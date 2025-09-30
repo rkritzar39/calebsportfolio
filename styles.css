@@ -177,231 +177,122 @@ body {
   pointer-events: none;
 }
 
-/* ======================================== */
-/* == Profile Section – Onyx Bubble Glass == */
-/* (Final Version with Button Animations)   */
-/* ======================================== */
+/* ============================= */
+/* Profile Section – iOS 26 Feel */
+/* ============================= */
 
 .profile-section {
 	position: relative;
 	text-align: center;
-	margin: 1.25rem 0 1.875rem 0;
-	padding: 1.875rem;
+	margin: 1.5rem 0 2rem;
+	padding: 2rem;
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-xl);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+	backdrop-filter: blur(28px) saturate(180%);
+	-webkit-backdrop-filter: blur(28px) saturate(180%);
 	width: 100%;
 	box-sizing: border-box;
 	transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* --- Profile Pic Wrapper --- */
+/* --- Profile Picture --- */
 .profile-pic-wrapper {
 	position: relative;
-	--profile-pic-size: 9.375rem;
+	--profile-pic-size: 9.5rem;
 	width: var(--profile-pic-size);
 	height: var(--profile-pic-size);
 	margin: 0 auto;
-	transition: width 0.3s ease, height 0.3s ease;
+	border-radius: 50%;
+	padding: 4px;
+	background: linear-gradient(135deg, var(--accent-color), transparent 70%);
+	box-shadow: 0 0 24px rgba(0,0,0,0.4);
+	transition: transform 0.3s ease;
 }
-
+.profile-pic-wrapper:hover {
+	transform: scale(1.03);
+}
 .profile-pic {
 	width: 100%;
 	height: 100%;
 	border-radius: 50%;
 	object-fit: cover;
-	box-shadow: var(--bubble-shadow);
-	border: 2px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 }
 
-/* --- Profile Status (Desktop Default) --- */
-.profile-status-container {
-	position: absolute;
-	width: calc(var(--profile-pic-size) * 0.19);
-	aspect-ratio: 1 / 1;
-	background-clip: content-box;
-	border-radius: 50%;
-	border: 3px solid var(--content-bg);
-	z-index: 2;
-	transition: all 0.3s ease;
-	top: 87%;
-	left: 87%;
-	transform: translate(-50%, -50%);
-}
-
-.profile-status-container.status-online   { background-color: #31a24c; }
-.profile-status-container.status-idle     { background-color: #ffc107; }
-.profile-status-container.status-dnd      { background-color: #dc3545; }
-.profile-status-container.status-offline  { background-color: #747f8d; }
-
-
-/* --- Username & Verified --- */
-.username-checkmark {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	margin: 1.875rem 0 0.625rem;
-	flex-wrap: wrap;
-}
-
+/* --- Username --- */
 .username-checkmark h1 {
-	margin: 0;
-	font-size: clamp(1.5rem, 5vw, 2.25rem);
+	margin: 1.75rem 0 0.75rem;
+	font-size: clamp(1.75rem, 5vw, 2.5rem);
 	font-weight: 800;
-	background: linear-gradient(120deg, var(--secondary-text), var(--accent-color));
+	letter-spacing: -0.015em;
+	background: linear-gradient(120deg, var(--text-color), var(--accent-color));
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
 }
 
+/* --- Verified Icon --- */
 .verified {
-	width: 1.25rem;
-	height: 1.25rem;
-	flex-shrink: 0;
+	width: 1.35rem;
+	height: 1.35rem;
+	filter: drop-shadow(0 0 6px var(--accent-color));
 }
 
-/* --- Text-Based Profile Status Badge (Hidden on Desktop) --- */
-.profile-status-text {
-	display: none;
-	font-size: 0.85rem;
-	font-weight: 700;
-	margin-top: 0.35rem;
-	padding: 0.25em 0.8em;
-	border-radius: 999px;
-	line-height: 1;
-}
-
-.profile-status-text.status-online {
-	background-color: #31a24c;
-	color: #ffffff;
-}
-.profile-status-text.status-idle {
-	background-color: #ffc107;
-	color: #1f1f1f;
-}
-.profile-status-text.status-dnd {
-	background-color: #dc3545;
-	color: #ffffff;
-}
-.profile-status-text.status-offline {
-	background-color: #747f8d;
-	color: #ffffff;
-}
-
-
-/* --- Profile Bio --- */
+/* --- Bio --- */
 .profile-bio {
-	font-size: var(--font-size-base, 1rem);
+	font-size: 1rem;
 	color: var(--secondary-text);
 	line-height: 1.6;
-	max-width: 37.5rem;
-	margin: 0.625rem auto 1.25rem;
+	max-width: 38rem;
+	margin: 0.75rem auto 1.5rem;
 }
 
-/* --- Corner Buttons --- */
+/* --- Corner Buttons (Circular iOS style) --- */
 .corner-button {
 	position: absolute;
-	width: 2.75rem;
-	height: 2.75rem;
-	border-radius: var(--radius-lg);
+	width: 3rem;
+	height: 3rem;
+	border-radius: 50%; /* fully round */
 	border: none;
 	cursor: pointer;
-	z-index: 10;
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	box-shadow: 0 8px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	color: var(--icon-color);
-	transition: transform 0.25s ease, box-shadow 0.25s ease, width 0.3s ease, height 0.3s ease;
+	transition: transform 0.25s cubic-bezier(.2, .8, .2, 1), 
+	            box-shadow 0.25s ease;
 }
 
 .settings-button { top: 1.25rem; right: 1.25rem; }
 .merch-button    { top: 1.25rem; left: 1.25rem; }
 .blog-button     { bottom: 1.25rem; left: 1.25rem; }
 
-.corner-button:hover,
-.corner-button:focus-visible {
-	transform: translateY(-3px) scale(1.05);
-	box-shadow: 0 8px 24px var(--shadow-color), 0 0 12px var(--accent-color);
-	outline: none;
+.corner-button:hover {
+	transform: translateY(-3px) scale(1.07);
+	box-shadow: 0 12px 28px rgba(0,0,0,0.45), 0 0 16px var(--accent-color);
 }
-
 .corner-button:active {
-	transform: scale(0.9);
-	box-shadow: 0 4px 12px var(--shadow-color), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+	transform: scale(0.93);
+	box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
 }
 
 .corner-button > * {
-	width: 1.25rem;
-	height: 1.25rem;
-	font-size: 1.25rem;
-	object-fit: contain;
+	width: 1.35rem;
+	height: 1.35rem;
 }
 
-a.corner-button {
-    text-decoration: none;
-}
-
-/* =================================== */
-/* === Responsive Breakpoint Rules === */
-/* =================================== */
-
-@media screen and (max-width: 1024px) {
-	.profile-pic-wrapper {
-		--profile-pic-size: 8.5rem;
-	}
-}
-
+/* --- Mobile Responsive --- */
 @media screen and (max-width: 768px) {
-	.profile-section {
-		padding: 1.5rem;
-	}
-	.profile-pic-wrapper {
-		--profile-pic-size: 7.5rem;
-	}
-	/* HIDE the corner circle on mobile */
-	.profile-status-container {
-		display: none;
-	}
-	/* SHOW the text status on mobile */
-	.profile-status-text {
-		display: block;
-		flex-basis: 100%;
-	}
-	.corner-button {
-		width: 2.375rem;
-		height: 2.375rem;
-	}
-	.profile-bio {
-		font-size: 0.95rem;
-	}
-}
-
-@media screen and (max-width: 480px) {
-	.profile-section {
-		padding: 1.25rem;
-		margin: 1rem 0;
-	}
-	.profile-pic-wrapper {
-		--profile-pic-size: 6.25rem;
-	}
-	.corner-button {
-		width: 2.25rem;
-		height: 2.25rem;
-		top: 0.9375rem;
-	}
-	.blog-button { top: auto; bottom: 0.9375rem; left: 0.9375rem; }
-	.settings-button { right: 0.9375rem; }
-	.merch-button { left: 0.9375rem; }
-	.profile-bio { font-size: 0.9rem; }
+	.profile-pic-wrapper { --profile-pic-size: 7.5rem; }
+	.corner-button { width: 2.5rem; height: 2.5rem; }
+	.profile-bio { font-size: 0.95rem; }
 }
 
 #status-widget {
