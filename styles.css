@@ -1,25 +1,46 @@
-/* ======================== */
-/* Dark Mode (Default)      */
-/* ======================== */
 :root {
-  /* Base Sizing */
+  /* ======================== */
+  /* Base Sizing              */
+  /* ======================== */
   font-size: 16px;
   --line-height-base: 1.65;
 
-  /* --- Dark Palette --- */
-  --dark-bg: #0A0A0F;
-  --dark-surface: rgba(25, 25, 30, 0.85);
-  --dark-text: #F5F5F7;
-  --dark-secondary-text: rgba(245, 245, 247, 0.65);
-  --dark-border: rgba(255, 255, 255, 0.1);
-  --dark-accent: #0A84FF;
-  --dark-hover: #1A6BFF;
-  --dark-link: var(--dark-accent);
-  --dark-shadow: rgba(0, 0, 0, 0.75);
-  --dark-glow: rgba(255, 255, 255, 0.08);
-  --dark-icon: #E5E5EA;
+  /* ======================== */
+  /* Dark Gray Palette (Default) */
+  /* ======================== */
+  --dark-bg: #1A1A1A;             /* Main background */
+  --dark-surface: #242424;        /* Surfaces / cards */
+  --dark-text: #F0F0F0;           /* Primary text */
+  --dark-secondary-text: #A3A3A3; /* Secondary text */
+  --dark-border: rgba(255, 255, 255, 0.08);
 
-  /* --- Default theme = dark --- */
+  --dark-accent: #4EA8FF;         /* Accent color */
+  --dark-hover: #2F89E5;          /* Hover color */
+  --dark-link: var(--dark-accent);
+
+  --dark-shadow: rgba(0, 0, 0, 0.6);
+  --dark-glow: rgba(255, 255, 255, 0.05);
+
+  --dark-icon: #D1D1D1;
+
+  /* ======================== */
+  /* Light Palette            */
+  /* ======================== */
+  --light-bg: #E3E3E3;
+  --light-content-bg: rgba(50, 50, 50, 0.18);
+  --light-text: #111827;
+  --light-secondary-text: #4B5563;
+  --light-border: rgba(0,0,0,0.15);
+  --light-accent: #0A84FF;
+  --light-hover: #0060DF;
+  --light-link: var(--light-accent);
+  --light-shadow: rgba(0,0,0,0.35);
+  --light-glow: rgba(255,255,255,0.35);
+  --light-icon: #1F2937;
+
+  /* ======================== */
+  /* Default theme (Dark Gray) */
+  /* ======================== */
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-surface);
   --text-color: var(--dark-text);
@@ -33,50 +54,27 @@
   --icon-color: var(--dark-icon);
   --social-icon-text-color: var(--dark-text);
 
-  /* Glass / Effects */
+  /* ======================== */
+  /* Effects & Decoration     */
+  /* ======================== */
   --backdrop-blur: saturate(180%) blur(22px);
-  --bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.15), transparent 70%);
-  --bubble-highlight: inset 1px 1px 3px rgba(255,255,255,0.2);
-  --bubble-shadow: 0 10px 28px rgba(0,0,0,0.55);
+  --bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 70%);
+  --bubble-highlight: inset 1px 1px 3px rgba(255,255,255,0.15);
+  --bubble-shadow: 0 10px 28px rgba(0,0,0,0.45);
 
-  /* Radii */
+  /* ======================== */
+  /* Border Radii             */
+  /* ======================== */
   --radius-xl: 28px;
   --radius-lg: 20px;
   --radius-md: 14px;
 
-  /* Transitions */
+  /* ======================== */
+  /* Transitions              */
+  /* ======================== */
   --transition-fast: 0.2s ease;
   --transition-medium: 0.3s ease;
   --transition-slow: 0.5s ease;
-}
-
-/* ======================== */
-/* Light Mode Overrides     */
-/* ======================== */
-body.light-e {
-  --bg-color: var(--light-bg);
-  --content-bg: var(--light-content-bg);
-  --text-color: var(--light-text);
-  --secondary-text: var(--light-secondary-text);
-  --border-color: var(--light-border);
-  --accent-color: var(--light-accent);
-  --hover-color: var(--light-hover);
-  --link-color: var(--light-link);
-  --shadow-color: var(--light-shadow);
-  --glow-color: var(--light-glow);
-  --icon-color: var(--light-icon);
-  --social-icon-text-color: var(--light-text);
-
-  --bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.3), rgba(255,255,255,0.1) 70%);
-  --backdrop-blur: saturate(180%) blur(26px);
-}
-
-/* ======================== */
-/* Dark Mode Class Toggle   */
-/* ======================== */
-html.dark-mode body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
 }
 
 /* ======================== */
