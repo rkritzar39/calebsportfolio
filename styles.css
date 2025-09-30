@@ -24,19 +24,22 @@
   --dark-icon: #D1D1D1;
 
   /* ======================== */
-  /* Light Palette            */
+  /* Light Palette (Improved) */
   /* ======================== */
-  --light-bg: #E3E3E3;
-  --light-content-bg: rgba(50, 50, 50, 0.18);
-  --light-text: #111827;
-  --light-secondary-text: #4B5563;
-  --light-border: rgba(0,0,0,0.15);
-  --light-accent: #0A84FF;
-  --light-hover: #0060DF;
+  --light-bg: #F5F5F7;                /* Bright clean base */
+  --light-content-bg: rgba(255, 255, 255, 0.72); /* Glassy panels */
+  --light-text: #111111;              /* High-contrast text */
+  --light-secondary-text: #4B5563;    /* Subtle gray for secondary */
+  --light-border: rgba(0, 0, 0, 0.1); /* Softer borders */
+
+  --light-accent: #007AFF;            /* iOS blue accent */
+  --light-hover: #005FCC;             /* Stronger hover */
   --light-link: var(--light-accent);
-  --light-shadow: rgba(0,0,0,0.35);
-  --light-glow: rgba(255,255,255,0.35);
-  --light-icon: #1F2937;
+
+  --light-shadow: rgba(0, 0, 0, 0.15);
+  --light-glow: rgba(255, 255, 255, 0.5);
+
+  --light-icon: #2C2C2E;              /* Darker icons for visibility */
 
   /* ======================== */
   /* Default theme (Dark Gray) */
@@ -75,6 +78,35 @@
   --transition-fast: 0.2s ease;
   --transition-medium: 0.3s ease;
   --transition-slow: 0.5s ease;
+}
+
+/* ======================== */
+/* Light Mode Overrides     */
+/* ======================== */
+body.light-e {
+  --bg-color: var(--light-bg);
+  --content-bg: var(--light-content-bg);
+  --text-color: var(--light-text);
+  --secondary-text: var(--light-secondary-text);
+  --border-color: var(--light-border);
+  --accent-color: var(--light-accent);
+  --hover-color: var(--light-hover);
+  --link-color: var(--light-link);
+  --shadow-color: var(--light-shadow);
+  --glow-color: var(--light-glow);
+  --icon-color: var(--light-icon);
+  --social-icon-text-color: var(--light-text);
+
+  --bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.4), rgba(255,255,255,0.15) 70%);
+  --backdrop-blur: saturate(180%) blur(24px);
+}
+
+/* ======================== */
+/* Dark Mode Wrapper        */
+/* ======================== */
+html.dark-mode body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 /* ======================== */
