@@ -120,27 +120,61 @@ html.dark-mode body {
 /* Base Styles – Onyx Bubble Glass */
 /* ======================== */
 body {
-	background: var(--bg-color); /* solid background only */
-	color: var(--text-color);
-	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
-	margin: 0;
-	padding: 32px; /* fixed sizing */
-	line-height: var(--line-height-base);
-	/* ✨ Body text size is now controlled by the slider variable. */
-	font-size: var(--font-size-base, 20px);
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+  background: var(--bg-color); /* solid matte base */
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
+  margin: 0;
+  padding: 32px;
+  line-height: var(--line-height-base);
+  font-size: var(--font-size-base, 20px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 
-	/* Optional smooth transition for light/dark mode */
-	transition: background 0.3s ease, color 0.3s ease;
+  /* Smooth transition for theme toggling */
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
+/* Constrains layout but doesn’t apply glass */
 .container {
-	max-width: 1140px;
-	margin: 0 auto;
-	padding: 0 24px; /* fixed sizing */
-	
-	/* No extra background here, leave bubble glass for sections only */
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ======================== */
+/* Glass Section / Card     */
+/* ======================== */
+.section {
+  background: var(--content-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+
+  background-image: var(--bubble-gradient);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+
+  padding: 24px;
+  margin-bottom: 32px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Optional: subtle “liquid reflection” effect */
+.section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0)
+  );
+  pointer-events: none;
 }
 
 /* ======================================== */
