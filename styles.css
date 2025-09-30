@@ -179,7 +179,7 @@ body {
 
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
-/* (Final Version for Provided HTML)      */
+/* (Final Version with Button Animations)   */
 /* ======================================== */
 
 .profile-section {
@@ -245,7 +245,7 @@ body {
 	justify-content: center;
 	gap: 0.5rem;
 	margin: 1.875rem 0 0.625rem;
-	flex-wrap: wrap; /* This allows items to wrap to the next line */
+	flex-wrap: wrap;
 }
 
 .username-checkmark h1 {
@@ -269,7 +269,7 @@ body {
 	display: none;
 	font-size: 0.85rem;
 	font-weight: 700;
-	margin-top: 0.35rem; /* Adds space above the badge */
+	margin-top: 0.35rem;
 	padding: 0.25em 0.8em;
 	border-radius: 999px;
 	line-height: 1;
@@ -320,7 +320,7 @@ body {
 	align-items: center;
 	justify-content: center;
 	color: var(--icon-color);
-	transition: transform 0.2s ease, box-shadow 0.2s ease, width 0.3s ease, height 0.3s ease;
+	transition: transform 0.25s ease, box-shadow 0.25s ease, width 0.3s ease, height 0.3s ease;
 }
 
 .settings-button { top: 1.25rem; right: 1.25rem; }
@@ -329,9 +329,14 @@ body {
 
 .corner-button:hover,
 .corner-button:focus-visible {
-	transform: translateY(-2px);
-	box-shadow: 0 6px 20px var(--shadow-color), 0 0 8px var(--glow-color);
+	transform: translateY(-3px) scale(1.05);
+	box-shadow: 0 8px 24px var(--shadow-color), 0 0 12px var(--accent-color);
 	outline: none;
+}
+
+.corner-button:active {
+	transform: scale(0.9);
+	box-shadow: 0 4px 12px var(--shadow-color), inset 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 
 .corner-button > * {
@@ -369,7 +374,6 @@ a.corner-button {
 	/* SHOW the text status on mobile */
 	.profile-status-text {
 		display: block;
-        /* KEY CHANGE: This forces the badge to a new line below the username */
 		flex-basis: 100%;
 	}
 	.corner-button {
