@@ -1,91 +1,82 @@
+/* ======================== */
+/* Dark Mode (Default)      */
+/* ======================== */
 :root {
-	/* --- Modern Base Sizing --- */
-	/* ✨ STEP 1: Font size is now fixed to stabilize 'rem' units for layout. */
-	font-size: 16px;
-	--line-height-base: 1.65;
+  /* Base Sizing */
+  font-size: 16px;
+  --line-height-base: 1.65;
 
-	/* --- Dark Mode (default) --- */
-	--dark-bg: #0A0A0F;
-	--dark-content-bg: rgba(25, 25, 30, 0.75);
-	--dark-text: #F5F5F7;
-	--dark-secondary-text: rgba(245, 245, 247, 0.65);
-	--dark-border: rgba(255, 255, 255, 0.08);
-	--dark-accent: #0A84FF;
-	--dark-hover: #0060DF;
-	--dark-link: var(--dark-accent);
-	--dark-shadow: rgba(0, 0, 0, 0.65);
-	--dark-glow: rgba(255, 255, 255, 0.12);
-	--dark-icon: #E5E5EA;
+  /* --- Dark Palette --- */
+  --dark-bg: #0A0A0F;
+  --dark-surface: rgba(25, 25, 30, 0.85);
+  --dark-text: #F5F5F7;
+  --dark-secondary-text: rgba(245, 245, 247, 0.65);
+  --dark-border: rgba(255, 255, 255, 0.1);
+  --dark-accent: #0A84FF;
+  --dark-hover: #1A6BFF;
+  --dark-link: var(--dark-accent);
+  --dark-shadow: rgba(0, 0, 0, 0.75);
+  --dark-glow: rgba(255, 255, 255, 0.08);
+  --dark-icon: #E5E5EA;
 
-	/* --- Light Mode (Onyx Frosted Glass) --- */
-	--light-bg: #E3E3E3;
-	--light-content-bg: rgba(50, 50, 50, 0.18);
-	--light-text: #111827;
-	--light-secondary-text: #4B5563;
-	--light-border: rgba(0,0,0,0.15);
-	--light-accent: #0A84FF;
-	--light-hover: #0060DF;
-	--light-link: var(--light-accent);
-	--light-shadow: rgba(0,0,0,0.35);
-	--light-glow: rgba(255,255,255,0.35);
-	--light-icon: #1F2937;
+  /* --- Default theme = dark --- */
+  --bg-color: var(--dark-bg);
+  --content-bg: var(--dark-surface);
+  --text-color: var(--dark-text);
+  --secondary-text: var(--dark-secondary-text);
+  --border-color: var(--dark-border);
+  --accent-color: var(--dark-accent);
+  --hover-color: var(--dark-hover);
+  --link-color: var(--dark-link);
+  --shadow-color: var(--dark-shadow);
+  --glow-color: var(--dark-glow);
+  --icon-color: var(--dark-icon);
+  --social-icon-text-color: var(--dark-text);
 
-	/* --- Default theme (dark) --- */
-	--bg-color: var(--dark-bg);
-	--content-bg: var(--dark-content-bg);
-	--text-color: var(--dark-text);
-	--secondary-text: var(--dark-secondary-text);
-	--border-color: var(--dark-border);
-	--accent-color: var(--dark-accent);
-	--hover-color: var(--dark-hover);
-	--link-color: var(--dark-link);
-	--shadow-color: var(--dark-shadow);
-	--glow-color: var(--dark-glow);
-	--icon-color: var(--dark-icon);
-	--social-icon-text-color: var(--dark-text);
+  /* Glass / Effects */
+  --backdrop-blur: saturate(180%) blur(22px);
+  --bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.15), transparent 70%);
+  --bubble-highlight: inset 1px 1px 3px rgba(255,255,255,0.2);
+  --bubble-shadow: 0 10px 28px rgba(0,0,0,0.55);
 
-	/* --- Glass / Bubble Effects --- */
-	--backdrop-blur: saturate(180%) blur(22px);
-	--bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.25), transparent 65%);
-	--bubble-highlight: inset 1px 1px 3px rgba(255,255,255,0.35);
-	--bubble-shadow: 0 10px 28px rgba(0,0,0,0.35);
+  /* Radii */
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
 
-	/* --- Border Radii --- */
-	--radius-xl: 28px;
-	--radius-lg: 20px;
-	--radius-md: 14px;
-
-	/* --- Transition / Animation Defaults --- */
-	--transition-fast: 0.2s ease;
-	--transition-medium: 0.3s ease;
-	--transition-slow: 0.5s ease;
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease;
 }
 
 /* ======================== */
-/* Light Mode Overrides via Class */
+/* Light Mode Overrides     */
 /* ======================== */
 body.light-e {
-	--bg-color: var(--light-bg);
-	--content-bg: var(--light-content-bg);
-	--text-color: var(--light-text);
-	--secondary-text: var(--light-secondary-text);
-	--border-color: var(--light-border);
-	--accent-color: var(--light-accent);
-	--hover-color: var(--light-hover);
-	--link-color: var(--light-link);
-	--shadow-color: var(--light-shadow);
-	--glow-color: var(--light-glow);
-	--icon-color: var(--light-icon);
-	--social-icon-text-color: var(--light-text);
+  --bg-color: var(--light-bg);
+  --content-bg: var(--light-content-bg);
+  --text-color: var(--light-text);
+  --secondary-text: var(--light-secondary-text);
+  --border-color: var(--light-border);
+  --accent-color: var(--light-accent);
+  --hover-color: var(--light-hover);
+  --link-color: var(--light-link);
+  --shadow-color: var(--light-shadow);
+  --glow-color: var(--light-glow);
+  --icon-color: var(--light-icon);
+  --social-icon-text-color: var(--light-text);
 
-	/* Slightly stronger gradient for light mode */
-	--bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.3), rgba(255,255,255,0.1) 70%);
-	--backdrop-blur: saturate(180%) blur(26px); /* more blur to pop on light bg */
+  --bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.3), rgba(255,255,255,0.1) 70%);
+  --backdrop-blur: saturate(180%) blur(26px);
 }
 
+/* ======================== */
+/* Dark Mode Class Toggle   */
+/* ======================== */
 html.dark-mode body {
-  background-color: var(--dark-bg-color, #121212);
-  color: var(--dark-text-color, #e0e0e0);
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 /* ======================== */
