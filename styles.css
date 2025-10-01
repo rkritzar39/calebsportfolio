@@ -1,116 +1,102 @@
 :root {
 	/* ======================== */
-	/* Base Sizing            */
+	/* 🍎 iOS 19 Design System  */
 	/* ======================== */
 	font-size: 16px;
-	--line-height-base: 1.65;
 
-	/* ======================== */
-	/* Dark Gray Glass Palette  */
-	/* ======================== */
-	--dark-bg: #0E0E0E;
-	--dark-content-bg: rgba(28, 28, 28, 0.6);
-	--dark-text: #F0F0F0;
-	--dark-secondary-text: #A3A3A3;
-	--dark-border: rgba(255, 255, 255, 0.08);
-	--dark-accent: #4EA8FF;
-	--dark-hover: #2F89E5;
-	--dark-link: var(--dark-accent);
-	--dark-shadow: rgba(0, 0, 0, 0.65);
-	--dark-glow: rgba(255, 255, 255, 0.05);
-	--dark-icon: #D1D1D1;
+	/* ------------------------ */
+	/* Palette: Light Mode      */
+	/* ------------------------ */
+	--light-bg-primary: #F2F2F7;       /* Page Background (System Gray 6) */
+	--light-bg-secondary: #FFFFFF;     /* Card/Element BG (Primary System BG) */
+	--light-bg-tertiary: #F2F2F7;       /* Inset Elements (Secondary System BG) */
 
-	/* ======================== */
-	/* Light Glass Palette      */
-	/* ======================== */
-	--light-bg: #E9ECF1;
-	--light-content-bg: rgba(255, 255, 255, 0.55);
-	--light-text: #111111;
-	--light-secondary-text: #4B5563;
-	--light-border: rgba(255, 255, 255, 0.6); /* Original, unused in favor of corrected value */
+	--light-material-bg: rgba(242, 242, 247, 0.8); /* Translucent Material */
+
+	--light-text-primary: #000000;
+	--light-text-secondary: rgba(60, 60, 67, 0.6);
+	--light-text-tertiary: rgba(60, 60, 67, 0.3);
+
+	--light-separator: rgba(60, 60, 67, 0.29);
 	--light-accent: #007AFF;
-	--light-hover: #005FCC;
-	--light-link: var(--light-accent);
-	--light-shadow: rgba(0, 0, 0, 0.25);
-	--light-glow: rgba(255, 255, 255, 0.75);
-	--light-icon: #2C2C2E;
+	--light-accent-hover: #0056b3;
+
+	--light-shadow-color: rgba(0, 0, 0, 0.12);
+
+	/* ------------------------ */
+	/* Palette: Dark Mode       */
+	/* ------------------------ */
+	--dark-bg-primary: #000000;
+	--dark-bg-secondary: #1C1C1E;
+	--dark-bg-tertiary: #2C2C2E;
+
+	--dark-material-bg: rgba(28, 28, 30, 0.75);
+
+	--dark-text-primary: #FFFFFF;
+	--dark-text-secondary: rgba(235, 235, 245, 0.6);
+	--dark-text-tertiary: rgba(235, 235, 245, 0.3);
+
+	--dark-separator: rgba(84, 84, 88, 0.65);
+	--dark-accent: #0A84FF; /* Slightly brighter blue for dark BG */
+	--dark-accent-hover: #0060f5;
+
+	--dark-shadow-color: rgba(0, 0, 0, 0.4);
 
 	/* ======================== */
-	/* Default Theme (Dark)     */
+	/* 🌙 Default Theme (Dark)  */
 	/* ======================== */
-	--bg-color: var(--dark-bg);
-	--content-bg: var(--dark-content-bg);
-	--text-color: var(--dark-text);
-	--secondary-text: var(--dark-secondary-text);
-	--border-color: var(--dark-border);
+	--bg-primary: var(--dark-bg-primary);
+	--bg-secondary: var(--dark-bg-secondary);
+	--bg-tertiary: var(--dark-bg-tertiary);
+	--material-bg: var(--dark-material-bg);
+
+	--text-primary: var(--dark-text-primary);
+	--text-secondary: var(--dark-text-secondary);
+	--text-tertiary: var(--dark-text-tertiary);
+
+	--separator-color: var(--dark-separator);
 	--accent-color: var(--dark-accent);
-	--hover-color: var(--dark-hover);
-	--link-color: var(--dark-link);
-	--shadow-color: var(--dark-shadow);
-	--glow-color: var(--dark-glow);
-	--icon-color: var(--dark-icon);
-	--social-icon-text-color: var(--dark-text);
+	--accent-hover: var(--dark-accent-hover);
+	
+	--shadow-color: var(--dark-shadow-color);
 
 	/* ======================== */
-	/* Effects & Decoration     */
+	/* ✨ Universal Effects     */
 	/* ======================== */
-	--backdrop-blur: saturate(180%) blur(28px);
-	--bubble-gradient: radial-gradient(
-		circle at top left,
-		rgba(255, 255, 255, 0.08),
-		transparent 70%
-	);
-	--bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
-	--bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+	--material-blur: saturate(180%) blur(20px);
+	--shadow-sm: 0 1px 3px var(--shadow-color);
+	--shadow-md: 0 4px 12px var(--shadow-color);
+	--shadow-lg: 0 10px 30px var(--shadow-color);
 
 	/* ======================== */
-	/* Border Radii           */
+	/* 📐 Sizing & Transitions  */
 	/* ======================== */
-	--radius-xl: 28px;
-	--radius-lg: 20px;
-	--radius-md: 14px;
+	--radius-sm: 8px;
+	--radius-md: 16px;
+	--radius-lg: 24px;
 
-	/* ======================== */
-	/* Transitions            */
-	/* ======================== */
-	--transition-fast: 0.2s ease;
-	--transition-medium: 0.3s ease;
-	--transition-slow: 0.5s ease;
+	--transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+	--transition-medium: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 /* ======================== */
-/* Light Mode Overrides     */
+/* ☀️ Light Mode Overrides  */
 /* ======================== */
 body.light-e {
-	--bg-color: var(--light-bg);
-	--content-bg: var(--light-content-bg);
-	--text-color: var(--light-text);
-	--secondary-text: var(--light-secondary-text);
-	
-	/* ✨ FIX: A darker border that's visible on a light background. */
-	--border-color: rgba(50, 50, 50, 0.2); 
+	--bg-primary: var(--light-bg-primary);
+	--bg-secondary: var(--light-bg-secondary);
+	--bg-tertiary: var(--light-bg-tertiary);
+	--material-bg: var(--light-material-bg);
 
+	--text-primary: var(--light-text-primary);
+	--text-secondary: var(--light-text-secondary);
+	--text-tertiary: var(--light-text-tertiary);
+
+	--separator-color: var(--light-separator);
 	--accent-color: var(--light-accent);
-	--hover-color: var(--light-hover);
-	--link-color: var(--light-link);
-	--shadow-color: var(--light-shadow);
-	--glow-color: var(--light-glow);
-	--icon-color: var(--light-icon);
-	--social-icon-text-color: var(--light-text);
-
-	--bubble-gradient: radial-gradient(
-		circle at top left,
-		rgba(255, 255, 255, 0.8), /* Brighter gradient for light mode */
-		rgba(255, 255, 255, 0.2) 70%
-	);
+	--accent-hover: var(--light-accent-hover);
 	
-	/* ✨ FIX: Redefined outer shadow for light mode using your variable. */
-	--bubble-shadow: 0 12px 32px var(--light-shadow);
-	
-	/* ✨ FIX: A subtle DARK inner shadow creates the beveled edge. */
-	--bubble-highlight: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
-	
-	--backdrop-blur: saturate(180%) blur(28px);
+	--shadow-color: var(--light-shadow-color);
 }
 
 /* ======================== */
