@@ -1,111 +1,111 @@
 :root {
-  /* ======================== */
-  /* Base Sizing              */
-  /* ======================== */
-  font-size: 16px;
-  --line-height-base: 1.65;
+	/* ======================== */
+	/* Base Sizing            */
+	/* ======================== */
+	font-size: 16px;
+	--line-height-base: 1.65;
 
-  /* ======================== */
-  /* Dark Gray Glass Palette  */
-  /* ======================== */
-  --dark-bg: #0E0E0E;              /* Deep base background */
-  --dark-content-bg: rgba(28, 28, 28, 0.6); /* Semi-transparent onyx glass */
-  --dark-text: #F0F0F0;
-  --dark-secondary-text: #A3A3A3;
-  --dark-border: rgba(255, 255, 255, 0.08);
+	/* ======================== */
+	/* Dark Gray Glass Palette  */
+	/* ======================== */
+	--dark-bg: #0E0E0E;                /* Deep base background */
+	--dark-content-bg: rgba(28, 28, 28, 0.6); /* Semi-transparent onyx glass */
+	--dark-text: #F0F0F0;
+	--dark-secondary-text: #A3A3A3;
+	--dark-border: rgba(255, 255, 255, 0.08);
 
-  --dark-accent: #4EA8FF;
-  --dark-hover: #2F89E5;
-  --dark-link: var(--dark-accent);
+	--dark-accent: #4EA8FF;
+	--dark-hover: #2F89E5;
+	--dark-link: var(--dark-accent);
 
-  --dark-shadow: rgba(0, 0, 0, 0.65);
-  --dark-glow: rgba(255, 255, 255, 0.05);
+	--dark-shadow: rgba(0, 0, 0, 0.65);
+	--dark-glow: rgba(255, 255, 255, 0.05);
 
-  --dark-icon: #D1D1D1;
+	--dark-icon: #D1D1D1;
 
-  /* ======================== */
-  /* Light Glass Palette      */
-  /* ======================== */
-  --light-bg: #E9ECF1;
-  --light-content-bg: rgba(255, 255, 255, 0.55); /* Liquid glass */
-  --light-text: #111111;
-  --light-secondary-text: #4B5563;
-  --light-border: rgba(255, 255, 255, 0.6);
+	/* ======================== */
+	/* Light Glass Palette      */
+	/* ======================== */
+	--light-bg: #E9ECF1;
+	--light-content-bg: rgba(255, 255, 255, 0.55); /* Liquid glass */
+	--light-text: #111111;
+	--light-secondary-text: #4B5563;
+	--light-border: rgba(255, 255, 255, 0.6);
 
-  --light-accent: #007AFF;
-  --light-hover: #005FCC;
-  --light-link: var(--light-accent);
+	--light-accent: #007AFF;
+	--light-hover: #005FCC;
+	--light-link: var(--light-accent);
 
-  --light-shadow: rgba(0, 0, 0, 0.25);
-  --light-glow: rgba(255, 255, 255, 0.75);
-  --light-icon: #2C2C2E;
+	--light-shadow: rgba(0, 0, 0, 0.25);
+	--light-glow: rgba(255, 255, 255, 0.75);
+	--light-icon: #2C2C2E;
 
-  /* ======================== */
-  /* Default Theme (Dark)     */
-  /* ======================== */
-  --bg-color: var(--dark-bg);
-  --content-bg: var(--dark-content-bg);
-  --text-color: var(--dark-text);
-  --secondary-text: var(--dark-secondary-text);
-  --border-color: var(--dark-border);
-  --accent-color: var(--dark-accent);
-  --hover-color: var(--dark-hover);
-  --link-color: var(--dark-link);
-  --shadow-color: var(--dark-shadow);
-  --glow-color: var(--dark-glow);
-  --icon-color: var(--dark-icon);
-  --social-icon-text-color: var(--dark-text);
+	/* ======================== */
+	/* Default Theme (Dark)     */
+	/* ======================== */
+	--bg-color: var(--dark-bg);
+	--content-bg: var(--dark-content-bg);
+	--text-color: var(--dark-text);
+	--secondary-text: var(--dark-secondary-text);
+	--border-color: var(--dark-border);
+	--accent-color: var(--dark-accent);
+	--hover-color: var(--dark-hover);
+	--link-color: var(--dark-link);
+	--shadow-color: var(--dark-shadow);
+	--glow-color: var(--dark-glow);
+	--icon-color: var(--dark-icon);
+	--social-icon-text-color: var(--dark-text);
 
-  /* ======================== */
-  /* Effects & Decoration     */
-  /* ======================== */
-  --backdrop-blur: saturate(180%) blur(28px);
-  --bubble-gradient: radial-gradient(
-    circle at top left,
-    rgba(255, 255, 255, 0.08),
-    transparent 70%
-  );
-  --bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
-  --bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+	/* ======================== */
+	/* Effects & Decoration     */
+	/* ======================== */
+	--backdrop-blur: saturate(180%) blur(28px);
+	--bubble-gradient: radial-gradient(
+		circle at top left,
+		rgba(255, 255, 255, 0.08),
+		transparent 70%
+	);
+	--bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
+	--bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 
-  /* ======================== */
-  /* Border Radii             */
-  /* ======================== */
-  --radius-xl: 28px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
+	/* ======================== */
+	/* Border Radii           */
+	/* ======================== */
+	--radius-xl: 28px;
+	--radius-lg: 20px;
+	--radius-md: 14px;
 
-  /* ======================== */
-  /* Transitions              */
-  /* ======================== */
-  --transition-fast: 0.2s ease;
-  --transition-medium: 0.3s ease;
-  --transition-slow: 0.5s ease;
+	/* ======================== */
+	/* Transitions            */
+	/* ======================== */
+	--transition-fast: 0.2s ease;
+	--transition-medium: 0.3s ease;
+	--transition-slow: 0.5s ease;
 }
 
 /* ======================== */
 /* Light Mode Overrides     */
 /* ======================== */
 body.light-e {
-  --bg-color: var(--light-bg);
-  --content-bg: var(--light-content-bg);
-  --text-color: var(--light-text);
-  --secondary-text: var(--light-secondary-text);
-  --border-color: var(--light-border);
-  --accent-color: var(--light-accent);
-  --hover-color: var(--light-hover);
-  --link-color: var(--light-link);
-  --shadow-color: var(--light-shadow);
-  --glow-color: var(--light-glow);
-  --icon-color: var(--light-icon);
-  --social-icon-text-color: var(--light-text);
+	--bg-color: var(--light-bg);
+	--content-bg: var(--light-content-bg);
+	--text-color: var(--light-text);
+	--secondary-text: var(--light-secondary-text);
+	--border-color: var(--light-border);
+	--accent-color: var(--light-accent);
+	--hover-color: var(--light-hover);
+	--link-color: var(--light-link);
+	--shadow-color: var(--light-shadow);
+	--glow-color: var(--light-glow);
+	--icon-color: var(--light-icon);
+	--social-icon-text-color: var(--light-text);
 
-  --bubble-gradient: radial-gradient(
-    circle at top left,
-    rgba(255, 255, 255, 0.6),
-    rgba(255, 255, 255, 0.15) 70%
-  );
-  --backdrop-blur: saturate(180%) blur(28px);
+	--bubble-gradient: radial-gradient(
+		circle at top left,
+		rgba(255, 255, 255, 0.6),
+		rgba(255, 255, 255, 0.15) 70%
+	);
+	--backdrop-blur: saturate(180%) blur(28px);
 }
 
 /* ======================== */
@@ -887,10 +887,11 @@ a.corner-button {
 	border-radius: var(--radius-xl);
 	padding: 30px;
 	margin-bottom: 30px;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-	transition: background 0.3s ease, box-shadow 0.3s ease;
+	transition: background var(--transition-medium), box-shadow var(--transition-medium);
 }
 
 .disabilities-section h2 {
@@ -927,9 +928,9 @@ a.corner-button {
 	border-radius: 25px;
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
-	border: 2px solid var(--accent-color);
-	box-shadow: var(--bubble-shadow), 0 0 0 1px var(--accent-color);
-	transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+	border: 1px solid var(--accent-color);
+	box-shadow: var(--bubble-highlight);
+	transition: transform var(--transition-medium), background var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
 	text-align: center;
 	position: relative;
 	overflow: hidden;
@@ -937,42 +938,26 @@ a.corner-button {
 	-webkit-backdrop-filter: var(--backdrop-blur);
 }
 
-/* Text wrapper inside button */
 .disabilities-section a span.button-text {
 	flex-grow: 1;
 	text-align: center;
 }
 
-/* Icon styling */
 .disabilities-section a i {
 	margin-left: 10px;
 	flex-shrink: 0;
 }
 
-/* Hover effect – Bubble Glass style */
 .disabilities-section a:hover {
-	background: var(--accent-color);
-	color: var(--content-bg);
+	background: var(--hover-color);
+	color: var(--dark-text);
 	transform: translateY(-3px);
-	box-shadow: 0 4px 12px var(--shadow-color),
-				  0 0 10px var(--accent-color);
+	box-shadow: 0 0 12px var(--accent-color), 0 0 24px var(--accent-color);
 }
 
-/* Focus accessibility */
-.disabilities-section a:focus {
+.disabilities-section a:focus-visible {
 	outline: none;
-	box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.35);
-}
-
-/* Responsive / Color scheme refinements */
-@media screen and (max-width: 768px) {
-	.disabilities-section { padding: 20px; }
-	.disabilities-section a { padding: 10px 16px; font-size: 0.95em; }
-}
-
-@media screen and (max-width: 480px) {
-	.disabilities-section { padding: 15px; }
-	.disabilities-section a { padding: 8px 14px; font-size: 0.9em; }
+	box-shadow: 0 0 0 4px var(--dark-hover);
 }
 
 /* ======================== */
@@ -986,13 +971,14 @@ a.corner-button {
 	padding: 30px;
 	border-radius: var(--radius-xl);
 	margin-bottom: 30px;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
 	width: 100%;
 	box-sizing: border-box;
 	overflow: hidden;
-	transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+	transition: background-color var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
 }
 
 /* Section Headers and Timestamps */
@@ -1006,14 +992,12 @@ a.corner-button {
 	font-size: 1.8em;
 }
 
-/* Font Awesome Headers */
 #tiktok-header::before,
 #instagram-header::before,
 #youtube-header::before {
 	color: var(--accent-color);
 }
 
-/* Timestamp text */
 #tiktok-last-updated-timestamp,
 #instagram-last-updated-timestamp,
 #youtube-last-updated-timestamp {
@@ -1025,7 +1009,6 @@ a.corner-button {
 	gap: 4px;
 }
 
-/* Timestamp icon */
 #tiktok-last-updated-timestamp::before,
 #instagram-last-updated-timestamp::before,
 #youtube-last-updated-timestamp::before {
@@ -1057,9 +1040,11 @@ a.corner-button {
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
-	transition: transform 0.3s ease, box-shadow 0.3s ease;
 	border: 1px solid var(--border-color);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	transition: transform var(--transition-medium), box-shadow var(--transition-medium);
 	width: 100%;
 	box-sizing: border-box;
 	max-width: 100%;
@@ -1067,16 +1052,14 @@ a.corner-button {
 	overflow: visible;
 	min-height: fit-content;
 	height: auto;
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
 }
 
 .creator-card:hover,
 .instagram-creator-card:hover,
 .youtube-creator-card:hover {
 	transform: translateY(-5px);
-	box-shadow: 0 6px 18px var(--shadow-color),
-				  0 0 12px var(--accent-color);
+	box-shadow: 0 8px 24px var(--shadow-color),
+				  0 0 15px var(--accent-color);
 }
 
 /* Cover Photo (YouTube) */
@@ -1122,6 +1105,17 @@ a.corner-button {
 	margin-bottom: 5px;
 }
 
+.creator-header h3,
+.instagram-creator-header h3,
+.youtube-creator-header h3 {
+	margin: 0;
+	font-size: max(1.1em, calc(var(--font-size-base, 20px) * 0.8));
+	color: var(--text-color);
+	line-height: 1.4;
+	overflow-wrap: break-word;
+	word-break: break-word;
+}
+
 /* Username Containers */
 .username-container,
 .instagram-username-container,
@@ -1142,7 +1136,7 @@ a.corner-button {
 .instagram-creator-username,
 .youtube-creator-username {
 	color: var(--secondary-text);
-	font-size: max(0.9em, calc(var(--font-size-base, 20px) * 0.7)); /* ✨ Updated for text scaling ✨ */
+	font-size: max(0.9em, calc(var(--font-size-base, 20px) * 0.7));
 	margin: 0;
 	width: auto;
 	max-width: 100%;
@@ -1187,42 +1181,28 @@ a.corner-button {
 .visit-profile,
 .instagram-visit-profile,
 .youtube-visit-profile {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
+	background: transparent;
 	border: 2px solid var(--accent-color);
 	color: var(--accent-color);
 	padding: 8px 20px;
 	border-radius: 25px;
 	text-decoration: none;
 	font-weight: 500;
-	transition: all 0.2s ease;
+	transition: all var(--transition-fast);
 	text-align: center;
 	position: relative;
 	overflow: hidden;
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
 }
 
 .visit-profile:hover,
 .instagram-visit-profile:hover,
 .youtube-visit-profile:hover {
-	background-color: var(--accent-color);
-	color: white;
+	background-color: var(--hover-color);
+	border-color: var(--hover-color);
+	color: var(--dark-text);
 	box-shadow: 0 0 10px var(--accent-color),
 				  0 0 20px var(--accent-color);
 	transform: translateY(-2px);
-}
-
-/* Creator Names */
-.creator-header h3,
-.instagram-creator-header h3,
-.youtube-creator-header h3 {
-	margin: 0;
-	font-size: max(1.1em, calc(var(--font-size-base, 20px) * 0.8)); /* ✨ Updated for text scaling ✨ */
-	color: var(--text-color);
-	line-height: 1.4;
-	overflow-wrap: break-word;
-	word-break: break-word;
 }
 
 /* Unavailable Message – Bubble Glass */
@@ -1239,7 +1219,7 @@ a.corner-button {
 
 .unavailable-message-title {
 	color: var(--text-color);
-	font-size: calc(var(--font-size-base, 20px) * 1.1); /* ✨ Updated for text scaling ✨ */
+	font-size: calc(var(--font-size-base, 20px) * 1.1);
 	font-weight: bold;
 	margin-bottom: 10px;
 }
@@ -1257,7 +1237,10 @@ a.corner-button {
 }
 
 @media screen and (max-width: 768px) {
-	.shoutouts-section { padding: 15px; margin-bottom: 20px; }
+	.disabilities-section,
+	.shoutouts-section { padding: 20px; margin-bottom: 20px; }
+	.disabilities-section a { padding: 10px 16px; font-size: 0.95em; }
+
 	.creator-grid,
 	.instagram-creator-grid,
 	.youtube-creator-grid {
@@ -1276,6 +1259,12 @@ a.corner-button {
 	.youtube-creator-username { font-size: 0.85em; }
 }
 
+@media screen and (max-width: 480px) {
+	.disabilities-section,
+	.shoutouts-section { padding: 15px; }
+	.disabilities-section a { padding: 8px 14px; font-size: 0.9em; }
+}
+
 @media screen and (max-width: 380px) {
 	.shoutouts-section { padding: 10px; }
 	.creator-grid,
@@ -1292,7 +1281,6 @@ a.corner-button {
 	.instagram-creator-username,
 	.youtube-creator-username { font-size: 0.8em; }
 }
-
 
 :root {
 	--accent-color-rgb: 0, 123, 255; /* Match this to your accent color */
