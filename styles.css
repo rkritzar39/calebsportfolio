@@ -1,87 +1,100 @@
 :root {
 	/* ======================== */
-	/* Base & Typography      */
+	/* 💧 Liquid Glass System   */
 	/* ======================== */
 	font-size: 16px;
 
 	/* ------------------------ */
 	/* Palette: Light Mode      */
 	/* ------------------------ */
-	--light-bg-primary: #F2F2F7;
-	--light-bg-secondary: #FFFFFF;
-	--light-bg-tertiary: #F2F2F7;
-	--light-material-bg: rgba(242, 242, 247, 0.8);
-	--light-text-primary: #000000;
-	--light-text-secondary: rgba(60, 60, 67, 0.6);
-	--light-text-tertiary: rgba(60, 60, 67, 0.3);
-	--light-separator: rgba(60, 60, 67, 0.29);
-	--light-accent: #007AFF;
-	--light-accent-hover: #0056b3;
-	--light-shadow-color: rgba(0, 0, 0, 0.12);
+	--light-bg: #EFEFF3;
+	--light-liquid-bg: rgba(250, 250, 250, 0.6);
+	--light-text-primary: #1d1d1f;
+	--light-text-secondary: rgba(60, 60, 67, 0.75);
+	--light-accent: #0071E3;
+	--light-accent-hover: #0077F0;
+	--light-shadow-color: rgba(0, 0, 0, 0.2);
+	--light-bevel-highlight: rgba(255, 255, 255, 0.8);
+	--light-bevel-shadow: rgba(0, 0, 0, 0.1);
 
 	/* ------------------------ */
 	/* Palette: Dark Mode       */
 	/* ------------------------ */
-	--dark-bg-primary: #000000;
-	--dark-bg-secondary: #1C1C1E;
-	--dark-bg-tertiary: #2C2C2E;
-	--dark-material-bg: rgba(28, 28, 30, 0.75);
-	--dark-text-primary: #FFFFFF;
-	--dark-text-secondary: rgba(235, 235, 245, 0.6);
-	--dark-text-tertiary: rgba(235, 235, 245, 0.3);
-	--dark-separator: rgba(84, 84, 88, 0.65);
-	--dark-accent: #0A84FF;
-	--dark-accent-hover: #0060f5;
-	--dark-shadow-color: rgba(0, 0, 0, 0.4);
+	--dark-bg: #0D0D0F;
+	--dark-liquid-bg: rgba(30, 30, 35, 0.5);
+	--dark-text-primary: #F5F5F7;
+	--dark-text-secondary: rgba(235, 235, 245, 0.65);
+	--dark-accent: #3392FF;
+	--dark-accent-hover: #52A5FF;
+	--dark-shadow-color: rgba(0, 0, 0, 0.5);
+	--dark-bevel-highlight: rgba(255, 255, 255, 0.1);
+	--dark-bevel-shadow: rgba(0, 0, 0, 0.4);
 
 	/* ======================== */
 	/* 🌙 Default Theme (Dark)  */
 	/* ======================== */
-	--bg-primary: var(--dark-bg-primary);
-	--bg-secondary: var(--dark-bg-secondary);
-	--bg-tertiary: var(--dark-bg-tertiary);
-	--material-bg: var(--dark-material-bg);
+	--bg-color: var(--dark-bg);
+	--liquid-bg: var(--dark-liquid-bg);
 	--text-primary: var(--dark-text-primary);
 	--text-secondary: var(--dark-text-secondary);
-	--text-tertiary: var(--dark-text-tertiary);
-	--separator-color: var(--dark-separator);
 	--accent-color: var(--dark-accent);
 	--accent-hover: var(--dark-accent-hover);
 	--shadow-color: var(--dark-shadow-color);
+	--bevel-highlight: var(--dark-bevel-highlight);
+	--bevel-shadow: var(--dark-bevel-shadow);
 
 	/* ======================== */
 	/* ✨ Universal Effects     */
 	/* ======================== */
-	--material-blur: saturate(180%) blur(20px);
-	--shadow-sm: 0 1px 3px var(--shadow-color);
-	--shadow-md: 0 4px 12px var(--shadow-color);
-	--shadow-lg: 0 10px 30px var(--shadow-color);
+	
+	/* The core "wet look" highlight, layered on top of the base color */
+	--liquid-sheen: 
+		linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 50%),
+		radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.15), transparent 40%);
+
+	/* A 3D beveled edge created with inner shadows */
+	--liquid-bevel: 
+		inset 1px 1px 1px var(--bevel-highlight),
+		inset -1px -1px 1px var(--bevel-shadow);
+
+	/* A soft outer shadow to lift the element */
+	--liquid-shadow: 0 10px 30px -5px var(--shadow-color);
+
+	/* The signature prismatic glow effect */
+	--liquid-chroma-glow-subtle: 
+		0 0 8px -2px #ff00de,
+		0 0 8px -2px #00f2ff;
+	--liquid-chroma-glow-strong: 
+		0 0 20px -2px var(--accent-color), 
+		0 0 15px -4px #ff00de,
+		0 0 15px -4px #00f2ff;
+
+	/* The background blur effect, now with more saturation */
+	--liquid-blur: saturate(220%) blur(18px);
 
 	/* ======================== */
 	/* 📐 Sizing & Transitions  */
 	/* ======================== */
-	--radius-sm: 8px;
-	--radius-md: 16px;
-	--radius-lg: 24px;
-	--transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-	--transition-medium: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+	--radius-md: 20px;
+	--radius-lg: 30px;
+	--radius-xl: 40px;
+	--transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	--transition-medium: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ======================== */
 /* ☀️ Light Mode Overrides  */
 /* ======================== */
 body.light-e {
-	--bg-primary: var(--light-bg-primary);
-	--bg-secondary: var(--light-bg-secondary);
-	--bg-tertiary: var(--light-bg-tertiary);
-	--material-bg: var(--light-material-bg);
+	--bg-color: var(--light-bg);
+	--liquid-bg: var(--light-liquid-bg);
 	--text-primary: var(--light-text-primary);
 	--text-secondary: var(--light-text-secondary);
-	--text-tertiary: var(--light-text-tertiary);
-	--separator-color: var(--light-separator);
 	--accent-color: var(--light-accent);
 	--accent-hover: var(--light-accent-hover);
 	--shadow-color: var(--light-shadow-color);
+	--bevel-highlight: var(--light-bevel-highlight);
+	--bevel-shadow: var(--light-bevel-shadow);
 }
 
 /* ======================== */
