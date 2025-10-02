@@ -1495,6 +1495,12 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (document.getElementById('post-content-area')) {
         initializePostPageContent();
     }
+    // --- THIS IS THE FIX for the "Loading..." issue ---
+    // Check if we are on the legislation tracker page
+    else if (document.getElementById('legislation-list')) {
+        console.log("Initializing Legislation Tracker Page...");
+        loadAndDisplayLegislation();
+    }
     // Otherwise, assume we are on the main homepage
     else if (document.getElementById('main-content-wrapper')) {
         initializeHomepageContent();
@@ -1813,12 +1819,14 @@ async function initializeHomepageContent() {
         // === END OF NEW CODE ===============================================
         // ===================================================================
 
-        // --- ADD THIS NEW FUNCTION FOR THE LEGISLATION TRACKER ---
+        // ======================================================
+// ===== LEGISLATION TRACKER PAGE SPECIFIC FUNCTIONS ====
+// ======================================================
+// (This function should be added to your file if it's not there already)
 
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
-    // This check ensures the code only runs on the tracker page
-    if (!legislationList) return; 
+    if (!legislationList) return; // This correctly stops the function from running on other pages
 
     legislationList.innerHTML = '<p>Loading legislation status...</p>';
     const legislationCollectionRef = collection(db, "legislation");
