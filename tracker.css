@@ -1,0 +1,54 @@
+/* tracker.css */
+
+#tracker-section {
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.back-to-home-btn {
+    display: inline-block;
+    margin-bottom: 2rem;
+    text-decoration: none;
+}
+
+.legislation-list {
+    display: grid;
+    gap: 20px;
+}
+
+.legislation-item {
+    background: var(--content-bg);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.legislation-item h4 {
+    margin-top: 0;
+    color: var(--accent-color);
+}
+
+.legislation-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 15px;
+    font-size: 0.9em;
+}
+
+.legislation-meta .status {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.status-in-progress { background-color: #007bff; }
+.status-passed { background-color: #28a745; }
+.status-repealed { background-color: #dc3545; }
+.status-under-review { background-color: #ffc107; color: #000; }
+
+.legislation-meta .date {
+    color: var(--secondary-text);
+}
