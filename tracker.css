@@ -1,32 +1,31 @@
-/* tracker.css (macOS 26 Redesign with Definitive Horizontal Bar) */
+/* tracker.css (Modern, Responsive, & Definitive Fix) */
 
-/* --- Page & Font --- */
+/* --- Page & Card Layout --- */
 #tracker-section {
     max-width: 900px;
-    margin: 4rem auto;
-    padding: 0 1.5rem;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    margin: 2rem auto;
+    padding: 2rem 1.5rem;
+    font-family: var(--font-family, system-ui, -apple-system, sans-serif);
 }
 
 .page-title {
     text-align: center;
     color: var(--headings-color);
-    font-size: clamp(2.5rem, 6vw, 3.5rem);
-    margin-bottom: 1rem;
-    font-weight: 700;
-    letter-spacing: -1.5px;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
 .back-to-home-btn {
-    display: block;
-    width: fit-content;
-    margin: 0 auto 3rem auto;
+    display: inline-block;
+    margin-bottom: 3rem;
     text-decoration: none;
     background-color: var(--secondary-bg);
     color: var(--secondary-text);
     border: 1px solid var(--border-color);
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-full);
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-md);
     transition: all 0.2s ease-out;
     font-weight: 500;
 }
@@ -38,65 +37,70 @@
     box-shadow: var(--shadow-md);
 }
 
-/* --- Legislation "Window" --- */
 .legislation-list {
     display: grid;
     gap: 2.5rem;
 }
 
 .legislation-item {
-    /* "Frosted Glass" Effect */
-    background-color: hsla(var(--content-bg-hsl), 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    border: 1px solid hsla(var(--border-color-hsl), 0.5);
+    background: var(--content-bg);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
-    padding: 2.5rem;
-    box-shadow: 0 10px 30px hsla(0, 0%, 0%, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    padding: 2rem 2.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.legislation-item:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-6px);
 }
 
 /* --- Bill Header & Details --- */
 .bill-header {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.bill-header h4 {
+    margin: 0;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    color: var(--headings-color);
+    line-height: 1.4;
+    font-weight: 700;
 }
 
 .bill-id {
     font-family: monospace, sans-serif;
     font-size: 0.9em;
-    font-weight: 600;
+    font-weight: bold;
     color: var(--accent-color);
-    padding: 0;
-}
-
-.bill-header h4 {
-    margin: 0;
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    color: var(--headings-color);
-    line-height: 1.2;
-    font-weight: 600;
+    background-color: hsla(var(--accent-color-hsl), 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
 }
 
 .bill-details p {
     margin: 0;
-    font-size: 1em;
+    font-size: 0.95em;
     color: var(--secondary-text);
-    line-height: 1.6;
 }
 
 .bill-details strong {
     color: var(--primary-text);
-    font-weight: 500;
+    font-weight: 600;
 }
 
-/* --- DEFINITIVE HORIZONTAL PROGRESS BAR FIX --- */
+/* --- THIS IS THE DEFINITIVE FIX for the progress bar --- */
 .progress-container {
-    padding-top: 1rem;
+    padding: 1rem 0;
+    margin: 1.5rem 0;
 }
 
 .progress-tracker {
@@ -106,34 +110,26 @@
     display: flex;
     justify-content: space-between;
     position: relative;
-    --progress-width: 0%; /* Controlled by JS */
 }
 
-/* Background track */
-.progress-tracker::before {
-    content: '';
+/* New container for the track and progress line */
+.progress-bar-track {
     position: absolute;
-    top: 8px; /* Center of the 16px dot */
-    left: 10%;
-    width: 80%;
-    height: 4px; /* Thinner line for a cleaner look */
+    top: 50%;
+    left: 10%; /* Starts at the center of the first dot's container */
+    transform: translateY(-50%);
+    width: 80%; /* Spans to the center of the last dot's container */
+    height: 6px;
     background-color: var(--secondary-bg);
-    border-radius: 2px;
+    border-radius: 3px;
     z-index: 1;
 }
 
-/* Foreground progress line */
-.progress-tracker::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 10%;
-    /* This calculation correctly stops the line at the last dot */
-    width: calc(80% * var(--progress-width) / 100);
-    height: 4px;
+.progress-bar-line {
+    width: 0%; /* Initial width, controlled by JS */
+    height: 100%;
     background: var(--accent-color);
-    border-radius: 2px;
-    z-index: 2;
+    border-radius: 3px;
     transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
@@ -141,16 +137,16 @@
     text-align: center;
     width: 20%;
     position: relative;
-    z-index: 3;
+    z-index: 2; /* Dots are on top of the track */
 }
 
 .progress-step .step-dot {
     box-sizing: border-box;
     display: inline-block;
-    width: 16px; /* Smaller, more refined dots */
-    height: 16px;
+    width: 24px;
+    height: 24px;
     background-color: var(--content-bg);
-    border: 3px solid var(--secondary-bg);
+    border: 4px solid var(--secondary-bg);
     border-radius: 50%;
     margin-bottom: 0.75rem;
     transition: all 0.4s ease;
@@ -160,6 +156,7 @@
     font-size: 0.8em;
     color: var(--secondary-text);
     font-weight: 500;
+    transition: all 0.4s ease;
 }
 
 /* State Styles */
@@ -168,22 +165,32 @@
     border-color: var(--accent-color);
 }
 
+.progress-step.completed .step-label {
+    color: var(--primary-text);
+    font-weight: 600;
+}
+
 .progress-step.current .step-dot {
-    transform: scale(1.25);
-    box-shadow: 0 0 12px hsla(var(--accent-color-hsl), 0.5);
+    transform: scale(1.2);
+    box-shadow: 0 0 15px hsla(var(--accent-color-hsl), 0.6);
 }
 
 .progress-step.current .step-label {
     color: var(--accent-color);
-    font-weight: 600;
+    font-weight: 700;
 }
+/* --- End of Progress Bar Fixes --- */
 
 /* --- Summary & Actions --- */
 .bill-summary {
     font-size: 1.05em;
     color: var(--primary-text);
     line-height: 1.7;
-    margin: 0;
+    margin: 2rem 0;
+    padding: 1rem 1.5rem;
+    background-color: var(--secondary-bg);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 .bill-actions {
@@ -191,28 +198,34 @@
     margin-top: 1rem;
 }
 
-.bill-actions .button-primary {
-    background-color: var(--accent-color);
-    color: #fff;
-    border-radius: var(--radius-full);
-    padding: 0.75rem 1.5rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.bill-actions .button-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px hsla(var(--accent-color-hsl), 0.4);
-}
-
-
-/* --- Responsive Styles --- */
+/* --- Responsive Styles for Mobile --- */
 @media (max-width: 600px) {
+    #tracker-section {
+        padding: 1rem 0.5rem;
+    }
+
     .legislation-item {
         padding: 1.5rem;
         border-radius: var(--radius-lg);
     }
+
+    .bill-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .bill-id {
+        order: -1;
+        margin-bottom: 0.5rem;
+    }
+
     .progress-step .step-label {
-        font-size: 10px;
+        font-size: 11px;
         line-height: 1.2;
+    }
+
+    .progress-step .step-dot {
+        width: 20px;
+        height: 20px;
     }
 }
