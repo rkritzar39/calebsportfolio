@@ -21,6 +21,8 @@ import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, que
 
 // In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
 
+// In displayShoutouts.js, confirm your function looks like this
+
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
     if (!legislationList) return;
@@ -53,8 +55,8 @@ async function loadAndDisplayLegislation() {
                 // Find the index of the last completed step
                 const lastCompletedIndex = steps.lastIndexOf(true);
                 
-                // Calculate the width of the progress line.
-                const progressWidth = lastCompletedIndex > 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
+                // Calculate the width of the progress line
+                const progressWidth = lastCompletedIndex >= 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
                 
                 // Determine CSS classes for each step
                 const stepClasses = steps.map((isCompleted, index) => {
