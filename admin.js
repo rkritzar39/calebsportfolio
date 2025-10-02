@@ -3160,12 +3160,12 @@ function setupLegislationCheckboxLogic() {
         checkbox.addEventListener('change', () => {
             const isChecked = checkbox.checked;
             if (isChecked) {
-                // Check all previous checkboxes
+                // When a box is checked, check all previous boxes
                 for (let i = 0; i < index; i++) {
                     checkboxes[i].checked = true;
                 }
             } else {
-                // Uncheck all subsequent checkboxes
+                // When a box is unchecked, uncheck all subsequent boxes
                 for (let i = index + 1; i < checkboxes.length; i++) {
                     checkboxes[i].checked = false;
                 }
@@ -4396,9 +4396,11 @@ async function loadDisabilitiesAdmin() {
     if (addShoutoutYoutubeForm) attachPreviewListeners(addShoutoutYoutubeForm, 'youtube', 'add');
     if (editForm) { const editPreviewInputs = [ editUsernameInput, editNicknameInput, editBioInput, editProfilePicInput, editIsVerifiedInput, editFollowersInput, editSubscribersInput, editCoverPhotoInput ]; editPreviewInputs.forEach(el => { if (el) { const eventType = (el.type === 'checkbox') ? 'change' : 'input'; el.addEventListener(eventType, () => { const currentPlatform = editForm.getAttribute('data-platform'); if (currentPlatform && typeof updateShoutoutPreview === 'function') { updateShoutoutPreview('edit', currentPlatform); } else if (!currentPlatform) { console.warn("Edit form platform not set."); } else { console.error("updateShoutoutPreview missing!"); } }); } }); }
 
-    if (addLegislationForm) {
+  if (addLegislationForm) {
     addLegislationForm.addEventListener('submit', handleSaveLegislation);
     document.getElementById('clear-legislation-form').addEventListener('click', clearLegislationForm);
+    // Initialize the smart checkbox logic
+    setupLegislationCheckboxLogic();
 }
     
     // Profile Pic URL Preview Listener
