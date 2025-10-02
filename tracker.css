@@ -1,33 +1,35 @@
-/* tracker.css (Amazon-Style Redesign) */
+/* tracker.css (Full-Width Modern Design) */
 
-/* --- Page & Card Layout --- */
+/* --- Page & Font --- */
 #tracker-section {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 2rem 1.5rem;
-    font-family: var(--font-family, system-ui, -apple-system, sans-serif);
+    /* THIS IS THE FIX: Increased max-width and adjusted padding */
+    max-width: 1200px; /* Allows the container to get much wider on large screens */
+    margin: 4rem auto;
+    padding: 0 2rem; /* Maintains a safe 2rem margin on the sides */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 .page-title {
     text-align: center;
     color: var(--headings-color);
-    font-size: clamp(2rem, 5vw, 2.8rem);
-    margin-bottom: 0.5rem;
-    font-weight: 800;
-    letter-spacing: -1px;
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: -1.5px;
 }
 
 .back-to-home-btn {
-    display: inline-block;
-    margin-bottom: 3rem;
+    display: block;
+    width: fit-content;
+    margin: 0 auto 3rem auto;
     text-decoration: none;
     background-color: var(--secondary-bg);
     color: var(--secondary-text);
-    padding: 0.6rem 1.2rem;
-    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
     transition: all 0.2s ease-out;
     font-weight: 500;
-    border: 1px solid var(--border-color);
 }
 
 .back-to-home-btn:hover {
@@ -37,167 +39,179 @@
     box-shadow: var(--shadow-md);
 }
 
+/* --- Legislation "Window" --- */
 .legislation-list {
     display: grid;
     gap: 2.5rem;
 }
 
 .legislation-item {
-    background: var(--content-bg);
-    border: 1px solid var(--border-color);
+    background-color: hsla(var(--content-bg-hsl), 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsla(var(--border-color-hsl), 0.5);
     border-radius: var(--radius-xl);
-    padding: 2rem 2.5rem;
-    box-shadow: var(--shadow-sm);
-    display: grid;
-    grid-template-columns: 1fr; /* Default to single column for mobile */
-    gap: 1.5rem 2.5rem;
-}
-
-/* On wider screens, create a two-column layout like the screenshot */
-@media (min-width: 768px) {
-    .legislation-item {
-        grid-template-columns: 1fr 220px; /* Content on left, tracker on right */
-    }
-}
-
-/* --- Bill Details (Left Column) --- */
-.bill-info {
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px hsla(0, 0%, 0%, 0.1);
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
 }
 
+/* --- Bill Header & Details --- */
 .bill-header {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-}
-
-.bill-header h4 {
-    margin: 0;
-    font-size: clamp(1.3rem, 4vw, 1.7rem);
-    color: var(--headings-color);
-    line-height: 1.3;
-    font-weight: 700;
 }
 
 .bill-id {
     font-family: monospace, sans-serif;
     font-size: 0.9em;
-    font-weight: bold;
+    font-weight: 600;
     color: var(--accent-color);
-    background-color: hsla(var(--accent-color-hsl), 0.1);
-    padding: 0.4rem 0.8rem;
-    border-radius: var(--radius-full);
-    width: fit-content;
+    padding: 0;
+}
+
+.bill-header h4 {
+    margin: 0;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    color: var(--headings-color);
+    line-height: 1.2;
+    font-weight: 600;
 }
 
 .bill-details p {
     margin: 0;
-    font-size: 0.95em;
+    font-size: 1em;
     color: var(--secondary-text);
-    line-height: 1.5;
+    line-height: 1.6;
 }
 
 .bill-details strong {
     color: var(--primary-text);
-    font-weight: 600;
+    font-weight: 500;
 }
 
-.bill-summary {
-    font-size: 1.05em;
-    color: var(--primary-text);
-    line-height: 1.7;
-    margin: 1rem 0;
-}
-
-.bill-actions {
-    margin-top: auto; /* Pushes the button to the bottom */
+/* --- Horizontal Progress Bar --- */
+.progress-container {
     padding-top: 1rem;
 }
 
-/* --- NEW: Amazon-Style Vertical Tracker (Right Column) --- */
-.progress-tracker-vertical {
+.progress-tracker {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    justify-content: space-between;
     position: relative;
+    --progress-width: 0%;
 }
 
-.progress-step-vertical {
-    position: relative;
-    padding: 0 0 2.5rem 2rem; /* Space for the dot and line */
-    min-height: 50px;
-}
-
-/* The vertical connecting line */
-.progress-step-vertical::before {
+.progress-tracker::before {
     content: '';
     position: absolute;
-    left: 11px; /* (24px dot width / 2) - (2px line width / 2) */
-    top: 5px; /* Start the line slightly below the top of the item */
-    width: 2px;
-    height: 100%;
+    top: 8px;
+    left: 10%;
+    width: 80%;
+    height: 4px;
     background-color: var(--secondary-bg);
+    border-radius: 2px;
     z-index: 1;
 }
 
-/* Hide the line on the very last step */
-.progress-step-vertical:last-child::before {
-    display: none;
+.progress-tracker::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 10%;
+    width: calc(80% * var(--progress-width) / 100);
+    height: 4px;
+    background: var(--accent-color);
+    border-radius: 2px;
+    z-index: 2;
+    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.progress-step-vertical .step-dot {
-    position: absolute;
-    left: 0;
-    top: 0;
+.progress-step {
+    text-align: center;
+    width: 20%;
+    position: relative;
+    z-index: 3;
+}
+
+.progress-step .step-dot {
     box-sizing: border-box;
-    width: 24px;
-    height: 24px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
     background-color: var(--content-bg);
-    border: 2px solid var(--secondary-bg);
+    border: 3px solid var(--secondary-bg);
     border-radius: 50%;
-    z-index: 2;
+    margin-bottom: 0.75rem;
     transition: all 0.4s ease;
 }
 
-.step-details {
-    display: flex;
-    flex-direction: column;
-}
-
-.step-label {
-    font-weight: 600;
+.progress-step .step-label {
+    font-size: 0.8em;
     color: var(--secondary-text);
-    font-size: 0.95em;
-    transition: color 0.3s ease;
+    font-weight: 500;
 }
 
-/* --- State Styles for Vertical Tracker --- */
-/* A step that is finished */
-.progress-step-vertical.completed::before {
-    background-color: var(--accent-color); /* Color the line green */
-}
-
-.progress-step-vertical.completed .step-dot {
+.progress-step.completed .step-dot {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
 }
 
-.progress-step-vertical.completed .step-label {
-    color: var(--primary-text);
+.progress-step.current .step-dot {
+    transform: scale(1.25);
+    box-shadow: 0 0 12px hsla(var(--accent-color-hsl), 0.5);
 }
 
-/* The current (most recent) step */
-.progress-step-vertical.current .step-dot {
-    transform: scale(1.2);
-    border-color: var(--accent-color);
-    background-color: var(--content-bg); /* Keep the inside hollow */
-}
-
-.progress-step-vertical.current .step-label {
+.progress-step.current .step-label {
     color: var(--accent-color);
-    font-weight: 700;
+    font-weight: 600;
+}
+
+/* --- Summary & Actions --- */
+.bill-summary {
+    font-size: 1.05em;
+    color: var(--primary-text);
+    line-height: 1.7;
+    margin: 0;
+}
+
+.bill-actions {
+    text-align: right;
+    margin-top: 1rem;
+}
+
+.bill-actions .button-primary {
+    background-color: var(--accent-color);
+    color: #fff;
+    border-radius: var(--radius-full);
+    padding: 0.75rem 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bill-actions .button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px hsla(var(--accent-color-hsl), 0.4);
+}
+
+
+/* --- Responsive Styles --- */
+@media (max-width: 600px) {
+    #tracker-section {
+        /* THIS IS THE FIX: Smaller padding for mobile screens */
+        padding: 0 1rem;
+    }
+    .legislation-item {
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+    }
+    .progress-step .step-label {
+        font-size: 10px;
+        line-height: 1.2;
+    }
 }
