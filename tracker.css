@@ -1,12 +1,18 @@
-/* tracker.css (Full-Width Modern Design) */
+/* tracker.css (Full-Width macOS 26 Design) */
 
 /* --- Page & Font --- */
-#tracker-section {
-    /* THIS IS THE FIX: Increased max-width and adjusted padding */
-    max-width: 1200px; /* Allows the container to get much wider on large screens */
-    margin: 4rem auto;
-    padding: 0 2rem; /* Maintains a safe 2rem margin on the sides */
+body {
+    background: radial-gradient(circle at top left, hsla(var(--accent-color-hsl), 0.15), transparent 40%),
+                radial-gradient(circle at bottom right, hsla(var(--accent-color-hsl), 0.15), transparent 40%),
+                var(--bg-color);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+#tracker-section {
+    /* THIS IS THE FIX: Increased max-width and adjusted padding for the edge-to-edge feel */
+    max-width: 1400px; /* Allows the container to get much wider */
+    margin: 4rem auto;
+    padding: 0 2.5rem; /* Maintains a safe but smaller margin on the sides */
 }
 
 .page-title {
@@ -199,11 +205,10 @@
     box-shadow: 0 4px 15px hsla(var(--accent-color-hsl), 0.4);
 }
 
-
 /* --- Responsive Styles --- */
 @media (max-width: 600px) {
     #tracker-section {
-        /* THIS IS THE FIX: Smaller padding for mobile screens */
+        /* THIS IS THE FIX: Smaller side padding for mobile screens */
         padding: 0 1rem;
     }
     .legislation-item {
