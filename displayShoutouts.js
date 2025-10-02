@@ -58,17 +58,21 @@ async function loadAndDisplayLegislation() {
                     return '';
                 });
 
+                // --- Updated HTML structure to work with the new CSS ---
                 itemDiv.innerHTML = `
                     <div class="bill-header">
-                        <span class="bill-id">${item.billId || 'N/A'}</span>
                         <h4>${item.title || 'No Title'}</h4>
+                        <span class="bill-id">${item.billId || 'N/A'}</span>
                     </div>
                     <div class="bill-details">
                         <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'} | <strong>Introduced:</strong> ${item.date || 'N/A'}</p>
                     </div>
 
                     <div class="progress-container">
-                        <ul class="progress-tracker" style="--progress-width: ${progressPercentage}%;">
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-line" style="width: ${progressPercentage}%;"></div>
+                        </div>
+                        <ul class="progress-tracker">
                             <li class="progress-step ${stepClasses[0]}">
                                 <span class="step-dot"></span>
                                 <span class="step-label">Introduced</span>
