@@ -3173,7 +3173,6 @@ function renderLegislationAdminListItem(itemData) {
     itemDiv.className = 'list-item-admin';
     itemDiv.setAttribute('data-id', itemData.id);
 
-    // Determine the furthest step reached for a quick status view
     let currentStatus = "Introduced";
     if (itemData.status?.becameLaw) currentStatus = "Became Law";
     else if (itemData.status?.toPresident) currentStatus = "To President";
@@ -3208,7 +3207,6 @@ function populateLegislationForm(itemData) {
     document.getElementById('legislation-description').value = itemData.description || '';
     document.getElementById('legislation-order').value = itemData.order || 0;
 
-    // Populate checkboxes
     document.getElementById('status-introduced').checked = itemData.status?.introduced || false;
     document.getElementById('status-passed-house').checked = itemData.status?.passedHouse || false;
     document.getElementById('status-passed-senate').checked = itemData.status?.passedSenate || false;
@@ -3220,7 +3218,7 @@ function populateLegislationForm(itemData) {
 
 function clearLegislationForm() {
     addLegislationForm.reset();
-    document.getElementById('legislation-id').value = ''; // Clear hidden ID field
+    document.getElementById('legislation-id').value = '';
 }
 
 async function handleSaveLegislation(event) {
@@ -4371,8 +4369,9 @@ async function loadDisabilitiesAdmin() {
     if (editForm) { const editPreviewInputs = [ editUsernameInput, editNicknameInput, editBioInput, editProfilePicInput, editIsVerifiedInput, editFollowersInput, editSubscribersInput, editCoverPhotoInput ]; editPreviewInputs.forEach(el => { if (el) { const eventType = (el.type === 'checkbox') ? 'change' : 'input'; el.addEventListener(eventType, () => { const currentPlatform = editForm.getAttribute('data-platform'); if (currentPlatform && typeof updateShoutoutPreview === 'function') { updateShoutoutPreview('edit', currentPlatform); } else if (!currentPlatform) { console.warn("Edit form platform not set."); } else { console.error("updateShoutoutPreview missing!"); } }); } }); }
 
     if (addLegislationForm) {
-    addLegislationForm.addEventListener('submit', handleAddLegislation);
-    }
+    addLegislationForm.addEventListener('submit', handleSaveLegislation);
+    document.getElementById('clear-legislation-form').addEventListener('click', clearLegislationForm);
+}
     
     // Profile Pic URL Preview Listener
     if (profilePicUrlInput && adminPfpPreview) { profilePicUrlInput.addEventListener('input', () => { const url = profilePicUrlInput.value.trim(); if (url) { adminPfpPreview.src = url; adminPfpPreview.style.display = 'inline-block'; } else { adminPfpPreview.style.display = 'none'; } }); adminPfpPreview.onerror = () => { console.warn("Preview image load failed:", adminPfpPreview.src); adminPfpPreview.style.display = 'none'; profilePicUrlInput.classList.add('input-error'); }; profilePicUrlInput.addEventListener('focus', () => { profilePicUrlInput.classList.remove('input-error'); }); }
