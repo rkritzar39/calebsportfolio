@@ -1,7 +1,7 @@
 /* tracker.css */
 
 #tracker-section {
-    padding: 2rem;
+    padding: 2rem 1rem;
     max-width: 900px;
     margin: 0 auto;
 }
@@ -10,6 +10,15 @@
     display: inline-block;
     margin-bottom: 2rem;
     text-decoration: none;
+    background-color: var(--secondary-bg);
+    color: var(--secondary-text);
+    border: 1px solid var(--border-color);
+}
+
+.page-title {
+    color: var(--headings-color);
+    text-align: center;
+    margin-bottom: 2.5rem;
 }
 
 .legislation-list {
@@ -22,11 +31,23 @@
     padding: 20px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.legislation-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
 }
 
 .legislation-item h4 {
     margin-top: 0;
     color: var(--accent-color);
+}
+
+.legislation-item p {
+    color: var(--primary-text);
+    margin-bottom: 1rem;
 }
 
 .legislation-meta {
@@ -40,15 +61,16 @@
 .legislation-meta .status {
     font-weight: bold;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     color: #fff;
 }
 
 .status-in-progress { background-color: #007bff; }
 .status-passed { background-color: #28a745; }
 .status-repealed { background-color: #dc3545; }
-.status-under-review { background-color: #ffc107; color: #000; }
+.status-under-review { background-color: #ffc107; color: #212529; }
 
 .legislation-meta .date {
     color: var(--secondary-text);
+    font-style: italic;
 }
