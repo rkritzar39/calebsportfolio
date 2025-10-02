@@ -17,6 +17,8 @@ import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, que
 
 // In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
 
+// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
+
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
     if (!legislationList) return;
