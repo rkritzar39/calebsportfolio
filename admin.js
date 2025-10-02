@@ -3160,12 +3160,12 @@ function setupLegislationCheckboxLogic() {
         checkbox.addEventListener('change', () => {
             const isChecked = checkbox.checked;
             if (isChecked) {
-                // When a box is checked, check all previous boxes
+                // When a box is checked, check all PREVIOUS boxes
                 for (let i = 0; i < index; i++) {
                     checkboxes[i].checked = true;
                 }
             } else {
-                // When a box is unchecked, uncheck all subsequent boxes
+                // When a box is unchecked, uncheck all SUBSEQUENT boxes
                 for (let i = index + 1; i < checkboxes.length; i++) {
                     checkboxes[i].checked = false;
                 }
