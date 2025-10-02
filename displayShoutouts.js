@@ -19,6 +19,8 @@ import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, que
 
 // In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
 
+// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
+
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
     if (!legislationList) return;
@@ -52,7 +54,6 @@ async function loadAndDisplayLegislation() {
                 const lastCompletedIndex = steps.lastIndexOf(true);
                 
                 // Calculate the width of the progress line.
-                // It's a percentage based on which step is last. 4 steps = 100%.
                 const progressWidth = lastCompletedIndex > 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
                 
                 // Determine CSS classes for each step
