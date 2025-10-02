@@ -45,7 +45,11 @@ async function loadAndDisplayLegislation() {
                 ];
                 
                 const lastCompletedIndex = steps.lastIndexOf(true);
-                const progressWidth = lastCompletedIndex >= 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
+                
+                // --- THIS IS THE FIX for the overshoot problem ---
+                // The progress width is now calculated based on the space BETWEEN dots,
+                // ensuring it stops perfectly at the center of the last dot.
+                const progressPercentage = lastCompletedIndex > 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
                 
                 const stepClasses = steps.map((isCompleted, index) => {
                     if (isCompleted) {
@@ -54,7 +58,7 @@ async function loadAndDisplayLegislation() {
                     return '';
                 });
 
-                // --- THIS IS THE HTML STRUCTURE FIX ---
+                // --- Updated HTML structure to work with the new CSS ---
                 itemDiv.innerHTML = `
                     <div class="bill-header">
                         <h4>${item.title || 'No Title'}</h4>
@@ -65,10 +69,7 @@ async function loadAndDisplayLegislation() {
                     </div>
 
                     <div class="progress-container">
-                        <div class="progress-track">
-                            <div class="progress-line" style="width: ${progressWidth}%;"></div>
-                        </div>
-                        <ul class="progress-tracker">
+                        <ul class="progress-tracker" style="--progress-width: ${progressPercentage}%;">
                             <li class="progress-step ${stepClasses[0]}">
                                 <span class="step-dot"></span>
                                 <span class="step-label">Introduced</span>
