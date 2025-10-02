@@ -173,6 +173,49 @@
     <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
 
 </section>
+
+            <section class="admin-section" id="legislation-management" aria-labelledby="legislation-heading">
+    <h3 id="legislation-heading">Manage Legislation Tracker</h3>
+
+    <form id="add-legislation-form" aria-labelledby="add-legislation-heading">
+        <h5 id="add-legislation-heading">Add New Item</h5>
+        <div class="form-group">
+            <label for="legislation-title">Title:</label>
+            <input type="text" id="legislation-title" name="title" required placeholder="e.g., Executive Order 12345">
+        </div>
+        <div class="form-group">
+            <label for="legislation-description">Description:</label>
+            <textarea id="legislation-description" name="description" rows="3" placeholder="A brief description of the item."></textarea>
+        </div>
+        <div class="form-group">
+            <label for="legislation-status">Status:</label>
+            <select id="legislation-status" name="status">
+                <option value="In Progress">In Progress</option>
+                <option value="Passed">Passed</option>
+                <option value="Repealed">Repealed</option>
+                <option value="Under Review">Under Review</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="legislation-date">Date:</label>
+            <input type="date" id="legislation-date" name="date">
+        </div>
+        <div class="form-group">
+            <label for="legislation-order">Display Order:</label>
+            <input type="number" id="legislation-order" name="order" min="0" step="1" required placeholder="e.g., 1, 2, 3...">
+        </div>
+        <div class="form-actions">
+           <button type="submit" class="button-primary">Add Item</button>
+        </div>
+    </form>
+
+    <h5 id="existing-legislation-heading">
+        Existing Items <span id="legislation-count" class="list-count"></span>
+    </h5>
+    <div id="legislation-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-legislation-heading">
+        <p>Loading items...</p>
+    </div>
+</section>
             
        <section class="admin-section" id="blog-management" aria-labelledby="blog-heading">
   <h3 id="blog-heading">Blog Management</h3>
