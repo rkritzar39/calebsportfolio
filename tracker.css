@@ -1,33 +1,33 @@
-/* tracker.css (Clean & Functional Redesign) */
+/* tracker.css (Amazon-Style Redesign) */
 
-/* --- Page Layout & Typography --- */
+/* --- Page & Card Layout --- */
 #tracker-section {
-    max-width: 1200px; /* Wider layout */
-    margin: 3rem auto;
-    padding: 0 2rem;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem 1.5rem;
     font-family: var(--font-family, system-ui, -apple-system, sans-serif);
 }
 
 .page-title {
     text-align: center;
     color: var(--headings-color);
-    font-size: clamp(2.2rem, 5vw, 3rem);
-    margin-bottom: 1rem;
-    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
 .back-to-home-btn {
-    display: block;
-    width: fit-content;
-    margin: 0 auto 3rem auto;
+    display: inline-block;
+    margin-bottom: 3rem;
     text-decoration: none;
     background-color: var(--secondary-bg);
     color: var(--secondary-text);
-    border: 1px solid var(--border-color);
     padding: 0.6rem 1.2rem;
     border-radius: var(--radius-md);
     transition: all 0.2s ease-out;
     font-weight: 500;
+    border: 1px solid var(--border-color);
 }
 
 .back-to-home-btn:hover {
@@ -37,10 +37,9 @@
     box-shadow: var(--shadow-md);
 }
 
-/* --- Bill Item Card --- */
 .legislation-list {
     display: grid;
-    gap: 2rem;
+    gap: 2.5rem;
 }
 
 .legislation-item {
@@ -49,27 +48,39 @@
     border-radius: var(--radius-xl);
     padding: 2rem 2.5rem;
     box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column for mobile */
+    gap: 1.5rem 2.5rem;
 }
 
-/* --- Bill Header & Details --- */
+/* On wider screens, create a two-column layout like the screenshot */
+@media (min-width: 768px) {
+    .legislation-item {
+        grid-template-columns: 1fr 220px; /* Content on left, tracker on right */
+    }
+}
+
+/* --- Bill Details (Left Column) --- */
+.bill-info {
+    display: flex;
+    flex-direction: column;
+}
+
 .bill-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-    padding-bottom: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
     border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .bill-header h4 {
     margin: 0;
-    font-size: clamp(1.3rem, 4vw, 1.8rem);
+    font-size: clamp(1.3rem, 4vw, 1.7rem);
     color: var(--headings-color);
     line-height: 1.3;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .bill-id {
@@ -77,154 +88,116 @@
     font-size: 0.9em;
     font-weight: bold;
     color: var(--accent-color);
-    background-color: var(--secondary-bg);
+    background-color: hsla(var(--accent-color-hsl), 0.1);
     padding: 0.4rem 0.8rem;
     border-radius: var(--radius-full);
-    white-space: nowrap;
+    width: fit-content;
 }
 
 .bill-details p {
     margin: 0;
-    font-size: 1em;
+    font-size: 0.95em;
     color: var(--secondary-text);
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 .bill-details strong {
     color: var(--primary-text);
-    font-weight: 500;
-}
-
-/* --- DEFINITIVE HORIZONTAL PROGRESS BAR FIX --- */
-.progress-container {
-    padding-top: 1rem;
-}
-
-.progress-tracker {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    --progress-width: 0%; /* Controlled by JS */
-}
-
-/* Background track */
-.progress-tracker::before {
-    content: '';
-    position: absolute;
-    top: 8px; /* Center of the 16px dot */
-    left: 10%;
-    width: 80%;
-    height: 4px;
-    background-color: var(--secondary-bg);
-    border-radius: 2px;
-    z-index: 1;
-}
-
-/* Foreground progress line */
-.progress-tracker::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 10%;
-    width: calc(80% * var(--progress-width) / 100);
-    height: 4px;
-    background: var(--accent-color);
-    border-radius: 2px;
-    z-index: 2;
-    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.progress-step {
-    text-align: center;
-    width: 20%;
-    position: relative;
-    z-index: 3;
-}
-
-.progress-step .step-dot {
-    box-sizing: border-box;
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background-color: var(--content-bg);
-    border: 3px solid var(--secondary-bg);
-    border-radius: 50%;
-    margin-bottom: 0.75rem;
-    transition: all 0.4s ease;
-}
-
-.progress-step .step-label {
-    font-size: 0.8em;
-    color: var(--secondary-text);
-    font-weight: 500;
-}
-
-/* State Styles */
-.progress-step.completed .step-dot {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
-.progress-step.current .step-dot {
-    transform: scale(1.25);
-    box-shadow: 0 0 12px hsla(var(--accent-color-hsl), 0.5);
-}
-
-.progress-step.current .step-label {
-    color: var(--accent-color);
     font-weight: 600;
 }
-/* --- End of Progress Bar Fixes --- */
 
-
-/* --- Summary & Actions --- */
 .bill-summary {
     font-size: 1.05em;
     color: var(--primary-text);
     line-height: 1.7;
-    margin: 0;
+    margin: 1rem 0;
 }
 
 .bill-actions {
-    text-align: right;
-    margin-top: 1rem;
+    margin-top: auto; /* Pushes the button to the bottom */
+    padding-top: 1rem;
 }
 
-.bill-actions .button-primary {
+/* --- NEW: Amazon-Style Vertical Tracker (Right Column) --- */
+.progress-tracker-vertical {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.progress-step-vertical {
+    position: relative;
+    padding: 0 0 2.5rem 2rem; /* Space for the dot and line */
+    min-height: 50px;
+}
+
+/* The vertical connecting line */
+.progress-step-vertical::before {
+    content: '';
+    position: absolute;
+    left: 11px; /* (24px dot width / 2) - (2px line width / 2) */
+    top: 5px; /* Start the line slightly below the top of the item */
+    width: 2px;
+    height: 100%;
+    background-color: var(--secondary-bg);
+    z-index: 1;
+}
+
+/* Hide the line on the very last step */
+.progress-step-vertical:last-child::before {
+    display: none;
+}
+
+.progress-step-vertical .step-dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    background-color: var(--content-bg);
+    border: 2px solid var(--secondary-bg);
+    border-radius: 50%;
+    z-index: 2;
+    transition: all 0.4s ease;
+}
+
+.step-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.step-label {
+    font-weight: 600;
+    color: var(--secondary-text);
+    font-size: 0.95em;
+    transition: color 0.3s ease;
+}
+
+/* --- State Styles for Vertical Tracker --- */
+/* A step that is finished */
+.progress-step-vertical.completed::before {
+    background-color: var(--accent-color); /* Color the line green */
+}
+
+.progress-step-vertical.completed .step-dot {
     background-color: var(--accent-color);
-    color: #fff;
-    border-radius: var(--radius-full);
-    padding: 0.75rem 1.5rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-color: var(--accent-color);
 }
 
-.bill-actions .button-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px hsla(var(--accent-color-hsl), 0.4);
+.progress-step-vertical.completed .step-label {
+    color: var(--primary-text);
 }
 
+/* The current (most recent) step */
+.progress-step-vertical.current .step-dot {
+    transform: scale(1.2);
+    border-color: var(--accent-color);
+    background-color: var(--content-bg); /* Keep the inside hollow */
+}
 
-/* --- Responsive Styles --- */
-@media (max-width: 600px) {
-    #tracker-section {
-        padding: 0 1rem;
-    }
-    .legislation-item {
-        padding: 1.5rem;
-    }
-    .bill-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .bill-id {
-        order: -1;
-        margin-bottom: 0.5rem;
-    }
-    .progress-step .step-label {
-        font-size: 10px;
-        line-height: 1.2;
-    }
+.progress-step-vertical.current .step-label {
+    color: var(--accent-color);
+    font-weight: 700;
 }
