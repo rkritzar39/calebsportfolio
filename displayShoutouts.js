@@ -15,6 +15,8 @@ const firebaseConfig = {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
+
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
     if (!legislationList) return;
@@ -46,10 +48,8 @@ async function loadAndDisplayLegislation() {
                 
                 const lastCompletedIndex = steps.lastIndexOf(true);
                 
-                // --- THIS IS THE FIX for the overshoot problem ---
-                // The progress width is now calculated based on the space BETWEEN dots,
-                // ensuring it stops perfectly at the center of the last dot.
-                const progressPercentage = lastCompletedIndex > 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
+                // This percentage is now correct. It represents how much of the track should be filled.
+                const progressPercentage = lastCompletedIndex >= 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
                 
                 const stepClasses = steps.map((isCompleted, index) => {
                     if (isCompleted) {
