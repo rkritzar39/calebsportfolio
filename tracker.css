@@ -1,4 +1,4 @@
-/* tracker.css (Modern Redesign - Final Corrected Version) */
+/* tracker.css (Modern, Responsive, & Corrected) */
 
 /* --- Page & Card Layout --- */
 #tracker-section {
@@ -101,27 +101,13 @@
 .progress-container {
     position: relative;
     margin: 2.5rem 0;
-    /* Set a height for the container to align children vertically */
-    height: 50px; 
+    /* This container holds both the track and the dots */
 }
 
-.progress-tracker {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
+/* This new element is the track for the progress line */
+.progress-track {
     position: absolute;
-    width: 100%;
-    top: 0; /* Align to the top of the container */
-    z-index: 3;
-}
-
-/* Background track */
-.progress-container::before {
-    content: '';
-    position: absolute;
-    top: 12px; /* Center of the 24px dot */
+    top: 12px; /* Vertically centers the track with the dots */
     left: 10%;
     width: 80%;
     height: 6px;
@@ -131,27 +117,31 @@
 }
 
 .progress-line {
-    position: absolute;
-    top: 12px;
-    left: 10%;
-    height: 6px;
+    width: 0%; /* Initial width, controlled by JS */
+    height: 100%;
     background: var(--accent-color);
     border-radius: 3px;
-    z-index: 2;
-    width: 0;
     transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.progress-tracker {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2; /* Ensures dots are on top of the track */
 }
 
 .progress-step {
     text-align: center;
     width: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .progress-step .step-dot {
     box-sizing: border-box;
+    display: inline-block;
     width: 24px;
     height: 24px;
     background-color: var(--content-bg);
@@ -168,7 +158,7 @@
     transition: all 0.4s ease;
 }
 
-/* --- THIS IS THE FIX for highlighting ALL completed statuses --- */
+/* --- State Styles --- */
 .progress-step.completed .step-dot {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
@@ -179,7 +169,6 @@
     font-weight: 600;
 }
 
-/* This adds extra flair to the CURRENT (most recent) step */
 .progress-step.current .step-dot {
     transform: scale(1.2);
     box-shadow: 0 0 15px hsla(var(--accent-color-hsl), 0.6);
@@ -190,6 +179,7 @@
     font-weight: 700;
 }
 /* --- End of Progress Bar Fixes --- */
+
 
 /* --- Summary & Actions --- */
 .bill-summary {
@@ -206,4 +196,40 @@
 .bill-actions {
     text-align: right;
     margin-top: 1rem;
+}
+
+
+/* --- THIS IS THE FIX for smaller screens --- */
+@media (max-width: 600px) {
+    #tracker-section {
+        padding: 1rem 0.5rem;
+    }
+
+    .legislation-item {
+        padding: 1.5rem;
+        border-radius: var(--radius-lg);
+    }
+
+    .bill-header {
+        flex-direction: column; /* Stack header items vertically */
+        align-items: flex-start;
+    }
+
+    .bill-id {
+        order: -1; /* Move Bill ID to the top */
+        margin-bottom: 0.5rem;
+    }
+
+    .progress-step .step-label {
+        font-size: 0.7em; /* Make labels smaller */
+    }
+
+    .progress-step .step-dot {
+        width: 20px;
+        height: 20px;
+    }
+
+    .progress-container::before, .progress-track {
+        top: 10px; /* Re-center with smaller dots */
+    }
 }
