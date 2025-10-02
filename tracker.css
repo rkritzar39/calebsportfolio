@@ -64,7 +64,7 @@
     gap: 1rem;
     border-bottom: 1px solid var(--border-color);
     padding-bottom: 1.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .bill-header h4 {
@@ -87,7 +87,7 @@
 }
 
 .bill-details p {
-    margin: 1rem 0;
+    margin: 0;
     font-size: 0.95em;
     color: var(--secondary-text);
 }
@@ -97,31 +97,9 @@
     font-weight: 600;
 }
 
-/* --- THIS IS THE FIX for the progress bar alignment --- */
+/* --- THIS IS THE DEFINITIVE FIX for the progress bar --- */
 .progress-container {
-    position: relative;
-    margin: 2.5rem 0;
-    /* This container holds both the track and the dots */
-}
-
-/* This new element is the track for the progress line */
-.progress-track {
-    position: absolute;
-    top: 12px; /* Vertically centers the track with the dots */
-    left: 10%;
-    width: 80%;
-    height: 6px;
-    background-color: var(--secondary-bg);
-    border-radius: 3px;
-    z-index: 1;
-}
-
-.progress-line {
-    width: 0%; /* Initial width, controlled by JS */
-    height: 100%;
-    background: var(--accent-color);
-    border-radius: 3px;
-    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    padding: 1rem 0;
 }
 
 .progress-tracker {
@@ -131,12 +109,41 @@
     display: flex;
     justify-content: space-between;
     position: relative;
-    z-index: 2; /* Ensures dots are on top of the track */
+    --progress-width: 0%; /* Default value, updated by JS */
+}
+
+/* Background track using a pseudo-element */
+.progress-tracker::before {
+    content: '';
+    position: absolute;
+    top: 12px; /* Center of the 24px dot */
+    left: 10%;
+    width: 80%;
+    height: 6px;
+    background-color: var(--secondary-bg);
+    border-radius: 3px;
+    z-index: 1;
+}
+
+/* Foreground progress line using another pseudo-element */
+.progress-tracker::after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 10%;
+    width: var(--progress-width); /* Controlled by the inline style from JS */
+    height: 6px;
+    background: var(--accent-color);
+    border-radius: 3px;
+    z-index: 2;
+    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .progress-step {
     text-align: center;
     width: 20%;
+    position: relative;
+    z-index: 3; /* Dots are on the highest layer */
 }
 
 .progress-step .step-dot {
@@ -144,7 +151,7 @@
     display: inline-block;
     width: 24px;
     height: 24px;
-    background-color: var(--content-bg);
+    background-color: var(--content-bg); /* Match card background to punch a hole in the line */
     border: 4px solid var(--secondary-bg);
     border-radius: 50%;
     margin-bottom: 0.75rem;
@@ -158,7 +165,7 @@
     transition: all 0.4s ease;
 }
 
-/* --- State Styles --- */
+/* State Styles */
 .progress-step.completed .step-dot {
     background-color: var(--accent-color);
     border-color: var(--accent-color);
@@ -180,7 +187,6 @@
 }
 /* --- End of Progress Bar Fixes --- */
 
-
 /* --- Summary & Actions --- */
 .bill-summary {
     font-size: 1.05em;
@@ -198,38 +204,38 @@
     margin-top: 1rem;
 }
 
-
 /* --- THIS IS THE FIX for smaller screens --- */
 @media (max-width: 600px) {
     #tracker-section {
         padding: 1rem 0.5rem;
     }
-
+    
     .legislation-item {
         padding: 1.5rem;
         border-radius: var(--radius-lg);
     }
-
+    
     .bill-header {
-        flex-direction: column; /* Stack header items vertically */
+        flex-direction: column;
         align-items: flex-start;
     }
-
+    
     .bill-id {
-        order: -1; /* Move Bill ID to the top */
+        order: -1;
         margin-bottom: 0.5rem;
     }
-
+    
     .progress-step .step-label {
-        font-size: 0.7em; /* Make labels smaller */
+        font-size: 11px; /* Use a fixed pixel size for tiny screens */
+        line-height: 1.2;
     }
-
+    
     .progress-step .step-dot {
         width: 20px;
         height: 20px;
     }
-
-    .progress-container::before, .progress-track {
+    
+    .progress-tracker::before, .progress-tracker::after {
         top: 10px; /* Re-center with smaller dots */
     }
 }
