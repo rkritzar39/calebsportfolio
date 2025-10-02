@@ -17,9 +17,9 @@ import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, que
 
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
-    if (!legislationList) return; // This correctly stops the function from running on other pages
+    if (!legislationList) return;
 
-    legislationList.innerHTML = '<p>Loading legislation status...</p>';
+    legislationList.innerHTML = '<p>Loading active legislation...</p>';
     const legislationCollectionRef = collection(db, "legislation");
 
     try {
@@ -28,27 +28,64 @@ async function loadAndDisplayLegislation() {
 
         legislationList.innerHTML = '';
         if (querySnapshot.empty) {
-            legislationList.innerHTML = '<p>No items to display at this time.</p>';
+            legislationList.innerHTML = '<p>No bills are currently being tracked.</p>';
         } else {
             querySnapshot.forEach(doc => {
                 const item = doc.data();
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'legislation-item';
 
+                // Determine CSS classes for each progress step
+                const status = item.status || {};
+                const introducedClass = status.introduced ? 'completed' : '';
+                const houseClass = status.passedHouse ? 'completed' : '';
+                const senateClass = status.passedSenate ? 'completed' : '';
+                const presidentClass = status.toPresident ? 'completed' : '';
+                const lawClass = status.becameLaw ? 'completed' : '';
+
                 itemDiv.innerHTML = `
-                    <h4>${item.title}</h4>
-                    <p>${item.description}</p>
-                    <div class="legislation-meta">
-                        <span class="status status-${item.status.toLowerCase().replace(/ /g, '-')}">${item.status}</span>
-                        ${item.date ? `<span class="date">${item.date}</span>` : ''}
+                    <div class="bill-header">
+                        <h4>${item.title || 'No Title'}</h4>
+                        <span class="bill-id">${item.billId || 'N/A'}</span>
                     </div>
+
+                    <div class="bill-details">
+                        <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'} | <strong>Introduced:</strong> ${item.date || 'N/A'}</p>
+                    </div>
+
+                    <ul class="progress-tracker">
+                        <li class="progress-step ${introducedClass}">
+                            <span class="step-dot"></span>
+                            <span class="step-label">Introduced</span>
+                        </li>
+                        <li class="progress-step ${houseClass}">
+                            <span class="step-dot"></span>
+                            <span class="step-label">Passed House</span>
+                        </li>
+                        <li class="progress-step ${senateClass}">
+                            <span class="step-dot"></span>
+                            <span class="step-label">Passed Senate</span>
+                        </li>
+                        <li class="progress-step ${presidentClass}">
+                            <span class="step-dot"></span>
+                            <span class="step-label">To President</span>
+                        </li>
+                        <li class="progress-step ${lawClass}">
+                            <span class="step-dot"></span>
+                            <span class="step-label">Became Law</span>
+                        </li>
+                    </ul>
+                    
+                    <p class="bill-summary">${item.description || ''}</p>
+
+                    ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
                 `;
                 legislationList.appendChild(itemDiv);
             });
         }
     } catch (error) {
-        console.error("Error loading legislation items for display:", error);
-        legislationList.innerHTML = '<p class="error">Could not load items.</p>';
+        console.error("Error loading legislation for display:", error);
+        legislationList.innerHTML = '<p class="error">Could not load legislation data.</p>';
     }
 }
 
