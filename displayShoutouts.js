@@ -15,6 +15,8 @@ const firebaseConfig = {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
+
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
     if (!legislationList) return;
@@ -35,13 +37,30 @@ async function loadAndDisplayLegislation() {
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'legislation-item';
 
-                // Determine CSS classes for each progress step
                 const status = item.status || {};
-                const introducedClass = status.introduced ? 'completed' : '';
-                const houseClass = status.passedHouse ? 'completed' : '';
-                const senateClass = status.passedSenate ? 'completed' : '';
-                const presidentClass = status.toPresident ? 'completed' : '';
-                const lawClass = status.becameLaw ? 'completed' : '';
+                const steps = [
+                    status.introduced,
+                    status.passedHouse,
+                    status.passedSenate,
+                    status.toPresident,
+                    status.becameLaw
+                ];
+                
+                // Find the index of the last completed step
+                const lastCompletedIndex = steps.lastIndexOf(true);
+                
+                // Calculate the width of the progress line
+                // 0 steps -> 0%, 1 step -> 25%, 2 steps -> 50%, 3 -> 75%, 4 -> 100%
+                const progressWidth = lastCompletedIndex > 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
+                
+                // Determine CSS classes for each step
+                const stepClasses = steps.map((isCompleted, index) => {
+                    if (isCompleted) {
+                        // If this is the last completed step, it's the 'current' one
+                        return index === lastCompletedIndex ? 'completed current' : 'completed';
+                    }
+                    return '';
+                });
 
                 itemDiv.innerHTML = `
                     <div class="bill-header">
@@ -53,28 +72,31 @@ async function loadAndDisplayLegislation() {
                         <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'} | <strong>Introduced:</strong> ${item.date || 'N/A'}</p>
                     </div>
 
-                    <ul class="progress-tracker">
-                        <li class="progress-step ${introducedClass}">
-                            <span class="step-dot"></span>
-                            <span class="step-label">Introduced</span>
-                        </li>
-                        <li class="progress-step ${houseClass}">
-                            <span class="step-dot"></span>
-                            <span class="step-label">Passed House</span>
-                        </li>
-                        <li class="progress-step ${senateClass}">
-                            <span class="step-dot"></span>
-                            <span class="step-label">Passed Senate</span>
-                        </li>
-                        <li class="progress-step ${presidentClass}">
-                            <span class="step-dot"></span>
-                            <span class="step-label">To President</span>
-                        </li>
-                        <li class="progress-step ${lawClass}">
-                            <span class="step-dot"></span>
-                            <span class="step-label">Became Law</span>
-                        </li>
-                    </ul>
+                    <div class="progress-container" style="position: relative;">
+                        <ul class="progress-tracker">
+                            <li class="progress-step ${stepClasses[0]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Introduced</span>
+                            </li>
+                            <li class="progress-step ${stepClasses[1]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Passed House</span>
+                            </li>
+                            <li class="progress-step ${stepClasses[2]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Passed Senate</span>
+                            </li>
+                            <li class="progress-step ${stepClasses[3]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">To President</span>
+                            </li>
+                            <li class="progress-step ${stepClasses[4]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Became Law</span>
+                            </li>
+                        </ul>
+                        <div class="progress-line" style="width: ${progressWidth}%;"></div>
+                    </div>
                     
                     <p class="bill-summary">${item.description || ''}</p>
 
