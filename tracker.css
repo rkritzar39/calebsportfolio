@@ -125,57 +125,62 @@
 
 /* In tracker.css, REPLACE the old .progress-tracker styles and ADD these new ones */
 
+/* This new container will align the progress lines correctly */
+.progress-container {
+    position: relative;
+    padding: 10px 0; /* Adds space so the labels don't get cut off */
+}
+
 .progress-tracker {
     list-style: none;
     padding: 0;
-    margin: 1rem 0;
+    margin: 0;
     display: flex;
     position: relative;
+    z-index: 3; /* Ensures dots are on top of the lines */
 }
 
-/* This is the gray line that runs behind the dots */
+/* This is the gray background line */
 .progress-tracker::before {
     content: '';
     position: absolute;
-    top: 10px; /* Aligns with the center of the dots */
-    left: 10%; /* Start after the first dot */
-    width: 80%; /* End before the last dot */
+    top: 50%;
+    left: 10%;
+    transform: translateY(-50%);
+    width: 80%;
     height: 4px;
     background-color: var(--border-color);
     z-index: 1;
 }
 
-/* This is the new colored line that shows progress */
+/* This is the new colored progress line */
 .progress-line {
     position: absolute;
-    top: 10px;
+    top: 50%;
     left: 10%;
+    transform: translateY(-50%);
     height: 4px;
     background-color: var(--accent-color);
-    z-index: 2;
-    width: 0; /* Width is set by inline style in JS */
+    z-index: 2; /* Sits on top of the gray line but below the dots */
+    width: 0; /* Width is set by JavaScript */
     transition: width 0.5s ease-in-out;
 }
 
 .progress-step {
-    position: relative;
-    z-index: 3;
     text-align: center;
     width: 20%;
-    /* Add padding to prevent labels from touching */
-    padding: 0 5px; 
 }
 
 .progress-step .step-dot {
-    box-sizing: border-box; /* Ensures border is included in width/height */
-    display: block;
+    box-sizing: border-box;
+    display: inline-block; /* Helps with centering */
     width: 24px;
     height: 24px;
-    background-color: var(--content-bg);
+    background-color: var(--content-bg); /* Match the background to "punch a hole" in the line */
     border: 4px solid var(--border-color);
     border-radius: 50%;
-    margin: 0 auto 0.5rem;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
 }
 
 .progress-step .step-label {
@@ -184,9 +189,8 @@
     transition: color 0.3s ease;
 }
 
-/* Completed Step Styles */
+/* --- State Styles --- */
 .progress-step.completed .step-dot {
-    background-color: var(--accent-color);
     border-color: var(--accent-color);
 }
 
@@ -194,10 +198,10 @@
     color: var(--primary-text);
 }
 
-/* NEW: Current Step Highlight */
+/* NEW: Highlight for the most recent step */
 .progress-step.current .step-dot {
-    border-color: var(--accent-color);
-    transform: scale(1.1); /* Makes the current dot slightly larger */
+    background-color: var(--accent-color);
+    transform: scale(1.1);
 }
 
 .progress-step.current .step-label {
