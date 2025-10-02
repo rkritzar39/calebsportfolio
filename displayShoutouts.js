@@ -15,6 +15,43 @@ const firebaseConfig = {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+async function loadAndDisplayLegislation() {
+    const legislationList = document.getElementById('legislation-list');
+    if (!legislationList) return; // This correctly stops the function from running on other pages
+
+    legislationList.innerHTML = '<p>Loading legislation status...</p>';
+    const legislationCollectionRef = collection(db, "legislation");
+
+    try {
+        const q = query(legislationCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(q);
+
+        legislationList.innerHTML = '';
+        if (querySnapshot.empty) {
+            legislationList.innerHTML = '<p>No items to display at this time.</p>';
+        } else {
+            querySnapshot.forEach(doc => {
+                const item = doc.data();
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'legislation-item';
+
+                itemDiv.innerHTML = `
+                    <h4>${item.title}</h4>
+                    <p>${item.description}</p>
+                    <div class="legislation-meta">
+                        <span class="status status-${item.status.toLowerCase().replace(/ /g, '-')}">${item.status}</span>
+                        ${item.date ? `<span class="date">${item.date}</span>` : ''}
+                    </div>
+                `;
+                legislationList.appendChild(itemDiv);
+            });
+        }
+    } catch (error) {
+        console.error("Error loading legislation items for display:", error);
+        legislationList.innerHTML = '<p class="error">Could not load items.</p>';
+    }
+}
+
 // --- Initialize Firebase ---
 let db;
 let firebaseAppInitialized = false;
@@ -1823,43 +1860,6 @@ async function initializeHomepageContent() {
 // ===== LEGISLATION TRACKER PAGE SPECIFIC FUNCTIONS ====
 // ======================================================
 // (This function should be added to your file if it's not there already)
-
-async function loadAndDisplayLegislation() {
-    const legislationList = document.getElementById('legislation-list');
-    if (!legislationList) return; // This correctly stops the function from running on other pages
-
-    legislationList.innerHTML = '<p>Loading legislation status...</p>';
-    const legislationCollectionRef = collection(db, "legislation");
-
-    try {
-        const q = query(legislationCollectionRef, orderBy("order", "asc"));
-        const querySnapshot = await getDocs(q);
-
-        legislationList.innerHTML = '';
-        if (querySnapshot.empty) {
-            legislationList.innerHTML = '<p>No items to display at this time.</p>';
-        } else {
-            querySnapshot.forEach(doc => {
-                const item = doc.data();
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'legislation-item';
-
-                itemDiv.innerHTML = `
-                    <h4>${item.title}</h4>
-                    <p>${item.description}</p>
-                    <div class="legislation-meta">
-                        <span class="status status-${item.status.toLowerCase().replace(/ /g, '-')}">${item.status}</span>
-                        ${item.date ? `<span class="date">${item.date}</span>` : ''}
-                    </div>
-                `;
-                legislationList.appendChild(itemDiv);
-            });
-        }
-    } catch (error) {
-        console.error("Error loading legislation items for display:", error);
-        legislationList.innerHTML = '<p class="error">Could not load items.</p>';
-    }
-}
 
 // --- END OF NEW FUNCTION ---
         
