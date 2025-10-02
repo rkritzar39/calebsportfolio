@@ -1,4 +1,4 @@
-/* tracker.css (Modern Redesign - Final Version) */
+/* tracker.css (Modern Redesign - Final Corrected Version) */
 
 /* --- Page & Card Layout --- */
 #tracker-section {
@@ -97,10 +97,24 @@
     font-weight: 600;
 }
 
-/* --- Corrected & Modern Progress Tracker --- */
+/* --- THIS IS THE FIX for the progress bar alignment --- */
 .progress-container {
     position: relative;
     margin: 2.5rem 0;
+    /* Set a height for the container to align children vertically */
+    height: 50px; 
+}
+
+.progress-tracker {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
+    top: 0; /* Align to the top of the container */
+    z-index: 3;
 }
 
 /* Background track */
@@ -128,27 +142,19 @@
     transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.progress-tracker {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    z-index: 3; /* Dots are on the highest layer */
-}
-
 .progress-step {
     text-align: center;
     width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .progress-step .step-dot {
     box-sizing: border-box;
-    display: inline-block;
     width: 24px;
     height: 24px;
-    background-color: var(--content-bg); /* Match card background */
+    background-color: var(--content-bg);
     border: 4px solid var(--secondary-bg);
     border-radius: 50%;
     margin-bottom: 0.75rem;
@@ -173,7 +179,7 @@
     font-weight: 600;
 }
 
-/* This adds an extra flair to the CURRENT (most recent) step */
+/* This adds extra flair to the CURRENT (most recent) step */
 .progress-step.current .step-dot {
     transform: scale(1.2);
     box-shadow: 0 0 15px hsla(var(--accent-color-hsl), 0.6);
@@ -183,6 +189,7 @@
     color: var(--accent-color);
     font-weight: 700;
 }
+/* --- End of Progress Bar Fixes --- */
 
 /* --- Summary & Actions --- */
 .bill-summary {
