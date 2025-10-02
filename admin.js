@@ -1,4 +1,4 @@
-// admin.js (Version includes Preview Prep + Previous Features + Social Links)
+    // admin.js (Version includes Preview Prep + Previous Features + Social Links)
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
 const storage = getStorage();
@@ -3145,8 +3145,36 @@ function closeEditUsefulLinkModal() { //
     // END: All Social Link Functions
     // ========================================================
 
-    // 3. Add these new functions to the end of your admin.js file
-// This function should be called inside your onAuthStateChanged listener
+// --- NEW: LOGIC FOR SMART CHECKBOXES ---
+function setupLegislationCheckboxLogic() {
+    const checkboxes = [
+        document.getElementById('status-introduced'),
+        document.getElementById('status-passed-house'),
+        document.getElementById('status-passed-senate'),
+        document.getElementById('status-to-president'),
+        document.getElementById('status-became-law')
+    ];
+
+    checkboxes.forEach((checkbox, index) => {
+        if (!checkbox) return;
+        checkbox.addEventListener('change', () => {
+            const isChecked = checkbox.checked;
+            if (isChecked) {
+                // Check all previous checkboxes
+                for (let i = 0; i < index; i++) {
+                    checkboxes[i].checked = true;
+                }
+            } else {
+                // Uncheck all subsequent checkboxes
+                for (let i = index + 1; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = false;
+                }
+            }
+        });
+    });
+}
+// --- END OF NEW LOGIC ---
+
 async function loadLegislationAdmin() {
     if (!legislationListAdmin) return;
     legislationListAdmin.innerHTML = `<p>Loading items...</p>`;
