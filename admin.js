@@ -81,6 +81,12 @@ document.addEventListener('DOMContentLoaded', () => { //
     const loginButton = document.getElementById('login-button'); //
     const timerDisplayElement = document.getElementById('inactivity-timer-display'); //
 
+    // 1. Add these variable declarations at the top with your other declarations
+    const legislationCollectionRef = collection(db, "legislation");
+    const addLegislationForm = document.getElementById('add-legislation-form');
+    const legislationListAdmin = document.getElementById('legislation-list-admin');
+    const legislationCount = document.getElementById('legislation-count');
+
     // --- Add these with other DOM element references ---
     const countdownTitleInput = document.getElementById('countdown-title-input');
     const countdownDatetimeInput = document.getElementById('countdown-datetime-input');
@@ -2173,6 +2179,7 @@ onAuthStateChanged(auth, user => {
                 loadDisabilitiesAdmin();
                 loadPresidentData();
                 loadTechItemsAdmin();
+                loadLegislationAdmin();
 
                 // ===============================================
                 // == THIS IS THE NEW CODE TO ADD ================
@@ -3137,6 +3144,101 @@ function closeEditUsefulLinkModal() { //
     // ========================================================
     // END: All Social Link Functions
     // ========================================================
+
+    // 3. Add these new functions to the end of your admin.js file
+async function loadLegislationAdmin() {
+    if (!legislationListAdmin) return;
+    legislationListAdmin.innerHTML = `<p>Loading items...</p>`;
+    let allItems = [];
+
+    try {
+        const q = query(legislationCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+            allItems.push({ id: doc.id, ...doc.data() });
+        });
+
+        legislationListAdmin.innerHTML = '';
+        if (allItems.length > 0) {
+            allItems.forEach(item => {
+                renderLegislationAdminListItem(item);
+            });
+        } else {
+            legislationListAdmin.innerHTML = '<p>No items found.</p>';
+        }
+        if (legislationCount) legislationCount.textContent = `(${allItems.length})`;
+
+    } catch (error) {
+        console.error("Error loading legislation items:", error);
+        legislationListAdmin.innerHTML = `<p class="error">Error loading items.</p>`;
+    }
+}
+
+function renderLegislationAdminListItem(itemData) {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'list-item-admin';
+    itemDiv.setAttribute('data-id', itemData.id);
+
+    itemDiv.innerHTML = `
+        <div class="item-content">
+            <div class="item-details">
+                <strong>${itemData.title || 'N/A'}</strong>
+                <span>Status: ${itemData.status || 'N/A'}</span>
+                <small>Order: ${itemData.order ?? 'N/A'}</small>
+            </div>
+        </div>
+        <div class="item-actions">
+            <button type="button" class="delete-button small-button">Delete</button>
+        </div>`;
+
+    const deleteButton = itemDiv.querySelector('.delete-button');
+    if (deleteButton) {
+        deleteButton.addEventListener('click', () => handleDeleteLegislation(itemData.id));
+    }
+
+    legislationListAdmin.appendChild(itemDiv);
+}
+
+async function handleAddLegislation(event) {
+    event.preventDefault();
+    const title = document.getElementById('legislation-title').value.trim();
+    const description = document.getElementById('legislation-description').value.trim();
+    const status = document.getElementById('legislation-status').value;
+    const date = document.getElementById('legislation-date').value;
+    const order = parseInt(document.getElementById('legislation-order').value);
+
+    if (!title || isNaN(order)) {
+        showAdminStatus("Title and a valid Order are required.", true);
+        return;
+    }
+
+    const newItem = { title, description, status, date, order, createdAt: serverTimestamp() };
+
+    showAdminStatus("Adding item...");
+    try {
+        await addDoc(legislationCollectionRef, newItem);
+        showAdminStatus("Item added successfully.", false);
+        addLegislationForm.reset();
+        loadLegislationAdmin();
+    } catch (error) {
+        console.error("Error adding item:", error);
+        showAdminStatus(`Error: ${error.message}`, true);
+    }
+}
+
+async function handleDeleteLegislation(docId) {
+    if (!confirm("Are you sure you want to delete this item?")) return;
+
+    showAdminStatus("Deleting item...");
+    try {
+        await deleteDoc(doc(db, 'legislation', docId));
+        showAdminStatus("Item deleted successfully.", false);
+        loadLegislationAdmin();
+    } catch (error) {
+        console.error("Error deleting item:", error);
+        showAdminStatus(`Error: ${error.message}`, true);
+    }
+}
 
     // Add Shoutout Forms
     if (addShoutoutTiktokForm) { //
@@ -4225,6 +4327,10 @@ async function loadDisabilitiesAdmin() {
     if (addShoutoutYoutubeForm) attachPreviewListeners(addShoutoutYoutubeForm, 'youtube', 'add');
     if (editForm) { const editPreviewInputs = [ editUsernameInput, editNicknameInput, editBioInput, editProfilePicInput, editIsVerifiedInput, editFollowersInput, editSubscribersInput, editCoverPhotoInput ]; editPreviewInputs.forEach(el => { if (el) { const eventType = (el.type === 'checkbox') ? 'change' : 'input'; el.addEventListener(eventType, () => { const currentPlatform = editForm.getAttribute('data-platform'); if (currentPlatform && typeof updateShoutoutPreview === 'function') { updateShoutoutPreview('edit', currentPlatform); } else if (!currentPlatform) { console.warn("Edit form platform not set."); } else { console.error("updateShoutoutPreview missing!"); } }); } }); }
 
+    if (addLegislationForm) {
+    addLegislationForm.addEventListener('submit', handleAddLegislation);
+    }
+    
     // Profile Pic URL Preview Listener
     if (profilePicUrlInput && adminPfpPreview) { profilePicUrlInput.addEventListener('input', () => { const url = profilePicUrlInput.value.trim(); if (url) { adminPfpPreview.src = url; adminPfpPreview.style.display = 'inline-block'; } else { adminPfpPreview.style.display = 'none'; } }); adminPfpPreview.onerror = () => { console.warn("Preview image load failed:", adminPfpPreview.src); adminPfpPreview.style.display = 'none'; profilePicUrlInput.classList.add('input-error'); }; profilePicUrlInput.addEventListener('focus', () => { profilePicUrlInput.classList.remove('input-error'); }); }
 
