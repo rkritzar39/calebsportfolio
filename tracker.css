@@ -1,4 +1,4 @@
-/* tracker.css (Modern, Responsive, & Definitive Fix) */
+/* tracker.css (Amazon-Style Redesign) */
 
 /* --- Page & Card Layout --- */
 #tracker-section {
@@ -23,11 +23,11 @@
     text-decoration: none;
     background-color: var(--secondary-bg);
     color: var(--secondary-text);
-    border: 1px solid var(--border-color);
     padding: 0.6rem 1.2rem;
     border-radius: var(--radius-md);
     transition: all 0.2s ease-out;
     font-weight: 500;
+    border: 1px solid var(--border-color);
 }
 
 .back-to-home-btn:hover {
@@ -48,30 +48,38 @@
     border-radius: var(--radius-xl);
     padding: 2rem 2.5rem;
     box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column */
+    gap: 1.5rem 2.5rem;
 }
 
-.legislation-item:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-6px);
+/* On wider screens, create a two-column layout */
+@media (min-width: 768px) {
+    .legislation-item {
+        grid-template-columns: 1fr 220px; /* Content on left, tracker on right */
+    }
 }
 
-/* --- Bill Header & Details --- */
+/* --- Bill Details (Left Column) --- */
+.bill-info {
+    display: flex;
+    flex-direction: column;
+}
+
 .bill-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
     border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1.5rem;
-    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 .bill-header h4 {
     margin: 0;
-    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    font-size: clamp(1.3rem, 4vw, 1.7rem);
     color: var(--headings-color);
-    line-height: 1.4;
+    line-height: 1.3;
     font-weight: 700;
 }
 
@@ -83,13 +91,14 @@
     background-color: hsla(var(--accent-color-hsl), 0.1);
     padding: 0.4rem 0.8rem;
     border-radius: var(--radius-full);
-    white-space: nowrap;
+    width: fit-content; /* Make it only as wide as its content */
 }
 
 .bill-details p {
     margin: 0;
     font-size: 0.95em;
     color: var(--secondary-text);
+    line-height: 1.5;
 }
 
 .bill-details strong {
@@ -97,142 +106,95 @@
     font-weight: 600;
 }
 
-/* --- THIS IS THE DEFINITIVE FIX for the progress bar --- */
-.progress-container {
-    position: relative;
-    padding: 1rem 0;
-    margin: 1.5rem 0;
-}
-
-/* The track for the progress line */
-.progress-track {
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    transform: translateY(-50%);
-    width: 80%;
-    height: 6px;
-    background-color: var(--secondary-bg);
-    border-radius: 3px;
-    z-index: 1;
-}
-
-.progress-line {
-    width: 0%; /* Initial width, controlled by JS */
-    height: 100%;
-    background: var(--accent-color);
-    border-radius: 3px;
-    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.progress-tracker {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    z-index: 2; /* Ensures dots are on top of the track */
-}
-
-.progress-step {
-    text-align: center;
-    width: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.progress-step .step-dot {
-    box-sizing: border-box;
-    width: 24px;
-    height: 24px;
-    background-color: var(--content-bg);
-    border: 4px solid var(--secondary-bg);
-    border-radius: 50%;
-    margin-bottom: 0.75rem;
-    transition: all 0.4s ease;
-}
-
-.progress-step .step-label {
-    font-size: 0.8em;
-    color: var(--secondary-text);
-    font-weight: 500;
-    transition: all 0.4s ease;
-}
-
-/* State Styles */
-.progress-step.completed .step-dot {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
-.progress-step.completed .step-label {
-    color: var(--primary-text);
-    font-weight: 600;
-}
-
-.progress-step.current .step-dot {
-    transform: scale(1.2);
-    box-shadow: 0 0 15px hsla(var(--accent-color-hsl), 0.6);
-}
-
-.progress-step.current .step-label {
-    color: var(--accent-color);
-    font-weight: 700;
-}
-/* --- End of Progress Bar Fixes --- */
-
-
-/* --- Summary & Actions --- */
 .bill-summary {
     font-size: 1.05em;
     color: var(--primary-text);
     line-height: 1.7;
-    margin: 2rem 0;
-    padding: 1rem 1.5rem;
-    background-color: var(--secondary-bg);
-    border-left: 4px solid var(--accent-color);
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    margin: 1rem 0;
 }
 
 .bill-actions {
-    text-align: right;
-    margin-top: 1rem;
+    margin-top: auto; /* Pushes the button to the bottom */
+    padding-top: 1rem;
 }
 
-/* --- Responsive Styles for Mobile --- */
-@media (max-width: 600px) {
-    #tracker-section {
-        padding: 1rem 0.5rem;
-    }
-    
-    .legislation-item {
-        padding: 1.5rem;
-        border-radius: var(--radius-lg);
-    }
-    
-    .bill-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .bill-id {
-        order: -1;
-        margin-bottom: 0.5rem;
-    }
-    
-    .progress-step .step-label {
-        font-size: 11px;
-        line-height: 1.2;
-    }
-    
-    .progress-step .step-dot {
-        width: 20px;
-        height: 20px;
-    }
+/* --- NEW: Amazon-Style Vertical Tracker (Right Column) --- */
+.progress-tracker-vertical {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
 
-    .progress-track {
-        top: 35%; /* Adjust vertical centering for smaller dots */
-    }
+.progress-step-vertical {
+    position: relative;
+    padding: 0 0 2.5rem 2rem; /* Space for the dot and line */
+    min-height: 50px;
+}
+
+/* The vertical connecting line */
+.progress-step-vertical::before {
+    content: '';
+    position: absolute;
+    left: 11px; /* (24px dot width / 2) - (2px line width / 2) */
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background-color: var(--secondary-bg);
+    z-index: 1;
+}
+
+/* Hide the line on the last step */
+.progress-step-vertical:last-child::before {
+    display: none;
+}
+
+.progress-step-vertical .step-dot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    background-color: var(--content-bg);
+    border: 2px solid var(--secondary-bg);
+    border-radius: 50%;
+    z-index: 2;
+    transition: all 0.4s ease;
+}
+
+.step-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.step-label {
+    font-weight: 600;
+    color: var(--secondary-text);
+    font-size: 0.95em;
+}
+
+/* --- State Styles for Vertical Tracker --- */
+.progress-step-vertical.completed::before {
+    background-color: var(--accent-color); /* Color the line for completed steps */
+}
+
+.progress-step-vertical.completed .step-dot {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.progress-step-vertical.completed .step-label {
+    color: var(--primary-text);
+}
+
+.progress-step-vertical.current .step-dot {
+    transform: scale(1.2);
+    border-color: var(--accent-color);
+    background-color: var(--content-bg);
+}
+
+.progress-step-vertical.current .step-label {
+    color: var(--accent-color);
+    font-weight: 700;
 }
