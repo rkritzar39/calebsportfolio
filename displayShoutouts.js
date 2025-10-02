@@ -1812,6 +1812,48 @@ async function initializeHomepageContent() {
         // ===================================================================
         // === END OF NEW CODE ===============================================
         // ===================================================================
+
+        // --- ADD THIS NEW FUNCTION FOR THE LEGISLATION TRACKER ---
+
+async function loadAndDisplayLegislation() {
+    const legislationList = document.getElementById('legislation-list');
+    // This check ensures the code only runs on the tracker page
+    if (!legislationList) return; 
+
+    legislationList.innerHTML = '<p>Loading legislation status...</p>';
+    const legislationCollectionRef = collection(db, "legislation");
+
+    try {
+        const q = query(legislationCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(q);
+
+        legislationList.innerHTML = '';
+        if (querySnapshot.empty) {
+            legislationList.innerHTML = '<p>No items to display at this time.</p>';
+        } else {
+            querySnapshot.forEach(doc => {
+                const item = doc.data();
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'legislation-item';
+
+                itemDiv.innerHTML = `
+                    <h4>${item.title}</h4>
+                    <p>${item.description}</p>
+                    <div class="legislation-meta">
+                        <span class="status status-${item.status.toLowerCase().replace(/ /g, '-')}">${item.status}</span>
+                        ${item.date ? `<span class="date">${item.date}</span>` : ''}
+                    </div>
+                `;
+                legislationList.appendChild(itemDiv);
+            });
+        }
+    } catch (error) {
+        console.error("Error loading legislation items for display:", error);
+        legislationList.innerHTML = '<p class="error">Could not load items.</p>';
+    }
+}
+
+// --- END OF NEW FUNCTION ---
         
         // ** START EVENT COUNTDOWN LOGIC (Main site countdown) **
         if (countdownTargetDate && typeof startEventCountdown === 'function') {
