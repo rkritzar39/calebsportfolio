@@ -39,57 +39,63 @@ async function loadAndDisplayLegislation() {
 
                 const status = item.status || {};
                 const steps = [
-                    { key: 'introduced', label: 'Introduced', completed: status.introduced },
-                    { key: 'passedHouse', label: 'Passed House', completed: status.passedHouse },
-                    { key: 'passedSenate', label: 'Passed Senate', completed: status.passedSenate },
-                    { key: 'toPresident', label: 'To President', completed: status.toPresident },
-                    { key: 'becameLaw', label: 'Became Law', completed: status.becameLaw },
+                    status.introduced,
+                    status.passedHouse,
+                    status.passedSenate,
+                    status.toPresident,
+                    status.becameLaw
                 ];
                 
-                // Find the index of the current (most recent) step
-                const currentIndex = steps.map(s => s.completed).lastIndexOf(true);
+                const lastCompletedIndex = steps.lastIndexOf(true);
                 
-                // Generate the HTML for the vertical steps
-                let stepsHtml = '';
-                steps.forEach((step, index) => {
-                    let stepClass = '';
-                    if (step.completed) {
-                        stepClass = 'completed';
+                // --- THIS IS THE FIX for the overshoot problem ---
+                // The progress percentage is now correct. It represents how much of the track should be filled.
+                const progressPercentage = lastCompletedIndex >= 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
+                
+                const stepClasses = steps.map((isCompleted, index) => {
+                    if (isCompleted) {
+                        return index === lastCompletedIndex ? 'completed current' : 'completed';
                     }
-                    if (index === currentIndex) {
-                        stepClass += ' current';
-                    }
-                    
-                    stepsHtml += `
-                        <li class="progress-step-vertical ${stepClass}">
-                            <div class="step-dot"></div>
-                            <div class="step-details">
-                                <span class="step-label">${step.label}</span>
-                            </div>
-                        </li>
-                    `;
+                    return '';
                 });
 
-                // This is the new two-column HTML structure
+                // --- Updated HTML structure to work with the new CSS ---
                 itemDiv.innerHTML = `
-                    <div class="bill-info">
-                        <div class="bill-header">
-                            <span class="bill-id">${item.billId || 'N/A'}</span>
-                            <h4>${item.title || 'No Title'}</h4>
-                        </div>
-                        <div class="bill-details">
-                            <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'}<br>
-                               <strong>Introduced:</strong> ${item.date || 'N/A'}
-                            </p>
-                        </div>
-                        <p class="bill-summary">${item.description || 'A summary is in progress.'}</p>
-                        ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
+                    <div class="bill-header">
+                        <h4>${item.title || 'No Title'}</h4>
+                        <span class="bill-id">${item.billId || 'N/A'}</span>
                     </div>
-                    <div class="bill-progress">
-                        <ol class="progress-tracker-vertical">
-                            ${stepsHtml}
-                        </ol>
+                    <div class="bill-details">
+                        <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'} | <strong>Introduced:</strong> ${item.date || 'N/A'}</p>
                     </div>
+
+                    <div class="progress-container">
+                        <ul class="progress-tracker" style="--progress-width: ${progressPercentage}%;">
+                            <li class="progress-step ${stepClasses[0]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Introduced</span>
+                            </li>
+                            <li class="progress-step ${stepClasses[1]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Passed House</span>
+                            </li>
+                            <li class="progress-step ${stepClasses[2]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Passed Senate</span>
+                            </li>
+                            <li class="progress-step ${stepClasses[3]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">To President</span>
+                            </li>
+                            <li class="progress-step ${stepClasses[4]}">
+                                <span class="step-dot"></span>
+                                <span class="step-label">Became Law</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <p class="bill-summary">${item.description || ''}</p>
+                    ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
                 `;
                 legislationList.appendChild(itemDiv);
             });
