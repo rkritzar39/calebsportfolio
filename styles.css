@@ -237,10 +237,10 @@ body {
 	transform: translate(-50%, -50%);
 }
 
-.profile-status-container.status-online   { background-color: #31a24c; }
-.profile-status-container.status-idle     { background-color: #ffc107; }
-.profile-status-container.status-dnd      { background-color: #dc3545; }
-.profile-status-container.status-offline  { background-color: #747f8d; }
+.profile-status-container.status-online    { background-color: #31a24c; }
+.profile-status-container.status-idle      { background-color: #ffc107; }
+.profile-status-container.status-dnd       { background-color: #dc3545; }
+.profile-status-container.status-offline   { background-color: #747f8d; }
 
 
 /* --- Username & Verified --- */
@@ -331,6 +331,7 @@ body {
 .settings-button { top: 1.25rem; right: 1.25rem; }
 .merch-button    { top: 1.25rem; left: 1.25rem; }
 .blog-button     { bottom: 1.25rem; left: 1.25rem; }
+.tracker-button  { bottom: 1.25rem; right: 1.25rem; } /* This is the new button */
 
 .corner-button:hover,
 .corner-button:focus-visible {
@@ -368,6 +369,8 @@ a.corner-button {
 @media screen and (max-width: 768px) {
 	.profile-section {
 		padding: 1.5rem;
+        /* Added padding to prevent content overlap with bottom buttons */
+        padding-bottom: 4rem; 
 	}
 	.profile-pic-wrapper {
 		--profile-pic-size: 7.5rem;
@@ -393,6 +396,7 @@ a.corner-button {
 @media screen and (max-width: 480px) {
 	.profile-section {
 		padding: 1.25rem;
+        padding-bottom: 4rem;
 		margin: 1rem 0;
 	}
 	.profile-pic-wrapper {
@@ -404,6 +408,7 @@ a.corner-button {
 		top: 0.9375rem;
 	}
 	.blog-button { top: auto; bottom: 0.9375rem; left: 0.9375rem; }
+    .tracker-button { top: auto; bottom: 0.9375rem; right: 0.9375rem; }
 	.settings-button { right: 0.9375rem; }
 	.merch-button { left: 0.9375rem; }
 	.profile-bio { font-size: 0.9rem; }
