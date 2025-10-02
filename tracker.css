@@ -1,56 +1,59 @@
-/* tracker.css (Complete Redesign) */
+/* tracker.css (Modern Redesign - Final Version) */
 
-/* --- Main Page Layout --- */
+/* --- Page & Card Layout --- */
 #tracker-section {
     max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-    font-family: var(--font-family, sans-serif);
+    margin: 2rem auto;
+    padding: 2rem 1.5rem;
+    font-family: var(--font-family, system-ui, -apple-system, sans-serif);
 }
 
 .page-title {
     text-align: center;
     color: var(--headings-color);
-    font-size: 2.5em;
-    margin-bottom: 1rem;
-    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    margin-bottom: 0.5rem;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
 .back-to-home-btn {
     display: inline-block;
-    margin-bottom: 2.5rem;
+    margin-bottom: 3rem;
     text-decoration: none;
     background-color: var(--secondary-bg);
     color: var(--secondary-text);
     border: 1px solid var(--border-color);
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     border-radius: var(--radius-md);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: all 0.2s ease-out;
+    font-weight: 500;
 }
 
 .back-to-home-btn:hover {
     background-color: var(--hover-bg);
     color: var(--primary-text);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-/* --- Bill Item Card --- */
 .legislation-list {
     display: grid;
-    gap: 2rem;
+    gap: 2.5rem;
 }
 
 .legislation-item {
     background: var(--content-bg);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem 2rem;
+    border-radius: var(--radius-xl);
+    padding: 2rem 2.5rem;
     box-shadow: var(--shadow-sm);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .legislation-item:hover {
     box-shadow: var(--shadow-lg);
-    transform: translateY(-5px);
+    transform: translateY(-6px);
 }
 
 /* --- Bill Header & Details --- */
@@ -58,33 +61,34 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
+    gap: 1rem;
     border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1rem;
+    padding-bottom: 1.5rem;
     margin-bottom: 1rem;
 }
 
 .bill-header h4 {
     margin: 0;
-    font-size: 1.5em;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
     color: var(--headings-color);
-    line-height: 1.3;
+    line-height: 1.4;
+    font-weight: 700;
 }
 
 .bill-id {
     font-family: monospace, sans-serif;
-    font-size: 1em;
+    font-size: 0.9em;
     font-weight: bold;
     color: var(--accent-color);
-    background-color: var(--secondary-bg);
-    padding: 0.3rem 0.6rem;
-    border-radius: var(--radius-sm);
+    background-color: hsla(var(--accent-color-hsl), 0.1);
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--radius-full);
+    white-space: nowrap;
 }
 
 .bill-details p {
-    margin: 0;
-    font-size: 0.9em;
+    margin: 1rem 0;
+    font-size: 0.95em;
     color: var(--secondary-text);
 }
 
@@ -93,10 +97,35 @@
     font-weight: 600;
 }
 
-/* --- Progress Tracker --- */
+/* --- Corrected & Modern Progress Tracker --- */
 .progress-container {
     position: relative;
-    margin: 2rem 0;
+    margin: 2.5rem 0;
+}
+
+/* Background track */
+.progress-container::before {
+    content: '';
+    position: absolute;
+    top: 12px; /* Center of the 24px dot */
+    left: 10%;
+    width: 80%;
+    height: 6px;
+    background-color: var(--secondary-bg);
+    border-radius: 3px;
+    z-index: 1;
+}
+
+.progress-line {
+    position: absolute;
+    top: 12px;
+    left: 10%;
+    height: 6px;
+    background: var(--accent-color);
+    border-radius: 3px;
+    z-index: 2;
+    width: 0;
+    transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .progress-tracker {
@@ -106,30 +135,7 @@
     display: flex;
     justify-content: space-between;
     position: relative;
-    z-index: 2; /* Dots are above the lines */
-}
-
-/* Background Line */
-.progress-container::before {
-    content: '';
-    position: absolute;
-    top: 12px; /* Center of the 24px dot */
-    left: 10%;
-    width: 80%;
-    height: 4px;
-    background-color: var(--border-color);
-    z-index: 1;
-}
-
-.progress-line {
-    position: absolute;
-    top: 12px;
-    left: 10%;
-    height: 4px;
-    background-color: var(--accent-color);
-    z-index: 1; /* Same level as background to be "on top" of it */
-    width: 0;
-    transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1); /* Smoother transition */
+    z-index: 3; /* Dots are on the highest layer */
 }
 
 .progress-step {
@@ -142,28 +148,35 @@
     display: inline-block;
     width: 24px;
     height: 24px;
-    background-color: var(--content-bg); /* Match the card background */
-    border: 4px solid var(--border-color);
+    background-color: var(--content-bg); /* Match card background */
+    border: 4px solid var(--secondary-bg);
     border-radius: 50%;
     margin-bottom: 0.75rem;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
 }
 
 .progress-step .step-label {
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: var(--secondary-text);
     font-weight: 500;
+    transition: all 0.4s ease;
 }
 
-/* Step States */
+/* --- THIS IS THE FIX for highlighting ALL completed statuses --- */
 .progress-step.completed .step-dot {
+    background-color: var(--accent-color);
     border-color: var(--accent-color);
 }
 
+.progress-step.completed .step-label {
+    color: var(--primary-text);
+    font-weight: 600;
+}
+
+/* This adds an extra flair to the CURRENT (most recent) step */
 .progress-step.current .step-dot {
-    background-color: var(--accent-color);
-    transform: scale(1.15);
-    box-shadow: 0 0 10px var(--accent-color);
+    transform: scale(1.2);
+    box-shadow: 0 0 15px hsla(var(--accent-color-hsl), 0.6);
 }
 
 .progress-step.current .step-label {
@@ -173,12 +186,14 @@
 
 /* --- Summary & Actions --- */
 .bill-summary {
-    font-size: 1em;
+    font-size: 1.05em;
     color: var(--primary-text);
     line-height: 1.7;
-    margin: 1.5rem 0;
-    padding-left: 1rem;
-    border-left: 3px solid var(--border-color);
+    margin: 2rem 0;
+    padding: 1rem 1.5rem;
+    background-color: var(--secondary-bg);
+    border-left: 4px solid var(--accent-color);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 .bill-actions {
