@@ -17,6 +17,8 @@ import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, que
 
 // In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
 
+// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
+
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
     if (!legislationList) return;
@@ -49,14 +51,14 @@ async function loadAndDisplayLegislation() {
                 // Find the index of the last completed step
                 const lastCompletedIndex = steps.lastIndexOf(true);
                 
-                // Calculate the width of the progress line
-                // 0 steps -> 0%, 1 step -> 25%, 2 steps -> 50%, 3 -> 75%, 4 -> 100%
+                // Calculate the width of the progress line.
+                // It's a percentage based on which step is last. 4 steps = 100%.
                 const progressWidth = lastCompletedIndex > 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
                 
                 // Determine CSS classes for each step
                 const stepClasses = steps.map((isCompleted, index) => {
                     if (isCompleted) {
-                        // If this is the last completed step, it's the 'current' one
+                        // The last completed step is the "current" one
                         return index === lastCompletedIndex ? 'completed current' : 'completed';
                     }
                     return '';
@@ -67,12 +69,12 @@ async function loadAndDisplayLegislation() {
                         <h4>${item.title || 'No Title'}</h4>
                         <span class="bill-id">${item.billId || 'N/A'}</span>
                     </div>
-
                     <div class="bill-details">
                         <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'} | <strong>Introduced:</strong> ${item.date || 'N/A'}</p>
                     </div>
 
-                    <div class="progress-container" style="position: relative;">
+                    <div class="progress-container">
+                        <div class="progress-line" style="width: ${progressWidth}%;"></div>
                         <ul class="progress-tracker">
                             <li class="progress-step ${stepClasses[0]}">
                                 <span class="step-dot"></span>
@@ -95,11 +97,9 @@ async function loadAndDisplayLegislation() {
                                 <span class="step-label">Became Law</span>
                             </li>
                         </ul>
-                        <div class="progress-line" style="width: ${progressWidth}%;"></div>
                     </div>
                     
                     <p class="bill-summary">${item.description || ''}</p>
-
                     ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
                 `;
                 legislationList.appendChild(itemDiv);
