@@ -15,14 +15,6 @@ const firebaseConfig = {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
-
-// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
-
-// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
-
-// In displayShoutouts.js, confirm your function looks like this
-
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
     if (!legislationList) return;
@@ -52,21 +44,17 @@ async function loadAndDisplayLegislation() {
                     status.becameLaw
                 ];
                 
-                // Find the index of the last completed step
                 const lastCompletedIndex = steps.lastIndexOf(true);
-                
-                // Calculate the width of the progress line
                 const progressWidth = lastCompletedIndex >= 0 ? (lastCompletedIndex / (steps.length - 1)) * 100 : 0;
                 
-                // Determine CSS classes for each step
                 const stepClasses = steps.map((isCompleted, index) => {
                     if (isCompleted) {
-                        // The last completed step is the "current" one
                         return index === lastCompletedIndex ? 'completed current' : 'completed';
                     }
                     return '';
                 });
 
+                // --- THIS IS THE HTML STRUCTURE FIX ---
                 itemDiv.innerHTML = `
                     <div class="bill-header">
                         <h4>${item.title || 'No Title'}</h4>
@@ -77,7 +65,9 @@ async function loadAndDisplayLegislation() {
                     </div>
 
                     <div class="progress-container">
-                        <div class="progress-line" style="width: ${progressWidth}%;"></div>
+                        <div class="progress-track">
+                            <div class="progress-line" style="width: ${progressWidth}%;"></div>
+                        </div>
                         <ul class="progress-tracker">
                             <li class="progress-step ${stepClasses[0]}">
                                 <span class="step-dot"></span>
