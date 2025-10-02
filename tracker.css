@@ -1,4 +1,4 @@
-/* tracker.css (Full-Width macOS 26 Design) */
+/* tracker.css (macOS 26 Redesign with Corrected Width) */
 
 /* --- Page & Font --- */
 body {
@@ -9,10 +9,10 @@ body {
 }
 
 #tracker-section {
-    /* THIS IS THE FIX: Increased max-width and adjusted padding for the edge-to-edge feel */
-    max-width: 1400px; /* Allows the container to get much wider */
+    /* THIS IS THE ONLY CHANGE: Wider container, smaller side margins */
+    max-width: 1400px; 
     margin: 4rem auto;
-    padding: 0 2.5rem; /* Maintains a safe but smaller margin on the sides */
+    padding: 0 2.5rem; 
 }
 
 .page-title {
@@ -208,7 +208,6 @@ body {
 /* --- Responsive Styles --- */
 @media (max-width: 600px) {
     #tracker-section {
-        /* THIS IS THE FIX: Smaller side padding for mobile screens */
         padding: 0 1rem;
     }
     .legislation-item {
