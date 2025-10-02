@@ -3146,28 +3146,22 @@ function closeEditUsefulLinkModal() { //
     // ========================================================
 
     // 3. Add these new functions to the end of your admin.js file
+// This function should be called inside your onAuthStateChanged listener
 async function loadLegislationAdmin() {
     if (!legislationListAdmin) return;
     legislationListAdmin.innerHTML = `<p>Loading items...</p>`;
-    let allItems = [];
-
     try {
         const q = query(legislationCollectionRef, orderBy("order", "asc"));
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-            allItems.push({ id: doc.id, ...doc.data() });
-        });
+        const allItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         legislationListAdmin.innerHTML = '';
         if (allItems.length > 0) {
-            allItems.forEach(item => {
-                renderLegislationAdminListItem(item);
-            });
+            allItems.forEach(item => renderLegislationAdminListItem(item));
         } else {
-            legislationListAdmin.innerHTML = '<p>No items found.</p>';
+            legislationListAdmin.innerHTML = '<p>No bills found.</p>';
         }
         if (legislationCount) legislationCount.textContent = `(${allItems.length})`;
-
     } catch (error) {
         console.error("Error loading legislation items:", error);
         legislationListAdmin.innerHTML = `<p class="error">Error loading items.</p>`;
@@ -3179,63 +3173,112 @@ function renderLegislationAdminListItem(itemData) {
     itemDiv.className = 'list-item-admin';
     itemDiv.setAttribute('data-id', itemData.id);
 
+    // Determine the furthest step reached for a quick status view
+    let currentStatus = "Introduced";
+    if (itemData.status?.becameLaw) currentStatus = "Became Law";
+    else if (itemData.status?.toPresident) currentStatus = "To President";
+    else if (itemData.status?.passedSenate) currentStatus = "Passed Senate";
+    else if (itemData.status?.passedHouse) currentStatus = "Passed House";
+
     itemDiv.innerHTML = `
         <div class="item-content">
             <div class="item-details">
-                <strong>${itemData.title || 'N/A'}</strong>
-                <span>Status: ${itemData.status || 'N/A'}</span>
-                <small>Order: ${itemData.order ?? 'N/A'}</small>
+                <strong>${itemData.billId || 'N/A'}: ${itemData.title || 'N/A'}</strong>
+                <span>Sponsor: ${itemData.sponsor || 'N/A'}</span>
+                <small>Current Status: ${currentStatus}</small>
             </div>
         </div>
         <div class="item-actions">
+            <button type="button" class="edit-button small-button">Edit</button>
             <button type="button" class="delete-button small-button">Delete</button>
         </div>`;
 
-    const deleteButton = itemDiv.querySelector('.delete-button');
-    if (deleteButton) {
-        deleteButton.addEventListener('click', () => handleDeleteLegislation(itemData.id));
-    }
-
+    itemDiv.querySelector('.edit-button').addEventListener('click', () => populateLegislationForm(itemData));
+    itemDiv.querySelector('.delete-button').addEventListener('click', () => handleDeleteLegislation(itemData.id));
     legislationListAdmin.appendChild(itemDiv);
 }
 
-async function handleAddLegislation(event) {
-    event.preventDefault();
-    const title = document.getElementById('legislation-title').value.trim();
-    const description = document.getElementById('legislation-description').value.trim();
-    const status = document.getElementById('legislation-status').value;
-    const date = document.getElementById('legislation-date').value;
-    const order = parseInt(document.getElementById('legislation-order').value);
+function populateLegislationForm(itemData) {
+    document.getElementById('legislation-id').value = itemData.id;
+    document.getElementById('legislation-bill-id').value = itemData.billId || '';
+    document.getElementById('legislation-title').value = itemData.title || '';
+    document.getElementById('legislation-sponsor').value = itemData.sponsor || '';
+    document.getElementById('legislation-date').value = itemData.date || '';
+    document.getElementById('legislation-url').value = itemData.url || '';
+    document.getElementById('legislation-description').value = itemData.description || '';
+    document.getElementById('legislation-order').value = itemData.order || 0;
 
-    if (!title || isNaN(order)) {
-        showAdminStatus("Title and a valid Order are required.", true);
+    // Populate checkboxes
+    document.getElementById('status-introduced').checked = itemData.status?.introduced || false;
+    document.getElementById('status-passed-house').checked = itemData.status?.passedHouse || false;
+    document.getElementById('status-passed-senate').checked = itemData.status?.passedSenate || false;
+    document.getElementById('status-to-president').checked = itemData.status?.toPresident || false;
+    document.getElementById('status-became-law').checked = itemData.status?.becameLaw || false;
+    
+    window.scrollTo(0, addLegislationForm.offsetTop);
+}
+
+function clearLegislationForm() {
+    addLegislationForm.reset();
+    document.getElementById('legislation-id').value = ''; // Clear hidden ID field
+}
+
+async function handleSaveLegislation(event) {
+    event.preventDefault();
+    const docId = document.getElementById('legislation-id').value;
+    const billId = document.getElementById('legislation-bill-id').value.trim();
+    const title = document.getElementById('legislation-title').value.trim();
+    
+    if (!billId || !title) {
+        showAdminStatus("Bill ID and Title are required.", true);
         return;
     }
 
-    const newItem = { title, description, status, date, order, createdAt: serverTimestamp() };
-
-    showAdminStatus("Adding item...");
+    const billData = {
+        billId: billId,
+        title: title,
+        sponsor: document.getElementById('legislation-sponsor').value.trim(),
+        date: document.getElementById('legislation-date').value,
+        url: document.getElementById('legislation-url').value.trim(),
+        description: document.getElementById('legislation-description').value.trim(),
+        order: parseInt(document.getElementById('legislation-order').value) || 0,
+        status: {
+            introduced: document.getElementById('status-introduced').checked,
+            passedHouse: document.getElementById('status-passed-house').checked,
+            passedSenate: document.getElementById('status-passed-senate').checked,
+            toPresident: document.getElementById('status-to-president').checked,
+            becameLaw: document.getElementById('status-became-law').checked,
+        },
+        lastUpdatedAt: serverTimestamp()
+    };
+    
+    showAdminStatus(docId ? "Updating bill..." : "Adding bill...");
     try {
-        await addDoc(legislationCollectionRef, newItem);
-        showAdminStatus("Item added successfully.", false);
-        addLegislationForm.reset();
+        if (docId) {
+            await setDoc(doc(db, 'legislation', docId), billData);
+            showAdminStatus("Bill updated successfully.", false);
+        } else {
+            billData.createdAt = serverTimestamp();
+            await addDoc(legislationCollectionRef, billData);
+            showAdminStatus("Bill added successfully.", false);
+        }
+        clearLegislationForm();
         loadLegislationAdmin();
     } catch (error) {
-        console.error("Error adding item:", error);
+        console.error("Error saving bill:", error);
         showAdminStatus(`Error: ${error.message}`, true);
     }
 }
 
 async function handleDeleteLegislation(docId) {
-    if (!confirm("Are you sure you want to delete this item?")) return;
-
-    showAdminStatus("Deleting item...");
+    if (!confirm("Are you sure you want to delete this bill? This cannot be undone.")) return;
+    showAdminStatus("Deleting bill...");
     try {
         await deleteDoc(doc(db, 'legislation', docId));
-        showAdminStatus("Item deleted successfully.", false);
+        showAdminStatus("Bill deleted successfully.", false);
         loadLegislationAdmin();
     } catch (error) {
-        console.error("Error deleting item:", error);
+        console.error("Error deleting bill:", error);
         showAdminStatus(`Error: ${error.message}`, true);
     }
 }
