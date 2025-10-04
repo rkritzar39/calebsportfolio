@@ -4,7 +4,7 @@
     /* ======================================================= */
 
     /* Base Defaults */
-    --text-size: 16px;
+    --font-size-base: 16px;
     --accent-color: #007aff; /* Apple's standard blue, user can override */
 
     /* Light Mode Colors (Standard Apple Palette) */
@@ -210,10 +210,10 @@ body.underline-links a {
 
 /* ========== General Styles ========== */
 body.settings-page {
-    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-size: var(--font-size-base, 1rem);
+    font-size: 1rem; /* This ensures the settings page inherits the root font size */
     line-height: 1.4;
     margin: 0;
     padding: 0;
