@@ -316,7 +316,7 @@ body.dark-mode #darkModeScheduler {
 .font-size-badge {
     padding: 0.25rem 0.75rem;
     background-color: var(--accent-color);
-    color: var(--accent-text-color, white); /* FIX: Use the new contrast variable */
+    color: var(--accent-text-color, white);
     border-radius: 0.75rem;
     font-weight: 600;
     font-size: 0.875rem;
@@ -326,7 +326,7 @@ body.dark-mode #darkModeScheduler {
     -webkit-appearance: none;
     appearance: none;
     width: 100%;
-    height: 8px; /* Thicker track */
+    height: 8px;
     border-radius: 999px;
     outline: none;
     background: var(--slider-track-color);
@@ -335,13 +335,13 @@ body.dark-mode #darkModeScheduler {
 #text-size-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 28px; /* Larger thumb */
-    height: 28px; /* Larger thumb */
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     background: var(--slider-thumb-color);
     cursor: pointer;
     border: 0.5px solid rgba(0,0,0,0.04);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Softer iOS shadow */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
     transition: transform 0.2s ease;
 }
 #text-size-slider::-webkit-slider-thumb:hover {
