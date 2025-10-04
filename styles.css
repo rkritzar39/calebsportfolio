@@ -86,7 +86,7 @@ body.light-e {
 	--text-color: var(--light-text);
 	--secondary-text: var(--light-secondary-text);
 	--border-color: rgba(255, 255, 255, 0.4);
-	--accent-color: var(--light-accent) !important; /* FIX: Added !important */
+	--accent-color: var(--light-accent); /* FIX: Removed !important */
 	--hover-color: var(--light-hover);
 	--link-color: var(--light-link);
 	--shadow-color: var(--light-shadow);
@@ -116,7 +116,7 @@ body.dark-mode {
     --bg-color: var(--dark-bg);
     --content-bg: var(--dark-content-bg);
     --text-color: var(--dark-text);
-    --accent-color: var(--dark-accent) !important; /* FIX: Added !important */
+    --accent-color: var(--dark-accent); /* FIX: Removed !important */
 }
 
 /* ======================== */
