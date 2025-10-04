@@ -1,144 +1,30 @@
-:root {
-	/* ======================== */
-	/* Base Sizing            */
-	/* ======================== */
-	font-size: 16px;
-	--line-height-base: 1.65;
+/* ======================================== */
+/* == Theme & General Styles (Inherited) == */
+/* ======================================== */
 
-	/* ======================== */
-	/* Dark Gray Glass Palette  */
-	/* ======================== */
-	--dark-bg: #0E0E0E;
-	--dark-content-bg: rgba(28, 28, 28, 0.6);
-	--dark-text: #F0F0F0;
-	--dark-secondary-text: #A3A3A3;
-	--dark-border: rgba(255, 255, 255, 0.08);
-	--dark-accent: #4EA8FF;
-	--dark-hover: #2F89E5;
-	--dark-link: var(--dark-accent);
-	--dark-shadow: rgba(0, 0, 0, 0.65);
-	--dark-glow: rgba(255, 255, 255, 0.05);
-	--dark-icon: #D1D1D1;
-
-	/* ======================== */
-	/* Light Glass Palette      */
-	/* ======================== */
-	--light-bg: #E9ECF1;
-	--light-content-bg: rgba(255, 255, 255, 0.55);
-	--light-text: #111111;
-	--light-secondary-text: #4B5563;
-	--light-border: rgba(255, 255, 255, 0.6); /* Original, unused in favor of corrected value */
-	--light-accent: #007AFF;
-	--light-hover: #005FCC;
-	--light-link: var(--light-accent);
-	--light-shadow: rgba(0, 0, 0, 0.25);
-	--light-glow: rgba(255, 255, 255, 0.75);
-	--light-icon: #2C2C2E;
-
-	/* ======================== */
-	/* Default Theme (Dark)     */
-	/* ======================== */
-	--bg-color: var(--dark-bg);
-	--content-bg: var(--dark-content-bg);
-	--text-color: var(--dark-text);
-	--secondary-text: var(--dark-secondary-text);
-	--border-color: var(--dark-border);
-	--accent-color: var(--dark-accent);
-	--hover-color: var(--dark-hover);
-	--link-color: var(--dark-link);
-	--shadow-color: var(--dark-shadow);
-	--glow-color: var(--dark-glow);
-	--icon-color: var(--dark-icon);
-	--social-icon-text-color: var(--dark-text);
-
-	/* ======================== */
-	/* Effects & Decoration     */
-	/* ======================== */
-	--backdrop-blur: saturate(180%) blur(28px);
-	--bubble-gradient: radial-gradient(
-		circle at top left,
-		rgba(255, 255, 255, 0.08),
-		transparent 70%
-	);
-	--bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
-	--bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-
-	/* ======================== */
-	/* Border Radii           */
-	/* ======================== */
-	--radius-xl: 28px;
-	--radius-lg: 20px;
-	--radius-md: 14px;
-
-	/* ======================== */
-	/* Transitions            */
-	/* ======================== */
-	--transition-fast: 0.2s ease;
-	--transition-medium: 0.3s ease;
-	--transition-slow: 0.5s ease;
-}
-
-/* ======================== */
-/* Light Mode Overrides     */
-/* ======================== */
-body.light-e {
-	--bg-color: var(--light-bg);
-	--content-bg: var(--light-content-bg);
-	--text-color: var(--light-text);
-	--secondary-text: var(--light-secondary-text);
-	
-	/* ✨ FIX: A darker border that's visible on a light background. */
-	--border-color: rgba(50, 50, 50, 0.2); 
-
-	--accent-color: var(--light-accent);
-	--hover-color: var(--light-hover);
-	--link-color: var(--light-link);
-	--shadow-color: var(--light-shadow);
-	--glow-color: var(--light-glow);
-	--icon-color: var(--light-icon);
-	--social-icon-text-color: var(--light-text);
-
-	--bubble-gradient: radial-gradient(
-		circle at top left,
-		rgba(255, 255, 255, 0.6),
-		rgba(255, 255, 255, 0.15) 70%
-	);
-	
-	/* ✨ FIX: Redefined outer shadow for light mode using your variable. */
-	--bubble-shadow: 0 12px 32px var(--light-shadow);
-	
-	/* ✨ FIX: A subtle DARK inner shadow creates the beveled edge. */
-	--bubble-highlight: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
-	
-	--backdrop-blur: saturate(180%) blur(28px);
-}
-
-/* General Body Styling */
+/* General Body Styling is inherited from styles.css */
 body {
     font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 20px;
     background-color: var(--bg-color);
     color: var(--text-color);
-    line-height: 1.6;
-    transition: all 0.3s ease;
-    min-height: 100vh;
 }
 
 /* ======================================== */
-/* == Header & Navigation == */
+/* == Header & Navigation (Onyx Glass) == */
 /* ======================================== */
 
-header {
-    background: linear-gradient(145deg,
-        color-mix(in srgb, var(--content-bg) 98%, white),
-        var(--content-bg));
-    backdrop-filter: blur(12px);
+header,
+.category-dropdown {
+    background: var(--content-bg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border-radius: var(--radius-lg);
     border: 1px solid var(--border-color);
-    color: var(--text-color);
+    background-image: var(--bubble-gradient);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
     padding: 25px;
-    border-radius: 20px;
     margin: 20px 0 30px 0;
+    position: relative;
 }
 
 .header-content {
@@ -182,20 +68,14 @@ header {
     transform: translateY(-2px);
     background: var(--accent-color);
     border-color: var(--accent-color);
-    color: var(--accent-text-color, white);
+    color: #fff; /* Explicit color for contrast */
     box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
-/* Modern Category Dropdown */
+/* Category Dropdown */
 .category-dropdown {
-    background: linear-gradient(145deg,
-        color-mix(in srgb, var(--content-bg) 98%, white),
-        var(--content-bg));
-    border: 1px solid var(--border-color);
     padding: 20px;
-    border-radius: 20px;
     margin-bottom: 30px;
-    position: relative;
 }
 
 .category-dropdown label {
@@ -224,7 +104,8 @@ header {
     content: '▼';
     position: absolute;
     right: 35px;
-    bottom: 32px;
+    top: 50%;
+    transform: translateY(50%);
     color: var(--secondary-text);
     font-size: 0.8rem;
     pointer-events: none;
@@ -232,7 +113,6 @@ header {
 
 #categories:hover {
     border-color: var(--accent-color);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 15%, transparent);
 }
 
 #categories:focus {
@@ -242,23 +122,25 @@ header {
 }
 
 /* ======================================== */
-/* == Product Grid & Cards (Unified Style) == */
+/* == Product Grid & Cards (Onyx Glass) == */
 /* ======================================== */
 
 .product-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
-    margin: 0;
-    padding: 0;
 }
 
 .product-item {
-    background: linear-gradient(145deg,
-        color-mix(in srgb, var(--content-bg) 98%, white),
-        var(--content-bg));
+    /* Applying Onyx Glass effect */
+    background: var(--content-bg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
     border: 1px solid var(--border-color);
-    border-radius: 20px;
+    background-image: var(--bubble-gradient);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    
+    border-radius: var(--radius-lg);
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -277,7 +159,7 @@ header {
 .product-image-container {
     width: 100%;
     aspect-ratio: 1;
-    border-radius: 14px;
+    border-radius: var(--radius-md);
     overflow: hidden;
     margin-bottom: 20px;
 }
@@ -304,7 +186,7 @@ header {
 /* Price Styling */
 .product-item .price {
     font-size: 1.3rem;
-    color: var(--text-color);
+    color: var(--accent-color);
     font-weight: 700;
     margin: 10px 0;
 }
@@ -338,7 +220,7 @@ header {
     transform: translateY(-2px);
     background: var(--accent-color);
     border-color: var(--accent-color);
-    color: var(--accent-text-color, white);
+    color: #fff;
     box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
@@ -386,22 +268,16 @@ header {
 
 @media (max-width: 768px) {
     body { padding: 15px; }
-    header { padding: 20px; margin: 15px 0 25px 0; }
+    header, .category-dropdown { padding: 20px; margin: 15px 0 25px 0; }
     .product-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
     .product-item { padding: 15px; }
     .header-content h1 { font-size: 1.8rem; }
-    .buy-now { padding: 10px 20px; }
-    .category-dropdown { padding: 15px; }
-    #categories { padding: 14px 18px; }
-    .category-dropdown::after { right: 30px; bottom: 28px; }
 }
 
 @media (max-width: 480px) {
     body { padding: 10px; }
-    header { padding: 15px; margin: 10px 0 20px 0; }
+    header, .category-dropdown { padding: 15px; margin: 10px 0 20px 0; }
     .product-grid { grid-template-columns: 1fr; gap: 15px; }
-    .product-item { padding: 12px; }
-    .category-dropdown { padding: 12px; }
-    #categories { padding: 12px 16px; font-size: 0.95rem; }
+    #categories { font-size: 0.95rem; }
     .category-dropdown label { font-size: 1rem; }
 }
