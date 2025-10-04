@@ -712,12 +712,12 @@ a.corner-button {
 	border-radius: 999px;
 
 	/* Applying the glass effect directly to the button */
-	background: var(--content-bg);
-	backdrop-filter: saturate(180%) blur(30px);
-	-webkit-backdrop-filter: saturate(180%) blur(30px);
+	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+	backdrop-filter: saturate(180%) blur(20px);
+	-webkit-backdrop-filter: saturate(180%) blur(20px);
 	border: 1px solid var(--border-color);
 	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
 		0 8px 15px -4px rgba(0, 0, 0, 0.3);
 
 	color: var(--text-color);
@@ -731,7 +731,7 @@ a.corner-button {
 	color: var(--accent-color);
 	transform: translateY(-3px) scale(1.03);
 	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
 		0 10px 20px -5px var(--shadow-color);
 }
 
@@ -906,7 +906,7 @@ a.corner-button {
 /* == Disabilities Section (iOS 26 Style) == */
 /* ======================================== */
 .disabilities-section {
-	/* Applying the new iOS 26 glass effect */
+	/* Main container uses the iOS 26 glass effect */
 	background: var(--content-bg);
 	backdrop-filter: saturate(180%) blur(30px);
 	-webkit-backdrop-filter: saturate(180%) blur(30px);
@@ -919,6 +919,11 @@ a.corner-button {
 	padding: 30px;
 	margin-bottom: 30px;
 	transition: background var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+.disabilities-section h2, .disabilities-section p {
+    position: relative; /* Ensures text stays above the blur */
+    z-index: 1;
 }
 
 .disabilities-section h2 {
@@ -943,20 +948,28 @@ a.corner-button {
 	gap: 12px;
 }
 
-/* Modern, Cleaner Button Links */
+/* --- Buttons now have the "iOS 26" Glass Effect --- */
 .disabilities-section a {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var(--accent-color);
+	padding: 12px 18px;
 	font-weight: 500;
 	text-decoration: none;
-	padding: 12px 18px;
 	border-radius: 25px;
-	background: color-mix(in srgb, var(--content-bg) 50%, transparent);
-	border: 1px solid var(--border-color);
-	transition: all 0.3s ease;
 	text-align: center;
+
+	/* Applying the glass effect directly to the button */
+	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+	backdrop-filter: saturate(180%) blur(20px);
+	-webkit-backdrop-filter: saturate(180%) blur(20px);
+	border: 1px solid var(--border-color);
+	box-shadow: 
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
+		0 8px 15px -4px rgba(0, 0, 0, 0.3);
+
+	color: var(--text-color);
+	transition: all 0.3s ease;
 }
 
 .disabilities-section a span.button-text {
@@ -970,11 +983,13 @@ a.corner-button {
 }
 
 .disabilities-section a:hover {
-	background: var(--accent-color);
-	color: #fff; /* Ensure contrast */
+	background: color-mix(in srgb, var(--accent-color) 20%, transparent);
 	border-color: var(--accent-color);
-	transform: translateY(-3px);
-	box-shadow: 0 0 12px var(--accent-color);
+	color: var(--accent-color);
+	transform: translateY(-3px) scale(1.03);
+	box-shadow: 
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
+		0 10px 20px -5px var(--shadow-color);
 }
 
 /* ======================== */
@@ -2199,7 +2214,7 @@ body.maintenance-active {
 	color: var(--secondary-text);
 }
 
-/* --- Contact Info Button --- */
+/* --- Contact Info Button now has the "iOS 26" Glass Effect --- */
 .contact-info {
 	margin-top: 30px;
 	padding-top: 25px;
@@ -2209,21 +2224,31 @@ body.maintenance-active {
 .contact-info a {
 	display: inline-block;
 	padding: 14px 36px;
-	background: color-mix(in srgb, var(--content-bg) 50%, transparent);
-	color: var(--accent-color);
-	border-radius: 9999px;
 	text-decoration: none;
 	font-weight: 700;
+	border-radius: 9999px;
+
+	/* Applying the glass effect directly to the button */
+	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+	backdrop-filter: saturate(180%) blur(20px);
+	-webkit-backdrop-filter: saturate(180%) blur(20px);
 	border: 1px solid var(--border-color);
+	box-shadow: 
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
+		0 8px 15px -4px rgba(0, 0, 0, 0.3);
+
+	color: var(--text-color);
 	transition: all 0.3s ease;
 }
 .contact-info a:hover,
 .contact-info a:focus {
-	transform: translateY(-3px);
-	background: var(--accent-color);
-	color: #fff;
+	background: color-mix(in srgb, var(--accent-color) 20%, transparent);
 	border-color: var(--accent-color);
-	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 40%, transparent);
+	color: var(--accent-color);
+	transform: translateY(-3px) scale(1.03);
+	box-shadow: 
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
+		0 10px 20px -5px var(--shadow-color);
 	outline: none;
 }
 
