@@ -146,18 +146,15 @@ body {
   background: var(--content-bg);
   backdrop-filter: saturate(180%) blur(30px);
   -webkit-backdrop-filter: saturate(180%) blur(30px);
-  border-radius: var(--radius-xl); /* Softer corners */
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border-color);
   padding: 24px;
   margin-bottom: 32px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
-  background-image: none; /* Removing the old bubble gradient */
+  background-image: none;
 
-  /* This is the new "iOS 26" multi-layered shadow */
   box-shadow: 
-    /* 1. Inner highlight for the 3D edge */
     inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
-    /* 2. Deep, diffused shadow for a floating effect */
     0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
@@ -175,7 +172,23 @@ body {
     rgba(255, 255, 255, 0)
   );
   pointer-events: none;
-  opacity: 0.5; /* Soften the reflection */
+  opacity: 0.5;
+}
+
+/* ======================================== */
+/* == NEW iOS-Style Focus Ring ========== */
+/* ======================================== */
+
+/* Remove the default outline on all focused elements first */
+*:focus-visible {
+    outline: none;
+}
+
+/* When the focus outline is NOT disabled in your settings, 
+  apply this new, softer box-shadow style to focused elements.
+*/
+body:not(.focus-outline-disabled) *:focus-visible {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
 /* ======================================== */
