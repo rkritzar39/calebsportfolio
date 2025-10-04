@@ -49,8 +49,8 @@
     --shadow-elevation-1: 0 1px 1px rgba(0,0,0,0.08);
     --shadow-elevation-2: 0 4px 10px rgba(0,0,0,0.12);
 
-    /* Glass / Translucent Material Variables --- Onyx Refinement */
-    --glass-blur: blur(25px); /* Slightly more subtle blur */
+    /* Glass / Translucent Material Variables --- iOS 26 Refinement */
+    --glass-blur: blur(30px); /* Deeper, more authentic blur */
     --glass-bg-light: rgba(242, 242, 247, 0.8);
     --glass-border-light: rgba(0, 0, 0, 0.1);
     --glass-bg-dark: rgba(28, 28, 30, 0.75);   /* Onyx Material */
@@ -74,14 +74,46 @@ body.dark-mode {
     --shadow-elevation-2: 0 8px 16px rgba(0,0,0,0.35); /* Deeper shadow for Onyx */
 }
 
-/* Base body styles for iOS font stack and anti-aliasing */
+/* Base body styles */
 body {
-    /* Prioritize SF Pro for a more authentic macOS feel */
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--bg-color); /* Apply base background */
-    color: var(--text-color); /* Apply base text color */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+/* ======================================================= */
+/* === "iOS 26" Glass Element Styling ==================== */
+/* ======================================================= */
+
+/* This is the shared style for all glass panels */
+.settings-header,
+.settings-subsection,
+footer,
+#cookie-consent-banner {
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border-light);
+    border-radius: 1.25rem; /* Softer, larger radius */
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+
+    /* The new multi-layered "iOS 26" shadow */
+    box-shadow: 
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.2), /* Inner highlight */
+        0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Deep shadow */
+}
+
+/* Dark mode overrides for the glass panels */
+body.dark-mode .settings-header,
+body.dark-mode .settings-subsection,
+body.dark-mode footer,
+body.dark-mode #cookie-consent-banner {
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-border-dark);
+    box-shadow: 
+        inset 0 0 0 1.5px rgba(255, 255, 255, 0.1), /* Softer inner highlight for dark mode */
+        0 25px 50px -12px rgba(0, 0, 0, 0.5); /* Deeper shadow for dark mode */
 }
 
 /* ======================================================= */
@@ -383,17 +415,68 @@ body.settings-page #appearanceModeSelect {
     margin-left: 0.625rem;
 }
 
-/* ========== Material Switch ========== */
+/* ======================================================= */
+/* === NEW "iOS 26" Toggle Switch ======================== */
+/* ======================================================= */
 .md-switch {
-    --width: 2.25rem; --height: 1.25rem; --thumb-size: 1rem;
-    display: inline-flex; align-items: center; position: relative;
-    width: var(--width); height: var(--height); flex-shrink: 0;
+    --width: 3.1875rem; /* 51px */
+    --height: 1.9375rem; /* 31px */
+    --thumb-size: 1.6875rem; /* 27px */
+    --padding: 0.125rem; /* 2px */
+
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    width: var(--width);
+    height: var(--height);
+    flex-shrink: 0;
 }
-.md-switch input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; z-index: 2; }
-.md-switch .track { width: var(--width); height: var(--height); background: var(--toggle-off); border-radius: 999px; transition: background 0.18s; }
-.md-switch .thumb { position: absolute; top: 50%; left: 0.125rem; transform: translateY(-50%); width: var(--thumb-size); height: var(--thumb-size); background: var(--slider-thumb-color); border-radius: 50%; transition: left 0.18s; }
-.md-switch input:checked ~ .track { background: var(--toggle-on); }
-.md-switch input:checked ~ .track .thumb { left: calc(var(--width) - var(--thumb-size) - 0.125rem); }
+
+.md-switch input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.md-switch .track {
+    width: var(--width);
+    height: var(--height);
+    background: var(--toggle-off);
+    border-radius: 999px;
+    transition: background 0.2s ease;
+}
+
+.md-switch .thumb {
+    position: absolute;
+    top: var(--padding);
+    left: var(--padding);
+    width: var(--thumb-size);
+    height: var(--thumb-size);
+    background: var(--slider-thumb-color);
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Softer shadow */
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1.2); /* Bouncy transition */
+}
+
+.md-switch input:checked ~ .track {
+    background: var(--toggle-on);
+}
+
+.md-switch input:checked ~ .track .thumb {
+    transform: translateX(calc(var(--width) - var(--thumb-size) - (2 * var(--padding))));
+}
+
+/* "Squish" animation on click */
+.md-switch input:active ~ .track .thumb {
+    transform: scale(0.85);
+}
+
+.md-switch input:checked:active ~ .track .thumb {
+    transform: translateX(calc(var(--width) - var(--thumb-size) - (2 * var(--padding)))) scale(0.85);
+}
 
 /* ========== Text Size Slider --- iOS 26 REDESIGN ========== */
 .setting-card:has(.text-size-control) { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
