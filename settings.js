@@ -251,7 +251,8 @@ class SettingsManager {
     applyAppearanceMode() {
         let isDark = this.settings.appearanceMode === 'dark' || (this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.body.classList.toggle('dark-mode', isDark);
-        document.body.classList.toggle('light-mode', !isDark);
+        // === THIS IS THE ONLY LINE THAT CHANGED ===
+        document.body.classList.toggle('light-e', !isDark); 
         this.checkAccentColor(this.settings.accentColor);
     }
 
@@ -267,8 +268,6 @@ class SettingsManager {
     }
 
     applySectionVisibility(sectionId, status) {
-        // This check is important because this script runs on all pages,
-        // but the sections only exist on the homepage.
         const section = document.getElementById(sectionId);
         if (section) {
             section.style.display = status === 'enabled' ? '' : 'none';
@@ -276,7 +275,7 @@ class SettingsManager {
     }
 
     initMouseTrail() {
-        if (document.getElementById('mouse-trail')) return; // Prevent creating multiple trails
+        if (document.getElementById('mouse-trail')) return;
         const trailContainer = document.createElement('div');
         trailContainer.id = 'mouse-trail';
         document.body.appendChild(trailContainer);
