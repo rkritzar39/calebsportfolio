@@ -122,7 +122,6 @@ body.dark-mode {
 /* ======================== */
 /* Base Styles              */
 /* ======================== */
-/* In the Base Styles section, ensure the body font-size is 1rem */
 body {
   background: var(--bg-color);
   color: var(--text-color);
@@ -130,7 +129,7 @@ body {
   margin: 0;
   padding: 32px;
   line-height: var(--line-height-base);
-  font-size: 1rem; /* This ensures the body inherits the new root font size */
+  font-size: var(--font-size-base, 20px);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background 0.4s ease, color 0.4s ease;
