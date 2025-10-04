@@ -118,7 +118,7 @@ html.dark-mode body {
 }
 
 /* ======================== */
-/* Base Styles – Onyx Bubble Glass */
+/* Base Styles              */
 /* ======================== */
 body {
   background: var(--bg-color);
@@ -140,19 +140,25 @@ body {
 }
 
 /* ======================== */
-/* Glass Section / Card     */
+/* "iOS 26" Glass Section   */
 /* ======================== */
 .section {
   background: var(--content-bg);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  border-radius: var(--radius-lg);
+  backdrop-filter: saturate(180%) blur(30px);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  border-radius: var(--radius-xl); /* Softer corners */
   border: 1px solid var(--border-color);
-  background-image: var(--bubble-gradient);
-  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
   padding: 24px;
   margin-bottom: 32px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
+  background-image: none; /* Removing the old bubble gradient */
+
+  /* This is the new "iOS 26" multi-layered shadow */
+  box-shadow: 
+    /* 1. Inner highlight for the 3D edge */
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
+    /* 2. Deep, diffused shadow for a floating effect */
+    0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .section::before {
@@ -169,6 +175,7 @@ body {
     rgba(255, 255, 255, 0)
   );
   pointer-events: none;
+  opacity: 0.5; /* Soften the reflection */
 }
 
 /* ======================================== */
