@@ -659,20 +659,16 @@ a.corner-button {
 }
 
 /* ======================================== */
-/* == Useful Links Section (iOS 26 Style) == */
+/* == Useful Links Section – Onyx Bubble Glass == */
 /* ======================================== */
 .useful-links-section {
-	/* Main container uses the iOS 26 glass effect */
 	background: var(--content-bg);
-	backdrop-filter: saturate(180%) blur(30px);
-	-webkit-backdrop-filter: saturate(180%) blur(30px);
-	border-radius: var(--radius-xl);
-	border: 1px solid var(--border-color);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
-		0 25px 50px -12px rgba(0, 0, 0, 0.5);
-	
+	background-image: var(--bubble-gradient);
 	padding: 30px;
+	border-radius: var(--radius-xl);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
 	margin: 25px 0;
 	width: 100%;
 	box-sizing: border-box;
@@ -682,7 +678,7 @@ a.corner-button {
 
 /* Title Styling */
 .useful-links-section h2 {
-	font-size: calc(var(--font-size-base, 20px) * 1.44);
+	font-size: calc(var(--font-size-base, 20px) * 1.44); /* ✨ Updated for text scaling ✨ */
 	margin-bottom: 25px;
 	color: var(--text-color);
 	text-align: center;
@@ -698,7 +694,7 @@ a.corner-button {
 	box-sizing: border-box;
 }
 
-/* --- Pill Buttons now have the "iOS 26" Glass Effect --- */
+/* --- Pill Buttons with Onyx Bubble Glass --- */
 .link-button {
 	display: flex;
 	align-items: center;
@@ -711,14 +707,12 @@ a.corner-button {
 	box-sizing: border-box;
 	border-radius: 999px;
 
-	/* Applying the glass effect directly to the button */
-	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
-	backdrop-filter: saturate(180%) blur(20px);
-	-webkit-backdrop-filter: saturate(180%) blur(20px);
-	border: 1px solid var(--border-color);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
-		0 8px 15px -4px rgba(0, 0, 0, 0.3);
+	/* Onyx Bubble Glass styling */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
 
 	color: var(--text-color);
 	transition: all 0.3s ease;
@@ -726,13 +720,12 @@ a.corner-button {
 
 /* Hover / Active State */
 .link-button:hover {
-	background: color-mix(in srgb, var(--accent-color) 20%, transparent);
+	background: var(--accent-color);
 	border-color: var(--accent-color);
-	color: var(--accent-color);
-	transform: translateY(-3px) scale(1.03);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
-		0 10px 20px -5px var(--shadow-color);
+	color: var(--content-bg);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 18px var(--shadow-color),
+				  0 0 12px var(--accent-color);
 }
 
 /* --- Responsive Design --- */
@@ -740,14 +733,15 @@ a.corner-button {
 	.useful-links-section { padding: 20px; }
 	.links-container { grid-template-columns: 1fr; gap: 15px; }
 	.link-button { padding: 12px 20px; font-size: 0.95em; }
-	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.28); }
+	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.28); } /* ✨ Updated for text scaling ✨ */
 }
 
 @media screen and (max-width: 480px) {
 	.useful-links-section { padding: 15px; }
 	.link-button { padding: 12px 16px; }
-	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.12); }
+	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.12); } /* ✨ Updated for text scaling ✨ */
 }
+
 
 /* ======================================== */
 /* == Tech Information Section – Onyx Bubble Glass == */
@@ -902,28 +896,20 @@ a.corner-button {
 	.battery-percentage { font-size: calc(var(--font-size-base, 20px) * 0.6); } /* ✨ Updated for text scaling ✨ */
 }
 
-/* ======================================== */
-/* == Disabilities Section (iOS 26 Style) == */
-/* ======================================== */
+/* ======================== */
+/* Disabilities Section – Onyx Bubble Glass */
+/* ======================== */
 .disabilities-section {
-	/* Main container uses the iOS 26 glass effect */
 	background: var(--content-bg);
-	backdrop-filter: saturate(180%) blur(30px);
-	-webkit-backdrop-filter: saturate(180%) blur(30px);
+	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-xl);
-	border: 1px solid var(--border-color);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
-		0 25px 50px -12px rgba(0, 0, 0, 0.5);
-
 	padding: 30px;
 	margin-bottom: 30px;
+	border: 1px solid var(--border-color);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
 	transition: background var(--transition-medium), box-shadow var(--transition-medium);
-}
-
-.disabilities-section h2, .disabilities-section p {
-    position: relative; /* Ensures text stays above the blur */
-    z-index: 1;
 }
 
 .disabilities-section h2 {
@@ -948,28 +934,26 @@ a.corner-button {
 	gap: 12px;
 }
 
-/* --- Buttons now have the "iOS 26" Glass Effect --- */
+/* Modern Button Links – Bubble Glass */
 .disabilities-section a {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 12px 18px;
+	color: var(--accent-color);
 	font-weight: 500;
 	text-decoration: none;
+	padding: 12px 18px;
 	border-radius: 25px;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border: 1px solid var(--accent-color);
+	box-shadow: var(--bubble-highlight);
+	transition: transform var(--transition-medium), background var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
 	text-align: center;
-
-	/* Applying the glass effect directly to the button */
-	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
-	backdrop-filter: saturate(180%) blur(20px);
-	-webkit-backdrop-filter: saturate(180%) blur(20px);
-	border: 1px solid var(--border-color);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
-		0 8px 15px -4px rgba(0, 0, 0, 0.3);
-
-	color: var(--text-color);
-	transition: all 0.3s ease;
+	position: relative;
+	overflow: hidden;
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
 }
 
 .disabilities-section a span.button-text {
@@ -983,13 +967,15 @@ a.corner-button {
 }
 
 .disabilities-section a:hover {
-	background: color-mix(in srgb, var(--accent-color) 20%, transparent);
-	border-color: var(--accent-color);
-	color: var(--accent-color);
-	transform: translateY(-3px) scale(1.03);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
-		0 10px 20px -5px var(--shadow-color);
+	background: var(--hover-color);
+	color: var(--dark-text);
+	transform: translateY(-3px);
+	box-shadow: 0 0 12px var(--accent-color), 0 0 24px var(--accent-color);
+}
+
+.disabilities-section a:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 4px var(--dark-hover);
 }
 
 /* ======================== */
@@ -2041,22 +2027,18 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* == Business Info Section (iOS 26 Style) == */
+/* == Business Info Section – Onyx Bubble Glass == */
 /* ======================================== */
 
 .business-info-section {
-	/* Applying the new iOS 26 glass effect */
 	background: var(--content-bg);
-	backdrop-filter: saturate(180%) blur(30px);
-	-webkit-backdrop-filter: saturate(180%) blur(30px);
+	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-xl);
-	border: 1px solid var(--border-color);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
-		0 25px 50px -12px rgba(0, 0, 0, 0.5);
-	
 	padding: clamp(20px, 4vw, 30px);
 	margin: 30px 0;
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur) saturate(120%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
 	width: 100%;
 	box-sizing: border-box;
 	position: relative;
@@ -2150,10 +2132,11 @@ body.maintenance-active {
 	max-width: 400px;
 }
 
-/* --- Cleaner Regular Hours List --- */
+/* --- Regular Hours List --- */
 .hours-list {
 	margin: 25px 0;
 	border-radius: 20px;
+	backdrop-filter: blur(12px) saturate(120%);
 }
 .hours-list ul { list-style: none; padding: 0; margin: 0; }
 .hours-list li {
@@ -2163,15 +2146,14 @@ body.maintenance-active {
 	padding: 14px 16px;
 	border-radius: 14px;
 	margin-bottom: 10px;
-	/* A clean, non-glass background for items on the glass panel */
-	background: color-mix(in srgb, var(--bg-color) 30%, transparent);
-	border: 1px solid var(--border-color);
-	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	background: color-mix(in srgb, var(--content-bg) 70%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .hours-list li:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent);
 }
 .hours-list li strong { color: var(--text-color); font-weight: 600; }
 .hours-list li span { color: var(--secondary-text); font-weight: 500; }
@@ -2194,10 +2176,10 @@ body.maintenance-active {
 	gap: 14px;
 }
 .special-hours-display li {
-	background: color-mix(in srgb, var(--bg-color) 30%, transparent);
+	background: color-mix(in srgb, var(--content-bg) 70%, transparent);
 	padding: 16px 22px;
 	border-radius: 18px;
-	border: 1px solid var(--border-color);
+	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 	box-shadow: 0 4px 15px color-mix(in srgb, var(--shadow-color) 25%, transparent);
 }
 .special-hours-display li .hours-container {
@@ -2214,7 +2196,7 @@ body.maintenance-active {
 	color: var(--secondary-text);
 }
 
-/* --- Contact Info Button now has the "iOS 26" Glass Effect --- */
+/* --- Contact Info Button --- */
 .contact-info {
 	margin-top: 30px;
 	padding-top: 25px;
@@ -2224,31 +2206,20 @@ body.maintenance-active {
 .contact-info a {
 	display: inline-block;
 	padding: 14px 36px;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	color: var(--accent-color);
+	border-radius: 9999px;
 	text-decoration: none;
 	font-weight: 700;
-	border-radius: 9999px;
-
-	/* Applying the glass effect directly to the button */
-	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
-	backdrop-filter: saturate(180%) blur(20px);
-	-webkit-backdrop-filter: saturate(180%) blur(20px);
-	border: 1px solid var(--border-color);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
-		0 8px 15px -4px rgba(0, 0, 0, 0.3);
-
-	color: var(--text-color);
-	transition: all 0.3s ease;
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
 }
 .contact-info a:hover,
 .contact-info a:focus {
-	background: color-mix(in srgb, var(--accent-color) 20%, transparent);
-	border-color: var(--accent-color);
-	color: var(--accent-color);
-	transform: translateY(-3px) scale(1.03);
-	box-shadow: 
-		inset 0 0 0 1.5px rgba(255, 255, 255, 0.1),
-		0 10px 20px -5px var(--shadow-color);
+	transform: translateY(-3px);
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent);
 	outline: none;
 }
 
@@ -2268,6 +2239,152 @@ body.maintenance-active {
 	.hours-list li { padding: 10px 12px; font-size: 0.9em; }
 	.special-hours-display li { padding: 12px 14px; font-size: 0.9em; }
 	.contact-info a { padding: 10px 24px; font-size: 0.9em; }
+}
+
+/* ======================================== */
+/* == Admin Panel Styles (Clean & Modern Upgrade) == */
+/* ======================================== */
+
+/* --- Form Inputs --- */
+.admin-form-input,
+.day-hours-group input[type="time"],
+.special-hours-list input[type="time"],
+.special-hours-list input[type="date"],
+.special-hours-list input[type="text"] {
+	width: 100%;
+	padding: 12px 14px;
+	border: 1px solid var(--border-color);
+	background-color: var(--bg-color);
+	border-radius: 10px;
+	font-size: 1em;
+	color: var(--text-color);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.admin-form-input:focus,
+.day-hours-group input[type="time"]:focus,
+.special-hours-list input[type="time"]:focus,
+.special-hours-list input[type="date"]:focus,
+.special-hours-list input[type="text"]:focus {
+	outline: none;
+	border-color: var(--accent-color);
+	box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.15);
+}
+
+/* --- Admin Section Cards --- */
+.admin-section-card {
+	background: color-mix(in srgb, var(--border-color) 15%, transparent);
+	padding: 20px 25px;
+	border-radius: 16px;
+	margin-bottom: 25px;
+	border: 1px solid var(--border-color);
+}
+
+.admin-section-card h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--border-color);
+	font-size: 1.3em;
+	color: var(--text-color);
+}
+
+/* --- Hours Grid --- */
+.hours-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 20px;
+}
+
+.day-hours-group {
+	background: var(--bg-color);
+	padding: 20px;
+	border-radius: 12px;
+	border: 1px solid var(--border-color);
+	transition: box-shadow 0.2s ease;
+}
+.day-hours-group:focus-within {
+	box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
+}
+.day-hours-group > label {
+	display: block;
+	margin-bottom: 15px;
+	font-weight: 600;
+	font-size: 1.1em;
+	color: var(--text-color);
+}
+.day-hours-group .time-inputs {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 15px;
+}
+.day-hours-group .form-group.checkbox-group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px;
+	border-radius: 8px;
+	background-color: color-mix(in srgb, var(--border-color) 30%, transparent);
+}
+.day-hours-group .form-group.checkbox-group label {
+	margin-bottom: 0;
+	font-weight: 500;
+	color: var(--secondary-text);
+	cursor: pointer;
+}
+
+/* --- Special Hours List Admin --- */
+.special-hours-list .hour-entry {
+	background: var(--bg-color);
+	padding: 20px;
+	border-radius: 12px;
+	border: 1px solid var(--border-color);
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 15px 20px;
+	align-items: flex-start;
+}
+.special-hours-list .hour-entry .form-group:has(label[for*="-label-"]),
+.special-hours-list .hour-entry .time-inputs,
+.special-hours-list .hour-entry .checkbox-group {
+	grid-column: 1 / -1;
+}
+.special-hours-list .hour-entry .remove-hour-button {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	background: none;
+	border: none;
+	color: var(--secondary-text);
+	cursor: pointer;
+	padding: 5px;
+	font-size: 1.4em;
+	line-height: 1;
+	opacity: 0.6;
+	transition: opacity 0.2s, color 0.2s, transform 0.2s ease;
+}
+.special-hours-list .hour-entry .remove-hour-button:hover {
+	opacity: 1;
+	color: var(--color-danger);
+	transform: scale(1.1);
+}
+
+/* --- Admin Preview Styles --- */
+.admin-preview-container {
+	border: 1px solid var(--border-color);
+	background: var(--bg-color);
+	padding: 25px;
+	border-radius: 16px;
+	margin-top: 30px;
+}
+.admin-preview-container h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--border-color);
+	font-size: 1.2em;
+	color: var(--accent-color);
 }
 
 /* Prevent printing of the page */
