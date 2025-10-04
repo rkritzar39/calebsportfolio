@@ -1,68 +1,116 @@
-/* ======================================== */
-/* == Theme & General Styles == */
-/* ======================================== */
-
-/* Theme Variables */
 :root {
-    /* Light Mode Colors */
-    --light-bg: #f9f9f9;
-    --light-content-bg: #ffffff;
-    --light-text: #212529;
-    --light-secondary-text: #6c757d;
-    --light-border: #dee2e6;
-    --light-accent: #007bff;
-    --light-hover: #0056b3;
-    --light-link: #007bff;
-    --light-shadow: rgba(0, 0, 0, 0.1);
+	/* ======================== */
+	/* Base Sizing            */
+	/* ======================== */
+	font-size: 16px;
+	--line-height-base: 1.65;
 
-    /* Dark Mode Colors */
-    --dark-bg: #121212;
-    --dark-content-bg: #1f1f1f;
-    --dark-text: #e0e0e0;
-    --dark-secondary-text: #a0a0a0;
-    --dark-border: #333333;
-    /* ✨ REMOVED: --dark-accent is no longer needed here as it's controlled by JS */
-    --dark-hover: #0056b3;
-    --dark-link: #bb86fc;
-    --dark-shadow: rgba(0, 0, 0, 0.3);
+	/* ======================== */
+	/* Dark Gray Glass Palette  */
+	/* ======================== */
+	--dark-bg: #0E0E0E;
+	--dark-content-bg: rgba(28, 28, 28, 0.6);
+	--dark-text: #F0F0F0;
+	--dark-secondary-text: #A3A3A3;
+	--dark-border: rgba(255, 255, 255, 0.08);
+	--dark-accent: #4EA8FF;
+	--dark-hover: #2F89E5;
+	--dark-link: var(--dark-accent);
+	--dark-shadow: rgba(0, 0, 0, 0.65);
+	--dark-glow: rgba(255, 255, 255, 0.05);
+	--dark-icon: #D1D1D1;
 
-    /* Default Theme (Dark) */
-    --bg-color: var(--dark-bg);
-    --content-bg: var(--dark-content-bg);
-    --text-color: var(--dark-text);
-    --secondary-text: var(--dark-secondary-text);
-    --border-color: var(--dark-border);
-    /* ✨ UPDATED: --accent-color is now set by the settings.js script, but we can keep a fallback */
-    --accent-color: #3ddc84; 
-    --accent-text-color: white; /* Fallback color */
-    --hover-color: var(--dark-hover);
-    --link-color: var(--dark-link);
-    --shadow-color: var(--dark-shadow);
+	/* ======================== */
+	/* Light Glass Palette      */
+	/* ======================== */
+	--light-bg: #E9ECF1;
+	--light-content-bg: rgba(255, 255, 255, 0.55);
+	--light-text: #111111;
+	--light-secondary-text: #4B5563;
+	--light-border: rgba(255, 255, 255, 0.6); /* Original, unused in favor of corrected value */
+	--light-accent: #007AFF;
+	--light-hover: #005FCC;
+	--light-link: var(--light-accent);
+	--light-shadow: rgba(0, 0, 0, 0.25);
+	--light-glow: rgba(255, 255, 255, 0.75);
+	--light-icon: #2C2C2E;
+
+	/* ======================== */
+	/* Default Theme (Dark)     */
+	/* ======================== */
+	--bg-color: var(--dark-bg);
+	--content-bg: var(--dark-content-bg);
+	--text-color: var(--dark-text);
+	--secondary-text: var(--dark-secondary-text);
+	--border-color: var(--dark-border);
+	--accent-color: var(--dark-accent);
+	--hover-color: var(--dark-hover);
+	--link-color: var(--dark-link);
+	--shadow-color: var(--dark-shadow);
+	--glow-color: var(--dark-glow);
+	--icon-color: var(--dark-icon);
+	--social-icon-text-color: var(--dark-text);
+
+	/* ======================== */
+	/* Effects & Decoration     */
+	/* ======================== */
+	--backdrop-blur: saturate(180%) blur(28px);
+	--bubble-gradient: radial-gradient(
+		circle at top left,
+		rgba(255, 255, 255, 0.08),
+		transparent 70%
+	);
+	--bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
+	--bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+	/* ======================== */
+	/* Border Radii           */
+	/* ======================== */
+	--radius-xl: 28px;
+	--radius-lg: 20px;
+	--radius-md: 14px;
+
+	/* ======================== */
+	/* Transitions            */
+	/* ======================== */
+	--transition-fast: 0.2s ease;
+	--transition-medium: 0.3s ease;
+	--transition-slow: 0.5s ease;
 }
 
-/* Theme Classes */
-.light-mode {
-    --bg-color: var(--light-bg);
-    --content-bg: var(--light-content-bg);
-    --text-color: var(--light-text);
-    --secondary-text: var(--light-secondary-text);
-    --border-color: var(--light-border);
-    /* ✨ REMOVED: --accent-color from here to ensure global override works */
-    --hover-color: var(--light-hover);
-    --link-color: var(--light-link);
-    --shadow-color: var(--light-shadow);
-}
+/* ======================== */
+/* Light Mode Overrides     */
+/* ======================== */
+body.light-e {
+	--bg-color: var(--light-bg);
+	--content-bg: var(--light-content-bg);
+	--text-color: var(--light-text);
+	--secondary-text: var(--light-secondary-text);
+	
+	/* ✨ FIX: A darker border that's visible on a light background. */
+	--border-color: rgba(50, 50, 50, 0.2); 
 
-.dark-mode {
-    --bg-color: var(--dark-bg);
-    --content-bg: var(--dark-content-bg);
-    --text-color: var(--dark-text);
-    --secondary-text: var(--dark-secondary-text);
-    --border-color: var(--dark-border);
-    /* ✨ REMOVED: --accent-color from here to ensure global override works */
-    --hover-color: var(--dark-hover);
-    --link-color: var(--dark-link);
-    --shadow-color: var(--dark-shadow);
+	--accent-color: var(--light-accent);
+	--hover-color: var(--light-hover);
+	--link-color: var(--light-link);
+	--shadow-color: var(--light-shadow);
+	--glow-color: var(--light-glow);
+	--icon-color: var(--light-icon);
+	--social-icon-text-color: var(--light-text);
+
+	--bubble-gradient: radial-gradient(
+		circle at top left,
+		rgba(255, 255, 255, 0.6),
+		rgba(255, 255, 255, 0.15) 70%
+	);
+	
+	/* ✨ FIX: Redefined outer shadow for light mode using your variable. */
+	--bubble-shadow: 0 12px 32px var(--light-shadow);
+	
+	/* ✨ FIX: A subtle DARK inner shadow creates the beveled edge. */
+	--bubble-highlight: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+	
+	--backdrop-blur: saturate(180%) blur(28px);
 }
 
 /* General Body Styling */
@@ -103,7 +151,6 @@ header {
 .header-content h1 {
     font-size: clamp(1.5rem, 3vw, 2.5rem);
     font-weight: 800;
-    /* ✨ UPDATED: The gradient now uses the accent color */
     background: linear-gradient(120deg,
         var(--text-color),
         color-mix(in srgb, var(--text-color) 70%, var(--accent-color))
@@ -126,7 +173,6 @@ header {
     cursor: pointer;
     text-decoration: none;
     transition: all 0.3s ease;
-
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -136,7 +182,7 @@ header {
     transform: translateY(-2px);
     background: var(--accent-color);
     border-color: var(--accent-color);
-    color: var(--accent-text-color, white); /* FIX: Use the new contrast variable */
+    color: var(--accent-text-color, white);
     box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
@@ -258,7 +304,6 @@ header {
 /* Price Styling */
 .product-item .price {
     font-size: 1.3rem;
-    /* ✨ UPDATED: Price now uses the accent color */
     color: var(--text-color);
     font-weight: 700;
     margin: 10px 0;
@@ -284,7 +329,6 @@ header {
     transition: all 0.3s ease;
     margin-top: auto;
     cursor: pointer;
-
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -292,10 +336,9 @@ header {
 
 .buy-now:hover {
     transform: translateY(-2px);
-    /* ✨ UPDATED: Hover effect now uses the accent color */
     background: var(--accent-color);
     border-color: var(--accent-color);
-    color: var(--accent-text-color, white); /* FIX: Use the new contrast variable */
+    color: var(--accent-text-color, white);
     box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
