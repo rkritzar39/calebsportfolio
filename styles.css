@@ -659,16 +659,20 @@ a.corner-button {
 }
 
 /* ======================================== */
-/* == Useful Links Section – Onyx Bubble Glass == */
+/* == Useful Links Section (iOS 26 Style) == */
 /* ======================================== */
 .useful-links-section {
+	/* Applying the new iOS 26 glass effect */
 	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	padding: 30px;
+	backdrop-filter: saturate(180%) blur(30px);
+	-webkit-backdrop-filter: saturate(180%) blur(30px);
 	border-radius: var(--radius-xl);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	border: 1px solid var(--border-color);
+	box-shadow: 
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
+		0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	
+	padding: 30px;
 	margin: 25px 0;
 	width: 100%;
 	box-sizing: border-box;
@@ -678,7 +682,7 @@ a.corner-button {
 
 /* Title Styling */
 .useful-links-section h2 {
-	font-size: calc(var(--font-size-base, 20px) * 1.44); /* ✨ Updated for text scaling ✨ */
+	font-size: calc(var(--font-size-base, 20px) * 1.44);
 	margin-bottom: 25px;
 	color: var(--text-color);
 	text-align: center;
@@ -694,7 +698,7 @@ a.corner-button {
 	box-sizing: border-box;
 }
 
-/* --- Pill Buttons with Onyx Bubble Glass --- */
+/* --- Cleaner Pill Buttons --- */
 .link-button {
 	display: flex;
 	align-items: center;
@@ -707,15 +711,10 @@ a.corner-button {
 	box-sizing: border-box;
 	border-radius: 999px;
 
-	/* Onyx Bubble Glass styling */
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-
+	/* Simplified background for a cleaner look */
+	background: color-mix(in srgb, var(--content-bg) 50%, transparent);
+	border: 1px solid var(--border-color);
 	color: var(--text-color);
-	border: 1px solid #28a745; /* green outline */
 	transition: all 0.3s ease;
 }
 
@@ -723,10 +722,9 @@ a.corner-button {
 .link-button:hover {
 	background: var(--accent-color);
 	border-color: var(--accent-color);
-	color: var(--content-bg);
+	color: #fff; /* Ensure contrast */
 	transform: translateY(-2px);
-	box-shadow: 0 6px 18px var(--shadow-color),
-				  0 0 12px var(--accent-color);
+	box-shadow: 0 6px 18px var(--shadow-color);
 }
 
 /* --- Responsive Design --- */
@@ -734,15 +732,14 @@ a.corner-button {
 	.useful-links-section { padding: 20px; }
 	.links-container { grid-template-columns: 1fr; gap: 15px; }
 	.link-button { padding: 12px 20px; font-size: 0.95em; }
-	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.28); } /* ✨ Updated for text scaling ✨ */
+	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.28); }
 }
 
 @media screen and (max-width: 480px) {
 	.useful-links-section { padding: 15px; }
 	.link-button { padding: 12px 16px; }
-	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.12); } /* ✨ Updated for text scaling ✨ */
+	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.12); }
 }
-
 
 /* ======================================== */
 /* == Tech Information Section – Onyx Bubble Glass == */
@@ -897,19 +894,22 @@ a.corner-button {
 	.battery-percentage { font-size: calc(var(--font-size-base, 20px) * 0.6); } /* ✨ Updated for text scaling ✨ */
 }
 
-/* ======================== */
-/* Disabilities Section – Onyx Bubble Glass */
-/* ======================== */
+/* ======================================== */
+/* == Disabilities Section (iOS 26 Style) == */
+/* ======================================== */
 .disabilities-section {
+	/* Applying the new iOS 26 glass effect */
 	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
+	backdrop-filter: saturate(180%) blur(30px);
+	-webkit-backdrop-filter: saturate(180%) blur(30px);
 	border-radius: var(--radius-xl);
+	border: 1px solid var(--border-color);
+	box-shadow: 
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
+		0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
 	padding: 30px;
 	margin-bottom: 30px;
-	border: 1px solid var(--border-color);
-	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
 	transition: background var(--transition-medium), box-shadow var(--transition-medium);
 }
 
@@ -935,7 +935,7 @@ a.corner-button {
 	gap: 12px;
 }
 
-/* Modern Button Links – Bubble Glass */
+/* Modern, Cleaner Button Links */
 .disabilities-section a {
 	display: flex;
 	align-items: center;
@@ -945,16 +945,10 @@ a.corner-button {
 	text-decoration: none;
 	padding: 12px 18px;
 	border-radius: 25px;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border: 1px solid var(--accent-color);
-	box-shadow: var(--bubble-highlight);
-	transition: transform var(--transition-medium), background var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
+	background: color-mix(in srgb, var(--content-bg) 50%, transparent);
+	border: 1px solid var(--border-color);
+	transition: all 0.3s ease;
 	text-align: center;
-	position: relative;
-	overflow: hidden;
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
 }
 
 .disabilities-section a span.button-text {
@@ -968,15 +962,11 @@ a.corner-button {
 }
 
 .disabilities-section a:hover {
-	background: var(--hover-color);
-	color: var(--dark-text);
+	background: var(--accent-color);
+	color: #fff; /* Ensure contrast */
+	border-color: var(--accent-color);
 	transform: translateY(-3px);
-	box-shadow: 0 0 12px var(--accent-color), 0 0 24px var(--accent-color);
-}
-
-.disabilities-section a:focus-visible {
-	outline: none;
-	box-shadow: 0 0 0 4px var(--dark-hover);
+	box-shadow: 0 0 12px var(--accent-color);
 }
 
 /* ======================== */
@@ -2028,18 +2018,22 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* == Business Info Section – Onyx Bubble Glass == */
+/* == Business Info Section (iOS 26 Style) == */
 /* ======================================== */
 
 .business-info-section {
+	/* Applying the new iOS 26 glass effect */
 	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
+	backdrop-filter: saturate(180%) blur(30px);
+	-webkit-backdrop-filter: saturate(180%) blur(30px);
 	border-radius: var(--radius-xl);
+	border: 1px solid var(--border-color);
+	box-shadow: 
+		inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
+		0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	
 	padding: clamp(20px, 4vw, 30px);
 	margin: 30px 0;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur) saturate(120%);
-	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
 	width: 100%;
 	box-sizing: border-box;
 	position: relative;
@@ -2133,11 +2127,10 @@ body.maintenance-active {
 	max-width: 400px;
 }
 
-/* --- Regular Hours List --- */
+/* --- Cleaner Regular Hours List --- */
 .hours-list {
 	margin: 25px 0;
 	border-radius: 20px;
-	backdrop-filter: blur(12px) saturate(120%);
 }
 .hours-list ul { list-style: none; padding: 0; margin: 0; }
 .hours-list li {
@@ -2147,14 +2140,15 @@ body.maintenance-active {
 	padding: 14px 16px;
 	border-radius: 14px;
 	margin-bottom: 10px;
-	background: color-mix(in srgb, var(--content-bg) 70%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+	/* A clean, non-glass background for items on the glass panel */
+	background: color-mix(in srgb, var(--bg-color) 30%, transparent);
+	border: 1px solid var(--border-color);
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .hours-list li:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+	box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 .hours-list li strong { color: var(--text-color); font-weight: 600; }
 .hours-list li span { color: var(--secondary-text); font-weight: 500; }
@@ -2177,10 +2171,10 @@ body.maintenance-active {
 	gap: 14px;
 }
 .special-hours-display li {
-	background: color-mix(in srgb, var(--content-bg) 70%, transparent);
+	background: color-mix(in srgb, var(--bg-color) 30%, transparent);
 	padding: 16px 22px;
 	border-radius: 18px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	border: 1px solid var(--border-color);
 	box-shadow: 0 4px 15px color-mix(in srgb, var(--shadow-color) 25%, transparent);
 }
 .special-hours-display li .hours-container {
@@ -2207,22 +2201,21 @@ body.maintenance-active {
 .contact-info a {
 	display: inline-block;
 	padding: 14px 36px;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
+	background: color-mix(in srgb, var(--content-bg) 50%, transparent);
 	color: var(--accent-color);
 	border-radius: 9999px;
 	text-decoration: none;
 	font-weight: 700;
-	border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+	border: 1px solid var(--border-color);
+	transition: all 0.3s ease;
 }
 .contact-info a:hover,
 .contact-info a:focus {
 	transform: translateY(-3px);
+	background: var(--accent-color);
 	color: #fff;
-	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent);
+	border-color: var(--accent-color);
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 40%, transparent);
 	outline: none;
 }
 
@@ -2270,7 +2263,7 @@ body.maintenance-active {
 .special-hours-list input[type="text"]:focus {
 	outline: none;
 	border-color: var(--accent-color);
-	box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.15);
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-color) 15%, transparent);
 }
 
 /* --- Admin Section Cards --- */
@@ -2369,7 +2362,7 @@ body.maintenance-active {
 }
 .special-hours-list .hour-entry .remove-hour-button:hover {
 	opacity: 1;
-	color: var(--color-danger);
+	color: var(--color-danger, #dc3545);
 	transform: scale(1.1);
 }
 
