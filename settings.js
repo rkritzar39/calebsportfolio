@@ -251,7 +251,7 @@ class SettingsManager {
     applyAppearanceMode() {
         let isDark = this.settings.appearanceMode === 'dark' || (this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.body.classList.toggle('dark-mode', isDark);
-        // === THIS IS THE ONLY LINE THAT CHANGED ===
+        // === THIS IS THE ONLY LINE THAT'S DIFFERENT ===
         document.body.classList.toggle('light-e', !isDark); 
         this.checkAccentColor(this.settings.accentColor);
     }
