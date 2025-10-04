@@ -9,14 +9,14 @@
 	/* Dark Gray Glass Palette  */
 	/* ======================== */
 	--dark-bg: #0E0E0E;
-	--dark-content-bg: rgba(28, 28, 28, 0.6);
+	--dark-content-bg: rgba(30, 30, 30, 0.75); /* Apple's dark material */
 	--dark-text: #F0F0F0;
 	--dark-secondary-text: #A3A3A3;
-	--dark-border: rgba(255, 255, 255, 0.08);
+	--dark-border: rgba(255, 255, 255, 0.1);
 	--dark-accent: #4EA8FF;
 	--dark-hover: #2F89E5;
 	--dark-link: var(--dark-accent);
-	--dark-shadow: rgba(0, 0, 0, 0.65);
+	--dark-shadow: rgba(0, 0, 0, 0.5);
 	--dark-glow: rgba(255, 255, 255, 0.05);
 	--dark-icon: #D1D1D1;
 
@@ -24,7 +24,7 @@
 	/* Light Glass Palette      */
 	/* ======================== */
 	--light-bg-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-	--light-content-bg: rgba(255, 255, 255, 0.55);
+	--light-content-bg: rgba(255, 255, 255, 0.6); /* Apple's light material */
 	--light-text: #111111;
 	--light-secondary-text: #4B5563;
 	--light-shadow: rgba(0, 0, 0, 0.15);
@@ -51,16 +51,11 @@
 	--social-icon-text-color: var(--dark-text);
 
 	/* ======================== */
-	/* Effects & Decoration     */
+	/* Apple Glass Effects      */
 	/* ======================== */
-	--backdrop-blur: saturate(180%) blur(28px);
-	--bubble-gradient: radial-gradient(
-		circle at top left,
-		rgba(255, 255, 255, 0.08),
-		transparent 70%
-	);
-	--bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
-	--bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+	--backdrop-blur: saturate(180%) blur(20px); /* Precise Apple blur */
+	--bubble-highlight: inset 0 0 0 0.5px rgba(255, 255, 255, 0.3);
+	--bubble-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 
 	/* ======================== */
 	/* Border Radii           */
@@ -93,14 +88,8 @@ body.light-e {
 	--glow-color: var(--light-glow);
 	--icon-color: var(--light-icon);
 	--social-icon-text-color: var(--light-text);
-	--bubble-gradient: radial-gradient(
-		circle at top left,
-		rgba(255, 255, 255, 0.8),
-		transparent 50%
-	);
 	--bubble-shadow: 0 12px 32px var(--light-shadow);
-	--bubble-highlight: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
-	--backdrop-blur: saturate(180%) blur(28px);
+	--bubble-highlight: inset 0 0 0 0.5px rgba(255, 255, 255, 0.9);
 }
 
 body.light-e {
@@ -108,17 +97,16 @@ body.light-e {
     background-attachment: fixed;
 }
 
-
 /* ======================== */
 /* Dark Mode Wrapper        */
 /* ======================== */
 html.dark-mode body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
 /* ======================== */
-/* Base Styles – Onyx Bubble Glass */
+/* Base Styles              */
 /* ======================== */
 body {
   background: var(--bg-color);
@@ -140,7 +128,7 @@ body {
 }
 
 /* ======================== */
-/* Glass Section / Card     */
+/* Apple Glass Section      */
 /* ======================== */
 .section {
   background: var(--content-bg);
@@ -148,7 +136,6 @@ body {
   -webkit-backdrop-filter: var(--backdrop-blur);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
-  background-image: var(--bubble-gradient);
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
   padding: 24px;
   margin-bottom: 32px;
