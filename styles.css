@@ -23,15 +23,14 @@
 	/* ======================== */
 	/* Light Glass Palette      */
 	/* ======================== */
-	--light-bg: #E9ECF1;
+	--light-bg-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
 	--light-content-bg: rgba(255, 255, 255, 0.55);
 	--light-text: #111111;
 	--light-secondary-text: #4B5563;
-	--light-border: rgba(255, 255, 255, 0.6); /* Original, unused in favor of corrected value */
+	--light-shadow: rgba(0, 0, 0, 0.15);
 	--light-accent: #007AFF;
 	--light-hover: #005FCC;
 	--light-link: var(--light-accent);
-	--light-shadow: rgba(0, 0, 0, 0.25);
 	--light-glow: rgba(255, 255, 255, 0.75);
 	--light-icon: #2C2C2E;
 
@@ -82,14 +81,11 @@
 /* Light Mode Overrides     */
 /* ======================== */
 body.light-e {
-	--bg-color: var(--light-bg);
+	--bg-color: var(--light-bg-gradient);
 	--content-bg: var(--light-content-bg);
 	--text-color: var(--light-text);
 	--secondary-text: var(--light-secondary-text);
-	
-	/* ✨ FIX: A darker border that's visible on a light background. */
-	--border-color: rgba(50, 50, 50, 0.2); 
-
+	--border-color: rgba(255, 255, 255, 0.4);
 	--accent-color: var(--light-accent);
 	--hover-color: var(--light-hover);
 	--link-color: var(--light-link);
@@ -97,21 +93,21 @@ body.light-e {
 	--glow-color: var(--light-glow);
 	--icon-color: var(--light-icon);
 	--social-icon-text-color: var(--light-text);
-
 	--bubble-gradient: radial-gradient(
 		circle at top left,
-		rgba(255, 255, 255, 0.6),
-		rgba(255, 255, 255, 0.15) 70%
+		rgba(255, 255, 255, 0.8),
+		transparent 50%
 	);
-	
-	/* ✨ FIX: Redefined outer shadow for light mode using your variable. */
 	--bubble-shadow: 0 12px 32px var(--light-shadow);
-	
-	/* ✨ FIX: A subtle DARK inner shadow creates the beveled edge. */
 	--bubble-highlight: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
-	
 	--backdrop-blur: saturate(180%) blur(28px);
 }
+
+body.light-e {
+    background: var(--light-bg-gradient);
+    background-attachment: fixed;
+}
+
 
 /* ======================== */
 /* Dark Mode Wrapper        */
@@ -125,7 +121,7 @@ html.dark-mode body {
 /* Base Styles – Onyx Bubble Glass */
 /* ======================== */
 body {
-  background: var(--bg-color); /* solid matte base */
+  background: var(--bg-color);
   color: var(--text-color);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
   margin: 0;
@@ -134,12 +130,9 @@ body {
   font-size: var(--font-size-base, 20px);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* Smooth transition for theme toggling */
   transition: background 0.4s ease, color 0.4s ease;
 }
 
-/* Constrains layout but doesn’t apply glass */
 .container {
   max-width: 1140px;
   margin: 0 auto;
@@ -153,19 +146,15 @@ body {
   background: var(--content-bg);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
-
   background-image: var(--bubble-gradient);
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-
   padding: 24px;
   margin-bottom: 32px;
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Optional: subtle “liquid reflection” effect */
 .section::before {
   content: "";
   position: absolute;
