@@ -946,7 +946,6 @@ a.corner-button {
 	border-radius: 25px;
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
-	border: 1px solid var(--accent-color);
 	box-shadow: var(--bubble-highlight);
 	transition: transform var(--transition-medium), background var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
 	text-align: center;
