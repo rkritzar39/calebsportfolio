@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-    // ========================
+   // ========================
 // Scroll to Top Orb Logic – iOS 26 Floating Onyx
 // ========================
 const scrollBtn = document.querySelector('.scroll-to-top');
@@ -182,7 +182,6 @@ scrollBtn.addEventListener('click', () => {
 	arrow.classList.remove('down');
 	arrow.classList.add('up');
 });
-
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
     const acceptCookiesBtn = document.getElementById('cookieAccept');
