@@ -1461,10 +1461,7 @@ a.corner-button {
 	.countdown-label { font-size: 0.8em; }
 }
 
-//* ======================================== */
-/* Scroll-to-Top Orb – Full Onyx/iOS 26 UI */
-/* ======================================== */
-.scroll-to-top {
+/.scroll-to-top {
 	position: fixed;
 	bottom: 25px;
 	left: 25px;
@@ -1500,13 +1497,11 @@ a.corner-button {
 	pointer-events: none;
 }
 
-/* Floating animation */
 @keyframes orb-float {
 	0%, 100% { transform: translateY(0); }
 	50% { transform: translateY(-5px); }
 }
 
-/* Subtle pulsing glow */
 @keyframes orb-pulse {
 	0%, 100% { box-shadow:
 		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
@@ -1518,7 +1513,7 @@ a.corner-button {
 		0 0 20px var(--accent-color); }
 }
 
-/* Progress ring container */
+/* Progress ring */
 .progress-ring {
 	position: absolute;
 	top: 50%;
@@ -1548,10 +1543,10 @@ a.corner-button {
 	transition: stroke-dashoffset 0.2s ease, filter 0.2s ease;
 }
 
-/* Arrow in upper half of orb */
+/* Arrow in center */
 .arrow {
 	position: absolute;
-	top: 40%;
+	top: 42%; /* slight upper center */
 	left: 50%;
 	transform: translate(-50%, -50%);
 	font-size: calc(var(--font-size-base, 20px) * 1.1);
@@ -1567,10 +1562,10 @@ a.corner-button {
 .arrow.up { transform: translate(-50%, -50%) rotate(0deg); }
 .arrow.down { transform: translate(-50%, -50%) rotate(180deg); }
 
-/* Percentage in lower half of orb */
+/* Percentage below arrow */
 .percentage {
 	position: absolute;
-	top: 62%;
+	top: 62%; /* slightly below arrow */
 	left: 50%;
 	transform: translate(-50%, -50%);
 	font-size: calc(var(--font-size-base, 20px) * 0.65);
