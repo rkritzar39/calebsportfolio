@@ -1466,46 +1466,54 @@ a.corner-button {
 /* ======================================== */
 .scroll-to-top {
 	position: fixed;
-	top: 50%;
+	bottom: 25px;
 	left: 25px;
-	transform: translateY(-50%);
 	width: 65px;
 	height: 65px;
 	border-radius: 50%;
-	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
 	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
-	box-shadow:
-		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
-		0 8px 25px color-mix(in srgb, var(--shadow-color) 80%, transparent);
 	backdrop-filter: blur(20px) saturate(180%);
 	-webkit-backdrop-filter: blur(20px) saturate(180%);
 	cursor: pointer;
 	z-index: 9999;
 	opacity: 1;
 	pointer-events: auto;
-	animation: orb-float 3.5s ease-in-out infinite;
-	transition: opacity 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Floating idle motion */
-@keyframes orb-float {
-	0%, 100% { transform: translateY(-50%) translateY(0); }
-	50% { transform: translateY(-50%) translateY(-6px); }
-}
-
-/* Hover response */
-.scroll-to-top:hover {
-	transform: translateY(-50%) scale(1.08);
+	animation: orb-float 3s ease-in-out infinite, orb-pulse 2.5s ease-in-out infinite;
 	box-shadow:
-		0 0 20px var(--accent-color),
-		0 0 35px color-mix(in srgb, var(--accent-color) 60%, transparent),
-		0 8px 25px var(--shadow-color);
+		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
+		0 6px 18px color-mix(in srgb, var(--shadow-color) 80%, transparent),
+		0 0 12px var(--accent-color);
+	transition: opacity 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Fade out after inactivity */
-.scroll-to-top.inactive {
-	opacity: 0.3;
-	transition: opacity 1s ease;
+.scroll-to-top:hover {
+	transform: scale(1.08);
+	box-shadow:
+		0 0 25px var(--accent-color),
+		0 0 45px color-mix(in srgb, var(--accent-color) 70%, transparent),
+		0 8px 25px color-mix(in srgb, var(--shadow-color) 80%, transparent);
+}
+
+.scroll-to-top.hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
+@keyframes orb-float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-5px); }
+}
+
+@keyframes orb-pulse {
+	0%, 100% { box-shadow:
+		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
+		0 6px 18px color-mix(in srgb, var(--shadow-color) 80%, transparent),
+		0 0 12px var(--accent-color); }
+	50% { box-shadow:
+		inset 0 1px 6px color-mix(in srgb, var(--glow-color) 50%, transparent),
+		0 8px 22px color-mix(in srgb, var(--shadow-color) 90%, transparent),
+		0 0 20px var(--accent-color); }
 }
 
 /* Progress ring */
@@ -1535,7 +1543,7 @@ a.corner-button {
 	filter:
 		drop-shadow(0 0 8px var(--accent-color))
 		drop-shadow(0 0 18px color-mix(in srgb, var(--accent-color) 70%, transparent));
-	transition: stroke-dashoffset 0.25s ease;
+	transition: stroke-dashoffset 0.2s ease, filter 0.2s ease;
 }
 
 /* Arrow */
@@ -1544,7 +1552,7 @@ a.corner-button {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: calc(var(--font-size-base, 20px) * 1.25);
+	font-size: calc(var(--font-size-base, 20px) * 1.1);
 	color: var(--accent-color);
 	font-weight: 700;
 	text-shadow:
@@ -1557,16 +1565,30 @@ a.corner-button {
 .arrow.up { transform: translate(-50%, -50%) rotate(0deg); }
 .arrow.down { transform: translate(-50%, -50%) rotate(180deg); }
 
+/* Percentage inside orb */
+.percentage {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: calc(var(--font-size-base, 20px) * 0.65);
+	color: var(--accent-color);
+	font-weight: 600;
+	text-shadow: 0 0 4px var(--accent-color);
+	pointer-events: none;
+}
+
 /* Responsive adjustments */
 @media screen and (max-width: 1024px) {
-	.scroll-to-top { width: 58px; height: 58px; left: 20px; }
+	.scroll-to-top { width: 58px; height: 58px; left: 20px; bottom: 20px; }
 }
 @media screen and (max-width: 768px) {
-	.scroll-to-top { width: 52px; height: 52px; left: 15px; }
+	.scroll-to-top { width: 52px; height: 52px; left: 15px; bottom: 15px; }
 }
 @media screen and (max-width: 480px) {
-	.scroll-to-top { width: 48px; height: 48px; left: 12px; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 1.1); }
+	.scroll-to-top { width: 48px; height: 48px; left: 12px; bottom: 12px; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 1); }
+	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.6); }
 }
 
 /* ======================== */
