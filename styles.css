@@ -1461,6 +1461,9 @@ a.corner-button {
 	.countdown-label { font-size: 0.8em; }
 }
 
+/* ======================================== */
+/* Scroll-to-Top Orb – iOS 26 Onyx Glass   */
+/* ======================================== */
 .scroll-to-top {
 	position: fixed;
 	bottom: 25px;
@@ -1497,11 +1500,13 @@ a.corner-button {
 	pointer-events: none;
 }
 
+/* Floating animation */
 @keyframes orb-float {
 	0%, 100% { transform: translateY(0); }
 	50% { transform: translateY(-5px); }
 }
 
+/* Subtle pulsing glow */
 @keyframes orb-pulse {
 	0%, 100% { box-shadow:
 		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
@@ -1518,35 +1523,37 @@ a.corner-button {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 80%;
-	height: 80%;
+	width: 78%;
+	height: 78%;
 	transform: translate(-50%, -50%) rotate(-90deg);
 }
 
 .progress-bg {
 	fill: none;
-	stroke: color-mix(in srgb, var(--accent-color) 25%, var(--border-color));
-	stroke-width: 4;
-	opacity: 0.4;
+	stroke: color-mix(in srgb, var(--accent-color) 15%, var(--border-color));
+	stroke-width: 3.5;
+	opacity: 0.35;
+	stroke-linecap: round;
 }
 
 .progress-indicator {
 	fill: none;
 	stroke: var(--accent-color);
-	stroke-width: 4;
+	stroke-width: 3.5;
 	stroke-linecap: round;
 	stroke-dasharray: 141;
 	stroke-dashoffset: 141;
+	stroke-linejoin: round;
+	transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
 	filter:
-		drop-shadow(0 0 8px var(--accent-color))
-		drop-shadow(0 0 18px color-mix(in srgb, var(--accent-color) 70%, transparent));
-	transition: stroke-dashoffset 0.2s ease, filter 0.2s ease;
+		drop-shadow(0 0 6px var(--accent-color))
+		drop-shadow(0 0 14px color-mix(in srgb, var(--accent-color) 70%, transparent));
 }
 
 /* Arrow in center */
 .arrow {
 	position: absolute;
-	top: 42%; /* slight upper center */
+	top: 38%; /* slightly upper inside orb */
 	left: 50%;
 	transform: translate(-50%, -50%);
 	font-size: calc(var(--font-size-base, 20px) * 1.1);
@@ -1565,7 +1572,7 @@ a.corner-button {
 /* Percentage below arrow */
 .percentage {
 	position: absolute;
-	top: 62%; /* slightly below arrow */
+	top: 68%; /* below arrow */
 	left: 50%;
 	transform: translate(-50%, -50%);
 	font-size: calc(var(--font-size-base, 20px) * 0.65);
@@ -1579,23 +1586,24 @@ a.corner-button {
 /* Responsive adjustments */
 @media screen and (max-width: 1024px) {
 	.scroll-to-top { width: 58px; height: 58px; left: 20px; bottom: 20px; }
-	.progress-ring { width: 75%; height: 75%; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 1); }
-	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.6); }
+	.progress-ring { width: 74%; height: 74%; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 1); top: 37%; }
+	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.6); top: 70%; }
 }
+
 @media screen and (max-width: 768px) {
 	.scroll-to-top { width: 52px; height: 52px; left: 15px; bottom: 15px; }
 	.progress-ring { width: 70%; height: 70%; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.95); }
-	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.55); }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.95); top: 36%; }
+	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.55); top: 71%; }
 }
+
 @media screen and (max-width: 480px) {
 	.scroll-to-top { width: 48px; height: 48px; left: 12px; bottom: 12px; }
 	.progress-ring { width: 65%; height: 65%; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.9); }
-	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.5); }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.9); top: 35%; }
+	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.5); top: 72%; }
 }
-
 /* ======================== */
 /* Version Info Section – Onyx Bubble Glass */
 /* ======================== */
