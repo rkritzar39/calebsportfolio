@@ -1461,38 +1461,53 @@ a.corner-button {
 	.countdown-label { font-size: 0.8em; }
 }
 
-/* ======================== */
-/* Scroll to Top – Neon Glass Orb (Fixed for Small Screens) */
+//* ======================== */
+/* Scroll to Top – Onyx Bubble Orb (Refined for Small Screens) */
 /* ======================== */
 .scroll-to-top {
 	position: fixed;
 	bottom: 25px;
 	left: 25px;
-	width: 55px;
-	height: 55px;
+	width: 60px;
+	height: 60px;
 	border-radius: 50%;
-	background: color-mix(in srgb, var(--content-bg) 60%, transparent);
-	backdrop-filter: blur(12px) saturate(140%);
-	-webkit-backdrop-filter: blur(12px) saturate(140%);
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	box-shadow: 0 4px 20px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-	transform: scale(0.85);
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border: 1px solid var(--border-color);
+	box-shadow:
+		inset 0 1px 3px var(--glow-color),
+		0 6px 25px var(--shadow-color),
+		var(--bubble-highlight);
+	backdrop-filter: blur(15px) saturate(160%);
+	-webkit-backdrop-filter: blur(15px) saturate(160%);
+	transform: scale(0.9);
 	opacity: 0;
 	pointer-events: none;
-	transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+	transition:
+		opacity var(--transition-medium),
+		transform var(--transition-medium),
+		box-shadow var(--transition-medium);
 }
 
+/* Visible State */
 .scroll-to-top.visible {
 	opacity: 1;
 	transform: scale(1);
 	pointer-events: auto;
 }
 
+/* Hover Interaction – gentle lift with accent glow */
 .scroll-to-top:hover {
-	transform: scale(1.08) translateY(-3px);
-	box-shadow: 0 0 20px var(--accent-color), 0 0 35px var(--accent-color);
+	transform: scale(1.08) translateY(-4px);
+	box-shadow:
+		0 0 25px var(--accent-color),
+		0 0 45px color-mix(in srgb, var(--accent-color) 60%, transparent),
+		inset 0 1px 4px var(--glow-color);
 }
 
+/* ======================== */
+/* Progress Ring (Now Clearer & Scales Down Better) */
+/* ======================== */
 .progress-ring {
 	position: absolute;
 	top: 50%;
@@ -1504,58 +1519,84 @@ a.corner-button {
 	overflow: visible;
 }
 
+/* Background ring is now faintly visible for better contrast */
 .progress-bg {
 	fill: none;
-	stroke: transparent;
+	stroke: color-mix(in srgb, var(--accent-color) 15%, transparent);
+	stroke-width: 3;
+	opacity: 0.4;
 }
 
+/* Indicator ring – brighter and larger stroke for visibility */
 .progress-indicator {
 	fill: none;
 	stroke: var(--accent-color);
-	stroke-width: 3;
+	stroke-width: 4;
 	stroke-linecap: round;
-	stroke-dasharray: 141;
-	stroke-dashoffset: 141;
+	stroke-dasharray: 150;
+	stroke-dashoffset: 150;
 	filter: drop-shadow(0 0 6px var(--accent-color))
-			  drop-shadow(0 0 12px var(--accent-color));
-	transition: stroke-dashoffset 0.2s ease-out, filter 0.2s ease-out;
+			drop-shadow(0 0 12px var(--accent-color));
+	transition: stroke-dashoffset 0.25s ease-out, filter 0.25s ease-out;
 }
 
+/* ======================== */
+/* Arrow (Neon Accent) */
+/* ======================== */
 .arrow {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate(-50%, -50%) rotate(0deg);
-	font-size: calc(var(--font-size-base, 20px) * 1.1); /* ✨ Updated for text scaling ✨ */
-	line-height: 1;
+	transform: translate(-50%, -50%);
+	font-size: calc(var(--font-size-base, 20px) * 1.2);
 	color: var(--accent-color);
-	pointer-events: none;
 	font-weight: 700;
-	text-shadow: 0 0 6px var(--accent-color), 0 0 12px var(--accent-color);
-	transition: transform 0.4s ease;
+	text-shadow:
+		0 0 6px var(--accent-color),
+		0 0 12px var(--accent-color),
+		0 0 20px color-mix(in srgb, var(--accent-color) 60%, transparent);
+	pointer-events: none;
+	transition: transform 0.3s ease;
 }
 
 .arrow.up { transform: translate(-50%, -50%) rotate(0deg); }
 .arrow.down { transform: translate(-50%, -50%) rotate(180deg); }
 
+/* ======================== */
+/* Responsive Adjustments */
+/* ======================== */
 @media screen and (max-width: 1024px) {
-	.scroll-to-top { width: 50px; height: 50px; bottom: 20px; left: 20px; }
-	.arrow { font-size: var(--font-size-base, 20px); } /* ✨ Updated for text scaling ✨ */
-	.progress-indicator { stroke-dasharray: 125; stroke-dashoffset: 125; stroke-width: 2.5; }
+	.scroll-to-top {
+		width: 55px;
+		height: 55px;
+		bottom: 20px;
+		left: 20px;
+	}
+	.progress-indicator { stroke-width: 3.5; stroke-dasharray: 135; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 1.1); }
 }
 
 @media screen and (max-width: 768px) {
-	.scroll-to-top { width: 45px; height: 45px; bottom: 15px; left: 15px; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.9); } /* ✨ Updated for text scaling ✨ */
-	.progress-indicator { stroke-dasharray: 110; stroke-dashoffset: 110; stroke-width: 2.2; }
+	.scroll-to-top {
+		width: 50px;
+		height: 50px;
+		bottom: 16px;
+		left: 16px;
+	}
+	.progress-indicator { stroke-width: 3.2; stroke-dasharray: 120; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 1.0); }
 }
 
 @media screen and (max-width: 480px) {
-	.scroll-to-top { width: 40px; height: 40px; bottom: 12px; left: 12px; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.8); } /* ✨ Updated for text scaling ✨ */
-	.progress-indicator { stroke-dasharray: 95; stroke-dashoffset: 95; stroke-width: 2; }
+	.scroll-to-top {
+		width: 48px;
+		height: 48px;
+		bottom: 12px;
+		left: 12px;
+	}
+	.progress-indicator { stroke-width: 3; stroke-dasharray: 110; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.95); }
 }
-
 /* ======================== */
 /* Version Info Section – Onyx Bubble Glass */
 /* ======================== */
