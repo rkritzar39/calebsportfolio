@@ -123,49 +123,65 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateTime, 1000);
 
     // ========================
-    // Scroll to Top Orb Logic
-    // ========================
-    const scrollBtn = document.querySelector('.scroll-to-top');
-    const arrow = scrollBtn.querySelector('.arrow');
-    const progressCircle = scrollBtn.querySelector('.progress-indicator');
+// Scroll to Top Orb Logic – iOS 26 Floating Onyx
+// ========================
+const scrollBtn = document.querySelector('.scroll-to-top');
+const arrow = scrollBtn.querySelector('.arrow');
+const progressCircle = scrollBtn.querySelector('.progress-indicator');
 
-    const radius = progressCircle.r.baseVal.value;
-    const circumference = 2 * Math.PI * radius;
-    progressCircle.style.strokeDasharray = `${circumference}`;
-    progressCircle.style.strokeDashoffset = `${circumference}`;
+// Set up circular progress ring
+const radius = progressCircle.r.baseVal.value;
+const circumference = 2 * Math.PI * radius;
+progressCircle.style.strokeDasharray = `${circumference}`;
+progressCircle.style.strokeDashoffset = `${circumference}`;
 
-    let lastScrollY = window.scrollY;
+let lastScrollY = window.scrollY;
+let targetY = 0;
+let currentY = 0;
 
-    function updateProgress() {
-        const scrollTop = window.scrollY;
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = scrollHeight ? (scrollTop / scrollHeight) : 0;
-        progressCircle.style.strokeDashoffset = `${circumference * (1 - progress)}`;
+// Update progress ring + arrow direction
+function updateProgress() {
+	const scrollTop = window.scrollY;
+	const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+	const progress = scrollHeight ? (scrollTop / scrollHeight) : 0;
 
-        if (scrollTop > lastScrollY) {
-            arrow.classList.remove('up');
-            arrow.classList.add('down');
-        } else if (scrollTop < lastScrollY) {
-            arrow.classList.remove('down');
-            arrow.classList.add('up');
-        }
+	// Update circular progress
+	progressCircle.style.strokeDashoffset = `${circumference * (1 - progress)}`;
 
-        lastScrollY = scrollTop;
+	// Change arrow direction smoothly
+	if (scrollTop > lastScrollY) {
+		arrow.classList.remove('up');
+		arrow.classList.add('down');
+	} else if (scrollTop < lastScrollY) {
+		arrow.classList.remove('down');
+		arrow.classList.add('up');
+	}
 
-        if (scrollTop > 100) {
-            scrollBtn.classList.add('visible');
-        } else {
-            scrollBtn.classList.remove('visible');
-        }
-    }
+	lastScrollY = scrollTop;
 
-    window.addEventListener('scroll', updateProgress);
+	// Always visible — no .visible toggle needed
+	scrollBtn.style.opacity = 1;
 
-    scrollBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        arrow.classList.remove('down');
-        arrow.classList.add('up');
-    });
+	// Set floating target (orb follows scroll)
+	targetY = scrollTop * 0.05; // Adjust multiplier for float sensitivity
+}
+
+// Smooth floating animation (adds iOS 26 realism)
+function smoothFollow() {
+	currentY += (targetY - currentY) * 0.08; // easing motion
+	scrollBtn.style.transform = `translateY(${currentY}px)`; // maintain scale(1)
+	requestAnimationFrame(smoothFollow);
+}
+
+smoothFollow();
+window.addEventListener('scroll', updateProgress);
+
+// Smooth scroll to top on click
+scrollBtn.addEventListener('click', () => {
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+	arrow.classList.remove('down');
+	arrow.classList.add('up');
+});
 
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
