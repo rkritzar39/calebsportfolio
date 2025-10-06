@@ -742,7 +742,7 @@ a.corner-button {
 
 
 //* ======================================== */
-/* == Tech Information Section – Onyx Bubble Glass (Updated Match) == */
+/* == Tech Information Section – Matches Root Theme == */
 /* ======================================== */
 
 .tech-section {
@@ -751,6 +751,7 @@ a.corner-button {
 	padding: 30px;
 	border-radius: var(--radius-lg);
 	margin-bottom: 30px;
+	border: 1px solid var(--border-color);
 	box-shadow:
 		var(--bubble-shadow),
 		inset 0 1px 2px var(--glow-color),
@@ -760,14 +761,11 @@ a.corner-button {
 	width: 100%;
 	box-sizing: border-box;
 	color: var(--text-color);
-	transition: 
-		background var(--transition-medium),
-		box-shadow var(--transition-medium),
-		transform var(--transition-fast);
+	transition: background var(--transition-medium), box-shadow var(--transition-medium);
 }
 
 /* ======================== */
-/* Tech Card Items          */
+/* Tech Cards / Items       */
 /* ======================== */
 .tech-item {
 	background: var(--content-bg);
@@ -775,48 +773,42 @@ a.corner-button {
 	border: 1px solid var(--border-color);
 	border-radius: var(--radius-md);
 	padding: 20px;
-	margin-bottom: 18px;
+	margin-bottom: 16px;
 	box-shadow:
 		inset 0 1px 2px var(--glow-color),
 		0 6px 20px var(--shadow-color);
-	transition: 
-		transform var(--transition-fast),
-		box-shadow var(--transition-medium),
-		background var(--transition-medium);
+	transition: transform var(--transition-fast), box-shadow var(--transition-medium);
 }
 
-/* Subtle interactive glass glow */
+/* Smooth hover — slight lift & glow */
 .tech-item:hover {
 	transform: translateY(-3px);
 	box-shadow:
 		0 10px 28px var(--shadow-color),
 		inset 0 1px 2px var(--glow-color);
-	background: var(--content-bg);
-	color: var(--text-color);
 }
 
 /* ======================== */
 /* Titles and Icons         */
 /* ======================== */
 .tech-item h3 {
-	margin: 0 0 14px 0;
-	color: var(--accent-color);
-	font-size: calc(var(--font-size-base) * 1.05);
-	font-weight: 600;
+	margin: 0 0 15px 0;
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+	color: var(--accent-color);
+	font-size: calc(var(--font-size-base) * 1.05);
+	font-weight: 600;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .tech-item h3 i {
 	font-size: calc(var(--font-size-base) * 1.15);
 	color: var(--accent-color);
-	filter: drop-shadow(0 1px 2px var(--shadow-color));
 }
 
 /* ======================== */
-/* Detail Rows              */
+/* Tech Detail Rows         */
 /* ======================== */
 .tech-detail {
 	display: flex;
@@ -824,7 +816,6 @@ a.corner-button {
 	gap: 10px;
 	margin: 10px 0;
 	color: var(--text-color);
-	opacity: 0.95;
 }
 
 .tech-detail i {
@@ -844,7 +835,7 @@ a.corner-button {
 }
 
 /* ======================== */
-/* Battery Icon Styling     */
+/* Battery Indicator        */
 /* ======================== */
 .battery-container {
 	display: flex;
@@ -862,12 +853,12 @@ a.corner-button {
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	background: rgba(32, 32, 32, 0.25);
-	box-shadow: inset 0 1px 6px rgba(0, 0, 0, 0.25);
+	background: var(--content-bg);
+	box-shadow: inset 0 1px 6px var(--shadow-color);
 	overflow: hidden;
 }
 
-/* Cap */
+/* Battery Cap */
 .battery-icon::after {
 	content: '';
 	position: absolute;
@@ -880,19 +871,19 @@ a.corner-button {
 	border-radius: 3px;
 }
 
-/* Fill Levels */
+/* Battery Fill */
 .battery-level {
 	height: 100%;
-	background: #32CD32;
+	background: var(--accent-color);
 	border-radius: 1px;
-	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.25);
+	box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
 	transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .low-power .battery-level { background: #FFCC00; }
 .critical .battery-level { background: #FF3B30; }
 
-/* Percentage Overlay */
+/* Percentage Text */
 .battery-percentage {
 	position: absolute;
 	top: 50%;
@@ -901,21 +892,20 @@ a.corner-button {
 	color: var(--text-color);
 	font-weight: 600;
 	font-size: calc(var(--font-size-base) * 0.75);
-	z-index: 1;
-	text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+	text-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
 
 /* ======================== */
-/* Responsive Tweaks        */
+/* Responsive Adjustments   */
 /* ======================== */
 @media screen and (max-width: 768px) {
-	.tech-section { padding: 22px; }
-	.tech-item { padding: 16px; }
+	.tech-section { padding: 20px; }
+	.tech-item { padding: 15px; }
 	.battery-icon { width: 150px; height: 35px; }
 }
 
 @media screen and (max-width: 480px) {
-	.tech-section { padding: 16px; }
+	.tech-section { padding: 15px; }
 	.tech-item { padding: 12px; }
 	.battery-icon { width: 120px; height: 30px; }
 	.battery-percentage { font-size: calc(var(--font-size-base) * 0.65); }
