@@ -122,33 +122,27 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-   // ========================
-// Scroll to Top Orb Logic – iOS 26 Floating Onyx
+  // ========================
+// Scroll to Top Orb Logic – Dynamic Fade (iOS 26 Style)
 // ========================
 const scrollBtn = document.querySelector('.scroll-to-top');
 const arrow = scrollBtn.querySelector('.arrow');
 const progressCircle = scrollBtn.querySelector('.progress-indicator');
 
-// Set up circular progress ring
 const radius = progressCircle.r.baseVal.value;
 const circumference = 2 * Math.PI * radius;
 progressCircle.style.strokeDasharray = `${circumference}`;
 progressCircle.style.strokeDashoffset = `${circumference}`;
 
 let lastScrollY = window.scrollY;
-let targetY = 0;
-let currentY = 0;
+let fadeTimeout = null;
 
-// Update progress ring + arrow direction
 function updateProgress() {
 	const scrollTop = window.scrollY;
 	const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
 	const progress = scrollHeight ? (scrollTop / scrollHeight) : 0;
-
-	// Update circular progress
 	progressCircle.style.strokeDashoffset = `${circumference * (1 - progress)}`;
 
-	// Change arrow direction smoothly
 	if (scrollTop > lastScrollY) {
 		arrow.classList.remove('up');
 		arrow.classList.add('down');
@@ -159,24 +153,20 @@ function updateProgress() {
 
 	lastScrollY = scrollTop;
 
-	// Always visible — no .visible toggle needed
-	scrollBtn.style.opacity = 1;
+	// Fade back in while scrolling
+	scrollBtn.classList.remove('inactive');
 
-	// Set floating target (orb follows scroll)
-	targetY = scrollTop * 0.05; // Adjust multiplier for float sensitivity
+	// Clear and restart fade timer
+	clearTimeout(fadeTimeout);
+	fadeTimeout = setTimeout(() => {
+		scrollBtn.classList.add('inactive');
+	}, 1500);
 }
 
-// Smooth floating animation (adds iOS 26 realism)
-function smoothFollow() {
-	currentY += (targetY - currentY) * 0.08; // easing motion
-	scrollBtn.style.transform = `translateY(${currentY}px)`; // maintain scale(1)
-	requestAnimationFrame(smoothFollow);
-}
-
-smoothFollow();
+// Scroll progress + fade control
 window.addEventListener('scroll', updateProgress);
 
-// Smooth scroll to top on click
+// Click = scroll to top
 scrollBtn.addEventListener('click', () => {
 	window.scrollTo({ top: 0, behavior: 'smooth' });
 	arrow.classList.remove('down');
