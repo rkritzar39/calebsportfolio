@@ -1461,53 +1461,51 @@ a.corner-button {
 	.countdown-label { font-size: 0.8em; }
 }
 
-//* ======================== */
-/* Scroll to Top – Onyx Bubble Orb (Refined for Small Screens) */
-/* ======================== */
+//* ======================================== */
+/* Scroll to Top – iOS 26 Onyx Floating Orb */
+/* ======================================== */
 .scroll-to-top {
 	position: fixed;
-	bottom: 25px;
-	left: 25px;
-	width: 60px;
-	height: 60px;
+	bottom: clamp(80px, 8vh, 120px);
+	left: clamp(25px, 3vw, 40px);
+	width: 65px;
+	height: 65px;
 	border-radius: 50%;
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
-	border: 1px solid var(--border-color);
+	border: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
 	box-shadow:
 		inset 0 1px 3px var(--glow-color),
-		0 6px 25px var(--shadow-color),
+		0 8px 30px var(--shadow-color),
 		var(--bubble-highlight);
-	backdrop-filter: blur(15px) saturate(160%);
-	-webkit-backdrop-filter: blur(15px) saturate(160%);
-	transform: scale(0.9);
-	opacity: 0;
-	pointer-events: none;
-	transition:
-		opacity var(--transition-medium),
-		transform var(--transition-medium),
-		box-shadow var(--transition-medium);
-}
-
-/* Visible State */
-.scroll-to-top.visible {
+	backdrop-filter: blur(20px) saturate(160%);
+	-webkit-backdrop-filter: blur(20px) saturate(160%);
 	opacity: 1;
-	transform: scale(1);
-	pointer-events: auto;
+	cursor: pointer;
+	z-index: 9999;
+	transform: translateY(0) scale(1);
+	animation: orb-float 3.5s ease-in-out infinite;
+	transition:
+		transform var(--transition-medium),
+		box-shadow var(--transition-medium),
+		background var(--transition-medium);
 }
 
-/* Hover Interaction – gentle lift with accent glow */
+/* Gentle floating shimmer */
+@keyframes orb-float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-4px); }
+}
+
 .scroll-to-top:hover {
-	transform: scale(1.08) translateY(-4px);
+	transform: translateY(-6px) scale(1.05);
 	box-shadow:
-		0 0 25px var(--accent-color),
-		0 0 45px color-mix(in srgb, var(--accent-color) 60%, transparent),
-		inset 0 1px 4px var(--glow-color);
+		0 0 20px var(--accent-color),
+		0 0 40px color-mix(in srgb, var(--accent-color) 60%, transparent),
+		0 10px 30px var(--shadow-color);
 }
 
-/* ======================== */
-/* Progress Ring (Now Clearer & Scales Down Better) */
-/* ======================== */
+/* Progress Ring */
 .progress-ring {
 	position: absolute;
 	top: 50%;
@@ -1516,18 +1514,15 @@ a.corner-button {
 	height: 100%;
 	transform: translate(-50%, -50%) rotate(-90deg);
 	border-radius: 50%;
-	overflow: visible;
 }
 
-/* Background ring is now faintly visible for better contrast */
 .progress-bg {
 	fill: none;
-	stroke: color-mix(in srgb, var(--accent-color) 15%, transparent);
-	stroke-width: 3;
-	opacity: 0.4;
+	stroke: color-mix(in srgb, var(--accent-color) 20%, var(--border-color));
+	stroke-width: 3.2;
+	opacity: 0.5;
 }
 
-/* Indicator ring – brighter and larger stroke for visibility */
 .progress-indicator {
 	fill: none;
 	stroke: var(--accent-color);
@@ -1535,26 +1530,26 @@ a.corner-button {
 	stroke-linecap: round;
 	stroke-dasharray: 150;
 	stroke-dashoffset: 150;
-	filter: drop-shadow(0 0 6px var(--accent-color))
-			drop-shadow(0 0 12px var(--accent-color));
-	transition: stroke-dashoffset 0.25s ease-out, filter 0.25s ease-out;
+	filter:
+		drop-shadow(0 0 6px var(--accent-color))
+		drop-shadow(0 0 12px var(--accent-color))
+		drop-shadow(0 0 20px color-mix(in srgb, var(--accent-color) 70%, transparent));
+	transition: stroke-dashoffset 0.25s ease-out;
 }
 
-/* ======================== */
-/* Arrow (Neon Accent) */
-/* ======================== */
+/* Arrow */
 .arrow {
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: calc(var(--font-size-base, 20px) * 1.2);
+	font-size: calc(var(--font-size-base, 20px) * 1.25);
 	color: var(--accent-color);
 	font-weight: 700;
 	text-shadow:
 		0 0 6px var(--accent-color),
 		0 0 12px var(--accent-color),
-		0 0 20px color-mix(in srgb, var(--accent-color) 60%, transparent);
+		0 0 24px color-mix(in srgb, var(--accent-color) 60%, transparent);
 	pointer-events: none;
 	transition: transform 0.3s ease;
 }
@@ -1562,41 +1557,23 @@ a.corner-button {
 .arrow.up { transform: translate(-50%, -50%) rotate(0deg); }
 .arrow.down { transform: translate(-50%, -50%) rotate(180deg); }
 
-/* ======================== */
-/* Responsive Adjustments */
-/* ======================== */
+/* Responsive Scaling */
 @media screen and (max-width: 1024px) {
-	.scroll-to-top {
-		width: 55px;
-		height: 55px;
-		bottom: 20px;
-		left: 20px;
-	}
-	.progress-indicator { stroke-width: 3.5; stroke-dasharray: 135; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 1.1); }
+	.scroll-to-top { width: 60px; height: 60px; bottom: 90px; left: 22px; }
+	.progress-indicator { stroke-width: 3.5; stroke-dasharray: 130; }
 }
 
 @media screen and (max-width: 768px) {
-	.scroll-to-top {
-		width: 50px;
-		height: 50px;
-		bottom: 16px;
-		left: 16px;
-	}
+	.scroll-to-top { width: 55px; height: 55px; bottom: 80px; left: 18px; }
 	.progress-indicator { stroke-width: 3.2; stroke-dasharray: 120; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 1.0); }
 }
 
 @media screen and (max-width: 480px) {
-	.scroll-to-top {
-		width: 48px;
-		height: 48px;
-		bottom: 12px;
-		left: 12px;
-	}
+	.scroll-to-top { width: 52px; height: 52px; bottom: 70px; left: 15px; }
 	.progress-indicator { stroke-width: 3; stroke-dasharray: 110; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.95); }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 1.05); }
 }
+
 /* ======================== */
 /* Version Info Section – Onyx Bubble Glass */
 /* ======================== */
