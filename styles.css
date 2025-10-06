@@ -1461,8 +1461,8 @@ a.corner-button {
 	.countdown-label { font-size: 0.8em; }
 }
 
-/* ======================================== */
-/* Scroll Progress Orb – Dynamic Fade (Onyx / iOS 26) */
+//* ======================================== */
+/* Scroll-to-Top Orb – Full Onyx/iOS 26 UI */
 /* ======================================== */
 .scroll-to-top {
 	position: fixed;
@@ -1500,11 +1500,13 @@ a.corner-button {
 	pointer-events: none;
 }
 
+/* Floating animation */
 @keyframes orb-float {
 	0%, 100% { transform: translateY(0); }
 	50% { transform: translateY(-5px); }
 }
 
+/* Subtle pulsing glow */
 @keyframes orb-pulse {
 	0%, 100% { box-shadow:
 		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
@@ -1516,27 +1518,27 @@ a.corner-button {
 		0 0 20px var(--accent-color); }
 }
 
-/* Progress ring */
+/* Progress ring container */
 .progress-ring {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	width: 100%;
-	height: 100%;
+	width: 80%;
+	height: 80%;
 	transform: translate(-50%, -50%) rotate(-90deg);
 }
 
 .progress-bg {
 	fill: none;
-	stroke: color-mix(in srgb, var(--accent-color) 20%, var(--border-color));
-	stroke-width: 3;
-	opacity: 0.5;
+	stroke: color-mix(in srgb, var(--accent-color) 25%, var(--border-color));
+	stroke-width: 4;
+	opacity: 0.4;
 }
 
 .progress-indicator {
 	fill: none;
 	stroke: var(--accent-color);
-	stroke-width: 3.5;
+	stroke-width: 4;
 	stroke-linecap: round;
 	stroke-dasharray: 141;
 	stroke-dashoffset: 141;
@@ -1546,10 +1548,10 @@ a.corner-button {
 	transition: stroke-dashoffset 0.2s ease, filter 0.2s ease;
 }
 
-/* Arrow */
+/* Arrow in upper half of orb */
 .arrow {
 	position: absolute;
-	top: 50%;
+	top: 40%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	font-size: calc(var(--font-size-base, 20px) * 1.1);
@@ -1565,10 +1567,10 @@ a.corner-button {
 .arrow.up { transform: translate(-50%, -50%) rotate(0deg); }
 .arrow.down { transform: translate(-50%, -50%) rotate(180deg); }
 
-/* Percentage inside orb */
+/* Percentage in lower half of orb */
 .percentage {
 	position: absolute;
-	top: 50%;
+	top: 62%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	font-size: calc(var(--font-size-base, 20px) * 0.65);
@@ -1576,19 +1578,27 @@ a.corner-button {
 	font-weight: 600;
 	text-shadow: 0 0 4px var(--accent-color);
 	pointer-events: none;
+	text-align: center;
 }
 
 /* Responsive adjustments */
 @media screen and (max-width: 1024px) {
 	.scroll-to-top { width: 58px; height: 58px; left: 20px; bottom: 20px; }
+	.progress-ring { width: 75%; height: 75%; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 1); }
+	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.6); }
 }
 @media screen and (max-width: 768px) {
 	.scroll-to-top { width: 52px; height: 52px; left: 15px; bottom: 15px; }
+	.progress-ring { width: 70%; height: 70%; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.95); }
+	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.55); }
 }
 @media screen and (max-width: 480px) {
 	.scroll-to-top { width: 48px; height: 48px; left: 12px; bottom: 12px; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 1); }
-	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.6); }
+	.progress-ring { width: 65%; height: 65%; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.9); }
+	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.5); }
 }
 
 /* ======================== */
