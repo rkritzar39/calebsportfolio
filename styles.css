@@ -1462,50 +1462,53 @@ a.corner-button {
 }
 
 /* ======================================== */
-/* Scroll to Top – iOS 26 Onyx Floating Orb */
+/* Scroll Progress Orb – Dynamic Fade (Onyx / iOS 26) */
 /* ======================================== */
 .scroll-to-top {
 	position: fixed;
-	bottom: clamp(80px, 8vh, 120px);
-	left: clamp(25px, 3vw, 40px);
+	top: 50%;
+	left: 25px;
+	transform: translateY(-50%);
 	width: 65px;
 	height: 65px;
 	border-radius: 50%;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
+	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
 	box-shadow:
-		inset 0 1px 3px var(--glow-color),
-		0 8px 30px var(--shadow-color),
-		var(--bubble-highlight);
-	backdrop-filter: blur(20px) saturate(160%);
-	-webkit-backdrop-filter: blur(20px) saturate(160%);
+		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
+		0 8px 25px color-mix(in srgb, var(--shadow-color) 80%, transparent);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
 	cursor: pointer;
 	z-index: 9999;
 	opacity: 1;
-	transform: translateY(0);
+	pointer-events: auto;
 	animation: orb-float 3.5s ease-in-out infinite;
-	transition:
-		transform var(--transition-medium),
-		box-shadow var(--transition-medium),
-		background var(--transition-medium);
+	transition: opacity 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Gentle floating shimmer */
+/* Floating idle motion */
 @keyframes orb-float {
-	0%, 100% { transform: translateY(0); }
-	50% { transform: translateY(-4px); }
+	0%, 100% { transform: translateY(-50%) translateY(0); }
+	50% { transform: translateY(-50%) translateY(-6px); }
 }
 
+/* Hover response */
 .scroll-to-top:hover {
-	transform: translateY(-6px) scale(1.05);
+	transform: translateY(-50%) scale(1.08);
 	box-shadow:
 		0 0 20px var(--accent-color),
-		0 0 40px color-mix(in srgb, var(--accent-color) 60%, transparent),
-		0 10px 30px var(--shadow-color);
+		0 0 35px color-mix(in srgb, var(--accent-color) 60%, transparent),
+		0 8px 25px var(--shadow-color);
 }
 
-/* Progress Ring */
+/* Fade out after inactivity */
+.scroll-to-top.inactive {
+	opacity: 0.3;
+	transition: opacity 1s ease;
+}
+
+/* Progress ring */
 .progress-ring {
 	position: absolute;
 	top: 50%;
@@ -1513,28 +1516,26 @@ a.corner-button {
 	width: 100%;
 	height: 100%;
 	transform: translate(-50%, -50%) rotate(-90deg);
-	border-radius: 50%;
 }
 
 .progress-bg {
 	fill: none;
 	stroke: color-mix(in srgb, var(--accent-color) 20%, var(--border-color));
-	stroke-width: 3.2;
+	stroke-width: 3;
 	opacity: 0.5;
 }
 
 .progress-indicator {
 	fill: none;
 	stroke: var(--accent-color);
-	stroke-width: 4;
+	stroke-width: 3.5;
 	stroke-linecap: round;
-	stroke-dasharray: 150;
-	stroke-dashoffset: 150;
+	stroke-dasharray: 141;
+	stroke-dashoffset: 141;
 	filter:
-		drop-shadow(0 0 6px var(--accent-color))
-		drop-shadow(0 0 12px var(--accent-color))
-		drop-shadow(0 0 20px color-mix(in srgb, var(--accent-color) 70%, transparent));
-	transition: stroke-dashoffset 0.25s ease-out;
+		drop-shadow(0 0 8px var(--accent-color))
+		drop-shadow(0 0 18px color-mix(in srgb, var(--accent-color) 70%, transparent));
+	transition: stroke-dashoffset 0.25s ease;
 }
 
 /* Arrow */
@@ -1548,8 +1549,7 @@ a.corner-button {
 	font-weight: 700;
 	text-shadow:
 		0 0 6px var(--accent-color),
-		0 0 12px var(--accent-color),
-		0 0 24px color-mix(in srgb, var(--accent-color) 60%, transparent);
+		0 0 12px color-mix(in srgb, var(--accent-color) 60%, transparent);
 	pointer-events: none;
 	transition: transform 0.3s ease;
 }
@@ -1557,21 +1557,16 @@ a.corner-button {
 .arrow.up { transform: translate(-50%, -50%) rotate(0deg); }
 .arrow.down { transform: translate(-50%, -50%) rotate(180deg); }
 
-/* Responsive Scaling */
+/* Responsive adjustments */
 @media screen and (max-width: 1024px) {
-	.scroll-to-top { width: 60px; height: 60px; bottom: 90px; left: 22px; }
-	.progress-indicator { stroke-width: 3.5; stroke-dasharray: 130; }
+	.scroll-to-top { width: 58px; height: 58px; left: 20px; }
 }
-
 @media screen and (max-width: 768px) {
-	.scroll-to-top { width: 55px; height: 55px; bottom: 80px; left: 18px; }
-	.progress-indicator { stroke-width: 3.2; stroke-dasharray: 120; }
+	.scroll-to-top { width: 52px; height: 52px; left: 15px; }
 }
-
 @media screen and (max-width: 480px) {
-	.scroll-to-top { width: 52px; height: 52px; bottom: 70px; left: 15px; }
-	.progress-indicator { stroke-width: 3; stroke-dasharray: 110; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 1.05); }
+	.scroll-to-top { width: 48px; height: 48px; left: 12px; }
+	.arrow { font-size: calc(var(--font-size-base, 20px) * 1.1); }
 }
 
 /* ======================== */
