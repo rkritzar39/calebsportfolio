@@ -1461,7 +1461,7 @@ a.corner-button {
 	.countdown-label { font-size: 0.8em; }
 }
 
-/.scroll-to-top {
+.scroll-to-top {
 	position: fixed;
 	bottom: 25px;
 	left: 25px;
