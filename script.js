@@ -127,7 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // ========================
 const scrollBtn = document.querySelector('.scroll-to-top');
 const arrow = scrollBtn.querySelector('.arrow');
-const progressCircle = scrollBtn.querySelector('.progress-indicator');
+const progressCircle = document.querySelector('.progress-indicator');
+const percentage = document.querySelector('.percentage');
 
 const radius = progressCircle.r.baseVal.value;
 const circumference = 2 * Math.PI * radius;
@@ -135,7 +136,7 @@ progressCircle.style.strokeDasharray = `${circumference}`;
 progressCircle.style.strokeDashoffset = `${circumference}`;
 
 let lastScrollY = window.scrollY;
-let fadeTimeout = null;
+let lastTime = Date.now();
 
 function updateProgress() {
 	const scrollTop = window.scrollY;
@@ -143,34 +144,32 @@ function updateProgress() {
 	const progress = scrollHeight ? (scrollTop / scrollHeight) : 0;
 	progressCircle.style.strokeDashoffset = `${circumference * (1 - progress)}`;
 
-	if (scrollTop > lastScrollY) {
-		arrow.classList.remove('up');
-		arrow.classList.add('down');
-	} else if (scrollTop < lastScrollY) {
-		arrow.classList.remove('down');
-		arrow.classList.add('up');
-	}
+	// Arrow direction
+	if (scrollTop > lastScrollY) arrow.classList.replace('up','down');
+	else if (scrollTop < lastScrollY) arrow.classList.replace('down','up');
+
+	// Fade orb at top
+	if (scrollTop < 50) scrollBtn.classList.add('hidden');
+	else scrollBtn.classList.remove('hidden');
+
+	// Update percentage
+	percentage.textContent = `${Math.round(progress * 100)}%`;
+
+	// Glow intensity reacts to scroll speed
+	const now = Date.now();
+	const delta = Math.abs(scrollTop - lastScrollY) / (now - lastTime + 1);
+	const glow = Math.min(1 + delta*30, 3); // max multiplier
+	progressCircle.style.filter = `drop-shadow(0 0 ${4*glow}px var(--accent-color)) drop-shadow(0 0 ${10*glow}px var(--accent-color))`;
+	lastTime = now;
 
 	lastScrollY = scrollTop;
-
-	// Fade back in while scrolling
-	scrollBtn.classList.remove('inactive');
-
-	// Clear and restart fade timer
-	clearTimeout(fadeTimeout);
-	fadeTimeout = setTimeout(() => {
-		scrollBtn.classList.add('inactive');
-	}, 1500);
 }
 
-// Scroll progress + fade control
 window.addEventListener('scroll', updateProgress);
 
-// Click = scroll to top
 scrollBtn.addEventListener('click', () => {
 	window.scrollTo({ top: 0, behavior: 'smooth' });
-	arrow.classList.remove('down');
-	arrow.classList.add('up');
+	arrow.classList.replace('down','up');
 });
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
