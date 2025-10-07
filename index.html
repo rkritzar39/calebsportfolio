@@ -327,5 +327,13 @@
     <span>Settings</span>
   </a>
 </nav>
+    <script>
+const current = window.location.pathname.split('/').pop();
+document.querySelectorAll('.toolbar-item').forEach(item => {
+  if (item.getAttribute('href') === current) {
+    item.classList.add('active');
+  }
+});
+</script>
 </body>
 </html>
