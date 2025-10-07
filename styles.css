@@ -443,67 +443,66 @@ a.corner-button {
 	margin: 0;
 }
 
-/* ======================================= */
-/* iOS 26 Floating Tab Bar – Apple Music Style */
-/* ======================================= */
+/* ============================================= */
+/* iOS 26 / 19 Glassy Transparent Floating Bar   */
+/* ============================================= */
 
-.ios26-toolbar {
+.ios26-toolbar.glass {
   position: fixed;
-  bottom: 16px;
+  bottom: 18px;
   left: 50%;
   transform: translateX(-50%);
-  width: 94%;
+  width: 92%;
   max-width: 520px;
-  height: 64px;
+  height: 66px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px) saturate(180%);
+  background: rgba(255, 255, 255, 0.12); /* transparent glass */
   border-radius: 22px;
   box-shadow:
-    0 4px 18px rgba(0,0,0,0.08),
-    0 0 0 0.5px rgba(255,255,255,0.5) inset;
+    0 6px 20px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.25);
   z-index: 999;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Dark mode adaptation */
-.dark-mode .ios26-toolbar {
-  background: rgba(25,25,25,0.55);
+/* Dark-mode adaptation */
+.dark-mode .ios26-toolbar.glass {
+  background: rgba(30, 30, 30, 0.25);
   box-shadow:
-    0 4px 18px rgba(0,0,0,0.25),
-    0 0 0 0.5px rgba(255,255,255,0.08) inset;
+    0 6px 20px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 .ios26-toolbar .toolbar-item {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
   text-decoration: none;
-  color: var(--text-color, #111);
+  color: var(--text-color, #fff);
   font-size: 0.72rem;
   font-weight: 500;
-  transition: all 0.3s ease;
+  gap: 3px;
   border-radius: 16px;
   padding: 6px 12px;
+  transition: all 0.3s ease;
 }
 
 .ios26-toolbar .toolbar-item img {
   width: 22px;
   height: 22px;
-  opacity: 0.8;
-  transition: opacity 0.25s ease;
+  opacity: 0.75;
+  transition: opacity 0.25s ease, filter 0.25s ease;
 }
 
-/* Active state (capsule bubble) */
+/* Active state – accent-colored capsule */
 .ios26-toolbar .toolbar-item.active {
-  background: #ff3b30; /* iOS red – adjust to your theme */
+  background: var(--accent-color, #34C759);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(255,59,48,0.3);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color, #34C759) 60%, transparent);
 }
 
 .ios26-toolbar .toolbar-item.active img {
