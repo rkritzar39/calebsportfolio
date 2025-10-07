@@ -443,66 +443,76 @@ a.corner-button {
 	margin: 0;
 }
 
-/* ===================================== */
-/* iOS 26 Bottom Toolbar – Glass Capsule */
-/* ===================================== */
+/* ======================================= */
+/* iOS 26 Floating Tab Bar – Apple Music Style */
+/* ======================================= */
 
-.ios-toolbar {
+.ios26-toolbar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 72px;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 94%;
+  max-width: 520px;
+  height: 64px;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  backdrop-filter: blur(22px);
-  background: rgba(255, 255, 255, 0.25);
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(30px);
+  border-radius: 22px;
+  box-shadow:
+    0 4px 18px rgba(0,0,0,0.08),
+    0 0 0 0.5px rgba(255,255,255,0.5) inset;
   z-index: 999;
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-.dark-mode .ios-toolbar {
-  background: rgba(20, 20, 20, 0.5);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+/* Dark mode adaptation */
+.dark-mode .ios26-toolbar {
+  background: rgba(25,25,25,0.55);
+  box-shadow:
+    0 4px 18px rgba(0,0,0,0.25),
+    0 0 0 0.5px rgba(255,255,255,0.08) inset;
 }
 
-.ios-toolbar .toolbar-item {
-  flex: 1;
+.ios26-toolbar .toolbar-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 3px;
   text-decoration: none;
-  background: none;
-  border: none;
   color: var(--text-color, #111);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 500;
-  gap: 4px;
-  transition: color 0.25s ease, transform 0.25s ease;
+  transition: all 0.3s ease;
+  border-radius: 16px;
+  padding: 6px 12px;
 }
 
-.ios-toolbar .toolbar-item img {
-  width: 24px;
-  height: 24px;
-  opacity: 0.7;
-  transition: opacity 0.25s ease, filter 0.25s ease;
+.ios26-toolbar .toolbar-item img {
+  width: 22px;
+  height: 22px;
+  opacity: 0.8;
+  transition: opacity 0.25s ease;
 }
 
-.ios-toolbar .toolbar-item.active img {
+/* Active state (capsule bubble) */
+.ios26-toolbar .toolbar-item.active {
+  background: #ff3b30; /* iOS red – adjust to your theme */
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(255,59,48,0.3);
+}
+
+.ios26-toolbar .toolbar-item.active img {
+  filter: brightness(0) invert(1);
   opacity: 1;
-  filter: drop-shadow(0 0 6px rgba(52,199,89,0.45));
 }
 
-.ios-toolbar .toolbar-item.active span {
-  color: #34C759; /* iOS green */
-}
-
-.ios-toolbar .toolbar-item:active {
-  transform: scale(0.95);
+.ios26-toolbar .toolbar-item:active {
+  transform: scale(0.96);
 }
 
 /* ======================================== */
