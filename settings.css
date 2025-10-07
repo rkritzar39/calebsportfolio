@@ -415,16 +415,17 @@ body.settings-page #appearanceModeSelect {
     margin-left: 0.625rem;
 }
 
-/* ===================================== */
-/* iOS Capsule Toggle (For .md-switch)   */
-/* ===================================== */
+/* ========================================= */
+/* iOS 26 Toggle Theme – Glass Capsule Style */
+/* ========================================= */
 
 .md-switch {
   position: relative;
   display: inline-flex;
   align-items: center;
-  width: 58px;
-  height: 32px;
+  justify-content: flex-end;
+  width: 62px;
+  height: 34px;
 }
 
 .md-switch input {
@@ -433,74 +434,83 @@ body.settings-page #appearanceModeSelect {
   height: 0;
 }
 
-/* Background capsule (track) */
+/* Capsule background */
 .md-switch .track {
   position: absolute;
   inset: 0;
-  background: rgba(160, 160, 160, 0.35);
-  border-radius: 32px;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(12px);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.25);
+  border-radius: 34px;
+  background: rgba(150,150,150,0.18);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow:
+    inset 0 0 8px rgba(255,255,255,0.2),
+    inset 0 0 4px rgba(0,0,0,0.25);
+  transition:
+    background 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Moving capsule (thumb) */
+/* Thumb (integrated look) */
 .md-switch .thumb {
   position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 26px;
-  height: 24px;
-  background: #fff;
+  top: 3px;
+  left: 3px;
+  width: 28px;
+  height: 28px;
   border-radius: 24px;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(145deg, rgba(255,255,255,0.85), rgba(230,230,230,0.75));
+  box-shadow:
+    0 0 3px rgba(255,255,255,0.9),
+    0 0 6px rgba(0,0,0,0.15);
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s ease;
 }
 
-/* Active (checked) state */
+/* ON state */
 .md-switch input:checked + .track {
-  background: rgba(0, 122, 255, 0.85);
-  box-shadow: 0 0 10px rgba(0, 122, 255, 0.55);
+  background: linear-gradient(145deg, rgba(0, 119, 255, 0.8), rgba(0, 132, 255, 0.9));
+  box-shadow:
+    inset 0 0 10px rgba(0,132,255,0.6),
+    0 0 12px rgba(0,132,255,0.4);
 }
 
+/* Thumb movement + glow */
 .md-switch input:checked + .track .thumb {
-  transform: translateX(26px);
+  transform: translateX(28px);
+  background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(220,240,255,0.8));
+  box-shadow:
+    0 0 6px rgba(255,255,255,0.9),
+    0 0 20px rgba(0,132,255,0.6);
 }
 
-/* Pressed (clicking) animation */
+/* Subtle press animation */
 .md-switch:active .thumb {
-  width: 30px;
+  transform: scale(0.95);
 }
 
-/* Focus ring for accessibility */
+/* Focus outline for accessibility */
 .md-switch input:focus-visible + .track {
-  outline: 2px solid rgba(0, 122, 255, 0.6);
-  outline-offset: 2px;
+  outline: 2px solid rgba(0,132,255,0.7);
+  outline-offset: 3px;
 }
 
-/* Smoothness tweak for your theme */
-.setting-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* Optional: adds smooth neon ripple effect */
+.md-switch input:checked + .track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 50%, rgba(0,132,255,0.35), transparent 70%);
+  opacity: 0;
+  animation: toggleRipple 0.6s ease;
 }
 
-.setting-label {
-  flex: 1;
-  margin-right: 12px;
-}
-
-.setting-title {
-  font-weight: 600;
-}
-
-/* "Squish" animation on click */
-.md-switch input:active ~ .track .thumb {
-    transform: scale(0.85);
-}
-
-.md-switch input:checked:active ~ .track .thumb {
-    transform: translateX(calc(var(--width) - var(--thumb-size) - (2 * var(--padding)))) scale(0.85);
+@keyframes toggleRipple {
+  0% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 0.2; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.3); }
 }
 
 /* ========== Text Size Slider --- iOS 26 REDESIGN ========== */
