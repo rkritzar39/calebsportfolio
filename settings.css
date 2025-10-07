@@ -415,58 +415,83 @@ body.settings-page #appearanceModeSelect {
     margin-left: 0.625rem;
 }
 
-/* ======================================================= */
-/* === NEW "iOS 26" Toggle Switch ======================== */
-/* ======================================================= */
-.md-switch {
-    --width: 3.1875rem; /* 51px */
-    --height: 1.9375rem; /* 31px */
-    --thumb-size: 1.6875rem; /* 27px */
-    --padding: 0.125rem; /* 2px */
+/* ===================================== */
+/* iOS Capsule Toggle (For .md-switch)   */
+/* ===================================== */
 
-    display: inline-flex;
-    align-items: center;
-    position: relative;
-    width: var(--width);
-    height: var(--height);
-    flex-shrink: 0;
+.md-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 58px;
+  height: 32px;
 }
 
 .md-switch input {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    margin: 0;
-    cursor: pointer;
-    z-index: 2;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
+/* Background capsule (track) */
 .md-switch .track {
-    width: var(--width);
-    height: var(--height);
-    background: var(--toggle-off);
-    border-radius: 999px;
-    transition: background 0.2s ease;
+  position: absolute;
+  inset: 0;
+  background: rgba(160, 160, 160, 0.35);
+  border-radius: 32px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.25);
 }
 
+/* Moving capsule (thumb) */
 .md-switch .thumb {
-    position: absolute;
-    top: var(--padding);
-    left: var(--padding);
-    width: var(--thumb-size);
-    height: var(--thumb-size);
-    background: var(--slider-thumb-color);
-    border-radius: 50%;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15); /* Softer shadow */
-    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1.2); /* Bouncy transition */
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 26px;
+  height: 24px;
+  background: #fff;
+  border-radius: 24px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
 }
 
-.md-switch input:checked ~ .track {
-    background: var(--toggle-on);
+/* Active (checked) state */
+.md-switch input:checked + .track {
+  background: rgba(0, 122, 255, 0.85);
+  box-shadow: 0 0 10px rgba(0, 122, 255, 0.55);
 }
 
-.md-switch input:checked ~ .track .thumb {
-    transform: translateX(calc(var(--width) - var(--thumb-size) - (2 * var(--padding))));
+.md-switch input:checked + .track .thumb {
+  transform: translateX(26px);
+}
+
+/* Pressed (clicking) animation */
+.md-switch:active .thumb {
+  width: 30px;
+}
+
+/* Focus ring for accessibility */
+.md-switch input:focus-visible + .track {
+  outline: 2px solid rgba(0, 122, 255, 0.6);
+  outline-offset: 2px;
+}
+
+/* Smoothness tweak for your theme */
+.setting-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setting-label {
+  flex: 1;
+  margin-right: 12px;
+}
+
+.setting-title {
+  font-weight: 600;
 }
 
 /* "Squish" animation on click */
