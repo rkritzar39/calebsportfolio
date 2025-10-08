@@ -1391,145 +1391,84 @@ a.corner-button {
 }
 
 /* ======================== */
-/* Countdown Section – Onyx Bubble Glass */
+/* Countdown Section - Redesigned */
 /* ======================== */
 .countdown-section {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	padding: 30px;
-	border-radius: var(--radius-lg);
-	margin: 30px auto;
-	text-align: center;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	width: 100%;
-	box-sizing: border-box;
-	transition: background 0.3s ease, box-shadow 0.3s ease;
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    padding: 30px;
+    border-radius: var(--radius-lg);
+    margin: 30px auto;
+    text-align: center;
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    width: 100%;
+    box-sizing: border-box;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .countdown-title {
-	font-size: calc(var(--font-size-base, 20px) * 1.2); /* ✨ Updated for text scaling ✨ */
-	font-weight: 700;
-	color: var(--text-color);
-	margin-bottom: 25px;
+    font-size: calc(var(--font-size-base, 20px) * 1.2);
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 25px;
 }
 
-/* Countdown container layout */
 .countdown-container {
-	display: flex;
-	justify-content: center;
-	gap: 25px;
-	margin-top: 20px;
-	flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 20px;
+    flex-wrap: wrap;
 }
 
-.countdown-block {
-	text-align: center;
+.countdown-item {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    text-align: center;
 }
 
-/* Flip clock styling */
-.flip-clock {
-	perspective: 500px;
-	margin-bottom: 10px;
-	display: inline-block;
+.countdown-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120px;
+    height: 120px;
+    transform: rotateY(-180deg) rotateZ(-90deg);
 }
 
-.flip-clock-inner {
-	position: relative;
-	width: 70px;
-	height: 90px;
-	transform-style: preserve-3d;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+.countdown-svg circle {
+    stroke-dasharray: 339.29;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    stroke-width: 10px;
+    stroke: var(--border-color);
+    fill: none;
 }
 
-/* Flip faces */
-.flip-clock-front,
-.flip-clock-back {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	backface-visibility: hidden;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-	border-radius: 12px;
-	background: color-mix(in srgb, var(--border-color) 10%, transparent);
-	backdrop-filter: blur(8px);
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	color: var(--accent-color);
-	font-size: 2.2em;
-	font-weight: 700;
-	text-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 50%, transparent);
-	transform-origin: top;
+.countdown-svg circle:nth-child(2) {
+    stroke-dashoffset: calc(339.29 - (339.29 * var(--percent)) / 100);
+    stroke: var(--accent-color);
+    transition: stroke-dashoffset 0.5s linear;
 }
 
-/* Crease line (middle fold) */
-.flip-clock-front::before,
-.flip-clock-back::before {
-	content: '';
-	position: absolute;
-	width: 100%;
-	height: 1px;
-	background-color: color-mix(in srgb, var(--border-color) 50%, transparent);
-	top: 50%;
-	transform: translateY(-50%);
+.countdown-number {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    font-weight: bold;
+    color: var(--accent-color);
 }
 
-.flip-clock-back {
-	transform: rotateX(180deg);
-	transform-origin: bottom;
-}
-
-/* Fold animations */
-.flip-clock-front.animate {
-	animation: foldTop 0.6s forwards;
-}
-.flip-clock-back.animate {
-	animation: foldBottom 0.6s forwards;
-}
-
-@keyframes foldTop {
-	0% { transform: rotateX(0deg); box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2); }
-	100% { transform: rotateX(-90deg); box-shadow: inset 0 -4px 6px rgba(0,0,0,0.3); }
-}
-
-@keyframes foldBottom {
-	0% { transform: rotateX(90deg); box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); }
-	100% { transform: rotateX(0deg); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
-}
-
-/* Labels */
 .countdown-label {
-	color: var(--secondary-text);
-	font-size: 0.9em;
-	font-weight: 600;
-	text-transform: uppercase;
-	margin-top: 10px;
-	letter-spacing: 0.8px;
-}
-
-/* ======================== */
-/* Responsive Design */
-/* ======================== */
-@media screen and (max-width: 768px) {
-	.countdown-section { padding: 20px; }
-	.countdown-container { gap: 20px; }
-	.flip-clock-inner { width: 60px; height: 80px; }
-	.flip-clock-front,
-	.flip-clock-back { font-size: 2em; }
-}
-
-@media screen and (max-width: 480px) {
-	.countdown-section { padding: 15px; }
-	.countdown-container { gap: 15px; }
-	.flip-clock-inner { width: 50px; height: 70px; }
-	.flip-clock-front,
-	.flip-clock-back { font-size: 1.8em; border-radius: 8px; }
-	.countdown-label { font-size: 0.8em; }
+    font-size: 0.8em;
+    color: var(--secondary-text);
+    text-transform: uppercase;
 }
 
 /* ======================================== */
