@@ -2133,47 +2133,48 @@ body.maintenance-active {
 /* == Business Info Section – Onyx Bubble Glass == */
 /* ======================================== */
 
+/* This section is now just a layout container, no design. */
 .business-info-section {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border-radius: var(--radius-xl);
 	padding: clamp(20px, 4vw, 30px);
 	margin: 30px 0;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur) saturate(120%);
-	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
 	width: 100%;
 	box-sizing: border-box;
 	position: relative;
-	overflow: hidden;
-	transition: background 0.3s ease, box-shadow 0.3s ease;
 	color: var(--text-color);
 }
 
 /* Section Header */
 .business-info-section h2 {
 	margin-top: 0;
-	margin-bottom: 18px;
+	margin-bottom: 25px; /* Increased margin */
 	font-size: 1.6em;
 	font-weight: 700;
 	color: var(--text-color);
 	text-align: center;
-	padding-bottom: 12px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* --- Status Display (Stacked) --- */
+/* --- Status Display --- */
 .business-status {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-bottom: 25px;
+	margin-bottom: 30px; /* Increased margin */
 	gap: 10px;
 	text-align: center;
 }
 
-/* Status Bubble */
+/*
+ * APPLIED ONYX DESIGN TO THE STATUS BUBBLE
+ */
 .status-main-text {
+	/* Onyx Bubble Glass Properties */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur) saturate(120%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+	
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -2181,16 +2182,16 @@ body.maintenance-active {
 	font-weight: 700;
 	font-size: 1.1em;
 	padding: 10px 24px;
-	border-radius: 9999px;
+	border-radius: 9999px; /* Pill shape */
 	letter-spacing: 0.3px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	background: color-mix(in srgb, currentColor 10%, transparent);
-	backdrop-filter: blur(6px);
-	z-index: 0;
-	transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.status-main-text:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--shadow-color) 60%, transparent), var(--bubble-highlight);
 }
 
-/* Status Dot (only pulse with subtle glow) */
+/* Status Dot */
 .status-main-text::before {
 	content: '';
 	display: block;
@@ -2202,32 +2203,17 @@ body.maintenance-active {
 	animation: pulse-status 2s infinite;
 }
 
-/* Remove the glow behind the dot */
-.status-main-text::after {
-	display: none;
-}
-
-/* Hover effect for dot only */
-.status-main-text:hover::before {
-	animation: pulse-hover 1.5s infinite;
-}
-
-/* --- Keyframes for Pulse --- */
 @keyframes pulse-status {
 	0%, 100% { transform: scale(1); opacity: 1; }
 	50% { transform: scale(1.25); opacity: 0.6; }
 }
-@keyframes pulse-hover {
-	0%, 100% { transform: scale(1); opacity: 1; }
-	50% { transform: scale(1.4); opacity: 0.8; }
-}
 
-/* --- Status Colors (Theme-Adaptive) --- */
+/* Status Colors */
 .status-main-text.status-open { color: var(--status-open-color, #28a745); }
 .status-main-text.status-closed { color: var(--status-closed-color, #dc3545); }
 .status-main-text.status-unavailable { color: var(--status-unavailable-color, #fd7e14); }
 
-/* --- Status Message */
+/* Status Message */
 .status-message {
 	font-size: 0.95em;
 	font-weight: 500;
@@ -2235,34 +2221,55 @@ body.maintenance-active {
 	max-width: 400px;
 }
 
-/* --- Regular Hours List --- */
-.hours-list {
+/* --- Hours List (Regular & Special) --- */
+.hours-list, .special-hours-display {
+	list-style: none;
+	padding: 0;
 	margin: 25px 0;
-	border-radius: 20px;
-	backdrop-filter: blur(12px) saturate(120%);
+	display: grid;
+	gap: 14px; /* Consistent gap */
 }
-.hours-list ul { list-style: none; padding: 0; margin: 0; }
+
+/*
+ * APPLIED ONYX DESIGN TO EACH HOURS LIST ITEM
+ */
+.hours-list li, .special-hours-display li {
+	/* Onyx Bubble Glass Properties */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur) saturate(120%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+
+	border-radius: var(--radius-lg); /* Consistent radius */
+	padding: 16px 22px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hours-list li:hover, .special-hours-display li:hover {
+	transform: translateY(-3px);
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--shadow-color) 60%, transparent), var(--bubble-highlight);
+}
+
+/* Grid layout for regular hours */
 .hours-list li {
 	display: grid;
 	grid-template-columns: 1fr auto;
 	align-items: center;
-	padding: 14px 16px;
-	border-radius: 14px;
-	margin-bottom: 10px;
-	background: color-mix(in srgb, var(--content-bg) 70%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.hours-list li:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+
+.hours-list li strong, .special-hours-display li strong {
+	color: var(--text-color);
+	font-weight: 600;
 }
-.hours-list li strong { color: var(--text-color); font-weight: 600; }
-.hours-list li span { color: var(--secondary-text); font-weight: 500; }
+.hours-list li span {
+	color: var(--secondary-text);
+	font-weight: 500;
+}
+
+/* Highlighting current day */
 .hours-list li.current-day {
-	background: color-mix(in srgb, var(--accent-color) 15%, transparent);
-	border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
+	border-color: color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
 .hours-list li.current-day strong,
 .hours-list li.current-day span {
@@ -2270,29 +2277,17 @@ body.maintenance-active {
 	font-weight: 700;
 }
 
-/* --- Special Hours Display --- */
-.special-hours-display {
-	list-style: none;
-	padding: 0;
-	margin: 30px 0 0 0;
-	display: grid;
-	gap: 14px;
-}
-.special-hours-display li {
-	background: color-mix(in srgb, var(--content-bg) 70%, transparent);
-	padding: 16px 22px;
-	border-radius: 18px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	box-shadow: 0 4px 15px color-mix(in srgb, var(--shadow-color) 25%, transparent);
-}
+/* Layout for special hours */
 .special-hours-display li .hours-container {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 6px;
 }
-.special-hours-display li strong { font-weight: 600; color: var(--text-color); }
-.special-hours-display li .hours { font-weight: 600; color: var(--text-color); }
+.special-hours-display li .hours {
+	font-weight: 600;
+	color: var(--text-color);
+}
 .special-hours-display li .dates {
 	display: block;
 	font-size: 0.9em;
@@ -2309,20 +2304,24 @@ body.maintenance-active {
 .contact-info a {
 	display: inline-block;
 	padding: 14px 36px;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
 	color: var(--accent-color);
-	border-radius: 9999px;
 	text-decoration: none;
 	font-weight: 700;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
 	transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+	
+	/* Onyx Bubble Glass Properties */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	border-radius: 9999px;
 }
 .contact-info a:hover,
 .contact-info a:focus {
 	transform: translateY(-3px);
-	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent);
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent), var(--bubble-highlight);
 	outline: none;
 }
 
