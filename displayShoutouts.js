@@ -1595,12 +1595,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-// --- ***** Countdown Timer Logic (v7) ***** ---
-function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOverride) { 
+function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOverride) {
     const countdownSection = document.querySelector('.countdown-section');
-    if (!countdownSection) { console.warn("Countdown section element missing."); return; }
+    if (!countdownSection) {
+        console.warn("Countdown section element missing.");
+        return;
+    }
 
-    const titleElement = countdownSection.querySelector('h2');
+    // Get all the elements, including the new ones
+    const titleElement = countdownSection.querySelector('.countdown-title');
     const yearsElement = document.getElementById('countdown-years');
     const monthsElement = document.getElementById('countdown-months');
     const daysElement = document.getElementById('countdown-days');
@@ -1609,196 +1612,76 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     const secondsElement = document.getElementById('countdown-seconds');
     const countdownContainer = countdownSection.querySelector('.countdown-container');
 
-    // This check was added in a later version of initializeHomepageContent, good to have here too
+    // Get the new circle elements
+    const yearsCircle = document.getElementById('years-circle');
+    const monthsCircle = document.getElementById('months-circle');
+    const daysCircle = document.getElementById('days-circle');
+    const hoursCircle = document.getElementById('hours-circle');
+    const minutesCircle = document.getElementById('minutes-circle');
+    const secondsCircle = document.getElementById('seconds-circle');
+
+    // Check if all required elements exist
     if (!titleElement || !yearsElement || !monthsElement || !daysElement || !hoursElement || !minutesElement || !secondsElement || !countdownContainer) {
-        console.warn("One or more inner countdown display elements missing (title, units, or container). Countdown cannot initialize fully.");
-        // Optionally hide the section if crucial parts are missing
-        // countdownSection.style.display = 'none';
-        // return; // Or allow it to proceed and show what it can
-    }
-
-    let targetDateMillis;
-    let targetDateObj;
-    if (targetTimestamp && targetTimestamp instanceof Timestamp) { // Timestamp should be imported/available
-        try {
-            targetDateObj = targetTimestamp.toDate();
-            targetDateMillis = targetDateObj.getTime();
-        } catch (e) {
-            console.error("Error converting Firestore Timestamp for countdown:", e);
-            targetDateMillis = null;
-        }
-    } else {
-        if (targetTimestamp) {
-            console.warn("Received countdownTargetDate but it is not a Firestore Timestamp:", targetTimestamp);
-        }
-        targetDateMillis = null;
-    }
-
-    const displayTitle = countdownTitle || "Countdown"; // Default title
-
-    if (!targetDateMillis || !targetDateObj) { // If no valid future date
-        console.warn(`Invalid or missing countdown target date for "${displayTitle}". Hiding section or showing expired state.`);
-        if (countdownSection) { // Ensure countdownSection itself was found
-            // If you want to show an expired message even if the date was initially invalid/missing:
-            const defaultExpiredMsg = `${displayTitle || 'The event'} has concluded or is not set.`;
-            const messageText = expiredMessageOverride || defaultExpiredMsg; // Use override if provided
-             if(countdownContainer) countdownContainer.style.display = 'none'; // Hide the numbers
-             if(titleElement) titleElement.textContent = displayTitle; // Still show title
-            // Add a message element if you don't have one, or update an existing one
-            let expiredMsgElement = countdownSection.querySelector('.countdown-expired-message');
-            if (!expiredMsgElement) {
-                expiredMsgElement = document.createElement('p');
-                expiredMsgElement.className = 'countdown-expired-message';
-                // Insert after title or at the end of countdownSection
-                if(titleElement && titleElement.parentNode === countdownSection) titleElement.after(expiredMsgElement);
-                else countdownSection.appendChild(expiredMsgElement);
-            }
-            expiredMsgElement.innerHTML = messageText.replace(/\n/g, '<br>');
-            expiredMsgElement.style.cssText = "font-size: 1.1em; line-height: 1.6; margin: 15px 0; text-align: center;";
-            countdownSection.style.display = 'block'; // Ensure section is visible to show message
-        }
+        countdownSection.style.display = 'none';
         return;
     }
 
-    const yearsFront = yearsElement?.querySelector('.flip-clock-front');
-    const monthsFront = monthsElement?.querySelector('.flip-clock-front');
-    const daysFront = daysElement?.querySelector('.flip-clock-front');
-    const hoursFront = hoursElement?.querySelector('.flip-clock-front');
-    const minutesFront = minutesElement?.querySelector('.flip-clock-front');
-    const secondsFront = secondsElement?.querySelector('.flip-clock-front');
+    let targetDateMillis;
+    try {
+        targetDateMillis = targetTimestamp.toDate().getTime();
+    } catch (e) {
+        targetDateMillis = null;
+    }
 
+    const displayTitle = countdownTitle || "Countdown";
     if (titleElement) titleElement.textContent = displayTitle;
-    console.log(`Initializing countdown timer for: "${displayTitle}" to target:`, targetDateObj);
 
-    function animateFlip(element, newValue) {
-    if (!element) return;
-
-    const front = element.querySelector('.flip-clock-front');
-    const back = element.querySelector('.flip-clock-back');
-
-    if (!front || !back) return;
-
-    const paddedValue = String(newValue).padStart(2, '0');
-
-    // Only animate if the value changed
-    if (front.textContent === paddedValue) return;
-
-    back.textContent = paddedValue;
-
-    // Trigger the flip
-    front.classList.add('flip');
-    back.classList.add('flip');
-
-    setTimeout(() => {
-        front.textContent = paddedValue;
-        front.classList.remove('flip');
-        back.classList.remove('flip');
-    }, 600); // matches your CSS transition duration
-}
-    
-    function updateDisplay(y, mo, d, h, m, s) {
-        animateFlip(document.getElementById('countdown-years'), y);
-        animateFlip(document.getElementById('countdown-months'), mo);
-        animateFlip(document.getElementById('countdown-days'), d);
-        animateFlip(document.getElementById('countdown-hours'), h);
-        animateFlip(document.getElementById('countdown-minutes'), m);
-        animateFlip(document.getElementById('countdown-seconds'), s);
-    }
-
-
-    let intervalId = null; // Store interval ID to clear it
-
-    function showExpiredState() {
-        console.log(`Countdown for "${displayTitle}" finished or was already expired.`);
-        const defaultExpiredMsg = `${displayTitle || 'The event'} has started!`;
-        const messageText = expiredMessageOverride || defaultExpiredMsg; 
-        
-        if (countdownSection) { // Check if countdownSection element is available
-            // Prepare the HTML for the expired state
-            let expiredHtml = '';
-            if (titleElement) { // Check if titleElement is available
-                expiredHtml += `<h2>${titleElement.textContent}</h2>`; // Keep current title
-            } else {
-                 expiredHtml += `<h2>${displayTitle}</h2>`; // Fallback to displayTitle
-            }
-            expiredHtml += `<p class="countdown-expired-message" style="font-size: 1.1em; line-height: 1.6; margin: 15px 0; text-align:center;">
-                                ${messageText.replace(/\n/g, '<br>')}
-                           </p>
-                           <div style="font-size: 1.5em; color: var(--text-color); text-align:center;">🎉🏁</div>`;
-            
-            countdownSection.innerHTML = expiredHtml;
-            countdownSection.style.display = 'block'; // Ensure section is visible
-        }
-    }
-
-    function calculateAndUpdate() {
-        // Re-check essential display elements for numbers in case they were removed by showExpiredState
-        const currentYearsFront = document.getElementById('countdown-years')?.querySelector('.flip-clock-front');
-        const currentMonthsFront = document.getElementById('countdown-months')?.querySelector('.flip-clock-front');
-        // ... and so on for days, hours, minutes, seconds
-        // If these elements are gone, it means showExpiredState ran, so stop.
-        if(!currentYearsFront) { // Check one critical element
-            if (intervalId) clearInterval(intervalId);
-            return false;
-        }
-
-
-        const now = new Date();
-        const target = targetDateObj; 
-        const distance = target.getTime() - now.getTime();
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = targetDateMillis - now;
 
         if (distance < 0) {
-            if (intervalId) clearInterval(intervalId);
-            showExpiredState();
-            return false; // Indicate timer should stop
+            clearInterval(interval);
+            const defaultExpiredMsg = `${displayTitle || 'The event'} has started!`;
+            const messageText = expiredMessageOverride || defaultExpiredMsg;
+            countdownContainer.innerHTML = `<p class="countdown-expired-message" style="font-size: 1.1em; line-height: 1.6; margin: 15px 0; text-align:center;">${messageText.replace(/\n/g, '<br>')}</p>`;
+            return;
         }
 
-        // Date calculation (years, months, days, hours, minutes, seconds)
-        // This is a common way but can be tricky with month lengths and leap years
-        // For precise calendar differences, Luxon's Duration is better, but this is often used for simple countdowns.
-        let years = target.getFullYear() - now.getFullYear();
-        let months = target.getMonth() - now.getMonth();
-        let days = target.getDate() - now.getDate();
-        let hours = target.getHours() - now.getHours();
-        let minutes = target.getMinutes() - now.getMinutes();
-        let seconds = target.getSeconds() - now.getSeconds();
+        // Calculation logic updated to include years and months
+        const years = Math.floor(distance / (1000 * 60 * 60 * 24 * 365));
+        const months = Math.floor((distance % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30.44));
+        const days = Math.floor((distance % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        if (seconds < 0) { minutes--; seconds += 60; }
-        if (minutes < 0) { hours--; minutes += 60; }
-        if (hours < 0) { days--; hours += 24; }
-        if (days < 0) { 
-            months--; 
-            // Get days in previous month: new Date(year, monthIndex (0-based), 0).getDate()
-            days += new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate(); // days in current month of 'now' to roll back
-        }
-        if (months < 0) { years--; months += 12; }
-        
-        years = Math.max(0, years);
-        months = Math.max(0, months);
-        days = Math.max(0, days);
-        // Hours, minutes, seconds can stay as calculated as they are the final remainder
+        // Update the text content for all elements
+        yearsElement.textContent = years;
+        monthsElement.textContent = months;
+        daysElement.textContent = days;
+        hoursElement.textContent = hours;
+        minutesElement.textContent = minutes;
+        secondsElement.textContent = seconds;
 
-        updateDisplay(years, months, days, hours, minutes, seconds);
-        if(countdownContainer && countdownContainer.style.display === 'none') { // If it was hidden (e.g. by no-target-date logic)
-            countdownContainer.style.display = ''; // Make number blocks visible
-        }
-        return true; // Indicate timer should continue
+        // Update the SVG circles
+        if (yearsCircle) yearsCircle.style.setProperty('--percent', (years / 10) * 100); // Or another max value
+        if (monthsCircle) monthsCircle.style.setProperty('--percent', (months / 12) * 100);
+        if (daysCircle) daysCircle.style.setProperty('--percent', (days / 30.44) * 100);
+        if (hoursCircle) hoursCircle.style.setProperty('--percent', (hours / 24) * 100);
+        if (minutesCircle) minutesCircle.style.setProperty('--percent', (minutes / 60) * 100);
+        if (secondsCircle) secondsCircle.style.setProperty('--percent', (seconds / 60) * 100);
     }
 
-    // Initial call and interval setup
-    if (!calculateAndUpdate()) { // If already expired on first check
-        console.log(`Countdown for "${displayTitle}" was expired on initial load.`);
-    } else {
-        // Clear any existing interval for safety if this function were ever called multiple times
-        // (though DOMContentLoaded should prevent that for the main call)
-        if (window.siteCountdownIntervalId) clearInterval(window.siteCountdownIntervalId);
-        window.siteCountdownIntervalId = setInterval(() => {
-            if (!calculateAndUpdate()) { // If calculateAndUpdate returns false (expired)
-                clearInterval(window.siteCountdownIntervalId);
-            }
-        }, 1000);
-        console.log(`Countdown interval started for "${displayTitle}".`);
+    if (!targetDateMillis) {
+        const defaultExpiredMsg = `${displayTitle || 'The event'} has concluded or is not set.`;
+        const messageText = expiredMessageOverride || defaultExpiredMsg;
+        countdownContainer.innerHTML = `<p class="countdown-expired-message" style="font-size: 1.1em; line-height: 1.6; margin: 15px 0; text-align:center;">${messageText.replace(/\n/g, '<br>')}</p>`;
+        return;
     }
+
+    const interval = setInterval(updateCountdown, 1000);
+    updateCountdown();
 }
 
 // In displayShoutouts.js
