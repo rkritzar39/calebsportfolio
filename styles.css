@@ -1391,34 +1391,34 @@ a.corner-button {
 }
 
 /* ======================== */
-/* Countdown Section - Redesigned & Themed */
+/* Countdown Section - Redesigned */
 /* ======================== */
 .countdown-section {
-    background: var(--onyx-gradient); /* Restored Onyx background */
-    border: 1px solid var(--border-color);
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
     padding: 30px;
     border-radius: var(--radius-lg);
     margin: 30px auto;
     text-align: center;
-    box-shadow: var(--onyx-shadow-lg); /* Restored Onyx shadow */
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
     width: 100%;
     box-sizing: border-box;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .countdown-title {
-    font-size: calc(var(--font-size-base, 20px) * 1.5); /* Made title slightly larger */
+    font-size: calc(var(--font-size-base, 20px) * 1.2);
     font-weight: 700;
-    color: var(--heading-color); /* Using your theme's heading color */
-    margin-bottom: 30px; /* Increased space below title */
-    text-shadow: var(--text-shadow-light);
+    color: var(--text-color);
+    margin-bottom: 25px;
 }
 
 .countdown-container {
     display: flex;
     justify-content: center;
-    gap: 20px; /* Adjusted gap for 6 items */
+    gap: 25px;
     margin-top: 20px;
     flex-wrap: wrap;
 }
@@ -1428,10 +1428,6 @@ a.corner-button {
     width: 120px;
     height: 120px;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
 }
 
 .countdown-svg {
@@ -1445,41 +1441,34 @@ a.corner-button {
 
 .countdown-svg circle {
     stroke-dasharray: 339.29;
+    stroke-dashoffset: 0;
     stroke-linecap: round;
-    stroke-width: 8px; /* Slightly thinner stroke */
-    stroke: var(--border-color-translucent); /* Themed circle background */
+    stroke-width: 10px;
+    stroke: var(--border-color);
     fill: none;
+}
+
+.countdown-svg circle:nth-child(2) {
+    stroke-dashoffset: calc(339.29 - (339.29 * var(--percent)) / 100);
+    stroke: var(--accent-color);
     transition: stroke-dashoffset 0.5s linear;
 }
 
-/* This is the moving part of the circle */
-.countdown-svg circle:nth-child(2) {
-    stroke: var(--accent-gradient); /* Themed accent color */
-    stroke-dashoffset: calc(339.29 - (339.29 * var(--percent, 0)) / 100);
-}
-
 .countdown-number {
-    font-size: 2.2em; /* Larger number */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
     font-weight: bold;
     color: var(--accent-color);
-    z-index: 1; /* Ensure number is on top */
 }
 
 .countdown-label {
-    margin-top: -5px; /* Pull label up slightly */
     font-size: 0.8em;
     color: var(--secondary-text);
     text-transform: uppercase;
-    z-index: 1;
-}
-
-/* Style for expired message */
-.countdown-expired-message {
-    font-size: 1.2em;
-    line-height: 1.6;
-    margin: 20px 0;
-    text-align: center;
-    color: var(--text-color);
 }
 
 /* ======================================== */
