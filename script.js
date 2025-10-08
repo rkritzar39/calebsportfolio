@@ -126,69 +126,34 @@ document.addEventListener('DOMContentLoaded', () => {
 // Scroll to Top Orb Logic – iOS 26 Enhanced Smooth Mode
 // ========================
 const scrollBtn = document.querySelector('.scroll-to-top');
-const arrow = scrollBtn.querySelector('.arrow');
 const progressCircle = document.querySelector('.progress-indicator');
 const percentage = document.querySelector('.percentage');
+const arrow = document.querySelector('.arrow');
 
 const radius = progressCircle.r.baseVal.value;
 const circumference = 2 * Math.PI * radius;
-progressCircle.style.strokeDasharray = `${circumference}`;
-progressCircle.style.strokeDashoffset = `${circumference}`;
-
-let lastScrollY = window.scrollY;
-let lastTime = performance.now();
-let ticking = false;
+progressCircle.style.strokeDasharray = circumference;
+progressCircle.style.strokeDashoffset = circumference;
 
 function updateProgress() {
-	const scrollTop = window.scrollY;
-	const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-	const progress = scrollHeight ? (scrollTop / scrollHeight) : 0;
+  const scrollTop = window.scrollY;
+  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollHeight ? scrollTop / scrollHeight : 0;
+  const offset = circumference * (1 - progress);
+  progressCircle.style.strokeDashoffset = offset;
+  percentage.textContent = `${Math.round(progress * 100)}%`;
 
-	// Animate progress ring
-	progressCircle.style.strokeDashoffset = `${circumference * (1 - progress)}`;
-
-	// Update percentage text
-	percentage.textContent = `${Math.round(progress * 100)}%`;
-
-	// Arrow direction toggle
-	if (scrollTop > lastScrollY + 2) arrow.classList.replace('up', 'down');
-	else if (scrollTop < lastScrollY - 2) arrow.classList.replace('down', 'up');
-
-	// Fade visibility
-	if (scrollTop < 100) {
-		scrollBtn.classList.remove('visible');
-		scrollBtn.classList.add('hidden');
-	} else {
-		scrollBtn.classList.add('visible');
-		scrollBtn.classList.remove('hidden');
-	}
-
-	// Dynamic glow based on scroll velocity
-	const now = performance.now();
-	const delta = Math.abs(scrollTop - lastScrollY) / (now - lastTime + 1);
-	const glow = Math.min(1 + delta * 30, 3); // cap intensity
-	progressCircle.style.filter = `
-		drop-shadow(0 0 ${4 * glow}px var(--accent-color))
-		drop-shadow(0 0 ${10 * glow}px var(--accent-color))
-	`;
-
-	lastScrollY = scrollTop;
-	lastTime = now;
-	ticking = false;
+  if (scrollTop > 200) {
+    scrollBtn.classList.add('visible');
+  } else {
+    scrollBtn.classList.remove('visible');
+  }
 }
+window.addEventListener('scroll', updateProgress);
 
-// Debounce scroll with rAF
-window.addEventListener('scroll', () => {
-	if (!ticking) {
-		requestAnimationFrame(updateProgress);
-		ticking = true;
-	}
-});
-
-// Smooth scroll to top
 scrollBtn.addEventListener('click', () => {
-	window.scrollTo({ top: 0, behavior: 'smooth' });
-	arrow.classList.replace('down', 'up');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  arrow.classList.replace('down', 'up');
 });
 
     // --- Cookie Consent ---
