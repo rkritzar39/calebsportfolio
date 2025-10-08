@@ -1394,8 +1394,16 @@ a.corner-button {
 /* Countdown Section - Final Themed Version */
 /* ======================== */
 
+/* The main container now has the Onyx design */
 .countdown-section {
-    padding: 20px 10px;
+    background: var(--onyx-gradient);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--onyx-shadow-lg);
+    border-radius: var(--radius-lg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    
+    padding: 30px;
     margin: 30px auto;
     width: 100%;
     box-sizing: border-box;
@@ -1417,15 +1425,11 @@ a.corner-button {
     flex-wrap: wrap;
 }
 
-/* This is where the Onyx design is applied to EACH item */
+/* Items are now transparent to show the section's background */
 .countdown-item {
-    background: var(--onyx-gradient);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--onyx-shadow-lg);
-    border-radius: var(--radius-lg);
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    
+    background: transparent;
+    border: none;
+    box-shadow: none;
     position: relative;
     width: 130px;
     height: 130px;
@@ -1435,12 +1439,11 @@ a.corner-button {
     justify-content: center;
     padding: 10px;
     box-sizing: border-box;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 .countdown-item:hover {
     transform: translateY(-5px);
-    box-shadow: var(--onyx-shadow-xl);
 }
 
 .countdown-svg {
@@ -1453,7 +1456,7 @@ a.corner-button {
 }
 
 .countdown-svg circle {
-    stroke-dasharray: 295.4; /* Adjusted for new circle size */
+    stroke-dasharray: 295.4;
     stroke-linecap: round;
     stroke-width: 8px;
     fill: none;
@@ -1465,12 +1468,11 @@ a.corner-button {
     stroke: rgba(255, 255, 255, 0.15);
 }
 
-/* Light Mode track color override for visibility */
+/* Light Mode track color override */
 [data-theme="light"] .countdown-svg circle:nth-child(1) {
     stroke: rgba(0, 0, 0, 0.1);
 }
 
-/* Progress circle using your theme's accent color */
 .countdown-svg circle:nth-child(2) {
     stroke: var(--accent-gradient);
     stroke-dashoffset: calc(295.4 - (295.4 * var(--percent, 0)) / 100);
@@ -1480,7 +1482,7 @@ a.corner-button {
     font-size: 2em;
     font-weight: bold;
     color: var(--accent-color);
-    z-index: 1; /* Ensures number is on top of the SVG */
+    z-index: 1;
 }
 
 .countdown-label {
