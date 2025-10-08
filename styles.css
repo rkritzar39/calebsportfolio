@@ -1,113 +1,111 @@
+:root {
+	/* ======================== */
+	/* Base Sizing            */
+	/* ======================== */
+	--font-size-base: 16px;
+	--line-height-base: 1.65;
+
+	/* ======================== */
+	/* Dark Gray Glass Palette  */
+	/* ======================== */
+	--dark-bg: #0E0E0E;
+	--dark-content-bg: rgba(28, 28, 28, 0.6);
+	--dark-text: #F0F0F0;
+	--dark-secondary-text: #A3A3A3;
+	--dark-border: rgba(255, 255, 255, 0.08);
+	--dark-accent: #4EA8FF;
+	--dark-hover: #2F89E5;
+	--dark-link: var(--dark-accent);
+	--dark-shadow: rgba(0, 0, 0, 0.65);
+	--dark-glow: rgba(255, 255, 255, 0.05);
+	--dark-icon: #D1D1D1;
+
+	/* ======================== */
+	/* Light Glass Palette      */
+	/* ======================== */
+	--light-bg-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+	--light-content-bg: rgba(255, 255, 255, 0.55);
+	--light-text: #111111;
+	--light-secondary-text: #4B5563;
+	--light-shadow: rgba(0, 0, 0, 0.15);
+	--light-accent: #007AFF;
+	--light-hover: #005FCC;
+	--light-link: var(--light-accent);
+	--light-glow: rgba(255, 255, 255, 0.75);
+	--light-icon: #2C2C2E;
+
+	/* ======================== */
+	/* Default Theme (Dark)     */
+	/* ======================== */
+	--bg-color: var(--dark-bg);
+	--content-bg: var(--dark-content-bg);
+	--text-color: var(--dark-text);
+	--secondary-text: var(--dark-secondary-text);
+	--border-color: var(--dark-border);
+	--accent-color: var(--dark-accent); /* This is the user-controlled color */
+	--hover-color: var(--dark-hover);
+	--link-color: var(--dark-link);
+	--shadow-color: var(--dark-shadow);
+	--glow-color: var(--dark-glow);
+	--icon-color: var(--dark-icon);
+	--social-icon-text-color: var(--dark-text);
+
+	/* ======================== */
+	/* Effects & Decoration     */
+	/* ======================== */
+	--backdrop-blur: saturate(180%) blur(28px);
+	--bubble-gradient: radial-gradient(
+		circle at top left,
+		rgba(255, 255, 255, 0.08),
+		transparent 70%
+	);
+	--bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
+	--bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+	/* ======================== */
+	/* Border Radii           */
+	/* ======================== */
+	--radius-xl: 28px;
+	--radius-lg: 20px;
+	--radius-md: 14px;
+
+	/* ======================== */
+	/* Transitions            */
+	/* ======================== */
+	--transition-fast: 0.2s ease;
+	--transition-medium: 0.3s ease;
+	--transition-slow: 0.5s ease;
+}
+
 /* ======================== */
-/* Countdown Section - Final Themed Version */
+/* Light Mode Overrides     */
 /* ======================== */
-
-.countdown-section {
-    /* This now uses your own variables for the Onyx Bubble Glass effect */
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-    border: 1px solid var(--border-color);
-    
-    border-radius: var(--radius-lg);
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    padding: 30px;
-    margin: 30px auto;
-    width: 100%;
-    box-sizing: border-box;
-    text-align: center;
+body.light-e {
+	--bg-color: var(--light-bg-gradient);
+	--content-bg: var(--light-content-bg);
+	--text-color: var(--light-text);
+	--secondary-text: var(--light-secondary-text);
+	--border-color: rgba(255, 255, 255, 0.4);
+	/* --accent-color is now correctly controlled by JavaScript */
+	--hover-color: var(--light-hover);
+	--link-color: var(--light-link);
+	--shadow-color: var(--light-shadow);
+	--glow-color: var(--light-glow);
+	--icon-color: var(--light-icon);
+	--social-icon-text-color: var(--light-text);
+	--bubble-gradient: radial-gradient(
+		circle at top left,
+		rgba(255, 255, 255, 0.8),
+		transparent 50%
+	);
+	--bubble-shadow: 0 12px 32px var(--light-shadow);
+	--bubble-highlight: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+	--backdrop-blur: saturate(180%) blur(28px);
 }
 
-.countdown-title {
-    font-size: calc(var(--font-size-base, 20px) * 1.5);
-    font-weight: 700;
-    color: var(--heading-color);
-    margin-bottom: 30px;
-    text-shadow: var(--text-shadow-light);
-}
-
-.countdown-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.countdown-item {
-    position: relative;
-    width: 130px;
-    height: 130px;
-    transition: transform 0.3s ease;
-}
-
-.countdown-item:hover {
-    transform: translateY(-5px);
-}
-
-.countdown-svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform: rotateY(-180deg) rotateZ(-90deg);
-}
-
-.countdown-svg circle {
-    stroke-dasharray: 339.29;
-    stroke-linecap: round;
-    stroke-width: 10px;
-    fill: none;
-    transition: stroke-dashoffset 0.5s linear;
-}
-
-/* Default (Dark Mode) track color */
-.countdown-svg circle:nth-child(1) {
-    stroke: rgba(255, 255, 255, 0.15);
-}
-
-/* Light Mode track color override for better visibility */
-[data-theme="light"] .countdown-svg circle:nth-child(1) {
-    stroke: rgba(0, 0, 0, 0.1);
-}
-
-/* Progress ring using your theme's accent color */
-.countdown-svg circle:nth-child(2) {
-    stroke: var(--accent-color);
-    stroke-dashoffset: calc(339.29 - (339.29 * var(--percent, 0)) / 100);
-}
-
-/* This new wrapper perfectly centers the number and label */
-.countdown-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    text-align: center;
-}
-
-.countdown-number {
-    font-size: 2.2em;
-    font-weight: 700;
-    color: var(--accent-color);
-    line-height: 1;
-}
-
-.countdown-label {
-    font-size: 0.7em;
-    color: var(--secondary-text);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.countdown-expired-message {
-    font-size: 1.2em;
-    line-height: 1.6;
-    margin: 20px 0;
-    text-align: center;
-    color: var(--text-color);
+body.light-e {
+    background: var(--light-bg-gradient);
+    background-attachment: fixed;
 }
 
 /* ======================== */
@@ -1396,15 +1394,16 @@ a.corner-button {
 /* Countdown Section - Final Themed Version */
 /* ======================== */
 
-/* The main container now has the Onyx design */
 .countdown-section {
-    background: var(--onyx-gradient);
+    /* This now uses your own variables for the Onyx Bubble Glass effect */
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
     border: 1px solid var(--border-color);
-    box-shadow: var(--onyx-shadow-lg);
+    
     border-radius: var(--radius-lg);
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
-    
     padding: 30px;
     margin: 30px auto;
     width: 100%;
@@ -1427,20 +1426,10 @@ a.corner-button {
     flex-wrap: wrap;
 }
 
-/* Items are now transparent to show the section's background */
 .countdown-item {
-    background: transparent;
-    border: none;
-    box-shadow: none;
     position: relative;
     width: 130px;
     height: 130px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    box-sizing: border-box;
     transition: transform 0.3s ease;
 }
 
@@ -1450,17 +1439,17 @@ a.corner-button {
 
 .countdown-svg {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100px;
-    height: 100px;
-    transform: translate(-50%, -50%) rotateY(-180deg) rotateZ(-90deg);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotateY(-180deg) rotateZ(-90deg);
 }
 
 .countdown-svg circle {
-    stroke-dasharray: 295.4;
+    stroke-dasharray: 339.29;
     stroke-linecap: round;
-    stroke-width: 8px;
+    stroke-width: 10px;
     fill: none;
     transition: stroke-dashoffset 0.5s linear;
 }
@@ -1470,29 +1459,39 @@ a.corner-button {
     stroke: rgba(255, 255, 255, 0.15);
 }
 
-/* Light Mode track color override */
+/* Light Mode track color override for better visibility */
 [data-theme="light"] .countdown-svg circle:nth-child(1) {
     stroke: rgba(0, 0, 0, 0.1);
 }
 
+/* Progress ring using your theme's accent color */
 .countdown-svg circle:nth-child(2) {
-    stroke: var(--accent-gradient);
-    stroke-dashoffset: calc(295.4 - (295.4 * var(--percent, 0)) / 100);
+    stroke: var(--accent-color);
+    stroke-dashoffset: calc(339.29 - (339.29 * var(--percent, 0)) / 100);
+}
+
+/* This new wrapper perfectly centers the number and label */
+.countdown-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
 }
 
 .countdown-number {
-    font-size: 2em;
-    font-weight: bold;
+    font-size: 2.2em;
+    font-weight: 700;
     color: var(--accent-color);
-    z-index: 1;
+    line-height: 1;
 }
 
 .countdown-label {
-    margin-top: -5px;
-    font-size: 0.75em;
+    font-size: 0.7em;
     color: var(--secondary-text);
     text-transform: uppercase;
-    z-index: 1;
+    letter-spacing: 1px;
 }
 
 .countdown-expired-message {
