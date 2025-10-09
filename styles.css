@@ -1503,8 +1503,8 @@ a.corner-button {
 }
 
 /* ======================================== */
-/* Scroll-to-Top Orb – iOS 26 Onyx Design   */
-/* Always Visible + Responsive Scaling      */
+/* Scroll-to-Top Orb – iOS 26 Onyx Glass    */
+/* Adaptive, Fades Out at Top               */
 /* ======================================== */
 .scroll-to-top {
   position: fixed;
@@ -1529,30 +1529,30 @@ a.corner-button {
   isolation: isolate;
   -webkit-mask-image: radial-gradient(circle, #000 99%, transparent 100%);
   mask-image: radial-gradient(circle, #000 99%, transparent 100%);
-  opacity: 1;
-  pointer-events: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
   transition:
-    transform 0.3s ease,
+    opacity 0.4s ease,
+    transform 0.4s ease,
     box-shadow 0.3s ease,
     background 0.4s ease;
 }
 
-/* Hover glow */
-.scroll-to-top:hover {
-  transform: scale(1.07);
-  box-shadow:
-    0 0 30px color-mix(in srgb, var(--system-accent, var(--accent-color)) 60%, transparent),
-    0 0 60px color-mix(in srgb, var(--system-accent, var(--accent-color)) 30%, transparent),
-    inset 0 1px 6px rgba(255,255,255,0.15);
+/* Visible when scrolled */
+.scroll-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
-/* Scroll activity glow */
-.scroll-to-top.scrolling {
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(0,0,0,0.9));
+/* Hover glow */
+.scroll-to-top:hover {
+  transform: translateY(-3px) scale(1.05);
   box-shadow:
-    inset 0 1px 6px rgba(255,255,255,0.1),
-    0 0 25px color-mix(in srgb, var(--system-accent, var(--accent-color)) 50%, transparent),
-    0 0 45px color-mix(in srgb, var(--system-accent, var(--accent-color)) 25%, transparent);
+    0 0 25px color-mix(in srgb, var(--system-accent, var(--accent-color)) 60%, transparent),
+    0 0 50px color-mix(in srgb, var(--system-accent, var(--accent-color)) 30%, transparent),
+    inset 0 1px 6px rgba(255,255,255,0.15);
 }
 
 /* Progress ring */
@@ -1598,13 +1598,12 @@ a.corner-button {
     0 0 6px var(--system-accent, var(--accent-color)),
     0 0 10px color-mix(in srgb, var(--system-accent, var(--accent-color)) 50%, transparent);
   pointer-events: none;
-  transition: transform 0.35s ease, rotate 0.35s ease;
+  transition: rotate 0.35s ease;
 }
-
 .arrow.up { rotate: 0deg; }
 .arrow.down { rotate: 180deg; }
 
-/* Percentage below arrow */
+/* Percentage */
 .percentage {
   position: absolute;
   top: 67%;
@@ -1637,7 +1636,7 @@ a.corner-button {
   100% { transform: translateX(120%) rotate(20deg); }
 }
 
-/* Light Mode (Frosted Onyx) */
+/* Light mode (Frosted Glass look) */
 @media (prefers-color-scheme: light) {
   .scroll-to-top {
     background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.9), rgba(240,240,240,0.65));
@@ -1649,23 +1648,19 @@ a.corner-button {
   .progress-bg { stroke: rgba(0, 0, 0, 0.08); }
 }
 
-/* =============================== */
-/* Responsive Sizing Adjustments   */
-/* =============================== */
+/* Responsive scaling */
 @media (max-width: 1024px) {
   .scroll-to-top { width: 58px; height: 58px; left: 20px; bottom: 20px; }
   .arrow { font-size: 20px; top: 37%; }
   .percentage { font-size: 12px; top: 70%; }
 }
-
 @media (max-width: 768px) {
-  .scroll-to-top { width: 52px; height: 52px; left: 16px; bottom: 16px; }
+  .scroll-to-top { width: 52px; height: 52px; left: 16px; bottom: 16px; opacity: 0.9; }
   .arrow { font-size: 18px; top: 36%; }
   .percentage { font-size: 11px; top: 71%; }
 }
-
 @media (max-width: 480px) {
-  .scroll-to-top { width: 46px; height: 46px; left: 14px; bottom: 14px; }
+  .scroll-to-top { width: 46px; height: 46px; left: 14px; bottom: 14px; opacity: 0.85; }
   .arrow { font-size: 17px; top: 35%; }
   .percentage { font-size: 10px; top: 72%; }
 }
