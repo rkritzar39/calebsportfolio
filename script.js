@@ -132,7 +132,9 @@ const circumference = 2 * Math.PI * radius;
 progressCircle.style.strokeDasharray = circumference;
 progressCircle.style.strokeDashoffset = circumference;
 
+let lastScrollY = window.scrollY;
 let scrollTimeout;
+
 window.addEventListener('scroll', () => {
   const scrollTop = window.scrollY;
   const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -141,10 +143,20 @@ window.addEventListener('scroll', () => {
   progressCircle.style.strokeDashoffset = offset;
   percentage.textContent = `${Math.round(progress * 100)}%`;
 
-  scrollBtn.classList.toggle('visible', scrollTop > 200);
   scrollBtn.classList.add('scrolling');
   clearTimeout(scrollTimeout);
-  scrollTimeout = setTimeout(() => scrollBtn.classList.remove('scrolling'), 500);
+  scrollTimeout = setTimeout(() => scrollBtn.classList.remove('scrolling'), 400);
+
+  // Detect scroll direction
+  if (scrollTop > lastScrollY + 5) {
+    arrow.classList.remove('up');
+    arrow.classList.add('down');
+  } else if (scrollTop < lastScrollY - 5) {
+    arrow.classList.remove('down');
+    arrow.classList.add('up');
+  }
+
+  lastScrollY = scrollTop;
 });
 
 scrollBtn.addEventListener('click', () => {
