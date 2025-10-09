@@ -143,11 +143,14 @@ window.addEventListener('scroll', () => {
   progressCircle.style.strokeDashoffset = offset;
   percentage.textContent = `${Math.round(progress * 100)}%`;
 
-  scrollBtn.classList.add('scrolling');
-  clearTimeout(scrollTimeout);
-  scrollTimeout = setTimeout(() => scrollBtn.classList.remove('scrolling'), 400);
+  // Fade out at top
+  if (scrollTop < 100) {
+    scrollBtn.classList.remove('visible');
+  } else {
+    scrollBtn.classList.add('visible');
+  }
 
-  // Detect scroll direction
+  // Arrow direction
   if (scrollTop > lastScrollY + 5) {
     arrow.classList.remove('up');
     arrow.classList.add('down');
@@ -155,6 +158,11 @@ window.addEventListener('scroll', () => {
     arrow.classList.remove('down');
     arrow.classList.add('up');
   }
+
+  // Glow on scroll
+  scrollBtn.classList.add('scrolling');
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => scrollBtn.classList.remove('scrolling'), 400);
 
   lastScrollY = scrollTop;
 });
@@ -164,6 +172,7 @@ scrollBtn.addEventListener('click', () => {
   arrow.classList.remove('down');
   arrow.classList.add('up');
 });
+
 
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
