@@ -122,55 +122,37 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-  // ========================
-// Scroll to Top Orb Logic – Dynamic Fade (iOS 26 Style)
-// ========================
-const scrollBtn = document.querySelector('.scroll-to-top');
-const arrow = scrollBtn.querySelector('.arrow');
+  const scrollBtn = document.querySelector('.scroll-to-top');
 const progressCircle = document.querySelector('.progress-indicator');
 const percentage = document.querySelector('.percentage');
+const arrow = document.querySelector('.arrow');
 
 const radius = progressCircle.r.baseVal.value;
 const circumference = 2 * Math.PI * radius;
-progressCircle.style.strokeDasharray = `${circumference}`;
-progressCircle.style.strokeDashoffset = `${circumference}`;
+progressCircle.style.strokeDasharray = circumference;
+progressCircle.style.strokeDashoffset = circumference;
 
-let lastScrollY = window.scrollY;
-let lastTime = Date.now();
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = scrollHeight ? (scrollTop / scrollHeight) : 0;
+  const offset = circumference * (1 - progress);
+  progressCircle.style.strokeDashoffset = offset;
+  percentage.textContent = `${Math.round(progress * 100)}%`;
 
-function updateProgress() {
-	const scrollTop = window.scrollY;
-	const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-	const progress = scrollHeight ? (scrollTop / scrollHeight) : 0;
-	progressCircle.style.strokeDashoffset = `${circumference * (1 - progress)}`;
-
-	// Arrow direction
-	if (scrollTop > lastScrollY) arrow.classList.replace('up','down');
-	else if (scrollTop < lastScrollY) arrow.classList.replace('down','up');
-
-	// Fade orb at top
-	if (scrollTop < 50) scrollBtn.classList.add('hidden');
-	else scrollBtn.classList.remove('hidden');
-
-	// Update percentage
-	percentage.textContent = `${Math.round(progress * 100)}%`;
-
-	// Glow intensity reacts to scroll speed
-	const now = Date.now();
-	const delta = Math.abs(scrollTop - lastScrollY) / (now - lastTime + 1);
-	const glow = Math.min(1 + delta*30, 3); // max multiplier
-	progressCircle.style.filter = `drop-shadow(0 0 ${4*glow}px var(--accent-color)) drop-shadow(0 0 ${10*glow}px var(--accent-color))`;
-	lastTime = now;
-
-	lastScrollY = scrollTop;
-}
-
-window.addEventListener('scroll', updateProgress);
+  scrollBtn.classList.toggle('visible', scrollTop > 200);
+  scrollBtn.classList.add('scrolling');
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => scrollBtn.classList.remove('scrolling'), 500);
+});
 
 scrollBtn.addEventListener('click', () => {
-	window.scrollTo({ top: 0, behavior: 'smooth' });
-	arrow.classList.replace('down','up');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  arrow.classList.remove('down');
+  arrow.classList.add('up');
 });
+
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
     const acceptCookiesBtn = document.getElementById('cookieAccept');
