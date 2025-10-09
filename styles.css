@@ -1503,60 +1503,72 @@ a.corner-button {
 }
 
 /* ======================================== */
-/* Scroll-to-Top Orb – iOS 26 Onyx Glass   */
+/* Scroll-to-Top Orb – iOS 26 Onyx Glass    */
 /* ======================================== */
 .scroll-to-top {
 	position: fixed;
 	bottom: 25px;
 	left: 25px;
-	width: 65px;
-	height: 65px;
+	width: 68px;
+	height: 68px;
 	border-radius: 50%;
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
-	backdrop-filter: blur(20px) saturate(180%);
-	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), rgba(0,0,0,0.8));
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(22px) saturate(200%);
+	-webkit-backdrop-filter: blur(22px) saturate(200%);
 	cursor: pointer;
 	z-index: 9999;
 	opacity: 1;
 	pointer-events: auto;
-	animation: orb-float 3s ease-in-out infinite, orb-pulse 2.5s ease-in-out infinite;
-	box-shadow:
-		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
-		0 6px 18px color-mix(in srgb, var(--shadow-color) 80%, transparent),
-		0 0 12px var(--accent-color);
 	transition: opacity 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+	box-shadow:
+		inset 0 1px 8px rgba(255,255,255,0.06),
+		0 6px 18px rgba(0,0,0,0.7),
+		0 0 12px rgba(255,255,255,0.05);
+
+	/* keep orb perfectly circular */
+	overflow: hidden;
+	isolation: isolate;
+	-webkit-mask-image: radial-gradient(circle, #000 99%, transparent 100%);
+	mask-image: radial-gradient(circle, #000 99%, transparent 100%);
+
+	/* Onyx breathing */
+	animation: onyx-float 4s ease-in-out infinite, onyx-pulse 6s ease-in-out infinite;
 }
 
 .scroll-to-top:hover {
-	transform: scale(1.08);
+	transform: scale(1.07);
 	box-shadow:
-		0 0 25px var(--accent-color),
-		0 0 45px color-mix(in srgb, var(--accent-color) 70%, transparent),
-		0 8px 25px color-mix(in srgb, var(--shadow-color) 80%, transparent);
+		0 0 30px rgba(var(--onyx-accent-rgb, 0,150,255), 0.4),
+		0 0 60px rgba(var(--onyx-accent-rgb, 0,150,255), 0.25),
+		inset 0 1px 6px rgba(255,255,255,0.15);
 }
 
+/* Hide when near top */
 .scroll-to-top.hidden {
 	opacity: 0;
 	pointer-events: none;
 }
 
-/* Floating animation */
-@keyframes orb-float {
+/* Float + pulse animations */
+@keyframes onyx-float {
 	0%, 100% { transform: translateY(0); }
 	50% { transform: translateY(-5px); }
 }
 
-/* Subtle pulsing glow */
-@keyframes orb-pulse {
-	0%, 100% { box-shadow:
-		inset 0 1px 4px color-mix(in srgb, var(--glow-color) 40%, transparent),
-		0 6px 18px color-mix(in srgb, var(--shadow-color) 80%, transparent),
-		0 0 12px var(--accent-color); }
-	50% { box-shadow:
-		inset 0 1px 6px color-mix(in srgb, var(--glow-color) 50%, transparent),
-		0 8px 22px color-mix(in srgb, var(--shadow-color) 90%, transparent),
-		0 0 20px var(--accent-color); }
+@keyframes onyx-pulse {
+	0%, 100% {
+		box-shadow:
+			inset 0 1px 6px rgba(255,255,255,0.05),
+			0 6px 20px rgba(0,0,0,0.7),
+			0 0 12px rgba(var(--onyx-accent-rgb, 0,150,255), 0.2);
+	}
+	50% {
+		box-shadow:
+			inset 0 1px 8px rgba(255,255,255,0.08),
+			0 8px 25px rgba(0,0,0,0.8),
+			0 0 20px rgba(var(--onyx-accent-rgb, 0,150,255), 0.35);
+	}
 }
 
 /* Progress ring */
@@ -1567,42 +1579,44 @@ a.corner-button {
 	width: 78%;
 	height: 78%;
 	transform: translate(-50%, -50%) rotate(-90deg);
+	border-radius: 50%;
+	pointer-events: none;
+	mix-blend-mode: screen;
 }
 
 .progress-bg {
 	fill: none;
-	stroke: color-mix(in srgb, var(--accent-color) 15%, var(--border-color));
+	stroke: rgba(255, 255, 255, 0.08);
 	stroke-width: 3.5;
-	opacity: 0.35;
 	stroke-linecap: round;
 }
 
 .progress-indicator {
 	fill: none;
-	stroke: var(--accent-color);
+	stroke: var(--accent-color, #00aaff);
 	stroke-width: 3.5;
 	stroke-linecap: round;
 	stroke-dasharray: 141;
 	stroke-dashoffset: 141;
 	stroke-linejoin: round;
-	transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
+	transition: stroke-dashoffset 0.25s ease;
 	filter:
 		drop-shadow(0 0 6px var(--accent-color))
-		drop-shadow(0 0 14px color-mix(in srgb, var(--accent-color) 70%, transparent));
+		drop-shadow(0 0 12px rgba(var(--onyx-accent-rgb, 0,150,255), 0.5));
 }
 
-/* Arrow in center */
+/* Arrow */
 .arrow {
 	position: absolute;
-	top: 38%; /* slightly upper inside orb */
+	top: 38%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: calc(var(--font-size-base, 20px) * 1.1);
-	color: var(--accent-color);
+	font-size: 22px;
 	font-weight: 700;
+	color: var(--accent-color, #00aaff);
 	text-shadow:
 		0 0 6px var(--accent-color),
-		0 0 12px color-mix(in srgb, var(--accent-color) 60%, transparent);
+		0 0 10px rgba(var(--onyx-accent-rgb, 0,150,255), 0.5);
 	pointer-events: none;
 	transition: transform 0.3s ease;
 }
@@ -1610,41 +1624,40 @@ a.corner-button {
 .arrow.up { transform: translate(-50%, -50%) rotate(0deg); }
 .arrow.down { transform: translate(-50%, -50%) rotate(180deg); }
 
-/* Percentage below arrow */
+/* Percentage */
 .percentage {
 	position: absolute;
-	top: 68%; /* below arrow */
+	top: 68%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: calc(var(--font-size-base, 20px) * 0.65);
-	color: var(--accent-color);
+	font-size: 13px;
 	font-weight: 600;
-	text-shadow: 0 0 4px var(--accent-color);
+	color: var(--accent-color, #00aaff);
+	text-shadow:
+		0 0 4px rgba(var(--onyx-accent-rgb, 0,150,255), 0.5);
 	pointer-events: none;
 	text-align: center;
 }
 
-/* Responsive adjustments */
-@media screen and (max-width: 1024px) {
+/* Hover lift */
+.scroll-to-top:hover .arrow {
+	transform: translate(-50%, -65%);
+}
+
+/* Responsive sizes */
+@media (max-width: 1024px) {
 	.scroll-to-top { width: 58px; height: 58px; left: 20px; bottom: 20px; }
 	.progress-ring { width: 74%; height: 74%; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 1); top: 37%; }
-	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.6); top: 70%; }
 }
-
-@media screen and (max-width: 768px) {
+@media (max-width: 768px) {
 	.scroll-to-top { width: 52px; height: 52px; left: 15px; bottom: 15px; }
 	.progress-ring { width: 70%; height: 70%; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.95); top: 36%; }
-	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.55); top: 71%; }
 }
-
-@media screen and (max-width: 480px) {
+@media (max-width: 480px) {
 	.scroll-to-top { width: 48px; height: 48px; left: 12px; bottom: 12px; }
 	.progress-ring { width: 65%; height: 65%; }
-	.arrow { font-size: calc(var(--font-size-base, 20px) * 0.9); top: 35%; }
-	.percentage { font-size: calc(var(--font-size-base, 20px) * 0.5); top: 72%; }
 }
+
 /* ======================== */
 /* Version Info Section – Onyx Bubble Glass */
 /* ======================== */
