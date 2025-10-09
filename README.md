@@ -166,4 +166,4 @@ This website is built using a combination of **JavaScript**, **CSS**, and **HTML
 
 This **Link in Bio** website is a powerful tool for showcasing my links, profiles, and updates. Visitors can interact with certain sections, but only I can modify the content through the admin portal.
 
-If you have any feedback or questions, feel free to reach out through the **Connect with Me** section. Thanks for visiting!
+If you have any feedback or questions, feel free to reach out through the **Connect with Me** section. Thanks for visiting! 
