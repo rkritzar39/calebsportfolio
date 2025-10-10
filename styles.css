@@ -443,51 +443,128 @@ a.corner-button {
 	margin: 0;
 }
 
-/* ===== Search Bar Styles ===== */
+/* ===== Creator Search Bar (Bubble + Accent Shimmer + Motion Sensitivity) ===== */
 .search-container {
-  position: relative;
-  margin: 10px 0 20px 0;
-  width: 100%;
-  max-width: 500px;
+	position: relative;
+	margin: 10px 0 20px 0;
+	width: 100%;
+	max-width: 500px;
 }
 
+/* Input field with bubble styling */
 .creator-search {
-  width: 100%;
-  padding: 10px 38px 10px 14px;
-  border-radius: 12px;
-  border: none;
-  outline: none;
-  font-size: 15px;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  color: #000;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	width: 100%;
+	padding: 10px 38px 10px 14px;
+	border: none;
+	outline: none;
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-base);
+	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+
+	/* 🫧 Bubble glass effect */
+	background: var(--bubble-gradient), var(--content-bg);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	color: var(--text-color);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+	position: relative;
+	overflow: hidden;
+
+	transition:
+		background var(--transition-medium),
+		box-shadow var(--transition-medium),
+		color var(--transition-medium),
+		transform var(--transition-fast);
 }
 
+/* ====== Accent-tinted hover shimmer ====== */
+@keyframes shimmerSweep {
+	0% {
+		transform: translateX(-100%);
+		opacity: 0;
+	}
+	50% {
+		transform: translateX(0%);
+		opacity: 0.45;
+	}
+	100% {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+}
+
+/* Reflection overlay */
+.creator-search::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -50%;
+	width: 40%;
+	height: 100%;
+	background: linear-gradient(
+		120deg,
+		transparent 0%,
+		color-mix(in srgb, var(--accent-color) 60%, rgba(255,255,255,0.6)) 50%,
+		transparent 100%
+	);
+	transform: translateX(-100%);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--transition-fast);
+}
+
+/* Active shimmer on hover (normal motion) */
+.search-container:not(.disabled):hover .creator-search::after {
+	animation: shimmerSweep 1.8s ease-in-out;
+	opacity: 1;
+}
+
+/* ===== Motion Reduction Support ===== */
+/* If user has Reduce Motion ON (body.no-animations), shimmer slows down drastically */
+body.no-animations .search-container:not(.disabled):hover .creator-search::after {
+	animation: shimmerSweep 4s ease-in-out;
+	opacity: 0.4;
+}
+
+/* If Reduce Motion is ON and prefers-reduced-motion detected, disable shimmer */
+@media (prefers-reduced-motion: reduce) {
+	.search-container:not(.disabled):hover .creator-search::after {
+		animation: none !important;
+		opacity: 0 !important;
+	}
+}
+
+/* Placeholder */
 .creator-search::placeholder {
-  color: #777;
+	color: var(--secondary-text);
 }
 
+/* Search icon */
 .search-icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: #888;
-  pointer-events: none;
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 16px;
+	color: var(--secondary-text);
+	pointer-events: none;
+	transition: color var(--transition-fast);
 }
 
-/* Disabled state (Coming Soon) */
+/* Focus ring glow (when enabled later) */
+.creator-search:focus {
+	box-shadow: 0 0 0 2px var(--accent-color), var(--bubble-shadow);
+}
+
+/* Disabled (Coming Soon) */
 .search-container.disabled {
-  opacity: 0.6;
-  pointer-events: none;
+	opacity: 0.6;
+	pointer-events: none;
 }
 
 .creator-search[disabled] {
-  cursor: not-allowed;
+	cursor: not-allowed;
 }
 
 /* ============================================= */
