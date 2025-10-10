@@ -443,6 +443,59 @@ a.corner-button {
 	margin: 0;
 }
 
+/* ========================
+   Reduced Motion Global
+   ======================== */
+
+/* Default transitions/animations */
+* {
+  transition: all 0.3s ease;
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+}
+
+/* System-level reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Manual reduced motion toggle */
+body.reduced-motion * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Specific animations */
+@media (prefers-reduced-motion: reduce), body.reduced-motion {
+  /* Scroll arrow */
+  .scroll-arrow {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Flip clocks */
+  .flip-clock-inner {
+    animation: none !important;
+  }
+
+  /* Bubbles (background effects) */
+  .bubble {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Any additional animated elements */
+  .countdown-block,
+  .floating-icon,
+  .carousel-item {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 /* ===== Creator Search Bar (Bubble + Accent Shimmer + Motion Sensitivity) ===== */
 .search-container {
 	position: relative;
