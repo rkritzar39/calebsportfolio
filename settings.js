@@ -13,7 +13,7 @@ class SettingsManager {
             darkModeEnd: '06:00',
             fontSize: 16,
             focusOutline: 'enabled',
-            motionEffects: 'enabled',
+            motionEffects: 'enabled', // Motion toggle
             highContrast: 'disabled',
             dyslexiaFont: 'disabled',
             underlineLinks: 'disabled',
@@ -44,7 +44,9 @@ class SettingsManager {
             this.initMouseTrail();
             this.initLoadingScreen();
             this.initSchedulerInterval();
+            this.initScrollArrow();
 
+            // Device theme change listener
             if (window.matchMedia) {
                 this.deviceThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
                 this.deviceThemeMedia.addEventListener('change', () => {
@@ -52,6 +54,7 @@ class SettingsManager {
                 });
             }
 
+            // System reduced motion listener
             if (window.matchMedia) {
                 const motionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
                 motionMedia.addEventListener('change', (e) => {
@@ -64,6 +67,7 @@ class SettingsManager {
                 });
             }
 
+            // Storage listener for sync across tabs
             window.addEventListener('storage', (e) => {
                 if (e.key === 'websiteSettings') {
                     this.settings = this.loadSettings();
@@ -72,6 +76,7 @@ class SettingsManager {
                 }
             });
 
+            // Auto update year
             const yearSpan = document.getElementById('year');
             if (yearSpan) yearSpan.textContent = new Date().getFullYear();
         });
@@ -229,7 +234,7 @@ class SettingsManager {
             accentColor: () => this.applyAccentColor(),
             fontSize: () => this.applyFontSize(),
             focusOutline: () => document.body.classList.toggle('focus-outline-disabled', this.settings.focusOutline === 'disabled'),
-            motionEffects: () => document.body.classList.toggle('reduce-motion', this.settings.motionEffects === 'disabled'),
+            motionEffects: () => this.applyMotionEffects(),
             highContrast: () => document.body.classList.toggle('high-contrast', this.settings.highContrast === 'enabled'),
             dyslexiaFont: () => document.body.classList.toggle('dyslexia-font', this.settings.dyslexiaFont === 'enabled'),
             underlineLinks: () => document.body.classList.toggle('underline-links', this.settings.underlineLinks === 'enabled'),
@@ -251,7 +256,6 @@ class SettingsManager {
     applyAppearanceMode() {
         let isDark = this.settings.appearanceMode === 'dark' || (this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.body.classList.toggle('dark-mode', isDark);
-        // === THIS IS THE ONLY LINE THAT'S DIFFERENT ===
         document.body.classList.toggle('light-e', !isDark); 
         this.checkAccentColor(this.settings.accentColor);
     }
@@ -265,6 +269,12 @@ class SettingsManager {
 
     applyFontSize() {
         document.documentElement.style.setProperty('--font-size-base', `${this.settings.fontSize}px`);
+    }
+
+    applyMotionEffects() {
+        const reduced = this.settings.motionEffects === 'disabled';
+        document.body.classList.toggle('reduced-motion', reduced);
+        if (reduced) document.body.offsetHeight; // force reflow to stop animations
     }
 
     applySectionVisibility(sectionId, status) {
@@ -288,6 +298,33 @@ class SettingsManager {
             dot.style.top = `${e.clientY - 5}px`;
             trailContainer.appendChild(dot);
             setTimeout(() => dot.remove(), 800);
+        });
+    }
+
+    initScrollArrow() {
+        const scrollArrow = document.querySelector('.scroll-arrow');
+        if (!scrollArrow) return;
+        let lastScroll = window.scrollY;
+
+        function updateScrollArrow() {
+            const currentScroll = window.scrollY;
+
+            if (currentScroll <= 0) scrollArrow.classList.add('hidden');
+            else scrollArrow.classList.remove('hidden');
+
+            if (!document.body.classList.contains('reduced-motion')) {
+                scrollArrow.classList.toggle('up', currentScroll < lastScroll);
+            } else {
+                scrollArrow.classList.toggle('up', currentScroll < lastScroll);
+                scrollArrow.style.transition = 'none';
+            }
+
+            lastScroll = currentScroll;
+        }
+
+        window.addEventListener('scroll', updateScrollArrow);
+        scrollArrow.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: document.body.classList.contains('reduced-motion') ? 'auto' : 'smooth' });
         });
     }
 
