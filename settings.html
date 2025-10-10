@@ -185,71 +185,83 @@
       </div>
 
       <div class="settings-subsection animate-slide-in">
-        <h2 class="subsection-title">Accessibility</h2>
+  <h2 class="subsection-title">Accessibility</h2>
 
-        <div class="setting-card">
-          <label for="text-size-slider" class="setting-label">
-            <strong class="setting-title">Text Size</strong>
-            <p class="setting-description">Adjust the text size for better readability</p>
-          </label>
-          <div class="text-size-control">
-            <span id="textSizeValue" class="font-size-badge">17px</span>
-            <input
-              type="range"
-              id="text-size-slider"
-              min="12"
-              max="24"
-              value="17"
-              step="1"
-              aria-label="Adjust text size"
-            />
-          </div>
-        </div>
+  <div class="setting-card">
+    <label for="text-size-slider" class="setting-label">
+      <strong class="setting-title">Text Size</strong>
+      <p class="setting-description">Adjust the text size for better readability</p>
+    </label>
+    <div class="text-size-control">
+      <span id="textSizeValue" class="font-size-badge">17px</span>
+      <input
+        type="range"
+        id="text-size-slider"
+        min="12"
+        max="24"
+        value="17"
+        step="1"
+        aria-label="Adjust text size"
+      />
+    </div>
+  </div>
 
-        <label class="setting-card focus-outline-setting-card" for="focusOutlineToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Focus Outline</strong>
-            <p class="setting-description">Toggle the focus outline for accessibility purposes</p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="focusOutlineToggle" role="switch" aria-label="Toggle focus outline" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
+  <label class="setting-card focus-outline-setting-card" for="focusOutlineToggle">
+    <div class="setting-label">
+      <strong class="setting-title">Focus Outline</strong>
+      <p class="setting-description">Toggle the focus outline for accessibility purposes</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="focusOutlineToggle" role="switch" aria-label="Toggle focus outline" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
 
-        <label class="setting-card" for="highContrastToggle">
-          <div class="setting-label">
-            <strong class="setting-title">High Contrast Mode</strong>
-            <p class="setting-description">Increase contrast for easier readability.</p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="highContrastToggle" role="switch" aria-label="Toggle high contrast mode" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
+  <label class="setting-card" for="highContrastToggle">
+    <div class="setting-label">
+      <strong class="setting-title">High Contrast Mode</strong>
+      <p class="setting-description">Increase contrast for easier readability.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="highContrastToggle" role="switch" aria-label="Toggle high contrast mode" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
 
-        <label class="setting-card" for="dyslexiaFontToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Dyslexia-Friendly Font</strong>
-            <p class="setting-description">Enable a more readable font for dyslexic users.</p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="dyslexiaFontToggle" role="switch" aria-label="Toggle dyslexia-friendly font" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
+  <label class="setting-card" for="dyslexiaFontToggle">
+    <div class="setting-label">
+      <strong class="setting-title">Dyslexia-Friendly Font</strong>
+      <p class="setting-description">Enable a more readable font for dyslexic users.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="dyslexiaFontToggle" role="switch" aria-label="Toggle dyslexia-friendly font" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
 
-        <label class="setting-card" for="underlineLinksToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Underline Links</strong>
-            <p class="setting-description">Always underline links to improve visibility.</p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="underlineLinksToggle" role="switch" aria-label="Toggle underline links" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
-      </div>
+  <label class="setting-card" for="underlineLinksToggle">
+    <div class="setting-label">
+      <strong class="setting-title">Underline Links</strong>
+      <p class="setting-description">Always underline links to improve visibility.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="underlineLinksToggle" role="switch" aria-label="Toggle underline links" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 🧩 Reduce Motion (currently disabled) -->
+  <label class="setting-card" for="reduceMotionToggle">
+    <div class="setting-label">
+      <strong class="setting-title">Reduce Motion</strong>
+      <p class="setting-description">Disable animations and transitions for motion sensitivity. (Coming soon)</p>
+    </div>
+    <div class="md-switch disabled">
+      <input type="checkbox" id="reduceMotionToggle" role="switch" aria-label="Toggle reduced motion" disabled />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+</div>
 
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Visual Flair</h2>
