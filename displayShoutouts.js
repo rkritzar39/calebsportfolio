@@ -116,6 +116,9 @@ let faqsCollectionRef;
 let businessDocRef; 
 let postsCollectionRef; // 🔥 declare this too
 
+// --- NEW: Module-level variables to store all creator data for searching ---
+let allTikTokCreators = [], allInstagramCreators = [], allYouTubeCreators = [];
+
 
 try {
     const app = initializeApp(firebaseConfig);
@@ -732,7 +735,48 @@ function attachFaqAccordionListeners() {
     console.log("FAQ accordion listeners attached (single open).");
 }
 
-async function loadShoutoutPlatformData(platform, gridElement, timestampElement) {
+// --- NEW SHOUTOUTS DISPLAY FUNCTION ---
+function displayPlatformCreators(platform, creatorsToDisplay) {
+    let gridElement, renderFunction;
+
+    switch (platform) {
+        case 'tiktok':
+            gridElement = document.querySelector('#tiktok-shoutouts-section .creator-grid');
+            renderFunction = renderTikTokCard;
+            break;
+        case 'instagram':
+            gridElement = document.querySelector('#instagram-shoutouts-section .instagram-creator-grid');
+            renderFunction = renderInstagramCard;
+            break;
+        case 'youtube':
+            gridElement = document.querySelector('#youtube-shoutouts-section .youtube-creator-grid');
+            renderFunction = renderYouTubeCard;
+            break;
+        default:
+            console.error("Unknown platform for display:", platform);
+            return;
+    }
+
+    if (!gridElement) {
+        console.error(`Grid element for ${platform} not found.`);
+        return;
+    }
+
+    if (creatorsToDisplay.length === 0) {
+        gridElement.innerHTML = `<p>No creators match your search.</p>`;
+    } else {
+        gridElement.innerHTML = creatorsToDisplay.map(creator => renderFunction(creator)).join('');
+    }
+}
+
+async function loadShoutoutPlatformData(platform, timestampElement) {
+    let gridElement;
+    switch (platform) {
+        case 'tiktok': gridElement = document.querySelector('#tiktok-shoutouts-section .creator-grid'); break;
+        case 'instagram': gridElement = document.querySelector('#instagram-shoutouts-section .instagram-creator-grid'); break;
+        case 'youtube': gridElement = document.querySelector('#youtube-shoutouts-section .youtube-creator-grid'); break;
+    }
+
     if (!firebaseAppInitialized || !db) { console.error(`Shoutout load error (${platform}): Firebase not ready.`); if(gridElement) gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`; return; }
     if (!gridElement) {
         console.warn(`Grid element missing for ${platform}. Cannot display shoutouts.`);
@@ -743,25 +787,23 @@ async function loadShoutoutPlatformData(platform, gridElement, timestampElement)
     gridElement.innerHTML = `<p>Loading ${platform} Creators...</p>`;
     if (timestampElement) timestampElement.textContent = 'Last Updated: Loading...';
 
-    let renderFunction;
-    switch(platform) {
-        case 'tiktok': renderFunction = renderTikTokCard; break;
-        case 'instagram': renderFunction = renderInstagramCard; break;
-        case 'youtube': renderFunction = renderYouTubeCard; break;
-        default: console.error(`Unknown platform type: ${platform}`); gridElement.innerHTML = `<p class="error">Configuration error for ${platform}.</p>`; return;
-    }
-
     try {
         const shoutoutsCol = collection(db, 'shoutouts');
         const shoutoutQuery = query(shoutoutsCol, where("platform", "==", platform), orderBy("order", "asc"));
         const querySnapshot = await getDocs(shoutoutQuery);
 
-        if (querySnapshot.empty) {
-            gridElement.innerHTML = `<p>No ${platform} creators featured currently.</p>`;
-        } else {
-            gridElement.innerHTML = querySnapshot.docs.map(doc => renderFunction(doc.data())).join('');
-        }
+        const creatorsData = querySnapshot.docs.map(doc => doc.data());
 
+        // Store the full list in the appropriate module-level variable
+        switch (platform) {
+            case 'tiktok': allTikTokCreators = creatorsData; break;
+            case 'instagram': allInstagramCreators = creatorsData; break;
+            case 'youtube': allYouTubeCreators = creatorsData; break;
+        }
+        
+        // Perform the initial display of all creators
+        displayPlatformCreators(platform, creatorsData);
+        
         if (timestampElement && shoutoutsMetaRef) {
             try {
                 const metaSnap = await getDoc(shoutoutsMetaRef);
@@ -779,7 +821,7 @@ async function loadShoutoutPlatformData(platform, gridElement, timestampElement)
             console.warn("Timestamp element provided, but shoutoutsMetaRef is not configured.");
             timestampElement.textContent = 'Last Updated: N/A';
         }
-        console.log(`${platform} shoutouts displayed.`);
+        console.log(`${platform} shoutouts loaded and displayed.`);
 
     } catch (error) {
         console.error(`Error loading ${platform} shoutout data:`, error);
@@ -1431,7 +1473,6 @@ async function initializeBlogListPageContent() {
                 <h2>${featuredPost.title}</h2>
                 <div class="post-meta">
                     ${featuredPost.authorPfpUrl ? `<img src="${featuredPost.authorPfpUrl}" class="author-pfp" alt="${featuredPost.author}">` : ""}
-                    <!-- This div groups the name and time for correct layout -->
                     <div class="author-details">
                         <span class="author-name"><a href="${authorLink}">${featuredPost.author}</a></span>
                         <span class="post-time">${formatRelativeTime(featuredPost.createdAt, featuredPost.updatedAt)}</span>
@@ -1462,7 +1503,6 @@ function displayPosts(posts) {
                 <p>${post.content.substring(0, 100)}...</p>
                 <div class="post-meta">
                     ${post.authorPfpUrl ? `<img src="${post.authorPfpUrl}" class="author-pfp" alt="${post.author}">` : ""}
-                    <!-- This div groups the name and time for correct layout -->
                     <div class="author-details">
                         <span class="author-name"><a href="${authorLink}">${post.author}</a></span>
                         <span class="post-time">${formatRelativeTime(post.createdAt, post.updatedAt)}</span>
@@ -1551,13 +1591,11 @@ async function initializePostPageContent() {
                 <div class="post-author-info">
                     ${post.authorPfpUrl ? `<img src="${post.authorPfpUrl}" alt="${post.author}" class="author-pfp">` : ''}
                     <div class="author-details">
-                        <!-- Made author name a link for consistency -->
                         <span class="author-name"><a href="author.html?name=${encodeURIComponent(post.author)}">${post.author}</a></span>
                         <div class="post-timestamps">${timestampsHTML}</div>
                     </div>
                 </div>
                 <div class="post-main-content">
-                    <!-- THIS IS THE FIX: We now insert the raw HTML directly -->
                     ${post.content}
                 </div>`;
         } else {
@@ -1693,8 +1731,46 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     updateCountdown();
 }
 
-// In displayShoutouts.js
-// REPLACE your existing initializeHomepageContent function with THIS ENTIRE VERSION:
+// --- NEW: FUNCTION TO SET UP SEARCH EVENT LISTENERS ---
+function setupCreatorSearch() {
+    const tiktokSearchInput = document.getElementById('tiktok-search');
+    const instagramSearchInput = document.getElementById('instagram-search');
+    const youtubeSearchInput = document.getElementById('youtube-search');
+
+    if (tiktokSearchInput) {
+        tiktokSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredCreators = allTikTokCreators.filter(creator =>
+                (creator.nickname || '').toLowerCase().includes(searchTerm) ||
+                (creator.username || '').toLowerCase().includes(searchTerm)
+            );
+            displayPlatformCreators('tiktok', filteredCreators);
+        });
+    }
+
+    if (instagramSearchInput) {
+        instagramSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredCreators = allInstagramCreators.filter(creator =>
+                (creator.nickname || '').toLowerCase().includes(searchTerm) ||
+                (creator.username || '').toLowerCase().includes(searchTerm)
+            );
+            displayPlatformCreators('instagram', filteredCreators);
+        });
+    }
+
+    if (youtubeSearchInput) {
+        youtubeSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredCreators = allYouTubeCreators.filter(creator =>
+                (creator.nickname || '').toLowerCase().includes(searchTerm) ||
+                (creator.username || '').toLowerCase().includes(searchTerm)
+            );
+            displayPlatformCreators('youtube', filteredCreators);
+        });
+    }
+    console.log("Creator search listeners attached.");
+}
 
 // --- MASTER INITIALIZATION FUNCTION ---
 async function initializeHomepageContent() {
@@ -1707,14 +1783,10 @@ async function initializeHomepageContent() {
     const tiktokHeaderContainer = document.getElementById('tiktok-shoutouts');
     const tiktokGridContainer = document.querySelector('#tiktok-shoutouts ~ .creator-grid');
     const tiktokUnavailableMessage = document.querySelector('#tiktok-shoutouts ~ .creator-grid ~ .unavailable-message');
-    const instagramGridContainer = document.querySelector('.instagram-creator-grid');
-    const youtubeGridContainer = document.querySelector('.youtube-creator-grid');
-
+    
     // Ensure Firebase and necessary Firestore document references are initialized globally before this function runs
-    // (firebaseAppInitialized, db, profileDocRef, businessDocRef, etc.)
     if (!firebaseAppInitialized || !db || !profileDocRef) {
         console.error("Firebase not ready or key Firestore document references (e.g., profileDocRef) are missing. Site cannot load settings properly.");
-        // Optionally, display a user-facing error message on the page here
         if (mainContentWrapper) mainContentWrapper.innerHTML = "<p class='error' style='text-align:center;padding:20px;'>Critical error: Could not initialize site settings.</p>";
         return;
     }
@@ -1737,7 +1809,6 @@ async function initializeHomepageContent() {
             maintenanceTitle = siteSettings.maintenanceTitle || maintenanceTitle;
             maintenanceMessage = siteSettings.maintenanceMessage || maintenanceMessage;
             hideTikTokSection = siteSettings.hideTikTokSection || false;
-            // Ensure countdownTargetDate is correctly handled as Firestore Timestamp or null
             countdownTargetDate = siteSettings.countdownTargetDate instanceof Timestamp ? siteSettings.countdownTargetDate : null;
             countdownTitle = siteSettings.countdownTitle;
             countdownExpiredMessage = siteSettings.countdownExpiredMessage;
@@ -1747,7 +1818,6 @@ async function initializeHomepageContent() {
         console.log("Settings fetched:", { maintenanceEnabled, hideTikTokSection, countdownSet: !!countdownTargetDate });
     } catch (error) {
         console.error("Critical Error fetching site settings:", error);
-        // Optionally, display a user-facing error message
         if (mainContentWrapper) mainContentWrapper.innerHTML = "<p class='error' style='text-align:center;padding:20px;'>Error loading site configuration.</p>";
         return;
     }
@@ -1774,60 +1844,42 @@ async function initializeHomepageContent() {
         if (maintenanceOverlay) maintenanceOverlay.style.display = 'none';
         bodyElement.classList.remove('maintenance-active');
 
-        // ===================================================================
-        // === NEW: APPLY SAVED SECTION ORDER ================================
-        // ===================================================================
         const savedOrder = JSON.parse(localStorage.getItem('sectionOrder'));
         const rearrangeableContainer = document.getElementById('rearrangeable-container');
 
         if (savedOrder && rearrangeableContainer) {
             console.log("Applying saved section order:", savedOrder);
             savedOrder.forEach(sectionId => {
-                // Find the section using its data attribute
                 const section = document.querySelector(`[data-section-id="${sectionId}"]`);
                 if (section) {
-                    // Append it to the container, which moves it to the new position
                     rearrangeableContainer.appendChild(section);
                 } else {
                     console.warn(`Could not find section with data-section-id: ${sectionId} to reorder.`);
                 }
             });
         }
-        // ===================================================================
-        // === END OF NEW CODE ===============================================
-        // ===================================================================
-
-        // ======================================================
-// ===== LEGISLATION TRACKER PAGE SPECIFIC FUNCTIONS ====
-// ======================================================
-// (This function should be added to your file if it's not there already)
-
-// --- END OF NEW FUNCTION ---
         
-        // ** START EVENT COUNTDOWN LOGIC (Main site countdown) **
         if (countdownTargetDate && typeof startEventCountdown === 'function') {
             if (countdownSection) {
-                countdownSection.style.display = 'block'; // Make sure section is visible
+                countdownSection.style.display = 'block'; 
             } else {
                 console.warn("HTML element for '.countdown-section' not found.");
             }
             startEventCountdown(countdownTargetDate, countdownTitle, countdownExpiredMessage);
         } else {
             if (countdownSection) {
-                countdownSection.style.display = 'none'; // Hide section if no target or function
+                countdownSection.style.display = 'none'; 
             }
             if (!countdownTargetDate) console.log("No valid countdown target date set from Firestore. Main event countdown section hidden.");
             if (typeof startEventCountdown !== 'function') console.warn("startEventCountdown function is not defined. Main event countdown will not run.");
         }
-        // ** END EVENT COUNTDOWN LOGIC **
 
         const oldMaintenanceMessageElement = document.getElementById('maintenanceModeMessage');
         if (oldMaintenanceMessageElement) oldMaintenanceMessageElement.style.display = 'none';
         if (usefulLinksSection) {
-            usefulLinksSection.style.display = 'block'; // Or your preferred display style
+            usefulLinksSection.style.display = 'block';
         }
 
-        // Handle TikTok Section Visibility
         let isTikTokVisible = false;
         if (!tiktokHeaderContainer || !tiktokGridContainer) {
             console.warn("Could not find TikTok header or grid containers for visibility check.");
@@ -1844,8 +1896,8 @@ async function initializeHomepageContent() {
                 isTikTokVisible = false;
             } else {
                 console.log("Showing TikTok section.");
-                tiktokHeaderContainer.style.display = ''; // Default display
-                tiktokGridContainer.style.display = ''; // Default display
+                tiktokHeaderContainer.style.display = ''; 
+                tiktokGridContainer.style.display = ''; 
                 if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
                 isTikTokVisible = true;
             }
@@ -1853,39 +1905,33 @@ async function initializeHomepageContent() {
 
         console.log("Initiating loading of other content sections...");
 
-        // ---- INITIAL BUSINESS INFO LOAD + PERIODIC REFRESH SETUP ----
-        // businessDocRef should be globally defined after Firebase init
         if (firebaseAppInitialized && typeof displayBusinessInfo === 'function' && db && businessDocRef) {
-            await displayBusinessInfo(); // Initial load
-
-            if (window.businessInfoRefreshInterval) { // Clear any old interval
+            await displayBusinessInfo(); 
+            if (window.businessInfoRefreshInterval) { 
                 clearInterval(window.businessInfoRefreshInterval);
             }
             window.businessInfoRefreshInterval = setInterval(async () => {
-                if (document.hidden) return; // Don't update if tab is not visible
-                // console.log("Periodically refreshing business info..."); // For debugging
-                await displayBusinessInfo(); // Re-fetch data and update display
-            }, 60000); // Refresh every 60 seconds
+                if (document.hidden) return;
+                await displayBusinessInfo();
+            }, 60000); 
             console.log("Business info display and periodic refresh initiated.");
         } else {
             console.error("Business info cannot be loaded/refreshed. Checks: firebaseAppInitialized, displayBusinessInfo function, db, businessDocRef.");
-            const biContainer = document.getElementById('business-status-display'); // Ensure this ID exists in index.html
+            const biContainer = document.getElementById('business-status-display');
             const statusMainTextElLocal = biContainer ? biContainer.querySelector('.status-main-text') : null;
             if(statusMainTextElLocal) {
                  statusMainTextElLocal.textContent = "Info Unavailable";
-                 statusMainTextElLocal.className = 'status-main-text status-unavailable'; // Ensure CSS class is also set
-            } else if (biContainer) { // Fallback if specific span isn't found
+                 statusMainTextElLocal.className = 'status-main-text status-unavailable';
+            } else if (biContainer) {
                 biContainer.innerHTML = "<span class='status-unavailable'>Business info could not be loaded.</span>";
             }
         }
-        // ---- END BUSINESS INFO LOAD + REFRESH SETUP ----
 
-        // Define all other content loading promises
         const loadPromises = [
             (typeof displayProfileData === 'function' ? displayProfileData(siteSettings) : Promise.resolve(console.warn("displayProfileData function not defined"))),
             (typeof displayPresidentData === 'function' ? displayPresidentData() : Promise.resolve(console.warn("displayPresidentData function not defined"))),
-            (typeof loadShoutoutPlatformData === 'function' && instagramGridContainer ? loadShoutoutPlatformData('instagram', instagramGridContainer, document.getElementById('instagram-last-updated-timestamp')) : Promise.resolve(console.warn("loadShoutoutPlatformData for Instagram not defined or grid missing"))),
-            (typeof loadShoutoutPlatformData === 'function' && youtubeGridContainer ? loadShoutoutPlatformData('youtube', youtubeGridContainer, document.getElementById('youtube-last-updated-timestamp')) : Promise.resolve(console.warn("loadShoutoutPlatformData for YouTube not defined or grid missing"))),
+            (typeof loadShoutoutPlatformData === 'function' ? loadShoutoutPlatformData('instagram', document.getElementById('instagram-last-updated-timestamp')) : Promise.resolve(console.warn("loadShoutoutPlatformData for Instagram not defined"))),
+            (typeof loadShoutoutPlatformData === 'function' ? loadShoutoutPlatformData('youtube', document.getElementById('youtube-last-updated-timestamp')) : Promise.resolve(console.warn("loadShoutoutPlatformData for YouTube not defined"))),
             (typeof loadAndDisplayUsefulLinks === 'function' ? loadAndDisplayUsefulLinks() : Promise.resolve(console.warn("loadAndDisplayUsefulLinks function not defined"))),
             (typeof loadAndDisplaySocialLinks === 'function' ? loadAndDisplaySocialLinks() : Promise.resolve(console.warn("loadAndDisplaySocialLinks function not defined"))),
             (typeof loadAndDisplayDisabilities === 'function' ? loadAndDisplayDisabilities() : Promise.resolve(console.warn("loadAndDisplayDisabilities function not defined"))),
@@ -1893,29 +1939,25 @@ async function initializeHomepageContent() {
             (typeof loadAndDisplayFaqs === 'function' ? loadAndDisplayFaqs() : Promise.resolve(console.warn("loadAndDisplayFaqs function not defined")))
         ];
 
-        if (isTikTokVisible && tiktokGridContainer && typeof loadShoutoutPlatformData === 'function') {
-            const tsEl = document.getElementById('tiktok-last-updated-timestamp');
-            if (tsEl) {
-                loadPromises.push(loadShoutoutPlatformData('tiktok', tiktokGridContainer, tsEl));
-            } else {
-                console.warn("Could not load TikTok section - timestamp element missing.");
-            }
-        } else if (isTikTokVisible) { // TikTok was meant to be visible but function or container was missing
-            console.warn("TikTok section was intended to be visible but loadShoutoutPlatformData is not defined or tiktokGridContainer is missing.");
+        if (isTikTokVisible && typeof loadShoutoutPlatformData === 'function') {
+            loadPromises.push(loadShoutoutPlatformData('tiktok', document.getElementById('tiktok-last-updated-timestamp')));
+        } else if (isTikTokVisible) {
+            console.warn("TikTok section was intended to be visible but loadShoutoutPlatformData is not defined.");
         }
 
-        // Await all other promises (excluding business info which is handled above)
         const results = await Promise.allSettled(loadPromises);
         results.forEach((result, index) => {
             if (result.status === 'rejected') {
-                // For better debugging, you could map indices to promise descriptions
                 console.error(`Error loading a content section (promise index ${index}):`, result.reason);
             }
         });
+
+        // --- NEW: Set up the search functionality AFTER all data has been loaded ---
+        setupCreatorSearch();
+        
         console.log("All other dynamic content loading initiated/completed.");
     }
 } // --- End of initializeHomepageContent function ---
 
 // --- Call the main initialization function when the DOM is ready ---
-// (Ensure this line is correct and ONLY PRESENT ONCE at the end of your script)
 document.addEventListener('DOMContentLoaded', initializeHomepageContent);
