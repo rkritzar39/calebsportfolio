@@ -443,6 +443,53 @@ a.corner-button {
 	margin: 0;
 }
 
+/* ===== Search Bar Styles ===== */
+.search-container {
+  position: relative;
+  margin: 10px 0 20px 0;
+  width: 100%;
+  max-width: 500px;
+}
+
+.creator-search {
+  width: 100%;
+  padding: 10px 38px 10px 14px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.creator-search::placeholder {
+  color: #777;
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #888;
+  pointer-events: none;
+}
+
+/* Disabled state (Coming Soon) */
+.search-container.disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.creator-search[disabled] {
+  cursor: not-allowed;
+}
+
 /* ============================================= */
 /* iOS 26 / 19 Glassy Transparent Floating Bar   */
 /* ============================================= */
