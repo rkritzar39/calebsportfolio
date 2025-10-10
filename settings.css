@@ -483,6 +483,7 @@ body.settings-page #appearanceModeSelect {
   transform: scale(0.96);
 }
 
+/* Visually indicate "Coming Soon" toggles */
 .md-switch.disabled {
   opacity: 0.5;
   pointer-events: none;
