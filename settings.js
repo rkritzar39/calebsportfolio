@@ -1,6 +1,7 @@
 /**
  * settings.js
  * Fully functional settings manager with live previews and real-time scheduler
+ * Fully motion-safe integration
  */
 class SettingsManager {
     constructor() {
@@ -13,7 +14,7 @@ class SettingsManager {
             darkModeEnd: '06:00',
             fontSize: 16,
             focusOutline: 'enabled',
-            motionEffects: 'enabled', // Motion toggle
+            motionEffects: 'enabled', // motion toggle
             highContrast: 'disabled',
             dyslexiaFont: 'disabled',
             underlineLinks: 'disabled',
@@ -206,9 +207,9 @@ class SettingsManager {
     getContrastColor(hexcolor) {
         if (!hexcolor) return '#ffffff';
         hexcolor = hexcolor.replace("#", "");
-        const r = parseInt(hexcolor.substr(0, 2), 16);
-        const g = parseInt(hexcolor.substr(2, 2), 16);
-        const b = parseInt(hexcolor.substr(4, 2), 16);
+        const r = parseInt(hexcolor.substr(1, 2), 16);
+        const g = parseInt(hexcolor.substr(3, 2), 16);
+        const b = parseInt(hexcolor.substr(5, 2), 16);
         const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
         return (yiq >= 128) ? '#000000' : '#ffffff';
     }
@@ -274,14 +275,30 @@ class SettingsManager {
     applyMotionEffects() {
         const reduced = this.settings.motionEffects === 'disabled';
         document.body.classList.toggle('reduced-motion', reduced);
-        if (reduced) document.body.offsetHeight; // force reflow to stop animations
+
+        // Stop scroll arrow transitions immediately
+        const scrollArrow = document.querySelector('.scroll-arrow');
+        if (scrollArrow) scrollArrow.style.transition = reduced ? 'none' : '';
+
+        // Remove mouse trail dots
+        const trails = document.querySelectorAll('.trail');
+        trails.forEach(dot => dot.remove());
+
+        // Stop flip clocks, bubbles, countdowns, floating icons, carousels
+        const animatedElements = document.querySelectorAll('.flip-clock-inner, .bubble, .countdown-block, .floating-icon, .carousel-item');
+        animatedElements.forEach(el => {
+            el.style.animation = 'none';
+            el.style.transition = 'none';
+            el.style.transform = 'none';
+        });
+
+        // Force reflow to stop any ongoing animations immediately
+        if (reduced) document.body.offsetHeight;
     }
 
     applySectionVisibility(sectionId, status) {
         const section = document.getElementById(sectionId);
-        if (section) {
-            section.style.display = status === 'enabled' ? '' : 'none';
-        }
+        if (section) section.style.display = status === 'enabled' ? '' : 'none';
     }
 
     initMouseTrail() {
@@ -308,16 +325,11 @@ class SettingsManager {
 
         function updateScrollArrow() {
             const currentScroll = window.scrollY;
+            const reduced = document.body.classList.contains('reduced-motion');
 
-            if (currentScroll <= 0) scrollArrow.classList.add('hidden');
-            else scrollArrow.classList.remove('hidden');
-
-            if (!document.body.classList.contains('reduced-motion')) {
-                scrollArrow.classList.toggle('up', currentScroll < lastScroll);
-            } else {
-                scrollArrow.classList.toggle('up', currentScroll < lastScroll);
-                scrollArrow.style.transition = 'none';
-            }
+            scrollArrow.classList.toggle('hidden', currentScroll <= 0);
+            scrollArrow.classList.toggle('up', currentScroll < lastScroll);
+            scrollArrow.style.transition = reduced ? 'none' : 'transform 0.3s ease';
 
             lastScroll = currentScroll;
         }
@@ -339,9 +351,7 @@ class SettingsManager {
     resetSectionVisibility() {
         if (confirm('Are you sure you want to make all homepage sections visible again?')) {
             const sectionKeys = Object.keys(this.defaultSettings).filter(k => k.startsWith('show'));
-            sectionKeys.forEach(key => {
-                this.settings[key] = 'enabled';
-            });
+            sectionKeys.forEach(key => this.settings[key] = 'enabled');
             this.saveSettings();
             this.initializeControls();
             this.applyAllSettings();
