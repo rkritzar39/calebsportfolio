@@ -444,55 +444,42 @@ a.corner-button {
 }
 
 /* ========================
-   Reduced Motion Global
+   TOTAL REDUCED MOTION
    ======================== */
 
-/* Default transitions/animations */
-* {
-  transition: all 0.3s ease;
-  animation-duration: 0.5s;
-  animation-fill-mode: both;
-}
-
-/* System-level reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-    animation: none !important;
-  }
-}
-
-/* Manual reduced motion toggle */
-body.reduced-motion * {
-  transition: none !important;
-  animation: none !important;
-}
-
-/* Specific animations */
 @media (prefers-reduced-motion: reduce), body.reduced-motion {
-  /* Scroll arrow */
-  .scroll-arrow {
-    animation: none !important;
-    transform: none !important;
-  }
 
-  /* Flip clocks */
-  .flip-clock-inner {
-    animation: none !important;
-  }
-
-  /* Bubbles (background effects) */
-  .bubble {
+  /* Stop all animations and transitions */
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
+    scroll-behavior: auto !important;
   }
 
-  /* Any additional animated elements */
+  /* Disable hover, focus, and active transforms/effects */
+  *,
+  *:hover,
+  *:focus,
+  *:active {
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+  }
+
+  /* Specific site elements */
+  .scroll-arrow,
+  .flip-clock-inner,
+  .bubble,
   .countdown-block,
   .floating-icon,
-  .carousel-item {
+  .carousel-item,
+  .trail {
     animation: none !important;
     transition: none !important;
+    transform: none !important;
   }
 }
 
