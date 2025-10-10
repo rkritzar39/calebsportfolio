@@ -483,6 +483,16 @@ body.settings-page #appearanceModeSelect {
   transform: scale(0.96);
 }
 
+.md-switch.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.setting-card input[disabled] + .track {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 /* ========== Text Size Slider --- iOS 26 REDESIGN ========== */
 .setting-card:has(.text-size-control) { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
 .setting-card:has(.text-size-control) > *:first-child { flex: 1; min-width: 15.625rem; }
