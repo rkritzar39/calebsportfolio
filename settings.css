@@ -84,31 +84,31 @@ body.dark-mode {
   --motion-ease: ease;
 }
 
-/* Reduced motion */
+/* ================= Motion Duration System ================= */
+html.full-motion {
+  --motion-duration: 0.4s;
+  --motion-ease: ease;
+}
+
 html.reduced-motion {
   --motion-duration: 0.15s;
   --motion-ease: ease-out;
 }
 
-/* No motion */
 html.no-motion {
   --motion-duration: 0s !important;
   --motion-ease: linear !important;
 }
 
-/* Apply transitions site-wide */
-*,
-*::before,
-*::after {
-  transition-duration: var(--motion-duration);
-  transition-timing-function: var(--motion-ease);
-}
-
-/* When no motion is selected, disable all movement */
+/* Stop animation and smooth transitions — but keep layout transforms */
 html.no-motion * {
   animation: none !important;
   transition: none !important;
-  transform: none !important;
+}
+
+/* Reduced motion keeps gentle hover states */
+html.reduced-motion * {
+  animation-duration: 0.15s !important;
 }
 
 /* Base body styles */
