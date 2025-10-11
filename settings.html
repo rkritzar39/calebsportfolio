@@ -9,19 +9,19 @@
   <link rel="stylesheet" href="settings.css" />
 
   <script>
-  // Prevent flicker by applying stored theme instantly
+  // This script runs instantly to apply a user's specific theme choice,
+  // overriding the CSS default if necessary.
   (function() {
     try {
       const storedSettings = localStorage.getItem('websiteSettings');
       if (!storedSettings) return;
+
       const settings = JSON.parse(storedSettings);
+      
       if (settings.appearanceMode === 'dark') {
         document.documentElement.classList.add('dark-mode');
       } else if (settings.appearanceMode === 'light') {
         document.documentElement.classList.add('light-mode');
-      }
-      if (settings.motionPreference) {
-        document.documentElement.classList.add(settings.motionPreference + '-motion');
       }
     } catch (e) {
       console.error("Flicker-prevention script error:", e);
@@ -45,7 +45,6 @@
         <span class="version">v26.1.2</span>
       </div>
 
-      <!-- Appearance Section -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Appearance</h2>
 
@@ -81,10 +80,8 @@
         </div>
       </div>
 
-      <!-- General Section -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">General</h2>
-
         <label class="setting-card" for="rearrangingEnabledToggle">
           <div class="setting-label">
             <strong class="setting-title">Enable Section Rearranging</strong>
@@ -95,17 +92,15 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <div class="setting-card">
-          <div class="setting-label">
-            <strong class="setting-title">Reset Section Layout</strong>
-            <p class="setting-description">Revert the homepage section order to the default layout.</p>
-          </div>
-          <button id="resetLayoutBtn" class="button reset-button">Reset</button>
+            <div class="setting-label">
+                <strong class="setting-title">Reset Section Layout</strong>
+                <p class="setting-description">Revert the homepage section order to the default layout.</p>
+            </div>
+            <button id="resetLayoutBtn" class="button reset-button">Reset</button>
         </div>
       </div>
 
-      <!-- Homepage Sections -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Homepage Sections</h2>
 
@@ -116,7 +111,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showPresidentSectionToggle">
           <div class="setting-label"><strong class="setting-title">President Section</strong></div>
           <div class="md-switch">
@@ -124,7 +118,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showTiktokShoutoutsToggle">
           <div class="setting-label"><strong class="setting-title">TikTok Shoutouts</strong></div>
           <div class="md-switch">
@@ -132,7 +125,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showInstagramShoutoutsToggle">
           <div class="setting-label"><strong class="setting-title">Instagram Shoutouts</strong></div>
           <div class="md-switch">
@@ -140,7 +132,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showYoutubeShoutoutsToggle">
           <div class="setting-label"><strong class="setting-title">YouTube Shoutouts</strong></div>
           <div class="md-switch">
@@ -148,7 +139,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showUsefulLinksToggle">
           <div class="setting-label"><strong class="setting-title">Useful Links</strong></div>
           <div class="md-switch">
@@ -156,7 +146,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showCountdownToggle">
           <div class="setting-label"><strong class="setting-title">Countdown</strong></div>
           <div class="md-switch">
@@ -164,7 +153,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showBusinessSectionToggle">
           <div class="setting-label"><strong class="setting-title">Business Section</strong></div>
           <div class="md-switch">
@@ -172,7 +160,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showTechInformationToggle">
           <div class="setting-label"><strong class="setting-title">Tech Information</strong></div>
           <div class="md-switch">
@@ -180,7 +167,6 @@
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
-
         <label class="setting-card" for="showDisabilitiesSectionToggle">
           <div class="setting-label"><strong class="setting-title">Disabilities Section</strong></div>
           <div class="md-switch">
@@ -190,96 +176,81 @@
         </label>
 
         <div class="setting-card">
-          <div class="setting-label">
-            <strong class="setting-title">Reset Visible Sections</strong>
-            <p class="setting-description">Make all homepage sections visible again.</p>
-          </div>
-          <button id="resetSectionsBtn" class="button reset-button">Reset</button>
+            <div class="setting-label">
+                <strong class="setting-title">Reset Visible Sections</strong>
+                <p class="setting-description">Make all homepage sections visible again.</p>
+            </div>
+            <button id="resetSectionsBtn" class="button reset-button">Reset</button>
         </div>
       </div>
 
-      <!-- Accessibility Section -->
       <div class="settings-subsection animate-slide-in">
-        <h2 class="subsection-title">Accessibility</h2>
+  <h2 class="subsection-title">Accessibility</h2>
 
-        <div class="setting-card">
-          <label for="text-size-slider" class="setting-label">
-            <strong class="setting-title">Text Size</strong>
-            <p class="setting-description">Adjust the text size for better readability</p>
-          </label>
-          <div class="text-size-control">
-            <span id="textSizeValue" class="font-size-badge">17px</span>
-            <input
-              type="range"
-              id="text-size-slider"
-              min="12"
-              max="24"
-              value="17"
-              step="1"
-              aria-label="Adjust text size"
-            />
-          </div>
-        </div>
+  <div class="setting-card">
+    <label for="text-size-slider" class="setting-label">
+      <strong class="setting-title">Text Size</strong>
+      <p class="setting-description">Adjust the text size for better readability</p>
+    </label>
+    <div class="text-size-control">
+      <span id="textSizeValue" class="font-size-badge">17px</span>
+      <input
+        type="range"
+        id="text-size-slider"
+        min="12"
+        max="24"
+        value="17"
+        step="1"
+        aria-label="Adjust text size"
+      />
+    </div>
+  </div>
 
-        <label class="setting-card focus-outline-setting-card" for="focusOutlineToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Focus Outline</strong>
-            <p class="setting-description">Toggle the focus outline for accessibility purposes</p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="focusOutlineToggle" role="switch" aria-label="Toggle focus outline" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
+  <label class="setting-card focus-outline-setting-card" for="focusOutlineToggle">
+    <div class="setting-label">
+      <strong class="setting-title">Focus Outline</strong>
+      <p class="setting-description">Toggle the focus outline for accessibility purposes</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="focusOutlineToggle" role="switch" aria-label="Toggle focus outline" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
 
-        <label class="setting-card" for="highContrastToggle">
-          <div class="setting-label">
-            <strong class="setting-title">High Contrast Mode</strong>
-            <p class="setting-description">Increase contrast for easier readability.</p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="highContrastToggle" role="switch" aria-label="Toggle high contrast mode" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
+  <label class="setting-card" for="highContrastToggle">
+    <div class="setting-label">
+      <strong class="setting-title">High Contrast Mode</strong>
+      <p class="setting-description">Increase contrast for easier readability.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="highContrastToggle" role="switch" aria-label="Toggle high contrast mode" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
 
-        <label class="setting-card" for="dyslexiaFontToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Dyslexia-Friendly Font</strong>
-            <p class="setting-description">Enable a more readable font for dyslexic users.</p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="dyslexiaFontToggle" role="switch" aria-label="Toggle dyslexia-friendly font" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
+  <label class="setting-card" for="dyslexiaFontToggle">
+    <div class="setting-label">
+      <strong class="setting-title">Dyslexia-Friendly Font</strong>
+      <p class="setting-description">Enable a more readable font for dyslexic users.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="dyslexiaFontToggle" role="switch" aria-label="Toggle dyslexia-friendly font" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
 
-        <label class="setting-card" for="underlineLinksToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Underline Links</strong>
-            <p class="setting-description">Always underline links to improve visibility.</p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="underlineLinksToggle" role="switch" aria-label="Toggle underline links" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
-
-        <!-- Motion & Animation Control -->
-        <label class="setting-card" for="motionEffectsControl">
-          <div class="setting-label">
-            <strong class="setting-title">Motion & Animation</strong>
-            <p class="setting-description">Control hover, animation, and transition effects.</p>
-          </div>
-          <div class="segmented-control" id="motionEffectsControl">
-            <button type="button" data-value="full">Full</button>
-            <button type="button" data-value="reduced">Reduced</button>
-            <button type="button" data-value="none">Off</button>
-          </div>
-        </label>
-      </div>
-
-      <!-- Visual Flair -->
+  <label class="setting-card" for="underlineLinksToggle">
+    <div class="setting-label">
+      <strong class="setting-title">Underline Links</strong>
+      <p class="setting-description">Always underline links to improve visibility.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="underlineLinksToggle" role="switch" aria-label="Toggle underline links" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+</div>
+      
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Visual Flair</h2>
 
@@ -295,7 +266,6 @@
         </label>
       </div>
 
-      <!-- Danger Zone -->
       <div class="settings-subsection danger-zone animate-slide-in">
         <h2 class="subsection-title">Danger Zone</h2>
         <div class="setting-card">
@@ -307,7 +277,6 @@
         </div>
       </div>
 
-      <!-- Footer -->
       <div class="back-link-container">
         <a href="/" class="back-link">
           <span class="back-icon">←</span>
