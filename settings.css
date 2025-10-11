@@ -100,15 +100,52 @@ html.no-motion {
   --motion-ease: linear !important;
 }
 
-/* Stop animation and smooth transitions — but keep layout transforms */
-html.no-motion * {
-  animation: none !important;
-  transition: none !important;
+/* ================= Full Motion ================= */
+html.full-motion *,
+body.full-motion * {
+  animation-play-state: running !important;
+  transition: all var(--motion-duration) var(--motion-ease);
 }
 
-/* Reduced motion keeps gentle hover states */
-html.reduced-motion * {
+/* ================= Reduced Motion ================= */
+html.reduced-motion *,
+body.reduced-motion * {
   animation-duration: 0.15s !important;
+  transition-duration: 0.15s !important;
+  scroll-behavior: smooth !important; /* keep smooth scrolling */
+}
+
+/* ================= No Motion (Completely static) ================= */
+html.no-motion *,
+body.no-motion *,
+body.no-motion *::before,
+body.no-motion *::after {
+  animation: none !important;
+  animation-play-state: paused !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+  transform: none !important; /* disables floaty/glassy hover transforms */
+  filter: none !important;
+}
+
+/* Disable hover-based effects in no-motion mode */
+body.no-motion *:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Prevent flickers for animated elements */
+body.no-motion .animated,
+body.no-motion [style*="animation"],
+body.no-motion [data-animate],
+body.no-motion .flip-clock-inner,
+body.no-motion .bubble,
+body.no-motion .floating-icon,
+body.no-motion .carousel-item {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
 }
 
 /* Base body styles */
