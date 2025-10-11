@@ -1,8 +1,9 @@
 /**
  * settings.js
  * Fully functional settings manager with live previews and real-time scheduler
- * Motion Control Enhanced — Full / Reduced / None
+ * Motion-safe system with Full / Reduced / Off modes
  */
+
 class SettingsManager {
     constructor() {
         this.defaultSettings = {
@@ -14,7 +15,7 @@ class SettingsManager {
             darkModeEnd: '06:00',
             fontSize: 16,
             focusOutline: 'enabled',
-            motionEffects: 'full', // now supports 'full', 'reduced', 'none'
+            motionEffects: 'full', // full | reduced | disabled
             highContrast: 'disabled',
             dyslexiaFont: 'disabled',
             underlineLinks: 'disabled',
@@ -37,10 +38,6 @@ class SettingsManager {
         this.settings = this.loadSettings();
         this.deviceThemeMedia = null;
         this.schedulerInterval = null;
-
-        // Auto-upgrade legacy motion settings
-        if (this.settings.motionEffects === 'enabled') this.settings.motionEffects = 'full';
-        if (this.settings.motionEffects === 'disabled') this.settings.motionEffects = 'reduced';
 
         document.addEventListener('DOMContentLoaded', () => {
             this.initializeControls();
@@ -65,14 +62,14 @@ class SettingsManager {
                 motionMedia.addEventListener('change', (e) => {
                     if (!localStorage.getItem('websiteSettings')) {
                         this.settings.motionEffects = e.matches ? 'reduced' : 'full';
-                        this.applyMotionEffects(this.settings.motionEffects);
+                        this.applyMotionEffects();
                         this.saveSettings();
-                        this.initSegmentedControl('motionControl', this.settings.motionEffects);
+                        this.initSegmentedControl('motionEffectsControl', this.settings.motionEffects);
                     }
                 });
             }
 
-            // Storage listener for sync across tabs
+            // Sync changes across tabs
             window.addEventListener('storage', (e) => {
                 if (e.key === 'websiteSettings') {
                     this.settings = this.loadSettings();
@@ -81,7 +78,7 @@ class SettingsManager {
                 }
             });
 
-            // Auto update footer year
+            // Update footer year
             const yearSpan = document.getElementById('year');
             if (yearSpan) yearSpan.textContent = new Date().getFullYear();
         });
@@ -110,7 +107,7 @@ class SettingsManager {
     initializeControls() {
         this.initSegmentedControl('appearanceModeControl', this.settings.appearanceMode);
         this.initSegmentedControl('themeStyleControl', this.settings.themeStyle);
-        this.initSegmentedControl('motionControl', this.settings.motionEffects);
+        this.initSegmentedControl('motionEffectsControl', this.settings.motionEffects);
 
         const accentPicker = document.getElementById('accentColorPicker');
         if (accentPicker) {
@@ -128,7 +125,7 @@ class SettingsManager {
 
         const toggles = Object.keys(this.defaultSettings).filter(
             k => typeof this.defaultSettings[k] === 'string' &&
-            (this.defaultSettings[k] === 'enabled' || this.defaultSettings[k] === 'disabled')
+                 (this.defaultSettings[k] === 'enabled' || this.defaultSettings[k] === 'disabled')
         );
         toggles.forEach(key => this.setToggle(key));
     }
@@ -147,7 +144,6 @@ class SettingsManager {
     }
 
     setupEventListeners() {
-        // Segment controls (appearance, theme, motion)
         ['appearanceMode', 'themeStyle', 'motionEffects'].forEach(key => {
             const control = document.getElementById(`${key}Control`);
             if (control) {
@@ -163,7 +159,6 @@ class SettingsManager {
             }
         });
 
-        // Accent color
         const accentPicker = document.getElementById('accentColorPicker');
         if (accentPicker) {
             accentPicker.addEventListener('input', e => {
@@ -173,7 +168,6 @@ class SettingsManager {
             });
         }
 
-        // Font size
         const slider = document.getElementById('text-size-slider');
         if (slider) {
             slider.addEventListener('input', e => {
@@ -185,10 +179,9 @@ class SettingsManager {
             });
         }
 
-        // Toggle switches
         const toggleKeys = Object.keys(this.defaultSettings).filter(
             k => typeof this.defaultSettings[k] === 'string' &&
-            (this.defaultSettings[k] === 'enabled' || this.defaultSettings[k] === 'disabled')
+                 (this.defaultSettings[k] === 'enabled' || this.defaultSettings[k] === 'disabled')
         );
         toggleKeys.forEach(key => {
             const el = document.getElementById(`${key}Toggle`);
@@ -201,7 +194,6 @@ class SettingsManager {
             }
         });
 
-        // Reset buttons
         document.getElementById('resetLayoutBtn')?.addEventListener('click', () => {
             if (confirm('Are you sure you want to reset the section layout to default?')) {
                 localStorage.removeItem('sectionOrder');
@@ -215,30 +207,8 @@ class SettingsManager {
 
     updateSliderFill(slider) {
         if (!slider) return;
-        const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+        const pct = ((slider.value - slider.min) / (slider.max - slider.max)) * 100;
         slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
-    }
-
-    getContrastColor(hexcolor) {
-        if (!hexcolor) return '#ffffff';
-        hexcolor = hexcolor.replace("#", "");
-        const r = parseInt(hexcolor.substr(0, 2), 16);
-        const g = parseInt(hexcolor.substr(2, 2), 16);
-        const b = parseInt(hexcolor.substr(4, 2), 16);
-        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-        return (yiq >= 128) ? '#000000' : '#ffffff';
-    }
-
-    checkAccentColor(hexcolor) {
-        const warningElement = document.getElementById('whiteAccentWarning');
-        if (!warningElement) return;
-        let isLightMode = this.settings.appearanceMode === 'light' ||
-            (this.settings.appearanceMode === 'device' && !window.matchMedia('(prefers-color-scheme: dark)').matches);
-        const r = parseInt(hexcolor.substr(1, 2), 16);
-        const g = parseInt(hexcolor.substr(3, 2), 16);
-        const b = parseInt(hexcolor.substr(5, 2), 16);
-        const isLightColor = r > 240 && g > 240 && b > 240;
-        warningElement.style.display = isLightColor && isLightMode ? 'block' : 'none';
     }
 
     applyAllSettings() {
@@ -251,7 +221,7 @@ class SettingsManager {
             accentColor: () => this.applyAccentColor(),
             fontSize: () => this.applyFontSize(),
             focusOutline: () => document.body.classList.toggle('focus-outline-disabled', this.settings.focusOutline === 'disabled'),
-            motionEffects: () => this.applyMotionEffects(this.settings.motionEffects),
+            motionEffects: () => this.applyMotionEffects(),
             highContrast: () => document.body.classList.toggle('high-contrast', this.settings.highContrast === 'enabled'),
             dyslexiaFont: () => document.body.classList.toggle('dyslexia-font', this.settings.dyslexiaFont === 'enabled'),
             underlineLinks: () => document.body.classList.toggle('underline-links', this.settings.underlineLinks === 'enabled'),
@@ -265,13 +235,13 @@ class SettingsManager {
             showCountdown: () => this.applySectionVisibility('countdown-section', this.settings.showCountdown),
             showBusinessSection: () => this.applySectionVisibility('business-section', this.settings.showBusinessSection),
             showTechInformation: () => this.applySectionVisibility('tech-information-section', this.settings.showTechInformation),
-            showDisabilitiesSection: () => this.applySectionVisibility('disabilities-section', this.settings.showDisabilitiesSection),
+            showDisabilitiesSection: () => this.applySectionVisibility('disabilities-section', this.settings.showDisabilitiesSection)
         };
         actions[key]?.();
     }
 
     applyAppearanceMode() {
-        const isDark = this.settings.appearanceMode === 'dark' ||
+        let isDark = this.settings.appearanceMode === 'dark' ||
             (this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         document.body.classList.toggle('dark-mode', isDark);
         document.body.classList.toggle('light-e', !isDark);
@@ -289,37 +259,43 @@ class SettingsManager {
         document.documentElement.style.setProperty('--font-size-base', `${this.settings.fontSize}px`);
     }
 
-    applyMotionEffects(mode) {
-        document.documentElement.classList.remove('full-motion', 'reduced-motion', 'no-motion');
+    applyMotionEffects() {
+        const mode = this.settings.motionEffects; // full | reduced | disabled
+        const html = document.documentElement;
+        const body = document.body;
 
-        switch (mode) {
-            case 'reduced':
-                document.documentElement.classList.add('reduced-motion');
-                break;
-            case 'none':
-                document.documentElement.classList.add('no-motion');
-                break;
-            default:
-                document.documentElement.classList.add('full-motion');
-                break;
+        html.classList.remove('full-motion', 'reduced-motion', 'no-motion');
+        body.classList.remove('full-motion', 'reduced-motion', 'no-motion');
+
+        if (mode === 'disabled' || mode === 'off') {
+            html.classList.add('no-motion');
+            body.classList.add('no-motion');
+        } else if (mode === 'reduced') {
+            html.classList.add('reduced-motion');
+            body.classList.add('reduced-motion');
+        } else {
+            html.classList.add('full-motion');
+            body.classList.add('full-motion');
         }
 
-        const isReduced = mode !== 'full';
-        const isOff = mode === 'none';
-
-        const scrollArrow = document.querySelector('.scroll-arrow');
-        if (scrollArrow) scrollArrow.style.transition = isReduced ? 'none' : '';
-
-        if (isOff) document.querySelectorAll('.trail').forEach(dot => dot.remove());
-
-        const animatedElements = document.querySelectorAll('.flip-clock-inner, .bubble, .countdown-block, .floating-icon, .carousel-item');
+        const animatedElements = document.querySelectorAll('[style*="animation"], [data-animate], .animated');
         animatedElements.forEach(el => {
-            el.style.animation = isOff ? 'none' : '';
-            el.style.transition = isReduced ? 'none' : '';
-            el.style.transform = isOff ? 'none' : '';
+            if (mode === 'disabled' || mode === 'off') {
+                el.style.animation = 'none';
+                el.style.transition = 'none';
+            } else if (mode === 'reduced') {
+                el.style.animationDuration = '0.15s';
+                el.style.transitionDuration = '0.15s';
+            } else {
+                el.style.animation = '';
+                el.style.transition = '';
+            }
         });
 
-        if (isOff) document.body.offsetHeight;
+        if (mode === 'disabled' || mode === 'off') {
+            const trails = document.querySelectorAll('.trail');
+            trails.forEach(dot => dot.remove());
+        }
     }
 
     applySectionVisibility(sectionId, status) {
@@ -349,28 +325,25 @@ class SettingsManager {
         if (!scrollArrow) return;
         let lastScroll = window.scrollY;
 
-        const updateScrollArrow = () => {
+        function updateScrollArrow() {
             const currentScroll = window.scrollY;
-            const reduced = document.documentElement.classList.contains('reduced-motion');
+            const reduced = document.body.classList.contains('reduced-motion');
+
             scrollArrow.classList.toggle('hidden', currentScroll <= 0);
             scrollArrow.classList.toggle('up', currentScroll < lastScroll);
             scrollArrow.style.transition = reduced ? 'none' : 'transform 0.3s ease';
+
             lastScroll = currentScroll;
-        };
+        }
 
         window.addEventListener('scroll', updateScrollArrow);
         scrollArrow.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: document.documentElement.classList.contains('reduced-motion') ? 'auto' : 'smooth' });
+            window.scrollTo({ top: 0, behavior: document.body.classList.contains('reduced-motion') ? 'auto' : 'smooth' });
         });
     }
 
-    initLoadingScreen() {
-        // reserved for loading screen behavior
-    }
-
-    initSchedulerInterval() {
-        // reserved for dark mode scheduling logic
-    }
+    initLoadingScreen() {}
+    initSchedulerInterval() {}
 
     resetSectionVisibility() {
         if (confirm('Are you sure you want to make all homepage sections visible again?')) {
@@ -392,6 +365,28 @@ class SettingsManager {
             this.applyAllSettings();
             alert('All settings and the layout have been reset to default.');
         }
+    }
+
+    getContrastColor(hexcolor) {
+        if (!hexcolor) return '#ffffff';
+        hexcolor = hexcolor.replace("#", "");
+        const r = parseInt(hexcolor.substr(0, 2), 16);
+        const g = parseInt(hexcolor.substr(2, 2), 16);
+        const b = parseInt(hexcolor.substr(4, 2), 16);
+        const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return (yiq >= 128) ? '#000000' : '#ffffff';
+    }
+
+    checkAccentColor(hexcolor) {
+        const warningElement = document.getElementById('whiteAccentWarning');
+        if (!warningElement) return;
+        let isLightMode = this.settings.appearanceMode === 'light' ||
+            (this.settings.appearanceMode === 'device' && !window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const r = parseInt(hexcolor.substr(1, 2), 16);
+        const g = parseInt(hexcolor.substr(3, 2), 16);
+        const b = parseInt(hexcolor.substr(5, 2), 16);
+        const isLightColor = r > 240 && g > 240 && b > 240;
+        warningElement.style.display = isLightColor && isLightMode ? 'block' : 'none';
     }
 }
 
