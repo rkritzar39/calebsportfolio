@@ -74,6 +74,43 @@ body.dark-mode {
     --shadow-elevation-2: 0 8px 16px rgba(0,0,0,0.35); /* Deeper shadow for Onyx */
 }
 
+/* ======================================================= */
+/* === Motion & Animation Control System ================= */
+/* ======================================================= */
+
+/* Motion variables – global defaults */
+:root {
+  --motion-duration: 0.4s;
+  --motion-ease: ease;
+}
+
+/* Reduced motion */
+html.reduced-motion {
+  --motion-duration: 0.15s;
+  --motion-ease: ease-out;
+}
+
+/* No motion */
+html.no-motion {
+  --motion-duration: 0s !important;
+  --motion-ease: linear !important;
+}
+
+/* Apply transitions site-wide */
+*,
+*::before,
+*::after {
+  transition-duration: var(--motion-duration);
+  transition-timing-function: var(--motion-ease);
+}
+
+/* When no motion is selected, disable all movement */
+html.no-motion * {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
 /* Base body styles */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
