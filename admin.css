@@ -1,66 +1,55 @@
 /* admin.css - Apple-Inspired Theme (Unified Preview Styles + President Preview + Toggles + Admin List PFP) */
 
 :root {
-    /* ======================== */
-    /* Base & Typography */
-    /* ======================== */
+	/* --- Base & Typography --- */
     --system-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     
-    /* Rounded corners & motion */
-    --border-radius-lg: 24px; /* Larger radius, iOS 26 style */
-    --border-radius-md: 14px;
-    --transition-speed: 0.25s;
+    /* --- Border Radius & Transitions --- */
+    --border-radius-lg: 22px; /* Softer, larger radius for sections */
+    --border-radius-md: 14px; /* For inputs and smaller elements */
+    --transition-speed: 0.2s;
 
     /* ======================== */
-    /* iOS 26 — Dark Mode */
+    /* Dark Mode Colors (iOS 26 Style) */
     /* ======================== */
-    --apple-dark-bg: #000000;
-    --apple-dark-content-bg: rgba(28, 28, 30, 0.72);
-    --apple-dark-text: #f5f5f7;
-    --apple-dark-secondary-text: #8d8d92;
-    --apple-dark-border: rgba(255, 255, 255, 0.08);
-    --apple-dark-input-bg: rgba(44, 44, 46, 0.85);
-    --apple-dark-input-border: rgba(255, 255, 255, 0.1);
-    --apple-dark-input-focus-border: #0a84ff;
-    --apple-dark-input-focus-shadow: rgba(10, 132, 255, 0.35);
-    --apple-dark-shadow: rgba(0, 0, 0, 0.6);
-    --apple-dark-accent: #0a84ff;
-    --apple-dark-accent-hover: #409cff;
-    --apple-dark-link: #409cff;
-    --apple-dark-success-bg: rgba(48, 209, 88, 0.15);
-    --apple-dark-success-text: #30d158;
-    --apple-dark-error-bg: rgba(255, 69, 58, 0.15);
-    --apple-dark-error-text: #ff453a;
-    --apple-dark-select-arrow: #ffffffcc;
-    --apple-dark-modal-backdrop: rgba(0, 0, 0, 0.55);
-    --apple-dark-input-focus-shadow: rgba(10, 132, 255, 0.35);
+    --bg-color: #000000;
+    --content-bg: rgba(18, 18, 20, 0.78); /* Onyx glass: deeper, slightly warm */
+    --text-color: #f5f5f7;
+    --secondary-text: #8d8d92;
+    --border-color: rgba(255, 255, 255, 0.06); /* very subtle pale border */
+    --input-bg-color: rgba(28, 28, 30, 0.88); /* richer onyx input */
+    --input-border-color: rgba(255, 255, 255, 0.08);
+    --accent-color: #0a84ff;
+    --accent-hover: #409cff;
+    --input-focus-border-color: var(--accent-color);
+    --input-focus-shadow-color: rgba(10, 132, 255, 0.30);
+    --color-danger: #ff453a;
+    --color-danger-hover: #ff6b62;
+    --color-success: #30d158;
+    --color-success-action-hover: #2ca349;
+    --success-bg-color: rgba(48, 209, 88, 0.12);
+    --success-text-color: #30d158;
+    --error-bg-color: rgba(255, 69, 58, 0.12);
+    --error-text-color: #ff453a;
+    --modal-backdrop-color: rgba(0, 0, 0, 0.65);
+    --accent-rgb: 10, 132, 255;
 
     /* ======================== */
-    /* iOS 26 — Light Mode */
+    /* Alert & Action Colors */
     /* ======================== */
-    --apple-light-bg: #f2f2f7;
-    --apple-light-content-bg: rgba(255, 255, 255, 0.65);
-    --apple-light-text: #1c1c1e;
-    --apple-light-secondary-text: #6e6e73;
-    --apple-light-border: rgba(0, 0, 0, 0.08);
-    --apple-light-input-bg: rgba(255, 255, 255, 0.85);
-    --apple-light-input-border: rgba(0, 0, 0, 0.12);
-    --apple-light-input-focus-border: #007aff;
-    --apple-light-input-focus-shadow: rgba(0, 122, 255, 0.25);
-    --apple-light-shadow: rgba(0, 0, 0, 0.08);
-    --apple-light-accent: #007aff;
-    --apple-light-accent-hover: #3395ff;
-    --apple-light-link: #007aff;
-    --apple-light-success-bg: rgba(52, 199, 89, 0.12);
-    --apple-light-success-text: #34c759;
-    --apple-light-error-bg: rgba(255, 59, 48, 0.12);
-    --apple-light-error-text: #ff3b30;
-    --apple-light-select-arrow: #000000aa;
-    --apple-light-modal-backdrop: rgba(255, 255, 255, 0.45);
-    --apple-light-input-focus-shadow: rgba(0, 122, 255, 0.25);
+    --color-danger: #ff3b30;
+    --color-danger-hover: #d1302f;
+    --color-danger-glow: rgba(255, 59, 48, 0.22);
+    --color-success-action: #34c759;
+    --color-success-action-hover: #2ca349;
+    --color-success-action-glow: rgba(52, 199, 89, 0.18);
+    --color-secondary-action: #8e8e93;
+    --color-secondary-action-hover: #7a7a80;
+    --color-secondary-action-glow: rgba(142, 142, 147, 0.18);
+    --color-danger-disabled: #7a7a7a;
 
     /* ======================== */
-    /* Default (Dark) variables */
+    /* Fallback / Default Colors (Dark Mode) */
     /* ======================== */
     --bg-color: var(--apple-dark-bg);
     --content-bg: var(--apple-dark-content-bg);
@@ -83,8 +72,9 @@
     --modal-backdrop-color: var(--apple-dark-modal-backdrop);
     --accent-glow-color: var(--apple-dark-input-focus-shadow);
     --accent-rgb: 10, 132, 255;
+    --danger-rgb: 255, 59, 48;
 }
-
+ 
 /* ======================== */
 /* Light Mode Overrides */
 /* ======================== */
