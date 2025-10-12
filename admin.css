@@ -695,7 +695,7 @@ select {
 }
 
 /* ======================== */
-/* Toggle Styles – iOS 26 Onyx */
+/* Toggle Styles – iOS 26 Onyx Enhanced */
 /* ======================== */
 .checkbox-group {
     display: flex;
@@ -703,9 +703,10 @@ select {
     flex-wrap: wrap;
     gap: 16px;
     padding-top: 4px;
+    position: relative;
 }
 
-/* Hidden Checkbox Base */
+/* Hidden Checkbox Input */
 .checkbox-group input[type="checkbox"] {
     opacity: 0;
     position: absolute;
@@ -715,19 +716,21 @@ select {
     pointer-events: none;
 }
 
-/* iOS Toggle Label */
+/* Label Styling */
 .checkbox-group label {
     position: relative;
-    padding-left: 70px;
-    cursor: pointer;
+    padding-left: 64px; /* space for toggle track */
     line-height: 32px;
+    display: flex;
+    align-items: center; /* vertically centers text with knob */
+    cursor: pointer;
     color: var(--text-color);
     font-weight: 400;
     font-size: 0.97rem;
     user-select: none;
 }
 
-/* Switch Track */
+/* Toggle Track */
 .checkbox-group label::before {
     content: "";
     position: absolute;
@@ -743,7 +746,7 @@ select {
     transition: background 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Switch Knob */
+/* Toggle Knob */
 .checkbox-group label::after {
     content: "";
     position: absolute;
@@ -771,6 +774,11 @@ select {
 .checkbox-group input[type="checkbox"]:focus-visible + label::before {
     outline: none;
     box-shadow: 0 0 0 2px var(--content-bg), 0 0 0 4px var(--accent-color);
+}
+
+/* Hover Effects */
+.checkbox-group label:hover::before {
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.15), 0 2px 8px rgba(0,0,0,0.3);
 }
 
 /* Helper Text */
