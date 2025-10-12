@@ -128,50 +128,51 @@
             </section>
 
             <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
-    <h3 id="settings-heading">Site Settings</h3>
+  <h3 id="settings-heading">Site Settings</h3>
 
-    <div class="form-group checkbox-group apple-toggle-group">
-        <input type="checkbox" id="maintenance-mode-toggle" name="maintenanceMode" class="apple-toggle-checkbox">
-        <label for="maintenance-mode-toggle" class="apple-toggle-label"></label>
-        <label for="maintenance-mode-toggle">Enable Maintenance Mode</label>
-        <small>Puts the public site into maintenance mode, showing only a maintenance message.</small>
-        </div>
+  <div class="form-group checkbox-group apple-toggle-group">
+    <input type="checkbox" id="maintenance-mode-toggle" name="maintenanceMode" class="apple-toggle-checkbox">
+    <label for="maintenance-mode-toggle" class="apple-toggle-label">Enable Maintenance Mode</label>
+    <small>Puts the public site into maintenance mode, showing only a maintenance message.</small>
+  </div>
 
-    <div class="form-group checkbox-group apple-toggle-group">
-        <input type="checkbox" id="hide-tiktok-section-toggle" name="hideTikTokSection" class="apple-toggle-checkbox">
-        <label for="hide-tiktok-section-toggle" class="apple-toggle-label"></label>
-        <label for="hide-tiktok-section-toggle">Hide TikTok Section on Homepage</label>
-        <small>If checked, the entire TikTok creator shoutout section will be hidden from the public homepage.</small>
-         </div>
+  <div class="form-group checkbox-group apple-toggle-group">
+    <input type="checkbox" id="hide-tiktok-section-toggle" name="hideTikTokSection" class="apple-toggle-checkbox">
+    <label for="hide-tiktok-section-toggle" class="apple-toggle-label">Hide TikTok Section on Homepage</label>
+    <small>If checked, the entire TikTok creator shoutout section will be hidden from the public homepage.</small>
+  </div>
 
-    <hr style="border-color: var(--border-color); margin: 2rem 0;">
+  <hr style="border-color: var(--border-color); margin: 2rem 0;">
 
-    <h4>Homepage Countdown Timer</h4>
+  <h4>Homepage Countdown Timer</h4>
 
-    <div class="form-group">
-        <label for="countdown-title-input">Countdown Title:</label>
-        <input type="text" id="countdown-title-input" name="countdownTitle" placeholder="e.g., Countdown to Earth Day!">
-        <small>The main title displayed above the countdown timer.</small>
-    </div>
+  <div class="form-group">
+    <label for="countdown-title-input">Countdown Title:</label>
+    <input type="text" id="countdown-title-input" name="countdownTitle" placeholder="e.g., Countdown to Earth Day!">
+    <small>The main title displayed above the countdown timer.</small>
+  </div>
 
-    <div class="form-group">
-        <label for="countdown-datetime-input">Countdown Target Date & Time:</label>
-        <input type="text" id="countdown-datetime-input" name="countdownTargetDateTime" placeholder="YYYY-MM-DDTHH:MM:SS (e.g., 2025-12-31T23:59:59)">
-         <small>Enter the target date and time in your local timezone (Bowling Green, Ohio is EDT - current time Mon, Sep 22 2025 1:14 PM EDT) using the specified format.</small>
-    </div>
+  <div class="form-group">
+    <label for="countdown-datetime-input">Countdown Target Date & Time:</label>
+    <input type="text" id="countdown-datetime-input" name="countdownTargetDateTime"
+      placeholder="YYYY-MM-DDTHH:MM:SS (e.g., 2025-12-31T23:59:59)">
+    <small>Enter the target date and time in your local timezone (Bowling Green, Ohio is EDT - current time Mon, Sep 22
+      2025 1:14 PM EDT) using the specified format.</small>
+  </div>
 
-    <div class="form-group">
-        <label for="countdown-expired-message-input">Expired Message:</label>
-        <textarea id="countdown-expired-message-input" name="countdownExpiredMessage" rows="3" placeholder="Message shown when countdown ends (e.g., Happy Earth Day!)"></textarea>
-        <small>This message replaces the countdown numbers when the target time is reached. Leave blank for a default message.</small>
-    </div>
+  <div class="form-group">
+    <label for="countdown-expired-message-input">Expired Message:</label>
+    <textarea id="countdown-expired-message-input" name="countdownExpiredMessage" rows="3"
+      placeholder="Message shown when countdown ends (e.g., Happy Earth Day!)"></textarea>
+    <small>This message replaces the countdown numbers when the target time is reached. Leave blank for a default
+      message.</small>
+  </div>
 
-    <div class="form-group">
-         <button id="save-countdown-settings-button" class="button">Save Countdown Settings</button>
-         </div>
+  <div class="form-group">
+    <button id="save-countdown-settings-button" class="button">Save Countdown Settings</button>
+  </div>
 
-    <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
-
+  <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
 </section>
 
            <section class="admin-section onyx-surface" id="legislation-management" aria-labelledby="legislation-heading">
@@ -391,9 +392,10 @@
 
     </section>
 
-             <section class="admin-section" id="creator-shoutouts" aria-labelledby="shoutouts-heading">
+           <section class="admin-section" id="creator-shoutouts" aria-labelledby="shoutouts-heading">
     <h3 id="shoutouts-heading">Creator Shoutouts</h3>
 
+    <!-- TikTok -->
     <div class="shoutouts-platform-container" aria-labelledby="tiktok-heading">
         <h4 id="tiktok-heading">TikTok</h4>
         <form id="add-shoutout-tiktok-form" aria-labelledby="add-tiktok-heading">
@@ -423,10 +425,10 @@
                 <input type="url" id="tiktok-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
             </div>
             <div class="form-group checkbox-group apple-toggle-group">
-                 <input type="checkbox" id="tiktok-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
-                 <label for="tiktok-isVerified" class="apple-toggle-label"></label>
-                 <label for="tiktok-isVerified">Is Verified?</label>
-                 </div>
+                <input type="checkbox" id="tiktok-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
+                <label for="tiktok-isVerified" class="apple-toggle-label"></label>
+                <span>Is Verified?</span>
+            </div>
             <div class="form-group">
                 <label>Preview:</label>
                 <div id="add-tiktok-preview" class="shoutout-preview-area">
@@ -447,101 +449,107 @@
         <div id="shoutouts-tiktok-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-tiktok-heading">
             <p>Loading TikTok shoutouts...</p>
         </div>
-        </div> <div class="shoutouts-platform-container" aria-labelledby="instagram-heading">
+    </div>
+
+    <!-- Instagram -->
+    <div class="shoutouts-platform-container" aria-labelledby="instagram-heading">
         <h4 id="instagram-heading">Instagram</h4>
         <form id="add-shoutout-instagram-form" aria-labelledby="add-instagram-heading">
-             <h5 id="add-instagram-heading">Add New Instagram Shoutout</h5>
-             <div class="form-group">
-                 <label for="instagram-username">Username:</label>
-                 <input type="text" id="instagram-username" name="username" required placeholder="e.g., mrbeast">
-             </div>
-             <div class="form-group">
-                 <label for="instagram-nickname">Nickname:</label>
-                 <input type="text" id="instagram-nickname" name="nickname" required placeholder="e.g., MrBeast">
-             </div>
-             <div class="form-group">
-                 <label for="instagram-order">Display Order:</label>
-                 <input type="number" id="instagram-order" name="order" min="0" step="1" required placeholder="e.g., 1">
-             </div>
-             <div class="form-group">
-                 <label for="instagram-followers">Followers (e.g., 10M, 500K):</label>
-                 <input type="text" id="instagram-followers" name="followers" placeholder="e.g., 67.2M" inputmode="text">
-             </div>
-             <div class="form-group">
-                 <label for="instagram-bio">Bio:</label>
-                 <textarea id="instagram-bio" name="bio" placeholder="Creator's bio text" rows="3"></textarea>
-             </div>
-             <div class="form-group">
-                 <label for="instagram-profilePic">Profile Pic URL:</label>
-                 <input type="url" id="instagram-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
-             </div>
-             <div class="form-group checkbox-group apple-toggle-group">
-                 <input type="checkbox" id="instagram-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
-                 <label for="instagram-isVerified" class="apple-toggle-label"></label>
-                 <label for="instagram-isVerified">Is Verified?</label>
-                 </div>
-              <div class="form-group">
-                 <label>Preview:</label>
-                 <div id="add-instagram-preview" class="shoutout-preview-area">
-                     <p><small>Preview will appear here as you type.</small></p>
-                 </div>
-             </div>
-             <div class="form-actions">
-                 <button type="submit" class="button-primary">Add Instagram Shoutout</button>
-             </div>
+            <h5 id="add-instagram-heading">Add New Instagram Shoutout</h5>
+            <div class="form-group">
+                <label for="instagram-username">Username:</label>
+                <input type="text" id="instagram-username" name="username" required placeholder="e.g., mrbeast">
+            </div>
+            <div class="form-group">
+                <label for="instagram-nickname">Nickname:</label>
+                <input type="text" id="instagram-nickname" name="nickname" required placeholder="e.g., MrBeast">
+            </div>
+            <div class="form-group">
+                <label for="instagram-order">Display Order:</label>
+                <input type="number" id="instagram-order" name="order" min="0" step="1" required placeholder="e.g., 1">
+            </div>
+            <div class="form-group">
+                <label for="instagram-followers">Followers (e.g., 10M, 500K):</label>
+                <input type="text" id="instagram-followers" name="followers" placeholder="e.g., 67.2M" inputmode="text">
+            </div>
+            <div class="form-group">
+                <label for="instagram-bio">Bio:</label>
+                <textarea id="instagram-bio" name="bio" placeholder="Creator's bio text" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="instagram-profilePic">Profile Pic URL:</label>
+                <input type="url" id="instagram-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
+            </div>
+            <div class="form-group checkbox-group apple-toggle-group">
+                <input type="checkbox" id="instagram-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
+                <label for="instagram-isVerified" class="apple-toggle-label"></label>
+                <span>Is Verified?</span>
+            </div>
+            <div class="form-group">
+                <label>Preview:</label>
+                <div id="add-instagram-preview" class="shoutout-preview-area">
+                    <p><small>Preview will appear here as you type.</small></p>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Add Instagram Shoutout</button>
+            </div>
         </form>
 
-         <h5 id="existing-instagram-heading">
+        <h5 id="existing-instagram-heading">
             Existing Instagram Shoutouts <span id="instagram-count" class="list-count"></span>
-         </h5>
-         <div class="list-controls">
-             <input type="search" id="search-instagram" placeholder="Search Instagram Shoutouts..." aria-label="Search Instagram Shoutouts">
-         </div>
-         <div id="shoutouts-instagram-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-instagram-heading">
-             <p>Loading Instagram shoutouts...</p>
-         </div>
-         </div> <div class="shoutouts-platform-container" aria-labelledby="youtube-heading">
+        </h5>
+        <div class="list-controls">
+            <input type="search" id="search-instagram" placeholder="Search Instagram Shoutouts..." aria-label="Search Instagram Shoutouts">
+        </div>
+        <div id="shoutouts-instagram-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-instagram-heading">
+            <p>Loading Instagram shoutouts...</p>
+        </div>
+    </div>
+
+    <!-- YouTube -->
+    <div class="shoutouts-platform-container" aria-labelledby="youtube-heading">
         <h4 id="youtube-heading">YouTube</h4>
         <form id="add-shoutout-youtube-form" aria-labelledby="add-youtube-heading">
             <h5 id="add-youtube-heading">Add New YouTube Shoutout</h5>
             <div class="form-group">
-                 <label for="youtube-username">Handle (@handle):</label>
-                 <input type="text" id="youtube-username" name="username" required placeholder="e.g., MrBeast">
+                <label for="youtube-username">Handle (@handle):</label>
+                <input type="text" id="youtube-username" name="username" required placeholder="e.g., MrBeast">
             </div>
             <div class="form-group">
-                 <label for="youtube-nickname">Channel Name / Nickname:</label>
-                 <input type="text" id="youtube-nickname" name="nickname" required placeholder="e.g., MrBeast">
+                <label for="youtube-nickname">Channel Name / Nickname:</label>
+                <input type="text" id="youtube-nickname" name="nickname" required placeholder="e.g., MrBeast">
             </div>
             <div class="form-group">
-                 <label for="youtube-order">Display Order:</label>
-                 <input type="number" id="youtube-order" name="order" min="0" step="1" required placeholder="e.g., 1">
+                <label for="youtube-order">Display Order:</label>
+                <input type="number" id="youtube-order" name="order" min="0" step="1" required placeholder="e.g., 1">
             </div>
             <div class="form-group">
-                 <label for="youtube-subscribers">Subscribers (e.g., 10M, 500K):</label>
-                 <input type="text" id="youtube-subscribers" name="subscribers" placeholder="e.g., 383M" inputmode="text">
+                <label for="youtube-subscribers">Subscribers (e.g., 10M, 500K):</label>
+                <input type="text" id="youtube-subscribers" name="subscribers" placeholder="e.g., 383M" inputmode="text">
             </div>
             <div class="form-group">
-                 <label for="youtube-bio">Description / Bio:</label>
-                 <textarea id="youtube-bio" name="bio" placeholder="Creator's channel description" rows="3"></textarea>
+                <label for="youtube-bio">Description / Bio:</label>
+                <textarea id="youtube-bio" name="bio" placeholder="Creator's channel description" rows="3"></textarea>
             </div>
             <div class="form-group">
-                 <label for="youtube-profilePic">Profile Pic URL:</label>
-                 <input type="url" id="youtube-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
+                <label for="youtube-profilePic">Profile Pic URL:</label>
+                <input type="url" id="youtube-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
             </div>
             <div class="form-group">
-                 <label for="youtube-coverPhoto">Cover Photo URL:</label>
-                 <input type="url" id="youtube-coverPhoto" name="coverPhoto" placeholder="https://..." inputmode="url">
+                <label for="youtube-coverPhoto">Cover Photo URL:</label>
+                <input type="url" id="youtube-coverPhoto" name="coverPhoto" placeholder="https://..." inputmode="url">
             </div>
-             <div class="form-group checkbox-group apple-toggle-group">
-                 <input type="checkbox" id="youtube-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
-                 <label for="youtube-isVerified" class="apple-toggle-label"></label>
-                 <label for="youtube-isVerified">Is Verified?</label>
-                 </div>
-              <div class="form-group">
-                 <label>Preview:</label>
-                 <div id="add-youtube-preview" class="shoutout-preview-area">
-                     <p><small>Preview will appear here as you type.</small></p>
-                 </div>
+            <div class="form-group checkbox-group apple-toggle-group">
+                <input type="checkbox" id="youtube-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
+                <label for="youtube-isVerified" class="apple-toggle-label"></label>
+                <span>Is Verified?</span>
+            </div>
+            <div class="form-group">
+                <label>Preview:</label>
+                <div id="add-youtube-preview" class="shoutout-preview-area">
+                    <p><small>Preview will appear here as you type.</small></p>
+                </div>
             </div>
             <div class="form-actions">
                 <button type="submit" class="button-primary">Add YouTube Shoutout</button>
@@ -557,9 +565,9 @@
         <div id="shoutouts-youtube-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-youtube-heading">
             <p>Loading YouTube shoutouts...</p>
         </div>
-        </div>
-    </section>
-
+    </div>
+</section>
+            
              <section class="admin-section" id="useful-links-management" aria-labelledby="useful-links-heading">
     <h3 id="useful-links-heading">Manage Useful Links</h3>
 
@@ -594,79 +602,73 @@
 
     </section>
 
-            <section class="admin-section onyx-surface" id="business-info-management" aria-labelledby="business-info-heading">
+           <div class="business-container onyx-surface">
+  <section class="admin-section" id="business-info-management" aria-labelledby="business-info-heading">
     <h3 id="business-info-heading" class="onyx-heading">Manage Business Information</h3>
 
     <form id="business-info-form" class="onyx-form">
-        <div class="form-group">
-            <label for="business-contact-email">Contact Email</label>
-            <input type="email" id="business-contact-email" name="contactEmail"
-                   placeholder="Enter contact email address">
-        </div>
+      <div class="form-group">
+        <label for="business-contact-email">Contact Email</label>
+        <input type="email" id="business-contact-email" name="contactEmail" placeholder="Enter contact email address">
+      </div>
 
-        <h4 class="onyx-subheading">Regular Business Hours</h4>
-        <p class="onyx-note">
-            <small><i>Enter all times based on US Eastern Time (ET / New York). They will be automatically converted for visitors.</i></small>
-        </p>
-        <div id="regular-hours-container" class="hours-grid"></div>
+      <h4 class="onyx-subheading">Regular Business Hours</h4>
+      <p class="onyx-note">
+        <small><i>Enter all times based on US Eastern Time (ET / New York). They will be automatically converted for visitors.</i></small>
+      </p>
+      <div id="regular-hours-container" class="hours-grid"></div>
 
-        <h4 class="onyx-subheading">Holiday Hours / Specific Date Closures</h4>
-        <p class="onyx-note">
-            <small><i>Enter times based on US Eastern Time (ET / New York).</i></small>
-        </p>
-        <div id="holiday-hours-list" class="special-hours-list"></div>
-        <button type="button" id="add-holiday-button" class="button-secondary small-button">
-            + Add Holiday / Specific Date
+      <h4 class="onyx-subheading">Holiday Hours / Specific Date Closures</h4>
+      <p class="onyx-note">
+        <small><i>Enter times based on US Eastern Time (ET / New York).</i></small>
+      </p>
+      <div id="holiday-hours-list" class="special-hours-list"></div>
+      <button type="button" id="add-holiday-button" class="button-secondary small-button">
+        + Add Holiday / Specific Date
+      </button>
+
+      <h4 class="onyx-subheading">Temporary Hours (e.g., Events, Renovations)</h4>
+      <p class="onyx-note">
+        <small><i>Enter times based on US Eastern Time (ET / New York).</i></small>
+      </p>
+      <div id="temporary-hours-list" class="special-hours-list"></div>
+      <button type="button" id="add-temporary-button" class="button-secondary small-button">
+        + Add Temporary Hours Period
+      </button>
+
+      <div class="form-group">
+        <label for="business-status-override">Status Override</label>
+        <select id="business-status-override" name="statusOverride">
+          <option value="auto">Automatic (Based on Hours/Time)</option>
+          <option value="open">Force Open</option>
+          <option value="closed">Force Closed</option>
+          <option value="unavailable">Force Temporarily Unavailable</option>
+        </select>
+        <small class="onyx-hint">Overrides the automatic open/closed calculation.</small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" id="save-business-info-button" class="button-primary">
+          Save Business Info
         </button>
-
-        <h4 class="onyx-subheading">Temporary Hours (e.g., Events, Renovations)</h4>
-        <p class="onyx-note">
-            <small><i>Enter times based on US Eastern Time (ET / New York).</i></small>
-        </p>
-        <div id="temporary-hours-list" class="special-hours-list"></div>
-        <button type="button" id="add-temporary-button" class="button-secondary small-button">
-            + Add Temporary Hours Period
-        </button>
-
-        <div class="form-group">
-            <label for="business-status-override">Status Override</label>
-            <select id="business-status-override" name="statusOverride">
-                <option value="auto">Automatic (Based on Hours/Time)</option>
-                <option value="open">Force Open</option>
-                <option value="closed">Force Closed</option>
-                <option value="unavailable">Force Temporarily Unavailable</option>
-            </select>
-            <small class="onyx-hint">Overrides the automatic open/closed calculation.</small>
-        </div>
-
-        <div class="form-group checkbox-group">
-            <input type="checkbox" id="enable-manual-status" class="apple-toggle-checkbox">
-            <label for="enable-manual-status" class="apple-toggle-label"></label>
-            <label for="enable-manual-status">Enable Manual Override Mode</label>
-            <small>Lets you toggle the business status manually in real-time.</small>
-        </div>
-
-        <div class="form-actions">
-            <button type="submit" id="save-business-info-button" class="button-primary">
-                Save Business Info
-            </button>
-        </div>
+      </div>
     </form>
 
     <div class="admin-preview-container">
-        <h4 class="onyx-subheading">Live Preview (Simulated Visitor View)</h4>
-        <p class="onyx-note">
-            <small><i>This preview uses your current browser time to simulate how a visitor in your timezone would see the hours and status based on unsaved values above. Assumes ET input.</i></small>
-        </p>
-        <div class="preview-content">
-            <div id="admin-preview-status" class="preview-status">Status: Update form to preview...</div>
-            <div id="admin-preview-hours" class="preview-hours"></div>
-            <div id="admin-preview-contact" class="preview-contact"></div>
-        </div>
+      <h4 class="onyx-subheading">Live Preview (Simulated Visitor View)</h4>
+      <p class="onyx-note">
+        <small><i>This preview uses your current browser time to simulate how a visitor in your timezone would see the hours and status based on unsaved values above. Assumes ET input.</i></small>
+      </p>
+      <div class="preview-content">
+        <div id="admin-preview-status" class="preview-status">Status: Update form to preview...</div>
+        <div id="admin-preview-hours" class="preview-hours"></div>
+        <div id="admin-preview-contact" class="preview-contact"></div>
+      </div>
     </div>
 
     <div id="business-info-status-message" class="status-message" role="status" aria-live="polite"></div>
-</section>
+  </section>
+</div>
             
              <section class="admin-section" id="tech-management" aria-labelledby="tech-heading">
                 <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
@@ -901,11 +903,14 @@
                 <label for="edit-profilePic">Profile Pic URL:</label>
                 <input type="url" id="edit-profilePic" name="profilePic" inputmode="url">
             </div>
+
+            <!-- Standardized Apple Toggle -->
             <div class="form-group checkbox-group apple-toggle-group">
                 <input type="checkbox" id="edit-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
                 <label for="edit-isVerified" class="apple-toggle-label"></label>
-                <label for="edit-isVerified">Is Verified?</label>
+                <span>Is Verified?</span>
             </div>
+
             <div id="edit-platform-specific">
                 <div class="form-group edit-followers-group" style="display: none;">
                     <label for="edit-followers">Followers:</label>
@@ -920,17 +925,20 @@
                     <input type="url" id="edit-coverPhoto" name="coverPhoto" inputmode="url">
                 </div>
             </div>
-             <div class="form-group">
+
+            <div class="form-group">
                 <label>Preview:</label>
                 <div id="edit-shoutout-preview" class="shoutout-preview-area">
                     <p><small>Preview will appear here.</small></p>
                 </div>
-             </div>
-             <div class="form-actions">
-                 <button type="submit" class="button-primary">Save Changes</button>
-             </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Save Changes</button>
+            </div>
         </form>
-         <div id="edit-shoutout-status-message" class="status-message" role="status" aria-live="polite"></div>
+
+        <div id="edit-shoutout-status-message" class="status-message" role="status" aria-live="polite"></div>
     </div>
 </div>
 
