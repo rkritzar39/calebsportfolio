@@ -1850,7 +1850,7 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 }
 
 /* ======================================== */
-/* Business Info Section Styles (Modern)    */
+/* Business Info Section Styles (Onyx Refined) */
 /* ======================================== */
 
 #business-info-management {
@@ -1861,58 +1861,73 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 }
 
 #business-info-management h3 {
-    margin-bottom: 30px;
+    margin-bottom: 32px;
+    font-size: 1.6em;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-color);
+    letter-spacing: 0.3px;
 }
 
 /* Card styling for each major group */
 .admin-section-card {
-	background: var(--content-bg);
-	padding: 25px 30px;
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	padding: 28px 34px;
 	border-radius: var(--border-radius-lg);
-	margin-bottom: 30px;
-	border: 1px solid var(--border-color);
-    box-shadow: 0 4px 12px var(--shadow-color);
+	margin-bottom: 32px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	transition: transform var(--transition-speed) var(--transition-timing),
+				box-shadow var(--transition-speed) var(--transition-timing);
+}
+.admin-section-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px color-mix(in srgb, var(--accent-color) 15%, var(--shadow-color));
 }
 
 .admin-section-card h4 {
 	margin-top: 0;
-	margin-bottom: 8px;
+	margin-bottom: 10px;
 	padding-bottom: 12px;
-	border-bottom: 1px solid var(--border-color);
-	font-size: 1.3em;
+	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
+	font-size: 1.35em;
 	color: var(--text-color);
-    font-weight: 600;
+	font-weight: 600;
+	letter-spacing: 0.3px;
 }
 
 .admin-section-card p > small > i {
-    color: var(--secondary-text);
-    font-size: 0.9em;
-    line-height: 1.4;
-    margin-bottom: 20px;
-    display: block;
+	color: var(--secondary-text);
+	font-size: 0.9em;
+	line-height: 1.4;
+	margin-bottom: 20px;
+	display: block;
 }
-
 
 /* --- Regular Hours Grid --- */
 .hours-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-	gap: 20px;
+	gap: 22px;
 }
 
 .day-hours-group {
-	background: var(--bg-color);
+	background: color-mix(in srgb, var(--bg-color) 90%, transparent);
 	padding: 20px;
 	border-radius: var(--border-radius-md);
-	border: 1px solid var(--border-color);
-	transition: box-shadow 0.2s ease;
+	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+	box-shadow: 0 4px 12px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+	transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 .day-hours-group:focus-within {
-	box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
+	transform: translateY(-2px);
+	box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 20%, transparent);
 }
 .day-hours-group > label {
 	display: block;
-	margin-bottom: 15px;
+	margin-bottom: 14px;
 	font-weight: 600;
 	font-size: 1.1em;
 	color: var(--text-color);
@@ -1927,9 +1942,9 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	padding: 8px;
+	padding: 8px 10px;
 	border-radius: var(--border-radius-sm);
-	background-color: color-mix(in srgb, var(--border-color) 30%, transparent);
+	background-color: color-mix(in srgb, var(--border-color) 40%, transparent);
 }
 .day-hours-group .form-group.checkbox-group label {
 	margin-bottom: 0;
@@ -1938,149 +1953,142 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	cursor: pointer;
 }
 
-/* --- Special Hours List Admin (Holiday & Temporary) --- */
+/* --- Special Hours List Admin --- */
 .special-hours-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-top: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-top: 20px;
 }
 
 .special-hours-list .hour-entry {
-	background: var(--bg-color);
-	padding: 20px;
+	background: color-mix(in srgb, var(--bg-color) 92%, transparent);
+	padding: 22px;
 	border-radius: var(--border-radius-md);
-	border: 1px solid var(--border-color);
-	position: relative;
-	display: flex; /* Use Flexbox for layout */
-	flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+	display: flex;
+	flex-wrap: wrap;
 	gap: 15px 20px;
-	align-items: flex-end; /* Align items to the bottom */
+	align-items: flex-end;
+	position: relative;
+	box-shadow: 0 3px 10px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
-/* Date and Label fields */
 .special-hours-list .hour-entry .form-group {
-    flex: 1 1 200px; /* Allow growing and shrinking, with a base width */
-    min-width: 180px;
+	flex: 1 1 200px;
+	min-width: 180px;
 }
 .special-hours-list .hour-entry .form-group:has(label[for*="-label-"]) {
-    flex-basis: 100%; /* Make label field take full width */
+	flex-basis: 100%;
 }
-
-/* Container for the time inputs */
 .special-hours-list .hour-entry .time-inputs {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-    flex: 2 1 250px; /* Allow it to take more space */
+	flex: 2 1 250px;
 }
-
-/* Correctly size the time inputs within the flex container */
 .special-hours-list .hour-entry .time-inputs input[type="time"] {
-    width: auto; /* Let the input determine its own width */
-    flex-grow: 1; /* Allow it to grow to fill the container */
+	width: auto;
+	flex-grow: 1;
 }
-
-/* Styling for the checkbox group */
 .special-hours-list .hour-entry .form-group.checkbox-group {
-    flex: 1 1 auto; /* Grow but don't shrink too much */
-    padding-bottom: 10px; /* Align checkbox with the bottom of the inputs */
+	flex: 1 1 auto;
+	padding-bottom: 10px;
 }
 
-/* Remove Button remains the same */
 .special-hours-list .hour-entry .remove-hour-button {
 	position: absolute;
-	top: 15px;
-	right: 15px;
+	top: 12px;
+	right: 12px;
 	background: transparent;
 	border: none;
 	color: var(--secondary-text);
 	cursor: pointer;
 	padding: 5px;
-	font-size: 1.5rem;
+	font-size: 1.4rem;
 	line-height: 1;
-	opacity: 0.7;
+	opacity: 0.65;
 	transition: opacity 0.2s, color 0.2s, transform 0.2s ease;
 }
-
 .special-hours-list .hour-entry .remove-hour-button:hover {
 	opacity: 1;
 	color: var(--color-danger);
-	transform: scale(1.1);
+	transform: scale(1.12);
 }
 
 /* --- Add Button Styling --- */
 #add-holiday-button, #add-temporary-button {
-    margin-top: 20px;
+	margin-top: 22px;
 }
 
 /* ======================================== */
-/* Business Info PREVIEW Styles             */
+/* Business Info PREVIEW Styles (Onyx)      */
 /* ======================================== */
+
 :root {
-	--status-open-color: #28a745;
-	--status-closed-color: #dc3545;
-	--status-unavailable-color: #fd7e14;
+	--status-open-color: #34c759;
+	--status-closed-color: #ff453a;
+	--status-unavailable-color: #ff9f0a;
 }
 
-/* --- Main Preview Container (Onyx Bubble Glass) --- */
+/* --- Main Preview Container --- */
 .admin-preview-container.business-preview {
-	--bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.1), transparent 65%);
-	--bubble-highlight: inset 1px 1px 2px rgba(255,255,255,0.15);
-	--bubble-shadow: 0 8px 25px rgba(0,0,0,0.3);
-	--backdrop-blur: blur(22px);
+	--bubble-gradient: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 65%);
+	--bubble-highlight: inset 1px 1px 2px rgba(255,255,255,0.1);
+	--bubble-shadow: 0 8px 30px rgba(0,0,0,0.4);
+	--backdrop-blur: blur(24px);
 
-	background: var(--content-bg);
+	background: color-mix(in srgb, var(--content-bg) 88%, transparent);
 	background-image: var(--bubble-gradient);
-	border-radius: 28px;
-	padding: clamp(20px, 4vw, 30px);
+	border-radius: 30px;
+	padding: clamp(22px, 4vw, 34px);
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur) saturate(120%);
-	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
-	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur) saturate(125%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(125%);
+	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
 	color: var(--text-color);
-    margin-top: 30px;
+	margin-top: 35px;
+	transition: box-shadow var(--transition-speed);
 }
 body.light-mode .admin-preview-container.business-preview {
-	--bubble-gradient: radial-gradient(circle at top left, rgba(255,255,255,0.3), rgba(255,255,255,0.1) 70%);
+	--bubble-gradient: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.25), rgba(255,255,255,0.1) 70%);
 }
 
 /* --- Preview Header --- */
 .admin-preview-container.business-preview h4 {
 	margin-top: 0;
 	margin-bottom: 18px;
-	font-size: 1.6em;
+	font-size: 1.55em;
 	font-weight: 700;
 	text-align: center;
 	padding-bottom: 12px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
+	letter-spacing: 0.4px;
+	color: var(--text-color);
 }
-.admin-preview-container.business-preview p > small > i { display: none; }
 
 /* --- Preview Status Display --- */
 .preview-content .preview-status {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-bottom: 25px;
+	margin-bottom: 26px;
 	gap: 10px;
 	text-align: center;
 }
 
-/* Status Bubble */
 .preview-status .status-main-text {
-	position: relative;
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
 	font-weight: 700;
-	font-size: 1.1em;
-	padding: 10px 24px;
+	font-size: 1.05em;
+	padding: 10px 26px;
 	border-radius: 9999px;
-	letter-spacing: 0.3px;
-	border: 1px solid transparent;
-	background: color-mix(in srgb, currentColor 10%, transparent);
+	border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+	background: color-mix(in srgb, currentColor 8%, transparent);
 	backdrop-filter: blur(6px);
+	box-shadow: 0 2px 6px color-mix(in srgb, currentColor 15%, transparent);
 }
 
 .preview-status .status-main-text::before {
@@ -2089,21 +2097,16 @@ body.light-mode .admin-preview-container.business-preview {
 	height: 10px;
 	border-radius: 50%;
 	background-color: currentColor;
-	box-shadow: 0 0 6px currentColor, 0 0 12px rgba(255, 255, 255, 0.1);
+	box-shadow: 0 0 6px currentColor, 0 0 14px color-mix(in srgb, currentColor 50%, transparent);
 	animation: pulse-status 2s infinite;
-}
-
-@keyframes pulse-status {
-	0%, 100% { transform: scale(1); opacity: 1; }
-	50% { transform: scale(1.25); opacity: 0.6; }
 }
 
 .preview-status .status-open { color: var(--status-open-color); }
 .preview-status .status-closed { color: var(--status-closed-color); }
 .preview-status .status-unavailable { color: var(--status-unavailable-color); }
 
-/* Status Reason Text */
-.preview-status .status-reason, .preview-status .status-countdown-text {
+.preview-status .status-reason,
+.preview-status .status-countdown-text {
 	font-size: 0.95em;
 	font-weight: 500;
 	color: var(--secondary-text);
@@ -2114,30 +2117,34 @@ body.light-mode .admin-preview-container.business-preview {
 	margin: 25px 0;
 	border-radius: 20px;
 }
-.preview-hours h4 {
-	font-size: 1.2em;
-	margin-bottom: 15px;
-	text-align: left;
-	border-bottom: none;
-	padding-bottom: 0;
-}
-.preview-hours ul { list-style: none; padding: 0; margin: 0; }
+
 .preview-hours li {
 	display: grid;
 	grid-template-columns: 1fr auto;
 	align-items: center;
-	padding: 14px 16px;
-	border-radius: 14px;
+	padding: 14px 18px;
+	border-radius: 16px;
 	margin-bottom: 10px;
-	background: color-mix(in srgb, var(--content-bg) 70%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+	background: color-mix(in srgb, var(--content-bg) 75%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+	box-shadow: 0 4px 16px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+	transition: background 0.2s ease, transform 0.2s ease;
 }
-.preview-hours li strong { color: var(--text-color); font-weight: 600; }
-.preview-hours li span { color: var(--secondary-text); font-weight: 500; }
+.preview-hours li:hover {
+	transform: translateY(-2px);
+	background: color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
+}
 .preview-hours li.current-day-preview {
 	background: color-mix(in srgb, var(--accent-color) 15%, transparent);
 	border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
+}
+.preview-hours li strong {
+	color: var(--text-color);
+	font-weight: 600;
+}
+.preview-hours li span {
+	color: var(--secondary-text);
+	font-weight: 500;
 }
 .preview-hours li.current-day-preview strong,
 .preview-hours li.current-day-preview span {
@@ -2145,7 +2152,7 @@ body.light-mode .admin-preview-container.business-preview {
 	font-weight: 700;
 }
 
-/* --- Special Hours in Preview --- */
+/* --- Special Hours Preview --- */
 .preview-hours ul.special-hours-preview li {
 	grid-template-columns: 1fr;
 }
@@ -2157,7 +2164,8 @@ body.light-mode .admin-preview-container.business-preview {
 }
 .preview-hours ul.special-hours-preview li .dates,
 .preview-hours ul.special-hours-preview li .date {
-	font-size: 0.9em; color: var(--secondary-text);
+	font-size: 0.9em;
+	color: var(--secondary-text);
 }
 .preview-hours .preview-timezone-note {
 	font-size: 0.8em;
@@ -2169,15 +2177,15 @@ body.light-mode .admin-preview-container.business-preview {
 
 /* --- Preview Contact --- */
 .preview-contact {
-	margin-top: 30px;
+	margin-top: 34px;
 	padding-top: 25px;
 	border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 	text-align: center;
 }
 .preview-contact a {
 	display: inline-block;
-	padding: 14px 36px;
-	background: var(--content-bg);
+	padding: 14px 38px;
+	background: color-mix(in srgb, var(--content-bg) 90%, transparent);
 	background-image: var(--bubble-gradient);
 	color: var(--accent-color);
 	border-radius: 9999px;
@@ -2186,6 +2194,7 @@ body.light-mode .admin-preview-container.business-preview {
 	border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	backdrop-filter: var(--backdrop-blur);
+	transition: transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease;
 }
 .preview-contact a:hover {
 	transform: translateY(-3px);
