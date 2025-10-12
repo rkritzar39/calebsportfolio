@@ -101,41 +101,41 @@
             </section>
 
             <section class="admin-section" id="profile-management" aria-labelledby="profile-heading">
-                <h3 id="profile-heading">Manage Homepage Profile</h3>
-                <form id="profile-form">
-                    <div class="form-group">
-                        <label for="profile-username">Username:</label>
-                        <input type="text" id="profile-username" name="username" placeholder="Enter homepage username">
-                    </div>
-                    <div class="form-group">
-                        <label for="profile-pic-url">Profile Picture URL:</label>
-                        <div class="input-with-preview"> <input type="url" id="profile-pic-url" name="profilePicUrl" placeholder="https://..." inputmode="url">
-                            <img src="path/to/placeholder-image.png"
-                                 alt="Profile picture preview"
-                                 class="pfp-preview-img"
-                                 id="admin-pfp-preview"
-                                 onerror="this.onerror=null; this.src='path/to/error-placeholder.png';"
-                                 style="display: none;" >
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="profile-bio">Bio:</label>
-                        <textarea id="profile-bio" name="bio" rows="4" placeholder="Enter profile bio text..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="profile-status">Status:</label>
-                        <select id="profile-status" name="status">
-                            <option value="online">Online (🟢)</option>
-                            <option value="idle">Idle (🟡)</option>
-                            <option value="offline">Offline (⚪️)</option>
-                            <option value="dnd">Do Not Disturb (🔴)</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" id="save-profile-button" class="button-primary">Save Profile Changes</button>
-                    </div>
-                </form>
-                <div id="profile-status-message" class="status-message" role="status" aria-live="polite"></div>
+                 <h3 id="profile-heading">Manage Homepage Profile</h3>
+                 <form id="profile-form">
+                     <div class="form-group">
+                         <label for="profile-username">Username:</label>
+                         <input type="text" id="profile-username" name="username" placeholder="Enter homepage username">
+                     </div>
+                     <div class="form-group">
+                         <label for="profile-pic-url">Profile Picture URL:</label>
+                         <div class="input-with-preview"> <input type="url" id="profile-pic-url" name="profilePicUrl" placeholder="https://..." inputmode="url">
+                             <img src="path/to/placeholder-image.png"
+                                  alt="Profile picture preview"
+                                  class="pfp-preview-img"
+                                  id="admin-pfp-preview"
+                                  onerror="this.onerror=null; this.src='path/to/error-placeholder.png';"
+                                  style="display: none;" >
+                         </div>
+                     </div>
+                     <div class="form-group">
+                         <label for="profile-bio">Bio:</label>
+                         <textarea id="profile-bio" name="bio" rows="4" placeholder="Enter profile bio text..."></textarea>
+                     </div>
+                     <div class="form-group">
+                         <label for="profile-status">Status:</label>
+                         <select id="profile-status" name="status">
+                             <option value="online">Online (🟢)</option>
+                             <option value="idle">Idle (🟡)</option>
+                             <option value="offline">Offline (⚪️)</option>
+                             <option value="dnd">Do Not Disturb (🔴)</option>
+                         </select>
+                     </div>
+                     <div class="form-actions">
+                         <button type="submit" id="save-profile-button" class="button-primary">Save Profile Changes</button>
+                     </div>
+                 </form>
+                  <div id="profile-status-message" class="status-message" role="status" aria-live="polite"></div>
             </section>
             
             <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
@@ -162,7 +162,7 @@
                 <div class="form-group">
                     <label for="countdown-datetime-input">Countdown Target Date & Time:</label>
                     <input type="text" id="countdown-datetime-input" name="countdownTargetDateTime" placeholder="YYYY-MM-DDTHH:MM:SS (e.g., 2025-12-31T23:59:59)">
-                    <small>Enter the target date and time in your local timezone (Bowling Green, Ohio is EDT - current time Mon, Sep 22 2025 1:14 PM EDT) using the specified format.</small>
+                    <small>Enter the target date and time in your local timezone (Bowling Green, Ohio is EDT - current time Sun, Oct 12 2025 10:23 AM EDT) using the specified format.</small>
                 </div>
                 <div class="form-group">
                     <label for="countdown-expired-message-input">Expired Message:</label>
@@ -176,57 +176,57 @@
             </section>
             
             <section class="admin-section" id="legislation-management" aria-labelledby="legislation-heading">
-                <h3 id="legislation-heading">Manage Legislation Tracker</h3>
-                <form id="add-legislation-form" aria-labelledby="add-legislation-heading">
-                    <h5 id="add-legislation-heading">Add or Update a Bill</h5>
-                    <input type="hidden" id="legislation-id" name="id">
-                    <div class="form-group">
-                        <label for="legislation-bill-id">Bill ID:</label>
-                        <input type="text" id="legislation-bill-id" name="billId" required placeholder="e.g., H.R. 5376, S. 2938">
-                    </div>
-                    <div class="form-group">
-                        <label for="legislation-title">Title:</label>
-                        <input type="text" id="legislation-title" name="title" required placeholder="e.g., The Inflation Reduction Act">
-                    </div>
-                    <div class="form-group">
-                        <label for="legislation-sponsor">Sponsor:</label>
-                        <input type="text" id="legislation-sponsor" name="sponsor" placeholder="e.g., Rep. John Yarmuth">
-                    </div>
-                    <div class="form-group">
-                        <label for="legislation-date">Date Introduced:</label>
-                        <input type="date" id="legislation-date" name="date">
-                    </div>
-                    <div class="form-group">
-                        <label for="legislation-url">Link to Full Text:</label>
-                        <input type="url" id="legislation-url" name="url" placeholder="https://www.congress.gov/bill/...">
-                    </div>
-                    <div class="form-group">
-                        <label for="legislation-description">Summary:</label>
-                        <textarea id="legislation-description" name="description" rows="3" placeholder="A brief, neutral summary of the bill's purpose."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="legislation-order">Display Order:</label>
-                        <input type="number" id="legislation-order" name="order" min="0" step="1" required value="1">
-                    </div>
-                    <h5 class="form-subheading">Legislative Progress</h5>
-                    <div class="form-group-checkboxes">
-                        <label><input type="checkbox" id="status-introduced" name="status-introduced"> Introduced</label>
-                        <label><input type="checkbox" id="status-passed-house" name="status-passed-house"> Passed House</label>
-                        <label><input type="checkbox" id="status-passed-senate" name="status-passed-senate"> Passed Senate</label>
-                        <label><input type="checkbox" id="status-to-president" name="status-to-president"> To President</label>
-                        <label><input type="checkbox" id="status-became-law" name="status-became-law"> Became Law</label>
-                    </div>
-                    <div class="form-actions">
-                       <button type="submit" class="button-primary">Save Bill</button>
-                       <button type="button" id="clear-legislation-form" class="button-secondary">Clear Form</button>
-                    </div>
-                </form>
-                <h5 id="existing-legislation-heading">
-                    Existing Bills <span id="legislation-count" class="list-count"></span>
-                </h5>
-                <div id="legislation-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-legislation-heading">
-                    <p>Loading items...</p>
-                </div>
+                 <h3 id="legislation-heading">Manage Legislation Tracker</h3>
+                 <form id="add-legislation-form" aria-labelledby="add-legislation-heading">
+                     <h5 id="add-legislation-heading">Add or Update a Bill</h5>
+                     <input type="hidden" id="legislation-id" name="id">
+                     <div class="form-group">
+                         <label for="legislation-bill-id">Bill ID:</label>
+                         <input type="text" id="legislation-bill-id" name="billId" required placeholder="e.g., H.R. 5376, S. 2938">
+                     </div>
+                     <div class="form-group">
+                         <label for="legislation-title">Title:</label>
+                         <input type="text" id="legislation-title" name="title" required placeholder="e.g., The Inflation Reduction Act">
+                     </div>
+                     <div class="form-group">
+                         <label for="legislation-sponsor">Sponsor:</label>
+                         <input type="text" id="legislation-sponsor" name="sponsor" placeholder="e.g., Rep. John Yarmuth">
+                     </div>
+                     <div class="form-group">
+                         <label for="legislation-date">Date Introduced:</label>
+                         <input type="date" id="legislation-date" name="date">
+                     </div>
+                     <div class="form-group">
+                         <label for="legislation-url">Link to Full Text:</label>
+                         <input type="url" id="legislation-url" name="url" placeholder="https://www.congress.gov/bill/...">
+                     </div>
+                     <div class="form-group">
+                         <label for="legislation-description">Summary:</label>
+                         <textarea id="legislation-description" name="description" rows="3" placeholder="A brief, neutral summary of the bill's purpose."></textarea>
+                     </div>
+                     <div class="form-group">
+                         <label for="legislation-order">Display Order:</label>
+                         <input type="number" id="legislation-order" name="order" min="0" step="1" required value="1">
+                     </div>
+                     <h5 class="form-subheading">Legislative Progress</h5>
+                     <div class="form-group-checkboxes">
+                         <label><input type="checkbox" id="status-introduced" name="status-introduced"> Introduced</label>
+                         <label><input type="checkbox" id="status-passed-house" name="status-passed-house"> Passed House</label>
+                         <label><input type="checkbox" id="status-passed-senate" name="status-passed-senate"> Passed Senate</label>
+                         <label><input type="checkbox" id="status-to-president" name="status-to-president"> To President</label>
+                         <label><input type="checkbox" id="status-became-law" name="status-became-law"> Became Law</label>
+                     </div>
+                     <div class="form-actions">
+                        <button type="submit" class="button-primary">Save Bill</button>
+                        <button type="button" id="clear-legislation-form" class="button-secondary">Clear Form</button>
+                     </div>
+                 </form>
+                 <h5 id="existing-legislation-heading">
+                     Existing Bills <span id="legislation-count" class="list-count"></span>
+                 </h5>
+                 <div id="legislation-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-legislation-heading">
+                     <p>Loading items...</p>
+                 </div>
             </section>
             
             <section class="admin-section" id="blog-management" aria-labelledby="blog-heading">
