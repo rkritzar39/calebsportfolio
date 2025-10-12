@@ -174,60 +174,91 @@
 
 </section>
 
-            <section class="admin-section" id="legislation-management" aria-labelledby="legislation-heading">
-    <h3 id="legislation-heading">Manage Legislation Tracker</h3>
+           <section class="admin-section onyx-surface" id="legislation-management" aria-labelledby="legislation-heading">
+    <h3 id="legislation-heading" class="onyx-heading">Manage Legislation Tracker</h3>
 
-    <form id="add-legislation-form" aria-labelledby="add-legislation-heading">
-        <h5 id="add-legislation-heading">Add or Update a Bill</h5>
+    <form id="add-legislation-form" aria-labelledby="add-legislation-heading" class="onyx-form">
+        <h5 id="add-legislation-heading" class="onyx-subheading">Add or Update a Bill</h5>
         <input type="hidden" id="legislation-id" name="id">
 
         <div class="form-group">
-            <label for="legislation-bill-id">Bill ID:</label>
+            <label for="legislation-bill-id">Bill ID</label>
             <input type="text" id="legislation-bill-id" name="billId" required placeholder="e.g., H.R. 5376, S. 2938">
         </div>
+
         <div class="form-group">
-            <label for="legislation-title">Title:</label>
+            <label for="legislation-title">Title</label>
             <input type="text" id="legislation-title" name="title" required placeholder="e.g., The Inflation Reduction Act">
         </div>
+
         <div class="form-group">
-            <label for="legislation-sponsor">Sponsor:</label>
+            <label for="legislation-sponsor">Sponsor</label>
             <input type="text" id="legislation-sponsor" name="sponsor" placeholder="e.g., Rep. John Yarmuth">
         </div>
+
         <div class="form-group">
-            <label for="legislation-date">Date Introduced:</label>
+            <label for="legislation-date">Date Introduced</label>
             <input type="date" id="legislation-date" name="date">
         </div>
+
         <div class="form-group">
-            <label for="legislation-url">Link to Full Text:</label>
+            <label for="legislation-url">Link to Full Text</label>
             <input type="url" id="legislation-url" name="url" placeholder="https://www.congress.gov/bill/...">
         </div>
+
         <div class="form-group">
-            <label for="legislation-description">Summary:</label>
+            <label for="legislation-description">Summary</label>
             <textarea id="legislation-description" name="description" rows="3" placeholder="A brief, neutral summary of the bill's purpose."></textarea>
         </div>
+
         <div class="form-group">
-            <label for="legislation-order">Display Order:</label>
+            <label for="legislation-order">Display Order</label>
             <input type="number" id="legislation-order" name="order" min="0" step="1" required value="1">
         </div>
 
-        <h5 class="form-subheading">Legislative Progress</h5>
-        <div class="form-group-checkboxes">
-            <label><input type="checkbox" id="status-introduced" name="status-introduced"> Introduced</label>
-            <label><input type="checkbox" id="status-passed-house" name="status-passed-house"> Passed House</label>
-            <label><input type="checkbox" id="status-passed-senate" name="status-passed-senate"> Passed Senate</label>
-            <label><input type="checkbox" id="status-to-president" name="status-to-president"> To President</label>
-            <label><input type="checkbox" id="status-became-law" name="status-became-law"> Became Law</label>
+        <h5 class="form-subheading onyx-subheading">Legislative Progress</h5>
+        <div class="form-group checkbox-group">
+            <label>
+                <input type="checkbox" id="status-introduced" name="status-introduced" class="apple-toggle-checkbox">
+                <span class="apple-toggle-label"></span>
+                Introduced
+            </label>
+
+            <label>
+                <input type="checkbox" id="status-passed-house" name="status-passed-house" class="apple-toggle-checkbox">
+                <span class="apple-toggle-label"></span>
+                Passed House
+            </label>
+
+            <label>
+                <input type="checkbox" id="status-passed-senate" name="status-passed-senate" class="apple-toggle-checkbox">
+                <span class="apple-toggle-label"></span>
+                Passed Senate
+            </label>
+
+            <label>
+                <input type="checkbox" id="status-to-president" name="status-to-president" class="apple-toggle-checkbox">
+                <span class="apple-toggle-label"></span>
+                To President
+            </label>
+
+            <label>
+                <input type="checkbox" id="status-became-law" name="status-became-law" class="apple-toggle-checkbox">
+                <span class="apple-toggle-label"></span>
+                Became Law
+            </label>
         </div>
-        
+
         <div class="form-actions">
-           <button type="submit" class="button-primary">Save Bill</button>
-           <button type="button" id="clear-legislation-form" class="button-secondary">Clear Form</button>
+            <button type="submit" class="button-primary">Save Bill</button>
+            <button type="button" id="clear-legislation-form" class="button-secondary">Clear Form</button>
         </div>
     </form>
 
-    <h5 id="existing-legislation-heading">
+    <h5 id="existing-legislation-heading" class="onyx-subheading">
         Existing Bills <span id="legislation-count" class="list-count"></span>
     </h5>
+
     <div id="legislation-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-legislation-heading">
         <p>Loading items...</p>
     </div>
@@ -563,71 +594,79 @@
 
     </section>
 
-             <section class="admin-section" id="business-info-management" aria-labelledby="business-info-heading">
-                <h3 id="business-info-heading">Manage Business Information</h3>
+            <section class="admin-section onyx-surface" id="business-info-management" aria-labelledby="business-info-heading">
+    <h3 id="business-info-heading" class="onyx-heading">Manage Business Information</h3>
 
-                <form id="business-info-form">
-                    <div class="form-group">
-                        <label for="business-contact-email">Contact Email:</label>
-                        <input type="email" id="business-contact-email" name="contactEmail"
-                               placeholder="Enter contact email address">
-                    </div>
+    <form id="business-info-form" class="onyx-form">
+        <div class="form-group">
+            <label for="business-contact-email">Contact Email</label>
+            <input type="email" id="business-contact-email" name="contactEmail"
+                   placeholder="Enter contact email address">
+        </div>
 
-                    <h4>Regular Business Hours</h4>
-                    <p><small><i>Enter all times based on US Eastern Time (ET / New York).
-                                 They will be automatically converted for visitors.</i></small></p>
-                    <div id="regular-hours-container" class="hours-grid"></div>
+        <h4 class="onyx-subheading">Regular Business Hours</h4>
+        <p class="onyx-note">
+            <small><i>Enter all times based on US Eastern Time (ET / New York). They will be automatically converted for visitors.</i></small>
+        </p>
+        <div id="regular-hours-container" class="hours-grid"></div>
 
-                    <h4>Holiday Hours / Specific Date Closures</h4>
-                    <p><small><i>Enter times based on US Eastern Time (ET / New York).</i></small></p>
-                    <div id="holiday-hours-list" class="special-hours-list"></div>
-                    <button type="button" id="add-holiday-button" class="button-secondary small-button">
-                        Add Holiday/Specific Date
-                    </button>
+        <h4 class="onyx-subheading">Holiday Hours / Specific Date Closures</h4>
+        <p class="onyx-note">
+            <small><i>Enter times based on US Eastern Time (ET / New York).</i></small>
+        </p>
+        <div id="holiday-hours-list" class="special-hours-list"></div>
+        <button type="button" id="add-holiday-button" class="button-secondary small-button">
+            + Add Holiday / Specific Date
+        </button>
 
-                    <h4>Temporary Hours (e.g., Events, Renovations)</h4>
-                    <p><small><i>Enter times based on US Eastern Time (ET / New York).</i></small></p>
-                    <div id="temporary-hours-list" class="special-hours-list"></div>
-                    <button type="button" id="add-temporary-button" class="button-secondary small-button">
-                        Add Temporary Hours Period
-                    </button>
+        <h4 class="onyx-subheading">Temporary Hours (e.g., Events, Renovations)</h4>
+        <p class="onyx-note">
+            <small><i>Enter times based on US Eastern Time (ET / New York).</i></small>
+        </p>
+        <div id="temporary-hours-list" class="special-hours-list"></div>
+        <button type="button" id="add-temporary-button" class="button-secondary small-button">
+            + Add Temporary Hours Period
+        </button>
 
-                    <div class="form-group">
-                        <label for="business-status-override">Status Override:</label>
-                        <select id="business-status-override" name="statusOverride">
-                            <option value="auto">Automatic (Based on Hours/Time)</option>
-                            <option value="open">Force Open</option>
-                            <option value="closed">Force Closed</option>
-                            <option value="unavailable">Force Temporarily Unavailable</option>
-                        </select>
-                        <small>Overrides the automatic open/closed calculation.</small>
-                    </div>
+        <div class="form-group">
+            <label for="business-status-override">Status Override</label>
+            <select id="business-status-override" name="statusOverride">
+                <option value="auto">Automatic (Based on Hours/Time)</option>
+                <option value="open">Force Open</option>
+                <option value="closed">Force Closed</option>
+                <option value="unavailable">Force Temporarily Unavailable</option>
+            </select>
+            <small class="onyx-hint">Overrides the automatic open/closed calculation.</small>
+        </div>
 
-                    <div class="form-actions">
-                        <button type="submit" id="save-business-info-button" class="button-primary">
-                            Save Business Info
-                        </button>
-                    </div>
-                </form>
+        <div class="form-group checkbox-group">
+            <input type="checkbox" id="enable-manual-status" class="apple-toggle-checkbox">
+            <label for="enable-manual-status" class="apple-toggle-label"></label>
+            <label for="enable-manual-status">Enable Manual Override Mode</label>
+            <small>Lets you toggle the business status manually in real-time.</small>
+        </div>
 
-                <div class="admin-preview-container">
-                    <h4>Live Preview (Simulated Visitor View)</h4>
-                    <p><small><i>This preview uses your current browser time and attempts to simulate
-                                 how a visitor in your timezone would see the hours and status based on the
-                                 unsaved values above. The actual display depends on each visitor's timezone.
-                                 Assumes ET input.</i></small></p>
-                    <div class="preview-content">
-                        <div id="admin-preview-status" class="preview-status">
-                            Status: Update form to preview...
-                        </div>
-                        <div id="admin-preview-hours" class="preview-hours"></div>
-                        <div id="admin-preview-contact" class="preview-contact"></div>
-                    </div>
-                </div>
+        <div class="form-actions">
+            <button type="submit" id="save-business-info-button" class="button-primary">
+                Save Business Info
+            </button>
+        </div>
+    </form>
 
-                <div id="business-info-status-message" class="status-message"
-                     role="status" aria-live="polite"></div>
-            </section>
+    <div class="admin-preview-container">
+        <h4 class="onyx-subheading">Live Preview (Simulated Visitor View)</h4>
+        <p class="onyx-note">
+            <small><i>This preview uses your current browser time to simulate how a visitor in your timezone would see the hours and status based on unsaved values above. Assumes ET input.</i></small>
+        </p>
+        <div class="preview-content">
+            <div id="admin-preview-status" class="preview-status">Status: Update form to preview...</div>
+            <div id="admin-preview-hours" class="preview-hours"></div>
+            <div id="admin-preview-contact" class="preview-contact"></div>
+        </div>
+    </div>
+
+    <div id="business-info-status-message" class="status-message" role="status" aria-live="polite"></div>
+</section>
             
              <section class="admin-section" id="tech-management" aria-labelledby="tech-heading">
                 <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
