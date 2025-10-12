@@ -1,4 +1,4 @@
-/* admin.css - Apple-Inspired Theme with Sidebar Layout */
+/* admin.css - Apple-Inspired Theme (Unified Preview Styles + President Preview + Toggles + Admin List PFP) */
 
 :root {
     /* --- Base & Typography --- */
@@ -12,8 +12,39 @@
     --border-radius-lg: 12px;
     --transition-speed: 0.2s;
     --transition-timing: ease-in-out;
-    
-    /* --- Dark Mode Colors (Apple Style) --- */
+
+    /* --- Glass Design Variables --- */
+    --glass-background: rgba(255, 255, 255, 0.7);
+    --glass-blur: 10px;
+    --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    --glass-border-radius: 16px;
+
+    /* ======================== */
+    /* Light Mode Colors (Apple Style) */
+    /* ======================== */
+    --apple-light-bg: #f5f5f7;
+    --apple-light-content-bg: #ffffff;
+    --apple-light-text: #1d1d1f;
+    --apple-light-secondary-text: #6e6e73;
+    --apple-light-border: #d2d2d7;
+    --apple-light-input-bg: #ffffff;
+    --apple-light-input-border: #d2d2d7;
+    --apple-light-input-focus-border: #007aff;
+    --apple-light-input-focus-shadow: rgba(0, 122, 255, 0.2);
+    --apple-light-shadow: rgba(0, 0, 0, 0.08);
+    --apple-light-accent: #007aff;
+    --apple-light-accent-hover: #005ecf;
+    --apple-light-link: #007aff;
+    --apple-light-success-bg: #e5f7e9;
+    --apple-light-success-text: #20803a;
+    --apple-light-error-bg: #fdebee;
+    --apple-light-error-text: #c62828;
+    --apple-light-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236e6e73' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    --apple-light-modal-backdrop: rgba(245, 245, 247, 0.7);
+
+    /* ======================== */
+    /* Dark Mode Colors (Apple Style) */
+    /* ======================== */
     --apple-dark-bg: #161617;
     --apple-dark-content-bg: #1d1d1f;
     --apple-dark-text: #f5f5f7;
@@ -27,8 +58,30 @@
     --apple-dark-accent: #0a84ff;
     --apple-dark-accent-hover: #3f9dff;
     --apple-dark-link: #0a84ff;
-    
+    --apple-dark-success-bg: #254a31;
+    --apple-dark-success-text: #79d496;
+    --apple-dark-error-bg: #5b1e23;
+    --apple-dark-error-text: #f7a3ab;
+    --apple-dark-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2386868b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    --apple-dark-modal-backdrop: rgba(22, 22, 23, 0.7);
+
+    /* ======================== */
+    /* Alert & Action Colors */
+    /* ======================== */
+    --color-danger: #ff3b30;
+    --color-danger-hover: #d1302f;
+    --color-danger-glow: rgba(255, 59, 48, 0.25);
+    --color-success-action: #34c759;
+    --color-success-action-hover: #2ca349;
+    --color-success-action-glow: rgba(52, 199, 89, 0.25);
+    --color-secondary-action: #8e8e93;
+    --color-secondary-action-hover: #7a7a80;
+    --color-secondary-action-glow: rgba(142, 142, 147, 0.25);
+    --color-danger-disabled: #7a7a7a;
+
+    /* ======================== */
     /* Fallback / Default Colors (Dark Mode) */
+    /* ======================== */
     --bg-color: var(--apple-dark-bg);
     --content-bg: var(--apple-dark-content-bg);
     --text-color: var(--apple-dark-text);
@@ -42,11 +95,47 @@
     --accent-color: var(--apple-dark-accent);
     --hover-color: var(--apple-dark-accent-hover);
     --link-color: var(--apple-dark-link);
+    --success-bg-color: var(--apple-dark-success-bg);
+    --success-text-color: var(--apple-dark-success-text);
+    --error-bg-color: var(--apple-dark-error-bg);
+    --error-text-color: var(--apple-dark-error-text);
+    --select-arrow: var(--apple-dark-select-arrow);
+    --modal-backdrop-color: var(--apple-dark-modal-backdrop);
+    --accent-glow-color: var(--apple-dark-input-focus-shadow);
     --accent-rgb: 10, 132, 255;
+    --danger-rgb: 255, 59, 48;
 }
 
 /* ======================== */
-/* Base & Layout Styles     */
+/* Light Mode Overrides */
+/* ======================== */
+body:not(.dark-mode),
+body.light-mode {
+    --bg-color: var(--apple-light-bg);
+    --content-bg: var(--apple-light-content-bg);
+    --text-color: var(--apple-light-text);
+    --secondary-text: var(--apple-light-secondary-text);
+    --border-color: var(--apple-light-border);
+    --input-bg-color: var(--apple-light-input-bg);
+    --input-border-color: var(--apple-light-input-border);
+    --input-focus-border-color: var(--apple-light-input-focus-border);
+    --input-focus-shadow-color: var(--apple-light-input-focus-shadow);
+    --shadow-color: var(--apple-light-shadow);
+    --accent-color: var(--apple-light-accent);
+    --hover-color: var(--apple-light-accent-hover);
+    --link-color: var(--apple-light-link);
+    --success-bg-color: var(--apple-light-success-bg);
+    --success-text-color: var(--apple-light-success-text);
+    --error-bg-color: var(--apple-light-error-bg);
+    --error-text-color: var(--apple-light-error-text);
+    --select-arrow: var(--apple-light-select-arrow);
+    --modal-backdrop-color: var(--apple-light-modal-backdrop);
+    --accent-glow-color: var(--apple-light-input-focus-shadow);
+    --accent-rgb: 0, 122, 255;
+}
+
+/* ======================== */
+/* Base Styles              */
 /* ======================== */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -54,99 +143,225 @@
 
 body {
     font-family: var(--system-font-stack);
+    font-size: var(--base-font-size);
     margin: 0;
+    padding: 40px;
     background-color: var(--bg-color);
     color: var(--text-color);
-    overflow: hidden;
+    line-height: var(--line-height);
+    transition: 
+        background-color var(--transition-speed) var(--transition-timing), 
+        color var(--transition-speed) var(--transition-timing);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-.container { /* For the login view */
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 20px;
+.container {
+    max-width: 1000px;
+    margin: 30px auto;
+    background: var(--content-bg);
+    padding: 40px 50px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 5px 25px -10px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    transition: 
+        background-color var(--transition-speed) var(--transition-timing), 
+        border-color var(--transition-speed) var(--transition-timing);
 }
 
-.admin-container { /* For the main admin view */
-    display: flex;
-    height: 100vh;
+h1, h2, h3, h4, h5 {
+    color: var(--text-color);
+    margin-top: 1.6em;
+    margin-bottom: 0.8em;
+    font-weight: 600;
+    letter-spacing: normal;
 }
 
-.main-content {
-    flex-grow: 1;
-    padding: 30px;
-    overflow-y: auto;
+h1 { 
+    text-align: center; 
+    margin-bottom: 40px; 
+    margin-top: 0; 
+    font-size: 2rem; 
+    font-weight: 700; 
 }
 
-/* Section Visibility Control */
-.admin-section {
-    display: none;
+h2 { 
+    font-size: 1.6rem; 
+    border-bottom: 1px solid var(--border-color); 
+    padding-bottom: 10px; 
+    margin-bottom: 1.5em; 
+    font-weight: 600; 
 }
-.admin-section.active-section {
-    display: block;
+
+h3 { 
+    font-size: 1.3rem; 
+    margin-top: 1.8em; 
+    margin-bottom: 1.2em; 
+    font-weight: 600; 
+}
+
+h4 { 
+    font-size: 1.1rem; 
+    margin-top: 30px; 
+    margin-bottom: 15px; 
+    font-weight: 600; 
+}
+
+h5 { 
+    font-size: 1rem; 
+    color: var(--secondary-text); 
+    margin-top: 25px; 
+    margin-bottom: 10px; 
+    font-weight: 500; 
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color var(--transition-speed) var(--transition-timing);
+}
+
+a:hover {
+    color: var(--hover-color);
+    text-decoration: underline;
 }
 
 /* ======================== */
-/* Sidebar Styles           */
+/* Login Section            */
 /* ======================== */
-.sidebar {
-    width: 250px;
+#login-section {
+    margin: 50px auto 0 auto; /* combines top margin and centering */
+    padding: 40px;
+    max-width: 400px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
     background-color: var(--content-bg);
-    border-right: 1px solid var(--border-color);
+    box-shadow: 0 5px 15px -5px var(--shadow-color);
+    transition: 
+        background-color var(--transition-speed) var(--transition-timing),
+        border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+#login-section h2 {
+    text-align: center;
+    border-bottom: none;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* ======================== */
+/* Admin Content Area       */
+/* ======================== */
+#admin-content {
+    margin-top: 40px;
+    padding-top: 0;
+}
+
+.admin-header {
     display: flex;
-    flex-direction: column;
-    padding: 20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    gap: 20px;
+}
+
+.admin-header h2 {
+    margin: 0;
+    text-align: left;
+    border-bottom: none;
+    flex-grow: 1;
+    font-size: 1.8rem;
+    color: var(--text-color);
+}
+
+#admin-greeting {
+    font-style: normal;
+    color: var(--secondary-text);
+    margin: 0 20px;
+    white-space: nowrap;
+    font-size: 0.95em;
+}
+
+#logout-button {
     flex-shrink: 0;
 }
 
-.sidebar-header h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-align: center;
-    margin: 0 0 30px 0;
-    padding: 0;
-    border: none;
-}
-
-.sidebar-nav ul { list-style: none; padding: 0; margin: 0; }
-
-.sidebar-nav a {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 12px 15px;
+.admin-section {
+    margin-bottom: 40px;
+    padding: 30px;
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
-    color: var(--secondary-text);
-    text-decoration: none;
-    font-weight: 500;
-    transition: background-color var(--transition-speed), color var(--transition-speed);
+    background-color: var(--content-bg);
+    box-shadow: 0 3px 15px -5px var(--shadow-color);
+    transition: 
+        background-color var(--transition-speed) var(--transition-timing),
+        border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing);
 }
 
-.sidebar-nav a:hover {
-    background-color: var(--input-bg-color);
+.admin-section:last-of-type {
+    margin-bottom: 15px;
+}
+
+/* ======================== */
+/* Sidebar                  */
+/* ======================== */
+#sidebar {
+    width: 250px;
+    background-color: var(--content-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 5px 25px -10px var(--shadow-color);
+    padding: 20px;
+    position: fixed;
+    top: 40px; /* matches body padding */
+    left: 40px;
+    height: calc(100vh - 80px); /* full height minus body padding */
+    overflow-y: auto;
+    transition: 
+        background-color var(--transition-speed) var(--transition-timing),
+        border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+#sidebar h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
     color: var(--text-color);
-}
-
-.sidebar-nav a.active {
-    background-color: var(--accent-color);
-    color: #fff;
     font-weight: 600;
 }
 
-.sidebar-nav .fa-fw { width: 20px; text-align: center; }
-
-.sidebar-footer {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color);
+#sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.logout-btn {
-    width: 100%;
-    background-color: #ff3b30;
-    color: white;
+#sidebar li {
+    margin-bottom: 12px;
 }
-.logout-btn:hover {
-    background-color: #d1302f;
+
+#sidebar a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: var(--border-radius-sm);
+    color: var(--text-color);
+    text-decoration: none;
+    transition: 
+        background-color var(--transition-speed) var(--transition-timing),
+        color var(--transition-speed) var(--transition-timing);
+}
+
+#sidebar a:hover {
+    background-color: var(--accent-glow-color);
+    color: var(--accent-color);
 }
 
 /* ======================================== */
