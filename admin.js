@@ -80,10 +80,6 @@ document.addEventListener('DOMContentLoaded', () => { //
     const passwordGroup = document.getElementById('password-group'); //
     const loginButton = document.getElementById('login-button'); //
     const timerDisplayElement = document.getElementById('inactivity-timer-display'); //
-    const loginView = document.getElementById('login-view-container');
-    const adminView = document.getElementById('admin-main-view');
-    const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
-    const sections = document.querySelectorAll('.admin-section');
 
     // 1. Add these variable declarations at the top with your other declarations
     const legislationCollectionRef = collection(db, "legislation");
@@ -839,33 +835,6 @@ function renderYouTubeCard(account) {
             }
         }
     }
-
-
-    // ========================
-    // NEW: Sidebar Navigation Logic
-    // ========================
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            const targetId = link.dataset.target;
-            const targetSection = document.getElementById(targetId);
-
-            // Update the active link in the sidebar
-            document.querySelector('.sidebar-nav .nav-link.active')?.classList.remove('active');
-            link.classList.add('active');
-
-            // Hide all content sections
-            sections.forEach(section => {
-                section.classList.remove('active-section');
-            });
-
-            // Show the target section
-            if (targetSection) {
-                targetSection.classList.add('active-section');
-            }
-        });
-    });
 
 // ======================================================
 // ===== START: ALL BUSINESS INFO CODE FOR admin.js (v15 - Syntax Fixed & Double Add Fix + Logging) =====
@@ -2196,21 +2165,21 @@ onAuthStateChanged(auth, user => {
             if (adminStatusElement) adminStatusElement.textContent = '';
             
             // 2. Safely load all data
-           try {
-                    console.log("Loading all admin panel data...");
-                    loadPosts();
-                    loadProfileData();
-                    loadBusinessInfoData();
-                    setupBusinessInfoListeners();
-                    loadShoutoutsAdmin('tiktok');
-                    loadShoutoutsAdmin('instagram');
-                    loadShoutoutsAdmin('youtube');
-                    loadUsefulLinksAdmin();
-                    loadSocialLinksAdmin();
-                    loadDisabilitiesAdmin();
-                    loadPresidentData();
-                    loadTechItemsAdmin();
-                    loadLegislationAdmin();
+            try {
+                console.log("Loading all admin panel data...");
+                loadPosts(); // Load blog posts
+                loadProfileData();
+                loadBusinessInfoData();
+                setupBusinessInfoListeners();
+                loadShoutoutsAdmin('tiktok');
+                loadShoutoutsAdmin('instagram');
+                loadShoutoutsAdmin('youtube');
+                loadUsefulLinksAdmin();
+                loadSocialLinksAdmin();
+                loadDisabilitiesAdmin();
+                loadPresidentData();
+                loadTechItemsAdmin();
+                loadLegislationAdmin();
 
                 // ===============================================
                 // == THIS IS THE NEW CODE TO ADD ================
@@ -2240,24 +2209,29 @@ onAuthStateChanged(auth, user => {
                 resetInactivityTimer();
                 addActivityListeners();
             } catch (error) {
-                    console.error("❌ CRITICAL ERROR during data loading:", error);
-                    showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
-                }
+                // If any data-loading function fails, it will be caught here
+                console.error("❌ CRITICAL ERROR during data loading:", error);
+                showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
+            }
 
         } else {
-                console.warn(`❌ Access DENIED for user: ${user.email}.`);
-                alert("Access Denied. This account is not authorized.");
-                signOut(auth);
-            }
-        } else {
-            // User is signed out, show the login screen and hide the admin panel
-            console.log("User is signed out. Displaying login screen.");
-            if (loginView) loginView.style.display = 'block';
-            if (adminView) adminView.style.display = 'none';
-            
-            removeActivityListeners(); // Stop the inactivity timer
+            // --- User is NOT an authorized admin ---
+            console.warn(`❌ Access DENIED for user: ${user.email}. Not in the admin list.`);
+            alert("Access Denied. This account is not authorized to access the admin panel.");
+            signOut(auth);
         }
-    });
+
+    } else {
+        // --- User is signed OUT ---
+        console.log("User is signed out. Displaying login screen.");
+        const loginSection = document.getElementById('login-section');
+        const adminContent = document.getElementById('admin-content');
+        if (loginSection) loginSection.style.display = 'block';
+        if (adminContent) adminContent.style.display = 'none';
+        
+        removeActivityListeners();
+    }
+});
     
     // Login Form Submission (Handles the final step after password entry)
     if (loginForm) { //
