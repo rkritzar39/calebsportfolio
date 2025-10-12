@@ -6,35 +6,29 @@
     <title>Admin Panel - Caleb's Profile</title>
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- ADD THESE TWO LINES FOR THE RICH TEXT EDITOR -->
-<link href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.js"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0RSQS1MS7"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-E0RSQS1MS7');
     </script>
-
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
-
-<meta name="browserconfig" content="/browserconfig.xml">
-    </head>
+    <meta name="browserconfig" content="/browserconfig.xml">
+</head>
 <body class="dark-mode">
-    <div class="container">
-        <h1>Admin Panel</h1>
 
+    <div id="login-view-container" class="container" style="display: block;">
+        <h1>Admin Panel</h1>
         <section id="login-section" aria-labelledby="login-heading">
             <h2 id="login-heading">Admin Login</h2>
-
             <div id="g_id_onload"
                  data-client_id="42980404680-vog8m63e51ud3hvlefpgr5s48ho2vb64.apps.googleusercontent.com"
                  data-callback="handleCredentialResponse"
@@ -52,42 +46,62 @@
                  data-width="260">
             </div>
             <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
-
-
             <form id="login-form">
-
                 <div class="form-group" id="email-group">
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required autocomplete="username">
                 </div>
-
                 <div class="form-group" id="password-group" style="display: none;">
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" required autocomplete="current-password">
                 </div>
-
                 <div class="form-actions">
                     <button type="button" id="next-button" class="button-primary">Next</button>
                     <button type="submit" id="login-button" class="button-primary" style="display: none;">Login</button>
                 </div>
-
             </form>
             <div id="auth-status" class="status-message" role="alert" aria-live="polite"></div>
         </section>
+    </div>
 
-        <main id="admin-content" style="display: none;" tabindex="-1">
-            <header class="admin-header">
-                <h2>Manage Content</h2>
+    <div class="admin-container" id="admin-main-view" style="display: none;">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Admin</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" data-target="dashboard" class="nav-link active"><i class="fas fa-tachometer-alt fa-fw"></i> Dashboard</a></li>
+                    <li><a href="#" data-target="profile-management" class="nav-link"><i class="fas fa-user-circle fa-fw"></i> Profile</a></li>
+                    <li><a href="#" data-target="site-settings" class="nav-link"><i class="fas fa-cog fa-fw"></i> Site Settings</a></li>
+                    <li><a href="#" data-target="creator-shoutouts" class="nav-link"><i class="fas fa-bullhorn fa-fw"></i> Shoutouts</a></li>
+                    <li><a href="#" data-target="useful-links-management" class="nav-link"><i class="fas fa-link fa-fw"></i> Useful Links</a></li>
+                    <li><a href="#" data-target="social-links-management" class="nav-link"><i class="fas fa-share-alt fa-fw"></i> Social Links</a></li>
+                    <li><a href="#" data-target="blog-management" class="nav-link"><i class="fas fa-blog fa-fw"></i> Blog</a></li>
+                    <li><a href="#" data-target="president-management" class="nav-link"><i class="fas fa-landmark fa-fw"></i> President Info</a></li>
+                    <li><a href="#" data-target="tech-management" class="nav-link"><i class="fas fa-microchip fa-fw"></i> Tech Info</a></li>
+                    <li><a href="#" data-target="business-info-management" class="nav-link"><i class="fas fa-briefcase fa-fw"></i> Business Info</a></li>
+                    <li><a href="#" data-target="disabilities-management" class="nav-link"><i class="fas fa-wheelchair fa-fw"></i> Disabilities</a></li>
+                    <li><a href="#" data-target="legislation-management" class="nav-link"><i class="fas fa-gavel fa-fw"></i> Legislation</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
                 <span id="admin-greeting" aria-live="polite"></span>
-                <span id="inactivity-timer-display" class="timer-display"></span>
-                <button type="button" id="logout-button">Logout</button>
-            </header>
+                <button id="logout-button" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </aside>
 
-            <div id="admin-status" class="status-message" role="status" aria-live="polite"></div>
+        <main class="main-content">
+            <section id="dashboard" class="admin-section active-section">
+                <div class="onyx-bubble-glass">
+                    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+                    <p>Welcome! Select a section from the sidebar to manage your site.</p>
+                    <span id="inactivity-timer-display" class="timer-display"></span>
+                </div>
+            </section>
 
             <section class="admin-section" id="profile-management" aria-labelledby="profile-heading">
                 <h3 id="profile-heading">Manage Homepage Profile</h3>
-
                 <form id="profile-form">
                     <div class="form-group">
                         <label for="profile-username">Username:</label>
@@ -104,12 +118,10 @@
                                  style="display: none;" >
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="profile-bio">Bio:</label>
                         <textarea id="profile-bio" name="bio" rows="4" placeholder="Enter profile bio text..."></textarea>
                     </div>
-
                     <div class="form-group">
                         <label for="profile-status">Status:</label>
                         <select id="profile-status" name="status">
@@ -119,164 +131,134 @@
                             <option value="dnd">Do Not Disturb (🔴)</option>
                         </select>
                     </div>
-
                     <div class="form-actions">
                         <button type="submit" id="save-profile-button" class="button-primary">Save Profile Changes</button>
                     </div>
                 </form>
-                 <div id="profile-status-message" class="status-message" role="status" aria-live="polite"></div>
+                <div id="profile-status-message" class="status-message" role="status" aria-live="polite"></div>
             </section>
-
+            
             <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
-    <h3 id="settings-heading">Site Settings</h3>
-
-    <div class="form-group checkbox-group apple-toggle-group">
-        <input type="checkbox" id="maintenance-mode-toggle" name="maintenanceMode" class="apple-toggle-checkbox">
-        <label for="maintenance-mode-toggle" class="apple-toggle-label"></label>
-        <label for="maintenance-mode-toggle">Enable Maintenance Mode</label>
-        <small>Puts the public site into maintenance mode, showing only a maintenance message.</small>
-        </div>
-
-    <div class="form-group checkbox-group apple-toggle-group">
-        <input type="checkbox" id="hide-tiktok-section-toggle" name="hideTikTokSection" class="apple-toggle-checkbox">
-        <label for="hide-tiktok-section-toggle" class="apple-toggle-label"></label>
-        <label for="hide-tiktok-section-toggle">Hide TikTok Section on Homepage</label>
-        <small>If checked, the entire TikTok creator shoutout section will be hidden from the public homepage.</small>
-         </div>
-
-    <hr style="border-color: var(--border-color); margin: 2rem 0;">
-
-    <h4>Homepage Countdown Timer</h4>
-
-    <div class="form-group">
-        <label for="countdown-title-input">Countdown Title:</label>
-        <input type="text" id="countdown-title-input" name="countdownTitle" placeholder="e.g., Countdown to Earth Day!">
-        <small>The main title displayed above the countdown timer.</small>
-    </div>
-
-    <div class="form-group">
-        <label for="countdown-datetime-input">Countdown Target Date & Time:</label>
-        <input type="text" id="countdown-datetime-input" name="countdownTargetDateTime" placeholder="YYYY-MM-DDTHH:MM:SS (e.g., 2025-12-31T23:59:59)">
-         <small>Enter the target date and time in your local timezone (Bowling Green, Ohio is EDT - current time Mon, Sep 22 2025 1:14 PM EDT) using the specified format.</small>
-    </div>
-
-    <div class="form-group">
-        <label for="countdown-expired-message-input">Expired Message:</label>
-        <textarea id="countdown-expired-message-input" name="countdownExpiredMessage" rows="3" placeholder="Message shown when countdown ends (e.g., Happy Earth Day!)"></textarea>
-        <small>This message replaces the countdown numbers when the target time is reached. Leave blank for a default message.</small>
-    </div>
-
-    <div class="form-group">
-         <button id="save-countdown-settings-button" class="button">Save Countdown Settings</button>
-         </div>
-
-    <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
-
-</section>
-
+                <h3 id="settings-heading">Site Settings</h3>
+                <div class="form-group checkbox-group apple-toggle-group">
+                    <input type="checkbox" id="maintenance-mode-toggle" name="maintenanceMode" class="apple-toggle-checkbox">
+                    <label for="maintenance-mode-toggle" class="apple-toggle-label"></label>
+                    <label for="maintenance-mode-toggle">Enable Maintenance Mode</label>
+                    <small>Puts the public site into maintenance mode, showing only a maintenance message.</small>
+                </div>
+                <div class="form-group checkbox-group apple-toggle-group">
+                    <input type="checkbox" id="hide-tiktok-section-toggle" name="hideTikTokSection" class="apple-toggle-checkbox">
+                    <label for="hide-tiktok-section-toggle" class="apple-toggle-label"></label>
+                    <label for="hide-tiktok-section-toggle">Hide TikTok Section on Homepage</label>
+                    <small>If checked, the entire TikTok creator shoutout section will be hidden from the public homepage.</small>
+                </div>
+                <hr style="border-color: var(--border-color); margin: 2rem 0;">
+                <h4>Homepage Countdown Timer</h4>
+                <div class="form-group">
+                    <label for="countdown-title-input">Countdown Title:</label>
+                    <input type="text" id="countdown-title-input" name="countdownTitle" placeholder="e.g., Countdown to Earth Day!">
+                    <small>The main title displayed above the countdown timer.</small>
+                </div>
+                <div class="form-group">
+                    <label for="countdown-datetime-input">Countdown Target Date & Time:</label>
+                    <input type="text" id="countdown-datetime-input" name="countdownTargetDateTime" placeholder="YYYY-MM-DDTHH:MM:SS (e.g., 2025-12-31T23:59:59)">
+                    <small>Enter the target date and time in your local timezone (Bowling Green, Ohio is EDT - current time Mon, Sep 22 2025 1:14 PM EDT) using the specified format.</small>
+                </div>
+                <div class="form-group">
+                    <label for="countdown-expired-message-input">Expired Message:</label>
+                    <textarea id="countdown-expired-message-input" name="countdownExpiredMessage" rows="3" placeholder="Message shown when countdown ends (e.g., Happy Earth Day!)"></textarea>
+                    <small>This message replaces the countdown numbers when the target time is reached. Leave blank for a default message.</small>
+                </div>
+                <div class="form-group">
+                    <button id="save-countdown-settings-button" class="button">Save Countdown Settings</button>
+                </div>
+                <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
+            </section>
+            
             <section class="admin-section" id="legislation-management" aria-labelledby="legislation-heading">
-    <h3 id="legislation-heading">Manage Legislation Tracker</h3>
-
-    <form id="add-legislation-form" aria-labelledby="add-legislation-heading">
-        <h5 id="add-legislation-heading">Add or Update a Bill</h5>
-        <input type="hidden" id="legislation-id" name="id">
-
-        <div class="form-group">
-            <label for="legislation-bill-id">Bill ID:</label>
-            <input type="text" id="legislation-bill-id" name="billId" required placeholder="e.g., H.R. 5376, S. 2938">
-        </div>
-        <div class="form-group">
-            <label for="legislation-title">Title:</label>
-            <input type="text" id="legislation-title" name="title" required placeholder="e.g., The Inflation Reduction Act">
-        </div>
-        <div class="form-group">
-            <label for="legislation-sponsor">Sponsor:</label>
-            <input type="text" id="legislation-sponsor" name="sponsor" placeholder="e.g., Rep. John Yarmuth">
-        </div>
-        <div class="form-group">
-            <label for="legislation-date">Date Introduced:</label>
-            <input type="date" id="legislation-date" name="date">
-        </div>
-        <div class="form-group">
-            <label for="legislation-url">Link to Full Text:</label>
-            <input type="url" id="legislation-url" name="url" placeholder="https://www.congress.gov/bill/...">
-        </div>
-        <div class="form-group">
-            <label for="legislation-description">Summary:</label>
-            <textarea id="legislation-description" name="description" rows="3" placeholder="A brief, neutral summary of the bill's purpose."></textarea>
-        </div>
-        <div class="form-group">
-            <label for="legislation-order">Display Order:</label>
-            <input type="number" id="legislation-order" name="order" min="0" step="1" required value="1">
-        </div>
-
-        <h5 class="form-subheading">Legislative Progress</h5>
-        <div class="form-group-checkboxes">
-            <label><input type="checkbox" id="status-introduced" name="status-introduced"> Introduced</label>
-            <label><input type="checkbox" id="status-passed-house" name="status-passed-house"> Passed House</label>
-            <label><input type="checkbox" id="status-passed-senate" name="status-passed-senate"> Passed Senate</label>
-            <label><input type="checkbox" id="status-to-president" name="status-to-president"> To President</label>
-            <label><input type="checkbox" id="status-became-law" name="status-became-law"> Became Law</label>
-        </div>
-        
-        <div class="form-actions">
-           <button type="submit" class="button-primary">Save Bill</button>
-           <button type="button" id="clear-legislation-form" class="button-secondary">Clear Form</button>
-        </div>
-    </form>
-
-    <h5 id="existing-legislation-heading">
-        Existing Bills <span id="legislation-count" class="list-count"></span>
-    </h5>
-    <div id="legislation-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-legislation-heading">
-        <p>Loading items...</p>
-    </div>
-</section>
+                <h3 id="legislation-heading">Manage Legislation Tracker</h3>
+                <form id="add-legislation-form" aria-labelledby="add-legislation-heading">
+                    <h5 id="add-legislation-heading">Add or Update a Bill</h5>
+                    <input type="hidden" id="legislation-id" name="id">
+                    <div class="form-group">
+                        <label for="legislation-bill-id">Bill ID:</label>
+                        <input type="text" id="legislation-bill-id" name="billId" required placeholder="e.g., H.R. 5376, S. 2938">
+                    </div>
+                    <div class="form-group">
+                        <label for="legislation-title">Title:</label>
+                        <input type="text" id="legislation-title" name="title" required placeholder="e.g., The Inflation Reduction Act">
+                    </div>
+                    <div class="form-group">
+                        <label for="legislation-sponsor">Sponsor:</label>
+                        <input type="text" id="legislation-sponsor" name="sponsor" placeholder="e.g., Rep. John Yarmuth">
+                    </div>
+                    <div class="form-group">
+                        <label for="legislation-date">Date Introduced:</label>
+                        <input type="date" id="legislation-date" name="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="legislation-url">Link to Full Text:</label>
+                        <input type="url" id="legislation-url" name="url" placeholder="https://www.congress.gov/bill/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="legislation-description">Summary:</label>
+                        <textarea id="legislation-description" name="description" rows="3" placeholder="A brief, neutral summary of the bill's purpose."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="legislation-order">Display Order:</label>
+                        <input type="number" id="legislation-order" name="order" min="0" step="1" required value="1">
+                    </div>
+                    <h5 class="form-subheading">Legislative Progress</h5>
+                    <div class="form-group-checkboxes">
+                        <label><input type="checkbox" id="status-introduced" name="status-introduced"> Introduced</label>
+                        <label><input type="checkbox" id="status-passed-house" name="status-passed-house"> Passed House</label>
+                        <label><input type="checkbox" id="status-passed-senate" name="status-passed-senate"> Passed Senate</label>
+                        <label><input type="checkbox" id="status-to-president" name="status-to-president"> To President</label>
+                        <label><input type="checkbox" id="status-became-law" name="status-became-law"> Became Law</label>
+                    </div>
+                    <div class="form-actions">
+                       <button type="submit" class="button-primary">Save Bill</button>
+                       <button type="button" id="clear-legislation-form" class="button-secondary">Clear Form</button>
+                    </div>
+                </form>
+                <h5 id="existing-legislation-heading">
+                    Existing Bills <span id="legislation-count" class="list-count"></span>
+                </h5>
+                <div id="legislation-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-legislation-heading">
+                    <p>Loading items...</p>
+                </div>
+            </section>
             
-       <section class="admin-section" id="blog-management" aria-labelledby="blog-heading">
-  <h3 id="blog-heading">Blog Management</h3>
-
-  <div class="form-group">
-    <!-- Inputs -->
-    <input type="text" id="post-title" placeholder="Post Title" class="admin-input">
-    <input type="text" id="post-author" placeholder="Author Name" class="admin-input">
-    <input type="text" id="post-author-pfp" placeholder="Author Profile Picture URL" class="admin-input">
-    <input type="text" id="post-category" placeholder="Category (e.g., Tech, Updates)" class="admin-input">
-
-    <!-- Featured Post Toggle -->
-    <label class="admin-checkbox-label">
-      <input type="checkbox" id="post-featured">
-      <span class="toggle-switch"></span>
-      Mark as Featured Post
-    </label>
-
-    <!-- Rich Text Editor -->
-    <div id="post-content-editor" class="admin-editor"></div>
-
-    <!-- Optional Image Upload for Featured Image -->
-    <div class="image-upload">
-      <label for="post-image">Featured Image (optional):</label>
-      <input type="file" id="post-image" accept="image/*">
-      <div id="post-image-preview" class="image-preview"></div>
-    </div>
-
-    <input type="hidden" id="post-id">
-
-    <!-- Form Actions -->
-    <div class="form-actions">
-      <button type="button" onclick="savePost()" class="admin-btn is-primary">Save Post</button>
-      <button type="button" onclick="resetPostForm()" class="admin-btn is-secondary">Cancel</button>
-    </div>
-  </div>
-
-  <!-- Existing Posts List -->
-  <h3>Existing Posts</h3>
-  <div id="posts-list" class="admin-list"></div>
-</section>
+            <section class="admin-section" id="blog-management" aria-labelledby="blog-heading">
+                <h3 id="blog-heading">Blog Management</h3>
+                <div class="form-group">
+                    <input type="text" id="post-title" placeholder="Post Title" class="admin-input">
+                    <input type="text" id="post-author" placeholder="Author Name" class="admin-input">
+                    <input type="text" id="post-author-pfp" placeholder="Author Profile Picture URL" class="admin-input">
+                    <input type="text" id="post-category" placeholder="Category (e.g., Tech, Updates)" class="admin-input">
+                    <label class="admin-checkbox-label">
+                      <input type="checkbox" id="post-featured">
+                      <span class="toggle-switch"></span>
+                      Mark as Featured Post
+                    </label>
+                    <div id="post-content-editor" class="admin-editor"></div>
+                    <div class="image-upload">
+                      <label for="post-image">Featured Image (optional):</label>
+                      <input type="file" id="post-image" accept="image/*">
+                      <div id="post-image-preview" class="image-preview"></div>
+                    </div>
+                    <input type="hidden" id="post-id">
+                    <div class="form-actions">
+                      <button type="button" onclick="savePost()" class="admin-btn is-primary">Save Post</button>
+                      <button type="button" onclick="resetPostForm()" class="admin-btn is-secondary">Cancel</button>
+                    </div>
+                </div>
+                <h3>Existing Posts</h3>
+                <div id="posts-list" class="admin-list"></div>
+            </section>
             
-             <section class="admin-section" id="president-management" aria-labelledby="president-heading">
+            <section class="admin-section" id="president-management" aria-labelledby="president-heading">
                 <h3 id="president-heading">Manage Current President Info</h3>
-
                 <form id="president-form">
                     <div class="form-group">
                         <label for="president-name">President's Name:</label>
@@ -306,7 +288,6 @@
                         <label for="president-image-url">President Image URL:</label>
                         <input type="url" id="president-image-url" name="imageUrl" placeholder="https://..." inputmode="url">
                     </div>
-
                     <div class="form-group">
                         <label>Preview:</label>
                         <div id="president-preview" class="president-preview-area"> <p><small>Preview will appear here as you type.</small></p>
@@ -316,282 +297,267 @@
                         <button type="submit" id="save-president-button" class="button-primary">Save President Info</button>
                     </div>
                 </form>
-                 <div id="president-status-message" class="status-message" role="status" aria-live="polite"></div>
+                <div id="president-status-message" class="status-message" role="status" aria-live="polite"></div>
             </section>
-
+            
             <section class="admin-section" id="social-links-management" aria-labelledby="social-links-heading">
-    <h3 id="social-links-heading">Manage Social Links</h3>
-
-    <form id="add-social-link-form" aria-labelledby="add-social-link-heading">
-        <h5 id="add-social-link-heading">Add New Social Link</h5>
-        <div class="form-group">
-            <label for="social-link-label">Link Label:</label>
-            <input type="text" id="social-link-label" name="label" required placeholder="e.g., TikTok">
-        </div>
-        <div class="form-group">
-            <label for="social-link-url">Link URL:</label>
-            <input type="url" id="social-link-url" name="url" required placeholder="https://..." inputmode="url">
-        </div>
-
-        <div class="form-group">
-            <label for="social-link-icon-class">Font Awesome Icon Class (Optional):</label>
-            <input type="text" id="social-link-icon-class" name="iconClass" placeholder="e.g., fa-brands fa-tiktok">
-            <small>Find classes at Font Awesome (e.g., 'fa-brands fa-tiktok', 'fa-brands fa-facebook'). Leave blank to auto-detect.</small>
-        </div>
-        <div class="form-group">
-            <label for="social-link-order">Display Order:</label>
-            <input type="number" id="social-link-order" name="order" min="0" step="1" required placeholder="e.g., 1, 2, 3...">
-        </div>
-
-        <div class="form-actions">
-           <button type="submit" class="button-primary">Add Social Link</button>
-        </div>
-    </form>
-
-    <h5 id="existing-social-links-heading">
-        Existing Social Links <span id="social-links-count" class="list-count"></span>
-    </h5>
-    <div class="list-controls">
-        <input type="search" id="search-social-links" placeholder="Search Social Links..." aria-label="Search Social Links">
-    </div>
-    <div id="social-links-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-social-links-heading">
-        <p>Loading links...</p>
-        </div>
-
-    </section>
-
-             <section class="admin-section" id="creator-shoutouts" aria-labelledby="shoutouts-heading">
-    <h3 id="shoutouts-heading">Creator Shoutouts</h3>
-
-    <div class="shoutouts-platform-container" aria-labelledby="tiktok-heading">
-        <h4 id="tiktok-heading">TikTok</h4>
-        <form id="add-shoutout-tiktok-form" aria-labelledby="add-tiktok-heading">
-            <h5 id="add-tiktok-heading">Add New TikTok Shoutout</h5>
-            <div class="form-group">
-                <label for="tiktok-username">Username (without @):</label>
-                <input type="text" id="tiktok-username" name="username" required placeholder="e.g., mrbeast">
-            </div>
-            <div class="form-group">
-                <label for="tiktok-nickname">Nickname:</label>
-                <input type="text" id="tiktok-nickname" name="nickname" required placeholder="e.g., MrBeast">
-            </div>
-            <div class="form-group">
-                <label for="tiktok-order">Display Order:</label>
-                <input type="number" id="tiktok-order" name="order" min="0" step="1" required placeholder="e.g., 1">
-            </div>
-            <div class="form-group">
-                <label for="tiktok-followers">Followers (e.g., 10M, 500K):</label>
-                <input type="text" id="tiktok-followers" name="followers" placeholder="e.g., 115.2M" inputmode="text">
-            </div>
-            <div class="form-group">
-                <label for="tiktok-bio">Bio:</label>
-                <textarea id="tiktok-bio" name="bio" placeholder="Creator's bio text" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="tiktok-profilePic">Profile Pic URL:</label>
-                <input type="url" id="tiktok-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
-            </div>
-            <div class="form-group checkbox-group apple-toggle-group">
-                 <input type="checkbox" id="tiktok-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
-                 <label for="tiktok-isVerified" class="apple-toggle-label"></label>
-                 <label for="tiktok-isVerified">Is Verified?</label>
-                 </div>
-            <div class="form-group">
-                <label>Preview:</label>
-                <div id="add-tiktok-preview" class="shoutout-preview-area">
-                    <p><small>Preview will appear here as you type.</small></p>
+                <h3 id="social-links-heading">Manage Social Links</h3>
+                <form id="add-social-link-form" aria-labelledby="add-social-link-heading">
+                    <h5 id="add-social-link-heading">Add New Social Link</h5>
+                    <div class="form-group">
+                        <label for="social-link-label">Link Label:</label>
+                        <input type="text" id="social-link-label" name="label" required placeholder="e.g., TikTok">
+                    </div>
+                    <div class="form-group">
+                        <label for="social-link-url">Link URL:</label>
+                        <input type="url" id="social-link-url" name="url" required placeholder="https://..." inputmode="url">
+                    </div>
+                    <div class="form-group">
+                        <label for="social-link-icon-class">Font Awesome Icon Class (Optional):</label>
+                        <input type="text" id="social-link-icon-class" name="iconClass" placeholder="e.g., fa-brands fa-tiktok">
+                        <small>Find classes at Font Awesome (e.g., 'fa-brands fa-tiktok', 'fa-brands fa-facebook'). Leave blank to auto-detect.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="social-link-order">Display Order:</label>
+                        <input type="number" id="social-link-order" name="order" min="0" step="1" required placeholder="e.g., 1, 2, 3...">
+                    </div>
+                    <div class="form-actions">
+                       <button type="submit" class="button-primary">Add Social Link</button>
+                    </div>
+                </form>
+                <h5 id="existing-social-links-heading">
+                    Existing Social Links <span id="social-links-count" class="list-count"></span>
+                </h5>
+                <div class="list-controls">
+                    <input type="search" id="search-social-links" placeholder="Search Social Links..." aria-label="Search Social Links">
                 </div>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="button-primary">Add TikTok Shoutout</button>
-            </div>
-        </form>
-
-        <h5 id="existing-tiktok-heading">
-            Existing TikTok Shoutouts <span id="tiktok-count" class="list-count"></span>
-        </h5>
-        <div class="list-controls">
-            <input type="search" id="search-tiktok" placeholder="Search TikTok Shoutouts..." aria-label="Search TikTok Shoutouts">
-        </div>
-        <div id="shoutouts-tiktok-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-tiktok-heading">
-            <p>Loading TikTok shoutouts...</p>
-        </div>
-        </div> <div class="shoutouts-platform-container" aria-labelledby="instagram-heading">
-        <h4 id="instagram-heading">Instagram</h4>
-        <form id="add-shoutout-instagram-form" aria-labelledby="add-instagram-heading">
-             <h5 id="add-instagram-heading">Add New Instagram Shoutout</h5>
-             <div class="form-group">
-                 <label for="instagram-username">Username:</label>
-                 <input type="text" id="instagram-username" name="username" required placeholder="e.g., mrbeast">
-             </div>
-             <div class="form-group">
-                 <label for="instagram-nickname">Nickname:</label>
-                 <input type="text" id="instagram-nickname" name="nickname" required placeholder="e.g., MrBeast">
-             </div>
-             <div class="form-group">
-                 <label for="instagram-order">Display Order:</label>
-                 <input type="number" id="instagram-order" name="order" min="0" step="1" required placeholder="e.g., 1">
-             </div>
-             <div class="form-group">
-                 <label for="instagram-followers">Followers (e.g., 10M, 500K):</label>
-                 <input type="text" id="instagram-followers" name="followers" placeholder="e.g., 67.2M" inputmode="text">
-             </div>
-             <div class="form-group">
-                 <label for="instagram-bio">Bio:</label>
-                 <textarea id="instagram-bio" name="bio" placeholder="Creator's bio text" rows="3"></textarea>
-             </div>
-             <div class="form-group">
-                 <label for="instagram-profilePic">Profile Pic URL:</label>
-                 <input type="url" id="instagram-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
-             </div>
-             <div class="form-group checkbox-group apple-toggle-group">
-                 <input type="checkbox" id="instagram-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
-                 <label for="instagram-isVerified" class="apple-toggle-label"></label>
-                 <label for="instagram-isVerified">Is Verified?</label>
-                 </div>
-              <div class="form-group">
-                 <label>Preview:</label>
-                 <div id="add-instagram-preview" class="shoutout-preview-area">
-                     <p><small>Preview will appear here as you type.</small></p>
-                 </div>
-             </div>
-             <div class="form-actions">
-                 <button type="submit" class="button-primary">Add Instagram Shoutout</button>
-             </div>
-        </form>
-
-         <h5 id="existing-instagram-heading">
-            Existing Instagram Shoutouts <span id="instagram-count" class="list-count"></span>
-         </h5>
-         <div class="list-controls">
-             <input type="search" id="search-instagram" placeholder="Search Instagram Shoutouts..." aria-label="Search Instagram Shoutouts">
-         </div>
-         <div id="shoutouts-instagram-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-instagram-heading">
-             <p>Loading Instagram shoutouts...</p>
-         </div>
-         </div> <div class="shoutouts-platform-container" aria-labelledby="youtube-heading">
-        <h4 id="youtube-heading">YouTube</h4>
-        <form id="add-shoutout-youtube-form" aria-labelledby="add-youtube-heading">
-            <h5 id="add-youtube-heading">Add New YouTube Shoutout</h5>
-            <div class="form-group">
-                 <label for="youtube-username">Handle (@handle):</label>
-                 <input type="text" id="youtube-username" name="username" required placeholder="e.g., MrBeast">
-            </div>
-            <div class="form-group">
-                 <label for="youtube-nickname">Channel Name / Nickname:</label>
-                 <input type="text" id="youtube-nickname" name="nickname" required placeholder="e.g., MrBeast">
-            </div>
-            <div class="form-group">
-                 <label for="youtube-order">Display Order:</label>
-                 <input type="number" id="youtube-order" name="order" min="0" step="1" required placeholder="e.g., 1">
-            </div>
-            <div class="form-group">
-                 <label for="youtube-subscribers">Subscribers (e.g., 10M, 500K):</label>
-                 <input type="text" id="youtube-subscribers" name="subscribers" placeholder="e.g., 383M" inputmode="text">
-            </div>
-            <div class="form-group">
-                 <label for="youtube-bio">Description / Bio:</label>
-                 <textarea id="youtube-bio" name="bio" placeholder="Creator's channel description" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                 <label for="youtube-profilePic">Profile Pic URL:</label>
-                 <input type="url" id="youtube-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
-            </div>
-            <div class="form-group">
-                 <label for="youtube-coverPhoto">Cover Photo URL:</label>
-                 <input type="url" id="youtube-coverPhoto" name="coverPhoto" placeholder="https://..." inputmode="url">
-            </div>
-             <div class="form-group checkbox-group apple-toggle-group">
-                 <input type="checkbox" id="youtube-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
-                 <label for="youtube-isVerified" class="apple-toggle-label"></label>
-                 <label for="youtube-isVerified">Is Verified?</label>
-                 </div>
-              <div class="form-group">
-                 <label>Preview:</label>
-                 <div id="add-youtube-preview" class="shoutout-preview-area">
-                     <p><small>Preview will appear here as you type.</small></p>
-                 </div>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="button-primary">Add YouTube Shoutout</button>
-            </div>
-        </form>
-
-        <h5 id="existing-youtube-heading">
-            Existing YouTube Shoutouts <span id="youtube-count" class="list-count"></span>
-        </h5>
-        <div class="list-controls">
-           <input type="search" id="search-youtube" placeholder="Search YouTube Shoutouts..." aria-label="Search YouTube Shoutouts">
-        </div>
-        <div id="shoutouts-youtube-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-youtube-heading">
-            <p>Loading YouTube shoutouts...</p>
-        </div>
-        </div>
-    </section>
-
-             <section class="admin-section" id="useful-links-management" aria-labelledby="useful-links-heading">
-    <h3 id="useful-links-heading">Manage Useful Links</h3>
-
-    <form id="add-useful-link-form" aria-labelledby="add-link-heading">
-        <h5 id="add-link-heading">Add New Useful Link</h5>
-        <div class="form-group">
-            <label for="link-label">Link Label:</label>
-            <input type="text" id="link-label" name="label" required placeholder="e.g., Merch Store">
-        </div>
-        <div class="form-group">
-            <label for="link-url">Link URL:</label>
-            <input type="url" id="link-url" name="url" required placeholder="https://..." inputmode="url">
-        </div>
-        <div class="form-group">
-            <label for="link-order">Display Order:</label>
-            <input type="number" id="link-order" name="order" min="0" step="1" required placeholder="e.g., 1, 2, 3...">
-        </div>
-        <div class="form-actions">
-           <button type="submit" class="button-primary">Add Link</button>
-        </div>
-    </form>
-
-    <h5 id="existing-links-heading">
-        Existing Useful Links <span id="useful-links-count" class="list-count"></span>
-    </h5>
-    <div class="list-controls">
-         <input type="search" id="search-useful-links" placeholder="Search Useful Links..." aria-label="Search Useful Links">
-       </div>
-    <div id="useful-links-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-links-heading">
-        <p>Loading links...</p>
-        </div>
-
-    </section>
-
-             <section class="admin-section" id="business-info-management" aria-labelledby="business-info-heading">
+                <div id="social-links-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-social-links-heading">
+                    <p>Loading links...</p>
+                </div>
+            </section>
+            
+            <section class="admin-section" id="creator-shoutouts" aria-labelledby="shoutouts-heading">
+                <h3 id="shoutouts-heading">Creator Shoutouts</h3>
+                <div class="shoutouts-platform-container" aria-labelledby="tiktok-heading">
+                    <h4 id="tiktok-heading">TikTok</h4>
+                    <form id="add-shoutout-tiktok-form" aria-labelledby="add-tiktok-heading">
+                        <h5 id="add-tiktok-heading">Add New TikTok Shoutout</h5>
+                        <div class="form-group">
+                            <label for="tiktok-username">Username (without @):</label>
+                            <input type="text" id="tiktok-username" name="username" required placeholder="e.g., mrbeast">
+                        </div>
+                        <div class="form-group">
+                            <label for="tiktok-nickname">Nickname:</label>
+                            <input type="text" id="tiktok-nickname" name="nickname" required placeholder="e.g., MrBeast">
+                        </div>
+                        <div class="form-group">
+                            <label for="tiktok-order">Display Order:</label>
+                            <input type="number" id="tiktok-order" name="order" min="0" step="1" required placeholder="e.g., 1">
+                        </div>
+                        <div class="form-group">
+                            <label for="tiktok-followers">Followers (e.g., 10M, 500K):</label>
+                            <input type="text" id="tiktok-followers" name="followers" placeholder="e.g., 115.2M" inputmode="text">
+                        </div>
+                        <div class="form-group">
+                            <label for="tiktok-bio">Bio:</label>
+                            <textarea id="tiktok-bio" name="bio" placeholder="Creator's bio text" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="tiktok-profilePic">Profile Pic URL:</label>
+                            <input type="url" id="tiktok-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
+                        </div>
+                        <div class="form-group checkbox-group apple-toggle-group">
+                             <input type="checkbox" id="tiktok-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
+                             <label for="tiktok-isVerified" class="apple-toggle-label"></label>
+                             <label for="tiktok-isVerified">Is Verified?</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Preview:</label>
+                            <div id="add-tiktok-preview" class="shoutout-preview-area">
+                                <p><small>Preview will appear here as you type.</small></p>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="button-primary">Add TikTok Shoutout</button>
+                        </div>
+                    </form>
+                    <h5 id="existing-tiktok-heading">
+                        Existing TikTok Shoutouts <span id="tiktok-count" class="list-count"></span>
+                    </h5>
+                    <div class="list-controls">
+                        <input type="search" id="search-tiktok" placeholder="Search TikTok Shoutouts..." aria-label="Search TikTok Shoutouts">
+                    </div>
+                    <div id="shoutouts-tiktok-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-tiktok-heading">
+                        <p>Loading TikTok shoutouts...</p>
+                    </div>
+                </div>
+                <div class="shoutouts-platform-container" aria-labelledby="instagram-heading">
+                    <h4 id="instagram-heading">Instagram</h4>
+                    <form id="add-shoutout-instagram-form" aria-labelledby="add-instagram-heading">
+                         <h5 id="add-instagram-heading">Add New Instagram Shoutout</h5>
+                         <div class="form-group">
+                             <label for="instagram-username">Username:</label>
+                             <input type="text" id="instagram-username" name="username" required placeholder="e.g., mrbeast">
+                         </div>
+                         <div class="form-group">
+                             <label for="instagram-nickname">Nickname:</label>
+                             <input type="text" id="instagram-nickname" name="nickname" required placeholder="e.g., MrBeast">
+                         </div>
+                         <div class="form-group">
+                             <label for="instagram-order">Display Order:</label>
+                             <input type="number" id="instagram-order" name="order" min="0" step="1" required placeholder="e.g., 1">
+                         </div>
+                         <div class="form-group">
+                             <label for="instagram-followers">Followers (e.g., 10M, 500K):</label>
+                             <input type="text" id="instagram-followers" name="followers" placeholder="e.g., 67.2M" inputmode="text">
+                         </div>
+                         <div class="form-group">
+                             <label for="instagram-bio">Bio:</label>
+                             <textarea id="instagram-bio" name="bio" placeholder="Creator's bio text" rows="3"></textarea>
+                         </div>
+                         <div class="form-group">
+                             <label for="instagram-profilePic">Profile Pic URL:</label>
+                             <input type="url" id="instagram-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
+                         </div>
+                         <div class="form-group checkbox-group apple-toggle-group">
+                             <input type="checkbox" id="instagram-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
+                             <label for="instagram-isVerified" class="apple-toggle-label"></label>
+                             <label for="instagram-isVerified">Is Verified?</label>
+                         </div>
+                          <div class="form-group">
+                             <label>Preview:</label>
+                             <div id="add-instagram-preview" class="shoutout-preview-area">
+                                 <p><small>Preview will appear here as you type.</small></p>
+                             </div>
+                         </div>
+                         <div class="form-actions">
+                             <button type="submit" class="button-primary">Add Instagram Shoutout</button>
+                         </div>
+                    </form>
+                     <h5 id="existing-instagram-heading">
+                        Existing Instagram Shoutouts <span id="instagram-count" class="list-count"></span>
+                     </h5>
+                     <div class="list-controls">
+                         <input type="search" id="search-instagram" placeholder="Search Instagram Shoutouts..." aria-label="Search Instagram Shoutouts">
+                     </div>
+                     <div id="shoutouts-instagram-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-instagram-heading">
+                         <p>Loading Instagram shoutouts...</p>
+                     </div>
+                </div>
+                <div class="shoutouts-platform-container" aria-labelledby="youtube-heading">
+                    <h4 id="youtube-heading">YouTube</h4>
+                    <form id="add-shoutout-youtube-form" aria-labelledby="add-youtube-heading">
+                        <h5 id="add-youtube-heading">Add New YouTube Shoutout</h5>
+                        <div class="form-group">
+                             <label for="youtube-username">Handle (@handle):</label>
+                             <input type="text" id="youtube-username" name="username" required placeholder="e.g., MrBeast">
+                        </div>
+                        <div class="form-group">
+                             <label for="youtube-nickname">Channel Name / Nickname:</label>
+                             <input type="text" id="youtube-nickname" name="nickname" required placeholder="e.g., MrBeast">
+                        </div>
+                        <div class="form-group">
+                             <label for="youtube-order">Display Order:</label>
+                             <input type="number" id="youtube-order" name="order" min="0" step="1" required placeholder="e.g., 1">
+                        </div>
+                        <div class="form-group">
+                             <label for="youtube-subscribers">Subscribers (e.g., 10M, 500K):</label>
+                             <input type="text" id="youtube-subscribers" name="subscribers" placeholder="e.g., 383M" inputmode="text">
+                        </div>
+                        <div class="form-group">
+                             <label for="youtube-bio">Description / Bio:</label>
+                             <textarea id="youtube-bio" name="bio" placeholder="Creator's channel description" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                             <label for="youtube-profilePic">Profile Pic URL:</label>
+                             <input type="url" id="youtube-profilePic" name="profilePic" placeholder="https://..." inputmode="url">
+                        </div>
+                        <div class="form-group">
+                             <label for="youtube-coverPhoto">Cover Photo URL:</label>
+                             <input type="url" id="youtube-coverPhoto" name="coverPhoto" placeholder="https://..." inputmode="url">
+                        </div>
+                         <div class="form-group checkbox-group apple-toggle-group">
+                             <input type="checkbox" id="youtube-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
+                             <label for="youtube-isVerified" class="apple-toggle-label"></label>
+                             <label for="youtube-isVerified">Is Verified?</label>
+                         </div>
+                          <div class="form-group">
+                             <label>Preview:</label>
+                             <div id="add-youtube-preview" class="shoutout-preview-area">
+                                 <p><small>Preview will appear here as you type.</small></p>
+                             </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="button-primary">Add YouTube Shoutout</button>
+                        </div>
+                    </form>
+                    <h5 id="existing-youtube-heading">
+                        Existing YouTube Shoutouts <span id="youtube-count" class="list-count"></span>
+                    </h5>
+                    <div class="list-controls">
+                       <input type="search" id="search-youtube" placeholder="Search YouTube Shoutouts..." aria-label="Search YouTube Shoutouts">
+                    </div>
+                    <div id="shoutouts-youtube-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-youtube-heading">
+                        <p>Loading YouTube shoutouts...</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="admin-section" id="useful-links-management" aria-labelledby="useful-links-heading">
+                <h3 id="useful-links-heading">Manage Useful Links</h3>
+                <form id="add-useful-link-form" aria-labelledby="add-link-heading">
+                    <h5 id="add-link-heading">Add New Useful Link</h5>
+                    <div class="form-group">
+                        <label for="link-label">Link Label:</label>
+                        <input type="text" id="link-label" name="label" required placeholder="e.g., Merch Store">
+                    </div>
+                    <div class="form-group">
+                        <label for="link-url">Link URL:</label>
+                        <input type="url" id="link-url" name="url" required placeholder="https://..." inputmode="url">
+                    </div>
+                    <div class="form-group">
+                        <label for="link-order">Display Order:</label>
+                        <input type="number" id="link-order" name="order" min="0" step="1" required placeholder="e.g., 1, 2, 3...">
+                    </div>
+                    <div class="form-actions">
+                       <button type="submit" class="button-primary">Add Link</button>
+                    </div>
+                </form>
+                <h5 id="existing-links-heading">
+                    Existing Useful Links <span id="useful-links-count" class="list-count"></span>
+                </h5>
+                <div class="list-controls">
+                     <input type="search" id="search-useful-links" placeholder="Search Useful Links..." aria-label="Search Useful Links">
+                   </div>
+                <div id="useful-links-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-links-heading">
+                    <p>Loading links...</p>
+                </div>
+            </section>
+            
+            <section class="admin-section" id="business-info-management" aria-labelledby="business-info-heading">
                 <h3 id="business-info-heading">Manage Business Information</h3>
-
                 <form id="business-info-form">
                     <div class="form-group">
                         <label for="business-contact-email">Contact Email:</label>
                         <input type="email" id="business-contact-email" name="contactEmail"
                                placeholder="Enter contact email address">
                     </div>
-
                     <h4>Regular Business Hours</h4>
                     <p><small><i>Enter all times based on US Eastern Time (ET / New York).
                                  They will be automatically converted for visitors.</i></small></p>
                     <div id="regular-hours-container" class="hours-grid"></div>
-
                     <h4>Holiday Hours / Specific Date Closures</h4>
                     <p><small><i>Enter times based on US Eastern Time (ET / New York).</i></small></p>
                     <div id="holiday-hours-list" class="special-hours-list"></div>
                     <button type="button" id="add-holiday-button" class="button-secondary small-button">
                         Add Holiday/Specific Date
                     </button>
-
                     <h4>Temporary Hours (e.g., Events, Renovations)</h4>
                     <p><small><i>Enter times based on US Eastern Time (ET / New York).</i></small></p>
                     <div id="temporary-hours-list" class="special-hours-list"></div>
                     <button type="button" id="add-temporary-button" class="button-secondary small-button">
                         Add Temporary Hours Period
                     </button>
-
                     <div class="form-group">
                         <label for="business-status-override">Status Override:</label>
                         <select id="business-status-override" name="statusOverride">
@@ -602,14 +568,12 @@
                         </select>
                         <small>Overrides the automatic open/closed calculation.</small>
                     </div>
-
                     <div class="form-actions">
                         <button type="submit" id="save-business-info-button" class="button-primary">
                             Save Business Info
                         </button>
                     </div>
                 </form>
-
                 <div class="admin-preview-container">
                     <h4>Live Preview (Simulated Visitor View)</h4>
                     <p><small><i>This preview uses your current browser time and attempts to simulate
@@ -624,14 +588,12 @@
                         <div id="admin-preview-contact" class="preview-contact"></div>
                     </div>
                 </div>
-
                 <div id="business-info-status-message" class="status-message"
                      role="status" aria-live="polite"></div>
             </section>
             
-             <section class="admin-section" id="tech-management" aria-labelledby="tech-heading">
+            <section class="admin-section" id="tech-management" aria-labelledby="tech-heading">
                 <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
-
                 <form id="add-tech-item-form" aria-labelledby="add-tech-heading">
                     <h4 id="add-tech-heading">Add New Tech Item</h4>
                     <div class="form-group">
@@ -691,7 +653,6 @@
                         <label for="tech-order">Display Order:</label>
                         <input type="number" id="tech-order" name="order" min="0" step="1" required placeholder="Lower numbers show first">
                     </div>
-
                     <div class="form-group">
                         <label>Preview:</label>
                         <div id="add-tech-item-preview" class="tech-preview-area">
@@ -702,7 +663,6 @@
                        <button type="submit" class="button-primary">Add Tech Item</button>
                     </div>
                 </form>
-
                 <h4 id="existing-tech-heading">
                     Existing Tech Items <span id="tech-items-count" class="list-count"></span>
                 </h4>
@@ -714,10 +674,9 @@
                     <p>Loading tech items...</p>
                 </div>
             </section>
-
-             <section class="admin-section" id="disabilities-management" aria-labelledby="disabilities-heading">
+            
+            <section class="admin-section" id="disabilities-management" aria-labelledby="disabilities-heading">
                 <h3 id="disabilities-heading">Manage Disabilities List</h3>
-
                 <form id="add-disability-form" aria-labelledby="add-disability-heading">
                     <h5 id="add-disability-heading">Add New Disability Link</h5>
                     <div class="form-group">
@@ -736,7 +695,6 @@
                        <button type="submit" class="button-primary">Add Disability Link</button>
                     </div>
                 </form>
-
                 <h5 id="existing-disabilities-heading">
                     Existing Disability Links <span id="disabilities-count" class="list-count"></span>
                 </h5>
@@ -745,234 +703,225 @@
                    </div>
                 <div id="disabilities-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-disabilities-heading">
                     <p>Loading disability links...</p>
-                    </div>
+                </div>
             </section>
-            <div id="edit-disability-modal" class="modal" style="display: none;"
-                 role="dialog" aria-modal="true" aria-labelledby="edit-disability-modal-heading">
-                <div class="modal-content">
-                    <button type="button" class="close-button" id="cancel-edit-disability-button" aria-label="Close dialog">&times;</button>
-                    <h2 id="edit-disability-modal-heading">Edit Disability Link</h2>
+        </main>
+    </div>
 
-                    <form id="edit-disability-form" data-doc-id="">
-                        <div class="form-group">
-                            <label for="edit-disability-name">Disability Name:</label>
-                            <input type="text" id="edit-disability-name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-disability-url">Information URL:</label>
-                            <input type="url" id="edit-disability-url" name="url" required inputmode="url">
-                        </div>
-                        <div class="form-group">
-                            <label for="edit-disability-order">Display Order:</label>
-                            <input type="number" id="edit-disability-order" name="order" min="0" step="1" required>
-                        </div>
-                        <div class="form-actions">
-                          <button type="submit" class="button-primary">Save Disability Changes</button>
-                          <button type="button" id="cancel-edit-disability-button-secondary" class="secondary-button">Cancel</button>
-                        </div>
-                    </form>
-                    <div id="edit-disability-status-message" class="status-message" role="status" aria-live="polite"></div>
+    <div id="edit-disability-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-disability-modal-heading">
+        <div class="modal-content">
+            <button type="button" class="close-button" id="cancel-edit-disability-button" aria-label="Close dialog">&times;</button>
+            <h2 id="edit-disability-modal-heading">Edit Disability Link</h2>
+            <form id="edit-disability-form" data-doc-id="">
+                <div class="form-group">
+                    <label for="edit-disability-name">Disability Name:</label>
+                    <input type="text" id="edit-disability-name" name="name" required>
                 </div>
-            </div>
-
-            <div id="edit-useful-link-modal" class="modal" style="display: none;"
-   role="dialog" aria-modal="true" aria-labelledby="edit-link-modal-heading">
-
-    <div class="modal-content">
-        <button type="button" class="close-button" id="cancel-edit-link-button" aria-label="Close dialog">&times;</button>
-        <h2 id="edit-link-modal-heading">Edit Useful Link</h2>
-
-        <form id="edit-useful-link-form" data-doc-id=""> <div class="form-group">
-                <label for="edit-link-label">Link Label:</label>
-                <input type="text" id="edit-link-label" name="label" required>
-            </div>
-            <div class="form-group">
-                <label for="edit-link-url">Link URL:</label>
-                <input type="url" id="edit-link-url" name="url" required inputmode="url">
-            </div>
-            <div class="form-group">
-                <label for="edit-link-order">Display Order:</label>
-                <input type="number" id="edit-link-order" name="order" min="0" step="1" required>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="button-primary">Save Link Changes</button>
-              <button type="button" id="cancel-edit-link-button-secondary" class="secondary-button">Cancel</button> </div>
-        </form>
-         <div id="edit-link-status-message" class="status-message" role="status" aria-live="polite"></div> </div>
-</div>
-
-    <div id="edit-social-link-modal" class="modal" style="display: none;"
-     role="dialog" aria-modal="true" aria-labelledby="edit-social-link-modal-heading">
-
-    <div class="modal-content">
-        <button type="button" class="close-button" id="cancel-edit-social-link-button" aria-label="Close dialog">&times;</button>
-        <h2 id="edit-social-link-modal-heading">Edit Social Link</h2>
-
-        <form id="edit-social-link-form" data-doc-id=""> <div class="form-group">
-                <label for="edit-social-link-label">Link Label:</label>
-                <input type="text" id="edit-social-link-label" name="label" required>
-            </div>
-             <div class="form-group">
-                <label for="edit-social-link-url">Link URL:</label>
-                <input type="url" id="edit-social-link-url" name="url" required inputmode="url">
-            </div>
-
-            <div class="form-group">
-                 <label for="edit-social-link-icon-class">Font Awesome Icon Class (Optional):</label>
-                 <input type="text" id="edit-social-link-icon-class" name="iconClass" placeholder="e.g., fa-brands fa-tiktok">
-                 <small>Find classes at Font Awesome (e.g., 'fa-brands fa-tiktok', 'fa-brands fa-facebook'). Leave blank to auto-detect.</small>
-            </div>
-            <div class="form-group">
-                <label for="edit-social-link-order">Display Order:</label>
-                <input type="number" id="edit-social-link-order" name="order" min="0" step="1" required>
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="button-primary">Save Changes</button>
-              <button type="button" id="cancel-edit-social-link-button-secondary" class="secondary-button">Cancel</button>
-            </div>
-        </form>
-         <div id="edit-social-link-status-message" class="status-message" role="status" aria-live="polite"></div> </div>
-</div>
-
-</main>
-
-<div id="edit-shoutout-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-modal-heading">
-    <div class="modal-content">
-        <button type="button" class="close-button" id="cancel-edit-button" aria-label="Close dialog">&times;</button>
-        <h2 id="edit-modal-heading">Edit Shoutout</h2>
-
-        <form id="edit-shoutout-form" data-doc-id="" data-platform="">
-            <div class="form-group">
-                <label for="edit-username">Username / Handle:</label>
-                <input type="text" id="edit-username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="edit-nickname">Nickname:</label>
-                <input type="text" id="edit-nickname" name="nickname" required>
-            </div>
-            <div class="form-group">
-                <label for="edit-order">Order:</label>
-                <input type="number" id="edit-order" name="order" min="0" step="1" required>
-            </div>
-            <div class="form-group">
-                <label for="edit-bio">Bio:</label>
-                <textarea id="edit-bio" name="bio" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label for="edit-profilePic">Profile Pic URL:</label>
-                <input type="url" id="edit-profilePic" name="profilePic" inputmode="url">
-            </div>
-            <div class="form-group checkbox-group apple-toggle-group">
-                <input type="checkbox" id="edit-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
-                <label for="edit-isVerified" class="apple-toggle-label"></label>
-                <label for="edit-isVerified">Is Verified?</label>
-            </div>
-            <div id="edit-platform-specific">
-                <div class="form-group edit-followers-group" style="display: none;">
-                    <label for="edit-followers">Followers:</label>
-                    <input type="text" id="edit-followers" name="followers" inputmode="text">
+                <div class="form-group">
+                    <label for="edit-disability-url">Information URL:</label>
+                    <input type="url" id="edit-disability-url" name="url" required inputmode="url">
                 </div>
-                <div class="form-group edit-subscribers-group" style="display: none;">
-                    <label for="edit-subscribers">Subscribers:</label>
-                    <input type="text" id="edit-subscribers" name="subscribers" inputmode="text">
+                <div class="form-group">
+                    <label for="edit-disability-order">Display Order:</label>
+                    <input type="number" id="edit-disability-order" name="order" min="0" step="1" required>
                 </div>
-                <div class="form-group edit-coverphoto-group" style="display: none;">
-                    <label for="edit-coverPhoto">Cover Photo URL:</label>
-                    <input type="url" id="edit-coverPhoto" name="coverPhoto" inputmode="url">
+                <div class="form-actions">
+                  <button type="submit" class="button-primary">Save Disability Changes</button>
+                  <button type="button" id="cancel-edit-disability-button-secondary" class="secondary-button">Cancel</button>
                 </div>
+            </form>
+            <div id="edit-disability-status-message" class="status-message" role="status" aria-live="polite"></div>
+        </div>
+    </div>
+    <div id="edit-useful-link-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-link-modal-heading">
+        <div class="modal-content">
+            <button type="button" class="close-button" id="cancel-edit-link-button" aria-label="Close dialog">&times;</button>
+            <h2 id="edit-link-modal-heading">Edit Useful Link</h2>
+            <form id="edit-useful-link-form" data-doc-id="">
+                <div class="form-group">
+                    <label for="edit-link-label">Link Label:</label>
+                    <input type="text" id="edit-link-label" name="label" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-link-url">Link URL:</label>
+                    <input type="url" id="edit-link-url" name="url" required inputmode="url">
+                </div>
+                <div class="form-group">
+                    <label for="edit-link-order">Display Order:</label>
+                    <input type="number" id="edit-link-order" name="order" min="0" step="1" required>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="button-primary">Save Link Changes</button>
+                  <button type="button" id="cancel-edit-link-button-secondary" class="secondary-button">Cancel</button>
+                </div>
+            </form>
+            <div id="edit-link-status-message" class="status-message" role="status" aria-live="polite"></div>
+        </div>
+    </div>
+    <div id="edit-social-link-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-social-link-modal-heading">
+        <div class="modal-content">
+            <button type="button" class="close-button" id="cancel-edit-social-link-button" aria-label="Close dialog">&times;</button>
+            <h2 id="edit-social-link-modal-heading">Edit Social Link</h2>
+            <form id="edit-social-link-form" data-doc-id="">
+                <div class="form-group">
+                    <label for="edit-social-link-label">Link Label:</label>
+                    <input type="text" id="edit-social-link-label" name="label" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-social-link-url">Link URL:</label>
+                    <input type="url" id="edit-social-link-url" name="url" required inputmode="url">
+                </div>
+                <div class="form-group">
+                     <label for="edit-social-link-icon-class">Font Awesome Icon Class (Optional):</label>
+                     <input type="text" id="edit-social-link-icon-class" name="iconClass" placeholder="e.g., fa-brands fa-tiktok">
+                     <small>Find classes at Font Awesome (e.g., 'fa-brands fa-tiktok', 'fa-brands fa-facebook'). Leave blank to auto-detect.</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-social-link-order">Display Order:</label>
+                    <input type="number" id="edit-social-link-order" name="order" min="0" step="1" required>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" class="button-primary">Save Changes</button>
+                  <button type="button" id="cancel-edit-social-link-button-secondary" class="secondary-button">Cancel</button>
+                </div>
+            </form>
+            <div id="edit-social-link-status-message" class="status-message" role="status" aria-live="polite"></div>
+        </div>
+    </div>
+    <div id="edit-shoutout-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-modal-heading">
+        <div class="modal-content">
+            <button type="button" class="close-button" id="cancel-edit-button" aria-label="Close dialog">&times;</button>
+            <h2 id="edit-modal-heading">Edit Shoutout</h2>
+            <form id="edit-shoutout-form" data-doc-id="" data-platform="">
+                <div class="form-group">
+                    <label for="edit-username">Username / Handle:</label>
+                    <input type="text" id="edit-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-nickname">Nickname:</label>
+                    <input type="text" id="edit-nickname" name="nickname" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-order">Order:</label>
+                    <input type="number" id="edit-order" name="order" min="0" step="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-bio">Bio:</label>
+                    <textarea id="edit-bio" name="bio" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="edit-profilePic">Profile Pic URL:</label>
+                    <input type="url" id="edit-profilePic" name="profilePic" inputmode="url">
+                </div>
+                <div class="form-group checkbox-group apple-toggle-group">
+                    <input type="checkbox" id="edit-isVerified" name="isVerified" value="true" class="apple-toggle-checkbox">
+                    <label for="edit-isVerified" class="apple-toggle-label"></label>
+                    <label for="edit-isVerified">Is Verified?</label>
+                </div>
+                <div id="edit-platform-specific">
+                    <div class="form-group edit-followers-group" style="display: none;">
+                        <label for="edit-followers">Followers:</label>
+                        <input type="text" id="edit-followers" name="followers" inputmode="text">
+                    </div>
+                    <div class="form-group edit-subscribers-group" style="display: none;">
+                        <label for="edit-subscribers">Subscribers:</label>
+                        <input type="text" id="edit-subscribers" name="subscribers" inputmode="text">
+                    </div>
+                    <div class="form-group edit-coverphoto-group" style="display: none;">
+                        <label for="edit-coverPhoto">Cover Photo URL:</label>
+                        <input type="url" id="edit-coverPhoto" name="coverPhoto" inputmode="url">
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label>Preview:</label>
+                    <div id="edit-shoutout-preview" class="shoutout-preview-area">
+                        <p><small>Preview will appear here.</small></p>
+                    </div>
+                 </div>
+                 <div class="form-actions">
+                     <button type="submit" class="button-primary">Save Changes</button>
+                 </div>
+            </form>
+             <div id="edit-shoutout-status-message" class="status-message" role="status" aria-live="polite"></div>
+        </div>
+    </div>
+    <div id="edit-tech-item-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-tech-modal-heading">
+        <div class="modal-content">
+            <button type="button" class="close-button" id="cancel-edit-tech-button" aria-label="Close dialog">&times;</button>
+            <h2 id="edit-tech-modal-heading">Edit Tech Item</h2>
+            <form id="edit-tech-item-form" data-doc-id="">
+                <div class="form-group">
+                    <label for="edit-tech-name">Device Name:</label>
+                    <input type="text" id="edit-tech-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-model">Model:</label>
+                    <input type="text" id="edit-tech-model" name="model">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-icon-class">Font Awesome Icon Class:</label>
+                    <input type="text" id="edit-tech-icon-class" name="iconClass">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-material">Material:</label>
+                    <input type="text" id="edit-tech-material" name="material">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-storage">Storage:</label>
+                    <input type="text" id="edit-tech-storage" name="storage">
+                </div>
+                <div class="form-group">
+                     <label for="edit-tech-battery-capacity">Battery Capacity (mAh):</label>
+                     <input type="text" id="edit-tech-battery-capacity" name="batteryCapacity">
+                </div>
+                <div class="form-group">
+                     <label for="edit-tech-color">Color:</label>
+                     <input type="text" id="edit-tech-color" name="color">
+                </div>
+                <div class="form-group">
+                     <label for="edit-tech-price">Price ($):</label>
+                     <input type="text" id="edit-tech-price" name="price">
+                </div>
+                <div class="form-group">
+                     <label for="edit-tech-date-released">Date Released:</label>
+                     <input type="text" id="edit-tech-date-released" name="dateReleased">
+                </div>
+                <div class="form-group">
+                     <label for="edit-tech-date-bought">Date Bought:</label>
+                     <input type="text" id="edit-tech-date-bought" name="dateBought">
+                </div>
+                <div class="form-group">
+                     <label for="edit-tech-os-version">OS Version:</label>
+                     <input type="text" id="edit-tech-os-version" name="osVersion">
+                </div>
+                 <div class="form-group">
+                     <label for="edit-tech-battery-health">Battery Health (%):</label>
+                     <input type="number" id="edit-tech-battery-health" name="batteryHealth" min="0" max="100">
+                 </div>
+                  <div class="form-group">
+                     <label for="edit-tech-battery-cycles">Battery Charge Cycles:</label>
+                     <input type="number" id="edit-tech-battery-cycles" name="batteryCycles" min="0">
+                  </div>
+                <div class="form-group">
+                  <label for="edit-tech-order">Display Order:</label>
+                  <input type="number" id="edit-tech-order" name="order" min="0" step="1" required>
             </div>
-             <div class="form-group">
+            <div class="form-group">
                 <label>Preview:</label>
-                <div id="edit-shoutout-preview" class="shoutout-preview-area">
-                    <p><small>Preview will appear here.</small></p>
+                <div id="edit-tech-item-preview" class="tech-preview-area">
+                     <p><small>Preview will load when modal opens.</small></p>
                 </div>
-             </div>
-             <div class="form-actions">
-                 <button type="submit" class="button-primary">Save Changes</button>
-             </div>
-        </form>
-         <div id="edit-shoutout-status-message" class="status-message" role="status" aria-live="polite"></div>
-    </div>
-</div>
-
-<div id="edit-tech-item-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-tech-modal-heading">
-    <div class="modal-content">
-        <button type="button" class="close-button" id="cancel-edit-tech-button" aria-label="Close dialog">&times;</button>
-        <h2 id="edit-tech-modal-heading">Edit Tech Item</h2>
-
-        <form id="edit-tech-item-form" data-doc-id="">
-            <div class="form-group">
-                <label for="edit-tech-name">Device Name:</label>
-                <input type="text" id="edit-tech-name" name="name" required>
             </div>
-            <div class="form-group">
-                <label for="edit-tech-model">Model:</label>
-                <input type="text" id="edit-tech-model" name="model">
-            </div>
-            <div class="form-group">
-                <label for="edit-tech-icon-class">Font Awesome Icon Class:</label>
-                <input type="text" id="edit-tech-icon-class" name="iconClass">
-            </div>
-            <div class="form-group">
-                <label for="edit-tech-material">Material:</label>
-                <input type="text" id="edit-tech-material" name="material">
-            </div>
-            <div class="form-group">
-                <label for="edit-tech-storage">Storage:</label>
-                <input type="text" id="edit-tech-storage" name="storage">
-            </div>
-            <div class="form-group">
-                 <label for="edit-tech-battery-capacity">Battery Capacity (mAh):</label>
-                 <input type="text" id="edit-tech-battery-capacity" name="batteryCapacity">
-            </div>
-            <div class="form-group">
-                 <label for="edit-tech-color">Color:</label>
-                 <input type="text" id="edit-tech-color" name="color">
-            </div>
-            <div class="form-group">
-                 <label for="edit-tech-price">Price ($):</label>
-                 <input type="text" id="edit-tech-price" name="price">
-            </div>
-            <div class="form-group">
-                 <label for="edit-tech-date-released">Date Released:</label>
-                 <input type="text" id="edit-tech-date-released" name="dateReleased">
-            </div>
-            <div class="form-group">
-                 <label for="edit-tech-date-bought">Date Bought:</label>
-                 <input type="text" id="edit-tech-date-bought" name="dateBought">
-            </div>
-            <div class="form-group">
-                 <label for="edit-tech-os-version">OS Version:</label>
-                 <input type="text" id="edit-tech-os-version" name="osVersion">
-            </div>
-             <div class="form-group">
-                 <label for="edit-tech-battery-health">Battery Health (%):</label>
-                 <input type="number" id="edit-tech-battery-health" name="batteryHealth" min="0" max="100">
-             </div>
-              <div class="form-group">
-                 <label for="edit-tech-battery-cycles">Battery Charge Cycles:</label>
-                 <input type="number" id="edit-tech-battery-cycles" name="batteryCycles" min="0">
-              </div>
-            <div class="form-group">
-              <label for="edit-tech-order">Display Order:</label>
-              <input type="number" id="edit-tech-order" name="order" min="0" step="1" required>
+            <div id="edit-tech-status-message" class="status-message" role="status" aria-live="polite"></div>
+           <div class="form-actions">
+             <button type="submit" class="button-primary">Save Tech Changes</button>
+             <button type="button" class="secondary-button" id="cancel-edit-tech-button-secondary">Cancel</button>
+           </div>
+            </form>
         </div>
-
-        <div class="form-group">
-            <label>Preview:</label>
-            <div id="edit-tech-item-preview" class="tech-preview-area">
-                 <p><small>Preview will load when modal opens.</small></p>
-            </div>
-        </div>
-        <div id="edit-tech-status-message" class="status-message" role="status" aria-live="polite"></div>
-       <div class="form-actions">
-         <button type="submit" class="button-primary">Save Tech Changes</button>
-         <button type="button" class="secondary-button" id="cancel-edit-tech-button-secondary">Cancel</button>
-       </div>
-        </form>
     </div>
-</div>
 
-<script type="module" src="admin.js"></script>
+    <script type="module" src="admin.js"></script>
+    <script type="module" src="firebase-init.js"></script>
 </body>
 </html>
