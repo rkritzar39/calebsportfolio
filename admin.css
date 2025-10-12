@@ -14,69 +14,70 @@
     --transition-timing: ease-in-out;
 
     /* --- Glass Design Variables --- */
-    --glass-background: rgba(255, 255, 255, 0.7);
-    --glass-blur: 10px;
-    --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    /* Onyx: much darker glass default, softer subtle highlight + deeper shadow */
+    --glass-background: rgba(18, 18, 20, 0.64);
+    --glass-blur: 14px;
+    --glass-shadow: 0 10px 36px rgba(0, 0, 0, 0.6);
     --glass-border-radius: 16px;
 
     /* ======================== */
     /* Light Mode Colors (Apple Style) */
     /* ======================== */
-    --apple-light-bg: #f5f5f7;
-    --apple-light-content-bg: #ffffff;
-    --apple-light-text: #1d1d1f;
-    --apple-light-secondary-text: #6e6e73;
-    --apple-light-border: #d2d2d7;
-    --apple-light-input-bg: #ffffff;
-    --apple-light-input-border: #d2d2d7;
-    --apple-light-input-focus-border: #007aff;
-    --apple-light-input-focus-shadow: rgba(0, 122, 255, 0.2);
-    --apple-light-shadow: rgba(0, 0, 0, 0.08);
-    --apple-light-accent: #007aff;
-    --apple-light-accent-hover: #005ecf;
-    --apple-light-link: #007aff;
-    --apple-light-success-bg: #e5f7e9;
-    --apple-light-success-text: #20803a;
-    --apple-light-error-bg: #fdebee;
-    --apple-light-error-text: #c62828;
-    --apple-light-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236e6e73' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-    --apple-light-modal-backdrop: rgba(245, 245, 247, 0.7);
+    --apple-light-bg: #f2f2f6;
+    --apple-light-content-bg: rgba(255, 255, 255, 0.92);
+    --apple-light-text: #141416;
+    --apple-light-secondary-text: #59595d;
+    --apple-light-border: rgba(0, 0, 0, 0.06);
+    --apple-light-input-bg: rgba(255, 255, 255, 0.98);
+    --apple-light-input-border: rgba(0, 0, 0, 0.08);
+    --apple-light-input-focus-border: #006aff;
+    --apple-light-input-focus-shadow: rgba(0, 106, 255, 0.14);
+    --apple-light-shadow: rgba(6, 10, 12, 0.06);
+    --apple-light-accent: #006aff;
+    --apple-light-accent-hover: #0a74f0;
+    --apple-light-link: #006aff;
+    --apple-light-success-bg: rgba(34, 139, 84, 0.08);
+    --apple-light-success-text: #166834;
+    --apple-light-error-bg: rgba(196, 30, 58, 0.06);
+    --apple-light-error-text: #9b1f28;
+    --apple-light-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2359595d' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    --apple-light-modal-backdrop: rgba(242, 242, 246, 0.78);
 
     /* ======================== */
     /* Dark Mode Colors (Apple Style) */
     /* ======================== */
-    --apple-dark-bg: #161617;
-    --apple-dark-content-bg: #1d1d1f;
-    --apple-dark-text: #f5f5f7;
-    --apple-dark-secondary-text: #86868b;
-    --apple-dark-border: #3a3a3c;
-    --apple-dark-input-bg: #2c2c2e;
-    --apple-dark-input-border: #3a3a3c;
+    --apple-dark-bg: #000000;
+    --apple-dark-content-bg: rgba(16, 16, 18, 0.78);
+    --apple-dark-text: #f6f6f7;
+    --apple-dark-secondary-text: #8b8b91;
+    --apple-dark-border: rgba(255, 255, 255, 0.04);
+    --apple-dark-input-bg: rgba(26, 26, 28, 0.90);
+    --apple-dark-input-border: rgba(255, 255, 255, 0.06);
     --apple-dark-input-focus-border: #0a84ff;
-    --apple-dark-input-focus-shadow: rgba(10, 132, 255, 0.3);
-    --apple-dark-shadow: rgba(0, 0, 0, 0.25);
+    --apple-dark-input-focus-shadow: rgba(10, 132, 255, 0.26);
+    --apple-dark-shadow: rgba(0, 0, 0, 0.6);
     --apple-dark-accent: #0a84ff;
-    --apple-dark-accent-hover: #3f9dff;
-    --apple-dark-link: #0a84ff;
-    --apple-dark-success-bg: #254a31;
-    --apple-dark-success-text: #79d496;
-    --apple-dark-error-bg: #5b1e23;
-    --apple-dark-error-text: #f7a3ab;
-    --apple-dark-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2386868b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-    --apple-dark-modal-backdrop: rgba(22, 22, 23, 0.7);
+    --apple-dark-accent-hover: #3b9bff;
+    --apple-dark-link: #3b9bff;
+    --apple-dark-success-bg: rgba(48, 209, 88, 0.10);
+    --apple-dark-success-text: #26c258;
+    --apple-dark-error-bg: rgba(255, 69, 58, 0.10);
+    --apple-dark-error-text: #ff6b62;
+    --apple-dark-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238b8b91' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    --apple-dark-modal-backdrop: rgba(0, 0, 0, 0.68);
 
     /* ======================== */
     /* Alert & Action Colors */
     /* ======================== */
     --color-danger: #ff3b30;
     --color-danger-hover: #d1302f;
-    --color-danger-glow: rgba(255, 59, 48, 0.25);
+    --color-danger-glow: rgba(255, 59, 48, 0.22);
     --color-success-action: #34c759;
     --color-success-action-hover: #2ca349;
-    --color-success-action-glow: rgba(52, 199, 89, 0.25);
+    --color-success-action-glow: rgba(52, 199, 89, 0.18);
     --color-secondary-action: #8e8e93;
     --color-secondary-action-hover: #7a7a80;
-    --color-secondary-action-glow: rgba(142, 142, 147, 0.25);
+    --color-secondary-action-glow: rgba(142, 142, 147, 0.18);
     --color-danger-disabled: #7a7a7a;
 
     /* ======================== */
