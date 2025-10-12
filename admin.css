@@ -591,7 +591,7 @@ a:hover {
 }
 
 /* ======================== */
-/* Form Element Styles – iOS 26 Onyx */
+/* Form Element Styles – iOS 26 Onyx Enhanced */
 /* ======================== */
 .form-group {
     margin-bottom: 22px;
@@ -603,8 +603,6 @@ label {
     font-weight: 500;
     color: var(--text-color);
     font-size: 0.95em;
-    text-transform: none;
-    letter-spacing: normal;
     opacity: 0.95;
 }
 
@@ -616,19 +614,21 @@ input[type="number"],
 input[type="url"],
 input[type="search"],
 input[type="datetime-local"],
+input[type="date"],
+input[type="time"],
 select,
 textarea {
     width: 100%;
-    padding: 11px 14px;
+    padding: 12px 14px;
     border: 1px solid var(--input-border-color);
     border-radius: var(--border-radius-md);
     font-size: 1rem;
     font-family: var(--system-font-stack);
-    background: var(--input-bg-color);
+    background: rgba(28, 28, 30, 0.85);
     color: var(--text-color);
-    backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.2);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 3px rgba(0,0,0,0.4);
     transition:
         border-color var(--transition-speed) var(--transition-timing),
         box-shadow var(--transition-speed) var(--transition-timing),
@@ -639,7 +639,7 @@ textarea {
 input:hover,
 select:hover,
 textarea:hover {
-    border-color: rgba(var(--accent-rgb), 0.4);
+    border-color: rgba(var(--accent-rgb), 0.45);
     transform: translateY(-0.5px);
 }
 
@@ -648,10 +648,31 @@ select:focus,
 textarea:focus {
     outline: none;
     border-color: var(--input-focus-border-color);
-    background-color: rgba(40, 40, 44, 0.8);
+    background-color: rgba(50, 50, 54, 0.9);
     box-shadow: 0 0 0 3px var(--input-focus-shadow-color),
-                0 2px 8px rgba(var(--accent-rgb), 0.2),
-                inset 0 1px 0 rgba(255,255,255,0.08);
+                0 2px 10px rgba(var(--accent-rgb), 0.25),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+    appearance: none;
+    background-image: none;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
+    color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) opacity(0.8);
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    filter: invert(1) opacity(1);
 }
 
 textarea {
@@ -674,115 +695,82 @@ select {
 }
 
 /* ======================== */
-/* Checkbox / Toggle Styles – iOS 26 */
+/* Toggle Styles – iOS 26 Onyx */
 /* ======================== */
 .checkbox-group {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 16px;
+    padding-top: 4px;
 }
 
-/* Standard Checkbox */
-.checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox) {
-    width: 1.1em;
-    height: 1.1em;
-    accent-color: var(--accent-color);
-    cursor: pointer;
-    vertical-align: middle;
-    margin: 0 8px 0 0;
-    padding: 0;
-    flex-shrink: 0;
-    border-radius: 4px;
-    transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-.checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox):hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
-}
-
-.checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox) + label:not(.apple-toggle-label) {
-    display: inline-flex;
-    align-items: center;
-    font-weight: normal;
-    color: var(--text-color);
-    cursor: pointer;
-    font-size: 1rem;
-    margin: 0;
-    line-height: 1.2;
-}
-
-/* Apple Toggle Switch */
-.apple-toggle-checkbox {
+/* Hidden Checkbox Base */
+.checkbox-group input[type="checkbox"] {
     opacity: 0;
     position: absolute;
     width: 0;
     height: 0;
-    overflow: hidden;
     appearance: none;
+    pointer-events: none;
 }
 
-.apple-toggle-label {
-    --_toggle-width: 51px;
-    --_toggle-height: 31px;
-    --_slider-size: 27px;
-    --_slider-margin: 2px;
-    --_slider-translate: calc(var(--_toggle-width) - var(--_slider-size) - (2 * var(--_slider-margin)));
-
-    display: inline-block;
+/* iOS Toggle Label */
+.checkbox-group label {
     position: relative;
+    padding-left: 70px;
     cursor: pointer;
-    width: var(--_toggle-width);
-    height: var(--_toggle-height);
+    line-height: 32px;
+    color: var(--text-color);
+    font-weight: 400;
+    font-size: 0.97rem;
+    user-select: none;
+}
+
+/* Switch Track */
+.checkbox-group label::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 54px;
+    height: 32px;
+    border-radius: 16px;
     background: linear-gradient(to bottom, rgba(120,120,128,0.32), rgba(99,99,102,0.32));
-    border-radius: calc(var(--_toggle-height) / 2);
-    transition: all var(--transition-speed) var(--transition-timing);
-    vertical-align: middle;
-    flex-shrink: 0;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.25);
     backdrop-filter: blur(12px) saturate(180%);
     -webkit-backdrop-filter: blur(12px) saturate(180%);
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.25);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
 }
 
-body.dark-mode .apple-toggle-label {
-    background: linear-gradient(to bottom, rgba(58,58,60,0.6), rgba(44,44,46,0.6));
-}
-
-.apple-toggle-label::after {
-    content: '';
+/* Switch Knob */
+.checkbox-group label::after {
+    content: "";
     position: absolute;
-    top: var(--_slider-margin);
-    left: var(--_slider-margin);
-    width: var(--_slider-size);
-    height: var(--_slider-size);
-    background: #ffffff;
+    left: 2px;
+    top: 2px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.5);
-    transition: transform var(--transition-speed) var(--transition-timing), background 0.2s ease;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.6);
+    transition: transform 0.25s ease, background 0.2s ease;
 }
 
-.apple-toggle-checkbox:checked + .apple-toggle-label {
+/* Checked State */
+.checkbox-group input[type="checkbox"]:checked + label::before {
     background: linear-gradient(to bottom, var(--color-success-action), var(--color-success-action-hover));
-    box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.4);
+    box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.45);
 }
 
-.apple-toggle-checkbox:checked + .apple-toggle-label::after {
-    transform: translateX(var(--_slider-translate));
-    background: #fff;
+.checkbox-group input[type="checkbox"]:checked + label::after {
+    transform: translateX(22px);
 }
 
-.apple-toggle-checkbox:focus-visible + .apple-toggle-label {
+/* Focus Glow */
+.checkbox-group input[type="checkbox"]:focus-visible + label::before {
     outline: none;
     box-shadow: 0 0 0 2px var(--content-bg), 0 0 0 4px var(--accent-color);
-}
-
-.checkbox-group .apple-toggle-label + label {
-    font-weight: normal;
-    font-size: 1rem;
-    color: var(--text-color);
-    cursor: pointer;
-    line-height: var(--_toggle-height);
-    display: inline-block;
 }
 
 /* Helper Text */
