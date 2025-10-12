@@ -591,107 +591,207 @@ a:hover {
 }
 
 /* ======================== */
-/* Onyx Date/Time Refinements */
+/* Form Element Styles – iOS 26 Onyx */
 /* ======================== */
-
-/* Remove default native pickers + icons */
-input[type="date"],
-input[type="time"],
-input[type="datetime-local"] {
-    appearance: none;
-    -webkit-appearance: none;
-    background-color: var(--input-bg-color);
-    background-image: none;
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 18px;
-    padding-right: 2.5rem;
-    color-scheme: dark;
+.form-group {
+    margin-bottom: 22px;
 }
 
-/* Add subtle custom icons via data URI (matching Onyx tone) */
-input[type="date"] {
-    background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23aaa' stroke-width='1.8' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='18' height='18' x='3' y='4' rx='2' ry='2'/%3E%3Cline x1='16' x2='16' y1='2' y2='6'/%3E%3Cline x1='8' x2='8' y1='2' y2='6'/%3E%3Cline x1='3' x2='21' y1='10' y2='10'/%3E%3C/svg%3E");
-}
-input[type="time"],
-input[type="datetime-local"] {
-    background-image: url("data:image/svg+xml,%3Csvg fill='none' stroke='%23aaa' stroke-width='1.8' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpolyline points='12 7 12 12 15 15'/%3E%3C/svg%3E");
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.95em;
+    text-transform: none;
+    letter-spacing: normal;
+    opacity: 0.95;
 }
 
-/* Hover & Focus polish */
-input[type="date"]:hover,
-input[type="time"]:hover,
-input[type="datetime-local"]:hover {
+/* Unified iOS Onyx Inputs */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"],
+input[type="url"],
+input[type="search"],
+input[type="datetime-local"],
+select,
+textarea {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    font-family: var(--system-font-stack);
+    background: var(--input-bg-color);
+    color: var(--text-color);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.2);
+    transition:
+        border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing),
+        background-color var(--transition-speed) var(--transition-timing),
+        transform var(--transition-speed) ease;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
     border-color: rgba(var(--accent-rgb), 0.4);
     transform: translateY(-0.5px);
 }
 
-input[type="date"]:focus,
-input[type="time"]:focus,
-input[type="datetime-local"]:focus {
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
     border-color: var(--input-focus-border-color);
-    background-color: rgba(40, 40, 44, 0.85);
+    background-color: rgba(40, 40, 44, 0.8);
     box-shadow: 0 0 0 3px var(--input-focus-shadow-color),
-                0 2px 8px rgba(var(--accent-rgb), 0.25);
+                0 2px 8px rgba(var(--accent-rgb), 0.2),
+                inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+select {
+    appearance: none;
+    background-image: var(--select-arrow);
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 12px 10px;
+    padding-right: 2.5rem;
+}
+
+::placeholder {
+    color: var(--secondary-text);
+    opacity: 0.75;
 }
 
 /* ======================== */
-/* Refined Checkbox Styling */
+/* Checkbox / Toggle Styles – iOS 26 */
 /* ======================== */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
-/* This keeps accent-color support but adds visual finesse */
+/* Standard Checkbox */
 .checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox) {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 1.15em;
-    height: 1.15em;
+    width: 1.1em;
+    height: 1.1em;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0 8px 0 0;
+    padding: 0;
+    flex-shrink: 0;
     border-radius: 4px;
-    border: 1.5px solid var(--input-border-color);
-    background: var(--input-bg-color);
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox):hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+}
+
+.checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox) + label:not(.apple-toggle-label) {
+    display: inline-flex;
+    align-items: center;
+    font-weight: normal;
+    color: var(--text-color);
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Apple Toggle Switch */
+.apple-toggle-checkbox {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    appearance: none;
+}
+
+.apple-toggle-label {
+    --_toggle-width: 51px;
+    --_toggle-height: 31px;
+    --_slider-size: 27px;
+    --_slider-margin: 2px;
+    --_slider-translate: calc(var(--_toggle-width) - var(--_slider-size) - (2 * var(--_slider-margin)));
+
     display: inline-block;
     position: relative;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.05), 0 1px 2px rgba(0,0,0,0.25);
+    width: var(--_toggle-width);
+    height: var(--_toggle-height);
+    background: linear-gradient(to bottom, rgba(120,120,128,0.32), rgba(99,99,102,0.32));
+    border-radius: calc(var(--_toggle-height) / 2);
+    transition: all var(--transition-speed) var(--transition-timing);
+    vertical-align: middle;
+    flex-shrink: 0;
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.25);
 }
 
-.checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox):hover {
-    border-color: rgba(var(--accent-rgb), 0.4);
-    transform: scale(1.05);
+body.dark-mode .apple-toggle-label {
+    background: linear-gradient(to bottom, rgba(58,58,60,0.6), rgba(44,44,46,0.6));
 }
 
-.checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox):checked {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
+.apple-toggle-label::after {
+    content: '';
+    position: absolute;
+    top: var(--_slider-margin);
+    left: var(--_slider-margin);
+    width: var(--_slider-size);
+    height: var(--_slider-size);
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: transform var(--transition-speed) var(--transition-timing), background 0.2s ease;
+}
+
+.apple-toggle-checkbox:checked + .apple-toggle-label {
+    background: linear-gradient(to bottom, var(--color-success-action), var(--color-success-action-hover));
     box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.4);
 }
 
-.checkbox-group input[type="checkbox"]:not(.apple-toggle-checkbox):checked::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 1.5px;
-    width: 5px;
-    height: 10px;
-    border: solid #fff;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
+.apple-toggle-checkbox:checked + .apple-toggle-label::after {
+    transform: translateX(var(--_slider-translate));
+    background: #fff;
 }
 
-/* Checkbox label alignment refinement */
-.checkbox-group label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.95rem;
+.apple-toggle-checkbox:focus-visible + .apple-toggle-label {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--content-bg), 0 0 0 4px var(--accent-color);
+}
+
+.checkbox-group .apple-toggle-label + label {
+    font-weight: normal;
+    font-size: 1rem;
     color: var(--text-color);
     cursor: pointer;
+    line-height: var(--_toggle-height);
+    display: inline-block;
 }
 
-/* Slightly smaller version for dense lists */
-.checkbox-group.compact input[type="checkbox"]:not(.apple-toggle-checkbox) {
-    width: 1em;
-    height: 1em;
+/* Helper Text */
+.checkbox-group small {
+    flex-basis: 100%;
+    margin-top: 2px;
+    color: var(--secondary-text);
+    font-size: 0.85em;
+    line-height: 1.3;
 }
 
 /* ======================== */
