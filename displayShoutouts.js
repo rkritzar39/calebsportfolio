@@ -1680,9 +1680,26 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
 
         if (distance < 0) {
             clearInterval(interval);
+
+            // **FIX:** Hide the timer container instead of destroying its contents.
+            countdownContainer.style.display = 'none';
+
+            // Check if the message already exists to avoid adding it multiple times.
+            if (countdownSection.querySelector('.countdown-expired-message')) {
+                return;
+            }
+            
             const defaultExpiredMsg = `${displayTitle || 'The event'} has started!`;
             const messageText = expiredMessageOverride || defaultExpiredMsg;
-            countdownContainer.innerHTML = `<p class="countdown-expired-message">${messageText.replace(/\n/g, '<br>')}</p>`;
+            
+            // Create a new element for the message.
+            const messageElement = document.createElement('div');
+            messageElement.className = 'countdown-expired-message';
+            messageElement.innerHTML = `<p>${messageText.replace(/\n/g, '<br>')}</p>`;
+
+            // Append the message to the main section.
+            countdownSection.appendChild(messageElement);
+
             return;
         }
 
