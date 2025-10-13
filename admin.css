@@ -920,6 +920,19 @@ button.edit-button:hover {
     opacity: 0.6;
 }
 
+/* === FIX: Make legislation toggles clickable again === */
+.apple-toggle-checkbox {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 2 !important;
+  opacity: 1 !important; /* optional: for debugging, remove once confirmed */
+  cursor: pointer !important;
+}
+
+.apple-toggle-label {
+  pointer-events: none !important; /* prevents overlay blocking clicks */
+}
+
 /* Form Actions */
 .form-actions {
     margin-top: 30px;
