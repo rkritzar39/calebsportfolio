@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-  // ========================
+// ========================
 // Scroll to Top Orb Logic – Dynamic Fade (iOS 26 Style)
 // ========================
 const scrollBtn = document.querySelector('.scroll-to-top');
@@ -171,6 +171,10 @@ scrollBtn.addEventListener('click', () => {
 	window.scrollTo({ top: 0, behavior: 'smooth' });
 	arrow.classList.replace('down','up');
 });
+
+// Run once on load to set the initial state
+updateProgress();
+	
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
     const acceptCookiesBtn = document.getElementById('cookieAccept');
