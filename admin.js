@@ -2137,49 +2137,77 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
          console.warn("Could not find all necessary elements for the 'Next' button functionality (Next Button, Email Input, Auth Status, Email Group, Password Group, Login Button)."); //
     }
 
-// Listener for changes in authentication state (login/logout)
-onAuthStateChanged(auth, user => {
-    // --- User is signed IN ---
-    if (user) {
-        const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"]; // Your authorized email
-
-        // Check if the signed-in user is on the admin list
-        if (adminEmails.includes(user.email)) {
-            console.log(`✅ Access GRANTED for admin: ${user.email}`);
-
-            // 1. Immediately show the admin panel
-            const loginSection = document.getElementById('login-section');
-            const adminContent = document.getElementById('admin-content');
-            const logoutButton = document.getElementById('logout-button');
-            const adminGreeting = document.getElementById('admin-greeting');
-            const authStatus = document.getElementById('auth-status');
-            const adminStatusElement = document.getElementById('admin-status');
-
-            if (loginSection) loginSection.style.display = 'none';
-            if (adminContent) adminContent.style.display = 'block';
-            if (logoutButton) logoutButton.style.display = 'inline-block';
-            if (adminGreeting) {
-                adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
+        onAuthStateChanged(auth, user => {
+            // --- Get references to the new and old containers ---
+            const glassLoginContainer = document.querySelector('.glass-login-container'); // The new glass container
+            const adminContent = document.getElementById('admin-content'); // The main admin dashboard
+            const body = document.body;
+        
+            // --- User is signed IN ---
+            if (user) {
+                const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"]; // Your authorized emails
+        
+                if (adminEmails.includes(user.email)) {
+                    console.log(`✅ Access GRANTED for admin: ${user.email}`);
+        
+                    // --- HIDE the login screen and SHOW the admin content ---
+                    if (glassLoginContainer) glassLoginContainer.style.display = 'none';
+                    if (adminContent) adminContent.style.display = 'block';
+                    body.classList.remove('admin-login-page'); // This helps the CSS hide the login styles
+        
+                    // Set up the admin dashboard
+                    const adminGreeting = document.getElementById('admin-greeting');
+                    if (adminGreeting) {
+                        adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
+                    }
+        
+                    // Load all your admin data
+                    try {
+                        loadAllAdminData(); // A helper function to keep this section clean
+                        resetInactivityTimer();
+                        addActivityListeners();
+                    } catch (error) {
+                        console.error("❌ CRITICAL ERROR during data loading:", error);
+                        showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
+                    }
+        
+                } else {
+                    // --- User is NOT an authorized admin ---
+                    console.warn(`❌ Access DENIED for user: ${user.email}. Not in the admin list.`);
+                    alert("Access Denied. This account is not authorized to access the admin panel.");
+                    signOut(auth);
+                }
+        
+            } else {
+                // --- User is signed OUT ---
+                console.log("User is signed out. Displaying login screen.");
+        
+                // --- SHOW the login screen and HIDE the admin content ---
+                if (glassLoginContainer) glassLoginContainer.style.display = 'grid'; // Use grid to match the CSS
+                if (adminContent) adminContent.style.display = 'none';
+                body.classList.add('admin-login-page'); // Restore the login page class for styling
+        
+                removeActivityListeners();
             }
-            if (authStatus) authStatus.textContent = '';
-            if (adminStatusElement) adminStatusElement.textContent = '';
-            
-            // 2. Safely load all data
-            try {
-                console.log("Loading all admin panel data...");
-                loadPosts(); // Load blog posts
-                loadProfileData();
-                loadBusinessInfoData();
-                setupBusinessInfoListeners();
-                loadShoutoutsAdmin('tiktok');
-                loadShoutoutsAdmin('instagram');
-                loadShoutoutsAdmin('youtube');
-                loadUsefulLinksAdmin();
-                loadSocialLinksAdmin();
-                loadDisabilitiesAdmin();
-                loadPresidentData();
-                loadTechItemsAdmin();
-                loadLegislationAdmin();
+        });
+        
+        // Helper function to consolidate all your data loading calls
+        function loadAllAdminData() {
+            console.log("Loading all admin panel data...");
+            loadPosts();
+            loadProfileData();
+            loadBusinessInfoData();
+            setupBusinessInfoListeners();
+            loadShoutoutsAdmin('tiktok');
+            loadShoutoutsAdmin('instagram');
+            loadShoutoutsAdmin('youtube');
+            loadUsefulLinksAdmin();
+            loadSocialLinksAdmin();
+            loadDisabilitiesAdmin();
+            loadPresidentData();
+            loadTechItemsAdmin();
+            loadLegislationAdmin();
+            // Any other data loading functions you have
 
                 // ===============================================
                 // == THIS IS THE NEW CODE TO ADD ================
