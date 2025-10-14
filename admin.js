@@ -81,6 +81,12 @@ document.addEventListener('DOMContentLoaded', () => { //
     const loginButton = document.getElementById('login-button'); //
     const timerDisplayElement = document.getElementById('inactivity-timer-display'); //
 
+    // 1. Add these variable declarations at the top with your other declarations
+    const legislationCollectionRef = collection(db, "legislation");
+    const addLegislationForm = document.getElementById('add-legislation-form');
+    const legislationListAdmin = document.getElementById('legislation-list-admin');
+    const legislationCount = document.getElementById('legislation-count');
+
     // --- Add these with other DOM element references ---
     const countdownTitleInput = document.getElementById('countdown-title-input');
     const countdownDatetimeInput = document.getElementById('countdown-datetime-input');
@@ -2173,7 +2179,7 @@ onAuthStateChanged(auth, user => {
                 loadDisabilitiesAdmin();
                 loadPresidentData();
                 loadTechItemsAdmin();
-                ();
+                loadLegislationAdmin();
 
                 // ===============================================
                 // == THIS IS THE NEW CODE TO ADD ================
@@ -3138,6 +3144,170 @@ function closeEditUsefulLinkModal() { //
     // ========================================================
     // END: All Social Link Functions
     // ========================================================
+
+// --- NEW: LOGIC FOR SMART CHECKBOXES ---
+function setupLegislationCheckboxLogic() {
+    const checkboxes = [
+        document.getElementById('status-introduced'),
+        document.getElementById('status-passed-house'),
+        document.getElementById('status-passed-senate'),
+        document.getElementById('status-to-president'),
+        document.getElementById('status-became-law')
+    ];
+
+    checkboxes.forEach((checkbox, index) => {
+        if (!checkbox) return;
+        checkbox.addEventListener('change', () => {
+            const isChecked = checkbox.checked;
+            if (isChecked) {
+                // When a box is checked, check all PREVIOUS boxes
+                for (let i = 0; i < index; i++) {
+                    checkboxes[i].checked = true;
+                }
+            } else {
+                // When a box is unchecked, uncheck all SUBSEQUENT boxes
+                for (let i = index + 1; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = false;
+                }
+            }
+        });
+    });
+}
+// --- END OF NEW LOGIC ---
+
+async function loadLegislationAdmin() {
+    if (!legislationListAdmin) return;
+    legislationListAdmin.innerHTML = `<p>Loading items...</p>`;
+    try {
+        const q = query(legislationCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(q);
+        const allItems = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        legislationListAdmin.innerHTML = '';
+        if (allItems.length > 0) {
+            allItems.forEach(item => renderLegislationAdminListItem(item));
+        } else {
+            legislationListAdmin.innerHTML = '<p>No bills found.</p>';
+        }
+        if (legislationCount) legislationCount.textContent = `(${allItems.length})`;
+    } catch (error) {
+        console.error("Error loading legislation items:", error);
+        legislationListAdmin.innerHTML = `<p class="error">Error loading items.</p>`;
+    }
+}
+
+function renderLegislationAdminListItem(itemData) {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'list-item-admin';
+    itemDiv.setAttribute('data-id', itemData.id);
+
+    let currentStatus = "Introduced";
+    if (itemData.status?.becameLaw) currentStatus = "Became Law";
+    else if (itemData.status?.toPresident) currentStatus = "To President";
+    else if (itemData.status?.passedSenate) currentStatus = "Passed Senate";
+    else if (itemData.status?.passedHouse) currentStatus = "Passed House";
+
+    itemDiv.innerHTML = `
+        <div class="item-content">
+            <div class="item-details">
+                <strong>${itemData.billId || 'N/A'}: ${itemData.title || 'N/A'}</strong>
+                <span>Sponsor: ${itemData.sponsor || 'N/A'}</span>
+                <small>Current Status: ${currentStatus}</small>
+            </div>
+        </div>
+        <div class="item-actions">
+            <button type="button" class="edit-button small-button">Edit</button>
+            <button type="button" class="delete-button small-button">Delete</button>
+        </div>`;
+
+    itemDiv.querySelector('.edit-button').addEventListener('click', () => populateLegislationForm(itemData));
+    itemDiv.querySelector('.delete-button').addEventListener('click', () => handleDeleteLegislation(itemData.id));
+    legislationListAdmin.appendChild(itemDiv);
+}
+
+function populateLegislationForm(itemData) {
+    document.getElementById('legislation-id').value = itemData.id;
+    document.getElementById('legislation-bill-id').value = itemData.billId || '';
+    document.getElementById('legislation-title').value = itemData.title || '';
+    document.getElementById('legislation-sponsor').value = itemData.sponsor || '';
+    document.getElementById('legislation-date').value = itemData.date || '';
+    document.getElementById('legislation-url').value = itemData.url || '';
+    document.getElementById('legislation-description').value = itemData.description || '';
+    document.getElementById('legislation-order').value = itemData.order || 0;
+
+    document.getElementById('status-introduced').checked = itemData.status?.introduced || false;
+    document.getElementById('status-passed-house').checked = itemData.status?.passedHouse || false;
+    document.getElementById('status-passed-senate').checked = itemData.status?.passedSenate || false;
+    document.getElementById('status-to-president').checked = itemData.status?.toPresident || false;
+    document.getElementById('status-became-law').checked = itemData.status?.becameLaw || false;
+    
+    window.scrollTo(0, addLegislationForm.offsetTop);
+}
+
+function clearLegislationForm() {
+    addLegislationForm.reset();
+    document.getElementById('legislation-id').value = '';
+}
+
+async function handleSaveLegislation(event) {
+    event.preventDefault();
+    const docId = document.getElementById('legislation-id').value;
+    const billId = document.getElementById('legislation-bill-id').value.trim();
+    const title = document.getElementById('legislation-title').value.trim();
+    
+    if (!billId || !title) {
+        showAdminStatus("Bill ID and Title are required.", true);
+        return;
+    }
+
+    const billData = {
+        billId: billId,
+        title: title,
+        sponsor: document.getElementById('legislation-sponsor').value.trim(),
+        date: document.getElementById('legislation-date').value,
+        url: document.getElementById('legislation-url').value.trim(),
+        description: document.getElementById('legislation-description').value.trim(),
+        order: parseInt(document.getElementById('legislation-order').value) || 0,
+        status: {
+            introduced: document.getElementById('status-introduced').checked,
+            passedHouse: document.getElementById('status-passed-house').checked,
+            passedSenate: document.getElementById('status-passed-senate').checked,
+            toPresident: document.getElementById('status-to-president').checked,
+            becameLaw: document.getElementById('status-became-law').checked,
+        },
+        lastUpdatedAt: serverTimestamp()
+    };
+    
+    showAdminStatus(docId ? "Updating bill..." : "Adding bill...");
+    try {
+        if (docId) {
+            await setDoc(doc(db, 'legislation', docId), billData);
+            showAdminStatus("Bill updated successfully.", false);
+        } else {
+            billData.createdAt = serverTimestamp();
+            await addDoc(legislationCollectionRef, billData);
+            showAdminStatus("Bill added successfully.", false);
+        }
+        clearLegislationForm();
+        loadLegislationAdmin();
+    } catch (error) {
+        console.error("Error saving bill:", error);
+        showAdminStatus(`Error: ${error.message}`, true);
+    }
+}
+
+async function handleDeleteLegislation(docId) {
+    if (!confirm("Are you sure you want to delete this bill? This cannot be undone.")) return;
+    showAdminStatus("Deleting bill...");
+    try {
+        await deleteDoc(doc(db, 'legislation', docId));
+        showAdminStatus("Bill deleted successfully.", false);
+        loadLegislationAdmin();
+    } catch (error) {
+        console.error("Error deleting bill:", error);
+        showAdminStatus(`Error: ${error.message}`, true);
+    }
+}
 
     // Add Shoutout Forms
     if (addShoutoutTiktokForm) { //
@@ -4225,7 +4395,13 @@ async function loadDisabilitiesAdmin() {
     if (addShoutoutInstagramForm) attachPreviewListeners(addShoutoutInstagramForm, 'instagram', 'add');
     if (addShoutoutYoutubeForm) attachPreviewListeners(addShoutoutYoutubeForm, 'youtube', 'add');
     if (editForm) { const editPreviewInputs = [ editUsernameInput, editNicknameInput, editBioInput, editProfilePicInput, editIsVerifiedInput, editFollowersInput, editSubscribersInput, editCoverPhotoInput ]; editPreviewInputs.forEach(el => { if (el) { const eventType = (el.type === 'checkbox') ? 'change' : 'input'; el.addEventListener(eventType, () => { const currentPlatform = editForm.getAttribute('data-platform'); if (currentPlatform && typeof updateShoutoutPreview === 'function') { updateShoutoutPreview('edit', currentPlatform); } else if (!currentPlatform) { console.warn("Edit form platform not set."); } else { console.error("updateShoutoutPreview missing!"); } }); } }); }
-    
+
+  if (addLegislationForm) {
+    addLegislationForm.addEventListener('submit', handleSaveLegislation);
+    document.getElementById('clear-legislation-form').addEventListener('click', clearLegislationForm);
+    // Initialize the smart checkbox logic
+    setupLegislationCheckboxLogic();
+}
     
     // Profile Pic URL Preview Listener
     if (profilePicUrlInput && adminPfpPreview) { profilePicUrlInput.addEventListener('input', () => { const url = profilePicUrlInput.value.trim(); if (url) { adminPfpPreview.src = url; adminPfpPreview.style.display = 'inline-block'; } else { adminPfpPreview.style.display = 'none'; } }); adminPfpPreview.onerror = () => { console.warn("Preview image load failed:", adminPfpPreview.src); adminPfpPreview.style.display = 'none'; profilePicUrlInput.classList.add('input-error'); }; profilePicUrlInput.addEventListener('focus', () => { profilePicUrlInput.classList.remove('input-error'); }); }
