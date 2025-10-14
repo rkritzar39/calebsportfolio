@@ -2550,3 +2550,11 @@ body.dark-mode .g_id_signin > div[role="button"] {
     background-color: #ffffff !important;
     border-color: #dadce0 !important;
 }
+
+body.admin-login-page .glass-login-container {
+    display: grid !important;
+}
+
+body.admin-login-page #admin-content {
+    display: none !important;
+}
