@@ -926,75 +926,39 @@ button.edit-button:hover {
 }
 
 /* ======================== */
-/* Apple-Style Toggle – iOS 26 Onyx Fixed */
+/* Static Visual Toggle – iOS 26 Onyx Style */
 /* ======================== */
 .apple-toggle-group {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-/* Custom iOS toggle */
-.apple-toggle-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 44px;
-    height: 26px;
-    background-color: var(--color-secondary-action, #3a3a3a);
-    border-radius: 50px;
-    position: relative;
-    cursor: pointer;
-    outline: none;
-    transition: background-color 0.25s ease;
-    border: none;
-    flex-shrink: 0;
+.apple-toggle-visual {
+  width: 44px;
+  height: 26px;
+  background: var(--color-secondary-action, #3a3a3a);
+  border-radius: 50px;
+  position: relative;
 }
 
-/* Knob */
-.apple-toggle-checkbox::before {
-    content: "";
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 20px;
-    height: 20px;
-    background-color: #fff;
-    border-radius: 50%;
-    transition: transform 0.25s ease;
+.apple-toggle-visual::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
 }
 
-/* Active ON state */
-.apple-toggle-checkbox:checked {
-    background-color: var(--accent-color, #007aff);
-}
-.apple-toggle-checkbox:checked::before {
-    transform: translateX(18px);
-}
-
-/* Optional hover glow */
-.apple-toggle-checkbox:hover {
-    box-shadow: 0 0 0 3px rgba(var(--accent-rgb, 10,132,255), 0.25);
-}
-
-/* Label next to toggle */
 .apple-toggle-label {
-    font-weight: 500;
-    color: var(--text-color);
-    cursor: pointer;
+  font-weight: 500;
+  color: var(--text-color);
 }
 
-/* Fix to ensure toggles remain clickable */
-.apple-toggle-checkbox {
-    pointer-events: auto !important;
-    position: relative !important;
-    z-index: 2 !important;
-    opacity: 1 !important;
-    cursor: pointer !important;
-}
-.apple-toggle-label {
-    pointer-events: none !important;
-}
 
 /* ======================== */
 /* Form Actions */
