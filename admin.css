@@ -532,6 +532,16 @@ body.admin-login-page {
     margin-bottom: 15px;
 }
 
+/* This rule hides the main admin panel content by default */
+#admin-content {
+    display: none !important; /* Use !important to prevent other styles from overriding this */
+}
+
+/* This rule ensures the login container is hidden *after* you log in */
+body:not(.admin-login-page) .glass-login-container {
+    display: none;
+}
+
 /* ======================== */
 /* Sidebar                  */
 /* ======================== */
