@@ -2137,11 +2137,7 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
          console.warn("Could not find all necessary elements for the 'Next' button functionality (Next Button, Email Input, Auth Status, Email Group, Password Group, Login Button)."); //
     }
 
-        onAuthStateChanged(auth, user => {
-    const glassLoginContainer = document.querySelector('.glass-login-container');
-    const adminContent = document.getElementById('admin-content');
-    const body = document.body;
-
+       onAuthStateChanged(auth, user => {
     // --- User is signed IN ---
     if (user) {
         const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"];
@@ -2150,7 +2146,7 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
             console.log(`✅ Access GRANTED for admin: ${user.email}`);
             if (glassLoginContainer) glassLoginContainer.style.display = 'none';
             if (adminContent) adminContent.style.display = 'block';
-            body.classList.remove('admin-login-page');
+            document.body.classList.remove('admin-login-page');
 
             const adminGreeting = document.getElementById('admin-greeting');
             if (adminGreeting) {
@@ -2158,7 +2154,7 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
             }
 
             try {
-                loadAllAdminData();
+                loadAllAdminData(); // This is a new helper function defined below
                 resetInactivityTimer();
                 addActivityListeners();
             } catch (error) {
@@ -2167,7 +2163,7 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
             }
         } else {
             console.warn(`❌ Access DENIED for user: ${user.email}.`);
-            alert("Access Denied. This account is not authorized.");
+            alert("Access Denied. This account is not authorized to access the admin panel.");
             signOut(auth);
         }
     } else {
@@ -2175,7 +2171,7 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
         console.log("User is signed out. Displaying login screen.");
         if (glassLoginContainer) glassLoginContainer.style.display = 'grid';
         if (adminContent) adminContent.style.display = 'none';
-        body.classList.add('admin-login-page');
+        document.body.classList.add('admin-login-page');
         removeActivityListeners();
     }
 });
