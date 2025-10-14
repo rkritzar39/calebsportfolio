@@ -2138,76 +2138,99 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
     }
 
         onAuthStateChanged(auth, user => {
-            // --- Get references to the new and old containers ---
-            const glassLoginContainer = document.querySelector('.glass-login-container'); // The new glass container
-            const adminContent = document.getElementById('admin-content'); // The main admin dashboard
-            const body = document.body;
-        
-            // --- User is signed IN ---
-            if (user) {
-                const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"]; // Your authorized emails
-        
-                if (adminEmails.includes(user.email)) {
-                    console.log(`✅ Access GRANTED for admin: ${user.email}`);
-        
-                    // --- HIDE the login screen and SHOW the admin content ---
-                    if (glassLoginContainer) glassLoginContainer.style.display = 'none';
-                    if (adminContent) adminContent.style.display = 'block';
-                    body.classList.remove('admin-login-page'); // This helps the CSS hide the login styles
-        
-                    // Set up the admin dashboard
-                    const adminGreeting = document.getElementById('admin-greeting');
-                    if (adminGreeting) {
-                        adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
-                    }
-        
-                    // Load all your admin data
-                    try {
-                        loadAllAdminData(); // A helper function to keep this section clean
-                        resetInactivityTimer();
-                        addActivityListeners();
-                    } catch (error) {
-                        console.error("❌ CRITICAL ERROR during data loading:", error);
-                        showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
-                    }
-        
-                } else {
-                    // --- User is NOT an authorized admin ---
-                    console.warn(`❌ Access DENIED for user: ${user.email}. Not in the admin list.`);
-                    alert("Access Denied. This account is not authorized to access the admin panel.");
-                    signOut(auth);
-                }
-        
-            } else {
-                // --- User is signed OUT ---
-                console.log("User is signed out. Displaying login screen.");
-        
-                // --- SHOW the login screen and HIDE the admin content ---
-                if (glassLoginContainer) glassLoginContainer.style.display = 'grid'; // Use grid to match the CSS
-                if (adminContent) adminContent.style.display = 'none';
-                body.classList.add('admin-login-page'); // Restore the login page class for styling
-        
-                removeActivityListeners();
+    const glassLoginContainer = document.querySelector('.glass-login-container');
+    const adminContent = document.getElementById('admin-content');
+    const body = document.body;
+
+    // --- User is signed IN ---
+    if (user) {
+        const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"];
+
+        if (adminEmails.includes(user.email)) {
+            console.log(`✅ Access GRANTED for admin: ${user.email}`);
+            if (glassLoginContainer) glassLoginContainer.style.display = 'none';
+            if (adminContent) adminContent.style.display = 'block';
+            body.classList.remove('admin-login-page');
+
+            const adminGreeting = document.getElementById('admin-greeting');
+            if (adminGreeting) {
+                adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
             }
+
+            try {
+                loadAllAdminData();
+                resetInactivityTimer();
+                addActivityListeners();
+            } catch (error) {
+                console.error("❌ CRITICAL ERROR during data loading:", error);
+                showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
+            }
+        } else {
+            console.warn(`❌ Access DENIED for user: ${user.email}.`);
+            alert("Access Denied. This account is not authorized.");
+            signOut(auth);
+        }
+    } else {
+        // --- User is signed OUT ---
+        console.log("User is signed out. Displaying login screen.");
+        if (glassLoginContainer) glassLoginContainer.style.display = 'grid';
+        if (adminContent) adminContent.style.display = 'none';
+        body.classList.add('admin-login-page');
+        removeActivityListeners();
+    }
+});
+
+// --- Email & Password Login Logic ---
+function handleEmailPasswordLogin(event) {
+    event.preventDefault(); // Stop page reload
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    if (!email || !password) {
+        authStatus.textContent = 'Please enter both email and password.';
+        authStatus.className = 'status-message error';
+        return;
+    }
+    authStatus.textContent = 'Logging in...';
+    authStatus.className = 'status-message';
+    signInWithEmailAndPassword(auth, email, password)
+        .catch((error) => {
+            console.error("Login Error:", error.code);
+            let msg = 'Invalid email or password.';
+            if (error.code === 'auth/too-many-requests') msg = 'Too many failed attempts. Please try again later.';
+            else if (error.code === 'auth/invalid-credential') msg = 'The email or password you entered is incorrect.';
+            authStatus.textContent = msg;
+            authStatus.className = 'status-message error';
         });
-        
-        // Helper function to consolidate all your data loading calls
-        function loadAllAdminData() {
-            console.log("Loading all admin panel data...");
-            loadPosts();
-            loadProfileData();
-            loadBusinessInfoData();
-            setupBusinessInfoListeners();
-            loadShoutoutsAdmin('tiktok');
-            loadShoutoutsAdmin('instagram');
-            loadShoutoutsAdmin('youtube');
-            loadUsefulLinksAdmin();
-            loadSocialLinksAdmin();
-            loadDisabilitiesAdmin();
-            loadPresidentData();
-            loadTechItemsAdmin();
-            loadLegislationAdmin();
-            // Any other data loading functions you have
+}
+
+// --- Attach Login Form Listener ---
+// This ensures the login button will trigger the login function.
+if (loginForm) {
+    // A simple way to prevent adding the listener multiple times
+    if (!loginForm.dataset.listenerAttached) {
+        loginForm.addEventListener('submit', handleEmailPasswordLogin);
+        loginForm.dataset.listenerAttached = 'true';
+        console.log("Login form submit listener attached successfully.");
+    }
+}
+
+// --- Helper function to load all data ---
+function loadAllAdminData() {
+    console.log("Loading all admin panel data...");
+    loadPosts();
+    loadProfileData();
+    loadBusinessInfoData();
+    setupBusinessInfoListeners();
+    loadShoutoutsAdmin('tiktok');
+    loadShoutoutsAdmin('instagram');
+    loadShoutoutsAdmin('youtube');
+    loadUsefulLinksAdmin();
+    loadSocialLinksAdmin();
+    loadDisabilitiesAdmin();
+    loadPresidentData();
+    loadTechItemsAdmin();
+    loadLegislationAdmin();
+}
 
                 // ===============================================
                 // == THIS IS THE NEW CODE TO ADD ================
