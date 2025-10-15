@@ -32,53 +32,61 @@
     <div class="container">
         <h1>Admin Panel</h1>
 
-        <section id="login-section" class="glass-login" aria-labelledby="login-heading">
-  <div class="login-card">
-    <div class="login-header">
-      <i class="fa-solid fa-shield-halved"></i>
-      <h2 id="login-heading">Admin Login</h2>
-      <p>Sign in to manage Caleb’s Profile</p>
+        <section id="login-section" class="modern-login">
+  <div class="login-wrapper">
+    <!-- Left side (Welcome area) -->
+    <div class="login-hero">
+      <h1>Welcome back, Admin 👋</h1>
+      <p>Manage, update, and personalize Caleb’s Profile with ease.</p>
+      <ul class="login-features">
+        <li><i class="fa-solid fa-check-circle"></i> Secure Access</li>
+        <li><i class="fa-solid fa-rocket"></i> Lightning Fast</li>
+        <li><i class="fa-solid fa-shield-halved"></i> Protected by Google</li>
+      </ul>
     </div>
 
-    <!-- Google Sign-In -->
-    <div id="g_id_onload"
-         data-client_id="42980404680-vog8m63e51ud3hvlefpgr5s48ho2vb64.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse"
-         data-context="signin"
-         data-ux_mode="popup"
-         data-auto_prompt="false">
+    <!-- Right side (Form area) -->
+    <div class="login-card glass-panel">
+      <div class="login-brand">
+        <i class="fa-solid fa-shield-halved"></i>
+        <h2>Admin Login</h2>
+        <p>Sign in to your account</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group" id="email-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="admin@example.com" required autocomplete="username">
+        </div>
+
+        <div class="form-group" id="password-group" style="display: none;">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+
+        <button type="button" id="next-button" class="login-btn primary">Continue</button>
+        <button type="submit" id="login-button" class="login-btn primary" style="display:none;">Login</button>
+
+        <div class="divider"><span>or</span></div>
+
+        <div id="g_id_onload"
+             data-client_id="42980404680-vog8m63e51ud3hvlefpgr5s48ho2vb64.apps.googleusercontent.com"
+             data-callback="handleCredentialResponse"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-auto_prompt="false"></div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-shape="pill"
+             data-theme="outline"
+             data-text="signin_with"
+             data-size="large"
+             data-logo_alignment="left"
+             data-width="280"></div>
+
+        <p id="auth-status" class="status-message" role="alert" aria-live="polite"></p>
+      </form>
     </div>
-    <div class="g_id_signin"
-         data-type="standard"
-         data-shape="pill"
-         data-theme="outline"
-         data-text="signin_with"
-         data-size="large"
-         data-logo_alignment="left"
-         data-width="280">
-    </div>
-
-    <div class="divider"><span>or</span></div>
-
-    <!-- Email / Password Login -->
-    <form id="login-form">
-      <div class="form-group" id="email-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="username">
-      </div>
-
-      <div class="form-group" id="password-group" style="display: none;">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
-      </div>
-
-      <div class="form-actions">
-        <button type="button" id="next-button" class="login-btn">Next</button>
-        <button type="submit" id="login-button" class="login-btn" style="display: none;">Login</button>
-      </div>
-    </form>
-
-    <div id="auth-status" class="status-message" role="alert" aria-live="polite"></div>
   </div>
 </section>
 
