@@ -227,47 +227,105 @@ a:hover {
     text-decoration: underline;
 }
 
-/* ======================== */
-/* Login Section – iOS 26 Glass Onyx */
-/* ======================== */
-#login-section {
-  margin: 80px auto;
-  padding: 50px 40px;
-  max-width: 420px;
-  border-radius: var(--border-radius-xl, 20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
-  transition: all 0.35s ease;
-  text-align: center;
+/* ============================= */
+/* Windows 11 + Glass Login Page */
+/* ============================= */
+
+.modern-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top left, #0b0b0b, #000);
+  background-size: cover;
+  overflow: hidden;
+  color: #f5f5f5;
+  font-family: "Segoe UI Variable", "SF Pro Display", sans-serif;
 }
 
-#login-section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.55);
+.login-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 90%;
+  max-width: 1100px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  animation: fadeIn 0.8s ease;
 }
 
-/* Header */
-#login-section h2 {
-  font-size: 1.8rem;
+.login-hero {
+  background: linear-gradient(135deg, #00b7ff10, #00ff8820);
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.login-hero h1 {
+  font-size: 2.2rem;
   font-weight: 600;
-  color: var(--text-color, #f5f5f5);
+  color: #00b7ff;
   margin-bottom: 12px;
 }
 
-#login-section p {
+.login-hero p {
+  color: #ccc;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.login-features {
+  list-style: none;
+  padding: 0;
+  color: #bbb;
+}
+
+.login-features li {
+  margin-bottom: 10px;
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 28px;
+}
+
+.login-features i {
+  color: #00b7ff;
+  margin-right: 8px;
+}
+
+/* Glass Login Card */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px) saturate(180%);
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login-brand {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.login-brand i {
+  font-size: 2.2rem;
+  color: #00b7ff;
+}
+
+.login-brand h2 {
+  font-size: 1.6rem;
+  margin: 8px 0 4px;
+}
+
+.login-brand p {
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 /* Inputs */
-#login-section .form-group {
-  text-align: left;
-  margin-bottom: 20px;
-}
-
 #login-section label {
   display: block;
   font-size: 0.9rem;
@@ -279,68 +337,82 @@ a:hover {
 #login-section input[type="password"] {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-color, #fff);
+  border-radius: 12px;
+  color: #fff;
   font-size: 0.95rem;
   transition: 0.3s;
   outline: none;
 }
 
 #login-section input:focus {
-  border-color: var(--accent-color, #00b7ff);
-  background: rgba(255, 255, 255, 0.15);
+  border-color: #00b7ff;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Buttons */
-#login-section .button-primary,
-#login-section button[type="button"],
-#login-section button[type="submit"] {
+.login-btn.primary {
   width: 100%;
-  background: linear-gradient(135deg, var(--accent-color, #00b7ff), #0078ff);
-  color: #fff;
+  background: linear-gradient(135deg, #00b7ff, #0078ff);
   border: none;
-  border-radius: 14px;
+  color: white;
   font-size: 1rem;
   font-weight: 500;
   padding: 12px 0;
+  border-radius: 14px;
   cursor: pointer;
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  transition: 0.25s ease;
+  margin-top: 16px;
 }
 
-#login-section .button-primary:hover,
-#login-section button:hover {
+.login-btn.primary:hover {
   transform: scale(1.03);
   opacity: 0.9;
+  box-shadow: 0 0 20px rgba(0, 183, 255, 0.4);
 }
 
-/* Divider and status message */
-#login-section hr {
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+/* Divider */
+.divider {
+  text-align: center;
   margin: 24px 0;
+  position: relative;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-#login-section .status-message {
+.divider::before, .divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.divider::before { left: 0; }
+.divider::after { right: 0; }
+
+.status-message {
   margin-top: 14px;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
 }
 
 /* Animation */
-@keyframes fadeInLogin {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-#login-section {
-  animation: fadeInLogin 0.6s ease-out;
+
+/* Responsive */
+@media (max-width: 900px) {
+  .login-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .login-hero {
+    display: none;
+  }
 }
 
 /* ======================== */
