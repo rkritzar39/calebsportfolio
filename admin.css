@@ -227,160 +227,182 @@ a:hover {
     text-decoration: underline;
 }
 
-/* ============================= */
-/* Windows 11 + Glass Login Page */
-/* ============================= */
+/* =============================== */
+/* Fluent Glass Login (Windows 11) */
+/* =============================== */
 
-.modern-login {
+.fluent-login {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at top left, #0b0b0b, #000);
-  background-size: cover;
-  overflow: hidden;
-  color: #f5f5f5;
+  background: radial-gradient(ellipse at top left, #0d0d0f 0%, #000 100%);
+  color: #fff;
   font-family: "Segoe UI Variable", "SF Pro Display", sans-serif;
+  overflow: hidden;
 }
 
-.login-wrapper {
+.fluent-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: 90%;
   max-width: 1100px;
-  border-radius: 24px;
+  border-radius: 30px;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
-  animation: fadeIn 0.8s ease;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: fadeInUp 0.8s ease;
 }
 
-.login-hero {
-  background: linear-gradient(135deg, #00b7ff10, #00ff8820);
-  padding: 60px 40px;
+/* Hero Section */
+.fluent-hero {
+  background: linear-gradient(135deg, #00b7ff20, #0078ff15);
+  padding: 70px 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  backdrop-filter: blur(10px);
 }
 
-.login-hero h1 {
+.fluent-hero h1 {
   font-size: 2.2rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #00b7ff;
   margin-bottom: 12px;
 }
 
-.login-hero p {
-  color: #ccc;
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 24px;
+.fluent-hero span {
+  color: #00e0ff;
 }
 
-.login-features {
+.fluent-hero p {
+  font-size: 1rem;
+  color: #ccc;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.fluent-hero ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+}
+
+.fluent-hero li {
+  font-size: 0.95rem;
+  margin-bottom: 12px;
   color: #bbb;
 }
 
-.login-features li {
-  margin-bottom: 10px;
-  font-size: 0.95rem;
-}
-
-.login-features i {
+.fluent-hero i {
   color: #00b7ff;
-  margin-right: 8px;
+  margin-right: 10px;
 }
 
-/* Glass Login Card */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(25px) saturate(180%);
-  padding: 50px 40px;
+/* Login Card */
+.fluent-card {
+  background: rgba(20, 20, 25, 0.65);
+  padding: 60px 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(30px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
 }
 
-.login-brand {
+/* Accent glow (Windows 11 flair) */
+.fluent-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at 30% 20%, rgba(0,183,255,0.15), transparent 60%);
+  animation: glowMove 10s infinite alternate;
+  z-index: 0;
+}
+
+.login-header {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 1;
 }
 
-.login-brand i {
-  font-size: 2.2rem;
+.login-header i {
+  font-size: 2.5rem;
   color: #00b7ff;
+  margin-bottom: 8px;
 }
 
-.login-brand h2 {
+.login-header h2 {
   font-size: 1.6rem;
-  margin: 8px 0 4px;
+  font-weight: 600;
 }
 
-.login-brand p {
+.login-header p {
   font-size: 0.9rem;
   opacity: 0.8;
 }
 
 /* Inputs */
-#login-section label {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 6px;
-  opacity: 0.85;
-}
-
 #login-section input[type="email"],
 #login-section input[type="password"] {
   width: 100%;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
   color: #fff;
   font-size: 0.95rem;
   transition: 0.3s;
   outline: none;
+  position: relative;
+  z-index: 1;
 }
 
 #login-section input:focus {
   border-color: #00b7ff;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* Buttons */
-.login-btn.primary {
+.fluent-btn {
   width: 100%;
-  background: linear-gradient(135deg, #00b7ff, #0078ff);
+  margin-top: 16px;
+  background: linear-gradient(135deg, #0078ff, #00b7ff);
   border: none;
-  color: white;
-  font-size: 1rem;
-  font-weight: 500;
-  padding: 12px 0;
   border-radius: 14px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 0;
   cursor: pointer;
   transition: 0.25s ease;
-  margin-top: 16px;
+  position: relative;
+  z-index: 1;
 }
 
-.login-btn.primary:hover {
-  transform: scale(1.03);
-  opacity: 0.9;
+.fluent-btn:hover {
+  transform: scale(1.02);
   box-shadow: 0 0 20px rgba(0, 183, 255, 0.4);
 }
 
 /* Divider */
 .divider {
   text-align: center;
-  margin: 24px 0;
-  position: relative;
+  margin: 25px 0;
   color: rgba(255, 255, 255, 0.6);
+  position: relative;
+  z-index: 1;
 }
 
-.divider::before, .divider::after {
+.divider::before,
+.divider::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -392,27 +414,21 @@ a:hover {
 .divider::before { left: 0; }
 .divider::after { right: 0; }
 
-.status-message {
-  margin-top: 14px;
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.75);
-  text-align: center;
+/* Animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes glowMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(10%, 10%); }
 }
 
 /* Responsive */
 @media (max-width: 900px) {
-  .login-wrapper {
-    grid-template-columns: 1fr;
-  }
-  .login-hero {
-    display: none;
-  }
+  .fluent-container { grid-template-columns: 1fr; }
+  .fluent-hero { display: none; }
 }
 
 /* ======================== */
