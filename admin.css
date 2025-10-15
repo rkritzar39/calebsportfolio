@@ -227,252 +227,30 @@ a:hover {
     text-decoration: underline;
 }
 
-/* admin-login.css */
-
-/* Use a more engaging font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-/* Style for sr-only to hide labels visually but keep them for screen readers */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-/* Body Styling for the Login Page */
-body.admin-login-page {
-    font-family: 'Poppins', sans-serif;
-    background-color: #0c0c0f; /* Dark background */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
-    position: relative;
-    padding: 20px;
-}
-
-/* Animated Background Shapes */
-@keyframes move {
-    100% {
-        transform: translate3d(0, 0, 1px) rotate(360deg);
-    }
-}
-
-.background-shapes {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    background: #0c0c0f;
-    overflow: hidden;
-    z-index: -1;
-}
-
-.background-shapes::before, .background-shapes::after {
-    content: '';
-    position: absolute;
-    width: 120vmax;
-    height: 120vmax;
-    border-radius: 45% 55% 70% 30% / 40% 50% 50% 60%;
-    animation: move 18s linear infinite;
-}
-
-.background-shapes::before {
-    left: -40%;
-    top: -60%;
-    background: rgba(67, 97, 238, 0.2);
-}
-
-.background-shapes::after {
-    left: 30%;
-    top: 40%;
-    background: rgba(0, 255, 157, 0.15);
-    animation-duration: 24s;
-    animation-direction: reverse;
-}
-
-/* Glassmorphism Container */
-.glass-login-container {
-    background: rgba(12, 12, 15, 0.6); /* Semi-transparent dark background */
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
-    display: grid;
-    grid-template-columns: 1fr; /* Default to single column */
-    gap: 30px;
+/* ======================== */
+/* Login Section            */
+/* ======================== */
+#login-section {
+    margin: 50px auto 0 auto; /* combines top margin and centering */
     padding: 40px;
-    width: 100%;
-    max-width: 900px;
-    z-index: 1;
+    max-width: 400px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    background-color: var(--content-bg);
+    box-shadow: 0 5px 15px -5px var(--shadow-color);
+    transition: 
+        background-color var(--transition-speed) var(--transition-timing),
+        border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing);
 }
 
-/* Two-column layout for wider screens */
-@media (min-width: 768px) {
-    .glass-login-container {
-        grid-template-columns: 1fr auto 1fr; /* Two columns with a separator */
-        align-items: center;
-    }
-}
-
-/* Vertical Separator */
-.separator {
-    width: 1px;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.15);
-    display: none; /* Hidden on mobile */
-}
-
-@media (min-width: 768px) {
-    .separator {
-        display: block; /* Visible on desktop */
-    }
-}
-
-/* Info Panel (Left Side) */
-.info-panel {
+#login-section h2 {
     text-align: center;
-    color: #f0f0f0;
-    padding-right: 0;
-}
-
-@media (min-width: 768px) {
-    .info-panel {
-        text-align: left;
-        padding-right: 30px;
-    }
-}
-
-.logo-text {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    background: linear-gradient(90deg, #4facfe, #00f2fe);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.tagline {
-    font-size: 1.5rem;
-    font-weight: 300;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: #a0a0b0;
-}
-
-.description {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #8a8a9e;
-    margin-bottom: 2rem;
-}
-
-.website-url {
-    font-size: 0.9rem;
-    color: #6a6a7e;
-}
-
-/* Login Panel (Right Side) */
-.login-panel #login-section {
-    background: none;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
-    max-width: 100%;
-}
-
-.login-panel #login-heading {
-    text-align: left;
     border-bottom: none;
-    font-size: 2rem;
-    color: #ffffff;
-    margin-bottom: 1.5rem;
-}
-
-/* Styling for the login form elements */
-.login-panel .form-group {
-    margin-bottom: 1.25rem;
-}
-
-.login-panel input[type="email"],
-.login-panel input[type="password"] {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #f0f0f0;
-    border-radius: 12px;
-    padding: 14px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-.login-panel input[type="email"]::placeholder,
-.login-panel input[type="password"]::placeholder {
-    color: #8a8a9e;
-}
-
-.login-panel input[type="email"]:focus,
-.login-panel input[type="password"]:focus {
-    background: rgba(0, 0, 0, 0.4);
-    border-color: #4facfe;
-    box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
-    outline: none;
-}
-
-/* OR Divider */
-.divider-text {
-    text-align: center;
-    margin: 1.5rem 0;
-    color: #6a6a7e;
-    font-weight: 500;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-
-/* Buttons */
-.login-panel .button-primary {
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
     font-weight: 600;
-    background: linear-gradient(90deg, #4facfe, #00f2fe);
-    border: none;
-    border-radius: 12px;
-    color: #ffffff;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-    transition: all 0.3s ease;
-}
-
-.login-panel .button-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
-}
-
-/* Status Messages */
-.login-panel .status-message {
-    font-size: 0.9rem;
-    padding: 10px;
-    border-radius: 8px;
-    text-align: center;
-    margin-top: 1rem;
-}
-
-.login-panel .status-message.error {
-    background-color: rgba(255, 59, 48, 0.15);
-    color: #ff8a80;
-    border: 1px solid rgba(255, 59, 48, 0.3);
+    color: var(--text-color);
 }
 
 /* ======================== */
@@ -530,16 +308,6 @@ body.admin-login-page {
 
 .admin-section:last-of-type {
     margin-bottom: 15px;
-}
-
-/* This rule hides the main admin panel content by default */
-#admin-content {
-    display: none !important; /* Use !important to prevent other styles from overriding this */
-}
-
-/* This rule ensures the login container is hidden *after* you log in */
-body:not(.admin-login-page) .glass-login-container {
-    display: none;
 }
 
 /* ======================== */
@@ -938,14 +706,14 @@ select {
     position: relative;
 }
 
-/* === FIX: Enable toggle clicks === */
+/* Hidden Checkbox Input */
 .checkbox-group input[type="checkbox"] {
-    pointer-events: auto !important;
-    width: 54px;
-    height: 32px;
     opacity: 0;
     position: absolute;
-    cursor: pointer;
+    width: 0;
+    height: 0;
+    appearance: none;
+    pointer-events: none;
 }
 
 /* Label Styling */
@@ -1073,7 +841,7 @@ button, .button-primary {
     font-size: 0.95rem;
     font-weight: 500;
     letter-spacing: normal;
-    transition:
+    transition: 
         background-color var(--transition-speed) var(--transition-timing),
         transform var(--transition-speed) var(--transition-timing),
         box-shadow var(--transition-speed) var(--transition-timing);
@@ -1100,13 +868,8 @@ button:disabled, .button-primary:disabled {
 }
 
 /* Special Buttons */
-#login-button {
-    background-color: var(--color-success-action);
-    color: #fff;
-}
-#login-button:hover {
-    background-color: var(--color-success-action-hover);
-}
+#login-button { background-color: var(--color-success-action); color: #fff; }
+#login-button:hover { background-color: var(--color-success-action-hover); }
 
 #logout-button,
 button.delete-button,
@@ -1157,44 +920,7 @@ button.edit-button:hover {
     opacity: 0.6;
 }
 
-/* ======================== */
-/* Static Visual Toggle – iOS 26 Onyx Style */
-/* ======================== */
-.apple-toggle-group {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.apple-toggle-visual {
-  width: 44px;
-  height: 26px;
-  background: var(--color-secondary-action, #3a3a3a);
-  border-radius: 50px;
-  position: relative;
-}
-
-.apple-toggle-visual::before {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  background: #fff;
-  border-radius: 50%;
-}
-
-.apple-toggle-label {
-  font-weight: 500;
-  color: var(--text-color);
-}
-
-
-/* ======================== */
 /* Form Actions */
-/* ======================== */
 .form-actions {
     margin-top: 30px;
     text-align: right;
@@ -2549,12 +2275,4 @@ body.light-mode .admin-preview-container.business-preview {
 body.dark-mode .g_id_signin > div[role="button"] {
     background-color: #ffffff !important;
     border-color: #dadce0 !important;
-}
-
-body.admin-login-page .glass-login-container {
-    display: grid !important;
-}
-
-body.admin-login-page #admin-content {
-    display: none !important;
 }
