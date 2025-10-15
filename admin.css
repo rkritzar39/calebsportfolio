@@ -228,20 +228,21 @@ a:hover {
 }
 
 /* ============================= */
-/* Windows 11 + Glass Login Page */
+/* Windows 11 + Glass Login Page (Fully Responsive) */
 /* ============================= */
 
 .modern-login {
-  min-height: 100vh;
+  min-height: 100dvh; /* ✅ dynamic viewport height (fixes keyboard cutoff) */
   display: flex;
   align-items: center;
   justify-content: center;
   background: radial-gradient(circle at top left, #0b0b0b, #000);
   background-size: cover;
-  overflow: hidden;
   color: #f5f5f5;
   font-family: "Segoe UI Variable", "SF Pro Display", sans-serif;
   padding: 20px;
+  overflow-y: auto; /* ✅ allows scroll when needed */
+  -webkit-overflow-scrolling: touch;
 }
 
 .login-wrapper {
@@ -254,6 +255,7 @@ a:hover {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
   animation: fadeIn 0.8s ease;
+  background: rgba(255, 255, 255, 0.04);
 }
 
 /* Hero Side */
@@ -384,8 +386,7 @@ a:hover {
   color: rgba(255, 255, 255, 0.6);
 }
 
-.divider::before,
-.divider::after {
+.divider::before, .divider::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -404,9 +405,7 @@ a:hover {
   text-align: center;
 }
 
-/* ===================== */
-/* Animations & Effects  */
-/* ===================== */
+/* Animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -416,18 +415,10 @@ a:hover {
 /* Responsive Design     */
 /* ===================== */
 
-/* Tablet View */
 @media (max-width: 900px) {
-  .modern-login {
-    flex-direction: column;
-    padding: 20px 10px;
-    overflow-y: auto; /* ✅ allow vertical scrolling */
-  }
-
   .login-wrapper {
     grid-template-columns: 1fr;
     max-width: 550px;
-    width: 100%;
     height: auto;
   }
 
@@ -439,30 +430,25 @@ a:hover {
     border-left: none;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding: 40px 30px;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   }
 }
 
-/* Mobile View */
 @media (max-width: 600px) {
   .modern-login {
-    padding: 10px;
-    overflow-y: auto; /* ✅ allows form to scroll if taller than screen */
+    padding: 12px;
     align-items: flex-start;
     justify-content: flex-start;
   }
 
   .login-wrapper {
     margin-top: 40px;
-    width: 100%;
     max-width: 420px;
-    grid-template-columns: 1fr;
   }
 
   .glass-panel {
-    padding: 28px 22px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    padding: 30px 22px;
+    border-radius: 18px;
   }
 
   .login-brand h2 {
