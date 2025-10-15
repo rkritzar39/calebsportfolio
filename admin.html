@@ -69,20 +69,22 @@
 
         <div class="divider"><span>or</span></div>
 
+        <!-- keep this: -->
         <div id="g_id_onload"
              data-client_id="42980404680-vog8m63e51ud3hvlefpgr5s48ho2vb64.apps.googleusercontent.com"
              data-callback="handleCredentialResponse"
              data-context="signin"
              data-ux_mode="popup"
              data-auto_prompt="false"></div>
+        
+        <!-- update this: (note: no data-width here) -->
         <div class="g_id_signin"
              data-type="standard"
              data-shape="pill"
              data-theme="outline"
              data-text="signin_with"
              data-size="large"
-             data-logo_alignment="left"
-             data-width="280"></div>
+             data-logo_alignment="left"></div>
 
         <p id="auth-status" class="status-message" role="alert" aria-live="polite"></p>
       </form>
