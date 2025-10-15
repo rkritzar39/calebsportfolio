@@ -227,182 +227,160 @@ a:hover {
     text-decoration: underline;
 }
 
-/* =============================== */
-/* Fluent Glass Login (Windows 11) */
-/* =============================== */
+/* ============================= */
+/* Windows 11 + Glass Login Page */
+/* ============================= */
 
-.fluent-login {
+.modern-login {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at top left, #0d0d0f 0%, #000 100%);
-  color: #fff;
-  font-family: "Segoe UI Variable", "SF Pro Display", sans-serif;
+  background: radial-gradient(circle at top left, #0b0b0b, #000);
+  background-size: cover;
   overflow: hidden;
+  color: #f5f5f5;
+  font-family: "Segoe UI Variable", "SF Pro Display", sans-serif;
 }
 
-.fluent-container {
+.login-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: 90%;
   max-width: 1100px;
-  border-radius: 30px;
+  border-radius: 24px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  animation: fadeInUp 0.8s ease;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  animation: fadeIn 0.8s ease;
 }
 
-/* Hero Section */
-.fluent-hero {
-  background: linear-gradient(135deg, #00b7ff20, #0078ff15);
-  padding: 70px 50px;
+.login-hero {
+  background: linear-gradient(135deg, #00b7ff10, #00ff8820);
+  padding: 60px 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  backdrop-filter: blur(10px);
 }
 
-.fluent-hero h1 {
+.login-hero h1 {
   font-size: 2.2rem;
-  font-weight: 700;
+  font-weight: 600;
   color: #00b7ff;
   margin-bottom: 12px;
 }
 
-.fluent-hero span {
-  color: #00e0ff;
-}
-
-.fluent-hero p {
-  font-size: 1rem;
+.login-hero p {
   color: #ccc;
-  margin-bottom: 28px;
+  font-size: 1rem;
   line-height: 1.5;
+  margin-bottom: 24px;
 }
 
-.fluent-hero ul {
+.login-features {
   list-style: none;
   padding: 0;
-  margin: 0;
-}
-
-.fluent-hero li {
-  font-size: 0.95rem;
-  margin-bottom: 12px;
   color: #bbb;
 }
 
-.fluent-hero i {
-  color: #00b7ff;
-  margin-right: 10px;
+.login-features li {
+  margin-bottom: 10px;
+  font-size: 0.95rem;
 }
 
-/* Login Card */
-.fluent-card {
-  background: rgba(20, 20, 25, 0.65);
-  padding: 60px 50px;
+.login-features i {
+  color: #00b7ff;
+  margin-right: 8px;
+}
+
+/* Glass Login Card */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px) saturate(180%);
+  padding: 50px 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  backdrop-filter: blur(30px);
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
-  position: relative;
-  overflow: hidden;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Accent glow (Windows 11 flair) */
-.fluent-card::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at 30% 20%, rgba(0,183,255,0.15), transparent 60%);
-  animation: glowMove 10s infinite alternate;
-  z-index: 0;
-}
-
-.login-header {
+.login-brand {
   text-align: center;
-  margin-bottom: 30px;
-  position: relative;
-  z-index: 1;
+  margin-bottom: 25px;
 }
 
-.login-header i {
-  font-size: 2.5rem;
+.login-brand i {
+  font-size: 2.2rem;
   color: #00b7ff;
-  margin-bottom: 8px;
 }
 
-.login-header h2 {
+.login-brand h2 {
   font-size: 1.6rem;
-  font-weight: 600;
+  margin: 8px 0 4px;
 }
 
-.login-header p {
+.login-brand p {
   font-size: 0.9rem;
   opacity: 0.8;
 }
 
 /* Inputs */
+#login-section label {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  opacity: 0.85;
+}
+
 #login-section input[type="email"],
 #login-section input[type="password"] {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
   color: #fff;
   font-size: 0.95rem;
   transition: 0.3s;
   outline: none;
-  position: relative;
-  z-index: 1;
 }
 
 #login-section input:focus {
   border-color: #00b7ff;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* Buttons */
-.fluent-btn {
+.login-btn.primary {
   width: 100%;
-  margin-top: 16px;
-  background: linear-gradient(135deg, #0078ff, #00b7ff);
+  background: linear-gradient(135deg, #00b7ff, #0078ff);
   border: none;
-  border-radius: 14px;
-  color: #fff;
-  font-weight: 600;
+  color: white;
   font-size: 1rem;
+  font-weight: 500;
   padding: 12px 0;
+  border-radius: 14px;
   cursor: pointer;
   transition: 0.25s ease;
-  position: relative;
-  z-index: 1;
+  margin-top: 16px;
 }
 
-.fluent-btn:hover {
-  transform: scale(1.02);
+.login-btn.primary:hover {
+  transform: scale(1.03);
+  opacity: 0.9;
   box-shadow: 0 0 20px rgba(0, 183, 255, 0.4);
 }
 
 /* Divider */
 .divider {
   text-align: center;
-  margin: 25px 0;
-  color: rgba(255, 255, 255, 0.6);
+  margin: 24px 0;
   position: relative;
-  z-index: 1;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.divider::before,
-.divider::after {
+.divider::before, .divider::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -414,22 +392,29 @@ a:hover {
 .divider::before { left: 0; }
 .divider::after { right: 0; }
 
-/* Animations */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.status-message {
+  margin-top: 14px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
 }
 
-@keyframes glowMove {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(10%, 10%); }
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Responsive */
 @media (max-width: 900px) {
-  .fluent-container { grid-template-columns: 1fr; }
-  .fluent-hero { display: none; }
+  .login-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .login-hero {
+    display: none;
+  }
 }
+
 
 /* ======================== */
 /* Admin Content Area       */
