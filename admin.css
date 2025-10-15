@@ -241,12 +241,13 @@ a:hover {
   overflow: hidden;
   color: #f5f5f5;
   font-family: "Segoe UI Variable", "SF Pro Display", sans-serif;
+  padding: 20px;
 }
 
 .login-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  width: 90%;
+  width: 100%;
   max-width: 1100px;
   border-radius: 24px;
   overflow: hidden;
@@ -255,6 +256,7 @@ a:hover {
   animation: fadeIn 0.8s ease;
 }
 
+/* Hero Side */
 .login-hero {
   background: linear-gradient(135deg, #00b7ff10, #00ff8820);
   padding: 60px 40px;
@@ -287,6 +289,8 @@ a:hover {
 .login-features li {
   margin-bottom: 10px;
   font-size: 0.95rem;
+  display: flex;
+  align-items: center;
 }
 
 .login-features i {
@@ -380,7 +384,8 @@ a:hover {
   color: rgba(255, 255, 255, 0.6);
 }
 
-.divider::before, .divider::after {
+.divider::before,
+.divider::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -399,22 +404,61 @@ a:hover {
   text-align: center;
 }
 
-/* Animation */
+/* ===================== */
+/* Animations & Effects  */
+/* ===================== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive */
+/* ===================== */
+/* Responsive Design     */
+/* ===================== */
+
+/* Tablet: collapse into single column */
 @media (max-width: 900px) {
   .login-wrapper {
     grid-template-columns: 1fr;
+    max-width: 550px;
   }
+
   .login-hero {
     display: none;
   }
+
+  .glass-panel {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px 30px;
+  }
 }
 
+/* Small phones */
+@media (max-width: 600px) {
+  .modern-login {
+    padding: 10px;
+  }
+
+  .glass-panel {
+    padding: 30px 24px;
+  }
+
+  .login-brand h2 {
+    font-size: 1.3rem;
+  }
+
+  .login-btn.primary {
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+
+  #login-section input[type="email"],
+  #login-section input[type="password"] {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+}
 
 /* ======================== */
 /* Admin Content Area       */
