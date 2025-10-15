@@ -578,6 +578,39 @@ a:hover {
   }
 }
 
+/* Contain Google sign-in button globally */
+#login-section .g_id_signin {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  margin: 0 !important;
+  overflow: hidden; /* clip any stray artifacts */
+}
+
+/* Force the injected iframe to fit the container */
+#login-section .g_id_signin iframe,
+#login-section .g_id_signin > div {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;    /* override Google’s inline min-width */
+  display: block !important;
+}
+
+/* Keep the card as the reference frame on mobile */
+@media (max-width: 900px) {
+  .glass-panel {
+    position: relative;
+    overflow: hidden;          /* ensures nothing bleeds out visually */
+  }
+
+  /* Keep the GSI button visually “native” on mobile */
+  #login-section .g_id_signin {
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+}
+
 /* ======================== */
 /* Admin Content Area       */
 /* ======================== */
