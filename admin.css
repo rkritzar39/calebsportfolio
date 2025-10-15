@@ -422,7 +422,7 @@ a:hover {
 }
 
 /* ===================================== */
-/* 📱 DISTINCT MOBILE DESIGN (Portrait)  */
+/* 📱 FINAL RESPONSIVE MOBILE DESIGN     */
 /* ===================================== */
 @media (max-width: 900px) {
   /* Hide desktop hero */
@@ -430,12 +430,13 @@ a:hover {
     display: none !important;
   }
 
-  /* Hide title above card */
+  /* Hide large "Admin Panel" title */
   h1,
   .admin-panel-title {
     display: none !important;
   }
 
+  /* Background */
   .modern-login {
     display: flex;
     flex-direction: column;
@@ -447,87 +448,104 @@ a:hover {
     overflow-y: auto;
   }
 
+  /* Make container full-width on phones */
   .login-wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 400px;
-    margin-top: 60px;
+    max-width: none;
+    margin-top: 0;
+    border-radius: 0;
     box-shadow: none;
     background: transparent;
   }
 
-  /* Glass card for mobile */
+  /* Full-width card */
   .glass-panel {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(25px) saturate(180%);
-    border-radius: 22px;
-    padding: 34px 26px;
-    width: calc(100% - 32px);
-    box-shadow: 0 6px 28px rgba(0, 0, 0, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    position: relative;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 0;
+    padding: 48px 28px 64px;
+    width: 100%;
+    min-height: 100dvh;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
-  /* Brand / Logo */
+  /* Brand / Header */
+  .login-brand {
+    text-align: center;
+    margin-bottom: 28px;
+  }
   .login-brand i {
     font-size: 2.8rem;
     color: #00b7ff;
     animation: pulseGlow 4s infinite ease-in-out;
   }
-
   .login-brand h2 {
-    font-size: 1.4rem;
+    font-size: 1.5rem;
     font-weight: 600;
-    margin-top: 10px;
+    margin-top: 12px;
   }
-
   .login-brand p {
     font-size: 0.9rem;
-    opacity: 0.7;
+    opacity: 0.75;
   }
 
   /* Inputs */
-  #login-section input[type="email"],
-  #login-section input[type="password"] {
-    padding: 14px;
-    font-size: 1rem;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+  #login-section label {
+    font-size: 0.9rem;
+    opacity: 0.85;
   }
 
-  /* Primary button */
+  #login-section input[type="email"],
+  #login-section input[type="password"] {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  /* Primary Button */
   .login-btn.primary {
     font-size: 1.05rem;
     font-weight: 600;
-    border-radius: 16px;
-    margin-top: 20px;
+    border-radius: 14px;
+    margin-top: 22px;
     padding: 14px 0;
     background: linear-gradient(135deg, #0078ff, #00b7ff);
-    box-shadow: 0 0 15px rgba(0, 183, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 183, 255, 0.35);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: none;
   }
 
   .login-btn.primary:hover {
     transform: scale(1.03);
-    box-shadow: 0 0 25px rgba(0, 183, 255, 0.5);
+    box-shadow: 0 0 30px rgba(0, 183, 255, 0.5);
   }
 
   .divider {
-    margin: 20px 0;
+    margin: 28px 0 20px;
+    color: rgba(255, 255, 255, 0.6);
   }
 
-  /* Google Sign-In - match glass look */
+  /* Google Sign-In: keep standard style */
   .g_id_signin {
-    border-radius: 16px !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
+    width: 100% !important;
+    margin: 0 auto;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
   }
 
-  /* Subtle animated glow */
+  /* Optional subtle animated background glow */
   .modern-login::before {
     content: "";
     position: fixed;
