@@ -724,7 +724,7 @@ a:hover {
 }
 
 /* ======================================== */
-/* == BLOG MANAGEMENT FORM STYLES (v5.0) == */
+/* == BLOG MANAGEMENT FORM STYLES (v6.0) == */
 /* ======================================== */
 
 /* --- Container & Section Spacing --- */
@@ -732,14 +732,20 @@ a:hover {
     padding: 2rem 1.5rem;
     max-width: 900px;
     margin: 0 auto;
-    margin-bottom: 4rem; /* Space below blog section */
+    margin-bottom: 4rem;
+    border-radius: 20px;
+    background: rgba(28, 28, 30, 0.65);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.45);
 }
 
 #blog-management h3 {
     font-size: 1.75rem;
     font-weight: 700;
     margin-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color, #e0e0e0);
+    border-bottom: 1px solid var(--border-color, #3a3a3a);
     padding-bottom: 0.5rem;
 }
 
@@ -764,25 +770,33 @@ a:hover {
 #blog-management .admin-input {
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid var(--border-color, #d1d5db);
+    border: 1px solid var(--border-color, #3a3a3a);
     border-radius: 12px;
     font-size: 1rem;
     font-family: 'Inter', sans-serif;
-    background-color: var(--content-bg, #fff);
-    color: var(--text-color, #111);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04) inset;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    background-color: rgba(28, 28, 30, 0.85);
+    color: var(--text-color, #fff);
+    backdrop-filter: blur(14px) saturate(180%);
+    -webkit-backdrop-filter: blur(14px) saturate(180%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 3px rgba(0,0,0,0.4);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
 }
 
 #blog-management .admin-input::placeholder {
-    color: var(--secondary-text, #6b7280);
+    color: var(--secondary-text, #aaa);
+}
+
+#blog-management .admin-input:hover {
+    border-color: rgba(var(--accent-rgb, 61, 220, 132), 0.45);
+    transform: translateY(-0.5px);
 }
 
 #blog-management .admin-input:focus {
     outline: none;
     border-color: var(--accent-color, #3ddc84);
-    background-color: #fff;
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color, #3ddc84) 20%, transparent);
+    background-color: rgba(50, 50, 54, 0.9);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color, #3ddc84) 25%, transparent),
+                0 2px 10px rgba(var(--accent-rgb, 61, 220, 132), 0.25);
 }
 
 /* --- Rich Text Editor --- */
@@ -790,13 +804,15 @@ a:hover {
     grid-column: 1 / -1;
     min-height: 300px;
     border-radius: 12px;
-    border: 1px solid var(--border-color, #d1d5db);
+    border: 1px solid var(--border-color, #3a3a3a);
     overflow: hidden;
+    background: rgba(28, 28, 30, 0.85);
+    backdrop-filter: blur(16px) saturate(180%);
 }
 
 .ql-toolbar.ql-snow {
-    background-color: var(--bg-color, #f9fafb);
-    border-bottom: 1px solid var(--border-color, #d1d5db);
+    background-color: rgba(40, 40, 42, 0.9);
+    border-bottom: 1px solid var(--border-color, #3a3a3a);
     padding: 8px;
 }
 
@@ -810,14 +826,8 @@ a:hover {
     font-size: 1rem;
     line-height: 1.6;
     padding: 12px 16px;
-    color: var(--text-color, #111);
+    color: var(--text-color, #fff);
 }
-
-/* Rich text features: */
-.ql-align-center { text-align: center; }
-.ql-align-right { text-align: right; }
-.ql-align-justify { text-align: justify; }
-.ql-highlight { background-color: var(--accent-color, #3ddc84); color: #fff; }
 
 /* --- Apple-style Toggle --- */
 .admin-checkbox-label {
@@ -827,7 +837,7 @@ a:hover {
     gap: 12px;
     cursor: pointer;
     font-weight: 600;
-    color: var(--text-color, #111);
+    color: var(--text-color, #fff);
     user-select: none;
     position: relative;
 }
@@ -842,7 +852,7 @@ a:hover {
     position: relative;
     width: 50px;
     height: 28px;
-    background-color: var(--border-color, #d1d5db);
+    background-color: var(--border-color, #3a3a3a);
     border-radius: 999px;
     transition: background-color 0.3s ease;
     flex-shrink: 0;
@@ -889,29 +899,29 @@ a:hover {
 
 .admin-btn.is-primary {
     background-color: var(--accent-color, #3ddc84);
-    color: var(--accent-text-color, #fff);
+    color: #fff;
 }
 
 .admin-btn.is-primary:hover {
     background-color: color-mix(in srgb, var(--accent-color, #3ddc84) 85%, black);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.25);
 }
 
 .admin-btn.is-secondary {
-    background-color: var(--content-bg, #fff);
-    color: var(--text-color, #111);
-    border: 1px solid var(--border-color, #d1d5db);
+    background-color: rgba(255,255,255,0.05);
+    color: var(--text-color, #fff);
+    border: 1px solid var(--border-color, #3a3a3a);
 }
 
 .admin-btn.is-secondary:hover {
-    background-color: var(--border-color, #d1d5db);
+    background-color: rgba(255,255,255,0.1);
 }
 
 /* --- Existing Posts List --- */
 #posts-list {
     margin-top: 24px;
-    border-top: 1px solid var(--border-color, #e0e0e0);
+    border-top: 1px solid var(--border-color, #3a3a3a);
 }
 
 .admin-list-item {
@@ -919,12 +929,8 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     padding: 14px 12px;
-    border-bottom: 1px solid var(--border-color, #d1d5db);
+    border-bottom: 1px solid var(--border-color, #3a3a3a);
     transition: background-color 0.2s ease;
-}
-
-.admin-list-item:last-child {
-    border-bottom: none;
 }
 
 .admin-list-item:hover {
@@ -936,7 +942,7 @@ a:hover {
 }
 
 .admin-list-item small {
-    color: var(--secondary-text, #6b7280);
+    color: var(--secondary-text, #aaa);
 }
 
 /* --- Image Preview --- */
@@ -945,7 +951,43 @@ a:hover {
     display: block;
     margin-top: 0.5rem;
     border-radius: 12px;
-    border: 1px solid var(--border-color, #d1d5db);
+    border: 1px solid var(--border-color, #3a3a3a);
+}
+
+/* --- Responsive Fix for Small Screens --- */
+@media (max-width: 600px) {
+    #blog-management {
+        padding: 1.25rem 1rem;
+        margin: 0 1rem 3rem;
+        border-radius: 16px;
+        background: rgba(28, 28, 30, 0.6);
+        backdrop-filter: blur(20px) saturate(160%);
+        -webkit-backdrop-filter: blur(20px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+    }
+
+    #blog-management .form-group {
+        grid-template-columns: 1fr !important;
+        gap: 18px;
+    }
+
+    #blog-management .admin-input,
+    #blog-management input,
+    #blog-management select,
+    #blog-management textarea {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .ql-toolbar.ql-snow,
+    .ql-container.ql-snow {
+        border-radius: 10px !important;
+        max-width: 100%;
+        overflow: hidden;
+    }
 }
 
 /* ======================== */
