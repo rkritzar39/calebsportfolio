@@ -21,7 +21,7 @@ class SettingsManager {
             loadingScreen: 'disabled',
             mouseTrail: 'disabled',
             liveStatus: 'disabled',
-            rearrangingEnabled: 'enabled',
+            rearrangingEnabled: 'disabled',
             showSocialLinks: 'enabled',
             showPresidentSection: 'enabled',
             showTiktokShoutouts: 'enabled',
