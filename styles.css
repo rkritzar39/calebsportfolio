@@ -1554,29 +1554,36 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	--shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-#quote-of-the-day {
-  margin: 4rem auto;
-  padding: 2rem;
-  max-width: 750px;
-  border-radius: 12px;
-  backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-color, #fff);
-  text-align: center;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-  transition: opacity 0.5s ease;
+/* =============================== */
+/* == QUOTE OF THE DAY SECTION == */
+/* =============================== */
+#quote-section {
+    margin: 4rem auto;
+    padding: 2rem;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    text-align: center;
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
-#quote-of-the-day h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
+
+#quote-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: var(--text-color, #fff);
 }
-#quote-of-the-day p {
-  font-style: italic;
-  font-size: 1.25rem;
-  margin-bottom: 0.5rem;
+
+#quote-section p {
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--text-color, #ddd);
+    margin-bottom: 0.75rem;
 }
-#quote-of-the-day small {
-  color: var(--accent-color, #ccc);
+
+#quote-section small {
+    color: var(--accent-color, #ccc);
 }
 
 /* ======================== */
