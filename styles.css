@@ -975,6 +975,136 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.12); } /* ✨ Updated for text scaling ✨ */
 }
 
+/* ======================================== */
+/* == ONYX AI ASSISTANT STYLES (GLASS) == */
+/* ======================================== */
+
+/* Floating trigger bubble */
+.ai-toggle-btn {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  color: var(--accent-text-color, #fff);
+  border: none;
+  box-shadow: 0 0 24px var(--glow-color);
+  backdrop-filter: var(--backdrop-blur);
+  cursor: pointer;
+  transition: var(--transition-medium);
+  z-index: 999;
+}
+.ai-toggle-btn:hover {
+  filter: brightness(1.15);
+}
+
+/* Main chat container */
+.onyx-ai-assistant {
+  position: fixed;
+  bottom: 100px;
+  right: 1.5rem;
+  width: 360px;
+  max-height: 500px;
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bubble-shadow), 0 8px 32px var(--shadow-color);
+  backdrop-filter: var(--backdrop-blur);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: opacity var(--transition-medium), transform var(--transition-medium);
+  z-index: 998;
+}
+
+/* Hide by default */
+.hidden {
+  display: none;
+}
+
+/* Header */
+.ai-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bubble-gradient);
+}
+.ai-header h3 {
+  font-size: 1rem;
+  color: var(--accent-color);
+  margin: 0;
+  text-shadow: 0 0 8px var(--glow-color);
+}
+.ai-header button {
+  background: transparent;
+  color: var(--secondary-text);
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+/* Messages area */
+.ai-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Message bubbles */
+.message {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  line-height: 1.5;
+  max-width: 80%;
+}
+.message.ai {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+.message.user {
+  align-self: flex-end;
+  background: var(--accent-color);
+  color: var(--accent-text-color, #fff);
+  border: none;
+}
+
+/* Input area */
+.ai-form {
+  display: flex;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bubble-gradient);
+}
+.ai-form input {
+  flex: 1;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--content-bg);
+  color: var(--text-color);
+  outline: none;
+}
+.ai-form button {
+  margin-left: 0.5rem;
+  background: var(--accent-color);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  color: var(--accent-text-color, #fff);
+  cursor: pointer;
+}
+.ai-form button:hover {
+  filter: brightness(1.1);
+}
 
 /* ======================================== */
 /* == Tech Information Section – Matches Root Theme == */
