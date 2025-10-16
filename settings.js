@@ -31,7 +31,8 @@ class SettingsManager {
             showCountdown: 'enabled',
             showBusinessSection: 'enabled',
             showTechInformation: 'enabled',
-            showDisabilitiesSection: 'enabled'
+            showDisabilitiesSection: 'enabled',
+            showQuoteSection: 'enabled'
         };
 
         this.settings = this.loadSettings();
@@ -250,6 +251,7 @@ class SettingsManager {
             showBusinessSection: () => this.applySectionVisibility('business-section', this.settings.showBusinessSection),
             showTechInformation: () => this.applySectionVisibility('tech-information-section', this.settings.showTechInformation),
             showDisabilitiesSection: () => this.applySectionVisibility('disabilities-section', this.settings.showDisabilitiesSection),
+            showQuoteSection: () => this.applySectionVisibility('quote-section', this.settings.showQuoteSection),
         };
         actions[key]?.();
     }
