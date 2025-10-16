@@ -1554,47 +1554,108 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	--shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-/* =============================== */
-/* == QUOTE OF THE DAY SECTION == */
-/* =============================== */
+/* =============================================== */
+/* == QUOTE OF THE DAY SECTION — ONYX COMPLETE == */
+/* =============================================== */
 #quote-section {
-  margin: 2rem 0; /* Matches spacing of other Onyx sections */
-  padding: 2rem 1.5rem;
+  position: relative;
   width: 100%;
-  max-width: 100%;
-  border-radius: var(--radius-lg);
-  background: var(--content-bg);
-  color: var(--text-color);
-  backdrop-filter: var(--backdrop-blur);
-  box-shadow: 0 6px 20px var(--shadow-color);
+  margin: 2rem 0;
+  padding: 2rem;
+  box-sizing: border-box;
   text-align: center;
+
+  /* === Onyx Surface === */
+  background: var(--content-bg);
   border: 1px solid var(--border-color);
-  transition: none; /* Removes hover/transform transitions */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bubble-shadow), 0 6px 24px var(--shadow-color);
+  backdrop-filter: var(--backdrop-blur);
+
+  /* === Lighting / Texture === */
+  background-image: var(--bubble-gradient);
+  background-blend-mode: overlay;
+  box-shadow:
+    var(--bubble-shadow),
+    inset 0 1px 2px var(--bubble-highlight),
+    0 8px 24px var(--shadow-color);
+
+  /* === Smooth transitions for theme switching === */
+  transition:
+    background var(--transition-medium),
+    border-color var(--transition-medium),
+    box-shadow var(--transition-medium),
+    color var(--transition-medium);
 }
 
-/* Section heading (consistent with Onyx) */
+#quote-section::before {
+  /* Subtle luminous overlay for depth */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  background: var(--bubble-gradient);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* === Heading === */
 #quote-section h2 {
+  position: relative;
   font-size: 1.65rem;
   font-weight: 700;
-  color: var(--accent-color);
   margin-bottom: 1rem;
-  text-shadow: 0 0 6px var(--glow-color);
+  color: var(--accent-color);
+  text-shadow: 0 0 8px var(--glow-color);
 }
 
-/* Quote text */
-#quote-section p {
+/* === Quote Text === */
+#quote-section .quote-text {
+  position: relative;
   font-style: italic;
   font-size: 1.15rem;
   color: var(--text-color);
-  margin-bottom: 0.35rem;
   line-height: var(--line-height-base);
+  margin-bottom: 0.5rem;
 }
 
-/* Author text */
-#quote-section small {
+/* === Author === */
+#quote-section .quote-author {
+  position: relative;
   display: block;
-  color: var(--secondary-text);
   font-size: 0.95rem;
+  color: var(--secondary-text);
+}
+
+/* === Decorative Bubble Highlight (optional accent) === */
+#quote-section::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: var(--bubble-gradient);
+  filter: blur(24px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* === Responsive Adjustments === */
+@media (max-width: 768px) {
+  #quote-section {
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  #quote-section h2 {
+    font-size: 1.45rem;
+  }
+
+  #quote-section .quote-text {
+    font-size: 1.05rem;
+  }
 }
 
 /* ======================== */
