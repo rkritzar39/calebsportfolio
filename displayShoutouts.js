@@ -2025,3 +2025,69 @@ async function initializeHomepageContent() {
 
 // --- Call the main initialization function when the DOM is ready ---
 document.addEventListener('DOMContentLoaded', initializeHomepageContent);
+
+/* =============================================== */
+/* == ONYX AI ASSISTANT LOGIC (Integrated v1.0) == */
+/* =============================================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const aiToggleBtn = document.getElementById("ai-toggle-btn");
+  const aiAssistant = document.getElementById("onyx-ai-assistant");
+  const aiCloseBtn = document.getElementById("ai-close-btn");
+  const aiForm = document.getElementById("ai-form");
+  const aiInput = document.getElementById("ai-input");
+  const aiMessages = document.getElementById("ai-messages");
+
+  // If AI elements aren’t found, exit early (prevents errors if section is hidden)
+  if (!aiToggleBtn || !aiAssistant) return;
+
+  // === Open / Close Assistant ===
+  aiToggleBtn.addEventListener("click", () => {
+    aiAssistant.classList.toggle("hidden");
+  });
+  aiCloseBtn.addEventListener("click", () => {
+    aiAssistant.classList.add("hidden");
+  });
+
+  // === Message Handling ===
+  aiForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const userMsg = aiInput.value.trim();
+    if (!userMsg) return;
+
+    appendMessage("user", userMsg);
+    aiInput.value = "";
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+
+    // Simulated AI reply for now
+    setTimeout(() => {
+      appendMessage("ai", generateReply(userMsg));
+      aiMessages.scrollTop = aiMessages.scrollHeight;
+    }, 600);
+  });
+
+  // === Append Message Utility ===
+  function appendMessage(sender, text) {
+    const msg = document.createElement("div");
+    msg.className = `message ${sender}`;
+    msg.textContent = text;
+    aiMessages.appendChild(msg);
+  }
+
+  // === Placeholder AI Logic (to be replaced with API later) ===
+  function generateReply(input) {
+    const lower = input.toLowerCase();
+    if (lower.includes("hello") || lower.includes("hi")) {
+      return "Hey there! 👋 What can I help you with today?";
+    }
+    if (lower.includes("theme") || lower.includes("color")) {
+      return "You can change my color using the Accent Color picker in your settings!";
+    }
+    if (lower.includes("who are you")) {
+      return "I’m Onyx — your personal glass assistant, designed just for this site.";
+    }
+    if (lower.includes("settings")) {
+      return "You can access all settings in your admin panel under 'Site Settings'.";
+    }
+    return "I'm still learning! Try asking about your theme, layout, or sections.";
+  }
+});
