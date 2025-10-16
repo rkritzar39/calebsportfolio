@@ -1430,6 +1430,40 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
+async function loadQuoteOfTheDay() {
+  const section = document.getElementById("quote-section");
+  if (!section) return;
+
+  const quoteText = document.getElementById("quote-text");
+  const quoteAuthor = document.getElementById("quote-author");
+
+  const lastQuote = localStorage.getItem("quoteOfTheDay");
+  const lastFetched = localStorage.getItem("quoteFetchedAt");
+  const now = new Date();
+
+  // Use cached quote if less than 24h old
+  if (lastQuote && lastFetched && now - new Date(lastFetched) < 86400000) {
+    const { content, author } = JSON.parse(lastQuote);
+    quoteText.textContent = `"${content}"`;
+    quoteAuthor.textContent = `— ${author}`;
+    return;
+  }
+
+  try {
+    const res = await fetch("https://api.quotable.io/random");
+    const data = await res.json();
+    quoteText.textContent = `"${data.content}"`;
+    quoteAuthor.textContent = `— ${data.author}`;
+    localStorage.setItem("quoteOfTheDay", JSON.stringify(data));
+    localStorage.setItem("quoteFetchedAt", now.toISOString());
+  } catch {
+    quoteText.textContent = "Keep going — great things take time.";
+    quoteAuthor.textContent = "— Unknown";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
+
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
 // ======================================================
