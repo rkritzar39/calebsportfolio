@@ -1432,22 +1432,25 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
 
 async function loadQuoteOfTheDay() {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  const isEnabled = settings.showQuoteSection === "enabled";
-  const section = document.getElementById("quote-section");
-  if (!section) return;
+  const quoteSection = document.getElementById("quote-section");
+  if (!quoteSection) return;
 
-  // Hide or show section based on settings
-  section.style.display = isEnabled ? "" : "none";
-  if (!isEnabled) return;
+  const showQuote = settings.showQuoteSection === "enabled";
+  const rearrangingEnabled = settings.rearrangingEnabled === "enabled";
 
+  // Show or hide the section
+  quoteSection.style.display = showQuote ? "" : "none";
+
+  // Only proceed if visible
+  if (!showQuote) return;
+
+  // --- Load cached or new quote ---
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
-
   const lastQuote = localStorage.getItem("quoteOfTheDay");
   const lastFetched = localStorage.getItem("quoteFetchedAt");
   const now = new Date();
 
-  // Use cached quote if less than 24h old
   if (lastQuote && lastFetched && now - new Date(lastFetched) < 86400000) {
     const { content, author } = JSON.parse(lastQuote);
     quoteText.textContent = `"${content}"`;
@@ -1455,7 +1458,6 @@ async function loadQuoteOfTheDay() {
     return;
   }
 
-  // Fetch new quote
   try {
     const res = await fetch("https://api.quotable.io/random");
     const data = await res.json();
@@ -1463,21 +1465,17 @@ async function loadQuoteOfTheDay() {
     quoteAuthor.textContent = `— ${data.author}`;
     localStorage.setItem("quoteOfTheDay", JSON.stringify(data));
     localStorage.setItem("quoteFetchedAt", now.toISOString());
-  } catch (err) {
+  } catch {
     quoteText.textContent = `"Keep going — great things take time."`;
     quoteAuthor.textContent = "— Unknown";
   }
 }
 
-// Load on page ready
 document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
-
-// Also reload quotes if settings change in another tab
 window.addEventListener("storage", (e) => {
-  if (e.key === "websiteSettings") {
-    loadQuoteOfTheDay();
-  }
+  if (e.key === "websiteSettings") loadQuoteOfTheDay();
 });
+
 
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
