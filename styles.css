@@ -1558,41 +1558,43 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 /* == QUOTE OF THE DAY SECTION == */
 /* =============================== */
 #quote-section {
-  margin: 4rem auto;
-  padding: 2rem;
-  max-width: 800px;
+  margin: 2rem 0; /* Matches spacing of other Onyx sections */
+  padding: 2rem 1.5rem;
+  width: 100%;
+  max-width: 100%;
   border-radius: var(--radius-lg);
   background: var(--content-bg);
   color: var(--text-color);
   backdrop-filter: var(--backdrop-blur);
-  box-shadow: 0 8px 32px var(--shadow-color);
+  box-shadow: 0 6px 20px var(--shadow-color);
   text-align: center;
   border: 1px solid var(--border-color);
-  transition: var(--transition-slow);
+  transition: none; /* Removes hover/transform transitions */
 }
 
+/* Section heading (consistent with Onyx) */
 #quote-section h2 {
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
+  font-size: 1.65rem;
+  font-weight: 700;
   color: var(--accent-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 6px var(--glow-color);
 }
 
+/* Quote text */
 #quote-section p {
   font-style: italic;
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   color: var(--text-color);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
   line-height: var(--line-height-base);
 }
 
+/* Author text */
 #quote-section small {
+  display: block;
   color: var(--secondary-text);
   font-size: 0.95rem;
-}
-
-#quote-section:hover {
-  transform: scale(1.02);
-  box-shadow: 0 12px 36px var(--shadow-color);
 }
 
 /* ======================== */
