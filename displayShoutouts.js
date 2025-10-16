@@ -1431,8 +1431,14 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
 async function loadQuoteOfTheDay() {
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const isEnabled = settings.showQuoteSection === "enabled";
   const section = document.getElementById("quote-section");
   if (!section) return;
+
+  // Hide or show section based on settings
+  section.style.display = isEnabled ? "" : "none";
+  if (!isEnabled) return;
 
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
@@ -1449,6 +1455,7 @@ async function loadQuoteOfTheDay() {
     return;
   }
 
+  // Fetch new quote
   try {
     const res = await fetch("https://api.quotable.io/random");
     const data = await res.json();
@@ -1456,13 +1463,21 @@ async function loadQuoteOfTheDay() {
     quoteAuthor.textContent = `— ${data.author}`;
     localStorage.setItem("quoteOfTheDay", JSON.stringify(data));
     localStorage.setItem("quoteFetchedAt", now.toISOString());
-  } catch {
-    quoteText.textContent = "Keep going — great things take time.";
+  } catch (err) {
+    quoteText.textContent = `"Keep going — great things take time."`;
     quoteAuthor.textContent = "— Unknown";
   }
 }
 
+// Load on page ready
 document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
+
+// Also reload quotes if settings change in another tab
+window.addEventListener("storage", (e) => {
+  if (e.key === "websiteSettings") {
+    loadQuoteOfTheDay();
+  }
+});
 
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
