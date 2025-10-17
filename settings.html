@@ -346,18 +346,34 @@ const pill = document.getElementById("active-pill");
 let active = items.find(i => i.href === location.href) || items[0];
 let dragging = false, lastY = window.scrollY;
 
-function tint(el){ el.style.setProperty("--tint", el.dataset.color); }
-function movePill(el, stretch = 1, instant = false){
-  const r = el.getBoundingClientRect();
-  const p = bar.getBoundingClientRect();
-  const w = Math.max(90, Math.min(120, r.width + 14)) * stretch;
-  const x = r.left - p.left + (r.width - w)/2;
-  if(instant) pill.style.transition = "none";
-  pill.style.left = `${x}px`;
-  pill.style.width = `${w}px`;
-  if(instant)
-    requestAnimationFrame(() => pill.style.transition =
-      "left .35s cubic-bezier(.25,1,.5,1), width .35s cubic-bezier(.25,1,.5,1), background 0.3s ease");
+/* tint + spacing logic */
+function tint(el) {
+  el.style.setProperty("--tint", el.dataset.color);
+}
+
+/* dynamically calculate capsule size & offset */
+function movePill(el, stretch = 1, instant = false) {
+  const iconRect = el.querySelector("i").getBoundingClientRect();
+  const textRect = el.querySelector("span").getBoundingClientRect();
+  const parentRect = bar.getBoundingClientRect();
+
+  const sidePadding = 14;   // space inside capsule around icon+label
+  const edgeMargin = 6;     // distance from dock’s sides
+
+  const leftEdge = Math.min(iconRect.left, textRect.left);
+  const rightEdge = Math.max(iconRect.right, textRect.right);
+  const width = (rightEdge - leftEdge) + sidePadding * 2;
+  const left = (leftEdge - parentRect.left) - sidePadding;
+
+  if (instant) pill.style.transition = "none";
+  pill.style.left = `${left + edgeMargin}px`;
+  pill.style.width = `${width - edgeMargin * 2}px`;
+
+  if (instant)
+    requestAnimationFrame(() =>
+      pill.style.transition =
+        "left .35s cubic-bezier(.25,1,.5,1), width .35s cubic-bezier(.25,1,.5,1)"
+    );
 }
 
 /* Initialize */
@@ -365,15 +381,15 @@ items.forEach(tint);
 active.classList.add("active");
 movePill(active, 1, true);
 
-/* Hide toolbar on scroll */
+/* Scroll hide (optional) */
 window.addEventListener("scroll", () => {
-  if(window.scrollY > lastY && window.scrollY > 100)
+  if (window.scrollY > lastY && window.scrollY > 100)
     bar.classList.add("hide");
   else bar.classList.remove("hide");
   lastY = window.scrollY;
 });
 
-/* Press & drag */
+/* Drag and pointer logic */
 items.forEach(item => {
   item.addEventListener("pointerdown", () => {
     dragging = true;
@@ -382,30 +398,32 @@ items.forEach(item => {
     movePill(item, 1.1, true);
   });
   item.addEventListener("pointerenter", () => {
-    if(!dragging) return;
+    if (!dragging) return;
     items.forEach(i => i.classList.remove("drag-over"));
     item.classList.add("drag-over");
     movePill(item, 1.15, true);
   });
   item.addEventListener("pointerup", finalize);
 });
+
 window.addEventListener("pointermove", e => {
-  if(!dragging) return;
-  const stretch = 1 + Math.min(Math.abs(e.movementX)/20, 0.3);
+  if (!dragging) return;
+  const stretch = 1 + Math.min(Math.abs(e.movementX) / 22, 0.25);
   movePill(document.querySelector(".toolbar-item.drag-over") || active, stretch, true);
 });
+
 window.addEventListener("pointerup", finalize);
 
-function finalize(){
-  if(!dragging) return;
+function finalize() {
+  if (!dragging) return;
   dragging = false;
   const target = document.querySelector(".toolbar-item.drag-over") || active;
-  items.forEach(i => i.classList.remove("drag-over","active"));
+  items.forEach(i => i.classList.remove("drag-over", "active"));
   target.classList.add("active");
   active = target;
   movePill(active, 1);
   tint(active);
-  setTimeout(() => location.href = active.href, 160);
+  setTimeout(() => (window.location.href = active.href), 160);
 }
 </script>
 </body>
