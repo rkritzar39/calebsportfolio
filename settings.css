@@ -763,3 +763,101 @@ body.dark-mode .color-warning {
   color: #ffeca7;
   border-color: #8b6b1f;
 }
+
+/* =============================================== */
+/* iOS 26 Floating Toolbar — Liquid Motion (v7.0)  */
+/* =============================================== */
+
+.ios26-toolbar {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-width: 420px;
+  height: 65px;
+  background: rgba(255,255,255,0.55);
+  border-radius: 28px;
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  overflow: hidden;
+  user-select: none;
+}
+
+.tab-highlight {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 70px;
+  background: rgba(200,200,200,0.3);
+  border-radius: 20px;
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  transform-origin: center;
+  transition: all 0.35s cubic-bezier(0.25,1,0.5,1);
+}
+
+/* liquid stretching */
+.tab-highlight.stretching {
+  transition: none;
+}
+
+.toolbar-item {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 0.75rem;
+  color: rgba(0,0,0,0.6);
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.toolbar-item i {
+  font-size: 1.25rem;
+  margin-bottom: 3px;
+  transition: transform 0.25s ease;
+}
+
+.toolbar-item.active {
+  color: var(--active-color, #007aff);
+  transform: translateY(-2px);
+}
+.toolbar-item.active i {
+  color: var(--active-color, #007aff);
+  transform: scale(1.05);
+}
+
+.toolbar-item.drag-over {
+  color: var(--hover-color, #007aff);
+}
+.toolbar-item.drag-over i {
+  color: var(--hover-color, #007aff);
+}
+
+/* hide on scroll */
+.ios26-toolbar.hide {
+  transform: translate(-50%, 120%);
+  opacity: 0;
+}
+
+/* dark mode */
+@media (prefers-color-scheme: dark) {
+  .ios26-toolbar {
+    background: rgba(30,30,30,0.45);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .tab-highlight {
+    background: rgba(255,255,255,0.08);
+  }
+  .toolbar-item { color: rgba(255,255,255,0.8); }
+}
