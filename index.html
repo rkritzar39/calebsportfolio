@@ -341,41 +341,55 @@
     
     <script src="rearrange.js"></script>
 
-    <!-- iOS 26 Beta 3 Interactive Toolbar -->
+    <!-- iOS 26 Floating Toolbar with Liquid Highlight -->
 <nav class="ios26-toolbar" id="ios26-toolbar">
+  <div class="tab-highlight" id="tab-highlight"></div>
+
   <a href="index.html" class="toolbar-item active" data-color="#007aff">
     <i class="fa-solid fa-house"></i>
     <span>Home</span>
-    <span class="bubble"></span>
   </a>
 
   <a href="blog.html" class="toolbar-item" data-color="#e63946">
     <i class="fa-solid fa-pen-nib"></i>
     <span>Blog</span>
-    <span class="bubble"></span>
   </a>
 
   <a href="merchandise.html" class="toolbar-item" data-color="#ff9500">
     <i class="fa-solid fa-shirt"></i>
     <span>Merch</span>
-    <span class="bubble"></span>
   </a>
 
   <a href="settings.html" class="toolbar-item" data-color="#34c759">
     <i class="fa-solid fa-gear"></i>
     <span>Settings</span>
-    <span class="bubble"></span>
   </a>
 </nav>
     
 <script>
 const toolbar = document.getElementById("ios26-toolbar");
-const items = document.querySelectorAll(".toolbar-item");
+const items = toolbar.querySelectorAll(".toolbar-item");
+const highlight = document.getElementById("tab-highlight");
+
 let lastScrollY = window.scrollY;
 let isDragging = false;
-let currentHover = null;
+let currentHover = toolbar.querySelector(".toolbar-item.active");
+let startX = 0, currentX = 0, dragStretch = 0;
 
-// Hide/show on scroll
+// --- helper to move highlight ---
+function moveHighlightTo(el, stretch = 1) {
+  const rect = el.getBoundingClientRect();
+  const parent = toolbar.getBoundingClientRect();
+  const centerX = rect.left - parent.left + rect.width / 2;
+  const x = centerX - highlight.offsetWidth / 2;
+  highlight.style.left = `${x}px`;
+  highlight.style.width = `${70 * stretch}px`;
+}
+
+// --- initialize position ---
+if (currentHover) moveHighlightTo(currentHover);
+
+// --- hide/show on scroll ---
 window.addEventListener("scroll", () => {
   if (window.scrollY > lastScrollY && window.scrollY > 100) {
     toolbar.classList.add("hide");
@@ -385,25 +399,20 @@ window.addEventListener("scroll", () => {
   lastScrollY = window.scrollY;
 });
 
-// Highlight current page
-items.forEach(link => {
-  if (link.href === window.location.href) {
-    link.classList.add("active");
-    link.style.setProperty("--active-color", link.dataset.color);
-  }
-});
-
-// Press + drag behavior
+// --- interactive drag ---
 items.forEach(item => {
   const color = item.dataset.color;
 
-  item.addEventListener("pointerdown", () => {
+  item.addEventListener("pointerdown", e => {
     isDragging = true;
+    startX = e.clientX;
+    currentX = startX;
+    highlight.classList.add("stretching");
     item.classList.add("drag-over");
     item.style.setProperty("--hover-color", color);
   });
 
-  item.addEventListener("pointerenter", () => {
+  item.addEventListener("pointerenter", e => {
     if (isDragging) {
       items.forEach(i => i.classList.remove("drag-over"));
       item.classList.add("drag-over");
@@ -412,22 +421,35 @@ items.forEach(item => {
     }
   });
 
-  item.addEventListener("pointerup", () => {
-    if (currentHover) {
-      items.forEach(i => i.classList.remove("active","drag-over"));
-      currentHover.classList.add("active");
-      currentHover.style.setProperty("--active-color", currentHover.dataset.color);
-      setTimeout(() => window.location.href = currentHover.href, 150);
-    }
-    isDragging = false;
-    currentHover = null;
-  });
-
-  window.addEventListener("pointerup", () => {
-    isDragging = false;
-    items.forEach(i => i.classList.remove("drag-over"));
+  item.addEventListener("pointerup", e => {
+    finalizeSelection();
   });
 });
+
+window.addEventListener("pointermove", e => {
+  if (!isDragging) return;
+  currentX = e.clientX;
+  const delta = Math.abs(currentX - startX);
+  const stretch = Math.min(1 + delta / 150, 1.35); // elastic factor
+  moveHighlightTo(currentHover, stretch);
+});
+
+window.addEventListener("pointerup", finalizeSelection);
+
+function finalizeSelection() {
+  if (!isDragging) return;
+  isDragging = false;
+  highlight.classList.remove("stretching");
+  highlight.style.transition = "all 0.35s cubic-bezier(0.25,1,0.5,1)";
+  moveHighlightTo(currentHover, 1);
+
+  items.forEach(i => i.classList.remove("active", "drag-over"));
+  if (currentHover) {
+    currentHover.classList.add("active");
+    currentHover.style.setProperty("--active-color", currentHover.dataset.color);
+    setTimeout(() => (window.location.href = currentHover.href), 180);
+  }
+}
 </script>
 </body>
 </html>
