@@ -607,102 +607,94 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	cursor: not-allowed;
 }
 
-/* ========================================= */
-/* == iOS 26 FLOATING TOOLBAR (v2.0) == */
-/* ========================================= */
-
-.ios-toolbar {
+.ios26-toolbar {
   position: fixed;
   bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
+  width: 92%;
+  max-width: 420px;
+  height: 65px;
+  background: rgba(255,255,255,0.55);
+  border-radius: 28px;
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.5);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 92%;
-  max-width: 420px;
-  padding: 0.65rem 0;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(25px) saturate(180%);
-  -webkit-backdrop-filter: blur(25px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 30px;
   z-index: 1000;
   transition: transform 0.35s ease, opacity 0.35s ease;
+  user-select: none;
 }
 
 .toolbar-item {
-  text-align: center;
-  color: var(--text-color, #fff);
-  text-decoration: none;
+  position: relative;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  opacity: 0.7;
-  font-size: 0.8rem;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  position: relative;
+  justify-content: center;
+  color: rgba(0,0,0,0.6);
+  text-decoration: none;
+  font-size: 0.75rem;
+  gap: 3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .toolbar-item i {
-  font-size: 1.4rem;
-  line-height: 1;
+  font-size: 1.25rem;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.toolbar-item .bubble {
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  transition: opacity 0.25s ease;
-}
-
-/* Filled (active) icon */
-.toolbar-item i.fa-solid {
+  transform: translate(-50%, -50%) scale(0);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: var(--bubble-color, transparent);
+  z-index: -1;
   opacity: 0;
+  transition: all 0.35s cubic-bezier(0.22,1,0.36,1);
 }
 
-/* Outline (inactive) icon */
-.toolbar-item i.fa-regular {
-  opacity: 1;
-}
-
-/* Active state */
 .toolbar-item.active {
-  opacity: 1;
-  transform: translateY(-2px);
+  color: var(--active-color, #007aff);
 }
 
-.toolbar-item.active i.fa-solid {
-  opacity: 1;
+.toolbar-item.active .bubble {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0.15;
+  background: var(--active-color, #007aff);
 }
 
-.toolbar-item.active i.fa-regular {
-  opacity: 0;
+.toolbar-item.drag-over {
+  color: var(--hover-color, #007aff);
 }
 
-/* Hide/show animation */
-.ios-toolbar.hide {
+.toolbar-item.drag-over .bubble {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 0.1;
+  background: var(--hover-color, #007aff);
+}
+
+.ios26-toolbar.hide {
   transform: translate(-50%, 120%);
   opacity: 0;
 }
 
-@media (prefers-color-scheme: light) {
-  .ios-toolbar {
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid rgba(0, 0, 0, 0.15);
+@media (prefers-color-scheme: dark) {
+  .ios26-toolbar {
+    background: rgba(40,40,40,0.45);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
   }
-  .toolbar-item {
-    color: #000;
-  }
-}
-
-@media (max-width: 768px) {
-  .ios-toolbar {
-    width: 95%;
-    bottom: 0.75rem;
-  }
-  .toolbar-item i {
-    font-size: 1.2rem;
-  }
+  .toolbar-item { color: rgba(255,255,255,0.8); }
 }
 
 /* ======================================== */
