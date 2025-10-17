@@ -415,10 +415,9 @@ body.settings-page #appearanceModeSelect {
     margin-left: 0.625rem;
 }
 
-/* ========================================= */
-/* Pure iOS Capsule Toggle (Green-White Look) */
-/* ========================================= */
-
+/* ======================================================= */
+/* === LIQUID GLASS TOGGLE — iOS 26 STYLE ================ */
+/* ======================================================= */
 .md-switch {
   position: relative;
   display: inline-flex;
@@ -434,64 +433,76 @@ body.settings-page #appearanceModeSelect {
   height: 0;
 }
 
-/* Capsule background (OFF) */
+/* Track (OFF) */
 .md-switch .track {
   position: absolute;
   inset: 0;
-  border-radius: 32px;
-  background: var(--toggle-off); /* Use the theme variable for the off state */
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+  border-radius: 999px;
+  background: var(--toggle-off);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.15);
+  overflow: hidden;
+  transition:
+    background .25s ease,
+    box-shadow .25s ease;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
-/* White thumb */
+/* Track glow overlay */
+.md-switch .track::after {
+  content: "";
+  position: absolute;
+  inset: -30%;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 50%,
+      color-mix(in srgb, var(--accent-color) 55%, transparent),
+      transparent 70%);
+  opacity: 0;
+  filter: blur(8px);
+  transition: opacity .4s ease;
+}
+
+/* Thumb */
 .md-switch .thumb {
   position: absolute;
   top: 2px;
   left: 2px;
   width: 28px;
   height: 28px;
-  border-radius: 28px;
+  border-radius: 999px;
   background: #fff;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-
-/* This is the new, corrected rule */
-.md-switch input:checked + .track {
-  background: var(--accent-color); /* Use the accent color variable */
-  box-shadow: inset 0 0 0 2px var(--accent-color); /* Also use it for the inset shadow */
-}
-
-.md-switch input:checked + .track .thumb {
-  transform: translateX(24px);
-  background: #fff;
-}
-
-/* Optional: soft glow for active state */
-.md-switch input:checked + .track::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(circle at 30% 50%, rgba(52,199,89,0.45), transparent 70%);
-  opacity: 0.4;
-  transition: opacity 0.4s ease;
+  box-shadow:
+    0 6px 14px rgba(0,0,0,.18),
+    inset 0 0 0 1px rgba(255,255,255,.35);
+  transition:
+    transform .25s cubic-bezier(.25,.8,.25,1),
+    width .25s ease,
+    box-shadow .25s ease;
 }
 
 /* Press feedback */
 .md-switch:active .thumb {
-  transform: scale(0.96);
+  width: 32px;
 }
 
-/* Visually indicate "Coming Soon" toggles */
-.md-switch.disabled {
-  opacity: 0.5;
+/* Checked (ON) */
+.md-switch input:checked + .track {
+  background: color-mix(in srgb, var(--accent-color) 75%, var(--toggle-on));
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--accent-color) 50%, transparent);
+}
+.md-switch input:checked + .track::after {
+  opacity: .8;
+}
+.md-switch input:checked + .track .thumb {
+  transform: translateX(24px);
+  width: 28px;
+}
+
+/* Disabled */
+.md-switch.disabled,
+.md-switch input[disabled] + .track {
+  opacity: .5;
   pointer-events: none;
-}
-
-.setting-card input[disabled] + .track {
-  background-color: #ccc;
-  cursor: not-allowed;
 }
 
 /* ========== Text Size Slider --- iOS 26 REDESIGN ========== */
@@ -762,56 +773,4 @@ body.dark-mode .color-warning {
   background-color: #4d3c1a;
   color: #ffeca7;
   border-color: #8b6b1f;
-}
-
-/* === iOS-style Toolbar where the pill fits around content === */
-.ios26-toolbar{
-  position:fixed;bottom:10px;left:50%;transform:translateX(-50%);
-  width:min(440px,92%);height:66px;
-  display:flex;justify-content:space-around;align-items:center;
-  border-radius:28px;
-  background:rgba(255,255,255,.75);
-  backdrop-filter:blur(30px)saturate(180%);
-  -webkit-backdrop-filter:blur(30px)saturate(180%);
-  border:1px solid rgba(255,255,255,.35);
-  box-shadow:0 6px 24px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.8);
-  overflow:hidden;z-index:1000;
-}
-
-/* glass capsule behind active tab */
-.active-pill{
-  position:absolute;top:8px;bottom:8px;left:0;
-  background:rgba(0,0,0,.08);
-  backdrop-filter:blur(10px)brightness(1.15);
-  -webkit-backdrop-filter:blur(10px)brightness(1.15);
-  border-radius:20px;
-  transition:left .35s cubic-bezier(.25,1,.5,1),
-             width .35s cubic-bezier(.25,1,.5,1);
-  pointer-events:none;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.9),
-              0 1px 3px rgba(0,0,0,.08);
-}
-
-.toolbar-item{
-  position:relative;flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-decoration:none;gap:3px;
-  color:rgba(0,0,0,.8);
-  font-size:.8rem;font-weight:500;
-  padding:0 14px;             /* space inside each cell */
-  transition:color .25s ease,transform .25s ease;
-}
-.toolbar-item i{
-  font-size:1.25rem;transition:color .25s ease,transform .25s ease;
-}
-
-.toolbar-item.active,
-.toolbar-item.drag-over{color:var(--tint,#007aff);}
-.toolbar-item.active i,
-.toolbar-item.drag-over i{color:var(--tint,#007aff);transform:scale(1.05);}
-
-@media(prefers-color-scheme:dark){
-  .ios26-toolbar{background:rgba(30,30,30,.55);border:1px solid rgba(255,255,255,.15);}
-  .active-pill{background:rgba(255,255,255,.18);}
-  .toolbar-item{color:rgba(255,255,255,.85);}
 }
