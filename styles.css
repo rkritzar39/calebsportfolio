@@ -1665,100 +1665,87 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	--shadow-color: rgba(0, 0, 0, 0.1);
 }
 
-/* ======================================== */
-/* == QUOTE OF THE DAY SECTION (ONYX MATCH) == */
-/* ======================================== */
-
+/* ======================== */
+/* Quote of the Day Section */
+/* ======================== */
 #quote-section {
-  position: relative;
-  width: 100%;
-  margin: 2rem 0;
-  padding: 2rem;
-  box-sizing: border-box;
-  text-align: center;
-
-  /* === ONYX GLASS EFFECT === */
   background: var(--content-bg);
-  background-image: var(--bubble-gradient);
-  background-blend-mode: overlay;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
   backdrop-filter: var(--backdrop-blur);
-  box-shadow: var(--bubble-shadow), 0 8px 24px var(--shadow-color);
-
-  color: var(--text-color);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  padding: 2.5rem 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+  text-align: center;
+  position: relative;
   overflow: hidden;
-  transition:
-    background var(--transition-medium),
-    border-color var(--transition-medium),
-    box-shadow var(--transition-medium),
-    color var(--transition-medium);
+  box-shadow: 
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
+    0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  transition: background var(--transition-medium), color var(--transition-medium);
 }
 
-/* === LIGHT REFLECTION LAYER === */
+/* Subtle top highlight (like iOS panels) */
 #quote-section::before {
   content: "";
   position: absolute;
-  inset: 0;
-  border-radius: var(--radius-lg);
-  background: var(--bubble-highlight);
-  opacity: 0.25;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0)
+  );
   pointer-events: none;
 }
 
-/* === Optional Bubble Glow Accent === */
-#quote-section::after {
-  content: "";
-  position: absolute;
-  bottom: -60px;
-  left: -60px;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  background: var(--bubble-gradient);
-  filter: blur(24px);
-  opacity: 0.25;
-  pointer-events: none;
-}
-
-/* === Section Heading === */
-#quote-section h2 {
-  font-size: 1.65rem;
-  font-weight: 700;
-  color: var(--accent-color);
-  margin-bottom: 1rem;
-  text-shadow: 0 0 8px var(--glow-color);
-}
-
-/* === Quote Text === */
-#quote-section .quote-text {
-  font-style: italic;
-  font-size: 1.15rem;
+/* Quote text */
+#quote-text {
+  font-size: 1.3rem;
+  font-weight: 500;
   color: var(--text-color);
-  line-height: var(--line-height-base);
-  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.2px;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
-/* === Author === */
-#quote-section .quote-author {
-  display: block;
-  font-size: 0.95rem;
-  color: var(--secondary-text);
+/* Author */
+#quote-author {
+  font-size: 1rem;
+  color: var(--accent-color);
+  font-weight: 600;
+  opacity: 0.9;
 }
 
-/* === Mobile Adjustments === */
-@media (max-width: 768px) {
+/* Optional fade animation */
+#quote-section {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeInQuote 0.6s ease-out forwards;
+}
+
+@keyframes fadeInQuote {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
   #quote-section {
-    padding: 1.5rem;
-    margin: 1.5rem 0;
+    padding: 1.75rem 1.25rem;
+    margin: 1.5rem;
   }
 
-  #quote-section h2 {
-    font-size: 1.45rem;
-  }
-
-  #quote-section .quote-text {
-    font-size: 1.05rem;
+  #quote-text {
+    font-size: 1.1rem;
   }
 }
 
