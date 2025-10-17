@@ -1666,11 +1666,12 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 }
 
 /* ========================================= */
-/* Quote of the Day Section (iOS 26 Styled) */
+/* Quote of the Day Section (Full Width)    */
 /* ========================================= */
 
 #quote-section {
-  /* Match other .section styles exactly */
+  /* Match other full-width .section cards */
+  width: 100%;
   background: var(--content-bg);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
@@ -1679,17 +1680,14 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   box-shadow: 
     inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
     0 25px 50px -12px var(--shadow-color);
-  padding: 24px;
-  margin-bottom: 32px;
+  padding: 32px 28px;
+  margin: 0 auto 32px auto;
   position: relative;
   overflow: hidden;
   transition: background var(--transition-medium), box-shadow var(--transition-medium);
-  max-width: 1140px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-/* Gradient highlight like other sections */
+/* Gradient top sheen, like other sections */
 #quote-section::before {
   content: "";
   position: absolute;
@@ -1720,7 +1718,7 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
-/* Author name */
+/* Author */
 #quote-author {
   text-align: center;
   font-size: 1rem;
@@ -1729,7 +1727,7 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   opacity: 0.9;
 }
 
-/* Subtle entry animation (optional) */
+/* Entry animation */
 #quote-section {
   opacity: 0;
   transform: translateY(12px);
@@ -1743,11 +1741,11 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   }
 }
 
-/* Responsive tweaks */
+/* Responsive adjustments */
 @media (max-width: 768px) {
   #quote-section {
-    padding: 20px;
-    margin: 1.5rem 1rem;
+    padding: 24px 20px;
+    border-radius: var(--radius-lg);
   }
 
   #quote-text {
