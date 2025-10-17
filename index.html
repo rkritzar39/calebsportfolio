@@ -341,27 +341,48 @@
     
     <script src="rearrange.js"></script>
 
-    <!-- iOS-Style Toolbar -->
-<nav class="ios-toolbar">
+    <!-- iOS 26 Floating Toolbar -->
+<nav class="ios-toolbar" id="ios-toolbar">
   <a href="index.html" class="toolbar-item active">
     <i class="fa-solid fa-house"></i>
+    <i class="fa-regular fa-house"></i>
     <span>Home</span>
   </a>
+
   <a href="blog.html" class="toolbar-item">
     <i class="fa-solid fa-pen-nib"></i>
+    <i class="fa-regular fa-pen-nib"></i>
     <span>Blog</span>
   </a>
-  <a href="merchandise.html" class="toolbar-item">
+
+  <a href="merch.html" class="toolbar-item">
     <i class="fa-solid fa-shirt"></i>
+    <i class="fa-regular fa-shirt"></i>
     <span>Merch</span>
   </a>
+
   <a href="settings.html" class="toolbar-item">
     <i class="fa-solid fa-gear"></i>
+    <i class="fa-regular fa-gear"></i>
     <span>Settings</span>
   </a>
 </nav>
-
+    
 <script>
+const toolbar = document.getElementById("ios-toolbar");
+let lastScrollY = window.scrollY;
+
+// Hide/show on scroll
+window.addEventListener("scroll", () => {
+  if (window.scrollY > lastScrollY && window.scrollY > 100) {
+    toolbar.classList.add("hide"); // Hide when scrolling down
+  } else {
+    toolbar.classList.remove("hide"); // Show when scrolling up
+  }
+  lastScrollY = window.scrollY;
+});
+
+// Auto-detect current page
 document.querySelectorAll('.ios-toolbar a').forEach(link => {
   if (link.href === window.location.href) {
     link.classList.add('active');
