@@ -611,98 +611,57 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 /* iOS 26 Floating Toolbar — Liquid Motion (v7.0)  */
 /* =============================================== */
 
-.ios26-toolbar {
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 92%;
-  max-width: 420px;
-  height: 65px;
-  background: rgba(255,255,255,0.55);
-  border-radius: 28px;
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid rgba(255,255,255,0.25);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 1000;
-  overflow: hidden;
-  user-select: none;
+/* === iOS 26 Toolbar (Caleb’s pages) === */
+.ios26-toolbar{
+  position:fixed; bottom:12px; left:50%; transform:translateX(-50%);
+  width:min(92%,440px); height:66px;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:0 10px; gap:6px;
+  background:rgba(255,255,255,0.86);
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border:1px solid rgba(0,0,0,0.08);
+  border-radius:28px;
+  box-shadow:0 6px 22px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.65);
+  z-index:1000; overflow:hidden; user-select:none;
 }
 
-.tab-highlight {
-  position: absolute;
-  top: 8px;
-  bottom: 8px;
-  left: 0;
-  width: 70px;
-  background: rgba(200,200,200,0.3);
-  border-radius: 20px;
-  pointer-events: none;
-  backdrop-filter: blur(10px);
-  transform-origin: center;
-  transition: all 0.35s cubic-bezier(0.25,1,0.5,1);
+.tab-highlight{
+  position:absolute; top:8px; bottom:8px; left:10px;
+  width:100px; border-radius:18px;
+  background:rgba(0,0,0,0.06);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.7);
+  transition:left .28s cubic-bezier(.25,1,.5,1),width .28s cubic-bezier(.25,1,.5,1);
+  pointer-events:none;
 }
 
-/* liquid stretching */
-.tab-highlight.stretching {
-  transition: none;
+.toolbar-item{
+  position:relative; flex:1; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:4px; text-decoration:none;
+  color:#0b0b0b; font-size:.82rem; font-weight:600;
+  transition:color .2s ease, transform .2s ease;
 }
 
-.toolbar-item {
-  position: relative;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  font-size: 0.75rem;
-  color: rgba(0,0,0,0.6);
-  transition: color 0.25s ease, transform 0.25s ease;
+.toolbar-item i{
+  font-size:1.26rem; line-height:1; color:#0b0b0b;
+  transition:color .2s ease, transform .2s ease;
 }
 
-.toolbar-item i {
-  font-size: 1.25rem;
-  margin-bottom: 3px;
-  transition: transform 0.25s ease;
-}
+.toolbar-item.active,
+.toolbar-item.drag-over{ color:var(--tint,#007aff); }
+.toolbar-item.active i,
+.toolbar-item.drag-over i{ color:var(--tint,#007aff); transform:translateY(-1px) scale(1.04); }
 
-.toolbar-item.active {
-  color: var(--active-color, #007aff);
-  transform: translateY(-2px);
-}
-.toolbar-item.active i {
-  color: var(--active-color, #007aff);
-  transform: scale(1.05);
-}
+.ios26-toolbar.hide{ transform:translate(-50%,120%); opacity:0; }
 
-.toolbar-item.drag-over {
-  color: var(--hover-color, #007aff);
-}
-.toolbar-item.drag-over i {
-  color: var(--hover-color, #007aff);
-}
-
-/* hide on scroll */
-.ios26-toolbar.hide {
-  transform: translate(-50%, 120%);
-  opacity: 0;
-}
-
-/* dark mode */
-@media (prefers-color-scheme: dark) {
-  .ios26-toolbar {
-    background: rgba(30,30,30,0.45);
-    border: 1px solid rgba(255,255,255,0.1);
+@media (prefers-color-scheme:dark){
+  .ios26-toolbar{
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.10);
+    box-shadow:0 8px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12);
   }
-  .tab-highlight {
-    background: rgba(255,255,255,0.08);
-  }
-  .toolbar-item { color: rgba(255,255,255,0.8); }
+  .tab-highlight{ background:rgba(255,255,255,0.10); }
 }
 
 /* ======================================== */
