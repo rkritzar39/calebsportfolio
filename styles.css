@@ -608,7 +608,7 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 }
 
 /* ========================================= */
-/* == iOS 26 STYLE TOOLBAR NAVIGATION (v1) == */
+/* == iOS 26 FLOATING TOOLBAR (v2.0) == */
 /* ========================================= */
 
 .ios-toolbar {
@@ -616,65 +616,92 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  max-width: 420px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-radius: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 0.6rem 0;
-  z-index: 999;
-  transition: all 0.3s ease;
+  width: 92%;
+  max-width: 420px;
+  padding: 0.65rem 0;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 30px;
+  z-index: 1000;
+  transition: transform 0.35s ease, opacity 0.35s ease;
 }
 
-.ios-toolbar .toolbar-item {
-  color: var(--text-color, #fff);
+.toolbar-item {
   text-align: center;
-  font-size: 0.8rem;
+  color: var(--text-color, #fff);
   text-decoration: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  opacity: 0.8;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 0.7;
+  font-size: 0.8rem;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  position: relative;
 }
 
-.ios-toolbar .toolbar-item i {
+.toolbar-item i {
   font-size: 1.4rem;
+  line-height: 1;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.25s ease;
 }
 
-.ios-toolbar .toolbar-item.active,
-.ios-toolbar .toolbar-item:hover {
+/* Filled (active) icon */
+.toolbar-item i.fa-solid {
+  opacity: 0;
+}
+
+/* Outline (inactive) icon */
+.toolbar-item i.fa-regular {
   opacity: 1;
-  transform: translateY(-3px);
+}
+
+/* Active state */
+.toolbar-item.active {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.toolbar-item.active i.fa-solid {
+  opacity: 1;
+}
+
+.toolbar-item.active i.fa-regular {
+  opacity: 0;
+}
+
+/* Hide/show animation */
+.ios-toolbar.hide {
+  transform: translate(-50%, 120%);
+  opacity: 0;
+}
+
+@media (prefers-color-scheme: light) {
+  .ios-toolbar {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+  .toolbar-item {
+    color: #000;
+  }
 }
 
 @media (max-width: 768px) {
   .ios-toolbar {
     width: 95%;
     bottom: 0.75rem;
-    padding: 0.5rem 0;
   }
-
-  .ios-toolbar .toolbar-item i {
+  .toolbar-item i {
     font-size: 1.2rem;
-  }
-
-  .ios-toolbar .toolbar-item span {
-    font-size: 0.7rem;
-  }
-}
-
-/* Optional: light/dark adaptation */
-@media (prefers-color-scheme: light) {
-  .ios-toolbar {
-    background: rgba(255, 255, 255, 0.45);
-    border: 1px solid rgba(0, 0, 0, 0.1);
   }
 }
 
