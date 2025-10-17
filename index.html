@@ -360,5 +360,13 @@
     <span>Settings</span>
   </a>
 </nav>
+
+<script>
+document.querySelectorAll('.ios-toolbar a').forEach(link => {
+  if (link.href === window.location.href) {
+    link.classList.add('active');
+  }
+});
+</script>
 </body>
 </html>
