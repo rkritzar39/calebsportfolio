@@ -341,52 +341,92 @@
     
     <script src="rearrange.js"></script>
 
-    <!-- iOS 26 Floating Toolbar -->
-<nav class="ios-toolbar" id="ios-toolbar">
-  <a href="index.html" class="toolbar-item active">
+    <!-- iOS 26 Beta 3 Interactive Toolbar -->
+<nav class="ios26-toolbar" id="ios26-toolbar">
+  <a href="index.html" class="toolbar-item active" data-color="#007aff">
     <i class="fa-solid fa-house"></i>
-    <i class="fa-regular fa-house"></i>
     <span>Home</span>
+    <span class="bubble"></span>
   </a>
 
-  <a href="blog.html" class="toolbar-item">
+  <a href="blog.html" class="toolbar-item" data-color="#e63946">
     <i class="fa-solid fa-pen-nib"></i>
-    <i class="fa-regular fa-pen-nib"></i>
     <span>Blog</span>
+    <span class="bubble"></span>
   </a>
 
-  <a href="merch.html" class="toolbar-item">
+  <a href="merchandise.html" class="toolbar-item" data-color="#ff9500">
     <i class="fa-solid fa-shirt"></i>
-    <i class="fa-regular fa-shirt"></i>
     <span>Merch</span>
+    <span class="bubble"></span>
   </a>
 
-  <a href="settings.html" class="toolbar-item">
+  <a href="settings.html" class="toolbar-item" data-color="#34c759">
     <i class="fa-solid fa-gear"></i>
-    <i class="fa-regular fa-gear"></i>
     <span>Settings</span>
+    <span class="bubble"></span>
   </a>
 </nav>
     
 <script>
-const toolbar = document.getElementById("ios-toolbar");
+const toolbar = document.getElementById("ios26-toolbar");
+const items = document.querySelectorAll(".toolbar-item");
 let lastScrollY = window.scrollY;
+let isDragging = false;
+let currentHover = null;
 
 // Hide/show on scroll
 window.addEventListener("scroll", () => {
   if (window.scrollY > lastScrollY && window.scrollY > 100) {
-    toolbar.classList.add("hide"); // Hide when scrolling down
+    toolbar.classList.add("hide");
   } else {
-    toolbar.classList.remove("hide"); // Show when scrolling up
+    toolbar.classList.remove("hide");
   }
   lastScrollY = window.scrollY;
 });
 
-// Auto-detect current page
-document.querySelectorAll('.ios-toolbar a').forEach(link => {
+// Highlight current page
+items.forEach(link => {
   if (link.href === window.location.href) {
-    link.classList.add('active');
+    link.classList.add("active");
+    link.style.setProperty("--active-color", link.dataset.color);
   }
+});
+
+// Press + drag behavior
+items.forEach(item => {
+  const color = item.dataset.color;
+
+  item.addEventListener("pointerdown", () => {
+    isDragging = true;
+    item.classList.add("drag-over");
+    item.style.setProperty("--hover-color", color);
+  });
+
+  item.addEventListener("pointerenter", () => {
+    if (isDragging) {
+      items.forEach(i => i.classList.remove("drag-over"));
+      item.classList.add("drag-over");
+      item.style.setProperty("--hover-color", color);
+      currentHover = item;
+    }
+  });
+
+  item.addEventListener("pointerup", () => {
+    if (currentHover) {
+      items.forEach(i => i.classList.remove("active","drag-over"));
+      currentHover.classList.add("active");
+      currentHover.style.setProperty("--active-color", currentHover.dataset.color);
+      setTimeout(() => window.location.href = currentHover.href, 150);
+    }
+    isDragging = false;
+    currentHover = null;
+  });
+
+  window.addEventListener("pointerup", () => {
+    isDragging = false;
+    items.forEach(i => i.classList.remove("drag-over"));
+  });
 });
 </script>
 </body>
