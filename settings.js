@@ -134,26 +134,49 @@ class SettingsManager {
         });
     }
 
+    updateSegmentedBackground(controlId) {
+    const control = document.getElementById(controlId);
+    if (!control) return;
+
+    let active = control.querySelector("button.active");
+    let bg = control.querySelector(".seg-bg");
+    if (!bg) {
+        bg = document.createElement("div");
+        bg.className = "seg-bg";
+        control.prepend(bg);
+    }
+
+    if (active) {
+        const rect = active.getBoundingClientRect();
+        const parentRect = control.getBoundingClientRect();
+        bg.style.left = rect.left - parentRect.left + "px";
+        bg.style.width = rect.width + "px";
+    }
+}
+
     setToggle(key) {
         const el = document.getElementById(`${key}Toggle`);
         if (el) el.checked = this.settings[key] === 'enabled';
     }
 
     setupEventListeners() {
-        ['appearanceMode', 'themeStyle'].forEach(key => {
-            const control = document.getElementById(`${key}Control`);
-            if (control) {
-                control.addEventListener('click', e => {
-                    const btn = e.target.closest('button');
-                    if (btn) {
-                        this.settings[key] = btn.dataset.value;
-                        this.applySetting(key);
-                        this.saveSettings();
-                        this.initSegmentedControl(`${key}Control`, this.settings[key]);
-                    }
-                });
+       ['appearanceMode', 'themeStyle'].forEach(key => {
+    const control = document.getElementById(`${key}Control`);
+    if (control) {
+        control.addEventListener('click', e => {
+            const btn = e.target.closest('button');
+            if (btn) {
+                this.settings[key] = btn.dataset.value;
+                this.applySetting(key);
+                this.saveSettings();
+                this.initSegmentedControl(`${key}Control`, this.settings[key]);
+                this.updateSegmentedBackground(`${key}Control`); // <-- make the capsule slide
             }
         });
+        // run once on page load to position the capsule
+        this.updateSegmentedBackground(`${key}Control`);
+    }
+});
 
         const accentPicker = document.getElementById('accentColorPicker');
         if (accentPicker) {
