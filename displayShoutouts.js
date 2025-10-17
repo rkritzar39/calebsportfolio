@@ -1430,39 +1430,52 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
-async function loadQuoteOfTheDay() {
+/* =============================================== */
+/* == QUOTE OF THE DAY SECTION (AUTO REFRESH) == */
+/* =============================================== */
+async function loadQuoteOfTheDay(forceRefresh = false) {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   const quoteSection = document.getElementById("quote-section");
   if (!quoteSection) return;
 
   const showQuote = settings.showQuoteSection === "enabled";
-  const rearrangingEnabled = settings.rearrangingEnabled === "enabled";
 
-  // Show or hide the section
-  quoteSection.style.display = showQuote ? "" : "none";
+  // Show/hide the section based on settings
+  if (!showQuote) {
+    quoteSection.style.display = "none";
+    return;
+  } else {
+    quoteSection.style.display = "";
+  }
 
-  // Only proceed if visible
-  if (!showQuote) return;
-
-  // --- Load cached or new quote ---
+  // Target elements
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
+
+  // Load cached quote info
   const lastQuote = localStorage.getItem("quoteOfTheDay");
   const lastFetched = localStorage.getItem("quoteFetchedAt");
   const now = new Date();
+  const today = now.toDateString();
+  const lastDate = lastFetched ? new Date(lastFetched).toDateString() : null;
 
-  if (lastQuote && lastFetched && now - new Date(lastFetched) < 86400000) {
+  // Use cached quote if same day and no force refresh
+  if (!forceRefresh && lastQuote && lastDate === today) {
     const { content, author } = JSON.parse(lastQuote);
     quoteText.textContent = `"${content}"`;
     quoteAuthor.textContent = `— ${author}`;
     return;
   }
 
+  // Otherwise, fetch a new one
   try {
     const res = await fetch("https://api.quotable.io/random");
     const data = await res.json();
+
     quoteText.textContent = `"${data.content}"`;
     quoteAuthor.textContent = `— ${data.author}`;
+
+    // Save to localStorage
     localStorage.setItem("quoteOfTheDay", JSON.stringify(data));
     localStorage.setItem("quoteFetchedAt", now.toISOString());
   } catch {
@@ -1471,12 +1484,29 @@ async function loadQuoteOfTheDay() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
-window.addEventListener("storage", (e) => {
-  if (e.key === "websiteSettings") loadQuoteOfTheDay();
+/* === Helper: Schedule auto-refresh exactly at midnight === */
+function scheduleNextQuoteRefresh() {
+  const now = new Date();
+  const next = new Date();
+  next.setHours(24, 0, 0, 0); // next midnight
+  const msUntilMidnight = next - now;
+
+  setTimeout(() => {
+    loadQuoteOfTheDay(true);
+    scheduleNextQuoteRefresh(); // re-schedule for the next day
+  }, msUntilMidnight);
+}
+
+/* === Run on page load === */
+document.addEventListener("DOMContentLoaded", () => {
+  loadQuoteOfTheDay();
+  scheduleNextQuoteRefresh();
 });
 
-
+/* === Update immediately if settings change === */
+window.addEventListener("storage", (e) => {
+  if (e.key === "websiteSettings") loadQuoteOfTheDay(true);
+});
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
 // ======================================================
