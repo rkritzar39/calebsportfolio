@@ -342,8 +342,9 @@
     <script src="rearrange.js"></script>
 
 <!-- iOS 26 Floating Toolbar -->
+<!-- iOS 26 Floating Toolbar -->
 <nav class="ios26-toolbar" id="ios26-toolbar">
-  <div class="tab-highlight" id="tab-highlight" aria-hidden="true"></div>
+  <div class="active-pill" id="active-pill" aria-hidden="true"></div>
 
   <a href="index.html" class="toolbar-item" data-color="#007aff">
     <i class="fa-solid fa-house"></i>
@@ -367,55 +368,73 @@
 </nav>
     
 <script>
-const bar=document.getElementById('ios26-toolbar');
-const items=[...bar.querySelectorAll('.toolbar-item')];
-const cap=document.getElementById('tab-highlight');
+const bar = document.getElementById("ios26-toolbar");
+const items = [...bar.querySelectorAll(".toolbar-item")];
+const pill = document.getElementById("active-pill");
 
-let current=items.find(i=>i.href===location.href)||items[0];
-let dragging=false,lastY=window.scrollY;
+let active = items.find(i => i.href === location.href) || items[0];
+let dragging = false, lastY = window.scrollY;
 
-function tint(el){el.style.setProperty('--tint',el.dataset.color);}
-function moveCap(el,opt={stretch:1,instant:false}){
-  const pr=bar.getBoundingClientRect(),r=el.getBoundingClientRect();
-  const w=Math.max(86,Math.min(128,r.width+12))*(opt.stretch||1);
-  const left=r.left-pr.left+(r.width-w)/2;
-  if(opt.instant)cap.style.transition='none';
-  cap.style.left=`${left}px`;cap.style.width=`${w}px`;
-  if(opt.instant)requestAnimationFrame(()=>cap.style.transition='left .28s cubic-bezier(.25,1,.5,1),width .28s cubic-bezier(.25,1,.5,1)');
+function tint(el){ el.style.setProperty("--tint", el.dataset.color); }
+function movePill(el, stretch = 1, instant = false){
+  const r = el.getBoundingClientRect();
+  const p = bar.getBoundingClientRect();
+  const w = Math.max(90, Math.min(120, r.width + 14)) * stretch;
+  const x = r.left - p.left + (r.width - w)/2;
+  if(instant) pill.style.transition = "none";
+  pill.style.left = `${x}px`;
+  pill.style.width = `${w}px`;
+  if(instant)
+    requestAnimationFrame(() => pill.style.transition =
+      "left .35s cubic-bezier(.25,1,.5,1), width .35s cubic-bezier(.25,1,.5,1), background 0.3s ease");
 }
-items.forEach(tint);moveCap(current,{instant:true});current.classList.add('active');
 
-window.addEventListener('scroll',()=>{
-  if(window.scrollY>lastY&&window.scrollY>100)bar.classList.add('hide');
-  else bar.classList.remove('hide');lastY=window.scrollY;
+/* Initialize */
+items.forEach(tint);
+active.classList.add("active");
+movePill(active, 1, true);
+
+/* Hide toolbar on scroll */
+window.addEventListener("scroll", () => {
+  if(window.scrollY > lastY && window.scrollY > 100)
+    bar.classList.add("hide");
+  else bar.classList.remove("hide");
+  lastY = window.scrollY;
 });
 
-items.forEach(item=>{
-  item.addEventListener('pointerdown',()=>{
-    dragging=true;items.forEach(i=>i.classList.remove('drag-over'));
-    item.classList.add('drag-over');moveCap(item,{stretch:1.15,instant:true});
+/* Press & drag */
+items.forEach(item => {
+  item.addEventListener("pointerdown", () => {
+    dragging = true;
+    items.forEach(i => i.classList.remove("drag-over"));
+    item.classList.add("drag-over");
+    movePill(item, 1.1, true);
   });
-  item.addEventListener('pointerenter',()=>{
-    if(!dragging)return;
-    items.forEach(i=>i.classList.remove('drag-over'));
-    item.classList.add('drag-over');moveCap(item,{stretch:1.18,instant:true});
+  item.addEventListener("pointerenter", () => {
+    if(!dragging) return;
+    items.forEach(i => i.classList.remove("drag-over"));
+    item.classList.add("drag-over");
+    movePill(item, 1.15, true);
   });
-  item.addEventListener('pointerup',finalize);
+  item.addEventListener("pointerup", finalize);
 });
-window.addEventListener('pointermove',e=>{
-  if(!dragging)return;
-  const stretch=1+Math.min(Math.abs(e.movementX)/18,0.35);
-  moveCap(document.querySelector('.toolbar-item.drag-over')||current,{stretch,instant:true});
+window.addEventListener("pointermove", e => {
+  if(!dragging) return;
+  const stretch = 1 + Math.min(Math.abs(e.movementX)/20, 0.3);
+  movePill(document.querySelector(".toolbar-item.drag-over") || active, stretch, true);
 });
-window.addEventListener('pointerup',finalize);
+window.addEventListener("pointerup", finalize);
 
 function finalize(){
-  if(!dragging)return;dragging=false;
-  const target=document.querySelector('.toolbar-item.drag-over')||current;
-  items.forEach(i=>i.classList.remove('drag-over','active'));
-  target.classList.add('active');current=target;
-  moveCap(current,{stretch:1});tint(current);
-  setTimeout(()=>location.href=current.href,160);
+  if(!dragging) return;
+  dragging = false;
+  const target = document.querySelector(".toolbar-item.drag-over") || active;
+  items.forEach(i => i.classList.remove("drag-over","active"));
+  target.classList.add("active");
+  active = target;
+  movePill(active, 1);
+  tint(active);
+  setTimeout(() => location.href = active.href, 160);
 }
 </script>
 </body>
