@@ -1436,83 +1436,101 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
 async function loadQuoteOfTheDay() {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   const quoteSection = document.getElementById("quote-section");
-  if (!quoteSection) return; // Exit if the quote section element doesn't exist
+  if (!quoteSection) return;
 
-  // Check if the setting allows showing the quote section
-  const showQuote = settings.showQuoteSection === "enabled";
-  quoteSection.style.display = showQuote ? "" : "none"; // Show or hide based on setting
-  if (!showQuote) return; // Exit if setting says to hide it
+  // Show by default unless explicitly disabled
+  const showQuote =
+    settings.showQuoteSection === "enabled" ||
+    settings.showQuoteSection === undefined ||
+    settings.showQuoteSection === null;
+  quoteSection.style.display = showQuote ? "" : "none";
+  if (!showQuote) return;
 
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
+  if (!quoteText || !quoteAuthor) return;
 
-  // Ensure text and author elements exist
-  if (!quoteText || !quoteAuthor) {
-      console.error("Quote text or author element not found.");
-      return;
-  }
-
-  const now = new Date();
-  const today = now.toDateString(); // Get date string like "Sat Oct 18 2025"
-
+  const today = new Date().toDateString();
   const storedDate = localStorage.getItem("quoteDate");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
-  // If we already have a quote stored for today, use it
+  // Use today's cached quote if present
   if (storedDate === today && storedQuote) {
     try {
-        const { content, author } = JSON.parse(storedQuote);
-        quoteText.textContent = `"${content}"`;
-        quoteAuthor.textContent = `— ${author}`;
-        console.log("Loaded quote from localStorage for today.");
-        return; // Successfully loaded from storage, exit
-    } catch (e) {
-        console.error("Error parsing stored quote, attempting to fetch new one.", e);
-        // Clear potentially corrupted stored data
-        localStorage.removeItem("quoteOfTheDay");
-        localStorage.removeItem("quoteDate");
+      const { content, author } = JSON.parse(storedQuote);
+      quoteText.textContent = `“${content}”`;
+      quoteAuthor.textContent = `— ${author || "Unknown"}`;
+      return;
+    } catch {}
+  }
+
+  // Deterministic fallback list (rotates daily even if offline)
+  const localQuotes = [
+    { content: "Keep going — great things take time.", author: "Unknown" },
+    { content: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
+    { content: "The best way out is always through.", author: "Robert Frost" },
+    { content: "What you do every day matters more than what you do once in a while.", author: "Gretchen Rubin" },
+    { content: "Do the best you can until you know better. Then when you know better, do better.", author: "Maya Angelou" },
+    { content: "If you’re going through hell, keep going.", author: "Winston Churchill" },
+    { content: "Dream big. Start small. Act now.", author: "Robin Sharma" },
+    { content: "Action is the foundational key to all success.", author: "Pablo Picasso" },
+    { content: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Will Durant" },
+    { content: "Little by little, one travels far.", author: "J.R.R. Tolkien" }
+  ];
+
+  function hashCode(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+    return h;
+  }
+
+  async function fetchWithTimeout(url, timeout = 5000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    try {
+      const res = await fetch(url, { signal: controller.signal, headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res;
+    } finally {
+      clearTimeout(id);
     }
   }
 
-  // If no valid quote for today is stored, fetch a new one
-  console.log("Fetching new quote of the day...");
-  quoteText.textContent = "Loading inspiration..."; // Show loading state
-  quoteAuthor.textContent = "";
+  let chosen = null;
+
+  // 1) Primary source: Quotable
   try {
-    const res = await fetch("https://api.quotable.io/random");
-    // Check if the response was successful
-    if (!res.ok) {
-        // Throw an error with the status text if fetch failed
-        throw new Error(`Failed to fetch quote: ${res.status} ${res.statusText}`);
-    }
+    const res = await fetchWithTimeout("https://api.quotable.io/random", 5000);
     const data = await res.json();
-    // Update the page with the new quote
-    quoteText.textContent = `"${data.content}"`;
-    quoteAuthor.textContent = `— ${data.author}`;
+    chosen = { content: data.content, author: data.author || "Unknown" };
+  } catch {
+    // 2) Backup: type.fit (large static list) — pick deterministic entry for today
+    try {
+      const res2 = await fetchWithTimeout("https://type.fit/api/quotes", 6000);
+      const list = await res2.json();
+      const idx = Math.abs(hashCode(today)) % (Array.isArray(list) ? list.length : localQuotes.length);
+      const item = Array.isArray(list) && list[idx] ? list[idx] : localQuotes[idx % localQuotes.length];
+      chosen = {
+        content: (item.text || item.content || "Keep going — great things take time."),
+        author: (item.author && typeof item.author === "string"
+                  ? item.author.replace(/,\s*type\.fit$/i, "")
+                  : "Unknown")
+      };
+    } catch {
+      // 3) Final fallback: rotate from local list
+      const idx2 = Math.abs(hashCode(today)) % localQuotes.length;
+      chosen = localQuotes[idx2];
+    }
+  }
 
-    // Store the new quote and today's date in localStorage
-    localStorage.setItem("quoteOfTheDay", JSON.stringify(data));
+  // Render + cache for the day (even on fallback)
+  if (chosen) {
+    quoteText.textContent = `“${chosen.content}”`;
+    quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
+    localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
     localStorage.setItem("quoteDate", today);
-    console.log("Successfully fetched and stored new quote.");
-
-  } catch (error) {
-    // If fetching fails, log the error and display the fallback quote
-    console.error("Error fetching quote:", error);
-    quoteText.textContent = `"Keep going — great things take time."`;
-    quoteAuthor.textContent = "— Unknown";
   }
 }
-
-// Load the quote when the page content is ready
-document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
-
-// Reload the quote if the settings change (e.g., if the user toggles the section visibility)
-window.addEventListener("storage", (e) => {
-  if (e.key === "websiteSettings") {
-      console.log("Settings changed, reloading quote of the day section visibility/content.");
-      loadQuoteOfTheDay();
-  }
-});
 
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
