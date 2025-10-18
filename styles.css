@@ -1684,6 +1684,14 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   overflow: hidden;
 }
 
+.quote-date {
+  color: var(--text-color);
+  font-size: 0.9em;
+  opacity: 0.75;
+  margin-top: -4px;
+  margin-bottom: 10px;
+}
+
 /* Header */
 #quote-section h2 {
   color: var(--text-color);
