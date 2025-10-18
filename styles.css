@@ -1682,30 +1682,34 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   transition: background var(--transition-medium), box-shadow var(--transition-medium);
   position: relative;
   overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInQuote 0.6s ease-out forwards;
 }
 
-/* Date (Centered & Styled to Match iOS Widget Look) */
+/* Accent-matched date */
 .quote-date {
   text-align: center;
-  color: var(--text-color);
+  color: var(--accent-color); /* 🌈 matches accent color */
   font-size: 0.95rem;
   font-weight: 500;
-  opacity: 0.75;
+  opacity: 0.9;
   margin-top: 4px;
   margin-bottom: 14px;
   letter-spacing: 0.2px;
-  transition: opacity 0.3s ease;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.05),
+               0 0 8px rgba(255, 255, 255, 0.06);
   animation: fadeInQuote 0.6s ease-out forwards;
 }
 
 /* Header */
 #quote-section h2 {
-  color: var(--text-color);
+  color: var(--accent-color); /* 🌈 matches accent color */
   font-size: 1.35em;
   font-weight: 700;
   margin-bottom: 18px;
   padding-bottom: 12px;
-  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1741,19 +1745,7 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   opacity: 0.9;
 }
 
-/* Hover & animation */
-#quote-section {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeInQuote 0.6s ease-out forwards;
-}
-
-#quote-section:hover {
-  box-shadow: 0 12px 30px color-mix(in srgb, var(--shadow-color) 40%, transparent),
-              var(--bubble-highlight);
-  transform: translateY(-2px);
-}
-
+/* Animation */
 @keyframes fadeInQuote {
   to {
     opacity: 1;
@@ -1773,6 +1765,7 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   #quote-section h2 { font-size: 1.1em; }
   .quote-text { font-size: 1rem; }
 }
+
 
 /* ======================== */
 /* Countdown Section - Final Themed Version */
