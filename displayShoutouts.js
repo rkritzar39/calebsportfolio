@@ -1448,9 +1448,20 @@ async function loadQuoteOfTheDay() {
 
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
+  const quoteDateEl = document.getElementById("quote-date"); // ✅ new date element
   if (!quoteText || !quoteAuthor) return;
 
-  const today = new Date().toDateString();
+  // 🗓️ Display today's date nicely formatted
+  const now = new Date();
+  const formattedDate = now.toLocaleDateString(undefined, {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+  if (quoteDateEl) quoteDateEl.textContent = formattedDate;
+
+  const today = now.toDateString();
   const storedDate = localStorage.getItem("quoteDate");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
@@ -1500,7 +1511,7 @@ async function loadQuoteOfTheDay() {
   let chosen = null;
 
   try {
-    // Try Quotable API
+    // Primary source: Quotable API
     const res = await fetchWithTimeout("https://api.quotable.io/random", 5000);
     const data = await res.json();
     chosen = { content: data.content, author: data.author || "Unknown" };
