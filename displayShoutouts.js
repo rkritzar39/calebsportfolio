@@ -1,124 +1,121 @@
 // displayShoutouts.js
+// ====================================================
+// ✅ Use existing Firebase instance (no re-initialization)
+// ====================================================
 
-// Use the same Firebase config as in admin.js (Ensure this is correct)
-const firebaseConfig = {
-    apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0", // Use your actual API key
-    authDomain: "busarmydudewebsite.firebaseapp.com",
-    projectId: "busarmydudewebsite",
-    storageBucket: "busarmydudewebsite.firebasestorage.app",
-    messagingSenderId: "42980404680",
-    appId: "1:42980404680:web:f4f1e54789902a4295e4fd",
-    measurementId: "G-DQPH8YL789" // Optional
-};
+// Import the initialized Firebase app and Firestore from firebase-init.js
+import { app, db } from "./firebase-init.js";
 
-// Import necessary Firebase functions (v9+ modular SDK)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+// Import only the Firestore utilities you need (no initializeApp here)
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  Timestamp,
+  orderBy,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
-
+// ====================================================
+// 🔹 loadAndDisplayLegislation Function (unchanged logic)
+// ====================================================
 async function loadAndDisplayLegislation() {
-    const legislationList = document.getElementById('legislation-list');
-    if (!legislationList) return;
+  const legislationList = document.getElementById("legislation-list");
+  if (!legislationList) return;
 
-    legislationList.innerHTML = '<p>Loading active legislation...</p>';
-    const legislationCollectionRef = collection(db, "legislation");
+  legislationList.innerHTML = "<p>Loading active legislation...</p>";
+  const legislationCollectionRef = collection(db, "legislation");
 
-    try {
-        const q = query(legislationCollectionRef, orderBy("order", "asc"));
-        const querySnapshot = await getDocs(q);
+  try {
+    const q = query(legislationCollectionRef, orderBy("order", "asc"));
+    const querySnapshot = await getDocs(q);
 
-        legislationList.innerHTML = '';
-        if (querySnapshot.empty) {
-            legislationList.innerHTML = '<p>No bills are currently being tracked.</p>';
-        } else {
-            querySnapshot.forEach(doc => {
-                const item = doc.data();
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'legislation-item';
+    legislationList.innerHTML = "";
+    if (querySnapshot.empty) {
+      legislationList.innerHTML = "<p>No bills are currently being tracked.</p>";
+    } else {
+      querySnapshot.forEach((doc) => {
+        const item = doc.data();
+        const itemDiv = document.createElement("div");
+        itemDiv.className = "legislation-item";
 
-                const status = item.status || {};
-                const steps = [
-                    { key: 'introduced', label: 'Introduced', completed: status.introduced },
-                    { key: 'passedHouse', label: 'Passed House', completed: status.passedHouse },
-                    { key: 'passedSenate', label: 'Passed Senate', completed: status.passedSenate },
-                    { key: 'toPresident', label: 'To President', completed: status.toPresident },
-                    { key: 'becameLaw', label: 'Became Law', completed: status.becameLaw },
-                ];
-                
-                // Find the index of the current (most recent) step
-                const currentIndex = steps.map(s => s.completed).lastIndexOf(true);
-                
-                // Generate the HTML for the vertical steps
-                let stepsHtml = '';
-                steps.forEach((step, index) => {
-                    let stepClass = '';
-                    if (step.completed) {
-                        stepClass = 'completed';
-                    }
-                    // The last completed step is the "current" one
-                    if (index === currentIndex) {
-                        stepClass += ' current';
-                    }
-                    
-                    stepsHtml += `
-                        <li class="progress-step-vertical ${stepClass}">
-                            <div class="step-dot"></div>
-                            <div class="step-details">
-                                <span class="step-label">${step.label}</span>
-                            </div>
-                        </li>
-                    `;
-                });
+        const status = item.status || {};
+        const steps = [
+          { key: "introduced", label: "Introduced", completed: status.introduced },
+          { key: "passedHouse", label: "Passed House", completed: status.passedHouse },
+          { key: "passedSenate", label: "Passed Senate", completed: status.passedSenate },
+          { key: "toPresident", label: "To President", completed: status.toPresident },
+          { key: "becameLaw", label: "Became Law", completed: status.becameLaw },
+        ];
 
-                // This is the new two-column HTML structure
-                itemDiv.innerHTML = `
-                    <div class="bill-info">
-                        <div class="bill-header">
-                            <span class="bill-id">${item.billId || 'N/A'}</span>
-                            <h4>${item.title || 'No Title'}</h4>
-                        </div>
-                        <div class="bill-details">
-                            <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'}<br>
-                               <strong>Introduced:</strong> ${item.date || 'N/A'}
-                            </p>
-                        </div>
-                        <p class="bill-summary">${item.description || 'A summary is in progress.'}</p>
-                        ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
-                    </div>
-                    <div class="bill-progress">
-                        <ol class="progress-tracker-vertical">
-                            ${stepsHtml}
-                        </ol>
-                    </div>
-                `;
-                legislationList.appendChild(itemDiv);
-            });
-        }
-    } catch (error) {
-        console.error("Error loading legislation for display:", error);
-        legislationList.innerHTML = '<p class="error">Could not load legislation data.</p>';
+        const currentIndex = steps.map((s) => s.completed).lastIndexOf(true);
+        let stepsHtml = "";
+        steps.forEach((step, index) => {
+          let stepClass = step.completed ? "completed" : "";
+          if (index === currentIndex) stepClass += " current";
+          stepsHtml += `
+            <li class="progress-step-vertical ${stepClass}">
+              <div class="step-dot"></div>
+              <div class="step-details">
+                <span class="step-label">${step.label}</span>
+              </div>
+            </li>
+          `;
+        });
+
+        itemDiv.innerHTML = `
+          <div class="bill-info">
+            <div class="bill-header">
+              <span class="bill-id">${item.billId || "N/A"}</span>
+              <h4>${item.title || "No Title"}</h4>
+            </div>
+            <div class="bill-details">
+              <p><strong>Sponsor:</strong> ${item.sponsor || "N/A"}<br>
+                 <strong>Introduced:</strong> ${item.date || "N/A"}
+              </p>
+            </div>
+            <p class="bill-summary">${item.description || "A summary is in progress."}</p>
+            ${
+              item.url
+                ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>`
+                : ""
+            }
+          </div>
+          <div class="bill-progress">
+            <ol class="progress-tracker-vertical">
+              ${stepsHtml}
+            </ol>
+          </div>
+        `;
+        legislationList.appendChild(itemDiv);
+      });
     }
+  } catch (error) {
+    console.error("Error loading legislation for display:", error);
+    legislationList.innerHTML = '<p class="error">Could not load legislation data.</p>';
+  }
 }
 
-// --- Initialize Firebase ---
-let db;
-let firebaseAppInitialized = false;
-// Declare references in module scope
-let profileDocRef; 
+// ====================================================
+// 🔹 Firestore References & Globals
+// ====================================================
+let profileDocRef;
 let presidentDocRef;
 let usefulLinksCollectionRef;
 let socialLinksCollectionRef;
 let disabilitiesCollectionRef;
 let techItemsCollectionRef;
-let shoutoutsMetaRef; 
+let shoutoutsMetaRef;
 let faqsCollectionRef;
-let businessDocRef; 
-let postsCollectionRef; // 🔥 declare this too
+let businessDocRef;
+let postsCollectionRef;
 
-// --- NEW: Module-level variables to store all creator data for searching ---
-let allTikTokCreators = [], allInstagramCreators = [], allYouTubeCreators = [];
-
+// --- Data arrays for creators ---
+let allTikTokCreators = [];
+let allInstagramCreators = [];
+let allYouTubeCreators = [];
 
 try {
     const app = initializeApp(firebaseConfig);
