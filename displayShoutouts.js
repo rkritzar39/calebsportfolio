@@ -1431,14 +1431,14 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
 /* =============================================== */
-/* == QUOTE OF THE DAY SECTION (AUTO REFRESH) == */
+/* == QUOTE OF THE DAY SECTION (FINAL VERSION) == */
 /* =============================================== */
+
 async function loadQuoteOfTheDay() {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   const quoteSection = document.getElementById("quote-section");
   if (!quoteSection) return;
 
-  // Show by default unless explicitly disabled
   const showQuote =
     settings.showQuoteSection === "enabled" ||
     settings.showQuoteSection === undefined ||
@@ -1454,17 +1454,18 @@ async function loadQuoteOfTheDay() {
   const storedDate = localStorage.getItem("quoteDate");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
-  // Use today's cached quote if present
+  // ✅ Use cached quote if it’s from today
   if (storedDate === today && storedQuote) {
     try {
       const { content, author } = JSON.parse(storedQuote);
       quoteText.textContent = `“${content}”`;
       quoteAuthor.textContent = `— ${author || "Unknown"}`;
       return;
-    } catch {}
+    } catch (err) {
+      console.warn("Cached quote parse failed:", err);
+    }
   }
 
-  // Deterministic fallback list (rotates daily even if offline)
   const localQuotes = [
     { content: "Keep going — great things take time.", author: "Unknown" },
     { content: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
@@ -1498,32 +1499,31 @@ async function loadQuoteOfTheDay() {
 
   let chosen = null;
 
-  // 1) Primary source: Quotable
   try {
+    // Try Quotable API
     const res = await fetchWithTimeout("https://api.quotable.io/random", 5000);
     const data = await res.json();
     chosen = { content: data.content, author: data.author || "Unknown" };
   } catch {
-    // 2) Backup: type.fit (large static list) — pick deterministic entry for today
     try {
+      // Fallback: type.fit
       const res2 = await fetchWithTimeout("https://type.fit/api/quotes", 6000);
       const list = await res2.json();
       const idx = Math.abs(hashCode(today)) % (Array.isArray(list) ? list.length : localQuotes.length);
       const item = Array.isArray(list) && list[idx] ? list[idx] : localQuotes[idx % localQuotes.length];
       chosen = {
-        content: (item.text || item.content || "Keep going — great things take time."),
+        content: item.text || item.content || "Keep going — great things take time.",
         author: (item.author && typeof item.author === "string"
                   ? item.author.replace(/,\s*type\.fit$/i, "")
                   : "Unknown")
       };
     } catch {
-      // 3) Final fallback: rotate from local list
+      // Final fallback
       const idx2 = Math.abs(hashCode(today)) % localQuotes.length;
       chosen = localQuotes[idx2];
     }
   }
 
-  // Render + cache for the day (even on fallback)
   if (chosen) {
     quoteText.textContent = `“${chosen.content}”`;
     quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
@@ -1531,6 +1531,11 @@ async function loadQuoteOfTheDay() {
     localStorage.setItem("quoteDate", today);
   }
 }
+
+/* === Run automatically when the page finishes loading === */
+document.addEventListener("DOMContentLoaded", () => {
+  loadQuoteOfTheDay();
+});
 
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
