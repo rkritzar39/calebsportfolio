@@ -1431,165 +1431,88 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
 /* =============================================== */
-/* == QUOTE OF THE DAY SECTION (AUTO REFRESH) ==  */
+/* == QUOTE OF THE DAY SECTION (AUTO REFRESH) == */
 /* =============================================== */
+async function loadQuoteOfTheDay() {
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const quoteSection = document.getElementById("quote-section");
+  if (!quoteSection) return; // Exit if the quote section element doesn't exist
 
-(function () {
-  const SETTINGS_KEY = "websiteSettings";
-  const QOD_DATE_KEY = "quoteDate";        // stored as YYYY-MM-DD (local)
-  const QOD_DATA_KEY = "quoteOfTheDay";    // { content, author }
+  // Check if the setting allows showing the quote section
+  const showQuote = settings.showQuoteSection === "enabled";
+  quoteSection.style.display = showQuote ? "" : "none"; // Show or hide based on setting
+  if (!showQuote) return; // Exit if setting says to hide it
 
-  const SECTION_ID = "quote-section";
-  const TEXT_ID = "quote-text";
-  const AUTHOR_ID = "quote-author";
+  const quoteText = document.getElementById("quote-text");
+  const quoteAuthor = document.getElementById("quote-author");
 
-  // ---- Helpers ----
-  const getLocalISODate = (d = new Date()) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`; // stable, locale-independent
-  };
-
-  const isQuoteEnabled = () => {
-    try {
-      const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
-      return s.showQuoteSection === "enabled";
-    } catch {
-      return true;
-    }
-  };
-
-  const displayQuote = (q) => {
-    const quoteText = document.getElementById(TEXT_ID);
-    const quoteAuthor = document.getElementById(AUTHOR_ID);
-    if (!quoteText || !quoteAuthor) return;
-
-    const content = q?.content || "Keep going — great things take time.";
-    const author = q?.author || "Unknown";
-
-    quoteText.textContent = `“${content}”`;
-    quoteAuthor.textContent = `— ${author}`;
-  };
-
-  const readStored = () => {
-    const date = localStorage.getItem(QOD_DATE_KEY);
-    let data = null;
-    try {
-      data = JSON.parse(localStorage.getItem(QOD_DATA_KEY) || "null");
-    } catch { /* ignore */ }
-    return { date, data };
-  };
-
-  const saveStored = (date, data) => {
-    localStorage.setItem(QOD_DATE_KEY, date);
-    localStorage.setItem(QOD_DATA_KEY, JSON.stringify({
-      content: data.content,
-      author: data.author
-    }));
-  };
-
-  async function fetchQuoteWithTimeout(ms = 8000) {
-    const ctrl = new AbortController();
-    const to = setTimeout(() => ctrl.abort(), ms);
-    try {
-      const res = await fetch("https://api.quotable.io/random", {
-        signal: ctrl.signal,
-        cache: "no-store"
-      });
-      if (!res.ok) throw new Error("Bad response");
-      const json = await res.json();
-      return { content: json.content, author: json.author };
-    } finally {
-      clearTimeout(to);
-    }
-  }
-
-  async function refreshQuoteIfNeeded({ force = false } = {}) {
-    const section = document.getElementById(SECTION_ID);
-    if (!section) return;
-
-    // Show/hide based on settings
-    const enabled = isQuoteEnabled();
-    section.style.display = enabled ? "" : "none";
-    if (!enabled) return;
-
-    const today = getLocalISODate();
-    const { date: storedDate, data: storedData } = readStored();
-
-    // Use today's cached quote unless forcing a refresh
-    if (!force && storedDate === today && storedData) {
-      displayQuote(storedData);
+  // Ensure text and author elements exist
+  if (!quoteText || !quoteAuthor) {
+      console.error("Quote text or author element not found.");
       return;
-    }
+  }
 
-    // Fetch and cache a fresh quote for today
+  const now = new Date();
+  const today = now.toDateString(); // Get date string like "Sat Oct 18 2025"
+
+  const storedDate = localStorage.getItem("quoteDate");
+  const storedQuote = localStorage.getItem("quoteOfTheDay");
+
+  // If we already have a quote stored for today, use it
+  if (storedDate === today && storedQuote) {
     try {
-      const q = await fetchQuoteWithTimeout();
-      displayQuote(q);
-      saveStored(today, q);
-    } catch {
-      // If fetch fails, keep previous if present; otherwise show default
-      if (storedData) {
-        displayQuote(storedData);
-      } else {
-        displayQuote(null);
-      }
+        const { content, author } = JSON.parse(storedQuote);
+        quoteText.textContent = `"${content}"`;
+        quoteAuthor.textContent = `— ${author}`;
+        console.log("Loaded quote from localStorage for today.");
+        return; // Successfully loaded from storage, exit
+    } catch (e) {
+        console.error("Error parsing stored quote, attempting to fetch new one.", e);
+        // Clear potentially corrupted stored data
+        localStorage.removeItem("quoteOfTheDay");
+        localStorage.removeItem("quoteDate");
     }
   }
 
-  function scheduleMidnightRefresh() {
-    const now = new Date();
-    const nextMidnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1,
-      0, 0, 0, 0
-    );
-    const ms = nextMidnight.getTime() - now.getTime() + 1000; // +1s cushion
-    setTimeout(async () => {
-      await refreshQuoteIfNeeded({ force: true });
-      scheduleMidnightRefresh(); // schedule the following day
-    }, ms);
-  }
-
-  // Public entry (keeps your original name)
-  async function loadQuoteOfTheDay() {
-    await refreshQuoteIfNeeded();
-  }
-
-  // ---- Event wiring ----
-  document.addEventListener("DOMContentLoaded", async () => {
-    await loadQuoteOfTheDay();
-    scheduleMidnightRefresh();
-  });
-
-  // Sync changes across tabs/windows
-  window.addEventListener("storage", (e) => {
-    if (
-      e.key === SETTINGS_KEY ||
-      e.key === QOD_DATE_KEY ||
-      e.key === QOD_DATA_KEY
-    ) {
-      // Re-render with whatever is current (settings or quote)
-      refreshQuoteIfNeeded();
+  // If no valid quote for today is stored, fetch a new one
+  console.log("Fetching new quote of the day...");
+  quoteText.textContent = "Loading inspiration..."; // Show loading state
+  quoteAuthor.textContent = "";
+  try {
+    const res = await fetch("https://api.quotable.io/random");
+    // Check if the response was successful
+    if (!res.ok) {
+        // Throw an error with the status text if fetch failed
+        throw new Error(`Failed to fetch quote: ${res.status} ${res.statusText}`);
     }
-  });
+    const data = await res.json();
+    // Update the page with the new quote
+    quoteText.textContent = `"${data.content}"`;
+    quoteAuthor.textContent = `— ${data.author}`;
 
-  // If the tab wakes after midnight, refresh once
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      const today = getLocalISODate();
-      const { date } = readStored();
-      if (date !== today) {
-        refreshQuoteIfNeeded({ force: true });
-      }
-    }
-  });
+    // Store the new quote and today's date in localStorage
+    localStorage.setItem("quoteOfTheDay", JSON.stringify(data));
+    localStorage.setItem("quoteDate", today);
+    console.log("Successfully fetched and stored new quote.");
 
-  // Expose the function name you already call elsewhere (optional)
-  window.loadQuoteOfTheDay = loadQuoteOfTheDay;
-})();
+  } catch (error) {
+    // If fetching fails, log the error and display the fallback quote
+    console.error("Error fetching quote:", error);
+    quoteText.textContent = `"Keep going — great things take time."`;
+    quoteAuthor.textContent = "— Unknown";
+  }
+}
+
+// Load the quote when the page content is ready
+document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
+
+// Reload the quote if the settings change (e.g., if the user toggles the section visibility)
+window.addEventListener("storage", (e) => {
+  if (e.key === "websiteSettings") {
+      console.log("Settings changed, reloading quote of the day section visibility/content.");
+      loadQuoteOfTheDay();
+  }
+});
 
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
