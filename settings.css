@@ -885,20 +885,20 @@ body.dark-mode #themeModeSelect:hover {
   background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
 }
 
-/* ======================================================= */
-/* === Custom Background Upload – iOS-26 Glass Capsule === */
-/* ======================================================= */
+/* ============================================ */
+/* == Custom Background Upload (Left Aligned) == */
+/* ============================================ */
 .custom-bg-controls {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;            /* ✅ Prevent clipping on narrow screens */
+  justify-content: flex-start; /* left aligned */
+  flex-wrap: wrap;
   gap: 0.75rem;
   width: 100%;
   margin-top: 0.5rem;
 }
 
-/* Upload Button */
+/* Upload Button – Accent Glass Capsule */
 #customBgUpload {
   font-size: 0.8125rem;
   padding: 0.45rem 0.85rem;
@@ -907,10 +907,6 @@ body.dark-mode #themeModeSelect:hover {
   background: color-mix(in srgb, var(--accent-color) 12%, var(--glass-bg-light));
   color: var(--text-color);
   cursor: pointer;
-  white-space: nowrap;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
@@ -922,37 +918,23 @@ body.dark-mode #themeModeSelect:hover {
     0 4px 14px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
 }
 
-/* Accent Micro Pulse (upload feedback) */
+/* ✨ Micro pulse when file uploaded */
 @keyframes uploadPulse {
-  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 35%, transparent); }
-  50%  { box-shadow: 0 0 20px 4px color-mix(in srgb, var(--accent-color) 45%, transparent); }
-  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 35%, transparent); }
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px color-mix(in srgb, var(--accent-color) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 35%, transparent);
+  }
 }
 #customBgUpload.pulse {
   animation: uploadPulse 0.9s ease-out;
 }
 
-/* Dark Mode adjustments */
-body.dark-mode #customBgUpload {
-  background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-dark));
-  border-color: color-mix(in srgb, var(--accent-color) 25%, var(--glass-border-dark));
-}
-body.dark-mode #customBgUpload:hover {
-  background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-dark));
-}
-
-/* Fix for iOS Safari file button */
-input[type="file"]#customBgUpload::-webkit-file-upload-button {
-  font-size: 0.8125rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
-  border: none;
-  color: var(--text-color);
-  cursor: pointer;
-}
-
-/* Remove Button */
+/* Remove Button – Accent Capsule Variant */
 #removeCustomBg {
   font-size: 0.8125rem;
   padding: 0.45rem 0.85rem;
@@ -962,35 +944,29 @@ input[type="file"]#customBgUpload::-webkit-file-upload-button {
   color: var(--accent-text-color, #fff);
   cursor: pointer;
   opacity: 0;
-  transform: translateY(-2px);
-  transition: background 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease, transform 0.25s ease;
+  transform: translateY(0);
+  transition: opacity 0.4s ease, background 0.3s ease, transform 0.25s ease;
+}
+#removeCustomBg.visible,
+#removeCustomBg[style*="inline-block"] {
+  opacity: 1;
+  transform: translateY(0);
 }
 #removeCustomBg:hover {
   background-color: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-light));
   transform: translateY(-1px);
-  box-shadow:
-    0 4px 14px color-mix(in srgb, var(--accent-color) 30%, rgba(0,0,0,0.25));
-}
-#removeCustomBg[style*="inline-block"],
-#removeCustomBg.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-body.dark-mode #removeCustomBg {
-  background-color: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-dark));
-  border-color: color-mix(in srgb, var(--accent-color) 40%, var(--glass-border-dark));
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 30%, rgba(0,0,0,0.25));
 }
 
-/* ===== Responsive Layout Fix ===== */
+/* Stack vertically on very small screens (still left aligned) */
 @media (max-width: 480px) {
   .custom-bg-controls {
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start; /* stays left aligned */
   }
   #customBgUpload,
   #removeCustomBg {
-    width: 100%;
-    text-align: center;
+    width: auto; /* don’t stretch full width */
   }
 }
 
