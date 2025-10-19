@@ -2,61 +2,54 @@
  * settings.js
  * Fully functional settings manager with live previews,
  * custom backgrounds, blur control, dark-mode scheduler,
- * dynamic wallpapers (with cross-fade), and full reset actions.
+ * and dynamic wallpapers.
  */
 class SettingsManager {
   constructor() {
     this.defaultSettings = {
-      appearanceMode: 'device',        // 'device' | 'light' | 'dark'
-      themeStyle: 'clear',             // 'clear' | 'tinted'
-      accentColor: '#3ddc84',
-      darkModeScheduler: 'off',        // 'off' | 'auto'
-      darkModeStart: '20:00',
-      darkModeEnd: '06:00',
+      appearanceMode: "device",
+      themeStyle: "clear",
+      accentColor: "#3ddc84",
+      darkModeScheduler: "off", // 'off' | 'auto'
+      darkModeStart: "20:00",
+      darkModeEnd: "06:00",
       fontSize: 16,
-
-      // A11y / visual toggles
-      focusOutline: 'enabled',
-      motionEffects: 'enabled',
-      highContrast: 'disabled',
-      dyslexiaFont: 'disabled',
-      underlineLinks: 'disabled',
-
-      // Fun / misc
-      loadingScreen: 'disabled',
-      mouseTrail: 'disabled',
-      liveStatus: 'disabled',
-      rearrangingEnabled: 'disabled',
-
-      // Sections visibility
-      showSocialLinks: 'enabled',
-      showPresidentSection: 'enabled',
-      showTiktokShoutouts: 'enabled',
-      showInstagramShoutouts: 'enabled',
-      showYoutubeShoutouts: 'enabled',
-      showUsefulLinks: 'enabled',
-      showCountdown: 'enabled',
-      showBusinessSection: 'enabled',
-      showTechInformation: 'enabled',
-      showDisabilitiesSection: 'enabled',
-      showQuoteSection: 'enabled'
+      focusOutline: "enabled",
+      motionEffects: "enabled",
+      highContrast: "disabled",
+      dyslexiaFont: "disabled",
+      underlineLinks: "disabled",
+      loadingScreen: "disabled",
+      mouseTrail: "disabled",
+      liveStatus: "disabled",
+      rearrangingEnabled: "disabled",
+      showSocialLinks: "enabled",
+      showPresidentSection: "enabled",
+      showTiktokShoutouts: "enabled",
+      showInstagramShoutouts: "enabled",
+      showYoutubeShoutouts: "enabled",
+      showUsefulLinks: "enabled",
+      showCountdown: "enabled",
+      showBusinessSection: "enabled",
+      showTechInformation: "enabled",
+      showDisabilitiesSection: "enabled",
+      showQuoteSection: "enabled",
     };
 
     this.settings = this.loadSettings();
     this.deviceThemeMedia = null;
     this.schedulerInterval = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener("DOMContentLoaded", () => {
       this.initializeControls();
       this.applyAllSettings();
       this.setupEventListeners();
 
-      // Misc placeholders
       this.initMouseTrail();
       this.initLoadingScreen();
       this.initScrollArrow();
 
-      // Wallpaper & blur
+      // Wallpaper + blur
       this.initCustomBackgroundControls();
       this.applyCustomBackground(false);
       this.initWallpaperBlurControl();
@@ -66,31 +59,31 @@ class SettingsManager {
 
       // Device theme listener
       if (window.matchMedia) {
-        this.deviceThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
-        this.deviceThemeMedia.addEventListener('change', () => {
-          if (this.settings.appearanceMode === 'device') {
+        this.deviceThemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
+        this.deviceThemeMedia.addEventListener("change", () => {
+          if (this.settings.appearanceMode === "device") {
             this.applyAppearanceMode();
             this.applyCustomBackground(false);
           }
         });
       }
 
-      // Reduced motion listener (only if no explicit settings saved yet)
+      // Reduced motion listener
       if (window.matchMedia) {
-        const motionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
-        motionMedia.addEventListener('change', (e) => {
-          if (!localStorage.getItem('websiteSettings')) {
-            this.settings.motionEffects = e.matches ? 'disabled' : 'enabled';
+        const motionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
+        motionMedia.addEventListener("change", (e) => {
+          if (!localStorage.getItem("websiteSettings")) {
+            this.settings.motionEffects = e.matches ? "disabled" : "enabled";
             this.applyMotionEffects();
             this.saveSettings();
-            this.setToggle('motionEffects');
+            this.setToggle("motionEffects");
           }
         });
       }
 
       // Cross-tab sync
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'websiteSettings') {
+      window.addEventListener("storage", (e) => {
+        if (e.key === "websiteSettings") {
           this.settings = this.loadSettings();
           this.applyAllSettings();
           this.initializeControls();
@@ -101,7 +94,7 @@ class SettingsManager {
       });
 
       // Footer year
-      const yearSpan = document.getElementById('year');
+      const yearSpan = document.getElementById("year");
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
     });
   }
@@ -111,7 +104,7 @@ class SettingsManager {
   // =============================
   loadSettings() {
     try {
-      const stored = localStorage.getItem('websiteSettings');
+      const stored = localStorage.getItem("websiteSettings");
       const loaded = stored ? JSON.parse(stored) : {};
       return { ...this.defaultSettings, ...loaded };
     } catch {
@@ -126,215 +119,247 @@ class SettingsManager {
         toSave[key] = this.settings[key];
       }
     }
-    localStorage.setItem('websiteSettings', JSON.stringify(toSave));
+    localStorage.setItem("websiteSettings", JSON.stringify(toSave));
   }
 
   // =============================
   // UI Setup
   // =============================
   initializeControls() {
-    // Segmented controls
-    this.initSegmentedControl('appearanceModeControl', this.settings.appearanceMode);
-    this.initSegmentedControl('themeStyleControl', this.settings.themeStyle);
-    this.updateSegmentedBackground('appearanceModeControl');
-    this.updateSegmentedBackground('themeStyleControl');
+    this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
+    this.initSegmentedControl("themeStyleControl", this.settings.themeStyle);
+    this.updateSegmentedBackground("appearanceModeControl");
+    this.updateSegmentedBackground("themeStyleControl");
 
-    // Accent color
-    const accentPicker = document.getElementById('accentColorPicker');
+    const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
       accentPicker.value = this.settings.accentColor;
       this.checkAccentColor(this.settings.accentColor);
     }
 
-    // Font size
-    const slider = document.getElementById('text-size-slider');
-    const badge = document.getElementById('textSizeValue');
+    const slider = document.getElementById("text-size-slider");
+    const badge = document.getElementById("textSizeValue");
     if (slider && badge) {
       slider.value = this.settings.fontSize;
       badge.textContent = `${this.settings.fontSize}px`;
       this.updateSliderFill(slider);
     }
 
-    // Dark mode scheduler controls
-    const schedulerSelect = document.getElementById('darkModeScheduler');
-    const startInput = document.getElementById('darkModeStart');
-    const endInput = document.getElementById('darkModeEnd');
+    const schedulerSelect = document.getElementById("darkModeScheduler");
+    const startInput = document.getElementById("darkModeStart");
+    const endInput = document.getElementById("darkModeEnd");
     if (schedulerSelect) schedulerSelect.value = this.settings.darkModeScheduler;
     if (startInput) startInput.value = this.settings.darkModeStart;
     if (endInput) endInput.value = this.settings.darkModeEnd;
+
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
 
-    // All toggle switches
     const toggles = Object.keys(this.defaultSettings).filter(
       (k) =>
-        typeof this.defaultSettings[k] === 'string' &&
-        (this.defaultSettings[k] === 'enabled' || this.defaultSettings[k] === 'disabled')
+        typeof this.defaultSettings[k] === "string" &&
+        (this.defaultSettings[k] === "enabled" ||
+          this.defaultSettings[k] === "disabled")
     );
     toggles.forEach((key) => this.setToggle(key));
 
-    // Wallpaper UI visibility on first load
     this.syncWallpaperUIVisibility();
   }
 
   initSegmentedControl(controlId, value) {
     const control = document.getElementById(controlId);
     if (!control) return;
-    control.querySelectorAll('button').forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.value === value);
+    control.querySelectorAll("button").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.value === value);
     });
   }
 
   updateSegmentedBackground(controlId) {
     const control = document.getElementById(controlId);
     if (!control) return;
-    let active = control.querySelector('button.active');
-    let bg = control.querySelector('.seg-bg');
+    let active = control.querySelector("button.active");
+    let bg = control.querySelector(".seg-bg");
     if (!bg) {
-      bg = document.createElement('div');
-      bg.className = 'seg-bg';
+      bg = document.createElement("div");
+      bg.className = "seg-bg";
       control.prepend(bg);
     }
     if (active) {
       const rect = active.getBoundingClientRect();
       const parent = control.getBoundingClientRect();
-      bg.style.left = rect.left - parent.left + 'px';
-      bg.style.width = rect.width + 'px';
+      bg.style.left = rect.left - parent.left + "px";
+      bg.style.width = rect.width + "px";
     }
   }
 
   setToggle(key) {
     const el = document.getElementById(`${key}Toggle`);
-    if (el) el.checked = this.settings[key] === 'enabled';
+    if (el) el.checked = this.settings[key] === "enabled";
   }
 
   // =============================
   // Event Listeners
   // =============================
   setupEventListeners() {
-    // Segmented: appearance + theme style
-    ['appearanceMode', 'themeStyle'].forEach((key) => {
+    ["appearanceMode", "themeStyle"].forEach((key) => {
       const control = document.getElementById(`${key}Control`);
       if (control) {
-        control.addEventListener('click', (e) => {
-          const btn = e.target.closest('button');
+        control.addEventListener("click", (e) => {
+          const btn = e.target.closest("button");
           if (!btn) return;
           this.settings[key] = btn.dataset.value;
           this.applySetting(key);
           this.saveSettings();
           this.initSegmentedControl(`${key}Control`, this.settings[key]);
           this.updateSegmentedBackground(`${key}Control`);
-
-          if (key === 'appearanceMode') {
-            this.applyCustomBackground(false); // retint for theme
+          if (key === "appearanceMode") {
+            this.applyCustomBackground(false);
           }
         });
         this.updateSegmentedBackground(`${key}Control`);
       }
     });
 
-    // Accent color
-    const accentPicker = document.getElementById('accentColorPicker');
+    const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
-      accentPicker.addEventListener('input', (e) => {
+      accentPicker.addEventListener("input", (e) => {
         this.settings.accentColor = e.target.value;
         this.applyAccentColor();
         this.saveSettings();
       });
     }
 
-    // Font size
-    const slider = document.getElementById('text-size-slider');
+    const slider = document.getElementById("text-size-slider");
     if (slider) {
-      slider.addEventListener('input', (e) => {
+      slider.addEventListener("input", (e) => {
         this.settings.fontSize = parseInt(e.target.value, 10);
         this.applyFontSize();
         this.updateSliderFill(slider);
-        const badge = document.getElementById('textSizeValue');
+        const badge = document.getElementById("textSizeValue");
         if (badge) badge.textContent = `${this.settings.fontSize}px`;
         this.saveSettings();
       });
     }
 
-    // Scheduler controls
-    const schedulerSelect = document.getElementById('darkModeScheduler');
-    const startInput = document.getElementById('darkModeStart');
-    const endInput = document.getElementById('darkModeEnd');
+    const schedulerSelect = document.getElementById("darkModeScheduler");
+    const startInput = document.getElementById("darkModeStart");
+    const endInput = document.getElementById("darkModeEnd");
 
     if (schedulerSelect) {
-      schedulerSelect.addEventListener('change', (e) => {
+      schedulerSelect.addEventListener("change", (e) => {
         const val = e.target.value;
         this.settings.darkModeScheduler = val;
         this.saveSettings();
         this.toggleScheduleInputs(val);
-        this.checkDarkModeSchedule(true); // apply immediately
+        this.checkDarkModeSchedule(true);
       });
     }
     if (startInput) {
-      startInput.addEventListener('change', (e) => {
+      startInput.addEventListener("change", (e) => {
         this.settings.darkModeStart = e.target.value;
         this.saveSettings();
         this.checkDarkModeSchedule(true);
       });
     }
     if (endInput) {
-      endInput.addEventListener('change', (e) => {
+      endInput.addEventListener("change", (e) => {
         this.settings.darkModeEnd = e.target.value;
         this.saveSettings();
         this.checkDarkModeSchedule(true);
       });
     }
 
-    // Blur slider updates label + effect
-    const blurSlider = document.getElementById('blur-slider');
-    const blurBadge = document.getElementById('blurValue');
+    const blurSlider = document.getElementById("blur-slider");
+    const blurBadge = document.getElementById("blurValue");
     if (blurSlider && blurBadge) {
       const setBlurFill = () => {
-        const min = parseFloat(blurSlider.min || '0');
-        const max = parseFloat(blurSlider.max || '40');
-        const val = parseFloat(blurSlider.value || '15');
+        const min = parseFloat(blurSlider.min || "0");
+        const max = parseFloat(blurSlider.max || "40");
+        const val = parseFloat(blurSlider.value || "15");
         const pct = ((val - min) / (max - min)) * 100;
         blurSlider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
       };
       setBlurFill();
 
-      blurSlider.addEventListener('input', (e) => {
+      blurSlider.addEventListener("input", (e) => {
         const val = e.target.value;
         blurBadge.textContent = `${val}px`;
-        localStorage.setItem('wallpaperBlur', val);
+        localStorage.setItem("wallpaperBlur", val);
         this.applyWallpaperBlur(val);
         setBlurFill();
       });
     }
 
-    // Generic toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
-        typeof this.defaultSettings[k] === 'string' &&
-        (this.defaultSettings[k] === 'enabled' || this.defaultSettings[k] === 'disabled')
+        typeof this.defaultSettings[k] === "string" &&
+        (this.defaultSettings[k] === "enabled" ||
+          this.defaultSettings[k] === "disabled")
     );
     toggleKeys.forEach((key) => {
       const el = document.getElementById(`${key}Toggle`);
       if (el) {
-        el.addEventListener('change', () => {
-          this.settings[key] = el.checked ? 'enabled' : 'disabled';
+        el.addEventListener("change", () => {
+          this.settings[key] = el.checked ? "enabled" : "disabled";
           this.applySetting(key);
           this.saveSettings();
         });
       }
     });
 
-    // Reset buttons (wired in HTML to these ids)
-    document.getElementById('resetSectionsBtn')?.addEventListener('click', () => this.resetSectionVisibility());
-    document.getElementById('resetSettings')?.addEventListener('click', () => this.resetSettings());
+    document
+      .getElementById("resetLayoutBtn")
+      ?.addEventListener("click", () => {
+        if (confirm("Reset the section layout to default?")) {
+          localStorage.removeItem("sectionOrder");
+          alert("Layout reset. Refresh homepage to see changes.");
+        }
+      });
 
-    // Mobile orientation/resize
-    window.addEventListener('resize', () => this.fitWallpaperLayer());
-    window.addEventListener('orientationchange', () => this.fitWallpaperLayer());
+    document
+      .getElementById("resetSectionsBtn")
+      ?.addEventListener("click", () => this.resetSectionVisibility());
+    document
+      .getElementById("resetSettings")
+      ?.addEventListener("click", () => this.resetSettings());
+
+    window.addEventListener("resize", () => this.fitWallpaperLayer());
+    window.addEventListener("orientationchange", () => this.fitWallpaperLayer());
   }
 
   // =============================
   // Appearance & Color
   // =============================
+  updateSliderFill(slider) {
+    if (!slider) return;
+    const pct =
+      ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+    slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
+  }
+
+  getContrastColor(hex) {
+    if (!hex) return "#fff";
+    hex = hex.replace("#", "");
+    const r = parseInt(hex.substr(0, 2), 16),
+      g = parseInt(hex.substr(2, 2), 16),
+      b = parseInt(hex.substr(4, 2), 16);
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 128 ? "#000" : "#fff";
+  }
+
+  checkAccentColor(hex) {
+    const warn = document.getElementById("whiteAccentWarning");
+    if (!warn) return;
+    let isLight =
+      this.settings.appearanceMode === "light" ||
+      (this.settings.appearanceMode === "device" &&
+        !window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const r = parseInt(hex.substr(1, 2), 16),
+      g = parseInt(hex.substr(3, 2), 16),
+      b = parseInt(hex.substr(5, 2), 16);
+    const isLightColor = r > 240 && g > 240 && b > 240;
+    warn.style.display = isLightColor && isLight ? "block" : "none";
+  }
+
   applyAllSettings() {
     Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
     this.applyCustomBackground(false);
@@ -345,338 +370,245 @@ class SettingsManager {
   applySetting(key) {
     const actions = {
       appearanceMode: () => this.applyAppearanceMode(),
-      themeStyle: () => this.applyThemeStyle(),
       accentColor: () => this.applyAccentColor(),
       fontSize: () => this.applyFontSize(),
       focusOutline: () =>
-        document.body.classList.toggle('focus-outline-disabled', this.settings.focusOutline === 'disabled'),
+        document.body.classList.toggle(
+          "focus-outline-disabled",
+          this.settings.focusOutline === "disabled"
+        ),
       motionEffects: () => this.applyMotionEffects(),
-      highContrast: () => document.body.classList.toggle('high-contrast', this.settings.highContrast === 'enabled'),
-      dyslexiaFont: () => document.body.classList.toggle('dyslexia-font', this.settings.dyslexiaFont === 'enabled'),
-      underlineLinks: () => document.body.classList.toggle('underline-links', this.settings.underlineLinks === 'enabled'),
-      mouseTrail: () => document.body.classList.toggle('mouse-trail-enabled', this.settings.mouseTrail === 'enabled'),
-
-      // Section vis
-      showSocialLinks: () => this.applySectionVisibility('social-links-section', this.settings.showSocialLinks),
-      showPresidentSection: () => this.applySectionVisibility('president-section', this.settings.showPresidentSection),
-      showTiktokShoutouts: () =>
-        this.applySectionVisibility('tiktok-shoutouts-section', this.settings.showTiktokShoutouts),
-      showInstagramShoutouts: () =>
-        this.applySectionVisibility('instagram-shoutouts-section', this.settings.showInstagramShoutouts),
-      showYoutubeShoutouts: () =>
-        this.applySectionVisibility('youtube-shoutouts-section', this.settings.showYoutubeShoutouts),
-      showUsefulLinks: () => this.applySectionVisibility('useful-links-section', this.settings.showUsefulLinks),
-      showCountdown: () => this.applySectionVisibility('countdown-section', this.settings.showCountdown),
-      showBusinessSection: () => this.applySectionVisibility('business-section', this.settings.showBusinessSection),
-      showTechInformation: () =>
-        this.applySectionVisibility('tech-information-section', this.settings.showTechInformation),
-      showDisabilitiesSection: () =>
-        this.applySectionVisibility('disabilities-section', this.settings.showDisabilitiesSection),
-      showQuoteSection: () => this.applySectionVisibility('quote-section', this.settings.showQuoteSection)
+      highContrast: () =>
+        document.body.classList.toggle(
+          "high-contrast",
+          this.settings.highContrast === "enabled"
+        ),
+      dyslexiaFont: () =>
+        document.body.classList.toggle(
+          "dyslexia-font",
+          this.settings.dyslexiaFont === "enabled"
+        ),
+      underlineLinks: () =>
+        document.body.classList.toggle(
+          "underline-links",
+          this.settings.underlineLinks === "enabled"
+        ),
+      mouseTrail: () =>
+        document.body.classList.toggle(
+          "mouse-trail-enabled",
+          this.settings.mouseTrail === "enabled"
+        ),
     };
     actions[key]?.();
   }
 
   setThemeClasses(isDark) {
-    document.documentElement.classList.toggle('dark-mode', isDark);
-    document.documentElement.classList.toggle('light-mode', !isDark);
-    document.body.classList.toggle('dark-mode', isDark);
-    document.body.classList.toggle('light-mode', !isDark);
-    // Clean up any legacy class that might have been used accidentally before
-    document.body.classList.remove('light-e');
+    document.documentElement.classList.toggle("dark-mode", isDark);
+    document.documentElement.classList.toggle("light-mode", !isDark);
+    document.body.classList.toggle("dark-mode", isDark);
+    document.body.classList.toggle("light-e", !isDark);
   }
 
   applyAppearanceMode() {
     const isDark =
-      this.settings.appearanceMode === 'dark' ||
-      (this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      this.settings.appearanceMode === "dark" ||
+      (this.settings.appearanceMode === "device" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
     this.setThemeClasses(isDark);
     this.checkAccentColor(this.settings.accentColor);
   }
 
-  applyThemeStyle() {
-    document.body.classList.toggle('clear-mode', this.settings.themeStyle === 'clear');
-    document.body.classList.toggle('tinted-mode', this.settings.themeStyle === 'tinted');
-  }
-
   applyAccentColor() {
     const accent = this.settings.accentColor;
-    document.documentElement.style.setProperty('--accent-color', accent);
-    document.documentElement.style.setProperty('--accent-text-color', this.getContrastColor(accent));
+    document.documentElement.style.setProperty("--accent-color", accent);
+    document.documentElement.style.setProperty(
+      "--accent-text-color",
+      this.getContrastColor(accent)
+    );
     this.checkAccentColor(accent);
   }
 
   applyFontSize() {
-    document.documentElement.style.setProperty('--font-size-base', `${this.settings.fontSize}px`);
+    document.documentElement.style.setProperty(
+      "--font-size-base",
+      `${this.settings.fontSize}px`
+    );
   }
 
   applyMotionEffects() {
-    const reduced = this.settings.motionEffects === 'disabled';
-    // Support both classnames for safety with your CSS
-    document.body.classList.toggle('motion-disabled', reduced);
-    document.body.classList.toggle('reduced-motion', reduced);
-  }
-
-  applySectionVisibility(id, status) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = status === 'enabled' ? '' : 'none';
-  }
-
-  updateSliderFill(slider) {
-    if (!slider) return;
-    const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
-    slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
-  }
-
-  getContrastColor(hex) {
-    if (!hex) return '#fff';
-    hex = hex.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16),
-      g = parseInt(hex.substr(2, 2), 16),
-      b = parseInt(hex.substr(4, 2), 16);
-    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-    return yiq >= 128 ? '#000' : '#fff';
-  }
-
-  checkAccentColor(hex) {
-    const warn = document.getElementById('whiteAccentWarning');
-    if (!warn) return;
-    const isLightUI =
-      this.settings.appearanceMode === 'light' ||
-      (this.settings.appearanceMode === 'device' && !window.matchMedia('(prefers-color-scheme: dark)').matches);
-    const r = parseInt(hex.substr(1, 2), 16),
-      g = parseInt(hex.substr(3, 2), 16),
-      b = parseInt(hex.substr(5, 2), 16);
-    const isVeryLight = r > 240 && g > 240 && b > 240;
-    warn.style.display = isVeryLight && isLightUI ? 'block' : 'none';
-  }
-
-  // =============================
-  // Wallpaper Layers (mobile + desktop safe)
-  // =============================
-  ensureWallpaperLayers() {
-    // Fixed full-viewport layer for image
-    let layer = document.getElementById('wallpaper-layer');
-    if (!layer) {
-      layer = document.createElement('div');
-      layer.id = 'wallpaper-layer';
-      Object.assign(layer.style, {
-        position: 'fixed',
-        inset: '0',
-        zIndex: '-3', // bottom
-        pointerEvents: 'none',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        transition: 'opacity 1.0s ease, filter 0.3s ease'
-      });
-      document.body.prepend(layer);
-    }
-
-    // Separate tint layer above the image (still behind content)
-    let tint = document.getElementById('wallpaper-tint');
-    if (!tint) {
-      tint = document.createElement('div');
-      tint.id = 'wallpaper-tint';
-      Object.assign(tint.style, {
-        position: 'fixed',
-        inset: '0',
-        zIndex: '-2',
-        pointerEvents: 'none',
-        background: 'transparent',
-        transition: 'background 0.3s ease'
-      });
-      document.body.prepend(tint);
-    }
-
-    return { layer, tint };
-  }
-
-  fitWallpaperLayer() {
-    // Using fixed + inset:0; nothing else needed for mobile.
+    const reduced = this.settings.motionEffects === "disabled";
+    document.body.classList.toggle("reduced-motion", reduced);
   }
 
   // =============================
   // Custom Background + Blur
   // =============================
+  ensureWallpaperLayers() {
+    let layer = document.getElementById("wallpaper-layer");
+    if (!layer) {
+      layer = document.createElement("div");
+      layer.id = "wallpaper-layer";
+      Object.assign(layer.style, {
+        position: "fixed",
+        inset: "0",
+        zIndex: "-1",
+        pointerEvents: "none",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        transition: "opacity 1.2s ease, filter 0.3s ease",
+      });
+      document.body.prepend(layer);
+    }
+
+    let tint = document.getElementById("wallpaper-tint");
+    if (!tint) {
+      tint = document.createElement("div");
+      tint.id = "wallpaper-tint";
+      Object.assign(tint.style, {
+        position: "fixed",
+        inset: "0",
+        zIndex: "-1",
+        pointerEvents: "none",
+        background: "transparent",
+        transition: "background 0.5s ease",
+      });
+      document.body.prepend(tint);
+    }
+    return { layer, tint };
+  }
+
   initCustomBackgroundControls() {
-    const upload = document.getElementById('customBgUpload');
-    const remove = document.getElementById('removeCustomBg');
+    const upload = document.getElementById("customBgUpload");
+    const remove = document.getElementById("removeCustomBg");
     if (!upload) return;
 
-    const hasExisting = !!localStorage.getItem('customBackground');
-    if (remove) remove.style.display = hasExisting ? 'inline-block' : 'none';
-    this.toggleWallpaperBlurCard(hasExisting);
+    const existing = !!localStorage.getItem("customBackground");
+    if (existing && remove) remove.style.display = "inline-block";
+    this.toggleWallpaperBlurCard(existing);
 
-    // Upload handler
-    upload.addEventListener('change', (e) => {
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+
+    upload.addEventListener("change", (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
+
+      if (fileNameDisplay) fileNameDisplay.textContent = file.name;
 
       const reader = new FileReader();
       reader.onload = (evt) => {
         const imageData = evt.target.result;
-
-        // Clear any stale fade layer before swapping
-        document.getElementById('wallpaper-fade')?.remove();
-
-        // Store new image and apply (with cross-dissolve)
-        const { layer } = this.ensureWallpaperLayers();
-        const previous = layer.style.backgroundImage;
-
-        localStorage.setItem('customBackground', imageData);
-        this.crossFadeWallpaper(previous, `url("${imageData}")`);
-
-        if (remove) remove.style.display = 'inline-block';
+        localStorage.setItem("customBackground", imageData);
+        this.applyCustomBackground(true);
+        if (remove) remove.style.display = "inline-block";
         this.toggleWallpaperBlurCard(true);
 
-        // Micropulse feedback
-        upload.classList.remove('pulse');
-        upload.offsetHeight; // reflow
-        upload.classList.add('pulse');
-        setTimeout(() => upload.classList.remove('pulse'), 900);
+        upload.classList.remove("pulse");
+        upload.offsetHeight;
+        upload.classList.add("pulse");
+        setTimeout(() => upload.classList.remove("pulse"), 900);
       };
       reader.readAsDataURL(file);
     });
 
-    // Remove handler
     if (remove) {
-      remove.addEventListener('click', (e) => {
+      remove.addEventListener("click", (e) => {
         e.preventDefault();
+        e.stopPropagation();
+        localStorage.removeItem("customBackground");
 
-        const { layer } = this.ensureWallpaperLayers();
-        const previous = layer.style.backgroundImage;
-
-        // Clear stored background
-        localStorage.removeItem('customBackground');
-
-        // Cross-fade out to empty
-        this.crossFadeWallpaper(previous, '');
-
+        const layer = document.getElementById("wallpaper-layer");
+        if (layer) {
+          layer.style.backgroundImage = "";
+          layer.style.opacity = "0";
+        }
+        this.applyCustomBackground();
         this.toggleWallpaperBlurCard(false);
-        remove.style.display = 'none';
+        remove.style.display = "none";
+        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
       });
     }
-  }
-const fileNameDisplay = document.getElementById('fileNameDisplay');
-if (upload && fileNameDisplay) {
-  upload.addEventListener('change', (e) => {
-    const file = e.target.files?.[0];
-    fileNameDisplay.textContent = file ? file.name : 'No file chosen';
-  });
-}
-
-  crossFadeWallpaper(prevBg, nextBg) {
-    const { layer } = this.ensureWallpaperLayers();
-
-    // Create a fading layer with the previous image (if any)
-    if (prevBg && prevBg !== '') {
-      const fadeLayer = document.createElement('div');
-      fadeLayer.id = 'wallpaper-fade';
-      Object.assign(fadeLayer.style, {
-        position: 'fixed',
-        inset: '0',
-        zIndex: '-4',
-        backgroundImage: prevBg,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        opacity: '1',
-        transition: 'opacity 0.9s ease'
-      });
-      document.body.prepend(fadeLayer);
-      // Next tick fade it out
-      requestAnimationFrame(() => (fadeLayer.style.opacity = '0'));
-      setTimeout(() => fadeLayer.remove(), 950);
-    }
-
-    // Swap main layer to the new image (or empty)
-    if (nextBg) {
-      document.body.style.backgroundColor = 'transparent';
-      layer.style.backgroundImage = nextBg;
-      layer.style.opacity = '1';
-    } else {
-      layer.style.backgroundImage = '';
-      layer.style.opacity = '0';
-      document.body.style.backgroundColor = ''; // restore CSS background
-    }
-
-    // Re-apply tint/blur each time
-    this.applyCustomBackground(false);
   }
 
   applyCustomBackground(fade = false) {
-    const bgData = localStorage.getItem('customBackground');
+    const bg = localStorage.getItem("customBackground");
     const { layer, tint } = this.ensureWallpaperLayers();
 
-    if (bgData && !layer.style.backgroundImage) {
-      // First-time apply without prev image
-      layer.style.backgroundImage = `url("${bgData}")`;
-      layer.style.opacity = '1';
-      document.body.style.backgroundColor = 'transparent';
+    if (bg) {
+      document.body.style.backgroundColor = "transparent";
+      document.body.style.backgroundImage = "";
+      if (fade) {
+        layer.style.opacity = "0";
+        requestAnimationFrame(() => {
+          layer.style.backgroundImage = `url("${bg}")`;
+          setTimeout(() => (layer.style.opacity = "1"), 50);
+        });
+      } else {
+        layer.style.backgroundImage = `url("${bg}")`;
+        layer.style.opacity = "1";
+      }
+    } else {
+      document.body.style.backgroundColor = "";
+      document.body.style.backgroundImage = "";
+      layer.style.backgroundImage = "";
+      layer.style.opacity = "0";
     }
 
-    // Tint based on theme
     const isDark =
-      this.settings.appearanceMode === 'dark' ||
-      (this.settings.appearanceMode === 'device' &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches);
+      this.settings.appearanceMode === "dark" ||
+      (this.settings.appearanceMode === "device" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
 
     tint.style.background = isDark
-      ? 'rgba(0, 0, 0, 0.40)'
-      : 'rgba(255, 255, 255, 0.15)';
+      ? "rgba(0, 0, 0, 0.45)"
+      : "rgba(255, 255, 255, 0.15)";
 
-    // Apply stored blur level
-    const blurValue = localStorage.getItem('wallpaperBlur') || 15;
+    const blurValue = localStorage.getItem("wallpaperBlur") || 15;
     this.applyWallpaperBlur(blurValue);
+  }
 
-    // Show/hide blur card based on presence
-    this.toggleWallpaperBlurCard(!!bgData);
+  applyWallpaperBlur(value) {
+    const layer = document.getElementById("wallpaper-layer");
+    if (!layer) return;
+    layer.style.filter = `blur(${value}px) brightness(1.03)`;
   }
 
   initWallpaperBlurControl() {
-    const slider = document.getElementById('blur-slider');
-    const badge = document.getElementById('blurValue');
+    const slider = document.getElementById("blur-slider");
+    const badge = document.getElementById("blurValue");
     if (!slider || !badge) return;
 
-    const stored = localStorage.getItem('wallpaperBlur') || 15;
+    const stored = localStorage.getItem("wallpaperBlur") || 15;
     slider.value = stored;
     badge.textContent = `${stored}px`;
     this.applyWallpaperBlur(stored);
 
     const setFill = () => {
-      const min = parseFloat(slider.min || '0');
-      const max = parseFloat(slider.max || '40');
+      const min = parseFloat(slider.min || "0");
+      const max = parseFloat(slider.max || "40");
       const val = parseFloat(slider.value || stored);
       const pct = ((val - min) / (max - min)) * 100;
       slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
     };
     setFill();
 
-    slider.addEventListener('input', (e) => {
+    slider.addEventListener("input", (e) => {
       const val = e.target.value;
       badge.textContent = `${val}px`;
-      localStorage.setItem('wallpaperBlur', val);
+      localStorage.setItem("wallpaperBlur", val);
       this.applyWallpaperBlur(val);
       setFill();
     });
   }
 
-  applyWallpaperBlur(value) {
-    const layer = document.getElementById('wallpaper-layer');
-    if (!layer) return;
-    // Blur ONLY the wallpaper layer; UI remains crisp
-    layer.style.filter = `blur(${value}px) brightness(1.03)`;
-  }
-
   toggleWallpaperBlurCard(show) {
-    const card = document.getElementById('wallpaperBlurCard');
+    const card = document.getElementById("wallpaperBlurCard");
     if (!card) return;
-    card.style.display = show ? '' : 'none';
+    card.style.display = show ? "" : "none";
   }
 
   syncWallpaperUIVisibility() {
-    const hasBg = !!localStorage.getItem('customBackground');
+    const hasBg = !!localStorage.getItem("customBackground");
     this.toggleWallpaperBlurCard(hasBg);
   }
 
@@ -685,79 +617,78 @@ if (upload && fileNameDisplay) {
   // =============================
   initSchedulerInterval() {
     clearInterval(this.schedulerInterval);
-    // Apply immediately on page load
     this.checkDarkModeSchedule(true);
-    // Recheck every minute automatically
-    this.schedulerInterval = setInterval(() => this.checkDarkModeSchedule(), 60000);
+    this.schedulerInterval = setInterval(
+      () => this.checkDarkModeSchedule(),
+      60000
+    );
   }
 
   checkDarkModeSchedule(force = false) {
-    const mode = this.settings.darkModeScheduler || 'off';
+    const mode = this.settings.darkModeScheduler || "off";
     this.toggleScheduleInputs(mode);
 
-    // Only control theme if user chose Scheduled (auto)
-    if (mode !== 'auto') {
-      if (force) this.applyAppearanceMode(); // respect manual/device mode when forcing once
+    if (mode !== "auto") {
+      if (force) this.applyAppearanceMode();
       return;
     }
 
     const now = new Date();
-    const [startH, startM] = this.settings.darkModeStart.split(':').map(Number);
-    const [endH, endM] = this.settings.darkModeEnd.split(':').map(Number);
+    const [startH, startM] = this.settings.darkModeStart.split(":").map(Number);
+    const [endH, endM] = this.settings.darkModeEnd.split(":").map(Number);
 
     const start = new Date();
     start.setHours(startH, startM, 0, 0);
     const end = new Date();
     end.setHours(endH, endM, 0, 0);
 
-    // Works across midnight (e.g., 20:00–06:00)
-    const isNight = end > start ? (now >= start && now < end) : (now >= start || now < end);
-
+    const isNight = end > start ? now >= start && now < end : now >= start || now < end;
     this.setThemeClasses(isNight);
-    // Retint wallpaper overlay for new theme
     this.applyCustomBackground(false);
   }
 
   toggleScheduleInputs(mode) {
-    const group = document.querySelector('.schedule-group');
+    const group = document.querySelector(".schedule-group");
     if (!group) return;
-    group.style.display = mode === 'auto' ? '' : 'none';
+    group.style.display = mode === "auto" ? "" : "none";
   }
 
   // =============================
-  // Reset & Misc Utilities
+  // Reset Controls
   // =============================
   resetSectionVisibility() {
-    if (confirm('Show all homepage sections again?')) {
-      const keys = Object.keys(this.defaultSettings).filter((k) => k.startsWith('show'));
-      keys.forEach((k) => (this.settings[k] = 'enabled'));
+    if (confirm("Show all homepage sections again?")) {
+      const keys = Object.keys(this.defaultSettings).filter((k) =>
+        k.startsWith("show")
+      );
+      keys.forEach((k) => (this.settings[k] = "enabled"));
       this.saveSettings();
       this.initializeControls();
       this.applyAllSettings();
-      alert('✅ All sections are now visible.');
+      alert("All sections are now visible.");
     }
   }
 
   resetSettings() {
-    if (confirm('Reset all settings to default values?')) {
+    if (confirm("Reset all settings to default values?")) {
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
-      localStorage.removeItem('sectionOrder');
+      localStorage.removeItem("sectionOrder");
       this.initializeControls();
       this.applyAllSettings();
-      alert('✅ Settings and layout have been reset to default.');
+      alert("Settings and layout have been reset to default.");
     }
   }
 
   // =============================
-  // Misc placeholders
+  // Misc
   // =============================
   initScrollArrow() {}
   initLoadingScreen() {}
   initMouseTrail() {}
 }
 
-// Initialize singleton
+// Initialize
 if (!window.settingsManagerInstance) {
   window.settingsManagerInstance = new SettingsManager();
 }
