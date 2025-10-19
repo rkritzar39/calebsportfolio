@@ -488,25 +488,53 @@ ensureOverlay() {
 
 applyCustomBackground(fade = false) {
   const bg = localStorage.getItem('customBackground');
-  const overlay = this.ensureOverlay();
 
-  // place overlay under everything else (critical)
-  overlay.style.zIndex = '-1';
-  document.body.style.position = 'relative';
-
-  if (bg) {
-    document.body.style.backgroundImage = `url("${bg}")`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
-    document.body.style.backgroundRepeat = 'no-repeat';
-    document.body.style.backgroundAttachment = 'fixed';
-    if (fade) {
-      overlay.style.opacity = '0';
-      requestAnimationFrame(() => setTimeout(() => (overlay.style.opacity = '1'), 50));
-    }
-  } else {
-    document.body.style.backgroundImage = '';
+  // Create or get the wallpaper layer (works on iOS/Android)
+  let layer = document.getElementById('wallpaper-layer');
+  if (!layer) {
+    layer = document.createElement('div');
+    layer.id = 'wallpaper-layer';
+    Object.assign(layer.style, {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      zIndex: '-1',
+      pointerEvents: 'none',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      transition: 'opacity 0.5s ease, filter 0.5s ease'
+    });
+    document.body.prepend(layer);
   }
+
+  // Update wallpaper
+  if (bg) {
+    layer.style.backgroundImage = `url("${bg}")`;
+    layer.style.opacity = fade ? '0' : '1';
+    if (fade) setTimeout(() => (layer.style.opacity = '1'), 50);
+  } else {
+    layer.style.backgroundImage = '';
+  }
+
+  // Apply theme overlay tint (dark/light tone)
+  const isDark =
+    this.settings.appearanceMode === 'dark' ||
+    (this.settings.appearanceMode === 'device' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
+  layer.style.backgroundColor = isDark
+    ? 'rgba(0,0,0,0.4)'
+    : 'rgba(255,255,255,0.15)';
+
+  // Apply blur after updating image
+  const blurValue = localStorage.getItem('wallpaperBlur') || 15;
+  this.applyWallpaperBlur(blurValue);
+
+  // Show or hide blur control section
+  this.toggleWallpaperBlurCard(!!bg);
+}
 
   const isDark =
     this.settings.appearanceMode === 'dark' ||
@@ -551,10 +579,10 @@ applyCustomBackground(fade = false) {
   }
 
   applyWallpaperBlur(value) {
-    const overlay = this.ensureOverlay();
-    overlay.style.backdropFilter = `blur(${value}px) saturate(120%)`;
-    overlay.style.webkitBackdropFilter = `blur(${value}px) saturate(120%)`;
-  }
+  const layer = document.getElementById('wallpaper-layer');
+  if (!layer) return;
+  layer.style.filter = `blur(${value}px) brightness(1) saturate(1.05)`;
+}
 
   // =============================
   // Dark Mode Scheduler
