@@ -416,7 +416,7 @@ body.settings-page #appearanceModeSelect {
 }
 
 /* ======================================================= */
-/* === PURE iOS 26 TOGGLE – CLEAN LIQUID STYLE ============ */
+/* === PURE iOS 26 TOGGLE – FIXED ACCENT LOGIC ============ */
 /* ======================================================= */
 .md-switch {
   position: relative;
@@ -426,35 +426,34 @@ body.settings-page #appearanceModeSelect {
   width: 52px;
   height: 32px;
 }
-
 .md-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-/* Track – neutral translucent capsule */
+/* Default track */
 .md-switch .track {
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: rgba(0,0,0,0.1);
+  background: var(--toggle-off);
   backdrop-filter: blur(10px) saturate(180%);
   -webkit-backdrop-filter: blur(10px) saturate(180%);
   box-shadow:
     inset 0 1px 2px rgba(0,0,0,0.1),
     inset 0 -1px 2px rgba(255,255,255,0.2);
-  transition: background 0.35s cubic-bezier(.25,.8,.25,1);
+  transition: background 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.3s ease;
 }
 
-/* --- iOS 26 thumb refinement --- */
+/* Thumb */
 .md-switch .thumb {
   position: absolute;
   top: 2px;
   left: 2px;
   width: 28px;
   height: 28px;
-  border-radius: 16px; /* Slightly less than 50% => pill-like */
+  border-radius: 16px;
   background: rgba(255,255,255,0.85);
   backdrop-filter: blur(6px) saturate(180%);
   -webkit-backdrop-filter: blur(6px) saturate(180%);
@@ -469,27 +468,40 @@ body.settings-page #appearanceModeSelect {
     background 0.25s ease,
     box-shadow 0.25s ease;
 }
-
-/* When pressed, thumb compresses slightly wider */
 .md-switch:active .thumb {
   width: 30px;
   border-radius: 15px;
 }
 
-/* Checked (ON) — thumb slides smoothly */
+/* === FIXED ACCENT COLOR LINK === */
+.md-switch input:checked + .track {
+  background: var(--toggle-on);
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent),
+    inset 0 0 0 1px rgba(255,255,255,0.25);
+  animation: togglePulse 2.5s ease-in-out infinite;
+}
 .md-switch input:checked + .track .thumb {
   transform: translateX(20px);
+  background: rgba(255,255,255,0.9);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--accent-color) 30%, transparent),
+    0 2px 4px rgba(0,0,0,0.2);
 }
 
 /* Dark mode adjustment */
 body.dark-mode .md-switch .track {
   background: rgba(255,255,255,0.15);
 }
+/* Dark mode accent sync */
 body.dark-mode .md-switch input:checked + .track {
-  background: color-mix(in srgb, var(--accent-color) 70%, rgba(255,255,255,0.15));
+  background: var(--toggle-on);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--accent-color) 55%, transparent),
+    inset 0 0 0 1px rgba(255,255,255,0.1);
 }
 
-/* Disabled state */
+/* Disabled */
 .md-switch.disabled,
 .md-switch input[disabled] + .track {
   opacity: 0.5;
@@ -805,7 +817,7 @@ body.dark-mode .color-warning {
 /* === iOS-26 Animated Capsule Dropdown & Time Inputs ==== */
 /* ======================================================= */
 
-/* --- Mode Dropdown (animated capsule) --- */
+/* Dropdown */
 #themeModeSelect {
   position: relative;
   appearance: none;
@@ -835,7 +847,6 @@ body.dark-mode .color-warning {
   background-size: 0.5rem 0.5rem;
   background-repeat: no-repeat;
 }
-
 #themeModeSelect:hover {
   background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
   box-shadow:
@@ -843,7 +854,6 @@ body.dark-mode .color-warning {
     0 6px 18px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
   transform: translateY(-1px);
 }
-
 #themeModeSelect:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
@@ -852,8 +862,6 @@ body.dark-mode .color-warning {
     0 0 12px color-mix(in srgb, var(--accent-color) 30%, transparent);
   animation: capsulePulse 2s ease-in-out infinite;
 }
-
-/* --- Shared pulse animation --- */
 @keyframes capsulePulse {
   0%, 100% {
     box-shadow:
@@ -866,8 +874,18 @@ body.dark-mode .color-warning {
       0 0 18px color-mix(in srgb, var(--accent-color) 45%, transparent);
   }
 }
+body.dark-mode #themeModeSelect {
+  background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
+  border-color: color-mix(in srgb, var(--accent-color) 15%, var(--glass-border-dark));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 4px 14px rgba(0,0,0,0.5);
+}
+body.dark-mode #themeModeSelect:hover {
+  background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
+}
 
-/* --- Time Inputs (same capsule glow) --- */
+/* Time Inputs */
 .schedule-time-row input[type="time"] {
   appearance: none;
   font-family: inherit;
@@ -889,7 +907,6 @@ body.dark-mode .color-warning {
     border-color 0.25s ease,
     transform 0.25s ease;
 }
-
 .schedule-time-row input[type="time"]:hover {
   background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
   transform: translateY(-1px);
@@ -897,7 +914,6 @@ body.dark-mode .color-warning {
     inset 0 0 0 1px rgba(255,255,255,0.25),
     0 6px 14px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
 }
-
 .schedule-time-row input[type="time"]:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--accent-color) 55%, transparent);
@@ -906,9 +922,6 @@ body.dark-mode .color-warning {
     0 0 12px color-mix(in srgb, var(--accent-color) 30%, transparent);
   animation: capsulePulse 2s ease-in-out infinite;
 }
-
-/* Dark-mode refinement */
-body.dark-mode #themeModeSelect,
 body.dark-mode .schedule-time-row input[type="time"] {
   background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
   border-color: color-mix(in srgb, var(--accent-color) 15%, var(--glass-border-dark));
@@ -916,7 +929,6 @@ body.dark-mode .schedule-time-row input[type="time"] {
     inset 0 0 0 1px rgba(255,255,255,0.08),
     0 4px 14px rgba(0,0,0,0.5);
 }
-body.dark-mode #themeModeSelect:hover,
 body.dark-mode .schedule-time-row input[type="time"]:hover {
   background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
 }
