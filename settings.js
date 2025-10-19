@@ -494,36 +494,45 @@ class SettingsManager {
   // Custom Background + Blur
   // =============================
   initCustomBackgroundControls() {
-    const upload = document.getElementById('customBgUpload');
-    const remove = document.getElementById('removeCustomBg');
-    if (!upload) return;
+  const upload = document.getElementById('customBgUpload');
+  const remove = document.getElementById('removeCustomBg');
+  if (!upload) return;
 
-    const existing = localStorage.getItem('customBackground');
-    if (existing && remove) remove.style.display = 'inline-block';
+  const existing = localStorage.getItem('customBackground');
+  if (existing && remove) remove.style.display = 'inline-block';
+  this.toggleWallpaperBlurCard(!!existing);
 
-    upload.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const imageData = evt.target.result;
-        localStorage.setItem('customBackground', imageData);
-        this.applyCustomBackground(true);
-        if (remove) remove.style.display = 'inline-block';
-        this.syncWallpaperUIVisibility();
-      };
-      reader.readAsDataURL(file);
+  // Upload handler
+  upload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+
+    reader.onload = (evt) => {
+      const imageData = evt.target.result;
+      localStorage.setItem('customBackground', imageData);
+      this.applyCustomBackground(true);
+      if (remove) remove.style.display = 'inline-block';
+      this.toggleWallpaperBlurCard(true);
+
+      // ✅ Add iOS-26 accent pulse animation feedback
+      upload.classList.add('pulse');
+      setTimeout(() => upload.classList.remove('pulse'), 1000);
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  // Remove handler
+  if (remove) {
+    remove.addEventListener('click', () => {
+      localStorage.removeItem('customBackground');
+      this.applyCustomBackground();
+      remove.style.display = 'none';
+      this.toggleWallpaperBlurCard(false);
     });
-
-    if (remove) {
-      remove.addEventListener('click', () => {
-        localStorage.removeItem('customBackground');
-        this.applyCustomBackground(false);
-        remove.style.display = 'none';
-        this.syncWallpaperUIVisibility();
-      });
-    }
   }
+}
 
   applyCustomBackground(fade = false) {
     const bg = localStorage.getItem('customBackground');
