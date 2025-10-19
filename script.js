@@ -122,55 +122,67 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-// ========================
-// Scroll to Top Orb Logic – Dynamic Fade (iOS 26 Style)
-// ========================
-const scrollBtn = document.querySelector('.scroll-to-top');
-const arrow = scrollBtn.querySelector('.arrow');
-const progressCircle = document.querySelector('.progress-indicator');
-const percentage = document.querySelector('.percentage');
+/* ======================================= */
+/* Scroll-to-Top Orb Script – iOS 26 Style */
+/* ======================================= */
+(function() {
+  const scrollBtn = document.getElementById('scrollToTopBtn');
+  const progressIndicator = document.getElementById('progressIndicator');
+  const scrollPercent = document.getElementById('scrollPercent');
+  const scrollArrow = document.getElementById('scrollArrow');
 
-const radius = progressCircle.r.baseVal.value;
-const circumference = 2 * Math.PI * radius;
-progressCircle.style.strokeDasharray = `${circumference}`;
-progressCircle.style.strokeDashoffset = `${circumference}`;
+  if (!scrollBtn || !progressIndicator) return;
 
-let lastScrollY = window.scrollY;
-let lastTime = Date.now();
+  const radius = progressIndicator.r.baseVal.value;
+  const circumference = 2 * Math.PI * radius;
+  progressIndicator.style.strokeDasharray = `${circumference}`;
+  progressIndicator.style.strokeDashoffset = `${circumference}`;
 
-function updateProgress() {
-	const scrollTop = window.scrollY;
-	const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-	const progress = scrollHeight ? (scrollTop / scrollHeight) : 0;
-	progressCircle.style.strokeDashoffset = `${circumference * (1 - progress)}`;
+  function updateScrollProgress() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = docHeight > 0 ? (scrollTop / docHeight) : 0;
+    const offset = circumference - scrolled * circumference;
+    progressIndicator.style.strokeDashoffset = offset;
 
-	// Arrow direction
-	if (scrollTop > lastScrollY) arrow.classList.replace('up','down');
-	else if (scrollTop < lastScrollY) arrow.classList.replace('down','up');
+    // Update percentage
+    const percent = Math.round(scrolled * 100);
+    scrollPercent.textContent = `${percent}%`;
 
-	// Fade orb at top
-	if (scrollTop < 50) scrollBtn.classList.add('hidden');
-	else scrollBtn.classList.remove('hidden');
+    // Show or hide button
+    if (scrollTop > window.innerHeight * 0.2) {
+      scrollBtn.classList.remove('hidden');
+    } else {
+      scrollBtn.classList.add('hidden');
+    }
 
-	// Update percentage
-	percentage.textContent = `${Math.round(progress * 100)}%`;
+    // Arrow direction
+    if (percent >= 98) {
+      scrollArrow.classList.remove('up');
+      scrollArrow.classList.add('down');
+      scrollArrow.textContent = '↓';
+    } else {
+      scrollArrow.classList.add('up');
+      scrollArrow.classList.remove('down');
+      scrollArrow.textContent = '↑';
+    }
+  }
 
-	// Glow intensity reacts to scroll speed
-	const now = Date.now();
-	const delta = Math.abs(scrollTop - lastScrollY) / (now - lastTime + 1);
-	const glow = Math.min(1 + delta*30, 3); // max multiplier
-	progressCircle.style.filter = `drop-shadow(0 0 ${4*glow}px var(--accent-color)) drop-shadow(0 0 ${10*glow}px var(--accent-color))`;
-	lastTime = now;
+  window.addEventListener('scroll', updateScrollProgress);
+  window.addEventListener('resize', updateScrollProgress);
+  updateScrollProgress();
 
-	lastScrollY = scrollTop;
-}
-
-window.addEventListener('scroll', updateProgress);
-
-scrollBtn.addEventListener('click', () => {
-	window.scrollTo({ top: 0, behavior: 'smooth' });
-	arrow.classList.replace('down','up');
-});
+  scrollBtn.addEventListener('click', () => {
+    const arrowDown = scrollArrow.classList.contains('down');
+    if (arrowDown) {
+      // Scroll to bottom
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    } else {
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+})();
 
 // Run once on load to set the initial state
 updateProgress();
