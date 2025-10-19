@@ -429,34 +429,37 @@ class SettingsManager {
   // Custom Background + Blur
   // =============================
   initCustomBackgroundControls() {
-    const upload = document.getElementById('customBgUpload');
-    const remove = document.getElementById('removeCustomBg');
-    if (!upload) return;
+  const upload = document.getElementById('customBgUpload');
+  const remove = document.getElementById('removeCustomBg');
+  if (!upload) return;
 
-    const existing = localStorage.getItem('customBackground');
-    if (existing && remove) remove.style.display = 'inline-block';
+  const existing = localStorage.getItem('customBackground');
+  if (existing && remove) remove.style.display = 'inline-block';
+  this.toggleWallpaperBlurCard(!!existing); // 👈 Show blur only if background exists
 
-    upload.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const imageData = evt.target.result;
-        localStorage.setItem('customBackground', imageData);
-        this.applyCustomBackground(true);
-        if (remove) remove.style.display = 'inline-block';
-      };
-      reader.readAsDataURL(file);
+  upload.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const imageData = evt.target.result;
+      localStorage.setItem('customBackground', imageData);
+      this.applyCustomBackground(true);
+      if (remove) remove.style.display = 'inline-block';
+      this.toggleWallpaperBlurCard(true); // 👈 show blur slider now
+    };
+    reader.readAsDataURL(file);
+  });
+
+  if (remove) {
+    remove.addEventListener('click', () => {
+      localStorage.removeItem('customBackground');
+      this.applyCustomBackground();
+      remove.style.display = 'none';
+      this.toggleWallpaperBlurCard(false); // 👈 hide blur slider now
     });
-
-    if (remove) {
-      remove.addEventListener('click', () => {
-        localStorage.removeItem('customBackground');
-        this.applyCustomBackground();
-        remove.style.display = 'none';
-      });
-    }
   }
+}
 
 ensureOverlay() {
   const overlayId = 'dark-bg-overlay';
@@ -592,6 +595,12 @@ applyCustomBackground(fade = false) {
     const group = document.querySelector('.schedule-group');
     if (!group) return;
     group.style.display = mode === 'auto' ? '' : 'none';
+  }
+
+  toggleWallpaperBlurCard(show) {
+  const card = document.getElementById('wallpaperBlurCard');
+  if (!card) return;
+  card.style.display = show ? '' : 'none';
   }
 
   // =============================
