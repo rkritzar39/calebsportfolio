@@ -130,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressIndicator = document.getElementById('progressIndicator');
   const scrollPercent = document.getElementById('scrollPercent');
   const scrollArrow = document.getElementById('scrollArrow');
-
   if (!scrollBtn || !progressIndicator) return;
 
   const radius = progressIndicator.r.baseVal.value;
@@ -144,27 +143,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrolled = docHeight > 0 ? (scrollTop / docHeight) : 0;
     const offset = circumference - scrolled * circumference;
     progressIndicator.style.strokeDashoffset = offset;
-
-    // Update percentage
     const percent = Math.round(scrolled * 100);
     scrollPercent.textContent = `${percent}%`;
 
-    // Show or hide button
     if (scrollTop > window.innerHeight * 0.2) {
       scrollBtn.classList.remove('hidden');
     } else {
       scrollBtn.classList.add('hidden');
     }
 
-    // Arrow direction
     if (percent >= 98) {
       scrollArrow.classList.remove('up');
       scrollArrow.classList.add('down');
-      scrollArrow.textContent = '↓';
     } else {
       scrollArrow.classList.add('up');
       scrollArrow.classList.remove('down');
-      scrollArrow.textContent = '↑';
     }
   }
 
@@ -175,17 +168,28 @@ document.addEventListener('DOMContentLoaded', () => {
   scrollBtn.addEventListener('click', () => {
     const arrowDown = scrollArrow.classList.contains('down');
     if (arrowDown) {
-      // Scroll to bottom
       window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     } else {
-      // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
 })();
 
-// Run once on load to set the initial state
-updateProgress();
+/* ======================================= */
+/* Smooth Percentage Fade Logic – iOS 26   */
+/* ======================================= */
+(function() {
+  const scrollPercent = document.getElementById('scrollPercent');
+  let fadeTimeout;
+  window.addEventListener('scroll', () => {
+    if (!scrollPercent) return;
+    scrollPercent.classList.add('visible');
+    clearTimeout(fadeTimeout);
+    fadeTimeout = setTimeout(() => {
+      scrollPercent.classList.remove('visible');
+    }, 1500);
+  });
+})();
 	
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
