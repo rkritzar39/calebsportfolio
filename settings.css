@@ -885,88 +885,88 @@ body.dark-mode #themeModeSelect:hover {
   background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
 }
 
-/* ============================================ */
-/* == Custom Background Upload (Left Aligned) == */
-/* ============================================ */
+/* ======================================================= */
+/* == Custom Background Upload – Right Aligned ============ */
+/* ======================================================= */
 .custom-bg-controls {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* left aligned */
-  flex-wrap: wrap;
+  justify-content: flex-end; /* ✅ right aligned */
   gap: 0.75rem;
-  width: 100%;
+  flex-wrap: wrap;
   margin-top: 0.5rem;
+  flex-shrink: 0;
 }
 
-/* Upload Button – Accent Glass Capsule */
+/* Hide the default input */
 #customBgUpload {
+  display: none;
+}
+
+/* "Choose File" iOS 26 Glass Button */
+.custom-bg-label {
   font-size: 0.8125rem;
-  padding: 0.45rem 0.85rem;
+  font-weight: 500;
+  color: var(--accent-text-color, #fff);
+  padding: 0.45rem 1rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
-  background: color-mix(in srgb, var(--accent-color) 12%, var(--glass-bg-light));
-  color: var(--text-color);
-  cursor: pointer;
+  background: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-light));
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
+  cursor: pointer;
   transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
-#customBgUpload:hover {
-  background: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-light));
+.custom-bg-label:hover {
+  background: color-mix(in srgb, var(--accent-color) 30%, var(--glass-bg-light));
   transform: translateY(-1px);
-  box-shadow:
-    0 4px 14px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
 }
 
-/* ✨ Micro pulse when file uploaded */
-@keyframes uploadPulse {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 35%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 20px 4px color-mix(in srgb, var(--accent-color) 45%, transparent);
-  }
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 35%, transparent);
-  }
-}
-#customBgUpload.pulse {
-  animation: uploadPulse 0.9s ease-out;
+/* File name text (right side of label) */
+.file-name {
+  font-size: 0.8125rem;
+  color: var(--secondary-text);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right; /* keeps text flush right */
 }
 
-/* Remove Button – Accent Capsule Variant */
+/* Remove button */
 #removeCustomBg {
   font-size: 0.8125rem;
   padding: 0.45rem 0.85rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
-  background-color: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
+  background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
   color: var(--accent-text-color, #fff);
   cursor: pointer;
   opacity: 0;
-  transform: translateY(0);
   transition: opacity 0.4s ease, background 0.3s ease, transform 0.25s ease;
 }
 #removeCustomBg.visible,
 #removeCustomBg[style*="inline-block"] {
   opacity: 1;
-  transform: translateY(0);
 }
 #removeCustomBg:hover {
-  background-color: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-light));
+  background: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-light));
   transform: translateY(-1px);
   box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 30%, rgba(0,0,0,0.25));
 }
 
-/* Stack vertically on very small screens (still left aligned) */
-@media (max-width: 480px) {
+/* Stack vertically on smaller screens */
+@media (max-width: 768px) {
   .custom-bg-controls {
+    justify-content: flex-start; /* Align left for mobile */
     flex-direction: column;
-    align-items: flex-start; /* stays left aligned */
+    align-items: flex-end; /* buttons stay right aligned */
   }
-  #customBgUpload,
-  #removeCustomBg {
-    width: auto; /* don’t stretch full width */
+  .file-name {
+    text-align: right;
+    width: 100%;
   }
 }
 
