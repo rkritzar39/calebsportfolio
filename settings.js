@@ -498,38 +498,58 @@ class SettingsManager {
   const remove = document.getElementById('removeCustomBg');
   if (!upload) return;
 
-  const existing = localStorage.getItem('customBackground');
+  // Show controls based on existing background
+  const existing = !!localStorage.getItem('customBackground');
   if (existing && remove) remove.style.display = 'inline-block';
-  this.toggleWallpaperBlurCard(!!existing);
+  this.toggleWallpaperBlurCard(existing);
 
-  // Upload handler
+  // --- Upload handler ---
   upload.addEventListener('change', (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
 
+    const reader = new FileReader();
     reader.onload = (evt) => {
       const imageData = evt.target.result;
       localStorage.setItem('customBackground', imageData);
+
+      // Apply BG and reveal UI
       this.applyCustomBackground(true);
       if (remove) remove.style.display = 'inline-block';
       this.toggleWallpaperBlurCard(true);
 
-      // ✅ Add iOS-26 accent pulse animation feedback
+      // ✅ accent pulse feedback on successful upload
+      upload.classList.remove('pulse'); // restart if queued twice
+      // force reflow so animation restarts reliably on iOS/Safari
+      // eslint-disable-next-line no-unused-expressions
+      upload.offsetHeight;
       upload.classList.add('pulse');
-      setTimeout(() => upload.classList.remove('pulse'), 1000);
+      setTimeout(() => upload.classList.remove('pulse'), 900);
     };
-
     reader.readAsDataURL(file);
   });
 
-  // Remove handler
+  // --- Remove handler ---
   if (remove) {
-    remove.addEventListener('click', () => {
+    remove.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Clear stored background
       localStorage.removeItem('customBackground');
+
+      // Clear visual wallpaper layer immediately
+      const layer = document.getElementById('wallpaper-layer');
+      if (layer) {
+        layer.style.backgroundImage = '';
+        layer.style.opacity = '1';
+      }
+      // Re-apply to update tint/blur/card visibility
       this.applyCustomBackground();
-      remove.style.display = 'none';
       this.toggleWallpaperBlurCard(false);
+
+      // Hide the button (no background to remove)
+      remove.style.display = 'none';
     });
   }
 }
