@@ -367,7 +367,7 @@ class SettingsManager {
     this.syncWallpaperUIVisibility();
   }
 
-  applySetting(key) {
+ applySetting(key) {
   const actions = {
     appearanceMode: () => this.applyAppearanceMode(),
     accentColor: () => this.applyAccentColor(),
@@ -400,24 +400,34 @@ class SettingsManager {
       ),
   };
 
-  // Run base setting handlers
+  // Apply core settings
   actions[key]?.();
 
-  // --- NEW: Handle show/hide of homepage sections ---
+  // === NEW: Universal show/hide for homepage sections ===
   if (key.startsWith("show")) {
+    // Convert "showUsefulLinks" → "useful-links"
     const sectionId = key
-      .replace("show", "")
-      .replace(/^[A-Z]/, (m) => m.toLowerCase()); // e.g. showUsefulLinks → usefulLinks
+      .replace(/^show/, "")
+      .replace(/^[A-Z]/, (m) => m.toLowerCase())
+      .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
 
-    // Each section in HTML should have either id="usefulLinks-section"
-    // or data-section-id="usefulLinks"
+    // Match both ID and data-section-id (for safety)
     const el =
       document.getElementById(`${sectionId}-section`) ||
       document.querySelector(`[data-section-id="${sectionId}"]`);
 
     if (el) {
       const visible = this.settings[key] === "enabled";
-      el.style.display = visible ? "" : "none";
+
+      // Smooth fade transition
+      el.style.transition = "opacity 0.3s ease";
+      if (visible) {
+        el.style.display = "";
+        requestAnimationFrame(() => (el.style.opacity = "1"));
+      } else {
+        el.style.opacity = "0";
+        setTimeout(() => (el.style.display = "none"), 300);
+      }
     }
   }
 }
