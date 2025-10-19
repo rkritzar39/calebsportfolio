@@ -558,6 +558,13 @@ class SettingsManager {
       });
     }
   }
+const fileNameDisplay = document.getElementById('fileNameDisplay');
+if (upload && fileNameDisplay) {
+  upload.addEventListener('change', (e) => {
+    const file = e.target.files?.[0];
+    fileNameDisplay.textContent = file ? file.name : 'No file chosen';
+  });
+}
 
   crossFadeWallpaper(prevBg, nextBg) {
     const { layer } = this.ensureWallpaperLayers();
