@@ -368,39 +368,59 @@ class SettingsManager {
   }
 
   applySetting(key) {
-    const actions = {
-      appearanceMode: () => this.applyAppearanceMode(),
-      accentColor: () => this.applyAccentColor(),
-      fontSize: () => this.applyFontSize(),
-      focusOutline: () =>
-        document.body.classList.toggle(
-          "focus-outline-disabled",
-          this.settings.focusOutline === "disabled"
-        ),
-      motionEffects: () => this.applyMotionEffects(),
-      highContrast: () =>
-        document.body.classList.toggle(
-          "high-contrast",
-          this.settings.highContrast === "enabled"
-        ),
-      dyslexiaFont: () =>
-        document.body.classList.toggle(
-          "dyslexia-font",
-          this.settings.dyslexiaFont === "enabled"
-        ),
-      underlineLinks: () =>
-        document.body.classList.toggle(
-          "underline-links",
-          this.settings.underlineLinks === "enabled"
-        ),
-      mouseTrail: () =>
-        document.body.classList.toggle(
-          "mouse-trail-enabled",
-          this.settings.mouseTrail === "enabled"
-        ),
-    };
-    actions[key]?.();
+  const actions = {
+    appearanceMode: () => this.applyAppearanceMode(),
+    accentColor: () => this.applyAccentColor(),
+    fontSize: () => this.applyFontSize(),
+    focusOutline: () =>
+      document.body.classList.toggle(
+        "focus-outline-disabled",
+        this.settings.focusOutline === "disabled"
+      ),
+    motionEffects: () => this.applyMotionEffects(),
+    highContrast: () =>
+      document.body.classList.toggle(
+        "high-contrast",
+        this.settings.highContrast === "enabled"
+      ),
+    dyslexiaFont: () =>
+      document.body.classList.toggle(
+        "dyslexia-font",
+        this.settings.dyslexiaFont === "enabled"
+      ),
+    underlineLinks: () =>
+      document.body.classList.toggle(
+        "underline-links",
+        this.settings.underlineLinks === "enabled"
+      ),
+    mouseTrail: () =>
+      document.body.classList.toggle(
+        "mouse-trail-enabled",
+        this.settings.mouseTrail === "enabled"
+      ),
+  };
+
+  // Run base setting handlers
+  actions[key]?.();
+
+  // --- NEW: Handle show/hide of homepage sections ---
+  if (key.startsWith("show")) {
+    const sectionId = key
+      .replace("show", "")
+      .replace(/^[A-Z]/, (m) => m.toLowerCase()); // e.g. showUsefulLinks → usefulLinks
+
+    // Each section in HTML should have either id="usefulLinks-section"
+    // or data-section-id="usefulLinks"
+    const el =
+      document.getElementById(`${sectionId}-section`) ||
+      document.querySelector(`[data-section-id="${sectionId}"]`);
+
+    if (el) {
+      const visible = this.settings[key] === "enabled";
+      el.style.display = visible ? "" : "none";
+    }
   }
+}
 
   setThemeClasses(isDark) {
     document.documentElement.classList.toggle("dark-mode", isDark);
