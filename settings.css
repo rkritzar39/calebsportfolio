@@ -939,50 +939,105 @@ body.dark-mode .schedule-time-row input[type="time"]:hover {
 .custom-bg-controls {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   gap: 0.75rem;
-  flex-shrink: 0;
+  width: 100%;
+  margin-top: 0.5rem;
 }
 
+/* Upload Button – Accent Glass Capsule */
 #customBgUpload {
   font-size: 0.8125rem;
-  padding: 0.4rem 0.75rem;
+  padding: 0.45rem 0.85rem;
   border-radius: 999px;
-  border: 1px solid var(--border-color);
-  background: var(--glass-bg-light);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
+  background: color-mix(in srgb, var(--accent-color) 12%, var(--glass-bg-light));
   color: var(--text-color);
   cursor: pointer;
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+}
+#customBgUpload:hover {
+  background: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-light));
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 14px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
 }
 
-#customBgUpload:hover {
-  background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+/* ✨ Micro pulse when file uploaded */
+@keyframes uploadPulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px color-mix(in srgb, var(--accent-color) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent-color) 35%, transparent);
+  }
+}
+#customBgUpload.pulse {
+  animation: uploadPulse 0.9s ease-out;
 }
 
 body.dark-mode #customBgUpload {
-  background: var(--glass-bg-dark);
-  border-color: var(--glass-border-dark);
+  background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-dark));
+  border-color: color-mix(in srgb, var(--accent-color) 25%, var(--glass-border-dark));
+}
+body.dark-mode #customBgUpload:hover {
+  background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-dark));
 }
 
+/* Remove Button – Accent Capsule Variant */
 #removeCustomBg {
-  background-color: color-mix(in srgb, var(--red-color) 15%, var(--glass-bg-light));
-  border: 1px solid color-mix(in srgb, var(--red-color) 50%, transparent);
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
+  background-color: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
+  color: var(--accent-text-color, #fff);
+  cursor: pointer;
+  opacity: 0;
+  transition: background 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease, transform 0.25s ease;
+}
+#removeCustomBg:hover {
+  background-color: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-light));
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 14px color-mix(in srgb, var(--accent-color) 30%, rgba(0,0,0,0.25));
+}
+#removeCustomBg[style*="inline-block"],
+#removeCustomBg.visible {
+  opacity: 1;
 }
 body.dark-mode #removeCustomBg {
-  background-color: color-mix(in srgb, var(--red-color) 20%, var(--glass-bg-dark));
+  background-color: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-dark));
+  border-color: color-mix(in srgb, var(--accent-color) 40%, var(--glass-border-dark));
 }
 
-/* ===== iOS 26 Blur Card Fade ===== */
+/* Stack vertically on narrow screens */
+@media (max-width: 480px) {
+  .custom-bg-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  #customBgUpload,
+  #removeCustomBg {
+    width: 100%;
+  }
+}
+
+/* ===== iOS-26 Blur Card Fade ===== */
 #wallpaperBlurCard {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
-
 #wallpaperBlurCard.hidden {
   opacity: 0;
   transform: translateY(-6px);
   pointer-events: none;
 }
+
