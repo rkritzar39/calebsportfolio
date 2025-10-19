@@ -1996,46 +1996,44 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	opacity: 0.9;
 }
 
-/* Centered inside the ring */
 .arrow-icon {
 	position: absolute;
-	top: 50%;
+	top: 47%;
 	left: 50%;
-	width: 18px;
-	height: 18px;
+	width: 20px;
+	height: 20px;
 	color: var(--accent-color);
 	pointer-events: none;
 	transform: translate(-50%, -50%) rotate(0deg);
 	opacity: 1;
 	transition:
-		transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-		opacity 0.35s ease,
+		transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
 		color 0.3s ease,
 		filter 0.3s ease;
 	filter:
-		drop-shadow(0 0 3px color-mix(in srgb, var(--accent-color) 60%, transparent))
-		drop-shadow(0 0 6px color-mix(in srgb, var(--accent-color) 40%, transparent));
+		drop-shadow(0 0 4px color-mix(in srgb, var(--accent-color) 60%, transparent))
+		drop-shadow(0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent));
 }
 
+/* Arrow points up or down dynamically */
+.arrow-icon.up {
+	transform: translate(-50%, -50%) rotate(0deg);
+}
 .arrow-icon.down {
 	transform: translate(-50%, -50%) rotate(180deg);
-	opacity: 0.9;
-	filter:
-		drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 55%, transparent))
-		drop-shadow(0 0 5px color-mix(in srgb, var(--accent-color) 35%, transparent));
 }
 
 /* Subtle hover light */
 .scroll-to-top:hover .arrow-icon {
 	filter:
-		drop-shadow(0 0 5px color-mix(in srgb, var(--accent-color) 75%, transparent))
-		drop-shadow(0 0 10px color-mix(in srgb, var(--accent-color) 50%, transparent));
+		drop-shadow(0 0 6px color-mix(in srgb, var(--accent-color) 75%, transparent))
+		drop-shadow(0 0 14px color-mix(in srgb, var(--accent-color) 50%, transparent));
 }
 
-/* Smaller, well-aligned percentage */
+/* Smaller, balanced percentage */
 .percentage {
 	position: absolute;
-	top: 66%;
+	top: 68%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	font-size: 0.65rem;
