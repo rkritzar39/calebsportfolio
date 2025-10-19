@@ -137,44 +137,47 @@ document.addEventListener('DOMContentLoaded', () => {
   progressIndicator.style.strokeDasharray = `${circumference}`;
   progressIndicator.style.strokeDashoffset = `${circumference}`;
 
+  let lastScrollTop = 0;
+
   function updateScrollProgress() {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrolled = docHeight > 0 ? (scrollTop / docHeight) : 0;
+    const scrolled = docHeight > 0 ? scrollTop / docHeight : 0;
     const offset = circumference - scrolled * circumference;
     progressIndicator.style.strokeDashoffset = offset;
 
     const percent = Math.round(scrolled * 100);
     scrollPercent.textContent = `${percent}%`;
 
-    // Show button after 20% scroll
+    // Show orb after 20% scroll
     if (scrollTop > window.innerHeight * 0.2) {
       scrollBtn.classList.remove('hidden');
     } else {
       scrollBtn.classList.add('hidden');
     }
 
-    // Flip arrow direction logic
-    if (percent >= 99) {
+    // Determine scroll direction
+    if (scrollTop > lastScrollTop + 5) {
+      // scrolling down
       scrollArrow.classList.remove('up');
       scrollArrow.classList.add('down');
-    } else if (percent <= 97) {
-      scrollArrow.classList.add('up');
+    } else if (scrollTop < lastScrollTop - 5) {
+      // scrolling up
       scrollArrow.classList.remove('down');
+      scrollArrow.classList.add('up');
     }
+
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
   }
 
   window.addEventListener('scroll', updateScrollProgress);
   window.addEventListener('resize', updateScrollProgress);
   updateScrollProgress();
 
+  // Always scroll to top when clicked
   scrollBtn.addEventListener('click', () => {
-    const arrowDown = scrollArrow.classList.contains('down');
-    if (arrowDown) {
-      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollArrow.classList.add('up'); // force arrow up on click
   });
 })();
 
