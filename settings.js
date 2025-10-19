@@ -458,57 +458,65 @@ class SettingsManager {
     }
   }
 
-  ensureOverlay() {
-    const overlayId = 'dark-bg-overlay';
-    let overlay = document.getElementById(overlayId);
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = overlayId;
-      Object.assign(overlay.style, {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: '0',
-        pointerEvents: 'none',
-        transition: 'opacity 0.6s ease, background 0.5s ease'
-      });
-      document.body.prepend(overlay);
-    }
-    return overlay;
+ensureOverlay() {
+  const overlayId = 'dark-bg-overlay';
+  let overlay = document.getElementById(overlayId);
+
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = overlayId;
+    Object.assign(overlay.style, {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      zIndex: '-1',          // 👈 pushes it BEHIND all page content
+      pointerEvents: 'none',
+      transition: 'opacity 0.6s ease, background 0.5s ease',
+      backdropFilter: 'blur(0px) saturate(120%)',
+      WebkitBackdropFilter: 'blur(0px) saturate(120%)'
+    });
+    document.body.prepend(overlay);
   }
 
-  applyCustomBackground(fade = false) {
-    const bg = localStorage.getItem('customBackground');
-    const overlay = this.ensureOverlay();
+  return overlay;
+}
 
-    if (bg) {
-      document.body.style.backgroundImage = `url("${bg}")`;
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center';
-      document.body.style.backgroundRepeat = 'no-repeat';
-      document.body.style.backgroundAttachment = 'fixed';
-      if (fade) {
-        overlay.style.opacity = '0';
-        // allow paint, then fade back in to reveal blur over new image
-        requestAnimationFrame(() => setTimeout(() => (overlay.style.opacity = '1'), 50));
-      }
-    } else {
-      // No custom background — clear image; dynamic gradient handled by scheduler if needed
-      document.body.style.backgroundImage = '';
+applyCustomBackground(fade = false) {
+  const bg = localStorage.getItem('customBackground');
+  const overlay = this.ensureOverlay();
+
+  // place overlay under everything else (critical)
+  overlay.style.zIndex = '-1';
+  document.body.style.position = 'relative';
+
+  if (bg) {
+    document.body.style.backgroundImage = `url("${bg}")`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundRepeat = 'no-repeat';
+    document.body.style.backgroundAttachment = 'fixed';
+    if (fade) {
+      overlay.style.opacity = '0';
+      requestAnimationFrame(() => setTimeout(() => (overlay.style.opacity = '1'), 50));
     }
-
-    const isDark =
-      this.settings.appearanceMode === 'dark' ||
-      (this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-    overlay.style.background = isDark ? 'rgba(0, 0, 0, 0.45)' : 'rgba(255, 255, 255, 0.15)';
-
-    // Ensure current blur is applied
-    const blurValue = localStorage.getItem('wallpaperBlur') || 15;
-    this.applyWallpaperBlur(blurValue);
+  } else {
+    document.body.style.backgroundImage = '';
   }
+
+  const isDark =
+    this.settings.appearanceMode === 'dark' ||
+    (this.settings.appearanceMode === 'device' &&
+      window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+  overlay.style.background = isDark
+    ? 'rgba(0, 0, 0, 0.45)'
+    : 'rgba(255, 255, 255, 0.15)';
+
+  const blurValue = localStorage.getItem('wallpaperBlur') || 15;
+  this.applyWallpaperBlur(blurValue);
+}
 
   initWallpaperBlurControl() {
     const slider = document.getElementById('blur-slider');
