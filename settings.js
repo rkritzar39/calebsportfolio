@@ -488,9 +488,8 @@ ensureOverlay() {
 
 applyCustomBackground(fade = false) {
   const bg = localStorage.getItem('customBackground');
-
-  // Create or get the wallpaper layer (works on iOS/Android)
   let layer = document.getElementById('wallpaper-layer');
+
   if (!layer) {
     layer = document.createElement('div');
     layer.id = 'wallpaper-layer';
@@ -500,17 +499,16 @@ applyCustomBackground(fade = false) {
       left: 0,
       width: '100%',
       height: '100%',
-      zIndex: '-1',
+      zIndex: '-1', // ✅ Keeps it behind everything
       pointerEvents: 'none',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
-      transition: 'opacity 0.5s ease, filter 0.5s ease'
+      transition: 'opacity 0.4s ease, filter 0.3s ease'
     });
     document.body.prepend(layer);
   }
 
-  // Update wallpaper
   if (bg) {
     layer.style.backgroundImage = `url("${bg}")`;
     layer.style.opacity = fade ? '0' : '1';
@@ -519,20 +517,19 @@ applyCustomBackground(fade = false) {
     layer.style.backgroundImage = '';
   }
 
-  // Apply theme overlay tint (dark/light tone)
+  // Tint based on theme
   const isDark =
     this.settings.appearanceMode === 'dark' ||
     (this.settings.appearanceMode === 'device' &&
       window.matchMedia('(prefers-color-scheme: dark)').matches);
-  layer.style.backgroundColor = isDark
-    ? 'rgba(0,0,0,0.4)'
-    : 'rgba(255,255,255,0.15)';
 
-  // Apply blur after updating image
+  layer.style.backgroundColor = isDark
+    ? 'rgba(0, 0, 0, 0.4)'
+    : 'rgba(255, 255, 255, 0.15)';
+
+  // ✅ Apply stored blur level
   const blurValue = localStorage.getItem('wallpaperBlur') || 15;
   this.applyWallpaperBlur(blurValue);
-
-  // Show or hide blur control section
   this.toggleWallpaperBlurCard(!!bg);
 }
 
@@ -581,43 +578,49 @@ applyCustomBackground(fade = false) {
   applyWallpaperBlur(value) {
   const layer = document.getElementById('wallpaper-layer');
   if (!layer) return;
-  layer.style.filter = `blur(${value}px) brightness(1) saturate(1.05)`;
+  layer.style.filter = `blur(${value}px) brightness(1.05)`;
 }
 
   // =============================
   // Dark Mode Scheduler
   // =============================
   initSchedulerInterval() {
-    clearInterval(this.schedulerInterval);
-    const applyScheduler = () => this.checkDarkModeSchedule();
-    applyScheduler();
-    this.schedulerInterval = setInterval(applyScheduler, 60000);
+  clearInterval(this.schedulerInterval);
+  // Apply immediately on page load
+  this.checkDarkModeSchedule(true);
+  // Recheck every minute automatically
+  this.schedulerInterval = setInterval(() => this.checkDarkModeSchedule(), 60000);
+}
+
+
+  checkDarkModeSchedule(force = false) {
+  const mode = this.settings.darkModeScheduler || 'off';
+  this.toggleScheduleInputs(mode);
+
+  // Only run if user chose "Scheduled"
+  if (mode !== 'auto' && !force) return;
+
+  const now = new Date();
+  const [startH, startM] = this.settings.darkModeStart.split(':').map(Number);
+  const [endH, endM] = this.settings.darkModeEnd.split(':').map(Number);
+
+  const start = new Date();
+  start.setHours(startH, startM, 0, 0);
+  const end = new Date();
+  end.setHours(endH, endM, 0, 0);
+
+  // ✅ Works across midnight (e.g. 20:00–06:00)
+  let isNight;
+  if (end > start) {
+    isNight = now >= start && now < end;
+  } else {
+    isNight = now >= start || now < end;
   }
 
-  checkDarkModeSchedule() {
-    const mode = this.settings.darkModeScheduler || 'off';
-    this.toggleScheduleInputs(mode);
-    if (mode === 'off') return;
-
-    const now = new Date();
-    const [startH, startM] = this.settings.darkModeStart.split(':').map(Number);
-    const [endH, endM] = this.settings.darkModeEnd.split(':').map(Number);
-
-    const start = new Date();
-    start.setHours(startH, startM, 0, 0);
-
-    const end = new Date();
-    end.setHours(endH, endM, 0, 0);
-
-    // If end <= start, it crosses midnight
-    const isNight = end > start ? now >= start && now < end : now >= start || now < end;
-
-    if (mode === 'auto') {
-      this.setThemeClasses(isNight);
-      // Re-apply background overlay tone for the new theme
-      this.applyCustomBackground();
-    }
-  }
+  // Apply instantly, not delayed by interval
+  this.setThemeClasses(isNight);
+  this.applyCustomBackground();
+}
 
   toggleScheduleInputs(mode) {
     const group = document.querySelector('.schedule-group');
