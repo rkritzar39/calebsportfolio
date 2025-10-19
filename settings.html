@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="settings.css" />
   <link rel="stylesheet" href="style.css" />
 
+  <!-- Flicker Prevention Script -->
   <script>
   (function() {
     try {
@@ -34,8 +35,6 @@
 </head>
 
 <body class="settings-page">
-  <div class="scroll-indicator" id="scrollIndicator"></div>
-
   <main class="container" id="main-content">
     <div class="settings-section">
       <div class="settings-header">
@@ -108,56 +107,59 @@
             Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
           </div>
         </div>
+      </div>
 
+      <!-- ================================= -->
       <!-- Dark Mode Scheduler -->
-<div class="settings-subsection animate-slide-in">
-  <h2 class="subsection-title">Dark Mode Scheduler</h2>
+      <!-- ================================= -->
+      <div class="settings-subsection animate-slide-in">
+        <h2 class="subsection-title">Dark Mode Scheduler</h2>
 
-  <div class="setting-card">
-    <div class="setting-label">
-      <strong class="setting-title">Automatic Theme Switching</strong>
-      <p class="setting-description">
-        Automatically switch between light and dark modes at custom times.
-      </p>
-    </div>
-    <select id="darkModeScheduler" aria-label="Dark mode schedule">
-      <option value="off">Off</option>
-      <option value="auto">Scheduled</option>
-    </select>
-  </div>
+        <div class="setting-card">
+          <div class="setting-label">
+            <strong class="setting-title">Automatic Theme Switching</strong>
+            <p class="setting-description">
+              Automatically switch between light and dark modes at custom times.
+            </p>
+          </div>
+          <select id="darkModeScheduler" aria-label="Dark mode schedule">
+            <option value="off">Off</option>
+            <option value="auto">Scheduled</option>
+          </select>
+        </div>
 
-  <div class="schedule-group">
-    <div class="setting-card">
-      <div class="setting-label">
-        <strong class="setting-title">Start Time</strong>
-        <p class="setting-description">Time when dark mode activates.</p>
+        <div class="schedule-group">
+          <div class="setting-card">
+            <div class="setting-label">
+              <strong class="setting-title">Start Time</strong>
+              <p class="setting-description">Time when dark mode activates.</p>
+            </div>
+            <input type="time" id="darkModeStart" value="20:00" />
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-label">
+              <strong class="setting-title">End Time</strong>
+              <p class="setting-description">Time when light mode reactivates.</p>
+            </div>
+            <input type="time" id="darkModeEnd" value="06:00" />
+          </div>
+        </div>
       </div>
-      <input type="time" id="darkModeStart" value="20:00">
-    </div>
-
-    <div class="setting-card">
-      <div class="setting-label">
-        <strong class="setting-title">End Time</strong>
-        <p class="setting-description">Time when light mode reactivates.</p>
-      </div>
-      <input type="time" id="darkModeEnd" value="06:00">
-    </div>
-  </div>
-</div>
-
 
       <!-- ================================= -->
       <!-- General -->
       <!-- ================================= -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">General</h2>
+
         <label class="setting-card" for="rearrangingEnabledToggle">
           <div class="setting-label">
             <strong class="setting-title">Enable Section Rearranging</strong>
             <p class="setting-description">Allow drag-and-drop to reorder sections on the homepage.</p>
           </div>
           <div class="md-switch">
-            <input type="checkbox" id="rearrangingEnabledToggle" role="switch" aria-label="Toggle section rearranging" />
+            <input type="checkbox" id="rearrangingEnabledToggle" role="switch" />
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
@@ -176,6 +178,8 @@
       <!-- ================================= -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Homepage Sections</h2>
+
+        <!-- toggles for homepage sections -->
         <label class="setting-card" for="showSocialLinksToggle">
           <div class="setting-label"><strong class="setting-title">Social Links</strong></div>
           <div class="md-switch"><input type="checkbox" id="showSocialLinksToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
@@ -248,21 +252,22 @@
       <!-- ================================= -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Accessibility</h2>
+
         <div class="setting-card">
           <label for="text-size-slider" class="setting-label">
             <strong class="setting-title">Text Size</strong>
-            <p class="setting-description">Adjust the text size for better readability</p>
+            <p class="setting-description">Adjust the text size for better readability.</p>
           </label>
           <div class="text-size-control">
             <span id="textSizeValue" class="font-size-badge">17px</span>
-            <input type="range" id="text-size-slider" min="12" max="24" value="17" step="1" aria-label="Adjust text size" />
+            <input type="range" id="text-size-slider" min="12" max="24" value="17" step="1" />
           </div>
         </div>
 
         <label class="setting-card" for="focusOutlineToggle">
           <div class="setting-label">
             <strong class="setting-title">Focus Outline</strong>
-            <p class="setting-description">Toggle the focus outline for accessibility purposes</p>
+            <p class="setting-description">Toggle the focus outline for accessibility purposes.</p>
           </div>
           <div class="md-switch"><input type="checkbox" id="focusOutlineToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
         </label>
@@ -314,7 +319,7 @@
         <div class="setting-card">
           <div class="setting-label">
             <strong class="setting-title">Reset to Factory Settings</strong>
-            <p class="setting-description">Restore all settings to their default values</p>
+            <p class="setting-description">Restore all settings to their default values.</p>
           </div>
           <button id="resetSettings" class="button reset-button">Reset</button>
         </div>
@@ -342,7 +347,7 @@
 
   <div id="mouse-trail"></div>
 
-  <!-- External JS files -->
+  <!-- External JS -->
   <script src="settings.js"></script>
   <script src="script.js"></script>
 </body>
