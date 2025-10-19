@@ -304,22 +304,21 @@
 <!-- Scroll-to-Top Orb – iOS 26 Onyx Glass -->
 <!-- ======================================= -->
 <div class="scroll-to-top hidden" id="scrollToTopBtn" aria-label="Scroll to top">
-  <!-- SVG progress ring -->
+  <!-- Progress Ring -->
   <svg class="progress-ring" viewBox="0 0 50 50">
     <circle class="progress-bg" cx="25" cy="25" r="22"></circle>
     <circle class="progress-indicator" id="progressIndicator" cx="25" cy="25" r="22"></circle>
   </svg>
 
-  <!-- Arrow -->
-  <span class="arrow up" id="scrollArrow">↑</span>
+  <!-- Arrow Icon -->
+  <svg class="arrow-icon up" id="scrollArrow" viewBox="0 0 24 24" fill="none">
+    <path d="M12 5L12 19" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    <path d="M6 10L12 4L18 10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
 
   <!-- Percentage -->
   <span class="percentage" id="scrollPercent">0%</span>
 </div>
-
-
-
-
 
     <iframe
   id="status-widget"
