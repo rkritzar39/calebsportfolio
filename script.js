@@ -122,9 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-/* ======================================= */
-/* Scroll-to-Top Orb Script – iOS 26 Style */
-/* ======================================= */
 (function() {
   const scrollBtn = document.getElementById('scrollToTopBtn');
   const progressIndicator = document.getElementById('progressIndicator');
@@ -149,22 +146,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const percent = Math.round(scrolled * 100);
     scrollPercent.textContent = `${percent}%`;
 
-    // Show orb after 20% scroll
     if (scrollTop > window.innerHeight * 0.2) {
       scrollBtn.classList.remove('hidden');
     } else {
       scrollBtn.classList.add('hidden');
     }
 
-    // Determine scroll direction
+    // Scroll direction detection
     if (scrollTop > lastScrollTop + 5) {
-      // scrolling down
-      scrollArrow.classList.remove('up');
       scrollArrow.classList.add('down');
     } else if (scrollTop < lastScrollTop - 5) {
-      // scrolling up
       scrollArrow.classList.remove('down');
-      scrollArrow.classList.add('up');
     }
 
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
@@ -174,16 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('resize', updateScrollProgress);
   updateScrollProgress();
 
-  // Always scroll to top when clicked
   scrollBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    scrollArrow.classList.add('up'); // force arrow up on click
+    scrollArrow.classList.remove('down'); // force arrow up on click
   });
 })();
 
-/* ======================================= */
-/* Smooth Percentage Fade Logic – iOS 26   */
-/* ======================================= */
+/* Percentage fade */
 (function() {
   const scrollPercent = document.getElementById('scrollPercent');
   let fadeTimeout;
@@ -191,9 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!scrollPercent) return;
     scrollPercent.classList.add('visible');
     clearTimeout(fadeTimeout);
-    fadeTimeout = setTimeout(() => {
-      scrollPercent.classList.remove('visible');
-    }, 1500);
+    fadeTimeout = setTimeout(() => scrollPercent.classList.remove('visible'), 1500);
   });
 })();
 	
