@@ -143,19 +143,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrolled = docHeight > 0 ? (scrollTop / docHeight) : 0;
     const offset = circumference - scrolled * circumference;
     progressIndicator.style.strokeDashoffset = offset;
+
     const percent = Math.round(scrolled * 100);
     scrollPercent.textContent = `${percent}%`;
 
+    // Show button after 20% scroll
     if (scrollTop > window.innerHeight * 0.2) {
       scrollBtn.classList.remove('hidden');
     } else {
       scrollBtn.classList.add('hidden');
     }
 
-    if (percent >= 98) {
+    // Flip arrow direction logic
+    if (percent >= 99) {
       scrollArrow.classList.remove('up');
       scrollArrow.classList.add('down');
-    } else {
+    } else if (percent <= 97) {
       scrollArrow.classList.add('up');
       scrollArrow.classList.remove('down');
     }
