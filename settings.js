@@ -597,11 +597,19 @@ applyCustomBackground(fade = false) {
     group.style.display = mode === 'auto' ? '' : 'none';
   }
 
-  toggleWallpaperBlurCard(show) {
+ toggleWallpaperBlurCard(show) {
   const card = document.getElementById('wallpaperBlurCard');
   if (!card) return;
-  card.style.display = show ? '' : 'none';
+
+  if (show) {
+    card.classList.remove('hidden');
+    setTimeout(() => (card.style.display = ''), 50);
+  } else {
+    card.classList.add('hidden');
+    // Wait for fade-out before hiding the element
+    setTimeout(() => (card.style.display = 'none'), 350);
   }
+}
 
   // =============================
   // Misc
