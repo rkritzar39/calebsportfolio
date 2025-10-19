@@ -109,49 +109,42 @@
           </div>
         </div>
 
-        <!-- Dynamic Wallpapers & Dark Mode Scheduler -->
-        <div class="setting-card dynamic-theme-card">
-          <div class="setting-label">
-            <strong class="setting-title">Dynamic Wallpapers & Dark Mode Scheduler</strong>
-            <p class="setting-description">Automatically change wallpapers and switch between light and dark modes based on time or a custom schedule.</p>
-          </div>
+      <!-- Dark Mode Scheduler -->
+<div class="settings-subsection animate-slide-in">
+  <h2 class="subsection-title">Dark Mode Scheduler</h2>
 
-          <div class="form-group">
-            <label for="themeModeSelect" class="setting-sub-label">Mode</label>
-            <select id="themeModeSelect">
-              <option value="system">Follow System</option>
-              <option value="dynamic">Dynamic (Time-Based)</option>
-              <option value="scheduled">Scheduled</option>
-              <option value="light">Always Light</option>
-              <option value="dark">Always Dark</option>
-            </select>
-          </div>
+  <div class="setting-card">
+    <div class="setting-label">
+      <strong class="setting-title">Automatic Theme Switching</strong>
+      <p class="setting-description">
+        Automatically switch between light and dark modes at custom times.
+      </p>
+    </div>
+    <select id="darkModeScheduler" aria-label="Dark mode schedule">
+      <option value="off">Off</option>
+      <option value="auto">Scheduled</option>
+    </select>
+  </div>
 
-          <div class="setting-card">
-            <div class="setting-label">
-              <strong class="setting-title">Dark Mode Scheduler</strong>
-              <p class="setting-description">Automatically switch themes between day and night.</p>
-            </div>
-            <select id="darkModeScheduler" aria-label="Dark mode schedule">
-              <option value="off">Off</option>
-              <option value="auto">Scheduled</option>
-            </select>
-          </div>
-          
-          <div class="schedule-group">
-            <div class="schedule-time-row">
-              <div>
-                <div class="setting-sub-label">Start Time</div>
-                <input type="time" id="darkModeStart" value="20:00">
-              </div>
-              <div>
-                <div class="setting-sub-label">End Time</div>
-                <input type="time" id="darkModeEnd" value="06:00">
-              </div>
-            </div>
-          </div>
-        </div>
+  <div class="schedule-group">
+    <div class="setting-card">
+      <div class="setting-label">
+        <strong class="setting-title">Start Time</strong>
+        <p class="setting-description">Time when dark mode activates.</p>
       </div>
+      <input type="time" id="darkModeStart" value="20:00">
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-label">
+        <strong class="setting-title">End Time</strong>
+        <p class="setting-description">Time when light mode reactivates.</p>
+      </div>
+      <input type="time" id="darkModeEnd" value="06:00">
+    </div>
+  </div>
+</div>
+
 
       <!-- ================================= -->
       <!-- General -->
