@@ -1,7 +1,8 @@
 /**
  * settings.js
- * Fully functional settings manager with live previews, custom backgrounds,
- * dark-mode overlay, real-time scheduler, and motion-safe integration.
+ * Fully functional settings manager with live previews,
+ * custom backgrounds, blur control, dark-mode scheduler,
+ * and dynamic wallpapers.
  */
 class SettingsManager {
 	constructor() {
@@ -45,21 +46,22 @@ class SettingsManager {
 			this.setupEventListeners();
 			this.initMouseTrail();
 			this.initLoadingScreen();
-			this.initSchedulerInterval();
 			this.initScrollArrow();
 			this.initCustomBackgroundControls();
 			this.applyCustomBackground();
+			this.initWallpaperBlurControl();
+			this.initSchedulerInterval();
 
-			// Device theme listener
+			// Device theme change listener
 			if (window.matchMedia) {
 				this.deviceThemeMedia = window.matchMedia('(prefers-color-scheme: dark)');
 				this.deviceThemeMedia.addEventListener('change', () => {
 					if (this.settings.appearanceMode === 'device') this.applyAppearanceMode();
-					this.applyCustomBackground(); // re-apply overlay
+					this.applyCustomBackground();
 				});
 			}
 
-			// Reduced motion listener
+			// System reduced motion listener
 			if (window.matchMedia) {
 				const motionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
 				motionMedia.addEventListener('change', (e) => {
@@ -72,7 +74,7 @@ class SettingsManager {
 				});
 			}
 
-			// Sync across tabs
+			// Storage sync across tabs
 			window.addEventListener('storage', (e) => {
 				if (e.key === 'websiteSettings') {
 					this.settings = this.loadSettings();
@@ -109,7 +111,7 @@ class SettingsManager {
 	}
 
 	// =============================
-	// UI setup
+	// UI Setup
 	// =============================
 	initializeControls() {
 		this.initSegmentedControl('appearanceModeControl', this.settings.appearanceMode);
@@ -169,7 +171,7 @@ class SettingsManager {
 	}
 
 	// =============================
-	// Event listeners
+	// Event Listeners
 	// =============================
 	setupEventListeners() {
 		['appearanceMode', 'themeStyle'].forEach((key) => {
@@ -226,6 +228,35 @@ class SettingsManager {
 			}
 		});
 
+		// === DARK MODE SCHEDULER CONTROLS ===
+		const schedulerSelect = document.getElementById('darkModeScheduler');
+		const startInput = document.getElementById('darkModeStart');
+		const endInput = document.getElementById('darkModeEnd');
+
+		if (schedulerSelect) {
+			schedulerSelect.addEventListener('change', (e) => {
+				this.settings.darkModeScheduler = e.target.value;
+				this.saveSettings();
+				this.checkDarkModeSchedule();
+			});
+		}
+
+		if (startInput) {
+			startInput.addEventListener('change', (e) => {
+				this.settings.darkModeStart = e.target.value;
+				this.saveSettings();
+				this.checkDarkModeSchedule();
+			});
+		}
+
+		if (endInput) {
+			endInput.addEventListener('change', (e) => {
+				this.settings.darkModeEnd = e.target.value;
+				this.saveSettings();
+				this.checkDarkModeSchedule();
+			});
+		}
+
 		document.getElementById('resetLayoutBtn')?.addEventListener('click', () => {
 			if (confirm('Reset the section layout to default?')) {
 				localStorage.removeItem('sectionOrder');
@@ -238,7 +269,7 @@ class SettingsManager {
 	}
 
 	// =============================
-	// Setting application
+	// Visual Settings
 	// =============================
 	updateSliderFill(slider) {
 		if (!slider) return;
@@ -339,7 +370,7 @@ class SettingsManager {
 	}
 
 	// =============================
-	// Custom Background
+	// Custom Background + Blur
 	// =============================
 	initCustomBackgroundControls() {
 		const upload = document.getElementById('customBgUpload');
@@ -376,37 +407,132 @@ class SettingsManager {
 		const overlayId = 'dark-bg-overlay';
 		let overlay = document.getElementById(overlayId);
 
-		if (bg) {
-			document.documentElement.style.backgroundImage = `url("${bg}")`;
-			document.documentElement.style.backgroundSize = 'cover';
-			document.documentElement.style.backgroundAttachment = 'fixed';
-			document.documentElement.style.backgroundPosition = 'center';
-
-			if (!overlay) {
-				overlay = document.createElement('div');
-				overlay.id = overlayId;
-				overlay.style.position = 'fixed';
-				overlay.style.top = 0;
-				overlay.style.left = 0;
-				overlay.style.width = '100%';
-				overlay.style.height = '100%';
-				overlay.style.zIndex = '-1';
-				document.body.prepend(overlay);
-			}
-
-			const isDark =
-				this.settings.appearanceMode === 'dark' ||
-				(this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-			overlay.style.background = isDark
-				? 'rgba(0, 0, 0, 0.45)' // translucent dark overlay for readability
-				: 'rgba(255, 255, 255, 0.15)';
-			overlay.style.transition = 'background 0.5s ease';
+		if (!overlay) {
+			overlay = document.createElement('div');
+			overlay.id = overlayId;
+			overlay.style.position = 'fixed';
+			overlay.style.top = 0;
+			overlay.style.left = 0;
+			overlay.style.width = '100%';
+			overlay.style.height = '100%';
+			overlay.style.zIndex = '0';
 			overlay.style.pointerEvents = 'none';
-			overlay.style.backdropFilter = 'none';
+			document.body.prepend(overlay);
+		}
+
+		if (bg) {
+			document.body.style.backgroundImage = `url("${bg}")`;
+			document.body.style.backgroundSize = 'cover';
+			document.body.style.backgroundAttachment = 'fixed';
+			document.body.style.backgroundPosition = 'center';
+			document.body.style.backgroundRepeat = 'no-repeat';
 		} else {
-			document.documentElement.style.backgroundImage = '';
-			if (overlay) overlay.remove();
+			document.body.style.backgroundImage = '';
+		}
+
+		const isDark =
+			this.settings.appearanceMode === 'dark' ||
+			(this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+		overlay.style.background = isDark
+			? 'rgba(0, 0, 0, 0.45)'
+			: 'rgba(255, 255, 255, 0.15)';
+		overlay.style.transition = 'background 0.5s ease';
+
+		const blurValue = localStorage.getItem('wallpaperBlur') || 15;
+		this.applyWallpaperBlur(blurValue);
+	}
+
+	initWallpaperBlurControl() {
+		const slider = document.getElementById('blur-slider');
+		const badge = document.getElementById('blurValue');
+		if (!slider || !badge) return;
+
+		const stored = localStorage.getItem('wallpaperBlur') || 15;
+		slider.value = stored;
+		badge.textContent = `${stored}px`;
+		this.applyWallpaperBlur(stored);
+
+		slider.addEventListener('input', (e) => {
+			const val = e.target.value;
+			badge.textContent = `${val}px`;
+			this.applyWallpaperBlur(val);
+			localStorage.setItem('wallpaperBlur', val);
+		});
+	}
+
+	applyWallpaperBlur(value) {
+		const overlay = document.getElementById('dark-bg-overlay');
+		if (!overlay) return;
+		overlay.style.backdropFilter = `blur(${value}px) saturate(120%)`;
+		overlay.style.webkitBackdropFilter = `blur(${value}px) saturate(120%)`;
+	}
+
+	// =============================
+	// Scheduler + Dynamic Wallpaper
+	// =============================
+	initSchedulerInterval() {
+		clearInterval(this.schedulerInterval);
+		const applyScheduler = () => this.checkDarkModeSchedule();
+		applyScheduler();
+		this.schedulerInterval = setInterval(applyScheduler, 60000);
+	}
+
+	checkDarkModeSchedule() {
+		const mode = this.settings.darkModeScheduler || 'off';
+		if (mode === 'off') return;
+
+		const now = new Date();
+		const [startH, startM] = this.settings.darkModeStart.split(':').map(Number);
+		const [endH, endM] = this.settings.darkModeEnd.split(':').map(Number);
+
+		const start = new Date();
+		start.setHours(startH, startM, 0, 0);
+
+		const end = new Date();
+		end.setHours(endH, endM, 0, 0);
+
+		let isNight;
+		if (end > start) {
+			isNight = now >= start && now < end;
+		} else {
+			isNight = now >= start || now < end;
+		}
+
+		if (mode === 'auto') {
+			document.body.classList.toggle('dark-mode', isNight);
+			document.body.classList.toggle('light-e', !isNight);
+			this.applyDynamicWallpaper(isNight);
+		}
+	}
+
+	applyDynamicWallpaper(isNight) {
+		const hasCustom = localStorage.getItem('customBackground');
+		const overlay = document.getElementById('dark-bg-overlay');
+
+		if (hasCustom) {
+			this.applyCustomBackground();
+			return;
+		}
+
+		const gradientDay = `
+			linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,240,245,0.9)),
+			radial-gradient(circle at 20% 20%, rgba(200,200,255,0.4), transparent 60%)
+		`;
+		const gradientNight = `
+			linear-gradient(135deg, rgba(10,10,15,0.95), rgba(20,20,25,0.95)),
+			radial-gradient(circle at 80% 10%, rgba(100,0,255,0.3), transparent 60%)
+		`;
+
+		document.body.style.backgroundImage = isNight ? gradientNight : gradientDay;
+		document.body.style.backgroundAttachment = 'fixed';
+		document.body.style.backgroundSize = 'cover';
+		document.body.style.backgroundPosition = 'center';
+
+		if (overlay) {
+			overlay.style.background = isNight
+				? 'rgba(0,0,0,0.45)'
+				: 'rgba(255,255,255,0.15)';
 		}
 	}
 
@@ -415,7 +541,6 @@ class SettingsManager {
 	// =============================
 	initScrollArrow() {}
 	initLoadingScreen() {}
-	initSchedulerInterval() {}
 
 	resetSectionVisibility() {
 		if (confirm('Show all homepage sections again?')) {
