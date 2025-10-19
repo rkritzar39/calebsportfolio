@@ -1998,24 +1998,23 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 
 .arrow-icon {
 	position: absolute;
-	top: 47%;
+	top: 42%; /* Moves arrow higher up */
 	left: 50%;
-	width: 20px;
-	height: 20px;
+	width: 16px;  /* Smaller arrow */
+	height: 16px;
 	color: var(--accent-color);
 	pointer-events: none;
 	transform: translate(-50%, -50%) rotate(0deg);
 	opacity: 1;
 	transition:
 		transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-		color 0.3s ease,
-		filter 0.3s ease;
+		filter 0.3s ease,
+		color 0.3s ease;
 	filter:
-		drop-shadow(0 0 4px color-mix(in srgb, var(--accent-color) 60%, transparent))
-		drop-shadow(0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent));
+		drop-shadow(0 0 3px color-mix(in srgb, var(--accent-color) 60%, transparent))
+		drop-shadow(0 0 6px color-mix(in srgb, var(--accent-color) 40%, transparent));
 }
 
-/* Arrow points up or down dynamically */
 .arrow-icon.up {
 	transform: translate(-50%, -50%) rotate(0deg);
 }
@@ -2026,26 +2025,28 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 /* Subtle hover light */
 .scroll-to-top:hover .arrow-icon {
 	filter:
-		drop-shadow(0 0 6px color-mix(in srgb, var(--accent-color) 75%, transparent))
-		drop-shadow(0 0 14px color-mix(in srgb, var(--accent-color) 50%, transparent));
+		drop-shadow(0 0 5px color-mix(in srgb, var(--accent-color) 75%, transparent))
+		drop-shadow(0 0 10px color-mix(in srgb, var(--accent-color) 50%, transparent));
 }
 
 /* Smaller, balanced percentage */
 .percentage {
 	position: absolute;
-	top: 68%;
+	top: 62%; /* More space below arrow */
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: 0.65rem;
+	font-size: 0.6rem; /* smaller, fits ring */
+	letter-spacing: 0.5px;
 	color: var(--accent-color);
-	font-weight: 600;
-	text-shadow: 0 0 4px color-mix(in srgb, var(--accent-color) 45%, transparent);
-	filter: drop-shadow(0 0 1px color-mix(in srgb, var(--accent-color) 40%, transparent));
+	font-weight: 500;
+	text-shadow: 0 0 3px color-mix(in srgb, var(--accent-color) 40%, transparent);
+	filter: drop-shadow(0 0 1px color-mix(in srgb, var(--accent-color) 30%, transparent));
 	pointer-events: none;
 	text-align: center;
 	opacity: 0;
 	transition: opacity 0.6s ease, transform 0.6s ease;
 }
+
 .percentage.visible {
 	opacity: 1;
 	transform: translate(-50%, -52%);
