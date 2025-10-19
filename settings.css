@@ -932,3 +932,44 @@ body.dark-mode .schedule-time-row input[type="time"] {
 body.dark-mode .schedule-time-row input[type="time"]:hover {
   background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
 }
+
+/* ============================================ */
+/* == Custom Background Upload (Glass Style) == */
+/* ============================================ */
+.custom-bg-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+#customBgUpload {
+  font-size: 0.8125rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--glass-bg-light);
+  color: var(--text-color);
+  cursor: pointer;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+#customBgUpload:hover {
+  background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+body.dark-mode #customBgUpload {
+  background: var(--glass-bg-dark);
+  border-color: var(--glass-border-dark);
+}
+
+#removeCustomBg {
+  background-color: color-mix(in srgb, var(--red-color) 15%, var(--glass-bg-light));
+  border: 1px solid color-mix(in srgb, var(--red-color) 50%, transparent);
+}
+body.dark-mode #removeCustomBg {
+  background-color: color-mix(in srgb, var(--red-color) 20%, var(--glass-bg-dark));
+}
