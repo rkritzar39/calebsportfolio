@@ -131,6 +131,9 @@ class SettingsManager {
 			this.updateSliderFill(slider);
 		}
 
+		// Apply scheduler toggle visibility
+		this.toggleScheduleInputs(this.settings.darkModeScheduler);
+
 		const toggles = Object.keys(this.defaultSettings).filter(
 			(k) =>
 				typeof this.defaultSettings[k] === 'string' &&
@@ -174,24 +177,7 @@ class SettingsManager {
 	// Event Listeners
 	// =============================
 	setupEventListeners() {
-		['appearanceMode', 'themeStyle'].forEach((key) => {
-			const control = document.getElementById(`${key}Control`);
-			if (control) {
-				control.addEventListener('click', (e) => {
-					const btn = e.target.closest('button');
-					if (btn) {
-						this.settings[key] = btn.dataset.value;
-						this.applySetting(key);
-						this.saveSettings();
-						this.initSegmentedControl(`${key}Control`, this.settings[key]);
-						this.updateSegmentedBackground(`${key}Control`);
-						this.applyCustomBackground();
-					}
-				});
-				this.updateSegmentedBackground(`${key}Control`);
-			}
-		});
-
+		// Accent color
 		const accentPicker = document.getElementById('accentColorPicker');
 		if (accentPicker) {
 			accentPicker.addEventListener('input', (e) => {
@@ -201,6 +187,7 @@ class SettingsManager {
 			});
 		}
 
+		// Font size
 		const slider = document.getElementById('text-size-slider');
 		if (slider) {
 			slider.addEventListener('input', (e) => {
@@ -212,23 +199,7 @@ class SettingsManager {
 			});
 		}
 
-		const toggleKeys = Object.keys(this.defaultSettings).filter(
-			(k) =>
-				typeof this.defaultSettings[k] === 'string' &&
-				(this.defaultSettings[k] === 'enabled' || this.defaultSettings[k] === 'disabled')
-		);
-		toggleKeys.forEach((key) => {
-			const el = document.getElementById(`${key}Toggle`);
-			if (el) {
-				el.addEventListener('change', () => {
-					this.settings[key] = el.checked ? 'enabled' : 'disabled';
-					this.applySetting(key);
-					this.saveSettings();
-				});
-			}
-		});
-
-		// === DARK MODE SCHEDULER CONTROLS ===
+		// Scheduler controls
 		const schedulerSelect = document.getElementById('darkModeScheduler');
 		const startInput = document.getElementById('darkModeStart');
 		const endInput = document.getElementById('darkModeEnd');
@@ -237,10 +208,10 @@ class SettingsManager {
 			schedulerSelect.addEventListener('change', (e) => {
 				this.settings.darkModeScheduler = e.target.value;
 				this.saveSettings();
+				this.toggleScheduleInputs(e.target.value);
 				this.checkDarkModeSchedule();
 			});
 		}
-
 		if (startInput) {
 			startInput.addEventListener('change', (e) => {
 				this.settings.darkModeStart = e.target.value;
@@ -248,7 +219,6 @@ class SettingsManager {
 				this.checkDarkModeSchedule();
 			});
 		}
-
 		if (endInput) {
 			endInput.addEventListener('change', (e) => {
 				this.settings.darkModeEnd = e.target.value;
@@ -257,19 +227,21 @@ class SettingsManager {
 			});
 		}
 
-		document.getElementById('resetLayoutBtn')?.addEventListener('click', () => {
-			if (confirm('Reset the section layout to default?')) {
-				localStorage.removeItem('sectionOrder');
-				alert('Layout reset. Refresh homepage to see changes.');
-			}
-		});
-
-		document.getElementById('resetSectionsBtn')?.addEventListener('click', () => this.resetSectionVisibility());
-		document.getElementById('resetSettings')?.addEventListener('click', () => this.resetSettings());
+		// Blur slider updates label + effect
+		const blurSlider = document.getElementById('blur-slider');
+		const blurBadge = document.getElementById('blurValue');
+		if (blurSlider && blurBadge) {
+			blurSlider.addEventListener('input', (e) => {
+				const val = e.target.value;
+				blurBadge.textContent = `${val}px`;
+				localStorage.setItem('wallpaperBlur', val);
+				this.applyWallpaperBlur(val);
+			});
+		}
 	}
 
 	// =============================
-	// Visual Settings
+	// Appearance & Color
 	// =============================
 	updateSliderFill(slider) {
 		if (!slider) return;
@@ -278,13 +250,13 @@ class SettingsManager {
 	}
 
 	getContrastColor(hex) {
-		if (!hex) return '#ffffff';
+		if (!hex) return '#fff';
 		hex = hex.replace('#', '');
-		const r = parseInt(hex.substr(0, 2), 16);
-		const g = parseInt(hex.substr(2, 2), 16);
-		const b = parseInt(hex.substr(4, 2), 16);
+		const r = parseInt(hex.substr(0, 2), 16),
+			g = parseInt(hex.substr(2, 2), 16),
+			b = parseInt(hex.substr(4, 2), 16);
 		const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-		return yiq >= 128 ? '#000000' : '#ffffff';
+		return yiq >= 128 ? '#000' : '#fff';
 	}
 
 	checkAccentColor(hex) {
@@ -300,77 +272,8 @@ class SettingsManager {
 		warn.style.display = isLightColor && isLight ? 'block' : 'none';
 	}
 
-	applyAllSettings() {
-		Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
-		this.applyCustomBackground();
-	}
-
-	applySetting(key) {
-		const actions = {
-			appearanceMode: () => this.applyAppearanceMode(),
-			accentColor: () => this.applyAccentColor(),
-			fontSize: () => this.applyFontSize(),
-			focusOutline: () =>
-				document.body.classList.toggle('focus-outline-disabled', this.settings.focusOutline === 'disabled'),
-			motionEffects: () => this.applyMotionEffects(),
-			highContrast: () =>
-				document.body.classList.toggle('high-contrast', this.settings.highContrast === 'enabled'),
-			dyslexiaFont: () => document.body.classList.toggle('dyslexia-font', this.settings.dyslexiaFont === 'enabled'),
-			underlineLinks: () =>
-				document.body.classList.toggle('underline-links', this.settings.underlineLinks === 'enabled'),
-			mouseTrail: () => document.body.classList.toggle('mouse-trail-enabled', this.settings.mouseTrail === 'enabled'),
-			showSocialLinks: () => this.applySectionVisibility('social-links-section', this.settings.showSocialLinks),
-			showPresidentSection: () => this.applySectionVisibility('president-section', this.settings.showPresidentSection),
-			showTiktokShoutouts: () =>
-				this.applySectionVisibility('tiktok-shoutouts-section', this.settings.showTiktokShoutouts),
-			showInstagramShoutouts: () =>
-				this.applySectionVisibility('instagram-shoutouts-section', this.settings.showInstagramShoutouts),
-			showYoutubeShoutouts: () =>
-				this.applySectionVisibility('youtube-shoutouts-section', this.settings.showYoutubeShoutouts),
-			showUsefulLinks: () => this.applySectionVisibility('useful-links-section', this.settings.showUsefulLinks),
-			showCountdown: () => this.applySectionVisibility('countdown-section', this.settings.showCountdown),
-			showBusinessSection: () => this.applySectionVisibility('business-section', this.settings.showBusinessSection),
-			showTechInformation: () =>
-				this.applySectionVisibility('tech-information-section', this.settings.showTechInformation),
-			showDisabilitiesSection: () =>
-				this.applySectionVisibility('disabilities-section', this.settings.showDisabilitiesSection),
-			showQuoteSection: () => this.applySectionVisibility('quote-section', this.settings.showQuoteSection)
-		};
-		actions[key]?.();
-	}
-
-	applyAppearanceMode() {
-		const isDark =
-			this.settings.appearanceMode === 'dark' ||
-			(this.settings.appearanceMode === 'device' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-		document.body.classList.toggle('dark-mode', isDark);
-		document.body.classList.toggle('light-e', !isDark);
-		this.checkAccentColor(this.settings.accentColor);
-	}
-
-	applyAccentColor() {
-		const accent = this.settings.accentColor;
-		document.documentElement.style.setProperty('--accent-color', accent);
-		document.documentElement.style.setProperty('--accent-text-color', this.getContrastColor(accent));
-		this.checkAccentColor(accent);
-	}
-
-	applyFontSize() {
-		document.documentElement.style.setProperty('--font-size-base', `${this.settings.fontSize}px`);
-	}
-
-	applyMotionEffects() {
-		const reduced = this.settings.motionEffects === 'disabled';
-		document.body.classList.toggle('reduced-motion', reduced);
-	}
-
-	applySectionVisibility(id, status) {
-		const el = document.getElementById(id);
-		if (el) el.style.display = status === 'enabled' ? '' : 'none';
-	}
-
 	// =============================
-	// Custom Background + Blur
+	// Custom Background & Blur
 	// =============================
 	initCustomBackgroundControls() {
 		const upload = document.getElementById('customBgUpload');
@@ -387,7 +290,7 @@ class SettingsManager {
 			reader.onload = (evt) => {
 				const imageData = evt.target.result;
 				localStorage.setItem('customBackground', imageData);
-				this.applyCustomBackground();
+				this.applyCustomBackground(true);
 				if (remove) remove.style.display = 'inline-block';
 			};
 			reader.readAsDataURL(file);
@@ -402,7 +305,7 @@ class SettingsManager {
 		}
 	}
 
-	applyCustomBackground() {
+	applyCustomBackground(fade = false) {
 		const bg = localStorage.getItem('customBackground');
 		const overlayId = 'dark-bg-overlay';
 		let overlay = document.getElementById(overlayId);
@@ -410,22 +313,29 @@ class SettingsManager {
 		if (!overlay) {
 			overlay = document.createElement('div');
 			overlay.id = overlayId;
-			overlay.style.position = 'fixed';
-			overlay.style.top = 0;
-			overlay.style.left = 0;
-			overlay.style.width = '100%';
-			overlay.style.height = '100%';
-			overlay.style.zIndex = '0';
-			overlay.style.pointerEvents = 'none';
+			Object.assign(overlay.style, {
+				position: 'fixed',
+				top: 0,
+				left: 0,
+				width: '100%',
+				height: '100%',
+				zIndex: '0',
+				pointerEvents: 'none',
+				transition: 'opacity 0.6s ease, background 0.5s ease'
+			});
 			document.body.prepend(overlay);
 		}
 
 		if (bg) {
 			document.body.style.backgroundImage = `url("${bg}")`;
 			document.body.style.backgroundSize = 'cover';
-			document.body.style.backgroundAttachment = 'fixed';
 			document.body.style.backgroundPosition = 'center';
 			document.body.style.backgroundRepeat = 'no-repeat';
+			document.body.style.backgroundAttachment = 'fixed';
+			if (fade) {
+				overlay.style.opacity = '0';
+				setTimeout(() => (overlay.style.opacity = '1'), 50);
+			}
 		} else {
 			document.body.style.backgroundImage = '';
 		}
@@ -437,28 +347,7 @@ class SettingsManager {
 		overlay.style.background = isDark
 			? 'rgba(0, 0, 0, 0.45)'
 			: 'rgba(255, 255, 255, 0.15)';
-		overlay.style.transition = 'background 0.5s ease';
-
-		const blurValue = localStorage.getItem('wallpaperBlur') || 15;
-		this.applyWallpaperBlur(blurValue);
-	}
-
-	initWallpaperBlurControl() {
-		const slider = document.getElementById('blur-slider');
-		const badge = document.getElementById('blurValue');
-		if (!slider || !badge) return;
-
-		const stored = localStorage.getItem('wallpaperBlur') || 15;
-		slider.value = stored;
-		badge.textContent = `${stored}px`;
-		this.applyWallpaperBlur(stored);
-
-		slider.addEventListener('input', (e) => {
-			const val = e.target.value;
-			badge.textContent = `${val}px`;
-			this.applyWallpaperBlur(val);
-			localStorage.setItem('wallpaperBlur', val);
-		});
+		this.applyWallpaperBlur(localStorage.getItem('wallpaperBlur') || 15);
 	}
 
 	applyWallpaperBlur(value) {
@@ -469,7 +358,7 @@ class SettingsManager {
 	}
 
 	// =============================
-	// Scheduler + Dynamic Wallpaper
+	// Dark Mode Scheduler
 	// =============================
 	initSchedulerInterval() {
 		clearInterval(this.schedulerInterval);
@@ -480,6 +369,7 @@ class SettingsManager {
 
 	checkDarkModeSchedule() {
 		const mode = this.settings.darkModeScheduler || 'off';
+		this.toggleScheduleInputs(mode);
 		if (mode === 'off') return;
 
 		const now = new Date();
@@ -492,48 +382,19 @@ class SettingsManager {
 		const end = new Date();
 		end.setHours(endH, endM, 0, 0);
 
-		let isNight;
-		if (end > start) {
-			isNight = now >= start && now < end;
-		} else {
-			isNight = now >= start || now < end;
-		}
+		let isNight = end > start ? now >= start && now < end : now >= start || now < end;
 
 		if (mode === 'auto') {
 			document.body.classList.toggle('dark-mode', isNight);
 			document.body.classList.toggle('light-e', !isNight);
-			this.applyDynamicWallpaper(isNight);
+			this.applyCustomBackground();
 		}
 	}
 
-	applyDynamicWallpaper(isNight) {
-		const hasCustom = localStorage.getItem('customBackground');
-		const overlay = document.getElementById('dark-bg-overlay');
-
-		if (hasCustom) {
-			this.applyCustomBackground();
-			return;
-		}
-
-		const gradientDay = `
-			linear-gradient(135deg, rgba(255,255,255,0.9), rgba(240,240,245,0.9)),
-			radial-gradient(circle at 20% 20%, rgba(200,200,255,0.4), transparent 60%)
-		`;
-		const gradientNight = `
-			linear-gradient(135deg, rgba(10,10,15,0.95), rgba(20,20,25,0.95)),
-			radial-gradient(circle at 80% 10%, rgba(100,0,255,0.3), transparent 60%)
-		`;
-
-		document.body.style.backgroundImage = isNight ? gradientNight : gradientDay;
-		document.body.style.backgroundAttachment = 'fixed';
-		document.body.style.backgroundSize = 'cover';
-		document.body.style.backgroundPosition = 'center';
-
-		if (overlay) {
-			overlay.style.background = isNight
-				? 'rgba(0,0,0,0.45)'
-				: 'rgba(255,255,255,0.15)';
-		}
+	toggleScheduleInputs(mode) {
+		const group = document.querySelector('.schedule-group');
+		if (!group) return;
+		group.style.display = mode === 'auto' ? '' : 'none';
 	}
 
 	// =============================
@@ -541,6 +402,7 @@ class SettingsManager {
 	// =============================
 	initScrollArrow() {}
 	initLoadingScreen() {}
+	initMouseTrail() {}
 
 	resetSectionVisibility() {
 		if (confirm('Show all homepage sections again?')) {
