@@ -14,7 +14,7 @@ class SettingsManager {
       darkModeStart: "20:00",
       darkModeEnd: "06:00",
       fontSize: 16,
-      focusOutline: "enabled",
+      focusOutline: "disabled",
       motionEffects: "enabled",
       highContrast: "disabled",
       dyslexiaFont: "disabled",
@@ -39,115 +39,7 @@ class SettingsManager {
     this.settings = this.loadSettings();
     this.deviceThemeMedia = null;
     this.schedulerInterval = null;
-/* ======================================== */
-/* == DEVICE MOTION 3D DEPTH EFFECTS (iOS26)== */
-/* ======================================== */
-initDeviceMotionEffects() {
-  if (this.deviceMotionInitialized) return;
-  this.deviceMotionInitialized = true;
 
-  const elements = document.querySelectorAll(
-    ".section, .profile-section, .version-info-section, .business-info-section, .useful-links-section, .countdown-section, .shoutouts-section, .tech-section, .disabilities-section, footer"
-  );
-  const wallpaper = document.getElementById("wallpaper-layer");
-
-  const updateMotion = (event) => {
-    if (this.settings.motionEffects === "disabled") {
-      this.resetMotionTransforms(elements, wallpaper);
-      return;
-    }
-
-    const { beta = 0, gamma = 0 } = event;
-    const maxTilt = 20;
-    const x = Math.min(Math.max(gamma, -maxTilt), maxTilt);
-    const y = Math.min(Math.max(beta, -maxTilt), maxTilt);
-
-    const rotateX = (y / maxTilt) * 8;
-    const rotateY = (x / maxTilt) * -8;
-    const depthX = (x / maxTilt) * -8;
-    const depthY = (y / maxTilt) * -8;
-
-    // Background parallax
-    if (wallpaper) {
-      wallpaper.style.transform = `translate(${depthX}px, ${depthY}px) scale(1.03)`;
-      wallpaper.style.transition = "transform 0.12s ease-out";
-    }
-
-    // Section 3D motion + dynamic light/shadow
-    elements.forEach((el) => {
-      el.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-      el.style.transition = "transform 0.12s ease-out, box-shadow 0.2s ease-out";
-      el.style.boxShadow = `
-        ${-rotateY * 1.2}px ${rotateX * 1.2}px 20px rgba(0,0,0,0.25),
-        inset ${rotateY * 0.6}px ${-rotateX * 0.6}px 12px rgba(255,255,255,0.15)
-      `;
-      el.style.backgroundImage = `linear-gradient(${45 + rotateY * 2}deg,
-        rgba(255,255,255,${0.08 + Math.abs(rotateX) * 0.003}) 0%,
-        transparent 70%)`;
-      el.style.backgroundBlendMode = "overlay";
-    });
-  };
-
-  // iOS permission gate
-  if (typeof DeviceOrientationEvent !== "undefined") {
-    if (typeof DeviceOrientationEvent.requestPermission === "function") {
-      const makeButton = () => {
-        if (document.getElementById("motionPermissionButton")) return;
-        const btn = document.createElement("button");
-        btn.id = "motionPermissionButton";
-        btn.textContent = "Enable Motion Effects";
-        Object.assign(btn.style, {
-          position: "fixed",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          padding: "10px 20px",
-          borderRadius: "12px",
-          border: "none",
-          background: "var(--accent-color)",
-          color: "var(--accent-text-color)",
-          fontWeight: "600",
-          fontSize: "1rem",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-          zIndex: "9999",
-        });
-        btn.addEventListener("click", async () => {
-          try {
-            const res = await DeviceOrientationEvent.requestPermission();
-            if (res === "granted") {
-              btn.remove();
-              window.addEventListener("deviceorientation", updateMotion);
-            } else {
-              alert("Motion access denied. Enable in Safari Settings → Motion & Orientation Access.");
-            }
-          } catch {
-            alert("Motion permission failed.");
-          }
-        });
-        document.body.appendChild(btn);
-      };
-      makeButton();
-    } else {
-      window.addEventListener("deviceorientation", updateMotion);
-    }
-  }
-
-  // Reset when device stops moving
-  let resetTimer;
-  window.addEventListener("deviceorientation", () => {
-    clearTimeout(resetTimer);
-    resetTimer = setTimeout(() => this.resetMotionTransforms(elements, wallpaper), 220);
-  });
-}
-
-resetMotionTransforms(elements, wallpaper) {
-  if (wallpaper) wallpaper.style.transform = "";
-  elements.forEach((el) => {
-    el.style.transform = "";
-    el.style.boxShadow = "";
-    el.style.backgroundImage = "";
-  });
-}
     document.addEventListener("DOMContentLoaded", () => {
       this.initializeControls();
       this.applyAllSettings();
@@ -162,9 +54,9 @@ resetMotionTransforms(elements, wallpaper) {
       this.applyCustomBackground(false);
       this.initWallpaperBlurControl();
 
-       // 💎 Add this right here
-       this.initDeviceMotionEffects();
-      
+      // 💎 3D motion depth
+      this.initDeviceMotionEffects();
+
       // Scheduler
       this.initSchedulerInterval();
 
@@ -179,7 +71,7 @@ resetMotionTransforms(elements, wallpaper) {
         });
       }
 
-      // Reduced motion listener
+   // Reduced motion listener
       if (window.matchMedia) {
         const motionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
         motionMedia.addEventListener("change", (e) => {
@@ -191,7 +83,7 @@ resetMotionTransforms(elements, wallpaper) {
           }
         });
       }
-
+      
       // Cross-tab sync
       window.addEventListener("storage", (e) => {
         if (e.key === "websiteSettings") {
@@ -307,6 +199,128 @@ resetMotionTransforms(elements, wallpaper) {
     if (el) el.checked = this.settings[key] === "enabled";
   }
 
+  // =============================
+  // 3D Motion & Depth Effects
+  // =============================
+  initDeviceMotionEffects() {
+    if (this.deviceMotionInitialized) return;
+    this.deviceMotionInitialized = true;
+
+    const elements = document.querySelectorAll(
+      ".section, .profile-section, .version-info-section, .business-info-section, .useful-links-section, .countdown-section, .shoutouts-section, .tech-section, .disabilities-section, footer"
+    );
+    const wallpaper = document.getElementById("wallpaper-layer");
+
+    const updateMotion = (event) => {
+      if (this.settings.motionEffects === "disabled") {
+        this.resetMotionTransforms(elements, wallpaper);
+        return;
+      }
+
+      const { beta = 0, gamma = 0 } = event;
+      const maxTilt = 20;
+      const x = Math.min(Math.max(gamma, -maxTilt), maxTilt);
+      const y = Math.min(Math.max(beta, -maxTilt), maxTilt);
+
+      const rotateX = (y / maxTilt) * 8;
+      const rotateY = (x / maxTilt) * -8;
+      const depthX = (x / maxTilt) * -8;
+      const depthY = (y / maxTilt) * -8;
+
+      // Wallpaper parallax
+      if (wallpaper) {
+        wallpaper.style.transform = `translate(${depthX}px, ${depthY}px) scale(1.03)`;
+        wallpaper.style.transition = "transform 0.12s ease-out";
+      }
+
+      // Section 3D tilt + soft shadow + shimmer
+      elements.forEach((el) => {
+        el.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        el.style.transition = "transform 0.12s ease-out, box-shadow 0.2s ease-out";
+        el.style.boxShadow = `
+          ${-rotateY * 1.2}px ${rotateX * 1.2}px 20px rgba(0,0,0,0.25),
+          inset ${rotateY * 0.6}px ${-rotateX * 0.6}px 12px rgba(255,255,255,0.15)
+        `;
+        el.style.backgroundImage = `linear-gradient(${45 + rotateY * 2}deg,
+          rgba(255,255,255,${0.08 + Math.abs(rotateX) * 0.003}) 0%,
+          transparent 70%)`;
+        el.style.backgroundBlendMode = "overlay";
+      });
+    };
+
+    if (typeof DeviceOrientationEvent !== "undefined") {
+      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        const makeButton = () => {
+          if (document.getElementById("motionPermissionButton")) return;
+          const btn = document.createElement("button");
+          btn.id = "motionPermissionButton";
+          btn.textContent = "Enable Motion Effects";
+          Object.assign(btn.style, {
+            position: "fixed",
+            bottom: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            padding: "10px 20px",
+            borderRadius: "12px",
+            border: "none",
+            background: "var(--accent-color)",
+            color: "var(--accent-text-color)",
+            fontWeight: "600",
+            fontSize: "1rem",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+            zIndex: "9999",
+          });
+          btn.addEventListener("click", async () => {
+            try {
+              const res = await DeviceOrientationEvent.requestPermission();
+              if (res === "granted") {
+                btn.remove();
+                window.addEventListener("deviceorientation", updateMotion);
+              } else {
+                alert("Motion access denied. Enable in Safari Settings → Motion & Orientation Access.");
+              }
+            } catch {
+              alert("Motion permission failed.");
+            }
+          });
+          document.body.appendChild(btn);
+        };
+        makeButton();
+      } else {
+        window.addEventListener("deviceorientation", updateMotion);
+      }
+    }
+
+    let resetTimer;
+    window.addEventListener("deviceorientation", () => {
+      clearTimeout(resetTimer);
+      resetTimer = setTimeout(() => this.resetMotionTransforms(elements, wallpaper), 220);
+    });
+  }
+
+  resetMotionTransforms(elements, wallpaper) {
+    if (wallpaper) wallpaper.style.transform = "";
+    elements.forEach((el) => {
+      el.style.transform = "";
+      el.style.boxShadow = "";
+      el.style.backgroundImage = "";
+    });
+  }
+
+  applyMotionEffects() {
+    const reduced = this.settings.motionEffects === "disabled";
+    document.body.classList.toggle("reduced-motion", reduced);
+
+    if (reduced) {
+      this.resetMotionTransforms(
+        document.querySelectorAll(
+          ".section, .profile-section, .version-info-section, .business-info-section, .useful-links-section, .countdown-section, .shoutouts-section, .tech-section, .disabilities-section, footer"
+        ),
+        document.getElementById("wallpaper-layer")
+      );
+    }
+  }
+  
   // =============================
   // Event Listeners
   // =============================
@@ -478,7 +492,7 @@ resetMotionTransforms(elements, wallpaper) {
     this.syncWallpaperUIVisibility();
   }
 
- applySetting(key) {
+  applySetting(key) {
   const actions = {
     appearanceMode: () => this.applyAppearanceMode(),
     accentColor: () => this.applyAccentColor(),
@@ -511,34 +525,24 @@ resetMotionTransforms(elements, wallpaper) {
       ),
   };
 
-  // Apply core settings
+  // Run base setting handlers
   actions[key]?.();
 
-  // === NEW: Universal show/hide for homepage sections ===
+  // --- NEW: Handle show/hide of homepage sections ---
   if (key.startsWith("show")) {
-    // Convert "showUsefulLinks" → "useful-links"
     const sectionId = key
-      .replace(/^show/, "")
-      .replace(/^[A-Z]/, (m) => m.toLowerCase())
-      .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+      .replace("show", "")
+      .replace(/^[A-Z]/, (m) => m.toLowerCase()); // e.g. showUsefulLinks → usefulLinks
 
-    // Match both ID and data-section-id (for safety)
+    // Each section in HTML should have either id="usefulLinks-section"
+    // or data-section-id="usefulLinks"
     const el =
       document.getElementById(`${sectionId}-section`) ||
       document.querySelector(`[data-section-id="${sectionId}"]`);
 
     if (el) {
       const visible = this.settings[key] === "enabled";
-
-      // Smooth fade transition
-      el.style.transition = "opacity 0.3s ease";
-      if (visible) {
-        el.style.display = "";
-        requestAnimationFrame(() => (el.style.opacity = "1"));
-      } else {
-        el.style.opacity = "0";
-        setTimeout(() => (el.style.display = "none"), 300);
-      }
+      el.style.display = visible ? "" : "none";
     }
   }
 }
@@ -577,18 +581,9 @@ resetMotionTransforms(elements, wallpaper) {
   }
 
   applyMotionEffects() {
-  const reduced = this.settings.motionEffects === "disabled";
-  document.body.classList.toggle("reduced-motion", reduced);
-
-  if (reduced) {
-    this.resetMotionTransforms(
-      document.querySelectorAll(
-        ".section, .profile-section, .version-info-section, .business-info-section, .useful-links-section, .countdown-section, .shoutouts-section, .tech-section, .disabilities-section, footer"
-      ),
-      document.getElementById("wallpaper-layer")
-    );
+    const reduced = this.settings.motionEffects === "disabled";
+    document.body.classList.toggle("reduced-motion", reduced);
   }
-}
 
   // =============================
   // Custom Background + Blur
@@ -803,117 +798,6 @@ resetMotionTransforms(elements, wallpaper) {
     group.style.display = mode === "auto" ? "" : "none";
   }
 
-  /* ======================================== */
-/* == DEVICE MOTION 3D DEPTH EFFECTS (iOS26)== */
-/* ======================================== */
-initDeviceMotionEffects() {
-  if (this.deviceMotionInitialized) return;
-  this.deviceMotionInitialized = true;
-
-  const elements = document.querySelectorAll(
-    ".section, .profile-section, .version-info-section, .business-info-section, .useful-links-section, .countdown-section, .shoutouts-section, .tech-section, .disabilities-section, footer"
-  );
-  const wallpaper = document.getElementById("wallpaper-layer");
-
-  const updateMotion = (event) => {
-    if (this.settings.motionEffects === "disabled") {
-      this.resetMotionTransforms(elements, wallpaper);
-      return;
-    }
-
-    const { beta = 0, gamma = 0 } = event;
-    const maxTilt = 20;
-    const x = Math.min(Math.max(gamma, -maxTilt), maxTilt);
-    const y = Math.min(Math.max(beta, -maxTilt), maxTilt);
-
-    const rotateX = (y / maxTilt) * 8;
-    const rotateY = (x / maxTilt) * -8;
-    const depthX = (x / maxTilt) * -8;
-    const depthY = (y / maxTilt) * -8;
-
-    // Background parallax
-    if (wallpaper) {
-      wallpaper.style.transform = `translate(${depthX}px, ${depthY}px) scale(1.03)`;
-      wallpaper.style.transition = "transform 0.12s ease-out";
-    }
-
-    // Section 3D motion + dynamic light/shadow
-    elements.forEach((el) => {
-      el.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-      el.style.transition = "transform 0.12s ease-out, box-shadow 0.2s ease-out";
-      el.style.boxShadow = `
-        ${-rotateY * 1.2}px ${rotateX * 1.2}px 20px rgba(0,0,0,0.25),
-        inset ${rotateY * 0.6}px ${-rotateX * 0.6}px 12px rgba(255,255,255,0.15)
-      `;
-      el.style.backgroundImage = `linear-gradient(${45 + rotateY * 2}deg,
-        rgba(255,255,255,${0.08 + Math.abs(rotateX) * 0.003}) 0%,
-        transparent 70%)`;
-      el.style.backgroundBlendMode = "overlay";
-    });
-  };
-
-  // iOS permission gate
-  if (typeof DeviceOrientationEvent !== "undefined") {
-    if (typeof DeviceOrientationEvent.requestPermission === "function") {
-      const makeButton = () => {
-        if (document.getElementById("motionPermissionButton")) return;
-        const btn = document.createElement("button");
-        btn.id = "motionPermissionButton";
-        btn.textContent = "Enable Motion Effects";
-        Object.assign(btn.style, {
-          position: "fixed",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          padding: "10px 20px",
-          borderRadius: "12px",
-          border: "none",
-          background: "var(--accent-color)",
-          color: "var(--accent-text-color)",
-          fontWeight: "600",
-          fontSize: "1rem",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
-          zIndex: "9999",
-        });
-        btn.addEventListener("click", async () => {
-          try {
-            const res = await DeviceOrientationEvent.requestPermission();
-            if (res === "granted") {
-              btn.remove();
-              window.addEventListener("deviceorientation", updateMotion);
-            } else {
-              alert("Motion access denied. Enable in Safari Settings → Motion & Orientation Access.");
-            }
-          } catch {
-            alert("Motion permission failed.");
-          }
-        });
-        document.body.appendChild(btn);
-      };
-      makeButton();
-    } else {
-      window.addEventListener("deviceorientation", updateMotion);
-    }
-  }
-
-  // Reset when device stops moving
-  let resetTimer;
-  window.addEventListener("deviceorientation", () => {
-    clearTimeout(resetTimer);
-    resetTimer = setTimeout(() => this.resetMotionTransforms(elements, wallpaper), 220);
-  });
-}
-
-resetMotionTransforms(elements, wallpaper) {
-  if (wallpaper) wallpaper.style.transform = "";
-  elements.forEach((el) => {
-    el.style.transform = "";
-    el.style.boxShadow = "";
-    el.style.backgroundImage = "";
-  });
-}
-  
-  
   // =============================
   // Reset Controls
   // =============================
