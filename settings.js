@@ -400,6 +400,35 @@ class SettingsManager {
       ),
   };
 
+  // Apply base settings
+  actions[key]?.();
+
+  // === Handle show/hide of homepage sections ===
+  if (key.startsWith("show")) {
+    // Convert "showUsefulLinks" → "useful-links"
+    const sectionId = key
+      .replace(/^show/, "")
+      .replace(/^[A-Z]/, (m) => m.toLowerCase())
+      .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+
+    const el =
+      document.getElementById(`${sectionId}-section`) ||
+      document.querySelector(`[data-section-id="${sectionId}"]`);
+
+    if (el) {
+      const visible = this.settings[key] === "enabled";
+      el.style.transition = "opacity 0.3s ease";
+      if (visible) {
+        el.style.display = "";
+        requestAnimationFrame(() => (el.style.opacity = "1"));
+      } else {
+        el.style.opacity = "0";
+        setTimeout(() => (el.style.display = "none"), 300);
+      }
+    }
+  }
+}
+
   // Run base setting handlers
   actions[key]?.();
 
