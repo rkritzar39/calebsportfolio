@@ -127,16 +127,26 @@
             </select>
           </div>
 
-          <div class="form-group schedule-group" id="scheduleInputs" style="display: none;">
-            <label class="setting-sub-label">Dark Mode Schedule</label>
+          <div class="setting-card">
+            <div class="setting-label">
+              <strong class="setting-title">Dark Mode Scheduler</strong>
+              <p class="setting-description">Automatically switch themes between day and night.</p>
+            </div>
+            <select id="darkModeScheduler" aria-label="Dark mode schedule">
+              <option value="off">Off</option>
+              <option value="auto">Scheduled</option>
+            </select>
+          </div>
+          
+          <div class="schedule-group">
             <div class="schedule-time-row">
               <div>
-                <label for="darkStart">Start (Dark)</label>
-                <input type="time" id="darkStart" value="22:00">
+                <div class="setting-sub-label">Start Time</div>
+                <input type="time" id="darkModeStart" value="20:00">
               </div>
               <div>
-                <label for="darkEnd">End (Light)</label>
-                <input type="time" id="darkEnd" value="07:00">
+                <div class="setting-sub-label">End Time</div>
+                <input type="time" id="darkModeEnd" value="06:00">
               </div>
             </div>
           </div>
