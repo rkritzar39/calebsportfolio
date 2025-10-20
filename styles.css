@@ -2938,3 +2938,33 @@ body.maintenance-active {
     opacity: 0.4;
     background-color: #4a4a4a;
 }
+
+/* ============================================ */
+/* == Frosted Cards (iOS 26 style) ============ */
+/* ============================================ */
+body.has-custom-background .card {
+  background: color-mix(in srgb, var(--glass-bg-light) 65%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 10%, var(--border-color));
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  box-shadow:
+    0 6px 30px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  transition: background 0.3s ease, backdrop-filter 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Dark mode variant */
+body.dark-mode.has-custom-background .card {
+  background: color-mix(in srgb, var(--glass-bg-dark) 65%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 15%, var(--glass-border-dark));
+}
+
+/* Optional subtle hover */
+body.has-custom-background .card:hover {
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 8px 36px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
