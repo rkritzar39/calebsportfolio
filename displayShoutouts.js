@@ -1430,7 +1430,7 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
-// --- Real-Time Creator Counts ---
+// --- Real-Time Creator Counts (Upgraded v2.1) ---
 function setupRealTimeCounts() {
   const sources = [
     { id: "tiktok", collection: "tiktokCreators" },
@@ -1439,20 +1439,48 @@ function setupRealTimeCounts() {
   ];
 
   const totalEl = document.getElementById("total-creators");
+  const summarySection = document.getElementById("creator-summary");
+  if (!totalEl || !summarySection) {
+    console.warn("Creator summary elements not found; skipping live counts.");
+    return;
+  }
+
+  // Hide until first data is received
+  totalEl.style.opacity = "0";
+  summarySection.style.opacity = "0";
+
   let counts = { tiktok: 0, youtube: 0, instagram: 0 };
+  let listenersReady = 0;
 
   const updateTotal = () => {
     const total = counts.tiktok + counts.youtube + counts.instagram;
-    if (totalEl) {
-      totalEl.textContent = `🎉 Total: ${total} creator${total !== 1 ? "s" : ""}`;
-      totalEl.classList.add("updated");
-      setTimeout(() => totalEl.classList.remove("updated"), 400);
+    listenersReady++;
+
+    // Show or hide the badge depending on data
+    if (listenersReady >= sources.length) {
+      if (total > 0) {
+        summarySection.style.display = "";
+        totalEl.textContent = `🎉 Total: ${total} creator${total !== 1 ? "s" : ""}`;
+        totalEl.classList.add("updated");
+        totalEl.style.opacity = "1";
+        summarySection.style.opacity = "1";
+        setTimeout(() => totalEl.classList.remove("updated"), 400);
+      } else {
+        totalEl.style.opacity = "0";
+        summarySection.style.opacity = "0";
+        setTimeout(() => {
+          summarySection.style.display = "none";
+        }, 300);
+      }
     }
   };
 
   sources.forEach(({ id, collection: collName }) => {
     const el = document.getElementById(`${id}-count`);
-    if (!el) return;
+    if (!el) {
+      console.warn(`Missing element for ${id}-count`);
+      return;
+    }
 
     const collRef = collection(db, collName);
     onSnapshot(
@@ -1460,9 +1488,11 @@ function setupRealTimeCounts() {
       (snapshot) => {
         const count = snapshot.size;
         counts[id] = count;
+
         el.textContent = `${count} creator${count !== 1 ? "s" : ""}`;
         el.classList.add("updated");
         setTimeout(() => el.classList.remove("updated"), 300);
+
         updateTotal();
       },
       (error) => {
@@ -1473,7 +1503,13 @@ function setupRealTimeCounts() {
   });
 }
 
-window.addEventListener("DOMContentLoaded", setupRealTimeCounts);
+// ✅ Initialize when the homepage loads (not globally on every page)
+document.addEventListener("DOMContentLoaded", () => {
+  // Only run this if the homepage is loaded
+  if (document.getElementById("main-content-wrapper")) {
+    setupRealTimeCounts();
+  }
+});
 
 /* =============================================== */
 /* == QUOTE OF THE DAY SECTION (FINAL VERSION) == */
