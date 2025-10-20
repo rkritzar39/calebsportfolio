@@ -119,6 +119,24 @@ body.dark-mode {
     /* --accent-color is now correctly controlled by JavaScript */
 }
 
+.card img {
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+  object-fit: cover;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0); /* Helps with GPU clarity */
+}
+
+/* For Retina / high-DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .card img {
+    image-rendering: auto;
+    filter: none;
+  }
+}
+
 /* ======================== */
 /* Base Styles              */
 /* ======================== */
