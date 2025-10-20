@@ -1430,19 +1430,19 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
-// --- Real-Time Creator Counts (Final shoutouts-based version) ---
+// --- Real-Time Creator Counts (Final iOS 26 Glass Edition) ---
 import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 function setupRealTimeCounts() {
-  // Prevent double initialization if script runs twice
   if (window.__creatorCountsInit) return;
   window.__creatorCountsInit = true;
 
   const summarySection = document.getElementById("creator-summary");
   const totalEl = document.getElementById("total-creators");
+  const liveNote = document.getElementById("creator-live-note");
 
   if (!summarySection || !totalEl) {
-    console.warn("Creator summary elements not found; skipping counts.");
+    console.warn("Creator summary elements missing.");
     return;
   }
 
@@ -1450,84 +1450,57 @@ function setupRealTimeCounts() {
   const counts = { tiktok: 0, youtube: 0, instagram: 0 };
   let ready = 0;
 
-  // Hide total at startup
   summarySection.style.opacity = "0";
-  totalEl.style.opacity = "0";
   summarySection.style.display = "none";
 
   const updateTotal = () => {
     const total = counts.tiktok + counts.youtube + counts.instagram;
     if (ready >= platforms.length) {
       if (total > 0) {
-        totalEl.textContent = `🎉 Total: ${total} creator${total !== 1 ? "s" : ""}`;
+        totalEl.innerHTML = `<span class="count">${total}</span> creators total`;
+        if (liveNote) liveNote.style.display = "block";
         summarySection.style.display = "";
-        requestAnimationFrame(() => {
-          summarySection.style.opacity = "1";
-          totalEl.style.opacity = "1";
-        });
-        totalEl.classList.add("updated");
-        setTimeout(() => totalEl.classList.remove("updated"), 400);
+        requestAnimationFrame(() => (summarySection.style.opacity = "1"));
       } else {
         summarySection.style.opacity = "0";
-        totalEl.style.opacity = "0";
         setTimeout(() => (summarySection.style.display = "none"), 400);
       }
     }
   };
 
-  // Helper to get or create <span id="*-count">
-  const ensureBadge = (platform) => {
-    const id = `${platform}-count`;
-    let el = document.getElementById(id);
-    if (!el) {
-      const h2 = document.querySelector(`#${platform}-shoutouts-section h2`);
-      if (h2) {
-        el = document.createElement("span");
-        el.id = id;
-        el.className = "creator-count";
-        el.textContent = "—";
-        h2.appendChild(document.createTextNode(" "));
-        h2.appendChild(el);
-      }
-    }
-    return el;
-  };
-
-  // Listen to real-time counts for each platform
+  // Create per-platform badges dynamically
+  const badgeContainer = document.getElementById("creator-platform-badges");
   platforms.forEach((platform) => {
-    const el = ensureBadge(platform);
-    if (!el) {
-      console.warn(`⚠️ Missing heading for ${platform} count.`);
-      ready++;
-      updateTotal();
-      return;
-    }
+    const badge = document.createElement("div");
+    badge.id = `${platform}-count`;
+    badge.className = `creator-badge badge-${platform}`;
+    badge.innerHTML = `
+      <div class="icon-wrap"><img src="images/${platform}.png" alt="${platform}" class="platform-icon"></div>
+      <div class="count-text">—</div>`;
+    badgeContainer.appendChild(badge);
 
     const q = query(collection(db, "shoutouts"), where("platform", "==", platform));
     onSnapshot(
       q,
       (snapshot) => {
-        counts[platform] = snapshot.size;
+        const count = snapshot.size;
+        counts[platform] = count;
         ready++;
-        el.textContent = `${snapshot.size} creator${snapshot.size !== 1 ? "s" : ""}`;
-        el.classList.add("updated");
-        setTimeout(() => el.classList.remove("updated"), 300);
+        badge.querySelector(".count-text").textContent = `${count}`;
+        badge.classList.add("updated");
+        setTimeout(() => badge.classList.remove("updated"), 300);
         updateTotal();
       },
-      (error) => {
-        console.error(`Error listening for ${platform} creators:`, error);
-        el.textContent = "—";
-        ready++;
-        updateTotal();
+      (err) => {
+        console.error(`Error for ${platform}:`, err);
+        badge.querySelector(".count-text").textContent = "—";
       }
     );
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("main-content-wrapper")) {
-    setupRealTimeCounts();
-  }
+  if (document.getElementById("main-content-wrapper")) setupRealTimeCounts();
 });
 
 /* =============================================== */
