@@ -137,6 +137,92 @@ body.dark-mode {
   }
 }
 
+
+/* =========================================================== */
+/* == iOS 26 Frosted Panel Effect (Outer Shell Only) ========= */
+/* =========================================================== */
+
+body.has-custom-background .section,
+body.has-custom-background .social-links-section,
+body.has-custom-background .shoutouts-section,
+body.has-custom-background .useful-links-section,
+body.has-custom-background .business-info-section,
+body.has-custom-background .tech-section,
+body.has-custom-background .version-info-section,
+body.has-custom-background .legal-section {
+  background: color-mix(in srgb, var(--glass-bg-light) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 8%, var(--border-color));
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl, 24px);
+  transition: background 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+/* Dark Mode variant */
+body.dark-mode.has-custom-background .section,
+body.dark-mode.has-custom-background .social-links-section,
+body.dark-mode.has-custom-background .useful-links-section,
+body.dark-mode.has-custom-background .business-info-section,
+body.dark-mode.has-custom-background .tech-section,
+body.dark-mode.has-custom-background .version-info-section {
+  background: color-mix(in srgb, var(--glass-bg-dark) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 12%, var(--glass-border-dark));
+  box-shadow:
+    0 10px 50px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+body.has-custom-background .section {
+  transform: translateY(0);
+  transition: transform 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.35s ease;
+}
+
+body.has-custom-background .section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* =============================================== */
+/* == High Quality Images (Retina + Anti-blur) === */
+/* =============================================== */
+
+img, video, canvas {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: high-quality;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.card img,
+.profile-pic,
+.creator-grid img,
+.instagram-creator-grid img,
+.youtube-creator-grid img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: inherit;
+  filter: saturate(105%) contrast(102%);
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.card img:hover,
+.creator-grid img:hover {
+  filter: saturate(115%) contrast(108%);
+  transform: scale(1.015);
+}
+
+/* Retina sharpness fix */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  img {
+    image-rendering: auto;
+  }
+}
+
 /* ======================== */
 /* Base Styles              */
 /* ======================== */
