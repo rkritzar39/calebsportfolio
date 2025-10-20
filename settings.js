@@ -508,6 +508,96 @@ class SettingsManager {
     return { layer, tint };
   }
 
+    initMouseTrail() {
+    // Remove existing trail if reinitializing
+    const existing = document.querySelector(".mouse-trail-container");
+    if (existing) existing.remove();
+
+    // Only run if enabled
+    if (this.settings.mouseTrail !== "enabled") return;
+
+    // Create container
+    const container = document.createElement("div");
+    container.className = "mouse-trail-container";
+    Object.assign(container.style, {
+      position: "fixed",
+      inset: "0",
+      zIndex: "9999",
+      pointerEvents: "none",
+      overflow: "hidden",
+    });
+    document.body.appendChild(container);
+
+    // --- Create particles ---
+    const trailCount = 15;
+    const particles = [];
+
+    for (let i = 0; i < trailCount; i++) {
+      const dot = document.createElement("div");
+      dot.className = "trail-dot";
+      Object.assign(dot.style, {
+        position: "absolute",
+        width: "8px",
+        height: "8px",
+        borderRadius: "50%",
+        background: "var(--accent-color)",
+        filter: "blur(6px)",
+        opacity: `${1 - i / trailCount}`,
+        transform: "translate(-50%, -50%)",
+        transition: "opacity 0.3s ease-out",
+      });
+      container.appendChild(dot);
+      particles.push({ el: dot, x: 0, y: 0 });
+    }
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let lastX = mouseX;
+    let lastY = mouseY;
+    const smooth = 0.25;
+
+    window.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    const animate = () => {
+      // Stop if user disabled trail or reduced motion
+      if (
+        this.settings.mouseTrail !== "enabled" ||
+        this.settings.motionEffects === "disabled"
+      ) {
+        container.style.display = "none";
+        return;
+      }
+
+      lastX += (mouseX - lastX) * smooth;
+      lastY += (mouseY - lastY) * smooth;
+
+      particles.forEach((p, i) => {
+        const next = particles[i - 1] || { x: lastX, y: lastY };
+        p.x += (next.x - p.x) * 0.35;
+        p.y += (next.y - p.y) * 0.35;
+        p.el.style.left = `${p.x}px`;
+        p.el.style.top = `${p.y}px`;
+      });
+
+      requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    // Clean up on setting change
+    window.addEventListener("storage", (e) => {
+      if (e.key === "websiteSettings") {
+        const newSettings = JSON.parse(e.newValue || "{}");
+        if (newSettings.mouseTrail !== "enabled") {
+          container.remove();
+        }
+      }
+    });
+  }
+  
   initCustomBackgroundControls() {
     const upload = document.getElementById("customBgUpload");
     const remove = document.getElementById("removeCustomBg");
