@@ -1437,12 +1437,13 @@ function setupRealTimeCounts() {
   if (window.__creatorCountsInit) return;
   window.__creatorCountsInit = true;
 
+  const db = firebase.firestore();
+
   const totalEl = document.getElementById("total-creators");
   const liveNote = document.getElementById("creator-live-note");
   const summarySection = document.getElementById("creator-summary");
-
   if (!totalEl || !summarySection) {
-    console.warn("Creator summary not found; skipping live counters.");
+    console.warn("⚠️ Creator summary section not found.");
     return;
   }
 
@@ -1468,8 +1469,7 @@ function setupRealTimeCounts() {
     }
   };
 
-  // Helper: update both header and summary elements
-  const updateElements = (platform, value) => {
+  const updatePlatform = (platform, value) => {
     const headerEl = document.getElementById(`${platform}-count`);
     const summaryEl = document.getElementById(`${platform}-count-summary`);
     [headerEl, summaryEl].forEach((el) => {
@@ -1482,26 +1482,26 @@ function setupRealTimeCounts() {
   };
 
   platforms.forEach((platform) => {
-    const q = query(collection(db, "shoutouts"), where("platform", "==", platform));
-    onSnapshot(
-      q,
-      (snapshot) => {
-        const count = snapshot.size;
-        counts[platform] = count;
-        initialized++;
-        updateElements(platform, count);
-        updateTotal();
-      },
-      (error) => {
-        console.error(`Error updating ${platform}:`, error);
-        updateElements(platform, "—");
-        initialized++;
-        updateTotal();
-      }
-    );
+    db.collection("shoutouts")
+      .where("platform", "==", platform)
+      .onSnapshot(
+        (snapshot) => {
+          counts[platform] = snapshot.size;
+          initialized++;
+          updatePlatform(platform, snapshot.size);
+          updateTotal();
+        },
+        (error) => {
+          console.error(`❌ Error listening to ${platform}:`, error);
+          updatePlatform(platform, "—");
+          initialized++;
+          updateTotal();
+        }
+      );
   });
 }
 
+// ✅ Initialize when DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("main-content-wrapper")) {
     setupRealTimeCounts();
