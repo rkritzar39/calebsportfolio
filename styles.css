@@ -189,6 +189,15 @@ body:not(.focus-outline-disabled) *:focus-visible {
     box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
+.mouse-trail-container .trail-dot {
+  mix-blend-mode: screen;
+  transition: transform 0.1s ease-out, opacity 0.3s ease-out;
+}
+body.reduced-motion .mouse-trail-container {
+  display: none !important;
+}
+
+
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
 /* (Final Version with Button Animations)   */
