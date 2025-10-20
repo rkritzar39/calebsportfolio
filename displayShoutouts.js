@@ -1430,7 +1430,7 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
-// --- Real-Time Creator Counts (final summary working version) ---
+// --- Real-Time Creator Counts (dual sync version) ---
 import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 function setupRealTimeCounts() {
@@ -1442,7 +1442,7 @@ function setupRealTimeCounts() {
   const summarySection = document.getElementById("creator-summary");
 
   if (!totalEl || !summarySection) {
-    console.warn("Creator summary section not found; skipping real-time counts.");
+    console.warn("Creator summary not found; skipping live counters.");
     return;
   }
 
@@ -1450,13 +1450,11 @@ function setupRealTimeCounts() {
   const counts = { tiktok: 0, youtube: 0, instagram: 0 };
   let initialized = 0;
 
-  // Hide summary until first update
   summarySection.style.opacity = "0";
   summarySection.style.display = "none";
 
   const updateTotal = () => {
     const total = counts.tiktok + counts.youtube + counts.instagram;
-
     if (initialized >= platforms.length) {
       if (total > 0) {
         totalEl.innerHTML = `<span class="count">${total}</span> total creators`;
@@ -1470,15 +1468,20 @@ function setupRealTimeCounts() {
     }
   };
 
-  platforms.forEach((platform) => {
-    const countEl = document.getElementById(`${platform}-count`);
-    if (!countEl) {
-      console.warn(`⚠️ Missing element for ${platform}-count`);
-      initialized++;
-      updateTotal();
-      return;
-    }
+  // Helper: update both header and summary elements
+  const updateElements = (platform, value) => {
+    const headerEl = document.getElementById(`${platform}-count`);
+    const summaryEl = document.getElementById(`${platform}-count-summary`);
+    [headerEl, summaryEl].forEach((el) => {
+      if (el) {
+        el.textContent = value;
+        el.classList.add("updated");
+        setTimeout(() => el.classList.remove("updated"), 300);
+      }
+    });
+  };
 
+  platforms.forEach((platform) => {
     const q = query(collection(db, "shoutouts"), where("platform", "==", platform));
     onSnapshot(
       q,
@@ -1486,17 +1489,12 @@ function setupRealTimeCounts() {
         const count = snapshot.size;
         counts[platform] = count;
         initialized++;
-
-        // Update the count text
-        countEl.textContent = count;
-        countEl.classList.add("updated");
-        setTimeout(() => countEl.classList.remove("updated"), 300);
-
+        updateElements(platform, count);
         updateTotal();
       },
       (error) => {
-        console.error(`Error updating ${platform} count:`, error);
-        countEl.textContent = "—";
+        console.error(`Error updating ${platform}:`, error);
+        updateElements(platform, "—");
         initialized++;
         updateTotal();
       }
