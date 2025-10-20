@@ -561,70 +561,42 @@ class SettingsManager {
   }
 
   applyCustomBackground(fade = false) {
-  const bg = localStorage.getItem("customBackground");
-  const { layer, tint } = this.ensureWallpaperLayers();
+    const bg = localStorage.getItem("customBackground");
+    const { layer, tint } = this.ensureWallpaperLayers();
 
-  const hasBg = !!bg;
-  document.body.classList.toggle("has-custom-background", hasBg);
-
-  // === Set background image ===
-  if (bg) {
-    document.body.style.backgroundColor = "transparent";
-    document.body.style.backgroundImage = "";
-
-    if (fade) {
-      layer.style.opacity = "0";
-      requestAnimationFrame(() => {
+    if (bg) {
+      document.body.style.backgroundColor = "transparent";
+      document.body.style.backgroundImage = "";
+      if (fade) {
+        layer.style.opacity = "0";
+        requestAnimationFrame(() => {
+          layer.style.backgroundImage = `url("${bg}")`;
+          setTimeout(() => (layer.style.opacity = "1"), 50);
+        });
+      } else {
         layer.style.backgroundImage = `url("${bg}")`;
-        setTimeout(() => (layer.style.opacity = "1"), 50);
-      });
+        layer.style.opacity = "1";
+      }
     } else {
-      layer.style.backgroundImage = `url("${bg}")`;
-      layer.style.opacity = "1";
+      document.body.style.backgroundColor = "";
+      document.body.style.backgroundImage = "";
+      layer.style.backgroundImage = "";
+      layer.style.opacity = "0";
     }
-  } else {
-    document.body.style.backgroundColor = "";
-    document.body.style.backgroundImage = "";
-    layer.style.backgroundImage = "";
-    layer.style.opacity = "0";
+
+    const isDark =
+      this.settings.appearanceMode === "dark" ||
+      (this.settings.appearanceMode === "device" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    tint.style.background = isDark
+      ? "rgba(0, 0, 0, 0.45)"
+      : "rgba(255, 255, 255, 0.15)";
+
+    const blurValue = localStorage.getItem("wallpaperBlur") || 15;
+    this.applyWallpaperBlur(blurValue);
   }
 
-  // === Tint logic based on appearance mode ===
-  const isDark =
-    this.settings.appearanceMode === "dark" ||
-    (this.settings.appearanceMode === "device" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-  tint.style.background = isDark
-    ? "rgba(0, 0, 0, 0.45)"
-    : "rgba(255, 255, 255, 0.15)";
-
-  // === Apply blur intensity ===
-  const blurValue = localStorage.getItem("wallpaperBlur") || 15;
-  this.applyWallpaperBlur(blurValue);
-
-  // === NEW: Frosted content logic ===
-  const frostedTargets = [
-    document.getElementById("profile-section"),
-    document.getElementById("president-section"),
-    document.getElementById("quote-section"),
-    ...document.querySelectorAll(".card")
-  ];
-
-  frostedTargets.forEach(section => {
-    if (!section) return;
-    const content = section.querySelector(".section-content, .card-content");
-
-    if (hasBg) {
-      section.classList.add("frosted");
-      if (content) content.classList.add("frosted-inner");
-    } else {
-      section.classList.remove("frosted");
-      if (content) content.classList.remove("frosted-inner");
-    }
-  });
-}
-  
   applyWallpaperBlur(value) {
     const layer = document.getElementById("wallpaper-layer");
     if (!layer) return;
