@@ -2994,3 +2994,36 @@ body.has-custom-background .card .card-content * {
         transform: scale(1);
     }
 }
+
+/* ===================================================== */
+/* === Universal Frost (Cards + Sections, No Shimmer) === */
+/* ===================================================== */
+
+body.has-custom-background .frosted,
+body.has-custom-background .frosted-inner {
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  backdrop-filter: var(--backdrop-blur) saturate(120%);
+  -webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  transition: background var(--transition-medium),
+              box-shadow var(--transition-medium),
+              backdrop-filter var(--transition-medium);
+  color: var(--text-color);
+  animation: frostFade 0.6s ease-out both;
+}
+
+@keyframes frostFade {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+    transform: scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+  }
+}
+
