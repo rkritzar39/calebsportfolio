@@ -1430,7 +1430,7 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
-// --- Real-Time Creator Counts (Final iOS 26 Glass Edition) ---
+// --- Real-Time Creator Counts (final fixed version) ---
 import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 function setupRealTimeCounts() {
@@ -1442,7 +1442,7 @@ function setupRealTimeCounts() {
   const liveNote = document.getElementById("creator-live-note");
 
   if (!summarySection || !totalEl) {
-    console.warn("Creator summary elements missing.");
+    console.warn("Creator summary section not found; skipping counts.");
     return;
   }
 
@@ -1458,9 +1458,9 @@ function setupRealTimeCounts() {
     if (ready >= platforms.length) {
       if (total > 0) {
         totalEl.innerHTML = `<span class="count">${total}</span> creators total`;
-        if (liveNote) liveNote.style.display = "block";
         summarySection.style.display = "";
         requestAnimationFrame(() => (summarySection.style.opacity = "1"));
+        if (liveNote) liveNote.style.display = "block";
       } else {
         summarySection.style.opacity = "0";
         setTimeout(() => (summarySection.style.display = "none"), 400);
@@ -1468,16 +1468,14 @@ function setupRealTimeCounts() {
     }
   };
 
-  // Create per-platform badges dynamically
-  const badgeContainer = document.getElementById("creator-platform-badges");
   platforms.forEach((platform) => {
-    const badge = document.createElement("div");
-    badge.id = `${platform}-count`;
-    badge.className = `creator-badge badge-${platform}`;
-    badge.innerHTML = `
-      <div class="icon-wrap"><img src="images/${platform}.png" alt="${platform}" class="platform-icon"></div>
-      <div class="count-text">—</div>`;
-    badgeContainer.appendChild(badge);
+    const el = document.getElementById(`${platform}-count`);
+    if (!el) {
+      console.warn(`⚠️ Missing #${platform}-count element`);
+      ready++;
+      updateTotal();
+      return;
+    }
 
     const q = query(collection(db, "shoutouts"), where("platform", "==", platform));
     onSnapshot(
@@ -1486,21 +1484,25 @@ function setupRealTimeCounts() {
         const count = snapshot.size;
         counts[platform] = count;
         ready++;
-        badge.querySelector(".count-text").textContent = `${count}`;
-        badge.classList.add("updated");
-        setTimeout(() => badge.classList.remove("updated"), 300);
+        el.textContent = `${count}`;
+        el.classList.add("updated");
+        setTimeout(() => el.classList.remove("updated"), 300);
         updateTotal();
       },
-      (err) => {
-        console.error(`Error for ${platform}:`, err);
-        badge.querySelector(".count-text").textContent = "—";
+      (error) => {
+        console.error(`Error listening to ${platform}:`, error);
+        el.textContent = "—";
+        ready++;
+        updateTotal();
       }
     );
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (document.getElementById("main-content-wrapper")) setupRealTimeCounts();
+  if (document.getElementById("main-content-wrapper")) {
+    setupRealTimeCounts();
+  }
 });
 
 /* =============================================== */
