@@ -560,7 +560,7 @@ class SettingsManager {
     }
   }
 
- applyCustomBackground(fade = false) {
+applyCustomBackground(fade = false) {
   const bg = localStorage.getItem("customBackground");
   const { layer, tint } = this.ensureWallpaperLayers();
 
@@ -602,23 +602,24 @@ class SettingsManager {
   const blurValue = localStorage.getItem("wallpaperBlur") || 15;
   this.applyWallpaperBlur(blurValue);
 
-  // === NEW: Frosted content activation ===
+  // === NEW: Frosted content activation (robust) ===
   const frostedTargets = [
     document.getElementById("profile-section"),
     document.getElementById("president-section"),
     document.getElementById("quote-section"),
-    ...document.querySelectorAll(".card")
+    ...document.querySelectorAll(
+      ".card, .creator-card, .instagram-creator-card, .youtube-creator-card, .useful-links-section, .social-links-section, .version-info-section, .business-info-section, .tech-section, .disabilities-section, .shoutouts-section"
+    )
   ];
 
   frostedTargets.forEach(section => {
     if (!section) return;
-    const content = section.querySelector(".section-content, .card-content");
     if (hasBg) {
       section.classList.add("frosted");
-      if (content) content.classList.add("frosted-inner");
+      section.classList.add("frosted-inner");
     } else {
       section.classList.remove("frosted");
-      if (content) content.classList.remove("frosted-inner");
+      section.classList.remove("frosted-inner");
     }
   });
 }
