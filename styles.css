@@ -1669,6 +1669,56 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	.youtube-creator-username { font-size: 0.8em; }
 }
 
+/* ===== Creator Count Badges ===== */
+.creator-count {
+  font-size: 0.85em;
+  padding: 5px 12px;
+  margin-left: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color) 60%, transparent);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  color: var(--text-color);
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--accent-color) 40%, transparent);
+  transition: background 0.3s ease, transform 0.25s ease;
+}
+.creator-count.updated {
+  transform: scale(1.1);
+  background: color-mix(in srgb, var(--accent-color) 80%, transparent);
+}
+
+/* ===== Total Count Badge ===== */
+.total-creator-count {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 18px;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--text-color);
+  background: color-mix(in srgb, var(--accent-color) 50%, transparent);
+  backdrop-filter: blur(15px) saturate(150%);
+  -webkit-backdrop-filter: blur(15px) saturate(150%);
+  border-radius: 999px;
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--accent-color) 40%, transparent);
+  transition: transform 0.25s ease, background 0.3s ease;
+}
+
+.total-creator-count.updated {
+  transform: scale(1.05);
+  background: color-mix(in srgb, var(--accent-color) 70%, transparent);
+}
+
+/* ===== Mobile Optimization ===== */
+@media (max-width: 600px) {
+  #creator-summary {
+    text-align: center;
+  }
+  .total-creator-count {
+    font-size: 0.95em;
+    padding: 8px 14px;
+  }
+}
+
 :root {
 	--accent-color-rgb: 0, 123, 255; /* Match this to your accent color */
 	--shadow-color: rgba(0, 0, 0, 0.1);
