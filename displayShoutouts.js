@@ -1430,6 +1430,51 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
+// --- Real-Time Creator Counts ---
+function setupRealTimeCounts() {
+  const sources = [
+    { id: "tiktok", collection: "tiktokCreators" },
+    { id: "youtube", collection: "youtubeCreators" },
+    { id: "instagram", collection: "instagramCreators" },
+  ];
+
+  const totalEl = document.getElementById("total-creators");
+  let counts = { tiktok: 0, youtube: 0, instagram: 0 };
+
+  const updateTotal = () => {
+    const total = counts.tiktok + counts.youtube + counts.instagram;
+    if (totalEl) {
+      totalEl.textContent = `🎉 Total: ${total} creator${total !== 1 ? "s" : ""}`;
+      totalEl.classList.add("updated");
+      setTimeout(() => totalEl.classList.remove("updated"), 400);
+    }
+  };
+
+  sources.forEach(({ id, collection: collName }) => {
+    const el = document.getElementById(`${id}-count`);
+    if (!el) return;
+
+    const collRef = collection(db, collName);
+    onSnapshot(
+      collRef,
+      (snapshot) => {
+        const count = snapshot.size;
+        counts[id] = count;
+        el.textContent = `${count} creator${count !== 1 ? "s" : ""}`;
+        el.classList.add("updated");
+        setTimeout(() => el.classList.remove("updated"), 300);
+        updateTotal();
+      },
+      (error) => {
+        console.error(`Error listening for ${id} count:`, error);
+        el.textContent = "—";
+      }
+    );
+  });
+}
+
+window.addEventListener("DOMContentLoaded", setupRealTimeCounts);
+
 /* =============================================== */
 /* == QUOTE OF THE DAY SECTION (FINAL VERSION) == */
 /* =============================================== */
