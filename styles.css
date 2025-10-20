@@ -1746,67 +1746,138 @@ h2:hover .platform-icon {
 .badge-youtube.updated { box-shadow: 0 0 14px rgba(255,50,50,0.4); }
 .badge-instagram.updated { box-shadow: 0 0 14px rgba(255,100,180,0.4); }
 
-/* ===================================================== */
-/* == CREATOR SUMMARY – MATCH FULL SECTION WIDTH STYLE == */
-/* ===================================================== */
+/* ============================================== */
+/* == CREATOR SUMMARY – Onyx Bubble Glass Match == */
+/* ============================================== */
+
 .creator-summary-section {
-	width: 100%;
-	max-width: 1140px; /* Matches your .container width */
-	margin: 40px auto;
-	padding: 28px;
-	background: var(--content-bg);
-	border-radius: var(--radius-xl);
-	border: 1px solid var(--border-color);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	position: relative;
 	text-align: center;
-	transition: opacity var(--transition-medium), transform var(--transition-medium);
+	margin: 1.25rem 0 1.875rem 0;
+	padding: 1.875rem;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	width: 100%;
+	box-sizing: border-box;
+	max-width: 1140px;
+	margin-left: auto;
+	margin-right: auto;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-.creator-summary-section::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: var(--bubble-gradient);
-	pointer-events: none;
-	z-index: 0;
+.creator-summary-title {
+	margin-top: 0;
+	margin-bottom: 1.5rem;
+	font-size: clamp(1.5rem, 5vw, 2.25rem);
+	font-weight: 800;
+	background: linear-gradient(120deg, var(--secondary-text), var(--accent-color));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
 }
 
-.creator-summary-section .creator-total {
+.creator-stats-grid {
+	display: flex;
+	justify-content: center;
+	gap: 1.5rem;
+	flex-wrap: wrap;
+	margin-bottom: 1.25rem;
+}
+
+/* --- Individual Platform Badges --- */
+.creator-badge {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.65rem 1.2rem;
+	border-radius: var(--radius-lg);
+	background: rgba(255,255,255,0.08);
+	border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
+	box-shadow: 0 8px 24px rgba(0,0,0,0.35), inset 0 0 1px rgba(255,255,255,0.25);
+	backdrop-filter: blur(18px) saturate(160%);
+	-webkit-backdrop-filter: blur(18px) saturate(160%);
+	font-weight: 600;
+	font-size: 1rem;
+	color: var(--text-color);
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.creator-badge:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 30px rgba(0,0,0,0.5), inset 0 0 2px rgba(255,255,255,0.4);
+}
+
+.creator-badge .platform-icon {
+	width: 22px;
+	height: 22px;
+	border-radius: 6px;
+	object-fit: contain;
+	filter: drop-shadow(0 1px 3px rgba(0,0,0,0.4));
+}
+
+.creator-badge .label {
+	font-weight: 600;
+}
+
+.badge-tiktok {
+	background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(39,39,39,0.4));
+}
+.badge-youtube {
+	background: linear-gradient(145deg, rgba(255,0,0,0.25), rgba(60,0,0,0.3));
+}
+.badge-instagram {
+	background: linear-gradient(135deg,
+		rgba(131,58,180,0.25),
+		rgba(253,29,29,0.25),
+		rgba(252,176,69,0.25)
+	);
+}
+
+/* --- Total Line --- */
+.creator-total-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.creator-total {
 	font-size: 1.3rem;
 	font-weight: 600;
 	color: var(--text-color);
-	margin-top: 8px;
+	margin-top: 0.5rem;
 }
 
-.creator-summary-section .creator-total .count {
+.creator-total .count {
 	font-size: 1.6rem;
 	background: linear-gradient(90deg, var(--accent-color), #00e6ff);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
 
-.creator-summary-section .creator-live-note {
+.creator-live-note {
 	display: block;
-	font-size: 0.9rem;
+	font-size: 0.85rem;
 	color: var(--secondary-text);
 	opacity: 0.7;
-	margin-top: 6px;
 	letter-spacing: 0.5px;
+	margin-top: 0.25rem;
 	text-transform: uppercase;
 }
 
-/* Optional subtle fade-in animation */
-.creator-summary-section {
-	opacity: 1;
-	animation: fadeInCreator 0.6s ease;
+/* --- Update Glow --- */
+.creator-badge.updated {
+	animation: pulseGlow 0.6s ease;
 }
-@keyframes fadeInCreator {
-	from { opacity: 0; transform: translateY(10px); }
-	to { opacity: 1; transform: translateY(0); }
+
+@keyframes pulseGlow {
+	0% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+	50% { box-shadow: 0 0 24px color-mix(in srgb, var(--accent-color) 60%, white 10%); }
+	100% { box-shadow: 0 0 0 rgba(255,255,255,0); }
 }
 
 :root {
