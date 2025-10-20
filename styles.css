@@ -2938,3 +2938,59 @@ body.maintenance-active {
     opacity: 0.4;
     background-color: #4a4a4a;
 }
+
+/* ===================================================== */
+/* === Frosted Inner Content (No Shimmer, Onyx Glass) === */
+/* ===================================================== */
+
+/* Apply frost only when user has a custom wallpaper */
+body.has-custom-background #profile-section,
+body.has-custom-background #president-section,
+body.has-custom-background #quote-section,
+body.has-custom-background .card {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Inner frosted layer for content sections */
+body.has-custom-background #profile-section .section-content,
+body.has-custom-background #president-section .section-content,
+body.has-custom-background #quote-section .section-content,
+body.has-custom-background .card .card-content {
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    backdrop-filter: var(--backdrop-blur) saturate(120%);
+    -webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    position: relative;
+    overflow: hidden;
+    color: var(--text-color);
+    transition:
+        background var(--transition-medium),
+        box-shadow var(--transition-medium),
+        backdrop-filter var(--transition-medium);
+    animation: frostFade 0.6s ease-out both;
+}
+
+/* Text color stays consistent */
+body.has-custom-background #profile-section .section-content *,
+body.has-custom-background #president-section .section-content *,
+body.has-custom-background #quote-section .section-content *,
+body.has-custom-background .card .card-content * {
+    color: var(--text-color);
+}
+
+/* Gentle fade-in for frost activation */
+@keyframes frostFade {
+    0% {
+        opacity: 0;
+        filter: blur(10px);
+        transform: scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
+}
