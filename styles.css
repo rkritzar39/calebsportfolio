@@ -138,51 +138,39 @@ body.dark-mode {
 }
 
 
-/* =========================================================== */
-/* == iOS 26 Frosted Panel Effect (Outer Shell Only) ========= */
-/* =========================================================== */
+/* ========================================= */
+/* == FROSTED CONTENT WHEN CUSTOM BG SET == */
+/* ========================================= */
 
-body.has-custom-background .section,
-body.has-custom-background .social-links-section,
-body.has-custom-background .shoutouts-section,
-body.has-custom-background .useful-links-section,
-body.has-custom-background .business-info-section,
-body.has-custom-background .tech-section,
-body.has-custom-background .version-info-section,
-body.has-custom-background .legal-section {
-  background: color-mix(in srgb, var(--glass-bg-light) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 8%, var(--border-color));
-  backdrop-filter: blur(22px) saturate(160%);
-  -webkit-backdrop-filter: blur(22px) saturate(160%);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.2),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-xl, 24px);
-  transition: background 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease;
+/* Shared frosted inner container style */
+.frosted-inner {
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  backdrop-filter: var(--backdrop-blur) saturate(120%);
+  -webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Dark Mode variant */
-body.dark-mode.has-custom-background .section,
-body.dark-mode.has-custom-background .social-links-section,
-body.dark-mode.has-custom-background .useful-links-section,
-body.dark-mode.has-custom-background .business-info-section,
-body.dark-mode.has-custom-background .tech-section,
-body.dark-mode.has-custom-background .version-info-section {
-  background: color-mix(in srgb, var(--glass-bg-dark) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 12%, var(--glass-border-dark));
-  box-shadow:
-    0 10px 50px rgba(0, 0, 0, 0.45),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+/* Ensure text inside keeps contrast readable */
+.frosted-inner * {
+  color: var(--text-color);
 }
 
-body.has-custom-background .section {
-  transform: translateY(0);
-  transition: transform 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.35s ease;
-}
-
-body.has-custom-background .section:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+/* Section-specific inner containers */
+#profile-section.frosted .section-content,
+#president-section.frosted .section-content,
+#quote-section.frosted .section-content,
+.card.frosted .card-content {
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  backdrop-filter: var(--backdrop-blur) saturate(120%);
+  -webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  padding: 1.25rem;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* =============================================== */
