@@ -1430,82 +1430,101 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
-// --- Real-Time Creator Counts (Upgraded v2.1) ---
-function setupRealTimeCounts() {
-  const sources = [
-    { id: "tiktok", collection: "tiktokCreators" },
-    { id: "youtube", collection: "youtubeCreators" },
-    { id: "instagram", collection: "instagramCreators" },
-  ];
+// --- Real-Time Creator Counts (Final shoutouts-based version) ---
+import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-  const totalEl = document.getElementById("total-creators");
+function setupRealTimeCounts() {
+  // Prevent double initialization if script runs twice
+  if (window.__creatorCountsInit) return;
+  window.__creatorCountsInit = true;
+
   const summarySection = document.getElementById("creator-summary");
-  if (!totalEl || !summarySection) {
-    console.warn("Creator summary elements not found; skipping live counts.");
+  const totalEl = document.getElementById("total-creators");
+
+  if (!summarySection || !totalEl) {
+    console.warn("Creator summary elements not found; skipping counts.");
     return;
   }
 
-  // Hide until first data is received
-  totalEl.style.opacity = "0";
-  summarySection.style.opacity = "0";
+  const platforms = ["tiktok", "youtube", "instagram"];
+  const counts = { tiktok: 0, youtube: 0, instagram: 0 };
+  let ready = 0;
 
-  let counts = { tiktok: 0, youtube: 0, instagram: 0 };
-  let listenersReady = 0;
+  // Hide total at startup
+  summarySection.style.opacity = "0";
+  totalEl.style.opacity = "0";
+  summarySection.style.display = "none";
 
   const updateTotal = () => {
     const total = counts.tiktok + counts.youtube + counts.instagram;
-    listenersReady++;
-
-    // Show or hide the badge depending on data
-    if (listenersReady >= sources.length) {
+    if (ready >= platforms.length) {
       if (total > 0) {
-        summarySection.style.display = "";
         totalEl.textContent = `🎉 Total: ${total} creator${total !== 1 ? "s" : ""}`;
+        summarySection.style.display = "";
+        requestAnimationFrame(() => {
+          summarySection.style.opacity = "1";
+          totalEl.style.opacity = "1";
+        });
         totalEl.classList.add("updated");
-        totalEl.style.opacity = "1";
-        summarySection.style.opacity = "1";
         setTimeout(() => totalEl.classList.remove("updated"), 400);
       } else {
-        totalEl.style.opacity = "0";
         summarySection.style.opacity = "0";
-        setTimeout(() => {
-          summarySection.style.display = "none";
-        }, 300);
+        totalEl.style.opacity = "0";
+        setTimeout(() => (summarySection.style.display = "none"), 400);
       }
     }
   };
 
-  sources.forEach(({ id, collection: collName }) => {
-    const el = document.getElementById(`${id}-count`);
+  // Helper to get or create <span id="*-count">
+  const ensureBadge = (platform) => {
+    const id = `${platform}-count`;
+    let el = document.getElementById(id);
     if (!el) {
-      console.warn(`Missing element for ${id}-count`);
+      const h2 = document.querySelector(`#${platform}-shoutouts-section h2`);
+      if (h2) {
+        el = document.createElement("span");
+        el.id = id;
+        el.className = "creator-count";
+        el.textContent = "—";
+        h2.appendChild(document.createTextNode(" "));
+        h2.appendChild(el);
+      }
+    }
+    return el;
+  };
+
+  // Listen to real-time counts for each platform
+  platforms.forEach((platform) => {
+    const el = ensureBadge(platform);
+    if (!el) {
+      console.warn(`⚠️ Missing heading for ${platform} count.`);
+      ready++;
+      updateTotal();
       return;
     }
 
-    const collRef = collection(db, collName);
+    const q = query(collection(db, "shoutouts"), where("platform", "==", platform));
     onSnapshot(
-      collRef,
+      q,
       (snapshot) => {
-        const count = snapshot.size;
-        counts[id] = count;
-
-        el.textContent = `${count} creator${count !== 1 ? "s" : ""}`;
+        counts[platform] = snapshot.size;
+        ready++;
+        el.textContent = `${snapshot.size} creator${snapshot.size !== 1 ? "s" : ""}`;
         el.classList.add("updated");
         setTimeout(() => el.classList.remove("updated"), 300);
-
         updateTotal();
       },
       (error) => {
-        console.error(`Error listening for ${id} count:`, error);
+        console.error(`Error listening for ${platform} creators:`, error);
         el.textContent = "—";
+        ready++;
+        updateTotal();
       }
     );
   });
 }
 
-// ✅ Initialize when the homepage loads (not globally on every page)
 document.addEventListener("DOMContentLoaded", () => {
-  // Only run this if the homepage is loaded
   if (document.getElementById("main-content-wrapper")) {
     setupRealTimeCounts();
   }
