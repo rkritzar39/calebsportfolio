@@ -1,16 +1,3 @@
-Got it ✅ — below is your entire fully updated settings.js.
-
-This version includes:
-	•	💎 Circular preview support (loads instantly, persists, removes cleanly)
-	•	✅ File name stays visible after reload
-	•	🧊 Wallpaper Blur UI auto-hides when no custom background
-	•	🔄 Reset to Factory Settings clears the background & preview
-	•	🧠 Fully compatible with your existing settings.css and iOS 26 design
-
-⸻
-
-🧩 Full settings.js
-
 /**
  * settings.js
  * Fully functional settings manager with live previews,
@@ -23,7 +10,7 @@ class SettingsManager {
       appearanceMode: "device",
       themeStyle: "clear",
       accentColor: "#3ddc84",
-      darkModeScheduler: "off",
+      darkModeScheduler: "off", // 'off' | 'auto'
       darkModeStart: "20:00",
       darkModeEnd: "06:00",
       fontSize: 16,
@@ -58,6 +45,7 @@ class SettingsManager {
       this.applyAllSettings();
       this.setupEventListeners();
 
+      // Keep YOUR real implementations below; do not overwrite later
       this.initMouseTrail();
       this.initLoadingScreen();
       this.initScrollArrow();
@@ -170,7 +158,8 @@ class SettingsManager {
     const toggles = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
-        (this.defaultSettings[k] === "enabled" || this.defaultSettings[k] === "disabled")
+        (this.defaultSettings[k] === "enabled" ||
+          this.defaultSettings[k] === "disabled")
     );
     toggles.forEach((key) => this.setToggle(key));
 
@@ -304,7 +293,8 @@ class SettingsManager {
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
-        (this.defaultSettings[k] === "enabled" || this.defaultSettings[k] === "disabled")
+        (this.defaultSettings[k] === "enabled" ||
+          this.defaultSettings[k] === "disabled")
     );
     toggleKeys.forEach((key) => {
       const el = document.getElementById(`${key}Toggle`);
@@ -317,19 +307,25 @@ class SettingsManager {
       }
     });
 
-    document.getElementById("resetLayoutBtn")?.addEventListener("click", () => {
-      if (confirm("Reset the section layout to default?")) {
-        localStorage.removeItem("sectionOrder");
-        alert("Layout reset. Refresh homepage to see changes.");
-      }
-    });
+    document
+      .getElementById("resetLayoutBtn")
+      ?.addEventListener("click", () => {
+        if (confirm("Reset the section layout to default?")) {
+          localStorage.removeItem("sectionOrder");
+          alert("Layout reset. Refresh homepage to see changes.");
+        }
+      });
 
-    document.getElementById("resetSectionsBtn")?.addEventListener("click", () =>
-      this.resetSectionVisibility()
-    );
-    document.getElementById("resetSettings")?.addEventListener("click", () =>
-      this.resetSettings()
-    );
+    document
+      .getElementById("resetSectionsBtn")
+      ?.addEventListener("click", () =>
+        this.resetSectionVisibility()
+      );
+    document
+      .getElementById("resetSettings")
+      ?.addEventListener("click", () =>
+        this.resetSettings()
+      );
 
     window.addEventListener("resize", () => this.fitWallpaperLayer());
     window.addEventListener("orientationchange", () => this.fitWallpaperLayer());
@@ -340,7 +336,8 @@ class SettingsManager {
   // =============================
   updateSliderFill(slider) {
     if (!slider) return;
-    const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+    const pct =
+      ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
     slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
   }
 
@@ -408,8 +405,10 @@ class SettingsManager {
         ),
     };
 
+    // Apply core settings
     actions[key]?.();
 
+    // Universal show/hide for homepage sections
     if (key.startsWith("show")) {
       const sectionId = key
         .replace(/^show/, "")
@@ -438,7 +437,7 @@ class SettingsManager {
     document.documentElement.classList.toggle("dark-mode", isDark);
     document.documentElement.classList.toggle("light-mode", !isDark);
     document.body.classList.toggle("dark-mode", isDark);
-    document.body.classList.toggle("light-e", !isDark);
+    document.body.classList.toggle("light-mode", !isDark); // fixed "light-e" typo
   }
 
   applyAppearanceMode() {
@@ -522,18 +521,19 @@ class SettingsManager {
     if (existing && remove) remove.style.display = "inline-block";
     this.toggleWallpaperBlurCard(existing);
 
+    // Show saved preview on load
     const savedBg = localStorage.getItem("customBackground");
     const savedName = localStorage.getItem("customBackgroundName");
     if (savedBg && previewContainer && previewImage) {
-      fileNameDisplay.textContent = savedName || "Saved background";
+      if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
       previewContainer.classList.add("visible");
       previewImage.src = savedBg;
-            previewImage.addEventListener("load", () =>
+      previewImage.addEventListener("load", () =>
         previewImage.classList.add("loaded")
       );
     }
 
-    // --- When uploading a new file ---
+    // When uploading a new file
     upload.addEventListener("change", (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -559,15 +559,16 @@ class SettingsManager {
           );
         }
 
+        // tiny pulse hint
         upload.classList.remove("pulse");
-        upload.offsetHeight;
+        upload.offsetHeight; // reflow
         upload.classList.add("pulse");
         setTimeout(() => upload.classList.remove("pulse"), 900);
       };
       reader.readAsDataURL(file);
     });
 
-    // --- Remove custom background ---
+    // Remove custom background
     if (remove) {
       remove.addEventListener("click", (e) => {
         e.preventDefault();
@@ -632,7 +633,7 @@ class SettingsManager {
     const blurValue = localStorage.getItem("wallpaperBlur") || 15;
     this.applyWallpaperBlur(blurValue);
 
-    // ✅ Sync circular preview visibility
+    // Sync circular preview visibility
     const previewContainer = document.getElementById("customBgPreviewContainer");
     if (previewContainer) {
       if (bg) {
@@ -647,6 +648,12 @@ class SettingsManager {
     const layer = document.getElementById("wallpaper-layer");
     if (!layer) return;
     layer.style.filter = `blur(${value}px) brightness(1.03)`;
+  }
+
+  // Safe no-op; layer uses fixed inset so sizing is automatic.
+  fitWallpaperLayer() {
+    // Intentionally left minimal to avoid resize errors.
+    // If you add parallax/zoom later, wire it up here.
   }
 
   initWallpaperBlurControl() {
@@ -694,7 +701,10 @@ class SettingsManager {
   initSchedulerInterval() {
     clearInterval(this.schedulerInterval);
     this.checkDarkModeSchedule(true);
-    this.schedulerInterval = setInterval(() => this.checkDarkModeSchedule(), 60000);
+    this.schedulerInterval = setInterval(
+      () => this.checkDarkModeSchedule(),
+      60000
+    );
   }
 
   checkDarkModeSchedule(force = false) {
@@ -731,7 +741,9 @@ class SettingsManager {
   // =============================
   resetSectionVisibility() {
     if (confirm("Show all homepage sections again?")) {
-      const keys = Object.keys(this.defaultSettings).filter((k) => k.startsWith("show"));
+      const keys = Object.keys(this.defaultSettings).filter((k) =>
+        k.startsWith("show")
+      );
       keys.forEach((k) => (this.settings[k] = "enabled"));
       this.saveSettings();
       this.initializeControls();
@@ -745,13 +757,13 @@ class SettingsManager {
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
 
-      // 🧹 Clear layout + background
+      // Clear layout + background + blur values
       localStorage.removeItem("sectionOrder");
       localStorage.removeItem("customBackground");
       localStorage.removeItem("customBackgroundName");
       localStorage.removeItem("wallpaperBlur");
 
-      // Reset background display
+      // Reset background display + preview UI
       const layer = document.getElementById("wallpaper-layer");
       if (layer) {
         layer.style.backgroundImage = "";
@@ -769,6 +781,7 @@ class SettingsManager {
       if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
       if (removeBtn) removeBtn.style.display = "none";
 
+      // Re-init UI
       this.initializeControls();
       this.applyAllSettings();
       alert("All settings have been reset to factory defaults.");
@@ -776,14 +789,21 @@ class SettingsManager {
   }
 
   // =============================
-  // Misc
+  // Misc (YOUR real implementations live here)
   // =============================
   initScrollArrow() {}
   initLoadingScreen() {}
-  initMouseTrail() {}
+
+  // IMPORTANT: do NOT leave a second empty initMouseTrail() — it would overwrite the real one.
+  // If you have a full implementation elsewhere in this class/file, keep that one.
+  initMouseTrail() {
+    // If you already have your full trail implementation, paste it here
+    // (kept minimal to avoid overriding your working version).
+    // No-op by default.
+  }
 }
 
-// Initialize instance
+// Initialize
 if (!window.settingsManagerInstance) {
   window.settingsManagerInstance = new SettingsManager();
 }
