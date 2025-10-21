@@ -968,32 +968,22 @@ body.dark-mode #themeModeSelect:hover {
   margin-top: 1rem;
   width: 120px;
   height: 120px;
-  position: relative;
   border-radius: 50%;
   overflow: hidden;
-  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
-  box-shadow:
-    0 4px 18px rgba(0, 0, 0, 0.25),
-    inset 0 0 20px rgba(255, 255, 255, 0.05),
-    inset 0 0 12px color-mix(in srgb, var(--accent-color) 25%, transparent);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  transition: transform 0.45s ease, opacity 0.45s ease, box-shadow 0.4s ease;
-  transform: scale(0.92);
   opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 #customBgPreviewContainer.visible {
+  display: block;
   opacity: 1;
   transform: scale(1);
 }
-
-/* Inner image */
 #customBgPreview {
   width: 100%;
   height: 100%;
-  object-fit: cover;
   border-radius: 50%;
-  display: block;
+  object-fit: cover;
   opacity: 0;
   transition: opacity 0.4s ease;
 }
