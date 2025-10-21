@@ -515,31 +515,38 @@ class SettingsManager {
   const fileNameDisplay = document.getElementById("fileNameDisplay");
   const previewContainer = document.getElementById("customBgPreviewContainer");
   const previewImage = document.getElementById("customBgPreview");
+  const divider = document.getElementById("customBgDivider");
+
   if (!upload || !previewContainer || !previewImage) return;
 
-  // --- restore previously saved background ---
+  // --- Restore previously saved background on load ---
   const savedBg = localStorage.getItem("customBackground");
   const savedName = localStorage.getItem("customBackgroundName");
+
   if (savedBg) {
-    fileNameDisplay.textContent = savedName || "Saved background";
+    if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
+    if (remove) remove.style.display = "inline-block";
+    this.toggleWallpaperBlurCard(true);
+
     previewContainer.classList.add("visible");
     previewImage.src = savedBg;
     previewImage.onload = () => previewImage.classList.add("loaded");
-    if (remove) remove.style.display = "inline-block";
-    this.toggleWallpaperBlurCard(true);
+
+    if (divider) divider.classList.add("visible");
   } else {
     previewContainer.classList.remove("visible");
     previewImage.classList.remove("loaded");
     previewImage.src = "";
     this.toggleWallpaperBlurCard(false);
+    if (divider) divider.classList.remove("visible");
   }
 
-  // --- when user selects a new file ---
+  // --- When uploading a new file ---
   upload.addEventListener("change", (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    fileNameDisplay.textContent = file.name;
+    if (fileNameDisplay) fileNameDisplay.textContent = file.name;
 
     const reader = new FileReader();
     reader.onload = (evt) => {
@@ -547,23 +554,21 @@ class SettingsManager {
       localStorage.setItem("customBackground", imageData);
       localStorage.setItem("customBackgroundName", file.name);
 
-      // apply immediately
       this.applyCustomBackground(true);
-
-      // show blur card and remove button
       if (remove) remove.style.display = "inline-block";
       this.toggleWallpaperBlurCard(true);
 
-      // show circular preview
+      // Show circular preview + divider
       previewContainer.classList.add("visible");
       previewImage.classList.remove("loaded");
       previewImage.src = imageData;
       previewImage.onload = () => previewImage.classList.add("loaded");
+      if (divider) divider.classList.add("visible");
     };
     reader.readAsDataURL(file);
   });
 
-  // --- remove current background ---
+  // --- Remove custom background ---
   if (remove) {
     remove.addEventListener("click", (e) => {
       e.preventDefault();
@@ -580,15 +585,17 @@ class SettingsManager {
       this.applyCustomBackground(false);
       this.toggleWallpaperBlurCard(false);
 
-      fileNameDisplay.textContent = "No file chosen";
+      if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
       remove.style.display = "none";
 
       previewContainer.classList.remove("visible");
       previewImage.classList.remove("loaded");
       previewImage.src = "";
+      if (divider) divider.classList.remove("visible");
     });
   }
 }
+  
   applyCustomBackground(fade = false) {
     const bg = localStorage.getItem("customBackground");
     const { layer, tint } = this.ensureWallpaperLayers();
