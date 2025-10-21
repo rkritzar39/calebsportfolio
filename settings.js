@@ -434,11 +434,11 @@ class SettingsManager {
   }
 
   setThemeClasses(isDark) {
-    document.documentElement.classList.toggle("dark-mode", isDark);
-    document.documentElement.classList.toggle("light-mode", !isDark);
-    document.body.classList.toggle("dark-mode", isDark);
-    document.body.classList.toggle("light-mode", !isDark); // fixed "light-e" typo
-  }
+  document.documentElement.classList.toggle("dark-mode", isDark);
+  document.documentElement.classList.toggle("light-mode", !isDark);
+  document.body.classList.toggle("dark-mode", isDark);
+  document.body.classList.toggle("light-e", !isDark); // ← restore Onyx Light
+}
 
   applyAppearanceMode() {
     const isDark =
