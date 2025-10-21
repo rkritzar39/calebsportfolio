@@ -1,37 +1,37 @@
 :root {
 	/* ======================== */
-	/* Base Sizing            */
+	/* Base Sizing              */
 	/* ======================== */
 	--font-size-base: 16px;
 	--line-height-base: 1.65;
 
 	/* ======================== */
-	/* Dark Gray Glass Palette  */
+	/* Dark Liquid Glass Palette */
 	/* ======================== */
 	--dark-bg: #0E0E0E;
-	--dark-content-bg: rgba(28, 28, 28, 0.6);
-	--dark-text: #F0F0F0;
-	--dark-secondary-text: #A3A3A3;
+	--dark-content-bg: rgba(24, 24, 24, 0.55);
+	--dark-text: #F5F7FA;
+	--dark-secondary-text: #A9A9A9;
 	--dark-border: rgba(255, 255, 255, 0.08);
 	--dark-accent: #4EA8FF;
-	--dark-hover: #2F89E5;
+	--dark-hover: #3F8CE0;
 	--dark-link: var(--dark-accent);
-	--dark-shadow: rgba(0, 0, 0, 0.65);
-	--dark-glow: rgba(255, 255, 255, 0.05);
-	--dark-icon: #D1D1D1;
+	--dark-shadow: rgba(0, 0, 0, 0.55);
+	--dark-glow: rgba(255, 255, 255, 0.08);
+	--dark-icon: #E3E3E3;
 
 	/* ======================== */
-	/* Light Glass Palette      */
+	/* Light Liquid Glass Palette */
 	/* ======================== */
-	--light-bg-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
-	--light-content-bg: rgba(255, 255, 255, 0.55);
+	--light-bg-gradient: linear-gradient(120deg, #d9f0ff 0%, #f5f9ff 100%);
+	--light-content-bg: rgba(255, 255, 255, 0.45);
 	--light-text: #111111;
 	--light-secondary-text: #4B5563;
 	--light-shadow: rgba(0, 0, 0, 0.15);
 	--light-accent: #007AFF;
 	--light-hover: #005FCC;
 	--light-link: var(--light-accent);
-	--light-glow: rgba(255, 255, 255, 0.75);
+	--light-glow: rgba(255, 255, 255, 0.7);
 	--light-icon: #2C2C2E;
 
 	/* ======================== */
@@ -42,7 +42,7 @@
 	--text-color: var(--dark-text);
 	--secondary-text: var(--dark-secondary-text);
 	--border-color: var(--dark-border);
-	--accent-color: var(--dark-accent); /* This is the user-controlled color */
+	--accent-color: var(--dark-accent);
 	--hover-color: var(--dark-hover);
 	--link-color: var(--dark-link);
 	--shadow-color: var(--dark-shadow);
@@ -51,27 +51,28 @@
 	--social-icon-text-color: var(--dark-text);
 
 	/* ======================== */
-	/* Effects & Decoration     */
+	/* Liquid Glass Effects     */
 	/* ======================== */
-	--backdrop-blur: saturate(180%) blur(28px);
+	--backdrop-blur: blur(24px) saturate(170%) contrast(110%);
 	--bubble-gradient: radial-gradient(
-		circle at top left,
-		rgba(255, 255, 255, 0.08),
+		circle at 30% 20%,
+		rgba(255, 255, 255, 0.12),
 		transparent 70%
 	);
-	--bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
-	--bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+	--bubble-highlight: inset 0 1px 3px rgba(255, 255, 255, 0.2);
+	--bubble-shadow:
+		inset 0 0 12px rgba(255, 255, 255, 0.05),
+		0 15px 35px rgba(0, 0, 0, 0.45);
+	--liquid-reflection: radial-gradient(circle at 25% 20%, rgba(255,255,255,0.18), transparent 70%);
+	--liquid-refraction: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
 
 	/* ======================== */
-	/* Border Radii           */
+	/* Radii & Transitions      */
 	/* ======================== */
 	--radius-xl: 28px;
 	--radius-lg: 20px;
 	--radius-md: 14px;
 
-	/* ======================== */
-	/* Transitions            */
-	/* ======================== */
 	--transition-fast: 0.2s ease;
 	--transition-medium: 0.3s ease;
 	--transition-slow: 0.5s ease;
@@ -85,27 +86,24 @@ body.light-e {
 	--content-bg: var(--light-content-bg);
 	--text-color: var(--light-text);
 	--secondary-text: var(--light-secondary-text);
-	--border-color: rgba(255, 255, 255, 0.4);
-	/* --accent-color is now correctly controlled by JavaScript */
+	--border-color: rgba(255, 255, 255, 0.45);
 	--hover-color: var(--light-hover);
 	--link-color: var(--light-link);
 	--shadow-color: var(--light-shadow);
 	--glow-color: var(--light-glow);
 	--icon-color: var(--light-icon);
 	--social-icon-text-color: var(--light-text);
-	--bubble-gradient: radial-gradient(
-		circle at top left,
-		rgba(255, 255, 255, 0.8),
-		transparent 50%
-	);
-	--bubble-shadow: 0 12px 32px var(--light-shadow);
-	--bubble-highlight: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
-	--backdrop-blur: saturate(180%) blur(28px);
-}
 
-body.light-e {
-    background: var(--light-bg-gradient);
-    background-attachment: fixed;
+	--bubble-gradient: radial-gradient(
+		circle at 40% 25%,
+		rgba(255, 255, 255, 0.6),
+		transparent 65%
+	);
+	--bubble-shadow:
+		inset 0 0 8px rgba(255, 255, 255, 0.2),
+		0 15px 35px rgba(0, 0, 0, 0.15);
+	--bubble-highlight: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+	--backdrop-blur: blur(24px) saturate(180%) contrast(110%);
 }
 
 /* ======================== */
@@ -113,68 +111,58 @@ body.light-e {
 /* ======================== */
 html.dark-mode body,
 body.dark-mode {
-    --bg-color: var(--dark-bg);
-    --content-bg: var(--dark-content-bg);
-    --text-color: var(--dark-text);
-    /* --accent-color is now correctly controlled by JavaScript */
+	--bg-color: var(--dark-bg);
+	--content-bg: var(--dark-content-bg);
+	--text-color: var(--dark-text);
 }
 
 /* ======================== */
 /* Base Styles              */
 /* ======================== */
 body {
-  background: var(--bg-color);
-  color: var(--text-color);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
-  margin: 0;
-  padding: 32px;
-  line-height: var(--line-height-base);
-  font-size: var(--font-size-base, 20px);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background 0.4s ease, color 0.4s ease;
-}
-
-.container {
-  max-width: 1140px;
-  margin: 0 auto;
-  padding: 0 24px;
+	background: var(--bg-color);
+	color: var(--text-color);
+	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
+	margin: 0;
+	padding: 32px;
+	line-height: var(--line-height-base);
+	font-size: var(--font-size-base, 20px);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	transition: background 0.4s ease, color 0.4s ease;
 }
 
 /* ======================== */
-/* "iOS 26" Glass Section   */
+/* Liquid Glass Section     */
 /* ======================== */
 .section {
-  background: var(--content-bg);
-  backdrop-filter: saturate(180%) blur(30px);
-  -webkit-backdrop-filter: saturate(180%) blur(30px);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-color);
-  padding: 24px;
-  margin-bottom: 32px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  background-image: none;
-
-  box-shadow: 
-    inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
-    0 25px 50px -12px rgba(0, 0, 0, 0.5);
+	position: relative;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient), var(--liquid-refraction);
+	border-radius: var(--radius-xl);
+	border: 1px solid var(--border-color);
+	padding: 24px;
+	margin-bottom: 32px;
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	box-shadow:
+		var(--bubble-shadow),
+		inset 0 1px 2px rgba(255, 255, 255, 0.05);
+	transition: background var(--transition-medium), box-shadow var(--transition-medium);
+	overflow: hidden;
 }
 
+/* Reflection overlay */
 .section::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  border-radius: inherit;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.15),
-    rgba(255, 255, 255, 0)
-  );
-  pointer-events: none;
-  opacity: 0.5;
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: 0.45;
+	transition: opacity 0.4s ease;
+	pointer-events: none;
 }
 
 /* ======================================== */
