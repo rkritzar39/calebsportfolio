@@ -886,7 +886,7 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Custom Background Upload – iOS 26 Liquid Glass ====== */
+/* == Custom Background Upload – iOS 26 Liquid Glass v4 == */
 /* ======================================================= */
 
 .custom-background {
@@ -955,7 +955,7 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Glass Divider Line (Fades In/Out) ================== */
+/* == Glass Divider Line (Fades In/Out with Preview) ===== */
 /* ======================================================= */
 .custom-bg-divider {
   width: 100%;
@@ -975,7 +975,7 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Circular Live Preview Bubble ======================= */
+/* == Circular Live Preview Bubble (Protected) ============ */
 /* ======================================================= */
 #customBgPreviewContainer {
   display: none;
@@ -1001,6 +1001,7 @@ body.dark-mode #themeModeSelect:hover {
   transform: scale(1);
 }
 
+/* The preview image itself */
 #customBgPreview {
   width: 100%;
   height: 100%;
@@ -1008,6 +1009,12 @@ body.dark-mode #themeModeSelect:hover {
   object-fit: cover;
   opacity: 0;
   transition: opacity 0.4s ease;
+
+  /* 🔒 Protection: prevent save/drag/selection */
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
 }
 #customBgPreview.loaded {
   opacity: 1;
