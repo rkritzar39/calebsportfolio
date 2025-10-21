@@ -61,10 +61,12 @@
     </div>
   </div>
 
+<!-- ================================= -->
 <!-- Custom Background Image -->
+<!-- ================================= -->
 <div class="setting-card custom-background">
   <div class="custom-bg-row">
-    <!-- Left side: label + controls -->
+    <!-- Left side -->
     <div class="custom-bg-left">
       <div class="setting-label">
         <strong class="setting-title">Custom Background</strong>
@@ -81,7 +83,7 @@
       </div>
     </div>
 
-    <!-- Right side: preview bubble -->
+    <!-- Right side -->
     <div class="custom-bg-right">
       <div id="customBgPreviewContainer">
         <img
@@ -92,27 +94,33 @@
         />
       </div>
     </div>
-
-  <!-- Wallpaper Blur Strength -->
-  <div class="setting-card" id="wallpaperBlurCard">
-    <div class="setting-label">
-      <strong class="setting-title">Wallpaper Blur</strong>
-      <p class="setting-description">Adjust the background blur strength for your custom wallpaper.</p>
-    </div>
-    <div class="blur-slider-control">
-      <span id="blurValue" class="font-size-badge">15px</span>
-      <input
-        type="range"
-        id="blur-slider"
-        min="0"
-        max="40"
-        step="1"
-        value="15"
-        aria-label="Adjust wallpaper blur"
-      />
-    </div>
   </div>
+</div>
 
+<!-- ================================= -->
+<!-- Wallpaper Blur Strength -->
+<!-- ================================= -->
+<div class="setting-card" id="wallpaperBlurCard">
+  <div class="setting-label">
+    <strong class="setting-title">Wallpaper Blur</strong>
+    <p class="setting-description">
+      Adjust the background blur strength for your custom wallpaper.
+    </p>
+  </div>
+  <div class="blur-slider-control">
+    <span id="blurValue" class="font-size-badge">15px</span>
+    <input
+      type="range"
+      id="blur-slider"
+      min="0"
+      max="40"
+      step="1"
+      value="15"
+      aria-label="Adjust wallpaper blur"
+    />
+  </div>
+</div>
+  
   <!-- Accent Color -->
   <div class="setting-card accent-color-card">
     <label for="accentColorPicker" class="setting-label">
