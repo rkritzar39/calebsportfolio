@@ -61,40 +61,45 @@
           </div>
         </div>
 
-        <!-- Custom Background Image -->
-        <div class="setting-card">
-          <div class="setting-label">
-            <strong class="setting-title">Custom Background</strong>
-            <p class="setting-description">Upload your own image to use as the background.</p>
-          </div>
-        
-          <div class="custom-bg-controls">
-            <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-            <input type="file" id="customBgUpload" accept="image/*">
-            <span id="fileNameDisplay" class="file-name">No file chosen</span>
-            <button id="removeCustomBg" class="button">Remove</button>
-          </div>
-        </div>
+    <!-- Custom Background Image -->
+<div class="setting-card">
+  <div class="setting-label">
+    <strong class="setting-title">Custom Background</strong>
+    <p class="setting-description">Upload your own image to use as the background.</p>
+  </div>
 
-        <!-- Wallpaper Blur Strength -->
-        <div class="setting-card" id="wallpaperBlurCard">
-          <div class="setting-label">
-            <strong class="setting-title">Wallpaper Blur</strong>
-            <p class="setting-description">Adjust the background blur strength for your custom wallpaper.</p>
-          </div>
-          <div class="blur-slider-control">
-            <span id="blurValue" class="font-size-badge">15px</span>
-            <input
-              type="range"
-              id="blur-slider"
-              min="0"
-              max="40"
-              step="1"
-              value="15"
-              aria-label="Adjust wallpaper blur"
-            />
-          </div>
-        </div>
+  <div class="custom-bg-controls">
+    <label for="customBgUpload" class="custom-bg-label">Choose File</label>
+    <input type="file" id="customBgUpload" accept="image/*">
+    <span id="fileNameDisplay" class="file-name">No file chosen</span>
+    <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+  </div>
+
+  <!-- 👇 NEW: Circular Preview Bubble -->
+  <div id="customBgPreviewContainer">
+    <img id="customBgPreview" alt="Background preview" />
+  </div>
+</div>
+
+<!-- Wallpaper Blur Strength -->
+<div class="setting-card" id="wallpaperBlurCard">
+  <div class="setting-label">
+    <strong class="setting-title">Wallpaper Blur</strong>
+    <p class="setting-description">Adjust the background blur strength for your custom wallpaper.</p>
+  </div>
+  <div class="blur-slider-control">
+    <span id="blurValue" class="font-size-badge">15px</span>
+    <input
+      type="range"
+      id="blur-slider"
+      min="0"
+      max="40"
+      step="1"
+      value="15"
+      aria-label="Adjust wallpaper blur"
+    />
+  </div>
+</div>
 
         <!-- Accent Color -->
         <div class="setting-card accent-color-card">
