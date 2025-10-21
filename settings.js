@@ -510,93 +510,83 @@ class SettingsManager {
   }
 
   initCustomBackgroundControls() {
-    const upload = document.getElementById("customBgUpload");
-    const remove = document.getElementById("removeCustomBg");
-    const fileNameDisplay = document.getElementById("fileNameDisplay");
-    const previewContainer = document.getElementById("customBgPreviewContainer");
-    const previewImage = document.getElementById("customBgPreview");
-    if (!upload) return;
+  const upload = document.getElementById("customBgUpload");
+  const remove = document.getElementById("removeCustomBg");
+  const fileNameDisplay =
+    document.getElementById("fileNameDisplay") ||
+    document.getElementById("customBgFileName");
+  const previewContainer = document.getElementById("customBgPreviewContainer");
+  const previewImage = document.getElementById("customBgPreview");
+  if (!upload) return;
 
-    const existing = !!localStorage.getItem("customBackground");
-    if (existing && remove) remove.style.display = "inline-block";
-    this.toggleWallpaperBlurCard(existing);
-
-    // Show saved preview on load
-    const savedBg = localStorage.getItem("customBackground");
-    const savedName = localStorage.getItem("customBackgroundName");
-    if (savedBg && previewContainer && previewImage) {
-      if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
+  // --- show saved background on load ---
+  const savedBg = localStorage.getItem("customBackground");
+  const savedName = localStorage.getItem("customBackgroundName");
+  if (savedBg) {
+    if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
+    if (remove) remove.style.display = "inline-block";
+    this.toggleWallpaperBlurCard(true);
+    if (previewContainer && previewImage) {
       previewContainer.classList.add("visible");
       previewImage.src = savedBg;
       previewImage.addEventListener("load", () =>
         previewImage.classList.add("loaded")
       );
     }
-
-    // When uploading a new file
-    upload.addEventListener("change", (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-
-      if (fileNameDisplay) fileNameDisplay.textContent = file.name;
-
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const imageData = evt.target.result;
-        localStorage.setItem("customBackground", imageData);
-        localStorage.setItem("customBackgroundName", file.name);
-
-        this.applyCustomBackground(true);
-        if (remove) remove.style.display = "inline-block";
-        this.toggleWallpaperBlurCard(true);
-
-        // Show circular preview
-        if (previewContainer && previewImage) {
-          previewContainer.classList.add("visible");
-          previewImage.src = imageData;
-          previewImage.addEventListener("load", () =>
-            previewImage.classList.add("loaded")
-          );
-        }
-
-        // tiny pulse hint
-        upload.classList.remove("pulse");
-        upload.offsetHeight; // reflow
-        upload.classList.add("pulse");
-        setTimeout(() => upload.classList.remove("pulse"), 900);
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Remove custom background
-    if (remove) {
-      remove.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        localStorage.removeItem("customBackground");
-        localStorage.removeItem("customBackgroundName");
-
-        const layer = document.getElementById("wallpaper-layer");
-        if (layer) {
-          layer.style.backgroundImage = "";
-          layer.style.opacity = "0";
-        }
-
-        this.applyCustomBackground();
-        this.toggleWallpaperBlurCard(false);
-        remove.style.display = "none";
-        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
-
-        // Hide preview
-        if (previewContainer && previewImage) {
-          previewContainer.classList.remove("visible");
-          previewImage.classList.remove("loaded");
-          previewImage.src = "";
-        }
-      });
-    }
   }
 
+  // --- upload new background ---
+  upload.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const imageData = evt.target.result;
+      localStorage.setItem("customBackground", imageData);
+      localStorage.setItem("customBackgroundName", file.name);
+
+      this.applyCustomBackground(true);
+      if (remove) remove.style.display = "inline-block";
+      this.toggleWallpaperBlurCard(true);
+
+      if (previewContainer && previewImage) {
+        previewContainer.classList.add("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = imageData;
+        previewImage.onload = () => previewImage.classList.add("loaded");
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // --- remove background ---
+  if (remove) {
+    remove.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("customBackground");
+      localStorage.removeItem("customBackgroundName");
+      localStorage.removeItem("wallpaperBlur");
+
+      const layer = document.getElementById("wallpaper-layer");
+      if (layer) {
+        layer.style.backgroundImage = "";
+        layer.style.opacity = "0";
+      }
+      this.applyCustomBackground(false);
+      this.toggleWallpaperBlurCard(false);
+
+      if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+      if (remove) remove.style.display = "none";
+      if (previewContainer && previewImage) {
+        previewContainer.classList.remove("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = "";
+      }
+    });
+  }
+}
   applyCustomBackground(fade = false) {
     const bg = localStorage.getItem("customBackground");
     const { layer, tint } = this.ensureWallpaperLayers();
