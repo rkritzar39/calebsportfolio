@@ -886,43 +886,50 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Custom Background Upload – Responsive Liquid Glass == */
+/* == Custom Background Upload – iOS 26 Liquid Glass v5 == */
 /* ======================================================= */
 
 .custom-background {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  position: relative;
+  gap: 1rem;
 }
 
-/* Wrap controls + preview in one flexible layout */
-.custom-background {
-  display: grid;
-  grid-template-columns: 1fr auto;
+/* === Desktop layout: title & description on left, controls below, preview on right === */
+.custom-bg-row {
+  display: flex;
   align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
   gap: 2rem;
 }
 
 /* --- Left side --- */
-.setting-label {
+.custom-bg-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.custom-bg-left .setting-label {
   text-align: left;
 }
 
+/* --- Controls row --- */
 .custom-bg-controls {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
-/* Hide default file input */
+/* Hide the default file input */
 #customBgUpload {
   display: none;
 }
 
-/* --- Upload Button --- */
+/* --- Choose File button --- */
 .custom-bg-label {
   font-size: 0.8125rem;
   font-weight: 500;
@@ -938,7 +945,17 @@ body.dark-mode #themeModeSelect:hover {
   transition: background 0.25s ease;
 }
 
-/* --- Remove Button --- */
+/* --- File name --- */
+.file-name {
+  font-size: 0.8125rem;
+  color: var(--secondary-text);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- Remove button --- */
 #removeCustomBg {
   font-size: 0.8125rem;
   padding: 0.45rem 0.85rem;
@@ -956,50 +973,23 @@ body.dark-mode #themeModeSelect:hover {
   opacity: 1;
 }
 
-/* --- File name text --- */
-.file-name {
-  font-size: 0.8125rem;
-  color: var(--secondary-text);
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* ======================================================= */
+/* == Right side: Circular Preview Bubble ================ */
+/* ======================================================= */
+.custom-bg-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
 }
 
-/* ======================================================= */
-/* == Vertical Divider (Desktop only) ==================== */
-/* ======================================================= */
-.custom-bg-divider {
-  position: absolute;
-  right: 150px;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  height: auto;
-  background: color-mix(in srgb, var(--text-color) 10%, transparent);
-  opacity: 0;
-  transform: scaleY(0.95);
-  border-radius: 1px;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-}
-.custom-bg-divider.visible {
-  opacity: 0.4;
-  transform: scaleY(1);
-}
-
-/* ======================================================= */
-/* == Circular Preview Bubble ============================ */
-/* ======================================================= */
 #customBgPreviewContainer {
   display: none;
-  width: 120px;
-  height: 120px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  justify-self: end;
   background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
   box-shadow:
     0 3px 10px rgba(0, 0, 0, 0.25),
@@ -1016,7 +1006,6 @@ body.dark-mode #themeModeSelect:hover {
   transform: scale(1);
 }
 
-/* Preview image */
 #customBgPreview {
   width: 100%;
   height: 100%;
@@ -1024,6 +1013,8 @@ body.dark-mode #themeModeSelect:hover {
   object-fit: cover;
   opacity: 0;
   transition: opacity 0.4s ease;
+
+  /* 🔒 Protection: prevent saving/dragging */
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
@@ -1048,33 +1039,26 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Mobile Layout (Stacked) ============================ */
+/* == Mobile Layout (stacked) ============================ */
 /* ======================================================= */
 @media (max-width: 768px) {
-  .custom-background {
-    display: flex;
+  .custom-bg-row {
     flex-direction: column;
     align-items: center;
-    text-align: center;
     gap: 1rem;
   }
-
-  .custom-bg-divider {
-    display: none;
+  .custom-bg-left .setting-label {
+    text-align: center;
   }
-
+  .custom-bg-controls {
+    justify-content: center;
+  }
+  .custom-bg-right {
+    margin-top: 0.5rem;
+  }
   #customBgPreviewContainer {
-    margin-top: 0.75rem;
     width: 95px;
     height: 95px;
-  }
-
-  .custom-bg-controls {
-    align-items: center;
-  }
-
-  .setting-label {
-    text-align: center;
   }
 }
 
