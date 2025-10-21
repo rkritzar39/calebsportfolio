@@ -65,25 +65,25 @@
 <!-- Custom Background Image -->
 <!-- ================================= -->
 <div class="setting-card custom-background">
-  <div class="custom-bg-row">
-    <!-- Left side -->
-    <div class="custom-bg-left">
-      <div class="setting-label">
-        <strong class="setting-title">Custom Background</strong>
-        <p class="setting-description">
-          Upload your own image to use as the background.
-        </p>
-      </div>
+  <!-- Title + Description -->
+  <div class="setting-label">
+    <strong class="setting-title">Custom Background</strong>
+    <p class="setting-description">
+      Upload your own image to use as the background.
+    </p>
+  </div>
 
-      <div class="custom-bg-controls">
-        <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-        <input type="file" id="customBgUpload" accept="image/*">
-        <span id="fileNameDisplay" class="file-name">No file chosen</span>
-        <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
-      </div>
+  <!-- Controls + Preview Row -->
+  <div class="custom-bg-row">
+    <!-- Left side: buttons and filename -->
+    <div class="custom-bg-controls">
+      <label for="customBgUpload" class="custom-bg-label">Choose File</label>
+      <input type="file" id="customBgUpload" accept="image/*">
+      <span id="fileNameDisplay" class="file-name">No file chosen</span>
+      <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
     </div>
 
-    <!-- Right side -->
+    <!-- Right side: preview bubble -->
     <div class="custom-bg-right">
       <div id="customBgPreviewContainer">
         <img
