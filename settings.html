@@ -61,33 +61,37 @@
     </div>
   </div>
 
-  <!-- Custom Background Image -->
-  <div class="setting-card custom-background">
-    <div class="setting-label">
-      <strong class="setting-title">Custom Background</strong>
-      <p class="setting-description">Upload your own image to use as the background.</p>
+<!-- Custom Background Image -->
+<div class="setting-card custom-background">
+  <div class="custom-bg-row">
+    <!-- Left side: label + controls -->
+    <div class="custom-bg-left">
+      <div class="setting-label">
+        <strong class="setting-title">Custom Background</strong>
+        <p class="setting-description">
+          Upload your own image to use as the background.
+        </p>
+      </div>
+
+      <div class="custom-bg-controls">
+        <label for="customBgUpload" class="custom-bg-label">Choose File</label>
+        <input type="file" id="customBgUpload" accept="image/*">
+        <span id="fileNameDisplay" class="file-name">No file chosen</span>
+        <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+      </div>
     </div>
 
-    <div class="custom-bg-controls">
-      <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-      <input type="file" id="customBgUpload" accept="image/*">
-      <span id="fileNameDisplay" class="file-name">No file chosen</span>
-      <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+    <!-- Right side: preview bubble -->
+    <div class="custom-bg-right">
+      <div id="customBgPreviewContainer">
+        <img
+          id="customBgPreview"
+          alt="Background preview"
+          draggable="false"
+          oncontextmenu="return false"
+        />
+      </div>
     </div>
-
-    <!-- 🌫 Glass Divider -->
-    <div class="custom-bg-divider" id="customBgDivider"></div>
-
-    <!-- Circular Preview Bubble -->
-    <div id="customBgPreviewContainer">
-      <img
-        id="customBgPreview"
-        alt="Background preview"
-        draggable="false"
-        oncontextmenu="return false"
-      />
-    </div>
-  </div>
 
   <!-- Wallpaper Blur Strength -->
   <div class="setting-card" id="wallpaperBlurCard">
