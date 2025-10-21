@@ -889,22 +889,28 @@ body.dark-mode #themeModeSelect:hover {
 /* == Custom Background Upload – iOS 26 Liquid Glass ====== */
 /* ======================================================= */
 
+.custom-background {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* --- Controls Layout --- */
 .custom-bg-controls {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  gap: 0.75rem;
   margin-top: 0.75rem;
-  flex-shrink: 0;
 }
 
-/* Hide the default input */
+/* Hide the default file input */
 #customBgUpload {
   display: none;
 }
 
-/* --- Upload Button (Glass Capsule) --- */
+/* --- Upload Button --- */
 .custom-bg-label {
   font-size: 0.8125rem;
   font-weight: 500;
@@ -916,13 +922,26 @@ body.dark-mode #themeModeSelect:hover {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s ease;
+}
+
+/* --- Remove Button --- */
+#removeCustomBg {
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
+  color: var(--accent-text-color, #fff);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease, background 0.25s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
-.custom-bg-label:hover {
-  background: color-mix(in srgb, var(--accent-color) 30%, var(--glass-bg-light));
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
+#removeCustomBg.visible,
+#removeCustomBg[style*="inline-block"] {
+  opacity: 1;
 }
 
 /* --- File name display --- */
@@ -933,45 +952,47 @@ body.dark-mode #themeModeSelect:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: right;
 }
 
-/* --- Remove button (Glass) --- */
-#removeCustomBg {
-  font-size: 0.8125rem;
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
-  background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
-  color: var(--accent-text-color, #fff);
-  cursor: pointer;
+/* ======================================================= */
+/* == Glass Divider Line (Fades In/Out) ================== */
+/* ======================================================= */
+.custom-bg-divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 0.75rem;
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  border-radius: 1px;
   opacity: 0;
-  transition: opacity 0.4s ease, background 0.3s ease, transform 0.25s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transform: scaleX(0.98);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
-#removeCustomBg.visible,
-#removeCustomBg[style*="inline-block"] {
-  opacity: 1;
-}
-#removeCustomBg:hover {
-  background: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-light));
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 30%, rgba(0,0,0,0.25));
+.custom-bg-divider.visible {
+  opacity: 0.4;
+  transform: scaleX(1);
 }
 
 /* ======================================================= */
 /* == Circular Live Preview Bubble ======================= */
 /* ======================================================= */
-
 #customBgPreviewContainer {
   display: none;
-  margin-top: 1rem;
-  width: 120px;
-  height: 120px;
+  margin: 1rem auto 0;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   overflow: hidden;
+  position: relative;
+  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.25),
+    inset 0 0 12px color-mix(in srgb, var(--accent-color) 15%, transparent);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.95);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 #customBgPreviewContainer.visible {
@@ -979,6 +1000,7 @@ body.dark-mode #themeModeSelect:hover {
   opacity: 1;
   transform: scale(1);
 }
+
 #customBgPreview {
   width: 100%;
   height: 100%;
@@ -991,45 +1013,36 @@ body.dark-mode #themeModeSelect:hover {
   opacity: 1;
 }
 
-/* Add subtle glass reflection overlay */
+/* Subtle reflection overlay */
 #customBgPreviewContainer::after {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   border-radius: 50%;
   background: radial-gradient(
     circle at 25% 20%,
-    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.12) 0%,
     transparent 60%
   );
   pointer-events: none;
 }
 
 /* ======================================================= */
-/* == Mobile Responsive Alignment ======================== */
+/* == Mobile Alignment == */
 /* ======================================================= */
-
 @media (max-width: 768px) {
   .custom-bg-controls {
-    justify-content: flex-start;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.5rem;
-  }
-  .file-name {
-    text-align: right;
-    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
   #customBgPreviewContainer {
-    margin-left: auto;
-    margin-right: auto;
+    width: 95px;
+    height: 95px;
+    margin-top: 0.75rem;
   }
 }
 
-/* ===== iOS-26 Blur Card Fade (for smooth entry) ===== */
+/* ===== iOS-26 Blur Card Fade ===== */
 #wallpaperBlurCard {
   opacity: 1;
   transform: translateY(0);
