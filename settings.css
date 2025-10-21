@@ -886,15 +886,16 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Custom Background Upload – Right Aligned ============ */
+/* == Custom Background Upload – iOS 26 Liquid Glass ====== */
 /* ======================================================= */
+
 .custom-bg-controls {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* ✅ right aligned */
+  justify-content: flex-end;
   gap: 0.75rem;
   flex-wrap: wrap;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   flex-shrink: 0;
 }
 
@@ -903,7 +904,7 @@ body.dark-mode #themeModeSelect:hover {
   display: none;
 }
 
-/* "Choose File" iOS 26 Glass Button */
+/* --- Upload Button (Glass Capsule) --- */
 .custom-bg-label {
   font-size: 0.8125rem;
   font-weight: 500;
@@ -916,7 +917,7 @@ body.dark-mode #themeModeSelect:hover {
   -webkit-backdrop-filter: var(--glass-blur);
   cursor: pointer;
   transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 .custom-bg-label:hover {
   background: color-mix(in srgb, var(--accent-color) 30%, var(--glass-bg-light));
@@ -924,7 +925,7 @@ body.dark-mode #themeModeSelect:hover {
   box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
 }
 
-/* File name text (right side of label) */
+/* --- File name display --- */
 .file-name {
   font-size: 0.8125rem;
   color: var(--secondary-text);
@@ -932,10 +933,10 @@ body.dark-mode #themeModeSelect:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: right; /* keeps text flush right */
+  text-align: right;
 }
 
-/* Remove button */
+/* --- Remove button (Glass) --- */
 #removeCustomBg {
   font-size: 0.8125rem;
   padding: 0.45rem 0.85rem;
@@ -946,6 +947,7 @@ body.dark-mode #themeModeSelect:hover {
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.4s ease, background 0.3s ease, transform 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 #removeCustomBg.visible,
 #removeCustomBg[style*="inline-block"] {
@@ -957,20 +959,87 @@ body.dark-mode #themeModeSelect:hover {
   box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 30%, rgba(0,0,0,0.25));
 }
 
-/* Stack vertically on smaller screens */
+/* ======================================================= */
+/* == Circular Live Preview Bubble ======================= */
+/* ======================================================= */
+
+#customBgPreviewContainer {
+  display: none;
+  margin-top: 1rem;
+  width: 120px;
+  height: 120px;
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
+  box-shadow:
+    0 4px 18px rgba(0, 0, 0, 0.25),
+    inset 0 0 20px rgba(255, 255, 255, 0.05),
+    inset 0 0 12px color-mix(in srgb, var(--accent-color) 25%, transparent);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: transform 0.45s ease, opacity 0.45s ease, box-shadow 0.4s ease;
+  transform: scale(0.92);
+  opacity: 0;
+}
+#customBgPreviewContainer.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Inner image */
+#customBgPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+#customBgPreview.loaded {
+  opacity: 1;
+}
+
+/* Add subtle glass reflection overlay */
+#customBgPreviewContainer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 25% 20%,
+    rgba(255, 255, 255, 0.25) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+/* ======================================================= */
+/* == Mobile Responsive Alignment ======================== */
+/* ======================================================= */
+
 @media (max-width: 768px) {
   .custom-bg-controls {
-    justify-content: flex-start; /* Align left for mobile */
+    justify-content: flex-start;
     flex-direction: column;
-    align-items: flex-end; /* buttons stay right aligned */
+    align-items: flex-end;
+    gap: 0.5rem;
   }
   .file-name {
     text-align: right;
     width: 100%;
   }
+  #customBgPreviewContainer {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
-/* ===== iOS-26 Blur Card Fade ===== */
+/* ===== iOS-26 Blur Card Fade (for smooth entry) ===== */
 #wallpaperBlurCard {
   opacity: 1;
   transform: translateY(0);
@@ -981,4 +1050,3 @@ body.dark-mode #themeModeSelect:hover {
   transform: translateY(-6px);
   pointer-events: none;
 }
-
