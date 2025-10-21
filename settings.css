@@ -886,7 +886,7 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Custom Background Upload – iOS 26 Liquid Glass v5 == */
+/* == Custom Background Upload – iOS 26 Liquid Glass (Final) == */
 /* ======================================================= */
 
 .custom-background {
@@ -895,36 +895,34 @@ body.dark-mode #themeModeSelect:hover {
   gap: 1rem;
 }
 
-/* === Desktop layout: title & description on left, controls below, preview on right === */
+/* --- Section title and description --- */
+.custom-background .setting-label {
+  text-align: left;
+  margin-bottom: 0.25rem;
+}
+
+/* --- Row layout for desktop (controls + preview) --- */
 .custom-bg-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 2rem;
 }
 
-/* --- Left side --- */
-.custom-bg-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
+/* ======================================================= */
+/* == Left side: controls row ============================ */
+/* ======================================================= */
 
-.custom-bg-left .setting-label {
-  text-align: left;
-}
-
-/* --- Controls row --- */
 .custom-bg-controls {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.75rem;
+  flex: 1;
 }
 
-/* Hide the default file input */
+/* Hide default file input */
 #customBgUpload {
   display: none;
 }
@@ -949,7 +947,7 @@ body.dark-mode #themeModeSelect:hover {
 .file-name {
   font-size: 0.8125rem;
   color: var(--secondary-text);
-  max-width: 200px;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -974,8 +972,9 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Right side: Circular Preview Bubble ================ */
+/* == Right side: circular preview bubble ================ */
 /* ======================================================= */
+
 .custom-bg-right {
   display: flex;
   align-items: center;
@@ -1006,6 +1005,7 @@ body.dark-mode #themeModeSelect:hover {
   transform: scale(1);
 }
 
+/* --- Preview image --- */
 #customBgPreview {
   width: 100%;
   height: 100%;
@@ -1047,15 +1047,19 @@ body.dark-mode #themeModeSelect:hover {
     align-items: center;
     gap: 1rem;
   }
-  .custom-bg-left .setting-label {
+
+  .custom-background .setting-label {
     text-align: center;
   }
+
   .custom-bg-controls {
     justify-content: center;
   }
+
   .custom-bg-right {
     margin-top: 0.5rem;
   }
+
   #customBgPreviewContainer {
     width: 95px;
     height: 95px;
