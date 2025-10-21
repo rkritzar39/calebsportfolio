@@ -1,6 +1,2950 @@
-/* ========================================
-   LIQUID GLASS THEME - Optimized for iOS/Safari
-   Integrated default homepage style (body.liquid-e)
-   ======================================== */
+:root {
+	/* ======================== */
+	/* Base Sizing            */
+	/* ======================== */
+	--font-size-base: 16px;
+	--line-height-base: 1.65;
 
-/* Placeholder: Full content merged from user's original styles.css with Liquid Glass integration */
+	/* ======================== */
+	/* Dark Gray Glass Palette  */
+	/* ======================== */
+	--dark-bg: #0E0E0E;
+	--dark-content-bg: rgba(28, 28, 28, 0.6);
+	--dark-text: #F0F0F0;
+	--dark-secondary-text: #A3A3A3;
+	--dark-border: rgba(255, 255, 255, 0.08);
+	--dark-accent: #4EA8FF;
+	--dark-hover: #2F89E5;
+	--dark-link: var(--dark-accent);
+	--dark-shadow: rgba(0, 0, 0, 0.65);
+	--dark-glow: rgba(255, 255, 255, 0.05);
+	--dark-icon: #D1D1D1;
+
+	/* ======================== */
+	/* Light Glass Palette      */
+	/* ======================== */
+	--light-bg-gradient: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+	--light-content-bg: rgba(255, 255, 255, 0.55);
+	--light-text: #111111;
+	--light-secondary-text: #4B5563;
+	--light-shadow: rgba(0, 0, 0, 0.15);
+	--light-accent: #007AFF;
+	--light-hover: #005FCC;
+	--light-link: var(--light-accent);
+	--light-glow: rgba(255, 255, 255, 0.75);
+	--light-icon: #2C2C2E;
+
+	/* ======================== */
+	/* Default Theme (Dark)     */
+	/* ======================== */
+	--bg-color: var(--dark-bg);
+	--content-bg: var(--dark-content-bg);
+	--text-color: var(--dark-text);
+	--secondary-text: var(--dark-secondary-text);
+	--border-color: var(--dark-border);
+	--accent-color: var(--dark-accent); /* This is the user-controlled color */
+	--hover-color: var(--dark-hover);
+	--link-color: var(--dark-link);
+	--shadow-color: var(--dark-shadow);
+	--glow-color: var(--dark-glow);
+	--icon-color: var(--dark-icon);
+	--social-icon-text-color: var(--dark-text);
+
+	/* ======================== */
+	/* Effects & Decoration     */
+	/* ======================== */
+	--backdrop-blur: saturate(180%) blur(28px);
+	--bubble-gradient: radial-gradient(
+		circle at top left,
+		rgba(255, 255, 255, 0.08),
+		transparent 70%
+	);
+	--bubble-highlight: inset 1px 1px 3px rgba(255, 255, 255, 0.2);
+	--bubble-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+	/* ======================== */
+	/* Border Radii           */
+	/* ======================== */
+	--radius-xl: 28px;
+	--radius-lg: 20px;
+	--radius-md: 14px;
+
+	/* ======================== */
+	/* Transitions            */
+	/* ======================== */
+	--transition-fast: 0.2s ease;
+	--transition-medium: 0.3s ease;
+	--transition-slow: 0.5s ease;
+}
+
+/* ======================== */
+/* Light Mode Overrides     */
+/* ======================== */
+body.light-e {
+	--bg-color: var(--light-bg-gradient);
+	--content-bg: var(--light-content-bg);
+	--text-color: var(--light-text);
+	--secondary-text: var(--light-secondary-text);
+	--border-color: rgba(255, 255, 255, 0.4);
+	/* --accent-color is now correctly controlled by JavaScript */
+	--hover-color: var(--light-hover);
+	--link-color: var(--light-link);
+	--shadow-color: var(--light-shadow);
+	--glow-color: var(--light-glow);
+	--icon-color: var(--light-icon);
+	--social-icon-text-color: var(--light-text);
+	--bubble-gradient: radial-gradient(
+		circle at top left,
+		rgba(255, 255, 255, 0.8),
+		transparent 50%
+	);
+	--bubble-shadow: 0 12px 32px var(--light-shadow);
+	--bubble-highlight: inset 1px 1px 3px rgba(0, 0, 0, 0.1);
+	--backdrop-blur: saturate(180%) blur(28px);
+}
+
+body.light-e {
+    background: var(--light-bg-gradient);
+    background-attachment: fixed;
+}
+
+/* ======================== */
+/* Dark Mode Wrapper        */
+/* ======================== */
+html.dark-mode body,
+body.dark-mode {
+    --bg-color: var(--dark-bg);
+    --content-bg: var(--dark-content-bg);
+    --text-color: var(--dark-text);
+    /* --accent-color is now correctly controlled by JavaScript */
+}
+
+/* ======================== */
+/* Base Styles              */
+/* ======================== */
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
+  margin: 0;
+  padding: 32px;
+  line-height: var(--line-height-base);
+  font-size: var(--font-size-base, 20px);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ======================== */
+/* "iOS 26" Glass Section   */
+/* ======================== */
+.section {
+  background: var(--content-bg);
+  backdrop-filter: saturate(180%) blur(30px);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  margin-bottom: 32px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  background-image: none;
+
+  box-shadow: 
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.15),
+    0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0)
+  );
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ======================================== */
+/* == CORRECTED iOS-Style Focus Ring ====== */
+/* ======================================== */
+
+*:focus {
+    outline: none;
+}
+
+body:not(.focus-outline-disabled) *:focus-visible {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+.mouse-trail-container .trail-dot {
+  mix-blend-mode: screen;
+  transition: transform 0.1s ease-out, opacity 0.3s ease-out;
+}
+body.reduced-motion .mouse-trail-container {
+  display: none !important;
+}
+
+
+/* ======================================== */
+/* == Profile Section – Onyx Bubble Glass == */
+/* (Final Version with Button Animations)   */
+/* ======================================== */
+
+.profile-section {
+	position: relative;
+	text-align: center;
+	margin: 1.25rem 0 1.875rem 0;
+	padding: 1.875rem;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	width: 100%;
+	box-sizing: border-box;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* --- Profile Pic Wrapper --- */
+.profile-pic-wrapper {
+	position: relative;
+	--profile-pic-size: 9.375rem;
+	width: var(--profile-pic-size);
+	height: var(--profile-pic-size);
+	margin: 0 auto;
+	transition: width 0.3s ease, height 0.3s ease;
+}
+
+.profile-pic {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	object-fit: cover;
+	box-shadow: var(--bubble-shadow);
+	border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- Profile Status (Desktop Default) --- */
+.profile-status-container {
+	position: absolute;
+	width: calc(var(--profile-pic-size) * 0.19);
+	aspect-ratio: 1 / 1;
+	background-clip: content-box;
+	border-radius: 50%;
+	border: 3px solid var(--content-bg);
+	z-index: 2;
+	transition: all 0.3s ease;
+	top: 87%;
+	left: 87%;
+	transform: translate(-50%, -50%);
+}
+
+.profile-status-container.status-online    { background-color: #31a24c; }
+.profile-status-container.status-idle      { background-color: #ffc107; }
+.profile-status-container.status-dnd       { background-color: #dc3545; }
+.profile-status-container.status-offline   { background-color: #747f8d; }
+
+
+/* --- Username & Verified --- */
+.username-checkmark {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	margin: 1.875rem 0 0.625rem;
+	flex-wrap: wrap;
+}
+
+.username-checkmark h1 {
+	margin: 0;
+	font-size: clamp(1.5rem, 5vw, 2.25rem);
+	font-weight: 800;
+	background: linear-gradient(120deg, var(--secondary-text), var(--accent-color));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.verified {
+	width: 1.25rem;
+	height: 1.25rem;
+	flex-shrink: 0;
+}
+
+/* --- Text-Based Profile Status Badge (Hidden on Desktop) --- */
+.profile-status-text {
+	display: none;
+	font-size: 0.85rem;
+	font-weight: 700;
+	margin-top: 0.35rem;
+	padding: 0.25em 0.8em;
+	border-radius: 999px;
+	line-height: 1;
+}
+
+.profile-status-text.status-online {
+	background-color: #31a24c;
+	color: #ffffff;
+}
+.profile-status-text.status-idle {
+	background-color: #ffc107;
+	color: #1f1f1f;
+}
+.profile-status-text.status-dnd {
+	background-color: #dc3545;
+	color: #ffffff;
+}
+.profile-status-text.status-offline {
+	background-color: #747f8d;
+	color: #ffffff;
+}
+
+
+/* --- Profile Bio --- */
+.profile-bio {
+	font-size: var(--font-size-base, 1rem);
+	color: var(--secondary-text);
+	line-height: 1.6;
+	max-width: 37.5rem;
+	margin: 0.625rem auto 1.25rem;
+}
+
+/* --- Corner Buttons --- */
+.corner-button {
+	position: absolute;
+	width: 2.75rem;
+	height: 2.75rem;
+	border-radius: var(--radius-lg);
+	border: none;
+	cursor: pointer;
+	z-index: 10;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--icon-color);
+	transition: transform 0.25s ease, box-shadow 0.25s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.settings-button { top: 1.25rem; right: 1.25rem; }
+.merch-button    { top: 1.25rem; left: 1.25rem; }
+.blog-button     { bottom: 1.25rem; left: 1.25rem; }
+.tracker-button  { bottom: 1.25rem; right: 1.25rem; } /* This is the new button */
+
+.corner-button:hover,
+.corner-button:focus-visible {
+	transform: translateY(-3px) scale(1.05);
+	box-shadow: 0 8px 24px var(--shadow-color), 0 0 12px var(--accent-color);
+	outline: none;
+}
+
+.corner-button:active {
+	transform: scale(0.9);
+	box-shadow: 0 4px 12px var(--shadow-color), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.corner-button > * {
+	width: 1.25rem;
+	height: 1.25rem;
+	font-size: 1.25rem;
+	object-fit: contain;
+}
+
+a.corner-button {
+    text-decoration: none;
+}
+
+/* =================================== */
+/* === Responsive Breakpoint Rules === */
+/* =================================== */
+
+@media screen and (max-width: 1024px) {
+	.profile-pic-wrapper {
+		--profile-pic-size: 8.5rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.profile-section {
+		padding: 1.5rem;
+        /* Added padding to prevent content overlap with bottom buttons */
+        padding-bottom: 4rem; 
+	}
+	.profile-pic-wrapper {
+		--profile-pic-size: 7.5rem;
+	}
+	/* HIDE the corner circle on mobile */
+	.profile-status-container {
+		display: none;
+	}
+	/* SHOW the text status on mobile */
+	.profile-status-text {
+		display: block;
+		flex-basis: 100%;
+	}
+	.corner-button {
+		width: 2.375rem;
+		height: 2.375rem;
+	}
+	.profile-bio {
+		font-size: 0.95rem;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.profile-section {
+		padding: 1.25rem;
+        padding-bottom: 4rem;
+		margin: 1rem 0;
+	}
+	.profile-pic-wrapper {
+		--profile-pic-size: 6.25rem;
+	}
+	.corner-button {
+		width: 2.25rem;
+		height: 2.25rem;
+		top: 0.9375rem;
+	}
+	.blog-button { top: auto; bottom: 0.9375rem; left: 0.9375rem; }
+    .tracker-button { top: auto; bottom: 0.9375rem; right: 0.9375rem; }
+	.settings-button { right: 0.9375rem; }
+	.merch-button { left: 0.9375rem; }
+	.profile-bio { font-size: 0.9rem; }
+}
+
+#status-widget {
+  width: 100%;
+  max-width: 100%; /* Ensures it doesn't overflow its container */
+}
+
+/* Current Date/Time Section */
+.datetime-section {
+	background-color: var(--content-bg);
+	padding: 15px;
+	border-radius: 10px;
+	margin-bottom: 20px;
+	text-align: center;
+	box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.current-datetime {
+	font-family: monospace;
+	font-size: 1.2em; /* This will scale relative to the body, which is correct */
+	color: var(--accent-color);
+	margin: 0;
+}
+
+/* ========================
+   TOTAL REDUCED MOTION
+   ======================== */
+
+@media (prefers-reduced-motion: reduce), body.reduced-motion {
+
+  /* Stop all animations and transitions */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable hover, focus, and active transforms/effects */
+  *,
+  *:hover,
+  *:focus,
+  *:active {
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+  }
+
+  /* Specific site elements */
+  .scroll-arrow,
+  .flip-clock-inner,
+  .bubble,
+  .countdown-block,
+  .floating-icon,
+  .carousel-item,
+  .trail {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* ===== Creator Search Bar (Bubble + Accent Shimmer + Motion Sensitivity) ===== */
+.search-container {
+	position: relative;
+	margin: 10px 0 20px 0;
+	width: 100%;
+	max-width: 500px;
+}
+
+/* Input field with bubble styling */
+.creator-search {
+	width: 100%;
+	padding: 10px 38px 10px 14px;
+	border: none;
+	outline: none;
+	border-radius: var(--radius-md);
+	font-size: var(--font-size-base);
+	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+
+	/* 🫧 Bubble glass effect */
+	background: var(--bubble-gradient), var(--content-bg);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	color: var(--text-color);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+	position: relative;
+	overflow: hidden;
+
+	transition:
+		background var(--transition-medium),
+		box-shadow var(--transition-medium),
+		color var(--transition-medium),
+		transform var(--transition-fast);
+}
+
+/* ====== Accent-tinted hover shimmer ====== */
+@keyframes shimmerSweep {
+	0% {
+		transform: translateX(-100%);
+		opacity: 0;
+	}
+	50% {
+		transform: translateX(0%);
+		opacity: 0.45;
+	}
+	100% {
+		transform: translateX(100%);
+		opacity: 0;
+	}
+}
+
+/* Reflection overlay */
+.creator-search::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -50%;
+	width: 40%;
+	height: 100%;
+	background: linear-gradient(
+		120deg,
+		transparent 0%,
+		color-mix(in srgb, var(--accent-color) 60%, rgba(255,255,255,0.6)) 50%,
+		transparent 100%
+	);
+	transform: translateX(-100%);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--transition-fast);
+}
+
+/* Active shimmer on hover (normal motion) */
+.search-container:not(.disabled):hover .creator-search::after {
+	animation: shimmerSweep 1.8s ease-in-out;
+	opacity: 1;
+}
+
+/* ===== Motion Reduction Support ===== */
+/* If user has Reduce Motion ON (body.no-animations), shimmer slows down drastically */
+body.no-animations .search-container:not(.disabled):hover .creator-search::after {
+	animation: shimmerSweep 4s ease-in-out;
+	opacity: 0.4;
+}
+
+/* If Reduce Motion is ON and prefers-reduced-motion detected, disable shimmer */
+@media (prefers-reduced-motion: reduce) {
+	.search-container:not(.disabled):hover .creator-search::after {
+		animation: none !important;
+		opacity: 0 !important;
+	}
+}
+
+/* Placeholder */
+.creator-search::placeholder {
+	color: var(--secondary-text);
+}
+
+/* Search icon */
+.search-icon {
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 16px;
+	color: var(--secondary-text);
+	pointer-events: none;
+	transition: color var(--transition-fast);
+}
+
+/* Focus ring glow (when enabled later) */
+.creator-search:focus {
+	box-shadow: 0 0 0 2px var(--accent-color), var(--bubble-shadow);
+}
+
+/* Disabled (Coming Soon) */
+.search-container.disabled {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.creator-search[disabled] {
+	cursor: not-allowed;
+}
+
+/* === iOS-style Toolbar where the pill fits around content === */
+.ios26-toolbar{
+  position:fixed;bottom:10px;left:50%;transform:translateX(-50%);
+  width:min(440px,92%);height:66px;
+  display:flex;justify-content:space-around;align-items:center;
+  border-radius:28px;
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(30px)saturate(180%);
+  -webkit-backdrop-filter:blur(30px)saturate(180%);
+  border:1px solid rgba(255,255,255,.35);
+  box-shadow:0 6px 24px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.8);
+  overflow:hidden;z-index:1000;
+}
+
+/* glass capsule behind active tab */
+.active-pill{
+  position:absolute;top:8px;bottom:8px;left:0;
+  background:rgba(0,0,0,.08);
+  backdrop-filter:blur(10px)brightness(1.15);
+  -webkit-backdrop-filter:blur(10px)brightness(1.15);
+  border-radius:20px;
+  transition:left .35s cubic-bezier(.25,1,.5,1),
+             width .35s cubic-bezier(.25,1,.5,1);
+  pointer-events:none;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.9),
+              0 1px 3px rgba(0,0,0,.08);
+}
+
+.toolbar-item{
+  position:relative;flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-decoration:none;gap:3px;
+  color:rgba(0,0,0,.8);
+  font-size:.8rem;font-weight:500;
+  padding:0 14px;             /* space inside each cell */
+  transition:color .25s ease,transform .25s ease;
+}
+.toolbar-item i{
+  font-size:1.25rem;transition:color .25s ease,transform .25s ease;
+}
+
+.toolbar-item.active,
+.toolbar-item.drag-over{color:var(--tint,#007aff);}
+.toolbar-item.active i,
+.toolbar-item.drag-over i{color:var(--tint,#007aff);transform:scale(1.05);}
+
+@media(prefers-color-scheme:dark){
+  .ios26-toolbar{background:rgba(30,30,30,.55);border:1px solid rgba(255,255,255,.15);}
+  .active-pill{background:rgba(255,255,255,.18);}
+  .toolbar-item{color:rgba(255,255,255,.85);}
+}
+
+/* ======================================== */
+/* == President Section – Onyx Bubble Glass == */
+/* ======================================== */
+.president-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	padding: 30px;
+	border-radius: var(--radius-xl);
+	margin-bottom: 30px;
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	width: 100%;
+	box-sizing: border-box;
+	color: var(--text-color);
+	transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* President info layout */
+.president-info {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+	padding: 10px;
+}
+
+/* Photo */
+.president-photo {
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+	border: 2px solid rgba(255,255,255,0.08); /* subtle border for contrast */
+	box-shadow: var(--bubble-shadow);
+}
+
+/* Details */
+.president-details {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+/* Name and Title */
+.president-name {
+	font-size: calc(var(--font-size-base, 20px) * 1.2); /* ✨ Updated for text scaling ✨ */
+	font-weight: 700;
+	color: var(--text-color);
+	margin: 0;
+}
+
+.president-title {
+	font-size: calc(var(--font-size-base, 20px) * 0.85); /* ✨ Updated for text scaling ✨ */
+	color: var(--secondary-text);
+	font-weight: 500;
+	font-style: italic;
+	margin: 4px 0 12px 0;
+}
+
+/* Description */
+.president-description {
+	font-size: calc(var(--font-size-base, 20px) * 0.8); /* ✨ Updated for text scaling ✨ */
+	line-height: 1.6;
+	color: var(--text-color);
+	opacity: 0.9;
+	margin: 0;
+}
+
+/* ======================== */
+/* Responsive Design */
+/* ======================== */
+@media screen and (max-width: 768px) {
+	.president-section { padding: 20px; }
+	.president-info { gap: 20px; }
+	.president-photo { width: 120px; height: 120px; }
+	.president-name { font-size: var(--font-size-base, 20px); } /* ✨ Updated for text scaling ✨ */
+	.president-title { font-size: calc(var(--font-size-base, 20px) * 0.8); } /* ✨ Updated for text scaling ✨ */
+}
+
+@media screen and (max-width: 480px) {
+	.president-section { padding: 20px; }
+	.president-info {
+		flex-direction: column;
+		text-align: center;
+	}
+	.president-photo { width: 100px; height: 100px; margin-bottom: 15px; }
+	.president-description { font-size: calc(var(--font-size-base, 20px) * 0.7); } /* ✨ Updated for text scaling ✨ */
+}
+
+/* ======================================== */
+/* == Social Links Section – Onyx Bubble Glass == */
+/* ======================================== */
+.social-links-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	padding: 30px;
+	border-radius: var(--radius-xl);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	margin: 20px 0;
+	text-align: center;
+	width: 100%;
+	box-sizing: border-box;
+	color: var(--text-color);
+	transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Section Header */
+.social-links-section h3 {
+	font-size: calc(var(--font-size-base, 20px) * 1.2); /* ✨ Updated for text scaling ✨ */
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 25px;
+}
+
+/* Grid Container */
+.social-links-container {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 18px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* --- Social Buttons – Onyx Bubble Glass --- */
+.social-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 14px 20px;
+	text-decoration: none;
+	font-weight: 600;
+	letter-spacing: 0.2px;
+	position: relative;
+	overflow: hidden;
+	width: 100%;
+	box-sizing: border-box;
+	border-radius: 999px;
+
+	/* Onyx Bubble Glass look */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+/* Icon & Text */
+.social-button .social-icon {
+	font-size: 1em; /* ✨ This will now scale relative to the body's font size ✨ */
+	margin-right: 12px;
+	flex-shrink: 0;
+	color: var(--icon-color);
+	transition: color 0.3s ease;
+}
+
+.social-button span {
+	flex-grow: 1;
+	text-align: left;
+	color: var(--text-color);
+	transition: color 0.3s ease;
+}
+
+/* Hover / Active State */
+.social-button:hover {
+	background: var(--accent-color);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 18px var(--shadow-color),
+				  0 0 12px var(--accent-color);
+}
+
+.social-button:hover .social-icon,
+.social-button:hover span {
+	color: var(--content-bg);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+	.social-links-section {
+		padding: 20px;
+		border-radius: var(--radius-lg);
+	}
+	.social-links-container {
+		grid-template-columns: 1fr;
+		gap: 15px;
+	}
+	.social-button {
+		padding: 12px 20px;
+		font-size: 0.95em;
+	}
+	.social-button span {
+		text-align: center;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.social-links-section {
+		padding: 15px;
+	}
+	.social-button {
+		padding: 12px 16px;
+	}
+	.social-button .social-icon {
+		font-size: 0.9em; /* ✨ This will now scale relative to the body's font size ✨ */
+		margin-right: 12px;
+	}
+}
+
+/* ======================================== */
+/* == Useful Links Section – Onyx Bubble Glass == */
+/* ======================================== */
+.useful-links-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	padding: 30px;
+	border-radius: var(--radius-xl);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	margin: 25px 0;
+	width: 100%;
+	box-sizing: border-box;
+	color: var(--text-color);
+	transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Title Styling */
+.useful-links-section h2 {
+	font-size: calc(var(--font-size-base, 20px) * 1.44); /* ✨ Updated for text scaling ✨ */
+	margin-bottom: 25px;
+	color: var(--text-color);
+	text-align: center;
+}
+
+/* Links Container */
+.links-container {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 18px;
+	margin-top: 20px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* --- Pill Buttons with Onyx Bubble Glass --- */
+.link-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 14px 24px;
+	width: 100%;
+	text-decoration: none;
+	font-weight: 600;
+	letter-spacing: 0.5px;
+	box-sizing: border-box;
+	border-radius: 999px;
+
+	/* Onyx Bubble Glass styling */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	color: var(--text-color);
+	transition: all 0.3s ease;
+}
+
+/* Hover / Active State */
+.link-button:hover {
+	background: var(--accent-color);
+	border-color: var(--accent-color);
+	color: var(--content-bg);
+	transform: translateY(-2px);
+	box-shadow: 0 6px 18px var(--shadow-color),
+				  0 0 12px var(--accent-color);
+}
+
+/* --- Responsive Design --- */
+@media screen and (max-width: 768px) {
+	.useful-links-section { padding: 20px; }
+	.links-container { grid-template-columns: 1fr; gap: 15px; }
+	.link-button { padding: 12px 20px; font-size: 0.95em; }
+	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.28); } /* ✨ Updated for text scaling ✨ */
+}
+
+@media screen and (max-width: 480px) {
+	.useful-links-section { padding: 15px; }
+	.link-button { padding: 12px 16px; }
+	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.12); } /* ✨ Updated for text scaling ✨ */
+}
+
+/* ======================================== */
+/* == ONYX AI ASSISTANT STYLES (GLASS) == */
+/* ======================================== */
+
+/* Floating trigger bubble */
+.ai-toggle-btn {
+  position: fixed;
+  bottom: 1.75rem;
+  right: 1.75rem;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  color: var(--accent-text-color, #fff);
+  border: none;
+  box-shadow: 0 0 24px var(--glow-color);
+  backdrop-filter: var(--backdrop-blur);
+  cursor: pointer;
+  transition: var(--transition-medium);
+  z-index: 999;
+}
+.ai-toggle-btn:hover {
+  filter: brightness(1.15);
+}
+
+/* Main chat container */
+.onyx-ai-assistant {
+  position: fixed;
+  bottom: 100px;
+  right: 1.5rem;
+  width: 360px;
+  max-height: 500px;
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bubble-shadow), 0 8px 32px var(--shadow-color);
+  backdrop-filter: var(--backdrop-blur);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: opacity var(--transition-medium), transform var(--transition-medium);
+  z-index: 998;
+}
+
+/* Hide by default */
+.hidden {
+  display: none;
+}
+
+/* Header */
+.ai-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bubble-gradient);
+}
+.ai-header h3 {
+  font-size: 1rem;
+  color: var(--accent-color);
+  margin: 0;
+  text-shadow: 0 0 8px var(--glow-color);
+}
+.ai-header button {
+  background: transparent;
+  color: var(--secondary-text);
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+/* Messages area */
+.ai-messages {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Message bubbles */
+.message {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  line-height: 1.5;
+  max-width: 80%;
+}
+.message.ai {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+.message.user {
+  align-self: flex-end;
+  background: var(--accent-color);
+  color: var(--accent-text-color, #fff);
+  border: none;
+}
+
+/* Input area */
+.ai-form {
+  display: flex;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bubble-gradient);
+}
+.ai-form input {
+  flex: 1;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--content-bg);
+  color: var(--text-color);
+  outline: none;
+}
+.ai-form button {
+  margin-left: 0.5rem;
+  background: var(--accent-color);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  color: var(--accent-text-color, #fff);
+  cursor: pointer;
+}
+.ai-form button:hover {
+  filter: brightness(1.1);
+}
+
+/* ======================================== */
+/* == Tech Information Section – Matches Root Theme == */
+/* ======================================== */
+
+.tech-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	padding: 30px;
+	border-radius: var(--radius-lg);
+	margin-bottom: 30px;
+	border: 1px solid var(--border-color);
+	box-shadow:
+		var(--bubble-shadow),
+		inset 0 1px 2px var(--glow-color),
+		var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	width: 100%;
+	box-sizing: border-box;
+	color: var(--text-color);
+	transition: background var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+/* ======================== */
+/* Tech Cards / Items       */
+/* ======================== */
+.tech-item {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	padding: 20px;
+	margin-bottom: 16px;
+	box-shadow:
+		inset 0 1px 2px var(--glow-color),
+		0 6px 20px var(--shadow-color);
+	transition: transform var(--transition-fast), box-shadow var(--transition-medium);
+}
+
+/* Smooth hover — slight lift & glow */
+.tech-item:hover {
+	transform: translateY(-3px);
+	box-shadow:
+		0 10px 28px var(--shadow-color),
+		inset 0 1px 2px var(--glow-color);
+}
+
+/* ======================== */
+/* Titles and Icons         */
+/* ======================== */
+.tech-item h3 {
+	margin: 0 0 15px 0;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--accent-color);
+	font-size: calc(var(--font-size-base) * 1.05);
+	font-weight: 600;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tech-item h3 i {
+	font-size: calc(var(--font-size-base) * 1.15);
+	color: var(--accent-color);
+}
+
+/* ======================== */
+/* Tech Detail Rows         */
+/* ======================== */
+.tech-detail {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 10px 0;
+	color: var(--text-color);
+}
+
+.tech-detail i {
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--accent-color);
+	font-size: calc(var(--font-size-base) * 0.85);
+}
+
+.tech-detail span {
+	font-weight: 600;
+	color: var(--secondary-text);
+	margin-right: 8px;
+}
+
+/* ======================== */
+/* Battery Indicator        */
+/* ======================== */
+.battery-container {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	margin-top: 15px;
+}
+
+.battery-icon {
+	position: relative;
+	width: 180px;
+	height: 40px;
+	border: 2px solid var(--border-color);
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	background: var(--content-bg);
+	box-shadow: inset 0 1px 6px var(--shadow-color);
+	overflow: hidden;
+}
+
+/* Battery Cap */
+.battery-icon::after {
+	content: '';
+	position: absolute;
+	right: -9px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 7px;
+	height: 20px;
+	background-color: var(--border-color);
+	border-radius: 3px;
+}
+
+/* Battery Fill */
+.battery-level {
+	height: 100%;
+	background: var(--accent-color);
+	border-radius: 1px;
+	box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+	transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.low-power .battery-level { background: #FFCC00; }
+.critical .battery-level { background: #FF3B30; }
+
+/* Percentage Text */
+.battery-percentage {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: var(--text-color);
+	font-weight: 600;
+	font-size: calc(var(--font-size-base) * 0.75);
+	text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* ======================== */
+/* Responsive Adjustments   */
+/* ======================== */
+@media screen and (max-width: 768px) {
+	.tech-section { padding: 20px; }
+	.tech-item { padding: 15px; }
+	.battery-icon { width: 150px; height: 35px; }
+}
+
+@media screen and (max-width: 480px) {
+	.tech-section { padding: 15px; }
+	.tech-item { padding: 12px; }
+	.battery-icon { width: 120px; height: 30px; }
+	.battery-percentage { font-size: calc(var(--font-size-base) * 0.65); }
+}
+
+/* ======================== */
+/* Disabilities Section – Onyx Bubble Glass */
+/* ======================== */
+.disabilities-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
+	padding: 30px;
+	margin-bottom: 30px;
+	border: 1px solid var(--border-color);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	transition: background var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+.disabilities-section h2 {
+	margin-bottom: 15px;
+	color: var(--text-color);
+	font-size: 1.6em;
+	font-weight: 600;
+}
+
+.disabilities-section p {
+	margin-bottom: 20px;
+	color: var(--secondary-text);
+	font-size: 1em;
+	line-height: 1.5;
+}
+
+.disabilities-section ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	gap: 12px;
+}
+
+/* Modern Button Links – Bubble Glass */
+.disabilities-section a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--accent-color);
+	font-weight: 500;
+	text-decoration: none;
+	padding: 12px 18px;
+	border-radius: 25px;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-highlight);
+	transition: transform var(--transition-medium), background var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+}
+
+.disabilities-section a span.button-text {
+	flex-grow: 1;
+	text-align: center;
+}
+
+.disabilities-section a i {
+	margin-left: 10px;
+	flex-shrink: 0;
+}
+
+.disabilities-section a:hover {
+	background: var(--hover-color);
+	color: var(--dark-text);
+	transform: translateY(-3px);
+	box-shadow: 0 0 12px var(--accent-color), 0 0 24px var(--accent-color);
+}
+
+.disabilities-section a:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 4px var(--dark-hover);
+}
+
+/* ======================== */
+/* Shoutouts Section – Onyx Bubble Glass */
+/* ======================== */
+
+.shoutouts-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	color: var(--text-color);
+	padding: 30px;
+	border-radius: var(--radius-xl);
+	margin-bottom: 30px;
+	border: 1px solid var(--border-color);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	width: 100%;
+	box-sizing: border-box;
+	overflow: hidden;
+	transition: background-color var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+/* Section Headers and Timestamps */
+.shoutouts-section h2 {
+	color: var(--text-color);
+	margin-bottom: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-family: 'Inter', sans-serif;
+	font-size: 1.8em;
+}
+
+#tiktok-header::before,
+#instagram-header::before,
+#youtube-header::before {
+	color: var(--accent-color);
+}
+
+#tiktok-last-updated-timestamp,
+#instagram-last-updated-timestamp,
+#youtube-last-updated-timestamp {
+	color: var(--secondary-text);
+	font-size: 0.9em;
+	margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+#tiktok-last-updated-timestamp::before,
+#instagram-last-updated-timestamp::before,
+#youtube-last-updated-timestamp::before {
+	content: '\f073';
+	font-family: 'Font Awesome 6 Free';
+	font-weight: 900;
+}
+
+/* Creator Grids */
+.creator-grid,
+.instagram-creator-grid,
+.youtube-creator-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 20px;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* Creator Cards – Bubble Glass */
+.creator-card,
+.instagram-creator-card,
+.youtube-creator-card {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-lg);
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--border-color);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+	width: 100%;
+	box-sizing: border-box;
+	max-width: 100%;
+	position: relative;
+	overflow: visible;
+	min-height: fit-content;
+	height: auto;
+}
+
+.creator-card:hover,
+.instagram-creator-card:hover,
+.youtube-creator-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 8px 24px var(--shadow-color),
+				  0 0 15px var(--accent-color);
+}
+
+/* Cover Photo (YouTube) */
+.youtube-cover-photo {
+	width: 100%;
+	height: auto;
+	display: block;
+	border-radius: 12px;
+	object-fit: contain;
+	background-color: transparent;
+	margin-bottom: 16px;
+}
+
+/* Creator Info Container */
+.youtube-creator-info {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	padding: 0;
+}
+
+/* Profile Pictures */
+.creator-pic,
+.instagram-creator-pic,
+.youtube-creator-pic {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid var(--accent-color);
+	margin-bottom: 15px;
+	position: relative;
+	z-index: 1;
+}
+
+/* Headers */
+.creator-header,
+.instagram-creator-header,
+.youtube-creator-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 5px;
+}
+
+.creator-header h3,
+.instagram-creator-header h3,
+.youtube-creator-header h3 {
+	margin: 0;
+	font-size: max(1.1em, calc(var(--font-size-base, 20px) * 0.8));
+	color: var(--text-color);
+	line-height: 1.4;
+	overflow-wrap: break-word;
+	word-break: break-word;
+}
+
+/* Username Containers */
+.username-container,
+.instagram-username-container,
+.youtube-username-container {
+	display: flex;
+	align-items: flex-start;
+	gap: 4px;
+	margin-bottom: 10px;
+	flex-wrap: wrap;
+	width: 100%;
+	overflow: visible;
+	padding-right: 8px;
+	min-height: min-content;
+}
+
+/* Usernames */
+.creator-username,
+.instagram-creator-username,
+.youtube-creator-username {
+	color: var(--secondary-text);
+	font-size: max(0.9em, calc(var(--font-size-base, 20px) * 0.7));
+	margin: 0;
+	width: auto;
+	max-width: 100%;
+	overflow-wrap: break-word;
+	word-break: break-all;
+	white-space: normal;
+	line-height: 1.5;
+	hyphens: auto;
+}
+
+/* Verification Badges */
+.verified-badge,
+.instagram-verified-badge,
+.youtube-verified-badge {
+	width: 16px;
+	height: 16px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+/* Bios */
+.creator-bio,
+.instagram-creator-bio,
+.youtube-creator-bio {
+	color: var(--secondary-text);
+	margin: 10px 0;
+	font-size: 0.9em;
+	line-height: 1.4;
+	word-break: break-word;
+}
+
+/* Follower/Subscriber Counts */
+.follower-count,
+.instagram-follower-count,
+.youtube-subscriber-count {
+	color: var(--accent-color);
+	font-weight: bold;
+	margin: 10px 0;
+}
+
+/* Visit Profile Buttons – Bubble Glass */
+.visit-profile,
+.instagram-visit-profile,
+.youtube-visit-profile {
+	background: transparent;
+	border: 2px solid var(--accent-color);
+	color: var(--accent-color);
+	padding: 8px 20px;
+	border-radius: 25px;
+	text-decoration: none;
+	font-weight: 500;
+	transition: all var(--transition-fast);
+	text-align: center;
+	position: relative;
+	overflow: hidden;
+}
+
+.visit-profile:hover,
+.instagram-visit-profile:hover,
+.youtube-visit-profile:hover {
+	background-color: var(--hover-color);
+	border-color: var(--hover-color);
+	color: var(--dark-text);
+	box-shadow: 0 0 10px var(--accent-color),
+				  0 0 20px var(--accent-color);
+	transform: translateY(-2px);
+}
+
+/* Unavailable Message – Bubble Glass */
+.unavailable-message {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	padding: 20px;
+	border-radius: var(--radius-lg);
+	border: 2px solid var(--accent-color);
+	box-shadow: var(--bubble-shadow), 0 0 12px var(--accent-color);
+	text-align: center;
+	color: var(--secondary-text);
+}
+
+.unavailable-message-title {
+	color: var(--text-color);
+	font-size: calc(var(--font-size-base, 20px) * 1.1);
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+/* ======================== */
+/* Responsive Layout */
+/* ======================== */
+
+@media screen and (max-width: 1400px) {
+	.creator-grid,
+	.instagram-creator-grid,
+	.youtube-creator-grid {
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.disabilities-section,
+	.shoutouts-section { padding: 20px; margin-bottom: 20px; }
+	.disabilities-section a { padding: 10px 16px; font-size: 0.95em; }
+
+	.creator-grid,
+	.instagram-creator-grid,
+	.youtube-creator-grid {
+		grid-template-columns: 1fr;
+		gap: 15px;
+	}
+	.creator-card,
+	.instagram-creator-card,
+	.youtube-creator-card { padding: 12px; min-height: fit-content; }
+	.youtube-cover-photo { width: calc(100% + 24px); margin: -12px -12px 15px -12px; }
+	.username-container,
+	.instagram-username-container,
+	.youtube-username-container { padding-right: 6px; }
+	.creator-username,
+	.instagram-creator-username,
+	.youtube-creator-username { font-size: 0.85em; }
+}
+
+@media screen and (max-width: 480px) {
+	.disabilities-section,
+	.shoutouts-section { padding: 15px; }
+	.disabilities-section a { padding: 8px 14px; font-size: 0.9em; }
+}
+
+@media screen and (max-width: 380px) {
+	.shoutouts-section { padding: 10px; }
+	.creator-grid,
+	.instagram-creator-grid,
+	.youtube-creator-grid { gap: 10px; }
+	.creator-card,
+	.instagram-creator-card,
+	.youtube-creator-card { padding: 10px; min-height: fit-content; }
+	.youtube-cover-photo { width: calc(100% + 20px); margin: -10px -10px 15px -10px; }
+	.username-container,
+	.instagram-username-container,
+	.youtube-username-container { padding-right: 4px; }
+	.creator-username,
+	.instagram-creator-username,
+	.youtube-creator-username { font-size: 0.8em; }
+}
+
+:root {
+	--accent-color-rgb: 0, 123, 255; /* Match this to your accent color */
+	--shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================= */
+/* Quote of the Day Section – Onyx Glass     */
+/* ========================================= */
+#quote-section {
+  /* inherits .section base glass style */
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  backdrop-filter: var(--backdrop-blur) saturate(120%);
+  -webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  padding: 28px;
+  margin-bottom: 40px;
+  transition: background var(--transition-medium), box-shadow var(--transition-medium);
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInQuote 0.6s ease-out forwards;
+}
+
+/* Accent-matched date */
+.quote-date {
+  text-align: center;
+  color: var(--accent-color); /* 🌈 matches accent color */
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.9;
+  margin-top: 4px;
+  margin-bottom: 14px;
+  letter-spacing: 0.2px;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.05),
+               0 0 8px rgba(255, 255, 255, 0.06);
+  animation: fadeInQuote 0.6s ease-out forwards;
+}
+
+/* Header */
+#quote-section h2 {
+  color: var(--accent-color); /* 🌈 matches accent color */
+  font-size: 1.35em;
+  font-weight: 700;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+#quote-section h2::before {
+  content: "💬";
+  font-size: 1.2em;
+}
+
+/* Quote text */
+.quote-text {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-color);
+  text-align: center;
+  line-height: 1.65;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.25px;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* Author */
+.quote-author {
+  display: block;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  opacity: 0.9;
+}
+
+/* Animation */
+@keyframes fadeInQuote {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  #quote-section { padding: 22px; }
+  #quote-section h2 { font-size: 1.2em; }
+  .quote-text { font-size: 1.1rem; }
+}
+
+@media (max-width: 400px) {
+  #quote-section { padding: 16px; }
+  #quote-section h2 { font-size: 1.1em; }
+  .quote-text { font-size: 1rem; }
+}
+
+
+/* ======================== */
+/* Countdown Section - Final Themed Version */
+/* ======================== */
+
+.countdown-section {
+    /* This now uses your own variables for the Onyx Bubble Glass effect */
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    border: 1px solid var(--border-color);
+    
+    border-radius: var(--radius-lg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    padding: 30px;
+    margin: 30px auto;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.countdown-title {
+    font-size: calc(var(--font-size-base, 20px) * 1.5);
+    font-weight: 700;
+    color: var(--heading-color);
+    margin-bottom: 30px;
+    text-shadow: var(--text-shadow-light);
+}
+
+.countdown-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.countdown-item {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    transition: transform 0.3s ease;
+}
+
+.countdown-item:hover {
+    transform: translateY(-5px);
+}
+
+.countdown-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotateY(-180deg) rotateZ(-90deg);
+}
+
+.countdown-svg circle {
+    stroke-dasharray: 339.29;
+    stroke-linecap: round;
+    stroke-width: 10px;
+    fill: none;
+    transition: stroke-dashoffset 0.5s linear;
+}
+
+/* Default (Dark Mode) track color */
+.countdown-svg circle:nth-child(1) {
+    stroke: rgba(255, 255, 255, 0.15);
+}
+
+/* Light Mode track color override for better visibility */
+[data-theme="light"] .countdown-svg circle:nth-child(1) {
+    stroke: rgba(0, 0, 0, 0.1);
+}
+
+/* Progress ring using your theme's accent color */
+.countdown-svg circle:nth-child(2) {
+    stroke: var(--accent-color);
+    stroke-dashoffset: calc(339.29 - (339.29 * var(--percent, 0)) / 100);
+}
+
+/* This new wrapper perfectly centers the number and label */
+.countdown-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+}
+
+.countdown-number {
+    font-size: 2.2em;
+    font-weight: 700;
+    color: var(--accent-color);
+    line-height: 1;
+}
+
+.countdown-label {
+    font-size: 0.7em;
+    color: var(--secondary-text);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.countdown-expired-message {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin: 20px 0;
+    text-align: center;
+    color: var(--text-color);
+}
+
+/* ======================================== */
+/* Scroll-to-Top Orb – iOS 26 Onyx Glass    */
+/* ======================================== */
+.scroll-to-top {
+	position: fixed;
+	bottom: 25px;
+	left: 25px;
+	width: 65px;
+	height: 65px;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+	backdrop-filter: blur(20px) saturate(180%);
+	-webkit-backdrop-filter: blur(20px) saturate(180%);
+	cursor: pointer;
+	z-index: 9999;
+	opacity: 1;
+	pointer-events: auto;
+	overflow: hidden;
+	isolation: isolate;
+	clip-path: circle(50% at 50% 50%);
+
+	box-shadow:
+		inset 0 1px 5px color-mix(in srgb, var(--glow-color) 35%, transparent),
+		0 0 22px color-mix(in srgb, var(--accent-color) 30%, transparent),
+		0 6px 20px color-mix(in srgb, var(--shadow-color) 70%, transparent);
+	transition: opacity 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+	animation: orb-float 3s ease-in-out infinite, orb-pulse 2.5s ease-in-out infinite;
+}
+
+.scroll-to-top::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), rgba(255,255,255,0.03) 60%, transparent 100%);
+	pointer-events: none;
+	mix-blend-mode: screen;
+}
+
+.scroll-to-top::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	background: radial-gradient(circle at 50% 120%, color-mix(in srgb, var(--accent-color) 45%, transparent), transparent 70%);
+	filter: blur(10px);
+	opacity: 0.6;
+	pointer-events: none;
+	mix-blend-mode: soft-light;
+}
+
+.scroll-to-top:hover {
+	transform: scale(1.08);
+	box-shadow:
+		inset 0 1px 6px color-mix(in srgb, var(--glow-color) 45%, transparent),
+		0 0 30px color-mix(in srgb, var(--accent-color) 55%, transparent),
+		0 8px 28px color-mix(in srgb, var(--shadow-color) 80%, transparent);
+}
+
+.scroll-to-top.hidden {
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* Floating + Pulse */
+@keyframes orb-float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-5px); }
+}
+@keyframes orb-pulse {
+	0%, 100% {
+		box-shadow:
+			inset 0 1px 5px color-mix(in srgb, var(--glow-color) 35%, transparent),
+			0 0 22px color-mix(in srgb, var(--accent-color) 30%, transparent),
+			0 6px 20px color-mix(in srgb, var(--shadow-color) 70%, transparent);
+	}
+	50% {
+		box-shadow:
+			inset 0 1px 6px color-mix(in srgb, var(--glow-color) 50%, transparent),
+			0 0 30px color-mix(in srgb, var(--accent-color) 50%, transparent),
+			0 8px 25px color-mix(in srgb, var(--shadow-color) 80%, transparent);
+	}
+}
+
+/* Progress Ring */
+.progress-ring {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 78%;
+	height: 78%;
+	transform: translate(-50%, -50%) rotate(-90deg);
+	pointer-events: none;
+	clip-path: circle(50% at 50% 50%);
+}
+
+.progress-bg {
+	fill: none;
+	stroke: color-mix(in srgb, var(--accent-color) 15%, var(--border-color));
+	stroke-width: 3.5;
+	opacity: 0.3;
+	stroke-linecap: round;
+}
+
+.progress-indicator {
+	fill: none;
+	stroke: var(--accent-color);
+	stroke-width: 3.5;
+	stroke-linecap: round;
+	stroke-dasharray: 141;
+	stroke-dashoffset: 141;
+	transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
+	filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent-color) 60%, transparent));
+	opacity: 0.9;
+}
+
+.arrow-icon {
+	position: absolute;
+	top: 44%;  /* perfectly centered with ring */
+	left: 50%;
+	width: 18px;
+	height: 18px;
+	color: var(--accent-color);
+	pointer-events: none;
+	transform: translate(-50%, -50%) rotate(0deg);
+	opacity: 1;
+	transition:
+		transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.3s ease,
+		color 0.3s ease;
+	filter:
+		drop-shadow(0 0 4px color-mix(in srgb, var(--accent-color) 55%, transparent))
+		drop-shadow(0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent));
+}
+
+.arrow-icon.down {
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.scroll-to-top:hover .arrow-icon {
+	filter:
+		drop-shadow(0 0 6px color-mix(in srgb, var(--accent-color) 75%, transparent))
+		drop-shadow(0 0 12px color-mix(in srgb, var(--accent-color) 50%, transparent));
+}
+
+/* Compact percentage below chevrons */
+.percentage {
+	position: absolute;
+	top: 64%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 0.6rem;
+	color: var(--accent-color);
+	font-weight: 500;
+	text-shadow: 0 0 3px color-mix(in srgb, var(--accent-color) 45%, transparent);
+	filter: drop-shadow(0 0 1px color-mix(in srgb, var(--accent-color) 35%, transparent));
+	pointer-events: none;
+	text-align: center;
+	opacity: 0;
+	transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.percentage.visible {
+	opacity: 1;
+	transform: translate(-50%, -52%);
+}
+
+/* Responsive Scaling */
+@media (max-width: 1024px) {
+	.scroll-to-top { width: 58px; height: 58px; left: 20px; bottom: 20px; }
+}
+@media (max-width: 768px) {
+	.scroll-to-top { width: 52px; height: 52px; left: 15px; bottom: 15px; }
+}
+@media (max-width: 480px) {
+	.scroll-to-top { width: 48px; height: 48px; left: 12px; bottom: 12px; }
+}
+
+/* ======================== */
+/* Version Info Section – Onyx Bubble Glass */
+/* ======================== */
+.version-info-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
+	padding: 28px;
+	margin-bottom: 40px;
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur) saturate(120%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+	transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Header */
+.version-header {
+	color: var(--text-color);
+	margin-bottom: 18px;
+	font-size: 1.35em;
+	font-weight: 700;
+	padding-bottom: 12px;
+	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.version-header::before {
+	content: "📊";
+	font-size: 1.2em;
+}
+
+/* Version list as Bubble Cards */
+.version-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	gap: 14px;
+}
+
+.version-list li {
+	position: relative;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	padding: 14px 18px 14px 36px;
+	border-radius: 16px;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	font-size: 1em;
+	color: var(--text-color);
+	font-weight: 500;
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.version-list li::before {
+	content: "";
+	position: absolute;
+	left: 12px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 60%, white));
+	box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.6), 0 0 12px rgba(var(--accent-rgb), 0.3);
+	animation: pulse-dot 2.5s infinite ease-in-out;
+}
+
+.version-list li:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 30px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+}
+
+.version-list li:hover::before {
+	box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.8), 0 0 20px rgba(var(--accent-rgb), 0.5);
+	transform: scale(1.2);
+}
+
+@keyframes pulse-dot {
+	0%, 100% { transform: scale(1); opacity: 1; }
+	50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.version-label { margin-right: 8px; }
+
+/* ======================== */
+/* Legal Section – Onyx Bubble Glass */
+/* ======================== */
+.legal-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
+	padding: 25px;
+	margin: 35px 0;
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur) saturate(120%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Header */
+.legal-header {
+	color: var(--text-color);
+	font-size: 1.3em;
+	font-weight: 700;
+	padding-bottom: 12px;
+	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+.legal-header::before { content: "⚖️"; font-size: 1.2em; }
+
+/* Messages */
+.copy-protection-message,
+.legal-protection-message {
+	padding: 16px 20px;
+	border-radius: 16px;
+	font-size: 0.95em;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+}
+
+/* Types */
+.copy-protection-message { border-left: 4px solid #ff4757; }
+.legal-protection-message { border-left: 4px solid #ffa502; }
+
+/* Icons */
+.copy-protection-message::before,
+.legal-protection-message::before {
+	content: "⚠️";
+	font-size: 1.2em;
+	min-width: 24px;
+}
+
+/* Watermark Footer */
+.watermark-note {
+	text-align: center;
+	font-size: 0.85em;
+	color: var(--secondary-text);
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px dashed var(--border-color);
+	letter-spacing: 0.3px;
+}
+
+/* ======================== */
+/* Responsive Layout */
+@media screen and (max-width: 768px) {
+	.version-info-section { padding: 22px; }
+	.version-header { font-size: 1.2em; }
+	.version-list li { font-size: 0.92em; }
+	.legal-section { padding: 20px; }
+	.legal-header { font-size: 1.2em; }
+}
+@media screen and (max-width: 400px) {
+	.version-info-section { padding: 16px; }
+	.version-header { font-size: 1.1em; }
+	.version-list li::before { left: 10px; width: 8px; height: 8px; }
+	.version-list li { padding-left: 30px; font-size: 0.9em; }
+	.legal-section { padding: 16px; }
+	.legal-header { font-size: 1.1em; }
+}
+
+/* Copy Protection */
+* {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+img {
+	pointer-events: none;
+	-webkit-user-drag: none;
+	-khtml-user-drag: none;
+	-moz-user-drag: none;
+	-o-user-drag: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Footer */
+footer {
+	text-align: center;
+	padding: 20px;
+	margin-top: 40px;
+	color: var(--secondary-text);
+	border-top: 1px solid var(--border-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.container {
+		padding: 0 10px;
+	}
+	
+	.countdown-item {
+		min-width: 80px;
+	}
+	
+	.creator-grid {
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	}
+	
+	.president-info {
+		flex-direction: column;
+		text-align: center;
+	}
+	
+	.social-links-container {
+		gap: 10px;
+	}
+}
+
+@media (max-width: 480px) {
+	body {
+		padding: 10px;
+	}
+	
+	.profile-pic {
+		width: 120px;
+		height: 120px;
+	}
+	
+	.social-button {
+		width: 100%;
+		justify-content: center;
+	}
+	
+	.creator-grid {
+		grid-template-columns: 1fr;
+	}
+	
+	.countdown-container {
+		flex-wrap: wrap;
+	}
+}
+
+:root {
+	--accent-color: #2563eb; /* ern blue */
+	--accent-color-rgb: 37, 99, 235;
+	--bg-color: #ffffff;
+	--content-bg: #f8fafc;
+	--text-color: #0f172a;
+	--border-color: #e2e8f0;
+	--border-color-rgb: 226, 232, 240;
+	--transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark e variables */
+@media (prefers-color-scheme: dark) {
+	:root {
+		--bg-color: #0f172a;
+		--content-bg: #1e293b;
+		--text-color: #f8fafc;
+		--border-color: #334155;
+		--border-color-rgb: 51, 65, 85;
+	}
+}
+
+/* Focus Outline Styles */
+*:focus {
+	outline: none; /* Remove default focus outlines */
+}
+
+/* Only show focus outlines when enabled (body doesn't have focus-outline-disabled class) */
+body:not(.focus-outline-disabled) *:focus {
+	outline: 2px solid var(--accent-color); /* Use theme accent color instead of purple */
+	outline-offset: 2px;
+}
+
+/* Remove default webkit tap highlight */
+* {
+	-webkit-tap-highlight-color: transparent;
+}
+
+/* Special focus styles for interactive elements */
+body:not(.focus-outline-disabled) button:focus,
+body:not(.focus-outline-disabled) a:focus,
+body:not(.focus-outline-disabled) input:focus,
+body:not(.focus-outline-disabled) select:focus,
+body:not(.focus-outline-disabled) textarea:focus {
+	outline: 2px solid var(--accent-color);
+	outline-offset: 2px;
+}
+
+/* Focus outline setting card responsive behavior */
+#focus-outline-setting-card {
+	display: block;
+}
+
+@media (max-width: 768px) {
+	#focus-outline-setting-card {
+		/* Don't hide on mobile, just adjust layout */
+		margin-bottom: 1rem;
+	}
+}
+
+/* ======================== */
+/* Maintenance Overlay – Onyx Bubble Glass */
+/* ======================== */
+
+body.maintenance-active {
+	overflow: hidden; /* disable scroll */
+}
+
+.maintenance-overlay {
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	background: color-mix(in srgb, var(--bg-color) 90%, transparent);
+	backdrop-filter: blur(12px);
+	display: none;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+	padding: 20px;
+	box-sizing: border-box;
+	opacity: 0;
+	transition: opacity 0.4s ease-in-out;
+}
+
+.maintenance-overlay.active {
+	display: flex;
+	opacity: 1;
+}
+
+/* Modal content */
+.maintenance-content {
+	max-width: min(550px, 90%);
+	width: 100%;
+	text-align: center;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	padding: clamp(25px, 6vw, 40px);
+	border-radius: var(--radius-xl);
+	border: 1px solid var(--border-color);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	animation: popInZoom 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Pop-in animation */
+@keyframes popInZoom {
+	0% { opacity: 0; transform: translateY(30px) scale(0.9); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Loader with frosted bubble background */
+.maintenance-loader {
+	position: relative;
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 4px solid color-mix(in srgb, var(--accent-color) 20%, transparent);
+	border-top-color: var(--accent-color);
+	margin: 0 auto 30px;
+	animation: spinLoader 1s linear infinite;
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+}
+
+/* Loader rotation */
+@keyframes spinLoader {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+/* Text content */
+.maintenance-content h1 {
+	color: var(--text-color);
+	font-size: clamp(calc(var(--font-size-base, 20px) * 1.44), 5vw, calc(var(--font-size-base, 20px) * 2.0)); /* ✨ Updated for text scaling ✨ */
+	margin: 0 0 20px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.maintenance-content p {
+	color: var(--secondary-text);
+	font-size: clamp(calc(var(--font-size-base, 20px) * 0.8), 3vw, calc(var(--font-size-base, 20px) * 0.92)); /* ✨ Updated for text scaling ✨ */
+	margin: 0 0 30px;
+	line-height: 1.6;
+}
+
+/* Social links section */
+.maintenance-socials {
+	padding-top: 25px;
+	border-top: 1px solid var(--border-color);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
+}
+
+.maintenance-socials p {
+	color: var(--secondary-text);
+	font-size: clamp(calc(var(--font-size-base, 20px) * 0.72), 2.5vw, calc(var(--font-size-base, 20px) * 0.8)); /* ✨ Updated for text scaling ✨ */
+	margin: 0;
+	font-weight: 500;
+}
+
+.maintenance-socials a {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--text-color);
+	text-decoration: none;
+	font-size: clamp(calc(var(--font-size-base, 20px) * 0.72), 2.5vw, calc(var(--font-size-base, 20px) * 0.8)); /* ✨ Updated for text scaling ✨ */
+	padding: 10px 20px;
+	border-radius: 25px;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border: 1px solid var(--border-color);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+}
+
+.maintenance-socials a i {
+	font-size: 1.1em;
+}
+
+.maintenance-socials a:hover,
+.maintenance-socials a:focus {
+	color: var(--accent-color);
+	background-color: color-mix(in srgb, var(--accent-color) 10%, transparent);
+	border-color: var(--accent-color);
+	transform: translateY(-2px);
+	outline: none;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 480px) {
+	.maintenance-content {
+		padding: 25px 20px;
+	}
+	.maintenance-loader {
+		width: 40px;
+		height: 40px;
+		border-width: 3px;
+		margin-bottom: 25px;
+	}
+	.maintenance-content h1 { margin-bottom: 20px; }
+	.maintenance-content p { margin-bottom: 25px; }
+	.maintenance-socials { padding-top: 20px; gap: 12px; }
+}
+
+@media screen and (max-height: 500px) {
+	.maintenance-loader { margin-bottom: 15px; }
+	.maintenance-content h1 { margin-bottom: 15px; }
+	.maintenance-content p { margin-bottom: 20px; }
+	.maintenance-socials { padding-top: 15px; gap: 10px; }
+	.maintenance-content { padding-top: 20px; padding-bottom: 20px; }
+}
+
+/* ======================================== */
+/* == Business Info Section – Onyx Bubble Glass == */
+/* ======================================== */
+
+/*
+ * 1. The main container has the Onyx design.
+ */
+.business-info-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
+	padding: clamp(20px, 4vw, 30px);
+	margin: 30px 0;
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur) saturate(120%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+	width: 100%;
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
+	color: var(--text-color);
+}
+
+/* Section Header */
+.business-info-section h2 {
+	margin-top: 0;
+	margin-bottom: 18px;
+	font-size: 1.6em;
+	font-weight: 700;
+	color: var(--text-color);
+	text-align: center;
+	padding-bottom: 12px;
+	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+}
+
+/* --- Status Display --- */
+.business-status {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 25px;
+	gap: 10px;
+	text-align: center;
+}
+
+/*
+ * 2. The status bubble has the Onyx design.
+ */
+.status-main-text {
+	/* Onyx Bubble Glass Properties */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 700;
+	font-size: 1.1em;
+	padding: 10px 24px;
+	border-radius: 9999px;
+	letter-spacing: 0.3px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Status Dot */
+.status-main-text::before {
+	content: '';
+	display: block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: currentColor;
+	box-shadow: 0 0 6px currentColor;
+	animation: pulse-status 2s infinite;
+}
+
+@keyframes pulse-status {
+	0%, 100% { transform: scale(1); opacity: 1; }
+	50% { transform: scale(1.25); opacity: 0.7; }
+}
+
+/*
+ * 3. Colored Onyx Bubbles.
+ * This layers a translucent color on TOP of the glass effect.
+ */
+.status-main-text.status-open {
+	color: var(--status-open-color, #28a745);
+	background-image: linear-gradient(rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.2)), var(--bubble-gradient);
+	border-color: rgba(40, 167, 69, 0.5);
+}
+.status-main-text.status-closed {
+	color: var(--status-closed-color, #dc3545);
+	background-image: linear-gradient(rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.2)), var(--bubble-gradient);
+	border-color: rgba(220, 53, 69, 0.5);
+}
+.status-main-text.status-unavailable {
+	color: var(--status-unavailable-color, #fd7e14);
+	background-image: linear-gradient(rgba(253, 126, 20, 0.2), rgba(253, 126, 20, 0.2)), var(--bubble-gradient);
+	border-color: rgba(253, 126, 20, 0.5);
+}
+
+/* Status Message */
+.status-message {
+	font-size: 0.95em;
+	font-weight: 500;
+	color: var(--secondary-text);
+	max-width: 400px;
+}
+
+/* --- Hours & Contact Sections --- */
+.hours-list, .special-hours-display, .contact-info {
+	margin-top: 30px;
+	padding-top: 25px;
+	border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+}
+.hours-list ul, .special-hours-display {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+/*
+ * 4. Each hours item has the Onyx design AND spacing.
+ */
+.hours-list li, .special-hours-display li {
+	/* Onyx Bubble Glass Properties */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	
+	border-radius: var(--radius-lg);
+	padding: 14px 16px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	margin-bottom: 12px; /* This adds the space between days */
+}
+.hours-list li:last-child, .special-hours-display li:last-child {
+	margin-bottom: 0; /* No extra space after the last item */
+}
+.hours-list li:hover, .special-hours-display li:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
+}
+
+.hours-list li {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	align-items: center;
+}
+.hours-list li strong, .special-hours-display strong { color: var(--text-color); font-weight: 600; }
+.hours-list li span, .special-hours-display .dates { color: var(--secondary-text); font-weight: 500; }
+
+.hours-list li.current-day {
+	border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
+}
+.hours-list li.current-day strong,
+.hours-list li.current-day span {
+	color: var(--accent-color);
+	font-weight: 700;
+}
+.special-hours-display .hours-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+.special-hours-display .hours { font-weight: 600; color: var(--text-color); }
+
+/* --- Contact Button --- */
+.contact-info { text-align: center; }
+.contact-info a {
+	/* Onyx Bubble Glass Properties */
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	display: inline-block;
+	padding: 14px 36px;
+	color: var(--accent-color);
+	border-radius: 9999px;
+	text-decoration: none;
+	font-weight: 700;
+	transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+}
+.contact-info a:hover,
+.contact-info a:focus {
+	transform: translateY(-3px);
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent), var(--bubble-highlight);
+	outline: none;
+}
+
+/* ============================================= */
+/* === Responsive Adjustments === */
+@media screen and (max-width: 768px) {
+	.business-info-section { padding: 22px; }
+	.business-status { gap: 6px; }
+	.status-main-text { padding: 8px 18px; font-size: 1em; }
+	.hours-list li { padding: 12px 14px; }
+	.special-hours-display li { padding: 14px 18px; }
+	.contact-info a { padding: 12px 28px; font-size: 0.95em; }
+}
+@media screen and (max-width: 400px) {
+	.business-info-section { padding: 16px; }
+	.status-main-text { padding: 6px 14px; font-size: 0.95em; }
+	.hours-list li { padding: 10px 12px; font-size: 0.9em; }
+	.special-hours-display li { padding: 12px 14px; font-size: 0.9em; }
+	.contact-info a { padding: 10px 24px; font-size: 0.9em; }
+}
+
+/* ======================================== */
+/* == Admin Panel Styles (Clean & Modern Upgrade) == */
+/* ======================================== */
+
+/* --- Form Inputs --- */
+.admin-form-input,
+.day-hours-group input[type="time"],
+.special-hours-list input[type="time"],
+.special-hours-list input[type="date"],
+.special-hours-list input[type="text"] {
+	width: 100%;
+	padding: 12px 14px;
+	border: 1px solid var(--border-color);
+	background-color: var(--bg-color);
+	border-radius: 10px;
+	font-size: 1em;
+	color: var(--text-color);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.admin-form-input:focus,
+.day-hours-group input[type="time"]:focus,
+.special-hours-list input[type="time"]:focus,
+.special-hours-list input[type="date"]:focus,
+.special-hours-list input[type="text"]:focus {
+	outline: none;
+	border-color: var(--accent-color);
+	box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.15);
+}
+
+/* --- Admin Section Cards --- */
+.admin-section-card {
+	background: color-mix(in srgb, var(--border-color) 15%, transparent);
+	padding: 20px 25px;
+	border-radius: 16px;
+	margin-bottom: 25px;
+	border: 1px solid var(--border-color);
+}
+
+.admin-section-card h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--border-color);
+	font-size: 1.3em;
+	color: var(--text-color);
+}
+
+/* --- Hours Grid --- */
+.hours-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 20px;
+}
+
+.day-hours-group {
+	background: var(--bg-color);
+	padding: 20px;
+	border-radius: 12px;
+	border: 1px solid var(--border-color);
+	transition: box-shadow 0.2s ease;
+}
+.day-hours-group:focus-within {
+	box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
+}
+.day-hours-group > label {
+	display: block;
+	margin-bottom: 15px;
+	font-weight: 600;
+	font-size: 1.1em;
+	color: var(--text-color);
+}
+.day-hours-group .time-inputs {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 15px;
+}
+.day-hours-group .form-group.checkbox-group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px;
+	border-radius: 8px;
+	background-color: color-mix(in srgb, var(--border-color) 30%, transparent);
+}
+.day-hours-group .form-group.checkbox-group label {
+	margin-bottom: 0;
+	font-weight: 500;
+	color: var(--secondary-text);
+	cursor: pointer;
+}
+
+/* --- Special Hours List Admin --- */
+.special-hours-list .hour-entry {
+	background: var(--bg-color);
+	padding: 20px;
+	border-radius: 12px;
+	border: 1px solid var(--border-color);
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 15px 20px;
+	align-items: flex-start;
+}
+.special-hours-list .hour-entry .form-group:has(label[for*="-label-"]),
+.special-hours-list .hour-entry .time-inputs,
+.special-hours-list .hour-entry .checkbox-group {
+	grid-column: 1 / -1;
+}
+.special-hours-list .hour-entry .remove-hour-button {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	background: none;
+	border: none;
+	color: var(--secondary-text);
+	cursor: pointer;
+	padding: 5px;
+	font-size: 1.4em;
+	line-height: 1;
+	opacity: 0.6;
+	transition: opacity 0.2s, color 0.2s, transform 0.2s ease;
+}
+.special-hours-list .hour-entry .remove-hour-button:hover {
+	opacity: 1;
+	color: var(--color-danger);
+	transform: scale(1.1);
+}
+
+/* --- Admin Preview Styles --- */
+.admin-preview-container {
+	border: 1px solid var(--border-color);
+	background: var(--bg-color);
+	padding: 25px;
+	border-radius: 16px;
+	margin-top: 30px;
+}
+.admin-preview-container h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--border-color);
+	font-size: 1.2em;
+	color: var(--accent-color);
+}
+
+/* Prevent printing of the page */
+@media print {
+	html, body {
+		width: 100% !important;
+		height: 100% !important;
+		overflow: hidden !important; /* Hide scrollbars */
+		display: none !important;  /* Hide the content entirely */
+		visibility: hidden !important; /* Further ensure content is not visible */
+		background-color: #fff !important; /* Force a white background to ensure blankness */
+		margin: 0 !important;
+		padding: 0 !important;
+		border: none !important;
+		box-shadow: none !important;
+	}
+
+	/* Hide everything else too, just in case */
+	* {
+		display: none !important;
+		visibility: hidden !important;
+		background-image: none !important;
+		box-shadow: none !important;
+		text-shadow: none !important;
+		border: none !important;
+	}
+}
+
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #4a4a4a;
+}
+
