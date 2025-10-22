@@ -730,6 +730,7 @@ initWallpaperBlurControl() {
   const mode = this.settings.darkModeScheduler || "off";
   this.toggleScheduleInputs(mode);
 
+  // Only apply schedule if "auto"
   if (mode !== "auto") {
     if (force) this.applyAppearanceMode();
     return;
@@ -744,20 +745,21 @@ initWallpaperBlurControl() {
   const end = new Date();
   end.setHours(endH, endM, 0, 0);
 
-  // Correct logic: dark mode between start and end
+  // 🔧 Handle overnight schedules (e.g. 20:00 → 06:00)
   let isDark;
-  if (end > start) {
-    // same day range (e.g., 20:00 → 06:00 next day)
+  if (end <= start) {
+    // The schedule wraps around midnight
     isDark = now >= start || now < end;
   } else {
-    // overnight range (wraps around midnight)
-    isDark = now >= start || now < end;
+    // Same-day schedule
+    isDark = now >= start && now < end;
   }
 
-  // Dark when within range, light when outside
+  // ✅ Apply correct mode
   this.setThemeClasses(isDark);
   this.applyCustomBackground(false);
 }
+
 
   toggleScheduleInputs(mode) {
     const group = document.querySelector(".schedule-group");
