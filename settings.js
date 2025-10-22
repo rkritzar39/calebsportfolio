@@ -202,23 +202,32 @@ class SettingsManager {
   // =============================
   setupEventListeners() {
     ["appearanceMode", "themeStyle"].forEach((key) => {
-      const control = document.getElementById(`${key}Control`);
-      if (control) {
-        control.addEventListener("click", (e) => {
-          const btn = e.target.closest("button");
-          if (!btn) return;
-          this.settings[key] = btn.dataset.value;
-          this.applySetting(key);
-          this.saveSettings();
-          this.initSegmentedControl(`${key}Control`, this.settings[key]);
-          this.updateSegmentedBackground(`${key}Control`);
-          if (key === "appearanceMode") {
-            this.applyCustomBackground(false);
-          }
-        });
-        this.updateSegmentedBackground(`${key}Control`);
+  const control = document.getElementById(`${key}Control`);
+  if (control) {
+    control.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+
+      // 🚫 Prevent user from changing appearance while scheduler is auto
+      if (key === "appearanceMode" && this.settings.darkModeScheduler === "auto") {
+        alert("Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes.");
+        this.initSegmentedControl(`${key}Control`, this.settings[key]); // reset UI
+        return;
+      }
+
+      // ✅ Otherwise allow change
+      this.settings[key] = btn.dataset.value;
+      this.applySetting(key);
+      this.saveSettings();
+      this.initSegmentedControl(`${key}Control`, this.settings[key]);
+      this.updateSegmentedBackground(`${key}Control`);
+      if (key === "appearanceMode") {
+        this.applyCustomBackground(false);
       }
     });
+    this.updateSegmentedBackground(`${key}Control`);
+  }
+});
 
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
