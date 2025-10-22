@@ -718,27 +718,37 @@ initWallpaperBlurControl() {
   }
 
   checkDarkModeSchedule(force = false) {
-    const mode = this.settings.darkModeScheduler || "off";
-    this.toggleScheduleInputs(mode);
+  const mode = this.settings.darkModeScheduler || "off";
+  this.toggleScheduleInputs(mode);
 
-    if (mode !== "auto") {
-      if (force) this.applyAppearanceMode();
-      return;
-    }
-
-    const now = new Date();
-    const [startH, startM] = this.settings.darkModeStart.split(":").map(Number);
-    const [endH, endM] = this.settings.darkModeEnd.split(":").map(Number);
-
-    const start = new Date();
-    start.setHours(startH, startM, 0, 0);
-    const end = new Date();
-    end.setHours(endH, endM, 0, 0);
-
-    const isNight = end > start ? now >= start && now < end : now >= start || now < end;
-    this.setThemeClasses(isNight);
-    this.applyCustomBackground(false);
+  if (mode !== "auto") {
+    if (force) this.applyAppearanceMode();
+    return;
   }
+
+  const now = new Date();
+  const [startH, startM] = this.settings.darkModeStart.split(":").map(Number);
+  const [endH, endM] = this.settings.darkModeEnd.split(":").map(Number);
+
+  const start = new Date();
+  start.setHours(startH, startM, 0, 0);
+  const end = new Date();
+  end.setHours(endH, endM, 0, 0);
+
+  // Correct logic: dark mode between start and end
+  let isDark;
+  if (end > start) {
+    // same day range (e.g., 20:00 → 06:00 next day)
+    isDark = now >= start || now < end;
+  } else {
+    // overnight range (wraps around midnight)
+    isDark = now >= start || now < end;
+  }
+
+  // Dark when within range, light when outside
+  this.setThemeClasses(isDark);
+  this.applyCustomBackground(false);
+}
 
   toggleScheduleInputs(mode) {
     const group = document.querySelector(".schedule-group");
