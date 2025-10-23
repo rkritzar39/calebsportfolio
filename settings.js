@@ -8,7 +8,6 @@ class SettingsManager {
   constructor() {
     this.defaultSettings = {
       appearanceMode: "device",
-      appearanceDepth: "frosted",
       themeStyle: "clear",
       accentColor: "#3ddc84",
       darkModeScheduler: "off", // 'off' | 'auto'
@@ -130,8 +129,6 @@ class SettingsManager {
   initializeControls() {
     this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
     this.initSegmentedControl("themeStyleControl", this.settings.themeStyle);
-    this.initSegmentedControl("appearanceDepthControl", this.settings.appearanceDepth);
-    this.updateSegmentedBackground("appearanceDepthControl");
     this.updateSegmentedBackground("appearanceModeControl");
     this.updateSegmentedBackground("themeStyleControl");
 
@@ -240,19 +237,6 @@ class SettingsManager {
         this.saveSettings();
       });
     }
-
-    const depthControl = document.getElementById("appearanceDepthControl");
-      if (depthControl) {
-        depthControl.addEventListener("click", (e) => {
-          const btn = e.target.closest("button");
-          if (!btn) return;
-          this.settings.appearanceDepth = btn.dataset.value;
-          this.applyAppearanceDepth();
-          this.saveSettings();
-          this.initSegmentedControl("appearanceDepthControl", this.settings.appearanceDepth);
-          this.updateSegmentedBackground("appearanceDepthControl");
-        });
-      }
 
     const slider = document.getElementById("text-size-slider");
     if (slider) {
@@ -393,7 +377,6 @@ class SettingsManager {
   applyAllSettings() {
     Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
     this.applyCustomBackground(false);
-    this.applyAppearanceDepth();
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
     this.syncWallpaperUIVisibility();
   }
@@ -474,21 +457,6 @@ class SettingsManager {
     this.setThemeClasses(isDark);
     this.checkAccentColor(this.settings.accentColor);
   }
-
-  applyAppearanceDepth() {
-  document.body.classList.remove("depth-standard", "depth-frosted", "depth-ultra");
-  const mode = this.settings.appearanceDepth;
-  switch (mode) {
-    case "standard":
-      document.body.classList.add("depth-standard");
-      break;
-    case "ultra":
-      document.body.classList.add("depth-ultra");
-      break;
-    default:
-      document.body.classList.add("depth-frosted");
-  }
-}
 
   applyAccentColor() {
     const accent = this.settings.accentColor;
