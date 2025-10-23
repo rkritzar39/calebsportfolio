@@ -518,15 +518,13 @@ class SettingsManager {
     return { layer, tint };
   }
 
-  // =============================
-// Custom Background + Blur (Final Version)
-// =============================
 initCustomBackgroundControls() {
   const upload = document.getElementById("customBgUpload");
   const remove = document.getElementById("removeCustomBg");
   const fileNameDisplay = document.getElementById("fileNameDisplay");
   const previewContainer = document.getElementById("customBgPreviewContainer");
   const previewImage = document.getElementById("customBgPreview");
+  const separator = document.getElementById("customBgSeparator");
 
   if (!upload || !previewContainer || !previewImage) return;
 
@@ -538,15 +536,19 @@ initCustomBackgroundControls() {
   if (savedBg) {
     if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
     if (remove) remove.style.display = "inline-block";
+
     this.toggleWallpaperBlurCard(true);
     previewContainer.classList.add("visible");
     previewImage.src = savedBg;
     previewImage.onload = () => previewImage.classList.add("loaded");
 
+    // ✅ Show separator line when image exists
+    if (separator) separator.classList.add("visible");
+
     // ✅ Apply saved blur immediately
     this.applyWallpaperBlur(savedBlur);
 
-    // ✅ Update blur slider UI to match saved blur
+    // ✅ Sync blur slider and badge
     const blurSlider = document.getElementById("blur-slider");
     const blurBadge = document.getElementById("blurValue");
     if (blurSlider && blurBadge) {
@@ -555,9 +557,10 @@ initCustomBackgroundControls() {
     }
   } else {
     this.toggleWallpaperBlurCard(false);
+    if (separator) separator.classList.remove("visible");
   }
 
-  // --- When uploading a new file ---
+  // --- Upload a new file ---
   upload.addEventListener("change", (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -570,7 +573,7 @@ initCustomBackgroundControls() {
       localStorage.setItem("customBackground", imageData);
       localStorage.setItem("customBackgroundName", file.name);
 
-      // ✅ Get the current blur slider value or 0 if unset
+      // ✅ Get current blur or 0
       const blurSlider = document.getElementById("blur-slider");
       const blurValue = blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
       localStorage.setItem("wallpaperBlur", blurValue);
@@ -578,18 +581,18 @@ initCustomBackgroundControls() {
       this.applyCustomBackground(true);
       this.applyWallpaperBlur(blurValue);
 
-      // ✅ Keep UI in sync
       const blurBadge = document.getElementById("blurValue");
       if (blurBadge) blurBadge.textContent = `${blurValue}px`;
 
       if (remove) remove.style.display = "inline-block";
       this.toggleWallpaperBlurCard(true);
 
-      // Show preview
+      // ✅ Show preview + separator
       previewContainer.classList.add("visible");
       previewImage.classList.remove("loaded");
       previewImage.src = imageData;
       previewImage.onload = () => previewImage.classList.add("loaded");
+      if (separator) separator.classList.add("visible");
     };
     reader.readAsDataURL(file);
   });
@@ -614,11 +617,13 @@ initCustomBackgroundControls() {
       if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
       remove.style.display = "none";
 
+      // ✅ Hide preview and separator smoothly
       previewContainer.classList.remove("visible");
       previewImage.classList.remove("loaded");
       previewImage.src = "";
+      if (separator) separator.classList.remove("visible");
 
-      // Reset blur slider and badge to 0
+      // Reset blur slider + badge
       const blurSlider = document.getElementById("blur-slider");
       const blurBadge = document.getElementById("blurValue");
       if (blurSlider && blurBadge) {
