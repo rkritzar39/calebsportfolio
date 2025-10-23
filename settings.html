@@ -65,37 +65,34 @@
 <!-- Custom Background Image -->
 <!-- ================================= -->
 <div class="setting-card custom-background">
-  <div class="custom-bg-wrapper">
-    <!-- Left Side -->
-    <div class="custom-bg-left">
-      <div class="setting-label">
-        <strong class="setting-title">Custom Background</strong>
-        <p class="setting-description">
-          Upload your own image to use as the background.
-        </p>
-      </div>
-
-      <div class="custom-bg-controls">
-        <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-        <input type="file" id="customBgUpload" accept="image/*">
-        <span id="fileNameDisplay" class="file-name">No file chosen</span>
-        <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
-      </div>
+  <div class="custom-bg-left">
+    <div class="setting-label">
+      <strong class="setting-title">Custom Background</strong>
+      <p class="setting-description">
+        Upload your own image to use as the background.
+      </p>
     </div>
 
-    <!-- Separator Line -->
-    <div class="custom-bg-separator" id="customBgSeparator"></div>
+    <div class="custom-bg-controls">
+      <label for="customBgUpload" class="custom-bg-label">Choose File</label>
+      <input type="file" id="customBgUpload" accept="image/*">
+      <span id="fileNameDisplay" class="file-name">No file chosen</span>
+      <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+    </div>
+  </div>
 
-    <!-- Right Side (Preview) -->
-    <div class="custom-bg-right">
-      <div id="customBgPreviewContainer">
-        <img
-          id="customBgPreview"
-          alt="Background preview"
-          draggable="false"
-          oncontextmenu="return false"
-        />
-      </div>
+  <!-- Separator Line -->
+  <div class="custom-bg-separator" id="customBgSeparator"></div>
+
+  <!-- Right side (Preview) -->
+  <div class="custom-bg-right">
+    <div id="customBgPreviewContainer">
+      <img
+        id="customBgPreview"
+        alt="Background preview"
+        draggable="false"
+        oncontextmenu="return false"
+      />
     </div>
   </div>
 </div>
