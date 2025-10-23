@@ -2937,7 +2937,7 @@ body.maintenance-active {
 }
 
 /* ======================================================= */
-/* == DARK MODE FROSTED GLASS CONTAINERS ================ */
+/* == DARK MODE FROSTED GLASS CONTAINERS (ONYX STYLE) ==== */
 /* ======================================================= */
 body.dark-mode .section,
 body.dark-mode .profile-card,
@@ -2955,31 +2955,30 @@ body.dark-mode .settings-header,
 body.dark-mode .settings-subsection,
 body.dark-mode footer,
 body.dark-mode #cookie-consent-banner {
-  background: var(--glass-bg-dark);
-  border: 1px solid var(--glass-border-dark);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  background: rgba(20, 20, 20, 0.45); /* frosted Onyx */
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.5),
-    inset 0 0 15px var(--glass-glow-dark);
-  transition: background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+    0 8px 32px rgba(0, 0, 0, 0.65),
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
+  transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-/* Optional: boost text clarity on frosted dark panels */
+/* Text clarity and brightness */
 body.dark-mode .section h2,
 body.dark-mode .section p,
 body.dark-mode .section small,
 body.dark-mode .section span,
 body.dark-mode .profile-card p,
 body.dark-mode .setting-description {
-  color: rgba(255, 255, 255, 0.92);
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.65);
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.75);
 }
 
 /* ======================================================= */
-/* == LIGHT MODE FROSTED GLASS CONTAINERS =============== */
+/* == LIGHT MODE FROSTED GLASS CONTAINERS (CLEAR STYLE) == */
 /* ======================================================= */
-
 body.light-mode .section,
 body.light-mode .profile-card,
 body.light-mode .quote-section,
@@ -2996,29 +2995,113 @@ body.light-mode .settings-header,
 body.light-mode .settings-subsection,
 body.light-mode footer,
 body.light-mode #cookie-consent-banner {
-  background: var(--glass-bg-light);
-  border: 1px solid var(--glass-border-light);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  background: rgba(255, 255, 255, 0.6); /* frosted clear glass */
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(25px) saturate(160%);
+  -webkit-backdrop-filter: blur(25px) saturate(160%);
   box-shadow:
-    0 10px 40px rgba(0, 0, 0, 0.08),
-    inset 0 0 10px rgba(255, 255, 255, 0.25);
-  transition: background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+    0 8px 40px rgba(0, 0, 0, 0.1),
+    inset 0 0 10px rgba(255, 255, 255, 0.4);
+  transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-/* Optional: slightly tint the panels in light mode for realism */
+/* Subtle tint for Apple realism (adapts to your accent) */
 body.light-mode .section,
 body.light-mode .profile-card {
-  background: color-mix(in srgb, var(--accent-color) 6%, var(--glass-bg-light));
+  background: color-mix(in srgb, var(--accent-color) 8%, rgba(255, 255, 255, 0.65));
 }
 
-/* --- Text contrast boost for clarity --- */
+/* Text clarity (slightly darkened) */
 body.light-mode .section h2,
 body.light-mode .section p,
 body.light-mode .section small,
 body.light-mode .section span,
 body.light-mode .profile-card p,
 body.light-mode .setting-description {
-  color: rgba(0, 0, 0, 0.88);
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.3);
+  color: rgba(0, 0, 0, 0.85);
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.4);
 }
+
+/* ======================================================= */
+/* == ADVANCED APPEARANCE DEPTH MODES (GLOBAL) =========== */
+/* ======================================================= */
+
+/* === 1. Standard (Solid) === */
+body.depth-standard .section,
+body.depth-standard .profile-section,
+body.depth-standard .profile-card,
+body.depth-standard .business-info-section,
+body.depth-standard .version-info-section,
+body.depth-standard .quote-section,
+body.depth-standard .countdown-section,
+body.depth-standard .tiktok-shoutouts-section,
+body.depth-standard .instagram-shoutouts-section,
+body.depth-standard .youtube-shoutouts-section,
+body.depth-standard .useful-links-section,
+body.depth-standard .tech-section,
+body.depth-standard .disabilities-section,
+body.depth-standard footer {
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* === 2. Frosted (Default iOS 26 Onyx Glass) === */
+body.depth-frosted .section,
+body.depth-frosted .profile-section,
+body.depth-frosted .profile-card,
+body.depth-frosted .business-info-section,
+body.depth-frosted .version-info-section,
+body.depth-frosted .quote-section,
+body.depth-frosted .countdown-section,
+body.depth-frosted .tiktok-shoutouts-section,
+body.depth-frosted .instagram-shoutouts-section,
+body.depth-frosted .youtube-shoutouts-section,
+body.depth-frosted .useful-links-section,
+body.depth-frosted .tech-section,
+body.depth-frosted .disabilities-section,
+body.depth-frosted footer {
+  background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
+  border: 1px solid var(--glass-border-dark);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    inset 0 0 12px rgba(255, 255, 255, 0.08);
+  transition: background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+}
+
+/* === 3. Ultra Clear (High Transparency) === */
+body.depth-ultra .section,
+body.depth-ultra .profile-section,
+body.depth-ultra .profile-card,
+body.depth-ultra .business-info-section,
+body.depth-ultra .version-info-section,
+body.depth-ultra .quote-section,
+body.depth-ultra .countdown-section,
+body.depth-ultra .tiktok-shoutouts-section,
+body.depth-ultra .instagram-shoutouts-section,
+body.depth-ultra .youtube-shoutouts-section,
+body.depth-ultra .useful-links-section,
+body.depth-ultra .tech-section,
+body.depth-ultra .disabilities-section,
+body.depth-ultra footer {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  box-shadow:
+    0 12px 50px rgba(0, 0, 0, 0.6),
+    inset 0 0 15px rgba(255, 255, 255, 0.12);
+  transition: background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+}
+
+/* === Smooth fade between depth modes === */
+body.depth-standard .section,
+body.depth-frosted .section,
+body.depth-ultra .section {
+  transition: background 0.5s ease, backdrop-filter 0.5s ease, box-shadow 0.5s ease;
+}
+
