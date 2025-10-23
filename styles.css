@@ -3030,13 +3030,13 @@ body.light-mode .setting-description {
 body.depth-standard .section,
 body.depth-standard .profile-section,
 body.depth-standard .profile-card,
-body.depth-standard .business-info-section,
+body.depth-standard .business-section,
 body.depth-standard .version-info-section,
 body.depth-standard .quote-section,
 body.depth-standard .countdown-section,
-body.depth-standard .tiktok-shoutouts-section,
-body.depth-standard .instagram-shoutouts-section,
-body.depth-standard .youtube-shoutouts-section,
+body.depth-standard .tiktok-section,
+body.depth-standard .instagram-section,
+body.depth-standard .youtube-section,
 body.depth-standard .useful-links-section,
 body.depth-standard .tech-section,
 body.depth-standard .disabilities-section,
@@ -3048,17 +3048,17 @@ body.depth-standard footer {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* === 2. Frosted (Default iOS 26 Onyx Glass) === */
+/* === 2. Frosted (Default iOS 26 Glass) === */
 body.depth-frosted .section,
 body.depth-frosted .profile-section,
 body.depth-frosted .profile-card,
-body.depth-frosted .business-info-section,
+body.depth-frosted .business-section,
 body.depth-frosted .version-info-section,
 body.depth-frosted .quote-section,
 body.depth-frosted .countdown-section,
-body.depth-frosted .tiktok-shoutouts-section,
-body.depth-frosted .instagram-shoutouts-section,
-body.depth-frosted .youtube-shoutouts-section,
+body.depth-frosted .tiktok-section,
+body.depth-frosted .instagram-section,
+body.depth-frosted .youtube-section,
 body.depth-frosted .useful-links-section,
 body.depth-frosted .tech-section,
 body.depth-frosted .disabilities-section,
@@ -3077,13 +3077,13 @@ body.depth-frosted footer {
 body.depth-ultra .section,
 body.depth-ultra .profile-section,
 body.depth-ultra .profile-card,
-body.depth-ultra .business-info-section,
+body.depth-ultra .business-section,
 body.depth-ultra .version-info-section,
 body.depth-ultra .quote-section,
 body.depth-ultra .countdown-section,
-body.depth-ultra .tiktok-shoutouts-section,
-body.depth-ultra .instagram-shoutouts-section,
-body.depth-ultra .youtube-shoutouts-section,
+body.depth-ultra .tiktok-section,
+body.depth-ultra .instagram-section,
+body.depth-ultra .youtube-section,
 body.depth-ultra .useful-links-section,
 body.depth-ultra .tech-section,
 body.depth-ultra .disabilities-section,
@@ -3104,4 +3104,3 @@ body.depth-frosted .section,
 body.depth-ultra .section {
   transition: background 0.5s ease, backdrop-filter 0.5s ease, box-shadow 0.5s ease;
 }
-
