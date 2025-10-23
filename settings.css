@@ -294,6 +294,67 @@ body.high-contrast :focus-visible {
     0 0 20px color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
 
+/* ======================================================= */
+/* == GLOBAL HOMEPAGE HIGH CONTRAST ADAPTATION =========== */
+/* ======================================================= */
+body.high-contrast .section,
+body.high-contrast .profile-card,
+body.high-contrast .quote-section,
+body.high-contrast .business-section,
+body.high-contrast .version-info-section,
+body.high-contrast .countdown-section,
+body.high-contrast .tiktok-section,
+body.high-contrast .instagram-section,
+body.high-contrast .youtube-section,
+body.high-contrast .useful-links-section,
+body.high-contrast .tech-info-section,
+body.high-contrast .disabilities-section {
+  background: color-mix(in srgb, var(--glass-bg-dark) 90%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    0 4px 25px rgba(0, 0, 0, 0.65),
+    inset 0 0 10px rgba(255, 255, 255, 0.12);
+  transition: background 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+/* --- Section Headers and Text --- */
+body.high-contrast .section h2,
+body.high-contrast .section p,
+body.high-contrast .section small,
+body.high-contrast .section span {
+  color: #fff !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+}
+
+/* --- Optional: Enhance inner cards or links --- */
+body.high-contrast .section a,
+body.high-contrast .section button {
+  filter: brightness(1.25) saturate(1.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--accent-text-color, #000);
+}
+
+body.high-contrast .section a:hover,
+body.high-contrast .section button:hover {
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.35),
+    inset 0 0 6px rgba(255, 255, 255, 0.25);
+}
+
+body.high-contrast .section,
+body.high-contrast [class*="-section"],
+body.high-contrast .profile-card {
+  background: color-mix(in srgb, var(--glass-bg-dark) 90%, transparent);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    0 4px 25px rgba(0, 0, 0, 0.65),
+    inset 0 0 10px rgba(255, 255, 255, 0.12);
+}
+
 /* ===================== */
 /* Motion & Effects Fix  */
 /* ===================== */
