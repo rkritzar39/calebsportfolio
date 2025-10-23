@@ -2941,6 +2941,8 @@ body.maintenance-active {
 /* ======================================================= */
 body.dark-mode .section,
 body.dark-mode .profile-card,
+body.dark-mode .social-links-section,
+body.dark-mode #president-section,
 body.dark-mode .quote-section,
 body.dark-mode .business-section,
 body.dark-mode .version-info-section,
@@ -2951,17 +2953,19 @@ body.dark-mode .youtube-section,
 body.dark-mode .useful-links-section,
 body.dark-mode .tech-info-section,
 body.dark-mode .disabilities-section,
+body.dark-mode .legal-section,
 body.dark-mode .settings-header,
 body.dark-mode .settings-subsection,
 body.dark-mode footer,
 body.dark-mode #cookie-consent-banner {
-  background: rgba(20, 20, 20, 0.45); /* frosted Onyx */
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(20, 20, 20, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.65),
     inset 0 0 20px rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
   transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
@@ -2971,9 +2975,13 @@ body.dark-mode .section p,
 body.dark-mode .section small,
 body.dark-mode .section span,
 body.dark-mode .profile-card p,
-body.dark-mode .setting-description {
-  color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.75);
+body.dark-mode .setting-description,
+body.dark-mode .social-links-section h2,
+body.dark-mode #president-section h2,
+body.dark-mode .quote-section h2,
+body.dark-mode .legal-section .legal-header {
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
 }
 
 /* ======================================================= */
@@ -2981,6 +2989,8 @@ body.dark-mode .setting-description {
 /* ======================================================= */
 body.light-mode .section,
 body.light-mode .profile-card,
+body.light-mode .social-links-section,
+body.light-mode #president-section,
 body.light-mode .quote-section,
 body.light-mode .business-section,
 body.light-mode .version-info-section,
@@ -2991,48 +3001,65 @@ body.light-mode .youtube-section,
 body.light-mode .useful-links-section,
 body.light-mode .tech-info-section,
 body.light-mode .disabilities-section,
+body.light-mode .legal-section,
 body.light-mode .settings-header,
 body.light-mode .settings-subsection,
 body.light-mode footer,
 body.light-mode #cookie-consent-banner {
-  background: rgba(255, 255, 255, 0.6); /* frosted clear glass */
+  background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.72),
+      rgba(255, 255, 255, 0.55)
+    );
   border: 1px solid rgba(0, 0, 0, 0.08);
   backdrop-filter: blur(25px) saturate(160%);
   -webkit-backdrop-filter: blur(25px) saturate(160%);
   box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.1),
-    inset 0 0 10px rgba(255, 255, 255, 0.4);
+    0 10px 45px rgba(0, 0, 0, 0.12),
+    inset 0 0 8px rgba(255, 255, 255, 0.35);
+  border-radius: 1rem;
   transition: background 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
 }
 
-/* Subtle tint for Apple realism (adapts to your accent) */
+/* Subtle accent tint for Apple realism */
 body.light-mode .section,
-body.light-mode .profile-card {
-  background: color-mix(in srgb, var(--accent-color) 8%, rgba(255, 255, 255, 0.65));
+body.light-mode .profile-card,
+body.light-mode .social-links-section,
+body.light-mode #quote-section {
+  background: linear-gradient(
+      to bottom right,
+      color-mix(in srgb, var(--accent-color) 4%, rgba(255, 255, 255, 0.75)),
+      color-mix(in srgb, var(--accent-color) 8%, rgba(255, 255, 255, 0.6))
+    );
 }
 
-/* Text clarity (slightly darkened) */
+/* Text clarity for frosted light panels */
 body.light-mode .section h2,
 body.light-mode .section p,
 body.light-mode .section small,
 body.light-mode .section span,
 body.light-mode .profile-card p,
-body.light-mode .setting-description {
-  color: rgba(0, 0, 0, 0.85);
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.4);
+body.light-mode .setting-description,
+body.light-mode .social-links-section h2,
+body.light-mode #president-section h2,
+body.light-mode .quote-section h2,
+body.light-mode .legal-section .legal-header {
+  color: rgba(0, 0, 0, 0.88);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
 /* ======================================================= */
 /* == ADVANCED APPEARANCE DEPTH MODES (GLOBAL) =========== */
 /* ======================================================= */
 
-/* === 1. Standard (Solid) === */
+/* === 1. Standard (Solid Panels) === */
 body.depth-standard .section,
 body.depth-standard .profile-section,
-body.depth-standard .profile-card,
+body.depth-standard .social-links-section,
+body.depth-standard #president-section,
+body.depth-standard .quote-section,
 body.depth-standard .business-section,
 body.depth-standard .version-info-section,
-body.depth-standard .quote-section,
 body.depth-standard .countdown-section,
 body.depth-standard .tiktok-section,
 body.depth-standard .instagram-section,
@@ -3040,6 +3067,7 @@ body.depth-standard .youtube-section,
 body.depth-standard .useful-links-section,
 body.depth-standard .tech-section,
 body.depth-standard .disabilities-section,
+body.depth-standard .legal-section,
 body.depth-standard footer {
   background: var(--content-bg);
   border: 1px solid var(--border-color);
@@ -3048,13 +3076,14 @@ body.depth-standard footer {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* === 2. Frosted (Default iOS 26 Glass) === */
+/* === 2. Frosted (Balanced Glass) === */
 body.depth-frosted .section,
 body.depth-frosted .profile-section,
-body.depth-frosted .profile-card,
+body.depth-frosted .social-links-section,
+body.depth-frosted #president-section,
+body.depth-frosted .quote-section,
 body.depth-frosted .business-section,
 body.depth-frosted .version-info-section,
-body.depth-frosted .quote-section,
 body.depth-frosted .countdown-section,
 body.depth-frosted .tiktok-section,
 body.depth-frosted .instagram-section,
@@ -3062,6 +3091,7 @@ body.depth-frosted .youtube-section,
 body.depth-frosted .useful-links-section,
 body.depth-frosted .tech-section,
 body.depth-frosted .disabilities-section,
+body.depth-frosted .legal-section,
 body.depth-frosted footer {
   background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
   border: 1px solid var(--glass-border-dark);
@@ -3070,16 +3100,18 @@ body.depth-frosted footer {
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.45),
     inset 0 0 12px rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
   transition: background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
 }
 
 /* === 3. Ultra Clear (High Transparency) === */
 body.depth-ultra .section,
 body.depth-ultra .profile-section,
-body.depth-ultra .profile-card,
+body.depth-ultra .social-links-section,
+body.depth-ultra #president-section,
+body.depth-ultra .quote-section,
 body.depth-ultra .business-section,
 body.depth-ultra .version-info-section,
-body.depth-ultra .quote-section,
 body.depth-ultra .countdown-section,
 body.depth-ultra .tiktok-section,
 body.depth-ultra .instagram-section,
@@ -3087,6 +3119,7 @@ body.depth-ultra .youtube-section,
 body.depth-ultra .useful-links-section,
 body.depth-ultra .tech-section,
 body.depth-ultra .disabilities-section,
+body.depth-ultra .legal-section,
 body.depth-ultra footer {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -3095,12 +3128,59 @@ body.depth-ultra footer {
   box-shadow:
     0 12px 50px rgba(0, 0, 0, 0.6),
     inset 0 0 15px rgba(255, 255, 255, 0.12);
+  border-radius: 1rem;
   transition: background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
 }
 
-/* === Smooth fade between depth modes === */
+/* Smooth transitions between depth modes */
 body.depth-standard .section,
 body.depth-frosted .section,
 body.depth-ultra .section {
   transition: background 0.5s ease, backdrop-filter 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* ======================================================= */
+/* == THEME INTEGRATION FIX (MISSED SECTIONS) ============ */
+/* ======================================================= */
+
+/* Extend all container themes to special sections */
+body.light-mode .social-links-section,
+body.dark-mode .social-links-section,
+body.depth-frosted .social-links-section,
+body.depth-ultra .social-links-section,
+body.depth-standard .social-links-section,
+body.light-mode #president-section,
+body.dark-mode #president-section,
+body.depth-frosted #president-section,
+body.depth-ultra #president-section,
+body.depth-standard #president-section,
+body.light-mode #quote-section,
+body.dark-mode #quote-section,
+body.depth-frosted #quote-section,
+body.depth-ultra #quote-section,
+body.depth-standard #quote-section,
+body.light-mode .legal-section,
+body.dark-mode .legal-section,
+body.depth-frosted .legal-section,
+body.depth-ultra .legal-section,
+body.depth-standard .legal-section {
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 1.25rem;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-elevation-2);
+  transition: background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
+}
+
+/* Text consistency across all sections */
+body.light-mode .social-links-section h2,
+body.dark-mode .social-links-section h2,
+body.light-mode #president-section h2,
+body.dark-mode #president-section h2,
+body.light-mode #quote-section h2,
+body.dark-mode #quote-section h2,
+body.light-mode .legal-section .legal-header,
+body.dark-mode .legal-section .legal-header {
+  color: var(--text-color);
 }
