@@ -3140,40 +3140,28 @@ body.depth-ultra .section {
 }
 
 /* ======================================================= */
-/* == THEME INTEGRATION FIX (MISSED SECTIONS) ============ */
+/* == THEME INTEGRATION FIX (SOCIAL, PRESIDENT, QUOTE, LEGAL) == */
 /* ======================================================= */
 
-/* Extend all container themes to special sections */
+/* Ensure these match the same frosted logic */
 body.light-mode .social-links-section,
 body.dark-mode .social-links-section,
-body.depth-frosted .social-links-section,
-body.depth-ultra .social-links-section,
-body.depth-standard .social-links-section,
 body.light-mode #president-section,
 body.dark-mode #president-section,
-body.depth-frosted #president-section,
-body.depth-ultra #president-section,
-body.depth-standard #president-section,
 body.light-mode #quote-section,
 body.dark-mode #quote-section,
-body.depth-frosted #quote-section,
-body.depth-ultra #quote-section,
-body.depth-standard #quote-section,
 body.light-mode .legal-section,
-body.dark-mode .legal-section,
-body.depth-frosted .legal-section,
-body.depth-ultra .legal-section,
-body.depth-standard .legal-section {
-  background: var(--content-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 1.25rem;
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--shadow-elevation-2);
+body.dark-mode .legal-section {
+  background: inherit;
+  border: inherit;
+  backdrop-filter: inherit;
+  -webkit-backdrop-filter: inherit;
+  border-radius: 1rem;
+  box-shadow: inherit;
   transition: background 0.4s ease, box-shadow 0.4s ease, border 0.4s ease;
 }
 
-/* Text consistency across all sections */
+/* Text consistency */
 body.light-mode .social-links-section h2,
 body.dark-mode .social-links-section h2,
 body.light-mode #president-section h2,
@@ -3183,4 +3171,13 @@ body.dark-mode #quote-section h2,
 body.light-mode .legal-section .legal-header,
 body.dark-mode .legal-section .legal-header {
   color: var(--text-color);
+}
+
+body.light-mode .social-links-section p,
+body.dark-mode .social-links-section p,
+body.light-mode #quote-section p,
+body.dark-mode #quote-section p,
+body.light-mode .legal-section p,
+body.dark-mode .legal-section p {
+  color: var(--secondary-text);
 }
