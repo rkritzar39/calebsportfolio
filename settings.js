@@ -8,6 +8,7 @@ class SettingsManager {
   constructor() {
     this.defaultSettings = {
       appearanceMode: "device",
+      appearanceDepth: "frosted",
       themeStyle: "clear",
       accentColor: "#3ddc84",
       darkModeScheduler: "off", // 'off' | 'auto'
