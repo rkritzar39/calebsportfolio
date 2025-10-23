@@ -886,7 +886,7 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Custom Background Upload – iOS 26 Alignment Fix ==== */
+/* == Custom Background Upload – iOS 26 Glass Alignment == */
 /* ======================================================= */
 
 .custom-background {
@@ -905,19 +905,18 @@ body.dark-mode #themeModeSelect:hover {
   justify-content: flex-start;
 }
 
-/* Align title & description exactly like other setting titles */
 .custom-bg-left .setting-label {
   text-align: left;
   margin-bottom: 0.5rem;
 }
 
-/* --- Controls row (always in one line) --- */
+/* --- Controls Row --- */
 .custom-bg-controls {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 0.75rem;
-  flex-wrap: nowrap; /* ✅ Prevent stacking even on mobile */
+  flex-wrap: nowrap; /* ✅ Always one line */
 }
 
 /* Hide default file input */
@@ -925,7 +924,7 @@ body.dark-mode #themeModeSelect:hover {
   display: none;
 }
 
-/* --- Choose File button --- */
+/* --- Choose File Button --- */
 .custom-bg-label {
   font-size: 0.8125rem;
   font-weight: 500;
@@ -970,26 +969,64 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Separator Line ==================================== */
+/* == Adaptive Glass Separator Line ====================== */
 /* ======================================================= */
 .custom-bg-separator {
+  position: relative;
   width: 1px;
   height: 100px;
-  background: color-mix(in srgb, var(--text-color) 10%, transparent);
-  border-radius: 1px;
+  border-radius: 2px;
   opacity: 0;
   transform: scaleY(0.9);
   transition: opacity 0.35s ease, transform 0.35s ease;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(6px) brightness(1.2);
+  -webkit-backdrop-filter: blur(6px) brightness(1.2);
+
+  /* subtle dual-layer gradient for depth */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.15),
+    inset 0 0 4px rgba(255, 255, 255, 0.12);
 }
+
+/* --- Visible state --- */
 .custom-bg-separator.visible {
-  opacity: 0.4;
+  opacity: 0.85;
   transform: scaleY(1);
 }
 
+/* --- Automatic color adjustment based on mode --- */
+.light-mode .custom-bg-separator {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  box-shadow:
+    0 0 6px rgba(0, 0, 0, 0.08),
+    inset 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.dark-mode .custom-bg-separator {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.15),
+    inset 0 0 4px rgba(255, 255, 255, 0.12);
+}
+
 /* ======================================================= */
-/* == Right Side (Preview Bubble) ======================= */
+/* == Right Side (Preview Bubble) ======================== */
 /* ======================================================= */
 .custom-bg-right {
   display: flex;
@@ -1053,13 +1090,13 @@ body.dark-mode #themeModeSelect:hover {
     text-align: center;
   }
 
-  /* Keep controls on one line even on mobile */
+  /* Controls remain inline on mobile */
   .custom-bg-controls {
     justify-content: center;
     flex-wrap: nowrap;
   }
 
-  /* Separator becomes horizontal under buttons */
+  /* Horizontal Separator for mobile */
   .custom-bg-separator {
     width: 80%;
     height: 1px;
@@ -1070,7 +1107,25 @@ body.dark-mode #themeModeSelect:hover {
     transform: scaleX(1);
   }
 
-  /* Center preview below */
+  .light-mode .custom-bg-separator {
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+  }
+
+  .dark-mode .custom-bg-separator {
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  }
+
+  /* Center preview bubble */
   .custom-bg-right {
     justify-content: center;
   }
