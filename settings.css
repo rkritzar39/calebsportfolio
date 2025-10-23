@@ -886,42 +886,38 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Custom Background Upload – Responsive Glass Layout == */
+/* == Custom Background Upload – iOS 26 Alignment Fix ==== */
 /* ======================================================= */
 
 .custom-background {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* === Wrapper for left + right === */
-.custom-bg-wrapper {
-  display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 2rem;
+  flex-wrap: nowrap;
 }
 
-/* --- Left Side (Text + Buttons) --- */
+/* --- Left Side (Title + Controls) --- */
 .custom-bg-left {
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.75rem;
+  justify-content: flex-start;
 }
 
+/* Align title & description exactly like other setting titles */
 .custom-bg-left .setting-label {
   text-align: left;
+  margin-bottom: 0.5rem;
 }
 
+/* --- Controls row (always in one line) --- */
 .custom-bg-controls {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 0.75rem;
+  flex-wrap: nowrap; /* ✅ Prevent stacking even on mobile */
 }
 
 /* Hide default file input */
@@ -929,7 +925,7 @@ body.dark-mode #themeModeSelect:hover {
   display: none;
 }
 
-/* --- Choose File Button --- */
+/* --- Choose File button --- */
 .custom-bg-label {
   font-size: 0.8125rem;
   font-weight: 500;
@@ -942,13 +938,14 @@ body.dark-mode #themeModeSelect:hover {
   -webkit-backdrop-filter: var(--glass-blur);
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s ease;
 }
 
 /* --- File name --- */
 .file-name {
   font-size: 0.8125rem;
   color: var(--secondary-text);
-  max-width: 200px;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -973,11 +970,11 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Glass Separator Line =============================== */
+/* == Separator Line ==================================== */
 /* ======================================================= */
 .custom-bg-separator {
   width: 1px;
-  height: 130px;
+  height: 100px;
   background: color-mix(in srgb, var(--text-color) 10%, transparent);
   border-radius: 1px;
   opacity: 0;
@@ -992,7 +989,7 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Right Side (Preview Bubble) ======================== */
+/* == Right Side (Preview Bubble) ======================= */
 /* ======================================================= */
 .custom-bg-right {
   display: flex;
@@ -1041,34 +1038,41 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Mobile Layout (Stacked) ============================ */
+/* == Mobile Layout ===================================== */
 /* ======================================================= */
 @media (max-width: 768px) {
-  .custom-bg-wrapper {
+  .custom-background {
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .custom-bg-left {
     align-items: center;
     text-align: center;
   }
 
-  .custom-bg-controls {
-    flex-direction: column;
+  .custom-bg-left {
+    width: 100%;
     align-items: center;
+    text-align: center;
   }
 
-  /* Turn the vertical line into a horizontal one */
+  /* Keep controls on one line even on mobile */
+  .custom-bg-controls {
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+
+  /* Separator becomes horizontal under buttons */
   .custom-bg-separator {
     width: 80%;
     height: 1px;
-    margin-top: 0.5rem;
+    margin: 1rem 0;
     transform: scaleX(0.9);
   }
   .custom-bg-separator.visible {
     transform: scaleX(1);
+  }
+
+  /* Center preview below */
+  .custom-bg-right {
+    justify-content: center;
   }
 
   #customBgPreviewContainer {
