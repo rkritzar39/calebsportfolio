@@ -172,16 +172,126 @@ body.tinted-mode {
     --glass-bg-dark: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-dark));
 }
 
-/* High Contrast Mode (Accessibility) */
+/* ======================================================= */
+/* === High Contrast Mode – iOS 26 Onyx Accessibility ==== */
+/* ======================================================= */
 body.high-contrast {
-    --bg-color: #000;
-    --content-bg: #000;
-    --text-color: #fff;
-    --secondary-text: #fff;
-    --border-color: #fff;
-    --accent-color: #ffff00; /* Yellow for high visibility */
-    --toggle-on: #ffff00;
-    --red-color: #ff8080;
+  /* Preserve overall palette logic */
+  --accent-color: #ffcc00; /* Apple yellow, highly visible but pleasant */
+  --accent-text-color: #000;
+
+  /* Background and content glass levels */
+  --bg-color: color-mix(in srgb, var(--dark-bg) 90%, #000 10%);
+  --content-bg: color-mix(in srgb, var(--dark-content-bg) 90%, #000 10%);
+  --glass-bg-light: rgba(255, 255, 255, 0.55);
+  --glass-bg-dark: rgba(22, 22, 22, 0.85);
+  --glass-border-light: rgba(0, 0, 0, 0.35);
+  --glass-border-dark: rgba(255, 255, 255, 0.35);
+
+  /* Text colors */
+  --text-color: #ffffff;
+  --secondary-text: rgba(255, 255, 255, 0.92);
+
+  /* Borders, sliders, and contrast helpers */
+  --border-color: rgba(255, 255, 255, 0.6);
+  --slider-track-color: rgba(255, 255, 255, 0.25);
+  --slider-thumb-color: #fff;
+  --toggle-on: var(--accent-color);
+  --toggle-off: rgba(255, 255, 255, 0.25);
+  --red-color: #ff6666;
+
+  /* Sharper blur for better clarity */
+  --glass-blur: blur(20px) saturate(180%);
+}
+
+/* === Panels & Cards ==================================== */
+body.high-contrast .settings-header,
+body.high-contrast .settings-subsection,
+body.high-contrast footer,
+body.high-contrast #cookie-consent-banner,
+body.high-contrast .setting-card,
+body.high-contrast .profile-card {
+  background: color-mix(in srgb, var(--glass-bg-dark) 90%, transparent);
+  border: 1px solid var(--glass-border-dark);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.65),
+    inset 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+/* === Text ============================================== */
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast p,
+body.high-contrast .setting-title,
+body.high-contrast .setting-description,
+body.high-contrast .file-name {
+  color: var(--text-color) !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* === Buttons, sliders, and toggles ===================== */
+body.high-contrast .custom-bg-label,
+body.high-contrast #removeCustomBg,
+body.high-contrast .button,
+body.high-contrast .segmented-control button {
+  filter: brightness(1.25) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 0 6px rgba(255, 255, 255, 0.3),
+    inset 0 0 4px rgba(255, 255, 255, 0.25);
+  color: var(--accent-text-color);
+  background: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-dark));
+}
+
+/* === Profile & circular elements ======================== */
+body.high-contrast .profile-card {
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 4px 25px rgba(0, 0, 0, 0.75),
+    inset 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+body.high-contrast #customBgPreviewContainer {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.35),
+    inset 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+/* === Divider & Separator =============================== */
+body.high-contrast .custom-bg-separator {
+  opacity: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.25),
+    inset 0 0 6px rgba(255, 255, 255, 0.25);
+}
+
+/* === Accent elements (verified badge, icons, etc.) ===== */
+body.high-contrast .verified-badge,
+body.high-contrast .icon-accent,
+body.high-contrast .accent-color-preview {
+  filter: brightness(1.3);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* === Focus outlines for accessibility ================== */
+body.high-contrast :focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 4px;
+  border-radius: 6px;
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--accent-color) 60%, white 25%),
+    0 0 20px color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
 
 /* ===================== */
@@ -886,24 +996,45 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ======================================================= */
-/* == Custom Background Upload – Right Aligned ============ */
+/* == Custom Background Upload – iOS 26 Glass Alignment == */
 /* ======================================================= */
+
+.custom-background {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: nowrap;
+}
+
+/* --- Left Side (Title + Controls) --- */
+.custom-bg-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.custom-bg-left .setting-label {
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+
+/* --- Controls Row --- */
 .custom-bg-controls {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* ✅ right aligned */
+  justify-content: flex-start;
   gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 0.5rem;
-  flex-shrink: 0;
+  flex-wrap: nowrap; /* ✅ Always one line */
 }
 
-/* Hide the default input */
+/* Hide default file input */
 #customBgUpload {
   display: none;
 }
 
-/* "Choose File" iOS 26 Glass Button */
+/* --- Choose File Button --- */
 .custom-bg-label {
   font-size: 0.8125rem;
   font-weight: 500;
@@ -915,16 +1046,11 @@ body.dark-mode #themeModeSelect:hover {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-.custom-bg-label:hover {
-  background: color-mix(in srgb, var(--accent-color) 30%, var(--glass-bg-light));
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s ease;
 }
 
-/* File name text (right side of label) */
+/* --- File name --- */
 .file-name {
   font-size: 0.8125rem;
   color: var(--secondary-text);
@@ -932,10 +1058,9 @@ body.dark-mode #themeModeSelect:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: right; /* keeps text flush right */
 }
 
-/* Remove button */
+/* --- Remove button --- */
 #removeCustomBg {
   font-size: 0.8125rem;
   padding: 0.45rem 0.85rem;
@@ -945,28 +1070,179 @@ body.dark-mode #themeModeSelect:hover {
   color: var(--accent-text-color, #fff);
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.4s ease, background 0.3s ease, transform 0.25s ease;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 #removeCustomBg.visible,
 #removeCustomBg[style*="inline-block"] {
   opacity: 1;
 }
-#removeCustomBg:hover {
-  background: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-light));
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color) 30%, rgba(0,0,0,0.25));
+
+/* ======================================================= */
+/* == Adaptive Glass Separator Line ====================== */
+/* ======================================================= */
+.custom-bg-separator {
+  position: relative;
+  width: 1px;
+  height: 100px;
+  border-radius: 2px;
+  opacity: 0;
+  transform: scaleY(0.9);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  backdrop-filter: blur(6px) brightness(1.2);
+  -webkit-backdrop-filter: blur(6px) brightness(1.2);
+
+  /* subtle dual-layer gradient for depth */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.15),
+    inset 0 0 4px rgba(255, 255, 255, 0.12);
 }
 
-/* Stack vertically on smaller screens */
+/* --- Visible state --- */
+.custom-bg-separator.visible {
+  opacity: 0.85;
+  transform: scaleY(1);
+}
+
+/* --- Automatic color adjustment based on mode --- */
+.light-mode .custom-bg-separator {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  box-shadow:
+    0 0 6px rgba(0, 0, 0, 0.08),
+    inset 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.dark-mode .custom-bg-separator {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.15),
+    inset 0 0 4px rgba(255, 255, 255, 0.12);
+}
+
+/* ======================================================= */
+/* == Right Side (Preview Bubble) ======================== */
+/* ======================================================= */
+.custom-bg-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+}
+
+#customBgPreviewContainer {
+  display: none;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.25),
+    inset 0 0 12px color-mix(in srgb, var(--accent-color) 15%, transparent);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+#customBgPreviewContainer.visible {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+#customBgPreview {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+#customBgPreview.loaded {
+  opacity: 1;
+}
+
+/* ======================================================= */
+/* == Mobile Layout ===================================== */
+/* ======================================================= */
 @media (max-width: 768px) {
-  .custom-bg-controls {
-    justify-content: flex-start; /* Align left for mobile */
+  .custom-background {
     flex-direction: column;
-    align-items: flex-end; /* buttons stay right aligned */
+    align-items: center;
+    text-align: center;
   }
-  .file-name {
-    text-align: right;
+
+  .custom-bg-left {
     width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Controls remain inline on mobile */
+  .custom-bg-controls {
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+
+  /* Horizontal Separator for mobile */
+  .custom-bg-separator {
+    width: 80%;
+    height: 1px;
+    margin: 1rem 0;
+    transform: scaleX(0.9);
+  }
+  .custom-bg-separator.visible {
+    transform: scaleX(1);
+  }
+
+  .light-mode .custom-bg-separator {
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+  }
+
+  .dark-mode .custom-bg-separator {
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  }
+
+  /* Center preview bubble */
+  .custom-bg-right {
+    justify-content: center;
+  }
+
+  #customBgPreviewContainer {
+    width: 95px;
+    height: 95px;
   }
 }
 
