@@ -1,40 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="8Z9aIwfUPs4hH7zGtkp0-jnHUEAQngGhOLfWm1mMEzc" />
-    <meta name="msvalidate.01" content="DF604B6A866AD7AE606EBAF19A20D042" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Welcome to my official link-in-bio page. Explore my merch, settings, and policies all in one place.">
-    <meta name="keywords" content="bus army dude, merch, link in bio, accessibility, privacy policy">
-    <meta name="author" content="Caleb Kritzar">
-    <title>Home - Caleb's Profile</title>
+  <meta name="google-site-verification" content="8Z9aIwfUPs4hH7zGtkp0-jnHUEAQngGhOLfWm1mMEzc" />
+  <meta name="msvalidate.01" content="DF604B6A866AD7AE606EBAF19A20D042" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Welcome to my official link-in-bio page. Explore my merch, settings, and policies all in one place." />
+  <meta name="keywords" content="bus army dude, merch, link in bio, accessibility, privacy policy" />
+  <meta name="author" content="Caleb Kritzar" />
+  <title>Home - Caleb's Profile</title>
 
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="settings.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />    
-    <script src="https://kit.fontawesome.com/ffa5e5607e.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="settings.css" />
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0RSQS1MS7"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-E0RSQS1MS7');
-    </script>
+  <!-- Icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://kit.fontawesome.com/ffa5e5607e.js" crossorigin="anonymous"></script>
+
+  <!-- Sortable -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-E0RSQS1MS7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-E0RSQS1MS7');
+  </script>
 </head>
-
-<body class="dark-mode">
+<body>
   <div class="container">
-
     <!-- Maintenance Overlay -->
-    <div id="maintenanceLoadingOverlay" class="maintenance-overlay" style="display: none;">
+    <div id="maintenanceLoadingOverlay" class="maintenance-overlay" style="display:none;">
       <div class="maintenance-content">
         <div class="maintenance-loader"></div>
         <h1>Site Under Maintenance</h1>
@@ -48,167 +53,272 @@
       </div>
     </div>
 
+    <div id="main-content-wrapper"></div>
+
     <!-- Profile Section -->
-    <div class="profile-section">
+    <div class="profile-section section">
       <a href="merchandise.html" class="corner-button merch-button" aria-label="Merchandise">
-        <img src="gift-bag-icon.png" alt="">
+        <img src="gift-bag-icon.png" alt="" />
       </a>
       <a href="settings.html" class="corner-button settings-button" aria-label="Settings">
-        <img src="settings-icon.png" alt="">
+        <img src="settings-icon.png" alt="" />
       </a>
 
       <div class="profile-pic-wrapper">
-        <img src="path/to/default-profile.jpg" alt="Profile Picture" class="profile-pic" id="profile-pic-main">
+        <img src="path/to/default-profile.jpg" alt="Profile Picture" class="profile-pic" id="profile-pic-main" />
         <div class="profile-status-container status-online" id="profile-status-main-container"></div>
       </div>
 
       <div class="username-checkmark">
         <h1 id="profile-username-main">Username</h1>
-        <img src="check.png" alt="Verified" class="verified">
+        <img src="check.png" alt="Verified" class="verified" />
         <p class="profile-status-text status-online" id="profile-status-text-main">Active</p>
       </div>
 
       <p class="profile-bio" id="profile-bio-main">Loading bio...</p>
     </div>
 
+    <!-- Rearrangeable Content -->
     <div id="rearrangeable-container">
-
       <!-- Social Links -->
-      <div class="section social-links-section" id="social-links-section" data-section-id="social-links">
+      <section class="social-links-section section" id="social-links-section" data-section-id="social-links">
         <h2>Follow Me</h2>
         <div id="social-links-container" class="social-links-container">
           <p>Loading social links...</p>
         </div>
-      </div>
+      </section>
 
-      <!-- President Section (Fixed container bug) -->
-      <div class="section" id="president-section" data-section-id="president">
-        <!-- President info dynamically injected here -->
-      </div>
+      <!-- President (single container; no nested container styles inside) -->
+      <section class="section" id="president-section" data-section-id="president">
+        <h2>Current U.S. President</h2>
+        <div id="president-placeholder" class="president-content"><!-- Filled by script --></div>
+      </section>
 
       <!-- TikTok Shoutouts -->
-      <div class="section shoutouts-section" id="tiktok-shoutouts-section" data-section-id="tiktok-shoutouts">
-        <h2>TikTok Creator Shoutouts</h2>
-        <p id="tiktok-last-updated-timestamp">Last Updated: Loading...</p>
-        <div class="search-container">
-          <input type="search" id="tiktok-search" class="creator-search" placeholder="Search TikTok creators" aria-label="Search TikTok creators">
-          <span class="search-icon">🔍</span>
+      <section class="shoutouts-section section" id="tiktok-shoutouts-section" data-section-id="tiktok-shoutouts">
+        <div id="tiktok-shoutouts">
+          <h2>TikTok Creator Shoutouts</h2>
+          <p id="tiktok-last-updated-timestamp">Last Updated: Loading...</p>
+
+          <div class="search-container">
+            <input
+              type="search"
+              id="tiktok-search"
+              class="creator-search"
+              placeholder="Search TikTok creators"
+              aria-label="Search TikTok creators"
+            />
+            <span class="search-icon">🔍</span>
+          </div>
         </div>
         <div class="creator-grid"></div>
-        <div class="unavailable-message" style="display: none;"></div>
-      </div>
+        <div class="unavailable-message" style="display:none;"></div>
+      </section>
 
       <!-- Instagram Shoutouts -->
-      <div class="section shoutouts-section" id="instagram-shoutouts-section" data-section-id="instagram-shoutouts">
-        <h2>Instagram Creator Shoutouts</h2>
-        <p id="instagram-last-updated-timestamp">Last Updated: Loading...</p>
-        <div class="search-container">
-          <input type="search" id="instagram-search" class="creator-search" placeholder="Search Instagram creators" aria-label="Search Instagram creators">
-          <span class="search-icon">🔍</span>
+      <section class="shoutouts-section section" id="instagram-shoutouts-section" data-section-id="instagram-shoutouts">
+        <div id="instagram-shoutouts">
+          <h2>Instagram Creator Shoutouts</h2>
+          <p id="instagram-last-updated-timestamp">Last Updated: Loading...</p>
+
+          <div class="search-container">
+            <input
+              type="search"
+              id="instagram-search"
+              class="creator-search"
+              placeholder="Search Instagram creators"
+              aria-label="Search Instagram creators"
+            />
+            <span class="search-icon">🔍</span>
+          </div>
         </div>
         <div class="instagram-creator-grid"></div>
-      </div>
+      </section>
 
       <!-- YouTube Shoutouts -->
-      <div class="section shoutouts-section" id="youtube-shoutouts-section" data-section-id="youtube-shoutouts">
-        <h2>YouTube Creator Shoutouts</h2>
-        <p id="youtube-last-updated-timestamp">Last Updated: Loading...</p>
-        <div class="search-container">
-          <input type="search" id="youtube-search" class="creator-search" placeholder="Search YouTube creators" aria-label="Search YouTube creators">
-          <span class="search-icon">🔍</span>
+      <section class="shoutouts-section section" id="youtube-shoutouts-section" data-section-id="youtube-shoutouts">
+        <div id="youtube-shoutouts">
+          <h2>YouTube Creator Shoutouts</h2>
+          <p id="youtube-last-updated-timestamp">Last Updated: Loading...</p>
+
+          <div class="search-container">
+            <input
+              type="search"
+              id="youtube-search"
+              class="creator-search"
+              placeholder="Search YouTube creators"
+              aria-label="Search YouTube creators"
+            />
+            <span class="search-icon">🔍</span>
+          </div>
         </div>
         <div class="youtube-creator-grid"></div>
-      </div>
+      </section>
 
       <!-- Useful Links -->
-      <div class="section useful-links-section" id="useful-links-section" data-section-id="useful-links">
+      <section class="useful-links-section section" id="useful-links-section" data-section-id="useful-links">
         <h2 class="section-title">Useful Links</h2>
         <div class="links-container"></div>
-      </div>
+      </section>
 
-      <!-- Countdown Section -->
-      <div class="section countdown-section" id="countdown-section" data-section-id="countdown">
+      <!-- Countdown -->
+      <section class="countdown-section section" id="countdown-section" data-section-id="countdown">
         <h2 class="countdown-title">Countdown to Earth Day 2025!</h2>
         <div class="countdown-container">
-          <!-- countdown timers here -->
+          <div class="countdown-item">
+            <svg class="countdown-svg" viewBox="0 0 120 120">
+              <circle r="54" cx="60" cy="60"></circle>
+              <circle r="54" cx="60" cy="60" id="years-circle"></circle>
+            </svg>
+            <div class="countdown-text">
+              <div id="countdown-years" class="countdown-number">0</div>
+              <div class="countdown-label">Years</div>
+            </div>
+          </div>
+          <div class="countdown-item">
+            <svg class="countdown-svg" viewBox="0 0 120 120">
+              <circle r="54" cx="60" cy="60"></circle>
+              <circle r="54" cx="60" cy="60" id="months-circle"></circle>
+            </svg>
+            <div class="countdown-text">
+              <div id="countdown-months" class="countdown-number">0</div>
+              <div class="countdown-label">Months</div>
+            </div>
+          </div>
+          <div class="countdown-item">
+            <svg class="countdown-svg" viewBox="0 0 120 120">
+              <circle r="54" cx="60" cy="60"></circle>
+              <circle r="54" cx="60" cy="60" id="days-circle"></circle>
+            </svg>
+            <div class="countdown-text">
+              <div id="countdown-days" class="countdown-number">0</div>
+              <div class="countdown-label">Days</div>
+            </div>
+          </div>
+          <div class="countdown-item">
+            <svg class="countdown-svg" viewBox="0 0 120 120">
+              <circle r="54" cx="60" cy="60"></circle>
+              <circle r="54" cx="60" cy="60" id="hours-circle"></circle>
+            </svg>
+            <div class="countdown-text">
+              <div id="countdown-hours" class="countdown-number">0</div>
+              <div class="countdown-label">Hours</div>
+            </div>
+          </div>
+          <div class="countdown-item">
+            <svg class="countdown-svg" viewBox="0 0 120 120">
+              <circle r="54" cx="60" cy="60"></circle>
+              <circle r="54" cx="60" cy="60" id="minutes-circle"></circle>
+            </svg>
+            <div class="countdown-text">
+              <div id="countdown-minutes" class="countdown-number">0</div>
+              <div class="countdown-label">Minutes</div>
+            </div>
+          </div>
+          <div class="countdown-item">
+            <svg class="countdown-svg" viewBox="0 0 120 120">
+              <circle r="54" cx="60" cy="60"></circle>
+              <circle r="54" cx="60" cy="60" id="seconds-circle"></circle>
+            </svg>
+            <div class="countdown-text">
+              <div id="countdown-seconds" class="countdown-number">0</div>
+              <div class="countdown-label">Seconds</div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Business Section (fixed) -->
-      <div class="section business-info-section" id="business-section" data-section-id="business-info">
-        <h2>Business Status & Hours</h2>
+      <!-- Business Info -->
+      <section class="business-info-section section" id="business-section" data-section-id="business-info">
+        <h2>Business Status &amp; Hours</h2>
+
         <div id="business-status-display" class="business-status">
           <span class="status-main-text">Loading Status...</span>
           <span class="status-countdown-text"></span>
           <div class="status-reason-text"></div>
         </div>
+
         <div id="business-hours-display" class="hours-list"></div>
         <div id="temporary-hours-display"></div>
         <div id="holiday-hours-display"></div>
         <div id="contact-email-display" class="contact-info"></div>
-      </div>
+      </section>
 
-      <!-- Tech Section -->
-      <div class="section tech-section" id="tech-information-section" data-section-id="tech-info">
+      <!-- Tech Information -->
+      <section class="tech-section section" id="tech-information-section" data-section-id="tech-info">
         <h2><i class="fas fa-microchip"></i> Tech Information</h2>
         <div id="tech-items-list-dynamic">
           <p>Loading Tech Info...</p>
         </div>
-      </div>
+      </section>
 
-      <!-- Quote Section -->
-      <div class="section" id="quote-section" data-section-id="quote">
+      <!-- Quote of the Day -->
+      <section class="section" id="quote-section" data-section-id="quote">
         <h2>Quote of the Day</h2>
         <p id="quote-date" class="quote-date"></p>
         <p id="quote-text" class="quote-text">Loading inspiration...</p>
         <small id="quote-author" class="quote-author"></small>
-      </div>
+      </section>
 
-      <!-- Disabilities Section -->
-      <div class="section disabilities-section" id="disabilities-section" data-section-id="disabilities">
+      <!-- Disabilities -->
+      <section class="disabilities-section section" id="disabilities-section" data-section-id="disabilities">
         <h2>Disabilities</h2>
         <p>I have the following disabilities:</p>
         <ul id="disabilities-list-placeholder"></ul>
+      </section>
+    </div><!-- /#rearrangeable-container -->
+
+    <!-- Version Info (single container) -->
+    <section class="version-info-section section">
+      <div class="version-header">Version Information</div>
+      <ul class="version-list">
+        <li>
+          <span class="version-label">🔢 <strong>Version:</strong></span>
+          <span class="version-value">v26.1.2</span>
+        </li>
+        <li>
+          <span class="version-label">🏗️ <strong>Build:</strong></span>
+          <span class="version-value">2025.9.20</span>
+        </li>
+        <li class="update-time">
+          <span class="version-label">🕒 <strong>Synced:</strong></span>
+          <span class="version-value">2025-01-27 21:29:16</span>
+        </li>
+        <li id="os-info">
+          <span class="version-label">💻 <strong>OS:</strong></span>
+          <span class="version-value">Detecting...</span>
+        </li>
+        <li id="device-info">
+          <span class="version-label">📱 <strong>Device:</strong></span>
+          <span class="version-value">Detecting...</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Legal -->
+    <section class="legal-section section">
+      <div class="legal-header">Legal Notices</div>
+      <div class="copy-protection-message">
+        A watermark protects this content. Unauthorized use is prohibited.
       </div>
-
-      <!-- Version Info Section (flattened structure) -->
-      <div class="section version-info-section" id="version-info-section">
-        <h2 class="version-header">Version Information</h2>
-        <ul class="version-list">
-          <li><strong>🔢 Version:</strong> v26.1.2</li>
-          <li><strong>🏗️ Build:</strong> 2025.9.20</li>
-          <li><strong>🕒 Synced:</strong> 2025-01-27 21:29:16</li>
-          <li id="os-info"><strong>💻 OS:</strong> Detecting...</li>
-          <li id="device-info"><strong>📱 Device:</strong> Detecting...</li>
-        </ul>
+      <div class="legal-protection-message">
+        All content and materials on this website are legally protected.
       </div>
+      <div class="watermark-note">Protected by Watermark</div>
+    </section>
 
-      <!-- Legal Section -->
-      <div class="section legal-section">
-        <h2 class="legal-header">Legal Notices</h2>
-        <div class="copy-protection-message">
-          A watermark protects this content. Unauthorized use is prohibited.
-        </div>
-        <div class="legal-protection-message">
-          All content and materials on this website are legally protected.
-        </div>
-        <div class="watermark-note">
-          Protected by Watermark
-        </div>
-      </div>
-
-    </div> <!-- end rearrangeable-container -->
-
-    <!-- Scroll To Top Button -->
+    <!-- Scroll To Top -->
     <div class="scroll-to-top hidden" id="scrollToTopBtn" aria-label="Scroll to top">
       <svg class="progress-ring" viewBox="0 0 50 50">
         <circle class="progress-bg" cx="25" cy="25" r="22"></circle>
         <circle class="progress-indicator" id="progressIndicator" cx="25" cy="25" r="22"></circle>
       </svg>
+
       <svg class="arrow-icon up" id="scrollArrow" viewBox="0 0 24 24" fill="none">
         <path d="M6 14L12 8L18 14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M6 18L12 12L18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
+
       <span class="percentage" id="scrollPercent">0%</span>
     </div>
 
@@ -217,17 +327,16 @@
       id="status-widget"
       src="https://calebs-status-page.instatus.com/embed-status/4e365a41/dark-lg"
       height="61"
-      frameBorder="0"
+      frameborder="0"
       scrolling="no"
-      style="border: none;"
+      style="border:none;"
     ></iframe>
 
     <!-- Footer -->
-    <footer>
+    <footer class="section">
       <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
     </footer>
-
-  </div> <!-- end container -->
+  </div><!-- /.container -->
 
   <!-- Scripts -->
   <script src="script.js"></script>
