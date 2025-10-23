@@ -2943,15 +2943,17 @@ body.dark-mode .section,
 body.dark-mode .profile-card,
 body.dark-mode .social-links-section,
 body.dark-mode #president-section,
-body.dark-mode .quote-section,
-body.dark-mode .business-section,
+body.dark-mode #quote-section,
+body.dark-mode #business-section,
+body.dark-mode .business-info-section,
 body.dark-mode .version-info-section,
 body.dark-mode .countdown-section,
 body.dark-mode .tiktok-section,
 body.dark-mode .instagram-section,
 body.dark-mode .youtube-section,
 body.dark-mode .useful-links-section,
-body.dark-mode .tech-info-section,
+body.dark-mode .tech-section,
+body.dark-mode #tech-information-section,
 body.dark-mode .disabilities-section,
 body.dark-mode .legal-section,
 body.dark-mode .settings-header,
@@ -2978,8 +2980,12 @@ body.dark-mode .profile-card p,
 body.dark-mode .setting-description,
 body.dark-mode .social-links-section h2,
 body.dark-mode #president-section h2,
-body.dark-mode .quote-section h2,
-body.dark-mode .legal-section .legal-header {
+body.dark-mode #quote-section h2,
+body.dark-mode .legal-section .legal-header,
+body.dark-mode #business-section h2,
+body.dark-mode .business-info-section h2,
+body.dark-mode .tech-section h2,
+body.dark-mode #tech-information-section h2 {
   color: rgba(255, 255, 255, 0.96);
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
 }
@@ -2991,15 +2997,17 @@ body.light-mode .section,
 body.light-mode .profile-card,
 body.light-mode .social-links-section,
 body.light-mode #president-section,
-body.light-mode .quote-section,
-body.light-mode .business-section,
+body.light-mode #quote-section,
+body.light-mode #business-section,
+body.light-mode .business-info-section,
 body.light-mode .version-info-section,
 body.light-mode .countdown-section,
 body.light-mode .tiktok-section,
 body.light-mode .instagram-section,
 body.light-mode .youtube-section,
 body.light-mode .useful-links-section,
-body.light-mode .tech-info-section,
+body.light-mode .tech-section,
+body.light-mode #tech-information-section,
 body.light-mode .disabilities-section,
 body.light-mode .legal-section,
 body.light-mode .settings-header,
@@ -3025,7 +3033,11 @@ body.light-mode #cookie-consent-banner {
 body.light-mode .section,
 body.light-mode .profile-card,
 body.light-mode .social-links-section,
-body.light-mode #quote-section {
+body.light-mode #quote-section,
+body.light-mode .business-info-section,
+body.light-mode #business-section,
+body.light-mode .tech-section,
+body.light-mode #tech-information-section {
   background: linear-gradient(
       to bottom right,
       color-mix(in srgb, var(--accent-color) 4%, rgba(255, 255, 255, 0.75)),
@@ -3042,8 +3054,12 @@ body.light-mode .profile-card p,
 body.light-mode .setting-description,
 body.light-mode .social-links-section h2,
 body.light-mode #president-section h2,
-body.light-mode .quote-section h2,
-body.light-mode .legal-section .legal-header {
+body.light-mode #quote-section h2,
+body.light-mode .legal-section .legal-header,
+body.light-mode #business-section h2,
+body.light-mode .business-info-section h2,
+body.light-mode .tech-section h2,
+body.light-mode #tech-information-section h2 {
   color: rgba(0, 0, 0, 0.88);
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
 }
@@ -3057,8 +3073,9 @@ body.depth-standard .section,
 body.depth-standard .profile-section,
 body.depth-standard .social-links-section,
 body.depth-standard #president-section,
-body.depth-standard .quote-section,
-body.depth-standard .business-section,
+body.depth-standard #quote-section,
+body.depth-standard #business-section,
+body.depth-standard .business-info-section,
 body.depth-standard .version-info-section,
 body.depth-standard .countdown-section,
 body.depth-standard .tiktok-section,
@@ -3066,6 +3083,7 @@ body.depth-standard .instagram-section,
 body.depth-standard .youtube-section,
 body.depth-standard .useful-links-section,
 body.depth-standard .tech-section,
+body.depth-standard #tech-information-section,
 body.depth-standard .disabilities-section,
 body.depth-standard .legal-section,
 body.depth-standard footer {
@@ -3081,8 +3099,9 @@ body.depth-frosted .section,
 body.depth-frosted .profile-section,
 body.depth-frosted .social-links-section,
 body.depth-frosted #president-section,
-body.depth-frosted .quote-section,
-body.depth-frosted .business-section,
+body.depth-frosted #quote-section,
+body.depth-frosted #business-section,
+body.depth-frosted .business-info-section,
 body.depth-frosted .version-info-section,
 body.depth-frosted .countdown-section,
 body.depth-frosted .tiktok-section,
@@ -3090,6 +3109,7 @@ body.depth-frosted .instagram-section,
 body.depth-frosted .youtube-section,
 body.depth-frosted .useful-links-section,
 body.depth-frosted .tech-section,
+body.depth-frosted #tech-information-section,
 body.depth-frosted .disabilities-section,
 body.depth-frosted .legal-section,
 body.depth-frosted footer {
@@ -3109,8 +3129,9 @@ body.depth-ultra .section,
 body.depth-ultra .profile-section,
 body.depth-ultra .social-links-section,
 body.depth-ultra #president-section,
-body.depth-ultra .quote-section,
-body.depth-ultra .business-section,
+body.depth-ultra #quote-section,
+body.depth-ultra #business-section,
+body.depth-ultra .business-info-section,
 body.depth-ultra .version-info-section,
 body.depth-ultra .countdown-section,
 body.depth-ultra .tiktok-section,
@@ -3118,6 +3139,7 @@ body.depth-ultra .instagram-section,
 body.depth-ultra .youtube-section,
 body.depth-ultra .useful-links-section,
 body.depth-ultra .tech-section,
+body.depth-ultra #tech-information-section,
 body.depth-ultra .disabilities-section,
 body.depth-ultra .legal-section,
 body.depth-ultra footer {
@@ -3140,10 +3162,10 @@ body.depth-ultra .section {
 }
 
 /* ======================================================= */
-/* == THEME INTEGRATION FIX (SOCIAL, PRESIDENT, QUOTE, LEGAL) == */
+/* == THEME INTEGRATION FIX (SOCIAL, PRESIDENT, QUOTE, LEGAL, BUSINESS, TECH) == */
 /* ======================================================= */
 
-/* Ensure these match the same frosted logic */
+/* Ensure these match the same frosted logic (inherit active mode styles) */
 body.light-mode .social-links-section,
 body.dark-mode .social-links-section,
 body.light-mode #president-section,
@@ -3151,7 +3173,15 @@ body.dark-mode #president-section,
 body.light-mode #quote-section,
 body.dark-mode #quote-section,
 body.light-mode .legal-section,
-body.dark-mode .legal-section {
+body.dark-mode .legal-section,
+body.light-mode #business-section,
+body.dark-mode #business-section,
+body.light-mode .business-info-section,
+body.dark-mode .business-info-section,
+body.light-mode .tech-section,
+body.dark-mode .tech-section,
+body.light-mode #tech-information-section,
+body.dark-mode #tech-information-section {
   background: inherit;
   border: inherit;
   backdrop-filter: inherit;
@@ -3169,7 +3199,15 @@ body.dark-mode #president-section h2,
 body.light-mode #quote-section h2,
 body.dark-mode #quote-section h2,
 body.light-mode .legal-section .legal-header,
-body.dark-mode .legal-section .legal-header {
+body.dark-mode .legal-section .legal-header,
+body.light-mode #business-section h2,
+body.dark-mode #business-section h2,
+body.light-mode .business-info-section h2,
+body.dark-mode .business-info-section h2,
+body.light-mode .tech-section h2,
+body.dark-mode .tech-section h2,
+body.light-mode #tech-information-section h2,
+body.dark-mode #tech-information-section h2 {
   color: var(--text-color);
 }
 
@@ -3178,6 +3216,35 @@ body.dark-mode .social-links-section p,
 body.light-mode #quote-section p,
 body.dark-mode #quote-section p,
 body.light-mode .legal-section p,
-body.dark-mode .legal-section p {
+body.dark-mode .legal-section p,
+body.light-mode #business-section p,
+body.dark-mode #business-section p,
+body.light-mode .business-info-section p,
+body.dark-mode .business-info-section p,
+body.light-mode .tech-section p,
+body.dark-mode .tech-section p,
+body.light-mode #tech-information-section p,
+body.dark-mode #tech-information-section p {
   color: var(--secondary-text);
 }
+
+/* ======================================================= */
+/* == CONSISTENT SPACING (helps 'touching' issue) ======== */
+/* ======================================================= */
+.section,
+.social-links-section,
+#president-section,
+#business-section,
+.business-info-section,
+#quote-section,
+.legal-section {
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+}
+
+.section:last-of-type,
+.legal-section:last-of-type {
+  margin-bottom: 0;
+}
+
