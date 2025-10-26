@@ -369,32 +369,91 @@
   <script src="settings.js"></script>
   <script src="script.js"></script>
 
-  <!-- iOS 19 Liquid Glass Toolbar -->
-<nav class="ios19-toolbar">
-  <a href="index.html" class="tab-item" data-page="home">
-    <i class="fa-solid fa-house"></i>
-    <span>Home</span>
-  </a>
-  <a href="merchandise.html" class="tab-item" data-page="merch">
-    <i class="fa-solid fa-bag-shopping"></i>
-    <span>Merch</span>
-  </a>
-  <a href="settings.html" class="tab-item" data-page="settings">
-    <i class="fa-solid fa-gear"></i>
-    <span>Settings</span>
-  </a>
+   <nav class="ios19-bubblebar" role="tablist" aria-label="Primary Navigation">
+  <a class="tab" href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
+  <a class="tab" href="merchandise.html"><i class="fa-solid fa-bag-shopping"></i><span>Merch</span></a>
+  <a class="tab" href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+  <div class="bubble"></div>
 </nav>
-
-<!-- Font Awesome for icons -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" defer></script>
-
+    
 <script>
-  // Auto-detect current page and highlight active tab
-  const currentPage = window.location.pathname.split("/").pop();
-  document.querySelectorAll(".tab-item").forEach(item => {
-    const page = item.getAttribute("href");
-    if (currentPage === page) item.classList.add("active");
+(() => {
+  const bar = document.querySelector('.ios19-bubblebar');
+  const tabs = [...bar.querySelectorAll('.tab')];
+  const bubble = bar.querySelector('.bubble');
+  let active = tabs.findIndex(t => t.href.endsWith(location.pathname.split('/').pop()));
+  if (active < 0) active = 0;
+
+  const bounds = () => tabs.map(t => t.getBoundingClientRect());
+  const base = () => bar.getBoundingClientRect();
+
+  const moveBubble = (i, animate = true) => {
+    const rects = bounds();
+    const r = rects[i];
+    const b = base();
+    const x = r.left - b.left + (r.width - bubble.offsetWidth) / 2;
+    bubble.style.setProperty('--x', `${x}px`);
+    tabs.forEach((t, k) => t.classList.toggle('active', k === i));
+    if (animate) { bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop'); }
+  };
+  requestAnimationFrame(() => moveBubble(active, false));
+
+  // drag logic
+  let dragging = false, startX = 0, startLeft = 0;
+  const onDown = e => {
+    dragging = true;
+    startX = e.touches ? e.touches[0].clientX : e.clientX;
+    startLeft = parseFloat(bubble.style.getPropertyValue('--x')) || 0;
+    bubble.classList.add('drag');
+  };
+  const onMove = e => {
+    if (!dragging) return;
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const dx = x - startX;
+    const barW = bar.offsetWidth - bubble.offsetWidth;
+    const newLeft = Math.max(0, Math.min(barW, startLeft + dx));
+    bubble.style.setProperty('--x', `${newLeft}px`);
+
+    // crossfade icons
+    const rects = bounds();
+    rects.forEach((r, i) => {
+      const center = r.left + r.width / 2;
+      const diff = Math.abs((bar.getBoundingClientRect().left + newLeft + bubble.offsetWidth / 2) - center);
+      const hot = Math.max(0, 1 - diff / (r.width * 0.9));
+      tabs[i].style.setProperty('--hot', hot.toFixed(2));
+    });
+  };
+  const onUp = () => {
+    if (!dragging) return;
+    dragging = false;
+    bubble.classList.remove('drag');
+    const rects = bounds();
+    const bubbleCenter = bar.getBoundingClientRect().left + parseFloat(bubble.style.getPropertyValue('--x')) + bubble.offsetWidth / 2;
+    active = rects.reduce((a, r, i) => Math.abs(bubbleCenter - (r.left + r.width / 2)) < Math.abs(bubbleCenter - (rects[a].left + rects[a].width / 2)) ? i : a, 0);
+    moveBubble(active);
+    setTimeout(() => location.href = tabs[active].href, 140);
+  };
+
+  bar.addEventListener('mousedown', onDown);
+  bar.addEventListener('touchstart', onDown, {passive: true});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, {passive: true});
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('touchend', onUp);
+
+  // scroll-hide effect
+  let lastScroll = 0, ticking = false;
+  function handleScroll() {
+    const cur = window.scrollY;
+    const delta = cur - lastScroll;
+    if (delta > 8 && cur > 60) bar.classList.add("toolbar-hidden");
+    else if (delta < -8 || cur < 60) bar.classList.remove("toolbar-hidden");
+    lastScroll = cur; ticking = false;
+  }
+  window.addEventListener("scroll", () => {
+    if (!ticking) { window.requestAnimationFrame(handleScroll); ticking = true; }
   });
+})();
 </script>
 </body>
 </html>
