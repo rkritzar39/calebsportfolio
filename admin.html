@@ -192,47 +192,6 @@
   <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
 </section>
             
-       <section class="admin-section" id="blog-management" aria-labelledby="blog-heading">
-  <h3 id="blog-heading">Blog Management</h3>
-
-  <div class="form-group">
-    <!-- Inputs -->
-    <input type="text" id="post-title" placeholder="Post Title" class="admin-input">
-    <input type="text" id="post-author" placeholder="Author Name" class="admin-input">
-    <input type="text" id="post-author-pfp" placeholder="Author Profile Picture URL" class="admin-input">
-    <input type="text" id="post-category" placeholder="Category (e.g., Tech, Updates)" class="admin-input">
-
-    <!-- Featured Post Toggle -->
-    <label class="admin-checkbox-label">
-      <input type="checkbox" id="post-featured">
-      <span class="toggle-switch"></span>
-      Mark as Featured Post
-    </label>
-
-    <!-- Rich Text Editor -->
-    <div id="post-content-editor" class="admin-editor"></div>
-
-    <!-- Optional Image Upload for Featured Image -->
-    <div class="image-upload">
-      <label for="post-image">Featured Image (optional):</label>
-      <input type="file" id="post-image" accept="image/*">
-      <div id="post-image-preview" class="image-preview"></div>
-    </div>
-
-    <input type="hidden" id="post-id">
-
-    <!-- Form Actions -->
-    <div class="form-actions">
-      <button type="button" onclick="savePost()" class="admin-btn is-primary">Save Post</button>
-      <button type="button" onclick="resetPostForm()" class="admin-btn is-secondary">Cancel</button>
-    </div>
-  </div>
-
-  <!-- Existing Posts List -->
-  <h3>Existing Posts</h3>
-  <div id="posts-list" class="admin-list"></div>
-</section>
-            
              <section class="admin-section" id="president-management" aria-labelledby="president-heading">
                 <h3 id="president-heading">Manage Current President Info</h3>
 
