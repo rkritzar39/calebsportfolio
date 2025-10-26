@@ -2393,9 +2393,10 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	margin-top: 20px;
 }
 
+/* Special Hours Entry (fixed click target) */
 .special-hours-list .hour-entry {
 	background: color-mix(in srgb, var(--bg-color) 92%, transparent);
-	padding: 22px;
+	padding: 22px 22px 22px 22px; /* keep nice padding */
 	border-radius: var(--border-radius-md);
 	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
 	display: flex;
@@ -2404,6 +2405,9 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	align-items: flex-end;
 	position: relative;
 	box-shadow: 0 3px 10px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+	
+	/* ⬇ extra top padding so the X doesn’t overlap inputs */
+	padding-top: 48px;
 }
 
 .special-hours-list .hour-entry .form-group {
@@ -2428,24 +2432,36 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	padding-bottom: 10px;
 }
 
+/* Fixed Remove “X” button */
 .special-hours-list .hour-entry .remove-hour-button {
 	position: absolute;
 	top: 12px;
 	right: 12px;
-	background: transparent;
-	border: none;
+	width: 32px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
 	color: var(--secondary-text);
-	cursor: pointer;
-	padding: 5px;
-	font-size: 1.4rem;
+	font-size: 1.2rem;
 	line-height: 1;
-	opacity: 0.65;
-	transition: opacity 0.2s, color 0.2s, transform 0.2s ease;
+	border-radius: 50%;
+	cursor: pointer;
+	z-index: 5; /* makes sure it stays above inputs */
+	backdrop-filter: blur(10px) saturate(180%);
+	-webkit-backdrop-filter: blur(10px) saturate(180%);
+	opacity: 0.85;
+	transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
 }
+
 .special-hours-list .hour-entry .remove-hour-button:hover {
-	opacity: 1;
+	background: rgba(255, 59, 48, 0.15);
 	color: var(--color-danger);
 	transform: scale(1.12);
+	opacity: 1;
+	box-shadow: 0 0 10px rgba(255, 59, 48, 0.25);
 }
 
 /* --- Add Button Styling --- */
