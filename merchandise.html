@@ -71,5 +71,33 @@
     <script src="ai-features.js"></script>
     <script src="settings.js"></script>
     <script src="merchandise.js"></script> 
+
+    <!-- iOS 19 Liquid Glass Toolbar -->
+<nav class="ios19-toolbar">
+  <a href="index.html" class="tab-item" data-page="home">
+    <i class="fa-solid fa-house"></i>
+    <span>Home</span>
+  </a>
+  <a href="merchandise.html" class="tab-item" data-page="merch">
+    <i class="fa-solid fa-bag-shopping"></i>
+    <span>Merch</span>
+  </a>
+  <a href="settings.html" class="tab-item" data-page="settings">
+    <i class="fa-solid fa-gear"></i>
+    <span>Settings</span>
+  </a>
+</nav>
+
+<!-- Font Awesome for icons -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" defer></script>
+
+<script>
+  // Auto-detect current page and highlight active tab
+  const currentPage = window.location.pathname.split("/").pop();
+  document.querySelectorAll(".tab-item").forEach(item => {
+    const page = item.getAttribute("href");
+    if (currentPage === page) item.classList.add("active");
+  });
+</script>
 </body>
 </html>
