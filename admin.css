@@ -2404,6 +2404,7 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	align-items: flex-end;
 	position: relative;
 	box-shadow: 0 3px 10px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+	z-index: 0;
 }
 
 .special-hours-list .hour-entry .form-group {
@@ -2428,28 +2429,49 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	padding-bottom: 10px;
 }
 
+/* --- Fix: Make Delete Button Always Clickable & Layered --- */
 .special-hours-list .hour-entry .remove-hour-button {
 	position: absolute;
-	top: 12px;
-	right: 12px;
-	background: transparent;
-	border: none;
-	color: var(--secondary-text);
-	cursor: pointer;
-	padding: 5px;
-	font-size: 1.4rem;
+	top: 10px;
+	right: 10px;
+	z-index: 10; /* keeps above inputs */
+	pointer-events: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	font-size: 1.1rem;
 	line-height: 1;
-	opacity: 0.65;
-	transition: opacity 0.2s, color 0.2s, transform 0.2s ease;
+	cursor: pointer;
+	color: var(--secondary-text);
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
+	border-radius: 50%;
+	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+	backdrop-filter: blur(10px) saturate(140%);
+	-webkit-backdrop-filter: blur(10px) saturate(140%);
+	opacity: 0.8;
+	transition:
+		background 0.25s ease,
+		color 0.25s ease,
+		transform 0.2s ease,
+		opacity 0.25s ease;
 }
 .special-hours-list .hour-entry .remove-hour-button:hover {
-	opacity: 1;
 	color: var(--color-danger);
-	transform: scale(1.12);
+	background: color-mix(in srgb, var(--color-danger) 15%, var(--content-bg));
+	opacity: 1;
+	transform: scale(1.08);
+	box-shadow: 0 4px 12px color-mix(in srgb, var(--color-danger) 25%, transparent);
+}
+.special-hours-list .hour-entry .remove-hour-button:active {
+	transform: scale(0.94);
 }
 
 /* --- Add Button Styling --- */
-#add-holiday-button, #add-temporary-button {
+#add-holiday-button,
+#add-temporary-button {
 	margin-top: 22px;
 }
 
