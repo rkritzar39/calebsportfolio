@@ -161,14 +161,17 @@
       </select>
     </div>
 
-    <div class="form-group checkbox-group">
+  <!-- Auto-Detect Toggle (temporarily disabled) -->
+<div class="form-group checkbox-group">
   <input type="checkbox" id="auto-status-toggle" disabled>
-  <label for="auto-status-toggle" style="opacity: 0.5; cursor: not-allowed;">
+  <label for="auto-status-toggle" style="opacity: 0.55; cursor: not-allowed;">
     Auto-detect when I'm online (coming soon)
   </label>
-  <small style="opacity: 0.6;">This feature is temporarily disabled.</small>
+  <small class="feature-disabled-note">
+    This feature is temporarily disabled for stability.  
+    Your status can still be changed manually.
+  </small>
 </div>
-
     <!-- Submit -->
     <div class="form-actions">
       <button
