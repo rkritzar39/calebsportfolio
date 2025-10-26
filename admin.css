@@ -2394,9 +2394,10 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 }
 
 /* Special Hours Entry (fixed click target) */
+/* --- Special Hours Entry (Improved Touch & Click Zone) --- */
 .special-hours-list .hour-entry {
 	background: color-mix(in srgb, var(--bg-color) 92%, transparent);
-	padding: 22px 22px 22px 22px; /* keep nice padding */
+	padding: 52px 22px 22px; /* ⬆ Extra top padding for safe click area */
 	border-radius: var(--border-radius-md);
 	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
 	display: flex;
@@ -2405,9 +2406,7 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	align-items: flex-end;
 	position: relative;
 	box-shadow: 0 3px 10px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-	
-	/* ⬇ extra top padding so the X doesn’t overlap inputs */
-	padding-top: 48px;
+	transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .special-hours-list .hour-entry .form-group {
@@ -2432,36 +2431,52 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	padding-bottom: 10px;
 }
 
-/* Fixed Remove “X” button */
+/* --- Fixed Remove “X” Button --- */
 .special-hours-list .hour-entry .remove-hour-button {
 	position: absolute;
-	top: 12px;
-	right: 12px;
-	width: 32px;
-	height: 32px;
+	top: 10px;
+	right: 10px;
+	width: 34px;
+	height: 34px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
-	color: var(--secondary-text);
 	font-size: 1.2rem;
 	line-height: 1;
+	color: var(--secondary-text);
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
 	border-radius: 50%;
 	cursor: pointer;
-	z-index: 5; /* makes sure it stays above inputs */
-	backdrop-filter: blur(10px) saturate(180%);
-	-webkit-backdrop-filter: blur(10px) saturate(180%);
+	z-index: 10; /* ensures it’s above date/time pickers */
+	backdrop-filter: blur(10px) saturate(160%);
+	-webkit-backdrop-filter: blur(10px) saturate(160%);
 	opacity: 0.85;
-	transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+	transition:
+		background 0.25s ease,
+		color 0.25s ease,
+		transform 0.25s ease,
+		opacity 0.25s ease;
 }
 
+/* Hover + Press feedback */
 .special-hours-list .hour-entry .remove-hour-button:hover {
 	background: rgba(255, 59, 48, 0.15);
 	color: var(--color-danger);
 	transform: scale(1.12);
 	opacity: 1;
 	box-shadow: 0 0 10px rgba(255, 59, 48, 0.25);
+}
+
+.special-hours-list .hour-entry .remove-hour-button:active {
+	transform: scale(0.95);
+	opacity: 0.9;
+}
+
+/* Make icon clicks safe (no accidental drag) */
+.special-hours-list .hour-entry .remove-hour-button i {
+	pointer-events: none;
 }
 
 /* --- Add Button Styling --- */
