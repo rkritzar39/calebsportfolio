@@ -604,41 +604,41 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	cursor: not-allowed;
 }
 
-/* =============================================== */
-/* iOS 26 “Liquid Glass” Toolbar – 3 Tab Version   */
-/* =============================================== */
-.liquid-toolbar {
+/* ========================================= */
+/* iOS 19 Liquid Glass Toolbar – Caleb's Site */
+/* ========================================= */
+.ios19-toolbar {
   position: fixed;
-  bottom: 18px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: calc(100% - 40px);
-  max-width: 460px;
-  background: rgba(30, 30, 30, 0.45);
-  backdrop-filter: blur(30px) saturate(180%) brightness(110%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%) brightness(110%);
-  border-radius: 34px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    0 6px 24px rgba(0, 0, 0, 0.4),
-    inset 0 0 1px rgba(255, 255, 255, 0.2),
-    inset 0 8px 30px rgba(255, 255, 255, 0.05);
+  width: calc(100% - 44px);
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 32px;
   padding: 10px 14px;
+  border: 0.5px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(26px) saturate(180%) brightness(120%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%) brightness(120%);
+  box-shadow:
+    inset 0 0 0.5px rgba(255,255,255,0.35),
+    inset 0 10px 35px rgba(255,255,255,0.08),
+    0 10px 25px rgba(0,0,0,0.35);
   z-index: 999;
   transition: all 0.35s ease;
 }
 
-/* Each button/tab */
+/* Tab Items */
 .tab-item {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 0.8rem;
   font-weight: 500;
   gap: 4px;
@@ -647,50 +647,53 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 
 /* Icon */
 .tab-item i {
-  font-size: 1.35rem;
-  opacity: 0.85;
+  font-size: 1.3rem;
+  opacity: 0.9;
   transition: transform 0.25s ease, opacity 0.3s ease;
 }
 
-/* Active state */
+/* Active tab */
 .tab-item.active {
-  color: var(--accent-color, #ff4d5a);
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--accent-color, #4ea8ff);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 22px;
   padding: 8px 16px;
   box-shadow:
-    0 0 25px rgba(255, 77, 90, 0.45),
-    inset 0 0 8px rgba(255, 255, 255, 0.15);
+    0 0 30px rgba(78,168,255,0.5),
+    inset 0 0 10px rgba(255,255,255,0.2);
   transform: translateY(-2px);
 }
 
+/* Active icon */
 .tab-item.active i {
   transform: scale(1.15);
   opacity: 1;
 }
 
-/* Tap / hover feedback */
+/* Touch Feedback */
 .tab-item:active {
   transform: scale(0.96);
   opacity: 0.9;
 }
 
+/* Hover for desktop preview */
 @media (hover: hover) {
   .tab-item:hover {
-    color: var(--accent-color, #ff4d5a);
+    color: var(--accent-color, #4ea8ff);
   }
 }
 
-/* Mobile width adjustment */
+/* Mobile adjustment */
 @media (max-width: 400px) {
-  .liquid-toolbar {
-    width: calc(100% - 24px);
+  .ios19-toolbar {
+    width: calc(100% - 26px);
     padding: 8px 10px;
   }
   .tab-item span {
     font-size: 0.75rem;
   }
 }
+
 /* ======================================== */
 /* == President Section – Onyx Bubble Glass == */
 /* ======================================== */
