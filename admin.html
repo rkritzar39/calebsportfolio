@@ -102,19 +102,32 @@
 
             <div id="admin-status" class="status-message" role="status" aria-live="polite"></div>
 
-        <section class="admin-section" id="profile-management" aria-labelledby="profile-heading">
+      <section class="admin-section" id="profile-management" aria-labelledby="profile-heading">
   <h3 id="profile-heading">Manage Homepage Profile</h3>
 
   <form id="profile-form">
+    <!-- Username -->
     <div class="form-group">
       <label for="profile-username">Username:</label>
-      <input type="text" id="profile-username" name="username" placeholder="Enter homepage username">
+      <input
+        type="text"
+        id="profile-username"
+        name="username"
+        placeholder="Enter homepage username"
+      >
     </div>
 
+    <!-- Profile Picture -->
     <div class="form-group">
       <label for="profile-pic-url">Profile Picture URL:</label>
       <div class="input-with-preview">
-        <input type="url" id="profile-pic-url" name="profilePicUrl" placeholder="https://..." inputmode="url">
+        <input
+          type="url"
+          id="profile-pic-url"
+          name="profilePicUrl"
+          placeholder="https://..."
+          inputmode="url"
+        >
         <img
           src="path/to/placeholder-image.png"
           alt="Profile picture preview"
@@ -126,11 +139,18 @@
       </div>
     </div>
 
+    <!-- Bio -->
     <div class="form-group">
       <label for="profile-bio">Bio:</label>
-      <textarea id="profile-bio" name="bio" rows="4" placeholder="Enter profile bio text..."></textarea>
+      <textarea
+        id="profile-bio"
+        name="bio"
+        rows="4"
+        placeholder="Enter profile bio text..."
+      ></textarea>
     </div>
 
+    <!-- Manual Status -->
     <div class="form-group">
       <label for="profile-status">Status:</label>
       <select id="profile-status" name="status">
@@ -141,25 +161,32 @@
       </select>
     </div>
 
-    <!-- Auto Status Toggle -->
-    <div class="form-group">
-      <label class="switch-label">
-        <input type="checkbox" id="auto-status-toggle" checked>
-        <span class="switch"></span>
-        Auto-detect when I'm online
-      </label>
+    <!-- Auto-Detect Toggle (matches .checkbox-group CSS) -->
+    <div class="form-group checkbox-group">
+      <input type="checkbox" id="auto-status-toggle" checked>
+      <label for="auto-status-toggle">Auto-detect when I'm online</label>
+      <small>Automatically updates your status to “Online” when you visit your site.</small>
     </div>
 
+    <!-- Submit -->
     <div class="form-actions">
-      <button type="submit" id="save-profile-button" class="button-primary">
+      <button
+        type="submit"
+        id="save-profile-button"
+        class="button-primary"
+      >
         Save Profile Changes
       </button>
     </div>
   </form>
 
-  <div id="profile-status-message" class="status-message" role="status" aria-live="polite"></div>
-</section>
-            <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
+  <div
+    id="profile-status-message"
+    class="status-message"
+    role="status"
+    aria-live="polite"
+  ></div>
+</section>            <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
   <h3 id="settings-heading">Site Settings</h3>
 
   <div class="form-group checkbox-group apple-toggle-group">
