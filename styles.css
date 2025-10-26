@@ -604,58 +604,93 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	cursor: not-allowed;
 }
 
-/* === iOS-style Toolbar where the pill fits around content === */
-.ios26-toolbar{
-  position:fixed;bottom:10px;left:50%;transform:translateX(-50%);
-  width:min(440px,92%);height:66px;
-  display:flex;justify-content:space-around;align-items:center;
-  border-radius:28px;
-  background:rgba(255,255,255,.75);
-  backdrop-filter:blur(30px)saturate(180%);
-  -webkit-backdrop-filter:blur(30px)saturate(180%);
-  border:1px solid rgba(255,255,255,.35);
-  box-shadow:0 6px 24px rgba(0,0,0,.1),inset 0 1px 0 rgba(255,255,255,.8);
-  overflow:hidden;z-index:1000;
+/* =============================================== */
+/* iOS 26 “Liquid Glass” Toolbar – 3 Tab Version   */
+/* =============================================== */
+.liquid-toolbar {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: calc(100% - 40px);
+  max-width: 460px;
+  background: rgba(30, 30, 30, 0.45);
+  backdrop-filter: blur(30px) saturate(180%) brightness(110%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%) brightness(110%);
+  border-radius: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.4),
+    inset 0 0 1px rgba(255, 255, 255, 0.2),
+    inset 0 8px 30px rgba(255, 255, 255, 0.05);
+  padding: 10px 14px;
+  z-index: 999;
+  transition: all 0.35s ease;
 }
 
-/* glass capsule behind active tab */
-.active-pill{
-  position:absolute;top:8px;bottom:8px;left:0;
-  background:rgba(0,0,0,.08);
-  backdrop-filter:blur(10px)brightness(1.15);
-  -webkit-backdrop-filter:blur(10px)brightness(1.15);
-  border-radius:20px;
-  transition:left .35s cubic-bezier(.25,1,.5,1),
-             width .35s cubic-bezier(.25,1,.5,1);
-  pointer-events:none;
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.9),
-              0 1px 3px rgba(0,0,0,.08);
+/* Each button/tab */
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.8rem;
+  font-weight: 500;
+  gap: 4px;
+  transition: color 0.3s ease, transform 0.25s ease;
 }
 
-.toolbar-item{
-  position:relative;flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-decoration:none;gap:3px;
-  color:rgba(0,0,0,.8);
-  font-size:.8rem;font-weight:500;
-  padding:0 14px;             /* space inside each cell */
-  transition:color .25s ease,transform .25s ease;
-}
-.toolbar-item i{
-  font-size:1.25rem;transition:color .25s ease,transform .25s ease;
+/* Icon */
+.tab-item i {
+  font-size: 1.35rem;
+  opacity: 0.85;
+  transition: transform 0.25s ease, opacity 0.3s ease;
 }
 
-.toolbar-item.active,
-.toolbar-item.drag-over{color:var(--tint,#007aff);}
-.toolbar-item.active i,
-.toolbar-item.drag-over i{color:var(--tint,#007aff);transform:scale(1.05);}
-
-@media(prefers-color-scheme:dark){
-  .ios26-toolbar{background:rgba(30,30,30,.55);border:1px solid rgba(255,255,255,.15);}
-  .active-pill{background:rgba(255,255,255,.18);}
-  .toolbar-item{color:rgba(255,255,255,.85);}
+/* Active state */
+.tab-item.active {
+  color: var(--accent-color, #ff4d5a);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  padding: 8px 16px;
+  box-shadow:
+    0 0 25px rgba(255, 77, 90, 0.45),
+    inset 0 0 8px rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
+.tab-item.active i {
+  transform: scale(1.15);
+  opacity: 1;
+}
+
+/* Tap / hover feedback */
+.tab-item:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
+@media (hover: hover) {
+  .tab-item:hover {
+    color: var(--accent-color, #ff4d5a);
+  }
+}
+
+/* Mobile width adjustment */
+@media (max-width: 400px) {
+  .liquid-toolbar {
+    width: calc(100% - 24px);
+    padding: 8px 10px;
+  }
+  .tab-item span {
+    font-size: 0.75rem;
+  }
+}
 /* ======================================== */
 /* == President Section – Onyx Bubble Glass == */
 /* ======================================== */
