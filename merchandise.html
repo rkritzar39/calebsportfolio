@@ -72,32 +72,154 @@
     <script src="settings.js"></script>
     <script src="merchandise.js"></script> 
 
-    <!-- iOS 19 Liquid Glass Toolbar -->
-<nav class="ios19-toolbar">
-  <a href="index.html" class="tab-item" data-page="home">
-    <i class="fa-solid fa-house"></i>
-    <span>Home</span>
+   <!-- iOS 19 Liquid Bubble Toolbar -->
+<nav class="ios19-bubble-toolbar" role="tablist" aria-label="Primary">
+  <a class="tab" href="index.html" data-accent="#ff3b30" role="tab" aria-selected="false">
+    <i class="fa-solid fa-house"></i><span>Home</span>
   </a>
-  <a href="merchandise.html" class="tab-item" data-page="merch">
-    <i class="fa-solid fa-bag-shopping"></i>
-    <span>Merch</span>
+  <a class="tab" href="merchandise.html" data-accent="#34c759" role="tab" aria-selected="false">
+    <i class="fa-solid fa-bag-shopping"></i><span>Merch</span>
   </a>
-  <a href="settings.html" class="tab-item" data-page="settings">
-    <i class="fa-solid fa-gear"></i>
-    <span>Settings</span>
+  <a class="tab" href="settings.html" data-accent="#0a84ff" role="tab" aria-selected="false">
+    <i class="fa-solid fa-gear"></i><span>Settings</span>
   </a>
+
+  <!-- The draggable liquid capsule -->
+  <div class="bubble-capsule" aria-hidden="true"></div>
 </nav>
 
-<!-- Font Awesome for icons -->
+<!-- Icons -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" defer></script>
 
 <script>
-  // Auto-detect current page and highlight active tab
-  const currentPage = window.location.pathname.split("/").pop();
-  document.querySelectorAll(".tab-item").forEach(item => {
-    const page = item.getAttribute("href");
-    if (currentPage === page) item.classList.add("active");
+/* ===============================
+   iOS 19 Liquid Bubble Controller
+   =============================== */
+(() => {
+  const toolbar = document.querySelector('.ios19-bubble-toolbar');
+  const tabs = [...toolbar.querySelectorAll('.tab')];
+  const capsule = toolbar.querySelector('.bubble-capsule');
+
+  // Active by URL
+  const current = location.pathname.split('/').pop() || 'index.html';
+  let activeIndex = Math.max(0, tabs.findIndex(t => t.getAttribute('href') === current));
+  if (activeIndex < 0) activeIndex = 0;
+
+  // Layout helpers
+  const rects = () => tabs.map(t => t.getBoundingClientRect());
+  const tw = () => toolbar.getBoundingClientRect().width;
+  const capW = () => Math.min(148, Math.max(120, Math.floor(tw()/tabs.length - 16)));
+  const capH = 46;
+
+  // Place capsule under active tab
+  function placeCapsule(index, animate=true) {
+    const R = rects();
+    const r = R[index];
+    const left = r.left - toolbar.getBoundingClientRect().left + r.width/2 - capW()/2;
+    capsule.style.setProperty('--cap-x', `${left}px`);
+    capsule.style.setProperty('--cap-w', `${capW()}px`);
+    capsule.style.setProperty('--cap-h', `${capH}px`);
+    capsule.style.setProperty('--cap-accent', tabs[index].dataset.accent || '#0a84ff');
+
+    tabs.forEach((t,i) => {
+      t.classList.toggle('active', i === index);
+      t.setAttribute('aria-selected', i === index ? 'true' : 'false');
+    });
+
+    if (animate) {
+      capsule.classList.remove('pop');
+      // Force reflow to restart animation
+      void capsule.offsetWidth;
+      capsule.classList.add('pop');
+    }
+  }
+
+  // Interpolate accent while dragging
+  function lerpColor(a, b, t) {
+    const ah = a.replace('#',''), bh = b.replace('#','');
+    const ar = parseInt(ah.substr(0,2),16), ag = parseInt(ah.substr(2,2),16), ab = parseInt(ah.substr(4,2),16);
+    const br = parseInt(bh.substr(0,2),16), bg = parseInt(bh.substr(2,2),16), bb = parseInt(bh.substr(4,2),16);
+    const rr = Math.round(ar+(br-ar)*t), rg = Math.round(ag+(bg-ag)*t), rb = Math.round(ab+(bb-ab)*t);
+    return `#${rr.toString(16).padStart(2,'0')}${rg.toString(16).padStart(2,'0')}${rb.toString(16).padStart(2,'0')}`;
+  }
+
+  // Drag logic
+  let dragging = false, startX = 0, startLeft = 0;
+
+  function xToIndex(x) {
+    const R = rects();
+    const centers = R.map(r => r.left + r.width/2);
+    let nearest = 0, min = Infinity;
+    centers.forEach((c,i) => { const d = Math.abs(x - c); if (d < min) { min = d; nearest = i; } });
+    return nearest;
+  }
+
+  function onDown(e){
+    const p = e.touches ? e.touches[0] : e;
+    dragging = true;
+    startX = p.clientX;
+    startLeft = parseFloat(getComputedStyle(capsule).getPropertyValue('--cap-x')) || 0;
+    capsule.classList.add('dragging');
+    e.preventDefault();
+  }
+  function onMove(e){
+    if (!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    const dx = p.clientX - startX;
+    const maxLeft = tw() - capW();
+    let newLeft = Math.min(maxLeft, Math.max(0, startLeft + dx));
+    capsule.style.setProperty('--cap-x', `${newLeft}px`);
+
+    // Determine fractional position between tabs for color crossfade
+    const R = rects();
+    const centers = R.map(r => r.left + r.width/2 - toolbar.getBoundingClientRect().left);
+    // Find surrounding indices
+    let i = centers.findIndex(c => newLeft + capW()/2 < c);
+    if (i === -1) i = centers.length - 1;
+    const prev = Math.max(0, i-1), next = i;
+    const a = centers[prev], b = centers[next];
+    const t = b === a ? 0 : (newLeft + capW()/2 - a) / (b - a);
+    const ca = tabs[prev].dataset.accent || '#ff3b30';
+    const cb = tabs[next].dataset.accent || '#0a84ff';
+    capsule.style.setProperty('--cap-accent', lerpColor(ca, cb, Math.min(1, Math.max(0, t))));
+  }
+  function onUp(e){
+    if (!dragging) return;
+    dragging = false;
+    capsule.classList.remove('dragging');
+
+    // Snap to nearest tab
+    const centerX = (parseFloat(getComputedStyle(capsule).getPropertyValue('--cap-x')) || 0) + capW()/2 + toolbar.getBoundingClientRect().left;
+    const idx = xToIndex(centerX);
+    activeIndex = idx;
+    placeCapsule(idx, true);
+
+    // Navigate after snap
+    setTimeout(() => { location.href = tabs[idx].getAttribute('href'); }, 140);
+  }
+
+  // Tap -> pop + move
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', (e) => {
+      e.preventDefault();
+      activeIndex = i;
+      placeCapsule(i, true);
+      setTimeout(() => { location.href = t.getAttribute('href'); }, 140);
+    }, {passive:false});
   });
+
+  // Pointer hooks
+  capsule.addEventListener('touchstart', onDown, {passive:false});
+  capsule.addEventListener('mousedown', onDown);
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchend', onUp);
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('resize', () => placeCapsule(activeIndex, false));
+
+  // Initial paint
+  requestAnimationFrame(() => placeCapsule(activeIndex, false));
+})();
 </script>
 </body>
 </html>
