@@ -72,95 +72,131 @@
     <script src="settings.js"></script>
     <script src="merchandise.js"></script> 
 
-   <nav class="ios19-bubblebar" role="tablist" aria-label="Primary Navigation">
+      <!-- Bottom Liquid Glass Toolbar -->
+<nav class="ios19-bubblebar" role="tablist" aria-label="Primary navigation">
   <a class="tab" href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
   <a class="tab" href="merchandise.html"><i class="fa-solid fa-bag-shopping"></i><span>Merch</span></a>
   <a class="tab" href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
-  <div class="bubble"></div>
+  <div class="bubble" aria-hidden="true"></div>
 </nav>
     
 <script>
 (() => {
-  const bar = document.querySelector('.ios19-bubblebar');
-  const tabs = [...bar.querySelectorAll('.tab')];
+  const bar    = document.querySelector('.ios19-bubblebar');
+  const tabs   = [...bar.querySelectorAll('.tab')];
   const bubble = bar.querySelector('.bubble');
-  let active = tabs.findIndex(t => t.href.endsWith(location.pathname.split('/').pop()));
+  const bs     = bubble.style;
+
+  // Determine active tab by URL
+  let active = tabs.findIndex(t => t.getAttribute('href') === (location.pathname.split('/').pop() || 'index.html'));
   if (active < 0) active = 0;
 
-  // cache measurements
+  // Cache rectangles
   let rects = [], barRect;
   const updateRects = () => {
     barRect = bar.getBoundingClientRect();
     rects = tabs.map(t => t.getBoundingClientRect());
   };
-  window.addEventListener('resize', updateRects);
+  window.addEventListener('resize', updateRects, { passive: true });
   updateRects();
 
+  // Move bubble to tab i (auto width, neat side insets)
   const moveBubble = (i, animate = true) => {
     const r = rects[i];
-    const x = r.left - barRect.left + (r.width - bubble.offsetWidth) / 2;
-    bubble.style.setProperty('--x', `${x}px`);
+    const inset = 4; // left/right space so it doesn't touch
+    const x = r.left - barRect.left + inset;
+    const w = r.width - inset*2;
+
+    bs.setProperty('--x', `${x}px`);
+    bs.setProperty('--w', `${w}px`);
     tabs.forEach((t, k) => t.classList.toggle('active', k === i));
-    if (animate) { bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop'); }
+
+    if (animate) {
+      bubble.classList.remove('pop');
+      void bubble.offsetWidth;
+      bubble.classList.add('pop');
+    }
   };
   requestAnimationFrame(() => moveBubble(active, false));
 
-  // drag variables
-  let dragging = false, startX = 0, startLeft = 0, pending = false;
-  let currentLeft = 0;
+  // ----- Drag (optimized, no jank) -----
+  let dragging = false, startX = 0, startLeft = 0, currentLeft = 0;
+  let lastDX = 0, lastT = 0, rafId = null, velocity = 0;
+
+  function applyRefraction() {
+    // Liquid skew/scale based on velocity (GPU transform only)
+    const distort = Math.min(6, Math.abs(velocity) * 0.15);
+    const dir = velocity > 0 ? 1 : -1;
+    bubble.style.transform = `translateZ(0) scale(${1 + Math.abs(velocity) * 0.0006}) skewX(${distort * dir}deg)`;
+    velocity *= 0.85;
+    if (Math.abs(velocity) > 0.2) rafId = requestAnimationFrame(applyRefraction);
+    else bubble.style.transform = '';
+  }
 
   const onDown = e => {
     dragging = true;
-    startX = e.touches ? e.touches[0].clientX : e.clientX;
-    startLeft = parseFloat(bubble.style.getPropertyValue('--x')) || 0;
+    startX = (e.touches ? e.touches[0].clientX : e.clientX);
+    startLeft = parseFloat(bs.getPropertyValue('--x')) || 0;
     bubble.classList.add('drag');
     updateRects();
   };
 
   const onMove = e => {
-    if (!dragging || pending) return;
-    pending = true;
-    requestAnimationFrame(() => {
-      const x = e.touches ? e.touches[0].clientX : e.clientX;
-      const dx = x - startX;
-      const max = bar.offsetWidth - bubble.offsetWidth;
-      currentLeft = Math.max(0, Math.min(max, startLeft + dx));
-      bubble.style.setProperty('--x', `${currentLeft}px`);
+    if (!dragging) return;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    const dx = x - startX;
 
-      // compute highlight without heavy recalcs
-      const center = barRect.left + currentLeft + bubble.offsetWidth / 2;
-      rects.forEach((r, i) => {
-        const diff = Math.abs(center - (r.left + r.width / 2));
-        const hot = Math.max(0, 1 - diff / (r.width * 0.9));
-        tabs[i].style.setProperty('--hot', hot.toFixed(2));
-      });
-      pending = false;
+    const now = performance.now();
+    const dt = now - (lastT || now);
+    velocity = (dx - lastDX) / Math.max(dt, 16); // px/ms
+    lastDX = dx; lastT = now;
+
+    const max = bar.offsetWidth - bubble.offsetWidth - 4;
+    currentLeft = Math.max(4, Math.min(max, startLeft + dx));
+    bs.setProperty('--x', `${currentLeft}px`);
+
+    // Crossfade icons by proximity to bubble center
+    const center = barRect.left + currentLeft + bubble.offsetWidth / 2;
+    rects.forEach((r, i) => {
+      const diff = Math.abs(center - (r.left + r.width / 2));
+      const hot  = Math.max(0, 1 - diff / (r.width * 0.9));
+      tabs[i].style.setProperty('--hot', hot.toFixed(2));
     });
+
+    if (!rafId) rafId = requestAnimationFrame(applyRefraction);
   };
 
   const onUp = () => {
     if (!dragging) return;
     dragging = false;
     bubble.classList.remove('drag');
+    cancelAnimationFrame(rafId); rafId = null;
+    bubble.style.transform = '';
+
+    // Snap to nearest tab center
     const center = barRect.left + currentLeft + bubble.offsetWidth / 2;
-    active = rects.reduce((a, r, i) =>
-      Math.abs(center - (r.left + r.width / 2)) <
-      Math.abs(center - (rects[a].left + rects[a].width / 2)) ? i : a, 0);
+    active = rects.reduce((a, r, i) => {
+      const ca = rects[a].left + rects[a].width / 2;
+      const ci = r.left + r.width / 2;
+      return Math.abs(center - ci) < Math.abs(center - ca) ? i : a;
+    }, 0);
+
     moveBubble(active);
     setTimeout(() => (window.location.href = tabs[active].href), 120);
   };
 
+  // Listeners
   bar.addEventListener('mousedown', onDown);
   bar.addEventListener('touchstart', onDown, { passive: true });
-  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mousemove', onMove, { passive: false });
   window.addEventListener('touchmove', onMove, { passive: true });
-  window.addEventListener('mouseup', onUp);
-  window.addEventListener('touchend', onUp);
+  window.addEventListener('mouseup', onUp, { passive: true });
+  window.addEventListener('touchend', onUp, { passive: true });
 
-  // scroll-hide (lightweight)
+  // Auto-hide on scroll
   let lastScroll = 0;
   window.addEventListener('scroll', () => {
-    const cur = window.scrollY;
+    const cur = window.scrollY || 0;
     if (cur > lastScroll + 8 && cur > 60) bar.classList.add('toolbar-hidden');
     else if (cur < lastScroll - 8 || cur < 60) bar.classList.remove('toolbar-hidden');
     lastScroll = cur;
