@@ -604,151 +604,139 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	cursor: not-allowed;
 }
 
-/* ========================================= */
-/* iOS 19 Liquid Glass Toolbar (Refined v2)  */
-/* ========================================= */
+/* ======================================================= */
+/* === iOS 26 / Apple Music-Style Toolbar (v3 Refined) === */
+/* ======================================================= */
 .ios19-bubblebar {
   position: fixed;
   left: 50%;
-  bottom: 20px;
+  bottom: 1.25rem;
   transform: translateX(-50%);
-  width: min(500px, calc(100% - 42px));
+  width: min(500px, calc(100% - 2.5rem));
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
   align-items: center;
-  padding: 12px 14px;
-  border-radius: 34px;
+  padding: 0.625rem 0.75rem;
+  border-radius: 2rem;
   z-index: 9999;
 
-  /* Modern Apple glass – more translucent, less gray */
-  background: color-mix(in srgb, var(--content-bg, rgba(30,30,30,0.6)) 75%, rgba(255,255,255,0.15));
-  border: 1px solid color-mix(in srgb, var(--border-color, rgba(255,255,255,0.2)) 60%, transparent);
+  /* true frosted glass */
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border-light);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   box-shadow:
-    0 10px 25px color-mix(in srgb, var(--shadow-color, rgba(0,0,0,0.5)) 70%, transparent),
-    inset 0 0 0.5px rgba(255,255,255,0.3);
-  backdrop-filter: blur(28px) saturate(180%) brightness(115%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(115%);
-  transition: transform .5s cubic-bezier(.22,.9,.22,1), opacity .5s ease, background .5s ease;
+    inset 0 0 0 1px rgba(255,255,255,0.15),
+    0 12px 30px rgba(0,0,0,0.25);
+  transition: transform .55s cubic-bezier(.22,.9,.22,1), opacity .55s ease;
 }
 
-.ios19-bubblebar::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(120% 85% at 50% -10%, rgba(255,255,255,.4) 0%, rgba(255,255,255,.1) 50%, transparent 70%);
-  mix-blend-mode: screen;
-  pointer-events: none;
+body.dark-mode .ios19-bubblebar {
+  background: var(--glass-bg-dark);
+  border-color: var(--glass-border-dark);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 14px 36px rgba(0,0,0,0.55);
 }
 
-/* Tabs */
+/* === Tabs === */
 .ios19-bubblebar .tab {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 0.3rem;
   text-decoration: none;
-  color: var(--text-color);
+  color: var(--secondary-text);
   font-weight: 600;
-  font-size: .88rem;
-  letter-spacing: 0.2px;
+  font-size: .85rem;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  transition: color .25s ease, transform .2s ease;
+  transition: color .3s ease, transform .2s ease;
 }
 
 .ios19-bubblebar .tab i {
-  font-size: 1.25rem;
-  transition: transform .25s ease, opacity .25s ease;
+  font-size: 1.2rem;
+  transition: color .3s ease, transform .25s ease;
   opacity: 0.9;
-  filter: drop-shadow(0 1.5px 2px rgba(0,0,0,.25));
 }
 
+/* Active Tab */
 .ios19-bubblebar .tab.active {
   color: var(--accent-color);
 }
 .ios19-bubblebar .tab.active i {
-  transform: translateY(-1px) scale(1.08);
+  color: var(--accent-color);
+  transform: translateY(-1px) scale(1.05);
   opacity: 1;
 }
 
-/* Floating Capsule (the bubble) */
+/* === Bubble Capsule === */
 .bubble {
   --x: 0px;
   --w: 130px;
-  --h: 50px;
-  --glow: 0;
+  --h: 46px;
   position: absolute;
   left: var(--x);
-  bottom: 10px;
+  bottom: 0.4rem;
   width: var(--w);
   height: var(--h);
-  border-radius: 28px;
-  z-index: 3;
-  pointer-events: auto;
-
-  /* Subtle glossy gradient */
-  background: linear-gradient(160deg, rgba(255,255,255,0.25), rgba(255,255,255,0.12) 85%);
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  box-shadow:
-    inset 0 0 0.6px rgba(255,255,255,0.9),
-    inset 0 10px 26px rgba(255,255,255,0.18),
-    0 6px 20px color-mix(in srgb, var(--shadow-color) 55%, transparent);
-  transition: left .22s cubic-bezier(.22,.9,.22,1), transform .25s ease;
-}
-
-/* Inner light layers */
-.bubble .lens, .bubble .rim, .bubble .aura, .bubble .sheen {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
+  border-radius: 2rem;
+  z-index: 1;
   pointer-events: none;
-}
-.bubble .lens {
-  background:
-    radial-gradient(130% 110% at 22% 18%, rgba(255,255,255,.45) 0%, rgba(255,255,255,.18) 38%, rgba(255,255,255,.05) 70%, transparent 100%),
-    linear-gradient(90deg, rgba(255,153,102,.08) 0%, rgba(255,255,255,0) 40%, rgba(120,180,255,.08) 60%, rgba(255,255,255,0) 100%);
-  mix-blend-mode: screen;
-}
-.bubble .rim {
-  box-shadow: inset 0 0 1px rgba(255,255,255,.9), inset 0 14px 28px rgba(255,255,255,.22);
-}
-.bubble .aura {
-  background: radial-gradient(75% 60% at 50% 50%, color-mix(in srgb, var(--accent-color) calc(55% + var(--glow)*30%), transparent) 0%, transparent 70%);
-  filter: blur(12px);
-  opacity: calc(.7 + var(--glow)*.45);
-}
-.bubble .sheen {
-  --tilt: 90deg;
-  background: linear-gradient(var(--tilt), rgba(255,255,255,.26), rgba(255,255,255,.12) 45%, transparent 70%);
-  opacity: .35;
-  filter: blur(6px);
-  mix-blend-mode: screen;
+
+  /* inside inset glass – softly luminous */
+  background: linear-gradient(160deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08) 80%);
+  border: 1px solid color-mix(in srgb, var(--glass-border-light) 60%, transparent);
+  box-shadow:
+    inset 0 0 1px rgba(255,255,255,0.7),
+    inset 0 10px 25px rgba(255,255,255,0.2),
+    0 6px 16px rgba(0,0,0,0.25);
+  transition: left .25s cubic-bezier(.22,.9,.22,1), transform .25s ease;
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
 }
 
-/* Drag & Pop */
-.bubble.drag { transform: scale(1.02); }
+/* keep even inset look */
+.ios19-bubblebar {
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+/* === Drag Glow and Pop === */
+.bubble.drag {
+  transform: scale(1.02);
+}
 @keyframes pop {
   0% { transform: scale(1); }
   50% { transform: scale(1.06); }
   100% { transform: scale(1); }
 }
-.bubble.pop { animation: pop .18s ease-out; }
+.bubble.pop {
+  animation: pop .18s ease-out;
+}
 
-/* Hide on Scroll */
+/* === Scroll Hide === */
 .toolbar-hidden {
   transform: translate(-50%, 110%) scale(0.98);
   opacity: 0.6;
 }
 
-/* Small screens fix */
-@media (max-width: 400px) {
-  .ios19-bubblebar { width: calc(100% - 24px); padding: 10px; }
-  .bubble { bottom: 8px; --w: 118px; --h: 48px; }
-  .ios19-bubblebar .tab span { font-size: .82rem; }
+/* Small Screens */
+@media (max-width: 430px) {
+  .ios19-bubblebar {
+    width: calc(100% - 1.25rem);
+    padding: 0.5rem 0.65rem;
+  }
+  .bubble {
+    bottom: 0.35rem;
+    --w: 115px;
+    --h: 42px;
+  }
+  .ios19-bubblebar .tab span {
+    font-size: .78rem;
+  }
 }
 
 /* ======================================== */
