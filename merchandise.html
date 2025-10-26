@@ -72,117 +72,89 @@
     <script src="settings.js"></script>
     <script src="merchandise.js"></script> 
 
-   <!-- iOS 19 Toolbar -->
-<nav class="ios19-bubblebar" role="tablist" aria-label="Primary Navigation">
+   <nav class="ios19-bubblebar" role="tablist" aria-label="Primary Navigation">
   <a class="tab" href="index.html"><i class="fa-solid fa-house"></i><span>Home</span></a>
   <a class="tab" href="merchandise.html"><i class="fa-solid fa-bag-shopping"></i><span>Merch</span></a>
   <a class="tab" href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
-
-  <div class="bubble" aria-hidden="true">
-    <div class="lens"></div>
-    <div class="rim"></div>
-    <div class="aura"></div>
-    <div class="sheen"></div>
-  </div>
+  <div class="bubble"></div>
 </nav>
-
-<!-- Toolbar Script -->
+    
 <script>
 (() => {
-  const bar  = document.querySelector('.ios19-bubblebar');
+  const bar = document.querySelector('.ios19-bubblebar');
   const tabs = [...bar.querySelectorAll('.tab')];
-  const bub  = bar.querySelector('.bubble');
-  const sheen = bub.querySelector('.sheen');
-
-  // Active tab based on page
-  const current = location.pathname.split('/').pop() || 'index.html';
-  let active = Math.max(0, tabs.findIndex(t => t.getAttribute('href') === current));
+  const bubble = bar.querySelector('.bubble');
+  let active = tabs.findIndex(t => t.href.endsWith(location.pathname.split('/').pop()));
   if (active < 0) active = 0;
 
-  const BR = () => bar.getBoundingClientRect();
-  const TR = () => tabs.map(t => t.getBoundingClientRect());
-  const capW = () => parseFloat(getComputedStyle(bub).getPropertyValue('--w')) || 128;
-  const snapX = (i) => {
-    const r = TR()[i], base = BR();
-    return r.left - base.left + r.width/2 - capW()/2;
+  const bounds = () => tabs.map(t => t.getBoundingClientRect());
+  const base = () => bar.getBoundingClientRect();
+
+  const moveBubble = (i, animate = true) => {
+    const rects = bounds();
+    const r = rects[i];
+    const b = base();
+    const x = r.left - b.left + (r.width - bubble.offsetWidth) / 2;
+    bubble.style.setProperty('--x', `${x}px`);
+    tabs.forEach((t, k) => t.classList.toggle('active', k === i));
+    if (animate) { bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop'); }
+  };
+  requestAnimationFrame(() => moveBubble(active, false));
+
+  // drag logic
+  let dragging = false, startX = 0, startLeft = 0;
+  const onDown = e => {
+    dragging = true;
+    startX = e.touches ? e.touches[0].clientX : e.clientX;
+    startLeft = parseFloat(bubble.style.getPropertyValue('--x')) || 0;
+    bubble.classList.add('drag');
+  };
+  const onMove = e => {
+    if (!dragging) return;
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const dx = x - startX;
+    const barW = bar.offsetWidth - bubble.offsetWidth;
+    const newLeft = Math.max(0, Math.min(barW, startLeft + dx));
+    bubble.style.setProperty('--x', `${newLeft}px`);
+
+    // crossfade icons
+    const rects = bounds();
+    rects.forEach((r, i) => {
+      const center = r.left + r.width / 2;
+      const diff = Math.abs((bar.getBoundingClientRect().left + newLeft + bubble.offsetWidth / 2) - center);
+      const hot = Math.max(0, 1 - diff / (r.width * 0.9));
+      tabs[i].style.setProperty('--hot', hot.toFixed(2));
+    });
+  };
+  const onUp = () => {
+    if (!dragging) return;
+    dragging = false;
+    bubble.classList.remove('drag');
+    const rects = bounds();
+    const bubbleCenter = bar.getBoundingClientRect().left + parseFloat(bubble.style.getPropertyValue('--x')) + bubble.offsetWidth / 2;
+    active = rects.reduce((a, r, i) => Math.abs(bubbleCenter - (r.left + r.width / 2)) < Math.abs(bubbleCenter - (rects[a].left + rects[a].width / 2)) ? i : a, 0);
+    moveBubble(active);
+    setTimeout(() => location.href = tabs[active].href, 140);
   };
 
-  function position(i, animate = true){
-    bub.style.setProperty('--x', `${snapX(i)}px`);
-    tabs.forEach((t,k)=>t.classList.toggle('active',k===i));
-    if (animate){ bub.classList.remove('pop'); void bub.offsetWidth; bub.classList.add('pop'); }
+  bar.addEventListener('mousedown', onDown);
+  bar.addEventListener('touchstart', onDown, {passive: true});
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('touchmove', onMove, {passive: true});
+  window.addEventListener('mouseup', onUp);
+  window.addEventListener('touchend', onUp);
+
+  // scroll-hide effect
+  let lastScroll = 0, ticking = false;
+  function handleScroll() {
+    const cur = window.scrollY;
+    const delta = cur - lastScroll;
+    if (delta > 8 && cur > 60) bar.classList.add("toolbar-hidden");
+    else if (delta < -8 || cur < 60) bar.classList.remove("toolbar-hidden");
+    lastScroll = cur; ticking = false;
   }
-
-  let dragging=false,sx=0,sl=0,lastX=0,lastT=0;
-
-  function inBubble(x,y){const r=bub.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;}
-
-  function onDown(e){
-    const p=e.touches?e.touches[0]:e;
-    if(!inBubble(p.clientX,p.clientY))return;
-    dragging=true;sx=lastX=p.clientX;sl=parseFloat(getComputedStyle(bub).getPropertyValue('--x'))||0;
-    lastT=performance.now();bub.classList.add('drag');e.preventDefault();
-  }
-  function onMove(e){
-    if(!dragging)return;
-    const p=e.touches?e.touches[0]:e;
-    const dx=p.clientX-sx;
-    const maxL=BR().width-capW();
-    const nl=Math.min(maxL,Math.max(0,sl+dx));
-    bub.style.setProperty('--x',`${nl}px`);
-    const now=performance.now();
-    const v=Math.abs(p.clientX-lastX)/Math.max(1,now-lastT);
-    lastX=p.clientX;lastT=now;
-    const glow=Math.min(1,v*0.45);
-    bub.style.setProperty('--glow',glow.toFixed(2));
-    const tilt=(dx>0?12:-12)*Math.min(1,Math.abs(dx)/80);
-    sheen.style.setProperty('--tilt',`${90+tilt}deg`);
-    e.preventDefault();
-  }
-  function onUp(){
-    if(!dragging)return;
-    dragging=false;bub.classList.remove('drag');
-    const base=BR();
-    const center=(parseFloat(getComputedStyle(bub).getPropertyValue('--x'))||0)+capW()/2+base.left;
-    const centers=TR().map(r=>r.left+r.width/2);
-    active=centers.reduce((a,b,i)=>Math.abs(center-b)<Math.abs(center-centers[a])?i:a,0);
-    position(active,true);
-    bub.style.setProperty('--glow','0');
-    sheen.style.removeProperty('--tilt');
-    setTimeout(()=>location.href=tabs[active].href,140);
-  }
-
-  tabs.forEach((t,i)=>{
-    t.addEventListener('click',e=>{
-      e.preventDefault();
-      active=i;position(i,true);
-      setTimeout(()=>location.href=t.href,140);
-    },{passive:false});
-  });
-
-  bar.addEventListener('mousedown',onDown);
-  bar.addEventListener('touchstart',onDown,{passive:false});
-  window.addEventListener('mousemove',onMove);
-  window.addEventListener('touchmove',onMove,{passive:false});
-  window.addEventListener('mouseup',onUp);
-  window.addEventListener('touchend',onUp);
-  window.addEventListener('resize',()=>position(active,false));
-  requestAnimationFrame(()=>position(active,false));
-
-  /* Apple-style auto-hide on scroll */
-  let lastScroll=0,ticking=false;
-  function handleScroll(){
-    const cur=window.scrollY||document.documentElement.scrollTop;
-    const delta=cur-lastScroll;
-    if(delta>8&&cur>60){
-      bar.classList.add("toolbar-hidden");
-    } else if(delta<-8||cur<60){
-      bar.classList.remove("toolbar-hidden");
-    }
-    lastScroll=cur;ticking=false;
-  }
-  window.addEventListener("scroll",()=>{
-    if(!ticking){window.requestAnimationFrame(handleScroll);ticking=true;}
+  window.addEventListener("scroll", () => {
+    if (!ticking) { window.requestAnimationFrame(handleScroll); ticking = true; }
   });
 })();
 </script>
