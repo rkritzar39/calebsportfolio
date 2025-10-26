@@ -605,8 +605,9 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 }
 
 /* ======================================================= */
-/* === iOS 26 / Apple Music-Style Toolbar (v3 Refined) === */
+/* === iOS 26 Toolbar – Onyx Glass Unified (v4) =========== */
 /* ======================================================= */
+
 .ios19-bubblebar {
   position: fixed;
   left: 50%;
@@ -616,21 +617,19 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  padding: 0.625rem 0.75rem;
+  padding: 0.65rem 0.75rem;
   border-radius: 2rem;
   z-index: 9999;
 
-  /* true frosted glass */
   background: var(--glass-bg-light);
   border: 1px solid var(--glass-border-light);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,0.15),
-    0 12px 30px rgba(0,0,0,0.25);
+    0 12px 28px rgba(0,0,0,0.25);
   transition: transform .55s cubic-bezier(.22,.9,.22,1), opacity .55s ease;
 }
-
 body.dark-mode .ios19-bubblebar {
   background: var(--glass-bg-dark);
   border-color: var(--glass-border-dark);
@@ -639,105 +638,74 @@ body.dark-mode .ios19-bubblebar {
     0 14px 36px rgba(0,0,0,0.55);
 }
 
-/* === Tabs === */
+/* Tabs */
 .ios19-bubblebar .tab {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.3rem;
+  justify-content: center;
+  gap: 0.35rem;
   text-decoration: none;
-  color: var(--secondary-text);
   font-weight: 600;
-  font-size: .85rem;
+  font-size: 0.86rem;
+  color: var(--secondary-text);
+  min-height: 3.2rem;
   -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  transition: color .3s ease, transform .2s ease;
+  transition: color 0.3s ease;
+  --hot: 0; /* JS updates this for crossfade */
+  color: color-mix(in srgb, var(--accent-color) calc(var(--hot) * 100%), var(--secondary-text));
 }
-
 .ios19-bubblebar .tab i {
   font-size: 1.2rem;
-  transition: color .3s ease, transform .25s ease;
-  opacity: 0.9;
+  color: currentColor;
+  transition: color 0.3s ease, transform 0.25s ease;
 }
+.ios19-bubblebar .tab.active { --hot: 1; }
+.ios19-bubblebar .tab.active i { transform: translateY(-1px) scale(1.05); }
 
-/* Active Tab */
-.ios19-bubblebar .tab.active {
-  color: var(--accent-color);
-}
-.ios19-bubblebar .tab.active i {
-  color: var(--accent-color);
-  transform: translateY(-1px) scale(1.05);
-  opacity: 1;
-}
-
-/* === Bubble Capsule === */
+/* Capsule bubble */
 .bubble {
   --x: 0px;
-  --w: 130px;
-  --h: 46px;
+  --w: 128px;
   position: absolute;
+  top: 6px;
+  bottom: 6px;
   left: var(--x);
-  bottom: 0.4rem;
   width: var(--w);
-  height: var(--h);
-  border-radius: 2rem;
+  border-radius: 999px;
   z-index: 1;
   pointer-events: none;
 
-  /* inside inset glass – softly luminous */
-  background: linear-gradient(160deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08) 80%);
-  border: 1px solid color-mix(in srgb, var(--glass-border-light) 60%, transparent);
-  box-shadow:
-    inset 0 0 1px rgba(255,255,255,0.7),
-    inset 0 10px 25px rgba(255,255,255,0.2),
-    0 6px 16px rgba(0,0,0,0.25);
-  transition: left .25s cubic-bezier(.22,.9,.22,1), transform .25s ease;
+  background: linear-gradient(160deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1) 80%);
+  border: 1px solid var(--glass-border-light);
   backdrop-filter: blur(18px) saturate(180%);
   -webkit-backdrop-filter: blur(18px) saturate(180%);
+  box-shadow:
+    inset 0 0 1px rgba(255,255,255,0.8),
+    inset 0 10px 26px rgba(255,255,255,0.18),
+    0 6px 18px rgba(0,0,0,0.3);
+  transition: left .25s cubic-bezier(.22,.9,.22,1), transform .25s ease;
+}
+body.dark-mode .bubble {
+  border-color: var(--glass-border-dark);
+  box-shadow:
+    inset 0 0 1px rgba(255,255,255,0.6),
+    inset 0 10px 26px rgba(255,255,255,0.12),
+    0 8px 22px rgba(0,0,0,0.6);
 }
 
-/* keep even inset look */
-.ios19-bubblebar {
-  padding-top: 0.6rem;
-  padding-bottom: 0.6rem;
-}
-
-/* === Drag Glow and Pop === */
-.bubble.drag {
-  transform: scale(1.02);
-}
-@keyframes pop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-  100% { transform: scale(1); }
-}
-.bubble.pop {
-  animation: pop .18s ease-out;
-}
-
-/* === Scroll Hide === */
+/* Scroll hide */
 .toolbar-hidden {
   transform: translate(-50%, 110%) scale(0.98);
   opacity: 0.6;
 }
 
-/* Small Screens */
-@media (max-width: 430px) {
-  .ios19-bubblebar {
-    width: calc(100% - 1.25rem);
-    padding: 0.5rem 0.65rem;
-  }
-  .bubble {
-    bottom: 0.35rem;
-    --w: 115px;
-    --h: 42px;
-  }
-  .ios19-bubblebar .tab span {
-    font-size: .78rem;
-  }
-}
+/* Drag + Pop feedback */
+.bubble.drag { transform: scale(1.02); }
+@keyframes pop { 0%{transform:scale(1);}50%{transform:scale(1.06);}100%{transform:scale(1);} }
+.bubble.pop { animation: pop .18s ease-out; }
 
 /* ======================================== */
 /* == President Section – Onyx Bubble Glass == */
