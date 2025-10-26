@@ -2282,23 +2282,23 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 }
 
 /* ======================================== */
-/* Business Info Section Styles (Onyx Refined – Stable Fixed) */
+/* Business Info Section Styles (Onyx Refined) */
 /* ======================================== */
 
 #business-info-management {
-	background-color: transparent;
-	border: none;
-	box-shadow: none;
-	padding: 0;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
 }
 
 #business-info-management h3 {
-	margin-bottom: 32px;
-	font-size: 1.6em;
-	font-weight: 700;
-	text-align: center;
-	color: var(--text-color);
-	letter-spacing: 0.3px;
+    margin-bottom: 32px;
+    font-size: 1.6em;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-color);
+    letter-spacing: 0.3px;
 }
 
 /* Card styling for each major group */
@@ -2393,10 +2393,9 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	margin-top: 20px;
 }
 
-/* Each hour entry */
-#business-info-management .special-hours-list .hour-entry {
+.special-hours-list .hour-entry {
 	background: color-mix(in srgb, var(--bg-color) 92%, transparent);
-	padding: 50px 22px 22px; /* adds top padding for the remove button */
+	padding: 22px;
 	border-radius: var(--border-radius-md);
 	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
 	display: flex;
@@ -2405,82 +2404,52 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	align-items: flex-end;
 	position: relative;
 	box-shadow: 0 3px 10px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-	transition: box-shadow 0.25s ease, transform 0.25s ease;
-}
-#business-info-management .special-hours-list .hour-entry:hover {
-	transform: translateY(-1px);
-	box-shadow: 0 4px 14px color-mix(in srgb, var(--shadow-color) 35%, transparent);
 }
 
-/* Hour entry inner form layout */
-#business-info-management .special-hours-list .hour-entry .form-group {
+.special-hours-list .hour-entry .form-group {
 	flex: 1 1 200px;
 	min-width: 180px;
 }
-#business-info-management .special-hours-list .hour-entry .form-group:has(label[for*="-label-"]) {
+.special-hours-list .hour-entry .form-group:has(label[for*="-label-"]) {
 	flex-basis: 100%;
 }
-#business-info-management .special-hours-list .hour-entry .time-inputs {
+.special-hours-list .hour-entry .time-inputs {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	flex: 2 1 250px;
 }
-#business-info-management .special-hours-list .hour-entry .time-inputs input[type="time"] {
+.special-hours-list .hour-entry .time-inputs input[type="time"] {
 	width: auto;
 	flex-grow: 1;
 }
-#business-info-management .special-hours-list .hour-entry .form-group.checkbox-group {
+.special-hours-list .hour-entry .form-group.checkbox-group {
 	flex: 1 1 auto;
 	padding-bottom: 10px;
 }
 
-/* ✅ Safe Remove “X” Button (no layout conflicts) */
-#business-info-management .special-hours-list .hour-entry .remove-hour-button {
+.special-hours-list .hour-entry .remove-hour-button {
 	position: absolute;
 	top: 12px;
 	right: 12px;
-	width: 32px;
-	height: 32px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 1.2rem;
-	line-height: 1;
+	background: transparent;
+	border: none;
 	color: var(--secondary-text);
-	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
-	border-radius: 50%;
 	cursor: pointer;
-	z-index: 5;
-	backdrop-filter: blur(10px) saturate(180%);
-	-webkit-backdrop-filter: blur(10px) saturate(180%);
-	opacity: 0.85;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-	transition: all 0.25s ease;
+	padding: 5px;
+	font-size: 1.4rem;
+	line-height: 1;
+	opacity: 0.65;
+	transition: opacity 0.2s, color 0.2s, transform 0.2s ease;
 }
-
-#business-info-management .special-hours-list .hour-entry .remove-hour-button:hover {
-	background: rgba(255, 59, 48, 0.15);
+.special-hours-list .hour-entry .remove-hour-button:hover {
+	opacity: 1;
 	color: var(--color-danger);
 	transform: scale(1.12);
-	opacity: 1;
-	box-shadow: 0 0 10px rgba(255, 59, 48, 0.25);
-}
-
-#business-info-management .special-hours-list .hour-entry .remove-hour-button:active {
-	transform: scale(0.95);
-	opacity: 0.9;
-}
-
-/* prevent icon inside from blocking click */
-#business-info-management .special-hours-list .hour-entry .remove-hour-button i {
-	pointer-events: none;
 }
 
 /* --- Add Button Styling --- */
-#add-holiday-button,
-#add-temporary-button {
+#add-holiday-button, #add-temporary-button {
 	margin-top: 22px;
 }
 
