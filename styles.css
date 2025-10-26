@@ -747,6 +747,16 @@ body.dark-mode .bubble {
   .ios19-bubblebar .tab span { font-size: .80rem; }
   .bubble               { top: 6px; bottom: 6px; }
 }
+
+@media (min-width: 768px) {
+  .ios19-bubblebar {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
 /* ======================================== */
 /* == President Section – Onyx Bubble Glass == */
 /* ======================================== */
