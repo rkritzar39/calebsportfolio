@@ -368,5 +368,112 @@
 
 <!-- Icons -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" defer></script>
+
+    <script>
+(() => {
+  const bar = document.querySelector('.ios19-bubble-toolbar');
+  const tabs = [...bar.querySelectorAll('.tab')];
+  const cap  = bar.querySelector('.bubble-capsule');
+  const sheen = cap.querySelector('.sheen');
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent-color') || '#0a84ff';
+
+  // highlight current page
+  const current = location.pathname.split('/').pop() || 'index.html';
+  let active = Math.max(0, tabs.findIndex(t => t.getAttribute('href') === current));
+  if (active < 0) active = 0;
+
+  const Rbar = () => bar.getBoundingClientRect();
+  const Rt   = () => tabs.map(t => t.getBoundingClientRect());
+  const capW = () => Math.min(148, Math.max(120, Math.floor(Rbar().width / tabs.length - 16)));
+  const capH = 46;
+
+  // place capsule under tab i
+  function place(i, animate=true){
+    const rr = Rt()[i]; const base = Rbar();
+    const x = rr.left - base.left + rr.width/2 - capW()/2;
+    cap.style.setProperty('--cap-x', `${x}px`);
+    cap.style.setProperty('--cap-w', `${capW()}px`);
+    cap.style.setProperty('--cap-h', `${capH}px`);
+    cap.style.setProperty('--cap-accent', accent);
+
+    tabs.forEach((t,k)=>{ t.classList.toggle('active',k===i); t.setAttribute('aria-selected', k===i); });
+    if (animate){ cap.classList.remove('pop'); void cap.offsetWidth; cap.classList.add('pop'); }
+  }
+
+  // ----- Dragging -----
+  let dragging=false, startX=0, startLeft=0, lastX=0, lastT=0;
+
+  function hitInsideCap(pX, pY){
+    const r = cap.getBoundingClientRect();
+    return pX>=r.left && pX<=r.right && pY>=r.top && pY<=r.bottom;
+  }
+
+  function down(e){
+    const p = e.touches ? e.touches[0] : e;
+    // only start if pointer is inside the capsule
+    if (!hitInsideCap(p.clientX, p.clientY)) return;
+    dragging = true; startX = lastX = p.clientX; lastT = performance.now();
+    startLeft = parseFloat(getComputedStyle(cap).getPropertyValue('--cap-x')) || 0;
+    cap.classList.add('dragging');
+    e.preventDefault();
+  }
+
+  function move(e){
+    if (!dragging) return;
+    const p = e.touches ? e.touches[0] : e;
+    const dx = p.clientX - startX;
+    const maxL = Rbar().width - capW();
+    const newLeft = Math.min(maxL, Math.max(0, startLeft + dx));
+    cap.style.setProperty('--cap-x', `${newLeft}px`);
+
+    // velocity -> glow
+    const now = performance.now();
+    const v = Math.abs(p.clientX - lastX) / Math.max(1, (now - lastT)); // px/ms
+    lastX = p.clientX; lastT = now;
+    const glow = Math.min(1, v * 0.45);
+    cap.style.setProperty('--cap-glow', glow.toFixed(2));
+
+    // tilt sheen slightly toward movement direction
+    const tilt = (dx > 0 ? 12 : -12) * Math.min(1, Math.abs(dx)/80);
+    sheen.style.setProperty('--tilt', `${90 + tilt}deg`);
+    e.preventDefault();
+  }
+
+  function up(){
+    if (!dragging) return;
+    dragging=false; cap.classList.remove('dragging');
+    // snap to nearest tab by center
+    const base = Rbar();
+    const center = (parseFloat(getComputedStyle(cap).getPropertyValue('--cap-x')) || 0) + capW()/2 + base.left;
+    const centers = Rt().map(r => r.left + r.width/2);
+    active = centers.reduce((a,b,i)=>Math.abs(center-b)<Math.abs(center-centers[a])?i:a,0);
+    place(active, true);
+    cap.style.setProperty('--cap-glow','0');
+    sheen.style.removeProperty('--tilt');
+    setTimeout(()=>location.href = tabs[active].href, 140);
+  }
+
+  // Click to move
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click', e => {
+      e.preventDefault();
+      active=i; place(i,true);
+      setTimeout(()=>location.href=t.href,140);
+    }, {passive:false});
+  });
+
+  // Listen on the WHOLE BAR so dragging always works
+  bar.addEventListener('mousedown', down);
+  bar.addEventListener('touchstart', down, {passive:false});
+  window.addEventListener('mousemove', move);
+  window.addEventListener('touchmove', move, {passive:false});
+  window.addEventListener('mouseup', up);
+  window.addEventListener('touchend', up);
+  window.addEventListener('resize', () => place(active,false));
+
+  // initial paint
+  requestAnimationFrame(()=>place(active,false));
+})();
+</script>
 </body>
 </html>
