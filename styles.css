@@ -605,7 +605,7 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 }
 
 /* ======================================================= */
-/* === iOS 26 Toolbar – Onyx Glass Unified (v4) =========== */
+/* === iOS-26 Toolbar – Onyx Glass Unified (FINAL) ======= */
 /* ======================================================= */
 
 .ios19-bubblebar {
@@ -617,10 +617,11 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  padding: 0.65rem 0.75rem;
+  padding: 0.65rem 0.75rem;          /* inner glass padding */
   border-radius: 2rem;
   z-index: 9999;
 
+  /* Use your Onyx glass variables */
   background: var(--glass-bg-light);
   border: 1px solid var(--glass-border-light);
   backdrop-filter: var(--glass-blur);
@@ -638,7 +639,7 @@ body.dark-mode .ios19-bubblebar {
     0 14px 36px rgba(0,0,0,0.55);
 }
 
-/* Tabs */
+/* Tabs (color crossfades via --hot that JS drives 0..1) */
 .ios19-bubblebar .tab {
   position: relative;
   z-index: 2;
@@ -647,66 +648,105 @@ body.dark-mode .ios19-bubblebar {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
+  min-height: 3.2rem;                /* ensures icon+label fit inside capsule */
   text-decoration: none;
   font-weight: 600;
   font-size: 0.86rem;
-  color: var(--secondary-text);
-  min-height: 3.2rem;
   -webkit-tap-highlight-color: transparent;
-  transition: color 0.3s ease;
-  --hot: 0; /* JS updates this for crossfade */
+  user-select: none;
+
+  /* crossfade from secondary -> accent as the bubble approaches */
+  --hot: 0;
   color: color-mix(in srgb, var(--accent-color) calc(var(--hot) * 100%), var(--secondary-text));
+  transition: color 0.25s ease;
 }
 .ios19-bubblebar .tab i {
   font-size: 1.2rem;
   color: currentColor;
-  transition: color 0.3s ease, transform 0.25s ease;
+  transition: color 0.25s ease, transform 0.25s ease;
 }
-.ios19-bubblebar .tab.active { --hot: 1; }
-.ios19-bubblebar .tab.active i { transform: translateY(-1px) scale(1.05); }
+.ios19-bubblebar .tab.active      { --hot: 1; }
+.ios19-bubblebar .tab.active i    { transform: translateY(-1px) scale(1.05); }
 
-/* Capsule bubble */
+/* Capsule – fully covers icon+label of active tab, evenly inset from bar */
 .bubble {
-  --x: 0px;
-  --w: 128px;
+  --x: 0px;                  /* left (JS) */
+  --w: 120px;                /* width (JS) */
   position: absolute;
-  top: 6px;
-  bottom: 6px;
+  top: 6px;                  /* neat inset from top edge */
+  bottom: 6px;               /* neat inset from bottom edge (auto height) */
   left: var(--x);
   width: var(--w);
   border-radius: 999px;
-  z-index: 1;
+  z-index: 1;                /* under text/icons, above glass */
   pointer-events: none;
+  overflow: hidden;
 
-  background: linear-gradient(160deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1) 80%);
+  /* neutral glass; color lives on icon/text */
+  background: linear-gradient(160deg, rgba(255,255,255,0.25), rgba(255,255,255,0.10) 85%);
   border: 1px solid var(--glass-border-light);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   box-shadow:
-    inset 0 0 1px rgba(255,255,255,0.8),
-    inset 0 10px 26px rgba(255,255,255,0.18),
-    0 6px 18px rgba(0,0,0,0.3);
-  transition: left .25s cubic-bezier(.22,.9,.22,1), transform .25s ease;
+    inset 0 0 1px rgba(255,255,255,0.80),
+    inset 0 10px 24px rgba(255,255,255,0.18),
+    0 6px 18px rgba(0,0,0,0.28);
+
+  transition:
+    left .25s cubic-bezier(.22,.9,.22,1),
+    width .25s cubic-bezier(.22,.9,.22,1),
+    transform .22s ease;
 }
 body.dark-mode .bubble {
   border-color: var(--glass-border-dark);
   box-shadow:
-    inset 0 0 1px rgba(255,255,255,0.6),
+    inset 0 0 1px rgba(255,255,255,0.60),
     inset 0 10px 26px rgba(255,255,255,0.12),
-    0 8px 22px rgba(0,0,0,0.6);
+    0 8px 22px rgba(0,0,0,0.60);
 }
 
-/* Scroll hide */
+/* Liquid “magnify” illusion: pseudo-layer + highlight */
+.bubble::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: inherit;                 /* inherits glass tones */
+  transform: scale(1.15);              /* slight magnification */
+  filter: brightness(1.25) saturate(130%) blur(8px);
+  transform-origin: center;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(130% 120% at 25% 25%, rgba(255,255,255,.40) 0%, rgba(255,255,255,.15) 50%, transparent 100%),
+    linear-gradient(160deg, rgba(255,255,255,.15), rgba(255,255,255,0) 70%);
+  mix-blend-mode: screen;
+  opacity: .5;
+  pointer-events: none;
+}
+
+/* Interactions */
+.bubble.drag { transform: scale(1.02); }
+@keyframes pop { 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
+.bubble.pop  { animation: pop .18s ease-out; }
+
+/* Auto-hide on scroll */
 .toolbar-hidden {
   transform: translate(-50%, 110%) scale(0.98);
   opacity: 0.6;
 }
 
-/* Drag + Pop feedback */
-.bubble.drag { transform: scale(1.02); }
-@keyframes pop { 0%{transform:scale(1);}50%{transform:scale(1.06);}100%{transform:scale(1);} }
-.bubble.pop { animation: pop .18s ease-out; }
-
+/* Small screens */
+@media (max-width: 430px) {
+  .ios19-bubblebar      { width: calc(100% - 1.25rem); padding: 0.55rem 0.65rem; }
+  .ios19-bubblebar .tab span { font-size: .80rem; }
+  .bubble               { top: 6px; bottom: 6px; }
+}
 /* ======================================== */
 /* == President Section – Onyx Bubble Glass == */
 /* ======================================== */
