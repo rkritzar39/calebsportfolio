@@ -1,15 +1,14 @@
 /* ===========================================================
  * settings.js — Caleb v26 (Onyx / Liquid Glass Final)
  * ===========================================================
- * Features:
- * - Theme switching (device/light/dark + scheduler)
- * - Custom background with blur, live preview, and persistent save
- * - Accent color + safe visibility warning
- * - Accessibility and font controls
- * - Homepage section visibility (including Time/Weather/Focus/Battery)
- * - Rearranging enabled flag + layout reset
- * - Live battery section compatibility
- * - All settings persist to localStorage
+ * Includes:
+ *  - Theme switching (device/light/dark + scheduler)
+ *  - Custom background + blur + preview
+ *  - Accent color + accessibility controls
+ *  - Section visibility (with rearranging + persistence)
+ *  - Live battery status
+ *  - Auto-updating current date & time in version info
+ *  - Works with Onyx / Liquid Glass palette
  * =========================================================== */
 
 class SettingsManager {
@@ -51,7 +50,7 @@ class SettingsManager {
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
 
-      // Mini sections
+      // Mini-sections
       showTimeSection: "enabled",
       showWeatherSection: "enabled",
       showFocusSection: "enabled",
@@ -67,17 +66,21 @@ class SettingsManager {
       this.applyAllSettings();
       this.setupEventListeners();
 
+      // Wallpaper system
       this.initCustomBackgroundControls();
-      this.applyCustomBackground(true); // ensure instant wallpaper on load
+      this.applyCustomBackground(true);
       this.initWallpaperBlurControl();
 
+      // Scheduler
       this.initSchedulerInterval();
 
+      // Misc features
       this.initMouseTrail();
       this.initLoadingScreen();
       this.initScrollArrow();
+      this.initVersionDateTime(); // 🕒 Auto-updating date/time
 
-      // System theme listener
+      // Device theme listener
       if (window.matchMedia) {
         this.deviceThemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
         this.deviceThemeMedia.addEventListener("change", () => {
@@ -94,14 +97,13 @@ class SettingsManager {
     });
   }
 
-  /* =============================
+  /* ===================================================
    * Load / Save
-   * ============================= */
+   * =================================================== */
   loadSettings() {
     try {
       const stored = localStorage.getItem("websiteSettings");
-      const loaded = stored ? JSON.parse(stored) : {};
-      return { ...this.defaultSettings, ...loaded };
+      return stored ? { ...this.defaultSettings, ...JSON.parse(stored) } : { ...this.defaultSettings };
     } catch {
       return { ...this.defaultSettings };
     }
@@ -111,9 +113,9 @@ class SettingsManager {
     localStorage.setItem("websiteSettings", JSON.stringify(this.settings));
   }
 
-  /* =============================
-   * Initialize Controls
-   * ============================= */
+  /* ===================================================
+   * Initialization
+   * =================================================== */
   initializeControls() {
     const accent = document.getElementById("accentColorPicker");
     if (accent) {
@@ -121,21 +123,20 @@ class SettingsManager {
       this.checkAccentColor(this.settings.accentColor);
     }
 
-    const sizeSlider = document.getElementById("text-size-slider");
-    const sizeBadge = document.getElementById("textSizeValue");
-    if (sizeSlider && sizeBadge) {
-      sizeSlider.value = this.settings.fontSize;
-      sizeBadge.textContent = `${this.settings.fontSize}px`;
-      this.updateSliderFill(sizeSlider);
+    const slider = document.getElementById("text-size-slider");
+    const badge = document.getElementById("textSizeValue");
+    if (slider && badge) {
+      slider.value = this.settings.fontSize;
+      badge.textContent = `${this.settings.fontSize}px`;
+      this.updateSliderFill(slider);
     }
 
     const scheduler = document.getElementById("darkModeScheduler");
-    if (scheduler) scheduler.value = this.settings.darkModeScheduler;
     const start = document.getElementById("darkModeStart");
     const end = document.getElementById("darkModeEnd");
+    if (scheduler) scheduler.value = this.settings.darkModeScheduler;
     if (start) start.value = this.settings.darkModeStart;
     if (end) end.value = this.settings.darkModeEnd;
-
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
 
     Object.keys(this.defaultSettings).forEach((k) => this.setToggle(k));
@@ -147,9 +148,9 @@ class SettingsManager {
     if (el) el.checked = this.settings[key] === "enabled";
   }
 
-  /* =============================
+  /* ===================================================
    * Event Listeners
-   * ============================= */
+   * =================================================== */
   setupEventListeners() {
     const accent = document.getElementById("accentColorPicker");
     if (accent) {
@@ -211,17 +212,13 @@ class SettingsManager {
       }
     });
 
-    document.getElementById("resetSectionsBtn")?.addEventListener("click", () =>
-      this.resetSectionVisibility()
-    );
-    document.getElementById("resetSettings")?.addEventListener("click", () =>
-      this.resetSettings()
-    );
+    document.getElementById("resetSectionsBtn")?.addEventListener("click", () => this.resetSectionVisibility());
+    document.getElementById("resetSettings")?.addEventListener("click", () => this.resetSettings());
   }
 
-  /* =============================
-   * Theme & Appearance
-   * ============================= */
+  /* ===================================================
+   * Appearance & Theme
+   * =================================================== */
   applyAllSettings() {
     Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
     this.applyCustomBackground(true);
@@ -268,9 +265,9 @@ class SettingsManager {
     slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
   }
 
-  /* =============================
+  /* ===================================================
    * Section Visibility
-   * ============================= */
+   * =================================================== */
   applySetting(key) {
     if (key === "appearanceMode") return this.applyAppearanceMode();
     if (key === "accentColor") return this.applyAccentColor();
@@ -281,7 +278,6 @@ class SettingsManager {
         .replace(/^show/, "")
         .replace(/^[A-Z]/, (m) => m.toLowerCase())
         .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
-
       const el =
         document.getElementById(`${sectionId}-section`) ||
         document.querySelector(`[data-section-id="${sectionId}"]`);
@@ -292,9 +288,9 @@ class SettingsManager {
     }
   }
 
-  /* =============================
+  /* ===================================================
    * Wallpaper + Blur
-   * ============================= */
+   * =================================================== */
   ensureWallpaperLayers() {
     let layer = document.getElementById("wallpaper-layer");
     if (!layer) {
@@ -385,9 +381,9 @@ class SettingsManager {
     if (card) card.style.display = hasBg ? "" : "none";
   }
 
-  /* =============================
+  /* ===================================================
    * Scheduler
-   * ============================= */
+   * =================================================== */
   initSchedulerInterval() {
     clearInterval(this.schedulerInterval);
     this.checkDarkModeSchedule(true);
@@ -419,9 +415,28 @@ class SettingsManager {
     if (group) group.style.display = mode === "auto" ? "" : "none";
   }
 
-  /* =============================
-   * Reset
-   * ============================= */
+  /* ===================================================
+   * Misc & Utilities
+   * =================================================== */
+  initVersionDateTime() {
+    const osInfo = document.getElementById("os-info")?.querySelector(".version-value");
+    const deviceInfo = document.getElementById("device-info")?.querySelector(".version-value");
+    const syncTime = document.querySelector(".update-time .version-value");
+
+    function updateDateTime() {
+      const now = new Date();
+      if (syncTime) syncTime.textContent = now.toLocaleString();
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+
+    if (osInfo) osInfo.textContent = navigator.platform || "Unknown OS";
+    if (deviceInfo) deviceInfo.textContent = navigator.userAgentData
+      ? navigator.userAgentData.platform
+      : navigator.userAgent || "Unknown Device";
+  }
+
   resetSectionVisibility() {
     if (confirm("Show all homepage sections again?")) {
       Object.keys(this.settings).forEach((k) => {
@@ -434,7 +449,7 @@ class SettingsManager {
   }
 
   resetSettings() {
-    if (confirm("Reset all settings to factory defaults?")) {
+    if (confirm("Reset all settings to default?")) {
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
       localStorage.removeItem("sectionOrder");
@@ -442,13 +457,10 @@ class SettingsManager {
       localStorage.removeItem("customBackgroundName");
       localStorage.removeItem("wallpaperBlur");
       this.applyAllSettings();
-      alert("All settings reset to default.");
+      alert("All settings have been reset.");
     }
   }
 
-  /* =============================
-   * Placeholders for external features
-   * ============================= */
   initScrollArrow() {}
   initLoadingScreen() {}
   initMouseTrail() {}
@@ -457,30 +469,27 @@ class SettingsManager {
 if (!window.settingsManagerInstance)
   window.settingsManagerInstance = new SettingsManager();
 
-/* =============================
- * Live Battery Status Handler
- * ============================= */
+/* ===================================================
+ * Live Battery Status
+ * =================================================== */
 document.addEventListener("DOMContentLoaded", async () => {
-  const batterySection = document.getElementById("battery-section");
   const levelEl = document.getElementById("battery-level");
   const chargeEl = document.getElementById("battery-charging-status");
-
-  if (!batterySection || !navigator.getBattery) return;
+  if (!navigator.getBattery || !levelEl) return;
 
   try {
     const battery = await navigator.getBattery();
 
     function updateBattery() {
       const pct = Math.round(battery.level * 100);
-      if (levelEl) levelEl.textContent = `Battery: ${pct}%`;
+      levelEl.textContent = `Battery: ${pct}%`;
       if (chargeEl) chargeEl.textContent = battery.charging ? "Charging ⚡" : "Not Charging";
     }
 
     updateBattery();
-
     battery.addEventListener("levelchange", updateBattery);
     battery.addEventListener("chargingchange", updateBattery);
   } catch (err) {
-    if (levelEl) levelEl.textContent = "Battery info unavailable.";
+    levelEl.textContent = "Battery info unavailable.";
   }
 });
