@@ -1,26 +1,44 @@
 /* ===========================================================
  * settings.js — Caleb v26 (Onyx / Liquid Glass Final)
- * Fully integrated with :root theme + new mini sections
+ * ===========================================================
+ * Features:
+ * - Theme switching (device/light/dark + scheduler)
+ * - Custom background with blur, live preview, and persistent save
+ * - Accent color + safe visibility warning
+ * - Accessibility and font controls
+ * - Homepage section visibility (including Time/Weather/Focus/Battery)
+ * - Rearranging enabled flag + layout reset
+ * - Live battery section compatibility
+ * - All settings persist to localStorage
  * =========================================================== */
 
 class SettingsManager {
   constructor() {
     this.defaultSettings = {
+      // Appearance
       appearanceMode: "device",
       accentColor: "#3ddc84",
+
+      // Scheduler
       darkModeScheduler: "off",
       darkModeStart: "20:00",
       darkModeEnd: "06:00",
+
+      // Accessibility
       fontSize: 16,
       focusOutline: "enabled",
       motionEffects: "enabled",
       highContrast: "disabled",
       dyslexiaFont: "disabled",
       underlineLinks: "disabled",
+
+      // Misc
       loadingScreen: "disabled",
       mouseTrail: "disabled",
       liveStatus: "disabled",
       rearrangingEnabled: "disabled",
+
+      // Homepage sections
       showSocialLinks: "enabled",
       showPresidentSection: "enabled",
       showTiktokShoutouts: "enabled",
@@ -32,7 +50,8 @@ class SettingsManager {
       showTechInformation: "enabled",
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
-      // new mini sections
+
+      // Mini sections
       showTimeSection: "enabled",
       showWeatherSection: "enabled",
       showFocusSection: "enabled",
@@ -47,15 +66,18 @@ class SettingsManager {
       this.initializeControls();
       this.applyAllSettings();
       this.setupEventListeners();
+
       this.initCustomBackgroundControls();
-      this.applyCustomBackground(false);
+      this.applyCustomBackground(true); // ensure instant wallpaper on load
       this.initWallpaperBlurControl();
+
       this.initSchedulerInterval();
+
       this.initMouseTrail();
       this.initLoadingScreen();
       this.initScrollArrow();
 
-      // System theme sync
+      // System theme listener
       if (window.matchMedia) {
         this.deviceThemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
         this.deviceThemeMedia.addEventListener("change", () => {
@@ -66,18 +88,20 @@ class SettingsManager {
         });
       }
 
+      // Footer year
       const yearSpan = document.getElementById("year");
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
     });
   }
 
-  // =============================
-  // Load + Save
-  // =============================
+  /* =============================
+   * Load / Save
+   * ============================= */
   loadSettings() {
     try {
-      const saved = localStorage.getItem("websiteSettings");
-      return saved ? { ...this.defaultSettings, ...JSON.parse(saved) } : { ...this.defaultSettings };
+      const stored = localStorage.getItem("websiteSettings");
+      const loaded = stored ? JSON.parse(stored) : {};
+      return { ...this.defaultSettings, ...loaded };
     } catch {
       return { ...this.defaultSettings };
     }
@@ -87,9 +111,9 @@ class SettingsManager {
     localStorage.setItem("websiteSettings", JSON.stringify(this.settings));
   }
 
-  // =============================
-  // Initialize Controls
-  // =============================
+  /* =============================
+   * Initialize Controls
+   * ============================= */
   initializeControls() {
     const accent = document.getElementById("accentColorPicker");
     if (accent) {
@@ -97,20 +121,21 @@ class SettingsManager {
       this.checkAccentColor(this.settings.accentColor);
     }
 
-    const slider = document.getElementById("text-size-slider");
-    const badge = document.getElementById("textSizeValue");
-    if (slider && badge) {
-      slider.value = this.settings.fontSize;
-      badge.textContent = `${this.settings.fontSize}px`;
-      this.updateSliderFill(slider);
+    const sizeSlider = document.getElementById("text-size-slider");
+    const sizeBadge = document.getElementById("textSizeValue");
+    if (sizeSlider && sizeBadge) {
+      sizeSlider.value = this.settings.fontSize;
+      sizeBadge.textContent = `${this.settings.fontSize}px`;
+      this.updateSliderFill(sizeSlider);
     }
 
     const scheduler = document.getElementById("darkModeScheduler");
+    if (scheduler) scheduler.value = this.settings.darkModeScheduler;
     const start = document.getElementById("darkModeStart");
     const end = document.getElementById("darkModeEnd");
-    if (scheduler) scheduler.value = this.settings.darkModeScheduler;
     if (start) start.value = this.settings.darkModeStart;
     if (end) end.value = this.settings.darkModeEnd;
+
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
 
     Object.keys(this.defaultSettings).forEach((k) => this.setToggle(k));
@@ -122,9 +147,9 @@ class SettingsManager {
     if (el) el.checked = this.settings[key] === "enabled";
   }
 
-  // =============================
-  // Event Listeners
-  // =============================
+  /* =============================
+   * Event Listeners
+   * ============================= */
   setupEventListeners() {
     const accent = document.getElementById("accentColorPicker");
     if (accent) {
@@ -150,7 +175,6 @@ class SettingsManager {
     const scheduler = document.getElementById("darkModeScheduler");
     const start = document.getElementById("darkModeStart");
     const end = document.getElementById("darkModeEnd");
-
     if (scheduler)
       scheduler.addEventListener("change", (e) => {
         this.settings.darkModeScheduler = e.target.value;
@@ -172,9 +196,10 @@ class SettingsManager {
       });
 
     const toggleKeys = Object.keys(this.defaultSettings).filter(
-      (k) => typeof this.defaultSettings[k] === "string" && (this.defaultSettings[k] === "enabled" || this.defaultSettings[k] === "disabled")
+      (k) =>
+        typeof this.defaultSettings[k] === "string" &&
+        (this.defaultSettings[k] === "enabled" || this.defaultSettings[k] === "disabled")
     );
-
     toggleKeys.forEach((key) => {
       const el = document.getElementById(`${key}Toggle`);
       if (el) {
@@ -186,16 +211,20 @@ class SettingsManager {
       }
     });
 
-    document.getElementById("resetSectionsBtn")?.addEventListener("click", () => this.resetSectionVisibility());
-    document.getElementById("resetSettings")?.addEventListener("click", () => this.resetSettings());
+    document.getElementById("resetSectionsBtn")?.addEventListener("click", () =>
+      this.resetSectionVisibility()
+    );
+    document.getElementById("resetSettings")?.addEventListener("click", () =>
+      this.resetSettings()
+    );
   }
 
-  // =============================
-  // Appearance Logic
-  // =============================
+  /* =============================
+   * Theme & Appearance
+   * ============================= */
   applyAllSettings() {
     Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
-    this.applyCustomBackground(false);
+    this.applyCustomBackground(true);
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
     this.syncWallpaperUIVisibility();
   }
@@ -210,15 +239,15 @@ class SettingsManager {
   applyAppearanceMode() {
     const isDark =
       this.settings.appearanceMode === "dark" ||
-      (this.settings.appearanceMode === "device" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      (this.settings.appearanceMode === "device" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
     this.setThemeClasses(isDark);
     this.checkAccentColor(this.settings.accentColor);
   }
 
   applyAccentColor() {
-    const color = this.settings.accentColor;
-    document.documentElement.style.setProperty("--accent-color", color);
-    this.checkAccentColor(color);
+    const accent = this.settings.accentColor;
+    document.documentElement.style.setProperty("--accent-color", accent);
   }
 
   applyFontSize() {
@@ -239,9 +268,9 @@ class SettingsManager {
     slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
   }
 
-  // =============================
-  // Section Visibility
-  // =============================
+  /* =============================
+   * Section Visibility
+   * ============================= */
   applySetting(key) {
     if (key === "appearanceMode") return this.applyAppearanceMode();
     if (key === "accentColor") return this.applyAccentColor();
@@ -252,16 +281,20 @@ class SettingsManager {
         .replace(/^show/, "")
         .replace(/^[A-Z]/, (m) => m.toLowerCase())
         .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+
       const el =
         document.getElementById(`${sectionId}-section`) ||
         document.querySelector(`[data-section-id="${sectionId}"]`);
-      if (el) el.style.display = this.settings[key] === "enabled" ? "" : "none";
+      if (el) {
+        const visible = this.settings[key] === "enabled";
+        el.style.display = visible ? "" : "none";
+      }
     }
   }
 
-  // =============================
-  // Wallpaper + Blur
-  // =============================
+  /* =============================
+   * Wallpaper + Blur
+   * ============================= */
   ensureWallpaperLayers() {
     let layer = document.getElementById("wallpaper-layer");
     if (!layer) {
@@ -315,7 +348,8 @@ class SettingsManager {
 
     const isDark =
       this.settings.appearanceMode === "dark" ||
-      (this.settings.appearanceMode === "device" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      (this.settings.appearanceMode === "device" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
     tint.style.background = isDark ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.15)";
 
     const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
@@ -337,21 +371,11 @@ class SettingsManager {
     badge.textContent = `${stored}px`;
     this.applyWallpaperBlur(stored);
 
-    const setFill = () => {
-      const min = parseFloat(slider.min || "0");
-      const max = parseFloat(slider.max || "40");
-      const val = parseFloat(slider.value || stored);
-      const pct = ((val - min) / (max - min)) * 100;
-      slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
-    };
-    setFill();
-
     slider.addEventListener("input", (e) => {
       const val = e.target.value;
       badge.textContent = `${val}px`;
       localStorage.setItem("wallpaperBlur", val);
       this.applyWallpaperBlur(val);
-      setFill();
     });
   }
 
@@ -361,9 +385,9 @@ class SettingsManager {
     if (card) card.style.display = hasBg ? "" : "none";
   }
 
-  // =============================
-  // Scheduler
-  // =============================
+  /* =============================
+   * Scheduler
+   * ============================= */
   initSchedulerInterval() {
     clearInterval(this.schedulerInterval);
     this.checkDarkModeSchedule(true);
@@ -395,9 +419,9 @@ class SettingsManager {
     if (group) group.style.display = mode === "auto" ? "" : "none";
   }
 
-  // =============================
-  // Resets
-  // =============================
+  /* =============================
+   * Reset
+   * ============================= */
   resetSectionVisibility() {
     if (confirm("Show all homepage sections again?")) {
       Object.keys(this.settings).forEach((k) => {
@@ -418,13 +442,13 @@ class SettingsManager {
       localStorage.removeItem("customBackgroundName");
       localStorage.removeItem("wallpaperBlur");
       this.applyAllSettings();
-      alert("All settings have been reset.");
+      alert("All settings reset to default.");
     }
   }
 
-  // =============================
-  // Placeholders
-  // =============================
+  /* =============================
+   * Placeholders for external features
+   * ============================= */
   initScrollArrow() {}
   initLoadingScreen() {}
   initMouseTrail() {}
@@ -432,3 +456,31 @@ class SettingsManager {
 
 if (!window.settingsManagerInstance)
   window.settingsManagerInstance = new SettingsManager();
+
+/* =============================
+ * Live Battery Status Handler
+ * ============================= */
+document.addEventListener("DOMContentLoaded", async () => {
+  const batterySection = document.getElementById("battery-section");
+  const levelEl = document.getElementById("battery-level");
+  const chargeEl = document.getElementById("battery-charging-status");
+
+  if (!batterySection || !navigator.getBattery) return;
+
+  try {
+    const battery = await navigator.getBattery();
+
+    function updateBattery() {
+      const pct = Math.round(battery.level * 100);
+      if (levelEl) levelEl.textContent = `Battery: ${pct}%`;
+      if (chargeEl) chargeEl.textContent = battery.charging ? "Charging ⚡" : "Not Charging";
+    }
+
+    updateBattery();
+
+    battery.addEventListener("levelchange", updateBattery);
+    battery.addEventListener("chargingchange", updateBattery);
+  } catch (err) {
+    if (levelEl) levelEl.textContent = "Battery info unavailable.";
+  }
+});
