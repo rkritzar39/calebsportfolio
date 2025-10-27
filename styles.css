@@ -116,6 +116,104 @@ body.dark-mode {
 	--text-color: var(--dark-text);
 }
 
+/* ================================================== */
+/* === ONYX / LIQUID GLASS MICRO-SECTIONS (No Hover) == */
+/* ================================================== */
+
+/* Shared Base for Micro Sections */
+.section[data-section-id="time"],
+.section[data-section-id="weather"],
+.section[data-section-id="focus"],
+.section[data-section-id="battery"] {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	padding: 18px 22px;
+	border-radius: var(--radius-lg);
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+	transition: background var(--transition-medium);
+}
+
+/* 🕒 Live Time */
+#live-time {
+	font-weight: 600;
+	font-size: 1rem;
+	color: var(--text-color);
+	letter-spacing: 0.4px;
+	padding: 6px 12px;
+	border-radius: var(--radius-md);
+	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	box-shadow: inset 0 1px 3px color-mix(in srgb, var(--glow-color) 70%, transparent);
+}
+
+/* 🌤️ Weather */
+#weather-widget {
+	font-size: 1.05rem;
+	font-weight: 500;
+	color: var(--text-color);
+	display: inline-block;
+	padding: 8px 14px;
+	border-radius: var(--radius-md);
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	box-shadow: inset 0 1px 2px color-mix(in srgb, var(--glow-color) 50%, transparent);
+}
+
+/* 💬 Daily Focus */
+#daily-focus {
+	width: 100%;
+	max-width: 480px;
+	padding: 18px 22px;
+	border-radius: var(--radius-lg);
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	box-shadow: 0 4px 14px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+}
+
+#daily-focus h3 {
+	margin: 0 0 8px;
+	font-size: 1.1em;
+	font-weight: 700;
+	color: var(--text-color);
+}
+
+#daily-focus p {
+	margin: 0;
+	color: var(--secondary-text);
+	font-size: 1em;
+}
+
+/* 🔋 Battery */
+#battery-widget {
+	font-size: 1rem;
+	font-weight: 500;
+	color: var(--text-color);
+	padding: 8px 14px;
+	border-radius: var(--radius-md);
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	box-shadow: inset 0 1px 2px color-mix(in srgb, var(--glow-color) 50%, transparent);
+}
+
+/* 📱 Mobile Responsiveness */
+@media (max-width: 600px) {
+	.section[data-section-id="time"],
+	.section[data-section-id="weather"],
+	.section[data-section-id="focus"],
+	.section[data-section-id="battery"] {
+		padding: 14px 16px;
+	}
+}
+
 /* ======================== */
 /* Base Styles              */
 /* ======================== */
