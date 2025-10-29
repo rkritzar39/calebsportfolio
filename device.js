@@ -18,8 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // --- Style applied to all OS icons ---
-  const iconStyle = `
-    display:inline-block;
+  const iconStyle = `display:inline-block;
     width:22px;
     height:22px;
     vertical-align:middle;
@@ -85,10 +84,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Final display
+ // Final display
   const icon = iconMap[os] || iconMap["Unknown"];
   osInfoEl.innerHTML = `
-    <img src="${icon}" alt="${os} icon" class="os-icon">
+    <img src="${icon}" alt="${os} icon" class="os-icon" style="${iconStyle}">
     ${version ? `${os} ${version}` : os}
   `;
 }
