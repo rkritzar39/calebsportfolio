@@ -2426,6 +2426,22 @@ body.dark-mode .bubble {
   color: var(--secondary-text);
 }
 
+/* OS Icon */
+.os-icon {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  margin-right: 8px;
+  filter: drop-shadow(0 0 3px rgba(0,0,0,0.25));
+  opacity: 0.9;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.os-icon:hover {
+  transform: scale(1.08);
+  opacity: 1;
+}
+
 /* ======================== */
 /* Legal Section – Onyx Bubble Glass */
 /* ======================== */
