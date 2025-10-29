@@ -3501,3 +3501,137 @@ body.light-e .contact-info a {
 		0 6px 15px rgba(0, 0, 0, 0.2);
 	color: var(--light-text);
 }
+
+/* ===================================================== */
+/* === LIQUID ONYX UNIFIED GLASS SECTIONS & CARDS ====== */
+/* ===================================================== */
+
+/* Shared capsule glass style for sections, panels, and cards */
+.section,
+.profile-section,
+.president-section,
+.social-links-section,
+.useful-links-section,
+.shoutouts-section,
+.business-info-section,
+.tech-section,
+.disabilities-section,
+.legal-section,
+.version-info-section,
+.countdown-section,
+#quote-section {
+	position: relative;
+	background: rgba(255, 255, 255, 0.06);
+	backdrop-filter: blur(18px) saturate(180%) contrast(110%);
+	-webkit-backdrop-filter: blur(18px) saturate(180%) contrast(110%);
+	border-radius: var(--radius-xl);
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	box-shadow:
+		inset 0 1px 2px rgba(255, 255, 255, 0.12),
+		inset 0 -2px 6px rgba(0, 0, 0, 0.5),
+		0 20px 40px rgba(0, 0, 0, 0.75),
+		0 0 60px rgba(0, 0, 0, 0.55);
+	background-image: linear-gradient(
+		to bottom right,
+		rgba(255, 255, 255, 0.1),
+		rgba(255, 255, 255, 0.03)
+	),
+	var(--bubble-gradient);
+	overflow: hidden;
+	isolation: isolate;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Inner rim reflection for “liquid edge” */
+.section::before,
+.profile-section::before,
+.president-section::before,
+.social-links-section::before,
+.useful-links-section::before,
+.shoutouts-section::before,
+.business-info-section::before,
+.tech-section::before,
+.disabilities-section::before,
+.legal-section::before,
+.version-info-section::before,
+.countdown-section::before,
+#quote-section::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: radial-gradient(
+		circle at 30% 25%,
+		rgba(255, 255, 255, 0.18),
+		rgba(255, 255, 255, 0.05) 45%,
+		transparent 80%
+	);
+	mix-blend-mode: soft-light;
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+/* Adds subtle inner shading for depth */
+.section::after,
+.profile-section::after,
+.president-section::after,
+.social-links-section::after,
+.useful-links-section::after,
+.shoutouts-section::after,
+.business-info-section::after,
+.tech-section::after,
+.disabilities-section::after,
+.legal-section::after,
+.version-info-section::after,
+.countdown-section::after,
+#quote-section::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(
+		150deg,
+		rgba(255, 255, 255, 0.03),
+		rgba(0, 0, 0, 0.3)
+	);
+	mix-blend-mode: overlay;
+	opacity: 0.4;
+	pointer-events: none;
+}
+
+/* === Light Mode Adjustments === */
+body.light-e .section,
+body.light-e .profile-section,
+body.light-e .president-section,
+body.light-e .social-links-section,
+body.light-e .useful-links-section,
+body.light-e .shoutouts-section,
+body.light-e .business-info-section,
+body.light-e .tech-section,
+body.light-e .disabilities-section,
+body.light-e .legal-section,
+body.light-e .version-info-section,
+body.light-e .countdown-section,
+body.light-e #quote-section {
+	background: rgba(255, 255, 255, 0.35);
+	border: 1px solid rgba(255, 255, 255, 0.55);
+	box-shadow:
+		inset 0 1px 2px rgba(255, 255, 255, 0.2),
+		inset 0 -2px 6px rgba(0, 0, 0, 0.2),
+		0 15px 30px rgba(0, 0, 0, 0.25),
+		0 0 60px rgba(255, 255, 255, 0.2);
+	background-image: linear-gradient(
+		to bottom right,
+		rgba(255, 255, 255, 0.25),
+		rgba(255, 255, 255, 0.08)
+	),
+	var(--bubble-gradient);
+}
+
+/* === Optional subtle glow for key text === */
+.countdown-number,
+#quote-section .quote-text {
+	text-shadow:
+		0 1px 2px rgba(0, 0, 0, 0.35),
+		0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent);
+}
