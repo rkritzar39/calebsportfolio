@@ -493,235 +493,244 @@ class SettingsManager {
     document.documentElement.style.setProperty("--glass-opacity", opacity);
   }
 
-  // =============================
-  // Custom Background + Blur
-  // =============================
-  ensureWallpaperLayers() {
-    let layer = document.getElementById("wallpaper-layer");
-    if (!layer) {
-      layer = document.createElement("div");
-      layer.id = "wallpaper-layer";
-      Object.assign(layer.style, {
-        position: "fixed",
-        inset: "0",
-        zIndex: "-1",
-        pointerEvents: "none",
-        backgroundSize: "cover",
-                backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        transition: "opacity 1.2s ease, filter 0.3s ease",
-      });
-      document.body.prepend(layer);
+// =============================
+// Custom Background + Blur (Instant Blur Version)
+// =============================
+
+ensureWallpaperLayers() {
+  let layer = document.getElementById("wallpaper-layer");
+  if (!layer) {
+    layer = document.createElement("div");
+    layer.id = "wallpaper-layer";
+    Object.assign(layer.style, {
+      position: "fixed",
+      inset: "0",
+      zIndex: "-1",
+      pointerEvents: "none",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
+      transition: "opacity 0.6s ease, filter 0.4s ease",
+      opacity: "1",
+      willChange: "filter, opacity",
+    });
+
+    // ✅ Apply instantly available blur before JS fully initializes
+    const initial = getComputedStyle(document.documentElement)
+      .getPropertyValue("--initial-wallpaper-blur")
+      .trim();
+    if (initial) {
+      layer.style.filter = `blur(${initial}) brightness(1.03)`;
     }
 
-    let tint = document.getElementById("wallpaper-tint");
-    if (!tint) {
-      tint = document.createElement("div");
-      tint.id = "wallpaper-tint";
-      Object.assign(tint.style, {
-        position: "fixed",
-        inset: "0",
-        zIndex: "-1",
-        pointerEvents: "none",
-        background: "transparent",
-        transition: "background 0.5s ease",
-      });
-      document.body.prepend(tint);
-    }
-    return { layer, tint };
+    document.body.prepend(layer);
   }
 
-  initCustomBackgroundControls() {
-    const upload = document.getElementById("customBgUpload");
-    const remove = document.getElementById("removeCustomBg");
-    const fileNameDisplay = document.getElementById("fileNameDisplay");
-    const previewContainer = document.getElementById("customBgPreviewContainer");
-    const previewImage = document.getElementById("customBgPreview");
-    const separator = document.getElementById("customBgSeparator");
+  let tint = document.getElementById("wallpaper-tint");
+  if (!tint) {
+    tint = document.createElement("div");
+    tint.id = "wallpaper-tint";
+    Object.assign(tint.style, {
+      position: "fixed",
+      inset: "0",
+      zIndex: "-1",
+      pointerEvents: "none",
+      background: "transparent",
+      transition: "background 0.5s ease",
+    });
+    document.body.prepend(tint);
+  }
+  return { layer, tint };
+}
 
-    if (!upload || !previewContainer || !previewImage) return;
+initCustomBackgroundControls() {
+  const upload = document.getElementById("customBgUpload");
+  const remove = document.getElementById("removeCustomBg");
+  const fileNameDisplay = document.getElementById("fileNameDisplay");
+  const previewContainer = document.getElementById("customBgPreviewContainer");
+  const previewImage = document.getElementById("customBgPreview");
+  const separator = document.getElementById("customBgSeparator");
 
-    // --- Restore saved background ---
-    const savedBg = localStorage.getItem("customBackground");
-    const savedName = localStorage.getItem("customBackgroundName");
-    const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
+  if (!upload || !previewContainer || !previewImage) return;
 
-    if (savedBg) {
-      if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
+  const savedBg = localStorage.getItem("customBackground");
+  const savedName = localStorage.getItem("customBackgroundName");
+  const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
+
+  if (savedBg) {
+    if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
+    if (remove) remove.style.display = "inline-block";
+
+    this.toggleWallpaperBlurCard(true);
+    previewContainer.classList.add("visible");
+    previewImage.src = savedBg;
+    previewImage.onload = () => previewImage.classList.add("loaded");
+
+    if (separator) separator.classList.add("visible");
+    this.applyWallpaperBlur(savedBlur);
+
+    const blurSlider = document.getElementById("blur-slider");
+    const blurBadge = document.getElementById("blurValue");
+    if (blurSlider && blurBadge) {
+      blurSlider.value = savedBlur;
+      blurBadge.textContent = `${savedBlur}px`;
+    }
+  } else {
+    this.toggleWallpaperBlurCard(false);
+    if (separator) separator.classList.remove("visible");
+  }
+
+  upload.addEventListener("change", (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const imageData = evt.target.result;
+      localStorage.setItem("customBackground", imageData);
+      localStorage.setItem("customBackgroundName", file.name);
+
+      const blurSlider = document.getElementById("blur-slider");
+      const blurValue = blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
+      localStorage.setItem("wallpaperBlur", blurValue);
+
+      this.applyCustomBackground(true);
+      this.applyWallpaperBlur(blurValue);
+
+      const blurBadge = document.getElementById("blurValue");
+      if (blurBadge) blurBadge.textContent = `${blurValue}px`;
+
       if (remove) remove.style.display = "inline-block";
-
       this.toggleWallpaperBlurCard(true);
-      previewContainer.classList.add("visible");
-      previewImage.src = savedBg;
-      previewImage.onload = () => previewImage.classList.add("loaded");
 
+      previewContainer.classList.add("visible");
+      previewImage.classList.remove("loaded");
+      previewImage.src = imageData;
+      previewImage.onload = () => previewImage.classList.add("loaded");
       if (separator) separator.classList.add("visible");
-      this.applyWallpaperBlur(savedBlur);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  if (remove) {
+    remove.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("customBackground");
+      localStorage.removeItem("customBackgroundName");
+      localStorage.removeItem("wallpaperBlur");
+
+      const layer = document.getElementById("wallpaper-layer");
+      if (layer) {
+        layer.style.backgroundImage = "";
+        layer.style.opacity = "0";
+      }
+
+      this.applyCustomBackground(false);
+      this.toggleWallpaperBlurCard(false);
+
+      if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+      remove.style.display = "none";
+
+      previewContainer.classList.remove("visible");
+      previewImage.classList.remove("loaded");
+      previewImage.src = "";
+      if (separator) separator.classList.remove("visible");
 
       const blurSlider = document.getElementById("blur-slider");
       const blurBadge = document.getElementById("blurValue");
       if (blurSlider && blurBadge) {
-        blurSlider.value = savedBlur;
-        blurBadge.textContent = `${savedBlur}px`;
+        blurSlider.value = 0;
+        blurBadge.textContent = "0px";
       }
-    } else {
-      this.toggleWallpaperBlurCard(false);
-      if (separator) separator.classList.remove("visible");
-    }
-
-    // --- Upload a new file ---
-    upload.addEventListener("change", (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-
-      if (fileNameDisplay) fileNameDisplay.textContent = file.name;
-
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const imageData = evt.target.result;
-        localStorage.setItem("customBackground", imageData);
-        localStorage.setItem("customBackgroundName", file.name);
-
-        const blurSlider = document.getElementById("blur-slider");
-        const blurValue =
-          blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
-        localStorage.setItem("wallpaperBlur", blurValue);
-
-        this.applyCustomBackground(true);
-        this.applyWallpaperBlur(blurValue);
-
-        const blurBadge = document.getElementById("blurValue");
-        if (blurBadge) blurBadge.textContent = `${blurValue}px`;
-
-        if (remove) remove.style.display = "inline-block";
-        this.toggleWallpaperBlurCard(true);
-
-        previewContainer.classList.add("visible");
-        previewImage.classList.remove("loaded");
-        previewImage.src = imageData;
-        previewImage.onload = () => previewImage.classList.add("loaded");
-        if (separator) separator.classList.add("visible");
-      };
-      reader.readAsDataURL(file);
     });
-
-    // --- Remove custom background ---
-    if (remove) {
-      remove.addEventListener("click", (e) => {
-        e.preventDefault();
-        localStorage.removeItem("customBackground");
-        localStorage.removeItem("customBackgroundName");
-        localStorage.removeItem("wallpaperBlur");
-
-        const layer = document.getElementById("wallpaper-layer");
-        if (layer) {
-          layer.style.backgroundImage = "";
-          layer.style.opacity = "0";
-        }
-
-        this.applyCustomBackground(false);
-        this.toggleWallpaperBlurCard(false);
-
-        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
-        remove.style.display = "none";
-
-        previewContainer.classList.remove("visible");
-        previewImage.classList.remove("loaded");
-        previewImage.src = "";
-        if (separator) separator.classList.remove("visible");
-
-        const blurSlider = document.getElementById("blur-slider");
-        const blurBadge = document.getElementById("blurValue");
-        if (blurSlider && blurBadge) {
-          blurSlider.value = 0;
-          blurBadge.textContent = "0px";
-        }
-      });
-    }
   }
+}
 
-  applyCustomBackground(fade = false) {
-    const bg = localStorage.getItem("customBackground");
-    const { layer, tint } = this.ensureWallpaperLayers();
+applyCustomBackground(fade = false) {
+  const bg = localStorage.getItem("customBackground");
+  const { layer, tint } = this.ensureWallpaperLayers();
 
-    if (bg) {
-      document.body.style.backgroundColor = "transparent";
-      document.body.style.backgroundImage = "";
-      if (fade) {
-        layer.style.opacity = "0";
-        requestAnimationFrame(() => {
-          layer.style.backgroundImage = `url("${bg}")`;
-          setTimeout(() => (layer.style.opacity = "1"), 50);
-        });
-      } else {
-        layer.style.backgroundImage = `url("${bg}")`;
-        layer.style.opacity = "1";
-      }
-    } else {
-      document.body.style.backgroundColor = "";
-      document.body.style.backgroundImage = "";
-      layer.style.backgroundImage = "";
+  if (bg) {
+    document.body.style.backgroundColor = "transparent";
+    document.body.style.backgroundImage = "";
+    if (fade) {
       layer.style.opacity = "0";
+      requestAnimationFrame(() => {
+        layer.style.backgroundImage = `url("${bg}")`;
+        setTimeout(() => (layer.style.opacity = "1"), 50);
+      });
+    } else {
+      layer.style.backgroundImage = `url("${bg}")`;
+      layer.style.opacity = "1";
     }
-
-    const isDark =
-      this.settings.appearanceMode === "dark" ||
-      (this.settings.appearanceMode === "device" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-    tint.style.background = isDark
-      ? "rgba(0, 0, 0, 0.45)"
-      : "rgba(255, 255, 255, 0.15)";
-
-    const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
-    this.applyWallpaperBlur(blurValue);
+  } else {
+    document.body.style.backgroundColor = "";
+    document.body.style.backgroundImage = "";
+    layer.style.backgroundImage = "";
+    layer.style.opacity = "0";
   }
 
-  applyWallpaperBlur(value) {
-    const layer = document.getElementById("wallpaper-layer");
-    if (!layer) return;
-    const blurAmount = parseInt(value, 10) || 0;
-    layer.style.filter = `blur(${blurAmount}px) brightness(1.03)`;
-  }
+  const isDark =
+    this.settings.appearanceMode === "dark" ||
+    (this.settings.appearanceMode === "device" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-  initWallpaperBlurControl() {
-    const slider = document.getElementById("blur-slider");
-    const badge = document.getElementById("blurValue");
-    if (!slider || !badge) return;
+  tint.style.background = isDark
+    ? "rgba(0, 0, 0, 0.45)"
+    : "rgba(255, 255, 255, 0.15)";
 
-    const stored = localStorage.getItem("wallpaperBlur") ?? "0";
-    slider.value = stored;
-    badge.textContent = `${stored}px`;
-    this.applyWallpaperBlur(stored);
+  // ✅ Apply saved or default blur instantly
+  const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
+  this.applyWallpaperBlur(blurValue);
+}
 
-    const setFill = () => {
-      const min = parseFloat(slider.min || "0");
-      const max = parseFloat(slider.max || "40");
-      const val = parseFloat(slider.value || stored);
-      const pct = ((val - min) / (max - min)) * 100;
-      slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
-    };
+applyWallpaperBlur(value) {
+  const layer = document.getElementById("wallpaper-layer");
+  if (!layer) return;
+  const blurAmount = parseInt(value, 10) || 0;
+  layer.style.filter = `blur(${blurAmount}px) brightness(1.03)`;
+}
+
+initWallpaperBlurControl() {
+  const slider = document.getElementById("blur-slider");
+  const badge = document.getElementById("blurValue");
+  if (!slider || !badge) return;
+
+  const stored = localStorage.getItem("wallpaperBlur") ?? "0";
+  slider.value = stored;
+  badge.textContent = `${stored}px`;
+  this.applyWallpaperBlur(stored);
+
+  const setFill = () => {
+    const min = parseFloat(slider.min || "0");
+    const max = parseFloat(slider.max || "40");
+    const val = parseFloat(slider.value || stored);
+    const pct = ((val - min) / (max - min)) * 100;
+    slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
+  };
+  setFill();
+
+  slider.addEventListener("input", (e) => {
+    const val = e.target.value;
+    badge.textContent = `${val}px`;
+    localStorage.setItem("wallpaperBlur", val);
+    this.applyWallpaperBlur(val);
     setFill();
+  });
+}
 
-    slider.addEventListener("input", (e) => {
-      const val = e.target.value;
-      badge.textContent = `${val}px`;
-      localStorage.setItem("wallpaperBlur", val);
-      this.applyWallpaperBlur(val);
-      setFill();
-    });
-  }
+toggleWallpaperBlurCard(show) {
+  const card = document.getElementById("wallpaperBlurCard");
+  if (!card) return;
+  card.style.display = show ? "" : "none";
+}
 
-  toggleWallpaperBlurCard(show) {
-    const card = document.getElementById("wallpaperBlurCard");
-    if (!card) return;
-    card.style.display = show ? "" : "none";
-  }
-
-  syncWallpaperUIVisibility() {
-    const hasBg = !!localStorage.getItem("customBackground");
-    this.toggleWallpaperBlurCard(hasBg);
-  }
+syncWallpaperUIVisibility() {
+  const hasBg = !!localStorage.getItem("customBackground");
+  this.toggleWallpaperBlurCard(hasBg);
+}
 
   // =============================
   // Dark Mode Scheduler
