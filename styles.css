@@ -4,6 +4,7 @@
 	/* ======================== */
 	--font-size-base: 16px;
 	--line-height-base: 1.65;
+	--bg-luminance: 0.5;
 
 	/* ======================== */
 	/* Dark Liquid Glass Palette */
@@ -3634,4 +3635,126 @@ body.light-e #quote-section {
 	text-shadow:
 		0 1px 2px rgba(0, 0, 0, 0.35),
 		0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent);
+}
+
+/* ========================================================= */
+/* === LIQUID ONYX CONTENT DEPTH + READABILITY FIX (FINAL) == */
+/* ========================================================= */
+
+/* Make text and icons appear "inside" the glass */
+.section,
+.section *:not(button):not(a),
+.profile-section,
+.profile-section *,
+.president-section,
+.president-section *,
+.social-links-section,
+.social-links-section *,
+.useful-links-section,
+.useful-links-section *,
+.shoutouts-section,
+.shoutouts-section *,
+.business-info-section,
+.business-info-section *,
+.tech-section,
+.tech-section *,
+.legal-section,
+.legal-section *,
+.version-info-section,
+.version-info-section *,
+.disabilities-section,
+.disabilities-section *,
+.countdown-section,
+.countdown-section *,
+#quote-section,
+#quote-section * {
+	color: color-mix(in srgb, var(--text-color) 90%, rgba(255,255,255,0.1));
+	text-shadow:
+		0 1px 2px rgba(0,0,0,0.35),
+		0 0 4px rgba(0,0,0,0.25);
+}
+
+/* Accent or interactive elements */
+a,
+.link-button,
+.social-button,
+.countdown-number,
+#quote-section .quote-text strong {
+	color: color-mix(in srgb, var(--accent-color) 95%, white);
+	text-shadow:
+		0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent),
+		0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Secondary and smaller text */
+.section small,
+.section span,
+.section p,
+.section .secondary,
+#quote-section .quote-author,
+.countdown-label {
+	color: color-mix(in srgb, var(--secondary-text) 90%, rgba(255,255,255,0.1));
+	text-shadow:
+		0 1px 1px rgba(0,0,0,0.35);
+}
+
+/* Icons inside glass */
+i,
+svg {
+	color: color-mix(in srgb, var(--icon-color) 85%, rgba(255,255,255,0.2));
+	filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
+/* Add a subtle veil inside all sections for improved contrast */
+.section::before,
+.profile-section::before,
+.president-section::before,
+.social-links-section::before,
+.useful-links-section::before,
+.shoutouts-section::before,
+.business-info-section::before,
+.tech-section::before,
+.legal-section::before,
+.version-info-section::before,
+.disabilities-section::before,
+.countdown-section::before,
+#quote-section::before {
+	background: linear-gradient(
+		to bottom,
+		rgba(0,0,0,0.06),
+		rgba(0,0,0,0.12)
+	);
+	mix-blend-mode: multiply;
+}
+
+/* Light Mode adjustments */
+body.light-e .section,
+body.light-e .profile-section,
+body.light-e .president-section,
+body.light-e .social-links-section,
+body.light-e .useful-links-section,
+body.light-e .shoutouts-section,
+body.light-e .business-info-section,
+body.light-e .tech-section,
+body.light-e .legal-section,
+body.light-e .version-info-section,
+body.light-e .disabilities-section,
+body.light-e .countdown-section,
+body.light-e #quote-section {
+	color: color-mix(in srgb, var(--text-color) 95%, rgba(0,0,0,0.2));
+	text-shadow:
+		0 1px 1px rgba(255,255,255,0.5),
+		0 0 3px rgba(255,255,255,0.25);
+}
+
+body.light-e .section::before,
+body.light-e .profile-section::before,
+body.light-e .countdown-section::before,
+body.light-e #quote-section::before {
+	background: linear-gradient(
+		to bottom,
+		rgba(255,255,255,0.4),
+		rgba(255,255,255,0.2)
+	);
+	mix-blend-mode: screen;
 }
