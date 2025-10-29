@@ -1,88 +1,71 @@
 /* ============================================== */
-/* LIQUID GLASS / ONYX UNIFIED THEME              */
+/* PURE ONYX LIQUID GLASS THEME (NO HOVER ANIM)   */
 /* ============================================== */
 
 :root {
-	/* ======================== */
-	/* Base Sizing              */
-	/* ======================== */
+	/* ===== Base Sizing ===== */
 	--font-size-base: 16px;
 	--line-height-base: 1.65;
-
-	/* ======================== */
-	/* Dark Liquid Glass Palette */
-	/* ======================== */
-	--dark-bg: #0E0E0E;
-	--dark-content-bg: rgba(24, 24, 24, 0.55);
-	--dark-text: #F5F7FA;
-	--dark-secondary-text: #A9A9A9;
-	--dark-border: rgba(255, 255, 255, 0.08);
-	--dark-accent: #4EA8FF;
-	--dark-hover: #3F8CE0;
-	--dark-shadow: rgba(0, 0, 0, 0.65);
-	--dark-glow: rgba(255, 255, 255, 0.08);
-	--dark-icon: #E3E3E3;
-
-	/* ======================== */
-	/* Light Liquid Glass Palette */
-	/* ======================== */
-	--light-bg-gradient: linear-gradient(120deg, #d9f0ff 0%, #f5f9ff 100%);
-	--light-content-bg: rgba(255, 255, 255, 0.45);
-	--light-text: #111111;
-	--light-secondary-text: #4B5563;
-	--light-border: rgba(0, 0, 0, 0.08);
-	--light-accent: #007AFF;
-	--light-hover: #005FCC;
-	--light-shadow: rgba(0, 0, 0, 0.15);
-	--light-glow: rgba(255, 255, 255, 0.7);
-	--light-icon: #2C2C2E;
-
-	/* ======================== */
-	/* Default Theme (Dark)     */
-	/* ======================== */
-	--bg-color: var(--dark-bg);
-	--content-bg: var(--dark-content-bg);
-	--text-color: var(--dark-text);
-	--secondary-text: var(--dark-secondary-text);
-	--border-color: var(--dark-border);
-	--accent-color: var(--dark-accent);
-	--hover-color: var(--dark-hover);
-	--shadow-color: var(--dark-shadow);
-	--glow-color: var(--dark-glow);
-	--icon-color: var(--dark-icon);
-
-	/* ======================== */
-	/* Liquid Glass Effects     */
-	/* ======================== */
-	--backdrop-blur: blur(24px) saturate(170%) contrast(110%);
-	--bubble-gradient: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12), transparent 70%);
-	--liquid-reflection: radial-gradient(circle at 25% 20%, rgba(255,255,255,0.18), transparent 70%);
-	--liquid-refraction: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-
 	--radius-xl: 28px;
 	--radius-lg: 20px;
 	--radius-md: 14px;
-	--transition-medium: 0.3s ease;
+	--transition-slow: 0.4s ease;
+
+	/* ===== Onyx Palette (Dark Mode Default) ===== */
+	--onyx-bg: #0d0d0d;
+	--onyx-surface: rgba(24, 24, 24, 0.5);
+	--onyx-text: #f5f7fa;
+	--onyx-secondary: #a6a6a6;
+	--onyx-border: rgba(255, 255, 255, 0.06);
+	--onyx-accent: #4ea8ff;
+	--onyx-shadow: rgba(0, 0, 0, 0.6);
+	--onyx-glow: rgba(78, 168, 255, 0.25);
+	--onyx-icon: #e3e3e3;
+
+	/* ===== Frost Palette (Light Mode) ===== */
+	--frost-bg: linear-gradient(120deg, #eaf2ff 0%, #f9fbff 100%);
+	--frost-surface: rgba(255, 255, 255, 0.45);
+	--frost-text: #111111;
+	--frost-secondary: #555;
+	--frost-border: rgba(0, 0, 0, 0.06);
+	--frost-accent: #007aff;
+	--frost-shadow: rgba(0, 0, 0, 0.18);
+	--frost-glow: rgba(255, 255, 255, 0.7);
+	--frost-icon: #2c2c2e;
+
+	/* ===== Defaults (Dark) ===== */
+	--bg-color: var(--onyx-bg);
+	--content-bg: var(--onyx-surface);
+	--text-color: var(--onyx-text);
+	--secondary-text: var(--onyx-secondary);
+	--border-color: var(--onyx-border);
+	--accent-color: var(--onyx-accent);
+	--shadow-color: var(--onyx-shadow);
+	--glow-color: var(--onyx-glow);
+	--icon-color: var(--onyx-icon);
+
+	/* ===== Glass Effects ===== */
+	--backdrop-blur: blur(24px) saturate(170%) contrast(110%);
+	--bubble-gradient: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1), transparent 70%);
+	--reflection-gradient: radial-gradient(circle at 25% 20%, rgba(255,255,255,0.15), transparent 70%);
 }
 
 /* ============================================== */
-/* LIGHT MODE OVERRIDES                           */
+/* LIGHT MODE (auto or manual override)           */
 /* ============================================== */
-body.light-e {
-	--bg-color: var(--light-bg-gradient);
-	--content-bg: var(--light-content-bg);
-	--text-color: var(--light-text);
-	--secondary-text: var(--light-secondary-text);
-	--border-color: var(--light-border);
-	--accent-color: var(--light-accent);
-	--hover-color: var(--light-hover);
-	--shadow-color: var(--light-shadow);
-	--glow-color: var(--light-glow);
-	--icon-color: var(--light-icon);
+body.light-mode {
+	--bg-color: var(--frost-bg);
+	--content-bg: var(--frost-surface);
+	--text-color: var(--frost-text);
+	--secondary-text: var(--frost-secondary);
+	--border-color: var(--frost-border);
+	--accent-color: var(--frost-accent);
+	--shadow-color: var(--frost-shadow);
+	--glow-color: var(--frost-glow);
+	--icon-color: var(--frost-icon);
 
-	--bubble-gradient: radial-gradient(circle at 40% 25%, rgba(255, 255, 255, 0.6), transparent 65%);
-	--liquid-reflection: radial-gradient(circle at 30% 15%, rgba(255,255,255,0.28), transparent 70%);
-	--liquid-refraction: linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05));
+	--bubble-gradient: radial-gradient(circle at 40% 25%, rgba(255,255,255,0.6), transparent 65%);
+	--reflection-gradient: radial-gradient(circle at 30% 15%, rgba(255,255,255,0.25), transparent 70%);
 }
 
 /* ============================================== */
@@ -97,17 +80,15 @@ body {
 	line-height: var(--line-height-base);
 	font-size: var(--font-size-base);
 	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	transition: background 0.4s ease, color 0.4s ease;
 }
 
 /* ============================================== */
-/* LIQUID GLASS SECTIONS (CARDS, BLOCKS, ETC.)    */
+/* ONYX GLASS SECTIONS                            */
 /* ============================================== */
 .section, .card, .admin-section-card {
 	position: relative;
 	background: var(--content-bg);
-	background-image: var(--bubble-gradient), var(--liquid-refraction);
+	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-xl);
 	border: 1px solid var(--border-color);
 	padding: 24px;
@@ -115,52 +96,31 @@ body {
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
 	box-shadow:
-		inset 0 1px 2px rgba(255,255,255,0.05),
-		0 12px 28px var(--shadow-color);
-	transition: background var(--transition-medium), box-shadow var(--transition-medium), transform 0.3s ease;
+		0 10px 30px var(--shadow-color),
+		inset 0 1px 2px rgba(255,255,255,0.05);
 	overflow: hidden;
 	isolation: isolate;
 }
 
-/* Reflection + Ambient Overlay */
+/* Static reflection – no hover motion */
 .section::before {
 	content: "";
 	position: absolute;
 	inset: 0;
 	border-radius: inherit;
-	background: var(--liquid-reflection);
+	background: var(--reflection-gradient);
 	mix-blend-mode: soft-light;
-	opacity: 0.45;
-	transition: opacity 0.4s ease;
+	opacity: 0.35;
 	pointer-events: none;
 }
-.section::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: radial-gradient(ellipse at 60% 10%, rgba(255, 255, 255, 0.12), transparent 70%);
-	mix-blend-mode: overlay;
-	opacity: 0.3;
-	pointer-events: none;
-	transition: opacity 0.5s ease;
-}
-
-/* Hover Effects */
-.section:hover {
-	transform: translateY(-3px) scale(1.01);
-	background: linear-gradient(130deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)), var(--content-bg);
-	box-shadow: 0 12px 30px var(--shadow-color), inset 0 0 16px rgba(255,255,255,0.04);
-}
-.section:hover::after { opacity: 0.55; }
 
 /* ============================================== */
-/* BUTTONS / LINKS WITH LIQUID GLOW               */
+/* BUTTONS / LINKS                                */
 /* ============================================== */
 button, .btn, a, .link-button {
 	position: relative;
 	color: var(--text-color);
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	background: color-mix(in srgb, var(--content-bg) 90%, transparent);
 	border: 1px solid var(--border-color);
 	border-radius: var(--radius-md);
 	padding: 10px 18px;
@@ -168,50 +128,60 @@ button, .btn, a, .link-button {
 	backdrop-filter: blur(14px);
 	-webkit-backdrop-filter: blur(14px);
 	box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
-	transition: all 0.3s ease;
-	overflow: hidden;
+	transition: background 0.3s ease, color 0.3s ease;
 }
-button::after, .btn::after, a::after, .link-button::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--accent-color), transparent 60%);
-	opacity: 0;
-	transition: opacity 0.3s ease;
-	pointer-events: none;
-}
-button:hover::after, .btn:hover::after, a:hover::after, .link-button:hover::after { opacity: 0.35; }
-button:hover, .btn:hover, a:hover, .link-button:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 0 20px color-mix(in srgb, var(--accent-color) 40%, transparent);
+
+/* Soft light highlight on press only */
+button:active, .btn:active, a:active, .link-button:active {
+	background: color-mix(in srgb, var(--accent-color) 20%, var(--content-bg));
+	box-shadow: inset 0 0 8px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
 /* ============================================== */
-/* ICON ENHANCEMENT                              */
+/* ICONS / ACCENTS                                */
 /* ============================================== */
 .icon, svg {
 	color: var(--accent-color);
-	filter: drop-shadow(0 0 6px rgba(255,255,255,0.12)) drop-shadow(0 0 14px rgba(78,168,255,0.1));
-	transition: transform 0.25s ease, filter 0.25s ease;
-}
-.icon:hover, svg:hover {
-	transform: scale(1.08);
-	filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent-color) 35%, transparent));
+	filter: drop-shadow(0 0 10px rgba(78,168,255,0.2));
 }
 
 /* ============================================== */
-/* SMOOTH SCROLL BAR (SUBTLE GLASS)              */
+/* SCROLLBAR (Subtle Glass)                       */
 /* ============================================== */
-::-webkit-scrollbar {
-	width: 8px;
-}
+::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-thumb {
 	background: rgba(255,255,255,0.08);
 	border-radius: 50px;
 }
-::-webkit-scrollbar-thumb:hover {
-	background: rgba(255,255,255,0.15);
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
+
+/* ============================================== */
+/* MICRO SECTIONS (Time, Weather, Focus, Battery) */
+/* ============================================== */
+.section[data-section-id="time"],
+.section[data-section-id="weather"],
+.section[data-section-id="focus"],
+.section[data-section-id="battery"] {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 18px 22px;
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-lg);
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	box-shadow: 0 4px 20px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+}
+
+/* Texts inside these micro sections */
+#live-time,
+#weather-widget,
+#daily-focus,
+#battery-widget {
+	color: var(--text-color);
+	font-weight: 500;
 }
 
 /* ======================================== */
