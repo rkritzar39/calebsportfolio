@@ -513,23 +513,24 @@ if (glassSlider && glassBadge) {
     const blur = localStorage.getItem("wallpaperBlur") ?? "0";
     this.applyWallpaperBlur(blur);
   }
+} // ✅ ← this closing brace was missing!
 
-
-  // Turn all glass off/on and sync the wallpaper layer
+// =============================
+// Optional Legacy Transparency Mode Support
+// (If you still have disableTransparency in defaults)
+// =============================
 applyTransparencyMode() {
   const on = this.settings.disableTransparency === "enabled";
   document.body.classList.toggle("no-transparency", on);
 
-  // Wallpaper & tint: hide when solid mode is on, restore when off
   const layer = document.getElementById("wallpaper-layer");
-  const tint  = document.getElementById("wallpaper-tint");
+  const tint = document.getElementById("wallpaper-tint");
   if (on) {
     if (layer) layer.style.display = "none";
-    if (tint)  tint.style.display  = "none";
+    if (tint) tint.style.display = "none";
   } else {
     if (layer) layer.style.display = "";
-    if (tint)  tint.style.display  = "";
-    // Re-apply background + blur instantly when coming back
+    if (tint) tint.style.display = "";
     this.applyCustomBackground(false);
     const blur = localStorage.getItem("wallpaperBlur") ?? "0";
     this.applyWallpaperBlur(blur);
