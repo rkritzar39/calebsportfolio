@@ -6,32 +6,33 @@
 	--line-height-base: 1.65;
 
 	/* ======================== */
-	/* Dark Liquid Glass Palette */
+	/* Dark Onyx Palette        */
 	/* ======================== */
-	--dark-bg: #0E0E0E;
-	--dark-content-bg: rgba(24, 24, 24, 0.55);
+	--dark-bg: #0C0C0C;
+	--dark-content-bg: rgba(22, 22, 22, 0.55);
 	--dark-text: #F5F7FA;
-	--dark-secondary-text: #A9A9A9;
-	--dark-border: rgba(255, 255, 255, 0.08);
+	--dark-secondary-text: #A0A0A0;
+	--dark-border: rgba(255, 255, 255, 0.06);
 	--dark-accent: #4EA8FF;
 	--dark-hover: #3F8CE0;
 	--dark-link: var(--dark-accent);
-	--dark-shadow: rgba(0, 0, 0, 0.55);
+	--dark-shadow: rgba(0, 0, 0, 0.6);
 	--dark-glow: rgba(255, 255, 255, 0.08);
 	--dark-icon: #E3E3E3;
 
 	/* ======================== */
-	/* Light Liquid Glass Palette */
+	/* Light Frost Palette      */
 	/* ======================== */
-	--light-bg-gradient: linear-gradient(120deg, #d9f0ff 0%, #f5f9ff 100%);
-	--light-content-bg: rgba(255, 255, 255, 0.45);
-	--light-text: #111111;
-	--light-secondary-text: #4B5563;
-	--light-shadow: rgba(0, 0, 0, 0.15);
+	--light-bg-gradient: linear-gradient(120deg, #e9f4ff 0%, #f6f9ff 100%);
+	--light-content-bg: rgba(255, 255, 255, 0.5);
+	--light-text: #111;
+	--light-secondary-text: #555;
+	--light-border: rgba(0, 0, 0, 0.05);
 	--light-accent: #007AFF;
-	--light-hover: #005FCC;
+	--light-hover: #0066CC;
 	--light-link: var(--light-accent);
-	--light-glow: rgba(255, 255, 255, 0.7);
+	--light-shadow: rgba(0, 0, 0, 0.18);
+	--light-glow: rgba(255, 255, 255, 0.6);
 	--light-icon: #2C2C2E;
 
 	/* ======================== */
@@ -51,20 +52,12 @@
 	--social-icon-text-color: var(--dark-text);
 
 	/* ======================== */
-	/* Liquid Glass Effects     */
+	/* Glass & Depth Effects    */
 	/* ======================== */
-	--backdrop-blur: blur(24px) saturate(170%) contrast(110%);
-	--bubble-gradient: radial-gradient(
-		circle at 30% 20%,
-		rgba(255, 255, 255, 0.12),
-		transparent 70%
-	);
-	--bubble-highlight: inset 0 1px 3px rgba(255, 255, 255, 0.2);
-	--bubble-shadow:
-		inset 0 0 12px rgba(255, 255, 255, 0.05),
-		0 15px 35px rgba(0, 0, 0, 0.45);
-	--liquid-reflection: radial-gradient(circle at 25% 20%, rgba(255,255,255,0.18), transparent 70%);
-	--liquid-refraction: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+	--backdrop-blur: blur(24px) saturate(160%) contrast(110%);
+	--bubble-gradient: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.08), transparent 70%);
+	--liquid-reflection: radial-gradient(circle at 25% 20%, rgba(255,255,255,0.14), transparent 70%);
+	--liquid-refraction: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
 
 	/* ======================== */
 	/* Radii & Transitions      */
@@ -72,10 +65,7 @@
 	--radius-xl: 28px;
 	--radius-lg: 20px;
 	--radius-md: 14px;
-
-	--transition-fast: 0.2s ease;
 	--transition-medium: 0.3s ease;
-	--transition-slow: 0.5s ease;
 }
 
 /* ======================== */
@@ -86,7 +76,7 @@ body.light-e {
 	--content-bg: var(--light-content-bg);
 	--text-color: var(--light-text);
 	--secondary-text: var(--light-secondary-text);
-	--border-color: rgba(255, 255, 255, 0.45);
+	--border-color: var(--light-border);
 	--hover-color: var(--light-hover);
 	--link-color: var(--light-link);
 	--shadow-color: var(--light-shadow);
@@ -94,128 +84,12 @@ body.light-e {
 	--icon-color: var(--light-icon);
 	--social-icon-text-color: var(--light-text);
 
-	--bubble-gradient: radial-gradient(
-		circle at 40% 25%,
-		rgba(255, 255, 255, 0.6),
-		transparent 65%
-	);
-	--bubble-shadow:
-		inset 0 0 8px rgba(255, 255, 255, 0.2),
-		0 15px 35px rgba(0, 0, 0, 0.15);
-	--bubble-highlight: inset 0 1px 3px rgba(0, 0, 0, 0.08);
-	--backdrop-blur: blur(24px) saturate(180%) contrast(110%);
+	--bubble-gradient: radial-gradient(circle at 40% 25%, rgba(255,255,255,0.55), transparent 65%);
+	--liquid-reflection: radial-gradient(circle at 30% 15%, rgba(255,255,255,0.22), transparent 70%);
 }
 
 /* ======================== */
-/* Dark Mode Wrapper        */
-/* ======================== */
-html.dark-mode body,
-body.dark-mode {
-	--bg-color: var(--dark-bg);
-	--content-bg: var(--dark-content-bg);
-	--text-color: var(--dark-text);
-}
-
-/* ================================================== */
-/* === ONYX / LIQUID GLASS MICRO-SECTIONS (No Hover) == */
-/* ================================================== */
-
-/* Shared Base for Micro Sections */
-.section[data-section-id="time"],
-.section[data-section-id="weather"],
-.section[data-section-id="focus"],
-.section[data-section-id="battery"] {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	text-align: center;
-	padding: 18px 22px;
-	border-radius: var(--radius-lg);
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	backdrop-filter: blur(14px) saturate(130%);
-	-webkit-backdrop-filter: blur(14px) saturate(130%);
-	box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color) 60%, transparent);
-	transition: background var(--transition-medium);
-}
-
-/* 🕒 Live Time */
-#live-time {
-	font-weight: 600;
-	font-size: 1rem;
-	color: var(--text-color);
-	letter-spacing: 0.4px;
-	padding: 6px 12px;
-	border-radius: var(--radius-md);
-	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	box-shadow: inset 0 1px 3px color-mix(in srgb, var(--glow-color) 70%, transparent);
-}
-
-/* 🌤️ Weather */
-#weather-widget {
-	font-size: 1.05rem;
-	font-weight: 500;
-	color: var(--text-color);
-	display: inline-block;
-	padding: 8px 14px;
-	border-radius: var(--radius-md);
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	box-shadow: inset 0 1px 2px color-mix(in srgb, var(--glow-color) 50%, transparent);
-}
-
-/* 💬 Daily Focus */
-#daily-focus {
-	width: 100%;
-	max-width: 480px;
-	padding: 18px 22px;
-	border-radius: var(--radius-lg);
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	backdrop-filter: blur(14px) saturate(130%);
-	-webkit-backdrop-filter: blur(14px) saturate(130%);
-	box-shadow: 0 4px 14px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-}
-
-#daily-focus h3 {
-	margin: 0 0 8px;
-	font-size: 1.1em;
-	font-weight: 700;
-	color: var(--text-color);
-}
-
-#daily-focus p {
-	margin: 0;
-	color: var(--secondary-text);
-	font-size: 1em;
-}
-
-/* 🔋 Battery */
-#battery-widget {
-	font-size: 1rem;
-	font-weight: 500;
-	color: var(--text-color);
-	padding: 8px 14px;
-	border-radius: var(--radius-md);
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	box-shadow: inset 0 1px 2px color-mix(in srgb, var(--glow-color) 50%, transparent);
-}
-
-/* 📱 Mobile Responsiveness */
-@media (max-width: 600px) {
-	.section[data-section-id="time"],
-	.section[data-section-id="weather"],
-	.section[data-section-id="focus"],
-	.section[data-section-id="battery"] {
-		padding: 14px 16px;
-	}
-}
-
-/* ======================== */
-/* Base Styles              */
+/* Base Body Style          */
 /* ======================== */
 body {
 	background: var(--bg-color);
@@ -224,14 +98,13 @@ body {
 	margin: 0;
 	padding: 32px;
 	line-height: var(--line-height-base);
-	font-size: var(--font-size-base, 20px);
+	font-size: var(--font-size-base);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	transition: background 0.4s ease, color 0.4s ease;
 }
 
 /* ======================== */
-/* Liquid Glass Section     */
+/* ONYX SECTION SURFACES    */
 /* ======================== */
 .section {
 	position: relative;
@@ -244,13 +117,12 @@ body {
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
 	box-shadow:
-		var(--bubble-shadow),
-		inset 0 1px 2px rgba(255, 255, 255, 0.05);
-	transition: background var(--transition-medium), box-shadow var(--transition-medium);
+		inset 0 1px 2px rgba(255,255,255,0.05),
+		0 12px 32px var(--shadow-color);
 	overflow: hidden;
 }
 
-/* Reflection overlay */
+/* Subtle static reflection */
 .section::before {
 	content: "";
 	position: absolute;
@@ -258,10 +130,85 @@ body {
 	border-radius: inherit;
 	background: var(--liquid-reflection);
 	mix-blend-mode: soft-light;
-	opacity: 0.45;
-	transition: opacity 0.4s ease;
+	opacity: 0.35;
 	pointer-events: none;
 }
+
+/* ======================== */
+/* Micro Sections           */
+/* ======================== */
+.section[data-section-id="time"],
+.section[data-section-id="weather"],
+.section[data-section-id="focus"],
+.section[data-section-id="battery"] {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 18px 22px;
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-lg);
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+	box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+}
+
+/* Text & Widgets */
+#live-time, #weather-widget, #daily-focus, #battery-widget {
+	color: var(--text-color);
+	font-weight: 500;
+}
+
+/* Inner Reflection Accent */
+#daily-focus h3 {
+	margin: 0 0 8px;
+	font-size: 1.1em;
+	font-weight: 700;
+	color: var(--text-color);
+}
+#daily-focus p {
+	margin: 0;
+	color: var(--secondary-text);
+}
+
+/* ======================== */
+/* Buttons and Links        */
+/* ======================== */
+button, .btn, a, .link-button {
+	position: relative;
+	color: var(--text-color);
+	background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	padding: 10px 18px;
+	font-weight: 500;
+	backdrop-filter: blur(14px);
+	-webkit-backdrop-filter: blur(14px);
+	box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+}
+button:active, .btn:active, a:active, .link-button:active {
+	background: color-mix(in srgb, var(--accent-color) 15%, var(--content-bg));
+	box-shadow: inset 0 0 10px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+/* ======================== */
+/* Icons                    */
+/* ======================== */
+.icon, svg {
+	color: var(--accent-color);
+	filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent-color) 20%, transparent));
+}
+
+/* ======================== */
+/* Scrollbar                */
+/* ======================== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb {
+	background: rgba(255,255,255,0.08);
+	border-radius: 50px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
 /* ======================================== */
 /* == CORRECTED iOS-Style Focus Ring ====== */
