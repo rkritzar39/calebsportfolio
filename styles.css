@@ -5,8 +5,9 @@
 	--font-size-base: 16px;
 	--line-height-base: 1.65;
 	--bg-luminance: 0.5;
-	--glass-opacity: 1; /* 0 = solid, 1 = full glass */
-	--glass-blur: 24px; /* dynamically updated by JS */
+	--glass-opacity: 1; /* JS updates this dynamically */
+  	--glass-blur: 24px; /* default blur */
+  	--glass-saturate: 170%; /* saturation for depth */
 
 	/* ======================== */
 	/* Dark Liquid Glass Palette */
@@ -4038,10 +4039,10 @@ body.no-transparency .contact-info a {
 .version-info-section,
 .countdown-section,
 #quote-section {
-  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity)));
-  backdrop-filter: blur(var(--glass-blur)) saturate(calc(100% + 70% * var(--glass-opacity)));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(calc(100% + 70% * var(--glass-opacity)));
-  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity))) !important;
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) contrast(110%) !important;
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) contrast(110%) !important;
+  transition: background 0.35s ease, backdrop-filter 0.35s ease;
 }
 
 /* Buttons and glass controls */
