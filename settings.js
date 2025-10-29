@@ -34,7 +34,7 @@ class SettingsManager {
       showTechInformation: "enabled",
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
-      disableTransparency: "disabled", // 'enabled' = solid cards
+      glassIntensity: 100, // 0 = solid, 100 = full glass
     };
 
     this.settings = this.loadSettings();
@@ -203,32 +203,32 @@ class SettingsManager {
   // =============================
   setupEventListeners() {
     ["appearanceMode", "themeStyle"].forEach((key) => {
-  const control = document.getElementById(`${key}Control`);
-  if (control) {
-    control.addEventListener("click", (e) => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
+      const control = document.getElementById(`${key}Control`);
+      if (control) {
+        control.addEventListener("click", (e) => {
+          const btn = e.target.closest("button");
+          if (!btn) return;
 
-      // 🚫 Prevent user from changing appearance while scheduler is auto
-      if (key === "appearanceMode" && this.settings.darkModeScheduler === "auto") {
-        alert("Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes.");
-        this.initSegmentedControl(`${key}Control`, this.settings[key]); // reset UI
-        return;
-      }
+          // 🚫 Prevent user from changing appearance while scheduler is auto
+          if (key === "appearanceMode" && this.settings.darkModeScheduler === "auto") {
+            alert("Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes.");
+            this.initSegmentedControl(`${key}Control`, this.settings[key]); // reset UI
+            return;
+          }
 
-      // ✅ Otherwise allow change
-      this.settings[key] = btn.dataset.value;
-      this.applySetting(key);
-      this.saveSettings();
-      this.initSegmentedControl(`${key}Control`, this.settings[key]);
-      this.updateSegmentedBackground(`${key}Control`);
-      if (key === "appearanceMode") {
-        this.applyCustomBackground(false);
+          // ✅ Otherwise allow change
+          this.settings[key] = btn.dataset.value;
+          this.applySetting(key);
+          this.saveSettings();
+          this.initSegmentedControl(`${key}Control`, this.settings[key]);
+          this.updateSegmentedBackground(`${key}Control`);
+          if (key === "appearanceMode") {
+            this.applyCustomBackground(false);
+          }
+        });
+        this.updateSegmentedBackground(`${key}Control`);
       }
     });
-    this.updateSegmentedBackground(`${key}Control`);
-  }
-});
 
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
@@ -279,6 +279,7 @@ class SettingsManager {
       });
     }
 
+    // Wallpaper Blur
     const blurSlider = document.getElementById("blur-slider");
     const blurBadge = document.getElementById("blurValue");
     if (blurSlider && blurBadge) {
@@ -300,6 +301,25 @@ class SettingsManager {
       });
     }
 
+    // Glass Intensity
+    const glassSlider = document.getElementById("glassIntensitySlider");
+    const glassBadge = document.getElementById("glassIntensityValue");
+    if (glassSlider && glassBadge) {
+      const updateGlass = () => {
+        const val = parseInt(glassSlider.value, 10);
+        glassBadge.textContent = `${val}%`;
+        this.settings.glassIntensity = val;
+        localStorage.setItem("websiteSettings", JSON.stringify(this.settings));
+        this.applyGlassIntensity();
+
+        const pct = (val / 100) * 100;
+        glassSlider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
+      };
+      glassSlider.addEventListener("input", updateGlass);
+      updateGlass(); // Initialize on load
+    }
+
+    // Generic Toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -317,25 +337,15 @@ class SettingsManager {
       }
     });
 
-    document
-      .getElementById("resetLayoutBtn")
-      ?.addEventListener("click", () => {
-        if (confirm("Reset the section layout to default?")) {
-          localStorage.removeItem("sectionOrder");
-          alert("Layout reset. Refresh homepage to see changes.");
-        }
-      });
+    document.getElementById("resetLayoutBtn")?.addEventListener("click", () => {
+      if (confirm("Reset the section layout to default?")) {
+        localStorage.removeItem("sectionOrder");
+        alert("Layout reset. Refresh homepage to see changes.");
+      }
+    });
 
-    document
-      .getElementById("resetSectionsBtn")
-      ?.addEventListener("click", () =>
-        this.resetSectionVisibility()
-      );
-    document
-      .getElementById("resetSettings")
-      ?.addEventListener("click", () =>
-        this.resetSettings()
-      );
+    document.getElementById("resetSectionsBtn")?.addEventListener("click", () => this.resetSectionVisibility());
+    document.getElementById("resetSettings")?.addEventListener("click", () => this.resetSettings());
 
     window.addEventListener("resize", () => this.fitWallpaperLayer());
     window.addEventListener("orientationchange", () => this.fitWallpaperLayer());
@@ -346,8 +356,7 @@ class SettingsManager {
   // =============================
   updateSliderFill(slider) {
     if (!slider) return;
-    const pct =
-      ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+    const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
     slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
   }
 
@@ -413,14 +422,9 @@ class SettingsManager {
           "mouse-trail-enabled",
           this.settings.mouseTrail === "enabled"
         ),
-      disableTransparency: () =>
-        document.body.classList.toggle(
-          "no-transparency",
-          this.settings.disableTransparency === "enabled"
-        ),
+      glassIntensity: () => this.applyGlassIntensity(),
     };
 
-    // Apply core settings
     actions[key]?.();
 
     // Universal show/hide for homepage sections
@@ -449,11 +453,11 @@ class SettingsManager {
   }
 
   setThemeClasses(isDark) {
-  document.documentElement.classList.toggle("dark-mode", isDark);
-  document.documentElement.classList.toggle("light-mode", !isDark);
-  document.body.classList.toggle("dark-mode", isDark);
-  document.body.classList.toggle("light-e", !isDark); // ← restore Onyx Light
-}
+    document.documentElement.classList.toggle("dark-mode", isDark);
+    document.documentElement.classList.toggle("light-mode", !isDark);
+    document.body.classList.toggle("dark-mode", isDark);
+    document.body.classList.toggle("light-e", !isDark);
+  }
 
   applyAppearanceMode() {
     const isDark =
@@ -475,15 +479,18 @@ class SettingsManager {
   }
 
   applyFontSize() {
-    document.documentElement.style.setProperty(
-      "--font-size-base",
-      `${this.settings.fontSize}px`
-    );
+    document.documentElement.style.setProperty("--font-size-base", `${this.settings.fontSize}px`);
   }
 
   applyMotionEffects() {
     const reduced = this.settings.motionEffects === "disabled";
     document.body.classList.toggle("reduced-motion", reduced);
+  }
+
+  applyGlassIntensity() {
+    const intensity = this.settings.glassIntensity ?? 100;
+    const opacity = intensity / 100;
+    document.documentElement.style.setProperty("--glass-opacity", opacity);
   }
 
   // =============================
@@ -500,7 +507,7 @@ class SettingsManager {
         zIndex: "-1",
         pointerEvents: "none",
         backgroundSize: "cover",
-        backgroundPosition: "center",
+                backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         transition: "opacity 1.2s ease, filter 0.3s ease",
       });
@@ -524,195 +531,186 @@ class SettingsManager {
     return { layer, tint };
   }
 
-initCustomBackgroundControls() {
-  const upload = document.getElementById("customBgUpload");
-  const remove = document.getElementById("removeCustomBg");
-  const fileNameDisplay = document.getElementById("fileNameDisplay");
-  const previewContainer = document.getElementById("customBgPreviewContainer");
-  const previewImage = document.getElementById("customBgPreview");
-  const separator = document.getElementById("customBgSeparator");
+  initCustomBackgroundControls() {
+    const upload = document.getElementById("customBgUpload");
+    const remove = document.getElementById("removeCustomBg");
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+    const previewContainer = document.getElementById("customBgPreviewContainer");
+    const previewImage = document.getElementById("customBgPreview");
+    const separator = document.getElementById("customBgSeparator");
 
-  if (!upload || !previewContainer || !previewImage) return;
+    if (!upload || !previewContainer || !previewImage) return;
 
-  // --- Restore saved background ---
-  const savedBg = localStorage.getItem("customBackground");
-  const savedName = localStorage.getItem("customBackgroundName");
-  const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
+    // --- Restore saved background ---
+    const savedBg = localStorage.getItem("customBackground");
+    const savedName = localStorage.getItem("customBackgroundName");
+    const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
 
-  if (savedBg) {
-    if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
-    if (remove) remove.style.display = "inline-block";
-
-    this.toggleWallpaperBlurCard(true);
-    previewContainer.classList.add("visible");
-    previewImage.src = savedBg;
-    previewImage.onload = () => previewImage.classList.add("loaded");
-
-    // ✅ Show separator line when image exists
-    if (separator) separator.classList.add("visible");
-
-    // ✅ Apply saved blur immediately
-    this.applyWallpaperBlur(savedBlur);
-
-    // ✅ Sync blur slider and badge
-    const blurSlider = document.getElementById("blur-slider");
-    const blurBadge = document.getElementById("blurValue");
-    if (blurSlider && blurBadge) {
-      blurSlider.value = savedBlur;
-      blurBadge.textContent = `${savedBlur}px`;
-    }
-  } else {
-    this.toggleWallpaperBlurCard(false);
-    if (separator) separator.classList.remove("visible");
-  }
-
-  // --- Upload a new file ---
-  upload.addEventListener("change", (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (fileNameDisplay) fileNameDisplay.textContent = file.name;
-
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const imageData = evt.target.result;
-      localStorage.setItem("customBackground", imageData);
-      localStorage.setItem("customBackgroundName", file.name);
-
-      // ✅ Get current blur or 0
-      const blurSlider = document.getElementById("blur-slider");
-      const blurValue = blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
-      localStorage.setItem("wallpaperBlur", blurValue);
-
-      this.applyCustomBackground(true);
-      this.applyWallpaperBlur(blurValue);
-
-      const blurBadge = document.getElementById("blurValue");
-      if (blurBadge) blurBadge.textContent = `${blurValue}px`;
-
+    if (savedBg) {
+      if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
       if (remove) remove.style.display = "inline-block";
+
       this.toggleWallpaperBlurCard(true);
-
-      // ✅ Show preview + separator
       previewContainer.classList.add("visible");
-      previewImage.classList.remove("loaded");
-      previewImage.src = imageData;
+      previewImage.src = savedBg;
       previewImage.onload = () => previewImage.classList.add("loaded");
+
       if (separator) separator.classList.add("visible");
-    };
-    reader.readAsDataURL(file);
-  });
+      this.applyWallpaperBlur(savedBlur);
 
-  // --- Remove custom background ---
-  if (remove) {
-    remove.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.removeItem("customBackground");
-      localStorage.removeItem("customBackgroundName");
-      localStorage.removeItem("wallpaperBlur");
-
-      const layer = document.getElementById("wallpaper-layer");
-      if (layer) {
-        layer.style.backgroundImage = "";
-        layer.style.opacity = "0";
-      }
-
-      this.applyCustomBackground(false);
-      this.toggleWallpaperBlurCard(false);
-
-      if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
-      remove.style.display = "none";
-
-      // ✅ Hide preview and separator smoothly
-      previewContainer.classList.remove("visible");
-      previewImage.classList.remove("loaded");
-      previewImage.src = "";
-      if (separator) separator.classList.remove("visible");
-
-      // Reset blur slider + badge
       const blurSlider = document.getElementById("blur-slider");
       const blurBadge = document.getElementById("blurValue");
       if (blurSlider && blurBadge) {
-        blurSlider.value = 0;
-        blurBadge.textContent = "0px";
+        blurSlider.value = savedBlur;
+        blurBadge.textContent = `${savedBlur}px`;
       }
+    } else {
+      this.toggleWallpaperBlurCard(false);
+      if (separator) separator.classList.remove("visible");
+    }
+
+    // --- Upload a new file ---
+    upload.addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const imageData = evt.target.result;
+        localStorage.setItem("customBackground", imageData);
+        localStorage.setItem("customBackgroundName", file.name);
+
+        const blurSlider = document.getElementById("blur-slider");
+        const blurValue =
+          blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
+        localStorage.setItem("wallpaperBlur", blurValue);
+
+        this.applyCustomBackground(true);
+        this.applyWallpaperBlur(blurValue);
+
+        const blurBadge = document.getElementById("blurValue");
+        if (blurBadge) blurBadge.textContent = `${blurValue}px`;
+
+        if (remove) remove.style.display = "inline-block";
+        this.toggleWallpaperBlurCard(true);
+
+        previewContainer.classList.add("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = imageData;
+        previewImage.onload = () => previewImage.classList.add("loaded");
+        if (separator) separator.classList.add("visible");
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // --- Remove custom background ---
+    if (remove) {
+      remove.addEventListener("click", (e) => {
+        e.preventDefault();
+        localStorage.removeItem("customBackground");
+        localStorage.removeItem("customBackgroundName");
+        localStorage.removeItem("wallpaperBlur");
+
+        const layer = document.getElementById("wallpaper-layer");
+        if (layer) {
+          layer.style.backgroundImage = "";
+          layer.style.opacity = "0";
+        }
+
+        this.applyCustomBackground(false);
+        this.toggleWallpaperBlurCard(false);
+
+        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+        remove.style.display = "none";
+
+        previewContainer.classList.remove("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = "";
+        if (separator) separator.classList.remove("visible");
+
+        const blurSlider = document.getElementById("blur-slider");
+        const blurBadge = document.getElementById("blurValue");
+        if (blurSlider && blurBadge) {
+          blurSlider.value = 0;
+          blurBadge.textContent = "0px";
+        }
+      });
+    }
+  }
+
+  applyCustomBackground(fade = false) {
+    const bg = localStorage.getItem("customBackground");
+    const { layer, tint } = this.ensureWallpaperLayers();
+
+    if (bg) {
+      document.body.style.backgroundColor = "transparent";
+      document.body.style.backgroundImage = "";
+      if (fade) {
+        layer.style.opacity = "0";
+        requestAnimationFrame(() => {
+          layer.style.backgroundImage = `url("${bg}")`;
+          setTimeout(() => (layer.style.opacity = "1"), 50);
+        });
+      } else {
+        layer.style.backgroundImage = `url("${bg}")`;
+        layer.style.opacity = "1";
+      }
+    } else {
+      document.body.style.backgroundColor = "";
+      document.body.style.backgroundImage = "";
+      layer.style.backgroundImage = "";
+      layer.style.opacity = "0";
+    }
+
+    const isDark =
+      this.settings.appearanceMode === "dark" ||
+      (this.settings.appearanceMode === "device" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    tint.style.background = isDark
+      ? "rgba(0, 0, 0, 0.45)"
+      : "rgba(255, 255, 255, 0.15)";
+
+    const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
+    this.applyWallpaperBlur(blurValue);
+  }
+
+  applyWallpaperBlur(value) {
+    const layer = document.getElementById("wallpaper-layer");
+    if (!layer) return;
+    const blurAmount = parseInt(value, 10) || 0;
+    layer.style.filter = `blur(${blurAmount}px) brightness(1.03)`;
+  }
+
+  initWallpaperBlurControl() {
+    const slider = document.getElementById("blur-slider");
+    const badge = document.getElementById("blurValue");
+    if (!slider || !badge) return;
+
+    const stored = localStorage.getItem("wallpaperBlur") ?? "0";
+    slider.value = stored;
+    badge.textContent = `${stored}px`;
+    this.applyWallpaperBlur(stored);
+
+    const setFill = () => {
+      const min = parseFloat(slider.min || "0");
+      const max = parseFloat(slider.max || "40");
+      const val = parseFloat(slider.value || stored);
+      const pct = ((val - min) / (max - min)) * 100;
+      slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
+    };
+    setFill();
+
+    slider.addEventListener("input", (e) => {
+      const val = e.target.value;
+      badge.textContent = `${val}px`;
+      localStorage.setItem("wallpaperBlur", val);
+      this.applyWallpaperBlur(val);
+      setFill();
     });
   }
-}
-
-applyCustomBackground(fade = false) {
-  const bg = localStorage.getItem("customBackground");
-  const { layer, tint } = this.ensureWallpaperLayers();
-
-  if (bg) {
-    document.body.style.backgroundColor = "transparent";
-    document.body.style.backgroundImage = "";
-    if (fade) {
-      layer.style.opacity = "0";
-      requestAnimationFrame(() => {
-        layer.style.backgroundImage = `url("${bg}")`;
-        setTimeout(() => (layer.style.opacity = "1"), 50);
-      });
-    } else {
-      layer.style.backgroundImage = `url("${bg}")`;
-      layer.style.opacity = "1";
-    }
-  } else {
-    document.body.style.backgroundColor = "";
-    document.body.style.backgroundImage = "";
-    layer.style.backgroundImage = "";
-    layer.style.opacity = "0";
-  }
-
-  const isDark =
-    this.settings.appearanceMode === "dark" ||
-    (this.settings.appearanceMode === "device" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-  tint.style.background = isDark
-    ? "rgba(0, 0, 0, 0.45)"
-    : "rgba(255, 255, 255, 0.15)";
-
-  // ✅ Apply saved or default blur
-  const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
-  this.applyWallpaperBlur(blurValue);
-}
-
-applyWallpaperBlur(value) {
-  const layer = document.getElementById("wallpaper-layer");
-  if (!layer) return;
-  const blurAmount = parseInt(value, 10) || 0;
-  layer.style.filter = `blur(${blurAmount}px) brightness(1.03)`;
-}
-
-initWallpaperBlurControl() {
-  const slider = document.getElementById("blur-slider");
-  const badge = document.getElementById("blurValue");
-  if (!slider || !badge) return;
-
-  // ✅ Load saved blur value or default to 0
-  const stored = localStorage.getItem("wallpaperBlur") ?? "0";
-  slider.value = stored;
-  badge.textContent = `${stored}px`;
-  this.applyWallpaperBlur(stored);
-
-  const setFill = () => {
-    const min = parseFloat(slider.min || "0");
-    const max = parseFloat(slider.max || "40");
-    const val = parseFloat(slider.value || stored);
-    const pct = ((val - min) / (max - min)) * 100;
-    slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
-  };
-  setFill();
-
-  slider.addEventListener("input", (e) => {
-    const val = e.target.value;
-    badge.textContent = `${val}px`;
-    localStorage.setItem("wallpaperBlur", val);
-    this.applyWallpaperBlur(val);
-    setFill();
-  });
-}
 
   toggleWallpaperBlurCard(show) {
     const card = document.getElementById("wallpaperBlurCard");
@@ -731,46 +729,37 @@ initWallpaperBlurControl() {
   initSchedulerInterval() {
     clearInterval(this.schedulerInterval);
     this.checkDarkModeSchedule(true);
-    this.schedulerInterval = setInterval(
-      () => this.checkDarkModeSchedule(),
-      60000
-    );
+    this.schedulerInterval = setInterval(() => this.checkDarkModeSchedule(), 60000);
   }
 
   checkDarkModeSchedule(force = false) {
-  const mode = this.settings.darkModeScheduler || "off";
-  this.toggleScheduleInputs(mode);
+    const mode = this.settings.darkModeScheduler || "off";
+    this.toggleScheduleInputs(mode);
 
-  // Only apply schedule if "auto"
-  if (mode !== "auto") {
-    if (force) this.applyAppearanceMode();
-    return;
+    if (mode !== "auto") {
+      if (force) this.applyAppearanceMode();
+      return;
+    }
+
+    const now = new Date();
+    const [startH, startM] = this.settings.darkModeStart.split(":").map(Number);
+    const [endH, endM] = this.settings.darkModeEnd.split(":").map(Number);
+
+    const start = new Date();
+    start.setHours(startH, startM, 0, 0);
+    const end = new Date();
+    end.setHours(endH, endM, 0, 0);
+
+    let isDark;
+    if (end <= start) {
+      isDark = now >= start || now < end;
+    } else {
+      isDark = now >= start && now < end;
+    }
+
+    this.setThemeClasses(isDark);
+    this.applyCustomBackground(false);
   }
-
-  const now = new Date();
-  const [startH, startM] = this.settings.darkModeStart.split(":").map(Number);
-  const [endH, endM] = this.settings.darkModeEnd.split(":").map(Number);
-
-  const start = new Date();
-  start.setHours(startH, startM, 0, 0);
-  const end = new Date();
-  end.setHours(endH, endM, 0, 0);
-
-  // 🔧 Handle overnight schedules (e.g. 20:00 → 06:00)
-  let isDark;
-  if (end <= start) {
-    // The schedule wraps around midnight
-    isDark = now >= start || now < end;
-  } else {
-    // Same-day schedule
-    isDark = now >= start && now < end;
-  }
-
-  // ✅ Apply correct mode
-  this.setThemeClasses(isDark);
-  this.applyCustomBackground(false);
-}
-
 
   toggleScheduleInputs(mode) {
     const group = document.querySelector(".schedule-group");
@@ -783,9 +772,7 @@ initWallpaperBlurControl() {
   // =============================
   resetSectionVisibility() {
     if (confirm("Show all homepage sections again?")) {
-      const keys = Object.keys(this.defaultSettings).filter((k) =>
-        k.startsWith("show")
-      );
+      const keys = Object.keys(this.defaultSettings).filter((k) => k.startsWith("show"));
       keys.forEach((k) => (this.settings[k] = "enabled"));
       this.saveSettings();
       this.initializeControls();
@@ -799,22 +786,22 @@ initWallpaperBlurControl() {
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
 
-      // Clear layout + background + blur values
       localStorage.removeItem("sectionOrder");
       localStorage.removeItem("customBackground");
       localStorage.removeItem("customBackgroundName");
       localStorage.removeItem("wallpaperBlur");
 
-      // Reset background display + preview UI
       const layer = document.getElementById("wallpaper-layer");
       if (layer) {
         layer.style.backgroundImage = "";
         layer.style.opacity = "0";
       }
+
       const previewContainer = document.getElementById("customBgPreviewContainer");
       const previewImage = document.getElementById("customBgPreview");
       const fileNameDisplay = document.getElementById("fileNameDisplay");
       const removeBtn = document.getElementById("removeCustomBg");
+
       if (previewContainer && previewImage) {
         previewContainer.classList.remove("visible");
         previewImage.classList.remove("loaded");
@@ -823,7 +810,6 @@ initWallpaperBlurControl() {
       if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
       if (removeBtn) removeBtn.style.display = "none";
 
-      // Re-init UI
       this.initializeControls();
       this.applyAllSettings();
       alert("All settings have been reset to factory defaults.");
@@ -831,18 +817,11 @@ initWallpaperBlurControl() {
   }
 
   // =============================
-  // Misc (YOUR real implementations live here)
+  // Misc
   // =============================
   initScrollArrow() {}
   initLoadingScreen() {}
-
-  // IMPORTANT: do NOT leave a second empty initMouseTrail() — it would overwrite the real one.
-  // If you have a full implementation elsewhere in this class/file, keep that one.
-  initMouseTrail() {
-    // If you already have your full trail implementation, paste it here
-    // (kept minimal to avoid overriding your working version).
-    // No-op by default.
-  }
+  initMouseTrail() {}
 }
 
 // Initialize
