@@ -3824,3 +3824,129 @@ body.light-e #quote-section::before {
 	);
 	mix-blend-mode: screen;
 }
+
+/* ===================================================== */
+/* TRUE DARK MODE ONYX GLASS SECTIONS                    */
+/* ===================================================== */
+
+html.dark-mode .section,
+body.dark-mode .section,
+html.dark-mode .profile-section,
+body.dark-mode .profile-section,
+html.dark-mode .president-section,
+body.dark-mode .president-section,
+html.dark-mode .social-links-section,
+body.dark-mode .social-links-section,
+html.dark-mode .useful-links-section,
+body.dark-mode .useful-links-section,
+html.dark-mode .shoutouts-section,
+body.dark-mode .shoutouts-section,
+html.dark-mode .business-info-section,
+body.dark-mode .business-info-section,
+html.dark-mode .tech-section,
+body.dark-mode .tech-section,
+html.dark-mode .disabilities-section,
+body.dark-mode .disabilities-section,
+html.dark-mode .legal-section,
+body.dark-mode .legal-section,
+html.dark-mode .version-info-section,
+body.dark-mode .version-info-section,
+html.dark-mode .countdown-section,
+body.dark-mode .countdown-section,
+html.dark-mode #quote-section,
+body.dark-mode #quote-section {
+	background: linear-gradient(
+			to bottom right,
+			color-mix(in srgb, #0a0a0a 92%, var(--content-bg)),
+			color-mix(in srgb, #111111 85%, transparent)
+		),
+		radial-gradient(circle at 25% 20%, rgba(255,255,255,0.04), transparent 70%);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	box-shadow:
+		inset 0 1px 1px rgba(255,255,255,0.05),
+		inset 0 -2px 8px rgba(0,0,0,0.65),
+		0 18px 38px rgba(0,0,0,0.85),
+		0 0 60px rgba(0,0,0,0.55);
+	backdrop-filter: blur(26px) saturate(160%) contrast(115%);
+	-webkit-backdrop-filter: blur(26px) saturate(160%) contrast(115%);
+	color: var(--text-color);
+	position: relative;
+	isolation: isolate;
+}
+
+/* Add subtle reflection & inner glow for glass curvature */
+html.dark-mode .section::before,
+body.dark-mode .section::before,
+html.dark-mode .profile-section::before,
+body.dark-mode .profile-section::before,
+html.dark-mode .president-section::before,
+body.dark-mode .president-section::before,
+html.dark-mode .social-links-section::before,
+body.dark-mode .social-links-section::before,
+html.dark-mode .useful-links-section::before,
+body.dark-mode .useful-links-section::before,
+html.dark-mode .shoutouts-section::before,
+body.dark-mode .shoutouts-section::before,
+html.dark-mode .business-info-section::before,
+body.dark-mode .business-info-section::before,
+html.dark-mode .tech-section::before,
+body.dark-mode .tech-section::before,
+html.dark-mode .disabilities-section::before,
+body.dark-mode .disabilities-section::before,
+html.dark-mode .legal-section::before,
+body.dark-mode .legal-section::before,
+html.dark-mode .version-info-section::before,
+body.dark-mode .version-info-section::before,
+html.dark-mode .countdown-section::before,
+body.dark-mode .countdown-section::before,
+html.dark-mode #quote-section::before,
+body.dark-mode #quote-section::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background:
+		radial-gradient(circle at 25% 20%, rgba(255,255,255,0.05), transparent 70%),
+		linear-gradient(150deg, rgba(255,255,255,0.02), rgba(0,0,0,0.3));
+	mix-blend-mode: soft-light;
+	pointer-events: none;
+	opacity: 0.5;
+}
+
+/* Slight inner depth tint */
+html.dark-mode .section::after,
+body.dark-mode .section::after,
+html.dark-mode .profile-section::after,
+body.dark-mode .profile-section::after,
+html.dark-mode .president-section::after,
+body.dark-mode .president-section::after,
+html.dark-mode .social-links-section::after,
+body.dark-mode .social-links-section::after,
+html.dark-mode .useful-links-section::after,
+body.dark-mode .useful-links-section::after,
+html.dark-mode .shoutouts-section::after,
+body.dark-mode .shoutouts-section::after,
+html.dark-mode .business-info-section::after,
+body.dark-mode .business-info-section::after,
+html.dark-mode .tech-section::after,
+body.dark-mode .tech-section::after,
+html.dark-mode .disabilities-section::after,
+body.dark-mode .disabilities-section::after,
+html.dark-mode .legal-section::after,
+body.dark-mode .legal-section::after,
+html.dark-mode .version-info-section::after,
+body.dark-mode .version-info-section::after,
+html.dark-mode .countdown-section::after,
+body.dark-mode .countdown-section::after,
+html.dark-mode #quote-section::after,
+body.dark-mode #quote-section::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(165deg, rgba(0,0,0,0.25), rgba(255,255,255,0.04));
+	mix-blend-mode: overlay;
+	pointer-events: none;
+	opacity: 0.35;
+}
+
