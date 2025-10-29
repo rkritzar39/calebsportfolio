@@ -1,13 +1,16 @@
+/**
+ * device.js
+ * Detects and displays OS, OS version, and device model with matching icons.
+ * Integrates seamlessly with Onyx / Liquid Glass theme.
+ */
+
 document.addEventListener("DOMContentLoaded", () => {
-  const osElement = document.querySelector("#os-info .version-value");
-  const deviceElement = document.querySelector("#device-info .version-value");
+  const osEl = document.querySelector("#os-info .version-value");
+  const deviceEl = document.querySelector("#device-info .version-value");
 
-  // --- Utility: Safe text update ---
-  const setText = (el, text) => {
-    if (el) el.textContent = text || "Unknown";
-  };
+  const setHTML = (el, html) => { if (el) el.innerHTML = html; };
+  const setText = (el, text) => { if (el) el.textContent = text; };
 
-  // --- Core Detection ---
   const ua = navigator.userAgent || navigator.vendor || window.opera;
   const uaLower = ua.toLowerCase();
 
@@ -15,7 +18,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let osVersion = "";
   let deviceModel = "Unknown Device";
 
-  // 1️⃣ OS Detection
+  /* ===================================
+   * 1️⃣ OS Detection
+   * =================================== */
   if (/windows phone/i.test(uaLower)) {
     os = "Windows Phone";
   } else if (/windows/i.test(uaLower)) {
@@ -35,7 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
     os = "Linux";
   }
 
-  // 2️⃣ OS Version Parsing (fallback)
+  /* ===================================
+   * 2️⃣ OS Version Parsing (fallback)
+   * =================================== */
   const matchVersion = (regex) => {
     const match = ua.match(regex);
     return match && match[1] ? match[1].replace(/_/g, ".") : "";
@@ -68,42 +75,95 @@ document.addEventListener("DOMContentLoaded", () => {
       break;
   }
 
-  // 3️⃣ Try Client Hints for more accuracy (asynchronously)
+  /* ===================================
+   * 3️⃣ Device Model (fallback first)
+   * =================================== */
+  deviceModel = parseModelFromUA(ua);
+
+  /* ===================================
+   * 4️⃣ Try Client Hints for accuracy
+   * =================================== */
   if (navigator.userAgentData) {
     navigator.userAgentData
       .getHighEntropyValues(["platform", "platformVersion", "model"])
       .then((data) => {
-        // OS platformVersion (better than UA parsing)
         if (data.platform) os = data.platform;
         if (data.platformVersion) {
           const pv = data.platformVersion.split(".");
           osVersion = pv.slice(0, 2).join(".");
         }
-
-        // Device model
         if (data.model && data.model.trim()) {
           deviceModel = data.model.trim();
-        } else {
-          deviceModel = parseModelFromUA(ua);
         }
-
-        setText(osElement, `${os} ${osVersion}`.trim());
-        setText(deviceElement, deviceModel);
+        updateOSDisplay(os, osVersion);
+        updateDeviceDisplay(deviceModel);
       })
       .catch(() => {
-        // fallback sync update
-        deviceModel = parseModelFromUA(ua);
-        setText(osElement, `${os} ${osVersion}`.trim());
-        setText(deviceElement, deviceModel);
+        updateOSDisplay(os, osVersion);
+        updateDeviceDisplay(deviceModel);
       });
   } else {
-    // Non-Client-Hints browsers (Safari, Firefox)
-    deviceModel = parseModelFromUA(ua);
-    setText(osElement, `${os} ${osVersion}`.trim());
-    setText(deviceElement, deviceModel);
+    updateOSDisplay(os, osVersion);
+    updateDeviceDisplay(deviceModel);
   }
 
-  // --- Model Extraction (Android / iOS / Desktop) ---
+  /* ===================================
+   * 5️⃣ Functions
+   * =================================== */
+
+  function updateOSDisplay(os, version) {
+    const iconMap = {
+      "Windows": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/windows.svg",
+      "macOS": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/apple.svg",
+      "iOS": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/apple.svg",
+      "iPadOS": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/apple.svg",
+      "Android": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/android.svg",
+      "Linux": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/linux.svg",
+      "ChromeOS": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/chrome.svg",
+      "Windows Phone": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/windows.svg",
+    };
+
+    const iconURL = iconMap[os] || "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/monitor.svg";
+
+    setHTML(
+      osEl,
+      `<img src="${iconURL}" alt="${os} icon" class="os-icon" draggable="false">
+       ${version ? `${os} ${version}` : os}`
+    );
+  }
+
+  function updateDeviceDisplay(model) {
+    const cleanModel = model.replace(/\s{2,}/g, " ").trim();
+    const deviceIcon = getDeviceIcon(cleanModel);
+    setHTML(
+      deviceEl,
+      `<img src="${deviceIcon}" alt="Device icon" class="os-icon" draggable="false"> ${cleanModel}`
+    );
+  }
+
+  function getDeviceIcon(model) {
+    const m = model.toLowerCase();
+    if (m.includes("iphone") || m.includes("ipad") || m.includes("ipod")) {
+      return "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/apple.svg";
+    }
+    if (m.includes("mac")) {
+      return "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/apple.svg";
+    }
+    if (m.includes("android")) {
+      return "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/android.svg";
+    }
+    if (m.includes("windows")) {
+      return "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/windows.svg";
+    }
+    if (m.includes("chromebook") || m.includes("chrome")) {
+      return "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/chrome.svg";
+    }
+    if (m.includes("linux")) {
+      return "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/linux.svg";
+    }
+    return "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/monitor.svg";
+  }
+
   function parseModelFromUA(ua) {
     if (/Android/.test(ua)) {
       const match = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
@@ -121,6 +181,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (/Linux/i.test(ua)) return "Linux Device";
     return "Unknown Device";
   }
+});
+
 
     // Initialize everything when the page loads
     const initialDeviceElement = document.querySelector("#device-info .version-value");
