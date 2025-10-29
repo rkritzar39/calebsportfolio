@@ -1,230 +1,126 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Function to detect OS and its version
-    function detectOSAndVersion() {
-        let userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        let os = "Unknown OS";
-        let osVersion = "";
+document.addEventListener("DOMContentLoaded", () => {
+  const osElement = document.querySelector("#os-info .version-value");
+  const deviceElement = document.querySelector("#device-info .version-value");
 
-        // --- Apple Mobile Devices ---
-        if (!window.MSStream) {
-            // iPadOS detection must come before macOS due to User-Agent string overlap
-            if (/iPad/i.test(userAgent)) {
-                os = "iPadOS";
-                if (navigator.userAgentData) {
-                    navigator.userAgentData.getHighEntropyValues(["platformVersion"])
-                        .then(ua => {
-                            if (ua.platformVersion) {
-                                const versionParts = ua.platformVersion.split('.');
-                                osVersion = versionParts.slice(0, 2).join('.');
-                                updateOSInfo(os, osVersion);
-                            }
-                        })
-                        .catch(() => {
-                            const osMatch = userAgent.match(/OS (\d+([_.]\d+)*)/i);
-                            if (osMatch && osMatch[1]) {
-                                osVersion = osMatch[1].replace(/_/g, '.');
-                                updateOSInfo(os, osVersion);
-                            }
-                        });
-                } else {
-                    const osMatch = userAgent.match(/OS (\d+([_.]\d+)*)/i);
-                    if (osMatch && osMatch[1]) {
-                        osVersion = osMatch[1].replace(/_/g, '.');
-                        updateOSInfo(os, osVersion);
-                    }
-                }
-            } else if (/iPhone|iPod/.test(userAgent)) {
-                os = "iOS";
-                if (navigator.userAgentData) {
-                    navigator.userAgentData.getHighEntropyValues(["platformVersion"])
-                        .then(ua => {
-                            if (ua.platformVersion) {
-                                const versionParts = ua.platformVersion.split('.');
-                                osVersion = versionParts.slice(0, 2).join('.');
-                                updateOSInfo(os, osVersion);
-                            }
-                        })
-                        .catch(() => {
-                            const osMatch = userAgent.match(/OS (\d+([_.]\d+)*)/i);
-                            if (osMatch && osMatch[1]) {
-                                osVersion = osMatch[1].replace(/_/g, '.');
-                                updateOSInfo(os, osVersion);
-                            }
-                        });
-                } else {
-                    const osMatch = userAgent.match(/OS (\d+([_.]\d+)*)/i);
-                    if (osMatch && osMatch[1]) {
-                        osVersion = osMatch[1].replace(/_/g, '.');
-                        updateOSInfo(os, osVersion);
-                    }
-                }
-            }
-        }
+  // --- Utility: Safe text update ---
+  const setText = (el, text) => {
+    if (el) el.textContent = text || "Unknown";
+  };
 
-        // --- Android ---
-        if (os === "Unknown OS" && /android/i.test(userAgent)) {
-            os = "Android";
-            if (navigator.userAgentData) {
-                navigator.userAgentData.getHighEntropyValues(["platformVersion"])
-                    .then(ua => {
-                        if (ua.platformVersion) {
-                            osVersion = ua.platformVersion.split('.').slice(0, 2).join('.');
-                            updateOSInfo(os, osVersion);
-                        }
-                    })
-                    .catch(() => {
-                        const androidMatch = userAgent.match(/Android (\d+(\.\d+)*)/i);
-                        if (androidMatch && androidMatch[1]) {
-                            osVersion = androidMatch[1];
-                            updateOSInfo(os, osVersion);
-                        }
-                    });
-            } else {
-                const androidMatch = userAgent.match(/Android (\d+(\.\d+)*)/i);
-                if (androidMatch && androidMatch[1]) {
-                    osVersion = androidMatch[1];
-                    updateOSInfo(os, osVersion);
-                }
-            }
-        }
-        // --- macOS ---
-        else if (os === "Unknown OS" && /Macintosh|MacIntel|MacPPC|Mac68K/.test(userAgent)) {
-            os = "macOS";
-            if (navigator.userAgentData) {
-                navigator.userAgentData.getHighEntropyValues(["platformVersion"])
-                    .then(ua => {
-                        if (ua.platformVersion) {
-                            const versionParts = ua.platformVersion.split('.');
-                            osVersion = versionParts.slice(0, 2).join('.');
-                            updateOSInfo(os, osVersion);
-                        }
-                    })
-                    .catch(() => {
-                        const macOSMatch = userAgent.match(/Mac OS X (\d+([_.]\d+)*)/i);
-                        if (macOSMatch && macOSMatch[1]) {
-                            osVersion = macOSMatch[1].replace(/_/g, '.');
-                            updateOSInfo(os, osVersion);
-                        }
-                    });
-            } else {
-                const macOSMatch = userAgent.match(/Mac OS X (\d+([_.]\d+)*)/i);
-                if (macOSMatch && macOSMatch[1]) {
-                    osVersion = macOSMatch[1].replace(/_/g, '.');
-                    updateOSInfo(os, osVersion);
-                }
-            }
-        }
-        // --- Windows ---
-        else if (os === "Unknown OS" && /Win/.test(userAgent)) {
-            os = "Windows";
-            if (navigator.userAgentData) {
-                navigator.userAgentData.getHighEntropyValues(["platformVersion"])
-                    .then(ua => {
-                        if (ua.platformVersion) {
-                            const versionParts = ua.platformVersion.split('.');
-                            const buildNumber = parseInt(versionParts[2], 10);
-                            osVersion = (buildNumber >= 22000) ? "11" : "10";
-                            updateOSInfo(os, osVersion);
-                        }
-                    })
-                    .catch(() => {
-                        handleLegacyWindowsVersion();
-                    });
-            } else {
-                handleLegacyWindowsVersion();
-            }
-        }
-        // --- Linux ---
-        else if (os === "Unknown OS" && /Linux/.test(userAgent)) {
-            os = "Linux";
-            updateOSInfo(os, osVersion);
-        }
+  // --- Core Detection ---
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const uaLower = ua.toLowerCase();
 
-        // Initial display if not already handled by async calls
-        if (os === "Unknown OS") {
-            updateOSInfo(os, osVersion);
-        }
+  let os = "Unknown OS";
+  let osVersion = "";
+  let deviceModel = "Unknown Device";
+
+  // 1️⃣ OS Detection
+  if (/windows phone/i.test(uaLower)) {
+    os = "Windows Phone";
+  } else if (/windows/i.test(uaLower)) {
+    os = "Windows";
+  } else if (/android/i.test(uaLower)) {
+    os = "Android";
+  } else if (/iPad|iPhone|iPod/.test(ua)) {
+    os = "iOS";
+    if (navigator.maxTouchPoints && navigator.maxTouchPoints > 1 && /Macintosh/.test(ua)) {
+      os = "iPadOS";
     }
+  } else if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(ua)) {
+    os = "macOS";
+  } else if (/CrOS/.test(ua)) {
+    os = "ChromeOS";
+  } else if (/Linux/.test(ua)) {
+    os = "Linux";
+  }
 
-    function handleLegacyWindowsVersion() {
-        const userAgent = navigator.userAgent;
-        const windowsMatch = userAgent.match(/Windows NT (\d+\.\d+)/i);
-        let osVersion = "";
-        
-        if (windowsMatch && windowsMatch[1]) {
-            const ntVersion = windowsMatch[1];
-            switch (ntVersion) {
-                case "10.0": osVersion = "10 / 11"; break;
-                case "6.3": osVersion = "8.1"; break;
-                case "6.2": osVersion = "8"; break;
-                case "6.1": osVersion = "7"; break;
-                case "6.0": osVersion = "Vista"; break;
-                case "5.1": case "5.2": osVersion = "XP"; break;
-                default: osVersion = "NT " + ntVersion;
-            }
+  // 2️⃣ OS Version Parsing (fallback)
+  const matchVersion = (regex) => {
+    const match = ua.match(regex);
+    return match && match[1] ? match[1].replace(/_/g, ".") : "";
+  };
+
+  switch (os) {
+    case "iOS":
+    case "iPadOS":
+      osVersion = matchVersion(/OS (\d+([_.]\d+)*)/i);
+      break;
+    case "Android":
+      osVersion = matchVersion(/Android (\d+(\.\d+)*)/i);
+      break;
+    case "macOS":
+      osVersion = matchVersion(/Mac OS X (\d+([_.]\d+)*)/i);
+      break;
+    case "Windows":
+      const winMatch = ua.match(/Windows NT (\d+\.\d+)/i);
+      if (winMatch && winMatch[1]) {
+        const map = {
+          "10.0": "10 / 11",
+          "6.3": "8.1",
+          "6.2": "8",
+          "6.1": "7",
+          "6.0": "Vista",
+          "5.1": "XP",
+        };
+        osVersion = map[winMatch[1]] || `NT ${winMatch[1]}`;
+      }
+      break;
+  }
+
+  // 3️⃣ Try Client Hints for more accuracy (asynchronously)
+  if (navigator.userAgentData) {
+    navigator.userAgentData
+      .getHighEntropyValues(["platform", "platformVersion", "model"])
+      .then((data) => {
+        // OS platformVersion (better than UA parsing)
+        if (data.platform) os = data.platform;
+        if (data.platformVersion) {
+          const pv = data.platformVersion.split(".");
+          osVersion = pv.slice(0, 2).join(".");
         }
-        updateOSInfo("Windows", osVersion);
-    }
 
-    function updateOSInfo(os, version) {
-        // FIX: Target the inner span to avoid deleting the label
-        const osInfoElement = document.querySelector("#os-info .version-value");
-        if (osInfoElement) {
-            osInfoElement.textContent = version ? `${os} ${version}` : os;
-        }
-    }
-
-    function detectDevice() {
-        let userAgent = navigator.userAgent;
-        if (/iPad/i.test(userAgent)) return "iPad";
-        if (/iPhone/i.test(userAgent)) return "iPhone";
-        if (/iPod/i.test(userAgent)) return "iPod";
-        if (/Macintosh/i.test(userAgent)) return "Mac";
-        if (/Android/i.test(userAgent)) return "Android Device";
-        if (/Windows/i.test(userAgent)) return "Windows Device";
-        if (/Linux/.test(userAgent)) return "Linux Device";
-        return "Unknown Device";
-    }
-
-    function getDetailedDeviceModel() {
-        const deviceInfoElement = document.querySelector("#device-info .version-value");
-        if (!deviceInfoElement) return; // Exit if element not found
-
-        if (navigator.userAgentData) {
-            navigator.userAgentData.getHighEntropyValues(["model"])
-                .then(ua => {
-                    const model = ua.model;
-                    if (model && model !== "Unknown") {
-                        deviceInfoElement.textContent = model;
-                    } else {
-                        deviceInfoElement.textContent = parseModelFromUserAgent(navigator.userAgent);
-                    }
-                })
-                .catch(error => {
-                    console.warn("Could not retrieve device model via Client Hints:", error);
-                    deviceInfoElement.textContent = parseModelFromUserAgent(navigator.userAgent);
-                });
+        // Device model
+        if (data.model && data.model.trim()) {
+          deviceModel = data.model.trim();
         } else {
-            deviceInfoElement.textContent = parseModelFromUserAgent(navigator.userAgent);
+          deviceModel = parseModelFromUA(ua);
         }
-    }
 
-    function parseModelFromUserAgent(userAgent) {
-        if (/iPad/.test(userAgent)) return "iPad";
-        if (/iPhone/.test(userAgent)) return "iPhone";
-        if (/iPod/.test(userAgent)) return "iPod";
-        if (/Android/.test(userAgent)) {
-            const match = userAgent.match(/Android.*?;\s*(.*?)\s*Build\//);
-            return match ? match[1].trim() : "Android Device";
-        }
-        if (/Windows Phone/.test(userAgent)) {
-            const match = userAgent.match(/Windows Phone (?:OS )?[\d.]+\d?; ([^;)]+)/);
-            return match ? match[1].trim() : "Windows Phone";
-        }
-        if (/Macintosh|MacIntel/.test(userAgent)) return "Mac";
-        if (/Linux/.test(userAgent)) return "Linux Device";
-        return "Unknown Device";
+        setText(osElement, `${os} ${osVersion}`.trim());
+        setText(deviceElement, deviceModel);
+      })
+      .catch(() => {
+        // fallback sync update
+        deviceModel = parseModelFromUA(ua);
+        setText(osElement, `${os} ${osVersion}`.trim());
+        setText(deviceElement, deviceModel);
+      });
+  } else {
+    // Non-Client-Hints browsers (Safari, Firefox)
+    deviceModel = parseModelFromUA(ua);
+    setText(osElement, `${os} ${osVersion}`.trim());
+    setText(deviceElement, deviceModel);
+  }
+
+  // --- Model Extraction (Android / iOS / Desktop) ---
+  function parseModelFromUA(ua) {
+    if (/Android/.test(ua)) {
+      const match = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
+      if (match && match[1]) {
+        return match[1].replace(/\s+$/, "").replace(/^;|;$/g, "");
+      }
+      return "Android Device";
     }
+    if (/iPhone/.test(ua)) return "iPhone";
+    if (/iPad/.test(ua)) return "iPad";
+    if (/iPod/.test(ua)) return "iPod";
+    if (/Macintosh/.test(ua)) return "Mac";
+    if (/Windows/i.test(ua)) return "Windows PC";
+    if (/CrOS/i.test(ua)) return "Chromebook";
+    if (/Linux/i.test(ua)) return "Linux Device";
+    return "Unknown Device";
+  }
 
     // Initialize everything when the page loads
     const initialDeviceElement = document.querySelector("#device-info .version-value");
