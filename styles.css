@@ -6,6 +6,8 @@
 	--line-height-base: 1.65;
 	--bg-luminance: 0.5;
 	--glass-opacity: 1; /* 0 = solid, 1 = full glass */
+	--glass-blur: 24px; /* dynamically updated by JS */
+}
 
 	/* ======================== */
 	/* Dark Liquid Glass Palette */
