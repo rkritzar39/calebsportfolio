@@ -5,6 +5,7 @@
 	--font-size-base: 16px;
 	--line-height-base: 1.65;
 	--bg-luminance: 0.5;
+	--glass-opacity: 1; /* 0 = solid, 1 = full glass */
 
 	/* ======================== */
 	/* Dark Liquid Glass Palette */
@@ -4019,3 +4020,45 @@ body.no-transparency .contact-info a {
   /* keep your existing solid background from your earlier block */
 }
 
+/* ====================================================== */
+/* === DYNAMIC GLASS INTENSITY LINK – INSTANT LIVE ======= */
+/* ====================================================== */
+
+/* Universal section binding */
+.section,
+.profile-section,
+.president-section,
+.social-links-section,
+.useful-links-section,
+.shoutouts-section,
+.business-info-section,
+.tech-section,
+.disabilities-section,
+.legal-section,
+.version-info-section,
+.countdown-section,
+#quote-section {
+  /* Adjust overall alpha based on --glass-opacity */
+  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity))) !important;
+  backdrop-filter: blur(calc(24px * var(--glass-opacity))) saturate(170%) contrast(110%) !important;
+  -webkit-backdrop-filter: blur(calc(24px * var(--glass-opacity))) saturate(170%) contrast(110%) !important;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+/* Buttons and glass controls */
+button,
+.btn,
+a.link-button,
+a.social-button,
+.contact-info a {
+  background: rgba(255, 255, 255, calc(0.08 * var(--glass-opacity))) !important;
+  backdrop-filter: blur(calc(16px * var(--glass-opacity))) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(calc(16px * var(--glass-opacity))) saturate(180%) !important;
+}
+
+/* Solid mode readability (Intensity = 0%) */
+body.no-transparency,
+:root[style*="--glass-opacity:0"] body {
+  --text-color: #f5f5f5;
+  --secondary-text: #cfcfcf;
+}
