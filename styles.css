@@ -4021,11 +4021,10 @@ body.no-transparency .contact-info a {
   /* keep your existing solid background from your earlier block */
 }
 
-/* ====================================================== */
-/* === DYNAMIC GLASS INTENSITY LINK – INSTANT LIVE ======= */
-/* ====================================================== */
+/* ====================================== */
+/* Dynamic Glass Intensity Containers     */
+/* ====================================== */
 
-/* Universal section binding */
 .section,
 .profile-section,
 .president-section,
@@ -4039,10 +4038,9 @@ body.no-transparency .contact-info a {
 .version-info-section,
 .countdown-section,
 #quote-section {
-  /* Adjust overall alpha based on --glass-opacity */
-  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity))) !important;
-  backdrop-filter: blur(calc(24px * var(--glass-opacity))) saturate(170%) contrast(110%) !important;
-  -webkit-backdrop-filter: blur(calc(24px * var(--glass-opacity))) saturate(170%) contrast(110%) !important;
+  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity)));
+  backdrop-filter: blur(var(--glass-blur)) saturate(calc(100% + 70% * var(--glass-opacity)));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(calc(100% + 70% * var(--glass-opacity)));
   transition: background 0.3s ease, backdrop-filter 0.3s ease;
 }
 
