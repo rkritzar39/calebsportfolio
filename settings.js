@@ -301,7 +301,7 @@ class SettingsManager {
       });
     }
 
-   // Glass Intensity
+  // Glass Intensity
 const glassSlider = document.getElementById("glassIntensitySlider");
 const glassBadge = document.getElementById("glassIntensityValue");
 
@@ -311,13 +311,13 @@ if (glassSlider && glassBadge) {
     glassBadge.textContent = `${val}%`;
     this.settings.glassIntensity = val;
     this.saveSettings();
-    this.applyGlassIntensity(); // 🔥 instant
+    this.applyGlassIntensity(); // instant update
     const pct = (val / 100) * 100;
     glassSlider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
   };
 
   glassSlider.addEventListener("input", updateGlass);
-  updateGlass(); // initialize
+  updateGlass(); // initialize on load
 }
 
     // Generic Toggles
@@ -491,22 +491,20 @@ if (glassSlider && glassBadge) {
 
  applyGlassIntensity() {
   const intensity = this.settings.glassIntensity ?? 100;
-  const glassOpacity = intensity / 100;
+  const opacity = intensity / 100;
 
-  // Update global CSS variable for container transparency
-  document.documentElement.style.setProperty("--glass-opacity", glassOpacity);
+  // Update CSS variables for blur and transparency
+  const blur = Math.round(24 * opacity); // 0% = 0 blur, 100% = 24px
+  const saturate = `${100 + Math.round(70 * opacity)}%`;
 
-  // Dynamically scale blur strength (so containers feel solid when 0%)
-  const blurStrength = Math.max(6, Math.round(24 * glassOpacity)); // 6px min blur
-  document.documentElement.style.setProperty("--glass-blur", `${blurStrength}px`);
+  document.documentElement.style.setProperty("--glass-opacity", opacity);
+  document.documentElement.style.setProperty("--glass-blur", `${blur}px`);
+  document.documentElement.style.setProperty("--glass-saturate", saturate);
 
-  // Instantly update visible containers (no refresh)
-  document.querySelectorAll(
-    ".section, .profile-section, .president-section, .social-links-section, .useful-links-section, .shoutouts-section, .business-info-section, .tech-section, .disabilities-section, .legal-section, .version-info-section, .countdown-section, #quote-section"
-  ).forEach((el) => {
-    el.style.background = `rgba(255, 255, 255, ${0.06 * glassOpacity})`;
-    el.style.backdropFilter = `blur(${blurStrength}px) saturate(${100 + 70 * glassOpacity}%)`;
-    el.style.webkitBackdropFilter = `blur(${blurStrength}px) saturate(${100 + 70 * glassOpacity}%)`;
+  // Instant visual feedback (optional but ensures CSS recalculates)
+  requestAnimationFrame(() => {
+    document.documentElement.style.removeProperty("--glass-opacity");
+    document.documentElement.style.setProperty("--glass-opacity", opacity);
   });
 }
 
