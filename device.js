@@ -29,66 +29,69 @@ document.addEventListener("DOMContentLoaded", () => {
     transition: transform 0.3s ease, opacity 0.3s ease;
   `;
 
-  // --- Detect OS + Version ---
   async function detectOS() {
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    let os = "Unknown";
-    let version = "";
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  let os = "Unknown";
+  let version = "";
 
-    // iOS / iPadOS
+  // Use client hints if available
+  if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
+    try {
+      const data = await navigator.userAgentData.getHighEntropyValues(["platform", "platformVersion"]);
+      if (data.platform) os = data.platform;
+      if (data.platformVersion) version = data.platformVersion;
+    } catch (err) {
+      console.warn("ClientHints version retrieval failed:", err);
+    }
+  }
+
+  // Fallback parsing
+  if (!version) {
     if (/iPad/i.test(ua)) {
       os = "iPadOS";
-      const match = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (match) version = match[1].replace(/_/g, ".");
+      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
+      if (m) version = m[1].replace(/_/g, ".");
     } else if (/iPhone|iPod/.test(ua)) {
       os = "iOS";
-      const match = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (match) version = match[1].replace(/_/g, ".");
-    }
-    // Android
-    else if (/Android/i.test(ua)) {
+      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
+      if (m) version = m[1].replace(/_/g, ".");
+    } else if (/Android/i.test(ua)) {
       os = "Android";
-      const match = ua.match(/Android (\d+(\.\d+)*)/i);
-      if (match) version = match[1];
-    }
-    // macOS
-    else if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(ua)) {
+      const m = ua.match(/Android (\d+(\.\d+)*)/i);
+      if (m) version = m[1];
+    } else if (/Macintosh|MacIntel|MacPPC|Mac68K/.test(ua)) {
       os = "macOS";
-      const match = ua.match(/Mac OS X (\d+([_.]\d+)*)/i);
-      if (match) version = match[1].replace(/_/g, ".");
-    }
-    // Windows
-    else if (/Win/.test(ua)) {
+      const m = ua.match(/Mac OS X (\d+([_.]\d+)*)/i);
+      if (m) version = m[1].replace(/_/g, ".");
+    } else if (/Win/.test(ua)) {
       os = "Windows";
-      const match = ua.match(/Windows NT (\d+\.\d+)/i);
-      if (match) {
-        const nt = match[1];
-        switch (nt) {
-          case "10.0": version = "10 / 11"; break;
-          case "6.3": version = "8.1"; break;
-          case "6.2": version = "8"; break;
-          case "6.1": version = "7"; break;
-          case "6.0": version = "Vista"; break;
-          case "5.1": case "5.2": version = "XP"; break;
-          default: version = "NT " + nt;
-        }
+      const m = ua.match(/Windows NT (\d+\.\d+)/i);
+      if (m) {
+        const nt = m[1];
+        const map = {
+          "10.0": "10 / 11",
+          "6.3": "8.1",
+          "6.2": "8",
+          "6.1": "7",
+          "6.0": "Vista",
+          "5.1": "XP"
+        };
+        version = map[nt] || `NT ${nt}`;
       }
-    }
-    // Linux
-    else if (/Linux/i.test(ua)) {
+    } else if (/CrOS/.test(ua)) {
+      os = "ChromeOS";
+    } else if (/Linux/.test(ua)) {
       os = "Linux";
     }
-    // ChromeOS
-    else if (/CrOS/i.test(ua)) {
-      os = "ChromeOS";
-    }
-
-    const icon = iconMap[os] || iconMap["Unknown"];
-    osInfoEl.innerHTML = `
-      <img src="${icon}" alt="${os} icon" style="${iconStyle}">
-      ${version ? `${os} ${version}` : os}
-    `;
   }
+
+  // Final display
+  const icon = iconMap[os] || iconMap["Unknown"];
+  osInfoEl.innerHTML = `
+    <img src="${icon}" alt="${os} icon" class="os-icon">
+    ${version ? `${os} ${version}` : os}
+  `;
+}
 
   // --- Detect Device Type ---
   function detectDevice() {
