@@ -2326,23 +2326,33 @@ body.dark-mode .bubble {
 	.scroll-to-top { width: 48px; height: 48px; left: 12px; bottom: 12px; }
 }
 
-/* ======================== */
-/* Version Info Section – Onyx Bubble Glass (Dynamic) */
-/* ======================== */
-.version-info-section {
-  position: relative;
-  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity)));
+/* ======================================================= */
+/* Onyx Liquid Glass – Version & Legal Sections            */
+/* ======================================================= */
+
+/* Shared Base for Both */
+.version-info-section,
+.legal-section {
+  background: color-mix(in srgb, var(--content-bg) calc(var(--glass-opacity, 1) * 100%), transparent);
   background-image: var(--bubble-gradient);
   border-radius: var(--radius-xl);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%)) contrast(110%);
+  -webkit-backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%)) contrast(110%);
+  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  transition:
+    background 0.3s ease,
+    backdrop-filter 0.3s ease,
+    box-shadow 0.3s ease,
+    border 0.3s ease;
+}
+
+/* ======================== */
+/* Version Info Section     */
+/* ======================== */
+.version-info-section {
   padding: 28px;
   margin-bottom: 40px;
-  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.3),
-    inset 0 0 0.5px rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  transition: background 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
 }
 
 /* Header */
@@ -2356,15 +2366,15 @@ body.dark-mode .bubble {
   display: flex;
   align-items: center;
   gap: 10px;
-  letter-spacing: 0.3px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
+
 .version-header::before {
   content: "📊";
   font-size: 1.2em;
+  opacity: 0.85;
 }
 
-/* Version list as Glass Bubbles */
+/* Version list as Bubble Cards */
 .version-list {
   list-style: none;
   padding: 0;
@@ -2375,22 +2385,18 @@ body.dark-mode .bubble {
 
 .version-list li {
   position: relative;
-  background: rgba(255, 255, 255, calc(0.08 * var(--glass-opacity)));
+  background: color-mix(in srgb, var(--content-bg) calc(var(--glass-opacity, 1) * 100%), transparent);
   background-image: var(--bubble-gradient);
   padding: 14px 18px 14px 36px;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   gap: 14px;
   font-size: 1em;
   color: var(--text-color);
   font-weight: 500;
-  border: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
-  box-shadow:
-    0 4px 15px rgba(0,0,0,0.25),
-    inset 0 0 0.5px rgba(255,255,255,0.15);
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(var(--glass-saturate));
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
@@ -2402,17 +2408,21 @@ body.dark-mode .bubble {
   height: 10px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 60%, white));
-  box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.6), 0 0 12px rgba(var(--accent-rgb), 0.3);
+  box-shadow:
+    0 0 6px rgba(var(--accent-rgb, 78,168,255), 0.6),
+    0 0 12px rgba(var(--accent-rgb, 78,168,255), 0.3);
   animation: pulse-dot 2.5s infinite ease-in-out;
 }
 
 .version-list li:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--shadow-color) 50%, transparent);
 }
 
 .version-list li:hover::before {
-  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.8), 0 0 20px rgba(var(--accent-rgb), 0.5);
+  box-shadow:
+    0 0 10px rgba(var(--accent-rgb, 78,168,255), 0.8),
+    0 0 20px rgba(var(--accent-rgb, 78,168,255), 0.5);
   transform: scale(1.2);
 }
 
@@ -2421,46 +2431,17 @@ body.dark-mode .bubble {
   50% { transform: scale(1.3); opacity: 0.7; }
 }
 
-.version-label {
-  margin-right: 8px;
-  color: var(--secondary-text);
-}
-
-/* OS Icon */
-.os-icon {
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  vertical-align: middle;
-  margin-right: 8px;
-  filter: drop-shadow(0 0 3px rgba(0,0,0,0.25));
-  opacity: 0.9;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-.os-icon:hover {
-  transform: scale(1.08);
-  opacity: 1;
-}
+.version-label { margin-right: 8px; }
 
 /* ======================== */
-/* Legal Section – Onyx Bubble Glass */
+/* Legal Section            */
 /* ======================== */
 .legal-section {
-  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity)));
-  background-image: var(--bubble-gradient);
-  border-radius: var(--radius-xl);
   padding: 25px;
   margin: 35px 0;
-  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.3),
-    inset 0 0 0.5px rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   display: flex;
   flex-direction: column;
   gap: 16px;
-  transition: background 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
 }
 
 /* Header */
@@ -2473,32 +2454,28 @@ body.dark-mode .bubble {
   display: flex;
   align-items: center;
   gap: 10px;
-  letter-spacing: 0.3px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
 .legal-header::before {
   content: "⚖️";
   font-size: 1.2em;
+  opacity: 0.85;
 }
 
 /* Messages */
 .copy-protection-message,
 .legal-protection-message {
   padding: 16px 20px;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   font-size: 0.95em;
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(255, 255, 255, calc(0.08 * var(--glass-opacity)));
+  background: color-mix(in srgb, var(--content-bg) calc(var(--glass-opacity, 1) * 100%), transparent);
   background-image: var(--bubble-gradient);
   border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-  box-shadow:
-    0 6px 20px rgba(0,0,0,0.25),
-    inset 0 0 0.5px rgba(255,255,255,0.15);
-  backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(var(--glass-saturate));
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%));
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -2512,6 +2489,7 @@ body.dark-mode .bubble {
   content: "⚠️";
   font-size: 1.2em;
   min-width: 24px;
+  opacity: 0.9;
 }
 
 /* Watermark Footer */
@@ -2526,7 +2504,8 @@ body.dark-mode .bubble {
 }
 
 /* ======================== */
-/* Responsive Layout */
+/* Responsive Layout        */
+/* ======================== */
 @media screen and (max-width: 768px) {
   .version-info-section { padding: 22px; }
   .version-header { font-size: 1.2em; }
