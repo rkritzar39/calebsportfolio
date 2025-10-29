@@ -422,7 +422,8 @@ class SettingsManager {
           "mouse-trail-enabled",
           this.settings.mouseTrail === "enabled"
         ),
-      glassIntensity: () => this.applyGlassIntensity(),
+      // ✅ NEW: actually apply the transparency preference
+      disableTransparency: () => this.applyTransparencyMode(),
     };
 
     actions[key]?.();
@@ -492,6 +493,28 @@ class SettingsManager {
     const opacity = intensity / 100;
     document.documentElement.style.setProperty("--glass-opacity", opacity);
   }
+
+
+  // Turn all glass off/on and sync the wallpaper layer
+applyTransparencyMode() {
+  const on = this.settings.disableTransparency === "enabled";
+  document.body.classList.toggle("no-transparency", on);
+
+  // Wallpaper & tint: hide when solid mode is on, restore when off
+  const layer = document.getElementById("wallpaper-layer");
+  const tint  = document.getElementById("wallpaper-tint");
+  if (on) {
+    if (layer) layer.style.display = "none";
+    if (tint)  tint.style.display  = "none";
+  } else {
+    if (layer) layer.style.display = "";
+    if (tint)  tint.style.display  = "";
+    // Re-apply background + blur instantly when coming back
+    this.applyCustomBackground(false);
+    const blur = localStorage.getItem("wallpaperBlur") ?? "0";
+    this.applyWallpaperBlur(blur);
+  }
+}
 
 // =============================
 // Custom Background + Blur (Instant Blur Version)
