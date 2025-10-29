@@ -489,31 +489,26 @@ if (glassSlider && glassBadge) {
     document.body.classList.toggle("reduced-motion", reduced);
   }
 
-  applyGlassIntensity() {
+ applyGlassIntensity() {
   const intensity = this.settings.glassIntensity ?? 100;
-  const opacity = intensity / 100;
+  const glassOpacity = intensity / 100;
 
-  // Core CSS variable used by your glass rules
-  document.documentElement.style.setProperty("--glass-opacity", opacity);
+  // Update global CSS variable for container transparency
+  document.documentElement.style.setProperty("--glass-opacity", glassOpacity);
 
-  // Handle “solid mode” automatically if intensity = 0
-  if (intensity <= 1) {
-    document.body.classList.add("no-transparency");
-    const layer = document.getElementById("wallpaper-layer");
-    const tint = document.getElementById("wallpaper-tint");
-    if (layer) layer.style.display = "none";
-    if (tint) tint.style.display = "none";
-  } else {
-    document.body.classList.remove("no-transparency");
-    const layer = document.getElementById("wallpaper-layer");
-    const tint = document.getElementById("wallpaper-tint");
-    if (layer) layer.style.display = "";
-    if (tint) tint.style.display = "";
-    this.applyCustomBackground(false);
-    const blur = localStorage.getItem("wallpaperBlur") ?? "0";
-    this.applyWallpaperBlur(blur);
-  }
-} // ✅ ← this closing brace was missing!
+  // Dynamically scale blur strength (so containers feel solid when 0%)
+  const blurStrength = Math.max(6, Math.round(24 * glassOpacity)); // 6px min blur
+  document.documentElement.style.setProperty("--glass-blur", `${blurStrength}px`);
+
+  // Instantly update visible containers (no refresh)
+  document.querySelectorAll(
+    ".section, .profile-section, .president-section, .social-links-section, .useful-links-section, .shoutouts-section, .business-info-section, .tech-section, .disabilities-section, .legal-section, .version-info-section, .countdown-section, #quote-section"
+  ).forEach((el) => {
+    el.style.background = `rgba(255, 255, 255, ${0.06 * glassOpacity})`;
+    el.style.backdropFilter = `blur(${blurStrength}px) saturate(${100 + 70 * glassOpacity}%)`;
+    el.style.webkitBackdropFilter = `blur(${blurStrength}px) saturate(${100 + 70 * glassOpacity}%)`;
+  });
+}
 
 // =============================
 // Optional Legacy Transparency Mode Support
