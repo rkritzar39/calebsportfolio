@@ -3635,3 +3635,101 @@ body.light-e #quote-section {
 		0 1px 2px rgba(0, 0, 0, 0.35),
 		0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
+
+/* ====================================================== */
+/* === CONTENT INSIDE GLASS – READABILITY OPTIMIZATION === */
+/* ====================================================== */
+
+/* Global text and icon adjustment for embedded look */
+.section,
+.profile-section,
+.president-section,
+.social-links-section,
+.useful-links-section,
+.shoutouts-section,
+.business-info-section,
+.tech-section,
+.legal-section,
+.version-info-section,
+.disabilities-section,
+.countdown-section,
+#quote-section {
+	color: color-mix(in srgb, var(--text-color) 90%, rgba(255,255,255,0.1));
+	text-shadow:
+		0 1px 2px rgba(0,0,0,0.35),
+		0 0 4px rgba(0,0,0,0.25);
+}
+
+/* Secondary text */
+.section p,
+.section small,
+.section span,
+.section .secondary,
+#quote-section .quote-author,
+.countdown-label {
+	color: color-mix(in srgb, var(--secondary-text) 90%, rgba(255,255,255,0.1));
+	text-shadow:
+		0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Accent-colored or bright text */
+a,
+.link-button,
+.countdown-number,
+#quote-section .quote-text strong {
+	color: color-mix(in srgb, var(--accent-color) 95%, white);
+	text-shadow:
+		0 0 6px color-mix(in srgb, var(--accent-color) 30%, transparent),
+		0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Icons inside the glass */
+i,
+svg {
+	color: color-mix(in srgb, var(--icon-color) 85%, rgba(255,255,255,0.2));
+	filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
+/* Inner container balancing – soft translucent veil */
+.section > * {
+	background: color-mix(in srgb, var(--content-bg) 92%, transparent);
+	backdrop-filter: blur(12px) saturate(150%);
+	-webkit-backdrop-filter: blur(12px) saturate(150%);
+	border-radius: var(--radius-md);
+	padding: 0.5rem 0.8rem;
+	box-shadow:
+		inset 0 1px 1px rgba(255,255,255,0.06),
+		0 1px 4px rgba(0,0,0,0.25);
+}
+
+/* Light mode – invert shadows for readability */
+body.light-e .section,
+body.light-e .profile-section,
+body.light-e .president-section,
+body.light-e .social-links-section,
+body.light-e .useful-links-section,
+body.light-e .shoutouts-section,
+body.light-e .business-info-section,
+body.light-e .tech-section,
+body.light-e .legal-section,
+body.light-e .version-info-section,
+body.light-e .disabilities-section,
+body.light-e .countdown-section,
+body.light-e #quote-section {
+	color: color-mix(in srgb, var(--text-color) 95%, rgba(0,0,0,0.2));
+	text-shadow:
+		0 1px 1px rgba(255,255,255,0.5),
+		0 0 3px rgba(255,255,255,0.25);
+}
+
+/* Optional adaptive tint for dark wallpapers */
+body.dark-mode .section::before,
+body.dark-mode #quote-section::before,
+body.dark-mode .countdown-section::before {
+	background: linear-gradient(
+		to bottom,
+		rgba(0,0,0,0.08),
+		rgba(0,0,0,0.18)
+	);
+	mix-blend-mode: multiply;
+}
