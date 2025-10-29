@@ -1609,35 +1609,57 @@ body.dark-mode .bubble {
 }
 
 /* ======================== */
-/* Shoutouts Section – Onyx Bubble Glass */
+/* Shoutouts Section – Onyx Liquid Glass */
 /* ======================== */
 
 .shoutouts-section {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	color: var(--text-color);
-	padding: 30px;
+	background: rgba(24, 24, 24, 0.55);
 	border-radius: var(--radius-xl);
-	margin-bottom: 30px;
-	border: 1px solid var(--border-color);
-	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	padding: 34px 30px;
+	margin-bottom: 40px;
+	border: none;
+	backdrop-filter: blur(28px) saturate(180%);
+	-webkit-backdrop-filter: blur(28px) saturate(180%);
+	box-shadow:
+		inset 0 1px 2px rgba(255, 255, 255, 0.05),
+		inset 0 -3px 8px rgba(0, 0, 0, 0.55),
+		0 20px 38px rgba(0, 0, 0, 0.8),
+		0 0 60px rgba(0, 0, 0, 0.55);
+	color: var(--text-color);
 	width: 100%;
 	box-sizing: border-box;
 	overflow: hidden;
 	transition: background-color var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
+	position: relative;
+	isolation: isolate;
 }
 
+.shoutouts-section::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.08), transparent 70%),
+				linear-gradient(150deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.3));
+	mix-blend-mode: soft-light;
+	pointer-events: none;
+	opacity: 0.8;
+}
+
+/* ======================== */
 /* Section Headers and Timestamps */
+/* ======================== */
+
 .shoutouts-section h2 {
-	color: var(--text-color);
-	margin-bottom: 10px;
+	color: var(--accent-color);
+	margin-bottom: 12px;
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	font-family: 'Inter', sans-serif;
 	font-size: 1.8em;
+	font-weight: 700;
+	text-shadow: 0 0 10px rgba(0, 122, 255, 0.3);
 }
 
 #tiktok-header::before,
@@ -1649,12 +1671,22 @@ body.dark-mode .bubble {
 #tiktok-last-updated-timestamp,
 #instagram-last-updated-timestamp,
 #youtube-last-updated-timestamp {
-	color: var(--secondary-text);
+	color: color-mix(in srgb, var(--secondary-text) 90%, rgba(255,255,255,0.1));
 	font-size: 0.9em;
 	margin-bottom: 20px;
 	display: flex;
 	align-items: center;
-	gap: 4px;
+	gap: 6px;
+	padding: 6px 16px;
+	border-radius: 999px;
+	background: rgba(255,255,255,0.05);
+	backdrop-filter: blur(12px) saturate(150%);
+	-webkit-backdrop-filter: blur(12px) saturate(150%);
+	box-shadow:
+		inset 0 1px 1px rgba(255,255,255,0.08),
+		0 2px 6px rgba(0,0,0,0.4);
+	opacity: 0.9;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.45);
 }
 
 #tiktok-last-updated-timestamp::before,
@@ -1663,87 +1695,137 @@ body.dark-mode .bubble {
 	content: '\f073';
 	font-family: 'Font Awesome 6 Free';
 	font-weight: 900;
+	color: var(--accent-color);
 }
 
+/* ======================== */
+/* Search Input */
+/* ======================== */
+
+.search-container {
+	position: relative;
+	width: 100%;
+	max-width: 520px;
+	margin: 0 auto 28px auto;
+}
+
+.creator-search {
+	width: 100%;
+	padding: 12px 44px 12px 16px;
+	font-size: 1rem;
+	border-radius: 999px;
+	border: none;
+	outline: none;
+	color: var(--text-color);
+	background: rgba(255, 255, 255, 0.06);
+	backdrop-filter: blur(18px) saturate(180%);
+	-webkit-backdrop-filter: blur(18px) saturate(180%);
+	box-shadow:
+		inset 0 1px 2px rgba(255,255,255,0.08),
+		inset 0 -2px 4px rgba(0,0,0,0.4),
+		0 6px 16px rgba(0,0,0,0.55);
+	transition: all 0.3s ease;
+}
+
+.creator-search::placeholder {
+	color: color-mix(in srgb, var(--secondary-text) 90%, rgba(255,255,255,0.2));
+	opacity: 0.9;
+}
+
+.creator-search:focus {
+	box-shadow:
+		inset 0 0 0 1px rgba(255,255,255,0.25),
+		0 0 16px color-mix(in srgb, var(--accent-color) 45%, transparent);
+	background: rgba(255,255,255,0.1);
+}
+
+.search-icon {
+	position: absolute;
+	right: 18px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--accent-color);
+	font-size: 1.1rem;
+	pointer-events: none;
+	opacity: 0.85;
+}
+
+/* ======================== */
 /* Creator Grids */
+/* ======================== */
+
 .creator-grid,
 .instagram-creator-grid,
 .youtube-creator-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-	gap: 20px;
+	gap: 22px;
 	width: 100%;
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
 }
 
-/* Creator Cards – Bubble Glass */
+/* ======================== */
+/* Creator Cards – Liquid Glass */
+/* ======================== */
+
 .creator-card,
 .instagram-creator-card,
 .youtube-creator-card {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
+	background: rgba(24,24,24,0.55);
 	border-radius: var(--radius-lg);
-	padding: 20px;
+	padding: 24px;
 	display: flex;
 	flex-direction: column;
-	border: 1px solid var(--border-color);
-	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	border: none;
+	box-shadow:
+		inset 0 1px 2px rgba(255,255,255,0.05),
+		inset 0 -2px 6px rgba(0,0,0,0.5),
+		0 16px 38px rgba(0,0,0,0.8),
+		0 0 50px rgba(0,0,0,0.6);
+	backdrop-filter: blur(24px) saturate(180%);
+	-webkit-backdrop-filter: blur(24px) saturate(180%);
 	transition: transform var(--transition-medium), box-shadow var(--transition-medium);
 	width: 100%;
 	box-sizing: border-box;
 	max-width: 100%;
 	position: relative;
-	overflow: visible;
+	overflow: hidden;
 	min-height: fit-content;
 	height: auto;
+	isolation: isolate;
+}
+
+.creator-card::before,
+.instagram-creator-card::before,
+.youtube-creator-card::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background:
+		radial-gradient(circle at 25% 25%, rgba(255,255,255,0.12), transparent 70%),
+		linear-gradient(150deg, rgba(255,255,255,0.03), rgba(0,0,0,0.3));
+	mix-blend-mode: soft-light;
+	pointer-events: none;
 }
 
 .creator-card:hover,
 .instagram-creator-card:hover,
 .youtube-creator-card:hover {
-	transform: translateY(-5px);
-	box-shadow: 0 8px 24px var(--shadow-color),
-				  0 0 15px var(--accent-color);
+	transform: translateY(-4px);
+	box-shadow:
+		inset 0 1px 2px rgba(255,255,255,0.08),
+		inset 0 -2px 6px rgba(0,0,0,0.5),
+		0 20px 48px rgba(0,0,0,0.85),
+		0 0 24px color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
-/* Cover Photo (YouTube) */
-.youtube-cover-photo {
-	width: 100%;
-	height: auto;
-	display: block;
-	border-radius: 12px;
-	object-fit: contain;
-	background-color: transparent;
-	margin-bottom: 16px;
-}
+/* ======================== */
+/* Inside Card Content */
+/* ======================== */
 
-/* Creator Info Container */
-.youtube-creator-info {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	padding: 0;
-}
-
-/* Profile Pictures */
-.creator-pic,
-.instagram-creator-pic,
-.youtube-creator-pic {
-	width: 60px;
-	height: 60px;
-	border-radius: 50%;
-	object-fit: cover;
-	border: 3px solid var(--accent-color);
-	margin-bottom: 15px;
-	position: relative;
-	z-index: 1;
-}
-
-/* Headers */
 .creator-header,
 .instagram-creator-header,
 .youtube-creator-header {
@@ -1758,62 +1840,35 @@ body.dark-mode .bubble {
 .youtube-creator-header h3 {
 	margin: 0;
 	font-size: max(1.1em, calc(var(--font-size-base, 20px) * 0.8));
-	color: var(--text-color);
+	color: rgba(255,255,255,0.95);
 	line-height: 1.4;
-	overflow-wrap: break-word;
-	word-break: break-word;
-}
-
-/* Username Containers */
-.username-container,
-.instagram-username-container,
-.youtube-username-container {
-	display: flex;
-	align-items: flex-start;
-	gap: 4px;
-	margin-bottom: 10px;
-	flex-wrap: wrap;
-	width: 100%;
-	overflow: visible;
-	padding-right: 8px;
-	min-height: min-content;
+	font-weight: 700;
+	text-shadow:
+		0 1px 2px rgba(0,0,0,0.45),
+		0 0 10px rgba(255,255,255,0.05);
 }
 
 /* Usernames */
 .creator-username,
 .instagram-creator-username,
 .youtube-creator-username {
-	color: var(--secondary-text);
+	color: rgba(255,255,255,0.7);
 	font-size: max(0.9em, calc(var(--font-size-base, 20px) * 0.7));
 	margin: 0;
-	width: auto;
-	max-width: 100%;
-	overflow-wrap: break-word;
-	word-break: break-all;
-	white-space: normal;
+	word-break: break-word;
 	line-height: 1.5;
-	hyphens: auto;
-}
-
-/* Verification Badges */
-.verified-badge,
-.instagram-verified-badge,
-.youtube-verified-badge {
-	width: 16px;
-	height: 16px;
-	display: inline-block;
-	vertical-align: middle;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.45);
 }
 
 /* Bios */
 .creator-bio,
 .instagram-creator-bio,
 .youtube-creator-bio {
-	color: var(--secondary-text);
+	color: rgba(255,255,255,0.8);
 	margin: 10px 0;
 	font-size: 0.9em;
-	line-height: 1.4;
-	word-break: break-word;
+	line-height: 1.5;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
 /* Follower/Subscriber Counts */
@@ -1823,46 +1878,68 @@ body.dark-mode .bubble {
 	color: var(--accent-color);
 	font-weight: bold;
 	margin: 10px 0;
+	text-shadow:
+		0 0 8px color-mix(in srgb, var(--accent-color) 35%, transparent),
+		0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* Visit Profile Buttons – Bubble Glass */
+/* Profile Pictures */
+.creator-pic,
+.instagram-creator-pic,
+.youtube-creator-pic {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 3px solid var(--accent-color);
+	margin-bottom: 15px;
+	box-shadow:
+		0 0 12px color-mix(in srgb, var(--accent-color) 35%, transparent),
+		0 0 6px rgba(0,0,0,0.4);
+}
+
+/* Visit Profile Buttons – Capsule Glass */
 .visit-profile,
 .instagram-visit-profile,
 .youtube-visit-profile {
-	background: transparent;
-	border: 2px solid var(--accent-color);
+	background: rgba(255,255,255,0.08);
+	border: 1px solid rgba(255,255,255,0.15);
 	color: var(--accent-color);
-	padding: 8px 20px;
-	border-radius: 25px;
+	padding: 10px 22px;
+	border-radius: 999px;
 	text-decoration: none;
-	font-weight: 500;
+	font-weight: 600;
 	transition: all var(--transition-fast);
 	text-align: center;
-	position: relative;
-	overflow: hidden;
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
 }
 
 .visit-profile:hover,
 .instagram-visit-profile:hover,
 .youtube-visit-profile:hover {
-	background-color: var(--hover-color);
-	border-color: var(--hover-color);
-	color: var(--dark-text);
-	box-shadow: 0 0 10px var(--accent-color),
-				  0 0 20px var(--accent-color);
+	background: rgba(255,255,255,0.15);
+	color: #fff;
+	box-shadow: 0 0 14px color-mix(in srgb, var(--accent-color) 45%, transparent);
 	transform: translateY(-2px);
 }
 
-/* Unavailable Message – Bubble Glass */
+/* ======================== */
+/* Unavailable Message */
+/* ======================== */
+
 .unavailable-message {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	padding: 20px;
+	background: rgba(24,24,24,0.55);
+	padding: 22px;
 	border-radius: var(--radius-lg);
 	border: 2px solid var(--accent-color);
-	box-shadow: var(--bubble-shadow), 0 0 12px var(--accent-color);
 	text-align: center;
 	color: var(--secondary-text);
+	backdrop-filter: blur(18px) saturate(180%);
+	-webkit-backdrop-filter: blur(18px) saturate(180%);
+	box-shadow:
+		inset 0 1px 2px rgba(255,255,255,0.1),
+		0 0 12px var(--accent-color);
 }
 
 .unavailable-message-title {
@@ -1929,6 +2006,7 @@ body.dark-mode .bubble {
 	.instagram-creator-username,
 	.youtube-creator-username { font-size: 0.8em; }
 }
+
 
 :root {
 	--accent-color-rgb: 0, 123, 255; /* Match this to your accent color */
