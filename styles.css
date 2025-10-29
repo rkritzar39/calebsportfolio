@@ -2327,137 +2327,163 @@ body.dark-mode .bubble {
 }
 
 /* ======================== */
-/* Version Info Section – Onyx Bubble Glass */
+/* Version Info Section – Onyx Bubble Glass (Dynamic) */
 /* ======================== */
 .version-info-section {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border-radius: var(--radius-xl);
-	padding: 28px;
-	margin-bottom: 40px;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur) saturate(120%);
-	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
-	transition: background 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity)));
+  background-image: var(--bubble-gradient);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  margin-bottom: 40px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.3),
+    inset 0 0 0.5px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  transition: background 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
 }
 
 /* Header */
 .version-header {
-	color: var(--text-color);
-	margin-bottom: 18px;
-	font-size: 1.35em;
-	font-weight: 700;
-	padding-bottom: 12px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	display: flex;
-	align-items: center;
-	gap: 10px;
+  color: var(--text-color);
+  margin-bottom: 18px;
+  font-size: 1.35em;
+  font-weight: 700;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
 .version-header::before {
-	content: "📊";
-	font-size: 1.2em;
+  content: "📊";
+  font-size: 1.2em;
 }
 
-/* Version list as Bubble Cards */
+/* Version list as Glass Bubbles */
 .version-list {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	display: grid;
-	gap: 14px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 14px;
 }
 
 .version-list li {
-	position: relative;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	padding: 14px 18px 14px 36px;
-	border-radius: 16px;
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	font-size: 1em;
-	color: var(--text-color);
-	font-weight: 500;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+  background: rgba(255, 255, 255, calc(0.08 * var(--glass-opacity)));
+  background-image: var(--bubble-gradient);
+  padding: 14px 18px 14px 36px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 1em;
+  color: var(--text-color);
+  font-weight: 500;
+  border: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
+  box-shadow:
+    0 4px 15px rgba(0,0,0,0.25),
+    inset 0 0 0.5px rgba(255,255,255,0.15);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(var(--glass-saturate));
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .version-list li::before {
-	content: "";
-	position: absolute;
-	left: 12px;
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 60%, white));
-	box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.6), 0 0 12px rgba(var(--accent-rgb), 0.3);
-	animation: pulse-dot 2.5s infinite ease-in-out;
+  content: "";
+  position: absolute;
+  left: 12px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 60%, white));
+  box-shadow: 0 0 6px rgba(var(--accent-rgb), 0.6), 0 0 12px rgba(var(--accent-rgb), 0.3);
+  animation: pulse-dot 2.5s infinite ease-in-out;
 }
 
 .version-list li:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 12px 30px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
 }
 
 .version-list li:hover::before {
-	box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.8), 0 0 20px rgba(var(--accent-rgb), 0.5);
-	transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.8), 0 0 20px rgba(var(--accent-rgb), 0.5);
+  transform: scale(1.2);
 }
 
 @keyframes pulse-dot {
-	0%, 100% { transform: scale(1); opacity: 1; }
-	50% { transform: scale(1.3); opacity: 0.7; }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
 }
 
-.version-label { margin-right: 8px; }
+.version-label {
+  margin-right: 8px;
+  color: var(--secondary-text);
+}
 
 /* ======================== */
 /* Legal Section – Onyx Bubble Glass */
 /* ======================== */
 .legal-section {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border-radius: var(--radius-xl);
-	padding: 25px;
-	margin: 35px 0;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur) saturate(120%);
-	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	transition: background 0.3s ease, box-shadow 0.3s ease;
+  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity)));
+  background-image: var(--bubble-gradient);
+  border-radius: var(--radius-xl);
+  padding: 25px;
+  margin: 35px 0;
+  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.3),
+    inset 0 0 0.5px rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: background 0.35s ease, box-shadow 0.35s ease, backdrop-filter 0.35s ease;
 }
 
 /* Header */
 .legal-header {
-	color: var(--text-color);
-	font-size: 1.3em;
-	font-weight: 700;
-	padding-bottom: 12px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	display: flex;
-	align-items: center;
-	gap: 10px;
+  color: var(--text-color);
+  font-size: 1.3em;
+  font-weight: 700;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
 }
-.legal-header::before { content: "⚖️"; font-size: 1.2em; }
+.legal-header::before {
+  content: "⚖️";
+  font-size: 1.2em;
+}
 
 /* Messages */
 .copy-protection-message,
 .legal-protection-message {
-	padding: 16px 20px;
-	border-radius: 16px;
-	font-size: 0.95em;
-	font-weight: 500;
-	display: flex;
-	align-items: center;
-	gap: 14px;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  padding: 16px 20px;
+  border-radius: 16px;
+  font-size: 0.95em;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, calc(0.08 * var(--glass-opacity)));
+  background-image: var(--bubble-gradient);
+  border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.25),
+    inset 0 0 0.5px rgba(255,255,255,0.15);
+  backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) * 0.7)) saturate(var(--glass-saturate));
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Types */
@@ -2467,38 +2493,39 @@ body.dark-mode .bubble {
 /* Icons */
 .copy-protection-message::before,
 .legal-protection-message::before {
-	content: "⚠️";
-	font-size: 1.2em;
-	min-width: 24px;
+  content: "⚠️";
+  font-size: 1.2em;
+  min-width: 24px;
 }
 
 /* Watermark Footer */
 .watermark-note {
-	text-align: center;
-	font-size: 0.85em;
-	color: var(--secondary-text);
-	margin-top: 12px;
-	padding-top: 12px;
-	border-top: 1px dashed var(--border-color);
-	letter-spacing: 0.3px;
+  text-align: center;
+  font-size: 0.85em;
+  color: var(--secondary-text);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-color);
+  letter-spacing: 0.3px;
 }
 
 /* ======================== */
 /* Responsive Layout */
 @media screen and (max-width: 768px) {
-	.version-info-section { padding: 22px; }
-	.version-header { font-size: 1.2em; }
-	.version-list li { font-size: 0.92em; }
-	.legal-section { padding: 20px; }
-	.legal-header { font-size: 1.2em; }
+  .version-info-section { padding: 22px; }
+  .version-header { font-size: 1.2em; }
+  .version-list li { font-size: 0.92em; }
+  .legal-section { padding: 20px; }
+  .legal-header { font-size: 1.2em; }
 }
+
 @media screen and (max-width: 400px) {
-	.version-info-section { padding: 16px; }
-	.version-header { font-size: 1.1em; }
-	.version-list li::before { left: 10px; width: 8px; height: 8px; }
-	.version-list li { padding-left: 30px; font-size: 0.9em; }
-	.legal-section { padding: 16px; }
-	.legal-header { font-size: 1.1em; }
+  .version-info-section { padding: 16px; }
+  .version-header { font-size: 1.1em; }
+  .version-list li::before { left: 10px; width: 8px; height: 8px; }
+  .version-list li { padding-left: 30px; font-size: 0.9em; }
+  .legal-section { padding: 16px; }
+  .legal-header { font-size: 1.1em; }
 }
 
 /* Copy Protection */
