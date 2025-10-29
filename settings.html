@@ -115,20 +115,29 @@
           </div>
         </div>
 
-        <!-- Disable Transparency -->
-        <label class="setting-card" for="disableTransparencyToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Disable Transparency</strong>
-            <p class="setting-description">
-              Make all sections solid instead of glassy. Improves readability on bright or busy wallpapers.
-            </p>
-          </div>
-          <div class="md-switch">
-            <input type="checkbox" id="disableTransparencyToggle" role="switch" />
-            <div class="track"><div class="thumb"></div></div>
-          </div>
-        </label>
-
+        <!-- ================================= -->
+<!-- Glass Intensity Slider -->
+<!-- ================================= -->
+<div class="setting-card">
+  <div class="setting-label">
+    <strong class="setting-title">Glass Intensity</strong>
+    <p class="setting-description">
+      Adjust how transparent sections appear on the homepage.
+    </p>
+  </div>
+  <div class="blur-slider-control">
+    <span id="glassIntensityValue" class="font-size-badge">100%</span>
+    <input
+      type="range"
+      id="glassIntensitySlider"
+      min="0"
+      max="100"
+      step="1"
+      value="100"
+      aria-label="Adjust glass intensity"
+    />
+  </div>
+</div>
         <!-- Accent Color -->
         <div class="setting-card accent-color-card">
           <label for="accentColorPicker" class="setting-label">
