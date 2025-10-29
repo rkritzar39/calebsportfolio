@@ -7,14 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- OS Icon Map ---
   const iconMap = {
-    "Windows": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/windows.svg",
-    "macOS": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/apple.svg",
-    "iOS": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/apple.svg",
-    "iPadOS": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/apple.svg",
-    "Android": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/android.svg",
-    "Linux": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/linux.svg",
-    "ChromeOS": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/chrome.svg",
-    "Unknown": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/monitor.svg"
+    "Windows": "/icons/windows.svg",
+    "macOS": "/icons/apple.svg",
+    "iOS": "/icons/apple.svg",
+    "iPadOS": "/icons/apple.svg",
+    "Android": "/icons/android.svg",
+    "Linux": "/icons/linux.svg",
+    "ChromeOS": "/icons/chrome.svg",
+    "Unknown": "/icons/monitor.svg"
   };
 
 // --- Style applied to all OS icons ---
