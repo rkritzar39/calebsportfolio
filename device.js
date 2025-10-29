@@ -17,27 +17,29 @@ document.addEventListener("DOMContentLoaded", () => {
     "Unknown": "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/monitor.svg"
   };
 
- // --- Style applied to all OS icons ---
+// --- Style applied to all OS icons ---
   const iconStyle = `
     display: inline-block;
     width: 22px;
     height: 22px;
     vertical-align: middle;
     margin-right: 8px;
-    opacity: 0.9; /* This handles transparency. Lower it for more. */
     filter: drop-shadow(0 0 3px rgba(0,0,0,0.25));
-    transition: opacity 0.3s ease;
+    transition: background-color 0.3s ease;
 
-    /* --- New properties for color matching --- */
-    background-color: currentColor; /* Fills the shape with the text color */
+    /* * This now uses color-mix to make the accent color itself transparent.
+     * '90%' means 90% opaque (10% transparent). You can change this value.
+     */
+    background-color: color-mix(in srgb, var(--accent-color) 90%, transparent);
+    
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
-    -webkit-mask-size: contain;         /* Safari compatibility */
-    -webkit-mask-repeat: no-repeat;     /* Safari compatibility */
-    -webkit-mask-position: center;    /* Safari compatibility */
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
   `;
-
+  
   async function detectOS() {
   const ua = navigator.userAgent || navigator.vendor || window.opera;
   let os = "Unknown";
