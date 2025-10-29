@@ -489,45 +489,44 @@ if (glassSlider && glassBadge) {
     document.body.classList.toggle("reduced-motion", reduced);
   }
 
- applyGlassIntensity() {
+applyGlassIntensity() {
   const intensity = this.settings.glassIntensity ?? 100;
   const opacity = intensity / 100;
 
-  // Update CSS variables for blur and transparency
-  const blur = Math.round(24 * opacity); // 0% = 0 blur, 100% = 24px
+  // Calculate corresponding blur and saturation levels
+  const blur = Math.round(30 * opacity); // 0 → solid, 30px → full glass
   const saturate = `${100 + Math.round(70 * opacity)}%`;
 
+  // Update root CSS variables
   document.documentElement.style.setProperty("--glass-opacity", opacity);
   document.documentElement.style.setProperty("--glass-blur", `${blur}px`);
   document.documentElement.style.setProperty("--glass-saturate", saturate);
 
-  // Instant visual feedback (optional but ensures CSS recalculates)
-  requestAnimationFrame(() => {
-    document.documentElement.style.removeProperty("--glass-opacity");
-    document.documentElement.style.setProperty("--glass-opacity", opacity);
+  // Apply live styles to every visible content container
+  const containers = document.querySelectorAll(`
+    .profile-section,
+    .social-links-section,
+    .shoutouts-section,
+    .useful-links-section,
+    .business-info-section,
+    .tech-section,
+    .countdown-section,
+    .disabilities-section,
+    .version-info-section,
+    .legal-section
+  `);
+
+  containers.forEach((el) => {
+    // Light/Dark adaptive background (looks good on both themes)
+    const isDark = document.body.classList.contains("dark-mode");
+    const base = isDark ? "0, 0, 0" : "255, 255, 255";
+    const bgAlpha = isDark ? 0.25 + opacity * 0.35 : 0.06 + opacity * 0.25;
+
+    el.style.background = `rgba(${base}, ${bgAlpha})`;
+    el.style.backdropFilter = `blur(${blur}px) saturate(${saturate})`;
+    el.style.webkitBackdropFilter = `blur(${blur}px) saturate(${saturate})`;
+    el.style.transition = "background 0.35s ease, backdrop-filter 0.35s ease";
   });
-}
-
-// =============================
-// Optional Legacy Transparency Mode Support
-// (If you still have disableTransparency in defaults)
-// =============================
-applyTransparencyMode() {
-  const on = this.settings.disableTransparency === "enabled";
-  document.body.classList.toggle("no-transparency", on);
-
-  const layer = document.getElementById("wallpaper-layer");
-  const tint = document.getElementById("wallpaper-tint");
-  if (on) {
-    if (layer) layer.style.display = "none";
-    if (tint) tint.style.display = "none";
-  } else {
-    if (layer) layer.style.display = "";
-    if (tint) tint.style.display = "";
-    this.applyCustomBackground(false);
-    const blur = localStorage.getItem("wallpaperBlur") ?? "0";
-    this.applyWallpaperBlur(blur);
-  }
 }
 
 // =============================
