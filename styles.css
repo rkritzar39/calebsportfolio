@@ -3207,3 +3207,117 @@ body.maintenance-active {
     opacity: 0.4;
     background-color: #4a4a4a;
 }
+
+/* ========================================================= */
+/* === LIQUID ONYX DEPTH ENHANCEMENT – STATIC NO ANIMATION === */
+/* ========================================================= */
+
+/* Sections, Panels, Cards */
+.section,
+.profile-section,
+.president-section,
+.social-links-section,
+.useful-links-section,
+.shoutouts-section,
+.business-info-section,
+.tech-section,
+.legal-section,
+.version-info-section,
+.disabilities-section,
+.admin-section-card {
+	box-shadow:
+		inset 0 1px 2px rgba(255, 255, 255, 0.06), /* top edge sheen */
+		inset 0 -2px 6px rgba(0, 0, 0, 0.55),      /* lower edge refraction */
+		0 18px 38px rgba(0, 0, 0, 0.7),            /* main depth shadow */
+		0 0 60px rgba(0, 0, 0, 0.55);              /* ambient diffusion */
+	background: linear-gradient(
+			to bottom right,
+			color-mix(in srgb, var(--content-bg) 96%, transparent),
+			color-mix(in srgb, var(--content-bg) 75%, transparent)
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction);
+	position: relative;
+	isolation: isolate;
+}
+
+/* Adds soft inner light to mimic glass thickness */
+.section::after,
+.profile-section::after,
+.president-section::after,
+.social-links-section::after,
+.useful-links-section::after,
+.shoutouts-section::after,
+.business-info-section::after,
+.tech-section::after,
+.legal-section::after,
+.version-info-section::after,
+.disabilities-section::after,
+.admin-section-card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(
+		145deg,
+		rgba(255, 255, 255, 0.04),
+		rgba(0, 0, 0, 0.25)
+	);
+	mix-blend-mode: overlay;
+	opacity: 0.35;
+	pointer-events: none;
+}
+
+/* Buttons and Link Buttons */
+button,
+.btn,
+a.link-button,
+a.social-button,
+.contact-info a {
+	background: linear-gradient(
+			to bottom right,
+			color-mix(in srgb, var(--content-bg) 85%, transparent),
+			color-mix(in srgb, var(--content-bg) 65%, transparent)
+		),
+		var(--bubble-gradient);
+	box-shadow:
+		inset 0 1px 1px rgba(255, 255, 255, 0.08),
+		inset 0 -2px 3px rgba(0, 0, 0, 0.4),
+		0 8px 20px rgba(0, 0, 0, 0.6);
+	border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+	color: var(--text-color);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+
+/* LIGHT MODE balance */
+body.light-e .section,
+body.light-e .profile-section,
+body.light-e .president-section,
+body.light-e .social-links-section,
+body.light-e .useful-links-section,
+body.light-e .shoutouts-section,
+body.light-e .business-info-section,
+body.light-e .tech-section,
+body.light-e .legal-section,
+body.light-e .version-info-section,
+body.light-e .disabilities-section,
+body.light-e .admin-section-card,
+body.light-e button,
+body.light-e .btn,
+body.light-e a.link-button,
+body.light-e a.social-button,
+body.light-e .contact-info a {
+	box-shadow:
+		inset 0 1px 2px rgba(255, 255, 255, 0.25),
+		inset 0 -2px 6px rgba(0, 0, 0, 0.15),
+		0 12px 30px rgba(0, 0, 0, 0.2),
+		0 0 60px rgba(255, 255, 255, 0.25);
+	background: linear-gradient(
+			to bottom right,
+			color-mix(in srgb, var(--content-bg) 95%, transparent),
+			color-mix(in srgb, var(--content-bg) 80%, transparent)
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction);
+}
