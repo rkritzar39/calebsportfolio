@@ -3321,3 +3321,102 @@ body.light-e .contact-info a {
 		var(--bubble-gradient),
 		var(--liquid-refraction);
 }
+
+/* ========================================================= */
+/* === ONYX DEPTH FIX: COUNTDOWN + QUOTE OF THE DAY ======== */
+/* ========================================================= */
+
+/* === Quote of the Day Section – Match Full Onyx === */
+#quote-section {
+	background: linear-gradient(
+			to bottom right,
+			color-mix(in srgb, var(--content-bg) 94%, transparent),
+			color-mix(in srgb, var(--content-bg) 75%, transparent)
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-xl);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	box-shadow:
+		inset 0 1px 2px rgba(255, 255, 255, 0.06),
+		inset 0 -2px 6px rgba(0, 0, 0, 0.55),
+		0 18px 38px rgba(0, 0, 0, 0.7),
+		0 0 60px rgba(0, 0, 0, 0.55);
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+}
+
+/* Add inner light layer */
+#quote-section::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(
+		145deg,
+		rgba(255, 255, 255, 0.05),
+		rgba(0, 0, 0, 0.25)
+	);
+	mix-blend-mode: overlay;
+	opacity: 0.4;
+	pointer-events: none;
+}
+
+/* === Countdown Section – Match Full Onyx === */
+.countdown-section {
+	background: linear-gradient(
+			to bottom right,
+			color-mix(in srgb, var(--content-bg) 94%, transparent),
+			color-mix(in srgb, var(--content-bg) 75%, transparent)
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-xl);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	box-shadow:
+		inset 0 1px 2px rgba(255, 255, 255, 0.06),
+		inset 0 -2px 6px rgba(0, 0, 0, 0.55),
+		0 18px 38px rgba(0, 0, 0, 0.7),
+		0 0 60px rgba(0, 0, 0, 0.55);
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+}
+
+/* Add subtle glow */
+.countdown-section::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(
+		150deg,
+		rgba(255, 255, 255, 0.04),
+		rgba(0, 0, 0, 0.25)
+	);
+	mix-blend-mode: overlay;
+	opacity: 0.4;
+	pointer-events: none;
+}
+
+/* === Light Mode Adjustments === */
+body.light-e #quote-section,
+body.light-e .countdown-section {
+	box-shadow:
+		inset 0 1px 2px rgba(255, 255, 255, 0.25),
+		inset 0 -2px 6px rgba(0, 0, 0, 0.15),
+		0 12px 30px rgba(0, 0, 0, 0.2),
+		0 0 60px rgba(255, 255, 255, 0.25);
+	background: linear-gradient(
+			to bottom right,
+			color-mix(in srgb, var(--content-bg) 95%, transparent),
+			color-mix(in srgb, var(--content-bg) 80%, transparent)
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction);
+}
