@@ -4,10 +4,6 @@
 	/* ======================== */
 	--font-size-base: 16px;
 	--line-height-base: 1.65;
-	--bg-luminance: 0.5;
-	--glass-opacity: 1; /* JS updates this dynamically */
-  	--glass-blur: 24px; /* default blur */
-  	--glass-saturate: 170%; /* saturation for depth */
 
 	/* ======================== */
 	/* Dark Liquid Glass Palette */
@@ -1616,11 +1612,8 @@ body.dark-mode .bubble {
 /* ======================== */
 
 .shoutouts-section {
-	background: linear-gradient(
-		to bottom right,
-		color-mix(in srgb, var(--content-bg) 92%, transparent),
-		color-mix(in srgb, var(--content-bg) 78%, transparent)
-	), var(--bubble-gradient);
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
 	color: var(--text-color);
 	padding: 30px;
 	border-radius: var(--radius-xl);
@@ -1633,22 +1626,6 @@ body.dark-mode .bubble {
 	box-sizing: border-box;
 	overflow: hidden;
 	transition: background-color var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
-	position: relative;
-	isolation: isolate;
-}
-
-/* subtle inner light for readability without changing layout */
-.shoutouts-section::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background:
-		radial-gradient(90% 80% at 20% 15%, rgba(255,255,255,0.08), transparent 70%),
-		linear-gradient(150deg, rgba(255,255,255,0.03), rgba(0,0,0,0.22));
-	mix-blend-mode: overlay;
-	pointer-events: none;
-	opacity: .5;
 }
 
 /* Section Headers and Timestamps */
@@ -1660,7 +1637,6 @@ body.dark-mode .bubble {
 	gap: 10px;
 	font-family: 'Inter', sans-serif;
 	font-size: 1.8em;
-	text-shadow: 0 1px 2px rgba(0,0,0,.25);
 }
 
 #tiktok-header::before,
@@ -1678,15 +1654,6 @@ body.dark-mode .bubble {
 	display: flex;
 	align-items: center;
 	gap: 4px;
-	padding: 6px 12px;
-	border-radius: 999px;
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-	box-shadow:
-		inset 0 1px 2px color-mix(in srgb, var(--bubble-highlight) 80%, transparent),
-		0 2px 6px color-mix(in srgb, var(--bubble-shadow) 55%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 }
 
 #tiktok-last-updated-timestamp::before,
@@ -1695,7 +1662,6 @@ body.dark-mode .bubble {
 	content: '\f073';
 	font-family: 'Font Awesome 6 Free';
 	font-weight: 900;
-	color: var(--accent-color);
 }
 
 /* Creator Grids */
@@ -1715,11 +1681,8 @@ body.dark-mode .bubble {
 .creator-card,
 .instagram-creator-card,
 .youtube-creator-card {
-	background: linear-gradient(
-		to bottom right,
-		color-mix(in srgb, var(--content-bg) 90%, transparent),
-		color-mix(in srgb, var(--content-bg) 72%, transparent)
-	), var(--bubble-gradient);
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-lg);
 	padding: 20px;
 	display: flex;
@@ -1728,7 +1691,7 @@ body.dark-mode .bubble {
 	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-	transition: transform var(--transition-medium), box-shadow var(--transition-medium), background var(--transition-medium);
+	transition: transform var(--transition-medium), box-shadow var(--transition-medium);
 	width: 100%;
 	box-sizing: border-box;
 	max-width: 100%;
@@ -1738,28 +1701,12 @@ body.dark-mode .bubble {
 	height: auto;
 }
 
-/* readability overlay without altering spacing */
-.creator-card::before,
-.instagram-creator-card::before,
-.youtube-creator-card::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background:
-		radial-gradient(70% 60% at 25% 20%, rgba(255,255,255,0.08), transparent 70%),
-		linear-gradient(160deg, rgba(255,255,255,0.02), rgba(0,0,0,0.18));
-	mix-blend-mode: overlay;
-	pointer-events: none;
-	opacity: .6;
-}
-
 .creator-card:hover,
 .instagram-creator-card:hover,
 .youtube-creator-card:hover {
 	transform: translateY(-5px);
-	box-shadow: 0 8px 24px color-mix(in srgb, var(--shadow-color) 70%, transparent),
-	            0 0 15px color-mix(in srgb, var(--accent-color) 35%, transparent);
+	box-shadow: 0 8px 24px var(--shadow-color),
+				  0 0 15px var(--accent-color);
 }
 
 /* Cover Photo (YouTube) */
@@ -1793,9 +1740,6 @@ body.dark-mode .bubble {
 	margin-bottom: 15px;
 	position: relative;
 	z-index: 1;
-	box-shadow:
-		0 0 10px color-mix(in srgb, var(--accent-color) 35%, transparent),
-		0 2px 8px color-mix(in srgb, var(--bubble-shadow) 55%, transparent);
 }
 
 /* Headers */
@@ -1817,7 +1761,6 @@ body.dark-mode .bubble {
 	line-height: 1.4;
 	overflow-wrap: break-word;
 	word-break: break-word;
-	text-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-color) 65%, transparent);
 }
 
 /* Username Containers */
@@ -1849,7 +1792,6 @@ body.dark-mode .bubble {
 	white-space: normal;
 	line-height: 1.5;
 	hyphens: auto;
-	text-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 }
 
 /* Verification Badges */
@@ -1871,7 +1813,6 @@ body.dark-mode .bubble {
 	font-size: 0.9em;
 	line-height: 1.4;
 	word-break: break-word;
-	text-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 }
 
 /* Follower/Subscriber Counts */
@@ -1881,15 +1822,14 @@ body.dark-mode .bubble {
 	color: var(--accent-color);
 	font-weight: bold;
 	margin: 10px 0;
-	text-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 35%, transparent);
 }
 
 /* Visit Profile Buttons – Bubble Glass */
 .visit-profile,
 .instagram-visit-profile,
 .youtube-visit-profile {
-	background: color-mix(in srgb, var(--content-bg) 70%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+	background: transparent;
+	border: 2px solid var(--accent-color);
 	color: var(--accent-color);
 	padding: 8px 20px;
 	border-radius: 25px;
@@ -1899,38 +1839,29 @@ body.dark-mode .bubble {
 	text-align: center;
 	position: relative;
 	overflow: hidden;
-	box-shadow:
-		inset 0 1px 2px color-mix(in srgb, var(--bubble-highlight) 80%, transparent),
-		0 4px 10px color-mix(in srgb, var(--bubble-shadow) 55%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
 }
 
 .visit-profile:hover,
 .instagram-visit-profile:hover,
 .youtube-visit-profile:hover {
-	background: color-mix(in srgb, var(--accent-color) 18%, var(--content-bg));
-	border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
-	color: var(--text-color);
-	box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 40%, transparent);
+	background-color: var(--hover-color);
+	border-color: var(--hover-color);
+	color: var(--dark-text);
+	box-shadow: 0 0 10px var(--accent-color),
+				  0 0 20px var(--accent-color);
 	transform: translateY(-2px);
 }
 
 /* Unavailable Message – Bubble Glass */
 .unavailable-message {
-	background: linear-gradient(
-		to bottom right,
-		color-mix(in srgb, var(--content-bg) 92%, transparent),
-		color-mix(in srgb, var(--content-bg) 78%, transparent)
-	), var(--bubble-gradient);
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
 	padding: 20px;
 	border-radius: var(--radius-lg);
 	border: 2px solid var(--accent-color);
-	box-shadow: var(--bubble-shadow), 0 0 12px color-mix(in srgb, var(--accent-color) 35%, transparent);
+	box-shadow: var(--bubble-shadow), 0 0 12px var(--accent-color);
 	text-align: center;
 	color: var(--secondary-text);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
 }
 
 .unavailable-message-title {
@@ -1938,7 +1869,6 @@ body.dark-mode .bubble {
 	font-size: calc(var(--font-size-base, 20px) * 1.1);
 	font-weight: bold;
 	margin-bottom: 10px;
-	text-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 }
 
 /* ======================== */
@@ -1986,7 +1916,7 @@ body.dark-mode .bubble {
 	.shoutouts-section { padding: 10px; }
 	.creator-grid,
 	.instagram-creator-grid,
-	youtube-creator-grid { gap: 10px; }
+	.youtube-creator-grid { gap: 10px; }
 	.creator-card,
 	.instagram-creator-card,
 	.youtube-creator-card { padding: 10px; min-height: fit-content; }
@@ -3276,789 +3206,4 @@ body.maintenance-active {
 .sortable-ghost {
     opacity: 0.4;
     background-color: #4a4a4a;
-}
-
-/* ========================================================= */
-/* === LIQUID ONYX DEPTH ENHANCEMENT – STATIC NO ANIMATION === */
-/* ========================================================= */
-
-/* Sections, Panels, Cards */
-.section,
-.profile-section,
-.president-section,
-.social-links-section,
-.useful-links-section,
-.shoutouts-section,
-.business-info-section,
-.tech-section,
-.legal-section,
-.version-info-section,
-.disabilities-section,
-.admin-section-card {
-	box-shadow:
-		inset 0 1px 2px rgba(255, 255, 255, 0.06), /* top edge sheen */
-		inset 0 -2px 6px rgba(0, 0, 0, 0.55),      /* lower edge refraction */
-		0 18px 38px rgba(0, 0, 0, 0.7),            /* main depth shadow */
-		0 0 60px rgba(0, 0, 0, 0.55);              /* ambient diffusion */
-	background: linear-gradient(
-			to bottom right,
-			color-mix(in srgb, var(--content-bg) 96%, transparent),
-			color-mix(in srgb, var(--content-bg) 75%, transparent)
-		),
-		var(--bubble-gradient),
-		var(--liquid-refraction);
-	position: relative;
-	isolation: isolate;
-}
-
-/* Adds soft inner light to mimic glass thickness */
-.section::after,
-.profile-section::after,
-.president-section::after,
-.social-links-section::after,
-.useful-links-section::after,
-.shoutouts-section::after,
-.business-info-section::after,
-.tech-section::after,
-.legal-section::after,
-.version-info-section::after,
-.disabilities-section::after,
-.admin-section-card::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: linear-gradient(
-		145deg,
-		rgba(255, 255, 255, 0.04),
-		rgba(0, 0, 0, 0.25)
-	);
-	mix-blend-mode: overlay;
-	opacity: 0.35;
-	pointer-events: none;
-}
-
-/* Buttons and Link Buttons */
-button,
-.btn,
-a.link-button,
-a.social-button,
-.contact-info a {
-	background: linear-gradient(
-			to bottom right,
-			color-mix(in srgb, var(--content-bg) 85%, transparent),
-			color-mix(in srgb, var(--content-bg) 65%, transparent)
-		),
-		var(--bubble-gradient);
-	box-shadow:
-		inset 0 1px 1px rgba(255, 255, 255, 0.08),
-		inset 0 -2px 3px rgba(0, 0, 0, 0.4),
-		0 8px 20px rgba(0, 0, 0, 0.6);
-	border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
-	color: var(--text-color);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-}
-
-/* LIGHT MODE balance */
-body.light-e .section,
-body.light-e .profile-section,
-body.light-e .president-section,
-body.light-e .social-links-section,
-body.light-e .useful-links-section,
-body.light-e .shoutouts-section,
-body.light-e .business-info-section,
-body.light-e .tech-section,
-body.light-e .legal-section,
-body.light-e .version-info-section,
-body.light-e .disabilities-section,
-body.light-e .admin-section-card,
-body.light-e button,
-body.light-e .btn,
-body.light-e a.link-button,
-body.light-e a.social-button,
-body.light-e .contact-info a {
-	box-shadow:
-		inset 0 1px 2px rgba(255, 255, 255, 0.25),
-		inset 0 -2px 6px rgba(0, 0, 0, 0.15),
-		0 12px 30px rgba(0, 0, 0, 0.2),
-		0 0 60px rgba(255, 255, 255, 0.25);
-	background: linear-gradient(
-			to bottom right,
-			color-mix(in srgb, var(--content-bg) 95%, transparent),
-			color-mix(in srgb, var(--content-bg) 80%, transparent)
-		),
-		var(--bubble-gradient),
-		var(--liquid-refraction);
-}
-
-/* ========================================================= */
-/* === ONYX DEPTH FIX: COUNTDOWN + QUOTE OF THE DAY ======== */
-/* ========================================================= */
-
-/* === Quote of the Day Section – Match Full Onyx === */
-#quote-section {
-	background: linear-gradient(
-			to bottom right,
-			color-mix(in srgb, var(--content-bg) 94%, transparent),
-			color-mix(in srgb, var(--content-bg) 75%, transparent)
-		),
-		var(--bubble-gradient),
-		var(--liquid-refraction);
-	border: 1px solid var(--border-color);
-	border-radius: var(--radius-xl);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	box-shadow:
-		inset 0 1px 2px rgba(255, 255, 255, 0.06),
-		inset 0 -2px 6px rgba(0, 0, 0, 0.55),
-		0 18px 38px rgba(0, 0, 0, 0.7),
-		0 0 60px rgba(0, 0, 0, 0.55);
-	position: relative;
-	isolation: isolate;
-	overflow: hidden;
-}
-
-/* Add inner light layer */
-#quote-section::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: linear-gradient(
-		145deg,
-		rgba(255, 255, 255, 0.05),
-		rgba(0, 0, 0, 0.25)
-	);
-	mix-blend-mode: overlay;
-	opacity: 0.4;
-	pointer-events: none;
-}
-
-/* === Countdown Section – Match Full Onyx === */
-.countdown-section {
-	background: linear-gradient(
-			to bottom right,
-			color-mix(in srgb, var(--content-bg) 94%, transparent),
-			color-mix(in srgb, var(--content-bg) 75%, transparent)
-		),
-		var(--bubble-gradient),
-		var(--liquid-refraction);
-	border: 1px solid var(--border-color);
-	border-radius: var(--radius-xl);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	box-shadow:
-		inset 0 1px 2px rgba(255, 255, 255, 0.06),
-		inset 0 -2px 6px rgba(0, 0, 0, 0.55),
-		0 18px 38px rgba(0, 0, 0, 0.7),
-		0 0 60px rgba(0, 0, 0, 0.55);
-	position: relative;
-	isolation: isolate;
-	overflow: hidden;
-}
-
-/* Add subtle glow */
-.countdown-section::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: linear-gradient(
-		150deg,
-		rgba(255, 255, 255, 0.04),
-		rgba(0, 0, 0, 0.25)
-	);
-	mix-blend-mode: overlay;
-	opacity: 0.4;
-	pointer-events: none;
-}
-
-/* === Light Mode Adjustments === */
-body.light-e #quote-section,
-body.light-e .countdown-section {
-	box-shadow:
-		inset 0 1px 2px rgba(255, 255, 255, 0.25),
-		inset 0 -2px 6px rgba(0, 0, 0, 0.15),
-		0 12px 30px rgba(0, 0, 0, 0.2),
-		0 0 60px rgba(255, 255, 255, 0.25);
-	background: linear-gradient(
-			to bottom right,
-			color-mix(in srgb, var(--content-bg) 95%, transparent),
-			color-mix(in srgb, var(--content-bg) 80%, transparent)
-		),
-		var(--bubble-gradient),
-		var(--liquid-refraction);
-}
-
-/* ===================================================== */
-/* === TRUE LIQUID GLASS BUTTONS (Apple Onyx Style) ==== */
-/* ===================================================== */
-
-button,
-.btn,
-a.link-button,
-a.social-button,
-.contact-info a {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 0.9em 1.8em;
-	border-radius: 999px;
-	font-weight: 600;
-	text-decoration: none;
-	cursor: pointer;
-	backdrop-filter: blur(16px) saturate(180%);
-	-webkit-backdrop-filter: blur(16px) saturate(180%);
-	border: 1px solid rgba(255, 255, 255, 0.18);
-	background: rgba(255, 255, 255, 0.08);
-	color: var(--text-color);
-	box-shadow:
-		inset 0 0 0 1px rgba(255, 255, 255, 0.25),
-		inset 0 8px 12px rgba(255, 255, 255, 0.08),
-		0 6px 15px rgba(0, 0, 0, 0.45);
-	transition: box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease;
-	overflow: hidden;
-}
-
-/* Highlight reflection */
-button::before,
-.btn::before,
-a.link-button::before,
-a.social-button::before,
-.contact-info a::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: linear-gradient(
-		160deg,
-		rgba(255, 255, 255, 0.22) 0%,
-		rgba(255, 255, 255, 0.08) 40%,
-		rgba(255, 255, 255, 0.02) 100%
-	);
-	mix-blend-mode: soft-light;
-	pointer-events: none;
-	opacity: 0.9;
-}
-
-/* Hover / focus state */
-button:hover,
-.btn:hover,
-a.link-button:hover,
-a.social-button:hover,
-.contact-info a:hover {
-	transform: translateY(-2px);
-	background: rgba(255, 255, 255, 0.12);
-	box-shadow:
-		inset 0 0 0 1px rgba(255, 255, 255, 0.3),
-		inset 0 8px 16px rgba(255, 255, 255, 0.12),
-		0 8px 20px rgba(0, 0, 0, 0.6);
-}
-
-/* Light mode */
-body.light-e button,
-body.light-e .btn,
-body.light-e a.link-button,
-body.light-e a.social-button,
-body.light-e .contact-info a {
-	background: rgba(255, 255, 255, 0.4);
-	border: 1px solid rgba(255, 255, 255, 0.55);
-	box-shadow:
-		inset 0 0 0 1px rgba(255, 255, 255, 0.4),
-		inset 0 8px 12px rgba(255, 255, 255, 0.2),
-		0 6px 15px rgba(0, 0, 0, 0.2);
-	color: var(--light-text);
-}
-
-/* ===================================================== */
-/* === LIQUID ONYX UNIFIED GLASS SECTIONS & CARDS ====== */
-/* ===================================================== */
-
-/* Shared capsule glass style for sections, panels, and cards */
-.section,
-.profile-section,
-.president-section,
-.social-links-section,
-.useful-links-section,
-.shoutouts-section,
-.business-info-section,
-.tech-section,
-.disabilities-section,
-.legal-section,
-.version-info-section,
-.countdown-section,
-#quote-section {
-	position: relative;
-	background: rgba(255, 255, 255, 0.06);
-	backdrop-filter: blur(18px) saturate(180%) contrast(110%);
-	-webkit-backdrop-filter: blur(18px) saturate(180%) contrast(110%);
-	border-radius: var(--radius-xl);
-	border: 1px solid rgba(255, 255, 255, 0.18);
-	box-shadow:
-		inset 0 1px 2px rgba(255, 255, 255, 0.12),
-		inset 0 -2px 6px rgba(0, 0, 0, 0.5),
-		0 20px 40px rgba(0, 0, 0, 0.75),
-		0 0 60px rgba(0, 0, 0, 0.55);
-	background-image: linear-gradient(
-		to bottom right,
-		rgba(255, 255, 255, 0.1),
-		rgba(255, 255, 255, 0.03)
-	),
-	var(--bubble-gradient);
-	overflow: hidden;
-	isolation: isolate;
-	transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Inner rim reflection for “liquid edge” */
-.section::before,
-.profile-section::before,
-.president-section::before,
-.social-links-section::before,
-.useful-links-section::before,
-.shoutouts-section::before,
-.business-info-section::before,
-.tech-section::before,
-.disabilities-section::before,
-.legal-section::before,
-.version-info-section::before,
-.countdown-section::before,
-#quote-section::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: radial-gradient(
-		circle at 30% 25%,
-		rgba(255, 255, 255, 0.18),
-		rgba(255, 255, 255, 0.05) 45%,
-		transparent 80%
-	);
-	mix-blend-mode: soft-light;
-	opacity: 0.6;
-	pointer-events: none;
-}
-
-/* Adds subtle inner shading for depth */
-.section::after,
-.profile-section::after,
-.president-section::after,
-.social-links-section::after,
-.useful-links-section::after,
-.shoutouts-section::after,
-.business-info-section::after,
-.tech-section::after,
-.disabilities-section::after,
-.legal-section::after,
-.version-info-section::after,
-.countdown-section::after,
-#quote-section::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: linear-gradient(
-		150deg,
-		rgba(255, 255, 255, 0.03),
-		rgba(0, 0, 0, 0.3)
-	);
-	mix-blend-mode: overlay;
-	opacity: 0.4;
-	pointer-events: none;
-}
-
-/* === Light Mode Adjustments === */
-body.light-e .section,
-body.light-e .profile-section,
-body.light-e .president-section,
-body.light-e .social-links-section,
-body.light-e .useful-links-section,
-body.light-e .shoutouts-section,
-body.light-e .business-info-section,
-body.light-e .tech-section,
-body.light-e .disabilities-section,
-body.light-e .legal-section,
-body.light-e .version-info-section,
-body.light-e .countdown-section,
-body.light-e #quote-section {
-	background: rgba(255, 255, 255, 0.35);
-	border: 1px solid rgba(255, 255, 255, 0.55);
-	box-shadow:
-		inset 0 1px 2px rgba(255, 255, 255, 0.2),
-		inset 0 -2px 6px rgba(0, 0, 0, 0.2),
-		0 15px 30px rgba(0, 0, 0, 0.25),
-		0 0 60px rgba(255, 255, 255, 0.2);
-	background-image: linear-gradient(
-		to bottom right,
-		rgba(255, 255, 255, 0.25),
-		rgba(255, 255, 255, 0.08)
-	),
-	var(--bubble-gradient);
-}
-
-/* === Optional subtle glow for key text === */
-.countdown-number,
-#quote-section .quote-text {
-	text-shadow:
-		0 1px 2px rgba(0, 0, 0, 0.35),
-		0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent);
-}
-
-/* ========================================================= */
-/* === LIQUID ONYX CONTENT DEPTH + READABILITY FIX (FINAL) == */
-/* ========================================================= */
-
-/* Make text and icons appear "inside" the glass */
-.section,
-.section *:not(button):not(a),
-.profile-section,
-.profile-section *,
-.president-section,
-.president-section *,
-.social-links-section,
-.social-links-section *,
-.useful-links-section,
-.useful-links-section *,
-.shoutouts-section,
-.shoutouts-section *,
-.business-info-section,
-.business-info-section *,
-.tech-section,
-.tech-section *,
-.legal-section,
-.legal-section *,
-.version-info-section,
-.version-info-section *,
-.disabilities-section,
-.disabilities-section *,
-.countdown-section,
-.countdown-section *,
-#quote-section,
-#quote-section * {
-	color: color-mix(in srgb, var(--text-color) 90%, rgba(255,255,255,0.1));
-	text-shadow:
-		0 1px 2px rgba(0,0,0,0.35),
-		0 0 4px rgba(0,0,0,0.25);
-}
-
-/* Accent or interactive elements */
-a,
-.link-button,
-.social-button,
-.countdown-number,
-#quote-section .quote-text strong {
-	color: color-mix(in srgb, var(--accent-color) 95%, white);
-	text-shadow:
-		0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent),
-		0 1px 2px rgba(0,0,0,0.3);
-}
-
-/* Secondary and smaller text */
-.section small,
-.section span,
-.section p,
-.section .secondary,
-#quote-section .quote-author,
-.countdown-label {
-	color: color-mix(in srgb, var(--secondary-text) 90%, rgba(255,255,255,0.1));
-	text-shadow:
-		0 1px 1px rgba(0,0,0,0.35);
-}
-
-/* Icons inside glass */
-i,
-svg {
-	color: color-mix(in srgb, var(--icon-color) 85%, rgba(255,255,255,0.2));
-	filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
-}
-
-/* Add a subtle veil inside all sections for improved contrast */
-.section::before,
-.profile-section::before,
-.president-section::before,
-.social-links-section::before,
-.useful-links-section::before,
-.shoutouts-section::before,
-.business-info-section::before,
-.tech-section::before,
-.legal-section::before,
-.version-info-section::before,
-.disabilities-section::before,
-.countdown-section::before,
-#quote-section::before {
-	background: linear-gradient(
-		to bottom,
-		rgba(0,0,0,0.06),
-		rgba(0,0,0,0.12)
-	);
-	mix-blend-mode: multiply;
-}
-
-/* Light Mode adjustments */
-body.light-e .section,
-body.light-e .profile-section,
-body.light-e .president-section,
-body.light-e .social-links-section,
-body.light-e .useful-links-section,
-body.light-e .shoutouts-section,
-body.light-e .business-info-section,
-body.light-e .tech-section,
-body.light-e .legal-section,
-body.light-e .version-info-section,
-body.light-e .disabilities-section,
-body.light-e .countdown-section,
-body.light-e #quote-section {
-	color: color-mix(in srgb, var(--text-color) 95%, rgba(0,0,0,0.2));
-	text-shadow:
-		0 1px 1px rgba(255,255,255,0.5),
-		0 0 3px rgba(255,255,255,0.25);
-}
-
-body.light-e .section::before,
-body.light-e .profile-section::before,
-body.light-e .countdown-section::before,
-body.light-e #quote-section::before {
-	background: linear-gradient(
-		to bottom,
-		rgba(255,255,255,0.4),
-		rgba(255,255,255,0.2)
-	);
-	mix-blend-mode: screen;
-}
-
-/* ===================================================== */
-/* TRUE DARK MODE ONYX GLASS SECTIONS                    */
-/* ===================================================== */
-
-html.dark-mode .section,
-body.dark-mode .section,
-html.dark-mode .profile-section,
-body.dark-mode .profile-section,
-html.dark-mode .president-section,
-body.dark-mode .president-section,
-html.dark-mode .social-links-section,
-body.dark-mode .social-links-section,
-html.dark-mode .useful-links-section,
-body.dark-mode .useful-links-section,
-html.dark-mode .shoutouts-section,
-body.dark-mode .shoutouts-section,
-html.dark-mode .business-info-section,
-body.dark-mode .business-info-section,
-html.dark-mode .tech-section,
-body.dark-mode .tech-section,
-html.dark-mode .disabilities-section,
-body.dark-mode .disabilities-section,
-html.dark-mode .legal-section,
-body.dark-mode .legal-section,
-html.dark-mode .version-info-section,
-body.dark-mode .version-info-section,
-html.dark-mode .countdown-section,
-body.dark-mode .countdown-section,
-html.dark-mode #quote-section,
-body.dark-mode #quote-section {
-	background: linear-gradient(
-			to bottom right,
-			color-mix(in srgb, #0a0a0a 92%, var(--content-bg)),
-			color-mix(in srgb, #111111 85%, transparent)
-		),
-		radial-gradient(circle at 25% 20%, rgba(255,255,255,0.04), transparent 70%);
-	border: 1px solid rgba(255, 255, 255, 0.06);
-	box-shadow:
-		inset 0 1px 1px rgba(255,255,255,0.05),
-		inset 0 -2px 8px rgba(0,0,0,0.65),
-		0 18px 38px rgba(0,0,0,0.85),
-		0 0 60px rgba(0,0,0,0.55);
-	backdrop-filter: blur(26px) saturate(160%) contrast(115%);
-	-webkit-backdrop-filter: blur(26px) saturate(160%) contrast(115%);
-	color: var(--text-color);
-	position: relative;
-	isolation: isolate;
-}
-
-/* Add subtle reflection & inner glow for glass curvature */
-html.dark-mode .section::before,
-body.dark-mode .section::before,
-html.dark-mode .profile-section::before,
-body.dark-mode .profile-section::before,
-html.dark-mode .president-section::before,
-body.dark-mode .president-section::before,
-html.dark-mode .social-links-section::before,
-body.dark-mode .social-links-section::before,
-html.dark-mode .useful-links-section::before,
-body.dark-mode .useful-links-section::before,
-html.dark-mode .shoutouts-section::before,
-body.dark-mode .shoutouts-section::before,
-html.dark-mode .business-info-section::before,
-body.dark-mode .business-info-section::before,
-html.dark-mode .tech-section::before,
-body.dark-mode .tech-section::before,
-html.dark-mode .disabilities-section::before,
-body.dark-mode .disabilities-section::before,
-html.dark-mode .legal-section::before,
-body.dark-mode .legal-section::before,
-html.dark-mode .version-info-section::before,
-body.dark-mode .version-info-section::before,
-html.dark-mode .countdown-section::before,
-body.dark-mode .countdown-section::before,
-html.dark-mode #quote-section::before,
-body.dark-mode #quote-section::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background:
-		radial-gradient(circle at 25% 20%, rgba(255,255,255,0.05), transparent 70%),
-		linear-gradient(150deg, rgba(255,255,255,0.02), rgba(0,0,0,0.3));
-	mix-blend-mode: soft-light;
-	pointer-events: none;
-	opacity: 0.5;
-}
-
-/* Slight inner depth tint */
-html.dark-mode .section::after,
-body.dark-mode .section::after,
-html.dark-mode .profile-section::after,
-body.dark-mode .profile-section::after,
-html.dark-mode .president-section::after,
-body.dark-mode .president-section::after,
-html.dark-mode .social-links-section::after,
-body.dark-mode .social-links-section::after,
-html.dark-mode .useful-links-section::after,
-body.dark-mode .useful-links-section::after,
-html.dark-mode .shoutouts-section::after,
-body.dark-mode .shoutouts-section::after,
-html.dark-mode .business-info-section::after,
-body.dark-mode .business-info-section::after,
-html.dark-mode .tech-section::after,
-body.dark-mode .tech-section::after,
-html.dark-mode .disabilities-section::after,
-body.dark-mode .disabilities-section::after,
-html.dark-mode .legal-section::after,
-body.dark-mode .legal-section::after,
-html.dark-mode .version-info-section::after,
-body.dark-mode .version-info-section::after,
-html.dark-mode .countdown-section::after,
-body.dark-mode .countdown-section::after,
-html.dark-mode #quote-section::after,
-body.dark-mode #quote-section::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: linear-gradient(165deg, rgba(0,0,0,0.25), rgba(255,255,255,0.04));
-	mix-blend-mode: overlay;
-	pointer-events: none;
-	opacity: 0.35;
-}
-
-/* ========================================================= */
-/* === NO TRANSPARENCY MODE – SOLID ONYX CARDS ============== */
-/* ========================================================= */
-
-body.no-transparency .section,
-body.no-transparency .profile-section,
-body.no-transparency .president-section,
-body.no-transparency .social-links-section,
-body.no-transparency .useful-links-section,
-body.no-transparency .shoutouts-section,
-body.no-transparency .business-info-section,
-body.no-transparency .tech-section,
-body.no-transparency .disabilities-section,
-body.no-transparency .legal-section,
-body.no-transparency .version-info-section,
-body.no-transparency .countdown-section,
-body.no-transparency #quote-section {
-  background: color-mix(in srgb, var(--content-bg) 98%, #000);
-  background-image: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  box-shadow:
-    0 12px 35px rgba(0, 0, 0, 0.6),
-    inset 0 0 8px rgba(255, 255, 255, 0.05);
-}
-
-/* Optional: slightly increase text contrast for better readability */
-body.no-transparency {
-  --text-color: #f5f5f5;
-  --secondary-text: #c2c2c2;
-}
-
-/* 🔒 Hard-disable glass when "no-transparency" is active */
-body.no-transparency #wallpaper-layer,
-body.no-transparency #wallpaper-tint {
-  display: none !important;
-}
-
-body.no-transparency *,
-body.no-transparency *::before,
-body.no-transparency *::after {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-/* Ensure no stray glass backgrounds slip through */
-body.no-transparency .section,
-body.no-transparency .profile-section,
-body.no-transparency .president-section,
-body.no-transparency .social-links-section,
-body.no-transparency .useful-links-section,
-body.no-transparency .shoutouts-section,
-body.no-transparency .business-info-section,
-body.no-transparency .tech-section,
-body.no-transparency .disabilities-section,
-body.no-transparency .legal-section,
-body.no-transparency .version-info-section,
-body.no-transparency .countdown-section,
-body.no-transparency #quote-section,
-body.no-transparency .admin-section-card,
-body.no-transparency button,
-body.no-transparency .btn,
-body.no-transparency a.link-button,
-body.no-transparency a.social-button,
-body.no-transparency .contact-info a {
-  background-image: none !important;
-  /* keep your existing solid background from your earlier block */
-}
-
-/* ====================================== */
-/* Dynamic Glass Intensity Containers     */
-/* ====================================== */
-
-.section,
-.profile-section,
-.president-section,
-.social-links-section,
-.useful-links-section,
-.shoutouts-section,
-.business-info-section,
-.tech-section,
-.disabilities-section,
-.legal-section,
-.version-info-section,
-.countdown-section,
-#quote-section {
-  background: rgba(255, 255, 255, calc(0.06 * var(--glass-opacity))) !important;
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) contrast(110%) !important;
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) contrast(110%) !important;
-  transition: background 0.35s ease, backdrop-filter 0.35s ease;
-}
-
-/* Buttons and glass controls */
-button,
-.btn,
-a.link-button,
-a.social-button,
-.contact-info a {
-  background: rgba(255, 255, 255, calc(0.08 * var(--glass-opacity))) !important;
-  backdrop-filter: blur(calc(16px * var(--glass-opacity))) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(calc(16px * var(--glass-opacity))) saturate(180%) !important;
-}
-
-/* Solid mode readability (Intensity = 0%) */
-body.no-transparency,
-:root[style*="--glass-opacity:0"] body {
-  --text-color: #f5f5f5;
-  --secondary-text: #cfcfcf;
 }
