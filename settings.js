@@ -34,6 +34,7 @@ class SettingsManager {
       showTechInformation: "enabled",
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
+      disableTransparency: "disabled", // 'enabled' = solid cards
     };
 
     this.settings = this.loadSettings();
@@ -411,6 +412,11 @@ class SettingsManager {
         document.body.classList.toggle(
           "mouse-trail-enabled",
           this.settings.mouseTrail === "enabled"
+        ),
+      disableTransparency: () =>
+        document.body.classList.toggle(
+          "no-transparency",
+          this.settings.disableTransparency === "enabled"
         ),
     };
 
