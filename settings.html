@@ -3,56 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Customize your experience. Toggle dark mode, accessibility features, and more." />
-  <title>Settings - Caleb's Profile</title>
+  <meta name="description" content="Customize your experience. Toggle dark mode, accessibility, and personalization settings." />
+  <title>Settings - Caleb’s Profile</title>
 
+  <!-- Core Styles -->
   <link rel="stylesheet" href="settings.css" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-  <!-- Flicker Prevention Script -->
+  <!-- Flicker Prevention -->
   <script>
-  (function() {
-    try {
-      const storedSettings = localStorage.getItem('websiteSettings');
-      if (!storedSettings) return;
-      const settings = JSON.parse(storedSettings);
-      if (settings.appearanceMode === 'dark') {
-        document.documentElement.classList.add('dark-mode');
-      } else if (settings.appearanceMode === 'light') {
-        document.documentElement.classList.add('light-mode');
-      }
-    } catch (e) {
-      console.error("Flicker-prevention script error:", e);
-    }
-  })();
+    (function() {
+      try {
+        const stored = localStorage.getItem('websiteSettings');
+        if (!stored) return;
+        const settings = JSON.parse(stored);
+        const isDark = settings.appearanceMode === "dark" ||
+          (settings.appearanceMode === "device" &&
+           window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle('dark-mode', isDark);
+        document.documentElement.classList.toggle('light-e', !isDark);
+        document.body?.classList.toggle('dark-mode', isDark);
+        document.body?.classList.toggle('light-e', !isDark);
+      } catch(e) { console.warn('Theme preload failed', e); }
+    })();
   </script>
 
+  <!-- Favicons -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 </head>
 
 <body class="settings-page">
   <main class="container" id="main-content">
     <div class="settings-section">
+
       <div class="settings-header">
         <h1>Settings</h1>
         <span class="version">v26.1.2</span>
       </div>
 
-      <!-- ================================= -->
+      <!-- ============================== -->
       <!-- Appearance -->
-      <!-- ================================= -->
+      <!-- ============================== -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Appearance</h2>
 
-        <!-- Appearance Mode -->
+        <!-- Mode -->
         <div class="setting-card">
           <div class="setting-label">
             <strong class="setting-title">Appearance Mode</strong>
-            <p class="setting-description">Choose light, dark, or follow your device setting.</p>
+            <p class="setting-description">Choose between Light, Dark, or follow your device.</p>
           </div>
           <div class="segmented-control" id="appearanceModeControl">
             <button type="button" data-value="device">Device</button>
@@ -61,118 +64,67 @@
           </div>
         </div>
 
-        <!-- Custom Background Image -->
+        <!-- Accent -->
+        <div class="setting-card accent-color-card">
+          <label for="accentColorPicker" class="setting-label">
+            <strong class="setting-title">Accent Color</strong>
+            <p class="setting-description">Customize the highlight color used across your site.</p>
+          </label>
+          <div class="accent-picker-container">
+            <input type="color" id="accentColorPicker" value="#007AFF" />
+            <div id="accentColorPreview" class="accent-color-preview"></div>
+          </div>
+          <div id="whiteAccentWarning" class="color-warning" style="display:none;">
+            Warning: very light accent colors may reduce visibility in light mode.
+          </div>
+        </div>
+
+        <!-- Wallpaper -->
         <div class="setting-card custom-background">
           <div class="custom-bg-left">
             <div class="setting-label">
               <strong class="setting-title">Custom Background</strong>
-              <p class="setting-description">
-                Upload your own image to use as the background.
-              </p>
+              <p class="setting-description">Upload an image as your background.</p>
             </div>
-
             <div class="custom-bg-controls">
               <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-              <input type="file" id="customBgUpload" accept="image/*">
+              <input type="file" id="customBgUpload" accept="image/*" />
               <span id="fileNameDisplay" class="file-name">No file chosen</span>
               <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
             </div>
           </div>
-
           <div class="custom-bg-separator" id="customBgSeparator"></div>
-
           <div class="custom-bg-right">
             <div id="customBgPreviewContainer">
-              <img
-                id="customBgPreview"
-                alt="Background preview"
-                draggable="false"
-                oncontextmenu="return false"
-              />
+              <img id="customBgPreview" alt="Background preview" draggable="false" />
             </div>
           </div>
         </div>
 
-        <!-- Wallpaper Blur Strength -->
+        <!-- Blur -->
         <div class="setting-card" id="wallpaperBlurCard">
           <div class="setting-label">
             <strong class="setting-title">Wallpaper Blur</strong>
-            <p class="setting-description">
-              Adjust the background blur strength for your custom wallpaper.
-            </p>
+            <p class="setting-description">Adjust blur intensity for custom wallpaper.</p>
           </div>
           <div class="blur-slider-control">
             <span id="blurValue" class="font-size-badge">15px</span>
-            <input
-              type="range"
-              id="blur-slider"
-              min="0"
-              max="40"
-              step="1"
-              value="15"
-              aria-label="Adjust wallpaper blur"
-            />
-          </div>
-        </div>
-
-        <!-- ================================= -->
-<!-- Glass Intensity Slider -->
-<!-- ================================= -->
-<div class="setting-card">
-  <div class="setting-label">
-    <strong class="setting-title">Glass Intensity</strong>
-    <p class="setting-description">
-      Adjust how transparent sections appear on the homepage.
-    </p>
-  </div>
-  <div class="blur-slider-control">
-    <span id="glassIntensityValue" class="font-size-badge">100%</span>
-    <input
-      type="range"
-      id="glassIntensitySlider"
-      min="0"
-      max="100"
-      step="1"
-      value="100"
-      aria-label="Adjust glass intensity"
-    />
-  </div>
-</div>
-        <!-- Accent Color -->
-        <div class="setting-card accent-color-card">
-          <label for="accentColorPicker" class="setting-label">
-            <strong class="setting-title">Accent Color</strong>
-            <p class="setting-description">Pick a custom highlight color.</p>
-          </label>
-          <div class="accent-picker-container">
-            <input
-              type="color"
-              id="accentColorPicker"
-              value="#007AFF"
-              aria-label="Choose accent color"
-            />
-            <div id="accentColorPreview" class="accent-color-preview"></div>
-          </div>
-          <div id="whiteAccentWarning" class="color-warning" style="display:none;">
-            Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
+            <input type="range" id="blur-slider" min="0" max="40" step="1" value="15" />
           </div>
         </div>
       </div>
 
-      <!-- ================================= -->
-      <!-- Dark Mode Scheduler -->
-      <!-- ================================= -->
+      <!-- ============================== -->
+      <!-- Scheduler -->
+      <!-- ============================== -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Dark Mode Scheduler</h2>
-
         <div class="setting-card">
           <div class="setting-label">
             <strong class="setting-title">Automatic Theme Switching</strong>
-            <p class="setting-description">
-              Automatically switch between light and dark modes at custom times.
-            </p>
+            <p class="setting-description">Switch between modes automatically.</p>
           </div>
-          <select id="darkModeScheduler" aria-label="Dark mode schedule">
+          <select id="darkModeScheduler">
             <option value="off">Off</option>
             <option value="auto">Scheduled</option>
           </select>
@@ -190,26 +142,26 @@
           <div class="setting-card">
             <div class="setting-label">
               <strong class="setting-title">End Time</strong>
-              <p class="setting-description">Time when light mode reactivates.</p>
+              <p class="setting-description">Time when light mode resumes.</p>
             </div>
             <input type="time" id="darkModeEnd" value="06:00" />
           </div>
         </div>
       </div>
 
-      <!-- ================================= -->
+      <!-- ============================== -->
       <!-- General -->
-      <!-- ================================= -->
+      <!-- ============================== -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">General</h2>
 
         <label class="setting-card" for="rearrangingEnabledToggle">
           <div class="setting-label">
             <strong class="setting-title">Enable Section Rearranging</strong>
-            <p class="setting-description">Allow drag-and-drop to reorder sections on the homepage.</p>
+            <p class="setting-description">Allow drag-and-drop reordering on the homepage.</p>
           </div>
           <div class="md-switch">
-            <input type="checkbox" id="rearrangingEnabledToggle" role="switch" />
+            <input type="checkbox" id="rearrangingEnabledToggle" />
             <div class="track"><div class="thumb"></div></div>
           </div>
         </label>
@@ -217,75 +169,95 @@
         <div class="setting-card">
           <div class="setting-label">
             <strong class="setting-title">Reset Section Layout</strong>
-            <p class="setting-description">Revert the homepage section order to the default layout.</p>
+            <p class="setting-description">Restore default homepage layout.</p>
           </div>
           <button id="resetLayoutBtn" class="button reset-button">Reset</button>
         </div>
       </div>
 
-      <!-- ================================= -->
+      <!-- ============================== -->
       <!-- Homepage Sections -->
-      <!-- ================================= -->
+      <!-- ============================== -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Homepage Sections</h2>
 
-        <label class="setting-card" for="showSocialLinksToggle">
-          <div class="setting-label"><strong class="setting-title">Social Links</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showSocialLinksToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+        <div id="homepage-toggles">
+          <label class="setting-card" for="showSocialLinksToggle">
+            <div class="setting-label"><strong>Social Links</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showSocialLinksToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showPresidentSectionToggle">
-          <div class="setting-label"><strong class="setting-title">President Section</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showPresidentSectionToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showPresidentSectionToggle">
+            <div class="setting-label"><strong>President Section</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showPresidentSectionToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showTiktokShoutoutsToggle">
-          <div class="setting-label"><strong class="setting-title">TikTok Shoutouts</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showTiktokShoutoutsToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showTiktokShoutoutsToggle">
+            <div class="setting-label"><strong>TikTok Shoutouts</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showTiktokShoutoutsToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showInstagramShoutsToggle">
-          <div class="setting-label"><strong class="setting-title">Instagram Shoutouts</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showInstagramShoutoutsToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showInstagramShoutoutsToggle">
+            <div class="setting-label"><strong>Instagram Shoutouts</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showInstagramShoutoutsToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showYoutubeShoutoutsToggle">
-          <div class="setting-label"><strong class="setting-title">YouTube Shoutouts</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showYoutubeShoutoutsToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showYoutubeShoutoutsToggle">
+            <div class="setting-label"><strong>YouTube Shoutouts</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showYoutubeShoutoutsToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showUsefulLinksToggle">
-          <div class="setting-label"><strong class="setting-title">Useful Links</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showUsefulLinksToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showUsefulLinksToggle">
+            <div class="setting-label"><strong>Useful Links</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showUsefulLinksToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showCountdownToggle">
-          <div class="setting-label"><strong class="setting-title">Countdown</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showCountdownToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showCountdownToggle">
+            <div class="setting-label"><strong>Countdown</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showCountdownToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showBusinessSectionToggle">
-          <div class="setting-label"><strong class="setting-title">Business Section</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showBusinessSectionToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showBusinessSectionToggle">
+            <div class="setting-label"><strong>Business Section</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showBusinessSectionToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showTechInformationToggle">
-          <div class="setting-label"><strong class="setting-title">Tech Information</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showTechInformationToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showTechInformationToggle">
+            <div class="setting-label"><strong>Tech Information</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showTechInformationToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showDisabilitiesSectionToggle">
-          <div class="setting-label"><strong class="setting-title">Disabilities Section</strong></div>
-          <div class="md-switch"><input type="checkbox" id="showDisabilitiesSectionToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showDisabilitiesSectionToggle">
+            <div class="setting-label"><strong>Disabilities Section</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showDisabilitiesSectionToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
 
-        <label class="setting-card" for="showQuoteSectionToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Quote of the Day</strong>
-            <p class="setting-description">Show or hide the Quote of the Day section on the homepage.</p>
-          </div>
-          <div class="md-switch"><input type="checkbox" id="showQuoteSectionToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
-        </label>
+          <label class="setting-card" for="showQuoteSectionToggle">
+            <div class="setting-label"><strong>Quote of the Day</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showQuoteSectionToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
+
+          <!-- NEW MINI SECTIONS -->
+          <label class="setting-card" for="showTimeSectionToggle">
+            <div class="setting-label"><strong>Time Widget</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showTimeSectionToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
+
+          <label class="setting-card" for="showWeatherSectionToggle">
+            <div class="setting-label"><strong>Weather Widget</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showWeatherSectionToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
+
+          <label class="setting-card" for="showFocusSectionToggle">
+            <div class="setting-label"><strong>Focus Widget</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showFocusSectionToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
+
+          <label class="setting-card" for="showBatterySectionToggle">
+            <div class="setting-label"><strong>Battery Widget</strong></div>
+            <div class="md-switch"><input type="checkbox" id="showBatterySectionToggle" /><div class="track"><div class="thumb"></div></div></div>
+          </label>
+        </div>
 
         <div class="setting-card">
           <div class="setting-label">
@@ -296,72 +268,60 @@
         </div>
       </div>
 
-      <!-- ================================= -->
+      <!-- ============================== -->
       <!-- Accessibility -->
-      <!-- ================================= -->
+      <!-- ============================== -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Accessibility</h2>
 
         <div class="setting-card">
           <label for="text-size-slider" class="setting-label">
-            <strong class="setting-title">Text Size</strong>
-            <p class="setting-description">Adjust the text size for better readability.</p>
+            <strong>Text Size</strong>
+            <p>Adjust text for readability.</p>
           </label>
           <div class="text-size-control">
-            <span id="textSizeValue" class="font-size-badge">17px</span>
-            <input type="range" id="text-size-slider" min="12" max="24" value="17" step="1" />
+            <span id="textSizeValue" class="font-size-badge">16px</span>
+            <input type="range" id="text-size-slider" min="12" max="24" value="16" step="1" />
           </div>
         </div>
 
         <label class="setting-card" for="focusOutlineToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Focus Outline</strong>
-            <p class="setting-description">Toggle the focus outline for accessibility purposes.</p>
-          </div>
-          <div class="md-switch"><input type="checkbox" id="focusOutlineToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
+          <div class="setting-label"><strong>Focus Outline</strong></div>
+          <div class="md-switch"><input type="checkbox" id="focusOutlineToggle" /><div class="track"><div class="thumb"></div></div></div>
         </label>
 
         <label class="setting-card" for="highContrastToggle">
-          <div class="setting-label">
-            <strong class="setting-title">High Contrast Mode</strong>
-            <p class="setting-description">Increase contrast for easier readability.</p>
-          </div>
-          <div class="md-switch"><input type="checkbox" id="highContrastToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
+          <div class="setting-label"><strong>High Contrast</strong></div>
+          <div class="md-switch"><input type="checkbox" id="highContrastToggle" /><div class="track"><div class="thumb"></div></div></div>
         </label>
 
         <label class="setting-card" for="dyslexiaFontToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Dyslexia-Friendly Font</strong>
-            <p class="setting-description">Enable a more readable font for dyslexic users.</p>
-          </div>
-          <div class="md-switch"><input type="checkbox" id="dyslexiaFontToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
+          <div class="setting-label"><strong>Dyslexia-Friendly Font</strong></div>
+          <div class="md-switch"><input type="checkbox" id="dyslexiaFontToggle" /><div class="track"><div class="thumb"></div></div></div>
         </label>
 
         <label class="setting-card" for="underlineLinksToggle">
-          <div class="setting-label">
-            <strong class="setting-title">Underline Links</strong>
-            <p class="setting-description">Always underline links to improve visibility.</p>
-          </div>
-          <div class="md-switch"><input type="checkbox" id="underlineLinksToggle" role="switch" /><div class="track"><div class="thumb"></div></div></div>
+          <div class="setting-label"><strong>Underline Links</strong></div>
+          <div class="md-switch"><input type="checkbox" id="underlineLinksToggle" /><div class="track"><div class="thumb"></div></div></div>
         </label>
       </div>
 
-      <!-- ================================= -->
+      <!-- ============================== -->
       <!-- Danger Zone -->
-      <!-- ================================= -->
+      <!-- ============================== -->
       <div class="settings-subsection danger-zone animate-slide-in">
         <h2 class="subsection-title">Danger Zone</h2>
         <div class="setting-card">
           <div class="setting-label">
             <strong class="setting-title">Reset to Factory Settings</strong>
-            <p class="setting-description">Restore all settings to their default values.</p>
+            <p>Restore all preferences to their default values.</p>
           </div>
           <button id="resetSettings" class="button reset-button">Reset</button>
         </div>
       </div>
 
       <div class="back-link-container">
-        <a href="/" class="back-link">
+        <a href="index.html" class="back-link">
           <span class="back-icon">←</span>
           <span>Back to Profile</span>
         </a>
@@ -372,17 +332,12 @@
   <footer class="settings-footer">
     <div class="footer-content">
       <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
-      <div class="footer-links">
-        <a href="privacy-policy.html">Privacy Policy</a>
-        <a href="terms-of-service.html">Terms of Service</a>
-        <a href="accessibility-statement.html">Accessibility Statement</a>
-      </div>
     </div>
   </footer>
 
   <div id="mouse-trail"></div>
 
-  <!-- External JS -->
+  <!-- JS -->
   <script src="settings.js"></script>
   <script src="script.js"></script>
 </body>
