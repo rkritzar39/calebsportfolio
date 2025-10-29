@@ -301,23 +301,24 @@ class SettingsManager {
       });
     }
 
-    // Glass Intensity
-    const glassSlider = document.getElementById("glassIntensitySlider");
-    const glassBadge = document.getElementById("glassIntensityValue");
-    if (glassSlider && glassBadge) {
-      const updateGlass = () => {
-        const val = parseInt(glassSlider.value, 10);
-        glassBadge.textContent = `${val}%`;
-        this.settings.glassIntensity = val;
-        localStorage.setItem("websiteSettings", JSON.stringify(this.settings));
-        this.applyGlassIntensity();
+   // Glass Intensity
+const glassSlider = document.getElementById("glassIntensitySlider");
+const glassBadge = document.getElementById("glassIntensityValue");
 
-        const pct = (val / 100) * 100;
-        glassSlider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
-      };
-      glassSlider.addEventListener("input", updateGlass);
-      updateGlass(); // Initialize on load
-    }
+if (glassSlider && glassBadge) {
+  const updateGlass = () => {
+    const val = parseInt(glassSlider.value, 10);
+    glassBadge.textContent = `${val}%`;
+    this.settings.glassIntensity = val;
+    this.saveSettings();
+    this.applyGlassIntensity(); // 🔥 instant
+    const pct = (val / 100) * 100;
+    glassSlider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
+  };
+
+  glassSlider.addEventListener("input", updateGlass);
+  updateGlass(); // initialize
+}
 
     // Generic Toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
@@ -489,9 +490,28 @@ class SettingsManager {
   }
 
   applyGlassIntensity() {
-    const intensity = this.settings.glassIntensity ?? 100;
-    const opacity = intensity / 100;
-    document.documentElement.style.setProperty("--glass-opacity", opacity);
+  const intensity = this.settings.glassIntensity ?? 100;
+  const opacity = intensity / 100;
+
+  // Core CSS variable used by your glass rules
+  document.documentElement.style.setProperty("--glass-opacity", opacity);
+
+  // Handle “solid mode” automatically if intensity = 0
+  if (intensity <= 1) {
+    document.body.classList.add("no-transparency");
+    const layer = document.getElementById("wallpaper-layer");
+    const tint = document.getElementById("wallpaper-tint");
+    if (layer) layer.style.display = "none";
+    if (tint) tint.style.display = "none";
+  } else {
+    document.body.classList.remove("no-transparency");
+    const layer = document.getElementById("wallpaper-layer");
+    const tint = document.getElementById("wallpaper-tint");
+    if (layer) layer.style.display = "";
+    if (tint) tint.style.display = "";
+    this.applyCustomBackground(false);
+    const blur = localStorage.getItem("wallpaperBlur") ?? "0";
+    this.applyWallpaperBlur(blur);
   }
 
 
