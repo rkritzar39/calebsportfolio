@@ -27,17 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
     filter: drop-shadow(0 0 3px rgba(0,0,0,0.25));
     transition: background-color 0.3s ease;
 
-    /* * This now uses color-mix to make the accent color itself transparent.
-     * '90%' means 90% opaque (10% transparent). You can change this value.
-     */
+    /* Use color-mix for accent color + 90% opacity */
     background-color: color-mix(in srgb, var(--accent-color) 90%, transparent);
     
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center;
+    /* --- Robust MASK properties --- */
     -webkit-mask-size: contain;
+    mask-size: contain;
     -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
     -webkit-mask-position: center;
+    mask-position: center;
   `;
   
   async function detectOS() {
@@ -96,10 +95,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-// Final display
+// --- Final display ---
   const icon = iconMap[os] || iconMap["Unknown"];
   
-  // We use a <span> with a CSS mask instead of an <img>
+  // Apply the styles and the dynamic mask-image URL
   osInfoEl.innerHTML = `
     <span
       role="img"
@@ -107,14 +106,13 @@ document.addEventListener("DOMContentLoaded", () => {
       class="os-icon"
       style="
         ${iconStyle}
+        -webkit-mask-image: url(${icon});
         mask-image: url(${icon});
-        -webkit-mask-image: url(${icon}); /* Safari compatibility */
       "
     ></span>
     ${version ? `${os} ${version}` : os}
   `;
 }
-
   // --- Detect Device Type ---
   function detectDevice() {
     const ua = navigator.userAgent;
