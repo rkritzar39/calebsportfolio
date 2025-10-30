@@ -10,10 +10,11 @@ import {
 import { db } from "./firebase-init.js";
 
 /* ================================
-   DISCORD PRESENCE
+   DISCORD PRESENCE — clean version
+   Shows only real activities (game / Spotify)
 ================================ */
 async function getDiscordActivity() {
-  const userId = "850815059093356594";
+  const userId = "850815059093356594"; // your Discord ID
   const endpoint = `https://api.lanyard.rest/v1/users/${userId}`;
 
   try {
@@ -23,7 +24,6 @@ async function getDiscordActivity() {
     const { data } = await res.json();
     if (!data) return "💬 Discord status unavailable";
 
-    // --- Basic presence state ---
     const statusMap = {
       online: "🟢 Online on Discord",
       idle: "🌙 Idle on Discord",
@@ -31,25 +31,21 @@ async function getDiscordActivity() {
       offline: "🔘 Offline",
     };
 
-    // --- Look for activities ---
     const activities = data.activities || [];
 
-    // Spotify (type 2)
+    // --- Spotify (type 2) ---
     const spotify = activities.find(a => a.name === "Spotify");
     if (spotify && spotify.details && spotify.state)
       return `🎵 Listening to “${spotify.details}” by ${spotify.state}`;
 
-    // Game (type 0)
+    // --- Game / Application (type 0) ---
     const game = activities.find(a => a.type === 0);
-    if (game) return `🎮 Playing ${game.name}`;
+    if (game && game.name)
+      return `🎮 Playing ${game.name}`;
 
-    // Custom status (type 4)
-    const custom = activities.find(a => a.type === 4);
-    if (custom && custom.state)
-      return `${custom.emoji ? custom.emoji.name + " " : ""}${custom.state}`;
-
-    // Fallback to general presence
-    return statusMap[data.discord_status] || "💬 Discord status unavailable";
+    // --- Fallback: no game / no Spotify, but user is online ---
+    const status = data.discord_status;
+    return statusMap[status] || "💬 Online on Discord";
   } catch (err) {
     console.error("Discord activity error:", err);
     return "💬 Discord status unavailable";
