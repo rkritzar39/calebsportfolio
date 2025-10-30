@@ -579,7 +579,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* ONYX SEARCH + SORT — FINAL ALIGNMENT FIX                */
+/* ONYX SEARCH + SORT — FINAL INLINE ICON VERSION          */
 /* ======================================================= */
 
 .search-container.unified {
@@ -601,7 +601,7 @@ a.corner-button {
 /* Input field */
 .creator-search {
 	width: 100%;
-	padding: 13px 110px 13px 44px;
+	padding: 11px 110px 11px 42px; /* left for icon, right for dropdown */
 	border: none;
 	outline: none;
 	background: transparent;
@@ -611,19 +611,20 @@ a.corner-button {
 	line-height: 1.4;
 }
 
+/* Placeholder */
 .creator-search::placeholder {
 	color: var(--secondary-text);
 	opacity: 0.9;
 }
 
-/* === Search Icon (aligned next to placeholder on all screens) === */
+/* === Clean inline search icon === */
 .search-icon {
 	position: absolute;
-	left: 18px;
+	left: 16px;
 	top: 50%;
 	transform: translateY(-50%);
-	width: 18px;
-	height: 18px;
+	width: 17px;
+	height: 17px;
 	pointer-events: none;
 	background: no-repeat center/contain
 		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23A9A9A9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
@@ -631,7 +632,7 @@ a.corner-button {
 	transition: filter 0.25s, transform 0.25s, opacity 0.25s;
 }
 
-/* Accent glow when typing/focused */
+/* Accent glow when focused or typing */
 .search-container.unified:focus-within .search-icon,
 .search-container.unified.typing .search-icon {
 	filter: drop-shadow(0 0 4px var(--accent-color))
@@ -701,33 +702,32 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* 📱 MOBILE FIX — No clipping, proper icon alignment       */
+/* 📱 MOBILE — same inline look, better breathing space     */
 /* ======================================================= */
 @media (max-width: 600px) {
 	.search-container.unified {
 		flex-direction: column;
 		align-items: stretch;
-		width: calc(100% - 40px);
-		padding: 10px 14px;
+		width: calc(100% - 36px);
+		padding: 8px 14px;
 		margin: 0 auto 36px auto;
 		border-radius: var(--radius-lg);
 	}
 
-	/* input and icon behave same as desktop */
 	.creator-search {
-		padding: 12px 12px 12px 44px;
+		padding: 12px 12px 12px 42px; /* same as desktop */
 		font-size: 16px;
+		line-height: 1.4;
 	}
 
 	.search-icon {
-		left: 20px;
+		left: 18px;
 		top: 50%;
 		transform: translateY(-50%);
-		width: 19px;
-		height: 19px;
+		width: 18px;
+		height: 18px;
 	}
 
-	/* dropdown stacks below input cleanly */
 	.sort-inline-select {
 		position: static;
 		transform: none;
