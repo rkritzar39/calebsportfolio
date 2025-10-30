@@ -770,196 +770,168 @@ function displayPlatformCreators(platform, creatorsToDisplay) {
 }
 
 /* ==========================================================
-   CREATOR SORTING + LOAD FUNCTION (ENHANCED)
+   CREATOR SORTING + LOAD FUNCTION (FINAL FIXED VERSION)
    ========================================================== */
 
 // --- Helper: Generic Sorter Function ---
 function sortCreators(creators, method) {
-    const sorted = [...creators]; // clone array to avoid mutating the original
-    switch (method) {
-        case "followers_desc":
-            return sorted.sort((a, b) =>
-                Number(b.followers || b.subscribers || 0) -
-                Number(a.followers || a.subscribers || 0)
-            );
-        case "followers_asc":
-            return sorted.sort((a, b) =>
-                Number(a.followers || a.subscribers || 0) -
-                Number(b.followers || b.subscribers || 0)
-            );
-        case "abc_asc":
-            return sorted.sort((a, b) =>
-                (a.nickname || a.username || "").localeCompare(
-                    b.nickname || b.username || "",
-                    undefined,
-                    { sensitivity: "base" }
-                )
-            );
-        case "abc_desc":
-            return sorted.sort((a, b) =>
-                (b.nickname || b.username || "").localeCompare(
-                    a.nickname || a.username || "",
-                    undefined,
-                    { sensitivity: "base" }
-                )
-            );
-        default:
-            return sorted;
+  if (!Array.isArray(creators)) return [];
+
+  // Parse follower/subscriber numbers properly (handles strings like "1.2K" or "3M")
+  const parseCount = (value) => {
+    if (typeof value === "string") {
+      const cleaned = value.replace(/,/g, "").trim().toUpperCase();
+      if (cleaned.endsWith("K")) return parseFloat(cleaned) * 1000;
+      if (cleaned.endsWith("M")) return parseFloat(cleaned) * 1000000;
+      if (cleaned.endsWith("B")) return parseFloat(cleaned) * 1000000000;
+      return parseFloat(cleaned) || 0;
     }
+    return Number(value) || 0;
+  };
+
+  const sorted = [...creators];
+
+  switch (method) {
+    case "followers_desc":
+      return sorted.sort((a, b) => parseCount(b.followers || b.subscribers) - parseCount(a.followers || a.subscribers));
+
+    case "followers_asc":
+      return sorted.sort((a, b) => parseCount(a.followers || a.subscribers) - parseCount(b.followers || b.subscribers));
+
+    case "abc_asc":
+      return sorted.sort((a, b) =>
+        (a.nickname || a.username || "").localeCompare(b.nickname || b.username || "", undefined, { sensitivity: "base" })
+      );
+
+    case "abc_desc":
+      return sorted.sort((a, b) =>
+        (b.nickname || b.username || "").localeCompare(a.nickname || a.username || "", undefined, { sensitivity: "base" })
+      );
+
+    default:
+      return sorted;
+  }
 }
 
 // --- Helper: Save/Load user preference ---
 function getSavedSortPreference(platform) {
-    return localStorage.getItem(`sortPref_${platform}`) || "followers_desc";
+  return localStorage.getItem(`sortPref_${platform}`) || "followers_desc";
 }
 function saveSortPreference(platform, value) {
-    localStorage.setItem(`sortPref_${platform}`, value);
+  localStorage.setItem(`sortPref_${platform}`, value);
 }
 
 // --- Main Loader Function ---
 async function loadShoutoutPlatformData(platform, timestampElement) {
-    let gridElement;
+  let gridElement;
+  switch (platform) {
+    case "tiktok":
+      gridElement = document.querySelector("#tiktok-shoutouts-section .creator-grid");
+      break;
+    case "instagram":
+      gridElement = document.querySelector("#instagram-shoutouts-section .instagram-creator-grid");
+      break;
+    case "youtube":
+      gridElement = document.querySelector("#youtube-shoutouts-section .youtube-creator-grid");
+      break;
+  }
+
+  if (!firebaseAppInitialized || !db) {
+    console.error(`Shoutout load error (${platform}): Firebase not ready.`);
+    if (gridElement) gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`;
+    return;
+  }
+
+  if (!gridElement) {
+    console.warn(`Grid element missing for ${platform}. Cannot display shoutouts.`);
+    return;
+  }
+
+  console.log(`Loading ${platform} shoutout data into:`, gridElement);
+  gridElement.innerHTML = `<p>Loading ${platform} Creators...</p>`;
+  if (timestampElement) timestampElement.textContent = "Last Updated: Loading...";
+
+  try {
+    const shoutoutsCol = collection(db, "shoutouts");
+    const shoutoutQuery = query(shoutoutsCol, where("platform", "==", platform));
+    const querySnapshot = await getDocs(shoutoutQuery);
+
+    let creatorsData = querySnapshot.docs.map((doc) => doc.data());
+
+    // Apply saved sorting preference (default: followers_desc)
+    const savedSort = getSavedSortPreference(platform);
+    creatorsData = sortCreators(creatorsData, savedSort);
+
+    // Store for search and live re-render
     switch (platform) {
-        case "tiktok":
-            gridElement = document.querySelector(
-                "#tiktok-shoutouts-section .creator-grid"
-            );
-            break;
-        case "instagram":
-            gridElement = document.querySelector(
-                "#instagram-shoutouts-section .instagram-creator-grid"
-            );
-            break;
-        case "youtube":
-            gridElement = document.querySelector(
-                "#youtube-shoutouts-section .youtube-creator-grid"
-            );
-            break;
+      case "tiktok":
+        allTikTokCreators = creatorsData;
+        break;
+      case "instagram":
+        allInstagramCreators = creatorsData;
+        break;
+      case "youtube":
+        allYouTubeCreators = creatorsData;
+        break;
     }
 
-    if (!firebaseAppInitialized || !db) {
-        console.error(
-            `Shoutout load error (${platform}): Firebase not ready.`
-        );
-        if (gridElement)
-            gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`;
-        return;
-    }
+    // ✅ Display creators
+    displayPlatformCreators(platform, creatorsData);
 
-    if (!gridElement) {
-        console.warn(
-            `Grid element missing for ${platform}. Cannot display shoutouts.`
-        );
-        return;
-    }
-
-    console.log(`Loading ${platform} shoutout data into:`, gridElement);
-    gridElement.innerHTML = `<p>Loading ${platform} Creators...</p>`;
-    if (timestampElement) timestampElement.textContent = "Last Updated: Loading...";
-
-    try {
-        const shoutoutsCol = collection(db, "shoutouts");
-        const shoutoutQuery = query(
-            shoutoutsCol,
-            where("platform", "==", platform)
-        );
-        const querySnapshot = await getDocs(shoutoutQuery);
-
-        let creatorsData = querySnapshot.docs.map((doc) => doc.data());
-
-        // 🔹 Apply saved sorting preference (default: followers_desc)
-        const savedSort = getSavedSortPreference(platform);
-        creatorsData = sortCreators(creatorsData, savedSort);
-
-        // 🔹 Store for search and live re-render
-        switch (platform) {
-            case "tiktok":
-                allTikTokCreators = creatorsData;
-                break;
-            case "instagram":
-                allInstagramCreators = creatorsData;
-                break;
-            case "youtube":
-                allYouTubeCreators = creatorsData;
-                break;
+    // === Timestamp logic ===
+    if (timestampElement && shoutoutsMetaRef) {
+      try {
+        const metaSnap = await getDoc(shoutoutsMetaRef);
+        if (metaSnap.exists()) {
+          const tsField = `lastUpdatedTime_${platform}`;
+          timestampElement.textContent = `Last Updated: ${formatFirestoreTimestamp(metaSnap.data()?.[tsField])}`;
+        } else {
+          timestampElement.textContent = "Last Updated: N/A";
         }
-
-        // ✅ Display creators
-        displayPlatformCreators(platform, creatorsData);
-
-        // === Timestamp logic ===
-        if (timestampElement && shoutoutsMetaRef) {
-            try {
-                const metaSnap = await getDoc(shoutoutsMetaRef);
-                if (metaSnap.exists()) {
-                    const tsField = `lastUpdatedTime_${platform}`;
-                    timestampElement.textContent = `Last Updated: ${formatFirestoreTimestamp(
-                        metaSnap.data()?.[tsField]
-                    )}`;
-                } else {
-                    timestampElement.textContent = "Last Updated: N/A";
-                }
-            } catch (e) {
-                console.warn(`Could not fetch timestamp for ${platform}:`, e);
-                timestampElement.textContent = "Last Updated: Error";
-            }
-        } else if (timestampElement) {
-            console.warn(
-                "Timestamp element provided, but shoutoutsMetaRef is not configured."
-            );
-            timestampElement.textContent = "Last Updated: N/A";
-        }
-
-        console.log(
-            `${platform} shoutouts loaded, sorted (${savedSort}), and displayed.`
-        );
-    } catch (error) {
-        console.error(`Error loading ${platform} shoutout data:`, error);
-        gridElement.innerHTML = `<p class="error">Error loading ${platform} creators.</p>`;
-        if (timestampElement) timestampElement.textContent = "Last Updated: Error";
+      } catch (e) {
+        console.warn(`Could not fetch timestamp for ${platform}:`, e);
+        timestampElement.textContent = "Last Updated: Error";
+      }
+    } else if (timestampElement) {
+      console.warn("Timestamp element provided, but shoutoutsMetaRef is not configured.");
+      timestampElement.textContent = "Last Updated: N/A";
     }
+
+    console.log(`${platform} shoutouts loaded and displayed (${savedSort}).`);
+  } catch (error) {
+    console.error(`Error loading ${platform} shoutout data:`, error);
+    gridElement.innerHTML = `<p class="error">Error loading ${platform} creators.</p>`;
+    if (timestampElement) timestampElement.textContent = "Last Updated: Error";
+  }
 }
 
-// --- Sorting Controls Setup ---
+// --- Sorting Dropdown Setup ---
 function setupCreatorSorting() {
-    const sortConfigs = [
-        {
-            id: "tiktok-sort",
-            platform: "tiktok",
-            dataRef: () => allTikTokCreators,
-        },
-        {
-            id: "instagram-sort",
-            platform: "instagram",
-            dataRef: () => allInstagramCreators,
-        },
-        {
-            id: "youtube-sort",
-            platform: "youtube",
-            dataRef: () => allYouTubeCreators,
-        },
-    ];
+  const sortConfigs = [
+    { id: "tiktok-sort", platform: "tiktok", dataRef: () => allTikTokCreators },
+    { id: "instagram-sort", platform: "instagram", dataRef: () => allInstagramCreators },
+    { id: "youtube-sort", platform: "youtube", dataRef: () => allYouTubeCreators },
+  ];
 
-    sortConfigs.forEach(({ id, platform, dataRef }) => {
-        const select = document.getElementById(id);
-        if (!select) return;
+  sortConfigs.forEach(({ id, platform, dataRef }) => {
+    const select = document.getElementById(id);
+    if (!select) return;
 
-        // 🔹 Load saved preference
-        const saved = getSavedSortPreference(platform);
-        select.value = saved;
+    // Load saved preference
+    const saved = getSavedSortPreference(platform);
+    select.value = saved;
 
-        select.addEventListener("change", () => {
-            const sortMethod = select.value;
-            saveSortPreference(platform, sortMethod);
-            const creators = [...dataRef()];
-            const sorted = sortCreators(creators, sortMethod);
-            displayPlatformCreators(platform, sorted);
-        });
+    select.addEventListener("change", () => {
+      const sortMethod = select.value;
+      saveSortPreference(platform, sortMethod);
+      const creators = [...dataRef()];
+      const sorted = sortCreators(creators, sortMethod);
+      displayPlatformCreators(platform, sorted);
     });
+  });
 
-    console.log("Creator sorting dropdowns initialized with memory.");
+  console.log("Creator sorting dropdowns initialized with localStorage memory.");
 }
-
 
 // --- BUSINESS INFO HELPER FUNCTIONS (FROM YOUR PROVIDED SCRIPT) ---
 function capitalizeFirstLetter(string) {
