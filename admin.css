@@ -2714,3 +2714,66 @@ body.dark-mode .g_id_signin > div[role="button"] {
     background-color: #ffffff !important;
     border-color: #dadce0 !important;
 }
+
+#live-status-management {
+  text-align: center;
+}
+
+#live-status-input {
+  width: 90%;
+  max-width: 420px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+  color: var(--text-color);
+  font-size: 1rem;
+  backdrop-filter: blur(10px);
+  margin-bottom: 12px;
+  transition: all var(--transition-fast);
+}
+
+#live-status-input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent);
+}
+
+.admin-button-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.admin-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background var(--transition-fast);
+}
+
+.admin-btn.primary {
+  background: var(--accent-color);
+  color: white;
+}
+
+.admin-btn.primary:hover {
+  background: var(--hover-color);
+}
+
+.admin-btn.secondary {
+  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+  color: var(--text-color);
+}
+
+.admin-btn.secondary:hover {
+  background: color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+.admin-status-msg {
+  margin-top: 10px;
+  color: var(--secondary-text);
+  font-size: 0.9rem;
+}
