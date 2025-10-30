@@ -2046,30 +2046,6 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     updateCountdown();
 }
 
-    if (instagramSearchInput) {
-        instagramSearchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredCreators = allInstagramCreators.filter(creator =>
-                (creator.nickname || '').toLowerCase().includes(searchTerm) ||
-                (creator.username || '').toLowerCase().includes(searchTerm)
-            );
-            displayPlatformCreators('instagram', filteredCreators);
-        });
-    }
-
-    if (youtubeSearchInput) {
-        youtubeSearchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredCreators = allYouTubeCreators.filter(creator =>
-                (creator.nickname || '').toLowerCase().includes(searchTerm) ||
-                (creator.username || '').toLowerCase().includes(searchTerm)
-            );
-            displayPlatformCreators('youtube', filteredCreators);
-        });
-    }
-    console.log("Creator search listeners attached.");
-}
-
 // --- MASTER INITIALIZATION FUNCTION ---
 async function initializeHomepageContent() {
     console.log("Initializing homepage content (v_with_countdown_and_biz_refresh)...");
