@@ -87,19 +87,21 @@
     <h2>TikTok Creator Shoutouts</h2>
     <p id="tiktok-last-updated-timestamp">Last Updated: Loading...</p>
 
-    <div class="search-container">
-      <input type="search" id="tiktok-search" class="creator-search" placeholder="Search TikTok creators" aria-label="Search TikTok creators" />
+    <!-- 🔍 Unified Search + Sort Bubble -->
+    <div class="search-container unified">
       <span class="search-icon">🔍</span>
-    </div>
-
-    <!-- 🔽 Sort Dropdown -->
-    <div class="creator-sort-controls">
-      <label for="tiktok-sort">Sort by:</label>
-      <select id="tiktok-sort">
-        <option value="followers_desc" selected>Followers (High → Low)</option>
-        <option value="followers_asc">Followers (Low → High)</option>
-        <option value="abc_asc">A → Z</option>
-        <option value="abc_desc">Z → A</option>
+      <input
+        type="search"
+        id="tiktok-search"
+        class="creator-search"
+        placeholder="Search TikTok creators"
+        aria-label="Search TikTok creators"
+      />
+      <select id="tiktok-sort" class="sort-inline-select">
+        <option value="followers_desc" selected>Followers — High → Low</option>
+        <option value="followers_asc">Followers — Low → High</option>
+        <option value="abc_asc">Name — A → Z</option>
+        <option value="abc_desc">Name — Z → A</option>
       </select>
     </div>
   </div>
@@ -114,18 +116,21 @@
     <h2>Instagram Creator Shoutouts</h2>
     <p id="instagram-last-updated-timestamp">Last Updated: Loading...</p>
 
-    <div class="search-container">
-      <input type="search" id="instagram-search" class="creator-search" placeholder="Search Instagram creators" aria-label="Search Instagram creators" />
+    <!-- 🔍 Unified Search + Sort Bubble -->
+    <div class="search-container unified">
       <span class="search-icon">🔍</span>
-    </div>
-
-    <div class="creator-sort-controls">
-      <label for="instagram-sort">Sort by:</label>
-      <select id="instagram-sort">
-        <option value="followers_desc" selected>Followers (High → Low)</option>
-        <option value="followers_asc">Followers (Low → High)</option>
-        <option value="abc_asc">A → Z</option>
-        <option value="abc_desc">Z → A</option>
+      <input
+        type="search"
+        id="instagram-search"
+        class="creator-search"
+        placeholder="Search Instagram creators"
+        aria-label="Search Instagram creators"
+      />
+      <select id="instagram-sort" class="sort-inline-select">
+        <option value="followers_desc" selected>Followers — High → Low</option>
+        <option value="followers_asc">Followers — Low → High</option>
+        <option value="abc_asc">Name — A → Z</option>
+        <option value="abc_desc">Name — Z → A</option>
       </select>
     </div>
   </div>
@@ -139,18 +144,21 @@
     <h2>YouTube Creator Shoutouts</h2>
     <p id="youtube-last-updated-timestamp">Last Updated: Loading...</p>
 
-    <div class="search-container">
-      <input type="search" id="youtube-search" class="creator-search" placeholder="Search YouTube creators" aria-label="Search YouTube creators" />
+    <!-- 🔍 Unified Search + Sort Bubble -->
+    <div class="search-container unified">
       <span class="search-icon">🔍</span>
-    </div>
-
-    <div class="creator-sort-controls">
-      <label for="youtube-sort">Sort by:</label>
-      <select id="youtube-sort">
-        <option value="followers_desc" selected>Subscribers (High → Low)</option>
-        <option value="followers_asc">Subscribers (Low → High)</option>
-        <option value="abc_asc">A → Z</option>
-        <option value="abc_desc">Z → A</option>
+      <input
+        type="search"
+        id="youtube-search"
+        class="creator-search"
+        placeholder="Search YouTube creators"
+        aria-label="Search YouTube creators"
+      />
+      <select id="youtube-sort" class="sort-inline-select">
+        <option value="followers_desc" selected>Subscribers — High → Low</option>
+        <option value="followers_asc">Subscribers — Low → High</option>
+        <option value="abc_asc">Name — A → Z</option>
+        <option value="abc_desc">Name — Z → A</option>
       </select>
     </div>
   </div>
