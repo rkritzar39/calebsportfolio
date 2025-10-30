@@ -4,7 +4,7 @@
 Welcome to the repository for my **Link in Bio** website. This site serves as a centralized hub for all my important links, shoutouts, and updates. The site prioritizes accessibility, security, and responsive design to provide a seamless experience across all devices.
  
 The current version of the website is **v26.1.2** 
-
+ 
 ---
 
 ## Features   
