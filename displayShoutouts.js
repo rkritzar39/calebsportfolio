@@ -13,12 +13,29 @@ const firebaseConfig = {
 
 // Import necessary Firebase functions (v9+ modular SDK)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { 
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  onSnapshot,        // 👈 add this
+  Timestamp,
+  orderBy,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 function watchLiveStatus() {
+  if (!db) {
+    console.warn("Firestore not ready yet, retrying...");
+    setTimeout(watchLiveStatus, 500);
+    return;
+  }
+
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
-
   const ref = doc(db, "live_status", "current");
+
   onSnapshot(ref, (snap) => {
     if (snap.exists()) {
       const data = snap.data();
