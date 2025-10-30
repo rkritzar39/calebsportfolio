@@ -770,50 +770,50 @@ function displayPlatformCreators(platform, creatorsToDisplay) {
 }
 
 /* ==========================================================
-   CREATOR SORTING + SEARCH + LOAD (FINAL INTEGRATED VERSION)
+   CREATOR SORTING + LOAD FUNCTION (FINAL FIXED VERSION)
    ========================================================== */
 
-// --- Helper: Numeric parser for followers/subscribers ---
-function parseCount(value) {
-  if (!value) return 0;
-  if (typeof value === "number") return value;
-  const str = value.toString().replace(/,/g, "").trim().toUpperCase();
-  if (str.endsWith("K")) return parseFloat(str) * 1000;
-  if (str.endsWith("M")) return parseFloat(str) * 1000000;
-  if (str.endsWith("B")) return parseFloat(str) * 1000000000;
-  return parseFloat(str) || 0;
-}
-
-// --- Generic Sorter Function ---
+// --- Helper: Generic Sorter Function ---
 function sortCreators(creators, method) {
+  if (!Array.isArray(creators)) return [];
+
+  // Parse follower/subscriber numbers properly (handles strings like "1.2K" or "3M")
+  const parseCount = (value) => {
+    if (typeof value === "string") {
+      const cleaned = value.replace(/,/g, "").trim().toUpperCase();
+      if (cleaned.endsWith("K")) return parseFloat(cleaned) * 1000;
+      if (cleaned.endsWith("M")) return parseFloat(cleaned) * 1000000;
+      if (cleaned.endsWith("B")) return parseFloat(cleaned) * 1000000000;
+      return parseFloat(cleaned) || 0;
+    }
+    return Number(value) || 0;
+  };
+
   const sorted = [...creators];
+
   switch (method) {
     case "followers_desc":
-      return sorted.sort((a, b) =>
-        parseCount(b.followers || b.subscribers) - parseCount(a.followers || a.subscribers)
-      );
+      return sorted.sort((a, b) => parseCount(b.followers || b.subscribers) - parseCount(a.followers || a.subscribers));
+
     case "followers_asc":
-      return sorted.sort((a, b) =>
-        parseCount(a.followers || a.subscribers) - parseCount(b.followers || b.subscribers)
-      );
+      return sorted.sort((a, b) => parseCount(a.followers || a.subscribers) - parseCount(b.followers || b.subscribers));
+
     case "abc_asc":
       return sorted.sort((a, b) =>
-        (a.nickname || a.username || "").localeCompare(b.nickname || b.username || "", undefined, {
-          sensitivity: "base",
-        })
+        (a.nickname || a.username || "").localeCompare(b.nickname || b.username || "", undefined, { sensitivity: "base" })
       );
+
     case "abc_desc":
       return sorted.sort((a, b) =>
-        (b.nickname || b.username || "").localeCompare(a.nickname || a.username || "", undefined, {
-          sensitivity: "base",
-        })
+        (b.nickname || b.username || "").localeCompare(a.nickname || a.username || "", undefined, { sensitivity: "base" })
       );
+
     default:
       return sorted;
   }
 }
 
-// --- LocalStorage Helpers ---
+// --- Helper: Save/Load user preference ---
 function getSavedSortPreference(platform) {
   return localStorage.getItem(`sortPref_${platform}`) || "followers_desc";
 }
@@ -821,39 +821,7 @@ function saveSortPreference(platform, value) {
   localStorage.setItem(`sortPref_${platform}`, value);
 }
 
-// --- Unified Renderer for Search + Sort ---
-function renderFilteredAndSortedCreators(platform, searchTerm = "") {
-  let creators;
-  switch (platform) {
-    case "tiktok":
-      creators = allTikTokCreators;
-      break;
-    case "instagram":
-      creators = allInstagramCreators;
-      break;
-    case "youtube":
-      creators = allYouTubeCreators;
-      break;
-    default:
-      return;
-  }
-
-  const sortSelect = document.getElementById(`${platform}-sort`);
-  const sortMethod = sortSelect ? sortSelect.value : getSavedSortPreference(platform);
-
-  const filtered = creators.filter((c) => {
-    const term = searchTerm.toLowerCase();
-    return (
-      (c.username && c.username.toLowerCase().includes(term)) ||
-      (c.nickname && c.nickname.toLowerCase().includes(term))
-    );
-  });
-
-  const sorted = sortCreators(filtered, sortMethod);
-  displayPlatformCreators(platform, sorted);
-}
-
-// --- Load Creators from Firestore ---
+// --- Main Loader Function ---
 async function loadShoutoutPlatformData(platform, timestampElement) {
   let gridElement;
   switch (platform) {
@@ -870,8 +838,7 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
 
   if (!firebaseAppInitialized || !db) {
     console.error(`Shoutout load error (${platform}): Firebase not ready.`);
-    if (gridElement)
-      gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`;
+    if (gridElement) gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`;
     return;
   }
 
@@ -888,12 +855,14 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
     const shoutoutsCol = collection(db, "shoutouts");
     const shoutoutQuery = query(shoutoutsCol, where("platform", "==", platform));
     const querySnapshot = await getDocs(shoutoutQuery);
+
     let creatorsData = querySnapshot.docs.map((doc) => doc.data());
 
-    // Apply saved sorting preference initially
+    // Apply saved sorting preference (default: followers_desc)
     const savedSort = getSavedSortPreference(platform);
     creatorsData = sortCreators(creatorsData, savedSort);
 
+    // Store for search and live re-render
     switch (platform) {
       case "tiktok":
         allTikTokCreators = creatorsData;
@@ -906,17 +875,16 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
         break;
     }
 
+    // ✅ Display creators
     displayPlatformCreators(platform, creatorsData);
 
-    // Timestamp display
+    // === Timestamp logic ===
     if (timestampElement && shoutoutsMetaRef) {
       try {
         const metaSnap = await getDoc(shoutoutsMetaRef);
         if (metaSnap.exists()) {
           const tsField = `lastUpdatedTime_${platform}`;
-          timestampElement.textContent = `Last Updated: ${formatFirestoreTimestamp(
-            metaSnap.data()?.[tsField]
-          )}`;
+          timestampElement.textContent = `Last Updated: ${formatFirestoreTimestamp(metaSnap.data()?.[tsField])}`;
         } else {
           timestampElement.textContent = "Last Updated: N/A";
         }
@@ -925,10 +893,11 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
         timestampElement.textContent = "Last Updated: Error";
       }
     } else if (timestampElement) {
+      console.warn("Timestamp element provided, but shoutoutsMetaRef is not configured.");
       timestampElement.textContent = "Last Updated: N/A";
     }
 
-    console.log(`${platform} shoutouts loaded (${savedSort}).`);
+    console.log(`${platform} shoutouts loaded and displayed (${savedSort}).`);
   } catch (error) {
     console.error(`Error loading ${platform} shoutout data:`, error);
     gridElement.innerHTML = `<p class="error">Error loading ${platform} creators.</p>`;
@@ -939,52 +908,30 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
 // --- Sorting Dropdown Setup ---
 function setupCreatorSorting() {
   const sortConfigs = [
-    { id: "tiktok-sort", platform: "tiktok" },
-    { id: "instagram-sort", platform: "instagram" },
-    { id: "youtube-sort", platform: "youtube" },
+    { id: "tiktok-sort", platform: "tiktok", dataRef: () => allTikTokCreators },
+    { id: "instagram-sort", platform: "instagram", dataRef: () => allInstagramCreators },
+    { id: "youtube-sort", platform: "youtube", dataRef: () => allYouTubeCreators },
   ];
 
-  sortConfigs.forEach(({ id, platform }) => {
+  sortConfigs.forEach(({ id, platform, dataRef }) => {
     const select = document.getElementById(id);
     if (!select) return;
 
+    // Load saved preference
     const saved = getSavedSortPreference(platform);
     select.value = saved;
 
     select.addEventListener("change", () => {
-      saveSortPreference(platform, select.value);
-
-      // Get current search term (so sorting and search stay synced)
-      const searchInput = document.getElementById(`${platform}-search`);
-      const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
-      renderFilteredAndSortedCreators(platform, searchTerm);
+      const sortMethod = select.value;
+      saveSortPreference(platform, sortMethod);
+      const creators = [...dataRef()];
+      const sorted = sortCreators(creators, sortMethod);
+      displayPlatformCreators(platform, sorted);
     });
   });
 
   console.log("Creator sorting dropdowns initialized with localStorage memory.");
 }
-
-// --- Search Input Setup (Now synced with sort) ---
-function setupCreatorSearch() {
-  const configs = [
-    { id: "tiktok-search", platform: "tiktok" },
-    { id: "instagram-search", platform: "instagram" },
-    { id: "youtube-search", platform: "youtube" },
-  ];
-
-  configs.forEach(({ id, platform }) => {
-    const input = document.getElementById(id);
-    if (!input) return;
-
-    input.addEventListener("input", (e) => {
-      const term = e.target.value.trim().toLowerCase();
-      renderFilteredAndSortedCreators(platform, term);
-    });
-  });
-
-  console.log("Creator search inputs initialized and synced with sorting.");
-}
-
 
 // --- BUSINESS INFO HELPER FUNCTIONS (FROM YOUR PROVIDED SCRIPT) ---
 function capitalizeFirstLetter(string) {
