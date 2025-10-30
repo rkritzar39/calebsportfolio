@@ -702,6 +702,88 @@ body.no-animations .search-container:not(.disabled):hover .creator-search::after
 	cursor: not-allowed;
 }
 
+/* ============================================== */
+/* Unified Search + Sort Capsule (Glass Onyx 2.0) */
+/* ============================================== */
+
+/* Make the whole container flex to align both input and select */
+.search-container.unified {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding-right: 8px;
+	position: relative;
+}
+
+/* Adjust bubble radius + padding for inline layout */
+.search-container.unified .creator-search {
+	flex: 1;
+	padding-right: 110px; /* space for dropdown */
+}
+
+/* Inline sort dropdown */
+.sort-inline-select {
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	border: none;
+	border-radius: 10px;
+	padding: 6px 28px 6px 10px;
+	color: var(--text-color);
+	font-size: 0.9em;
+	font-weight: 500;
+	cursor: pointer;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	transition: all 0.25s ease;
+	appearance: none;
+	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+}
+
+/* Subtle glowing accent hover */
+.sort-inline-select:hover,
+.sort-inline-select:focus {
+	background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+	outline: none;
+	box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 50%, transparent);
+}
+
+/* Add an accent arrow for dropdown */
+.sort-inline-select {
+	background-image: linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
+		linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
+	background-position: calc(100% - 12px) 50%, calc(100% - 8px) 50%;
+	background-size: 4px 4px, 4px 4px;
+	background-repeat: no-repeat;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+	.search-container.unified {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 8px;
+		padding: 10px;
+		border-radius: var(--radius-lg);
+	}
+
+	.search-container.unified .creator-search {
+		width: 100%;
+		padding-right: 12px;
+	}
+
+	.sort-inline-select {
+		position: static;
+		transform: none;
+		width: 100%;
+		text-align: center;
+		font-size: 0.9em;
+		padding: 8px;
+	}
+}
+
 /* ======================================= */
 /* == ONYX GLASS ADD-ONS (v1 Compatible) == */
 /* ======================================= */
