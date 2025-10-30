@@ -2046,23 +2046,6 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     updateCountdown();
 }
 
-// --- NEW: FUNCTION TO SET UP SEARCH EVENT LISTENERS ---
-function setupCreatorSearch() {
-    const tiktokSearchInput = document.getElementById('tiktok-search');
-    const instagramSearchInput = document.getElementById('instagram-search');
-    const youtubeSearchInput = document.getElementById('youtube-search');
-
-    if (tiktokSearchInput) {
-        tiktokSearchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredCreators = allTikTokCreators.filter(creator =>
-                (creator.nickname || '').toLowerCase().includes(searchTerm) ||
-                (creator.username || '').toLowerCase().includes(searchTerm)
-            );
-            displayPlatformCreators('tiktok', filteredCreators);
-        });
-    }
-
     if (instagramSearchInput) {
         instagramSearchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
