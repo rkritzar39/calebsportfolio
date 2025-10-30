@@ -458,38 +458,81 @@ a.corner-button {
     text-decoration: none;
 }
 
+/* =============================================== */
+/* 🎧 Live Activity Capsule — Themed for LiquidGlass */
+/* =============================================== */
+
 .live-activity {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: color-mix(in srgb, var(--content-bg) 80%, transparent);
-  backdrop-filter: blur(14px);
-  border-radius: 16px;
-  padding: 8px 14px;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 60%, transparent);
-  width: fit-content;
-  margin: 14px auto 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin: 16px auto 0;
+	padding: 8px 16px;
+	width: fit-content;
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	backdrop-filter: var(--backdrop-blur);
+	border-radius: var(--radius-md);
+	box-shadow:
+		0 8px 22px color-mix(in srgb, var(--shadow-color) 55%, transparent),
+		var(--bubble-shadow);
+	border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+	transition:
+		opacity var(--transition-medium),
+		transform var(--transition-medium),
+		background var(--transition-medium);
 }
 
 .live-activity.hidden {
-  opacity: 0;
-  transform: translateY(6px);
+	opacity: 0;
+	transform: translateY(6px);
+	pointer-events: none;
 }
 
+/* === Icon === */
 .activity-icon {
-  width: 22px;
-  height: 22px;
-  filter: brightness(1.2);
-  opacity: 0.9;
+	width: 22px;
+	height: 22px;
+	filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+	opacity: 0.85;
 }
 
+/* === Text === */
 #live-activity-text {
-  font-size: 1em;
-  font-weight: 500;
-  color: var(--accent-color);
-  text-align: center;
+	font-size: 1rem;
+	font-weight: 500;
+	color: var(--accent-color);
+	text-align: center;
+	white-space: nowrap;
+	letter-spacing: 0.3px;
+}
+
+/* === Light Mode Adjustment === */
+body.light-e .live-activity {
+	background: color-mix(in srgb, var(--content-bg) 90%, white);
+	box-shadow:
+		0 6px 18px color-mix(in srgb, var(--shadow-color) 25%, transparent),
+		var(--bubble-shadow);
+	border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+body.light-e #live-activity-text {
+	color: var(--light-accent);
+}
+
+/* === Responsive === */
+@media (max-width: 600px) {
+	.live-activity {
+		gap: 8px;
+		padding: 6px 12px;
+	}
+	.activity-icon {
+		width: 18px;
+		height: 18px;
+	}
+	#live-activity-text {
+		font-size: 0.95rem;
+	}
 }
 
 /* =================================== */
