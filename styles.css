@@ -715,15 +715,22 @@ a.corner-button {
 	}
 
 	.creator-search {
-		padding: 12px 12px 12px 42px; /* same as desktop */
+		padding: 12px 12px 12px 42px; /* 42px left padding makes room for the icon */
 		font-size: 16px;
 		line-height: 1.4;
 	}
 
 	.search-icon {
-		left: 18px;
-		top: 50%;
-		transform: translateY(-50%);
+		left: 18px; /* 18px from container left edge */
+		
+		/* FIX: Replaced 'top: 50%' with a calculated value.
+		  'top: 50%' centers relative to the *entire* container (search + sort).
+		  This new value centers it relative to the search input *only*.
+		  Calc: 8px (container padding) + (46.4px input height / 2) = 31.2px
+		*/
+		top: 31.2px; 
+		
+		transform: translateY(-50%); /* This still correctly centers the icon on the 31.2px line */
 		width: 18px;
 		height: 18px;
 	}
