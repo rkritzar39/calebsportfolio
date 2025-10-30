@@ -579,7 +579,7 @@ a.corner-button {
 }
 
 /* =============================================== */
-/* ONYX UNIFIED SEARCH + SORT CAPSULE (FINAL v2)   */
+/* ONYX UNIFIED SEARCH + SORT CAPSULE (FINAL v3)   */
 /* =============================================== */
 
 .search-container.unified {
@@ -595,13 +595,13 @@ a.corner-button {
 	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 	overflow: hidden;
 	transition: all var(--transition-medium);
-	margin-bottom: 24px; /* 🆕 Adds breathing space below */
+	margin-bottom: 24px;
 }
 
 /* === Search field === */
 .search-container.unified .creator-search {
 	flex: 1;
-	padding: 10px 46px 10px 14px;
+	padding: 10px 110px 10px 38px; /* left padding for icon, right for dropdown */
 	border: none;
 	outline: none;
 	background: transparent;
@@ -615,15 +615,23 @@ a.corner-button {
 	color: var(--secondary-text);
 }
 
-/* === Search icon === */
+/* === Search icon inside the field === */
 .search-container.unified .search-icon {
 	position: absolute;
-	right: 12px;
+	left: 12px;               /* ⬅️ moved to the left inside input */
 	top: 50%;
 	transform: translateY(-50%);
 	font-size: 16px;
 	color: var(--secondary-text);
 	pointer-events: none;
+	opacity: 0.85;
+	transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+/* Accent glow when focused */
+.search-container.unified:focus-within .search-icon {
+	color: var(--accent-color);
+	opacity: 1;
 }
 
 /* === Dropdown inside the bubble === */
@@ -703,11 +711,11 @@ a.corner-button {
 		align-items: stretch;
 		padding: 10px;
 		border-radius: var(--radius-lg);
-		margin-bottom: 32px; /* 🆕 Extra space on mobile */
+		margin-bottom: 32px;
 	}
 
 	.search-container.unified .creator-search {
-		padding-right: 12px;
+		padding: 10px 12px 10px 36px; /* still leaves icon space */
 		border-radius: var(--radius-md);
 	}
 
@@ -725,6 +733,13 @@ a.corner-button {
 
 	.search-container.unified::before {
 		display: none;
+	}
+
+	/* ensure icon visibility on mobile too */
+	.search-container.unified .search-icon {
+		left: 10px;
+		font-size: 18px;
+		opacity: 0.9;
 	}
 }
 
