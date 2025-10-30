@@ -13,24 +13,46 @@ import { db } from "./firebase-init.js";
    DISCORD PRESENCE
 ================================ */
 async function getDiscordActivity() {
+  const userId = "850815059093356594";
+  const endpoint = `https://api.lanyard.rest/v1/users/${userId}`;
+
   try {
-    const res = await fetch("https://api.lanyard.rest/v1/users/850815059093356594");
+    const res = await fetch(endpoint);
+    if (!res.ok) return "💬 Discord status unavailable";
+
     const { data } = await res.json();
-    if (!data || data.discord_status === "offline") return null;
+    if (!data) return "💬 Discord status unavailable";
 
-    const activity = data.activities.find(a => a.type === 0 || a.type === 2);
-    if (!activity) return null;
+    // --- Basic presence state ---
+    const statusMap = {
+      online: "🟢 Online on Discord",
+      idle: "🌙 Idle on Discord",
+      dnd: "⛔ Do Not Disturb",
+      offline: "🔘 Offline",
+    };
 
-    // Spotify / Game
-    if (activity.name === "Spotify" && activity.details && activity.state)
-      return `🎵 Listening to “${activity.details}” by ${activity.state}`;
-    if (activity.type === 0)
-      return `🎮 Playing ${activity.name}`;
+    // --- Look for activities ---
+    const activities = data.activities || [];
 
-    return null;
+    // Spotify (type 2)
+    const spotify = activities.find(a => a.name === "Spotify");
+    if (spotify && spotify.details && spotify.state)
+      return `🎵 Listening to “${spotify.details}” by ${spotify.state}`;
+
+    // Game (type 0)
+    const game = activities.find(a => a.type === 0);
+    if (game) return `🎮 Playing ${game.name}`;
+
+    // Custom status (type 4)
+    const custom = activities.find(a => a.type === 4);
+    if (custom && custom.state)
+      return `${custom.emoji ? custom.emoji.name + " " : ""}${custom.state}`;
+
+    // Fallback to general presence
+    return statusMap[data.discord_status] || "💬 Discord status unavailable";
   } catch (err) {
     console.error("Discord activity error:", err);
-    return null;
+    return "💬 Discord status unavailable";
   }
 }
 
