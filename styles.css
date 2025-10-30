@@ -579,7 +579,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* ONYX SEARCH + SORT — FINAL INLINE ICON VERSION          */
+/* ONYX SEARCH + SORT — FINAL INLINE ICON VERSION          */
 /* ======================================================= */
 
 .search-container.unified {
@@ -702,7 +702,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* 📱 MOBILE — same inline look, better breathing space     */
+/* 📱 MOBILE — same inline look, better breathing space     */
 /* ======================================================= */
 @media (max-width: 600px) {
 	.search-container.unified {
