@@ -2215,6 +2215,7 @@ async function initializeHomepageContent() {
 
         // --- NEW: Set up the search functionality AFTER all data has been loaded ---
         setupCreatorSearch();
+        setupCreatorSorting();
         
         console.log("All other dynamic content loading initiated/completed.");
     }
