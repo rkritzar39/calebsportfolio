@@ -1610,6 +1610,28 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".search-container.unified .creator-search").forEach(input => {
+    const container = input.closest(".search-container.unified");
+
+    const setTyping = () => {
+      if (input.value.trim()) {
+        container.classList.add("typing");
+      } else {
+        container.classList.remove("typing");
+      }
+    };
+
+    // Initialize once on load
+    setTyping();
+
+    // Listen for user input
+    input.addEventListener("input", setTyping);
+    input.addEventListener("change", setTyping);
+    input.addEventListener("blur", setTyping);
+  });
+});
+
 /* =============================================== */
 /* == QUOTE OF THE DAY SECTION (FINAL VERSION) == */
 /* =============================================== */
