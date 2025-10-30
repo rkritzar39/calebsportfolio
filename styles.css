@@ -1929,6 +1929,41 @@ body.dark-mode .bubble {
 	.youtube-creator-username { font-size: 0.8em; }
 }
 
+.creator-sort-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 20px;
+  font-size: 0.95em;
+  justify-content: flex-start;
+}
+
+.creator-sort-controls label {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.creator-sort-controls select {
+  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 6px 12px;
+  color: var(--text-color);
+  font-size: 0.9em;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+  transition: all 0.25s ease;
+}
+
+.creator-sort-controls select:hover,
+.creator-sort-controls select:focus {
+  border-color: var(--accent-color);
+  outline: none;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 60%, transparent);
+}
+
+
 :root {
 	--accent-color-rgb: 0, 123, 255; /* Match this to your accent color */
 	--shadow-color: rgba(0, 0, 0, 0.1);
