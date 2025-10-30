@@ -579,7 +579,7 @@ a.corner-button {
 }
 
 /* =============================================== */
-/* ONYX UNIFIED SEARCH + SORT CAPSULE               */
+/* ONYX UNIFIED SEARCH + SORT CAPSULE (FINAL v2)   */
 /* =============================================== */
 
 .search-container.unified {
@@ -595,6 +595,7 @@ a.corner-button {
 	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 	overflow: hidden;
 	transition: all var(--transition-medium);
+	margin-bottom: 24px; /* 🆕 Adds breathing space below */
 }
 
 /* === Search field === */
@@ -702,6 +703,7 @@ a.corner-button {
 		align-items: stretch;
 		padding: 10px;
 		border-radius: var(--radius-lg);
+		margin-bottom: 32px; /* 🆕 Extra space on mobile */
 	}
 
 	.search-container.unified .creator-search {
