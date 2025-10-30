@@ -579,74 +579,99 @@ a.corner-button {
 }
 
 /* =============================================== */
-/* UNIFIED SEARCH + SORT CAPSULE (ONYX GLASS 2.0) */
+/* ONYX UNIFIED SEARCH + SORT CAPSULE               */
 /* =============================================== */
 
-/* Flex container for inline input + sort dropdown */
 .search-container.unified {
 	display: flex;
 	align-items: center;
 	position: relative;
-	padding-right: 6px;
-	gap: 0;
 	width: 100%;
 	max-width: 500px;
+	border-radius: var(--radius-md);
+	background: var(--content-bg);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+	overflow: hidden;
+	transition: all var(--transition-medium);
 }
 
-/* Extend your existing creator-search bubble */
+/* === Search field === */
 .search-container.unified .creator-search {
 	flex: 1;
-	padding-right: 120px; /* Make room for dropdown */
-	border-top-right-radius: var(--radius-md);
-	border-bottom-right-radius: var(--radius-md);
+	padding: 10px 46px 10px 14px;
+	border: none;
+	outline: none;
+	background: transparent;
+	color: var(--text-color);
+	font-size: var(--font-size-base);
+	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+	transition: color var(--transition-fast);
 }
 
-/* Inline dropdown inside the bubble */
+.creator-search::placeholder {
+	color: var(--secondary-text);
+}
+
+/* === Search icon === */
+.search-container.unified .search-icon {
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 16px;
+	color: var(--secondary-text);
+	pointer-events: none;
+}
+
+/* === Dropdown inside the bubble === */
 .sort-inline-select {
 	position: absolute;
 	right: 8px;
 	top: 50%;
 	transform: translateY(-50%);
-	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
 	border: none;
-	border-radius: 10px;
-	padding: 6px 28px 6px 10px;
-	color: var(--text-color);
+	outline: none;
 	font-size: 0.9em;
 	font-weight: 500;
-	cursor: pointer;
+	color: var(--text-color);
+	background: color-mix(in srgb, var(--content-bg) 90%, transparent);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-	transition: all 0.25s ease;
+	padding: 6px 28px 6px 10px;
+	border-radius: 10px;
+	cursor: pointer;
 	appearance: none;
+	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+	transition: all var(--transition-fast);
 }
 
-/* Hover + focus glow */
-.sort-inline-select:hover,
-.sort-inline-select:focus {
-	background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
-	outline: none;
-	box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent);
-}
-
-/* Dropdown accent arrow */
+/* Accent arrow */
 .sort-inline-select {
-	background-image: linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
-					  linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
+	background-image:
+		linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
+		linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
 	background-position: calc(100% - 12px) 50%, calc(100% - 8px) 50%;
 	background-size: 4px 4px, 4px 4px;
 	background-repeat: no-repeat;
 	padding-right: 24px;
 }
 
-/* Optional subtle divider between search and dropdown */
+/* Hover / focus accent glow */
+.sort-inline-select:hover,
+.sort-inline-select:focus {
+	background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+	box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 35%, transparent);
+}
+
+/* === Divider between input & dropdown === */
 .search-container.unified::before {
 	content: "";
 	position: absolute;
 	right: 112px;
-	top: 8px;
-	bottom: 8px;
+	top: 6px;
+	bottom: 6px;
 	width: 1.5px;
 	background: linear-gradient(
 		to bottom,
@@ -656,27 +681,30 @@ a.corner-button {
 	border-radius: 1px;
 	opacity: 0.35;
 	pointer-events: none;
-	transition: opacity 0.25s ease;
+	transition: opacity var(--transition-medium);
 }
 
-/* Hide divider when input focused (gives a "connected" look) */
-.search-container.unified .creator-search:focus ~ .sort-inline-select + ::before,
+/* Fade divider when focused */
 .search-container.unified:focus-within::before {
 	opacity: 0;
 }
 
-/* Responsive: stack vertically on mobile */
+/* === Focus ring on input === */
+.creator-search:focus {
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 70%, transparent);
+	border-radius: var(--radius-md);
+}
+
+/* === Responsive stacking === */
 @media (max-width: 600px) {
 	.search-container.unified {
 		flex-direction: column;
 		align-items: stretch;
-		gap: 10px;
 		padding: 10px;
 		border-radius: var(--radius-lg);
 	}
 
 	.search-container.unified .creator-search {
-		width: 100%;
 		padding-right: 12px;
 		border-radius: var(--radius-md);
 	}
@@ -685,24 +713,17 @@ a.corner-button {
 		position: static;
 		transform: none;
 		width: 100%;
-		text-align: center;
+		margin-top: 8px;
 		font-size: 0.95em;
 		padding: 10px;
 		border-radius: var(--radius-md);
-		background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+		background: color-mix(in srgb, var(--content-bg) 85%, transparent);
 		box-shadow: 0 2px 10px color-mix(in srgb, var(--shadow-color) 60%, transparent);
 	}
 
 	.search-container.unified::before {
 		display: none;
 	}
-}
-
-/* Optional smoother transition for layout shifts */
-.search-container.unified,
-.sort-inline-select,
-.creator-search {
-	transition: all 0.25s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ======================================= */
