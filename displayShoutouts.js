@@ -769,69 +769,195 @@ function displayPlatformCreators(platform, creatorsToDisplay) {
     }
 }
 
+/* ==========================================================
+   CREATOR SORTING + LOAD FUNCTION (ENHANCED)
+   ========================================================== */
+
+// --- Helper: Generic Sorter Function ---
+function sortCreators(creators, method) {
+    const sorted = [...creators]; // clone array to avoid mutating the original
+    switch (method) {
+        case "followers_desc":
+            return sorted.sort((a, b) =>
+                Number(b.followers || b.subscribers || 0) -
+                Number(a.followers || a.subscribers || 0)
+            );
+        case "followers_asc":
+            return sorted.sort((a, b) =>
+                Number(a.followers || a.subscribers || 0) -
+                Number(b.followers || b.subscribers || 0)
+            );
+        case "abc_asc":
+            return sorted.sort((a, b) =>
+                (a.nickname || a.username || "").localeCompare(
+                    b.nickname || b.username || "",
+                    undefined,
+                    { sensitivity: "base" }
+                )
+            );
+        case "abc_desc":
+            return sorted.sort((a, b) =>
+                (b.nickname || b.username || "").localeCompare(
+                    a.nickname || a.username || "",
+                    undefined,
+                    { sensitivity: "base" }
+                )
+            );
+        default:
+            return sorted;
+    }
+}
+
+// --- Helper: Save/Load user preference ---
+function getSavedSortPreference(platform) {
+    return localStorage.getItem(`sortPref_${platform}`) || "followers_desc";
+}
+function saveSortPreference(platform, value) {
+    localStorage.setItem(`sortPref_${platform}`, value);
+}
+
+// --- Main Loader Function ---
 async function loadShoutoutPlatformData(platform, timestampElement) {
     let gridElement;
     switch (platform) {
-        case 'tiktok': gridElement = document.querySelector('#tiktok-shoutouts-section .creator-grid'); break;
-        case 'instagram': gridElement = document.querySelector('#instagram-shoutouts-section .instagram-creator-grid'); break;
-        case 'youtube': gridElement = document.querySelector('#youtube-shoutouts-section .youtube-creator-grid'); break;
+        case "tiktok":
+            gridElement = document.querySelector(
+                "#tiktok-shoutouts-section .creator-grid"
+            );
+            break;
+        case "instagram":
+            gridElement = document.querySelector(
+                "#instagram-shoutouts-section .instagram-creator-grid"
+            );
+            break;
+        case "youtube":
+            gridElement = document.querySelector(
+                "#youtube-shoutouts-section .youtube-creator-grid"
+            );
+            break;
     }
 
-    if (!firebaseAppInitialized || !db) { console.error(`Shoutout load error (${platform}): Firebase not ready.`); if(gridElement) gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`; return; }
+    if (!firebaseAppInitialized || !db) {
+        console.error(
+            `Shoutout load error (${platform}): Firebase not ready.`
+        );
+        if (gridElement)
+            gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`;
+        return;
+    }
+
     if (!gridElement) {
-        console.warn(`Grid element missing for ${platform}. Cannot display shoutouts.`);
-        return; 
+        console.warn(
+            `Grid element missing for ${platform}. Cannot display shoutouts.`
+        );
+        return;
     }
 
     console.log(`Loading ${platform} shoutout data into:`, gridElement);
     gridElement.innerHTML = `<p>Loading ${platform} Creators...</p>`;
-    if (timestampElement) timestampElement.textContent = 'Last Updated: Loading...';
+    if (timestampElement) timestampElement.textContent = "Last Updated: Loading...";
 
     try {
-        const shoutoutsCol = collection(db, 'shoutouts');
-        const shoutoutQuery = query(shoutoutsCol, where("platform", "==", platform), orderBy("order", "asc"));
+        const shoutoutsCol = collection(db, "shoutouts");
+        const shoutoutQuery = query(
+            shoutoutsCol,
+            where("platform", "==", platform)
+        );
         const querySnapshot = await getDocs(shoutoutQuery);
 
-        const creatorsData = querySnapshot.docs.map(doc => doc.data());
+        let creatorsData = querySnapshot.docs.map((doc) => doc.data());
 
-        // Store the full list in the appropriate module-level variable
+        // 🔹 Apply saved sorting preference (default: followers_desc)
+        const savedSort = getSavedSortPreference(platform);
+        creatorsData = sortCreators(creatorsData, savedSort);
+
+        // 🔹 Store for search and live re-render
         switch (platform) {
-            case 'tiktok': allTikTokCreators = creatorsData; break;
-            case 'instagram': allInstagramCreators = creatorsData; break;
-            case 'youtube': allYouTubeCreators = creatorsData; break;
+            case "tiktok":
+                allTikTokCreators = creatorsData;
+                break;
+            case "instagram":
+                allInstagramCreators = creatorsData;
+                break;
+            case "youtube":
+                allYouTubeCreators = creatorsData;
+                break;
         }
-        
-        // Perform the initial display of all creators
+
+        // ✅ Display creators
         displayPlatformCreators(platform, creatorsData);
-        
+
+        // === Timestamp logic ===
         if (timestampElement && shoutoutsMetaRef) {
             try {
                 const metaSnap = await getDoc(shoutoutsMetaRef);
                 if (metaSnap.exists()) {
                     const tsField = `lastUpdatedTime_${platform}`;
-                    timestampElement.textContent = `Last Updated: ${formatFirestoreTimestamp(metaSnap.data()?.[tsField])}`;
+                    timestampElement.textContent = `Last Updated: ${formatFirestoreTimestamp(
+                        metaSnap.data()?.[tsField]
+                    )}`;
                 } else {
-                    if(timestampElement) timestampElement.textContent = 'Last Updated: N/A';
+                    timestampElement.textContent = "Last Updated: N/A";
                 }
             } catch (e) {
                 console.warn(`Could not fetch timestamp for ${platform}:`, e);
-                if(timestampElement) timestampElement.textContent = 'Last Updated: Error';
+                timestampElement.textContent = "Last Updated: Error";
             }
         } else if (timestampElement) {
-            console.warn("Timestamp element provided, but shoutoutsMetaRef is not configured.");
-            timestampElement.textContent = 'Last Updated: N/A';
+            console.warn(
+                "Timestamp element provided, but shoutoutsMetaRef is not configured."
+            );
+            timestampElement.textContent = "Last Updated: N/A";
         }
-        console.log(`${platform} shoutouts loaded and displayed.`);
 
+        console.log(
+            `${platform} shoutouts loaded, sorted (${savedSort}), and displayed.`
+        );
     } catch (error) {
         console.error(`Error loading ${platform} shoutout data:`, error);
         gridElement.innerHTML = `<p class="error">Error loading ${platform} creators.</p>`;
-        if (timestampElement) timestampElement.textContent = 'Last Updated: Error';
-        if (error.code === 'failed-precondition') {
-            console.error(`Firestore query requires a composite index for 'shoutouts' on fields 'platform' and 'order'. Please create this index in the Firebase console.`);
-            gridElement.innerHTML += `<br><small>Error: Missing database index. Check console.</small>`;
-        }
+        if (timestampElement) timestampElement.textContent = "Last Updated: Error";
     }
+}
+
+// --- Sorting Controls Setup ---
+function setupCreatorSorting() {
+    const sortConfigs = [
+        {
+            id: "tiktok-sort",
+            platform: "tiktok",
+            dataRef: () => allTikTokCreators,
+        },
+        {
+            id: "instagram-sort",
+            platform: "instagram",
+            dataRef: () => allInstagramCreators,
+        },
+        {
+            id: "youtube-sort",
+            platform: "youtube",
+            dataRef: () => allYouTubeCreators,
+        },
+    ];
+
+    sortConfigs.forEach(({ id, platform, dataRef }) => {
+        const select = document.getElementById(id);
+        if (!select) return;
+
+        // 🔹 Load saved preference
+        const saved = getSavedSortPreference(platform);
+        select.value = saved;
+
+        select.addEventListener("change", () => {
+            const sortMethod = select.value;
+            saveSortPreference(platform, sortMethod);
+            const creators = [...dataRef()];
+            const sorted = sortCreators(creators, sortMethod);
+            displayPlatformCreators(platform, sorted);
+        });
+    });
+
+    console.log("Creator sorting dropdowns initialized with memory.");
 }
 
 
