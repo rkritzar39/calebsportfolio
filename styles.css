@@ -458,6 +458,40 @@ a.corner-button {
     text-decoration: none;
 }
 
+.live-activity {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+  backdrop-filter: blur(14px);
+  border-radius: 16px;
+  padding: 8px 14px;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+  width: fit-content;
+  margin: 14px auto 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.live-activity.hidden {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.activity-icon {
+  width: 22px;
+  height: 22px;
+  filter: brightness(1.2);
+  opacity: 0.9;
+}
+
+#live-activity-text {
+  font-size: 1em;
+  font-weight: 500;
+  color: var(--accent-color);
+  text-align: center;
+}
+
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
