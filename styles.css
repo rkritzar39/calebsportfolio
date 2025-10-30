@@ -578,14 +578,22 @@ a.corner-button {
   }
 }
 
-/* =============================================== */
-/* ONYX UNIFIED SEARCH + SORT CAPSULE (FINAL v5)   */
-/* =============================================== */
+/* ========================================================= */
+/* ONYX UNIFIED SEARCH + SORT CAPSULE — FINAL (ALL 3)        */
+/* ========================================================= */
 
+/* Hide old sort controls if still present */
+#tiktok-shoutouts .creator-sort-controls,
+#instagram-shoutouts .creator-sort-controls,
+#youtube-shoutouts .creator-sort-controls {
+	display: none !important;
+}
+
+/* Unified glass bubble container */
 .search-container.unified {
+	position: relative;
 	display: flex;
 	align-items: center;
-	position: relative;
 	width: 100%;
 	max-width: 500px;
 	border-radius: var(--radius-md);
@@ -598,13 +606,13 @@ a.corner-button {
 	margin-bottom: 24px;
 }
 
-/* === Search field === */
+/* Input field */
 .search-container.unified .creator-search {
 	width: 100%;
-	padding: 10px 110px 10px 42px; /* left padding for icon, right for dropdown */
+	padding: 12px 112px 12px 44px !important; /* room for icon + dropdown */
 	border: none;
 	outline: none;
-	background: transparent;
+	background: transparent !important;
 	color: var(--text-color);
 	font-size: var(--font-size-base);
 	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
@@ -615,85 +623,29 @@ a.corner-button {
 	color: var(--secondary-text);
 }
 
-/* === Search icon (inside the input) === */
+/* 🔍 Icon inside search */
 .search-container.unified .search-icon {
 	position: absolute;
-	left: 16px;
+	left: 14px;
 	top: 50%;
 	transform: translateY(-50%);
 	font-size: 18px;
 	color: var(--secondary-text);
 	pointer-events: none;
-	opacity: 0.9;
-	transition:
-		color var(--transition-medium) ease,
-		opacity var(--transition-medium) ease,
-		transform 0.25s ease;
-	z-index: 2;
+	z-index: 3;
+	opacity: 0.95;
+	transition: color var(--transition-medium), opacity var(--transition-medium), transform 0.25s ease;
 }
 
-/* === Glow + color change on focus === */
-.search-container.unified:focus-within .search-icon {
-	color: var(--accent-color);
-	opacity: 1;
-	transform: translateY(-50%) scale(1.1);
-}
-
-/* === Dynamic input-based color (typing feedback) === */
+/* When focused or typing → accent color + gentle scale */
+.search-container.unified:focus-within .search-icon,
 .search-container.unified.typing .search-icon {
 	color: var(--accent-color);
 	opacity: 1;
-	transform: translateY(-50%) scale(1.12);
+	transform: translateY(-50%) scale(1.08);
 }
 
-/* === Smooth revert when empty === */
-.search-container.unified:not(.typing) .search-icon {
-	color: var(--secondary-text);
-	opacity: 0.9;
-	transform: translateY(-50%) scale(1);
-}
-
-/* === Dropdown inside the bubble === */
-.sort-inline-select {
-	position: absolute;
-	right: 8px;
-	top: 50%;
-	transform: translateY(-50%);
-	border: none;
-	outline: none;
-	font-size: 0.9em;
-	font-weight: 500;
-	color: var(--text-color);
-	background: color-mix(in srgb, var(--content-bg) 90%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	padding: 6px 28px 6px 10px;
-	border-radius: 10px;
-	cursor: pointer;
-	appearance: none;
-	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-	transition: all var(--transition-fast);
-}
-
-/* Accent arrow */
-.sort-inline-select {
-	background-image:
-		linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
-		linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
-	background-position: calc(100% - 12px) 50%, calc(100% - 8px) 50%;
-	background-size: 4px 4px, 4px 4px;
-	background-repeat: no-repeat;
-	padding-right: 24px;
-}
-
-/* Hover / focus accent glow */
-.sort-inline-select:hover,
-.sort-inline-select:focus {
-	background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
-	box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 35%, transparent);
-}
-
-/* === Divider between input & dropdown === */
+/* Divider line between search + dropdown */
 .search-container.unified::before {
 	content: "";
 	position: absolute;
@@ -711,19 +663,52 @@ a.corner-button {
 	pointer-events: none;
 	transition: opacity var(--transition-medium);
 }
-
-/* Fade divider when focused */
 .search-container.unified:focus-within::before {
 	opacity: 0;
 }
 
-/* === Focus ring on input === */
-.creator-search:focus {
-	box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 70%, transparent);
-	border-radius: var(--radius-md);
+/* Sort dropdown styling */
+.sort-inline-select {
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	border: none;
+	outline: none;
+	appearance: none;
+	cursor: pointer;
+	font-size: 0.9em;
+	font-weight: 500;
+	color: var(--text-color);
+	background: color-mix(in srgb, var(--content-bg) 90%, transparent);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	padding: 6px 28px 6px 10px;
+	border-radius: 10px;
+	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+	transition: all var(--transition-fast);
+	z-index: 2;
 }
 
-/* === Responsive stacking === */
+/* Custom dropdown chevron */
+.sort-inline-select {
+	background-image:
+		linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
+		linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
+	background-position: calc(100% - 12px) 50%, calc(100% - 8px) 50%;
+	background-size: 4px 4px, 4px 4px;
+	background-repeat: no-repeat;
+	padding-right: 24px;
+}
+
+/* Hover/focus glow */
+.sort-inline-select:hover,
+.sort-inline-select:focus {
+	background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+	box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 35%, transparent);
+}
+
+/* Responsive stacking on mobile */
 @media (max-width: 600px) {
 	.search-container.unified {
 		flex-direction: column;
@@ -734,7 +719,7 @@ a.corner-button {
 	}
 
 	.search-container.unified .creator-search {
-		padding: 12px 12px 12px 42px;
+		padding: 12px 12px 12px 44px !important;
 		border-radius: var(--radius-md);
 	}
 
