@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* =============================================== */
-/* 🎧 Live Activity Capsule — Themed for LiquidGlass */
+/* 🎧 Live Activity Capsule — Liquid Glass Edition */
 /* =============================================== */
 
 .live-activity {
@@ -532,6 +532,20 @@ body.light-e #live-activity-text {
 	}
 	#live-activity-text {
 		font-size: 0.95rem;
+	}
+}
+
+/* === Pulse animation when live === */
+.live-activity.active {
+	animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+	0%, 100% {
+		box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+	}
+	50% {
+		box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color) 45%, transparent);
 	}
 }
 
