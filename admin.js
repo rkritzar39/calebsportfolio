@@ -1,6 +1,40 @@
     // admin.js (Version includes Preview Prep + Previous Features + Social Links)
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("live-status-input");
+  const updateBtn = document.getElementById("update-live-status-btn");
+  const clearBtn = document.getElementById("clear-live-status-btn");
+  const resultMsg = document.getElementById("live-status-result");
+
+  updateBtn?.addEventListener("click", async () => {
+    const message = input.value.trim();
+    if (!message) {
+      resultMsg.textContent = "Please enter a status first.";
+      return;
+    }
+
+    try {
+      await setDoc(doc(db, "live_status", "current"), { message });
+      resultMsg.textContent = "✅ Live status updated successfully!";
+      input.value = "";
+    } catch (err) {
+      console.error("Error updating live status:", err);
+      resultMsg.textContent = "❌ Failed to update live status.";
+    }
+  });
+
+  clearBtn?.addEventListener("click", async () => {
+    try {
+      await deleteDoc(doc(db, "live_status", "current"));
+      resultMsg.textContent = "🧹 Live status cleared.";
+    } catch (err) {
+      console.error("Error clearing live status:", err);
+      resultMsg.textContent = "❌ Failed to clear status.";
+    }
+  });
+});
+
 const storage = getStorage();
 
 // *** Import Firebase services from your corrected init file ***
