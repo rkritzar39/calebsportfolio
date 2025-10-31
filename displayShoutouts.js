@@ -1667,9 +1667,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/* =============================================== */
-/* == QUOTE OF THE DAY SECTION (MULTI-API FINAL) == */
-/* =============================================== */
+/* ========================================================= */
+/* == QUOTE OF THE DAY (MULTI-API + CATEGORY + ANIMATION) == */
+/* ========================================================= */
 
 async function loadQuoteOfTheDay() {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
@@ -1688,7 +1688,6 @@ async function loadQuoteOfTheDay() {
   const quoteDateEl = document.getElementById("quote-date");
   if (!quoteText || !quoteAuthor) return;
 
-  // 🗓️ Display today's date nicely formatted
   const now = new Date();
   const formattedDate = now.toLocaleDateString(undefined, {
     weekday: "long",
@@ -1702,43 +1701,41 @@ async function loadQuoteOfTheDay() {
   const storedDate = localStorage.getItem("quoteDate");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
-  // ✅ Use cached quote if from today
   if (storedDate === today && storedQuote) {
     try {
       const { content, author } = JSON.parse(storedQuote);
       quoteText.textContent = `“${content}”`;
       quoteAuthor.textContent = `— ${author || "Unknown"}`;
+      quoteSection.classList.add("loaded");
       return;
     } catch (err) {
       console.warn("Cached quote parse failed:", err);
     }
   }
 
-  /* ------------------ LOCAL FALLBACKS ------------------ */
-  const localQuotes = [
-    { content: "Keep going — great things take time.", author: "Unknown" },
-    { content: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
-    { content: "The best way out is always through.", author: "Robert Frost" },
-    { content: "What you do every day matters more than what you do once in a while.", author: "Gretchen Rubin" },
-    { content: "Do the best you can until you know better. Then when you know better, do better.", author: "Maya Angelou" },
-    { content: "If you’re going through hell, keep going.", author: "Winston Churchill" },
-    { content: "Dream big. Start small. Act now.", author: "Robin Sharma" },
-    { content: "Action is the foundational key to all success.", author: "Pablo Picasso" },
-    { content: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Will Durant" },
-    { content: "Little by little, one travels far.", author: "J.R.R. Tolkien" }
-  ];
+  const category = settings.quoteCategory || "inspirational";
 
-  function hashCode(str) {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
-    return h;
-  }
+  const localQuotes = {
+    inspirational: [
+      { content: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+      { content: "Keep going — great things take time.", author: "Unknown" },
+      { content: "The best way out is always through.", author: "Robert Frost" }
+    ],
+    life: [
+      { content: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
+      { content: "Difficulties in life are intended to make us better, not bitter.", author: "Dan Reeves" }
+    ],
+    success: [
+      { content: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+      { content: "Action is the foundational key to all success.", author: "Pablo Picasso" }
+    ]
+  };
 
   async function fetchWithTimeout(url, timeout = 5000) {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
     try {
-      const res = await fetch(url, { signal: controller.signal, headers: { Accept: "application/json" } });
+      const res = await fetch(url, { signal: controller.signal });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res;
     } finally {
@@ -1746,18 +1743,14 @@ async function loadQuoteOfTheDay() {
     }
   }
 
-  /* ------------------ API HELPERS ------------------ */
-  async function getQuoteFromQuotable(today) {
+  async function getQuoteFromQuotable() {
     try {
-      const pageHash = Math.abs(hashCode(today));
-      const itemHash = Math.abs(hashCode(today + "_item"));
-      const pageToFetch = (pageHash % 74) + 1;
-      const res = await fetchWithTimeout(`https://api.quotable.io/quotes?page=${pageToFetch}`, 5000);
+      const res = await fetchWithTimeout(
+        `https://api.quotable.io/random?tags=${encodeURIComponent(category)}`,
+        6000
+      );
       const data = await res.json();
-      const list = data.results;
-      if (!Array.isArray(list) || list.length === 0) throw new Error("Empty list");
-      const item = list[itemHash % list.length];
-      return { content: item.content, author: item.author || "Unknown" };
+      return { content: data.content, author: data.author || "Unknown" };
     } catch (err) {
       console.warn("Quotable failed:", err);
       return null;
@@ -1766,7 +1759,7 @@ async function loadQuoteOfTheDay() {
 
   async function getQuoteFromZenQuotes() {
     try {
-      const res = await fetchWithTimeout("https://zenquotes.io/api/today", 5000);
+      const res = await fetchWithTimeout("https://zenquotes.io/api/today", 6000);
       const data = await res.json();
       const q = data[0];
       return { content: q.q, author: q.a };
@@ -1778,7 +1771,7 @@ async function loadQuoteOfTheDay() {
 
   async function getQuoteFromFavQs() {
     try {
-      const res = await fetchWithTimeout("https://favqs.com/api/qotd", 5000);
+      const res = await fetchWithTimeout("https://favqs.com/api/qotd", 6000);
       const data = await res.json();
       return { content: data.quote.body, author: data.quote.author };
     } catch (err) {
@@ -1787,28 +1780,24 @@ async function loadQuoteOfTheDay() {
     }
   }
 
-  /* ------------------ MAIN FLOW ------------------ */
-  let chosen = await getQuoteFromQuotable(today);
+  let chosen = await getQuoteFromQuotable();
   if (!chosen) chosen = await getQuoteFromZenQuotes();
   if (!chosen) chosen = await getQuoteFromFavQs();
-
   if (!chosen) {
-    console.warn("All APIs failed. Using local fallback.");
-    const idx = Math.abs(hashCode(today)) % localQuotes.length;
-    chosen = localQuotes[idx];
+    const catList = localQuotes[category] || localQuotes["inspirational"];
+    chosen = catList[Math.floor(Math.random() * catList.length)];
   }
 
-  // 🧠 Cache + Display
   quoteText.textContent = `“${chosen.content}”`;
   quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
   localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
   localStorage.setItem("quoteDate", today);
+
+  quoteSection.classList.add("loaded");
 }
 
-/* === Run automatically when the page finishes loading === */
-document.addEventListener("DOMContentLoaded", () => {
-  loadQuoteOfTheDay();
-});
+document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
+
 
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
