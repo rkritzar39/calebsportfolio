@@ -2112,26 +2112,36 @@ body.dark-mode .bubble {
 }
 
 /* ========================================================= */
-/* == QUOTE OF THE DAY SECTION (Liquid Glass Edition) == */
+/* == QUOTE OF THE DAY SECTION (Full Width Glass Edition) == */
 /* ========================================================= */
 
 #quote-section {
+  width: 100%;
   background: var(--content-bg);
-  background-image: var(--bubble-gradient);
+  background-image: var(--bubble-gradient), var(--liquid-reflection);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-color);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-  padding: 32px;
-  margin: 40px auto;
-  max-width: 640px;
-  text-align: center;
+  padding: 64px 6%;
+  position: relative;
+  overflow: hidden;
   color: var(--text-color);
   transition: background var(--transition-medium), box-shadow var(--transition-medium);
   opacity: 0;
   transform: translateY(15px);
   animation: fadeInQuote 0.6s ease-out forwards;
+}
+
+/* Subtle decorative gradient overlay for depth */
+#quote-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--liquid-refraction);
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 @keyframes fadeInQuote {
@@ -2142,19 +2152,27 @@ body.dark-mode .bubble {
 }
 
 /* ========================================================= */
-/* == Quote Header & Date == */
+/* == Section Inner Wrapper (Centers Content Neatly) == */
 /* ========================================================= */
+
+#quote-section .inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
 
 #quote-section h2 {
   color: var(--accent-color);
-  font-size: 1.5rem;
+  font-size: 1.7rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   border-bottom: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
   padding-bottom: 0.5rem;
-  display: flex;
-  justify-content: center;
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.4rem;
 }
 
@@ -2163,119 +2181,74 @@ body.dark-mode .bubble {
   font-size: 1.2em;
 }
 
+/* ========================================================= */
+/* == Date, Text & Author == */
+/* ========================================================= */
+
 .quote-date {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--accent-color);
   opacity: 0.9;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-/* ========================================================= */
-/* == Quote Text & Author == */
-/* ========================================================= */
-
 .quote-text {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--text-color);
-  text-align: center;
   margin: 0 auto 0.75rem;
   letter-spacing: 0.3px;
-  max-width: 540px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  max-width: 800px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .quote-author {
   display: block;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--accent-color);
   opacity: 0.95;
-  margin-bottom: 1.2rem;
+  margin-bottom: 2rem;
 }
 
 /* ========================================================= */
-/* == Controls Section == */
+/* == Controls == */
 /* ========================================================= */
 
 #quote-controls {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.75rem;
-  margin-top: 1rem;
 }
 
-/* Category Dropdown */
-#quote-category {
-  padding: 0.45rem 0.75rem;
+#quote-controls select,
+#quote-controls input,
+#quote-controls button {
+  font-size: 0.95rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   background: rgba(255, 255, 255, 0.06);
   color: var(--text-color);
-  font-size: 0.95rem;
-  cursor: pointer;
-  outline: none;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
+  padding: 0.5rem 0.9rem;
+  transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
-#quote-category:hover {
+#quote-controls select:hover,
+#quote-controls input:hover,
+#quote-controls button:hover {
   border-color: var(--accent-color);
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Custom Category Input */
-#custom-category-container {
-  display: none;
-  gap: 0.5rem;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-#custom-category-input {
-  padding: 0.4rem 0.6rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-color);
-  font-size: 0.9rem;
-  min-width: 140px;
-  outline: none;
-}
-
-#save-custom-category {
-  background-color: var(--accent-color);
-  color: white;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-weight: 600;
-  transition: background var(--transition-fast), transform var(--transition-fast);
-}
-
-#save-custom-category:hover {
-  background-color: var(--hover-color);
-  transform: translateY(-1px);
-}
-
-/* ========================================================= */
-/* == Buttons == */
-/* ========================================================= */
-
 #quote-controls button {
   background: var(--accent-color);
-  color: white;
   border: none;
-  padding: 0.5rem 1.1rem;
-  border-radius: var(--radius-md);
-  font-size: 0.95rem;
-  cursor: pointer;
+  color: white;
   font-weight: 600;
+  cursor: pointer;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-  transition: all var(--transition-fast);
 }
 
 #quote-controls button:hover {
@@ -2284,18 +2257,17 @@ body.dark-mode .bubble {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Pulse animation for "Next Quote" on new day */
+/* Pulse animation for new-day quotes */
 #next-quote-btn.new-day {
   animation: glowPulse 1.8s infinite;
 }
-
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 8px var(--accent-color); }
-  50% { box-shadow: 0 0 16px var(--accent-color); }
+  0%, 100% { box-shadow: 0 0 10px var(--accent-color); }
+  50% { box-shadow: 0 0 20px var(--accent-color); }
 }
 
 /* ========================================================= */
-/* == Modals (Add + Manager) == */
+/* == Modals == */
 /* ========================================================= */
 
 .category-modal {
@@ -2305,7 +2277,7 @@ body.dark-mode .bubble {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .category-modal.hidden {
@@ -2317,12 +2289,12 @@ body.dark-mode .bubble {
   color: var(--text-color);
   padding: 1.6rem;
   border-radius: var(--radius-lg);
-  max-width: 420px;
+  max-width: 440px;
   width: 90%;
   box-shadow: var(--bubble-shadow);
-  animation: fadeInModal 0.4s ease-out;
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
+  animation: fadeInModal 0.4s ease-out;
 }
 
 @keyframes fadeInModal {
@@ -2332,7 +2304,7 @@ body.dark-mode .bubble {
 
 .category-modal-content h3 {
   text-align: center;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   color: var(--accent-color);
   margin-top: 0;
   margin-bottom: 1rem;
@@ -2340,60 +2312,14 @@ body.dark-mode .bubble {
   padding-bottom: 0.5rem;
 }
 
-.category-modal-content label {
-  display: block;
-  font-weight: 600;
-  margin: 0.4rem 0 0.25rem;
-}
-
-.category-modal-content textarea,
-.category-modal-content input,
-.category-modal-content select {
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-color);
-  margin-bottom: 0.8rem;
-  outline: none;
-  transition: border-color var(--transition-fast);
-}
-
-.category-modal-content textarea:focus,
-.category-modal-content input:focus,
-.category-modal-content select:focus {
-  border-color: var(--accent-color);
-}
-
-/* Modal Buttons */
-.category-modal-content button {
-  background: var(--accent-color);
-  border: none;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-weight: 600;
-  transition: background var(--transition-fast);
-}
-
-.category-modal-content button:hover {
-  background: var(--hover-color);
-}
-
-/* ========================================================= */
-/* == Custom Quote Manager == */
-/* ========================================================= */
-
+/* Manager list styling */
 #custom-quote-list {
   list-style: none;
   padding: 0;
   margin: 1rem 0;
-  max-height: 250px;
+  max-height: 260px;
   overflow-y: auto;
 }
-
 #custom-quote-list li {
   background: rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
@@ -2405,7 +2331,6 @@ body.dark-mode .bubble {
   color: var(--text-color);
   font-size: 0.9rem;
 }
-
 #custom-quote-list button {
   background: #ff4d4f;
   border: none;
@@ -2416,26 +2341,26 @@ body.dark-mode .bubble {
   font-size: 0.85rem;
   transition: background var(--transition-fast);
 }
-
 #custom-quote-list button:hover {
   background: #d9363e;
 }
 
 /* ========================================================= */
-/* == Responsive Adjustments == */
+/* == Responsive Layout == */
 /* ========================================================= */
 
 @media (max-width: 768px) {
-  #quote-section { padding: 22px; }
-  #quote-section h2 { font-size: 1.3rem; }
-  .quote-text { font-size: 1.1rem; }
+  #quote-section { padding: 48px 5%; }
+  #quote-section h2 { font-size: 1.4rem; }
+  .quote-text { font-size: 1.15rem; }
 }
 
 @media (max-width: 420px) {
-  #quote-section { padding: 16px; }
+  #quote-section { padding: 40px 4%; }
   #quote-section h2 { font-size: 1.1rem; }
   .quote-text { font-size: 1rem; }
-  #quote-controls button { width: 100%; }
+  #quote-controls { flex-direction: column; gap: 0.6rem; }
+  #quote-controls button, #quote-controls select { width: 100%; }
 }
 
 /* ======================== */
