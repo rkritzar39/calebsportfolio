@@ -1,6 +1,7 @@
 /* =======================================================
    Live Activity System (Color Dynamic Edition)
    Platforms: Manual • Twitch • GitHub • Reddit • Steam • Discord • TikTok
+   Author: Caleb Kritzar
    ======================================================= */
 
 import {
@@ -11,13 +12,13 @@ import {
 import { db } from "./firebase-init.js";
 
 /* ================================
-   CONFIG
+   CONFIGURATION
 ================================ */
 const CONFIG = {
   twitch: {
     user: "calebkritzar",
     clientId: "n7e3lys858u96xlg7v2aohe8vzxha3",
-    token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm", // ⚠️ move server-side later
+    token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm", // ⚠️ Move server-side later
   },
   github: { username: "rkritzar39" },
   reddit: { username: "Electronic_Row_1262" },
@@ -26,11 +27,14 @@ const CONFIG = {
     apiKey: "B254FC3875EF0EB1AAEBA9FACFA81C1F",
   },
   discord: { userId: "850815059093356594" },
-  tiktok: { username: "calebkritzar" },
+  tiktok: {
+    username: "calebkritzar",
+    latestVideoId: "7429138404928736514" // 🆕 Replace with your most recent TikTok ID
+  },
 };
 
 /* ================================
-   COLORS + ICONS
+   PLATFORM COLORS + ICONS
 ================================ */
 const PLATFORM_STYLE = {
   twitch:  { color: "#9146FF", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg" },
@@ -47,7 +51,7 @@ const PLATFORM_STYLE = {
 let lastTikTokTitle = null;
 
 /* ================================
-   UTILS
+   UTILITIES
 ================================ */
 function isLiveActivityEnabled() {
   try {
@@ -59,7 +63,7 @@ function isLiveActivityEnabled() {
 }
 
 /* ================================
-   SHOW STATUS (Dynamic Colors)
+   DISPLAY HANDLER
 ================================ */
 function showStatus(payload, isOffline = false) {
   const el = document.getElementById("live-activity-text");
@@ -71,16 +75,15 @@ function showStatus(payload, isOffline = false) {
   const platform = PLATFORM_STYLE[isOffline ? "offline" : source] || PLATFORM_STYLE.discord;
   const { color, icon: iconSrc } = platform;
 
-  // Text + icon
+  // Update content
   el.textContent = text;
   icon.src = iconSrc;
   el.style.color = color;
   icon.className = `activity-icon ${source} change`;
 
-  // Background & glow
+  // Update background and glow
   container.style.setProperty("--platform-color", color);
-  container.classList.toggle("active", !isOffline);
-  container.classList.toggle("offline", isOffline);
+  container.className = `live-activity ${source} ${isOffline ? "offline" : "active"}`;
   container.classList.remove("hidden");
 
   container.style.background = `color-mix(in srgb, ${color} 20%, var(--content-bg))`;
@@ -93,6 +96,8 @@ function showStatus(payload, isOffline = false) {
 /* ================================
    PLATFORM FETCHES
 ================================ */
+
+/* 📝 Manual Firestore */
 async function getManualStatus() {
   try {
     const snap = await getDoc(doc(db, "live_status", "current"));
@@ -107,6 +112,7 @@ async function getManualStatus() {
   }
 }
 
+/* 🟣 Twitch (Streaming) */
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
@@ -117,7 +123,8 @@ async function getTwitchStatus() {
     if (!res.ok) return null;
     const data = await res.json();
     const stream = data?.data?.[0];
-    if (stream?.title) return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
+    if (stream?.title)
+      return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
     return null;
   } catch (err) {
     console.error("Twitch API error:", err);
@@ -125,10 +132,11 @@ async function getTwitchStatus() {
   }
 }
 
+/* 🎬 TikTok (Latest Post via oEmbed) */
 async function getTikTokStatus() {
-  const { username } = CONFIG.tiktok;
+  const { username, latestVideoId } = CONFIG.tiktok;
   try {
-    const endpoint = `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${encodeURIComponent(username)}`;
+    const endpoint = `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${encodeURIComponent(username)}/video/${latestVideoId}`;
     const res = await fetch(endpoint, { cache: "no-store" });
     if (!res.ok) return null;
     const data = await res.json();
@@ -142,6 +150,7 @@ async function getTikTokStatus() {
   }
 }
 
+/* 💻 GitHub (Latest Public Activity) */
 async function getGitHubStatus() {
   const { username } = CONFIG.github;
   try {
@@ -155,6 +164,7 @@ async function getGitHubStatus() {
     switch (latest.type) {
       case "PushEvent": return { text: `💻 Pushed code to ${repo}`, source: "github" };
       case "PullRequestEvent": return { text: `🧩 Opened PR on ${repo}`, source: "github" };
+      case "IssuesEvent": return { text: `🐞 Updated issue on ${repo}`, source: "github" };
       default: return null;
     }
   } catch (err) {
@@ -163,21 +173,26 @@ async function getGitHubStatus() {
   }
 }
 
+/* 📢 Reddit (Latest Post) */
 async function getRedditStatus() {
   const { username } = CONFIG.reddit;
   try {
-    const res = await fetch(`https://www.reddit.com/user/${encodeURIComponent(username)}/submitted.json`);
+    const res = await fetch(
+      `https://www.reddit.com/user/${encodeURIComponent(username)}/submitted.json`,
+      { headers: { "User-Agent": "live-activity-widget/1.0" } }
+    );
     if (!res.ok) return null;
     const data = await res.json();
     const post = data?.data?.children?.[0]?.data;
     if (!post) return null;
     return { text: `📢 Posted on r/${post.subreddit} — “${post.title}”`, source: "reddit" };
   } catch (err) {
-    console.error("Reddit API error:", err);
+    console.error("Reddit fetch error:", err);
     return null;
   }
 }
 
+/* 🎮 Steam (Currently Playing Game) */
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
@@ -196,6 +211,7 @@ async function getSteamStatus() {
   }
 }
 
+/* 💬 Discord (Presence via Lanyard) */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
@@ -241,11 +257,12 @@ async function updateLiveStatus() {
   }
   container.style.display = "";
 
+  // Priority order: Manual > Twitch > Discord > Steam > GitHub > Reddit > TikTok
   const sources = [
     getManualStatus,
     getTwitchStatus,
-    getSteamStatus,
     getDiscordActivity,
+    getSteamStatus,
     getGitHubStatus,
     getRedditStatus,
     getTikTokStatus,
