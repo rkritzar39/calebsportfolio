@@ -459,16 +459,16 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity Capsule — Cinematic Fade + Neon Glow
+   🎧 Live Activity Capsule — Multi-Icon Glow Edition
    ====================================================== */
 
 .live-activity {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 
-  /* Container look */
+  /* Layout */
   position: relative;
   margin: 1rem auto 0 auto;
   padding: 10px 18px;
@@ -477,18 +477,17 @@ a.corner-button {
   border-radius: var(--radius-md);
   z-index: 2;
 
-  /* Glass effect */
+  /* Glassy background */
   background: color-mix(in srgb, var(--content-bg) 80%, transparent);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
   border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
   box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
   transition:
-    background 0.6s ease,
-    box-shadow 0.6s ease,
+    background 0.5s ease,
+    box-shadow 0.5s ease,
     opacity 0.4s ease,
     transform 0.3s ease;
-  cursor: default;
 }
 
 .live-activity.hidden {
@@ -497,84 +496,103 @@ a.corner-button {
   pointer-events: none;
 }
 
-/* Parallax lift on hover */
+/* Hover lift */
 .live-activity:hover {
   transform: translateY(-2px) scale(1.01);
 }
 
 /* ======================================================
-   🎨 Icon Animation
+   🎨 Icon Cluster (Left side)
    ====================================================== */
-.activity-icon {
+.icon-cluster {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  min-width: 30px;
+}
+
+.left-icon {
   width: 22px;
   height: 22px;
-  opacity: 0.9;
-  filter: brightness(1.1);
-  transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+  border-radius: 5px;
+  transition: opacity 0.4s ease, transform 0.3s ease;
+  background: transparent;
 }
 
-.activity-icon.change {
-  transform: scale(1.15);
-  opacity: 0.8;
+.left-icon:hover {
+  transform: scale(1.1);
 }
 
-/* Platform color filters */
-.activity-icon.twitch  { filter: invert(49%) sepia(99%) saturate(3447%) hue-rotate(245deg) brightness(102%) contrast(101%); }
-.activity-icon.tiktok  { filter: invert(0%) brightness(20%); }
-.activity-icon.github  { filter: invert(16%) brightness(0.6); }
-.activity-icon.reddit  { filter: invert(55%) sepia(83%) saturate(6457%) hue-rotate(358deg) brightness(100%) contrast(95%); }
-.activity-icon.steam   { filter: invert(38%) sepia(90%) saturate(530%) hue-rotate(182deg) brightness(95%) contrast(87%); }
-.activity-icon.spotify { filter: invert(47%) sepia(93%) saturate(419%) hue-rotate(87deg) brightness(95%) contrast(87%); }
-.activity-icon.discord { filter: invert(39%) sepia(83%) saturate(1387%) hue-rotate(210deg) brightness(98%) contrast(94%); }
-.activity-icon.offline { filter: grayscale(100%) brightness(70%); }
+/* Fade out disappearing temporary icons */
+.left-icon.fade-out {
+  opacity: 0;
+  transform: scale(0.8);
+}
 
 /* ======================================================
-   📝 Text Fade + Inline Icon
+   📝 Activity Text + Inline Icons
    ====================================================== */
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
-  color: var(--accent-color);
   text-align: center;
   line-height: 1.4;
-  transition: color 0.4s ease, opacity 0.4s ease;
+  color: var(--accent-color);
+  transition: color 0.3s ease, opacity 0.4s ease;
 }
 
 #live-activity-text.fade-out { opacity: 0; }
 #live-activity-text.fade-in { opacity: 1; }
 
 .inline-icon {
-  width: 18px;
-  height: 18px;
-  vertical-align: -3px;
-  opacity: 0.9;
+  width: 15px;
+  height: 15px;
+  vertical-align: -2px;
   margin-right: 4px;
-  filter: drop-shadow(0 0 3px rgba(255,255,255,0.1));
 }
 
 .divider {
-  opacity: 0.6;
-  margin: 0 4px;
+  opacity: 0.5;
+  margin: 0 6px;
 }
 
 /* ======================================================
-   ✨ Glow Pulse Modes
+   ✨ Glow Animations
    ====================================================== */
-.live-activity[data-glow="neon"] { animation: pulseNeon 2.8s ease-in-out infinite; }
-.live-activity[data-glow="mid"]  { animation: pulseMid 4s ease-in-out infinite; }
-.live-activity[data-glow="soft"] { animation: pulseSoft 6s ease-in-out infinite; }
+.live-activity[data-glow="neon"] {
+  animation: glowNeon 3s ease-in-out infinite;
+}
+.live-activity[data-glow="mid"] {
+  animation: glowMid 4s ease-in-out infinite;
+}
+.live-activity[data-glow="soft"] {
+  animation: glowSoft 6s ease-in-out infinite;
+}
 
-@keyframes pulseNeon {
-  0%,100% { box-shadow: 0 0 25px var(--accent-color)50, 0 0 35px var(--accent-color)30 inset; }
-  50%     { box-shadow: 0 0 45px var(--accent-color)80, 0 0 50px var(--accent-color)60 inset; }
+@keyframes glowNeon {
+  0%, 100% {
+    box-shadow: 0 0 25px var(--accent-color)60, 0 0 45px var(--accent-color)30 inset;
+  }
+  50% {
+    box-shadow: 0 0 45px var(--accent-color)90, 0 0 60px var(--accent-color)60 inset;
+  }
 }
-@keyframes pulseMid {
-  0%,100% { box-shadow: 0 0 15px var(--accent-color)40; }
-  50%     { box-shadow: 0 0 25px var(--accent-color)60; }
+@keyframes glowMid {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--accent-color)50, 0 0 40px var(--accent-color)30 inset;
+  }
+  50% {
+    box-shadow: 0 0 30px var(--accent-color)70, 0 0 50px var(--accent-color)40 inset;
+  }
 }
-@keyframes pulseSoft {
-  0%,100% { box-shadow: 0 0 10px var(--accent-color)20; }
-  50%     { box-shadow: 0 0 18px var(--accent-color)30; }
+@keyframes glowSoft {
+  0%, 100% {
+    box-shadow: 0 0 12px var(--accent-color)30, 0 0 25px var(--accent-color)15 inset;
+  }
+  50% {
+    box-shadow: 0 0 18px var(--accent-color)45, 0 0 35px var(--accent-color)25 inset;
+  }
 }
 
 /* ======================================================
@@ -586,7 +604,14 @@ a.corner-button {
     padding: 8px 14px;
     max-width: 90%;
   }
-  .inline-icon { width: 16px; height: 16px; }
+  .left-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .inline-icon {
+    width: 13px;
+    height: 13px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -595,7 +620,14 @@ a.corner-button {
     padding: 7px 12px;
     max-width: 88%;
   }
-  .inline-icon { width: 14px; height: 14px; }
+  .left-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .inline-icon {
+    width: 12px;
+    height: 12px;
+  }
 }
 
 /* =================================== */
