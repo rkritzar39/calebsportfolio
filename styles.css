@@ -2199,6 +2199,41 @@ body.dark-mode .bubble {
   }
 }
 
+#quote-controls {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#quote-controls select,
+#custom-category-input {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+#custom-category-container {
+  display: none;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+#save-custom-category {
+  background-color: #0078ff;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#save-custom-category:hover {
+  background-color: #005fcc;
+}
+
 /* Responsive Layout */
 @media (max-width: 768px) {
   #quote-section { padding: 22px; }
