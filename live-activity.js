@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Honeycomb + Tooltip Edition
+   🎧 Live Activity System — Final Stable Edition
    ====================================================== */
 
 import {
@@ -10,7 +10,7 @@ import {
 import { db } from "./firebase-init.js";
 
 /* ======================================================
-   ⚙️ CONFIGURATION
+   ⚙️ CONFIG
    ====================================================== */
 const CONFIG = {
   twitch: { user: "calebkritzar", clientId: "n7e3lys858u96xlg7v2aohe8vzxha3", token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm" },
@@ -41,9 +41,10 @@ const BRAND_COLORS = {
    ====================================================== */
 let lastUpdateTime = null;
 let isLive = false;
+let currentSpotifyArt = null;
 
 /* ======================================================
-   🧠 COOLDOWN HANDLING (Prevents Repetitive Temporary Posts)
+   🧠 COOLDOWN HANDLING (Prevents Repeated Temp Posts)
    ====================================================== */
 function wasRecentlyShown(platform, cooldown = 300000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
@@ -54,7 +55,7 @@ function markAsShown(platform) {
 }
 
 /* ======================================================
-   🐝 ICON CLUSTER
+   🐝 ICON CLUSTER BUILDER
    ====================================================== */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
@@ -77,7 +78,25 @@ function updateIconCluster(platforms) {
     icon.appendChild(img);
     cluster.appendChild(icon);
 
-    // Temporary icons fade after 5s
+    // Spotify album art overlay
+    if (source === "spotify" && currentSpotifyArt) {
+      const thumb = document.createElement("img");
+      thumb.src = currentSpotifyArt;
+      thumb.alt = "Album Art";
+      thumb.className = "spotify-thumb";
+      thumb.style.width = "24px";
+      thumb.style.height = "24px";
+      thumb.style.borderRadius = "4px";
+      thumb.style.objectFit = "cover";
+      thumb.style.position = "absolute";
+      thumb.style.bottom = "-30px";
+      thumb.style.left = "50%";
+      thumb.style.transform = "translateX(-50%)";
+      thumb.style.boxShadow = "0 0 8px rgba(0,0,0,0.4)";
+      cluster.appendChild(thumb);
+    }
+
+    // Fade temp icons
     if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
@@ -85,7 +104,7 @@ function updateIconCluster(platforms) {
       }, 5000);
     }
 
-    // Touch tooltip support
+    // Touch tooltip
     let holdTimer;
     icon.addEventListener("touchstart", () => {
       holdTimer = setTimeout(() => icon.classList.add("touch-active"), 400);
@@ -137,7 +156,7 @@ function showStatus(payload, allActive = []) {
     showToast(`🔥 New ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, BRAND_COLORS[source]);
   }
 
-  isLive = ["twitch", "steam", "discord"].includes(source);
+  isLive = ["twitch", "steam", "discord", "spotify"].includes(source);
   container.classList.toggle("live-now", isLive);
 
   lastUpdateTime = Date.now();
@@ -145,7 +164,7 @@ function showStatus(payload, allActive = []) {
 }
 
 /* ======================================================
-   🕒 TIMESTAMP HANDLER
+   🕒 LAST UPDATED TIMER
    ====================================================== */
 function updateLastUpdated() {
   const updated = document.getElementById("live-activity-updated");
@@ -171,7 +190,7 @@ function updateLastUpdated() {
 }
 
 /* ======================================================
-   🌐 PLATFORM FETCHERS (Live + Temporary)
+   🌐 PLATFORM FETCHERS
    ====================================================== */
 
 // Manual (Firestore)
@@ -191,7 +210,8 @@ async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
     const res = await fetch(`https://api.twitch.tv/helix/streams?user_login=${user}`, {
-      headers: { "Client-ID": clientId, "Authorization": `Bearer ${token}` }
+      headers: { "Client-ID": clientId, "Authorization": `Bearer ${token}` },
+      cache: "no-store"
     });
     const data = await res.json();
     const stream = data?.data?.[0];
@@ -204,7 +224,7 @@ async function getTwitchStatus() {
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
-    const res = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`);
+    const res = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`, { cache: "no-store" });
     const data = await res.json();
     const player = data?.response?.players?.[0];
     if (player?.gameextrainfo) return { text: `🎮 Playing ${player.gameextrainfo} on Steam`, source: "steam" };
@@ -212,18 +232,37 @@ async function getSteamStatus() {
   return null;
 }
 
-// Discord (Lanyard)
+// Discord (Lanyard with Spotify)
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`);
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`, { cache: "no-store" });
     const { data } = await res.json();
+    if (!data) return null;
+
     const activities = data.activities || [];
+
+    // Spotify
     const spotify = activities.find(a => a.name === "Spotify");
-    if (spotify?.details) return { text: `🎵 Listening to “${spotify.details}”`, source: "spotify" };
+    if (spotify?.details && spotify?.state) {
+      const song = spotify.details;
+      const artist = spotify.state;
+      const album = spotify.assets?.large_text;
+      const art = spotify.assets?.large_image?.replace("mp:", "https://i.scdn.co/image/");
+      currentSpotifyArt = art || null;
+      return { text: `🎵 Listening to “${song}” by ${artist}${album ? ` — ${album}` : ""}`, source: "spotify" };
+    }
+
+    // Game
     const game = activities.find(a => a.type === 0);
     if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
-    return { text: "💬 Online on Discord", source: "discord" };
+
+    const statusMap = {
+      online: "🟢 Online on Discord",
+      idle: "🌙 Idle on Discord",
+      dnd: "⛔ Do Not Disturb",
+    };
+    if (data.discord_status !== "offline") return { text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" };
   } catch {}
   return null;
 }
@@ -233,9 +272,7 @@ async function getGitHubStatus() {
   const { username } = CONFIG.github;
   if (wasRecentlyShown("github")) return null;
   try {
-    const res = await fetch(`https://api.github.com/users/${username}/events/public?_=${Date.now()}`, {
-      cache: "no-store", headers: { "Cache-Control": "no-cache" }
-    });
+    const res = await fetch(`https://api.github.com/users/${username}/events/public?_=${Date.now()}`, { cache: "no-store" });
     const events = await res.json();
     const latest = events?.[0];
     if (latest?.repo) {
