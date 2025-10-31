@@ -1,5 +1,5 @@
 /* ======================================================
-   🧠 Live Activity System — Smart Priority + Cooldown Edition
+   🧠 Live Activity System — Smart Priority + Cooldown Edition (Final)
    ====================================================== */
 
 import {
@@ -62,10 +62,11 @@ function updateIconCluster(activePlatforms, mainSource) {
     icon.appendChild(img);
     cluster.appendChild(icon);
 
+    // temporary icons fade out after 5s
     if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
-        setTimeout(() => icon.remove(), 600);
+        setTimeout(() => icon.remove(), 700);
       }, 5000);
     }
   });
@@ -118,7 +119,9 @@ async function getManualStatus() {
       if (msg && msg.trim()) return { text: msg, source: "manual" };
     }
     return null;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 async function getTwitchStatus() {
@@ -139,13 +142,19 @@ async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   try {
     if (wasRecentlyShown("tiktok")) return null;
-    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`);
+    const res = await fetch(
+      `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}?t=${Date.now()}`,
+      { cache: "no-store" }
+    );
+    if (!res.ok) return null;
     const data = await res.json();
     if (data?.title) {
       markAsShown("tiktok");
       return { text: `🎬 Posted on TikTok — “${data.title}”`, source: "tiktok", temporary: true };
     }
-  } catch {}
+  } catch (err) {
+    console.error("TikTok error:", err);
+  }
   return null;
 }
 
@@ -153,7 +162,10 @@ async function getGitHubStatus() {
   const { username } = CONFIG.github;
   try {
     if (wasRecentlyShown("github")) return null;
-    const res = await fetch(`https://api.github.com/users/${username}/events/public`);
+    const res = await fetch(
+      `https://api.github.com/users/${encodeURIComponent(username)}/events/public?timestamp=${Date.now()}`,
+      { cache: "no-store" }
+    );
     const events = await res.json();
     const latest = events?.[0];
     if (!latest) return null;
@@ -161,7 +173,11 @@ async function getGitHubStatus() {
     markAsShown("github");
     if (latest.type === "PushEvent")
       return { text: `💻 Pushed code to ${repo}`, source: "github", temporary: true };
-  } catch {}
+    if (latest.type === "CreateEvent")
+      return { text: `🪄 Created new repo ${repo}`, source: "github", temporary: true };
+  } catch (err) {
+    console.error("GitHub error:", err);
+  }
   return null;
 }
 
@@ -169,20 +185,30 @@ async function getRedditStatus() {
   const { username } = CONFIG.reddit;
   try {
     if (wasRecentlyShown("reddit")) return null;
-    const res = await fetch(`https://www.reddit.com/user/${username}/submitted.json`);
+    const res = await fetch(`https://www.reddit.com/user/${encodeURIComponent(username)}/submitted.json?t=${Date.now()}`, {
+      cache: "no-store",
+      headers: { "User-Agent": "LiveActivitySystem/1.0 (by CalebKritzar)" }
+    });
+    if (!res.ok) return null;
     const data = await res.json();
     const post = data?.data?.children?.[0]?.data;
     if (!post) return null;
+    const sub = post.subreddit ?? "reddit";
+    const title = post.title ?? "New post";
     markAsShown("reddit");
-    return { text: `📢 Posted on r/${post.subreddit} — “${post.title}”`, source: "reddit", temporary: true };
-  } catch {}
+    return { text: `📢 Posted on r/${sub} — “${title}”`, source: "reddit", temporary: true };
+  } catch (err) {
+    console.error("Reddit error:", err);
+  }
   return null;
 }
 
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
-    const res = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`);
+    const res = await fetch(
+      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`
+    );
     const data = await res.json();
     const player = data?.response?.players?.[0];
     if (player?.gameextrainfo)
@@ -204,7 +230,8 @@ async function getDiscordActivity() {
       return { text: `🎵 Listening to “${spotify.details}” by ${spotify.state}`, source: "spotify" };
 
     const game = activities.find(a => a.type === 0);
-    if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
+    if (game?.name)
+      return { text: `🎮 Playing ${game.name}`, source: "discord" };
 
     if (data.discord_status !== "offline")
       return { text: `🟢 Online on Discord`, source: "discord" };
