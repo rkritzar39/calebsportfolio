@@ -1668,7 +1668,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ========================================================= */
-/* == QUOTE OF THE DAY (FINAL VERSION with Categories) == */
+/* == QUOTE OF THE DAY MODULE (ALL FEATURES) == */
 /* ========================================================= */
 
 async function loadQuoteOfTheDay(forceRefresh = false) {
@@ -1686,9 +1686,9 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
   const quoteDateEl = document.getElementById("quote-date");
+  const quoteMessage = document.getElementById("quote-message");
   if (!quoteText || !quoteAuthor) return;
 
-  // 🗓️ Format date
   const now = new Date();
   const formattedDate = now.toLocaleDateString(undefined, {
     weekday: "long",
@@ -1704,7 +1704,6 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
   const storedCategory = localStorage.getItem("quoteCategory");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
-  // ✅ Use cached quote if same date & same category & not forced
   if (!forceRefresh && storedDate === today && storedQuote && storedCategory === category) {
     try {
       const { content, author } = JSON.parse(storedQuote);
@@ -1717,24 +1716,7 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
-  // 🪶 Local fallback quotes
-  const localQuotes = {
-    inspirational: [
-      { content: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
-      { content: "Keep going — great things take time.", author: "Unknown" },
-      { content: "The best way out is always through.", author: "Robert Frost" }
-    ],
-    life: [
-      { content: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
-      { content: "Difficulties in life are intended to make us better, not bitter.", author: "Dan Reeves" }
-    ],
-    success: [
-      { content: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
-      { content: "Action is the foundational key to all success.", author: "Pablo Picasso" }
-    ]
-  };
-
-  async function fetchWithTimeout(url, timeout = 5000) {
+  async function fetchWithTimeout(url, timeout = 6000) {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
     try {
@@ -1746,25 +1728,26 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
-  // === API 1: Quotable ===
-  async function getQuoteFromQuotable() {
+  async function getQuoteFromQuotable(tag) {
     try {
       const res = await fetchWithTimeout(
-        `https://api.quotable.io/random?tags=${encodeURIComponent(category)}`,
-        6000
+        `https://api.quotable.io/random?tags=${encodeURIComponent(tag)}`
       );
       const data = await res.json();
-      return { content: data.content, author: data.author || "Unknown" };
+      if (data && data.content) {
+        return { content: data.content, author: data.author || "Unknown" };
+      } else {
+        throw new Error("No quotes found");
+      }
     } catch (err) {
-      console.warn("Quotable failed:", err);
+      console.warn(`Quotable failed for tag '${tag}':`, err);
       return null;
     }
   }
 
-  // === API 2: ZenQuotes ===
   async function getQuoteFromZenQuotes() {
     try {
-      const res = await fetchWithTimeout("https://zenquotes.io/api/today", 6000);
+      const res = await fetchWithTimeout("https://zenquotes.io/api/today");
       const data = await res.json();
       const q = data[0];
       return { content: q.q, author: q.a };
@@ -1774,10 +1757,9 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
-  // === API 3: FavQs ===
   async function getQuoteFromFavQs() {
     try {
-      const res = await fetchWithTimeout("https://favqs.com/api/qotd", 6000);
+      const res = await fetchWithTimeout("https://favqs.com/api/qotd");
       const data = await res.json();
       return { content: data.quote.body, author: data.quote.author };
     } catch (err) {
@@ -1786,28 +1768,48 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
-  // 🌐 Try APIs in order
-  let chosen = await getQuoteFromQuotable();
-  if (!chosen) chosen = await getQuoteFromZenQuotes();
-  if (!chosen) chosen = await getQuoteFromFavQs();
+  let chosen = await getQuoteFromQuotable(category);
+  let fallbackMessage = "";
 
-  // 🧱 Final fallback: Local quotes
-  if (!chosen) {
-    const catList = localQuotes[category] || localQuotes["inspirational"];
-    chosen = catList[Math.floor(Math.random() * catList.length)];
+  if (!chosen && category.includes("-")) {
+    const simplified = category.split("-")[0];
+    chosen = await getQuoteFromQuotable(simplified);
   }
 
-  // 🖋️ Display + cache + fade-in
+  if (!chosen) {
+    fallbackMessage = `⚠️ No quotes found for “${category}”. Showing an inspirational quote instead.`;
+    chosen = await getQuoteFromQuotable("inspirational");
+  }
+
+  if (!chosen) chosen = await getQuoteFromZenQuotes();
+  if (!chosen) chosen = await getQuoteFromFavQs();
+  if (!chosen) {
+    fallbackMessage = "⚠️ Could not connect to quote services. Showing fallback quote.";
+    chosen = { content: "Keep going — great things take time.", author: "Unknown" };
+  }
+
   quoteText.textContent = `“${chosen.content}”`;
   quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
+
+  if (quoteMessage) {
+    if (fallbackMessage) {
+      quoteMessage.textContent = fallbackMessage;
+      quoteMessage.style.display = "block";
+    } else {
+      quoteMessage.textContent = "";
+      quoteMessage.style.display = "none";
+    }
+  }
+
   localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
   localStorage.setItem("quoteDate", today);
   localStorage.setItem("quoteCategory", category);
+
   quoteSection.classList.add("loaded");
 }
 
 /* ========================================================= */
-/* == CATEGORY SELECTOR (Add + Custom + Refresh Support) == */
+/* == CATEGORY SELECTOR & CUSTOM CATEGORY SUPPORT == */
 /* ========================================================= */
 
 function setupQuoteCategorySelector() {
@@ -1822,8 +1824,12 @@ function setupQuoteCategorySelector() {
   const savedCategories = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
   const currentCategory = settings.quoteCategory || "inspirational";
 
-  // Rebuild dropdown each time
-  const baseCategories = ["inspirational", "life", "success"];
+  const baseCategories = [
+    "inspirational", "life", "success",
+    "technology", "programming", "engineering",
+    "cybersecurity", "innovation", "ai", "business"
+  ];
+
   categorySelect.innerHTML = "";
 
   baseCategories.forEach(cat => {
@@ -1847,7 +1853,7 @@ function setupQuoteCategorySelector() {
 
   const customOpt = document.createElement("option");
   customOpt.value = "custom";
-  customOpt.textContent = "➕ Add new category...";
+  customOpt.textContent = "➕ Add new category…";
   categorySelect.appendChild(customOpt);
 
   categorySelect.value =
@@ -1890,11 +1896,12 @@ function updateQuoteCategory(category, forceReload = false) {
 
   localStorage.removeItem("quoteOfTheDay");
   localStorage.setItem("quoteCategory", category);
+
   loadQuoteOfTheDay(true);
 }
 
 /* ========================================================= */
-/* == CATEGORY MANAGER MODAL (View + Delete) == */
+/* == CATEGORY MANAGER (View + Delete) == */
 /* ========================================================= */
 
 function setupCategoryManager() {
@@ -1958,13 +1965,27 @@ function setupCategoryManager() {
 }
 
 /* ========================================================= */
-/* == INIT on Page Load == */
+/* == NEXT QUOTE BUTTON == */
+/* ========================================================= */
+
+function setupNextQuoteButton() {
+  const btn = document.getElementById("next-quote-btn");
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+    loadQuoteOfTheDay(true);
+  });
+}
+
+/* ========================================================= */
+/* == INIT on DOMContentLoaded == */
 /* ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   loadQuoteOfTheDay();
   setupQuoteCategorySelector();
   setupCategoryManager();
+  setupNextQuoteButton();
 });
 
 // ======================================================
