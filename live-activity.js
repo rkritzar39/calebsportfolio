@@ -107,9 +107,9 @@ function isLiveActivityEnabled() {
   }
 }
 
-/* ================================
-   MAIN STATUS UPDATER
-================================ */
+// ===============================
+// 🎧 Update Live Activity Display
+// ===============================
 async function updateLiveStatus() {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
@@ -124,6 +124,7 @@ async function updateLiveStatus() {
 
   // Ensure it's visible
   container.style.display = "";
+  container.classList.remove("offline");
 
   try {
     // --- Manual override ---
@@ -154,7 +155,6 @@ function showStatus(text, isOffline = false) {
   el.textContent = text;
   container.classList.toggle("active", !isOffline);
   container.classList.toggle("offline", isOffline);
-  container.style.display = isOffline ? "" : "";
 }
 
 /* ================================
@@ -174,5 +174,7 @@ function showStatus(text) {
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
   // Refresh every 30 seconds
-  setInterval(updateLiveStatus, 30000);
+  setInterval(() => {
+  if (isLiveActivityEnabled()) updateLiveStatus();
+}, 30000);
 });
