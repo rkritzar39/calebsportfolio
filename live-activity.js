@@ -29,7 +29,7 @@ const CONFIG = {
   discord: { userId: "850815059093356594" },
   tiktok: {
     username: "calebkritzar",
-    latestVideoId: "7429138404928736514" // 🆕 Replace with your most recent TikTok ID
+    latestVideoId: "7567459318736506167" // 🆕 Replace with your most recent TikTok ID
   },
 };
 
