@@ -1798,6 +1798,81 @@ async function loadQuoteOfTheDay() {
 
 document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
 
+/* ========================================================= */
+/* == QUOTE CATEGORY PICKER + CUSTOM CATEGORY SUPPORT == */
+/* ========================================================= */
+
+function setupQuoteCategorySelector() {
+  const categorySelect = document.getElementById("quote-category");
+  const customContainer = document.getElementById("custom-category-container");
+  const customInput = document.getElementById("custom-category-input");
+  const saveCustomBtn = document.getElementById("save-custom-category");
+
+  if (!categorySelect || !customInput || !saveCustomBtn) return;
+
+  // Load current category
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const currentCategory = settings.quoteCategory || "inspirational";
+
+  // If user had a custom one, add it dynamically to dropdown
+  if (
+    currentCategory &&
+    !["inspirational", "life", "success"].includes(currentCategory)
+  ) {
+    const customOpt = document.createElement("option");
+    customOpt.value = currentCategory;
+    customOpt.textContent = `🌟 ${currentCategory}`;
+    categorySelect.insertBefore(customOpt, categorySelect.lastElementChild);
+    categorySelect.value = currentCategory;
+  } else {
+    categorySelect.value = currentCategory;
+  }
+
+  // Show or hide input box when "custom" is selected
+  categorySelect.addEventListener("change", () => {
+    const val = categorySelect.value;
+    if (val === "custom") {
+      customContainer.style.display = "flex";
+      customInput.focus();
+    } else {
+      customContainer.style.display = "none";
+      updateQuoteCategory(val);
+    }
+  });
+
+  // Save new custom category
+  saveCustomBtn.addEventListener("click", () => {
+    const newCategory = customInput.value.trim().toLowerCase();
+    if (!newCategory) {
+      alert("Please enter a valid category name!");
+      return;
+    }
+
+    // Add it to the dropdown
+    const newOpt = document.createElement("option");
+    newOpt.value = newCategory;
+    newOpt.textContent = `🌟 ${newCategory}`;
+    categorySelect.insertBefore(newOpt, categorySelect.lastElementChild);
+    categorySelect.value = newCategory;
+    customContainer.style.display = "none";
+    customInput.value = "";
+
+    updateQuoteCategory(newCategory);
+  });
+}
+
+// Save to settings + reload quote
+function updateQuoteCategory(category) {
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  settings.quoteCategory = category;
+  localStorage.setItem("websiteSettings", JSON.stringify(settings));
+
+  // Immediately reload the quote section
+  loadQuoteOfTheDay();
+}
+
+// Initialize when the page loads
+document.addEventListener("DOMContentLoaded", setupQuoteCategorySelector);
 
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
