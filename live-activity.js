@@ -1,5 +1,5 @@
 /* ======================================================
-   🧠 Live Activity System — Honeycomb + Smart Cooldown + Timer Edition
+   🧠 Live Activity System — Left Honeycomb + Smart Cooldown Edition
    ====================================================== */
 
 import {
@@ -37,36 +37,18 @@ const BRAND_COLORS = {
 };
 
 /* ================================
-   TIMER UTILITIES
-================================ */
-let lastUpdatedTime = Date.now();
-
-function startUpdateTimer() {
-  const label = document.getElementById("last-updated");
-  if (!label) return;
-  setInterval(() => {
-    const seconds = Math.floor((Date.now() - lastUpdatedTime) / 1000);
-    if (seconds < 60) label.textContent = `⏱️ Updated ${seconds}s ago`;
-    else if (seconds < 3600)
-      label.textContent = `⏱️ Updated ${Math.floor(seconds / 60)}m ago`;
-    else label.textContent = `⏱️ Updated ${Math.floor(seconds / 3600)}h ago`;
-  }, 1000);
-}
-
-/* ================================
    COOLDOWN HELPERS
 ================================ */
 function wasRecentlyShown(platform, cooldown = 600000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
-  if (!last) return false;
-  return Date.now() - parseInt(last, 10) < cooldown;
+  return last && Date.now() - parseInt(last, 10) < cooldown;
 }
 function markAsShown(platform) {
   localStorage.setItem(`last_${platform}_shown`, Date.now().toString());
 }
 
 /* ================================
-   ICON CLUSTER
+   ICON CLUSTER (Left)
 ================================ */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
@@ -74,29 +56,22 @@ function updateIconCluster(platforms) {
   cluster.innerHTML = "";
 
   platforms.forEach(({ source, temporary }) => {
-    const iconWrapper = document.createElement("div");
-    iconWrapper.className = `cluster-icon ${source}`;
-    iconWrapper.style.backgroundColor = BRAND_COLORS[source] || "#777";
-
+    const icon = document.createElement("div");
+    icon.className = `cluster-icon ${source}`;
+    icon.style.backgroundColor = BRAND_COLORS[source] || "#777";
     const img = document.createElement("img");
     img.src = `https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/${source}.svg`;
     img.alt = source;
+    icon.appendChild(img);
+    cluster.appendChild(icon);
 
-    iconWrapper.appendChild(img);
-    cluster.appendChild(iconWrapper);
-
-    // Temporary icons fade after 5 seconds
     if (temporary) {
       setTimeout(() => {
-        iconWrapper.classList.add("fade-out");
-        setTimeout(() => iconWrapper.remove(), 800);
+        icon.classList.add("fade-out");
+        setTimeout(() => icon.remove(), 800);
       }, 5000);
     }
   });
-
-  // Auto-expand honeycomb size
-  const iconCount = cluster.children.length;
-  cluster.style.setProperty("--cluster-size", iconCount > 6 ? "80px" : "60px");
 }
 
 /* ================================
@@ -115,7 +90,6 @@ function showStatus(payload, isOffline = false, allActive = []) {
   container.style.opacity = isOffline ? "0.8" : "1";
 
   updateIconCluster(allActive);
-  lastUpdatedTime = Date.now();
 }
 
 /* ================================
@@ -261,6 +235,5 @@ async function updateLiveStatus() {
 
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
-  startUpdateTimer();
   setInterval(updateLiveStatus, 30000);
 });
