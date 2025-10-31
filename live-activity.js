@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Final Polished Edition
+   🎧 Live Activity System — Final Spotify Fix Edition
    ====================================================== */
 
 import {
@@ -217,7 +217,7 @@ async function getDiscordActivity() {
 
     const activities = data.activities || [];
 
-    // 🎵 Spotify — FIXED album cover handling
+    // 🎵 Spotify — fixed universal album art handler
     const spotify = activities.find(a => a.name === "Spotify");
     if (spotify?.details && spotify?.state) {
       const trackTitle = spotify.details;
@@ -228,15 +228,24 @@ async function getDiscordActivity() {
         const raw = spotify.assets.large_image.trim();
         let hash = null;
 
-        if (raw.startsWith("spotify:")) hash = raw.split(":").pop();
-        else if (raw.startsWith("mp:")) hash = raw.replace(/^mp:(external\/|spotify:image:)?/, "");
-        else if (raw.startsWith("https://")) musicCover = raw;
+        if (raw.startsWith("mp:spotify:image:")) {
+          hash = raw.replace("mp:spotify:image:", "");
+        } else if (raw.startsWith("spotify:image:")) {
+          hash = raw.replace("spotify:image:", "");
+        } else if (raw.startsWith("mp:external/")) {
+          hash = raw.replace("mp:external/", "");
+        } else if (raw.startsWith("mp:")) {
+          hash = raw.replace("mp:", "");
+        } else if (raw.startsWith("https://")) {
+          musicCover = raw;
+        }
 
-        if (!musicCover && hash)
-          musicCover = `https://i.scdn.co/image/${hash}`;
+        if (!musicCover && hash) {
+          const cleanHash = hash.split("?")[0].replace(/_/g, "").trim();
+          musicCover = `https://i.scdn.co/image/${cleanHash}`;
+        }
       }
 
-      // fallback if missing
       if (!musicCover)
         musicCover = "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg";
 
