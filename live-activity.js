@@ -219,28 +219,28 @@ async function getDiscordActivity() {
 
     // 🎵 Spotify — fixed full cover parsing
     const spotify = activities.find(a => a.name === "Spotify");
-    if (spotify?.details && spotify?.state) {
-      const trackTitle = spotify.details;
-      const artist = spotify.state;
-      let musicCover = null;
+   if (spotify.assets?.large_image) {
+  const raw = spotify.assets.large_image.trim();
 
-      if (spotify.assets?.large_image) {
-        const raw = spotify.assets.large_image;
-
-        // Handle all Spotify formats
-        if (raw.startsWith("mp:external/")) {
-          const hash = raw.replace("mp:external/", "");
-          musicCover = `https://i.scdn.co/image/${hash}`;
-        } else if (raw.startsWith("mp:spotify:image:")) {
-          const hash = raw.replace("mp:spotify:image:", "");
-          musicCover = `https://i.scdn.co/image/${hash}`;
-        } else if (raw.startsWith("mp:")) {
-          musicCover = raw.replace("mp:", "https://i.scdn.co/image/");
-        } else if (raw.startsWith("https")) {
-          musicCover = raw;
-        }
-      }
-
+  // Handle every Spotify cover format seen in Discord's presence
+  if (raw.startsWith("mp:external/")) {
+    const hash = raw.replace("mp:external/", "");
+    musicCover = `https://i.scdn.co/image/${hash}`;
+  } else if (raw.startsWith("spotify:external:")) {
+    const hash = raw.replace("spotify:external:", "");
+    musicCover = `https://i.scdn.co/image/${hash}`;
+  } else if (raw.startsWith("mp:spotify:image:")) {
+    const hash = raw.replace("mp:spotify:image:", "");
+    musicCover = `https://i.scdn.co/image/${hash}`;
+  } else if (raw.startsWith("spotify:image:")) {
+    const hash = raw.replace("spotify:image:", "");
+    musicCover = `https://i.scdn.co/image/${hash}`;
+  } else if (raw.startsWith("mp:")) {
+    musicCover = raw.replace("mp:", "https://i.scdn.co/image/");
+  } else if (raw.startsWith("https")) {
+    musicCover = raw;
+  }
+}
       if (!musicCover)
         musicCover = "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg";
 
