@@ -458,10 +458,6 @@ a.corner-button {
     text-decoration: none;
 }
 
-/* ======================================================
-   🎧 Live Activity — Honeycomb + Hover Music Cover Edition
-   ====================================================== */
-
 .live-activity {
   display: flex;
   align-items: center;
@@ -469,26 +465,18 @@ a.corner-button {
   gap: 16px;
   margin: 1rem auto;
   padding: 12px 20px;
-  border-radius: var(--radius-md, 14px);
+  border-radius: 14px;
   width: fit-content;
   max-width: 95%;
   background: color-mix(in srgb, var(--content-bg, #1b1b1b) 80%, transparent);
-  backdrop-filter: var(--backdrop-blur, blur(12px));
+  backdrop-filter: blur(12px);
   border: 1px solid color-mix(in srgb, var(--border-color, #555) 60%, transparent);
   box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color, #000) 50%, transparent);
   transition: all 0.4s ease;
-  position: relative;
+  z-index: 5;
 }
 
-.live-activity.hidden {
-  opacity: 0;
-  transform: translateY(8px);
-  pointer-events: none;
-}
-
-/* ======================================================
-   🐝 ICON CLUSTER (Left)
-   ====================================================== */
+/* Honeycomb Icons */
 .icon-cluster {
   display: flex;
   flex-wrap: wrap;
@@ -499,7 +487,6 @@ a.corner-button {
   position: relative;
 }
 
-/* Circle icons */
 .cluster-icon {
   width: 22px;
   height: 22px;
@@ -512,13 +499,6 @@ a.corner-button {
   position: relative;
   transition: transform 0.3s ease, opacity 0.4s ease;
   cursor: pointer;
-  overflow: visible;
-}
-
-.cluster-icon img {
-  width: 12px;
-  height: 12px;
-  filter: brightness(0) invert(1);
 }
 
 @keyframes pop-in {
@@ -527,7 +507,13 @@ a.corner-button {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* Tooltip */
+.cluster-icon img {
+  width: 12px;
+  height: 12px;
+  filter: brightness(0) invert(1);
+}
+
+/* Tooltips */
 .cluster-icon::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -541,25 +527,23 @@ a.corner-button {
   border-radius: 4px;
   white-space: nowrap;
   opacity: 0;
-  pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
 }
+.cluster-icon:hover::after { opacity: 1; transform: translateX(-50%) scale(1); }
 
-.cluster-icon:hover::after,
-.cluster-icon.touch-active::after {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-}
-
-/* Fade out for temporary icons */
 .cluster-icon.fade-out {
   opacity: 0;
   transform: scale(0.6);
 }
 
-/* ======================================================
-   🎵 SPOTIFY HOVER MUSIC COVER (fixed display)
-   ====================================================== */
+/* Spotify Hover Music Cover */
+.cluster-icon.spotify {
+  overflow: visible;
+  z-index: 98;
+  position: relative;
+}
+
 .spotify-hover-art {
   position: absolute;
   top: -90px;
@@ -568,13 +552,12 @@ a.corner-button {
   opacity: 0;
   pointer-events: none;
   transition: all 0.35s ease;
-  z-index: 99; /* Bring it above blur + honeycomb */
+  z-index: 99;
   border-radius: 10px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
   overflow: hidden;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
 }
-
 .spotify-hover-art img {
   width: 85px;
   height: 85px;
@@ -582,26 +565,13 @@ a.corner-button {
   border-radius: 10px;
   display: block;
 }
-
-/* Show on hover */
 .cluster-icon.spotify:hover .spotify-hover-art {
   opacity: 1;
   transform: translateX(-50%) scale(1);
   pointer-events: auto;
 }
 
-/* Make sure icon itself doesn’t clip the image */
-.cluster-icon.spotify {
-  overflow: visible;
-  z-index: 98;
-}
-
-/* Add a soft glowing border to the album art */
-.cluster-icon.spotify:hover .spotify-hover-art img {
-  box-shadow: 0 0 15px rgba(29, 185, 84, 0.7);
-}
-
-/* Pulse ring around Spotify when music is playing */
+/* Glow Ring */
 .cluster-icon.spotify::before {
   content: "";
   position: absolute;
@@ -611,78 +581,38 @@ a.corner-button {
   opacity: 0.8;
   animation: spotify-pulse 2s infinite ease-in-out;
 }
-
 @keyframes spotify-pulse {
   0%, 100% { transform: scale(1); opacity: 0.8; }
-  50% { transform: scale(1.3); opacity: 0.2; }
+  50% { transform: scale(1.3); opacity: 0.3; }
 }
 
-/* ======================================================
-   ✨ TEXT + TIMER
-   ====================================================== */
-.activity-content {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
+/* Text */
+.activity-content { display: flex; flex-direction: column; gap: 3px; }
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
   color: var(--accent-color, #ddd);
-  line-height: 1.4;
-  transition: color 0.3s ease, opacity 0.3s ease;
 }
-
 #live-activity-updated {
   font-size: 0.75rem;
   color: #aaa;
-  opacity: 0.9;
   font-style: italic;
-  transition: color 0.3s ease;
 }
-
-/* When live */
 .live-activity.live-now {
   border-color: #9146FF;
   box-shadow: 0 0 18px rgba(145, 70, 255, 0.4);
 }
-.live-activity.live-now #live-activity-updated {
-  color: #9146FF;
-}
+.live-activity.live-now #live-activity-updated { color: #9146FF; }
 
-/* ======================================================
-   💫 Pulse Glow (non-live)
-   ====================================================== */
+/* Pulse Animation */
 .live-activity.active:not(.live-now) {
   animation: pulse 3s ease-in-out infinite;
 }
 @keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--accent-color, #888) 30%, transparent);
-  }
-  50% {
-    box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color, #888) 50%, transparent);
-  }
+  0%, 100% { box-shadow: 0 8px 22px rgba(255,255,255,0.15); }
+  50% { box-shadow: 0 8px 28px rgba(255,255,255,0.3); }
 }
 
-/* ======================================================
-   📱 Responsive
-   ====================================================== */
-@media (max-width: 768px) {
-  .live-activity {
-    gap: 12px;
-    padding: 8px 14px;
-  }
-  .icon-cluster {
-    width: 52px;
-    gap: 5px;
-  }
-  .spotify-hover-art img {
-    width: 60px;
-    height: 60px;
-  }
-}
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
