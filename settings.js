@@ -34,7 +34,7 @@ class SettingsManager {
       showTechInformation: "enabled",
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
-      showLiveActivity: "enabled", // 👈 add this line
+      showLiveActivity: "enabled",
     };
 
     this.settings = this.loadSettings();
@@ -46,12 +46,12 @@ class SettingsManager {
       this.applyAllSettings();
       this.setupEventListeners();
 
-      // Keep YOUR real implementations below; do not overwrite later
+      // Feature initialization
       this.initMouseTrail();
       this.initLoadingScreen();
       this.initScrollArrow();
 
-      // Wallpaper + blur
+      // Wallpaper / Blur
       this.initCustomBackgroundControls();
       this.applyCustomBackground(false);
       this.initWallpaperBlurControl();
@@ -83,7 +83,7 @@ class SettingsManager {
         });
       }
 
-     // Cross-tab sync
+      // Cross-tab sync (WITH BACKGROUND/BLUR FIX)
       window.addEventListener("storage", (e) => {
         // --- This part is your original code ---
         if (e.key === "websiteSettings") {
@@ -99,7 +99,7 @@ class SettingsManager {
           this.initWallpaperBlurControl();
         }
         
-        // --- ADD THIS BLOCK ---
+        // --- THIS IS THE FIX ---
         // This new part listens for changes to background/blur
         if (
           e.key === "customBackground" ||
@@ -115,10 +115,10 @@ class SettingsManager {
           // Sync the blur card visibility
           this.syncWallpaperUIVisibility();
         }
-        // --- End of added block ---
+        // --- End of fix ---
       });
 
-      // 🔄 Restart or stop live activity when setting changes
+      // Restart or stop live activity when setting changes
       if (typeof updateLiveStatus === "function") {
         setTimeout(() => updateLiveStatus(), 500);
       }
@@ -157,9 +157,9 @@ class SettingsManager {
   // =============================
   initializeControls() {
     this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
-    this.initSegmentedControl("themeStyleControl", this.settings.themeStyle);
+    // this.initSegmentedControl("themeStyleControl", this.settings.themeStyle); // You don't have this element in your HTML
     this.updateSegmentedBackground("appearanceModeControl");
-    this.updateSegmentedBackground("themeStyleControl");
+    // this.updateSegmentedBackground("themeStyleControl");
 
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
@@ -207,6 +207,11 @@ class SettingsManager {
     const control = document.getElementById(controlId);
     if (!control) return;
     let active = control.querySelector("button.active");
+    if (!active) {
+       // Fallback to first button if none are active
+       active = control.querySelector("button");
+       if (active) active.classList.add("active");
+    }
     let bg = control.querySelector(".seg-bg");
     if (!bg) {
       bg = document.createElement("div");
@@ -214,10 +219,9 @@ class SettingsManager {
       control.prepend(bg);
     }
     if (active) {
-      const rect = active.getBoundingClientRect();
-      const parent = control.getBoundingClientRect();
-      bg.style.left = rect.left - parent.left + "px";
-      bg.style.width = rect.width + "px";
+      // Use offsetLeft and offsetWidth for more reliable positioning
+      bg.style.left = `${active.offsetLeft}px`;
+      bg.style.width = `${active.offsetWidth}px`;
     }
   }
 
@@ -230,53 +234,44 @@ class SettingsManager {
   // Event Listeners
   // =============================
   setupEventListeners() {
-    ["appearanceMode", "themeStyle"].forEach((key) => {
-      const control = document.getElementById(`${key}Control`);
-      if (control) {
-        control.addEventListener("click", (e) => {
-          const btn = e.target.closest("button");
-          if (!btn) return;
+    // Appearance Mode
+    const appearanceControl = document.getElementById("appearanceModeControl");
+    if (appearanceControl) {
+        appearanceControl.addEventListener("click", (e) => {
+            const btn = e.target.closest("button");
+            if (!btn) return;
 
-          // 🚫 Prevent user from changing appearance while scheduler is auto
-          if (
-            key === "appearanceMode" &&
-            this.settings.darkModeScheduler === "auto"
-          ) {
-            alert(
-              "Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes."
-            );
-            this.initSegmentedControl(`${key}Control`, this.settings[key]); // reset UI
-            return;
-          }
+            if (this.settings.darkModeScheduler === "auto") {
+                alert("Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes.");
+                // Revert UI to saved setting
+                this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
+                this.updateSegmentedBackground("appearanceModeControl");
+                return;
+            }
 
-          // ✅ Otherwise allow change
-          this.settings[key] = btn.dataset.value;
-          this.applySetting(key);
-          this.saveSettings();
-          this.initSegmentedControl(`${key}Control`, this.settings[key]);
-          this.updateSegmentedBackground(`${key}Control`);
-          if (key === "appearanceMode") {
-            this.applyCustomBackground(false);
-          }
+            this.settings.appearanceMode = btn.dataset.value;
+            this.applySetting("appearanceMode");
+            this.saveSettings();
+            this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
+            this.updateSegmentedBackground("appearanceModeControl");
+            this.applyCustomBackground(false); // Re-apply tint
         });
-        this.updateSegmentedBackground(`${key}Control`);
-      }
-    });
+    }
 
+    // Accent color
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
       accentPicker.addEventListener("input", (e) => {
         this.settings.accentColor = e.target.value;
         this.applyAccentColor();
         this.saveSettings();
-
-        // --- FIXED ---
-        // Instantly update slider colors when accent changes
+        // Update sliders that use accent color
         this.updateSliderFill(document.getElementById("text-size-slider"));
         this.updateSliderFill(document.getElementById("blur-slider"));
       });
     }
 
+    // Text size
     const slider = document.getElementById("text-size-slider");
     if (slider) {
       slider.addEventListener("input", (e) => {
@@ -289,6 +284,7 @@ class SettingsManager {
       });
     }
 
+    // Scheduler
     const schedulerSelect = document.getElementById("darkModeScheduler");
     const startInput = document.getElementById("darkModeStart");
     const endInput = document.getElementById("darkModeEnd");
@@ -317,10 +313,7 @@ class SettingsManager {
       });
     }
 
-    // --- FIXED ---
-    // Removed redundant blur slider logic from here.
-    // initWallpaperBlurControl() now handles this, preventing a double listener.
-
+    // Toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -334,10 +327,15 @@ class SettingsManager {
           this.settings[key] = el.checked ? "enabled" : "disabled";
           this.applySetting(key);
           this.saveSettings();
+          
+          if (key === "showLiveActivity" && typeof updateLiveStatus === "function") {
+             setTimeout(() => updateLiveStatus(), 300);
+          }
         });
       }
     });
 
+    // Reset Buttons
     document
       .getElementById("resetLayoutBtn")
       ?.addEventListener("click", () => {
@@ -349,15 +347,14 @@ class SettingsManager {
 
     document
       .getElementById("resetSectionsBtn")
-      ?.addEventListener("click", () => this.resetSectionVisibility());
+      ?.addEventListener("click", () =>
+        this.resetSectionVisibility()
+      );
     document
       .getElementById("resetSettings")
-      ?.addEventListener("click", () => this.resetSettings());
-
-    // Note: 'fitWallpaperLayer' is not defined in this class.
-    // Make sure it exists somewhere or remove these listeners if unused.
-    // window.addEventListener("resize", () => this.fitWallpaperLayer());
-    // window.addEventListener("orientationchange", () => this.fitWallpaperLayer());
+      ?.addEventListener("click", () =>
+        this.resetSettings()
+      );
   }
 
   // =============================
@@ -365,9 +362,13 @@ class SettingsManager {
   // =============================
   updateSliderFill(slider) {
     if (!slider) return;
-    const pct =
-      ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
-    slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
+    const min = slider.min || 0;
+    const max = slider.max || 100;
+    const val = slider.value;
+    const pct = ((val - min) / (max - min)) * 100;
+    
+    // Set CSS variable for the thumb to use
+    slider.style.setProperty('--_fill', `${pct}%`);
   }
 
   getContrastColor(hex) {
@@ -434,10 +435,9 @@ class SettingsManager {
         ),
     };
 
-    // ✅ Apply core settings
     actions[key]?.();
 
-    // ✅ Universal show/hide for homepage sections
+    // Universal show/hide for homepage sections
     if (key.startsWith("show")) {
       const sectionId = key
         .replace(/^show/, "")
@@ -461,7 +461,7 @@ class SettingsManager {
       }
     }
 
-    // ✅ Special rule: Live Activity toggle (handles visibility + API checks)
+    // Special rule: Live Activity toggle
     if (key === "showLiveActivity") {
       const liveActivity = document.getElementById("live-activity");
       if (liveActivity) {
@@ -469,7 +469,6 @@ class SettingsManager {
         if (visible) {
           liveActivity.style.display = "";
           requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
-          // restart updater if available
           if (typeof updateLiveStatus === "function") {
             setTimeout(() => updateLiveStatus(), 300);
           }
@@ -486,7 +485,7 @@ class SettingsManager {
     document.documentElement.classList.toggle("dark-mode", isDark);
     document.documentElement.classList.toggle("light-mode", !isDark);
     document.body.classList.toggle("dark-mode", isDark);
-    document.body.classList.toggle("light-e", !isDark); // ← restore Onyx Light
+    document.body.classList.toggle("light-mode", !isDark); // Added for 'light-e' fix
   }
 
   applyAppearanceMode() {
@@ -500,11 +499,17 @@ class SettingsManager {
 
   applyAccentColor() {
     const accent = this.settings.accentColor;
+    const contrast = this.getContrastColor(accent);
     document.documentElement.style.setProperty("--accent-color", accent);
     document.documentElement.style.setProperty(
       "--accent-text-color",
-      this.getContrastColor(accent)
+      contrast
     );
+    // Update preview bubble
+    const preview = document.getElementById("accentColorPreview");
+    if(preview) {
+        preview.style.backgroundColor = accent;
+    }
     this.checkAccentColor(accent);
   }
 
@@ -568,14 +573,13 @@ class SettingsManager {
 
     if (!upload || !previewContainer || !previewImage) return;
 
-    // --- Restore saved background ---
+    // Restore saved background
     const savedBg = localStorage.getItem("customBackground");
     const savedName = localStorage.getItem("customBackgroundName");
     const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
 
     if (savedBg) {
-      if (fileNameDisplay)
-        fileNameDisplay.textContent = savedName || "Saved background";
+      if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
       if (remove) remove.style.display = "inline-block";
 
       this.toggleWallpaperBlurCard(true);
@@ -583,13 +587,9 @@ class SettingsManager {
       previewImage.src = savedBg;
       previewImage.onload = () => previewImage.classList.add("loaded");
 
-      // ✅ Show separator line when image exists
       if (separator) separator.classList.add("visible");
-
-      // ✅ Apply saved blur immediately
       this.applyWallpaperBlur(savedBlur);
 
-      // ✅ Sync blur slider and badge
       const blurSlider = document.getElementById("blur-slider");
       const blurBadge = document.getElementById("blurValue");
       if (blurSlider && blurBadge) {
@@ -601,7 +601,7 @@ class SettingsManager {
       if (separator) separator.classList.remove("visible");
     }
 
-    // --- Upload a new file ---
+    // Upload a new file
     upload.addEventListener("change", (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -614,11 +614,8 @@ class SettingsManager {
         localStorage.setItem("customBackground", imageData);
         localStorage.setItem("customBackgroundName", file.name);
 
-        // ✅ Get current blur or 0
         const blurSlider = document.getElementById("blur-slider");
-        const blurValue = blurSlider
-          ? blurSlider.value
-          : localStorage.getItem("wallpaperBlur") || "0";
+        const blurValue = blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
         localStorage.setItem("wallpaperBlur", blurValue);
 
         this.applyCustomBackground(true);
@@ -630,7 +627,6 @@ class SettingsManager {
         if (remove) remove.style.display = "inline-block";
         this.toggleWallpaperBlurCard(true);
 
-        // ✅ Show preview + separator
         previewContainer.classList.add("visible");
         previewImage.classList.remove("loaded");
         previewImage.src = imageData;
@@ -640,7 +636,7 @@ class SettingsManager {
       reader.readAsDataURL(file);
     });
 
-    // --- Remove custom background ---
+    // Remove custom background
     if (remove) {
       remove.addEventListener("click", (e) => {
         e.preventDefault();
@@ -660,13 +656,11 @@ class SettingsManager {
         if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
         remove.style.display = "none";
 
-        // ✅ Hide preview and separator smoothly
         previewContainer.classList.remove("visible");
         previewImage.classList.remove("loaded");
         previewImage.src = "";
         if (separator) separator.classList.remove("visible");
 
-        // Reset blur slider + badge
         const blurSlider = document.getElementById("blur-slider");
         const blurBadge = document.getElementById("blurValue");
         if (blurSlider && blurBadge) {
@@ -710,7 +704,6 @@ class SettingsManager {
       ? "rgba(0, 0, 0, 0.45)"
       : "rgba(255, 255, 255, 0.15)";
 
-    // ✅ Apply saved or default blur
     const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
     this.applyWallpaperBlur(blurValue);
   }
@@ -727,27 +720,18 @@ class SettingsManager {
     const badge = document.getElementById("blurValue");
     if (!slider || !badge) return;
 
-    // ✅ Load saved blur value or default to 0
     const stored = localStorage.getItem("wallpaperBlur") ?? "0";
     slider.value = stored;
     badge.textContent = `${stored}px`;
     this.applyWallpaperBlur(stored);
-
-    const setFill = () => {
-      const min = parseFloat(slider.min || "0");
-      const max = parseFloat(slider.max || "40");
-      const val = parseFloat(slider.value || stored);
-      const pct = ((val - min) / (max - min)) * 100;
-      slider.style.background = `linear-gradient(90deg, var(--accent-color) ${pct}%, var(--slider-track-color) ${pct}%)`;
-    };
-    setFill();
+    this.updateSliderFill(slider); // Apply fill
 
     slider.addEventListener("input", (e) => {
       const val = e.target.value;
       badge.textContent = `${val}px`;
       localStorage.setItem("wallpaperBlur", val);
       this.applyWallpaperBlur(val);
-      setFill();
+      this.updateSliderFill(slider); // Update fill on drag
     });
   }
 
@@ -778,7 +762,6 @@ class SettingsManager {
     const mode = this.settings.darkModeScheduler || "off";
     this.toggleScheduleInputs(mode);
 
-    // Only apply schedule if "auto"
     if (mode !== "auto") {
       if (force) this.applyAppearanceMode();
       return;
@@ -793,17 +776,13 @@ class SettingsManager {
     const end = new Date();
     end.setHours(endH, endM, 0, 0);
 
-    // 🔧 Handle overnight schedules (e.g. 20:00 → 06:00)
     let isDark;
     if (end <= start) {
-      // The schedule wraps around midnight
       isDark = now >= start || now < end;
     } else {
-      // Same-day schedule
       isDark = now >= start && now < end;
     }
 
-    // ✅ Apply correct mode
     this.setThemeClasses(isDark);
     this.applyCustomBackground(false);
   }
@@ -839,13 +818,11 @@ class SettingsManager {
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
 
-      // Clear layout + background + blur values
       localStorage.removeItem("sectionOrder");
       localStorage.removeItem("customBackground");
       localStorage.removeItem("customBackgroundName");
       localStorage.removeItem("wallpaperBlur");
 
-      // Reset background display + preview UI
       const layer = document.getElementById("wallpaper-layer");
       if (layer) {
         layer.style.backgroundImage = "";
@@ -865,7 +842,6 @@ class SettingsManager {
       if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
       if (removeBtn) removeBtn.style.display = "none";
 
-      // Re-init UI
       this.initializeControls();
       this.applyAllSettings();
       alert("All settings have been reset to factory defaults.");
@@ -873,18 +849,11 @@ class SettingsManager {
   }
 
   // =============================
-  // Misc (YOUR real implementations live here)
+  // Misc (Stubs for your implementations)
   // =============================
   initScrollArrow() {}
   initLoadingScreen() {}
-
-  // IMPORTANT: do NOT leave a second empty initMouseTrail() — it would overwrite the real one.
-  // If you have a full implementation elsewhere in this class/file, keep that one.
-  initMouseTrail() {
-    // If you already have your full trail implementation, paste it here
-    // (kept minimal to avoid overriding your working version).
-    // No-op by default.
-  }
+  initMouseTrail() {}
 }
 
 // Initialize
