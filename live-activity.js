@@ -308,3 +308,36 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateLiveStatus, 30000);  // refresh activities
   setInterval(updateLastUpdated, 1000);  // update counter every second
 });
+
+/* ======================================================
+   🔔 Toast Notification Helper
+   ====================================================== */
+function showToast(message, color = "#555") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.style.borderLeft = `4px solid ${color}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(-10px)";
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+}
+
+/* Trigger toast when temporary activity fires */
+const originalShowStatus = showStatus;
+showStatus = function (payload, allActive = []) {
+  if (payload?.temporary) {
+    const color = BRAND_COLORS[payload.source] || "#555";
+    showToast(
+      `🔥 New ${payload.source.charAt(0).toUpperCase() + payload.source.slice(1)} activity detected!`,
+      color
+    );
+  }
+  originalShowStatus(payload, allActive);
+};
