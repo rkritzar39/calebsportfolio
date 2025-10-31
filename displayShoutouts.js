@@ -1872,7 +1872,10 @@ function setupQuoteCategorySelector() {
   });
 
   saveCustomBtn.addEventListener("click", () => {
-    const newCategory = customInput.value.trim().toLowerCase();
+    const newCategory = customInput.value
+  .trim()
+  .replace(/[^a-z0-9-_\s]/gi, '')
+  .toLowerCase();
     if (!newCategory) {
       alert("Please enter a valid category name!");
       return;
