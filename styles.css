@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb Cluster + Toasts
+   🎧 Live Activity — Honeycomb + Tooltip + Toast Edition
    ====================================================== */
 
 .live-activity {
@@ -486,7 +486,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🐝 ICON HONEYCOMB CLUSTER
+   🐝 ICON CLUSTER — Honeycomb Style
    ====================================================== */
 .icon-cluster {
   display: grid;
@@ -510,6 +510,7 @@ a.corner-button {
   animation: pop-in 0.4s ease forwards;
   transition: opacity 0.4s ease, transform 0.3s ease;
   cursor: pointer;
+  position: relative;
 }
 
 .cluster-icon img {
@@ -530,7 +531,43 @@ a.corner-button {
 }
 
 /* ======================================================
-   ✨ TEXT + STATUS
+   💬 Tooltip Styling
+   ====================================================== */
+.cluster-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: rgba(20, 20, 20, 0.92);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 5px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 20;
+}
+
+.cluster-icon:hover::after,
+.cluster-icon:focus::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  box-shadow: 0 0 10px currentColor;
+}
+
+/* Touch-friendly (tap shows tooltip) */
+.cluster-icon.touch-active::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* ======================================================
+   ✨ Text + Timestamp
    ====================================================== */
 .activity-content {
   display: flex;
@@ -573,7 +610,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🔔 TOAST NOTIFICATIONS
+   🔔 Toast Notifications
    ====================================================== */
 #toast-container {
   position: fixed;
@@ -627,7 +664,6 @@ a.corner-button {
     height: 44px;
   }
 }
-
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
