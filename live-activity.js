@@ -1,5 +1,5 @@
 /* ======================================================
-   🧠 Live Activity System — Left Honeycomb + Smart Cooldown Edition
+   🧠 Live Activity System — Left Honeycomb + Temporary Status Fade
    ====================================================== */
 
 import {
@@ -26,8 +26,8 @@ const CONFIG = {
 ================================ */
 const BRAND_COLORS = {
   twitch: "#9146FF",
-  tiktok: "#000000",
-  github: "#24292F",
+  tiktok: "#010101",
+  github: "#181717",
   reddit: "#FF4500",
   steam: "#171A21",
   spotify: "#1DB954",
@@ -37,7 +37,7 @@ const BRAND_COLORS = {
 };
 
 /* ================================
-   COOLDOWN HELPERS
+   COOLDOWN HANDLERS
 ================================ */
 function wasRecentlyShown(platform, cooldown = 600000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
@@ -48,7 +48,7 @@ function markAsShown(platform) {
 }
 
 /* ================================
-   ICON CLUSTER (Left)
+   ICON CLUSTER (Left Honeycomb)
 ================================ */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
@@ -86,6 +86,7 @@ function showStatus(payload, isOffline = false, allActive = []) {
   el.textContent = text;
   container.classList.remove("hidden");
   container.classList.toggle("offline", isOffline);
+  container.classList.toggle("active", !isOffline);
   container.style.setProperty("--accent-color", BRAND_COLORS[source] || "#999");
   container.style.opacity = isOffline ? "0.8" : "1";
 
