@@ -98,6 +98,15 @@ async function getManualStatus() {
   }
 }
 
+function isLiveActivityEnabled() {
+  try {
+    const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    return settings.showLiveActivity === "enabled";
+  } catch {
+    return true; // default to enabled if settings missing
+  }
+}
+
 /* ================================
    MAIN STATUS UPDATER
 ================================ */
@@ -106,25 +115,46 @@ async function updateLiveStatus() {
   const container = document.getElementById("live-activity");
   if (!el || !container) return;
 
+  // 🧠 Skip everything if Live Activity is disabled
+  if (!isLiveActivityEnabled()) {
+    container.style.display = "none";
+    console.log("[Live Activity] Disabled by user settings.");
+    return;
+  }
+
+  // Ensure it's visible
+  container.style.display = "";
+
   try {
-    // 1️⃣ Manual (highest priority)
+    // --- Manual override ---
     const manual = await getManualStatus();
     if (manual) return showStatus(manual);
 
-    // 2️⃣ Twitch
+    // --- Twitch ---
     const twitch = await getTwitchStatus();
     if (twitch) return showStatus(twitch);
 
-    // 3️⃣ Discord
+    // --- Discord ---
     const discord = await getDiscordActivity();
-    if (discord) return showStatus(discord);
+    if (discord && !discord.includes("Offline")) return showStatus(discord);
 
-    // 4️⃣ Offline fallback
-    return showStatus("🛌 Offline");
+    // --- Offline fallback ---
+    showStatus("🛌 Offline", true);
   } catch (err) {
     console.error("Live activity update error:", err);
-    showStatus("Status unavailable");
+    showStatus("💬 Discord status unavailable", true);
   }
+}
+
+function showStatus(text, isOffline = false) {
+  const el = document.getElementById("live-activity-text");
+  const container = document.getElementById("live-activity");
+  if (!el || !container) return;
+
+  el.textContent = text;
+  container.classList.toggle("active", !isOffline);
+  container.classList.toggle("offline", isOffline);
+  container.style.display = isOffline ? "" : "";
 }
 
 /* ================================
