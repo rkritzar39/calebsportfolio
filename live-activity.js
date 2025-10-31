@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Spotify Album Art Fixed Edition
+   🎧 Live Activity System — Final Polished Edition
    ====================================================== */
 
 import {
@@ -226,24 +226,14 @@ async function getDiscordActivity() {
 
       if (spotify.assets?.large_image) {
         const raw = spotify.assets.large_image.trim();
+        let hash = null;
 
-        if (raw.startsWith("mp:external/")) {
-          const hash = raw.replace("mp:external/", "");
+        if (raw.startsWith("spotify:")) hash = raw.split(":").pop();
+        else if (raw.startsWith("mp:")) hash = raw.replace(/^mp:(external\/|spotify:image:)?/, "");
+        else if (raw.startsWith("https://")) musicCover = raw;
+
+        if (!musicCover && hash)
           musicCover = `https://i.scdn.co/image/${hash}`;
-        } else if (raw.startsWith("spotify:external:")) {
-          const hash = raw.replace("spotify:external:", "");
-          musicCover = `https://i.scdn.co/image/${hash}`;
-        } else if (raw.startsWith("mp:spotify:image:")) {
-          const hash = raw.replace("mp:spotify:image:", "");
-          musicCover = `https://i.scdn.co/image/${hash}`;
-        } else if (raw.startsWith("spotify:image:")) {
-          const hash = raw.replace("spotify:image:", "");
-          musicCover = `https://i.scdn.co/image/${hash}`;
-        } else if (raw.startsWith("mp:")) {
-          musicCover = raw.replace("mp:", "https://i.scdn.co/image/");
-        } else if (raw.startsWith("https")) {
-          musicCover = raw;
-        }
       }
 
       // fallback if missing
