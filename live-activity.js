@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Hover Album + Twitch Live Now Edition
+   🎧 Live Activity System — Final Polished Edition
    ====================================================== */
 
 import {
@@ -41,10 +41,10 @@ const BRAND_COLORS = {
    ====================================================== */
 let lastUpdateTime = null;
 let isTwitchLive = false;
-let currentSpotifyArt = null;
+let currentMusicCover = null;
 
 /* ======================================================
-   🧠 COOLDOWN HANDLING (Prevents Repeated Temp Posts)
+   🧠 COOLDOWN HANDLING (Temporary Event Logic)
    ====================================================== */
 function wasRecentlyShown(platform, cooldown = 300000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
@@ -78,18 +78,18 @@ function updateIconCluster(platforms) {
     icon.appendChild(img);
     cluster.appendChild(icon);
 
-    // 🎵 Spotify hover album art
-    if (source === "spotify" && currentSpotifyArt) {
-      const albumPreview = document.createElement("div");
-      albumPreview.className = "spotify-hover-art";
-      const albumImg = document.createElement("img");
-      albumImg.src = currentSpotifyArt;
-      albumImg.alt = "Album Art";
-      albumPreview.appendChild(albumImg);
-      icon.appendChild(albumPreview);
+    // 🎵 Spotify hover music cover
+    if (source === "spotify" && currentMusicCover) {
+      const hoverArt = document.createElement("div");
+      hoverArt.className = "spotify-hover-art";
+      const imgArt = document.createElement("img");
+      imgArt.src = currentMusicCover;
+      imgArt.alt = "Music Cover";
+      hoverArt.appendChild(imgArt);
+      icon.appendChild(hoverArt);
     }
 
-    // Fade temporary icons
+    // ⏳ Fade temporary icons
     if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
@@ -97,7 +97,7 @@ function updateIconCluster(platforms) {
       }, 5000);
     }
 
-    // Touch tooltip support
+    // Mobile hover emulation
     let holdTimer;
     icon.addEventListener("touchstart", () => {
       holdTimer = setTimeout(() => icon.classList.add("touch-active"), 400);
@@ -110,7 +110,7 @@ function updateIconCluster(platforms) {
 }
 
 /* ======================================================
-   🔔 TOAST NOTIFICATIONS
+   🔔 TOASTS
    ====================================================== */
 function showToast(message, color = "#555") {
   const container = document.getElementById("toast-container");
@@ -146,7 +146,7 @@ function showStatus(payload, allActive = []) {
   updateIconCluster(allActive);
 
   if (payload?.temporary) {
-    showToast(`🔥 New ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, BRAND_COLORS[source]);
+    showToast(`🔥 ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, BRAND_COLORS[source]);
   }
 
   isTwitchLive = source === "twitch";
@@ -168,9 +168,7 @@ function updateLastUpdated() {
     updated.textContent = "🟣 Live Now";
     container.classList.add("live-now");
     return;
-  } else {
-    container.classList.remove("live-now");
-  }
+  } else container.classList.remove("live-now");
 
   const elapsed = Math.floor((Date.now() - lastUpdateTime) / 1000);
   let text;
@@ -230,21 +228,21 @@ async function getDiscordActivity() {
 
     const activities = data.activities || [];
 
-    // Spotify
+    // 🎵 Spotify music cover + now playing
     const spotify = activities.find(a => a.name === "Spotify");
     if (spotify?.details && spotify?.state) {
-      const song = spotify.details;
+      const trackTitle = spotify.details;
       const artist = spotify.state;
-      const album = spotify.assets?.large_text;
-      const art = spotify.assets?.large_image?.replace("mp:", "https://i.scdn.co/image/");
-      currentSpotifyArt = art || null;
-      return { text: `🎵 Listening to “${song}” by ${artist}${album ? ` — ${album}` : ""}`, source: "spotify" };
+      const musicCover = spotify.assets?.large_image?.replace("mp:", "https://i.scdn.co/image/");
+      currentMusicCover = musicCover || null;
+      return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
     }
 
-    // Game
+    // 🎮 Game
     const game = activities.find(a => a.type === 0);
     if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
 
+    // 💬 Presence
     const statusMap = {
       online: "🟢 Online on Discord",
       idle: "🌙 Idle on Discord",
