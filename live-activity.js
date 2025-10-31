@@ -1,5 +1,5 @@
 /* =======================================================
-   Live Activity System — Cinematic Neon Smart Edition ⚡
+   Live Activity System — Smart Expiring Edition ⚡
    ======================================================= */
 
 import {
@@ -13,17 +13,10 @@ import { db } from "./firebase-init.js";
    CONFIG
 ================================ */
 const CONFIG = {
-  twitch: {
-    user: "calebkritzar",
-    clientId: "n7e3lys858u96xlg7v2aohe8vzxha3",
-    token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm",
-  },
+  twitch: { user: "calebkritzar", clientId: "n7e3lys858u96xlg7v2aohe8vzxha3", token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm" },
   github: { username: "rkritzar39" },
   reddit: { username: "Electronic_Row_1262" },
-  steam: {
-    steamId64: "76561199283946668",
-    apiKey: "B254FC3875EF0EB1AAEBA9FACFA81C1F",
-  },
+  steam: { steamId64: "76561199283946668", apiKey: "B254FC3875EF0EB1AAEBA9FACFA81C1F" },
   discord: { userId: "850815059093356594" },
   tiktok: { username: "calebkritzar" },
 };
@@ -44,36 +37,32 @@ const PLATFORM_STYLE = {
 };
 
 /* ================================
-   PRIORITY + LIFETIME
+   PRIORITY + TEMPORARY TRACKER
 ================================ */
 function getPriority(source) {
-  const live = ["twitch", "steam", "spotify", "discord"];
-  const mid = ["github", "reddit", "tiktok"];
-  const low = ["manual"];
-  if (live.includes(source)) return 3;
-  if (mid.includes(source)) return 2;
-  if (low.includes(source)) return 1;
+  if (["twitch", "steam", "spotify", "discord"].includes(source)) return 3;
+  if (["github", "reddit", "tiktok"].includes(source)) return 2;
+  if (["manual"].includes(source)) return 1;
   return 0;
 }
 
-// Track temporary posts
+// persistent temporary map
 const TEMP_TRACKER = new Map();
-const TEMP_LIFETIME = 90 * 1000; // 90s lifetime
+const TEMP_LIFETIME = 90 * 1000; // 90s
 
-function registerTemporary(source, text) {
+function markTemporary(source, text) {
   const key = `${source}:${text}`;
-  TEMP_TRACKER.set(key, Date.now());
+  if (!TEMP_TRACKER.has(key)) TEMP_TRACKER.set(key, Date.now());
 }
 
-function isExpired(source, text) {
+function isTemporaryExpired(source, text) {
   const key = `${source}:${text}`;
-  const t = TEMP_TRACKER.get(key);
-  if (!t) return false;
-  return Date.now() - t > TEMP_LIFETIME;
+  if (!TEMP_TRACKER.has(key)) return false;
+  return Date.now() - TEMP_TRACKER.get(key) > TEMP_LIFETIME;
 }
 
 /* ================================
-   SHOW STATUS
+   RENDER / DISPLAY
 ================================ */
 function showStatus(activities, isOffline = false) {
   const container = document.getElementById("live-activity");
@@ -81,13 +70,11 @@ function showStatus(activities, isOffline = false) {
   const textEl = document.getElementById("live-activity-text");
   if (!container || !iconEl || !textEl) return;
 
-  // filter out expired mid-tier
   const filtered = (Array.isArray(activities) ? activities : [activities]).filter(a => {
     const p = getPriority(a.source);
     if (p === 2) {
-      if (!TEMP_TRACKER.has(`${a.source}:${a.text}`))
-        registerTemporary(a.source, a.text);
-      return !isExpired(a.source, a.text);
+      markTemporary(a.source, a.text);
+      return !isTemporaryExpired(a.source, a.text);
     }
     return true;
   });
@@ -100,13 +87,11 @@ function showStatus(activities, isOffline = false) {
   const textHTML = sorted
     .map(a => {
       const { icon: i, color: c } = PLATFORM_STYLE[a.source] || {};
-      const priority = getPriority(a.source);
-      const opacity = priority < highest ? 0.55 : 1;
-      const italic = priority < highest ? "italic" : "normal";
-      return `
-        <span class="activity-item" style="opacity:${opacity};font-style:${italic}">
-          <img src="${i}" class="inline-icon" alt="${a.source}" style="filter:none;fill:${c}" /> ${a.text}
-        </span>`;
+      const opacity = getPriority(a.source) < highest ? 0.55 : 1;
+      const italic = getPriority(a.source) < highest ? "italic" : "normal";
+      return `<span class="activity-item" style="opacity:${opacity};font-style:${italic}">
+        <img src="${i}" class="inline-icon" alt="${a.source}" style="fill:${c};filter:none"/> ${a.text}
+      </span>`;
     })
     .join('<span class="divider"> • </span>');
 
@@ -120,13 +105,12 @@ function showStatus(activities, isOffline = false) {
     setTimeout(() => textEl.classList.remove("fade-in"), 400);
   }, 200);
 
-  // main icon
   iconEl.src = icon;
   iconEl.className = `activity-icon ${top.source} change`;
 
-  // glow
   container.style.background = `linear-gradient(90deg, color-mix(in srgb, ${color} 30%, transparent), color-mix(in srgb, var(--content-bg) 80%, transparent))`;
   container.style.boxShadow = `0 0 25px ${color}70, 0 0 40px ${color}40 inset`;
+
   const glow = highest === 3 ? "neon" : highest === 2 ? "mid" : "soft";
   container.dataset.glow = glow;
   container.classList.remove("hidden");
@@ -192,11 +176,7 @@ async function getDiscordActivity() {
     if (game?.name)
       results.push({ text: `🎮 Playing ${game.name}`, source: "discord" });
 
-    const statusMap = {
-      online: "🟢 Online",
-      idle: "🌙 Idle",
-      dnd: "⛔ Busy",
-    };
+    const statusMap = { online: "🟢 Online", idle: "🌙 Idle", dnd: "⛔ Busy" };
     if (data.discord_status !== "offline" && results.length === 0)
       results.push({ text: `${statusMap[data.discord_status]} on Discord`, source: "discord" });
 
@@ -235,9 +215,7 @@ async function getRedditStatus() {
 async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   try {
-    const res = await fetch(
-      `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`
-    );
+    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`);
     const data = await res.json();
     if (data?.title)
       return [{ text: `🎬 “${data.title}”`, source: "tiktok" }];
@@ -249,9 +227,6 @@ async function getTikTokStatus() {
    MAIN LOOP
 ================================ */
 async function updateLiveStatus() {
-  const container = document.getElementById("live-activity");
-  if (!container) return;
-
   const results = await Promise.all([
     getManualStatus(),
     getTwitchStatus(),
