@@ -558,32 +558,47 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎵 SPOTIFY HOVER ART
+   🎵 SPOTIFY HOVER MUSIC COVER (fixed display)
    ====================================================== */
 .spotify-hover-art {
   position: absolute;
-  top: -85px;
+  top: -90px;
   left: 50%;
   transform: translateX(-50%) scale(0.8);
   opacity: 0;
   pointer-events: none;
-  transition: all 0.3s ease;
-  z-index: 5;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.35s ease;
+  z-index: 99; /* Bring it above blur + honeycomb */
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
   overflow: hidden;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .spotify-hover-art img {
-  width: 70px;
-  height: 70px;
-  border-radius: 8px;
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 10px;
   display: block;
 }
 
+/* Show on hover */
 .cluster-icon.spotify:hover .spotify-hover-art {
   opacity: 1;
   transform: translateX(-50%) scale(1);
+  pointer-events: auto;
+}
+
+/* Make sure icon itself doesn’t clip the image */
+.cluster-icon.spotify {
+  overflow: visible;
+  z-index: 98;
+}
+
+/* Add a soft glowing border to the album art */
+.cluster-icon.spotify:hover .spotify-hover-art img {
+  box-shadow: 0 0 15px rgba(29, 185, 84, 0.7);
 }
 
 /* Pulse ring around Spotify when music is playing */
