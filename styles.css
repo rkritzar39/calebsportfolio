@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb Icon Cluster Edition
+   🎧 Live Activity — Honeycomb Auto-Expand Edition
    ====================================================== */
 
 .live-activity {
@@ -468,14 +468,14 @@ a.corner-button {
   gap: 12px;
   margin: 1rem auto;
   padding: 10px 18px;
+  border-radius: var(--radius-md);
   width: fit-content;
   max-width: 95%;
-  border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--content-bg) 80%, transparent);
   backdrop-filter: var(--backdrop-blur);
   border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
   box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-  transition: background 0.5s ease, box-shadow 0.5s ease, opacity 0.4s ease;
+  transition: all 0.4s ease;
 }
 
 .live-activity.hidden {
@@ -485,16 +485,17 @@ a.corner-button {
 }
 
 /* ======================================================
-   🐝 ICON CLUSTER (Honeycomb layout)
+   🐝 ICON CLUSTER (auto-expand honeycomb)
    ====================================================== */
 .icon-cluster {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: var(--cluster-size, 60px);
+  height: var(--cluster-size, 60px);
   display: grid;
-  place-items: center;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 4px;
+  grid-template-columns: repeat(auto-fit, minmax(18px, 1fr));
+  gap: 4px;
+  justify-content: center;
+  align-content: center;
 }
 
 .cluster-icon {
@@ -504,13 +505,13 @@ a.corner-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.5s ease, transform 0.4s ease;
+  transition: opacity 0.4s ease, transform 0.3s ease;
 }
 
 .cluster-icon img {
   width: 12px;
   height: 12px;
-  filter: brightness(100%) contrast(100%);
+  filter: brightness(0) invert(1);
 }
 
 .cluster-icon.fade-out {
@@ -519,31 +520,23 @@ a.corner-button {
 }
 
 /* ======================================================
-   ✨ TEXT
+   ✨ TEXT + GLOW
    ====================================================== */
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
   color: var(--accent-color);
-  text-align: center;
-  line-height: 1.4;
   transition: color 0.3s ease, opacity 0.3s ease;
 }
 
-/* ======================================================
-   ✨ GLOW
-   ====================================================== */
 .live-activity.active {
-  animation: pulse 2.8s ease-in-out infinite;
+  animation: pulse 3s ease-in-out infinite;
 }
 @keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-  }
-  50% {
-    box-shadow: 0 8px 26px var(--accent-color);
-  }
+  0%, 100% { box-shadow: 0 8px 22px var(--accent-color); }
+  50% { box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color) 40%, transparent); }
 }
+
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
