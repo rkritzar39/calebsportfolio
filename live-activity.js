@@ -1,5 +1,5 @@
 /* ======================================================
-   🧠 Live Activity System — Honeycomb + Smart Cooldown Edition
+   🧠 Live Activity System — Honeycomb + Smart Cooldown + Timer Edition
    ====================================================== */
 
 import {
@@ -35,6 +35,23 @@ const BRAND_COLORS = {
   manual: "#8888FF",
   offline: "#666666"
 };
+
+/* ================================
+   TIMER UTILITIES
+================================ */
+let lastUpdatedTime = Date.now();
+
+function startUpdateTimer() {
+  const label = document.getElementById("last-updated");
+  if (!label) return;
+  setInterval(() => {
+    const seconds = Math.floor((Date.now() - lastUpdatedTime) / 1000);
+    if (seconds < 60) label.textContent = `⏱️ Updated ${seconds}s ago`;
+    else if (seconds < 3600)
+      label.textContent = `⏱️ Updated ${Math.floor(seconds / 60)}m ago`;
+    else label.textContent = `⏱️ Updated ${Math.floor(seconds / 3600)}h ago`;
+  }, 1000);
+}
 
 /* ================================
    COOLDOWN HELPERS
@@ -77,7 +94,7 @@ function updateIconCluster(platforms) {
     }
   });
 
-  // Auto-adjust honeycomb size
+  // Auto-expand honeycomb size
   const iconCount = cluster.children.length;
   cluster.style.setProperty("--cluster-size", iconCount > 6 ? "80px" : "60px");
 }
@@ -98,6 +115,7 @@ function showStatus(payload, isOffline = false, allActive = []) {
   container.style.opacity = isOffline ? "0.8" : "1";
 
   updateIconCluster(allActive);
+  lastUpdatedTime = Date.now();
 }
 
 /* ================================
@@ -243,5 +261,6 @@ async function updateLiveStatus() {
 
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
+  startUpdateTimer();
   setInterval(updateLiveStatus, 30000);
 });
