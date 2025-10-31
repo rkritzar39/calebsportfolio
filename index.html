@@ -282,32 +282,46 @@
   <p id="quote-text" class="quote-text">Loading inspiration...</p>
   <small id="quote-author" class="quote-author"></small>
 
-        <div id="quote-controls">
-          <label for="quote-category">Category:</label>
-          <select id="quote-category">
-            <option value="inspirational">Inspirational</option>
-            <option value="life">Life</option>
-            <option value="success">Success</option>
-            <option value="custom">➕ Custom...</option>
-          </select>
-        
-          <div id="custom-category-container" style="display:none;">
-            <input type="text" id="custom-category-input" placeholder="Enter your category">
-            <button id="save-custom-category">Save</button>
-          </div>
-        
-          <!-- 🔧 Category Manager Button -->
-          <button id="manage-categories-btn" class="button-secondary">Manage Categories</button>
-        </div>
-        
-        <!-- 🧰 Modal for Managing Custom Categories -->
-        <div id="category-manager-modal" class="category-modal hidden">
-          <div class="category-modal-content">
-            <h3>Manage Custom Categories</h3>
-            <ul id="custom-category-list"></ul>
-            <button id="close-category-manager">Close</button>
-          </div>
+  <div id="quote-controls">
+    <select id="quote-category"></select>
+
+    <div id="custom-category-container" style="display:none;">
+      <input type="text" id="custom-category-input" placeholder="New category name">
+      <button id="save-custom-category">Save</button>
     </div>
+
+    <button id="next-quote-btn">🔄 Next Quote</button>
+    <button id="add-custom-quote-btn">➕ Add Custom Quote</button>
+    <button id="manage-custom-quotes-btn">🗂️ Manage Quotes</button>
+  </div>
+</div>
+
+<!-- Add Custom Quote Modal -->
+<div id="custom-quote-modal" class="category-modal hidden">
+  <div class="category-modal-content">
+    <h3>Add Custom Quote</h3>
+    <label>Quote:</label>
+    <textarea id="new-quote-text" placeholder="Type your quote..." rows="3"></textarea>
+    <label>Author:</label>
+    <input type="text" id="new-quote-author" placeholder="Optional">
+    <label>Category:</label>
+    <select id="new-quote-category"></select>
+    <div style="margin-top: 1rem; display: flex; justify-content: space-between;">
+      <button id="save-custom-quote">Save Quote</button>
+      <button id="cancel-custom-quote">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Quote Manager -->
+<div id="custom-quotes-manager" class="category-modal hidden">
+  <div class="category-modal-content">
+    <h3>Manage Custom Quotes</h3>
+    <label>Category:</label>
+    <select id="manager-category-select"></select>
+    <ul id="custom-quote-list"></ul>
+    <button id="close-manager-btn" style="margin-top:1rem;">Close</button>
+  </div>
 </div>
 
     <div class="disabilities-section section" id="disabilities-section" data-section-id="disabilities">
