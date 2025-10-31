@@ -1,5 +1,5 @@
 /* ======================================================
-   🧠 Live Activity System — Final Version with Live Counter + Glow
+   🧠 Live Activity System — Final Version with Live Counter + No Cache Fix
    ====================================================== */
 
 import {
@@ -138,9 +138,17 @@ async function getManualStatus() {
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
-    const res = await fetch(`https://api.twitch.tv/helix/streams?user_login=${user}`, {
-      headers: { "Client-ID": clientId, "Authorization": `Bearer ${token}` }
-    });
+    const res = await fetch(
+      `https://api.twitch.tv/helix/streams?user_login=${user}&_=${Date.now()}`,
+      {
+        headers: {
+          "Client-ID": clientId,
+          "Authorization": `Bearer ${token}`,
+          "Cache-Control": "no-cache"
+        },
+        cache: "no-store"
+      }
+    );
     if (!res.ok) return null;
     const data = await res.json();
     const stream = data?.data?.[0];
@@ -157,7 +165,8 @@ async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
     const res = await fetch(
-      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`
+      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}&_=${Date.now()}`,
+      { cache: "no-store" }
     );
     if (!res.ok) return null;
     const data = await res.json();
@@ -174,7 +183,7 @@ async function getSteamStatus() {
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`);
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}?_=${Date.now()}`, { cache: "no-store" });
     if (!res.ok) return null;
     const { data } = await res.json();
     if (!data) return null;
@@ -201,14 +210,14 @@ async function getDiscordActivity() {
   return null;
 }
 
-/* GitHub */
+/* GitHub (no cache) */
 async function getGitHubStatus() {
   const { username } = CONFIG.github;
   try {
     if (wasRecentlyShown("github")) return null;
     const res = await fetch(
-      `https://api.github.com/users/${username}/events/public?nocache=${Date.now()}`,
-      { cache: "no-store" }
+      `https://api.github.com/users/${username}/events/public?_=${Date.now()}`,
+      { headers: { "Cache-Control": "no-cache" }, cache: "no-store" }
     );
     if (!res.ok) return null;
     const events = await res.json();
@@ -227,13 +236,13 @@ async function getGitHubStatus() {
   return null;
 }
 
-/* Reddit */
+/* Reddit (no cache) */
 async function getRedditStatus() {
   const { username } = CONFIG.reddit;
   try {
     if (wasRecentlyShown("reddit")) return null;
     const res = await fetch(
-      `https://www.reddit.com/user/${username}/submitted.json?nocache=${Date.now()}`,
+      `https://www.reddit.com/user/${username}/submitted.json?limit=1&_=${Date.now()}`,
       { cache: "no-store" }
     );
     if (!res.ok) return null;
@@ -250,13 +259,13 @@ async function getRedditStatus() {
   return null;
 }
 
-/* TikTok */
+/* TikTok (no cache) */
 async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   try {
     if (wasRecentlyShown("tiktok")) return null;
     const res = await fetch(
-      `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}?nocache=${Date.now()}`,
+      `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}/video/${Date.now()}`,
       { cache: "no-store" }
     );
     if (!res.ok) return null;
@@ -297,5 +306,5 @@ async function updateLiveStatus() {
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
   setInterval(updateLiveStatus, 30000);  // refresh activities
-  setInterval(updateLastUpdated, 1000);  // update live counter every second
+  setInterval(updateLastUpdated, 1000);  // update counter every second
 });
