@@ -282,20 +282,32 @@
   <p id="quote-text" class="quote-text">Loading inspiration...</p>
   <small id="quote-author" class="quote-author"></small>
 
-  <div id="quote-controls">
-    <label for="quote-category">Category:</label>
-    <select id="quote-category">
-      <option value="inspirational">Inspirational</option>
-      <option value="life">Life</option>
-      <option value="success">Success</option>
-      <option value="custom">➕ Custom...</option>
-    </select>
-
-    <div id="custom-category-container" style="display:none;">
-      <input type="text" id="custom-category-input" placeholder="Enter your category">
-      <button id="save-custom-category">Save</button>
+        <div id="quote-controls">
+          <label for="quote-category">Category:</label>
+          <select id="quote-category">
+            <option value="inspirational">Inspirational</option>
+            <option value="life">Life</option>
+            <option value="success">Success</option>
+            <option value="custom">➕ Custom...</option>
+          </select>
+        
+          <div id="custom-category-container" style="display:none;">
+            <input type="text" id="custom-category-input" placeholder="Enter your category">
+            <button id="save-custom-category">Save</button>
+          </div>
+        
+          <!-- 🔧 Category Manager Button -->
+          <button id="manage-categories-btn" class="button-secondary">Manage Categories</button>
+        </div>
+        
+        <!-- 🧰 Modal for Managing Custom Categories -->
+        <div id="category-manager-modal" class="category-modal hidden">
+          <div class="category-modal-content">
+            <h3>Manage Custom Categories</h3>
+            <ul id="custom-category-list"></ul>
+            <button id="close-category-manager">Close</button>
+          </div>
     </div>
-  </div>
 </div>
 
     <div class="disabilities-section section" id="disabilities-section" data-section-id="disabilities">
