@@ -34,6 +34,7 @@ class SettingsManager {
       showTechInformation: "enabled",
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
+      showLiveActivity: "enabled", // 👈 add this line
     };
 
     this.settings = this.loadSettings();
@@ -441,6 +442,21 @@ class SettingsManager {
       }
     }
   }
+
+  // === Live Activity Capsule Visibility ===
+if (key === "showLiveActivity") {
+  const liveActivity = document.getElementById("live-activity");
+  if (liveActivity) {
+    const visible = this.settings.showLiveActivity === "enabled";
+    if (visible) {
+      liveActivity.style.display = "";
+      requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
+    } else {
+      liveActivity.style.opacity = "0";
+      setTimeout(() => (liveActivity.style.display = "none"), 250);
+    }
+  }
+}
 
   setThemeClasses(isDark) {
   document.documentElement.classList.toggle("dark-mode", isDark);
