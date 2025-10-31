@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Final Spotify Fix Edition
+   🎧 Live Activity System — Spotify Album Cover Fix Edition
    ====================================================== */
 
 import {
@@ -73,7 +73,7 @@ function updateIconCluster(platforms) {
     img.alt = source;
     icon.appendChild(img);
 
-    // 🎵 Spotify hover cover
+    // 🎵 Spotify hover album cover
     if (source === "spotify" && currentMusicCover) {
       const hoverArt = document.createElement("div");
       hoverArt.className = "spotify-hover-art";
@@ -208,6 +208,9 @@ async function getSteamStatus() {
   return null;
 }
 
+/* =========================
+   DISCORD (SPOTIFY FIXED)
+========================= */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
@@ -217,7 +220,7 @@ async function getDiscordActivity() {
 
     const activities = data.activities || [];
 
-    // 🎵 Spotify — fixed universal album art handler
+    // 🎵 Spotify — album cover fix
     const spotify = activities.find(a => a.name === "Spotify");
     if (spotify?.details && spotify?.state) {
       const trackTitle = spotify.details;
@@ -241,15 +244,16 @@ async function getDiscordActivity() {
         }
 
         if (!musicCover && hash) {
-          const cleanHash = hash.split("?")[0].replace(/_/g, "").trim();
+          const cleanHash = hash
+            .split("?")[0]
+            .replace(/_/g, "")
+            .replace(/^spotify:image:/, "")
+            .trim();
           musicCover = `https://i.scdn.co/image/${cleanHash}`;
         }
       }
 
-      if (!musicCover)
-        musicCover = "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg";
-
-      currentMusicCover = musicCover;
+      currentMusicCover = musicCover || null;
       return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
     }
 
@@ -263,7 +267,9 @@ async function getDiscordActivity() {
     };
     if (data.discord_status !== "offline")
       return { text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" };
-  } catch {}
+  } catch (err) {
+    console.error("Discord API error:", err);
+  }
   return null;
 }
 
