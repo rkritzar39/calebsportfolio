@@ -473,16 +473,15 @@ a.corner-button {
   margin: 1rem auto 0 auto;
   padding: 10px 18px;
 
-  /* Glassy look */
-  background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+  /* Glass aesthetic */
+  background: color-mix(in srgb, var(--content-bg) 80%, var(--platform-color, transparent));
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
   border-radius: var(--radius-md);
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-  transition: opacity var(--transition-medium), transform var(--transition-medium);
-  
-  /* Keep it contained */
+  border: 1px solid color-mix(in srgb, var(--platform-color, var(--border-color)) 60%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--platform-color, var(--shadow-color)) 40%, transparent);
+  transition: all 0.4s ease-in-out;
+
   width: fit-content;
   max-width: 95%;
   overflow-wrap: break-word;
@@ -501,18 +500,17 @@ a.corner-button {
   pointer-events: none;
 }
 
+/* =======================================================
+   🎨 Icon Color Themes
+   ======================================================= */
 .activity-icon {
   width: 22px;
   height: 22px;
   opacity: 0.9;
-  filter: brightness(1.2);
   transition: filter 0.4s ease, opacity 0.4s ease, transform 0.3s ease;
 }
 
-/* =======================================================
-   🎨 Icon Color Themes
-   ======================================================= */
-
+/* Filter styles for each platform */
 .activity-icon.twitch  { filter: invert(43%) sepia(100%) saturate(7450%) hue-rotate(254deg) brightness(102%) contrast(106%); }
 .activity-icon.tiktok  { filter: invert(0%) brightness(20%); }
 .activity-icon.github  { filter: invert(20%) brightness(0.6); }
@@ -521,33 +519,60 @@ a.corner-button {
 .activity-icon.spotify { filter: invert(47%) sepia(93%) saturate(419%) hue-rotate(87deg) brightness(95%) contrast(87%); }
 .activity-icon.discord { filter: invert(39%) sepia(83%) saturate(1387%) hue-rotate(210deg) brightness(98%) contrast(94%); }
 .activity-icon.offline { filter: grayscale(100%) brightness(70%); }
-.activity-icon.change  { transform: scale(1.15); opacity: 0.85; transition: transform 0.3s ease, opacity 0.3s ease; }
+
+.activity-icon.change {
+  transform: scale(1.15);
+  opacity: 0.85;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
 
 /* =======================================================
-   ✨ Text Styling + Animation
+   ✨ Text Styling + Reactive Color
    ======================================================= */
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
-  color: var(--accent-color);
+  color: var(--platform-color, var(--accent-color));
   text-align: center;
   white-space: normal;
   line-height: 1.4;
   transition: color 0.3s ease;
 }
 
-/* Pulse glow animation when active */
+/* =======================================================
+   🌈 Dynamic Color Classes (Linked to JS)
+   ======================================================= */
+.live-activity.twitch  { --platform-color: #9146FF; }
+.live-activity.tiktok  { --platform-color: #010101; }
+.live-activity.github  { --platform-color: #333333; }
+.live-activity.reddit  { --platform-color: #FF4500; }
+.live-activity.steam   { --platform-color: #00ADEE; }
+.live-activity.spotify { --platform-color: #1DB954; }
+.live-activity.discord { --platform-color: #5865F2; }
+.live-activity.manual  { --platform-color: var(--accent-color); }
+.live-activity.offline { --platform-color: #999999; }
+
+/* =======================================================
+   💫 Pulse Glow Animation
+   ======================================================= */
 .live-activity.active {
-  animation: pulse 2.4s ease-in-out infinite;
+  animation: platformPulse 2.4s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes platformPulse {
   0%, 100% {
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--platform-color) 35%, transparent);
   }
   50% {
-    box-shadow: 0 8px 26px color-mix(in srgb, var(--accent-color) 40%, transparent);
+    box-shadow: 0 0 28px color-mix(in srgb, var(--platform-color) 60%, transparent);
   }
+}
+
+/* Offline fade */
+.live-activity.offline {
+  opacity: 0.7;
+  background: color-mix(in srgb, #808080 15%, var(--content-bg));
+  box-shadow: none;
 }
 
 /* =======================================================
@@ -570,8 +595,6 @@ a.corner-button {
     max-width: 88%;
   }
 }
-
-
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
