@@ -2118,7 +2118,7 @@ body.dark-mode .bubble {
 #quote-section {
   width: 100%;
   box-sizing: border-box;
-  padding: 64px 8%; /* matches other sections */
+  padding: 64px 8%;
   background: var(--content-bg);
   background-image: var(--bubble-gradient), var(--liquid-reflection);
   backdrop-filter: var(--backdrop-blur);
@@ -2252,7 +2252,6 @@ body.dark-mode .bubble {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* Pulse animation for new-day quotes */
 #next-quote-btn.new-day {
   animation: glowPulse 1.8s infinite;
 }
@@ -2300,55 +2299,66 @@ body.dark-mode .bubble {
 }
 
 /* ========================================================= */
-/* == Custom Quote Modal (Floating Labels + Spacing) == */
+/* == Custom Quote Modal (Fixed Padding + Floating Labels) == */
 /* ========================================================= */
 
 #custom-quote-modal .category-modal-content {
   background: var(--content-bg);
-  padding: 2rem 2rem 1.8rem 2rem;
+  padding: 2rem 2.5rem; /* ✅ Fix: added side padding */
   border-radius: var(--radius-lg);
   color: var(--text-color);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   animation: fadeInModal 0.45s ease-out;
+  width: 95%;
+  max-width: 480px;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 25%, var(--border-color));
+  box-sizing: border-box;
 }
 
-/* Floating label structure */
 .form-floating {
   position: relative;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1.6rem;
 }
 
 .form-floating input,
 .form-floating textarea,
 .form-floating select {
   width: 100%;
-  padding: 1.2rem 1rem 0.5rem 1rem; /* Added side & top padding */
+  padding: 1.2rem 1.3rem 0.7rem 1.3rem; /* ✅ Fixed inner spacing */
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--text-color);
-  font-size: 0.95rem;
+  font-size: 1rem;
+  line-height: 1.5;
   outline: none;
-  transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  resize: none;
+  box-sizing: border-box;
+}
+
+.form-floating input::placeholder,
+.form-floating textarea::placeholder {
+  color: transparent;
 }
 
 .form-floating input:focus,
 .form-floating textarea:focus,
 .form-floating select:focus {
   border-color: var(--accent-color);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
 .form-floating label {
   position: absolute;
-  left: 1rem;
-  top: 1.05rem; /* adjusted for spacing comfort */
+  left: 1.3rem;
+  top: 1.05rem;
   color: var(--secondary-text);
   font-size: 0.95rem;
   pointer-events: none;
   transition: all 0.25s ease;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .form-floating input:focus + label,
@@ -2357,46 +2367,17 @@ body.dark-mode .bubble {
 .form-floating input:not(:placeholder-shown) + label,
 .form-floating textarea:not(:placeholder-shown) + label,
 .form-floating select:not([value=""]) + label {
-  top: 0.35rem;
-  font-size: 0.75rem;
+  top: -0.6rem;
+  left: 1.1rem;
+  font-size: 0.78rem;
   color: var(--accent-color);
+  background: var(--content-bg);
+  padding: 0 0.3rem;
+  border-radius: 6px;
   opacity: 1;
 }
 
-/* Buttons inside modal */
-#custom-quote-modal button {
-  border: none;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-#save-custom-quote {
-  background: var(--accent-color);
-  color: #fff;
-  padding: 0.55rem 1.4rem;
-}
-
-#save-custom-quote:hover {
-  background: var(--hover-color);
-  transform: translateY(-2px);
-}
-
-#cancel-custom-quote {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
-  padding: 0.55rem 1.4rem;
-}
-
-#cancel-custom-quote:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-/* Button row layout */
+/* Buttons */
 #custom-quote-modal .category-modal-content > div:last-child {
   display: flex;
   justify-content: space-between;
@@ -2404,8 +2385,43 @@ body.dark-mode .bubble {
   margin-top: 1.8rem;
 }
 
+#save-custom-quote,
+#cancel-custom-quote {
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.6rem 1.4rem;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+#save-custom-quote {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+#save-custom-quote:hover {
+  background: var(--hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+#cancel-custom-quote {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+#cancel-custom-quote:hover {
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+}
+
 /* ========================================================= */
-/* == Manage Custom Quotes Modal (Beautiful Card Layout) == */
+/* == Manage Custom Quotes Modal == */
 /* ========================================================= */
 
 #custom-quotes-manager .category-modal-content {
@@ -2414,7 +2430,6 @@ body.dark-mode .bubble {
   border-radius: var(--radius-lg);
   background: var(--content-bg);
   backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
   color: var(--text-color);
   box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
 }
@@ -2437,7 +2452,7 @@ body.dark-mode .bubble {
   margin-bottom: 1rem;
 }
 
-/* Quote card list */
+/* Quote cards */
 #custom-quote-list {
   list-style: none;
   padding: 0;
@@ -2511,6 +2526,7 @@ body.dark-mode .bubble {
   #quote-controls { flex-direction: column; gap: 0.6rem; }
   #quote-controls button, #quote-controls select { width: 100%; }
 }
+
 
 /* ======================== */
 /* Countdown Section - Final Themed Version */
