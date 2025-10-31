@@ -7,9 +7,6 @@
   <title>Settings - Caleb's Profile</title>
 
   <link rel="stylesheet" href="settings.css" />
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Flicker Prevention Script -->
   <script>
   (function() {
     try {
@@ -42,112 +39,108 @@
         <span class="version">v26.1.2</span>
       </div>
 
-    <!-- ================================= -->
-<!-- Appearance -->
-<!-- ================================= -->
-<div class="settings-subsection animate-slide-in">
-  <h2 class="subsection-title">Appearance</h2>
+    <div class="settings-subsection animate-slide-in">
+      <h2 class="subsection-title">Appearance</h2>
 
-  <!-- Appearance Mode -->
-  <div class="setting-card">
-    <div class="setting-label">
-      <strong class="setting-title">Appearance Mode</strong>
-      <p class="setting-description">Choose light, dark, or follow your device setting.</p>
+      <div class="setting-card">
+        <div class="setting-icon-container" style="background-color: #8e8e93;">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+        </div>
+        <div class="setting-label">
+          <strong class="setting-title">Appearance Mode</strong>
+          <p class="setting-description">Choose light, dark, or follow your device setting.</p>
+        </div>
+        <div class="segmented-control" id="appearanceModeControl">
+          <button type="button" data-value="device">Device</button>
+          <button type="button" data-value="light">Light</button>
+          <button type="button" data-value="dark">Dark</button>
+        </div>
+      </div>
+
+    <div class="setting-card custom-background">
+      <div class="setting-icon-container" style="background-color: #007aff;">
+        <i class="fa-solid fa-image"></i>
+      </div>
+      <div class="custom-bg-left">
+        <div class="setting-label">
+          <strong class="setting-title">Custom Background</strong>
+          <p class="setting-description">
+            Upload your own image to use as the background.
+          </p>
+        </div>
+        <div class="custom-bg-controls">
+          <label for="customBgUpload" class="custom-bg-label">Choose File</label>
+          <input type="file" id="customBgUpload" accept="image/*">
+          <span id="fileNameDisplay" class="file-name">No file chosen</span>
+          <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+        </div>
+      </div>
+      <div class="custom-bg-separator" id="customBgSeparator"></div>
+      <div class="custom-bg-right">
+        <div id="customBgPreviewContainer">
+          <img
+            id="customBgPreview"
+            alt="Background preview"
+            draggable="false"
+            oncontextmenu="return false"
+          />
+        </div>
+      </div>
     </div>
-    <div class="segmented-control" id="appearanceModeControl">
-      <button type="button" data-value="device">Device</button>
-      <button type="button" data-value="light">Light</button>
-      <button type="button" data-value="dark">Dark</button>
+
+    <div class="setting-card" id="wallpaperBlurCard">
+      <div class="setting-icon-container" style="background-color: #af52de;">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </div>
+      <div class="setting-label">
+        <strong class="setting-title">Wallpaper Blur</strong>
+        <p class="setting-description">
+          Adjust the background blur strength for your custom wallpaper.
+        </p>
+      </div>
+      <div class="blur-slider-control">
+        <span id="blurValue" class="font-size-badge">15px</span>
+        <input
+          type="range"
+          id="blur-slider"
+          min="0"
+          max="40"
+          step="1"
+          value="15"
+          aria-label="Adjust wallpaper blur"
+        />
+      </div>
+    </div>
+    
+    <div class="setting-card accent-color-card">
+      <div class="setting-icon-container" style="background-color: #34c759;">
+        <i class="fa-solid fa-palette"></i>
+      </div>
+      <label for="accentColorPicker" class="setting-label">
+        <strong class="setting-title">Accent Color</strong>
+        <p class="setting-description">Pick a custom highlight color.</p>
+      </label>
+      <div class="accent-picker-container">
+        <input
+          type="color"
+          id="accentColorPicker"
+          value="#007AFF"
+          aria-label="Choose accent color"
+        />
+        <div id="accentColorPreview" class="accent-color-preview"></div>
+      </div>
+      <div id="whiteAccentWarning" class="color-warning" style="display:none;">
+        Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
+      </div>
     </div>
   </div>
-
-<!-- ================================= -->
-<!-- Custom Background Image -->
-<!-- ================================= -->
-<div class="setting-card custom-background">
-  <div class="custom-bg-left">
-    <div class="setting-label">
-      <strong class="setting-title">Custom Background</strong>
-      <p class="setting-description">
-        Upload your own image to use as the background.
-      </p>
-    </div>
-
-    <div class="custom-bg-controls">
-      <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-      <input type="file" id="customBgUpload" accept="image/*">
-      <span id="fileNameDisplay" class="file-name">No file chosen</span>
-      <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
-    </div>
-  </div>
-
-  <!-- Separator Line -->
-  <div class="custom-bg-separator" id="customBgSeparator"></div>
-
-  <!-- Right side (Preview) -->
-  <div class="custom-bg-right">
-    <div id="customBgPreviewContainer">
-      <img
-        id="customBgPreview"
-        alt="Background preview"
-        draggable="false"
-        oncontextmenu="return false"
-      />
-    </div>
-  </div>
-</div>
-
-<!-- ================================= -->
-<!-- Wallpaper Blur Strength -->
-<!-- ================================= -->
-<div class="setting-card" id="wallpaperBlurCard">
-  <div class="setting-label">
-    <strong class="setting-title">Wallpaper Blur</strong>
-    <p class="setting-description">
-      Adjust the background blur strength for your custom wallpaper.
-    </p>
-  </div>
-  <div class="blur-slider-control">
-    <span id="blurValue" class="font-size-badge">15px</span>
-    <input
-      type="range"
-      id="blur-slider"
-      min="0"
-      max="40"
-      step="1"
-      value="15"
-      aria-label="Adjust wallpaper blur"
-    />
-  </div>
-</div>
-  
-  <!-- Accent Color -->
-  <div class="setting-card accent-color-card">
-    <label for="accentColorPicker" class="setting-label">
-      <strong class="setting-title">Accent Color</strong>
-      <p class="setting-description">Pick a custom highlight color.</p>
-    </label>
-    <div class="accent-picker-container">
-      <input
-        type="color"
-        id="accentColorPicker"
-        value="#007AFF"
-        aria-label="Choose accent color"
-      />
-      <div id="accentColorPreview" class="accent-color-preview"></div>
-    </div>
-    <div id="whiteAccentWarning" class="color-warning" style="display:none;">
-      Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
-    </div>
-  </div>
-</div>
-      <!-- ================================= -->
-      <!-- Dark Mode Scheduler -->
-      <!-- ================================= -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Dark Mode Scheduler</h2>
 
         <div class="setting-card">
+          <div class="setting-icon-container" style="background-color: #5856d6;">
+            <i class="fa-solid fa-clock"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Automatic Theme Switching</strong>
             <p class="setting-description">
@@ -162,6 +155,9 @@
 
         <div class="schedule-group">
           <div class="setting-card">
+            <div class="setting-icon-container" style="background-color: #007aff;">
+                <i class="fa-solid fa-moon"></i>
+            </div>
             <div class="setting-label">
               <strong class="setting-title">Start Time</strong>
               <p class="setting-description">Time when dark mode activates.</p>
@@ -170,6 +166,9 @@
           </div>
 
           <div class="setting-card">
+            <div class="setting-icon-container" style="background-color: #ff9500;">
+                <i class="fa-solid fa-sun"></i>
+            </div>
             <div class="setting-label">
               <strong class="setting-title">End Time</strong>
               <p class="setting-description">Time when light mode reactivates.</p>
@@ -179,13 +178,13 @@
         </div>
       </div>
 
-      <!-- ================================= -->
-      <!-- General -->
-      <!-- ================================= -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">General</h2>
 
         <label class="setting-card" for="rearrangingEnabledToggle">
+          <div class="setting-icon-container" style="background-color: #8e8e93;">
+            <i class="fa-solid fa-arrows-up-down"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Enable Section Rearranging</strong>
             <p class="setting-description">Allow drag-and-drop to reorder sections on the homepage.</p>
@@ -197,6 +196,9 @@
         </label>
 
         <div class="setting-card">
+          <div class="setting-icon-container" style="background-color: #8e8e93;">
+            <i class="fa-solid fa-layer-group"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Reset Section Layout</strong>
             <p class="setting-description">Revert the homepage section order to the default layout.</p>
@@ -209,6 +211,9 @@
         <h2 class="subsection-title">Homepage Sections</h2>
 
         <label class="setting-card" for="showSocialLinksToggle">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-share-alt"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Social Links</strong>
             <p class="setting-description">Show or hide the Social Links section.</p>
@@ -217,6 +222,9 @@
         </label>
 
         <label class="setting-card" for="showPresidentSectionToggle">
+          <div class="setting-icon-container" style="background-color: #a2845e;">
+            <i class="fa-solid fa-landmark"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">President Section</strong>
             <p class="setting-description">Show or hide the President Section.</p>
@@ -225,6 +233,9 @@
         </label>
 
         <label class="setting-card" for="showTiktokShoutoutsToggle">
+          <div class="setting-icon-container" style="background-color: #000000;">
+            <i class="fa-brands fa-tiktok"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">TikTok Shoutouts</strong>
             <p class="setting-description">Show or hide the TikTok Shoutouts section.</p>
@@ -233,6 +244,9 @@
         </label>
 
         <label class="setting-card" for="showInstagramShoutoutsToggle">
+          <div class="setting-icon-container" style="background-color: #e1306c;">
+            <i class="fa-brands fa-instagram"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Instagram Shoutouts</strong>
             <p class="setting-description">Show or hide the Instagram Shoutouts section.</p>
@@ -241,6 +255,9 @@
         </label>
 
         <label class="setting-card" for="showYoutubeShoutoutsToggle">
+          <div class="setting-icon-container" style="background-color: #ff0000;">
+            <i class="fa-brands fa-youtube"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">YouTube Shoutouts</strong>
             <p class="setting-description">Show or hide the YouTube Shoutouts section.</p>
@@ -249,6 +266,9 @@
         </label>
 
         <label class="setting-card" for="showUsefulLinksToggle">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-link"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Useful Links</strong>
             <p class="setting-description">Show or hide the Useful Links section.</p>
@@ -257,6 +277,9 @@
         </label>
 
         <label class="setting-card" for="showCountdownToggle">
+          <div class="setting-icon-container" style="background-color: #34c759;">
+            <i class="fa-solid fa-hourglass-half"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Countdown</strong>
             <p class="setting-description">Show or hide the event Countdown section.</p>
@@ -265,6 +288,9 @@
         </label>
 
         <label class="setting-card" for="showBusinessSectionToggle">
+          <div class="setting-icon-container" style="background-color: #a2845e;">
+            <i class="fa-solid fa-briefcase"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Business Section</strong>
             <p class="setting-description">Show or hide the Business Section.</p>
@@ -273,6 +299,9 @@
         </label>
 
         <label class="setting-card" for="showTechInformationToggle">
+          <div class="setting-icon-container" style="background-color: #8e8e93;">
+            <i class="fa-solid fa-microchip"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Tech Information</strong>
             <p class="setting-description">Show or hide the Tech Information section.</p>
@@ -281,6 +310,9 @@
         </label>
 
         <label class="setting-card" for="showDisabilitiesSectionToggle">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-universal-access"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Disabilities Section</strong>
             <p class="setting-description">Show or hide the Disabilities Section.</p>
@@ -289,6 +321,9 @@
         </label>
 
         <label class="setting-card" for="showQuoteSectionToggle">
+          <div class="setting-icon-container" style="background-color: #5ac8fa;">
+            <i class="fa-solid fa-comment-dots"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Quote of the Day</strong>
             <p class="setting-description">Show or hide the Quote of the Day section on the homepage.</p>
@@ -297,6 +332,9 @@
         </label>
 
         <label class="setting-card" for="showLiveActivityToggle">
+          <div class="setting-icon-container" style="background-color: #ff2d55;">
+            <i class="fa-solid fa-satellite-dish"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Live Activity</strong>
             <p class="setting-description">
@@ -310,6 +348,9 @@
         </label>
 
         <div class="setting-card">
+          <div class="setting-icon-container" style="background-color: #8e8e93;">
+            <i class="fa-solid fa-eye"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Reset Visible Sections</strong>
             <p class="setting-description">Make all homepage sections visible again.</p>
@@ -318,13 +359,13 @@
         </div>
       </div>
 
-      <!-- ================================= -->
-      <!-- Accessibility -->
-      <!-- ================================= -->
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Accessibility</h2>
 
         <div class="setting-card">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-text-height"></i>
+          </div>
           <label for="text-size-slider" class="setting-label">
             <strong class="setting-title">Text Size</strong>
             <p class="setting-description">Adjust the text size for better readability.</p>
@@ -336,6 +377,9 @@
         </div>
 
         <label class="setting-card" for="focusOutlineToggle">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-dot-circle"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Focus Outline</strong>
             <p class="setting-description">Toggle the focus outline for accessibility purposes.</p>
@@ -344,6 +388,9 @@
         </label>
 
         <label class="setting-card" for="highContrastToggle">
+          <div class="setting-icon-container" style="background-color: #8e8e93;">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">High Contrast Mode</strong>
             <p class="setting-description">Increase contrast for easier readability.</p>
@@ -352,6 +399,9 @@
         </label>
 
         <label class="setting-card" for="dyslexiaFontToggle">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-font"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Dyslexia-Friendly Font</strong>
             <p class="setting-description">Enable a more readable font for dyslexic users.</p>
@@ -360,6 +410,9 @@
         </label>
 
         <label class="setting-card" for="underlineLinksToggle">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-underline"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Underline Links</strong>
             <p class="setting-description">Always underline links to improve visibility.</p>
@@ -368,12 +421,12 @@
         </label>
       </div>
 
-      <!-- ================================= -->
-      <!-- Danger Zone -->
-      <!-- ================================= -->
       <div class="settings-subsection danger-zone animate-slide-in">
         <h2 class="subsection-title">Danger Zone</h2>
         <div class="setting-card">
+          <div class="setting-icon-container" style="background-color: #ff3b30;">
+            <i class="fa-solid fa-trash"></i>
+          </div>
           <div class="setting-label">
             <strong class="setting-title">Reset to Factory Settings</strong>
             <p class="setting-description">Restore all settings to their default values.</p>
@@ -404,8 +457,7 @@
 
   <div id="mouse-trail"></div>
 
-  <!-- External JS -->
   <script src="settings.js"></script>
   <script src="script.js"></script>
-</body>
+  </body>
 </html>
