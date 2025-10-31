@@ -33,7 +33,7 @@ function isLiveActivityEnabled() {
   }
 }
 
-function wasRecentlyShown(platform, cooldown = 600000) { // 10 min
+function wasRecentlyShown(platform, cooldown = 600000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
   if (!last) return false;
   return Date.now() - parseInt(last, 10) < cooldown;
@@ -47,24 +47,26 @@ function markAsShown(platform) {
    ICON RENDERING
 ================================ */
 function updateIconCluster(activePlatforms, mainSource) {
-  const cluster = document.querySelector(".icon-cluster");
+  const cluster = document.getElementById("icon-cluster");
   if (!cluster) return;
-
   cluster.innerHTML = "";
-  activePlatforms.forEach(({ source }) => {
+
+  activePlatforms.forEach(({ source, temporary }) => {
     const icon = document.createElement("div");
     icon.className = "left-icon";
     icon.setAttribute("alt", source);
+
     const img = document.createElement("img");
     img.src = `https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/${source}.svg`;
+
     icon.appendChild(img);
     cluster.appendChild(icon);
 
-    if (source !== mainSource && ["tiktok", "github", "reddit"].includes(source)) {
+    if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
-        setTimeout(() => icon.remove(), 500);
-      }, 6000);
+        setTimeout(() => icon.remove(), 600);
+      }, 5000);
     }
   });
 }
@@ -79,9 +81,10 @@ function showStatus(payload, isOffline = false, allActive = []) {
 
   const { text, source } = payload || { text: "💬 Status", source: "manual" };
   textEl.textContent = text;
-  container.style.opacity = isOffline ? "0.8" : "1";
+  container.classList.remove("hidden");
   container.dataset.glow = isOffline ? "soft" : "neon";
   container.style.setProperty("--accent-color", getBrandColor(source));
+  container.style.opacity = isOffline ? "0.8" : "1";
 
   updateIconCluster(allActive, source);
 }
@@ -126,7 +129,8 @@ async function getTwitchStatus() {
     });
     const data = await res.json();
     const stream = data?.data?.[0];
-    if (stream?.title) return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
+    if (stream?.title)
+      return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
   } catch {}
   return null;
 }
