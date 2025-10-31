@@ -388,77 +388,82 @@ class SettingsManager {
   }
 
   applySetting(key) {
-    const actions = {
-      appearanceMode: () => this.applyAppearanceMode(),
-      accentColor: () => this.applyAccentColor(),
-      fontSize: () => this.applyFontSize(),
-      focusOutline: () =>
-        document.body.classList.toggle(
-          "focus-outline-disabled",
-          this.settings.focusOutline === "disabled"
-        ),
-      motionEffects: () => this.applyMotionEffects(),
-      highContrast: () =>
-        document.body.classList.toggle(
-          "high-contrast",
-          this.settings.highContrast === "enabled"
-        ),
-      dyslexiaFont: () =>
-        document.body.classList.toggle(
-          "dyslexia-font",
-          this.settings.dyslexiaFont === "enabled"
-        ),
-      underlineLinks: () =>
-        document.body.classList.toggle(
-          "underline-links",
-          this.settings.underlineLinks === "enabled"
-        ),
-      mouseTrail: () =>
-        document.body.classList.toggle(
-          "mouse-trail-enabled",
-          this.settings.mouseTrail === "enabled"
-        ),
-    };
+  const actions = {
+    appearanceMode: () => this.applyAppearanceMode(),
+    accentColor: () => this.applyAccentColor(),
+    fontSize: () => this.applyFontSize(),
+    focusOutline: () =>
+      document.body.classList.toggle(
+        "focus-outline-disabled",
+        this.settings.focusOutline === "disabled"
+      ),
+    motionEffects: () => this.applyMotionEffects(),
+    highContrast: () =>
+      document.body.classList.toggle(
+        "high-contrast",
+        this.settings.highContrast === "enabled"
+      ),
+    dyslexiaFont: () =>
+      document.body.classList.toggle(
+        "dyslexia-font",
+        this.settings.dyslexiaFont === "enabled"
+      ),
+    underlineLinks: () =>
+      document.body.classList.toggle(
+        "underline-links",
+        this.settings.underlineLinks === "enabled"
+      ),
+    mouseTrail: () =>
+      document.body.classList.toggle(
+        "mouse-trail-enabled",
+        this.settings.mouseTrail === "enabled"
+      ),
+  };
 
-    // Apply core settings
-    actions[key]?.();
+  // ✅ Apply core settings
+  actions[key]?.();
 
-    // Universal show/hide for homepage sections
-    if (key.startsWith("show")) {
-      const sectionId = key
-        .replace(/^show/, "")
-        .replace(/^[A-Z]/, (m) => m.toLowerCase())
-        .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+  // ✅ Universal show/hide for homepage sections
+  if (key.startsWith("show")) {
+    const sectionId = key
+      .replace(/^show/, "")
+      .replace(/^[A-Z]/, (m) => m.toLowerCase())
+      .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
 
-      const el =
-        document.getElementById(`${sectionId}-section`) ||
-        document.querySelector(`[data-section-id="${sectionId}"]`);
+    const el =
+      document.getElementById(`${sectionId}-section`) ||
+      document.querySelector(`[data-section-id="${sectionId}"]`);
 
-      if (el) {
-        const visible = this.settings[key] === "enabled";
-        el.style.transition = "opacity 0.3s ease";
-        if (visible) {
-          el.style.display = "";
-          requestAnimationFrame(() => (el.style.opacity = "1"));
-        } else {
-          el.style.opacity = "0";
-          setTimeout(() => (el.style.display = "none"), 300);
-        }
+    if (el) {
+      const visible = this.settings[key] === "enabled";
+      el.style.transition = "opacity 0.3s ease";
+      if (visible) {
+        el.style.display = "";
+        requestAnimationFrame(() => (el.style.opacity = "1"));
+      } else {
+        el.style.opacity = "0";
+        setTimeout(() => (el.style.display = "none"), 300);
       }
     }
   }
 
-  // === Live Activity Capsule Visibility ===
-if (key === "showLiveActivity") {
-  const liveActivity = document.getElementById("live-activity");
-  if (liveActivity) {
-    const visible = this.settings.showLiveActivity === "enabled";
-    if (visible) {
-      liveActivity.style.display = "";
-      requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
-    } else {
-      liveActivity.style.opacity = "0";
-      setTimeout(() => (liveActivity.style.display = "none"), 250);
+  // ✅ Special rule: Live Activity toggle (handles visibility + API checks)
+  if (key === "showLiveActivity") {
+    const liveActivity = document.getElementById("live-activity");
+    if (liveActivity) {
+      const visible = this.settings.showLiveActivity === "enabled";
+      if (visible) {
+        liveActivity.style.display = "";
+        requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
+        // restart updater if available
+        if (typeof updateLiveStatus === "function") {
+          setTimeout(() => updateLiveStatus(), 300);
+        }
+      } else {
+        liveActivity.style.opacity = "0";
+        setTimeout(() => (liveActivity.style.display = "none"), 250);
+        console.log("[Live Activity] Disabled by settings — API paused");
+      }
     }
   }
 }
