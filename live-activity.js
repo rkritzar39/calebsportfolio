@@ -217,28 +217,35 @@ async function getDiscordActivity() {
 
     const activities = data.activities || [];
 
-    // 🎵 Spotify — music cover fixed
-    const spotify = activities.find(a => a.name === "Spotify");
     if (spotify?.details && spotify?.state) {
-      const trackTitle = spotify.details;
-      const artist = spotify.state;
-      let musicCover = null;
+  const trackTitle = spotify.details;
+  const artist = spotify.state;
+  let musicCover = null;
 
-      if (spotify.assets?.large_image) {
-        const raw = spotify.assets.large_image;
-        if (raw.startsWith("mp:external/")) {
-          const hash = raw.replace("mp:external/", "");
-          musicCover = `https://i.scdn.co/image/${hash}`;
-        } else if (raw.startsWith("mp:")) {
-          musicCover = raw.replace("mp:", "https://i.scdn.co/image/");
-        } else if (raw.startsWith("https")) {
-          musicCover = raw;
-        }
-      }
+  if (spotify.assets?.large_image) {
+    const raw = spotify.assets.large_image;
 
-      currentMusicCover = musicCover || null;
-      return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
+    // Handle all possible Spotify asset formats
+    if (raw.startsWith("mp:external/")) {
+      const hash = raw.replace("mp:external/", "");
+      musicCover = `https://i.scdn.co/image/${hash}`;
+    } else if (raw.startsWith("mp:spotify:image:")) {
+      const hash = raw.replace("mp:spotify:image:", "");
+      musicCover = `https://i.scdn.co/image/${hash}`;
+    } else if (raw.startsWith("mp:")) {
+      musicCover = raw.replace("mp:", "https://i.scdn.co/image/");
+    } else if (raw.startsWith("https")) {
+      musicCover = raw;
     }
+  }
+
+  // fallback image if Spotify fails
+  if (!musicCover)
+    musicCover = "https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg";
+
+  currentMusicCover = musicCover;
+  return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
+}
 
     // 🎮 Game presence
     const game = activities.find(a => a.type === 0);
