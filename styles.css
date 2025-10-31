@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb + Smart Fade Edition
+   🎧 Live Activity — Honeycomb + Tooltip Edition
    ====================================================== */
 
 .live-activity {
@@ -499,16 +499,42 @@ a.corner-button {
   position: relative;
 }
 
+/* Circle icons */
 .cluster-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   transform: scale(0);
   animation: pop-in 0.4s ease forwards;
   transition: opacity 0.4s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+/* Tooltip */
+.cluster-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 3px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.cluster-icon:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
 }
 
 @keyframes pop-in {
@@ -542,7 +568,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   💫 Pulse Glow for Active Status
+   💫 Pulse Glow
    ====================================================== */
 .live-activity.active {
   animation: pulse 3s ease-in-out infinite;
@@ -566,7 +592,6 @@ a.corner-button {
     gap: 12px;
   }
 }
-
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
