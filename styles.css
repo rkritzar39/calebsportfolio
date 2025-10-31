@@ -459,16 +459,16 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity Capsule — Multi-Icon Glow Edition
+   🎧 Live Activity Capsule — Brand Circle Glow Edition
    ====================================================== */
 
 .live-activity {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
 
-  /* Layout */
+  /* Layout + look */
   position: relative;
   margin: 1rem auto 0 auto;
   padding: 10px 18px;
@@ -477,7 +477,7 @@ a.corner-button {
   border-radius: var(--radius-md);
   z-index: 2;
 
-  /* Glassy background */
+  /* Glass look */
   background: color-mix(in srgb, var(--content-bg) 80%, transparent);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
@@ -496,42 +496,61 @@ a.corner-button {
   pointer-events: none;
 }
 
-/* Hover lift */
+/* Hover feel */
 .live-activity:hover {
   transform: translateY(-2px) scale(1.01);
 }
 
 /* ======================================================
-   🎨 Icon Cluster (Left side)
+   🟢 Left Icon Cluster
    ====================================================== */
 .icon-cluster {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 6px;
-  min-width: 30px;
+  min-width: 40px;
 }
 
 .left-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
-  transition: opacity 0.4s ease, transform 0.3s ease;
-  background: transparent;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s ease;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
-.left-icon:hover {
-  transform: scale(1.1);
+.left-icon img {
+  width: 16px;
+  height: 16px;
+  filter: brightness(100%) contrast(100%);
 }
 
-/* Fade out disappearing temporary icons */
+/* Fade out for temporary disappearing icons */
 .left-icon.fade-out {
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.7);
 }
 
 /* ======================================================
-   📝 Activity Text + Inline Icons
+   🌈 Brand Colors
+   ====================================================== */
+.left-icon[alt="twitch"]  { background-color: #9146FF; }
+.left-icon[alt="tiktok"]  { background-color: #010101; }
+.left-icon[alt="github"]  { background-color: #181717; }
+.left-icon[alt="reddit"]  { background-color: #FF4500; }
+.left-icon[alt="steam"]   { background-color: #171A21; }
+.left-icon[alt="spotify"] { background-color: #1DB954; }
+.left-icon[alt="discord"] { background-color: #5865F2; }
+.left-icon[alt="manual"]  { background-color: var(--accent-color); }
+.left-icon[alt="offline"] { background-color: #777; }
+
+/* ======================================================
+   📝 Activity Text
    ====================================================== */
 #live-activity-text {
   font-size: 1rem;
@@ -545,11 +564,12 @@ a.corner-button {
 #live-activity-text.fade-out { opacity: 0; }
 #live-activity-text.fade-in { opacity: 1; }
 
+/* Inline icons inside text */
 .inline-icon {
   width: 15px;
   height: 15px;
   vertical-align: -2px;
-  margin-right: 4px;
+  margin-right: 5px;
 }
 
 .divider {
@@ -558,7 +578,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   ✨ Glow Animations
+   ✨ Glow Modes
    ====================================================== */
 .live-activity[data-glow="neon"] {
   animation: glowNeon 3s ease-in-out infinite;
@@ -604,13 +624,15 @@ a.corner-button {
     padding: 8px 14px;
     max-width: 90%;
   }
+
   .left-icon {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
-  .inline-icon {
-    width: 13px;
-    height: 13px;
+
+  .left-icon img {
+    width: 14px;
+    height: 14px;
   }
 }
 
@@ -620,11 +642,13 @@ a.corner-button {
     padding: 7px 12px;
     max-width: 88%;
   }
+
   .left-icon {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
   }
-  .inline-icon {
+
+  .left-icon img {
     width: 12px;
     height: 12px;
   }
