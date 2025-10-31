@@ -6,6 +6,7 @@
     /* Base Defaults */
     --font-size-base: 16px;
     --accent-color: #007aff; /* Apple's standard blue, user can override */
+    --accent-text-color: #fff; /* JS will set this to #000 or #fff */
 
     /* Light Mode Colors (Standard Apple Palette) */
     --light-bg: #f2f2f7;
@@ -90,7 +91,7 @@ body {
 /* This is the shared style for all glass panels */
 .settings-header,
 .settings-subsection,
-footer,
+footer.settings-footer, /* Make selector more specific */
 #cookie-consent-banner {
     background: var(--glass-bg-light);
     border: 1px solid var(--glass-border-light);
@@ -107,7 +108,7 @@ footer,
 /* Dark mode overrides for the glass panels */
 body.dark-mode .settings-header,
 body.dark-mode .settings-subsection,
-body.dark-mode footer,
+body.dark-mode footer.settings-footer,
 body.dark-mode #cookie-consent-banner {
     background: var(--glass-bg-dark);
     border: 1px solid var(--glass-border-dark);
@@ -130,7 +131,7 @@ html.dark-mode body {
 /* Apply glass effect instantly to relevant sections */
 html.dark-mode .settings-header,
 html.dark-mode .settings-subsection,
-html.dark-mode footer {
+html.dark-mode footer.settings-footer {
     background: var(--glass-bg-dark);
     border-color: var(--glass-border-dark);
     -webkit-backdrop-filter: var(--glass-blur);
@@ -142,23 +143,6 @@ html.dark-mode footer {
 /* ======================================================= */
 /* === THEME OVERRIDES =================================== */
 /* ======================================================= */
-
-/* Dark Mode Override (Applied via JS) */
-body.dark-mode {
-    --bg-color: var(--dark-bg);
-    --content-bg: var(--dark-content-bg);
-    --text-color: var(--dark-text);
-    --secondary-text: var(--dark-secondary-text);
-    --border-color: var(--dark-border);
-    --hover-color: var(--dark-hover);
-    --toggle-on: var(--dark-toggle-on);
-    --toggle-off: var(--dark-toggle-off);
-    --red-color: var(--dark-red-color);
-    --slider-track-color: var(--dark-slider-track);
-    --slider-thumb-color: var(--dark-slider-thumb);
-    --shadow-elevation-1: 0 1px 1px rgba(0,0,0,0.3);
-    --shadow-elevation-2: 0 6px 18px rgba(0,0,0,0.4);
-}
 
 /* ===== Theme Style Variants (Clear & Tinted) ===== */
 /* 'Clear' reduces material opacity for a more transparent look */
@@ -207,7 +191,7 @@ body.high-contrast {
 /* === Panels & Cards ==================================== */
 body.high-contrast .settings-header,
 body.high-contrast .settings-subsection,
-body.high-contrast footer,
+body.high-contrast footer.settings-footer,
 body.high-contrast #cookie-consent-banner,
 body.high-contrast .setting-card,
 body.high-contrast .profile-card {
@@ -320,13 +304,11 @@ body.underline-links a {
 
 /* ========== General Styles ========== */
 body.settings-page {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
     font-size: 1rem; /* This ensures the settings page inherits the root font size */
     line-height: 1.4;
     margin: 0;
     padding: 0;
+    padding-bottom: 120px; /* Add padding for the mobile toolbar */
 }
 
 /* ========== Container ========== */
@@ -342,18 +324,8 @@ body.settings-page .settings-header {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.875rem;
-    background: var(--glass-bg-light);
-    border: 0.0625rem solid var(--glass-border-light);
-    border-radius: 1.25rem; /* iOS 26: Larger radius */
     padding: 1rem 1.25rem;
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: 0 0.5rem 2rem rgba(0,0,0,0.1);
-}
-body.dark-mode .settings-header {
-    background: var(--glass-bg-dark);
-    border: 0.0625rem solid var(--glass-border-dark);
-    box-shadow: 0 0.625rem 2.25rem rgba(0,0,0,0.5);
+    /* Glass styles are now handled by the global rule */
 }
 
 body.settings-page .settings-header h1 {
@@ -373,19 +345,9 @@ body.settings-page .version {
 
 /* ========== Settings Subsection ========== */
 body.settings-page .settings-subsection {
-    border-radius: 1rem; /* iOS 26: Larger radius */
     margin-bottom: 1.5rem;
     overflow: hidden;
-    background: var(--glass-bg-light);
-    border: 0.0625rem solid var(--glass-border-light);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: 0 0.5rem 2rem rgba(0,0,0,0.1);
-}
-body.dark-mode .settings-subsection {
-    background: var(--glass-bg-dark);
-    border: 0.0625rem solid var(--glass-border-dark);
-    box-shadow: 0 0.625rem 2.25rem rgba(0,0,0,0.5);
+    /* Glass styles are now handled by the global rule */
 }
 
 body.settings-page .subsection-title {
@@ -409,25 +371,17 @@ body.settings-page .setting-card {
     position: relative;
     overflow: hidden;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    gap: 1rem; /* NEW: Adds space for the icon */
 }
 body.settings-page .setting-card:last-child { border-bottom: none; }
 body.settings-page .setting-card:hover {
     background-color: color-mix(in srgb, var(--bg-color) 50%, var(--content-bg));
-    box-shadow: var(--shadow-elevation-2);
 }
 
 body.settings-page .setting-label { flex: 1; padding-right: 0.75rem; }
 body.settings-page .setting-title { font-size: 0.9375rem; font-weight: 500; margin: 0 0 0.25rem 0; }
 body.settings-page .setting-description { font-size: 0.8125rem; color: var(--secondary-text); margin: 0; }
 
-/* Ripple */
-body.settings-page .setting-card:active::after {
-    width: 18.75rem; height: 18.75rem; opacity: 0.14;
-    transition: width 0s, height 0s;
-}
-
-/* Chevron */
-body.settings-page .chevron { margin-left: 0.75rem; color: var(--secondary-text); font-size: 1.25rem; }
 
 /* ========== Modern Dark Mode Scheduler ========== */
 #darkModeScheduler {
@@ -493,36 +447,9 @@ body.dark-mode #darkModeScheduler {
     border: none;
     padding: 0;
 }
-#accentColorPicker::after {
-    content: '';
-    position: absolute;
-    top: -0.25rem;
-    left: -0.25rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    border: 0.125rem solid var(--accent-color);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-#accentColorPicker.selected::after {
-    opacity: 1;
-}
 #accentColorPicker:hover {
     transform: scale(1.1);
     transition: transform 0.2s ease;
-}
-
-/* ========== Appearance Mode Select ========== */
-body.settings-page #appearanceModeSelect {
-    font-size: 0.9375rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    border: 0.0625rem solid var(--border-color);
-    background: var(--bg-color);
-    color: var(--text-color);
-    margin-left: 0.625rem;
 }
 
 /* ======================================================= */
@@ -535,6 +462,7 @@ body.settings-page #appearanceModeSelect {
   justify-content: flex-end;
   width: 52px;
   height: 32px;
+  flex-shrink: 0; /* Prevent switch from shrinking */
 }
 .md-switch input {
   opacity: 0;
@@ -589,7 +517,7 @@ body.settings-page #appearanceModeSelect {
   box-shadow:
     0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent),
     inset 0 0 0 1px rgba(255,255,255,0.25);
-  animation: togglePulse 2.5s ease-in-out infinite;
+  /* animation: togglePulse 2.5s ease-in-out infinite; */ /* Optional: can be distracting */
 }
 .md-switch input:checked + .track .thumb {
   transform: translateX(20px);
@@ -630,7 +558,8 @@ body.dark-mode .md-switch input:checked + .track {
     font-weight: 600;
     font-size: 0.875rem;
     margin-bottom: 0.75rem;
-}#text-size-slider {
+}
+#text-size-slider, #blur-slider {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
@@ -646,7 +575,8 @@ body.dark-mode .md-switch input:checked + .track {
   );
   transition: background .15s linear;
 }
-#text-size-slider::-webkit-slider-thumb {
+#text-size-slider::-webkit-slider-thumb,
+#blur-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 28px;
@@ -660,13 +590,15 @@ body.dark-mode .md-switch input:checked + .track {
   cursor: pointer;
   transition: transform .2s ease, box-shadow .2s ease;
 }
-#text-size-slider::-webkit-slider-thumb:active {
+#text-size-slider::-webkit-slider-thumb:active,
+#blur-slider::-webkit-slider-thumb:active {
   transform: scale(1.05);
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,.35),
     0 10px 20px color-mix(in srgb,var(--accent-color) 35%,rgba(0,0,0,.25));
 }
-#text-size-slider::-moz-range-thumb {
+#text-size-slider::-moz-range-thumb,
+#blur-slider::-moz-range-thumb {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -677,7 +609,8 @@ body.dark-mode .md-switch input:checked + .track {
     0 6px 16px rgba(0,0,0,.2);
   transition: transform .2s ease, box-shadow .2s ease;
 }
-#text-size-slider::-moz-range-thumb:active {
+#text-size-slider::-moz-range-thumb:active,
+#blur-slider::-moz-range-thumb:active {
   transform: scale(1.05);
 }
 
@@ -697,7 +630,7 @@ body.dark-mode .md-switch input:checked + .track {
 @media (max-width: 480px) {
     body.settings-page .container { padding: 0.9375rem 0.625rem; }
     body.settings-page .settings-header h1 { font-size: 1.375rem; }
-    body.settings-page footer { padding: 0.9375rem; flex-direction: column; gap: 0.625rem; }
+    body.settings-page footer.settings-footer { padding: 0.9375rem; flex-direction: column; gap: 0.625rem; }
 }
 
 /* ========== Danger Zone ========== */
@@ -762,37 +695,22 @@ body.dark-mode #cookie-consent-banner button:hover {
 /* ========== Footer & Back Link ========== */
 body.settings-page .back-link { display: inline-flex; align-items: center; color: var(--accent-color); text-decoration: none; font-size: 1rem; }
 body.settings-page .back-link:hover { color: var(--hover-color); }
-body.settings-page footer {
+body.settings-page footer.settings-footer {
     text-align: center; padding: 1.25rem; font-size: 0.875rem; color: var(--secondary-text);
-    background: var(--glass-bg-light);
-    border: 0.0625rem solid var(--glass-border-light);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-}
-body.dark-mode footer {
-    background: var(--glass-bg-dark);
-    border: 0.0625rem solid var(--glass-border-dark);
+    /* Glass styles are handled globally */
 }
 
 /* ========== Cookie Consent Banner ========== */
 body.settings-page #cookie-consent-banner {
     position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
-    border-radius: 0.75rem;
     padding: 1rem;
     display: flex; align-items: center; justify-content: space-between; gap: 1rem;
     max-width: 92%; width: 40rem; z-index: 1000;
-    background: var(--glass-bg-light);
-    border: 0.0625rem solid var(--glass-border-light);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-}
-body.dark-mode #cookie-consent-banner {
-    background: var(--glass-bg-dark);
-    border: 0.0625rem solid var(--glass-border-dark);
+    /* Glass styles are handled globally */
 }
 
 /* ============================== */
-/* Focus outline                  */
+/* Focus outline                */
 /* ============================== */
 body.settings-page :focus-visible {
   outline: 0.125rem solid var(--accent-color);
@@ -818,6 +736,7 @@ body.settings-page.focus-outline-disabled :focus-visible {
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid color-mix(in srgb,var(--accent-color) 15%,transparent);
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
+  flex-shrink: 0; /* Prevent control from shrinking */
 }
 .segmented-control button {
   position: relative;
@@ -928,7 +847,7 @@ body.dark-mode .color-warning {
 /* ======================================================= */
 
 /* Dropdown */
-#themeModeSelect {
+#darkModeScheduler { /* Re-using this ID to style the select */
   position: relative;
   appearance: none;
   font-family: inherit;
@@ -950,21 +869,22 @@ body.dark-mode .color-warning {
     box-shadow 0.35s cubic-bezier(.25,.8,.25,1),
     border-color 0.3s ease,
     transform 0.25s ease;
-  width: 100%;
+  width: auto; /* Allow it to size to content */
+  min-width: 120px;
   background-image: linear-gradient(45deg, transparent 50%, var(--secondary-text) 50%), 
                     linear-gradient(135deg, var(--secondary-text) 50%, transparent 50%);
   background-position: right 0.9rem top 50%, right 0.65rem top 50%;
   background-size: 0.5rem 0.5rem;
   background-repeat: no-repeat;
 }
-#themeModeSelect:hover {
+#darkModeScheduler:hover {
   background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,0.25),
     0 6px 18px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
   transform: translateY(-1px);
 }
-#themeModeSelect:focus {
+#darkModeScheduler:focus {
   outline: none;
   border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
   box-shadow:
@@ -984,14 +904,14 @@ body.dark-mode .color-warning {
       0 0 18px color-mix(in srgb, var(--accent-color) 45%, transparent);
   }
 }
-body.dark-mode #themeModeSelect {
+body.dark-mode #darkModeScheduler {
   background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
   border-color: color-mix(in srgb, var(--accent-color) 15%, var(--glass-border-dark));
   box-shadow:
     inset 0 0 0 1px rgba(255,255,255,0.08),
     0 4px 14px rgba(0,0,0,0.5);
 }
-body.dark-mode #themeModeSelect:hover {
+body.dark-mode #darkModeScheduler:hover {
   background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
 }
 
@@ -1038,7 +958,7 @@ body.dark-mode #themeModeSelect:hover {
 .custom-bg-label {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--accent-text-color, #fff);
+  color: var(--text-color); /* Changed from accent-text-color */
   padding: 0.45rem 1rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
@@ -1048,6 +968,9 @@ body.dark-mode #themeModeSelect:hover {
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   transition: background 0.25s ease;
+}
+body.dark-mode .custom-bg-label {
+  color: var(--text-color);
 }
 
 /* --- File name --- */
@@ -1067,11 +990,14 @@ body.dark-mode #themeModeSelect:hover {
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
   background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
-  color: var(--accent-text-color, #fff);
+  color: var(--text-color); /* Changed from accent-text-color */
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.3s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+body.dark-mode #removeCustomBg {
+  color: var(--text-color);
 }
 #removeCustomBg.visible,
 #removeCustomBg[style*="inline-block"] {
@@ -1111,7 +1037,7 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* --- Automatic color adjustment based on mode --- */
-.light-mode .custom-bg-separator {
+body:not(.dark-mode) .custom-bg-separator {
   background: linear-gradient(
     to bottom,
     rgba(0, 0, 0, 0.15) 0%,
@@ -1123,7 +1049,7 @@ body.dark-mode #themeModeSelect:hover {
     inset 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
-.dark-mode .custom-bg-separator {
+body.dark-mode .custom-bg-separator {
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0.35) 0%,
@@ -1217,7 +1143,7 @@ body.dark-mode #themeModeSelect:hover {
     transform: scaleX(1);
   }
 
-  .light-mode .custom-bg-separator {
+  body:not(.dark-mode) .custom-bg-separator {
     background: linear-gradient(
       to right,
       rgba(0, 0, 0, 0.15) 0%,
@@ -1226,7 +1152,7 @@ body.dark-mode #themeModeSelect:hover {
     );
   }
 
-  .dark-mode .custom-bg-separator {
+  body.dark-mode .custom-bg-separator {
     background: linear-gradient(
       to right,
       rgba(255, 255, 255, 0.35) 0%,
@@ -1251,11 +1177,13 @@ body.dark-mode #themeModeSelect:hover {
   opacity: 1;
   transform: translateY(0);
   transition: opacity 0.35s ease, transform 0.35s ease;
+  display: flex; /* Ensure it's flex */
 }
-#wallpaperBlurCard.hidden {
+#wallpaperBlurCard.hidden { /* JS can add this class */
   opacity: 0;
   transform: translateY(-6px);
   pointer-events: none;
+  display: none; /* Hide it fully */
 }
 
 /* ======================================================= */
@@ -1271,7 +1199,7 @@ body.dark-mode #themeModeSelect:hover {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-items: center;
-  padding: 0.65rem 0.75rem;          /* inner glass padding */
+  padding: 0.65rem 0.75rem;       /* inner glass padding */
   border-radius: 2rem;
   z-index: 9999;
 
@@ -1302,7 +1230,7 @@ body.dark-mode .ios19-bubblebar {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  min-height: 3.2rem;                /* ensures icon+label fit inside capsule */
+  min-height: 3.2rem;          /* ensures icon+label fit inside capsule */
   text-decoration: none;
   font-weight: 600;
   font-size: 0.86rem;
@@ -1319,20 +1247,20 @@ body.dark-mode .ios19-bubblebar {
   color: currentColor;
   transition: color 0.25s ease, transform 0.25s ease;
 }
-.ios19-bubblebar .tab.active      { --hot: 1; }
-.ios19-bubblebar .tab.active i    { transform: translateY(-1px) scale(1.05); }
+.ios19-bubblebar .tab.active     { --hot: 1; }
+.ios19-bubblebar .tab.active i   { transform: translateY(-1px) scale(1.05); }
 
 /* Capsule – fully covers icon+label of active tab, evenly inset from bar */
 .bubble {
-  --x: 0px;                  /* left (JS) */
-  --w: 120px;                /* width (JS) */
+  --x: 0px;             /* left (JS) */
+  --w: 120px;           /* width (JS) */
   position: absolute;
-  top: 6px;                  /* neat inset from top edge */
-  bottom: 6px;               /* neat inset from bottom edge (auto height) */
+  top: 6px;             /* neat inset from top edge */
+  bottom: 6px;            /* neat inset from bottom edge (auto height) */
   left: var(--x);
   width: var(--w);
   border-radius: 999px;
-  z-index: 1;                /* under text/icons, above glass */
+  z-index: 1;           /* under text/icons, above glass */
   pointer-events: none;
   overflow: hidden;
 
@@ -1364,8 +1292,8 @@ body.dark-mode .bubble {
   content: "";
   position: absolute;
   inset: -20%;
-  background: inherit;                 /* inherits glass tones */
-  transform: scale(1.15);              /* slight magnification */
+  background: inherit;            /* inherits glass tones */
+  transform: scale(1.15);         /* slight magnification */
   filter: brightness(1.25) saturate(130%) blur(8px);
   transform-origin: center;
   opacity: 0.7;
@@ -1387,7 +1315,7 @@ body.dark-mode .bubble {
 /* Interactions */
 .bubble.drag { transform: scale(1.02); }
 @keyframes pop { 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
-.bubble.pop  { animation: pop .18s ease-out; }
+.bubble.pop   { animation: pop .18s ease-out; }
 
 /* Auto-hide on scroll */
 .toolbar-hidden {
@@ -1397,9 +1325,9 @@ body.dark-mode .bubble {
 
 /* Small screens */
 @media (max-width: 430px) {
-  .ios19-bubblebar      { width: calc(100% - 1.25rem); padding: 0.55rem 0.65rem; }
+  .ios19-bubblebar       { width: calc(100% - 1.25rem); padding: 0.55rem 0.65rem; }
   .ios19-bubblebar .tab span { font-size: .80rem; }
-  .bubble               { top: 6px; bottom: 6px; }
+  .bubble             { top: 6px; bottom: 6px; }
 }
 
 @media (min-width: 768px) {
@@ -1409,4 +1337,44 @@ body.dark-mode .bubble {
     opacity: 0 !important;
     pointer-events: none !important;
   }
+}
+
+/* ======================================================= */
+/* === NEW: Apple Settings Icon & Chevron Styles ========= */
+/* ======================================================= */
+
+/*
+* 1. The Icon Container
+* (The colorful rounded square)
+*/
+.setting-icon-container {
+  width: 29px;
+  height: 29px;
+  border-radius: 7px; /* Apple's specific radius */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  font-size: 15px;
+}
+
+/*
+* 2. The Chevron
+* (The ">" arrow on navigation rows)
+*/
+.chevron {
+  color: var(--secondary-text);
+  opacity: 0.5;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/*
+* 3. Make navigation rows behave like links
+*/
+.setting-card.navigation-row {
+  cursor: pointer;
+  text-decoration: none;
 }
