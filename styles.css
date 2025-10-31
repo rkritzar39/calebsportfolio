@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb + Tooltip + Live-Aware Edition
+   🎧 Live Activity — Final Live Counter + Glow Edition
    ====================================================== */
 
 .live-activity {
@@ -500,7 +500,6 @@ a.corner-button {
   position: relative;
 }
 
-/* Circular platform icons */
 .cluster-icon {
   width: 20px;
   height: 20px;
@@ -556,7 +555,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   ✨ TEXT + LIVE STATUS
+   ✨ TEXT + COLORS
    ====================================================== */
 .activity-content {
   display: flex;
@@ -598,7 +597,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   💫 Pulse Glow Animation
+   💫 Pulse Glow
    ====================================================== */
 .live-activity.active {
   animation: pulse 3s ease-in-out infinite;
@@ -635,6 +634,7 @@ a.corner-button {
     font-size: 0.75rem;
   }
 }
+
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
