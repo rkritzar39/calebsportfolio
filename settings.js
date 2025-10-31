@@ -83,8 +83,9 @@ class SettingsManager {
         });
       }
 
-      // Cross-tab sync
+     // Cross-tab sync
       window.addEventListener("storage", (e) => {
+        // --- This part is your original code ---
         if (e.key === "websiteSettings") {
           this.settings = this.loadSettings();
           this.applyAllSettings();
@@ -92,7 +93,29 @@ class SettingsManager {
           this.applyCustomBackground(false);
           this.toggleScheduleInputs(this.settings.darkModeScheduler);
           this.syncWallpaperUIVisibility();
+          
+          // Re-init background/blur UI to match
+          this.initCustomBackgroundControls();
+          this.initWallpaperBlurControl();
         }
+        
+        // --- ADD THIS BLOCK ---
+        // This new part listens for changes to background/blur
+        if (
+          e.key === "customBackground" ||
+          e.key === "customBackgroundName" ||
+          e.key === "wallpaperBlur"
+        ) {
+          // Re-apply the background on the other tab
+          this.applyCustomBackground(false);
+          // Re-init the background controls to update the preview/filename
+          this.initCustomBackgroundControls();
+          // Re-init the blur slider to sync its position
+          this.initWallpaperBlurControl();
+          // Sync the blur card visibility
+          this.syncWallpaperUIVisibility();
+        }
+        // --- End of added block ---
       });
 
       // 🔄 Restart or stop live activity when setting changes
