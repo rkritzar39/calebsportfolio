@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity Capsule — Fade + Glow Edition
+   🎧 Live Activity Capsule — Cinematic Fade + Neon Glow
    ====================================================== */
 
 .live-activity {
@@ -484,16 +484,22 @@ a.corner-button {
   border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
   box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
   transition:
-    background 0.5s ease,
-    box-shadow 0.5s ease,
+    background 0.6s ease,
+    box-shadow 0.6s ease,
     opacity 0.4s ease,
     transform 0.3s ease;
+  cursor: default;
 }
 
 .live-activity.hidden {
   opacity: 0;
   transform: translateY(6px);
   pointer-events: none;
+}
+
+/* Parallax lift on hover */
+.live-activity:hover {
+  transform: translateY(-2px) scale(1.01);
 }
 
 /* ======================================================
@@ -512,7 +518,7 @@ a.corner-button {
   opacity: 0.8;
 }
 
-/* Platform tints */
+/* Platform color filters */
 .activity-icon.twitch  { filter: invert(49%) sepia(99%) saturate(3447%) hue-rotate(245deg) brightness(102%) contrast(101%); }
 .activity-icon.tiktok  { filter: invert(0%) brightness(20%); }
 .activity-icon.github  { filter: invert(16%) brightness(0.6); }
@@ -523,7 +529,7 @@ a.corner-button {
 .activity-icon.offline { filter: grayscale(100%) brightness(70%); }
 
 /* ======================================================
-   📝 Text Fade Transition
+   📝 Text Fade + Inline Icon
    ====================================================== */
 #live-activity-text {
   font-size: 1rem;
@@ -531,31 +537,44 @@ a.corner-button {
   color: var(--accent-color);
   text-align: center;
   line-height: 1.4;
-  transition: color 0.3s ease, opacity 0.4s ease;
+  transition: color 0.4s ease, opacity 0.4s ease;
 }
 
-#live-activity-text.fade-out {
-  opacity: 0;
+#live-activity-text.fade-out { opacity: 0; }
+#live-activity-text.fade-in { opacity: 1; }
+
+.inline-icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: -3px;
+  opacity: 0.9;
+  margin-right: 4px;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.1));
 }
 
-#live-activity-text.fade-in {
-  opacity: 1;
+.divider {
+  opacity: 0.6;
+  margin: 0 4px;
 }
 
 /* ======================================================
-   ✨ Glow Pulse
+   ✨ Glow Pulse Modes
    ====================================================== */
-.live-activity.active {
-  animation: pulse 2.8s ease-in-out infinite;
-}
+.live-activity[data-glow="neon"] { animation: pulseNeon 2.8s ease-in-out infinite; }
+.live-activity[data-glow="mid"]  { animation: pulseMid 4s ease-in-out infinite; }
+.live-activity[data-glow="soft"] { animation: pulseSoft 6s ease-in-out infinite; }
 
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-  }
-  50% {
-    box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color) 45%, transparent);
-  }
+@keyframes pulseNeon {
+  0%,100% { box-shadow: 0 0 25px var(--accent-color)50, 0 0 35px var(--accent-color)30 inset; }
+  50%     { box-shadow: 0 0 45px var(--accent-color)80, 0 0 50px var(--accent-color)60 inset; }
+}
+@keyframes pulseMid {
+  0%,100% { box-shadow: 0 0 15px var(--accent-color)40; }
+  50%     { box-shadow: 0 0 25px var(--accent-color)60; }
+}
+@keyframes pulseSoft {
+  0%,100% { box-shadow: 0 0 10px var(--accent-color)20; }
+  50%     { box-shadow: 0 0 18px var(--accent-color)30; }
 }
 
 /* ======================================================
@@ -567,6 +586,7 @@ a.corner-button {
     padding: 8px 14px;
     max-width: 90%;
   }
+  .inline-icon { width: 16px; height: 16px; }
 }
 
 @media (max-width: 480px) {
@@ -575,6 +595,7 @@ a.corner-button {
     padding: 7px 12px;
     max-width: 88%;
   }
+  .inline-icon { width: 14px; height: 14px; }
 }
 
 /* =================================== */
