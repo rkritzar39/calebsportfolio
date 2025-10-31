@@ -1,6 +1,5 @@
 /* =======================================================
-   Live Activity System — Cinematic Neon Pulse Edition ⚡
-   Platforms: Manual • Twitch • Steam • Discord • Spotify • GitHub • Reddit • TikTok
+   Live Activity System — Cinematic Neon Smart Edition ⚡
    ======================================================= */
 
 import {
@@ -30,22 +29,22 @@ const CONFIG = {
 };
 
 /* ================================
-   PLATFORM STYLES
+   PLATFORM ICONS + COLORS
 ================================ */
 const PLATFORM_STYLE = {
-  twitch:  { color: "#9146FF", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg", name: "Twitch" },
-  tiktok:  { color: "#010101", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg", name: "TikTok" },
-  github:  { color: "#333333", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg", name: "GitHub" },
-  reddit:  { color: "#FF4500", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/reddit.svg", name: "Reddit" },
-  steam:   { color: "#00ADEE", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg", name: "Steam" },
-  spotify: { color: "#1DB954", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg", name: "Spotify" },
-  discord: { color: "#5865F2", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg", name: "Discord" },
-  manual:  { color: "var(--accent-color)", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/activitypub.svg", name: "Status" },
-  offline: { color: "#999999", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg", name: "Offline" },
+  twitch:  { color: "#9146FF", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg" },
+  tiktok:  { color: "#000000", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" },
+  github:  { color: "#181717", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg" },
+  reddit:  { color: "#FF4500", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/reddit.svg" },
+  steam:   { color: "#171A21", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg" },
+  spotify: { color: "#1DB954", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg" },
+  discord: { color: "#5865F2", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" },
+  manual:  { color: "var(--accent-color)", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/activitypub.svg" },
+  offline: { color: "#999999", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" },
 };
 
 /* ================================
-   PRIORITY MAP
+   PRIORITY + LIFETIME
 ================================ */
 function getPriority(source) {
   const live = ["twitch", "steam", "spotify", "discord"];
@@ -57,8 +56,24 @@ function getPriority(source) {
   return 0;
 }
 
+// Track temporary posts
+const TEMP_TRACKER = new Map();
+const TEMP_LIFETIME = 90 * 1000; // 90s lifetime
+
+function registerTemporary(source, text) {
+  const key = `${source}:${text}`;
+  TEMP_TRACKER.set(key, Date.now());
+}
+
+function isExpired(source, text) {
+  const key = `${source}:${text}`;
+  const t = TEMP_TRACKER.get(key);
+  if (!t) return false;
+  return Date.now() - t > TEMP_LIFETIME;
+}
+
 /* ================================
-   RENDER STATUS
+   SHOW STATUS
 ================================ */
 function showStatus(activities, isOffline = false) {
   const container = document.getElementById("live-activity");
@@ -66,49 +81,54 @@ function showStatus(activities, isOffline = false) {
   const textEl = document.getElementById("live-activity-text");
   if (!container || !iconEl || !textEl) return;
 
-  const list = Array.isArray(activities) ? activities : [activities];
-  const sorted = list.sort((a, b) => getPriority(b.source) - getPriority(a.source));
-  const top = sorted[0];
-  const { color, icon } = PLATFORM_STYLE[isOffline ? "offline" : top.source] || PLATFORM_STYLE.discord;
+  // filter out expired mid-tier
+  const filtered = (Array.isArray(activities) ? activities : [activities]).filter(a => {
+    const p = getPriority(a.source);
+    if (p === 2) {
+      if (!TEMP_TRACKER.has(`${a.source}:${a.text}`))
+        registerTemporary(a.source, a.text);
+      return !isExpired(a.source, a.text);
+    }
+    return true;
+  });
+
+  const sorted = filtered.sort((a, b) => getPriority(b.source) - getPriority(a.source));
+  const top = sorted[0] || { text: "🛌 Offline", source: "offline" };
+  const { color, icon } = PLATFORM_STYLE[top.source] || PLATFORM_STYLE.discord;
   const highest = getPriority(top.source);
 
-  // Build HTML with inline icons
   const textHTML = sorted
-    .map((a) => {
-      const style = PLATFORM_STYLE[a.source] || {};
+    .map(a => {
+      const { icon: i, color: c } = PLATFORM_STYLE[a.source] || {};
       const priority = getPriority(a.source);
       const opacity = priority < highest ? 0.55 : 1;
       const italic = priority < highest ? "italic" : "normal";
-      const blur = priority < highest ? "blur(0.4px)" : "none";
       return `
-        <span class="activity-item" style="opacity:${opacity};font-style:${italic};filter:${blur}">
-          <img src="${style.icon}" class="inline-icon" alt="${a.source}" /> ${a.text}
+        <span class="activity-item" style="opacity:${opacity};font-style:${italic}">
+          <img src="${i}" class="inline-icon" alt="${a.source}" style="filter:none;fill:${c}" /> ${a.text}
         </span>`;
     })
     .join('<span class="divider"> • </span>');
 
-  // Fade transition
+  // fade animation
   textEl.classList.add("fade-out");
   setTimeout(() => {
     textEl.innerHTML = textHTML;
     textEl.style.color = color;
     textEl.classList.remove("fade-out");
     textEl.classList.add("fade-in");
-    setTimeout(() => textEl.classList.remove("fade-in"), 500);
-  }, 250);
+    setTimeout(() => textEl.classList.remove("fade-in"), 400);
+  }, 200);
 
-  // Main icon + glow
+  // main icon
   iconEl.src = icon;
   iconEl.className = `activity-icon ${top.source} change`;
 
-  // Neon gradient background
-  container.style.background = `linear-gradient(90deg, color-mix(in srgb, ${color} 35%, transparent), color-mix(in srgb, var(--content-bg) 80%, transparent))`;
+  // glow
+  container.style.background = `linear-gradient(90deg, color-mix(in srgb, ${color} 30%, transparent), color-mix(in srgb, var(--content-bg) 80%, transparent))`;
   container.style.boxShadow = `0 0 25px ${color}70, 0 0 40px ${color}40 inset`;
-
-  // Glow strength
-  const glowPulse = highest === 3 ? "neon" : highest === 2 ? "mid" : "soft";
-  container.dataset.glow = glowPulse;
-  container.classList.toggle("offline", isOffline);
+  const glow = highest === 3 ? "neon" : highest === 2 ? "mid" : "soft";
+  container.dataset.glow = glow;
   container.classList.remove("hidden");
 }
 
@@ -123,45 +143,41 @@ async function getManualStatus() {
       if (msg && msg.trim()) return [{ text: msg, source: "manual" }];
     }
     return [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
-    const res = await fetch(
-      `https://api.twitch.tv/helix/streams?user_login=${encodeURIComponent(user)}`,
-      { headers: { "Client-ID": clientId, "Authorization": `Bearer ${token}` } }
-    );
+    const res = await fetch(`https://api.twitch.tv/helix/streams?user_login=${user}`, {
+      headers: { "Client-ID": clientId, Authorization: `Bearer ${token}` },
+    });
     const data = await res.json();
     const stream = data?.data?.[0];
-    if (stream?.title) return [{ text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" }];
+    if (stream?.title)
+      return [{ text: `🟣 Streaming — ${stream.title}`, source: "twitch" }];
     return [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
-    const res = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`);
+    const res = await fetch(
+      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`
+    );
     const data = await res.json();
     const player = data?.response?.players?.[0];
     if (player?.gameextrainfo)
       return [{ text: `🎮 Playing ${player.gameextrainfo}`, source: "steam" }];
     return [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${encodeURIComponent(userId)}`);
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`);
     const { data } = await res.json();
     if (!data) return [];
 
@@ -176,18 +192,16 @@ async function getDiscordActivity() {
     if (game?.name)
       results.push({ text: `🎮 Playing ${game.name}`, source: "discord" });
 
-    const status = {
+    const statusMap = {
       online: "🟢 Online",
       idle: "🌙 Idle",
       dnd: "⛔ Busy",
-    }[data.discord_status];
-    if (status && results.length === 0)
-      results.push({ text: `${status} on Discord`, source: "discord" });
+    };
+    if (data.discord_status !== "offline" && results.length === 0)
+      results.push({ text: `${statusMap[data.discord_status]} on Discord`, source: "discord" });
 
     return results;
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 async function getGitHubStatus() {
@@ -198,14 +212,12 @@ async function getGitHubStatus() {
     const latest = events?.[0];
     if (!latest) return [];
     const repo = latest.repo?.name ?? "a repo";
-    switch (latest.type) {
-      case "PushEvent": return [{ text: `💻 Pushed code to ${repo}`, source: "github" }];
-      case "PullRequestEvent": return [{ text: `🧩 Opened PR on ${repo}`, source: "github" }];
-      default: return [];
-    }
-  } catch {
+    if (latest.type === "PushEvent")
+      return [{ text: `💻 Pushed to ${repo}`, source: "github" }];
+    if (latest.type === "PullRequestEvent")
+      return [{ text: `🧩 Opened PR on ${repo}`, source: "github" }];
     return [];
-  }
+  } catch { return []; }
 }
 
 async function getRedditStatus() {
@@ -214,24 +226,23 @@ async function getRedditStatus() {
     const res = await fetch(`https://www.reddit.com/user/${username}/submitted.json`);
     const data = await res.json();
     const post = data?.data?.children?.[0]?.data;
-    if (post) return [{ text: `📢 Posted “${post.title}” on r/${post.subreddit}`, source: "reddit" }];
+    if (post)
+      return [{ text: `📢 “${post.title}” on r/${post.subreddit}`, source: "reddit" }];
     return [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   try {
-    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`);
+    const res = await fetch(
+      `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`
+    );
     const data = await res.json();
     if (data?.title)
-      return [{ text: `🎬 Uploaded “${data.title}”`, source: "tiktok" }];
+      return [{ text: `🎬 “${data.title}”`, source: "tiktok" }];
     return [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 /* ================================
