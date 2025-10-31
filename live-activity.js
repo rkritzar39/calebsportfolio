@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Final Stable Edition
+   🎧 Live Activity System — Hover Album + Twitch Live Now Edition
    ====================================================== */
 
 import {
@@ -40,7 +40,7 @@ const BRAND_COLORS = {
    🧩 GLOBALS
    ====================================================== */
 let lastUpdateTime = null;
-let isLive = false;
+let isTwitchLive = false;
 let currentSpotifyArt = null;
 
 /* ======================================================
@@ -78,25 +78,18 @@ function updateIconCluster(platforms) {
     icon.appendChild(img);
     cluster.appendChild(icon);
 
-    // Spotify album art overlay
+    // 🎵 Spotify hover album art
     if (source === "spotify" && currentSpotifyArt) {
-      const thumb = document.createElement("img");
-      thumb.src = currentSpotifyArt;
-      thumb.alt = "Album Art";
-      thumb.className = "spotify-thumb";
-      thumb.style.width = "24px";
-      thumb.style.height = "24px";
-      thumb.style.borderRadius = "4px";
-      thumb.style.objectFit = "cover";
-      thumb.style.position = "absolute";
-      thumb.style.bottom = "-30px";
-      thumb.style.left = "50%";
-      thumb.style.transform = "translateX(-50%)";
-      thumb.style.boxShadow = "0 0 8px rgba(0,0,0,0.4)";
-      cluster.appendChild(thumb);
+      const albumPreview = document.createElement("div");
+      albumPreview.className = "spotify-hover-art";
+      const albumImg = document.createElement("img");
+      albumImg.src = currentSpotifyArt;
+      albumImg.alt = "Album Art";
+      albumPreview.appendChild(albumImg);
+      icon.appendChild(albumPreview);
     }
 
-    // Fade temp icons
+    // Fade temporary icons
     if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
@@ -104,7 +97,7 @@ function updateIconCluster(platforms) {
       }, 5000);
     }
 
-    // Touch tooltip
+    // Touch tooltip support
     let holdTimer;
     icon.addEventListener("touchstart", () => {
       holdTimer = setTimeout(() => icon.classList.add("touch-active"), 400);
@@ -156,8 +149,8 @@ function showStatus(payload, allActive = []) {
     showToast(`🔥 New ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, BRAND_COLORS[source]);
   }
 
-  isLive = ["twitch", "steam", "discord", "spotify"].includes(source);
-  container.classList.toggle("live-now", isLive);
+  isTwitchLive = source === "twitch";
+  container.classList.toggle("live-now", isTwitchLive);
 
   lastUpdateTime = Date.now();
   updateLastUpdated();
@@ -171,8 +164,8 @@ function updateLastUpdated() {
   const container = document.getElementById("live-activity");
   if (!updated || !lastUpdateTime) return;
 
-  if (isLive) {
-    updated.textContent = "🟢 Live Now";
+  if (isTwitchLive) {
+    updated.textContent = "🟣 Live Now";
     container.classList.add("live-now");
     return;
   } else {
@@ -192,8 +185,6 @@ function updateLastUpdated() {
 /* ======================================================
    🌐 PLATFORM FETCHERS
    ====================================================== */
-
-// Manual (Firestore)
 async function getManualStatus() {
   try {
     const snap = await getDoc(doc(db, "live_status", "current"));
@@ -205,7 +196,6 @@ async function getManualStatus() {
   return null;
 }
 
-// Twitch
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
@@ -220,7 +210,6 @@ async function getTwitchStatus() {
   return null;
 }
 
-// Steam
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
@@ -232,7 +221,6 @@ async function getSteamStatus() {
   return null;
 }
 
-// Discord (Lanyard with Spotify)
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
@@ -267,7 +255,6 @@ async function getDiscordActivity() {
   return null;
 }
 
-// GitHub (Temporary)
 async function getGitHubStatus() {
   const { username } = CONFIG.github;
   if (wasRecentlyShown("github")) return null;
@@ -283,7 +270,6 @@ async function getGitHubStatus() {
   return null;
 }
 
-// Reddit (Temporary)
 async function getRedditStatus() {
   const { username } = CONFIG.reddit;
   if (wasRecentlyShown("reddit")) return null;
@@ -299,7 +285,6 @@ async function getRedditStatus() {
   return null;
 }
 
-// TikTok (Temporary)
 async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   if (wasRecentlyShown("tiktok")) return null;
