@@ -1668,7 +1668,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ========================================================= */
-/* == QUOTE OF THE DAY (MULTI-API + CATEGORY + REFRESH FIX) == */
+/* == QUOTE OF THE DAY (FINAL VERSION with Categories) == */
 /* ========================================================= */
 
 async function loadQuoteOfTheDay(forceRefresh = false) {
@@ -1688,6 +1688,7 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
   const quoteDateEl = document.getElementById("quote-date");
   if (!quoteText || !quoteAuthor) return;
 
+  // 🗓️ Format date
   const now = new Date();
   const formattedDate = now.toLocaleDateString(undefined, {
     weekday: "long",
@@ -1703,7 +1704,7 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
   const storedCategory = localStorage.getItem("quoteCategory");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
-  // ✅ Only reuse cached quote if same date AND same category AND not forced
+  // ✅ Use cached quote if same date & same category & not forced
   if (!forceRefresh && storedDate === today && storedQuote && storedCategory === category) {
     try {
       const { content, author } = JSON.parse(storedQuote);
@@ -1716,6 +1717,7 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
+  // 🪶 Local fallback quotes
   const localQuotes = {
     inspirational: [
       { content: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
@@ -1744,6 +1746,7 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
+  // === API 1: Quotable ===
   async function getQuoteFromQuotable() {
     try {
       const res = await fetchWithTimeout(
@@ -1758,6 +1761,7 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
+  // === API 2: ZenQuotes ===
   async function getQuoteFromZenQuotes() {
     try {
       const res = await fetchWithTimeout("https://zenquotes.io/api/today", 6000);
@@ -1770,6 +1774,7 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
+  // === API 3: FavQs ===
   async function getQuoteFromFavQs() {
     try {
       const res = await fetchWithTimeout("https://favqs.com/api/qotd", 6000);
@@ -1781,29 +1786,28 @@ async function loadQuoteOfTheDay(forceRefresh = false) {
     }
   }
 
+  // 🌐 Try APIs in order
   let chosen = await getQuoteFromQuotable();
   if (!chosen) chosen = await getQuoteFromZenQuotes();
   if (!chosen) chosen = await getQuoteFromFavQs();
+
+  // 🧱 Final fallback: Local quotes
   if (!chosen) {
     const catList = localQuotes[category] || localQuotes["inspirational"];
     chosen = catList[Math.floor(Math.random() * catList.length)];
   }
 
+  // 🖋️ Display + cache + fade-in
   quoteText.textContent = `“${chosen.content}”`;
   quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
-
-  // ✅ Save both date and category
   localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
   localStorage.setItem("quoteDate", today);
   localStorage.setItem("quoteCategory", category);
-
   quoteSection.classList.add("loaded");
 }
 
-document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
-
 /* ========================================================= */
-/* == QUOTE CATEGORY PICKER + CUSTOM CATEGORY MANAGER == */
+/* == CATEGORY SELECTOR (Add + Custom + Refresh Support) == */
 /* ========================================================= */
 
 function setupQuoteCategorySelector() {
@@ -1818,7 +1822,7 @@ function setupQuoteCategorySelector() {
   const savedCategories = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
   const currentCategory = settings.quoteCategory || "inspirational";
 
-  // Populate dropdown
+  // Rebuild dropdown each time
   const baseCategories = ["inspirational", "life", "success"];
   categorySelect.innerHTML = "";
 
@@ -1841,21 +1845,16 @@ function setupQuoteCategorySelector() {
     categorySelect.appendChild(optGroup);
   }
 
-  // Add final "Custom..." option
   const customOpt = document.createElement("option");
   customOpt.value = "custom";
   customOpt.textContent = "➕ Add new category...";
   categorySelect.appendChild(customOpt);
 
-  // Set current value
   categorySelect.value =
-    currentCategory &&
-    (baseCategories.includes(currentCategory) ||
-      savedCategories.includes(currentCategory))
+    (baseCategories.includes(currentCategory) || savedCategories.includes(currentCategory))
       ? currentCategory
       : "inspirational";
 
-  // Show input field when "custom" is selected
   categorySelect.addEventListener("change", () => {
     if (categorySelect.value === "custom") {
       customContainer.style.display = "flex";
@@ -1866,7 +1865,6 @@ function setupQuoteCategorySelector() {
     }
   });
 
-  // Save custom category
   saveCustomBtn.addEventListener("click", () => {
     const newCategory = customInput.value.trim().toLowerCase();
     if (!newCategory) {
@@ -1878,29 +1876,96 @@ function setupQuoteCategorySelector() {
     if (!saved.includes(newCategory)) saved.push(newCategory);
     localStorage.setItem("customQuoteCategories", JSON.stringify(saved));
 
-    // Update settings
     updateQuoteCategory(newCategory, true);
-
-    // Refresh dropdown
     setupQuoteCategorySelector();
     customContainer.style.display = "none";
     customInput.value = "";
   });
 }
 
-// Update settings and refresh quote
 function updateQuoteCategory(category, forceReload = false) {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   settings.quoteCategory = category;
   localStorage.setItem("websiteSettings", JSON.stringify(settings));
 
-  // Invalidate cache and refresh
   localStorage.removeItem("quoteOfTheDay");
   localStorage.setItem("quoteCategory", category);
-  loadQuoteOfTheDay(true); // force reload new quote
+  loadQuoteOfTheDay(true);
 }
 
-document.addEventListener("DOMContentLoaded", setupQuoteCategorySelector);
+/* ========================================================= */
+/* == CATEGORY MANAGER MODAL (View + Delete) == */
+/* ========================================================= */
+
+function setupCategoryManager() {
+  const modal = document.getElementById("category-manager-modal");
+  const list = document.getElementById("custom-category-list");
+  const openBtn = document.getElementById("manage-categories-btn");
+  const closeBtn = document.getElementById("close-category-manager");
+
+  if (!modal || !list || !openBtn || !closeBtn) return;
+
+  openBtn.addEventListener("click", () => {
+    updateCustomCategoryList();
+    modal.classList.remove("hidden");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    modal.classList.add("hidden");
+  });
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.add("hidden");
+  });
+
+  function updateCustomCategoryList() {
+    const saved = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
+    list.innerHTML = "";
+
+    if (saved.length === 0) {
+      list.innerHTML = `<li style="text-align:center;">No custom categories yet.</li>`;
+      return;
+    }
+
+    saved.forEach((cat) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <span>${cat}</span>
+        <button data-cat="${cat}">🗑️ Remove</button>
+      `;
+      list.appendChild(li);
+    });
+
+    list.querySelectorAll("button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const catToDelete = btn.dataset.cat;
+        const savedCats = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
+        const updated = savedCats.filter((c) => c !== catToDelete);
+        localStorage.setItem("customQuoteCategories", JSON.stringify(updated));
+
+        const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+        if (settings.quoteCategory === catToDelete) {
+          settings.quoteCategory = "inspirational";
+          localStorage.setItem("websiteSettings", JSON.stringify(settings));
+          loadQuoteOfTheDay(true);
+        }
+
+        setupQuoteCategorySelector();
+        updateCustomCategoryList();
+      });
+    });
+  }
+}
+
+/* ========================================================= */
+/* == INIT on Page Load == */
+/* ========================================================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadQuoteOfTheDay();
+  setupQuoteCategorySelector();
+  setupCategoryManager();
+});
 
 // ======================================================
 // ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
