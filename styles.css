@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Final Live Counter + Glow Edition
+   🎧 Live Activity — Honeycomb Cluster + Toasts
    ====================================================== */
 
 .live-activity {
@@ -467,17 +467,16 @@ a.corner-button {
   align-items: center;
   justify-content: flex-start;
   gap: 16px;
-  margin: 1.2rem auto 0 auto;
+  margin: 1rem auto;
   padding: 12px 20px;
-  border-radius: var(--radius-md, 14px);
-  width: 90%;
-  max-width: 480px;
-  background: color-mix(in srgb, var(--content-bg, #1b1b1b) 85%, transparent);
-  backdrop-filter: var(--backdrop-blur, blur(14px));
-  border: 1px solid color-mix(in srgb, var(--border-color, #444) 60%, transparent);
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color, #000) 50%, transparent);
+  border-radius: 14px;
+  width: fit-content;
+  max-width: 95%;
+  background: color-mix(in srgb, var(--content-bg, #1b1b1b) 80%, transparent);
+  backdrop-filter: var(--backdrop-blur, blur(12px));
+  border: 1px solid color-mix(in srgb, var(--border-color, #555) 60%, transparent);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color, #000) 50%, transparent);
   transition: all 0.4s ease;
-  position: relative;
 }
 
 .live-activity.hidden {
@@ -487,16 +486,16 @@ a.corner-button {
 }
 
 /* ======================================================
-   🐝 ICON CLUSTER
+   🐝 ICON HONEYCOMB CLUSTER
    ====================================================== */
 .icon-cluster {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 4px;
+  grid-gap: 6px;
   justify-items: center;
   align-items: center;
-  width: 60px;
-  height: 60px;
+  width: 68px;
+  height: 68px;
   position: relative;
 }
 
@@ -507,40 +506,10 @@ a.corner-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   transform: scale(0);
   animation: pop-in 0.4s ease forwards;
   transition: opacity 0.4s ease, transform 0.3s ease;
   cursor: pointer;
-}
-
-/* Tooltip */
-.cluster-icon::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 130%;
-  left: 50%;
-  transform: translateX(-50%) scale(0.95);
-  background: rgba(0, 0, 0, 0.9);
-  color: #fff;
-  font-size: 0.7rem;
-  padding: 3px 6px;
-  border-radius: 4px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.cluster-icon:hover::after {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-}
-
-@keyframes pop-in {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
 }
 
 .cluster-icon img {
@@ -554,54 +523,46 @@ a.corner-button {
   transform: scale(0.6);
 }
 
+@keyframes pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 /* ======================================================
-   ✨ TEXT + COLORS
+   ✨ TEXT + STATUS
    ====================================================== */
 .activity-content {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  gap: 3px;
 }
 
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
   color: var(--accent-color, #ddd);
-  text-align: left;
   line-height: 1.4;
-  transition: color 0.3s ease, opacity 0.3s ease;
 }
 
-/* ======================================================
-   🕒 LAST UPDATED / LIVE LABEL
-   ====================================================== */
-.live-activity-updated {
+.activity-updated {
   font-size: 0.8rem;
-  font-weight: 400;
-  color: color-mix(in srgb, var(--accent-color, #bbb) 60%, #999);
-  opacity: 0.8;
-  margin-top: 3px;
-  transition: opacity 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+  opacity: 0.7;
+  color: #aaa;
+  transition: color 0.3s ease;
 }
 
-.live-activity-updated.fade {
-  opacity: 0.5;
-}
-
-/* Live glow effect */
-.live-activity.live-now .live-activity-updated {
-  color: #39ff14;
-  text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
-  font-weight: 500;
+.live-activity.live-now .activity-updated {
+  color: #1db954;
 }
 
 /* ======================================================
-   💫 Pulse Glow
+   💫 Glow Pulse
    ====================================================== */
 .live-activity.active {
   animation: pulse 3s ease-in-out infinite;
 }
+
 @keyframes pulse {
   0%, 100% {
     box-shadow: 0 8px 22px color-mix(in srgb, var(--accent-color, #888) 30%, transparent);
@@ -612,26 +573,58 @@ a.corner-button {
 }
 
 /* ======================================================
+   🔔 TOAST NOTIFICATIONS
+   ====================================================== */
+#toast-container {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.toast {
+  background: rgba(20, 20, 20, 0.95);
+  color: white;
+  font-size: 0.9rem;
+  padding: 10px 16px;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: toast-slide 0.4s forwards;
+}
+
+@keyframes toast-slide {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================================================
    📱 Responsive
    ====================================================== */
 @media (max-width: 768px) {
   .live-activity {
-    margin-top: 0.75rem;
-    padding: 8px 14px;
     gap: 12px;
+    padding: 10px 14px;
   }
-
   .icon-cluster {
+    grid-template-columns: repeat(2, 1fr);
     width: 50px;
     height: 50px;
   }
+}
 
-  #live-activity-text {
-    font-size: 0.95rem;
-  }
-
-  .live-activity-updated {
-    font-size: 0.75rem;
+@media (max-width: 480px) {
+  .icon-cluster {
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 4px;
+    width: 44px;
+    height: 44px;
   }
 }
 
