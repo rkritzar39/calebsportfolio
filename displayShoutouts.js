@@ -1685,7 +1685,7 @@ async function loadQuoteOfTheDay() {
 
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
-  const quoteDateEl = document.getElementById("quote-date"); // ✅ new date element
+  const quoteDateEl = document.getElementById("quote-date");
   if (!quoteText || !quoteAuthor) return;
 
   // 🗓️ Display today's date nicely formatted
@@ -1748,11 +1748,38 @@ async function loadQuoteOfTheDay() {
   let chosen = null;
 
   try {
-    // Primary source: Quotable API
-    const res = await fetchWithTimeout("https://api.quotable.io/random", 5000);
+    // ==================
+    // START: MODIFIED BLOCK
+    // ==================
+    // Primary source: Quotable API (now deterministic "Quote of the Day")
+    
+    // We pick a "daily" page from ~74 total pages, then pick a "daily" quote from that page.
+    const pageHash = Math.abs(hashCode(today));
+    const itemHash = Math.abs(hashCode(today + "_item")); // Use "salt" for a different hash
+
+    // quotable.io has ~74 pages of 20 quotes each. We'll pick a page from 1-74.
+    const pageToFetch = (pageHash % 74) + 1;
+    
+    const res = await fetchWithTimeout(
+      `https://api.quotable.io/quotes?page=${pageToFetch}`, // default limit is 20
+      5000
+    );
     const data = await res.json();
-    chosen = { content: data.content, author: data.author || "Unknown" };
-  } catch {
+    const list = data.results; // This is an array of up to 20 quotes
+
+    if (!Array.isArray(list) || list.length === 0) {
+      throw new Error("Invalid quote list from quotable.io");
+    }
+
+    // Pick the deterministic quote from the page
+    const item = list[itemHash % list.length];
+    chosen = { content: item.content, author: item.author || "Unknown" };
+    // ==================
+    // END: MODIFIED BLOCK
+    // ==================
+
+  } catch (err) {
+    console.warn("Primary quotable.io fetch failed, trying fallback:", err); // Added logging
     try {
       // Fallback: type.fit
       const res2 = await fetchWithTimeout("https://type.fit/api/quotes", 6000);
