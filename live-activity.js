@@ -28,18 +28,18 @@ const CONFIG = {
 
   // GitHub
   github: {
-    username: "GITHUB_USERNAME", // e.g., "calebkritzar"
+    username: "rkritzar39", // e.g., "calebkritzar"
   },
 
   // Reddit
   reddit: {
-    username: "REDDIT_USERNAME", // e.g., "calebkritzar"
+    username: "Electronic_Row_1262", // e.g., "calebkritzar"
   },
 
   // Steam
   steam: {
-    steamId64: "STEAM_ID_64",      // 64-bit SteamID
-    apiKey: "STEAM_API_KEY",       // https://steamcommunity.com/dev/apikey
+    steamId64: "76561199283946668",      // 64-bit SteamID
+    apiKey: "B254FC3875EF0EB1AAEBA9FACFA81C1F",       // https://steamcommunity.com/dev/apikey
   },
 
   // Discord (via Lanyard)
