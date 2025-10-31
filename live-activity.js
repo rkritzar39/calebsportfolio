@@ -11,7 +11,6 @@ import { db } from "./firebase-init.js";
 
 /* ================================
    DISCORD PRESENCE — Clean version
-   Shows only real activities (game / Spotify)
 ================================ */
 async function getDiscordActivity() {
   const userId = "850815059093356594"; // your Discord ID
@@ -54,12 +53,11 @@ async function getDiscordActivity() {
 
 /* ================================
    TWITCH STATUS
-   (For production, use a server-side proxy to keep tokens private)
 ================================ */
 async function getTwitchStatus() {
   const user = "calebkritzar";
   const clientId = "n7e3lys858u96xlg7v2aohe8vzxha3";
-  const token = "wh1m17qfuq5dkh5b78ekk6oh5wc8wm";
+  const token = "wh1m17qfuq5dkh5b78ekk6oh5wc8wm"; // ⚠️ move to server-side in production
 
   try {
     const res = await fetch(
@@ -71,8 +69,8 @@ async function getTwitchStatus() {
         }
       }
     );
-    const data = await res.json();
 
+    const data = await res.json();
     if (data.data && data.data.length > 0) {
       const title = data.data[0].title;
       return `🟣 Streaming on Twitch — ${title}`;
@@ -106,7 +104,7 @@ function isLiveActivityEnabled() {
     const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
     return settings.showLiveActivity === "enabled";
   } catch {
-    return true; // default to enabled if settings missing
+    return true; // default to enabled if missing
   }
 }
 
@@ -118,7 +116,7 @@ async function updateLiveStatus() {
   const container = document.getElementById("live-activity");
   if (!el || !container) return;
 
-  // 🧠 Skip everything if Live Activity is disabled
+  // Skip everything if disabled
   if (!isLiveActivityEnabled()) {
     container.style.display = "none";
     console.log("[Live Activity] Disabled by user settings.");
@@ -151,23 +149,50 @@ async function updateLiveStatus() {
 }
 
 /* ================================
-   SHOW STATUS
+   SHOW STATUS + ICON HANDLER
 ================================ */
 function showStatus(text, isOffline = false) {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
-  if (!el || !container) return;
+  const icon = document.getElementById("activity-icon");
+  if (!el || !container || !icon) return;
 
   el.textContent = text;
   container.classList.toggle("active", !isOffline);
   container.classList.toggle("offline", isOffline);
   container.classList.remove("hidden");
 
-  if (isOffline) {
-    container.style.opacity = "0.8";
-  } else {
-    container.style.opacity = "1";
+  // --- Determine which icon to show ---
+  let iconClass = "discord";
+  let iconSrc = "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg";
+  let textColor = "var(--accent-color)";
+
+  if (text.includes("Twitch")) {
+    iconClass = "twitch";
+    iconSrc = "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg";
+    textColor = "#9146FF";
+  } else if (text.includes("Spotify") || text.includes("Listening")) {
+    iconClass = "spotify";
+    iconSrc = "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg";
+    textColor = "#1DB954";
+  } else if (text.includes("Playing")) {
+    iconClass = "discord";
+    iconSrc = "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg";
+    textColor = "#5865F2";
+  } else if (text.includes("Offline") || isOffline) {
+    iconClass = "offline";
+    iconSrc = "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg";
+    textColor = "gray";
   }
+
+  // Apply updates
+  icon.src = iconSrc;
+  icon.className = `activity-icon ${iconClass} change`;
+  el.style.color = textColor;
+  container.style.opacity = isOffline ? "0.8" : "1";
+
+  // Smooth transition animation
+  setTimeout(() => icon.classList.remove("change"), 300);
 }
 
 /* ================================
@@ -176,7 +201,7 @@ function showStatus(text, isOffline = false) {
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
 
-  // Refresh every 30 seconds (only if enabled)
+  // Refresh every 30 seconds
   setInterval(() => {
     if (isLiveActivityEnabled()) updateLiveStatus();
   }, 30000);
