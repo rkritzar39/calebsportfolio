@@ -1,6 +1,6 @@
-/* =======================================================
-   Live Activity System — Persistent Multi-Icon Glow Edition
-   ======================================================= */
+/* ======================================================
+   🧠 Live Activity System — Smart Priority + Cooldown Edition
+   ====================================================== */
 
 import {
   getFirestore,
@@ -22,168 +22,169 @@ const CONFIG = {
 };
 
 /* ================================
-   BRAND COLORS + ICONS
+   HELPERS
 ================================ */
-const PLATFORM_STYLE = {
-  twitch:  { color: "#9146FF", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg" },
-  tiktok:  { color: "#000000", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" },
-  github:  { color: "#181717", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg" },
-  reddit:  { color: "#FF4500", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/reddit.svg" },
-  steam:   { color: "#171A21", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg" },
-  spotify: { color: "#1DB954", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg" },
-  discord: { color: "#5865F2", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" },
-  manual:  { color: "var(--accent-color)", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/activitypub.svg" },
-  offline: { color: "#999999", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" },
-};
-
-/* ================================
-   PRIORITIES + EXPIRATION
-================================ */
-function getPriority(source) {
-  if (["twitch", "steam", "spotify", "discord"].includes(source)) return 3; // live
-  if (["github", "reddit", "tiktok"].includes(source)) return 2; // temporary
-  if (["manual"].includes(source)) return 1;
-  return 0;
-}
-
-const TEMP_LIFETIME = 45 * 1000; // 45s
-const TEMP_KEY = "liveActivityTempTracker";
-
-function loadTempTracker() {
-  try { return JSON.parse(localStorage.getItem(TEMP_KEY)) || {}; }
-  catch { return {}; }
-}
-function saveTempTracker(obj) {
-  localStorage.setItem(TEMP_KEY, JSON.stringify(obj));
-}
-
-let TEMP_TRACKER = loadTempTracker();
-
-function markTemporary(source, text) {
-  const key = `${source}:${text}`;
-  if (!TEMP_TRACKER[key]) {
-    TEMP_TRACKER[key] = Date.now();
-    saveTempTracker(TEMP_TRACKER);
-  }
-}
-
-function isExpired(source, text) {
-  const key = `${source}:${text}`;
-  if (!TEMP_TRACKER[key]) return false;
-  const expired = Date.now() - TEMP_TRACKER[key] > TEMP_LIFETIME;
-  if (expired) {
-    delete TEMP_TRACKER[key];
-    saveTempTracker(TEMP_TRACKER);
-  }
-  return expired;
-}
-
-/* ================================
-   RENDER
-================================ */
-function showStatus(activities, isOffline = false) {
-  const container = document.getElementById("live-activity");
-  const iconContainer = document.getElementById("activity-icon"); // main left cluster
-  const textEl = document.getElementById("live-activity-text");
-  if (!container || !iconContainer || !textEl) return;
-
-  const all = Array.isArray(activities) ? activities : [activities];
-
-  // Filter temp expirations
-  const filtered = all.filter(a => {
-    if (getPriority(a.source) === 2) {
-      markTemporary(a.source, a.text);
-      return !isExpired(a.source, a.text);
-    }
+function isLiveActivityEnabled() {
+  try {
+    const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    return settings.showLiveActivity === "enabled";
+  } catch {
     return true;
-  });
+  }
+}
 
-  const sorted = filtered.sort((a, b) => getPriority(b.source) - getPriority(a.source));
-  const top = sorted[0] || { text: "🛌 Offline", source: "offline" };
-  const highest = getPriority(top.source);
-  const { color } = PLATFORM_STYLE[top.source] || PLATFORM_STYLE.discord;
+function wasRecentlyShown(platform, cooldown = 600000) { // 10 min
+  const last = localStorage.getItem(`last_${platform}_shown`);
+  if (!last) return false;
+  return Date.now() - parseInt(last, 10) < cooldown;
+}
 
-  /* ---- Left Icon Cluster ---- */
-  const activeIcons = sorted.map(a => {
-    const { icon, color } = PLATFORM_STYLE[a.source];
-    const size = getPriority(a.source) === 3 ? 22 : 18;
-    return `<img src="${icon}" class="left-icon" alt="${a.source}"
-              style="width:${size}px;height:${size}px;margin-right:6px;filter:none;fill:${color};">`;
-  }).join("");
-
-  iconContainer.outerHTML = `<div id="activity-icon" class="icon-cluster">${activeIcons}</div>`;
-
-  /* ---- Text ---- */
-  const textHTML = sorted
-    .map(a => {
-      const { icon, color } = PLATFORM_STYLE[a.source];
-      const priority = getPriority(a.source);
-      const opacity = priority < highest ? 0.6 : 1;
-      const italic = priority < highest ? "italic" : "normal";
-      return `<span class="activity-item" style="opacity:${opacity};font-style:${italic}">
-        <img src="${icon}" class="inline-icon" alt="${a.source}" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px;"> 
-        ${a.text}
-      </span>`;
-    })
-    .join('<span class="divider"> • </span>');
-
-  textEl.classList.add("fade-out");
-  setTimeout(() => {
-    textEl.innerHTML = textHTML;
-    textEl.style.color = color;
-    textEl.classList.remove("fade-out");
-    textEl.classList.add("fade-in");
-    setTimeout(() => textEl.classList.remove("fade-in"), 400);
-  }, 200);
-
-  /* ---- Glow ---- */
-  container.style.background = `linear-gradient(90deg, color-mix(in srgb, ${color} 25%, transparent), color-mix(in srgb, var(--content-bg) 80%, transparent))`;
-  container.style.boxShadow = `0 0 25px ${color}60, 0 0 40px ${color}30 inset`;
-  const glow = highest === 3 ? "neon" : highest === 2 ? "mid" : "soft";
-  container.dataset.glow = glow;
-  container.classList.remove("hidden");
+function markAsShown(platform) {
+  localStorage.setItem(`last_${platform}_shown`, Date.now().toString());
 }
 
 /* ================================
-   PLATFORM FETCHERS
+   ICON RENDERING
+================================ */
+function updateIconCluster(activePlatforms, mainSource) {
+  const cluster = document.querySelector(".icon-cluster");
+  if (!cluster) return;
+
+  cluster.innerHTML = "";
+  activePlatforms.forEach(({ source }) => {
+    const icon = document.createElement("div");
+    icon.className = "left-icon";
+    icon.setAttribute("alt", source);
+    const img = document.createElement("img");
+    img.src = `https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/${source}.svg`;
+    icon.appendChild(img);
+    cluster.appendChild(icon);
+
+    if (source !== mainSource && ["tiktok", "github", "reddit"].includes(source)) {
+      setTimeout(() => {
+        icon.classList.add("fade-out");
+        setTimeout(() => icon.remove(), 500);
+      }, 6000);
+    }
+  });
+}
+
+/* ================================
+   STATUS DISPLAY
+================================ */
+function showStatus(payload, isOffline = false, allActive = []) {
+  const textEl = document.getElementById("live-activity-text");
+  const container = document.getElementById("live-activity");
+  if (!textEl || !container) return;
+
+  const { text, source } = payload || { text: "💬 Status", source: "manual" };
+  textEl.textContent = text;
+  container.style.opacity = isOffline ? "0.8" : "1";
+  container.dataset.glow = isOffline ? "soft" : "neon";
+  container.style.setProperty("--accent-color", getBrandColor(source));
+
+  updateIconCluster(allActive, source);
+}
+
+/* ================================
+   BRAND COLORS
+================================ */
+function getBrandColor(source) {
+  const colors = {
+    twitch: "#9146FF",
+    tiktok: "#010101",
+    github: "#24292F",
+    reddit: "#FF4500",
+    steam: "#171A21",
+    spotify: "#1DB954",
+    discord: "#5865F2",
+    manual: "var(--accent-color)",
+    offline: "#777",
+  };
+  return colors[source] || "var(--accent-color)";
+}
+
+/* ================================
+   PLATFORM FETCHES
 ================================ */
 async function getManualStatus() {
   try {
     const snap = await getDoc(doc(db, "live_status", "current"));
     if (snap.exists()) {
       const msg = snap.data().message;
-      if (msg && msg.trim()) return [{ text: msg, source: "manual" }];
+      if (msg && msg.trim()) return { text: msg, source: "manual" };
     }
-    return [];
-  } catch { return []; }
+    return null;
+  } catch { return null; }
 }
 
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
     const res = await fetch(`https://api.twitch.tv/helix/streams?user_login=${user}`, {
-      headers: { "Client-ID": clientId, Authorization: `Bearer ${token}` },
+      headers: { "Client-ID": clientId, "Authorization": `Bearer ${token}` },
     });
     const data = await res.json();
     const stream = data?.data?.[0];
-    if (stream?.title)
-      return [{ text: `🟣 Streaming — ${stream.title}`, source: "twitch" }];
-    return [];
-  } catch { return []; }
+    if (stream?.title) return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
+  } catch {}
+  return null;
+}
+
+async function getTikTokStatus() {
+  const { username } = CONFIG.tiktok;
+  try {
+    if (wasRecentlyShown("tiktok")) return null;
+    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`);
+    const data = await res.json();
+    if (data?.title) {
+      markAsShown("tiktok");
+      return { text: `🎬 Posted on TikTok — “${data.title}”`, source: "tiktok", temporary: true };
+    }
+  } catch {}
+  return null;
+}
+
+async function getGitHubStatus() {
+  const { username } = CONFIG.github;
+  try {
+    if (wasRecentlyShown("github")) return null;
+    const res = await fetch(`https://api.github.com/users/${username}/events/public`);
+    const events = await res.json();
+    const latest = events?.[0];
+    if (!latest) return null;
+    const repo = latest.repo?.name ?? "a repository";
+    markAsShown("github");
+    if (latest.type === "PushEvent")
+      return { text: `💻 Pushed code to ${repo}`, source: "github", temporary: true };
+  } catch {}
+  return null;
+}
+
+async function getRedditStatus() {
+  const { username } = CONFIG.reddit;
+  try {
+    if (wasRecentlyShown("reddit")) return null;
+    const res = await fetch(`https://www.reddit.com/user/${username}/submitted.json`);
+    const data = await res.json();
+    const post = data?.data?.children?.[0]?.data;
+    if (!post) return null;
+    markAsShown("reddit");
+    return { text: `📢 Posted on r/${post.subreddit} — “${post.title}”`, source: "reddit", temporary: true };
+  } catch {}
+  return null;
 }
 
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
-    const res = await fetch(
-      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`
-    );
+    const res = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`);
     const data = await res.json();
     const player = data?.response?.players?.[0];
     if (player?.gameextrainfo)
-      return [{ text: `🎮 Playing ${player.gameextrainfo}`, source: "steam" }];
-    return [];
-  } catch { return []; }
+      return { text: `🎮 Playing ${player.gameextrainfo} on Steam`, source: "steam" };
+  } catch {}
+  return null;
 }
 
 async function getDiscordActivity() {
@@ -191,86 +192,57 @@ async function getDiscordActivity() {
   try {
     const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`);
     const { data } = await res.json();
-    if (!data) return [];
+    if (!data) return null;
+    const activities = data.activities || [];
 
-    const acts = data.activities || [];
-    const results = [];
-
-    const spotify = acts.find(a => a.name === "Spotify");
+    const spotify = activities.find(a => a.name === "Spotify");
     if (spotify?.details && spotify?.state)
-      results.push({ text: `🎵 “${spotify.details}” by ${spotify.state}`, source: "spotify" });
+      return { text: `🎵 Listening to “${spotify.details}” by ${spotify.state}`, source: "spotify" };
 
-    const game = acts.find(a => a.type === 0);
-    if (game?.name)
-      results.push({ text: `🎮 Playing ${game.name}`, source: "discord" });
+    const game = activities.find(a => a.type === 0);
+    if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
 
-    const statusMap = { online: "🟢 Online", idle: "🌙 Idle", dnd: "⛔ Busy" };
-    if (data.discord_status !== "offline" && results.length === 0)
-      results.push({ text: `${statusMap[data.discord_status]} on Discord`, source: "discord" });
-
-    return results;
-  } catch { return []; }
-}
-
-async function getGitHubStatus() {
-  const { username } = CONFIG.github;
-  try {
-    const res = await fetch(`https://api.github.com/users/${username}/events/public`);
-    const events = await res.json();
-    const latest = events?.[0];
-    if (!latest) return [];
-    const repo = latest.repo?.name ?? "a repo";
-    if (latest.type === "PushEvent")
-      return [{ text: `💻 Pushed to ${repo}`, source: "github" }];
-    if (latest.type === "PullRequestEvent")
-      return [{ text: `🧩 Opened PR on ${repo}`, source: "github" }];
-    return [];
-  } catch { return []; }
-}
-
-async function getRedditStatus() {
-  const { username } = CONFIG.reddit;
-  try {
-    const res = await fetch(`https://www.reddit.com/user/${username}/submitted.json`);
-    const data = await res.json();
-    const post = data?.data?.children?.[0]?.data;
-    if (post)
-      return [{ text: `📢 “${post.title}” on r/${post.subreddit}`, source: "reddit" }];
-    return [];
-  } catch { return []; }
-}
-
-async function getTikTokStatus() {
-  const { username } = CONFIG.tiktok;
-  try {
-    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`);
-    const data = await res.json();
-    if (data?.title)
-      return [{ text: `🎬 “${data.title}”`, source: "tiktok" }];
-    return [];
-  } catch { return []; }
+    if (data.discord_status !== "offline")
+      return { text: `🟢 Online on Discord`, source: "discord" };
+  } catch {}
+  return null;
 }
 
 /* ================================
-   MAIN LOOP
+   UPDATE LOOP
 ================================ */
 async function updateLiveStatus() {
-  const results = await Promise.all([
-    getManualStatus(),
-    getTwitchStatus(),
-    getSteamStatus(),
-    getDiscordActivity(),
-    getGitHubStatus(),
-    getRedditStatus(),
-    getTikTokStatus(),
-  ]);
+  const container = document.getElementById("live-activity");
+  if (!container) return;
+  if (!isLiveActivityEnabled()) {
+    container.style.display = "none";
+    return;
+  }
 
-  const active = results.flat();
-  if (active.length > 0) showStatus(active);
-  else showStatus({ text: "🛌 Offline", source: "offline" }, true);
+  const sources = [
+    getManualStatus,
+    getTwitchStatus,
+    getSteamStatus,
+    getDiscordActivity,
+    getGitHubStatus,
+    getRedditStatus,
+    getTikTokStatus,
+  ];
+
+  const active = [];
+  for (const fn of sources) {
+    const result = await fn();
+    if (result) active.push(result);
+  }
+
+  const live = active.find(a => !a.temporary) || active[0];
+  showStatus(live || { text: "🛌 Offline", source: "offline" }, !live, active);
 }
 
+/* ================================
+   INIT
+================================ */
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
-  setInterval(updateLiveStatus, 15000);
+  setInterval(updateLiveStatus, 30000);
 });
