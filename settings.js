@@ -45,7 +45,7 @@ class SettingsManager {
       this.initializeControls();
       this.applyAllSettings();
       this.setupEventListeners();
-
+      
       // Keep YOUR real implementations below; do not overwrite later
       this.initMouseTrail();
       this.initLoadingScreen();
@@ -94,6 +94,11 @@ class SettingsManager {
           this.syncWallpaperUIVisibility();
         }
       });
+
+      // 🔄 Restart or stop live activity when setting changes
+      if (typeof updateLiveStatus === "function") {
+        setTimeout(() => updateLiveStatus(), 500);
+      }
 
       // Footer year
       const yearSpan = document.getElementById("year");
