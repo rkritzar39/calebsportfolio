@@ -1,5 +1,5 @@
 /* ======================================================
-   🧠 Live Activity System — Tooltip + Smart Temporary Logic
+   🧠 Live Activity System — Final Version with Live Now Indicator
    ====================================================== */
 
 import {
@@ -9,9 +9,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
-/* ================================
-   CONFIG
-================================ */
+/* ---------------- CONFIG ---------------- */
 const CONFIG = {
   twitch: { user: "calebkritzar", clientId: "n7e3lys858u96xlg7v2aohe8vzxha3", token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm" },
   github: { username: "rkritzar39" },
@@ -21,9 +19,6 @@ const CONFIG = {
   tiktok: { username: "calebkritzar" },
 };
 
-/* ================================
-   BRAND COLORS
-================================ */
 const BRAND_COLORS = {
   twitch: "#9146FF",
   tiktok: "#010101",
@@ -36,9 +31,10 @@ const BRAND_COLORS = {
   offline: "#666666"
 };
 
-/* ================================
-   COOLDOWN SYSTEM
-================================ */
+/* ---------------- STATE TRACKERS ---------------- */
+let lastUpdateTime = null;
+
+/* ---------------- COOLDOWN UTILS ---------------- */
 function wasRecentlyShown(platform, cooldown = 600000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
   return last && Date.now() - parseInt(last, 10) < cooldown;
@@ -47,9 +43,7 @@ function markAsShown(platform) {
   localStorage.setItem(`last_${platform}_shown`, Date.now().toString());
 }
 
-/* ================================
-   ICON CLUSTER (with Tooltips)
-================================ */
+/* ---------------- ICON CLUSTER ---------------- */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
   if (!cluster) return;
@@ -76,28 +70,43 @@ function updateIconCluster(platforms) {
   });
 }
 
-/* ================================
-   STATUS DISPLAY
-================================ */
+/* ---------------- STATUS DISPLAY ---------------- */
 function showStatus(payload, isOffline = false, allActive = []) {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
-  if (!el || !container) return;
+  const updated = document.getElementById("live-activity-updated");
+  if (!el || !container || !updated) return;
 
   const { text, source } = payload || { text: "💬 Status", source: "manual" };
   el.textContent = text;
+
   container.classList.remove("hidden");
   container.classList.toggle("offline", isOffline);
   container.classList.toggle("active", !isOffline);
   container.style.setProperty("--accent-color", BRAND_COLORS[source] || "#999");
-  container.style.opacity = isOffline ? "0.8" : "1";
 
   updateIconCluster(allActive);
+
+  // Determine if user is LIVE
+  const isLive = ["twitch", "steam", "discord"].includes(source);
+  container.classList.toggle("live-now", isLive);
+
+  // Timestamp or LIVE label
+  if (isLive) {
+    updated.textContent = "🟢 Live Now";
+  } else {
+    const secondsAgo = Math.floor((Date.now() - lastUpdateTime) / 1000);
+    if (secondsAgo < 10) updated.textContent = "Updated just now";
+    else if (secondsAgo < 60) updated.textContent = `Updated ${secondsAgo}s ago`;
+    else if (secondsAgo < 3600) updated.textContent = `Updated ${Math.floor(secondsAgo / 60)}m ago`;
+    else updated.textContent = "Updated over an hour ago";
+  }
+
+  updated.classList.add("fade");
+  setTimeout(() => updated.classList.remove("fade"), 200);
 }
 
-/* ================================
-   PLATFORM FETCHERS
-================================ */
+/* ---------------- PLATFORM FETCHERS ---------------- */
 async function getManualStatus() {
   try {
     const snap = await getDoc(doc(db, "live_status", "current"));
@@ -212,9 +221,7 @@ async function getDiscordActivity() {
   return null;
 }
 
-/* ================================
-   UPDATE LOOP
-================================ */
+/* ---------------- UPDATE LOOP ---------------- */
 async function updateLiveStatus() {
   const sources = [
     getManualStatus,
@@ -233,6 +240,7 @@ async function updateLiveStatus() {
   }
 
   const live = active.find(a => !a.temporary) || active[0];
+  lastUpdateTime = Date.now();
   showStatus(live || { text: "🛌 Offline", source: "offline" }, !live, active);
 }
 
