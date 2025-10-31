@@ -49,7 +49,7 @@ function markAsShown(platform) {
 }
 
 /* ================================
-   UI HELPERS
+   ICON CLUSTER
 ================================ */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
@@ -68,7 +68,7 @@ function updateIconCluster(platforms) {
     iconWrapper.appendChild(img);
     cluster.appendChild(iconWrapper);
 
-    // Fade-out for temporary icons
+    // Temporary icons fade after 5 seconds
     if (temporary) {
       setTimeout(() => {
         iconWrapper.classList.add("fade-out");
@@ -76,8 +76,15 @@ function updateIconCluster(platforms) {
       }, 5000);
     }
   });
+
+  // Auto-adjust honeycomb size
+  const iconCount = cluster.children.length;
+  cluster.style.setProperty("--cluster-size", iconCount > 6 ? "80px" : "60px");
 }
 
+/* ================================
+   STATUS DISPLAY
+================================ */
 function showStatus(payload, isOffline = false, allActive = []) {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
