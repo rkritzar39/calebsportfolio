@@ -1668,7 +1668,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =============================================== */
-/* == QUOTE OF THE DAY SECTION (FINAL VERSION) == */
+/* == QUOTE OF THE DAY SECTION (MULTI-API FINAL) == */
 /* =============================================== */
 
 async function loadQuoteOfTheDay() {
@@ -1702,7 +1702,7 @@ async function loadQuoteOfTheDay() {
   const storedDate = localStorage.getItem("quoteDate");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
-  // ✅ Use cached quote if it’s from today
+  // ✅ Use cached quote if from today
   if (storedDate === today && storedQuote) {
     try {
       const { content, author } = JSON.parse(storedQuote);
@@ -1714,6 +1714,7 @@ async function loadQuoteOfTheDay() {
     }
   }
 
+  /* ------------------ LOCAL FALLBACKS ------------------ */
   const localQuotes = [
     { content: "Keep going — great things take time.", author: "Unknown" },
     { content: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
@@ -1745,43 +1746,63 @@ async function loadQuoteOfTheDay() {
     }
   }
 
-  let chosen = null;
-
-  try {
-    // Primary source: Quotable API (deterministic)
-    const pageHash = Math.abs(hashCode(today));
-    const itemHash = Math.abs(hashCode(today + "_item"));
-    const pageToFetch = (pageHash % 74) + 1; // quotable.io has ~74 pages
-
-    const res = await fetchWithTimeout(
-      `https://api.quotable.io/quotes?page=${pageToFetch}`,
-      5000
-    );
-    const data = await res.json();
-    const list = data.results;
-
-    if (!Array.isArray(list) || list.length === 0) {
-      throw new Error("Invalid quote list from quotable.io");
+  /* ------------------ API HELPERS ------------------ */
+  async function getQuoteFromQuotable(today) {
+    try {
+      const pageHash = Math.abs(hashCode(today));
+      const itemHash = Math.abs(hashCode(today + "_item"));
+      const pageToFetch = (pageHash % 74) + 1;
+      const res = await fetchWithTimeout(`https://api.quotable.io/quotes?page=${pageToFetch}`, 5000);
+      const data = await res.json();
+      const list = data.results;
+      if (!Array.isArray(list) || list.length === 0) throw new Error("Empty list");
+      const item = list[itemHash % list.length];
+      return { content: item.content, author: item.author || "Unknown" };
+    } catch (err) {
+      console.warn("Quotable failed:", err);
+      return null;
     }
-    const item = list[itemHash % list.length];
-    chosen = { content: item.content, author: item.author || "Unknown" };
-
-  } catch (err) {
-    // === FALLBACK BLOCK ===
-    // This will run if quotable.io fails (e.g., bad clock, no internet)
-    // We removed the broken type.fit API
-    console.warn("Primary API (quotable.io) failed. Using local quotes.", err);
-
-    const idx2 = Math.abs(hashCode(today)) % localQuotes.length;
-    chosen = localQuotes[idx2];
   }
 
-  if (chosen) {
-    quoteText.textContent = `“${chosen.content}”`;
-    quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
-    localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
-    localStorage.setItem("quoteDate", today);
+  async function getQuoteFromZenQuotes() {
+    try {
+      const res = await fetchWithTimeout("https://zenquotes.io/api/today", 5000);
+      const data = await res.json();
+      const q = data[0];
+      return { content: q.q, author: q.a };
+    } catch (err) {
+      console.warn("ZenQuotes failed:", err);
+      return null;
+    }
   }
+
+  async function getQuoteFromFavQs() {
+    try {
+      const res = await fetchWithTimeout("https://favqs.com/api/qotd", 5000);
+      const data = await res.json();
+      return { content: data.quote.body, author: data.quote.author };
+    } catch (err) {
+      console.warn("FavQs failed:", err);
+      return null;
+    }
+  }
+
+  /* ------------------ MAIN FLOW ------------------ */
+  let chosen = await getQuoteFromQuotable(today);
+  if (!chosen) chosen = await getQuoteFromZenQuotes();
+  if (!chosen) chosen = await getQuoteFromFavQs();
+
+  if (!chosen) {
+    console.warn("All APIs failed. Using local fallback.");
+    const idx = Math.abs(hashCode(today)) % localQuotes.length;
+    chosen = localQuotes[idx];
+  }
+
+  // 🧠 Cache + Display
+  quoteText.textContent = `“${chosen.content}”`;
+  quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
+  localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
+  localStorage.setItem("quoteDate", today);
 }
 
 /* === Run automatically when the page finishes loading === */
