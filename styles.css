@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb + Tooltip Edition
+   🎧 Live Activity — Honeycomb + Tooltip + Embedded Edition
    ====================================================== */
 
 .live-activity {
@@ -467,16 +467,17 @@ a.corner-button {
   align-items: center;
   justify-content: flex-start;
   gap: 16px;
-  margin: 1rem auto;
+  margin: 1.2rem auto 0 auto;
   padding: 12px 20px;
   border-radius: var(--radius-md, 14px);
-  width: fit-content;
-  max-width: 95%;
-  background: color-mix(in srgb, var(--content-bg, #1b1b1b) 80%, transparent);
-  backdrop-filter: var(--backdrop-blur, blur(12px));
-  border: 1px solid color-mix(in srgb, var(--border-color, #555) 60%, transparent);
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color, #000) 50%, transparent);
+  width: 90%;
+  max-width: 480px;
+  background: color-mix(in srgb, var(--content-bg, #1b1b1b) 85%, transparent);
+  backdrop-filter: var(--backdrop-blur, blur(14px));
+  border: 1px solid color-mix(in srgb, var(--border-color, #444) 60%, transparent);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color, #000) 50%, transparent);
   transition: all 0.4s ease;
+  position: relative;
 }
 
 .live-activity.hidden {
@@ -518,10 +519,10 @@ a.corner-button {
 .cluster-icon::after {
   content: attr(data-tooltip);
   position: absolute;
-  bottom: 125%;
+  bottom: 130%;
   left: 50%;
   transform: translateX(-50%) scale(0.95);
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.9);
   color: #fff;
   font-size: 0.7rem;
   padding: 3px 6px;
@@ -557,6 +558,13 @@ a.corner-button {
 /* ======================================================
    ✨ TEXT + COLORS
    ====================================================== */
+.activity-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
@@ -565,6 +573,28 @@ a.corner-button {
   white-space: normal;
   line-height: 1.4;
   transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+/* ======================================================
+   🕒 LAST UPDATED LABEL
+   ====================================================== */
+.live-activity-updated {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: color-mix(in srgb, var(--accent-color, #bbb) 60%, #999);
+  opacity: 0.8;
+  margin-top: 3px;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.live-activity-updated.fade {
+  opacity: 0.5;
+}
+
+/* Make the timestamp glow slightly when “live” */
+.live-activity.active .live-activity-updated {
+  color: var(--accent-color, #ccc);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--accent-color, #999) 40%, transparent);
 }
 
 /* ======================================================
@@ -591,7 +621,21 @@ a.corner-button {
     padding: 8px 14px;
     gap: 12px;
   }
+
+  .icon-cluster {
+    width: 50px;
+    height: 50px;
+  }
+
+  #live-activity-text {
+    font-size: 0.95rem;
+  }
+
+  .live-activity-updated {
+    font-size: 0.75rem;
+  }
 }
+
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
