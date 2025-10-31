@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb + Tooltip + Toast Edition
+   🎧 Live Activity — Honeycomb + Music Cover + Tooltip Edition
    ====================================================== */
 
 .live-activity {
@@ -469,7 +469,7 @@ a.corner-button {
   gap: 16px;
   margin: 1rem auto;
   padding: 12px 20px;
-  border-radius: 14px;
+  border-radius: var(--radius-md, 14px);
   width: fit-content;
   max-width: 95%;
   background: color-mix(in srgb, var(--content-bg, #1b1b1b) 80%, transparent);
@@ -486,36 +486,37 @@ a.corner-button {
 }
 
 /* ======================================================
-   🐝 ICON CLUSTER — Honeycomb Style
+   🐝 ICON CLUSTER (Honeycomb Left)
    ====================================================== */
 .icon-cluster {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-gap: 6px;
+  grid-gap: 4px;
   justify-items: center;
   align-items: center;
-  width: 68px;
-  height: 68px;
+  width: 60px;
+  height: 60px;
   position: relative;
 }
 
+/* Circle icons */
 .cluster-icon {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   transform: scale(0);
   animation: pop-in 0.4s ease forwards;
-  transition: opacity 0.4s ease, transform 0.3s ease;
+  transition: opacity 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  position: relative;
 }
 
 .cluster-icon img {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   filter: brightness(0) invert(1);
 }
 
@@ -524,6 +525,32 @@ a.corner-button {
   transform: scale(0.6);
 }
 
+/* Tooltip */
+.cluster-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 3px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 10;
+}
+
+.cluster-icon:hover::after,
+.cluster-icon.touch-active::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* Pop animation */
 @keyframes pop-in {
   0% { transform: scale(0); opacity: 0; }
   60% { transform: scale(1.2); opacity: 1; }
@@ -531,103 +558,79 @@ a.corner-button {
 }
 
 /* ======================================================
-   💬 Tooltip Styling
+   🎵 Spotify Music Cover Hover (Spinning Record)
    ====================================================== */
-.cluster-icon::after {
-  content: attr(data-tooltip);
-  position: absolute;
-  bottom: 130%;
-  left: 50%;
-  transform: translateX(-50%) scale(0.95);
-  background: rgba(20, 20, 20, 0.92);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 500;
-  padding: 5px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s ease, transform 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  z-index: 20;
-}
-
-.cluster-icon:hover::after,
-.cluster-icon:focus::after {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-  box-shadow: 0 0 10px currentColor;
-}
-
-/* Touch-friendly (tap shows tooltip) */
-.cluster-icon.touch-active::after {
-  opacity: 1;
-  transform: translateX(-50%) scale(1);
-}
-
-/* ======================================================
-   ✨ Text + Timestamp
-   ====================================================== */
-.activity-content {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-#live-activity-text {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--accent-color, #ddd);
-  line-height: 1.4;
-}
-
-.activity-updated {
-  font-size: 0.8rem;
-  opacity: 0.7;
-  color: #aaa;
-  transition: color 0.3s ease;
-}
-
-.live-activity.live-now .activity-updated {
-  color: #1db954;
-}
-
-/* Spotify hover album art */
 .spotify-hover-art {
   position: absolute;
   bottom: 130%;
   left: 50%;
-  transform: translateX(-50%) scale(0.8);
+  transform: translateX(-50%) scale(0.8) rotate(0deg);
   opacity: 0;
-  transition: all 0.25s ease;
+  transition: all 0.35s ease;
   pointer-events: none;
-  z-index: 10;
+  z-index: 15;
 }
 
 .spotify-hover-art img {
   width: 70px;
   height: 70px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   object-fit: cover;
+  animation: spin-slow 5s linear infinite;
+  transform-origin: center;
 }
 
 .cluster-icon.spotify:hover .spotify-hover-art {
   opacity: 1;
-  transform: translateX(-50%) scale(1);
+  transform: translateX(-50%) scale(1) rotate(0deg);
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* ======================================================
-   💫 Glow Pulse
+   ✨ TEXT + STATUS COLORING
+   ====================================================== */
+.activity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#live-activity-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent-color, #ddd);
+  text-align: left;
+  line-height: 1.4;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+#live-activity-updated {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--accent-color, #aaa) 60%, #aaa);
+  opacity: 0.9;
+  transition: color 0.3s ease;
+}
+
+.live-now #live-activity-updated {
+  color: #9146ff; /* Twitch Purple */
+  font-weight: 600;
+  text-shadow: 0 0 8px rgba(145, 70, 255, 0.6);
+}
+
+/* ======================================================
+   💫 Pulse Glow (Active State)
    ====================================================== */
 .live-activity.active {
   animation: pulse 3s ease-in-out infinite;
 }
-
 @keyframes pulse {
   0%, 100% {
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--accent-color, #888) 30%, transparent);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--accent-color, #888) 25%, transparent);
   }
   50% {
     box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color, #888) 50%, transparent);
@@ -635,35 +638,26 @@ a.corner-button {
 }
 
 /* ======================================================
-   🔔 Toast Notifications
+   🔔 Toast Notification (for Temporary Activities)
    ====================================================== */
 #toast-container {
   position: fixed;
-  top: 16px;
-  right: 16px;
+  bottom: 1.5rem;
+  right: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  z-index: 9999;
+  gap: 8px;
+  z-index: 1000;
 }
 
 .toast {
-  background: rgba(20, 20, 20, 0.95);
-  color: white;
+  background: rgba(25, 25, 25, 0.9);
+  color: #fff;
   font-size: 0.9rem;
-  padding: 10px 16px;
-  border-radius: 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  transform: translateY(-10px);
-  animation: toast-slide 0.4s forwards;
-}
-
-@keyframes toast-slide {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  padding: 8px 14px;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* ======================================================
@@ -671,22 +665,30 @@ a.corner-button {
    ====================================================== */
 @media (max-width: 768px) {
   .live-activity {
+    margin-top: 0.75rem;
+    padding: 8px 14px;
     gap: 12px;
-    padding: 10px 14px;
-  }
-  .icon-cluster {
-    grid-template-columns: repeat(2, 1fr);
-    width: 50px;
-    height: 50px;
   }
 }
 
 @media (max-width: 480px) {
+  .live-activity {
+    margin-top: 0.5rem;
+    padding: 7px 12px;
+    gap: 10px;
+  }
+
   .icon-cluster {
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 4px;
-    width: 44px;
-    height: 44px;
+    width: 50px;
+    height: 50px;
+  }
+
+  #live-activity-text {
+    font-size: 0.9rem;
+  }
+
+  #live-activity-updated {
+    font-size: 0.75rem;
   }
 }
 
