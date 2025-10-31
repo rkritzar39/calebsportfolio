@@ -2,7 +2,7 @@
  * settings.js
  * Fully functional settings manager with live previews,
  * custom backgrounds, blur control, dark-mode scheduler,
- * dynamic wallpapers, and instant setting updates.
+ * and dynamic wallpapers.
  */
 class SettingsManager {
   constructor() {
@@ -34,7 +34,7 @@ class SettingsManager {
       showTechInformation: "enabled",
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
-      showLiveActivity: "enabled", // 👈 live activity toggle
+      showLiveActivity: "enabled", // 👈 add this line
     };
 
     this.settings = this.loadSettings();
@@ -46,12 +46,12 @@ class SettingsManager {
       this.applyAllSettings();
       this.setupEventListeners();
 
-      // Feature initialization
+      // Keep YOUR real implementations below; do not overwrite later
       this.initMouseTrail();
       this.initLoadingScreen();
       this.initScrollArrow();
 
-      // Wallpaper / Blur
+      // Wallpaper + blur
       this.initCustomBackgroundControls();
       this.applyCustomBackground(false);
       this.initWallpaperBlurControl();
@@ -92,13 +92,10 @@ class SettingsManager {
           this.applyCustomBackground(false);
           this.toggleScheduleInputs(this.settings.darkModeScheduler);
           this.syncWallpaperUIVisibility();
-          if (typeof updateLiveStatus === "function") {
-            setTimeout(() => updateLiveStatus(), 300);
-          }
         }
       });
 
-      // Restart live activity updater
+      // 🔄 Restart or stop live activity when setting changes
       if (typeof updateLiveStatus === "function") {
         setTimeout(() => updateLiveStatus(), 500);
       }
@@ -161,6 +158,7 @@ class SettingsManager {
     if (schedulerSelect) schedulerSelect.value = this.settings.darkModeScheduler;
     if (startInput) startInput.value = this.settings.darkModeStart;
     if (endInput) endInput.value = this.settings.darkModeEnd;
+
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
 
     const toggles = Object.keys(this.defaultSettings).filter(
@@ -209,39 +207,97 @@ class SettingsManager {
   // Event Listeners
   // =============================
   setupEventListeners() {
-    // --- EXISTING LISTENERS (Already working) ---
+    ["appearanceMode", "themeStyle"].forEach((key) => {
+      const control = document.getElementById(`${key}Control`);
+      if (control) {
+        control.addEventListener("click", (e) => {
+          const btn = e.target.closest("button");
+          if (!btn) return;
 
-    // Accent color live update
+          // 🚫 Prevent user from changing appearance while scheduler is auto
+          if (
+            key === "appearanceMode" &&
+            this.settings.darkModeScheduler === "auto"
+          ) {
+            alert(
+              "Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes."
+            );
+            this.initSegmentedControl(`${key}Control`, this.settings[key]); // reset UI
+            return;
+          }
+
+          // ✅ Otherwise allow change
+          this.settings[key] = btn.dataset.value;
+          this.applySetting(key);
+          this.saveSettings();
+          this.initSegmentedControl(`${key}Control`, this.settings[key]);
+          this.updateSegmentedBackground(`${key}Control`);
+          if (key === "appearanceMode") {
+            this.applyCustomBackground(false);
+          }
+        });
+        this.updateSegmentedBackground(`${key}Control`);
+      }
+    });
+
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
       accentPicker.addEventListener("input", (e) => {
         this.settings.accentColor = e.target.value;
         this.applyAccentColor();
         this.saveSettings();
-        
-        // --- Fix: Update slider fills that use accent color ---
+
+        // --- FIXED ---
+        // Instantly update slider colors when accent changes
         this.updateSliderFill(document.getElementById("text-size-slider"));
-        this.initWallpaperBlurControl(); // This re-runs the fill for the blur slider
+        this.updateSliderFill(document.getElementById("blur-slider"));
       });
     }
 
-    // Text size live update
     const slider = document.getElementById("text-size-slider");
     if (slider) {
       slider.addEventListener("input", (e) => {
         this.settings.fontSize = parseInt(e.target.value, 10);
         this.applyFontSize();
+        this.updateSliderFill(slider);
         const badge = document.getElementById("textSizeValue");
         if (badge) badge.textContent = `${this.settings.fontSize}px`;
-        
-        // --- Fix: Update slider fill on input ---
-        this.updateSliderFill(e.target); 
-        
         this.saveSettings();
       });
     }
 
-    // Live toggle updates
+    const schedulerSelect = document.getElementById("darkModeScheduler");
+    const startInput = document.getElementById("darkModeStart");
+    const endInput = document.getElementById("darkModeEnd");
+
+    if (schedulerSelect) {
+      schedulerSelect.addEventListener("change", (e) => {
+        const val = e.target.value;
+        this.settings.darkModeScheduler = val;
+        this.saveSettings();
+        this.toggleScheduleInputs(val);
+        this.checkDarkModeSchedule(true);
+      });
+    }
+    if (startInput) {
+      startInput.addEventListener("change", (e) => {
+        this.settings.darkModeStart = e.target.value;
+        this.saveSettings();
+        this.checkDarkModeSchedule(true);
+      });
+    }
+    if (endInput) {
+      endInput.addEventListener("change", (e) => {
+        this.settings.darkModeEnd = e.target.value;
+        this.saveSettings();
+        this.checkDarkModeSchedule(true);
+      });
+    }
+
+    // --- FIXED ---
+    // Removed redundant blur slider logic from here.
+    // initWallpaperBlurControl() now handles this, preventing a double listener.
+
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -250,103 +306,35 @@ class SettingsManager {
     );
     toggleKeys.forEach((key) => {
       const el = document.getElementById(`${key}Toggle`);
-      if (!el) return;
-      el.addEventListener("change", () => {
-        this.settings[key] = el.checked ? "enabled" : "disabled";
-        this.saveSettings();
-        this.applySetting(key);
+      if (el) {
+        el.addEventListener("change", () => {
+          this.settings[key] = el.checked ? "enabled" : "disabled";
+          this.applySetting(key);
+          this.saveSettings();
+        });
+      }
+    });
 
-        // Instant update for homepage sections
-        if (key.startsWith("show")) this.applySetting(key);
-
-        // Instant update for Live Activity
-        if (key === "showLiveActivity" && typeof updateLiveStatus === "function") {
-          setTimeout(() => updateLiveStatus(), 300);
+    document
+      .getElementById("resetLayoutBtn")
+      ?.addEventListener("click", () => {
+        if (confirm("Reset the section layout to default?")) {
+          localStorage.removeItem("sectionOrder");
+          alert("Layout reset. Refresh homepage to see changes.");
         }
-
-        // Broadcast for other tabs/windows
-        window.dispatchEvent(new Event("settings-updated"));
       });
-    });
 
-    // --- NEW LISTENERS (These were missing) ---
+    document
+      .getElementById("resetSectionsBtn")
+      ?.addEventListener("click", () => this.resetSectionVisibility());
+    document
+      .getElementById("resetSettings")
+      ?.addEventListener("click", () => this.resetSettings());
 
-    // Helper function for segmented controls (Appearance & Theme)
-    const setupSegmentedControl = (controlId, settingKey, applyFn = null) => {
-      const control = document.getElementById(controlId);
-      if (!control) return;
-
-      control.addEventListener("click", (e) => {
-        const button = e.target.closest("button");
-        // Check if it's a valid button with a value, and not already active
-        if (!button || !button.dataset.value || button.classList.contains("active")) {
-          return;
-        }
-        
-        const newValue = button.dataset.value;
-        this.settings[settingKey] = newValue;
-        this.saveSettings();
-
-        // Update the UI
-        control.querySelectorAll("button").forEach((btn) => btn.classList.remove("active"));
-        button.classList.add("active");
-        this.updateSegmentedBackground(controlId);
-
-        // Run the specific apply function
-        applyFn?.();
-
-        // Tell other tabs
-        window.dispatchEvent(new Event("settings-updated"));
-      });
-    };
-
-    // 1. Wire up Appearance Mode (Light/Dark/Device)
-    setupSegmentedControl("appearanceModeControl", "appearanceMode", () => {
-      this.applyAppearanceMode();
-      this.applyCustomBackground(false); // Re-apply background tint
-    });
-    
-    // 2. Wire up Theme Style (Clear, etc.)
-    setupSegmentedControl("themeStyleControl", "themeStyle", () => {
-        // The original code had no apply function for 'themeStyle'.
-        // You can add one here if needed, e.g., by setting a data-attribute:
-        document.body.dataset.themeStyle = this.settings.themeStyle;
-    });
-
-
-    // 3. Wire up Dark Mode Scheduler Dropdown
-    const schedulerSelect = document.getElementById("darkModeScheduler");
-    if (schedulerSelect) {
-      schedulerSelect.addEventListener("change", (e) => {
-        this.settings.darkModeScheduler = e.target.value;
-        this.saveSettings();
-        this.toggleScheduleInputs(e.target.value);
-        this.checkDarkModeSchedule(true); // Force a re-check
-        window.dispatchEvent(new Event("settings-updated"));
-      });
-    }
-
-    // 4. Wire up Dark Mode Start Time
-    const startInput = document.getElementById("darkModeStart");
-    if (startInput) {
-      startInput.addEventListener("change", (e) => {
-        this.settings.darkModeStart = e.target.value;
-        this.saveSettings();
-        this.checkDarkModeSchedule(true); // Force a re-check
-        window.dispatchEvent(new Event("settings-updated"));
-      });
-    }
-
-    // 5. Wire up Dark Mode End Time
-    const endInput = document.getElementById("darkModeEnd");
-    if (endInput) {
-      endInput.addEventListener("change", (e) => {
-        this.settings.darkModeEnd = e.target.value;
-        this.saveSettings();
-        this.checkDarkModeSchedule(true); // Force a re-check
-        window.dispatchEvent(new Event("settings-updated"));
-      });
-    }
+    // Note: 'fitWallpaperLayer' is not defined in this class.
+    // Make sure it exists somewhere or remove these listeners if unused.
+    // window.addEventListener("resize", () => this.fitWallpaperLayer());
+    // window.addEventListener("orientationchange", () => this.fitWallpaperLayer());
   }
 
   // =============================
@@ -423,9 +411,10 @@ class SettingsManager {
         ),
     };
 
+    // ✅ Apply core settings
     actions[key]?.();
 
-    // Universal show/hide for homepage sections
+    // ✅ Universal show/hide for homepage sections
     if (key.startsWith("show")) {
       const sectionId = key
         .replace(/^show/, "")
@@ -449,7 +438,7 @@ class SettingsManager {
       }
     }
 
-    // Live Activity capsule visibility
+    // ✅ Special rule: Live Activity toggle (handles visibility + API checks)
     if (key === "showLiveActivity") {
       const liveActivity = document.getElementById("live-activity");
       if (liveActivity) {
@@ -457,12 +446,14 @@ class SettingsManager {
         if (visible) {
           liveActivity.style.display = "";
           requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
+          // restart updater if available
           if (typeof updateLiveStatus === "function") {
             setTimeout(() => updateLiveStatus(), 300);
           }
         } else {
           liveActivity.style.opacity = "0";
           setTimeout(() => (liveActivity.style.display = "none"), 250);
+          console.log("[Live Activity] Disabled by settings — API paused");
         }
       }
     }
@@ -472,7 +463,7 @@ class SettingsManager {
     document.documentElement.classList.toggle("dark-mode", isDark);
     document.documentElement.classList.toggle("light-mode", !isDark);
     document.body.classList.toggle("dark-mode", isDark);
-    document.body.classList.toggle("light-e", !isDark);
+    document.body.classList.toggle("light-e", !isDark); // ← restore Onyx Light
   }
 
   applyAppearanceMode() {
@@ -544,6 +535,125 @@ class SettingsManager {
     return { layer, tint };
   }
 
+  initCustomBackgroundControls() {
+    const upload = document.getElementById("customBgUpload");
+    const remove = document.getElementById("removeCustomBg");
+    const fileNameDisplay = document.getElementById("fileNameDisplay");
+    const previewContainer = document.getElementById("customBgPreviewContainer");
+    const previewImage = document.getElementById("customBgPreview");
+    const separator = document.getElementById("customBgSeparator");
+
+    if (!upload || !previewContainer || !previewImage) return;
+
+    // --- Restore saved background ---
+    const savedBg = localStorage.getItem("customBackground");
+    const savedName = localStorage.getItem("customBackgroundName");
+    const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
+
+    if (savedBg) {
+      if (fileNameDisplay)
+        fileNameDisplay.textContent = savedName || "Saved background";
+      if (remove) remove.style.display = "inline-block";
+
+      this.toggleWallpaperBlurCard(true);
+      previewContainer.classList.add("visible");
+      previewImage.src = savedBg;
+      previewImage.onload = () => previewImage.classList.add("loaded");
+
+      // ✅ Show separator line when image exists
+      if (separator) separator.classList.add("visible");
+
+      // ✅ Apply saved blur immediately
+      this.applyWallpaperBlur(savedBlur);
+
+      // ✅ Sync blur slider and badge
+      const blurSlider = document.getElementById("blur-slider");
+      const blurBadge = document.getElementById("blurValue");
+      if (blurSlider && blurBadge) {
+        blurSlider.value = savedBlur;
+        blurBadge.textContent = `${savedBlur}px`;
+      }
+    } else {
+      this.toggleWallpaperBlurCard(false);
+      if (separator) separator.classList.remove("visible");
+    }
+
+    // --- Upload a new file ---
+    upload.addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const imageData = evt.target.result;
+        localStorage.setItem("customBackground", imageData);
+        localStorage.setItem("customBackgroundName", file.name);
+
+        // ✅ Get current blur or 0
+        const blurSlider = document.getElementById("blur-slider");
+        const blurValue = blurSlider
+          ? blurSlider.value
+          : localStorage.getItem("wallpaperBlur") || "0";
+        localStorage.setItem("wallpaperBlur", blurValue);
+
+        this.applyCustomBackground(true);
+        this.applyWallpaperBlur(blurValue);
+
+        const blurBadge = document.getElementById("blurValue");
+        if (blurBadge) blurBadge.textContent = `${blurValue}px`;
+
+        if (remove) remove.style.display = "inline-block";
+        this.toggleWallpaperBlurCard(true);
+
+        // ✅ Show preview + separator
+        previewContainer.classList.add("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = imageData;
+        previewImage.onload = () => previewImage.classList.add("loaded");
+        if (separator) separator.classList.add("visible");
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // --- Remove custom background ---
+    if (remove) {
+      remove.addEventListener("click", (e) => {
+        e.preventDefault();
+        localStorage.removeItem("customBackground");
+        localStorage.removeItem("customBackgroundName");
+        localStorage.removeItem("wallpaperBlur");
+
+        const layer = document.getElementById("wallpaper-layer");
+        if (layer) {
+          layer.style.backgroundImage = "";
+          layer.style.opacity = "0";
+        }
+
+        this.applyCustomBackground(false);
+        this.toggleWallpaperBlurCard(false);
+
+        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+        remove.style.display = "none";
+
+        // ✅ Hide preview and separator smoothly
+        previewContainer.classList.remove("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = "";
+        if (separator) separator.classList.remove("visible");
+
+        // Reset blur slider + badge
+        const blurSlider = document.getElementById("blur-slider");
+        const blurBadge = document.getElementById("blurValue");
+        if (blurSlider && blurBadge) {
+          blurSlider.value = 0;
+          blurBadge.textContent = "0px";
+        }
+      });
+    }
+  }
+
   applyCustomBackground(fade = false) {
     const bg = localStorage.getItem("customBackground");
     const { layer, tint } = this.ensureWallpaperLayers();
@@ -577,6 +687,7 @@ class SettingsManager {
       ? "rgba(0, 0, 0, 0.45)"
       : "rgba(255, 255, 255, 0.15)";
 
+    // ✅ Apply saved or default blur
     const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
     this.applyWallpaperBlur(blurValue);
   }
@@ -593,6 +704,7 @@ class SettingsManager {
     const badge = document.getElementById("blurValue");
     if (!slider || !badge) return;
 
+    // ✅ Load saved blur value or default to 0
     const stored = localStorage.getItem("wallpaperBlur") ?? "0";
     slider.value = stored;
     badge.textContent = `${stored}px`;
@@ -642,6 +754,8 @@ class SettingsManager {
   checkDarkModeSchedule(force = false) {
     const mode = this.settings.darkModeScheduler || "off";
     this.toggleScheduleInputs(mode);
+
+    // Only apply schedule if "auto"
     if (mode !== "auto") {
       if (force) this.applyAppearanceMode();
       return;
@@ -656,13 +770,17 @@ class SettingsManager {
     const end = new Date();
     end.setHours(endH, endM, 0, 0);
 
+    // 🔧 Handle overnight schedules (e.g. 20:00 → 06:00)
     let isDark;
     if (end <= start) {
+      // The schedule wraps around midnight
       isDark = now >= start || now < end;
     } else {
+      // Same-day schedule
       isDark = now >= start && now < end;
     }
 
+    // ✅ Apply correct mode
     this.setThemeClasses(isDark);
     this.applyCustomBackground(false);
   }
@@ -674,7 +792,7 @@ class SettingsManager {
   }
 
   // =============================
-  // Misc + Resets
+  // Reset Controls
   // =============================
   resetSectionVisibility() {
     if (confirm("Show all homepage sections again?")) {
@@ -697,41 +815,54 @@ class SettingsManager {
     ) {
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
+
+      // Clear layout + background + blur values
       localStorage.removeItem("sectionOrder");
       localStorage.removeItem("customBackground");
       localStorage.removeItem("customBackgroundName");
       localStorage.removeItem("wallpaperBlur");
+
+      // Reset background display + preview UI
+      const layer = document.getElementById("wallpaper-layer");
+      if (layer) {
+        layer.style.backgroundImage = "";
+        layer.style.opacity = "0";
+      }
+      const previewContainer = document.getElementById(
+        "customBgPreviewContainer"
+      );
+      const previewImage = document.getElementById("customBgPreview");
+      const fileNameDisplay = document.getElementById("fileNameDisplay");
+      const removeBtn = document.getElementById("removeCustomBg");
+      if (previewContainer && previewImage) {
+        previewContainer.classList.remove("visible");
+        previewImage.classList.remove("loaded");
+        previewImage.src = "";
+      }
+      if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+      if (removeBtn) removeBtn.style.display = "none";
+
+      // Re-init UI
       this.initializeControls();
       this.applyAllSettings();
       alert("All settings have been reset to factory defaults.");
     }
   }
-  
-  // These are stubs from the original code, you can add implementations here
-  initCustomBackgroundControls() {}
+
+  // =============================
+  // Misc (YOUR real implementations live here)
+  // =============================
   initScrollArrow() {}
   initLoadingScreen() {}
-  initMouseTrail() {}
-}
 
-// 🔄 Multi-tab instant update listener
-window.addEventListener("settings-updated", () => {
-  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  Object.keys(settings).forEach((key) => {
-    if (key.startsWith("show")) {
-      const sectionId = key
-        .replace(/^show/, "")
-        .replace(/^[A-Z]/, (m) => m.toLowerCase())
-        .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
-      const el =
-        document.getElementById(`${sectionId}-section`) ||
-        document.querySelector(`[data-section-id="${sectionId}"]`);
-      if (el) el.style.display = settings[key] === "enabled" ? "" : "none";
-    }
-  });
-  if (typeof updateLiveStatus === "function")
-    setTimeout(() => updateLiveStatus(), 250);
-});
+  // IMPORTANT: do NOT leave a second empty initMouseTrail() — it would overwrite the real one.
+  // If you have a full implementation elsewhere in this class/file, keep that one.
+  initMouseTrail() {
+    // If you already have your full trail implementation, paste it here
+    // (kept minimal to avoid overriding your working version).
+    // No-op by default.
+  }
+}
 
 // Initialize
 if (!window.settingsManagerInstance) {
