@@ -1,7 +1,6 @@
 /* =======================================================
-   Live Activity System (Everything Easy, Client-Side)
+   Live Activity System (Color Dynamic Edition)
    Platforms: Manual • Twitch • GitHub • Reddit • Steam • Discord • TikTok
-   Author: Caleb Kritzar
    ======================================================= */
 
 import {
@@ -12,7 +11,7 @@ import {
 import { db } from "./firebase-init.js";
 
 /* ================================
-   CONFIG — Fill these in
+   CONFIG
 ================================ */
 const CONFIG = {
   twitch: {
@@ -31,19 +30,21 @@ const CONFIG = {
 };
 
 /* ================================
-   ICON / COLOR MAP
+   COLORS + ICONS
 ================================ */
 const PLATFORM_STYLE = {
-  twitch:  { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg",  color: "#9146FF" },
-  tiktok:  { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg",  color: "#010101" },
-  github:  { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg",  color: "#333333" },
-  reddit:  { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/reddit.svg",  color: "#FF4500" },
-  steam:   { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg",   color: "#00ADEE" },
-  spotify: { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg", color: "#1DB954" },
-  discord: { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg", color: "#5865F2" },
-  manual:  { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/activitypub.svg", color: "var(--accent-color)" },
-  offline: { icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg", color: "gray" },
+  twitch:  { color: "#9146FF", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg" },
+  tiktok:  { color: "#010101", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" },
+  github:  { color: "#333333", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg" },
+  reddit:  { color: "#FF4500", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/reddit.svg" },
+  steam:   { color: "#00ADEE", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg" },
+  spotify: { color: "#1DB954", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg" },
+  discord: { color: "#5865F2", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" },
+  manual:  { color: "var(--accent-color)", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/activitypub.svg" },
+  offline: { color: "#999999", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" },
 };
+
+let lastTikTokTitle = null;
 
 /* ================================
    UTILS
@@ -57,42 +58,41 @@ function isLiveActivityEnabled() {
   }
 }
 
-function styleFor(source) {
-  return PLATFORM_STYLE[source] || PLATFORM_STYLE.discord;
-}
-
-let lastTikTokTitle = null;
-
 /* ================================
-   SHOW STATUS
+   SHOW STATUS (Dynamic Colors)
 ================================ */
 function showStatus(payload, isOffline = false) {
-  const textEl = document.getElementById("live-activity-text");
+  const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
-  const iconEl = document.getElementById("activity-icon");
-  if (!textEl || !container || !iconEl) return;
+  const icon = document.getElementById("activity-icon");
+  if (!el || !container || !icon) return;
 
   const { text, source } = typeof payload === "string" ? { text: payload, source: "manual" } : payload;
-  const { icon, color } = styleFor(isOffline ? "offline" : source);
+  const platform = PLATFORM_STYLE[isOffline ? "offline" : source] || PLATFORM_STYLE.discord;
+  const { color, icon: iconSrc } = platform;
 
-  textEl.textContent = text;
-  textEl.style.color = color;
-  iconEl.src = icon;
-  iconEl.className = `activity-icon ${source} change`;
+  // Text + icon
+  el.textContent = text;
+  icon.src = iconSrc;
+  el.style.color = color;
+  icon.className = `activity-icon ${source} change`;
 
+  // Background & glow
+  container.style.setProperty("--platform-color", color);
   container.classList.toggle("active", !isOffline);
   container.classList.toggle("offline", isOffline);
   container.classList.remove("hidden");
+
+  container.style.background = `color-mix(in srgb, ${color} 20%, var(--content-bg))`;
+  container.style.boxShadow = `0 0 15px ${color}60`;
   container.style.opacity = isOffline ? "0.8" : "1";
 
-  setTimeout(() => iconEl.classList.remove("change"), 300);
+  setTimeout(() => icon.classList.remove("change"), 300);
 }
 
 /* ================================
-   PLATFORM INTEGRATIONS
+   PLATFORM FETCHES
 ================================ */
-
-/* Manual (Firestore) */
 async function getManualStatus() {
   try {
     const snap = await getDoc(doc(db, "live_status", "current"));
@@ -107,7 +107,6 @@ async function getManualStatus() {
   }
 }
 
-/* Twitch (live streaming) */
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
@@ -126,7 +125,6 @@ async function getTwitchStatus() {
   }
 }
 
-/* TikTok (latest post, skip duplicates) */
 async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   try {
@@ -135,22 +133,17 @@ async function getTikTokStatus() {
     if (!res.ok) return null;
     const data = await res.json();
     if (!data?.title) return null;
-
-    // Skip if same TikTok post as before
     if (data.title === lastTikTokTitle) return null;
     lastTikTokTitle = data.title;
-
     return { text: `🎬 Posted on TikTok — “${data.title}”`, source: "tiktok" };
   } catch (err) {
-    console.error("TikTok fetch error:", err);
+    console.error("TikTok API error:", err);
     return null;
   }
 }
 
-/* GitHub (latest activity) */
 async function getGitHubStatus() {
   const { username } = CONFIG.github;
-  if (!username) return null;
   try {
     const res = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/events/public`);
     if (!res.ok) return null;
@@ -162,7 +155,6 @@ async function getGitHubStatus() {
     switch (latest.type) {
       case "PushEvent": return { text: `💻 Pushed code to ${repo}`, source: "github" };
       case "PullRequestEvent": return { text: `🧩 Opened PR on ${repo}`, source: "github" };
-      case "CreateEvent": return { text: `🪄 Created something in ${repo}`, source: "github" };
       default: return null;
     }
   } catch (err) {
@@ -171,10 +163,8 @@ async function getGitHubStatus() {
   }
 }
 
-/* Reddit (latest post) */
 async function getRedditStatus() {
   const { username } = CONFIG.reddit;
-  if (!username) return null;
   try {
     const res = await fetch(`https://www.reddit.com/user/${encodeURIComponent(username)}/submitted.json`);
     if (!res.ok) return null;
@@ -188,7 +178,6 @@ async function getRedditStatus() {
   }
 }
 
-/* Steam (currently playing) */
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
@@ -207,7 +196,6 @@ async function getSteamStatus() {
   }
 }
 
-/* Discord (via Lanyard) */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
@@ -218,25 +206,22 @@ async function getDiscordActivity() {
 
     const activities = data.activities || [];
 
-    // Spotify
     const spotify = activities.find(a => a.name === "Spotify");
     if (spotify?.details && spotify?.state)
       return { text: `🎵 Listening to “${spotify.details}” by ${spotify.state}`, source: "spotify" };
 
-    // Game / App
     const game = activities.find(a => a.type === 0);
     if (game?.name)
       return { text: `🎮 Playing ${game.name}`, source: "discord" };
 
-    // Status only
     const statusMap = {
       online: "🟢 Online on Discord",
       idle: "🌙 Idle on Discord",
       dnd: "⛔ Do Not Disturb",
-      offline: "🔘 Offline",
     };
-    const status = data.discord_status;
-    if (status !== "offline") return { text: statusMap[status] || "💬 Online on Discord", source: "discord" };
+    if (data.discord_status !== "offline")
+      return { text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" };
+
     return null;
   } catch (err) {
     console.error("Discord API error:", err);
@@ -245,48 +230,43 @@ async function getDiscordActivity() {
 }
 
 /* ================================
-   UPDATE CHAIN (priority order)
+   UPDATE LOOP
 ================================ */
 async function updateLiveStatus() {
   const container = document.getElementById("live-activity");
   if (!container) return;
-
   if (!isLiveActivityEnabled()) {
     container.style.display = "none";
     return;
   }
   container.style.display = "";
-  container.classList.remove("offline");
+
+  const sources = [
+    getManualStatus,
+    getTwitchStatus,
+    getSteamStatus,
+    getDiscordActivity,
+    getGitHubStatus,
+    getRedditStatus,
+    getTikTokStatus,
+  ];
 
   try {
-    const order = [
-      getManualStatus,
-      getTwitchStatus,
-      getSteamStatus,
-      getDiscordActivity,
-      getGitHubStatus,
-      getRedditStatus,
-      getTikTokStatus,
-    ];
-
-    for (const fn of order) {
+    for (const fn of sources) {
       const result = await fn();
       if (result) return showStatus(result);
     }
-
     showStatus({ text: "🛌 Offline", source: "offline" }, true);
   } catch (err) {
-    console.error("Live activity update error:", err);
+    console.error("Live status error:", err);
     showStatus({ text: "💬 Status unavailable", source: "offline" }, true);
   }
 }
 
 /* ================================
-   INIT + REFRESH
+   INIT
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
-  setInterval(() => {
-    if (isLiveActivityEnabled()) updateLiveStatus();
-  }, 30000);
+  setInterval(() => updateLiveStatus(), 30000);
 });
