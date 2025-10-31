@@ -157,9 +157,7 @@ class SettingsManager {
   // =============================
   initializeControls() {
     this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
-    // this.initSegmentedControl("themeStyleControl", this.settings.themeStyle); // You don't have this element in your HTML
     this.updateSegmentedBackground("appearanceModeControl");
-    // this.updateSegmentedBackground("themeStyleControl");
 
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
@@ -198,9 +196,18 @@ class SettingsManager {
   initSegmentedControl(controlId, value) {
     const control = document.getElementById(controlId);
     if (!control) return;
+    let foundActive = false;
     control.querySelectorAll("button").forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.value === value);
+        const isActive = btn.dataset.value === value;
+        btn.classList.toggle("active", isActive);
+        if (isActive) foundActive = true;
     });
+    
+    // Fallback if no value matches
+    if (!foundActive) {
+        const firstBtn = control.querySelector("button");
+        if (firstBtn) firstBtn.classList.add("active");
+    }
   }
 
   updateSegmentedBackground(controlId) {
@@ -208,9 +215,9 @@ class SettingsManager {
     if (!control) return;
     let active = control.querySelector("button.active");
     if (!active) {
-       // Fallback to first button if none are active
        active = control.querySelector("button");
        if (active) active.classList.add("active");
+       else return; // No buttons in control
     }
     let bg = control.querySelector(".seg-bg");
     if (!bg) {
@@ -218,11 +225,9 @@ class SettingsManager {
       bg.className = "seg-bg";
       control.prepend(bg);
     }
-    if (active) {
-      // Use offsetLeft and offsetWidth for more reliable positioning
-      bg.style.left = `${active.offsetLeft}px`;
-      bg.style.width = `${active.offsetWidth}px`;
-    }
+    // Use offsetLeft and offsetWidth for reliable positioning
+    bg.style.left = `${active.offsetLeft}px`;
+    bg.style.width = `${active.offsetWidth}px`;
   }
 
   setToggle(key) {
@@ -239,7 +244,7 @@ class SettingsManager {
     if (appearanceControl) {
         appearanceControl.addEventListener("click", (e) => {
             const btn = e.target.closest("button");
-            if (!btn) return;
+            if (!btn || !btn.dataset.value) return;
 
             if (this.settings.darkModeScheduler === "auto") {
                 alert("Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes.");
@@ -252,8 +257,12 @@ class SettingsManager {
             this.settings.appearanceMode = btn.dataset.value;
             this.applySetting("appearanceMode");
             this.saveSettings();
-            this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
+            
+            // Update UI
+            appearanceControl.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
             this.updateSegmentedBackground("appearanceModeControl");
+            
             this.applyCustomBackground(false); // Re-apply tint
         });
     }
@@ -481,12 +490,33 @@ class SettingsManager {
     }
   }
 
+  // ===================================
+  // === THIS FUNCTION IS THE FIX ====
+  // ===================================
   setThemeClasses(isDark) {
+    // These control the flicker script and are fine
     document.documentElement.classList.toggle("dark-mode", isDark);
     document.documentElement.classList.toggle("light-mode", !isDark);
-    document.body.classList.toggle("dark-mode", isDark);
-    document.body.classList.toggle("light-mode", !isDark); // Added for 'light-e' fix
+
+    // These control the theme
+    document.body.classList.toggle("dark-mode", isDark); // For settings.css (Onyx)
+    document.body.classList.toggle("light-e", !isDark);  // For style.css (Liquid Glass)
+    
+    // --- THE FIX ---
+    // If we are on the settings page, we MUST disable the 'light-e' class
+    // when in light mode, because it's for the *other* theme and will conflict.
+    if (document.body.classList.contains("settings-page")) {
+      if (!isDark) {
+        // We are in Light Mode on the Settings Page.
+        // The Onyx theme (settings.css) is light by default (no class).
+        // We must REMOVE light-e to prevent style.css from interfering.
+        document.body.classList.remove("light-e");
+      }
+    }
   }
+  // ===================================
+  // === END OF FIX ====================
+  // ===================================
 
   applyAppearanceMode() {
     const isDark =
