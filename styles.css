@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb Auto-Expand Edition
+   🎧 Live Activity — Honeycomb + Timer Edition
    ====================================================== */
 
 .live-activity {
@@ -471,6 +471,7 @@ a.corner-button {
   border-radius: var(--radius-md);
   width: fit-content;
   max-width: 95%;
+  flex-direction: column;
   background: color-mix(in srgb, var(--content-bg) 80%, transparent);
   backdrop-filter: var(--backdrop-blur);
   border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
@@ -485,17 +486,17 @@ a.corner-button {
 }
 
 /* ======================================================
-   🐝 ICON CLUSTER (auto-expand honeycomb)
+   🐝 ICON CLUSTER
    ====================================================== */
 .icon-cluster {
   position: relative;
-  width: var(--cluster-size, 60px);
-  height: var(--cluster-size, 60px);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18px, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(auto-fit, 18px);
+  grid-gap: 6px;
   justify-content: center;
   align-content: center;
+  width: var(--cluster-size, 60px);
+  height: var(--cluster-size, 60px);
 }
 
 .cluster-icon {
@@ -520,15 +521,28 @@ a.corner-button {
 }
 
 /* ======================================================
-   ✨ TEXT + GLOW
+   ✨ TEXT + TIMER
    ====================================================== */
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
   color: var(--accent-color);
+  text-align: center;
   transition: color 0.3s ease, opacity 0.3s ease;
 }
 
+#last-updated {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--accent-color) 70%, #999);
+  text-align: center;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+/* ======================================================
+   ✨ GLOW
+   ====================================================== */
 .live-activity.active {
   animation: pulse 3s ease-in-out infinite;
 }
@@ -536,6 +550,7 @@ a.corner-button {
   0%, 100% { box-shadow: 0 8px 22px var(--accent-color); }
   50% { box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color) 40%, transparent); }
 }
+
 
 
 /* =================================== */
