@@ -1,5 +1,5 @@
 /* ======================================================
-   🧠 Live Activity System — Final Version with Live Counter + No Cache Fix
+   🎧 Live Activity System — Honeycomb + Tooltip Edition
    ====================================================== */
 
 import {
@@ -9,6 +9,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
+/* ======================================================
+   ⚙️ CONFIGURATION
+   ====================================================== */
 const CONFIG = {
   twitch: { user: "calebkritzar", clientId: "n7e3lys858u96xlg7v2aohe8vzxha3", token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm" },
   github: { username: "rkritzar39" },
@@ -18,6 +21,9 @@ const CONFIG = {
   tiktok: { username: "calebkritzar" },
 };
 
+/* ======================================================
+   🎨 BRAND COLORS
+   ====================================================== */
 const BRAND_COLORS = {
   twitch: "#9146FF",
   tiktok: "#010101",
@@ -30,11 +36,16 @@ const BRAND_COLORS = {
   offline: "#666666"
 };
 
+/* ======================================================
+   🧩 GLOBALS
+   ====================================================== */
 let lastUpdateTime = null;
 let isLive = false;
 
-/* ---------------- COOLDOWN HANDLING ---------------- */
-function wasRecentlyShown(platform, cooldown = 600000) {
+/* ======================================================
+   🧠 COOLDOWN HANDLING (Prevents Repetitive Temporary Posts)
+   ====================================================== */
+function wasRecentlyShown(platform, cooldown = 300000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
   return last && Date.now() - parseInt(last, 10) < cooldown;
 }
@@ -42,17 +53,23 @@ function markAsShown(platform) {
   localStorage.setItem(`last_${platform}_shown`, Date.now().toString());
 }
 
-/* ---------------- ICON CLUSTER ---------------- */
+/* ======================================================
+   🐝 ICON CLUSTER
+   ====================================================== */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
   if (!cluster) return;
   cluster.innerHTML = "";
 
-  platforms.forEach(({ source, temporary }) => {
+  platforms.forEach(({ source, text, temporary }) => {
     const icon = document.createElement("div");
     icon.className = `cluster-icon ${source}`;
     icon.style.backgroundColor = BRAND_COLORS[source] || "#777";
-    icon.setAttribute("data-tooltip", source.charAt(0).toUpperCase() + source.slice(1));
+
+    const tooltipText = text
+      ? `${source.charAt(0).toUpperCase() + source.slice(1)} — ${text}`
+      : source.charAt(0).toUpperCase() + source.slice(1);
+    icon.setAttribute("data-tooltip", tooltipText);
 
     const img = document.createElement("img");
     img.src = `https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/${source}.svg`;
@@ -60,17 +77,47 @@ function updateIconCluster(platforms) {
     icon.appendChild(img);
     cluster.appendChild(icon);
 
-    // Temporary icons fade out
+    // Temporary icons fade after 5s
     if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
         setTimeout(() => icon.remove(), 800);
       }, 5000);
     }
+
+    // Touch tooltip support
+    let holdTimer;
+    icon.addEventListener("touchstart", () => {
+      holdTimer = setTimeout(() => icon.classList.add("touch-active"), 400);
+    });
+    icon.addEventListener("touchend", () => {
+      clearTimeout(holdTimer);
+      setTimeout(() => icon.classList.remove("touch-active"), 1500);
+    });
   });
 }
 
-/* ---------------- STATUS DISPLAY ---------------- */
+/* ======================================================
+   🔔 TOAST NOTIFICATIONS
+   ====================================================== */
+function showToast(message, color = "#555") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.style.borderLeft = `4px solid ${color}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(-10px)";
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+}
+
+/* ======================================================
+   🪄 STATUS DISPLAY
+   ====================================================== */
 function showStatus(payload, allActive = []) {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
@@ -86,6 +133,10 @@ function showStatus(payload, allActive = []) {
 
   updateIconCluster(allActive);
 
+  if (payload?.temporary) {
+    showToast(`🔥 New ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, BRAND_COLORS[source]);
+  }
+
   isLive = ["twitch", "steam", "discord"].includes(source);
   container.classList.toggle("live-now", isLive);
 
@@ -93,7 +144,9 @@ function showStatus(payload, allActive = []) {
   updateLastUpdated();
 }
 
-/* ---------------- COUNTER ---------------- */
+/* ======================================================
+   🕒 TIMESTAMP HANDLER
+   ====================================================== */
 function updateLastUpdated() {
   const updated = document.getElementById("live-activity-updated");
   const container = document.getElementById("live-activity");
@@ -109,7 +162,6 @@ function updateLastUpdated() {
 
   const elapsed = Math.floor((Date.now() - lastUpdateTime) / 1000);
   let text;
-
   if (elapsed < 10) text = "Updated just now";
   else if (elapsed < 60) text = `Updated ${elapsed}s ago`;
   else if (elapsed < 3600) text = `Updated ${Math.floor(elapsed / 60)}m ago`;
@@ -118,9 +170,11 @@ function updateLastUpdated() {
   updated.textContent = text;
 }
 
-/* ---------------- PLATFORM FETCHERS ---------------- */
+/* ======================================================
+   🌐 PLATFORM FETCHERS (Live + Temporary)
+   ====================================================== */
 
-/* Firestore Manual */
+// Manual (Firestore)
 async function getManualStatus() {
   try {
     const snap = await getDoc(doc(db, "live_status", "current"));
@@ -128,159 +182,104 @@ async function getManualStatus() {
       const msg = snap.data().message;
       if (msg && msg.trim()) return { text: msg, source: "manual" };
     }
-  } catch (err) {
-    console.error("Manual status error:", err);
-  }
+  } catch {}
   return null;
 }
 
-/* Twitch */
+// Twitch
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
-    const res = await fetch(
-      `https://api.twitch.tv/helix/streams?user_login=${user}&_=${Date.now()}`,
-      {
-        headers: {
-          "Client-ID": clientId,
-          "Authorization": `Bearer ${token}`,
-          "Cache-Control": "no-cache"
-        },
-        cache: "no-store"
-      }
-    );
-    if (!res.ok) return null;
+    const res = await fetch(`https://api.twitch.tv/helix/streams?user_login=${user}`, {
+      headers: { "Client-ID": clientId, "Authorization": `Bearer ${token}` }
+    });
     const data = await res.json();
     const stream = data?.data?.[0];
-    if (stream?.title)
-      return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
-  } catch (err) {
-    console.error("Twitch API error:", err);
-  }
+    if (stream?.title) return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
+  } catch {}
   return null;
 }
 
-/* Steam */
+// Steam
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
-    const res = await fetch(
-      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}&_=${Date.now()}`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return null;
+    const res = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`);
     const data = await res.json();
     const player = data?.response?.players?.[0];
-    if (player?.gameextrainfo)
-      return { text: `🎮 Playing ${player.gameextrainfo} on Steam`, source: "steam" };
-  } catch (err) {
-    console.error("Steam API error:", err);
-  }
+    if (player?.gameextrainfo) return { text: `🎮 Playing ${player.gameextrainfo} on Steam`, source: "steam" };
+  } catch {}
   return null;
 }
 
-/* Discord */
+// Discord (Lanyard)
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}?_=${Date.now()}`, { cache: "no-store" });
-    if (!res.ok) return null;
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`);
     const { data } = await res.json();
-    if (!data) return null;
-
     const activities = data.activities || [];
     const spotify = activities.find(a => a.name === "Spotify");
-    if (spotify?.details && spotify?.state)
-      return { text: `🎵 Listening to “${spotify.details}” by ${spotify.state}`, source: "spotify" };
-
+    if (spotify?.details) return { text: `🎵 Listening to “${spotify.details}”`, source: "spotify" };
     const game = activities.find(a => a.type === 0);
-    if (game?.name)
-      return { text: `🎮 Playing ${game.name}`, source: "discord" };
-
-    const statusMap = {
-      online: "🟢 Online on Discord",
-      idle: "🌙 Idle on Discord",
-      dnd: "⛔ Do Not Disturb",
-    };
-    if (data.discord_status !== "offline")
-      return { text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" };
-  } catch (err) {
-    console.error("Discord activity error:", err);
-  }
+    if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
+    return { text: "💬 Online on Discord", source: "discord" };
+  } catch {}
   return null;
 }
 
-/* GitHub (no cache) */
+// GitHub (Temporary)
 async function getGitHubStatus() {
   const { username } = CONFIG.github;
+  if (wasRecentlyShown("github")) return null;
   try {
-    if (wasRecentlyShown("github")) return null;
-    const res = await fetch(
-      `https://api.github.com/users/${username}/events/public?_=${Date.now()}`,
-      { headers: { "Cache-Control": "no-cache" }, cache: "no-store" }
-    );
-    if (!res.ok) return null;
+    const res = await fetch(`https://api.github.com/users/${username}/events/public?_=${Date.now()}`, {
+      cache: "no-store", headers: { "Cache-Control": "no-cache" }
+    });
     const events = await res.json();
     const latest = events?.[0];
-    if (!latest) return null;
-
-    const repo = latest.repo?.name ?? "a repository";
-    markAsShown("github");
-    if (latest.type === "PushEvent")
-      return { text: `💻 Pushed code to ${repo}`, source: "github", temporary: true };
-    if (latest.type === "PullRequestEvent")
-      return { text: `🧩 Opened PR on ${repo}`, source: "github", temporary: true };
-  } catch (err) {
-    console.error("GitHub API error:", err);
-  }
+    if (latest?.repo) {
+      markAsShown("github");
+      return { text: `💻 Updated ${latest.repo.name}`, source: "github", temporary: true };
+    }
+  } catch {}
   return null;
 }
 
-/* Reddit (no cache) */
+// Reddit (Temporary)
 async function getRedditStatus() {
   const { username } = CONFIG.reddit;
+  if (wasRecentlyShown("reddit")) return null;
   try {
-    if (wasRecentlyShown("reddit")) return null;
-    const res = await fetch(
-      `https://www.reddit.com/user/${username}/submitted.json?limit=1&_=${Date.now()}`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return null;
+    const res = await fetch(`https://www.reddit.com/user/${username}/submitted.json?limit=1&_=${Date.now()}`, { cache: "no-store" });
     const data = await res.json();
     const post = data?.data?.children?.[0]?.data;
-    if (!post) return null;
-    const sub = post.subreddit ?? "reddit";
-    const title = post.title ?? "New post";
-    markAsShown("reddit");
-    return { text: `📢 Posted on r/${sub} — “${title}”`, source: "reddit", temporary: true };
-  } catch (err) {
-    console.error("Reddit API error:", err);
-  }
+    if (post) {
+      markAsShown("reddit");
+      return { text: `📢 Posted on r/${post.subreddit} — “${post.title}”`, source: "reddit", temporary: true };
+    }
+  } catch {}
   return null;
 }
 
-/* TikTok (no cache) */
+// TikTok (Temporary)
 async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
+  if (wasRecentlyShown("tiktok")) return null;
   try {
-    if (wasRecentlyShown("tiktok")) return null;
-    const res = await fetch(
-      `https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}/video/${Date.now()}`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return null;
+    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}/video/${Date.now()}`, { cache: "no-store" });
     const data = await res.json();
     if (data?.title) {
       markAsShown("tiktok");
       return { text: `🎬 Posted on TikTok — “${data.title}”`, source: "tiktok", temporary: true };
     }
-  } catch (err) {
-    console.error("TikTok API error:", err);
-  }
+  } catch {}
   return null;
 }
 
-/* ---------------- UPDATE LOOP ---------------- */
+/* ======================================================
+   🔁 MAIN UPDATE LOOP
+   ====================================================== */
 async function updateLiveStatus() {
   const sources = [
     getManualStatus,
@@ -302,42 +301,11 @@ async function updateLiveStatus() {
   showStatus(live || { text: "🛌 Offline", source: "offline" }, active);
 }
 
-/* ---------------- INIT ---------------- */
+/* ======================================================
+   🚀 INIT
+   ====================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
-  setInterval(updateLiveStatus, 30000);  // refresh activities
-  setInterval(updateLastUpdated, 1000);  // update counter every second
+  setInterval(updateLiveStatus, 30000);
+  setInterval(updateLastUpdated, 1000);
 });
-
-/* ======================================================
-   🔔 Toast Notification Helper
-   ====================================================== */
-function showToast(message, color = "#555") {
-  const container = document.getElementById("toast-container");
-  if (!container) return;
-
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.style.borderLeft = `4px solid ${color}`;
-  toast.textContent = message;
-  container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    toast.style.transform = "translateY(-10px)";
-    setTimeout(() => toast.remove(), 400);
-  }, 3000);
-}
-
-/* Trigger toast when temporary activity fires */
-const originalShowStatus = showStatus;
-showStatus = function (payload, allActive = []) {
-  if (payload?.temporary) {
-    const color = BRAND_COLORS[payload.source] || "#555";
-    showToast(
-      `🔥 New ${payload.source.charAt(0).toUpperCase() + payload.source.slice(1)} activity detected!`,
-      color
-    );
-  }
-  originalShowStatus(payload, allActive);
-};
