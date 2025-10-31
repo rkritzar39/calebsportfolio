@@ -1750,15 +1750,15 @@ async function loadQuoteOfTheDay() {
   try {
     // Primary source: Quotable API (deterministic)
     const pageHash = Math.abs(hashCode(today));
-    const itemHash = Math.abs(hashCode(today + "_item")); 
+    const itemHash = Math.abs(hashCode(today + "_item"));
     const pageToFetch = (pageHash % 74) + 1; // quotable.io has ~74 pages
-    
+
     const res = await fetchWithTimeout(
       `https://api.quotable.io/quotes?page=${pageToFetch}`,
       5000
     );
     const data = await res.json();
-    const list = data.results; 
+    const list = data.results;
 
     if (!Array.isArray(list) || list.length === 0) {
       throw new Error("Invalid quote list from quotable.io");
@@ -1767,27 +1767,13 @@ async function loadQuoteOfTheDay() {
     chosen = { content: item.content, author: item.author || "Unknown" };
 
   } catch (err) {
-    console.warn("Primary API (quotable.io) failed. Trying fallback.", err); // 1. First failure
-    try {
-      // Fallback: type.fit
-      const res2 = await fetchWithTimeout("https://type.fit/api/quotes", 6000);
-      const list = await res2.json();
-      const idx = Math.abs(hashCode(today)) % (Array.isArray(list) ? list.length : localQuotes.length);
-      const item = Array.isArray(list) && list[idx] ? list[idx] : localQuotes[idx % localQuotes.length];
-      chosen = {
-        content: item.text || item.content || "Keep going — great things take time.",
-        author: (item.author && typeof item.author === "string"
-                  ? item.author.replace(/,\s*type\.fit$/i, "")
-                  : "Unknown")
-      };
-    } catch (err2) {
-      // ✅✅✅ THIS IS THE NEW LINE ✅✅✅
-      console.error("Fallback API (type.fit) also failed. Using local quotes.", err2); // 2. Second failure
-      
-      // Final fallback
-      const idx2 = Math.abs(hashCode(today)) % localQuotes.length;
-      chosen = localQuotes[idx2];
-    }
+    // === FALLBACK BLOCK ===
+    // This will run if quotable.io fails (e.g., bad clock, no internet)
+    // We removed the broken type.fit API
+    console.warn("Primary API (quotable.io) failed. Using local quotes.", err);
+
+    const idx2 = Math.abs(hashCode(today)) % localQuotes.length;
+    chosen = localQuotes[idx2];
   }
 
   if (chosen) {
