@@ -1,5 +1,5 @@
 /* =======================================================
-   Live Activity System (Hybrid Steam + Discord Edition)
+   Live Activity System (Smart Hybrid Multi-Activity Edition)
    Platforms: Manual • Twitch • GitHub • Reddit • Steam • Discord • TikTok
    ======================================================= */
 
@@ -28,7 +28,7 @@ const CONFIG = {
   discord: { userId: "850815059093356594" },
   tiktok: {
     username: "calebkritzar",
-    latestVideoId: "7429138404928736514" // replace with your latest TikTok ID
+    latestVideoId: "7429138404928736514" // replace with latest video ID
   },
 };
 
@@ -64,26 +64,28 @@ function isLiveActivityEnabled() {
 /* ================================
    DISPLAY HANDLER
 ================================ */
-function showStatus(payload, isOffline = false) {
-  const el = document.getElementById("live-activity-text");
+function showStatus(activities, isOffline = false) {
   const container = document.getElementById("live-activity");
   const icon = document.getElementById("activity-icon");
-  if (!el || !container || !icon) return;
+  const textEl = document.getElementById("live-activity-text");
+  if (!container || !icon || !textEl) return;
 
-  const { text, source } = typeof payload === "string" ? { text: payload, source: "manual" } : payload;
+  if (!Array.isArray(activities)) activities = [activities];
+
+  // Primary (highest-priority) activity
+  const main = activities[0];
+  const { source, text } = main;
+
   const platform = PLATFORM_STYLE[isOffline ? "offline" : source] || PLATFORM_STYLE.discord;
   const { color, icon: iconSrc } = platform;
 
-  // Text + icon update
-  el.textContent = text;
-  icon.src = iconSrc;
-  el.style.color = color;
-  icon.className = `activity-icon ${source} change`;
+  // Text display: combine multiple sources (Spotify, Game, Twitch)
+  const textCombined = activities.map(a => a.text).join(" • ");
 
-  // Background glow
-  container.style.setProperty("--platform-color", color);
-  container.className = `live-activity ${source} ${isOffline ? "offline" : "active"}`;
-  container.classList.remove("hidden");
+  textEl.textContent = textCombined;
+  icon.src = iconSrc;
+  textEl.style.color = color;
+  icon.className = `activity-icon ${source} change`;
 
   container.style.background = `color-mix(in srgb, ${color} 20%, var(--content-bg))`;
   container.style.boxShadow = `0 0 15px ${color}60`;
@@ -111,7 +113,7 @@ async function getManualStatus() {
   }
 }
 
-/* 🟣 Twitch (Streaming) */
+/* 🟣 Twitch */
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
@@ -131,7 +133,7 @@ async function getTwitchStatus() {
   }
 }
 
-/* 🎬 TikTok (Latest Post) */
+/* 🎬 TikTok */
 async function getTikTokStatus() {
   const { username, latestVideoId } = CONFIG.tiktok;
   try {
@@ -210,7 +212,7 @@ async function getSteamStatus() {
   }
 }
 
-/* 💬 Discord */
+/* 💬 Discord (Spotify + Games) */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
@@ -220,45 +222,46 @@ async function getDiscordActivity() {
     if (!data) return null;
 
     const activities = data.activities || [];
+    const results = [];
 
     const spotify = activities.find(a => a.name === "Spotify");
     if (spotify?.details && spotify?.state)
-      return { text: `🎵 Listening to “${spotify.details}” by ${spotify.state}`, source: "spotify" };
+      results.push({ text: `🎵 “${spotify.details}” by ${spotify.state}`, source: "spotify" });
 
     const game = activities.find(a => a.type === 0);
     if (game?.name)
-      return { text: `🎮 Playing ${game.name}`, source: "discord" };
+      results.push({ text: `🎮 Playing ${game.name}`, source: "discord" });
 
     const statusMap = {
       online: "🟢 Online on Discord",
       idle: "🌙 Idle on Discord",
       dnd: "⛔ Do Not Disturb",
     };
-    if (data.discord_status !== "offline")
-      return { text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" };
+    if (data.discord_status !== "offline" && results.length === 0)
+      results.push({ text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" });
 
-    return null;
+    return results.length ? results : null;
   } catch (err) {
     console.error("Discord API error:", err);
     return null;
   }
 }
 
-/* ================================
-   HYBRID STEAM + DISCORD
-================================ */
+/* 🧠 Hybrid Steam + Discord */
 async function getHybridGameStatus() {
-  const steam = await getSteamStatus();
-  if (steam) return steam;
+  const [steam, discordActivities] = await Promise.all([
+    getSteamStatus(),
+    getDiscordActivity(),
+  ]);
 
-  const discord = await getDiscordActivity();
-  if (discord && discord.text.includes("Playing")) return discord;
-
-  return null;
+  const results = [];
+  if (steam) results.push(steam);
+  if (discordActivities) results.push(...discordActivities.filter(a => a.text.includes("Playing") || a.source === "spotify"));
+  return results.length ? results : null;
 }
 
 /* ================================
-   UPDATE LOOP
+   SMART UPDATE LOOP
 ================================ */
 async function updateLiveStatus() {
   const container = document.getElementById("live-activity");
@@ -269,21 +272,27 @@ async function updateLiveStatus() {
   }
   container.style.display = "";
 
-  const sources = [
-    getManualStatus,
-    getTwitchStatus,
-    getHybridGameStatus, // 🧠 new hybrid logic
-    getGitHubStatus,
-    getRedditStatus,
-    getTikTokStatus,
-  ];
-
   try {
-    for (const fn of sources) {
-      const result = await fn();
-      if (result) return showStatus(result);
+    const [manual, twitch, hybrid, github, reddit, tiktok] = await Promise.all([
+      getManualStatus(),
+      getTwitchStatus(),
+      getHybridGameStatus(),
+      getGitHubStatus(),
+      getRedditStatus(),
+      getTikTokStatus(),
+    ]);
+
+    const all = [manual, twitch, hybrid, github, reddit, tiktok].flat().filter(Boolean);
+
+    // 🌟 Priority order
+    const priority = ["manual", "twitch", "steam", "discord", "spotify", "github", "reddit", "tiktok"];
+    const sorted = all.sort((a, b) => priority.indexOf(a.source) - priority.indexOf(b.source));
+
+    if (sorted.length > 0) {
+      showStatus(sorted);
+    } else {
+      showStatus({ text: "🛌 Offline", source: "offline" }, true);
     }
-    showStatus({ text: "🛌 Offline", source: "offline" }, true);
   } catch (err) {
     console.error("Live status error:", err);
     showStatus({ text: "💬 Status unavailable", source: "offline" }, true);
@@ -295,5 +304,5 @@ async function updateLiveStatus() {
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
-  setInterval(() => updateLiveStatus(), 30000);
+  setInterval(() => updateLiveStatus(), 15000);
 });
