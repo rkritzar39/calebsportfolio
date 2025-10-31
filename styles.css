@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity Capsule — Brand Circle Glow (Minimal Edition)
+   🎧 Live Activity Capsule — Brand Circle Glow Polished Edition
    ====================================================== */
 
 .live-activity {
@@ -496,11 +496,6 @@ a.corner-button {
   pointer-events: none;
 }
 
-/* Hover micro-lift */
-.live-activity:hover {
-  transform: translateY(-2px) scale(1.01);
-}
-
 /* ======================================================
    🟢 Left Icon Cluster
    ====================================================== */
@@ -508,36 +503,49 @@ a.corner-button {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 6px;
-  min-width: 40px;
+  gap: 8px;
+  min-width: 48px;
 }
 
 .left-icon {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #555;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.4s ease;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  position: relative;
 }
 
+/* Divider lines between icons */
+.left-icon:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -6px;
+  width: 1px;
+  height: 16px;
+  background: color-mix(in srgb, var(--text-color) 25%, transparent);
+  opacity: 0.6;
+}
+
+/* Icon images inside circles */
 .left-icon img {
   width: 16px;
   height: 16px;
-  filter: brightness(0) invert(1); /* makes logos white */
+  filter: brightness(0) invert(1);
+  transition: opacity 0.4s ease;
 }
 
-/* Fade out temporary icons */
+/* Fade out for temporary icons */
 .left-icon.fade-out {
   opacity: 0;
-  transform: scale(0.7);
+  transform: scale(0.75);
 }
 
 /* ======================================================
-   🌈 Brand Colors
+   🌈 Brand Colors + Contrast Logic
    ====================================================== */
 .left-icon[alt="twitch"]  { background-color: #9146FF; }
 .left-icon[alt="tiktok"]  { background-color: #010101; }
@@ -548,6 +556,11 @@ a.corner-button {
 .left-icon[alt="discord"] { background-color: #5865F2; }
 .left-icon[alt="manual"]  { background-color: var(--accent-color); }
 .left-icon[alt="offline"] { background-color: #777; }
+
+/* Automatically invert dark ones */
+.left-icon[data-dark] img {
+  filter: brightness(0) invert(1);
+}
 
 /* ======================================================
    📝 Activity Text
@@ -564,61 +577,32 @@ a.corner-button {
 #live-activity-text.fade-out { opacity: 0; }
 #live-activity-text.fade-in { opacity: 1; }
 
-/* Removes old inline icons */
-.activity-item img,
-.inline-icon,
-.divider {
-  display: none !important;
-}
-
 /* ======================================================
    ✨ Glow Modes
    ====================================================== */
-.live-activity[data-glow="neon"] {
-  animation: glowNeon 3s ease-in-out infinite;
-}
-.live-activity[data-glow="mid"] {
-  animation: glowMid 4s ease-in-out infinite;
-}
-.live-activity[data-glow="soft"] {
-  animation: glowSoft 6s ease-in-out infinite;
-}
+.live-activity[data-glow="neon"] { animation: glowNeon 3s ease-in-out infinite; }
+.live-activity[data-glow="mid"]  { animation: glowMid 4s ease-in-out infinite; }
+.live-activity[data-glow="soft"] { animation: glowSoft 6s ease-in-out infinite; }
 
 @keyframes glowNeon {
-  0%, 100% {
-    box-shadow: 0 0 25px var(--accent-color)60, 0 0 45px var(--accent-color)30 inset;
-  }
-  50% {
-    box-shadow: 0 0 45px var(--accent-color)90, 0 0 60px var(--accent-color)60 inset;
-  }
+  0%, 100% { box-shadow: 0 0 25px var(--accent-color)60, 0 0 45px var(--accent-color)30 inset; }
+  50%      { box-shadow: 0 0 45px var(--accent-color)90, 0 0 60px var(--accent-color)60 inset; }
 }
+
 @keyframes glowMid {
-  0%, 100% {
-    box-shadow: 0 0 20px var(--accent-color)50, 0 0 40px var(--accent-color)30 inset;
-  }
-  50% {
-    box-shadow: 0 0 30px var(--accent-color)70, 0 0 50px var(--accent-color)40 inset;
-  }
+  0%, 100% { box-shadow: 0 0 20px var(--accent-color)50, 0 0 40px var(--accent-color)30 inset; }
+  50%      { box-shadow: 0 0 30px var(--accent-color)70, 0 0 50px var(--accent-color)40 inset; }
 }
+
 @keyframes glowSoft {
-  0%, 100% {
-    box-shadow: 0 0 12px var(--accent-color)30, 0 0 25px var(--accent-color)15 inset;
-  }
-  50% {
-    box-shadow: 0 0 18px var(--accent-color)45, 0 0 35px var(--accent-color)25 inset;
-  }
+  0%, 100% { box-shadow: 0 0 12px var(--accent-color)30, 0 0 25px var(--accent-color)15 inset; }
+  50%      { box-shadow: 0 0 18px var(--accent-color)45, 0 0 35px var(--accent-color)25 inset; }
 }
 
 /* ======================================================
    📱 Responsive
    ====================================================== */
 @media (max-width: 768px) {
-  .live-activity {
-    margin-top: 0.75rem;
-    padding: 8px 14px;
-    max-width: 90%;
-  }
-
   .left-icon {
     width: 24px;
     height: 24px;
@@ -631,12 +615,6 @@ a.corner-button {
 }
 
 @media (max-width: 480px) {
-  .live-activity {
-    margin-top: 0.5rem;
-    padding: 7px 12px;
-    max-width: 88%;
-  }
-
   .left-icon {
     width: 22px;
     height: 22px;
