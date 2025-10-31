@@ -1,5 +1,5 @@
 /* ======================================================
-   🧠 Live Activity System — Left Honeycomb + Temporary Status Fade
+   🧠 Live Activity System — Tooltip + Smart Temporary Logic
    ====================================================== */
 
 import {
@@ -37,7 +37,7 @@ const BRAND_COLORS = {
 };
 
 /* ================================
-   COOLDOWN HANDLERS
+   COOLDOWN SYSTEM
 ================================ */
 function wasRecentlyShown(platform, cooldown = 600000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
@@ -48,7 +48,7 @@ function markAsShown(platform) {
 }
 
 /* ================================
-   ICON CLUSTER (Left Honeycomb)
+   ICON CLUSTER (with Tooltips)
 ================================ */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
@@ -59,6 +59,8 @@ function updateIconCluster(platforms) {
     const icon = document.createElement("div");
     icon.className = `cluster-icon ${source}`;
     icon.style.backgroundColor = BRAND_COLORS[source] || "#777";
+    icon.setAttribute("data-tooltip", source.charAt(0).toUpperCase() + source.slice(1));
+
     const img = document.createElement("img");
     img.src = `https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/${source}.svg`;
     img.alt = source;
