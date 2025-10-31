@@ -10,7 +10,7 @@ import {
 import { db } from "./firebase-init.js";
 
 /* ================================
-   DISCORD PRESENCE — clean version
+   DISCORD PRESENCE — Clean version
    Shows only real activities (game / Spotify)
 ================================ */
 async function getDiscordActivity() {
@@ -19,10 +19,10 @@ async function getDiscordActivity() {
 
   try {
     const res = await fetch(endpoint);
-    if (!res.ok) return "💬 Discord status unavailable";
+    if (!res.ok) return null;
 
     const { data } = await res.json();
-    if (!data) return "💬 Discord status unavailable";
+    if (!data) return null;
 
     const statusMap = {
       online: "🟢 Online on Discord",
@@ -43,12 +43,12 @@ async function getDiscordActivity() {
     if (game && game.name)
       return `🎮 Playing ${game.name}`;
 
-    // --- Fallback: no game / no Spotify, but user is online ---
+    // --- Fallback: no game / no Spotify ---
     const status = data.discord_status;
     return statusMap[status] || "💬 Online on Discord";
   } catch (err) {
     console.error("Discord activity error:", err);
-    return "💬 Discord status unavailable";
+    return null;
   }
 }
 
@@ -98,6 +98,9 @@ async function getManualStatus() {
   }
 }
 
+/* ================================
+   USER SETTING CHECK
+================================ */
 function isLiveActivityEnabled() {
   try {
     const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
@@ -107,9 +110,9 @@ function isLiveActivityEnabled() {
   }
 }
 
-// ===============================
-// 🎧 Update Live Activity Display
-// ===============================
+/* ================================
+   UPDATE LIVE ACTIVITY DISPLAY
+================================ */
 async function updateLiveStatus() {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
@@ -127,19 +130,19 @@ async function updateLiveStatus() {
   container.classList.remove("offline");
 
   try {
-    // --- Manual override ---
+    // --- 1️⃣ Manual override ---
     const manual = await getManualStatus();
     if (manual) return showStatus(manual);
 
-    // --- Twitch ---
+    // --- 2️⃣ Twitch (streaming) ---
     const twitch = await getTwitchStatus();
     if (twitch) return showStatus(twitch);
 
-    // --- Discord ---
+    // --- 3️⃣ Discord ---
     const discord = await getDiscordActivity();
     if (discord && !discord.includes("Offline")) return showStatus(discord);
 
-    // --- Offline fallback ---
+    // --- 4️⃣ Offline fallback ---
     showStatus("🛌 Offline", true);
   } catch (err) {
     console.error("Live activity update error:", err);
@@ -147,6 +150,9 @@ async function updateLiveStatus() {
   }
 }
 
+/* ================================
+   SHOW STATUS
+================================ */
 function showStatus(text, isOffline = false) {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
@@ -155,26 +161,23 @@ function showStatus(text, isOffline = false) {
   el.textContent = text;
   container.classList.toggle("active", !isOffline);
   container.classList.toggle("offline", isOffline);
-}
-
-/* ================================
-   RENDER
-================================ */
-function showStatus(text) {
-  const el = document.getElementById("live-activity-text");
-  const container = document.getElementById("live-activity");
-  el.textContent = text;
   container.classList.remove("hidden");
-  container.classList.add("active");
+
+  if (isOffline) {
+    container.style.opacity = "0.8";
+  } else {
+    container.style.opacity = "1";
+  }
 }
 
 /* ================================
-   INIT
+   INIT + AUTO REFRESH
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
-  // Refresh every 30 seconds
+
+  // Refresh every 30 seconds (only if enabled)
   setInterval(() => {
-  if (isLiveActivityEnabled()) updateLiveStatus();
-}, 30000);
+    if (isLiveActivityEnabled()) updateLiveStatus();
+  }, 30000);
 });
