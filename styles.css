@@ -2118,7 +2118,7 @@ body.dark-mode .bubble {
 #quote-section {
   width: 100%;
   box-sizing: border-box;
-  padding: 64px 8%; /* aligns with other sections */
+  padding: 64px 8%; /* matches other sections */
   background: var(--content-bg);
   background-image: var(--bubble-gradient), var(--liquid-reflection);
   backdrop-filter: var(--backdrop-blur);
@@ -2135,6 +2135,7 @@ body.dark-mode .bubble {
   transition: background var(--transition-medium), box-shadow var(--transition-medium);
 }
 
+/* Decorative overlay for subtle depth */
 #quote-section::before {
   content: "";
   position: absolute;
@@ -2145,10 +2146,16 @@ body.dark-mode .bubble {
 }
 
 @keyframes fadeInQuote {
-  to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Header & Date */
+/* ========================================================= */
+/* == Header & Date == */
+/* ========================================================= */
+
 #quote-section h2 {
   color: var(--accent-color);
   font-size: 1.7rem;
@@ -2161,7 +2168,11 @@ body.dark-mode .bubble {
   justify-content: center;
   gap: 0.4rem;
 }
-#quote-section h2::before { content: "💬"; font-size: 1.2em; }
+
+#quote-section h2::before {
+  content: "💬";
+  font-size: 1.2em;
+}
 
 .quote-date {
   font-size: 1rem;
@@ -2171,7 +2182,10 @@ body.dark-mode .bubble {
   text-align: center;
 }
 
-/* Quote text & author */
+/* ========================================================= */
+/* == Quote Text & Author == */
+/* ========================================================= */
+
 .quote-text {
   font-size: 1.4rem;
   font-weight: 500;
@@ -2194,13 +2208,17 @@ body.dark-mode .bubble {
   margin-bottom: 2rem;
 }
 
-/* Controls */
+/* ========================================================= */
+/* == Controls == */
+/* ========================================================= */
+
 #quote-controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
 }
+
 #quote-controls select,
 #quote-controls input,
 #quote-controls button {
@@ -2212,12 +2230,14 @@ body.dark-mode .bubble {
   padding: 0.5rem 0.9rem;
   transition: background var(--transition-fast), transform var(--transition-fast);
 }
+
 #quote-controls select:hover,
 #quote-controls input:hover,
 #quote-controls button:hover {
   border-color: var(--accent-color);
   background: rgba(255, 255, 255, 0.1);
 }
+
 #quote-controls button {
   background: var(--accent-color);
   border: none;
@@ -2226,20 +2246,27 @@ body.dark-mode .bubble {
   cursor: pointer;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
 }
+
 #quote-controls button:hover {
   background: var(--hover-color);
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
+
+/* Pulse animation for new-day quotes */
 #next-quote-btn.new-day {
   animation: glowPulse 1.8s infinite;
 }
+
 @keyframes glowPulse {
   0%, 100% { box-shadow: 0 0 10px var(--accent-color); }
   50% { box-shadow: 0 0 20px var(--accent-color); }
 }
 
-/* Modals */
+/* ========================================================= */
+/* == Modals (Glass UI Base) == */
+/* ========================================================= */
+
 .category-modal {
   position: fixed;
   inset: 0;
@@ -2249,7 +2276,10 @@ body.dark-mode .bubble {
   justify-content: center;
   z-index: 2000;
 }
-.category-modal.hidden { display: none; }
+
+.category-modal.hidden {
+  display: none;
+}
 
 .category-modal-content {
   background: var(--content-bg);
@@ -2264,10 +2294,12 @@ body.dark-mode .bubble {
   animation: fadeInModal 0.4s ease-out;
   border: 1px solid color-mix(in srgb, var(--accent-color) 20%, var(--border-color));
 }
+
 @keyframes fadeInModal {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
 .category-modal-content h3 {
   text-align: center;
   font-size: 1.3rem;
@@ -2278,11 +2310,32 @@ body.dark-mode .bubble {
   padding-bottom: 0.5rem;
 }
 
-/* Floating label form */
+/* ========================================================= */
+/* == Custom Quote Modal (with Floating Labels) == */
+/* ========================================================= */
+
+#custom-quote-modal .category-modal-content {
+  background: var(--content-bg);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 20%, var(--border-color));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  color: var(--text-color);
+  padding: 2rem 1.8rem;
+  width: 95%;
+  max-width: 460px;
+  position: relative;
+  animation: fadeInModal 0.45s ease-out;
+  overflow: hidden;
+}
+
+/* Floating label wrapper */
 .form-floating {
   position: relative;
   margin-bottom: 1.2rem;
 }
+
 .form-floating input,
 .form-floating textarea,
 .form-floating select {
@@ -2296,6 +2349,7 @@ body.dark-mode .bubble {
   outline: none;
   transition: border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
+
 .form-floating input:focus,
 .form-floating textarea:focus,
 .form-floating select:focus {
@@ -2303,6 +2357,8 @@ body.dark-mode .bubble {
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
+
+/* Label animation */
 .form-floating label {
   position: absolute;
   left: 0.85rem;
@@ -2313,6 +2369,7 @@ body.dark-mode .bubble {
   transition: all 0.25s ease;
   opacity: 0.8;
 }
+
 .form-floating input:focus + label,
 .form-floating textarea:focus + label,
 .form-floating select:focus + label,
@@ -2325,7 +2382,68 @@ body.dark-mode .bubble {
   opacity: 1;
 }
 
-/* Custom Quote Manager */
+/* Buttons */
+#custom-quote-modal button {
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+#save-custom-quote {
+  background: var(--accent-color);
+  color: #fff;
+  padding: 0.5rem 1.2rem;
+}
+
+#save-custom-quote:hover {
+  background: var(--hover-color);
+  transform: translateY(-2px);
+}
+
+#cancel-custom-quote {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem 1.2rem;
+}
+
+#cancel-custom-quote:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  transform: translateY(-2px);
+}
+
+/* Button row layout */
+#custom-quote-modal .category-modal-content > div:last-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.8rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+  #custom-quote-modal .category-modal-content {
+    padding: 1.4rem 1rem;
+  }
+  #custom-quote-modal h3 {
+    font-size: 1.15rem;
+  }
+  #custom-quote-modal button {
+    width: 100%;
+  }
+  #custom-quote-modal .category-modal-content > div:last-child {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ========================================================= */
+/* == Custom Quote Manager == */
+/* ========================================================= */
+
 #custom-quote-list {
   list-style: none;
   padding: 0;
@@ -2333,6 +2451,7 @@ body.dark-mode .bubble {
   max-height: 260px;
   overflow-y: auto;
 }
+
 #custom-quote-list li {
   background: rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
@@ -2344,6 +2463,7 @@ body.dark-mode .bubble {
   color: var(--text-color);
   font-size: 0.9rem;
 }
+
 #custom-quote-list button {
   background: #ff4d4f;
   border: none;
@@ -2354,16 +2474,21 @@ body.dark-mode .bubble {
   font-size: 0.85rem;
   transition: background var(--transition-fast);
 }
+
 #custom-quote-list button:hover {
   background: #d9363e;
 }
 
-/* Responsive */
+/* ========================================================= */
+/* == Responsive Layout == */
+/* ========================================================= */
+
 @media (max-width: 768px) {
   #quote-section { padding: 48px 6%; }
   #quote-section h2 { font-size: 1.4rem; }
   .quote-text { font-size: 1.15rem; }
 }
+
 @media (max-width: 420px) {
   #quote-section { padding: 40px 5%; }
   #quote-section h2 { font-size: 1.1rem; }
