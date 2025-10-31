@@ -459,29 +459,23 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity Capsule — Final Brand Circle Glow Edition
+   🎧 Live Activity — Honeycomb Icon Cluster Edition
    ====================================================== */
 
 .live-activity {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
-
-  position: relative;
-  margin: 1rem auto 0 auto;
+  gap: 12px;
+  margin: 1rem auto;
   padding: 10px 18px;
   width: fit-content;
   max-width: 95%;
   border-radius: var(--radius-md);
-  z-index: 2;
-
-  /* Glassy style */
-  background: color-mix(in srgb, var(--content-bg, #202020) 80%, transparent);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
-  transition: background 0.5s ease, box-shadow 0.5s ease, opacity 0.4s ease, transform 0.3s ease;
+  background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+  transition: background 0.5s ease, box-shadow 0.5s ease, opacity 0.4s ease;
 }
 
 .live-activity.hidden {
@@ -490,125 +484,66 @@ a.corner-button {
   pointer-events: none;
 }
 
-.live-activity:hover {
-  transform: translateY(-2px) scale(1.01);
-}
-
 /* ======================================================
-   🟢 Left Icon Cluster
+   🐝 ICON CLUSTER (Honeycomb layout)
    ====================================================== */
 .icon-cluster {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  min-width: 48px;
+  position: relative;
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 4px;
 }
 
-.left-icon {
-  width: 28px;
-  height: 28px;
+.cluster-icon {
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.4s ease;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
-  position: relative;
+  transition: opacity 0.5s ease, transform 0.4s ease;
 }
 
-.left-icon:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  right: -6px;
-  width: 1px;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.15);
+.cluster-icon img {
+  width: 12px;
+  height: 12px;
+  filter: brightness(100%) contrast(100%);
 }
 
-.left-icon img {
-  width: 16px;
-  height: 16px;
-  filter: brightness(0) invert(1);
-  transition: opacity 0.4s ease;
-}
-
-/* Fade for temporary icons */
-.left-icon.fade-out {
+.cluster-icon.fade-out {
   opacity: 0;
-  transform: scale(0.7);
+  transform: scale(0.6);
 }
 
 /* ======================================================
-   🌈 Brand Colors
-   ====================================================== */
-.left-icon[alt="twitch"]  { background-color: #9146FF; }
-.left-icon[alt="tiktok"]  { background-color: #010101; }
-.left-icon[alt="github"]  { background-color: #24292F; }
-.left-icon[alt="reddit"]  { background-color: #FF4500; }
-.left-icon[alt="steam"]   { background-color: #171A21; }
-.left-icon[alt="spotify"] { background-color: #1DB954; }
-.left-icon[alt="discord"] { background-color: #5865F2; }
-.left-icon[alt="manual"]  { background-color: var(--accent-color, #FF6F61); }
-.left-icon[alt="offline"] { background-color: #777; }
-
-/* Auto contrast (dark brands) */
-.left-icon[alt="tiktok"] img,
-.left-icon[alt="github"] img,
-.left-icon[alt="steam"] img {
-  filter: brightness(0) invert(1);
-}
-
-/* ======================================================
-   📝 Activity Text
+   ✨ TEXT
    ====================================================== */
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
+  color: var(--accent-color);
   text-align: center;
   line-height: 1.4;
-  color: var(--accent-color, #FF6F61);
-  transition: color 0.3s ease, opacity 0.4s ease;
-}
-
-#live-activity-text.fade-out { opacity: 0; }
-#live-activity-text.fade-in { opacity: 1; }
-
-/* ======================================================
-   ✨ Glow Animation Modes
-   ====================================================== */
-.live-activity[data-glow="neon"] { animation: glowNeon 3s ease-in-out infinite; }
-.live-activity[data-glow="mid"]  { animation: glowMid 4s ease-in-out infinite; }
-.live-activity[data-glow="soft"] { animation: glowSoft 6s ease-in-out infinite; }
-
-@keyframes glowNeon {
-  0%, 100% { box-shadow: 0 0 25px var(--accent-color)60, 0 0 45px var(--accent-color)30 inset; }
-  50%      { box-shadow: 0 0 45px var(--accent-color)90, 0 0 60px var(--accent-color)60 inset; }
-}
-
-@keyframes glowMid {
-  0%, 100% { box-shadow: 0 0 20px var(--accent-color)50, 0 0 40px var(--accent-color)30 inset; }
-  50%      { box-shadow: 0 0 30px var(--accent-color)70, 0 0 50px var(--accent-color)40 inset; }
-}
-
-@keyframes glowSoft {
-  0%, 100% { box-shadow: 0 0 12px var(--accent-color)30, 0 0 25px var(--accent-color)15 inset; }
-  50%      { box-shadow: 0 0 18px var(--accent-color)45, 0 0 35px var(--accent-color)25 inset; }
+  transition: color 0.3s ease, opacity 0.3s ease;
 }
 
 /* ======================================================
-   📱 Responsive
+   ✨ GLOW
    ====================================================== */
-@media (max-width: 768px) {
-  .left-icon { width: 24px; height: 24px; }
-  .left-icon img { width: 14px; height: 14px; }
+.live-activity.active {
+  animation: pulse 2.8s ease-in-out infinite;
 }
-
-@media (max-width: 480px) {
-  .left-icon { width: 22px; height: 22px; }
-  .left-icon img { width: 12px; height: 12px; }
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+  }
+  50% {
+    box-shadow: 0 8px 26px var(--accent-color);
+  }
 }
-
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
