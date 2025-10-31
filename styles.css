@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity Capsule — Brand Circle Glow Edition
+   🎧 Live Activity Capsule — Brand Circle Glow (Minimal Edition)
    ====================================================== */
 
 .live-activity {
@@ -477,7 +477,7 @@ a.corner-button {
   border-radius: var(--radius-md);
   z-index: 2;
 
-  /* Glass look */
+  /* Glassy look */
   background: color-mix(in srgb, var(--content-bg) 80%, transparent);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
@@ -496,7 +496,7 @@ a.corner-button {
   pointer-events: none;
 }
 
-/* Hover feel */
+/* Hover micro-lift */
 .live-activity:hover {
   transform: translateY(-2px) scale(1.01);
 }
@@ -521,16 +521,16 @@ a.corner-button {
   align-items: center;
   justify-content: center;
   transition: all 0.4s ease;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
 }
 
 .left-icon img {
   width: 16px;
   height: 16px;
-  filter: brightness(100%) contrast(100%);
+  filter: brightness(0) invert(1); /* makes logos white */
 }
 
-/* Fade out for temporary disappearing icons */
+/* Fade out temporary icons */
 .left-icon.fade-out {
   opacity: 0;
   transform: scale(0.7);
@@ -564,17 +564,11 @@ a.corner-button {
 #live-activity-text.fade-out { opacity: 0; }
 #live-activity-text.fade-in { opacity: 1; }
 
-/* Inline icons inside text */
-.inline-icon {
-  width: 15px;
-  height: 15px;
-  vertical-align: -2px;
-  margin-right: 5px;
-}
-
+/* Removes old inline icons */
+.activity-item img,
+.inline-icon,
 .divider {
-  opacity: 0.5;
-  margin: 0 6px;
+  display: none !important;
 }
 
 /* ======================================================
