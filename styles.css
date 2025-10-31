@@ -476,12 +476,11 @@ a.corner-button {
   border-radius: var(--radius-md);
   z-index: 2;
 
-  /* Glass look */
-  background: color-mix(in srgb, var(--content-bg) 80%, transparent);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+  /* Glassy style */
+  background: color-mix(in srgb, var(--content-bg, #202020) 80%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
   transition: background 0.5s ease, box-shadow 0.5s ease, opacity 0.4s ease, transform 0.3s ease;
 }
 
@@ -518,32 +517,30 @@ a.corner-button {
   position: relative;
 }
 
-/* Divider between icons */
 .left-icon:not(:last-child)::after {
   content: "";
   position: absolute;
   right: -6px;
   width: 1px;
   height: 16px;
-  background: color-mix(in srgb, var(--text-color) 25%, transparent);
-  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.15);
 }
 
-/* Icon inside circle */
 .left-icon img {
   width: 16px;
   height: 16px;
+  filter: brightness(0) invert(1);
   transition: opacity 0.4s ease;
 }
 
-/* Fade out for temporary icons */
+/* Fade for temporary icons */
 .left-icon.fade-out {
   opacity: 0;
   transform: scale(0.7);
 }
 
 /* ======================================================
-   🌈 Brand Background Colors
+   🌈 Brand Colors
    ====================================================== */
 .left-icon[alt="twitch"]  { background-color: #9146FF; }
 .left-icon[alt="tiktok"]  { background-color: #010101; }
@@ -552,10 +549,10 @@ a.corner-button {
 .left-icon[alt="steam"]   { background-color: #171A21; }
 .left-icon[alt="spotify"] { background-color: #1DB954; }
 .left-icon[alt="discord"] { background-color: #5865F2; }
-.left-icon[alt="manual"]  { background-color: var(--accent-color); }
+.left-icon[alt="manual"]  { background-color: var(--accent-color, #FF6F61); }
 .left-icon[alt="offline"] { background-color: #777; }
 
-/* Auto invert for dark backgrounds */
+/* Auto contrast (dark brands) */
 .left-icon[alt="tiktok"] img,
 .left-icon[alt="github"] img,
 .left-icon[alt="steam"] img {
@@ -570,7 +567,7 @@ a.corner-button {
   font-weight: 500;
   text-align: center;
   line-height: 1.4;
-  color: var(--accent-color);
+  color: var(--accent-color, #FF6F61);
   transition: color 0.3s ease, opacity 0.4s ease;
 }
 
@@ -578,7 +575,7 @@ a.corner-button {
 #live-activity-text.fade-in { opacity: 1; }
 
 /* ======================================================
-   ✨ Glow Modes
+   ✨ Glow Animation Modes
    ====================================================== */
 .live-activity[data-glow="neon"] { animation: glowNeon 3s ease-in-out infinite; }
 .live-activity[data-glow="mid"]  { animation: glowMid 4s ease-in-out infinite; }
@@ -603,27 +600,13 @@ a.corner-button {
    📱 Responsive
    ====================================================== */
 @media (max-width: 768px) {
-  .left-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .left-icon img {
-    width: 14px;
-    height: 14px;
-  }
+  .left-icon { width: 24px; height: 24px; }
+  .left-icon img { width: 14px; height: 14px; }
 }
 
 @media (max-width: 480px) {
-  .left-icon {
-    width: 22px;
-    height: 22px;
-  }
-
-  .left-icon img {
-    width: 12px;
-    height: 12px;
-  }
+  .left-icon { width: 22px; height: 22px; }
+  .left-icon img { width: 12px; height: 12px; }
 }
 
 
