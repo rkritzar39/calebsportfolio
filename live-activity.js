@@ -1,7 +1,6 @@
 /* =======================================================
-   Live Activity System (Color Dynamic Edition)
+   Live Activity System (Hybrid Steam + Discord Edition)
    Platforms: Manual • Twitch • GitHub • Reddit • Steam • Discord • TikTok
-   Author: Caleb Kritzar
    ======================================================= */
 
 import {
@@ -12,13 +11,13 @@ import {
 import { db } from "./firebase-init.js";
 
 /* ================================
-   CONFIGURATION
+   CONFIG
 ================================ */
 const CONFIG = {
   twitch: {
     user: "calebkritzar",
     clientId: "n7e3lys858u96xlg7v2aohe8vzxha3",
-    token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm", // ⚠️ Move server-side later
+    token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm", // ⚠️ move server-side later
   },
   github: { username: "rkritzar39" },
   reddit: { username: "Electronic_Row_1262" },
@@ -29,12 +28,12 @@ const CONFIG = {
   discord: { userId: "850815059093356594" },
   tiktok: {
     username: "calebkritzar",
-    latestVideoId: "7567459318736506167" // 🆕 Replace with your most recent TikTok ID
+    latestVideoId: "7429138404928736514" // replace with your latest TikTok ID
   },
 };
 
 /* ================================
-   PLATFORM COLORS + ICONS
+   COLORS + ICONS
 ================================ */
 const PLATFORM_STYLE = {
   twitch:  { color: "#9146FF", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg" },
@@ -75,13 +74,13 @@ function showStatus(payload, isOffline = false) {
   const platform = PLATFORM_STYLE[isOffline ? "offline" : source] || PLATFORM_STYLE.discord;
   const { color, icon: iconSrc } = platform;
 
-  // Update content
+  // Text + icon update
   el.textContent = text;
   icon.src = iconSrc;
   el.style.color = color;
   icon.className = `activity-icon ${source} change`;
 
-  // Update background and glow
+  // Background glow
   container.style.setProperty("--platform-color", color);
   container.className = `live-activity ${source} ${isOffline ? "offline" : "active"}`;
   container.classList.remove("hidden");
@@ -132,7 +131,7 @@ async function getTwitchStatus() {
   }
 }
 
-/* 🎬 TikTok (Latest Post via oEmbed) */
+/* 🎬 TikTok (Latest Post) */
 async function getTikTokStatus() {
   const { username, latestVideoId } = CONFIG.tiktok;
   try {
@@ -150,7 +149,7 @@ async function getTikTokStatus() {
   }
 }
 
-/* 💻 GitHub (Latest Public Activity) */
+/* 💻 GitHub */
 async function getGitHubStatus() {
   const { username } = CONFIG.github;
   try {
@@ -173,7 +172,7 @@ async function getGitHubStatus() {
   }
 }
 
-/* 📢 Reddit (Latest Post) */
+/* 📢 Reddit */
 async function getRedditStatus() {
   const { username } = CONFIG.reddit;
   try {
@@ -192,7 +191,7 @@ async function getRedditStatus() {
   }
 }
 
-/* 🎮 Steam (Currently Playing Game) */
+/* 🎮 Steam */
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
@@ -211,7 +210,7 @@ async function getSteamStatus() {
   }
 }
 
-/* 💬 Discord (Presence via Lanyard) */
+/* 💬 Discord */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
   try {
@@ -246,6 +245,19 @@ async function getDiscordActivity() {
 }
 
 /* ================================
+   HYBRID STEAM + DISCORD
+================================ */
+async function getHybridGameStatus() {
+  const steam = await getSteamStatus();
+  if (steam) return steam;
+
+  const discord = await getDiscordActivity();
+  if (discord && discord.text.includes("Playing")) return discord;
+
+  return null;
+}
+
+/* ================================
    UPDATE LOOP
 ================================ */
 async function updateLiveStatus() {
@@ -257,12 +269,10 @@ async function updateLiveStatus() {
   }
   container.style.display = "";
 
-  // Priority order: Manual > Twitch > Discord > Steam > GitHub > Reddit > TikTok
   const sources = [
     getManualStatus,
     getTwitchStatus,
-    getDiscordActivity,
-    getSteamStatus,
+    getHybridGameStatus, // 🧠 new hybrid logic
     getGitHubStatus,
     getRedditStatus,
     getTikTokStatus,
