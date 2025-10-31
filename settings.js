@@ -209,6 +209,8 @@ class SettingsManager {
   // Event Listeners
   // =============================
   setupEventListeners() {
+    // --- EXISTING LISTENERS (Already working) ---
+
     // Accent color live update
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
@@ -216,6 +218,10 @@ class SettingsManager {
         this.settings.accentColor = e.target.value;
         this.applyAccentColor();
         this.saveSettings();
+        
+        // --- Fix: Update slider fills that use accent color ---
+        this.updateSliderFill(document.getElementById("text-size-slider"));
+        this.initWallpaperBlurControl(); // This re-runs the fill for the blur slider
       });
     }
 
@@ -227,6 +233,10 @@ class SettingsManager {
         this.applyFontSize();
         const badge = document.getElementById("textSizeValue");
         if (badge) badge.textContent = `${this.settings.fontSize}px`;
+        
+        // --- Fix: Update slider fill on input ---
+        this.updateSliderFill(e.target); 
+        
         this.saveSettings();
       });
     }
@@ -258,6 +268,85 @@ class SettingsManager {
         window.dispatchEvent(new Event("settings-updated"));
       });
     });
+
+    // --- NEW LISTENERS (These were missing) ---
+
+    // Helper function for segmented controls (Appearance & Theme)
+    const setupSegmentedControl = (controlId, settingKey, applyFn = null) => {
+      const control = document.getElementById(controlId);
+      if (!control) return;
+
+      control.addEventListener("click", (e) => {
+        const button = e.target.closest("button");
+        // Check if it's a valid button with a value, and not already active
+        if (!button || !button.dataset.value || button.classList.contains("active")) {
+          return;
+        }
+        
+        const newValue = button.dataset.value;
+        this.settings[settingKey] = newValue;
+        this.saveSettings();
+
+        // Update the UI
+        control.querySelectorAll("button").forEach((btn) => btn.classList.remove("active"));
+        button.classList.add("active");
+        this.updateSegmentedBackground(controlId);
+
+        // Run the specific apply function
+        applyFn?.();
+
+        // Tell other tabs
+        window.dispatchEvent(new Event("settings-updated"));
+      });
+    };
+
+    // 1. Wire up Appearance Mode (Light/Dark/Device)
+    setupSegmentedControl("appearanceModeControl", "appearanceMode", () => {
+      this.applyAppearanceMode();
+      this.applyCustomBackground(false); // Re-apply background tint
+    });
+    
+    // 2. Wire up Theme Style (Clear, etc.)
+    setupSegmentedControl("themeStyleControl", "themeStyle", () => {
+        // The original code had no apply function for 'themeStyle'.
+        // You can add one here if needed, e.g., by setting a data-attribute:
+        document.body.dataset.themeStyle = this.settings.themeStyle;
+    });
+
+
+    // 3. Wire up Dark Mode Scheduler Dropdown
+    const schedulerSelect = document.getElementById("darkModeScheduler");
+    if (schedulerSelect) {
+      schedulerSelect.addEventListener("change", (e) => {
+        this.settings.darkModeScheduler = e.target.value;
+        this.saveSettings();
+        this.toggleScheduleInputs(e.target.value);
+        this.checkDarkModeSchedule(true); // Force a re-check
+        window.dispatchEvent(new Event("settings-updated"));
+      });
+    }
+
+    // 4. Wire up Dark Mode Start Time
+    const startInput = document.getElementById("darkModeStart");
+    if (startInput) {
+      startInput.addEventListener("change", (e) => {
+        this.settings.darkModeStart = e.target.value;
+        this.saveSettings();
+        this.checkDarkModeSchedule(true); // Force a re-check
+        window.dispatchEvent(new Event("settings-updated"));
+      });
+    }
+
+    // 5. Wire up Dark Mode End Time
+    const endInput = document.getElementById("darkModeEnd");
+    if (endInput) {
+      endInput.addEventListener("change", (e) => {
+        this.settings.darkModeEnd = e.target.value;
+        this.saveSettings();
+        this.checkDarkModeSchedule(true); // Force a re-check
+        window.dispatchEvent(new Event("settings-updated"));
+      });
+    }
   }
 
   // =============================
@@ -617,7 +706,9 @@ class SettingsManager {
       alert("All settings have been reset to factory defaults.");
     }
   }
-
+  
+  // These are stubs from the original code, you can add implementations here
+  initCustomBackgroundControls() {}
   initScrollArrow() {}
   initLoadingScreen() {}
   initMouseTrail() {}
