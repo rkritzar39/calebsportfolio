@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb + Tooltip + Embedded Edition
+   🎧 Live Activity — Honeycomb + Tooltip + Live-Aware Edition
    ====================================================== */
 
 .live-activity {
@@ -487,7 +487,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🐝 ICON CLUSTER (Left)
+   🐝 ICON CLUSTER
    ====================================================== */
 .icon-cluster {
   display: grid;
@@ -500,7 +500,7 @@ a.corner-button {
   position: relative;
 }
 
-/* Circle icons */
+/* Circular platform icons */
 .cluster-icon {
   width: 20px;
   height: 20px;
@@ -556,7 +556,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   ✨ TEXT + COLORS
+   ✨ TEXT + LIVE STATUS
    ====================================================== */
 .activity-content {
   display: flex;
@@ -570,13 +570,12 @@ a.corner-button {
   font-weight: 500;
   color: var(--accent-color, #ddd);
   text-align: left;
-  white-space: normal;
   line-height: 1.4;
   transition: color 0.3s ease, opacity 0.3s ease;
 }
 
 /* ======================================================
-   🕒 LAST UPDATED LABEL
+   🕒 LAST UPDATED / LIVE LABEL
    ====================================================== */
 .live-activity-updated {
   font-size: 0.8rem;
@@ -584,21 +583,22 @@ a.corner-button {
   color: color-mix(in srgb, var(--accent-color, #bbb) 60%, #999);
   opacity: 0.8;
   margin-top: 3px;
-  transition: opacity 0.3s ease, color 0.3s ease;
+  transition: opacity 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
 }
 
 .live-activity-updated.fade {
   opacity: 0.5;
 }
 
-/* Make the timestamp glow slightly when “live” */
-.live-activity.active .live-activity-updated {
-  color: var(--accent-color, #ccc);
-  text-shadow: 0 0 6px color-mix(in srgb, var(--accent-color, #999) 40%, transparent);
+/* Live glow effect */
+.live-activity.live-now .live-activity-updated {
+  color: #39ff14;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
+  font-weight: 500;
 }
 
 /* ======================================================
-   💫 Pulse Glow
+   💫 Pulse Glow Animation
    ====================================================== */
 .live-activity.active {
   animation: pulse 3s ease-in-out infinite;
@@ -635,7 +635,6 @@ a.corner-button {
     font-size: 0.75rem;
   }
 }
-
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
