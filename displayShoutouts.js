@@ -1668,10 +1668,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ========================================================= */
-/* == QUOTE OF THE DAY (MULTI-API + CATEGORY + ANIMATION) == */
+/* == QUOTE OF THE DAY (MULTI-API + CATEGORY + REFRESH FIX) == */
 /* ========================================================= */
 
-async function loadQuoteOfTheDay() {
+async function loadQuoteOfTheDay(forceRefresh = false) {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   const quoteSection = document.getElementById("quote-section");
   if (!quoteSection) return;
@@ -1698,10 +1698,13 @@ async function loadQuoteOfTheDay() {
   if (quoteDateEl) quoteDateEl.textContent = formattedDate;
 
   const today = now.toDateString();
+  const category = settings.quoteCategory || "inspirational";
   const storedDate = localStorage.getItem("quoteDate");
+  const storedCategory = localStorage.getItem("quoteCategory");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
-  if (storedDate === today && storedQuote) {
+  // ✅ Only reuse cached quote if same date AND same category AND not forced
+  if (!forceRefresh && storedDate === today && storedQuote && storedCategory === category) {
     try {
       const { content, author } = JSON.parse(storedQuote);
       quoteText.textContent = `“${content}”`;
@@ -1712,8 +1715,6 @@ async function loadQuoteOfTheDay() {
       console.warn("Cached quote parse failed:", err);
     }
   }
-
-  const category = settings.quoteCategory || "inspirational";
 
   const localQuotes = {
     inspirational: [
@@ -1790,8 +1791,11 @@ async function loadQuoteOfTheDay() {
 
   quoteText.textContent = `“${chosen.content}”`;
   quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
+
+  // ✅ Save both date and category
   localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
   localStorage.setItem("quoteDate", today);
+  localStorage.setItem("quoteCategory", category);
 
   quoteSection.classList.add("loaded");
 }
@@ -1799,7 +1803,7 @@ async function loadQuoteOfTheDay() {
 document.addEventListener("DOMContentLoaded", loadQuoteOfTheDay);
 
 /* ========================================================= */
-/* == QUOTE CATEGORY PICKER + CUSTOM CATEGORY SUPPORT == */
+/* == QUOTE CATEGORY PICKER + CUSTOM CATEGORY MANAGER == */
 /* ========================================================= */
 
 function setupQuoteCategorySelector() {
@@ -1810,37 +1814,59 @@ function setupQuoteCategorySelector() {
 
   if (!categorySelect || !customInput || !saveCustomBtn) return;
 
-  // Load current category
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const savedCategories = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
   const currentCategory = settings.quoteCategory || "inspirational";
 
-  // If user had a custom one, add it dynamically to dropdown
-  if (
-    currentCategory &&
-    !["inspirational", "life", "success"].includes(currentCategory)
-  ) {
-    const customOpt = document.createElement("option");
-    customOpt.value = currentCategory;
-    customOpt.textContent = `🌟 ${currentCategory}`;
-    categorySelect.insertBefore(customOpt, categorySelect.lastElementChild);
-    categorySelect.value = currentCategory;
-  } else {
-    categorySelect.value = currentCategory;
+  // Populate dropdown
+  const baseCategories = ["inspirational", "life", "success"];
+  categorySelect.innerHTML = "";
+
+  baseCategories.forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    categorySelect.appendChild(opt);
+  });
+
+  if (savedCategories.length > 0) {
+    const optGroup = document.createElement("optgroup");
+    optGroup.label = "Custom Categories";
+    savedCategories.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = `🌟 ${cat}`;
+      optGroup.appendChild(opt);
+    });
+    categorySelect.appendChild(optGroup);
   }
 
-  // Show or hide input box when "custom" is selected
+  // Add final "Custom..." option
+  const customOpt = document.createElement("option");
+  customOpt.value = "custom";
+  customOpt.textContent = "➕ Add new category...";
+  categorySelect.appendChild(customOpt);
+
+  // Set current value
+  categorySelect.value =
+    currentCategory &&
+    (baseCategories.includes(currentCategory) ||
+      savedCategories.includes(currentCategory))
+      ? currentCategory
+      : "inspirational";
+
+  // Show input field when "custom" is selected
   categorySelect.addEventListener("change", () => {
-    const val = categorySelect.value;
-    if (val === "custom") {
+    if (categorySelect.value === "custom") {
       customContainer.style.display = "flex";
       customInput.focus();
     } else {
       customContainer.style.display = "none";
-      updateQuoteCategory(val);
+      updateQuoteCategory(categorySelect.value);
     }
   });
 
-  // Save new custom category
+  // Save custom category
   saveCustomBtn.addEventListener("click", () => {
     const newCategory = customInput.value.trim().toLowerCase();
     if (!newCategory) {
@@ -1848,30 +1874,32 @@ function setupQuoteCategorySelector() {
       return;
     }
 
-    // Add it to the dropdown
-    const newOpt = document.createElement("option");
-    newOpt.value = newCategory;
-    newOpt.textContent = `🌟 ${newCategory}`;
-    categorySelect.insertBefore(newOpt, categorySelect.lastElementChild);
-    categorySelect.value = newCategory;
+    const saved = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
+    if (!saved.includes(newCategory)) saved.push(newCategory);
+    localStorage.setItem("customQuoteCategories", JSON.stringify(saved));
+
+    // Update settings
+    updateQuoteCategory(newCategory, true);
+
+    // Refresh dropdown
+    setupQuoteCategorySelector();
     customContainer.style.display = "none";
     customInput.value = "";
-
-    updateQuoteCategory(newCategory);
   });
 }
 
-// Save to settings + reload quote
-function updateQuoteCategory(category) {
+// Update settings and refresh quote
+function updateQuoteCategory(category, forceReload = false) {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   settings.quoteCategory = category;
   localStorage.setItem("websiteSettings", JSON.stringify(settings));
 
-  // Immediately reload the quote section
-  loadQuoteOfTheDay();
+  // Invalidate cache and refresh
+  localStorage.removeItem("quoteOfTheDay");
+  localStorage.setItem("quoteCategory", category);
+  loadQuoteOfTheDay(true); // force reload new quote
 }
 
-// Initialize when the page loads
 document.addEventListener("DOMContentLoaded", setupQuoteCategorySelector);
 
 // ======================================================
