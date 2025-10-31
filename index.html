@@ -277,7 +277,10 @@
         </div>
     </div>
 
-      <div class="section" id="quote-section" data-section-id="quote">
+      <!-- ========================= -->
+<!-- Quote of the Day Section -->
+<!-- ========================= -->
+<div class="section" id="quote-section" data-section-id="quote">
   <h2>Quote of the Day</h2>
   <p id="quote-date" class="quote-date"></p>
   <p id="quote-text" class="quote-text">Loading inspiration...</p>
@@ -301,13 +304,25 @@
 <div id="custom-quote-modal" class="category-modal hidden">
   <div class="category-modal-content">
     <h3>Add Custom Quote</h3>
-    <label>Quote:</label>
-    <textarea id="new-quote-text" placeholder="Type your quote..." rows="3"></textarea>
-    <label>Author:</label>
-    <input type="text" id="new-quote-author" placeholder="Optional">
-    <label>Category:</label>
-    <select id="new-quote-category"></select>
-    <div style="margin-top: 1rem; display: flex; justify-content: space-between;">
+
+    <div class="form-floating">
+      <textarea id="new-quote-text" placeholder=" " rows="3"></textarea>
+      <label for="new-quote-text">Quote</label>
+    </div>
+
+    <div class="form-floating">
+      <input type="text" id="new-quote-author" placeholder=" ">
+      <label for="new-quote-author">Author (optional)</label>
+    </div>
+
+    <div class="form-floating">
+      <select id="new-quote-category">
+        <option value="">Select a category...</option>
+      </select>
+      <label for="new-quote-category">Category</label>
+    </div>
+
+    <div>
       <button id="save-custom-quote">Save Quote</button>
       <button id="cancel-custom-quote">Cancel</button>
     </div>
