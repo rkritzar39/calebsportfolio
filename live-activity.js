@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Final Polished Edition
+   🎧 Live Activity System — Polished Final Version
    ====================================================== */
 
 import {
@@ -97,7 +97,7 @@ function updateIconCluster(platforms) {
       }, 5000);
     }
 
-    // Mobile hover emulation
+    // Touch / mobile tooltip support
     let holdTimer;
     icon.addEventListener("touchstart", () => {
       holdTimer = setTimeout(() => icon.classList.add("touch-active"), 400);
@@ -110,7 +110,7 @@ function updateIconCluster(platforms) {
 }
 
 /* ======================================================
-   🔔 TOASTS
+   🔔 TOAST NOTIFICATIONS
    ====================================================== */
 function showToast(message, color = "#555") {
   const container = document.getElementById("toast-container");
@@ -233,7 +233,15 @@ async function getDiscordActivity() {
     if (spotify?.details && spotify?.state) {
       const trackTitle = spotify.details;
       const artist = spotify.state;
-      const musicCover = spotify.assets?.large_image?.replace("mp:", "https://i.scdn.co/image/");
+      let musicCover = null;
+
+      if (spotify.assets?.large_image) {
+        const raw = spotify.assets.large_image;
+        if (raw.startsWith("spotify:")) musicCover = null;
+        else if (raw.startsWith("mp:")) musicCover = raw.replace("mp:", "https://i.scdn.co/image/");
+        else if (raw.startsWith("https")) musicCover = raw;
+      }
+
       currentMusicCover = musicCover || null;
       return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
     }
