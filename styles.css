@@ -461,6 +461,10 @@ a.corner-button {
 /* =============================================== */
 /* 🎧 Live Activity Capsule — Liquid Glass Edition */
 /* =============================================== */
+/* =======================================================
+   🎧 LIVE ACTIVITY SECTION — Final Version (with color tint)
+   ======================================================= */
+
 .live-activity {
   display: flex;
   align-items: center;
@@ -505,8 +509,45 @@ a.corner-button {
   height: 22px;
   opacity: 0.9;
   filter: brightness(1.2);
+  transition: filter 0.4s ease, opacity 0.4s ease, transform 0.3s ease;
 }
 
+/* =======================================================
+   🎨 Icon Color Themes
+   ======================================================= */
+
+/* 🟣 Twitch — purple glow */
+.activity-icon.twitch {
+  filter: invert(43%) sepia(100%) saturate(7450%) hue-rotate(254deg) brightness(102%) contrast(106%);
+}
+
+/* 🟢 Spotify — green tint */
+.activity-icon.spotify {
+  filter: invert(47%) sepia(93%) saturate(419%) hue-rotate(87deg) brightness(95%) contrast(87%);
+}
+
+/* 🔵 Discord — blurple tone */
+.activity-icon.discord {
+  filter: invert(39%) sepia(83%) saturate(1387%) hue-rotate(210deg) brightness(98%) contrast(94%);
+}
+
+/* ⚫ Offline — grayscale dim */
+.activity-icon.offline {
+  filter: grayscale(100%) brightness(70%);
+}
+
+/* Optional: subtle pop animation when switching icons */
+.activity-icon.change {
+  transform: scale(1.15);
+  opacity: 0.85;
+}
+.activity-icon.change:not(.twitch):not(.spotify):not(.discord):not(.offline) {
+  filter: brightness(1.2);
+}
+
+/* =======================================================
+   ✨ Text Styling + Animation
+   ======================================================= */
 #live-activity-text {
   font-size: 1rem;
   font-weight: 500;
@@ -514,9 +555,10 @@ a.corner-button {
   text-align: center;
   white-space: normal;
   line-height: 1.4;
+  transition: color 0.3s ease;
 }
 
-/* Pulse glow animation */
+/* Pulse glow animation when active */
 .live-activity.active {
   animation: pulse 2.4s ease-in-out infinite;
 }
@@ -530,7 +572,9 @@ a.corner-button {
   }
 }
 
-/* Responsive containment */
+/* =======================================================
+   📱 Responsive Adjustments
+   ======================================================= */
 @media (max-width: 768px) {
   .live-activity {
     margin-top: 0.75rem;
@@ -548,6 +592,7 @@ a.corner-button {
     max-width: 88%;
   }
 }
+
 
 
 /* =================================== */
