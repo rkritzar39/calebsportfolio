@@ -1,5 +1,5 @@
 /* =======================================================
-   Live Activity System — Smart Expiring Edition ⚡
+   Live Activity System — Persistent Multi-Icon Glow Edition
    ======================================================= */
 
 import {
@@ -22,7 +22,7 @@ const CONFIG = {
 };
 
 /* ================================
-   PLATFORM ICONS + COLORS
+   BRAND COLORS + ICONS
 ================================ */
 const PLATFORM_STYLE = {
   twitch:  { color: "#9146FF", icon: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg" },
@@ -37,65 +37,96 @@ const PLATFORM_STYLE = {
 };
 
 /* ================================
-   PRIORITY + TEMPORARY TRACKER
+   PRIORITIES + EXPIRATION
 ================================ */
 function getPriority(source) {
-  if (["twitch", "steam", "spotify", "discord"].includes(source)) return 3;
-  if (["github", "reddit", "tiktok"].includes(source)) return 2;
+  if (["twitch", "steam", "spotify", "discord"].includes(source)) return 3; // live
+  if (["github", "reddit", "tiktok"].includes(source)) return 2; // temporary
   if (["manual"].includes(source)) return 1;
   return 0;
 }
 
-// persistent temporary map
-const TEMP_TRACKER = new Map();
-const TEMP_LIFETIME = 90 * 1000; // 90s
+const TEMP_LIFETIME = 45 * 1000; // 45s
+const TEMP_KEY = "liveActivityTempTracker";
+
+function loadTempTracker() {
+  try { return JSON.parse(localStorage.getItem(TEMP_KEY)) || {}; }
+  catch { return {}; }
+}
+function saveTempTracker(obj) {
+  localStorage.setItem(TEMP_KEY, JSON.stringify(obj));
+}
+
+let TEMP_TRACKER = loadTempTracker();
 
 function markTemporary(source, text) {
   const key = `${source}:${text}`;
-  if (!TEMP_TRACKER.has(key)) TEMP_TRACKER.set(key, Date.now());
+  if (!TEMP_TRACKER[key]) {
+    TEMP_TRACKER[key] = Date.now();
+    saveTempTracker(TEMP_TRACKER);
+  }
 }
 
-function isTemporaryExpired(source, text) {
+function isExpired(source, text) {
   const key = `${source}:${text}`;
-  if (!TEMP_TRACKER.has(key)) return false;
-  return Date.now() - TEMP_TRACKER.get(key) > TEMP_LIFETIME;
+  if (!TEMP_TRACKER[key]) return false;
+  const expired = Date.now() - TEMP_TRACKER[key] > TEMP_LIFETIME;
+  if (expired) {
+    delete TEMP_TRACKER[key];
+    saveTempTracker(TEMP_TRACKER);
+  }
+  return expired;
 }
 
 /* ================================
-   RENDER / DISPLAY
+   RENDER
 ================================ */
 function showStatus(activities, isOffline = false) {
   const container = document.getElementById("live-activity");
-  const iconEl = document.getElementById("activity-icon");
+  const iconContainer = document.getElementById("activity-icon"); // main left cluster
   const textEl = document.getElementById("live-activity-text");
-  if (!container || !iconEl || !textEl) return;
+  if (!container || !iconContainer || !textEl) return;
 
-  const filtered = (Array.isArray(activities) ? activities : [activities]).filter(a => {
-    const p = getPriority(a.source);
-    if (p === 2) {
+  const all = Array.isArray(activities) ? activities : [activities];
+
+  // Filter temp expirations
+  const filtered = all.filter(a => {
+    if (getPriority(a.source) === 2) {
       markTemporary(a.source, a.text);
-      return !isTemporaryExpired(a.source, a.text);
+      return !isExpired(a.source, a.text);
     }
     return true;
   });
 
   const sorted = filtered.sort((a, b) => getPriority(b.source) - getPriority(a.source));
   const top = sorted[0] || { text: "🛌 Offline", source: "offline" };
-  const { color, icon } = PLATFORM_STYLE[top.source] || PLATFORM_STYLE.discord;
   const highest = getPriority(top.source);
+  const { color } = PLATFORM_STYLE[top.source] || PLATFORM_STYLE.discord;
 
+  /* ---- Left Icon Cluster ---- */
+  const activeIcons = sorted.map(a => {
+    const { icon, color } = PLATFORM_STYLE[a.source];
+    const size = getPriority(a.source) === 3 ? 22 : 18;
+    return `<img src="${icon}" class="left-icon" alt="${a.source}"
+              style="width:${size}px;height:${size}px;margin-right:6px;filter:none;fill:${color};">`;
+  }).join("");
+
+  iconContainer.outerHTML = `<div id="activity-icon" class="icon-cluster">${activeIcons}</div>`;
+
+  /* ---- Text ---- */
   const textHTML = sorted
     .map(a => {
-      const { icon: i, color: c } = PLATFORM_STYLE[a.source] || {};
-      const opacity = getPriority(a.source) < highest ? 0.55 : 1;
-      const italic = getPriority(a.source) < highest ? "italic" : "normal";
+      const { icon, color } = PLATFORM_STYLE[a.source];
+      const priority = getPriority(a.source);
+      const opacity = priority < highest ? 0.6 : 1;
+      const italic = priority < highest ? "italic" : "normal";
       return `<span class="activity-item" style="opacity:${opacity};font-style:${italic}">
-        <img src="${i}" class="inline-icon" alt="${a.source}" style="fill:${c};filter:none"/> ${a.text}
+        <img src="${icon}" class="inline-icon" alt="${a.source}" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px;"> 
+        ${a.text}
       </span>`;
     })
     .join('<span class="divider"> • </span>');
 
-  // fade animation
   textEl.classList.add("fade-out");
   setTimeout(() => {
     textEl.innerHTML = textHTML;
@@ -105,12 +136,9 @@ function showStatus(activities, isOffline = false) {
     setTimeout(() => textEl.classList.remove("fade-in"), 400);
   }, 200);
 
-  iconEl.src = icon;
-  iconEl.className = `activity-icon ${top.source} change`;
-
-  container.style.background = `linear-gradient(90deg, color-mix(in srgb, ${color} 30%, transparent), color-mix(in srgb, var(--content-bg) 80%, transparent))`;
-  container.style.boxShadow = `0 0 25px ${color}70, 0 0 40px ${color}40 inset`;
-
+  /* ---- Glow ---- */
+  container.style.background = `linear-gradient(90deg, color-mix(in srgb, ${color} 25%, transparent), color-mix(in srgb, var(--content-bg) 80%, transparent))`;
+  container.style.boxShadow = `0 0 25px ${color}60, 0 0 40px ${color}30 inset`;
   const glow = highest === 3 ? "neon" : highest === 2 ? "mid" : "soft";
   container.dataset.glow = glow;
   container.classList.remove("hidden");
