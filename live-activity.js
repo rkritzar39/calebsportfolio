@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Polished Final Version
+   🎧 Live Activity System — Final Fixed Edition
    ====================================================== */
 
 import {
@@ -9,9 +9,9 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
-/* ======================================================
-   ⚙️ CONFIG
-   ====================================================== */
+/* =========================
+   CONFIG
+========================= */
 const CONFIG = {
   twitch: { user: "calebkritzar", clientId: "n7e3lys858u96xlg7v2aohe8vzxha3", token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm" },
   github: { username: "rkritzar39" },
@@ -21,31 +21,31 @@ const CONFIG = {
   tiktok: { username: "calebkritzar" },
 };
 
-/* ======================================================
-   🎨 BRAND COLORS
-   ====================================================== */
+/* =========================
+   BRAND COLORS
+========================= */
 const BRAND_COLORS = {
   twitch: "#9146FF",
-  tiktok: "#010101",
+  tiktok: "#EE1D52",
   github: "#181717",
   reddit: "#FF4500",
-  steam: "#171A21",
+  steam: "#00ADEE",
   spotify: "#1DB954",
   discord: "#5865F2",
   manual: "#8888FF",
   offline: "#666666"
 };
 
-/* ======================================================
-   🧩 GLOBALS
-   ====================================================== */
+/* =========================
+   GLOBALS
+========================= */
 let lastUpdateTime = null;
 let isTwitchLive = false;
 let currentMusicCover = null;
 
-/* ======================================================
-   🧠 COOLDOWN HANDLING (Temporary Event Logic)
-   ====================================================== */
+/* =========================
+   TEMPORARY EVENT LOGIC
+========================= */
 function wasRecentlyShown(platform, cooldown = 300000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
   return last && Date.now() - parseInt(last, 10) < cooldown;
@@ -54,9 +54,9 @@ function markAsShown(platform) {
   localStorage.setItem(`last_${platform}_shown`, Date.now().toString());
 }
 
-/* ======================================================
-   🐝 ICON CLUSTER BUILDER
-   ====================================================== */
+/* =========================
+   ICON CLUSTER BUILDER
+========================= */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
   if (!cluster) return;
@@ -66,52 +66,39 @@ function updateIconCluster(platforms) {
     const icon = document.createElement("div");
     icon.className = `cluster-icon ${source}`;
     icon.style.backgroundColor = BRAND_COLORS[source] || "#777";
-
-    const tooltipText = text
-      ? `${source.charAt(0).toUpperCase() + source.slice(1)} — ${text}`
-      : source.charAt(0).toUpperCase() + source.slice(1);
-    icon.setAttribute("data-tooltip", tooltipText);
+    icon.setAttribute("data-tooltip", `${source.charAt(0).toUpperCase() + source.slice(1)} — ${text}`);
 
     const img = document.createElement("img");
     img.src = `https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/${source}.svg`;
     img.alt = source;
     icon.appendChild(img);
-    cluster.appendChild(icon);
 
-    // 🎵 Spotify hover music cover
+    // 🎵 Spotify hover cover
     if (source === "spotify" && currentMusicCover) {
       const hoverArt = document.createElement("div");
       hoverArt.className = "spotify-hover-art";
-      const imgArt = document.createElement("img");
-      imgArt.src = currentMusicCover;
-      imgArt.alt = "Music Cover";
-      hoverArt.appendChild(imgArt);
+      const artImg = document.createElement("img");
+      artImg.src = currentMusicCover;
+      artImg.alt = "Music Cover";
+      hoverArt.appendChild(artImg);
       icon.appendChild(hoverArt);
     }
 
-    // ⏳ Fade temporary icons
+    cluster.appendChild(icon);
+
+    // 🕓 Temporary fade-out
     if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
         setTimeout(() => icon.remove(), 800);
       }, 5000);
     }
-
-    // Touch / mobile tooltip support
-    let holdTimer;
-    icon.addEventListener("touchstart", () => {
-      holdTimer = setTimeout(() => icon.classList.add("touch-active"), 400);
-    });
-    icon.addEventListener("touchend", () => {
-      clearTimeout(holdTimer);
-      setTimeout(() => icon.classList.remove("touch-active"), 1500);
-    });
   });
 }
 
-/* ======================================================
-   🔔 TOAST NOTIFICATIONS
-   ====================================================== */
+/* =========================
+   TOASTS
+========================= */
 function showToast(message, color = "#555") {
   const container = document.getElementById("toast-container");
   if (!container) return;
@@ -127,9 +114,9 @@ function showToast(message, color = "#555") {
   }, 3000);
 }
 
-/* ======================================================
-   🪄 STATUS DISPLAY
-   ====================================================== */
+/* =========================
+   STATUS DISPLAY
+========================= */
 function showStatus(payload, allActive = []) {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
@@ -137,7 +124,6 @@ function showStatus(payload, allActive = []) {
 
   const { text, source } = payload || { text: "💬 Status", source: "manual" };
   el.textContent = text;
-
   container.classList.remove("hidden");
   container.classList.toggle("offline", !payload);
   container.classList.toggle("active", !!payload);
@@ -145,20 +131,18 @@ function showStatus(payload, allActive = []) {
 
   updateIconCluster(allActive);
 
-  if (payload?.temporary) {
+  if (payload?.temporary)
     showToast(`🔥 ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, BRAND_COLORS[source]);
-  }
 
   isTwitchLive = source === "twitch";
   container.classList.toggle("live-now", isTwitchLive);
-
   lastUpdateTime = Date.now();
   updateLastUpdated();
 }
 
-/* ======================================================
-   🕒 LAST UPDATED TIMER
-   ====================================================== */
+/* =========================
+   LAST UPDATED TIMER
+========================= */
 function updateLastUpdated() {
   const updated = document.getElementById("live-activity-updated");
   const container = document.getElementById("live-activity");
@@ -180,9 +164,9 @@ function updateLastUpdated() {
   updated.textContent = text;
 }
 
-/* ======================================================
-   🌐 PLATFORM FETCHERS
-   ====================================================== */
+/* =========================
+   PLATFORM FETCHERS
+========================= */
 async function getManualStatus() {
   try {
     const snap = await getDoc(doc(db, "live_status", "current"));
@@ -203,7 +187,8 @@ async function getTwitchStatus() {
     });
     const data = await res.json();
     const stream = data?.data?.[0];
-    if (stream?.title) return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
+    if (stream?.title)
+      return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
   } catch {}
   return null;
 }
@@ -211,10 +196,14 @@ async function getTwitchStatus() {
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
-    const res = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`, { cache: "no-store" });
+    const res = await fetch(
+      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`,
+      { cache: "no-store" }
+    );
     const data = await res.json();
     const player = data?.response?.players?.[0];
-    if (player?.gameextrainfo) return { text: `🎮 Playing ${player.gameextrainfo} on Steam`, source: "steam" };
+    if (player?.gameextrainfo)
+      return { text: `🎮 Playing ${player.gameextrainfo} on Steam`, source: "steam" };
   } catch {}
   return null;
 }
@@ -228,7 +217,7 @@ async function getDiscordActivity() {
 
     const activities = data.activities || [];
 
-    // 🎵 Spotify music cover + now playing
+    // 🎵 Spotify — music cover fixed
     const spotify = activities.find(a => a.name === "Spotify");
     if (spotify?.details && spotify?.state) {
       const trackTitle = spotify.details;
@@ -237,26 +226,31 @@ async function getDiscordActivity() {
 
       if (spotify.assets?.large_image) {
         const raw = spotify.assets.large_image;
-        if (raw.startsWith("spotify:")) musicCover = null;
-        else if (raw.startsWith("mp:")) musicCover = raw.replace("mp:", "https://i.scdn.co/image/");
-        else if (raw.startsWith("https")) musicCover = raw;
+        if (raw.startsWith("mp:external/")) {
+          const hash = raw.replace("mp:external/", "");
+          musicCover = `https://i.scdn.co/image/${hash}`;
+        } else if (raw.startsWith("mp:")) {
+          musicCover = raw.replace("mp:", "https://i.scdn.co/image/");
+        } else if (raw.startsWith("https")) {
+          musicCover = raw;
+        }
       }
 
       currentMusicCover = musicCover || null;
       return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
     }
 
-    // 🎮 Game
+    // 🎮 Game presence
     const game = activities.find(a => a.type === 0);
     if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
 
-    // 💬 Presence
     const statusMap = {
       online: "🟢 Online on Discord",
       idle: "🌙 Idle on Discord",
       dnd: "⛔ Do Not Disturb",
     };
-    if (data.discord_status !== "offline") return { text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" };
+    if (data.discord_status !== "offline")
+      return { text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" };
   } catch {}
   return null;
 }
@@ -295,7 +289,7 @@ async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   if (wasRecentlyShown("tiktok")) return null;
   try {
-    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}/video/${Date.now()}`, { cache: "no-store" });
+    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`, { cache: "no-store" });
     const data = await res.json();
     if (data?.title) {
       markAsShown("tiktok");
@@ -305,9 +299,9 @@ async function getTikTokStatus() {
   return null;
 }
 
-/* ======================================================
-   🔁 MAIN UPDATE LOOP
-   ====================================================== */
+/* =========================
+   UPDATE LOOP
+========================= */
 async function updateLiveStatus() {
   const sources = [
     getManualStatus,
@@ -329,9 +323,9 @@ async function updateLiveStatus() {
   showStatus(live || { text: "🛌 Offline", source: "offline" }, active);
 }
 
-/* ======================================================
-   🚀 INIT
-   ====================================================== */
+/* =========================
+   INIT
+========================= */
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
   setInterval(updateLiveStatus, 30000);
