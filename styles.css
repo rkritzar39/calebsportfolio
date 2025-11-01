@@ -3868,72 +3868,65 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* Latest TikTok Video Section (Onyx Glass) */
+/* TikTok Section – Static Onyx Glass Match */
 /* ======================================== */
 
 #tiktok-latest-section {
-  position: relative;
   text-align: center;
-  padding: 32px 24px;
   margin: 40px auto;
+  padding: 28px 24px;
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--content-bg) 90%, transparent);
-  box-shadow: 0 8px 28px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+  background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+  box-shadow: 0 8px 26px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
-  transition: all var(--transition-medium);
-  overflow: hidden;
-}
-
-/* Soft glow hover like other Onyx cards */
-#tiktok-latest-section:hover {
-  box-shadow: 0 12px 36px color-mix(in srgb, var(--shadow-color) 75%, transparent),
-              0 0 12px color-mix(in srgb, var(--glow-color) 60%, transparent);
-  transform: translateY(-3px);
-}
-
-/* Title styling */
-#tiktok-latest-section .section-title {
-  font-size: 1.6rem;
   color: var(--text-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6em;
-  margin-bottom: 20px;
 }
 
-/* Container for embed */
+#tiktok-latest-section .section-title {
+  font-size: 1.55rem;
+  color: var(--text-color);
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: 0.3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
 .tiktok-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
   margin-top: 10px;
 }
 
-/* TikTok embed block itself */
-.tiktok-embed {
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: 0 6px 16px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-  transition: box-shadow var(--transition-medium), transform var(--transition-fast);
-}
-
-/* Slight pop hover on embed */
-.tiktok-embed:hover {
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--shadow-color) 70%, transparent),
-              0 0 8px color-mix(in srgb, var(--glow-color) 60%, transparent);
-  transform: scale(1.02);
-}
-
-/* Loading text */
 .tiktok-container p {
   color: var(--secondary-text);
+  opacity: 0.85;
   font-size: 1rem;
-  opacity: 0.8;
   margin: 0 auto;
 }
 
+.tiktok-embed {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  width: 100%;
+  max-width: 605px;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+}
 
+/* Maintain the same glass tone in light mode */
+body.light-e #tiktok-latest-section {
+  background: color-mix(in srgb, var(--content-bg) 92%, transparent);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+}
+
+body.light-e .tiktok-embed {
+  box-shadow: 0 5px 16px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+}
