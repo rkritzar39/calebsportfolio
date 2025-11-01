@@ -2342,3 +2342,50 @@ document.addEventListener("DOMContentLoaded", () => {
     return "I'm still learning! Try asking about your theme, layout, or sections.";
   }
 });
+
+// ============================================
+// 🎥 Display Latest TikTok Video (Manual/Admin Saved)
+// ============================================
+import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+// --- Ensure Firebase is ready ---
+if (firebaseAppInitialized && db && profileDocRef) {
+  console.log("Setting up listener for latest TikTok video...");
+
+  onSnapshot(profileDocRef, (docSnap) => {
+    const container = document.getElementById("tiktok-latest");
+    if (!container) return;
+
+    container.innerHTML = ""; // Clear previous
+
+    if (!docSnap.exists()) {
+      container.innerHTML = "<p>No TikTok video found.</p>";
+      return;
+    }
+
+    const data = docSnap.data();
+    const url = data.latestTikTokURL;
+
+    if (!url) {
+      container.innerHTML = "<p>No TikTok video available.</p>";
+      return;
+    }
+
+    console.log("🎬 Rendering TikTok video from:", url);
+
+    const embed = document.createElement("blockquote");
+    embed.className = "tiktok-embed";
+    embed.setAttribute("cite", url);
+    embed.setAttribute("data-video-id", url.split("/video/")[1]?.split("?")[0]);
+    embed.innerHTML = `<a href="${url}" target="_blank" rel="noopener"></a>`;
+    container.appendChild(embed);
+
+    const script = document.createElement("script");
+    script.src = "https://www.tiktok.com/embed.js";
+    script.async = true;
+    container.appendChild(script);
+  });
+} else {
+  console.error("❌ TikTok display skipped: Firebase not ready.");
+}
+
