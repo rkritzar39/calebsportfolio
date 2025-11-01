@@ -500,6 +500,8 @@ async function displayPresidentData() {
     }
 }
 
+
+
 async function loadAndDisplayUsefulLinks() {
     const containerElement = document.querySelector('.useful-links-section .links-container');
     if (!containerElement) { console.warn("Useful links container missing (.useful-links-section .links-container)."); return; }
@@ -2334,6 +2336,63 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     updateCountdown();
 }
 
+/* ========================================================= */
+/* == LATEST TIKTOK VIDEO AUTO DISPLAY (Firebase Integrated) == */
+/* ========================================================= */
+
+async function displayTikTokEmbed() {
+  try {
+    // Ensure Firebase is ready
+    if (!firebaseAppInitialized || !db || !profileDocRef) {
+      console.error("TikTok embed: Firebase not ready or profileDocRef missing.");
+      return;
+    }
+
+    const container = document.getElementById("tiktok-latest");
+    if (!container) {
+      console.warn("TikTok embed container (#tiktok-latest) not found in the page.");
+      return;
+    }
+
+    const docSnap = await getDoc(profileDocRef);
+    if (!docSnap.exists()) {
+      console.warn("TikTok embed: profile document not found.");
+      return;
+    }
+
+    const data = docSnap.data();
+    if (!data.latestTikTokURL || !data.latestTikTokID) {
+      console.log("TikTok embed: no latest video data found in Firestore yet.");
+      container.innerHTML = `<p style="text-align:center;opacity:0.7;">No TikTok video available.</p>`;
+      return;
+    }
+
+    // Render the embed
+    container.innerHTML = `
+      <blockquote 
+        class="tiktok-embed" 
+        cite="${data.latestTikTokURL}" 
+        data-video-id="${data.latestTikTokID}" 
+        style="max-width: 605px;min-width: 325px;">
+        <section></section>
+      </blockquote>
+    `;
+
+    // Reload TikTok script to render the new embed
+    const script = document.createElement("script");
+    script.src = "https://www.tiktok.com/embed.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    console.log("Latest TikTok embedded successfully:", data.latestTikTokURL);
+  } catch (error) {
+    console.error("Error displaying latest TikTok video:", error);
+    const container = document.getElementById("tiktok-latest");
+    if (container)
+      container.innerHTML = `<p class="error">Failed to load TikTok video. Please try again later.</p>`;
+  }
+}
+
 // --- MASTER INITIALIZATION FUNCTION ---
 async function initializeHomepageContent() {
     console.log("Initializing homepage content (v_with_countdown_and_biz_refresh)...");
@@ -2517,6 +2576,9 @@ async function initializeHomepageContent() {
         // --- NEW: Set up the search functionality AFTER all data has been loaded ---
         setupCreatorSearch();
         setupCreatorSorting();
+
+        // ✅ Load your latest TikTok embed automatically
+        await displayTikTokEmbed();
         
         console.log("All other dynamic content loading initiated/completed.");
     }
