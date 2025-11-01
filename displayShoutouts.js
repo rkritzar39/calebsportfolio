@@ -2654,16 +2654,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ========================================
-// 🎥 Display Latest TikTok Video
+// 🎥 Auto-Updating TikTok Embed
 // ========================================
-async function displayLatestTikTok() {
-  try {
-    const container = document.getElementById("tiktok-latest");
-    if (!container) return; // Safety check
+import { onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-    const docRef = doc(db, "site_config", "mainProfile");
-    const docSnap = await getDoc(docRef);
+function initTikTokRealtime() {
+  const container = document.getElementById("tiktok-latest");
+  if (!container) return;
 
+  // Listen for live updates to mainProfile
+  const docRef = doc(db, "site_config", "mainProfile");
+
+  onSnapshot(docRef, (docSnap) => {
     if (!docSnap.exists()) {
       container.innerHTML = "<p>No TikTok data found.</p>";
       return;
@@ -2676,36 +2678,37 @@ async function displayLatestTikTok() {
     }
 
     const videoURL = data.latestTikTokURL;
+    const videoID = data.latestTikTokID || "";
 
-    // Create the TikTok embed block
+    // Render TikTok embed
     container.innerHTML = `
       <blockquote class="tiktok-embed"
         cite="${videoURL}"
-        data-video-id="${data.latestTikTokID}"
+        data-video-id="${videoID}"
         style="max-width: 605px;min-width: 325px;">
         <section>Loading TikTok...</section>
       </blockquote>
     `;
 
-    // Load TikTok's embed script if not already present
-    if (!document.getElementById("tiktok-embed-script")) {
+    // Load or refresh the TikTok embed script
+    const scriptId = "tiktok-embed-script";
+    if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
-      script.id = "tiktok-embed-script";
+      script.id = scriptId;
       script.src = "https://www.tiktok.com/embed.js";
       script.async = true;
       document.body.appendChild(script);
-    } else {
-      // If it's already loaded, refresh embeds
-      window.tiktokEmbedLoad && window.tiktokEmbedLoad();
+    } else if (window.tiktokEmbedLoad) {
+      // If script already loaded, re-process embeds dynamically
+      window.tiktokEmbedLoad();
     }
-
-  } catch (error) {
-    console.error("Error displaying latest TikTok:", error);
-    const container = document.getElementById("tiktok-latest");
-    if (container) container.innerHTML = "<p>❌ Failed to load TikTok video.</p>";
-  }
+  }, (error) => {
+    console.error("Error in TikTok realtime listener:", error);
+    container.innerHTML = "<p>❌ Failed to load TikTok video.</p>";
+  });
 }
 
-// Call it when the page finishes loading
-document.addEventListener("DOMContentLoaded", displayLatestTikTok);
+// Initialize when DOM is ready
+document.addEventListener("DOMContentLoaded", initTikTokRealtime);
+
 
