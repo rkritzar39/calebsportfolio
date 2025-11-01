@@ -4534,16 +4534,57 @@ async function safeFetch(url, timeoutMs = 8000) {
 
       console.log("Fetching TikTok for username:", username);
 
-      // 🎥 Fetch the latest TikTok RSS feed via proxy (to avoid CORS)
-      const rssURL = `https://www.tiktok.com/@${username}/rss`;
-      const response = await safeFetch(
-        `https://api.allorigins.win/get?url=${encodeURIComponent(rssURL)}`,
-        10000
-      );
+    // 🎥 Fetch the latest TikTok RSS feed (with full logging and fallback proxy)
+console.log("Attempting to fetch TikTok RSS via proxy...");
 
-      if (!response.ok) throw new Error(`TikTok RSS fetch failed: ${response.status}`);
+const rssURL = `https://www.tiktok.com/@${username}/rss`;
+const proxyCandidates = [
+  `https://api.allorigins.win/get?url=${encodeURIComponent(rssURL)}`,
+  `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(rssURL)}`
+];
+
+let text = null;
+let success = false;
+
+for (const proxyURL of proxyCandidates) {
+  console.log("Trying proxy:", proxyURL);
+  try {
+    const response = await safeFetch(proxyURL, 10000);
+    console.log("Response received from proxy:", response.status, response.statusText);
+
+    if (!response.ok) throw new Error(`Proxy returned HTTP ${response.status}`);
+
+    // Try JSON parse first (AllOrigins format)
+    try {
       const json = await response.json();
-      const text = json.contents; // actual RSS XML
+      if (json.contents) {
+        text = json.contents;
+        console.log("✅ RSS fetched successfully via AllOrigins proxy");
+        success = true;
+        break;
+      }
+    } catch (jsonErr) {
+      console.warn("JSON parse failed, trying text mode instead:", jsonErr);
+    }
+
+    // Fallback: some proxies return raw text/XML directly
+    const fallbackText = await response.text();
+    if (fallbackText.includes("<rss") || fallbackText.includes("<channel>")) {
+      text = fallbackText;
+      console.log("✅ RSS fetched successfully via fallback text parse");
+      success = true;
+      break;
+    }
+  } catch (err) {
+    console.error("Fetch error with proxy:", proxyURL, err);
+  }
+}
+
+if (!success || !text) {
+  throw new Error("All proxies failed — TikTok blocked RSS or network issue.");
+}
+
+console.log("✅ RSS contents fetched. Length:", text.length);
 
       // 🧩 Parse the RSS feed
       const parser = new DOMParser();
