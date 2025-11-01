@@ -3868,65 +3868,91 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* TikTok Section – Static Onyx Glass Match */
+/* Onyx Liquid Glass TikTok Section (Static) */
 /* ======================================== */
 
 #tiktok-latest-section {
   text-align: center;
-  margin: 40px auto;
-  padding: 28px 24px;
+  margin: 48px auto;
+  padding: 32px 28px;
   border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--content-bg) 88%, transparent);
-  box-shadow: 0 8px 26px color-mix(in srgb, var(--shadow-color) 55%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+  color: var(--text-color);
+
+  /* Layered frosted glass background using your defined gradients */
+  background: 
+    var(--liquid-reflection),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 92%, transparent);
+
+  /* Subtle inner & outer shadow depth */
+  box-shadow:
+    0 12px 28px color-mix(in srgb, var(--shadow-color) 60%, transparent),
+    inset 0 0 8px color-mix(in srgb, var(--glow-color) 25%, transparent);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-  color: var(--text-color);
+
+  /* Keep consistent contrast and depth */
+  overflow: hidden;
 }
 
 #tiktok-latest-section .section-title {
   font-size: 1.55rem;
-  color: var(--text-color);
-  text-align: center;
-  margin-bottom: 20px;
-  letter-spacing: 0.3px;
+  font-weight: 600;
+  margin-bottom: 22px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 0.6em;
+  letter-spacing: 0.3px;
+  color: var(--text-color);
+}
+
+#tiktok-latest-section .section-title i {
+  color: var(--icon-color);
+  font-size: 1.4rem;
 }
 
 .tiktok-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  flex-direction: column;
+  margin-top: 8px;
+}
+
+.tiktok-embed {
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 600px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--content-bg) 96%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 }
 
 .tiktok-container p {
   color: var(--secondary-text);
   opacity: 0.85;
   font-size: 1rem;
-  margin: 0 auto;
+  margin-top: 10px;
 }
 
-.tiktok-embed {
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  width: 100%;
-  max-width: 605px;
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 60%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-}
-
-/* Maintain the same glass tone in light mode */
+/* Light mode balance */
 body.light-e #tiktok-latest-section {
-  background: color-mix(in srgb, var(--content-bg) 92%, transparent);
-  box-shadow: 0 6px 22px color-mix(in srgb, var(--shadow-color) 45%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  background:
+    var(--liquid-reflection),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 95%, transparent);
+  box-shadow:
+    0 8px 26px color-mix(in srgb, var(--shadow-color) 45%, transparent),
+    inset 0 0 8px color-mix(in srgb, var(--glow-color) 25%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
 }
 
 body.light-e .tiktok-embed {
-  box-shadow: 0 5px 16px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+  background: color-mix(in srgb, var(--content-bg) 98%, transparent);
+  box-shadow: 0 5px 18px color-mix(in srgb, var(--shadow-color) 40%, transparent);
   border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
 }
