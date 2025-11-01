@@ -4483,10 +4483,10 @@ window.handleCredentialResponse = (response) => {
 };
 
 // ========================================
-// 🎥 TikTok Sync Integration (CORS-safe + auto-create Firestore)
+// 🎥 TikTok Sync Integration (Final Safe Version)
 // ========================================
 
-// Wait until Firebase is ready
+// Wait until Firebase SDK is ready
 async function waitForFirebase() {
   return new Promise((resolve) => {
     const check = () => {
@@ -4498,7 +4498,7 @@ async function waitForFirebase() {
 }
 
 // Safe fetch with timeout protection
-async function safeFetch(url, timeoutMs = 8000) {
+async function safeFetch(url, timeoutMs = 10000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -4512,49 +4512,52 @@ async function safeFetch(url, timeoutMs = 8000) {
 }
 
 (async function () {
+  console.log("TikTok Sync Script Loaded ✅");
+
   const syncBtn = document.getElementById("sync-tiktok-btn");
   const status = document.getElementById("tiktok-sync-status");
-  if (!syncBtn || !status) return;
+  if (!syncBtn || !status) return; // exit if not on admin page
 
   syncBtn.addEventListener("click", async () => {
     status.textContent = "Fetching latest TikTok...";
     status.style.color = "var(--text-color)";
+    console.log("🟡 Sync button clicked — starting TikTok fetch...");
 
     try {
-      // ✅ Wait for Firebase
+      // ✅ Wait for Firebase to be ready
       const fb = await waitForFirebase();
+      console.log("✅ Firebase loaded:", typeof fb);
       const db = fb.firestore();
 
-      // 🧠 Get TikTok username from Firestore (default fallback)
+      // 🧠 Get username from Firestore (fallback to default)
       const profileDoc = await db.collection("site_config").doc("mainProfile").get();
       let username = "busarmydude";
       if (profileDoc.exists && profileDoc.data().tiktokUsername) {
         username = profileDoc.data().tiktokUsername;
       }
+      console.log("🎯 Fetching TikTok for:", username);
 
-      console.log("Fetching TikTok for:", username);
-
-      // 🎥 Fetch RSS using a CORS-safe proxy
+      // 🎥 Fetch the TikTok RSS via CORS-safe proxy (raw XML)
       const rssURL = `https://www.tiktok.com/@${username}/rss`;
-      const proxyURL = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(rssURL)}`;
+      const proxyURL = `https://api.allorigins.win/raw?url=${encodeURIComponent(rssURL)}`;
+      console.log("🌐 Proxy URL:", proxyURL);
+
       const response = await safeFetch(proxyURL, 10000);
-
-      if (!response.ok) throw new Error(`Proxy request failed: ${response.status}`);
-
+      if (!response.ok) throw new Error(`Proxy returned HTTP ${response.status}`);
       const rssText = await response.text();
-      if (!rssText.includes("<rss")) throw new Error("Invalid RSS data from TikTok.");
+      console.log("📦 RSS fetched, length:", rssText.length);
 
-      // Parse RSS to get latest video link
+      // 🧩 Parse RSS XML
+      if (!rssText.includes("<rss")) throw new Error("Invalid TikTok RSS feed.");
       const parser = new DOMParser();
       const xml = parser.parseFromString(rssText, "application/xml");
       const firstItem = xml.querySelector("item link");
       if (!firstItem) throw new Error("No TikTok videos found.");
       const latestLink = firstItem.textContent.trim();
       const videoId = latestLink.split("/video/")[1]?.split("?")[0] || "";
+      console.log("🎬 Latest TikTok:", latestLink);
 
-      console.log("Latest TikTok link:", latestLink);
-
-      // 💾 Update Firestore document
+      // 💾 Write/update Firestore document
       const docRef = db.collection("site_config").doc("mainProfile");
       await docRef.set(
         {
@@ -4567,9 +4570,11 @@ async function safeFetch(url, timeoutMs = 8000) {
 
       status.textContent = "✅ Synced latest TikTok successfully!";
       status.style.color = "var(--success-color)";
+      console.log("✅ Firestore updated with latest TikTok!");
     } catch (error) {
-      console.error("TikTok sync failed:", error);
-      status.textContent = "❌ Failed to sync TikTok. " + (error.message || "Unknown error");
+      console.error("❌ TikTok sync failed:", error);
+      status.textContent =
+        "❌ Failed to sync TikTok. " + (error.message || "Unknown error");
       status.style.color = "var(--error-color)";
     }
   });
