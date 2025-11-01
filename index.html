@@ -8,6 +8,7 @@
     <meta name="description" content="Welcome to my official link-in-bio page. Explore my merch, settings, and policies all in one place.">
     <meta name="keywords" content="bus army dude, merch, link in bio, accessibility, privacy policy">
     <meta name="author" content="Caleb Kritzar">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>Home - Caleb's Profile</title>
     
     <link rel="stylesheet" href="styles.css">
@@ -47,13 +48,13 @@
 
 <div id="main-content-wrapper">
     </div>
- <div class="profile-section">
+<div class="profile-section">
   <!-- Corner Buttons -->
   <a href="merchandise.html" class="corner-button merch-button" aria-label="Merchandise">
-    <img src="gift-bag-icon.png" alt="">
+    <img src="gift-bag-icon.png" alt="Merchandise">
   </a>
   <a href="settings.html" class="corner-button settings-button" aria-label="Settings">
-    <img src="settings-icon.png" alt="">
+    <img src="settings-icon.png" alt="Settings">
   </a>
 
   <!-- Profile Picture -->
@@ -72,13 +73,22 @@
   <!-- Bio -->
   <p class="profile-bio" id="profile-bio-main">Loading bio...</p>
 
-     <!-- 🎧 LIVE ACTIVITY SECTION -->
-<div class="live-activity hidden" id="live-activity">
-  <img src="activity-icon.svg" alt="Activity Icon" class="activity-icon">
-  <span id="live-activity-text">Loading activity...</span>
+  <!-- 🎧 LIVE ACTIVITY SYSTEM -->
+  <div class="live-activity hidden" id="live-activity">
+    <!-- Honeycomb Icon Cluster -->
+    <div class="icon-cluster" id="icon-cluster"></div>
+
+    <!-- Status Text -->
+    <div class="activity-content">
+      <span id="live-activity-text">Loading activity...</span>
+      <div id="live-activity-updated" class="activity-updated">Updated just now</div>
+    </div>
+  </div>
 </div>
 
-</div>
+<!-- 🔔 Toast Notifications -->
+<div id="toast-container"></div>
+
 
 <div id="rearrangeable-container">
     <div class="social-links-section" id="social-links-section" data-section-id="social-links">
@@ -91,14 +101,6 @@
     <div id="president-section" data-section-id="president">
         <div id="president-placeholder"></div>
     </div>
-
-    <div class="section" id="tiktok-latest-section" data-section-id="tiktok-latest">
-  <h2 class="section-title"><i class="fab fa-tiktok"></i> Latest TikTok Video</h2>
-  <div id="tiktok-latest" class="tiktok-container">
-    <p>Loading TikTok...</p>
-  </div>
-</div>
-
 
 <!-- TikTok Section -->
 <div class="shoutouts-section section" id="tiktok-shoutouts-section" data-section-id="tiktok-shoutouts">
@@ -284,12 +286,68 @@
         </div>
     </div>
 
-      <div class="section" id="quote-section" data-section-id="quote">
-          <h2>Quote of the Day</h2>
-          <p id="quote-date" class="quote-date"></p>
-          <p id="quote-text" class="quote-text">Loading inspiration...</p>
-          <small id="quote-author" class="quote-author"></small>
-      </div>
+      <!-- ========================= -->
+<!-- Quote of the Day Section -->
+<!-- ========================= -->
+<div class="section" id="quote-section" data-section-id="quote">
+  <h2>Quote of the Day</h2>
+  <p id="quote-date" class="quote-date"></p>
+  <p id="quote-text" class="quote-text">Loading inspiration...</p>
+  <small id="quote-author" class="quote-author"></small>
+
+  <div id="quote-controls">
+    <select id="quote-category"></select>
+
+    <div id="custom-category-container" style="display:none;">
+      <input type="text" id="custom-category-input" placeholder="New category name">
+      <button id="save-custom-category">Save</button>
+    </div>
+
+    <button id="next-quote-btn">🔄 Next Quote</button>
+    <button id="add-custom-quote-btn">➕ Add Custom Quote</button>
+    <button id="manage-custom-quotes-btn">🗂️ Manage Quotes</button>
+  </div>
+</div>
+
+<!-- Add Custom Quote Modal -->
+<div id="custom-quote-modal" class="category-modal hidden">
+  <div class="category-modal-content">
+    <h3>Add Custom Quote</h3>
+
+    <div class="form-floating">
+      <textarea id="new-quote-text" placeholder=" " rows="3"></textarea>
+      <label for="new-quote-text">Quote</label>
+    </div>
+
+    <div class="form-floating">
+      <input type="text" id="new-quote-author" placeholder=" ">
+      <label for="new-quote-author">Author (optional)</label>
+    </div>
+
+    <div class="form-floating">
+      <select id="new-quote-category">
+        <option value="">Select a category...</option>
+      </select>
+      <label for="new-quote-category">Category</label>
+    </div>
+
+    <div>
+      <button id="save-custom-quote">Save Quote</button>
+      <button id="cancel-custom-quote">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Quote Manager -->
+<div id="custom-quotes-manager" class="category-modal hidden">
+  <div class="category-modal-content">
+    <h3>Manage Custom Quotes</h3>
+    <label>Category:</label>
+    <select id="manager-category-select"></select>
+    <ul id="custom-quote-list"></ul>
+    <button id="close-manager-btn" style="margin-top:1rem;">Close</button>
+  </div>
+</div>
 
     <div class="disabilities-section section" id="disabilities-section" data-section-id="disabilities">
         <h2>Disabilities</h2>
