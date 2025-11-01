@@ -2656,13 +2656,10 @@ document.addEventListener("DOMContentLoaded", () => {
 // ========================================
 // 🎥 Auto-Updating TikTok Embed
 // ========================================
-import { onSnapshot, doc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-
 function initTikTokRealtime() {
   const container = document.getElementById("tiktok-latest");
   if (!container) return;
 
-  // Listen for live updates to mainProfile
   const docRef = doc(db, "site_config", "mainProfile");
 
   onSnapshot(docRef, (docSnap) => {
@@ -2680,7 +2677,6 @@ function initTikTokRealtime() {
     const videoURL = data.latestTikTokURL;
     const videoID = data.latestTikTokID || "";
 
-    // Render TikTok embed
     container.innerHTML = `
       <blockquote class="tiktok-embed"
         cite="${videoURL}"
@@ -2690,7 +2686,7 @@ function initTikTokRealtime() {
       </blockquote>
     `;
 
-    // Load or refresh the TikTok embed script
+    // Load or refresh embed script
     const scriptId = "tiktok-embed-script";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -2699,7 +2695,6 @@ function initTikTokRealtime() {
       script.async = true;
       document.body.appendChild(script);
     } else if (window.tiktokEmbedLoad) {
-      // If script already loaded, re-process embeds dynamically
       window.tiktokEmbedLoad();
     }
   }, (error) => {
@@ -2708,7 +2703,4 @@ function initTikTokRealtime() {
   });
 }
 
-// Initialize when DOM is ready
 document.addEventListener("DOMContentLoaded", initTikTokRealtime);
-
-
