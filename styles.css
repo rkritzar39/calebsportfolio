@@ -3866,3 +3866,21 @@ body.maintenance-active {
     opacity: 0.4;
     background-color: #4a4a4a;
 }
+
+#tiktok-latest-section {
+  text-align: center;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--content-bg) 90%, transparent);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+}
+
+.tiktok-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
