@@ -13,12 +13,29 @@ const firebaseConfig = {
 
 // Import necessary Firebase functions (v9+ modular SDK)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, getDoc, Timestamp, orderBy, query, where } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { 
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  onSnapshot,        // 👈 add this
+  Timestamp,
+  orderBy,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 function watchLiveStatus() {
+  if (!db) {
+    console.warn("Firestore not ready yet, retrying...");
+    setTimeout(watchLiveStatus, 500);
+    return;
+  }
+
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
-
   const ref = doc(db, "live_status", "current");
+
   onSnapshot(ref, (snap) => {
     if (snap.exists()) {
       const data = snap.data();
@@ -1650,11 +1667,60 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/* =============================================== */
-/* == QUOTE OF THE DAY SECTION (FINAL VERSION) == */
-/* =============================================== */
+/* ========================================================= */
+/* == QUOTE OF THE DAY MODULE (Local + Custom + Manager) == */
+/* ========================================================= */
 
-async function loadQuoteOfTheDay() {
+function getAllLocalQuotes() {
+  const baseQuotes = {
+    inspirational: [
+      { content: "The best way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+      { content: "Don’t watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+      { content: "Success is not final; failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" }
+    ],
+    life: [
+      { content: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
+      { content: "The purpose of life is to live it, to taste experience to the utmost.", author: "Eleanor Roosevelt" }
+    ],
+    technology: [
+      { content: "Technology is best when it brings people together.", author: "Matt Mullenweg" },
+      { content: "Any sufficiently advanced technology is indistinguishable from magic.", author: "Arthur C. Clarke" },
+      { content: "The real problem is not whether machines think but whether men do.", author: "B.F. Skinner" }
+    ],
+    programming: [
+      { content: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
+      { content: "First, solve the problem. Then, write the code.", author: "John Johnson" },
+      { content: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" }
+    ],
+    cybersecurity: [
+      { content: "Security is not a product, but a process.", author: "Bruce Schneier" },
+      { content: "The only truly secure system is one that is powered off.", author: "Gene Spafford" },
+      { content: "Amateurs hack systems, professionals hack people.", author: "Bruce Schneier" }
+    ],
+    ai: [
+      { content: "Artificial Intelligence is the new electricity.", author: "Andrew Ng" },
+      { content: "The question is not whether intelligent machines can have emotions, but whether machines can be intelligent without emotions.", author: "Marvin Minsky" }
+    ],
+    business: [
+      { content: "Opportunities don’t happen. You create them.", author: "Chris Grosser" },
+      { content: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau" }
+    ]
+  };
+
+  const customQuotes = JSON.parse(localStorage.getItem("customQuotes") || "{}");
+  for (const cat in customQuotes) {
+    if (!baseQuotes[cat]) baseQuotes[cat] = [];
+    baseQuotes[cat] = baseQuotes[cat].concat(customQuotes[cat]);
+  }
+
+  return baseQuotes;
+}
+
+/* ========================================================= */
+/* == MAIN QUOTE LOADER == */
+/* ========================================================= */
+
+async function loadQuoteOfTheDay(forceRefresh = false) {
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   const quoteSection = document.getElementById("quote-section");
   if (!quoteSection) return;
@@ -1668,10 +1734,9 @@ async function loadQuoteOfTheDay() {
 
   const quoteText = document.getElementById("quote-text");
   const quoteAuthor = document.getElementById("quote-author");
-  const quoteDateEl = document.getElementById("quote-date"); // ✅ new date element
+  const quoteDateEl = document.getElementById("quote-date");
   if (!quoteText || !quoteAuthor) return;
 
-  // 🗓️ Display today's date nicely formatted
   const now = new Date();
   const formattedDate = now.toLocaleDateString(undefined, {
     weekday: "long",
@@ -1682,90 +1747,273 @@ async function loadQuoteOfTheDay() {
   if (quoteDateEl) quoteDateEl.textContent = formattedDate;
 
   const today = now.toDateString();
+  const category = settings.quoteCategory || "inspirational";
   const storedDate = localStorage.getItem("quoteDate");
+  const storedCategory = localStorage.getItem("quoteCategory");
   const storedQuote = localStorage.getItem("quoteOfTheDay");
 
-  // ✅ Use cached quote if it’s from today
-  if (storedDate === today && storedQuote) {
+  if (!forceRefresh && storedDate === today && storedQuote && storedCategory === category) {
     try {
       const { content, author } = JSON.parse(storedQuote);
       quoteText.textContent = `“${content}”`;
       quoteAuthor.textContent = `— ${author || "Unknown"}`;
+      quoteSection.classList.add("loaded");
       return;
     } catch (err) {
       console.warn("Cached quote parse failed:", err);
     }
   }
 
-  const localQuotes = [
-    { content: "Keep going — great things take time.", author: "Unknown" },
-    { content: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
-    { content: "The best way out is always through.", author: "Robert Frost" },
-    { content: "What you do every day matters more than what you do once in a while.", author: "Gretchen Rubin" },
-    { content: "Do the best you can until you know better. Then when you know better, do better.", author: "Maya Angelou" },
-    { content: "If you’re going through hell, keep going.", author: "Winston Churchill" },
-    { content: "Dream big. Start small. Act now.", author: "Robin Sharma" },
-    { content: "Action is the foundational key to all success.", author: "Pablo Picasso" },
-    { content: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Will Durant" },
-    { content: "Little by little, one travels far.", author: "J.R.R. Tolkien" }
+  const allQuotes = getAllLocalQuotes();
+  let quotes = allQuotes[category];
+  if (!quotes || quotes.length === 0) quotes = allQuotes.inspirational;
+
+  const chosen = quotes[Math.floor(Math.random() * quotes.length)];
+
+  quoteText.textContent = `“${chosen.content}”`;
+  quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
+
+  localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
+  localStorage.setItem("quoteDate", today);
+  localStorage.setItem("quoteCategory", category);
+
+  quoteSection.classList.add("loaded");
+}
+
+/* ========================================================= */
+/* == CATEGORY HANDLING == */
+/* ========================================================= */
+
+function setupQuoteCategorySelector() {
+  const categorySelect = document.getElementById("quote-category");
+  const customContainer = document.getElementById("custom-category-container");
+  const customInput = document.getElementById("custom-category-input");
+  const saveCustomBtn = document.getElementById("save-custom-category");
+
+  if (!categorySelect || !customInput || !saveCustomBtn) return;
+
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const savedCategories = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
+  const currentCategory = settings.quoteCategory || "inspirational";
+
+  const baseCategories = [
+    "inspirational", "life", "technology", "programming", "cybersecurity", "ai", "business"
   ];
 
-  function hashCode(str) {
-    let h = 0;
-    for (let i = 0; i < str.length; i++) h = Math.imul(31, h) + str.charCodeAt(i) | 0;
-    return h;
+  categorySelect.innerHTML = "";
+
+  baseCategories.forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    categorySelect.appendChild(opt);
+  });
+
+  if (savedCategories.length > 0) {
+    const optGroup = document.createElement("optgroup");
+    optGroup.label = "Custom Categories";
+    savedCategories.forEach(cat => {
+      const opt = document.createElement("option");
+      opt.value = cat;
+      opt.textContent = `🌟 ${cat}`;
+      optGroup.appendChild(opt);
+    });
+    categorySelect.appendChild(optGroup);
   }
 
-  async function fetchWithTimeout(url, timeout = 5000) {
-    const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
-    try {
-      const res = await fetch(url, { signal: controller.signal, headers: { Accept: "application/json" } });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return res;
-    } finally {
-      clearTimeout(id);
+  const customOpt = document.createElement("option");
+  customOpt.value = "custom";
+  customOpt.textContent = "➕ Add new category…";
+  categorySelect.appendChild(customOpt);
+
+  categorySelect.value =
+    (baseCategories.includes(currentCategory) || savedCategories.includes(currentCategory))
+      ? currentCategory
+      : "inspirational";
+
+  categorySelect.addEventListener("change", () => {
+    if (categorySelect.value === "custom") {
+      customContainer.style.display = "flex";
+      customInput.focus();
+    } else {
+      customContainer.style.display = "none";
+      updateQuoteCategory(categorySelect.value);
     }
-  }
+  });
 
-  let chosen = null;
-
-  try {
-    // Primary source: Quotable API
-    const res = await fetchWithTimeout("https://api.quotable.io/random", 5000);
-    const data = await res.json();
-    chosen = { content: data.content, author: data.author || "Unknown" };
-  } catch {
-    try {
-      // Fallback: type.fit
-      const res2 = await fetchWithTimeout("https://type.fit/api/quotes", 6000);
-      const list = await res2.json();
-      const idx = Math.abs(hashCode(today)) % (Array.isArray(list) ? list.length : localQuotes.length);
-      const item = Array.isArray(list) && list[idx] ? list[idx] : localQuotes[idx % localQuotes.length];
-      chosen = {
-        content: item.text || item.content || "Keep going — great things take time.",
-        author: (item.author && typeof item.author === "string"
-                  ? item.author.replace(/,\s*type\.fit$/i, "")
-                  : "Unknown")
-      };
-    } catch {
-      // Final fallback
-      const idx2 = Math.abs(hashCode(today)) % localQuotes.length;
-      chosen = localQuotes[idx2];
+  saveCustomBtn.addEventListener("click", () => {
+    const newCategory = customInput.value
+      .trim()
+      .replace(/[^a-z0-9-_\s]/gi, '')
+      .toLowerCase();
+    if (!newCategory) {
+      alert("Please enter a valid category name!");
+      return;
     }
-  }
 
-  if (chosen) {
-    quoteText.textContent = `“${chosen.content}”`;
-    quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
-    localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
-    localStorage.setItem("quoteDate", today);
+    const saved = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
+    if (!saved.includes(newCategory)) saved.push(newCategory);
+    localStorage.setItem("customQuoteCategories", JSON.stringify(saved));
+
+    updateQuoteCategory(newCategory, true);
+    setupQuoteCategorySelector();
+    customContainer.style.display = "none";
+    customInput.value = "";
+  });
+}
+
+function updateQuoteCategory(category, forceReload = false) {
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  settings.quoteCategory = category;
+  localStorage.setItem("websiteSettings", JSON.stringify(settings));
+
+  localStorage.removeItem("quoteOfTheDay");
+  localStorage.setItem("quoteCategory", category);
+
+  loadQuoteOfTheDay(true);
+}
+
+/* ========================================================= */
+/* == CUSTOM QUOTE ADDER & MANAGER == */
+/* ========================================================= */
+
+function setupCustomQuoteAdder() {
+  const addQuoteBtn = document.getElementById("add-custom-quote-btn");
+  const customQuoteModal = document.getElementById("custom-quote-modal");
+  const saveQuoteBtn = document.getElementById("save-custom-quote");
+  const cancelQuoteBtn = document.getElementById("cancel-custom-quote");
+  const quoteInput = document.getElementById("new-quote-text");
+  const authorInput = document.getElementById("new-quote-author");
+  const categorySelect = document.getElementById("new-quote-category");
+
+  if (!addQuoteBtn || !customQuoteModal) return;
+
+  addQuoteBtn.addEventListener("click", () => {
+    updateQuoteCategoryOptions(categorySelect);
+    customQuoteModal.classList.remove("hidden");
+  });
+
+  cancelQuoteBtn.addEventListener("click", () => {
+    customQuoteModal.classList.add("hidden");
+    quoteInput.value = "";
+    authorInput.value = "";
+  });
+
+  saveQuoteBtn.addEventListener("click", () => {
+    const quoteText = quoteInput.value.trim();
+    const author = authorInput.value.trim() || "Unknown";
+    const category = categorySelect.value;
+
+    if (!quoteText) {
+      alert("Please enter a quote!");
+      return;
+    }
+
+    const customQuotes = JSON.parse(localStorage.getItem("customQuotes") || "{}");
+    if (!customQuotes[category]) customQuotes[category] = [];
+    customQuotes[category].push({ content: quoteText, author });
+    localStorage.setItem("customQuotes", JSON.stringify(customQuotes));
+
+    alert(`Quote added to "${category}"!`);
+    customQuoteModal.classList.add("hidden");
+    quoteInput.value = "";
+    authorInput.value = "";
+
+    loadQuoteOfTheDay(true);
+  });
+}
+
+function updateQuoteCategoryOptions(select) {
+  if (!select) return;
+  select.innerHTML = "";
+
+  const baseCategories = [
+    "inspirational", "life", "technology", "programming", "cybersecurity", "ai", "business"
+  ];
+  const customCategories = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
+  [...baseCategories, ...customCategories].forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    select.appendChild(opt);
+  });
+}
+
+/* ========================================================= */
+/* == VIEW & DELETE CUSTOM QUOTES == */
+/* ========================================================= */
+
+function setupCustomQuoteManager() {
+  const manageBtn = document.getElementById("manage-custom-quotes-btn");
+  const managerModal = document.getElementById("custom-quotes-manager");
+  const closeManagerBtn = document.getElementById("close-manager-btn");
+  const quoteList = document.getElementById("custom-quote-list");
+  const categorySelect = document.getElementById("manager-category-select");
+
+  if (!manageBtn) return;
+
+  manageBtn.addEventListener("click", () => {
+    updateQuoteCategoryOptions(categorySelect);
+    loadCustomQuotesIntoList(categorySelect.value);
+    managerModal.classList.remove("hidden");
+  });
+
+  closeManagerBtn.addEventListener("click", () => {
+    managerModal.classList.add("hidden");
+  });
+
+  categorySelect.addEventListener("change", () => {
+    loadCustomQuotesIntoList(categorySelect.value);
+  });
+
+  function loadCustomQuotesIntoList(category) {
+    quoteList.innerHTML = "";
+    const customQuotes = JSON.parse(localStorage.getItem("customQuotes") || "{}");
+    const quotes = (customQuotes[category] || []);
+    if (quotes.length === 0) {
+      quoteList.innerHTML = "<li>No custom quotes for this category.</li>";
+      return;
+    }
+
+    quotes.forEach((q, idx) => {
+      const li = document.createElement("li");
+      li.textContent = `"${q.content}" — ${q.author}`;
+      const del = document.createElement("button");
+      del.textContent = "🗑️";
+      del.addEventListener("click", () => {
+        if (confirm("Delete this quote?")) {
+          quotes.splice(idx, 1);
+          customQuotes[category] = quotes;
+          localStorage.setItem("customQuotes", JSON.stringify(customQuotes));
+          loadCustomQuotesIntoList(category);
+        }
+      });
+      li.appendChild(del);
+      quoteList.appendChild(li);
+    });
   }
 }
 
-/* === Run automatically when the page finishes loading === */
+/* ========================================================= */
+/* == NEXT QUOTE BUTTON == */
+/* ========================================================= */
+
+function setupNextQuoteButton() {
+  const btn = document.getElementById("next-quote-btn");
+  if (!btn) return;
+  btn.addEventListener("click", () => loadQuoteOfTheDay(true));
+}
+
+/* ========================================================= */
+/* == INIT on DOMContentLoaded == */
+/* ========================================================= */
+
 document.addEventListener("DOMContentLoaded", () => {
   loadQuoteOfTheDay();
+  setupQuoteCategorySelector();
+  setupNextQuoteButton();
+  setupCustomQuoteAdder();
+  setupCustomQuoteManager();
 });
 
 // ======================================================
@@ -2342,50 +2590,3 @@ document.addEventListener("DOMContentLoaded", () => {
     return "I'm still learning! Try asking about your theme, layout, or sections.";
   }
 });
-
-// ============================================
-// 🎥 Display Latest TikTok Video (Manual/Admin Saved)
-// ============================================
-import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-
-// --- Ensure Firebase is ready ---
-if (firebaseAppInitialized && db && profileDocRef) {
-  console.log("Setting up listener for latest TikTok video...");
-
-  onSnapshot(profileDocRef, (docSnap) => {
-    const container = document.getElementById("tiktok-latest");
-    if (!container) return;
-
-    container.innerHTML = ""; // Clear previous
-
-    if (!docSnap.exists()) {
-      container.innerHTML = "<p>No TikTok video found.</p>";
-      return;
-    }
-
-    const data = docSnap.data();
-    const url = data.latestTikTokURL;
-
-    if (!url) {
-      container.innerHTML = "<p>No TikTok video available.</p>";
-      return;
-    }
-
-    console.log("🎬 Rendering TikTok video from:", url);
-
-    const embed = document.createElement("blockquote");
-    embed.className = "tiktok-embed";
-    embed.setAttribute("cite", url);
-    embed.setAttribute("data-video-id", url.split("/video/")[1]?.split("?")[0]);
-    embed.innerHTML = `<a href="${url}" target="_blank" rel="noopener"></a>`;
-    container.appendChild(embed);
-
-    const script = document.createElement("script");
-    script.src = "https://www.tiktok.com/embed.js";
-    script.async = true;
-    container.appendChild(script);
-  });
-} else {
-  console.error("❌ TikTok display skipped: Firebase not ready.");
-}
-
