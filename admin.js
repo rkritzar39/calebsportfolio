@@ -1782,51 +1782,6 @@ async function loadProfileData() {
 }
 
 
-   // ========================================
-// 🎥 Manual TikTok Video Saver (fixed version)
-// ========================================
-document.getElementById("save-tiktok-url-btn")?.addEventListener("click", async () => {
-  const input = document.getElementById("manual-tiktok-url");
-  const status = document.getElementById("tiktok-save-status");
-
-  if (!input) return;
-  const url = input.value.trim();
-
-  if (!url || !url.includes("tiktok.com/@")) {
-    status.textContent = "⚠️ Please enter a valid TikTok video URL.";
-    status.style.color = "var(--error-color)";
-    return;
-  }
-
-  try {
-    // ✅ Make sure Firebase is ready
-    if (typeof firebase === "undefined" || !firebase.firestore) {
-      throw new Error("Firebase SDK not loaded");
-    }
-
-    const db = firebase.firestore();
-    const docRef = db.collection("site_config").doc("mainProfile");
-
-    // ✅ Use set with merge to auto-create doc if missing
-    await docRef.set(
-      {
-        latestTikTokURL: url,
-        latestTikTokID: url.split("/video/")[1]?.split("?")[0] || "",
-        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
-      },
-      { merge: true }
-    );
-
-    status.textContent = "✅ TikTok video saved successfully!";
-    status.style.color = "var(--success-color)";
-  } catch (error) {
-    console.error("Error saving TikTok URL:", error);
-    status.textContent = "❌ Failed to save TikTok URL. " + (error.message || "");
-    status.style.color = "var(--error-color)";
-  }
-});
-
-
     // --- Function to Save Profile Data (with Logging) ---
     async function saveProfileData(event) {
         event.preventDefault();
