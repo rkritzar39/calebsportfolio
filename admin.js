@@ -819,12 +819,11 @@ function renderYouTubeCard(account) {
     }
     // *** END updateShoutoutPreview FUNCTION ***
 
-    // ========================================
+ // ========================================
 // TikTok Sync Integration
 // ========================================
-import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-const dbTikTok = getFirestore();
+const dbTikTok = firebase.firestore();
 
 // Function to fetch the latest TikTok video using the RSS feed
 async function fetchLatestTikTok(username) {
@@ -851,8 +850,8 @@ document.getElementById("sync-tiktok-btn")?.addEventListener("click", async () =
     const { latestLink, videoId } = await fetchLatestTikTok("busarmydude");
 
     // Update Firestore document
-    const docRef = doc(dbTikTok, "site_config", "mainProfile");
-    await updateDoc(docRef, {
+    const docRef = dbTikTok.collection("site_config").doc("mainProfile");
+    await docRef.update({
       latestTikTokURL: latestLink,
       latestTikTokID: videoId
     });
