@@ -2652,3 +2652,60 @@ document.addEventListener("DOMContentLoaded", () => {
     return "I'm still learning! Try asking about your theme, layout, or sections.";
   }
 });
+
+// ========================================
+// 🎥 Display Latest TikTok Video
+// ========================================
+async function displayLatestTikTok() {
+  try {
+    const container = document.getElementById("tiktok-latest");
+    if (!container) return; // Safety check
+
+    const docRef = doc(db, "site_config", "mainProfile");
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      container.innerHTML = "<p>No TikTok data found.</p>";
+      return;
+    }
+
+    const data = docSnap.data();
+    if (!data.latestTikTokURL) {
+      container.innerHTML = "<p>No TikTok video synced yet.</p>";
+      return;
+    }
+
+    const videoURL = data.latestTikTokURL;
+
+    // Create the TikTok embed block
+    container.innerHTML = `
+      <blockquote class="tiktok-embed"
+        cite="${videoURL}"
+        data-video-id="${data.latestTikTokID}"
+        style="max-width: 605px;min-width: 325px;">
+        <section>Loading TikTok...</section>
+      </blockquote>
+    `;
+
+    // Load TikTok's embed script if not already present
+    if (!document.getElementById("tiktok-embed-script")) {
+      const script = document.createElement("script");
+      script.id = "tiktok-embed-script";
+      script.src = "https://www.tiktok.com/embed.js";
+      script.async = true;
+      document.body.appendChild(script);
+    } else {
+      // If it's already loaded, refresh embeds
+      window.tiktokEmbedLoad && window.tiktokEmbedLoad();
+    }
+
+  } catch (error) {
+    console.error("Error displaying latest TikTok:", error);
+    const container = document.getElementById("tiktok-latest");
+    if (container) container.innerHTML = "<p>❌ Failed to load TikTok video.</p>";
+  }
+}
+
+// Call it when the page finishes loading
+document.addEventListener("DOMContentLoaded", displayLatestTikTok);
+
