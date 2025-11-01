@@ -4482,6 +4482,17 @@ window.handleCredentialResponse = (response) => {
     }
 };
 
+// Wait until Firebase is ready (global firebase object exists)
+async function waitForFirebase() {
+  return new Promise((resolve, reject) => {
+    const check = () => {
+      if (typeof firebase !== "undefined" && firebase.firestore) resolve(firebase);
+      else setTimeout(check, 100); // check every 100ms until Firebase is loaded
+    };
+    check();
+  });
+}
+
 // ========================================
 // 🎥 TikTok Sync Integration (Auto-create)
 // ========================================
@@ -4495,42 +4506,36 @@ window.handleCredentialResponse = (response) => {
     status.style.color = "var(--text-color)";
 
     try {
-      // Ensure Firebase exists in global scope
-      if (typeof firebase === "undefined" || !firebase.firestore) {
-        console.error("Firebase not loaded — check script order in admin.html!");
-        status.textContent = "⚠️ Firebase not loaded.";
-        status.style.color = "var(--error-color)";
-        return;
-      }
+      // ✅ Wait for Firebase to load before continuing
+      const fb = await waitForFirebase();
+      const db = fb.firestore();
 
-      // --- Fetch the latest TikTok ---
-      const username = "calebkritzar"; // Change to your actual username if needed
-      const response = await fetch(`https://www.tiktok.com/@${username}/rss`);
-      const text = await response.text();
+      // Fetch TikTok RSS
+      const username = "calebkritzar"; // change if needed
+      const rss = await fetch(`https://www.tiktok.com/@${username}/rss`);
+      const xmlText = await rss.text();
       const parser = new DOMParser();
-      const xml = parser.parseFromString(text, "application/xml");
+      const xml = parser.parseFromString(xmlText, "application/xml");
       const firstItem = xml.querySelector("item link");
 
-      if (!firstItem) throw new Error("No TikTok videos found.");
+      if (!firstItem) throw new Error("No TikTok videos found in RSS feed.");
+
       const latestLink = firstItem.textContent;
-      const videoId = latestLink.split("/video/")[1].split("?")[0];
+      const videoId = latestLink.split("/video/")[1]?.split("?")[0] || "";
 
-      // --- Write to Firestore (auto-create if missing) ---
-      const db = firebase.firestore();
+      // Update or create Firestore document
       const docRef = db.collection("site_config").doc("mainProfile");
-
       await docRef.set(
         {
           latestTikTokURL: latestLink,
           latestTikTokID: videoId,
-          lastSynced: firebase.firestore.FieldValue.serverTimestamp(),
+          lastSynced: fb.firestore.FieldValue.serverTimestamp(),
         },
-        { merge: true } // create if missing, update if exists
+        { merge: true }
       );
 
       status.textContent = "✅ Synced latest TikTok successfully!";
       status.style.color = "var(--success-color)";
-      console.log("TikTok synced:", latestLink);
     } catch (error) {
       console.error("TikTok sync failed:", error);
       status.textContent = "❌ Failed to sync TikTok. Please try again.";
