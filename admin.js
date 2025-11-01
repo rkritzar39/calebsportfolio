@@ -1,23 +1,5 @@
-// ========================================
-// Firebase Initialization (Compat SDK)
-// ========================================
-if (typeof firebase === "undefined") {
-  console.error("❌ Firebase SDK not loaded. Check script order in admin.html!");
-} else {
-  const firebaseConfig = {
-    apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0",
-    authDomain: "busarmydudewebsite.firebaseapp.com",
-    projectId: "busarmydudewebsite",
-    storageBucket: "busarmydudewebsite.firebasestorage.app",
-    messagingSenderId: "42980404680",
-    appId: "1:42980404680:web:f4f1e54789902a4295e4fd",
-    measurementId: "G-DQPH8YL789"
-  };
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  console.log("✅ Firebase initialized (Compat)");
-}
+    // admin.js (Version includes Preview Prep + Previous Features + Social Links)
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("live-status-input");
@@ -4597,4 +4579,3 @@ async function safeFetch(url, timeoutMs = 10000) {
     }
   });
 })();
-
