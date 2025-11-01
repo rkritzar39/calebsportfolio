@@ -4482,21 +4482,36 @@ window.handleCredentialResponse = (response) => {
     }
 };
 
+// ========================================
+// 🎥 TikTok Sync Integration (Auto-create + Firestore Username)
+// ========================================
+
 // Wait until Firebase is ready (global firebase object exists)
 async function waitForFirebase() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const check = () => {
       if (typeof firebase !== "undefined" && firebase.firestore) resolve(firebase);
-      else setTimeout(check, 100); // check every 100ms until Firebase is loaded
+      else setTimeout(check, 100);
     };
     check();
   });
 }
 
-// ========================================
-// 🎥 TikTok Sync Integration (Auto-create)
-// ========================================
-(async function() {
+// Safe fetch with timeout (so it won't hang forever)
+async function safeFetch(url, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+    return response;
+  } catch (err) {
+    clearTimeout(timeout);
+    throw err;
+  }
+}
+
+(async function () {
   const syncBtn = document.getElementById("sync-tiktok-btn");
   const status = document.getElementById("tiktok-sync-status");
   if (!syncBtn || !status) return;
@@ -4506,24 +4521,34 @@ async function waitForFirebase() {
     status.style.color = "var(--text-color)";
 
     try {
-      // ✅ Wait for Firebase to load before continuing
+      // ✅ Wait for Firebase to load
       const fb = await waitForFirebase();
       const db = fb.firestore();
 
-      // Fetch TikTok RSS
-      const username = "calebkritzar"; // change if needed
-      const rss = await fetch(`https://www.tiktok.com/@${username}/rss`);
-      const xmlText = await rss.text();
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(xmlText, "application/xml");
-      const firstItem = xml.querySelector("item link");
+      // 🧠 Get TikTok username from Firestore
+      const profileDoc = await db.collection("site_config").doc("mainProfile").get();
+      let username = "busarmydude"; // fallback default
+      if (profileDoc.exists && profileDoc.data().tiktokUsername) {
+        username = profileDoc.data().tiktokUsername;
+      }
 
+      console.log("Fetching TikTok for username:", username);
+
+      // 🎥 Fetch the latest TikTok RSS feed
+      const response = await safeFetch(`https://www.tiktok.com/@${username}/rss`, 10000);
+      if (!response.ok) throw new Error(`TikTok RSS fetch failed: ${response.status}`);
+      const text = await response.text();
+
+      // 🧩 Parse the RSS feed
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(text, "application/xml");
+      const firstItem = xml.querySelector("item link");
       if (!firstItem) throw new Error("No TikTok videos found in RSS feed.");
 
-      const latestLink = firstItem.textContent;
+      const latestLink = firstItem.textContent.trim();
       const videoId = latestLink.split("/video/")[1]?.split("?")[0] || "";
 
-      // Update or create Firestore document
+      // 💾 Write/update Firestore document
       const docRef = db.collection("site_config").doc("mainProfile");
       await docRef.set(
         {
@@ -4534,12 +4559,14 @@ async function waitForFirebase() {
         { merge: true }
       );
 
+      console.log("✅ TikTok synced:", latestLink);
       status.textContent = "✅ Synced latest TikTok successfully!";
       status.style.color = "var(--success-color)";
     } catch (error) {
       console.error("TikTok sync failed:", error);
-      status.textContent = "❌ Failed to sync TikTok. Please try again.";
+      status.textContent = "❌ Failed to sync TikTok. " + (error.message || "Unknown error");
       status.style.color = "var(--error-color)";
     }
   });
 })();
+
