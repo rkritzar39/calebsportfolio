@@ -4483,10 +4483,10 @@ window.handleCredentialResponse = (response) => {
 };
 
 // ========================================
-// 🎥 TikTok Sync Integration (CORS-safe + Auto-create + Firestore Username)
+// 🎥 TikTok Sync Integration (CORS-safe + auto-create Firestore)
 // ========================================
 
-// Wait until Firebase is ready (global firebase object exists)
+// Wait until Firebase is ready
 async function waitForFirebase() {
   return new Promise((resolve) => {
     const check = () => {
@@ -4497,7 +4497,7 @@ async function waitForFirebase() {
   });
 }
 
-// Safe fetch with timeout (prevents hanging forever)
+// Safe fetch with timeout protection
 async function safeFetch(url, timeoutMs = 8000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -4514,90 +4514,47 @@ async function safeFetch(url, timeoutMs = 8000) {
 (async function () {
   const syncBtn = document.getElementById("sync-tiktok-btn");
   const status = document.getElementById("tiktok-sync-status");
-  if (!syncBtn || !status) return; // Skip if not on admin page
+  if (!syncBtn || !status) return;
 
   syncBtn.addEventListener("click", async () => {
     status.textContent = "Fetching latest TikTok...";
     status.style.color = "var(--text-color)";
 
     try {
-      // ✅ Wait for Firebase to load
+      // ✅ Wait for Firebase
       const fb = await waitForFirebase();
       const db = fb.firestore();
 
-      // 🧠 Get TikTok username from Firestore
+      // 🧠 Get TikTok username from Firestore (default fallback)
       const profileDoc = await db.collection("site_config").doc("mainProfile").get();
-      let username = "busarmydude"; // fallback if not set
+      let username = "busarmydude";
       if (profileDoc.exists && profileDoc.data().tiktokUsername) {
         username = profileDoc.data().tiktokUsername;
       }
 
-      console.log("Fetching TikTok for username:", username);
+      console.log("Fetching TikTok for:", username);
 
-    // 🎥 Fetch the latest TikTok RSS feed (with full logging and fallback proxy)
-console.log("Attempting to fetch TikTok RSS via proxy...");
+      // 🎥 Fetch RSS using a CORS-safe proxy
+      const rssURL = `https://www.tiktok.com/@${username}/rss`;
+      const proxyURL = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(rssURL)}`;
+      const response = await safeFetch(proxyURL, 10000);
 
-const rssURL = `https://www.tiktok.com/@${username}/rss`;
-const proxyCandidates = [
-  `https://api.allorigins.win/get?url=${encodeURIComponent(rssURL)}`,
-  `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(rssURL)}`
-];
+      if (!response.ok) throw new Error(`Proxy request failed: ${response.status}`);
 
-let text = null;
-let success = false;
+      const rssText = await response.text();
+      if (!rssText.includes("<rss")) throw new Error("Invalid RSS data from TikTok.");
 
-for (const proxyURL of proxyCandidates) {
-  console.log("Trying proxy:", proxyURL);
-  try {
-    const response = await safeFetch(proxyURL, 10000);
-    console.log("Response received from proxy:", response.status, response.statusText);
-
-    if (!response.ok) throw new Error(`Proxy returned HTTP ${response.status}`);
-
-    // Try JSON parse first (AllOrigins format)
-    try {
-      const json = await response.json();
-      if (json.contents) {
-        text = json.contents;
-        console.log("✅ RSS fetched successfully via AllOrigins proxy");
-        success = true;
-        break;
-      }
-    } catch (jsonErr) {
-      console.warn("JSON parse failed, trying text mode instead:", jsonErr);
-    }
-
-    // Fallback: some proxies return raw text/XML directly
-    const fallbackText = await response.text();
-    if (fallbackText.includes("<rss") || fallbackText.includes("<channel>")) {
-      text = fallbackText;
-      console.log("✅ RSS fetched successfully via fallback text parse");
-      success = true;
-      break;
-    }
-  } catch (err) {
-    console.error("Fetch error with proxy:", proxyURL, err);
-  }
-}
-
-if (!success || !text) {
-  throw new Error("All proxies failed — TikTok blocked RSS or network issue.");
-}
-
-console.log("✅ RSS contents fetched. Length:", text.length);
-
-      // 🧩 Parse the RSS feed
+      // Parse RSS to get latest video link
       const parser = new DOMParser();
-      const xml = parser.parseFromString(text, "application/xml");
+      const xml = parser.parseFromString(rssText, "application/xml");
       const firstItem = xml.querySelector("item link");
-      if (!firstItem) throw new Error("No TikTok videos found in RSS feed.");
-
+      if (!firstItem) throw new Error("No TikTok videos found.");
       const latestLink = firstItem.textContent.trim();
       const videoId = latestLink.split("/video/")[1]?.split("?")[0] || "";
 
       console.log("Latest TikTok link:", latestLink);
 
-      // 💾 Write/update Firestore document (auto-create if missing)
+      // 💾 Update Firestore document
       const docRef = db.collection("site_config").doc("mainProfile");
       await docRef.set(
         {
@@ -4617,3 +4574,4 @@ console.log("✅ RSS contents fetched. Length:", text.length);
     }
   });
 })();
+
