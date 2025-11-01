@@ -2686,7 +2686,7 @@ function initTikTokRealtime() {
       </blockquote>
     `;
 
-    // Load or refresh embed script
+    // Load or refresh TikTok embed script
     const scriptId = "tiktok-embed-script";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -2704,3 +2704,4 @@ function initTikTokRealtime() {
 }
 
 document.addEventListener("DOMContentLoaded", initTikTokRealtime);
+
