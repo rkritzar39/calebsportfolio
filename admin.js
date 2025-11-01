@@ -4483,7 +4483,7 @@ window.handleCredentialResponse = (response) => {
 };
 
 // ========================================
-// 🎥 TikTok Sync Integration (Auto-create + Firestore Username)
+// 🎥 TikTok Sync Integration (CORS-safe + Auto-create + Firestore Username)
 // ========================================
 
 // Wait until Firebase is ready (global firebase object exists)
@@ -4497,7 +4497,7 @@ async function waitForFirebase() {
   });
 }
 
-// Safe fetch with timeout (so it won't hang forever)
+// Safe fetch with timeout (prevents hanging forever)
 async function safeFetch(url, timeoutMs = 8000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -4514,7 +4514,7 @@ async function safeFetch(url, timeoutMs = 8000) {
 (async function () {
   const syncBtn = document.getElementById("sync-tiktok-btn");
   const status = document.getElementById("tiktok-sync-status");
-  if (!syncBtn || !status) return;
+  if (!syncBtn || !status) return; // Skip if not on admin page
 
   syncBtn.addEventListener("click", async () => {
     status.textContent = "Fetching latest TikTok...";
@@ -4527,17 +4527,23 @@ async function safeFetch(url, timeoutMs = 8000) {
 
       // 🧠 Get TikTok username from Firestore
       const profileDoc = await db.collection("site_config").doc("mainProfile").get();
-      let username = "busarmydude"; // fallback default
+      let username = "busarmydude"; // fallback if not set
       if (profileDoc.exists && profileDoc.data().tiktokUsername) {
         username = profileDoc.data().tiktokUsername;
       }
 
       console.log("Fetching TikTok for username:", username);
 
-      // 🎥 Fetch the latest TikTok RSS feed
-      const response = await safeFetch(`https://www.tiktok.com/@${username}/rss`, 10000);
+      // 🎥 Fetch the latest TikTok RSS feed via proxy (to avoid CORS)
+      const rssURL = `https://www.tiktok.com/@${username}/rss`;
+      const response = await safeFetch(
+        `https://api.allorigins.win/get?url=${encodeURIComponent(rssURL)}`,
+        10000
+      );
+
       if (!response.ok) throw new Error(`TikTok RSS fetch failed: ${response.status}`);
-      const text = await response.text();
+      const json = await response.json();
+      const text = json.contents; // actual RSS XML
 
       // 🧩 Parse the RSS feed
       const parser = new DOMParser();
@@ -4548,7 +4554,9 @@ async function safeFetch(url, timeoutMs = 8000) {
       const latestLink = firstItem.textContent.trim();
       const videoId = latestLink.split("/video/")[1]?.split("?")[0] || "";
 
-      // 💾 Write/update Firestore document
+      console.log("Latest TikTok link:", latestLink);
+
+      // 💾 Write/update Firestore document (auto-create if missing)
       const docRef = db.collection("site_config").doc("mainProfile");
       await docRef.set(
         {
@@ -4559,7 +4567,6 @@ async function safeFetch(url, timeoutMs = 8000) {
         { merge: true }
       );
 
-      console.log("✅ TikTok synced:", latestLink);
       status.textContent = "✅ Synced latest TikTok successfully!";
       status.style.color = "var(--success-color)";
     } catch (error) {
@@ -4569,4 +4576,3 @@ async function safeFetch(url, timeoutMs = 8000) {
     }
   });
 })();
-
