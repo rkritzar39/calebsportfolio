@@ -4481,3 +4481,71 @@ window.handleCredentialResponse = (response) => {
         console.error("Critical Error: handleGoogleSignIn is not globally available for the Google callback.");
     }
 };
+
+// ========================================
+// TikTok Sync Integration (Firestore Username Version)
+// ========================================
+document.addEventListener("DOMContentLoaded", async () => {
+  if (typeof firebase === "undefined") {
+    console.error("Firebase not loaded — check script order in admin.html!");
+    return;
+  }
+
+  const db = firebase.firestore();
+  const syncBtn = document.getElementById("sync-tiktok-btn");
+  const syncStatus = document.getElementById("tiktok-sync-status");
+
+  if (!syncBtn || !syncStatus) {
+    console.warn("TikTok Sync button or status element not found in admin.html.");
+    return;
+  }
+
+  // --- Helper: Fetch latest TikTok via RSS ---
+  async function fetchLatestTikTok(username) {
+    const response = await fetch(`https://www.tiktok.com/@${username}/rss`);
+    const text = await response.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, "application/xml");
+    const firstItem = xml.querySelector("item link");
+    if (!firstItem) throw new Error("No TikTok videos found.");
+    const latestLink = firstItem.textContent;
+    const videoId = latestLink.split("/video/")[1].split("?")[0];
+    return { latestLink, videoId };
+  }
+
+  // --- Sync Button Logic ---
+  syncBtn.addEventListener("click", async () => {
+    syncStatus.textContent = "Fetching TikTok username...";
+    syncStatus.style.color = "var(--text-color)";
+
+    try {
+      // Get TikTok username from Firestore
+      const docRef = db.collection("site_config").doc("mainProfile");
+      const docSnap = await docRef.get();
+
+      if (!docSnap.exists || !docSnap.data().tiktokUsername) {
+        throw new Error("TikTok username not set in Firestore!");
+      }
+
+      const username = docSnap.data().tiktokUsername;
+      syncStatus.textContent = `Syncing latest TikTok for @${username}...`;
+
+      // Fetch latest TikTok video
+      const { latestLink, videoId } = await fetchLatestTikTok(username);
+
+      // Update Firestore with new video info
+      await docRef.update({
+        latestTikTokURL: latestLink,
+        latestTikTokID: videoId,
+        lastSynced: new Date().toISOString()
+      });
+
+      syncStatus.textContent = "✅ Synced latest TikTok successfully!";
+      syncStatus.style.color = "limegreen";
+    } catch (error) {
+      console.error("TikTok sync failed:", error);
+      syncStatus.textContent = `❌ ${error.message || "Sync failed"}`;
+      syncStatus.style.color = "red";
+    }
+  });
+});
