@@ -819,6 +819,53 @@ function renderYouTubeCard(account) {
     }
     // *** END updateShoutoutPreview FUNCTION ***
 
+    // ========================================
+// TikTok Sync Integration
+// ========================================
+import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+const dbTikTok = getFirestore();
+
+// Function to fetch the latest TikTok video using the RSS feed
+async function fetchLatestTikTok(username) {
+  const response = await fetch(`https://www.tiktok.com/@${username}/rss`);
+  const text = await response.text();
+  const parser = new DOMParser();
+  const xml = parser.parseFromString(text, "application/xml");
+  const firstItem = xml.querySelector("item link");
+  if (!firstItem) throw new Error("No TikTok videos found.");
+
+  const latestLink = firstItem.textContent;
+  const videoId = latestLink.split("/video/")[1].split("?")[0];
+  return { latestLink, videoId };
+}
+
+// Button event listener
+document.getElementById("sync-tiktok-btn")?.addEventListener("click", async () => {
+  const status = document.getElementById("tiktok-sync-status");
+  status.textContent = "Fetching latest TikTok...";
+  status.style.color = "var(--text-color)";
+  
+  try {
+    // ⚠️ Replace "busarmydude" with your actual TikTok username (without @)
+    const { latestLink, videoId } = await fetchLatestTikTok("busarmydude");
+
+    // Update Firestore document
+    const docRef = doc(dbTikTok, "site_config", "mainProfile");
+    await updateDoc(docRef, {
+      latestTikTokURL: latestLink,
+      latestTikTokID: videoId
+    });
+
+    status.textContent = "✅ Synced latest TikTok successfully!";
+    status.style.color = "var(--success-color)";
+  } catch (error) {
+    console.error("TikTok sync failed:", error);
+    status.textContent = "❌ Failed to sync TikTok. Please try again.";
+    status.style.color = "var(--error-color)";
+  }
+});
+
     // Global Click Listener for Modals (Defined ONCE)
     if (!window.adminModalClickListenerAttached) {
         window.addEventListener('click', (event) => {
