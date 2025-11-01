@@ -1051,6 +1051,12 @@
     </div>
 </div>
 
-<script type="module" src="admin.js"></script>
+<!-- ✅ Load Firebase first -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+<!-- ✅ Then load your admin logic -->
+<script src="admin.js"></script>
 </body>
 </html>
