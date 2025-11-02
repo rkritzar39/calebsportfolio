@@ -459,36 +459,34 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Onyx Accent Edition (Final Build)
+   🎧 Live Activity — Fully Responsive + Fixed Alignment
    ====================================================== */
 
 #live-activity {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
 
-  margin: 1.4rem auto 0;
-  padding: 22px 24px;
-  width: 92%;
-  max-width: 520px;
+  margin: 1.5rem auto 0;
+  padding: clamp(14px, 3vw, 24px);
+  width: min(92%, 540px);
   border-radius: 18px;
 
   background: linear-gradient(
     145deg,
-    color-mix(in srgb, var(--content-bg, #1b1b1b) 90%, transparent),
+    color-mix(in srgb, var(--content-bg, #1b1b1b) 92%, transparent),
     color-mix(in srgb, var(--accent-color, #1db954) 8%, transparent)
   );
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid color-mix(in srgb, var(--border-color, #333) 70%, transparent);
   box-shadow:
-    0 0 18px color-mix(in srgb, var(--accent-color, #1db954) 22%, transparent),
-    0 2px 8px rgba(0, 0, 0, 0.3);
-
-  overflow: hidden;
+    0 0 20px color-mix(in srgb, var(--accent-color, #1db954) 20%, transparent),
+    0 2px 8px rgba(0, 0, 0, 0.35);
   transition: all 0.35s ease;
+  overflow: hidden;
 }
 
 #live-activity.hidden {
@@ -498,97 +496,106 @@ a.corner-button {
 }
 
 /* ======================================================
-   🐝 HONEYCOMB ICON CLUSTER + STATUS LINE
+   🐝 HEADER — Honeycomb + Status Line
    ====================================================== */
 .la-header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 14px;
   width: 100%;
-  margin-bottom: 14px;
+  gap: clamp(8px, 2vw, 16px);
+  margin-bottom: clamp(10px, 2vw, 14px);
 }
 
 .icon-cluster {
   display: grid;
-  grid-template-columns: repeat(3, 18px);
+  grid-template-columns: repeat(auto-fit, minmax(18px, 1fr));
   grid-auto-rows: 18px;
-  gap: 6px;
-  align-content: center;
+  gap: clamp(4px, 1vw, 6px);
   justify-content: start;
+  align-content: center;
+  flex-shrink: 0;
 }
 
 .cluster-icon {
-  width: 18px;
-  height: 18px;
+  width: clamp(16px, 3vw, 20px);
+  height: clamp(16px, 3vw, 20px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transform: scale(0);
   animation: pop-in 0.35s ease forwards;
-  position: relative;
-  box-shadow: 0 0 5px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
 }
 .cluster-icon img {
-  width: 10px;
-  height: 10px;
+  width: 60%;
+  height: 60%;
   filter: brightness(0) invert(1);
 }
 
-/* Status line with logo */
+/* Status line */
 .status-line {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: clamp(0.9rem, 1.6vw, 1rem);
   color: var(--text-color, #f1f1f1);
   text-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .status-icon-logo {
-  width: 18px;
-  height: 18px;
+  width: clamp(16px, 3vw, 20px);
+  height: clamp(16px, 3vw, 20px);
+  flex-shrink: 0;
   object-fit: contain;
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent-color) 70%, transparent));
 }
 
 /* ======================================================
-   🎵 SPOTIFY CARD (Contained Inside)
+   🎵 SPOTIFY CARD — Contained and Responsive
    ====================================================== */
 .spotify-card {
   display: grid;
-  grid-template-columns: 74px 1fr;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  gap: 14px;
+  gap: clamp(10px, 2vw, 14px);
   width: 100%;
-  border-radius: 12px;
-  padding: 12px 14px;
-  background: color-mix(in srgb, var(--content-bg, #101010) 65%, transparent);
+  border-radius: 14px;
+  padding: clamp(10px, 2.2vw, 16px);
+  background: color-mix(in srgb, var(--content-bg, #111) 65%, transparent);
   border: 1px solid color-mix(in srgb, var(--border-color, #333) 55%, transparent);
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 12%, transparent),
     0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-top: clamp(8px, 1.5vw, 12px);
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
+
 .spotify-card:hover {
   transform: translateY(-1px);
   box-shadow:
     0 8px 18px rgba(0, 0, 0, 0.28),
-    0 0 20px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    0 0 20px color-mix(in srgb, var(--accent-color) 22%, transparent);
 }
+
 .spotify-card.hidden {
   opacity: 0;
   pointer-events: none;
 }
 
 .live-album-art {
-  width: 74px;
-  height: 74px;
+  width: clamp(64px, 14vw, 78px);
+  height: clamp(64px, 14vw, 78px);
   border-radius: 10px;
   overflow: hidden;
+  flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 .live-album-art img {
@@ -597,14 +604,15 @@ a.corner-button {
   object-fit: cover;
 }
 
-/* Song info */
 .live-info {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  min-width: 0;
 }
+
 .live-song-title {
-  font-size: 1rem;
+  font-size: clamp(0.95rem, 1.8vw, 1rem);
   font-weight: 600;
   color: var(--text-color, #f5f5f5);
   margin-bottom: 2px;
@@ -612,8 +620,9 @@ a.corner-button {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .live-artist {
-  font-size: 0.85rem;
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
   color: #aaa;
   margin-bottom: 8px;
   white-space: nowrap;
@@ -621,7 +630,7 @@ a.corner-button {
   text-overflow: ellipsis;
 }
 
-/* Progress bar */
+/* Progress Bar */
 .music-progress-container {
   position: relative;
   width: 100%;
@@ -645,7 +654,7 @@ a.corner-button {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   margin-top: 6px;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.4vw, 0.85rem);
   font-weight: 600;
   color: color-mix(in srgb, var(--accent-color) 70%, #ccc);
 }
@@ -657,28 +666,55 @@ a.corner-button {
    🕓 Updated Timestamp
    ====================================================== */
 .la-updated {
-  margin-top: 10px;
-  font-size: 0.82rem;
-  color: color-mix(in srgb, var(--accent-color) 38%, #aaa);
+  margin-top: clamp(8px, 1.8vw, 12px);
+  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
+  color: color-mix(in srgb, var(--accent-color) 40%, #aaa);
   text-shadow: 0 0 6px color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
 
-/* Light mode */
-:root[data-theme="light"] #live-activity {
-  background: linear-gradient(
-    145deg,
-    color-mix(in srgb, var(--light-content-bg, #fff) 96%, transparent),
-    color-mix(in srgb, var(--accent-color, #1db954) 10%, transparent)
-  );
+/* ======================================================
+   🌈 Pulse Glow (Spotify Active)
+   ====================================================== */
+.spotify-active {
+  animation: spotifyPulse 3s ease-in-out infinite;
+}
+@keyframes spotifyPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px color-mix(in srgb, var(--accent-color) 25%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 32px color-mix(in srgb, var(--accent-color) 45%, transparent);
+  }
 }
 
-/* Animation */
-@keyframes pop-in {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.25); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+/* ======================================================
+   📱 RESPONSIVE FINE-TUNING
+   ====================================================== */
+@media (max-width: 600px) {
+  #live-activity {
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .la-header {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .spotify-card {
+    grid-template-columns: 64px 1fr;
+  }
 }
 
+@media (max-width: 400px) {
+  #live-activity {
+    padding: 14px;
+  }
+  .status-line {
+    font-size: 0.85rem;
+  }
+  .live-song-title {
+    font-size: 0.9rem;
+  }
+}
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
