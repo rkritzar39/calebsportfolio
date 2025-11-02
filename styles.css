@@ -492,7 +492,13 @@ a.corner-button {
   transition: all 0.4s ease;
 }
 
-/* Spotify green glow when live */
+#live-activity.hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+}
+
+/* Spotify green glow when live (optional) */
 #live-activity.live-now {
   box-shadow:
     0 0 30px color-mix(in srgb, #1db954 60%, transparent),
@@ -510,14 +516,8 @@ a.corner-button {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-#live-activity.hidden {
-  opacity: 0;
-  transform: translateY(10px);
-  pointer-events: none;
-}
-
 /* ======================================================
-   🐝 ICON CLUSTER
+   🐝 ICON CLUSTER (kept)
    ====================================================== */
 #icon-cluster {
   display: grid;
@@ -596,7 +596,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎵 SPOTIFY HOVER ALBUM ART
+   🎵 SPOTIFY HOVER ALBUM ART (kept)
    ====================================================== */
 .spotify-hover-art {
   position: absolute;
@@ -612,12 +612,10 @@ a.corner-button {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   z-index: 50;
 }
-
 .cluster-icon.spotify:hover .spotify-hover-art {
   opacity: 1;
   transform: translateX(-50%) scale(1);
 }
-
 .spotify-hover-art img {
   width: 110px;
   height: 110px;
@@ -627,8 +625,9 @@ a.corner-button {
 }
 
 /* ======================================================
-   ✨ TEXT + TIMESTAMP
+   ✨ TEXT + UPDATED TIMESTAMP
    ====================================================== */
+.activity-content { flex: 1; min-width: 0; }
 #live-activity-text {
   font-size: 1rem;
   font-weight: 600;
@@ -637,10 +636,7 @@ a.corner-button {
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.35);
   transition: color 0.3s ease;
 }
-
-:root[data-theme="light"] #live-activity-text {
-  color: #202020;
-}
+:root[data-theme="light"] #live-activity-text { color: #202020; }
 
 #live-activity-updated {
   font-size: 0.85rem;
@@ -665,50 +661,96 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎵 Spotify Progress Bar + Time Display (Fixed Timestamp)
+   🎵 Discord-Style Spotify Card + Progress
    ====================================================== */
+.spotify-card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  width: 100%;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.spotify-card.hidden { opacity: 0; pointer-events: none; }
+
+.live-album-art {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+.live-album-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.live-info { flex: 1; text-align: left; overflow: hidden; }
+.live-song-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color, #f5f5f5);
+  margin-bottom: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.live-artist {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-bottom: 10px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
 .music-progress-container {
   position: relative;
   width: 100%;
   height: 5px;
   background: color-mix(in srgb, var(--accent-color, #1DB954) 15%, transparent);
-  border-radius: 10px;
-  margin-top: 6px;
-  overflow: visible; /* allow time text */
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  border-radius: 50px;
+  overflow: visible;
+  opacity: 1;
 }
-
 .music-progress-bar {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0%;
+  top: 0; left: 0;
+  height: 100%; width: 0%;
   background: var(--accent-color, #1DB954);
   border-radius: inherit;
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color, #1DB954) 40%, transparent);
-  transition: width 1s linear;
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color, #1DB954) 40%, transparent);
+  transition: width 0.5s linear;
 }
-
-/* Time display below the bar */
 .music-progress-time {
-  position: relative;
-  display: block;
-  margin-top: 8px;
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
   font-size: 0.8rem;
   color: color-mix(in srgb, var(--accent-color, #1DB954) 70%, #ccc);
   font-weight: 500;
   text-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
-  opacity: 0.9;
-  pointer-events: none;
 }
+.music-progress-time span { flex: 1; text-align: center; }
+.music-progress-time span:first-child { text-align: left; }
+.music-progress-time span:last-child { text-align: right; }
 
-.live-now .music-progress-container,
-.spotify-active .music-progress-container {
+/* ======================================================
+   💬 Discord Status Fallback (when Spotify is not active)
+   ====================================================== */
+.discord-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-color, #f5f5f5);
   opacity: 1;
+  transition: opacity 0.3s ease;
 }
+.discord-status.hidden { opacity: 0; pointer-events: none; }
+
+.status-icon { width: 12px; height: 12px; border-radius: 50%; }
+.status-online  { background: #3ba55d; }
+.status-idle    { background: #faa81a; }
+.status-dnd     { background: #ed4245; }
+.status-offline { background: #747f8d; }
 
 /* ======================================================
    🔔 Toast Notifications
@@ -722,7 +764,6 @@ a.corner-button {
   gap: 10px;
   z-index: 9999;
 }
-
 .toast {
   background: color-mix(in srgb, var(--content-bg, #111) 85%, transparent);
   color: var(--text-color, #fff);
@@ -739,19 +780,10 @@ a.corner-button {
    📱 Responsive Layout
    ====================================================== */
 @media (max-width: 768px) {
-  #live-activity {
-    padding: 10px 16px;
-    gap: 12px;
-  }
-  #icon-cluster {
-    width: 58px;
-    height: 58px;
-  }
-  #live-activity-text {
-    font-size: 0.95rem;
-  }
+  #live-activity { padding: 10px 16px; gap: 12px; }
+  #icon-cluster { width: 58px; height: 58px; }
+  #live-activity-text { font-size: 0.95rem; }
 }
-
 @media (max-width: 480px) {
   #live-activity {
     flex-direction: column;
@@ -759,26 +791,13 @@ a.corner-button {
     padding: 10px 14px;
     gap: 10px;
   }
-  #icon-cluster {
-    grid-template-columns: repeat(2, 1fr);
-    width: 50px;
-    height: 50px;
-  }
-  #live-activity-text {
-    font-size: 0.9rem;
-  }
+  #icon-cluster { grid-template-columns: repeat(2, 1fr); width: 50px; height: 50px; }
+  #live-activity-text { font-size: 0.9rem; }
 
   /* Move hover preview below on phones */
-  .spotify-hover-art {
-    top: auto;
-    bottom: 110%;
-    transform: translateX(-50%) scale(0.9);
-  }
-  .cluster-icon.spotify:hover .spotify-hover-art {
-    transform: translateX(-50%) scale(1);
-  }
+  .spotify-hover-art { top: auto; bottom: 110%; transform: translateX(-50%) scale(0.9); }
+  .cluster-icon.spotify:hover .spotify-hover-art { transform: translateX(-50%) scale(1); }
 }
-
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
