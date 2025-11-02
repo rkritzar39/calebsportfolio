@@ -459,56 +459,57 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Honeycomb + Spotify Album Art Edition
+   🎧 Live Activity — Spotify Album Cover Fix Edition
    ====================================================== */
-.live-activity {
+
+#live-activity {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 16px;
-  margin: 1rem auto;
-  padding: 12px 20px;
-  border-radius: var(--radius-md, 14px);
+  gap: 18px;
+  padding: 14px 22px;
+  margin: 1.2rem auto;
   width: fit-content;
   max-width: 95%;
-  background: color-mix(in srgb, var(--content-bg, #1b1b1b) 75%, transparent);
-  backdrop-filter: var(--backdrop-blur, blur(14px) saturate(160%));
-  border: 1px solid color-mix(in srgb, var(--border-color, #555) 60%, transparent);
-  box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color, #000) 50%, transparent);
+  border-radius: 16px;
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  background: color-mix(in srgb, var(--content-bg, #1b1b1b) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color, #555) 50%, transparent);
+  box-shadow: 0 8px 28px color-mix(in srgb, var(--shadow-color, #000) 55%, transparent);
   transition: all 0.4s ease;
   overflow: hidden;
 }
 
-/* Adaptive Glass Glow (Dark/Light) */
-:root[data-theme="dark"] .live-activity {
-  background: color-mix(in srgb, var(--dark-content-bg, #111) 75%, transparent);
+/* Light / Dark adaptive glass */
+:root[data-theme="light"] #live-activity {
+  background: color-mix(in srgb, var(--light-content-bg, #fff) 80%, transparent);
+  border-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
-:root[data-theme="light"] .live-activity {
-  background: color-mix(in srgb, var(--light-content-bg, #fff) 75%, transparent);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-  border: 1px solid color-mix(in srgb, var(--border-color, #ccc) 40%, transparent);
+:root[data-theme="dark"] #live-activity {
+  background: color-mix(in srgb, var(--dark-content-bg, #111) 80%, transparent);
 }
 
-.live-activity.hidden {
+#live-activity.hidden {
   opacity: 0;
   transform: translateY(10px);
   pointer-events: none;
 }
 
 /* ======================================================
-   🐝 ICON CLUSTER (Left Honeycomb Layout)
+   🐝 ICON CLUSTER (Honeycomb)
    ====================================================== */
-.icon-cluster {
+#icon-cluster {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 4px;
   justify-items: center;
   align-items: center;
-  width: 65px;
-  height: 65px;
+  width: 68px;
+  height: 68px;
+  margin-right: 12px;
   position: relative;
-  margin-right: 10px;
-  filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--accent-color, #3ddc84) 25%, transparent));
 }
 
 .cluster-icon {
@@ -518,31 +519,25 @@ a.corner-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   transform: scale(0);
   animation: pop-in 0.4s ease forwards;
-  transition: all 0.3s ease;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
   cursor: pointer;
-  background: color-mix(in srgb, var(--accent-color, #3ddc84) 60%, transparent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color, #3ddc84) 35%, transparent);
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.3s ease;
 }
 
 .cluster-icon img {
   width: 13px;
   height: 13px;
   filter: brightness(10) saturate(0) invert(1);
+  pointer-events: none;
 }
 
-/* Accent hover */
+/* Hover glow using brand color */
 .cluster-icon:hover {
   transform: scale(1.15);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color, #3ddc84) 60%, transparent);
-}
-
-/* Fade-out for temporary icons */
-.cluster-icon.fade-out {
-  opacity: 0;
-  transform: scale(0.6);
+  box-shadow: 0 0 12px currentColor;
 }
 
 /* Tooltip */
@@ -552,7 +547,7 @@ a.corner-button {
   bottom: 130%;
   left: 50%;
   transform: translateX(-50%) scale(0.95);
-  background: color-mix(in srgb, var(--accent-color, #3ddc84) 40%, #000);
+  background: rgba(0, 0, 0, 0.85);
   color: #fff;
   font-size: 0.7rem;
   padding: 3px 6px;
@@ -567,7 +562,14 @@ a.corner-button {
   transform: translateX(-50%) scale(1);
 }
 
-/* Pop animation */
+/* Fade-out for temporary icons */
+.cluster-icon.fade-out {
+  opacity: 0;
+  transform: scale(0.7);
+  transition: all 0.5s ease;
+}
+
+/* Pop-in Animation */
 @keyframes pop-in {
   0% { transform: scale(0); opacity: 0; }
   60% { transform: scale(1.2); opacity: 1; }
@@ -579,7 +581,7 @@ a.corner-button {
    ====================================================== */
 .spotify-hover-art {
   position: absolute;
-  top: -120px;
+  top: -130px;
   left: 50%;
   transform: translateX(-50%) scale(0.9);
   background: rgba(0, 0, 0, 0.85);
@@ -588,7 +590,7 @@ a.corner-button {
   opacity: 0;
   pointer-events: none;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
 }
 
 .cluster-icon.spotify:hover .spotify-hover-art {
@@ -601,58 +603,48 @@ a.corner-button {
   height: 110px;
   border-radius: 8px;
   object-fit: cover;
-  box-shadow: 0 0 18px color-mix(in srgb, var(--accent-color, #1db954) 60%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent-color, #1DB954) 60%, transparent);
 }
 
 /* ======================================================
    ✨ TEXT + TIMESTAMP
    ====================================================== */
-.activity-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
 #live-activity-text {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-color, #e0e0e0);
-  text-align: left;
   line-height: 1.4;
-  transition: color 0.3s ease, opacity 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 :root[data-theme="light"] #live-activity-text {
-  color: var(--dark-bg, #111);
+  color: #202020;
 }
 
 #live-activity-updated {
-  font-size: 0.8rem;
-  color: color-mix(in srgb, var(--accent-color, #888) 30%, #aaa);
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--accent-color, #888) 35%, #aaa);
   margin-top: 3px;
   transition: color 0.3s ease;
 }
 
-.live-activity.live-now #live-activity-updated {
-  color: var(--accent-color, #3ddc84);
-  font-weight: 600;
-  text-shadow: 0 0 6px color-mix(in srgb, var(--accent-color, #3ddc84) 50%, transparent);
+#live-activity.live-now #live-activity-updated {
+  color: var(--accent-color, #9146FF);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--accent-color, #9146FF) 50%, transparent);
 }
 
 /* ======================================================
    💫 Pulse Glow for Active
    ====================================================== */
-.live-activity.active {
+#live-activity.active {
   animation: pulse 3s ease-in-out infinite;
 }
-
 @keyframes pulse {
   0%, 100% {
-    box-shadow: 0 8px 22px color-mix(in srgb, var(--accent-color, #888) 30%, transparent);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--accent-color, #3ddc84) 25%, transparent);
   }
   50% {
-    box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color, #888) 60%, transparent);
+    box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color, #3ddc84) 55%, transparent);
   }
 }
 
@@ -666,7 +658,7 @@ a.corner-button {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .toast {
@@ -676,24 +668,21 @@ a.corner-button {
   border-radius: 8px;
   font-size: 0.9rem;
   min-width: 220px;
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color, #3ddc84) 20%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color, #3ddc84) 25%, transparent);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color, #3ddc84) 25%, transparent);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 /* ======================================================
-   📱 Responsive Layout
+   📱 Responsive
    ====================================================== */
 @media (max-width: 768px) {
-  .live-activity {
-    margin-top: 0.75rem;
-    padding: 8px 14px;
+  #live-activity {
+    padding: 10px 16px;
     gap: 12px;
   }
-  .icon-cluster {
-    width: 55px;
-    height: 55px;
-    grid-gap: 3px;
+  #icon-cluster {
+    width: 58px;
+    height: 58px;
   }
   #live-activity-text {
     font-size: 0.95rem;
@@ -701,16 +690,16 @@ a.corner-button {
 }
 
 @media (max-width: 480px) {
-  .live-activity {
+  #live-activity {
     flex-direction: column;
     align-items: flex-start;
     padding: 10px 14px;
     gap: 10px;
   }
-  .icon-cluster {
+  #icon-cluster {
     grid-template-columns: repeat(2, 1fr);
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
   }
   #live-activity-text {
     font-size: 0.9rem;
