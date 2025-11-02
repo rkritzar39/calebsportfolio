@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity — Multi-Platform + Logos + Manual Override (Final)
+   🎧 Live Activity System — Final Complete Version
    ====================================================== */
 
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -9,29 +9,17 @@ import { db } from "./firebase-init.js";
    CONFIG
 ========================= */
 const CONFIG = {
-  twitch: { user: "calebkritzar", clientId: "n7e3lys858u96xlg7v2aohe8vzxha3", token: "wh1m17qfuq5dkh5b78ekk6oh5wc8wm" },
+  twitch: { user: "calebkritzar" },
   github: { username: "rkritzar39" },
   reddit: { username: "Electronic_Row_1262" },
-  steam:  { steamId64: "76561199283946668", apiKey: "B254FC3875EF0EB1AAEBA9FACFA81C1F" },
+  steam:  { steamId64: "76561199283946668" },
   discord:{ userId: "850815059093356594" },
   tiktok: { username: "calebkritzar" },
 };
 
 /* =========================
-   BRAND ICONS / COLORS
+   BRAND COLORS
 ========================= */
-const BRAND_LOGOS = {
-  twitch: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg",
-  tiktok: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg",
-  github: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg",
-  reddit: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/reddit.svg",
-  steam:  "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg",
-  spotify:"https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg",
-  discord:"https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg",
-  manual: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/user.svg",
-  offline:"https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/offline.svg"
-};
-
 const BRAND_COLORS = {
   twitch: "#9146FF",
   tiktok: "#EE1D52",
@@ -48,22 +36,19 @@ const BRAND_COLORS = {
    GLOBALS
 ========================= */
 let lastUpdateTime = null;
-let currentMusicCover = null;
 let progressInterval = null;
 let currentSpotifyUrl = null;
-
 const $$ = id => document.getElementById(id);
-const setText = (id, val) => { const el = $$(id); if (el) el.textContent = val; };
-function formatTime(seconds) {
-  const s = Math.max(0, Math.floor(seconds));
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${String(r).padStart(2, "0")}`;
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-/* =========================
-   HONEYCOMB CLUSTER
-========================= */
+/* ======================================================
+   🐝 HONEYCOMB ICON CLUSTER (NO BLACK ICONS)
+====================================================== */
 function updateIconCluster(platforms) {
   const cluster = $$("icon-cluster");
   if (!cluster) return;
@@ -73,260 +58,187 @@ function updateIconCluster(platforms) {
     const icon = document.createElement("div");
     icon.className = `cluster-icon ${source}`;
     icon.style.backgroundColor = BRAND_COLORS[source] || "var(--accent-color)";
+    icon.style.boxShadow = `0 0 8px ${BRAND_COLORS[source] || "var(--accent-color)"}`;
     icon.setAttribute("data-tooltip", `${source.charAt(0).toUpperCase() + source.slice(1)} — ${text}`);
-
-    const img = document.createElement("img");
-    img.src = BRAND_LOGOS[source] || BRAND_LOGOS.manual;
-    img.alt = source;
-    icon.appendChild(img);
-
     cluster.appendChild(icon);
 
     if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
-        setTimeout(() => icon.remove(), 700);
-      }, 4500);
+        setTimeout(() => icon.remove(), 800);
+      }, 5000);
     }
   });
 }
 
-/* =========================
-   STATUS LINE
-========================= */
+/* ======================================================
+   💬 STATUS LINE + ICON
+====================================================== */
 function setStatusLine(text, source = "manual") {
-  const logo = document.getElementById("status-icon-logo");
-  const line = document.getElementById("status-line-text");
-  if (logo && line) {
-    logo.src = BRAND_LOGOS[source] || BRAND_LOGOS.manual;
-    logo.alt = source;
-    line.textContent = text || "—";
-  }
+  const textEl = $$("status-line-text");
+  const iconEl = $$("status-icon-logo");
+  if (!textEl || !iconEl) return;
+
+  textEl.textContent = text || "—";
+  const color = BRAND_COLORS[source] || "var(--accent-color)";
+  iconEl.style.background = color;
+  iconEl.style.boxShadow = `0 0 10px ${color}`;
+
   lastUpdateTime = Date.now();
   updateLastUpdated();
 }
 
+/* ======================================================
+   🕒 LAST UPDATED TIMER
+====================================================== */
 function updateLastUpdated() {
   const el = $$("live-activity-updated");
   if (!el || !lastUpdateTime) return;
-  const sec = Math.floor((Date.now() - lastUpdateTime) / 1000);
-  let t = "Updated just now";
-  if (sec >= 60 && sec < 3600) t = `Updated ${Math.floor(sec / 60)}m ago`;
-  else if (sec >= 10 && sec < 60) t = `Updated ${sec}s ago`;
-  else if (sec >= 3600) t = `Updated ${Math.floor(sec / 3600)}h ago`;
-  el.textContent = t;
+
+  const elapsed = Math.floor((Date.now() - lastUpdateTime) / 1000);
+  let text;
+  if (elapsed < 10) text = "Updated just now";
+  else if (elapsed < 60) text = `Updated ${elapsed}s ago`;
+  else if (elapsed < 3600) text = `Updated ${Math.floor(elapsed / 60)}m ago`;
+  else text = `Updated ${Math.floor(elapsed / 3600)}h ago`;
+
+  el.textContent = text;
 }
 
-/* =========================
-   FIRESTORE MANUAL STATUS
-========================= */
-async function getManualStatus() {
-  try {
-    const snap = await getDoc(doc(db, "live_status", "current"));
-    if (snap.exists()) {
-      const msg = (snap.data().message || "").trim();
-      if (msg) return { text: msg, source: "manual" };
-    }
-  } catch {}
-  return null;
-}
-
-/* =========================
-   PLATFORM FETCHERS
-========================= */
-async function getTwitchStatus() {
-  const { user, clientId, token } = CONFIG.twitch;
-  try {
-    const res = await fetch(`https://api.twitch.tv/helix/streams?user_login=${user}`, {
-      headers: { "Client-ID": clientId, "Authorization": `Bearer ${token}` },
-      cache: "no-store"
-    });
-    const data = await res.json();
-    const stream = data?.data?.[0];
-    if (stream?.title) return { text: `Streaming on Twitch — ${stream.title}`, source: "twitch" };
-  } catch {}
-  return null;
-}
-
-async function getSteamStatus() {
-  const { steamId64, apiKey } = CONFIG.steam;
-  try {
-    const res = await fetch(
-      `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId64}`,
-      { cache: "no-store" }
-    );
-    const data = await res.json();
-    const p = data?.response?.players?.[0];
-    if (p?.gameextrainfo) return { text: `Playing ${p.gameextrainfo} on Steam`, source: "steam" };
-  } catch {}
-  return null;
-}
-
-async function getGitHubStatus() {
-  const { username } = CONFIG.github;
-  if (wasRecentlyShown("github")) return null;
-  try {
-    const res = await fetch(`https://api.github.com/users/${username}/events/public?_=${Date.now()}`, { cache: "no-store" });
-    const events = await res.json();
-    const latest = events?.[0];
-    if (latest?.repo) {
-      markAsShown("github");
-      return { text: `Updated ${latest.repo.name}`, source: "github", temporary: true };
-    }
-  } catch {}
-  return null;
-}
-
-async function getRedditStatus() {
-  const { username } = CONFIG.reddit;
-  if (wasRecentlyShown("reddit")) return null;
-  try {
-    const res = await fetch(`https://www.reddit.com/user/${username}/submitted.json?limit=1&_=${Date.now()}`, { cache: "no-store" });
-    const data = await res.json();
-    const post = data?.data?.children?.[0]?.data;
-    if (post) {
-      markAsShown("reddit");
-      return { text: `Posted on r/${post.subreddit} — “${post.title}”`, source: "reddit", temporary: true };
-    }
-  } catch {}
-  return null;
-}
-
-async function getTikTokStatus() {
-  const { username } = CONFIG.tiktok;
-  if (wasRecentlyShown("tiktok")) return null;
-  try {
-    const res = await fetch(`https://www.tiktok.com/oembed?url=https://www.tiktok.com/@${username}`, { cache: "no-store" });
-    const data = await res.json();
-    if (data?.title) {
-      markAsShown("tiktok");
-      return { text: `Posted on TikTok — “${data.title}”`, source: "tiktok", temporary: true };
-    }
-  } catch {}
-  return null;
-}
-
-/* =========================
-   DISCORD + SPOTIFY
-========================= */
-async function getDiscordActivity() {
-  const { userId } = CONFIG.discord;
-  try {
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`, { cache: "no-store" });
-    const { data } = await res.json();
-    if (!data) return null;
-
-    const sp = data.spotify;
-    const activities = data.activities || [];
-    const game = activities.find(a => a.type === 0 && a.name && a.name !== "Spotify");
-
-    // Spotify
-    if (sp) {
-      const { song, artist, album_art_url, track_id, timestamps } = sp;
-      $$("spotify-card").classList.remove("hidden");
-      $$("live-activity-cover").src = album_art_url;
-      setText("live-song-title", song);
-      setText("live-song-artist", artist);
-      currentSpotifyUrl = `https://open.spotify.com/track/${track_id}`;
-      setupProgress(timestamps.start, timestamps.end);
-      setStatusLine("Listening to Spotify", "spotify");
-      return { text: `Listening to “${song}” by ${artist}`, source: "spotify" };
-    }
-
-    // Discord fallback
-    $$("spotify-card").classList.add("hidden");
-    if (progressInterval) clearInterval(progressInterval);
-    const map = {
-      online: "Online on Discord",
-      idle: "Idle on Discord",
-      dnd: "Do Not Disturb",
-      offline: "Offline"
-    };
-    const statusText = game?.name ? `Playing ${game.name}` : (map[data.discord_status] || "Online on Discord");
-    setStatusLine(statusText, "discord");
-    return { text: statusText, source: "discord" };
-  } catch (e) {
-    console.error("Discord/Lanyard error:", e);
-  }
-  return null;
-}
-
-/* =========================
-   PROGRESS BAR
-========================= */
-function setupProgress(startMs, endMs) {
+/* ======================================================
+   🎵 SPOTIFY PROGRESS HANDLER
+====================================================== */
+function setupProgress(start, end) {
   const bar = $$("music-progress-bar");
   const elapsedEl = $$("elapsed-time");
   const remainingEl = $$("remaining-time");
   const totalEl = $$("total-time");
-  if (!bar || !elapsedEl || !remainingEl || !totalEl || !startMs || !endMs) return;
-  if (progressInterval) clearInterval(progressInterval);
-  const totalSec = (endMs - startMs) / 1000;
-  totalEl.textContent = formatTime(totalSec);
+  if (!bar || !start || !end) return;
+
+  const total = (end - start) / 1000;
+  totalEl.textContent = formatTime(total);
+  clearInterval(progressInterval);
+
   function tick() {
     const now = Date.now();
-    const elapsed = Math.min((now - startMs) / 1000, totalSec);
-    const remaining = Math.max(totalSec - elapsed, 0);
-    bar.style.width = `${(elapsed / totalSec) * 100}%`;
+    const elapsed = Math.min((now - start) / 1000, total);
+    const remaining = Math.max(total - elapsed, 0);
+    bar.style.width = `${(elapsed / total) * 100}%`;
     elapsedEl.textContent = formatTime(elapsed);
     remainingEl.textContent = `-${formatTime(remaining)}`;
   }
+
   tick();
   progressInterval = setInterval(tick, 1000);
 }
 
-/* =========================
-   COMBINE SOURCES
-========================= */
+/* ======================================================
+   🔥 FIRESTORE MANUAL STATUS
+====================================================== */
+async function getManualStatus() {
+  try {
+    const snap = await getDoc(doc(db, "live_status", "current"));
+    if (snap.exists()) {
+      const msg = snap.data().message;
+      if (msg && msg.trim()) return { text: msg, source: "manual" };
+    }
+  } catch (e) {
+    console.warn("Firestore manual status error:", e);
+  }
+  return null;
+}
+
+/* ======================================================
+   💬 DISCORD (WITH REAL SPOTIFY + STATUS)
+====================================================== */
+async function getDiscordActivity() {
+  const { userId } = CONFIG.discord;
+  try {
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${userId}`);
+    const { data } = await res.json();
+    if (!data) return null;
+
+    const spotify = data.spotify;
+    if (spotify) {
+      $$("spotify-card").classList.remove("hidden");
+      $$("live-activity-cover").src = spotify.album_art_url;
+      $$("live-song-title").textContent = spotify.song;
+      $$("live-song-artist").textContent = spotify.artist;
+      currentSpotifyUrl = `https://open.spotify.com/track/${spotify.track_id}`;
+      setupProgress(spotify.timestamps.start, spotify.timestamps.end);
+      setStatusLine(`Listening to “${spotify.song}” by ${spotify.artist}`, "spotify");
+      $$("live-activity").classList.add("spotify-active");
+      return { text: `Listening to ${spotify.song}`, source: "spotify" };
+    } else {
+      $$("spotify-card").classList.add("hidden");
+      $$("live-activity").classList.remove("spotify-active");
+    }
+
+    // Non-Spotify Discord presence
+    const map = {
+      online: "💬 Online on Discord",
+      idle: "🌙 Idle on Discord",
+      dnd: "⛔ Do Not Disturb",
+      offline: "⚫ Offline"
+    };
+    const status = map[data.discord_status] || "💬 Online on Discord";
+    setStatusLine(status, "discord");
+    return { text: status, source: "discord" };
+  } catch (err) {
+    console.error("Discord/Lanyard API error:", err);
+    return null;
+  }
+}
+
+/* ======================================================
+   🔧 COMBINE ALL SOURCES
+====================================================== */
 async function updateLiveStatus() {
   const sources = [
     getManualStatus,
-    getTwitchStatus,
-    getSteamStatus,
-    getDiscordActivity,
-    getGitHubStatus,
-    getRedditStatus,
-    getTikTokStatus
+    getDiscordActivity
+    // (Steam, Twitch, Reddit, etc. can be re-enabled here)
   ];
-  const allActive = [];
+
+  const active = [];
   for (const fn of sources) {
     try {
-      const res = await fn();
-      if (res) allActive.push(res);
-    } catch {}
+      const result = await fn();
+      if (result) active.push(result);
+    } catch (e) {
+      console.warn("Error in source:", e);
+    }
   }
-  const priority = ["spotify", "discord", "twitch", "steam", "manual"];
-  const main = allActive.sort((a, b) => priority.indexOf(a.source) - priority.indexOf(b.source))[0];
-  if (main) setStatusLine(main.text, main.source);
-  updateIconCluster(allActive.slice(0, 9));
-  $$("live-activity").classList.toggle("hidden", !allActive.length);
+
+  if (active.length > 0) updateIconCluster(active);
+  else {
+    $$("live-activity").classList.add("hidden");
+  }
 }
 
-/* =========================
-   HELPERS
-========================= */
-function wasRecentlyShown(p, c = 300000) {
-  const last = localStorage.getItem(`last_${p}_shown`);
-  return last && Date.now() - parseInt(last, 10) < c;
-}
-function markAsShown(p) {
-  localStorage.setItem(`last_${p}_shown`, Date.now().toString());
-}
-
-/* =========================
-   SPOTIFY CLICK-THROUGH
-========================= */
+/* ======================================================
+   🎵 SPOTIFY CARD CLICK-THROUGH
+====================================================== */
 function bindSpotifyClickThrough() {
   const card = $$("spotify-card");
   if (!card) return;
-  card.addEventListener("click", () => {
+
+  function openTrack() {
     if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank", "noopener");
+  }
+
+  card.addEventListener("click", openTrack);
+  card.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openTrack();
+    }
   });
 }
 
-/* =========================
-   INIT
-========================= */
+/* ======================================================
+   🚀 INIT
+====================================================== */
 document.addEventListener("DOMContentLoaded", () => {
   bindSpotifyClickThrough();
   updateLiveStatus();
