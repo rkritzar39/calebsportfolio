@@ -75,18 +75,37 @@
 
   <!-- 🎧 LIVE ACTIVITY SYSTEM -->
   <div class="live-activity hidden" id="live-activity">
-    <!-- Honeycomb Icon Cluster -->
+    <!-- Honeycomb Icon Cluster (kept) -->
     <div class="icon-cluster" id="icon-cluster"></div>
 
-    <!-- Status Text -->
+    <!-- Status + Cards -->
     <div class="activity-content">
       <span id="live-activity-text">Loading activity...</span>
       <div id="live-activity-updated" class="activity-updated">Updated just now</div>
 
-      <!-- 🎵 Spotify Progress Bar + Time -->
-      <div class="music-progress-container">
-        <div class="music-progress-bar" id="music-progress-bar"></div>
-        <div class="music-progress-time" id="music-progress-time"></div>
+      <!-- 🎵 Discord-Style Spotify Card (shows only when Spotify is active) -->
+      <div class="spotify-card hidden" id="spotify-card">
+        <div class="live-album-art">
+          <img id="live-activity-cover" src="path/to/default-cover.jpg" alt="Album Art">
+        </div>
+        <div class="live-info">
+          <div class="live-song-title" id="live-song-title">Loading...</div>
+          <div class="live-artist" id="live-song-artist">Spotify</div>
+          <div class="music-progress-container">
+            <div class="music-progress-bar" id="music-progress-bar"></div>
+          </div>
+          <div class="music-progress-time" id="music-progress-time">
+            <span id="elapsed-time">0:00</span>
+            <span id="remaining-time">-0:00</span>
+            <span id="total-time">0:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 💬 Discord Status / Game Fallback (shows when Spotify is NOT active) -->
+      <div class="discord-status hidden" id="discord-status">
+        <div class="status-icon" id="status-icon"></div>
+        <p class="status-text" id="status-text">Online on Discord</p>
       </div>
     </div>
   </div>
