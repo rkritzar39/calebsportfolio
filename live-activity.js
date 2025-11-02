@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Spotify Progress + Time Edition
+   🎧 Live Activity System — Spotify Progress + Auto Sync Edition
    ====================================================== */
 
 import {
@@ -43,9 +43,10 @@ let lastUpdateTime = null;
 let isTwitchLive = false;
 let currentMusicCover = null;
 let spotifyProgressInterval = null;
+let lastSpotifyTrack = null;
 
 /* =========================
-   UTILS
+   HELPERS
 ========================= */
 function wasRecentlyShown(platform, cooldown = 300000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
@@ -131,7 +132,7 @@ function showStatus(payload, allActive = []) {
   container.classList.toggle("offline", !payload);
   container.classList.toggle("active", !!payload);
 
-  // reset progress if not Spotify
+  // Reset progress if leaving Spotify
   if (bar && source !== "spotify") {
     bar.style.width = "0%";
     clearInterval(spotifyProgressInterval);
@@ -223,7 +224,7 @@ async function getSteamStatus() {
 }
 
 /* =========================
-   DISCORD / SPOTIFY ACTIVITY
+   DISCORD (SPOTIFY FIXED + AUTO RESET)
 ========================= */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
@@ -238,15 +239,21 @@ async function getDiscordActivity() {
     if (spotify?.details && spotify?.state) {
       const trackTitle = spotify.details;
       const artist = spotify.state;
+      const trackId = spotify.sync_id || spotify.id || `${trackTitle}-${artist}`;
 
-      // album art fix
+      // detect new track or restart
+      if (trackId !== lastSpotifyTrack) {
+        clearInterval(spotifyProgressInterval);
+        lastSpotifyTrack = trackId;
+      }
+
+      // Album Art
       let musicCover = null;
       if (spotify.assets?.large_image) {
         const raw = spotify.assets.large_image.trim();
         let hash = null;
         if (raw.startsWith("mp:spotify:image:")) hash = raw.replace("mp:spotify:image:", "");
         else if (raw.startsWith("spotify:image:")) hash = raw.replace("spotify:image:", "");
-        else if (raw.startsWith("mp:external/")) hash = raw.replace("mp:external/", "");
         else if (raw.startsWith("mp:")) hash = raw.replace("mp:", "");
         else if (raw.startsWith("https://")) musicCover = raw;
         if (!musicCover && hash) {
@@ -259,7 +266,7 @@ async function getDiscordActivity() {
         }
       }
 
-      // progress bar + time
+      // Progress Bar + Time
       const timestamps = spotify.timestamps || {};
       const bar = document.getElementById("music-progress-bar");
       const time = document.getElementById("music-progress-time");
@@ -277,18 +284,29 @@ async function getDiscordActivity() {
           return `${min}:${sec}`;
         }
 
-        spotifyProgressInterval = setInterval(() => {
+        function updateProgress() {
           const now = Date.now();
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1) * 100;
+          const elapsed = Math.max(0, Math.min(now - start, duration));
+          const progress = (elapsed / duration) * 100;
+
           bar.style.width = `${progress}%`;
+          time.textContent = `${format(elapsed)} / ${format(duration)}`;
+        }
 
-          const elapsedText = format(elapsed);
-          const totalText = format(duration);
-          time.textContent = `${elapsedText} / ${totalText}`;
+        // Start sync loop
+        updateProgress();
+        spotifyProgressInterval = setInterval(() => {
+          updateProgress();
 
-          if (progress >= 100) clearInterval(spotifyProgressInterval);
-        }, 1000);
+          // Auto-reset if user pauses or skips (Discord updates timestamps)
+          const currentElapsed = Date.now() - start;
+          if (currentElapsed > duration + 5000) {
+            clearInterval(spotifyProgressInterval);
+            bar.style.width = "0%";
+            time.textContent = "";
+            lastSpotifyTrack = null;
+          }
+        }, 500);
       }
 
       currentMusicCover = musicCover || null;
@@ -296,6 +314,17 @@ async function getDiscordActivity() {
       return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
     }
 
+    // Clear when no longer playing
+    if (lastSpotifyTrack) {
+      lastSpotifyTrack = null;
+      clearInterval(spotifyProgressInterval);
+      const bar = document.getElementById("music-progress-bar");
+      const time = document.getElementById("music-progress-time");
+      if (bar) bar.style.width = "0%";
+      if (time) time.textContent = "";
+    }
+
+    // Other Discord activity
     const game = activities.find(a => a.type === 0);
     if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
 
