@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Spotify Album Cover + Hover Fix Edition
+   🎧 Live Activity — Spotify Progress + Time Edition
    ====================================================== */
 
 #live-activity {
@@ -487,7 +487,6 @@ a.corner-button {
     0 0 20px color-mix(in srgb, var(--accent-color, #1db954) 25%, transparent),
     0 2px 8px rgba(0, 0, 0, 0.3);
 
-  /* Important for hover album art */
   overflow: visible;
   isolation: isolate;
   transition: all 0.4s ease;
@@ -511,7 +510,6 @@ a.corner-button {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Hide transition in/out */
 #live-activity.hidden {
   opacity: 0;
   transform: translateY(10px);
@@ -519,7 +517,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🐝 ICON CLUSTER (Honeycomb)
+   🐝 ICON CLUSTER
    ====================================================== */
 #icon-cluster {
   display: grid;
@@ -667,6 +665,49 @@ a.corner-button {
 }
 
 /* ======================================================
+   🎵 Spotify Progress Bar + Time Display
+   ====================================================== */
+.music-progress-container {
+  position: relative;
+  width: 100%;
+  height: 5px;
+  background: color-mix(in srgb, var(--accent-color, #1DB954) 15%, transparent);
+  border-radius: 10px;
+  margin-top: 6px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.music-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  background: var(--accent-color, #1DB954);
+  border-radius: inherit;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color, #1DB954) 40%, transparent);
+  transition: width 1s linear;
+}
+
+.music-progress-time {
+  position: absolute;
+  top: 8px;
+  right: 0;
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--accent-color, #1DB954) 70%, #ccc);
+  font-weight: 500;
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  opacity: 0.9;
+}
+
+.live-now .music-progress-container,
+.spotify-active .music-progress-container {
+  opacity: 1;
+}
+
+/* ======================================================
    🔔 Toast Notifications
    ====================================================== */
 #toast-container {
@@ -734,7 +775,6 @@ a.corner-button {
     transform: translateX(-50%) scale(1);
   }
 }
-
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
