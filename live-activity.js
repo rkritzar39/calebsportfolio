@@ -165,7 +165,7 @@ function updateLastUpdated() {
 }
 
 /* =========================
-   PLATFORM FETCHERS
+   FIRESTORE MANUAL STATUS
 ========================= */
 async function getManualStatus() {
   try {
@@ -178,6 +178,9 @@ async function getManualStatus() {
   return null;
 }
 
+/* =========================
+   TWITCH STATUS
+========================= */
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
   try {
@@ -193,6 +196,9 @@ async function getTwitchStatus() {
   return null;
 }
 
+/* =========================
+   STEAM STATUS
+========================= */
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
@@ -209,7 +215,7 @@ async function getSteamStatus() {
 }
 
 /* =========================
-   DISCORD (SPOTIFY FIXED)
+   DISCORD (SPOTIFY FIX)
 ========================= */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
@@ -231,17 +237,11 @@ async function getDiscordActivity() {
         const raw = spotify.assets.large_image.trim();
         let hash = null;
 
-        if (raw.startsWith("mp:spotify:image:")) {
-          hash = raw.replace("mp:spotify:image:", "");
-        } else if (raw.startsWith("spotify:image:")) {
-          hash = raw.replace("spotify:image:", "");
-        } else if (raw.startsWith("mp:external/")) {
-          hash = raw.replace("mp:external/", "");
-        } else if (raw.startsWith("mp:")) {
-          hash = raw.replace("mp:", "");
-        } else if (raw.startsWith("https://")) {
-          musicCover = raw;
-        }
+        if (raw.startsWith("mp:spotify:image:")) hash = raw.replace("mp:spotify:image:", "");
+        else if (raw.startsWith("spotify:image:")) hash = raw.replace("spotify:image:", "");
+        else if (raw.startsWith("mp:external/")) hash = raw.replace("mp:external/", "");
+        else if (raw.startsWith("mp:")) hash = raw.replace("mp:", "");
+        else if (raw.startsWith("https://")) musicCover = raw;
 
         if (!musicCover && hash) {
           const cleanHash = hash
@@ -273,6 +273,9 @@ async function getDiscordActivity() {
   return null;
 }
 
+/* =========================
+   GITHUB STATUS
+========================= */
 async function getGitHubStatus() {
   const { username } = CONFIG.github;
   if (wasRecentlyShown("github")) return null;
@@ -288,6 +291,9 @@ async function getGitHubStatus() {
   return null;
 }
 
+/* =========================
+   REDDIT STATUS
+========================= */
 async function getRedditStatus() {
   const { username } = CONFIG.reddit;
   if (wasRecentlyShown("reddit")) return null;
@@ -303,6 +309,9 @@ async function getRedditStatus() {
   return null;
 }
 
+/* =========================
+   TIKTOK STATUS
+========================= */
 async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   if (wasRecentlyShown("tiktok")) return null;
@@ -340,6 +349,15 @@ async function updateLiveStatus() {
   const live = active.find(a => !a.temporary) || active[0];
   showStatus(live || { text: "🛌 Offline", source: "offline" }, active);
 }
+
+/* =========================
+   ACCENT + THEME SYNC (with settings.js)
+========================= */
+window.addEventListener("settingsUpdated", () => {
+  const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent-color")?.trim();
+  const live = document.getElementById("live-activity");
+  if (live && accent) live.style.setProperty("--accent-color", accent);
+});
 
 /* =========================
    INIT
