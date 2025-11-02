@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================
-   🎧 Live Activity — Fully Responsive + Fixed Alignment
+   🎧 Live Activity — Multi-Platform + Responsive + Icon Colors
    ====================================================== */
 
 #live-activity {
@@ -507,6 +507,7 @@ a.corner-button {
   margin-bottom: clamp(10px, 2vw, 14px);
 }
 
+/* Honeycomb icons (auto-color) */
 .icon-cluster {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(18px, 1fr));
@@ -518,19 +519,31 @@ a.corner-button {
 }
 
 .cluster-icon {
-  width: clamp(16px, 3vw, 20px);
-  height: clamp(16px, 3vw, 20px);
+  width: clamp(18px, 3vw, 22px);
+  height: clamp(18px, 3vw, 22px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transform: scale(0);
   animation: pop-in 0.35s ease forwards;
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.15);
 }
+
+/* Brand colors per platform */
+.cluster-icon.twitch   { background-color: #9146FF; }
+.cluster-icon.tiktok   { background-color: #EE1D52; }
+.cluster-icon.github   { background-color: #181717; }
+.cluster-icon.reddit   { background-color: #FF4500; }
+.cluster-icon.steam    { background-color: #00ADEE; }
+.cluster-icon.spotify  { background-color: #1DB954; }
+.cluster-icon.discord  { background-color: #5865F2; }
+.cluster-icon.manual   { background-color: var(--accent-color, #3ddc84); }
+.cluster-icon.offline  { background-color: #666666; }
+
 .cluster-icon img {
-  width: 60%;
-  height: 60%;
+  width: 10px;
+  height: 10px;
   filter: brightness(0) invert(1);
 }
 
@@ -550,15 +563,15 @@ a.corner-button {
 }
 
 .status-icon-logo {
-  width: clamp(16px, 3vw, 20px);
-  height: clamp(16px, 3vw, 20px);
+  width: clamp(18px, 3vw, 22px);
+  height: clamp(18px, 3vw, 22px);
   flex-shrink: 0;
   object-fit: contain;
   filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent-color) 70%, transparent));
 }
 
 /* ======================================================
-   🎵 SPOTIFY CARD — Contained and Responsive
+   🎵 SPOTIFY CARD — Contained + Responsive
    ====================================================== */
 .spotify-card {
   display: grid;
@@ -577,14 +590,12 @@ a.corner-button {
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
-
 .spotify-card:hover {
   transform: translateY(-1px);
   box-shadow:
     0 8px 18px rgba(0, 0, 0, 0.28),
     0 0 20px color-mix(in srgb, var(--accent-color) 22%, transparent);
 }
-
 .spotify-card.hidden {
   opacity: 0;
   pointer-events: none;
@@ -620,7 +631,6 @@ a.corner-button {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .live-artist {
   font-size: clamp(0.8rem, 1.5vw, 0.9rem);
   color: #aaa;
@@ -630,7 +640,9 @@ a.corner-button {
   text-overflow: ellipsis;
 }
 
-/* Progress Bar */
+/* ======================================================
+   ⏱ Progress Bar + Times
+   ====================================================== */
 .music-progress-container {
   position: relative;
   width: 100%;
@@ -638,7 +650,9 @@ a.corner-button {
   background: color-mix(in srgb, var(--accent-color) 18%, transparent);
   border-radius: 999px;
   overflow: hidden;
+  margin-top: 6px;
 }
+
 .music-progress-bar {
   position: absolute;
   top: 0;
@@ -650,17 +664,33 @@ a.corner-button {
   box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent);
   transition: width 1s linear;
 }
+
+/* ⏱ Start (left), Remaining (center), End (right) */
 .music-progress-time {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  margin-top: 6px;
-  font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
   font-weight: 600;
   color: color-mix(in srgb, var(--accent-color) 70%, #ccc);
 }
-.music-progress-time span:nth-child(1) { text-align: left; }
-.music-progress-time span:nth-child(2) { text-align: center; }
-.music-progress-time span:nth-child(3) { text-align: right; }
+.music-progress-time span:first-child {
+  text-align: left;
+  flex: 1;
+}
+.music-progress-time span:nth-child(2) {
+  text-align: center;
+  flex: 1;
+  opacity: 0.7;
+  font-size: 0.85em;
+}
+.music-progress-time span:last-child {
+  text-align: right;
+  flex: 1;
+}
 
 /* ======================================================
    🕓 Updated Timestamp
@@ -715,6 +745,14 @@ a.corner-button {
     font-size: 0.9rem;
   }
 }
+
+/* Animation for honeycomb */
+@keyframes pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
