@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Visual Spotify Progress Edition
+   🎧 Live Activity System — Multi-Platform + Real Spotify (Lanyard)
    ====================================================== */
 
 import {
@@ -42,8 +42,9 @@ const BRAND_COLORS = {
 let lastUpdateTime = null;
 let isTwitchLive = false;
 let currentMusicCover = null;
-let spotifyProgressInterval = null;
-let fakeProgress = 0;
+
+/* Timer for Spotify progress */
+let progressInterval = null;
 
 /* =========================
    UTILS
@@ -55,12 +56,20 @@ function wasRecentlyShown(platform, cooldown = 300000) {
 function markAsShown(platform) {
   localStorage.setItem(`last_${platform}_shown`, Date.now().toString());
 }
+const $$ = id => document.getElementById(id);
+
+function formatTime(seconds) {
+  const s = Math.max(0, Math.floor(seconds));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${String(r).padStart(2, "0")}`;
+}
 
 /* =========================
    ICON CLUSTER
 ========================= */
 function updateIconCluster(platforms) {
-  const cluster = document.getElementById("icon-cluster");
+  const cluster = $$("icon-cluster");
   if (!cluster) return;
   cluster.innerHTML = "";
 
@@ -75,7 +84,7 @@ function updateIconCluster(platforms) {
     img.alt = source;
     icon.appendChild(img);
 
-    // 🎵 Spotify hover album art
+    // Spotify hover album cover
     if (source === "spotify" && currentMusicCover) {
       const hoverArt = document.createElement("div");
       hoverArt.className = "spotify-hover-art";
@@ -101,7 +110,7 @@ function updateIconCluster(platforms) {
    TOASTS
 ========================= */
 function showToast(message, color = "var(--accent-color)") {
-  const container = document.getElementById("toast-container");
+  const container = $$("toast-container");
   if (!container) return;
   const toast = document.createElement("div");
   toast.className = "toast";
@@ -116,14 +125,11 @@ function showToast(message, color = "var(--accent-color)") {
 }
 
 /* =========================
-   STATUS DISPLAY
+   STATUS DISPLAY (text line + cluster)
 ========================= */
 function showStatus(payload, allActive = []) {
-  const el = document.getElementById("live-activity-text");
-  const container = document.getElementById("live-activity");
-  const bar = document.getElementById("music-progress-bar");
-  const time = document.getElementById("music-progress-time");
-
+  const el = $$("live-activity-text");
+  const container = $$("live-activity");
   if (!el || !container) return;
 
   const { text, source } = payload || { text: "💬 Status", source: "manual" };
@@ -132,17 +138,10 @@ function showStatus(payload, allActive = []) {
   container.classList.toggle("offline", !payload);
   container.classList.toggle("active", !!payload);
 
-  // reset progress for non-spotify
-  if (source !== "spotify" && bar) {
-    bar.style.width = "0%";
-    clearInterval(spotifyProgressInterval);
-  }
-  if (source !== "spotify" && time) time.textContent = "";
-
   updateIconCluster(allActive);
 
   if (payload?.temporary)
-    showToast(`🔥 ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`);
+    showToast(`🔥 ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, BRAND_COLORS[source]);
 
   isTwitchLive = source === "twitch";
   container.classList.toggle("live-now", isTwitchLive);
@@ -154,8 +153,8 @@ function showStatus(payload, allActive = []) {
    LAST UPDATED TIMER
 ========================= */
 function updateLastUpdated() {
-  const updated = document.getElementById("live-activity-updated");
-  const container = document.getElementById("live-activity");
+  const updated = $$("live-activity-updated");
+  const container = $$("live-activity");
   if (!updated || !lastUpdateTime) return;
 
   if (isTwitchLive) {
@@ -224,7 +223,7 @@ async function getSteamStatus() {
 }
 
 /* =========================
-   DISCORD (SPOTIFY VISUAL SIM)
+   DISCORD (REAL Spotify via Lanyard) + status fallback
 ========================= */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
@@ -233,68 +232,105 @@ async function getDiscordActivity() {
     const { data } = await res.json();
     if (!data) return null;
 
+    const spotify = data.spotify;                // Lanyard's direct spotify object (best for accuracy)
     const activities = data.activities || [];
-    const spotify = activities.find(a => a.name === "Spotify");
+    const game = activities.find(a => a.type === 0 && a.name && a.name !== "Spotify");
 
-    if (spotify?.details && spotify?.state) {
-      const trackTitle = spotify.details;
-      const artist = spotify.state;
+    const spotifyCard = $$("spotify-card");
+    const discordStatus = $$("discord-status");
+    const card = $$("live-activity");
 
-      // Album Art Fix
-      let musicCover = null;
-      if (spotify.assets?.large_image) {
-        const raw = spotify.assets.large_image.trim();
-        let hash = null;
-        if (raw.startsWith("mp:spotify:image:")) hash = raw.replace("mp:spotify:image:", "");
-        else if (raw.startsWith("spotify:image:")) hash = raw.replace("spotify:image:", "");
-        else if (raw.startsWith("mp:")) hash = raw.replace("mp:", "");
-        else if (raw.startsWith("https://")) musicCover = raw;
-        if (!musicCover && hash) {
-          const cleanHash = hash.replace(/_/g, "").replace(/^spotify:image:/, "").trim();
-          musicCover = `https://i.scdn.co/image/${cleanHash}`;
-        }
-      }
+    if (spotify) {
+      // 🎵 Show Spotify card
+      const title = spotify.song;
+      const artist = spotify.artist;
+      const cover = spotify.album_art_url || currentMusicCover;
 
-      // 🎚️ Simulated Progress
-      const bar = document.getElementById("music-progress-bar");
-      const time = document.getElementById("music-progress-time");
-      clearInterval(spotifyProgressInterval);
-      fakeProgress = 0;
+      currentMusicCover = cover || null;
 
-      if (bar && time) {
-        spotifyProgressInterval = setInterval(() => {
-          fakeProgress += 1;
-          if (fakeProgress > 100) fakeProgress = 0;
-          bar.style.width = `${fakeProgress}%`;
+      // Fill UI
+      $$("live-song-title").textContent = title || "Unknown Track";
+      $$("live-song-artist").textContent = artist || "Unknown Artist";
+      $$("live-activity-cover").src = cover || "path/to/default-cover.jpg";
 
-          // fake timer for style
-          const totalSec = 180; // simulate 3:00 track
-          const elapsedSec = Math.floor((fakeProgress / 100) * totalSec);
-          const format = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-          time.textContent = `${format(elapsedSec)} / ${format(totalSec)}`;
-        }, 1000);
-      }
+      // Progress
+      const start = spotify.timestamps?.start;
+      const end   = spotify.timestamps?.end;
+      setupProgress(start, end);
 
-      currentMusicCover = musicCover || null;
-      document.getElementById("live-activity")?.classList.add("spotify-active");
-      return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
+      // Toggle visibility
+      spotifyCard.classList.remove("hidden");
+      discordStatus.classList.add("hidden");
+      card.classList.add("spotify-active");
+
+      return { text: `🎵 Listening to “${title}” by ${artist}`, source: "spotify" };
     }
 
-    // other Discord activity
-    const game = activities.find(a => a.type === 0);
-    if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
+    // No Spotify → show Discord status/game (and ensure music UI hidden)
+    $$("music-progress-bar").style.width = "0%";
+    clearInterval(progressInterval);
+    spotifyCard.classList.add("hidden");
+    $$("live-activity").classList.remove("spotify-active");
 
     const statusMap = {
-      online: "🟢 Online on Discord",
-      idle: "🌙 Idle on Discord",
-      dnd: "⛔ Do Not Disturb",
+      online: { text: "🟢 Online on Discord", class: "status-online" },
+      idle:   { text: "🌙 Idle on Discord",   class: "status-idle" },
+      dnd:    { text: "⛔ Do Not Disturb",    class: "status-dnd" },
+      offline:{ text: "⚫ Offline",           class: "status-offline" },
     };
-    if (data.discord_status !== "offline")
-      return { text: statusMap[data.discord_status] || "💬 Online on Discord", source: "discord" };
+
+    const presence = statusMap[data.discord_status] || statusMap.offline;
+
+    // If playing a game, prefer that text
+    const statusText = game?.name ? `🎮 Playing ${game.name}` : presence.text;
+
+    // Fill fallback UI
+    const icon = $$("status-icon");
+    const text = $$("status-text");
+    icon.className = `status-icon ${presence.class}`;
+    text.textContent = statusText;
+
+    discordStatus.classList.remove("hidden");
+
+    // If fully offline, you may hide the whole card:
+    if (data.discord_status === "offline") {
+      $$("live-activity").classList.add("hidden");
+    } else {
+      $$("live-activity").classList.remove("hidden");
+    }
+
+    return { text: statusText, source: "discord" };
   } catch (err) {
     console.error("Discord API error:", err);
   }
   return null;
+}
+
+/* Progress setup using start/end ms from Lanyard */
+function setupProgress(startMs, endMs) {
+  const bar = $$("music-progress-bar");
+  const elapsedEl = $$("elapsed-time");
+  const remainingEl = $$("remaining-time");
+  const totalEl = $$("total-time");
+  if (!bar || !elapsedEl || !remainingEl || !totalEl || !startMs || !endMs) return;
+
+  clearInterval(progressInterval);
+
+  const totalSec = (endMs - startMs) / 1000;
+  totalEl.textContent = formatTime(totalSec);
+
+  function tick() {
+    const now = Date.now();
+    const elapsedSec = Math.min((now - startMs) / 1000, totalSec);
+    const remainingSec = Math.max(totalSec - elapsedSec, 0);
+
+    bar.style.width = `${(elapsedSec / totalSec) * 100}%`;
+    elapsedEl.textContent = formatTime(elapsedSec);
+    remainingEl.textContent = `-${formatTime(remainingSec)}`;
+  }
+
+  tick();
+  progressInterval = setInterval(tick, 1000);
 }
 
 /* =========================
@@ -358,7 +394,7 @@ async function updateLiveStatus() {
     getManualStatus,
     getTwitchStatus,
     getSteamStatus,
-    getDiscordActivity,
+    getDiscordActivity,   // includes Spotify + status fallback + card toggling
     getGitHubStatus,
     getRedditStatus,
     getTikTokStatus,
@@ -366,12 +402,21 @@ async function updateLiveStatus() {
 
   const active = [];
   for (const fn of sources) {
-    const result = await fn();
-    if (result) active.push(result);
+    try {
+      const result = await fn();
+      if (result) active.push(result);
+    } catch {}
   }
 
   const live = active.find(a => !a.temporary) || active[0];
   showStatus(live || { text: "🛌 Offline", source: "offline" }, active);
+
+  // If absolutely nothing active and Discord offline, hide whole widget
+  if (!active.length) {
+    $$("live-activity").classList.add("hidden");
+  } else {
+    $$("live-activity").classList.remove("hidden");
+  }
 }
 
 /* =========================
@@ -379,6 +424,6 @@ async function updateLiveStatus() {
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
   updateLiveStatus();
-  setInterval(updateLiveStatus, 30000);
-  setInterval(updateLastUpdated, 1000);
+  setInterval(updateLiveStatus, 5000);   // presence refresh
+  setInterval(updateLastUpdated, 1000);  // "Updated Xs ago"
 });
