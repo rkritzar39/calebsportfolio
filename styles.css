@@ -458,217 +458,153 @@ a.corner-button {
     text-decoration: none;
 }
 
-/* ======================================================
-   🎧 Live Activity — Final Unified Build
-   ====================================================== */
+/* =======================================================
+   🎧 Live Activity — Clean layout, 1 status icon, correct colors
+   ======================================================= */
 
-#live-activity {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  margin: 1.5rem auto 0;
-  padding: clamp(14px, 3vw, 24px);
-  width: min(92%, 540px);
-  border-radius: 18px;
-  background: linear-gradient(
+#live-activity{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  margin:1.4rem auto 0;
+  padding:clamp(14px,3vw,22px);
+  width:min(92%,540px);
+  border-radius:18px;
+  background:linear-gradient(
     145deg,
-    color-mix(in srgb, var(--content-bg, #1b1b1b) 92%, transparent),
-    color-mix(in srgb, var(--accent-color, #1db954) 8%, transparent)
+    color-mix(in srgb,var(--content-bg,#1b1b1b) 92%,transparent),
+    color-mix(in srgb,var(--accent-color,#1db954) 8%,transparent)
   );
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid color-mix(in srgb, var(--border-color, #333) 70%, transparent);
-  box-shadow:
-    0 0 20px color-mix(in srgb, var(--accent-color, #1db954) 20%, transparent),
-    0 2px 8px rgba(0, 0, 0, 0.35);
-  transition: all 0.35s ease;
-  overflow: hidden;
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid color-mix(in srgb,var(--border-color,#333) 70%,transparent);
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+  overflow:hidden;
 }
-#live-activity.hidden { opacity: 0; transform: translateY(8px); pointer-events: none; }
+#live-activity.hidden{opacity:0;transform:translateY(8px);pointer-events:none}
 
-/* ======================================================
-   🐝 HEADER — Honeycomb + Status Line
-   ====================================================== */
-.la-header {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  gap: clamp(8px, 2vw, 16px);
-  margin-bottom: clamp(10px, 2vw, 14px);
-}
-.icon-cluster {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18px, 1fr));
-  grid-auto-rows: 18px;
-  gap: clamp(4px, 1vw, 6px);
-  justify-content: start;
-  align-content: center;
-  flex-shrink: 0;
-}
-.cluster-icon {
-  width: clamp(18px, 3vw, 22px);
-  height: clamp(18px, 3vw, 22px);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: scale(0);
-  animation: pop-in 0.35s ease forwards;
+/* ===== Header: honeycomb + single status icon + text ===== */
+.la-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  flex-wrap:wrap;
 }
 
-/* Platform colors */
-.cluster-icon.twitch { background-color: #9146FF; box-shadow: 0 0 8px #9146FF; }
-.cluster-icon.tiktok { background-color: #EE1D52; box-shadow: 0 0 8px #EE1D52; }
-.cluster-icon.github { background-color: #181717; box-shadow: 0 0 8px #181717; }
-.cluster-icon.reddit { background-color: #FF4500; box-shadow: 0 0 8px #FF4500; }
-.cluster-icon.steam  { background-color: #00ADEE; box-shadow: 0 0 8px #00ADEE; }
-.cluster-icon.spotify { background-color: #1DB954; box-shadow: 0 0 8px #1DB954; }
-.cluster-icon.discord { background-color: #5865F2; box-shadow: 0 0 8px #5865F2; }
-.cluster-icon.manual { background-color: var(--accent-color, #3ddc84); box-shadow: 0 0 8px var(--accent-color, #3ddc84); }
-.cluster-icon.offline { background-color: #666666; box-shadow: 0 0 8px #666666; }
-
-.status-line {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-  font-weight: 600;
-  font-size: clamp(0.9rem, 1.6vw, 1rem);
-  color: var(--text-color, #f1f1f1);
-  text-shadow: 0 0 8px rgba(0, 0, 0, 0.35);
-  flex-wrap: wrap;
+.icon-cluster{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:4px;
+  width:52px;
+  height:52px;
+  justify-items:center;
+  align-items:center;
+  flex-shrink:0;
 }
-.status-icon-logo {
-  width: clamp(18px, 3vw, 22px);
-  height: clamp(18px, 3vw, 22px);
-  border-radius: 50%;
-  box-shadow: 0 0 6px var(--accent-color, #1db954);
+.cluster-icon{
+  width:14px;height:14px;border-radius:50%;
+  transform:scale(0);animation:pop-in .35s ease forwards;
 }
 
-/* ======================================================
-   🎵 SPOTIFY CARD
-   ====================================================== */
-.spotify-card {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: clamp(10px, 2vw, 14px);
-  width: 100%;
-  border-radius: 14px;
-  padding: clamp(10px, 2.2vw, 16px);
-  background: color-mix(in srgb, var(--content-bg, #111) 65%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color, #333) 55%, transparent);
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 12%, transparent),
-    0 4px 10px rgba(0, 0, 0, 0.2);
-  margin-top: clamp(8px, 1.5vw, 12px);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-}
-.spotify-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 16px color-mix(in srgb, var(--accent-color) 28%, transparent);
-}
-.spotify-card.hidden { opacity: 0; pointer-events: none; }
+/* brand colors for dots */
+.cluster-icon.twitch {background:#9146FF; box-shadow:0 0 6px #9146FF;}
+.cluster-icon.tiktok {background:#EE1D52; box-shadow:0 0 6px #EE1D52;}
+.cluster-icon.github {background:#181717; box-shadow:0 0 6px #181717;}
+.cluster-icon.reddit {background:#FF4500; box-shadow:0 0 6px #FF4500;}
+.cluster-icon.steam  {background:#00ADEE; box-shadow:0 0 6px #00ADEE;}
+.cluster-icon.spotify{background:#1DB954; box-shadow:0 0 6px #1DB954;}
+.cluster-icon.discord{background:#5865F2; box-shadow:0 0 6px #5865F2;}
+.cluster-icon.manual {background:var(--accent-color,#3ddc84); box-shadow:0 0 6px var(--accent-color,#3ddc84);}
+.cluster-icon.offline{background:#666; box-shadow:0 0 6px #666;}
 
-.live-album-art {
-  width: clamp(64px, 14vw, 78px);
-  height: clamp(64px, 14vw, 78px);
-  border-radius: 10px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-.live-album-art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.status-line{
+  display:flex;align-items:center;gap:8px;min-width:0;flex:1;
+  color:var(--text-color,#f1f1f1);font-weight:600;
+  font-size:clamp(.92rem,1.6vw,1rem);
 }
 
-.live-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-width: 0;
+/* the ONLY status icon */
+.status-icon-logo{
+  width:18px;height:18px;border-radius:50%;
+  flex-shrink:0;
+  box-shadow:0 0 8px var(--accent-color,#1db954);
 }
-.live-song-title {
-  font-size: clamp(0.95rem, 1.8vw, 1rem);
-  font-weight: 600;
-  color: var(--text-color, #f5f5f5);
-  line-height: 1.3;
-  white-space: normal;
-  word-wrap: break-word;
-}
-.live-artist {
-  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
-  color: #aaa;
-  margin-bottom: 8px;
-  white-space: normal;
-  word-wrap: break-word;
+#status-line-text{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;
 }
 
-/* Progress bar + times */
-.music-progress-container {
-  width: 100%;
-  height: 5px;
-  background: color-mix(in srgb, var(--accent-color) 18%, transparent);
-  border-radius: 999px;
-  overflow: hidden;
-  margin-top: 6px;
+/* ===== Spotify card ===== */
+.spotify-card{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  border-radius:14px;
+  padding:12px;
+  background:color-mix(in srgb,var(--content-bg,#111) 65%,transparent);
+  border:1px solid color-mix(in srgb,var(--border-color,#333) 55%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent-color) 12%,transparent);
+  cursor:pointer;
+  transition:transform .2s ease, box-shadow .3s ease;
 }
-.music-progress-bar {
-  position: absolute;
-  top: 0; left: 0;
-  height: 5px;
-  width: 0%;
-  background: var(--accent-color, #1DB954);
-  border-radius: inherit;
-  box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent);
-  transition: width 1s linear;
-}
-.music-progress-time {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  width: 100%;
-  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
-  font-weight: 600;
-  color: color-mix(in srgb, var(--accent-color) 70%, #ccc);
-}
-.music-progress-time span:nth-child(2) { opacity: 0.7; font-size: 0.85em; text-align: center; }
+.spotify-card.hidden{display:none}
+.spotify-card:hover{transform:translateY(-1px);box-shadow:0 0 16px color-mix(in srgb,var(--accent-color) 28%,transparent)}
 
-/* Updated timestamp */
-.la-updated {
-  margin-top: clamp(8px, 1.8vw, 12px);
-  font-size: clamp(0.75rem, 1.5vw, 0.85rem);
-  color: color-mix(in srgb, var(--accent-color) 40%, #aaa);
-  text-shadow: 0 0 6px color-mix(in srgb, var(--accent-color) 45%, transparent);
-}
+.live-album-art{width:72px;height:72px;border-radius:10px;overflow:hidden;flex-shrink:0}
+.live-album-art img{width:100%;height:100%;object-fit:cover}
 
-/* Pulse glow */
-.spotify-active { animation: spotifyPulse 3s ease-in-out infinite; }
-@keyframes spotifyPulse {
-  0%,100% { box-shadow: 0 0 20px color-mix(in srgb, var(--accent-color) 25%, transparent); }
-  50% { box-shadow: 0 0 32px color-mix(in srgb, var(--accent-color) 45%, transparent); }
+.live-info{display:flex;flex-direction:column;gap:6px;min-width:0}
+.live-song-title{font-weight:700;color:var(--text-color,#f5f5f5);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live-artist{color:#aaa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== Progress bar IN ITS TRACK (above times) ===== */
+.music-progress-container{
+  position:relative;
+  width:100%;
+  height:6px;
+  background:color-mix(in srgb,var(--accent-color,#1DB954) 18%, transparent);
+  border-radius:999px;
+  overflow:hidden;           /* progress stays inside */
+  margin-top:2px;
+}
+.music-progress-bar{
+  position:absolute;inset:0 100% 0 0; /* start at 0% width */
+  height:100%;
+  background:var(--accent-color,#1DB954);
+  box-shadow:0 0 8px color-mix(in srgb,var(--accent-color) 45%,transparent);
+  transition:width 1s linear;
+  border-radius:inherit;
 }
 
-/* Responsive tweaks */
-@media (max-width: 600px) {
-  #live-activity { padding: 16px; }
-  .spotify-card { grid-template-columns: 64px 1fr; }
+/* times row */
+.music-progress-time{
+  display:flex;justify-content:space-between;align-items:center;
+  width:100%;margin-top:8px;
+  font-size:clamp(.76rem,1.4vw,.9rem);font-weight:600;
+  color:color-mix(in srgb,var(--accent-color) 70%, #ccc);
 }
-@media (max-width: 400px) {
-  #live-activity { padding: 14px; }
-  .status-line { font-size: 0.85rem; }
+.music-progress-time span:nth-child(2){opacity:.75;font-size:.9em;text-align:center}
+
+/* updated stamp */
+.la-updated{font-size:clamp(.74rem,1.4vw,.85rem);color:color-mix(in srgb,var(--accent-color) 40%,#aaa)}
+
+/* spotify pulse */
+.spotify-active{animation:spotifyPulse 3s ease-in-out infinite}
+@keyframes spotifyPulse{0%,100%{box-shadow:0 0 20px color-mix(in srgb,var(--accent-color) 25%,transparent)}50%{box-shadow:0 0 32px color-mix(in srgb,var(--accent-color) 45%,transparent)}}
+
+/* small screens */
+@media (max-width:480px){
+  .icon-cluster{width:46px;height:46px}
+  .cluster-icon{width:12px;height:12px}
+  .live-album-art{width:64px;height:64px}
 }
-@keyframes pop-in {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.25); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
+
+/* dots pop */
+@keyframes pop-in{0%{transform:scale(0);opacity:0}60%{transform:scale(1.2);opacity:1}100%{transform:scale(1);opacity:1}}
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
