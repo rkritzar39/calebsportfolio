@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Spotify Progress + Auto Sync Edition
+   🎧 Live Activity System — Visual Spotify Progress Edition
    ====================================================== */
 
 import {
@@ -43,10 +43,10 @@ let lastUpdateTime = null;
 let isTwitchLive = false;
 let currentMusicCover = null;
 let spotifyProgressInterval = null;
-let lastSpotifyTrack = null;
+let fakeProgress = 0;
 
 /* =========================
-   HELPERS
+   UTILS
 ========================= */
 function wasRecentlyShown(platform, cooldown = 300000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
@@ -132,12 +132,12 @@ function showStatus(payload, allActive = []) {
   container.classList.toggle("offline", !payload);
   container.classList.toggle("active", !!payload);
 
-  // Reset progress if leaving Spotify
-  if (bar && source !== "spotify") {
+  // reset progress for non-spotify
+  if (source !== "spotify" && bar) {
     bar.style.width = "0%";
     clearInterval(spotifyProgressInterval);
   }
-  if (time && source !== "spotify") time.textContent = "";
+  if (source !== "spotify" && time) time.textContent = "";
 
   updateIconCluster(allActive);
 
@@ -224,7 +224,7 @@ async function getSteamStatus() {
 }
 
 /* =========================
-   DISCORD (SPOTIFY FIXED + AUTO RESET)
+   DISCORD (SPOTIFY VISUAL SIM)
 ========================= */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
@@ -239,15 +239,8 @@ async function getDiscordActivity() {
     if (spotify?.details && spotify?.state) {
       const trackTitle = spotify.details;
       const artist = spotify.state;
-      const trackId = spotify.sync_id || spotify.id || `${trackTitle}-${artist}`;
 
-      // detect new track or restart
-      if (trackId !== lastSpotifyTrack) {
-        clearInterval(spotifyProgressInterval);
-        lastSpotifyTrack = trackId;
-      }
-
-      // Album Art
+      // Album Art Fix
       let musicCover = null;
       if (spotify.assets?.large_image) {
         const raw = spotify.assets.large_image.trim();
@@ -257,56 +250,29 @@ async function getDiscordActivity() {
         else if (raw.startsWith("mp:")) hash = raw.replace("mp:", "");
         else if (raw.startsWith("https://")) musicCover = raw;
         if (!musicCover && hash) {
-          const cleanHash = hash
-            .split("?")[0]
-            .replace(/_/g, "")
-            .replace(/^spotify:image:/, "")
-            .trim();
+          const cleanHash = hash.replace(/_/g, "").replace(/^spotify:image:/, "").trim();
           musicCover = `https://i.scdn.co/image/${cleanHash}`;
         }
       }
 
-      // Progress Bar + Time
-      const timestamps = spotify.timestamps || {};
+      // 🎚️ Simulated Progress
       const bar = document.getElementById("music-progress-bar");
       const time = document.getElementById("music-progress-time");
       clearInterval(spotifyProgressInterval);
+      fakeProgress = 0;
 
-      if (timestamps.start && timestamps.end && bar && time) {
-        const start = timestamps.start;
-        const end = timestamps.end;
-        const duration = end - start;
-
-        function format(ms) {
-          const totalSec = Math.floor(ms / 1000);
-          const min = Math.floor(totalSec / 60);
-          const sec = String(totalSec % 60).padStart(2, "0");
-          return `${min}:${sec}`;
-        }
-
-        function updateProgress() {
-          const now = Date.now();
-          const elapsed = Math.max(0, Math.min(now - start, duration));
-          const progress = (elapsed / duration) * 100;
-
-          bar.style.width = `${progress}%`;
-          time.textContent = `${format(elapsed)} / ${format(duration)}`;
-        }
-
-        // Start sync loop
-        updateProgress();
+      if (bar && time) {
         spotifyProgressInterval = setInterval(() => {
-          updateProgress();
+          fakeProgress += 1;
+          if (fakeProgress > 100) fakeProgress = 0;
+          bar.style.width = `${fakeProgress}%`;
 
-          // Auto-reset if user pauses or skips (Discord updates timestamps)
-          const currentElapsed = Date.now() - start;
-          if (currentElapsed > duration + 5000) {
-            clearInterval(spotifyProgressInterval);
-            bar.style.width = "0%";
-            time.textContent = "";
-            lastSpotifyTrack = null;
-          }
-        }, 500);
+          // fake timer for style
+          const totalSec = 180; // simulate 3:00 track
+          const elapsedSec = Math.floor((fakeProgress / 100) * totalSec);
+          const format = s => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+          time.textContent = `${format(elapsedSec)} / ${format(totalSec)}`;
+        }, 1000);
       }
 
       currentMusicCover = musicCover || null;
@@ -314,17 +280,7 @@ async function getDiscordActivity() {
       return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
     }
 
-    // Clear when no longer playing
-    if (lastSpotifyTrack) {
-      lastSpotifyTrack = null;
-      clearInterval(spotifyProgressInterval);
-      const bar = document.getElementById("music-progress-bar");
-      const time = document.getElementById("music-progress-time");
-      if (bar) bar.style.width = "0%";
-      if (time) time.textContent = "";
-    }
-
-    // Other Discord activity
+    // other Discord activity
     const game = activities.find(a => a.type === 0);
     if (game?.name) return { text: `🎮 Playing ${game.name}`, source: "discord" };
 
