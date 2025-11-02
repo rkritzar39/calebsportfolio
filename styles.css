@@ -461,7 +461,6 @@ a.corner-button {
 /* ======================================================
    🎧 Live Activity — Honeycomb + Spotify Album Art Edition
    ====================================================== */
-
 .live-activity {
   display: flex;
   align-items: center;
@@ -472,16 +471,27 @@ a.corner-button {
   border-radius: var(--radius-md, 14px);
   width: fit-content;
   max-width: 95%;
-  background: color-mix(in srgb, var(--content-bg, #1b1b1b) 80%, transparent);
-  backdrop-filter: var(--backdrop-blur, blur(12px));
+  background: color-mix(in srgb, var(--content-bg, #1b1b1b) 75%, transparent);
+  backdrop-filter: var(--backdrop-blur, blur(14px) saturate(160%));
   border: 1px solid color-mix(in srgb, var(--border-color, #555) 60%, transparent);
   box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color, #000) 50%, transparent);
   transition: all 0.4s ease;
+  overflow: hidden;
+}
+
+/* Adaptive Glass Glow (Dark/Light) */
+:root[data-theme="dark"] .live-activity {
+  background: color-mix(in srgb, var(--dark-content-bg, #111) 75%, transparent);
+}
+:root[data-theme="light"] .live-activity {
+  background: color-mix(in srgb, var(--light-content-bg, #fff) 75%, transparent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  border: 1px solid color-mix(in srgb, var(--border-color, #ccc) 40%, transparent);
 }
 
 .live-activity.hidden {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(10px);
   pointer-events: none;
 }
 
@@ -498,9 +508,9 @@ a.corner-button {
   height: 65px;
   position: relative;
   margin-right: 10px;
+  filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--accent-color, #3ddc84) 25%, transparent));
 }
 
-/* Circle Icons */
 .cluster-icon {
   width: 22px;
   height: 22px;
@@ -511,15 +521,22 @@ a.corner-button {
   position: relative;
   transform: scale(0);
   animation: pop-in 0.4s ease forwards;
-  transition: opacity 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+  background: color-mix(in srgb, var(--accent-color, #3ddc84) 60%, transparent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent-color, #3ddc84) 35%, transparent);
 }
 
 .cluster-icon img {
-  width: 12px;
-  height: 12px;
-  filter: brightness(0) invert(1);
+  width: 13px;
+  height: 13px;
+  filter: brightness(10) saturate(0) invert(1);
+}
+
+/* Accent hover */
+.cluster-icon:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color, #3ddc84) 60%, transparent);
 }
 
 /* Fade-out for temporary icons */
@@ -535,7 +552,7 @@ a.corner-button {
   bottom: 130%;
   left: 50%;
   transform: translateX(-50%) scale(0.95);
-  background: rgba(0, 0, 0, 0.85);
+  background: color-mix(in srgb, var(--accent-color, #3ddc84) 40%, #000);
   color: #fff;
   font-size: 0.7rem;
   padding: 3px 6px;
@@ -545,7 +562,6 @@ a.corner-button {
   pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
-
 .cluster-icon:hover::after {
   opacity: 1;
   transform: translateX(-50%) scale(1);
@@ -585,7 +601,7 @@ a.corner-button {
   height: 110px;
   border-radius: 8px;
   object-fit: cover;
-  box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent-color, #1db954) 60%, transparent);
 }
 
 /* ======================================================
@@ -600,24 +616,28 @@ a.corner-button {
 
 #live-activity-text {
   font-size: 1rem;
-  font-weight: 500;
-  color: var(--accent-color, #ddd);
+  font-weight: 600;
+  color: var(--text-color, #e0e0e0);
   text-align: left;
   line-height: 1.4;
   transition: color 0.3s ease, opacity 0.3s ease;
 }
 
+:root[data-theme="light"] #live-activity-text {
+  color: var(--dark-bg, #111);
+}
+
 #live-activity-updated {
   font-size: 0.8rem;
-  color: #aaa;
+  color: color-mix(in srgb, var(--accent-color, #888) 30%, #aaa);
   margin-top: 3px;
   transition: color 0.3s ease;
 }
 
 .live-activity.live-now #live-activity-updated {
-  color: #9146FF;
+  color: var(--accent-color, #3ddc84);
   font-weight: 600;
-  text-shadow: 0 0 6px rgba(145, 70, 255, 0.5);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--accent-color, #3ddc84) 50%, transparent);
 }
 
 /* ======================================================
@@ -626,12 +646,13 @@ a.corner-button {
 .live-activity.active {
   animation: pulse 3s ease-in-out infinite;
 }
+
 @keyframes pulse {
   0%, 100% {
     box-shadow: 0 8px 22px color-mix(in srgb, var(--accent-color, #888) 30%, transparent);
   }
   50% {
-    box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color, #888) 55%, transparent);
+    box-shadow: 0 8px 28px color-mix(in srgb, var(--accent-color, #888) 60%, transparent);
   }
 }
 
@@ -649,13 +670,14 @@ a.corner-button {
 }
 
 .toast {
-  background: rgba(20, 20, 20, 0.9);
-  color: white;
+  background: color-mix(in srgb, var(--content-bg, #111) 85%, transparent);
+  color: var(--text-color, #fff);
   padding: 10px 14px;
   border-radius: 8px;
   font-size: 0.9rem;
-  min-width: 200px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  min-width: 220px;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent-color, #3ddc84) 20%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color, #3ddc84) 25%, transparent);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
