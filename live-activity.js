@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Spotify Album Cover Fix Edition
+   🎧 Live Activity System — Uses Global Accent Color + Spotify Fix
    ====================================================== */
 
 import {
@@ -32,7 +32,7 @@ const BRAND_COLORS = {
   steam: "#00ADEE",
   spotify: "#1DB954",
   discord: "#5865F2",
-  manual: "#8888FF",
+  manual: "var(--accent-color)",
   offline: "#666666"
 };
 
@@ -65,7 +65,7 @@ function updateIconCluster(platforms) {
   platforms.forEach(({ source, text, temporary }) => {
     const icon = document.createElement("div");
     icon.className = `cluster-icon ${source}`;
-    icon.style.backgroundColor = BRAND_COLORS[source] || "#777";
+    icon.style.backgroundColor = BRAND_COLORS[source] || "var(--accent-color)";
     icon.setAttribute("data-tooltip", `${source.charAt(0).toUpperCase() + source.slice(1)} — ${text}`);
 
     const img = document.createElement("img");
@@ -99,7 +99,7 @@ function updateIconCluster(platforms) {
 /* =========================
    TOASTS
 ========================= */
-function showToast(message, color = "#555") {
+function showToast(message, color = "var(--accent-color)") {
   const container = document.getElementById("toast-container");
   if (!container) return;
   const toast = document.createElement("div");
@@ -127,12 +127,14 @@ function showStatus(payload, allActive = []) {
   container.classList.remove("hidden");
   container.classList.toggle("offline", !payload);
   container.classList.toggle("active", !!payload);
-  container.style.setProperty("--accent-color", BRAND_COLORS[source] || "#999");
+
+  // 🟢 Use the root accent color instead of overwriting it
+  container.style.removeProperty("--accent-color");
 
   updateIconCluster(allActive);
 
   if (payload?.temporary)
-    showToast(`🔥 ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, BRAND_COLORS[source]);
+    showToast(`🔥 ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, "var(--accent-color)");
 
   isTwitchLive = source === "twitch";
   container.classList.toggle("live-now", isTwitchLive);
@@ -349,15 +351,6 @@ async function updateLiveStatus() {
   const live = active.find(a => !a.temporary) || active[0];
   showStatus(live || { text: "🛌 Offline", source: "offline" }, active);
 }
-
-/* =========================
-   ACCENT + THEME SYNC (with settings.js)
-========================= */
-window.addEventListener("settingsUpdated", () => {
-  const accent = getComputedStyle(document.documentElement).getPropertyValue("--accent-color")?.trim();
-  const live = document.getElementById("live-activity");
-  if (live && accent) live.style.setProperty("--accent-color", accent);
-});
 
 /* =========================
    INIT
