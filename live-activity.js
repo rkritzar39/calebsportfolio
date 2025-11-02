@@ -1,5 +1,5 @@
 /* ======================================================
-   🎧 Live Activity System — Uses Global Accent Color + Spotify Fix
+   🎧 Live Activity System — Spotify Progress + Time Edition
    ====================================================== */
 
 import {
@@ -42,9 +42,10 @@ const BRAND_COLORS = {
 let lastUpdateTime = null;
 let isTwitchLive = false;
 let currentMusicCover = null;
+let spotifyProgressInterval = null;
 
 /* =========================
-   TEMPORARY EVENT LOGIC
+   UTILS
 ========================= */
 function wasRecentlyShown(platform, cooldown = 300000) {
   const last = localStorage.getItem(`last_${platform}_shown`);
@@ -55,7 +56,7 @@ function markAsShown(platform) {
 }
 
 /* =========================
-   ICON CLUSTER BUILDER
+   ICON CLUSTER
 ========================= */
 function updateIconCluster(platforms) {
   const cluster = document.getElementById("icon-cluster");
@@ -73,7 +74,7 @@ function updateIconCluster(platforms) {
     img.alt = source;
     icon.appendChild(img);
 
-    // 🎵 Spotify hover album cover
+    // 🎵 Spotify hover album art
     if (source === "spotify" && currentMusicCover) {
       const hoverArt = document.createElement("div");
       hoverArt.className = "spotify-hover-art";
@@ -86,7 +87,6 @@ function updateIconCluster(platforms) {
 
     cluster.appendChild(icon);
 
-    // 🕓 Temporary fade-out
     if (temporary) {
       setTimeout(() => {
         icon.classList.add("fade-out");
@@ -120,6 +120,9 @@ function showToast(message, color = "var(--accent-color)") {
 function showStatus(payload, allActive = []) {
   const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
+  const bar = document.getElementById("music-progress-bar");
+  const time = document.getElementById("music-progress-time");
+
   if (!el || !container) return;
 
   const { text, source } = payload || { text: "💬 Status", source: "manual" };
@@ -128,13 +131,17 @@ function showStatus(payload, allActive = []) {
   container.classList.toggle("offline", !payload);
   container.classList.toggle("active", !!payload);
 
-  // 🟢 Use the root accent color instead of overwriting it
-  container.style.removeProperty("--accent-color");
+  // reset progress if not Spotify
+  if (bar && source !== "spotify") {
+    bar.style.width = "0%";
+    clearInterval(spotifyProgressInterval);
+  }
+  if (time && source !== "spotify") time.textContent = "";
 
   updateIconCluster(allActive);
 
   if (payload?.temporary)
-    showToast(`🔥 ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`, "var(--accent-color)");
+    showToast(`🔥 ${source.charAt(0).toUpperCase() + source.slice(1)} activity detected!`);
 
   isTwitchLive = source === "twitch";
   container.classList.toggle("live-now", isTwitchLive);
@@ -162,7 +169,6 @@ function updateLastUpdated() {
   else if (elapsed < 60) text = `Updated ${elapsed}s ago`;
   else if (elapsed < 3600) text = `Updated ${Math.floor(elapsed / 60)}m ago`;
   else text = `Updated ${Math.floor(elapsed / 3600)}h ago`;
-
   updated.textContent = text;
 }
 
@@ -217,7 +223,7 @@ async function getSteamStatus() {
 }
 
 /* =========================
-   DISCORD (SPOTIFY FIX)
+   DISCORD / SPOTIFY ACTIVITY
 ========================= */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
@@ -227,24 +233,22 @@ async function getDiscordActivity() {
     if (!data) return null;
 
     const activities = data.activities || [];
-
-    // 🎵 Spotify — album cover fix
     const spotify = activities.find(a => a.name === "Spotify");
+
     if (spotify?.details && spotify?.state) {
       const trackTitle = spotify.details;
       const artist = spotify.state;
-      let musicCover = null;
 
+      // album art fix
+      let musicCover = null;
       if (spotify.assets?.large_image) {
         const raw = spotify.assets.large_image.trim();
         let hash = null;
-
         if (raw.startsWith("mp:spotify:image:")) hash = raw.replace("mp:spotify:image:", "");
         else if (raw.startsWith("spotify:image:")) hash = raw.replace("spotify:image:", "");
         else if (raw.startsWith("mp:external/")) hash = raw.replace("mp:external/", "");
         else if (raw.startsWith("mp:")) hash = raw.replace("mp:", "");
         else if (raw.startsWith("https://")) musicCover = raw;
-
         if (!musicCover && hash) {
           const cleanHash = hash
             .split("?")[0]
@@ -255,7 +259,40 @@ async function getDiscordActivity() {
         }
       }
 
+      // progress bar + time
+      const timestamps = spotify.timestamps || {};
+      const bar = document.getElementById("music-progress-bar");
+      const time = document.getElementById("music-progress-time");
+      clearInterval(spotifyProgressInterval);
+
+      if (timestamps.start && timestamps.end && bar && time) {
+        const start = timestamps.start;
+        const end = timestamps.end;
+        const duration = end - start;
+
+        function format(ms) {
+          const totalSec = Math.floor(ms / 1000);
+          const min = Math.floor(totalSec / 60);
+          const sec = String(totalSec % 60).padStart(2, "0");
+          return `${min}:${sec}`;
+        }
+
+        spotifyProgressInterval = setInterval(() => {
+          const now = Date.now();
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1) * 100;
+          bar.style.width = `${progress}%`;
+
+          const elapsedText = format(elapsed);
+          const totalText = format(duration);
+          time.textContent = `${elapsedText} / ${totalText}`;
+
+          if (progress >= 100) clearInterval(spotifyProgressInterval);
+        }, 1000);
+      }
+
       currentMusicCover = musicCover || null;
+      document.getElementById("live-activity")?.classList.add("spotify-active");
       return { text: `🎵 Listening to “${trackTitle}” by ${artist}`, source: "spotify" };
     }
 
