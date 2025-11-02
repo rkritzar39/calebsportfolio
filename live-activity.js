@@ -1,12 +1,8 @@
 /* ======================================================
-   🎧 Live Activity — Multi-Platform + Real Spotify + Manual Override
+   🎧 Live Activity — Multi-Platform + Logos + Manual Override (Final)
    ====================================================== */
 
-import {
-  getFirestore,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
 /* =========================
@@ -22,8 +18,20 @@ const CONFIG = {
 };
 
 /* =========================
-   BRAND COLORS
+   BRAND ICONS / COLORS
 ========================= */
+const BRAND_LOGOS = {
+  twitch: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitch.svg",
+  tiktok: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg",
+  github: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg",
+  reddit: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/reddit.svg",
+  steam:  "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/steam.svg",
+  spotify:"https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg",
+  discord:"https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg",
+  manual: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/user.svg",
+  offline:"https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/offline.svg"
+};
+
 const BRAND_COLORS = {
   twitch: "#9146FF",
   tiktok: "#EE1D52",
@@ -42,18 +50,19 @@ const BRAND_COLORS = {
 let lastUpdateTime = null;
 let currentMusicCover = null;
 let progressInterval = null;
-let currentSpotifyUrl = null;  // for click-through
+let currentSpotifyUrl = null;
 
-/* Utils */
 const $$ = id => document.getElementById(id);
 const setText = (id, val) => { const el = $$(id); if (el) el.textContent = val; };
 function formatTime(seconds) {
-  const s = Math.max(0, Math.floor(seconds)); const m = Math.floor(s/60); const r = s%60;
-  return `${m}:${String(r).padStart(2,"0")}`;
+  const s = Math.max(0, Math.floor(seconds));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${String(r).padStart(2, "0")}`;
 }
 
 /* =========================
-   Honeycomb (top-left)
+   HONEYCOMB CLUSTER
 ========================= */
 function updateIconCluster(platforms) {
   const cluster = $$("icon-cluster");
@@ -64,17 +73,12 @@ function updateIconCluster(platforms) {
     const icon = document.createElement("div");
     icon.className = `cluster-icon ${source}`;
     icon.style.backgroundColor = BRAND_COLORS[source] || "var(--accent-color)";
-    icon.setAttribute("data-tooltip", `${source[0].toUpperCase()+source.slice(1)} — ${text}`);
+    icon.setAttribute("data-tooltip", `${source.charAt(0).toUpperCase() + source.slice(1)} — ${text}`);
 
     const img = document.createElement("img");
-    img.src = `https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/${source}.svg`;
+    img.src = BRAND_LOGOS[source] || BRAND_LOGOS.manual;
     img.alt = source;
     icon.appendChild(img);
-
-    // Spotify hover preview (optional)
-    if (source === "spotify" && currentMusicCover) {
-      // keep minimal to avoid overlap in compact header
-    }
 
     cluster.appendChild(icon);
 
@@ -88,55 +92,33 @@ function updateIconCluster(platforms) {
 }
 
 /* =========================
-   Toasts
+   STATUS LINE
 ========================= */
-function showToast(message, color = "var(--accent-color)") {
-  const container = $$("toast-container");
-  if (!container) return;
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.style.borderLeft = `4px solid ${color}`;
-  toast.textContent = message;
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    toast.style.transform = "translateY(-8px)";
-    setTimeout(() => toast.remove(), 320);
-  }, 2800);
-}
-
-/* =========================
-   Was Recently Shown
-========================= */
-function wasRecentlyShown(platform, cooldown = 300000) {
-  const last = localStorage.getItem(`last_${platform}_shown`);
-  return last && Date.now() - parseInt(last, 10) < cooldown;
-}
-function markAsShown(platform) {
-  localStorage.setItem(`last_${platform}_shown`, Date.now().toString());
-}
-
-/* =========================
-   Status line + updated timer
-========================= */
-function setStatusLine(text) {
-  setText("status-line-text", text || "—");
+function setStatusLine(text, source = "manual") {
+  const logo = document.getElementById("status-icon-logo");
+  const line = document.getElementById("status-line-text");
+  if (logo && line) {
+    logo.src = BRAND_LOGOS[source] || BRAND_LOGOS.manual;
+    logo.alt = source;
+    line.textContent = text || "—";
+  }
   lastUpdateTime = Date.now();
   updateLastUpdated();
 }
+
 function updateLastUpdated() {
   const el = $$("live-activity-updated");
   if (!el || !lastUpdateTime) return;
   const sec = Math.floor((Date.now() - lastUpdateTime) / 1000);
   let t = "Updated just now";
-  if (sec >= 60 && sec < 3600) t = `Updated ${Math.floor(sec/60)}m ago`;
+  if (sec >= 60 && sec < 3600) t = `Updated ${Math.floor(sec / 60)}m ago`;
   else if (sec >= 10 && sec < 60) t = `Updated ${sec}s ago`;
-  else if (sec >= 3600) t = `Updated ${Math.floor(sec/3600)}h ago`;
+  else if (sec >= 3600) t = `Updated ${Math.floor(sec / 3600)}h ago`;
   el.textContent = t;
 }
 
 /* =========================
-   Firestore Manual Status (override)
+   FIRESTORE MANUAL STATUS
 ========================= */
 async function getManualStatus() {
   try {
@@ -150,7 +132,7 @@ async function getManualStatus() {
 }
 
 /* =========================
-   Twitch
+   PLATFORM FETCHERS
 ========================= */
 async function getTwitchStatus() {
   const { user, clientId, token } = CONFIG.twitch;
@@ -161,14 +143,11 @@ async function getTwitchStatus() {
     });
     const data = await res.json();
     const stream = data?.data?.[0];
-    if (stream?.title) return { text: `🟣 Streaming on Twitch — ${stream.title}`, source: "twitch" };
+    if (stream?.title) return { text: `Streaming on Twitch — ${stream.title}`, source: "twitch" };
   } catch {}
   return null;
 }
 
-/* =========================
-   Steam
-========================= */
 async function getSteamStatus() {
   const { steamId64, apiKey } = CONFIG.steam;
   try {
@@ -178,14 +157,11 @@ async function getSteamStatus() {
     );
     const data = await res.json();
     const p = data?.response?.players?.[0];
-    if (p?.gameextrainfo) return { text: `🎮 Playing ${p.gameextrainfo} on Steam`, source: "steam" };
+    if (p?.gameextrainfo) return { text: `Playing ${p.gameextrainfo} on Steam`, source: "steam" };
   } catch {}
   return null;
 }
 
-/* =========================
-   GitHub
-========================= */
 async function getGitHubStatus() {
   const { username } = CONFIG.github;
   if (wasRecentlyShown("github")) return null;
@@ -195,15 +171,12 @@ async function getGitHubStatus() {
     const latest = events?.[0];
     if (latest?.repo) {
       markAsShown("github");
-      return { text: `💻 Updated ${latest.repo.name}`, source: "github", temporary: true };
+      return { text: `Updated ${latest.repo.name}`, source: "github", temporary: true };
     }
   } catch {}
   return null;
 }
 
-/* =========================
-   Reddit
-========================= */
 async function getRedditStatus() {
   const { username } = CONFIG.reddit;
   if (wasRecentlyShown("reddit")) return null;
@@ -213,15 +186,12 @@ async function getRedditStatus() {
     const post = data?.data?.children?.[0]?.data;
     if (post) {
       markAsShown("reddit");
-      return { text: `📢 Posted on r/${post.subreddit} — “${post.title}”`, source: "reddit", temporary: true };
+      return { text: `Posted on r/${post.subreddit} — “${post.title}”`, source: "reddit", temporary: true };
     }
   } catch {}
   return null;
 }
 
-/* =========================
-   TikTok
-========================= */
 async function getTikTokStatus() {
   const { username } = CONFIG.tiktok;
   if (wasRecentlyShown("tiktok")) return null;
@@ -230,14 +200,14 @@ async function getTikTokStatus() {
     const data = await res.json();
     if (data?.title) {
       markAsShown("tiktok");
-      return { text: `🎬 Posted on TikTok — “${data.title}”`, source: "tiktok", temporary: true };
+      return { text: `Posted on TikTok — “${data.title}”`, source: "tiktok", temporary: true };
     }
   } catch {}
   return null;
 }
 
 /* =========================
-   Discord Presence (Spotify + fallback)
+   DISCORD + SPOTIFY
 ========================= */
 async function getDiscordActivity() {
   const { userId } = CONFIG.discord;
@@ -246,55 +216,34 @@ async function getDiscordActivity() {
     const { data } = await res.json();
     if (!data) return null;
 
-    // Prefer direct Lanyard spotify object (accurate, with track id + timestamps)
     const sp = data.spotify;
     const activities = data.activities || [];
     const game = activities.find(a => a.type === 0 && a.name && a.name !== "Spotify");
 
-    // If Spotify active
+    // Spotify
     if (sp) {
-      const title  = sp.song;
-      const artist = sp.artist;
-      const cover  = sp.album_art_url;
-      currentMusicCover = cover;
-      currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
-
-      // Fill UI
+      const { song, artist, album_art_url, track_id, timestamps } = sp;
       $$("spotify-card").classList.remove("hidden");
-      $$("live-activity").classList.remove("hidden");
-      $$("live-activity-cover").src = cover || "path/to/default-cover.jpg";
-      setText("live-song-title", title || "Unknown Track");
-      setText("live-song-artist", artist || "Unknown Artist");
-
-      // Progress using timestamps
-      setupProgress(sp.timestamps?.start, sp.timestamps?.end);
-
-      // Status line
-      setStatusLine("🎧 Listening to Spotify");
-
-      return { text: `Listening to “${title}” by ${artist}`, source: "spotify" };
+      $$("live-activity-cover").src = album_art_url;
+      setText("live-song-title", song);
+      setText("live-song-artist", artist);
+      currentSpotifyUrl = `https://open.spotify.com/track/${track_id}`;
+      setupProgress(timestamps.start, timestamps.end);
+      setStatusLine("Listening to Spotify", "spotify");
+      return { text: `Listening to “${song}” by ${artist}`, source: "spotify" };
     }
 
-    // Not Spotify → hide card & show presence/game in status line
+    // Discord fallback
     $$("spotify-card").classList.add("hidden");
-    $$("music-progress-bar").style.width = "0%";
-    if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
-    currentSpotifyUrl = null;
-
+    if (progressInterval) clearInterval(progressInterval);
     const map = {
-      online: "💬 Online on Discord",
-      idle:   "🌙 Idle on Discord",
-      dnd:    "⛔ Do Not Disturb",
-      offline:"⚫ Offline"
+      online: "Online on Discord",
+      idle: "Idle on Discord",
+      dnd: "Do Not Disturb",
+      offline: "Offline"
     };
-
-    const statusText = game?.name ? `🎮 Playing ${game.name}` : (map[data.discord_status] || "💬 Online on Discord");
-    setStatusLine(statusText);
-
-    // If truly offline, we’ll still keep the card visible so the honeycomb shows,
-    // but you can hide the whole widget here if preferred:
-    // if (data.discord_status === "offline") $$("live-activity").classList.add("hidden");
-
+    const statusText = game?.name ? `Playing ${game.name}` : (map[data.discord_status] || "Online on Discord");
+    setStatusLine(statusText, "discord");
     return { text: statusText, source: "discord" };
   } catch (e) {
     console.error("Discord/Lanyard error:", e);
@@ -302,47 +251,43 @@ async function getDiscordActivity() {
   return null;
 }
 
-/* Progress using start/end ms */
+/* =========================
+   PROGRESS BAR
+========================= */
 function setupProgress(startMs, endMs) {
   const bar = $$("music-progress-bar");
   const elapsedEl = $$("elapsed-time");
   const remainingEl = $$("remaining-time");
   const totalEl = $$("total-time");
   if (!bar || !elapsedEl || !remainingEl || !totalEl || !startMs || !endMs) return;
-
   if (progressInterval) clearInterval(progressInterval);
-
   const totalSec = (endMs - startMs) / 1000;
   totalEl.textContent = formatTime(totalSec);
-
   function tick() {
     const now = Date.now();
     const elapsed = Math.min((now - startMs) / 1000, totalSec);
     const remaining = Math.max(totalSec - elapsed, 0);
-
     bar.style.width = `${(elapsed / totalSec) * 100}%`;
     elapsedEl.textContent = formatTime(elapsed);
     remainingEl.textContent = `-${formatTime(remaining)}`;
   }
-
   tick();
   progressInterval = setInterval(tick, 1000);
 }
 
 /* =========================
-   Build header + combine sources
+   COMBINE SOURCES
 ========================= */
 async function updateLiveStatus() {
   const sources = [
-    getManualStatus,   // manual override (will appear in honeycomb + status line if chosen as primary)
+    getManualStatus,
     getTwitchStatus,
     getSteamStatus,
-    getDiscordActivity, // includes Spotify handling + status line
+    getDiscordActivity,
     getGitHubStatus,
     getRedditStatus,
-    getTikTokStatus,
+    getTikTokStatus
   ];
-
   const allActive = [];
   for (const fn of sources) {
     try {
@@ -350,42 +295,33 @@ async function updateLiveStatus() {
       if (res) allActive.push(res);
     } catch {}
   }
-
-  // Choose primary line: prefer Spotify/Discord/Twitch/Steam/Manual order, then first
-  const priority = ["spotify","discord","twitch","steam","manual"];
-  const main = allActive.sort((a,b) => (priority.indexOf(a.source) + 99*(priority.indexOf(a.source)<0)) - (priority.indexOf(b.source) + 99*(priority.indexOf(b.source)<0)))[0];
-
-  // If manual is present and you want manual to override always, uncomment:
-  // const main = allActive.find(a=>a.source==="manual") || allActive.find(a=>a.source==="spotify"||a.source==="discord") || allActive[0];
-
-  // Set status line (avoid duplicates; Discord handler already set it — so only set here if needed)
-  if (main && !/Listening to Spotify|Playing |Online on Discord|Idle|Do Not Disturb|Offline/.test($$("status-line-text")?.textContent || "")) {
-    setStatusLine(main.text.replace(/^([^\s]+)\s/, (m)=>m)); // keep as-is
-  }
-
-  // Build honeycomb icons from all active entries (cap to 9 for neatness)
+  const priority = ["spotify", "discord", "twitch", "steam", "manual"];
+  const main = allActive.sort((a, b) => priority.indexOf(a.source) - priority.indexOf(b.source))[0];
+  if (main) setStatusLine(main.text, main.source);
   updateIconCluster(allActive.slice(0, 9));
-
-  // Show/hide the whole widget if nothing active at all
-  if (!allActive.length) {
-    $$("live-activity").classList.add("hidden");
-  } else {
-    $$("live-activity").classList.remove("hidden");
-  }
+  $$("live-activity").classList.toggle("hidden", !allActive.length);
 }
 
 /* =========================
-   Click-through for Spotify card
+   HELPERS
+========================= */
+function wasRecentlyShown(p, c = 300000) {
+  const last = localStorage.getItem(`last_${p}_shown`);
+  return last && Date.now() - parseInt(last, 10) < c;
+}
+function markAsShown(p) {
+  localStorage.setItem(`last_${p}_shown`, Date.now().toString());
+}
+
+/* =========================
+   SPOTIFY CLICK-THROUGH
 ========================= */
 function bindSpotifyClickThrough() {
   const card = $$("spotify-card");
   if (!card) return;
-
-  function openTrack() {
+  card.addEventListener("click", () => {
     if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank", "noopener");
-  }
-  card.addEventListener("click", openTrack);
-  card.addEventListener("keydown", (e)=>{ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); openTrack(); } });
+  });
 }
 
 /* =========================
@@ -394,6 +330,6 @@ function bindSpotifyClickThrough() {
 document.addEventListener("DOMContentLoaded", () => {
   bindSpotifyClickThrough();
   updateLiveStatus();
-  setInterval(updateLiveStatus, 5000); // refresh presence
-  setInterval(updateLastUpdated, 1000); // updated stamp
+  setInterval(updateLiveStatus, 8000);
+  setInterval(updateLastUpdated, 1000);
 });
