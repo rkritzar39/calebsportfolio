@@ -459,84 +459,64 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY SYSTEM (TEXT ONLY VERSION) ======== */
+/* === 🎧 LIVE ACTIVITY — APPLE MUSIC × SPOTIFY STYLE ==== */
 /* ======================================================= */
 
 .live-activity {
   position: relative;
-  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+  background: var(--dynamic-bg, color-mix(in srgb, var(--content-bg) 92%, transparent));
   border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
-  border-radius: var(--border-radius-lg, 16px);
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  padding: 18px 20px;
-  margin: 14px auto;
+  border-radius: 22px;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  padding: 28px 24px;
+  margin: 18px auto;
   width: calc(100% - 40px);
   box-sizing: border-box;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  overflow: hidden;
-  transition: all 0.3s ease;
+  align-items: center;
+  animation: fadeInCard 0.45s ease forwards;
 }
 
 .live-activity.hidden {
   display: none !important;
 }
 
-/* ======================================================= */
-/* === STATUS LINE ======================================= */
-/* ======================================================= */
-
+/* --- Status Line --- */
 .status-line {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
   text-align: center;
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-color, #f5f5f5);
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
-  line-height: 1.4;
-}
-
-.status-icon-logo {
-  display: none; /* hidden permanently (no icons anymore) */
-}
-
-/* ======================================================= */
-/* === SPOTIFY CARD ====================================== */
-/* ======================================================= */
-
-.spotify-card {
+  margin-bottom: 18px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 16px;
-  background: color-mix(in srgb, var(--content-bg) 88%, transparent);
-  border-radius: 12px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: background 0.25s ease;
-  width: 100%;
-  box-sizing: border-box;
+  gap: 6px;
+  opacity: 0.9;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.spotify-card.hidden {
-  display: none !important;
+.status-line.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  height: 0;
+  margin: 0;
 }
 
-.spotify-card:hover {
-  background: color-mix(in srgb, var(--content-bg) 92%, transparent);
-}
-
+/* --- Album Cover --- */
 .live-album-art {
-  width: 64px;
-  height: 64px;
-  border-radius: 10px;
+  width: 220px;
+  height: 220px;
+  border-radius: 18px;
   overflow: hidden;
-  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  margin-bottom: 18px;
+  transition: transform 0.35s ease;
 }
 
 .live-album-art img {
@@ -544,45 +524,51 @@ a.corner-button {
   height: 100%;
   object-fit: cover;
   border-radius: inherit;
+  transition: transform 0.35s ease;
 }
 
+.spotify-card:hover .live-album-art img {
+  transform: scale(1.05);
+}
+
+/* --- Song Info --- */
 .live-info {
-  flex: 1;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 6px;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
 }
 
 .live-song-title {
-  font-size: 1rem;
+  font-size: 1.3rem;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--text-color, #fff);
   white-space: normal;
   overflow-wrap: break-word;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
 .live-artist {
-  font-size: 0.9rem;
-  color: var(--secondary-text, #bbb);
+  font-size: 1rem;
+  color: var(--secondary-text, #c0c0c0);
   white-space: normal;
   overflow-wrap: break-word;
   line-height: 1.3;
+  margin-bottom: 12px;
 }
 
-/* ======================================================= */
-/* === PROGRESS BAR ====================================== */
-/* ======================================================= */
-
+/* --- Progress Bar --- */
 .music-progress-container {
   width: 100%;
-  height: 5px;
-  background: color-mix(in srgb, var(--border-color) 30%, transparent);
-  border-radius: 3px;
+  max-width: 360px;
+  height: 8px;
+  background: color-mix(in srgb, var(--border-color) 25%, transparent);
+  border-radius: 4px;
   overflow: hidden;
   position: relative;
+  margin-top: 8px;
 }
 
 .music-progress-bar {
@@ -592,63 +578,60 @@ a.corner-button {
   height: 100%;
   width: 0%;
   border-radius: inherit;
-  background: var(--accent-color, #1db954);
-  transition: width 0.3s linear;
+  background: var(--dynamic-accent, var(--accent-color, #1DB954));
+  box-shadow: 0 0 14px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 80%, transparent);
+  transition: width 0.3s linear, background 0.5s ease;
 }
 
+/* --- Time Display (start / remaining / end) --- */
 .music-progress-time {
   display: flex;
   justify-content: space-between;
-  margin-top: 4px;
-  font-size: 0.8rem;
+  margin-top: 8px;
+  width: 100%;
+  max-width: 360px;
+  font-size: 0.9rem;
   color: var(--secondary-text, #aaa);
+  letter-spacing: 0.3px;
 }
 
-/* ======================================================= */
-/* === UPDATED TIMESTAMP ================================= */
-/* ======================================================= */
-
+/* --- Last Updated --- */
 .la-updated {
-  text-align: center;
   font-size: 0.8rem;
   color: var(--secondary-text, #999);
-  margin-top: 4px;
+  margin-top: 10px;
   opacity: 0.9;
 }
 
-/* ======================================================= */
-/* === MOBILE RESPONSIVENESS ============================= */
-/* ======================================================= */
+/* --- Fade Animation --- */
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
+/* --- Responsive --- */
 @media (max-width: 600px) {
-  .live-activity {
-    width: calc(100% - 24px);
-    padding: 14px;
-    gap: 12px;
-  }
-
-  .status-line {
-    font-size: 0.9rem;
-    gap: 6px;
-  }
-
-  .spotify-card {
-    flex-direction: row;
-    align-items: center;
-    padding: 10px 12px;
-  }
-
   .live-album-art {
-    width: 54px;
-    height: 54px;
+    width: 180px;
+    height: 180px;
   }
 
   .live-song-title {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
   }
 
   .live-artist {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
+  }
+
+  .music-progress-container {
+    height: 6px;
   }
 }
 
