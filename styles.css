@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — APPLE MUSIC × SPOTIFY STYLE ==== */
+/* === 🎧 LIVE ACTIVITY — FINAL VERSION ================== */
 /* ======================================================= */
 
 .live-activity {
@@ -479,13 +479,17 @@ a.corner-button {
   flex-direction: column;
   align-items: center;
   animation: fadeInCard 0.45s ease forwards;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
 }
 
 .live-activity.hidden {
   display: none !important;
 }
 
-/* --- Status Line --- */
+/* ======================================================= */
+/* === STATUS LINE ======================================= */
+/* ======================================================= */
+
 .status-line {
   text-align: center;
   font-size: 1rem;
@@ -508,7 +512,37 @@ a.corner-button {
   margin: 0;
 }
 
-/* --- Album Cover --- */
+/* ======================================================= */
+/* === SPOTIFY CARD ====================================== */
+/* ======================================================= */
+
+.spotify-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 18px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 480px;
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+  animation: fadeInCard 0.45s ease forwards;
+}
+
+.spotify-card.hidden {
+  display: none !important;
+}
+
+.spotify-card:hover {
+  transform: translateY(-3px);
+}
+
+/* ======================================================= */
+/* === ALBUM ART ========================================= */
+/* ======================================================= */
+
 .live-album-art {
   width: 220px;
   height: 220px;
@@ -531,7 +565,10 @@ a.corner-button {
   transform: scale(1.05);
 }
 
-/* --- Song Info --- */
+/* ======================================================= */
+/* === SONG INFO ========================================= */
+/* ======================================================= */
+
 .live-info {
   text-align: center;
   display: flex;
@@ -545,21 +582,24 @@ a.corner-button {
   font-size: 1.3rem;
   font-weight: 600;
   color: var(--text-color, #fff);
-  white-space: normal;
-  overflow-wrap: break-word;
   line-height: 1.4;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .live-artist {
   font-size: 1rem;
   color: var(--secondary-text, #c0c0c0);
-  white-space: normal;
-  overflow-wrap: break-word;
-  line-height: 1.3;
   margin-bottom: 12px;
+  line-height: 1.3;
+  word-break: break-word;
+  white-space: normal;
 }
 
-/* --- Progress Bar --- */
+/* ======================================================= */
+/* === PROGRESS BAR ====================================== */
+/* ======================================================= */
+
 .music-progress-container {
   width: 100%;
   max-width: 360px;
@@ -580,10 +620,28 @@ a.corner-button {
   border-radius: inherit;
   background: var(--dynamic-accent, var(--accent-color, #1DB954));
   box-shadow: 0 0 14px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 80%, transparent);
-  transition: width 0.3s linear, background 0.5s ease;
+  transition: width 0.3s linear, background 0.5s ease, box-shadow 0.5s ease;
 }
 
-/* --- Time Display (start / remaining / end) --- */
+/* Add optional pulse animation (disabled by default)
+.music-progress-bar.active {
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--dynamic-accent, var(--accent-color));
+  }
+  50% {
+    box-shadow: 0 0 18px var(--dynamic-accent, var(--accent-color));
+  }
+}
+*/
+
+/* ======================================================= */
+/* === TIME DISPLAY (start / remaining / end) ============ */
+/* ======================================================= */
+
 .music-progress-time {
   display: flex;
   justify-content: space-between;
@@ -595,15 +653,22 @@ a.corner-button {
   letter-spacing: 0.3px;
 }
 
-/* --- Last Updated --- */
+/* ======================================================= */
+/* === LAST UPDATED LABEL ================================ */
+/* ======================================================= */
+
 .la-updated {
   font-size: 0.8rem;
   color: var(--secondary-text, #999);
   margin-top: 10px;
   opacity: 0.9;
+  text-align: center;
 }
 
-/* --- Fade Animation --- */
+/* ======================================================= */
+/* === ANIMATIONS ======================================== */
+/* ======================================================= */
+
 @keyframes fadeInCard {
   from {
     opacity: 0;
@@ -615,7 +680,10 @@ a.corner-button {
   }
 }
 
-/* --- Responsive --- */
+/* ======================================================= */
+/* === RESPONSIVE DESIGN ================================= */
+/* ======================================================= */
+
 @media (max-width: 600px) {
   .live-album-art {
     width: 180px;
@@ -632,6 +700,10 @@ a.corner-button {
 
   .music-progress-container {
     height: 6px;
+  }
+
+  .music-progress-time {
+    font-size: 0.82rem;
   }
 }
 
