@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — FINAL VERSION ================== */
+/* === 🎧 LIVE ACTIVITY — FINAL POLISHED VERSION ========= */
 /* ======================================================= */
 
 .live-activity {
@@ -597,18 +597,20 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR ====================================== */
+/* === PROGRESS BAR (IMPROVED) =========================== */
 /* ======================================================= */
 
 .music-progress-container {
   width: 100%;
-  max-width: 360px;
-  height: 8px;
-  background: color-mix(in srgb, var(--border-color) 25%, transparent);
-  border-radius: 4px;
+  max-width: 420px;
+  height: 10px;
+  background: color-mix(in srgb, var(--border-color) 18%, transparent);
+  border-radius: 50px;
   overflow: hidden;
   position: relative;
-  margin-top: 8px;
+  margin-top: 18px;
+  margin-bottom: 12px;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.25);
 }
 
 .music-progress-bar {
@@ -619,38 +621,58 @@ a.corner-button {
   width: 0%;
   border-radius: inherit;
   background: var(--dynamic-accent, var(--accent-color, #1DB954));
-  box-shadow: 0 0 14px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 80%, transparent);
-  transition: width 0.3s linear, background 0.5s ease, box-shadow 0.5s ease;
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 70%, transparent),
+    0 0 22px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 45%, transparent);
+  transition: width 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
 }
 
-/* Add optional pulse animation (disabled by default)
-.music-progress-bar.active {
-  animation: pulseGlow 3s infinite ease-in-out;
+/* --- Smooth fill-in animation when song starts --- */
+@keyframes fillIntro {
+  from {
+    width: 0%;
+    opacity: 0.8;
+  }
+  to {
+    width: var(--target-width, 100%);
+    opacity: 1;
+  }
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 10px var(--dynamic-accent, var(--accent-color));
-  }
-  50% {
-    box-shadow: 0 0 18px var(--dynamic-accent, var(--accent-color));
-  }
+.music-progress-bar.start-animate {
+  animation: fillIntro 1.2s ease forwards;
 }
-*/
 
 /* ======================================================= */
-/* === TIME DISPLAY (start / remaining / end) ============ */
+/* === TIME DISPLAY (READABLE + SPACED) ================== */
 /* ======================================================= */
 
 .music-progress-time {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
+  align-items: center;
+  margin-top: 10px;
   width: 100%;
-  max-width: 360px;
-  font-size: 0.9rem;
-  color: var(--secondary-text, #aaa);
-  letter-spacing: 0.3px;
+  max-width: 420px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-color, #e8e8e8);
+  letter-spacing: 0.4px;
+  opacity: 0.95;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.music-progress-time span {
+  flex: 1;
+  text-align: center;
+}
+
+.music-progress-time span:first-child {
+  text-align: left;
+}
+
+.music-progress-time span:last-child {
+  text-align: right;
 }
 
 /* ======================================================= */
@@ -658,9 +680,9 @@ a.corner-button {
 /* ======================================================= */
 
 .la-updated {
-  font-size: 0.8rem;
-  color: var(--secondary-text, #999);
-  margin-top: 10px;
+  font-size: 0.82rem;
+  color: var(--secondary-text, #a2a2a2);
+  margin-top: 12px;
   opacity: 0.9;
   text-align: center;
 }
@@ -699,14 +721,17 @@ a.corner-button {
   }
 
   .music-progress-container {
-    height: 6px;
+    max-width: 320px;
+    height: 8px;
+    margin-top: 14px;
   }
 
   .music-progress-time {
-    font-size: 0.82rem;
+    max-width: 320px;
+    font-size: 0.9rem;
+    opacity: 0.9;
   }
 }
-
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
