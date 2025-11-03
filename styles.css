@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — POLISHED EDGE ALIGNMENT ======== */
+/* === 🎧 LIVE ACTIVITY — CENTERED + ENLARGED COVER ===== */
 /* ======================================================= */
 
 .live-activity {
@@ -470,14 +470,15 @@ a.corner-button {
   box-shadow: 0 8px 25px color-mix(in srgb, var(--shadow-color) 55%, transparent);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  padding: 28px 20px;
-  margin: 20px auto;
+  padding: 36px 24px;
+  margin: 22px auto;
   width: calc(100% - 40px);
+  max-width: 620px;
   box-sizing: border-box;
-  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   animation: fadeInCard 0.4s ease forwards;
 }
 
@@ -486,13 +487,13 @@ a.corner-button {
 /* ======================================================= */
 
 .status-line {
-  text-align: center;
   font-size: 1rem;
   font-weight: 500;
   color: var(--text-color, #f5f5f5);
-  margin-bottom: 18px;
+  margin-bottom: 24px;
   opacity: 0.9;
   transition: opacity 0.3s ease, transform 0.3s ease;
+  text-align: center;
 }
 
 .status-line.hidden {
@@ -502,20 +503,44 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === ALBUM ART ========================================= */
+/* === SPOTIFY CARD CONTAINER ============================ */
 /* ======================================================= */
 
-.live-album-art {
-  width: 220px;
-  height: 220px;
-  border-radius: 16px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+.spotify-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ✅ Center everything */
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  cursor: pointer;
   transition: transform 0.3s ease;
 }
 
+.spotify-card:hover {
+  transform: translateY(-3px);
+}
+
+/* ======================================================= */
+/* === ALBUM COVER (CENTERED + ENLARGED) ================= */
+/* ======================================================= */
+
+.live-album-art {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 26px auto; /* ✅ Centered horizontally */
+  width: 260px;  /* ✅ Larger, more balanced size */
+  height: 260px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  transition: transform 0.35s ease;
+}
+
 .live-album-art img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -528,14 +553,50 @@ a.corner-button {
 }
 
 /* ======================================================= */
+/* === "NO ACTIVITY" OVERLAY ============================= */
+/* ======================================================= */
+
+.no-activity-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.3s ease;
+}
+
+.no-activity-overlay.hidden {
+  display: none;
+}
+
+.no-activity-overlay p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: color-mix(in srgb, var(--text-color) 70%, #ccc);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* ======================================================= */
 /* === SONG INFO ========================================= */
 /* ======================================================= */
 
+.live-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
 .live-song-title {
-  font-size: 1.3rem;
+  font-size: 1.35rem;
   font-weight: 600;
   color: var(--text-color, #fff);
-  line-height: 1.4;
   margin-bottom: 4px;
   word-break: break-word;
 }
@@ -547,19 +608,19 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR — FLUSH EDGE + DEPTH ================= */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 .music-progress-container {
   width: 100%;
-  max-width: 100%;
+  max-width: 440px;
   height: 10px;
   background: color-mix(in srgb, var(--border-color) 20%, transparent);
   border-radius: 50px;
   overflow: hidden;
   position: relative;
-  margin-top: 6px;
-  margin-bottom: 6px;
+  margin-top: 10px;
+  margin-bottom: 8px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
@@ -573,29 +634,26 @@ a.corner-button {
   background: var(--dynamic-accent, var(--accent-color, #1DB954));
   box-shadow:
     0 0 10px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 70%, transparent),
-    0 0 20px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 40%, transparent);
+    0 0 22px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 45%, transparent);
   transition: width 0.4s linear, box-shadow 0.4s ease;
 }
 
 /* ======================================================= */
-/* === TIME DISPLAY — DARKER + EDGE-ALIGNED ============== */
+/* === TIME DISPLAY ====================================== */
 /* ======================================================= */
 
 .music-progress-time {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   width: 100%;
+  max-width: 440px;
   margin-top: 8px;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: color-mix(in srgb, var(--text-color) 65%, #444);
-  letter-spacing: 0.4px;
-  opacity: 0.85;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  color: color-mix(in srgb, var(--text-color) 60%, #555);
+  opacity: 0.9;
 }
 
-/* Push times visually closer to container edges */
 .music-progress-time span:first-child {
   margin-left: 4px;
 }
@@ -605,11 +663,11 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === LAST UPDATED LABEL ================================ */
+/* === LAST UPDATED ====================================== */
 /* ======================================================= */
 
 .la-updated {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--secondary-text, #999);
   margin-top: 14px;
   opacity: 0.85;
@@ -631,13 +689,13 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === RESPONSIVE DESIGN ================================= */
+/* === RESPONSIVE ======================================== */
 /* ======================================================= */
 
 @media (max-width: 600px) {
   .live-album-art {
-    width: 180px;
-    height: 180px;
+    width: 200px;
+    height: 200px;
   }
 
   .live-song-title {
@@ -650,7 +708,6 @@ a.corner-button {
 
   .music-progress-container {
     height: 8px;
-    margin-bottom: 8px;
   }
 
   .music-progress-time {
