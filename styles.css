@@ -463,34 +463,38 @@ a.corner-button {
 /* ======================================================= */
 
 .live-activity {
+  position: relative;
   background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
   border-radius: var(--border-radius-lg, 16px);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--border-color) 20%, transparent);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   padding: 18px 20px;
-  margin-top: 18px;
-  width: 100%;
-  max-width: 480px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  width: calc(100% - 40px);
   margin-left: auto;
   margin-right: auto;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .live-activity.hidden {
   display: none !important;
 }
 
-/* --- Header (Icons + Status Line) --- */
+/* --- Header: Icon Cluster + Status Line --- */
 .la-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .icon-cluster {
@@ -498,6 +502,7 @@ a.corner-button {
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  max-width: 60%;
 }
 
 .cluster-icon-svg {
@@ -514,12 +519,16 @@ a.corner-button {
   transform: scale(1);
 }
 
+.cluster-icon-svg.main-icon {
+  transform: scale(1.1);
+}
+
 .cluster-icon-svg svg {
   width: 22px;
   height: 22px;
-  display: block;
 }
 
+/* --- Status Line --- */
 .status-line {
   display: flex;
   align-items: center;
@@ -529,15 +538,13 @@ a.corner-button {
   font-weight: 500;
   color: var(--text-color, #f5f5f5);
   text-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+  justify-content: flex-end;
 }
 
 .status-icon-logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
 }
 
 .status-icon-logo svg {
@@ -554,8 +561,10 @@ a.corner-button {
   background: color-mix(in srgb, var(--content-bg) 88%, transparent);
   border-radius: var(--border-radius-md, 12px);
   padding: 14px 16px;
-  cursor: pointer;
   transition: background 0.25s ease;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .spotify-card.hidden {
@@ -582,6 +591,7 @@ a.corner-button {
   flex-direction: column;
   justify-content: center;
   gap: 6px;
+  min-width: 0;
 }
 
 .live-song-title {
@@ -601,7 +611,7 @@ a.corner-button {
   text-overflow: ellipsis;
 }
 
-/* --- Music Progress Bar --- */
+/* --- Progress Bar --- */
 .music-progress-container {
   width: 100%;
   height: 5px;
@@ -630,16 +640,16 @@ a.corner-button {
   color: var(--secondary-text, #aaa);
 }
 
-/* --- Last Updated Text --- */
+/* --- Updated Timestamp --- */
 .la-updated {
   text-align: center;
   font-size: 0.8rem;
   color: var(--secondary-text, #999);
-  margin-top: 6px;
-  opacity: 0.9;
+  margin-top: 4px;
+  opacity: 0.85;
 }
 
-/* --- Platform Brand Glow for Active Icons --- */
+/* --- Brand Glow for Temporary Active Icons --- */
 .cluster-icon-svg.tiktok.active svg path {
   filter: drop-shadow(0 0 3px rgba(238, 29, 82, 0.6));
 }
@@ -652,11 +662,12 @@ a.corner-button {
   filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.4));
 }
 
-/* --- Mobile Optimization --- */
+/* --- Mobile Adjustments --- */
 @media (max-width: 500px) {
   .live-activity {
     padding: 14px;
     gap: 12px;
+    width: calc(100% - 24px);
   }
 
   .status-line {
