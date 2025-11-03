@@ -125,19 +125,35 @@ async function getDiscord() {
   }
 }
 
-/* ---------- TWITCH STATUS ---------- */
+/* ---------- TWITCH STATUS (Improved) ---------- */
 async function getTwitch() {
+  const username = CONFIG.twitch.username.toLowerCase();
+
   try {
-    const res = await fetch(`https://decapi.me/twitch/live/${CONFIG.twitch.username}`, { cache: "no-store" });
-    const t = await res.text();
-    if (t.toLowerCase().includes("is live")) {
-      setStatusLine("Now Live on Twitch");
+    // First attempt — DecAPI (fastest)
+    const res = await fetch(`https://decapi.me/twitch/live/${username}`, { cache: "no-store" });
+    const text = (await res.text()).toLowerCase();
+
+    if (text.includes("is live")) {
+      setStatusLine("🔴 Now Live on Twitch");
       return { text: "Now Live on Twitch", source: "twitch" };
     }
-  } catch {}
+
+    // Backup — fetch JSON via proxy (reliable)
+    const proxy = await fetch(`https://r.jina.ai/https://decapi.me/twitch/live/${username}`, { cache: "no-store" });
+    const backupText = (await proxy.text()).toLowerCase();
+
+    if (backupText.includes("is live")) {
+      setStatusLine("🔴 Now Live on Twitch");
+      return { text: "Now Live on Twitch", source: "twitch" };
+    }
+
+  } catch (err) {
+    console.warn("Twitch error:", err);
+  }
+
   return null;
 }
-
 /* ---------- REDDIT STATUS ---------- */
 async function getReddit() {
   try {
