@@ -3,7 +3,7 @@ import { db } from "./firebase-init.js";
 
 const CONFIG = {
   discord: { userId: "850815059093356594" },
-  twitch: { username: "calebkritzar" }, // 👈 change this
+  twitch: { username: "calebkritzar" },
 };
 
 const BRAND_COLORS = {
@@ -53,19 +53,25 @@ function setStatusLine(text, source = "manual") {
   updateLastUpdated();
 }
 
-/* ========== LAST UPDATED TIMER ========== */
+/* ========== LAST UPDATED TIMER (FIXED) ========== */
 function updateLastUpdated() {
   const el = $$("live-activity-updated");
-  if (!el || !lastUpdateTime) return;
-  const sec = Math.floor((Date.now() - lastUpdateTime) / 1000);
-  el.textContent =
-    sec < 10
-      ? "Updated just now"
-      : sec < 60
-      ? `Updated ${sec}s ago`
-      : sec < 3600
-      ? `Updated ${Math.floor(sec / 60)}m ago`
-      : `Updated ${Math.floor(sec / 3600)}h ago`;
+  if (!el) return;
+
+  if (!lastUpdateTime) {
+    el.textContent = "—";
+    return;
+  }
+
+  const seconds = Math.floor((Date.now() - lastUpdateTime) / 1000);
+  let label = "";
+  if (seconds < 5) label = "Updated just now";
+  else if (seconds < 60) label = `Updated ${seconds}s ago`;
+  else if (seconds < 3600) label = `Updated ${Math.floor(seconds / 60)}m ago`;
+  else if (seconds < 86400) label = `Updated ${Math.floor(seconds / 3600)}h ago`;
+  else label = `Updated ${Math.floor(seconds / 86400)}d ago`;
+
+  el.textContent = label;
 }
 
 /* ========== SPOTIFY PROGRESS BAR ========== */
@@ -101,7 +107,9 @@ async function getManualStatus() {
       const msg = snap.data().message?.trim();
       if (msg) return { text: msg, source: "manual" };
     }
-  } catch {}
+  } catch (e) {
+    console.warn("Firestore error:", e);
+  }
   return null;
 }
 
@@ -127,6 +135,7 @@ async function getDiscord() {
 
     $$("spotify-card").classList.add("hidden");
     $$("live-activity").classList.remove("spotify-active");
+
     const map = {
       online: "💬 Online on Discord",
       idle: "🌙 Idle on Discord",
@@ -142,20 +151,19 @@ async function getDiscord() {
   }
 }
 
-/* ========== TWITCH LIVE STATUS ========== */
+/* ========== TWITCH LIVE STATUS (WORKING FIX) ========== */
 async function getTwitch() {
   try {
     const username = CONFIG.twitch.username.toLowerCase();
-    // Using decapi.me to avoid exposing client secrets
     const res = await fetch(`https://decapi.me/twitch/live/${username}`, { cache: "no-store" });
     const text = await res.text();
 
     if (text.toLowerCase().includes("is live")) {
-      setStatusLine(`🔴 Live on Twitch`, "twitch");
-      return { text: "Live on Twitch", source: "twitch" };
-    } else {
-      return null;
+      setStatusLine(`🔴 Now Live on Twitch`, "twitch");
+      return { text: "Now Live on Twitch", source: "twitch" };
     }
+
+    return null;
   } catch (e) {
     console.warn("Twitch error:", e);
     return null;
