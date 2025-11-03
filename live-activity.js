@@ -3,6 +3,7 @@ import { db } from "./firebase-init.js";
 
 const CONFIG = {
   discord: { userId: "850815059093356594" },
+  twitch: { username: "calebkritzar" }, // 👈 change this
 };
 
 const BRAND_COLORS = {
@@ -104,7 +105,7 @@ async function getManualStatus() {
   return null;
 }
 
-/* ========== DISCORD (REAL SPOTIFY + STATUS) ========== */
+/* ========== DISCORD STATUS + SPOTIFY ========== */
 async function getDiscord() {
   try {
     const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}`, { cache: "no-store" });
@@ -141,9 +142,29 @@ async function getDiscord() {
   }
 }
 
+/* ========== TWITCH LIVE STATUS ========== */
+async function getTwitch() {
+  try {
+    const username = CONFIG.twitch.username.toLowerCase();
+    // Using decapi.me to avoid exposing client secrets
+    const res = await fetch(`https://decapi.me/twitch/live/${username}`, { cache: "no-store" });
+    const text = await res.text();
+
+    if (text.toLowerCase().includes("is live")) {
+      setStatusLine(`🔴 Live on Twitch`, "twitch");
+      return { text: "Live on Twitch", source: "twitch" };
+    } else {
+      return null;
+    }
+  } catch (e) {
+    console.warn("Twitch error:", e);
+    return null;
+  }
+}
+
 /* ========== COMBINE SOURCES ========== */
 async function updateLiveStatus() {
-  const sources = [getManualStatus, getDiscord];
+  const sources = [getManualStatus, getDiscord, getTwitch];
   const results = [];
   for (const fn of sources) {
     const res = await fn();
