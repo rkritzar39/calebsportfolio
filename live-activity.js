@@ -1,18 +1,8 @@
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
-/**
- * Live Activity – Clean Text-Only Version
- * No icons, single status line, improved offline handling.
- * Spotify card appears only when music is active.
- */
-
 const CONFIG = {
   discord: { userId: "850815059093356594" },
-  twitch: { username: "calebkritzar" },
-  reddit: { username: "Electronic_Row_1262" },
-  github: { username: "rkritzar39" },
-  tiktok: { username: "calebkritzar" },
 };
 
 let lastUpdateTime = null;
@@ -23,27 +13,26 @@ const $$ = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /* ---------- STATUS LINE ---------- */
-function setStatusLine(text, color = "var(--text-color)") {
+function setStatusLine(text, isVisible = true) {
   const txt = $$("status-line-text");
-  const ico = $$("status-icon-logo");
-  if (!txt || !ico) return;
+  const line = $$("status-line");
+  if (!txt || !line) return;
 
   txt.textContent = text || "Offline";
-  ico.style.display = "none"; // hide icon area
+  if (isVisible) {
+    line.classList.remove("hidden");
+  } else {
+    line.classList.add("hidden");
+  }
   lastUpdateTime = Date.now();
   updateLastUpdated();
 }
 
-/* ---------- UPDATED TIMER ---------- */
+/* ---------- LAST UPDATED ---------- */
 function updateLastUpdated() {
   const el = $$("live-activity-updated");
   if (!el) return;
-
-  if (!lastUpdateTime) {
-    el.textContent = "—";
-    return;
-  }
-
+  if (!lastUpdateTime) return (el.textContent = "—");
   const s = Math.floor((Date.now() - lastUpdateTime) / 1000);
   el.textContent =
     s < 5 ? "Updated just now" :
@@ -77,26 +66,49 @@ function setupProgress(startMs, endMs) {
   progressInterval = setInterval(tick, 1000);
 }
 
-/* ---------- FIRESTORE MANUAL STATUS ---------- */
-async function getManualStatus() {
-  try {
-    const snap = await getDoc(doc(db, "live_status", "current"));
-    if (snap.exists()) {
-      const msg = snap.data().message?.trim();
-      if (msg) return { text: msg, source: "manual" };
+/* ---------- DYNAMIC BACKGROUND + ACCENT ---------- */
+function updateDynamicColors(imageUrl) {
+  if (!imageUrl) return;
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = imageUrl;
+
+  img.onload = () => {
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+
+      let r = 0, g = 0, b = 0, count = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
+      }
+      r = Math.floor(r / count);
+      g = Math.floor(g / count);
+      b = Math.floor(b / count);
+
+      const gradient = `linear-gradient(180deg, rgba(${r},${g},${b},0.4), rgba(${r},${g},${b},0.15))`;
+      document.querySelector(".live-activity").style.setProperty("--dynamic-bg", gradient);
+      document.querySelector(".live-activity").style.setProperty("--dynamic-accent", `rgb(${r},${g},${b})`);
+    } catch (err) {
+      console.warn("Dynamic color extraction failed:", err);
     }
-  } catch {}
-  return null;
+  };
 }
 
-/* ---------- DISCORD / SPOTIFY STATUS ---------- */
+/* ---------- DISCORD (SPOTIFY) ACTIVITY ---------- */
 async function getDiscord() {
   try {
     const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}`, { cache: "no-store" });
     const { data } = await res.json();
     if (!data) return null;
 
-    // Spotify Activity
     if (data.spotify) {
       const sp = data.spotify;
       $$("spotify-card").classList.remove("hidden");
@@ -105,115 +117,27 @@ async function getDiscord() {
       $$("live-song-artist").textContent = sp.artist;
       currentSpotifyUrl = `https://open.spotify.com/track/${sp.track_id}`;
       setupProgress(sp.timestamps.start, sp.timestamps.end);
-      setStatusLine(`Listening to “${sp.song}” by ${sp.artist}`);
+      updateDynamicColors(sp.album_art_url);
+      setStatusLine(`Listening to “${sp.song}” by ${sp.artist}`, true);
       return { text: `Spotify — ${sp.song}`, source: "spotify" };
     }
 
-    // Regular Discord Presence
     $$("spotify-card").classList.add("hidden");
-    const map = {
-      online: "Online on Discord",
-      idle: "Idle on Discord",
-      dnd: "Do Not Disturb",
-      offline: "Offline",
-    };
-    const status = map[data.discord_status] || "Offline";
-    setStatusLine(status);
-    return { text: status, source: "discord" };
-  } catch {
+    setStatusLine("Offline", false);
+    return { text: "Offline", source: "manual" };
+  } catch (err) {
+    console.warn("Discord fetch error:", err);
     return null;
   }
 }
 
-/* ---------- TWITCH STATUS (Improved) ---------- */
-async function getTwitch() {
-  const username = CONFIG.twitch.username.toLowerCase();
-
-  try {
-    // First attempt — DecAPI (fastest)
-    const res = await fetch(`https://decapi.me/twitch/live/${username}`, { cache: "no-store" });
-    const text = (await res.text()).toLowerCase();
-
-    if (text.includes("is live")) {
-      setStatusLine("🔴 Now Live on Twitch");
-      return { text: "Now Live on Twitch", source: "twitch" };
-    }
-
-    // Backup — fetch JSON via proxy (reliable)
-    const proxy = await fetch(`https://r.jina.ai/https://decapi.me/twitch/live/${username}`, { cache: "no-store" });
-    const backupText = (await proxy.text()).toLowerCase();
-
-    if (backupText.includes("is live")) {
-      setStatusLine("🔴 Now Live on Twitch");
-      return { text: "Now Live on Twitch", source: "twitch" };
-    }
-
-  } catch (err) {
-    console.warn("Twitch error:", err);
-  }
-
-  return null;
-}
-/* ---------- REDDIT STATUS ---------- */
-async function getReddit() {
-  try {
-    const res = await fetch(`https://www.reddit.com/user/${CONFIG.reddit.username}/submitted.json?limit=1`, { cache: "no-store" });
-    const json = await res.json();
-    const post = json.data.children[0]?.data;
-    if (post) {
-      setStatusLine("Shared something on Reddit");
-      return { text: `Reddit — ${post.title}`, source: "reddit" };
-    }
-  } catch {}
-  return null;
-}
-
-/* ---------- GITHUB STATUS ---------- */
-async function getGitHub() {
-  try {
-    const res = await fetch(`https://api.github.com/users/${CONFIG.github.username}/events/public`, { cache: "no-store" });
-    const events = await res.json();
-    const evt = events.find((e) => ["PushEvent", "CreateEvent"].includes(e.type));
-    if (evt) {
-      setStatusLine("Committed code on GitHub");
-      return { text: "Committed on GitHub", source: "github" };
-    }
-  } catch {}
-  return null;
-}
-
-/* ---------- TIKTOK STATUS ---------- */
-async function getTikTok() {
-  try {
-    const res = await fetch(`https://r.jina.ai/http://www.tiktok.com/@${CONFIG.tiktok.username}`, { cache: "no-store" });
-    const html = await res.text();
-    if (html.includes("/video/")) {
-      setStatusLine("Posted a new TikTok video");
-      return { text: "Posted on TikTok", source: "tiktok" };
-    }
-  } catch {}
-  return null;
-}
-
-/* ---------- COMBINE SOURCES ---------- */
+/* ---------- UPDATE LOOP ---------- */
 async function updateLiveStatus() {
-  const sources = [getManualStatus, getDiscord, getTwitch, getTikTok, getReddit, getGitHub];
-  const results = [];
-
-  for (const fn of sources) {
-    const r = await fn();
-    if (r) results.push(r);
-  }
-
-  const main = results.find((r) => ["spotify", "discord"].includes(r.source)) || results[0];
-
-  if (main) {
-    setStatusLine(main.text);
-  } else {
+  const res = await getDiscord();
+  if (!res) {
     $$("spotify-card").classList.add("hidden");
-    setStatusLine("Offline");
+    setStatusLine("Offline", false);
   }
-
   $$("live-activity").classList.remove("hidden");
 }
 
