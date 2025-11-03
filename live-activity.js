@@ -1,28 +1,23 @@
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
-/* =========================
-   CONFIG: your handles
-========================= */
 const CONFIG = {
-  discord: { userId: "850815059093356594" }, // Lanyard for Spotify + presence
+  discord: { userId: "850815059093356594" },
   twitch:  { username: "calebkritzar" },
   reddit:  { username: "Electronic_Row_1262" },
   github:  { username: "rkritzar39" },
   tiktok:  { username: "calebkritzar" },
 };
 
-/* =========================
-   STATE
-========================= */
 let lastUpdateTime = null;
 let progressInterval = null;
 let currentSpotifyUrl = null;
 
-// For temp banners (TikTok / Reddit / GitHub)
-let tempBanner = null;          // { text: string, expiresAt: number }
+// Temporary banner tracking (TikTok, Reddit, GitHub)
+let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
+// Cache last seen IDs to avoid repeats
 let lastGitHubEventId = null;
 let lastRedditPostId  = null;
 let lastTikTokVideoId = null;
@@ -31,22 +26,22 @@ let twitchWasLive     = false;
 const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
-/* =========================
-   STATUS LINE (no icons)
-========================= */
+/* ======================================================= */
+/* === STATUS LINE ======================================= */
+/* ======================================================= */
 function setStatusLine(text, isVisible = true) {
   const txt  = $$("status-line-text");
   const line = $$("status-line");
   if (!txt || !line) return;
-  txt.textContent = text || "Offline";
+  txt.textContent = text || "No Current Active Activities";
   line.classList.toggle("hidden", !isVisible);
   lastUpdateTime = Date.now();
   updateLastUpdated();
 }
 
-/* =========================
-   LAST UPDATED LABEL
-========================= */
+/* ======================================================= */
+/* === LAST UPDATED LABEL ================================ */
+/* ======================================================= */
 function updateLastUpdated() {
   const el = $$("live-activity-updated");
   if (!el) return;
@@ -59,9 +54,9 @@ function updateLastUpdated() {
                `${Math.floor(s / 3600)}h ago`;
 }
 
-/* =========================
-   PROGRESS BAR (start/remaining/end)
-========================= */
+/* ======================================================= */
+/* === PROGRESS BAR ====================================== */
+/* ======================================================= */
 function setupProgress(startMs, endMs) {
   const bar       = $$("music-progress-bar");
   const elapsedEl = $$("elapsed-time");
@@ -86,14 +81,14 @@ function setupProgress(startMs, endMs) {
   progressInterval = setInterval(tick, 1000);
 }
 
-/* =========================
-   DYNAMIC COLORS (accent-first)
-========================= */
+/* ======================================================= */
+/* === DYNAMIC BACKGROUND + ACCENT ======================= */
+/* ======================================================= */
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  // Always start with the global accent color
+  // Default to accent color
   const accent = getComputedStyle(document.documentElement)
     .getPropertyValue("--accent-color")
     .trim() || "#1DB954";
@@ -136,34 +131,21 @@ function updateDynamicColors(imageUrl) {
   };
 }
 
-/* =========================
-   FIRESTORE MANUAL (optional)
-========================= */
-async function getManualStatus() {
-  try {
-    const snap = await getDoc(doc(db, "live_status", "current"));
-    if (snap.exists()) {
-      const msg = (snap.data().message || "").trim();
-      if (msg) return { text: msg, source: "manual" };
-    }
-  } catch {}
-  return null;
-}
-
-/* =========================
-   DISCORD (via Lanyard) → Spotify + presence
-========================= */
+/* ======================================================= */
+/* === DISCORD (Spotify + status) ======================== */
+/* ======================================================= */
 async function getDiscord() {
   try {
     const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}`, { cache: "no-store" });
     const { data } = await res.json();
     if (!data) return null;
 
+    // Spotify detected
     if (data.spotify) {
       const sp = data.spotify;
       $$("spotify-card").classList.remove("hidden");
-      $$("live-activity-cover").src   = sp.album_art_url;
-      $$("live-song-title").textContent  = sp.song;
+      $$("live-activity-cover").src = sp.album_art_url;
+      $$("live-song-title").textContent = sp.song;
       $$("live-song-artist").textContent = sp.artist;
       currentSpotifyUrl = `https://open.spotify.com/track/${sp.track_id}`;
       setupProgress(sp.timestamps.start, sp.timestamps.end);
@@ -171,39 +153,37 @@ async function getDiscord() {
       return { text: `Listening to “${sp.song}” by ${sp.artist}`, source: "spotify" };
     }
 
-    // No Spotify → hide card, use presence
     $$("spotify-card").classList.add("hidden");
     updateDynamicColors(null);
-    const map = { online: "Online on Discord", idle: "Idle on Discord", dnd: "Do Not Disturb", offline: "Offline" };
-    const status = map[data.discord_status] || "Offline";
-    return { text: status, source: data.discord_status === "offline" ? "manual" : "discord" };
+
+    // If offline
+    const map = {
+      online: "Online on Discord",
+      idle: "Idle on Discord",
+      dnd: "Do Not Disturb",
+      offline: "No Current Active Activities",
+    };
+    const status = map[data.discord_status] || "No Current Active Activities";
+    return { text: status, source: "discord" };
   } catch (e) {
     console.warn("Discord error:", e);
     return null;
   }
 }
 
-/* =========================
-   TWITCH (improved)
-========================= */
+/* ======================================================= */
+/* === TWITCH ============================================ */
+/* ======================================================= */
 async function getTwitch() {
   const u = (CONFIG.twitch.username || "").toLowerCase();
   if (!u) return null;
   try {
-    // Primary (fast)
     const r1 = await fetch(`https://decapi.me/twitch/live/${u}`, { cache: "no-store" });
     const t1 = (await r1.text()).toLowerCase();
-
-    // Fallback (proxy) — helps with caching/CORS edge cases
-    const liveText =
-      t1 ||
-      (await (await fetch(`https://r.jina.ai/https://decapi.me/twitch/live/${u}`, { cache: "no-store" })).text()).toLowerCase();
-
-    if (liveText.includes("is live")) {
+    if (t1.includes("is live")) {
       twitchWasLive = true;
       return { text: "🔴 Now Live on Twitch", source: "twitch" };
     }
-
     twitchWasLive = false;
   } catch (e) {
     console.warn("Twitch error:", e);
@@ -211,9 +191,9 @@ async function getTwitch() {
   return null;
 }
 
-/* =========================
-   REDDIT (latest post)
-========================= */
+/* ======================================================= */
+/* === REDDIT ============================================ */
+/* ======================================================= */
 async function getReddit() {
   const u = CONFIG.reddit.username;
   if (!u) return null;
@@ -221,10 +201,7 @@ async function getReddit() {
     const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, { cache: "no-store" });
     const j = await r.json();
     const post = j?.data?.children?.[0]?.data;
-    if (!post) return null;
-
-    // Only trigger when a *new* post id is seen
-    if (post.id && post.id !== lastRedditPostId) {
+    if (post && post.id !== lastRedditPostId) {
       lastRedditPostId = post.id;
       return { text: "Shared on Reddit", source: "reddit", isTemp: true };
     }
@@ -234,19 +211,19 @@ async function getReddit() {
   return null;
 }
 
-/* =========================
-   GITHUB (recent public events)
-========================= */
+/* ======================================================= */
+/* === GITHUB ============================================ */
+/* ======================================================= */
 async function getGitHub() {
   const u = CONFIG.github.username;
   if (!u) return null;
   try {
     const r = await fetch(`https://api.github.com/users/${u}/events/public`, { cache: "no-store" });
     const events = await r.json();
-    const evt = Array.isArray(events) ? events.find((e) => ["PushEvent", "CreateEvent", "PullRequestEvent"].includes(e.type)) : null;
-    if (!evt) return null;
-
-    if (evt.id && evt.id !== lastGitHubEventId) {
+    const evt = Array.isArray(events)
+      ? events.find((e) => ["PushEvent", "CreateEvent", "PullRequestEvent"].includes(e.type))
+      : null;
+    if (evt && evt.id !== lastGitHubEventId) {
       lastGitHubEventId = evt.id;
       return { text: "Committed on GitHub", source: "github", isTemp: true };
     }
@@ -256,22 +233,18 @@ async function getGitHub() {
   return null;
 }
 
-/* =========================
-   TIKTOK (profile scrape; detects new video)
-========================= */
+/* ======================================================= */
+/* === TIKTOK ============================================ */
+/* ======================================================= */
 async function getTikTok() {
   const u = CONFIG.tiktok.username;
   if (!u) return null;
   try {
-    const res  = await fetch(`https://r.jina.ai/http://www.tiktok.com/@${u}`, { cache: "no-store" });
+    const res = await fetch(`https://r.jina.ai/http://www.tiktok.com/@${u}`, { cache: "no-store" });
     const html = await res.text();
-
-    // try to pull the latest /video/<id>
     const m = html.match(/\/video\/(\d+)/);
     const videoId = m?.[1];
-    if (!videoId) return null;
-
-    if (videoId !== lastTikTokVideoId) {
+    if (videoId && videoId !== lastTikTokVideoId) {
       lastTikTokVideoId = videoId;
       return { text: "Posted on TikTok", source: "tiktok", isTemp: true };
     }
@@ -281,46 +254,46 @@ async function getTikTok() {
   return null;
 }
 
-/* =========================
-   APPLY DECISION / PRIORITY
-========================= */
+/* ======================================================= */
+/* === STATUS DECISION =================================== */
+/* ======================================================= */
 function applyStatusDecision({ main, twitchLive, temp }) {
-  // 1) Temporary banner wins briefly (but Spotify card still shows if active)
+  const spotifyCard = $$("spotify-card");
+
+  // Temporary banner (TikTok, Reddit, GitHub)
   if (temp && temp.text && Date.now() < temp.expiresAt) {
     setStatusLine(temp.text, true);
     return;
   }
 
-  // 2) Spotify (card) wins over everything else
+  // Spotify (main)
   if (main?.source === "spotify") {
     setStatusLine(main.text, true);
+    spotifyCard.classList.remove("hidden");
     return;
   }
 
-  // 3) Twitch live overrides Discord presence if no Spotify
+  // Twitch live
   if (twitchLive) {
     setStatusLine("🔴 Now Live on Twitch", true);
     return;
   }
 
-  // 4) Otherwise, Discord presence / manual / offline
-  if (main) {
-    const show = main.source !== "manual" || main.text !== "Offline";
-    setStatusLine(main.text, show);
+  // Discord active or manual
+  if (main && main.text && main.text !== "No Current Active Activities") {
+    setStatusLine(main.text, true);
     return;
   }
 
-  // 5) Fallback
-  setStatusLine("Offline", false);
+  // Default fallback — completely idle
+  setStatusLine("No Current Active Activities", true);
 }
 
-/* =========================
-   UPDATE LOOP
-========================= */
+/* ======================================================= */
+/* === UPDATE LOOP ======================================= */
+/* ======================================================= */
 async function updateLiveStatus() {
-  // Fetch in parallel
-  const [manual, discord, twitch, tiktok, reddit, github] = await Promise.all([
-    getManualStatus(),
+  const [discord, twitch, tiktok, reddit, github] = await Promise.all([
     getDiscord(),
     getTwitch(),
     getTikTok(),
@@ -328,25 +301,14 @@ async function updateLiveStatus() {
     getGitHub(),
   ]);
 
-  // Determine "main" (Spotify>Discord>Manual>Offline)
-  const main =
-    discord?.source === "spotify" ? discord :
-    discord || manual || { text: "Offline", source: "manual" };
+  const main = discord || { text: "No Current Active Activities", source: "manual" };
 
-  // Create/refresh temp banner if any new temp sources detected
+  // Track temporary banners
   const tempHit = [tiktok, reddit, github].find((r) => r && r.isTemp);
   if (tempHit) {
     tempBanner = { text: tempHit.text, expiresAt: Date.now() + TEMP_BANNER_MS };
   } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
     tempBanner = null;
-  }
-
-  // Show/hide Spotify card based on main
-  if (main?.source === "spotify") {
-    $$("spotify-card").classList.remove("hidden");
-  } else {
-    $$("spotify-card").classList.add("hidden");
-    updateDynamicColors(null);
   }
 
   applyStatusDecision({
@@ -358,9 +320,9 @@ async function updateLiveStatus() {
   $$("live-activity").classList.remove("hidden");
 }
 
-/* =========================
-   INIT
-========================= */
+/* ======================================================= */
+/* === INIT ============================================== */
+/* ======================================================= */
 document.addEventListener("DOMContentLoaded", () => {
   const card = $$("spotify-card");
   if (card) {
@@ -368,6 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank");
     });
   }
+
   updateLiveStatus();
   setInterval(updateLiveStatus, 10000);
   setInterval(updateLastUpdated, 1000);
