@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY SYSTEM =========================== */
+/* === 🎧 LIVE ACTIVITY SYSTEM (TEXT ONLY VERSION) ======== */
 /* ======================================================= */
 
 .live-activity {
@@ -486,106 +486,24 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === HEADER: ICON CLUSTER + STATUS LINE ================ */
-/* ======================================================= */
-
-.la-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.icon-cluster {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  max-width: 60%;
-}
-
-/* --- Icon Wrappers --- */
-.cluster-icon-svg {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transform: scale(0.8);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.cluster-icon-svg.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.cluster-icon-svg.main-icon {
-  transform: scale(1.05);
-}
-
-/* --- Actual SVG Icons --- */
-.cluster-icon-svg svg {
-  width: 22px;
-  height: 22px;
-  display: block;
-  color: currentColor;
-  fill: currentColor;
-}
-
-/* --- Brand Colors --- */
-.cluster-icon-svg.spotify svg { color: #1DB954; }
-.cluster-icon-svg.discord svg { color: #5865F2; }
-.cluster-icon-svg.tiktok svg { color: #EE1D52; }
-.cluster-icon-svg.reddit svg { color: #FF4500; }
-.cluster-icon-svg.github svg { color: #181717; }
-.cluster-icon-svg.twitch svg { color: #9146FF; }
-
-/* --- Glow Effects --- */
-.cluster-icon-svg.main-icon svg path {
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
-}
-
-.cluster-icon-svg.tiktok.active svg path {
-  filter: drop-shadow(0 0 3px rgba(238, 29, 82, 0.55));
-}
-
-.cluster-icon-svg.reddit.active svg path {
-  filter: drop-shadow(0 0 3px rgba(255, 69, 0, 0.55));
-}
-
-.cluster-icon-svg.github.active svg path {
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.35));
-}
-
-.cluster-icon-svg.twitch.active svg path {
-  filter: drop-shadow(0 0 3px rgba(145, 70, 255, 0.55));
-}
-
-/* ======================================================= */
 /* === STATUS LINE ======================================= */
 /* ======================================================= */
 
 .status-line {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 8px;
-  font-size: 0.95rem;
+  text-align: center;
+  font-size: 0.98rem;
   font-weight: 500;
   color: var(--text-color, #f5f5f5);
   text-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  line-height: 1.4;
 }
 
 .status-icon-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.status-icon-logo svg {
-  width: 22px;
-  height: 22px;
-  vertical-align: middle;
+  display: none; /* hidden permanently (no icons anymore) */
 }
 
 /* ======================================================= */
@@ -607,6 +525,10 @@ a.corner-button {
 
 .spotify-card.hidden {
   display: none !important;
+}
+
+.spotify-card:hover {
+  background: color-mix(in srgb, var(--content-bg) 92%, transparent);
 }
 
 .live-album-art {
@@ -692,21 +614,6 @@ a.corner-button {
   color: var(--secondary-text, #999);
   margin-top: 4px;
   opacity: 0.9;
-}
-
-/* ======================================================= */
-/* === TEMP ICON ANIMATION =============================== */
-/* ======================================================= */
-
-.cluster-icon-svg.temp-icon {
-  opacity: 0;
-  transform: scale(0.8);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.cluster-icon-svg.temp-icon.active {
-  opacity: 1;
-  transform: scale(1);
 }
 
 /* ======================================================= */
