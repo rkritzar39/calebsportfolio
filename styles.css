@@ -465,31 +465,30 @@ a.corner-button {
 .live-activity {
   position: relative;
   background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-  border-top: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
   border-radius: var(--border-radius-lg, 16px);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--border-color) 20%, transparent);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   padding: 18px 20px;
-  margin-top: 12px;
-  margin-bottom: 12px;
+  margin: 14px auto;
   width: calc(100% - 40px);
-  margin-left: auto;
-  margin-right: auto;
-  transition: all 0.3s ease;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 14px;
   overflow: hidden;
-  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .live-activity.hidden {
   display: none !important;
 }
 
-/* --- Header: Icon Cluster + Status Line --- */
+/* ======================================================= */
+/* === HEADER: ICON CLUSTER + STATUS LINE ================ */
+/* ======================================================= */
+
 .la-header {
   display: flex;
   align-items: center;
@@ -510,8 +509,8 @@ a.corner-button {
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transform: scale(0.85);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .cluster-icon-svg.active {
@@ -520,25 +519,49 @@ a.corner-button {
 }
 
 .cluster-icon-svg.main-icon {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .cluster-icon-svg svg {
   width: 22px;
   height: 22px;
+  display: block;
 }
 
-/* --- Status Line --- */
+/* Persistent + Temporary icon glow */
+.cluster-icon-svg.main-icon svg path {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.35));
+}
+
+.cluster-icon-svg.tiktok.active svg path {
+  filter: drop-shadow(0 0 3px rgba(238, 29, 82, 0.55));
+}
+
+.cluster-icon-svg.reddit.active svg path {
+  filter: drop-shadow(0 0 3px rgba(255, 69, 0, 0.55));
+}
+
+.cluster-icon-svg.github.active svg path {
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.35));
+}
+
+.cluster-icon-svg.twitch.active svg path {
+  filter: drop-shadow(0 0 3px rgba(145, 70, 255, 0.55));
+}
+
+/* ======================================================= */
+/* === STATUS LINE ======================================= */
+/* ======================================================= */
+
 .status-line {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
-  flex: 1;
   font-size: 0.95rem;
   font-weight: 500;
   color: var(--text-color, #f5f5f5);
   text-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-  justify-content: flex-end;
 }
 
 .status-icon-logo {
@@ -553,16 +576,19 @@ a.corner-button {
   vertical-align: middle;
 }
 
-/* --- Spotify Card --- */
+/* ======================================================= */
+/* === SPOTIFY CARD ====================================== */
+/* ======================================================= */
+
 .spotify-card {
   display: flex;
   align-items: center;
   gap: 16px;
   background: color-mix(in srgb, var(--content-bg) 88%, transparent);
-  border-radius: var(--border-radius-md, 12px);
+  border-radius: 12px;
   padding: 14px 16px;
-  transition: background 0.25s ease;
   cursor: pointer;
+  transition: background 0.25s ease;
   width: 100%;
   box-sizing: border-box;
 }
@@ -583,6 +609,7 @@ a.corner-button {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit;
 }
 
 .live-info {
@@ -598,20 +625,23 @@ a.corner-button {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.3;
 }
 
 .live-artist {
   font-size: 0.9rem;
   color: var(--secondary-text, #bbb);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.3;
 }
 
-/* --- Progress Bar --- */
+/* ======================================================= */
+/* === PROGRESS BAR ====================================== */
+/* ======================================================= */
+
 .music-progress-container {
   width: 100%;
   height: 5px;
@@ -640,34 +670,42 @@ a.corner-button {
   color: var(--secondary-text, #aaa);
 }
 
-/* --- Updated Timestamp --- */
+/* ======================================================= */
+/* === UPDATED TIMESTAMP ================================= */
+/* ======================================================= */
+
 .la-updated {
   text-align: center;
   font-size: 0.8rem;
   color: var(--secondary-text, #999);
   margin-top: 4px;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
-/* --- Brand Glow for Temporary Active Icons --- */
-.cluster-icon-svg.tiktok.active svg path {
-  filter: drop-shadow(0 0 3px rgba(238, 29, 82, 0.6));
+/* ======================================================= */
+/* === TEMP ICON ANIMATION =============================== */
+/* ======================================================= */
+
+.cluster-icon-svg.temp-icon {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.cluster-icon-svg.reddit.active svg path {
-  filter: drop-shadow(0 0 3px rgba(255, 69, 0, 0.6));
+.cluster-icon-svg.temp-icon.active {
+  opacity: 1;
+  transform: scale(1);
 }
 
-.cluster-icon-svg.github.active svg path {
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.4));
-}
+/* ======================================================= */
+/* === MOBILE RESPONSIVENESS ============================= */
+/* ======================================================= */
 
-/* --- Mobile Adjustments --- */
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .live-activity {
+    width: calc(100% - 24px);
     padding: 14px;
     gap: 12px;
-    width: calc(100% - 24px);
   }
 
   .status-line {
