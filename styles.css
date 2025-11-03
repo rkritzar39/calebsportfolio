@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — PERFECTLY SPACED VERSION ======= */
+/* === 🎧 LIVE ACTIVITY — FINAL PERFECT VERSION ========= */
 /* ======================================================= */
 
 .live-activity {
@@ -503,7 +503,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === SPOTIFY CARD CONTAINER ============================ */
+/* === SPOTIFY CARD ====================================== */
 /* ======================================================= */
 
 .spotify-card {
@@ -522,7 +522,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === ALBUM COVER (CENTERED + ENLARGED) ================= */
+/* === ALBUM COVER ======================================= */
 /* ======================================================= */
 
 .live-album-art {
@@ -540,7 +540,6 @@ a.corner-button {
 }
 
 .live-album-art img {
-  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -553,7 +552,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === "NO ACTIVITY" OVERLAY ============================= */
+/* === NO ACTIVITY OVERLAY =============================== */
 /* ======================================================= */
 
 .no-activity-overlay {
@@ -608,7 +607,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR (SPACED & GLOWING) =================== */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 .music-progress-container {
@@ -619,8 +618,8 @@ a.corner-button {
   border-radius: 50px;
   overflow: hidden;
   position: relative;
-  margin-top: 22px;
-  margin-bottom: 18px;
+  margin-top: 26px;
+  margin-bottom: 20px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
@@ -639,51 +638,46 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === TIME DISPLAY (SPACED + BALANCED) ================== */
+/* === TIME DISPLAY — LOCKED ALIGNMENT =================== */
 /* ======================================================= */
 
 .music-progress-time {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* ✅ even spacing regardless of time length */
   align-items: center;
   width: 100%;
   max-width: 480px;
-  padding: 0 12px;
+  padding: 0 14px;
   font-size: 0.96rem;
   font-weight: 500;
   color: color-mix(in srgb, var(--text-color) 80%, #ddd);
   opacity: 0.95;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-  margin-top: 4px;
 }
 
-.music-progress-time span {
-  flex: 1;
-  text-align: center;
-}
-
-/* Start time */
 .music-progress-time span:first-child {
+  justify-self: start;
   text-align: left;
   color: color-mix(in srgb, var(--text-color) 85%, #f0f0f0);
 }
 
-/* Remaining time (center) */
 .music-progress-time span:nth-child(2) {
+  justify-self: center;
   text-align: center;
   font-size: 0.9rem;
-  color: color-mix(in srgb, var(--text-color) 60%, #777);
+  color: color-mix(in srgb, var(--text-color) 60%, #888);
   font-weight: 400;
+  min-width: 48px; /* ✅ prevents jitter for shorter numbers */
 }
 
-/* End time */
 .music-progress-time span:last-child {
+  justify-self: end;
   text-align: right;
   color: color-mix(in srgb, var(--text-color) 85%, #f0f0f0);
 }
 
 /* ======================================================= */
-/* === LAST UPDATED LABEL ================================ */
+/* === LAST UPDATED ====================================== */
 /* ======================================================= */
 
 .la-updated {
@@ -728,15 +722,16 @@ a.corner-button {
 
   .music-progress-container {
     height: 8px;
-    margin-top: 20px;
-    margin-bottom: 16px;
+    margin-top: 22px;
+    margin-bottom: 18px;
     max-width: 340px;
   }
 
   .music-progress-time {
     font-size: 0.9rem;
     max-width: 340px;
-    padding: 0 8px;
+    padding: 0 10px;
+    grid-template-columns: 1fr auto 1fr;
   }
 }
 
