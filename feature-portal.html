@@ -1,154 +1,462 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Community Portal – Advanced Preview</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Community Portal – Feature Requests</title>
   <link rel="stylesheet" href="portal.css" />
 </head>
 <body>
   <div id="feature-portal" class="portal-wrapper">
+    <!-- Header -->
     <header class="portal-header glass">
-      <h1>🧠 Community Portal</h1>
-      <p>Submit new ideas, vote on suggestions, and track progress — all in one place.</p>
+      <div class="header-row">
+        <h1>🧠 Community Portal</h1>
+        <a class="home-link" href="/">← Back to Home</a>
+      </div>
+      <p>Submit ideas, report bugs, track progress, or contact me directly.</p>
     </header>
 
-    <!-- ===== Tabs ===== -->
-    <nav class="portal-tabs glass">
+    <!-- Tabs -->
+    <nav class="portal-tabs glass" aria-label="Sections">
       <button class="tab-btn active" data-tab="submit">📝 Submit</button>
       <button class="tab-btn" data-tab="requests">📋 Requests</button>
       <button class="tab-btn" data-tab="changelog">🧾 Changelog</button>
       <button class="tab-btn" data-tab="stats">📊 Stats</button>
+      <button class="tab-btn" data-tab="contact">✉️ Contact</button>
     </nav>
 
-    <!-- ===== Submit Section ===== -->
-    <section id="tab-submit" class="tab-content active glass">
-      <h2>Submit a Feature or Feedback</h2>
-      <form class="portal-form">
-        <div class="form-grid">
-          <label>
-            <span>Title</span>
-            <input type="text" placeholder="Summarize your idea..." />
-          </label>
+    <!-- SUBMIT -->
+    <section id="tab-submit" class="tab-content active glass" role="region" aria-labelledby="submit">
+      <h2 id="submit">Submit a Request</h2>
+      <form id="request-form" class="portal-form" novalidate>
+        <label>
+          <span>Title</span>
+          <input id="req-title" type="text" placeholder="Summarize your idea…" maxlength="60" required />
+          <small class="hint">Max 60 characters</small>
+        </label>
 
+        <div class="row-2">
           <label>
             <span>Category</span>
-            <select>
+            <select id="req-category">
               <option>Feature</option>
               <option>Bug</option>
               <option>Feedback</option>
+            </select>
+          </label>
+          <label>
+            <span>Priority</span>
+            <select id="req-priority">
+              <option>Normal</option>
+              <option>High</option>
+              <option>Low</option>
             </select>
           </label>
         </div>
 
         <label>
           <span>Description</span>
-          <textarea rows="4" placeholder="Describe your request in detail..."></textarea>
+          <textarea id="req-desc" rows="4" placeholder="Explain the idea or issue…" maxlength="500" required></textarea>
+          <small class="hint">Max 500 characters</small>
         </label>
 
-        <div class="form-grid">
+        <div class="row-2">
           <label>
             <span>Name (optional)</span>
-            <input type="text" placeholder="Your name or handle" />
+            <input id="req-name" type="text" placeholder="Your name or handle" maxlength="30" />
           </label>
           <label>
             <span>Email (optional)</span>
-            <input type="email" placeholder="you@example.com" />
+            <input id="req-email" type="email" placeholder="you@example.com" />
           </label>
         </div>
 
-        <button type="button" class="onyx-btn">🚀 Submit Request</button>
+        <div class="row-2">
+          <label class="checkbox">
+            <input id="req-consent" type="checkbox" />
+            <span>Allow follow-up if I have questions</span>
+          </label>
+          <span></span>
+        </div>
+
+        <button type="submit" class="onyx-btn">🚀 Submit</button>
+        <p id="req-status" class="req-status" role="status" aria-live="polite"></p>
       </form>
     </section>
 
-    <!-- ===== Requests Section ===== -->
-    <section id="tab-requests" class="tab-content glass">
-      <div class="requests-header">
-        <h2>All Requests</h2>
-        <input type="text" id="search" placeholder="Search requests..." />
+    <!-- REQUESTS -->
+    <section id="tab-requests" class="tab-content glass" role="region" aria-labelledby="requests">
+      <div class="requests-topbar">
+        <h2 id="requests">All Requests</h2>
+
+        <!-- Search + Sort -->
+        <div class="controls">
+          <div class="search-bar glass">
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.47 6.47 0 0 0 1.57-4.23A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20 15.5 14Zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14Z"/></svg>
+            <input id="search" type="text" placeholder="Search requests…" aria-label="Search requests" />
+          </div>
+
+          <label class="sort">
+            <span>Sort</span>
+            <select id="sort-select" aria-label="Sort requests">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="status">Status</option>
+              <option value="category">Category</option>
+              <option value="priority">Priority</option>
+            </select>
+          </label>
+        </div>
       </div>
 
-      <div id="request-list" class="request-list">
-        <!-- Example cards -->
-        <article class="request-card">
-          <h3>Custom Background Uploads</h3>
-          <p>Allow users to upload and set personal wallpapers.</p>
-          <div class="meta">
-            <span class="category">Feature</span>
-            <span class="status approved">✅ Approved</span>
-          </div>
-        </article>
+      <!-- Filter chips -->
+      <div class="chip-row">
+        <div class="chip-group" role="group" aria-label="Category filter">
+          <button class="chip active" data-cat="all">All</button>
+          <button class="chip" data-cat="Feature">Feature</button>
+          <button class="chip" data-cat="Bug">Bug</button>
+          <button class="chip" data-cat="Feedback">Feedback</button>
+        </div>
+        <div class="chip-group" role="group" aria-label="Status filter">
+          <button class="chip active" data-status="all">All</button>
+          <button class="chip" data-status="pending">Pending</button>
+          <button class="chip" data-status="approved">Approved</button>
+          <button class="chip" data-status="in_progress">In Progress</button>
+          <button class="chip" data-status="completed">Completed</button>
+          <button class="chip" data-status="rejected">Rejected</button>
+        </div>
+      </div>
 
-        <article class="request-card">
-          <h3>Music Visualizer Integration</h3>
-          <p>Add a reactive waveform behind the live activity card.</p>
-          <div class="meta">
-            <span class="category">Feature</span>
-            <span class="status in-progress">⚙️ In Progress</span>
-          </div>
-        </article>
+      <!-- Stats summary -->
+      <div class="stats-inline" id="stats-inline">
+        <!-- filled by JS -->
+      </div>
 
-        <article class="request-card">
-          <h3>Dark Mode Flicker Fix</h3>
-          <p>Eliminate flicker when toggling dark/light themes.</p>
-          <div class="meta">
-            <span class="category">Bug</span>
-            <span class="status completed">✅ Completed</span>
-          </div>
-        </article>
+      <!-- List -->
+      <div id="request-list" class="request-list" aria-live="polite">
+        <!-- cards injected by JS -->
+      </div>
 
-        <article class="request-card rejected">
-          <h3>Auto Play Music on Load</h3>
-          <p>Automatically start playing your current track when the page loads.</p>
-          <div class="meta">
-            <span class="category">Feature</span>
-            <span class="status rejected">❌ Rejected</span>
-          </div>
-          <small class="reason">Reason: Violates autoplay policies.</small>
-        </article>
+      <!-- Pagination -->
+      <div class="pagination">
+        <button id="load-more" class="ghost-btn">Load more</button>
       </div>
     </section>
 
-    <!-- ===== Changelog Section ===== -->
-    <section id="tab-changelog" class="tab-content glass">
-      <h2>Recent Updates</h2>
-      <ul class="changelog-list">
-        <li><strong>Nov 5, 2025:</strong> Portal interface mock-up added.</li>
-        <li><strong>Nov 3, 2025:</strong> Added compact mode & improved layout spacing.</li>
-        <li><strong>Oct 30, 2025:</strong> New blur control & animation settings.</li>
+    <!-- CHANGELOG -->
+    <section id="tab-changelog" class="tab-content glass" role="region" aria-labelledby="changelog">
+      <h2 id="changelog">Changelog</h2>
+      <ul class="changelog-list" id="changelog-list">
+        <li><strong>Nov 5, 2025:</strong> Advanced Portal preview with filters, sorting, stats, pagination, and contact tab.</li>
+        <li><strong>Nov 3, 2025:</strong> Compact mode & layout improvements.</li>
+        <li><strong>Oct 30, 2025:</strong> Blur control & reduced motion options.</li>
       </ul>
     </section>
 
-    <!-- ===== Stats Section ===== -->
-    <section id="tab-stats" class="tab-content glass">
-      <h2>Portal Stats</h2>
-      <div class="stats-grid">
-        <div class="stat">
-          <h3>42</h3><p>Total Requests</p>
-        </div>
-        <div class="stat">
-          <h3>12</h3><p>Approved</p>
-        </div>
-        <div class="stat">
-          <h3>7</h3><p>Completed</p>
-        </div>
-        <div class="stat">
-          <h3>3</h3><p>Rejected</p>
-        </div>
+    <!-- STATS -->
+    <section id="tab-stats" class="tab-content glass" role="region" aria-labelledby="stats">
+      <h2 id="stats">Portal Stats</h2>
+      <div class="stats-grid" id="stats-grid">
+        <!-- filled by JS -->
       </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="tab-contact" class="tab-content glass" role="region" aria-labelledby="contact">
+      <h2 id="contact">Contact</h2>
+      <p>Have a question or something private? Send a message here.</p>
+      <form id="contact-form" class="portal-form" novalidate>
+        <label>
+          <span>Name</span>
+          <input id="contact-name" type="text" placeholder="Your name" maxlength="40" />
+        </label>
+        <label>
+          <span>Email</span>
+          <input id="contact-email" type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          <span>Subject</span>
+          <select id="contact-subject">
+            <option>Support</option>
+            <option>Business</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>
+          <span>Message</span>
+          <textarea id="contact-message" rows="4" placeholder="Write your message…" maxlength="1000" required></textarea>
+        </label>
+        <button type="submit" class="onyx-btn">📨 Send</button>
+        <p id="contact-status" class="req-status" role="status" aria-live="polite"></p>
+      </form>
     </section>
   </div>
 
+  <!-- Request Details Modal -->
+  <dialog id="details-modal" class="glass">
+    <div class="modal-header">
+      <h3 id="modal-title">Request</h3>
+      <button id="modal-close" class="icon-btn" aria-label="Close">✕</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+    <div class="modal-footer">
+      <button id="modal-close-2" class="ghost-btn">Close</button>
+    </div>
+  </dialog>
+
   <script>
-    // tab switching animation
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+    /* ===========================
+       Mock data (preview only)
+       =========================== */
+    const MOCK = Array.from([
+      {title:"Custom Background Uploads",category:"Feature",priority:"Normal",desc:"Allow users to upload wallpapers.",status:"approved",reason:"",date:"2025-11-02"},
+      {title:"Music Visualizer Integration",category:"Feature",priority:"High",desc:"Reactive waveform behind live activity.",status:"in_progress",reason:"",date:"2025-11-01"},
+      {title:"Dark Mode Flicker Fix",category:"Bug",priority:"High",desc:"Eliminate flicker toggling themes.",status:"completed",reason:"",date:"2025-10-30"},
+      {title:"Auto Play Music on Load",category:"Feature",priority:"Low",desc:"Start playing on page load.",status:"rejected",reason:"Browser autoplay policies.",date:"2025-10-29"},
+      {title:"Improve Mobile Spacing",category:"Feedback",priority:"Normal",desc:"Cards are tight on small screens.",status:"pending",reason:"",date:"2025-11-05"},
+      {title:"Export Settings JSON",category:"Feature",priority:"Normal",desc:"Download all settings as JSON.",status:"approved",reason:"",date:"2025-10-28"},
+      {title:"Search Debounce",category:"Feature",priority:"Low",desc:"Debounce search for performance.",status:"pending",reason:"",date:"2025-11-04"},
+      {title:"Contact Auto-Reply",category:"Feature",priority:"Low",desc:"Show confirmation after sending.",status:"completed",reason:"",date:"2025-10-27"},
+      {title:"Accessibility Labels",category:"Bug",priority:"High",desc:"Add aria-labels for controls.",status:"approved",reason:"",date:"2025-11-03"},
+      {title:"Stats Overview Banner",category:"Feature",priority:"Normal",desc:"Show counts for statuses.",status:"in_progress",reason:"",date:"2025-10-31"},
+      {title:"Prevent Duplicate Requests",category:"Feature",priority:"High",desc:"Warn if similar title exists.",status:"pending",reason:"",date:"2025-11-05"}
+    ]);
+
+    /* ===========================
+       State
+       =========================== */
+    let state = {
+      query: "",
+      cat: "all",
+      status: "all",
+      sort: "newest",
+      page: 1,
+      pageSize: 6
+    };
+
+    /* ===========================
+       Helpers
+       =========================== */
+    const $ = (sel, ctx=document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+    const formatDate = (iso) => new Date(iso+"T00:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+    const bySort = (a,b) => {
+      if (state.sort==="newest") return b.date.localeCompare(a.date);
+      if (state.sort==="oldest") return a.date.localeCompare(b.date);
+      if (state.sort==="status") return a.status.localeCompare(b.status);
+      if (state.sort==="category") return a.category.localeCompare(b.category);
+      if (state.sort==="priority") {
+        const order = {High:0, Normal:1, Low:2};
+        return order[a.priority]-order[b.priority];
+      }
+      return 0;
+    };
+
+    const matchQuery = (r) => {
+      if (!state.query) return true;
+      const hay = (r.title+" "+r.desc+" "+r.category+" "+r.status+" "+r.priority).toLowerCase();
+      return hay.includes(state.query.toLowerCase());
+    };
+    const matchCat = (r) => state.cat==="all" ? true : r.category===state.cat;
+    const matchStatus = (r) => state.status==="all" ? true : r.status===state.status;
+
+    /* ===========================
+       Render
+       =========================== */
+    function computeFiltered() {
+      return MOCK.filter(matchQuery).filter(matchCat).filter(matchStatus).sort(bySort);
+    }
+
+    function renderStatsInline(list) {
+      const total = list.length;
+      const count = (s) => list.filter(x=>x.status===s).length;
+      $("#stats-inline").innerHTML = `
+        <div class="pill">Total: <strong>${total}</strong></div>
+        <div class="pill">Approved: <strong>${count("approved")}</strong></div>
+        <div class="pill">In Progress: <strong>${count("in_progress")}</strong></div>
+        <div class="pill">Completed: <strong>${count("completed")}</strong></div>
+        <div class="pill">Rejected: <strong>${count("rejected")}</strong></div>
+        <div class="pill">Pending: <strong>${count("pending")}</strong></div>
+      `;
+    }
+
+    function renderStatsGrid() {
+      const list = MOCK;
+      const total = list.length;
+      const by = (key,val) => list.filter(x=>x[key]===val).length;
+      $("#stats-grid").innerHTML = `
+        <div class="stat"><h3>${total}</h3><p>Total Requests</p></div>
+        <div class="stat"><h3>${by("status","approved")}</h3><p>Approved</p></div>
+        <div class="stat"><h3>${by("status","in_progress")}</h3><p>In Progress</p></div>
+        <div class="stat"><h3>${by("status","completed")}</h3><p>Completed</p></div>
+        <div class="stat"><h3>${by("status","rejected")}</h3><p>Rejected</p></div>
+        <div class="stat"><h3>${by("status","pending")}</h3><p>Pending</p></div>
+      `;
+    }
+
+    function statusLabel(s) {
+      return {
+        approved: "✅ Approved",
+        in_progress: "⚙️ In Progress",
+        completed: "✅ Completed",
+        rejected: "❌ Rejected",
+        pending: "• Pending"
+      }[s] || s;
+    }
+
+    function cardHTML(r, idx) {
+      const cls = `request-card ${r.status==="rejected"?"rejected":""}`;
+      const st = `status ${r.status.replace("_","-")}`;
+      const reason = r.reason ? `<small class="reason">Reason: ${r.reason}</small>` : "";
+      return `
+        <article class="${cls}" data-idx="${idx}" tabindex="0" role="button" aria-label="Open request details: ${r.title}">
+          <h3>${r.title}</h3>
+          <p>${r.desc}</p>
+          <div class="meta">
+            <span class="badge">${r.category}</span>
+            <span class="badge ${r.priority.toLowerCase()}">${r.priority}</span>
+            <span class="${st}">${statusLabel(r.status)}</span>
+            <span class="date">Submitted: ${formatDate(r.date)}</span>
+          </div>
+          ${reason}
+        </article>
+      `;
+    }
+
+    function renderList() {
+      const all = computeFiltered();
+      renderStatsInline(all);
+
+      const start = 0;
+      const end = state.page * state.pageSize;
+      const pageItems = all.slice(start, end);
+
+      $("#request-list").innerHTML = pageItems.map((r,i)=>cardHTML(r,i)).join("") || `<p class="muted">No matching requests.</p>`;
+      $("#load-more").style.display = end < all.length ? "inline-flex" : "none";
+    }
+
+    /* ===========================
+       Modal
+       =========================== */
+    const modal = $("#details-modal");
+    const openModal = (r) => {
+      $("#modal-title").textContent = r.title;
+      $("#modal-body").innerHTML = `
+        <div class="kv"><span>Category</span><strong>${r.category}</strong></div>
+        <div class="kv"><span>Priority</span><strong>${r.priority}</strong></div>
+        <div class="kv"><span>Status</span><strong>${statusLabel(r.status)}</strong></div>
+        <div class="kv"><span>Date</span><strong>${formatDate(r.date)}</strong></div>
+        <p class="mt">${r.desc}</p>
+        ${r.reason ? `<p class="muted">Reject reason: ${r.reason}</p>` : ""}
+      `;
+      modal.showModal();
+    };
+    modal.addEventListener("click", (e) => {
+      const rect = modal.getBoundingClientRect();
+      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) modal.close();
+    });
+    $("#modal-close").onclick = $("#modal-close-2").onclick = ()=>modal.close();
+
+    /* ===========================
+       Wire up interactions
+       =========================== */
+    // tabs
+    $$(".tab-btn").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        $$(".tab-btn").forEach(b=>b.classList.remove("active"));
+        $$(".tab-content").forEach(c=>c.classList.remove("active"));
         btn.classList.add("active");
-        document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
+        $("#tab-"+btn.dataset.tab).classList.add("active");
+        window.scrollTo({top:0,behavior:"smooth"});
       });
     });
+
+    // search
+    $("#search").addEventListener("input",(e)=>{ state.query = e.target.value.trim(); state.page=1; renderList(); });
+
+    // sort
+    $("#sort-select").addEventListener("change",(e)=>{ state.sort = e.target.value; state.page=1; renderList(); });
+
+    // category chips
+    $$("[data-cat]").forEach(ch=>{
+      ch.addEventListener("click",()=>{
+        $$("[data-cat]").forEach(c=>c.classList.remove("active"));
+        ch.classList.add("active");
+        state.cat = ch.dataset.cat;
+        state.page=1;
+        renderList();
+      });
+    });
+
+    // status chips
+    $$("[data-status]").forEach(ch=>{
+      ch.addEventListener("click",()=>{
+        $$("[data-status]").forEach(c=>c.classList.remove("active"));
+        ch.classList.add("active");
+        state.status = ch.dataset.status;
+        state.page=1;
+        renderList();
+      });
+    });
+
+    // pagination
+    $("#load-more").addEventListener("click",()=>{ state.page++; renderList(); });
+
+    // list click -> modal
+    $("#request-list").addEventListener("click",(e)=>{
+      const card = e.target.closest(".request-card");
+      if (!card) return;
+      const idx = +card.dataset.idx;
+      const item = computeFiltered()[idx];
+      if (item) openModal(item);
+    });
+    $("#request-list").addEventListener("keydown",(e)=>{
+      if (e.key==="Enter" || e.key===" ") {
+        const card = e.target.closest(".request-card");
+        if (!card) return;
+        const idx = +card.dataset.idx;
+        const item = computeFiltered()[idx];
+        if (item) { e.preventDefault(); openModal(item); }
+      }
+    });
+
+    // submit (preview only)
+    $("#request-form").addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const title = $("#req-title").value.trim();
+      const desc = $("#req-desc").value.trim();
+      if (!title || !desc) { $("#req-status").textContent = "Please fill in the required fields."; return; }
+      const doc = {
+        title,
+        category: $("#req-category").value,
+        priority: $("#req-priority").value,
+        desc,
+        status: "pending",
+        reason: "",
+        date: new Date().toISOString().slice(0,10)
+      };
+      MOCK.unshift(doc);
+      $("#req-status").textContent = "✅ Request submitted (preview).";
+      e.target.reset();
+      state.page=1;
+      renderList();
+      renderStatsGrid();
+    });
+
+    // contact (preview only)
+    $("#contact-form").addEventListener("submit",(e)=>{
+      e.preventDefault();
+      const email = $("#contact-email").value.trim();
+      const msg = $("#contact-message").value.trim();
+      if (!email || !msg) { $("#contact-status").textContent = "Please fill in email and message."; return; }
+      $("#contact-status").textContent = "✅ Message sent (preview).";
+      e.target.reset();
+    });
+
+    // initial render
+    renderList();
+    renderStatsGrid();
   </script>
 </body>
 </html>
