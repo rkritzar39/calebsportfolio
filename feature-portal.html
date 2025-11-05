@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Community Portal – Feature Requests</title>
+  <title>Community Portal – Caleb</title>
   <link rel="stylesheet" href="portal.css" />
 </head>
 <body>
@@ -14,7 +14,7 @@
         <h1>🧠 Community Portal</h1>
         <a class="home-link" href="/">← Back to Home</a>
       </div>
-      <p>Submit ideas, report bugs, track progress, or contact me directly.</p>
+      <p>Submit ideas, browse requests, see the roadmap & status, and contact me.</p>
     </header>
 
     <!-- Tabs -->
@@ -22,8 +22,13 @@
       <button class="tab-btn active" data-tab="submit">📝 Submit</button>
       <button class="tab-btn" data-tab="requests">📋 Requests</button>
       <button class="tab-btn" data-tab="changelog">🧾 Changelog</button>
+      <button class="tab-btn" data-tab="roadmap">🗺️ Roadmap</button>
+      <button class="tab-btn" data-tab="kb">🧠 Knowledge Base</button>
       <button class="tab-btn" data-tab="stats">📊 Stats</button>
+      <button class="tab-btn" data-tab="status">⚙️ Status</button>
       <button class="tab-btn" data-tab="contact">✉️ Contact</button>
+      <button class="tab-btn" data-tab="about">🪪 About</button>
+      <button class="tab-btn" data-tab="privacy">🔐 Privacy</button>
     </nav>
 
     <!-- SUBMIT -->
@@ -72,13 +77,10 @@
           </label>
         </div>
 
-        <div class="row-2">
-          <label class="checkbox">
-            <input id="req-consent" type="checkbox" />
-            <span>Allow follow-up if I have questions</span>
-          </label>
-          <span></span>
-        </div>
+        <label class="checkbox">
+          <input id="req-consent" type="checkbox" />
+          <span>Allow follow-up if I have questions</span>
+        </label>
 
         <button type="submit" class="onyx-btn">🚀 Submit</button>
         <p id="req-status" class="req-status" role="status" aria-live="polite"></p>
@@ -90,7 +92,6 @@
       <div class="requests-topbar">
         <h2 id="requests">All Requests</h2>
 
-        <!-- Search + Sort -->
         <div class="controls">
           <div class="search-bar glass">
             <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.47 6.47 0 0 0 1.57-4.23A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79L20 21.5 21.5 20 15.5 14Zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14Z"/></svg>
@@ -129,14 +130,10 @@
       </div>
 
       <!-- Stats summary -->
-      <div class="stats-inline" id="stats-inline">
-        <!-- filled by JS -->
-      </div>
+      <div class="stats-inline" id="stats-inline"></div>
 
       <!-- List -->
-      <div id="request-list" class="request-list" aria-live="polite">
-        <!-- cards injected by JS -->
-      </div>
+      <div id="request-list" class="request-list" aria-live="polite"></div>
 
       <!-- Pagination -->
       <div class="pagination">
@@ -148,18 +145,82 @@
     <section id="tab-changelog" class="tab-content glass" role="region" aria-labelledby="changelog">
       <h2 id="changelog">Changelog</h2>
       <ul class="changelog-list" id="changelog-list">
-        <li><strong>Nov 5, 2025:</strong> Advanced Portal preview with filters, sorting, stats, pagination, and contact tab.</li>
+        <li><strong>Nov 5, 2025:</strong> Portal preview with filters, sorting, stats, roadmap, status and contact.</li>
         <li><strong>Nov 3, 2025:</strong> Compact mode & layout improvements.</li>
         <li><strong>Oct 30, 2025:</strong> Blur control & reduced motion options.</li>
       </ul>
     </section>
 
+    <!-- ROADMAP -->
+    <section id="tab-roadmap" class="tab-content glass" role="region" aria-labelledby="roadmap">
+      <h2 id="roadmap">Public Roadmap</h2>
+      <div class="roadmap-grid">
+        <div class="roadmap-column">
+          <h3>🧠 Planned</h3>
+          <div class="roadmap-card">“Export Settings JSON” <small>#REQ-106</small></div>
+          <div class="roadmap-card">“Improved Mobile Spacing” <small>#REQ-113</small></div>
+          <div class="roadmap-card">“Status Filter Buttons” <small>#REQ-118</small></div>
+        </div>
+        <div class="roadmap-column">
+          <h3>⚙️ In Progress</h3>
+          <div class="roadmap-card">“Music Visualizer Integration” <small>#REQ-102</small></div>
+          <div class="roadmap-card">“Stats Overview Banner” <small>#REQ-109</small></div>
+        </div>
+        <div class="roadmap-column">
+          <h3>✅ Completed</h3>
+          <div class="roadmap-card done">“Dark Mode Flicker Fix” <small>#BUG-091</small></div>
+          <div class="roadmap-card done">“Contact Auto-Reply” <small>#REQ-095</small></div>
+        </div>
+      </div>
+      <p class="muted mt">Roadmap items are examples for preview. Final items will sync from request statuses.</p>
+    </section>
+
+    <!-- KNOWLEDGE BASE -->
+    <section id="tab-kb" class="tab-content glass" role="region" aria-labelledby="kb">
+      <h2 id="kb">Knowledge Base</h2>
+      <div class="kb-list">
+        <details open>
+          <summary>How do I submit a great feature request?</summary>
+          <p>Include a short title, clear description, why it helps, and any examples. One idea per request is best.</p>
+        </details>
+        <details>
+          <summary>What do the statuses mean?</summary>
+          <ul>
+            <li><strong>Pending</strong> — waiting for review</li>
+            <li><strong>Approved</strong> — accepted for the roadmap</li>
+            <li><strong>In Progress</strong> — actively being built</li>
+            <li><strong>Completed</strong> — shipped!</li>
+            <li><strong>Rejected</strong> — not a fit right now (may include a reason)</li>
+          </ul>
+        </details>
+        <details>
+          <summary>Why was my request rejected?</summary>
+          <p>Usually overlap with another request, technical constraints, or not aligned with current goals.</p>
+        </details>
+        <details>
+          <summary>Do I need to log in?</summary>
+          <p>No. Submissions are open. You may optionally include an email for follow-up.</p>
+        </details>
+      </div>
+    </section>
+
     <!-- STATS -->
     <section id="tab-stats" class="tab-content glass" role="region" aria-labelledby="stats">
       <h2 id="stats">Portal Stats</h2>
-      <div class="stats-grid" id="stats-grid">
-        <!-- filled by JS -->
-      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+    </section>
+
+    <!-- STATUS -->
+    <section id="tab-status" class="tab-content glass" role="region" aria-labelledby="status">
+      <h2 id="status">System Status</h2>
+      <ul class="status-list">
+        <li class="ok">🟢 Website — Operational</li>
+        <li class="ok">🟢 Database — Operational</li>
+        <li class="ok">🟢 Live Activity — Operational</li>
+        <li class="warn">🟠 TikTok Integration — Rate limited</li>
+        <li class="down">🔴 Discord Status — Temporarily unavailable</li>
+      </ul>
+      <p class="muted mt">These are placeholders. Later, this can update automatically from health checks.</p>
     </section>
 
     <!-- CONTACT -->
@@ -191,9 +252,41 @@
         <p id="contact-status" class="req-status" role="status" aria-live="polite"></p>
       </form>
     </section>
+
+    <!-- ABOUT -->
+    <section id="tab-about" class="tab-content glass" role="region" aria-labelledby="about">
+      <h2 id="about">About This Portal</h2>
+      <div class="about-grid">
+        <div class="about-card">
+          <h3>Mission</h3>
+          <p>Make feedback simple, transparent, and useful — so the site keeps getting better.</p>
+        </div>
+        <div class="about-card">
+          <h3>Stack</h3>
+          <p>HTML, CSS, JS (Onyx UI). Planned: Firebase Auth + Firestore for storage.</p>
+        </div>
+        <div class="about-card">
+          <h3>Version</h3>
+          <p>Preview 1.0 — Nov 2025</p>
+        </div>
+      </div>
+      <p class="muted mt">Questions or ideas? Use the Contact tab or submit a request.</p>
+    </section>
+
+    <!-- PRIVACY -->
+    <section id="tab-privacy" class="tab-content glass" role="region" aria-labelledby="privacy">
+      <h2 id="privacy">Privacy & Policy</h2>
+      <ul class="policy-list">
+        <li><strong>What we collect:</strong> Feature requests (public) and contact messages (private).</li>
+        <li><strong>How it’s used:</strong> To improve the site and respond to messages.</li>
+        <li><strong>Retention:</strong> Requests remain visible; contact messages are stored privately.</li>
+        <li><strong>Deletion:</strong> To request removal of a message, contact me via the Contact tab.</li>
+      </ul>
+      <p class="muted mt">This is a simple, human-readable summary. A full policy page can be linked here later.</p>
+    </section>
   </div>
 
-  <!-- Request Details Modal -->
+  <!-- Details Modal -->
   <dialog id="details-modal" class="glass">
     <div class="modal-header">
       <h3 id="modal-title">Request</h3>
@@ -206,257 +299,165 @@
   </dialog>
 
   <script>
-    /* ===========================
-       Mock data (preview only)
-       =========================== */
-    const MOCK = Array.from([
+    /* ===== Mock data (preview) ===== */
+    const MOCK = [
       {title:"Custom Background Uploads",category:"Feature",priority:"Normal",desc:"Allow users to upload wallpapers.",status:"approved",reason:"",date:"2025-11-02"},
       {title:"Music Visualizer Integration",category:"Feature",priority:"High",desc:"Reactive waveform behind live activity.",status:"in_progress",reason:"",date:"2025-11-01"},
       {title:"Dark Mode Flicker Fix",category:"Bug",priority:"High",desc:"Eliminate flicker toggling themes.",status:"completed",reason:"",date:"2025-10-30"},
       {title:"Auto Play Music on Load",category:"Feature",priority:"Low",desc:"Start playing on page load.",status:"rejected",reason:"Browser autoplay policies.",date:"2025-10-29"},
-      {title:"Improve Mobile Spacing",category:"Feedback",priority:"Normal",desc:"Cards are tight on small screens.",status:"pending",reason:"",date:"2025-11-05"},
+      {title:"Improve Mobile Spacing",category:"Feedback",priority:"Normal",desc:"Cards feel tight on small screens.",status:"pending",reason:"",date:"2025-11-05"},
       {title:"Export Settings JSON",category:"Feature",priority:"Normal",desc:"Download all settings as JSON.",status:"approved",reason:"",date:"2025-10-28"},
       {title:"Search Debounce",category:"Feature",priority:"Low",desc:"Debounce search for performance.",status:"pending",reason:"",date:"2025-11-04"},
       {title:"Contact Auto-Reply",category:"Feature",priority:"Low",desc:"Show confirmation after sending.",status:"completed",reason:"",date:"2025-10-27"},
       {title:"Accessibility Labels",category:"Bug",priority:"High",desc:"Add aria-labels for controls.",status:"approved",reason:"",date:"2025-11-03"},
       {title:"Stats Overview Banner",category:"Feature",priority:"Normal",desc:"Show counts for statuses.",status:"in_progress",reason:"",date:"2025-10-31"},
       {title:"Prevent Duplicate Requests",category:"Feature",priority:"High",desc:"Warn if similar title exists.",status:"pending",reason:"",date:"2025-11-05"}
-    ]);
+    ];
 
-    /* ===========================
-       State
-       =========================== */
-    let state = {
-      query: "",
-      cat: "all",
-      status: "all",
-      sort: "newest",
-      page: 1,
-      pageSize: 6
-    };
-
-    /* ===========================
-       Helpers
-       =========================== */
-    const $ = (sel, ctx=document) => ctx.querySelector(sel);
-    const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
-    const formatDate = (iso) => new Date(iso+"T00:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
-    const bySort = (a,b) => {
-      if (state.sort==="newest") return b.date.localeCompare(a.date);
-      if (state.sort==="oldest") return a.date.localeCompare(b.date);
-      if (state.sort==="status") return a.status.localeCompare(b.status);
-      if (state.sort==="category") return a.category.localeCompare(b.category);
-      if (state.sort==="priority") {
-        const order = {High:0, Normal:1, Low:2};
-        return order[a.priority]-order[b.priority];
-      }
+    /* ===== State & helpers ===== */
+    let state = { query:"", cat:"all", status:"all", sort:"newest", page:1, pageSize:6 };
+    const $ = (s,c=document)=>c.querySelector(s);
+    const $$ = (s,c=document)=>Array.from(c.querySelectorAll(s));
+    const fmtDate = iso => new Date(iso+"T00:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+    const sortFn = (a,b)=>{
+      if(state.sort==="newest") return b.date.localeCompare(a.date);
+      if(state.sort==="oldest") return a.date.localeCompare(b.date);
+      if(state.sort==="status") return a.status.localeCompare(b.status);
+      if(state.sort==="category") return a.category.localeCompare(b.category);
+      if(state.sort==="priority"){const o={High:0,Normal:1,Low:2};return o[a.priority]-o[b.priority];}
       return 0;
     };
+    const statusLabel = s=>({approved:"✅ Approved",in_progress:"⚙️ In Progress",completed:"✅ Completed",rejected:"❌ Rejected",pending:"• Pending"}[s]||s);
 
-    const matchQuery = (r) => {
-      if (!state.query) return true;
-      const hay = (r.title+" "+r.desc+" "+r.category+" "+r.status+" "+r.priority).toLowerCase();
-      return hay.includes(state.query.toLowerCase());
-    };
-    const matchCat = (r) => state.cat==="all" ? true : r.category===state.cat;
-    const matchStatus = (r) => state.status==="all" ? true : r.status===state.status;
-
-    /* ===========================
-       Render
-       =========================== */
-    function computeFiltered() {
-      return MOCK.filter(matchQuery).filter(matchCat).filter(matchStatus).sort(bySort);
+    function filtered(){
+      return MOCK
+        .filter(r=>!state.query || (r.title+" "+r.desc+" "+r.category+" "+r.status+" "+r.priority).toLowerCase().includes(state.query.toLowerCase()))
+        .filter(r=>state.cat==="all"||r.category===state.cat)
+        .filter(r=>state.status==="all"||r.status===state.status)
+        .sort(sortFn);
     }
 
-    function renderStatsInline(list) {
-      const total = list.length;
-      const count = (s) => list.filter(x=>x.status===s).length;
+    function renderStatsInline(list){
+      const count = s=>list.filter(x=>x.status===s).length;
       $("#stats-inline").innerHTML = `
-        <div class="pill">Total: <strong>${total}</strong></div>
+        <div class="pill">Total: <strong>${list.length}</strong></div>
         <div class="pill">Approved: <strong>${count("approved")}</strong></div>
         <div class="pill">In Progress: <strong>${count("in_progress")}</strong></div>
         <div class="pill">Completed: <strong>${count("completed")}</strong></div>
         <div class="pill">Rejected: <strong>${count("rejected")}</strong></div>
-        <div class="pill">Pending: <strong>${count("pending")}</strong></div>
-      `;
+        <div class="pill">Pending: <strong>${count("pending")}</strong></div>`;
     }
-
-    function renderStatsGrid() {
-      const list = MOCK;
-      const total = list.length;
-      const by = (key,val) => list.filter(x=>x[key]===val).length;
+    function renderStatsGrid(){
+      const list = MOCK, by=(k,v)=>list.filter(x=>x[k]===v).length;
       $("#stats-grid").innerHTML = `
-        <div class="stat"><h3>${total}</h3><p>Total Requests</p></div>
+        <div class="stat"><h3>${list.length}</h3><p>Total Requests</p></div>
         <div class="stat"><h3>${by("status","approved")}</h3><p>Approved</p></div>
         <div class="stat"><h3>${by("status","in_progress")}</h3><p>In Progress</p></div>
         <div class="stat"><h3>${by("status","completed")}</h3><p>Completed</p></div>
         <div class="stat"><h3>${by("status","rejected")}</h3><p>Rejected</p></div>
-        <div class="stat"><h3>${by("status","pending")}</h3><p>Pending</p></div>
-      `;
+        <div class="stat"><h3>${by("status","pending")}</h3><p>Pending</p></div>`;
     }
 
-    function statusLabel(s) {
-      return {
-        approved: "✅ Approved",
-        in_progress: "⚙️ In Progress",
-        completed: "✅ Completed",
-        rejected: "❌ Rejected",
-        pending: "• Pending"
-      }[s] || s;
-    }
-
-    function cardHTML(r, idx) {
+    function cardHTML(r,i){
       const cls = `request-card ${r.status==="rejected"?"rejected":""}`;
       const st = `status ${r.status.replace("_","-")}`;
-      const reason = r.reason ? `<small class="reason">Reason: ${r.reason}</small>` : "";
       return `
-        <article class="${cls}" data-idx="${idx}" tabindex="0" role="button" aria-label="Open request details: ${r.title}">
+        <article class="${cls}" data-idx="${i}" tabindex="0" role="button" aria-label="Open request details: ${r.title}">
           <h3>${r.title}</h3>
           <p>${r.desc}</p>
           <div class="meta">
             <span class="badge">${r.category}</span>
             <span class="badge ${r.priority.toLowerCase()}">${r.priority}</span>
             <span class="${st}">${statusLabel(r.status)}</span>
-            <span class="date">Submitted: ${formatDate(r.date)}</span>
+            <span class="date">Submitted: ${fmtDate(r.date)}</span>
           </div>
-          ${reason}
-        </article>
-      `;
+          ${r.reason?`<small class="reason">Reason: ${r.reason}</small>`:""}
+        </article>`;
     }
 
-    function renderList() {
-      const all = computeFiltered();
+    function renderList(){
+      const all = filtered();
       renderStatsInline(all);
-
-      const start = 0;
-      const end = state.page * state.pageSize;
-      const pageItems = all.slice(start, end);
-
-      $("#request-list").innerHTML = pageItems.map((r,i)=>cardHTML(r,i)).join("") || `<p class="muted">No matching requests.</p>`;
+      const end = state.page*state.pageSize;
+      const items = all.slice(0,end);
+      $("#request-list").innerHTML = items.map((r,i)=>cardHTML(r,i)).join("") || `<p class="muted">No matching requests.</p>`;
       $("#load-more").style.display = end < all.length ? "inline-flex" : "none";
     }
 
-    /* ===========================
-       Modal
-       =========================== */
+    /* ===== Modal ===== */
     const modal = $("#details-modal");
-    const openModal = (r) => {
+    const openModal = r=>{
       $("#modal-title").textContent = r.title;
       $("#modal-body").innerHTML = `
         <div class="kv"><span>Category</span><strong>${r.category}</strong></div>
         <div class="kv"><span>Priority</span><strong>${r.priority}</strong></div>
         <div class="kv"><span>Status</span><strong>${statusLabel(r.status)}</strong></div>
-        <div class="kv"><span>Date</span><strong>${formatDate(r.date)}</strong></div>
+        <div class="kv"><span>Date</span><strong>${fmtDate(r.date)}</strong></div>
         <p class="mt">${r.desc}</p>
-        ${r.reason ? `<p class="muted">Reject reason: ${r.reason}</p>` : ""}
-      `;
+        ${r.reason?`<p class="muted">Reject reason: ${r.reason}</p>`:""}`;
       modal.showModal();
     };
-    modal.addEventListener("click", (e) => {
-      const rect = modal.getBoundingClientRect();
-      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) modal.close();
-    });
     $("#modal-close").onclick = $("#modal-close-2").onclick = ()=>modal.close();
-
-    /* ===========================
-       Wire up interactions
-       =========================== */
-    // tabs
-    $$(".tab-btn").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        $$(".tab-btn").forEach(b=>b.classList.remove("active"));
-        $$(".tab-content").forEach(c=>c.classList.remove("active"));
-        btn.classList.add("active");
-        $("#tab-"+btn.dataset.tab).classList.add("active");
-        window.scrollTo({top:0,behavior:"smooth"});
-      });
+    modal.addEventListener("click",(e)=>{
+      const r = modal.getBoundingClientRect();
+      if (e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) modal.close();
     });
 
-    // search
-    $("#search").addEventListener("input",(e)=>{ state.query = e.target.value.trim(); state.page=1; renderList(); });
-
-    // sort
-    $("#sort-select").addEventListener("change",(e)=>{ state.sort = e.target.value; state.page=1; renderList(); });
-
-    // category chips
-    $$("[data-cat]").forEach(ch=>{
-      ch.addEventListener("click",()=>{
-        $$("[data-cat]").forEach(c=>c.classList.remove("active"));
-        ch.classList.add("active");
-        state.cat = ch.dataset.cat;
-        state.page=1;
-        renderList();
-      });
+    /* ===== Wire up ===== */
+    // Tabs
+    $$(".tab-btn").forEach(b=>b.addEventListener("click",()=>{
+      $$(".tab-btn").forEach(x=>x.classList.remove("active"));
+      $$(".tab-content").forEach(x=>x.classList.remove("active"));
+      b.classList.add("active");
+      $("#tab-"+b.dataset.tab).classList.add("active");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }));
+    // Search / sort
+    $("#search").addEventListener("input",e=>{state.query=e.target.value.trim();state.page=1;renderList();});
+    $("#sort-select").addEventListener("change",e=>{state.sort=e.target.value;state.page=1;renderList();});
+    // Filters
+    $$("[data-cat]").forEach(ch=>ch.addEventListener("click",()=>{
+      $$("[data-cat]").forEach(x=>x.classList.remove("active"));
+      ch.classList.add("active"); state.cat = ch.dataset.cat; state.page=1; renderList();
+    }));
+    $$("[data-status]").forEach(ch=>ch.addEventListener("click",()=>{
+      $$("[data-status]").forEach(x=>x.classList.remove("active"));
+      ch.classList.add("active"); state.status = ch.dataset.status; state.page=1; renderList();
+    }));
+    // Pagination
+    $("#load-more").addEventListener("click",()=>{state.page++;renderList();});
+    // Card open
+    $("#request-list").addEventListener("click",e=>{
+      const card = e.target.closest(".request-card"); if(!card) return;
+      const idx = +card.dataset.idx; const item = filtered()[idx];
+      if(item) openModal(item);
     });
-
-    // status chips
-    $$("[data-status]").forEach(ch=>{
-      ch.addEventListener("click",()=>{
-        $$("[data-status]").forEach(c=>c.classList.remove("active"));
-        ch.classList.add("active");
-        state.status = ch.dataset.status;
-        state.page=1;
-        renderList();
-      });
-    });
-
-    // pagination
-    $("#load-more").addEventListener("click",()=>{ state.page++; renderList(); });
-
-    // list click -> modal
-    $("#request-list").addEventListener("click",(e)=>{
-      const card = e.target.closest(".request-card");
-      if (!card) return;
-      const idx = +card.dataset.idx;
-      const item = computeFiltered()[idx];
-      if (item) openModal(item);
-    });
-    $("#request-list").addEventListener("keydown",(e)=>{
-      if (e.key==="Enter" || e.key===" ") {
-        const card = e.target.closest(".request-card");
-        if (!card) return;
-        const idx = +card.dataset.idx;
-        const item = computeFiltered()[idx];
-        if (item) { e.preventDefault(); openModal(item); }
+    $("#request-list").addEventListener("keydown",e=>{
+      if(e.key==="Enter"||e.key===" "){
+        const card = e.target.closest(".request-card"); if(!card) return;
+        const idx = +card.dataset.idx; const item = filtered()[idx];
+        if(item){e.preventDefault();openModal(item);}
       }
     });
-
-    // submit (preview only)
+    // Submit (preview only)
     $("#request-form").addEventListener("submit",(e)=>{
       e.preventDefault();
-      const title = $("#req-title").value.trim();
-      const desc = $("#req-desc").value.trim();
-      if (!title || !desc) { $("#req-status").textContent = "Please fill in the required fields."; return; }
-      const doc = {
-        title,
-        category: $("#req-category").value,
-        priority: $("#req-priority").value,
-        desc,
-        status: "pending",
-        reason: "",
-        date: new Date().toISOString().slice(0,10)
-      };
-      MOCK.unshift(doc);
-      $("#req-status").textContent = "✅ Request submitted (preview).";
-      e.target.reset();
-      state.page=1;
-      renderList();
-      renderStatsGrid();
+      const title=$("#req-title").value.trim(), desc=$("#req-desc").value.trim();
+      if(!title||!desc){$("#req-status").textContent="Please fill in the required fields.";return;}
+      MOCK.unshift({title,category:$("#req-category").value,priority:$("#req-priority").value,desc,status:"pending",reason:"",date:new Date().toISOString().slice(0,10)});
+      $("#req-status").textContent="✅ Request submitted (preview).";
+      e.target.reset(); state.page=1; renderList(); renderStatsGrid();
     });
-
-    // contact (preview only)
+    // Contact (preview only)
     $("#contact-form").addEventListener("submit",(e)=>{
       e.preventDefault();
-      const email = $("#contact-email").value.trim();
-      const msg = $("#contact-message").value.trim();
-      if (!email || !msg) { $("#contact-status").textContent = "Please fill in email and message."; return; }
-      $("#contact-status").textContent = "✅ Message sent (preview).";
-      e.target.reset();
+      const email=$("#contact-email").value.trim(), msg=$("#contact-message").value.trim();
+      if(!email||!msg){$("#contact-status").textContent="Please fill in email and message.";return;}
+      $("#contact-status").textContent="✅ Message sent (preview)."; e.target.reset();
     });
 
-    // initial render
-    renderList();
-    renderStatsGrid();
+    // Initial render
+    renderList(); renderStatsGrid();
   </script>
 </body>
 </html>
