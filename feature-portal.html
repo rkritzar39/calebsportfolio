@@ -172,7 +172,7 @@
           <div class="roadmap-card done">“Contact Auto-Reply” <small>#REQ-095</small></div>
         </div>
       </div>
-      <p class="muted mt">Roadmap items are examples for preview. Final items will sync from request statuses.</p>
+      <p class="muted mt">Roadmap items are examples for preview. Final items can sync from request statuses later.</p>
     </section>
 
     <!-- KNOWLEDGE BASE -->
@@ -210,17 +210,78 @@
       <div class="stats-grid" id="stats-grid"></div>
     </section>
 
-    <!-- STATUS -->
+    <!-- STATUS (improved dashboard style) -->
     <section id="tab-status" class="tab-content glass" role="region" aria-labelledby="status">
       <h2 id="status">System Status</h2>
-      <ul class="status-list">
-        <li class="ok">🟢 Website — Operational</li>
-        <li class="ok">🟢 Database — Operational</li>
-        <li class="ok">🟢 Live Activity — Operational</li>
-        <li class="warn">🟠 TikTok Integration — Rate limited</li>
-        <li class="down">🔴 Discord Status — Temporarily unavailable</li>
-      </ul>
-      <p class="muted mt">These are placeholders. Later, this can update automatically from health checks.</p>
+
+      <div class="status-summary">
+        <div class="status-dot ok"></div>
+        <div class="summary-text">
+          <h3>All Systems Operational</h3>
+          <p>Last updated: <span id="status-updated">Nov 5 2025 10:42 AM</span></p>
+        </div>
+      </div>
+
+      <div class="status-services">
+        <details open>
+          <summary>
+            <span class="service-name">🌐 Website</span>
+            <span class="badge ok">Operational</span>
+          </summary>
+          <p>No known issues.</p>
+        </details>
+
+        <details open>
+          <summary>
+            <span class="service-name">🗄️ Database (Firebase)</span>
+            <span class="badge ok">Operational</span>
+          </summary>
+          <p>Read/write latency &lt; 120 ms. Automatic scaling active.</p>
+        </details>
+
+        <details open>
+          <summary>
+            <span class="service-name">🎧 Live Activity</span>
+            <span class="badge warn">Degraded Performance</span>
+          </summary>
+          <p>Spotify API occasionally rate-limits updates. Monitoring in progress.</p>
+        </details>
+
+        <details>
+          <summary>
+            <span class="service-name">📹 TikTok Integration</span>
+            <span class="badge down">Partial Outage</span>
+          </summary>
+          <p>Some video thumbnails failing to load. Awaiting API stability fix.</p>
+        </details>
+
+        <details>
+          <summary>
+            <span class="service-name">💬 Discord Status</span>
+            <span class="badge down">Outage</span>
+          </summary>
+          <p>Discord presence API unreachable. Automatic retry every 10 minutes.</p>
+        </details>
+      </div>
+
+      <div class="uptime-graph">
+        <h4>Past 7 Days Uptime</h4>
+        <div class="bars">
+          <div class="bar ok"   title="100%"></div>
+          <div class="bar ok"   title="100%"></div>
+          <div class="bar ok"   title="100%"></div>
+          <div class="bar warn" title="97%"></div>
+          <div class="bar ok"   title="100%"></div>
+          <div class="bar ok"   title="100%"></div>
+          <div class="bar ok"   title="100%"></div>
+        </div>
+        <p class="muted small">Each bar represents one day. Hover for uptime %.</p>
+      </div>
+
+      <footer class="status-footer">
+        <p>Next automatic check in: <strong>10 minutes</strong></p>
+        <p class="muted small">Status data is updated manually for this preview.</p>
+      </footer>
     </section>
 
     <!-- CONTACT -->
@@ -286,7 +347,7 @@
     </section>
   </div>
 
-  <!-- Details Modal -->
+  <!-- Request Details Modal -->
   <dialog id="details-modal" class="glass">
     <div class="modal-header">
       <h3 id="modal-title">Request</h3>
@@ -299,7 +360,9 @@
   </dialog>
 
   <script>
-    /* ===== Mock data (preview) ===== */
+    /* ===========================
+       Mock data (preview only)
+       =========================== */
     const MOCK = [
       {title:"Custom Background Uploads",category:"Feature",priority:"Normal",desc:"Allow users to upload wallpapers.",status:"approved",reason:"",date:"2025-11-02"},
       {title:"Music Visualizer Integration",category:"Feature",priority:"High",desc:"Reactive waveform behind live activity.",status:"in_progress",reason:"",date:"2025-11-01"},
@@ -314,11 +377,15 @@
       {title:"Prevent Duplicate Requests",category:"Feature",priority:"High",desc:"Warn if similar title exists.",status:"pending",reason:"",date:"2025-11-05"}
     ];
 
-    /* ===== State & helpers ===== */
+    /* ===========================
+       State & utilities
+       =========================== */
     let state = { query:"", cat:"all", status:"all", sort:"newest", page:1, pageSize:6 };
-    const $ = (s,c=document)=>c.querySelector(s);
-    const $$ = (s,c=document)=>Array.from(c.querySelectorAll(s));
+
+    const $  = (sel, ctx=document) => ctx.querySelector(sel);
+    const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
     const fmtDate = iso => new Date(iso+"T00:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});
+
     const sortFn = (a,b)=>{
       if(state.sort==="newest") return b.date.localeCompare(a.date);
       if(state.sort==="oldest") return a.date.localeCompare(b.date);
@@ -330,13 +397,17 @@
     const statusLabel = s=>({approved:"✅ Approved",in_progress:"⚙️ In Progress",completed:"✅ Completed",rejected:"❌ Rejected",pending:"• Pending"}[s]||s);
 
     function filtered(){
+      const q = state.query.toLowerCase();
       return MOCK
-        .filter(r=>!state.query || (r.title+" "+r.desc+" "+r.category+" "+r.status+" "+r.priority).toLowerCase().includes(state.query.toLowerCase()))
+        .filter(r=>!q || (r.title+" "+r.desc+" "+r.category+" "+r.status+" "+r.priority).toLowerCase().includes(q))
         .filter(r=>state.cat==="all"||r.category===state.cat)
         .filter(r=>state.status==="all"||r.status===state.status)
         .sort(sortFn);
     }
 
+    /* ===========================
+       Renderers
+       =========================== */
     function renderStatsInline(list){
       const count = s=>list.filter(x=>x.status===s).length;
       $("#stats-inline").innerHTML = `
@@ -347,6 +418,7 @@
         <div class="pill">Rejected: <strong>${count("rejected")}</strong></div>
         <div class="pill">Pending: <strong>${count("pending")}</strong></div>`;
     }
+
     function renderStatsGrid(){
       const list = MOCK, by=(k,v)=>list.filter(x=>x[k]===v).length;
       $("#stats-grid").innerHTML = `
@@ -360,7 +432,7 @@
 
     function cardHTML(r,i){
       const cls = `request-card ${r.status==="rejected"?"rejected":""}`;
-      const st = `status ${r.status.replace("_","-")}`;
+      const st  = `status ${r.status.replace("_","-")}`;
       return `
         <article class="${cls}" data-idx="${i}" tabindex="0" role="button" aria-label="Open request details: ${r.title}">
           <h3>${r.title}</h3>
@@ -384,7 +456,9 @@
       $("#load-more").style.display = end < all.length ? "inline-flex" : "none";
     }
 
-    /* ===== Modal ===== */
+    /* ===========================
+       Modal
+       =========================== */
     const modal = $("#details-modal");
     const openModal = r=>{
       $("#modal-title").textContent = r.title;
@@ -403,30 +477,48 @@
       if (e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) modal.close();
     });
 
-    /* ===== Wire up ===== */
+    /* ===========================
+       Wire up interactions
+       =========================== */
     // Tabs
-    $$(".tab-btn").forEach(b=>b.addEventListener("click",()=>{
-      $$(".tab-btn").forEach(x=>x.classList.remove("active"));
-      $$(".tab-content").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active");
-      $("#tab-"+b.dataset.tab).classList.add("active");
-      window.scrollTo({top:0,behavior:"smooth"});
-    }));
-    // Search / sort
+    $$(".tab-btn").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        $$(".tab-btn").forEach(b=>b.classList.remove("active"));
+        $$(".tab-content").forEach(c=>c.classList.remove("active"));
+        btn.classList.add("active");
+        $("#tab-"+btn.dataset.tab).classList.add("active");
+        window.scrollTo({top:0,behavior:"smooth"});
+      });
+    });
+
+    // Search & sort
     $("#search").addEventListener("input",e=>{state.query=e.target.value.trim();state.page=1;renderList();});
     $("#sort-select").addEventListener("change",e=>{state.sort=e.target.value;state.page=1;renderList();});
+
     // Filters
-    $$("[data-cat]").forEach(ch=>ch.addEventListener("click",()=>{
-      $$("[data-cat]").forEach(x=>x.classList.remove("active"));
-      ch.classList.add("active"); state.cat = ch.dataset.cat; state.page=1; renderList();
-    }));
-    $$("[data-status]").forEach(ch=>ch.addEventListener("click",()=>{
-      $$("[data-status]").forEach(x=>x.classList.remove("active"));
-      ch.classList.add("active"); state.status = ch.dataset.status; state.page=1; renderList();
-    }));
+    $$("[data-cat]").forEach(ch=>{
+      ch.addEventListener("click",()=>{
+        $$("[data-cat]").forEach(x=>x.classList.remove("active"));
+        ch.classList.add("active");
+        state.cat = ch.dataset.cat;
+        state.page = 1;
+        renderList();
+      });
+    });
+    $$("[data-status]").forEach(ch=>{
+      ch.addEventListener("click",()=>{
+        $$("[data-status]").forEach(x=>x.classList.remove("active"));
+        ch.classList.add("active");
+        state.status = ch.dataset.status;
+        state.page = 1;
+        renderList();
+      });
+    });
+
     // Pagination
-    $("#load-more").addEventListener("click",()=>{state.page++;renderList();});
-    // Card open
+    $("#load-more").addEventListener("click",()=>{ state.page++; renderList(); });
+
+    // Card open (mouse + keyboard)
     $("#request-list").addEventListener("click",e=>{
       const card = e.target.closest(".request-card"); if(!card) return;
       const idx = +card.dataset.idx; const item = filtered()[idx];
@@ -436,28 +528,43 @@
       if(e.key==="Enter"||e.key===" "){
         const card = e.target.closest(".request-card"); if(!card) return;
         const idx = +card.dataset.idx; const item = filtered()[idx];
-        if(item){e.preventDefault();openModal(item);}
+        if(item){ e.preventDefault(); openModal(item); }
       }
     });
+
     // Submit (preview only)
     $("#request-form").addEventListener("submit",(e)=>{
       e.preventDefault();
       const title=$("#req-title").value.trim(), desc=$("#req-desc").value.trim();
       if(!title||!desc){$("#req-status").textContent="Please fill in the required fields.";return;}
-      MOCK.unshift({title,category:$("#req-category").value,priority:$("#req-priority").value,desc,status:"pending",reason:"",date:new Date().toISOString().slice(0,10)});
+      MOCK.unshift({
+        title,
+        category:$("#req-category").value,
+        priority:$("#req-priority").value,
+        desc,
+        status:"pending",
+        reason:"",
+        date:new Date().toISOString().slice(0,10)
+      });
       $("#req-status").textContent="✅ Request submitted (preview).";
-      e.target.reset(); state.page=1; renderList(); renderStatsGrid();
+      e.target.reset();
+      state.page=1;
+      renderList();
+      renderStatsGrid();
     });
+
     // Contact (preview only)
     $("#contact-form").addEventListener("submit",(e)=>{
       e.preventDefault();
       const email=$("#contact-email").value.trim(), msg=$("#contact-message").value.trim();
       if(!email||!msg){$("#contact-status").textContent="Please fill in email and message.";return;}
-      $("#contact-status").textContent="✅ Message sent (preview)."; e.target.reset();
+      $("#contact-status").textContent="✅ Message sent (preview).";
+      e.target.reset();
     });
 
     // Initial render
-    renderList(); renderStatsGrid();
+    renderList();
+    renderStatsGrid();
   </script>
 </body>
 </html>
