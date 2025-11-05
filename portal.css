@@ -1,157 +1,135 @@
 :root {
-  --accent: #4ea8ff;
-  --bg: #0e0e0e;
-  --glass-bg: rgba(255, 255, 255, 0.06);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --text: #f5f7fa;
+  --accent:#4ea8ff;
+  --bg:#0e0e0e;
+  --glass-bg:rgba(255,255,255,0.06);
+  --glass-border:rgba(255,255,255,0.1);
+  --text:#f5f7fa;
 }
 
 body {
-  background: radial-gradient(circle at top left, #0a0a0a, #1b1b1b);
-  font-family: "Inter", sans-serif;
-  color: var(--text);
-  margin: 0;
-  padding: 40px;
+  margin:0;
+  padding:24px;
+  font-family:"Inter",sans-serif;
+  background:radial-gradient(circle at top left,#0a0a0a,#1b1b1b);
+  color:var(--text);
 }
 
 .portal-wrapper {
-  max-width: 900px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  max-width:900px;
+  margin:auto;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
 .glass {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  backdrop-filter: blur(20px) saturate(180%);
-  padding: 24px 28px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  border-radius:16px;
+  backdrop-filter:blur(20px)saturate(180%);
+  padding:24px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
 }
 
 .portal-header h1 {
-  font-size: 2.2em;
-  margin-bottom: 4px;
-  color: var(--accent);
+  color:var(--accent);
+  margin-bottom:8px;
 }
 
 .portal-tabs {
-  display: flex;
-  gap: 12px;
-  justify-content: space-around;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:6px;
 }
-
+.portal-tabs::-webkit-scrollbar {display:none;}
 .tab-btn {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-size: 1em;
-  color: var(--text);
-  cursor: pointer;
-  transition: all 0.25s ease;
+  flex:1;
+  min-width:110px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid transparent;
+  border-radius:10px;
+  color:var(--text);
+  padding:10px 12px;
+  font-size:1em;
+  cursor:pointer;
+  transition:all .25s ease;
 }
 .tab-btn.active {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(255,255,255,0.12);
+  border-color:var(--accent);
+  color:var(--accent);
+  background:rgba(255,255,255,0.12);
 }
+.tab-content {display:none;animation:fadeIn .35s ease;}
+.tab-content.active {display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
-.tab-content {
-  display: none;
-  animation: fadeIn 0.4s ease;
+.portal-form label{display:flex;flex-direction:column;margin-bottom:16px;}
+.portal-form input, .portal-form select, .portal-form textarea{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:8px;
+  color:var(--text);
+  padding:10px;
+  margin-top:6px;
+  font-size:1em;
 }
-.tab-content.active {
-  display: block;
+.portal-form button{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  padding:12px 18px;
+  font-weight:600;
+  width:100%;
+  cursor:pointer;
+  transition:background .3s;
 }
+.portal-form button:hover{background:#3f8ce0;}
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+.request-list{display:grid;gap:16px;}
+.request-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:16px 20px;
+  transition:transform .25s ease;
 }
+.request-card:hover{transform:translateY(-3px);}
+.request-card h3{color:var(--accent);margin:0 0 6px 0;}
+.meta{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;}
+.status{
+  padding:4px 10px;border-radius:8px;font-size:.9em;opacity:.9;
+}
+.status.approved{background:rgba(52,152,219,.25);color:#4ea8ff;}
+.status.in-progress{background:rgba(241,196,15,.25);color:#f1c40f;}
+.status.completed{background:rgba(46,204,113,.25);color:#2ecc71;}
+.status.rejected{background:rgba(231,76,60,.25);color:#e74c3c;}
+.status.pending{background:rgba(155,155,155,.25);color:#bbb;}
+.reason{display:block;margin-top:4px;font-size:.85em;opacity:.7;}
 
-.portal-form label {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 16px;
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:16px;
+  text-align:center;
 }
+.stat{
+  background:rgba(255,255,255,0.05);
+  border-radius:12px;
+  padding:20px;
+}
+.stat h3{font-size:2em;color:var(--accent);margin:0;}
 
-.portal-form input,
-.portal-form select,
-.portal-form textarea {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 8px;
-  color: var(--text);
-  padding: 10px;
-  margin-top: 6px;
-}
-
-.portal-form button {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-.portal-form button:hover {
-  background: #3f8ce0;
-}
-
-.request-list {
-  display: grid;
-  gap: 16px;
-}
-
-.request-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 12px;
-  padding: 16px 20px;
-  transition: transform 0.25s ease;
-}
-.request-card:hover {
-  transform: translateY(-3px);
-}
-.request-card h3 {
-  margin-top: 0;
-  color: var(--accent);
-}
-.meta {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
-}
-.status {
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 0.9em;
-  opacity: 0.9;
-}
-.status.approved { background: rgba(52, 152, 219, 0.25); color: #4ea8ff; }
-.status.in-progress { background: rgba(241, 196, 15, 0.25); color: #f1c40f; }
-.status.completed { background: rgba(46, 204, 113, 0.25); color: #2ecc71; }
-.status.rejected { background: rgba(231, 76, 60, 0.25); color: #e74c3c; }
-.status.pending { background: rgba(155, 155, 155, 0.25); color: #bbb; }
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
-  text-align: center;
-}
-.stat {
-  background: rgba(255,255,255,0.05);
-  border-radius: 12px;
-  padding: 20px;
-}
-.stat h3 {
-  font-size: 2em;
-  color: var(--accent);
-  margin: 0;
+/* --- Mobile Optimizations --- */
+@media (max-width:600px){
+  body{padding:16px;}
+  .portal-wrapper{gap:16px;}
+  .glass{padding:18px;}
+  .portal-header h1{font-size:1.6em;}
+  .tab-btn{font-size:.9em;padding:8px;}
+  .portal-form input, .portal-form select, .portal-form textarea{font-size:.95em;}
+  .request-card{padding:14px;}
+  .stat h3{font-size:1.6em;}
 }
