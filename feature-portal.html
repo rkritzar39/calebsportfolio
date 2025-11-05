@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community Portal – Advanced Preview</title>
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body>
+  <div id="feature-portal" class="portal-wrapper">
+    <header class="portal-header glass">
+      <h1>🧠 Community Portal</h1>
+      <p>Submit new ideas, vote on suggestions, and track progress — all in one place.</p>
+    </header>
+
+    <!-- ===== Tabs ===== -->
+    <nav class="portal-tabs glass">
+      <button class="tab-btn active" data-tab="submit">📝 Submit</button>
+      <button class="tab-btn" data-tab="requests">📋 Requests</button>
+      <button class="tab-btn" data-tab="changelog">🧾 Changelog</button>
+      <button class="tab-btn" data-tab="stats">📊 Stats</button>
+    </nav>
+
+    <!-- ===== Submit Section ===== -->
+    <section id="tab-submit" class="tab-content active glass">
+      <h2>Submit a Feature or Feedback</h2>
+      <form class="portal-form">
+        <div class="form-grid">
+          <label>
+            <span>Title</span>
+            <input type="text" placeholder="Summarize your idea..." />
+          </label>
+
+          <label>
+            <span>Category</span>
+            <select>
+              <option>Feature</option>
+              <option>Bug</option>
+              <option>Feedback</option>
+            </select>
+          </label>
+        </div>
+
+        <label>
+          <span>Description</span>
+          <textarea rows="4" placeholder="Describe your request in detail..."></textarea>
+        </label>
+
+        <div class="form-grid">
+          <label>
+            <span>Name (optional)</span>
+            <input type="text" placeholder="Your name or handle" />
+          </label>
+          <label>
+            <span>Email (optional)</span>
+            <input type="email" placeholder="you@example.com" />
+          </label>
+        </div>
+
+        <button type="button" class="onyx-btn">🚀 Submit Request</button>
+      </form>
+    </section>
+
+    <!-- ===== Requests Section ===== -->
+    <section id="tab-requests" class="tab-content glass">
+      <div class="requests-header">
+        <h2>All Requests</h2>
+        <input type="text" id="search" placeholder="Search requests..." />
+      </div>
+
+      <div id="request-list" class="request-list">
+        <!-- Example cards -->
+        <article class="request-card">
+          <h3>Custom Background Uploads</h3>
+          <p>Allow users to upload and set personal wallpapers.</p>
+          <div class="meta">
+            <span class="category">Feature</span>
+            <span class="status approved">✅ Approved</span>
+          </div>
+        </article>
+
+        <article class="request-card">
+          <h3>Music Visualizer Integration</h3>
+          <p>Add a reactive waveform behind the live activity card.</p>
+          <div class="meta">
+            <span class="category">Feature</span>
+            <span class="status in-progress">⚙️ In Progress</span>
+          </div>
+        </article>
+
+        <article class="request-card">
+          <h3>Dark Mode Flicker Fix</h3>
+          <p>Eliminate flicker when toggling dark/light themes.</p>
+          <div class="meta">
+            <span class="category">Bug</span>
+            <span class="status completed">✅ Completed</span>
+          </div>
+        </article>
+
+        <article class="request-card rejected">
+          <h3>Auto Play Music on Load</h3>
+          <p>Automatically start playing your current track when the page loads.</p>
+          <div class="meta">
+            <span class="category">Feature</span>
+            <span class="status rejected">❌ Rejected</span>
+          </div>
+          <small class="reason">Reason: Violates autoplay policies.</small>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== Changelog Section ===== -->
+    <section id="tab-changelog" class="tab-content glass">
+      <h2>Recent Updates</h2>
+      <ul class="changelog-list">
+        <li><strong>Nov 5, 2025:</strong> Portal interface mock-up added.</li>
+        <li><strong>Nov 3, 2025:</strong> Added compact mode & improved layout spacing.</li>
+        <li><strong>Oct 30, 2025:</strong> New blur control & animation settings.</li>
+      </ul>
+    </section>
+
+    <!-- ===== Stats Section ===== -->
+    <section id="tab-stats" class="tab-content glass">
+      <h2>Portal Stats</h2>
+      <div class="stats-grid">
+        <div class="stat">
+          <h3>42</h3><p>Total Requests</p>
+        </div>
+        <div class="stat">
+          <h3>12</h3><p>Approved</p>
+        </div>
+        <div class="stat">
+          <h3>7</h3><p>Completed</p>
+        </div>
+        <div class="stat">
+          <h3>3</h3><p>Rejected</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // tab switching animation
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>
