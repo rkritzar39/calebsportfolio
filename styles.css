@@ -598,11 +598,6 @@ a.corner-button {
   color: var(--text-color, #fff);
   margin-bottom: 2px;
   word-break: break-word;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 6px;
 }
 
 .live-artist {
@@ -612,38 +607,12 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === EXPLICIT BADGE (🅴) =============================== */
-/* ======================================================= */
-
-.explicit-tag {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7em;
-  font-weight: 600;
-  background: #555;
-  color: #fff;
-  border-radius: 3px;
-  padding: 1px 4px;
-  letter-spacing: 0.3px;
-  line-height: 1;
-  vertical-align: middle;
-  user-select: none;
-  animation: fadeInBadge 0.25s ease;
-}
-
-/* optional subtle fade for 🅴 */
-@keyframes fadeInBadge {
-  from { opacity: 0; transform: scale(0.9); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-/* ======================================================= */
 /* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 .music-progress-container {
   width: 100%;
+  /* max-width: 480px; */ /* <-- REMOVED THIS LINE */
   height: 10px;
   background: color-mix(in srgb, var(--border-color) 25%, transparent);
   border-radius: 50px;
@@ -669,7 +638,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === TIME DISPLAY — LOCKED CENTER ====================== */
+/* === TIME DISPLAY — LOCKED, CENTERED, CLEAN ============ */
 /* ======================================================= */
 
 .music-progress-time {
@@ -678,6 +647,7 @@ a.corner-button {
   align-items: center;
   justify-items: center;
   width: 100%;
+  /* max-width: 480px; */ /* <-- REMOVED THIS LINE */
   font-size: 0.96rem;
   font-weight: 500;
   color: color-mix(in srgb, var(--text-color) 80%, #ddd);
@@ -687,7 +657,7 @@ a.corner-button {
 }
 
 .music-progress-time span {
-  min-width: 60px;
+  min-width: 60px; /* ✅ prevents times from shifting */
 }
 
 .music-progress-time span:first-child {
@@ -708,22 +678,6 @@ a.corner-button {
   justify-self: end;
   text-align: right;
   color: color-mix(in srgb, var(--text-color) 85%, #f0f0f0);
-}
-
-/* ======================================================= */
-/* === ⏸ PAUSED STATE (dim bar, keep layout) ============ */
-/* ======================================================= */
-
-.spotify-paused .music-progress-bar {
-  opacity: 0.45;
-  filter: grayscale(0.4);
-  transition: opacity 0.3s ease;
-}
-.spotify-paused .live-song-title::before {
-  content: "⏸";
-  opacity: 0.8;
-  margin-right: 6px;
-  font-size: 0.9em;
 }
 
 /* ======================================================= */
@@ -774,12 +728,15 @@ a.corner-button {
     height: 8px;
     margin-top: 22px;
     margin-bottom: 18px;
+    /* max-width: 340px; */ /* <-- REMOVED THIS LINE */
   }
 
   .music-progress-time {
     font-size: 0.9rem;
+    /* max-width: 340px; */ /* <-- REMOVED THIS LINE */
   }
 }
+
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
