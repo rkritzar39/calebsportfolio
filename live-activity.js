@@ -23,41 +23,37 @@ let twitchWasLive     = false;
 const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
-/* ======================================================= */
-/* === HONEYCOMB ICON MAPPER ============================= */
-/* ======================================================= */
+/* === BRAND-COLOR ICONS (Simple Icons CDN) ============== */
 const ICON_MAP = {
-  spotify: "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/spotify.svg",
-  discord: "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/discord.svg",
-  youtube: "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/youtube.svg",
-  twitch:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/twitch.svg",
-  reddit:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/reddit.svg",
-  github:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/github.svg",
-  tiktok:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/tiktok.svg",
-  manual:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/information.svg",
-  default: "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/information.svg",
+  spotify: "https://cdn.simpleicons.org/spotify/1DB954",
+  discord: "https://cdn.simpleicons.org/discord/5865F2",
+  twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
+  youtube: "https://cdn.simpleicons.org/youtube/FF0000",
+  reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
+  github:  "https://cdn.simpleicons.org/github/FFFFFF",
+  tiktok:  "https://cdn.simpleicons.org/tiktok/FFFFFF",
+  manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
-/* ======================================================= */
-/* === STATUS LINE ======================================= */
-/* ======================================================= */
+/* === STATUS LINE (forces icon swap every update) ======== */
 function setStatusLine(text, isVisible = true, source = "default") {
-  const txt  = $$("status-line-text");
-  const line = $$("status-line");
-  const icon = $$("status-icon");
+  const txt  = document.getElementById("status-line-text");
+  const line = document.getElementById("status-line");
+  const icon = document.getElementById("status-icon");
   if (!txt || !line || !icon) return;
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
 
-  // Smooth fade animation
+  // Smooth swap
   line.style.opacity = 0;
-  setTimeout(() => {
+  requestAnimationFrame(() => {
     icon.src = iconUrl;
     icon.alt = `${source} icon`;
     txt.textContent = text || "No Current Active Activities";
     line.classList.toggle("hidden", !isVisible);
     line.style.opacity = 1;
-  }, 200);
+  });
 
   lastUpdateTime = Date.now();
   updateLastUpdated();
