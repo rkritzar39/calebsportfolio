@@ -76,41 +76,57 @@
   </p>
 
   <!-- 🎧 LIVE ACTIVITY SYSTEM -->
-<div class="live-activity hidden" id="live-activity">
-  <!-- Status Line -->
-<!-- Status Line -->
-<div class="status-line" id="status-line">
-  <div class="status-icon-honeycomb">
-    <img id="status-icon" class="status-icon" src="https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/information.svg" alt="Status Icon" />
-  </div>
-  <span id="status-line-text">Loading status…</span>
-</div>
-
-  <!-- Spotify Card -->
-  <div class="spotify-card hidden" id="spotify-card" role="button" tabindex="0" aria-label="Open in Spotify">
-    <div class="live-album-art">
-      <img id="live-activity-cover" src="path/to/default-cover.jpg" alt="Album Art" />
+  <div class="live-activity hidden" id="live-activity">
+    <!-- Status Line -->
+    <div class="status-line" id="status-line">
+      <div class="status-icon-honeycomb">
+        <img
+          id="status-icon"
+          class="status-icon"
+          src="https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/information.svg"
+          alt="Status Icon"
+        />
+      </div>
+      <span id="status-line-text">Loading status…</span>
     </div>
 
-    <div class="live-info">
-      <div class="live-song-title" id="live-song-title">—</div>
-      <div class="live-artist" id="live-song-artist">—</div>
-
-      <div class="music-progress-container">
-        <div class="music-progress-bar" id="music-progress-bar"></div>
+    <!-- Spotify Card -->
+    <div
+      class="spotify-card hidden"
+      id="spotify-card"
+      role="button"
+      tabindex="0"
+      aria-label="Open in Spotify"
+    >
+      <div class="live-album-art">
+        <img
+          id="live-activity-cover"
+          src="path/to/default-cover.jpg"
+          alt="Album Art"
+        />
       </div>
 
-      <div class="music-progress-time">
-        <span id="elapsed-time">0:00</span>
-        <span id="remaining-time">-0:00</span>
-        <span id="total-time">0:00</span>
+      <div class="live-info">
+        <div class="live-song-title" id="live-song-title">—</div>
+        <div class="live-artist" id="live-song-artist">—</div>
+
+        <div class="music-progress-container">
+          <div class="music-progress-bar" id="music-progress-bar"></div>
+        </div>
+
+        <div class="music-progress-time">
+          <span id="elapsed-time">0:00</span>
+          <span id="remaining-time">-0:00</span>
+          <span id="total-time">0:00</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="la-updated" id="live-activity-updated">Updated just now</div>
+    <!-- Last Updated Label -->
+    <div class="la-updated" id="live-activity-updated">Updated just now</div>
+  </div>
+  <!-- End Live Activity -->
 </div>
-<!-- End Live Activity -->
 
 <!-- 🔔 Toast Notifications -->
 <div id="toast-container"></div>
