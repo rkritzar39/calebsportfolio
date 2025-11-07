@@ -24,20 +24,24 @@ const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /* ======================================================= */
-/* === OFFICIAL PLATFORM ICONS (THEME-AWARE) ============= */
+/* === OFFICIAL PLATFORM ICONS (AUTO LIGHT/DARK) ========= */
 /* ======================================================= */
+function getThemeColor(hexLight, hexDark) {
+  const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  return isDark ? hexDark.replace("#", "") : hexLight.replace("#", "");
+}
+
 const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
   youtube: "https://cdn.simpleicons.org/youtube/FF0000",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
-  github:  `https://cdn.simpleicons.org/github/${getComputedStyle(document.documentElement).getPropertyValue("--icon-github").trim().replace("#","")}`,
-  tiktok:  `https://cdn.simpleicons.org/tiktok/${getComputedStyle(document.documentElement).getPropertyValue("--icon-tiktok").trim().replace("#","")}`,
+  github:  `https://cdn.simpleicons.org/github/${getThemeColor("#000000", "#ffffff")}`,
+  tiktok:  `https://cdn.simpleicons.org/tiktok/${getThemeColor("#000000", "#ffffff")}`,
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
-
 /* ======================================================= */
 /* === STATUS LINE HANDLER =============================== */
 /* ======================================================= */
