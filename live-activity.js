@@ -12,12 +12,9 @@ const CONFIG = {
 let lastUpdateTime = null;
 let progressInterval = null;
 let currentSpotifyUrl = null;
-
-// Temporary banner tracking (TikTok, Reddit, GitHub)
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
-// Cache last seen IDs to avoid repeats
 let lastGitHubEventId = null;
 let lastRedditPostId  = null;
 let lastTikTokVideoId = null;
@@ -27,14 +24,41 @@ const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /* ======================================================= */
+/* === HONEYCOMB ICON MAPPER ============================= */
+/* ======================================================= */
+const ICON_MAP = {
+  spotify: "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/spotify.svg",
+  discord: "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/discord.svg",
+  youtube: "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/youtube.svg",
+  twitch:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/twitch.svg",
+  reddit:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/reddit.svg",
+  github:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/github.svg",
+  tiktok:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/tiktok.svg",
+  manual:  "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/information.svg",
+  default: "https://cdn.jsdelivr.net/gh/edent/SuperTinyIcons/images/svg/information.svg",
+};
+
+/* ======================================================= */
 /* === STATUS LINE ======================================= */
 /* ======================================================= */
-function setStatusLine(text, isVisible = true) {
+function setStatusLine(text, isVisible = true, source = "default") {
   const txt  = $$("status-line-text");
   const line = $$("status-line");
-  if (!txt || !line) return;
-  txt.textContent = text || "No Current Active Activities";
-  line.classList.toggle("hidden", !isVisible);
+  const icon = $$("status-icon");
+  if (!txt || !line || !icon) return;
+
+  const iconUrl = ICON_MAP[source] || ICON_MAP.default;
+
+  // Smooth fade animation
+  line.style.opacity = 0;
+  setTimeout(() => {
+    icon.src = iconUrl;
+    icon.alt = `${source} icon`;
+    txt.textContent = text || "No Current Active Activities";
+    line.classList.toggle("hidden", !isVisible);
+    line.style.opacity = 1;
+  }, 200);
+
   lastUpdateTime = Date.now();
   updateLastUpdated();
 }
@@ -88,7 +112,6 @@ function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  // Default to accent color
   const accent = getComputedStyle(document.documentElement)
     .getPropertyValue("--accent-color")
     .trim() || "#1DB954";
@@ -182,7 +205,7 @@ async function getTwitch() {
     const t1 = (await r1.text()).toLowerCase();
     if (t1.includes("is live")) {
       twitchWasLive = true;
-      return { text: "🔴 Now Live on Twitch", source: "twitch" };
+      return { text: "Now Live on Twitch", source: "twitch" };
     }
     twitchWasLive = false;
   } catch (e) {
@@ -262,31 +285,31 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 
   // Temporary banner (TikTok, Reddit, GitHub)
   if (temp && temp.text && Date.now() < temp.expiresAt) {
-    setStatusLine(temp.text, true);
+    setStatusLine(temp.text, true, temp.source || "default");
     return;
   }
 
   // Spotify (main)
   if (main?.source === "spotify") {
-    setStatusLine(main.text, true);
+    setStatusLine(main.text, true, "spotify");
     spotifyCard.classList.remove("hidden");
     return;
   }
 
   // Twitch live
   if (twitchLive) {
-    setStatusLine("🔴 Now Live on Twitch", true);
+    setStatusLine("Now Live on Twitch", true, "twitch");
     return;
   }
 
   // Discord active or manual
   if (main && main.text && main.text !== "No Current Active Activities") {
-    setStatusLine(main.text, true);
+    setStatusLine(main.text, true, main.source || "discord");
     return;
   }
 
   // Default fallback — completely idle
-  setStatusLine("No Current Active Activities", true);
+  setStatusLine("No Current Active Activities", true, "manual");
 }
 
 /* ======================================================= */
@@ -303,10 +326,9 @@ async function updateLiveStatus() {
 
   const main = discord || { text: "No Current Active Activities", source: "manual" };
 
-  // Track temporary banners
   const tempHit = [tiktok, reddit, github].find((r) => r && r.isTemp);
   if (tempHit) {
-    tempBanner = { text: tempHit.text, expiresAt: Date.now() + TEMP_BANNER_MS };
+    tempBanner = { text: tempHit.text, source: tempHit.source, expiresAt: Date.now() + TEMP_BANNER_MS };
   } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
     tempBanner = null;
   }
