@@ -23,7 +23,9 @@ let twitchWasLive     = false;
 const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
-/* === BRAND-COLOR ICONS (Simple Icons CDN) ============== */
+/* ======================================================= */
+/* === OFFICIAL PLATFORM ICONS =========================== */
+/* ======================================================= */
 const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   discord: "https://cdn.simpleicons.org/discord/5865F2",
@@ -36,7 +38,9 @@ const ICON_MAP = {
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
-/* === STATUS LINE (forces icon swap every update) ======== */
+/* ======================================================= */
+/* === STATUS LINE HANDLER =============================== */
+/* ======================================================= */
 function setStatusLine(text, isVisible = true, source = "default") {
   const txt  = document.getElementById("status-line-text");
   const line = document.getElementById("status-line");
@@ -45,20 +49,23 @@ function setStatusLine(text, isVisible = true, source = "default") {
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
 
-  // Smooth swap
+  // Clean fade transition
   line.style.opacity = 0;
-  requestAnimationFrame(() => {
+  setTimeout(() => {
     icon.src = iconUrl;
     icon.alt = `${source} icon`;
     txt.textContent = text || "No Current Active Activities";
     line.classList.toggle("hidden", !isVisible);
     line.style.opacity = 1;
-  });
+  }, 150);
+
+  // Add subtle glow for live/active
+  icon.classList.remove("glow");
+  if (source === "spotify" || source === "twitch") icon.classList.add("glow");
 
   lastUpdateTime = Date.now();
   updateLastUpdated();
 }
-
 /* ======================================================= */
 /* === LAST UPDATED LABEL ================================ */
 /* ======================================================= */
