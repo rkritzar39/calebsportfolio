@@ -483,6 +483,29 @@ a.corner-button {
 }
 
 /* ======================================================= */
+/* === LIGHT / DARK MODE ICON VISIBILITY FIX ============= */
+/* ======================================================= */
+
+/* Default (dark mode) keeps brand colors as-is */
+:root {
+  --icon-github: #ffffff;
+  --icon-tiktok: #ffffff;
+  --icon-discord: #5865F2;
+  --icon-spotify: #1DB954;
+  --icon-twitch: #9146FF;
+  --icon-youtube: #FF0000;
+  --icon-reddit: #FF4500;
+}
+
+/* Light mode override */
+@media (prefers-color-scheme: light) {
+  :root {
+    --icon-github: #000000; /* visible on white background */
+    --icon-tiktok: #000000; /* darker for visibility */
+  }
+}
+
+/* ======================================================= */
 /* === STATUS LINE (CLEAN, OFFICIAL ICONS) =============== */
 /* ======================================================= */
 
