@@ -24,7 +24,7 @@ const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /* ======================================================= */
-/* === OFFICIAL PLATFORM ICONS =========================== */
+/* === OFFICIAL PLATFORM ICONS (THEME-AWARE) ============= */
 /* ======================================================= */
 const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
@@ -32,8 +32,8 @@ const ICON_MAP = {
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
   youtube: "https://cdn.simpleicons.org/youtube/FF0000",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
-  github:  "https://cdn.simpleicons.org/github/FFFFFF",
-  tiktok:  "https://cdn.simpleicons.org/tiktok/FFFFFF",
+  github:  `https://cdn.simpleicons.org/github/${getComputedStyle(document.documentElement).getPropertyValue("--icon-github").trim().replace("#","")}`,
+  tiktok:  `https://cdn.simpleicons.org/tiktok/${getComputedStyle(document.documentElement).getPropertyValue("--icon-tiktok").trim().replace("#","")}`,
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
