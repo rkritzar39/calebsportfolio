@@ -483,16 +483,20 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === STATUS LINE ======================================= */
+/* === STATUS LINE (CLEAN, OFFICIAL ICONS) =============== */
 /* ======================================================= */
 
 .status-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   font-size: 1rem;
   font-weight: 500;
   color: var(--text-color, #f5f5f5);
-  margin-bottom: 24px;
-  opacity: 0.9;
   text-align: center;
+  margin-bottom: 24px;
+  opacity: 0.95;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -500,6 +504,33 @@ a.corner-button {
   opacity: 0;
   transform: translateY(-10px);
   pointer-events: none;
+}
+
+.status-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  filter: none; /* Keep official colors */
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.status-icon:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+/* Glow effect for active (Spotify or Twitch) */
+.status-icon.glow {
+  animation: pulseGlow 1.4s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px var(--dynamic-accent, #3ddc84));
+  }
 }
 
 /* ======================================================= */
@@ -612,7 +643,6 @@ a.corner-button {
 
 .music-progress-container {
   width: 100%;
-  /* max-width: 480px; */ /* <-- REMOVED THIS LINE */
   height: 10px;
   background: color-mix(in srgb, var(--border-color) 25%, transparent);
   border-radius: 50px;
@@ -638,7 +668,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === TIME DISPLAY — LOCKED, CENTERED, CLEAN ============ */
+/* === TIME DISPLAY ====================================== */
 /* ======================================================= */
 
 .music-progress-time {
@@ -647,7 +677,6 @@ a.corner-button {
   align-items: center;
   justify-items: center;
   width: 100%;
-  /* max-width: 480px; */ /* <-- REMOVED THIS LINE */
   font-size: 0.96rem;
   font-weight: 500;
   color: color-mix(in srgb, var(--text-color) 80%, #ddd);
@@ -657,7 +686,7 @@ a.corner-button {
 }
 
 .music-progress-time span {
-  min-width: 60px; /* ✅ prevents times from shifting */
+  min-width: 60px;
 }
 
 .music-progress-time span:first-child {
@@ -690,68 +719,6 @@ a.corner-button {
   margin-top: 18px;
   opacity: 0.85;
 }
-/* ======================================================= */
-/* === HONEYCOMB STATUS ICONS ============================ */
-/* ======================================================= */
-
-.status-line {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-color, #f5f5f5);
-  margin-bottom: 24px;
-  text-align: center;
-  opacity: 0.95;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-/* === Honeycomb + Icon visual fixes ====================== */
-.status-icon-honeycomb {
-  position: relative;
-  width: 38px;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-  /* neutral glass so brand colors pop */
-  background: color-mix(in srgb, var(--content-bg, #111) 85%, transparent);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
-}
-
-.status-icon-honeycomb:hover {
-  transform: scale(1.06);
-  box-shadow: 0 8px 18px rgba(0,0,0,0.45);
-}
-
-.status-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  /* IMPORTANT: remove inversion so official brand colors show */
-  filter: none !important;
-  transition: transform .2s ease, opacity .2s ease;
-}
-
-.status-icon-honeycomb:hover .status-icon {
-  transform: scale(1.08);
-  opacity: .95;
-}
-
-/* Optional pulse when "live" (Twitch) or "listening" (Spotify) */
-.honeycomb-pulse {
-  animation: honeyPulse 1.25s ease-in-out infinite;
-}
-@keyframes honeyPulse {
-  0%, 100% { box-shadow: 0 0 0 rgba(0,0,0,0.0), 0 0 0 rgba(0,0,0,0.0); }
-  50%      { box-shadow: 0 0 14px rgba(0,0,0,0.25), 0 0 28px color-mix(in srgb, var(--dynamic-accent, #3ddc84) 50%, transparent); }
-}
 
 /* ======================================================= */
 /* === ANIMATIONS ======================================== */
@@ -769,7 +736,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === RESPONSIVE DESIGN (MOBILE) ======================== */
+/* === RESPONSIVE DESIGN ================================= */
 /* ======================================================= */
 
 @media (max-width: 600px) {
@@ -790,15 +757,12 @@ a.corner-button {
     height: 8px;
     margin-top: 22px;
     margin-bottom: 18px;
-    /* max-width: 340px; */ /* <-- REMOVED THIS LINE */
   }
 
   .music-progress-time {
     font-size: 0.9rem;
-    /* max-width: 340px; */ /* <-- REMOVED THIS LINE */
   }
 }
-
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
