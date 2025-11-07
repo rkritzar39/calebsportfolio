@@ -708,7 +708,7 @@ a.corner-button {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Honeycomb Hexagon Container */
+/* === Honeycomb + Icon visual fixes ====================== */
 .status-icon-honeycomb {
   position: relative;
   width: 38px;
@@ -717,38 +717,42 @@ a.corner-button {
   align-items: center;
   justify-content: center;
   clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
-  background: color-mix(in srgb, var(--accent-color, #1DB954) 80%, transparent);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
-  transition: transform 0.3s ease, background 0.3s ease;
+  /* neutral glass so brand colors pop */
+  background: color-mix(in srgb, var(--content-bg, #111) 85%, transparent);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
   backdrop-filter: blur(12px) saturate(160%);
   -webkit-backdrop-filter: blur(12px) saturate(160%);
+  transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
 }
 
 .status-icon-honeycomb:hover {
-  transform: scale(1.08);
-  background: color-mix(in srgb, var(--accent-color, #1DB954) 100%, transparent);
+  transform: scale(1.06);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.45);
 }
 
-/* Icon inside honeycomb */
 .status-icon {
   width: 20px;
   height: 20px;
   object-fit: contain;
-  filter: brightness(0) invert(var(--invert-icon, 0));
-  transition: transform 0.25s ease, opacity 0.25s ease;
+  /* IMPORTANT: remove inversion so official brand colors show */
+  filter: none !important;
+  transition: transform .2s ease, opacity .2s ease;
 }
 
 .status-icon-honeycomb:hover .status-icon {
-  transform: scale(1.15);
-  opacity: 0.9;
+  transform: scale(1.08);
+  opacity: .95;
 }
 
-/* Auto invert icons in dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --invert-icon: 1;
-  }
+/* Optional pulse when "live" (Twitch) or "listening" (Spotify) */
+.honeycomb-pulse {
+  animation: honeyPulse 1.25s ease-in-out infinite;
 }
+@keyframes honeyPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(0,0,0,0.0), 0 0 0 rgba(0,0,0,0.0); }
+  50%      { box-shadow: 0 0 14px rgba(0,0,0,0.25), 0 0 28px color-mix(in srgb, var(--dynamic-accent, #3ddc84) 50%, transparent); }
+}
+
 /* ======================================================= */
 /* === ANIMATIONS ======================================== */
 /* ======================================================= */
