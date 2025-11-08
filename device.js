@@ -1,8 +1,6 @@
 /**
- * device.js — v5.1
- * Caleb’s System Dashboard
- * OS, Browser, Connection Type, and Network Generation
- * Works on desktop + mobile (iOS, Android, Windows, macOS)
+ * device.js — v5.2
+ * Fully working system dashboard: OS, Browser, Connection, Network
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -12,84 +10,58 @@ document.addEventListener("DOMContentLoaded", () => {
   const resolutionEl = document.querySelector("#resolution-info .version-value");
   const connectionEl = document.querySelector("#connection-info .version-value");
   const networkEl = document.querySelector("#network-info .version-value");
-  const batteryRow = document.querySelector("#battery-info");
-  const batteryEl = batteryRow ? batteryRow.querySelector(".version-value") : null;
   const syncedEl = document.querySelector("#synced-info .version-value");
 
-  /* ----------------------------
-     🕒 Live Synced Clock
-  ---------------------------- */
-  function updateSyncedClock() {
+  /* --- 🕒 Clock --- */
+  function updateClock() {
     if (!syncedEl) return;
     const now = new Date();
-    const datePart = now.toLocaleDateString(undefined, {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    const date = now.toLocaleDateString(undefined, {
+      weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
-    const timePart = now.toLocaleTimeString(undefined, {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
+    const time = now.toLocaleTimeString(undefined, {
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true,
     });
-    const tz = new Date()
-      .toLocaleTimeString("en-us", { timeZoneName: "short" })
-      .split(" ")
-      .pop();
-    syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tz}</span>`;
+    const tz = new Date().toLocaleTimeString("en-us", { timeZoneName: "short" }).split(" ").pop();
+    syncedEl.innerHTML = `${date} at ${time} <span class="tz-tag">${tz}</span>`;
   }
-  updateSyncedClock();
-  setInterval(updateSyncedClock, 1000);
+  updateClock();
+  setInterval(updateClock, 1000);
 
-  /* ----------------------------
-     💻 OS Detection
-  ---------------------------- */
-  function detectOSVersion() {
+  /* --- 💻 OS --- */
+  function detectOS() {
     const ua = navigator.userAgent;
-    let os = "Unknown";
-    let version = "";
-
+    let os = "Unknown", version = "";
     const isIPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     if (isIPad) {
       os = "iPadOS";
-      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (m) version = m[1].replace(/_/g, ".");
+      const m = ua.match(/OS (\d+[._]\d+)/i);
+      if (m) version = m[1].replace("_", ".");
     } else if (/iPhone|iPod/i.test(ua)) {
       os = "iOS";
-      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (m) version = m[1].replace(/_/g, ".");
+      const m = ua.match(/OS (\d+[._]\d+)/i);
+      if (m) version = m[1].replace("_", ".");
       const build = ua.match(/Build\/([^)]+)\)/i);
       if (build) version += ` (${build[1]})`;
     } else if (/Android/i.test(ua)) {
       os = "Android";
-      const m = ua.match(/Android (\d+(\.\d+)*)/i);
+      const m = ua.match(/Android (\d+(\.\d+)?)/i);
       if (m) version = m[1];
     } else if (/Macintosh|Mac OS X/.test(ua)) {
       os = "macOS";
-      const m = ua.match(/Mac OS X (\d+([_.]\d+)*)/i);
-      if (m) version = m[1].replace(/_/g, ".");
+      const m = ua.match(/Mac OS X (\d+[._]\d+)/i);
+      if (m) version = m[1].replace("_", ".");
     } else if (/Windows NT/i.test(ua)) {
       os = "Windows";
-      const map = {
-        "10.0": "11 / 10",
-        "6.3": "8.1",
-        "6.2": "8",
-        "6.1": "7",
-        "6.0": "Vista",
-      };
+      const map = { "10.0": "11/10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
       const m = ua.match(/Windows NT (\d+\.\d+)/);
-      if (m) version = `${map[m[1]] || "NT " + m[1]}`;
+      if (m) version = map[m[1]] || m[1];
     } else if (/CrOS/i.test(ua)) os = "ChromeOS";
     else if (/Linux/i.test(ua)) os = "Linux";
-
     return version ? `${os} ${version}` : os;
   }
 
-  /* ----------------------------
-     🌐 Browser Detection
-  ---------------------------- */
+  /* --- 🌐 Browser --- */
   function detectBrowser() {
     const ua = navigator.userAgent;
     if (ua.includes("CriOS")) return "Chrome (iOS)";
@@ -104,77 +76,46 @@ document.addEventListener("DOMContentLoaded", () => {
     return "Unknown Browser";
   }
 
-  /* ----------------------------
-     📱 Connection Type (Wi-Fi / Cellular / Both)
-  ---------------------------- */
+  /* --- 📱 Connection --- */
   async function detectConnectionType() {
     if (!connectionEl) return;
-
     if (!navigator.onLine) {
       connectionEl.textContent = "🚫 Not Connected";
-      return "Not Connected";
+      return;
     }
-
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
     if (conn && conn.type) {
-      if (conn.type === "wifi") {
-        connectionEl.textContent = "📶 Wi-Fi";
-        return "Wi-Fi";
-      } else if (conn.type === "cellular") {
-        connectionEl.textContent = "📱 Cellular";
-        return "Cellular";
-      } else if (conn.type === "mixed" || conn.type === "wifi-cellular") {
-        connectionEl.textContent = "📡 Cellular / Wi-Fi";
-        return "Cellular / Wi-Fi";
-      }
+      if (conn.type === "wifi") return (connectionEl.textContent = "📶 Wi-Fi");
+      if (conn.type === "cellular") return (connectionEl.textContent = "📱 Cellular");
     }
 
-    // Safari fallback: ping latency heuristic
+    // fallback for Safari/iOS
     try {
       const start = performance.now();
       await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
       const latency = performance.now() - start;
-
-      // >200 ms → Cellular; <200 ms → Wi-Fi
-      if (latency > 200) {
-        connectionEl.textContent = "📱 Cellular";
-        return "Cellular";
-      } else {
-        connectionEl.textContent = "📶 Wi-Fi";
-        return "Wi-Fi";
-      }
+      connectionEl.textContent = latency > 200 ? "📱 Cellular" : "📶 Wi-Fi";
     } catch {
       connectionEl.textContent = "🌐 Connected";
-      return "Connected";
     }
   }
 
-  /* ----------------------------
-     📡 Network Generation (5G / LTE / 4G / 3G)
-  ---------------------------- */
+  /* --- 📡 Network Generation --- */
   async function detectNetworkGeneration() {
     if (!networkEl) return;
-
-    if (!navigator.onLine) {
-      networkEl.textContent = "🚫 Not Connected";
-      return;
-    }
+    if (!navigator.onLine) return (networkEl.textContent = "🚫 Not Connected");
 
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if (conn && conn.effectiveType) {
       const eff = conn.effectiveType.toLowerCase();
-      let label = "";
-      if (eff.includes("5g")) label = "5G";
-      else if (eff.includes("4g")) label = "4G / LTE";
-      else if (eff.includes("3g")) label = "3G";
-      else if (eff.includes("2g")) label = "2G";
-      else label = "LTE / 4G";
-      networkEl.textContent = label;
-      return;
+      if (eff.includes("5g")) return (networkEl.textContent = "5G");
+      if (eff.includes("4g")) return (networkEl.textContent = "4G / LTE");
+      if (eff.includes("3g")) return (networkEl.textContent = "3G");
+      if (eff.includes("2g")) return (networkEl.textContent = "2G");
+      return (networkEl.textContent = "LTE / 4G");
     }
 
-    // iOS / Safari fallback using latency
+    // fallback for Safari/iOS
     try {
       const start = performance.now();
       await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
@@ -188,60 +129,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  /* ----------------------------
-     🔋 Battery (Auto-hide on desktop)
-  ---------------------------- */
-  async function detectBattery() {
-    if (!batteryEl) return;
-    const ua = navigator.userAgent;
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
-    const isLaptop = /Macintosh|Mac OS X/.test(ua) && navigator.maxTouchPoints > 0;
-    if (!isMobile && !isLaptop) {
-      batteryRow.style.display = "none";
-      return;
-    }
-
-    if ("getBattery" in navigator) {
-      try {
-        const battery = await navigator.getBattery();
-        const updateBatteryUI = () => {
-          const percent = Math.round(battery.level * 100);
-          const icon = battery.charging ? "⚡" : "🔋";
-          batteryEl.textContent = `${icon} ${percent}%`;
-        };
-        updateBatteryUI();
-        battery.addEventListener("levelchange", updateBatteryUI);
-        battery.addEventListener("chargingchange", updateBatteryUI);
-      } catch {
-        batteryEl.textContent = "⚡ Battery Mode";
-      }
-    } else {
-      batteryEl.textContent = "🔋 Battery";
-    }
-  }
-
-  /* ----------------------------
-     🧠 Apply Everything
-  ---------------------------- */
-  function applyAll() {
-    if (osEl) osEl.textContent = detectOSVersion();
-    if (deviceEl) deviceEl.textContent = navigator.userAgent.includes("iPad")
-      ? "iPad"
-      : /iPhone/i.test(navigator.userAgent)
+  /* --- 🧠 Apply All --- */
+  async function applyAll() {
+    if (osEl) osEl.textContent = detectOS();
+    if (deviceEl) deviceEl.textContent = /iPhone/i.test(navigator.userAgent)
       ? "iPhone"
+      : /iPad/i.test(navigator.userAgent)
+      ? "iPad"
       : "Device";
     if (browserEl) browserEl.textContent = detectBrowser();
     if (resolutionEl) resolutionEl.textContent = `${window.screen.width} × ${window.screen.height}`;
-    detectConnectionType();
-    detectNetworkGeneration();
-    detectBattery();
+    await detectConnectionType();
+    await detectNetworkGeneration();
   }
 
   applyAll();
-  setInterval(() => {
-    detectConnectionType();
-    detectNetworkGeneration();
-  }, 5000);
+  setInterval(applyAll, 5000);
 
   window.addEventListener("online", applyAll);
   window.addEventListener("offline", applyAll);
