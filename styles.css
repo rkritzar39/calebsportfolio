@@ -3172,6 +3172,36 @@ body.dark-mode .bubble {
   opacity: 1;
 }
 
+#connection-info {
+  transition: opacity 0.3s ease;
+}
+
+#connection-info .version-value {
+  font-family: var(--mono-font, 'SF Mono', monospace);
+  font-size: 0.95em;
+  letter-spacing: 0.3px;
+  color: var(--text-color);
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+/* Pulse when strong connection detected */
+.pulse-signal {
+  animation: pulse-signal 1.6s infinite ease-in-out;
+}
+
+@keyframes pulse-signal {
+  0%, 100% {
+    text-shadow: 0 0 4px color-mix(in srgb, var(--accent-color) 40%, transparent),
+                 0 0 8px color-mix(in srgb, var(--accent-color) 20%, transparent);
+    transform: scale(1);
+  }
+  50% {
+    text-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 80%, transparent),
+                 0 0 20px color-mix(in srgb, var(--accent-color) 40%, transparent);
+    transform: scale(1.04);
+  }
+}
+
 /* Accent Timezone Tag */
 .tz-tag {
   display: inline-block;
