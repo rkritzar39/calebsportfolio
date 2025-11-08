@@ -167,68 +167,6 @@ class SettingsManager {
       return { ...this.defaultSettings };
     }
   }
-
-/* ==========================================================
-   🔔 PUSH NOTIFICATION SETUP (Firebase Cloud Messaging)
-   ========================================================== */
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
-
-async function requestPushNotifications() {
-  try {
-    if (!("Notification" in window)) {
-      alert("Your browser does not support push notifications.");
-      return;
-    }
-
-    const permission = await Notification.requestPermission();
-    if (permission !== "granted") {
-      alert("You must allow notifications to enable push alerts.");
-      return;
-    }
-
-    const messaging = getMessaging();
-    const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc"; // Replace with your VAPID key from Firebase Console
-
-    // Register service worker
-    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-    console.log("✅ Service worker registered for push notifications:", registration);
-
-    // Get user token
-    const token = await getToken(messaging, {
-      vapidKey,
-      serviceWorkerRegistration: registration
-    });
-
-    if (token) {
-      console.log("🔑 Push token obtained:", token);
-      localStorage.setItem("pushNotificationsEnabled", "true");
-      localStorage.setItem("fcmToken", token);
-      showToast("Push Notifications Enabled", "You’ll now receive updates even when the site is closed.");
-    } else {
-      showToast("Push Notification Error", "Could not get device token. Please try again later.");
-    }
-
-    // Listen for foreground pushes
-    onMessage(messaging, (payload) => {
-      console.log("📩 Push notification received in foreground:", payload);
-      const { title, body, icon } = payload.notification || {};
-      showToast(title || "Notification", body || "You have a new update!");
-    });
-  } catch (err) {
-    console.error("❌ Push notification setup failed:", err);
-    showToast("Push Setup Failed", err.message || "Unknown error");
-  }
-}
-
-// Attach click handler
-document.addEventListener("DOMContentLoaded", () => {
-  const pushButton = document.getElementById("enablePushNotifications");
-  if (pushButton) {
-    pushButton.addEventListener("click", () => {
-      requestPushNotifications();
-    });
-  }
-});
   
   saveSettings() {
     const toSave = {};
