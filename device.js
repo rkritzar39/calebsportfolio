@@ -212,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function setSunUI(sunrise, sunset) {
-      const now = new Date();
+      const now = new Date(Date.now() + 3600 * 1000 * 12); // add 12 hours forward
       const isDay = now >= sunrise && now < sunset;
 
       sunriseEl.textContent = sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
