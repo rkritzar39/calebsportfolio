@@ -1,11 +1,11 @@
 /**
- * device.js — v9.0 FINAL
+ * device.js — v10.0 FINAL
  * Caleb’s System Dashboard
  * ✅ Accurate OS / Device / Browser Detection
- * ✅ Auto Network & Connection Info
- * ✅ Synced Clock (Timezone-aware)
- * ✅ Sunrise / Sunset + Day/Night Status
- * ✅ Graceful fallbacks for iOS privacy limits
+ * ✅ Smart Network + Connection
+ * ✅ Synced Clock (with Timezone)
+ * ✅ Sunrise / Sunset + Day/Night Accent Theme
+ * ✅ Graceful Fallbacks for iOS privacy restrictions
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -170,18 +170,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function detectNetworkTier() {
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!conn) return "Unavailable";
-    const eff = conn.effectiveType?.toLowerCase() || "";
-    if (eff.includes("5g")) return "5G";
-    if (eff.includes("4g")) return "4G LTE";
-    if (eff.includes("lte")) return "LTE";
-    if (eff.includes("3g")) return "3G";
-    if (eff.includes("2g")) return "2G";
+
+    if (!navigator.onLine) return "Not Connected";
+
+    if (conn && (conn.effectiveType || conn.type)) {
+      const eff = (conn.effectiveType || "").toLowerCase();
+      if (eff.includes("5g")) return "5G";
+      if (eff.includes("4g")) return "4G LTE";
+      if (eff.includes("lte")) return "LTE";
+      if (eff.includes("3g")) return "3G";
+      if (eff.includes("2g")) return "2G";
+    }
+
+    // --- Smart fallback for restricted browsers (like iOS) ---
+    const ua = navigator.userAgent;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+    const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
+
+    if (isMobile) return "Cellular (Unknown Speed)";
+    if (isDesktop) return "Wi-Fi (Unknown Speed)";
+
     return "Unknown";
   }
 
   /* ----------------------------
-     🌅 Sunrise / Sunset + Day/Night
+     🌅 Sunrise / Sunset + Accent Theme
   ---------------------------- */
   function fetchSunTimes() {
     if (!sunriseEl || !sunsetEl) return;
@@ -208,13 +221,23 @@ document.addEventListener("DOMContentLoaded", () => {
       sunriseEl.style.color = "#ff9500";
       sunsetEl.style.color = "#5856d6";
 
+      const root = document.documentElement;
+      const transition = "background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease";
+
       if (isDay) {
         dayStatusEl.textContent = "Daytime ☀️";
         dayStatusEl.style.color = "#ffd60a";
+        root.style.setProperty("--accent-color", "#ffd60a");
+        root.style.setProperty("--accent-text-color", "#000");
       } else {
         dayStatusEl.textContent = "Nighttime 🌙";
-        dayStatusEl.style.color = "#5ac8fa";
+        dayStatusEl.style.color = "#0a84ff";
+        root.style.setProperty("--accent-color", "#0a84ff");
+        root.style.setProperty("--accent-text-color", "#fff");
       }
+
+      root.style.transition = transition;
+      document.body.style.transition = transition;
     }
 
     function setError(msg) {
@@ -247,7 +270,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const sunset = new Date(data.results.sunset);
           setSunUI(sunrise, sunset);
 
-          // Update status every minute
           setInterval(() => setSunUI(sunrise, sunset), 60000);
         } catch (err) {
           console.error("Sunrise/Sunset fetch error:", err);
