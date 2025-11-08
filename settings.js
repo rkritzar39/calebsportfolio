@@ -69,6 +69,21 @@
   });
 })();
 
+console.log("[Settings.js] Loaded ✅");
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("[Push Setup] DOM ready ✅");
+
+  const btn = document.getElementById("enablePushNotifications");
+  console.log("[Push Setup] Button found:", !!btn);
+
+  if (btn) {
+    btn.addEventListener("click", () => {
+      console.log("[Push Setup] Button clicked ✅");
+    });
+  }
+});
+
 class SettingsManager {
   constructor() {
     /* =============================
