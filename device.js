@@ -1,8 +1,7 @@
 /**
- * device.js — v4.5 FINAL
+ * device.js — v5.0
  * Caleb’s System Dashboard
- * Accurate OS, Device, Browser, Connection, and Synced Clock
- * Auto-hides battery on desktops
+ * Detects OS, Browser, Network Type, and Network Generation
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -11,12 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const browserEl = document.querySelector("#browser-info .version-value");
   const resolutionEl = document.querySelector("#resolution-info .version-value");
   const connectionEl = document.querySelector("#connection-info .version-value");
+  const networkEl = document.querySelector("#network-info .version-value"); // <-- second connection line
   const batteryRow = document.querySelector("#battery-info");
   const batteryEl = batteryRow ? batteryRow.querySelector(".version-value") : null;
   const syncedEl = document.querySelector("#synced-info .version-value");
 
   /* ----------------------------
-     🕒 Human-Friendly “Synced” Clock
+     🕒 Synced Clock
   ---------------------------- */
   function updateSyncedClock() {
     if (!syncedEl) return;
@@ -33,35 +33,20 @@ document.addEventListener("DOMContentLoaded", () => {
       second: "2-digit",
       hour12: true,
     });
-    const tzShort = getTimezoneAbbreviation();
-    syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tzShort}</span>`;
+    const tz = new Date().toLocaleTimeString("en-us", { timeZoneName: "short" }).split(" ").pop();
+    syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tz}</span>`;
   }
-
-  function getTimezoneAbbreviation() {
-    try {
-      const dateString = new Date().toLocaleTimeString("en-us", { timeZoneName: "short" });
-      const tz = dateString.split(" ").pop();
-      return tz.replace(/[()]/g, "");
-    } catch {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
-    }
-  }
-
   updateSyncedClock();
   setInterval(updateSyncedClock, 1000);
 
   /* ----------------------------
-     💻 OS + Version Detection
+     💻 OS + Version
   ---------------------------- */
   function detectOSVersion() {
-    const ua = navigator.userAgent || navigator.vendor || window.opera;
-    let os = "Unknown";
-    let version = "";
+    const ua = navigator.userAgent;
+    let os = "Unknown", version = "";
 
-    const isIPad =
-      /iPad/i.test(ua) ||
-      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-
+    const isIPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     if (isIPad) {
       os = "iPadOS";
       const m = ua.match(/OS (\d+([_.]\d+)*)/i);
@@ -70,8 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
       os = "iOS";
       const m = ua.match(/OS (\d+([_.]\d+)*)/i);
       if (m) version = m[1].replace(/_/g, ".");
-      // iOS Build ID (if available)
-      const build = ua.match(/\((?:iPhone|CPU) OS [^;]+;[^)]+Build\/([^)]+)\)/i);
+      const build = ua.match(/Build\/([^)]+)\)/i);
       if (build) version += ` (${build[1]})`;
     } else if (/Android/i.test(ua)) {
       os = "Android";
@@ -81,21 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
       os = "macOS";
       const m = ua.match(/Mac OS X (\d+([_.]\d+)*)/i);
       if (m) version = m[1].replace(/_/g, ".");
-    } else if (/Win(dows )?NT/.test(ua)) {
+    } else if (/Windows NT/i.test(ua)) {
       os = "Windows";
-      const m = ua.match(/Windows NT (\d+\.\d+)/i);
-      if (m) {
-        const nt = m[1];
-        const map = {
-          "10.0": "11 / 10",
-          "6.3": "8.1",
-          "6.2": "8",
-          "6.1": "7",
-          "6.0": "Vista",
-          "5.1": "XP",
-        };
-        version = map[nt] ? `${map[nt]} (NT ${nt})` : `NT ${nt}`;
-      }
+      const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7", "6.0": "Vista" };
+      const m = ua.match(/Windows NT (\d+\.\d+)/);
+      if (m) version = `${map[m[1]] || "NT " + m[1]}`;
     } else if (/CrOS/i.test(ua)) os = "ChromeOS";
     else if (/Linux/i.test(ua)) os = "Linux";
 
@@ -103,133 +77,159 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     📱 Device Detection
-  ---------------------------- */
-  function detectDevice() {
-    const ua = navigator.userAgent;
-    if (/iPhone/i.test(ua)) return "iPhone";
-    if (/iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1))
-      return "iPad";
-    if (/Android/i.test(ua)) {
-      const match = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
-      return match ? match[1].trim() : "Android Device";
-    }
-    if (/Macintosh/i.test(ua)) return "Mac";
-    if (/Windows/i.test(ua)) return "Windows PC";
-    return "Unknown Device";
-  }
-
-  /* ----------------------------
-     🌐 Browser Detection (Fixed)
+     🌐 Browser
   ---------------------------- */
   function detectBrowser() {
     const ua = navigator.userAgent;
-    if (ua.includes("CriOS")) return "Google Chrome (iOS)";
-    if (ua.includes("EdgiOS")) return "Microsoft Edge (iOS)";
+    if (ua.includes("CriOS")) return "Chrome (iOS)";
+    if (ua.includes("EdgiOS")) return "Edge (iOS)";
     if (ua.includes("FxiOS")) return "Firefox (iOS)";
     if (ua.includes("OPiOS")) return "Opera (iOS)";
     if (ua.includes("Edg")) return "Microsoft Edge";
     if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
-    if (ua.includes("Chrome") && !ua.includes("Chromium")) return "Google Chrome";
+    if (ua.includes("Chrome") && !ua.includes("Chromium")) return "Chrome";
     if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
     if (ua.includes("Firefox")) return "Firefox";
     return "Unknown Browser";
   }
 
   /* ----------------------------
-     📶 Connection + Resolution
+     📱 Connection Type (Wi-Fi / Cellular)
   ---------------------------- */
-  function detectConnection() {
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!navigator.onLine) return "Offline";
-    if (!conn) {
-      // Safari / iOS fallback
-      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) return "📱 Cellular / Wi-Fi";
-      if (/Macintosh/.test(navigator.userAgent)) return "💻 Wi-Fi / Ethernet";
-      return "🌐 Connected";
-    }
-    const eff = conn.effectiveType?.toUpperCase() || "";
-    const down = conn.downlink ? `${conn.downlink.toFixed(1)} Mbps` : "";
-    return `${eff || "Online"} ${down ? `• ${down}` : ""}`;
-  }
+  async function detectConnectionType() {
+    if (!connectionEl) return;
 
-  function detectResolution() {
-    return `${window.screen.width} × ${window.screen.height}`;
+    if (!navigator.onLine) {
+      connectionEl.textContent = "🚫 Not Connected";
+      return "Not Connected";
+    }
+
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+    // ✅ Use NetworkInformation API if available
+    if (conn && conn.type) {
+      if (conn.type === "wifi") {
+        connectionEl.textContent = "📶 Wi-Fi";
+        return "Wi-Fi";
+      } else if (conn.type === "cellular") {
+        connectionEl.textContent = "📱 Cellular";
+        return "Cellular";
+      } else if (conn.type === "mixed" || conn.type === "wifi-cellular") {
+        connectionEl.textContent = "📡 Cellular / Wi-Fi";
+        return "Cellular / Wi-Fi";
+      }
+    }
+
+    // Fallback for iOS / Safari
+    try {
+      const start = performance.now();
+      await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
+      const latency = performance.now() - start;
+
+      // Heuristic: if latency is high, likely cellular
+      if (latency > 200) {
+        connectionEl.textContent = "📱 Cellular";
+        return "Cellular";
+      } else {
+        connectionEl.textContent = "📶 Wi-Fi";
+        return "Wi-Fi";
+      }
+    } catch {
+      connectionEl.textContent = "🌐 Connected";
+      return "Connected";
+    }
   }
 
   /* ----------------------------
-     🔋 Battery (Hide on Desktops)
+     📡 Network Generation (5G / LTE / 4G)
+  ---------------------------- */
+  function detectNetworkGeneration() {
+    if (!networkEl) return;
+
+    if (!navigator.onLine) {
+      networkEl.textContent = "🚫 Not Connected";
+      return;
+    }
+
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn && conn.effectiveType) {
+      const eff = conn.effectiveType.toLowerCase();
+      let label = "";
+      if (eff.includes("5g")) label = "5G";
+      else if (eff.includes("4g")) label = "4G / LTE";
+      else if (eff.includes("3g")) label = "3G";
+      else if (eff.includes("2g")) label = "2G";
+      else label = "LTE / 4G";
+      networkEl.textContent = label;
+      return;
+    }
+
+    // Safari Fallback: guess based on latency
+    (async () => {
+      try {
+        const start = performance.now();
+        await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
+        const latency = performance.now() - start;
+        let gen = "LTE / 4G";
+        if (latency > 800) gen = "3G";
+        else if (latency < 200) gen = "5G";
+        networkEl.textContent = gen;
+      } catch {
+        networkEl.textContent = "Unknown";
+      }
+    })();
+  }
+
+  /* ----------------------------
+     🔋 Battery (Auto-hide on Desktop)
   ---------------------------- */
   async function detectBattery() {
     if (!batteryEl) return;
     const ua = navigator.userAgent;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
     const isLaptop = /Macintosh|Mac OS X/.test(ua) && navigator.maxTouchPoints > 0;
-    const hasBattery = isMobile || isLaptop;
-
-    if (!hasBattery && batteryRow) {
+    if (!isMobile && !isLaptop) {
       batteryRow.style.display = "none";
       return;
     }
 
     if ("getBattery" in navigator) {
-      try {
-        const battery = await navigator.getBattery();
-        const updateBatteryUI = () => {
-          const percent = Math.round(battery.level * 100);
-          const icon = battery.charging ? "⚡ Charging" : "🔋";
-          batteryEl.textContent = `${icon} ${percent}%`;
-          if (percent <= 20) batteryEl.style.color = "#ff3b30";
-          else if (percent <= 50) batteryEl.style.color = "#ffcc00";
-          else batteryEl.style.color = "#34c759";
-        };
-        updateBatteryUI();
-        battery.addEventListener("levelchange", updateBatteryUI);
-        battery.addEventListener("chargingchange", updateBatteryUI);
-        return;
-      } catch {
-        batteryEl.textContent = "⚡ Battery Mode";
-      }
+      const battery = await navigator.getBattery();
+      const updateBatteryUI = () => {
+        const percent = Math.round(battery.level * 100);
+        const icon = battery.charging ? "⚡" : "🔋";
+        batteryEl.textContent = `${icon} ${percent}%`;
+      };
+      updateBatteryUI();
+      battery.addEventListener("levelchange", updateBatteryUI);
+      battery.addEventListener("chargingchange", updateBatteryUI);
     } else {
-      batteryEl.textContent = isMobile ? "🔋 Battery (Mobile)" : "⚡ Plugged In";
+      batteryEl.textContent = "🔋 Battery";
     }
   }
 
   /* ----------------------------
-     🧠 Apply Values
+     🧠 Apply Everything
   ---------------------------- */
-  function applyValues() {
+  function applyAll() {
     if (osEl) osEl.textContent = detectOSVersion();
-    if (deviceEl) deviceEl.textContent = detectDevice();
+    if (deviceEl) deviceEl.textContent = navigator.userAgent.includes("iPad") ? "iPad" : "Device";
     if (browserEl) browserEl.textContent = detectBrowser();
-    if (resolutionEl) resolutionEl.textContent = detectResolution();
-    if (connectionEl) connectionEl.textContent = detectConnection();
+    if (resolutionEl) resolutionEl.textContent = `${window.screen.width} × ${window.screen.height}`;
+    detectConnectionType();
+    detectNetworkGeneration();
     detectBattery();
-
-    window.addEventListener("resize", () => {
-      if (resolutionEl) resolutionEl.textContent = detectResolution();
-    });
-
-    // Live updates for connection
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (conn && "addEventListener" in conn)
-      conn.addEventListener("change", () => {
-        connectionEl.textContent = detectConnection();
-      });
-
-    window.addEventListener("online", () => {
-      connectionEl.textContent = detectConnection();
-    });
-    window.addEventListener("offline", () => {
-      connectionEl.textContent = detectConnection();
-    });
   }
 
-  applyValues();
+  applyAll();
+  setInterval(() => {
+    detectConnectionType();
+    detectNetworkGeneration();
+  }, 5000);
 
-  // Fade-in animation
-  document.querySelectorAll(".version-value").forEach((el) => {
-    el.style.transition = "opacity 0.4s ease";
-    requestAnimationFrame(() => (el.style.opacity = "1"));
+  window.addEventListener("online", applyAll);
+  window.addEventListener("offline", applyAll);
+  window.addEventListener("resize", () => {
+    if (resolutionEl) resolutionEl.textContent = `${window.screen.width} × ${window.screen.height}`;
   });
 });
