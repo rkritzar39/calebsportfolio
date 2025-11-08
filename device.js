@@ -1,7 +1,7 @@
 /**
- * device.js — v4.0 FINAL
+ * device.js — v4.5 FINAL
  * Caleb’s System Dashboard
- * Accurate OS, Device, Browser, Battery, and Synced Clock
+ * Accurate OS, Device, Browser, Connection, and Synced Clock
  * Auto-hides battery on desktops
  */
 
@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const tzShort = getTimezoneAbbreviation();
     syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tzShort}</span>`;
-    syncedEl.style.opacity = "1";
   }
 
   function getTimezoneAbbreviation() {
@@ -59,7 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let os = "Unknown";
     let version = "";
 
-    const isIPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isIPad =
+      /iPad/i.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
     if (isIPad) {
       os = "iPadOS";
@@ -69,6 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
       os = "iOS";
       const m = ua.match(/OS (\d+([_.]\d+)*)/i);
       if (m) version = m[1].replace(/_/g, ".");
+      // iOS Build ID (if available)
+      const build = ua.match(/\((?:iPhone|CPU) OS [^;]+;[^)]+Build\/([^)]+)\)/i);
+      if (build) version += ` (${build[1]})`;
     } else if (/Android/i.test(ua)) {
       os = "Android";
       const m = ua.match(/Android (\d+(\.\d+)*)/i);
@@ -104,7 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function detectDevice() {
     const ua = navigator.userAgent;
     if (/iPhone/i.test(ua)) return "iPhone";
-    if (/iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) return "iPad";
+    if (/iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1))
+      return "iPad";
     if (/Android/i.test(ua)) {
       const match = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
       return match ? match[1].trim() : "Android Device";
@@ -115,12 +120,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     🌐 Browser Detection
+     🌐 Browser Detection (Fixed)
   ---------------------------- */
   function detectBrowser() {
     const ua = navigator.userAgent;
-    if (ua.includes("CriOS")) return "Chrome (iOS)";
-    if (ua.includes("EdgiOS")) return "Edge (iOS)";
+    if (ua.includes("CriOS")) return "Google Chrome (iOS)";
+    if (ua.includes("EdgiOS")) return "Microsoft Edge (iOS)";
     if (ua.includes("FxiOS")) return "Firefox (iOS)";
     if (ua.includes("OPiOS")) return "Opera (iOS)";
     if (ua.includes("Edg")) return "Microsoft Edge";
@@ -135,32 +140,38 @@ document.addEventListener("DOMContentLoaded", () => {
      📶 Connection + Resolution
   ---------------------------- */
   function detectConnection() {
-    if (!("connection" in navigator)) return navigator.onLine ? "Online" : "Offline";
-    return navigator.connection.effectiveType?.toUpperCase() || "Online";
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (!navigator.onLine) return "Offline";
+    if (!conn) {
+      // Safari / iOS fallback
+      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) return "📱 Cellular / Wi-Fi";
+      if (/Macintosh/.test(navigator.userAgent)) return "💻 Wi-Fi / Ethernet";
+      return "🌐 Connected";
+    }
+    const eff = conn.effectiveType?.toUpperCase() || "";
+    const down = conn.downlink ? `${conn.downlink.toFixed(1)} Mbps` : "";
+    return `${eff || "Online"} ${down ? `• ${down}` : ""}`;
   }
+
   function detectResolution() {
     return `${window.screen.width} × ${window.screen.height}`;
   }
 
   /* ----------------------------
-     🔋 Battery (Cross-Browser)
+     🔋 Battery (Hide on Desktops)
   ---------------------------- */
   async function detectBattery() {
     if (!batteryEl) return;
-
-    // Determine if device type likely has a battery
     const ua = navigator.userAgent;
     const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
     const isLaptop = /Macintosh|Mac OS X/.test(ua) && navigator.maxTouchPoints > 0;
     const hasBattery = isMobile || isLaptop;
 
-    // Hide entire battery row if definitely desktop
     if (!hasBattery && batteryRow) {
       batteryRow.style.display = "none";
       return;
     }
 
-    // Native Battery API
     if ("getBattery" in navigator) {
       try {
         const battery = await navigator.getBattery();
@@ -168,8 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const percent = Math.round(battery.level * 100);
           const icon = battery.charging ? "⚡ Charging" : "🔋";
           batteryEl.textContent = `${icon} ${percent}%`;
-
-          // Color indicator
           if (percent <= 20) batteryEl.style.color = "#ff3b30";
           else if (percent <= 50) batteryEl.style.color = "#ffcc00";
           else batteryEl.style.color = "#34c759";
@@ -177,127 +186,50 @@ document.addEventListener("DOMContentLoaded", () => {
         updateBatteryUI();
         battery.addEventListener("levelchange", updateBatteryUI);
         battery.addEventListener("chargingchange", updateBatteryUI);
-        batteryEl.style.opacity = "1";
         return;
-      } catch (err) {
-        console.warn("Battery API failed:", err);
+      } catch {
+        batteryEl.textContent = "⚡ Battery Mode";
       }
+    } else {
+      batteryEl.textContent = isMobile ? "🔋 Battery (Mobile)" : "⚡ Plugged In";
     }
-
-    // Fallback (iOS, Safari, Firefox)
-    let simulated = "";
-    if (/iPhone|iPad|iPod/i.test(ua)) simulated = "🔋 Battery (Mobile)";
-    else if (/Macintosh/i.test(ua)) simulated = "⚡ Charging (Mac)";
-    else simulated = navigator.onLine ? "⚡ Plugged In" : "🔋 Battery Mode";
-
-    batteryEl.textContent = simulated;
-    batteryEl.style.opacity = "1";
   }
 
   /* ----------------------------
-     🧠 Apply Everything
+     🧠 Apply Values
   ---------------------------- */
   function applyValues() {
-    if (osEl) { osEl.textContent = detectOSVersion(); osEl.style.opacity = "1"; }
-    if (deviceEl) { deviceEl.textContent = detectDevice(); deviceEl.style.opacity = "1"; }
-    if (browserEl) { browserEl.textContent = detectBrowser(); browserEl.style.opacity = "1"; }
-    if (resolutionEl) { resolutionEl.textContent = detectResolution(); resolutionEl.style.opacity = "1"; }
-    if (connectionEl) { connectionEl.textContent = detectConnection(); connectionEl.style.opacity = "1"; }
+    if (osEl) osEl.textContent = detectOSVersion();
+    if (deviceEl) deviceEl.textContent = detectDevice();
+    if (browserEl) browserEl.textContent = detectBrowser();
+    if (resolutionEl) resolutionEl.textContent = detectResolution();
+    if (connectionEl) connectionEl.textContent = detectConnection();
     detectBattery();
 
     window.addEventListener("resize", () => {
       if (resolutionEl) resolutionEl.textContent = detectResolution();
     });
-    if ("connection" in navigator) {
-      navigator.connection.addEventListener("change", () => {
+
+    // Live updates for connection
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (conn && "addEventListener" in conn)
+      conn.addEventListener("change", () => {
         connectionEl.textContent = detectConnection();
       });
-    }
+
+    window.addEventListener("online", () => {
+      connectionEl.textContent = detectConnection();
+    });
+    window.addEventListener("offline", () => {
+      connectionEl.textContent = detectConnection();
+    });
   }
 
   applyValues();
 
   // Fade-in animation
-  document.querySelectorAll(".version-value").forEach(el => {
+  document.querySelectorAll(".version-value").forEach((el) => {
     el.style.transition = "opacity 0.4s ease";
-    requestAnimationFrame(() => el.style.opacity = "1");
+    requestAnimationFrame(() => (el.style.opacity = "1"));
   });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const connectionLi = document.getElementById("connection-info");
-  const connectionEl = connectionLi?.querySelector(".version-value");
-  if (!connectionEl) return;
-
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-  function getSignalIcon(effType, downlink) {
-    if (!effType) return "📶";
-    if (effType === "5g") return "💨"; // super fast
-    if (effType === "4g") return downlink > 50 ? "⚡" : "📱";
-    if (effType === "3g") return "📡";
-    if (effType === "2g") return "📡";
-    return "📶";
-  }
-
-  function describeConnection() {
-    if (!navigator.onLine) {
-      connectionLi.style.opacity = "0";
-      setTimeout(() => (connectionLi.style.display = "none"), 300);
-      return;
-    }
-
-    connectionLi.style.display = ""; // ensure visible again
-    setTimeout(() => (connectionLi.style.opacity = "1"), 50);
-
-    if (!conn) {
-      connectionEl.textContent = "Unavailable";
-      return;
-    }
-
-    const eff = conn.effectiveType || "unknown";
-    const down = conn.downlink ? `${conn.downlink.toFixed(1)} Mbps` : null;
-    const rtt = conn.rtt ? `${conn.rtt} ms` : null;
-    const type = conn.type || "unknown";
-
-    let base;
-    if (type === "wifi") base = "Wi-Fi";
-    else if (type === "cellular" || ["4g", "5g", "3g"].includes(eff)) base = "Cellular";
-    else base = "Unknown";
-
-    const typeLabel =
-      eff === "5g"
-        ? "5G"
-        : eff === "4g"
-        ? "4G"
-        : eff === "3g"
-        ? "3G"
-        : eff === "2g"
-        ? "2G"
-        : "";
-
-    const icon = getSignalIcon(eff, conn.downlink || 0);
-    const parts = [];
-    if (base !== "Unknown") parts.push(base);
-    if (typeLabel) parts.push(typeLabel);
-    if (down) parts.push(down);
-    if (rtt && rtt !== "0 ms") parts.push(rtt);
-
-    connectionEl.textContent = `${icon} ${parts.join(" • ")}`;
-
-    // Add pulse animation on strong connections
-    if (["⚡", "💨"].includes(icon)) {
-      connectionEl.classList.add("pulse-signal");
-    } else {
-      connectionEl.classList.remove("pulse-signal");
-    }
-  }
-
-  // Initial load
-  describeConnection();
-
-  // Live updates
-  if (conn && "addEventListener" in conn) conn.addEventListener("change", describeConnection);
-  window.addEventListener("online", describeConnection);
-  window.addEventListener("offline", describeConnection);
 });
