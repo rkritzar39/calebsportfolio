@@ -661,18 +661,18 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR ====================================== */
+/* === PROGRESS BAR (Spotify Style Wide Alignment) ======== */
 /* ======================================================= */
 
 .music-progress-container {
   width: 100%;
-  height: 10px;
+  height: 6px; /* thinner like the image */
   background: color-mix(in srgb, var(--border-color) 25%, transparent);
   border-radius: 50px;
   overflow: hidden;
   position: relative;
-  margin-top: 26px;
-  margin-bottom: 22px;
+  margin-top: 24px;
+  margin-bottom: 12px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
@@ -683,24 +683,27 @@ a.corner-button {
   height: 100%;
   width: 0%;
   border-radius: inherit;
-  background: var(--dynamic-accent, var(--accent-color, #1DB954));
+  background: linear-gradient(
+    90deg,
+    var(--dynamic-accent, var(--accent-color, #1DB954)) 0%,
+    color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 60%, #000) 100%
+  );
   box-shadow:
-    0 0 12px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 75%, transparent),
-    0 0 26px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 45%, transparent);
+    0 0 8px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 70%, transparent),
+    0 0 20px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 45%, transparent);
   transition: width 0.4s linear, box-shadow 0.4s ease;
 }
 
 /* ======================================================= */
-/* === TIME DISPLAY ====================================== */
+/* === TIME DISPLAY (Left, Center, Right Alignment) ======= */
 /* ======================================================= */
 
 .music-progress-time {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-items: center;
   width: 100%;
-  font-size: 0.96rem;
+  font-size: 0.92rem;
   font-weight: 500;
   color: color-mix(in srgb, var(--text-color) 80%, #ddd);
   opacity: 0.95;
@@ -709,27 +712,24 @@ a.corner-button {
 }
 
 .music-progress-time span {
-  min-width: 60px;
+  flex: 1;
 }
 
 .music-progress-time span:first-child {
-  justify-self: start;
   text-align: left;
-  color: color-mix(in srgb, var(--text-color) 85%, #f0f0f0);
+  color: color-mix(in srgb, var(--text-color) 90%, #f8f8f8);
 }
 
 .music-progress-time span:nth-child(2) {
-  justify-self: center;
   text-align: center;
-  font-size: 0.9rem;
-  color: color-mix(in srgb, var(--text-color) 60%, #888);
+  font-size: 0.88rem;
+  color: color-mix(in srgb, var(--text-color) 65%, #aaa);
   font-weight: 400;
 }
 
 .music-progress-time span:last-child {
-  justify-self: end;
   text-align: right;
-  color: color-mix(in srgb, var(--text-color) 85%, #f0f0f0);
+  color: color-mix(in srgb, var(--text-color) 90%, #f8f8f8);
 }
 
 /* ======================================================= */
