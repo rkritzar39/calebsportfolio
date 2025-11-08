@@ -6,6 +6,70 @@
  *
  * Plug directly into your existing settings.html.
  */
+
+// === PUSH NOTIFICATIONS (Firebase Cloud Messaging) ===
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
+
+// --- Firebase Config (replace with yours if needed) ---
+const firebaseConfig = {
+  apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0",
+  authDomain: "busarmydudewebsite.firebaseapp.com",
+  projectId: "busarmydudewebsite",
+  storageBucket: "busarmydudewebsite.firebasestorage.app",
+  messagingSenderId: "42980404680",
+  appId: "1:42980404680:web:f4f1e54789902a4295e4fd",
+  measurementId: "G-DQPH8YL789"
+};
+
+// --- Initialize Firebase ---
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
+
+// --- Request Push Notifications ---
+async function requestPushNotifications() {
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      alert("You must allow notifications to enable push alerts.");
+      return;
+    }
+
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    console.log("✅ Service worker registered:", registration);
+
+    const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc";
+
+    const token = await getToken(messaging, {
+      vapidKey,
+      serviceWorkerRegistration: registration
+    });
+
+    if (token) {
+      console.log("🔑 Push token:", token);
+      localStorage.setItem("fcmToken", token);
+      alert("Push notifications enabled! Token saved.");
+    } else {
+      alert("Failed to get token — try again later.");
+    }
+
+    onMessage(messaging, (payload) => {
+      console.log("📩 Foreground push:", payload);
+      const { title, body, icon } = payload.notification || {};
+      new Notification(title || "Update", { body, icon });
+    });
+
+  } catch (err) {
+    console.error("❌ Push setup failed:", err);
+    alert("Push setup failed: " + err.message);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const pushButton = document.getElementById("enablePushNotifications");
+  if (pushButton) pushButton.addEventListener("click", requestPushNotifications);
+});
+
 class SettingsManager {
   constructor() {
     /* =============================
