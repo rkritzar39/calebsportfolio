@@ -1,11 +1,11 @@
 /**
- * device.js — v8.0 (Final Integrated)
+ * device.js — v9.0 FINAL
  * Caleb’s System Dashboard
- * ✅ iOS / iPadOS detection (no build)
- * ✅ Auto sunrise & sunset times
- * ✅ Accurate connection + network logic
- * ✅ Synced clock with timezone
- * ✅ Polished fade-in UI
+ * ✅ Accurate OS / Device / Browser Detection
+ * ✅ Auto Network & Connection Info
+ * ✅ Synced Clock (Timezone-aware)
+ * ✅ Sunrise / Sunset + Day/Night Status
+ * ✅ Graceful fallbacks for iOS privacy limits
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const connectionEl = el("connection-info");
   const networkRow = document.getElementById("network-info");
   const networkEl = networkRow ? networkRow.querySelector(".version-value") : null;
+
   const sunriseEl = el("sunrise-info");
   const sunsetEl = el("sunset-info");
 
@@ -169,69 +170,96 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function detectNetworkTier() {
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!conn) {
-      if (networkRow) networkRow.style.display = "none";
-      return "";
-    }
-
+    if (!conn) return "Unavailable";
     const eff = conn.effectiveType?.toLowerCase() || "";
     if (eff.includes("5g")) return "5G";
     if (eff.includes("4g")) return "4G LTE";
     if (eff.includes("lte")) return "LTE";
     if (eff.includes("3g")) return "3G";
     if (eff.includes("2g")) return "2G";
-    return "";
+    return "Unknown";
   }
 
   /* ----------------------------
-     🌅 Sunrise / Sunset
+     🌅 Sunrise / Sunset + Day/Night
   ---------------------------- */
   function fetchSunTimes() {
     if (!sunriseEl || !sunsetEl) return;
 
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          const { latitude, longitude } = pos.coords;
-          try {
-            const res = await fetch(
-              `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`
-            );
-            const data = await res.json();
-            if (data.status === "OK") {
-              const sunrise = new Date(data.results.sunrise);
-              const sunset = new Date(data.results.sunset);
-
-              sunriseEl.textContent = sunrise.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-              sunsetEl.textContent = sunset.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-
-              sunriseEl.style.color = "#ff9500";
-              sunsetEl.style.color = "#5856d6";
-            } else {
-              sunriseEl.textContent = "Unavailable";
-              sunsetEl.textContent = "Unavailable";
-            }
-          } catch (err) {
-            console.error("Sunrise/Sunset fetch failed:", err);
-            sunriseEl.textContent = "Error";
-            sunsetEl.textContent = "Error";
-          }
-        },
-        () => {
-          sunriseEl.textContent = "Denied";
-          sunsetEl.textContent = "Denied";
-        }
-      );
-    } else {
-      sunriseEl.textContent = "Unavailable";
-      sunsetEl.textContent = "Unavailable";
+    // Create Day/Night row if not present
+    let dayStatusEl = document.getElementById("day-status-info");
+    if (!dayStatusEl) {
+      const li = document.createElement("li");
+      li.id = "day-status-info";
+      li.innerHTML = `
+        <span class="version-label">🌞 <strong>Status:</strong></span>
+        <span class="version-value">Loading...</span>`;
+      document.querySelector(".version-list").appendChild(li);
+      dayStatusEl = li.querySelector(".version-value");
     }
+
+    function setSunUI(sunrise, sunset) {
+      const now = new Date();
+      const isDay = now >= sunrise && now < sunset;
+
+      sunriseEl.textContent = sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      sunsetEl.textContent = sunset.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+      sunriseEl.style.color = "#ff9500";
+      sunsetEl.style.color = "#5856d6";
+
+      if (isDay) {
+        dayStatusEl.textContent = "Daytime ☀️";
+        dayStatusEl.style.color = "#ffd60a";
+      } else {
+        dayStatusEl.textContent = "Nighttime 🌙";
+        dayStatusEl.style.color = "#5ac8fa";
+      }
+    }
+
+    function setError(msg) {
+      sunriseEl.textContent = msg;
+      sunsetEl.textContent = msg;
+      dayStatusEl.textContent = "Unavailable";
+      dayStatusEl.style.color = "#999";
+    }
+
+    if (!("geolocation" in navigator)) {
+      setError("Unavailable");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const response = await fetch(
+            `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`
+          );
+          const data = await response.json();
+
+          if (data.status !== "OK") {
+            setError("Unavailable");
+            return;
+          }
+
+          const sunrise = new Date(data.results.sunrise);
+          const sunset = new Date(data.results.sunset);
+          setSunUI(sunrise, sunset);
+
+          // Update status every minute
+          setInterval(() => setSunUI(sunrise, sunset), 60000);
+        } catch (err) {
+          console.error("Sunrise/Sunset fetch error:", err);
+          setError("Error");
+        }
+      },
+      (err) => {
+        console.warn("Geolocation denied:", err);
+        setError("Permission Denied");
+      },
+      { enableHighAccuracy: false, timeout: 8000 }
+    );
   }
 
   /* ----------------------------
@@ -246,33 +274,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (browserEl) browserEl.textContent = detectBrowser();
     if (resolutionEl) resolutionEl.textContent = detectResolution();
     if (connectionEl) connectionEl.textContent = detectConnectionType();
-    if (networkEl) {
-      const network = detectNetworkTier();
-      if (network) networkEl.textContent = network;
-      else if (networkRow) networkRow.style.display = "none";
-    }
+    if (networkEl) networkEl.textContent = detectNetworkTier();
 
     fetchSunTimes();
 
-    [osEl, deviceEl, browserEl, resolutionEl, connectionEl, networkEl, versionEl, buildEl].forEach(
-      (el) => {
-        if (el) {
-          el.style.opacity = "1";
-          el.style.transition = "opacity 0.4s ease";
-        }
-      }
-    );
+    document.querySelectorAll(".version-value").forEach((v) => {
+      v.style.opacity = "1";
+      v.style.transition = "opacity 0.4s ease";
+    });
   }
 
   applySystemInfo();
 
-  // Live updates
   window.addEventListener("resize", () => {
     if (resolutionEl) resolutionEl.textContent = detectResolution();
   });
-  window.addEventListener("online", applySystemInfo);
-  window.addEventListener("offline", applySystemInfo);
 
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (conn && "addEventListener" in conn) conn.addEventListener("change", applySystemInfo);
+  if (conn && conn.addEventListener) conn.addEventListener("change", applySystemInfo);
+  window.addEventListener("online", applySystemInfo);
+  window.addEventListener("offline", applySystemInfo);
 });
