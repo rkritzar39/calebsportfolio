@@ -661,18 +661,18 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR (Spotify Style Wide Alignment) ======== */
+/* === PROGRESS BAR (Balanced + Spacious) ================ */
 /* ======================================================= */
 
 .music-progress-container {
   width: 100%;
-  height: 6px; /* thinner like the image */
+  max-width: 500px; /* keep visually centered and not too wide */
+  height: 6px;
   background: color-mix(in srgb, var(--border-color) 25%, transparent);
   border-radius: 50px;
   overflow: hidden;
   position: relative;
-  margin-top: 24px;
-  margin-bottom: 12px;
+  margin: 28px auto 16px auto; /* add more top/bottom space */
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
@@ -689,13 +689,13 @@ a.corner-button {
     color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 60%, #000) 100%
   );
   box-shadow:
-    0 0 8px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 70%, transparent),
-    0 0 20px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 45%, transparent);
-  transition: width 0.4s linear, box-shadow 0.4s ease;
+    0 0 10px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 60%, transparent),
+    0 0 20px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 40%, transparent);
+  transition: width 0.4s linear;
 }
 
 /* ======================================================= */
-/* === TIME DISPLAY (Left, Center, Right Alignment) ======= */
+/* === TIME DISPLAY (Proper Spacing + Legibility) ========= */
 /* ======================================================= */
 
 .music-progress-time {
@@ -703,33 +703,31 @@ a.corner-button {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  font-size: 0.92rem;
+  max-width: 500px;
+  margin: 0 auto; /* centers it below the bar */
+  padding: 4px 2px 0 2px;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: color-mix(in srgb, var(--text-color) 80%, #ddd);
-  opacity: 0.95;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-  letter-spacing: 0.3px;
+  color: color-mix(in srgb, var(--text-color) 85%, #ddd);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .music-progress-time span {
-  flex: 1;
+  width: 33.33%;
 }
 
 .music-progress-time span:first-child {
   text-align: left;
-  color: color-mix(in srgb, var(--text-color) 90%, #f8f8f8);
 }
 
 .music-progress-time span:nth-child(2) {
   text-align: center;
-  font-size: 0.88rem;
-  color: color-mix(in srgb, var(--text-color) 65%, #aaa);
   font-weight: 400;
+  color: color-mix(in srgb, var(--text-color) 70%, #aaa);
 }
 
 .music-progress-time span:last-child {
   text-align: right;
-  color: color-mix(in srgb, var(--text-color) 90%, #f8f8f8);
 }
 
 /* ======================================================= */
