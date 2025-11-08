@@ -1,9 +1,9 @@
 /**
- * device.js — v5.2
- * Fully working system dashboard: OS, Browser, Connection, Network
+ * device.js — v5.3 (iOS-safe)
+ * Fixes: iOS no detection issue, waits for DOM readiness
  */
 
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("load", () => {
   const osEl = document.querySelector("#os-info .version-value");
   const deviceEl = document.querySelector("#device-info .version-value");
   const browserEl = document.querySelector("#browser-info .version-value");
@@ -12,23 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const networkEl = document.querySelector("#network-info .version-value");
   const syncedEl = document.querySelector("#synced-info .version-value");
 
-  /* --- 🕒 Clock --- */
+  // 🕒 Live Synced Clock
   function updateClock() {
-    if (!syncedEl) return;
     const now = new Date();
-    const date = now.toLocaleDateString(undefined, {
-      weekday: "long", year: "numeric", month: "long", day: "numeric",
-    });
-    const time = now.toLocaleTimeString(undefined, {
-      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true,
-    });
-    const tz = new Date().toLocaleTimeString("en-us", { timeZoneName: "short" }).split(" ").pop();
-    syncedEl.innerHTML = `${date} at ${time} <span class="tz-tag">${tz}</span>`;
+    const date = now.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+    const time = now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true });
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (syncedEl) syncedEl.innerHTML = `${date} at ${time} <span class="tz-tag">${tz}</span>`;
   }
   updateClock();
   setInterval(updateClock, 1000);
 
-  /* --- 💻 OS --- */
+  // 💻 OS + Version
   function detectOS() {
     const ua = navigator.userAgent;
     let os = "Unknown", version = "";
@@ -53,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (m) version = m[1].replace("_", ".");
     } else if (/Windows NT/i.test(ua)) {
       os = "Windows";
-      const map = { "10.0": "11/10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
+      const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
       const m = ua.match(/Windows NT (\d+\.\d+)/);
       if (m) version = map[m[1]] || m[1];
     } else if (/CrOS/i.test(ua)) os = "ChromeOS";
@@ -61,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return version ? `${os} ${version}` : os;
   }
 
-  /* --- 🌐 Browser --- */
+  // 🌐 Browser
   function detectBrowser() {
     const ua = navigator.userAgent;
     if (ua.includes("CriOS")) return "Chrome (iOS)";
@@ -76,60 +71,55 @@ document.addEventListener("DOMContentLoaded", () => {
     return "Unknown Browser";
   }
 
-  /* --- 📱 Connection --- */
+  // 📶 Connection Type
   async function detectConnectionType() {
-    if (!connectionEl) return;
     if (!navigator.onLine) {
       connectionEl.textContent = "🚫 Not Connected";
+      networkEl.textContent = "🚫 Not Connected";
       return;
     }
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (conn && conn.type) {
-      if (conn.type === "wifi") return (connectionEl.textContent = "📶 Wi-Fi");
-      if (conn.type === "cellular") return (connectionEl.textContent = "📱 Cellular");
-    }
 
-    // fallback for Safari/iOS
     try {
-      const start = performance.now();
-      await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
-      const latency = performance.now() - start;
-      connectionEl.textContent = latency > 200 ? "📱 Cellular" : "📶 Wi-Fi";
+      const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (conn && conn.type) {
+        if (conn.type === "wifi") connectionEl.textContent = "📶 Wi-Fi";
+        else if (conn.type === "cellular") connectionEl.textContent = "📱 Cellular";
+        else connectionEl.textContent = "🌐 Connected";
+      } else {
+        // Safari fallback: simple ping test
+        const start = performance.now();
+        await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors" });
+        const latency = performance.now() - start;
+        connectionEl.textContent = latency > 250 ? "📱 Cellular" : "📶 Wi-Fi";
+      }
     } catch {
       connectionEl.textContent = "🌐 Connected";
     }
   }
 
-  /* --- 📡 Network Generation --- */
+  // 📡 Network Generation (heuristic)
   async function detectNetworkGeneration() {
-    if (!networkEl) return;
     if (!navigator.onLine) return (networkEl.textContent = "🚫 Not Connected");
-
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if (conn && conn.effectiveType) {
       const eff = conn.effectiveType.toLowerCase();
-      if (eff.includes("5g")) return (networkEl.textContent = "5G");
-      if (eff.includes("4g")) return (networkEl.textContent = "4G / LTE");
-      if (eff.includes("3g")) return (networkEl.textContent = "3G");
-      if (eff.includes("2g")) return (networkEl.textContent = "2G");
-      return (networkEl.textContent = "LTE / 4G");
+      if (eff.includes("5g")) networkEl.textContent = "5G";
+      else if (eff.includes("4g")) networkEl.textContent = "4G / LTE";
+      else if (eff.includes("3g")) networkEl.textContent = "3G";
+      else networkEl.textContent = "LTE / 4G";
+      return;
     }
-
-    // fallback for Safari/iOS
-    try {
-      const start = performance.now();
-      await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
-      const latency = performance.now() - start;
-      let gen = "LTE / 4G";
-      if (latency > 800) gen = "3G";
-      else if (latency < 200) gen = "5G";
-      networkEl.textContent = gen;
-    } catch {
-      networkEl.textContent = "Unknown";
-    }
+    // fallback latency guess
+    const start = performance.now();
+    await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors" });
+    const latency = performance.now() - start;
+    if (latency < 200) networkEl.textContent = "5G";
+    else if (latency < 500) networkEl.textContent = "LTE / 4G";
+    else if (latency < 1000) networkEl.textContent = "3G";
+    else networkEl.textContent = "2G";
   }
 
-  /* --- 🧠 Apply All --- */
+  // 🧠 Apply Everything
   async function applyAll() {
     if (osEl) osEl.textContent = detectOS();
     if (deviceEl) deviceEl.textContent = /iPhone/i.test(navigator.userAgent)
@@ -138,17 +128,11 @@ document.addEventListener("DOMContentLoaded", () => {
       ? "iPad"
       : "Device";
     if (browserEl) browserEl.textContent = detectBrowser();
-    if (resolutionEl) resolutionEl.textContent = `${window.screen.width} × ${window.screen.height}`;
+    if (resolutionEl) resolutionEl.textContent = `${screen.width} × ${screen.height}`;
     await detectConnectionType();
     await detectNetworkGeneration();
   }
 
   applyAll();
-  setInterval(applyAll, 5000);
-
-  window.addEventListener("online", applyAll);
-  window.addEventListener("offline", applyAll);
-  window.addEventListener("resize", () => {
-    if (resolutionEl) resolutionEl.textContent = `${window.screen.width} × ${window.screen.height}`;
-  });
+  setInterval(applyAll, 7000); // auto-refresh
 });
