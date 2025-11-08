@@ -181,6 +181,62 @@ try {
 }
 
 /* ==========================================================
+   🔔 FIREBASE CLOUD MESSAGING — PUSH NOTIFICATION SETUP
+   ========================================================== */
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
+
+async function initializePushNotifications() {
+  try {
+    if (!("Notification" in window)) {
+      console.warn("Browser does not support notifications.");
+      return;
+    }
+
+    // Ask user for permission
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      console.warn("Notification permission denied by user.");
+      return;
+    }
+
+    const messaging = getMessaging();
+    const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc"; // 🔑 Replace with your real VAPID key
+
+    // Register your service worker (must be at root)
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    console.log("✅ Service Worker registered for push notifications:", registration);
+
+    // Get an FCM token for this device
+    const token = await getToken(messaging, {
+      vapidKey,
+      serviceWorkerRegistration: registration
+    });
+    console.log("🔑 FCM Token:", token);
+
+    // Optionally save token to Firestore to identify this user later
+    // const tokenRef = doc(db, "user_tokens", token);
+    // await setDoc(tokenRef, { token, timestamp: Date.now() });
+
+    // Listen for foreground notifications (while site is open)
+    onMessage(messaging, (payload) => {
+      console.log("📩 Push message received in foreground:", payload);
+      const { title, body, icon } = payload.notification || {};
+      showSmartToast(title || "Notification", body || "You have a new update!");
+    });
+
+  } catch (err) {
+    console.error("❌ Push notification setup failed:", err);
+  }
+}
+
+// --- Initialize push notifications when Firebase is ready ---
+document.addEventListener("DOMContentLoaded", () => {
+  if (firebaseAppInitialized && db) {
+    initializePushNotifications();
+  }
+});
+
+/* ==========================================================
    🔔 SMART FIRESTORE NOTIFICATION SYSTEM (ALL SECTIONS)
    ========================================================== */
 
