@@ -1,27 +1,44 @@
 /**
  * settings.js
  * Full Settings Manager with live previews, themes, accessibility,
- * custom backgrounds, blur, dark-mode scheduler, and in-site notifications.
+ * custom backgrounds, blur, dark-mode scheduler, in-site notifications,
+ * and cross-tab synchronization.
+ *
+ * Plug directly into your existing settings.html.
  */
 class SettingsManager {
   constructor() {
+    /* =============================
+       Defaults
+    ============================= */
     this.defaultSettings = {
-      appearanceMode: "device",
+      // Appearance
+      appearanceMode: "device",   // "device" | "light" | "dark"
       themeStyle: "clear",
       accentColor: "#3ddc84",
-      darkModeScheduler: "off", // 'off' | 'auto'
+
+      // Scheduler
+      darkModeScheduler: "off",   // "off" | "auto"
       darkModeStart: "20:00",
       darkModeEnd: "06:00",
+
+      // Typography & a11y
       fontSize: 16,
-      focusOutline: "enabled",
-      motionEffects: "enabled",
-      highContrast: "disabled",
-      dyslexiaFont: "disabled",
-      underlineLinks: "disabled",
-      loadingScreen: "disabled",
-      mouseTrail: "disabled",
-      liveStatus: "disabled",
+      focusOutline: "enabled",    // enabled | disabled
+      motionEffects: "enabled",   // enabled | disabled
+      highContrast: "disabled",   // enabled | disabled
+      dyslexiaFont: "disabled",   // enabled | disabled
+      underlineLinks: "disabled", // enabled | disabled
+
+      // Fun / perf
+      loadingScreen: "disabled",  // enabled | disabled
+      mouseTrail: "disabled",     // enabled | disabled
+      liveStatus: "disabled",     // enabled | disabled
+
+      // Reordering
       rearrangingEnabled: "disabled",
+
+      // Homepage sections visibility
       showSocialLinks: "enabled",
       showPresidentSection: "enabled",
       showTiktokShoutouts: "enabled",
@@ -34,23 +51,33 @@ class SettingsManager {
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
       showLiveActivity: "enabled",
+
+      // Local-only notifications container (persisted under websiteSettings.notifications)
+      // (kept separate so defaultSettings stays stable)
     };
 
+    /* =============================
+       Instance State
+    ============================= */
     this.settings = this.loadSettings();
     this.deviceThemeMedia = null;
     this.schedulerInterval = null;
 
+    /* =============================
+       Boot on DOM ready
+    ============================= */
     document.addEventListener("DOMContentLoaded", () => {
+      // Initial UI + Settings
       this.initializeControls();
       this.applyAllSettings();
       this.setupEventListeners();
 
-      // Feature initialization
+      // Feature setup
       this.initMouseTrail();
       this.initLoadingScreen();
       this.initScrollArrow();
 
-      // Wallpaper / Blur
+      // Wallpaper
       this.initCustomBackgroundControls();
       this.applyCustomBackground(false);
       this.initWallpaperBlurControl();
@@ -58,7 +85,7 @@ class SettingsManager {
       // Scheduler
       this.initSchedulerInterval();
 
-      // Device theme listener
+      // System theme listener (for "device" mode)
       if (window.matchMedia) {
         this.deviceThemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
         this.deviceThemeMedia.addEventListener("change", () => {
@@ -69,7 +96,7 @@ class SettingsManager {
         });
       }
 
-      // Reduced motion listener
+      // Reduced-motion listener (only seeds if no stored settings)
       if (window.matchMedia) {
         const motionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
         motionMedia.addEventListener("change", (e) => {
@@ -82,8 +109,9 @@ class SettingsManager {
         });
       }
 
-      // Cross-tab sync
+      // Cross-tab synchronization
       window.addEventListener("storage", (e) => {
+        // Entire settings changed
         if (e.key === "websiteSettings") {
           this.settings = this.loadSettings();
           this.applyAllSettings();
@@ -91,10 +119,16 @@ class SettingsManager {
           this.applyCustomBackground(false);
           this.toggleScheduleInputs(this.settings.darkModeScheduler);
           this.syncWallpaperUIVisibility();
+
+          // Ensure background controls reflect latest
           this.initCustomBackgroundControls();
           this.initWallpaperBlurControl();
+
+          // Keep Notifications UI synced
+          this.applyNotificationUI();
         }
 
+        // Direct bg/blur change sync
         if (
           e.key === "customBackground" ||
           e.key === "customBackgroundName" ||
@@ -107,16 +141,16 @@ class SettingsManager {
         }
       });
 
-      // Reapply live status if needed
+      // Live Activity (if provided globally)
       if (typeof updateLiveStatus === "function") {
         setTimeout(() => updateLiveStatus(), 500);
       }
 
-      // Footer year
+      // Footer year helper
       const yearSpan = document.getElementById("year");
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-      // ✅ Initialize In-Site Notification Settings
+      // In-site notifications (no push)
       this.initNotificationSettings();
     });
   }
@@ -141,6 +175,11 @@ class SettingsManager {
         toSave[key] = this.settings[key];
       }
     }
+    // Preserve notifications payload if present
+    const existing = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    if (existing.notifications) {
+      toSave.notifications = existing.notifications;
+    }
     localStorage.setItem("websiteSettings", JSON.stringify(toSave));
   }
 
@@ -148,15 +187,18 @@ class SettingsManager {
      UI Setup
   ============================= */
   initializeControls() {
+    // Segmented appearance control
     this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
     this.updateSegmentedBackground("appearanceModeControl");
 
+    // Accent color
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
       accentPicker.value = this.settings.accentColor;
       this.checkAccentColor(this.settings.accentColor);
     }
 
+    // Text size
     const slider = document.getElementById("text-size-slider");
     const badge = document.getElementById("textSizeValue");
     if (slider && badge) {
@@ -165,15 +207,16 @@ class SettingsManager {
       this.updateSliderFill(slider);
     }
 
+    // Scheduler values
     const schedulerSelect = document.getElementById("darkModeScheduler");
     const startInput = document.getElementById("darkModeStart");
     const endInput = document.getElementById("darkModeEnd");
     if (schedulerSelect) schedulerSelect.value = this.settings.darkModeScheduler;
     if (startInput) startInput.value = this.settings.darkModeStart;
     if (endInput) endInput.value = this.settings.darkModeEnd;
-
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
 
+    // Boolean toggles (enabled/disabled)
     const toggles = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -182,6 +225,7 @@ class SettingsManager {
     );
     toggles.forEach((key) => this.setToggle(key));
 
+    // Wallpaper UI visibility
     this.syncWallpaperUIVisibility();
   }
 
@@ -228,6 +272,7 @@ class SettingsManager {
      Event Listeners
   ============================= */
   setupEventListeners() {
+    // Appearance segmented control
     const appearanceControl = document.getElementById("appearanceModeControl");
     if (appearanceControl) {
       appearanceControl.addEventListener("click", (e) => {
@@ -254,6 +299,7 @@ class SettingsManager {
       });
     }
 
+    // Accent color
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
       accentPicker.addEventListener("input", (e) => {
@@ -265,6 +311,7 @@ class SettingsManager {
       });
     }
 
+    // Text size
     const slider = document.getElementById("text-size-slider");
     if (slider) {
       slider.addEventListener("input", (e) => {
@@ -277,34 +324,32 @@ class SettingsManager {
       });
     }
 
+    // Scheduler selects
     const schedulerSelect = document.getElementById("darkModeScheduler");
     const startInput = document.getElementById("darkModeStart");
     const endInput = document.getElementById("darkModeEnd");
 
-    if (schedulerSelect) {
-      schedulerSelect.addEventListener("change", (e) => {
-        const val = e.target.value;
-        this.settings.darkModeScheduler = val;
-        this.saveSettings();
-        this.toggleScheduleInputs(val);
-        this.checkDarkModeSchedule(true);
-      });
-    }
-    if (startInput) {
-      startInput.addEventListener("change", (e) => {
-        this.settings.darkModeStart = e.target.value;
-        this.saveSettings();
-        this.checkDarkModeSchedule(true);
-      });
-    }
-    if (endInput) {
-      endInput.addEventListener("change", (e) => {
-        this.settings.darkModeEnd = e.target.value;
-        this.saveSettings();
-        this.checkDarkModeSchedule(true);
-      });
-    }
+    schedulerSelect?.addEventListener("change", (e) => {
+      const val = e.target.value;
+      this.settings.darkModeScheduler = val;
+      this.saveSettings();
+      this.toggleScheduleInputs(val);
+      this.checkDarkModeSchedule(true);
+    });
 
+    startInput?.addEventListener("change", (e) => {
+      this.settings.darkModeStart = e.target.value;
+      this.saveSettings();
+      this.checkDarkModeSchedule(true);
+    });
+
+    endInput?.addEventListener("change", (e) => {
+      this.settings.darkModeEnd = e.target.value;
+      this.saveSettings();
+      this.checkDarkModeSchedule(true);
+    });
+
+    // All boolean toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -312,19 +357,20 @@ class SettingsManager {
     );
     toggleKeys.forEach((key) => {
       const el = document.getElementById(`${key}Toggle`);
-      if (el) {
-        el.addEventListener("change", () => {
-          this.settings[key] = el.checked ? "enabled" : "disabled";
-          this.applySetting(key);
-          this.saveSettings();
+      if (!el) return;
+      el.addEventListener("change", () => {
+        this.settings[key] = el.checked ? "enabled" : "disabled";
+        this.applySetting(key);
+        this.saveSettings();
 
-          if (key === "showLiveActivity" && typeof updateLiveStatus === "function") {
-            setTimeout(() => updateLiveStatus(), 300);
-          }
-        });
-      }
+        // Live Activity hook
+        if (key === "showLiveActivity" && typeof updateLiveStatus === "function") {
+          setTimeout(() => updateLiveStatus(), 300);
+        }
+      });
     });
 
+    // Resets
     document.getElementById("resetLayoutBtn")?.addEventListener("click", () => {
       if (confirm("Reset the section layout to default?")) {
         localStorage.removeItem("sectionOrder");
@@ -332,116 +378,70 @@ class SettingsManager {
       }
     });
 
-    document.getElementById("resetSectionsBtn")?.addEventListener("click", () => this.resetSectionVisibility());
-    document.getElementById("resetSettings")?.addEventListener("click", () => this.resetSettings());
-  }
+    document.getElementById("resetSectionsBtn")?.addEventListener("click", () =>
+      this.resetSectionVisibility()
+    );
 
-  /* =============================
-     🎯 In-Site Notifications
-  ============================= */
-  ensureToastContainer() {
-    let c = document.getElementById("toast-container");
-    if (!c) {
-      c = document.createElement("div");
-      c.id = "toast-container";
-      Object.assign(c.style, {
-        position: "fixed",
-        bottom: "30px",
-        right: "30px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "12px",
-        zIndex: "9999",
-      });
-      document.body.appendChild(c);
-    }
-    return c;
-  }
-
-  showToast(title, message) {
-    const container = this.ensureToastContainer();
-    const toast = document.createElement("div");
-    toast.className = "toast";
-    const accent =
-      getComputedStyle(document.documentElement).getPropertyValue("--accent-color") || "#007aff";
-    toast.style.background = accent.trim();
-    toast.innerHTML = `<strong>${title}</strong><span>${message}</span>`;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
-  }
-
-  getNotificationSettings() {
-    const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-    return (
-      settings.notifications || {
-        enabled: false,
-        categories: { updates: false, liveActivity: false, creators: false },
-      }
+    document.getElementById("resetSettings")?.addEventListener("click", () =>
+      this.resetSettings()
     );
   }
 
-  setNotificationSettings(next) {
-    const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-    settings.notifications = next;
-    localStorage.setItem("websiteSettings", JSON.stringify(settings));
-  }
-
-  applyNotificationUI() {
-    const state = this.getNotificationSettings();
-    const main = document.getElementById("inSiteNotificationsToggle");
-    const group = document.getElementById("notificationCategories");
-    const upd = document.getElementById("notifUpdatesToggle");
-    const live = document.getElementById("notifLiveActivityToggle");
-    const cre = document.getElementById("notifCreatorUpdatesToggle");
-    if (!main || !group) return;
-    main.checked = !!state.enabled;
-    group.style.display = state.enabled ? "block" : "none";
-    if (upd) upd.checked = !!state.categories?.updates;
-    if (live) live.checked = !!state.categories?.liveActivity;
-    if (cre) cre.checked = !!state.categories?.creators;
-  }
-
-  initNotificationSettings() {
-    const main = document.getElementById("inSiteNotificationsToggle");
-    if (!main) return;
-    const group = document.getElementById("notificationCategories");
-    const upd = document.getElementById("notifUpdatesToggle");
-    const live = document.getElementById("notifLiveActivityToggle");
-    const cre = document.getElementById("notifCreatorUpdatesToggle");
-
-    this.applyNotificationUI();
-
-    main.addEventListener("change", () => {
-      const state = this.getNotificationSettings();
-      state.enabled = main.checked;
-      this.setNotificationSettings(state);
-      group.style.display = state.enabled ? "block" : "none";
-      this.showToast(
-        state.enabled ? "In-Site Notifications Enabled" : "Notifications Disabled",
-        state.enabled ? "You’ll now see alerts like this one!" : "In-site notifications are now off."
-      );
-    });
-
-    const wireCat = (el, key) => {
-      if (!el) return;
-      el.addEventListener("change", () => {
-        const state = this.getNotificationSettings();
-        state.categories = state.categories || { updates: false, liveActivity: false, creators: false };
-        state.categories[key] = el.checked;
-        this.setNotificationSettings(state);
-        const label = el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
-        this.showToast("Preference Saved", `${label} notifications updated.`);
-      });
-    };
-
-    wireCat(upd, "updates");
-    wireCat(live, "liveActivity");
-    wireCat(cre, "creators");
-  }
-
   /* =============================
-     Remaining core methods (appearance, background, etc.)
-     ============================= */
+     Appearance & Theme
+  ============================= */
+  // Fix: consistent theme classes across pages (esp. settings page)
+  setThemeClasses(isDark) {
+    // These control the flicker script and page theme
+    document.documentElement.classList.toggle("dark-mode", isDark);
+    document.documentElement.classList.toggle("light-mode", !isDark);
+
+    // Site themes (two CSS stacks)
+    document.body.classList.toggle("dark-mode", isDark); // e.g. settings.css
+    document.body.classList.toggle("light-e", !isDark);  // e.g. style.css
+
+    // Important: on the settings page, avoid mixing "light-e"
+    if (document.body.classList.contains("settings-page")) {
+      if (!isDark) {
+        // We’re in light mode on settings page — keep it clean
+        document.body.classList.remove("light-e");
+      }
+    }
+  }
+
+  applyAppearanceMode() {
+    const isDark =
+      this.settings.appearanceMode === "dark" ||
+      (this.settings.appearanceMode === "device" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    this.setThemeClasses(isDark);
+    this.checkAccentColor(this.settings.accentColor);
+  }
+
+  applyAccentColor() {
+    const accent = this.settings.accentColor;
+    const contrast = this.getContrastColor(accent);
+    document.documentElement.style.setProperty("--accent-color", accent);
+    document.documentElement.style.setProperty("--accent-text-color", contrast);
+
+    const preview = document.getElementById("accentColorPreview");
+    if (preview) preview.style.backgroundColor = accent;
+
+    this.checkAccentColor(accent);
+  }
+
+  applyFontSize() {
+    document.documentElement.style.setProperty(
+      "--font-size-base",
+      `${this.settings.fontSize}px`
+    );
+  }
+
+  applyMotionEffects() {
+    const reduced = this.settings.motionEffects === "disabled";
+    document.body.classList.toggle("reduced-motion", reduced);
+  }
+
   updateSliderFill(slider) {
     if (!slider) return;
     const min = slider.min || 0;
@@ -475,270 +475,9 @@ class SettingsManager {
     warn.style.display = isLightColor && isLight ? "block" : "none";
   }
 
-  applyAllSettings() {
-    Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
-    this.applyCustomBackground(false);
-    this.toggleScheduleInputs(this.settings.darkModeScheduler);
-    this.syncWallpaperUIVisibility();
-  }
-
-  applySetting(key) {
-    const actions = {
-      appearanceMode: () => this.applyAppearanceMode(),
-      accentColor: () => this.applyAccentColor(),
-      fontSize: () => this.applyFontSize(),
-      focusOutline: () =>
-        document.body.classList.toggle(
-          "focus-outline-disabled",
-          this.settings.focusOutline === "disabled"
-        ),
-      motionEffects: () => this.applyMotionEffects(),
-      highContrast: () =>
-        document.body.classList.toggle(
-          "high-contrast",
-          this.settings.highContrast === "enabled"
-        ),
-      dyslexiaFont: () =>
-        document.body.classList.toggle(
-          "dyslexia-font",
-          this.settings.dyslexiaFont === "enabled"
-        ),
-      underlineLinks: () =>
-        document.body.classList.toggle(
-          "underline-links",
-          this.settings.underlineLinks === "enabled"
-        ),
-      mouseTrail: () =>
-        document.body.classList.toggle(
-          "mouse-trail-enabled",
-          this.settings.mouseTrail === "enabled"
-        ),
-    };
-
-    actions[key]?.();
-
-    // Universal show/hide for homepage sections
-    if (key.startsWith("show")) {
-      const sectionId = key
-        .replace(/^show/, "")
-        .replace(/^[A-Z]/, (m) => m.toLowerCase())
-        .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
-
-      const el =
-        document.getElementById(`${sectionId}-section`) ||
-        document.querySelector(`[data-section-id="${sectionId}"]`);
-
-      if (el) {
-        const visible = this.settings[key] === "enabled";
-        el.style.transition = "opacity 0.3s ease";
-        if (visible) {
-          el.style.display = "";
-          requestAnimationFrame(() => (el.style.opacity = "1"));
-        } else {
-          el.style.opacity = "0";
-          setTimeout(() => (el.style.display = "none"), 300);
-        }
-      }
-    }
-
-    // Special rule: Live Activity toggle
-    if (key === "showLiveActivity") {
-      const liveActivity = document.getElementById("live-activity");
-      if (liveActivity) {
-        const visible = this.settings.showLiveActivity === "enabled";
-        if (visible) {
-          liveActivity.style.display = "";
-          requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
-          if (typeof updateLiveStatus === "function") {
-            setTimeout(() => updateLiveStatus(), 300);
-          }
-        } else {
-          liveActivity.style.opacity = "0";
-          setTimeout(() => (liveActivity.style.display = "none"), 250);
-          console.log("[Live Activity] Disabled by settings — API paused");
-        }
-      }
-    }
-  }
-/* ==========================================================
-   🛠️ Notifications Settings System
-   ========================================================== */
-
-// === Toast Preview ===
-function showToast(title, message) {
-  const container = document.getElementById('toast-container');
-  if (!container) return;
-
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.innerHTML = `<strong>${title}</strong><span>${message}</span>`;
-  container.appendChild(toast);
-
-  // Auto-remove after 4 seconds
-  setTimeout(() => toast.remove(), 4000);
-}
-
-// === Get Elements ===
-const inSiteNotificationsToggle = document.getElementById('inSiteNotificationsToggle');
-const notificationCategories = document.getElementById('notificationCategories');
-const notifToggles = {
-  updates: document.getElementById('notifUpdatesToggle'),
-  liveActivity: document.getElementById('notifLiveActivityToggle'),
-  creators: document.getElementById('notifCreatorUpdatesToggle')
-};
-const enablePushBtn = document.getElementById('enablePushNotifications');
-
-// === Save Settings ===
-function saveNotificationSettings() {
-  const settings = JSON.parse(localStorage.getItem('websiteSettings')) || {};
-  settings.notifications = {
-    enabled: inSiteNotificationsToggle.checked,
-    categories: {
-      updates: notifToggles.updates.checked,
-      liveActivity: notifToggles.liveActivity.checked,
-      creators: notifToggles.creators.checked
-    },
-    pushEnabled: settings.notifications?.pushEnabled || false
-  };
-  localStorage.setItem('websiteSettings', JSON.stringify(settings));
-}
-
-// === Load Settings on Page Start ===
-function loadNotificationSettings() {
-  const settings = JSON.parse(localStorage.getItem('websiteSettings')) || {};
-  const notif = settings.notifications || {};
-  inSiteNotificationsToggle.checked = notif.enabled || false;
-  notificationCategories.style.display = notif.enabled ? 'block' : 'none';
-
-  if (notif.categories) {
-    notifToggles.updates.checked = notif.categories.updates || false;
-    notifToggles.liveActivity.checked = notif.categories.liveActivity || false;
-    notifToggles.creators.checked = notif.categories.creators || false;
-  }
-}
-
-// === Event: Toggle Main In-Site Notifications ===
-inSiteNotificationsToggle?.addEventListener('change', () => {
-  notificationCategories.style.display = inSiteNotificationsToggle.checked ? 'block' : 'none';
-  saveNotificationSettings();
-
-  if (inSiteNotificationsToggle.checked) {
-    showToast("In-Site Notifications Enabled", "You’ll now see alerts like this one!");
-  } else {
-    showToast("Notifications Disabled", "In-site notifications are now off.");
-  }
-});
-
-// === Event: Sub Toggles (Updates, Live, Creators) ===
-Object.values(notifToggles).forEach(toggle => toggle?.addEventListener('change', () => {
-  saveNotificationSettings();
-  const label = toggle.parentElement.querySelector('.setting-title').textContent;
-  showToast("Preference Saved", `${label} notifications updated.`);
-}));
-
-// === Push Notifications (Browser Permission) ===
-enablePushBtn?.addEventListener('click', async () => {
-  try {
-    const permission = await Notification.requestPermission();
-
-    if (permission === 'granted') {
-      // Mark push notifications as enabled
-      const settings = JSON.parse(localStorage.getItem('websiteSettings')) || {};
-      settings.notifications = settings.notifications || {};
-      settings.notifications.pushEnabled = true;
-      localStorage.setItem('websiteSettings', JSON.stringify(settings));
-
-      // Update button UI
-      enablePushBtn.textContent = "Enabled ✅";
-      enablePushBtn.disabled = true;
-
-      // Show browser notification preview
-      new Notification("Notifications Enabled!", {
-        body: "You’ll now get alerts even when the site is closed (coming soon).",
-        icon: "/favicon-32x32.png"
-      });
-
-      // Toast preview
-      showToast("Push Notifications Enabled", "Browser permission granted successfully.");
-    } else {
-      showToast("Permission Denied", "Notifications blocked in browser settings.");
-    }
-  } catch (e) {
-    console.error("Notification error:", e);
-    showToast("Error", "Could not enable push notifications.");
-  }
-});
-
-// === Initialize ===
-loadNotificationSettings();
-  // ===================================
-  // === THIS FUNCTION IS THE FIX ====
-  // ===================================
-  setThemeClasses(isDark) {
-    // These control the flicker script and are fine
-    document.documentElement.classList.toggle("dark-mode", isDark);
-    document.documentElement.classList.toggle("light-mode", !isDark);
-
-    // These control the theme
-    document.body.classList.toggle("dark-mode", isDark); // For settings.css (Onyx)
-    document.body.classList.toggle("light-e", !isDark);  // For style.css (Liquid Glass)
-    
-    // --- THE FIX ---
-    // If we are on the settings page, we MUST disable the 'light-e' class
-    // when in light mode, because it's for the *other* theme and will conflict.
-    if (document.body.classList.contains("settings-page")) {
-      if (!isDark) {
-        // We are in Light Mode on the Settings Page.
-        // The Onyx theme (settings.css) is light by default (no class).
-        // We must REMOVE light-e to prevent style.css from interfering.
-        document.body.classList.remove("light-e");
-      }
-    }
-  }
-  // ===================================
-  // === END OF FIX ====================
-  // ===================================
-
-  applyAppearanceMode() {
-    const isDark =
-      this.settings.appearanceMode === "dark" ||
-      (this.settings.appearanceMode === "device" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-    this.setThemeClasses(isDark);
-    this.checkAccentColor(this.settings.accentColor);
-  }
-
-  applyAccentColor() {
-    const accent = this.settings.accentColor;
-    const contrast = this.getContrastColor(accent);
-    document.documentElement.style.setProperty("--accent-color", accent);
-    document.documentElement.style.setProperty(
-      "--accent-text-color",
-      contrast
-    );
-    // Update preview bubble
-    const preview = document.getElementById("accentColorPreview");
-    if(preview) {
-        preview.style.backgroundColor = accent;
-    }
-    this.checkAccentColor(accent);
-  }
-
-  applyFontSize() {
-    document.documentElement.style.setProperty(
-      "--font-size-base",
-      `${this.settings.fontSize}px`
-    );
-  }
-
-  applyMotionEffects() {
-    const reduced = this.settings.motionEffects === "disabled";
-    document.body.classList.toggle("reduced-motion", reduced);
-  }
-
-  // =============================
-  // Custom Background + Blur
-  // =============================
+  /* =============================
+     Custom Background & Blur
+  ============================= */
   ensureWallpaperLayers() {
     let layer = document.getElementById("wallpaper-layer");
     if (!layer) {
@@ -753,6 +492,7 @@ loadNotificationSettings();
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         transition: "opacity 1.2s ease, filter 0.3s ease",
+        opacity: "0",
       });
       document.body.prepend(layer);
     }
@@ -906,6 +646,7 @@ loadNotificationSettings();
       layer.style.opacity = "0";
     }
 
+    // Tint based on theme
     const isDark =
       this.settings.appearanceMode === "dark" ||
       (this.settings.appearanceMode === "device" &&
@@ -915,6 +656,7 @@ loadNotificationSettings();
       ? "rgba(0, 0, 0, 0.45)"
       : "rgba(255, 255, 255, 0.15)";
 
+    // Ensure blur applied
     const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
     this.applyWallpaperBlur(blurValue);
   }
@@ -935,14 +677,14 @@ loadNotificationSettings();
     slider.value = stored;
     badge.textContent = `${stored}px`;
     this.applyWallpaperBlur(stored);
-    this.updateSliderFill(slider); // Apply fill
+    this.updateSliderFill(slider);
 
     slider.addEventListener("input", (e) => {
       const val = e.target.value;
       badge.textContent = `${val}px`;
       localStorage.setItem("wallpaperBlur", val);
       this.applyWallpaperBlur(val);
-      this.updateSliderFill(slider); // Update fill on drag
+      this.updateSliderFill(slider);
     });
   }
 
@@ -957,9 +699,9 @@ loadNotificationSettings();
     this.toggleWallpaperBlurCard(hasBg);
   }
 
-  // =============================
-  // Dark Mode Scheduler
-  // =============================
+  /* =============================
+     Dark Mode Scheduler
+  ============================= */
   initSchedulerInterval() {
     clearInterval(this.schedulerInterval);
     this.checkDarkModeSchedule(true);
@@ -989,6 +731,7 @@ loadNotificationSettings();
 
     let isDark;
     if (end <= start) {
+      // Over midnight
       isDark = now >= start || now < end;
     } else {
       isDark = now >= start && now < end;
@@ -1004,14 +747,247 @@ loadNotificationSettings();
     group.style.display = mode === "auto" ? "" : "none";
   }
 
-  // =============================
-  // Reset Controls
-  // =============================
+  /* =============================
+     Apply Settings
+  ============================= */
+  applyAllSettings() {
+    Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
+    this.applyCustomBackground(false);
+    this.toggleScheduleInputs(this.settings.darkModeScheduler);
+    this.syncWallpaperUIVisibility();
+  }
+
+  applySetting(key) {
+    // Map of single-key actions
+    const actions = {
+      appearanceMode: () => this.applyAppearanceMode(),
+      accentColor: () => this.applyAccentColor(),
+      fontSize: () => this.applyFontSize(),
+      focusOutline: () =>
+        document.body.classList.toggle(
+          "focus-outline-disabled",
+          this.settings.focusOutline === "disabled"
+        ),
+      motionEffects: () => this.applyMotionEffects(),
+      highContrast: () =>
+        document.body.classList.toggle(
+          "high-contrast",
+          this.settings.highContrast === "enabled"
+        ),
+      dyslexiaFont: () =>
+        document.body.classList.toggle(
+          "dyslexia-font",
+          this.settings.dyslexiaFont === "enabled"
+        ),
+      underlineLinks: () =>
+        document.body.classList.toggle(
+          "underline-links",
+          this.settings.underlineLinks === "enabled"
+        ),
+      mouseTrail: () =>
+        document.body.classList.toggle(
+          "mouse-trail-enabled",
+          this.settings.mouseTrail === "enabled"
+        ),
+    };
+
+    // Execute direct action if exists
+    actions[key]?.();
+
+    // Universal show/hide behavior for sections (keys beginning with "show")
+    if (key.startsWith("show")) {
+      const sectionId = key
+        .replace(/^show/, "")
+        .replace(/^[A-Z]/, (m) => m.toLowerCase())
+        .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+
+      const el =
+        document.getElementById(`${sectionId}-section`) ||
+        document.querySelector(`[data-section-id="${sectionId}"]`);
+
+      if (el) {
+        const visible = this.settings[key] === "enabled";
+        el.style.transition = "opacity 0.3s ease";
+        if (visible) {
+          el.style.display = "";
+          requestAnimationFrame(() => (el.style.opacity = "1"));
+        } else {
+          el.style.opacity = "0";
+          setTimeout(() => (el.style.display = "none"), 300);
+        }
+      }
+    }
+
+    // Special: Live Activity visibility hook
+    if (key === "showLiveActivity") {
+      const liveActivity = document.getElementById("live-activity");
+      if (liveActivity) {
+        const visible = this.settings.showLiveActivity === "enabled";
+        if (visible) {
+          liveActivity.style.display = "";
+          requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
+          if (typeof updateLiveStatus === "function") {
+            setTimeout(() => updateLiveStatus(), 300);
+          }
+        } else {
+          liveActivity.style.opacity = "0";
+          setTimeout(() => (liveActivity.style.display = "none"), 250);
+        }
+      }
+    }
+  }
+
+  /* =============================
+     In-Site Notifications (Toasts)
+  ============================= */
+  ensureToastContainer() {
+    let c = document.getElementById("toast-container");
+    if (!c) {
+      c = document.createElement("div");
+      c.id = "toast-container";
+      Object.assign(c.style, {
+        position: "fixed",
+        bottom: "30px",
+        right: "30px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        zIndex: "9999",
+        pointerEvents: "none",
+      });
+      document.body.appendChild(c);
+    }
+    return c;
+  }
+
+  showToast(title, message) {
+    const container = this.ensureToastContainer();
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    const accent =
+      getComputedStyle(document.documentElement).getPropertyValue("--accent-color") ||
+      "#007aff";
+
+    // Basic look; your CSS can style .toast further
+    Object.assign(toast.style, {
+      background: accent.trim(),
+      color: "var(--accent-text-color, #fff)",
+      borderRadius: "14px",
+      padding: "12px 14px",
+      boxShadow: "0 10px 28px rgba(0,0,0,.25)",
+      backdropFilter: "blur(10px)",
+      WebkitBackdropFilter: "blur(10px)",
+      maxWidth: "340px",
+      fontSize: "14px",
+      lineHeight: "1.35",
+      pointerEvents: "auto",
+      transform: "translateY(10px)",
+      opacity: "0",
+      transition: "opacity .25s ease, transform .25s ease",
+    });
+
+    toast.innerHTML = `<strong style="display:block;margin-bottom:4px;">${title}</strong><span>${message}</span>`;
+    container.appendChild(toast);
+
+    // Intro animation
+    requestAnimationFrame(() => {
+      toast.style.transform = "translateY(0)";
+      toast.style.opacity = "1";
+    });
+
+    // Auto-remove
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transform = "translateY(10px)";
+      setTimeout(() => toast.remove(), 250);
+    }, 4000);
+  }
+
+  getNotificationSettings() {
+    const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    return (
+      settings.notifications || {
+        enabled: false,
+        categories: { updates: false, liveActivity: false, creators: false },
+      }
+    );
+  }
+
+  setNotificationSettings(next) {
+    const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    settings.notifications = next;
+    localStorage.setItem("websiteSettings", JSON.stringify(settings));
+  }
+
+  applyNotificationUI() {
+    const state = this.getNotificationSettings();
+    const main = document.getElementById("inSiteNotificationsToggle");
+    const group = document.getElementById("notificationCategories");
+    const upd = document.getElementById("notifUpdatesToggle");
+    const live = document.getElementById("notifLiveActivityToggle");
+    const cre = document.getElementById("notifCreatorUpdatesToggle");
+
+    if (!main || !group) return;
+    main.checked = !!state.enabled;
+    group.style.display = state.enabled ? "block" : "none";
+    if (upd) upd.checked = !!state.categories?.updates;
+    if (live) live.checked = !!state.categories?.liveActivity;
+    if (cre) cre.checked = !!state.categories?.creators;
+  }
+
+  initNotificationSettings() {
+    const main = document.getElementById("inSiteNotificationsToggle");
+    if (!main) return;
+    const group = document.getElementById("notificationCategories");
+    const upd = document.getElementById("notifUpdatesToggle");
+    const live = document.getElementById("notifLiveActivityToggle");
+    const cre = document.getElementById("notifCreatorUpdatesToggle");
+
+    // Initial UI state
+    this.applyNotificationUI();
+
+    // Master toggle
+    main.addEventListener("change", () => {
+      const state = this.getNotificationSettings();
+      state.enabled = main.checked;
+      this.setNotificationSettings(state);
+      group.style.display = state.enabled ? "block" : "none";
+
+      this.showToast(
+        state.enabled ? "In-Site Notifications Enabled" : "Notifications Disabled",
+        state.enabled ? "You’ll now see alerts like this one!" : "In-site notifications are now off."
+      );
+    });
+
+    // Helper to wire category toggles
+    const wireCat = (el, key) => {
+      if (!el) return;
+      el.addEventListener("change", () => {
+        const state = this.getNotificationSettings();
+        state.categories = state.categories || {
+          updates: false,
+          liveActivity: false,
+          creators: false,
+        };
+        state.categories[key] = el.checked;
+        this.setNotificationSettings(state);
+        const label =
+          el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
+        this.showToast("Preference Saved", `${label} notifications updated.`);
+      });
+    };
+
+    wireCat(upd, "updates");
+    wireCat(live, "liveActivity");
+    wireCat(cre, "creators");
+  }
+
+  /* =============================
+     Reset Controls
+  ============================= */
   resetSectionVisibility() {
     if (confirm("Show all homepage sections again?")) {
-      const keys = Object.keys(this.defaultSettings).filter((k) =>
-        k.startsWith("show")
-      );
+      const keys = Object.keys(this.defaultSettings).filter((k) => k.startsWith("show"));
       keys.forEach((k) => (this.settings[k] = "enabled"));
       this.saveSettings();
       this.initializeControls();
@@ -1029,6 +1005,7 @@ loadNotificationSettings();
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
 
+      // Clear local-only items
       localStorage.removeItem("sectionOrder");
       localStorage.removeItem("customBackground");
       localStorage.removeItem("customBackgroundName");
@@ -1039,12 +1016,11 @@ loadNotificationSettings();
         layer.style.backgroundImage = "";
         layer.style.opacity = "0";
       }
-      const previewContainer = document.getElementById(
-        "customBgPreviewContainer"
-      );
+      const previewContainer = document.getElementById("customBgPreviewContainer");
       const previewImage = document.getElementById("customBgPreview");
       const fileNameDisplay = document.getElementById("fileNameDisplay");
       const removeBtn = document.getElementById("removeCustomBg");
+
       if (previewContainer && previewImage) {
         previewContainer.classList.remove("visible");
         previewImage.classList.remove("loaded");
@@ -1059,15 +1035,17 @@ loadNotificationSettings();
     }
   }
 
-  // =============================
-  // Misc (Stubs for your implementations)
-  // =============================
+  /* =============================
+     Misc Stubs (safe no-ops)
+  ============================= */
   initScrollArrow() {}
   initLoadingScreen() {}
   initMouseTrail() {}
 }
 
-// Initialize
+/* =============================
+   Initialize (singleton)
+============================= */
 if (!window.settingsManagerInstance) {
   window.settingsManagerInstance = new SettingsManager();
 }
