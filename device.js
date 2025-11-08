@@ -1,10 +1,11 @@
 /**
- * device.js — v7.0 (FINAL)
+ * device.js — v8.0 (Final Integrated)
  * Caleb’s System Dashboard
- * ✅ iPadOS / iOS detection (no build numbers)
- * ✅ Auto-hide unsupported network info
- * ✅ Accurate connection display
- * ✅ Live synced clock + timezone
+ * ✅ iOS / iPadOS detection (no build)
+ * ✅ Auto sunrise & sunset times
+ * ✅ Accurate connection + network logic
+ * ✅ Synced clock with timezone
+ * ✅ Polished fade-in UI
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -21,6 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const connectionEl = el("connection-info");
   const networkRow = document.getElementById("network-info");
   const networkEl = networkRow ? networkRow.querySelector(".version-value") : null;
+  const sunriseEl = el("sunrise-info");
+  const sunsetEl = el("sunset-info");
 
   /* ----------------------------
      🕒 Synced Clock
@@ -144,12 +147,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!navigator.onLine) return "Not Connected";
 
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!conn) return "Wi-Fi"; // iOS fallback
+    if (!conn || (!conn.type && !conn.effectiveType)) {
+      return /iPhone|iPad|iPod/i.test(navigator.userAgent)
+        ? "Unknown (iOS restricted)"
+        : "Wi-Fi";
+    }
 
     const type = conn.type || "";
     const eff = conn.effectiveType || "";
 
-    // Handle mixed or multiple
     if (type === "wifi" && eff.match(/4g|5g|lte/i)) return "Wi-Fi + Cellular";
     if (type === "wifi") return "Wi-Fi";
     if (type === "cellular") return "Cellular";
@@ -164,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function detectNetworkTier() {
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if (!conn) {
-      if (networkRow) networkRow.style.display = "none"; // hide on unsupported browsers
+      if (networkRow) networkRow.style.display = "none";
       return "";
     }
 
@@ -178,7 +184,58 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     ⚙️ Apply System Info
+     🌅 Sunrise / Sunset
+  ---------------------------- */
+  function fetchSunTimes() {
+    if (!sunriseEl || !sunsetEl) return;
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const { latitude, longitude } = pos.coords;
+          try {
+            const res = await fetch(
+              `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`
+            );
+            const data = await res.json();
+            if (data.status === "OK") {
+              const sunrise = new Date(data.results.sunrise);
+              const sunset = new Date(data.results.sunset);
+
+              sunriseEl.textContent = sunrise.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              sunsetEl.textContent = sunset.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+              sunriseEl.style.color = "#ff9500";
+              sunsetEl.style.color = "#5856d6";
+            } else {
+              sunriseEl.textContent = "Unavailable";
+              sunsetEl.textContent = "Unavailable";
+            }
+          } catch (err) {
+            console.error("Sunrise/Sunset fetch failed:", err);
+            sunriseEl.textContent = "Error";
+            sunsetEl.textContent = "Error";
+          }
+        },
+        () => {
+          sunriseEl.textContent = "Denied";
+          sunsetEl.textContent = "Denied";
+        }
+      );
+    } else {
+      sunriseEl.textContent = "Unavailable";
+      sunsetEl.textContent = "Unavailable";
+    }
+  }
+
+  /* ----------------------------
+     ⚙️ Apply Everything
   ---------------------------- */
   function applySystemInfo() {
     if (versionEl) versionEl.textContent = "v26.1.2";
@@ -194,6 +251,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (network) networkEl.textContent = network;
       else if (networkRow) networkRow.style.display = "none";
     }
+
+    fetchSunTimes();
 
     [osEl, deviceEl, browserEl, resolutionEl, connectionEl, networkEl, versionEl, buildEl].forEach(
       (el) => {
