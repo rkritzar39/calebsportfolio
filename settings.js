@@ -489,7 +489,117 @@ class SettingsManager {
       }
     }
   }
+/* ==========================================================
+   🛠️ Notifications Settings System
+   ========================================================== */
 
+// === Toast Preview ===
+function showToast(title, message) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<strong>${title}</strong><span>${message}</span>`;
+  container.appendChild(toast);
+
+  // Auto-remove after 4 seconds
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// === Get Elements ===
+const inSiteNotificationsToggle = document.getElementById('inSiteNotificationsToggle');
+const notificationCategories = document.getElementById('notificationCategories');
+const notifToggles = {
+  updates: document.getElementById('notifUpdatesToggle'),
+  liveActivity: document.getElementById('notifLiveActivityToggle'),
+  creators: document.getElementById('notifCreatorUpdatesToggle')
+};
+const enablePushBtn = document.getElementById('enablePushNotifications');
+
+// === Save Settings ===
+function saveNotificationSettings() {
+  const settings = JSON.parse(localStorage.getItem('websiteSettings')) || {};
+  settings.notifications = {
+    enabled: inSiteNotificationsToggle.checked,
+    categories: {
+      updates: notifToggles.updates.checked,
+      liveActivity: notifToggles.liveActivity.checked,
+      creators: notifToggles.creators.checked
+    },
+    pushEnabled: settings.notifications?.pushEnabled || false
+  };
+  localStorage.setItem('websiteSettings', JSON.stringify(settings));
+}
+
+// === Load Settings on Page Start ===
+function loadNotificationSettings() {
+  const settings = JSON.parse(localStorage.getItem('websiteSettings')) || {};
+  const notif = settings.notifications || {};
+  inSiteNotificationsToggle.checked = notif.enabled || false;
+  notificationCategories.style.display = notif.enabled ? 'block' : 'none';
+
+  if (notif.categories) {
+    notifToggles.updates.checked = notif.categories.updates || false;
+    notifToggles.liveActivity.checked = notif.categories.liveActivity || false;
+    notifToggles.creators.checked = notif.categories.creators || false;
+  }
+}
+
+// === Event: Toggle Main In-Site Notifications ===
+inSiteNotificationsToggle?.addEventListener('change', () => {
+  notificationCategories.style.display = inSiteNotificationsToggle.checked ? 'block' : 'none';
+  saveNotificationSettings();
+
+  if (inSiteNotificationsToggle.checked) {
+    showToast("In-Site Notifications Enabled", "You’ll now see alerts like this one!");
+  } else {
+    showToast("Notifications Disabled", "In-site notifications are now off.");
+  }
+});
+
+// === Event: Sub Toggles (Updates, Live, Creators) ===
+Object.values(notifToggles).forEach(toggle => toggle?.addEventListener('change', () => {
+  saveNotificationSettings();
+  const label = toggle.parentElement.querySelector('.setting-title').textContent;
+  showToast("Preference Saved", `${label} notifications updated.`);
+}));
+
+// === Push Notifications (Browser Permission) ===
+enablePushBtn?.addEventListener('click', async () => {
+  try {
+    const permission = await Notification.requestPermission();
+
+    if (permission === 'granted') {
+      // Mark push notifications as enabled
+      const settings = JSON.parse(localStorage.getItem('websiteSettings')) || {};
+      settings.notifications = settings.notifications || {};
+      settings.notifications.pushEnabled = true;
+      localStorage.setItem('websiteSettings', JSON.stringify(settings));
+
+      // Update button UI
+      enablePushBtn.textContent = "Enabled ✅";
+      enablePushBtn.disabled = true;
+
+      // Show browser notification preview
+      new Notification("Notifications Enabled!", {
+        body: "You’ll now get alerts even when the site is closed (coming soon).",
+        icon: "/favicon-32x32.png"
+      });
+
+      // Toast preview
+      showToast("Push Notifications Enabled", "Browser permission granted successfully.");
+    } else {
+      showToast("Permission Denied", "Notifications blocked in browser settings.");
+    }
+  } catch (e) {
+    console.error("Notification error:", e);
+    showToast("Error", "Could not enable push notifications.");
+  }
+});
+
+// === Initialize ===
+loadNotificationSettings();
   // ===================================
   // === THIS FUNCTION IS THE FIX ====
   // ===================================
