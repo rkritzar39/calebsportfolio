@@ -1,22 +1,26 @@
 /**
- * device.js — v5.0
- * Caleb's System Dashboard (Clean + Accurate)
- * ✅ Correct iPadOS / iOS detection (no build numbers)
- * ✅ Connection & Network separation
- * ✅ Synced clock with timezone
- * ✅ Auto hides missing data gracefully
+ * device.js — v7.0 (FINAL)
+ * Caleb’s System Dashboard
+ * ✅ iPadOS / iOS detection (no build numbers)
+ * ✅ Auto-hide unsupported network info
+ * ✅ Accurate connection display
+ * ✅ Live synced clock + timezone
  */
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ device.js loaded");
 
-  const osEl = document.querySelector("#os-info .version-value");
-  const deviceEl = document.querySelector("#device-info .version-value");
-  const browserEl = document.querySelector("#browser-info .version-value");
-  const resolutionEl = document.querySelector("#resolution-info .version-value");
-  const connectionEl = document.querySelector("#connection-info .version-value");
-  const networkEl = document.querySelector("#network-info .version-value");
-  const syncedEl = document.querySelector("#synced-info .version-value");
+  const el = (id) => document.querySelector(`#${id} .version-value`);
+  const versionEl = el("version-info");
+  const buildEl = el("build-info");
+  const syncedEl = el("synced-info");
+  const osEl = el("os-info");
+  const deviceEl = el("device-info");
+  const browserEl = el("browser-info");
+  const resolutionEl = el("resolution-info");
+  const connectionEl = el("connection-info");
+  const networkRow = document.getElementById("network-info");
+  const networkEl = networkRow ? networkRow.querySelector(".version-value") : null;
 
   /* ----------------------------
      🕒 Synced Clock
@@ -28,16 +32,17 @@ document.addEventListener("DOMContentLoaded", () => {
       weekday: "long",
       month: "long",
       day: "numeric",
-      year: "numeric"
+      year: "numeric",
     });
     const timePart = now.toLocaleTimeString(undefined, {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
-      hour12: true
+      hour12: true,
     });
     const tz = getTimezoneAbbreviation();
     syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tz}</span>`;
+    syncedEl.style.opacity = "1";
   }
 
   function getTimezoneAbbreviation() {
@@ -53,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateSyncedClock, 1000);
 
   /* ----------------------------
-     💻 OS + Version (clean, no build)
+     💻 OS + Version
   ---------------------------- */
   function detectOSVersion() {
     const ua = navigator.userAgent;
@@ -96,7 +101,8 @@ document.addEventListener("DOMContentLoaded", () => {
   ---------------------------- */
   function detectDevice() {
     const ua = navigator.userAgent;
-    if (/iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) return "iPad";
+    if (/iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1))
+      return "iPad";
     if (/iPhone/i.test(ua)) return "iPhone";
     if (/Android/i.test(ua)) {
       const match = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
@@ -132,35 +138,35 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     📶 Connection (Cellular/Wi-Fi)
+     📶 Connection + Network
   ---------------------------- */
   function detectConnectionType() {
     if (!navigator.onLine) return "Not Connected";
 
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!conn) return "Online";
+    if (!conn) return "Wi-Fi"; // iOS fallback
 
     const type = conn.type || "";
     const eff = conn.effectiveType || "";
 
-    // Determine main connection name
+    // Handle mixed or multiple
+    if (type === "wifi" && eff.match(/4g|5g|lte/i)) return "Wi-Fi + Cellular";
     if (type === "wifi") return "Wi-Fi";
     if (type === "cellular") return "Cellular";
     if (navigator.onLine && !type) {
-      // Guess based on effective type
-      if (eff === "5g" || eff === "4g" || eff === "lte") return "Cellular";
+      if (eff.match(/5g|4g|lte/i)) return "Cellular";
       return "Wi-Fi";
     }
 
     return "Unknown";
   }
 
-  /* ----------------------------
-     📡 Network (Speed / Tier)
-  ---------------------------- */
   function detectNetworkTier() {
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!conn) return "Detecting…";
+    if (!conn) {
+      if (networkRow) networkRow.style.display = "none"; // hide on unsupported browsers
+      return "";
+    }
 
     const eff = conn.effectiveType?.toLowerCase() || "";
     if (eff.includes("5g")) return "5G";
@@ -168,31 +174,42 @@ document.addEventListener("DOMContentLoaded", () => {
     if (eff.includes("lte")) return "LTE";
     if (eff.includes("3g")) return "3G";
     if (eff.includes("2g")) return "2G";
-    return "Detecting…";
+    return "";
   }
 
   /* ----------------------------
-     ⚙️ Apply Everything
+     ⚙️ Apply System Info
   ---------------------------- */
   function applySystemInfo() {
-    osEl.textContent = detectOSVersion();
-    deviceEl.textContent = detectDevice();
-    browserEl.textContent = detectBrowser();
-    resolutionEl.textContent = detectResolution();
-    connectionEl.textContent = detectConnectionType();
-    networkEl.textContent = detectNetworkTier();
+    if (versionEl) versionEl.textContent = "v26.1.2";
+    if (buildEl) buildEl.textContent = "2025.9.20";
 
-    [osEl, deviceEl, browserEl, resolutionEl, connectionEl, networkEl].forEach(el => {
-      el.style.opacity = "1";
-      el.style.transition = "opacity 0.4s ease";
-    });
+    if (osEl) osEl.textContent = detectOSVersion();
+    if (deviceEl) deviceEl.textContent = detectDevice();
+    if (browserEl) browserEl.textContent = detectBrowser();
+    if (resolutionEl) resolutionEl.textContent = detectResolution();
+    if (connectionEl) connectionEl.textContent = detectConnectionType();
+    if (networkEl) {
+      const network = detectNetworkTier();
+      if (network) networkEl.textContent = network;
+      else if (networkRow) networkRow.style.display = "none";
+    }
+
+    [osEl, deviceEl, browserEl, resolutionEl, connectionEl, networkEl, versionEl, buildEl].forEach(
+      (el) => {
+        if (el) {
+          el.style.opacity = "1";
+          el.style.transition = "opacity 0.4s ease";
+        }
+      }
+    );
   }
 
   applySystemInfo();
 
-  // Live updates for network/resolution
+  // Live updates
   window.addEventListener("resize", () => {
-    resolutionEl.textContent = detectResolution();
+    if (resolutionEl) resolutionEl.textContent = detectResolution();
   });
   window.addEventListener("online", applySystemInfo);
   window.addEventListener("offline", applySystemInfo);
