@@ -151,6 +151,61 @@ let faqsCollectionRef;
 let businessDocRef; 
 let postsCollectionRef; // 🔥 declare this too
 
+/* ==========================================================
+   🔄 Real-Time Notifications for Creators & Social Links
+   ========================================================== */
+
+// Helper to handle Firestore change events
+function setupRealtimeNotifications() {
+  const prefs = getNotificationPrefs();
+  if (!prefs.enabled || !prefs.creators) {
+    console.log("Notifications disabled or category not allowed — skipping live alerts.");
+    return;
+  }
+
+  // --- Listen for shoutouts (creators) ---
+  try {
+    const shoutoutsCol = collection(db, "shoutouts");
+    onSnapshot(shoutoutsCol, (snapshot) => {
+      snapshot.docChanges().forEach(change => {
+        const data = change.doc.data();
+        const platform = data.platform || "Creator";
+        const name = data.nickname || data.username || "Unnamed Creator";
+
+        if (change.type === "added") {
+          showToast("New Creator Added", `${name} just joined ${platform}!`);
+        } else if (change.type === "modified") {
+          showToast("Creator Updated", `${name}'s profile on ${platform} was updated.`);
+        } else if (change.type === "removed") {
+          showToast("Creator Removed", `${name} was removed from ${platform}.`);
+        }
+      });
+    });
+  } catch (e) {
+    console.error("Error setting up shoutouts listener:", e);
+  }
+
+  // --- Listen for social links ---
+  try {
+    onSnapshot(socialLinksCollectionRef, (snapshot) => {
+      snapshot.docChanges().forEach(change => {
+        const data = change.doc.data();
+        const label = data.label || "A social link";
+
+        if (change.type === "added") {
+          showToast("New Social Link", `${label} was added to the site.`);
+        } else if (change.type === "modified") {
+          showToast("Social Link Updated", `${label} has been updated.`);
+        } else if (change.type === "removed") {
+          showToast("Social Link Removed", `${label} was removed.`);
+        }
+      });
+    });
+  } catch (e) {
+    console.error("Error setting up social link listener:", e);
+  }
+}
+
 // --- NEW: Module-level variables to store all creator data for searching ---
 let allTikTokCreators = [], allInstagramCreators = [], allYouTubeCreators = [];
 
@@ -178,6 +233,46 @@ try {
         body.innerHTML = '<p class="error" style="text-align: center; padding: 50px; color: red; font-size: 1.2em;">Could not connect to required services. Please try again later.</p>';
     }
     firebaseAppInitialized = false;
+}
+
+/* ==========================================================
+   🔔 Notification & Toast Helpers
+   ========================================================== */
+
+// Global toast display
+function showToast(title, message) {
+  const container = document.getElementById('toast-container') || (() => {
+    const c = document.createElement('div');
+    c.id = 'toast-container';
+    c.style.position = 'fixed';
+    c.style.bottom = '30px';
+    c.style.right = '30px';
+    c.style.display = 'flex';
+    c.style.flexDirection = 'column';
+    c.style.gap = '12px';
+    c.style.zIndex = '9999';
+    document.body.appendChild(c);
+    return c;
+  })();
+
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.style.background = getComputedStyle(document.documentElement)
+    .getPropertyValue('--accent-color') || '#007aff';
+  toast.innerHTML = `<strong>${title}</strong><span>${message}</span>`;
+  container.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// Load user's notification preferences
+function getNotificationPrefs() {
+  const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+  const notif = settings.notifications || {};
+  return {
+    enabled: notif.enabled || false,
+    creators: notif.categories?.creators || false
+  };
 }
 
 // --- !! MOVED HERE FOR GLOBAL SCOPE !! ---
@@ -2521,6 +2616,12 @@ async function initializeHomepageContent() {
         console.log("All other dynamic content loading initiated/completed.");
     }
 } // --- End of initializeHomepageContent function ---
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (firebaseAppInitialized && db) {
+    setupRealtimeNotifications();
+  }
+});
 
 // --- Call the main initialization function when the DOM is ready ---
 document.addEventListener('DOMContentLoaded', initializeHomepageContent);
