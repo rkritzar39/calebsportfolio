@@ -151,61 +151,6 @@ let faqsCollectionRef;
 let businessDocRef; 
 let postsCollectionRef; // 🔥 declare this too
 
-/* ==========================================================
-   🔄 Real-Time Notifications for Creators & Social Links
-   ========================================================== */
-
-// Helper to handle Firestore change events
-function setupRealtimeNotifications() {
-  const prefs = getNotificationPrefs();
-  if (!prefs.enabled || !prefs.creators) {
-    console.log("Notifications disabled or category not allowed — skipping live alerts.");
-    return;
-  }
-
-  // --- Listen for shoutouts (creators) ---
-  try {
-    const shoutoutsCol = collection(db, "shoutouts");
-    onSnapshot(shoutoutsCol, (snapshot) => {
-      snapshot.docChanges().forEach(change => {
-        const data = change.doc.data();
-        const platform = data.platform || "Creator";
-        const name = data.nickname || data.username || "Unnamed Creator";
-
-        if (change.type === "added") {
-          showToast("New Creator Added", `${name} just joined ${platform}!`);
-        } else if (change.type === "modified") {
-          showToast("Creator Updated", `${name}'s profile on ${platform} was updated.`);
-        } else if (change.type === "removed") {
-          showToast("Creator Removed", `${name} was removed from ${platform}.`);
-        }
-      });
-    });
-  } catch (e) {
-    console.error("Error setting up shoutouts listener:", e);
-  }
-
-  // --- Listen for social links ---
-  try {
-    onSnapshot(socialLinksCollectionRef, (snapshot) => {
-      snapshot.docChanges().forEach(change => {
-        const data = change.doc.data();
-        const label = data.label || "A social link";
-
-        if (change.type === "added") {
-          showToast("New Social Link", `${label} was added to the site.`);
-        } else if (change.type === "modified") {
-          showToast("Social Link Updated", `${label} has been updated.`);
-        } else if (change.type === "removed") {
-          showToast("Social Link Removed", `${label} was removed.`);
-        }
-      });
-    });
-  } catch (e) {
-    console.error("Error setting up social link listener:", e);
-  }
-}
-
 // --- NEW: Module-level variables to store all creator data for searching ---
 let allTikTokCreators = [], allInstagramCreators = [], allYouTubeCreators = [];
 
@@ -236,45 +181,170 @@ try {
 }
 
 /* ==========================================================
-   🔔 Notification & Toast Helpers
+   🔔 SMART FIRESTORE NOTIFICATION SYSTEM (ALL SECTIONS)
    ========================================================== */
 
-// Global toast display
-function showToast(title, message) {
+// --- Cache system to prevent duplicates ---
+const notifiedDocs = new Set(JSON.parse(sessionStorage.getItem('notifiedDocs') || "[]"));
+
+function rememberDoc(id) {
+  notifiedDocs.add(id);
+  sessionStorage.setItem('notifiedDocs', JSON.stringify([...notifiedDocs]));
+}
+
+function hasNotified(id) {
+  return notifiedDocs.has(id);
+}
+
+// --- Load user notification preferences ---
+function getNotifPrefs() {
+  const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+  return settings.notifications || { enabled: false, categories: {} };
+}
+
+// --- Toast Helper (uses in-site system) ---
+function showSmartToast(title, message) {
   const container = document.getElementById('toast-container') || (() => {
     const c = document.createElement('div');
     c.id = 'toast-container';
-    c.style.position = 'fixed';
-    c.style.bottom = '30px';
-    c.style.right = '30px';
-    c.style.display = 'flex';
-    c.style.flexDirection = 'column';
-    c.style.gap = '12px';
-    c.style.zIndex = '9999';
+    Object.assign(c.style, {
+      position: 'fixed',
+      bottom: '30px',
+      right: '30px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '12px',
+      zIndex: '9999'
+    });
     document.body.appendChild(c);
     return c;
   })();
 
   const toast = document.createElement('div');
   toast.className = 'toast';
-  toast.style.background = getComputedStyle(document.documentElement)
-    .getPropertyValue('--accent-color') || '#007aff';
-  toast.innerHTML = `<strong>${title}</strong><span>${message}</span>`;
+  toast.style.cssText = `
+    background: var(--accent-color, #007aff);
+    color: #fff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    backdrop-filter: blur(16px);
+    font-size: 15px;
+    animation: fadeInCard 0.4s ease forwards;
+  `;
+  toast.innerHTML = `<strong>${title}</strong><br><span>${message}</span>`;
   container.appendChild(toast);
 
   setTimeout(() => toast.remove(), 4000);
 }
 
-// Load user's notification preferences
-function getNotificationPrefs() {
-  const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-  const notif = settings.notifications || {};
-  return {
-    enabled: notif.enabled || false,
-    creators: notif.categories?.creators || false
-  };
+// --- Initialize smart realtime notifications ---
+function setupSmartRealtimeNotifications() {
+  const prefs = getNotifPrefs();
+  if (!prefs.enabled) return;
+
+  // --- Utility ---
+  function setupCollectionListener(ref, sectionName, formatMessage) {
+    let firstLoad = false;
+    onSnapshot(ref, (snapshot) => {
+      if (!firstLoad) {
+        snapshot.docs.forEach(doc => rememberDoc(doc.id));
+        firstLoad = true;
+        return;
+      }
+      snapshot.docChanges().forEach(change => {
+        const id = change.doc.id;
+        if (hasNotified(id)) return;
+        const data = change.doc.data();
+        const { title, message } = formatMessage(change.type, data);
+        if (title && message) {
+          showSmartToast(title, message);
+          rememberDoc(id);
+        }
+      });
+    });
+  }
+
+  // === Creators ===
+  setupCollectionListener(collection(db, "shoutouts"), "Creators", (action, d) => {
+    const platform = d.platform || "Unknown";
+    const name = d.nickname || d.username || "Unnamed Creator";
+    const verb = action === "added" ? "joined" :
+                 action === "modified" ? "was updated" : "was removed";
+    return { title: `Creator ${action}`, message: `${name} ${verb} on ${platform}.` };
+  });
+
+  // === Social Links ===
+  setupCollectionListener(collection(db, "social_links"), "Social", (action, d) => ({
+    title: action === "added" ? "New Social Link" : action === "modified" ? "Social Link Updated" : "Social Link Removed",
+    message: `${d.label || "Link"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Useful Links ===
+  setupCollectionListener(collection(db, "useful_links"), "Links", (action, d) => ({
+    title: action === "added" ? "Useful Link Added" : action === "modified" ? "Useful Link Updated" : "Useful Link Removed",
+    message: `${d.label || "Link"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Tech Items ===
+  setupCollectionListener(collection(db, "tech_items"), "Tech", (action, d) => ({
+    title: action === "added" ? "New Tech Item" : action === "modified" ? "Tech Item Updated" : "Tech Item Removed",
+    message: `${d.name || "Device"} ${action === "added" ? "added" : action === "modified" ? "updated" : "removed"}.`
+  }));
+
+  // === FAQs ===
+  setupCollectionListener(collection(db, "faqs"), "FAQs", (action, d) => ({
+    title: action === "added" ? "New FAQ" : action === "modified" ? "FAQ Updated" : "FAQ Removed",
+    message: `${d.question || "Question"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Posts ===
+  setupCollectionListener(collection(db, "posts"), "Posts", (action, d) => ({
+    title: action === "added" ? "New Post" : action === "modified" ? "Post Updated" : "Post Removed",
+    message: `${d.title || "A post"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Legislation ===
+  setupCollectionListener(collection(db, "legislation"), "Legislation", (action, d) => ({
+    title: action === "added" ? "New Bill" : action === "modified" ? "Bill Updated" : "Bill Removed",
+    message: `${d.title || d.billId || "A bill"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Business Info ===
+  const bizRef = doc(db, "site_config", "businessDetails");
+  let firstBiz = false;
+  onSnapshot(bizRef, (snap) => {
+    if (!firstBiz) { firstBiz = true; rememberDoc("bizInfo"); return; }
+    showSmartToast("Business Info Updated", "Business hours or contact details changed.");
+    rememberDoc("bizInfo");
+  });
+
+  // === Main Profile ===
+  const mainRef = doc(db, "site_config", "mainProfile");
+  let firstMain = false;
+  onSnapshot(mainRef, (snap) => {
+    if (!firstMain) { firstMain = true; rememberDoc("mainProfile"); return; }
+    showSmartToast("Profile Updated", "Site profile or settings were modified.");
+    rememberDoc("mainProfile");
+  });
+
+  // === President Info ===
+  const presRef = doc(db, "site_config", "currentPresident");
+  let firstPres = false;
+  onSnapshot(presRef, (snap) => {
+    if (!firstPres) { firstPres = true; rememberDoc("presInfo"); return; }
+    showSmartToast("President Info Updated", "President data has changed.");
+    rememberDoc("presInfo");
+  });
+
+  console.log("✅ Smart Firestore notifications initialized (all collections).");
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+  if (firebaseAppInitialized && db) {
+    setupSmartRealtimeNotifications();
+  }
+});
 // --- !! MOVED HERE FOR GLOBAL SCOPE !! ---
 const assumedBusinessTimezone = 'America/New_York'; // Your business's primary IANA timezone
 
