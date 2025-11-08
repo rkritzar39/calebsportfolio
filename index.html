@@ -542,29 +542,5 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
-    <script>
-if (/iPhone|iPad/.test(navigator.userAgent) && !window.navigator.standalone) {
-  setTimeout(() => {
-    const tip = document.createElement("div");
-    tip.textContent = "📱 Tip: Add this site to your Home Screen for full PWA features!";
-    Object.assign(tip.style, {
-      position: "fixed",
-      bottom: "20px",
-      left: "50%",
-      transform: "translateX(-50%)",
-      background: "#3ddc84",
-      color: "#fff",
-      padding: "10px 18px",
-      borderRadius: "12px",
-      fontSize: "14px",
-      fontWeight: "600",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-      zIndex: "9999"
-    });
-    document.body.appendChild(tip);
-    setTimeout(() => tip.remove(), 7000);
-  }, 3000);
-}
-</script>
 </body>
 </html>
