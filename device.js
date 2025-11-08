@@ -223,3 +223,81 @@ document.addEventListener("DOMContentLoaded", () => {
     requestAnimationFrame(() => el.style.opacity = "1");
   });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const connectionLi = document.getElementById("connection-info");
+  const connectionEl = connectionLi?.querySelector(".version-value");
+  if (!connectionEl) return;
+
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+  function getSignalIcon(effType, downlink) {
+    if (!effType) return "📶";
+    if (effType === "5g") return "💨"; // super fast
+    if (effType === "4g") return downlink > 50 ? "⚡" : "📱";
+    if (effType === "3g") return "📡";
+    if (effType === "2g") return "📡";
+    return "📶";
+  }
+
+  function describeConnection() {
+    if (!navigator.onLine) {
+      connectionLi.style.opacity = "0";
+      setTimeout(() => (connectionLi.style.display = "none"), 300);
+      return;
+    }
+
+    connectionLi.style.display = ""; // ensure visible again
+    setTimeout(() => (connectionLi.style.opacity = "1"), 50);
+
+    if (!conn) {
+      connectionEl.textContent = "Unavailable";
+      return;
+    }
+
+    const eff = conn.effectiveType || "unknown";
+    const down = conn.downlink ? `${conn.downlink.toFixed(1)} Mbps` : null;
+    const rtt = conn.rtt ? `${conn.rtt} ms` : null;
+    const type = conn.type || "unknown";
+
+    let base;
+    if (type === "wifi") base = "Wi-Fi";
+    else if (type === "cellular" || ["4g", "5g", "3g"].includes(eff)) base = "Cellular";
+    else base = "Unknown";
+
+    const typeLabel =
+      eff === "5g"
+        ? "5G"
+        : eff === "4g"
+        ? "4G"
+        : eff === "3g"
+        ? "3G"
+        : eff === "2g"
+        ? "2G"
+        : "";
+
+    const icon = getSignalIcon(eff, conn.downlink || 0);
+    const parts = [];
+    if (base !== "Unknown") parts.push(base);
+    if (typeLabel) parts.push(typeLabel);
+    if (down) parts.push(down);
+    if (rtt && rtt !== "0 ms") parts.push(rtt);
+
+    connectionEl.textContent = `${icon} ${parts.join(" • ")}`;
+
+    // Add pulse animation on strong connections
+    if (["⚡", "💨"].includes(icon)) {
+      connectionEl.classList.add("pulse-signal");
+    } else {
+      connectionEl.classList.remove("pulse-signal");
+    }
+  }
+
+  // Initial load
+  describeConnection();
+
+  // Live updates
+  if (conn && "addEventListener" in conn) conn.addEventListener("change", describeConnection);
+  window.addEventListener("online", describeConnection);
+  window.addEventListener("offline", describeConnection);
+});
