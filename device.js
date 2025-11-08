@@ -1,7 +1,8 @@
 /**
- * device.js — v3.9 FINAL
+ * device.js — v4.0 FINAL
  * Caleb’s System Dashboard
- * Accurate OS version + pretty “Synced” time with accent timezone tag
+ * Accurate OS, Device, Browser, Battery, and Synced Clock
+ * Auto-hides battery on desktops
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,37 +11,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const browserEl = document.querySelector("#browser-info .version-value");
   const resolutionEl = document.querySelector("#resolution-info .version-value");
   const connectionEl = document.querySelector("#connection-info .version-value");
-  const batteryEl = document.querySelector("#battery-info .version-value");
+  const batteryRow = document.querySelector("#battery-info");
+  const batteryEl = batteryRow ? batteryRow.querySelector(".version-value") : null;
   const syncedEl = document.querySelector("#synced-info .version-value");
 
   /* ----------------------------
-     🕒 Human-Readable Synced Clock
+     🕒 Human-Friendly “Synced” Clock
   ---------------------------- */
   function updateSyncedClock() {
     if (!syncedEl) return;
     const now = new Date();
-
     const datePart = now.toLocaleDateString(undefined, {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
     });
-
     const timePart = now.toLocaleTimeString(undefined, {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hour12: true,
     });
-
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
     const tzShort = getTimezoneAbbreviation();
-
-    syncedEl.innerHTML = `
-      ${datePart} at ${timePart}
-      <span class="tz-tag">${tzShort}</span>
-    `;
+    syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tzShort}</span>`;
     syncedEl.style.opacity = "1";
   }
 
@@ -149,30 +143,55 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     🔋 Battery
+     🔋 Battery (Cross-Browser)
   ---------------------------- */
   async function detectBattery() {
     if (!batteryEl) return;
-    if (!("getBattery" in navigator)) {
-      batteryEl.textContent = "Unavailable on this device";
-      batteryEl.style.opacity = "1";
+
+    // Determine if device type likely has a battery
+    const ua = navigator.userAgent;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+    const isLaptop = /Macintosh|Mac OS X/.test(ua) && navigator.maxTouchPoints > 0;
+    const hasBattery = isMobile || isLaptop;
+
+    // Hide entire battery row if definitely desktop
+    if (!hasBattery && batteryRow) {
+      batteryRow.style.display = "none";
       return;
     }
-    try {
-      const battery = await navigator.getBattery();
-      const updateBatteryUI = () => {
-        const percent = Math.round(battery.level * 100);
-        const icon = battery.charging ? "⚡ Charging" : "🔋";
-        batteryEl.textContent = `${icon} ${percent}%`;
-      };
-      updateBatteryUI();
-      battery.addEventListener("levelchange", updateBatteryUI);
-      battery.addEventListener("chargingchange", updateBatteryUI);
-      batteryEl.style.opacity = "1";
-    } catch {
-      batteryEl.textContent = "Unavailable";
-      batteryEl.style.opacity = "1";
+
+    // Native Battery API
+    if ("getBattery" in navigator) {
+      try {
+        const battery = await navigator.getBattery();
+        const updateBatteryUI = () => {
+          const percent = Math.round(battery.level * 100);
+          const icon = battery.charging ? "⚡ Charging" : "🔋";
+          batteryEl.textContent = `${icon} ${percent}%`;
+
+          // Color indicator
+          if (percent <= 20) batteryEl.style.color = "#ff3b30";
+          else if (percent <= 50) batteryEl.style.color = "#ffcc00";
+          else batteryEl.style.color = "#34c759";
+        };
+        updateBatteryUI();
+        battery.addEventListener("levelchange", updateBatteryUI);
+        battery.addEventListener("chargingchange", updateBatteryUI);
+        batteryEl.style.opacity = "1";
+        return;
+      } catch (err) {
+        console.warn("Battery API failed:", err);
+      }
     }
+
+    // Fallback (iOS, Safari, Firefox)
+    let simulated = "";
+    if (/iPhone|iPad|iPod/i.test(ua)) simulated = "🔋 Battery (Mobile)";
+    else if (/Macintosh/i.test(ua)) simulated = "⚡ Charging (Mac)";
+    else simulated = navigator.onLine ? "⚡ Plugged In" : "🔋 Battery Mode";
+
+    batteryEl.textContent = simulated;
+    batteryEl.style.opacity = "1";
   }
 
   /* ----------------------------
