@@ -198,21 +198,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-	/**
- * systemHealth.js
- * Fetches live status info from Instatus API.
- */
+    // --- Update footer year dynamically ---
+    function updateFooterYear() {
+        const yearElement = document.getElementById('year');
+        if (yearElement) {
+            yearElement.textContent = new Date().getFullYear();
+        }
+    }
+    updateFooterYear();
+
+}); // --- END OF DOMContentLoaded ---
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   const summaryEl = document.getElementById("system-health-summary");
   const incidentsEl = document.getElementById("system-health-incidents");
   if (!summaryEl) return;
 
-  const instatusPage = "calebs-status-page.instatus.com"; // your Instatus page
-  const apiUrl = `https://${instatusPage}/api/v1/summary`;
+  const instatusPage = "calebs-status-page.instatus.com";
+  const apiUrl = `https://${instatusPage}/summary.json`;
 
   try {
     const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error("Request failed with status " + res.status);
     const data = await res.json();
 
     const status = data.status.indicator || "unknown";
@@ -229,14 +237,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
     summaryEl.classList.remove("loading");
 
-    // Render incidents
+    // Render incidents (if any)
     if (data.incidents && data.incidents.length > 0) {
       incidentsEl.innerHTML = `<h3>Recent Incidents</h3>` +
         data.incidents
           .slice(0, 3)
           .map(i => `
             <div class="incident">
-              <strong>${i.name}</strong>
+              <strong>${i.name || "Incident"}</strong>
               <p>${i.shortlink ? `<a href="${i.shortlink}" target="_blank">View Details</a>` : ""}</p>
               <small>${new Date(i.created_at).toLocaleString()}</small>
             </div>
@@ -245,20 +253,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       incidentsEl.classList.remove("hidden");
     } else {
       incidentsEl.innerHTML = `<p>✅ No active or recent incidents.</p>`;
+      incidentsEl.classList.remove("hidden");
     }
   } catch (err) {
     console.error("❌ Failed to fetch system health:", err);
     summaryEl.innerHTML = `<p>⚠️ Could not load system health data.</p>`;
   }
 });
-
-    // --- Update footer year dynamically ---
-    function updateFooterYear() {
-        const yearElement = document.getElementById('year');
-        if (yearElement) {
-            yearElement.textContent = new Date().getFullYear();
-        }
-    }
-    updateFooterYear();
-
-}); // --- END OF DOMContentLoaded ---
