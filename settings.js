@@ -1,8 +1,7 @@
 /**
  * settings.js
- * Fully functional settings manager with live previews,
- * custom backgrounds, blur control, dark-mode scheduler,
- * and dynamic wallpapers.
+ * Full Settings Manager with live previews, themes, accessibility,
+ * custom backgrounds, blur, dark-mode scheduler, and in-site notifications.
  */
 class SettingsManager {
   constructor() {
@@ -83,9 +82,8 @@ class SettingsManager {
         });
       }
 
-      // Cross-tab sync (WITH BACKGROUND/BLUR FIX)
+      // Cross-tab sync
       window.addEventListener("storage", (e) => {
-        // --- This part is your original code ---
         if (e.key === "websiteSettings") {
           this.settings = this.loadSettings();
           this.applyAllSettings();
@@ -93,32 +91,23 @@ class SettingsManager {
           this.applyCustomBackground(false);
           this.toggleScheduleInputs(this.settings.darkModeScheduler);
           this.syncWallpaperUIVisibility();
-          
-          // Re-init background/blur UI to match
           this.initCustomBackgroundControls();
           this.initWallpaperBlurControl();
         }
-        
-        // --- THIS IS THE FIX ---
-        // This new part listens for changes to background/blur
+
         if (
           e.key === "customBackground" ||
           e.key === "customBackgroundName" ||
           e.key === "wallpaperBlur"
         ) {
-          // Re-apply the background on the other tab
           this.applyCustomBackground(false);
-          // Re-init the background controls to update the preview/filename
           this.initCustomBackgroundControls();
-          // Re-init the blur slider to sync its position
           this.initWallpaperBlurControl();
-          // Sync the blur card visibility
           this.syncWallpaperUIVisibility();
         }
-        // --- End of fix ---
       });
 
-      // Restart or stop live activity when setting changes
+      // Reapply live status if needed
       if (typeof updateLiveStatus === "function") {
         setTimeout(() => updateLiveStatus(), 500);
       }
@@ -126,12 +115,15 @@ class SettingsManager {
       // Footer year
       const yearSpan = document.getElementById("year");
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+      // ✅ Initialize In-Site Notification Settings
+      this.initNotificationSettings();
     });
   }
 
-  // =============================
-  // Load / Save
-  // =============================
+  /* =============================
+     Load / Save
+  ============================= */
   loadSettings() {
     try {
       const stored = localStorage.getItem("websiteSettings");
@@ -152,9 +144,9 @@ class SettingsManager {
     localStorage.setItem("websiteSettings", JSON.stringify(toSave));
   }
 
-  // =============================
-  // UI Setup
-  // =============================
+  /* =============================
+     UI Setup
+  ============================= */
   initializeControls() {
     this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
     this.updateSegmentedBackground("appearanceModeControl");
@@ -198,15 +190,13 @@ class SettingsManager {
     if (!control) return;
     let foundActive = false;
     control.querySelectorAll("button").forEach((btn) => {
-        const isActive = btn.dataset.value === value;
-        btn.classList.toggle("active", isActive);
-        if (isActive) foundActive = true;
+      const isActive = btn.dataset.value === value;
+      btn.classList.toggle("active", isActive);
+      if (isActive) foundActive = true;
     });
-    
-    // Fallback if no value matches
     if (!foundActive) {
-        const firstBtn = control.querySelector("button");
-        if (firstBtn) firstBtn.classList.add("active");
+      const firstBtn = control.querySelector("button");
+      if (firstBtn) firstBtn.classList.add("active");
     }
   }
 
@@ -215,9 +205,9 @@ class SettingsManager {
     if (!control) return;
     let active = control.querySelector("button.active");
     if (!active) {
-       active = control.querySelector("button");
-       if (active) active.classList.add("active");
-       else return; // No buttons in control
+      active = control.querySelector("button");
+      if (active) active.classList.add("active");
+      else return;
     }
     let bg = control.querySelector(".seg-bg");
     if (!bg) {
@@ -225,7 +215,6 @@ class SettingsManager {
       bg.className = "seg-bg";
       control.prepend(bg);
     }
-    // Use offsetLeft and offsetWidth for reliable positioning
     bg.style.left = `${active.offsetLeft}px`;
     bg.style.width = `${active.offsetWidth}px`;
   }
@@ -235,52 +224,47 @@ class SettingsManager {
     if (el) el.checked = this.settings[key] === "enabled";
   }
 
-  // =============================
-  // Event Listeners
-  // =============================
+  /* =============================
+     Event Listeners
+  ============================= */
   setupEventListeners() {
-    // Appearance Mode
     const appearanceControl = document.getElementById("appearanceModeControl");
     if (appearanceControl) {
-        appearanceControl.addEventListener("click", (e) => {
-            const btn = e.target.closest("button");
-            if (!btn || !btn.dataset.value) return;
+      appearanceControl.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if (!btn || !btn.dataset.value) return;
 
-            if (this.settings.darkModeScheduler === "auto") {
-                alert("Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes.");
-                // Revert UI to saved setting
-                this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
-                this.updateSegmentedBackground("appearanceModeControl");
-                return;
-            }
+        if (this.settings.darkModeScheduler === "auto") {
+          alert(
+            "Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes."
+          );
+          this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
+          this.updateSegmentedBackground("appearanceModeControl");
+          return;
+        }
 
-            this.settings.appearanceMode = btn.dataset.value;
-            this.applySetting("appearanceMode");
-            this.saveSettings();
-            
-            // Update UI
-            appearanceControl.querySelectorAll("button").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            this.updateSegmentedBackground("appearanceModeControl");
-            
-            this.applyCustomBackground(false); // Re-apply tint
-        });
+        this.settings.appearanceMode = btn.dataset.value;
+        this.applySetting("appearanceMode");
+        this.saveSettings();
+
+        appearanceControl.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.updateSegmentedBackground("appearanceModeControl");
+        this.applyCustomBackground(false);
+      });
     }
 
-    // Accent color
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
       accentPicker.addEventListener("input", (e) => {
         this.settings.accentColor = e.target.value;
         this.applyAccentColor();
         this.saveSettings();
-        // Update sliders that use accent color
         this.updateSliderFill(document.getElementById("text-size-slider"));
         this.updateSliderFill(document.getElementById("blur-slider"));
       });
     }
 
-    // Text size
     const slider = document.getElementById("text-size-slider");
     if (slider) {
       slider.addEventListener("input", (e) => {
@@ -293,7 +277,6 @@ class SettingsManager {
       });
     }
 
-    // Scheduler
     const schedulerSelect = document.getElementById("darkModeScheduler");
     const startInput = document.getElementById("darkModeStart");
     const endInput = document.getElementById("darkModeEnd");
@@ -322,12 +305,10 @@ class SettingsManager {
       });
     }
 
-    // Toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
-        (this.defaultSettings[k] === "enabled" ||
-          this.defaultSettings[k] === "disabled")
+        (this.defaultSettings[k] === "enabled" || this.defaultSettings[k] === "disabled")
     );
     toggleKeys.forEach((key) => {
       const el = document.getElementById(`${key}Toggle`);
@@ -336,48 +317,138 @@ class SettingsManager {
           this.settings[key] = el.checked ? "enabled" : "disabled";
           this.applySetting(key);
           this.saveSettings();
-          
+
           if (key === "showLiveActivity" && typeof updateLiveStatus === "function") {
-             setTimeout(() => updateLiveStatus(), 300);
+            setTimeout(() => updateLiveStatus(), 300);
           }
         });
       }
     });
 
-    // Reset Buttons
-    document
-      .getElementById("resetLayoutBtn")
-      ?.addEventListener("click", () => {
-        if (confirm("Reset the section layout to default?")) {
-          localStorage.removeItem("sectionOrder");
-          alert("Layout reset. Refresh homepage to see changes.");
-        }
-      });
+    document.getElementById("resetLayoutBtn")?.addEventListener("click", () => {
+      if (confirm("Reset the section layout to default?")) {
+        localStorage.removeItem("sectionOrder");
+        alert("Layout reset. Refresh homepage to see changes.");
+      }
+    });
 
-    document
-      .getElementById("resetSectionsBtn")
-      ?.addEventListener("click", () =>
-        this.resetSectionVisibility()
-      );
-    document
-      .getElementById("resetSettings")
-      ?.addEventListener("click", () =>
-        this.resetSettings()
-      );
+    document.getElementById("resetSectionsBtn")?.addEventListener("click", () => this.resetSectionVisibility());
+    document.getElementById("resetSettings")?.addEventListener("click", () => this.resetSettings());
   }
 
-  // =============================
-  // Appearance & Color
-  // =============================
+  /* =============================
+     🎯 In-Site Notifications
+  ============================= */
+  ensureToastContainer() {
+    let c = document.getElementById("toast-container");
+    if (!c) {
+      c = document.createElement("div");
+      c.id = "toast-container";
+      Object.assign(c.style, {
+        position: "fixed",
+        bottom: "30px",
+        right: "30px",
+        display: "flex",
+        flexDirection: "column",
+        gap: "12px",
+        zIndex: "9999",
+      });
+      document.body.appendChild(c);
+    }
+    return c;
+  }
+
+  showToast(title, message) {
+    const container = this.ensureToastContainer();
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    const accent =
+      getComputedStyle(document.documentElement).getPropertyValue("--accent-color") || "#007aff";
+    toast.style.background = accent.trim();
+    toast.innerHTML = `<strong>${title}</strong><span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
+
+  getNotificationSettings() {
+    const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    return (
+      settings.notifications || {
+        enabled: false,
+        categories: { updates: false, liveActivity: false, creators: false },
+      }
+    );
+  }
+
+  setNotificationSettings(next) {
+    const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+    settings.notifications = next;
+    localStorage.setItem("websiteSettings", JSON.stringify(settings));
+  }
+
+  applyNotificationUI() {
+    const state = this.getNotificationSettings();
+    const main = document.getElementById("inSiteNotificationsToggle");
+    const group = document.getElementById("notificationCategories");
+    const upd = document.getElementById("notifUpdatesToggle");
+    const live = document.getElementById("notifLiveActivityToggle");
+    const cre = document.getElementById("notifCreatorUpdatesToggle");
+    if (!main || !group) return;
+    main.checked = !!state.enabled;
+    group.style.display = state.enabled ? "block" : "none";
+    if (upd) upd.checked = !!state.categories?.updates;
+    if (live) live.checked = !!state.categories?.liveActivity;
+    if (cre) cre.checked = !!state.categories?.creators;
+  }
+
+  initNotificationSettings() {
+    const main = document.getElementById("inSiteNotificationsToggle");
+    if (!main) return;
+    const group = document.getElementById("notificationCategories");
+    const upd = document.getElementById("notifUpdatesToggle");
+    const live = document.getElementById("notifLiveActivityToggle");
+    const cre = document.getElementById("notifCreatorUpdatesToggle");
+
+    this.applyNotificationUI();
+
+    main.addEventListener("change", () => {
+      const state = this.getNotificationSettings();
+      state.enabled = main.checked;
+      this.setNotificationSettings(state);
+      group.style.display = state.enabled ? "block" : "none";
+      this.showToast(
+        state.enabled ? "In-Site Notifications Enabled" : "Notifications Disabled",
+        state.enabled ? "You’ll now see alerts like this one!" : "In-site notifications are now off."
+      );
+    });
+
+    const wireCat = (el, key) => {
+      if (!el) return;
+      el.addEventListener("change", () => {
+        const state = this.getNotificationSettings();
+        state.categories = state.categories || { updates: false, liveActivity: false, creators: false };
+        state.categories[key] = el.checked;
+        this.setNotificationSettings(state);
+        const label = el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
+        this.showToast("Preference Saved", `${label} notifications updated.`);
+      });
+    };
+
+    wireCat(upd, "updates");
+    wireCat(live, "liveActivity");
+    wireCat(cre, "creators");
+  }
+
+  /* =============================
+     Remaining core methods (appearance, background, etc.)
+     ============================= */
   updateSliderFill(slider) {
     if (!slider) return;
     const min = slider.min || 0;
     const max = slider.max || 100;
     const val = slider.value;
     const pct = ((val - min) / (max - min)) * 100;
-    
-    // Set CSS variable for the thumb to use
-    slider.style.setProperty('--_fill', `${pct}%`);
+    slider.style.setProperty("--_fill", `${pct}%`);
   }
 
   getContrastColor(hex) {
