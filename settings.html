@@ -198,6 +198,9 @@
 <div class="settings-subsection animate-slide-in">
   <h2 class="subsection-title">Notifications</h2>
 
+<div class="settings-subsection animate-slide-in">
+  <h2 class="subsection-title">Notifications</h2>
+
   <!-- Enable In-Site Notifications -->
   <label class="setting-card" for="inSiteNotificationsToggle">
     <div class="setting-icon-container" style="background-color: #007aff;">
@@ -205,7 +208,7 @@
     </div>
     <div class="setting-label">
       <strong class="setting-title">In-Site Notifications</strong>
-      <p class="setting-description">Show pop-up alerts for activity and updates while browsing.</p>
+      <p class="setting-description">Show pop-up alerts for site updates and activities.</p>
     </div>
     <div class="md-switch">
       <input type="checkbox" id="inSiteNotificationsToggle" role="switch" />
@@ -215,14 +218,14 @@
 
   <!-- Notification Categories -->
   <div class="notification-category-group" id="notificationCategories" style="display:none;">
-
+    
     <label class="setting-card" for="notifUpdatesToggle">
       <div class="setting-icon-container" style="background-color: #34c759;">
         <i class="fa-solid fa-gear"></i>
       </div>
       <div class="setting-label">
         <strong class="setting-title">Website Updates</strong>
-        <p class="setting-description">Be alerted when new features or site versions are added.</p>
+        <p class="setting-description">Get notified when new features or site versions launch.</p>
       </div>
       <div class="md-switch">
         <input type="checkbox" id="notifUpdatesToggle" role="switch" />
@@ -236,7 +239,7 @@
       </div>
       <div class="setting-label">
         <strong class="setting-title">Live Activity Alerts</strong>
-        <p class="setting-description">Get notified when your status or Spotify updates.</p>
+        <p class="setting-description">Be alerted when your status or Spotify activity updates.</p>
       </div>
       <div class="md-switch">
         <input type="checkbox" id="notifLiveActivityToggle" role="switch" />
@@ -250,14 +253,13 @@
       </div>
       <div class="setting-label">
         <strong class="setting-title">Creators & Social Updates</strong>
-        <p class="setting-description">Be notified when creators or social links are added, updated, or removed.</p>
+        <p class="setting-description">Get alerts when creators or social links are added, updated, or removed.</p>
       </div>
       <div class="md-switch">
         <input type="checkbox" id="notifCreatorUpdatesToggle" role="switch" />
         <div class="track"><div class="thumb"></div></div>
       </div>
     </label>
-
   </div>
 
   <!-- Push Notification Setup -->
@@ -267,11 +269,14 @@
     </div>
     <div class="setting-label">
       <strong class="setting-title">Push Notifications</strong>
-      <p class="setting-description">Receive browser alerts even when you’re not on the site.</p>
+      <p class="setting-description">Get browser alerts even when you’re not on the site.</p>
     </div>
     <button id="enablePushNotifications" class="button">Enable</button>
   </div>
 </div>
+
+<!-- Toast Preview Container -->
+<div id="toast-container"></div>
       
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">General</h2>
@@ -551,9 +556,6 @@
   </footer>
 
   <div id="mouse-trail"></div>
-
-<!-- Toast Notification Container -->
-<div id="toast-container"></div>
   
   <script src="settings.js"></script>
   <script src="script.js"></script>
