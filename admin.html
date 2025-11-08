@@ -237,61 +237,6 @@
 
   <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
 </section>
-
-            <div class="admin-section-card" id="live-status-management">
-  <h3>🎧 Live Activity</h3>
-  <input
-    type="text"
-    id="live-status-input"
-    placeholder="e.g. 🎥 Editing new video or 💻 Working on code"
-  />
-  <div class="admin-button-group">
-    <button id="update-live-status-btn" class="admin-btn primary">Update Status</button>
-    <button id="clear-live-status-btn" class="admin-btn secondary">Clear Status</button>
-  </div>
-  <p id="live-status-result" class="admin-status-msg"></p>
-</div>
-            
-       <section class="admin-section" id="blog-management" aria-labelledby="blog-heading">
-  <h3 id="blog-heading">Blog Management</h3>
-
-  <div class="form-group">
-    <!-- Inputs -->
-    <input type="text" id="post-title" placeholder="Post Title" class="admin-input">
-    <input type="text" id="post-author" placeholder="Author Name" class="admin-input">
-    <input type="text" id="post-author-pfp" placeholder="Author Profile Picture URL" class="admin-input">
-    <input type="text" id="post-category" placeholder="Category (e.g., Tech, Updates)" class="admin-input">
-
-    <!-- Featured Post Toggle -->
-    <label class="admin-checkbox-label">
-      <input type="checkbox" id="post-featured">
-      <span class="toggle-switch"></span>
-      Mark as Featured Post
-    </label>
-
-    <!-- Rich Text Editor -->
-    <div id="post-content-editor" class="admin-editor"></div>
-
-    <!-- Optional Image Upload for Featured Image -->
-    <div class="image-upload">
-      <label for="post-image">Featured Image (optional):</label>
-      <input type="file" id="post-image" accept="image/*">
-      <div id="post-image-preview" class="image-preview"></div>
-    </div>
-
-    <input type="hidden" id="post-id">
-
-    <!-- Form Actions -->
-    <div class="form-actions">
-      <button type="button" onclick="savePost()" class="admin-btn is-primary">Save Post</button>
-      <button type="button" onclick="resetPostForm()" class="admin-btn is-secondary">Cancel</button>
-    </div>
-  </div>
-
-  <!-- Existing Posts List -->
-  <h3>Existing Posts</h3>
-  <div id="posts-list" class="admin-list"></div>
-</section>
             
              <section class="admin-section" id="president-management" aria-labelledby="president-heading">
                 <h3 id="president-heading">Manage Current President Info</h3>
