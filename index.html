@@ -515,6 +515,15 @@
   new MutationObserver(updateLum).observe(body,{attributes:true,attributeFilter:["style"]});
 })();
 </script>
-
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then(reg => console.log("✅ PWA Service Worker registered:", reg))
+      .catch(err => console.error("❌ SW registration failed:", err));
+  });
+}
+</script>
 </body>
 </html>
