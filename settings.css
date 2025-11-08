@@ -1437,3 +1437,11 @@ body.dark-mode .bubble {
 @keyframes toastFadeOut {
   to { opacity: 0; transform: translateY(20px); }
 }
+
+/* Category group styling */
+.notification-category-group {
+  border-left: 2px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
+  margin-left: 16px;
+  padding-left: 16px;
+  transition: 0.3s ease;
+}
