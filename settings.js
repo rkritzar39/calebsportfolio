@@ -78,12 +78,30 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("[Push Setup] Button found:", !!btn);
 
   if (btn) {
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", async () => {
       console.log("[Push Setup] Button clicked ✅");
+
+      if (!("Notification" in window)) {
+        alert("❌ This browser does not support notifications.");
+        return;
+      }
+
+      const permission = await Notification.requestPermission();
+      console.log("[Push Setup] Permission result:", permission);
+
+      if (permission === "granted") {
+        new Notification("🎉 Notifications Enabled!", {
+          body: "You’ll now receive updates even when this site is closed.",
+          icon: "/favicon-32x32.png",
+        });
+      } else if (permission === "denied") {
+        alert("🚫 You’ve blocked notifications for this site. Please re-enable them in your browser settings.");
+      } else {
+        alert("⚠️ Permission request dismissed. Try again.");
+      }
     });
   }
 });
-
 class SettingsManager {
   constructor() {
     /* =============================
