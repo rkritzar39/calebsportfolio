@@ -170,19 +170,17 @@ async function getDiscord() {
     const { data } = await res.json();
     if (!data) return null;
 
-    // Spotify detected
-    if (data.spotify) {
-      const sp = data.spotify;
-      $$("spotify-card").classList.remove("hidden");
-      $$("live-activity-cover").src = sp.album_art_url;
-      $$("live-song-title").textContent = sp.song;
-      $$("live-song-artist").textContent = sp.artist;
-      currentSpotifyUrl = `https://open.spotify.com/track/${sp.track_id}`;
-      setupProgress(sp.timestamps.start, sp.timestamps.end);
-      updateDynamicColors(sp.album_art_url);
-      return { text: `Listening to “${sp.song}” by ${sp.artist}`, source: "spotify" };
-    }
-
+  if (data.spotify) {
+  const sp = data.spotify;
+  $$("spotify-card").classList.remove("hidden");
+  $$("live-activity-cover").src = sp.album_art_url;
+  $$("live-song-title").textContent = sp.song;
+  $$("live-song-artist").textContent = sp.artist;
+  currentSpotifyUrl = `https://open.spotify.com/track/${sp.track_id}`;
+  setupProgress(sp.timestamps.start, sp.timestamps.end);
+  updateDynamicColors(sp.album_art_url);
+  return { text: "Listening to Spotify", source: "spotify" };
+}
     $$("spotify-card").classList.add("hidden");
     updateDynamicColors(null);
 
