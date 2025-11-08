@@ -198,6 +198,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+	/**
+ * systemHealth.js
+ * Fetches live status info from Instatus API.
+ */
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const summaryEl = document.getElementById("system-health-summary");
+  const incidentsEl = document.getElementById("system-health-incidents");
+  if (!summaryEl) return;
+
+  const instatusPage = "calebs-status-page.instatus.com"; // your Instatus page
+  const apiUrl = `https://${instatusPage}/api/v1/summary`;
+
+  try {
+    const res = await fetch(apiUrl);
+    const data = await res.json();
+
+    const status = data.status.indicator || "unknown";
+    const desc = data.status.description || "No status available";
+
+    // Determine color
+    let colorClass = "green";
+    if (status === "major") colorClass = "red";
+    else if (status === "minor" || status === "degraded") colorClass = "orange";
+
+    summaryEl.innerHTML = `
+      <p><strong>Current Status:</strong></p>
+      <div class="status-pill ${colorClass}">${desc}</div>
+    `;
+    summaryEl.classList.remove("loading");
+
+    // Render incidents
+    if (data.incidents && data.incidents.length > 0) {
+      incidentsEl.innerHTML = `<h3>Recent Incidents</h3>` +
+        data.incidents
+          .slice(0, 3)
+          .map(i => `
+            <div class="incident">
+              <strong>${i.name}</strong>
+              <p>${i.shortlink ? `<a href="${i.shortlink}" target="_blank">View Details</a>` : ""}</p>
+              <small>${new Date(i.created_at).toLocaleString()}</small>
+            </div>
+          `)
+          .join("");
+      incidentsEl.classList.remove("hidden");
+    } else {
+      incidentsEl.innerHTML = `<p>✅ No active or recent incidents.</p>`;
+    }
+  } catch (err) {
+    console.error("❌ Failed to fetch system health:", err);
+    summaryEl.innerHTML = `<p>⚠️ Could not load system health data.</p>`;
+  }
+});
+
     // --- Update footer year dynamically ---
     function updateFooterYear() {
         const yearElement = document.getElementById('year');
