@@ -215,13 +215,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const incidentsEl = document.getElementById("system-health-incidents");
   if (!summaryEl) return;
 
-  const instatusPage = "calebs-status-page.instatus.com";
-  const apiUrl = `https://${instatusPage}/summary.json`;
+  const proxyUrl = "https://api.allorigins.win/get?url=";
+  const target = encodeURIComponent("https://calebs-status-page.instatus.com/summary.json");
+  const apiUrl = `${proxyUrl}${target}`;
 
   try {
     const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error("Request failed with status " + res.status);
-    const data = await res.json();
+    if (!res.ok) throw new Error("Network response failed: " + res.status);
+    const raw = await res.json();
+    const data = JSON.parse(raw.contents);
 
     const status = data.status.indicator || "unknown";
     const desc = data.status.description || "No status available";
@@ -237,7 +239,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     `;
     summaryEl.classList.remove("loading");
 
-    // Render incidents (if any)
+    // Render incidents
     if (data.incidents && data.incidents.length > 0) {
       incidentsEl.innerHTML = `<h3>Recent Incidents</h3>` +
         data.incidents
