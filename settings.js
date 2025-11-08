@@ -7,29 +7,29 @@
  * Plug directly into your existing settings.html.
  */
 
-// === UNIVERSAL PUSH NOTIFICATIONS (WORKS ON ALL SUPPORTED BROWSERS) ===
+// === UNIVERSAL PUSH NOTIFICATIONS (Firebase Cloud Messaging - NON-MODULE VERSION) ===
 (function () {
-  console.log("[Push] Universal Notification Setup…");
+  console.log("[Push] Initializing universal setup…");
 
-  // ---- Step 1: Environment checks ----
+  // --- 1️⃣ Check for browser support ---
   if (!("serviceWorker" in navigator)) {
-    console.warn("❌ Service workers not supported.");
+    console.warn("❌ Service Workers not supported in this browser.");
     return;
   }
 
   if (!("Notification" in window)) {
-    alert("❌ This browser or device does not support notifications.");
-    console.warn("Unsupported environment:", navigator.userAgent);
+    console.warn("❌ Notifications not supported in this browser.");
     return;
   }
 
-  // ---- Step 2: Initialize Firebase (Compat SDK) ----
-  if (!("firebase" in window)) {
-    console.error("Firebase SDK missing! Load firebase-app-compat.js and firebase-messaging-compat.js first.");
+  // --- 2️⃣ Ensure Firebase is loaded first ---
+  if (!window.firebase) {
+    console.error("❌ Firebase SDK missing. Make sure firebase-app-compat.js and firebase-messaging-compat.js load before settings.js");
     return;
   }
 
-  firebase.initializeApp({
+  // --- 3️⃣ Initialize Firebase ---
+  const firebaseConfig = {
     apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0",
     authDomain: "busarmydudewebsite.firebaseapp.com",
     projectId: "busarmydudewebsite",
@@ -37,33 +37,40 @@
     messagingSenderId: "42980404680",
     appId: "1:42980404680:web:f4f1e54789902a4295e4fd",
     measurementId: "G-DQPH8YL789"
-  });
+  };
+
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  } catch (err) {
+    console.error("Firebase init failed:", err);
+    return;
+  }
 
   const messaging = firebase.messaging();
 
-  // ---- Step 3: Request Push Notifications ----
+  // --- 4️⃣ Define request function ---
   async function requestPushNotifications() {
-    console.log("[Push] Button clicked — starting setup…");
+    console.log("[Push] Requesting permission…");
 
     try {
-      // Request user permission
+      // Ask for permission
       const permission = await Notification.requestPermission();
       console.log("[Push] Permission result:", permission);
 
       if (permission !== "granted") {
-        alert("🚫 Please allow notifications to enable push alerts.");
+        alert("🚫 Please allow notifications in your browser settings to enable push alerts.");
         return;
       }
 
       // Register service worker
       const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-      console.log("✅ Service Worker registered:", registration);
+      console.log("✅ Service worker registered:", registration);
 
       // Get FCM token
       const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc";
       const token = await messaging.getToken({
         vapidKey: vapidKey,
-        serviceWorkerRegistration: registration
+        serviceWorkerRegistration: registration,
       });
 
       if (!token) {
@@ -71,44 +78,43 @@
         return;
       }
 
-      console.log("🔑 Push token received:", token);
+      console.log("🔑 Push token:", token);
       localStorage.setItem("fcmToken", token);
 
-      // Show test notification
+      // Show a quick test notification
       registration.showNotification("🎉 Notifications Enabled!", {
-        body: "You’ll now receive updates even when this site is closed.",
+        body: "You’ll now receive updates from Caleb’s site.",
         icon: "/favicon-32x32.png",
         badge: "/favicon-32x32.png",
       });
 
-      // Foreground messages
+      // Listen for foreground messages
       messaging.onMessage((payload) => {
-        console.log("📩 Foreground push received:", payload);
+        console.log("📩 Foreground message received:", payload);
         const { title, body, icon } = payload.notification || {};
         registration.showNotification(title || "Update", {
-          body,
-          icon: icon || "/favicon-32x32.png"
+          body: body || "You’ve got a new message!",
+          icon: icon || "/favicon-32x32.png",
         });
       });
-
     } catch (err) {
       console.error("❌ Push setup failed:", err);
       alert("Push setup failed: " + err.message);
     }
   }
 
-  // ---- Step 4: Bind button click ----
+  // --- 5️⃣ Attach button event listener ---
   document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("enablePushNotifications");
     if (btn) {
+      console.log("[Push] Enable button found ✅");
       btn.addEventListener("click", requestPushNotifications);
-      console.log("[Push] Ready — button bound ✅");
     } else {
-      console.warn("[Push] Enable button not found.");
+      console.warn("[Push] Enable button not found in DOM.");
     }
   });
 })();
-});
+
 class SettingsManager {
   constructor() {
     /* =============================
