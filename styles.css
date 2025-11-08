@@ -3955,3 +3955,61 @@ body.maintenance-active {
     opacity: 0.4;
     background-color: #4a4a4a;
 }
+
+/* ===============================
+   🌐 SYSTEM HEALTH PANEL
+================================= */
+.status-health-section {
+  margin: 30px auto;
+  padding: 30px;
+  max-width: 640px;
+  border-radius: 20px;
+  background: var(--dynamic-bg, color-mix(in srgb, var(--content-bg) 94%, transparent));
+  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.health-summary p {
+  margin: 8px 0;
+}
+
+.health-summary .status-pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: #fff;
+  margin-top: 8px;
+}
+
+.status-pill.green { background-color: #32d74b; }    /* operational */
+.status-pill.orange { background-color: #ff9500; }   /* partial issues */
+.status-pill.red { background-color: #ff3b30; }      /* outage */
+
+.health-incidents {
+  margin-top: 20px;
+  text-align: left;
+}
+
+.health-incidents .incident {
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+  border-left: 4px solid var(--accent-color);
+}
+
+.health-incidents .incident strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.health-incidents .incident small {
+  opacity: 0.8;
+  font-size: 12px;
+}
