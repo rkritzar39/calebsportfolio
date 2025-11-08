@@ -7,10 +7,25 @@
  * Plug directly into your existing settings.html.
  */
 
-// === PUSH NOTIFICATIONS (Firebase Cloud Messaging - NON MODULE VERSION) ===
-(function() {
+// === UNIVERSAL PUSH NOTIFICATIONS (WORKS ON ALL SUPPORTED BROWSERS) ===
+(function () {
+  console.log("[Push] Universal Notification Setup…");
+
+  // ---- Step 1: Environment checks ----
+  if (!("serviceWorker" in navigator)) {
+    console.warn("❌ Service workers not supported.");
+    return;
+  }
+
+  if (!("Notification" in window)) {
+    alert("❌ This browser or device does not support notifications.");
+    console.warn("Unsupported environment:", navigator.userAgent);
+    return;
+  }
+
+  // ---- Step 2: Initialize Firebase (Compat SDK) ----
   if (!("firebase" in window)) {
-    console.error("Firebase SDK not loaded. Make sure firebase-app-compat.js and firebase-messaging-compat.js are included before settings.js");
+    console.error("Firebase SDK missing! Load firebase-app-compat.js and firebase-messaging-compat.js first.");
     return;
   }
 
@@ -26,81 +41,73 @@
 
   const messaging = firebase.messaging();
 
-  window.requestPushNotifications = async function() {
+  // ---- Step 3: Request Push Notifications ----
+  async function requestPushNotifications() {
+    console.log("[Push] Button clicked — starting setup…");
+
     try {
+      // Request user permission
       const permission = await Notification.requestPermission();
+      console.log("[Push] Permission result:", permission);
+
       if (permission !== "granted") {
-        alert("Please allow notifications in your browser to enable push alerts.");
+        alert("🚫 Please allow notifications to enable push alerts.");
         return;
       }
 
+      // Register service worker
       const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-      console.log("✅ Service worker registered:", registration);
+      console.log("✅ Service Worker registered:", registration);
 
+      // Get FCM token
       const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc";
-
       const token = await messaging.getToken({
         vapidKey: vapidKey,
         serviceWorkerRegistration: registration
       });
 
-      if (token) {
-        console.log("🔑 Push token:", token);
-        localStorage.setItem("fcmToken", token);
-        alert("Push notifications enabled! Token saved.");
-      } else {
-        alert("Failed to get push token. Try again later.");
+      if (!token) {
+        alert("⚠️ Failed to get push token. Try again later.");
+        return;
       }
 
-      messaging.onMessage((payload) => {
-        console.log("📩 Foreground push:", payload);
-        const { title, body, icon } = payload.notification || {};
-        new Notification(title || "Update", { body, icon });
+      console.log("🔑 Push token received:", token);
+      localStorage.setItem("fcmToken", token);
+
+      // Show test notification
+      registration.showNotification("🎉 Notifications Enabled!", {
+        body: "You’ll now receive updates even when this site is closed.",
+        icon: "/favicon-32x32.png",
+        badge: "/favicon-32x32.png",
       });
+
+      // Foreground messages
+      messaging.onMessage((payload) => {
+        console.log("📩 Foreground push received:", payload);
+        const { title, body, icon } = payload.notification || {};
+        registration.showNotification(title || "Update", {
+          body,
+          icon: icon || "/favicon-32x32.png"
+        });
+      });
+
     } catch (err) {
       console.error("❌ Push setup failed:", err);
       alert("Push setup failed: " + err.message);
     }
-  };
+  }
 
+  // ---- Step 4: Bind button click ----
   document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("enablePushNotifications");
-    if (btn) btn.addEventListener("click", window.requestPushNotifications);
+    if (btn) {
+      btn.addEventListener("click", requestPushNotifications);
+      console.log("[Push] Ready — button bound ✅");
+    } else {
+      console.warn("[Push] Enable button not found.");
+    }
   });
 })();
-
-console.log("[Settings.js] Loaded ✅");
-
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("[Push Setup] DOM ready ✅");
-
-  const btn = document.getElementById("enablePushNotifications");
-  console.log("[Push Setup] Button found:", !!btn);
-
-  if (btn) {
-    btn.addEventListener("click", async () => {
-      console.log("[Push Setup] Button clicked ✅");
-
-      if (!("Notification" in window)) {
-        alert("❌ This browser does not support notifications.");
-        return;
-      }
-
-      const permission = await Notification.requestPermission();
-      console.log("[Push Setup] Permission result:", permission);
-
-      if (permission === "granted") {
-        new Notification("🎉 Notifications Enabled!", {
-          body: "You’ll now receive updates even when this site is closed.",
-          icon: "/favicon-32x32.png",
-        });
-      } else if (permission === "denied") {
-        alert("🚫 You’ve blocked notifications for this site. Please re-enable them in your browser settings.");
-      } else {
-        alert("⚠️ Permission request dismissed. Try again.");
-      }
-    });
-  }
 });
 class SettingsManager {
   constructor() {
