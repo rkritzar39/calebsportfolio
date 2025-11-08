@@ -3124,6 +3124,8 @@ body.dark-mode .bubble {
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
   border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  min-height: 44px;
+  line-height: 1.5;
 }
 
 .version-list li::before {
@@ -3157,7 +3159,60 @@ body.dark-mode .bubble {
   50% { transform: scale(1.3); opacity: 0.7; }
 }
 
-.version-label { margin-right: 8px; }
+.version-label {
+  margin-right: 8px;
+}
+
+.version-value {
+  opacity: 0;
+  transition: opacity 0.4s ease, color 0.3s ease;
+}
+
+.version-value[style*="opacity: 1"] {
+  opacity: 1;
+}
+
+/* ======================== */
+/* System Detection Styling */
+/* ======================== */
+
+/* Dynamic category colors for new metrics */
+#browser-info::before {
+  background: linear-gradient(135deg, #ff9f0a, #ffb700);
+}
+#resolution-info::before {
+  background: linear-gradient(135deg, #5ac8fa, #007aff);
+}
+#connection-info::before {
+  background: linear-gradient(135deg, #34c759, #0bd36f);
+}
+#battery-info::before {
+  background: linear-gradient(135deg, #30d158, #1ecf4a);
+}
+
+/* Battery dot changes with level */
+.version-list li.low-battery::before {
+  background: linear-gradient(135deg, #ff3b30, #ff453a);
+  box-shadow: 0 0 10px rgba(255, 59, 48, 0.6);
+}
+.version-list li.medium-battery::before {
+  background: linear-gradient(135deg, #ffcc00, #ffd60a);
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+}
+.version-list li.full-battery::before {
+  background: linear-gradient(135deg, #30d158, #1ecf4a);
+  box-shadow: 0 0 10px rgba(48, 209, 88, 0.6);
+}
+
+/* Hover effect on system rows */
+#browser-info:hover,
+#resolution-info:hover,
+#connection-info:hover,
+#battery-info:hover {
+  background: color-mix(in srgb, var(--accent-color) 12%, var(--content-bg));
+  border-color: color-mix(in srgb, var(--accent-color) 45%, transparent);
+  transform: translateY(-1px);
+}
 
 /* ======================== */
 /* Legal Section            */
@@ -3181,6 +3236,7 @@ body.dark-mode .bubble {
   align-items: center;
   gap: 10px;
 }
+
 .legal-header::before {
   content: "⚖️";
   font-size: 1.2em;
@@ -3206,8 +3262,12 @@ body.dark-mode .bubble {
 }
 
 /* Types */
-.copy-protection-message { border-left: 4px solid #ff4757; }
-.legal-protection-message { border-left: 4px solid #ffa502; }
+.copy-protection-message {
+  border-left: 4px solid #ff4757;
+}
+.legal-protection-message {
+  border-left: 4px solid #ffa502;
+}
 
 /* Icons */
 .copy-protection-message::before,
@@ -3233,20 +3293,45 @@ body.dark-mode .bubble {
 /* Responsive Layout        */
 /* ======================== */
 @media screen and (max-width: 768px) {
-  .version-info-section { padding: 22px; }
-  .version-header { font-size: 1.2em; }
-  .version-list li { font-size: 0.92em; }
-  .legal-section { padding: 20px; }
-  .legal-header { font-size: 1.2em; }
+  .version-info-section {
+    padding: 22px;
+  }
+  .version-header {
+    font-size: 1.2em;
+  }
+  .version-list li {
+    font-size: 0.92em;
+  }
+  .legal-section {
+    padding: 20px;
+  }
+  .legal-header {
+    font-size: 1.2em;
+  }
 }
 
 @media screen and (max-width: 400px) {
-  .version-info-section { padding: 16px; }
-  .version-header { font-size: 1.1em; }
-  .version-list li::before { left: 10px; width: 8px; height: 8px; }
-  .version-list li { padding-left: 30px; font-size: 0.9em; }
-  .legal-section { padding: 16px; }
-  .legal-header { font-size: 1.1em; }
+  .version-info-section {
+    padding: 16px;
+  }
+  .version-header {
+    font-size: 1.1em;
+  }
+  .version-list li::before {
+    left: 10px;
+    width: 8px;
+    height: 8px;
+  }
+  .version-list li {
+    padding-left: 30px;
+    font-size: 0.9em;
+  }
+  .legal-section {
+    padding: 16px;
+  }
+  .legal-header {
+    font-size: 1.1em;
+  }
 }
 
 /* Copy Protection */
