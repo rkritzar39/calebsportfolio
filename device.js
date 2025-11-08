@@ -1,7 +1,8 @@
 /**
- * device.js — v5.0
+ * device.js — v5.1
  * Caleb’s System Dashboard
- * Detects OS, Browser, Network Type, and Network Generation
+ * OS, Browser, Connection Type, and Network Generation
+ * Works on desktop + mobile (iOS, Android, Windows, macOS)
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -10,13 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const browserEl = document.querySelector("#browser-info .version-value");
   const resolutionEl = document.querySelector("#resolution-info .version-value");
   const connectionEl = document.querySelector("#connection-info .version-value");
-  const networkEl = document.querySelector("#network-info .version-value"); // <-- second connection line
+  const networkEl = document.querySelector("#network-info .version-value");
   const batteryRow = document.querySelector("#battery-info");
   const batteryEl = batteryRow ? batteryRow.querySelector(".version-value") : null;
   const syncedEl = document.querySelector("#synced-info .version-value");
 
   /* ----------------------------
-     🕒 Synced Clock
+     🕒 Live Synced Clock
   ---------------------------- */
   function updateSyncedClock() {
     if (!syncedEl) return;
@@ -33,18 +34,22 @@ document.addEventListener("DOMContentLoaded", () => {
       second: "2-digit",
       hour12: true,
     });
-    const tz = new Date().toLocaleTimeString("en-us", { timeZoneName: "short" }).split(" ").pop();
+    const tz = new Date()
+      .toLocaleTimeString("en-us", { timeZoneName: "short" })
+      .split(" ")
+      .pop();
     syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tz}</span>`;
   }
   updateSyncedClock();
   setInterval(updateSyncedClock, 1000);
 
   /* ----------------------------
-     💻 OS + Version
+     💻 OS Detection
   ---------------------------- */
   function detectOSVersion() {
     const ua = navigator.userAgent;
-    let os = "Unknown", version = "";
+    let os = "Unknown";
+    let version = "";
 
     const isIPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     if (isIPad) {
@@ -67,7 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (m) version = m[1].replace(/_/g, ".");
     } else if (/Windows NT/i.test(ua)) {
       os = "Windows";
-      const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7", "6.0": "Vista" };
+      const map = {
+        "10.0": "11 / 10",
+        "6.3": "8.1",
+        "6.2": "8",
+        "6.1": "7",
+        "6.0": "Vista",
+      };
       const m = ua.match(/Windows NT (\d+\.\d+)/);
       if (m) version = `${map[m[1]] || "NT " + m[1]}`;
     } else if (/CrOS/i.test(ua)) os = "ChromeOS";
@@ -77,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     🌐 Browser
+     🌐 Browser Detection
   ---------------------------- */
   function detectBrowser() {
     const ua = navigator.userAgent;
@@ -87,14 +98,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (ua.includes("OPiOS")) return "Opera (iOS)";
     if (ua.includes("Edg")) return "Microsoft Edge";
     if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
-    if (ua.includes("Chrome") && !ua.includes("Chromium")) return "Chrome";
+    if (ua.includes("Chrome") && !ua.includes("Chromium")) return "Google Chrome";
     if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
-    if (ua.includes("Firefox")) return "Firefox";
+    if (ua.includes("Firefox")) return "Mozilla Firefox";
     return "Unknown Browser";
   }
 
   /* ----------------------------
-     📱 Connection Type (Wi-Fi / Cellular)
+     📱 Connection Type (Wi-Fi / Cellular / Both)
   ---------------------------- */
   async function detectConnectionType() {
     if (!connectionEl) return;
@@ -106,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-    // ✅ Use NetworkInformation API if available
     if (conn && conn.type) {
       if (conn.type === "wifi") {
         connectionEl.textContent = "📶 Wi-Fi";
@@ -120,13 +130,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    // Fallback for iOS / Safari
+    // Safari fallback: ping latency heuristic
     try {
       const start = performance.now();
       await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
       const latency = performance.now() - start;
 
-      // Heuristic: if latency is high, likely cellular
+      // >200 ms → Cellular; <200 ms → Wi-Fi
       if (latency > 200) {
         connectionEl.textContent = "📱 Cellular";
         return "Cellular";
@@ -141,9 +151,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     📡 Network Generation (5G / LTE / 4G)
+     📡 Network Generation (5G / LTE / 4G / 3G)
   ---------------------------- */
-  function detectNetworkGeneration() {
+  async function detectNetworkGeneration() {
     if (!networkEl) return;
 
     if (!navigator.onLine) {
@@ -164,24 +174,22 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Safari Fallback: guess based on latency
-    (async () => {
-      try {
-        const start = performance.now();
-        await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
-        const latency = performance.now() - start;
-        let gen = "LTE / 4G";
-        if (latency > 800) gen = "3G";
-        else if (latency < 200) gen = "5G";
-        networkEl.textContent = gen;
-      } catch {
-        networkEl.textContent = "Unknown";
-      }
-    })();
+    // iOS / Safari fallback using latency
+    try {
+      const start = performance.now();
+      await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store" });
+      const latency = performance.now() - start;
+      let gen = "LTE / 4G";
+      if (latency > 800) gen = "3G";
+      else if (latency < 200) gen = "5G";
+      networkEl.textContent = gen;
+    } catch {
+      networkEl.textContent = "Unknown";
+    }
   }
 
   /* ----------------------------
-     🔋 Battery (Auto-hide on Desktop)
+     🔋 Battery (Auto-hide on desktop)
   ---------------------------- */
   async function detectBattery() {
     if (!batteryEl) return;
@@ -194,15 +202,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if ("getBattery" in navigator) {
-      const battery = await navigator.getBattery();
-      const updateBatteryUI = () => {
-        const percent = Math.round(battery.level * 100);
-        const icon = battery.charging ? "⚡" : "🔋";
-        batteryEl.textContent = `${icon} ${percent}%`;
-      };
-      updateBatteryUI();
-      battery.addEventListener("levelchange", updateBatteryUI);
-      battery.addEventListener("chargingchange", updateBatteryUI);
+      try {
+        const battery = await navigator.getBattery();
+        const updateBatteryUI = () => {
+          const percent = Math.round(battery.level * 100);
+          const icon = battery.charging ? "⚡" : "🔋";
+          batteryEl.textContent = `${icon} ${percent}%`;
+        };
+        updateBatteryUI();
+        battery.addEventListener("levelchange", updateBatteryUI);
+        battery.addEventListener("chargingchange", updateBatteryUI);
+      } catch {
+        batteryEl.textContent = "⚡ Battery Mode";
+      }
     } else {
       batteryEl.textContent = "🔋 Battery";
     }
@@ -213,7 +225,11 @@ document.addEventListener("DOMContentLoaded", () => {
   ---------------------------- */
   function applyAll() {
     if (osEl) osEl.textContent = detectOSVersion();
-    if (deviceEl) deviceEl.textContent = navigator.userAgent.includes("iPad") ? "iPad" : "Device";
+    if (deviceEl) deviceEl.textContent = navigator.userAgent.includes("iPad")
+      ? "iPad"
+      : /iPhone/i.test(navigator.userAgent)
+      ? "iPhone"
+      : "Device";
     if (browserEl) browserEl.textContent = detectBrowser();
     if (resolutionEl) resolutionEl.textContent = `${window.screen.width} × ${window.screen.height}`;
     detectConnectionType();
