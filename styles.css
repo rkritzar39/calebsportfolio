@@ -3172,6 +3172,22 @@ body.dark-mode .bubble {
   opacity: 1;
 }
 
+/* Accent Timezone Tag */
+.tz-tag {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--accent-color);
+  color: var(--accent-text-color, #fff);
+  font-weight: 600;
+  font-size: 0.8em;
+  letter-spacing: 0.2px;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent-color) 50%, transparent);
+  vertical-align: middle;
+}
+
+
 /* ======================== */
 /* System Detection Styling */
 /* ======================== */
