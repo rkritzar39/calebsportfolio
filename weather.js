@@ -48,7 +48,12 @@ function codeToText(c){
   return m[c]||"—";
 }
 
+// --- [FIXED RENDER FUNCTION] ---
 function render(f,a,lat,lon){
+  // Find current hour index
+  // This is the key fix: find the index in the hourly array that matches the current time.
+  const currentHourIndex = Math.max(0, f.hourly.time.findIndex(t => t === f.current_weather.time));
+
   const cur=f.current_weather;
   const uTemp=units==="imperial"?"°F":"°C";
   const uWind=units==="imperial"?"mph":"km/h";
@@ -62,7 +67,11 @@ function render(f,a,lat,lon){
 
   // hourly
   const h=document.getElementById("hourly");h.innerHTML="";
-  for(let i=0;i<12;i++){
+  // Loop for 12 hours *starting from the current hour index*
+  const startIndex = currentHourIndex;
+  const endIndex = startIndex + 12;
+
+  for(let i = startIndex; i < endIndex && i < f.hourly.time.length; i++){
     const t=Math.round(f.hourly.temperature_2m[i]);
     const hr=new Date(f.hourly.time[i]).getHours();
     h.insertAdjacentHTML("beforeend",
@@ -81,14 +90,15 @@ function render(f,a,lat,lon){
 
   // AQI
   const aqi=document.getElementById("aqi");
-  if(a.hourly?.us_aqi){
-    const val=a.hourly.us_aqi[0];
+  // Check if data exists *at the current hour index*
+  if(a.hourly?.us_aqi && a.hourly.us_aqi.length > currentHourIndex){
+    const val=a.hourly.us_aqi[currentHourIndex];
     let cat="Good";
     if(val>50)cat="Moderate";
     if(val>100)cat="Unhealthy";
     if(val>200)cat="Very Unhealthy";
     aqi.innerHTML=`US AQI <strong>${val}</strong> (${cat})<br>
-      PM2.5 ${a.hourly.pm2_5[0]} µg/m³ • PM10 ${a.hourly.pm10[0]} µg/m³`;
+      PM2.5 ${a.hourly.pm2_5[currentHourIndex]} µg/m³ • PM10 ${a.hourly.pm10[currentHourIndex]} µg/m³`;
   } else aqi.textContent="No air-quality data.";
 
   initRadar(lat,lon);
