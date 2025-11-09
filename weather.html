@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Liquid-Glass Weather</title>
-  <link rel="stylesheet" href="weather.css"/>
+  <link rel="stylesheet" href="weather.css" />
 
-  <!-- Leaflet (Radar) -->
+  <!-- Leaflet for radar -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
@@ -17,10 +17,10 @@
       <p id="date-time">—</p>
     </header>
 
-    <section class="liquid-card main">
+    <section id="main" class="liquid-card main">
       <h2 id="city">Locating…</h2>
       <div class="current">
-        <img id="icon" alt="icon"/>
+        <img id="icon" alt="icon" />
         <div>
           <h1 id="temp">--°</h1>
           <p id="desc">—</p>
@@ -37,7 +37,7 @@
     </section>
 
     <section class="liquid-card">
-      <h3>7-Day</h3>
+      <h3>7-Day Forecast</h3>
       <div id="daily" class="daily"></div>
     </section>
 
@@ -52,7 +52,7 @@
     </section>
 
     <footer class="footer">
-      <p>Data © Open-Meteo • Radar © RainViewer</p>
+      <p>Data © Open-Meteo • Radar © RainViewer • City © OpenStreetMap Nominatim</p>
     </footer>
   </main>
   <script src="weather.js"></script>
