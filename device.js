@@ -135,8 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", setRes);
 
 /* ===========================================================
-   📶 Fixed Connection + Network Detection
-   Accurate for iOS, Android, and Desktop (no API dependency)
+   📶 Smart Network & Connection Detection (Final)
+   Works across iOS, Android, Desktop
 =========================================================== */
 function detectNetworkAndConnection() {
   const connectionEl = document.querySelector("#connection-info .version-value");
@@ -146,84 +146,75 @@ function detectNetworkAndConnection() {
   let connection = "Unknown";
   let network = "Unknown";
 
-  // 1️⃣ If offline
+  // 1️⃣ Offline
   if (!navigator.onLine) {
     connection = "Not Connected";
     network = "Not Connected";
-  } else {
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    const ua = navigator.userAgent || "";
-    const isIOS = /iPhone|iPad|iPod/i.test(ua);
-    const isAndroid = /Android/i.test(ua);
-    const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
-
-    // --- Reliable network type detection ---
-    if (conn && (conn.type || conn.effectiveType)) {
-      const type = (conn.type || "").toLowerCase();
-      const eff = (conn.effectiveType || "").toLowerCase();
-
-      const hasWifi = type.includes("wifi");
-      const hasCell = /(cellular|5g|4g|lte|3g|2g)/.test(type) || /(5g|4g|lte|3g|2g)/.test(eff);
-
-      if (hasWifi && hasCell) {
-        connection = "Cellular / Wi-Fi";
-        network = "Cellular / Wi-Fi";
-      } else if (hasWifi) {
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
-      } else if (hasCell) {
-        connection = "Cellular";
-        network = "Cellular";
-      } else {
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
-      }
-    }
-    // --- iOS fallback (Safari gives nothing) ---
-    else if (isIOS) {
-      // iOS never reports "wifi", so we infer from platform
-      if (navigator.maxTouchPoints > 0 && !navigator.standalone) {
-        // When Safari running standalone (added to Home Screen), assume Wi-Fi
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
-      } else {
-        // Default to Wi-Fi when online — only show "Cellular" if user agent says Mobile
-        if (/Mobile/i.test(ua)) {
-          connection = "Wi-Fi";
-          network = "Wi-Fi";
-        } else {
-          connection = "Wi-Fi";
-          network = "Wi-Fi";
-        }
-      }
-    }
-    // --- Android fallback ---
-    else if (isAndroid) {
-      const conn = navigator.connection;
-      if (conn && conn.type === "wifi") {
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
-      } else {
-        const downlink = conn?.downlink || 0;
-        connection = downlink > 10 ? "Wi-Fi" : "Cellular";
-        network = connection;
-      }
-    }
-    // --- Desktop fallback ---
-    else if (isDesktop) {
-      connection = "Wi-Fi";
-      network = "Wi-Fi";
-    }
+    update();
+    return;
   }
 
-  // Apply result
-  connectionEl.textContent = connection;
-  networkEl.textContent = network;
-  connectionEl.style.opacity = "1";
-  networkEl.style.opacity = "1";
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const ua = navigator.userAgent || "";
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  const isAndroid = /Android/i.test(ua);
+  const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
+
+  // helper: update UI
+  function update() {
+    connectionEl.textContent = connection;
+    networkEl.textContent = network;
+    connectionEl.style.opacity = "1";
+    networkEl.style.opacity = "1";
+  }
+
+  // 2️⃣ If API gives type info
+  if (conn && (conn.type || conn.effectiveType)) {
+    const type = (conn.type || "").toLowerCase();
+    const eff = (conn.effectiveType || "").toLowerCase();
+
+    const hasWifi = type.includes("wifi");
+    const hasCell = /(cellular|5g|4g|lte|3g|2g)/.test(type) || /(5g|4g|lte|3g|2g)/.test(eff);
+
+    if (hasWifi && hasCell) connection = network = "Cellular / Wi-Fi";
+    else if (hasWifi) connection = network = "Wi-Fi";
+    else if (hasCell) connection = network = "Cellular";
+    else connection = network = "Wi-Fi";
+
+    update();
+    return;
+  }
+
+  // 3️⃣ Fallback: iOS / Android (no network info)
+  async function guessNetwork() {
+    try {
+      const response = await fetch("https://api64.ipify.org?format=json");
+      const { ip } = await response.json();
+      // check private IP blocks (Wi-Fi local)
+      const isPrivate =
+        /^10\./.test(ip) ||
+        /^192\.168\./.test(ip) ||
+        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip);
+      if (isPrivate) {
+        connection = network = "Wi-Fi";
+      } else if (isIOS || isAndroid) {
+        connection = network = "Cellular";
+      } else {
+        connection = network = "Wi-Fi";
+      }
+    } catch (e) {
+      console.warn("Network guess fallback:", e);
+      // still guess sensibly
+      if (isDesktop) connection = network = "Wi-Fi";
+      else connection = network = "Cellular";
+    }
+    update();
+  }
+
+  guessNetwork();
 }
 
-// Run on load and network changes
+// Initial run + listeners
 detectNetworkAndConnection();
 window.addEventListener("online", detectNetworkAndConnection);
 window.addEventListener("offline", detectNetworkAndConnection);
