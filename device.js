@@ -1,11 +1,15 @@
 /**
- * device.js — v12 SAFE
- * Minimal, robust, iOS-friendly. No third-party IP services.
- * If a field can't be read, it shows a clear reason instead of staying blank.
+ * device.js — v14 SAFE+
+ * ✅ Works on iOS, Android, and Desktop
+ * ✅ Fixes version/build/synced display
+ * ✅ Auto-updates Day/Night every minute
+ * ✅ Accurate local sunrise/sunset times
  */
 
 document.addEventListener("DOMContentLoaded", () => {
   const q = (id) => document.querySelector(`#${id} .version-value`);
+  const safeSet = (el, text) => { if (el) el.textContent = text; };
+  const fadeIn  = (el) => { if (el) { el.style.opacity = "1"; el.style.transition = "opacity .3s"; } };
 
   const versionEl    = q("version-info");
   const buildEl      = q("build-info");
@@ -20,29 +24,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const sunsetEl     = q("sunset-info");
 
   /* ----------------------------
-   * Helpers
+   * Version / Build
    * -------------------------- */
-  const safeSet = (el, text) => { if (el) el.textContent = text; };
-  const fadeIn  = (el) => { if (el) { el.style.opacity = "1"; el.style.transition = "opacity .25s"; } };
+  if (versionEl) {
+    safeSet(versionEl, "v26.1.2");
+    fadeIn(versionEl);
+  }
+  if (buildEl) {
+    safeSet(buildEl, "2025.9.20");
+    fadeIn(buildEl);
+  }
 
   /* ----------------------------
-   * Version / Build (static from your HTML)
-   * -------------------------- */
-  fadeIn(versionEl);
-  fadeIn(buildEl);
-
-  /* ----------------------------
-   * Synced clock (local TZ label)
+   * 🕒 Synced Clock (local TZ)
    * -------------------------- */
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
   function updateClock() {
     if (!syncedEl) return;
-    const now  = new Date();
+    const now = new Date();
     const date = now.toLocaleDateString(undefined, {
-      weekday: "long", month: "long", day: "numeric", year: "numeric",
+      weekday: "long", month: "long", day: "numeric", year: "numeric"
     });
     const time = now.toLocaleTimeString(undefined, {
-      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true,
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
     });
     syncedEl.innerHTML = `${date} at ${time} <span class="tz-tag">${tzName}</span>`;
     fadeIn(syncedEl);
@@ -51,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateClock, 1000);
 
   /* ----------------------------
-   * OS + Version (UA & iPad detection)
+   * 💻 OS + Version
    * -------------------------- */
   function detectOSVersion() {
     const ua = navigator.userAgent || "";
@@ -88,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   safeSet(osEl, detectOSVersion()); fadeIn(osEl);
 
   /* ----------------------------
-   * Device
+   * 📱 Device
    * -------------------------- */
   function detectDevice() {
     const ua = navigator.userAgent || "";
@@ -106,117 +110,74 @@ document.addEventListener("DOMContentLoaded", () => {
   safeSet(deviceEl, detectDevice()); fadeIn(deviceEl);
 
   /* ----------------------------
-   * Browser
+   * 🌐 Browser
    * -------------------------- */
   function detectBrowser() {
     const ua = navigator.userAgent || "";
-    if (ua.includes("CriOS"))              return "Chrome (iOS)";
-    if (ua.includes("EdgiOS"))             return "Edge (iOS)";
-    if (ua.includes("FxiOS"))              return "Firefox (iOS)";
-    if (ua.includes("OPiOS"))              return "Opera (iOS)";
-    if (ua.includes("Edg"))                return "Microsoft Edge";
+    if (ua.includes("CriOS")) return "Chrome (iOS)";
+    if (ua.includes("EdgiOS")) return "Edge (iOS)";
+    if (ua.includes("FxiOS")) return "Firefox (iOS)";
+    if (ua.includes("OPiOS")) return "Opera (iOS)";
+    if (ua.includes("Edg")) return "Microsoft Edge";
     if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
     if (ua.includes("Chrome") && !ua.includes("Chromium")) return "Google Chrome";
-    if (ua.includes("Safari") && !ua.includes("Chrome"))   return "Safari";
-    if (ua.includes("Firefox"))            return "Firefox";
+    if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
+    if (ua.includes("Firefox")) return "Firefox";
     return "Unknown Browser";
   }
   safeSet(browserEl, detectBrowser()); fadeIn(browserEl);
 
   /* ----------------------------
-   * Resolution
+   * 🖥️ Resolution
    * -------------------------- */
   const setRes = () => { safeSet(resolutionEl, `${screen.width} × ${screen.height}`); fadeIn(resolutionEl); };
-  setRes(); window.addEventListener("resize", setRes);
-
+  setRes();
+  window.addEventListener("resize", setRes);
 
   /* ----------------------------
-     📶 Detect Connection + Network
-  ---------------------------- */
+   * 📶 Connection + Network
+   * -------------------------- */
   function detectConnection() {
     const ua = navigator.userAgent || "";
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
     let connection = "Unknown";
     let network = "Unknown";
 
-    // 1️⃣ If completely offline
     if (!navigator.onLine) {
-      connection = "Not Connected";
-      network = "Not Connected";
-    }
-    // 2️⃣ If API available (Android + modern browsers)
-    else if (conn) {
+      connection = network = "Not Connected";
+    } else if (conn) {
       const type = (conn.type || "").toLowerCase();
       const eff = (conn.effectiveType || "").toLowerCase();
-
       const hasWifi = type.includes("wifi");
       const hasCell = /(cellular|5g|4g|lte|3g|2g)/.test(type) || /(5g|4g|lte|3g|2g)/.test(eff);
-
-      if (hasWifi && hasCell) {
-        connection = "Cellular / Wi-Fi";
-        network = "Cellular / Wi-Fi";
-      } else if (hasCell) {
-        connection = "Cellular";
-        network = "Cellular";
-      } else if (hasWifi) {
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
-      } else {
-        connection = "Wi-Fi"; // fallback if online
-        network = "Wi-Fi";
-      }
-    }
-    // 3️⃣ iOS / Safari fallback (no API)
-    else {
+      if (hasWifi && hasCell) connection = network = "Cellular / Wi-Fi";
+      else if (hasCell)       connection = network = "Cellular";
+      else if (hasWifi)       connection = network = "Wi-Fi";
+      else                    connection = network = "Wi-Fi";
+    } else {
       const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
       const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
-
-      if (!navigator.onLine) {
-        connection = "Not Connected";
-        network = "Not Connected";
-      } else if (isMobile) {
-        // On iOS we can't tell Wi-Fi vs Cellular — assume Cellular if not Wi-Fi
-        if (navigator.connection?.type === "wifi") {
-          connection = "Wi-Fi";
-          network = "Wi-Fi";
-        } else {
-          connection = "Cellular";
-          network = "Cellular";
-        }
-      } else if (isDesktop) {
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
-      }
+      if (!navigator.onLine) connection = network = "Not Connected";
+      else if (isMobile)     connection = network = "Cellular";
+      else if (isDesktop)    connection = network = "Wi-Fi";
     }
 
-    // Update UI
-    if (connectionEl) {
-      connectionEl.textContent = connection;
-      connectionEl.style.opacity = "1";
-    }
-    if (networkEl) {
-      networkEl.textContent = network;
-      networkEl.style.opacity = "1";
-    }
+    safeSet(connectionEl, connection);
+    safeSet(networkEl, network);
+    fadeIn(connectionEl);
+    fadeIn(networkEl);
   }
-
-  // Run immediately
   detectConnection();
-
-  // Auto update when state changes
   window.addEventListener("online", detectConnection);
   window.addEventListener("offline", detectConnection);
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if (conn && conn.addEventListener) conn.addEventListener("change", detectConnection);
-});
+
   /* ----------------------------
-   * Sunrise / Sunset (Geolocation only)
+   * 🌅 Sunrise / Sunset + Auto Day/Night
    * -------------------------- */
   async function loadSunTimes() {
     if (!sunriseEl || !sunsetEl) return;
-
-    // Status row (Daytime/Nighttime)
     let statusLi = document.getElementById("day-status-info");
     let statusEl;
     if (!statusLi) {
@@ -229,50 +190,52 @@ document.addEventListener("DOMContentLoaded", () => {
       statusEl = statusLi.querySelector(".version-value") || statusLi;
     }
 
-    // If no geolocation, fail cleanly
     if (!("geolocation" in navigator)) {
       safeSet(sunriseEl, "Unavailable");
-      safeSet(sunsetEl,  "Unavailable");
-      safeSet(statusEl,  "Unavailable");
+      safeSet(sunsetEl, "Unavailable");
+      safeSet(statusEl, "Unavailable");
       return;
     }
 
-    // Ask once; if denied, show reason.
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { latitude, longitude } = pos.coords;
-      try {
-        const resp = await fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`, { cache: "no-store" });
-        const data = await resp.json();
-        if (data.status !== "OK") throw new Error("Sun API error");
+      async function refreshSunTimes() {
+        try {
+          const resp = await fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`, { cache: "no-store" });
+          const data = await resp.json();
+          if (data.status !== "OK") throw new Error("Sun API error");
 
-        // API returns UTC; Date parses ISO as UTC, format prints local time.
-        const sunrise = new Date(data.results.sunrise);
-        const sunset  = new Date(data.results.sunset);
+          const sunrise = new Date(data.results.sunrise);
+          const sunset  = new Date(data.results.sunset);
+          safeSet(sunriseEl, sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+          safeSet(sunsetEl,  sunset .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+          fadeIn(sunriseEl); fadeIn(sunsetEl);
 
-        safeSet(sunriseEl, sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-        safeSet(sunsetEl,  sunset .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-        fadeIn(sunriseEl); fadeIn(sunsetEl);
-
-        const now = new Date();
-        const isDay = now >= sunrise && now < sunset;
-        safeSet(statusEl, isDay ? "Daytime ☀️" : "Nighttime 🌙");
-        fadeIn(statusEl);
-      } catch (e) {
-        console.error("Sunrise/Sunset fetch failed:", e);
-        safeSet(sunriseEl, "Error");
-        safeSet(sunsetEl,  "Error");
-        safeSet(statusEl,  "Unavailable");
+          const now = new Date();
+          const isDay = now >= sunrise && now < sunset;
+          safeSet(statusEl, isDay ? "Daytime ☀️" : "Nighttime 🌙");
+          fadeIn(statusEl);
+        } catch (e) {
+          console.error("Sunrise/Sunset fetch failed:", e);
+          safeSet(sunriseEl, "Error");
+          safeSet(sunsetEl, "Error");
+          safeSet(statusEl, "Unavailable");
+        }
       }
+      await refreshSunTimes();
+      setInterval(refreshSunTimes, 60000);
     }, (err) => {
       console.warn("Geolocation denied:", err);
       safeSet(sunriseEl, "Permission denied");
-      safeSet(sunsetEl,  "Permission denied");
-      safeSet(statusEl,  "Unavailable");
+      safeSet(sunsetEl, "Permission denied");
+      const li = document.getElementById("day-status-info");
+      if (li) safeSet(li.querySelector(".version-value"), "Unavailable");
     }, { timeout: 8000, maximumAge: 0 });
   }
+
   loadSunTimes();
 
-  /* Ensure all current fields are visible even if values are defaults */
+  /* Ensure everything fades in */
   [versionEl, buildEl, osEl, deviceEl, browserEl, resolutionEl, connectionEl, networkEl, sunriseEl, sunsetEl, syncedEl]
     .forEach(fadeIn);
 });
