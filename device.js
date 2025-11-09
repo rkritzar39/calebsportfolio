@@ -1,15 +1,15 @@
 /**
- * device.js — v10.0 FINAL
+ * device.js — v10.1 FINAL
  * Caleb’s System Dashboard
  * ✅ Accurate OS / Device / Browser Detection
  * ✅ Smart Network + Connection
  * ✅ Synced Clock (with Timezone)
- * ✅ Sunrise / Sunset + Day/Night Accent Theme
- * ✅ Graceful Fallbacks for iOS privacy restrictions
+ * ✅ Correct Local Sunrise / Sunset Detection
+ * ✅ Day/Night Accent that Respects Custom Colors
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ device.js loaded");
+  console.log("✅ device.js v10.1 loaded");
 
   const el = (id) => document.querySelector(`#${id} .version-value`);
   const versionEl = el("version-info");
@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const connectionEl = el("connection-info");
   const networkRow = document.getElementById("network-info");
   const networkEl = networkRow ? networkRow.querySelector(".version-value") : null;
-
   const sunriseEl = el("sunrise-info");
   const sunsetEl = el("sunset-info");
 
@@ -157,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const type = conn.type || "";
     const eff = conn.effectiveType || "";
 
-    if (type === "wifi" && eff.match(/4g|5g|lte/i)) return "Wi-Fi + Cellular";
     if (type === "wifi") return "Wi-Fi";
     if (type === "cellular") return "Cellular";
     if (navigator.onLine && !type) {
@@ -182,24 +180,18 @@ document.addEventListener("DOMContentLoaded", () => {
       if (eff.includes("2g")) return "2G";
     }
 
-    // --- Smart fallback for restricted browsers (like iOS) ---
     const ua = navigator.userAgent;
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
-    const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
-
-    if (isMobile) return "Cellular (Unknown Speed)";
-    if (isDesktop) return "Wi-Fi (Unknown Speed)";
-
+    if (/iPhone|iPad|iPod|Android/i.test(ua)) return "Cellular (Unknown Speed)";
+    if (/Macintosh|Windows|Linux/i.test(ua)) return "Wi-Fi (Unknown Speed)";
     return "Unknown";
   }
 
   /* ----------------------------
-     🌅 Sunrise / Sunset + Accent Theme
+     🌅 Sunrise / Sunset (Fixed Local)
   ---------------------------- */
   function fetchSunTimes() {
     if (!sunriseEl || !sunsetEl) return;
 
-    // Create Day/Night row if not present
     let dayStatusEl = document.getElementById("day-status-info");
     if (!dayStatusEl) {
       const li = document.createElement("li");
@@ -212,28 +204,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function setSunUI(sunrise, sunset) {
-      const now = new Date(Date.now() + 3600 * 1000 * 12); // add 12 hours forward
+      const now = new Date();
       const isDay = now >= sunrise && now < sunset;
 
       sunriseEl.textContent = sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       sunsetEl.textContent = sunset.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
       sunriseEl.style.color = "#ff9500";
       sunsetEl.style.color = "#5856d6";
 
       const root = document.documentElement;
       const transition = "background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease";
 
+      // Preserve user accent if customized
+      const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+      const userAccent = settings.accentColor || "#3ddc84";
+      const defaultAccent = "#3ddc84";
+
       if (isDay) {
         dayStatusEl.textContent = "Daytime ☀️";
         dayStatusEl.style.color = "#ffd60a";
-        root.style.setProperty("--accent-color", "#ffd60a");
-        root.style.setProperty("--accent-text-color", "#000");
+        if (userAccent === defaultAccent) {
+          root.style.setProperty("--accent-color", "#ffd60a");
+          root.style.setProperty("--accent-text-color", "#000");
+        }
       } else {
         dayStatusEl.textContent = "Nighttime 🌙";
         dayStatusEl.style.color = "#0a84ff";
-        root.style.setProperty("--accent-color", "#0a84ff");
-        root.style.setProperty("--accent-text-color", "#fff");
+        if (userAccent === defaultAccent) {
+          root.style.setProperty("--accent-color", "#0a84ff");
+          root.style.setProperty("--accent-text-color", "#fff");
+        }
       }
 
       root.style.transition = transition;
@@ -266,10 +266,13 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
 
-          const sunrise = new Date(data.results.sunrise);
-          const sunset = new Date(data.results.sunset);
-          setSunUI(sunrise, sunset);
+          // Convert UTC to local
+          const sunriseUTC = new Date(data.results.sunrise);
+          const sunsetUTC = new Date(data.results.sunset);
+          const sunrise = new Date(sunriseUTC.getTime() + sunriseUTC.getTimezoneOffset() * 60000 * -1);
+          const sunset = new Date(sunsetUTC.getTime() + sunsetUTC.getTimezoneOffset() * 60000 * -1);
 
+          setSunUI(sunrise, sunset);
           setInterval(() => setSunUI(sunrise, sunset), 60000);
         } catch (err) {
           console.error("Sunrise/Sunset fetch error:", err);
@@ -285,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     ⚙️ Apply Everything
+     ⚙️ Apply All Info
   ---------------------------- */
   function applySystemInfo() {
     if (versionEl) versionEl.textContent = "v26.1.2";
