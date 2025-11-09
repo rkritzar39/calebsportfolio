@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Liquid Glass Weather</title>
-  <link rel="stylesheet" href="weather.css" />
+  <title>Liquid-Glass Weather</title>
+  <link rel="stylesheet" href="weather.css"/>
 
-  <!-- Leaflet for radar -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Leaflet (Radar) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
@@ -17,10 +17,10 @@
       <p id="date-time">—</p>
     </header>
 
-    <section id="current" class="liquid-card main-card">
+    <section class="liquid-card main">
       <h2 id="city">Locating…</h2>
-      <div class="weather-current">
-        <img id="icon" class="weather-icon" alt="icon"/>
+      <div class="current">
+        <img id="icon" alt="icon"/>
         <div>
           <h1 id="temp">--°</h1>
           <p id="desc">—</p>
@@ -28,6 +28,7 @@
       </div>
       <p id="extra"></p>
       <p id="sun"></p>
+      <button id="unit-toggle" class="unit-btn">Switch °C / °F</button>
     </section>
 
     <section class="liquid-card">
@@ -36,18 +37,13 @@
     </section>
 
     <section class="liquid-card">
-      <h3>7-Day Forecast</h3>
+      <h3>7-Day</h3>
       <div id="daily" class="daily"></div>
     </section>
 
     <section class="liquid-card">
       <h3>Air Quality</h3>
-      <div id="aqi" class="aqi"></div>
-    </section>
-
-    <section class="liquid-card">
-      <h3>Weather Alerts</h3>
-      <div id="alerts"></div>
+      <div id="aqi"></div>
     </section>
 
     <section class="liquid-card">
@@ -56,7 +52,7 @@
     </section>
 
     <footer class="footer">
-      <p>Powered by Open-Meteo • Radar by NOAA & RainViewer</p>
+      <p>Data © Open-Meteo • Radar © RainViewer</p>
     </footer>
   </main>
   <script src="weather.js"></script>
