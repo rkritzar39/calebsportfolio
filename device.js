@@ -135,91 +135,67 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", setRes);
 
 /* ===========================================================
-   📶 Smart Network & Connection Detection (Final)
-   Works across iOS, Android, Desktop
+   📶 Network & Connection — Final Local-Only Version
+   Accurate labeling without Firebase or extra APIs
 =========================================================== */
-function detectNetworkAndConnection() {
+async function detectNetworkAndConnection() {
   const connectionEl = document.querySelector("#connection-info .version-value");
   const networkEl = document.querySelector("#network-info .version-value");
   if (!connectionEl || !networkEl) return;
 
+  // Default
   let connection = "Unknown";
   let network = "Unknown";
 
-  // 1️⃣ Offline
+  // Offline
   if (!navigator.onLine) {
     connection = "Not Connected";
     network = "Not Connected";
-    update();
-    return;
-  }
+  } else {
+    const ua = navigator.userAgent || "";
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+    const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
 
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  const ua = navigator.userAgent || "";
-  const isIOS = /iPhone|iPad|iPod/i.test(ua);
-  const isAndroid = /Android/i.test(ua);
-  const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
-
-  // helper: update UI
-  function update() {
-    connectionEl.textContent = connection;
-    networkEl.textContent = network;
-    connectionEl.style.opacity = "1";
-    networkEl.style.opacity = "1";
-  }
-
-  // 2️⃣ If API gives type info
-  if (conn && (conn.type || conn.effectiveType)) {
-    const type = (conn.type || "").toLowerCase();
-    const eff = (conn.effectiveType || "").toLowerCase();
-
-    const hasWifi = type.includes("wifi");
-    const hasCell = /(cellular|5g|4g|lte|3g|2g)/.test(type) || /(5g|4g|lte|3g|2g)/.test(eff);
-
-    if (hasWifi && hasCell) connection = network = "Cellular / Wi-Fi";
-    else if (hasWifi) connection = network = "Wi-Fi";
-    else if (hasCell) connection = network = "Cellular";
-    else connection = network = "Wi-Fi";
-
-    update();
-    return;
-  }
-
-  // 3️⃣ Fallback: iOS / Android (no network info)
-  async function guessNetwork() {
     try {
-      const response = await fetch("https://api64.ipify.org?format=json");
+      // Fetch public IP — helps distinguish private (Wi-Fi) vs public (cellular)
+      const response = await fetch("https://api64.ipify.org?format=json", { cache: "no-store" });
       const { ip } = await response.json();
-      // check private IP blocks (Wi-Fi local)
+
+      // Private IP ranges usually mean Wi-Fi / LAN
       const isPrivate =
         /^10\./.test(ip) ||
         /^192\.168\./.test(ip) ||
         /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip);
-      if (isPrivate) {
-        connection = network = "Wi-Fi";
-      } else if (isIOS || isAndroid) {
-        connection = network = "Cellular";
+
+      if (isPrivate || isDesktop) {
+        connection = "Wi-Fi";
+        network = "Wi-Fi";
+      } else if (isMobile) {
+        connection = "Cellular";
+        network = "Cellular";
       } else {
-        connection = network = "Wi-Fi";
+        connection = "Wi-Fi";
+        network = "Wi-Fi";
       }
-    } catch (e) {
-      console.warn("Network guess fallback:", e);
-      // still guess sensibly
-      if (isDesktop) connection = network = "Wi-Fi";
-      else connection = network = "Cellular";
+    } catch (err) {
+      console.warn("Network guess failed:", err);
+      // fallback guesses
+      connection = isMobile ? "Cellular" : "Wi-Fi";
+      network = connection;
     }
-    update();
   }
 
-  guessNetwork();
+  // Update UI
+  connectionEl.textContent = connection;
+  networkEl.textContent = network;
+  connectionEl.style.opacity = "1";
+  networkEl.style.opacity = "1";
 }
 
-// Initial run + listeners
+// Run immediately and keep in sync
 detectNetworkAndConnection();
 window.addEventListener("online", detectNetworkAndConnection);
 window.addEventListener("offline", detectNetworkAndConnection);
-const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-if (conn && conn.addEventListener) conn.addEventListener("change", detectNetworkAndConnection);
   /* ----------------------------
    * 🌅 Sunrise / Sunset + Auto Day/Night
    * -------------------------- */
