@@ -1,16 +1,17 @@
 /**
- * device.js — v10.2 FINAL
+ * device.js — v10.4 FINAL
  * Caleb’s System Dashboard
  * ✅ Accurate OS / Device / Browser Detection
  * ✅ Smart Network + Connection
  * ✅ Synced Clock (with Timezone)
- * ✅ Correct Local Sunrise / Sunset Detection
+ * ✅ Correct Local Sunrise / Sunset (no UTC offset errors)
  * ✅ IP Location Fallback for iOS / Safari
- * ✅ Day/Night Accent that Respects Custom Colors
+ * ✅ Day/Night Accent respects custom colors
+ * ✅ NEW: Animated Sun Arc like iOS Weather 🌞
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ device.js v10.2 loaded");
+  console.log("✅ device.js v10.4 loaded");
 
   const el = (id) => document.querySelector(`#${id} .version-value`);
   const versionEl = el("version-info");
@@ -21,8 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const browserEl = el("browser-info");
   const resolutionEl = el("resolution-info");
   const connectionEl = el("connection-info");
-  const networkRow = document.getElementById("network-info");
-  const networkEl = networkRow ? networkRow.querySelector(".version-value") : null;
+  const networkEl = document.querySelector("#network-info .version-value");
   const sunriseEl = el("sunrise-info");
   const sunsetEl = el("sunset-info");
 
@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const tz = getTimezoneAbbreviation();
     syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tz}</span>`;
-    syncedEl.style.opacity = "1";
   }
 
   function getTimezoneAbbreviation() {
@@ -69,9 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let os = "Unknown";
     let version = "";
 
-    const isIPad =
-      /iPad/i.test(ua) ||
-      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isIPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
     if (isIPad) {
       os = "iPadOS";
@@ -146,32 +143,26 @@ document.addEventListener("DOMContentLoaded", () => {
   ---------------------------- */
   function detectConnectionType() {
     if (!navigator.onLine) return "Not Connected";
-
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
     if (!conn || (!conn.type && !conn.effectiveType)) {
       return /iPhone|iPad|iPod/i.test(navigator.userAgent)
         ? "Unknown (iOS restricted)"
         : "Wi-Fi";
     }
-
     const type = conn.type || "";
     const eff = conn.effectiveType || "";
-
     if (type === "wifi") return "Wi-Fi";
     if (type === "cellular") return "Cellular";
     if (navigator.onLine && !type) {
       if (eff.match(/5g|4g|lte/i)) return "Cellular";
       return "Wi-Fi";
     }
-
     return "Unknown";
   }
 
   function detectNetworkTier() {
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
     if (!navigator.onLine) return "Not Connected";
-
     if (conn && (conn.effectiveType || conn.type)) {
       const eff = (conn.effectiveType || "").toLowerCase();
       if (eff.includes("5g")) return "5G";
@@ -180,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (eff.includes("3g")) return "3G";
       if (eff.includes("2g")) return "2G";
     }
-
     const ua = navigator.userAgent;
     if (/iPhone|iPad|iPod|Android/i.test(ua)) return "Cellular (Unknown Speed)";
     if (/Macintosh|Windows|Linux/i.test(ua)) return "Wi-Fi (Unknown Speed)";
@@ -188,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     🌅 Sunrise / Sunset (with IP Fallback)
+     🌅 Sunrise / Sunset + Sun Arc
   ---------------------------- */
   async function getApproxLocation() {
     try {
@@ -196,8 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       console.log("🌍 IP-based location:", data);
       return { latitude: data.latitude, longitude: data.longitude };
-    } catch (e) {
-      console.warn("Fallback IP location failed:", e);
+    } catch {
       return null;
     }
   }
@@ -209,11 +198,41 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!dayStatusEl) {
       const li = document.createElement("li");
       li.id = "day-status-info";
-      li.innerHTML = `
-        <span class="version-label">🌞 <strong>Status:</strong></span>
-        <span class="version-value">Loading...</span>`;
+      li.innerHTML = `<span class="version-label">🌞 <strong>Status:</strong></span>
+      <span class="version-value">Loading...</span>`;
       document.querySelector(".version-list").appendChild(li);
       dayStatusEl = li.querySelector(".version-value");
+    }
+
+    // Add Sun Arc container (if not already added)
+    let sunArcContainer = document.getElementById("sun-arc");
+    if (!sunArcContainer) {
+      const div = document.createElement("div");
+      div.id = "sun-arc";
+      div.style = `
+        width: 100%;
+        height: 80px;
+        position: relative;
+        margin-top: 12px;
+        overflow: visible;
+      `;
+      div.innerHTML = `
+        <svg viewBox="0 0 200 100" style="width:100%; height:100%;">
+          <path d="M10 90 Q100 10 190 90" stroke="var(--accent-color)" stroke-width="3" fill="none" opacity="0.4"/>
+          <circle id="sun-icon" cx="10" cy="90" r="6" fill="var(--accent-color)" />
+        </svg>`;
+      document.querySelector(".version-info-section").appendChild(div);
+      sunArcContainer = div;
+    }
+
+    function updateSunArc(sunrise, sunset) {
+      const now = new Date();
+      const progress = Math.min(Math.max((now - sunrise) / (sunset - sunrise), 0), 1);
+      const sun = document.getElementById("sun-icon");
+      const x = 10 + progress * 180;
+      const y = 90 - Math.sin(progress * Math.PI) * 80;
+      sun.setAttribute("cx", x);
+      sun.setAttribute("cy", y);
     }
 
     function setSunUI(sunrise, sunset) {
@@ -222,97 +241,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sunriseEl.textContent = sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       sunsetEl.textContent = sunset.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      sunriseEl.style.color = "#ff9500";
-      sunsetEl.style.color = "#5856d6";
 
       const root = document.documentElement;
-      const transition = "background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease";
-
       const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
       const userAccent = settings.accentColor || "#3ddc84";
-      const defaultAccent = "#3ddc84";
 
       if (isDay) {
         dayStatusEl.textContent = "Daytime ☀️";
-        dayStatusEl.style.color = "#ffd60a";
-        if (userAccent === defaultAccent) {
-          root.style.setProperty("--accent-color", "#ffd60a");
-          root.style.setProperty("--accent-text-color", "#000");
-        }
+        if (userAccent === "#3ddc84") root.style.setProperty("--accent-color", "#ffd60a");
       } else {
         dayStatusEl.textContent = "Nighttime 🌙";
-        dayStatusEl.style.color = "#0a84ff";
-        if (userAccent === defaultAccent) {
-          root.style.setProperty("--accent-color", "#0a84ff");
-          root.style.setProperty("--accent-text-color", "#fff");
-        }
+        if (userAccent === "#3ddc84") root.style.setProperty("--accent-color", "#0a84ff");
       }
 
-      root.style.transition = transition;
-      document.body.style.transition = transition;
+      updateSunArc(sunrise, sunset);
+      setInterval(() => updateSunArc(sunrise, sunset), 60000);
     }
 
-    function setError(msg) {
-      sunriseEl.textContent = msg;
-      sunsetEl.textContent = msg;
-      dayStatusEl.textContent = "Unavailable";
-      dayStatusEl.style.color = "#999";
+    async function fetchSunTimesWithCoords(lat, lng) {
+      const res = await fetch(`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lng}&formatted=0`);
+      const data = await res.json();
+      if (data.status !== "OK") return;
+
+      const sunrise = new Date(data.results.sunrise);
+      const sunset = new Date(data.results.sunset);
+      setSunUI(sunrise, sunset);
     }
 
-    async function fetchSunTimesWithCoords(latitude, longitude) {
-      try {
-        const response = await fetch(
-          `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`
-        );
-        const data = await response.json();
-
-        if (data.status !== "OK") {
-          setError("Unavailable");
-          return;
-        }
-
-        // Convert UTC to local
-        const sunriseUTC = new Date(data.results.sunrise);
-        const sunsetUTC = new Date(data.results.sunset);
-        const sunrise = new Date(
-          sunriseUTC.getTime() + sunriseUTC.getTimezoneOffset() * 60000 * -1
-        );
-        const sunset = new Date(
-          sunsetUTC.getTime() + sunsetUTC.getTimezoneOffset() * 60000 * -1
-        );
-
-        setSunUI(sunrise, sunset);
-        setInterval(() => setSunUI(sunrise, sunset), 60000);
-      } catch (err) {
-        console.error("Sunrise/Sunset fetch error:", err);
-        setError("Error");
-      }
-    }
-
-    // Try GPS first, fallback to IP
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          console.log("📍 GPS location:", pos.coords.latitude, pos.coords.longitude);
-          fetchSunTimesWithCoords(pos.coords.latitude, pos.coords.longitude);
-        },
-        async (err) => {
-          console.warn("Geolocation denied, using IP fallback:", err);
-          const approx = await getApproxLocation();
-          if (approx) fetchSunTimesWithCoords(approx.latitude, approx.longitude);
-          else setError("Permission Denied");
-        },
-        { enableHighAccuracy: false, timeout: 8000 }
+        (pos) => fetchSunTimesWithCoords(pos.coords.latitude, pos.coords.longitude),
+        async () => {
+          const fallback = await getApproxLocation();
+          if (fallback) fetchSunTimesWithCoords(fallback.latitude, fallback.longitude);
+        }
       );
     } else {
-      const approx = await getApproxLocation();
-      if (approx) fetchSunTimesWithCoords(approx.latitude, approx.longitude);
-      else setError("Unavailable");
+      const fallback = await getApproxLocation();
+      if (fallback) fetchSunTimesWithCoords(fallback.latitude, fallback.longitude);
     }
   }
 
   /* ----------------------------
-     ⚙️ Apply All Info
+     ⚙️ Apply System Info
   ---------------------------- */
   function applySystemInfo() {
     if (versionEl) versionEl.textContent = "v26.1.2";
@@ -326,11 +297,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (networkEl) networkEl.textContent = detectNetworkTier();
 
     fetchSunTimes();
-
-    document.querySelectorAll(".version-value").forEach((v) => {
-      v.style.opacity = "1";
-      v.style.transition = "opacity 0.4s ease";
-    });
   }
 
   applySystemInfo();
