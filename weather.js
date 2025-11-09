@@ -1,7 +1,7 @@
 /* =============================
    CONFIG
 ============================= */
-const OWM_KEY = "88a889bce78f9ea1dc4fc0ef692e8ca4"; // ← replace this
+const OWM_KEY = "e261c0d563503aabaf6710629356bf41"; // ← replace this
 
 /* =============================
    SETTINGS BRIDGE
