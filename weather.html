@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Weather — Caleb</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather — Liquid Glass</title>
+  <link rel="stylesheet" href="weather.css" />
 
   <!-- Leaflet (Radar) -->
   <link
@@ -18,95 +19,57 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
     crossorigin=""
   ></script>
-
-  <link rel="stylesheet" href="weather.css" />
 </head>
 <body>
-  <main class="main-page fade-in">
-    <header class="page-header glass-header">
+  <main class="weather-wrapper">
+    <header class="liquid-header">
       <h1>Weather</h1>
       <p id="date-time">—</p>
     </header>
 
-    <!-- CURRENT -->
-    <section id="weather-card" class="weather-card glass-card">
+    <!-- MAIN WEATHER CARD -->
+    <section id="weather-card" class="liquid-card main-card">
       <div class="weather-location">
-        <h2 id="city-name">Locating…</h2>
+        <h2 id="city-name">Locating...</h2>
       </div>
 
       <div class="weather-current">
-        <img id="weather-icon" alt="Weather icon" class="weather-icon" />
-        <div class="weather-main">
+        <img id="weather-icon" class="weather-icon" alt="Icon" />
+        <div>
           <h1 id="temp">--°</h1>
           <p id="description">—</p>
         </div>
       </div>
 
       <div class="weather-extra">
-        <p id="extra">Feels like —, Humidity —, Wind —</p>
-        <p id="sunrise-sunset">☀️ Sunrise — | 🌙 Sunset —</p>
+        <p id="extra"></p>
+        <p id="sunrise-sunset"></p>
       </div>
     </section>
 
-    <!-- HOURLY -->
-    <section class="forecast-section glass-card">
-      <div class="section-header">
-        <h3>Hourly Forecast</h3>
-        <div class="unit-toggle" id="unit-toggle" role="button" tabindex="0" aria-label="Toggle units">°C / °F</div>
-      </div>
+    <!-- HOURLY FORECAST -->
+    <section class="liquid-card">
+      <h3>Hourly Forecast</h3>
       <div id="hourly-scroll" class="hourly-container"></div>
     </section>
 
-    <!-- DAILY -->
-    <section class="forecast-section glass-card">
+    <!-- DAILY FORECAST -->
+    <section class="liquid-card">
       <h3>7-Day Forecast</h3>
       <div id="daily-forecast" class="daily-list"></div>
     </section>
 
-    <!-- DETAILS -->
-    <section class="details-section glass-card">
-      <h3>Details</h3>
-      <div id="weather-details" class="details-grid"></div>
+    <!-- RADAR MAP -->
+    <section class="liquid-card">
+      <h3>Radar</h3>
+      <div id="radar" class="radar-map"></div>
     </section>
 
-    <!-- AQI -->
-    <section class="aqi-section glass-card">
-      <h3>Air Quality</h3>
-      <div id="aqi-wrap" class="aqi-wrap">
-        <div class="aqi-badge" id="aqi-badge">—</div>
-        <div class="aqi-meta">
-          <p id="aqi-desc">Loading air quality…</p>
-          <p id="aqi-breakdown" class="muted">PM2.5 — µg/m³ • PM10 — µg/m³ • O₃ — µg/m³ • NO₂ — µg/m³ • SO₂ — µg/m³ • CO — µg/m³</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ALERTS -->
-    <section class="alerts-section glass-card" id="alerts-section" hidden>
-      <h3>Weather Alerts</h3>
-      <div id="alerts-list" class="alerts-list"></div>
-    </section>
-
-    <!-- RADAR -->
-    <section class="radar-section glass-card">
-      <div class="section-header">
-        <h3>Radar</h3>
-        <div class="radar-controls">
-          <label><input type="checkbox" data-layer="precipitation_new" checked> Precip</label>
-          <label><input type="checkbox" data-layer="clouds_new"> Clouds</label>
-          <label><input type="checkbox" data-layer="temp_new"> Temp</label>
-          <label><input type="checkbox" data-layer="wind_new"> Wind</label>
-        </div>
-      </div>
-      <div id="radar" class="radar-map" aria-label="Weather radar map"></div>
-    </section>
-
-    <footer class="weather-footer">
-      <p>Powered by <a href="https://openweathermap.org/" target="_blank" rel="noopener">OpenWeather</a></p>
+    <footer class="footer">
+      <p>Powered by <a href="https://openweathermap.org/" target="_blank">OpenWeather</a></p>
     </footer>
   </main>
 
-  <!-- Your global settings.js should already be loaded on the site -->
-  <script src="weather.js" defer></script>
+  <script src="weather.js"></script>
 </body>
 </html>
