@@ -1,31 +1,38 @@
+let units = "metric"; // default °C
+
 function updateTime(){
   document.getElementById("date-time").textContent =
     new Date().toLocaleString(undefined,{weekday:"long",hour:"2-digit",minute:"2-digit"});
 }
 setInterval(updateTime,60000);updateTime();
 
-// ---- Open-Meteo weather + air quality ----
 async function getWeather(lat,lon){
   const base=`latitude=${lat}&longitude=${lon}&timezone=auto`;
-  const fURL=`https://api.open-meteo.com/v1/forecast?${base}&current_weather=true&hourly=temperature_2m,relative_humidity_2m,weathercode,windspeed_10m&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,weathercode&alerts=true`;
-  const aURL=`https://air-quality-api.open-meteo.com/v1/air-quality?${base}&hourly=pm10,pm2_5,carbon_monoxide,ozone,us_aqi`;
-  const [fRes,aRes]=await Promise.all([fetch(fURL),fetch(aURL)]);
-  const forecast=await fRes.json(), air=await aRes.json();
+  const tempUnit = units==="imperial" ? "fahrenheit" : "celsius";
+  const url=`https://api.open-meteo.com/v1/forecast?${base}&current_weather=true`
+           +`&hourly=temperature_2m,relative_humidity_2m,weathercode,windspeed_10m`
+           +`&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,weathercode`
+           +`&temperature_unit=${tempUnit}&windspeed_unit=${units==="imperial"?"mph":"kmh"}`
+           +`&timezone=auto&alerts=true`;
+  const aqiUrl=`https://air-quality-api.open-meteo.com/v1/air-quality?${base}&hourly=pm2_5,pm10,us_aqi`;
+
+  const [fRes,aRes]=await Promise.all([fetch(url),fetch(aqiUrl)]);
+  const forecast=await fRes.json(),air=await aRes.json();
   render(forecast,air,lat,lon);
 }
 
 function codeToText(c){
-  const map={0:"Clear",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",
-  48:"Freezing fog",51:"Drizzle",61:"Rain",71:"Snow",80:"Showers",95:"Thunderstorm"};
-  return map[c]||"—";
+  const m={0:"Clear",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",
+           48:"Freezing fog",51:"Drizzle",61:"Rain",71:"Snow",80:"Showers",95:"Thunderstorm"};
+  return m[c]||"—";
 }
 
 function render(f,a,lat,lon){
   const cur=f.current_weather;
   document.getElementById("city").textContent=`${lat.toFixed(2)}, ${lon.toFixed(2)}`;
-  document.getElementById("temp").textContent=Math.round(cur.temperature)+"°";
+  document.getElementById("temp").textContent=`${Math.round(cur.temperature)}°${units==="imperial"?"F":"C"}`;
   document.getElementById("desc").textContent=codeToText(cur.weathercode);
-  document.getElementById("extra").textContent=`Wind ${Math.round(cur.windspeed)} km/h`;
+  document.getElementById("extra").textContent=`Wind ${Math.round(cur.windspeed)} ${units==="imperial"?"mph":"km/h"}`;
   const sr=new Date(f.daily.sunrise[0]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   const ss=new Date(f.daily.sunset[0]).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   document.getElementById("sun").textContent=`☀️ ${sr}  🌙 ${ss}`;
@@ -37,58 +44,51 @@ function render(f,a,lat,lon){
     const hr=new Date(f.hourly.time[i]).getHours();
     h.insertAdjacentHTML("beforeend",`<div class="hour"><p>${hr}:00</p><p>${t}°</p></div>`);
   }
-
   // Daily
-  const dl=document.getElementById("daily");dl.innerHTML="";
+  const d=document.getElementById("daily");d.innerHTML="";
   for(let i=0;i<7;i++){
     const day=new Date(f.daily.time[i]).toLocaleDateString(undefined,{weekday:"short"});
     const hi=Math.round(f.daily.temperature_2m_max[i]);
     const lo=Math.round(f.daily.temperature_2m_min[i]);
-    dl.insertAdjacentHTML("beforeend",`<div class="day"><span>${day}</span><span>${hi}° / ${lo}°</span></div>`);
+    d.insertAdjacentHTML("beforeend",`<div class="day"><span>${day}</span><span>${hi}° / ${lo}°</span></div>`);
   }
-
-  // Air quality
+  // AQI
   const aqi=document.getElementById("aqi");
-  const aqiVal=a.hourly.us_aqi[0];
-  aqi.innerHTML=`<div>US AQI: <strong>${aqiVal}</strong></div>
-  <div>PM2.5: ${a.hourly.pm2_5[0]} µg/m³</div>
-  <div>O₃: ${a.hourly.ozone[0]} µg/m³</div>`;
-
-  // Alerts
-  const al=document.getElementById("alerts");
-  if(f.alerts && f.alerts.length){
-    al.innerHTML=f.alerts.map(x=>`
-      <div style="background:rgba(255,0,0,.15);border-radius:12px;padding:10px;margin:6px 0">
-        <strong>${x.event}</strong><br>
-        <small>${x.sender_name||""}</small><br>
-        ${x.description}
-      </div>`).join("");
-  } else al.textContent="No active alerts.";
+  if(a.hourly.us_aqi){
+    const val=a.hourly.us_aqi[0];
+    let cat="Good";
+    if(val>50)cat="Moderate";
+    if(val>100)cat="Unhealthy";
+    if(val>200)cat="Very Unhealthy";
+    aqi.innerHTML=`US AQI <strong>${val}</strong> (${cat})<br>
+      PM2.5 ${a.hourly.pm2_5[0]} µg/m³ | PM10 ${a.hourly.pm10[0]} µg/m³`;
+  }else aqi.textContent="No AQI data.";
 
   initRadar(lat,lon);
 }
 
-// ---- Radar (NOAA US + RainViewer fallback) ----
+// --- Radar (RainViewer global fallback always works) ---
 let map;
 function initRadar(lat,lon){
   if(!window.L)return;
   if(map){map.setView([lat,lon],6);return;}
   map=L.map("radar",{zoomControl:false,attributionControl:false}).setView([lat,lon],6);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:10}).addTo(map);
-
-  // NOAA if inside US bounding box, else RainViewer
-  if(lat>24&&lat<50&&lon>-125&&lon<-66){
-    L.tileLayer.wms(
-      "https://nowcoast.noaa.gov/arcgis/services/nowcoast/radar_meteo_imagery_nexrad_time/MapServer/WMSServer",
-      {layers:1,format:"image/png",transparent:true,opacity:0.6}).addTo(map);
-  }else{
-    L.tileLayer(
-      "https://tilecache.rainviewer.com/v2/radar/0/256/{z}/{x}/{y}/2/1_1.png",
-      {opacity:0.6}).addTo(map);
-  }
+  // RainViewer composite tile layer
+  L.tileLayer("https://tilecache.rainviewer.com/v2/radar/0/256/{z}/{x}/{y}/2/1_1.png",
+    {opacity:.65}).addTo(map);
 }
 
-// ---- Start ----
+// --- Unit toggle ---
+document.getElementById("unit-toggle").addEventListener("click",()=>{
+  units = units==="metric" ? "imperial" : "metric";
+  navigator.geolocation.getCurrentPosition(
+    p=>getWeather(p.coords.latitude,p.coords.longitude),
+    ()=>getWeather(40.7128,-74.0060)
+  );
+});
+
+// --- Start ---
 navigator.geolocation.getCurrentPosition(
   p=>getWeather(p.coords.latitude,p.coords.longitude),
   ()=>getWeather(40.7128,-74.0060)
