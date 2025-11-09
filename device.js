@@ -1,15 +1,16 @@
 /**
- * device.js — v10.1 FINAL
+ * device.js — v10.2 FINAL
  * Caleb’s System Dashboard
  * ✅ Accurate OS / Device / Browser Detection
  * ✅ Smart Network + Connection
  * ✅ Synced Clock (with Timezone)
  * ✅ Correct Local Sunrise / Sunset Detection
+ * ✅ IP Location Fallback for iOS / Safari
  * ✅ Day/Night Accent that Respects Custom Colors
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ device.js v10.1 loaded");
+  console.log("✅ device.js v10.2 loaded");
 
   const el = (id) => document.querySelector(`#${id} .version-value`);
   const versionEl = el("version-info");
@@ -187,9 +188,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     🌅 Sunrise / Sunset (Fixed Local)
+     🌅 Sunrise / Sunset (with IP Fallback)
   ---------------------------- */
-  function fetchSunTimes() {
+  async function getApproxLocation() {
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+      console.log("🌍 IP-based location:", data);
+      return { latitude: data.latitude, longitude: data.longitude };
+    } catch (e) {
+      console.warn("Fallback IP location failed:", e);
+      return null;
+    }
+  }
+
+  async function fetchSunTimes() {
     if (!sunriseEl || !sunsetEl) return;
 
     let dayStatusEl = document.getElementById("day-status-info");
@@ -215,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const root = document.documentElement;
       const transition = "background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease";
 
-      // Preserve user accent if customized
       const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
       const userAccent = settings.accentColor || "#3ddc84";
       const defaultAccent = "#3ddc84";
@@ -247,44 +259,56 @@ document.addEventListener("DOMContentLoaded", () => {
       dayStatusEl.style.color = "#999";
     }
 
-    if (!("geolocation" in navigator)) {
-      setError("Unavailable");
-      return;
+    async function fetchSunTimesWithCoords(latitude, longitude) {
+      try {
+        const response = await fetch(
+          `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`
+        );
+        const data = await response.json();
+
+        if (data.status !== "OK") {
+          setError("Unavailable");
+          return;
+        }
+
+        // Convert UTC to local
+        const sunriseUTC = new Date(data.results.sunrise);
+        const sunsetUTC = new Date(data.results.sunset);
+        const sunrise = new Date(
+          sunriseUTC.getTime() + sunriseUTC.getTimezoneOffset() * 60000 * -1
+        );
+        const sunset = new Date(
+          sunsetUTC.getTime() + sunsetUTC.getTimezoneOffset() * 60000 * -1
+        );
+
+        setSunUI(sunrise, sunset);
+        setInterval(() => setSunUI(sunrise, sunset), 60000);
+      } catch (err) {
+        console.error("Sunrise/Sunset fetch error:", err);
+        setError("Error");
+      }
     }
 
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        const { latitude, longitude } = pos.coords;
-        try {
-          const response = await fetch(
-            `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`
-          );
-          const data = await response.json();
-
-          if (data.status !== "OK") {
-            setError("Unavailable");
-            return;
-          }
-
-          // Convert UTC to local
-          const sunriseUTC = new Date(data.results.sunrise);
-          const sunsetUTC = new Date(data.results.sunset);
-          const sunrise = new Date(sunriseUTC.getTime() + sunriseUTC.getTimezoneOffset() * 60000 * -1);
-          const sunset = new Date(sunsetUTC.getTime() + sunsetUTC.getTimezoneOffset() * 60000 * -1);
-
-          setSunUI(sunrise, sunset);
-          setInterval(() => setSunUI(sunrise, sunset), 60000);
-        } catch (err) {
-          console.error("Sunrise/Sunset fetch error:", err);
-          setError("Error");
-        }
-      },
-      (err) => {
-        console.warn("Geolocation denied:", err);
-        setError("Permission Denied");
-      },
-      { enableHighAccuracy: false, timeout: 8000 }
-    );
+    // Try GPS first, fallback to IP
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          console.log("📍 GPS location:", pos.coords.latitude, pos.coords.longitude);
+          fetchSunTimesWithCoords(pos.coords.latitude, pos.coords.longitude);
+        },
+        async (err) => {
+          console.warn("Geolocation denied, using IP fallback:", err);
+          const approx = await getApproxLocation();
+          if (approx) fetchSunTimesWithCoords(approx.latitude, approx.longitude);
+          else setError("Permission Denied");
+        },
+        { enableHighAccuracy: false, timeout: 8000 }
+      );
+    } else {
+      const approx = await getApproxLocation();
+      if (approx) fetchSunTimesWithCoords(approx.latitude, approx.longitude);
+      else setError("Unavailable");
+    }
   }
 
   /* ----------------------------
