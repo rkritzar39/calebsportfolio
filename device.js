@@ -239,3 +239,84 @@ document.addEventListener("DOMContentLoaded", () => {
   [versionEl, buildEl, osEl, deviceEl, browserEl, resolutionEl, connectionEl, networkEl, sunriseEl, sunsetEl, syncedEl]
     .forEach(fadeIn);
 });
+
+/* ===========================================================
+   🌤️ LIVE WEATHER (FAHRENHEIT VERSION)
+   Powered by Open-Meteo API — No key required
+   Automatically updates every 15 minutes
+=========================================================== */
+async function detectWeather() {
+  const el = document.querySelector("#weather-info .version-value");
+  if (!el) return;
+
+  // graceful fallback if geolocation is unavailable
+  if (!("geolocation" in navigator)) {
+    el.textContent = "Unavailable";
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const { latitude, longitude } = pos.coords;
+
+      try {
+        // Fetch weather data
+        const resp = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode&timezone=auto`
+        );
+        const data = await resp.json();
+
+        if (!data.current) {
+          el.textContent = "Weather unavailable";
+          return;
+        }
+
+        const tempC = data.current.temperature_2m;
+        const tempF = Math.round((tempC * 9) / 5 + 32); // Convert to Fahrenheit
+        const code = data.current.weathercode;
+
+        // Weather code → emoji mapping
+        const weatherIcons = {
+          0: "☀️ Clear",
+          1: "🌤️ Mostly clear",
+          2: "⛅ Partly cloudy",
+          3: "☁️ Cloudy",
+          45: "🌫️ Fog",
+          48: "🌫️ Fog",
+          51: "🌦️ Light drizzle",
+          53: "🌦️ Drizzle",
+          55: "🌧️ Drizzle",
+          61: "🌧️ Rain",
+          63: "🌧️ Rain showers",
+          65: "🌧️ Heavy rain",
+          71: "🌨️ Snow",
+          73: "🌨️ Snow",
+          75: "❄️ Heavy snow",
+          77: "🌨️ Snow grains",
+          80: "🌧️ Rain showers",
+          81: "🌧️ Moderate rain",
+          82: "⛈️ Thunderstorm",
+          95: "⛈️ Thunderstorm",
+          99: "⛈️ Severe storm",
+        };
+
+        const label = weatherIcons[code] || "🌡️ Weather";
+
+        el.textContent = `${label} • ${tempF}°F`;
+        el.style.opacity = "1";
+      } catch (err) {
+        console.error("Weather fetch failed:", err);
+        el.textContent = "Error fetching weather";
+      }
+    },
+    (err) => {
+      console.warn("Weather denied:", err);
+      el.textContent = "Permission denied";
+    },
+    { timeout: 8000, maximumAge: 0 }
+  );
+}
+
+// Run immediately and auto-refresh every 15 minutes
+detectWeather();
+setInterval(detectWeather, 15 * 60 * 1000);
