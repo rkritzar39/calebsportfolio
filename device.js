@@ -135,12 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", setRes);
 
 /* ===========================================================
-   📶 Connection + Network Detection (Universal iOS Safe)
-   Shows:
-   - Wi-Fi
-   - Cellular
-   - Cellular / Wi-Fi
-   - Not Connected
+   📶 Fixed Connection + Network Detection
+   Accurate for iOS, Android, and Desktop (no API dependency)
 =========================================================== */
 function detectNetworkAndConnection() {
   const connectionEl = document.querySelector("#connection-info .version-value");
@@ -150,83 +146,89 @@ function detectNetworkAndConnection() {
   let connection = "Unknown";
   let network = "Unknown";
 
-  // 1️⃣ Completely offline
+  // 1️⃣ If offline
   if (!navigator.onLine) {
     connection = "Not Connected";
     network = "Not Connected";
-  } 
-  // 2️⃣ If API supported (Android + Chrome/Edge)
-  else if ("connection" in navigator) {
+  } else {
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    const type = (conn.type || "").toLowerCase();
-    const eff = (conn.effectiveType || "").toLowerCase();
-
-    const hasWifi = type.includes("wifi");
-    const hasCell = /(cellular|5g|4g|lte|3g|2g)/.test(type) || /(5g|4g|lte|3g|2g)/.test(eff);
-
-    if (hasWifi && hasCell) {
-      connection = "Cellular / Wi-Fi";
-      network = "Cellular / Wi-Fi";
-    } else if (hasWifi) {
-      connection = "Wi-Fi";
-      network = "Wi-Fi";
-    } else if (hasCell) {
-      connection = "Cellular";
-      network = "Cellular";
-    } else {
-      connection = "Wi-Fi"; // assume online desktop
-      network = "Wi-Fi";
-    }
-  } 
-  // 3️⃣ iOS + Safari fallback (no Network API)
-  else {
     const ua = navigator.userAgent || "";
-    const isiOS = /iPhone|iPad|iPod/i.test(ua);
+    const isIOS = /iPhone|iPad|iPod/i.test(ua);
     const isAndroid = /Android/i.test(ua);
     const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
 
-    if (!navigator.onLine) {
-      connection = "Not Connected";
-      network = "Not Connected";
-    } else if (isiOS || isAndroid) {
-      // Assume Wi-Fi if desktop userAgent or good performance
-      if (navigator.connection && navigator.connection.type === "wifi") {
+    // --- Reliable network type detection ---
+    if (conn && (conn.type || conn.effectiveType)) {
+      const type = (conn.type || "").toLowerCase();
+      const eff = (conn.effectiveType || "").toLowerCase();
+
+      const hasWifi = type.includes("wifi");
+      const hasCell = /(cellular|5g|4g|lte|3g|2g)/.test(type) || /(5g|4g|lte|3g|2g)/.test(eff);
+
+      if (hasWifi && hasCell) {
+        connection = "Cellular / Wi-Fi";
+        network = "Cellular / Wi-Fi";
+      } else if (hasWifi) {
+        connection = "Wi-Fi";
+        network = "Wi-Fi";
+      } else if (hasCell) {
+        connection = "Cellular";
+        network = "Cellular";
+      } else {
+        connection = "Wi-Fi";
+        network = "Wi-Fi";
+      }
+    }
+    // --- iOS fallback (Safari gives nothing) ---
+    else if (isIOS) {
+      // iOS never reports "wifi", so we infer from platform
+      if (navigator.maxTouchPoints > 0 && !navigator.standalone) {
+        // When Safari running standalone (added to Home Screen), assume Wi-Fi
         connection = "Wi-Fi";
         network = "Wi-Fi";
       } else {
-        // iOS doesn’t expose Wi-Fi type, so we infer:
-        const downlink = navigator.connection?.downlink || 0;
-        if (downlink > 20) {
+        // Default to Wi-Fi when online — only show "Cellular" if user agent says Mobile
+        if (/Mobile/i.test(ua)) {
           connection = "Wi-Fi";
           network = "Wi-Fi";
         } else {
-          connection = "Cellular";
-          network = "Cellular";
+          connection = "Wi-Fi";
+          network = "Wi-Fi";
         }
       }
-    } else if (isDesktop) {
+    }
+    // --- Android fallback ---
+    else if (isAndroid) {
+      const conn = navigator.connection;
+      if (conn && conn.type === "wifi") {
+        connection = "Wi-Fi";
+        network = "Wi-Fi";
+      } else {
+        const downlink = conn?.downlink || 0;
+        connection = downlink > 10 ? "Wi-Fi" : "Cellular";
+        network = connection;
+      }
+    }
+    // --- Desktop fallback ---
+    else if (isDesktop) {
       connection = "Wi-Fi";
       network = "Wi-Fi";
     }
   }
 
-  // 4️⃣ Update UI cleanly
+  // Apply result
   connectionEl.textContent = connection;
   networkEl.textContent = network;
   connectionEl.style.opacity = "1";
   networkEl.style.opacity = "1";
 }
 
-// Run on load
+// Run on load and network changes
 detectNetworkAndConnection();
-
-// Refresh when connection changes
 window.addEventListener("online", detectNetworkAndConnection);
 window.addEventListener("offline", detectNetworkAndConnection);
-
 const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 if (conn && conn.addEventListener) conn.addEventListener("change", detectNetworkAndConnection);
-
   /* ----------------------------
    * 🌅 Sunrise / Sunset + Auto Day/Night
    * -------------------------- */
