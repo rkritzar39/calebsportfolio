@@ -1,29 +1,31 @@
 /**
- * device.js — v10.5 FINAL CLEAN
+ * device.js — v11.0 Ultra Stable Release
  * Caleb’s System Dashboard
  * ✅ Accurate OS / Device / Browser Detection
  * ✅ Smart Network + Connection
  * ✅ Synced Clock (with Timezone)
- * ✅ Correct Local Sunrise / Sunset (no UTC double offset)
+ * ✅ Correct Local Sunrise / Sunset (Local-Time Safe)
  * ✅ IP Location fallback for iOS / Safari
- * ✅ Day/Night accent switch (preserves custom accent)
+ * ✅ True Day/Night detection
+ * ✅ Preserves user accent color unless default green
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ device.js v10.5 loaded");
+  console.log("✅ device.js v11.0 loaded successfully");
 
-  const el = (id) => document.querySelector(`#${id} .version-value`);
-  const versionEl = el("version-info");
-  const buildEl = el("build-info");
-  const syncedEl = el("synced-info");
-  const osEl = el("os-info");
-  const deviceEl = el("device-info");
-  const browserEl = el("browser-info");
-  const resolutionEl = el("resolution-info");
-  const connectionEl = el("connection-info");
+  const getEl = (id) => document.querySelector(`#${id} .version-value`);
+
+  const versionEl = getEl("version-info");
+  const buildEl = getEl("build-info");
+  const syncedEl = getEl("synced-info");
+  const osEl = getEl("os-info");
+  const deviceEl = getEl("device-info");
+  const browserEl = getEl("browser-info");
+  const resolutionEl = getEl("resolution-info");
+  const connectionEl = getEl("connection-info");
   const networkEl = document.querySelector("#network-info .version-value");
-  const sunriseEl = el("sunrise-info");
-  const sunsetEl = el("sunset-info");
+  const sunriseEl = getEl("sunrise-info");
+  const sunsetEl = getEl("sunset-info");
 
   /* ----------------------------
      🕒 Synced Clock
@@ -60,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateSyncedClock, 1000);
 
   /* ----------------------------
-     💻 OS + Version
+     💻 OS + Version Detection
   ---------------------------- */
   function detectOSVersion() {
     const ua = navigator.userAgent;
@@ -177,13 +179,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-     🌅 Sunrise / Sunset (fixed local conversion)
+     🌅 Sunrise / Sunset (Fixed)
   ---------------------------- */
   async function getApproxLocation() {
     try {
       const res = await fetch("https://ipapi.co/json/");
       const data = await res.json();
-      console.log("🌍 IP-based location:", data);
       return { latitude: data.latitude, longitude: data.longitude };
     } catch {
       return null;
@@ -193,14 +194,16 @@ document.addEventListener("DOMContentLoaded", () => {
   async function fetchSunTimes() {
     if (!sunriseEl || !sunsetEl) return;
 
-    let dayStatusEl = document.getElementById("day-status-info");
-    if (!dayStatusEl) {
+    let statusLi = document.getElementById("day-status-info");
+    if (!statusLi) {
       const li = document.createElement("li");
       li.id = "day-status-info";
       li.innerHTML = `<span class="version-label">🌞 <strong>Status:</strong></span>
-      <span class="version-value">Loading...</span>`;
+        <span class="version-value">Loading...</span>`;
       document.querySelector(".version-list").appendChild(li);
-      dayStatusEl = li.querySelector(".version-value");
+      statusLi = li.querySelector(".version-value");
+    } else {
+      statusLi = statusLi.querySelector(".version-value") || statusLi;
     }
 
     function setSunUI(sunrise, sunset) {
@@ -210,15 +213,15 @@ document.addEventListener("DOMContentLoaded", () => {
       sunriseEl.textContent = sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       sunsetEl.textContent = sunset.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-      const root = document.documentElement;
       const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
       const userAccent = settings.accentColor || "#3ddc84";
+      const root = document.documentElement;
 
       if (isDay) {
-        dayStatusEl.textContent = "Daytime ☀️";
+        statusLi.textContent = "Daytime ☀️";
         if (userAccent === "#3ddc84") root.style.setProperty("--accent-color", "#ffd60a");
       } else {
-        dayStatusEl.textContent = "Nighttime 🌙";
+        statusLi.textContent = "Nighttime 🌙";
         if (userAccent === "#3ddc84") root.style.setProperty("--accent-color", "#0a84ff");
       }
     }
@@ -229,13 +232,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await res.json();
         if (data.status !== "OK") throw new Error("Invalid response");
 
-        // ✅ Correct: rely on Date()’s built-in timezone adjustment
+        // ✅ Correct: use UTC → local automatically
         const sunrise = new Date(data.results.sunrise);
         const sunset = new Date(data.results.sunset);
+
+        console.log("🌅 Local sunrise:", sunrise, "| 🌇 Local sunset:", sunset);
         setSunUI(sunrise, sunset);
       } catch (err) {
-        console.error("Sunrise/Sunset fetch error:", err);
+        console.error("Sunrise fetch error:", err);
         sunriseEl.textContent = sunsetEl.textContent = "Unavailable";
+        statusLi.textContent = "Unavailable";
       }
     }
 
@@ -247,27 +253,27 @@ document.addEventListener("DOMContentLoaded", () => {
           if (fallback) fetchSunTimesWithCoords(fallback.latitude, fallback.longitude);
           else {
             sunriseEl.textContent = sunsetEl.textContent = "Unavailable";
-            dayStatusEl.textContent = "Unavailable";
+            statusLi.textContent = "Unavailable";
           }
-        }
+        },
+        { enableHighAccuracy: false, timeout: 8000 }
       );
     } else {
       const fallback = await getApproxLocation();
       if (fallback) fetchSunTimesWithCoords(fallback.latitude, fallback.longitude);
       else {
         sunriseEl.textContent = sunsetEl.textContent = "Unavailable";
-        dayStatusEl.textContent = "Unavailable";
+        statusLi.textContent = "Unavailable";
       }
     }
   }
 
   /* ----------------------------
-     ⚙️ Apply All Info
+     ⚙️ Apply All System Info
   ---------------------------- */
   function applySystemInfo() {
     if (versionEl) versionEl.textContent = "v26.1.2";
     if (buildEl) buildEl.textContent = "2025.9.20";
-
     if (osEl) osEl.textContent = detectOSVersion();
     if (deviceEl) deviceEl.textContent = detectDevice();
     if (browserEl) browserEl.textContent = detectBrowser();
