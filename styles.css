@@ -4144,3 +4144,61 @@ body.maintenance-active {
   opacity: 0.8;
   font-size: 12px;
 }
+
+/* ========================= */
+/* 🌤️ Weather Info Styling   */
+/* ========================= */
+
+#weather-info {
+  position: relative;
+  background: color-mix(in srgb, var(--content-bg) 96%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  border-left: 4px solid var(--accent-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  backdrop-filter: blur(var(--glass-blur, 20px)) saturate(160%);
+  transition: all 0.3s ease;
+}
+
+#weather-info:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+}
+
+#weather-info .version-label {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+#weather-info .version-value {
+  font-weight: 500;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+/* Subtle weather-based color tone hints */
+#weather-info.sunny {
+  border-left-color: #ffd60a;
+}
+
+#weather-info.rainy {
+  border-left-color: #0a84ff;
+}
+
+#weather-info.cloudy {
+  border-left-color: #a0a0a0;
+}
+
+#weather-info.snowy {
+  border-left-color: #b0e0ff;
+}
+
+/* Responsive adjustment */
+@media screen and (max-width: 500px) {
+  #weather-info {
+    padding: 12px 14px 12px 32px;
+  }
+  #weather-info .version-value {
+    font-size: 0.9em;
+  }
+}
