@@ -134,62 +134,65 @@ document.addEventListener("DOMContentLoaded", () => {
    * Network (5G / LTE / etc.)
    * -------------------------- */
     function readConnection() {
-    // Offline check
-    if (!navigator.onLine) {
-      return { connection: "Not Connected", network: "Not Connected" };
-    }
-
-    const ua = navigator.userAgent || "";
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-
-    // Default guesses
-    let connection = "Wi-Fi";
-    let network    = "Wi-Fi";
-
-    if (conn) {
-      // --- use real API if available ---
-      if (conn.type === "wifi") {
-        connection = "Wi-Fi";
-        network    = "Wi-Fi";
-      } else if (conn.type === "cellular") {
-        connection = "Cellular";
-        network    = "Cellular";
-      } else if (conn.effectiveType) {
-        const eff = conn.effectiveType.toLowerCase();
-        if (/(5g|4g|lte)/.test(eff)) {
-          connection = "Cellular";
-          network    = "Cellular";
-        } else {
-          connection = "Wi-Fi";
-          network    = "Wi-Fi";
-        }
-      }
-    } else {
-      // --- privacy-blocked fallback (iOS) ---
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
-      const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
-
-      if (isMobile && navigator.onLine) {
-        connection = "Cellular";
-        network    = "Cellular";
-      } else if (isDesktop && navigator.onLine) {
-        connection = "Wi-Fi";
-        network    = "Wi-Fi";
-      } else {
-        connection = "Unknown";
-        network    = "Unknown";
-      }
-    }
-
-    // If somehow both are true (multi-path network)
-    if (navigator.onLine && /Cellular/i.test(connection) && /wifi/i.test(conn?.type || "")) {
-      connection = "Cellular / Wi-Fi";
-      network    = "Cellular / Wi-Fi";
-    }
-
-    return { connection, network };
+  // If offline — done early
+  if (!navigator.onLine) {
+    return { connection: "Not Connected", network: "Not Connected" };
   }
 
+  const ua = navigator.userAgent || "";
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+
+  let connection = "Wi-Fi";
+  let network = "Wi-Fi";
+
+  if (conn) {
+    const type = (conn.type || "").toLowerCase();
+    const eff = (conn.effectiveType || "").toLowerCase();
+
+    if (type.includes("wifi")) {
+      connection = "Wi-Fi";
+      network = "Wi-Fi";
+    } else if (type.includes("cellular") || /(5g|4g|lte|3g|2g)/.test(eff)) {
+      connection = "Cellular";
+      network = "Cellular";
+    } else if (type.includes("wifi") && /(5g|4g|lte|3g|2g)/.test(eff)) {
+      connection = "Cellular / Wi-Fi";
+      network = "Cellular / Wi-Fi";
+    } else {
+      // Unknown but online
+      connection = "Wi-Fi";
+      network = "Wi-Fi";
+    }
+  } else {
+    // Safari / iOS fallback
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+    const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
+
+    if (isMobile && navigator.onLine) {
+      connection = "Cellular";
+      network = "Cellular";
+    } else if (isDesktop && navigator.onLine) {
+      connection = "Wi-Fi";
+      network = "Wi-Fi";
+    } else {
+      connection = "Unknown";
+      network = "Unknown";
+    }
+  }
+
+  // Force “Cellular / Wi-Fi” when both are active
+  if (
+    navigator.onLine &&
+    conn &&
+    type?.includes("wifi") &&
+    /(5g|4g|lte|3g|2g|cellular)/.test(conn.effectiveType || "")
+  ) {
+    connection = "Cellular / Wi-Fi";
+    network = "Cellular / Wi-Fi";
+  }
+
+  return { connection, network };
+}
   /* ----------------------------
    * Sunrise / Sunset (Geolocation only)
    * -------------------------- */
