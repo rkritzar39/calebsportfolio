@@ -133,52 +133,62 @@ document.addEventListener("DOMContentLoaded", () => {
    * Connection (type you're using)
    * Network (5G / LTE / etc.)
    * -------------------------- */
-  function readConnection() {
-    if (!navigator.onLine) { return { connection: "Not Connected", network: "Not Connected" }; }
+    function readConnection() {
+    // Offline check
+    if (!navigator.onLine) {
+      return { connection: "Not Connected", network: "Not Connected" };
+    }
 
-    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    let connection = "Wi-Fi", network = "Unknown";
+    const ua = navigator.userAgent || "";
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
 
-    if (c) {
-      // connection
-      if (c.type === "cellular") connection = "Cellular";
-      else if (c.type === "wifi") connection = "Wi-Fi";
-      else if (!c.type && c.effectiveType) {
-        if (/(5g|4g|lte)/i.test(c.effectiveType)) connection = "Cellular";
-        else connection = "Wi-Fi";
-      }
+    // Default guesses
+    let connection = "Wi-Fi";
+    let network    = "Wi-Fi";
 
-      // network tier
-      if (c.effectiveType) {
-        const eff = c.effectiveType.toLowerCase();
-        if (eff.includes("5g")) network = "5G";
-        else if (eff.includes("4g")) network = "4G LTE";
-        else if (eff.includes("lte")) network = "LTE";
-        else if (eff.includes("3g")) network = "3G";
-        else if (eff.includes("2g")) network = "2G";
-        else network = "Unknown";
+    if (conn) {
+      // --- use real API if available ---
+      if (conn.type === "wifi") {
+        connection = "Wi-Fi";
+        network    = "Wi-Fi";
+      } else if (conn.type === "cellular") {
+        connection = "Cellular";
+        network    = "Cellular";
+      } else if (conn.effectiveType) {
+        const eff = conn.effectiveType.toLowerCase();
+        if (/(5g|4g|lte)/.test(eff)) {
+          connection = "Cellular";
+          network    = "Cellular";
+        } else {
+          connection = "Wi-Fi";
+          network    = "Wi-Fi";
+        }
       }
     } else {
-      // iOS Safari: Network Info API is blocked.
-      // Fall back to a safe, honest guess:
-      connection = "Unknown (iOS restricted)";
-      network    = "Unknown";
+      // --- privacy-blocked fallback (iOS) ---
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+      const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
+
+      if (isMobile && navigator.onLine) {
+        connection = "Cellular";
+        network    = "Cellular";
+      } else if (isDesktop && navigator.onLine) {
+        connection = "Wi-Fi";
+        network    = "Wi-Fi";
+      } else {
+        connection = "Unknown";
+        network    = "Unknown";
+      }
+    }
+
+    // If somehow both are true (multi-path network)
+    if (navigator.onLine && /Cellular/i.test(connection) && /wifi/i.test(conn?.type || "")) {
+      connection = "Cellular / Wi-Fi";
+      network    = "Cellular / Wi-Fi";
     }
 
     return { connection, network };
   }
-
-  const applyConn = () => {
-    const { connection, network } = readConnection();
-    safeSet(connectionEl, connection); fadeIn(connectionEl);
-    safeSet(networkEl, network);       fadeIn(networkEl);
-  };
-  applyConn();
-
-  const connObj = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (connObj && connObj.addEventListener) connObj.addEventListener("change", applyConn);
-  window.addEventListener("online", applyConn);
-  window.addEventListener("offline", applyConn);
 
   /* ----------------------------
    * Sunrise / Sunset (Geolocation only)
