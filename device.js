@@ -1,250 +1,248 @@
 /**
- * device.js — v11.2 LTS
- * Caleb’s System Dashboard (Final iOS Stable)
- * ✅ Works 100% even if location is denied
- * ✅ Correct local sunrise/sunset (auto timezone)
- * ✅ Fills all fields with fallback data
+ * device.js — v12 SAFE
+ * Minimal, robust, iOS-friendly. No third-party IP services.
+ * If a field can't be read, it shows a clear reason instead of staying blank.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ device.js v11.2 LTS loaded");
+  const q = (id) => document.querySelector(`#${id} .version-value`);
 
-  const el = (id) => document.querySelector(`#${id} .version-value`);
-
-  const versionEl = el("version-info");
-  const buildEl = el("build-info");
-  const syncedEl = el("synced-info");
-  const osEl = el("os-info");
-  const deviceEl = el("device-info");
-  const browserEl = el("browser-info");
-  const resolutionEl = el("resolution-info");
-  const connectionEl = el("connection-info");
-  const networkEl = el("network-info");
-  const sunriseEl = el("sunrise-info");
-  const sunsetEl = el("sunset-info");
+  const versionEl    = q("version-info");
+  const buildEl      = q("build-info");
+  const syncedEl     = q("synced-info");
+  const osEl         = q("os-info");
+  const deviceEl     = q("device-info");
+  const browserEl    = q("browser-info");
+  const resolutionEl = q("resolution-info");
+  const connectionEl = q("connection-info");
+  const networkEl    = q("network-info");
+  const sunriseEl    = q("sunrise-info");
+  const sunsetEl     = q("sunset-info");
 
   /* ----------------------------
-     🕒 Synced Clock
-  ---------------------------- */
-  function updateSyncedClock() {
+   * Helpers
+   * -------------------------- */
+  const safeSet = (el, text) => { if (el) el.textContent = text; };
+  const fadeIn  = (el) => { if (el) { el.style.opacity = "1"; el.style.transition = "opacity .25s"; } };
+
+  /* ----------------------------
+   * Version / Build (static from your HTML)
+   * -------------------------- */
+  fadeIn(versionEl);
+  fadeIn(buildEl);
+
+  /* ----------------------------
+   * Synced clock (local TZ label)
+   * -------------------------- */
+  const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+  function updateClock() {
     if (!syncedEl) return;
-    const now = new Date();
-    const datePart = now.toLocaleDateString(undefined, {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
+    const now  = new Date();
+    const date = now.toLocaleDateString(undefined, {
+      weekday: "long", month: "long", day: "numeric", year: "numeric",
     });
-    const timePart = now.toLocaleTimeString(undefined, {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: true,
+    const time = now.toLocaleTimeString(undefined, {
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true,
     });
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    syncedEl.innerHTML = `${datePart} at ${timePart} <span class="tz-tag">${tz}</span>`;
+    syncedEl.innerHTML = `${date} at ${time} <span class="tz-tag">${tzName}</span>`;
+    fadeIn(syncedEl);
   }
-  updateSyncedClock();
-  setInterval(updateSyncedClock, 1000);
+  updateClock();
+  setInterval(updateClock, 1000);
 
   /* ----------------------------
-     💻 OS + Version
-  ---------------------------- */
+   * OS + Version (UA & iPad detection)
+   * -------------------------- */
   function detectOSVersion() {
-    const ua = navigator.userAgent;
-    let os = "Unknown", version = "";
-    const isIPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const ua = navigator.userAgent || "";
+    let os = "Unknown", ver = "";
 
-    if (isIPad) {
+    const isiPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+    if (isiPad) {
       os = "iPadOS";
       const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (m) version = m[1].replace(/_/g, ".");
+      if (m) ver = m[1].replace(/_/g, ".");
     } else if (/iPhone|iPod/i.test(ua)) {
       os = "iOS";
       const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (m) version = m[1].replace(/_/g, ".");
+      if (m) ver = m[1].replace(/_/g, ".");
     } else if (/Android/i.test(ua)) {
       os = "Android";
       const m = ua.match(/Android (\d+(\.\d+)?)/i);
-      if (m) version = m[1];
+      if (m) ver = m[1];
     } else if (/Macintosh|Mac OS X/.test(ua)) {
       os = "macOS";
       const m = ua.match(/Mac OS X (\d+([_.]\d+)*)/i);
-      if (m) version = m[1].replace(/_/g, ".");
+      if (m) ver = m[1].replace(/_/g, ".");
     } else if (/Windows NT/i.test(ua)) {
       os = "Windows";
       const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
       const m = ua.match(/Windows NT (\d+\.\d+)/);
-      if (m) version = map[m[1]] || m[1];
+      if (m) ver = map[m[1]] || m[1];
     } else if (/CrOS/i.test(ua)) os = "ChromeOS";
-    else if (/Linux/i.test(ua)) os = "Linux";
+    else if (/Linux/i.test(ua))   os = "Linux";
 
-    return version ? `${os} ${version}` : os;
+    return ver ? `${os} ${ver}` : os;
   }
+  safeSet(osEl, detectOSVersion()); fadeIn(osEl);
 
   /* ----------------------------
-     📱 Device
-  ---------------------------- */
+   * Device
+   * -------------------------- */
   function detectDevice() {
-    const ua = navigator.userAgent;
+    const ua = navigator.userAgent || "";
     if (/iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) return "iPad";
-    if (/iPhone/i.test(ua)) return "iPhone";
+    if (/iPhone/i.test(ua))  return "iPhone";
     if (/Android/i.test(ua)) {
-      const match = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
-      return match ? match[1].trim() : "Android Device";
+      const m = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
+      return m ? m[1].trim() : "Android Device";
     }
     if (/Macintosh/i.test(ua)) return "Mac";
-    if (/Windows/i.test(ua)) return "Windows PC";
+    if (/Windows/i.test(ua))   return "Windows PC";
+    if (/Linux/i.test(ua))     return "Linux Device";
     return "Unknown Device";
   }
+  safeSet(deviceEl, detectDevice()); fadeIn(deviceEl);
 
   /* ----------------------------
-     🌐 Browser
-  ---------------------------- */
+   * Browser
+   * -------------------------- */
   function detectBrowser() {
-    const ua = navigator.userAgent;
-    if (ua.includes("CriOS")) return "Chrome (iOS)";
-    if (ua.includes("EdgiOS")) return "Edge (iOS)";
-    if (ua.includes("FxiOS")) return "Firefox (iOS)";
-    if (ua.includes("OPiOS")) return "Opera (iOS)";
-    if (ua.includes("Edg")) return "Microsoft Edge";
+    const ua = navigator.userAgent || "";
+    if (ua.includes("CriOS"))              return "Chrome (iOS)";
+    if (ua.includes("EdgiOS"))             return "Edge (iOS)";
+    if (ua.includes("FxiOS"))              return "Firefox (iOS)";
+    if (ua.includes("OPiOS"))              return "Opera (iOS)";
+    if (ua.includes("Edg"))                return "Microsoft Edge";
     if (ua.includes("OPR") || ua.includes("Opera")) return "Opera";
     if (ua.includes("Chrome") && !ua.includes("Chromium")) return "Google Chrome";
-    if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
-    if (ua.includes("Firefox")) return "Firefox";
+    if (ua.includes("Safari") && !ua.includes("Chrome"))   return "Safari";
+    if (ua.includes("Firefox"))            return "Firefox";
     return "Unknown Browser";
   }
+  safeSet(browserEl, detectBrowser()); fadeIn(browserEl);
 
   /* ----------------------------
-     🖥️ Resolution
-  ---------------------------- */
-  function detectResolution() {
-    return `${window.screen.width} × ${window.screen.height}`;
-  }
+   * Resolution
+   * -------------------------- */
+  const setRes = () => { safeSet(resolutionEl, `${screen.width} × ${screen.height}`); fadeIn(resolutionEl); };
+  setRes(); window.addEventListener("resize", setRes);
 
   /* ----------------------------
-     📶 Connection + Network
-  ---------------------------- */
-  function detectConnectionType() {
-    if (!navigator.onLine) return "Not Connected";
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (!conn) return "Wi-Fi";
-    if (conn.type === "cellular") return "Cellular";
-    if (conn.type === "wifi") return "Wi-Fi";
-    if (conn.effectiveType?.includes("4g")) return "Cellular";
-    if (conn.effectiveType?.includes("5g")) return "Cellular";
-    return "Wi-Fi";
-  }
+   * Connection (type you're using)
+   * Network (5G / LTE / etc.)
+   * -------------------------- */
+  function readConnection() {
+    if (!navigator.onLine) { return { connection: "Not Connected", network: "Not Connected" }; }
 
-  function detectNetworkTier() {
-    if (!navigator.onLine) return "Not Connected";
-    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (conn?.effectiveType) {
-      const eff = conn.effectiveType.toLowerCase();
-      if (eff.includes("5g")) return "5G";
-      if (eff.includes("4g")) return "4G LTE";
-      if (eff.includes("lte")) return "LTE";
-      if (eff.includes("3g")) return "3G";
-      if (eff.includes("2g")) return "2G";
+    const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    let connection = "Wi-Fi", network = "Unknown";
+
+    if (c) {
+      // connection
+      if (c.type === "cellular") connection = "Cellular";
+      else if (c.type === "wifi") connection = "Wi-Fi";
+      else if (!c.type && c.effectiveType) {
+        if (/(5g|4g|lte)/i.test(c.effectiveType)) connection = "Cellular";
+        else connection = "Wi-Fi";
+      }
+
+      // network tier
+      if (c.effectiveType) {
+        const eff = c.effectiveType.toLowerCase();
+        if (eff.includes("5g")) network = "5G";
+        else if (eff.includes("4g")) network = "4G LTE";
+        else if (eff.includes("lte")) network = "LTE";
+        else if (eff.includes("3g")) network = "3G";
+        else if (eff.includes("2g")) network = "2G";
+        else network = "Unknown";
+      }
+    } else {
+      // iOS Safari: Network Info API is blocked.
+      // Fall back to a safe, honest guess:
+      connection = "Unknown (iOS restricted)";
+      network    = "Unknown";
     }
-    return "Unknown";
+
+    return { connection, network };
   }
 
+  const applyConn = () => {
+    const { connection, network } = readConnection();
+    safeSet(connectionEl, connection); fadeIn(connectionEl);
+    safeSet(networkEl, network);       fadeIn(networkEl);
+  };
+  applyConn();
+
+  const connObj = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (connObj && connObj.addEventListener) connObj.addEventListener("change", applyConn);
+  window.addEventListener("online", applyConn);
+  window.addEventListener("offline", applyConn);
+
   /* ----------------------------
-     🌅 Sunrise / Sunset
-  ---------------------------- */
-  async function fetchSunTimes() {
+   * Sunrise / Sunset (Geolocation only)
+   * -------------------------- */
+  async function loadSunTimes() {
     if (!sunriseEl || !sunsetEl) return;
 
+    // Status row (Daytime/Nighttime)
     let statusLi = document.getElementById("day-status-info");
+    let statusEl;
     if (!statusLi) {
       const li = document.createElement("li");
       li.id = "day-status-info";
       li.innerHTML = `<span class="version-label">🌞 <strong>Status:</strong></span><span class="version-value">Loading...</span>`;
       document.querySelector(".version-list").appendChild(li);
-      statusLi = li.querySelector(".version-value");
+      statusEl = li.querySelector(".version-value");
     } else {
-      statusLi = statusLi.querySelector(".version-value") || statusLi;
+      statusEl = statusLi.querySelector(".version-value") || statusLi;
     }
 
-    const updateUI = (sunrise, sunset) => {
-      const now = new Date();
-      const isDay = now >= sunrise && now < sunset;
-      sunriseEl.textContent = sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-      sunsetEl.textContent = sunset.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    // If no geolocation, fail cleanly
+    if (!("geolocation" in navigator)) {
+      safeSet(sunriseEl, "Unavailable");
+      safeSet(sunsetEl,  "Unavailable");
+      safeSet(statusEl,  "Unavailable");
+      return;
+    }
 
-      const root = document.documentElement;
-      const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-      const userAccent = settings.accentColor || "#3ddc84";
+    // Ask once; if denied, show reason.
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      try {
+        const resp = await fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`, { cache: "no-store" });
+        const data = await resp.json();
+        if (data.status !== "OK") throw new Error("Sun API error");
 
-      if (isDay) {
-        statusLi.textContent = "Daytime ☀️";
-        if (userAccent === "#3ddc84") root.style.setProperty("--accent-color", "#ffd60a");
-      } else {
-        statusLi.textContent = "Nighttime 🌙";
-        if (userAccent === "#3ddc84") root.style.setProperty("--accent-color", "#0a84ff");
+        // API returns UTC; Date parses ISO as UTC, format prints local time.
+        const sunrise = new Date(data.results.sunrise);
+        const sunset  = new Date(data.results.sunset);
+
+        safeSet(sunriseEl, sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+        safeSet(sunsetEl,  sunset .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+        fadeIn(sunriseEl); fadeIn(sunsetEl);
+
+        const now = new Date();
+        const isDay = now >= sunrise && now < sunset;
+        safeSet(statusEl, isDay ? "Daytime ☀️" : "Nighttime 🌙");
+        fadeIn(statusEl);
+      } catch (e) {
+        console.error("Sunrise/Sunset fetch failed:", e);
+        safeSet(sunriseEl, "Error");
+        safeSet(sunsetEl,  "Error");
+        safeSet(statusEl,  "Unavailable");
       }
-    };
-
-    async function getCoords() {
-      if ("geolocation" in navigator) {
-        return new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(
-            (pos) => resolve(pos.coords),
-            async () => {
-              try {
-                const res = await fetch("https://ipapi.co/json/");
-                const d = await res.json();
-                resolve({ latitude: d.latitude, longitude: d.longitude });
-              } catch {
-                reject("No location data");
-              }
-            },
-            { timeout: 7000 }
-          );
-        });
-      } else {
-        const res = await fetch("https://ipapi.co/json/");
-        const d = await res.json();
-        return { latitude: d.latitude, longitude: d.longitude };
-      }
-    }
-
-    try {
-      const coords = await getCoords();
-      const res = await fetch(`https://api.sunrise-sunset.org/json?lat=${coords.latitude}&lng=${coords.longitude}&formatted=0`);
-      const data = await res.json();
-      if (data.status !== "OK") throw new Error("Bad response");
-      const sunrise = new Date(data.results.sunrise);
-      const sunset = new Date(data.results.sunset);
-      updateUI(sunrise, sunset);
-    } catch (err) {
-      console.error("Sunrise/Sunset error:", err);
-      sunriseEl.textContent = sunsetEl.textContent = "Unavailable";
-      statusLi.textContent = "Unavailable";
-    }
+    }, (err) => {
+      console.warn("Geolocation denied:", err);
+      safeSet(sunriseEl, "Permission denied");
+      safeSet(sunsetEl,  "Permission denied");
+      safeSet(statusEl,  "Unavailable");
+    }, { timeout: 8000, maximumAge: 0 });
   }
+  loadSunTimes();
 
-  /* ----------------------------
-     ⚙️ Apply Everything
-  ---------------------------- */
-  function applyAll() {
-    if (versionEl) versionEl.textContent = "v26.1.2";
-    if (buildEl) buildEl.textContent = "2025.9.20";
-    if (osEl) osEl.textContent = detectOSVersion();
-    if (deviceEl) deviceEl.textContent = detectDevice();
-    if (browserEl) browserEl.textContent = detectBrowser();
-    if (resolutionEl) resolutionEl.textContent = detectResolution();
-    if (connectionEl) connectionEl.textContent = detectConnectionType();
-    if (networkEl) networkEl.textContent = detectNetworkTier();
-    fetchSunTimes();
-  }
-
-  applyAll();
-
-  window.addEventListener("resize", () => {
-    if (resolutionEl) resolutionEl.textContent = detectResolution();
-  });
-  window.addEventListener("online", applyAll);
-  window.addEventListener("offline", applyAll);
+  /* Ensure all current fields are visible even if values are defaults */
+  [versionEl, buildEl, osEl, deviceEl, browserEl, resolutionEl, connectionEl, networkEl, sunriseEl, sunsetEl, syncedEl]
+    .forEach(fadeIn);
 });
