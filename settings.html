@@ -196,7 +196,7 @@
       </div>
 
 <!-- 🔔 Notifications Section -->
-<section class="settings-subsection animate-slide-in" id="notifications-section">
+<div class="settings-subsection animate-slide-in">
   <h2 class="subsection-title">Notifications</h2>
 
   <!-- Enable In-Site Notifications -->
@@ -217,7 +217,6 @@
   <!-- Notification Categories -->
   <div class="notification-category-group" id="notificationCategories" style="display:none;">
     
-    <!-- Website Updates -->
     <label class="setting-card" for="notifUpdatesToggle">
       <div class="setting-icon-container" style="background-color: #34c759;">
         <i class="fa-solid fa-gear"></i>
@@ -232,7 +231,6 @@
       </div>
     </label>
 
-    <!-- Live Activity Alerts -->
     <label class="setting-card" for="notifLiveActivityToggle">
       <div class="setting-icon-container" style="background-color: #ff2d55;">
         <i class="fa-solid fa-satellite-dish"></i>
@@ -247,7 +245,6 @@
       </div>
     </label>
 
-    <!-- Creator Updates -->
     <label class="setting-card" for="notifCreatorUpdatesToggle">
       <div class="setting-icon-container" style="background-color: #af52de;">
         <i class="fa-solid fa-users"></i>
@@ -263,21 +260,21 @@
     </label>
   </div>
 
-  <!-- Toast Preview Container -->
-  <div id="toast-container"></div>
-</section>
+  <!-- Push Notification Setup -->
+  <div class="setting-card">
+    <div class="setting-icon-container" style="background-color: #ff9500;">
+      <i class="fa-solid fa-bell-slash"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Push Notifications</strong>
+      <p class="setting-description">Get browser alerts even when you’re not on the site.</p>
+    </div>
+    <button id="enablePushNotifications" class="button">Enable</button>
+  </div>
+</div>
 
-<!-- JavaScript for Notification Toggles -->
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const inSiteToggle = document.getElementById("inSiteNotificationsToggle");
-    const categoryGroup = document.getElementById("notificationCategories");
-
-    inSiteToggle.addEventListener("change", () => {
-      categoryGroup.style.display = inSiteToggle.checked ? "block" : "none";
-    });
-  });
-</script>
+<!-- Toast Preview Container -->
+<div id="toast-container"></div>
       
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">General</h2>
