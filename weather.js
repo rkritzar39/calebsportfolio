@@ -1,7 +1,8 @@
-/* Weather app using Open-Meteo (no API keys) */
+/* Weather app using Open-Meteo (no API keys)
+   Fixed: improved geolocation + fallback + remembered city
+*/
 
 (() => {
-  // DOM
   const els = {
     cityInput: document.getElementById("city-input"),
     citySubmit: document.getElementById("city-submit"),
@@ -27,22 +28,19 @@
     toast: document.getElementById("toast")
   };
 
-  // State
   const state = {
-    unit: localStorage.getItem("wxUnit") || "imperial", // 'imperial' | 'metric'
-    lastQuery: null, // { lat, lon, name, admin1, country, timezone }
+    unit: localStorage.getItem("wxUnit") || "imperial",
+    lastQuery: JSON.parse(localStorage.getItem("wxLastQuery") || "null"),
   };
 
-  // Init
   init();
+
   function init(){
-    // Set unit UI
     setUnitUI(state.unit);
 
-    // Bind events
     els.citySubmit.addEventListener("click", onCitySearch);
     els.cityInput.addEventListener("keydown", (e)=>{ if(e.key==="Enter") onCitySearch(); });
-    els.useLocation.addEventListener("click", useMyLocation);
+    els.useLocation.addEventListener("click", ()=> useMyLocation({silent:false}));
     els.unitBtns.forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const u = btn.dataset.unit;
@@ -51,15 +49,19 @@
           localStorage.setItem("wxUnit", state.unit);
           setUnitUI(state.unit);
           if(state.lastQuery){
-            // re-fetch with new units
             fetchAndRender(state.lastQuery.lat, state.lastQuery.lon, state.lastQuery);
           }
         }
       });
     });
 
-    // Try initial location
-    useMyLocation({ silent: true });
+    // Try last location first
+    if(state.lastQuery){
+      fetchAndRender(state.lastQuery.lat, state.lastQuery.lon, state.lastQuery);
+    } else {
+      // Try location, fallback if blocked
+      useMyLocation({silent:true});
+    }
   }
 
   function setUnitUI(u){
@@ -69,13 +71,13 @@
     els.feelsUnit.textContent = isImp ? "°F" : "°C";
   }
 
-  // === Interactions ===
+  // ====== Interactions ======
   async function onCitySearch(){
     const name = (els.cityInput.value || "").trim();
     if(!name){ return toast("Type a city name to search."); }
     try{
       const loc = await geocodeCity(name);
-      if(!loc){ throw new Error("City not found."); }
+      if(!loc) throw new Error("City not found.");
       await fetchAndRender(loc.latitude, loc.longitude, loc);
     }catch(err){
       toast(err.message || "Failed to find that city.");
@@ -85,28 +87,36 @@
   function useMyLocation(opts = {}){
     if(!navigator.geolocation){
       if(!opts.silent) toast("Geolocation not supported on this device.");
+      fallbackToDefault();
       return;
     }
+
     navigator.geolocation.getCurrentPosition(async (pos)=>{
       const { latitude: lat, longitude: lon } = pos.coords || {};
       try{
         const loc = await reverseGeocode(lat, lon);
         await fetchAndRender(lat, lon, loc || { name: `${lat.toFixed(3)}, ${lon.toFixed(3)}` });
       }catch(e){
-        toast("Could not get weather for your location.");
+        toast("Could not get weather for your location, loading fallback city.");
+        fallbackToDefault();
       }
-    }, (err)=>{
-      if(!opts.silent) toast("Permission denied for location.");
-    }, { enableHighAccuracy:true, timeout: 12000, maximumAge: 0 });
+    }, async (err)=>{
+      if(!opts.silent) toast("Couldn't get location, using fallback city.");
+      fallbackToDefault();
+    }, { enableHighAccuracy:true, timeout: 20000, maximumAge: 10000 });
   }
 
-  // === Data Fetching ===
+  async function fallbackToDefault(){
+    await fetchAndRender(40.7128, -74.0060, { name: "New York, US", country: "US" });
+  }
+
+  // ====== Data Fetching ======
   async function geocodeCity(name){
     const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=en&format=json`;
     const res = await fetch(url);
     if(!res.ok) throw new Error("Geocoding failed");
     const data = await res.json();
-    if(!data.results || !data.results.length) return null;
+    if(!data.results?.length) return null;
     const r = data.results[0];
     return {
       name: r.name,
@@ -126,7 +136,7 @@
     const r = data?.results?.[0];
     if(!r) return null;
     return {
-      name: r.name || r.city || r.locality || "My location",
+      name: r.name || "My location",
       admin1: r.admin1,
       country: r.country,
       timezone: r.timezone,
@@ -136,15 +146,12 @@
   }
 
   function unitParams(unit){
-    if(unit === "imperial"){
-      return {
-        temperature_unit: "fahrenheit",
-        wind_speed_unit: "mph",
-        precipitation_unit: "inch",
-        pressure_unit: "inchmercury" // alt: "hPa" if you prefer
-      };
-    }
-    return {
+    return unit === "imperial" ? {
+      temperature_unit: "fahrenheit",
+      wind_speed_unit: "mph",
+      precipitation_unit: "inch",
+      pressure_unit: "inchmercury"
+    } : {
       temperature_unit: "celsius",
       wind_speed_unit: "kmh",
       precipitation_unit: "mm",
@@ -152,8 +159,7 @@
     };
   }
 
-  async function fetchAndRender(lat, lon, locInfo = null){
-    // Build query
+  async function fetchAndRender(lat, lon, locInfo = {}){
     const u = unitParams(state.unit);
     const params = new URLSearchParams({
       latitude: lat,
@@ -182,102 +188,85 @@
       ].join(","),
       temperature_unit: u.temperature_unit,
       wind_speed_unit: u.wind_speed_unit,
-      precipitation_unit: u.precipitation_unit
+      precipitation_unit: u.precipitation_unit,
+      pressure_unit: u.pressure_unit
     });
 
-    // pressure unit param (not all deployments need it, but try to honor)
-    if (u.pressure_unit) params.append("pressure_unit", u.pressure_unit);
-
-    const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
-    const res = await fetch(url);
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
     if(!res.ok) throw new Error("Weather request failed.");
     const data = await res.json();
 
-    // Persist the "last query" context for re-fetching on unit change
     state.lastQuery = {
       lat, lon,
-      name: locInfo?.name || state.lastQuery?.name || "—",
-      admin1: locInfo?.admin1,
-      country: locInfo?.country,
-      timezone: data.timezone || locInfo?.timezone
+      name: locInfo.name || "—",
+      admin1: locInfo.admin1,
+      country: locInfo.country,
+      timezone: data.timezone || locInfo.timezone
     };
+    localStorage.setItem("wxLastQuery", JSON.stringify(state.lastQuery));
 
     renderAll(data);
   }
 
-  // === Render ===
+  // ====== Rendering ======
   function renderAll(data){
-    // Location
     const loc = state.lastQuery;
     const subtitle = [loc.admin1, loc.country].filter(Boolean).join(", ");
     els.locName.textContent = loc.name || "—";
-    els.locMeta.textContent = subtitle || (loc.timezone || "—");
+    els.locMeta.textContent = subtitle || loc.timezone || "—";
 
-    // Current
     const c = data.current || {};
     const d = data.daily || {};
     const hourly = data.hourly || {};
 
-    // Summary via current weathercode if provided, else forecast code today
     const nowIdx = findClosestIndex(hourly?.time, data?.current?.time);
-    const summaryCode = (hourly?.weathercode?.[nowIdx] ?? d?.weathercode?.[0] ?? null);
-    els.summary.textContent = weatherCodeToText(summaryCode);
+    const code = (hourly?.weathercode?.[nowIdx] ?? d?.weathercode?.[0] ?? null);
+    els.summary.textContent = weatherCodeToText(code);
 
-    // Temps
     els.tempNow.textContent = round(c.temperature_2m);
-    els.tempHi.textContent  = "H: " + round(d.temperature_2m_max?.[0]) + (state.unit === "imperial" ? "°F" : "°C");
-    els.tempLo.textContent  = "L: " + round(d.temperature_2m_min?.[0]) + (state.unit === "imperial" ? "°F" : "°C");
+    els.tempHi.textContent  = "H: " + round(d.temperature_2m_max?.[0]) + unitSymbol();
+    els.tempLo.textContent  = "L: " + round(d.temperature_2m_min?.[0]) + unitSymbol();
 
-    // Details
     els.feelsLike.textContent = round(c.apparent_temperature);
     els.humidity.textContent = safeInt(c.relative_humidity_2m);
     els.wind.textContent = formatWind(c.wind_speed_10m);
     els.pressure.textContent = formatPressure(c.pressure_msl);
 
-    // UV current from hourly uv_index nearest to current time
     const uvIdx = findClosestIndex(hourly?.time, data?.current?.time);
     const uvNow = (hourly?.uv_index?.[uvIdx] ?? d?.uv_index_max?.[0] ?? null);
     els.uv.textContent = uvNow != null ? Math.round(uvNow) : "—";
     els.uvCat.textContent = uvCategory(uvNow);
     els.uvCat.className = "chip " + uvBadgeClass(uvNow);
 
-    // Sun
-    els.sunrise.textContent = toLocalShortTime(d.sunrise?.[0], data.timezone);
-    els.sunset.textContent  = toLocalShortTime(d.sunset?.[0], data.timezone);
+    els.sunrise.textContent = toLocalShortTime(d.sunrise?.[0]);
+    els.sunset.textContent  = toLocalShortTime(d.sunset?.[0]);
 
-    // Forecast next 5 days
-    renderForecast(d, data.timezone);
-
-    // Update unit symbols (already handled visually but keep consistent)
-    els.tempUnit.textContent  = state.unit === "imperial" ? "°F" : "°C";
-    els.feelsUnit.textContent = state.unit === "imperial" ? "°F" : "°C";
+    renderForecast(d);
   }
 
-  function renderForecast(daily, tz){
-    const days = daily?.time || [];
-    const max = daily?.temperature_2m_max || [];
-    const min = daily?.temperature_2m_min || [];
-    const codes = daily?.weathercode || [];
-
+  function renderForecast(d){
+    const days = d?.time || [];
+    const max = d?.temperature_2m_max || [];
+    const min = d?.temperature_2m_min || [];
+    const codes = d?.weathercode || [];
     const take = Math.min(days.length, 5);
     els.forecastRow.innerHTML = "";
-
     for(let i=0;i<take;i++){
-      const date = new Date(days[i] + "T12:00:00");
-      const label = weekdayShort(date);
+      const date = new Date(days[i]);
+      const label = date.toLocaleDateString([], { weekday:"short" });
       const card = document.createElement("div");
       card.className = "forecast-card";
       card.innerHTML = `
         <div class="forecast-day">${label}</div>
         <div class="forecast-icon">${iconForCode(codes[i])}</div>
-        <div class="forecast-hi">${round(max[i])}${state.unit === "imperial" ? "°F" : "°C"}</div>
-        <div class="forecast-lo">${round(min[i])}${state.unit === "imperial" ? "°F" : "°C"}</div>
+        <div class="forecast-hi">${round(max[i])}${unitSymbol()}</div>
+        <div class="forecast-lo">${round(min[i])}${unitSymbol()}</div>
       `;
       els.forecastRow.appendChild(card);
     }
   }
 
-  // === Helpers ===
+  // ====== Helpers ======
   function toast(msg){
     els.toast.textContent = msg;
     els.toast.classList.add("show");
@@ -285,59 +274,41 @@
     els.toast._t = setTimeout(()=> els.toast.classList.remove("show"), 3000);
   }
 
-  function round(v){
-    if(v == null || isNaN(v)) return "—";
-    return Math.round(v);
-  }
-  function safeInt(v){
-    if(v == null || isNaN(v)) return "—";
-    return Math.round(v);
-  }
+  function round(v){ return (v == null || isNaN(v)) ? "—" : Math.round(v); }
+  function safeInt(v){ return (v == null || isNaN(v)) ? "—" : Math.round(v); }
+  function unitSymbol(){ return state.unit === "imperial" ? "°F" : "°C"; }
 
   function formatWind(v){
     if(v == null || isNaN(v)) return "—";
     return `${Math.round(v)} ${state.unit==='imperial'?'mph':'km/h'}`;
   }
+
   function formatPressure(v){
     if(v == null || isNaN(v)) return "—";
     if(state.unit === 'imperial'){
-      // v expected in inHg if pressure_unit=inchmercury accepted, else convert from hPa
-      if(v > 70){ // looks like hPa
-        const inHg = v * 0.0295299830714;
-        return `${inHg.toFixed(2)} inHg`;
-      }
+      if(v > 70){ v = v * 0.02953; }
       return `${v.toFixed(2)} inHg`;
-    }else{
-      // metric: show hPa (if we received inHg by chance, convert back)
-      if(v < 70){ // inHg -> hPa
-        const hPa = v / 0.0295299830714;
-        return `${Math.round(hPa)} hPa`;
-      }
+    } else {
+      if(v < 70){ v = v / 0.02953; }
       return `${Math.round(v)} hPa`;
     }
-  }
-
-  function toLocalShortTime(iso, tz){
-    if(!iso) return "—";
-    try{
-      const d = new Date(iso);
-      return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    }catch{ return "—"; }
-  }
-  function weekdayShort(d){
-    return d.toLocaleDateString([], { weekday: 'short' });
   }
 
   function findClosestIndex(times, targetIso){
     if(!Array.isArray(times) || !times.length) return 0;
     let target = targetIso ? new Date(targetIso).getTime() : Date.now();
-    let bestI = 0, bestDiff = Infinity;
+    let best = 0, bestDiff = Infinity;
     for(let i=0;i<times.length;i++){
-      const t = new Date(times[i]).getTime();
-      const diff = Math.abs(t - target);
-      if(diff < bestDiff){ bestI = i; bestDiff = diff; }
+      const diff = Math.abs(new Date(times[i]).getTime() - target);
+      if(diff < bestDiff){ best = i; bestDiff = diff; }
     }
-    return bestI;
+    return best;
+  }
+
+  function toLocalShortTime(iso){
+    if(!iso) return "—";
+    const d = new Date(iso);
+    return d.toLocaleTimeString([], { hour:'numeric', minute:'2-digit' });
   }
 
   function uvCategory(u){
@@ -348,6 +319,7 @@
     if(u < 11) return "Very High";
     return "Extreme";
   }
+
   function uvBadgeClass(u){
     if(u == null || isNaN(u)) return "";
     if(u < 3) return "uv-low";
@@ -358,25 +330,19 @@
   }
 
   function weatherCodeToText(code){
-    // Minimal mapping (Open-Meteo WMO codes)
     const m = {
-      0: "Clear sky",
-      1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
-      45: "Fog", 48: "Depositing rime fog",
-      51: "Light drizzle", 53: "Drizzle", 55: "Dense drizzle",
-      56: "Freezing drizzle", 57: "Freezing drizzle",
-      61: "Light rain", 63: "Rain", 65: "Heavy rain",
-      66: "Freezing rain", 67: "Freezing rain",
-      71: "Light snow", 73: "Snow", 75: "Heavy snow",
-      77: "Snow grains", 80: "Rain showers", 81: "Rain showers", 82: "Violent rain showers",
-      85: "Snow showers", 86: "Heavy snow showers",
-      95: "Thunderstorm", 96: "Thunderstorm w/ hail", 97: "Thunderstorm w/ hail"
+      0:"Clear sky",1:"Mainly clear",2:"Partly cloudy",3:"Overcast",
+      45:"Fog",48:"Rime fog",51:"Light drizzle",53:"Drizzle",55:"Heavy drizzle",
+      61:"Light rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",67:"Freezing rain",
+      71:"Light snow",73:"Snow",75:"Heavy snow",77:"Snow grains",
+      80:"Rain showers",81:"Heavy rain showers",82:"Violent rain showers",
+      85:"Snow showers",86:"Heavy snow showers",
+      95:"Thunderstorm",96:"Thunderstorm (hail)",97:"Severe storm"
     };
-    return m?.[code] ?? "—";
+    return m[code] || "—";
   }
+
   function iconForCode(code){
-    // Simple emoji icons (no external assets); customize with your own later
-    if(code == null) return "⛅️";
     if([0].includes(code)) return "☀️";
     if([1,2].includes(code)) return "🌤️";
     if([3].includes(code)) return "☁️";
@@ -386,5 +352,4 @@
     if([95,96,97].includes(code)) return "⛈️";
     return "⛅️";
   }
-
 })();
