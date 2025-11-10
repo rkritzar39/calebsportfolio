@@ -1,60 +1,101 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Liquid-Glass Weather</title>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+  <title>Weather</title>
   <link rel="stylesheet" href="weather.css" />
-
-  <!-- Leaflet for radar -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
-  <main class="weather-wrapper">
-    <header class="liquid-header">
-      <h1>Weather</h1>
-      <p id="date-time">—</p>
-    </header>
+  <main class="wx-app">
+    <!-- Header / Controls -->
+    <header class="wx-header glass">
+      <div class="wx-left">
+        <button id="use-location" class="btn ghost" aria-label="Use my location">📍 My location</button>
+      </div>
 
-    <section id="main" class="liquid-card main">
-      <h2 id="city">Locating…</h2>
-      <div class="current">
-        <img id="icon" alt="icon" />
-        <div>
-          <h1 id="temp">--°</h1>
-          <p id="desc">—</p>
+      <div class="wx-search">
+        <input id="city-input" type="search" placeholder="Search city…" autocomplete="off" />
+        <button id="city-submit" class="btn">Search</button>
+      </div>
+
+      <div class="wx-right">
+        <div class="unit-toggle" role="group" aria-label="Units">
+          <button data-unit="imperial" class="unit-btn active">°F</button>
+          <button data-unit="metric" class="unit-btn">°C</button>
         </div>
       </div>
-      <p id="extra"></p>
-      <p id="sun"></p>
-      <button id="unit-toggle" class="unit-btn">Switch °C / °F</button>
+    </header>
+
+    <!-- Location / Time -->
+    <section class="wx-location glass" id="loc-card" aria-live="polite">
+      <h1 id="loc-name">—</h1>
+      <p id="loc-meta">—</p>
     </section>
 
-    <section class="liquid-card">
-      <h3>Hourly</h3>
-      <div id="hourly" class="scroll-x"></div>
+    <!-- Current Conditions -->
+    <section class="wx-current glass" id="current-card">
+      <div class="wx-current-main">
+        <div class="temp-row">
+          <div class="temp-now">
+            <span id="temp-now">—</span>
+            <span class="unit-symbol" id="temp-unit">°F</span>
+          </div>
+          <div class="temp-range">
+            <span id="temp-hi">H: —</span>
+            <span id="temp-lo">L: —</span>
+          </div>
+        </div>
+        <div class="wx-summary">
+          <span id="summary">—</span>
+        </div>
+      </div>
+
+      <div class="wx-grid">
+        <div class="wx-item">
+          <div class="label">Feels like</div>
+          <div class="value"><span id="feels-like">—</span><span class="unit-symbol" id="feels-unit">°F</span></div>
+        </div>
+        <div class="wx-item">
+          <div class="label">Humidity</div>
+          <div class="value"><span id="humidity">—</span>%</div>
+        </div>
+        <div class="wx-item">
+          <div class="label">Wind</div>
+          <div class="value"><span id="wind">—</span></div>
+        </div>
+        <div class="wx-item">
+          <div class="label">Pressure</div>
+          <div class="value"><span id="pressure">—</span></div>
+        </div>
+        <div class="wx-item">
+          <div class="label">UV Index</div>
+          <div class="value"><span id="uv">—</span> <small id="uv-cat" class="chip">—</small></div>
+        </div>
+        <div class="wx-item">
+          <div class="label">Sunrise</div>
+          <div class="value"><span id="sunrise">—</span></div>
+        </div>
+        <div class="wx-item">
+          <div class="label">Sunset</div>
+          <div class="value"><span id="sunset">—</span></div>
+        </div>
+      </div>
     </section>
 
-    <section class="liquid-card">
-      <h3>7-Day Forecast</h3>
-      <div id="daily" class="daily"></div>
+    <!-- Forecast -->
+    <section class="wx-forecast glass" id="forecast-card">
+      <h2>Next 5 Days</h2>
+      <div class="forecast-row" id="forecast-row" aria-live="polite"></div>
     </section>
 
-    <section class="liquid-card">
-      <h3>Air Quality</h3>
-      <div id="aqi"></div>
-    </section>
-
-    <section class="liquid-card">
-      <h3>Radar</h3>
-      <div id="radar" class="radar-map"></div>
-    </section>
-
-    <footer class="footer">
-      <p>Data © Open-Meteo • Radar © RainViewer • City © OpenStreetMap Nominatim</p>
-    </footer>
+    <!-- Errors -->
+    <div id="toast" role="status" aria-live="assertive"></div>
   </main>
-  <script src="weather.js"></script>
+
+  <script src="weather.js" defer></script>
 </body>
 </html>
