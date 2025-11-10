@@ -3,58 +3,69 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Weather</title>
+  <title>Epic Weather</title>
   <link rel="stylesheet" href="weather.css" />
 </head>
 <body data-sky="default">
   <main class="wx-app">
+    <!-- Header -->
     <header class="wx-header glass">
-      <div class="wx-left">
-        <button id="use-location" class="btn ghost">📍 My Location</button>
-      </div>
+      <button id="use-location" class="btn ghost">📍 My Location</button>
+
       <div class="wx-search">
         <input id="city-input" type="search" placeholder="Search city…" />
         <button id="city-submit" class="btn">Search</button>
       </div>
-      <div class="wx-right">
-        <div class="unit-toggle">
-          <button data-unit="imperial" class="unit-btn active">°F</button>
-          <button data-unit="metric" class="unit-btn">°C</button>
-        </div>
+
+      <div class="unit-toggle">
+        <button data-unit="imperial" class="unit-btn active">°F</button>
+        <button data-unit="metric" class="unit-btn">°C</button>
       </div>
     </header>
 
-    <section class="wx-favs glass" id="favs"></section>
-
+    <!-- Location / Info -->
     <section class="wx-location glass">
       <h1 id="loc-name">—</h1>
       <p id="loc-meta">—</p>
       <small id="updated">Last updated: —</small>
     </section>
 
+    <!-- Weather Alerts -->
     <section class="wx-alert glass hidden" id="alerts-card"></section>
 
+    <!-- Current Weather -->
     <section class="wx-current glass">
-      <div class="temp-now"><span id="temp-now">—</span><span class="unit-symbol" id="temp-unit">°F</span></div>
+      <div class="temp-now">
+        <span id="temp-now">—</span><span id="temp-unit">°F</span>
+      </div>
+
+      <div class="wx-emoji" id="wx-emoji">☁️</div>
+
       <p id="summary">—</p>
+
       <div class="wx-grid">
-        <div><strong>Feels:</strong> <span id="feels-like">—</span>°</div>
+        <div><strong>Feels Like:</strong> <span id="feels-like">—</span>°</div>
         <div><strong>Humidity:</strong> <span id="humidity">—</span>%</div>
         <div><strong>Wind:</strong> <span id="wind">—</span></div>
+        <div><strong>Dir:</strong> <span id="wind-dir">—</span></div>
         <div><strong>Pressure:</strong> <span id="pressure">—</span></div>
         <div><strong>UV:</strong> <span id="uv">—</span></div>
+        <div><strong>Air:</strong> <span id="air">—</span></div>
         <div><strong>Sunrise:</strong> <span id="sunrise">—</span></div>
         <div><strong>Sunset:</strong> <span id="sunset">—</span></div>
       </div>
     </section>
 
+    <!-- 5-Day Forecast -->
     <section class="wx-forecast glass">
       <h2>Next 5 Days</h2>
       <div id="forecast-row" class="forecast-row"></div>
     </section>
 
+    <!-- Toast Messages -->
     <div id="toast"></div>
   </main>
+
   <script src="weather.js" defer></script>
 </body>
 </html>
