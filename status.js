@@ -4,39 +4,28 @@ const CONFIG = {
     {
       name: "Core Systems",
       services: [
-        { name: "Website", status: "ok", uptime: 99.98 },
+        { name: "Website", status: "ok", uptime: 100 },
         { name: "User Settings", status: "ok", uptime: 100 },
-        { name: "Feature Portal", status: "warn", uptime: 97.2 }
+        { name: "Feature Portal", status: "ok", uptime: 100 }
       ]
     },
     {
       name: "APIs & Integrations",
       services: [
-        { name: "Spotify Live", status: "ok", uptime: 99.6 },
-        { name: "Weather API", status: "down", uptime: 92.5 },
-        { name: "Firebase Sync", status: "ok", uptime: 99.9 }
+        { name: "Spotify Live", status: "ok", uptime: 100 },
+        { name: "Weather API", status: "ok", uptime: 100 },
+        { name: "Firebase Sync", status: "ok", uptime: 100 }
       ]
     },
     {
       name: "External Services",
       services: [
         { name: "Discord Lanyard", status: "ok", uptime: 100 },
-        { name: "GitHub API", status: "ok", uptime: 99.8 }
+        { name: "GitHub API", status: "ok", uptime: 100 }
       ]
     }
   ],
   incidents: [
-    {
-      title: "Weather API Outage",
-      date: "Nov 9, 2025",
-      details: "Service unavailable due to upstream downtime. Restored after 15 mins."
-    },
-    {
-      title: "Feature Portal Slowdown",
-      date: "Nov 7, 2025",
-      details: "Increased latency observed during sync. Fixed in 20 mins."
-    }
-  ]
 };
 
 // ==== THEME DETECT ====
