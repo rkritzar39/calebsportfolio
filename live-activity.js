@@ -113,19 +113,32 @@ function setupProgress(startMs, endMs) {
 }
 
 /* ======================================================= */
-/* === DYNAMIC BACKGROUND + ACCENT ======================= */
+/* === DYNAMIC BACKGROUND + ACCENT (with settings) ======= */
 /* ======================================================= */
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  const accent = getComputedStyle(document.documentElement)
-    .getPropertyValue("--accent-color")
-    .trim() || "#1DB954";
-  activity.style.setProperty("--dynamic-accent", accent);
+  // Load settings from localStorage
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const matchAccent = settings.matchSongAccent === "enabled";
+  const userAccent = settings.accentColor || "#1DB954";
 
+  // Default fallback
+  let appliedAccent = userAccent;
+
+  // If matching is OFF → just use saved accent color
+  if (!matchAccent) {
+    document.documentElement.style.setProperty("--accent-color", userAccent);
+    activity.style.setProperty("--dynamic-bg", "none");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    return;
+  }
+
+  // === Extract dominant color from album art ===
   if (!imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
+    document.documentElement.style.setProperty("--accent-color", userAccent);
     return;
   }
 
@@ -136,27 +149,39 @@ function updateDynamicColors(imageUrl) {
   img.onload = () => {
     try {
       const canvas = document.createElement("canvas");
-      canvas.width  = img.width;
-      canvas.height = img.height;
       const ctx = canvas.getContext("2d");
+      canvas.width = img.width;
+      canvas.height = img.height;
       ctx.drawImage(img, 0, 0, img.width, img.height);
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       let r = 0, g = 0, b = 0, count = 0;
       for (let i = 0; i < data.length; i += 4) {
-        r += data[i]; g += data[i + 1]; b += data[i + 2]; count++;
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
       }
       r = Math.floor(r / count);
       g = Math.floor(g / count);
       b = Math.floor(b / count);
 
-      const dynamic  = `rgb(${r},${g},${b})`;
-      const gradient = `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.15))`;
-      activity.style.setProperty("--dynamic-bg", gradient);
-      activity.style.setProperty("--dynamic-accent", dynamic);
+      appliedAccent = `rgb(${r}, ${g}, ${b})`;
+
+      // Smoothly transition between colors
+      document.documentElement.style.transition = "var(--accent-transition, background-color 0.6s ease)";
+      activity.style.transition = "background 0.6s ease, box-shadow 0.6s ease";
+
+      document.documentElement.style.setProperty("--accent-color", appliedAccent);
+      activity.style.setProperty("--dynamic-accent", appliedAccent);
+      activity.style.setProperty(
+        "--dynamic-bg",
+        `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.15))`
+      );
     } catch (err) {
       console.warn("Dynamic color extraction failed:", err);
-      activity.style.setProperty("--dynamic-accent", accent);
+      document.documentElement.style.setProperty("--accent-color", userAccent);
+      activity.style.setProperty("--dynamic-accent", userAccent);
     }
   };
 }
