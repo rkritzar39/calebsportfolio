@@ -1,0 +1,105 @@
+:root {
+  --ok: #30d158;
+  --warn: #ffd60a;
+  --down: #ff453a;
+  --bg: color-mix(in srgb, var(--content-bg, #ffffff) 90%, transparent);
+  --border: color-mix(in srgb, var(--border-color, #ccc) 50%, transparent);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  background: linear-gradient(180deg, #f5f5f7 0%, #e9ebee 100%);
+  color: #000;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.status-page {
+  backdrop-filter: blur(25px) saturate(160%);
+  -webkit-backdrop-filter: blur(25px) saturate(160%);
+  background: var(--bg);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  padding: 40px;
+  margin-top: 60px;
+  width: 90%;
+  max-width: 700px;
+  text-align: center;
+}
+
+.status-page h1 {
+  font-weight: 600;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.overall-status {
+  background: rgba(48,209,88,0.15);
+  border: 1px solid rgba(48,209,88,0.4);
+  color: var(--ok);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 15px 0;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.status-grid {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.4);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.status-indicator span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.status-ok span { background: var(--ok); }
+.status-warn span { background: var(--warn); }
+.status-down span { background: var(--down); }
+
+.last-updated {
+  color: #555;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+button#refresh-btn {
+  margin-top: 25px;
+  padding: 10px 18px;
+  background: #007aff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button#refresh-btn:hover {
+  background: #005ecb;
+}
