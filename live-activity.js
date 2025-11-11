@@ -113,7 +113,7 @@ function setupProgress(startMs, endMs) {
 }
 
 /* ======================================================= */
-/* === DYNAMIC BACKGROUND + ACCENT (with settings) ======= */
+/* === DYNAMIC BACKGROUND + ACCENT (Spotify-only) ========= */
 /* ======================================================= */
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
@@ -124,24 +124,23 @@ function updateDynamicColors(imageUrl) {
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent = settings.accentColor || "#1DB954";
 
-  // Default fallback
   let appliedAccent = userAccent;
 
-  // If matching is OFF → just use saved accent color
+  // 🎨 If matching is OFF → use saved accent color only
   if (!matchAccent) {
-    document.documentElement.style.setProperty("--accent-color", userAccent);
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
-  // === Extract dominant color from album art ===
+  // 🎵 If no album art available → fallback
   if (!imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
-    document.documentElement.style.setProperty("--accent-color", userAccent);
+    activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
+  // 🧠 Extract dominant color from album art
   const img = new Image();
   img.crossOrigin = "anonymous";
   img.src = imageUrl;
@@ -162,17 +161,17 @@ function updateDynamicColors(imageUrl) {
         b += data[i + 2];
         count++;
       }
+
       r = Math.floor(r / count);
       g = Math.floor(g / count);
       b = Math.floor(b / count);
 
       appliedAccent = `rgb(${r}, ${g}, ${b})`;
 
-      // Smoothly transition between colors
-      document.documentElement.style.transition = "var(--accent-transition, background-color 0.6s ease)";
+      // Smooth transition
       activity.style.transition = "background 0.6s ease, box-shadow 0.6s ease";
 
-      document.documentElement.style.setProperty("--accent-color", appliedAccent);
+      // ✅ Apply accent only to Spotify card
       activity.style.setProperty("--dynamic-accent", appliedAccent);
       activity.style.setProperty(
         "--dynamic-bg",
@@ -180,7 +179,6 @@ function updateDynamicColors(imageUrl) {
       );
     } catch (err) {
       console.warn("Dynamic color extraction failed:", err);
-      document.documentElement.style.setProperty("--accent-color", userAccent);
       activity.style.setProperty("--dynamic-accent", userAccent);
     }
   };
