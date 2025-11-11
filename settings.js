@@ -125,6 +125,7 @@ class SettingsManager {
       appearanceMode: "device",   // "device" | "light" | "dark"
       themeStyle: "clear",
       accentColor: "#3ddc84",
+      matchSongAccent: "enabled",
 
       // Scheduler
       darkModeScheduler: "off",   // "off" | "auto"
@@ -307,6 +308,10 @@ class SettingsManager {
       this.checkAccentColor(this.settings.accentColor);
     }
 
+    // 🎵 Match Song Accent toggle
+    const matchToggle = document.getElementById("matchSongAccentToggle");
+    if (matchToggle) matchToggle.checked = this.settings.matchSongAccent === "enabled";
+
     // Text size
     const slider = document.getElementById("text-size-slider");
     const badge = document.getElementById("textSizeValue");
@@ -419,6 +424,23 @@ class SettingsManager {
         this.updateSliderFill(document.getElementById("blur-slider"));
       });
     }
+
+    // 🎵 Match Song Accent listener
+const matchToggle = document.getElementById("matchSongAccentToggle");
+if (matchToggle) {
+  matchToggle.addEventListener("change", (e) => {
+    this.settings.matchSongAccent = e.target.checked ? "enabled" : "disabled";
+    this.saveSettings();
+
+    // Optional feedback
+    this.showToast(
+      "Accent Sync Updated",
+      e.target.checked
+        ? "Accent color will now match your current Spotify song."
+        : "Accent color will use your custom color only."
+    );
+  });
+}
 
     // Text size
     const slider = document.getElementById("text-size-slider");
