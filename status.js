@@ -1,55 +1,53 @@
-// === CONFIG — EASY TO EDIT ===
+// ==== CONFIG ====
 const CONFIG = {
   groups: [
     {
       name: "Core Systems",
       services: [
-        { name: "Website", status: "ok" },
-        { name: "User Settings", status: "ok" },
-        { name: "Feature Portal", status: "warn" }
+        { name: "Website", status: "ok", uptime: 99.98 },
+        { name: "User Settings", status: "ok", uptime: 100 },
+        { name: "Feature Portal", status: "warn", uptime: 97.2 }
       ]
     },
     {
       name: "APIs & Integrations",
       services: [
-        { name: "Spotify Live", status: "ok" },
-        { name: "Weather API", status: "ok" },
-        { name: "Firebase Sync", status: "ok" }
+        { name: "Spotify Live", status: "ok", uptime: 99.6 },
+        { name: "Weather API", status: "down", uptime: 92.5 },
+        { name: "Firebase Sync", status: "ok", uptime: 99.9 }
       ]
     },
     {
       name: "External Services",
       services: [
-        { name: "Discord Lanyard", status: "ok" },
-        { name: "GitHub API", status: "ok" }
+        { name: "Discord Lanyard", status: "ok", uptime: 100 },
+        { name: "GitHub API", status: "ok", uptime: 99.8 }
       ]
     }
   ],
   incidents: [
     {
-      title: "Feature Portal Slowdown",
-      date: "November 11, 2025",
-      details: "Feature Portal had slower responses due to a background sync issue. Fixed."
+      title: "Weather API Outage",
+      date: "Nov 9, 2025",
+      details: "Service unavailable due to upstream downtime. Restored after 15 mins."
     },
     {
-      title: "Weather API Timeout",
-      date: "November 3, 2025",
-      details: "Temporary outage caused by upstream provider. Resolved in 15 minutes."
+      title: "Feature Portal Slowdown",
+      date: "Nov 7, 2025",
+      details: "Increased latency observed during sync. Fixed in 20 mins."
     }
   ]
 };
 
-// === THEME DETECTOR ===
+// ==== THEME DETECT ====
 function applyTheme() {
   const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
 }
 applyTheme();
-
-// Update theme dynamically if system changes
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
 
-// === RENDER FUNCTION ===
+// ==== RENDER ====
 function renderStatus() {
   const container = document.getElementById("status-groups");
   const banner = document.getElementById("overall-status");
@@ -59,31 +57,45 @@ function renderStatus() {
 
   let allOk = true;
 
-  CONFIG.groups.forEach(group => {
+  CONFIG.groups.forEach((group) => {
     const groupEl = document.createElement("div");
-    groupEl.className = "status-group";
-    groupEl.innerHTML = `<h2>${group.name}</h2>`;
+    groupEl.className = "group";
 
-    group.services.forEach(service => {
+    const header = document.createElement("div");
+    header.className = "group-header";
+    header.innerHTML = `
+      <h2>${group.name}</h2>
+      <span class="arrow">▼</span>
+    `;
+
+    const grid = document.createElement("div");
+    grid.className = "status-grid";
+
+    group.services.forEach((s) => {
       const item = document.createElement("div");
-      item.className = `status-item status-${service.status}`;
+      item.className = `status-item status-${s.status}`;
       item.innerHTML = `
-        <div class="status-indicator ${service.status}">
-          <span></span> ${service.name}
+        <div class="status-indicator"><span></span> ${s.name}</div>
+        <div class="status-text">
+          ${s.status === "ok" ? "Operational ✅" : s.status === "warn" ? "Degraded ⚠️" : "Outage 🔴"}
+          <span class="uptime">${s.uptime}% uptime</span>
         </div>
-        <div class="status-text">${
-          service.status === "ok" ? "Operational ✅" :
-          service.status === "warn" ? "Degraded ⚠️" :
-          "Outage 🔴"
-        }</div>
       `;
-      groupEl.appendChild(item);
-      if (service.status !== "ok") allOk = false;
+      grid.appendChild(item);
+      if (s.status !== "ok") allOk = false;
     });
 
+    // collapse toggle
+    header.addEventListener("click", () => {
+      groupEl.classList.toggle("collapsed");
+    });
+
+    groupEl.appendChild(header);
+    groupEl.appendChild(grid);
     container.appendChild(groupEl);
   });
 
+  // Banner
   if (allOk) {
     banner.style.background = "rgba(48,209,88,0.15)";
     banner.style.border = "1px solid rgba(48,209,88,0.4)";
@@ -96,10 +108,11 @@ function renderStatus() {
     banner.innerHTML = "<p>Some systems experiencing issues ⚠️</p>";
   }
 
+  // Incidents
   if (CONFIG.incidents.length === 0) {
     log.innerHTML = "<p>No recent incidents 🎉</p>";
   } else {
-    CONFIG.incidents.forEach(incident => {
+    CONFIG.incidents.forEach((incident) => {
       const entry = document.createElement("div");
       entry.className = "incident";
       entry.innerHTML = `
