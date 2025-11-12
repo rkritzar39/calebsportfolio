@@ -1445,3 +1445,72 @@ body.dark-mode .bubble {
   padding-left: 16px;
   transition: 0.3s ease;
 }
+
+/* ======================================================= */
+/* 🍎 Onyx Glass Floating Dock – Matches iOS 26 Look       */
+/* ======================================================= */
+.onyx-dock {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 26px;
+  padding: 10px 28px;
+  border-radius: 40px;
+  z-index: 9999;
+
+  /* match your glass system */
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border-light);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.25),
+    0 12px 28px rgba(0,0,0,0.25);
+}
+
+body.dark-mode .onyx-dock {
+  background: var(--glass-bg-dark);
+  border-color: var(--glass-border-dark);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 14px 36px rgba(0,0,0,0.55);
+}
+
+.onyx-dock .dock-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.85;
+  transition: all 0.25s ease;
+  padding: 6px 14px;
+  border-radius: 25px;
+}
+
+.onyx-dock .dock-item:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.onyx-dock .dock-item.active {
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 25%, transparent);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--accent-color) 40%, transparent);
+  opacity: 1;
+}
+
+.onyx-dock .dock-icon {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.onyx-dock .dock-label {
+  font-size: 12px;
+}
