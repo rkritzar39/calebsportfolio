@@ -1,9 +1,6 @@
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
-/* ======================================================= */
-/* === CONFIG ============================================ */
-/* ======================================================= */
 const CONFIG = {
   discord: { userId: "850815059093356594" },
   twitch:  { username: "calebkritzar" },
@@ -12,15 +9,12 @@ const CONFIG = {
   tiktok:  { username: "calebkritzar" },
 };
 
-/* ======================================================= */
-/* === GLOBAL STATE ====================================== */
-/* ======================================================= */
 let lastUpdateTime = null;
 let progressInterval = null;
-let activityTimer = null;
 let currentSpotifyUrl = null;
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
+
 let lastGitHubEventId = null;
 let lastRedditPostId  = null;
 let lastTikTokVideoId = null;
@@ -30,12 +24,13 @@ const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /* ======================================================= */
-/* === ICONS ============================================= */
+/* === OFFICIAL PLATFORM ICONS (AUTO LIGHT/DARK) ========= */
 /* ======================================================= */
 function getThemeColor(hexLight, hexDark) {
   const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   return isDark ? hexDark.replace("#", "") : hexLight.replace("#", "");
 }
+
 const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   discord: "https://cdn.simpleicons.org/discord/5865F2",
@@ -47,17 +42,18 @@ const ICON_MAP = {
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
-
 /* ======================================================= */
-/* === STATUS LINE HELPERS =============================== */
+/* === STATUS LINE HANDLER =============================== */
 /* ======================================================= */
 function setStatusLine(text, isVisible = true, source = "default") {
-  const txt  = $$("status-line-text");
-  const line = $$("status-line");
-  const icon = $$("status-icon");
+  const txt  = document.getElementById("status-line-text");
+  const line = document.getElementById("status-line");
+  const icon = document.getElementById("status-icon");
   if (!txt || !line || !icon) return;
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
+
+  // Clean fade transition
   line.style.opacity = 0;
   setTimeout(() => {
     icon.src = iconUrl;
@@ -67,13 +63,13 @@ function setStatusLine(text, isVisible = true, source = "default") {
     line.style.opacity = 1;
   }, 150);
 
+  // Add subtle glow for live/active
   icon.classList.remove("glow");
-  if (["spotify", "twitch"].includes(source)) icon.classList.add("glow");
+  if (source === "spotify" || source === "twitch") icon.classList.add("glow");
 
   lastUpdateTime = Date.now();
   updateLastUpdated();
 }
-
 /* ======================================================= */
 /* === LAST UPDATED LABEL ================================ */
 /* ======================================================= */
@@ -83,10 +79,10 @@ function updateLastUpdated() {
   if (!lastUpdateTime) { el.textContent = "—"; return; }
   const s = Math.floor((Date.now() - lastUpdateTime) / 1000);
   el.textContent =
-    s < 5 ? "Updated just now" :
-    s < 60 ? `Updated ${s}s ago` :
+    s < 5    ? "Updated just now" :
+    s < 60   ? `Updated ${s}s ago` :
     s < 3600 ? `Updated ${Math.floor(s / 60)}m ago` :
-    `${Math.floor(s / 3600)}h ago`;
+               `${Math.floor(s / 3600)}h ago`;
 }
 
 /* ======================================================= */
@@ -98,208 +94,294 @@ function setupProgress(startMs, endMs) {
   const remainEl  = $$("remaining-time");
   const totalEl   = $$("total-time");
   if (!bar || !startMs || !endMs) return;
+
   const totalSec = (endMs - startMs) / 1000;
   totalEl.textContent = fmt(totalSec);
   clearInterval(progressInterval);
+
   function tick() {
-    const now = Date.now();
+    const now        = Date.now();
     const elapsedSec = Math.min((now - startMs) / 1000, totalSec);
-    const left = Math.max(totalSec - elapsedSec, 0);
-    bar.style.width = `${(elapsedSec / totalSec) * 100}%`;
+    const left       = Math.max(totalSec - elapsedSec, 0);
+    bar.style.width  = `${(elapsedSec / totalSec) * 100}%`;
     elapsedEl.textContent = fmt(elapsedSec);
     remainEl.textContent  = `-${fmt(left)}`;
   }
+
   tick();
   progressInterval = setInterval(tick, 1000);
 }
 
 /* ======================================================= */
-/* === ACCENT COLOR (Spotify album art) ================== */
+/* === DYNAMIC BACKGROUND + ACCENT (Spotify-only) ========= */
 /* ======================================================= */
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
+
+  // Load settings from localStorage
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent = settings.accentColor || "#1DB954";
-  if (!matchAccent || !imageUrl) {
+
+  let appliedAccent = userAccent;
+
+  // 🎨 If matching is OFF → use saved accent color only
+  if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
+
+  // 🎵 If no album art available → fallback
+  if (!imageUrl) {
+    activity.style.setProperty("--dynamic-bg", "none");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    return;
+  }
+
+  // 🧠 Extract dominant color from album art
   const img = new Image();
   img.crossOrigin = "anonymous";
   img.src = imageUrl;
+
   img.onload = () => {
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       canvas.width = img.width;
       canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let r=0,g=0,b=0,count=0;
-      for (let i=0;i<data.length;i+=4){r+=data[i];g+=data[i+1];b+=data[i+2];count++;}
-      r=Math.floor(r/count);g=Math.floor(g/count);b=Math.floor(b/count);
-      const col=`rgb(${r},${g},${b})`;
-      activity.style.transition="background .6s ease,box-shadow .6s ease";
-      activity.style.setProperty("--dynamic-accent",col);
-      activity.style.setProperty("--dynamic-bg",`linear-gradient(180deg,rgba(${r},${g},${b},.35),rgba(${r},${g},${b},.15))`);
-    }catch(e){activity.style.setProperty("--dynamic-accent",userAccent);}
-  };
-}
+      let r = 0, g = 0, b = 0, count = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
+      }
 
-/* ======================================================= */
-/* === LANYARD WEBSOCKET (REALTIME) ====================== */
-/* ======================================================= */
-let ws=null, hb=null, reconnectTimer=null;
-function connectLanyard(){
-  ws=new WebSocket("wss://api.lanyard.rest/socket");
-  ws.onopen=()=>console.log("✅ Lanyard connected");
-  ws.onmessage=(e)=>{
-    const msg=JSON.parse(e.data);
-    if(msg.op===1){
-      hb=setInterval(()=>ws?.readyState===1&&ws.send(JSON.stringify({op:3})),msg.d.heartbeat_interval);
-      ws.send(JSON.stringify({op:2,d:{subscribe_to_id:CONFIG.discord.userId}}));
-      fetchLanyardOnce();
+      r = Math.floor(r / count);
+      g = Math.floor(g / count);
+      b = Math.floor(b / count);
+
+      appliedAccent = `rgb(${r}, ${g}, ${b})`;
+
+      // Smooth transition
+      activity.style.transition = "background 0.6s ease, box-shadow 0.6s ease";
+
+      // ✅ Apply accent only to Spotify card
+      activity.style.setProperty("--dynamic-accent", appliedAccent);
+      activity.style.setProperty(
+        "--dynamic-bg",
+        `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.15))`
+      );
+    } catch (err) {
+      console.warn("Dynamic color extraction failed:", err);
+      activity.style.setProperty("--dynamic-accent", userAccent);
     }
-    if(msg.op===0&&(msg.t==="INIT_STATE"||msg.t==="PRESENCE_UPDATE")) renderDiscord(msg.d);
   };
-  ws.onclose=scheduleReconnect;
-  ws.onerror=scheduleReconnect;
-}
-function scheduleReconnect(){clearInterval(hb);if(reconnectTimer)return;reconnectTimer=setTimeout(connectLanyard,1500);}
-async function fetchLanyardOnce(){
-  try{const r=await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}`);const j=await r.json();
-    if(j?.data)renderDiscord(j.data);}catch(e){console.warn("Lanyard REST fail",e);}
 }
 
 /* ======================================================= */
-/* === DISCORD RENDERER ================================== */
+/* === DISCORD (Spotify + status) ======================== */
 /* ======================================================= */
-function renderDiscord(d){
-  if(!d)return;
-  const spotify=d.spotify;
-  const custom=(d.activities||[]).find(a=>a.type===4);
-  const game=(d.activities||[]).find(a=>a.type===0);
-  const status=d.discord_status;
-  const device=d.active_on_discord_mobile?"Mobile":d.active_on_discord_desktop?"Desktop":"";
-  const voice=d.in_voice_channel;
-  
-  // Presence summary line
-  let presence=`${status?.charAt(0).toUpperCase()+status?.slice(1)||"Offline"}`;
-  if(device) presence+=` · ${device}`;
-  if(voice) presence+=" · In Voice";
-  if(custom) presence+=` · ${custom.emoji?.name||""}${custom.state||""}`;
-  
-  // Spotify (always top priority)
-  if(spotify){
-    $$("spotify-card").classList.remove("hidden");
-    $$("live-activity-cover").src=spotify.album_art_url;
-    $$("live-song-title").textContent=spotify.song;
-    $$("live-song-artist").textContent=spotify.artist;
-    currentSpotifyUrl=`https://open.spotify.com/track/${spotify.track_id}`;
-    setupProgress(spotify.timestamps.start,spotify.timestamps.end);
-    updateDynamicColors(spotify.album_art_url);
-    setStatusLine("Listening to Spotify",true,"spotify");
-  } else {
+async function getDiscord() {
+  try {
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}`, { cache: "no-store" });
+    const { data } = await res.json();
+    if (!data) return null;
+
+  if (data.spotify) {
+  const sp = data.spotify;
+  $$("spotify-card").classList.remove("hidden");
+  $$("live-activity-cover").src = sp.album_art_url;
+  $$("live-song-title").textContent = sp.song;
+  $$("live-song-artist").textContent = sp.artist;
+  currentSpotifyUrl = `https://open.spotify.com/track/${sp.track_id}`;
+  setupProgress(sp.timestamps.start, sp.timestamps.end);
+  updateDynamicColors(sp.album_art_url);
+  return { text: "Listening to Spotify", source: "spotify" };
+}
     $$("spotify-card").classList.add("hidden");
     updateDynamicColors(null);
-  }
 
-  // Game / Rich activity card
-  if(game){
-    const card=$$("activity-card");
-    if(card){
-      card.classList.remove("hidden");
-      $$("activity-name").textContent=game.name||"—";
-      $$("activity-details").textContent=game.details||game.state||"";
-      const icon=$$("activity-icon-img");
-      if(icon){
-        const asset=game.assets?.large_image||game.assets?.small_image||"";
-        icon.src=assetToUrl(asset,game.application_id);
-      }
-      const start=game.timestamps?.start||null;
-      if(start) startActivityTimer(start);
+    // If offline
+    const map = {
+      online: "Online on Discord",
+      idle: "Idle on Discord",
+      dnd: "Do Not Disturb",
+      offline: "No Current Active Activities",
+    };
+    const status = map[data.discord_status] || "No Current Active Activities";
+    return { text: status, source: "discord" };
+  } catch (e) {
+    console.warn("Discord error:", e);
+    return null;
+  }
+}
+
+/* ======================================================= */
+/* === TWITCH ============================================ */
+/* ======================================================= */
+async function getTwitch() {
+  const u = (CONFIG.twitch.username || "").toLowerCase();
+  if (!u) return null;
+  try {
+    const r1 = await fetch(`https://decapi.me/twitch/live/${u}`, { cache: "no-store" });
+    const t1 = (await r1.text()).toLowerCase();
+    if (t1.includes("is live")) {
+      twitchWasLive = true;
+      return { text: "Now Live on Twitch", source: "twitch" };
     }
-  } else {
-    $$("activity-card")?.classList.add("hidden");
-    stopActivityTimer();
+    twitchWasLive = false;
+  } catch (e) {
+    console.warn("Twitch error:", e);
+  }
+  return null;
+}
+
+/* ======================================================= */
+/* === REDDIT ============================================ */
+/* ======================================================= */
+async function getReddit() {
+  const u = CONFIG.reddit.username;
+  if (!u) return null;
+  try {
+    const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, { cache: "no-store" });
+    const j = await r.json();
+    const post = j?.data?.children?.[0]?.data;
+    if (post && post.id !== lastRedditPostId) {
+      lastRedditPostId = post.id;
+      return { text: "Shared on Reddit", source: "reddit", isTemp: true };
+    }
+  } catch (e) {
+    console.warn("Reddit error:", e);
+  }
+  return null;
+}
+
+/* ======================================================= */
+/* === GITHUB ============================================ */
+/* ======================================================= */
+async function getGitHub() {
+  const u = CONFIG.github.username;
+  if (!u) return null;
+  try {
+    const r = await fetch(`https://api.github.com/users/${u}/events/public`, { cache: "no-store" });
+    const events = await r.json();
+    const evt = Array.isArray(events)
+      ? events.find((e) => ["PushEvent", "CreateEvent", "PullRequestEvent"].includes(e.type))
+      : null;
+    if (evt && evt.id !== lastGitHubEventId) {
+      lastGitHubEventId = evt.id;
+      return { text: "Committed on GitHub", source: "github", isTemp: true };
+    }
+  } catch (e) {
+    console.warn("GitHub error:", e);
+  }
+  return null;
+}
+
+/* ======================================================= */
+/* === TIKTOK ============================================ */
+/* ======================================================= */
+async function getTikTok() {
+  const u = CONFIG.tiktok.username;
+  if (!u) return null;
+  try {
+    const res = await fetch(`https://r.jina.ai/http://www.tiktok.com/@${u}`, { cache: "no-store" });
+    const html = await res.text();
+    const m = html.match(/\/video\/(\d+)/);
+    const videoId = m?.[1];
+    if (videoId && videoId !== lastTikTokVideoId) {
+      lastTikTokVideoId = videoId;
+      return { text: "Posted on TikTok", source: "tiktok", isTemp: true };
+    }
+  } catch (e) {
+    console.warn("TikTok error:", e);
+  }
+  return null;
+}
+
+/* ======================================================= */
+/* === STATUS DECISION =================================== */
+/* ======================================================= */
+function applyStatusDecision({ main, twitchLive, temp }) {
+  const spotifyCard = $$("spotify-card");
+
+  // Temporary banner (TikTok, Reddit, GitHub)
+  if (temp && temp.text && Date.now() < temp.expiresAt) {
+    setStatusLine(temp.text, true, temp.source || "default");
+    return;
   }
 
-  // Presence line update
-  setStatusLine(presence,true,"discord");
+  // Spotify (main)
+  if (main?.source === "spotify") {
+    setStatusLine(main.text, true, "spotify");
+    spotifyCard.classList.remove("hidden");
+    return;
+  }
+
+  // Twitch live
+  if (twitchLive) {
+    setStatusLine("Now Live on Twitch", true, "twitch");
+    return;
+  }
+
+  // Discord active or manual
+  if (main && main.text && main.text !== "No Current Active Activities") {
+    setStatusLine(main.text, true, main.source || "discord");
+    return;
+  }
+
+  // Default fallback — completely idle
+  setStatusLine("No Current Active Activities", true, "manual");
 }
 
-function assetToUrl(asset,appId){
-  if(!asset)return "";
-  if(asset.startsWith("mp:")||asset.startsWith("spotify:"))
-    return `https://media.discordapp.net/${asset.replace(/^mp:\//,"")}`;
-  return appId?`https://cdn.discordapp.com/app-assets/${appId}/${asset}.png`:"";
-}
+/* ======================================================= */
+/* === UPDATE LOOP ======================================= */
+/* ======================================================= */
+async function updateLiveStatus() {
+  const [discord, twitch, tiktok, reddit, github] = await Promise.all([
+    getDiscord(),
+    getTwitch(),
+    getTikTok(),
+    getReddit(),
+    getGitHub(),
+  ]);
 
-/* ======================================================= */
-/* === ACTIVITY TIMER ==================================== */
-/* ======================================================= */
-function startActivityTimer(start){
-  stopActivityTimer();
-  const t=$$("activity-timer");
-  activityTimer=setInterval(()=>{
-    const elapsed=Date.now()-start;
-    const s=Math.floor(elapsed/1000);
-    const m=Math.floor(s/60);
-    const sec=s%60;
-    if(t)t.textContent=`Elapsed ${m}:${String(sec).padStart(2,"0")}`;
-  },1000);
-}
-function stopActivityTimer(){clearInterval(activityTimer);activityTimer=null;}
+  const main = discord || { text: "No Current Active Activities", source: "manual" };
 
-/* ======================================================= */
-/* === TWITCH / REDDIT / GITHUB / TIKTOK ================ */
-/* ======================================================= */
-async function getTwitch(){const u=(CONFIG.twitch.username||"").toLowerCase();if(!u)return null;
-  try{const r=await fetch(`https://decapi.me/twitch/live/${u}`);const t=(await r.text()).toLowerCase();
-  if(t.includes("is live")){twitchWasLive=true;return{text:"Now Live on Twitch",source:"twitch"};}twitchWasLive=false;}catch(e){console.warn(e);}return null;}
-async function getReddit(){const u=CONFIG.reddit.username;if(!u)return null;
-  try{const r=await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`);
-  const j=await r.json();const p=j?.data?.children?.[0]?.data;
-  if(p&&p.id!==lastRedditPostId){lastRedditPostId=p.id;return{text:"Shared on Reddit",source:"reddit",isTemp:true};}}catch(e){console.warn(e);}return null;}
-async function getGitHub(){const u=CONFIG.github.username;if(!u)return null;
-  try{const r=await fetch(`https://api.github.com/users/${u}/events/public`);
-  const ev=await r.json();const e=Array.isArray(ev)?ev.find(x=>["PushEvent","CreateEvent","PullRequestEvent"].includes(x.type)):null;
-  if(e&&e.id!==lastGitHubEventId){lastGitHubEventId=e.id;return{text:"Committed on GitHub",source:"github",isTemp:true};}}catch(e){console.warn(e);}return null;}
-async function getTikTok(){const u=CONFIG.tiktok.username;if(!u)return null;
-  try{const r=await fetch(`https://r.jina.ai/http://www.tiktok.com/@${u}`);const h=await r.text();const m=h.match(/\/video\/(\d+)/);const v=m?.[1];
-  if(v&&v!==lastTikTokVideoId){lastTikTokVideoId=v;return{text:"Posted on TikTok",source:"tiktok",isTemp:true};}}catch(e){console.warn(e);}return null;}
+  const tempHit = [tiktok, reddit, github].find((r) => r && r.isTemp);
+  if (tempHit) {
+    tempBanner = { text: tempHit.text, source: tempHit.source, expiresAt: Date.now() + TEMP_BANNER_MS };
+  } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
+    tempBanner = null;
+  }
 
-/* ======================================================= */
-/* === LOOP + INIT ======================================= */
-/* ======================================================= */
-let tempBanner=null;
-function applyStatusDecision({main,twitchLive,temp}){
-  if(temp&&temp.text&&Date.now()<temp.expiresAt){setStatusLine(temp.text,true,temp.source);return;}
-  if(twitchLive){setStatusLine("Now Live on Twitch",true,"twitch");return;}
-  if(main&&main.text){setStatusLine(main.text,true,main.source);return;}
-  setStatusLine("No Current Active Activities",true,"manual");
-}
-async function updateLiveStatus(){
-  const [twitch,tiktok,reddit,github]=await Promise.all([getTwitch(),getTikTok(),getReddit(),getGitHub()]);
-  const main={text:"",source:"discord"};
-  const tempHit=[tiktok,reddit,github].find(r=>r&&r.isTemp);
-  if(tempHit){tempBanner={text:tempHit.text,source:tempHit.source,expiresAt:Date.now()+TEMP_BANNER_MS};}
-  else if(tempBanner&&Date.now()>=tempBanner.expiresAt){tempBanner=null;}
-  applyStatusDecision({main,twitchLive:!!twitch,temp:tempBanner});
+  applyStatusDecision({
+    main,
+    twitchLive: !!twitch,
+    temp: tempBanner,
+  });
+
   $$("live-activity").classList.remove("hidden");
 }
 
 /* ======================================================= */
-/* === STARTUP =========================================== */
+/* === INIT ============================================== */
 /* ======================================================= */
-document.addEventListener("DOMContentLoaded",()=>{
-  const card=$$("spotify-card");
-  if(card){card.addEventListener("click",()=>{if(currentSpotifyUrl)window.open(currentSpotifyUrl,"_blank");});}
-  connectLanyard(); // connect Discord realtime
-  updateLiveStatus(); // update other platforms
-  setInterval(updateLiveStatus,15000);
-  setInterval(updateLastUpdated,1000);
+document.addEventListener("DOMContentLoaded", () => {
+  const card = $$("spotify-card");
+  if (card) {
+    card.addEventListener("click", () => {
+      if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank");
+    });
+  }
+
+  updateLiveStatus();
+  setInterval(updateLiveStatus, 10000);
+  setInterval(updateLastUpdated, 1000);
 });
