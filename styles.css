@@ -458,40 +458,52 @@ a.corner-button {
     text-decoration: none;
 }
 
-/* ============================================= */
-/* 🍎 Apple-Style Floating Dock Navigation */
-/* ============================================= */
-/* 🍎 Compact Onyx Dock (Reduced Height & Perfect Alignment) */
+/* 🍎 Onyx Glass Dock – Real Apple-Style Glass Material */
 .onyx-dock {
   position: fixed;
-  bottom: 14px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  padding: 6px 18px;
-  border-radius: 32px;
+  gap: 22px;
+  padding: 8px 22px;
+  border-radius: 30px;
   z-index: 9999;
 
-  background: var(--glass-bg-light);
-  border: 1px solid var(--glass-border-light);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  /* Realistic Onyx layering */
+  background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.04)
+    ),
+    var(--glass-bg-light);
+  border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.25),
-    0 8px 20px rgba(0,0,0,0.25);
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.05),
+    0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
+/* Dark mode tuning */
 body.dark-mode .onyx-dock {
-  background: var(--glass-bg-dark);
-  border-color: var(--glass-border-dark);
+  background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    ),
+    var(--glass-bg-dark);
+  border-color: color-mix(in srgb, var(--glass-border-dark) 60%, transparent);
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.08),
-    0 10px 26px rgba(0,0,0,0.55);
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    0 10px 30px rgba(0, 0, 0, 0.55);
 }
 
+/* Dock items */
 .onyx-dock .dock-item {
   display: flex;
   flex-direction: column;
@@ -499,14 +511,15 @@ body.dark-mode .onyx-dock {
   justify-content: center;
   text-decoration: none;
   color: var(--text-color);
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 500;
-  opacity: 0.85;
+  opacity: 0.9;
   transition: all 0.25s ease;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 22px;
 }
 
+/* Active & hover states */
 .onyx-dock .dock-item:hover {
   opacity: 1;
   transform: translateY(-1.5px);
@@ -515,21 +528,33 @@ body.dark-mode .onyx-dock {
 .onyx-dock .dock-item.active {
   color: var(--accent-color);
   background: color-mix(in srgb, var(--accent-color) 25%, transparent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 35%, transparent);
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--accent-color) 35%, transparent),
+    inset 0 0 0 0.5px rgba(255,255,255,0.15);
   opacity: 1;
 }
 
+/* Icons */
 .onyx-dock .dock-icon {
   width: 20px;
   height: 20px;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
+/* Labels */
 .onyx-dock .dock-label {
   font-size: 11px;
+  letter-spacing: 0.01em;
   line-height: 1;
+  color: inherit;
+}
+
+/* Micro bounce animation for realism */
+.onyx-dock .dock-item:hover .dock-icon {
+  transform: scale(1.08);
+  transition: transform 0.25s cubic-bezier(.25,.8,.25,1);
 }
 
 /* ======================================================= */
