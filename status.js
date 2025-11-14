@@ -1,121 +1,69 @@
-// ==== CONFIG ====
-const CONFIG = {
-  groups: [
-    {
-      name: "Core Systems",
-      services: [
-        { name: "Website", status: "ok", uptime: 100 },
-        { name: "User Settings", status: "ok", uptime: 100 },
-        { name: "Feature Portal", status: "ok", uptime: 100 }
-      ]
-    },
-    {
-      name: "APIs & Integrations",
-      services: [
-        { name: "Spotify Live", status: "ok", uptime: 100 },
-        { name: "Weather API", status: "ok", uptime: 100 },
-        { name: "Firebase Sync", status: "ok", uptime: 100 }
-      ]
-    },
-    {
-      name: "External Services",
-      services: [
-        { name: "Discord Lanyard", status: "ok", uptime: 100 },
-        { name: "GitHub API", status: "ok", uptime: 100 }
-      ]
-    }
-  ],
-  incidents: [
-};
+async function loadStatus() {
+  const res = await fetch("status-data.json");
+  const data = await res.json();
 
-// ==== THEME DETECT ====
-function applyTheme() {
-  const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
-}
-applyTheme();
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+  // INCIDENT BANNER
+  const banner = document.getElementById("incident-banner");
 
-// ==== RENDER ====
-function renderStatus() {
+  if (data.incident?.active) {
+    banner.classList.remove("hide");
+
+    const cls =
+      data.incident.status === "major"
+        ? "incident-major"
+        : "incident-minor";
+
+    banner.classList.add(cls);
+
+    banner.innerHTML = `
+      <strong>${data.incident.title}</strong><br>
+      ${data.incident.description}
+    `;
+  }
+
+  // GROUPS + COMPONENTS
   const container = document.getElementById("status-groups");
-  const banner = document.getElementById("overall-status");
-  const log = document.getElementById("incident-log");
   container.innerHTML = "";
-  log.innerHTML = "";
 
-  let allOk = true;
-
-  CONFIG.groups.forEach((group) => {
-    const groupEl = document.createElement("div");
-    groupEl.className = "group";
-
-    const header = document.createElement("div");
-    header.className = "group-header";
-    header.innerHTML = `
-      <h2>${group.name}</h2>
-      <span class="arrow">▼</span>
+  data.groups.forEach(group => {
+    const groupDiv = document.createElement("div");
+    groupDiv.className = "group";
+    groupDiv.innerHTML = `
+      <div class="group-title">${group.name}</div>
     `;
 
-    const grid = document.createElement("div");
-    grid.className = "status-grid";
+    group.components.forEach(c => {
+      const cEl = document.createElement("div");
+      cEl.className = "component";
 
-    group.services.forEach((s) => {
-      const item = document.createElement("div");
-      item.className = `status-item status-${s.status}`;
-      item.innerHTML = `
-        <div class="status-indicator"><span></span> ${s.name}</div>
-        <div class="status-text">
-          ${s.status === "ok" ? "Operational ✅" : s.status === "warn" ? "Degraded ⚠️" : "Outage 🔴"}
-          <span class="uptime">${s.uptime}% uptime</span>
-        </div>
+      cEl.innerHTML = `
+        <div>${c.name}</div>
+        <div class="status ${c.status}">${formatStatus(c.status)}</div>
       `;
-      grid.appendChild(item);
-      if (s.status !== "ok") allOk = false;
+
+      // Uptime History
+      const hist = document.createElement("div");
+      hist.className = "history";
+
+      c.history.forEach(h => {
+        const hDiv = document.createElement("div");
+        hDiv.classList.add(h);
+        hist.appendChild(hDiv);
+      });
+
+      cEl.appendChild(hist);
+      groupDiv.appendChild(cEl);
     });
 
-    // collapse toggle
-    header.addEventListener("click", () => {
-      groupEl.classList.toggle("collapsed");
-    });
-
-    groupEl.appendChild(header);
-    groupEl.appendChild(grid);
-    container.appendChild(groupEl);
+    container.appendChild(groupDiv);
   });
-
-  // Banner
-  if (allOk) {
-    banner.style.background = "rgba(48,209,88,0.15)";
-    banner.style.border = "1px solid rgba(48,209,88,0.4)";
-    banner.style.color = "var(--ok)";
-    banner.innerHTML = "<p>All systems operational ✅</p>";
-  } else {
-    banner.style.background = "rgba(255,69,58,0.15)";
-    banner.style.border = "1px solid rgba(255,69,58,0.4)";
-    banner.style.color = "var(--down)";
-    banner.innerHTML = "<p>Some systems experiencing issues ⚠️</p>";
-  }
-
-  // Incidents
-  if (CONFIG.incidents.length === 0) {
-    log.innerHTML = "<p>No recent incidents 🎉</p>";
-  } else {
-    CONFIG.incidents.forEach((incident) => {
-      const entry = document.createElement("div");
-      entry.className = "incident";
-      entry.innerHTML = `
-        <h3>${incident.title}</h3>
-        <p><strong>${incident.date}</strong></p>
-        <p>${incident.details}</p>
-      `;
-      log.appendChild(entry);
-    });
-  }
-
-  document.getElementById("last-updated").textContent = new Date().toLocaleTimeString();
 }
 
-document.getElementById("refresh-btn").addEventListener("click", renderStatus);
-setInterval(renderStatus, 5 * 60 * 1000);
-renderStatus();
+function formatStatus(s) {
+  if (s === "operational") return "Operational";
+  if (s === "warn") return "Partial Outage";
+  if (s === "major") return "Major Outage";
+  return s;
+}
+
+loadStatus();
