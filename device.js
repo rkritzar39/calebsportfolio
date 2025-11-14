@@ -1,9 +1,8 @@
 /**
- * device.js — v14 SAFE+
- * ✅ Works on iOS, Android, and Desktop
- * ✅ Fixes version/build/synced display
- * ✅ Auto-updates Day/Night every minute
- * ✅ Accurate local sunrise/sunset times
+ * device.js — v14 SAFE+ UPDATED
+ * Fully automatic OS detection (NO macOS version maps)
+ * Shows WebKit + Safari version instead of fake macOS numbers
+ * Works on iOS, Android, macOS, Windows, Linux
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -36,9 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ----------------------------
-   * 🕒 Synced Clock (local TZ)
+   * 🕒 Synced Clock
    * -------------------------- */
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+
   function updateClock() {
     if (!syncedEl) return;
     const now = new Date();
@@ -54,72 +54,108 @@ document.addEventListener("DOMContentLoaded", () => {
   updateClock();
   setInterval(updateClock, 1000);
 
-/* ----------------------------
- * 💻 OS + Version
- * -------------------------- */
-function detectOSVersion() {
-  const ua = navigator.userAgent || "";
-  let os = "Unknown", ver = "";
+  /* ----------------------------
+   * 💻 OS + Version (NO MAPS)
+   * -------------------------- */
+  function detectOSVersion() {
+    const ua = navigator.userAgent || "";
+    let os = "Unknown";
+    let ver = "";
 
-  const isiPad = /iPad/i.test(ua) || 
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    const isiPad = /iPad/i.test(ua) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-  /* ===== iPadOS ===== */
-  if (isiPad) {
-    os = "iPadOS";
-    const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-    if (m) ver = m[1].replace(/_/g, ".");
+    /* ===== iPadOS ===== */
+    if (isiPad) {
+      os = "iPadOS";
+      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
+      ver = m ? m[1].replace(/_/g, ".") : "(Unknown)";
+    }
+
+    /* ===== iOS ===== */
+    else if (/iPhone|iPod/i.test(ua)) {
+      os = "iOS";
+      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
+      ver = m ? m[1].replace(/_/g, ".") : "(Unknown)";
+    }
+
+    /* ===== Android ===== */
+    else if (/Android/i.test(ua)) {
+      os = "Android";
+      const m = ua.match(/Android (\d+(\.\d+)?)/i);
+      ver = m ? m[1] : "(Unknown)";
+    }
+
+    /* ===== macOS — PURE AUTO (NO GUESSING) ===== */
+    else if (/Macintosh|Mac OS X/.test(ua)) {
+      os = "macOS";
+
+      // WebKit version
+      const wkMatch = ua.match(/AppleWebKit\/([\d.]+)/);
+      const wk = wkMatch ? wkMatch[1] : "Unknown";
+
+      // Safari version (if Safari)
+      let safari = "Unknown";
+      if (ua.includes("Safari") && !ua.includes("Chrome")) {
+        const s = ua.match(/Version\/([\d.]+)/);
+        if (s) safari = s[1];
+      }
+
+      // final: show exactly what browser exposes
+      ver = `WebKit ${wk}, Safari ${safari}`;
+    }
+
+    /* ===== Windows ===== */
+    else if (/Windows NT/i.test(ua)) {
+      os = "Windows";
+      const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
+      const m = ua.match(/Windows NT (\d+\.\d+)/);
+      ver = m ? map[m[1]] || m[1] : "(Unknown)";
+    }
+
+    /* ===== ChromeOS ===== */
+    else if (/CrOS/i.test(ua)) os = "ChromeOS";
+
+    /* ===== Linux ===== */
+    else if (/Linux/i.test(ua)) os = "Linux";
+
+    return ver ? `${os} ${ver}` : os;
   }
 
-  /* ===== iOS ===== */
-  else if (/iPhone|iPod/i.test(ua)) {
-    os = "iOS";
-    const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-    if (m) ver = m[1].replace(/_/g, ".");
+  safeSet(osEl, detectOSVersion());
+  fadeIn(osEl);
+
+  /* ----------------------------
+   * 📱 Device Name
+   * -------------------------- */
+  function detectDevice() {
+    const ua = navigator.userAgent || "";
+
+    if (/iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1))
+      return "iPad";
+
+    if (/iPhone/i.test(ua))
+      return "iPhone";
+
+    if (/Android/i.test(ua)) {
+      const m = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
+      return m ? m[1].trim() : "Android Device";
+    }
+
+    if (/Macintosh/i.test(ua))
+      return "Mac";
+
+    if (/Windows/i.test(ua))
+      return "Windows PC";
+
+    if (/Linux/i.test(ua))
+      return "Linux Device";
+
+    return "Unknown Device";
   }
 
-  /* ===== Android ===== */
-  else if (/Android/i.test(ua)) {
-    os = "Android";
-    const m = ua.match(/Android (\d+(\.\d+)?)/i);
-    if (m) ver = m[1];
-  }
-
-  /* ===== macOS (FIXED!) ===== */
-  else if (/Macintosh|Mac OS X/.test(ua)) {
-    os = "macOS";
-
-    // WebKit version detection (accurate, modern)
-    const wkMatch = ua.match(/AppleWebKit\/(\d+)/);
-    const wk = wkMatch ? parseInt(wkMatch[1]) : 0;
-
-    if (wk >= 618)  ver = "15 (Sequoia)";
-    else if (wk >= 605) ver = "14 (Sonoma)";
-    else if (wk >= 601) ver = "13 (Ventura)";
-    else if (wk >= 610) ver = "12 (Monterey)";
-    else if (wk >= 602) ver = "11 (Big Sur)";
-    else ver = "(Version Hidden)";
-  }
-
-  /* ===== Windows ===== */
-  else if (/Windows NT/i.test(ua)) {
-    os = "Windows";
-    const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
-    const m = ua.match(/Windows NT (\d+\.\d+)/);
-    if (m) ver = map[m[1]] || m[1];
-  }
-
-  /* ===== ChromeOS ===== */
-  else if (/CrOS/i.test(ua)) os = "ChromeOS";
-
-  /* ===== Linux ===== */
-  else if (/Linux/i.test(ua)) os = "Linux";
-
-  return ver ? `${os} ${ver}` : os;
-}
-
-safeSet(osEl, detectOSVersion());
-fadeIn(osEl);
+  safeSet(deviceEl, detectDevice());
+  fadeIn(deviceEl);
 
   /* ----------------------------
    * 🌐 Browser
@@ -137,84 +173,83 @@ fadeIn(osEl);
     if (ua.includes("Firefox")) return "Firefox";
     return "Unknown Browser";
   }
-  safeSet(browserEl, detectBrowser()); fadeIn(browserEl);
+
+  safeSet(browserEl, detectBrowser());
+  fadeIn(browserEl);
 
   /* ----------------------------
    * 🖥️ Resolution
    * -------------------------- */
-  const setRes = () => { safeSet(resolutionEl, `${screen.width} × ${screen.height}`); fadeIn(resolutionEl); };
+  const setRes = () => {
+    safeSet(resolutionEl, `${screen.width} × ${screen.height}`);
+    fadeIn(resolutionEl);
+  };
   setRes();
   window.addEventListener("resize", setRes);
 
-/* ===========================================================
-   📶 Network & Connection — Final Local-Only Version
-   Accurate labeling without Firebase or extra APIs
-=========================================================== */
-async function detectNetworkAndConnection() {
-  const connectionEl = document.querySelector("#connection-info .version-value");
-  const networkEl = document.querySelector("#network-info .version-value");
-  if (!connectionEl || !networkEl) return;
+  /* ===========================================================
+     📶 Network & Connection — Local Only
+  =========================================================== */
+  async function detectNetworkAndConnection() {
+    const connectionEl = document.querySelector("#connection-info .version-value");
+    const networkEl = document.querySelector("#network-info .version-value");
+    if (!connectionEl || !networkEl) return;
 
-  // Default
-  let connection = "Unknown";
-  let network = "Unknown";
+    let connection = "Unknown";
+    let network = "Unknown";
 
-  // Offline
-  if (!navigator.onLine) {
-    connection = "Not Connected";
-    network = "Not Connected";
-  } else {
-    const ua = navigator.userAgent || "";
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
-    const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
+    if (!navigator.onLine) {
+      connection = "Not Connected";
+      network = "Not Connected";
+    } else {
+      const ua = navigator.userAgent || "";
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
+      const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
 
-    try {
-      // Fetch public IP — helps distinguish private (Wi-Fi) vs public (cellular)
-      const response = await fetch("https://api64.ipify.org?format=json", { cache: "no-store" });
-      const { ip } = await response.json();
+      try {
+        const response = await fetch("https://api64.ipify.org?format=json", { cache: "no-store" });
+        const { ip } = await response.json();
 
-      // Private IP ranges usually mean Wi-Fi / LAN
-      const isPrivate =
-        /^10\./.test(ip) ||
-        /^192\.168\./.test(ip) ||
-        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip);
+        const isPrivate =
+          /^10\./.test(ip) ||
+          /^192\.168\./.test(ip) ||
+          /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip);
 
-      if (isPrivate || isDesktop) {
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
-      } else if (isMobile) {
-        connection = "Cellular";
-        network = "Cellular";
-      } else {
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
+        if (isPrivate || isDesktop) {
+          connection = "Wi-Fi";
+          network = "Wi-Fi";
+        } else if (isMobile) {
+          connection = "Cellular";
+          network = "Cellular";
+        } else {
+          connection = "Wi-Fi";
+          network = "Wi-Fi";
+        }
+      } catch (err) {
+        connection = isMobile ? "Cellular" : "Wi-Fi";
+        network = connection;
       }
-    } catch (err) {
-      console.warn("Network guess failed:", err);
-      // fallback guesses
-      connection = isMobile ? "Cellular" : "Wi-Fi";
-      network = connection;
     }
+
+    connectionEl.textContent = connection;
+    networkEl.textContent = network;
+    connectionEl.style.opacity = "1";
+    networkEl.style.opacity = "1";
   }
 
-  // Update UI
-  connectionEl.textContent = connection;
-  networkEl.textContent = network;
-  connectionEl.style.opacity = "1";
-  networkEl.style.opacity = "1";
-}
+  detectNetworkAndConnection();
+  window.addEventListener("online", detectNetworkAndConnection);
+  window.addEventListener("offline", detectNetworkAndConnection);
 
-// Run immediately and keep in sync
-detectNetworkAndConnection();
-window.addEventListener("online", detectNetworkAndConnection);
-window.addEventListener("offline", detectNetworkAndConnection);
   /* ----------------------------
-   * 🌅 Sunrise / Sunset + Auto Day/Night
+   * 🌅 Sunrise / Sunset
    * -------------------------- */
   async function loadSunTimes() {
     if (!sunriseEl || !sunsetEl) return;
+
     let statusLi = document.getElementById("day-status-info");
     let statusEl;
+
     if (!statusLi) {
       const li = document.createElement("li");
       li.id = "day-status-info";
@@ -234,124 +269,117 @@ window.addEventListener("offline", detectNetworkAndConnection);
 
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { latitude, longitude } = pos.coords;
+
       async function refreshSunTimes() {
         try {
-          const resp = await fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`, { cache: "no-store" });
+          const resp = await fetch(`https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`);
           const data = await resp.json();
           if (data.status !== "OK") throw new Error("Sun API error");
 
           const sunrise = new Date(data.results.sunrise);
           const sunset  = new Date(data.results.sunset);
+
           safeSet(sunriseEl, sunrise.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
           safeSet(sunsetEl,  sunset .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-          fadeIn(sunriseEl); fadeIn(sunsetEl);
+          fadeIn(sunriseEl); 
+          fadeIn(sunsetEl);
 
           const now = new Date();
           const isDay = now >= sunrise && now < sunset;
           safeSet(statusEl, isDay ? "Daytime ☀️" : "Nighttime 🌙");
           fadeIn(statusEl);
+
         } catch (e) {
-          console.error("Sunrise/Sunset fetch failed:", e);
           safeSet(sunriseEl, "Error");
           safeSet(sunsetEl, "Error");
           safeSet(statusEl, "Unavailable");
         }
       }
+
       await refreshSunTimes();
       setInterval(refreshSunTimes, 60000);
-    }, (err) => {
-      console.warn("Geolocation denied:", err);
+    }, () => {
       safeSet(sunriseEl, "Permission denied");
       safeSet(sunsetEl, "Permission denied");
       const li = document.getElementById("day-status-info");
       if (li) safeSet(li.querySelector(".version-value"), "Unavailable");
-    }, { timeout: 8000, maximumAge: 0 });
+    });
   }
 
   loadSunTimes();
 
-  /* Ensure everything fades in */
+  /* Fade-in all fields */
   [versionEl, buildEl, osEl, deviceEl, browserEl, resolutionEl, connectionEl, networkEl, sunriseEl, sunsetEl, syncedEl]
     .forEach(fadeIn);
 });
 
 /* ===========================================================
-   🌤️ LIVE WEATHER (FAHRENHEIT VERSION)
-   Powered by Open-Meteo API — No key required
-   Automatically updates every 15 minutes
+   🌤️ LIVE WEATHER (Open-Meteo — No Key Required)
 =========================================================== */
 async function detectWeather() {
   const el = document.querySelector("#weather-info .version-value");
   if (!el) return;
 
-  // graceful fallback if geolocation is unavailable
   if (!("geolocation" in navigator)) {
     el.textContent = "Unavailable";
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      const { latitude, longitude } = pos.coords;
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const { latitude, longitude } = pos.coords;
 
-      try {
-        // Fetch weather data
-        const resp = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode&timezone=auto`
-        );
-        const data = await resp.json();
+    try {
+      const resp = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode&timezone=auto`
+      );
+      const data = await resp.json();
 
-        if (!data.current) {
-          el.textContent = "Weather unavailable";
-          return;
-        }
-
-        const tempC = data.current.temperature_2m;
-        const tempF = Math.round((tempC * 9) / 5 + 32); // Convert to Fahrenheit
-        const code = data.current.weathercode;
-
-        // Weather code → emoji mapping
-        const weatherIcons = {
-          0: "☀️ Clear",
-          1: "🌤️ Mostly clear",
-          2: "⛅ Partly cloudy",
-          3: "☁️ Cloudy",
-          45: "🌫️ Fog",
-          48: "🌫️ Fog",
-          51: "🌦️ Light drizzle",
-          53: "🌦️ Drizzle",
-          55: "🌧️ Drizzle",
-          61: "🌧️ Rain",
-          63: "🌧️ Rain showers",
-          65: "🌧️ Heavy rain",
-          71: "🌨️ Snow",
-          73: "🌨️ Snow",
-          75: "❄️ Heavy snow",
-          77: "🌨️ Snow grains",
-          80: "🌧️ Rain showers",
-          81: "🌧️ Moderate rain",
-          82: "⛈️ Thunderstorm",
-          95: "⛈️ Thunderstorm",
-          99: "⛈️ Severe storm",
-        };
-
-        const label = weatherIcons[code] || "🌡️ Weather";
-
-        el.textContent = `${label} • ${tempF}°F`;
-        el.style.opacity = "1";
-      } catch (err) {
-        console.error("Weather fetch failed:", err);
-        el.textContent = "Error fetching weather";
+      if (!data.current) {
+        el.textContent = "Weather unavailable";
+        return;
       }
-    },
-    (err) => {
-      console.warn("Weather denied:", err);
-      el.textContent = "Permission denied";
-    },
-    { timeout: 8000, maximumAge: 0 }
-  );
+
+      const tempC = data.current.temperature_2m;
+      const tempF = Math.round((tempC * 9) / 5 + 32);
+      const code  = data.current.weathercode;
+
+      const weatherIcons = {
+        0: "☀️ Clear",
+        1: "🌤️ Mostly clear",
+        2: "⛅ Partly cloudy",
+        3: "☁️ Cloudy",
+        45: "🌫️ Fog",
+        48: "🌫️ Fog",
+        51: "🌦️ Light drizzle",
+        53: "🌦️ Drizzle",
+        55: "🌧️ Drizzle",
+        61: "🌧️ Rain",
+        63: "🌧️ Rain showers",
+        65: "🌧️ Heavy rain",
+        71: "🌨️ Snow",
+        73: "🌨️ Snow",
+        75: "❄️ Heavy snow",
+        77: "🌨️ Snow grains",
+        80: "🌧️ Rain showers",
+        81: "🌧️ Moderate rain",
+        82: "⛈️ Thunderstorm",
+        95: "⛈️ Thunderstorm",
+        99: "⛈️ Severe storm",
+      };
+
+      const label = weatherIcons[code] || "🌡️ Weather";
+
+      el.textContent = `${label} • ${tempF}°F`;
+      el.style.opacity = "1";
+
+    } catch (err) {
+      el.textContent = "Error fetching weather";
+    }
+  }, () => {
+    el.textContent = "Permission denied";
+  });
 }
 
-// Run immediately and auto-refresh every 15 minutes
+// Run immediately and refresh every 15 minutes
 detectWeather();
 setInterval(detectWeather, 15 * 60 * 1000);
