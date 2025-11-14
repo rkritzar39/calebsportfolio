@@ -616,84 +616,70 @@
 
            <div class="business-container onyx-surface">
   <section class="admin-section" id="business-info-management" aria-labelledby="business-info-heading">
-  <h3 id="business-info-heading" class="onyx-heading">Manage Business Information</h3>
+    <h3 id="business-info-heading" class="onyx-heading">Manage Business Information</h3>
 
-  <form id="business-info-form" class="onyx-form">
+    <form id="business-info-form" class="onyx-form">
+      <div class="form-group">
+        <label for="business-contact-email">Contact Email</label>
+        <input type="email" id="business-contact-email" name="contactEmail" placeholder="Enter contact email address">
+      </div>
 
-    <!-- CONTACT EMAIL -->
-    <div class="form-group">
-      <label for="business-contact-email">Contact Email</label>
-      <input type="email" id="business-contact-email" name="contactEmail" placeholder="Enter contact email address">
-    </div>
+      <h4 class="onyx-subheading">Regular Business Hours</h4>
+      <p class="onyx-note">
+        <small><i>Enter all times based on US Eastern Time (ET / New York). They will be automatically converted for visitors.</i></small>
+      </p>
+      <div id="regular-hours-container" class="hours-grid"></div>
 
-    <!-- REGULAR HOURS -->
-    <h4 class="onyx-subheading">Regular Business Hours</h4>
-    <p class="onyx-note">
-      <small><i>Enter all times in Eastern Time (ET). Visitors will see their local time automatically.</i></small>
-    </p>
-
-    <div id="regular-hours-container" class="hours-grid"></div>
-
-    <!-- HOLIDAY HOURS -->
-    <h4 class="onyx-subheading">Holiday Hours / Specific Date Closures</h4>
-    <p class="onyx-note">
-      <small><i>Used for one-off days where hours differ from normal.</i></small>
-    </p>
-
-    <div id="holiday-hours-list" class="special-hours-list"></div>
-
-    <button type="button" id="add-holiday-button" class="button-secondary small-button">
-      + Add Holiday / Specific Date
-    </button>
-
-    <!-- TEMPORARY HOURS -->
-    <h4 class="onyx-subheading">Temporary Hours (Events, Renovations, etc.)</h4>
-    <p class="onyx-note">
-      <small><i>Used for multi-day adjusted hours.</i></small>
-    </p>
-
-    <div id="temporary-hours-list" class="special-hours-list"></div>
-
-    <button type="button" id="add-temporary-button" class="button-secondary small-button">
-      + Add Temporary Hours Period
-    </button>
-
-    <!-- OVERRIDE -->
-    <div class="form-group">
-      <label for="business-status-override">Status Override</label>
-      <select id="business-status-override" name="statusOverride">
-        <option value="auto">Automatic (Based on Hours)</option>
-        <option value="open">Force Open</option>
-        <option value="closed">Force Closed</option>
-        <option value="unavailable">Force Temporarily Unavailable</option>
-      </select>
-      <small class="onyx-hint">Overrides automatic open/closed calculations.</small>
-    </div>
-
-    <!-- SAVE BUTTON -->
-    <div class="form-actions">
-      <button type="submit" id="save-business-info-button" class="button-primary">
-        Save Business Info
+      <h4 class="onyx-subheading">Holiday Hours / Specific Date Closures</h4>
+      <p class="onyx-note">
+        <small><i>Enter times based on US Eastern Time (ET / New York).</i></small>
+      </p>
+      <div id="holiday-hours-list" class="special-hours-list"></div>
+      <button type="button" id="add-holiday-button" class="button-secondary small-button">
+        + Add Holiday / Specific Date
       </button>
+
+      <h4 class="onyx-subheading">Temporary Hours (e.g., Events, Renovations)</h4>
+      <p class="onyx-note">
+        <small><i>Enter times based on US Eastern Time (ET / New York).</i></small>
+      </p>
+      <div id="temporary-hours-list" class="special-hours-list"></div>
+      <button type="button" id="add-temporary-button" class="button-secondary small-button">
+        + Add Temporary Hours Period
+      </button>
+
+      <div class="form-group">
+        <label for="business-status-override">Status Override</label>
+        <select id="business-status-override" name="statusOverride">
+          <option value="auto">Automatic (Based on Hours/Time)</option>
+          <option value="open">Force Open</option>
+          <option value="closed">Force Closed</option>
+          <option value="unavailable">Force Temporarily Unavailable</option>
+        </select>
+        <small class="onyx-hint">Overrides the automatic open/closed calculation.</small>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" id="save-business-info-button" class="button-primary">
+          Save Business Info
+        </button>
+      </div>
+    </form>
+
+    <div class="admin-preview-container">
+      <h4 class="onyx-subheading">Live Preview (Simulated Visitor View)</h4>
+      <p class="onyx-note">
+        <small><i>This preview uses your current browser time to simulate how a visitor in your timezone would see the hours and status based on unsaved values above. Assumes ET input.</i></small>
+      </p>
+      <div class="preview-content">
+        <div id="admin-preview-status" class="preview-status">Status: Update form to preview...</div>
+        <div id="admin-preview-hours" class="preview-hours"></div>
+        <div id="admin-preview-contact" class="preview-contact"></div>
+      </div>
     </div>
-  </form>
 
-  <!-- LIVE PREVIEW -->
-  <div class="admin-preview-container">
-    <h4 class="onyx-subheading">Live Preview (Visitor View)</h4>
-    <p class="onyx-note">
-      <small><i>Uses your current timezone to simulate visitor display.</i></small>
-    </p>
-
-    <div class="preview-content">
-      <div id="admin-preview-status" class="preview-status">Status: Loading…</div>
-      <div id="admin-preview-hours" class="preview-hours"></div>
-      <div id="admin-preview-contact" class="preview-contact"></div>
-    </div>
-  </div>
-
-  <div id="business-info-status-message" class="status-message" role="status" aria-live="polite"></div>
-</section>
+    <div id="business-info-status-message" class="status-message" role="status" aria-live="polite"></div>
+  </section>
 </div>
             
              <section class="admin-section" id="tech-management" aria-labelledby="tech-heading">
