@@ -1,31 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Status — Caleb</title>
-  <link rel="stylesheet" href="status.css" />
+  <meta charset="UTF-8">
+  <title>Status Page</title>
+  <link rel="stylesheet" href="status.css">
+  <script defer src="status.js"></script>
 </head>
 <body>
-  <main class="status-page">
-    <h1>System Status</h1>
 
-    <div class="overall-status" id="overall-status">
-      <p>All systems operational ✅</p>
-    </div>
+  <!-- 🔥 Incident Banner -->
+  <div id="incident-banner" class="hide"></div>
 
-    <p class="last-updated">Last updated: <span id="last-updated"></span></p>
+  <!-- Groups -->
+  <div id="status-groups"></div>
 
-    <div class="status-groups" id="status-groups"></div>
-
-    <button id="refresh-btn">🔄 Refresh</button>
-
-    <section class="incident-history">
-      <h2>Past Incidents</h2>
-      <div id="incident-log"></div>
-    </section>
-  </main>
-
-  <script src="status.js"></script>
 </body>
 </html>
