@@ -2330,6 +2330,7 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	transition: transform var(--transition-speed) var(--transition-timing),
 				box-shadow var(--transition-speed) var(--transition-timing);
 }
+
 .admin-section-card:hover {
 	transform: translateY(-2px);
 	box-shadow: 0 8px 24px color-mix(in srgb, var(--accent-color) 15%, var(--shadow-color));
@@ -2354,54 +2355,113 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	display: block;
 }
 
-/* --- Regular Hours Grid --- */
+
+/* ============================================================
+   📅 Multi-Range Business Hours Editor (Apple Onyx Design)
+============================================================ */
+
 .hours-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-	gap: 22px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 22px;
 }
 
-.day-hours-group {
-	background: color-mix(in srgb, var(--bg-color) 90%, transparent);
-	padding: 20px;
-	border-radius: var(--border-radius-md);
-	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-	box-shadow: 0 4px 12px color-mix(in srgb, var(--shadow-color) 35%, transparent);
-	transition: box-shadow 0.2s ease, transform 0.2s ease;
-}
-.day-hours-group:focus-within {
-	transform: translateY(-2px);
-	box-shadow: 0 0 12px color-mix(in srgb, var(--accent-color) 20%, transparent);
-}
-.day-hours-group > label {
-	display: block;
-	margin-bottom: 14px;
-	font-weight: 600;
-	font-size: 1.1em;
-	color: var(--text-color);
-}
-.day-hours-group .time-inputs {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	margin-bottom: 15px;
-}
-.day-hours-group .form-group.checkbox-group {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 10px;
-	border-radius: var(--border-radius-sm);
-	background-color: color-mix(in srgb, var(--border-color) 40%, transparent);
-}
-.day-hours-group .form-group.checkbox-group label {
-	margin-bottom: 0;
-	font-weight: 500;
-	color: var(--secondary-text);
-	cursor: pointer;
+.day-hours-block {
+    background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+    border-radius: var(--border-radius-lg);
+    padding: 18px 20px;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
-/* --- Special Hours List Admin --- */
+.day-hours-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 22px color-mix(in srgb, var(--accent-color) 18%, var(--shadow-color));
+}
+
+.day-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    letter-spacing: 0.3px;
+    color: var(--text-color);
+}
+
+/* Time Ranges */
+.time-range {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.time-range input[type="time"] {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 0.95rem;
+    border: 1px solid var(--input-border-color);
+    border-radius: var(--border-radius-md);
+    background: var(--input-bg-color);
+    color: var(--text-color);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.28);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.time-range input[type="time"]:focus {
+    outline: none;
+    border-color: var(--input-focus-border-color);
+    box-shadow: 0 0 0 3px var(--input-focus-shadow-color),
+                inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+/* Remove Button */
+.remove-range-btn {
+    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+    color: var(--error-text-color);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+    transition: 0.25s ease;
+}
+
+.remove-range-btn:hover {
+    background: color-mix(in srgb, var(--error-text-color) 15%, var(--content-bg));
+    transform: scale(1.08);
+}
+
+/* Add Hours Button */
+.add-range-btn {
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    background: color-mix(in srgb, var(--content-bg) 90%, transparent);
+    border-radius: var(--border-radius-md);
+    padding: 8px 12px;
+    color: var(--accent-color);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
+.add-range-btn:hover {
+    background: color-mix(in srgb, var(--accent-color) 15%, var(--content-bg));
+    transform: translateY(-1px);
+}
+
+
+/* ============================================================
+   Special Hours (Holiday/Temporary)
+============================================================ */
+
 .special-hours-list {
 	display: flex;
 	flex-direction: column;
@@ -2423,42 +2483,14 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	z-index: 0;
 }
 
-.special-hours-list .hour-entry .form-group {
-	flex: 1 1 200px;
-	min-width: 180px;
-}
-.special-hours-list .hour-entry .form-group:has(label[for*="-label-"]) {
-	flex-basis: 100%;
-}
-.special-hours-list .hour-entry .time-inputs {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	flex: 2 1 250px;
-}
-.special-hours-list .hour-entry .time-inputs input[type="time"] {
-	width: auto;
-	flex-grow: 1;
-}
-.special-hours-list .hour-entry .form-group.checkbox-group {
-	flex: 1 1 auto;
-	padding-bottom: 10px;
-}
-
-/* --- Fix: Make Delete Button Always Clickable & Layered --- */
 .special-hours-list .hour-entry .remove-hour-button {
 	position: absolute;
 	top: 10px;
 	right: 10px;
-	z-index: 10; /* keeps above inputs */
-	pointer-events: auto;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	z-index: 10;
 	width: 32px;
 	height: 32px;
 	font-size: 1.1rem;
-	line-height: 1;
 	cursor: pointer;
 	color: var(--secondary-text);
 	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
@@ -2466,31 +2498,79 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 	border-radius: 50%;
 	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 35%, transparent);
 	backdrop-filter: blur(10px) saturate(140%);
-	-webkit-backdrop-filter: blur(10px) saturate(140%);
 	opacity: 0.8;
-	transition:
-		background 0.25s ease,
-		color 0.25s ease,
-		transform 0.2s ease,
-		opacity 0.25s ease;
+	transition: background 0.25s, color 0.25s, transform 0.2s, opacity 0.25s;
 }
+
 .special-hours-list .hour-entry .remove-hour-button:hover {
 	color: var(--color-danger);
 	background: color-mix(in srgb, var(--color-danger) 15%, var(--content-bg));
 	opacity: 1;
 	transform: scale(1.08);
-	box-shadow: 0 4px 12px color-mix(in srgb, var(--color-danger) 25%, transparent);
-}
-.special-hours-list .hour-entry .remove-hour-button:active {
-	transform: scale(0.94);
 }
 
-/* --- Add Button Styling --- */
 #add-holiday-button,
 #add-temporary-button {
 	margin-top: 22px;
 }
 
+
+/* ============================================================
+   🟢 Live Preview — Apple Maps UI (Onyx)
+============================================================ */
+
+:root {
+	--status-open-color: #34c759;
+	--status-closed-color: #ff453a;
+	--status-unavailable-color: #ff9f0a;
+}
+
+.admin-preview-container.business-preview {
+	--bubble-gradient: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 65%);
+	--bubble-shadow: 0 8px 30px rgba(0,0,0,0.4);
+	--backdrop-blur: blur(24px);
+
+	background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+	background-image: var(--bubble-gradient);
+	border-radius: 30px;
+	padding: clamp(22px, 4vw, 34px);
+	box-shadow: var(--bubble-shadow);
+	backdrop-filter: var(--backdrop-blur) saturate(125%);
+	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);    
+	margin-top: 35px;
+}
+
+.preview-status .status-main-text {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 700;
+	font-size: 1.05em;
+	padding: 10px 26px;
+	border-radius: 9999px;
+	border: 1px solid color-mix(in srgb, currentColor 30%,透明);
+	background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.preview-status .status-open { color: var(--status-open-color); }
+.preview-status .status-closed { color: var(--status-closed-color); }
+.preview-status .status-unavailable { color: var(--status-unavailable-color); }
+
+.preview-hours li {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	align-items: center;
+	padding: 14px 18px;
+	margin-bottom: 10px;
+	border-radius: 16px;
+	background: color-mix(in srgb, var(--content-bg) 75%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+}
+
+.preview-hours li.current-day-preview {
+	background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+	border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
+}
 /* ======================================== */
 /* Business Info PREVIEW Styles (Onyx)      */
 /* ======================================== */
