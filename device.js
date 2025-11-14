@@ -54,60 +54,72 @@ document.addEventListener("DOMContentLoaded", () => {
   updateClock();
   setInterval(updateClock, 1000);
 
-  /* ----------------------------
-   * 💻 OS + Version
-   * -------------------------- */
-  function detectOSVersion() {
-    const ua = navigator.userAgent || "";
-    let os = "Unknown", ver = "";
+/* ----------------------------
+ * 💻 OS + Version
+ * -------------------------- */
+function detectOSVersion() {
+  const ua = navigator.userAgent || "";
+  let os = "Unknown", ver = "";
 
-    const isiPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isiPad = /iPad/i.test(ua) || 
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    if (isiPad) {
-      os = "iPadOS";
-      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (m) ver = m[1].replace(/_/g, ".");
-    } else if (/iPhone|iPod/i.test(ua)) {
-      os = "iOS";
-      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (m) ver = m[1].replace(/_/g, ".");
-    } else if (/Android/i.test(ua)) {
-      os = "Android";
-      const m = ua.match(/Android (\d+(\.\d+)?)/i);
-      if (m) ver = m[1];
-    } else if (/Macintosh|Mac OS X/.test(ua)) {
-      os = "macOS";
-      const m = ua.match(/Mac OS X (\d+([_.]\d+)*)/i);
-      if (m) ver = m[1].replace(/_/g, ".");
-    } else if (/Windows NT/i.test(ua)) {
-      os = "Windows";
-      const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
-      const m = ua.match(/Windows NT (\d+\.\d+)/);
-      if (m) ver = map[m[1]] || m[1];
-    } else if (/CrOS/i.test(ua)) os = "ChromeOS";
-    else if (/Linux/i.test(ua))   os = "Linux";
-
-    return ver ? `${os} ${ver}` : os;
+  /* ===== iPadOS ===== */
+  if (isiPad) {
+    os = "iPadOS";
+    const m = ua.match(/OS (\d+([_.]\d+)*)/i);
+    if (m) ver = m[1].replace(/_/g, ".");
   }
-  safeSet(osEl, detectOSVersion()); fadeIn(osEl);
 
-  /* ----------------------------
-   * 📱 Device
-   * -------------------------- */
-  function detectDevice() {
-    const ua = navigator.userAgent || "";
-    if (/iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) return "iPad";
-    if (/iPhone/i.test(ua))  return "iPhone";
-    if (/Android/i.test(ua)) {
-      const m = ua.match(/Android.*?;\s*(.*?)\s*Build\//);
-      return m ? m[1].trim() : "Android Device";
-    }
-    if (/Macintosh/i.test(ua)) return "Mac";
-    if (/Windows/i.test(ua))   return "Windows PC";
-    if (/Linux/i.test(ua))     return "Linux Device";
-    return "Unknown Device";
+  /* ===== iOS ===== */
+  else if (/iPhone|iPod/i.test(ua)) {
+    os = "iOS";
+    const m = ua.match(/OS (\d+([_.]\d+)*)/i);
+    if (m) ver = m[1].replace(/_/g, ".");
   }
-  safeSet(deviceEl, detectDevice()); fadeIn(deviceEl);
+
+  /* ===== Android ===== */
+  else if (/Android/i.test(ua)) {
+    os = "Android";
+    const m = ua.match(/Android (\d+(\.\d+)?)/i);
+    if (m) ver = m[1];
+  }
+
+  /* ===== macOS (FIXED!) ===== */
+  else if (/Macintosh|Mac OS X/.test(ua)) {
+    os = "macOS";
+
+    // WebKit version detection (accurate, modern)
+    const wkMatch = ua.match(/AppleWebKit\/(\d+)/);
+    const wk = wkMatch ? parseInt(wkMatch[1]) : 0;
+
+    if (wk >= 618)  ver = "15 (Sequoia)";
+    else if (wk >= 605) ver = "14 (Sonoma)";
+    else if (wk >= 601) ver = "13 (Ventura)";
+    else if (wk >= 610) ver = "12 (Monterey)";
+    else if (wk >= 602) ver = "11 (Big Sur)";
+    else ver = "(Version Hidden)";
+  }
+
+  /* ===== Windows ===== */
+  else if (/Windows NT/i.test(ua)) {
+    os = "Windows";
+    const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
+    const m = ua.match(/Windows NT (\d+\.\d+)/);
+    if (m) ver = map[m[1]] || m[1];
+  }
+
+  /* ===== ChromeOS ===== */
+  else if (/CrOS/i.test(ua)) os = "ChromeOS";
+
+  /* ===== Linux ===== */
+  else if (/Linux/i.test(ua)) os = "Linux";
+
+  return ver ? `${os} ${ver}` : os;
+}
+
+safeSet(osEl, detectOSVersion());
+fadeIn(osEl);
 
   /* ----------------------------
    * 🌐 Browser
