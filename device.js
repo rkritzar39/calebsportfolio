@@ -54,42 +54,91 @@ document.addEventListener("DOMContentLoaded", () => {
   updateClock();
   setInterval(updateClock, 1000);
 
-  /* ----------------------------
-   * 💻 OS + Version
-   * -------------------------- */
-  function detectOSVersion() {
-    const ua = navigator.userAgent || "";
-    let os = "Unknown", ver = "";
+/* ----------------------------
+  * 💻 OS + Version (SAFE HYBRID METHOD)
+  * -------------------------- */
+  
+ // 1. Your original function, renamed as a fallback
+ function detectOSVersion_Fallback() {
+   const ua = navigator.userAgent || "";
+   let os = "Unknown", ver = "";
 
-    const isiPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+   const isiPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
-    if (isiPad) {
-      os = "iPadOS";
-      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (m) ver = m[1].replace(/_/g, ".");
-    } else if (/iPhone|iPod/i.test(ua)) {
-      os = "iOS";
-      const m = ua.match(/OS (\d+([_.]\d+)*)/i);
-      if (m) ver = m[1].replace(/_/g, ".");
-    } else if (/Android/i.test(ua)) {
-      os = "Android";
-      const m = ua.match(/Android (\d+(\.\d+)?)/i);
-      if (m) ver = m[1];
-    } else if (/Macintosh|Mac OS X/.test(ua)) {
-      os = "macOS";
-      const m = ua.match(/Mac OS X (\d+([_.]\d+)*)/i);
-      if (m) ver = m[1].replace(/_/g, ".");
-    } else if (/Windows NT/i.test(ua)) {
-      os = "Windows";
-      const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
-      const m = ua.match(/Windows NT (\d+\.\d+)/);
-      if (m) ver = map[m[1]] || m[1];
-    } else if (/CrOS/i.test(ua)) os = "ChromeOS";
-    else if (/Linux/i.test(ua))   os = "Linux";
+   if (isiPad) {
+     os = "iPadOS";
+     const m = ua.match(/OS (\d+([_.]\d+)*)/i);
+     if (m) ver = m[1].replace(/_/g, ".");
+   } else if (/iPhone|iPod/i.test(ua)) {
+     os = "iOS";
+     const m = ua.match(/OS (\d+([_.]\d+)*)/i);
+     if (m) ver = m[1].replace(/_/g, ".");
+   } else if (/Android/i.test(ua)) {
+     os = "Android";
+     const m = ua.match(/Android (\d+(\.\d+)?)/i);
+     if (m) ver = m[1];
+   } else if (/Macintosh|Mac OS X/.test(ua)) {
+     os = "macOS";
+     const m = ua.match(/Mac OS X (\d+([_.]\d+)*)/i);
+     if (m) ver = m[1].replace(/_/g, ".");
+   } else if (/Windows NT/i.test(ua)) {
+     os = "Windows";
+     const map = { "10.0": "11 / 10", "6.3": "8.1", "6.2": "8", "6.1": "7" };
+     const m = ua.match(/Windows NT (\d+\.\d+)/);
+     if (m) ver = map[m[1]] || m[1];
+   } else if (/CrOS/i.test(ua)) os = "ChromeOS";
+   else if (/Linux/i.test(ua))   os = "Linux";
 
-    return ver ? `${os} ${ver}` : os;
-  }
-  safeSet(osEl, detectOSVersion()); fadeIn(osEl);
+   return ver ? `${os} ${ver}` : os;
+ }
+
+ // 2. The new "safe" async function
+ async function detectOSVersion() {
+   // Check for the modern, safe API
+   if (navigator.userAgentData) {
+     try {
+       // Request "high entropy" (detailed) values
+       const uaData = await navigator.userAgentData.getHighEntropyValues([
+         "platformVersion"
+       ]);
+       
+       const os = uaData.platform || "Unknown"; // e.g., "Windows", "macOS", "Android"
+       let ver = uaData.platformVersion || "";  // e.g., "15.0.0"
+
+       // Clean up the version string
+       if (ver) {
+         // Special handling for Windows 11 vs 10
+         if (os === "Windows") {
+           const majorVer = parseInt(ver.split('.')[0], 10);
+           if (majorVer >= 13) {
+             ver = "11"; // Win 11 reports v13+ (e.g., 15.0.0)
+           } else {
+             ver = "10"; // Win 10 reports v10.0
+           }
+         } else {
+           // For other OS, just take major/minor
+           ver = ver.split('.').slice(0, 2).join('.');
+         }
+       }
+       return ver ? `${os} ${ver}` : os;
+
+     } catch (err) {
+       console.warn("UserAgentData API failed, falling back...", err);
+       // If the API fails for any reason, use the fallback
+       return detectOSVersion_Fallback();
+     }
+   }
+   
+   // If navigator.userAgentData doesn't exist, use the fallback
+   return detectOSVersion_Fallback();
+ }
+
+ // 3. Update the *calling* code to be async
+ (async () => {
+   const osVersion = await detectOSVersion();
+   safeSet(osEl, osVersion); 
+   fadeIn(osEl);
+ })();
 
   /* ----------------------------
    * 📱 Device
