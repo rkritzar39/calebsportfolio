@@ -184,67 +184,70 @@ document.addEventListener("DOMContentLoaded", () => {
   window.addEventListener("resize", setRes);
 
 /* ===========================================================
-   📶 Network & Connection — Final Local-Only Version
-   Accurate labeling without Firebase or extra APIs
-=========================================================== */
+ * 📶 Network & Connection (Safer Hybrid Version)
+ * =========================================================== */
 async function detectNetworkAndConnection() {
   const connectionEl = document.querySelector("#connection-info .version-value");
   const networkEl = document.querySelector("#network-info .version-value");
   if (!connectionEl || !networkEl) return;
 
-  // Default
   let connection = "Unknown";
   let network = "Unknown";
 
-  // Offline
   if (!navigator.onLine) {
     connection = "Not Connected";
     network = "Not Connected";
-  } else {
-    const ua = navigator.userAgent || "";
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(ua);
-    const isDesktop = /Macintosh|Windows|Linux/i.test(ua);
-
-    try {
-      // Fetch public IP — helps distinguish private (Wi-Fi) vs public (cellular)
-      const response = await fetch("https://api64.ipify.org?format=json", { cache: "no-store" });
-      const { ip } = await response.json();
-
-      // Private IP ranges usually mean Wi-Fi / LAN
-      const isPrivate =
-        /^10\./.test(ip) ||
-        /^192\.168\./.test(ip) ||
-        /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip);
-
-      if (isPrivate || isDesktop) {
+  } else if (navigator.connection && navigator.connection.type) {
+    // --- MODERN API (Priority) ---
+    // navigator.connection.type can be:
+    // "wifi", "cellular", "ethernet", "bluetooth", "wimax", "other", "unknown"
+    
+    switch (navigator.connection.type) {
+      case "wifi":
         connection = "Wi-Fi";
         network = "Wi-Fi";
-      } else if (isMobile) {
+        break;
+      case "cellular":
         connection = "Cellular";
         network = "Cellular";
+        // You could even check navigator.connection.effectiveType (e.g., '4g')
+        break;
+      case "ethernet":
+        connection = "Ethernet";
+        network = "Wired";
+        break;
+      default:
+        connection = "Connected";
+        network = "Online";
+    }
+  } else {
+    // --- FALLBACK (Your original logic) ---
+    try {
+      // This is still a guess, but it's a good fallback
+      const response = await fetch("https://api64.ipify.org?format=json", { cache: "no-store" });
+      const { ip } = await response.json();
+      const isPrivate = /^10\./.test(ip) || /^192\.168\./.test(ip) || /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(ip);
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || "");
+      
+      if (isPrivate || !isMobile) {
+        connection = "Wi-Fi / LAN"; // Guess
+        network = "Wi-Fi / LAN";
       } else {
-        connection = "Wi-Fi";
-        network = "Wi-Fi";
+        connection = "Cellular"; // Guess
+        network = "Cellular";
       }
     } catch (err) {
-      console.warn("Network guess failed:", err);
-      // fallback guesses
-      connection = isMobile ? "Cellular" : "Wi-Fi";
-      network = connection;
+      connection = "Online"; // Fallback guess
+      network = "Online";
     }
   }
 
   // Update UI
-  connectionEl.textContent = connection;
-  networkEl.textContent = network;
-  connectionEl.style.opacity = "1";
-  networkEl.style.opacity = "1";
+  safeSet(connectionEl, connection);
+  safeSet(networkEl, network);
+  fadeIn(connectionEl); // Assuming you keep fadeIn separate
+  fadeIn(networkEl);
 }
-
-// Run immediately and keep in sync
-detectNetworkAndConnection();
-window.addEventListener("online", detectNetworkAndConnection);
-window.addEventListener("offline", detectNetworkAndConnection);
   /* ----------------------------
    * 🌅 Sunrise / Sunset + Auto Day/Night
    * -------------------------- */
