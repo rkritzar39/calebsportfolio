@@ -45,6 +45,68 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apply settings on initial page load
     applyHomepageSettings();
 
+    // --- NEW: Highlight Active Navigation Link ---
+    const highlightActiveNavLink = () => {
+        // Get the current page's path (e.g., "/blog.html")
+        const currentPath = window.location.pathname;
+        
+        // Normalize paths to treat "/" and "/index.html" as the same page
+        const normalize = (path) => path.replace(/\/index\.html$/, '/');
+        const normalizedCurrentPath = normalize(currentPath);
+
+        // Select all links in your main navigation.
+        // If your "tool bar" has a more specific ID, like '#main-nav', you can use
+        // document.querySelectorAll('#main-nav a') for better performance.
+        const navLinks = document.querySelectorAll('nav a');
+
+        let foundActiveLink = false;
+
+        navLinks.forEach(link => {
+            // Remove any 'active' class from all links first
+            link.classList.remove('active');
+            
+            let linkPath;
+            try {
+                // Use new URL() to reliably get the pathname from the link's href
+                linkPath = new URL(link.href).pathname;
+            } catch (e) {
+                // Fallback for relative paths or invalid URLs
+                linkPath = link.getAttribute('href');
+            }
+            
+            const normalizedLinkPath = normalize(linkPath);
+
+            // Check for an exact match
+            if (normalizedLinkPath === normalizedCurrentPath) {
+                link.classList.add('active');
+                foundActiveLink = true;
+            }
+        });
+
+        // --- Special Case for Child Pages (like a blog post) ---
+        // If no exact match was found, we check if we're on a page that
+        // should have a "parent" link highlighted.
+        if (!foundActiveLink) {
+            // Based on your displayShoutouts.js, you use 'post-content-area' for single posts.
+            if (document.getElementById('post-content-area')) {
+                // Find the link to the main blog page (assuming it contains "blog" in its href)
+                const blogLink = document.querySelector('nav a[href*="blog"]');
+                if (blogLink) {
+                    blogLink.classList.add('active');
+                }
+            }
+            
+            // You can add more 'else if' blocks here for other child pages
+            // else if (document.getElementById('some-other-child-page')) {
+            //     const parentLink = document.querySelector('nav a[href*="parent"]');
+            //     if (parentLink) parentLink.classList.add('active');
+            // }
+        }
+    };
+
+    // Run the new function to highlight the link
+    highlightActiveNavLink();
+
     // Listen for changes from the settings page to update live
     window.addEventListener('storage', (e) => {
         if (e.key === 'websiteSettings') {
@@ -221,7 +283,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error("Network response failed: " + res.status);
+    if (!res.ok) throw new Error("Network response failed: "_ + res.status);
     const raw = await res.json();
     const data = JSON.parse(raw.contents);
 
