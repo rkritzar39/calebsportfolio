@@ -262,3 +262,64 @@ document.addEventListener("DOMContentLoaded", async () => {
     summaryEl.innerHTML = `<p>⚠️ Could not load system health data.</p>`;
   }
 });
+
+// Elements
+const chatbot = document.getElementById('ai-chatbot');
+const closeBtn = document.getElementById('ai-chatbot-close');
+const messagesContainer = document.getElementById('ai-chatbot-messages');
+const inputField = document.getElementById('ai-chatbot-input');
+const sendBtn = document.getElementById('ai-chatbot-send');
+
+// Close chat
+closeBtn.addEventListener('click', () => chatbot.style.display = 'none');
+
+// Append message function
+function appendMessage(sender, text) {
+    const message = document.createElement('div');
+    const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    message.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+    message.innerHTML = `<span>${text}</span><div style="font-size:10px; color:#555; text-align:right;">${time}</div>`;
+    messagesContainer.appendChild(message);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Typing indicator
+function showTypingIndicator() {
+    const typing = document.createElement('div');
+    typing.classList.add('ai-typing');
+    typing.innerHTML = `<span></span><span></span><span></span>`;
+    messagesContainer.appendChild(typing);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    return typing;
+}
+
+// Send message function
+async function sendMessage() {
+    const text = inputField.value.trim();
+    if (!text) return;
+    appendMessage('user', text);
+    inputField.value = '';
+
+    const typing = showTypingIndicator();
+
+    try {
+        // Example AI API call
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({message: text})
+        });
+        const data = await response.json();
+
+        typing.remove();
+        appendMessage('ai', data.reply);
+    } catch(err) {
+        typing.remove();
+        appendMessage('ai', '⚠️ Error connecting to AI.');
+        console.error(err);
+    }
+}
+
+// Event listeners
+sendBtn.addEventListener('click', sendMessage);
+inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
