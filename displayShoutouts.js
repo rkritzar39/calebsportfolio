@@ -2441,20 +2441,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOverride) {
+
+    /* ------------------------------------------------------------ */
+    /*  ELEMENTS & VALIDATION                                       */
+    /* ------------------------------------------------------------ */
     const countdownSection = document.querySelector('.countdown-section');
-    if (!countdownSection) {
-        console.warn("Countdown section element missing.");
-        return;
-    }
+    if (!countdownSection) return console.warn("Countdown section missing.");
 
     const titleElement = countdownSection.querySelector('.countdown-title');
+    const countdownContainer = countdownSection.querySelector('.countdown-container');
+
     const yearsElement = document.getElementById('countdown-years');
     const monthsElement = document.getElementById('countdown-months');
     const daysElement = document.getElementById('countdown-days');
     const hoursElement = document.getElementById('countdown-hours');
     const minutesElement = document.getElementById('countdown-minutes');
     const secondsElement = document.getElementById('countdown-seconds');
-    const countdownContainer = countdownSection.querySelector('.countdown-container');
 
     const yearsCircle = document.getElementById('years-circle');
     const monthsCircle = document.getElementById('months-circle');
@@ -2467,32 +2469,30 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     const statusMessage = document.getElementById('status-message');
 
     if (
-        !titleElement || !yearsElement || !monthsElement ||
-        !daysElement || !hoursElement || !minutesElement ||
-        !secondsElement || !countdownContainer
+        !titleElement || !yearsElement || !monthsElement || !daysElement || !hoursElement ||
+        !minutesElement || !secondsElement || !countdownContainer
     ) {
-        console.error("A required countdown element is missing from the HTML.");
-        countdownSection.style.display = 'none';
+        console.error("Missing countdown HTML elements.");
+        countdownSection.style.display = "none";
         return;
     }
 
-    // --- Convert Firebase timestamp (or Date) ---
+    /* ------------------------------------------------------------ */
+    /*  PARSE TARGET DATE                                           */
+    /* ------------------------------------------------------------ */
     let targetDate;
-    try {
-        targetDate = targetTimestamp.toDate();
-    } catch (e) {
-        targetDate = targetTimestamp instanceof Date ? targetTimestamp : null;
-    }
 
-    // --- Title override ---
+    try { targetDate = targetTimestamp.toDate(); }
+    catch (e) { targetDate = targetTimestamp instanceof Date ? targetTimestamp : null; }
+
     const displayTitle = countdownTitle || "Countdown";
     titleElement.textContent = displayTitle;
 
-    // ====================================================== //
-    //                 LOCAL TIME CONVERSION                  //
-    // ====================================================== //
+    /* ------------------------------------------------------------ */
+    /*  LOCAL TIME DISPLAY                                          */
+    /* ------------------------------------------------------------ */
     function updateLocalTimeDisplay() {
-        if (!localTimeDisplay || !targetDate) return;
+        if (!targetDate || !localTimeDisplay) return;
 
         const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const localTime = targetDate.toLocaleString([], {
@@ -2501,62 +2501,85 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
             timeZone: tz
         });
 
-        localTimeDisplay.textContent =
-            `${displayTitle} begins at ${localTime} (${tz}).`;
+        localTimeDisplay.textContent = `${displayTitle} begins at ${localTime} (${tz}).`;
     }
-
     updateLocalTimeDisplay();
 
-    // ====================================================== //
-    //                 ROTATING STATUS MESSAGES               //
-    // ====================================================== //
-    const rotatingMessages = [
-        "Calculating time remaining…",
-        "Earth Day is approaching…",
-        "Stay mindful of the planet…",
-        "Preparing event details…",
-        "Almost there…"
-    ];
+    /* ------------------------------------------------------------ */
+    /*  AI-POWERED STATUS MESSAGE GENERATION                        */
+    /* ------------------------------------------------------------ */
+    function generateAIMessages(title) {
+        // base meaning of the event
+        const t = title.trim();
 
-    let statusIndex = 0;
-    setInterval(() => {
-        if (statusMessage) {
-            statusMessage.textContent = rotatingMessages[statusIndex];
+        // dynamic message templates
+        const templates = [
+            `Anticipation builds as ${t} approaches…`,
+            `${t} is shaping up to be something special…`,
+            `Preparing the final moments before ${t}…`,
+            `Excitement rises — ${t} draws near…`,
+            `Every second brings you closer to ${t}…`,
+            `Momentum grows as we countdown to ${t}…`,
+            `The world is almost ready for ${t}…`,
+            `Aligning everything perfectly for ${t}…`,
+            `${t} is on the horizon…`,
+            `A new moment begins soon: ${t}…`,
+            `Energy is building toward ${t}…`,
+            `All paths lead to ${t}…`,
+            `The countdown continues — ${t} awaits…`
+        ];
+
+        // shuffle the templates to make messages feel organic
+        for (let i = templates.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [templates[i], templates[j]] = [templates[j], templates[i]];
         }
+
+        return templates.slice(0, 5); // rotate 5 AI messages
+    }
+
+    const rotatingMessages = generateAIMessages(displayTitle);
+    let statusIndex = 0;
+
+    if (statusMessage) statusMessage.textContent = rotatingMessages[0];
+
+    const statusInterval = setInterval(() => {
+        statusMessage.textContent = rotatingMessages[statusIndex];
         statusIndex = (statusIndex + 1) % rotatingMessages.length;
     }, 3500);
 
-    // ====================================================== //
-    //                      COUNTDOWN LOGIC                   //
-    // ====================================================== //
+    /* ------------------------------------------------------------ */
+    /*  COUNTDOWN LOGIC                                             */
+    /* ------------------------------------------------------------ */
+
+    function clamp(v, min = 0, max = 100) {
+        return Math.min(max, Math.max(min, v));
+    }
+
     function updateCountdown() {
         if (!targetDate) return;
 
         const now = new Date();
-        const distance = targetDate.getTime() - now.getTime();
+        const distance = targetDate - now;
 
-        // --------------------------------------
-        // EVENT IS OVER
-        // --------------------------------------
-        if (distance < 0) {
+        // EVENT HAS STARTED
+        if (distance <= 0) {
             clearInterval(interval);
+            clearInterval(statusInterval);
 
-            countdownContainer.style.display = 'none';
+            countdownContainer.style.display = "none";
 
             if (!countdownSection.querySelector('.countdown-expired-message')) {
-                const defaultMsg = `${displayTitle} has started!`;
-                const messageText = expiredMessageOverride || defaultMsg;
-
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'countdown-expired-message';
-                msgDiv.innerHTML = `<p>${messageText.replace(/\n/g, '<br>')}</p>`;
-                countdownSection.appendChild(msgDiv);
+                const msg = expiredMessageOverride || `${displayTitle} has started!`;
+                const el = document.createElement("div");
+                el.className = "countdown-expired-message";
+                el.innerHTML = `<p>${msg.replace(/\n/g, "<br>")}</p>`;
+                countdownSection.appendChild(el);
             }
-
             return;
         }
 
-        // YEAR / MONTH / DAY MATH
+        // CALCULATE COMPONENTS
         let tempDate = new Date(now.getTime());
         let years = targetDate.getFullYear() - tempDate.getFullYear();
         let months = targetDate.getMonth() - tempDate.getMonth();
@@ -2568,15 +2591,14 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
         }
         if (days < 0) {
             months--;
-            const daysInLastMonth = new Date(
+            const daysInPrevMonth = new Date(
                 tempDate.getFullYear(),
                 tempDate.getMonth() + 1,
                 0
             ).getDate();
-            days += daysInLastMonth;
+            days += daysInPrevMonth;
         }
 
-        // TIME UNITS
         const hours = Math.floor((distance % 86400000) / 3600000);
         const minutes = Math.floor((distance % 3600000) / 60000);
         const seconds = Math.floor((distance % 60000) / 1000);
@@ -2589,26 +2611,39 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
         minutesElement.textContent = minutes;
         secondsElement.textContent = seconds;
 
-        // ====================================================== //
-        //         APPLY CSS VARIABLES FOR PROGRESS RINGS         //
-        // ====================================================== //
-        if (yearsCircle)   yearsCircle.style.setProperty('--percent', (years / 5) * 100);
-        if (monthsCircle)  monthsCircle.style.setProperty('--percent', (months / 12) * 100);
-        if (daysCircle)    daysCircle.style.setProperty('--percent', (days / 31) * 100);
-        if (hoursCircle)   hoursCircle.style.setProperty('--percent', (hours / 24) * 100);
-        if (minutesCircle) minutesCircle.style.setProperty('--percent', (minutes / 60) * 100);
-        if (secondsCircle) secondsCircle.style.setProperty('--percent', (seconds / 60) * 100);
+        // MAX VALUES
+        const yearsMax = Math.max(1, targetDate.getFullYear() - now.getFullYear());
+        const monthsMax = 12;
+        const daysMax = new Date(tempDate.getFullYear(), tempDate.getMonth() + 1, 0).getDate();
+        const hoursMax = 24;
+        const minutesMax = 60;
+        const secondsMax = 60;
+
+        // % UPDATE FUNCTION
+        function updatePercent(circle, value, maxValue) {
+            if (!circle) return;
+            const raw = (value / maxValue) * 100;
+            const pct = clamp(Math.round(raw));
+            circle.style.setProperty("--percent", pct);
+        }
+
+        updatePercent(yearsCircle, years, yearsMax);
+        updatePercent(monthsCircle, months, monthsMax);
+        updatePercent(daysCircle, days, daysMax);
+        updatePercent(hoursCircle, hours, hoursMax);
+        updatePercent(minutesCircle, minutes, minutesMax);
+        updatePercent(secondsCircle, seconds, secondsMax);
     }
 
+    // INVALID DATE
     if (!targetDate) {
-        const defaultMsg = `${displayTitle} date has not been set.`;
-        const messageText = expiredMessageOverride || defaultMsg;
-
-        countdownContainer.innerHTML =
-            `<p class="countdown-expired-message">${messageText.replace(/\n/g, '<br>')}</p>`;
+        const msg = expiredMessageOverride || `${displayTitle} date has not been set.`;
+        countdownContainer.innerHTML = `<p class="countdown-expired-message">${msg}</p>`;
+        clearInterval(statusInterval);
         return;
     }
 
+    // START LOOP
     const interval = setInterval(updateCountdown, 1000);
     updateCountdown();
 }
