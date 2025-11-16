@@ -146,6 +146,15 @@
         <div id="president-placeholder"></div>
     </div>
 
+    <div class="ai-chat-section section" id="ai-chat-section" data-section-id="ai-chat">
+    <h2 class="section-title">AI Chat</h2>
+    <div id="ai-chat-messages" class="chat-messages-container"></div>
+    <div id="ai-chat-input-container" class="chat-input-container">
+        <input type="text" id="ai-chat-input" placeholder="Type a message..." />
+        <button id="ai-chat-send">Send</button>
+    </div>
+</div>
+
 <!-- TikTok Section -->
 <div class="shoutouts-section section" id="tiktok-shoutouts-section" data-section-id="tiktok-shoutouts">
   <div id="tiktok-shoutouts">
@@ -234,6 +243,8 @@
        <div class="links-container">
        </div>
    </div>    
+
+    
 
 <div class="countdown-section" id="countdown-section" data-section-id="countdown">
 
@@ -618,18 +629,5 @@ if ("serviceWorker" in navigator) {
     }
   });
 </script>
-
-    <!-- AI Chatbot Widget -->
-<div id="ai-chatbot">
-  <div id="ai-chatbot-header">
-    <span>AI Assistant</span>
-    <span id="ai-chatbot-close">×</span>
-  </div>
-  <div id="ai-chatbot-messages"></div>
-  <div id="ai-chatbot-input-container">
-    <input type="text" id="ai-chatbot-input" placeholder="iMessage-style chat...">
-    <button id="ai-chatbot-send">Send</button>
-  </div>
-</div>
 </body>
 </html>
