@@ -968,6 +968,13 @@ if (matchToggle) {
     }
   }
 
+  if (key === "showLiveActivity") {
+  // Update visibility of Match Song Accent based on new setting
+  this.updateMatchSongAccentVisibility(
+    window.__spotifyIsActive === true
+  );
+}
+
   /* =============================
      In-Site Notifications (Toasts)
   ============================= */
@@ -1172,6 +1179,19 @@ if (matchToggle) {
   initScrollArrow() {}
   initLoadingScreen() {}
   initMouseTrail() {}
+}
+
+updateMatchSongAccentVisibility(isSpotifyActive) {
+  const toggleCard = document.getElementById("matchSongAccentToggle")?.closest(".setting-card");
+  if (!toggleCard) return;
+
+  const showLive = this.settings.showLiveActivity === "enabled";
+
+  if (showLive && isSpotifyActive) {
+    toggleCard.style.display = "";
+  } else {
+    toggleCard.style.display = "none";
+  }
 }
 
 /* =============================
