@@ -619,13 +619,20 @@
 
 <script>
   // Automatically highlight the current page
-  const links = document.querySelectorAll('.onyx-dock .dock-item');
-  const current = window.location.pathname.split("/").pop();
-  links.forEach(link => {
-    const target = link.getAttribute("href");
-    if (target === current) {
-      link.classList.add("active");
-    }
+  document.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelectorAll('.onyx-dock .dock-item');
+
+    // Get current page (normalize "/" → "index.html")
+    let current = window.location.pathname.split("/").pop();
+    if (current === "" || current === "/") current = "settings.html";
+
+    links.forEach(link => {
+      const target = link.getAttribute("href");
+
+      if (target === current) {
+        link.classList.add("active");
+      }
+    });
   });
 </script>
 </body>
