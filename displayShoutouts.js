@@ -1866,7 +1866,10 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
    }
 } // --- END OF calculateAndDisplayStatusConvertedBI ---
 
+
+
 document.addEventListener("DOMContentLoaded", () => {
+  // === TYPING GLOW LOGIC (your existing code) ===
   document.querySelectorAll(".search-container.unified .creator-search").forEach(input => {
     const container = input.closest(".search-container.unified");
 
@@ -1878,15 +1881,33 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    // Initialize once on load
     setTyping();
 
-    // Listen for user input
     input.addEventListener("input", setTyping);
     input.addEventListener("change", setTyping);
     input.addEventListener("blur", setTyping);
   });
+
+  // === SEARCH FILTER LOGIC (the part you were missing) ===
+  document.querySelectorAll(".creator-search").forEach(input => {
+    input.addEventListener("input", () => {
+      const targetId = input.dataset.target;
+      const container = document.getElementById(targetId);
+      if (!container) return;
+
+      const filter = input.value.toLowerCase().trim();
+
+      // Filter ANY text element inside the target container
+      const items = container.querySelectorAll("li, a, p, div");
+
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(filter) ? "" : "none";
+      });
+    });
+  });
 });
+
 
 /* ========================================================= */
 /* == QUOTE OF THE DAY MODULE (Local + Custom + Manager) == */
