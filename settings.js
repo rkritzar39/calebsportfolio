@@ -118,8 +118,8 @@
 class SettingsManager {
   constructor() {
     /* =============================
-        Defaults
-     ============================= */
+       Defaults
+    ============================= */
     this.defaultSettings = {
       // Appearance
       appearanceMode: "device",   // "device" | "light" | "dark"
@@ -167,15 +167,15 @@ class SettingsManager {
     };
 
     /* =============================
-        Instance State
-     ============================= */
+       Instance State
+    ============================= */
     this.settings = this.loadSettings();
     this.deviceThemeMedia = null;
     this.schedulerInterval = null;
 
     /* =============================
-        Boot on DOM ready
-     ============================= */
+       Boot on DOM ready
+    ============================= */
     document.addEventListener("DOMContentLoaded", () => {
       // Initial UI + Settings
       this.initializeControls();
@@ -266,8 +266,8 @@ class SettingsManager {
   }
 
   /* =============================
-      Load / Save
-   ============================= */
+     Load / Save
+  ============================= */
   loadSettings() {
     try {
       const stored = localStorage.getItem("websiteSettings");
@@ -277,7 +277,7 @@ class SettingsManager {
       return { ...this.defaultSettings };
     }
   }
-
+  
   saveSettings() {
     const toSave = {};
     for (const key in this.defaultSettings) {
@@ -294,8 +294,8 @@ class SettingsManager {
   }
 
   /* =============================
-      UI Setup
-   ============================= */
+     UI Setup
+  ============================= */
   initializeControls() {
     // Segmented appearance control
     this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
@@ -333,9 +333,9 @@ class SettingsManager {
     // Boolean toggles (enabled/disabled)
     const toggles = Object.keys(this.defaultSettings).filter(
       (k) =>
-      typeof this.defaultSettings[k] === "string" &&
-      (this.defaultSettings[k] === "enabled" ||
-        this.defaultSettings[k] === "disabled")
+        typeof this.defaultSettings[k] === "string" &&
+        (this.defaultSettings[k] === "enabled" ||
+          this.defaultSettings[k] === "disabled")
     );
     toggles.forEach((key) => this.setToggle(key));
 
@@ -383,8 +383,8 @@ class SettingsManager {
   }
 
   /* =============================
-      Event Listeners
-   ============================= */
+     Event Listeners
+  ============================= */
   setupEventListeners() {
     // Appearance segmented control
     const appearanceControl = document.getElementById("appearanceModeControl");
@@ -426,21 +426,21 @@ class SettingsManager {
     }
 
     // 🎵 Match Song Accent listener
-    const matchToggle = document.getElementById("matchSongAccentToggle");
-    if (matchToggle) {
-      matchToggle.addEventListener("change", (e) => {
-        this.settings.matchSongAccent = e.target.checked ? "enabled" : "disabled";
-        this.saveSettings();
+const matchToggle = document.getElementById("matchSongAccentToggle");
+if (matchToggle) {
+  matchToggle.addEventListener("change", (e) => {
+    this.settings.matchSongAccent = e.target.checked ? "enabled" : "disabled";
+    this.saveSettings();
 
-        // Optional feedback
-        this.showToast(
-          "Accent Sync Updated",
-          e.target.checked ?
-          "Accent color will now match your current Spotify song." :
-          "Accent color will use your custom color only."
-        );
-      });
-    }
+    // Optional feedback
+    this.showToast(
+      "Accent Sync Updated",
+      e.target.checked
+        ? "Accent color will now match your current Spotify song."
+        : "Accent color will use your custom color only."
+    );
+  });
+}
 
     // Text size
     const slider = document.getElementById("text-size-slider");
@@ -483,8 +483,8 @@ class SettingsManager {
     // All boolean toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
-      typeof this.defaultSettings[k] === "string" &&
-      (this.defaultSettings[k] === "enabled" || this.defaultSettings[k] === "disabled")
+        typeof this.defaultSettings[k] === "string" &&
+        (this.defaultSettings[k] === "enabled" || this.defaultSettings[k] === "disabled")
     );
     toggleKeys.forEach((key) => {
       const el = document.getElementById(`${key}Toggle`);
@@ -519,8 +519,8 @@ class SettingsManager {
   }
 
   /* =============================
-      Appearance & Theme
-   ============================= */
+     Appearance & Theme
+  ============================= */
   // Fix: consistent theme classes across pages (esp. settings page)
   setThemeClasses(isDark) {
     // These control the flicker script and page theme
@@ -529,7 +529,7 @@ class SettingsManager {
 
     // Site themes (two CSS stacks)
     document.body.classList.toggle("dark-mode", isDark); // e.g. settings.css
-    document.body.classList.toggle("light-e", !isDark); // e.g. style.css
+    document.body.classList.toggle("light-e", !isDark);  // e.g. style.css
 
     // Important: on the settings page, avoid mixing "light-e"
     if (document.body.classList.contains("settings-page")) {
@@ -607,8 +607,8 @@ class SettingsManager {
   }
 
   /* =============================
-      Custom Background & Blur
-   ============================= */
+     Custom Background & Blur
+  ============================= */
   ensureWallpaperLayers() {
     let layer = document.getElementById("wallpaper-layer");
     if (!layer) {
@@ -642,10 +642,7 @@ class SettingsManager {
       });
       document.body.prepend(tint);
     }
-    return {
-      layer,
-      tint
-    };
+    return { layer, tint };
   }
 
   initCustomBackgroundControls() {
@@ -758,10 +755,7 @@ class SettingsManager {
 
   applyCustomBackground(fade = false) {
     const bg = localStorage.getItem("customBackground");
-    const {
-      layer,
-      tint
-    } = this.ensureWallpaperLayers();
+    const { layer, tint } = this.ensureWallpaperLayers();
 
     if (bg) {
       document.body.style.backgroundColor = "transparent";
@@ -789,9 +783,9 @@ class SettingsManager {
       (this.settings.appearanceMode === "device" &&
         window.matchMedia("(prefers-color-scheme: dark)").matches);
 
-    tint.style.background = isDark ?
-      "rgba(0, 0, 0, 0.45)" :
-      "rgba(255, 255, 255, 0.15)";
+    tint.style.background = isDark
+      ? "rgba(0, 0, 0, 0.45)"
+      : "rgba(255, 255, 255, 0.15)";
 
     // Ensure blur applied
     const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
@@ -837,8 +831,8 @@ class SettingsManager {
   }
 
   /* =============================
-      Dark Mode Scheduler
-   ============================= */
+     Dark Mode Scheduler
+  ============================= */
   initSchedulerInterval() {
     clearInterval(this.schedulerInterval);
     this.checkDarkModeSchedule(true);
@@ -885,8 +879,8 @@ class SettingsManager {
   }
 
   /* =============================
-      Apply Settings
-   ============================= */
+     Apply Settings
+  ============================= */
   applyAllSettings() {
     Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
     this.applyCustomBackground(false);
@@ -971,18 +965,12 @@ class SettingsManager {
           setTimeout(() => (liveActivity.style.display = "none"), 250);
         }
       }
-
-      // Update visibility of Match Song Accent based on new setting
-      // window.__spotifyIsActive must be defined in your music player script
-      this.updateMatchSongAccentVisibility(
-        window.__spotifyIsActive === true
-      );
     }
   }
 
   /* =============================
-      In-Site Notifications (Toasts)
-   ============================= */
+     In-Site Notifications (Toasts)
+  ============================= */
   ensureToastContainer() {
     let c = document.getElementById("toast-container");
     if (!c) {
@@ -1051,11 +1039,7 @@ class SettingsManager {
     return (
       settings.notifications || {
         enabled: false,
-        categories: {
-          updates: false,
-          liveActivity: false,
-          creators: false
-        },
+        categories: { updates: false, liveActivity: false, creators: false },
       }
     );
   }
@@ -1130,8 +1114,8 @@ class SettingsManager {
   }
 
   /* =============================
-      Reset Controls
-   ============================= */
+     Reset Controls
+  ============================= */
   resetSectionVisibility() {
     if (confirm("Show all homepage sections again?")) {
       const keys = Object.keys(this.defaultSettings).filter((k) => k.startsWith("show"));
@@ -1149,8 +1133,7 @@ class SettingsManager {
         "Reset all settings to factory defaults? This will also clear your custom background."
       )
     ) {
-      this.settings = { ...this.defaultSettings
-      };
+      this.settings = { ...this.defaultSettings };
       this.saveSettings();
 
       // Clear local-only items
@@ -1184,25 +1167,11 @@ class SettingsManager {
   }
 
   /* =============================
-      Misc Stubs (safe no-ops)
-   ============================= */
+     Misc Stubs (safe no-ops)
+  ============================= */
   initScrollArrow() {}
   initLoadingScreen() {}
   initMouseTrail() {}
-
-  // MOVED THIS METHOD INSIDE THE CLASS
-  updateMatchSongAccentVisibility(isSpotifyActive) {
-    const toggleCard = document.getElementById("matchSongAccentToggle")?.closest(".setting-card");
-    if (!toggleCard) return;
-
-    const showLive = this.settings.showLiveActivity === "enabled";
-
-    if (showLive && isSpotifyActive) {
-      toggleCard.style.display = "";
-    } else {
-      toggleCard.style.display = "none";
-    }
-  }
 }
 
 /* =============================
