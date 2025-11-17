@@ -134,13 +134,21 @@
 <!-- 🔔 Toast Notifications -->
 <div id="toast-container"></div>
         
-<div id="rearrangeable-container">
-    <div class="social-links-section" id="social-links-section" data-section-id="social-links">
-        <h2>Follow Me</h2>
-        <div id="social-links-container" class="social-links-container">
-            <p>Loading social links...</p>
-        </div>
+<div class="social-links-section" id="social-links-section" data-section-id="social-links">
+    <h2>Follow Me</h2>
+
+    <!-- Search bar -->
+    <input 
+        type="text" 
+        class="section-search" 
+        placeholder="Search social links..."
+        data-target="social-links-container"
+    />
+
+    <div id="social-links-container" class="social-links-container">
+        <p>Loading social links...</p>
     </div>
+</div>
 
     <div id="president-section" data-section-id="president">
         <div id="president-placeholder"></div>
@@ -230,12 +238,19 @@
 
 
     <div class="useful-links-section section" id="useful-links-section" data-section-id="useful-links">
-       <h2 class="section-title">Useful Links</h2>
-       <div class="links-container">
-       </div>
-   </div>    
+    <h2 class="section-title">Useful Links</h2>
 
-    
+    <!-- Search bar -->
+    <input 
+        type="text" 
+        class="section-search" 
+        placeholder="Search useful links..."
+        data-target="useful-links-container"
+    />
+
+    <div class="links-container" id="useful-links-container">
+    </div>
+</div>  
 
 <div class="countdown-section" id="countdown-section" data-section-id="countdown">
 
@@ -421,10 +436,18 @@
 </div>
 
     <div class="disabilities-section section" id="disabilities-section" data-section-id="disabilities">
-        <h2>Disabilities</h2>
-        <p>I have the following disabilities:</p>
-        <ul id="disabilities-list-placeholder">
-            </ul>
+    <h2>Disabilities</h2>
+    <p>I have the following disabilities:</p>
+
+    <!-- Search bar -->
+    <input 
+        type="text" 
+        class="section-search" 
+        placeholder="Search disabilities..."
+        data-target="disabilities-list-placeholder"
+    />
+
+        <ul id="disabilities-list-placeholder"></ul>
     </div>
 </div>
         
