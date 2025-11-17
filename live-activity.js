@@ -193,34 +193,21 @@ async function getDiscord() {
     const { data } = await res.json();
     if (!data) return null;
 
-    if (data.spotify) {
-      const sp = data.spotify;
-      $$("spotify-card").classList.remove("hidden");
-      $$("live-activity-cover").src = sp.album_art_url;
-      $$("live-song-title").textContent = sp.song;
-      $$("live-song-artist").textContent = sp.artist;
-      currentSpotifyUrl = `https://open.spotify.com/track/${sp.track_id}`;
-      setupProgress(sp.timestamps.start, sp.timestamps.end);
-      updateDynamicColors(sp.album_art_url);
-
-      // 🔥 NEW
-      window.__spotifyIsActive = true;
-      if (window.settingsManagerInstance) {
-        window.settingsManagerInstance.updateMatchSongAccentVisibility(true);
-      }
-
-      return { text: "Listening to Spotify", source: "spotify" };
-    }
-
+  if (data.spotify) {
+  const sp = data.spotify;
+  $$("spotify-card").classList.remove("hidden");
+  $$("live-activity-cover").src = sp.album_art_url;
+  $$("live-song-title").textContent = sp.song;
+  $$("live-song-artist").textContent = sp.artist;
+  currentSpotifyUrl = `https://open.spotify.com/track/${sp.track_id}`;
+  setupProgress(sp.timestamps.start, sp.timestamps.end);
+  updateDynamicColors(sp.album_art_url);
+  return { text: "Listening to Spotify", source: "spotify" };
+}
     $$("spotify-card").classList.add("hidden");
     updateDynamicColors(null);
 
-    // 🔥 NEW
-    window.__spotifyIsActive = false;
-    if (window.settingsManagerInstance) {
-      window.settingsManagerInstance.updateMatchSongAccentVisibility(false);
-    }
-
+    // If offline
     const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
