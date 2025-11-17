@@ -1869,7 +1869,7 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  // === TYPING GLOW LOGIC (your existing code) ===
+  // === GLOW TYPING LOGIC (your original) ===
   document.querySelectorAll(".search-container.unified .creator-search").forEach(input => {
     const container = input.closest(".search-container.unified");
 
@@ -1888,7 +1888,7 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("blur", setTyping);
   });
 
-  // === SEARCH FILTER LOGIC (the part you were missing) ===
+  // === SEARCH + NO RESULTS LOGIC ===
   document.querySelectorAll(".creator-search").forEach(input => {
     input.addEventListener("input", () => {
       const targetId = input.dataset.target;
@@ -1896,18 +1896,36 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!container) return;
 
       const filter = input.value.toLowerCase().trim();
-
-      // Filter ANY text element inside the target container
       const items = container.querySelectorAll("li, a, p, div");
+
+      let visibleCount = 0;
 
       items.forEach(item => {
         const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(filter) ? "" : "none";
+
+        if (text.includes(filter)) {
+          item.style.display = "";
+          visibleCount++;
+        } else {
+          item.style.display = "none";
+        }
       });
+
+      // Which "no results" message to update?
+      let msgId = {
+        "social-links-container": "no-results-social",
+        "useful-links-container": "no-results-useful",
+        "disabilities-list-placeholder": "no-results-disabilities"
+      }[targetId];
+
+      const msg = document.getElementById(msgId);
+
+      if (msg) {
+        msg.style.display = visibleCount === 0 ? "block" : "none";
+      }
     });
   });
 });
-
 
 /* ========================================================= */
 /* == QUOTE OF THE DAY MODULE (Local + Custom + Manager) == */
