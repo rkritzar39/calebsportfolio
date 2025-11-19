@@ -323,3 +323,76 @@ async function sendMessage() {
 // Event listeners
 sendBtn.addEventListener('click', sendMessage);
 inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+
+// --------------------------------------
+// AUTO PAGE REFRESH + COUNTDOWN DISPLAY
+// --------------------------------------
+
+// Adjust this to whatever interval you want
+const refreshIntervalMinutes = 5;
+
+// Get the countdown display element
+const countdownEl = document.getElementById("refresh-countdown");
+
+// Time remaining in milliseconds
+let remainingMs = refreshIntervalMinutes * 60 * 1000;
+
+// Timers
+let countdownTimer = null;
+let refreshTimer = null;
+
+// Format time (MM:SS)
+function formatTime(ms) {
+  let totalSeconds = Math.floor(ms / 1000);
+  let minutes = Math.floor(totalSeconds / 60);
+  let seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function startCountdown() {
+  remainingMs = refreshIntervalMinutes * 60 * 1000;
+
+  countdownTimer = setInterval(() => {
+    remainingMs -= 1000;
+
+    if (countdownEl) {
+      countdownEl.textContent = formatTime(remainingMs);
+    }
+
+    if (remainingMs <= 0) {
+      location.reload(); // full page refresh
+    }
+  }, 1000);
+}
+
+function stopCountdown() {
+  clearInterval(countdownTimer);
+}
+
+function startAutoRefresh() {
+  refreshTimer = setInterval(() => {
+    if (document.visibilityState === "visible") {
+      location.reload();
+    }
+  }, refreshIntervalMinutes * 60 * 1000);
+
+  startCountdown();
+}
+
+function stopAutoRefresh() {
+  clearInterval(refreshTimer);
+  stopCountdown();
+}
+
+// Pause refresh when tab is inactive (saves reads)
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    startAutoRefresh();
+  } else {
+    stopAutoRefresh();
+  }
+});
+
+// Start when page loads
+startAutoRefresh();
+
