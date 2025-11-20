@@ -4203,27 +4203,29 @@ body.maintenance-active {
   opacity: 0.8;
 }
 
-/* ======================== */
-/* Goal Tracker (Theme-Aware) */
-/* ======================== */
+/* ====================================== */
+/* 🔥 GOAL TRACKER — LIQUID GLASS THEME  */
+/* ====================================== */
 
-.goal-tracker {
+#goals-wrapper.goal-tracker {
     background: var(--content-bg);
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
-    color: var(--text-color);
     padding: 28px;
     border-radius: var(--radius-lg);
+    color: var(--text-color);
     margin: 40px auto;
+    width: 100%;
+
     box-shadow: var(--bubble-shadow);
     border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
 }
 
-/* Soft glass bubble sheen */
-.goal-tracker::before {
+/* Glass highlight layer */
+#goals-wrapper::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -4231,15 +4233,21 @@ body.maintenance-active {
     pointer-events: none;
 }
 
+/* ======================== */
+/* Stats Layout */
+/* ======================== */
 .goal-stats {
     display: flex;
-    gap: 24px;
-    margin-bottom: 18px;
+    gap: 22px;
+    margin-bottom: 14px;
     font-size: 17px;
     color: var(--secondary-text);
     flex-wrap: wrap;
 }
 
+/* ======================== */
+/* Progress Bar */
+/* ======================== */
 .goal-bar {
     width: 100%;
     height: 18px;
@@ -4258,8 +4266,11 @@ body.maintenance-active {
     box-shadow: 0 0 10px var(--accent-color);
 }
 
+/* ======================== */
+/* Message Text */
+/* ======================== */
 .goal-message {
-    margin-top: 12px;
+    margin-top: 10px;
     opacity: 0.9;
     color: var(--secondary-text);
     font-size: 15px;
