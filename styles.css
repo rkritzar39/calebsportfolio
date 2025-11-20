@@ -4204,7 +4204,7 @@ body.maintenance-active {
 }
 
 /* ====================================== */
-/* 🔥 GOAL TRACKER — LIQUID GLASS THEME  */
+/* 🔋 GOAL BATTERY — FIXED CONTAINER     */
 /* ====================================== */
 
 #goals-wrapper.goal-tracker {
@@ -4215,63 +4215,30 @@ body.maintenance-active {
     padding: 28px;
     border-radius: var(--radius-lg);
     color: var(--text-color);
-    margin: 40px auto;
-    width: 100%;
 
+    /* FIX: Add safe spacing from both left and right edges */
+    margin: 40px auto;
+    margin-left: auto;
+    margin-right: auto;
+
+    /* FIX: Match your site’s standard card/container width */
+    width: 100%;
+    max-width: 900px;
+
+    /* Liquid-glass shadows & border */
     box-shadow: var(--bubble-shadow);
     border: 1px solid var(--border-color);
+
+    /* Prevent internal blur/gradient from spilling */
     position: relative;
     overflow: hidden;
 }
 
-/* Glass highlight layer */
+/* Glass highlight */
 #goals-wrapper::before {
     content: "";
     position: absolute;
     inset: 0;
     background: var(--bubble-gradient);
     pointer-events: none;
-}
-
-/* ======================== */
-/* Stats Layout */
-/* ======================== */
-.goal-stats {
-    display: flex;
-    gap: 22px;
-    margin-bottom: 14px;
-    font-size: 17px;
-    color: var(--secondary-text);
-    flex-wrap: wrap;
-}
-
-/* ======================== */
-/* Progress Bar */
-/* ======================== */
-.goal-bar {
-    width: 100%;
-    height: 18px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 999px;
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-    box-shadow: inset 0 1px 4px rgba(0,0,0,0.25);
-}
-
-#goalFill {
-    height: 100%;
-    width: 0%;
-    background: var(--accent-color);
-    transition: width var(--transition-slow);
-    box-shadow: 0 0 10px var(--accent-color);
-}
-
-/* ======================== */
-/* Message Text */
-/* ======================== */
-.goal-message {
-    margin-top: 10px;
-    opacity: 0.9;
-    color: var(--secondary-text);
-    font-size: 15px;
 }
