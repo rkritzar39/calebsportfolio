@@ -42,17 +42,20 @@ document.getElementById("goal-form").addEventListener("submit", async (e) => {
   const remaining = Math.max(total - raised, 0);
 
   try {
-    await setDoc(doc(db, "siteSettings", "goalTracker"), {
+    // Save to /goals collection with ownerId
+    await setDoc(doc(db, "goals", "goalTracker"), {
       goalTitle: title,
       goalTotal: total,
       goalRaised: raised,
-      goalRemaining: remaining
+      goalRemaining: remaining,
+      ownerId: auth.currentUser.uid // ⚡ Required for Firestore rule
     });
 
     const msg = document.getElementById("goal-status-message");
     msg.textContent = "Goal Tracker Saved!";
     msg.classList.add("success");
   } catch (err) {
+    console.error(err); // Log Firestore error
     const msg = document.getElementById("goal-status-message");
     msg.textContent = "Error saving goal tracker.";
     msg.classList.add("error");
