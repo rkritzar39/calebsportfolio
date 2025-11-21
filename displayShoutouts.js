@@ -2913,3 +2913,53 @@ document.addEventListener("DOMContentLoaded", () => {
     return "I'm still learning! Try asking about your theme, layout, or sections.";
   }
 });
+
+// --------------------------------------
+// LOAD PROJECT GOAL TRACKER ON HOMEPAGE
+// --------------------------------------
+async function loadGoalTrackerHomepage() {
+  try {
+    const ref = doc(db, "siteSettings", "goalTracker");
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      console.warn("No goalTracker document found.");
+      return;
+    }
+
+    const data = snap.data();
+
+    // Set title
+    const titleEl = document.querySelector(".goals-title");
+    if (titleEl) titleEl.textContent = data.goalTitle || "Project Goal";
+
+    // Set numbers
+    const totalEl = document.getElementById("goalTotal");
+    const raisedEl = document.getElementById("goalRaised");
+    const remainingEl = document.getElementById("goalRemaining");
+
+    if (totalEl) totalEl.textContent = data.goalTotal ?? 0;
+    if (raisedEl) raisedEl.textContent = data.goalRaised ?? 0;
+    if (remainingEl) remainingEl.textContent = data.goalRemaining ?? 0;
+
+    // Progress bar
+    const fill = document.getElementById("goalFill");
+    if (fill && data.goalTotal > 0) {
+      const pct = Math.min((data.goalRaised / data.goalTotal) * 100, 100);
+      fill.style.width = pct + "%";
+    }
+
+    // Message
+    const msg = document.getElementById("goalMessage");
+    if (msg && data.goalTotal > 0) {
+      const pct = Math.min((data.goalRaised / data.goalTotal) * 100, 100);
+      msg.textContent = `You are ${pct.toFixed(1)}% of the way there!`;
+    }
+
+  } catch (err) {
+    console.error("Error loading goal tracker:", err);
+  }
+}
+
+// Load on page render
+document.addEventListener("DOMContentLoaded", loadGoalTrackerHomepage);
