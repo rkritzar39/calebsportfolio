@@ -11,17 +11,25 @@ const firebaseConfig = {
     measurementId: "G-DQPH8YL789" // Optional
 };
 
+// displayShoutouts.js
+
+// Load shared Firestore instance from firebaseInit.js
+import { db } from "./firebaseInit.js";
+
 import {
-  getFirestore,
   collection,
   addDoc,
   getDocs,
-  doc,
-  getDoc,
   deleteDoc,
   updateDoc,
+  doc,
+  getDoc,
   onSnapshot,
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+// ------------------------------
+// WATCH LIVE STATUS
+// ------------------------------
 function watchLiveStatus() {
   if (!db) {
     console.warn("Firestore not ready yet, retrying...");
@@ -47,11 +55,10 @@ function watchLiveStatus() {
 }
 
 document.addEventListener("DOMContentLoaded", watchLiveStatus);
-// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
 
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-import { db } from "./firebaseInit.js";
-
+// ------------------------------
+// LOAD GOAL TRACKER ON HOMEPAGE
+// ------------------------------
 async function loadGoalTrackerHomepage() {
   const ref = doc(db, "siteSettings", "goalTracker");
   const snap = await getDoc(ref);
