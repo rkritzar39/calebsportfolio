@@ -11,20 +11,17 @@ const firebaseConfig = {
     measurementId: "G-DQPH8YL789" // Optional
 };
 
-// Import necessary Firebase functions (v9+ modular SDK)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { 
+import {
   getFirestore,
   collection,
+  addDoc,
   getDocs,
   doc,
   getDoc,
-  onSnapshot,        // 👈 add this
-  Timestamp,
-  orderBy,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+  deleteDoc,
+  updateDoc,
+  onSnapshot,
+} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 function watchLiveStatus() {
   if (!db) {
     console.warn("Firestore not ready yet, retrying...");
