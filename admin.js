@@ -1,6 +1,65 @@
     // admin.js (Version includes Preview Prep + Previous Features + Social Links)
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
+// Load existing Project Goal Data
+async function loadGoalTracker() {
+  const ref = doc(db, "siteSettings", "goalTracker");
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    const data = snap.data();
+
+    document.getElementById("goal-title").value = data.goalTitle ?? "";
+    document.getElementById("goal-total").value = data.goalTotal ?? 0;
+    document.getElementById("goal-raised").value = data.goalRaised ?? 0;
+    document.getElementById("goal-remaining").value = data.goalRemaining ?? 0;
+  }
+}
+
+loadGoalTracker();
+
+const goalTitleInput = document.getElementById("goal-title");
+const goalTotalInput = document.getElementById("goal-total");
+const goalRaisedInput = document.getElementById("goal-raised");
+const goalRemainingInput = document.getElementById("goal-remaining");
+
+function updateRemaining() {
+  const total = Number(goalTotalInput.value) || 0;
+  const raised = Number(goalRaisedInput.value) || 0;
+  goalRemainingInput.value = Math.max(total - raised, 0);
+}
+
+goalTotalInput.addEventListener("input", updateRemaining);
+goalRaisedInput.addEventListener("input", updateRemaining);
+
+
+document.getElementById("goal-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const title = goalTitleInput.value.trim();
+  const total = Number(goalTotalInput.value);
+  const raised = Number(goalRaisedInput.value);
+  const remaining = Math.max(total - raised, 0);
+
+  try {
+    await setDoc(doc(db, "siteSettings", "goalTracker"), {
+      goalTitle: title,
+      goalTotal: total,
+      goalRaised: raised,
+      goalRemaining: remaining
+    });
+
+    const msg = document.getElementById("goal-status-message");
+    msg.textContent = "Goal Tracker Saved!";
+    msg.classList.add("success");
+  } catch (err) {
+    const msg = document.getElementById("goal-status-message");
+    msg.textContent = "Error saving goal tracker.";
+    msg.classList.add("error");
+  }
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("live-status-input");
   const updateBtn = document.getElementById("update-live-status-btn");
