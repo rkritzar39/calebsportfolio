@@ -52,6 +52,37 @@ function watchLiveStatus() {
 document.addEventListener("DOMContentLoaded", watchLiveStatus);
 // In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
 
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+import { db } from "./firebaseInit.js";
+
+async function loadGoalTrackerHomepage() {
+  const ref = doc(db, "siteSettings", "goalTracker");
+  const snap = await getDoc(ref);
+
+  if (!snap.exists()) return;
+
+  const data = snap.data();
+
+  // Insert Goal Title
+  document.querySelector(".goals-title").textContent = data.goalTitle || "Project Goal";
+
+  // Insert numbers
+  document.getElementById("goalTotal").textContent = data.goalTotal;
+  document.getElementById("goalRaised").textContent = data.goalRaised;
+  document.getElementById("goalRemaining").textContent = data.goalRemaining;
+
+  // Progress bar
+  const fill = document.getElementById("goalFill");
+  const pct = Math.min((data.goalRaised / data.goalTotal) * 100, 100);
+  fill.style.width = pct + "%";
+
+  // Message
+  const msg = document.getElementById("goalMessage");
+  msg.textContent = `You are ${pct.toFixed(1)}% of the way there!`;
+}
+
+loadGoalTrackerHomepage();
+
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
     if (!legislationList) return;
