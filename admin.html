@@ -238,19 +238,7 @@
   <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
 </section>
 
-            <div class="admin-section-card" id="live-status-management">
-  <h3>🎧 Live Activity</h3>
-  <input
-    type="text"
-    id="live-status-input"
-    placeholder="e.g. 🎥 Editing new video or 💻 Working on code"
-  />
-  <div class="admin-button-group">
-    <button id="update-live-status-btn" class="admin-btn primary">Update Status</button>
-    <button id="clear-live-status-btn" class="admin-btn secondary">Clear Status</button>
-  </div>
-  <p id="live-status-result" class="admin-status-msg"></p>
-</div>
+           
             
        <section class="admin-section" id="blog-management" aria-labelledby="blog-heading">
   <h3 id="blog-heading">Blog Management</h3>
@@ -614,10 +602,16 @@
 
     </section>
 
-            <section class="admin-section" id="goal-management" aria-labelledby="goal-management-heading">
+           <section class="admin-section" id="goal-management" aria-labelledby="goal-management-heading">
   <h3 id="goal-management-heading">Project Goal Tracker</h3>
 
   <form id="goal-form">
+
+    <div class="form-group">
+      <label for="goal-title">Goal Title</label>
+      <input type="text" id="goal-title" name="goalTitle" placeholder="e.g., New Studio Setup" required>
+    </div>
+
     <div class="form-group">
       <label for="goal-total">Goal Amount ($)</label>
       <input type="number" id="goal-total" name="goalTotal" placeholder="e.g., 5000" required>
@@ -643,6 +637,7 @@
 
   <div id="goal-status-message" class="status-message" role="status" aria-live="polite"></div>
 </section>
+
 
 
            <div class="business-container onyx-surface">
