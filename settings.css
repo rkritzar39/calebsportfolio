@@ -59,6 +59,11 @@
     --shadow-md: var(--light-shadow-md);
     --shadow-lg: var(--light-shadow-lg);
 
+    /* Compatibility Variables for Logic */
+    --toggle-on: var(--accent-color);
+    --toggle-off: var(--secondary-text);
+    --slider-track-color: var(--border-color);
+
     /* --- Physics & Radii --- */
     --glass-blur: blur(40px) saturate(180%); /* Hyper-real blur */
     --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1); /* Spring physics */
@@ -107,6 +112,7 @@ body.high-contrast {
     --border-color: var(--text-color);
     --glass-border: var(--text-color);
     --secondary-text: var(--text-color);
+    --shadow-lg: none;
 }
 
 /* Dyslexia Font */
@@ -326,10 +332,17 @@ footer,
 .md-switch input:checked + .track {
     background: var(--accent-color);
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+    /* Breathing animation for checked state */
+    animation: togglePulse 3s ease-in-out infinite;
 }
 .md-switch input:checked + .track .thumb {
     transform: translateX(20px);
     box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+
+@keyframes togglePulse {
+  0%, 100% { box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 0 0 0 color-mix(in srgb, var(--accent-color) 40%, transparent); }
+  50% { box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 0 12px 2px color-mix(in srgb, var(--accent-color) 30%, transparent); }
 }
 
 /* Dark Mode Adjustments */
@@ -453,11 +466,20 @@ body.dark-mode .md-switch .track {
     flex-wrap: wrap;
 }
 
+.custom-bg-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .custom-bg-controls {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-top: 0.5rem;
 }
+
+#customBgUpload { display: none; }
 
 .custom-bg-label {
     background: color-mix(in srgb, var(--accent-color) 15%, var(--glass-surface));
@@ -472,6 +494,16 @@ body.dark-mode .md-switch .track {
 }
 .custom-bg-label:hover {
     transform: scale(1.03);
+    background: color-mix(in srgb, var(--accent-color) 20%, var(--glass-surface));
+}
+
+.file-name {
+    font-size: 0.8rem;
+    color: var(--secondary-text);
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 #removeCustomBg {
@@ -504,9 +536,24 @@ body.dark-mode .md-switch .track {
     background: var(--border-color);
     box-shadow: var(--shadow-md);
     display: none;
+    transform: scale(0.9);
+    transition: all 0.3s var(--ease-elastic);
 }
-#customBgPreviewContainer.visible { display: block; }
+#customBgPreviewContainer.visible { 
+    display: block;
+    transform: scale(1);
+    opacity: 1;
+}
 #customBgPreview { width: 100%; height: 100%; object-fit: cover; }
+
+/* Blur Card Fade (if used) */
+#wallpaperBlurCard {
+  transition: opacity 0.35s ease;
+}
+#wallpaperBlurCard.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* ======================================================= */
 /* === Buttons & Segmented Controls ====================== */
@@ -542,6 +589,7 @@ body.dark-mode .md-switch .track {
     border-radius: 99px;
     position: relative;
     border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
 }
 .segmented-control button {
     background: transparent;
@@ -554,6 +602,10 @@ body.dark-mode .md-switch .track {
     position: relative;
     z-index: 2;
     cursor: pointer;
+    transition: color 0.2s ease;
+}
+.segmented-control button:hover {
+    color: var(--accent-color);
 }
 .segmented-control .seg-bg {
     position: absolute;
@@ -673,9 +725,16 @@ footer {
     box-shadow: 0 0 6px var(--accent-color);
 }
 
-/* Legacy Bubblebar Support (Hidden on Desktop) */
+/* Legacy Bubblebar Support (Hidden on Desktop to avoid duplicates) */
 @media (min-width: 768px) {
     .ios19-bubblebar { display: none !important; }
+}
+/* Legacy Bubblebar styles retained for fallback/mobile if used */
+.ios19-bubblebar {
+  position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
+  background: var(--glass-surface); border: 1px solid var(--glass-border);
+  border-radius: 2rem; z-index: 9998; padding: 0.65rem;
+  display: flex;
 }
 
 /* ======================================================= */
@@ -696,6 +755,7 @@ footer {
 .toast {
     background: color-mix(in srgb, var(--glass-surface) 90%, var(--bg-color));
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     color: var(--text-color);
     padding: 14px 20px;
     border-radius: 16px;
@@ -705,6 +765,7 @@ footer {
     animation: toastFadeIn 0.4s var(--ease-elastic);
     max-width: 320px;
 }
+.toast strong { display: block; margin-bottom: 4px; font-weight: 600; }
 
 @keyframes toastFadeIn {
     from { opacity: 0; transform: translateY(20px) scale(0.9); }
@@ -741,8 +802,18 @@ footer {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--warning-color) 40%, transparent);
 }
-body.dark-mode .color-warning { color: #ffd60a; }
+body.dark-mode .color-warning { color: #ffd60a; background: color-mix(in srgb, var(--warning-color) 20%, black); }
+
+/* Mouse Trail */
+#mouse-trail { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
+.trail {
+  width: 10px; height: 10px; background: var(--accent-color);
+  border-radius: 50%; position: absolute; opacity: 0.6;
+  animation: fadeOut 0.8s forwards;
+}
+@keyframes fadeOut { to { opacity: 0; transform: scale(2); } }
 
 /* Motion Handling */
 .motion-disabled *, 
@@ -765,7 +836,8 @@ body.focus-outline-disabled :focus-visible { outline: none; }
     body.settings-page .container { padding: 1rem; }
     .settings-header h1 { font-size: 1.5rem; }
     .custom-background { justify-content: center; text-align: center; }
-    .custom-bg-separator { width: 80%; height: 1px; margin: 1rem 0; }
+    .custom-bg-left { align-items: center; }
+    .custom-bg-separator { width: 80%; height: 1px; margin: 1rem 0; transform: scaleX(1); }
     #toast-container { bottom: 20px; right: 20px; left: 20px; align-items: center; }
     .onyx-dock { width: 90%; max-width: 400px; padding: 0.5rem 1rem; }
 }
