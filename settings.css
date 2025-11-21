@@ -1,843 +1,1500 @@
 :root {
     /* ======================================================= */
-    /* === iOS 26.2 (Onyx Beta 3) Theme Engine =============== */
+    /* === Onyx (macOS/iOS 26 Inspired) Theme Defaults ===== */
     /* ======================================================= */
 
-    /* --- Dynamic Palette (User Overridable) --- */
-    --accent-color: #007aff;
-    --accent-text-color: #ffffff;
-    --danger-color: #ff453a;
-    --success-color: #30d158;
-    --warning-color: #ffd60a;
+    /* Base Defaults */
+    --font-size-base: 16px;
+    --accent-color: #007aff; /* Standard Apple blue */
+    --accent-text-color: #fff;
 
-    /* --- Light Mode (Spatial Day) --- */
-    --light-bg: #f5f5f7;
+    /* Light Mode */
+    --light-bg: #f2f2f7;
     --light-content-bg: #ffffff;
-    --light-text: #1d1d1f;
-    --light-secondary-text: #86868b;
-    --light-border: rgba(0, 0, 0, 0.08);
-    
-    /* iOS 26 Glass Materials (Light) */
-    --light-glass-surface: rgba(255, 255, 255, 0.65);
-    --light-glass-border: rgba(255, 255, 255, 0.4);
-    --light-glass-highlight: rgba(255, 255, 255, 0.5);
-    
-    /* Shadows */
-    --light-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-    --light-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
-    --light-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08), inset 0 0 0 1px rgba(255,255,255,0.5);
+    --light-text: #000;
+    --light-secondary-text: #8a8a8e;
+    --light-border: #c6c6c8;
+    --light-hover: rgba(0, 0, 0, 0.05);
+    --light-toggle-on: var(--accent-color);
+    --light-toggle-off: #e9e9eb;
+    --light-red-color: #ff3b30;
+    --light-slider-track: #e9e9eb;
+    --light-slider-thumb: #fff;
 
-    /* --- Dark Mode (Deep Onyx) --- */
-    --dark-bg: #000000;
+    /* Dark Mode (Onyx) */
+    --dark-bg: #000;
     --dark-content-bg: #1c1c1e;
-    --dark-text: #f5f5f7;
-    --dark-secondary-text: #98989d;
-    --dark-border: rgba(255, 255, 255, 0.12);
+    --dark-text: #fff;
+    --dark-secondary-text: #8d8d93;
+    --dark-border: #38383a;
+    --dark-hover: rgba(255, 255, 255, 0.1);
+    --dark-toggle-on: var(--accent-color);
+    --dark-toggle-off: #39393d;
+    --dark-red-color: #ff453a;
+    --dark-slider-track: #2f2f31;
+    --dark-slider-thumb: #e6e6e6;
 
-    /* iOS 26 Glass Materials (Dark) */
-    --dark-glass-surface: rgba(30, 30, 32, 0.70);
-    --dark-glass-border: rgba(255, 255, 255, 0.12);
-    --dark-glass-highlight: rgba(255, 255, 255, 0.08);
-
-    /* Shadows */
-    --dark-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --dark-shadow-md: 0 8px 20px rgba(0, 0, 0, 0.4);
-    --dark-shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
-
-    /* --- Defaults (Light Active by Default) --- */
+    /* Default theme */
     --bg-color: var(--light-bg);
     --content-bg: var(--light-content-bg);
     --text-color: var(--light-text);
     --secondary-text: var(--light-secondary-text);
     --border-color: var(--light-border);
-    
-    /* Material Mappings */
-    --glass-surface: var(--light-glass-surface);
-    --glass-border: var(--light-glass-border);
-    --glass-highlight: var(--light-glass-highlight);
-    --shadow-sm: var(--light-shadow-sm);
-    --shadow-md: var(--light-shadow-md);
-    --shadow-lg: var(--light-shadow-lg);
+    --hover-color: var(--light-hover);
+    --toggle-on: var(--light-toggle-on);
+    --toggle-off: var(--light-toggle-off);
+    --red-color: var(--light-red-color);
+    --slider-track-color: var(--light-slider-track);
+    --slider-track-filled-color: var(--accent-color);
+    --slider-thumb-color: var(--light-slider-thumb);
+    --shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.08);
+    --shadow-elevation-2: 0 6px 20px rgba(0,0,0,0.12);
 
-    /* Compatibility Variables for Logic */
-    --toggle-on: var(--accent-color);
-    --toggle-off: var(--secondary-text);
-    --slider-track-color: var(--border-color);
-
-    /* --- Physics & Radii --- */
-    --glass-blur: blur(40px) saturate(180%); /* Hyper-real blur */
-    --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1); /* Spring physics */
-    --ease-smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 24px;
-    --radius-pill: 999px;
+    /* Glass Material */
+    --glass-blur: blur(30px) saturate(150%) brightness(1.05);
+    --glass-bg-light: rgba(242, 242, 247, 0.8);
+    --glass-border-light: rgba(0, 0, 0, 0.1);
+    --glass-bg-dark: rgba(28, 28, 30, 0.75);
+    --glass-border-dark: rgba(255, 255, 255, 0.15);
 }
 
-/* ======================================================= */
-/* === Theme Overrides =================================== */
-/* ======================================================= */
-
-/* Dark Mode Injection */
+/* Dark Mode */
 body.dark-mode {
     --bg-color: var(--dark-bg);
     --content-bg: var(--dark-content-bg);
     --text-color: var(--dark-text);
     --secondary-text: var(--dark-secondary-text);
     --border-color: var(--dark-border);
-    
-    --glass-surface: var(--dark-glass-surface);
-    --glass-border: var(--dark-glass-border);
-    --glass-highlight: var(--dark-glass-highlight);
-    --shadow-sm: var(--dark-shadow-sm);
-    --shadow-md: var(--dark-shadow-md);
-    --shadow-lg: var(--dark-shadow-lg);
+    --hover-color: var(--dark-hover);
+    --toggle-on: var(--dark-toggle-on);
+    --toggle-off: var(--dark-toggle-off);
+    --red-color: var(--dark-red-color);
+    --slider-track-color: var(--dark-slider-track);
+    --slider-thumb-color: var(--dark-slider-thumb);
+    --shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-elevation-2: 0 12px 28px rgba(0,0,0,0.35);
 }
 
-/* Clear Mode (Less opacity) */
-body.clear-mode {
-    --light-glass-surface: rgba(255, 255, 255, 0.3);
-    --dark-glass-surface: rgba(30, 30, 32, 0.4);
-}
-
-/* Tinted Mode (Mix accent into glass) */
-body.tinted-mode {
-    --glass-surface: color-mix(in srgb, var(--accent-color) 8%, var(--glass-surface));
-}
-
-/* High Contrast Mode */
-body.high-contrast {
-    --glass-blur: none;
-    --glass-surface: var(--bg-color);
-    --border-color: var(--text-color);
-    --glass-border: var(--text-color);
-    --secondary-text: var(--text-color);
-    --shadow-lg: none;
-}
-
-/* Dyslexia Font */
-body.dyslexia-font {
-    font-family: "OpenDyslexic", "Arial", sans-serif !important;
-}
-
-/* ======================================================= */
-/* === Global Architecture =============================== */
-/* ======================================================= */
-
+/* Base body */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     background-color: var(--bg-color);
     color: var(--text-color);
-    margin: 0;
-    padding: 0;
-    line-height: 1.4;
-    -webkit-font-smoothing: antialiased;
-    
-    /* Subtle mesh gradient background for glass depth */
-    background-image: 
-        radial-gradient(circle at 10% 20%, color-mix(in srgb, var(--accent-color) 5%, transparent) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, color-mix(in srgb, var(--accent-color) 5%, transparent) 0%, transparent 40%);
-    background-attachment: fixed;
-    transition: background-color 0.4s var(--ease-smooth), color 0.4s ease;
 }
 
-body.settings-page .container {
-    max-width: 54rem;
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
-}
-
-/* ======================================================= */
-/* === "Plucked" Glass Panels ============================ */
-/* ======================================================= */
-
-/* Base Glass Class */
-.glass-panel,
+/* Glass Panels */
 .settings-header,
 .settings-subsection,
 footer,
 #cookie-consent-banner {
-    background: var(--glass-surface);
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border-light);
+    border-radius: 1.5rem;
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    /* The iOS 26 "Inner Glow" + Deep Shadow */
     box-shadow: 
-        inset 0 1px 0 0 var(--glass-highlight),
-        var(--shadow-lg);
-    transition: box-shadow 0.3s var(--ease-smooth), background 0.3s ease;
+        inset 0 0 0 1.5px rgba(255,255,255,0.2),
+        0 20px 40px -10px rgba(0,0,0,0.25);
 }
 
-/* Header */
-.settings-header {
+body.dark-mode .settings-header,
+body.dark-mode .settings-subsection,
+body.dark-mode footer,
+body.dark-mode #cookie-consent-banner {
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-border-dark);
+    box-shadow: 
+        inset 0 0 0 1.5px rgba(255,255,255,0.1),
+        0 20px 40px -10px rgba(0,0,0,0.5);
+}
+
+/* Clear & Tinted Modes */
+body.clear-mode {
+    --glass-bg-light: rgba(255,255,255,0.45);
+    --glass-bg-dark: rgba(28,28,30,0.45);
+}
+
+body.tinted-mode {
+    --glass-bg-light: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
+    --glass-bg-dark: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-dark));
+}
+
+/* High Contrast Mode */
+body.high-contrast {
+    --accent-color: #ffcc00;
+    --accent-text-color: #000;
+    --bg-color: color-mix(in srgb, var(--dark-bg) 90%, #000 10%);
+    --content-bg: color-mix(in srgb, var(--dark-content-bg) 90%, #000 10%);
+    --glass-bg-light: rgba(255,255,255,0.55);
+    --glass-bg-dark: rgba(22,22,22,0.85);
+    --glass-border-light: rgba(0,0,0,0.35);
+    --glass-border-dark: rgba(255,255,255,0.35);
+    --text-color: #fff;
+    --secondary-text: rgba(255,255,255,0.92);
+    --border-color: rgba(255,255,255,0.6);
+    --slider-track-color: rgba(255,255,255,0.25);
+    --slider-thumb-color: #fff;
+    --toggle-on: var(--accent-color);
+    --toggle-off: rgba(255,255,255,0.25);
+    --red-color: #ff6666;
+    --glass-blur: blur(20px) saturate(180%);
+}
+
+/* === Panels & Cards ==================================== */
+body.high-contrast .settings-header,
+body.high-contrast .settings-subsection,
+body.high-contrast footer,
+body.high-contrast #cookie-consent-banner,
+body.high-contrast .setting-card,
+body.high-contrast .profile-card {
+  background: color-mix(in srgb, var(--glass-bg-dark) 90%, transparent);
+  border: 1px solid var(--glass-border-dark);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.65),
+    inset 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+/* === Text ============================================== */
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast p,
+body.high-contrast .setting-title,
+body.high-contrast .setting-description,
+body.high-contrast .file-name {
+  color: var(--text-color) !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+/* === Buttons, sliders, and toggles ===================== */
+body.high-contrast .custom-bg-label,
+body.high-contrast #removeCustomBg,
+body.high-contrast .button,
+body.high-contrast .segmented-control button {
+  filter: brightness(1.25) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 0 6px rgba(255, 255, 255, 0.3),
+    inset 0 0 4px rgba(255, 255, 255, 0.25);
+  color: var(--accent-text-color);
+  background: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-dark));
+}
+
+/* === Profile & circular elements ======================== */
+body.high-contrast .profile-card {
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 4px 25px rgba(0, 0, 0, 0.75),
+    inset 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+body.high-contrast #customBgPreviewContainer {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.35),
+    inset 0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+/* === Divider & Separator =============================== */
+body.high-contrast .custom-bg-separator {
+  opacity: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.25),
+    inset 0 0 6px rgba(255, 255, 255, 0.25);
+}
+
+/* === Accent elements (verified badge, icons, etc.) ===== */
+body.high-contrast .verified-badge,
+body.high-contrast .icon-accent,
+body.high-contrast .accent-color-preview {
+  filter: brightness(1.3);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+/* === Focus outlines for accessibility ================== */
+body.high-contrast :focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 4px;
+  border-radius: 6px;
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--accent-color) 60%, white 25%),
+    0 0 20px color-mix(in srgb, var(--accent-color) 45%, transparent);
+}
+
+/* ===================== */
+/* Motion & Effects Fix  */
+/* ===================== */
+.motion-disabled * {
+  transition: none !important;
+  animation: none !important;
+}
+.motion-disabled a:hover,
+.motion-disabled button:hover,
+.motion-disabled .hover-effect {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Dyslexia-Friendly Font */
+body.dyslexia-font {
+    font-family: "OpenDyslexic", "Arial", sans-serif !important;
+}
+
+/* Underline Links */
+body.underline-links a {
+    text-decoration: underline !important;
+}
+
+/* ========== General Styles ========== */
+body.settings-page {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem; /* This ensures the settings page inherits the root font size */
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+}
+
+/* ========== Container ========== */
+body.settings-page .container {
+    max-width: 57.5rem;
+    margin: 0 auto;
+    padding: 1.875rem 1.25rem;
+}
+
+/* ========== Settings Header ========== */
+/* CLEANED: Removed redundant glass styles */
+body.settings-page .settings-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.875rem;
+    padding: 1rem 1.25rem;
 }
 
-.settings-header h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
+body.settings-page .settings-header h1 {
+    font-size: 1.5rem; /* Slightly smaller for a more desktop-like feel */
+    font-weight: 600; /* Semibold is common for titles in macOS */
     margin: 0;
-    /* Subtle gradient text */
-    background: linear-gradient(180deg, var(--text-color) 0%, color-mix(in srgb, var(--text-color) 80%, transparent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-color);
 }
 
-.settings-header .version {
-    font-size: 0.75rem;
-    font-weight: 600;
+body.settings-page .version {
+    font-size: 0.8125rem;
     color: var(--secondary-text);
-    background: var(--border-color);
-    padding: 0.25rem 0.6rem;
-    border-radius: 6px;
+    background-color: var(--border-color);
+    padding: 0.1875rem 0.5rem;
+    border-radius: 0.375rem;
 }
 
-/* Subsections */
-.settings-subsection {
-    margin-bottom: 2rem;
+/* ========== Settings Subsection ========== */
+/* CLEANED: Removed redundant glass styles */
+body.settings-page .settings-subsection {
+    border-radius: 1rem; /* iOS 26: Larger radius */
+    margin-bottom: 1.5rem;
     overflow: hidden;
-    isolation: isolate;
 }
 
-.subsection-title {
-    font-size: 0.8rem;
+body.settings-page .subsection-title {
+    font-size: 0.8125rem; /* 13px is standard for macOS subsection titles */
     font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--secondary-text);
-    padding: 1rem 1.5rem 0.5rem;
+    padding: 0.75rem 1.25rem;
     margin: 0;
-    opacity: 0.85;
-    border-bottom: 1px solid transparent; /* Spacing helper */
+    text-transform: uppercase; /* macOS often uses uppercase for these titles */
+    color: var(--secondary-text); /* Titles are often secondary color */
+    border-bottom: 0.0625rem solid var(--border-color);
 }
 
-/* ======================================================= */
-/* === Interactive Settings Rows ========================= */
-/* ======================================================= */
-
-.setting-card {
-    padding: 1rem 1.5rem;
+/* ========== Setting Card ========== */
+body.settings-page .setting-card {
+    padding: 1rem 1.25rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    background: transparent;
-    transition: background 0.2s ease;
-    gap: 1rem;
+    min-height: 3.5rem;
+    border-bottom: 0.0625rem solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    gap: 1rem; /* ADDED: Space for icons */
+}
+body.settings-page .setting-card:last-child { border-bottom: none; }
+body.settings-page .setting-card:hover {
+    background-color: color-mix(in srgb, var(--bg-color) 50%, var(--content-bg));
+    box-shadow: var(--shadow-elevation-2);
+}
+
+body.settings-page .setting-label { flex: 1; padding-right: 0.75rem; }
+body.settings-page .setting-title { font-size: 0.9375rem; font-weight: 500; margin: 0 0 0.25rem 0; }
+body.settings-page .setting-description { font-size: 0.8125rem; color: var(--secondary-text); margin: 0; }
+
+/* Ripple */
+body.settings-page .setting-card:active::after {
+    width: 18.75rem; height: 18.75rem; opacity: 0.14;
+    transition: width 0s, height 0s;
+}
+
+/* Chevron */
+body.settings-page .chevron { margin-left: 0.75rem; color: var(--secondary-text); font-size: 1.25rem; }
+
+/* ========== Modern Dark Mode Scheduler ========== */
+#darkModeScheduler {
+    appearance: none;
+    background: var(--glass-bg-light);
+    border: 0.0625rem solid var(--glass-border-light);
+    border-radius: 0.75rem;
+    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-color);
+    cursor: pointer;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--shadow-elevation-1);
+    transition: background 0.2s ease, box-shadow 0.2s ease;
     position: relative;
 }
-
-.setting-card:last-child {
-    border-bottom: none;
+#darkModeScheduler option {
+    font-size: 0.875rem;
+    color: var(--text-color);
+    background: var(--content-bg);
 }
-
-/* Hover Physics */
-.setting-card:hover {
-    background: color-mix(in srgb, var(--text-color) 3%, transparent);
+/* Hover & Dark adjustments */
+#darkModeScheduler:hover {
+    background: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
+    box-shadow: var(--shadow-elevation-2);
 }
-.setting-card:active {
-    background: color-mix(in srgb, var(--text-color) 5%, transparent);
+body.dark-mode #darkModeScheduler {
+    background: var(--glass-bg-dark);
+    border: 0.0625rem solid var(--glass-border-dark);
 }
-
-/* Typography */
-.setting-label { flex: 1; }
-.setting-title {
-    font-size: 1rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    margin: 0 0 0.25rem 0;
-}
-.setting-description {
-    font-size: 0.85rem;
-    color: var(--secondary-text);
-    line-height: 1.3;
-    margin: 0;
-}
-
-/* Icons */
-.setting-icon-container {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 16px;
-    color: #fff;
-    /* Default gradient, usually overridden inline */
-    background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 50%, black));
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
-
-.chevron {
-    color: var(--secondary-text);
-    opacity: 0.5;
-    font-size: 1rem;
-}
-
-/* Navigation Links */
-.setting-card.navigation-row {
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-}
-
-/* ======================================================= */
-/* === Haptic Toggle Switch (Beta 3 Redesign) ============ */
-/* ======================================================= */
-
-.md-switch {
-    width: 52px;
-    height: 32px;
-    position: relative;
-    display: inline-flex;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-}
-.md-switch input { opacity: 0; width: 0; height: 0; margin: 0; }
-
-/* Track: Deep groove */
-.md-switch .track {
+#darkModeScheduler::after {
+    content: "▾";
     position: absolute;
-    inset: 0;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--secondary-text) 25%, var(--bg-color));
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    transition: background 0.35s var(--ease-smooth);
+    right: 0.75rem;
+    color: var(--secondary-text);
+    pointer-events: none;
 }
 
-/* Thumb: Floating Sphere */
-.md-switch .thumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 28px;
-    height: 28px;
-    background: #ffffff;
+/* ========== Modern Accent Color Picker ========== */
+#accentColorPicker {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 0 0.5px rgba(0,0,0,0.05);
-    transition: transform 0.35s var(--ease-elastic);
-    z-index: 2;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.2);
+    border: 0.125rem solid var(--border-color);
+    background: transparent;
+    padding: 0;
+    position: relative;
+}
+#accentColorPicker::-webkit-color-swatch {
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+}
+#accentColorPicker::-moz-color-swatch {
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+}
+#accentColorPicker::after {
+    content: '';
+    position: absolute;
+    top: -0.25rem;
+    left: -0.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 0.125rem solid var(--accent-color);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+#accentColorPicker.selected::after {
+    opacity: 1;
+}
+#accentColorPicker:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
 }
 
-/* Active State */
+/* ========== Appearance Mode Select ========== */
+body.settings-page #appearanceModeSelect {
+    font-size: 0.9375rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid var(--border-color);
+    background: var(--bg-color);
+    color: var(--text-color);
+    margin-left: 0.625rem;
+}
+
+/* ======================================================= */
+/* === PURE iOS 26 TOGGLE – FIXED ACCENT LOGIC ============ */
+/* ======================================================= */
+.md-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 52px;
+  height: 32px;
+}
+.md-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* Default track */
+.md-switch .track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--toggle-off);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,0.1),
+    inset 0 -1px 2px rgba(255,255,255,0.2);
+  transition: background 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.3s ease;
+}
+
+/* Thumb */
+.md-switch .thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px) saturate(180%);
+  -webkit-backdrop-filter: blur(6px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.9),
+    inset 0 -1px 2px rgba(0,0,0,0.1),
+    0 2px 4px rgba(0,0,0,0.15),
+    0 6px 12px rgba(0,0,0,0.10);
+  transition:
+    transform 0.35s cubic-bezier(.25,.8,.25,1),
+    width 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.md-switch:active .thumb {
+  width: 30px;
+  border-radius: 15px;
+}
+
+/* === FIXED ACCENT COLOR LINK === */
 .md-switch input:checked + .track {
-    background: var(--accent-color);
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
-    /* Breathing animation for checked state */
-    animation: togglePulse 3s ease-in-out infinite;
+  background: var(--toggle-on);
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent),
+    inset 0 0 0 1px rgba(255,255,255,0.25);
+  animation: togglePulse 2.5s ease-in-out infinite;
 }
 .md-switch input:checked + .track .thumb {
-    transform: translateX(20px);
-    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  transform: translateX(20px);
+  background: rgba(255,255,255,0.9);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--accent-color) 30%, transparent),
+    0 2px 4px rgba(0,0,0,0.2);
 }
 
-@keyframes togglePulse {
-  0%, 100% { box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 0 0 0 color-mix(in srgb, var(--accent-color) 40%, transparent); }
-  50% { box-shadow: inset 0 1px 3px rgba(0,0,0,0.15), 0 0 12px 2px color-mix(in srgb, var(--accent-color) 30%, transparent); }
-}
-
-/* Dark Mode Adjustments */
+/* Dark mode adjustment */
 body.dark-mode .md-switch .track {
-    background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.15);
+}
+/* Dark mode accent sync */
+body.dark-mode .md-switch input:checked + .track {
+  background: var(--toggle-on);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--accent-color) 55%, transparent),
+    inset 0 0 0 1px rgba(255,255,255,0.1);
 }
 
 /* Disabled */
-.md-switch.disabled { opacity: 0.5; pointer-events: none; }
-
-/* ======================================================= */
-/* === Inputs & Selects (Capsule Style) ================== */
-/* ======================================================= */
-
-#themeModeSelect,
-#appearanceModeSelect,
-#darkModeScheduler {
-    appearance: none;
-    border: 1px solid var(--border-color);
-    background: color-mix(in srgb, var(--bg-color) 60%, transparent);
-    padding: 0.6rem 2rem 0.6rem 1rem;
-    border-radius: var(--radius-pill);
-    font-family: inherit;
-    font-size: 0.9rem;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(10px);
-    background-image: linear-gradient(45deg, transparent 50%, var(--secondary-text) 50%), 
-                      linear-gradient(135deg, var(--secondary-text) 50%, transparent 50%);
-    background-position: right 1rem top 50%, right 0.75rem top 50%;
-    background-size: 5px 5px;
-    background-repeat: no-repeat;
-    box-shadow: var(--shadow-sm);
+.md-switch.disabled,
+.md-switch input[disabled] + .track {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-#themeModeSelect:hover,
-#darkModeScheduler:hover {
-    background-color: color-mix(in srgb, var(--bg-color) 90%, var(--accent-color));
-    border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
-}
-
-#themeModeSelect:focus,
-#darkModeScheduler:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 30%, transparent);
-}
-
-/* ======================================================= */
-/* === Fluid Slider ====================================== */
-/* ======================================================= */
-
-.setting-card:has(.text-size-control) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1.5rem;
-}
-@media(min-width: 600px) {
-    .setting-card:has(.text-size-control) {
-        flex-direction: row;
-        align-items: center;
-    }
-    .text-size-control { width: 50%; }
-}
-
-#text-size-slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    border-radius: 99px;
-    background: var(--border-color);
-    outline: none;
-    cursor: pointer;
-    position: relative;
-}
-
-/* Gradient Fill Logic via JS usually, fallback here */
-#text-size-slider::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, var(--accent-color) 0%, var(--accent-color) var(--val, 0%), var(--border-color) var(--val, 0%));
-    border-radius: 99px;
-    height: 6px;
-}
-
-#text-size-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 0 0 0.5px rgba(0,0,0,0.05);
-    transition: transform 0.2s var(--ease-elastic);
-    margin-top: -10px; /* Align center */
-}
-
-#text-size-slider::-webkit-slider-thumb:active {
-    transform: scale(1.2);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
-
+/* ========== Text Size Slider --- iOS 26 REDESIGN ========== */
+.setting-card:has(.text-size-control) { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.setting-card:has(.text-size-control) > *:first-child { flex: 1; min-width: 15.625rem; }
+.text-size-control { flex-shrink: 0; width: 17.5rem; display: flex; flex-direction: column; align-items: center; }
 .font-size-badge {
-    align-self: center;
     padding: 0.25rem 0.75rem;
-    background: var(--accent-color);
-    color: #fff;
-    border-radius: 12px;
-    font-size: 0.8rem;
+    background-color: var(--accent-color);
+    color: var(--accent-text-color, white); /* FIX: Use the new contrast variable */
+    border-radius: 0.75rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
+#text-size-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  outline: none;
+  background: linear-gradient(
+    to right,
+    var(--accent-color) 0%,
+    var(--accent-color) var(--_fill, 0%),
+    var(--slider-track-color) var(--_fill, 0%),
+    var(--slider-track-color) 100%
+  );
+  transition: background .15s linear;
+}
+#text-size-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.25),
+    0 6px 16px rgba(0,0,0,.2);
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+#text-size-slider::-webkit-slider-thumb:active {
+  transform: scale(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.35),
+    0 10px 20px color-mix(in srgb,var(--accent-color) 35%,rgba(0,0,0,.25));
+}
+#text-size-slider::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.25),
+    0 6px 16px rgba(0,0,0,.2);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+#text-size-slider::-moz-range-thumb:active {
+  transform: scale(1.05);
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 600px) {
+    .setting-card:has(.text-size-control) { flex-direction: column; align-items: flex-start; }
+    .text-size-control { width: 100%; align-items: flex-start; }
+    #text-size-slider { max-width: 100%; }
+}
+@media (max-width: 768px) {
+    body.settings-page .container { padding: 1.25rem 0.9375rem; }
+    body.settings-page .settings-header h1 { font-size: 1.625rem; }
+    body.settings-page .setting-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1rem; }
+    body.settings-page .setting-label { width: 100%; }
+    body.settings-page #cookie-consent-banner { flex-direction: column; text-align: center; width: 90%; gap: 0.75rem; }
+}
+@media (max-width: 480px) {
+    body.settings-page .container { padding: 0.9375rem 0.625rem; }
+    body.settings-page .settings-header h1 { font-size: 1.375rem; }
+    body.settings-page footer { padding: 0.9375rem; flex-direction: column; gap: 0.625rem; }
+}
+
+/* ========== Danger Zone ========== */
+body.settings-page .danger-zone .settings-subsection {
+    background: color-mix(in srgb, var(--red-color) 15%, var(--glass-bg-light));
+    border: 0.0625rem solid color-mix(in srgb, var(--red-color) 50%, transparent);
+}
+body.dark-mode .danger-zone .settings-subsection {
+    background: color-mix(in srgb, var(--red-color) 20%, var(--glass-bg-dark));
+    border: 0.0625rem solid color-mix(in srgb, var(--red-color) 50%, transparent);
+}
+
+/* ========== Buttons ========== */
+body.settings-page .button {
+    /* Base styles for all buttons */
+    border-radius: 0.5rem;
+    font-size: 0.8125rem; /* Authentic 13px macOS button font size */
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.375rem 0.875rem; /* More compact padding */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    -webkit-font-smoothing: antialiased;
+}
+
+.reset-button,
+#cookie-consent-banner button {
+    /* Style for standard gray material buttons */
+    color: var(--text-color);
+    background-color: var(--light-slider-track); /* A subtle material fill */
+    border: 1px solid var(--light-border);
+}
+
+body.settings-page .reset-button:hover,
+body.settings-page #cookie-consent-banner button:hover {
+    background-color: var(--light-border); /* Subtle hover effect */
+}
+
+/* Dark Mode Overrides for Standard Buttons */
+body.dark-mode .reset-button,
+body.dark-mode #cookie-consent-banner button {
+    background-color: var(--dark-slider-track);
+    border: 1px solid var(--dark-border);
+}
+
+body.dark-mode .reset-button:hover,
+body.dark-mode #cookie-consent-banner button:hover {
+    background-color: var(--dark-border);
+}
+
+/* Style for a prominent, accent-colored button */
+.button-prominent {
+    background-color: var(--accent-color);
+    border: 1px solid transparent;
+    color: #fff; /* Text should be white for contrast */
+}
+
+.button-prominent:hover {
+    /* Darken the accent color slightly on hover */
+    background-color: color-mix(in srgb, var(--accent-color) 85%, black);
+}
+
+/* ========== Footer & Back Link ========== */
+body.settings-page .back-link { display: inline-flex; align-items: center; color: var(--accent-color); text-decoration: none; font-size: 1rem; }
+body.settings-page .back-link:hover { color: var(--hover-color); }
+/* CLEANED: Removed redundant glass styles */
+body.settings-page footer {
+    text-align: center; padding: 1.25rem; font-size: 0.875rem; color: var(--secondary-text);
+}
+
+/* ========== Cookie Consent Banner ========== */
+/* CLEANED: Removed redundant glass styles */
+body.settings-page #cookie-consent-banner {
+    position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    max-width: 92%; width: 40rem; z-index: 1000;
+}
+
+/* ============================== */
+/* Focus outline                  */
+/* ============================== */
+body.settings-page :focus-visible {
+  outline: 0.125rem solid var(--accent-color);
+  outline-offset: 0.125rem;
+  border-radius: 0.375rem;
+}
+body.settings-page.focus-outline-disabled :focus-visible {
+    outline: none !important;
+    outline-offset: 0 !important;
 }
 
 /* ======================================================= */
-/* === Custom Background & Separator ===================== */
+/* === LIQUID GLASS SEGMENTED CONTROL ==================== */
+/* ======================================================= */
+.segmented-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: color-mix(in srgb,var(--content-bg) 60%,transparent);
+  border-radius: 999px;
+  padding: 0.125rem;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid color-mix(in srgb,var(--accent-color) 15%,transparent);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
+}
+.segmented-control button {
+  position: relative;
+  z-index: 2;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: color .2s ease;
+}
+.segmented-control button:hover {
+  color: var(--accent-color);
+}
+.segmented-control .seg-bg {
+  position: absolute;
+  z-index: 1;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(33% - 6px);
+  border-radius: 999px;
+  background: color-mix(in srgb,var(--accent-color) 35%,var(--content-bg));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.25),
+    0 6px 14px color-mix(in srgb,var(--accent-color) 25%,rgba(0,0,0,.25));
+  transition: left .3s cubic-bezier(.25,1,.5,1), width .3s cubic-bezier(.25,1,.5,1);
+}
+
+/* Dark-mode tuning */
+body.dark-mode .segmented-control {
+  background: color-mix(in srgb,var(--glass-bg-dark) 80%,transparent);
+  border-color: color-mix(in srgb,var(--accent-color) 15%,transparent);
+}
+body.dark-mode .segmented-control .seg-bg {
+  background: color-mix(in srgb,var(--accent-color) 30%,var(--glass-bg-dark));
+}
+
+/* ===================== */
+/* Mouse Trail Effect    */
+/* ===================== */
+#mouse-trail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+.trail {
+  width: 10px;
+  height: 10px;
+  background: var(--accent-color, #3ddc84);
+  border-radius: 50%;
+  position: absolute;
+  opacity: 0.6;
+  transform: scale(1);
+  animation: fadeOut 0.8s forwards;
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+/* ===================== */
+/* Focus Outline Control */
+/* ===================== */
+body:not(.focus-outline-disabled) :focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+body.focus-outline-disabled :focus {
+  outline: none !important;
+}
+
+/* Add this new, specific rule to settings.css */
+.accent-color-card {
+  flex-wrap: wrap;
+}
+
+/* Add or replace the .color-warning rule with this one */
+.color-warning {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: #fffbe6;
+  color: #9c6f00;
+  border: 1px solid #ffe58f;
+  border-radius: var(--border-radius-md, 8px);
+  font-size: 0.875rem;
+  box-sizing: border-box;
+}
+
+body.dark-mode .color-warning {
+  background-color: #4d3c1a;
+  color: #ffeca7;
+  border-color: #8b6b1f;
+}
+
+/* ======================================================= */
+/* === iOS-26 Animated Capsule Dropdown & Time Inputs ==== */
+/* ======================================================= */
+
+/* Dropdown */
+#themeModeSelect {
+  position: relative;
+  appearance: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-color);
+  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 15%, var(--border-color));
+  border-radius: 999px;
+  padding: 0.55rem 2.25rem 0.55rem 0.9rem;
+  cursor: pointer;
+  backdrop-filter: var(--glass-blur) saturate(150%);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(150%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.15),
+    0 4px 10px rgba(0,0,0,0.15);
+  transition:
+    background 0.3s ease,
+    box-shadow 0.35s cubic-bezier(.25,.8,.25,1),
+    border-color 0.3s ease,
+    transform 0.25s ease;
+  width: 100%;
+  background-image: linear-gradient(45deg, transparent 50%, var(--secondary-text) 50%), 
+                    linear-gradient(135deg, var(--secondary-text) 50%, transparent 50%);
+  background-position: right 0.9rem top 50%, right 0.65rem top 50%;
+  background-size: 0.5rem 0.5rem;
+  background-repeat: no-repeat;
+}
+#themeModeSelect:hover {
+  background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.25),
+    0 6px 18px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
+  transform: translateY(-1px);
+}
+#themeModeSelect:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent-color) 45%, transparent),
+    0 0 12px color-mix(in srgb, var(--accent-color) 30%, transparent);
+  animation: capsulePulse 2s ease-in-out infinite;
+}
+@keyframes capsulePulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--accent-color) 40%, transparent),
+      0 0 10px color-mix(in srgb, var(--accent-color) 30%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--accent-color) 60%, transparent),
+      0 0 18px color-mix(in srgb, var(--accent-color) 45%, transparent);
+  }
+}
+body.dark-mode #themeModeSelect {
+  background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
+  border-color: color-mix(in srgb, var(--accent-color) 15%, var(--glass-border-dark));
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 4px 14px rgba(0,0,0,0.5);
+}
+body.dark-mode #themeModeSelect:hover {
+  background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
+}
+
+/* ======================================================= */
+/* == Custom Background Upload – iOS 26 Glass Alignment == */
 /* ======================================================= */
 
 .custom-background {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: nowrap;
 }
 
+/* --- Left Side (Title + Controls) --- */
 .custom-bg-left {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
+.custom-bg-left .setting-label {
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+
+/* --- Controls Row --- */
 .custom-bg-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  flex-wrap: nowrap; /* ✅ Always one line */
 }
 
-#customBgUpload { display: none; }
+/* Hide default file input */
+#customBgUpload {
+  display: none;
+}
 
+/* --- Choose File Button --- */
 .custom-bg-label {
-    background: color-mix(in srgb, var(--accent-color) 15%, var(--glass-surface));
-    color: var(--accent-color);
-    font-weight: 600;
-    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent);
-    padding: 0.5rem 1rem;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-.custom-bg-label:hover {
-    transform: scale(1.03);
-    background: color-mix(in srgb, var(--accent-color) 20%, var(--glass-surface));
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--accent-text-color, #fff);
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
+  background: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-light));
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s ease;
 }
 
+/* --- File name --- */
 .file-name {
-    font-size: 0.8rem;
-    color: var(--secondary-text);
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  font-size: 0.8125rem;
+  color: var(--secondary-text);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+/* --- Remove button --- */
 #removeCustomBg {
-    background: color-mix(in srgb, var(--danger-color) 15%, var(--glass-surface));
-    color: var(--danger-color);
-    border: 1px solid color-mix(in srgb, var(--danger-color) 30%, transparent);
-    padding: 0.5rem 1rem;
-    border-radius: 999px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    display: none; /* Toggled by JS */
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
+  color: var(--accent-text-color, #fff);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
-#removeCustomBg.visible { display: inline-block; }
+#removeCustomBg.visible,
+#removeCustomBg[style*="inline-block"] {
+  opacity: 1;
+}
 
-/* Glass Separator */
+/* ======================================================= */
+/* == Adaptive Glass Separator Line ====================== */
+/* ======================================================= */
 .custom-bg-separator {
-    width: 1px;
-    height: 60px;
-    background: linear-gradient(to bottom, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  position: relative;
+  width: 1px;
+  height: 100px;
+  border-radius: 2px;
+  opacity: 0;
+  transform: scaleY(0.9);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  backdrop-filter: blur(6px) brightness(1.2);
+  -webkit-backdrop-filter: blur(6px) brightness(1.2);
+
+  /* subtle dual-layer gradient for depth */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.15),
+    inset 0 0 4px rgba(255, 255, 255, 0.12);
 }
-.custom-bg-separator.visible { opacity: 1; }
+
+/* --- Visible state --- */
+.custom-bg-separator.visible {
+  opacity: 0.85;
+  transform: scaleY(1);
+}
+
+/* --- Automatic color adjustment based on mode --- */
+.light-mode .custom-bg-separator {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  box-shadow:
+    0 0 6px rgba(0, 0, 0, 0.08),
+    inset 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+.dark-mode .custom-bg-separator {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.15),
+    inset 0 0 4px rgba(255, 255, 255, 0.12);
+}
+
+/* ======================================================= */
+/* == Right Side (Preview Bubble) ======================== */
+/* ======================================================= */
+.custom-bg-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+}
 
 #customBgPreviewContainer {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: var(--border-color);
-    box-shadow: var(--shadow-md);
-    display: none;
-    transform: scale(0.9);
-    transition: all 0.3s var(--ease-elastic);
+  display: none;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.25),
+    inset 0 0 12px color-mix(in srgb, var(--accent-color) 15%, transparent);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
-#customBgPreviewContainer.visible { 
-    display: block;
-    transform: scale(1);
-    opacity: 1;
+#customBgPreviewContainer.visible {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
 }
-#customBgPreview { width: 100%; height: 100%; object-fit: cover; }
 
-/* Blur Card Fade (if used) */
+#customBgPreview {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+#customBgPreview.loaded {
+  opacity: 1;
+}
+
+/* ======================================================= */
+/* == Mobile Layout ===================================== */
+/* ======================================================= */
+@media (max-width: 768px) {
+  .custom-background {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .custom-bg-left {
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* Controls remain inline on mobile */
+  .custom-bg-controls {
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+
+  /* Horizontal Separator for mobile */
+  .custom-bg-separator {
+    width: 80%;
+    height: 1px;
+    margin: 1rem 0;
+    transform: scaleX(0.9);
+  }
+  .custom-bg-separator.visible {
+    transform: scaleX(1);
+  }
+
+  .light-mode .custom-bg-separator {
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.15) 0%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
+  }
+
+  .dark-mode .custom-bg-separator {
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.35) 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  }
+
+  /* Center preview bubble */
+  .custom-bg-right {
+    justify-content: center;
+  }
+
+  #customBgPreviewContainer {
+    width: 95px;
+    height: 95px;
+  }
+}
+
+/* ===== iOS-26 Blur Card Fade ===== */
 #wallpaperBlurCard {
-  transition: opacity 0.35s ease;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 #wallpaperBlurCard.hidden {
   opacity: 0;
+  transform: translateY(-6px);
   pointer-events: none;
 }
 
 /* ======================================================= */
-/* === Buttons & Segmented Controls ====================== */
+/* === iOS-26 Toolbar – Onyx Glass Unified (FINAL) ======= */
 /* ======================================================= */
+/* This is from your other file 'style.css', included here */
+/* for completeness if it's part of the settings page */
 
-.button {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: 1px solid var(--border-color);
-    background: var(--content-bg);
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.button:hover { background: var(--border-color); }
-
-.button-prominent {
-    background: var(--accent-color);
-    color: #fff;
-    border: none;
-}
-.button-prominent:hover {
-    background: color-mix(in srgb, var(--accent-color) 85%, black);
-}
-
-/* Liquid Glass Segmented Control */
-.segmented-control {
-    display: inline-flex;
-    background: color-mix(in srgb, var(--secondary-text) 15%, transparent);
-    padding: 3px;
-    border-radius: 99px;
-    position: relative;
-    border: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(12px);
-}
-.segmented-control button {
-    background: transparent;
-    border: none;
-    padding: 0.4rem 1rem;
-    border-radius: 99px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-color);
-    position: relative;
-    z-index: 2;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-.segmented-control button:hover {
-    color: var(--accent-color);
-}
-.segmented-control .seg-bg {
-    position: absolute;
-    top: 3px; bottom: 3px; left: 3px;
-    background: var(--content-bg);
-    border-radius: 99px;
-    z-index: 1;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    width: 0; /* Set by JS */
-}
-
-/* ======================================================= */
-/* === Footer & Danger Zone ============================== */
-/* ======================================================= */
-
-.danger-zone .settings-subsection {
-    background: color-mix(in srgb, var(--danger-color) 5%, var(--glass-surface));
-    border-color: color-mix(in srgb, var(--danger-color) 20%, transparent);
-}
-
-footer {
-    text-align: center;
-    padding: 1.5rem;
-    color: var(--secondary-text);
-    font-size: 0.85rem;
-    margin-top: 2rem;
-}
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    color: var(--accent-color);
-    text-decoration: none;
-    font-weight: 500;
-    margin-bottom: 1rem;
-}
-
-/* ======================================================= */
-/* === The Onyx Dock (Unified) =========================== */
-/* ======================================================= */
-
-.onyx-dock {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 1.5rem;
-    padding: 0.75rem 1.5rem;
-    z-index: 9999;
-    border-radius: 30px;
-    
-    background: var(--glass-surface);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--glass-border);
-    
-    /* Advanced Levitation Shadow */
-    box-shadow: 
-        0 20px 50px -12px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 0 var(--glass-highlight);
-    
-    transition: transform 0.3s var(--ease-elastic);
-}
-
-.onyx-dock .dock-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: var(--secondary-text);
-    transition: all 0.3s var(--ease-elastic);
-    position: relative;
-}
-
-.onyx-dock .dock-icon {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 4px;
-    stroke-width: 2;
-    stroke: currentColor;
-    fill: none;
-}
-
-.onyx-dock .dock-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    opacity: 0;
-    transform: translateY(5px);
-    transition: all 0.2s ease;
-    position: absolute;
-    bottom: -20px;
-    white-space: nowrap;
-}
-
-/* Interaction */
-.onyx-dock .dock-item:hover,
-.onyx-dock .dock-item.active {
-    color: var(--accent-color);
-    transform: translateY(-6px) scale(1.15);
-}
-
-.onyx-dock .dock-item:hover .dock-label {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Active Dot */
-.onyx-dock .dock-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    width: 4px;
-    height: 4px;
-    background: var(--accent-color);
-    border-radius: 50%;
-    box-shadow: 0 0 6px var(--accent-color);
-}
-
-/* Legacy Bubblebar Support (Hidden on Desktop to avoid duplicates) */
-@media (min-width: 768px) {
-    .ios19-bubblebar { display: none !important; }
-}
-/* Legacy Bubblebar styles retained for fallback/mobile if used */
 .ios19-bubblebar {
-  position: fixed; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
-  background: var(--glass-surface); border: 1px solid var(--glass-border);
-  border-radius: 2rem; z-index: 9998; padding: 0.65rem;
-  display: flex;
+  position: fixed;
+  left: 50%;
+  bottom: 1.25rem;
+  transform: translateX(-50%);
+  width: min(500px, calc(100% - 2.5rem));
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: center;
+  padding: 0.65rem 0.75rem;          /* inner glass padding */
+  border-radius: 2rem;
+  z-index: 9999;
+
+  /* Use your Onyx glass variables */
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border-light);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.15),
+    0 12px 28px rgba(0,0,0,0.25);
+  transition: transform .55s cubic-bezier(.22,.9,.22,1), opacity .55s ease;
+}
+body.dark-mode .ios19-bubblebar {
+  background: var(--glass-bg-dark);
+  border-color: var(--glass-border-dark);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 14px 36px rgba(0,0,0,0.55);
 }
 
-/* ======================================================= */
-/* === Toast Notifications =============================== */
-/* ======================================================= */
+/* Tabs (color crossfades via --hot that JS drives 0..1) */
+.ios19-bubblebar .tab {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 3.2rem;            /* ensures icon+label fit inside capsule */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.86rem;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 
+  /* crossfade from secondary -> accent as the bubble approaches */
+  --hot: 0;
+  color: color-mix(in srgb, var(--accent-color) calc(var(--hot) * 100%), var(--secondary-text));
+  transition: color 0.25s ease;
+}
+.ios19-bubblebar .tab i {
+  font-size: 1.2rem;
+  color: currentColor;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+.ios19-bubblebar .tab.active     { --hot: 1; }
+.ios19-bubblebar .tab.active i   { transform: translateY(-1px) scale(1.05); }
+
+/* Capsule – fully covers icon+label of active tab, evenly inset from bar */
+.bubble {
+  --x: 0px;                /* left (JS) */
+  --w: 120px;                /* width (JS) */
+  position: absolute;
+  top: 6px;                  /* neat inset from top edge */
+  bottom: 6px;                 /* neat inset from bottom edge (auto height) */
+  left: var(--x);
+  width: var(--w);
+  border-radius: 999px;
+  z-index: 1;                /* under text/icons, above glass */
+  pointer-events: none;
+  overflow: hidden;
+
+  /* neutral glass; color lives on icon/text */
+  background: linear-gradient(160deg, rgba(255,255,255,0.25), rgba(255,255,255,0.10) 85%);
+  border: 1px solid var(--glass-border-light);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow:
+    inset 0 0 1px rgba(255,255,255,0.80),
+    inset 0 10px 24px rgba(255,255,255,0.18),
+    0 6px 18px rgba(0,0,0,0.28);
+
+  transition:
+    left .25s cubic-bezier(.22,.9,.22,1),
+    width .25s cubic-bezier(.22,.9,.22,1),
+    transform .22s ease;
+}
+body.dark-mode .bubble {
+  border-color: var(--glass-border-dark);
+  box-shadow:
+    inset 0 0 1px rgba(255,255,255,0.60),
+    inset 0 10px 26px rgba(255,255,255,0.12),
+    0 8px 22px rgba(0,0,0,0.60);
+}
+
+/* Liquid “magnify” illusion: pseudo-layer + highlight */
+.bubble::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: inherit;               /* inherits glass tones */
+  transform: scale(1.15);             /* slight magnification */
+  filter: brightness(1.25) saturate(130%) blur(8px);
+  transform-origin: center;
+  opacity: 0.7;
+  pointer-events: none;
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(130% 120% at 25% 25%, rgba(255,255,255,.40) 0%, rgba(255,255,255,.15) 50%, transparent 100%),
+    linear-gradient(160deg, rgba(255,255,255,.15), rgba(255,255,255,0) 70%);
+  mix-blend-mode: screen;
+  opacity: .5;
+  pointer-events: none;
+}
+
+/* Interactions */
+.bubble.drag { transform: scale(1.02); }
+@keyframes pop { 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
+.bubble.pop   { animation: pop .18s ease-out; }
+
+/* Auto-hide on scroll */
+.toolbar-hidden {
+  transform: translate(-50%, 110%) scale(0.98);
+  opacity: 0.6;
+}
+
+/* Small screens */
+@media (max-width: 430px) {
+  .ios19-bubblebar       { width: calc(100% - 1.25rem); padding: 0.55rem 0.65rem; }
+  .ios19-bubblebar .tab span { font-size: .80rem; }
+  .bubble                { top: 6px; bottom: 6px; }
+}
+
+@media (min-width: 768px) {
+  .ios19-bubblebar {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
+/*
+ * =======================================================
+ * === NEW: Apple Settings Icons & Chevrons ================
+ * =======================================================
+ */
+
+/* 1. The Icon Container (The colorful rounded square) */
+.setting-icon-container {
+  width: 29px;
+  height: 29px;
+  border-radius: 7px; /* Apple's specific radius */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  font-size: 15px;
+}
+
+/* 2. The Chevron (The ">" arrow on navigation rows) */
+.chevron {
+  color: var(--secondary-text);
+  opacity: 0.5;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* 3. Make navigation rows behave like links */
+.setting-card.navigation-row {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* === Toast Notification Preview === */
 #toast-container {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 12px;
-    z-index: 10000;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  z-index: 9999;
 }
 
 .toast {
-    background: color-mix(in srgb, var(--glass-surface) 90%, var(--bg-color));
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    color: var(--text-color);
-    padding: 14px 20px;
-    border-radius: 16px;
-    font-size: 0.9rem;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--glass-border);
-    animation: toastFadeIn 0.4s var(--ease-elastic);
-    max-width: 320px;
+  background: color-mix(in srgb, var(--accent-color) 25%, #000);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 15px;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+  animation: toastFadeIn 0.4s ease, toastFadeOut 0.4s ease 3.5s forwards;
+  max-width: 320px;
+  backdrop-filter: blur(10px);
 }
-.toast strong { display: block; margin-bottom: 4px; font-weight: 600; }
+
+.toast strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
 
 @keyframes toastFadeIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.9); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes toastFadeOut {
+  to { opacity: 0; transform: translateY(20px); }
 }
 
-/* ======================================================= */
-/* === Color Picker & Utilities ========================== */
-/* ======================================================= */
-
-#accentColorPicker {
-    -webkit-appearance: none;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    padding: 0;
-    background: transparent;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: transform 0.2s var(--ease-elastic);
-}
-#accentColorPicker:hover { transform: scale(1.1); }
-#accentColorPicker::-webkit-color-swatch-wrapper { padding: 0; }
-#accentColorPicker::-webkit-color-swatch { border-radius: 50%; border: 2px solid #fff; }
-
-.color-warning {
-    padding: 0.75rem;
-    background: color-mix(in srgb, var(--warning-color) 10%, var(--glass-surface));
-    color: #9c6f00;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    margin-top: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    border: 1px solid color-mix(in srgb, var(--warning-color) 40%, transparent);
-}
-body.dark-mode .color-warning { color: #ffd60a; background: color-mix(in srgb, var(--warning-color) 20%, black); }
-
-/* Mouse Trail */
-#mouse-trail { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
-.trail {
-  width: 10px; height: 10px; background: var(--accent-color);
-  border-radius: 50%; position: absolute; opacity: 0.6;
-  animation: fadeOut 0.8s forwards;
-}
-@keyframes fadeOut { to { opacity: 0; transform: scale(2); } }
-
-/* Motion Handling */
-.motion-disabled *, 
-.motion-disabled *::before, 
-.motion-disabled *::after {
-    transition: none !important;
-    animation: none !important;
+/* Category group styling */
+.notification-category-group {
+  border-left: 2px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
+  margin-left: 16px;
+  padding-left: 16px;
+  transition: 0.3s ease;
 }
 
-/* Focus Visibility */
-:focus-visible {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 4px;
-    border-radius: 4px;
-}
-body.focus-outline-disabled :focus-visible { outline: none; }
+/* 🍎 Onyx Glass Dock – Real Apple-Style Glass Material */
+.onyx-dock {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  padding: 8px 22px;
+  border-radius: 30px;
+  z-index: 9999;
 
-/* Mobile Responsive */
-@media (max-width: 768px) {
-    body.settings-page .container { padding: 1rem; }
-    .settings-header h1 { font-size: 1.5rem; }
-    .custom-background { justify-content: center; text-align: center; }
-    .custom-bg-left { align-items: center; }
-    .custom-bg-separator { width: 80%; height: 1px; margin: 1rem 0; transform: scaleX(1); }
-    #toast-container { bottom: 20px; right: 20px; left: 20px; align-items: center; }
-    .onyx-dock { width: 90%; max-width: 400px; padding: 0.5rem 1rem; }
+  /* Realistic Onyx layering */
+  background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.04)
+    ),
+    var(--glass-bg-light);
+  border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.05),
+    0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+/* Dark mode tuning */
+body.dark-mode .onyx-dock {
+  background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.02)
+    ),
+    var(--glass-bg-dark);
+  border-color: color-mix(in srgb, var(--glass-border-dark) 60%, transparent);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.05),
+    0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Dock items */
+.onyx-dock .dock-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 12.5px;
+  font-weight: 500;
+  opacity: 0.9;
+  transition: all 0.25s ease;
+  padding: 4px 10px;
+  border-radius: 22px;
+}
+
+/* Active & hover states */
+.onyx-dock .dock-item:hover {
+  opacity: 1;
+  transform: translateY(-1.5px);
+}
+
+.onyx-dock .dock-item.active {
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 25%, transparent);
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--accent-color) 35%, transparent),
+    inset 0 0 0 0.5px rgba(255,255,255,0.15);
+  opacity: 1;
+}
+
+/* Icons */
+.onyx-dock .dock-icon {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 3px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Labels */
+.onyx-dock .dock-label {
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: inherit;
+}
+
+/* Micro bounce animation for realism */
+.onyx-dock .dock-item:hover .dock-icon {
+  transform: scale(1.08);
+  transition: transform 0.25s cubic-bezier(.25,.8,.25,1);
 }
