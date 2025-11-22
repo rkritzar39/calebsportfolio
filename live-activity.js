@@ -1,4 +1,4 @@
-/* live-activity.js — Spotify fully blocked only during manual, resumes after */
+/* live-activity.js — Fixed: Song Name displays when manual is disabled */
 
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -46,6 +46,9 @@ function showStatusLineWithFade(text, source = "manual") {
   const line = $$("status-line");
   const icon = $$("status-icon");
   if (!txt || !line || !icon) return;
+
+  // Avoid re-rendering if nothing changed (prevents flicker)
+  if (txt.textContent === text && icon.alt === `${source} icon`) return;
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
   line.style.transition = "opacity .22s ease";
@@ -164,20 +167,22 @@ function isManualActive(){ if(!manualStatus?.enabled) return false; const exp = 
 let lastSpotifyTrackId = null, lastSpotifyElapsed = null, lastSpotifySeenAt = 0;
 
 async function getDiscord(){
+  // 1. If manual mode is ON, block Spotify and return manual status
   if(isManualActive()){
-    // Hide Spotify entirely during manual mode
     const card=$$("spotify-card"); if(card) slideOutCard(card);
     clearInterval(progressInterval);
     updateDynamicColors(null);
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
 
+  // 2. If manual mode is OFF, try fetching Lanyard
   try{
     const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}?_ts=${Date.now()}`,{cache:"no-store"});
     if(!res.ok) throw new Error(`Lanyard ${res.status}`);
     const json = await res.json(); const data = json.data;
     if(!data) return null;
 
+    // Check if listening to Spotify
     if(data.spotify){
       const sp = data.spotify; const now=Date.now();
       const startMs=sp.timestamps?.start ?? (now-(sp.spotify_elapsed? sp.spotify_elapsed*1000:0));
@@ -204,9 +209,12 @@ async function getDiscord(){
 
       updateDynamicColors(sp.album_art_url);
 
-      return { text:"Listening to Spotify", source:"spotify", isPaused };
+      // --- FIXED HERE: Return the actual song name logic ---
+      const statusText = isPaused ? `Paused: ${sp.song}` : `${sp.song} • ${sp.artist}`;
+      return { text: statusText, source: "spotify", isPaused };
     }
 
+    // If not Spotify, check other statuses
     const map={online:"Online on Discord",idle:"Idle on Discord",dnd:"Do Not Disturb",offline:"No Current Active Activities"};
     const status=map[data.discord_status]||"No Current Active Activities";
     const card=$$("spotify-card"); if(card) slideOutCard(card);
@@ -259,19 +267,31 @@ try{
    Apply status line logic
    ========================= */
 function applyStatusDecision({ main, twitchLive, temp }) {
+  // 1. Manual override (Highest priority)
   if(isManualActive()){
-    showStatusLineWithFade(manualStatus.text||"Status (manual)",manualStatus.icon||"manual");
+    showStatusLineWithFade(manualStatus.text||"Status (manual)", manualStatus.icon||"manual");
     return;
   }
 
+  // 2. Temporary events (Reddit/Github/TikTok)
   if(temp && Date.now()<temp.expiresAt){
     showStatusLineWithFade(temp.text,temp.source||"default");
     return;
   }
 
-  if(main?.source==="spotify") showStatusLineWithFade(main.isPaused?"Paused on Spotify":"Listening to Spotify","spotify");
-  else if(twitchLive) showStatusLineWithFade("Now Live on Twitch","twitch");
-  else showStatusLineWithFade(main?.text||"No Current Active Activities",main?.source||"discord");
+  // 3. Spotify Logic
+  if(main?.source==="spotify") {
+    // --- FIXED HERE: Use main.text instead of hardcoded "Listening to Spotify" ---
+    showStatusLineWithFade(main.text, "spotify");
+  }
+  // 4. Twitch Live
+  else if(twitchLive) {
+    showStatusLineWithFade("Now Live on Twitch","twitch");
+  }
+  // 5. Fallback (Discord status or Offline)
+  else {
+    showStatusLineWithFade(main?.text||"No Current Active Activities", main?.source||"discord");
+  }
 }
 
 /* =========================
@@ -280,12 +300,22 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 async function mainLoop(){
   const manualActive = isManualActive();
 
+  // If manual is active, we do NOT check external APIs to save resources/confusion
+  // (Except discord/spotify is checked inside getDiscord merely to handle the 'blocking' logic)
+  
   const [discord,twitch,reddit,github,tiktok]=await Promise.all([
     getDiscord(), getTwitch(), getReddit(), getGitHub(), getTikTok()
   ]);
 
-  const primary = manualActive ? null : (discord?.source==="spotify"?discord:twitch||discord||{ text:"No Current Active Activities", source:"manual" });
+  // Determine Primary status
+  // If manual is active, primary is NULL here, because getDiscord handles the manual return obj.
+  // Actually, let's just trust what getDiscord returns if it returns a manual source.
   
+  const primary = (discord?.source==="manual") 
+    ? discord 
+    : (discord?.source==="spotify" ? discord : (twitch || discord || { text:"No Current Active Activities", source:"discord" }));
+  
+  // Determine Temp Banner
   let tempHit = [reddit,github,tiktok].find(r=>r && r.isTemp);
   if(tempHit){ tempBanner={ text: tempHit.text, source: tempHit.source, expiresAt: Date.now()+TEMP_BANNER_MS }; }
   else if(tempBanner && Date.now()>=tempBanner.expiresAt){ tempBanner=null; }
