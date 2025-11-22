@@ -1,35 +1,11 @@
-/* =======================================================
-   live-activity.js — Lanyard-only (Spotify + Discord Hybrid)
-   Option C behavior:
-     - Show Spotify when playing
-     - Show "Paused on Spotify" when paused (keeps album art)
-     - If no Spotify: show Discord status text (online/idle/dnd)
-     - Twitch > Discord (unless Spotify present)
-     - Temp banners: GitHub / Reddit / TikTok (short duration)
-   Features:
-     - Drift-corrected progress bar
-     - Pause detection (delta-based)
-     - Smooth album-art crossfade
-     - Slide-in/out card animations
-     - No Amazon / YouTube / external presence sources
-   Drop-in replacement: overwrite your existing live-activity.js
-   ======================================================= */
+/* live-activity.js — Lanyard (Spotify) + Manual Status from Firestore
+   Priority: Spotify (Lanyard) > Twitch > Manual (Firestore) > Discord > fallback
+*/
 
-/* =========================
-   Minimal CSS suggestions (put these in your CSS if not present)
-   -------------------------
-   .spotify-card { transition: transform .36s ease, opacity .28s ease; transform-origin: center left; }
-   .spotify-card.slide-in  { transform: translateY(0); opacity: 1; }
-   .spotify-card.slide-out { transform: translateY(8px); opacity: 0; }
-   .album-overlay { pointer-events: none; position: absolute; inset: 0; object-fit: cover; }
-   #status-line { transition: opacity .22s ease; }
-   .glow { filter: drop-shadow(0 6px 18px rgba(29,185,84,.25)); }
-   ========================= */
+import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { db } from "./firebase-init.js"; // must export Firestore instance
 
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-// Note: db import left in place if you use firebase elsewhere. Not used by this file.
-// import { db } from "./firebase-init.js";
-
+/* CONFIG (unchanged) */
 const CONFIG = {
   discord: { userId: "850815059093356594" },
   twitch:  { username: "calebkritzar" },
@@ -38,9 +14,7 @@ const CONFIG = {
   tiktok:  { username: "calebkritzar" },
 };
 
-/* ======================
-   Internal state
-   ====================== */
+/* STATE */
 let lastUpdateTime = null;
 let progressInterval = null;
 let currentSpotifyUrl = null;
@@ -51,21 +25,17 @@ let lastGitHubEventId = null;
 let lastRedditPostId  = null;
 let lastTikTokVideoId = null;
 
-let lastKnownMain = null; // last known main object (discord / spotify)
+let lastKnownMain = null;
 let lastLanyardSuccess = Date.now();
 
-/* Spotify pause detection state */
-let lastSpotifyTrackId = null;
-let lastSpotifyElapsed = null; // seconds
-let lastSpotifySeenAt = 0;
+/* Manual status (from Firestore) */
+let manualStatus = null; // { text, icon, enabled, expiresAt, persistent, updated_at }
 
 /* DOM helpers */
-const $$ = (id) => document.getElementById(id);
+const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
-/* ======================
-   Icon map (auto theme aware)
-   ====================== */
+/* ICON MAP (match your other file) */
 function getThemeColor(light, dark) {
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? dark.replace("#", "") : light.replace("#", "");
 }
@@ -73,16 +43,15 @@ const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
+  youtube: "https://cdn.simpleicons.org/youtube/FF0000",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
-  github:  `https://cdn.simpleicons.org/github/${getThemeColor("#000000","#ffffff")}`,
-  tiktok:  `https://cdn.simpleicons.org/tiktok/${getThemeColor("#000000","#ffffff")}`,
+  github:  `https://cdn.simpleicons.org/github/${getThemeColor("#000000", "#ffffff")}`,
+  tiktok:  `https://cdn.simpleicons.org/tiktok/${getThemeColor("#000000", "#ffffff")}`,
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
-/* ======================
-   Status line + last-updated
-   ====================== */
+/* STATUS LINE helper */
 function showStatusLineWithFade(text, source = "manual") {
   const txt = $$("status-line-text");
   const line = $$("status-line");
@@ -118,9 +87,7 @@ function updateLastUpdated() {
                `${Math.floor(s / 3600)}h ago`;
 }
 
-/* ======================
-   Progress bar (tick)
-   ====================== */
+/* Progress helper (same as before) */
 function setupProgress(startMs, endMs) {
   const bar       = $$("music-progress-bar");
   const elapsedEl = $$("elapsed-time");
@@ -146,9 +113,7 @@ function setupProgress(startMs, endMs) {
   progressInterval = setInterval(tick, 1000);
 }
 
-/* ======================
-   Accent color extraction (album art)
-   ====================== */
+/* Dynamic accent / album extraction (same approach) */
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
@@ -174,7 +139,7 @@ function updateDynamicColors(imageUrl) {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
       let r=0,g=0,b=0,count=0;
-      for (let i=0;i<data.length;i+=4){ r+=data[i]; g+=data[i+1]; b+=data[i+2]; count++; }
+      for (let i=0;i<data.length;i+=4) { r+=data[i]; g+=data[i+1]; b+=data[i+2]; count++; }
       r=Math.floor(r/count); g=Math.floor(g/count); b=Math.floor(b/count);
       const accent = `rgb(${r}, ${g}, ${b})`;
       activity.style.setProperty("--dynamic-accent", accent);
@@ -190,9 +155,7 @@ function updateDynamicColors(imageUrl) {
   };
 }
 
-/* ======================
-   Album art crossfade + slide animations
-   ====================== */
+/* Crossfade helper (same as before) */
 function crossfadeAlbumArt(imgEl, newSrc) {
   if (!imgEl) return;
   if (imgEl.dataset.current === newSrc) return;
@@ -228,13 +191,13 @@ function slideOutCard(cardEl) {
   setTimeout(()=>{ if (cardEl.classList.contains("slide-out")) { cardEl.style.opacity="0"; cardEl.style.display="none"; } }, 360);
 }
 
-/* ======================
-   DISCORD / LANYARD (Spotify)
-   - robust handling
-   - timestamp drift correction
-   - pause detection (delta)
-   - keeps lastKnownMain for graceful fallback
-   ====================== */
+/* =========================
+   Lanyard (Discord) — Spotify detection (same robust logic as before)
+   ========================= */
+let lastSpotifyTrackId = null;
+let lastSpotifyElapsed = null;
+let lastSpotifySeenAt = 0;
+
 async function getDiscord() {
   try {
     const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}?_ts=${Date.now()}`, { cache: "no-store" });
@@ -244,18 +207,14 @@ async function getDiscord() {
     if (!data) return null;
     lastLanyardSuccess = Date.now();
 
-    // If Spotify presence exists
     if (data.spotify) {
       const sp = data.spotify;
-
-      // Normalize timestamps
       const now = Date.now();
       const startMs = sp.timestamps?.start ?? (now - (sp.spotify_elapsed ? sp.spotify_elapsed * 1000 : 0));
-      const endMs   = sp.timestamps?.end ?? (startMs + (sp.spotify_duration ? sp.spotify_duration * 1000 : 0));
+      const endMs = sp.timestamps?.end ?? (startMs + (sp.spotify_duration ? sp.spotify_duration * 1000 : 0));
       const duration = Math.max(endMs - startMs, 1);
       const elapsedNow = (now - startMs) / 1000;
 
-      // Drift correction using provided spotify_elapsed/duration if available
       let correctedStart = startMs;
       let correctedEnd = endMs;
       if (elapsedNow < -2 || elapsedNow > (duration/1000) + 5) {
@@ -265,25 +224,21 @@ async function getDiscord() {
         }
       }
 
-      // Pause detection (compare observed elapsed across polls)
       const observedElapsed = typeof sp.spotify_elapsed === "number" ? sp.spotify_elapsed : Math.round((Date.now() - correctedStart)/1000);
       const trackId = sp.track_id || null;
       let isPaused = false;
       if (lastSpotifyTrackId && lastSpotifyTrackId === trackId && lastSpotifyElapsed != null) {
         const elapsedDelta = observedElapsed - lastSpotifyElapsed;
         const since = (Date.now() - lastSpotifySeenAt) / 1000;
-        // if time isn't moving forward by >0.9s over a >2s window -> treat paused
         if (since >= 2 && elapsedDelta <= 0.9) isPaused = true;
-        // small negative jumps considered noise - don't mark paused
         if (elapsedDelta < -3) isPaused = false;
       }
 
-      // update trackers
       lastSpotifyTrackId = trackId;
       lastSpotifyElapsed = observedElapsed;
       lastSpotifySeenAt = Date.now();
 
-      // Update UI
+      // UI updates
       const card = $$("spotify-card");
       if (card) slideInCard(card);
 
@@ -291,57 +246,44 @@ async function getDiscord() {
       if (coverEl && sp.album_art_url) {
         if (!coverEl.dataset.current) coverEl.dataset.current = coverEl.src || "";
         if (coverEl.dataset.current !== sp.album_art_url) crossfadeAlbumArt(coverEl, sp.album_art_url);
-        else if (!coverEl.src) { coverEl.src = sp.album_art_url; coverEl.dataset.current = sp.album_art_url; }
       }
 
-      const titleEl = $$("live-song-title");
-      const artistEl = $$("live-song-artist");
-      if (titleEl) titleEl.textContent = sp.song || "Unknown";
-      if (artistEl) artistEl.textContent = sp.artist || "Unknown";
-
+      $$("live-song-title").textContent = sp.song || "Unknown";
+      $$("live-song-artist").textContent = sp.artist || "Unknown";
       currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
-      // Apply progress (freeze if paused)
       if (!isPaused) {
         setupProgress(correctedStart, correctedEnd);
       } else {
         setupProgress(correctedStart, correctedEnd);
-        clearInterval(progressInterval); // freeze
+        clearInterval(progressInterval);
       }
 
       updateDynamicColors(sp.album_art_url);
-
       const statusText = isPaused ? "Paused on Spotify" : "Listening to Spotify";
       lastKnownMain = { text: statusText, source: "spotify" };
       return { text: statusText, source: "spotify", isPaused };
     }
 
-    // No Spotify present: map Discord status
+    // no spotify present
     const map = { online: "Online on Discord", idle: "Idle on Discord", dnd: "Do Not Disturb", offline: "No Current Active Activities" };
     const status = map[data.discord_status] || "No Current Active Activities";
-
-    // Hide spotify card (but keep status line visible)
     const card = $$("spotify-card");
     if (card) slideOutCard(card);
     updateDynamicColors(null);
 
     lastKnownMain = { text: status, source: "discord" };
     return { text: status, source: "discord" };
-
   } catch (e) {
     console.warn("Lanyard error:", e);
-    // If Lanyard intermittently fails, keep last known for a short grace period to avoid flicker
-    if (lastKnownMain && Date.now() - lastLanyardSuccess < 10000) {
-      return lastKnownMain;
-    }
+    if (lastKnownMain && Date.now() - lastLanyardSuccess < 10000) return lastKnownMain;
     return null;
   }
 }
 
-/* ======================
-   TWITCH / REDDIT / GITHUB / TIKTOK
-   (unchanged behavior — temp banners)
-   ====================== */
+/* =========================
+   Twitch, GitHub, Reddit, TikTok (temp banners), same code as before
+   ========================= */
 async function getTwitch() {
   const u = (CONFIG.twitch.username || "").toLowerCase();
   if (!u) return null;
@@ -390,35 +332,60 @@ async function getTikTok() {
   return null;
 }
 
-/* ======================
-   Status priority logic (Option C)
-   Priority:
-     1. Spotify (playing/paused)
-     2. Twitch (live)
-     3. Discord status
-     4. Temp banners (GitHub/Reddit/TikTok briefly) override everything
-   Note: temp banners override main for TEMP_BANNER_MS
-   ====================== */
-function applyStatusDecision({ main, twitchLive, temp }) {
-  const spotifyCard = $$("spotify-card");
+/* =========================
+   Firestore manual status listener
+   document path: manualStatus/site
+   Fields: text, icon, enabled (bool), expiresAt (ms|null), updated_at
+   ========================= */
+try {
+  const manualRef = doc(db, "manualStatus", "site");
+  onSnapshot(manualRef, (snap) => {
+    if (!snap.exists()) {
+      manualStatus = null;
+      return;
+    }
+    const d = snap.data();
+    // normalize
+    if (d.expiresAt != null) d.expiresAt = Number(d.expiresAt);
+    manualStatus = d;
+  }, (err) => {
+    console.warn("manual status listener error:", err);
+  });
+} catch (e) {
+  console.warn("Firestore manual status disabled:", e);
+}
 
-  // Temp banner overrides (immediate)
+/* =========================
+   Priority decision (includes manual)
+   ========================= */
+function applyStatusDecision({ main, twitchLive, temp }) {
+  // temp banners override everything first (GitHub/TikTok/Reddit)
   if (temp && Date.now() < temp.expiresAt) {
     showStatusLineWithFade(temp.text, temp.source || "default");
     return;
   }
 
-  // Spotify first
+  // Spotify
   if (main?.source === "spotify") {
     showStatusLineWithFade(main.text, "spotify");
-    if (spotifyCard) spotifyCard.classList.remove("hidden");
     return;
   }
 
-  // Twitch (live)
+  // Twitch live is second
   if (twitchLive) {
     showStatusLineWithFade("Now Live on Twitch", "twitch");
     return;
+  }
+
+  // Manual third (only if enabled and not expired)
+  if (manualStatus && manualStatus.enabled) {
+    const exp = manualStatus.expiresAt ? Number(manualStatus.expiresAt) : null;
+    if (!exp || Date.now() < exp) {
+      const txt = manualStatus.text || "Status (manual)";
+      const icon = manualStatus.icon || "manual";
+      showStatusLineWithFade(txt, icon);
+      return;
+    }
   }
 
   // Otherwise show Discord status
@@ -427,24 +394,19 @@ function applyStatusDecision({ main, twitchLive, temp }) {
     return;
   }
 
-  // Default fallback - keep status line visible with manual message
   showStatusLineWithFade("No Current Active Activities", "manual");
 }
 
-/* ======================
-   Update loop
-   ====================== */
+/* =========================
+   Main update loop
+   ========================= */
 async function updateLiveStatus() {
-  // Lanyard (discord) primary for Spotify presence
   const discord = await getDiscord();
-
-  // Parallel other checks (twitch + temp events)
   const [twitch, reddit, github, tiktok] = await Promise.all([getTwitch(), getReddit(), getGitHub(), getTikTok()]);
 
-  // Determine primary
   let primary = null;
   if (discord && discord.source === "spotify") {
-    primary = discord; // contains isPaused flag if paused
+    primary = discord;
   } else if (twitch) {
     primary = twitch;
   } else if (discord) {
@@ -453,7 +415,7 @@ async function updateLiveStatus() {
     primary = { text: "No Current Active Activities", source: "manual" };
   }
 
-  // Temp banner logic (short lived)
+  // temp banners
   const tempHit = [reddit, github, tiktok].find((r) => r && r.isTemp);
   if (tempHit) {
     tempBanner = { text: tempHit.text, source: tempHit.source, expiresAt: Date.now() + TEMP_BANNER_MS };
@@ -462,15 +424,12 @@ async function updateLiveStatus() {
   }
 
   applyStatusDecision({ main: primary, twitchLive: !!twitch, temp: tempBanner });
-
-  // ensure live-activity visible
-  const live = $$("live-activity");
-  if (live) live.classList.remove("hidden");
+  $$("live-activity").classList.remove("hidden");
 }
 
-/* ======================
+/* =========================
    Init
-   ====================== */
+   ========================= */
 document.addEventListener("DOMContentLoaded", () => {
   const card = $$("spotify-card");
   if (card) {
@@ -479,12 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // initial run
   updateLiveStatus();
-
-  // Lanyard-friendly interval
   setInterval(updateLiveStatus, 5000);
-
-  // last-updated ticker
   setInterval(updateLastUpdated, 1000);
 });
