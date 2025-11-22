@@ -1,6 +1,128 @@
     // admin.js (Version includes Preview Prep + Previous Features + Social Links)
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
+const MANUAL_DOC = doc(db, "manualStatus", "site");
+
+const $ = (id) => document.getElementById(id);
+
+function showFeedback(msg, ok = true) {
+  const el = $("manual-status-feedback");
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = ok ? "" : "#ff6b6b";
+  setTimeout(() => { if (el.textContent === msg) el.textContent = ""; }, 4000);
+}
+
+async function loadManualStatusToForm() {
+  try {
+    const snap = await getDoc(MANUAL_DOC);
+    if (!snap.exists()) {
+      // defaults
+      $("manual-status-text").value = "";
+      $("manual-status-icon").value = "manual";
+      $("manual-status-duration").value = 15;
+      $("manual-status-enabled").checked = false;
+      return;
+    }
+    const data = snap.data();
+    $("manual-status-text").value = data.text || "";
+    $("manual-status-icon").value = data.icon || "manual";
+    // compute remaining minutes if expiresAt exists
+    if (data.expiresAt && typeof data.expiresAt === "number") {
+      const mins = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / 60000));
+      $("manual-status-duration").value = mins;
+    } else {
+      $("manual-status-duration").value = data.persistent ? 0 : 15;
+    }
+    $("manual-status-enabled").checked = !!data.enabled;
+  } catch (err) {
+    console.error("Load manual status error:", err);
+    showFeedback("Failed to load manual status", false);
+  }
+}
+
+async function saveManualStatus(e) {
+  e?.preventDefault();
+  try {
+    const text = $("manual-status-text").value.trim();
+    const icon = $("manual-status-icon").value || "manual";
+    const duration = Number($("manual-status-duration").value || 0);
+    const enabled = !!$("manual-status-enabled").checked;
+
+    const payload = {
+      text: text || "",
+      icon,
+      enabled,
+      updated_at: Date.now(),
+      persistent: duration === 0,
+    };
+
+    if (duration > 0) {
+      payload.expiresAt = Date.now() + Math.max(0, duration) * 60_000;
+    } else {
+      payload.expiresAt = null;
+    }
+
+    await setDoc(MANUAL_DOC, payload, { merge: true });
+    showFeedback("Manual status saved");
+  } catch (err) {
+    console.error("Save manual status error:", err);
+    showFeedback("Failed to save manual status", false);
+  }
+}
+
+async function clearManualStatus() {
+  try {
+    // Disable manual override and clear text
+    await setDoc(MANUAL_DOC, {
+      text: "",
+      icon: "manual",
+      enabled: false,
+      updated_at: Date.now(),
+      expiresAt: null,
+      persistent: false
+    }, { merge: true });
+    await loadManualStatusToForm();
+    showFeedback("Manual status cleared");
+  } catch (err) {
+    console.error("Clear manual status error:", err);
+    showFeedback("Failed to clear manual status", false);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Form handlers
+  const form = $("manual-status-form");
+  form?.addEventListener("submit", saveManualStatus);
+
+  $("clear-manual-status-btn")?.addEventListener("click", async () => {
+    if (!confirm("Clear manual status? This will disable the manual override.")) return;
+    await clearManualStatus();
+  });
+
+  // Prefill the form from Firestore
+  loadManualStatusToForm();
+
+  // Optional: realtime UI reflection if manual doc updated elsewhere
+  (async () => {
+    try {
+      // dynamic import to avoid initial bundle dependency if not needed:
+      const { onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js");
+      onSnapshot(MANUAL_DOC, (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        // If another admin updates the manual status, reflect in the UI
+        $("manual-status-text").value = data.text || "";
+        $("manual-status-icon").value = data.icon || "manual";
+        $("manual-status-enabled").checked = !!data.enabled;
+      });
+    } catch (e) {
+      // not fatal — form still works
+      console.warn("Realtime watch for manual status not enabled:", e);
+    }
+  })();
+});
+
 // Load existing Project Goal Data
 async function loadGoalTracker() {
   const ref = doc(db, "siteSettings", "goalTracker");
