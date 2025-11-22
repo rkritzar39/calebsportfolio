@@ -1,4 +1,4 @@
-/* live-activity.js — Fixed: Song Name displays when manual is disabled */
+/* live-activity.js — Matches Screenshot: "Listening to Spotify" header + Song details in card */
 
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -47,7 +47,7 @@ function showStatusLineWithFade(text, source = "manual") {
   const icon = $$("status-icon");
   if (!txt || !line || !icon) return;
 
-  // Avoid re-rendering if nothing changed (prevents flicker)
+  // Prevent flicker if nothing changed
   if (txt.textContent === text && icon.alt === `${source} icon`) return;
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
@@ -84,10 +84,11 @@ function setupProgress(startMs, endMs) {
   const elapsedEl = $$("elapsed-time");
   const remainEl  = $$("remaining-time");
   const totalEl   = $$("total-time");
+  
   if (!bar || !startMs || !endMs) return;
 
   const totalSec = Math.max((endMs - startMs) / 1000, 1);
-  totalEl.textContent = fmt(totalSec);
+  if(totalEl) totalEl.textContent = fmt(totalSec);
 
   clearInterval(progressInterval);
 
@@ -95,9 +96,10 @@ function setupProgress(startMs, endMs) {
     const now = Date.now();
     const elapsedSec = Math.min((now - startMs) / 1000, totalSec);
     const left = Math.max(totalSec - elapsedSec, 0);
+    
     bar.style.width = `${(elapsedSec / totalSec) * 100}%`;
-    elapsedEl.textContent = fmt(elapsedSec);
-    remainEl.textContent = `-${fmt(left)}`;
+    if(elapsedEl) elapsedEl.textContent = fmt(elapsedSec);
+    if(remainEl) remainEl.textContent = `-${fmt(left)}`;
   }
 
   tick();
@@ -108,7 +110,7 @@ function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  const userAccent = "#1DB954"; // fallback accent
+  const userAccent = "#1DB954"; 
   if (!imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
@@ -148,16 +150,38 @@ function crossfadeAlbumArt(imgEl, newSrc) {
   overlay.style.width = "100%"; overlay.style.height = "100%";
   overlay.style.objectFit = "cover"; overlay.style.opacity = "0";
   overlay.style.transition = "opacity .45s ease"; overlay.src = newSrc;
+  
   overlay.onload = () => {
     imgEl.parentElement.appendChild(overlay);
     requestAnimationFrame(()=>overlay.style.opacity="1");
-    setTimeout(()=>{ imgEl.src = newSrc; imgEl.dataset.current = newSrc; overlay.remove(); }, 470);
+    setTimeout(()=>{ 
+        imgEl.src = newSrc; 
+        imgEl.dataset.current = newSrc; 
+        overlay.remove(); 
+    }, 470);
   };
   overlay.onerror = () => overlay.remove();
 }
 
-function slideInCard(cardEl){ if(!cardEl) return; cardEl.classList.remove("slide-out"); cardEl.classList.add("slide-in"); cardEl.style.display=""; cardEl.style.opacity="1"; }
-function slideOutCard(cardEl){ if(!cardEl) return; cardEl.classList.remove("slide-in"); cardEl.classList.add("slide-out"); setTimeout(()=>{ if(cardEl.classList.contains("slide-out")){cardEl.style.opacity="0"; cardEl.style.display="none";} },360); }
+function slideInCard(cardEl){ 
+    if(!cardEl) return; 
+    cardEl.classList.remove("slide-out"); 
+    cardEl.classList.add("slide-in"); 
+    cardEl.style.display=""; 
+    cardEl.style.opacity="1"; 
+}
+
+function slideOutCard(cardEl){ 
+    if(!cardEl) return; 
+    cardEl.classList.remove("slide-in"); 
+    cardEl.classList.add("slide-out"); 
+    setTimeout(()=>{ 
+        if(cardEl.classList.contains("slide-out")){
+            cardEl.style.opacity="0"; 
+            cardEl.style.display="none";
+        } 
+    },360); 
+}
 
 function isManualActive(){ if(!manualStatus?.enabled) return false; const exp = manualStatus.expiresAt? Number(manualStatus.expiresAt) : null; return !exp || Date.now()<exp; }
 
@@ -167,7 +191,7 @@ function isManualActive(){ if(!manualStatus?.enabled) return false; const exp = 
 let lastSpotifyTrackId = null, lastSpotifyElapsed = null, lastSpotifySeenAt = 0;
 
 async function getDiscord(){
-  // 1. If manual mode is ON, block Spotify and return manual status
+  // 1. IF MANUAL IS ACTIVE: Block Spotify, Hide Card, Return Manual Text
   if(isManualActive()){
     const card=$$("spotify-card"); if(card) slideOutCard(card);
     clearInterval(progressInterval);
@@ -175,14 +199,14 @@ async function getDiscord(){
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
 
-  // 2. If manual mode is OFF, try fetching Lanyard
+  // 2. NORMAL MODE (Manual OFF): Check Lanyard
   try{
     const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}?_ts=${Date.now()}`,{cache:"no-store"});
     if(!res.ok) throw new Error(`Lanyard ${res.status}`);
     const json = await res.json(); const data = json.data;
     if(!data) return null;
 
-    // Check if listening to Spotify
+    // === SPOTIFY IS PLAYING ===
     if(data.spotify){
       const sp = data.spotify; const now=Date.now();
       const startMs=sp.timestamps?.start ?? (now-(sp.spotify_elapsed? sp.spotify_elapsed*1000:0));
@@ -197,27 +221,36 @@ async function getDiscord(){
 
       lastSpotifyTrackId=sp.track_id; lastSpotifyElapsed=observedElapsed; lastSpotifySeenAt=Date.now();
 
-      const card=$$("spotify-card"); if(card) slideInCard(card);
-      const coverEl=$$("live-activity-cover"); if(coverEl && sp.album_art_url) crossfadeAlbumArt(coverEl,sp.album_art_url);
+      // A. Reveal the large card (This was missing before)
+      const card=$$("spotify-card"); 
+      if(card) slideInCard(card);
 
-      $$("live-song-title").textContent=sp.song||"Unknown";
-      $$("live-song-artist").textContent=sp.artist||"Unknown";
-      currentSpotifyUrl=sp.track_id?`https://open.spotify.com/track/${sp.track_id}`:null;
+      // B. Update Card details (Song, Artist, Art)
+      const coverEl=$$("live-activity-cover"); 
+      if(coverEl && sp.album_art_url) crossfadeAlbumArt(coverEl,sp.album_art_url);
+
+      $$("live-song-title").textContent = sp.song || "Unknown";
+      $$("live-song-artist").textContent = sp.artist || "Unknown";
+      currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
       if(!isPaused) setupProgress(startMs,endMs);
       else { setupProgress(startMs,endMs); clearInterval(progressInterval); }
 
       updateDynamicColors(sp.album_art_url);
 
-      // --- FIXED HERE: Return the actual song name logic ---
-      const statusText = isPaused ? `Paused: ${sp.song}` : `${sp.song} • ${sp.artist}`;
+      // C. Return standard header text to match the screenshot
+      const statusText = isPaused ? "Paused on Spotify" : "Listening to Spotify";
       return { text: statusText, source: "spotify", isPaused };
     }
 
-    // If not Spotify, check other statuses
+    // === SPOTIFY IS NOT PLAYING ===
     const map={online:"Online on Discord",idle:"Idle on Discord",dnd:"Do Not Disturb",offline:"No Current Active Activities"};
     const status=map[data.discord_status]||"No Current Active Activities";
-    const card=$$("spotify-card"); if(card) slideOutCard(card);
+    
+    // Hide the card
+    const card=$$("spotify-card"); 
+    if(card) slideOutCard(card);
+    
     updateDynamicColors(null);
     return { text:status, source:"discord" };
 
@@ -267,28 +300,28 @@ try{
    Apply status line logic
    ========================= */
 function applyStatusDecision({ main, twitchLive, temp }) {
-  // 1. Manual override (Highest priority)
+  // 1. Manual Override
   if(isManualActive()){
     showStatusLineWithFade(manualStatus.text||"Status (manual)", manualStatus.icon||"manual");
     return;
   }
 
-  // 2. Temporary events (Reddit/Github/TikTok)
+  // 2. Temp Event
   if(temp && Date.now()<temp.expiresAt){
     showStatusLineWithFade(temp.text,temp.source||"default");
     return;
   }
 
-  // 3. Spotify Logic
+  // 3. Spotify
   if(main?.source==="spotify") {
-    // --- FIXED HERE: Use main.text instead of hardcoded "Listening to Spotify" ---
+    // Shows "Listening to Spotify" at the top (matching screenshot)
     showStatusLineWithFade(main.text, "spotify");
   }
-  // 4. Twitch Live
+  // 4. Twitch
   else if(twitchLive) {
     showStatusLineWithFade("Now Live on Twitch","twitch");
   }
-  // 5. Fallback (Discord status or Offline)
+  // 5. Default
   else {
     showStatusLineWithFade(main?.text||"No Current Active Activities", main?.source||"discord");
   }
@@ -300,22 +333,14 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 async function mainLoop(){
   const manualActive = isManualActive();
 
-  // If manual is active, we do NOT check external APIs to save resources/confusion
-  // (Except discord/spotify is checked inside getDiscord merely to handle the 'blocking' logic)
-  
   const [discord,twitch,reddit,github,tiktok]=await Promise.all([
     getDiscord(), getTwitch(), getReddit(), getGitHub(), getTikTok()
   ]);
 
-  // Determine Primary status
-  // If manual is active, primary is NULL here, because getDiscord handles the manual return obj.
-  // Actually, let's just trust what getDiscord returns if it returns a manual source.
-  
   const primary = (discord?.source==="manual") 
     ? discord 
     : (discord?.source==="spotify" ? discord : (twitch || discord || { text:"No Current Active Activities", source:"discord" }));
   
-  // Determine Temp Banner
   let tempHit = [reddit,github,tiktok].find(r=>r && r.isTemp);
   if(tempHit){ tempBanner={ text: tempHit.text, source: tempHit.source, expiresAt: Date.now()+TEMP_BANNER_MS }; }
   else if(tempBanner && Date.now()>=tempBanner.expiresAt){ tempBanner=null; }
