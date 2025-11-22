@@ -1,4 +1,4 @@
-/* live-activity.js — Restored Original Spotify Layout + Manual Mode */
+/* live-activity.js — Fixed: Respects "Match Song Accent" setting + Manual Mode + Spotify Layout */
 
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -92,7 +92,7 @@ function updateLastUpdated() {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR & COLORS ============================= */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 function setupProgress(startMs, endMs) {
@@ -122,20 +122,35 @@ function setupProgress(startMs, endMs) {
   progressInterval = setInterval(tick, 1000);
 }
 
+/* ======================================================= */
+/* === DYNAMIC COLORS (FIXED) ============================ */
+/* ======================================================= */
+
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  const userAccent = "#1DB954"; // Default Green
-  if (!imageUrl) {
+  // 1. GET SETTINGS FROM LOCALSTORAGE
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  
+  // 2. CHECK IF FEATURE IS ENABLED
+  const matchAccent = settings.matchSongAccent === "enabled";
+  
+  // 3. GET USER PREFERENCE OR DEFAULT
+  const userAccent  = settings.accentColor || "#1DB954";
+
+  // 4. IF DISABLED OR NO IMAGE, RESET TO DEFAULT AND STOP
+  if (!matchAccent || !imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
+  // 5. IF ENABLED, EXTRACT COLORS
   const img = new Image();
   img.crossOrigin = "anonymous";
   img.src = imageUrl;
+  
   img.onload = () => {
     try {
       const canvas = document.createElement("canvas");
@@ -154,10 +169,12 @@ function updateDynamicColors(imageUrl) {
       activity.style.setProperty("--dynamic-accent", accent);
       activity.style.setProperty("--dynamic-bg", `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`);
     } catch {
+      // Fallback on error
       activity.style.setProperty("--dynamic-accent", userAccent);
       activity.style.setProperty("--dynamic-bg", "none");
     }
   };
+  
   img.onerror = () => { 
     activity.style.setProperty("--dynamic-accent", userAccent); 
     activity.style.setProperty("--dynamic-bg", "none"); 
@@ -170,7 +187,6 @@ function updateDynamicColors(imageUrl) {
 
 function slideInCard(cardEl){ 
   if(!cardEl) return;
-  // Mimic removing "hidden" but with animation
   cardEl.classList.remove("slide-out", "hidden"); 
   cardEl.classList.add("slide-in"); 
   cardEl.style.display = ""; 
@@ -228,7 +244,6 @@ async function getDiscord(){
       const sp = data.spotify; 
       const now = Date.now();
       
-      // Fix Lanyard drift calculation (Standardized)
       const startMs = sp.timestamps?.start ?? (now - (sp.spotify_elapsed ? sp.spotify_elapsed*1000 : 0));
       const endMs   = sp.timestamps?.end ?? (startMs + (sp.spotify_duration ? sp.spotify_duration*1000 : 0));
       const observedElapsed = typeof sp.spotify_elapsed==="number" ? sp.spotify_elapsed : Math.round((now-startMs)/1000);
@@ -244,8 +259,6 @@ async function getDiscord(){
       lastSpotifyElapsed = observedElapsed; 
       lastSpotifySeenAt  = Date.now();
 
-      // --- HERE IS THE RESTORED LOGIC ---
-      
       // 1. Show the Card
       const card = $$("spotify-card");
       if(card) slideInCard(card);
@@ -256,7 +269,7 @@ async function getDiscord(){
       
       // 3. Update Album Art & Progress
       const coverEl = $$("live-activity-cover");
-      if(coverEl && coverEl.src !== sp.album_art_url) coverEl.src = sp.album_art_url; // Simple swap or use crossfade if preferred
+      if(coverEl && coverEl.src !== sp.album_art_url) coverEl.src = sp.album_art_url; 
       
       currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
@@ -265,7 +278,7 @@ async function getDiscord(){
 
       updateDynamicColors(sp.album_art_url);
 
-      // 4. Return the Header Text (Matches "Listening to Spotify")
+      // 4. Return the Header Text
       const statusText = isPaused ? "Paused on Spotify" : "Listening to Spotify";
       return { text: statusText, source: "spotify", isPaused };
     }
@@ -274,7 +287,6 @@ async function getDiscord(){
     const map={online:"Online on Discord",idle:"Idle on Discord",dnd:"Do Not Disturb",offline:"No Current Active Activities"};
     const status = map[data.discord_status] || "No Current Active Activities";
     
-    // Hide Card
     const card = $$("spotify-card");
     if(card) slideOutCard(card);
     
@@ -284,7 +296,6 @@ async function getDiscord(){
   } catch(e){ console.warn("Lanyard error:",e); return null; }
 }
 
-/* (Keep Twitch/Reddit/GitHub/TikTok exactly as they were) */
 async function getTwitch(){ const u=(CONFIG.twitch.username||"").toLowerCase(); if(!u) return null;
   try{ const r=await fetch(`https://decapi.me/twitch/live/${u}`,{cache:"no-store"});
     const t=(await r.text()).toLowerCase(); if(t.includes("is live")) return { text:"Now Live on Twitch", source:"twitch" };
@@ -326,29 +337,20 @@ try{
 /* ======================================================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
-  // 1. Manual Override
   if(isManualActive()){
     showStatusLineWithFade(manualStatus.text||"Status (manual)", manualStatus.icon||"manual");
     return;
   }
-
-  // 2. Temp Events
   if(temp && Date.now() < temp.expiresAt){
     showStatusLineWithFade(temp.text, temp.source||"default");
     return;
   }
-
-  // 3. Spotify
   if(main?.source === "spotify") {
-    // The HEADER gets "Listening to Spotify" (main.text)
-    // The CARD info (Song/Artist) was already updated in getDiscord()
     showStatusLineWithFade(main.text, "spotify");
   }
-  // 4. Twitch
   else if(twitchLive) {
     showStatusLineWithFade("Now Live on Twitch", "twitch");
   }
-  // 5. Default
   else {
     showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
   }
@@ -373,9 +375,6 @@ async function mainLoop(){
   $$("live-activity")?.classList.remove("hidden");
 }
 
-/* ======================================================= */
-/* === INITIALIZATION ==================================== */
-/* ======================================================= */
 document.addEventListener("DOMContentLoaded",()=>{
   const card=$$("spotify-card"); 
   if(card) card.addEventListener("click",()=>{ if(currentSpotifyUrl) window.open(currentSpotifyUrl,"_blank"); });
