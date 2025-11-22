@@ -638,6 +638,51 @@
   <div id="goal-status-message" class="status-message" role="status" aria-live="polite"></div>
 </section>
 
+            <!-- Manual Live Status (Admin) -->
+<section id="manual-status-section" class="admin-subsection" aria-labelledby="manual-status-heading">
+  <h4 id="manual-status-heading">Manual Live Status (website-only)</h4>
+
+  <form id="manual-status-form" class="manual-status-form" aria-label="Manual live status form">
+    <div class="form-group">
+      <label for="manual-status-text">Status text</label>
+      <input type="text" id="manual-status-text" name="text" placeholder="e.g., Editing site — do not disturb" maxlength="120" />
+      <small>What the site will display when manual override is active.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="manual-status-icon">Icon</label>
+      <select id="manual-status-icon" name="icon">
+        <option value="manual">Default</option>
+        <option value="spotify">Spotify</option>
+        <option value="twitch">Twitch</option>
+        <option value="discord">Discord</option>
+        <option value="github">GitHub</option>
+        <option value="reddit">Reddit</option>
+        <option value="youtube">YouTube</option>
+      </select>
+      <small>Choose an icon to show beside your manual status (site-only).</small>
+    </div>
+
+    <div class="form-group">
+      <label for="manual-status-duration">Duration</label>
+      <input type="number" id="manual-status-duration" name="duration" min="0" value="15" />
+      <small>Show for N minutes. Set 0 for persistent until you disable.</small>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <input type="checkbox" id="manual-status-enabled" name="enabled" />
+      <label for="manual-status-enabled">Enable manual override</label>
+      <small>When checked, your manual status overrides Discord (unless Spotify or Twitch are active).</small>
+    </div>
+
+    <div class="form-actions" style="margin-top:.5rem;">
+      <button type="submit" id="save-manual-status-btn" class="button-primary">Save Manual Status</button>
+      <button type="button" id="clear-manual-status-btn" class="secondary-button">Clear Manual Status</button>
+    </div>
+
+    <div id="manual-status-feedback" class="status-message" role="status" aria-live="polite" style="margin-top:.5rem;"></div>
+  </form>
+</section>
 
 
            <div class="business-container onyx-surface">
