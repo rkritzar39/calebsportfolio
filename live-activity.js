@@ -1,4 +1,4 @@
-/* live-activity.js — Full multi-source + manual lock + Spotify fully disabled when manual active */
+/* live-activity.js — Spotify fully blocked only during manual, resumes after */
 
 import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -219,42 +219,29 @@ async function getDiscord(){
 /* =========================
    Twitch / GitHub / Reddit / TikTok temp banners
    ========================= */
-async function getTwitch(){
-  const u=(CONFIG.twitch.username||"").toLowerCase();
-  if(!u) return null;
+async function getTwitch(){ const u=(CONFIG.twitch.username||"").toLowerCase(); if(!u) return null;
   try{ const r=await fetch(`https://decapi.me/twitch/live/${u}`,{cache:"no-store"});
     const t=(await r.text()).toLowerCase(); if(t.includes("is live")) return { text:"Now Live on Twitch", source:"twitch" };
-  } catch(e){ console.warn("Twitch error:",e); }
-  return null;
-}
+  } catch(e){ console.warn("Twitch error:",e); } return null; }
 
-async function getGitHub(){
-  const u=CONFIG.github.username; if(!u) return null;
+async function getGitHub(){ const u=CONFIG.github.username; if(!u) return null;
   try{ const r=await fetch(`https://api.github.com/users/${u}/events/public`,{cache:"no-store"});
     const events=await r.json(); const evt=Array.isArray(events)?events.find(e=>["PushEvent","CreateEvent","PullRequestEvent"].includes(e.type)):null;
     if(evt && evt.id!==lastGitHubEventId){ lastGitHubEventId=evt.id; return { text:"Committed on GitHub", source:"github", isTemp:true }; }
-  } catch(e){ console.warn("GitHub error:",e); }
-  return null;
-}
+  } catch(e){ console.warn("GitHub error:",e); } return null; }
 
-async function getReddit(){
-  const u=CONFIG.reddit.username; if(!u) return null;
+async function getReddit(){ const u=CONFIG.reddit.username; if(!u) return null;
   try{ const r=await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`,{cache:"no-store"});
     const j=await r.json(); const post=j?.data?.children?.[0]?.data;
     if(post && post.id!==lastRedditPostId){ lastRedditPostId=post.id; return { text:"Shared on Reddit", source:"reddit", isTemp:true }; }
-  } catch(e){ console.warn("Reddit error:",e); }
-  return null;
-}
+  } catch(e){ console.warn("Reddit error:",e); } return null; }
 
-async function getTikTok(){
-  const u=CONFIG.tiktok.username; if(!u) return null;
+async function getTikTok(){ const u=CONFIG.tiktok.username; if(!u) return null;
   try{ const res=await fetch(`https://r.jina.ai/http://www.tiktok.com/@${u}`,{cache:"no-store"});
     const html=await res.text(); const m=html.match(/\/video\/(\d+)/);
     const videoId=m?.[1];
     if(videoId && videoId!==lastTikTokVideoId){ lastTikTokVideoId=videoId; return { text:"Posted on TikTok", source:"tiktok", isTemp:true }; }
-  } catch(e){ console.warn("TikTok error:",e); }
-  return null;
-}
+  } catch(e){ console.warn("TikTok error:",e); } return null; }
 
 /* =========================
    Manual Firestore listener
@@ -291,16 +278,13 @@ function applyStatusDecision({ main, twitchLive, temp }) {
    Main update loop
    ========================= */
 async function mainLoop(){
-  if(isManualActive()){ 
-    applyStatusDecision({main:null,twitchLive:false,temp:null});
-    return;
-  }
+  const manualActive = isManualActive();
 
   const [discord,twitch,reddit,github,tiktok]=await Promise.all([
     getDiscord(), getTwitch(), getReddit(), getGitHub(), getTikTok()
   ]);
 
-  const primary = discord?.source==="spotify"?discord:twitch||discord||{ text:"No Current Active Activities", source:"manual" };
+  const primary = manualActive ? null : (discord?.source==="spotify"?discord:twitch||discord||{ text:"No Current Active Activities", source:"manual" });
   
   let tempHit = [reddit,github,tiktok].find(r=>r && r.isTemp);
   if(tempHit){ tempBanner={ text: tempHit.text, source: tempHit.source, expiresAt: Date.now()+TEMP_BANNER_MS }; }
