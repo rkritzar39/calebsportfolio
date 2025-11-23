@@ -162,6 +162,21 @@ class SettingsManager {
       showQuoteSection: "enabled",
       showLiveActivity: "enabled",
 
+      // Accessibility advanced features (new)
+      adhdMode: "disabled",
+      autismMode: "disabled",
+      epilepsySafe: "disabled",
+      colorBlindMode: "off",          // off | deuteranopia | protanopia | tritanopia | achromatopsia
+      readingMask: "disabled",
+      reducedMotion: "disabled",      // maps to motionEffects
+      lowVisionMode: "disabled",
+      screenReaderEnhancements: "disabled",
+      cognitiveMode: "disabled",
+      focusLock: "disabled",
+      voiceControl: "disabled",
+      uiDensity: "default",           // default | compact | comfortable | spacious
+      audioFeedback: "disabled",
+
       // Local-only notifications container (persisted under websiteSettings.notifications)
       // (kept separate so defaultSettings stays stable)
     };
@@ -341,6 +356,39 @@ class SettingsManager {
 
     // Wallpaper UI visibility
     this.syncWallpaperUIVisibility();
+
+    /* ------------- Accessibility controls init ------------- */
+    // Map simple boolean toggles to checkboxes (IDs must match)
+    const mapToggle = (id, key) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.checked = this.settings[key] === "enabled";
+    };
+
+    mapToggle("adhdModeToggle", "adhdMode");
+    mapToggle("autismModeToggle", "autismMode");
+    mapToggle("epilepsySafeToggle", "epilepsySafe");
+    mapToggle("readingMaskToggle", "readingMask");
+    // reducedMotion toggle may already exist in UI but we support it here
+    const reducedEl = document.getElementById("reducedMotionToggle");
+    if (reducedEl) reducedEl.checked = this.settings.reducedMotion === "enabled";
+
+    mapToggle("lowVisionToggle", "lowVisionMode");
+    mapToggle("screenReaderToggle", "screenReaderEnhancements");
+    mapToggle("cognitiveModeToggle", "cognitiveMode");
+    mapToggle("focusLockToggle", "focusLock");
+    mapToggle("voiceControlToggle", "voiceControl");
+    mapToggle("audioFeedbackToggle", "audioFeedback");
+
+    // selects
+    const colorSelect = document.getElementById("colorBlindModeSelect");
+    if (colorSelect) colorSelect.value = this.settings.colorBlindMode || "off";
+
+    const uiDensity = document.getElementById("uiDensitySelect");
+    if (uiDensity) uiDensity.value = this.settings.uiDensity || "default";
+
+    // Apply classes to page based on accessibility settings
+    this.applyAccessibilityClasses();
   }
 
   initSegmentedControl(controlId, value) {
@@ -426,21 +474,21 @@ class SettingsManager {
     }
 
     // 🎵 Match Song Accent listener
-const matchToggle = document.getElementById("matchSongAccentToggle");
-if (matchToggle) {
-  matchToggle.addEventListener("change", (e) => {
-    this.settings.matchSongAccent = e.target.checked ? "enabled" : "disabled";
-    this.saveSettings();
+    const matchToggle = document.getElementById("matchSongAccentToggle");
+    if (matchToggle) {
+      matchToggle.addEventListener("change", (e) => {
+        this.settings.matchSongAccent = e.target.checked ? "enabled" : "disabled";
+        this.saveSettings();
 
-    // Optional feedback
-    this.showToast(
-      "Accent Sync Updated",
-      e.target.checked
-        ? "Accent color will now match your current Spotify song."
-        : "Accent color will use your custom color only."
-    );
-  });
-}
+        // Optional feedback
+        this.showToast(
+          "Accent Sync Updated",
+          e.target.checked
+            ? "Accent color will now match your current Spotify song."
+            : "Accent color will use your custom color only."
+        );
+      });
+    }
 
     // Text size
     const slider = document.getElementById("text-size-slider");
@@ -480,7 +528,7 @@ if (matchToggle) {
       this.checkDarkModeSchedule(true);
     });
 
-    // All boolean toggles
+    // All boolean toggles (existing wiring)
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -498,6 +546,9 @@ if (matchToggle) {
         if (key === "showLiveActivity" && typeof updateLiveStatus === "function") {
           setTimeout(() => updateLiveStatus(), 300);
         }
+
+        // play click sound if audio feedback is enabled
+        this.playUiClickSound();
       });
     });
 
@@ -516,6 +567,68 @@ if (matchToggle) {
     document.getElementById("resetSettings")?.addEventListener("click", () =>
       this.resetSettings()
     );
+
+    /* ------------------------------
+       Accessibility: wiring (new)
+       ------------------------------ */
+    // Accessibility toggle wiring helper
+    const wireBool = (id, key, onChangeExtra) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("change", (ev) => {
+        this.settings[key] = el.checked ? "enabled" : "disabled";
+        // Keep reducedMotion and motionEffects in sync
+        if (key === "reducedMotion") {
+          this.settings.motionEffects = el.checked ? "disabled" : "enabled";
+        }
+        this.applyAccessibilityClasses();
+        this.saveSettings();
+        if (onChangeExtra) onChangeExtra(ev);
+        this.playUiClickSound();
+        // Announce change for screen readers if enhancements enabled
+        if (this.settings.screenReaderEnhancements === "enabled") {
+          const nice = id.replace(/([A-Z])/g, " $1").replace("Toggle", "");
+          this.announceForA11y(`${nice} ${el.checked ? "enabled" : "disabled"}`);
+        }
+      });
+    };
+
+    // wire all
+    wireBool("adhdModeToggle", "adhdMode");
+    wireBool("autismModeToggle", "autismMode");
+    wireBool("epilepsySafeToggle", "epilepsySafe");
+    wireBool("readingMaskToggle", "readingMask");
+    wireBool("reducedMotionToggle", "reducedMotion");
+    wireBool("lowVisionToggle", "lowVisionMode");
+    wireBool("screenReaderToggle", "screenReaderEnhancements");
+    wireBool("cognitiveModeToggle", "cognitiveMode");
+    wireBool("focusLockToggle", "focusLock");
+    wireBool("voiceControlToggle", "voiceControl", (ev) => {
+      // small user prompt when enabling voice
+      if (ev.target.checked) this.showToast("Voice", "Voice commands enabled — say 'dark mode', 'increase text', or 'home'.");
+    });
+    wireBool("audioFeedbackToggle", "audioFeedback");
+
+    // selects
+    const colorSelectEl = document.getElementById("colorBlindModeSelect");
+    if (colorSelectEl) {
+      colorSelectEl.addEventListener("change", (e) => {
+        this.settings.colorBlindMode = e.target.value;
+        this.applyAccessibilityClasses();
+        this.saveSettings();
+        this.playUiClickSound();
+      });
+    }
+
+    const uiDensityEl = document.getElementById("uiDensitySelect");
+    if (uiDensityEl) {
+      uiDensityEl.addEventListener("change", (e) => {
+        this.settings.uiDensity = e.target.value;
+        this.applyAccessibilityClasses();
+        this.saveSettings();
+        this.playUiClickSound();
+      });
+    }
   }
 
   /* =============================
@@ -886,6 +999,8 @@ if (matchToggle) {
     this.applyCustomBackground(false);
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
     this.syncWallpaperUIVisibility();
+    // Ensure accessibility classes applied after all settings
+    this.applyAccessibilityClasses();
   }
 
   applySetting(key) {
@@ -965,6 +1080,16 @@ if (matchToggle) {
           setTimeout(() => (liveActivity.style.display = "none"), 250);
         }
       }
+    }
+
+    // Ensure accessibility classes and side-effects are applied for new keys
+    const accessibilityKeys = [
+      "adhdMode","autismMode","epilepsySafe","colorBlindMode","readingMask",
+      "reducedMotion","lowVisionMode","screenReaderEnhancements","cognitiveMode",
+      "focusLock","voiceControl","uiDensity","audioFeedback"
+    ];
+    if (accessibilityKeys.includes(key)) {
+      this.applyAccessibilityClasses();
     }
   }
 
@@ -1164,6 +1289,281 @@ if (matchToggle) {
       this.applyAllSettings();
       alert("All settings have been reset to factory defaults.");
     }
+  }
+
+  /* =============================
+     Accessibility helper methods
+  ============================= */
+
+  applyAccessibilityClasses() {
+    // Generic helper that maps settings to body/html classes and CSS variables
+    const s = this.settings;
+
+    // Neurodiversity / sensory classes
+    document.body.classList.toggle("adhd-mode", s.adhdMode === "enabled");
+    document.body.classList.toggle("autism-mode", s.autismMode === "enabled");
+    document.body.classList.toggle("epilepsy-safe", s.epilepsySafe === "enabled");
+    document.body.classList.toggle("low-vision-mode", s.lowVisionMode === "enabled");
+    document.body.classList.toggle("cognitive-mode", s.cognitiveMode === "enabled");
+    document.body.classList.toggle("focus-lock", s.focusLock === "enabled");
+    document.body.classList.toggle("screenreader-enhanced", s.screenReaderEnhancements === "enabled");
+    document.body.classList.toggle("audio-feedback", s.audioFeedback === "enabled");
+
+    // Reduced motion mapping to existing motionEffects
+    const reduced = s.reducedMotion === "enabled";
+    this.settings.motionEffects = reduced ? "disabled" : "enabled"; // keep older key in sync
+    document.body.classList.toggle("reduced-motion", reduced);
+
+    // UI density
+    document.body.classList.remove("density-compact", "density-comfortable", "density-spacious", "density-default");
+    switch (s.uiDensity) {
+      case "compact":
+        document.body.classList.add("density-compact");
+        break;
+      case "comfortable":
+        document.body.classList.add("density-comfortable");
+        break;
+      case "spacious":
+        document.body.classList.add("density-spacious");
+        break;
+      default:
+        document.body.classList.add("density-default");
+    }
+
+    // Color blind mode -> apply CSS classes
+    document.documentElement.classList.remove(
+      "cb-deuteranopia",
+      "cb-protanopia",
+      "cb-tritanopia",
+      "cb-achromatopsia"
+    );
+    switch (s.colorBlindMode) {
+      case "deuteranopia":
+        document.documentElement.classList.add("cb-deuteranopia");
+        break;
+      case "protanopia":
+        document.documentElement.classList.add("cb-protanopia");
+        break;
+      case "tritanopia":
+        document.documentElement.classList.add("cb-tritanopia");
+        break;
+      case "achromatopsia":
+        document.documentElement.classList.add("cb-achromatopsia");
+        break;
+      default:
+        // off -> nothing to do
+        break;
+    }
+
+    // Reading mask
+    if (s.readingMask === "enabled") this.enableReadingMask();
+    else this.disableReadingMask();
+
+    // Voice control
+    if (s.voiceControl === "enabled") this.startVoiceControl();
+    else this.stopVoiceControl();
+  }
+
+  /* ---------------------------
+     Reading mask (line highlighter)
+     --------------------------- */
+  ensureReadingMaskEl() {
+    let m = document.getElementById("reading-mask");
+    if (!m) {
+      m = document.createElement("div");
+      m.id = "reading-mask";
+      m.setAttribute("aria-hidden", "true");
+      Object.assign(m.style, {
+        position: "fixed",
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "min(90%, 900px)",
+        height: "3.2rem",
+        pointerEvents: "none",
+        zIndex: "9998",
+        borderRadius: "6px",
+        boxShadow: "0 6px 20px rgba(0,0,0,0.25)",
+        transition: "top .18s ease",
+        background: "rgba(255,255,255,0.06)",
+        mixBlendMode: "normal",
+        display: "none"
+      });
+      document.body.appendChild(m);
+    }
+    return m;
+  }
+
+  enableReadingMask() {
+    const mask = this.ensureReadingMaskEl();
+    mask.style.display = "block";
+    // Move mask to follow keyboard focus or mouse hover over paragraphs
+    const moveMask = (target) => {
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      // center vertically on target, but stay within viewport
+      const maskHeight = parseFloat(getComputedStyle(mask).height) || 52;
+      let top = window.scrollY + rect.top + rect.height / 2 - maskHeight / 2;
+      // clamp to viewport
+      const minTop = window.scrollY + 40;
+      const maxTop = window.scrollY + window.innerHeight - maskHeight - 40;
+      top = Math.min(Math.max(top, minTop), maxTop);
+      mask.style.top = `${top}px`;
+    };
+
+    // focus handler
+    this._readingMaskHandler = (e) => {
+      const target = e.target.closest("p, li, .content-block, article, .post, .setting-card");
+      if (target) moveMask(target);
+    };
+
+    document.addEventListener("focusin", this._readingMaskHandler, true);
+    document.addEventListener("mousemove", this._readingMaskHandler, { passive: true });
+  }
+
+  disableReadingMask() {
+    const mask = document.getElementById("reading-mask");
+    if (mask) mask.style.display = "none";
+    if (this._readingMaskHandler) {
+      document.removeEventListener("focusin", this._readingMaskHandler, true);
+      document.removeEventListener("mousemove", this._readingMaskHandler);
+      delete this._readingMaskHandler;
+    }
+  }
+
+  /* ---------------------------
+     Simple voice control (Web Speech API)
+     --------------------------- */
+  startVoiceControl() {
+    if (this._voiceActive) return;
+    if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
+      console.warn("[Voice] SpeechRecognition not supported.");
+      return;
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    this._rec = new SpeechRecognition();
+    this._rec.continuous = true;
+    this._rec.interimResults = false;
+    this._rec.lang = "en-US";
+    this._rec.onresult = (ev) => {
+      for (let i = ev.resultIndex; i < ev.results.length; ++i) {
+        const text = ev.results[i][0].transcript.trim().toLowerCase();
+        this.handleVoiceCommand(text);
+      }
+    };
+    this._rec.onend = () => {
+      if (this.settings.voiceControl === "enabled") {
+        // restart automatically
+        try { this._rec.start(); } catch (err) {}
+      }
+    };
+    try {
+      this._rec.start();
+      this._voiceActive = true;
+      console.log("[Voice] started");
+    } catch (err) {
+      console.error("[Voice] start failed:", err);
+    }
+  }
+
+  stopVoiceControl() {
+    if (this._rec && this._voiceActive) {
+      try { this._rec.onend = null; this._rec.stop(); } catch (err) {}
+    }
+    this._voiceActive = false;
+  }
+
+  handleVoiceCommand(text) {
+    // Small set of commands mapped to actions - expand as desired
+    try {
+      console.log("[Voice] heard:", text);
+      if (text.includes("dark mode")) {
+        this.settings.appearanceMode = "dark";
+        this.applySetting("appearanceMode");
+        this.saveSettings();
+        this.showToast("Voice", "Dark mode enabled");
+      } else if (text.includes("light mode")) {
+        this.settings.appearanceMode = "light";
+        this.applySetting("appearanceMode");
+        this.saveSettings();
+        this.showToast("Voice", "Light mode enabled");
+      } else if (text.includes("increase text") || text.includes("bigger text")) {
+        this.settings.fontSize = Math.min(28, (this.settings.fontSize || 16) + 2);
+        this.applySetting("fontSize");
+        this.saveSettings();
+        this.showToast("Voice", "Text size increased");
+      } else if (text.includes("decrease text") || text.includes("smaller text")) {
+        this.settings.fontSize = Math.max(12, (this.settings.fontSize || 16) - 2);
+        this.applySetting("fontSize");
+        this.saveSettings();
+        this.showToast("Voice", "Text size decreased");
+      } else if (text.includes("turn off animations") || text.includes("reduce motion")) {
+        this.settings.reducedMotion = "enabled";
+        this.applyAccessibilityClasses();
+        this.saveSettings();
+        this.showToast("Voice", "Reduced motion enabled");
+      } else if (text.includes("open settings") || text.includes("go to settings")) {
+        window.location.href = "/settings.html";
+      } else if (text.includes("home")) {
+        window.location.href = "/";
+      }
+    } catch (err) {
+      console.error("[Voice] handle error:", err);
+    }
+  }
+
+  /* ---------------------------
+     Audio feedback (short beep)
+     --------------------------- */
+  playUiClickSound() {
+    if (!this.settings.audioFeedback || this.settings.audioFeedback !== "enabled") return;
+    try {
+      if (!this._audioCtx) this._audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = this._audioCtx;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.value = 880; // short high beep
+      g.gain.value = 0.0001;
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.start();
+      g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.12);
+      o.stop(ctx.currentTime + 0.13);
+    } catch (err) {
+      // fallback no-op
+    }
+  }
+
+  /* ---------------------------
+     Screen reader announcement
+     --------------------------- */
+  ensureAnnouncer() {
+    let el = document.getElementById("a11y-announcer");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "a11y-announcer";
+      el.setAttribute("aria-live", "polite");
+      el.setAttribute("aria-atomic", "true");
+      el.style.position = "absolute";
+      el.style.width = "1px";
+      el.style.height = "1px";
+      el.style.margin = "-1px";
+      el.style.padding = "0";
+      el.style.border = "0";
+      el.style.clip = "rect(0 0 0 0)";
+      el.style.overflow = "hidden";
+      document.body.appendChild(el);
+    }
+    return el;
+  }
+
+  announceForA11y(msg) {
+    const el = this.ensureAnnouncer();
+    el.textContent = "";
+    setTimeout(() => {
+      el.textContent = msg;
+    }, 50);
   }
 
   /* =============================
