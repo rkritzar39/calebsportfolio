@@ -4365,7 +4365,7 @@ body.maintenance-active {
 }
 
 /* =========================================================
-   Accessibility Mode Overrides — tailored to your theme
+   Accessibility Mode Overrides — Cleaned + Fixed Version
    ========================================================= */
 
 /* Helper tokens */
@@ -4376,9 +4376,9 @@ body.maintenance-active {
   --a11y-muted: var(--dark-secondary-text, #a9a9a9);
 }
 
-/* -------------------------
+/* =========================================================
    ADHD Focus Mode
-   ------------------------- */
+   ========================================================= */
 body.adhd-mode * {
   transition-duration: 150ms !important;
   transition-delay: 0 !important;
@@ -4389,18 +4389,18 @@ body.adhd-mode .animate-slide-in {
   opacity: 1 !important;
 }
 body.adhd-mode .onyx-dock {
-  opacity: 0.95 !important;
+  opacity: 0.98 !important;
 }
 
-/* -------------------------
-   Autism / Sensory-Friendly Mode (FIXED)
-   ------------------------- */
+/* =========================================================
+   Autism / Sensory-Friendly Mode
+   (Fixed so navbar remains visible + theme neutral)
+   ========================================================= */
 body.autism-mode {
-  /* Soften and neutralize backgrounds */
   --dark-content-bg: rgba(245,245,245,0.92);
   --light-content-bg: rgba(250,250,250,0.96);
 
-  /* Force readable dark text for ALL themes */
+  /* readable text */
   color: #111 !important;
 }
 
@@ -4414,66 +4414,69 @@ body.autism-mode * {
 body.autism-mode .glass-card,
 body.autism-mode .setting-card {
   background: rgba(255,255,255,0.92) !important;
-  border: 1px solid rgba(0,0,0,0.08) !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
 }
 
+/* ⭐ NAV BAR FIXED */
 body.autism-mode .onyx-dock {
-  background: rgba(255,255,255,0.85) !important;
+  background: rgba(255,255,255,0.92) !important;
+  color: #111 !important;
   backdrop-filter: none !important;
-  border: 1px solid rgba(0,0,0,0.1) !important;
+  border: 1px solid rgba(0,0,0,0.13) !important;
+  display: flex !important;
 }
 
 body.autism-mode a {
-  color: #0056d6 !important; /* Accessible blue */
+  color: #0056d6 !important;
 }
 
-
-/* -------------------------
-   Epilepsy Safe Mode (UPDATED)
-   ------------------------- */
+/* =========================================================
+   Epilepsy Safe Mode (Navbar must stay visible)
+   ========================================================= */
 body.epilepsy-safe, html.epilepsy-safe {
   scroll-behavior: auto !important;
 }
+
 body.epilepsy-safe * {
   animation: none !important;
   transition: none !important;
 }
 
-/* Freeze wallpaper layers */
+/* Freeze wallpapers */
 body.epilepsy-safe #wallpaper-layer,
 body.epilepsy-safe #wallpaper-tint {
   transform: none !important;
-  will-change: auto !important;
   animation: none !important;
 }
 
-/* KEEP NAV BAR — disable animation & shimmer */
+/* ⭐ NAV BAR FIXED & ALWAYS VISIBLE */
 body.epilepsy-safe .onyx-dock {
   animation: none !important;
   transition: none !important;
   transform: none !important;
   opacity: 1 !important;
-  backdrop-filter: none !important; /* prevents flicker */
+  backdrop-filter: none !important;
+  display: flex !important;
 }
 
-/* Hide unsafe flashing elements */
+/* Hide unsafe flashes */
 body.epilepsy-safe .toast,
 body.epilepsy-safe #reading-mask {
   display: none !important;
 }
 
-/* -------------------------
+/* =========================================================
    Reduced Motion
-   ------------------------- */
+   ========================================================= */
 body.reduced-motion * {
   animation: none !important;
   transition: none !important;
   scroll-behavior: auto !important;
 }
 
-/* -------------------------
+/* =========================================================
    Low Vision Mode
-   ------------------------- */
+   ========================================================= */
 body.low-vision-mode {
   --font-size-base: calc(var(--font-size-base, 16px) * 1.14);
   --line-height-base: 1.85;
@@ -4487,9 +4490,9 @@ body.low-vision-mode .md-switch {
   min-width: 48px !important;
 }
 
-/* -------------------------
+/* =========================================================
    Cognitive-Friendly Mode
-   ------------------------- */
+   ========================================================= */
 body.cognitive-mode {
   line-height: 1.7;
   letter-spacing: 0.03em;
@@ -4502,22 +4505,27 @@ body.cognitive-mode li {
   margin-right: auto;
 }
 
-/* -------------------------
-   Focus Lock
-   ------------------------- */
-body.focus-lock .onyx-dock,
+/* =========================================================
+   Focus Lock (Navbar must still show)
+   ========================================================= */
 body.focus-lock #toast-container,
 body.focus-lock .floating {
   display: none !important;
 }
+
+/* ⭐ KEEP NAV BAR */
+body.focus-lock .onyx-dock {
+  display: flex !important;
+}
+
 body.focus-lock .container {
   max-width: 900px;
   margin: 0 auto;
 }
 
-/* -------------------------
+/* =========================================================
    UI Density Modes
-   ------------------------- */
+   ========================================================= */
 body.density-compact .setting-card {
   padding: 8px !important;
   gap: 8px !important;
@@ -4531,9 +4539,9 @@ body.density-spacious .setting-card {
   gap: 20px !important;
 }
 
-/* -------------------------
+/* =========================================================
    Reading Mask
-   ------------------------- */
+   ========================================================= */
 #reading-mask {
   display: none;
   position: fixed;
@@ -4551,36 +4559,31 @@ body.density-spacious .setting-card {
   transition: top 0.18s ease;
 }
 
-/* -------------------------
+/* =========================================================
    Color Blind Modes
-   ------------------------- */
-:root.cb-deuteranopia {
-  --accent-color: #007AFF;
-}
-:root.cb-protanopia {
-  --accent-color: #0A84FF;
-}
-:root.cb-tritanopia {
-  --accent-color: #FF9F0A;
-}
+   ========================================================= */
+:root.cb-deuteranopia { --accent-color: #007AFF; }
+:root.cb-protanopia   { --accent-color: #0A84FF; }
+:root.cb-tritanopia   { --accent-color: #FF9F0A; }
 :root.cb-achromatopsia {
   filter: grayscale(1) contrast(1.08);
 }
 
-/* -------------------------
-   High Contrast Extra
-   ------------------------- */
+/* =========================================================
+   High Contrast Mode
+   ========================================================= */
 body.high-contrast {
   background: #000 !important;
   color: #fff !important;
 }
+
 body.high-contrast a {
   color: var(--a11y-accent, #0ff) !important;
 }
 
-/* -------------------------
+/* =========================================================
    Large Tap Targets
-   ------------------------- */
+   ========================================================= */
 .setting-card .setting-icon-container {
   min-width: 44px;
   min-height: 44px;
@@ -4589,9 +4592,9 @@ body.high-contrast a {
   justify-content: center;
 }
 
-/* -------------------------
-   Cleanup for wallpaper flicker on modes
-   ------------------------- */
+/* =========================================================
+   Wallpaper Flicker Cleanup
+   ========================================================= */
 body.epilepsy-safe #wallpaper-layer,
 body.autism-mode #wallpaper-layer {
   transition: none !important;
