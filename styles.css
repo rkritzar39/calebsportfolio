@@ -4378,82 +4378,78 @@ body.maintenance-active {
 }
 
 /* =========================================================
-   iOS 26 Floating Dock — Protected & Centered
+   UNIVERSAL SAFE NAV BAR (Fits All Devices)
    ========================================================= */
 
 .onyx-dock {
   all: initial !important;
 
   position: fixed !important;
-  bottom: 22px !important;
+  bottom: env(safe-area-inset-bottom, 22px) !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
 
   display: flex !important;
-  justify-content: space-between !important;
+  justify-content: center !important;
   align-items: center !important;
+  gap: 24px !important;
 
-  gap: 22px !important;
+  /* Universal safe width */
+  width: max-content !important;              /* Only as wide as icons */
+  max-width: 90vw !important;                 /* Never wider than screen */
+  padding: 12px 20px !important;              /* iOS pill */
+  box-sizing: border-box !important;
 
-  /* iOS26 sizing */
-  width: auto !important;
-  padding: 10px 18px !important;
-  max-width: calc(100% - 48px) !important;
-
-  /* iOS 26 glass style */
-  background: rgba(20, 20, 20, 0.65) !important;
-  backdrop-filter: blur(26px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(180%) !important;
+  /* iOS glass blur */
+  background: rgba(20, 20, 20, 0.55) !important;
+  backdrop-filter: blur(22px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
 
   border-radius: 32px !important;
 
-  /* Subtle iOS glow */
+  /* Soft floating shadow */
   box-shadow:
-    0 4px 16px rgba(0,0,0,0.35),
-    0 0 3px rgba(255,255,255,0.09) inset !important;
+    0 6px 22px rgba(0, 0, 0, 0.28),
+    0 0 2px rgba(255, 255, 255, 0.08) inset !important;
 
-  z-index: 9999 !important;
+  z-index: 99999 !important;
 }
 
-/* Make icons feel like iOS */
+/* --- Icons inside the dock --- */
 .onyx-dock .nav-item {
   all: unset !important;
+
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
 
   font-size: 12px !important;
-  color: rgba(255,255,255,0.78) !important;
+  color: rgba(255, 255, 255, 0.82) !important;
 
-  transition: opacity .25s ease, transform .22s ease !important;
+  transition: 0.22s ease !important;
 }
 
 .onyx-dock .nav-item:active {
   transform: scale(0.92) !important;
-  opacity: 0.6 !important;
+  opacity: 0.65 !important;
 }
 
-/* Selected item (iOS glow dot) */
-.onyx-dock .active {
-  color: #ff453a !important; /* iOS system red indicator */
-
-  position: relative !important;
-}
-
+/* Active item indicator */
 .onyx-dock .active::after {
   content: "" !important;
-  position: absolute !important;
-  bottom: -6px !important;
   width: 6px !important;
   height: 6px !important;
-  background: #ff453a !important;
   border-radius: 50% !important;
-  opacity: 0.85 !important;
+  background: #ff453a !important;
+  position: absolute !important;
+  bottom: -6px !important;
 }
 
-/* Lock the dock from accessibility modes */
-body * .onyx-dock,
+/* =========================================================
+   PROTECT NAV BAR FROM ALL ACCESSIBILITY MODES
+   ========================================================= */
+
 body.autism-mode .onyx-dock,
 body.epilepsy-safe .onyx-dock,
 body.focus-lock .onyx-dock,
@@ -4467,29 +4463,31 @@ body.density-spacious .onyx-dock {
   all: unset !important;
 
   position: fixed !important;
-  bottom: 22px !important;
+  bottom: env(safe-area-inset-bottom, 22px) !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
 
   display: flex !important;
-  justify-content: space-between !important;
+  justify-content: center !important;
   align-items: center !important;
-  gap: 22px !important;
+  gap: 24px !important;
 
-  padding: 10px 18px !important;
-  max-width: calc(100% - 48px) !important;
+  width: max-content !important;
+  max-width: 90vw !important;
+  padding: 12px 20px !important;
+  box-sizing: border-box !important;
 
-  background: rgba(20, 20, 20, 0.65) !important;
-  backdrop-filter: blur(26px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(26px) saturate(180%) !important;
+  background: rgba(20, 20, 20, 0.55) !important;
+  backdrop-filter: blur(22px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
 
   border-radius: 32px !important;
 
   box-shadow:
-    0 4px 16px rgba(0,0,0,0.35),
-    0 0 3px rgba(255,255,255,0.09) inset !important;
+    0 6px 22px rgba(0, 0, 0, 0.28),
+    0 0 2px rgba(255, 255, 255, 0.08) inset !important;
 
-  z-index: 9999 !important;
+  z-index: 99999 !important;
 }
 
 /* Mobile refinement */
