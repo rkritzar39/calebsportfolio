@@ -4365,7 +4365,8 @@ body.maintenance-active {
 }
 
 /* =========================================================
-   Accessibility Mode Overrides — Cleaned + Fixed Version
+   Accessibility Mode Overrides — Final Clean Version
+   Nav bar (.onyx-dock) is now fully protected from ALL modes
    ========================================================= */
 
 /* Helper tokens */
@@ -4376,10 +4377,13 @@ body.maintenance-active {
   --a11y-muted: var(--dark-secondary-text, #a9a9a9);
 }
 
-/* --- NAV BAR CENTER FIX --- */
+/* =========================================================
+   🔒 GLOBAL NAV BAR LOCK (Unchangeable by ANYTHING)
+   ========================================================= */
 .onyx-dock {
+  all: initial !important;            /* Wipe ALL inherited styles */
   position: fixed !important;
-  bottom: 24px;
+  bottom: 24px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
 
@@ -4387,24 +4391,59 @@ body.maintenance-active {
   justify-content: center !important;
   align-items: center !important;
 
-  width: 92%;
-  max-width: 680px;
+  width: 92% !important;
+  max-width: 680px !important;
+
   z-index: 9999 !important;
+
+  /* Restore your default variables */
+  font-family: var(--font-family, inherit) !important;
+  background: var(--dock-bg, rgba(0,0,0,0.45)) !important;
+  backdrop-filter: var(--dock-blur, blur(18px)) !important;
+  -webkit-backdrop-filter: var(--dock-blur, blur(18px)) !important;
+  border-radius: var(--radius-xl, 22px) !important;
+  padding: var(--dock-padding, 14px) !important;
 }
 
-/* Prevent any mode from breaking it */
+/* Lock nav bar in ALL modes */
+body * .onyx-dock,
 body.autism-mode .onyx-dock,
 body.epilepsy-safe .onyx-dock,
-body.focus-lock .onyx-dock {
+body.focus-lock .onyx-dock,
+body.low-vision-mode .onyx-dock,
+body.cognitive-mode .onyx-dock,
+body.reduced-motion .onyx-dock,
+body.high-contrast .onyx-dock,
+body.density-compact .onyx-dock,
+body.density-comfortable .onyx-dock,
+body.density-spacious .onyx-dock {
+  all: unset !important;
+  position: fixed !important;
+  bottom: 24px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
+
   display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+
+  width: 92% !important;
+  max-width: 680px !important;
+  z-index: 9999 !important;
+
+  font-family: var(--font-family, inherit) !important;
+  background: var(--dock-bg, rgba(0,0,0,0.45)) !important;
+  backdrop-filter: var(--dock-blur, blur(18px)) !important;
+  -webkit-backdrop-filter: var(--dock-blur, blur(18px)) !important;
+  border-radius: var(--radius-xl, 22px) !important;
+  padding: var(--dock-padding, 14px) !important;
 }
 
+/* Mobile refinement */
 @media (max-width: 480px) {
   .onyx-dock {
-    width: 94%;
-    max-width: 420px;
+    width: 94% !important;
+    max-width: 420px !important;
   }
 }
 
@@ -4416,12 +4455,10 @@ body.adhd-mode * {
   transition-delay: 0 !important;
   animation-duration: 0 !important;
 }
+
 body.adhd-mode .animate-slide-in {
   animation: none !important;
   opacity: 1 !important;
-}
-body.adhd-mode .onyx-dock {
-  opacity: 0.98 !important;
 }
 
 /* =========================================================
@@ -4446,25 +4483,14 @@ body.autism-mode .setting-card {
   border: 1px solid rgba(0,0,0,0.09) !important;
 }
 
-/* Fixed Navbar (Center + Visible) */
-body.autism-mode .onyx-dock {
-  background: rgba(255,255,255,0.92) !important;
-  color: #111 !important;
-  border: 1px solid rgba(0,0,0,0.13) !important;
-  backdrop-filter: none !important;
-}
-
-/* Link colors */
-body.autism-mode a {
-  color: #0056d6 !important;
-}
-
 /* =========================================================
    Epilepsy Safe Mode
    ========================================================= */
-body.epilepsy-safe, html.epilepsy-safe {
+body.epilepsy-safe,
+html.epilepsy-safe {
   scroll-behavior: auto !important;
 }
+
 body.epilepsy-safe * {
   animation: none !important;
   transition: none !important;
@@ -4477,16 +4503,7 @@ body.epilepsy-safe #wallpaper-tint {
   animation: none !important;
 }
 
-/* Navbar ALWAYS visible + centered */
-body.epilepsy-safe .onyx-dock {
-  animation: none !important;
-  transition: none !important;
-  transform: translateX(-50%) !important;
-  opacity: 1 !important;
-  backdrop-filter: none !important;
-}
-
-/* Hide unsafe flashing UI */
+/* Hide flashing components */
 body.epilepsy-safe .toast,
 body.epilepsy-safe #reading-mask {
   display: none !important;
@@ -4508,9 +4525,11 @@ body.low-vision-mode {
   --font-size-base: calc(var(--font-size-base, 16px) * 1.14);
   --line-height-base: 1.85;
 }
+
 body.low-vision-mode .setting-card {
   padding: 22px !important;
 }
+
 body.low-vision-mode button,
 body.low-vision-mode .md-switch {
   min-height: 48px !important;
@@ -4525,6 +4544,7 @@ body.cognitive-mode {
   letter-spacing: 0.03em;
   --font-size-base: calc(var(--font-size-base, 16px) * 1.04);
 }
+
 body.cognitive-mode p,
 body.cognitive-mode li {
   max-width: 75ch;
@@ -4533,16 +4553,11 @@ body.cognitive-mode li {
 }
 
 /* =========================================================
-   Focus Lock Mode
+   Focus Lock
    ========================================================= */
 body.focus-lock #toast-container,
 body.focus-lock .floating {
   display: none !important;
-}
-
-/* Navigation stays visible */
-body.focus-lock .onyx-dock {
-  display: flex !important;
 }
 
 body.focus-lock .container {
@@ -4551,7 +4566,7 @@ body.focus-lock .container {
 }
 
 /* =========================================================
-   UI Density Modes
+   UI Density
    ========================================================= */
 body.density-compact .setting-card {
   padding: 8px !important;
@@ -4590,8 +4605,8 @@ body.density-spacious .setting-card {
    Color Blind Modes
    ========================================================= */
 :root.cb-deuteranopia { --accent-color: #007AFF; }
-:root.cb-protanopia   { --accent-color: #0A84FF; }
-:root.cb-tritanopia   { --accent-color: #FF9F0A; }
+:root.cb-protanopia { --accent-color: #0A84FF; }
+:root.cb-tritanopia { --accent-color: #FF9F0A; }
 :root.cb-achromatopsia {
   filter: grayscale(1) contrast(1.08);
 }
