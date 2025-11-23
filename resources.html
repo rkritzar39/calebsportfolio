@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Resources & Tools I Use</title>
+
+  <!-- Your site theme files (existing) -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="settings.css">
+
+  <!-- Page-specific stylesheet -->
+  <link rel="stylesheet" href="resources.css">
+</head>
+<body>
+
+  <!-- If you have a header include block, you can replace this with your server include / partial -->
+  <header id="site-header"></header>
+
+  <main class="site-main container">
+    <section class="page-header">
+      <h1>Resources & Tools I Use</h1>
+      <p class="muted">A curated list of the tech, apps and gear I use to build and create.</p>
+    </section>
+
+    <section class="resource-section">
+      <h2>My Tech Stack</h2>
+      <div class="resource-grid" id="techStack"></div>
+    </section>
+
+    <section class="resource-section">
+      <h2>My Productivity Tools</h2>
+      <div class="resource-grid" id="productivityTools"></div>
+    </section>
+
+    <section class="resource-section">
+      <h2>My Apps</h2>
+      <div class="resource-grid" id="apps"></div>
+    </section>
+
+    <section class="resource-section">
+      <h2>My Gear</h2>
+      <div class="resource-grid" id="gear"></div>
+    </section>
+  </main>
+
+  <!-- Keep your existing site scripts loaded so global behavior + Firestore helpers are present -->
+  <script src="settings.js"></script>
+  <script src="script.js"></script>
+
+  <!-- Page-specific script that renders the cards -->
+  <script src="resources.js"></script>
+</body>
+</html>
