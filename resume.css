@@ -43,18 +43,35 @@ a:hover {
 
 /* Header */
 .site-header {
-    text-align: center;
     margin: 50px 0;
 }
 
-.site-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
+.header-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
-.site-header p {
+.header-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.header-text p {
+    margin: 5px 0 0 0;
     font-size: 1rem;
-    margin-top: 5px;
+    text-align: center;
 }
 
 /* Section titles */
@@ -67,8 +84,16 @@ section h2 {
 }
 
 /* Jobs and Education */
-.job, .education-item {
+.job, .education-item, #certifications ul li {
     margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.job:last-child,
+.education-item:last-child,
+#certifications ul li:last-child {
+    border-bottom: none;
 }
 
 .job h3, .education-item h3 {
@@ -133,7 +158,7 @@ li {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .site-header h1 {
+    .header-text h1 {
         font-size: 2rem;
     }
 
