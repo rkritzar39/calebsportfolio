@@ -4573,36 +4573,31 @@ body.autism-mode #wallpaper-layer {
 }
 
 /* =========================================================
-   Interaction & Motion Modes
+   Interaction & Motion Modes (FINAL FIX)
    ========================================================= */
 
 /* ---------------------------------------------------------
    1. Disable Hover 
-   Stop movement, glow, and scaling on hover, but 
-   DO NOT hide backgrounds or break layout positioning.
+   Prevents hover animations (scaling, glowing) on INTERACTIVE items only.
+   Does NOT touch containers, divs, or navbars, so layout won't break.
    --------------------------------------------------------- */
-body.disable-hover *:hover,
-body.disable-hover *:focus {
-  /* Only stop the movement/scaling */
-  transform: none !important; 
-  /* Remove glow/shadows */
-  box-shadow: none !important; 
-  /* Remove brightness/contrast filters */
-  filter: none !important; 
-  /* Stop the transition so it changes instantly */
-  transition: none !important; 
+body.disable-hover a:hover,
+body.disable-hover button:hover,
+body.disable-hover input:hover,
+body.disable-hover .btn:hover,
+body.disable-hover .card:hover,
+body.disable-hover .icon:hover,
+body.disable-hover [role="button"]:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transition: none !important;
+  /* Do NOT set background: inherit here, or buttons disappear */
 }
-
-/* Fix for centered elements: prevent "transform: none" from 
-   breaking elements that use translate for centering */
-body.disable-hover .centered-element:hover {
-    transform: translate(-50%, -50%) !important;
-}
-
 
 /* ---------------------------------------------------------
    2. Disable Motion 
-   Kills all animations and smooth scrolling.
+   Stops animations and smooth scrolling globally.
    --------------------------------------------------------- */
 body.disable-motion *,
 body.disable-motion *::before,
@@ -4612,60 +4607,56 @@ body.disable-motion *::after {
   scroll-behavior: auto !important;
 }
 
-
 /* ---------------------------------------------------------
    3. Ultra Minimal Mode 
-   Removes Glassmorphism, Blur, Depth, and Hover Effects.
+   Flattens the design (removes blur/shadows) without changing colors.
    --------------------------------------------------------- */
 
-/* Remove effects from everything */
+/* Remove depth and blur from everything */
 body.ultra-minimal *,
 body.ultra-minimal *::before,
 body.ultra-minimal *::after {
   box-shadow: none !important;
-  filter: none !important;
+  text-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
-  text-shadow: none !important;
-  border-radius: 0 !important; /* Optional: makes it truly brutalist/minimal */
+  border-radius: 0 !important; /* Optional: Square edges for 'minimal' look */
 }
 
-/* KILL HOVER transforms in minimal mode too */
-body.ultra-minimal *:hover {
+/* Stop hover transforms on interactive items in minimal mode */
+body.ultra-minimal a:hover,
+body.ultra-minimal button:hover,
+body.ultra-minimal .btn:hover {
   transform: none !important;
   transition: none !important;
 }
 
-/* CRITICAL FIX: 
-   When blur is gone, transparency looks messy. 
-   We must force backgrounds to be SOLID (Opaque).
-*/
-body.ultra-minimal {
-  /* Override your glass variables to be solid colors */
-  --glass-bg-light: #ffffff !important; 
-  --glass-bg-dark: #000000 !important; 
-  --glass-border: 1px solid #ccc !important;
-  
-  /* Force global background to be solid */
-  background-color: var(--bg-color, #ffffff) !important;
-  background-image: none !important;
-}
-
-/* NAVBAR FIX:
-   Ensure the nav bar is solid so content doesn't bleed through 
-   when scrolling, since blur is disabled.
+/* THEME PRESERVATION FIX:
+   Instead of forcing a color (like black), we force the element 
+   to be OPAQUE using its current background color.
 */
 body.ultra-minimal nav,
 body.ultra-minimal header,
 body.ultra-minimal .navbar,
-body.ultra-minimal .glass-panel {
-  background-color: var(--bg-body, #111) !important; /* Use your site's solid background color variable */
+body.ultra-minimal .glass-panel,
+body.ultra-minimal .card,
+body.ultra-minimal .sidebar {
+  /* 1. Remove transparency/blur 
+     2. Force the background to be solid based on your theme's variable.
+     If you use a specific variable like --bg-secondary or --surface, use that here.
+  */
+  background-color: var(--bg-body, var(--background, #111)) !important;
   opacity: 1 !important;
-  border-bottom: 1px solid rgba(128,128,128, 0.2);
+  
+  /* Add a subtle border since shadows are gone, to define edges */
+  border: 1px solid var(--border-color, rgba(128,128,128, 0.3)) !important;
 }
 
-/* Light mode override for Nav if needed */
-body.light-mode.ultra-minimal nav,
-body.light-mode.ultra-minimal header {
-  background-color: #ffffff !important;
+/* Specific fix for buttons in Ultra Minimal:
+   Keep their accent color, but remove the glow/shadow.
+*/
+body.ultra-minimal button,
+body.ultra-minimal .btn {
+  box-shadow: none !important;
+  filter: none !important;
 }
