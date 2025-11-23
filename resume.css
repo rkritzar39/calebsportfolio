@@ -1,0 +1,121 @@
+/* ============================= */
+/* Resume Page Styles for Caleb  */
+/* ============================= */
+
+/* Base styling */
+body {
+    font-family: var(--font-family, 'Inter', sans-serif);
+    background-color: var(--bg-color, #f9f9f9);
+    color: var(--text-color, #333);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 20px;
+}
+
+a {
+    color: var(--primary-color, #007BFF);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Header */
+.site-header {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.site-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.site-header p {
+    font-size: 1rem;
+}
+
+/* Main Sections */
+.resume-content {
+    max-width: 900px;
+    margin: 0 auto 60px auto;
+}
+
+section {
+    margin-bottom: 40px;
+}
+
+section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--primary-color, #007BFF);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Jobs and Education */
+.job, .education-item {
+    margin-bottom: 20px;
+}
+
+.job h3, .education-item h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.company, .school {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--secondary-text-color, #555);
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+/* Skills Section */
+#skills .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#skills .skills-list span {
+    background-color: var(--primary-color, #007BFF);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+/* Footer */
+.site-footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--secondary-text-color, #777);
+    margin-top: 60px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .site-header h1 {
+        font-size: 2rem;
+    }
+    
+    section h2 {
+        font-size: 1.5rem;
+    }
+    
+    #skills .skills-list {
+        flex-direction: column;
+        gap: 6px;
+    }
+}
