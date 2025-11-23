@@ -4376,9 +4376,7 @@ body.maintenance-active {
   --a11y-muted: var(--dark-secondary-text, #a9a9a9);
 }
 
-/* =========================================================
-   UNIVERSAL NAV BAR CENTERING & STABILITY
-   ========================================================= */
+/* --- NAV BAR CENTER FIX --- */
 .onyx-dock {
   position: fixed !important;
   bottom: 24px;
@@ -4391,23 +4389,16 @@ body.maintenance-active {
 
   width: 92%;
   max-width: 680px;
-
   z-index: 9999 !important;
 }
 
-/* Prevent any mode from breaking centering */
+/* Prevent any mode from breaking it */
 body.autism-mode .onyx-dock,
 body.epilepsy-safe .onyx-dock,
-body.focus-lock .onyx-dock,
-body.reduced-motion .onyx-dock,
-body.high-contrast .onyx-dock,
-body.low-vision-mode .onyx-dock {
-  position: fixed !important;
+body.focus-lock .onyx-dock {
   left: 50% !important;
   transform: translateX(-50%) !important;
   display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
 }
 
 @media (max-width: 480px) {
