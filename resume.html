@@ -12,10 +12,15 @@
 </head>
 <body>
 
-  <!-- Header -->
+  <!-- Header with image -->
   <header class="site-header">
-    <h1>Caleb Kritzar</h1>
-    <p>Bowling Green, OH 43402 | +1 (567) 436-0691 | <a href="mailto:ckritzar53@busarmydude.org">ckritzar53@busarmydude.org</a></p>
+    <div class="header-container">
+      <img src="your-photo.jpg" alt="Caleb Kritzar" class="header-photo">
+      <div class="header-text">
+        <h1>Caleb Kritzar</h1>
+        <p>Bowling Green, OH 43402 | +1 (567) 436-0691 | <a href="mailto:ckritzar53@busarmydude.org">ckritzar53@busarmydude.org</a></p>
+      </div>
+    </div>
   </header>
 
   <!-- Main container -->
@@ -158,7 +163,6 @@
   <script src="settings.js"></script>
   <script src="script.js"></script>
   <script>
-    // Fallback dynamic year
     const yearEl = document.getElementById('current-year');
     if(yearEl) yearEl.textContent = new Date().getFullYear();
   </script>
