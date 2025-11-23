@@ -4366,7 +4366,6 @@ body.maintenance-active {
 
 /* =========================================================
    Accessibility Mode Overrides — Final Clean Version
-   Nav bar (.onyx-dock) is now fully protected from ALL modes
    ========================================================= */
 
 /* Helper tokens */
@@ -4375,127 +4374,6 @@ body.maintenance-active {
   --a11y-accent: var(--accent-color, #007aff);
   --a11y-text-strong: var(--dark-text, #fff);
   --a11y-muted: var(--dark-secondary-text, #a9a9a9);
-}
-
-/* =========================================================
-   UNIVERSAL SAFE NAV BAR (Fits All Devices)
-   ========================================================= */
-
-.onyx-dock {
-  all: initial !important;
-
-  position: fixed !important;
-  bottom: env(safe-area-inset-bottom, 22px) !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 24px !important;
-
-  /* Universal safe width */
-  width: max-content !important;              /* Only as wide as icons */
-  max-width: 90vw !important;                 /* Never wider than screen */
-  padding: 12px 20px !important;              /* iOS pill */
-  box-sizing: border-box !important;
-
-  /* iOS glass blur */
-  background: rgba(20, 20, 20, 0.55) !important;
-  backdrop-filter: blur(22px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
-
-  border-radius: 32px !important;
-
-  /* Soft floating shadow */
-  box-shadow:
-    0 6px 22px rgba(0, 0, 0, 0.28),
-    0 0 2px rgba(255, 255, 255, 0.08) inset !important;
-
-  z-index: 99999 !important;
-}
-
-/* --- Icons inside the dock --- */
-.onyx-dock .nav-item {
-  all: unset !important;
-
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-
-  font-size: 12px !important;
-  color: rgba(255, 255, 255, 0.82) !important;
-
-  transition: 0.22s ease !important;
-}
-
-.onyx-dock .nav-item:active {
-  transform: scale(0.92) !important;
-  opacity: 0.65 !important;
-}
-
-/* Active item indicator */
-.onyx-dock .active::after {
-  content: "" !important;
-  width: 6px !important;
-  height: 6px !important;
-  border-radius: 50% !important;
-  background: #ff453a !important;
-  position: absolute !important;
-  bottom: -6px !important;
-}
-
-/* =========================================================
-   PROTECT NAV BAR FROM ALL ACCESSIBILITY MODES
-   ========================================================= */
-
-body.autism-mode .onyx-dock,
-body.epilepsy-safe .onyx-dock,
-body.focus-lock .onyx-dock,
-body.low-vision-mode .onyx-dock,
-body.cognitive-mode .onyx-dock,
-body.reduced-motion .onyx-dock,
-body.high-contrast .onyx-dock,
-body.density-compact .onyx-dock,
-body.density-comfortable .onyx-dock,
-body.density-spacious .onyx-dock {
-  all: unset !important;
-
-  position: fixed !important;
-  bottom: env(safe-area-inset-bottom, 22px) !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 24px !important;
-
-  width: max-content !important;
-  max-width: 90vw !important;
-  padding: 12px 20px !important;
-  box-sizing: border-box !important;
-
-  background: rgba(20, 20, 20, 0.55) !important;
-  backdrop-filter: blur(22px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(180%) !important;
-
-  border-radius: 32px !important;
-
-  box-shadow:
-    0 6px 22px rgba(0, 0, 0, 0.28),
-    0 0 2px rgba(255, 255, 255, 0.08) inset !important;
-
-  z-index: 99999 !important;
-}
-
-/* Mobile refinement */
-@media (max-width: 480px) {
-  .onyx-dock {
-    width: 94% !important;
-    max-width: 420px !important;
-  }
 }
 
 /* =========================================================
@@ -4547,14 +4425,12 @@ body.epilepsy-safe * {
   transition: none !important;
 }
 
-/* Freeze wallpaper */
 body.epilepsy-safe #wallpaper-layer,
 body.epilepsy-safe #wallpaper-tint {
   transform: none !important;
   animation: none !important;
 }
 
-/* Hide flashing components */
 body.epilepsy-safe .toast,
 body.epilepsy-safe #reading-mask {
   display: none !important;
@@ -4623,10 +4499,12 @@ body.density-compact .setting-card {
   padding: 8px !important;
   gap: 8px !important;
 }
+
 body.density-comfortable .setting-card {
   padding: 18px !important;
   gap: 12px !important;
 }
+
 body.density-spacious .setting-card {
   padding: 28px !important;
   gap: 20px !important;
