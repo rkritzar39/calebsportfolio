@@ -4377,6 +4377,47 @@ body.maintenance-active {
 }
 
 /* =========================================================
+   UNIVERSAL NAV BAR CENTERING & STABILITY
+   ========================================================= */
+.onyx-dock {
+  position: fixed !important;
+  bottom: 24px;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+
+  width: 92%;
+  max-width: 680px;
+
+  z-index: 9999 !important;
+}
+
+/* Prevent any mode from breaking centering */
+body.autism-mode .onyx-dock,
+body.epilepsy-safe .onyx-dock,
+body.focus-lock .onyx-dock,
+body.reduced-motion .onyx-dock,
+body.high-contrast .onyx-dock,
+body.low-vision-mode .onyx-dock {
+  position: fixed !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+@media (max-width: 480px) {
+  .onyx-dock {
+    width: 94%;
+    max-width: 420px;
+  }
+}
+
+/* =========================================================
    ADHD Focus Mode
    ========================================================= */
 body.adhd-mode * {
@@ -4394,13 +4435,10 @@ body.adhd-mode .onyx-dock {
 
 /* =========================================================
    Autism / Sensory-Friendly Mode
-   (Fixed so navbar remains visible + theme neutral)
    ========================================================= */
 body.autism-mode {
   --dark-content-bg: rgba(245,245,245,0.92);
   --light-content-bg: rgba(250,250,250,0.96);
-
-  /* readable text */
   color: #111 !important;
 }
 
@@ -4417,49 +4455,47 @@ body.autism-mode .setting-card {
   border: 1px solid rgba(0,0,0,0.09) !important;
 }
 
-/* ⭐ NAV BAR FIXED */
+/* Fixed Navbar (Center + Visible) */
 body.autism-mode .onyx-dock {
   background: rgba(255,255,255,0.92) !important;
   color: #111 !important;
-  backdrop-filter: none !important;
   border: 1px solid rgba(0,0,0,0.13) !important;
-  display: flex !important;
+  backdrop-filter: none !important;
 }
 
+/* Link colors */
 body.autism-mode a {
   color: #0056d6 !important;
 }
 
 /* =========================================================
-   Epilepsy Safe Mode (Navbar must stay visible)
+   Epilepsy Safe Mode
    ========================================================= */
 body.epilepsy-safe, html.epilepsy-safe {
   scroll-behavior: auto !important;
 }
-
 body.epilepsy-safe * {
   animation: none !important;
   transition: none !important;
 }
 
-/* Freeze wallpapers */
+/* Freeze wallpaper */
 body.epilepsy-safe #wallpaper-layer,
 body.epilepsy-safe #wallpaper-tint {
   transform: none !important;
   animation: none !important;
 }
 
-/* ⭐ NAV BAR FIXED & ALWAYS VISIBLE */
+/* Navbar ALWAYS visible + centered */
 body.epilepsy-safe .onyx-dock {
   animation: none !important;
   transition: none !important;
-  transform: none !important;
+  transform: translateX(-50%) !important;
   opacity: 1 !important;
   backdrop-filter: none !important;
-  display: flex !important;
 }
 
-/* Hide unsafe flashes */
+/* Hide unsafe flashing UI */
 body.epilepsy-safe .toast,
 body.epilepsy-safe #reading-mask {
   display: none !important;
@@ -4506,14 +4542,14 @@ body.cognitive-mode li {
 }
 
 /* =========================================================
-   Focus Lock (Navbar must still show)
+   Focus Lock Mode
    ========================================================= */
 body.focus-lock #toast-container,
 body.focus-lock .floating {
   display: none !important;
 }
 
-/* ⭐ KEEP NAV BAR */
+/* Navigation stays visible */
 body.focus-lock .onyx-dock {
   display: flex !important;
 }
