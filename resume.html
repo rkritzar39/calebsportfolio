@@ -124,11 +124,13 @@
         <h2>Education</h2>
         <div class="education-item">
           <h3>Elmwood High School</h3>
-          <span class="school">Bloomdale, OH | Graduated Jun 2024</span>
+          <span class="school">Bloomdale, OH</span>
+          <span class="education-dates">Graduated Jun 2024</span>
         </div>
         <div class="education-item">
           <h3>Penta Career Center | Information Technology Academy</h3>
-          <span class="school">Perrysburg, OH | Graduated May 2024</span>
+          <span class="school">Perrysburg, OH</span>
+          <span class="education-dates">Graduated May 2024</span>
           <p>Honor Roll Fall 2022 - Spring 2023: Earned 6 college credits in computer hardware and programming</p>
         </div>
       </section>
@@ -156,7 +158,7 @@
   <script src="settings.js"></script>
   <script src="script.js"></script>
   <script>
-    // Ensure footer year works if not already in script.js
+    // Fallback dynamic year
     const yearEl = document.getElementById('current-year');
     if(yearEl) yearEl.textContent = new Date().getFullYear();
   </script>
