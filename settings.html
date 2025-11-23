@@ -291,6 +291,212 @@
   </div>
 </div>
 
+<div class="settings-subsection animate-slide-in">
+  <h2 class="subsection-title">Neurodiversity & Accessibility</h2>
+
+  <!-- 1. ADHD Focus Mode -->
+  <label class="setting-card" for="adhdModeToggle">
+    <div class="setting-icon-container" style="background-color:#5ac8fa;">
+      <i class="fa-solid fa-brain"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">ADHD Focus Mode</strong>
+      <p class="setting-description">Reduces distractions, improves focus, and simplifies the UI.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="adhdModeToggle" role="switch" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 2. Autism Sensory-Friendly Mode -->
+  <label class="setting-card" for="autismModeToggle">
+    <div class="setting-icon-container" style="background-color:#af52de;">
+      <i class="fa-solid fa-puzzle-piece"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Autism Sensory-Friendly Mode</strong>
+      <p class="setting-description">Softens colors, removes harsh effects, reduces sensory overload.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="autismModeToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 3. Epilepsy Safe Mode -->
+  <label class="setting-card" for="epilepsySafeToggle">
+    <div class="setting-icon-container" style="background-color:#ff2d55;">
+      <i class="fa-solid fa-heart-pulse"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Epilepsy Safe Mode</strong>
+      <p class="setting-description">Removes flashing, intense motion, and strobing effects.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="epilepsySafeToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 4. Color Blind Modes -->
+  <div class="setting-card">
+    <div class="setting-icon-container" style="background-color:#ff9500;">
+      <i class="fa-solid fa-eye-dropper"></i>
+    </div>
+    <label for="colorBlindModeSelect" class="setting-label">
+      <strong class="setting-title">Color Blind Mode</strong>
+      <p class="setting-description">Choose a color palette optimized for your visual needs.</p>
+    </label>
+    <select id="colorBlindModeSelect" aria-label="Color blind mode selector">
+      <option value="off">Off</option>
+      <option value="deuteranopia">Deuteranopia</option>
+      <option value="protanopia">Protanopia</option>
+      <option value="tritanopia">Tritanopia</option>
+      <option value="achromatopsia">Achromatopsia</option>
+    </select>
+  </div>
+
+  <!-- 5. Reading Mask -->
+  <label class="setting-card" for="readingMaskToggle">
+    <div class="setting-icon-container" style="background-color:#34c759;">
+      <i class="fa-solid fa-book"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Reading Mask</strong>
+      <p class="setting-description">Highlights one line at a time to improve reading focus.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="readingMaskToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 6. Reduced Motion -->
+  <label class="setting-card" for="reducedMotionToggle">
+    <div class="setting-icon-container" style="background-color:#007aff;">
+      <i class="fa-solid fa-wave-square"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Reduced Motion</strong>
+      <p class="setting-description">Disable animations, transitions, parallax, and movement effects.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="reducedMotionToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 7. Low Vision Mode -->
+  <label class="setting-card" for="lowVisionToggle">
+    <div class="setting-icon-container" style="background-color:#8e8e93;">
+      <i class="fa-solid fa-eye-low-vision"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Low Vision Mode</strong>
+      <p class="setting-description">Thicker borders, larger hit areas, and simplified layout.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="lowVisionToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 8. Screen Reader Optimization -->
+  <label class="setting-card" for="screenReaderToggle">
+    <div class="setting-icon-container" style="background-color:#007aff;">
+      <i class="fa-solid fa-ear-listen"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Screen Reader Enhancements</strong>
+      <p class="setting-description">Improves labels, ARIA support, and live region announcements.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="screenReaderToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 9. Cognitive-Friendly Mode -->
+  <label class="setting-card" for="cognitiveModeToggle">
+    <div class="setting-icon-container" style="background-color:#af52de;">
+      <i class="fa-solid fa-brain-circuit"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Cognitive-Friendly Mode</strong>
+      <p class="setting-description">More spacing, clearer layout, and improved readability.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="cognitiveModeToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 10. Focus Lock -->
+  <label class="setting-card" for="focusLockToggle">
+    <div class="setting-icon-container" style="background-color:#5856d6;">
+      <i class="fa-solid fa-lock"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Focus Lock</strong>
+      <p class="setting-description">Hide distractions and lock onto the current content block.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="focusLockToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 11. Voice Control -->
+  <label class="setting-card" for="voiceControlToggle">
+    <div class="setting-icon-container" style="background-color:#34c759;">
+      <i class="fa-solid fa-microphone"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Voice Navigation</strong>
+      <p class="setting-description">Use voice commands to navigate and control the interface.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="voiceControlToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- 12. UI Density Control -->
+  <div class="setting-card">
+    <div class="setting-icon-container" style="background-color:#ffcc00;">
+      <i class="fa-solid fa-maximize"></i>
+    </div>
+    <label for="uiDensitySelect" class="setting-label">
+      <strong class="setting-title">UI Density</strong>
+      <p class="setting-description">Adjust spacing and layout size to your comfort level.</p>
+    </label>
+    <select id="uiDensitySelect" aria-label="UI density selector">
+      <option value="default">Default</option>
+      <option value="compact">Compact</option>
+      <option value="comfortable">Comfortable</option>
+      <option value="spacious">Spacious</option>
+    </select>
+  </div>
+
+  <!-- 13. Audio Feedback -->
+  <label class="setting-card" for="audioFeedbackToggle">
+    <div class="setting-icon-container" style="background-color:#ff9500;">
+      <i class="fa-solid fa-waveform"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Audio Feedback</strong>
+      <p class="setting-description">Play subtle sounds when toggles and buttons are pressed.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="audioFeedbackToggle" role="switch"/>
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+</div>
+
+      
 <!-- Toast Preview Container -->
 <div id="toast-container"></div>
       
