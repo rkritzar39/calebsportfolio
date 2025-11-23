@@ -1,5 +1,5 @@
 /* ============================= */
-/* Resume Page Styles (Liquid Glass Theme) with separation lines */
+/* Resume Page Styles (Liquid Glass Theme) with separation lines and proper spacing */
 /* ============================= */
 
 /* Base styling */
@@ -27,6 +27,7 @@ a:hover {
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 /* Header with container and image */
@@ -41,6 +42,7 @@ a:hover {
     display: flex;
     align-items: center;
     gap: 20px;
+    box-sizing: border-box;
 }
 
 .header-photo {
@@ -75,6 +77,7 @@ a:hover {
     margin-bottom: 30px;
     box-shadow: var(--bubble-shadow);
     transition: var(--transition-medium);
+    box-sizing: border-box;
 }
 
 /* Section titles */
@@ -92,13 +95,13 @@ section h2 {
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.15); /* more visible Liquid Glass line */
+    border-bottom: 1px solid rgba(255,255,255,0.15);
     margin-bottom: 15px;
 }
 
 .job:last-child,
 .education-item:last-child {
-    border-bottom: none; /* no line for last item */
+    border-bottom: none;
 }
 
 .job-left, .edu-left {
@@ -158,9 +161,10 @@ li {
     font-size: 0.9rem;
     color: var(--secondary-text);
     margin: 60px 0;
+    box-sizing: border-box;
 }
 
-/* Responsive */
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .site-header {
         flex-direction: column;
@@ -180,5 +184,13 @@ li {
     #skills .skills-list {
         flex-direction: column;
         gap: 6px;
+    }
+
+    .resume-container {
+        padding: 15px;
+    }
+
+    .site-header {
+        padding: 15px 20px;
     }
 }
