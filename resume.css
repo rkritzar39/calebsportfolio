@@ -1,5 +1,5 @@
 /* ============================= */
-/* Resume Page Styles (Liquid Glass Theme) */
+/* Resume Page Styles (Liquid Glass Theme) with separation lines */
 /* ============================= */
 
 /* Base styling */
@@ -29,6 +29,42 @@ a:hover {
     padding: 20px;
 }
 
+/* Header with container and image */
+.site-header {
+    background: var(--content-bg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border-radius: var(--radius-lg);
+    padding: 20px 30px;
+    margin: 40px auto;
+    max-width: 1000px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+}
+
+.header-text {
+    flex: 1;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+.header-text p {
+    margin: 5px 0 0 0;
+    font-size: 1rem;
+}
+
 /* Section containers */
 .resume-container section {
     background: var(--content-bg);
@@ -41,39 +77,6 @@ a:hover {
     transition: var(--transition-medium);
 }
 
-/* Header */
-.site-header {
-    margin: 50px 0;
-}
-
-.header-container {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.header-photo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--accent-color);
-}
-
-.header-text h1 {
-    margin: 0;
-    font-size: 2.5rem;
-    text-align: center;
-}
-
-.header-text p {
-    margin: 5px 0 0 0;
-    font-size: 1rem;
-    text-align: center;
-}
-
 /* Section titles */
 section h2 {
     font-size: 1.8rem;
@@ -83,17 +86,24 @@ section h2 {
     padding-bottom: 5px;
 }
 
-/* Jobs and Education */
-.job, .education-item, #certifications ul li {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border-color);
+/* Jobs and Education - horizontal layout with separation lines */
+.job, .education-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.15); /* more visible Liquid Glass line */
+    margin-bottom: 15px;
 }
 
 .job:last-child,
-.education-item:last-child,
-#certifications ul li:last-child {
-    border-bottom: none;
+.education-item:last-child {
+    border-bottom: none; /* no line for last item */
+}
+
+.job-left, .edu-left {
+    display: flex;
+    flex-direction: column;
 }
 
 .job h3, .education-item h3 {
@@ -102,24 +112,18 @@ section h2 {
 }
 
 .company, .school {
-    display: block;
     font-size: 0.95rem;
     color: var(--secondary-text);
-    margin-bottom: 3px;
 }
 
-/* Dates badges */
-.job-dates,
-.education-dates {
-    display: inline-block;
+/* Dates badges aligned right */
+.job-dates, .education-dates {
     font-size: 0.9rem;
     color: var(--text-color);
     background: var(--accent-color);
     padding: 4px 12px;
     border-radius: 12px;
     font-weight: 600;
-    margin-top: 2px;
-    margin-bottom: 10px;
 }
 
 /* Lists */
@@ -158,12 +162,19 @@ li {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .header-text h1 {
-        font-size: 2rem;
+    .site-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
     }
 
-    section h2 {
-        font-size: 1.5rem;
+    .job, .education-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .job-dates, .education-dates {
+        margin-top: 5px;
     }
 
     #skills .skills-list {
