@@ -1,6 +1,5 @@
 // creator-dashboard.js — Firestore-powered Creator Dashboard
-// Usage: include in a page that has Chart.js loaded and elements with IDs:
-// reachVal, followersVal, projectsVal, goalsVal, visitorsVal, visitorsChart, range
+// Includes loading indicator and Firestore fetch timing
 
 // -----------------------------
 // Firebase config
@@ -91,6 +90,25 @@ function safeText(elementId, text) {
 }
 
 // -----------------------------
+// Loading indicator
+// -----------------------------
+function showLoading(show = true) {
+  const main = document.querySelector('.site-main');
+  if (!main) return;
+  let loader = document.getElementById('dashboard-loader');
+  if (!loader) {
+    loader = document.createElement('div');
+    loader.id = 'dashboard-loader';
+    loader.style.padding = '16px';
+    loader.style.textAlign = 'center';
+    loader.style.fontWeight = 'bold';
+    loader.innerText = 'Loading dashboard...';
+    main.prepend(loader);
+  }
+  loader.style.display = show ? 'block' : 'none';
+}
+
+// -----------------------------
 // Firestore loader
 // -----------------------------
 async function fetchDocsFlexible(rangeDays = 30) {
@@ -159,26 +177,36 @@ function buildSeriesForRange(docsByDateSortedAsc, rangeDays=30) {
 // -----------------------------
 // Load dashboard
 // -----------------------------
-async function loadFromFirestore(rangeDays=30) {
-  if (!Number.isInteger(rangeDays)||rangeDays<=0) rangeDays=30;
+async function loadFromFirestore(rangeDays = 30) {
+  if (!Number.isInteger(rangeDays)||rangeDays<=0) rangeDays = 30;
+  showLoading(true);
+  console.time('Firestore load');
+
   try {
     const rawSorted = await fetchDocsFlexible(rangeDays);
-    if (!rawSorted || rawSorted.length===0) {
+    console.timeEnd('Firestore load');
+
+    if (!rawSorted || rawSorted.length === 0) {
       console.warn('No docs found in Firestore.');
+      showLoading(false);
       return;
     }
 
     const series = buildSeriesForRange(rawSorted, rangeDays);
     safeText('visitorsVal', series.visitors.reduce((a,b)=>a+b,0).toLocaleString());
+
     if (series.latest) {
       safeText('reachVal', series.latest.reach);
       safeText('followersVal', series.latest.followers);
       safeText('projectsVal', series.latest.projects);
       safeText('goalsVal', series.latest.goals);
     }
+
     initChart(series.labels, series.visitors);
   } catch(err) {
     console.error('Error loading Firestore data:', err);
+  } finally {
+    showLoading(false);
   }
 }
 
@@ -189,7 +217,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const sel = document.getElementById('range');
   const days = Number(sel?.value || 30);
   loadFromFirestore(days);
-  sel?.addEventListener('change',(e)=>{
+  sel?.addEventListener('change', ()=>{
     loadFromFirestore(Number(sel.value)||30);
   });
 });
