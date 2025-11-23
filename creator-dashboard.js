@@ -1,5 +1,6 @@
 // creator-dashboard.js — Firestore-powered Creator Dashboard
-// Includes loading indicator and Firestore fetch timing
+// Usage: include in a page that has Chart.js loaded and elements with IDs:
+// reachVal, followersVal, projectsVal, goalsVal, visitorsVal, visitorsChart, range
 
 // -----------------------------
 // Firebase config
@@ -23,7 +24,6 @@ import {
   collection,
   getDocs,
   query,
-  orderBy,
   limit,
   Timestamp
 } from "https://www.gstatic.com/firebasejs/10.6.1/firebase-firestore.js";
@@ -38,11 +38,19 @@ const db = getFirestore(app);
 // Chart helper (Chart.js must be loaded globally)
 // -----------------------------
 let visitorsChart = null;
+
 function initChart(labels = [], data = []) {
   const canvas = document.getElementById('visitorsChart');
   if (!canvas) return;
+  
   const ctx = canvas.getContext('2d');
   if (visitorsChart) visitorsChart.destroy();
+
+  // Create gradient
+  let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  gradient.addColorStop(0, 'rgba(75, 192, 192, 0.5)');
+  gradient.addColorStop(1, 'rgba(75, 192, 192, 0.0)');
+
   visitorsChart = new Chart(ctx, {
     type: 'line',
     data: {
@@ -51,14 +59,20 @@ function initChart(labels = [], data = []) {
         label: 'Site Visitors',
         data,
         fill: true,
-        tension: 0.25,
-        pointRadius: 2
+        backgroundColor: gradient,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.3,
+        pointRadius: 3
       }]
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true } }
+      scales: { 
+        x: { ticks: { maxTicksLimit: 6, color: '#888' }, grid: { display: false } },
+        y: { beginAtZero: true, grid: { color: '#333' }, ticks: { color: '#888' } }
+      }
     }
   });
 }
@@ -66,158 +80,155 @@ function initChart(labels = [], data = []) {
 // -----------------------------
 // Utilities
 // -----------------------------
-function toISODateStringFromAny(value) {
-  if (!value && value !== 0) return null;
-  if (typeof value === 'string') {
-    const s = value.trim();
-    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-    const d = new Date(s);
-    if (!isNaN(d)) return d.toISOString().slice(0,10);
-    return null;
-  }
-  if (value instanceof Timestamp && typeof value.toDate === 'function') return value.toDate().toISOString().slice(0,10);
-  if (value instanceof Date) return value.toISOString().slice(0,10);
-  if (typeof value === 'number') {
-    const d = new Date(value > 1e12 ? value : value*1000);
-    if (!isNaN(d)) return d.toISOString().slice(0,10);
-  }
-  return null;
+function formatDate(val) {
+  // Robust date parser
+  if (!val) return new Date().toISOString().slice(0,10);
+  if (val instanceof Timestamp) return val.toDate().toISOString().slice(0,10);
+  if (val instanceof Date) return val.toISOString().slice(0,10);
+  if (typeof val === 'string') return val.slice(0,10); // Assume ISO-like string
+  return new Date().toISOString().slice(0,10);
 }
 
 function safeText(elementId, text) {
   const el = document.getElementById(elementId);
-  if (el) el.innerText = (text === undefined || text === null) ? '—' : String(text);
-}
-
-// -----------------------------
-// Loading indicator
-// -----------------------------
-function showLoading(show = true) {
-  const main = document.querySelector('.site-main');
-  if (!main) return;
-  let loader = document.getElementById('dashboard-loader');
-  if (!loader) {
-    loader = document.createElement('div');
-    loader.id = 'dashboard-loader';
-    loader.style.padding = '16px';
-    loader.style.textAlign = 'center';
-    loader.style.fontWeight = 'bold';
-    loader.innerText = 'Loading dashboard...';
-    main.prepend(loader);
-  }
-  loader.style.display = show ? 'block' : 'none';
+  // If text is 0, we want to show "0", but if null/undefined show "—"
+  if (el) el.innerText = (text !== undefined && text !== null) ? String(text) : '—';
 }
 
 // -----------------------------
 // Firestore loader
 // -----------------------------
 async function fetchDocsFlexible(rangeDays = 30) {
-  async function fetchFromCollectionPath(path, limitCount = rangeDays*5) {
+  
+  // Helper to fetch data without "orderBy" (avoids Index errors)
+  async function fetchSafe(path) {
     try {
       const col = collection(db, path);
-      const q = query(col, orderBy('date','desc'), limit(limitCount));
+      // We limit to 100 to keep it light, but fetch ANY order
+      const q = query(col, limit(100)); 
       const snaps = await getDocs(q);
-      console.log(`Fetched ${snaps.size} docs from ${path}`);
-      return snaps.docs.map(d => ({ id: d.id, data: d.data() }));
+      console.log(`[Debug] Fetched ${snaps.size} docs from '${path}'`);
+      return snaps.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch(err) {
-      console.warn(`Failed fetching ${path}:`, err);
+      console.warn(`[Debug] Could not fetch '${path}':`, err.message);
       return [];
     }
   }
 
-  let raw = await fetchFromCollectionPath('public_stats/daily', rangeDays*3);
-  if (!raw || raw.length===0) raw = await fetchFromCollectionPath('public_stats', rangeDays*3);
+  // 1. Try 'public_stats' first (Most common structure)
+  let rawData = await fetchSafe('public_stats');
+  
+  // 2. If empty, try the sub-path user mentioned
+  if (rawData.length === 0) {
+    // Note: 'public_stats/daily' implies Collection/Document. 
+    // If 'daily' is a collection, we try to access it directly:
+    rawData = await fetchSafe('public_stats/daily/stats'); 
+    // Or try simply a named collection called daily_stats
+    if(rawData.length === 0) rawData = await fetchSafe('daily_stats');
+  }
 
-  const normalized = raw.map(doc => {
-    const obj = doc.data || doc.data;
-    const picked = {
-      _id: doc.id,
-      dateStr: toISODateStringFromAny(obj?.date ?? obj?.day ?? obj?.timestamp ?? doc.id),
-      visitors: Number(obj?.visitors ?? obj?.visitorCount ?? 0),
-      reach: Number(obj?.reach ?? obj?.monthlyReach ?? 0),
-      followers: Number(obj?.followers ?? obj?.followerCount ?? 0),
-      projects: Number(obj?.projects ?? obj?.projectsCompleted ?? 0),
-      goals: Number(obj?.goals ?? obj?.goalsAchieved ?? 0),
-      raw: obj
+  if (rawData.length === 0) {
+    console.error("[Debug] No data found in 'public_stats' or 'daily_stats'. Check your Firestore Collection Name.");
+    return [];
+  }
+
+  // 3. Normalize Data
+  const normalized = rawData.map(obj => {
+    // Handle various naming conventions
+    const dateStr = formatDate(obj.date || obj.timestamp || obj.day || obj.created_at);
+    
+    return {
+      dateStr: dateStr,
+      // Convert all numbers safely
+      visitors: Number(obj.visitors ?? obj.visitorCount ?? 0),
+      reach: Number(obj.reach ?? obj.monthlyReach ?? 0),
+      followers: Number(obj.followers ?? obj.followerCount ?? 0),
+      projects: Number(obj.projects ?? obj.projectsCompleted ?? 0),
+      goals: Number(obj.goals ?? obj.goalsAchieved ?? 0)
     };
-    if (!picked.dateStr) picked.dateStr = new Date().toISOString().slice(0,10);
-    return picked;
   });
 
-  const byDate = new Map();
-  normalized.forEach(item => {
-    const existing = byDate.get(item.dateStr);
-    if (!existing || item.visitors >= existing.visitors) byDate.set(item.dateStr,item);
-  });
+  // 4. Sort by Date Ascending (Client-side sort is safer for small datasets)
+  normalized.sort((a, b) => a.dateStr.localeCompare(b.dateStr));
 
-  return Array.from(byDate.values()).sort((a,b) => a.dateStr.localeCompare(b.dateStr));
+  return normalized;
 }
 
 // -----------------------------
 // Build series for chart
 // -----------------------------
-function buildSeriesForRange(docsByDateSortedAsc, rangeDays=30) {
-  const map = new Map(docsByDateSortedAsc.map(d => [d.dateStr,d]));
+function processDataForDashboard(allSortedDocs, rangeDays) {
   const labels = [];
-  const visitors = [];
-  const today = new Date();
+  const visitorsData = [];
+  
+  // Map for quick lookup by date string
+  const dataMap = new Map();
+  allSortedDocs.forEach(d => dataMap.set(d.dateStr, d));
 
-  for (let i=rangeDays-1;i>=0;i--) {
-    const d = new Date(); d.setDate(today.getDate()-i);
-    const ds = d.toISOString().slice(0,10);
-    labels.push(ds);
-    const doc = map.get(ds);
-    visitors.push(doc ? Number(doc.visitors) : 0);
+  // Generate dates for the last X days
+  for (let i = rangeDays - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const isoDate = d.toISOString().slice(0,10);
+    
+    labels.push(isoDate.slice(5)); // Show "MM-DD"
+    const entry = dataMap.get(isoDate);
+    visitorsData.push(entry ? entry.visitors : 0);
   }
 
-  const latestDoc = docsByDateSortedAsc.length ? docsByDateSortedAsc[docsByDateSortedAsc.length-1] : null;
-  return { labels, visitors, latest: latestDoc };
+  // Get the absolute latest entry for the "Stats Cards"
+  // (Even if it's not today, show the most recent available data)
+  const latestDoc = allSortedDocs.length > 0 ? allSortedDocs[allSortedDocs.length - 1] : null;
+
+  return {
+    labels,
+    visitorsData,
+    latest: latestDoc,
+    totalVisitors: visitorsData.reduce((a,b) => a+b, 0)
+  };
 }
 
 // -----------------------------
 // Load dashboard
 // -----------------------------
 async function loadFromFirestore(rangeDays = 30) {
-  if (!Number.isInteger(rangeDays)||rangeDays<=0) rangeDays = 30;
-  showLoading(true);
-  console.time('Firestore load');
-
-  try {
-    const rawSorted = await fetchDocsFlexible(rangeDays);
-    console.timeEnd('Firestore load');
-
-    if (!rawSorted || rawSorted.length === 0) {
-      console.warn('No docs found in Firestore.');
-      showLoading(false);
-      return;
-    }
-
-    const series = buildSeriesForRange(rawSorted, rangeDays);
-    safeText('visitorsVal', series.visitors.reduce((a,b)=>a+b,0).toLocaleString());
-
-    if (series.latest) {
-      safeText('reachVal', series.latest.reach);
-      safeText('followersVal', series.latest.followers);
-      safeText('projectsVal', series.latest.projects);
-      safeText('goalsVal', series.latest.goals);
-    }
-
-    initChart(series.labels, series.visitors);
-  } catch(err) {
-    console.error('Error loading Firestore data:', err);
-  } finally {
-    showLoading(false);
+  console.log("Loading dashboard...");
+  
+  const docs = await fetchDocsFlexible(rangeDays);
+  
+  if (!docs || docs.length === 0) {
+    safeText('reachVal', 'No Data');
+    return;
   }
+
+  const processed = processDataForDashboard(docs, rangeDays);
+
+  // Update Top Cards using the LATEST available data
+  if (processed.latest) {
+    safeText('reachVal', processed.latest.reach);
+    safeText('followersVal', processed.latest.followers);
+    safeText('projectsVal', processed.latest.projects);
+    safeText('goalsVal', processed.latest.goals);
+  }
+
+  // Update Visitor Count (Total over range)
+  safeText('visitorsVal', processed.totalVisitors.toLocaleString());
+
+  // Render Chart
+  initChart(processed.labels, processed.visitorsData);
 }
 
 // -----------------------------
 // DOM wiring
 // -----------------------------
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
   const sel = document.getElementById('range');
-  const days = Number(sel?.value || 30);
-  loadFromFirestore(days);
-  sel?.addEventListener('change', ()=>{
-    loadFromFirestore(Number(sel.value)||30);
+  
+  // Initial Load
+  loadFromFirestore(Number(sel?.value) || 30);
+
+  // Listener
+  sel?.addEventListener('change', (e) => {
+    loadFromFirestore(Number(e.target.value) || 30);
   });
 });
