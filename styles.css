@@ -4366,13 +4366,12 @@ body.maintenance-active {
 
 /* =========================================================
    Accessibility Mode Overrides — tailored to your theme
-   Place at the end of styles (2).css
    ========================================================= */
 
-/* Helper tokens (fall back to existing tokens if available) */
+/* Helper tokens */
 :root {
   --a11y-mask-bg: rgba(0,0,0,0.06);
-  --a11y-accent: var(--dark-accent, #007aff);
+  --a11y-accent: var(--accent-color, #007aff);
   --a11y-text-strong: var(--dark-text, #fff);
   --a11y-muted: var(--dark-secondary-text, #a9a9a9);
 }
@@ -4380,41 +4379,40 @@ body.maintenance-active {
 /* -------------------------
    ADHD Focus Mode
    ------------------------- */
-body.adhd-mode {
-  /* Reduce visual noise */
-  --glass-opacity: 0.7;
-}
 body.adhd-mode * {
   transition-duration: 150ms !important;
-  transition-timing-function: ease !important;
   transition-delay: 0 !important;
-  animation-duration: 0.12s !important;
+  animation-duration: 0 !important;
 }
-body.adhd-mode .animate-slide-in { animation: none !important; opacity: 1 !important; }
-body.adhd-mode .onyx-dock { opacity: 0.92 !important; }
+body.adhd-mode .animate-slide-in {
+  animation: none !important;
+  opacity: 1 !important;
+}
+body.adhd-mode .onyx-dock {
+  opacity: 0.95 !important;
+}
 
 /* -------------------------
-   Autism / Sensory-Friendly
+   Autism / Sensory-Friendly Mode
    ------------------------- */
 body.autism-mode {
-  /* Soften colors and remove strong glass/blur */
   --dark-content-bg: rgba(250,250,250,0.96);
   --dark-glow: transparent;
   --light-content-bg: rgba(255,255,255,0.98);
   color: var(--a11y-text-strong);
-  background-color: var(--light-content-bg);
 }
 body.autism-mode * {
   filter: none !important;
   box-shadow: none !important;
 }
-body.autism-mode .onyx-dock, body.autism-mode .toast {
-  opacity: 0.95 !important;
-  transform: none !important;
+body.autism-mode .glass-card,
+body.autism-mode .setting-card {
+  background: var(--dark-content-bg) !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
 }
 
 /* -------------------------
-   Epilepsy Safe Mode
+   Epilepsy Safe Mode (UPDATED)
    ------------------------- */
 body.epilepsy-safe, html.epilepsy-safe {
   scroll-behavior: auto !important;
@@ -4423,19 +4421,32 @@ body.epilepsy-safe * {
   animation: none !important;
   transition: none !important;
 }
-#wallpaper-layer, #wallpaper-tint {
+
+/* Freeze wallpaper layers */
+body.epilepsy-safe #wallpaper-layer,
+body.epilepsy-safe #wallpaper-tint {
   transform: none !important;
   will-change: auto !important;
   animation: none !important;
 }
-body.epilepsy-safe .onyx-dock,
+
+/* KEEP NAV BAR — disable animation & shimmer */
+body.epilepsy-safe .onyx-dock {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important; /* prevents flicker */
+}
+
+/* Hide unsafe flashing elements */
 body.epilepsy-safe .toast,
 body.epilepsy-safe #reading-mask {
   display: none !important;
 }
 
 /* -------------------------
-   Reduced Motion (mapped)
+   Reduced Motion
    ------------------------- */
 body.reduced-motion * {
   animation: none !important;
@@ -4447,23 +4458,17 @@ body.reduced-motion * {
    Low Vision Mode
    ------------------------- */
 body.low-vision-mode {
-  --font-size-base: calc(var(--font-size-base, 16px) * 1.12);
+  --font-size-base: calc(var(--font-size-base, 16px) * 1.14);
   --line-height-base: 1.85;
 }
 body.low-vision-mode .setting-card {
   padding: 22px !important;
-  gap: 14px !important;
 }
-body.low-vision-mode button, body.low-vision-mode .md-switch {
+body.low-vision-mode button,
+body.low-vision-mode .md-switch {
   min-height: 48px !important;
   min-width: 48px !important;
 }
-
-/* -------------------------
-   Screen Reader Enhancements
-   ------------------------- */
-/* Minimal: keep ARIA helpers visible to assistive tech without visual impact */
-#a11y-announcer { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); border:0; }
 
 /* -------------------------
    Cognitive-Friendly Mode
@@ -4473,32 +4478,44 @@ body.cognitive-mode {
   letter-spacing: 0.03em;
   --font-size-base: calc(var(--font-size-base, 16px) * 1.04);
 }
-body.cognitive-mode p, body.cognitive-mode li {
+body.cognitive-mode p,
+body.cognitive-mode li {
   max-width: 75ch;
   margin-left: auto;
   margin-right: auto;
-  text-align: left;
 }
 
 /* -------------------------
-   Focus Lock (distraction free)
+   Focus Lock
    ------------------------- */
 body.focus-lock .onyx-dock,
 body.focus-lock #toast-container,
 body.focus-lock .floating {
   display: none !important;
 }
-body.focus-lock .container { max-width: 900px; margin: 0 auto; }
+body.focus-lock .container {
+  max-width: 900px;
+  margin: 0 auto;
+}
 
 /* -------------------------
    UI Density Modes
    ------------------------- */
-body.density-compact .setting-card { padding: 8px !important; gap: 8px !important; }
-body.density-comfortable .setting-card { padding: 18px !important; gap: 12px !important; }
-body.density-spacious .setting-card { padding: 28px !important; gap: 20px !important; }
+body.density-compact .setting-card {
+  padding: 8px !important;
+  gap: 8px !important;
+}
+body.density-comfortable .setting-card {
+  padding: 18px !important;
+  gap: 12px !important;
+}
+body.density-spacious .setting-card {
+  padding: 28px !important;
+  gap: 20px !important;
+}
 
 /* -------------------------
-   Reading Mask (visual)
+   Reading Mask
    ------------------------- */
 #reading-mask {
   display: none;
@@ -4518,83 +4535,48 @@ body.density-spacious .setting-card { padding: 28px !important; gap: 20px !impor
 }
 
 /* -------------------------
-   Color-blind palettes (override accents only)
-   These use your existing CSS variables so color swaps are non-destructive.
+   Color Blind Modes
    ------------------------- */
 :root.cb-deuteranopia {
-  --dark-accent: #007AFF; /* blue-focused fallback */
-  --light-accent: #007AFF;
   --accent-color: #007AFF;
 }
 :root.cb-protanopia {
-  --dark-accent: #0A84FF;
-  --light-accent: #0A84FF;
   --accent-color: #0A84FF;
 }
 :root.cb-tritanopia {
-  --dark-accent: #FF9F0A;
-  --light-accent: #FF9F0A;
   --accent-color: #FF9F0A;
 }
-/* Achromatopsia (monochrome) */
 :root.cb-achromatopsia {
   filter: grayscale(1) contrast(1.08);
 }
 
 /* -------------------------
-   Epilepsy-safe tweak: neutralize any SVG <animate> or CSS keyframes for site components
-   (keeps layout intact but prevents flashing)
+   High Contrast Extra
    ------------------------- */
-body.epilepsy-safe svg * { animation: none !important; }
-body.epilepsy-safe [style*="animation"] { animation: none !important; }
-
-/* -------------------------
-   Autism-mode: reduce contrast spikes for glass cards and glows
-   ------------------------- */
-body.autism-mode .glass-card,
-body.autism-mode .setting-card {
-  background: var(--dark-content-bg, rgba(24,24,24,0.55)) !important;
-  box-shadow: none !important;
-  border: 1px solid rgba(0,0,0,0.06) !important;
+body.high-contrast {
+  background: #000 !important;
+  color: #fff !important;
+}
+body.high-contrast a {
+  color: var(--a11y-accent, #0ff) !important;
 }
 
 /* -------------------------
-   Accessibility: large tap targets helper
-   Use with .low-vision-mode or standalone if you later add a toggle
+   Large Tap Targets
    ------------------------- */
 .setting-card .setting-icon-container {
   min-width: 44px;
   min-height: 44px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* -------------------------
-   Small adjustments to ensure wallpaper/tint doesn't flicker in epilepsy/autism modes
+   Cleanup for wallpaper flicker on modes
    ------------------------- */
 body.epilepsy-safe #wallpaper-layer,
 body.autism-mode #wallpaper-layer {
   transition: none !important;
   filter: none !important;
-  opacity: 1 !important;
-}
-
-/* -------------------------
-   High contrast fallback (touch up)
-   ------------------------- */
-body.high-contrast {
-  color: #fff !important;
-  background: #000 !important;
-}
-body.high-contrast a { color: var(--a11y-accent, #0ff) !important; }
-
-/* -------------------------
-   Preserve existing component look but adapt when modes active
-   ------------------------- */
-body.adhd-mode .accent-color-preview,
-body.autism-mode .accent-color-preview,
-body.low-vision-mode .accent-color-preview {
-  box-shadow: none !important;
-  border: 2px solid rgba(0,0,0,0.06);
 }
