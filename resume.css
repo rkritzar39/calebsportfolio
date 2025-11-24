@@ -1,78 +1,86 @@
 /* ============================= */
-/* EXECUTIVE LIQUID GLASS THEME  */
+/* EXECUTIVE LIQUID GLASS RESUME */
 /* ============================= */
 
 :root {
     /* ======================== */
-    /* 1. Base Sizing & Fonts   */
+    /* 1. Base Settings         */
     /* ======================== */
     --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --radius-sm: 8px;
     --radius-lg: 12px;
-    --blur-strength: blur(16px) saturate(180%);
+    --blur-strength: blur(15px); /* The "Frosted" effect intensity */
 
     /* ======================== */
-    /* 2. Light Mode Variables  */
-    /* (Default)                */
+    /* 2. Light Mode (Default)  */
     /* ======================== */
     
-    /* The "Paper" is now White Glass */
-    --paper-bg: rgba(255, 255, 255, 0.75);
+    /* The "Paper" background (White tint) */
+    --paper-bg: rgba(255, 255, 255, 0.85);
     
-    /* The Header is a dark semi-transparent blue */
-    --header-bg: linear-gradient(to right, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
-    
+    /* Text Colors */
     --text-main: #111827;     /* Near Black */
     --text-muted: #4b5563;    /* Slate Grey */
-    --text-header: #ffffff;   /* White text for the dark header */
-    --text-header-sub: #cbd5e1;
     
+    /* Header Colors (Keep header dark in light mode for contrast) */
+    --header-bg: linear-gradient(to right, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+    --header-text-main: #ffffff;
+    --header-text-sub: #cbd5e1;
+    
+    /* Accents */
     --accent-color: #2563eb;  /* Trust Blue */
-    --accent-bg: rgba(37, 99, 235, 0.1); /* Low opacity blue for badges */
-    
+    --accent-bg: rgba(37, 99, 235, 0.1); /* Light blue pill background */
+    --link-hover: #1d4ed8;
+
+    /* Borders & Shadows */
     --border-light: rgba(0, 0, 0, 0.1);
-    --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
-    --skill-tag-bg: rgba(255, 255, 255, 0.6);
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --skill-chip-bg: rgba(255, 255, 255, 0.5);
 }
 
 /* ======================== */
-/* 3. Dark Mode Variables   */
+/* 3. Dark Mode Overrides   */
 /* ======================== */
 @media (prefers-color-scheme: dark) {
     :root {
-        /* The "Paper" is now Black Glass */
-        --paper-bg: rgba(20, 20, 20, 0.70);
+        /* The "Paper" background (Black tint) */
+        --paper-bg: rgba(20, 20, 20, 0.75);
         
-        /* The Header blends slightly better in dark mode */
-        --header-bg: linear-gradient(to right, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.6));
+        /* Text Colors */
+        --text-main: #f3f4f6;     /* Off-White */
+        --text-muted: #9ca3af;    /* Light Grey */
         
-        --text-main: #F5F7FA;     /* White/Grey */
-        --text-muted: #A9A9A9;    /* Light Grey */
-        --text-header: #ffffff;
-        --text-header-sub: #94a3b8;
-
-        --accent-color: #60a5fa;  /* Lighter Blue for dark backgrounds */
+        /* Header Colors (Slightly more transparent in dark mode) */
+        --header-bg: linear-gradient(to right, rgba(15, 23, 42, 0.8), rgba(0, 0, 0, 0.8));
+        --header-text-main: #ffffff;
+        --header-text-sub: #94a3b8;
+        
+        /* Accents (Lighter blue for readability on dark) */
+        --accent-color: #60a5fa; 
         --accent-bg: rgba(96, 165, 250, 0.15);
-        
-        --border-light: rgba(255, 255, 255, 0.1);
+        --link-hover: #93c5fd;
+
+        /* Borders & Shadows */
+        --border-light: rgba(255, 255, 255, 0.12); /* Subtle white border */
         --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
-        --skill-tag-bg: rgba(255, 255, 255, 0.05);
+        --skill-chip-bg: rgba(255, 255, 255, 0.05);
     }
 }
 
 /* ======================== */
-/* 4. Global Styles         */
+/* 4. Layout & Typography   */
 /* ======================== */
+
 body {
     font-family: var(--font-stack);
-    /* No background color here! This lets the wallpaper show. */
+    /* IMPORTANT: Transparent background so wallpaper shows */
     background: transparent; 
     color: var(--text-main);
     margin: 0;
     padding: 40px 20px;
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
+    min-height: 100vh; /* Ensures body covers full screen */
 }
 
 a {
@@ -84,7 +92,7 @@ a {
 
 a:hover {
     text-decoration: underline;
-    opacity: 0.8;
+    color: var(--link-hover);
 }
 
 /* ======================== */
@@ -94,14 +102,16 @@ a:hover {
     max-width: 900px;
     margin: 0 auto;
     
-    /* GLASS MAGIC HERE */
+    /* The Glass Effect */
     background: var(--paper-bg);
     backdrop-filter: var(--blur-strength);
     -webkit-backdrop-filter: var(--blur-strength);
-    border: 1px solid var(--border-light);
     
     border-radius: var(--radius-lg);
+    /* Added a border for better definition in dark mode */
+    border: 1px solid var(--border-light);
     box-shadow: var(--card-shadow);
+    
     overflow: hidden;
     transition: background 0.3s ease, color 0.3s ease;
 }
@@ -111,7 +121,7 @@ a:hover {
 /* ======================== */
 .site-header {
     background: var(--header-bg);
-    color: var(--text-header);
+    color: var(--header-text-main);
     padding: 40px 50px;
     display: flex;
     align-items: center;
@@ -133,18 +143,22 @@ a:hover {
     font-size: 2.2rem;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: var(--text-header);
+    color: var(--header-text-main);
 }
 
 .header-text p {
     margin: 8px 0 0 0;
     font-size: 1rem;
-    color: var(--text-header-sub);
+    color: var(--header-text-sub);
     font-weight: 400;
 }
 
+.header-text a {
+    color: #60a5fa; /* Keep links in header light blue */
+}
+
 /* ======================== */
-/* 7. Content Areas         */
+/* 7. Main Content          */
 /* ======================== */
 .resume-content {
     padding: 50px;
@@ -179,11 +193,11 @@ section h2::before {
 }
 
 /* ======================== */
-/* 8. Jobs & Education      */
+/* 8. Job & Education Grid  */
 /* ======================== */
 .job, .education-item {
     display: grid;
-    grid-template-columns: 1fr auto; 
+    grid-template-columns: 1fr auto;
     gap: 10px;
     margin-bottom: 25px;
     padding-bottom: 25px;
@@ -213,7 +227,7 @@ section h2::before {
     margin-top: 4px;
 }
 
-/* Dates Pill Badge */
+/* Dates Pill */
 .job-dates, .education-dates {
     grid-column: 2;
     align-self: start;
@@ -224,13 +238,15 @@ section h2::before {
     border-radius: 6px;
     font-weight: 600;
     white-space: nowrap;
-    border: 1px solid var(--border-light);
+    /* Added border for dark mode clarity */
+    border: 1px solid var(--border-light); 
 }
 
+/* Lists */
 .job ul, .education-item p {
     grid-column: 1 / -1;
     margin-top: 10px;
-    color: var(--text-muted); /* Changed to var for dark mode */
+    color: var(--text-muted); /* Using variable now */
     padding-left: 18px;
 }
 
@@ -239,7 +255,7 @@ li {
 }
 
 /* ======================== */
-/* 9. Skills Tags           */
+/* 9. Skills Chips          */
 /* ======================== */
 .skills-list {
     display: flex;
@@ -248,7 +264,7 @@ li {
 }
 
 .skills-list span {
-    background: var(--skill-tag-bg);
+    background: var(--skill-chip-bg);
     border: 1px solid var(--border-light);
     color: var(--text-main);
     padding: 8px 16px;
@@ -266,16 +282,16 @@ li {
     font-size: 0.9rem;
     color: var(--text-muted);
     padding: 30px;
-    background: rgba(0,0,0,0.02); /* Slight tint */
+    background: rgba(0, 0, 0, 0.03); /* Subtle tint */
     border-top: 1px solid var(--border-light);
 }
 
 /* ======================== */
-/* 11. Mobile Optimization  */
+/* 11. Mobile               */
 /* ======================== */
 @media (max-width: 700px) {
     body { padding: 0; }
-    .resume-container { border-radius: 0; border: none; }
+    .resume-container { border-radius: 0; box-shadow: none; border: none; }
     .site-header { flex-direction: column; text-align: center; padding: 30px 20px; }
     .resume-content { padding: 30px 20px; }
     
@@ -287,28 +303,29 @@ li {
     .job-dates, .education-dates {
         align-self: flex-start;
         margin-top: 8px;
-        padding-left: 0;
         background: transparent;
+        padding-left: 0;
         border: none;
-        color: var(--text-muted);
     }
 }
 
 /* ======================== */
-/* 12. Print Override       */
+/* 12. Print Optimization   */
 /* ======================== */
 @media print {
     body { 
         background: white; 
         padding: 0; 
+        -webkit-print-color-adjust: exact; 
     }
     .resume-container { 
         box-shadow: none; 
+        border: none;
         width: 100%; 
         max-width: 100%; 
-        margin: 0;
-        background: white; /* Remove glass effect for print */
-        border: none;
+        margin: 0; 
+        /* Remove glass effect for print */
+        background: white;
     }
     .site-header { 
         background: white; 
@@ -316,11 +333,10 @@ li {
         padding: 0 0 20px 0; 
         border-bottom: 2px solid black; 
     }
-    .header-text h1, .header-text p { color: black !important; }
+    .header-text h1 { color: black !important; }
+    .header-text p { color: black !important; }
     .header-photo { display: none; }
     .job-dates { border: none; color: black; padding: 0; background: none; }
     a { text-decoration: none; color: black; }
     .site-footer { display: none; }
-    section h2 { border-color: black; color: black; }
-    .skills-list span { border-color: black; color: black; }
 }
