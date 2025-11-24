@@ -1,191 +1,188 @@
 /* ============================= */
-/* MODERN PROFESSIONAL RESUME THEME */
+/* EXECUTIVE TECH RESUME THEME   */
 /* ============================= */
 
 :root {
-    /* Professional Color Palette (Navy & Slate) */
-    --bg-color: #f4f7f6; /* Light grey-blue background */
-    --content-bg: rgba(255, 255, 255, 0.85); /* Frosted glass white */
-    --text-color: #1f2937; /* Dark charcoal for readability */
-    --secondary-text: #4b5563; /* Slate grey for subtitles */
-    --accent-color: #2563eb; /* Professional Royal Blue */
-    --accent-bg: rgba(37, 99, 235, 0.1); /* Light blue background for pills */
-    --border-color: rgba(209, 213, 219, 0.5);
+    /* Professional Palette - Trustworthy & Clean */
+    --page-bg: #f3f4f6;       /* Light Grey-Blue backing */
+    --paper-bg: #ffffff;      /* Pure White Paper */
+    --text-main: #111827;     /* Near Black for sharpness */
+    --text-muted: #4b5563;    /* Slate Grey for details */
+    --accent-color: #2563eb;  /* "Trust" Blue (standard in Tech) */
+    --accent-bg: #eff6ff;     /* Very light blue for backgrounds */
+    --border-light: #e5e7eb;
     
-    /* Effects */
-    --backdrop-blur: blur(12px);
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    /* Spacing & Radius */
+    --radius-sm: 8px;
     --radius-lg: 12px;
+    --font-stack: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* Base styling */
+/* 1. BACKGROUND & TYPOGRAPHY */
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
-    background-image: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.1) 0px, transparent 50%), 
-                      radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.1) 0px, transparent 50%);
-    color: var(--text-color);
-    line-height: 1.6;
+    font-family: var(--font-stack);
+    background-color: var(--page-bg);
+    color: var(--text-main);
     margin: 0;
-    padding: 0;
+    padding: 40px 20px;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
 }
 
 a {
     color: var(--accent-color);
     text-decoration: none;
-    font-weight: 500;
-    transition: color 0.2s;
+    font-weight: 600;
+    transition: all 0.2s;
 }
 
 a:hover {
     text-decoration: underline;
-    color: #1e40af; /* Darker blue */
+    color: #1d4ed8; /* Darker Blue */
 }
 
-/* Main container */
+/* 2. THE "DIGITAL PAPER" CONTAINER */
+/* This makes it look like a document sitting on a desk */
 .resume-container {
-    max-width: 900px; /* Standard readable width */
-    margin: 40px auto;
-    padding: 0 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--paper-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Keeps content inside the rounded corners */
 }
 
-/* Header Styling */
+/* 3. HEADER - Clean & Corporate */
 .site-header {
-    background: var(--content-bg);
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    border: 1px solid white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    
-    padding: 30px;
+    background: linear-gradient(to right, #1e293b, #0f172a); /* Professional Navy Gradient */
+    color: white;
+    padding: 40px 50px;
     display: flex;
     align-items: center;
     gap: 30px;
-    margin-bottom: 30px;
 }
 
 .header-photo {
-    width: 130px;
-    height: 130px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid white;
-    box-shadow: var(--shadow-sm);
-}
-
-.header-text {
-    flex: 1;
+    border: 4px solid rgba(255,255,255,0.2);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
 }
 
 .header-text h1 {
     margin: 0;
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: #111827;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
 }
 
 .header-text p {
     margin: 8px 0 0 0;
-    font-size: 1.05rem;
-    color: var(--secondary-text);
+    font-size: 1rem;
+    color: #cbd5e1; /* Light grey text on dark bg */
+    font-weight: 400;
 }
 
-/* Section General Styling */
-.resume-container section {
-    background: var(--content-bg);
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    border: 1px solid white;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    
-    padding: 30px;
-    margin-bottom: 25px;
+.header-text a {
+    color: #60a5fa; /* Lighter blue for links on dark bg */
+}
+
+/* 4. MAIN CONTENT PADDING */
+.resume-content {
+    padding: 50px;
+}
+
+/* 5. SECTION HEADINGS */
+section {
+    margin-bottom: 40px;
 }
 
 section h2 {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--accent-color);
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-light);
+    padding-bottom: 10px;
     margin-top: 0;
     margin-bottom: 25px;
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 10px;
-}
-
-/* JOB & EDUCATION ENTRIES - The Layout Fix */
-.job, .education-item {
     display: flex;
-    flex-wrap: wrap; /* This forces the bullet points to the next line */
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
+    align-items: center;
 }
 
-.job:last-child,
-.education-item:last-child {
+/* Small accent line before the title */
+section h2::before {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 24px;
+    background: var(--accent-color);
+    margin-right: 12px;
+    border-radius: 2px;
+}
+
+/* 6. JOBS & EDUCATION - Grid Layout */
+.job, .education-item {
+    display: grid;
+    grid-template-columns: 1fr auto; /* Left side takes space, Right side fits content */
+    gap: 10px;
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px dashed var(--border-light);
+}
+
+.job:last-child, .education-item:last-child {
     border-bottom: none;
     margin-bottom: 0;
-    padding-bottom: 0;
 }
 
 .job-left, .edu-left {
-    flex-grow: 1; /* Takes up available space */
-    margin-right: 20px;
+    grid-column: 1;
 }
 
 .job h3, .education-item h3 {
     margin: 0;
     font-size: 1.2rem;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-main);
 }
 
 .company, .school {
     display: block;
-    margin-top: 4px;
-    font-size: 1rem;
+    color: var(--text-muted);
     font-weight: 500;
-    color: var(--secondary-text);
+    margin-top: 4px;
 }
 
-/* Date Badges */
+/* Dates - The pill badge */
 .job-dates, .education-dates {
+    grid-column: 2; /* Force to right side */
+    align-self: start;
     font-size: 0.85rem;
-    background: #e5e7eb; /* Neutral grey badge */
-    color: #374151;
-    padding: 4px 10px;
+    background: var(--accent-bg);
+    color: var(--accent-color);
+    padding: 6px 12px;
     border-radius: 6px;
     font-weight: 600;
-    white-space: nowrap; /* Prevents date form breaking */
-    margin-top: 2px;
+    white-space: nowrap;
 }
 
-/* Lists (Bullet Points) */
+/* Bullet Points */
 .job ul, .education-item p {
-    flex-basis: 100%; /* Forces this element to take a full new row */
-    width: 100%;
-    margin-top: 12px;
-    color: var(--text-color);
-}
-
-ul {
-    margin: 0;
-    padding-left: 20px;
+    grid-column: 1 / -1; /* Span full width */
+    margin-top: 10px;
+    color: #374151;
+    padding-left: 18px;
 }
 
 li {
-    margin-bottom: 6px;
+    margin-bottom: 5px;
 }
 
-/* Skills Section - Pill Design */
+/* 7. SKILLS - Clean Tags */
 .skills-list {
     display: flex;
     flex-wrap: wrap;
@@ -193,89 +190,68 @@ li {
 }
 
 .skills-list span {
-    background-color: var(--accent-bg);
-    color: var(--accent-color);
+    background: white;
+    border: 1px solid var(--border-light);
+    color: var(--text-main);
     padding: 8px 16px;
-    border-radius: 50px;
+    border-radius: 4px; /* Slightly squared for professional look */
     font-size: 0.9rem;
     font-weight: 600;
-    border: 1px solid rgba(37, 99, 235, 0.2);
-    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-.skills-list span:hover {
-    background-color: var(--accent-color);
-    color: white;
-}
-
-/* Footer */
+/* 8. FOOTER */
 .site-footer {
     text-align: center;
     font-size: 0.9rem;
-    color: var(--secondary-text);
-    padding: 40px 0;
+    color: var(--text-muted);
+    padding: 30px;
+    background: #f9fafb;
+    border-top: 1px solid var(--border-light);
 }
 
-/* ============================= */
-/* RESPONSIVE & PRINT STYLES */
-/* ============================= */
-
-@media (max-width: 768px) {
-    .site-header {
+/* 9. MOBILE OPTIMIZATION */
+@media (max-width: 700px) {
+    body { padding: 0; }
+    .resume-container { border-radius: 0; box-shadow: none; }
+    .site-header { flex-direction: column; text-align: center; padding: 30px 20px; }
+    .resume-content { padding: 30px 20px; }
+    
+    .job, .education-item {
+        display: flex;
         flex-direction: column;
-        text-align: center;
-        padding: 20px;
     }
     
-    .header-text h1 {
-        font-size: 2rem;
-    }
-
-    .job, .education-item {
-        flex-direction: column; /* Stack everything on mobile */
-    }
-
     .job-dates, .education-dates {
-        align-self: flex-start; /* Align left on mobile */
+        align-self: flex-start;
         margin-top: 8px;
         background: transparent;
-        padding: 0;
-        color: var(--secondary-text);
-        font-style: italic;
+        padding-left: 0;
     }
 }
 
-/* Print Optimization (Crucial for Resumes!) */
+/* 10. PRINT PERFECT */
 @media print {
-    body {
-        background: white;
-        color: black;
+    body { 
+        background: white; 
+        padding: 0; 
     }
-    
-    .resume-container, .site-header, section {
-        box-shadow: none;
-        border: none;
-        background: white;
-        backdrop-filter: none;
-        margin: 0;
-        padding: 0 0 20px 0;
-        max-width: 100%;
+    .resume-container { 
+        box-shadow: none; 
+        width: 100%; 
+        max-width: 100%; 
+        margin: 0; 
     }
-    
-    .site-header {
-        border-bottom: 2px solid #000;
-        border-radius: 0;
-        padding-bottom: 20px;
-        margin-bottom: 20px;
+    .site-header { 
+        background: white; 
+        color: black; 
+        padding: 0 0 20px 0; 
+        border-bottom: 2px solid black; 
     }
-    
-    .job-dates, .education-dates {
-        border: 1px solid #ccc;
-        background: white;
-    }
-
-    /* Hide footer in print */
-    .site-footer { display: none; }
-    
+    .header-text h1 { color: black; }
+    .header-text p { color: black; }
+    .header-photo { display: none; } /* Often better to hide photo for strict US resumes */
+    .job-dates { border: none; color: black; padding: 0; }
     a { text-decoration: none; color: black; }
+    .site-footer { display: none; }
 }
