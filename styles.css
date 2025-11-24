@@ -459,91 +459,148 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🚀 UPDATED: Vision OS Style Items */
+/* 🚀 VISION OS DOCK - COMPLETE CSS */
 /* ============================================= */
 
-.onyx-dock .dock-item {
-  position: relative; /* Needed for the spotlight positioning */
+:root {
+  /* The Cyan/Teal color from the reference video */
+  --vision-cyan: #22d3ee; 
+  /* Deep glass background */
+  --vision-bg: rgba(10, 10, 10, 0.65);
+  /* Subtle white border for glass effect */
+  --vision-border: rgba(255, 255, 255, 0.12);
+  /* Base text color (slightly muted white) */
+  --vision-text: rgba(255, 255, 255, 0.75);
+}
+
+/* --- 1. THE DOCK CONTAINER --- */
+.onyx-dock {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  display: flex;
+  align-items: center;
+  gap: 12px; /* Space between icons */
+  padding: 10px 14px;
+  border-radius: 32px;
+  
+  /* Glassmorphism Styling */
+  background: var(--vision-bg);
+  border: 1px solid var(--vision-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  
+  /* Deep shadow for depth */
+  box-shadow: 
+    0 0 0 1px rgba(0,0,0, 0.1), /* Inner ring */
+    0 15px 35px rgba(0, 0, 0, 0.4);
+    
+  z-index: 9999;
+}
+
+/* --- 2. DOCK ITEMS (The Buttons) --- */
+.dock-item {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  
+  /* Fixed size ensures consistent spotlight behavior */
+  width: 75px;
+  height: 65px;
+  
   text-decoration: none;
+  border-radius: 18px;
+  color: var(--vision-text);
   
-  /* Color & sizing */
-  color: var(--text-color);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 8px 16px; /* Increased padding slightly for the effect */
-  border-radius: 20px;
-  background: transparent; /* Background is now handled by the ::before layer */
+  /* Smooth physics for Scale and Color */
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease;
   
-  /* Physics */
-  transform-origin: center bottom; /* Scales up from the bottom */
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s;
-  
-  /* CRITICAL: Allows the glow to sit behind the text */
+  /* CRITICAL: Creates a stacking context so the ::before glow sits BEHIND text */
   isolation: isolate; 
-  overflow: hidden; /* Contains the spotlight inside the rounded corners */
+  overflow: hidden; /* Clips the spotlight gradient to the rounded corners */
 }
 
-/* --- THE SPOTLIGHT GLOW LAYER --- */
-.onyx-dock .dock-item::before {
+/* --- 3. THE SPOTLIGHT GLOW (::before) --- */
+/* This relies on --x and --y variables set by JavaScript */
+.dock-item::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
-  background: transparent; /* Default transparent */
+  z-index: -1; /* Place behind icon/text */
   
-  /* The Magic Gradient: Position is updated via JS variables --x and --y */
+  background: transparent;
+  
+  /* The moving gradient spotlight */
   background-image: radial-gradient(
-      80px circle at var(--x, 50%) var(--y, 50%), 
-      rgba(255, 255, 255, 0.2), 
-      transparent 60%
+    70px circle at var(--x, 50%) var(--y, 50%), 
+    rgba(255, 255, 255, 0.15), 
+    transparent 60%
   );
   
-  opacity: 0;
+  opacity: 0; /* Hidden by default */
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
-/* --- HOVER STATES --- */
+/* --- 4. HOVER STATES --- */
 
-/* 1. Scale Up (The "Pop") */
-.onyx-dock .dock-item:hover {
-  transform: scale(1.25) translateY(-5px); /* Grows and lifts */
-  color: #22d3ee; /* The Cyan color from the video */
+/* Scale up the button (The "Pop") */
+.dock-item:hover {
+  transform: scale(1.2); 
+  color: var(--vision-cyan);
+  z-index: 10; /* Ensure scaled item overlaps neighbors correctly */
 }
 
-/* 2. Show the Spotlight */
-.onyx-dock .dock-item:hover::before {
+/* Reveal the spotlight */
+.dock-item:hover::before {
   opacity: 1;
 }
 
-/* 3. Icon Parallax & Color */
-.onyx-dock .dock-item .dock-icon {
-  width: 22px;
-  height: 22px;
-  margin-bottom: 4px;
-  stroke: currentColor; /* Inherits the Cyan on hover */
-  transition: transform 0.2s ease;
-  
-  /* Subtle movement opposite to mouse for depth */
-  transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
+/* Add a text glow on hover */
+.dock-item:hover .dock-label,
+.dock-item:hover .dock-icon {
+  text-shadow: 0 0 12px rgba(34, 211, 238, 0.5);
+  filter: drop-shadow(0 0 5px rgba(34, 211, 238, 0.4));
 }
 
-.onyx-dock .dock-item .dock-label {
-  font-size: 11px;
-  line-height: 1;
+/* --- 5. ACTIVE STATE (Current Page) --- */
+.dock-item.active {
+  color: var(--vision-cyan);
+  background: rgba(34, 211, 238, 0.1);
+  box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.15);
+}
+
+.dock-item.active .dock-label {
   font-weight: 600;
 }
 
-/* --- ACTIVE STATE (Optional: Keep it glowing) --- */
-.onyx-dock .dock-item.active {
-  color: #22d3ee;
-  background: rgba(34, 211, 238, 0.1);
-  box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+/* --- 6. ICON & TEXT STYLING --- */
+
+.dock-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 4px;
+  stroke: currentColor;
+  stroke-width: 2px;
+  
+  /* Parallax Transition */
+  transition: transform 0.1s linear; 
+  
+  /* Parallax Movement: Controlled by JS --dx and --dy */
+  /* Multiplier (3px) determines how far the icon moves */
+  transform: translate(calc(var(--dx, 0) * 3px), calc(var(--dy, 0) * 3px));
 }
 
+.dock-label {
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
 
 /* ======================================================= */
 /* === 🎧 LIVE ACTIVITY — FINAL STABLE LAYOUT ============ */
