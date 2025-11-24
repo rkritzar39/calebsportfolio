@@ -6,7 +6,6 @@
   <meta name="description" content="Customize your experience. Toggle dark mode, accessibility features, and more." />
   <title>Settings - Caleb's Profile</title>
 
-  <!-- Flicker-prevention: runs early so classes are applied before rendering -->
   <script>
     (function() {
       try {
@@ -36,7 +35,6 @@
     })();
   </script>
 
-  <!-- Stylesheets -->
   <link rel="stylesheet" href="settings.css" />
   <link rel="stylesheet" href="style.css" />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -53,7 +51,6 @@
         <span class="version">v26.1.2</span>
       </div>
 
-      <!-- Appearance Subsection -->
       <section class="settings-subsection animate-slide-in" aria-labelledby="appearance-title">
         <h2 id="appearance-title" class="subsection-title">Appearance</h2>
 
@@ -145,7 +142,6 @@
         </div>
       </section>
 
-      <!-- Dark Mode Scheduler -->
       <section class="settings-subsection animate-slide-in" aria-labelledby="darkmode-title">
         <h2 id="darkmode-title" class="subsection-title">Dark Mode Scheduler</h2>
 
@@ -188,7 +184,6 @@
         </div>
       </section>
 
-      <!-- Notifications -->
       <section class="settings-subsection animate-slide-in" aria-labelledby="notifications-title">
         <h2 id="notifications-title" class="subsection-title">Notifications</h2>
 
@@ -262,7 +257,6 @@
         </div>
       </section>
 
-      <!-- Neurodiversity & Accessibility -->
       <section class="settings-subsection animate-slide-in" aria-labelledby="neuro-title">
         <h2 id="neuro-title" class="subsection-title">Neurodiversity & Accessibility</h2>
 
@@ -326,7 +320,6 @@
         </div>
       </section>
 
-      <!-- General -->
       <section class="settings-subsection animate-slide-in" aria-labelledby="general-title">
         <h2 id="general-title" class="subsection-title">General</h2>
 
@@ -356,7 +349,6 @@
         </div>
       </section>
 
-      <!-- Homepage Sections -->
       <section class="settings-subsection animate-slide-in" aria-labelledby="homepage-title">
         <h2 id="homepage-title" class="subsection-title">Homepage Sections</h2>
 
@@ -504,7 +496,6 @@
         </div>
       </section>
 
-      <!-- Accessibility -->
       <section class="settings-subsection animate-slide-in" aria-labelledby="accessibility-title">
         <h2 id="accessibility-title" class="subsection-title">Accessibility</h2>
 
@@ -567,7 +558,6 @@
         </div>
       </section>
 
-      <!-- Danger Zone -->
       <section class="settings-subsection danger-zone animate-slide-in" aria-labelledby="danger-title">
         <h2 id="danger-title" class="subsection-title">Danger Zone</h2>
         <div class="setting-card">
@@ -582,7 +572,6 @@
         </div>
       </section>
 
-      <!-- Toast Preview Container -->
       <div id="toast-container" aria-live="polite"></div>
 
       <div class="back-link-container">
@@ -607,7 +596,6 @@
 
   <div id="mouse-trail" aria-hidden="true"></div>
 
-  <!-- Onyx Glass Floating Dock -->
   <nav class="onyx-dock" aria-label="Dock">
     <a href="index.html" class="dock-item">
       <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -651,7 +639,9 @@
     });
   </script>
 
-  <!-- External scripts (your existing JS) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+
   <script src="settings.js"></script>
   <script src="script.js"></script>
 </body>
