@@ -595,6 +595,19 @@ function renderTechItemHomepage(itemData) {
             </div>`;
 }
 
+const techSearch = document.getElementById("tech-search");
+const techList = document.getElementById("tech-items-list-dynamic");
+
+techSearch.addEventListener("input", () => {
+    const query = techSearch.value.toLowerCase().trim();
+    const items = techList.querySelectorAll(".tech-item");
+
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(query) ? "block" : "none";
+    });
+});
+
 function renderFaqItemHomepage(faqData) {
     const question = faqData.question || 'No Question Provided';
     const answerHtml = faqData.answer ? (faqData.answer.includes('<') ? faqData.answer : `<p>${faqData.answer}</p>`) : '<p>No Answer Provided.</p>';
