@@ -459,18 +459,34 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🔬 VISION OS DOCK (Micro/Compact Version) */
+/* 🔬 VISION OS DOCK (Adaptive & Compact) */
 /* ============================================= */
 
 :root {
-  /* Theme Colors */
-  --dock-highlight: #22d3ee; /* Cyan/Teal */
-  --dock-bg: rgba(10, 10, 10, 0.75);
-  --dock-border: rgba(255, 255, 255, 0.12);
-  --dock-text: rgba(255, 255, 255, 0.85);
+  /* --- LIGHT MODE (Default) --- */
+  /* Adjusted for visibility on white backgrounds */
+  --dock-highlight: #0891b2; /* Darker Cyan for contrast on light */
+  --dock-bg: rgba(255, 255, 255, 0.75);
+  --dock-border: rgba(0, 0, 0, 0.1);
+  --dock-text: rgba(0, 0, 0, 0.7);
+  --dock-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --dock-active-bg: rgba(8, 145, 178, 0.1);
   
   /* Glass Effect */
   --dock-blur: blur(12px);
+}
+
+/* --- DARK MODE OVERRIDES --- */
+/* This automatically triggers when the system is set to Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dock-highlight: #22d3ee; /* Bright Cyan */
+    --dock-bg: rgba(10, 10, 10, 0.75);
+    --dock-border: rgba(255, 255, 255, 0.12);
+    --dock-text: rgba(255, 255, 255, 0.85);
+    --dock-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    --dock-active-bg: rgba(34, 211, 238, 0.15);
+  }
 }
 
 /* --- 1. THE DOCK CONTAINER --- */
@@ -483,9 +499,15 @@ a.corner-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px; /* Tight spacing between items */
-  padding: 6px 8px; /* Minimal container padding */
+  gap: 8px; 
+  padding: 6px 8px;
   border-radius: 24px;
+
+  /* --- WIDTH CONSTRAINTS --- */
+  /* 1. Fit content: Only be as wide as the buttons inside */
+  width: fit-content; 
+  /* 2. Safety cap: Don't touch screen edges on mobile (90% of viewport) */
+  max-width: 90vw;
   
   /* Glassmorphism Styling */
   background: var(--dock-bg);
@@ -495,8 +517,8 @@ a.corner-button {
   
   /* Depth Shadows */
   box-shadow: 
-    0 0 0 1px rgba(0,0,0, 0.1), 
-    0 8px 20px rgba(0, 0, 0, 0.4);
+    0 0 0 1px rgba(0,0,0, 0.05), /* Subtle outline */
+    var(--dock-shadow);
     
   z-index: 9999;
 }
@@ -509,7 +531,6 @@ a.corner-button {
   align-items: center;
   justify-content: center;
   
-  /* Compact Sizing */
   padding: 8px 16px;
   min-width: 52px; 
   
@@ -517,27 +538,22 @@ a.corner-button {
   border-radius: 16px;
   color: var(--dock-text);
   
-  /* Smooth Physics */
   transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease;
-  
-  /* CRITICAL: Manages the glow layering */
   isolation: isolate; 
   overflow: hidden;
 }
 
 /* --- 3. THE SPOTLIGHT GLOW (::before) --- */
-/* Controlled by JS variables --x and --y */
 .dock-item::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1; /* Behind text */
+  z-index: -1;
   background: transparent;
   
-  /* The moving gradient spotlight */
   background-image: radial-gradient(
     45px circle at var(--x, 50%) var(--y, 50%), 
-    rgba(255, 255, 255, 0.15), 
+    rgba(255, 255, 255, 0.2), /* Slightly stronger for visibility on both */
     transparent 60%
   );
   
@@ -547,30 +563,27 @@ a.corner-button {
 }
 
 /* --- 4. HOVER INTERACTIONS --- */
-
-/* Scale Up ("Pop" effect) */
 .dock-item:hover {
   transform: scale(1.1); 
   color: var(--dock-highlight);
   z-index: 10;
 }
 
-/* Show Spotlight */
 .dock-item:hover::before {
   opacity: 1;
 }
 
-/* Text/Icon Glow */
 .dock-item:hover .dock-label,
 .dock-item:hover .dock-icon {
-  filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.4));
+  /* Uses CSS var for the shadow color to match the theme */
+  filter: drop-shadow(0 0 4px var(--dock-highlight));
 }
 
-/* --- 5. ACTIVE STATE (Current Page) --- */
+/* --- 5. ACTIVE STATE --- */
 .dock-item.active {
   color: var(--dock-highlight);
-  background: rgba(34, 211, 238, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.15);
+  background: var(--dock-active-bg); /* Adapted for themes */
+  box-shadow: inset 0 0 0 1px var(--dock-active-bg);
 }
 
 .dock-item.active .dock-label {
@@ -578,22 +591,19 @@ a.corner-button {
 }
 
 /* --- 6. CONTENT STYLING --- */
-
 .dock-icon {
-  width: 18px; /* Micro size */
+  width: 18px; 
   height: 18px;
   margin-bottom: 3px;
   stroke: currentColor;
   stroke-width: 2px;
   
-  /* Parallax Transition */
   transition: transform 0.1s linear; 
-  /* Movement driven by JS --dx/--dy variables */
   transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
 }
 
 .dock-label {
-  font-size: 10px; /* Micro text */
+  font-size: 10px; 
   line-height: 1;
   font-weight: 500;
   letter-spacing: 0.2px;
