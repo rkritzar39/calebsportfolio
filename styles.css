@@ -459,48 +459,49 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🚀 VISION OS DOCK - COMPLETE CSS */
+/* 🔬 VISION OS DOCK (Micro/Compact Version) */
 /* ============================================= */
 
 :root {
-  /* The Cyan/Teal color from the reference video */
-  --vision-cyan: #22d3ee; 
-  /* Deep glass background */
-  --vision-bg: rgba(10, 10, 10, 0.65);
-  /* Subtle white border for glass effect */
-  --vision-border: rgba(255, 255, 255, 0.12);
-  /* Base text color (slightly muted white) */
-  --vision-text: rgba(255, 255, 255, 0.75);
+  /* Theme Colors */
+  --dock-highlight: #22d3ee; /* Cyan/Teal */
+  --dock-bg: rgba(10, 10, 10, 0.75);
+  --dock-border: rgba(255, 255, 255, 0.12);
+  --dock-text: rgba(255, 255, 255, 0.85);
+  
+  /* Glass Effect */
+  --dock-blur: blur(12px);
 }
 
 /* --- 1. THE DOCK CONTAINER --- */
 .onyx-dock {
   position: fixed;
-  bottom: 24px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   
   display: flex;
   align-items: center;
-  gap: 12px; /* Space between icons */
-  padding: 10px 14px;
-  border-radius: 32px;
+  justify-content: center;
+  gap: 8px; /* Tight spacing between items */
+  padding: 6px 8px; /* Minimal container padding */
+  border-radius: 24px;
   
   /* Glassmorphism Styling */
-  background: var(--vision-bg);
-  border: 1px solid var(--vision-border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--dock-bg);
+  border: 1px solid var(--dock-border);
+  backdrop-filter: var(--dock-blur);
+  -webkit-backdrop-filter: var(--dock-blur);
   
-  /* Deep shadow for depth */
+  /* Depth Shadows */
   box-shadow: 
-    0 0 0 1px rgba(0,0,0, 0.1), /* Inner ring */
-    0 15px 35px rgba(0, 0, 0, 0.4);
+    0 0 0 1px rgba(0,0,0, 0.1), 
+    0 8px 20px rgba(0, 0, 0, 0.4);
     
   z-index: 9999;
 }
 
-/* --- 2. DOCK ITEMS (The Buttons) --- */
+/* --- 2. DOCK ITEMS (Links) --- */
 .dock-item {
   position: relative;
   display: flex;
@@ -508,69 +509,67 @@ a.corner-button {
   align-items: center;
   justify-content: center;
   
-  /* Fixed size ensures consistent spotlight behavior */
-  width: 75px;
-  height: 65px;
+  /* Compact Sizing */
+  padding: 8px 16px;
+  min-width: 52px; 
   
   text-decoration: none;
-  border-radius: 18px;
-  color: var(--vision-text);
+  border-radius: 16px;
+  color: var(--dock-text);
   
-  /* Smooth physics for Scale and Color */
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease;
+  /* Smooth Physics */
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease;
   
-  /* CRITICAL: Creates a stacking context so the ::before glow sits BEHIND text */
+  /* CRITICAL: Manages the glow layering */
   isolation: isolate; 
-  overflow: hidden; /* Clips the spotlight gradient to the rounded corners */
+  overflow: hidden;
 }
 
 /* --- 3. THE SPOTLIGHT GLOW (::before) --- */
-/* This relies on --x and --y variables set by JavaScript */
+/* Controlled by JS variables --x and --y */
 .dock-item::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1; /* Place behind icon/text */
-  
+  z-index: -1; /* Behind text */
   background: transparent;
   
   /* The moving gradient spotlight */
   background-image: radial-gradient(
-    70px circle at var(--x, 50%) var(--y, 50%), 
+    45px circle at var(--x, 50%) var(--y, 50%), 
     rgba(255, 255, 255, 0.15), 
     transparent 60%
   );
   
-  opacity: 0; /* Hidden by default */
+  opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
-/* --- 4. HOVER STATES --- */
+/* --- 4. HOVER INTERACTIONS --- */
 
-/* Scale up the button (The "Pop") */
+/* Scale Up ("Pop" effect) */
 .dock-item:hover {
-  transform: scale(1.2); 
-  color: var(--vision-cyan);
-  z-index: 10; /* Ensure scaled item overlaps neighbors correctly */
+  transform: scale(1.1); 
+  color: var(--dock-highlight);
+  z-index: 10;
 }
 
-/* Reveal the spotlight */
+/* Show Spotlight */
 .dock-item:hover::before {
   opacity: 1;
 }
 
-/* Add a text glow on hover */
+/* Text/Icon Glow */
 .dock-item:hover .dock-label,
 .dock-item:hover .dock-icon {
-  text-shadow: 0 0 12px rgba(34, 211, 238, 0.5);
-  filter: drop-shadow(0 0 5px rgba(34, 211, 238, 0.4));
+  filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.4));
 }
 
 /* --- 5. ACTIVE STATE (Current Page) --- */
 .dock-item.active {
-  color: var(--vision-cyan);
-  background: rgba(34, 211, 238, 0.1);
+  color: var(--dock-highlight);
+  background: rgba(34, 211, 238, 0.08);
   box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.15);
 }
 
@@ -578,28 +577,26 @@ a.corner-button {
   font-weight: 600;
 }
 
-/* --- 6. ICON & TEXT STYLING --- */
+/* --- 6. CONTENT STYLING --- */
 
 .dock-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
+  width: 18px; /* Micro size */
+  height: 18px;
+  margin-bottom: 3px;
   stroke: currentColor;
   stroke-width: 2px;
   
   /* Parallax Transition */
   transition: transform 0.1s linear; 
-  
-  /* Parallax Movement: Controlled by JS --dx and --dy */
-  /* Multiplier (3px) determines how far the icon moves */
-  transform: translate(calc(var(--dx, 0) * 3px), calc(var(--dy, 0) * 3px));
+  /* Movement driven by JS --dx/--dy variables */
+  transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
 }
 
 .dock-label {
-  font-size: 11px;
+  font-size: 10px; /* Micro text */
   line-height: 1;
   font-weight: 500;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 /* ======================================================= */
