@@ -597,15 +597,64 @@ function renderTechItemHomepage(itemData) {
 
 const techSearch = document.getElementById("tech-search");
 const techList = document.getElementById("tech-items-list-dynamic");
+const autocompleteBox = document.getElementById("tech-autocomplete");
+
+function getAllTechNames() {
+    const items = techList.querySelectorAll(".tech-item");
+    const names = [];
+
+    items.forEach(item => {
+        const name = item.getAttribute("data-name");
+        if (name) names.push(name);
+    });
+
+    return names;
+}
 
 techSearch.addEventListener("input", () => {
     const query = techSearch.value.toLowerCase().trim();
     const items = techList.querySelectorAll(".tech-item");
 
+    // Filter items (your normal search)
     items.forEach(item => {
         const text = item.textContent.toLowerCase();
         item.style.display = text.includes(query) ? "block" : "none";
     });
+
+    // Autocomplete list
+    const names = getAllTechNames();
+    const matches = names
+        .filter(n => n.includes(query))
+        .slice(0, 8);
+
+    autocompleteBox.innerHTML = "";
+
+    if (!query || matches.length === 0) {
+        autocompleteBox.style.display = "none";
+        return;
+    }
+
+    matches.forEach(match => {
+        const div = document.createElement("div");
+        div.className = "autocomplete-item";
+        div.textContent = match;
+
+        div.addEventListener("click", () => {
+            techSearch.value = match;
+            autocompleteBox.style.display = "none";
+            techSearch.dispatchEvent(new Event("input"));
+        });
+
+        autocompleteBox.appendChild(div);
+    });
+
+    autocompleteBox.style.display = "block";
+});
+
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".tech-search-wrapper")) {
+        autocompleteBox.style.display = "none";
+    }
 });
 
 function renderFaqItemHomepage(faqData) {
