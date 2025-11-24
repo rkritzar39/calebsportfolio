@@ -2508,64 +2508,70 @@ body.dark-mode .bubble {
   box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 60%, transparent);
 }
 
-.tech-search-wrapper {
+/* The container inside the rounded card */
+.tech-search-container {
     position: relative;
     width: 100%;
     margin-bottom: 18px;
+    overflow: visible; /* allows dropdown to extend */
+}
+
+/* Wraps input + icon */
+.tech-search-wrapper {
+    position: relative;
+    width: 100%;
 }
 
 .tech-search-wrapper i {
     position: absolute;
-    left: 12px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    opacity: 0.6;
+    opacity: 0.5;
     font-size: 15px;
 }
 
-#tech-search {
+.tech-search-wrapper input {
     width: 100%;
-    padding: 12px 14px 12px 38px;
-    background: rgba(255, 255, 255, 0.07);
+    padding: 12px 14px 12px 40px;
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
+    border-radius: 14px;
     color: #fff;
     font-size: 15px;
-    backdrop-filter: blur(6px);
-    transition: 0.25s ease;
+    backdrop-filter: blur(8px);
+    transition: 0.2s ease-in-out;
 }
 
-#tech-search::placeholder {
-    color: rgba(255, 255, 255, 0.45);
-}
-
-#tech-search:focus {
+.tech-search-wrapper input:focus {
     border-color: #6ab4ff;
-    box-shadow: 0 0 10px rgba(106, 180, 255, 0.3);
+    box-shadow: 0 0 10px rgba(106, 180, 255, 0.4);
     outline: none;
 }
 
+/* AUTOCOMPLETE */
 .autocomplete-list {
     position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
     width: 100%;
-    background: rgba(20, 20, 20, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    margin-top: -10px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-    max-height: 220px;
+    background: rgba(25, 25, 25, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 6px 0;
+    max-height: 260px;
     overflow-y: auto;
-    backdrop-filter: blur(6px);
-    z-index: 10;
+    z-index: 500;
     display: none;
 }
 
 .autocomplete-item {
-    padding: 10px 14px;
-    cursor: pointer;
+    padding: 10px 16px;
     color: #fff;
-    transition: 0.2s ease;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .autocomplete-item:hover {
