@@ -615,17 +615,15 @@ techSearch.addEventListener("input", () => {
     const query = techSearch.value.toLowerCase().trim();
     const items = techList.querySelectorAll(".tech-item");
 
-    // Filter items (your normal search)
+    // Filter items normally
     items.forEach(item => {
         const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(query) ? "block" : "none";
+        item.style.display = text.includes(query) ? "" : "none";
     });
 
-    // Autocomplete list
+    // Build autocomplete
     const names = getAllTechNames();
-    const matches = names
-        .filter(n => n.includes(query))
-        .slice(0, 8);
+    const matches = names.filter(n => n.includes(query)).slice(0, 8);
 
     autocompleteBox.innerHTML = "";
 
@@ -651,8 +649,9 @@ techSearch.addEventListener("input", () => {
     autocompleteBox.style.display = "block";
 });
 
-document.addEventListener("click", (e) => {
-    if (!e.target.closest(".tech-search-wrapper")) {
+/* Close dropdown when clicking outside */
+document.addEventListener("click", e => {
+    if (!e.target.closest(".tech-search-container")) {
         autocompleteBox.style.display = "none";
     }
 });
