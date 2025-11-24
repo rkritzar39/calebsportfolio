@@ -72,7 +72,7 @@
     <script src="settings.js"></script>
     <script src="merchandise.js"></script> 
 
-<nav class="onyx-dock">
+    <nav class="onyx-dock">
   
   <a href="index.html" class="dock-item">
     <svg class="dock-icon" viewBox="0 0 24 24">
@@ -114,14 +114,44 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const links = document.querySelectorAll('.onyx-dock .dock-item');
+    
+    // 1. Get current page for Active State
     let current = window.location.pathname.split("/").pop();
     if (current === "" || current === "/") current = "index.html";
 
     links.forEach(link => {
+      // --- LOGIC A: Set Active State ---
       const target = link.getAttribute("href");
       if (target === current) {
         link.classList.add("active");
       }
+
+      // --- LOGIC B: Vision OS Mouse Tracking ---
+      link.addEventListener('mousemove', (e) => {
+        const rect = link.getBoundingClientRect();
+        
+        // Calculate X/Y of mouse relative to the button
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Calculate offset from center (for parallax)
+        // Ranges from -0.5 to 0.5
+        const dx = (x / rect.width) - 0.5;
+        const dy = (y / rect.height) - 0.5;
+
+        // Set CSS variables
+        link.style.setProperty('--x', `${x}px`);
+        link.style.setProperty('--y', `${y}px`);
+        link.style.setProperty('--dx', dx);
+        link.style.setProperty('--dy', dy);
+      });
+
+      // Reset when mouse leaves (optional, but looks cleaner)
+      link.addEventListener('mouseleave', () => {
+        link.style.setProperty('--dx', 0);
+        link.style.setProperty('--dy', 0);
+        // Note: We don't reset X/Y so the light fades out where you left it
+      });
     });
   });
 </script>
