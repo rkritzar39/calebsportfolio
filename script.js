@@ -490,60 +490,34 @@ inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessa
 
 document.addEventListener("DOMContentLoaded", () => {
   const wrapper = document.querySelector(".section-jump-wrapper");
-  const toggle = wrapper.querySelector(".section-jump-toggle");
-  const menu = wrapper.querySelector(".section-jump-menu");
+  const toggle = document.querySelector(".section-jump-toggle");
+  const menu = document.querySelector(".section-jump-menu");
   const links = menu.querySelectorAll("a");
 
-  // Toggle menu
-  toggle.addEventListener("click", () => {
-    wrapper.classList.toggle("active");
-  });
+  // Toggle mobile menu
+  toggle.addEventListener("click", () => wrapper.classList.toggle("active"));
 
-  // Smooth scroll & auto-close on mobile
+  // Smooth scroll + close menu on mobile
   links.forEach(link => {
     link.addEventListener("click", e => {
       e.preventDefault();
       const targetId = link.getAttribute("href").slice(1);
       const target = document.getElementById(targetId);
-
-      if (target) {
-        const offset = 80; // adjust if you have a header
-        window.scrollTo({
-          top: target.getBoundingClientRect().top + window.scrollY - offset,
-          behavior: "smooth"
-        });
+      if(target){
+        const offset = 80;
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: "smooth" });
       }
-
-      // Close on mobile
-      if (window.innerWidth < 1024) {
-        wrapper.classList.remove("active");
-      }
+      if(window.innerWidth < 1024) wrapper.classList.remove("active");
     });
   });
 
-  // Highlight active section
-  const sections = Array.from(links).map(l => document.getElementById(l.getAttribute("href").slice(1)));
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const link = menu.querySelector(`a[href="#${entry.target.id}"]`);
-      if (entry.isIntersecting) {
-        links.forEach(l => l.classList.remove("active"));
-        if (link) link.classList.add("active");
-      }
-    });
-  }, { threshold: 0.4 });
-
-  sections.forEach(s => s && observer.observe(s));
-
-  // Close if clicking outside on mobile
+  // Close if clicking outside (mobile)
   document.addEventListener("click", e => {
-    if (window.innerWidth < 1024 && !wrapper.contains(e.target)) {
-      wrapper.classList.remove("active");
-    }
+    if(window.innerWidth < 1024 && !wrapper.contains(e.target)) wrapper.classList.remove("active");
   });
 
   // Close on resize
   window.addEventListener("resize", () => {
-    if (window.innerWidth >= 1024) wrapper.classList.remove("active");
+    if(window.innerWidth >= 1024) wrapper.classList.remove("active");
   });
 });
