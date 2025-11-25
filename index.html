@@ -544,19 +544,19 @@
    </div> 
    
 <div class="scroll-to-top hidden" id="scrollToTopBtn" aria-label="Scroll to top">
+
+  <!-- Progress Ring (works with your existing CSS) -->
   <svg class="progress-ring" viewBox="0 0 50 50">
     <circle class="progress-bg" cx="25" cy="25" r="22"></circle>
     <circle class="progress-indicator" id="progressIndicator" cx="25" cy="25" r="22"></circle>
   </svg>
 
-  <!-- Refined Arrow -->
- <svg class="arrow-icon up" id="scrollArrow" viewBox="0 0 24 24" fill="none">
-  <path d="M6 14L12 8L18 14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M6 18L12 12L18 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+  <!-- Vision Pro Arrow (matches your mask-based CSS) -->
+  <div class="arrow-icon" id="scrollArrow"></div>
 
-<!-- Percentage -->
-<span class="percentage" id="scrollPercent">0%</span>
+  <!-- Percentage Label -->
+  <span class="percentage" id="scrollPercent">0%</span>
+
 </div>
 
   <footer>
