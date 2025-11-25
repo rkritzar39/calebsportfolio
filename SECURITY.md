@@ -76,7 +76,7 @@ To report a security vulnerability, please follow these steps:
 - The website undergoes regular security updates
 - Security patches are implemented as soon as vulnerabilities are discovered
 - Users are notified of significant security updates through the version info section
-- Current stable version is v1.26
+- Current stable version is v26.5
 
 ## Security Best Practices
 
@@ -101,6 +101,7 @@ To report a security vulnerability, please follow these steps:
 | Version  | Supported          |
 | -------- | ------------------ |
 | 26.1.2   | :white_check_mark: |
+| 26.1.2   | :x: |
 | 1.26     | :x: |
 | 1.15.0   | :x:                |
 | 1.14.0   | :x:                |
@@ -137,8 +138,8 @@ We appreciate the security community's efforts in responsibly disclosing vulnera
 
 ## Version Control
 
-This security policy is version 1.26 and was last updated on 2025-22-8 at 9:40 AM EST.
+This security policy is version 26.5 and was last updated on 2025-25-11 at 4:52 PM EST.
 
 ---
 
-*This document is maintained by @BusArmyDude*
+*This document is maintained by @Caleb Kritzar*
