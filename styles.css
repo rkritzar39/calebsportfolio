@@ -2999,7 +2999,7 @@ body.dark-mode .bubble {
 /* ======================================== */
 .scroll-to-top {
 	position: fixed;
-	bottom: 25px;
+	bottom: calc(1.25rem + 78px); /* >>> FIXED: sits above bubblebar <<< */
 	left: 25px;
 	width: 65px;
 	height: 65px;
@@ -3113,7 +3113,7 @@ body.dark-mode .bubble {
 
 .arrow-icon {
 	position: absolute;
-	top: 44%;  /* perfectly centered with ring */
+	top: 44%;
 	left: 50%;
 	width: 18px;
 	height: 18px;
@@ -3140,7 +3140,7 @@ body.dark-mode .bubble {
 		drop-shadow(0 0 12px color-mix(in srgb, var(--accent-color) 50%, transparent));
 }
 
-/* Compact percentage below chevrons */
+/* Percentage */
 .percentage {
 	position: absolute;
 	top: 64%;
@@ -3163,15 +3163,29 @@ body.dark-mode .bubble {
 
 /* Responsive Scaling */
 @media (max-width: 1024px) {
-	.scroll-to-top { width: 58px; height: 58px; left: 20px; bottom: 20px; }
+	.scroll-to-top {
+		width: 58px;
+		height: 58px;
+		left: 20px;
+		bottom: calc(1.25rem + 78px); /* maintain clearance */
+	}
 }
 @media (max-width: 768px) {
-	.scroll-to-top { width: 52px; height: 52px; left: 15px; bottom: 15px; }
+	.scroll-to-top {
+		width: 52px;
+		height: 52px;
+		left: 15px;
+		bottom: calc(1.25rem + 78px); /* maintain clearance */
+	}
 }
 @media (max-width: 480px) {
-	.scroll-to-top { width: 48px; height: 48px; left: 12px; bottom: 12px; }
+	.scroll-to-top {
+		width: 48px;
+		height: 48px;
+		left: 12px;
+		bottom: calc(1.25rem + 78px); /* maintain clearance */
+	}
 }
-
 /* ======================================================= */
 /* Onyx Liquid Glass – Version & Legal Sections            */
 /* ======================================================= */
