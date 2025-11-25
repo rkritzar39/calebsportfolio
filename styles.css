@@ -459,7 +459,7 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🚀 UPDATED: Vision OS Style Items */
+/* 🚀 Vision OS Style Items with Light/Dark Mode */
 /* ============================================= */
 
 .onyx-dock .dock-item {
@@ -469,65 +469,56 @@ a.corner-button {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  
+
   /* Color & sizing */
   color: var(--text-color);
   font-size: 12px;
   font-weight: 500;
-  padding: 8px 16px; /* Increased padding slightly for the effect */
+  padding: 8px 16px;
   border-radius: 20px;
-  background: transparent; /* Background is now handled by the ::before layer */
-  
+  background: transparent;
+
   /* Physics */
-  transform-origin: center bottom; /* Scales up from the bottom */
+  transform-origin: center bottom;
   transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s;
-  
-  /* CRITICAL: Allows the glow to sit behind the text */
-  isolation: isolate; 
-  overflow: hidden; /* Contains the spotlight inside the rounded corners */
+
+  /* Glow layering */
+  isolation: isolate;
+  overflow: hidden;
 }
 
-/* --- THE SPOTLIGHT GLOW LAYER --- */
+/* --- Spotlight Glow Layer --- */
 .onyx-dock .dock-item::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: transparent; /* Default transparent */
-  
-  /* The Magic Gradient: Position is updated via JS variables --x and --y */
+  background: transparent;
   background-image: radial-gradient(
-      80px circle at var(--x, 50%) var(--y, 50%), 
-      rgba(255, 255, 255, 0.2), 
-      transparent 60%
+    80px circle at var(--x, 50%) var(--y, 50%),
+    rgba(var(--accent-color-rgb, 34, 211, 238), 0.2),
+    transparent 60%
   );
-  
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-/* --- HOVER STATES --- */
-
-/* 1. Scale Up (The "Pop") */
+/* --- Hover States --- */
 .onyx-dock .dock-item:hover {
-  transform: scale(1.25) translateY(-5px); /* Grows and lifts */
-  color: #22d3ee; /* The Cyan color from the video */
+  transform: scale(1.25) translateY(-5px);
+  color: var(--accent-color);
 }
 
-/* 2. Show the Spotlight */
 .onyx-dock .dock-item:hover::before {
   opacity: 1;
 }
 
-/* 3. Icon Parallax & Color */
 .onyx-dock .dock-item .dock-icon {
   width: 22px;
   height: 22px;
   margin-bottom: 4px;
-  stroke: currentColor; /* Inherits the Cyan on hover */
+  stroke: currentColor;
   transition: transform 0.2s ease;
-  
-  /* Subtle movement opposite to mouse for depth */
   transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
 }
 
@@ -537,13 +528,24 @@ a.corner-button {
   font-weight: 600;
 }
 
-/* --- ACTIVE STATE (Optional: Keep it glowing) --- */
+/* --- Active State --- */
 .onyx-dock .dock-item.active {
-  color: #22d3ee;
-  background: rgba(34, 211, 238, 0.1);
-  box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+  color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 34, 211, 238), 0.1);
+  box-shadow: 0 0 15px rgba(var(--accent-color-rgb, 34, 211, 238), 0.2);
 }
 
+/* --- Utility: Convert HEX accent to RGB for glow --- */
+:root {
+  /* Example: Extract RGB from hex for dark mode accent */
+  --accent-color: var(--dark-accent);
+  --accent-color-rgb: 78, 168, 255; /* Matches #4EA8FF */
+}
+
+body.light-e {
+  --accent-color: var(--light-accent);
+  --accent-color-rgb: 0, 122, 255; /* Matches #007AFF */
+}
 
 /* ======================================================= */
 /* === 🎧 LIVE ACTIVITY — FINAL STABLE LAYOUT ============ */
