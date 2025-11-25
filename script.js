@@ -140,26 +140,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     const scrolled = docHeight > 0 ? scrollTop / docHeight : 0;
+
+    // Update ring
     const offset = circumference - scrolled * circumference;
     progressIndicator.style.strokeDashoffset = offset;
 
+    // Update percentage text
     const percent = Math.round(scrolled * 100);
     scrollPercent.textContent = `${percent}%`;
 
+    // Show/hide orb
     if (scrollTop > window.innerHeight * 0.2) {
       scrollBtn.classList.remove('hidden');
     } else {
       scrollBtn.classList.add('hidden');
     }
 
-    // Scroll direction detection
-    if (scrollTop > lastScrollTop + 5) {
-      scrollArrow.classList.add('down');
-    } else if (scrollTop < lastScrollTop - 5) {
-      scrollArrow.classList.remove('down');
+    // Vision Pro arrow:
+    // No rotation. No direction class.
+    // Just fade the arrow slightly depending on scroll direction.
+    if (scrollArrow) {
+      if (scrollTop > lastScrollTop + 5) {
+        // scrolling down → arrow slightly dim
+        scrollArrow.style.opacity = "0.65";
+      } else if (scrollTop < lastScrollTop - 5) {
+        // scrolling up → arrow full brightness
+        scrollArrow.style.opacity = "1";
+      }
     }
 
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    lastScrollTop = Math.max(scrollTop, 0);
   }
 
   window.addEventListener('scroll', updateScrollProgress);
@@ -168,19 +178,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   scrollBtn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    scrollArrow.classList.remove('down'); // force arrow up on click
+
+    // Reset arrow brightness after scroll
+    if (scrollArrow) {
+      scrollArrow.style.opacity = "1";
+    }
   });
 })();
 
-/* Percentage fade */
+/* ============================= */
+/*  Percentage fade-in & timeout */
+/* ============================= */
 (function() {
   const scrollPercent = document.getElementById('scrollPercent');
   let fadeTimeout;
   window.addEventListener('scroll', () => {
     if (!scrollPercent) return;
     scrollPercent.classList.add('visible');
+
     clearTimeout(fadeTimeout);
-    fadeTimeout = setTimeout(() => scrollPercent.classList.remove('visible'), 1500);
+    fadeTimeout = setTimeout(() => {
+      scrollPercent.classList.remove('visible');
+    }, 1500);
   });
 })();
 	
