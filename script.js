@@ -488,21 +488,28 @@ inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessa
   }
 })();
 
-// Section Jump Menu Scroll
 document.addEventListener("DOMContentLoaded", () => {
+  const wrapper = document.querySelector(".section-jump-wrapper");
+  const toggle = document.querySelector(".section-jump-toggle");
   const menuLinks = document.querySelectorAll(".section-jump-menu a");
   const sections = Array.from(menuLinks).map(link => document.querySelector(link.getAttribute("href")));
+
+  // Toggle menu on mobile
+  toggle.addEventListener("click", () => {
+    wrapper.classList.toggle("active");
+  });
 
   // Smooth scroll
   menuLinks.forEach(link => {
     link.addEventListener("click", e => {
       e.preventDefault();
+      wrapper.classList.remove("active"); // auto-close on mobile
       const target = document.querySelector(link.getAttribute("href"));
       if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   });
 
-  // Highlight active section on scroll
+  // Highlight active section
   window.addEventListener("scroll", () => {
     let current = sections[0];
     sections.forEach(section => {
@@ -514,5 +521,19 @@ document.addEventListener("DOMContentLoaded", () => {
       link.classList.remove("active");
       if (link.getAttribute("href") === `#${current.id}`) link.classList.add("active");
     });
+  });
+
+  // Auto-hide on scroll down (desktop)
+  let lastScroll = window.pageYOffset;
+  window.addEventListener("scroll", () => {
+    if (window.innerWidth > 768) {
+      const wrapperEl = document.querySelector(".section-jump-wrapper");
+      if (window.pageYOffset > lastScroll) {
+        wrapperEl.style.transform = "translateY(-60%) translateX(100%)"; // hide
+      } else {
+        wrapperEl.style.transform = "translateY(-50%) translateX(0)"; // show
+      }
+      lastScroll = window.pageYOffset;
+    }
   });
 });
