@@ -488,3 +488,31 @@ inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessa
   }
 })();
 
+// Section Jump Menu Scroll
+document.addEventListener("DOMContentLoaded", () => {
+  const menuLinks = document.querySelectorAll(".section-jump-menu a");
+  const sections = Array.from(menuLinks).map(link => document.querySelector(link.getAttribute("href")));
+
+  // Smooth scroll
+  menuLinks.forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute("href"));
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  // Highlight active section on scroll
+  window.addEventListener("scroll", () => {
+    let current = sections[0];
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - window.innerHeight / 2;
+      if (pageYOffset >= sectionTop) current = section;
+    });
+
+    menuLinks.forEach(link => {
+      link.classList.remove("active");
+      if (link.getAttribute("href") === `#${current.id}`) link.classList.add("active");
+    });
+  });
+});
