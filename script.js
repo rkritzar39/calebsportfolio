@@ -494,24 +494,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const menu = wrapper.querySelector(".section-jump-menu");
   const links = menu.querySelectorAll("a");
 
-  // Toggle Menu
-  toggle.addEventListener("click", (e) => {
-    e.stopPropagation();
+  // Toggle menu
+  toggle.addEventListener("click", () => {
     wrapper.classList.toggle("active");
   });
 
   // Smooth scroll & auto-close on mobile
   links.forEach(link => {
-    link.addEventListener("click", (e) => {
+    link.addEventListener("click", e => {
       e.preventDefault();
       const targetId = link.getAttribute("href").slice(1);
       const target = document.getElementById(targetId);
+
       if (target) {
-        const offset = 80;
-        const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: "smooth" });
+        const offset = 80; // adjust if you have a header
+        window.scrollTo({
+          top: target.getBoundingClientRect().top + window.scrollY - offset,
+          behavior: "smooth"
+        });
       }
-      if (window.innerWidth < 1024) wrapper.classList.remove("active");
+
+      // Close on mobile
+      if (window.innerWidth < 1024) {
+        wrapper.classList.remove("active");
+      }
     });
   });
 
@@ -520,20 +526,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       const link = menu.querySelector(`a[href="#${entry.target.id}"]`);
-      links.forEach(l => l.classList.remove("active"));
-      if (entry.isIntersecting && link) link.classList.add("active");
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove("active"));
+        if (link) link.classList.add("active");
+      }
     });
   }, { threshold: 0.4 });
-  sections.forEach(sec => sec && observer.observe(sec));
 
-  // Close menu if click outside (mobile)
-  document.addEventListener("click", (e) => {
+  sections.forEach(s => s && observer.observe(s));
+
+  // Close if clicking outside on mobile
+  document.addEventListener("click", e => {
     if (window.innerWidth < 1024 && !wrapper.contains(e.target)) {
       wrapper.classList.remove("active");
     }
   });
 
-  // Close on resize if switching to desktop
+  // Close on resize
   window.addEventListener("resize", () => {
     if (window.innerWidth >= 1024) wrapper.classList.remove("active");
   });
