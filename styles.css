@@ -4692,22 +4692,20 @@ body.ultra-minimal .btn {
   filter: none !important;
 }
 
-/* ========================== */
-/* Section Jump Wrapper        */
-/* ========================== */
-/* Wrapper covers top-right corner */
+/* Wrapper */
 .section-jump-wrapper {
   position: fixed;
-  top: 0;
+  top: 5rem;
   right: 0;
   z-index: 9999;
-  height: 100vh;
-  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
-/* Toggle button always on top */
+/* Toggle button */
 .section-jump-toggle {
-  position: fixed; /* ensure always clickable */
+  position: fixed;
   top: 1rem;
   right: 0;
   z-index: 10000;
@@ -4717,58 +4715,86 @@ body.ultra-minimal .btn {
   border-radius: var(--radius-md) 0 0 var(--radius-md);
   padding: 0.6rem 0.9rem;
   cursor: pointer;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   box-shadow: 0 4px 12px var(--shadow-color);
-  transition: transform 0.3s ease;
-  display: none; /* only show on mobile */
+  display: none; /* desktop hidden */
 }
 
-/* Menu panel slides from right */
+/* Menu panel */
 .section-jump-menu {
-  position: fixed; /* always fixed so it slides correctly */
+  position: fixed;
   top: 0;
-  right: -220px; /* start hidden offscreen */
-  width: 220px;
+  right: 0;
   height: 100vh;
+  width: 220px;
   background: var(--content-bg);
   backdrop-filter: var(--backdrop-blur);
   border-left: 1px solid var(--border-color);
   box-shadow: -4px 0 20px var(--shadow-color);
-  padding: 3rem 1rem 1rem 1rem;
+  padding: 3rem 1rem 1rem;
   display: flex;
   flex-direction: column;
-  transition: right 0.3s ease;
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Active state: menu slides in */
+/* Active menu */
 .section-jump-wrapper.active .section-jump-menu {
-  right: 0;
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 
-/* Move toggle left when menu is open */
+/* Toggle active shift */
 .section-jump-wrapper.active .section-jump-toggle {
   transform: translateX(-220px);
 }
 
 /* Menu links */
-.section-jump-menu a { color: var(--text-color); }
-.section-jump-menu a:hover, .section-jump-menu a.active { color: var(--accent-color); }
-
-/* Mobile toggle */
-@media(max-width:1023px){
-  .section-jump-toggle { display:block; }
+.section-jump-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* Desktop menu always visible */
-@media(min-width:1024px){
-  .section-jump-toggle { display:none; }
-  .section-jump-menu { 
-    right:0; 
-    width:180px;
-    transform:none;
-    position:fixed;
-    box-shadow:none;
-    border-left:none;
-    padding:2rem 0.5rem;
+.section-jump-menu li {
+  margin: 1rem 0;
+}
+
+.section-jump-menu a {
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.section-jump-menu a:hover {
+  color: var(--accent-color);
+}
+
+/* Desktop overrides */
+@media(min-width: 1024px) {
+  .section-jump-toggle { display: none; }
+
+  .section-jump-menu {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+    width: 180px;
+    padding: 2rem 0.5rem;
+    border-left: none;
+    box-shadow: none;
   }
+
+  .section-jump-wrapper {
+    top: 5rem;
+    right: 0;
+  }
+}
+
+/* Mobile */
+@media(max-width: 1023px) {
+  .section-jump-toggle { display: block; }
 }
