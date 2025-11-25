@@ -1401,104 +1401,60 @@ body.dark-mode .bubble {
 }
 
 /* ============================================= */
-/* 🔬 VISION OS DOCK (Adaptive & Compact) */
+/* 🔬 VISION OS DOCK (Adaptive & Compact)       */
 /* ============================================= */
 
-:root {
-  /* --- LIGHT MODE (Default) --- */
-  /* Adjusted for visibility on white backgrounds */
-  --dock-highlight: #0891b2; /* Darker Cyan for contrast on light */
-  --dock-bg: rgba(255, 255, 255, 0.75);
-  --dock-border: rgba(0, 0, 0, 0.1);
-  --dock-text: rgba(0, 0, 0, 0.7);
-  --dock-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  --dock-active-bg: rgba(8, 145, 178, 0.1);
-  
-  /* Glass Effect */
-  --dock-blur: blur(12px);
-}
-
-/* --- DARK MODE OVERRIDES --- */
-/* This automatically triggers when the system is set to Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --dock-highlight: #22d3ee; /* Bright Cyan */
-    --dock-bg: rgba(10, 10, 10, 0.75);
-    --dock-border: rgba(255, 255, 255, 0.12);
-    --dock-text: rgba(255, 255, 255, 0.85);
-    --dock-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    --dock-active-bg: rgba(34, 211, 238, 0.15);
-  }
-}
-
-/* --- 1. THE DOCK CONTAINER --- */
+/* --- 1. DOCK CONTAINER --- */
 .onyx-dock {
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px; 
+  gap: 8px;
   padding: 6px 8px;
-  border-radius: 24px;
-
-  /* --- WIDTH CONSTRAINTS --- */
-  /* 1. Fit content: Only be as wide as the buttons inside */
-  width: fit-content; 
-  /* 2. Safety cap: Don't touch screen edges on mobile (90% of viewport) */
+  border-radius: var(--radius-lg);
+  width: fit-content;
   max-width: 90vw;
-  
-  /* Glassmorphism Styling */
-  background: var(--dock-bg);
-  border: 1px solid var(--dock-border);
-  backdrop-filter: var(--dock-blur);
-  -webkit-backdrop-filter: var(--dock-blur);
-  
-  /* Depth Shadows */
-  box-shadow: 
-    0 0 0 1px rgba(0,0,0, 0.05), /* Subtle outline */
-    var(--dock-shadow);
-    
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.25);
   z-index: 9999;
 }
 
-/* --- 2. DOCK ITEMS (Links) --- */
+/* --- 2. DOCK ITEMS --- */
 .dock-item {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
   padding: 8px 16px;
-  min-width: 52px; 
-  
+  min-width: 52px;
   text-decoration: none;
-  border-radius: 16px;
-  color: var(--dock-text);
-  
-  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease;
-  isolation: isolate; 
+  border-radius: var(--radius-md);
+  color: var(--text-color);
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease, background 0.3s ease;
+  isolation: isolate;
   overflow: hidden;
 }
 
-/* --- 3. THE SPOTLIGHT GLOW (::before) --- */
+/* --- 3. SPOTLIGHT GLOW --- */
 .dock-item::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   background: transparent;
-  
   background-image: radial-gradient(
-    45px circle at var(--x, 50%) var(--y, 50%), 
-    rgba(255, 255, 255, 0.2), /* Slightly stronger for visibility on both */
+    45px circle at var(--x, 50%) var(--y, 50%),
+    rgba(var(--accent-color-rgb, 0, 122, 255), 0.2),
     transparent 60%
   );
-  
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
@@ -1506,8 +1462,8 @@ body.dark-mode .bubble {
 
 /* --- 4. HOVER INTERACTIONS --- */
 .dock-item:hover {
-  transform: scale(1.1); 
-  color: var(--dock-highlight);
+  transform: scale(1.1);
+  color: var(--accent-color);
   z-index: 10;
 }
 
@@ -1517,15 +1473,14 @@ body.dark-mode .bubble {
 
 .dock-item:hover .dock-label,
 .dock-item:hover .dock-icon {
-  /* Uses CSS var for the shadow color to match the theme */
-  filter: drop-shadow(0 0 4px var(--dock-highlight));
+  filter: drop-shadow(0 0 4px var(--accent-color));
 }
 
 /* --- 5. ACTIVE STATE --- */
 .dock-item.active {
-  color: var(--dock-highlight);
-  background: var(--dock-active-bg); /* Adapted for themes */
-  box-shadow: inset 0 0 0 1px var(--dock-active-bg);
+  color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
+  box-shadow: inset 0 0 0 1px rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
 }
 
 .dock-item.active .dock-label {
@@ -1534,18 +1489,17 @@ body.dark-mode .bubble {
 
 /* --- 6. CONTENT STYLING --- */
 .dock-icon {
-  width: 18px; 
+  width: 18px;
   height: 18px;
   margin-bottom: 3px;
   stroke: currentColor;
   stroke-width: 2px;
-  
-  transition: transform 0.1s linear; 
+  transition: transform 0.1s linear;
   transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
 }
 
 .dock-label {
-  font-size: 10px; 
+  font-size: 10px;
   line-height: 1;
   font-weight: 500;
   letter-spacing: 0.2px;
