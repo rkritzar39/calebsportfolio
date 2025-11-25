@@ -4691,3 +4691,42 @@ body.ultra-minimal .btn {
   box-shadow: none !important;
   filter: none !important;
 }
+
+.section-jump-menu {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background: var(--content-bg);
+    backdrop-filter: var(--backdrop-blur);
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    padding: 0.5rem;
+    z-index: 9999;
+    box-shadow: var(--bubble-shadow);
+}
+
+.section-jump-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.section-jump-menu li {
+    margin: 0.5rem 0;
+}
+
+.section-jump-menu a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 0.85rem;
+    display: block;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.section-jump-menu a:hover,
+.section-jump-menu a.active {
+    background: var(--accent-color);
+    color: #000;
+}
