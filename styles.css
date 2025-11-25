@@ -3007,16 +3007,16 @@ body.dark-mode .bubble {
 	height: 64px;
 	border-radius: 50%;
 
-	/* Pure spatial glass */
+	/* Spatial glass */
 	background: color-mix(in srgb, var(--content-bg) 60%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
 
 	backdrop-filter: blur(32px) saturate(180%);
 	-webkit-backdrop-filter: blur(32px) saturate(180%);
 
 	display: flex;
-	align-items: center;
 	justify-content: center;
+	align-items: center;
 
 	clip-path: circle(50%);
 	isolation: isolate;
@@ -3025,7 +3025,7 @@ body.dark-mode .bubble {
 	z-index: 9999;
 	cursor: pointer;
 
-	/* Vision Pro depth light-space stack */
+	/* Vision Pro depth */
 	box-shadow:
 		0 0 0.7px rgba(255,255,255,0.65) inset,
 		0 1px 3px rgba(0,0,0,0.18),
@@ -3053,65 +3053,65 @@ body.dark-mode .bubble {
 }
 
 /* ===================================================== */
-/* Spatial Progress Ring                                 */
+/* Progress Ring – Vision Pro                            */
 /* ===================================================== */
 
 .progress-ring {
 	position: absolute;
 	width: 76%;
 	height: 76%;
-	left: 50%;
 	top: 50%;
+	left: 50%;
 	transform: translate(-50%, -50%) rotate(-90deg);
 	pointer-events: none;
 }
 
 .progress-bg {
 	fill: none;
-	stroke: color-mix(in srgb, var(--accent-color) 20%, transparent);
-	stroke-width: 3.5;
-	opacity: 0.20;
+	stroke: color-mix(in srgb, var(--accent-color) 18%, transparent);
+	stroke-width: 3.3;
+	opacity: 0.22;
 	stroke-linecap: round;
 }
 
 .progress-indicator {
 	fill: none;
 	stroke: var(--accent-color);
-	stroke-width: 3.4;
+	stroke-width: 3.3;
 	stroke-linecap: round;
 
 	stroke-dasharray: 141;
 	stroke-dashoffset: 141;
 
-	transition: stroke-dashoffset .24s ease;
+	transition: stroke-dashoffset .25s ease;
 	filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 45%, transparent));
 }
 
 /* ===================================================== */
-/* Chevron – Apple Vision Pro Spatial Masked SVG         */
+/* Chevron Icon – Vision Pro spatial arrow               */
 /* ===================================================== */
 
 .arrow-icon {
 	position: absolute;
-	top: 46%;
+	top: 38%;   /* Moved up for perfect spacing */
 	left: 50%;
 	transform: translate(-50%, -50%);
 
 	width: 20px;
 	height: 20px;
 
-	/* New VisionOS chevron mask */
-	--chevron-vp: url("data:image/svg+xml;utf8,\
-	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
-	<path d='M12 7.4 7.4 12 9 13.6 12 10.6 15 13.6 16.6 12 Z' fill='white'/>\
+	/* Inline SVG as background-image */
+	background-image: url("data:image/svg+xml;utf8,\
+	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>\
+	  <path d='M6 14L12 8L18 14' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/>\
 	</svg>");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
 
-	mask: var(--chevron-vp) center/contain no-repeat;
-	-webkit-mask: var(--chevron-vp) center/contain no-repeat;
-
-	background-color: var(--accent-color);
-
+	color: var(--accent-color);
 	opacity: 0.95;
+
 	filter: drop-shadow(0 0 4px rgba(0,0,0,0.28));
 
 	transition:
@@ -3127,33 +3127,33 @@ body.dark-mode .bubble {
 }
 
 /* ===================================================== */
-/* Percentage – Vision Pro Floating Label                */
+/* Percentage – Floating VisionOS micro-badge            */
 /* ===================================================== */
 
 .percentage {
 	position: absolute;
-	bottom: 8px;
+	top: 66%;   /* Lowered slightly for clean spacing */
 	left: 50%;
-	transform: translateX(-50%);
+	transform: translate(-50%, -50%);
 
-	font-size: 0.58rem;
+	font-size: 0.48rem;
 	font-weight: 600;
 
 	color: var(--accent-color);
 	opacity: 0;
 
-	padding: 3px 7px;
-	border-radius: 7px;
+	padding: 1.5px 4.5px;
+	border-radius: 4px;
 
-	/* Floating label glass */
-	background: color-mix(in srgb, var(--accent-color) 16%, transparent);
-	backdrop-filter: blur(10px) saturate(140%);
-	-webkit-backdrop-filter: blur(10px) saturate(140%);
+	background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
 
 	box-shadow:
-		0 0 0.4px rgba(255,255,255,0.7) inset,
-		0 2px 4px rgba(0,0,0,0.22);
+		0 0 0.3px rgba(255,255,255,0.5) inset,
+		0 1px 2px rgba(0,0,0,0.18);
 
+	pointer-events: none;
 	transition: opacity .35s ease;
 }
 
@@ -3162,12 +3162,23 @@ body.dark-mode .bubble {
 }
 
 /* ===================================================== */
-/* Responsive Vision Scaling                             */
+/* Responsive scaling                                    */
 /* ===================================================== */
 
 @media (max-width: 480px) {
-	.scroll-to-top { width: 56px; height: 56px; }
-	.arrow-icon { width: 17px; height: 17px; }
+	.scroll-to-top {
+		width: 56px;
+		height: 56px;
+	}
+	.arrow-icon {
+		width: 17px;
+		height: 17px;
+		top: 38%;
+	}
+	.percentage {
+		font-size: 0.44rem;
+		top: 66%;
+	}
 }
 
 /* ======================================================= */
