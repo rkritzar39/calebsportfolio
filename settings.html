@@ -54,119 +54,108 @@
         <span class="version">v26.1.2</span>
       </div>
 
-    <div class="settings-subsection animate-slide-in">
-      <h2 class="subsection-title">Appearance</h2>
+      <div class="settings-subsection animate-slide-in">
+        <h2 class="subsection-title">Appearance</h2>
 
-      <div class="setting-card">
-        <div class="setting-icon-container" style="background-color: #8e8e93;">
-          <i class="fa-solid fa-circle-half-stroke"></i>
-        </div>
-        <div class="setting-label">
-          <strong class="setting-title">Appearance Mode</strong>
-          <p class="setting-description">Choose light, dark, or follow your device setting.</p>
-        </div>
-        <div class="segmented-control" id="appearanceModeControl">
-          <div class="seg-bg"></div>
-          <button type="button" data-value="device">Device</button>
-          <button type="button" data-value="light">Light</button>
-          <button type="button" data-value="dark">Dark</button>
-        </div>
-      </div>
-
-      <div class="setting-card custom-background">
-        <div class="setting-icon-container" style="background-color: #007aff;">
-          <i class="fa-solid fa-image"></i>
-        </div>
-        <div class="custom-bg-left">
+        <div class="setting-card">
+          <div class="setting-icon-container" style="background-color: #8e8e93;">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+          </div>
           <div class="setting-label">
-            <strong class="setting-title">Custom Background</strong>
-            <p class="setting-description">
-              Upload your own image to use as the background.
-            </p>
+            <strong class="setting-title">Appearance Mode</strong>
+            <p class="setting-description">Choose light, dark, or follow your device setting.</p>
           </div>
-          <div class="custom-bg-controls">
-            <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-            <input type="file" id="customBgUpload" accept="image/*">
-            <span id="fileNameDisplay" class="file-name">No file chosen</span>
-            <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+          <div class="segmented-control" id="appearanceModeControl" role="group" aria-label="Appearance Mode">
+            <div class="seg-bg"></div>
+            <button type="button" data-value="device">Device</button>
+            <button type="button" data-value="light">Light</button>
+            <button type="button" data-value="dark">Dark</button>
           </div>
         </div>
-        <div class="custom-bg-separator" id="customBgSeparator"></div>
-        <div class="custom-bg-right">
-          <div id="customBgPreviewContainer">
-            <img
-              id="customBgPreview"
-              alt="Background preview"
-              draggable="false"
-              oncontextmenu="return false"
-            />
-          </div>
-        </div>
-      </div>
 
-      <div class="setting-card" id="wallpaperBlurCard">
-        <div class="setting-icon-container" style="background-color: #5ac8fa;">
-          <i class="fa-solid fa-droplet"></i>
+        <div class="setting-card custom-background">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-image"></i>
+          </div>
+          <div class="custom-bg-left">
+            <div class="setting-label">
+              <strong class="setting-title">Custom Background</strong>
+              <p class="setting-description">Upload your own image to use as the background.</p>
+            </div>
+            <div class="custom-bg-controls">
+              <label for="customBgUpload" class="custom-bg-label">Choose File</label>
+              <input type="file" id="customBgUpload" accept="image/*">
+              <span id="fileNameDisplay" class="file-name">No file chosen</span>
+              <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+            </div>
+          </div>
+          <div class="custom-bg-separator" id="customBgSeparator"></div>
+          <div class="custom-bg-right">
+            <div id="customBgPreviewContainer">
+              <img id="customBgPreview" alt="Background preview" draggable="false" oncontextmenu="return false" />
+            </div>
+          </div>
         </div>
-        <div class="setting-label">
-          <strong class="setting-title">Wallpaper Blur</strong>
-          <p class="setting-description">
-            Adjust the background blur strength.
-          </p>
+
+        <div class="setting-card" id="wallpaperBlurCard">
+          <div class="setting-icon-container" style="background-color: #5ac8fa;">
+            <i class="fa-solid fa-droplet"></i>
+          </div>
+          <div class="setting-label">
+            <strong class="setting-title">Wallpaper Blur</strong>
+            <p class="setting-description">Adjust the background blur strength.</p>
+          </div>
+          <div class="blur-slider-control">
+            <span id="blurValue" class="font-size-badge">15px</span>
+            <input type="range" id="blur-slider" min="0" max="40" step="1" value="15" aria-label="Adjust wallpaper blur" />
+          </div>
         </div>
-        <div class="blur-slider-control">
-          <span id="blurValue" class="font-size-badge">15px</span>
-          <input
-            type="range"
-            id="blur-slider"
-            min="0"
-            max="40"
-            step="1"
-            value="15"
-            aria-label="Adjust wallpaper blur"
-          />
-        </div>
-      </div>
       
-      <div class="setting-card accent-color-card">
-        <div class="setting-icon-container" style="background-color: #ff9500;">
-          <i class="fa-solid fa-palette"></i>
+        <div class="setting-card accent-color-card">
+          <div class="setting-icon-container" style="background-color: #ff9500;">
+            <i class="fa-solid fa-palette"></i>
+          </div>
+          <label for="accentColorPicker" class="setting-label">
+            <strong class="setting-title">Accent Color</strong>
+            <p class="setting-description">Pick a custom highlight color.</p>
+          </label>
+          <div class="accent-picker-container">
+            <input type="color" id="accentColorPicker" value="#007AFF" aria-label="Choose accent color" />
+            <div id="accentColorPreview" class="accent-color-preview"></div>
+          </div>
+          <div id="whiteAccentWarning" class="color-warning" style="display:none;">
+            Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
+          </div>
         </div>
-        <label for="accentColorPicker" class="setting-label">
-          <strong class="setting-title">Accent Color</strong>
-          <p class="setting-description">Pick a custom highlight color.</p>
-        </label>
-        <div class="accent-picker-container">
-          <input
-            type="color"
-            id="accentColorPicker"
-            value="#007AFF"
-            aria-label="Choose accent color"
-          />
-          <div id="accentColorPreview" class="accent-color-preview"></div>
-        </div>
-        <div id="whiteAccentWarning" class="color-warning" style="display:none;">
-          Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
-        </div>
-      </div>
 
-      <!-- 🎵 Match Song Accent Setting -->
-      <label class="setting-card" for="matchSongAccentToggle">
-        <div class="setting-icon-container" style="background-color: #34c759;">
-          <i class="fa-solid fa-music"></i>
+        <div class="setting-card">
+          <div class="setting-icon-container" style="background-color: #4ac8ff;">
+            <i class="fa-solid fa-vr-cardboard"></i>
+          </div>
+          <label for="themeStyleControl" class="setting-label">
+            <strong class="setting-title">Theme Style</strong>
+            <p class="setting-description">Switch UI style, including VisionOS 26 Uni.</p>
+          </label>
+          <select id="themeStyleControl" aria-label="Theme Style Selector">
+            <option value="default">Default</option>
+            <option value="visionos26">VisionOS 26 Uni</option>
+          </select>
         </div>
-        <div class="setting-label">
-          <strong class="setting-title">Match Song Accent</strong>
-          <p class="setting-description">
-            Automatically change your accent color to match the current song’s album art.
-          </p>
-        </div>
-        <div class="md-switch">
-          <input type="checkbox" id="matchSongAccentToggle" role="switch" checked />
-          <div class="track"><div class="thumb"></div></div>
-        </div>
-      </label>
-    </div>
+
+        <label class="setting-card" for="matchSongAccentToggle">
+          <div class="setting-icon-container" style="background-color: #34c759;">
+            <i class="fa-solid fa-music"></i>
+          </div>
+          <div class="setting-label">
+            <strong class="setting-title">Match Song Accent</strong>
+            <p class="setting-description">Automatically change your accent color to match the current song’s album art.</p>
+          </div>
+          <div class="md-switch">
+            <input type="checkbox" id="matchSongAccentToggle" role="switch" checked />
+            <div class="track"><div class="thumb"></div></div>
+          </div>
+        </label>
+      </div>
 
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Dark Mode Scheduler</h2>
@@ -177,9 +166,7 @@
           </div>
           <div class="setting-label">
             <strong class="setting-title">Automatic Theme Switching</strong>
-            <p class="setting-description">
-              Automatically switch between light and dark modes.
-            </p>
+            <p class="setting-description">Automatically switch between light and dark modes.</p>
           </div>
           <select id="darkModeScheduler" aria-label="Dark mode schedule">
             <option value="off">Off</option>
@@ -212,89 +199,81 @@
         </div>
       </div>
 
+      <div class="settings-subsection animate-slide-in">
+        <h2 class="subsection-title">Notifications</h2>
 
-<!-- 🔔 Notifications Section -->
-<div class="settings-subsection animate-slide-in">
-  <h2 class="subsection-title">Notifications</h2>
+        <label class="setting-card" for="inSiteNotificationsToggle">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-bell"></i>
+          </div>
+          <div class="setting-label">
+            <strong class="setting-title">In-Site Notifications</strong>
+            <p class="setting-description">Show pop-up alerts for site updates and activities.</p>
+          </div>
+          <div class="md-switch">
+            <input type="checkbox" id="inSiteNotificationsToggle" role="switch" />
+            <div class="track"><div class="thumb"></div></div>
+          </div>
+        </label>
 
-  <!-- Enable In-Site Notifications -->
-  <label class="setting-card" for="inSiteNotificationsToggle">
-    <div class="setting-icon-container" style="background-color: #007aff;">
-      <i class="fa-solid fa-bell"></i>
-    </div>
-    <div class="setting-label">
-      <strong class="setting-title">In-Site Notifications</strong>
-      <p class="setting-description">Show pop-up alerts for site updates and activities.</p>
-    </div>
-    <div class="md-switch">
-      <input type="checkbox" id="inSiteNotificationsToggle" role="switch" />
-      <div class="track"><div class="thumb"></div></div>
-    </div>
-  </label>
+        <div class="notification-category-group" id="notificationCategories" style="display:none;">
+          
+          <label class="setting-card" for="notifUpdatesToggle">
+            <div class="setting-icon-container" style="background-color: #34c759;">
+              <i class="fa-solid fa-gear"></i>
+            </div>
+            <div class="setting-label">
+              <strong class="setting-title">Website Updates</strong>
+              <p class="setting-description">Be notified when new features or site versions launch.</p>
+            </div>
+            <div class="md-switch">
+              <input type="checkbox" id="notifUpdatesToggle" role="switch" />
+              <div class="track"><div class="thumb"></div></div>
+            </div>
+          </label>
 
-  <!-- Notification Categories -->
-  <div class="notification-category-group" id="notificationCategories" style="display:none;">
-    
-    <label class="setting-card" for="notifUpdatesToggle">
-      <div class="setting-icon-container" style="background-color: #34c759;">
-        <i class="fa-solid fa-gear"></i>
-      </div>
-      <div class="setting-label">
-        <strong class="setting-title">Website Updates</strong>
-        <p class="setting-description">Be notified when new features or site versions launch.</p>
-      </div>
-      <div class="md-switch">
-        <input type="checkbox" id="notifUpdatesToggle" role="switch" />
-        <div class="track"><div class="thumb"></div></div>
-      </div>
-    </label>
+          <label class="setting-card" for="notifLiveActivityToggle">
+            <div class="setting-icon-container" style="background-color: #ff2d55;">
+              <i class="fa-solid fa-satellite-dish"></i>
+            </div>
+            <div class="setting-label">
+              <strong class="setting-title">Live Activity Alerts</strong>
+              <p class="setting-description">Be alerted when your status or Spotify activity updates.</p>
+            </div>
+            <div class="md-switch">
+              <input type="checkbox" id="notifLiveActivityToggle" role="switch" />
+              <div class="track"><div class="thumb"></div></div>
+            </div>
+          </label>
 
-    <label class="setting-card" for="notifLiveActivityToggle">
-      <div class="setting-icon-container" style="background-color: #ff2d55;">
-        <i class="fa-solid fa-satellite-dish"></i>
-      </div>
-      <div class="setting-label">
-        <strong class="setting-title">Live Activity Alerts</strong>
-        <p class="setting-description">Be alerted when your status or Spotify activity updates.</p>
-      </div>
-      <div class="md-switch">
-        <input type="checkbox" id="notifLiveActivityToggle" role="switch" />
-        <div class="track"><div class="thumb"></div></div>
-      </div>
-    </label>
+          <label class="setting-card" for="notifCreatorUpdatesToggle">
+            <div class="setting-icon-container" style="background-color: #af52de;">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="setting-label">
+              <strong class="setting-title">Creators & Social Updates</strong>
+              <p class="setting-description">Get alerts when creators or social links are added, updated, or removed.</p>
+            </div>
+            <div class="md-switch">
+              <input type="checkbox" id="notifCreatorUpdatesToggle" role="switch" />
+              <div class="track"><div class="thumb"></div></div>
+            </div>
+          </label>
+        </div>
 
-    <label class="setting-card" for="notifCreatorUpdatesToggle">
-      <div class="setting-icon-container" style="background-color: #af52de;">
-        <i class="fa-solid fa-users"></i>
+        <div class="setting-card">
+          <div class="setting-icon-container" style="background-color: #ff9500;">
+            <i class="fa-solid fa-bell-slash"></i>
+          </div>
+          <div class="setting-label">
+            <strong class="setting-title">Push Notifications</strong>
+            <p class="setting-description">Get browser alerts even when you’re not on the site.</p>
+          </div>
+          <button id="enablePushNotifications" class="button">Enable</button>
+        </div>
       </div>
-      <div class="setting-label">
-        <strong class="setting-title">Creators & Social Updates</strong>
-        <p class="setting-description">Get alerts when creators or social links are added, updated, or removed.</p>
-      </div>
-      <div class="md-switch">
-        <input type="checkbox" id="notifCreatorUpdatesToggle" role="switch" />
-        <div class="track"><div class="thumb"></div></div>
-      </div>
-    </label>
-  </div>
 
-  <!-- Push Notification Setup -->
-  <div class="setting-card">
-    <div class="setting-icon-container" style="background-color: #ff9500;">
-      <i class="fa-solid fa-bell-slash"></i>
-    </div>
-    <div class="setting-label">
-      <strong class="setting-title">Push Notifications</strong>
-      <p class="setting-description">Get browser alerts even when you’re not on the site.</p>
-    </div>
-    <button id="enablePushNotifications" class="button">Enable</button>
-  </div>
-</div>
-
-<!-- Toast Preview Container -->
-<div id="toast-container"></div>
-      
-     <div class="settings-subsection animate-slide-in">
+      <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Homepage Sections</h2>
 
         <label class="setting-card" for="showSocialLinksToggle">
@@ -424,9 +403,7 @@
           </div>
           <div class="setting-label">
             <strong class="setting-title">Live Activity</strong>
-            <p class="setting-description">
-              Show or hide the Live Activity capsule on your profile.
-            </p>
+            <p class="setting-description">Show or hide the Live Activity capsule on your profile.</p>
           </div>
           <div class="md-switch">
             <input type="checkbox" id="showLiveActivityToggle" role="switch" />
@@ -531,6 +508,9 @@
     </div>
   </main>
 
+  <div id="toast-container"></div>
+  <div id="mouse-trail"></div>
+
   <footer class="settings-footer">
     <div class="footer-content">
       <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
@@ -542,92 +522,99 @@
     </div>
   </footer>
 
-  <div id="mouse-trail"></div>
-  
+  <nav class="onyx-dock">
+    <a href="index.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24">
+        <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Home</span>
+    </a>
+
+    <a href="resume.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Resume</span>
+    </a>
+
+    <a href="merchandise.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24">
+        <path d="M6 7h12l1 13H5L6 7Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 7V4a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Merch</span>
+    </a>
+
+    <a href="settings.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Settings</span>
+    </a>
+  </nav>
+
   <script src="settings.js"></script>
   <script src="script.js"></script>
-    <nav class="onyx-dock">
-  
-  <a href="index.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Home</span>
-  </a>
 
-  <a href="resume.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Resume</span>
-  </a>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const links = document.querySelectorAll('.onyx-dock .dock-item');
+      
+      // 1. Get current page for Active State (Robust Check)
+      // Removes query params and .html extension for clean matching
+      let currentPath = window.location.pathname.split("?")[0]; 
+      let currentPage = currentPath.split("/").pop();
+      
+      // Strip .html if present
+      currentPage = currentPage.replace('.html', '');
+      
+      // Default to 'index' if root
+      if (currentPage === "" || currentPage === "/") currentPage = "index";
 
-  <a href="merchandise.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <path d="M6 7h12l1 13H5L6 7Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M9 7V4a3 3 0 0 1 6 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Merch</span>
-  </a>
+      links.forEach(link => {
+        // --- LOGIC A: Set Active State ---
+        const targetHref = link.getAttribute("href");
+        // Strip .html from href for comparison
+        const targetPage = targetHref.replace('.html', '');
 
-  <a href="settings.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Settings</span>
-  </a>
+        if (targetPage === currentPage) {
+          link.classList.add("active");
+        }
 
-</nav>
+        // --- LOGIC B: Vision OS Mouse Tracking ---
+        link.addEventListener('mousemove', (e) => {
+          const rect = link.getBoundingClientRect();
+          
+          // Calculate X/Y of mouse relative to the button
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const links = document.querySelectorAll('.onyx-dock .dock-item');
-    
-    // 1. Get current page for Active State
-    let current = window.location.pathname.split("/").pop();
-    if (current === "" || current === "/") current = "index.html";
+          // Calculate offset from center (for parallax)
+          // Ranges from -0.5 to 0.5
+          const dx = (x / rect.width) - 0.5;
+          const dy = (y / rect.height) - 0.5;
 
-    links.forEach(link => {
-      // --- LOGIC A: Set Active State ---
-      const target = link.getAttribute("href");
-      if (target === current) {
-        link.classList.add("active");
-      }
+          // Set CSS variables
+          link.style.setProperty('--x', `${x}px`);
+          link.style.setProperty('--y', `${y}px`);
+          link.style.setProperty('--dx', dx);
+          link.style.setProperty('--dy', dy);
+        });
 
-      // --- LOGIC B: Vision OS Mouse Tracking ---
-      link.addEventListener('mousemove', (e) => {
-        const rect = link.getBoundingClientRect();
-        
-        // Calculate X/Y of mouse relative to the button
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Calculate offset from center (for parallax)
-        // Ranges from -0.5 to 0.5
-        const dx = (x / rect.width) - 0.5;
-        const dy = (y / rect.height) - 0.5;
-
-        // Set CSS variables
-        link.style.setProperty('--x', `${x}px`);
-        link.style.setProperty('--y', `${y}px`);
-        link.style.setProperty('--dx', dx);
-        link.style.setProperty('--dy', dy);
-      });
-
-      // Reset when mouse leaves (optional, but looks cleaner)
-      link.addEventListener('mouseleave', () => {
-        link.style.setProperty('--dx', 0);
-        link.style.setProperty('--dy', 0);
-        // Note: We don't reset X/Y so the light fades out where you left it
+        // Reset when mouse leaves
+        link.addEventListener('mouseleave', () => {
+          link.style.setProperty('--dx', 0);
+          link.style.setProperty('--dy', 0);
+        });
       });
     });
-  });
-</script>
+  </script>
 </body>
 </html>
+
