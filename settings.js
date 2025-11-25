@@ -1,119 +1,10 @@
 /**
  * settings.js
- * Full Settings Manager with live previews, themes, accessibility,
- * custom backgrounds, blur, dark-mode scheduler, in-site notifications,
- * and cross-tab synchronization.
- *
- * Plug directly into your existing settings.html.
+ * (Updated: Fixes Light Mode Accent Color Override)
  */
 
-// === UNIVERSAL PUSH NOTIFICATIONS (Firebase Cloud Messaging - NON-MODULE VERSION) ===
-(function () {
-  console.log("[Push] Initializing universal setup…");
-
-  // --- 1️⃣ Check for browser support ---
-  if (!("serviceWorker" in navigator)) {
-    console.warn("❌ Service Workers not supported in this browser.");
-    return;
-  }
-
-  if (!("Notification" in window)) {
-    console.warn("❌ Notifications not supported in this browser.");
-    return;
-  }
-
-  // --- 2️⃣ Ensure Firebase is loaded first ---
-  if (!window.firebase) {
-    console.error("❌ Firebase SDK missing. Make sure firebase-app-compat.js and firebase-messaging-compat.js load before settings.js");
-    return;
-  }
-
-  // --- 3️⃣ Initialize Firebase ---
-  const firebaseConfig = {
-    apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0",
-    authDomain: "busarmydudewebsite.firebaseapp.com",
-    projectId: "busarmydudewebsite",
-    storageBucket: "busarmydudewebsite.firebasestorage.app",
-    messagingSenderId: "42980404680",
-    appId: "1:42980404680:web:f4f1e54789902a4295e4fd",
-    measurementId: "G-DQPH8YL789"
-  };
-
-  try {
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  } catch (err) {
-    console.error("Firebase init failed:", err);
-    return;
-  }
-
-  const messaging = firebase.messaging();
-
-  // --- 4️⃣ Define request function ---
-  async function requestPushNotifications() {
-    console.log("[Push] Requesting permission…");
-
-    try {
-      // Ask for permission
-      const permission = await Notification.requestPermission();
-      console.log("[Push] Permission result:", permission);
-
-      if (permission !== "granted") {
-        alert("🚫 Please allow notifications in your browser settings to enable push alerts.");
-        return;
-      }
-
-      // Register service worker
-      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-      console.log("✅ Service worker registered:", registration);
-
-      // Get FCM token
-      const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc";
-      const token = await messaging.getToken({
-        vapidKey: vapidKey,
-        serviceWorkerRegistration: registration,
-      });
-
-      if (!token) {
-        alert("⚠️ Failed to get push token. Try again later.");
-        return;
-      }
-
-      console.log("🔑 Push token:", token);
-      localStorage.setItem("fcmToken", token);
-
-      // Show a quick test notification
-      registration.showNotification("🎉 Notifications Enabled!", {
-        body: "You’ll now receive updates from Caleb’s site.",
-        icon: "/favicon-32x32.png",
-        badge: "/favicon-32x32.png",
-      });
-
-      // Listen for foreground messages
-      messaging.onMessage((payload) => {
-        console.log("📩 Foreground message received:", payload);
-        const { title, body, icon } = payload.notification || {};
-        registration.showNotification(title || "Update", {
-          body: body || "You’ve got a new message!",
-          icon: icon || "/favicon-32x32.png",
-        });
-      });
-    } catch (err) {
-      console.error("❌ Push setup failed:", err);
-      alert("Push setup failed: " + err.message);
-    }
-  }
-
-  // --- 5️⃣ Attach button event listener ---
-  document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("enablePushNotifications");
-    if (btn) {
-      console.log("[Push] Enable button found ✅");
-      btn.addEventListener("click", requestPushNotifications);
-    } else {
-      console.warn("[Push] Enable button not found in DOM.");
-    }
-  });
-})();
+// ... [Keep your existing Firebase Push Notification code at the top] ...
+// (Omitted here for brevity, keep the top section of your file exactly as is)
 
 class SettingsManager {
   constructor() {
@@ -161,9 +52,6 @@ class SettingsManager {
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
       showLiveActivity: "enabled",
-
-      // Local-only notifications container (persisted under websiteSettings.notifications)
-      // (kept separate so defaultSettings stays stable)
     };
 
     /* =============================
@@ -206,7 +94,7 @@ class SettingsManager {
         });
       }
 
-      // Reduced-motion listener (only seeds if no stored settings)
+      // Reduced-motion listener
       if (window.matchMedia) {
         const motionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
         motionMedia.addEventListener("change", (e) => {
@@ -221,7 +109,6 @@ class SettingsManager {
 
       // Cross-tab synchronization
       window.addEventListener("storage", (e) => {
-        // Entire settings changed
         if (e.key === "websiteSettings") {
           this.settings = this.loadSettings();
           this.applyAllSettings();
@@ -229,16 +116,10 @@ class SettingsManager {
           this.applyCustomBackground(false);
           this.toggleScheduleInputs(this.settings.darkModeScheduler);
           this.syncWallpaperUIVisibility();
-
-          // Ensure background controls reflect latest
           this.initCustomBackgroundControls();
           this.initWallpaperBlurControl();
-
-          // Keep Notifications UI synced
           this.applyNotificationUI();
         }
-
-        // Direct bg/blur change sync
         if (
           e.key === "customBackground" ||
           e.key === "customBackgroundName" ||
@@ -251,16 +132,14 @@ class SettingsManager {
         }
       });
 
-      // Live Activity (if provided globally)
+      // Live Activity
       if (typeof updateLiveStatus === "function") {
         setTimeout(() => updateLiveStatus(), 500);
       }
 
-      // Footer year helper
       const yearSpan = document.getElementById("year");
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-      // In-site notifications (no push)
       this.initNotificationSettings();
     });
   }
@@ -285,7 +164,6 @@ class SettingsManager {
         toSave[key] = this.settings[key];
       }
     }
-    // Preserve notifications payload if present
     const existing = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
     if (existing.notifications) {
       toSave.notifications = existing.notifications;
@@ -297,22 +175,18 @@ class SettingsManager {
      UI Setup
   ============================= */
   initializeControls() {
-    // Segmented appearance control
     this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
     this.updateSegmentedBackground("appearanceModeControl");
 
-    // Accent color
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
       accentPicker.value = this.settings.accentColor;
       this.checkAccentColor(this.settings.accentColor);
     }
 
-    // 🎵 Match Song Accent toggle
     const matchToggle = document.getElementById("matchSongAccentToggle");
     if (matchToggle) matchToggle.checked = this.settings.matchSongAccent === "enabled";
 
-    // Text size
     const slider = document.getElementById("text-size-slider");
     const badge = document.getElementById("textSizeValue");
     if (slider && badge) {
@@ -321,7 +195,6 @@ class SettingsManager {
       this.updateSliderFill(slider);
     }
 
-    // Scheduler values
     const schedulerSelect = document.getElementById("darkModeScheduler");
     const startInput = document.getElementById("darkModeStart");
     const endInput = document.getElementById("darkModeEnd");
@@ -330,7 +203,6 @@ class SettingsManager {
     if (endInput) endInput.value = this.settings.darkModeEnd;
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
 
-    // Boolean toggles (enabled/disabled)
     const toggles = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -339,7 +211,6 @@ class SettingsManager {
     );
     toggles.forEach((key) => this.setToggle(key));
 
-    // Wallpaper UI visibility
     this.syncWallpaperUIVisibility();
   }
 
@@ -386,7 +257,6 @@ class SettingsManager {
      Event Listeners
   ============================= */
   setupEventListeners() {
-    // Appearance segmented control
     const appearanceControl = document.getElementById("appearanceModeControl");
     if (appearanceControl) {
       appearanceControl.addEventListener("click", (e) => {
@@ -394,9 +264,7 @@ class SettingsManager {
         if (!btn || !btn.dataset.value) return;
 
         if (this.settings.darkModeScheduler === "auto") {
-          alert(
-            "Appearance mode is controlled by the Dark Mode Scheduler. Disable it to make manual changes."
-          );
+          alert("Appearance mode is controlled by the Scheduler. Disable it to make manual changes.");
           this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
           this.updateSegmentedBackground("appearanceModeControl");
           return;
@@ -413,7 +281,6 @@ class SettingsManager {
       });
     }
 
-    // Accent color
     const accentPicker = document.getElementById("accentColorPicker");
     if (accentPicker) {
       accentPicker.addEventListener("input", (e) => {
@@ -425,24 +292,20 @@ class SettingsManager {
       });
     }
 
-    // 🎵 Match Song Accent listener
-const matchToggle = document.getElementById("matchSongAccentToggle");
-if (matchToggle) {
-  matchToggle.addEventListener("change", (e) => {
-    this.settings.matchSongAccent = e.target.checked ? "enabled" : "disabled";
-    this.saveSettings();
+    const matchToggle = document.getElementById("matchSongAccentToggle");
+    if (matchToggle) {
+      matchToggle.addEventListener("change", (e) => {
+        this.settings.matchSongAccent = e.target.checked ? "enabled" : "disabled";
+        this.saveSettings();
+        this.showToast(
+          "Accent Sync Updated",
+          e.target.checked
+            ? "Accent color will now match your current Spotify song."
+            : "Accent color will use your custom color only."
+        );
+      });
+    }
 
-    // Optional feedback
-    this.showToast(
-      "Accent Sync Updated",
-      e.target.checked
-        ? "Accent color will now match your current Spotify song."
-        : "Accent color will use your custom color only."
-    );
-  });
-}
-
-    // Text size
     const slider = document.getElementById("text-size-slider");
     if (slider) {
       slider.addEventListener("input", (e) => {
@@ -455,7 +318,6 @@ if (matchToggle) {
       });
     }
 
-    // Scheduler selects
     const schedulerSelect = document.getElementById("darkModeScheduler");
     const startInput = document.getElementById("darkModeStart");
     const endInput = document.getElementById("darkModeEnd");
@@ -480,7 +342,6 @@ if (matchToggle) {
       this.checkDarkModeSchedule(true);
     });
 
-    // All boolean toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -493,15 +354,12 @@ if (matchToggle) {
         this.settings[key] = el.checked ? "enabled" : "disabled";
         this.applySetting(key);
         this.saveSettings();
-
-        // Live Activity hook
         if (key === "showLiveActivity" && typeof updateLiveStatus === "function") {
           setTimeout(() => updateLiveStatus(), 300);
         }
       });
     });
 
-    // Resets
     document.getElementById("resetLayoutBtn")?.addEventListener("click", () => {
       if (confirm("Reset the section layout to default?")) {
         localStorage.removeItem("sectionOrder");
@@ -521,23 +379,28 @@ if (matchToggle) {
   /* =============================
      Appearance & Theme
   ============================= */
-  // Fix: consistent theme classes across pages (esp. settings page)
+  
   setThemeClasses(isDark) {
-    // These control the flicker script and page theme
+    // 1. Control the html classes
     document.documentElement.classList.toggle("dark-mode", isDark);
     document.documentElement.classList.toggle("light-mode", !isDark);
 
-    // Site themes (two CSS stacks)
-    document.body.classList.toggle("dark-mode", isDark); // e.g. settings.css
-    document.body.classList.toggle("light-e", !isDark);  // e.g. style.css
+    // 2. Control the body classes (for specific stylesheets)
+    document.body.classList.toggle("dark-mode", isDark); 
+    document.body.classList.toggle("light-e", !isDark);
 
-    // Important: on the settings page, avoid mixing "light-e"
+    // 3. Settings page specific handling
+    // If we are on the settings page in light mode, we might want to ensure 
+    // the "light-e" class doesn't conflict with local styles, OR we might need it.
+    // *UPDATE*: Removing logic that strips 'light-e' to prevent variable loss.
+    // If you specifically need to strip it for layout reasons, uncomment below:
+    /*
     if (document.body.classList.contains("settings-page")) {
       if (!isDark) {
-        // We’re in light mode on settings page — keep it clean
         document.body.classList.remove("light-e");
       }
     }
+    */
   }
 
   applyAppearanceMode() {
@@ -545,16 +408,32 @@ if (matchToggle) {
       this.settings.appearanceMode === "dark" ||
       (this.settings.appearanceMode === "device" &&
         window.matchMedia("(prefers-color-scheme: dark)").matches);
+    
     this.setThemeClasses(isDark);
-    this.checkAccentColor(this.settings.accentColor);
+    
+    // Re-apply accent color after theme change to ensure it overrides
+    this.applyAccentColor();
   }
 
+  /**
+   * UPDATED: applyAccentColor
+   * Now sets properties on both <html> and <body> to ensure
+   * Light Mode CSS stylesheets don't override the custom color.
+   */
   applyAccentColor() {
     const accent = this.settings.accentColor;
     const contrast = this.getContrastColor(accent);
+
+    // 1. Set on HTML (Global)
     document.documentElement.style.setProperty("--accent-color", accent);
     document.documentElement.style.setProperty("--accent-text-color", contrast);
 
+    // 2. Set on BODY (Override Specificity)
+    // This forces the custom color to win over 'body.light-mode' CSS rules.
+    document.body.style.setProperty("--accent-color", accent);
+    document.body.style.setProperty("--accent-text-color", contrast);
+
+    // Update preview box
     const preview = document.getElementById("accentColorPreview");
     if (preview) preview.style.backgroundColor = accent;
 
@@ -602,6 +481,7 @@ if (matchToggle) {
     const r = parseInt(hex.substr(1, 2), 16),
       g = parseInt(hex.substr(3, 2), 16),
       b = parseInt(hex.substr(5, 2), 16);
+    // If color is very bright and we are in light mode, show warning
     const isLightColor = r > 240 && g > 240 && b > 240;
     warn.style.display = isLightColor && isLight ? "block" : "none";
   }
@@ -655,7 +535,6 @@ if (matchToggle) {
 
     if (!upload || !previewContainer || !previewImage) return;
 
-    // Restore saved background
     const savedBg = localStorage.getItem("customBackground");
     const savedName = localStorage.getItem("customBackgroundName");
     const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
@@ -683,7 +562,6 @@ if (matchToggle) {
       if (separator) separator.classList.remove("visible");
     }
 
-    // Upload a new file
     upload.addEventListener("change", (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
@@ -718,7 +596,6 @@ if (matchToggle) {
       reader.readAsDataURL(file);
     });
 
-    // Remove custom background
     if (remove) {
       remove.addEventListener("click", (e) => {
         e.preventDefault();
@@ -777,7 +654,6 @@ if (matchToggle) {
       layer.style.opacity = "0";
     }
 
-    // Tint based on theme
     const isDark =
       this.settings.appearanceMode === "dark" ||
       (this.settings.appearanceMode === "device" &&
@@ -787,7 +663,6 @@ if (matchToggle) {
       ? "rgba(0, 0, 0, 0.45)"
       : "rgba(255, 255, 255, 0.15)";
 
-    // Ensure blur applied
     const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
     this.applyWallpaperBlur(blurValue);
   }
@@ -862,7 +737,6 @@ if (matchToggle) {
 
     let isDark;
     if (end <= start) {
-      // Over midnight
       isDark = now >= start || now < end;
     } else {
       isDark = now >= start && now < end;
@@ -889,7 +763,6 @@ if (matchToggle) {
   }
 
   applySetting(key) {
-    // Map of single-key actions
     const actions = {
       appearanceMode: () => this.applyAppearanceMode(),
       accentColor: () => this.applyAccentColor(),
@@ -922,10 +795,8 @@ if (matchToggle) {
         ),
     };
 
-    // Execute direct action if exists
     actions[key]?.();
 
-    // Universal show/hide behavior for sections (keys beginning with "show")
     if (key.startsWith("show")) {
       const sectionId = key
         .replace(/^show/, "")
@@ -949,7 +820,6 @@ if (matchToggle) {
       }
     }
 
-    // Special: Live Activity visibility hook
     if (key === "showLiveActivity") {
       const liveActivity = document.getElementById("live-activity");
       if (liveActivity) {
@@ -969,7 +839,7 @@ if (matchToggle) {
   }
 
   /* =============================
-     In-Site Notifications (Toasts)
+     In-Site Notifications
   ============================= */
   ensureToastContainer() {
     let c = document.getElementById("toast-container");
@@ -996,10 +866,9 @@ if (matchToggle) {
     const toast = document.createElement("div");
     toast.className = "toast";
     const accent =
-      getComputedStyle(document.documentElement).getPropertyValue("--accent-color") ||
+      getComputedStyle(document.body).getPropertyValue("--accent-color") ||
       "#007aff";
 
-    // Basic look; your CSS can style .toast further
     Object.assign(toast.style, {
       background: accent.trim(),
       color: "var(--accent-text-color, #fff)",
@@ -1020,13 +889,11 @@ if (matchToggle) {
     toast.innerHTML = `<strong style="display:block;margin-bottom:4px;">${title}</strong><span>${message}</span>`;
     container.appendChild(toast);
 
-    // Intro animation
     requestAnimationFrame(() => {
       toast.style.transform = "translateY(0)";
       toast.style.opacity = "1";
     });
 
-    // Auto-remove
     setTimeout(() => {
       toast.style.opacity = "0";
       toast.style.transform = "translateY(10px)";
@@ -1074,10 +941,8 @@ if (matchToggle) {
     const live = document.getElementById("notifLiveActivityToggle");
     const cre = document.getElementById("notifCreatorUpdatesToggle");
 
-    // Initial UI state
     this.applyNotificationUI();
 
-    // Master toggle
     main.addEventListener("change", () => {
       const state = this.getNotificationSettings();
       state.enabled = main.checked;
@@ -1090,7 +955,6 @@ if (matchToggle) {
       );
     });
 
-    // Helper to wire category toggles
     const wireCat = (el, key) => {
       if (!el) return;
       el.addEventListener("change", () => {
@@ -1136,7 +1000,6 @@ if (matchToggle) {
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
 
-      // Clear local-only items
       localStorage.removeItem("sectionOrder");
       localStorage.removeItem("customBackground");
       localStorage.removeItem("customBackgroundName");
@@ -1167,7 +1030,7 @@ if (matchToggle) {
   }
 
   /* =============================
-     Misc Stubs (safe no-ops)
+     Misc Stubs
   ============================= */
   initScrollArrow() {}
   initLoadingScreen() {}
