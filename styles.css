@@ -4693,20 +4693,22 @@ body.ultra-minimal .btn {
 }
 
 /* ========================== */
-/* Section Jump Menu - Base   */
+/* Section Jump Menu - Polished */
 /* ========================== */
 .section-jump-wrapper {
   position: fixed;
-  top: 0;
+  top: 5rem; /* desktop offset from top */
   right: 0;
   z-index: 9999;
+  display: flex;
+  align-items: flex-start;
 }
 
-/* Toggle Button */
+/* Toggle Button (mobile) */
 .section-jump-toggle {
   position: fixed;
   top: 1rem;
-  right: 0;
+  right: 0; /* flush against edge */
   z-index: 10000;
   background: var(--accent-color);
   color: var(--text-color);
@@ -4716,7 +4718,8 @@ body.ultra-minimal .btn {
   cursor: pointer;
   font-size: 1.4rem;
   box-shadow: 0 4px 12px var(--shadow-color);
-  display: none; /* hide on desktop by default */
+  transition: transform 0.3s ease;
+  display: none;
 }
 
 /* Menu Panel */
@@ -4733,20 +4736,25 @@ body.ultra-minimal .btn {
   padding: 3rem 1rem 1rem 1rem;
   display: flex;
   flex-direction: column;
-  transform: translateX(100%);
+  transform: translateX(100%); /* hidden by default */
   opacity: 0;
   pointer-events: none;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Menu Active State */
+/* Active menu (mobile) */
 .section-jump-wrapper.active .section-jump-menu {
   transform: translateX(0);
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Menu Links */
+/* Move toggle button slightly left when active */
+.section-jump-wrapper.active .section-jump-toggle {
+  transform: translateX(-220px);
+}
+
+/* Menu links */
 .section-jump-menu ul {
   list-style: none;
   padding: 0;
@@ -4769,11 +4777,11 @@ body.ultra-minimal .btn {
 }
 
 /* ========================== */
-/* Desktop Specific           */
+/* Desktop Layout             */
 /* ========================== */
 @media(min-width: 1024px) {
   .section-jump-toggle {
-    display: none; /* hidden on desktop */
+    display: none; /* hide toggle on desktop */
   }
 
   .section-jump-menu {
@@ -4787,13 +4795,13 @@ body.ultra-minimal .btn {
   }
 
   .section-jump-wrapper {
-    right: 0.5rem;
+    right: 0; /* flush */
     top: 5rem;
   }
 }
 
 /* ========================== */
-/* Mobile Specific            */
+/* Mobile Layout              */
 /* ========================== */
 @media(max-width: 1023px) {
   .section-jump-toggle {
