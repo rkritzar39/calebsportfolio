@@ -4692,23 +4692,20 @@ body.ultra-minimal .btn {
   filter: none !important;
 }
 
-/* ========================== */
-/* Section Jump Menu - Polished */
-/* ========================== */
+/* Wrapper fixed full height */
 .section-jump-wrapper {
   position: fixed;
-  top: 5rem; /* desktop offset from top */
+  top: 0;
   right: 0;
+  height: 100%;
   z-index: 9999;
-  display: flex;
-  align-items: flex-start;
 }
 
 /* Toggle Button (mobile) */
 .section-jump-toggle {
   position: fixed;
   top: 1rem;
-  right: 0; /* flush against edge */
+  right: 0;
   z-index: 10000;
   background: var(--accent-color);
   color: var(--text-color);
@@ -4727,7 +4724,7 @@ body.ultra-minimal .btn {
   position: fixed;
   top: 0;
   right: 0;
-  height: 100vh;
+  height: 100%;
   width: 220px;
   background: var(--content-bg);
   backdrop-filter: var(--backdrop-blur);
@@ -4749,7 +4746,7 @@ body.ultra-minimal .btn {
   pointer-events: auto;
 }
 
-/* Move toggle button slightly left when active */
+/* Move toggle button left when menu is open */
 .section-jump-wrapper.active .section-jump-toggle {
   transform: translateX(-220px);
 }
@@ -4772,13 +4769,12 @@ body.ultra-minimal .btn {
   transition: color 0.2s ease;
 }
 
-.section-jump-menu a:hover {
+.section-jump-menu a:hover,
+.section-jump-menu a.active {
   color: var(--accent-color);
 }
 
-/* ========================== */
-/* Desktop Layout             */
-/* ========================== */
+/* Desktop Layout */
 @media(min-width: 1024px) {
   .section-jump-toggle {
     display: none; /* hide toggle on desktop */
@@ -4797,12 +4793,11 @@ body.ultra-minimal .btn {
   .section-jump-wrapper {
     right: 0; /* flush */
     top: 5rem;
+    height: auto;
   }
 }
 
-/* ========================== */
-/* Mobile Layout              */
-/* ========================== */
+/* Mobile Layout */
 @media(max-width: 1023px) {
   .section-jump-toggle {
     display: block;
