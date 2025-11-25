@@ -4692,41 +4692,79 @@ body.ultra-minimal .btn {
   filter: none !important;
 }
 
+/* Wrapper & Toggle */
+.section-jump-wrapper {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 9999;
+}
+
+.section-jump-toggle {
+  display: none; /* will show on mobile */
+  background: var(--content-bg);
+  backdrop-filter: var(--backdrop-blur);
+  border: none;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  color: var(--text-color);
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  font-size: 1.25rem;
+  box-shadow: var(--bubble-shadow);
+  transition: all var(--transition-fast);
+}
+
 .section-jump-menu {
-    position: fixed;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    background: var(--content-bg);
-    backdrop-filter: var(--backdrop-blur);
-    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-    padding: 0.5rem;
-    z-index: 9999;
-    box-shadow: var(--bubble-shadow);
+  background: var(--content-bg);
+  backdrop-filter: var(--backdrop-blur);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  padding: 0.5rem;
+  box-shadow: var(--bubble-shadow);
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .section-jump-menu ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .section-jump-menu li {
-    margin: 0.4rem 0;
+  margin: 0.4rem 0;
 }
 
 .section-jump-menu a {
-    color: var(--text-color);
-    text-decoration: none;
-    font-size: 0.85rem;
-    display: block;
-    padding: 0.35rem 0.75rem;
-    border-radius: var(--radius-md);
-    transition: all var(--transition-fast);
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 0.85rem;
+  display: block;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
 }
 
 .section-jump-menu a:hover,
 .section-jump-menu a.active {
-    background: var(--accent-color);
-    color: #000;
+  background: var(--accent-color);
+  color: #000;
+}
+
+/* Mobile collapsible */
+@media (max-width: 768px) {
+  .section-jump-toggle {
+    display: block;
+  }
+
+  .section-jump-menu {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .section-jump-wrapper.active .section-jump-menu {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
