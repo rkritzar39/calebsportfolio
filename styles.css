@@ -4692,21 +4692,24 @@ body.ultra-minimal .btn {
   filter: none !important;
 }
 
-/* Wrapper fixed full height */
+/* ========================== */
+/* Section Jump Wrapper        */
+/* ========================== */
 .section-jump-wrapper {
   position: fixed;
-  top: 0;
+  top: 5rem; /* desktop offset */
   right: 0;
-  height: 100%;
   z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  height: auto;
 }
 
-/* Toggle Button (mobile) */
+/* Toggle Button */
 .section-jump-toggle {
-  position: fixed;
-  top: 1rem;
+  position: absolute; /* relative to wrapper */
+  top: 0.5rem;
   right: 0;
-  z-index: 10000;
   background: var(--accent-color);
   color: var(--text-color);
   border: none;
@@ -4716,16 +4719,17 @@ body.ultra-minimal .btn {
   font-size: 1.4rem;
   box-shadow: 0 4px 12px var(--shadow-color);
   transition: transform 0.3s ease;
-  display: none;
+  display: none; /* hidden on desktop */
+  z-index: 10000;
 }
 
 /* Menu Panel */
 .section-jump-menu {
-  position: fixed;
+  position: absolute; /* relative to wrapper */
   top: 0;
   right: 0;
-  height: 100%;
   width: 220px;
+  height: 100vh;
   background: var(--content-bg);
   backdrop-filter: var(--backdrop-blur);
   border-left: 1px solid var(--border-color);
@@ -4734,19 +4738,15 @@ body.ultra-minimal .btn {
   display: flex;
   flex-direction: column;
   transform: translateX(100%); /* hidden by default */
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
-/* Active menu (mobile) */
+/* Active state for mobile */
 .section-jump-wrapper.active .section-jump-menu {
   transform: translateX(0);
-  opacity: 1;
-  pointer-events: auto;
 }
 
-/* Move toggle button left when menu is open */
+/* Move toggle left when menu is open */
 .section-jump-wrapper.active .section-jump-toggle {
   transform: translateX(-220px);
 }
@@ -4774,16 +4774,17 @@ body.ultra-minimal .btn {
   color: var(--accent-color);
 }
 
-/* Desktop Layout */
+/* ========================== */
+/* Desktop Layout             */
+/* ========================== */
 @media(min-width: 1024px) {
   .section-jump-toggle {
-    display: none; /* hide toggle on desktop */
+    display: none;
   }
 
   .section-jump-menu {
     transform: translateX(0);
-    opacity: 1;
-    pointer-events: auto;
+    position: fixed;
     width: 180px;
     padding: 2rem 0.5rem;
     border-left: none;
@@ -4791,13 +4792,13 @@ body.ultra-minimal .btn {
   }
 
   .section-jump-wrapper {
-    right: 0; /* flush */
     top: 5rem;
-    height: auto;
   }
 }
 
-/* Mobile Layout */
+/* ========================== */
+/* Mobile Layout              */
+/* ========================== */
 @media(max-width: 1023px) {
   .section-jump-toggle {
     display: block;
