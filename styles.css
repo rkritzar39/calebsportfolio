@@ -2994,64 +2994,57 @@ body.dark-mode .bubble {
     font-size: 1.2em;
 }
 
-/* ======================================== */
-/* Scroll-to-Top Orb – iOS 26 Onyx Glass    */
-/* ======================================== */
+/* ===================================================== */
+/* Apple Vision Pro – Spatial Glass Scroll Orb (Final)   */
+/* ===================================================== */
+
 .scroll-to-top {
 	position: fixed;
-	bottom: calc(1.25rem + 78px); /* >>> FIXED: sits above bubblebar <<< */
-	left: 25px;
-	width: 65px;
-	height: 65px;
+	bottom: calc(1.25rem + 78px);
+	left: 22px;
+
+	width: 64px;
+	height: 64px;
 	border-radius: 50%;
-	background: color-mix(in srgb, var(--content-bg) 80%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
-	backdrop-filter: blur(20px) saturate(180%);
-	-webkit-backdrop-filter: blur(20px) saturate(180%);
-	cursor: pointer;
-	z-index: 9999;
-	opacity: 1;
-	pointer-events: auto;
-	overflow: hidden;
+
+	/* Pure spatial glass */
+	background: color-mix(in srgb, var(--content-bg) 60%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+
+	backdrop-filter: blur(32px) saturate(180%);
+	-webkit-backdrop-filter: blur(32px) saturate(180%);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	clip-path: circle(50%);
 	isolation: isolate;
-	clip-path: circle(50% at 50% 50%);
+	overflow: hidden;
 
+	z-index: 9999;
+	cursor: pointer;
+
+	/* Vision Pro depth light-space stack */
 	box-shadow:
-		inset 0 1px 5px color-mix(in srgb, var(--glow-color) 35%, transparent),
-		0 0 22px color-mix(in srgb, var(--accent-color) 30%, transparent),
-		0 6px 20px color-mix(in srgb, var(--shadow-color) 70%, transparent);
-	transition: opacity 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
-	animation: orb-float 3s ease-in-out infinite, orb-pulse 2.5s ease-in-out infinite;
-}
+		0 0 0.7px rgba(255,255,255,0.65) inset,
+		0 1px 3px rgba(0,0,0,0.18),
+		0 12px 28px rgba(0,0,0,0.45),
+		0 32px 60px rgba(0,0,0,0.35);
 
-.scroll-to-top::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: 50%;
-	background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), rgba(255,255,255,0.03) 60%, transparent 100%);
-	pointer-events: none;
-	mix-blend-mode: screen;
-}
-
-.scroll-to-top::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: 50%;
-	background: radial-gradient(circle at 50% 120%, color-mix(in srgb, var(--accent-color) 45%, transparent), transparent 70%);
-	filter: blur(10px);
-	opacity: 0.6;
-	pointer-events: none;
-	mix-blend-mode: soft-light;
+	transition:
+		transform .25s ease,
+		box-shadow .3s ease,
+		opacity .4s ease;
 }
 
 .scroll-to-top:hover {
-	transform: scale(1.08);
+	transform: scale(1.04);
 	box-shadow:
-		inset 0 1px 6px color-mix(in srgb, var(--glow-color) 45%, transparent),
-		0 0 30px color-mix(in srgb, var(--accent-color) 55%, transparent),
-		0 8px 28px color-mix(in srgb, var(--shadow-color) 80%, transparent);
+		0 0 1px rgba(255,255,255,0.8) inset,
+		0 2px 6px rgba(0,0,0,0.22),
+		0 18px 36px rgba(0,0,0,0.55),
+		0 40px 70px rgba(0,0,0,0.45);
 }
 
 .scroll-to-top.hidden {
@@ -3059,133 +3052,124 @@ body.dark-mode .bubble {
 	pointer-events: none;
 }
 
-/* Floating + Pulse */
-@keyframes orb-float {
-	0%, 100% { transform: translateY(0); }
-	50% { transform: translateY(-5px); }
-}
-@keyframes orb-pulse {
-	0%, 100% {
-		box-shadow:
-			inset 0 1px 5px color-mix(in srgb, var(--glow-color) 35%, transparent),
-			0 0 22px color-mix(in srgb, var(--accent-color) 30%, transparent),
-			0 6px 20px color-mix(in srgb, var(--shadow-color) 70%, transparent);
-	}
-	50% {
-		box-shadow:
-			inset 0 1px 6px color-mix(in srgb, var(--glow-color) 50%, transparent),
-			0 0 30px color-mix(in srgb, var(--accent-color) 50%, transparent),
-			0 8px 25px color-mix(in srgb, var(--shadow-color) 80%, transparent);
-	}
-}
+/* ===================================================== */
+/* Spatial Progress Ring                                 */
+/* ===================================================== */
 
-/* Progress Ring */
 .progress-ring {
 	position: absolute;
-	top: 50%;
+	width: 76%;
+	height: 76%;
 	left: 50%;
-	width: 78%;
-	height: 78%;
+	top: 50%;
 	transform: translate(-50%, -50%) rotate(-90deg);
 	pointer-events: none;
-	clip-path: circle(50% at 50% 50%);
 }
 
 .progress-bg {
 	fill: none;
-	stroke: color-mix(in srgb, var(--accent-color) 15%, var(--border-color));
+	stroke: color-mix(in srgb, var(--accent-color) 20%, transparent);
 	stroke-width: 3.5;
-	opacity: 0.3;
+	opacity: 0.20;
 	stroke-linecap: round;
 }
 
 .progress-indicator {
 	fill: none;
 	stroke: var(--accent-color);
-	stroke-width: 3.5;
+	stroke-width: 3.4;
 	stroke-linecap: round;
+
 	stroke-dasharray: 141;
 	stroke-dashoffset: 141;
-	transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
-	filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent-color) 60%, transparent));
-	opacity: 0.9;
+
+	transition: stroke-dashoffset .24s ease;
+	filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 45%, transparent));
 }
+
+/* ===================================================== */
+/* Chevron – Apple Vision Pro Spatial Masked SVG         */
+/* ===================================================== */
 
 .arrow-icon {
 	position: absolute;
-	top: 44%;
+	top: 46%;
 	left: 50%;
-	width: 18px;
-	height: 18px;
-	color: var(--accent-color);
-	pointer-events: none;
-	transform: translate(-50%, -50%) rotate(0deg);
-	opacity: 1;
-	transition:
-		transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-		filter 0.3s ease,
-		color 0.3s ease;
-	filter:
-		drop-shadow(0 0 4px color-mix(in srgb, var(--accent-color) 55%, transparent))
-		drop-shadow(0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent));
-}
+	transform: translate(-50%, -50%);
 
-.arrow-icon.down {
-	transform: translate(-50%, -50%) rotate(180deg);
+	width: 20px;
+	height: 20px;
+
+	/* New VisionOS chevron mask */
+	--chevron-vp: url("data:image/svg+xml;utf8,\
+	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+	<path d='M12 7.4 7.4 12 9 13.6 12 10.6 15 13.6 16.6 12 Z' fill='white'/>\
+	</svg>");
+
+	mask: var(--chevron-vp) center/contain no-repeat;
+	-webkit-mask: var(--chevron-vp) center/contain no-repeat;
+
+	background-color: var(--accent-color);
+
+	opacity: 0.95;
+	filter: drop-shadow(0 0 4px rgba(0,0,0,0.28));
+
+	transition:
+		transform .22s ease,
+		opacity .22s ease,
+		filter .22s ease;
 }
 
 .scroll-to-top:hover .arrow-icon {
-	filter:
-		drop-shadow(0 0 6px color-mix(in srgb, var(--accent-color) 75%, transparent))
-		drop-shadow(0 0 12px color-mix(in srgb, var(--accent-color) 50%, transparent));
-}
-
-/* Percentage */
-.percentage {
-	position: absolute;
-	top: 64%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	font-size: 0.6rem;
-	color: var(--accent-color);
-	font-weight: 500;
-	text-shadow: 0 0 3px color-mix(in srgb, var(--accent-color) 45%, transparent);
-	filter: drop-shadow(0 0 1px color-mix(in srgb, var(--accent-color) 35%, transparent));
-	pointer-events: none;
-	text-align: center;
-	opacity: 0;
-	transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.percentage.visible {
 	opacity: 1;
 	transform: translate(-50%, -52%);
+	filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
 }
 
-/* Responsive Scaling */
-@media (max-width: 1024px) {
-	.scroll-to-top {
-		width: 58px;
-		height: 58px;
-		left: 20px;
-		bottom: calc(1.25rem + 78px); /* maintain clearance */
-	}
+/* ===================================================== */
+/* Percentage – Vision Pro Floating Label                */
+/* ===================================================== */
+
+.percentage {
+	position: absolute;
+	bottom: 8px;
+	left: 50%;
+	transform: translateX(-50%);
+
+	font-size: 0.58rem;
+	font-weight: 600;
+
+	color: var(--accent-color);
+	opacity: 0;
+
+	padding: 3px 7px;
+	border-radius: 7px;
+
+	/* Floating label glass */
+	background: color-mix(in srgb, var(--accent-color) 16%, transparent);
+	backdrop-filter: blur(10px) saturate(140%);
+	-webkit-backdrop-filter: blur(10px) saturate(140%);
+
+	box-shadow:
+		0 0 0.4px rgba(255,255,255,0.7) inset,
+		0 2px 4px rgba(0,0,0,0.22);
+
+	transition: opacity .35s ease;
 }
-@media (max-width: 768px) {
-	.scroll-to-top {
-		width: 52px;
-		height: 52px;
-		left: 15px;
-		bottom: calc(1.25rem + 78px); /* maintain clearance */
-	}
+
+.percentage.visible {
+	opacity: 1;
 }
+
+/* ===================================================== */
+/* Responsive Vision Scaling                             */
+/* ===================================================== */
+
 @media (max-width: 480px) {
-	.scroll-to-top {
-		width: 48px;
-		height: 48px;
-		left: 12px;
-		bottom: calc(1.25rem + 78px); /* maintain clearance */
-	}
+	.scroll-to-top { width: 56px; height: 56px; }
+	.arrow-icon { width: 17px; height: 17px; }
 }
+
 /* ======================================================= */
 /* Onyx Liquid Glass – Version & Legal Sections            */
 /* ======================================================= */
