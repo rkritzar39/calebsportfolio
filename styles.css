@@ -462,8 +462,18 @@ a.corner-button {
 /* 🚀 Vision OS Style Items with Light/Dark Mode */
 /* ============================================= */
 
+/* --- Dock container --- */
+.onyx-dock {
+  background: var(--content-bg);
+  border-radius: var(--radius-lg);
+  padding: 8px 12px;
+  display: flex;
+  gap: 12px;
+}
+
+/* --- Dock items --- */
 .onyx-dock .dock-item {
-  position: relative; /* Needed for the spotlight positioning */
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -476,11 +486,11 @@ a.corner-button {
   font-weight: 500;
   padding: 8px 16px;
   border-radius: 20px;
-  background: transparent;
+  background: var(--content-bg);
 
   /* Physics */
   transform-origin: center bottom;
-  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s, background 0.3s ease;
 
   /* Glow layering */
   isolation: isolate;
@@ -535,16 +545,15 @@ a.corner-button {
   box-shadow: 0 0 15px rgba(var(--accent-color-rgb, 34, 211, 238), 0.2);
 }
 
-/* --- Utility: Convert HEX accent to RGB for glow --- */
+/* --- Accent Color RGB Variables --- */
 :root {
-  /* Example: Extract RGB from hex for dark mode accent */
   --accent-color: var(--dark-accent);
-  --accent-color-rgb: 78, 168, 255; /* Matches #4EA8FF */
+  --accent-color-rgb: 78, 168, 255; /* #4EA8FF dark mode */
 }
 
 body.light-e {
   --accent-color: var(--light-accent);
-  --accent-color-rgb: 0, 122, 255; /* Matches #007AFF */
+  --accent-color-rgb: 0, 122, 255; /* #007AFF light mode */
 }
 
 /* ======================================================= */
