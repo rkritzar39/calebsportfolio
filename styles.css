@@ -4695,21 +4695,22 @@ body.ultra-minimal .btn {
 /* ========================== */
 /* Section Jump Wrapper        */
 /* ========================== */
+/* Wrapper covers top-right corner */
 .section-jump-wrapper {
   position: fixed;
-  top: 5rem; /* desktop offset */
+  top: 0;
   right: 0;
   z-index: 9999;
-  display: flex;
-  align-items: flex-start;
-  height: auto;
+  height: 100vh;
+  width: auto;
 }
 
-/* Toggle Button */
+/* Toggle button always on top */
 .section-jump-toggle {
-  position: absolute; /* relative to wrapper */
-  top: 0.5rem;
+  position: fixed; /* ensure always clickable */
+  top: 1rem;
   right: 0;
+  z-index: 10000;
   background: var(--accent-color);
   color: var(--text-color);
   border: none;
@@ -4719,15 +4720,14 @@ body.ultra-minimal .btn {
   font-size: 1.4rem;
   box-shadow: 0 4px 12px var(--shadow-color);
   transition: transform 0.3s ease;
-  display: none; /* hidden on desktop */
-  z-index: 10000;
+  display: none; /* only show on mobile */
 }
 
-/* Menu Panel */
+/* Menu panel slides from right */
 .section-jump-menu {
-  position: absolute; /* relative to wrapper */
+  position: fixed; /* always fixed so it slides correctly */
   top: 0;
-  right: 0;
+  right: -220px; /* start hidden offscreen */
   width: 220px;
   height: 100vh;
   background: var(--content-bg);
@@ -4737,13 +4737,12 @@ body.ultra-minimal .btn {
   padding: 3rem 1rem 1rem 1rem;
   display: flex;
   flex-direction: column;
-  transform: translateX(100%); /* hidden by default */
-  transition: transform 0.3s ease;
+  transition: right 0.3s ease;
 }
 
-/* Active state for mobile */
+/* Active state: menu slides in */
 .section-jump-wrapper.active .section-jump-menu {
-  transform: translateX(0);
+  right: 0;
 }
 
 /* Move toggle left when menu is open */
@@ -4752,55 +4751,24 @@ body.ultra-minimal .btn {
 }
 
 /* Menu links */
-.section-jump-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.section-jump-menu a { color: var(--text-color); }
+.section-jump-menu a:hover, .section-jump-menu a.active { color: var(--accent-color); }
+
+/* Mobile toggle */
+@media(max-width:1023px){
+  .section-jump-toggle { display:block; }
 }
 
-.section-jump-menu li {
-  margin: 1rem 0;
-}
-
-.section-jump-menu a {
-  text-decoration: none;
-  color: var(--text-color);
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.section-jump-menu a:hover,
-.section-jump-menu a.active {
-  color: var(--accent-color);
-}
-
-/* ========================== */
-/* Desktop Layout             */
-/* ========================== */
-@media(min-width: 1024px) {
-  .section-jump-toggle {
-    display: none;
-  }
-
-  .section-jump-menu {
-    transform: translateX(0);
-    position: fixed;
-    width: 180px;
-    padding: 2rem 0.5rem;
-    border-left: none;
-    box-shadow: none;
-  }
-
-  .section-jump-wrapper {
-    top: 5rem;
-  }
-}
-
-/* ========================== */
-/* Mobile Layout              */
-/* ========================== */
-@media(max-width: 1023px) {
-  .section-jump-toggle {
-    display: block;
+/* Desktop menu always visible */
+@media(min-width:1024px){
+  .section-jump-toggle { display:none; }
+  .section-jump-menu { 
+    right:0; 
+    width:180px;
+    transform:none;
+    position:fixed;
+    box-shadow:none;
+    border-left:none;
+    padding:2rem 0.5rem;
   }
 }
