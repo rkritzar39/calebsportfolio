@@ -506,7 +506,7 @@ a.corner-button {
   background: transparent;
   background-image: radial-gradient(
     80px circle at var(--x, 50%) var(--y, 50%),
-    rgba(var(--accent-color-rgb, 34, 211, 238), 0.2),
+    rgba(var(--accent-color-rgb, 78, 168, 255), 0.2),
     transparent 60%
   );
   opacity: 0;
@@ -541,19 +541,19 @@ a.corner-button {
 /* --- Active State --- */
 .onyx-dock .dock-item.active {
   color: var(--accent-color);
-  background: rgba(var(--accent-color-rgb, 34, 211, 238), 0.1);
-  box-shadow: 0 0 15px rgba(var(--accent-color-rgb, 34, 211, 238), 0.2);
+  background: rgba(var(--accent-color-rgb, 78, 168, 255), 0.1);
+  box-shadow: 0 0 15px rgba(var(--accent-color-rgb, 78, 168, 255), 0.2);
 }
 
 /* --- Accent Color RGB Variables --- */
 :root {
   --accent-color: var(--dark-accent);
-  --accent-color-rgb: 78, 168, 255; /* #4EA8FF dark mode */
+  --accent-color-rgb: 78, 168, 255; /* Dark mode */
 }
 
 body.light-e {
   --accent-color: var(--light-accent);
-  --accent-color-rgb: 0, 122, 255; /* #007AFF light mode */
+  --accent-color-rgb: 0, 122, 255; /* Light mode */
 }
 
 /* ======================================================= */
