@@ -488,96 +488,53 @@ inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessa
   }
 })();
 
-// ============================
-// Section Jump Menu JS
-// ============================
-
 document.addEventListener("DOMContentLoaded", () => {
   const wrapper = document.querySelector(".section-jump-wrapper");
-  const toggle = document.querySelector(".section-jump-toggle");
-  const menu = document.querySelector(".section-jump-menu");
+  const toggle = wrapper.querySelector(".section-jump-toggle");
+  const menu = wrapper.querySelector(".section-jump-menu");
   const links = menu.querySelectorAll("a");
 
-  // ----------------------------
-  // Toggle Menu (Mobile)
-  // ----------------------------
-  if (toggle) {
-    toggle.addEventListener("click", () => {
-      wrapper.classList.toggle("active");
-    });
-  }
+  // Toggle Menu
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    wrapper.classList.toggle("active");
+  });
 
-  // ----------------------------
-  // Auto-close menu on mobile when a link is clicked
-  // ----------------------------
+  // Smooth scroll & auto-close on mobile
   links.forEach(link => {
     link.addEventListener("click", (e) => {
-      e.preventDefault(); // Prevent jump for smooth scroll
-      const targetId = link.getAttribute("href").replace("#", "");
+      e.preventDefault();
+      const targetId = link.getAttribute("href").slice(1);
       const target = document.getElementById(targetId);
-
       if (target) {
-        const offset = 80; // optional top offset (header)
+        const offset = 80;
         const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({
-          top,
-          behavior: "smooth"
-        });
+        window.scrollTo({ top, behavior: "smooth" });
       }
-
-      // Close menu on mobile
-      if (window.innerWidth < 1024) {
-        wrapper.classList.remove("active");
-      }
+      if (window.innerWidth < 1024) wrapper.classList.remove("active");
     });
   });
 
-  // ----------------------------
-  // Highlight active section while scrolling
-  // ----------------------------
-  const sections = Array.from(links).map(link => {
-    const id = link.getAttribute("href").replace("#", "");
-    return document.getElementById(id);
-  });
-
-  const observerOptions = {
-    root: null,
-    rootMargin: "0px",
-    threshold: 0.4 // 40% of section visible
-  };
-
+  // Highlight active section
+  const sections = Array.from(links).map(l => document.getElementById(l.getAttribute("href").slice(1)));
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      const id = entry.target.id;
-      const link = menu.querySelector(`a[href="#${id}"]`);
-      if (entry.isIntersecting) {
-        links.forEach(l => l.classList.remove("active"));
-        if (link) link.classList.add("active");
-      }
+      const link = menu.querySelector(`a[href="#${entry.target.id}"]`);
+      links.forEach(l => l.classList.remove("active"));
+      if (entry.isIntersecting && link) link.classList.add("active");
     });
-  }, observerOptions);
+  }, { threshold: 0.4 });
+  sections.forEach(sec => sec && observer.observe(sec));
 
-  sections.forEach(section => {
-    if (section) observer.observe(section);
-  });
-
-  // ----------------------------
-  // Optional: close menu if user clicks outside (mobile)
-  // ----------------------------
+  // Close menu if click outside (mobile)
   document.addEventListener("click", (e) => {
-    if (window.innerWidth < 1024) {
-      if (!wrapper.contains(e.target)) {
-        wrapper.classList.remove("active");
-      }
-    }
-  });
-
-  // ----------------------------
-  // Optional: close on resize
-  // ----------------------------
-  window.addEventListener("resize", () => {
-    if (window.innerWidth >= 1024) {
+    if (window.innerWidth < 1024 && !wrapper.contains(e.target)) {
       wrapper.classList.remove("active");
     }
+  });
+
+  // Close on resize if switching to desktop
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 1024) wrapper.classList.remove("active");
   });
 });
