@@ -488,52 +488,96 @@ inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessa
   }
 })();
 
+// ============================
+// Section Jump Menu JS
+// ============================
+
 document.addEventListener("DOMContentLoaded", () => {
   const wrapper = document.querySelector(".section-jump-wrapper");
   const toggle = document.querySelector(".section-jump-toggle");
-  const menuLinks = document.querySelectorAll(".section-jump-menu a");
-  const sections = Array.from(menuLinks).map(link => document.querySelector(link.getAttribute("href")));
+  const menu = document.querySelector(".section-jump-menu");
+  const links = menu.querySelectorAll("a");
 
-  // Toggle menu on mobile
-  toggle.addEventListener("click", () => {
-    wrapper.classList.toggle("active");
-  });
-
-  // Smooth scroll
-  menuLinks.forEach(link => {
-    link.addEventListener("click", e => {
-      e.preventDefault();
-      wrapper.classList.remove("active"); // auto-close on mobile
-      const target = document.querySelector(link.getAttribute("href"));
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+  // ----------------------------
+  // Toggle Menu (Mobile)
+  // ----------------------------
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      wrapper.classList.toggle("active");
     });
-  });
+  }
 
-  // Highlight active section
-  window.addEventListener("scroll", () => {
-    let current = sections[0];
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop - window.innerHeight / 2;
-      if (pageYOffset >= sectionTop) current = section;
-    });
+  // ----------------------------
+  // Auto-close menu on mobile when a link is clicked
+  // ----------------------------
+  links.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault(); // Prevent jump for smooth scroll
+      const targetId = link.getAttribute("href").replace("#", "");
+      const target = document.getElementById(targetId);
 
-    menuLinks.forEach(link => {
-      link.classList.remove("active");
-      if (link.getAttribute("href") === `#${current.id}`) link.classList.add("active");
-    });
-  });
-
-  // Auto-hide on scroll down (desktop)
-  let lastScroll = window.pageYOffset;
-  window.addEventListener("scroll", () => {
-    if (window.innerWidth > 768) {
-      const wrapperEl = document.querySelector(".section-jump-wrapper");
-      if (window.pageYOffset > lastScroll) {
-        wrapperEl.style.transform = "translateY(-60%) translateX(100%)"; // hide
-      } else {
-        wrapperEl.style.transform = "translateY(-50%) translateX(0)"; // show
+      if (target) {
+        const offset = 80; // optional top offset (header)
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({
+          top,
+          behavior: "smooth"
+        });
       }
-      lastScroll = window.pageYOffset;
+
+      // Close menu on mobile
+      if (window.innerWidth < 1024) {
+        wrapper.classList.remove("active");
+      }
+    });
+  });
+
+  // ----------------------------
+  // Highlight active section while scrolling
+  // ----------------------------
+  const sections = Array.from(links).map(link => {
+    const id = link.getAttribute("href").replace("#", "");
+    return document.getElementById(id);
+  });
+
+  const observerOptions = {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0.4 // 40% of section visible
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = entry.target.id;
+      const link = menu.querySelector(`a[href="#${id}"]`);
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove("active"));
+        if (link) link.classList.add("active");
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach(section => {
+    if (section) observer.observe(section);
+  });
+
+  // ----------------------------
+  // Optional: close menu if user clicks outside (mobile)
+  // ----------------------------
+  document.addEventListener("click", (e) => {
+    if (window.innerWidth < 1024) {
+      if (!wrapper.contains(e.target)) {
+        wrapper.classList.remove("active");
+      }
+    }
+  });
+
+  // ----------------------------
+  // Optional: close on resize
+  // ----------------------------
+  window.addEventListener("resize", () => {
+    if (window.innerWidth >= 1024) {
+      wrapper.classList.remove("active");
     }
   });
 });
