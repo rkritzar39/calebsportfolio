@@ -1,72 +1,77 @@
+/* ----------- VisionOS Glass Core Styles ----------- */
+
 body {
-  background: var(--content-bg);
-  color: var(--text-color);
-  font-family: system-ui, sans-serif;
-  padding: 24px;
   margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at 50% 20%, #ffffff20, #000000d0),
+              #000;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-/* Incident Banner */
-#incident-banner {
-  padding: 18px 20px;
-  border-radius: 14px;
-  margin-bottom: 22px;
-  font-weight: 600;
-  backdrop-filter: blur(12px) saturate(180%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%);
+.status-container {
+  text-align: center;
+  width: 95%;
+  max-width: 900px;
+  padding: 20px;
 }
 
-.hide { display: none; }
-
-.incident-major { background: rgba(255, 75, 75, .15); color: #ff4b4b; }
-.incident-minor { background: rgba(255, 150, 0, .15); color: #ff8c00; }
-
-/* Group */
-.group {
-  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-  border-radius: 16px;
-  margin-bottom: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 16px color-mix(in srgb, var(--shadow-color) 60%, transparent);
-  backdrop-filter: blur(12px) saturate(180%);
-}
-
-.group-title {
-  font-size: 1.2rem;
+.title {
+  font-size: 2.6rem;
   font-weight: 700;
-  margin-bottom: 14px;
+  margin-bottom: 5px;
 }
 
-/* Components */
-.component {
-  display: flex;
-  justify-content: space-between;
-  margin: 8px 0;
-  padding: 10px 0;
+.subtitle {
+  font-size: 1.1rem;
+  opacity: 0.7;
+  margin-bottom: 30px;
 }
 
-.status {
-  font-weight: 600;
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
 }
 
-.operational { color: #12d66c; }
-.warn { color: #ff8c00; }
-.major { color: #ff4b4b; }
-
-/* Uptime History */
-.history {
-  display: flex;
-  gap: 4px;
+/* ----------- VisionOS Card Style ----------- */
+.status-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(30px) saturate(140%);
+  border-radius: 25px;
+  padding: 25px;
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: transform 0.25s;
 }
 
-.history div {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  background: var(--border-color);
+.status-card:hover {
+  transform: translateY(-5px);
 }
 
-.history .up { background: #12d66c; }
-.history .warn { background: #ff8c00; }
-.history .down { background: #ff4b4b; }
+.status-card h2 {
+  margin: 0 0 15px 0;
+}
+
+/* ----------- Status Indicator ----------- */
+.status-indicator {
+  width: 18px;
+  height: 18px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  background: #999;
+  box-shadow: 0 0 8px #000;
+}
+
+.status-text {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.footer {
+  opacity: 0.5;
+  margin-top: 40px;
+}
