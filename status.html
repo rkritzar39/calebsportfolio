@@ -1,18 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Status Page</title>
-  <link rel="stylesheet" href="status.css">
-  <script defer src="status.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Status – Caleb’s Systems</title>
+
+  <link rel="stylesheet" href="status.css" />
 </head>
+
 <body>
 
-  <!-- 🔥 Incident Banner -->
-  <div id="incident-banner" class="hide"></div>
+  <div class="status-container">
 
-  <!-- Groups -->
-  <div id="status-groups"></div>
+    <h1 class="title">System Status</h1>
+    <p class="subtitle">Live service health for Caleb's Website</p>
 
+    <div class="status-grid">
+
+      <!-- Main Website -->
+      <div class="status-card" data-check="https://calebskritzar.github.io">
+        <h2>Main Website</h2>
+        <div class="status-indicator"></div>
+        <p class="status-text">Checking...</p>
+      </div>
+
+      <!-- GitHub API -->
+      <div class="status-card" data-check="https://api.github.com">
+        <h2>GitHub API</h2>
+        <div class="status-indicator"></div>
+        <p class="status-text">Checking...</p>
+      </div>
+
+      <!-- Portfolio CDN (example) -->
+      <div class="status-card" data-check="https://raw.githubusercontent.com">
+        <h2>Asset CDN</h2>
+        <div class="status-indicator"></div>
+        <p class="status-text">Checking...</p>
+      </div>
+
+    </div>
+
+    <p class="footer">Last updated: <span id="last-updated">…</span></p>
+
+  </div>
+
+  <script src="status.js"></script>
 </body>
 </html>
