@@ -1,69 +1,60 @@
-async function loadStatus() {
-  const res = await fetch("status-data.json");
-  const data = await res.json();
+// ------------------------------
+// VisionOS Glass Status Checker
+// ------------------------------
 
-  // INCIDENT BANNER
-  const banner = document.getElementById("incident-banner");
+async function checkService(card) {
+  const url = card.dataset.check;
+  const indicator = card.querySelector(".status-indicator");
+  const text = card.querySelector(".status-text");
 
-  if (data.incident?.active) {
-    banner.classList.remove("hide");
+  // Set to "checking" state
+  indicator.style.background = "#888";
+  indicator.style.boxShadow = "0 0 8px #444";
+  text.textContent = "Checking...";
 
-    const cls =
-      data.incident.status === "major"
-        ? "incident-major"
-        : "incident-minor";
+  try {
+    // Timeout: 5 seconds
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
 
-    banner.classList.add(cls);
+    const start = performance.now();
+    const response = await fetch(url, { signal: controller.signal });
+    const latency = Math.round(performance.now() - start);
 
-    banner.innerHTML = `
-      <strong>${data.incident.title}</strong><br>
-      ${data.incident.description}
-    `;
+    clearTimeout(timeout);
+
+    // Response OK → Online
+    if (response.ok) {
+      indicator.style.background = "#00ff88";
+      indicator.style.boxShadow = "0 0 12px #00ff88";
+      text.textContent = `Online • ${latency}ms`;
+    }
+
+    // Response NOT OK → Partial outage
+    else {
+      indicator.style.background = "#ffcc00";
+      indicator.style.boxShadow = "0 0 12px #ffcc00";
+      text.textContent = `Degraded • ${latency}ms`;
+    }
+
+  } catch (err) {
+    // If it fails → Offline
+    indicator.style.background = "#ff4444";
+    indicator.style.boxShadow = "0 0 12px #ff4444";
+    text.textContent = "Offline";
   }
-
-  // GROUPS + COMPONENTS
-  const container = document.getElementById("status-groups");
-  container.innerHTML = "";
-
-  data.groups.forEach(group => {
-    const groupDiv = document.createElement("div");
-    groupDiv.className = "group";
-    groupDiv.innerHTML = `
-      <div class="group-title">${group.name}</div>
-    `;
-
-    group.components.forEach(c => {
-      const cEl = document.createElement("div");
-      cEl.className = "component";
-
-      cEl.innerHTML = `
-        <div>${c.name}</div>
-        <div class="status ${c.status}">${formatStatus(c.status)}</div>
-      `;
-
-      // Uptime History
-      const hist = document.createElement("div");
-      hist.className = "history";
-
-      c.history.forEach(h => {
-        const hDiv = document.createElement("div");
-        hDiv.classList.add(h);
-        hist.appendChild(hDiv);
-      });
-
-      cEl.appendChild(hist);
-      groupDiv.appendChild(cEl);
-    });
-
-    container.appendChild(groupDiv);
-  });
 }
 
-function formatStatus(s) {
-  if (s === "operational") return "Operational";
-  if (s === "warn") return "Partial Outage";
-  if (s === "major") return "Major Outage";
-  return s;
+function updateAll() {
+  const cards = document.querySelectorAll(".status-card");
+  cards.forEach(card => checkService(card));
+
+  const timestamp = new Date().toLocaleTimeString();
+  document.getElementById("last-updated").textContent = timestamp;
 }
 
-loadStatus();
+// Run once on page load
+updateAll();
+
+// Auto-refresh every 30 seconds
+setInterval(updateAll, 30000);
