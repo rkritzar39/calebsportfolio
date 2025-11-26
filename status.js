@@ -1,48 +1,39 @@
-// ------------------------------
-// VisionOS Glass Status Checker
-// ------------------------------
+// ------------------------------------------
+// VisionOS Glass Status Checker (IMG-PING)
+// ------------------------------------------
 
-async function checkService(card) {
+function checkService(card) {
   const url = card.dataset.check;
   const indicator = card.querySelector(".status-indicator");
   const text = card.querySelector(".status-text");
 
-  // Set to "checking" state
+  // Reset to "checking" state
   indicator.style.background = "#888";
   indicator.style.boxShadow = "0 0 8px #444";
   text.textContent = "Checking...";
 
-  try {
-    // Timeout: 5 seconds
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+  // Add a cache-buster to avoid browser caching
+  const testURL = `${url}?_=${Date.now()}`;
 
-    const start = performance.now();
-    const response = await fetch(url, { signal: controller.signal });
-    const latency = Math.round(performance.now() - start);
+  const img = new Image();
+  const startTime = performance.now();
 
-    clearTimeout(timeout);
+  img.onload = () => {
+    const latency = Math.round(performance.now() - startTime);
 
-    // Response OK → Online
-    if (response.ok) {
-      indicator.style.background = "#00ff88";
-      indicator.style.boxShadow = "0 0 12px #00ff88";
-      text.textContent = `Online • ${latency}ms`;
-    }
+    indicator.style.background = "#00ff88";
+    indicator.style.boxShadow = "0 0 12px #00ff88";
+    text.textContent = `Online • ${latency}ms`;
+  };
 
-    // Response NOT OK → Partial outage
-    else {
-      indicator.style.background = "#ffcc00";
-      indicator.style.boxShadow = "0 0 12px #ffcc00";
-      text.textContent = `Degraded • ${latency}ms`;
-    }
-
-  } catch (err) {
-    // If it fails → Offline
+  img.onerror = () => {
     indicator.style.background = "#ff4444";
     indicator.style.boxShadow = "0 0 12px #ff4444";
     text.textContent = "Offline";
-  }
+  };
+
+  // Trigger the load
+  img.src = testURL;
 }
 
 function updateAll() {
@@ -53,8 +44,8 @@ function updateAll() {
   document.getElementById("last-updated").textContent = timestamp;
 }
 
-// Run once on page load
+// Run once on load
 updateAll();
 
-// Auto-refresh every 30 seconds
+// Refresh every 30 seconds
 setInterval(updateAll, 30000);
