@@ -623,39 +623,68 @@ const sortSelect = document.getElementById("tech-sort");
 const searchContainer = document.querySelector(".search-container.unified");
 
 /* ------------------------------------------------------------
+   SAFE DATE PARSING
+------------------------------------------------------------ */
+function normalizeDate(value) {
+    if (!value) return 0;
+    const parsed = Date.parse(value);
+    return isNaN(parsed) ? 0 : parsed;
+}
+
+/* ------------------------------------------------------------
    MAIN RENDER ENGINE
 ------------------------------------------------------------ */
 function renderTechList() {
     let filtered = [...allTechItems];
 
-    // Search
+    /* -------------------------------
+       UNIVERSAL SEARCH (FIXED)
+    -------------------------------- */
     const q = searchInput.value.toLowerCase().trim();
     if (q.length > 0) {
-        filtered = filtered.filter(item =>
-            (item.name || "").toLowerCase().includes(q) ||
-            (item.model || "").toLowerCase().includes(q) ||
-            (item.material || "").toLowerCase().includes(q) ||
-            (item.color || "").toLowerCase().includes(q) ||
-            (item.osVersion || "").toLowerCase().includes(q)
+        filtered = filtered.filter(item => {
+            const searchable = JSON.stringify(item).toLowerCase();
+            return searchable.includes(q);
+        });
+    }
+
+    /* -------------------------------
+       SORT SYSTEM (FULLY FIXED)
+    -------------------------------- */
+    const sortValue = sortSelect.value;
+
+    if (sortValue === "az") {
+        filtered.sort((a, b) =>
+            (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase())
         );
     }
 
-    // Sort
-    const sortValue = sortSelect.value;
-    if (sortValue === "az") {
-        filtered.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-    } else if (sortValue === "za") {
-        filtered.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
-    } else if (sortValue === "newest") {
-        filtered.sort((a, b) => new Date(b.dateBought || 0) - new Date(a.dateBought || 0));
-    } else if (sortValue === "oldest") {
-        filtered.sort((a, b) => new Date(a.dateBought || 0) - new Date(b.dateBought || 0));
+    else if (sortValue === "za") {
+        filtered.sort((a, b) =>
+            (b.name || "").toLowerCase().localeCompare((a.name || "").toLowerCase())
+        );
     }
 
-    // Render list
+    else if (sortValue === "newest") {
+        filtered.sort((a, b) =>
+            normalizeDate(b.dateBought) - normalizeDate(a.dateBought)
+        );
+    }
+
+    else if (sortValue === "oldest") {
+        filtered.sort((a, b) =>
+            normalizeDate(a.dateBought) - normalizeDate(b.dateBought)
+        );
+    }
+
+    /* -------------------------------
+       RENDER TO PAGE
+    -------------------------------- */
     techListContainer.innerHTML = filtered.map(renderTechItemHomepage).join("");
 
-    // Universal search glow
+    /* -------------------------------
+       SEARCH BAR GLOW
+    -------------------------------- */
     if (q.length > 0) searchContainer.classList.add("typing");
     else searchContainer.classList.remove("typing");
 }
@@ -671,6 +700,7 @@ function loadTechItems() {
             ...doc.data(),
             id: doc.id
         }));
+
         renderTechList();
     });
 }
@@ -685,7 +715,6 @@ sortSelect.addEventListener("change", renderTechList);
    INIT
 ------------------------------------------------------------ */
 loadTechItems();
-
 
 function renderFaqItemHomepage(faqData) {
     const question = faqData.question || 'No Question Provided';
