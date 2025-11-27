@@ -550,7 +550,7 @@ function renderYouTubeCard(account) {
 let allTechItems = [];
 
 /* ------------------------------------------------------------
-   RENDER FUNCTION (YOUR ORIGINAL)
+   RENDER FUNCTION (UNCHANGED)
 ------------------------------------------------------------ */
 function renderTechItemHomepage(itemData) {
     const name = itemData.name || 'Unnamed Device';
@@ -618,32 +618,14 @@ function renderTechItemHomepage(itemData) {
    DOM REFERENCES
 ------------------------------------------------------------ */
 const techListContainer = document.getElementById("tech-items-list-dynamic");
-const searchInput = document.getElementById("tech-search");
-const searchContainer = document.querySelector(".search-container.unified");
 
 /* ------------------------------------------------------------
-   MAIN RENDER ENGINE  (FIXED UNIVERSAL SEARCH)
+   RENDER ALL ITEMS (NO SEARCH)
 ------------------------------------------------------------ */
 function renderTechList() {
-    let filtered = [...allTechItems];
-
-    // -------- UNIVERSAL SEARCH FIX --------
-    const q = searchInput.value.toLowerCase().trim();
-
-    if (q.length > 0) {
-        filtered = filtered.filter(item => {
-            // Convert entire Firestore object into a searchable string
-            const searchable = JSON.stringify(item).toLowerCase();
-            return searchable.includes(q);
-        });
-    }
-
-    // Render
-    techListContainer.innerHTML = filtered.map(renderTechItemHomepage).join("");
-
-    // Glow effect
-    if (q.length > 0) searchContainer.classList.add("typing");
-    else searchContainer.classList.remove("typing");
+    techListContainer.innerHTML = allTechItems
+        .map(renderTechItemHomepage)
+        .join("");
 }
 
 /* ------------------------------------------------------------
@@ -662,14 +644,10 @@ function loadTechItems() {
 }
 
 /* ------------------------------------------------------------
-   EVENTS
------------------------------------------------------------- */
-searchInput.addEventListener("input", renderTechList);
-
-/* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
 loadTechItems();
+
 
 
 function renderFaqItemHomepage(faqData) {
