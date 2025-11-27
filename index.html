@@ -355,15 +355,13 @@
             </div>
     </div>
 
-   <div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
+ <div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
     <h2><i class="fas fa-microchip"></i> Tech Information</h2>
 
-    <!-- 🔍 Uses universal ONYX search container -->
+    <!-- 🔍 Universal ONYX Search -->
     <div class="search-container unified">
         <span class="search-icon" aria-hidden="true"></span>
 
-        <!-- This class name MUST stay .creator-search
-             because your universal CSS targets that selector -->
         <input
             type="search"
             id="tech-search"
@@ -371,21 +369,13 @@
             placeholder="Search tech information"
             aria-label="Search tech information"
         />
-
-        <!-- Optional (keep or remove depending on needs) -->
-        <select class="sort-inline-select" id="tech-sort">
-            <option value="default">Sort</option>
-            <option value="az">A → Z</option>
-            <option value="za">Z → A</option>
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-        </select>
     </div>
 
     <div id="tech-items-list-dynamic">
         <p>Loading Tech Info...</p>
     </div>
 </div>
+
 
       <!-- ========================= -->
 <!-- Quote of the Day Section -->
