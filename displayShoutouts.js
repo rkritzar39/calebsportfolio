@@ -544,20 +544,13 @@ function renderYouTubeCard(account) {
             </div>`;
 }
 
-/* ============================================================
-   TECH INFORMATION — FINAL CLEAN PRODUCTION JS
-   ============================================================ */
-
-import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-import { db } from "./firebase-init.js";
-
 /* ------------------------------------------------------------
-   Global array of loaded items
+   GLOBAL STORAGE
 ------------------------------------------------------------ */
 let allTechItems = [];
 
 /* ------------------------------------------------------------
-   Your existing renderer — unchanged
+   RENDER FUNCTION (YOUR ORIGINAL)
 ------------------------------------------------------------ */
 function renderTechItemHomepage(itemData) {
     const name = itemData.name || 'Unnamed Device';
@@ -622,7 +615,7 @@ function renderTechItemHomepage(itemData) {
 }
 
 /* ------------------------------------------------------------
-   DOM elements
+   DOM REFERENCES
 ------------------------------------------------------------ */
 const techListContainer = document.getElementById("tech-items-list-dynamic");
 const searchInput = document.getElementById("tech-search");
@@ -630,67 +623,66 @@ const sortSelect = document.getElementById("tech-sort");
 const searchContainer = document.querySelector(".search-container.unified");
 
 /* ------------------------------------------------------------
-   Render with search + sort
+   MAIN RENDER ENGINE
 ------------------------------------------------------------ */
 function renderTechList() {
     let filtered = [...allTechItems];
 
     // Search
-    const query = searchInput.value.toLowerCase().trim();
-    if (query) {
+    const q = searchInput.value.toLowerCase().trim();
+    if (q.length > 0) {
         filtered = filtered.filter(item =>
-            (item.name || "").toLowerCase().includes(query) ||
-            (item.model || "").toLowerCase().includes(query) ||
-            (item.material || "").toLowerCase().includes(query) ||
-            (item.color || "").toLowerCase().includes(query) ||
-            (item.osVersion || "").toLowerCase().includes(query)
+            (item.name || "").toLowerCase().includes(q) ||
+            (item.model || "").toLowerCase().includes(q) ||
+            (item.material || "").toLowerCase().includes(q) ||
+            (item.color || "").toLowerCase().includes(q) ||
+            (item.osVersion || "").toLowerCase().includes(q)
         );
     }
 
     // Sort
-    switch (sortSelect.value) {
-        case "az":
-            filtered.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-            break;
-        case "za":
-            filtered.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
-            break;
-        case "newest":
-            filtered.sort((a, b) => new Date(b.dateBought || 0) - new Date(a.dateBought || 0));
-            break;
-        case "oldest":
-            filtered.sort((a, b) => new Date(a.dateBought || 0) - new Date(b.dateBought || 0));
-            break;
+    const sortValue = sortSelect.value;
+    if (sortValue === "az") {
+        filtered.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+    } else if (sortValue === "za") {
+        filtered.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
+    } else if (sortValue === "newest") {
+        filtered.sort((a, b) => new Date(b.dateBought || 0) - new Date(a.dateBought || 0));
+    } else if (sortValue === "oldest") {
+        filtered.sort((a, b) => new Date(a.dateBought || 0) - new Date(b.dateBought || 0));
     }
 
-    // Render
-    techListContainer.innerHTML = filtered.map(item => renderTechItemHomepage(item)).join("");
+    // Render list
+    techListContainer.innerHTML = filtered.map(renderTechItemHomepage).join("");
 
-    // Typing glow
-    if (query.length > 0) searchContainer.classList.add("typing");
+    // Universal search glow
+    if (q.length > 0) searchContainer.classList.add("typing");
     else searchContainer.classList.remove("typing");
 }
 
 /* ------------------------------------------------------------
-   Firestore live loading
+   FIRESTORE LISTENER
 ------------------------------------------------------------ */
 function loadTechItems() {
     const ref = collection(db, "techItems");
 
-    onSnapshot(ref, (snapshot) => {
-        allTechItems = snapshot.docs.map(doc => doc.data());
+    onSnapshot(ref, snapshot => {
+        allTechItems = snapshot.docs.map(doc => ({
+            ...doc.data(),
+            id: doc.id
+        }));
         renderTechList();
     });
 }
 
 /* ------------------------------------------------------------
-   Event Listeners
+   EVENTS
 ------------------------------------------------------------ */
 searchInput.addEventListener("input", renderTechList);
 sortSelect.addEventListener("change", renderTechList);
 
 /* ------------------------------------------------------------
-   Init
+   INIT
 ------------------------------------------------------------ */
 loadTechItems();
 
