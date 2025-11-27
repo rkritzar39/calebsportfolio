@@ -544,198 +544,156 @@ function renderYouTubeCard(account) {
             </div>`;
 }
 
+/* ============================================================
+   TECH INFORMATION — FINAL CLEAN PRODUCTION JS
+   ============================================================ */
+
+import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { db } from "./firebase-init.js";
+
+/* ------------------------------------------------------------
+   Global array of loaded items
+------------------------------------------------------------ */
 let allTechItems = [];
 
-// Your renderer (unchanged, trimmed whitespace)
+/* ------------------------------------------------------------
+   Your existing renderer — unchanged
+------------------------------------------------------------ */
 function renderTechItemHomepage(itemData) {
-  const name = itemData.name || "Unnamed Device";
-  const model = itemData.model || "";
-  const iconClass = itemData.iconClass || "fas fa-question-circle";
-  const material = itemData.material || "";
-  const storage = itemData.storage || "";
-  const batteryCapacity = itemData.batteryCapacity || "";
-  const color = itemData.color || "";
-  const price = itemData.price ? `$${itemData.price}` : "";
-  const dateReleased = itemData.dateReleased || "";
-  const dateBought = itemData.dateBought || "";
-  const osVersion = itemData.osVersion || "";
-  const batteryHealth = itemData.batteryHealth !== null && !isNaN(itemData.batteryHealth)
-    ? parseInt(itemData.batteryHealth, 10)
-    : null;
-  const batteryCycles = itemData.batteryCycles !== null && !isNaN(itemData.batteryCycles)
-    ? itemData.batteryCycles
-    : null;
+    const name = itemData.name || 'Unnamed Device';
+    const model = itemData.model || '';
+    const iconClass = itemData.iconClass || 'fas fa-question-circle';
+    const material = itemData.material || '';
+    const storage = itemData.storage || '';
+    const batteryCapacity = itemData.batteryCapacity || '';
+    const color = itemData.color || '';
+    const price = itemData.price ? `$${itemData.price}` : '';
+    const dateReleased = itemData.dateReleased || '';
+    const dateBought = itemData.dateBought || '';
+    const osVersion = itemData.osVersion || '';
+    const batteryHealth = itemData.batteryHealth !== null && !isNaN(itemData.batteryHealth)
+        ? parseInt(itemData.batteryHealth, 10)
+        : null;
+    const batteryCycles = itemData.batteryCycles !== null && !isNaN(itemData.batteryCycles)
+        ? itemData.batteryCycles
+        : null;
 
-  let batteryHtml = "";
-  if (batteryHealth !== null) {
-    let batteryClass = "";
-    if (batteryHealth <= 20) batteryClass = "critical";
-    else if (batteryHealth <= 50) batteryClass = "low-power";
-    const displayHealth = Math.min(batteryHealth, 100);
-    batteryHtml = `
-      <div class="tech-detail"><i class="fas fa-heart"></i><span>Battery Health:</span></div>
-      <div class="battery-container">
-        <div class="battery-icon ${batteryClass}">
-          <div class="battery-level" style="width: ${displayHealth}%;"></div>
-          <div class="battery-percentage">${batteryHealth}%</div>
-        </div>
-      </div>`;
-  }
+    let batteryHtml = '';
+    if (batteryHealth !== null) {
+        let batteryClass = '';
+        if (batteryHealth <= 20) batteryClass = 'critical';
+        else if (batteryHealth <= 50) batteryClass = 'low-power';
 
-  let cyclesHtml = "";
-  if (batteryCycles !== null) {
-    cyclesHtml = `
-      <div class="tech-detail"><i class="fas fa-sync"></i>
-        <span>Battery Charge Cycles:</span> ${batteryCycles}
-      </div>`;
-  }
+        const displayHealth = Math.min(batteryHealth, 100);
 
-  return `
-  <div class="tech-item">
-    <h3><i class="${iconClass}"></i> ${name}</h3>
-    ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${model}</div>` : ""}
-    ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ""}
-    ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${storage}</div>` : ""}
-    ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${batteryCapacity}</div>` : ""}
-    ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${color}</div>` : ""}
-    ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ""}
-    ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ""}
-    ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ""}
-    ${osVersion ? `<div class="tech-detail"><i class="fab fa-apple"></i><span>OS Version:</span> ${osVersion}</div>` : ""}
-    ${batteryHtml}
-    ${cyclesHtml}
-  </div>`;
+        batteryHtml = `
+            <div class="tech-detail"><i class="fas fa-heart"></i><span>Battery Health:</span></div>
+            <div class="battery-container">
+                <div class="battery-icon ${batteryClass}">
+                    <div class="battery-level" style="width: ${displayHealth}%;"></div>
+                    <div class="battery-percentage">${batteryHealth}%</div>
+                </div>
+            </div>`;
+    }
+
+    let cyclesHtml = '';
+    if (batteryCycles !== null) {
+        cyclesHtml = `
+            <div class="tech-detail"><i class="fas fa-sync"></i>
+                <span>Battery Charge Cycles:</span> ${batteryCycles}
+            </div>`;
+    }
+
+    return `
+    <div class="tech-item">
+        <h3><i class="${iconClass}"></i> ${name}</h3>
+        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${model}</div>` : ''}
+        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ''}
+        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${storage}</div>` : ''}
+        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${batteryCapacity}</div>` : ''}
+        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${color}</div>` : ''}
+        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ''}
+        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ''}
+        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ''}
+        ${osVersion ? `<div class="tech-detail"><i class="fab fa-apple"></i><span>OS Version:</span> ${osVersion}</div>` : ''}
+        ${batteryHtml}
+        ${cyclesHtml}
+    </div>`;
 }
 
-/* ---------- Utilities ---------- */
-function debounce(fn, wait = 200) {
-  let t;
-  return (...args) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...args), wait);
-  };
-}
-function safeDateVal(d) {
-  if (!d) return 0;
-  const n = Date.parse(d);
-  return isNaN(n) ? 0 : n;
-}
+/* ------------------------------------------------------------
+   DOM elements
+------------------------------------------------------------ */
+const techListContainer = document.getElementById("tech-items-list-dynamic");
+const searchInput = document.getElementById("tech-search");
+const sortSelect = document.getElementById("tech-sort");
+const searchContainer = document.querySelector(".search-container.unified");
 
-/* ---------- DOM & rendering ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  const techListContainer = document.getElementById("tech-items-list-dynamic");
-  const searchInput = document.getElementById("tech-search");
-  const sortSelect = document.getElementById("tech-sort");
-  const searchContainer = document.querySelector(".search-container.unified");
+/* ------------------------------------------------------------
+   Render with search + sort
+------------------------------------------------------------ */
+function renderTechList() {
+    let filtered = [...allTechItems];
 
-  // Basic validation
-  if (!techListContainer) {
-    console.error("[TechInfo] Missing #tech-items-list-dynamic element.");
-    return;
-  }
-  if (!searchInput) {
-    console.warn("[TechInfo] Missing #tech-search input — search will be disabled.");
-  }
-  if (!searchContainer) {
-    console.warn("[TechInfo] Missing .search-container.unified — typing glow won't work.");
-  }
-
-  // Main renderer
-  function renderTechList() {
-    try {
-      let filtered = [...allTechItems];
-
-      const query = searchInput ? (searchInput.value || "").toLowerCase().trim() : "";
-
-      if (query) {
+    // Search
+    const query = searchInput.value.toLowerCase().trim();
+    if (query) {
         filtered = filtered.filter(item =>
-          ((item.name || "") + " " + (item.model || "") + " " + (item.material || "") + " " + (item.color || "") + " " + (item.osVersion || ""))
-            .toLowerCase()
-            .includes(query)
+            (item.name || "").toLowerCase().includes(query) ||
+            (item.model || "").toLowerCase().includes(query) ||
+            (item.material || "").toLowerCase().includes(query) ||
+            (item.color || "").toLowerCase().includes(query) ||
+            (item.osVersion || "").toLowerCase().includes(query)
         );
-      }
-
-      const sortType = sortSelect ? sortSelect.value : "default";
-
-      filtered.sort((a, b) => {
-        switch (sortType) {
-          case "az":
-            return (a.name || "").localeCompare(b.name || "");
-          case "za":
-            return (b.name || "").localeCompare(a.name || "");
-          case "newest":
-            return safeDateVal(b.dateBought) - safeDateVal(a.dateBought);
-          case "oldest":
-            return safeDateVal(a.dateBought) - safeDateVal(b.dateBought);
-          default:
-            return 0;
-        }
-      });
-
-      if (!filtered.length) {
-        techListContainer.innerHTML = `<div class="glass-card no-results">No results found.</div>`;
-      } else {
-        techListContainer.innerHTML = filtered.map(renderTechItemHomepage).join("");
-      }
-
-      if (searchContainer) {
-        if (query.length > 0) searchContainer.classList.add("typing");
-        else searchContainer.classList.remove("typing");
-      }
-    } catch (err) {
-      console.error("[TechInfo] renderTechList error:", err);
-      techListContainer.innerHTML = `<div class="glass-card no-results">An error occurred while rendering items.</div>`;
     }
-  }
 
-  // Debounced version for input
-  const debouncedRender = debounce(renderTechList, 180);
-
-  if (searchInput) searchInput.addEventListener("input", debouncedRender);
-  if (sortSelect) sortSelect.addEventListener("change", renderTechList);
-
-  // Firestore listener with fallback
-  function loadTechItemsFromFirestore() {
-    techListContainer.innerHTML = `<p>Loading Tech Info...</p>`;
-
-    try {
-      const itemsRef = collection(db, "techItems");
-      onSnapshot(itemsRef, (snapshot) => {
-        try {
-          allTechItems = snapshot.docs.map(d => {
-            const data = d.data();
-            // store the doc id as well in case you need it
-            return { ...data, _id: d.id };
-          });
-          console.info(`[TechInfo] Loaded ${allTechItems.length} items from Firestore.`);
-          renderTechList();
-        } catch (renderErr) {
-          console.error("[TechInfo] Error parsing snapshot:", renderErr);
-          renderTechList();
-        }
-      }, (err) => {
-        console.error("[TechInfo] Firestore onSnapshot error:", err);
-        // fallback to sample data if Firestore fails
-        useFallbackData();
-      });
-    } catch (err) {
-      console.error("[TechInfo] Could not initialize Firestore listener:", err);
-      useFallbackData();
+    // Sort
+    switch (sortSelect.value) {
+        case "az":
+            filtered.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+            break;
+        case "za":
+            filtered.sort((a, b) => (b.name || "").localeCompare(a.name || ""));
+            break;
+        case "newest":
+            filtered.sort((a, b) => new Date(b.dateBought || 0) - new Date(a.dateBought || 0));
+            break;
+        case "oldest":
+            filtered.sort((a, b) => new Date(a.dateBought || 0) - new Date(b.dateBought || 0));
+            break;
     }
-  }
 
-  function useFallbackData() {
-    console.warn("[TechInfo] Using fallback sample data.");
-    allTechItems = [
-      { name: "Sample Phone", model: "SP-1", material: "Aluminum", storage: "128GB", batteryCapacity: "4000mAh", color: "Black", price: 499, dateBought: "2023-08-01", osVersion: "1.0", batteryHealth: 95, batteryCycles: 120, iconClass: "fas fa-mobile-alt" },
-      { name: "Sample Laptop", model: "SL-13", material: "Magnesium", storage: "512GB", batteryCapacity: "6000mAh", color: "Silver", price: 1299, dateBought: "2024-02-15", osVersion: "2.4", batteryHealth: 88, batteryCycles: 350, iconClass: "fas fa-laptop" }
-    ];
-    renderTechList();
-  }
+    // Render
+    techListContainer.innerHTML = filtered.map(item => renderTechItemHomepage(item)).join("");
 
-  // Start
-  loadTechItemsFromFirestore();
-});
+    // Typing glow
+    if (query.length > 0) searchContainer.classList.add("typing");
+    else searchContainer.classList.remove("typing");
+}
+
+/* ------------------------------------------------------------
+   Firestore live loading
+------------------------------------------------------------ */
+function loadTechItems() {
+    const ref = collection(db, "techItems");
+
+    onSnapshot(ref, (snapshot) => {
+        allTechItems = snapshot.docs.map(doc => doc.data());
+        renderTechList();
+    });
+}
+
+/* ------------------------------------------------------------
+   Event Listeners
+------------------------------------------------------------ */
+searchInput.addEventListener("input", renderTechList);
+sortSelect.addEventListener("change", renderTechList);
+
+/* ------------------------------------------------------------
+   Init
+------------------------------------------------------------ */
+loadTechItems();
+
 
 function renderFaqItemHomepage(faqData) {
     const question = faqData.question || 'No Question Provided';
