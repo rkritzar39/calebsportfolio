@@ -619,28 +619,17 @@ function renderTechItemHomepage(itemData) {
 ------------------------------------------------------------ */
 const techListContainer = document.getElementById("tech-items-list-dynamic");
 const searchInput = document.getElementById("tech-search");
-const sortSelect = document.getElementById("tech-sort");
 const searchContainer = document.querySelector(".search-container.unified");
 
 /* ------------------------------------------------------------
-   SAFE DATE PARSING
------------------------------------------------------------- */
-function normalizeDate(value) {
-    if (!value) return 0;
-    const parsed = Date.parse(value);
-    return isNaN(parsed) ? 0 : parsed;
-}
-
-/* ------------------------------------------------------------
-   MAIN RENDER ENGINE
+   RENDER LIST WITH SEARCH ONLY
 ------------------------------------------------------------ */
 function renderTechList() {
     let filtered = [...allTechItems];
 
-    /* -------------------------------
-       UNIVERSAL SEARCH (FIXED)
-    -------------------------------- */
+    // UNIVERSAL SEARCH — WORKS FOR “mac”, “apple”, “iphone”, ANYTHING
     const q = searchInput.value.toLowerCase().trim();
+
     if (q.length > 0) {
         filtered = filtered.filter(item => {
             const searchable = JSON.stringify(item).toLowerCase();
@@ -648,49 +637,16 @@ function renderTechList() {
         });
     }
 
-    /* -------------------------------
-       SORT SYSTEM (FULLY FIXED)
-    -------------------------------- */
-    const sortValue = sortSelect.value;
-
-    if (sortValue === "az") {
-        filtered.sort((a, b) =>
-            (a.name || "").toLowerCase().localeCompare((b.name || "").toLowerCase())
-        );
-    }
-
-    else if (sortValue === "za") {
-        filtered.sort((a, b) =>
-            (b.name || "").toLowerCase().localeCompare((a.name || "").toLowerCase())
-        );
-    }
-
-    else if (sortValue === "newest") {
-        filtered.sort((a, b) =>
-            normalizeDate(b.dateBought) - normalizeDate(a.dateBought)
-        );
-    }
-
-    else if (sortValue === "oldest") {
-        filtered.sort((a, b) =>
-            normalizeDate(a.dateBought) - normalizeDate(b.dateBought)
-        );
-    }
-
-    /* -------------------------------
-       RENDER TO PAGE
-    -------------------------------- */
+    // Render filtered list
     techListContainer.innerHTML = filtered.map(renderTechItemHomepage).join("");
 
-    /* -------------------------------
-       SEARCH BAR GLOW
-    -------------------------------- */
+    // Glow animation
     if (q.length > 0) searchContainer.classList.add("typing");
     else searchContainer.classList.remove("typing");
 }
 
 /* ------------------------------------------------------------
-   FIRESTORE LISTENER
+   FIRESTORE LOADING
 ------------------------------------------------------------ */
 function loadTechItems() {
     const ref = collection(db, "techItems");
@@ -709,7 +665,6 @@ function loadTechItems() {
    EVENTS
 ------------------------------------------------------------ */
 searchInput.addEventListener("input", renderTechList);
-sortSelect.addEventListener("change", renderTechList);
 
 /* ------------------------------------------------------------
    INIT
