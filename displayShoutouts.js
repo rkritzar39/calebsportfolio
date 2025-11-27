@@ -622,31 +622,32 @@ const searchInput = document.getElementById("tech-search");
 const searchContainer = document.querySelector(".search-container.unified");
 
 /* ------------------------------------------------------------
-   RENDER LIST WITH SEARCH ONLY
+   MAIN RENDER ENGINE  (FIXED UNIVERSAL SEARCH)
 ------------------------------------------------------------ */
 function renderTechList() {
     let filtered = [...allTechItems];
 
-    // UNIVERSAL SEARCH — WORKS FOR “mac”, “apple”, “iphone”, ANYTHING
+    // -------- UNIVERSAL SEARCH FIX --------
     const q = searchInput.value.toLowerCase().trim();
 
     if (q.length > 0) {
         filtered = filtered.filter(item => {
+            // Convert entire Firestore object into a searchable string
             const searchable = JSON.stringify(item).toLowerCase();
             return searchable.includes(q);
         });
     }
 
-    // Render filtered list
+    // Render
     techListContainer.innerHTML = filtered.map(renderTechItemHomepage).join("");
 
-    // Glow animation
+    // Glow effect
     if (q.length > 0) searchContainer.classList.add("typing");
     else searchContainer.classList.remove("typing");
 }
 
 /* ------------------------------------------------------------
-   FIRESTORE LOADING
+   FIRESTORE LISTENER
 ------------------------------------------------------------ */
 function loadTechItems() {
     const ref = collection(db, "techItems");
@@ -656,7 +657,6 @@ function loadTechItems() {
             ...doc.data(),
             id: doc.id
         }));
-
         renderTechList();
     });
 }
@@ -670,6 +670,7 @@ searchInput.addEventListener("input", renderTechList);
    INIT
 ------------------------------------------------------------ */
 loadTechItems();
+
 
 function renderFaqItemHomepage(faqData) {
     const question = faqData.question || 'No Question Provided';
