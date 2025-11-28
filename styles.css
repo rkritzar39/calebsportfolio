@@ -458,81 +458,62 @@ a.corner-button {
     text-decoration: none;
 }
 
-/* ========================================= */
-/* 💎 VISION OS THEME & PHYSICS */
-/* ========================================= */
+/* ============================================= */
+/* 🍎 Vision OS / iOS Future Theme Variables */
+/* ============================================= */
 :root {
-  /* Colors */
-  --accent-blue: #007AFF;
+  /* The Glass Material */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-blur: 25px;
+  --dock-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  
+  /* Text & Colors */
   --text-primary: #000000;
-  --text-secondary: #86868b;
+  --text-secondary: #666666;
+  --accent-color: #007AFF; /* System Blue */
   
-  /* Glass Material */
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --glass-blur: 20px;
-  --dock-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-  
-  /* Sliding Pill */
-  --pill-bg: #FFFFFF;
-  --pill-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  /* Active Pill */
+  --active-bg: #FFFFFF;
+  --active-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* ========================================= */
-/* 🛸 DOCK CONTAINER */
-/* ========================================= */
+/* ============================================= */
+/* 💎 The Glass Dock Container */
+/* ============================================= */
 .onyx-dock {
   position: fixed;
-  bottom: 24px;
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  
+
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px;
-  
-  /* Frosted Glass Effect */
+  gap: 12px;
+  padding: 10px;
+
+  /* The Vision OS Frosted Glass Effect */
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
+  
   border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: var(--dock-shadow);
   
-  /* Prevents page scrolling while dragging on mobile */
-  touch-action: none; 
-  isolation: isolate; 
+  /* Smooth container entry */
+  animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
-/* ========================================= */
-/* 💊 THE SLIDING ACTIVE PILL */
-/* ========================================= */
-.dock-active-pill {
-  position: absolute;
-  top: 8px; 
-  left: 0;
-  height: calc(100% - 16px);
-  width: 0; /* JS will set this */
-  
-  background: var(--pill-bg);
-  border-radius: 999px;
-  box-shadow: var(--pill-shadow);
-  z-index: -1; /* Behind the text */
-  opacity: 0;
-  pointer-events: none; /* Let clicks pass through */
-  
-  /* Physics for the slide (Springy) */
-  transition: 
-    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1),
-    width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 0.3s ease;
+@keyframes floatUp {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
 
-/* ========================================= */
-/* 🧩 DOCK ITEMS */
-/* ========================================= */
+/* ============================================= */
+/* 🛸 The Interactive Items */
+/* ============================================= */
 .dock-item {
   position: relative;
   display: flex;
@@ -540,91 +521,85 @@ a.corner-button {
   align-items: center;
   justify-content: center;
   
-  padding: 10px 20px;
   min-width: 60px;
+  padding: 12px 20px;
   border-radius: 999px;
   
   text-decoration: none;
   color: var(--text-secondary);
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 11px;
-  font-weight: 500;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   
-  transition: color 0.3s ease, transform 0.2s ease;
-  overflow: hidden; /* Clips the spotlight/ripple */
-  user-select: none; /* Prevents text selection during drag */
-  -webkit-user-select: none;
+  /* Clip the lighting glow */
+  overflow: hidden;
+  isolation: isolate; /* Create new stacking context for glow */
 }
 
-/* --- Icons --- */
-.dock-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 3px;
-  stroke-width: 2px;
-  transition: stroke 0.3s ease;
-  
-  /* Parallax: Moves opposite to mouse (using JS vars) */
-  transform: translate(calc(var(--dx, 0) * 3px), calc(var(--dy, 0) * 3px));
-  pointer-events: none;
-}
-
-/* --- Spotlight Effect (Vision OS) --- */
+/* --- 1. The Spotlight Glow (Vision OS Signature) --- */
+/* Uses the JS variables --x and --y to follow mouse */
 .dock-item::before {
   content: "";
   position: absolute;
-  inset: 0;
-  z-index: -2;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
   background: radial-gradient(
-    60px circle at var(--x, 50%) var(--y, 50%),
-    rgba(0, 0, 0, 0.05),
+    80px circle at var(--x, 50%) var(--y, 50%),
+    rgba(0, 0, 0, 0.08),
     transparent 100%
   );
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.3s ease;
 }
 
 .dock-item:hover::before {
-  opacity: 1;
+  opacity: 1; /* Show glow on hover */
 }
 
-/* --- Active State Colors --- */
+/* --- 2. Typography & Icons --- */
+.dock-label {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 4px;
+  opacity: 0.8;
+  transition: transform 0.2s;
+}
+
+.dock-icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2px;
+  transition: color 0.3s ease, transform 0.1s linear; /* Linear for instant physics */
+  
+  /* PARALLAX PHYSICS: Icons move slightly opposite to mouse */
+  transform: translate(calc(var(--dx) * 5px), calc(var(--dy) * 5px));
+}
+
+/* ============================================= */
+/* ✨ Active & Hover States */
+/* ============================================= */
+
+/* Hover Lift */
+.dock-item:hover {
+  transform: scale(1.08) translateY(-2px); /* Buoyant lift */
+  color: var(--text-primary);
+}
+
+/* Active State (The "Pill" sits ON TOP of glass) */
 .dock-item.active {
-  color: var(--accent-blue);
+  background: var(--active-bg);
+  box-shadow: var(--active-shadow);
+  color: var(--accent-color);
+  transform: scale(1); /* Active item is grounded */
 }
+
 .dock-item.active .dock-icon {
-  stroke: var(--accent-blue);
+  stroke: var(--accent-color);
+  stroke-width: 2.5px;
 }
 
-/* ========================================= */
-/* 🫧 INTERACTION: CLICK BUBBLE */
-/* ========================================= */
-.dock-item::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 122, 255, 0.15);
-  border-radius: 999px;
-  opacity: 0;
-  transform: scale(0.5);
-  z-index: -1;
-  pointer-events: none;
+.dock-item.active::before {
+  display: none; /* No hover spotlight on the active item */
 }
-
-.dock-item:active::after {
-  animation: bubble-pop 0.4s cubic-bezier(0, 0, 0.2, 1);
-}
-
-@keyframes bubble-pop {
-  0% { opacity: 1; transform: scale(0.8); }
-  100% { opacity: 0; transform: scale(1.5); }
-}
-
-.dock-item:active {
-  transform: scale(0.94); /* Squishy click */
-}
-
 
 /* ======================================================= */
 /* === 🎧 LIVE ACTIVITY — FINAL STABLE LAYOUT ============ */
