@@ -2858,24 +2858,39 @@ body.dark-mode .g_id_signin > div[role="button"] {
   font-size: 0.9rem;
 }
 
-/* ===== Merch Management Section ===== */
+/* ======================================== */
+/* Admin Merchandise Management Container  */
+/* ======================================== */
 #merch-management {
   max-width: 1100px;
   margin: 40px auto;
-  padding: 0 20px;
+  padding: 20px;
   font-family: 'Poppins', sans-serif;
+  background: var(--content-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 }
 
+/* Headings */
 #merch-management h2 {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 20px;
   color: var(--text-color);
 }
+#merch-management h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 20px 0 10px;
+  color: var(--text-color);
+}
 
+/* ============================ */
+/* Form Styling */
+/* ============================ */
 .form-container {
-  background: var(--content-bg);
   padding: 25px;
+  background: var(--content-bg);
   border-radius: var(--radius-lg);
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
   margin-bottom: 40px;
@@ -2933,7 +2948,9 @@ body.dark-mode .g_id_signin > div[role="button"] {
   box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
+/* ============================ */
 /* Table Styling */
+/* ============================ */
 .table-container {
   overflow-x: auto;
   border-radius: var(--radius-lg);
@@ -2970,16 +2987,12 @@ body.dark-mode .g_id_signin > div[role="button"] {
   cursor: pointer;
   font-size: 0.85rem;
   transition: all 0.3s ease;
-}
-
-#product-table button:hover {
-  opacity: 0.85;
+  margin-right: 5px;
 }
 
 #product-table button:first-child {
   background: var(--accent-color);
   color: #fff;
-  margin-right: 5px;
 }
 
 #product-table button:last-child {
@@ -2987,7 +3000,9 @@ body.dark-mode .g_id_signin > div[role="button"] {
   color: #fff;
 }
 
-/* Stock badges */
+/* ============================ */
+/* Badges & Price Styling */
+/* ============================ */
 .stock-badge {
   padding: 2px 6px;
   border-radius: 6px;
@@ -3000,7 +3015,6 @@ body.dark-mode .g_id_signin > div[role="button"] {
 .badge-yellow { background: #ffc107; color: #333; }
 .badge-gray { background: #6c757d; }
 
-/* Sale badge */
 .sale-badge {
   background: #dc3545;
   color: #fff;
@@ -3010,7 +3024,6 @@ body.dark-mode .g_id_signin > div[role="button"] {
   font-size: 0.85rem;
 }
 
-/* Price formatting */
 .original-price {
   text-decoration: line-through;
   color: #888;
@@ -3021,3 +3034,36 @@ body.dark-mode .g_id_signin > div[role="button"] {
   font-weight: bold;
 }
 
+/* ============================ */
+/* Responsive Design */
+/* ============================ */
+@media (max-width: 992px) {
+  .form-row {
+    flex-direction: column;
+  }
+  #product-table th,
+  #product-table td {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 768px) {
+  #merch-management {
+    margin: 20px;
+    padding: 15px;
+  }
+  #product-table th,
+  #product-table td {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
+  .form-group input,
+  .form-group select {
+    font-size: 0.95rem;
+  }
+  .btn-save {
+    font-size: 0.95rem;
+    padding: 10px 15px;
+  }
+}
