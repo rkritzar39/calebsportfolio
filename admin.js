@@ -290,30 +290,7 @@ function renderProducts() {
     `;
     tableBody.appendChild(tr);
 
-    // Preview item
-    const isDisabled = product.stock === "out-of-stock";
-
-    const priceHTML = product.discount
-      ? `<span class="original-price">$${basePrice.toFixed(2)}</span>
-         <span class="discount-price">$${finalPrice}</span>
-         <span class="sale-badge">-${product.discount}% Off</span>`
-      : `<span class="regular-price">$${finalPrice}</span>`;
-
-    const buttonHTML = `<button class="buy-now" ${isDisabled ? 'disabled style="background:#888; cursor:not-allowed;"' : `onclick="window.open('${product.link}','_blank')"`}>Buy Now</button>`;
-
-    const previewItem = document.createElement("div");
-    previewItem.classList.add("product-item");
-    previewItem.innerHTML = `
-      <div class="product-image-container">
-        <img src="${product.image}" alt="${product.name}">
-        ${product.sale ? '<div class="sale-ribbon">Sale</div>' : ''}
-        <div class="stock-ribbon ${product.stock}">${product.stock.replace("-", " ")}</div>
-      </div>
-      <h3>${product.name}</h3>
-      <p class="price">${priceHTML}</p>
-      ${buttonHTML}
-    `;
-    previewGrid.appendChild(previewItem);
+    // Preview (can be extended later)
   });
 }
 
@@ -363,7 +340,6 @@ form.addEventListener("submit", async e => {
       await addDoc(productsCol, productData);
     }
 
-    // Reset form
     form.reset();
     document.getElementById("product-id").value = "";
     resetVariations();
@@ -444,14 +420,14 @@ addVariationBtn.addEventListener("click", () => {
   addRemoveListeners();
 });
 
-// Function to attach remove button listeners
+// Attach remove button listeners
 function addRemoveListeners() {
   document.querySelectorAll(".remove-variation").forEach(btn => {
     btn.onclick = () => btn.parentElement.remove();
   });
 }
 
-// Function to reset variations to 1 empty row
+// Reset variations to 1 empty row
 function resetVariations() {
   variationsContainer.innerHTML = `
     <div class="variation">
@@ -473,6 +449,7 @@ function resetVariations() {
 // Initial fetch
 // -----------------------------
 fetchProducts();
+
 
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
