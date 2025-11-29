@@ -19,11 +19,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const products = [
         {
             name: "September Awareness Rainbow Onesie",
-            price: 25.00,
+            price: 15.00,
             originalPrice: 25.00, // Same as price, for non-sale
-            discount: 0, // No discount
+            discount: 40, // No discount
             stock: "in-stock",
-            sale: false, // No sale
+            sale: true, // No sale
             image: "product_images/september.webp",
             link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/september-awareness-rainbow-onesie",
             category: "Baby & Toddler"
