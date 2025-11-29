@@ -347,21 +347,10 @@
     <!-- Variations Section -->
     <div id="variations-container" class="form-group full-width">
       <h4>Product Variations</h4>
-      <div class="variation">
-        <input type="text" class="variation-color" placeholder="Color">
-        <input type="text" class="variation-size" placeholder="Size">
-        <input type="number" class="variation-price" placeholder="Price" step="0.01">
-        <select class="variation-stock">
-          <option value="in-stock">In Stock</option>
-          <option value="low-stock">Low Stock</option>
-          <option value="out-of-stock">Out of Stock</option>
-        </select>
-        <button type="button" class="remove-variation">Remove</button>
-      </div>
+      <!-- Start empty; admin adds variations dynamically -->
     </div>
 
     <button type="button" id="add-variation">Add Variation</button>
-
     <input type="hidden" id="product-id">
 
     <div class="form-actions">
@@ -393,8 +382,6 @@
   <div id="preview-grid" class="product-grid"></div>
 
 </section>
-
-
 
              <section class="admin-section" id="president-management" aria-labelledby="president-heading">
                 <h3 id="president-heading">Manage Current President Info</h3>
