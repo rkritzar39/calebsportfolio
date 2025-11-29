@@ -2,7 +2,7 @@
 /* == Theme & General Styles (Inherited) == */
 /* ======================================== */
 
-/* General Body Styling is inherited from styles.css */
+/* General Body Styling */
 body {
     font-family: 'Poppins', sans-serif;
     background-color: var(--bg-color);
@@ -47,7 +47,7 @@ header,
     margin: 0;
 }
 
-/* Adaptive Home Button */
+/* Home Button */
 .home-button {
     display: inline-flex;
     align-items: center;
@@ -68,7 +68,7 @@ header,
     transform: translateY(-2px);
     background: var(--accent-color);
     border-color: var(--accent-color);
-    color: #fff; /* Explicit color for contrast */
+    color: #fff;
     box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
@@ -100,17 +100,6 @@ header,
     transition: all 0.3s ease;
 }
 
-.category-dropdown::after {
-    content: '▼';
-    position: absolute;
-    right: 35px;
-    top: 50%;
-    transform: translateY(50%);
-    color: var(--secondary-text);
-    font-size: 0.8rem;
-    pointer-events: none;
-}
-
 #categories:hover {
     border-color: var(--accent-color);
 }
@@ -132,20 +121,18 @@ header,
 }
 
 .product-item {
-    /* Applying Onyx Glass effect */
     background: var(--content-bg);
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
     border: 1px solid var(--border-color);
     background-image: var(--bubble-gradient);
     box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-    
     border-radius: var(--radius-lg);
     padding: 20px;
     display: flex;
     flex-direction: column;
     position: relative;
-    overflow: hidden;
+    min-height: 400px; /* ensures cards are tall enough for ribbons/buttons */
     transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -156,18 +143,13 @@ header,
 }
 
 /* Product Image */
-.product-image-container {
-    width: 100%;
-    aspect-ratio: 1;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
 .product-item img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto; /* allows full image display */
+    max-height: 250px; /* prevent extremely tall images */
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
     transition: transform 0.35s ease;
 }
 
@@ -181,6 +163,8 @@ header,
     font-weight: 600;
     margin: 0 0 10px 0;
     color: var(--text-color);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Price Styling */
@@ -189,6 +173,7 @@ header,
     color: var(--accent-color);
     font-weight: 700;
     margin: 10px 0;
+    white-space: normal;
 }
 
 .original-price {
@@ -209,7 +194,7 @@ header,
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
-    margin-top: auto;
+    margin-top: auto; /* pushes button to bottom */
     cursor: pointer;
     background: transparent;
     border: 1px solid var(--border-color);
@@ -270,7 +255,7 @@ header,
     body { padding: 15px; }
     header, .category-dropdown { padding: 20px; margin: 15px 0 25px 0; }
     .product-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-    .product-item { padding: 15px; }
+    .product-item { padding: 15px; min-height: auto; }
     .header-content h1 { font-size: 1.8rem; }
 }
 
