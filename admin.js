@@ -7,182 +7,19 @@ import {
     collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc,
     query, orderBy, getDoc, Timestamp, where
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-import {
-    getAuth, signInWithEmailAndPassword, signOut,
-    onAuthStateChanged, GoogleAuthProvider, signInWithCredential
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
 // -------------------------
-// GLOBAL ARRAYS / VARIABLES
+// GLOBAL VARIABLES
 // -------------------------
-let allShoutouts = { tiktok: [], instagram: [], youtube: [] };
-let allUsefulLinks = [];
-let allSocialLinks = [];
-let allDisabilities = [];
-let allTechItems = [];
 let allProducts = [];
 
 // -------------------------
-// DOM HELPER
+// DOM HELPERS
 // -------------------------
 const $ = id => document.getElementById(id);
-function showFeedback(msg, ok = true) {
-    const el = $("manual-status-feedback");
-    if (!el) return;
-    el.textContent = msg;
-    el.style.color = ok ? "" : "#ff6b6b";
-    setTimeout(() => { if (el.textContent === msg) el.textContent = ""; }, 4000);
-}
 
 // -------------------------
-// SHOUTOUTS LOAD FUNCTIONS
-// -------------------------
-async function loadShoutoutsAdmin() {
-    try {
-        const colRef = collection(db, "shoutouts");
-
-        const qTikTok = query(colRef, where("platform", "==", "tiktok"), orderBy("createdAt", "desc"));
-        const snapTikTok = await getDocs(qTikTok);
-        allShoutouts.tiktok = snapTikTok.docs.map(d => ({ id: d.id, ...d.data() }));
-
-        const qIG = query(colRef, where("platform", "==", "instagram"), orderBy("createdAt", "desc"));
-        const snapIG = await getDocs(qIG);
-        allShoutouts.instagram = snapIG.docs.map(d => ({ id: d.id, ...d.data() }));
-
-        const qYT = query(colRef, where("platform", "==", "youtube"), orderBy("createdAt", "desc"));
-        const snapYT = await getDocs(qYT);
-        allShoutouts.youtube = snapYT.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    } catch (err) {
-        console.error("Error loading shoutouts:", err);
-    }
-}
-
-// -------------------------
-// MANUAL STATUS
-// -------------------------
-const MANUAL_DOC = doc(db, "manualStatus", "site");
-
-async function loadManualStatusToForm() {
-    try {
-        const snap = await getDoc(MANUAL_DOC);
-        if (!snap.exists()) {
-            $("manual-status-text").value = "";
-            $("manual-status-icon").value = "manual";
-            $("manual-status-duration").value = 15;
-            $("manual-status-enabled").checked = false;
-            return;
-        }
-        const data = snap.data();
-        $("manual-status-text").value = data.text || "";
-        $("manual-status-icon").value = data.icon || "manual";
-        if (data.expiresAt && typeof data.expiresAt === "number") {
-            const mins = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / 60000));
-            $("manual-status-duration").value = mins;
-        } else {
-            $("manual-status-duration").value = data.persistent ? 0 : 15;
-        }
-        $("manual-status-enabled").checked = !!data.enabled;
-    } catch (err) {
-        console.error("Load manual status error:", err);
-        showFeedback("Failed to load manual status", false);
-    }
-}
-
-async function saveManualStatus(e) {
-    e?.preventDefault();
-    try {
-        const text = $("manual-status-text").value.trim();
-        const icon = $("manual-status-icon").value || "manual";
-        const duration = Number($("manual-status-duration").value || 0);
-        const enabled = !!$("manual-status-enabled").checked;
-
-        const payload = { text, icon, enabled, updated_at: Date.now(), persistent: duration === 0 };
-        if (duration > 0) payload.expiresAt = Date.now() + Math.max(0, duration) * 60000;
-        else payload.expiresAt = null;
-
-        await setDoc(MANUAL_DOC, payload, { merge: true });
-        showFeedback("Manual status saved");
-    } catch (err) {
-        console.error("Save manual status error:", err);
-        showFeedback("Failed to save manual status", false);
-    }
-}
-
-async function clearManualStatus() {
-    try {
-        await setDoc(MANUAL_DOC, {
-            text: "",
-            icon: "manual",
-            enabled: false,
-            updated_at: Date.now(),
-            expiresAt: null,
-            persistent: false
-        }, { merge: true });
-        await loadManualStatusToForm();
-        showFeedback("Manual status cleared");
-    } catch (err) {
-        console.error("Clear manual status error:", err);
-        showFeedback("Failed to clear manual status", false);
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    $("manual-status-form")?.addEventListener("submit", saveManualStatus);
-    $("clear-manual-status-btn")?.addEventListener("click", async () => {
-        if (!confirm("Clear manual status? This will disable the manual override.")) return;
-        await clearManualStatus();
-    });
-    loadManualStatusToForm();
-});
-
-// -------------------------
-// GOAL TRACKER
-// -------------------------
-async function loadGoalTracker() {
-    const snap = await getDoc(doc(db, "siteSettings", "goalTracker"));
-    if (snap.exists()) {
-        const data = snap.data();
-        $("goal-title").value = data.goalTitle ?? "";
-        $("goal-total").value = data.goalTotal ?? 0;
-        $("goal-raised").value = data.goalRaised ?? 0;
-        $("goal-remaining").value = data.goalRemaining ?? 0;
-    }
-}
-
-function updateRemaining() {
-    const total = Number($("goal-total").value) || 0;
-    const raised = Number($("goal-raised").value) || 0;
-    $("goal-remaining").value = Math.max(total - raised, 0);
-}
-
-$("goal-total")?.addEventListener("input", updateRemaining);
-$("goal-raised")?.addEventListener("input", updateRemaining);
-
-$("goal-form")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const title = $("goal-title").value.trim();
-    const total = Number($("goal-total").value);
-    const raised = Number($("goal-raised").value);
-    const remaining = Math.max(total - raised, 0);
-
-    try {
-        await setDoc(doc(db, "goals", "goalTracker"), {
-            goalTitle: title,
-            goalTotal: total,
-            goalRaised: raised,
-            goalRemaining: remaining,
-            ownerId: auth.currentUser.uid
-        });
-        $("goal-status-message").textContent = "Goal Tracker Saved!";
-    } catch (err) {
-        console.error(err);
-        $("goal-status-message").textContent = "Error saving goal tracker.";
-    }
-});
-
-// -------------------------
-// MERCH MANAGEMENT
+// MERCH ELEMENTS
 // -------------------------
 const merchForm = $("product-form");
 const merchTableBody = $("product-table")?.querySelector("tbody");
@@ -193,7 +30,9 @@ const merchAddVariationBtn = $("add-variation");
 const merchBasePriceInput = $("base-price");
 const merchCol = collection(db, "merch");
 
-// Base Price logic
+// -------------------------
+// BASE PRICE LOGIC
+// -------------------------
 function updateBasePrice() {
     const variations = Array.from(merchVariationsContainer.querySelectorAll(".variation"))
         .filter(v => v.querySelector(".variation-price").value || v.querySelector(".variation-color").value || v.querySelector(".variation-size").value);
@@ -221,6 +60,9 @@ function addRemoveListeners() {
     });
 }
 
+// -------------------------
+// ADD VARIATION
+// -------------------------
 merchAddVariationBtn?.addEventListener("click", () => {
     const div = document.createElement("div");
     div.classList.add("variation");
@@ -240,14 +82,18 @@ merchAddVariationBtn?.addEventListener("click", () => {
     updateBasePrice();
 });
 
-// Fetch products
+// -------------------------
+// FETCH PRODUCTS
+// -------------------------
 async function fetchProducts() {
     const snap = await getDocs(query(merchCol, orderBy("order", "asc")));
     allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderProducts();
 }
 
-// Render products (table + live preview)
+// -------------------------
+// RENDER PRODUCTS
+// -------------------------
 function renderProducts() {
     merchTableBody.innerHTML = "";
     merchPreviewGrid.innerHTML = "";
@@ -260,9 +106,10 @@ function renderProducts() {
         const prices = hasVariations ? variations.map(v => v.price) : [product.price || 0];
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
+
         const displayBasePrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
 
-        // Discount
+        // Calculate discounted prices
         let displayPriceHTML;
         if (product.discount > 0) {
             const discountedPrices = prices.map(p => p * (1 - product.discount / 100));
@@ -272,7 +119,7 @@ function renderProducts() {
             displayPriceHTML = `<span class="original-price">${displayBasePrice}</span><span class="discount-price">${discountedText}</span>`;
         } else displayPriceHTML = `<span class="regular-price">${displayBasePrice}</span>`;
 
-        // Table row
+        // ---------------- TABLE ROW ----------------
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${product.name}</td>
@@ -288,7 +135,7 @@ function renderProducts() {
           </td>`;
         merchTableBody.appendChild(tr);
 
-        // Live preview card
+        // ---------------- LIVE PREVIEW ----------------
         const card = document.createElement("div");
         card.classList.add("product-item");
 
@@ -318,7 +165,7 @@ function renderProducts() {
         `;
         merchPreviewGrid.appendChild(card);
 
-        // Variation change
+        // Variation change handler
         const select = card.querySelector(".variation-select");
         const buyBtn = card.querySelector(".buy-now");
         const priceSpan = card.querySelector(".price");
@@ -351,7 +198,56 @@ function renderProducts() {
     });
 }
 
-// Save product
+// -------------------------
+// EDIT / DELETE PRODUCTS
+// -------------------------
+window.editProduct = function(id) {
+    const p = allProducts.find(x => x.id === id);
+    if (!p) return;
+
+    $("product-id").value = p.id;
+    $("product-name").value = p.name;
+    $("product-category").value = p.category;
+    $("product-discount").value = p.discount || 0;
+    $("product-stock").value = p.stock;
+    $("product-sale").value = p.sale ? "true" : "false";
+    $("product-image").value = p.image;
+    $("product-link").value = p.link;
+    merchBasePriceInput.value = p.price || "";
+    merchBasePriceInput.readOnly = !!(p.variations && p.variations.length);
+
+    merchVariationsContainer.innerHTML = "";
+    (p.variations || []).forEach(v => {
+        const div = document.createElement("div");
+        div.classList.add("variation");
+        div.innerHTML = `
+            <input type="text" class="variation-color" value="${v.color}">
+            <input type="text" class="variation-size" value="${v.size}">
+            <input type="number" class="variation-price" step="0.01" value="${v.price}">
+            <select class="variation-stock">
+                <option value="in-stock" ${v.stock === "in-stock" ? "selected" : ""}>In Stock</option>
+                <option value="low-stock" ${v.stock === "low-stock" ? "selected" : ""}>Low Stock</option>
+                <option value="out-of-stock" ${v.stock === "out-of-stock" ? "selected" : ""}>Out of Stock</option>
+            </select>
+            <button type="button" class="remove-variation">Remove</button>
+        `;
+        merchVariationsContainer.appendChild(div);
+    });
+
+    attachPriceListeners();
+    addRemoveListeners();
+    updateBasePrice();
+};
+
+window.deleteProduct = async id => {
+    if (!confirm("Delete product?")) return;
+    await deleteDoc(doc(db, "merch", id));
+    fetchProducts();
+};
+
+// -------------------------
+// SAVE PRODUCT
+// -------------------------
 merchForm?.addEventListener("submit", async e => {
     e.preventDefault();
     const id = $("product-id").value;
@@ -382,10 +278,6 @@ merchForm?.addEventListener("submit", async e => {
     fetchProducts();
 });
 
-// Edit / Delete
-window.editProduct = function(id) { /* same as above logic */ };
-window.deleteProduct = async id => { if (!confirm("Delete product?")) return; await deleteDoc(doc(db, "merch", id)); fetchProducts(); };
-
 // -------------------------
 // INIT
 // -------------------------
@@ -393,8 +285,6 @@ fetchProducts();
 attachPriceListeners();
 addRemoveListeners();
 updateBasePrice();
-loadGoalTracker();
-loadShoutoutsAdmin();
 
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
