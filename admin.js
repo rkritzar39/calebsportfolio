@@ -254,7 +254,7 @@ let allDisabilities = [];
 let allTechItems = [];
 
 //---------------------------------------------------------------------
-// MERCH SYSTEM (FULLY FIXED VERSION) — Drop-in replacement
+// MERCH SYSTEM — FULLY FIXED VERSION
 //---------------------------------------------------------------------
 
 // Elements
@@ -262,7 +262,6 @@ const merchForm = document.getElementById("product-form");
 const merchTableBody = document.querySelector("#product-table tbody");
 const merchPreviewGrid = document.getElementById("preview-grid");
 const merchCountAdmin = document.getElementById("product-count-admin");
-
 const merchVariationsContainer = document.getElementById("variations-container");
 const merchAddVariationBtn = document.getElementById("add-variation");
 const merchBasePriceInput = document.getElementById("base-price");
@@ -277,18 +276,32 @@ let allProducts = [];
 // Variation price → base price calculator
 // -------------------------------------------------
 function updateBasePrice() {
-  const prices = Array.from(
-    merchVariationsContainer.querySelectorAll(".variation-price")
-  ).map(i => parseFloat(i.value) || 0);
+  const variations = Array.from(
+    merchVariationsContainer.querySelectorAll(".variation")
+  ).filter(v => v.querySelector(".variation-price").value.trim() !== "");
 
-  if (!prices.length) {
-    merchBasePriceInput.value = "";
+  const prices = variations
+    .map(v => parseFloat(v.querySelector(".variation-price").value) || 0)
+    .filter(p => p > 0);
+
+  if (!variations.length) {
+    // No variations → allow manual price entry
+    merchBasePriceInput.readOnly = false;
     return;
   }
 
-  merchBasePriceInput.value = Math.min(...prices).toFixed(2);
+  merchBasePriceInput.readOnly = true;
+
+  if (variations.length === 1) {
+    merchBasePriceInput.value = prices[0].toFixed(2);
+  } else {
+    const minPrice = Math.min(...prices).toFixed(2);
+    const maxPrice = Math.max(...prices).toFixed(2);
+    merchBasePriceInput.value = minPrice === maxPrice ? minPrice : `${minPrice} – ${maxPrice}`;
+  }
 }
 
+// Attach listeners to variation price inputs
 function attachPriceListeners() {
   document.querySelectorAll(".variation-price").forEach(input => {
     input.removeEventListener("input", updateBasePrice);
@@ -296,6 +309,7 @@ function attachPriceListeners() {
   });
 }
 
+// Attach remove button listeners
 function addRemoveListeners() {
   document.querySelectorAll(".remove-variation").forEach(btn => {
     btn.onclick = () => {
@@ -312,9 +326,9 @@ merchAddVariationBtn.addEventListener("click", () => {
   const div = document.createElement("div");
   div.classList.add("variation");
   div.innerHTML = `
-    <input type="text" class="variation-color" placeholder="Color" required>
-    <input type="text" class="variation-size" placeholder="Size" required>
-    <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
+    <input type="text" class="variation-color" placeholder="Color">
+    <input type="text" class="variation-size" placeholder="Size">
+    <input type="number" class="variation-price" placeholder="Price" step="0.01">
     <select class="variation-stock">
       <option value="in-stock">In Stock</option>
       <option value="low-stock">Low Stock</option>
@@ -322,7 +336,6 @@ merchAddVariationBtn.addEventListener("click", () => {
     </select>
     <button type="button" class="remove-variation">Remove</button>
   `;
-
   merchVariationsContainer.appendChild(div);
   attachPriceListeners();
   addRemoveListeners();
@@ -350,24 +363,27 @@ function renderProducts() {
 
   allProducts.forEach(product => {
     const variations = product.variations || [];
-
     const inStock = variations.filter(v => v.stock !== "out-of-stock");
-    const basePrice = inStock.length
-      ? Math.min(...inStock.map(v => v.price))
-      : product.price || 0;
+
+    const prices = inStock.length
+      ? inStock.map(v => v.price)
+      : product.variations.length === 0
+      ? [parseFloat(product.price) || 0]
+      : [0];
+
+    const basePrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
 
     const finalPrice = product.discount
       ? (basePrice * (1 - product.discount / 100)).toFixed(2)
       : basePrice.toFixed(2);
 
-    // -------------------------------------------------
-    // TABLE ROW
-    // -------------------------------------------------
+    // ------------------ TABLE ------------------
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${product.name}</td>
       <td>${product.category}</td>
-      <td>$${finalPrice}</td>
+      <td>${variations.length > 1 ? `${basePrice.toFixed(2)} – ${maxPrice.toFixed(2)}` : `$${finalPrice}`}</td>
       <td>${product.discount || 0}%</td>
       <td>${product.stock}</td>
       <td>${product.sale ? "Yes" : "No"}</td>
@@ -378,9 +394,7 @@ function renderProducts() {
     `;
     merchTableBody.appendChild(tr);
 
-    // -------------------------------------------------
-    // PREVIEW CARD
-    // -------------------------------------------------
+    // ------------------ PREVIEW ------------------
     const card = document.createElement("div");
     card.classList.add("product-item");
 
@@ -394,7 +408,9 @@ function renderProducts() {
       variationSelect += `</select>`;
     }
 
-    const priceHTML = product.discount
+    const priceHTML = variations.length
+      ? `<span class="regular-price">${basePrice.toFixed(2)}${basePrice !== maxPrice ? ' – ' + maxPrice.toFixed(2) : ''}</span>`
+      : product.discount
       ? `<span class="original-price">$${basePrice.toFixed(2)}</span>
          <span class="discount-price">$${finalPrice}</span>
          <span class="sale-badge">-${product.discount}% Off</span>`
@@ -404,23 +420,16 @@ function renderProducts() {
       (variations.length && !inStock.length) ||
       (!variations.length && product.stock === "out-of-stock");
 
-    const buttonHTML = `
-      <button class="buy-now" ${disabled ? "disabled" : ""}>
-        Buy Now
-      </button>
-    `;
-
     card.innerHTML = `
       <div class="product-image-container">
         <img src="${product.image}">
         ${product.sale ? `<div class="sale-ribbon">Sale</div>` : ""}
         <div class="stock-ribbon ${product.stock}">${product.stock}</div>
       </div>
-
       <h3>${product.name}</h3>
       ${variationSelect}
       <p class="price">${priceHTML}</p>
-      ${buttonHTML}
+      <button class="buy-now" ${disabled ? "disabled" : ""}>Buy Now</button>
     `;
 
     merchPreviewGrid.appendChild(card);
@@ -442,17 +451,18 @@ merchForm.addEventListener("submit", async e => {
     size: v.querySelector(".variation-size").value,
     price: parseFloat(v.querySelector(".variation-price").value),
     stock: v.querySelector(".variation-stock").value
-  }));
+  })).filter(v => v.price > 0 || v.color || v.size);
 
   const product = {
     name: document.getElementById("product-name").value,
     category: document.getElementById("product-category").value,
-    discount: parseFloat(document.getElementById("product-discount").value),
+    discount: parseFloat(document.getElementById("product-discount").value) || 0,
     stock: document.getElementById("product-stock").value,
     sale: document.getElementById("product-sale").value === "true",
     image: document.getElementById("product-image").value,
     link: document.getElementById("product-link").value,
     variations,
+    price: variations.length === 0 ? parseFloat(merchBasePriceInput.value) || 0 : undefined,
     order: id ? undefined : allProducts.length
   };
 
@@ -479,9 +489,11 @@ window.editProduct = id => {
   document.getElementById("product-sale").value = p.sale ? "true" : "false";
   document.getElementById("product-image").value = p.image;
   document.getElementById("product-link").value = p.link;
+  merchBasePriceInput.value = p.price ? p.price.toFixed(2) : "";
+  merchBasePriceInput.readOnly = !!(p.variations && p.variations.length);
 
   merchVariationsContainer.innerHTML = "";
-  p.variations.forEach(v => {
+  (p.variations || []).forEach(v => {
     const div = document.createElement("div");
     div.classList.add("variation");
     div.innerHTML = `
@@ -541,7 +553,6 @@ fetchProducts();
 attachPriceListeners();
 addRemoveListeners();
 updateBasePrice();
-
 
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
