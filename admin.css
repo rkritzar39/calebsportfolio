@@ -2986,3 +2986,38 @@ body.dark-mode .g_id_signin > div[role="button"] {
   background: #ff4444;
   color: #fff;
 }
+
+/* Stock badges */
+.stock-badge {
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #fff;
+  text-transform: capitalize;
+  font-size: 0.85rem;
+}
+.badge-green { background: #28a745; }
+.badge-yellow { background: #ffc107; color: #333; }
+.badge-gray { background: #6c757d; }
+
+/* Sale badge */
+.sale-badge {
+  background: #dc3545;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+/* Price formatting */
+.original-price {
+  text-decoration: line-through;
+  color: #888;
+  margin-right: 5px;
+}
+.discount-price {
+  color: #dc3545;
+  font-weight: bold;
+}
+
