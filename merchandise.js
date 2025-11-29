@@ -47,15 +47,24 @@ function renderProducts(products) {
     const variations = product.variations || [];
     const hasVariations = variations.length > 0;
 
-    // Determine base price for display
+    // Determine min/max prices
     const inStockVariations = variations.filter(v => v.stock !== "out-of-stock");
-    const basePrice = inStockVariations.length
-      ? Math.min(...inStockVariations.map(v => v.price))
-      : product.price || 0;
+    const prices = inStockVariations.length
+      ? inStockVariations.map(v => v.price)
+      : hasVariations
+      ? [0]
+      : [product.price || 0];
+
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+
+    const displayPrice = minPrice === maxPrice
+      ? minPrice.toFixed(2)
+      : `${minPrice.toFixed(2)} – ${maxPrice.toFixed(2)}`;
 
     const finalPrice = product.discount
-      ? (basePrice * (1 - (product.discount || 0) / 100)).toFixed(2)
-      : basePrice.toFixed(2);
+      ? (minPrice * (1 - (product.discount || 0) / 100)).toFixed(2)
+      : minPrice.toFixed(2);
 
     // Generate variation selector if multiple variations
     let variationSelectHTML = "";
@@ -71,10 +80,10 @@ function renderProducts(products) {
 
     // Price HTML for initial render
     const priceHTML = product.discount
-      ? `<span class="original-price">$${basePrice.toFixed(2)}</span>
+      ? `<span class="original-price">$${minPrice.toFixed(2)}</span>
          <span class="discount-price">$${finalPrice}</span>
          <span class="sale-badge">-${product.discount}% Off</span>`
-      : `<span class="regular-price">$${finalPrice}</span>`;
+      : `<span class="regular-price">${displayPrice}</span>`;
 
     // Determine if Buy Now button should be disabled
     const overallOutOfStock = (!hasVariations && product.stock === "out-of-stock") || (hasVariations && inStockVariations.length === 0);
@@ -102,31 +111,9 @@ function renderProducts(products) {
     const priceSpan = productDiv.querySelector(".price");
 
     const updatePriceAndButton = () => {
-      if (!select) {
-        // Single variation
-        const singleVar = variations[0] || { price: product.price || 0, stock: product.stock };
-        const newPrice = product.discount
-          ? (singleVar.price * (1 - (product.discount || 0)/100)).toFixed(2)
-          : singleVar.price.toFixed(2);
+      let selectedVar = variations[0] || { price: product.price || 0, stock: product.stock };
+      if (select) selectedVar = variations[select.value];
 
-        if (product.discount) {
-          priceSpan.innerHTML = `
-            <span class="original-price">$${singleVar.price.toFixed(2)}</span>
-            <span class="discount-price">$${newPrice}</span>
-            <span class="sale-badge">-${product.discount}% Off</span>
-          `;
-        } else {
-          priceSpan.innerHTML = `<span class="regular-price">$${newPrice}</span>`;
-        }
-
-        buyBtn.disabled = singleVar.stock === "out-of-stock";
-        buyBtn.style.background = singleVar.stock === "out-of-stock" ? "#888" : "";
-        buyBtn.style.cursor = singleVar.stock === "out-of-stock" ? "not-allowed" : "";
-        return;
-      }
-
-      const idx = select.value;
-      const selectedVar = variations[idx];
       const newPrice = product.discount
         ? (selectedVar.price * (1 - (product.discount || 0)/100)).toFixed(2)
         : selectedVar.price.toFixed(2);
@@ -138,7 +125,7 @@ function renderProducts(products) {
           <span class="sale-badge">-${product.discount}% Off</span>
         `;
       } else {
-        priceSpan.innerHTML = `<span class="regular-price">$${newPrice}</span>`;
+        priceSpan.innerHTML = `<span class="regular-price">$${selectedVar.price.toFixed(2)}</span>`;
       }
 
       buyBtn.disabled = selectedVar.stock === "out-of-stock";
@@ -156,9 +143,12 @@ function renderProducts(products) {
       if (buyBtn.disabled) return;
 
       let url = product.link;
-      let selectedVar = variations[0];
-      if (select) selectedVar = variations[select.value];
-      if (selectedVar) url += `?color=${encodeURIComponent(selectedVar.color)}&size=${encodeURIComponent(selectedVar.size)}`;
+      if (select) {
+        const sv = variations[select.value];
+        url += `?color=${encodeURIComponent(sv.color)}&size=${encodeURIComponent(sv.size)}`;
+      } else if (variations[0]) {
+        url += `?color=${encodeURIComponent(variations[0].color)}&size=${encodeURIComponent(variations[0].size)}`;
+      }
       window.open(url, "_blank");
     });
   });
