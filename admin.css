@@ -2857,3 +2857,132 @@ body.dark-mode .g_id_signin > div[role="button"] {
   color: var(--secondary-text);
   font-size: 0.9rem;
 }
+
+/* ===== Merch Management Section ===== */
+#merch-management {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+#merch-management h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.form-container {
+  background: var(--content-bg);
+  padding: 25px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  margin-bottom: 40px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn-save {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+/* Table Styling */
+.table-container {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  background: var(--content-bg);
+}
+
+#product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#product-table th,
+#product-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.95rem;
+}
+
+#product-table th {
+  background-color: rgba(255,255,255,0.05);
+  font-weight: 600;
+}
+
+#product-table tr:hover {
+  background-color: rgba(255,255,255,0.03);
+}
+
+#product-table button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+#product-table button:hover {
+  opacity: 0.85;
+}
+
+#product-table button:first-child {
+  background: var(--accent-color);
+  color: #fff;
+  margin-right: 5px;
+}
+
+#product-table button:last-child {
+  background: #ff4444;
+  color: #fff;
+}
