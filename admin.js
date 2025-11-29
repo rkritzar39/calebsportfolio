@@ -221,28 +221,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const storage = getStorage();
 
-// *** Import Firebase services from your corrected init file ***
-import { db, auth } from './firebase-init.js'; // Ensure path is correct
-
-// Import Firebase functions (Includes 'where', 'query', 'orderBy', 'limit')
-import {
-    getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc, serverTimestamp, getDoc, query, orderBy, where, limit, Timestamp, deleteField, writeBatch // <<< MAKE SURE Timestamp IS HERE
+// admin.js
+import { db } from './firebase-init.js';
+import { 
+    collection, 
+    getDocs, 
+    addDoc, 
+    updateDoc, 
+    deleteDoc, 
+    doc, 
+    getDoc, 
+    onSnapshot 
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged,
-    GoogleAuthProvider,
-    signInWithCredential
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
-// *** Global Variable for Client-Side Filtering ***
-let allShoutouts = { tiktok: [], instagram: [], youtube: [] }; // Stores the full lists for filtering
-
-let allUsefulLinks = [];
-let allSocialLinks = [];
-let allDisabilities = [];
-let allTechItems = []; // For Tech section
 
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
@@ -294,14 +284,12 @@ form.addEventListener("submit", async (e) => {
         sale: document.getElementById("product-sale").value === "true",
         image: document.getElementById("product-image").value,
         link: document.getElementById("product-link").value,
-        order: parseInt(document.getElementById("product-order").value) || 0 // optional for ordering
+        order: parseInt(document.getElementById("product-order").value) || 0
     };
 
     if (id) {
-        // Update existing product
         await updateDoc(doc(db, "merch", id), productData);
     } else {
-        // Add new product
         await addDoc(productsCol, productData);
     }
 
@@ -313,8 +301,8 @@ form.addEventListener("submit", async (e) => {
 // Edit Product
 // -----------------------------
 window.editProduct = async (id) => {
-    const docSnap = await getDocs(doc(db, "merch", id));
-    const data = (await doc(db, "merch", id).get()).data();
+    const docSnap = await getDoc(doc(db, "merch", id));
+    const data = docSnap.data();
 
     document.getElementById("product-id").value = id;
     document.getElementById("product-name").value = data.name;
