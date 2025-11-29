@@ -8,15 +8,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sectionTitle = document.getElementById("section-title");
     const productCount = document.getElementById("product-count");
 
-    // Define categories
-    const categories = ["All Products", "Outdoor", "Hats", "Hoodies & Sweatshirts", "T-Shirts", "Baby & Toddler", "Kitchenwear", "Accessories"];
-    categories.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat;
-        option.textContent = cat;
-        categorySelect.appendChild(option);
-    });
-
     // Fetch products from Firestore
     async function fetchProducts() {
         const merchCol = collection(db, 'merch');
@@ -25,30 +16,54 @@ document.addEventListener("DOMContentLoaded", async () => {
         return snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
     }
 
-    // Render products into the grid
-    function renderProducts(products) {
-        productGrid.innerHTML = "";
-        productCount.textContent = `${products.length} product${products.length !== 1 ? 's' : ''}`;
+    // Dynamically populate categories from products
+    function populateCategories(products) {
+        const categories = new Set(products.map(p => p.category).filter(c => c));
+        categorySelect.innerHTML = '<option value="All Products">All Products</option>';
+        categories.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.textContent = cat;
+            categorySelect.appendChild(option);
+        });
+    }
 
-        products.forEach(product => {
+    // Calculate price HTML based on discount
+    function getPriceHTML(product) {
+        const original = Number(product.originalPrice || product.price).toFixed(2);
+        let finalPrice = Number(product.price || original).toFixed(2);
+
+        if (product.discount && product.discount > 0) {
+            finalPrice = (original * (1 - product.discount / 100)).toFixed(2);
+            return `
+                <span class="original-price">$${original}</span>
+                <span class="sale-price">$${finalPrice}</span>
+                <span class="discount">-${product.discount}% Off</span>
+            `;
+        } else {
+            return `<span class="regular-price">$${finalPrice}</span>`;
+        }
+    }
+
+    // Render products
+    function renderProducts(productsToRender) {
+        productGrid.innerHTML = "";
+        productCount.textContent = `${productsToRender.length} product${productsToRender.length !== 1 ? 's' : ''}`;
+
+        productsToRender.forEach(product => {
             const productItem = document.createElement("div");
             productItem.classList.add("product-item");
 
-            // Sale & stock ribbons
             const saleRibbon = product.sale ? '<div class="sale-ribbon">Sale</div>' : '';
-            const stockRibbon = `<div class="stock-ribbon ${product.stock}">${product.stock.replace("-", " ")}</div>`;
+            const stockRibbon = product.stock ? `<div class="stock-ribbon ${product.stock}">${product.stock.replace("-", " ")}</div>` : '';
 
-            // Price HTML
-            const priceHTML = product.sale
-                ? `<span class="original-price">$${Number(product.originalPrice).toFixed(2)}</span>
-                   <span class="sale-price">$${Number(product.price).toFixed(2)}</span>
-                   <span class="discount">-${product.discount}% Off</span>`
-                : `<span class="regular-price">$${Number(product.price).toFixed(2)}</span>`;
+            const priceHTML = getPriceHTML(product);
 
-            // Product template
             productItem.innerHTML = `
-                <a href="${product.link}" target="_blank">
-                    <img src="${product.image}" alt="${product.name}">
+                <a href="${product.link}" target="_blank" class="product-link">
+                    <div class="product-image-container">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
                     ${saleRibbon}
                     ${stockRibbon}
                     <h3>${product.name}</h3>
@@ -56,30 +71,25 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <span class="buy-now">Buy Now</span>
                 </a>
             `;
-
             productGrid.appendChild(productItem);
         });
     }
 
-    // Fetch and render all products
+    // Initial load
     const products = await fetchProducts();
+    populateCategories(products);
     renderProducts(products);
 
-    // Filter products by category
+    // Category filtering
     categorySelect.addEventListener("change", () => {
         const selected = categorySelect.value;
         sectionTitle.textContent = selected;
-
-        if (selected === "All Products") {
-            renderProducts(products);
-        } else {
-            const filtered = products.filter(p => p.category === selected);
-            renderProducts(filtered);
-        }
+        if (selected === "All Products") renderProducts(products);
+        else renderProducts(products.filter(p => p.category === selected));
     });
 });
 
-// Optional: fade-in effect
+// Optional: fade-in effect once fully loaded
 window.addEventListener("load", () => {
     document.body.classList.add("loaded");
 });
