@@ -466,41 +466,57 @@ function renderProducts() {
   });
 }
 
-// -----------------------------
-// Admin: Save product
-// -----------------------------
 merchForm?.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const id = document.getElementById("product-id").value;
+  const id = merchForm.querySelector("#product-id").value;
+
+  // Gather variations
   const variations = Array.from(merchVariationsContainer.querySelectorAll(".variation"))
     .map(v => ({
-      color: v.querySelector(".variation-color").value,
-      size: v.querySelector(".variation-size").value,
-      price: parseFloat(v.querySelector(".variation-price").value),
+      color: v.querySelector(".variation-color").value.trim(),
+      size: v.querySelector(".variation-size").value.trim(),
+      price: parseFloat(v.querySelector(".variation-price").value) || 0,
       stock: v.querySelector(".variation-stock").value
-    })).filter(v => v.price || v.color || v.size);
+    }))
+    .filter(v => v.price || v.color || v.size); // only include filled variations
 
+  // Determine base price if no variations
+  let basePrice = 0;
+  if (!variations.length) {
+    basePrice = parseFloat(merchBasePriceInput.value) || 0;
+  }
+
+  // Build product object
   const product = {
-    name: document.getElementById("product-name").value,
-    category: document.getElementById("product-category").value,
-    discount: parseFloat(document.getElementById("product-discount").value) || 0,
-    stock: document.getElementById("product-stock").value,
-    sale: document.getElementById("product-sale").value === "true",
-    image: document.getElementById("product-image").value,
-    link: document.getElementById("product-link").value,
-    variations,
-    price: variations.length === 0 ? parseFloat(merchBasePriceInput.value) || 0 : undefined,
+    name: merchForm.querySelector("#product-name").value.trim(),
+    category: merchForm.querySelector("#product-category").value,
+    discount: parseFloat(merchForm.querySelector("#product-discount").value) || 0,
+    stock: merchForm.querySelector("#product-stock").value,
+    sale: merchForm.querySelector("#product-sale").value === "true",
+    image: merchForm.querySelector("#product-image").value.trim(),
+    link: merchForm.querySelector("#product-link").value.trim(),
+    variations: variations.length ? variations : [],
+    price: !variations.length ? basePrice : undefined,
     order: id ? undefined : allProducts.length
   };
 
-  if (id) await updateDoc(doc(db, "merch", id), product);
-  else await addDoc(merchCol, product);
+  try {
+    if (id) {
+      await updateDoc(doc(db, "merch", id), product);
+    } else {
+      await addDoc(merchCol, product);
+    }
 
-  merchForm.reset();
-  merchVariationsContainer.innerHTML = "";
-  updateBasePrice();
-  fetchProducts();
+    // Reset form
+    merchForm.reset();
+    merchVariationsContainer.innerHTML = "";
+    updateBasePrice();
+    fetchProducts();
+  } catch (err) {
+    console.error("Error saving product:", err);
+    alert("Failed to save product. Check console for details.");
+  }
 });
 
 // -----------------------------
