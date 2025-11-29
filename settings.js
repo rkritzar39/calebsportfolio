@@ -567,67 +567,87 @@ class SettingsManager {
     const previewContainer = document.getElementById("customBgPreviewContainer");
     const previewImage = document.getElementById("customBgPreview");
     const separator = document.getElementById("customBgSeparator");
+    const zoomSlider = document.getElementById("bgZoomSlider");
+    const zoomLabel = document.querySelector('label[for="bgZoomSlider"]');
+    const customBgCard = document.querySelector(".custom-background");
 
     if (!upload || !previewContainer || !previewImage) return;
+
+    // Utility to toggle zoom controls
+    const toggleZoomControls = (show) => {
+      if (zoomSlider) zoomSlider.style.display = show ? "inline-block" : "none";
+      if (zoomLabel) zoomLabel.style.display = show ? "block" : "none";
+    };
 
     const savedBg = localStorage.getItem("customBackground");
     const savedName = localStorage.getItem("customBackgroundName");
     const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
 
+    // If a saved image exists, show preview and controls
     if (savedBg) {
       if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
       if (remove) remove.style.display = "inline-block";
-      this.toggleWallpaperBlurCard(true);
+      if (customBgCard) customBgCard.style.display = "flex";
+      toggleZoomControls(true);
+
       previewContainer.classList.add("visible");
-      previewImage.src = savedBg;
-      previewImage.onload = () => previewImage.classList.add("loaded");
+      previewImage.style.backgroundImage = `url("${savedBg}")`;
+      previewImage.classList.add("loaded");
+
       if (separator) separator.classList.add("visible");
+      this.applyCustomBackground(true);
       this.applyWallpaperBlur(savedBlur);
 
-      const blurSlider = document.getElementById("blur-slider");
-      const blurBadge = document.getElementById("blurValue");
-      if (blurSlider && blurBadge) {
-        blurSlider.value = savedBlur;
-        blurBadge.textContent = `${savedBlur}px`;
+      if (zoomSlider) {
+        zoomSlider.value = localStorage.getItem("customBackgroundZoom") || 100;
       }
     } else {
-      this.toggleWallpaperBlurCard(false);
+      if (customBgCard) customBgCard.style.display = "none";
+      toggleZoomControls(false);
       if (separator) separator.classList.remove("visible");
     }
 
-    upload.addEventListener("change", (e) => {
+    // Handle image upload
+    upload.addEventListener("change", async (e) => {
       const file = e.target.files?.[0];
       if (!file) return;
+
       if (fileNameDisplay) fileNameDisplay.textContent = file.name;
 
       const reader = new FileReader();
-      reader.onload = (evt) => {
-        const imageData = evt.target.result;
+      reader.onload = async (evt) => {
+        let imageData = evt.target.result;
+
+        // Optional: call AI to extend the image
+        try {
+          imageData = await this.extendBackgroundWithAI(imageData);
+        } catch (err) {
+          console.warn("AI extension failed, using original image:", err);
+        }
+
         localStorage.setItem("customBackground", imageData);
         localStorage.setItem("customBackgroundName", file.name);
 
-        const blurSlider = document.getElementById("blur-slider");
-        const blurValue = blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
+        if (customBgCard) customBgCard.style.display = "flex";
+        toggleZoomControls(true);
+
+        const blurValue = zoomSlider ? zoomSlider.value : localStorage.getItem("wallpaperBlur") || "0";
         localStorage.setItem("wallpaperBlur", blurValue);
-
-        this.applyCustomBackground(true);
-        this.applyWallpaperBlur(blurValue);
-
-        const blurBadge = document.getElementById("blurValue");
-        if (blurBadge) blurBadge.textContent = `${blurValue}px`;
-
-        if (remove) remove.style.display = "inline-block";
-        this.toggleWallpaperBlurCard(true);
 
         previewContainer.classList.add("visible");
         previewImage.classList.remove("loaded");
-        previewImage.src = imageData;
+        previewImage.style.backgroundImage = `url("${imageData}")`;
         previewImage.onload = () => previewImage.classList.add("loaded");
         if (separator) separator.classList.add("visible");
+
+        if (remove) remove.style.display = "inline-block";
+        this.applyCustomBackground(true);
+        this.applyWallpaperBlur(blurValue);
       };
       reader.readAsDataURL(file);
     });
 
+    // Handle removal
     if (remove) {
       remove.addEventListener("click", (e) => {
         e.preventDefault();
@@ -638,58 +658,51 @@ class SettingsManager {
         localStorage.removeItem("customBackgroundPosY");
         localStorage.removeItem("customBackgroundZoom");
 
+        if (customBgCard) customBgCard.style.display = "none";
+        toggleZoomControls(false);
+
         const layer = document.getElementById("wallpaper-layer");
         if (layer) {
           layer.style.backgroundImage = "";
           layer.style.opacity = "0";
         }
 
-        this.applyCustomBackground(false);
-        this.toggleWallpaperBlurCard(false);
-
-        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
-        remove.style.display = "none";
-
         previewContainer.classList.remove("visible");
         previewImage.classList.remove("loaded");
-        previewImage.src = "";
+        previewImage.style.backgroundImage = "";
+        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+        remove.style.display = "none";
         if (separator) separator.classList.remove("visible");
 
-        const blurSlider = document.getElementById("blur-slider");
         const blurBadge = document.getElementById("blurValue");
-        if (blurSlider && blurBadge) {
-          blurSlider.value = 0;
+        if (zoomSlider && blurBadge) {
+          zoomSlider.value = 100;
           blurBadge.textContent = "0px";
         }
       });
     }
-  }
 
-  initWallpaperDragZoom() {
-    const preview = document.getElementById("customBgPreview");
-    const zoomSlider = document.getElementById("bgZoomSlider");
-    if (!preview || !zoomSlider) return;
-
+    // --- Drag & Zoom ---
     let isDragging = false;
     let startX, startY;
     let posX = parseFloat(localStorage.getItem("customBackgroundPosX") || 50);
     let posY = parseFloat(localStorage.getItem("customBackgroundPosY") || 50);
-    let zoom = parseFloat(localStorage.getItem("customBackgroundZoom") || 100);
-    zoomSlider.value = zoom;
+    let zoomVal = parseFloat(localStorage.getItem("customBackgroundZoom") || 100);
 
-    this.applyCustomBackgroundTransform(preview, posX, posY, zoom);
+    // Initialize transform
+    this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
 
-    preview.addEventListener("mousedown", (e) => {
+    previewImage?.addEventListener("mousedown", (e) => {
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
-      preview.classList.add("dragging");
+      previewImage.classList.add("dragging");
     });
 
     document.addEventListener("mousemove", (e) => {
       if (!isDragging) return;
-      const dx = ((e.clientX - startX) / preview.offsetWidth) * 100;
-      const dy = ((e.clientY - startY) / preview.offsetHeight) * 100;
+      const dx = ((e.clientX - startX) / previewImage.offsetWidth) * 100;
+      const dy = ((e.clientY - startY) / previewImage.offsetHeight) * 100;
       startX = e.clientX;
       startY = e.clientY;
 
@@ -698,19 +711,21 @@ class SettingsManager {
 
       localStorage.setItem("customBackgroundPosX", posX);
       localStorage.setItem("customBackgroundPosY", posY);
-      this.applyCustomBackgroundTransform(preview, posX, posY, zoom);
+
+      this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
       this.applyCustomBackground(true);
     });
 
     document.addEventListener("mouseup", () => {
       isDragging = false;
-      preview.classList.remove("dragging");
+      previewImage?.classList.remove("dragging");
     });
 
-    zoomSlider.addEventListener("input", (e) => {
-      zoom = e.target.value;
-      localStorage.setItem("customBackgroundZoom", zoom);
-      this.applyCustomBackgroundTransform(preview, posX, posY, zoom);
+    // Zoom slider
+    zoomSlider?.addEventListener("input", (e) => {
+      zoomVal = e.target.value;
+      localStorage.setItem("customBackgroundZoom", zoomVal);
+      this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
       this.applyCustomBackground(true);
     });
   }
@@ -723,6 +738,23 @@ class SettingsManager {
     const { layer } = this.ensureWallpaperLayers();
     layer.style.backgroundPosition = `${posX}% ${posY}%`;
     layer.style.backgroundSize = `${zoom}% auto`;
+  }
+
+  async extendBackgroundWithAI(imageData) {
+    // Example: call your server-side endpoint that uses OpenAI or Stable Diffusion
+    try {
+      const response = await fetch("/api/extend-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageData }),
+      });
+      const data = await response.json();
+      if (data.extendedImage) return data.extendedImage;
+      return imageData; // fallback
+    } catch (err) {
+      console.error("AI background extension failed:", err);
+      return imageData; // fallback
+    }
   }
 
   applyCustomBackground(fade = false) {
@@ -755,8 +787,8 @@ class SettingsManager {
         window.matchMedia("(prefers-color-scheme: dark)").matches);
 
     tint.style.background = isDark
-      ? "rgba(0,0,0,0.45)"
-      : "rgba(255,255,255,0.15)";
+      ? "rgba(0, 0, 0, 0.45)"
+      : "rgba(255, 255, 255, 0.15)";
 
     const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
     this.applyWallpaperBlur(blurValue);
