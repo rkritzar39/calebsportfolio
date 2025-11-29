@@ -245,17 +245,19 @@ let allDisabilities = [];
 let allTechItems = []; // For Tech section
 
 
-// DOM Elements
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
 const productsCol = collection(db, "merch");
+const productCountEl = document.getElementById("product-count-admin");
 
 // -----------------------------
-// Fetch & render products in admin table
+// Fetch & Render Products
 // -----------------------------
 async function fetchProducts() {
-  tableBody.innerHTML = "";
   const snapshot = await getDocs(productsCol);
+  tableBody.innerHTML = "";
+
+  productCountEl.textContent = snapshot.docs.length;
 
   snapshot.docs.forEach(docSnap => {
     const data = docSnap.data();
@@ -263,14 +265,28 @@ async function fetchProducts() {
       ? (data.price * (1 - data.discount / 100)).toFixed(2)
       : Number(data.price).toFixed(2);
 
+    // Stock badge color
+    let stockClass = "";
+    switch (data.stock) {
+      case "in-stock": stockClass = "badge-green"; break;
+      case "low-stock": stockClass = "badge-yellow"; break;
+      case "out-of-stock": stockClass = "badge-gray"; break;
+    }
+
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${data.name}</td>
       <td>${data.category}</td>
-      <td>$${finalPrice}</td>
+      <td>
+        ${data.discount 
+          ? `<span class="original-price">$${Number(data.price).toFixed(2)}</span>
+             <span class="discount-price">$${finalPrice}</span>`
+          : `$${finalPrice}`
+        }
+      </td>
       <td>${data.discount || 0}%</td>
-      <td>${data.stock}</td>
-      <td>${data.sale}</td>
+      <td><span class="stock-badge ${stockClass}">${data.stock.replace("-", " ")}</span></td>
+      <td>${data.sale ? '<span class="sale-badge">Sale</span>' : 'No'}</td>
       <td>
         <button onclick="editProduct('${docSnap.id}')">Edit</button>
         <button onclick="deleteProduct('${docSnap.id}')">Delete</button>
@@ -295,8 +311,7 @@ form.addEventListener("submit", async (e) => {
     stock: document.getElementById("product-stock").value,
     sale: document.getElementById("product-sale").value === "true",
     image: document.getElementById("product-image").value,
-    link: document.getElementById("product-link").value,
-    order: parseInt(document.getElementById("product-order")?.value) || 0
+    link: document.getElementById("product-link").value
   };
 
   if (id) {
@@ -314,8 +329,8 @@ form.addEventListener("submit", async (e) => {
 // Edit Product
 // -----------------------------
 window.editProduct = async (id) => {
-  const docSnap = await getDoc(doc(db, "merch", id));
-  const data = docSnap.data();
+  const docSnap = await doc(db, "merch", id).get();
+  const data = (await doc(db, "merch", id).get()).data();
 
   document.getElementById("product-id").value = id;
   document.getElementById("product-name").value = data.name;
@@ -326,9 +341,6 @@ window.editProduct = async (id) => {
   document.getElementById("product-sale").value = data.sale;
   document.getElementById("product-image").value = data.image;
   document.getElementById("product-link").value = data.link;
-  if (document.getElementById("product-order")) {
-    document.getElementById("product-order").value = data.order || 0;
-  }
 };
 
 // -----------------------------
