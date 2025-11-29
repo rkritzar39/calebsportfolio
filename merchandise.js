@@ -1,36 +1,27 @@
 // merchandise.js
 import { db } from './firebase-init.js';
-import {
-  collection,
-  query,
-  orderBy,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-// -----------------------------
 // DOM Elements
-// -----------------------------
 const productGrid = document.getElementById("product-grid");
 const categorySelect = document.getElementById("categories");
 const sectionTitle = document.getElementById("section-title");
 const productCount = document.getElementById("product-count");
 
-// -----------------------------
-// Firestore collection
-// -----------------------------
+// Firestore reference
 const productsCol = collection(db, "merch");
 
-// -----------------------------
-// All products
-// -----------------------------
+// Store all products
 let allProducts = [];
 
 // -----------------------------
-// Render categories dropdown
+// Render categories in dropdown
 // -----------------------------
 function renderCategories(products) {
   const uniqueCategories = Array.from(new Set(products.map(p => p.category))).sort();
   categorySelect.innerHTML = "";
+
+  // All Products option
   const allOption = document.createElement("option");
   allOption.value = "All Products";
   allOption.textContent = "All Products";
@@ -86,7 +77,7 @@ function renderProducts(products) {
 }
 
 // -----------------------------
-// Filter by category
+// Filter products by category
 // -----------------------------
 categorySelect.addEventListener("change", () => {
   const selected = categorySelect.value;
@@ -100,13 +91,17 @@ categorySelect.addEventListener("change", () => {
 });
 
 // -----------------------------
-// Initial Fetch
+// Fetch products from Firestore
 // -----------------------------
 async function fetchProducts() {
-  const snapshot = await getDocs(query(productsCol, orderBy("order", "asc")));
+  const q = query(productsCol, orderBy("order", "asc"));
+  const snapshot = await getDocs(q);
+
   allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
   renderCategories(allProducts);
   renderProducts(allProducts);
 }
 
+// Initial fetch
 fetchProducts();
