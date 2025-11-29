@@ -1,286 +1,544 @@
+   // admin.js (Version includes Preview Prep + Previous Features + Social Links)
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
+
 // -------------------------
-// 🔥 FIREBASE INIT
+// 🔥 FIREBASE INIT (ONE TIME ONLY)
 // -------------------------
-import { db, auth } from './firebase-init.js';
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
+import { db, auth } from './firebase-init.js'; // ← KEEP THIS ONE
+
+// -------------------------
+// FIRESTORE FUNCTIONS
+// -------------------------
 import {
-    collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc,
-    query, orderBy, getDoc, Timestamp, where
+    getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc,
+    serverTimestamp, getDoc, query, orderBy, where, limit, Timestamp,
+    deleteField, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 // -------------------------
-// GLOBAL VARIABLES
+// AUTH
 // -------------------------
-let allProducts = [];
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithCredential
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
-// -------------------------
-// DOM HELPERS
-// -------------------------
-const $ = id => document.getElementById(id);
+const MANUAL_DOC = doc(db, "manualStatus", "site");
 
-// -------------------------
-// MERCH ELEMENTS
-// -------------------------
-const merchForm = $("product-form");
-const merchTableBody = $("product-table")?.querySelector("tbody");
-const merchPreviewGrid = $("preview-grid");
-const merchCountAdmin = $("product-count-admin");
-const merchVariationsContainer = $("variations-container");
-const merchAddVariationBtn = $("add-variation");
-const merchBasePriceInput = $("base-price");
-const merchCol = collection(db, "merch");
+const $ = (id) => document.getElementById(id);
 
-// -------------------------
-// BASE PRICE LOGIC
-// -------------------------
-function updateBasePrice() {
-    const variations = Array.from(merchVariationsContainer.querySelectorAll(".variation"))
-        .filter(v => v.querySelector(".variation-price").value || v.querySelector(".variation-color").value || v.querySelector(".variation-size").value);
-    if (!variations.length) {
-        merchBasePriceInput.readOnly = false;
-        return;
-    }
-    merchBasePriceInput.readOnly = true;
-    const prices = variations.map(v => parseFloat(v.querySelector(".variation-price").value) || 0);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    merchBasePriceInput.value = minPrice === maxPrice ? minPrice.toFixed(2) : `${minPrice.toFixed(2)} – ${maxPrice.toFixed(2)}`;
+function showFeedback(msg, ok = true) {
+  const el = $("manual-status-feedback");
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = ok ? "" : "#ff6b6b";
+  setTimeout(() => { if (el.textContent === msg) el.textContent = ""; }, 4000);
 }
 
-function attachPriceListeners() {
-    document.querySelectorAll(".variation-price").forEach(input => {
-        input.removeEventListener("input", updateBasePrice);
-        input.addEventListener("input", updateBasePrice);
+async function loadManualStatusToForm() {
+  try {
+    const snap = await getDoc(MANUAL_DOC);
+    if (!snap.exists()) {
+      $("manual-status-text").value = "";
+      $("manual-status-icon").value = "manual";
+      $("manual-status-duration").value = 15;
+      $("manual-status-enabled").checked = false;
+      return;
+    }
+    const data = snap.data();
+    $("manual-status-text").value = data.text || "";
+    $("manual-status-icon").value = data.icon || "manual";
+
+    if (data.expiresAt && typeof data.expiresAt === "number") {
+      const mins = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / 60000));
+      $("manual-status-duration").value = mins;
+    } else {
+      $("manual-status-duration").value = data.persistent ? 0 : 15;
+    }
+    $("manual-status-enabled").checked = !!data.enabled;
+  } catch (err) {
+    console.error("Load manual status error:", err);
+    showFeedback("Failed to load manual status", false);
+  }
+}
+
+async function saveManualStatus(e) {
+  e?.preventDefault();
+  try {
+    const text = $("manual-status-text").value.trim();
+    const icon = $("manual-status-icon").value || "manual";
+    const duration = Number($("manual-status-duration").value || 0);
+    const enabled = !!$("manual-status-enabled").checked;
+
+    const payload = {
+      text: text || "",
+      icon,
+      enabled,
+      updated_at: Date.now(),
+      persistent: duration === 0,
+    };
+
+    if (duration > 0) {
+      payload.expiresAt = Date.now() + Math.max(0, duration) * 60_000;
+    } else {
+      payload.expiresAt = null;
+    }
+
+    await setDoc(MANUAL_DOC, payload, { merge: true });
+    showFeedback("Manual status saved");
+  } catch (err) {
+    console.error("Save manual status error:", err);
+    showFeedback("Failed to save manual status", false);
+  }
+}
+
+async function clearManualStatus() {
+  try {
+    await setDoc(MANUAL_DOC, {
+      text: "",
+      icon: "manual",
+      enabled: false,
+      updated_at: Date.now(),
+      expiresAt: null,
+      persistent: false
+    }, { merge: true });
+
+    await loadManualStatusToForm();
+    showFeedback("Manual status cleared");
+  } catch (err) {
+    console.error("Clear manual status error:", err);
+    showFeedback("Failed to clear manual status", false);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = $("manual-status-form");
+  form?.addEventListener("submit", saveManualStatus);
+
+  $("clear-manual-status-btn")?.addEventListener("click", async () => {
+    if (!confirm("Clear manual status? This will disable the manual override.")) return;
+    await clearManualStatus();
+  });
+
+  loadManualStatusToForm();
+
+  (async () => {
+    try {
+      const { onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js");
+      onSnapshot(MANUAL_DOC, (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        $("manual-status-text").value = data.text || "";
+        $("manual-status-icon").value = data.icon || "manual";
+        $("manual-status-enabled").checked = !!data.enabled;
+      });
+    } catch (e) {
+      console.warn("Realtime watch not enabled:", e);
+    }
+  })();
+});
+
+// -----------------------------
+// GOAL TRACKER
+// -----------------------------
+async function loadGoalTracker() {
+  const ref = doc(db, "siteSettings", "goalTracker");
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    const data = snap.data();
+    document.getElementById("goal-title").value = data.goalTitle ?? "";
+    document.getElementById("goal-total").value = data.goalTotal ?? 0;
+    document.getElementById("goal-raised").value = data.goalRaised ?? 0;
+    document.getElementById("goal-remaining").value = data.goalRemaining ?? 0;
+  }
+}
+
+loadGoalTracker();
+
+const goalTitleInput = document.getElementById("goal-title");
+const goalTotalInput = document.getElementById("goal-total");
+const goalRaisedInput = document.getElementById("goal-raised");
+const goalRemainingInput = document.getElementById("goal-remaining");
+
+function updateRemaining() {
+  const total = Number(goalTotalInput.value) || 0;
+  const raised = Number(goalRaisedInput.value) || 0;
+  goalRemainingInput.value = Math.max(total - raised, 0);
+}
+
+goalTotalInput.addEventListener("input", updateRemaining);
+goalRaisedInput.addEventListener("input", updateRemaining);
+
+document.getElementById("goal-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const title = goalTitleInput.value.trim();
+  const total = Number(goalTotalInput.value);
+  const raised = Number(goalRaisedInput.value);
+  const remaining = Math.max(total - raised, 0);
+
+  try {
+    await setDoc(doc(db, "goals", "goalTracker"), {
+      goalTitle: title,
+      goalTotal: total,
+      goalRaised: raised,
+      goalRemaining: remaining,
+      ownerId: auth.currentUser.uid
     });
+
+    const msg = document.getElementById("goal-status-message");
+    msg.textContent = "Goal Tracker Saved!";
+    msg.classList.add("success");
+  } catch (err) {
+    console.error(err);
+    const msg = document.getElementById("goal-status-message");
+    msg.textContent = "Error saving goal tracker.";
+    msg.classList.add("error");
+  }
+});
+
+// -----------------------------
+// LIVE STATUS
+// -----------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.getElementById("live-status-input");
+  const updateBtn = document.getElementById("update-live-status-btn");
+  const clearBtn = document.getElementById("clear-live-status-btn");
+  const resultMsg = document.getElementById("live-status-result");
+
+  updateBtn?.addEventListener("click", async () => {
+    const message = input.value.trim();
+    if (!message) {
+      resultMsg.textContent = "Please enter a status first.";
+      return;
+    }
+
+    try {
+      await setDoc(doc(db, "live_status", "current"), { message });
+      resultMsg.textContent = "✅ Live status updated successfully!";
+      input.value = "";
+    } catch (err) {
+      console.error("Error updating live status:", err);
+      resultMsg.textContent = "❌ Failed to update live status.";
+    }
+  });
+
+  clearBtn?.addEventListener("click", async () => {
+    try {
+      await deleteDoc(doc(db, "live_status", "current"));
+      resultMsg.textContent = "🧹 Live status cleared.";
+    } catch (err) {
+      console.error("Error clearing live status:", err);
+      resultMsg.textContent = "❌ Failed to clear status.";
+    }
+  });
+});
+
+// -----------------------------
+// STORAGE
+// -----------------------------
+const storage = getStorage();
+
+// -----------------------------
+// GLOBAL DATA ARRAYS
+// -----------------------------
+let allShoutouts = { tiktok: [], instagram: [], youtube: [] };
+let allUsefulLinks = [];
+let allSocialLinks = [];
+let allDisabilities = [];
+let allTechItems = [];
+
+// --- Elements ---
+const merchForm = document.getElementById("product-form");
+const merchTableBody = document.querySelector("#product-table tbody");
+const merchPreviewGrid = document.getElementById("preview-grid");
+const merchCountAdmin = document.getElementById("product-count-admin");
+const merchVariationsContainer = document.getElementById("variations-container");
+const merchAddVariationBtn = document.getElementById("add-variation");
+const merchBasePriceInput = document.getElementById("base-price");
+
+// Firestore reference
+const merchCol = collection(db, "merch");
+
+// Local products array
+let allProducts = [];
+
+// -----------------------------
+// Update Base Price
+// -----------------------------
+function updateBasePrice() {
+  const variations = Array.from(merchVariationsContainer.querySelectorAll(".variation"))
+    .filter(v => {
+      const price = v.querySelector(".variation-price").value;
+      const color = v.querySelector(".variation-color").value;
+      const size = v.querySelector(".variation-size").value;
+      return price || color || size; // count only filled rows
+    });
+
+  if (!variations.length) {
+    merchBasePriceInput.readOnly = false;
+    return;
+  }
+
+  merchBasePriceInput.readOnly = true;
+
+  const prices = variations.map(v => parseFloat(v.querySelector(".variation-price").value) || 0);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  merchBasePriceInput.value = minPrice === maxPrice ? minPrice.toFixed(2) : `${minPrice.toFixed(2)} – ${maxPrice.toFixed(2)}`;
+}
+
+// -----------------------------
+// Attach listeners
+// -----------------------------
+function attachPriceListeners() {
+  document.querySelectorAll(".variation-price").forEach(input => {
+    input.removeEventListener("input", updateBasePrice);
+    input.addEventListener("input", updateBasePrice);
+  });
 }
 
 function addRemoveListeners() {
-    document.querySelectorAll(".remove-variation").forEach(btn => {
-        btn.onclick = () => { btn.parentElement.remove(); updateBasePrice(); };
-    });
+  document.querySelectorAll(".remove-variation").forEach(btn => {
+    btn.onclick = () => {
+      btn.parentElement.remove();
+      updateBasePrice();
+    };
+  });
 }
 
-// -------------------------
-// ADD VARIATION
-// -------------------------
-merchAddVariationBtn?.addEventListener("click", () => {
+// -----------------------------
+// Add new variation row
+// -----------------------------
+merchAddVariationBtn.addEventListener("click", () => {
+  const div = document.createElement("div");
+  div.classList.add("variation");
+  div.innerHTML = `
+    <input type="text" class="variation-color" placeholder="Color">
+    <input type="text" class="variation-size" placeholder="Size">
+    <input type="number" class="variation-price" placeholder="Price" step="0.01">
+    <select class="variation-stock">
+      <option value="in-stock">In Stock</option>
+      <option value="low-stock">Low Stock</option>
+      <option value="out-of-stock">Out of Stock</option>
+    </select>
+    <button type="button" class="remove-variation">Remove</button>
+  `;
+  merchVariationsContainer.appendChild(div);
+  attachPriceListeners();
+  addRemoveListeners();
+  updateBasePrice();
+});
+
+// -----------------------------
+// Fetch products
+// -----------------------------
+async function fetchProducts() {
+  const q = query(merchCol, orderBy("order", "asc"));
+  const snap = await getDocs(q);
+
+  allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderProducts();
+}
+
+// -----------------------------
+// Render products (table + preview)
+// -----------------------------
+function renderProducts() {
+  merchTableBody.innerHTML = "";
+  merchPreviewGrid.innerHTML = "";
+  merchCountAdmin.textContent = allProducts.length;
+
+  allProducts.forEach(product => {
+    const variations = product.variations || [];
+    const hasVariations = variations.length > 0;
+    const inStock = variations.filter(v => v.stock !== "out-of-stock");
+
+    const prices = hasVariations
+      ? variations.map(v => v.price)
+      : [product.price || 0];
+
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const displayPrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
+
+    // ------------------ TABLE ROW ------------------
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${product.name}</td>
+      <td>${product.category}</td>
+      <td>${displayPrice}</td>
+      <td>${product.discount || 0}%</td>
+      <td>${product.stock}</td>
+      <td>${product.sale ? "Yes" : "No"}</td>
+      <td>
+        <button onclick="editProduct('${product.id}')">Edit</button>
+        <button onclick="deleteProduct('${product.id}')">Delete</button>
+      </td>
+    `;
+    merchTableBody.appendChild(tr);
+
+    // ------------------ LIVE PREVIEW ------------------
+    const card = document.createElement("div");
+    card.classList.add("product-item");
+
+    // Variation selector
+    let variationSelectHTML = "";
+    if (hasVariations && variations.length > 1) {
+      variationSelectHTML = `<select class="variation-select">`;
+      variations.forEach((v, idx) => {
+        const disabled = v.stock === "out-of-stock" ? "disabled" : "";
+        const label = `${v.color} - ${v.size}${v.stock !== "in-stock" ? ` (${v.stock})` : ""}`;
+        variationSelectHTML += `<option value="${idx}" ${disabled}>${label}</option>`;
+      });
+      variationSelectHTML += `</select>`;
+    }
+
+    // Price HTML
+    const priceHTML = displayPrice;
+
+    const disabledBuy = (!hasVariations && product.stock === "out-of-stock") || (hasVariations && inStock.length === 0);
+    const buttonHTML = `<button class="buy-now" ${disabledBuy ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>`;
+
+    card.innerHTML = `
+      <div class="product-image-container">
+        <img src="${product.image}" alt="${product.name}">
+        ${product.sale ? '<div class="sale-ribbon">Sale</div>' : ''}
+        <div class="stock-ribbon ${product.stock}">${product.stock}</div>
+      </div>
+      <h3>${product.name}</h3>
+      ${variationSelectHTML}
+      <p class="price">${priceHTML}</p>
+      ${buttonHTML}
+    `;
+    merchPreviewGrid.appendChild(card);
+
+    // ------------------ Variation change ------------------
+    const select = card.querySelector(".variation-select");
+    const buyBtn = card.querySelector(".buy-now");
+    const priceSpan = card.querySelector(".price");
+
+    const updatePrice = () => {
+      let selectedVar = variations[0] || { price: product.price || 0, stock: product.stock };
+      if (select) selectedVar = variations[select.value];
+
+      const newPrice = product.discount
+        ? (selectedVar.price * (1 - (product.discount || 0)/100)).toFixed(2)
+        : selectedVar.price.toFixed(2);
+
+      priceSpan.textContent = `$${newPrice}`;
+      buyBtn.disabled = selectedVar.stock === "out-of-stock";
+      buyBtn.style.background = selectedVar.stock === "out-of-stock" ? "#888" : "";
+      buyBtn.style.cursor = selectedVar.stock === "out-of-stock" ? "not-allowed" : "";
+    };
+
+    if (select) select.addEventListener("change", updatePrice);
+    updatePrice();
+
+    // Buy button
+    buyBtn.addEventListener("click", () => {
+      if (buyBtn.disabled) return;
+      let url = product.link;
+      let sv = variations[0];
+      if (select) sv = variations[select.value];
+      if (sv) url += `?color=${encodeURIComponent(sv.color)}&size=${encodeURIComponent(sv.size)}`;
+      window.open(url, "_blank");
+    });
+  });
+}
+
+// -----------------------------
+// Admin: Save product
+// -----------------------------
+merchForm.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  const id = document.getElementById("product-id").value;
+  const variations = Array.from(merchVariationsContainer.querySelectorAll(".variation"))
+    .map(v => ({
+      color: v.querySelector(".variation-color").value,
+      size: v.querySelector(".variation-size").value,
+      price: parseFloat(v.querySelector(".variation-price").value),
+      stock: v.querySelector(".variation-stock").value
+    })).filter(v => v.price || v.color || v.size);
+
+  const product = {
+    name: document.getElementById("product-name").value,
+    category: document.getElementById("product-category").value,
+    discount: parseFloat(document.getElementById("product-discount").value) || 0,
+    stock: document.getElementById("product-stock").value,
+    sale: document.getElementById("product-sale").value === "true",
+    image: document.getElementById("product-image").value,
+    link: document.getElementById("product-link").value,
+    variations,
+    price: variations.length === 0 ? parseFloat(merchBasePriceInput.value) || 0 : undefined,
+    order: id ? undefined : allProducts.length
+  };
+
+  if (id) await updateDoc(doc(db, "merch", id), product);
+  else await addDoc(merchCol, product);
+
+  merchForm.reset();
+  merchVariationsContainer.innerHTML = "";
+  updateBasePrice();
+  fetchProducts();
+});
+
+// -----------------------------
+// Admin: Edit & Delete
+// -----------------------------
+window.editProduct = id => {
+  const p = allProducts.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById("product-id").value = id;
+  document.getElementById("product-name").value = p.name;
+  document.getElementById("product-category").value = p.category;
+  document.getElementById("product-discount").value = p.discount || 0;
+  document.getElementById("product-stock").value = p.stock;
+  document.getElementById("product-sale").value = p.sale ? "true" : "false";
+  document.getElementById("product-image").value = p.image;
+  document.getElementById("product-link").value = p.link;
+  merchBasePriceInput.value = p.price || "";
+  merchBasePriceInput.readOnly = !!(p.variations && p.variations.length);
+
+  merchVariationsContainer.innerHTML = "";
+  (p.variations || []).forEach(v => {
     const div = document.createElement("div");
     div.classList.add("variation");
     div.innerHTML = `
-      <input type="text" class="variation-color" placeholder="Color">
-      <input type="text" class="variation-size" placeholder="Size">
-      <input type="number" class="variation-price" placeholder="Price" step="0.01">
+      <input type="text" class="variation-color" value="${v.color}">
+      <input type="text" class="variation-size" value="${v.size}">
+      <input type="number" class="variation-price" step="0.01" value="${v.price}">
       <select class="variation-stock">
-        <option value="in-stock">In Stock</option>
-        <option value="low-stock">Low Stock</option>
-        <option value="out-of-stock">Out of Stock</option>
+        <option value="in-stock" ${v.stock === "in-stock" ? "selected" : ""}>In Stock</option>
+        <option value="low-stock" ${v.stock === "low-stock" ? "selected" : ""}>Low Stock</option>
+        <option value="out-of-stock" ${v.stock === "out-of-stock" ? "selected" : ""}>Out of Stock</option>
       </select>
-      <button type="button" class="remove-variation">Remove</button>`;
+      <button type="button" class="remove-variation">Remove</button>
+    `;
     merchVariationsContainer.appendChild(div);
-    attachPriceListeners();
-    addRemoveListeners();
-    updateBasePrice();
-});
+  });
 
-// -------------------------
-// FETCH PRODUCTS
-// -------------------------
-async function fetchProducts() {
-    const snap = await getDocs(query(merchCol, orderBy("order", "asc")));
-    allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderProducts();
-}
-
-// -------------------------
-// RENDER PRODUCTS
-// -------------------------
-function renderProducts() {
-    merchTableBody.innerHTML = "";
-    merchPreviewGrid.innerHTML = "";
-    merchCountAdmin.textContent = allProducts.length;
-
-    allProducts.forEach(product => {
-        const variations = product.variations || [];
-        const hasVariations = variations.length > 0;
-        const inStock = variations.filter(v => v.stock !== "out-of-stock");
-        const prices = hasVariations ? variations.map(v => v.price) : [product.price || 0];
-        const minPrice = Math.min(...prices);
-        const maxPrice = Math.max(...prices);
-
-        const displayBasePrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
-
-        // Calculate discounted prices
-        let displayPriceHTML;
-        if (product.discount > 0) {
-            const discountedPrices = prices.map(p => p * (1 - product.discount / 100));
-            const minDiscount = Math.min(...discountedPrices);
-            const maxDiscount = Math.max(...discountedPrices);
-            const discountedText = minDiscount === maxDiscount ? `$${minDiscount.toFixed(2)}` : `$${minDiscount.toFixed(2)} – $${maxDiscount.toFixed(2)}`;
-            displayPriceHTML = `<span class="original-price">${displayBasePrice}</span><span class="discount-price">${discountedText}</span>`;
-        } else displayPriceHTML = `<span class="regular-price">${displayBasePrice}</span>`;
-
-        // ---------------- TABLE ROW ----------------
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${product.name}</td>
-          <td>${product.category}</td>
-          <td>${displayBasePrice}</td>
-          <td>${product.discount > 0 ? displayPriceHTML.replace(/<[^>]+>/g,'') : '-'}</td>
-          <td>${product.discount || 0}%</td>
-          <td>${product.stock}</td>
-          <td>${product.sale ? "Yes" : "No"}</td>
-          <td>
-            <button onclick="editProduct('${product.id}')">Edit</button>
-            <button onclick="deleteProduct('${product.id}')">Delete</button>
-          </td>`;
-        merchTableBody.appendChild(tr);
-
-        // ---------------- LIVE PREVIEW ----------------
-        const card = document.createElement("div");
-        card.classList.add("product-item");
-
-        let variationSelectHTML = "";
-        if (hasVariations && variations.length > 1) {
-            variationSelectHTML = `<select class="variation-select">`;
-            variations.forEach((v, idx) => {
-                const disabled = v.stock === "out-of-stock" ? "disabled" : "";
-                const label = `${v.color} - ${v.size}${v.stock !== "in-stock" ? ` (${v.stock})` : ""}`;
-                variationSelectHTML += `<option value="${idx}" ${disabled}>${label}</option>`;
-            });
-            variationSelectHTML += `</select>`;
-        }
-
-        const disabledBuy = (!hasVariations && product.stock === "out-of-stock") || (hasVariations && inStock.length === 0);
-
-        card.innerHTML = `
-          <div class="product-image-container">
-            <img src="${product.image}" alt="${product.name}">
-            ${product.sale || product.discount > 0 ? '<div class="sale-ribbon">Sale</div>' : ''}
-            <div class="stock-ribbon ${product.stock}">${product.stock}</div>
-          </div>
-          <h3>${product.name}</h3>
-          ${variationSelectHTML}
-          <p class="price">${displayPriceHTML}</p>
-          <button class="buy-now" ${disabledBuy ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>
-        `;
-        merchPreviewGrid.appendChild(card);
-
-        // Variation change handler
-        const select = card.querySelector(".variation-select");
-        const buyBtn = card.querySelector(".buy-now");
-        const priceSpan = card.querySelector(".price");
-
-        const updatePrice = () => {
-            let selectedVar = variations[0] || { price: product.price || 0, stock: product.stock };
-            if (select) selectedVar = variations[select.value];
-            const newPrice = product.discount > 0
-                ? (selectedVar.price * (1 - product.discount / 100)).toFixed(2)
-                : selectedVar.price.toFixed(2);
-            priceSpan.innerHTML = product.discount > 0
-                ? `<span class="original-price">$${selectedVar.price.toFixed(2)}</span><span class="discount-price">$${newPrice}</span>`
-                : `$${newPrice}`;
-            buyBtn.disabled = selectedVar.stock === "out-of-stock";
-            buyBtn.style.background = selectedVar.stock === "out-of-stock" ? "#888" : "";
-            buyBtn.style.cursor = selectedVar.stock === "out-of-stock" ? "not-allowed" : "";
-        };
-
-        if (select) select.addEventListener("change", updatePrice);
-        updatePrice();
-
-        buyBtn.addEventListener("click", () => {
-            if (buyBtn.disabled) return;
-            let url = product.link;
-            let sv = variations[0];
-            if (select) sv = variations[select.value];
-            if (sv) url += `?color=${encodeURIComponent(sv.color)}&size=${encodeURIComponent(sv.size)}`;
-            window.open(url, "_blank");
-        });
-    });
-}
-
-// -------------------------
-// EDIT / DELETE PRODUCTS
-// -------------------------
-window.editProduct = function(id) {
-    const p = allProducts.find(x => x.id === id);
-    if (!p) return;
-
-    $("product-id").value = p.id;
-    $("product-name").value = p.name;
-    $("product-category").value = p.category;
-    $("product-discount").value = p.discount || 0;
-    $("product-stock").value = p.stock;
-    $("product-sale").value = p.sale ? "true" : "false";
-    $("product-image").value = p.image;
-    $("product-link").value = p.link;
-    merchBasePriceInput.value = p.price || "";
-    merchBasePriceInput.readOnly = !!(p.variations && p.variations.length);
-
-    merchVariationsContainer.innerHTML = "";
-    (p.variations || []).forEach(v => {
-        const div = document.createElement("div");
-        div.classList.add("variation");
-        div.innerHTML = `
-            <input type="text" class="variation-color" value="${v.color}">
-            <input type="text" class="variation-size" value="${v.size}">
-            <input type="number" class="variation-price" step="0.01" value="${v.price}">
-            <select class="variation-stock">
-                <option value="in-stock" ${v.stock === "in-stock" ? "selected" : ""}>In Stock</option>
-                <option value="low-stock" ${v.stock === "low-stock" ? "selected" : ""}>Low Stock</option>
-                <option value="out-of-stock" ${v.stock === "out-of-stock" ? "selected" : ""}>Out of Stock</option>
-            </select>
-            <button type="button" class="remove-variation">Remove</button>
-        `;
-        merchVariationsContainer.appendChild(div);
-    });
-
-    attachPriceListeners();
-    addRemoveListeners();
-    updateBasePrice();
+  attachPriceListeners();
+  addRemoveListeners();
+  updateBasePrice();
 };
 
 window.deleteProduct = async id => {
-    if (!confirm("Delete product?")) return;
-    await deleteDoc(doc(db, "merch", id));
-    fetchProducts();
+  if (!confirm("Delete product?")) return;
+  await deleteDoc(doc(db, "merch", id));
+  fetchProducts();
 };
 
-// -------------------------
-// SAVE PRODUCT
-// -------------------------
-merchForm?.addEventListener("submit", async e => {
-    e.preventDefault();
-    const id = $("product-id").value;
-    const variations = Array.from(merchVariationsContainer.querySelectorAll(".variation"))
-        .map(v => ({
-            color: v.querySelector(".variation-color").value,
-            size: v.querySelector(".variation-size").value,
-            price: parseFloat(v.querySelector(".variation-price").value),
-            stock: v.querySelector(".variation-stock").value
-        })).filter(v => v.price || v.color || v.size);
-    const product = {
-        name: $("product-name").value,
-        category: $("product-category").value,
-        discount: parseFloat($("product-discount").value) || 0,
-        stock: $("product-stock").value,
-        sale: $("product-sale").value === "true",
-        image: $("product-image").value,
-        link: $("product-link").value,
-        variations,
-        price: variations.length === 0 ? parseFloat(merchBasePriceInput.value) || 0 : undefined,
-        order: id ? undefined : allProducts.length
-    };
-    if (id) await updateDoc(doc(db, "merch", id), product);
-    else await addDoc(merchCol, product);
-    merchForm.reset();
-    merchVariationsContainer.innerHTML = "";
-    updateBasePrice();
-    fetchProducts();
-});
-
-// -------------------------
-// INIT
-// -------------------------
+// -----------------------------
+// Init
+// -----------------------------
 fetchProducts();
 attachPriceListeners();
 addRemoveListeners();
