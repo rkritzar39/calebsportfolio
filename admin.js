@@ -245,38 +245,29 @@ let allDisabilities = [];
 let allTechItems = []; // For Tech section
 
 
-// -----------------------------
 // DOM Elements
-// -----------------------------
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
 const productCountAdmin = document.getElementById("product-count-admin");
 const previewGrid = document.getElementById("preview-grid");
-
 const productsCol = collection(db, "merch");
 
-// -----------------------------
-// Fetch Products
-// -----------------------------
-async function fetchProducts() {
-  const snapshot = await getDocs(query(productsCol, orderBy("order", "asc")));
-  const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  renderTable(products);
-  renderPreview(products);
-  productCountAdmin.textContent = products.length;
-  return products;
-}
+let allProducts = [];
 
 // -----------------------------
-// Render Table
+// Render products in table & preview
 // -----------------------------
-function renderTable(products) {
+function renderProducts() {
   tableBody.innerHTML = "";
-  products.forEach(product => {
+  previewGrid.innerHTML = "";
+  productCountAdmin.textContent = allProducts.length;
+
+  allProducts.forEach(product => {
     const finalPrice = product.discount
       ? (product.price * (1 - product.discount / 100)).toFixed(2)
       : Number(product.price).toFixed(2);
 
+    // Table row
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${product.name}</td>
@@ -291,36 +282,20 @@ function renderTable(products) {
       </td>
     `;
     tableBody.appendChild(tr);
-  });
-}
 
-// -----------------------------
-// Render Live Preview
-// -----------------------------
-function renderPreview(products) {
-  previewGrid.innerHTML = "";
-
-  products.forEach(product => {
-    const finalPrice = product.discount
-      ? (product.price * (1 - product.discount / 100)).toFixed(2)
-      : Number(product.price).toFixed(2);
-
+    // Preview item
+    const isDisabled = product.stock === "out-of-stock";
     const priceHTML = product.discount
       ? `<span class="original-price">$${Number(product.price).toFixed(2)}</span>
          <span class="discount-price">$${finalPrice}</span>
          <span class="sale-badge">-${product.discount}% Off</span>`
       : `<span class="regular-price">$${finalPrice}</span>`;
 
-    const productItem = document.createElement("div");
-    productItem.classList.add("product-item");
+    const buttonHTML = `<button class="buy-now" ${isDisabled ? 'disabled style="background:#888; cursor:not-allowed;"' : `onclick="window.open('${product.link}','_blank')"`}>Buy Now</button>`;
 
-    const isDisabled = product.stock === "out-of-stock";
-    const buttonHTML = `<button class="buy-now" 
-                          ${isDisabled ? 'disabled style="background:#888; cursor:not-allowed;"' : `onclick="window.open('${product.link}', '_blank')"`}>
-                          Buy Now
-                        </button>`;
-
-    productItem.innerHTML = `
+    const previewItem = document.createElement("div");
+    previewItem.classList.add("product-item");
+    previewItem.innerHTML = `
       <div class="product-image-container">
         <img src="${product.image}" alt="${product.name}">
         ${product.sale ? '<div class="sale-ribbon">Sale</div>' : ''}
@@ -330,16 +305,26 @@ function renderPreview(products) {
       <p class="price">${priceHTML}</p>
       ${buttonHTML}
     `;
-
-    previewGrid.appendChild(productItem);
+    previewGrid.appendChild(previewItem);
   });
 }
 
 // -----------------------------
-// Add / Update Product
+// Fetch products from Firestore
 // -----------------------------
-form.addEventListener("submit", async (e) => {
+async function fetchProducts() {
+  const q = query(productsCol, orderBy("order", "asc"));
+  const snapshot = await getDocs(q);
+  allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  renderProducts();
+}
+
+// -----------------------------
+// Add / Update product
+// -----------------------------
+form.addEventListener("submit", async e => {
   e.preventDefault();
+
   const id = document.getElementById("product-id").value;
   const productData = {
     name: document.getElementById("product-name").value,
@@ -349,50 +334,57 @@ form.addEventListener("submit", async (e) => {
     stock: document.getElementById("product-stock").value,
     sale: document.getElementById("product-sale").value === "true",
     image: document.getElementById("product-image").value,
-    link: document.getElementById("product-link").value
+    link: document.getElementById("product-link").value,
+    order: allProducts.length // optional ordering
   };
 
-  if (id) {
-    await updateDoc(doc(db, "merch", id), productData);
-  } else {
-    await addDoc(productsCol, productData);
+  try {
+    if (id) {
+      await updateDoc(doc(db, "merch", id), productData);
+    } else {
+      await addDoc(productsCol, productData);
+    }
+    form.reset();
+    document.getElementById("product-id").value = "";
+    fetchProducts();
+  } catch (err) {
+    console.error("Error saving product:", err);
   }
-
-  form.reset();
-  document.getElementById("product-id").value = "";
-  fetchProducts();
 });
 
 // -----------------------------
-// Edit Product
+// Edit product
 // -----------------------------
-window.editProduct = async (id) => {
-  const docSnap = await getDoc(doc(db, "merch", id));
-  const data = docSnap.data();
+window.editProduct = async id => {
+  const product = allProducts.find(p => p.id === id);
+  if (!product) return;
 
   document.getElementById("product-id").value = id;
-  document.getElementById("product-name").value = data.name;
-  document.getElementById("product-category").value = data.category;
-  document.getElementById("product-price").value = data.price;
-  document.getElementById("product-discount").value = data.discount || 0;
-  document.getElementById("product-stock").value = data.stock;
-  document.getElementById("product-sale").value = data.sale ? "true" : "false";
-  document.getElementById("product-image").value = data.image;
-  document.getElementById("product-link").value = data.link;
+  document.getElementById("product-name").value = product.name;
+  document.getElementById("product-category").value = product.category;
+  document.getElementById("product-price").value = product.price;
+  document.getElementById("product-discount").value = product.discount || 0;
+  document.getElementById("product-stock").value = product.stock;
+  document.getElementById("product-sale").value = product.sale ? "true" : "false";
+  document.getElementById("product-image").value = product.image;
+  document.getElementById("product-link").value = product.link;
 };
 
 // -----------------------------
-// Delete Product
+// Delete product
 // -----------------------------
-window.deleteProduct = async (id) => {
-  if (confirm("Are you sure you want to delete this product?")) {
+window.deleteProduct = async id => {
+  if (!confirm("Are you sure you want to delete this product?")) return;
+  try {
     await deleteDoc(doc(db, "merch", id));
     fetchProducts();
+  } catch (err) {
+    console.error("Error deleting product:", err);
   }
 };
 
 // -----------------------------
-// Initial Fetch
+// Initial fetch
 // -----------------------------
 fetchProducts();
 
