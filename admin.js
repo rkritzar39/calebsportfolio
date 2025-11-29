@@ -282,7 +282,7 @@ form.addEventListener("submit", async (e) => {
     price: parseFloat(document.getElementById("product-price").value),
     discount: parseFloat(document.getElementById("product-discount").value) || 0,
     stock: document.getElementById("product-stock").value,
-    sale: document.getElementById("product-sale").value === "true",
+    sale: document.getElementById("product-sale").checked,
     image: document.getElementById("product-image").value,
     link: document.getElementById("product-link").value
   };
@@ -300,15 +300,18 @@ form.addEventListener("submit", async (e) => {
 
 // Edit product
 window.editProduct = async (id) => {
-  const docSnap = await doc(db, "merch", id).get();
-  const data = (await doc(db, "merch", id).get()).data();
+  const docSnap = await getDocs(doc(db, "merch", id));
+  const docRef = doc(db, "merch", id);
+  const dataSnap = await getDocs(docRef);
+  const data = dataSnap.data();
+
   document.getElementById("product-id").value = id;
   document.getElementById("product-name").value = data.name;
   document.getElementById("product-category").value = data.category;
   document.getElementById("product-price").value = data.price;
   document.getElementById("product-discount").value = data.discount || 0;
   document.getElementById("product-stock").value = data.stock;
-  document.getElementById("product-sale").value = data.sale;
+  document.getElementById("product-sale").checked = data.sale;
   document.getElementById("product-image").value = data.image;
   document.getElementById("product-link").value = data.link;
 };
