@@ -285,67 +285,89 @@
   <h2>Manage Merchandise</h2>
 
   <!-- Add/Edit Product Form -->
-  <form id="product-form">
-    <label for="product-name">Product Name:</label>
-    <input type="text" id="product-name" required>
+  <div class="form-container">
+    <form id="product-form">
+      <div class="form-group">
+        <label for="product-name">Product Name:</label>
+        <input type="text" id="product-name" placeholder="Enter product name" required>
+      </div>
 
-    <label for="product-category">Category:</label>
-    <select id="product-category" required>
-      <option value="">-- Select Category --</option>
-      <option value="Outdoor">Outdoor</option>
-      <option value="Hats">Hats</option>
-      <option value="Hoodies & Sweatshirts">Hoodies & Sweatshirts</option>
-      <option value="T-Shirts">T-Shirts</option>
-      <option value="Baby & Toddler">Baby & Toddler</option>
-      <option value="Kitchenwear">Kitchenwear</option>
-      <option value="Accessories">Accessories</option>
-    </select>
+      <div class="form-group">
+        <label for="product-category">Category:</label>
+        <select id="product-category" required>
+          <option value="">-- Select Category --</option>
+          <option value="Outdoor">Outdoor</option>
+          <option value="Hats">Hats</option>
+          <option value="Hoodies & Sweatshirts">Hoodies & Sweatshirts</option>
+          <option value="T-Shirts">T-Shirts</option>
+          <option value="Baby & Toddler">Baby & Toddler</option>
+          <option value="Kitchenwear">Kitchenwear</option>
+          <option value="Accessories">Accessories</option>
+        </select>
+      </div>
 
-    <label for="product-price">Price ($):</label>
-    <input type="number" id="product-price" step="0.01" required>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="product-price">Price ($):</label>
+          <input type="number" id="product-price" step="0.01" placeholder="0.00" required>
+        </div>
+        <div class="form-group">
+          <label for="product-discount">Discount (%):</label>
+          <input type="number" id="product-discount" min="0" max="100" placeholder="0">
+        </div>
+      </div>
 
-    <label for="product-discount">Discount (%):</label>
-    <input type="number" id="product-discount" min="0" max="100">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="product-stock">Stock Status:</label>
+          <select id="product-stock" required>
+            <option value="in-stock">In Stock</option>
+            <option value="low-stock">Low Stock</option>
+            <option value="out-of-stock">Out of Stock</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="product-sale">On Sale?</label>
+          <select id="product-sale" required>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+      </div>
 
-    <label for="product-stock">Stock Status:</label>
-    <select id="product-stock" required>
-      <option value="in-stock">In Stock</option>
-      <option value="low-stock">Low Stock</option>
-      <option value="out-of-stock">Out of Stock</option>
-    </select>
+      <div class="form-group">
+        <label for="product-image">Image URL:</label>
+        <input type="url" id="product-image" placeholder="https://example.com/image.jpg" required>
+      </div>
 
-    <label for="product-sale">On Sale?</label>
-    <select id="product-sale" required>
-      <option value="true">Yes</option>
-      <option value="false">No</option>
-    </select>
+      <div class="form-group">
+        <label for="product-link">Product Link:</label>
+        <input type="url" id="product-link" placeholder="https://example.com/product" required>
+      </div>
 
-    <label for="product-image">Image URL:</label>
-    <input type="url" id="product-image" required>
-
-    <label for="product-link">Product Link:</label>
-    <input type="url" id="product-link" required>
-
-    <input type="hidden" id="product-id">
-    <button type="submit">Save Product</button>
-  </form>
+      <input type="hidden" id="product-id">
+      <button type="submit" class="btn-save">Save Product</button>
+    </form>
+  </div>
 
   <!-- Existing Products Table -->
   <h3>Existing Products</h3>
-  <table id="product-table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Price</th>
-        <th>Discount</th>
-        <th>Stock</th>
-        <th>Sale</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="table-container">
+    <table id="product-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Discount</th>
+          <th>Stock</th>
+          <th>Sale</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </section>
 
             
