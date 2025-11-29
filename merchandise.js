@@ -15,317 +15,316 @@ document.addEventListener("DOMContentLoaded", function() {
         categorySelect.appendChild(option);
     });
 
-    // Example products data (with categories)
-    const products = [
-        {
-            name: "September Awareness Rainbow Onesie",
-            price: 15.00,
-            originalPrice: 25.00, // Same as price, for non-sale
-            discount: 40, // No discount
-            stock: "in-stock",
-            sale: true, // No sale
-            image: "product_images/september.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/september-awareness-rainbow-onesie",
-            category: "Baby & Toddler"
-        },
-        {
-            name: "ADHD Awareness Ribbon Baby Tee",
-            price: 29.00,
-            originalPrice: 29.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/adhd.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-baby-tee",
-            category: "Baby & Toddler"
-        },
-        {
-            name: "Bear Hug Baby Tee",
-            price: 28.00,
-            originalPrice: 28.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/bear-hug-baby-tee.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/bear-hug-baby-tee",
-            category: "Baby & Toddler"
-        },
-        {
-            name: "Autism Mode Puzzle Heart Baby Onesie",
-            price: 24.00,
-            originalPrice: 24.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/Autism.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-mode-puzzle-heart-baby-onesie",
-            category: "Baby & Toddler"
-        },
-        {
-            name: "Autism Awareness All-Over Flag",
-            price: 32.00,
-            originalPrice: 32.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/autismflag.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-all-over-flag",
-            category: "Outdoor"
-        },
-        {
-            name: "ADHD Awareness Ribbon Baby Onesie",
-            price: 25.00,
-            originalPrice: 25.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/ribbon.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-baby-onesie",
-            category: "Baby & Toddler"
-        },
-        {
-            name: "HydroStrong Rainbow Baby Tee",
-            price: 28.00,
-            originalPrice: 28.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/hydro.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/hydrostrong-rainbow-baby-tee",
-            category: "Baby & Toddler"
-        },
-        {
-            name: "ADHD Awareness Ribbon Women's Polo",
-            price: 84.00,
-            originalPrice: 84.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/adhdwomenspolo.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-womens-polo",
-            category: "T-Shirts"
-        },
-        {
-            name: "ADHD Awareness Ribbon Women's Polo",
-            price: 84.00,
-            originalPrice: 84.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/adhdmenspolo.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-polo-shirt",
-            category: "T-Shirts"
-        },
-        {
-            name: "Inclusive Autism Awareness Polo",
-            price: 75.97,
-            originalPrice: 75.97, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/inclusiveautism.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/inclusive-autism-awareness-polo",
-            category: "T-Shirts"
-        },
-        {
-            name: "Colorful Handprints Autism Support Youth T-Shirt",
-            price: 24.00,
-            originalPrice: 24.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/colorfulautism.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/colorful-handprints-autism-support-youth-t-shirt",
-            category: "T-Shirts"
-        },
-        {
-            name: "Unity Puzzle Piece Cotton T-Shirt",
-            price: 27.00,
-            originalPrice: 27.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/unitypuzzel.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/unity-puzzle-piece-cotton-t-shirt",
-            category: "T-Shirts"
-        },
-        {
-            name: "ADHD Awareness Tie-Dye Dad Hat",
-            price: 26.00,
-            originalPrice: 26.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "out-of-stock",
-            sale: false, // No sale
-            image: "product_images/adhdtiedye.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-tie-dye-dad-hat",
-            category: "Hats"
-        },
-        {
-            name: "Autism Awareness Puzzle Trucker Hat",
-            price: 23.00,
-            originalPrice: 23.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/autismtrucker.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-puzzle-trucker-hat",
-            category: "Hats"
-        },
-        {
-            name: "Autism Awareness Puzzle Piece Hoodie",
-            price: 39.00,
-            originalPrice: 39.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/autismhoodie.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-puzzle-piece-hoodie",
-            category: "Hoodies & Sweatshirts"
-        },
-        {
-            name: "Autism Awareness AirPods Case®",
-            price: 25.00,
-            originalPrice: 25.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/autismairpodscase.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-airpods-case",
-            category: "Accessories"
-        },
-        {
-            name: "ADHD Awareness Ribbon iPhone® Case",
-            price: 21.00,
-            originalPrice: 21.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/adhdcase.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-iphone-case",
-            category: "Accessories"
-        },
-        {
-            name: "ADHD Awareness Ribbon Pin Set (1.25)",
-            price: 14.00,
-            originalPrice: 14.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/adhdpin125.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-pin-set",
-            category: "Accessories"
-        },
-        {
-            name: "ADHD Awareness Ribbon Pin Set (2.25)",
-            price: 15.00,
-            originalPrice: 15.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/adhdpin225.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-pin-set",
-            category: "Accessories"
-        },
-        {
-            name: "Vibrant Puzzle Pieces Autism Awareness Desk Mat",
-            price: 23.00,
-            originalPrice: 23.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/autismdeskmat.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/vibrant-puzzle-pieces-autism-awareness-desk-mat",
-            category: "Accessories"
-        },
-        {
-            name: "Interlocking Hearts Jigsaw Puzzle Mug",
-            price: 14.00,
-            originalPrice: 14.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/blackmug.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/interlocking-hearts-jigsaw-puzzle-mug",
-            category: "Kitchenwear"
-        },
-        {
-            name: "Autism Awareness Puzzle Ceramic Mug",
-            price: 14.00,
-            originalPrice: 14.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/whitemug.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-puzzle-ceramic-mug",
-            category: "Kitchenwear"
-        },
-        {
-            name: "ALL TIME BEST Basketball Graphic Sweatshirt",
-            price: 12.05,
-            originalPrice: 12.05, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/alltimebestsweatshirt.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/products/all-time-best-basketball-graphic-sweatshirt",
-            category: "Hoodies & Sweatshirts"
-        },
-        {
-            name: "Timeless Basketball Graphic Tee",
-            price: 26.00,
-            originalPrice: 26.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/timelessbasketball.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/products/timeless-basketball-graphic-tee",
-            category: "T-Shirts"
-        },
-        {
-            name: "Timeless Hoops Foam Trucker Hat",
-            price: 23.00,
-            originalPrice: 23.00, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/timelesshoophat.webp",
-            link: "https://riverkritzar-shop.fourthwall.com/products/timeless-hoops-foam-trucker-hat",
-            category: "Hats"
-        },
-        {
-            name: "ALL TIME BEST Basketball-Inspired Baby Bodysuit",
-            price: 18.99,
-            originalPrice: 18.99, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/alltimebestbodysuit.webp",
-            link: "https://busarmydude-shop.fourthwall.com/products/all-time-best-basketball-inspired-baby-bodysuit",
-            category: "Baby & Toddler"
-        },
-        {
-            name: "Timeless Hoops Baby Tee",
-            price: 17.99,
-            originalPrice: 17.99, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/timelesstee.webp",
-            link: "https://busarmydude-shop.fourthwall.com/products/timeless-hoops-baby-tee",
-            category: "Baby & Toddler"
-        },
-        {
-            name: "ALL TIME BEST Basketball Baby Onesie",
-            price: 18.99,
-            originalPrice: 18.99, // Same as price, for non-sale
-            discount: 0, // No discount
-            stock: "in-stock",
-            sale: false, // No sale
-            image: "product_images/alltimebestbabyonsie.webp",
-            link: "https://busarmydude-shop.fourthwall.com/products/all-time-best-basketball-baby-onesie",
-            category: "Baby & Toddler"
-        },
-    ];
+   const products = [
+    {
+        name: "September Awareness Rainbow Onesie",
+        price: 15.00,
+        originalPrice: 25.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/september.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/september-awareness-rainbow-onesie",
+        category: "Baby & Toddler"
+    },
+    {
+        name: "ADHD Awareness Ribbon Baby Tee",
+        price: 17.40,
+        originalPrice: 29.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/adhd.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-baby-tee",
+        category: "Baby & Toddler"
+    },
+    {
+        name: "Bear Hug Baby Tee",
+        price: 16.80,
+        originalPrice: 28.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/bear-hug-baby-tee.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/bear-hug-baby-tee",
+        category: "Baby & Toddler"
+    },
+    {
+        name: "Autism Mode Puzzle Heart Baby Onesie",
+        price: 14.40,
+        originalPrice: 24.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/Autism.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-mode-puzzle-heart-baby-onesie",
+        category: "Baby & Toddler"
+    },
+    {
+        name: "Autism Awareness All-Over Flag",
+        price: 19.20,
+        originalPrice: 32.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/autismflag.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-all-over-flag",
+        category: "Outdoor"
+    },
+    {
+        name: "ADHD Awareness Ribbon Baby Onesie",
+        price: 15.00,
+        originalPrice: 25.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/ribbon.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-baby-onesie",
+        category: "Baby & Toddler"
+    },
+    {
+        name: "HydroStrong Rainbow Baby Tee",
+        price: 16.80,
+        originalPrice: 28.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/hydro.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/hydrostrong-rainbow-baby-tee",
+        category: "Baby & Toddler"
+    },
+    {
+        name: "ADHD Awareness Ribbon Women's Polo",
+        price: 50.40,
+        originalPrice: 84.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/adhdwomenspolo.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-womens-polo",
+        category: "T-Shirts"
+    },
+    {
+        name: "ADHD Awareness Ribbon Women's Polo",
+        price: 50.40,
+        originalPrice: 84.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/adhdmenspolo.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-polo-shirt",
+        category: "T-Shirts"
+    },
+    {
+        name: "Inclusive Autism Awareness Polo",
+        price: 45.58,
+        originalPrice: 75.97,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/inclusiveautism.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/inclusive-autism-awareness-polo",
+        category: "T-Shirts"
+    },
+    {
+        name: "Colorful Handprints Autism Support Youth T-Shirt",
+        price: 14.40,
+        originalPrice: 24.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/colorfulautism.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/colorful-handprints-autism-support-youth-t-shirt",
+        category: "T-Shirts"
+    },
+    {
+        name: "Unity Puzzle Piece Cotton T-Shirt",
+        price: 16.20,
+        originalPrice: 27.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/unitypuzzel.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/unity-puzzle-piece-cotton-t-shirt",
+        category: "T-Shirts"
+    },
+    {
+        name: "ADHD Awareness Tie-Dye Dad Hat",
+        price: 15.60,
+        originalPrice: 26.00,
+        discount: 40,
+        stock: "out-of-stock",
+        sale: true,
+        image: "product_images/adhdtiedye.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-tie-dye-dad-hat",
+        category: "Hats"
+    },
+    {
+        name: "Autism Awareness Puzzle Trucker Hat",
+        price: 13.80,
+        originalPrice: 23.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/autismtrucker.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-puzzle-trucker-hat",
+        category: "Hats"
+    },
+    {
+        name: "Autism Awareness Puzzle Piece Hoodie",
+        price: 23.40,
+        originalPrice: 39.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/autismhoodie.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-puzzle-piece-hoodie",
+        category: "Hoodies & Sweatshirts"
+    },
+    {
+        name: "Autism Awareness AirPods Case®",
+        price: 15.00,
+        originalPrice: 25.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/autismairpodscase.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-airpods-case",
+        category: "Accessories"
+    },
+    {
+        name: "ADHD Awareness Ribbon iPhone® Case",
+        price: 12.60,
+        originalPrice: 21.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/adhdcase.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-iphone-case",
+        category: "Accessories"
+    },
+    {
+        name: "ADHD Awareness Ribbon Pin Set (1.25)",
+        price: 8.40,
+        originalPrice: 14.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/adhdpin125.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-pin-set",
+        category: "Accessories"
+    },
+    {
+        name: "ADHD Awareness Ribbon Pin Set (2.25)",
+        price: 9.00,
+        originalPrice: 15.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/adhdpin225.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/adhd-awareness-ribbon-pin-set",
+        category: "Accessories"
+    },
+    {
+        name: "Vibrant Puzzle Pieces Autism Awareness Desk Mat",
+        price: 13.80,
+        originalPrice: 23.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/autismdeskmat.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/vibrant-puzzle-pieces-autism-awareness-desk-mat",
+        category: "Accessories"
+    },
+    {
+        name: "Interlocking Hearts Jigsaw Puzzle Mug",
+        price: 8.40,
+        originalPrice: 14.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/blackmug.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/interlocking-hearts-jigsaw-puzzle-mug",
+        category: "Kitchenwear"
+    },
+    {
+        name: "Autism Awareness Puzzle Ceramic Mug",
+        price: 8.40,
+        originalPrice: 14.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/whitemug.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/en-usd/products/autism-awareness-puzzle-ceramic-mug",
+        category: "Kitchenwear"
+    },
+    {
+        name: "ALL TIME BEST Basketball Graphic Sweatshirt",
+        price: 7.23,
+        originalPrice: 12.05,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/alltimebestsweatshirt.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/products/all-time-best-basketball-graphic-sweatshirt",
+        category: "Hoodies & Sweatshirts"
+    },
+    {
+        name: "Timeless Basketball Graphic Tee",
+        price: 15.60,
+        originalPrice: 26.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/timelessbasketball.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/products/timeless-basketball-graphic-tee",
+        category: "T-Shirts"
+    },
+    {
+        name: "Timeless Hoops Foam Trucker Hat",
+        price: 13.80,
+        originalPrice: 23.00,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/timelesshoophat.webp",
+        link: "https://riverkritzar-shop.fourthwall.com/products/timeless-hoops-foam-trucker-hat",
+        category: "Hats"
+    },
+    {
+        name: "ALL TIME BEST Basketball-Inspired Baby Bodysuit",
+        price: 11.39,
+        originalPrice: 18.99,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/alltimebestbodysuit.webp",
+        link: "https://busarmydude-shop.fourthwall.com/products/all-time-best-basketball-inspired-baby-bodysuit",
+        category: "Baby & Toddler"
+    },
+    {
+        name: "Timeless Hoops Baby Tee",
+        price: 10.79,
+        originalPrice: 17.99,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/timelesstee.webp",
+        link: "https://busarmydude-shop.fourthwall.com/products/timeless-hoops-baby-tee",
+        category: "Baby & Toddler"
+    },
+    {
+        name: "ALL TIME BEST Basketball Baby Onesie",
+        price: 11.39,
+        originalPrice: 18.99,
+        discount: 40,
+        stock: "in-stock",
+        sale: true,
+        image: "product_images/alltimebestbabyonsie.webp",
+        link: "https://busarmydude-shop.fourthwall.com/products/all-time-best-basketball-baby-onesie",
+        category: "Baby & Toddler"
+    }
+];
 
     const productGrid = document.getElementById("product-grid");
     const sectionTitle = document.getElementById("section-title");
