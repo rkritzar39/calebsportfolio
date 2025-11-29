@@ -1,179 +1,86 @@
-import { db } from './firebase-init.js';
-import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+// ====== Configuration ======
+const FOURTHWALL_API_URL = "https://api.fourthwall.com/v1/products"; // Replace with your actual API endpoint
+const FOURTHWALL_API_KEY = "ptkn_1f3e9e3f-0002-465d-8590-525c92bced98"; // Replace with your actual API key
 
-// DOM Elements
 const productGrid = document.getElementById("product-grid");
 const categorySelect = document.getElementById("categories");
 const sectionTitle = document.getElementById("section-title");
 const productCount = document.getElementById("product-count");
 
-// Firestore reference
-const productsCol = collection(db, "merch");
-
-// Store all products
 let allProducts = [];
 
-// -----------------------------
-// Render categories in dropdown
-// -----------------------------
-function renderCategories(products) {
-  const uniqueCategories = Array.from(new Set(products.map(p => p.category))).sort();
-  categorySelect.innerHTML = "";
+// ====== Fetch Products ======
+async function fetchProducts() {
+    try {
+        const res = await fetch(FOURTHWALL_API_URL, {
+            headers: {
+                "Authorization": `Bearer ${FOURTHWALL_API_KEY}`,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) throw new Error("Failed to fetch products");
 
-  const allOption = document.createElement("option");
-  allOption.value = "All Products";
-  allOption.textContent = "All Products";
-  categorySelect.appendChild(allOption);
-
-  uniqueCategories.forEach(cat => {
-    const option = document.createElement("option");
-    option.value = cat;
-    option.textContent = cat;
-    categorySelect.appendChild(option);
-  });
-}
-
-// -----------------------------
-// Render products with variations
-// -----------------------------
-function renderProducts(products) {
-  productGrid.innerHTML = "";
-  productCount.textContent = `${products.length} product${products.length !== 1 ? 's' : ''}`;
-
-  products.forEach(product => {
-    const productDiv = document.createElement("div");
-    productDiv.classList.add("product-item");
-
-    const variations = product.variations || [];
-    const hasVariations = variations.length > 0;
-
-    // Determine min/max prices
-    const inStockVariations = variations.filter(v => v.stock !== "out-of-stock");
-    const prices = inStockVariations.length
-      ? inStockVariations.map(v => v.price)
-      : hasVariations
-      ? [0]
-      : [product.price || 0];
-
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-
-    const displayPrice = minPrice === maxPrice
-      ? minPrice.toFixed(2)
-      : `${minPrice.toFixed(2)} – ${maxPrice.toFixed(2)}`;
-
-    const finalPrice = product.discount
-      ? (minPrice * (1 - (product.discount || 0) / 100)).toFixed(2)
-      : minPrice.toFixed(2);
-
-    // Generate variation selector if multiple variations
-    let variationSelectHTML = "";
-    if (hasVariations && variations.length > 1) {
-      variationSelectHTML = `<select class="variation-select" data-product-id="${product.id}">`;
-      variations.forEach((v, idx) => {
-        const disabled = v.stock === "out-of-stock" ? "disabled" : "";
-        const label = `${v.color} - ${v.size}${v.stock === "out-of-stock" ? " (Out of Stock)" : v.stock === "low-stock" ? " (Low Stock)" : ""}`;
-        variationSelectHTML += `<option value="${idx}" data-price="${v.price.toFixed(2)}" ${disabled}>${label}</option>`;
-      });
-      variationSelectHTML += `</select>`;
+        const data = await res.json();
+        allProducts = data.products || [];
+        populateCategories(allProducts);
+        renderProducts(allProducts);
+    } catch (err) {
+        console.error("Error fetching products:", err);
+        productGrid.innerHTML = "<p style='color:red;'>Failed to load products.</p>";
     }
-
-    // Price HTML for initial render
-    const priceHTML = product.discount
-      ? `<span class="original-price">$${minPrice.toFixed(2)}</span>
-         <span class="discount-price">$${finalPrice}</span>
-         <span class="sale-badge">-${product.discount}% Off</span>`
-      : `<span class="regular-price">${displayPrice}</span>`;
-
-    // Determine if Buy Now button should be disabled
-    const overallOutOfStock = (!hasVariations && product.stock === "out-of-stock") || (hasVariations && inStockVariations.length === 0);
-    const buttonHTML = `<button class="buy-now" ${overallOutOfStock ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>`;
-
-    productDiv.innerHTML = `
-      <div class="product-image-container">
-        <img src="${product.image}" alt="${product.name}">
-        ${product.sale ? '<div class="sale-ribbon">Sale</div>' : ''}
-        <div class="stock-ribbon ${product.stock}">${product.stock.replace("-", " ")}</div>
-      </div>
-      <h3>${product.name}</h3>
-      ${variationSelectHTML}
-      <p class="price">${priceHTML}</p>
-      ${buttonHTML}
-    `;
-
-    productGrid.appendChild(productDiv);
-
-    // -----------------------------
-    // Update price & button when variation changes
-    // -----------------------------
-    const select = productDiv.querySelector(".variation-select");
-    const buyBtn = productDiv.querySelector(".buy-now");
-    const priceSpan = productDiv.querySelector(".price");
-
-    const updatePriceAndButton = () => {
-      let selectedVar = variations[0] || { price: product.price || 0, stock: product.stock };
-      if (select) selectedVar = variations[select.value];
-
-      const newPrice = product.discount
-        ? (selectedVar.price * (1 - (product.discount || 0)/100)).toFixed(2)
-        : selectedVar.price.toFixed(2);
-
-      if (product.discount) {
-        priceSpan.innerHTML = `
-          <span class="original-price">$${selectedVar.price.toFixed(2)}</span>
-          <span class="discount-price">$${newPrice}</span>
-          <span class="sale-badge">-${product.discount}% Off</span>
-        `;
-      } else {
-        priceSpan.innerHTML = `<span class="regular-price">$${selectedVar.price.toFixed(2)}</span>`;
-      }
-
-      buyBtn.disabled = selectedVar.stock === "out-of-stock";
-      buyBtn.style.background = selectedVar.stock === "out-of-stock" ? "#888" : "";
-      buyBtn.style.cursor = selectedVar.stock === "out-of-stock" ? "not-allowed" : "";
-    };
-
-    if (select) select.addEventListener("change", updatePriceAndButton);
-    updatePriceAndButton(); // Initial trigger
-
-    // -----------------------------
-    // Buy Now click event
-    // -----------------------------
-    buyBtn.addEventListener("click", () => {
-      if (buyBtn.disabled) return;
-
-      let url = product.link;
-      if (select) {
-        const sv = variations[select.value];
-        url += `?color=${encodeURIComponent(sv.color)}&size=${encodeURIComponent(sv.size)}`;
-      } else if (variations[0]) {
-        url += `?color=${encodeURIComponent(variations[0].color)}&size=${encodeURIComponent(variations[0].size)}`;
-      }
-      window.open(url, "_blank");
-    });
-  });
 }
 
-// -----------------------------
-// Category filter
-// -----------------------------
+// ====== Render Products ======
+function renderProducts(products) {
+    productGrid.innerHTML = "";
+    productCount.textContent = `${products.length} product${products.length !== 1 ? "s" : ""}`;
+
+    products.forEach(product => {
+        const hasDiscount = product.discount && product.discount > 0;
+        const originalPrice = hasDiscount ? product.price.toFixed(2) : null;
+        const discountPrice = hasDiscount ? (product.price * (1 - product.discount / 100)).toFixed(2) : product.price.toFixed(2);
+
+        let stockClass = "in-stock";
+        if (product.stock === 0) stockClass = "out-of-stock";
+        else if (product.stock < 5) stockClass = "low-stock";
+
+        const productHTML = `
+            <div class="product-item">
+                ${hasDiscount ? `<div class="discount-tag">-${product.discount}%</div>` : ""}
+                <div class="stock-ribbon ${stockClass}">${product.stock > 0 ? product.stock + " left" : "Out of stock"}</div>
+                <img src="${product.image}" alt="${product.name}" />
+                <h3>${product.name}</h3>
+                <div class="price">
+                    ${hasDiscount ? `<span class="original-price">$${originalPrice}</span>` : ""}
+                    <span class="discount-price">$${discountPrice}</span>
+                </div>
+                <button class="buy-now" ${product.stock === 0 ? "disabled" : ""} onclick="window.open('${product.url}','_blank')">
+                    Buy Now
+                </button>
+            </div>
+        `;
+        productGrid.insertAdjacentHTML("beforeend", productHTML);
+    });
+}
+
+// ====== Populate Categories ======
+function populateCategories(products) {
+    const categories = ["All", ...new Set(products.map(p => p.category).filter(Boolean))];
+    categorySelect.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join("");
+}
+
+// ====== Filter Products ======
 categorySelect.addEventListener("change", () => {
-  const selected = categorySelect.value;
-  sectionTitle.textContent = selected;
-  if (selected === "All Products") renderProducts(allProducts);
-  else renderProducts(allProducts.filter(p => p.category === selected));
+    const selected = categorySelect.value;
+    if (selected === "All") {
+        renderProducts(allProducts);
+        sectionTitle.textContent = "All Products";
+    } else {
+        const filtered = allProducts.filter(p => p.category === selected);
+        renderProducts(filtered);
+        sectionTitle.textContent = selected;
+    }
 });
 
-// -----------------------------
-// Fetch products from Firestore
-// -----------------------------
-async function fetchProducts() {
-  const q = query(productsCol, orderBy("order", "asc"));
-  const snapshot = await getDocs(q);
-  allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  renderCategories(allProducts);
-  renderProducts(allProducts);
-}
-
-// Initial fetch
-fetchProducts();
+// ====== Initialize ======
+document.addEventListener("DOMContentLoaded", fetchProducts);
