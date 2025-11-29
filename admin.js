@@ -261,41 +261,28 @@ const merchCountAdmin = document.getElementById("product-count-admin");
 const merchVariationsContainer = document.getElementById("variations-container");
 const merchAddVariationBtn = document.getElementById("add-variation");
 const merchBasePriceInput = document.getElementById("base-price");
-
-// Firestore reference
 const merchCol = collection(db, "merch");
 
-// Local products array
+// Local products array (declared once)
 let allProducts = [];
 
 // -----------------------------
-// Update Base Price
+// Base Price Update
 // -----------------------------
 function updateBasePrice() {
   const variations = Array.from(merchVariationsContainer.querySelectorAll(".variation"))
-    .filter(v => {
-      const price = v.querySelector(".variation-price").value;
-      const color = v.querySelector(".variation-color").value;
-      const size = v.querySelector(".variation-size").value;
-      return price || color || size; // count only filled rows
-    });
-
+    .filter(v => v.querySelector(".variation-price").value || v.querySelector(".variation-color").value || v.querySelector(".variation-size").value);
   if (!variations.length) {
     merchBasePriceInput.readOnly = false;
     return;
   }
-
   merchBasePriceInput.readOnly = true;
-
   const prices = variations.map(v => parseFloat(v.querySelector(".variation-price").value) || 0);
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
   merchBasePriceInput.value = minPrice === maxPrice ? minPrice.toFixed(2) : `${minPrice.toFixed(2)} – ${maxPrice.toFixed(2)}`;
 }
 
-// -----------------------------
-// Attach listeners
-// -----------------------------
 function attachPriceListeners() {
   document.querySelectorAll(".variation-price").forEach(input => {
     input.removeEventListener("input", updateBasePrice);
@@ -315,7 +302,7 @@ function addRemoveListeners() {
 // -----------------------------
 // Add new variation row
 // -----------------------------
-merchAddVariationBtn.addEventListener("click", () => {
+merchAddVariationBtn?.addEventListener("click", () => {
   const div = document.createElement("div");
   div.classList.add("variation");
   div.innerHTML = `
@@ -327,8 +314,7 @@ merchAddVariationBtn.addEventListener("click", () => {
       <option value="low-stock">Low Stock</option>
       <option value="out-of-stock">Out of Stock</option>
     </select>
-    <button type="button" class="remove-variation">Remove</button>
-  `;
+    <button type="button" class="remove-variation">Remove</button>`;
   merchVariationsContainer.appendChild(div);
   attachPriceListeners();
   addRemoveListeners();
@@ -339,9 +325,7 @@ merchAddVariationBtn.addEventListener("click", () => {
 // Fetch products
 // -----------------------------
 async function fetchProducts() {
-  const q = query(merchCol, orderBy("order", "asc"));
-  const snap = await getDocs(q);
-
+  const snap = await getDocs(query(merchCol, orderBy("order", "asc")));
   allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderProducts();
 }
@@ -365,29 +349,36 @@ function renderProducts() {
 
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
-    const displayPrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
+    const displayBasePrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
+
+    // Sale / discount calculation
+    let displayDiscountPrice = "-";
+    if (product.discount > 0) {
+      const discountedPrices = prices.map(p => (p * (1 - product.discount/100)));
+      const minDiscount = Math.min(...discountedPrices);
+      const maxDiscount = Math.max(...discountedPrices);
+      displayDiscountPrice = minDiscount === maxDiscount ? `$${minDiscount.toFixed(2)}` : `$${minDiscount.toFixed(2)} – $${maxDiscount.toFixed(2)}`;
+    }
 
     // ------------------ TABLE ROW ------------------
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${product.name}</td>
       <td>${product.category}</td>
-      <td>${displayPrice}</td>
-      <td>${product.discount || 0}%</td>
+      <td>${displayBasePrice}</td>
+      <td>${product.discount > 0 ? displayDiscountPrice : '-'}</td>
       <td>${product.stock}</td>
       <td>${product.sale ? "Yes" : "No"}</td>
       <td>
         <button onclick="editProduct('${product.id}')">Edit</button>
         <button onclick="deleteProduct('${product.id}')">Delete</button>
-      </td>
-    `;
+      </td>`;
     merchTableBody.appendChild(tr);
 
     // ------------------ LIVE PREVIEW ------------------
     const card = document.createElement("div");
     card.classList.add("product-item");
 
-    // Variation selector
     let variationSelectHTML = "";
     if (hasVariations && variations.length > 1) {
       variationSelectHTML = `<select class="variation-select">`;
@@ -399,22 +390,30 @@ function renderProducts() {
       variationSelectHTML += `</select>`;
     }
 
-    // Price HTML
-    const priceHTML = displayPrice;
+    // Price HTML for card
+    let displayPriceForCard;
+    if (product.discount > 0) {
+      const discountedPrices = prices.map(p => (p * (1 - product.discount/100)));
+      const minDiscount = Math.min(...discountedPrices);
+      const maxDiscount = Math.max(...discountedPrices);
+      const discountedText = minDiscount === maxDiscount ? `$${minDiscount.toFixed(2)}` : `$${minDiscount.toFixed(2)} – $${maxDiscount.toFixed(2)}`;
+      displayPriceForCard = `<span class="original-price">${displayBasePrice}</span><span class="discount-price">${discountedText}</span>`;
+    } else {
+      displayPriceForCard = `<span class="regular-price">${displayBasePrice}</span>`;
+    }
 
     const disabledBuy = (!hasVariations && product.stock === "out-of-stock") || (hasVariations && inStock.length === 0);
-    const buttonHTML = `<button class="buy-now" ${disabledBuy ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>`;
 
     card.innerHTML = `
       <div class="product-image-container">
         <img src="${product.image}" alt="${product.name}">
-        ${product.sale ? '<div class="sale-ribbon">Sale</div>' : ''}
+        ${(product.sale || product.discount > 0) ? '<div class="sale-ribbon">Sale</div>' : ''}
         <div class="stock-ribbon ${product.stock}">${product.stock}</div>
       </div>
       <h3>${product.name}</h3>
       ${variationSelectHTML}
-      <p class="price">${priceHTML}</p>
-      ${buttonHTML}
+      <p class="price">${displayPriceForCard}</p>
+      <button class="buy-now" ${disabledBuy ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>
     `;
     merchPreviewGrid.appendChild(card);
 
@@ -427,11 +426,15 @@ function renderProducts() {
       let selectedVar = variations[0] || { price: product.price || 0, stock: product.stock };
       if (select) selectedVar = variations[select.value];
 
-      const newPrice = product.discount
-        ? (selectedVar.price * (1 - (product.discount || 0)/100)).toFixed(2)
-        : selectedVar.price.toFixed(2);
+      let newPriceText;
+      if (product.discount > 0) {
+        const discounted = (selectedVar.price * (1 - product.discount/100)).toFixed(2);
+        newPriceText = `<span class="original-price">$${selectedVar.price.toFixed(2)}</span><span class="discount-price">$${discounted}</span>`;
+      } else {
+        newPriceText = `$${selectedVar.price.toFixed(2)}`;
+      }
+      priceSpan.innerHTML = newPriceText;
 
-      priceSpan.textContent = `$${newPrice}`;
       buyBtn.disabled = selectedVar.stock === "out-of-stock";
       buyBtn.style.background = selectedVar.stock === "out-of-stock" ? "#888" : "";
       buyBtn.style.cursor = selectedVar.stock === "out-of-stock" ? "not-allowed" : "";
@@ -440,7 +443,6 @@ function renderProducts() {
     if (select) select.addEventListener("change", updatePrice);
     updatePrice();
 
-    // Buy button
     buyBtn.addEventListener("click", () => {
       if (buyBtn.disabled) return;
       let url = product.link;
@@ -455,7 +457,7 @@ function renderProducts() {
 // -----------------------------
 // Admin: Save product
 // -----------------------------
-merchForm.addEventListener("submit", async e => {
+merchForm?.addEventListener("submit", async e => {
   e.preventDefault();
 
   const id = document.getElementById("product-id").value;
