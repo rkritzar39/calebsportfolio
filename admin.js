@@ -251,6 +251,8 @@ const tableBody = document.querySelector("#product-table tbody");
 const productCountAdmin = document.getElementById("product-count-admin");
 const previewGrid = document.getElementById("preview-grid");
 const productsCol = collection(db, "merch");
+const variationsContainer = document.getElementById("variations-container");
+const addVariationBtn = document.getElementById("add-variation");
 
 let allProducts = [];
 
@@ -263,9 +265,14 @@ function renderProducts() {
   productCountAdmin.textContent = allProducts.length;
 
   allProducts.forEach(product => {
+    // Calculate lowest price among variations
+    const basePrice = product.variations && product.variations.length
+      ? Math.min(...product.variations.map(v => v.price))
+      : product.price || 0;
+
     const finalPrice = product.discount
-      ? (product.price * (1 - product.discount / 100)).toFixed(2)
-      : Number(product.price).toFixed(2);
+      ? (basePrice * (1 - product.discount / 100)).toFixed(2)
+      : basePrice.toFixed(2);
 
     // Table row
     const tr = document.createElement("tr");
@@ -285,11 +292,15 @@ function renderProducts() {
 
     // Preview item
     const isDisabled = product.stock === "out-of-stock";
-    const priceHTML = product.discount
-      ? `<span class="original-price">$${Number(product.price).toFixed(2)}</span>
-         <span class="discount-price">$${finalPrice}</span>
-         <span class="sale-badge">-${product.discount}% Off</span>`
-      : `<span class="regular-price">$${finalPrice}</span>`;
+
+    let priceHTML = "";
+    if (product.discount && basePrice > 0) {
+      priceHTML = `<span class="original-price">$${basePrice.toFixed(2)}</span>
+                   <span class="discount-price">$${finalPrice}</span>
+                   <span class="sale-badge">-${product.discount}% Off</span>`;
+    } else {
+      priceHTML = `<span class="regular-price">$${finalPrice}</span>`;
+    }
 
     const buttonHTML = `<button class="buy-now" ${isDisabled ? 'disabled style="background:#888; cursor:not-allowed;"' : `onclick="window.open('${product.link}','_blank')"`}>Buy Now</button>`;
 
@@ -325,16 +336,23 @@ async function fetchProducts() {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
+  // Collect variations
+  const variations = Array.from(variationsContainer.querySelectorAll(".variation")).map(v => ({
+    color: v.querySelector(".variation-color").value,
+    size: v.querySelector(".variation-size").value,
+    price: parseFloat(v.querySelector(".variation-price").value.toFixed(2))
+  }));
+
   const id = document.getElementById("product-id").value;
   const productData = {
     name: document.getElementById("product-name").value,
     category: document.getElementById("product-category").value,
-    price: parseFloat(document.getElementById("product-price").value),
     discount: parseFloat(document.getElementById("product-discount").value) || 0,
     stock: document.getElementById("product-stock").value,
     sale: document.getElementById("product-sale").value === "true",
     image: document.getElementById("product-image").value,
     link: document.getElementById("product-link").value,
+    variations,
     order: allProducts.length // optional ordering
   };
 
@@ -346,6 +364,16 @@ form.addEventListener("submit", async e => {
     }
     form.reset();
     document.getElementById("product-id").value = "";
+    // Reset variations container to 1 default row
+    variationsContainer.innerHTML = `
+      <div class="variation">
+        <input type="text" class="variation-color" placeholder="Color" required>
+        <input type="text" class="variation-size" placeholder="Size" required>
+        <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
+        <button type="button" class="remove-variation">Remove</button>
+      </div>
+    `;
+    addRemoveListeners(); // reattach remove listeners
     fetchProducts();
   } catch (err) {
     console.error("Error saving product:", err);
@@ -362,12 +390,26 @@ window.editProduct = async id => {
   document.getElementById("product-id").value = id;
   document.getElementById("product-name").value = product.name;
   document.getElementById("product-category").value = product.category;
-  document.getElementById("product-price").value = product.price;
   document.getElementById("product-discount").value = product.discount || 0;
   document.getElementById("product-stock").value = product.stock;
   document.getElementById("product-sale").value = product.sale ? "true" : "false";
   document.getElementById("product-image").value = product.image;
   document.getElementById("product-link").value = product.link;
+
+  // Load variations
+  variationsContainer.innerHTML = "";
+  product.variations.forEach(v => {
+    const variationDiv = document.createElement("div");
+    variationDiv.classList.add("variation");
+    variationDiv.innerHTML = `
+      <input type="text" class="variation-color" placeholder="Color" value="${v.color}" required>
+      <input type="text" class="variation-size" placeholder="Size" value="${v.size}" required>
+      <input type="number" class="variation-price" placeholder="Price" step="0.01" value="${v.price.toFixed(2)}" required>
+      <button type="button" class="remove-variation">Remove</button>
+    `;
+    variationsContainer.appendChild(variationDiv);
+  });
+  addRemoveListeners();
 };
 
 // -----------------------------
@@ -382,6 +424,29 @@ window.deleteProduct = async id => {
     console.error("Error deleting product:", err);
   }
 };
+
+// -----------------------------
+// Add / Remove variation rows
+// -----------------------------
+addVariationBtn.addEventListener("click", () => {
+  const variationDiv = document.createElement("div");
+  variationDiv.classList.add("variation");
+  variationDiv.innerHTML = `
+    <input type="text" class="variation-color" placeholder="Color" required>
+    <input type="text" class="variation-size" placeholder="Size" required>
+    <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
+    <button type="button" class="remove-variation">Remove</button>
+  `;
+  variationsContainer.appendChild(variationDiv);
+  addRemoveListeners();
+});
+
+// Function to attach remove button listeners
+function addRemoveListeners() {
+  document.querySelectorAll(".remove-variation").forEach(btn => {
+    btn.onclick = () => btn.parentElement.remove();
+  });
+}
 
 // -----------------------------
 // Initial fetch
