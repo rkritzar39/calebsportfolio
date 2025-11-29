@@ -284,72 +284,94 @@
 <section id="merch-management">
   <h2>Manage Merchandise</h2>
 
-  <!-- Add/Edit Product Form -->
   <form id="product-form">
-    <label for="product-name">Product Name:</label>
-    <input type="text" id="product-name" required>
+    
+    <div class="form-group">
+      <label for="product-name">Product Name:</label>
+      <input type="text" id="product-name" required>
+    </div>
 
-    <label for="product-category">Category:</label>
-    <select id="product-category" required>
-      <option value="">-- Select Category --</option>
-      <option value="Outdoor">Outdoor</option>
-      <option value="Hats">Hats</option>
-      <option value="Hoodies & Sweatshirts">Hoodies & Sweatshirts</option>
-      <option value="T-Shirts">T-Shirts</option>
-      <option value="Baby & Toddler">Baby & Toddler</option>
-      <option value="Kitchenwear">Kitchenwear</option>
-      <option value="Accessories">Accessories</option>
-    </select>
+    <div class="form-group">
+      <label for="product-category">Category:</label>
+      <select id="product-category" required>
+        <option value="">-- Select Category --</option>
+        <option value="Outdoor">Outdoor</option>
+        <option value="Hats">Hats</option>
+        <option value="Hoodies & Sweatshirts">Hoodies & Sweatshirts</option>
+        <option value="T-Shirts">T-Shirts</option>
+        <option value="Baby & Toddler">Baby & Toddler</option>
+        <option value="Kitchenwear">Kitchenwear</option>
+        <option value="Accessories">Accessories</option>
+      </select>
+    </div>
 
-    <label for="product-price">Price ($):</label>
-    <input type="number" id="product-price" step="0.01" required>
+    <div class="form-group">
+      <label for="product-price">Price ($):</label>
+      <input type="number" id="product-price" step="0.01" required>
+    </div>
 
-    <label for="product-discount">Discount (%):</label>
-    <input type="number" id="product-discount" min="0" max="100">
+    <div class="form-group">
+      <label for="product-discount">Discount (%):</label>
+      <input type="number" id="product-discount" min="0" max="100">
+    </div>
 
-    <label for="product-stock">Stock Status:</label>
-    <select id="product-stock" required>
-      <option value="in-stock">In Stock</option>
-      <option value="low-stock">Low Stock</option>
-      <option value="out-of-stock">Out of Stock</option>
-    </select>
+    <div class="form-group">
+      <label for="product-stock">Stock Status:</label>
+      <select id="product-stock" required>
+        <option value="in-stock">In Stock</option>
+        <option value="low-stock">Low Stock</option>
+        <option value="out-of-stock">Out of Stock</option>
+      </select>
+    </div>
 
-    <label for="product-sale">On Sale?</label>
-    <select id="product-sale" required>
-      <option value="true">Yes</option>
-      <option value="false">No</option>
-    </select>
+    <div class="form-group">
+      <label for="product-sale">On Sale?</label>
+      <select id="product-sale" required>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+    </div>
 
-    <label for="product-image">Image URL:</label>
-    <input type="url" id="product-image" required>
+    <div class="form-group full-width">
+      <label for="product-image">Image URL:</label>
+      <input type="url" id="product-image" required>
+    </div>
 
-    <label for="product-link">Product Link:</label>
-    <input type="url" id="product-link" required>
+    <div class="form-group full-width">
+      <label for="product-link">Product Link:</label>
+      <input type="url" id="product-link" required>
+    </div>
 
     <input type="hidden" id="product-id">
-    <button type="submit">Save Product</button>
+    
+    <div class="form-actions">
+      <button type="submit">Save Product</button>
+    </div>
   </form>
 
-  <!-- Existing Products Table -->
   <h3>Existing Products (<span id="product-count-admin">0</span>)</h3>
-  <table id="product-table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Category</th>
-        <th>Price</th>
-        <th>Discount</th>
-        <th>Stock</th>
-        <th>Sale</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  
+  <div class="table-responsive">
+    <table id="product-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Discount</th>
+          <th>Stock</th>
+          <th>Sale</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        </tbody>
+    </table>
+  </div>
 
-  <!-- Live Preview -->
   <h3>Live Preview</h3>
-  <div id="preview-grid" class="product-grid"></div>
+  <div id="preview-grid" class="product-grid">
+    </div>
 </section>
 
             
