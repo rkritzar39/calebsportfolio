@@ -228,7 +228,6 @@ async function fetchProducts() {
     renderProducts();
 }
 
-// Render products
 function renderProducts() {
     merchTableBody.innerHTML = "";
     merchPreviewGrid.innerHTML = "";
@@ -238,26 +237,45 @@ function renderProducts() {
         const variations = product.variations || [];
         const hasVariations = variations.length > 0;
         const inStock = variations.filter(v => v.stock !== "out-of-stock");
+
+        // Prices
         const prices = hasVariations ? variations.map(v => v.price) : [product.price || 0];
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
+
+        // Display base price
         const displayBasePrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
 
-        let salePriceDisplay = "-";
-        if (product.discount && !hasVariations) salePriceDisplay = `$${(minPrice * (1 - product.discount/100)).toFixed(2)}`;
-        else if (product.discount && hasVariations) {
+        // Calculate discounted prices
+        let displayPriceHTML;
+        if (product.discount > 0) {
             const discountedPrices = prices.map(p => p * (1 - product.discount / 100));
-            const minSale = Math.min(...discountedPrices).toFixed(2);
-            const maxSale = Math.max(...discountedPrices).toFixed(2);
-            salePriceDisplay = minSale === maxSale ? `$${minSale}` : `$${minSale} – $${maxSale}`;
+            const minDiscount = Math.min(...discountedPrices);
+            const maxDiscount = Math.max(...discountedPrices);
+
+            const discountedText = minDiscount === maxDiscount
+                ? `$${minDiscount.toFixed(2)}`
+                : `$${minDiscount.toFixed(2)} – $${maxDiscount.toFixed(2)}`;
+
+            const originalText = minPrice === maxPrice
+                ? `$${minPrice.toFixed(2)}`
+                : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
+
+            displayPriceHTML = `
+                <span class="original-price">${originalText}</span>
+                <span class="discount-price">${discountedText}</span>
+            `;
+        } else {
+            displayPriceHTML = `<span class="regular-price">${displayBasePrice}</span>`;
         }
 
+        // ------------------ TABLE ROW ------------------
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${product.name}</td>
           <td>${product.category}</td>
           <td>${displayBasePrice}</td>
-          <td>${salePriceDisplay}</td>
+          <td>${product.discount > 0 ? displayPriceHTML.replace(/<[^>]+>/g, '') : '-'}</td>
           <td>${product.discount || 0}%</td>
           <td>${product.stock}</td>
           <td>${product.sale ? "Yes" : "No"}</td>
@@ -267,9 +285,10 @@ function renderProducts() {
           </td>`;
         merchTableBody.appendChild(tr);
 
-        // Live preview
+        // ------------------ LIVE PREVIEW ------------------
         const card = document.createElement("div");
         card.classList.add("product-item");
+
         let variationSelectHTML = "";
         if (hasVariations && variations.length > 1) {
             variationSelectHTML = `<select class="variation-select">`;
@@ -280,36 +299,54 @@ function renderProducts() {
             });
             variationSelectHTML += `</select>`;
         }
-        const displayPrice = product.discount ? `$${(minPrice * (1 - product.discount/100)).toFixed(2)}` : displayBasePrice;
+
+        const displayPriceForCard = product.discount > 0 ? displayPriceHTML : `<span class="regular-price">${displayBasePrice}</span>`;
         const disabledBuy = (!hasVariations && product.stock === "out-of-stock") || (hasVariations && inStock.length === 0);
-        const buttonHTML = `<button class="buy-now" ${disabledBuy ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>`;
 
         card.innerHTML = `
           <div class="product-image-container">
             <img src="${product.image}" alt="${product.name}">
-            ${product.sale ? '<div class="sale-ribbon">Sale</div>' : ''}
+            ${product.sale || product.discount > 0 ? '<div class="sale-ribbon">Sale</div>' : ''}
             <div class="stock-ribbon ${product.stock}">${product.stock}</div>
           </div>
           <h3>${product.name}</h3>
           ${variationSelectHTML}
-          <p class="price">${displayPrice}</p>
-          ${buttonHTML}`;
+          <p class="price">${displayPriceForCard}</p>
+          <button class="buy-now" ${disabledBuy ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>
+        `;
+
         merchPreviewGrid.appendChild(card);
 
+        // ------------------ Variation change ------------------
         const select = card.querySelector(".variation-select");
         const buyBtn = card.querySelector(".buy-now");
         const priceSpan = card.querySelector(".price");
+
         const updatePrice = () => {
             let selectedVar = variations[0] || { price: product.price || 0, stock: product.stock };
             if (select) selectedVar = variations[select.value];
-            const newPrice = product.discount ? (selectedVar.price * (1 - product.discount/100)).toFixed(2) : selectedVar.price.toFixed(2);
-            priceSpan.textContent = `$${newPrice}`;
+
+            const newPrice = product.discount > 0
+                ? (selectedVar.price * (1 - product.discount / 100)).toFixed(2)
+                : selectedVar.price.toFixed(2);
+
+            if (product.discount > 0) {
+                priceSpan.innerHTML = `
+                    <span class="original-price">$${selectedVar.price.toFixed(2)}</span>
+                    <span class="discount-price">$${newPrice}</span>
+                `;
+            } else {
+                priceSpan.textContent = `$${newPrice}`;
+            }
+
             buyBtn.disabled = selectedVar.stock === "out-of-stock";
             buyBtn.style.background = selectedVar.stock === "out-of-stock" ? "#888" : "";
             buyBtn.style.cursor = selectedVar.stock === "out-of-stock" ? "not-allowed" : "";
         };
+
         if (select) select.addEventListener("change", updatePrice);
         updatePrice();
+
         buyBtn.addEventListener("click", () => {
             if (buyBtn.disabled) return;
             let url = product.link;
