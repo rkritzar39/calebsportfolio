@@ -5,15 +5,11 @@ import { db, auth } from './firebase-init.js';
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 import {
     collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc,
-    query, orderBy, getDoc, Timestamp
+    query, orderBy, getDoc, Timestamp, where
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import {
-    getAuth,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged,
-    GoogleAuthProvider,
-    signInWithCredential
+    getAuth, signInWithEmailAndPassword, signOut,
+    onAuthStateChanged, GoogleAuthProvider, signInWithCredential
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
 // -------------------------
@@ -27,15 +23,39 @@ let allTechItems = [];
 let allProducts = [];
 
 // -------------------------
-// HELPER FUNCTIONS
+// DOM HELPER
 // -------------------------
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
 function showFeedback(msg, ok = true) {
     const el = $("manual-status-feedback");
     if (!el) return;
     el.textContent = msg;
     el.style.color = ok ? "" : "#ff6b6b";
     setTimeout(() => { if (el.textContent === msg) el.textContent = ""; }, 4000);
+}
+
+// -------------------------
+// SHOUTOUTS LOAD FUNCTIONS
+// -------------------------
+async function loadShoutoutsAdmin() {
+    try {
+        const colRef = collection(db, "shoutouts");
+
+        const qTikTok = query(colRef, where("platform", "==", "tiktok"), orderBy("createdAt", "desc"));
+        const snapTikTok = await getDocs(qTikTok);
+        allShoutouts.tiktok = snapTikTok.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const qIG = query(colRef, where("platform", "==", "instagram"), orderBy("createdAt", "desc"));
+        const snapIG = await getDocs(qIG);
+        allShoutouts.instagram = snapIG.docs.map(d => ({ id: d.id, ...d.data() }));
+
+        const qYT = query(colRef, where("platform", "==", "youtube"), orderBy("createdAt", "desc"));
+        const snapYT = await getDocs(qYT);
+        allShoutouts.youtube = snapYT.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    } catch (err) {
+        console.error("Error loading shoutouts:", err);
+    }
 }
 
 // -------------------------
@@ -108,8 +128,7 @@ async function clearManualStatus() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const form = $("manual-status-form");
-    if (form) form.addEventListener("submit", saveManualStatus);
+    $("manual-status-form")?.addEventListener("submit", saveManualStatus);
     $("clear-manual-status-btn")?.addEventListener("click", async () => {
         if (!confirm("Clear manual status? This will disable the manual override.")) return;
         await clearManualStatus();
@@ -174,7 +193,7 @@ const merchAddVariationBtn = $("add-variation");
 const merchBasePriceInput = $("base-price");
 const merchCol = collection(db, "merch");
 
-// Base Price update
+// Base Price logic
 function updateBasePrice() {
     const variations = Array.from(merchVariationsContainer.querySelectorAll(".variation"))
         .filter(v => v.querySelector(".variation-price").value || v.querySelector(".variation-color").value || v.querySelector(".variation-size").value);
@@ -221,13 +240,14 @@ merchAddVariationBtn?.addEventListener("click", () => {
     updateBasePrice();
 });
 
-// Fetch and render products
+// Fetch products
 async function fetchProducts() {
     const snap = await getDocs(query(merchCol, orderBy("order", "asc")));
     allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     renderProducts();
 }
 
+// Render products (table + live preview)
 function renderProducts() {
     merchTableBody.innerHTML = "";
     merchPreviewGrid.innerHTML = "";
@@ -237,45 +257,28 @@ function renderProducts() {
         const variations = product.variations || [];
         const hasVariations = variations.length > 0;
         const inStock = variations.filter(v => v.stock !== "out-of-stock");
-
-        // Prices
         const prices = hasVariations ? variations.map(v => v.price) : [product.price || 0];
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
-
-        // Display base price
         const displayBasePrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
 
-        // Calculate discounted prices
+        // Discount
         let displayPriceHTML;
         if (product.discount > 0) {
             const discountedPrices = prices.map(p => p * (1 - product.discount / 100));
             const minDiscount = Math.min(...discountedPrices);
             const maxDiscount = Math.max(...discountedPrices);
+            const discountedText = minDiscount === maxDiscount ? `$${minDiscount.toFixed(2)}` : `$${minDiscount.toFixed(2)} – $${maxDiscount.toFixed(2)}`;
+            displayPriceHTML = `<span class="original-price">${displayBasePrice}</span><span class="discount-price">${discountedText}</span>`;
+        } else displayPriceHTML = `<span class="regular-price">${displayBasePrice}</span>`;
 
-            const discountedText = minDiscount === maxDiscount
-                ? `$${minDiscount.toFixed(2)}`
-                : `$${minDiscount.toFixed(2)} – $${maxDiscount.toFixed(2)}`;
-
-            const originalText = minPrice === maxPrice
-                ? `$${minPrice.toFixed(2)}`
-                : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
-
-            displayPriceHTML = `
-                <span class="original-price">${originalText}</span>
-                <span class="discount-price">${discountedText}</span>
-            `;
-        } else {
-            displayPriceHTML = `<span class="regular-price">${displayBasePrice}</span>`;
-        }
-
-        // ------------------ TABLE ROW ------------------
+        // Table row
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${product.name}</td>
           <td>${product.category}</td>
           <td>${displayBasePrice}</td>
-          <td>${product.discount > 0 ? displayPriceHTML.replace(/<[^>]+>/g, '') : '-'}</td>
+          <td>${product.discount > 0 ? displayPriceHTML.replace(/<[^>]+>/g,'') : '-'}</td>
           <td>${product.discount || 0}%</td>
           <td>${product.stock}</td>
           <td>${product.sale ? "Yes" : "No"}</td>
@@ -285,7 +288,7 @@ function renderProducts() {
           </td>`;
         merchTableBody.appendChild(tr);
 
-        // ------------------ LIVE PREVIEW ------------------
+        // Live preview card
         const card = document.createElement("div");
         card.classList.add("product-item");
 
@@ -300,7 +303,6 @@ function renderProducts() {
             variationSelectHTML += `</select>`;
         }
 
-        const displayPriceForCard = product.discount > 0 ? displayPriceHTML : `<span class="regular-price">${displayBasePrice}</span>`;
         const disabledBuy = (!hasVariations && product.stock === "out-of-stock") || (hasVariations && inStock.length === 0);
 
         card.innerHTML = `
@@ -311,13 +313,12 @@ function renderProducts() {
           </div>
           <h3>${product.name}</h3>
           ${variationSelectHTML}
-          <p class="price">${displayPriceForCard}</p>
+          <p class="price">${displayPriceHTML}</p>
           <button class="buy-now" ${disabledBuy ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>
         `;
-
         merchPreviewGrid.appendChild(card);
 
-        // ------------------ Variation change ------------------
+        // Variation change
         const select = card.querySelector(".variation-select");
         const buyBtn = card.querySelector(".buy-now");
         const priceSpan = card.querySelector(".price");
@@ -325,20 +326,12 @@ function renderProducts() {
         const updatePrice = () => {
             let selectedVar = variations[0] || { price: product.price || 0, stock: product.stock };
             if (select) selectedVar = variations[select.value];
-
             const newPrice = product.discount > 0
                 ? (selectedVar.price * (1 - product.discount / 100)).toFixed(2)
                 : selectedVar.price.toFixed(2);
-
-            if (product.discount > 0) {
-                priceSpan.innerHTML = `
-                    <span class="original-price">$${selectedVar.price.toFixed(2)}</span>
-                    <span class="discount-price">$${newPrice}</span>
-                `;
-            } else {
-                priceSpan.textContent = `$${newPrice}`;
-            }
-
+            priceSpan.innerHTML = product.discount > 0
+                ? `<span class="original-price">$${selectedVar.price.toFixed(2)}</span><span class="discount-price">$${newPrice}</span>`
+                : `$${newPrice}`;
             buyBtn.disabled = selectedVar.stock === "out-of-stock";
             buyBtn.style.background = selectedVar.stock === "out-of-stock" ? "#888" : "";
             buyBtn.style.cursor = selectedVar.stock === "out-of-stock" ? "not-allowed" : "";
@@ -369,7 +362,6 @@ merchForm?.addEventListener("submit", async e => {
             price: parseFloat(v.querySelector(".variation-price").value),
             stock: v.querySelector(".variation-stock").value
         })).filter(v => v.price || v.color || v.size);
-
     const product = {
         name: $("product-name").value,
         category: $("product-category").value,
@@ -382,19 +374,17 @@ merchForm?.addEventListener("submit", async e => {
         price: variations.length === 0 ? parseFloat(merchBasePriceInput.value) || 0 : undefined,
         order: id ? undefined : allProducts.length
     };
-
     if (id) await updateDoc(doc(db, "merch", id), product);
     else await addDoc(merchCol, product);
-
     merchForm.reset();
     merchVariationsContainer.innerHTML = "";
     updateBasePrice();
     fetchProducts();
 });
 
-// Edit / Delete product
-window.editProduct = id => { /* same logic as before */ };
-window.deleteProduct = async id => { if (!confirm("Delete?")) return; await deleteDoc(doc(db, "merch", id)); fetchProducts(); };
+// Edit / Delete
+window.editProduct = function(id) { /* same as above logic */ };
+window.deleteProduct = async id => { if (!confirm("Delete product?")) return; await deleteDoc(doc(db, "merch", id)); fetchProducts(); };
 
 // -------------------------
 // INIT
@@ -404,6 +394,7 @@ attachPriceListeners();
 addRemoveListeners();
 updateBasePrice();
 loadGoalTracker();
+loadShoutoutsAdmin();
 
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
