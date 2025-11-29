@@ -1275,3 +1275,18 @@ body.dark-mode #themeModeSelect:hover {
   font-weight: 500;
   letter-spacing: 0.2px;
 }
+
+.custom-bg-preview {
+  width: 100%;
+  height: 200px;
+  background-size: 100% auto;
+  background-position: center center;
+  background-repeat: no-repeat;
+  cursor: grab;
+  border: 1px solid #ccc;
+  transition: background-position 0.1s ease, background-size 0.1s ease;
+}
+
+.custom-bg-preview.dragging {
+  cursor: grabbing;
+}
