@@ -1,5 +1,31 @@
-    // admin.js (Version includes Preview Prep + Previous Features + Social Links)
+   // admin.js (Version includes Preview Prep + Previous Features + Social Links)
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
+
+// -------------------------
+// 🔥 FIREBASE INIT (ONE TIME ONLY)
+// -------------------------
+import { db, auth } from './firebase-init.js'; // ← KEEP THIS ONE
+
+// -------------------------
+// FIRESTORE FUNCTIONS
+// -------------------------
+import {
+    getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc,
+    serverTimestamp, getDoc, query, orderBy, where, limit, Timestamp,
+    deleteField, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+// -------------------------
+// AUTH
+// -------------------------
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithCredential
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
 const MANUAL_DOC = doc(db, "manualStatus", "site");
 
@@ -17,7 +43,6 @@ async function loadManualStatusToForm() {
   try {
     const snap = await getDoc(MANUAL_DOC);
     if (!snap.exists()) {
-      // defaults
       $("manual-status-text").value = "";
       $("manual-status-icon").value = "manual";
       $("manual-status-duration").value = 15;
@@ -27,7 +52,7 @@ async function loadManualStatusToForm() {
     const data = snap.data();
     $("manual-status-text").value = data.text || "";
     $("manual-status-icon").value = data.icon || "manual";
-    // compute remaining minutes if expiresAt exists
+
     if (data.expiresAt && typeof data.expiresAt === "number") {
       const mins = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / 60000));
       $("manual-status-duration").value = mins;
@@ -73,7 +98,6 @@ async function saveManualStatus(e) {
 
 async function clearManualStatus() {
   try {
-    // Disable manual override and clear text
     await setDoc(MANUAL_DOC, {
       text: "",
       icon: "manual",
@@ -82,6 +106,7 @@ async function clearManualStatus() {
       expiresAt: null,
       persistent: false
     }, { merge: true });
+
     await loadManualStatusToForm();
     showFeedback("Manual status cleared");
   } catch (err) {
@@ -91,7 +116,6 @@ async function clearManualStatus() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Form handlers
   const form = $("manual-status-form");
   form?.addEventListener("submit", saveManualStatus);
 
@@ -100,37 +124,33 @@ document.addEventListener("DOMContentLoaded", () => {
     await clearManualStatus();
   });
 
-  // Prefill the form from Firestore
   loadManualStatusToForm();
 
-  // Optional: realtime UI reflection if manual doc updated elsewhere
   (async () => {
     try {
-      // dynamic import to avoid initial bundle dependency if not needed:
       const { onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js");
       onSnapshot(MANUAL_DOC, (snap) => {
         if (!snap.exists()) return;
         const data = snap.data();
-        // If another admin updates the manual status, reflect in the UI
         $("manual-status-text").value = data.text || "";
         $("manual-status-icon").value = data.icon || "manual";
         $("manual-status-enabled").checked = !!data.enabled;
       });
     } catch (e) {
-      // not fatal — form still works
-      console.warn("Realtime watch for manual status not enabled:", e);
+      console.warn("Realtime watch not enabled:", e);
     }
   })();
 });
 
-// Load existing Project Goal Data
+// -----------------------------
+// GOAL TRACKER
+// -----------------------------
 async function loadGoalTracker() {
   const ref = doc(db, "siteSettings", "goalTracker");
   const snap = await getDoc(ref);
 
   if (snap.exists()) {
     const data = snap.data();
-
     document.getElementById("goal-title").value = data.goalTitle ?? "";
     document.getElementById("goal-total").value = data.goalTotal ?? 0;
     document.getElementById("goal-raised").value = data.goalRaised ?? 0;
@@ -154,7 +174,6 @@ function updateRemaining() {
 goalTotalInput.addEventListener("input", updateRemaining);
 goalRaisedInput.addEventListener("input", updateRemaining);
 
-
 document.getElementById("goal-form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -164,27 +183,28 @@ document.getElementById("goal-form").addEventListener("submit", async (e) => {
   const remaining = Math.max(total - raised, 0);
 
   try {
-    // Save to /goals collection with ownerId
     await setDoc(doc(db, "goals", "goalTracker"), {
       goalTitle: title,
       goalTotal: total,
       goalRaised: raised,
       goalRemaining: remaining,
-      ownerId: auth.currentUser.uid // ⚡ Required for Firestore rule
+      ownerId: auth.currentUser.uid
     });
 
     const msg = document.getElementById("goal-status-message");
     msg.textContent = "Goal Tracker Saved!";
     msg.classList.add("success");
   } catch (err) {
-    console.error(err); // Log Firestore error
+    console.error(err);
     const msg = document.getElementById("goal-status-message");
     msg.textContent = "Error saving goal tracker.";
     msg.classList.add("error");
   }
 });
 
-
+// -----------------------------
+// LIVE STATUS
+// -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("live-status-input");
   const updateBtn = document.getElementById("update-live-status-btn");
@@ -219,36 +239,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// -----------------------------
+// STORAGE
+// -----------------------------
 const storage = getStorage();
 
-// *** Import Firebase services from your corrected init file ***
-import { db, auth } from './firebase-init.js'; // Ensure path is correct
-
-// Import Firebase functions (Includes 'where', 'query', 'orderBy', 'limit')
-import {
-    getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc, serverTimestamp, getDoc, query, orderBy, where, limit, Timestamp, deleteField, writeBatch // <<< MAKE SURE Timestamp IS HERE
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged,
-    GoogleAuthProvider,
-    signInWithCredential
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
-// *** Global Variable for Client-Side Filtering ***
-let allShoutouts = { tiktok: [], instagram: [], youtube: [] }; // Stores the full lists for filtering
-
+// -----------------------------
+// GLOBAL DATA ARRAYS
+// -----------------------------
+let allShoutouts = { tiktok: [], instagram: [], youtube: [] };
 let allUsefulLinks = [];
 let allSocialLinks = [];
 let allDisabilities = [];
-let allTechItems = []; // For Tech section
+let allTechItems = [];
 
-
-import { db } from './firebase-init.js';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-
-// DOM Elements
+// -----------------------------
+// MERCH SYSTEM
+// -----------------------------
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
 const productCountAdmin = document.getElementById("product-count-admin");
@@ -260,9 +267,6 @@ const basePriceInput = document.getElementById("base-price");
 
 let allProducts = [];
 
-// -----------------------------
-// Update Base Price dynamically
-// -----------------------------
 function updateBasePrice() {
   const prices = Array.from(variationsContainer.querySelectorAll(".variation-price"))
     .map(input => parseFloat(input.value) || 0);
@@ -273,16 +277,12 @@ function updateBasePrice() {
   }
 }
 
-// Attach event listeners to update base price when variation price changes
 function attachPriceListeners() {
   document.querySelectorAll(".variation-price").forEach(input => {
     input.addEventListener("input", updateBasePrice);
   });
 }
 
-// -----------------------------
-// Add / Remove variation rows
-// -----------------------------
 function addRemoveListeners() {
   document.querySelectorAll(".remove-variation").forEach(btn => {
     btn.onclick = () => {
@@ -313,7 +313,7 @@ addVariationBtn.addEventListener("click", () => {
 });
 
 // -----------------------------
-// Render products in table & preview
+// Render products
 // -----------------------------
 function renderProducts() {
   tableBody.innerHTML = "";
@@ -331,7 +331,6 @@ function renderProducts() {
       ? (basePrice * (1 - (product.discount || 0)/100)).toFixed(2)
       : basePrice.toFixed(2);
 
-    // Table
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${product.name}</td>
@@ -347,7 +346,6 @@ function renderProducts() {
     `;
     tableBody.appendChild(tr);
 
-    // Live Preview
     const productDiv = document.createElement("div");
     productDiv.classList.add("product-item");
 
@@ -368,7 +366,10 @@ function renderProducts() {
          <span class="sale-badge">-${product.discount}% Off</span>`
       : `<span class="regular-price">$${finalPrice}</span>`;
 
-    const buyBtnDisabled = (variations.length && inStockVariations.length === 0) || (!variations.length && product.stock === "out-of-stock");
+    const buyBtnDisabled =
+      (variations.length && inStockVariations.length === 0) ||
+      (!variations.length && product.stock === "out-of-stock");
+
     const buttonHTML = `<button class="buy-now" ${buyBtnDisabled ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>`;
 
     productDiv.innerHTML = `
@@ -385,7 +386,6 @@ function renderProducts() {
 
     previewGrid.appendChild(productDiv);
 
-    // Variation change updates
     const select = productDiv.querySelector(".variation-select");
     const priceSpan = productDiv.querySelector(".price");
     const buyBtn = productDiv.querySelector(".buy-now");
@@ -393,9 +393,11 @@ function renderProducts() {
     const updatePreview = () => {
       let selectedVar = variations[0] || { price: product.price, stock: product.stock };
       if (select) selectedVar = variations[select.value];
+
       const newPrice = product.discount
         ? (selectedVar.price * (1 - (product.discount || 0)/100)).toFixed(2)
         : selectedVar.price.toFixed(2);
+
       if (product.discount) {
         priceSpan.innerHTML = `
           <span class="original-price">$${selectedVar.price.toFixed(2)}</span>
@@ -405,9 +407,12 @@ function renderProducts() {
       } else {
         priceSpan.innerHTML = `<span class="regular-price">$${newPrice}</span>`;
       }
+
       buyBtn.disabled = selectedVar.stock === "out-of-stock";
-      buyBtn.style.background = selectedVar.stock === "out-of-stock" ? "#888" : "";
-      buyBtn.style.cursor = selectedVar.stock === "out-of-stock" ? "not-allowed" : "";
+      buyBtn.style.background =
+        selectedVar.stock === "out-of-stock" ? "#888" : "";
+      buyBtn.style.cursor =
+        selectedVar.stock === "out-of-stock" ? "not-allowed" : "";
     };
 
     if (select) select.addEventListener("change", updatePreview);
@@ -417,7 +422,10 @@ function renderProducts() {
       if (buyBtn.disabled) return;
       let url = product.link;
       const selectedVar = select ? variations[select.value] : variations[0];
-      if (selectedVar) url += `?color=${encodeURIComponent(selectedVar.color)}&size=${encodeURIComponent(selectedVar.size)}`;
+
+      if (selectedVar)
+        url += `?color=${encodeURIComponent(selectedVar.color)}&size=${encodeURIComponent(selectedVar.size)}`;
+
       window.open(url, "_blank");
     });
   });
@@ -429,14 +437,19 @@ function renderProducts() {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const variations = Array.from(variationsContainer.querySelectorAll(".variation")).map(v => ({
+  const variations = Array.from(
+    variationsContainer.querySelectorAll(".variation")
+  ).map(v => ({
     color: v.querySelector(".variation-color").value,
     size: v.querySelector(".variation-size").value,
-    price: parseFloat(parseFloat(v.querySelector(".variation-price").value).toFixed(2)),
+    price: parseFloat(
+      parseFloat(v.querySelector(".variation-price").value).toFixed(2)
+    ),
     stock: v.querySelector(".variation-stock").value
   }));
 
   const id = document.getElementById("product-id").value;
+
   const productData = {
     name: document.getElementById("product-name").value,
     category: document.getElementById("product-category").value,
@@ -514,7 +527,9 @@ window.deleteProduct = async id => {
   }
 };
 
-// Reset variations to one empty row
+// -----------------------------
+// Reset variations
+// -----------------------------
 function resetVariations() {
   variationsContainer.innerHTML = `
     <div class="variation">
@@ -541,7 +556,6 @@ fetchProducts();
 attachPriceListeners();
 addRemoveListeners();
 updateBasePrice();
-
 
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
