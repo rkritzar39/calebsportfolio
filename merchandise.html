@@ -88,6 +88,31 @@ document.addEventListener("DOMContentLoaded", () => {
     // Dynamic year in footer
     const year = new Date().getFullYear();
     document.getElementById("year").textContent = year;
+
+    // Highlight active tab
+    const links = document.querySelectorAll('.onyx-dock .dock-item');
+    let currentPage = window.location.pathname.split("/").pop();
+    if (!currentPage) currentPage = "index.html";
+
+    links.forEach(link => {
+        const linkHref = link.getAttribute("href").split("/").pop();
+        if (linkHref === currentPage) {
+            link.classList.add("active");
+        }
+
+        // Optional: Vision OS Mouse Tracking
+        link.addEventListener('mousemove', (e) => {
+            const rect = link.getBoundingClientRect();
+            const dx = (e.clientX - rect.left) / rect.width - 0.5;
+            const dy = (e.clientY - rect.top) / rect.height - 0.5;
+            link.style.setProperty('--dx', dx);
+            link.style.setProperty('--dy', dy);
+        });
+        link.addEventListener('mouseleave', () => {
+            link.style.setProperty('--dx', 0);
+            link.style.setProperty('--dy', 0);
+        });
+    });
 });
 </script>
 
