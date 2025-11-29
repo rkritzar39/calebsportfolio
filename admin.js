@@ -221,19 +221,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const storage = getStorage();
 
-// admin.js
-import { db } from './firebase-init.js';
-import { 
-    collection, 
-    getDocs, 
-    addDoc, 
-    updateDoc, 
-    deleteDoc, 
-    doc, 
-    getDoc, 
-    onSnapshot 
+// admin.js (Products Management)
+
+// -----------------------------
+// Firebase Imports
+// -----------------------------
+import { db, auth } from './firebase-init.js';
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+// -----------------------------
+// DOM Elements
+// -----------------------------
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
 const productsCol = collection(db, "merch");
@@ -242,97 +249,107 @@ const productsCol = collection(db, "merch");
 // Fetch and Render Products
 // -----------------------------
 async function fetchProducts() {
-    tableBody.innerHTML = "";
-    const snapshot = await getDocs(productsCol);
+  tableBody.innerHTML = "";
+  const snapshot = await getDocs(productsCol);
 
-    snapshot.docs.forEach(docSnap => {
-        const data = docSnap.data();
-        const finalPrice = data.discount
-            ? (data.price * (1 - data.discount / 100)).toFixed(2)
-            : Number(data.price).toFixed(2);
+  snapshot.docs.forEach(docSnap => {
+    const data = docSnap.data();
+    const finalPrice = data.discount
+      ? (data.price * (1 - data.discount / 100)).toFixed(2)
+      : Number(data.price).toFixed(2);
 
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${data.name}</td>
-            <td>${data.category}</td>
-            <td>$${finalPrice}</td>
-            <td>${data.discount || 0}%</td>
-            <td>${data.stock}</td>
-            <td>${data.sale}</td>
-            <td>
-                <button onclick="editProduct('${docSnap.id}')">Edit</button>
-                <button onclick="deleteProduct('${docSnap.id}')">Delete</button>
-            </td>
-        `;
-        tableBody.appendChild(tr);
-    });
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${data.name}</td>
+      <td>${data.category}</td>
+      <td>$${finalPrice}</td>
+      <td>${data.discount || 0}%</td>
+      <td>${data.stock}</td>
+      <td>${data.sale}</td>
+      <td>
+        <button onclick="editProduct('${docSnap.id}')">Edit</button>
+        <button onclick="deleteProduct('${docSnap.id}')">Delete</button>
+      </td>
+    `;
+    tableBody.appendChild(tr);
+  });
 }
 
 // -----------------------------
 // Add / Update Product
 // -----------------------------
 form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const id = document.getElementById("product-id").value;
-    const productData = {
-        name: document.getElementById("product-name").value,
-        category: document.getElementById("product-category").value,
-        price: parseFloat(document.getElementById("product-price").value),
-        discount: parseFloat(document.getElementById("product-discount").value) || 0,
-        stock: document.getElementById("product-stock").value,
-        sale: document.getElementById("product-sale").value === "true",
-        image: document.getElementById("product-image").value,
-        link: document.getElementById("product-link").value,
-        order: parseInt(document.getElementById("product-order").value) || 0
-    };
+  const currentUser = auth.currentUser;
+  if (!currentUser) {
+    alert("You must be signed in as admin!");
+    return;
+  }
 
-    if (id) {
-        await updateDoc(doc(db, "merch", id), productData);
-    } else {
-        await addDoc(productsCol, productData);
-    }
+  const id = document.getElementById("product-id").value;
+  const productData = {
+    name: document.getElementById("product-name").value,
+    category: document.getElementById("product-category").value,
+    price: parseFloat(document.getElementById("product-price").value),
+    discount: parseFloat(document.getElementById("product-discount").value) || 0,
+    stock: document.getElementById("product-stock").value,
+    sale: document.getElementById("product-sale").value === "true",
+    image: document.getElementById("product-image").value,
+    link: document.getElementById("product-link").value,
+    order: parseInt(document.getElementById("product-order").value) || 0,
+    ownerId: currentUser.uid
+  };
 
-    form.reset();
-    document.getElementById("product-id").value = "";
+  if (id) {
+    await updateDoc(doc(db, "merch", id), productData);
+  } else {
+    await addDoc(productsCol, productData);
+  }
+
+  form.reset();
+  document.getElementById("product-id").value = "";
 });
 
 // -----------------------------
 // Edit Product
 // -----------------------------
 window.editProduct = async (id) => {
-    const docSnap = await getDoc(doc(db, "merch", id));
-    const data = docSnap.data();
+  const docSnap = await getDoc(doc(db, "merch", id));
+  if (!docSnap.exists()) return;
 
-    document.getElementById("product-id").value = id;
-    document.getElementById("product-name").value = data.name;
-    document.getElementById("product-category").value = data.category;
-    document.getElementById("product-price").value = data.price;
-    document.getElementById("product-discount").value = data.discount || 0;
-    document.getElementById("product-stock").value = data.stock;
-    document.getElementById("product-sale").value = data.sale;
-    document.getElementById("product-image").value = data.image;
-    document.getElementById("product-link").value = data.link;
-    document.getElementById("product-order").value = data.order || 0;
+  const data = docSnap.data();
+  document.getElementById("product-id").value = id;
+  document.getElementById("product-name").value = data.name;
+  document.getElementById("product-category").value = data.category;
+  document.getElementById("product-price").value = data.price;
+  document.getElementById("product-discount").value = data.discount || 0;
+  document.getElementById("product-stock").value = data.stock;
+  document.getElementById("product-sale").value = data.sale;
+  document.getElementById("product-image").value = data.image;
+  document.getElementById("product-link").value = data.link;
+  document.getElementById("product-order").value = data.order || 0;
 };
 
 // -----------------------------
 // Delete Product
 // -----------------------------
 window.deleteProduct = async (id) => {
-    if (confirm("Are you sure you want to delete this product?")) {
-        await deleteDoc(doc(db, "merch", id));
-    }
+  if (confirm("Are you sure you want to delete this product?")) {
+    await deleteDoc(doc(db, "merch", id));
+  }
 };
 
 // -----------------------------
 // Real-time Updates
 // -----------------------------
 onSnapshot(productsCol, () => {
-    fetchProducts();
+  fetchProducts();
 });
 
-// Initial fetch
+// -----------------------------
+// Initial Fetch
+// -----------------------------
 fetchProducts();
 
 document.addEventListener('DOMContentLoaded', () => { //
