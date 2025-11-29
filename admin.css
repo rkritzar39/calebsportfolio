@@ -2858,54 +2858,84 @@ body.dark-mode .g_id_signin > div[role="button"] {
   font-size: 0.9rem;
 }
 
-/* ===== Container & Merch Grid ===== */
 #merch-management {
   max-width: 1200px;
   margin: 40px auto;
   padding: 0 20px;
   font-family: 'Poppins', sans-serif;
+  box-sizing: border-box; /* Ensures padding doesn't affect total width */
 }
 
-#merch-management h2, #merch-management h3 {
+/* Responsive Headings: Scales size based on screen width */
+#merch-management h2 {
   color: var(--text-color);
+  font-size: clamp(1.5rem, 4vw, 2.2rem); 
+  margin-bottom: 20px;
 }
 
 #merch-management h3 {
-  margin-top: 30px;
-  margin-bottom: 15px;
+  color: var(--text-color);
+  margin-top: 40px;
+  margin-bottom: 20px;
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
 }
 
-/* Form Styling */
+/* =========================================
+   2. Form Styling (Responsive Grid System)
+   ========================================= */
 #product-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  display: grid;
+  /* Mobile First Default: 1 Column */
+  grid-template-columns: 1fr; 
+  gap: 20px;
   background: var(--content-bg);
-  padding: 25px;
+  padding: 20px;
   border-radius: var(--radius-lg);
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
   margin-bottom: 40px;
 }
 
-#product-form label {
-  flex-basis: 100%;
-  font-weight: 600;
-  margin-bottom: 4px;
+/* Form Groups: Wraps Label + Input */
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-#product-form input,
-#product-form select {
-  padding: 10px 12px;
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
   background: var(--bg-color);
   color: var(--text-color);
   font-size: 1rem;
-  flex-grow: 1;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+/* Form Actions (Submit Button Area) */
+.form-actions {
+  grid-column: 1 / -1; /* Always spans full width of grid */
+  display: flex;
+  justify-content: flex-end; /* Right align on desktop */
 }
 
 #product-form button {
-  padding: 12px 20px;
+  padding: 12px 24px;
   font-weight: 600;
   border: none;
   border-radius: 10px;
@@ -2913,6 +2943,7 @@ body.dark-mode .g_id_signin > div[role="button"] {
   background: var(--accent-color);
   color: #fff;
   transition: all 0.3s ease;
+  width: 100%; /* Full width on mobile for better touch targets */
 }
 
 #product-form button:hover {
@@ -2920,17 +2951,63 @@ body.dark-mode .g_id_signin > div[role="button"] {
   box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
-/* Table Styling */
+/* --- Form Media Queries --- */
+
+/* Tablet (Min 600px): Switch to 2 Columns */
+@media (min-width: 600px) {
+  #product-form {
+    grid-template-columns: 1fr 1fr;
+    padding: 25px;
+  }
+  
+  /* Force specific fields (like Image/Link) to span full width */
+  .form-group.full-width {
+    grid-column: 1 / -1; 
+  }
+
+  /* Return button to natural width */
+  #product-form button {
+    width: auto; 
+  }
+}
+
+/* Desktop (Min 900px): Switch to 4 Columns */
+@media (min-width: 900px) {
+  #product-form {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Make Name and Category wider for visual balance */
+  .form-group:nth-child(1), /* Name */
+  .form-group:nth-child(2)  /* Category */ {
+    grid-column: span 2;
+  }
+}
+
+/* =========================================
+   3. Table Styling (Responsive Wrapper)
+   ========================================= */
+/* Wrapper allows scrolling without breaking layout */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 40px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
 #product-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 40px;
+  min-width: 700px; /* Forces scroll on small screens instead of squishing */
 }
 
 #product-table th, #product-table td {
-  padding: 12px;
+  padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
+  white-space: nowrap; /* Prevents text from wrapping awkwardly */
 }
 
 #product-table th {
@@ -2947,6 +3024,7 @@ body.dark-mode .g_id_signin > div[role="button"] {
   font-size: 0.85rem;
   border-radius: 6px;
   cursor: pointer;
+  border: none;
 }
 
 #product-table button:first-child {
@@ -2960,27 +3038,13 @@ body.dark-mode .g_id_signin > div[role="button"] {
   color: #fff;
 }
 
-/* Stock Ribbon / Sale Badge */
-.stock-ribbon, .sale-ribbon {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 2px 6px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  border-radius: 4px;
-  color: #fff;
-}
-
-.sale-ribbon { background: #dc3545; }
-.stock-ribbon.in-stock { background: #28a745; }
-.stock-ribbon.low-stock { background: #ffc107; color:#333; }
-.stock-ribbon.out-of-stock { background: #6c757d; }
-
-/* Public Grid Styling */
+/* =========================================
+   4. Public Grid Styling & Cards
+   ========================================= */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  /* Auto-fill fits as many cards as possible, minimum 250px wide */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
   gap: 20px;
 }
 
@@ -2991,6 +3055,8 @@ body.dark-mode .g_id_signin > div[role="button"] {
   text-align: center;
   position: relative;
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  display: flex;
+  flex-direction: column;
 }
 
 .product-image-container {
@@ -3002,6 +3068,8 @@ body.dark-mode .g_id_signin > div[role="button"] {
   height: auto;
   border-radius: var(--radius-md);
   margin-bottom: 10px;
+  aspect-ratio: 1/1; /* Ensures images are square uniform */
+  object-fit: cover;
 }
 
 .product-item h3 {
@@ -3013,16 +3081,19 @@ body.dark-mode .g_id_signin > div[role="button"] {
 .product-item .price {
   font-size: 1rem;
   margin-bottom: 10px;
+  flex-grow: 1; /* Pushes button to bottom if titles vary in length */
 }
 
 .buy-now {
-  padding: 8px 12px;
+  width: 100%;
+  padding: 10px;
   border-radius: 6px;
   border: none;
   background: var(--accent-color);
   color: #fff;
   cursor: pointer;
   font-weight: 600;
+  margin-top: auto;
 }
 
 .buy-now[disabled] {
@@ -3030,20 +3101,51 @@ body.dark-mode .g_id_signin > div[role="button"] {
   cursor: not-allowed;
 }
 
-/* Price Styling */
+/* Tiny Mobile Screens (<500px): Force 1 Column Grid */
+@media (max-width: 500px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================
+   5. Badges, Ribbons & Price Utils
+   ========================================= */
+.stock-ribbon, .sale-ribbon {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 4px;
+  color: #fff;
+  z-index: 2;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.sale-ribbon { background: #dc3545; }
+.stock-ribbon.in-stock { background: #28a745; }
+.stock-ribbon.low-stock { background: #ffc107; color:#333; }
+.stock-ribbon.out-of-stock { background: #6c757d; }
+
+/* Price Text */
 .original-price {
   text-decoration: line-through;
   color: #888;
   margin-right: 5px;
 }
+
 .discount-price {
   color: #dc3545;
   font-weight: bold;
 }
+
 .sale-badge {
   background: #dc3545;
   color: #fff;
-  padding: 2px 4px;
+  padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.75rem;
+  margin-left: 5px;
 }
