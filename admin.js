@@ -265,13 +265,13 @@ function renderProducts() {
   productCountAdmin.textContent = allProducts.length;
 
   allProducts.forEach(product => {
-    // Calculate lowest price among variations
-    const basePrice = product.variations && product.variations.length
+    // Lowest variation price (or product price)
+    const basePrice = product.variations?.length
       ? Math.min(...product.variations.map(v => v.price))
       : product.price || 0;
 
     const finalPrice = product.discount
-      ? (basePrice * (1 - product.discount / 100)).toFixed(2)
+      ? (basePrice * (1 - (product.discount || 0) / 100)).toFixed(2)
       : basePrice.toFixed(2);
 
     // Table row
@@ -293,14 +293,11 @@ function renderProducts() {
     // Preview item
     const isDisabled = product.stock === "out-of-stock";
 
-    let priceHTML = "";
-    if (product.discount && basePrice > 0) {
-      priceHTML = `<span class="original-price">$${basePrice.toFixed(2)}</span>
-                   <span class="discount-price">$${finalPrice}</span>
-                   <span class="sale-badge">-${product.discount}% Off</span>`;
-    } else {
-      priceHTML = `<span class="regular-price">$${finalPrice}</span>`;
-    }
+    const priceHTML = product.discount
+      ? `<span class="original-price">$${basePrice.toFixed(2)}</span>
+         <span class="discount-price">$${finalPrice}</span>
+         <span class="sale-badge">-${product.discount}% Off</span>`
+      : `<span class="regular-price">$${finalPrice}</span>`;
 
     const buttonHTML = `<button class="buy-now" ${isDisabled ? 'disabled style="background:#888; cursor:not-allowed;"' : `onclick="window.open('${product.link}','_blank')"`}>Buy Now</button>`;
 
@@ -336,14 +333,13 @@ async function fetchProducts() {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  // Collect variations
   const variations = Array.from(variationsContainer.querySelectorAll(".variation")).map(v => {
     const priceValue = parseFloat(v.querySelector(".variation-price").value);
     return {
       color: v.querySelector(".variation-color").value,
       size: v.querySelector(".variation-size").value,
-      price: parseFloat(priceValue.toFixed(2)), // ensures number with 2 decimals
-      stock: v.dataset.stock || "in-stock" // optional: you can add per-variation stock later
+      price: parseFloat(priceValue.toFixed(2)),
+      stock: v.querySelector(".variation-stock").value
     };
   });
 
@@ -356,8 +352,8 @@ form.addEventListener("submit", async e => {
     sale: document.getElementById("product-sale").value === "true",
     image: document.getElementById("product-image").value,
     link: document.getElementById("product-link").value,
-    variations, // now safe
-    order: allProducts.length // optional ordering
+    variations,
+    order: allProducts.length
   };
 
   try {
@@ -370,18 +366,7 @@ form.addEventListener("submit", async e => {
     // Reset form
     form.reset();
     document.getElementById("product-id").value = "";
-
-    // Reset variations container to 1 default row
-    variationsContainer.innerHTML = `
-      <div class="variation">
-        <input type="text" class="variation-color" placeholder="Color" required>
-        <input type="text" class="variation-size" placeholder="Size" required>
-        <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
-        <button type="button" class="remove-variation">Remove</button>
-      </div>
-    `;
-    addRemoveListeners(); // reattach remove listeners
-
+    resetVariations();
     fetchProducts();
   } catch (err) {
     console.error("Error saving product:", err);
@@ -413,6 +398,11 @@ window.editProduct = async id => {
       <input type="text" class="variation-color" placeholder="Color" value="${v.color}" required>
       <input type="text" class="variation-size" placeholder="Size" value="${v.size}" required>
       <input type="number" class="variation-price" placeholder="Price" step="0.01" value="${v.price.toFixed(2)}" required>
+      <select class="variation-stock">
+        <option value="in-stock" ${v.stock === "in-stock" ? "selected" : ""}>In Stock</option>
+        <option value="low-stock" ${v.stock === "low-stock" ? "selected" : ""}>Low Stock</option>
+        <option value="out-of-stock" ${v.stock === "out-of-stock" ? "selected" : ""}>Out of Stock</option>
+      </select>
       <button type="button" class="remove-variation">Remove</button>
     `;
     variationsContainer.appendChild(variationDiv);
@@ -443,6 +433,11 @@ addVariationBtn.addEventListener("click", () => {
     <input type="text" class="variation-color" placeholder="Color" required>
     <input type="text" class="variation-size" placeholder="Size" required>
     <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
+    <select class="variation-stock">
+      <option value="in-stock">In Stock</option>
+      <option value="low-stock">Low Stock</option>
+      <option value="out-of-stock">Out of Stock</option>
+    </select>
     <button type="button" class="remove-variation">Remove</button>
   `;
   variationsContainer.appendChild(variationDiv);
@@ -454,6 +449,24 @@ function addRemoveListeners() {
   document.querySelectorAll(".remove-variation").forEach(btn => {
     btn.onclick = () => btn.parentElement.remove();
   });
+}
+
+// Function to reset variations to 1 empty row
+function resetVariations() {
+  variationsContainer.innerHTML = `
+    <div class="variation">
+      <input type="text" class="variation-color" placeholder="Color" required>
+      <input type="text" class="variation-size" placeholder="Size" required>
+      <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
+      <select class="variation-stock">
+        <option value="in-stock">In Stock</option>
+        <option value="low-stock">Low Stock</option>
+        <option value="out-of-stock">Out of Stock</option>
+      </select>
+      <button type="button" class="remove-variation">Remove</button>
+    </div>
+  `;
+  addRemoveListeners();
 }
 
 // -----------------------------
