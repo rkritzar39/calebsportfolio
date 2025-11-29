@@ -74,28 +74,33 @@
         </div>
 
         <div class="setting-card custom-background">
-          <div class="setting-icon-container" style="background-color: #007aff;">
-            <i class="fa-solid fa-image"></i>
-          </div>
-          <div class="custom-bg-left">
-            <div class="setting-label">
-              <strong class="setting-title">Custom Background</strong>
-              <p class="setting-description">Upload your own image to use as the background.</p>
-            </div>
-            <div class="custom-bg-controls">
-              <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-              <input type="file" id="customBgUpload" accept="image/*">
-              <span id="fileNameDisplay" class="file-name">No file chosen</span>
-              <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
-            </div>
-          </div>
-          <div class="custom-bg-separator" id="customBgSeparator"></div>
-          <div class="custom-bg-right">
-            <div id="customBgPreviewContainer">
-              <img id="customBgPreview" alt="Background preview" draggable="false" oncontextmenu="return false" />
-            </div>
-          </div>
-        </div>
+  <div class="setting-icon-container" style="background-color: #007aff;">
+    <i class="fa-solid fa-image"></i>
+  </div>
+  <div class="custom-bg-left">
+    <div class="setting-label">
+      <strong class="setting-title">Custom Background</strong>
+      <p class="setting-description">Upload your own image and adjust position and zoom.</p>
+    </div>
+    <div class="custom-bg-controls">
+      <label for="customBgUpload" class="custom-bg-label">Choose File</label>
+      <input type="file" id="customBgUpload" accept="image/*">
+      <span id="fileNameDisplay" class="file-name">No file chosen</span>
+      <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+      
+      <!-- Zoom slider -->
+      <label for="bgZoomSlider">Zoom:</label>
+      <input type="range" id="bgZoomSlider" min="50" max="200" value="100">
+    </div>
+  </div>
+  <div class="custom-bg-separator" id="customBgSeparator"></div>
+  <div class="custom-bg-right">
+    <div id="customBgPreviewContainer">
+      <div id="customBgPreview" class="custom-bg-preview" draggable="false"></div>
+    </div>
+  </div>
+</div>
+
 
         <div class="setting-card" id="wallpaperBlurCard">
           <div class="setting-icon-container" style="background-color: #5ac8fa;">
