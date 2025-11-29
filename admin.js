@@ -221,48 +221,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const storage = getStorage();
 
-// admin.js (Products Management)
+// *** Import Firebase services from your corrected init file ***
+import { db, auth } from './firebase-init.js'; // Ensure path is correct
 
-// -----------------------------
-// Firebase Imports
-// -----------------------------
-import { db, auth } from './firebase-init.js';
+// Import Firebase functions (Includes 'where', 'query', 'orderBy', 'limit')
 import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  onSnapshot
+    getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc, serverTimestamp, getDoc, query, orderBy, where, limit, Timestamp, deleteField, writeBatch // <<< MAKE SURE Timestamp IS HERE
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithCredential
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+// *** Global Variable for Client-Side Filtering ***
+let allShoutouts = { tiktok: [], instagram: [], youtube: [] }; // Stores the full lists for filtering
 
-// -----------------------------
-// DOM Elements
-// -----------------------------
+let allUsefulLinks = [];
+let allSocialLinks = [];
+let allDisabilities = [];
+let allTechItems = []; // For Tech section
+
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
+
 const productsCol = collection(db, "merch");
 
-// -----------------------------
-// Fetch and Render Products
-// -----------------------------
+// Fetch and render products
 async function fetchProducts() {
-  tableBody.innerHTML = "";
   const snapshot = await getDocs(productsCol);
-
+  tableBody.innerHTML = "";
   snapshot.docs.forEach(docSnap => {
     const data = docSnap.data();
-    const finalPrice = data.discount
-      ? (data.price * (1 - data.discount / 100)).toFixed(2)
-      : Number(data.price).toFixed(2);
-
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${data.name}</td>
       <td>${data.category}</td>
-      <td>$${finalPrice}</td>
+      <td>$${(data.price * (1 - (data.discount || 0)/100)).toFixed(2)}</td>
       <td>${data.discount || 0}%</td>
       <td>${data.stock}</td>
       <td>${data.sale}</td>
@@ -275,18 +272,9 @@ async function fetchProducts() {
   });
 }
 
-// -----------------------------
-// Add / Update Product
-// -----------------------------
+// Add / Update product
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
-  const currentUser = auth.currentUser;
-  if (!currentUser) {
-    alert("You must be signed in as admin!");
-    return;
-  }
-
   const id = document.getElementById("product-id").value;
   const productData = {
     name: document.getElementById("product-name").value,
@@ -294,11 +282,9 @@ form.addEventListener("submit", async (e) => {
     price: parseFloat(document.getElementById("product-price").value),
     discount: parseFloat(document.getElementById("product-discount").value) || 0,
     stock: document.getElementById("product-stock").value,
-    sale: document.getElementById("product-sale").value === "true",
+    sale: document.getElementById("product-sale").checked,
     image: document.getElementById("product-image").value,
-    link: document.getElementById("product-link").value,
-    order: parseInt(document.getElementById("product-order").value) || 0,
-    ownerId: currentUser.uid
+    link: document.getElementById("product-link").value
   };
 
   if (id) {
@@ -309,47 +295,36 @@ form.addEventListener("submit", async (e) => {
 
   form.reset();
   document.getElementById("product-id").value = "";
+  fetchProducts();
 });
 
-// -----------------------------
-// Edit Product
-// -----------------------------
+// Edit product
 window.editProduct = async (id) => {
-  const docSnap = await getDoc(doc(db, "merch", id));
-  if (!docSnap.exists()) return;
+  const docSnap = await getDocs(doc(db, "merch", id));
+  const docRef = doc(db, "merch", id);
+  const dataSnap = await getDocs(docRef);
+  const data = dataSnap.data();
 
-  const data = docSnap.data();
   document.getElementById("product-id").value = id;
   document.getElementById("product-name").value = data.name;
   document.getElementById("product-category").value = data.category;
   document.getElementById("product-price").value = data.price;
   document.getElementById("product-discount").value = data.discount || 0;
   document.getElementById("product-stock").value = data.stock;
-  document.getElementById("product-sale").value = data.sale;
+  document.getElementById("product-sale").checked = data.sale;
   document.getElementById("product-image").value = data.image;
   document.getElementById("product-link").value = data.link;
-  document.getElementById("product-order").value = data.order || 0;
 };
 
-// -----------------------------
-// Delete Product
-// -----------------------------
+// Delete product
 window.deleteProduct = async (id) => {
   if (confirm("Are you sure you want to delete this product?")) {
     await deleteDoc(doc(db, "merch", id));
+    fetchProducts();
   }
 };
 
-// -----------------------------
-// Real-time Updates
-// -----------------------------
-onSnapshot(productsCol, () => {
-  fetchProducts();
-});
-
-// -----------------------------
-// Initial Fetch
-// -----------------------------
+// Initial fetch
 fetchProducts();
 
 document.addEventListener('DOMContentLoaded', () => { //
