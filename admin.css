@@ -2858,15 +2858,17 @@ body.dark-mode .g_id_signin > div[role="button"] {
   font-size: 0.9rem;
 }
 
+/* =========================================
+   1. Container & Headings
+   ========================================= */
 #merch-management {
   max-width: 1200px;
   margin: 40px auto;
   padding: 0 20px;
   font-family: 'Poppins', sans-serif;
-  box-sizing: border-box; /* Ensures padding doesn't affect total width */
+  box-sizing: border-box;
 }
 
-/* Responsive Headings: Scales size based on screen width */
 #merch-management h2 {
   color: var(--text-color);
   font-size: clamp(1.5rem, 4vw, 2.2rem); 
@@ -2881,12 +2883,11 @@ body.dark-mode .g_id_signin > div[role="button"] {
 }
 
 /* =========================================
-   2. Form Styling (Responsive Grid System)
+   2. Form Styling (Responsive Grid)
    ========================================= */
 #product-form {
   display: grid;
-  /* Mobile First Default: 1 Column */
-  grid-template-columns: 1fr; 
+  grid-template-columns: 1fr;
   gap: 20px;
   background: var(--content-bg);
   padding: 20px;
@@ -2895,7 +2896,6 @@ body.dark-mode .g_id_signin > div[role="button"] {
   margin-bottom: 40px;
 }
 
-/* Form Groups: Wraps Label + Input */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -2927,11 +2927,11 @@ body.dark-mode .g_id_signin > div[role="button"] {
   border-color: var(--accent-color);
 }
 
-/* Form Actions (Submit Button Area) */
+/* Form Actions */
 .form-actions {
-  grid-column: 1 / -1; /* Always spans full width of grid */
+  grid-column: 1 / -1;
   display: flex;
-  justify-content: flex-end; /* Right align on desktop */
+  justify-content: flex-end;
 }
 
 #product-form button {
@@ -2943,7 +2943,7 @@ body.dark-mode .g_id_signin > div[role="button"] {
   background: var(--accent-color);
   color: #fff;
   transition: all 0.3s ease;
-  width: 100%; /* Full width on mobile for better touch targets */
+  width: 100%;
 }
 
 #product-form button:hover {
@@ -2951,44 +2951,64 @@ body.dark-mode .g_id_signin > div[role="button"] {
   box-shadow: 0 6px 18px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
-/* --- Form Media Queries --- */
-
-/* Tablet (Min 600px): Switch to 2 Columns */
+/* Tablet */
 @media (min-width: 600px) {
   #product-form {
     grid-template-columns: 1fr 1fr;
     padding: 25px;
   }
-  
-  /* Force specific fields (like Image/Link) to span full width */
-  .form-group.full-width {
-    grid-column: 1 / -1; 
-  }
-
-  /* Return button to natural width */
-  #product-form button {
-    width: auto; 
-  }
+  .form-group.full-width { grid-column: 1 / -1; }
+  #product-form button { width: auto; }
 }
 
-/* Desktop (Min 900px): Switch to 4 Columns */
+/* Desktop */
 @media (min-width: 900px) {
-  #product-form {
-    grid-template-columns: repeat(4, 1fr);
-  }
-
-  /* Make Name and Category wider for visual balance */
-  .form-group:nth-child(1), /* Name */
-  .form-group:nth-child(2)  /* Category */ {
-    grid-column: span 2;
-  }
+  #product-form { grid-template-columns: repeat(4, 1fr); }
+  .form-group:nth-child(1),
+  .form-group:nth-child(2) { grid-column: span 2; }
 }
 
 /* =========================================
-   3. Table Styling (Fixed Text Wrapping)
+   3. Variations Styling
    ========================================= */
+#variations-container .variation {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
-/* The wrapper handles the overflow if the table is still too big */
+#variations-container .variation input,
+#variations-container .variation select {
+  padding: 8px;
+  font-size: 0.9rem;
+}
+
+#variations-container .variation button.remove-variation {
+  background: #ff4444;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#variations-container .variation button.remove-variation:hover {
+  transform: translateY(-1px);
+}
+
+/* Base Price */
+#base-price {
+  background: #e9ecef;
+  cursor: not-allowed;
+  font-weight: bold;
+}
+
+/* =========================================
+   4. Table Styling
+   ========================================= */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -3001,24 +3021,20 @@ body.dark-mode .g_id_signin > div[role="button"] {
 #product-table {
   width: 100%;
   border-collapse: collapse;
-  /* Removed min-width so it tries to fit the screen first */
 }
 
 #product-table th, #product-table td {
-  padding: 12px 10px; /* Slightly reduced padding */
+  padding: 12px 10px;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
-  
-  /* CRITICAL FIX: Allow text to wrap to the next line */
-  white-space: normal; 
-  word-wrap: break-word; /* Breaks long words if necessary */
-  vertical-align: top;   /* Aligns text to top if it wraps */
+  white-space: normal;
+  word-wrap: break-word;
+  vertical-align: top;
 }
 
-/* Constrain the "Name" column so it wraps instead of stretching */
 #product-table td:first-child, 
 #product-table th:first-child {
-  max-width: 150px; /* Adjust this number if you need it wider/narrower */
+  max-width: 150px;
   min-width: 100px;
 }
 
@@ -3027,38 +3043,25 @@ body.dark-mode .g_id_signin > div[role="button"] {
   font-weight: 600;
 }
 
-#product-table tr:hover {
-  background-color: rgba(255,255,255,0.03);
-}
+#product-table tr:hover { background-color: rgba(255,255,255,0.03); }
 
-/* Button Actions in Table */
 #product-table button {
   padding: 6px 10px;
   font-size: 0.85rem;
   border-radius: 6px;
   cursor: pointer;
   border: none;
-  white-space: nowrap; /* Keep buttons on one line though */
+  white-space: nowrap;
 }
 
-#product-table button:first-child {
-  background: var(--accent-color);
-  color: #fff;
-  margin-right: 5px;
-  margin-bottom: 4px; /* Stack buttons on very small screens if needed */
-}
-
-#product-table button:last-child {
-  background: #ff4444;
-  color: #fff;
-}
+#product-table button:first-child { background: var(--accent-color); color: #fff; margin-right: 5px; margin-bottom: 4px; }
+#product-table button:last-child { background: #ff4444; color: #fff; }
 
 /* =========================================
-   4. Public Grid Styling & Cards
+   5. Product Grid / Live Preview
    ========================================= */
 .product-grid {
   display: grid;
-  /* Auto-fill fits as many cards as possible, minimum 250px wide */
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
   gap: 20px;
 }
@@ -3072,18 +3075,22 @@ body.dark-mode .g_id_signin > div[role="button"] {
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
   display: flex;
   flex-direction: column;
+  transition: all 0.3s ease;
 }
 
-.product-image-container {
-  position: relative;
+.product-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
+
+.product-image-container { position: relative; }
 
 .product-item img {
   width: 100%;
   height: auto;
   border-radius: var(--radius-md);
   margin-bottom: 10px;
-  aspect-ratio: 1/1; /* Ensures images are square uniform */
+  aspect-ratio: 1/1;
   object-fit: cover;
 }
 
@@ -3096,7 +3103,19 @@ body.dark-mode .g_id_signin > div[role="button"] {
 .product-item .price {
   font-size: 1rem;
   margin-bottom: 10px;
-  flex-grow: 1; /* Pushes button to bottom if titles vary in length */
+  flex-grow: 1;
+  transition: all 0.3s ease;
+}
+
+.product-item .variation-select {
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-color);
+  width: 100%;
+  font-size: 0.95rem;
 }
 
 .buy-now {
@@ -3109,6 +3128,7 @@ body.dark-mode .g_id_signin > div[role="button"] {
   cursor: pointer;
   font-weight: 600;
   margin-top: auto;
+  transition: all 0.3s ease;
 }
 
 .buy-now[disabled] {
@@ -3116,15 +3136,13 @@ body.dark-mode .g_id_signin > div[role="button"] {
   cursor: not-allowed;
 }
 
-/* Tiny Mobile Screens (<500px): Force 1 Column Grid */
+/* Tiny Mobile Screens (<500px) */
 @media (max-width: 500px) {
-  .product-grid {
-    grid-template-columns: 1fr;
-  }
+  .product-grid { grid-template-columns: 1fr; }
 }
 
 /* =========================================
-   5. Badges, Ribbons & Price Utils
+   6. Badges & Ribbons
    ========================================= */
 .stock-ribbon, .sale-ribbon {
   position: absolute;
@@ -3144,7 +3162,6 @@ body.dark-mode .g_id_signin > div[role="button"] {
 .stock-ribbon.low-stock { background: #ffc107; color:#333; }
 .stock-ribbon.out-of-stock { background: #6c757d; }
 
-/* Price Text */
 .original-price {
   text-decoration: line-through;
   color: #888;
