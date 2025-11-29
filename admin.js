@@ -244,93 +244,85 @@ let allSocialLinks = [];
 let allDisabilities = [];
 let allTechItems = []; // For Tech section
 
-const merchForm = document.getElementById('add-merch-form');
-const merchListContainer = document.getElementById('merch-items-list-admin');
+const form = document.getElementById("product-form");
+const tableBody = document.querySelector("#product-table tbody");
 
-async function loadMerchProducts() {
-    const merchCol = collection(db, 'merch');
-    const q = query(merchCol, orderBy('order', 'asc'));
-    const snapshot = await getDocs(q);
+const productsCol = collection(db, "merch");
 
-    const products = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
-
-    merchListContainer.innerHTML = products.length
-        ? products.map(p => `
-            <div class="merch-item">
-                <strong>${p.name}</strong> - $${p.price} ${p.discount ? `(Sale: ${p.discount}% Off)` : ''}
-                <br>Stock: ${p.stock} | <a href="${p.link}" target="_blank">Link</a>
-                <div class="merch-actions">
-                  <button data-id="${p.id}" class="edit-merch-btn">Edit</button>
-                  <button data-id="${p.id}" class="delete-merch-btn">Delete</button>
-                </div>
-            </div>
-        `).join('')
-        : '<p>No products added yet.</p>';
-
-    // Add event listeners
-    document.querySelectorAll('.delete-merch-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const id = btn.dataset.id;
-            if (confirm('Are you sure you want to delete this product?')) {
-                await deleteDoc(doc(db, 'merch', id));
-                loadMerchProducts();
-            }
-        });
-    });
-
-    document.querySelectorAll('.edit-merch-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = btn.dataset.id;
-            const product = products.find(p => p.id === id);
-            if (!product) return;
-
-            // Populate form for editing
-            merchForm.dataset.editing = id;
-            merchForm['name'].value = product.name;
-            merchForm['price'].value = product.price;
-            merchForm['discount'].value = product.discount || 0;
-            merchForm['stock'].value = product.stock;
-            merchForm['link'].value = product.link;
-            merchForm['image'].value = product.image;
-            merchForm['order'].value = product.order;
-        });
-    });
+// Fetch and render products
+async function fetchProducts() {
+  const snapshot = await getDocs(productsCol);
+  tableBody.innerHTML = "";
+  snapshot.docs.forEach(docSnap => {
+    const data = docSnap.data();
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${data.name}</td>
+      <td>${data.category}</td>
+      <td>$${(data.price * (1 - (data.discount || 0)/100)).toFixed(2)}</td>
+      <td>${data.discount || 0}%</td>
+      <td>${data.stock}</td>
+      <td>${data.sale}</td>
+      <td>
+        <button onclick="editProduct('${docSnap.id}')">Edit</button>
+        <button onclick="deleteProduct('${docSnap.id}')">Delete</button>
+      </td>
+    `;
+    tableBody.appendChild(tr);
+  });
 }
 
-// Handle Add / Edit Submit
-merchForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+// Add / Update product
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("product-id").value;
+  const productData = {
+    name: document.getElementById("product-name").value,
+    category: document.getElementById("product-category").value,
+    price: parseFloat(document.getElementById("product-price").value),
+    discount: parseFloat(document.getElementById("product-discount").value) || 0,
+    stock: document.getElementById("product-stock").value,
+    sale: document.getElementById("product-sale").value === "true",
+    image: document.getElementById("product-image").value,
+    link: document.getElementById("product-link").value
+  };
 
-    const data = {
-        name: merchForm['name'].value,
-        price: parseFloat(merchForm['price'].value).toFixed(2),
-        discount: parseInt(merchForm['discount'].value) || 0,
-        stock: merchForm['stock'].value,
-        link: merchForm['link'].value,
-        image: merchForm['image'].value,
-        order: parseInt(merchForm['order'].value)
-    };
+  if (id) {
+    await updateDoc(doc(db, "merch", id), productData);
+  } else {
+    await addDoc(productsCol, productData);
+  }
 
-    try {
-        if (merchForm.dataset.editing) {
-            // Edit existing product
-            const id = merchForm.dataset.editing;
-            await updateDoc(doc(db, 'merch', id), data);
-            delete merchForm.dataset.editing;
-        } else {
-            // Add new product
-            await addDoc(collection(db, 'merch'), data);
-        }
-        merchForm.reset();
-        loadMerchProducts();
-    } catch (err) {
-        console.error(err);
-        alert('Error saving product');
-    }
+  form.reset();
+  document.getElementById("product-id").value = "";
+  fetchProducts();
 });
 
-// Initial load
-loadMerchProducts();
+// Edit product
+window.editProduct = async (id) => {
+  const docSnap = await doc(db, "merch", id).get();
+  const data = (await doc(db, "merch", id).get()).data();
+  document.getElementById("product-id").value = id;
+  document.getElementById("product-name").value = data.name;
+  document.getElementById("product-category").value = data.category;
+  document.getElementById("product-price").value = data.price;
+  document.getElementById("product-discount").value = data.discount || 0;
+  document.getElementById("product-stock").value = data.stock;
+  document.getElementById("product-sale").value = data.sale;
+  document.getElementById("product-image").value = data.image;
+  document.getElementById("product-link").value = data.link;
+};
+
+// Delete product
+window.deleteProduct = async (id) => {
+  if (confirm("Are you sure you want to delete this product?")) {
+    await deleteDoc(doc(db, "merch", id));
+    fetchProducts();
+  }
+};
+
+// Initial fetch
+fetchProducts();
 
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
