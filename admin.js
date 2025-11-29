@@ -300,7 +300,7 @@ function addRemoveListeners() {
 }
 
 // -----------------------------
-// Add new variation row
+// Add new variation row (fixed)
 // -----------------------------
 merchAddVariationBtn?.addEventListener("click", () => {
   const div = document.createElement("div");
@@ -314,12 +314,24 @@ merchAddVariationBtn?.addEventListener("click", () => {
       <option value="low-stock">Low Stock</option>
       <option value="out-of-stock">Out of Stock</option>
     </select>
-    <button type="button" class="remove-variation">Remove</button>`;
+    <button type="button" class="remove-variation">Remove</button>
+  `;
   merchVariationsContainer.appendChild(div);
-  attachPriceListeners();
-  addRemoveListeners();
+
+  // Attach listeners to the newly added row
+  const priceInput = div.querySelector(".variation-price");
+  priceInput.addEventListener("input", updateBasePrice);
+
+  const removeBtn = div.querySelector(".remove-variation");
+  removeBtn.addEventListener("click", () => {
+    div.remove();
+    updateBasePrice();
+  });
+
+  // Recalculate base price
   updateBasePrice();
 });
+
 
 // -----------------------------
 // Fetch products
