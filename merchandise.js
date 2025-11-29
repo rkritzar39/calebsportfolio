@@ -8,22 +8,27 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 // -----------------------------
-// DOM elements
+// DOM Elements
 // -----------------------------
 const productGrid = document.getElementById("product-grid");
 const categorySelect = document.getElementById("categories");
 const sectionTitle = document.getElementById("section-title");
 const productCount = document.getElementById("product-count");
 
-// Collection reference
+// -----------------------------
+// Firestore Reference
+// -----------------------------
 const productsCol = collection(db, "merch");
+const productsQuery = query(productsCol, orderBy("order", "asc"));
 
-// Available categories
+// -----------------------------
+// State
+// -----------------------------
 let allProducts = [];
 let categories = ["All Products"];
 
 // -----------------------------
-// Render products
+// Render products in grid
 // -----------------------------
 function renderProducts(products) {
   productGrid.innerHTML = "";
@@ -59,11 +64,12 @@ function renderProducts(products) {
 }
 
 // -----------------------------
-// Render categories in dropdown
+// Render category dropdown
 // -----------------------------
 function renderCategories(products) {
   const uniqueCategories = Array.from(new Set(products.map(p => p.category))).sort();
   categories = ["All Products", ...uniqueCategories];
+
   categorySelect.innerHTML = "";
   categories.forEach(cat => {
     const option = document.createElement("option");
@@ -90,16 +96,15 @@ categorySelect.addEventListener("change", () => {
 // -----------------------------
 // Fetch products from Firestore
 // -----------------------------
-async function fetchProducts() {
-  const q = query(productsCol, orderBy("order", "asc"));
-  const snapshot = await getDocs(q);
-
+async function loadProducts() {
+  const snapshot = await getDocs(productsQuery);
   allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
   renderCategories(allProducts);
   renderProducts(allProducts);
 }
 
 // -----------------------------
-// Initial fetch
+// Initial load
 // -----------------------------
-fetchProducts();
+loadProducts();
