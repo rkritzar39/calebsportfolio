@@ -245,15 +245,13 @@ let allDisabilities = [];
 let allTechItems = []; // For Tech section
 
 
-// -----------------------------
-// DOM References
-// -----------------------------
+// DOM Elements
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
 const productsCol = collection(db, "merch");
 
 // -----------------------------
-// Fetch & Render Products
+// Fetch & render products in admin table
 // -----------------------------
 async function fetchProducts() {
   tableBody.innerHTML = "";
@@ -272,10 +270,10 @@ async function fetchProducts() {
       <td>$${finalPrice}</td>
       <td>${data.discount || 0}%</td>
       <td>${data.stock}</td>
-      <td>${data.sale ? "Yes" : "No"}</td>
+      <td>${data.sale}</td>
       <td>
-        <button type="button" onclick="editProduct('${docSnap.id}')">Edit</button>
-        <button type="button" onclick="deleteProduct('${docSnap.id}')">Delete</button>
+        <button onclick="editProduct('${docSnap.id}')">Edit</button>
+        <button onclick="deleteProduct('${docSnap.id}')">Delete</button>
       </td>
     `;
     tableBody.appendChild(tr);
@@ -287,8 +285,8 @@ async function fetchProducts() {
 // -----------------------------
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   const id = document.getElementById("product-id").value;
+
   const productData = {
     name: document.getElementById("product-name").value,
     category: document.getElementById("product-category").value,
@@ -297,7 +295,8 @@ form.addEventListener("submit", async (e) => {
     stock: document.getElementById("product-stock").value,
     sale: document.getElementById("product-sale").value === "true",
     image: document.getElementById("product-image").value,
-    link: document.getElementById("product-link").value
+    link: document.getElementById("product-link").value,
+    order: parseInt(document.getElementById("product-order")?.value) || 0
   };
 
   if (id) {
@@ -316,18 +315,20 @@ form.addEventListener("submit", async (e) => {
 // -----------------------------
 window.editProduct = async (id) => {
   const docSnap = await getDoc(doc(db, "merch", id));
-  if (!docSnap.exists()) return;
-
   const data = docSnap.data();
+
   document.getElementById("product-id").value = id;
   document.getElementById("product-name").value = data.name;
   document.getElementById("product-category").value = data.category;
   document.getElementById("product-price").value = data.price;
   document.getElementById("product-discount").value = data.discount || 0;
   document.getElementById("product-stock").value = data.stock;
-  document.getElementById("product-sale").value = data.sale ? "true" : "false";
+  document.getElementById("product-sale").value = data.sale;
   document.getElementById("product-image").value = data.image;
   document.getElementById("product-link").value = data.link;
+  if (document.getElementById("product-order")) {
+    document.getElementById("product-order").value = data.order || 0;
+  }
 };
 
 // -----------------------------
@@ -341,7 +342,7 @@ window.deleteProduct = async (id) => {
 };
 
 // -----------------------------
-// Initial Fetch
+// Initial fetch
 // -----------------------------
 fetchProducts();
 
