@@ -479,13 +479,10 @@ merchForm?.addEventListener("submit", async e => {
       price: parseFloat(v.querySelector(".variation-price").value) || 0,
       stock: v.querySelector(".variation-stock").value
     }))
-    .filter(v => v.price || v.color || v.size); // only include filled variations
+    .filter(v => v.price || v.color || v.size);
 
   // Determine base price if no variations
-  let basePrice = 0;
-  if (!variations.length) {
-    basePrice = parseFloat(merchBasePriceInput.value) || 0;
-  }
+  const basePrice = !variations.length ? parseFloat(merchBasePriceInput.value) || 0 : undefined;
 
   // Build product object
   const product = {
@@ -497,9 +494,17 @@ merchForm?.addEventListener("submit", async e => {
     image: merchForm.querySelector("#product-image").value.trim(),
     link: merchForm.querySelector("#product-link").value.trim(),
     variations: variations.length ? variations : [],
-    price: !variations.length ? basePrice : undefined,
-    order: id ? undefined : allProducts.length
   };
+
+  // Only add order if creating a new product
+  if (!id) {
+    product.order = allProducts.length;
+  }
+
+  // Only add price if no variations
+  if (basePrice !== undefined) {
+    product.price = basePrice;
+  }
 
   try {
     if (id) {
