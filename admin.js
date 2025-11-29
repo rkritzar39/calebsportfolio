@@ -253,6 +253,9 @@ let allSocialLinks = [];
 let allDisabilities = [];
 let allTechItems = [];
 
+import { db } from './firebase-init.js';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
 // --- Elements ---
 const merchForm = document.getElementById("product-form");
 const merchTableBody = document.querySelector("#product-table tbody");
@@ -277,7 +280,7 @@ function updateBasePrice() {
       const price = v.querySelector(".variation-price").value;
       const color = v.querySelector(".variation-color").value;
       const size = v.querySelector(".variation-size").value;
-      return price || color || size; // count only filled rows
+      return price || color || size;
     });
 
   if (!variations.length) {
@@ -359,20 +362,31 @@ function renderProducts() {
     const hasVariations = variations.length > 0;
     const inStock = variations.filter(v => v.stock !== "out-of-stock");
 
-    const prices = hasVariations
-      ? variations.map(v => v.price)
-      : [product.price || 0];
-
+    const prices = hasVariations ? variations.map(v => v.price) : [product.price || 0];
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
-    const displayPrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
+
+    const displayBasePrice = minPrice === maxPrice ? `$${minPrice.toFixed(2)}` : `$${minPrice.toFixed(2)} – $${maxPrice.toFixed(2)}`;
+
+    // Calculate sale price
+    let salePriceDisplay = "-";
+    if (product.discount && !hasVariations) {
+      const finalPrice = (minPrice * (1 - product.discount / 100)).toFixed(2);
+      salePriceDisplay = `$${finalPrice}`;
+    } else if (product.discount && hasVariations) {
+      const discountedPrices = prices.map(p => (p * (1 - product.discount / 100)));
+      const minSale = Math.min(...discountedPrices).toFixed(2);
+      const maxSale = Math.max(...discountedPrices).toFixed(2);
+      salePriceDisplay = minSale === maxSale ? `$${minSale}` : `$${minSale} – $${maxSale}`;
+    }
 
     // ------------------ TABLE ROW ------------------
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${product.name}</td>
       <td>${product.category}</td>
-      <td>${displayPrice}</td>
+      <td>${displayBasePrice}</td>
+      <td>${salePriceDisplay}</td>
       <td>${product.discount || 0}%</td>
       <td>${product.stock}</td>
       <td>${product.sale ? "Yes" : "No"}</td>
@@ -387,7 +401,6 @@ function renderProducts() {
     const card = document.createElement("div");
     card.classList.add("product-item");
 
-    // Variation selector
     let variationSelectHTML = "";
     if (hasVariations && variations.length > 1) {
       variationSelectHTML = `<select class="variation-select">`;
@@ -399,9 +412,7 @@ function renderProducts() {
       variationSelectHTML += `</select>`;
     }
 
-    // Price HTML
-    const priceHTML = displayPrice;
-
+    const displayPrice = product.discount ? `$${(minPrice * (1 - product.discount/100)).toFixed(2)}` : displayBasePrice;
     const disabledBuy = (!hasVariations && product.stock === "out-of-stock") || (hasVariations && inStock.length === 0);
     const buttonHTML = `<button class="buy-now" ${disabledBuy ? 'disabled style="background:#888; cursor:not-allowed;"' : ''}>Buy Now</button>`;
 
@@ -413,7 +424,7 @@ function renderProducts() {
       </div>
       <h3>${product.name}</h3>
       ${variationSelectHTML}
-      <p class="price">${priceHTML}</p>
+      <p class="price">${displayPrice}</p>
       ${buttonHTML}
     `;
     merchPreviewGrid.appendChild(card);
@@ -440,7 +451,6 @@ function renderProducts() {
     if (select) select.addEventListener("change", updatePrice);
     updatePrice();
 
-    // Buy button
     buyBtn.addEventListener("click", () => {
       if (buyBtn.disabled) return;
       let url = product.link;
