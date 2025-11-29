@@ -2,12 +2,14 @@
 import { db } from './firebase-init.js';
 import {
   collection,
+  getDocs,
   query,
-  orderBy,
-  onSnapshot
+  orderBy
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+// -----------------------------
 // DOM elements
+// -----------------------------
 const productGrid = document.getElementById("product-grid");
 const categorySelect = document.getElementById("categories");
 const sectionTitle = document.getElementById("section-title");
@@ -17,6 +19,7 @@ const productCount = document.getElementById("product-count");
 const productsCol = collection(db, "merch");
 
 // Available categories
+let allProducts = [];
 let categories = ["All Products"];
 
 // -----------------------------
@@ -85,25 +88,18 @@ categorySelect.addEventListener("change", () => {
 });
 
 // -----------------------------
-// Real-time Firestore listener
+// Fetch products from Firestore
 // -----------------------------
-let allProducts = [];
-const q = query(productsCol, orderBy("order", "asc"));
+async function fetchProducts() {
+  const q = query(productsCol, orderBy("order", "asc"));
+  const snapshot = await getDocs(q);
 
-onSnapshot(q, snapshot => {
   allProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   renderCategories(allProducts);
   renderProducts(allProducts);
-
-  // Update the section title if a category is selected
-  const selected = categorySelect.value || "All Products";
-  sectionTitle.textContent = selected;
-  if (selected !== "All Products") {
-    renderProducts(allProducts.filter(p => p.category === selected));
-  }
-});
+}
 
 // -----------------------------
 // Initial fetch
 // -----------------------------
-// Will be handled by onSnapshot automatically, so nothing else needed
+fetchProducts();
