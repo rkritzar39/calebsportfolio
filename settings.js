@@ -560,246 +560,254 @@ class SettingsManager {
     return { layer, tint };
   }
 
-  initCustomBackgroundControls() {
-    const upload = document.getElementById("customBgUpload");
-    const remove = document.getElementById("removeCustomBg");
-    const fileNameDisplay = document.getElementById("fileNameDisplay");
-    const previewContainer = document.getElementById("customBgPreviewContainer");
-    const previewImage = document.getElementById("customBgPreview");
-    const separator = document.getElementById("customBgSeparator");
-    const zoomSlider = document.getElementById("bgZoomSlider");
-    const zoomLabel = document.querySelector('label[for="bgZoomSlider"]');
-    const customBgCard = document.querySelector(".custom-background");
+ initCustomBackgroundControls() {
+  const upload = document.getElementById("customBgUpload");
+  const remove = document.getElementById("removeCustomBg");
+  const fileNameDisplay = document.getElementById("fileNameDisplay");
+  const previewContainer = document.getElementById("customBgPreviewContainer");
+  const previewImage = document.getElementById("customBgPreview");
+  const separator = document.getElementById("customBgSeparator");
+  const zoomSlider = document.getElementById("bgZoomSlider");
+  const zoomLabel = document.querySelector('label[for="bgZoomSlider"]');
+  const customBgCard = document.querySelector(".custom-background");
 
-    if (!upload || !previewContainer || !previewImage) return;
+  if (!upload || !previewContainer || !previewImage) return;
 
-    // Utility to toggle zoom controls
-    const toggleZoomControls = (show) => {
-      if (zoomSlider) zoomSlider.style.display = show ? "inline-block" : "none";
-      if (zoomLabel) zoomLabel.style.display = show ? "block" : "none";
-    };
+  const toggleZoomControls = (show) => {
+    if (zoomSlider) zoomSlider.style.display = show ? "inline-block" : "none";
+    if (zoomLabel) zoomLabel.style.display = show ? "block" : "none";
+  };
 
-    const savedBg = localStorage.getItem("customBackground");
-    const savedName = localStorage.getItem("customBackgroundName");
-    const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
+  const savedBg = localStorage.getItem("customBackground");
+  const savedName = localStorage.getItem("customBackgroundName");
+  const savedBlur = localStorage.getItem("wallpaperBlur") ?? "0";
 
-    // If a saved image exists, show preview and controls
-    if (savedBg) {
-      if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
-      if (remove) remove.style.display = "inline-block";
+  if (savedBg) {
+    if (fileNameDisplay) fileNameDisplay.textContent = savedName || "Saved background";
+    if (remove) remove.style.display = "inline-block";
+    if (customBgCard) customBgCard.style.display = "flex";
+    toggleZoomControls(true);
+
+    previewContainer.classList.add("visible");
+    previewImage.style.backgroundImage = `url("${savedBg}")`;
+    previewImage.classList.add("loaded");
+
+    if (separator) separator.classList.add("visible");
+    this.applyCustomBackground(true);
+    this.applyWallpaperBlur(savedBlur);
+
+    if (zoomSlider) {
+      zoomSlider.value = localStorage.getItem("customBackgroundZoom") || 100;
+    }
+  } else {
+    if (customBgCard) customBgCard.style.display = "none";
+    toggleZoomControls(false);
+    if (separator) separator.classList.remove("visible");
+  }
+
+  // --- Upload ---
+  upload.addEventListener("change", async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      let imageData = evt.target.result;
+
+      // --- Client-side background "extension" ---
+      try {
+        imageData = await this.extendBackgroundWithCanvas(file);
+      } catch (err) {
+        console.warn("Canvas extension failed, using original image:", err);
+      }
+
+      localStorage.setItem("customBackground", imageData);
+      localStorage.setItem("customBackgroundName", file.name);
+
       if (customBgCard) customBgCard.style.display = "flex";
       toggleZoomControls(true);
 
+      const blurValue = zoomSlider ? zoomSlider.value : localStorage.getItem("wallpaperBlur") || "0";
+      localStorage.setItem("wallpaperBlur", blurValue);
+
       previewContainer.classList.add("visible");
-      previewImage.style.backgroundImage = `url("${savedBg}")`;
-      previewImage.classList.add("loaded");
-
+      previewImage.classList.remove("loaded");
+      previewImage.style.backgroundImage = `url("${imageData}")`;
+      previewImage.onload = () => previewImage.classList.add("loaded");
       if (separator) separator.classList.add("visible");
-      this.applyCustomBackground(true);
-      this.applyWallpaperBlur(savedBlur);
 
-      if (zoomSlider) {
-        zoomSlider.value = localStorage.getItem("customBackgroundZoom") || 100;
-      }
-    } else {
+      if (remove) remove.style.display = "inline-block";
+      this.applyCustomBackground(true);
+      this.applyWallpaperBlur(blurValue);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // --- Remove ---
+  if (remove) {
+    remove.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("customBackground");
+      localStorage.removeItem("customBackgroundName");
+      localStorage.removeItem("wallpaperBlur");
+      localStorage.removeItem("customBackgroundPosX");
+      localStorage.removeItem("customBackgroundPosY");
+      localStorage.removeItem("customBackgroundZoom");
+
       if (customBgCard) customBgCard.style.display = "none";
       toggleZoomControls(false);
-      if (separator) separator.classList.remove("visible");
-    }
 
-    // Handle image upload
-    upload.addEventListener("change", async (e) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-
-      if (fileNameDisplay) fileNameDisplay.textContent = file.name;
-
-      const reader = new FileReader();
-      reader.onload = async (evt) => {
-        let imageData = evt.target.result;
-
-        // Optional: call AI to extend the image
-        try {
-          imageData = await this.extendBackgroundWithAI(imageData);
-        } catch (err) {
-          console.warn("AI extension failed, using original image:", err);
-        }
-
-        localStorage.setItem("customBackground", imageData);
-        localStorage.setItem("customBackgroundName", file.name);
-
-        if (customBgCard) customBgCard.style.display = "flex";
-        toggleZoomControls(true);
-
-        const blurValue = zoomSlider ? zoomSlider.value : localStorage.getItem("wallpaperBlur") || "0";
-        localStorage.setItem("wallpaperBlur", blurValue);
-
-        previewContainer.classList.add("visible");
-        previewImage.classList.remove("loaded");
-        previewImage.style.backgroundImage = `url("${imageData}")`;
-        previewImage.onload = () => previewImage.classList.add("loaded");
-        if (separator) separator.classList.add("visible");
-
-        if (remove) remove.style.display = "inline-block";
-        this.applyCustomBackground(true);
-        this.applyWallpaperBlur(blurValue);
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Handle removal
-    if (remove) {
-      remove.addEventListener("click", (e) => {
-        e.preventDefault();
-        localStorage.removeItem("customBackground");
-        localStorage.removeItem("customBackgroundName");
-        localStorage.removeItem("wallpaperBlur");
-        localStorage.removeItem("customBackgroundPosX");
-        localStorage.removeItem("customBackgroundPosY");
-        localStorage.removeItem("customBackgroundZoom");
-
-        if (customBgCard) customBgCard.style.display = "none";
-        toggleZoomControls(false);
-
-        const layer = document.getElementById("wallpaper-layer");
-        if (layer) {
-          layer.style.backgroundImage = "";
-          layer.style.opacity = "0";
-        }
-
-        previewContainer.classList.remove("visible");
-        previewImage.classList.remove("loaded");
-        previewImage.style.backgroundImage = "";
-        if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
-        remove.style.display = "none";
-        if (separator) separator.classList.remove("visible");
-
-        const blurBadge = document.getElementById("blurValue");
-        if (zoomSlider && blurBadge) {
-          zoomSlider.value = 100;
-          blurBadge.textContent = "0px";
-        }
-      });
-    }
-
-    // --- Drag & Zoom ---
-    let isDragging = false;
-    let startX, startY;
-    let posX = parseFloat(localStorage.getItem("customBackgroundPosX") || 50);
-    let posY = parseFloat(localStorage.getItem("customBackgroundPosY") || 50);
-    let zoomVal = parseFloat(localStorage.getItem("customBackgroundZoom") || 100);
-
-    // Initialize transform
-    this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
-
-    previewImage?.addEventListener("mousedown", (e) => {
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      previewImage.classList.add("dragging");
-    });
-
-    document.addEventListener("mousemove", (e) => {
-      if (!isDragging) return;
-      const dx = ((e.clientX - startX) / previewImage.offsetWidth) * 100;
-      const dy = ((e.clientY - startY) / previewImage.offsetHeight) * 100;
-      startX = e.clientX;
-      startY = e.clientY;
-
-      posX = Math.max(0, Math.min(100, posX + dx));
-      posY = Math.max(0, Math.min(100, posY + dy));
-
-      localStorage.setItem("customBackgroundPosX", posX);
-      localStorage.setItem("customBackgroundPosY", posY);
-
-      this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
-      this.applyCustomBackground(true);
-    });
-
-    document.addEventListener("mouseup", () => {
-      isDragging = false;
-      previewImage?.classList.remove("dragging");
-    });
-
-    // Zoom slider
-    zoomSlider?.addEventListener("input", (e) => {
-      zoomVal = e.target.value;
-      localStorage.setItem("customBackgroundZoom", zoomVal);
-      this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
-      this.applyCustomBackground(true);
-    });
-  }
-
-  applyCustomBackgroundTransform(previewEl, posX, posY, zoom) {
-    if (!previewEl) return;
-    previewEl.style.backgroundPosition = `${posX}% ${posY}%`;
-    previewEl.style.backgroundSize = `${zoom}% auto`;
-
-    const { layer } = this.ensureWallpaperLayers();
-    layer.style.backgroundPosition = `${posX}% ${posY}%`;
-    layer.style.backgroundSize = `${zoom}% auto`;
-  }
-
-  async extendBackgroundWithAI(imageData) {
-    // Example: call your server-side endpoint that uses OpenAI or Stable Diffusion
-    try {
-      const response = await fetch("/api/extend-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: imageData }),
-      });
-      const data = await response.json();
-      if (data.extendedImage) return data.extendedImage;
-      return imageData; // fallback
-    } catch (err) {
-      console.error("AI background extension failed:", err);
-      return imageData; // fallback
-    }
-  }
-
-  applyCustomBackground(fade = false) {
-    const bg = localStorage.getItem("customBackground");
-    const { layer, tint } = this.ensureWallpaperLayers();
-
-    if (bg) {
-      document.body.style.backgroundColor = "transparent";
-      document.body.style.backgroundImage = "";
-      if (fade) {
+      const layer = document.getElementById("wallpaper-layer");
+      if (layer) {
+        layer.style.backgroundImage = "";
         layer.style.opacity = "0";
-        requestAnimationFrame(() => {
-          layer.style.backgroundImage = `url("${bg}")`;
-          setTimeout(() => (layer.style.opacity = "1"), 50);
-        });
-      } else {
-        layer.style.backgroundImage = `url("${bg}")`;
-        layer.style.opacity = "1";
       }
-    } else {
-      document.body.style.backgroundColor = "";
-      document.body.style.backgroundImage = "";
-      layer.style.backgroundImage = "";
+
+      previewContainer.classList.remove("visible");
+      previewImage.classList.remove("loaded");
+      previewImage.style.backgroundImage = "";
+      if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
+      remove.style.display = "none";
+      if (separator) separator.classList.remove("visible");
+
+      const blurBadge = document.getElementById("blurValue");
+      if (zoomSlider && blurBadge) {
+        zoomSlider.value = 100;
+        blurBadge.textContent = "0px";
+      }
+    });
+  }
+
+  // --- Drag & Zoom ---
+  let isDragging = false;
+  let startX, startY;
+  let posX = parseFloat(localStorage.getItem("customBackgroundPosX") || 50);
+  let posY = parseFloat(localStorage.getItem("customBackgroundPosY") || 50);
+  let zoomVal = parseFloat(localStorage.getItem("customBackgroundZoom") || 100);
+
+  this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
+
+  previewImage?.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    previewImage.classList.add("dragging");
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    const dx = ((e.clientX - startX) / previewImage.offsetWidth) * 100;
+    const dy = ((e.clientY - startY) / previewImage.offsetHeight) * 100;
+    startX = e.clientX;
+    startY = e.clientY;
+
+    posX = Math.max(0, Math.min(100, posX + dx));
+    posY = Math.max(0, Math.min(100, posY + dy));
+
+    localStorage.setItem("customBackgroundPosX", posX);
+    localStorage.setItem("customBackgroundPosY", posY);
+
+    this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
+    this.applyCustomBackground(true);
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+    previewImage?.classList.remove("dragging");
+  });
+
+  zoomSlider?.addEventListener("input", (e) => {
+    zoomVal = e.target.value;
+    localStorage.setItem("customBackgroundZoom", zoomVal);
+    this.applyCustomBackgroundTransform(previewImage, posX, posY, zoomVal);
+    this.applyCustomBackground(true);
+  });
+}
+
+// --- Apply transform ---
+applyCustomBackgroundTransform(previewEl, posX, posY, zoom) {
+  if (!previewEl) return;
+  previewEl.style.backgroundPosition = `${posX}% ${posY}%`;
+  previewEl.style.backgroundSize = `${zoom}% auto`;
+
+  const { layer } = this.ensureWallpaperLayers();
+  layer.style.backgroundPosition = `${posX}% ${posY}%`;
+  layer.style.backgroundSize = `${zoom}% auto`;
+}
+
+// --- Client-side Canvas "extension" ---
+async extendBackgroundWithCanvas(file) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width * 2;  // double width
+      canvas.height = img.height * 2; // double height
+      const ctx = canvas.getContext("2d");
+
+      // Draw original image in center
+      const offsetX = img.width / 2;
+      const offsetY = img.height / 2;
+      ctx.drawImage(img, offsetX, offsetY);
+
+      // Mirror edges for seamless extension
+      ctx.save();
+      ctx.scale(-1, -1);
+      ctx.drawImage(img, 0, 0, img.width, img.height, -offsetX, -offsetY, img.width, img.height);
+      ctx.restore();
+
+      resolve(canvas.toDataURL());
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// --- Apply custom background ---
+applyCustomBackground(fade = false) {
+  const bg = localStorage.getItem("customBackground");
+  const { layer, tint } = this.ensureWallpaperLayers();
+
+  if (bg) {
+    document.body.style.backgroundColor = "transparent";
+    document.body.style.backgroundImage = "";
+    if (fade) {
       layer.style.opacity = "0";
+      requestAnimationFrame(() => {
+        layer.style.backgroundImage = `url("${bg}")`;
+        setTimeout(() => (layer.style.opacity = "1"), 50);
+      });
+    } else {
+      layer.style.backgroundImage = `url("${bg}")`;
+      layer.style.opacity = "1";
     }
-
-    const isDark =
-      this.settings.appearanceMode === "dark" ||
-      (this.settings.appearanceMode === "device" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
-
-    tint.style.background = isDark
-      ? "rgba(0, 0, 0, 0.45)"
-      : "rgba(255, 255, 255, 0.15)";
-
-    const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
-    this.applyWallpaperBlur(blurValue);
+  } else {
+    document.body.style.backgroundColor = "";
+    document.body.style.backgroundImage = "";
+    layer.style.backgroundImage = "";
+    layer.style.opacity = "0";
   }
 
-  applyWallpaperBlur(value) {
-    const layer = document.getElementById("wallpaper-layer");
-    if (!layer) return;
-    const blurAmount = parseInt(value, 10) || 0;
-    layer.style.filter = `blur(${blurAmount}px) brightness(1.03)`;
-  }
+  const isDark =
+    this.settings.appearanceMode === "dark" ||
+    (this.settings.appearanceMode === "device" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  tint.style.background = isDark
+    ? "rgba(0, 0, 0, 0.45)"
+    : "rgba(255, 255, 255, 0.15)";
+
+  const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
+  this.applyWallpaperBlur(blurValue);
+}
+
+applyWallpaperBlur(value) {
+  const layer = document.getElementById("wallpaper-layer");
+  if (!layer) return;
+  const blurAmount = parseInt(value, 10) || 0;
+  layer.style.filter = `blur(${blurAmount}px) brightness(1.03)`;
+}
 
   initWallpaperBlurControl() {
     const slider = document.getElementById("blur-slider");
