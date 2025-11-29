@@ -245,46 +245,46 @@ let allDisabilities = [];
 let allTechItems = []; // For Tech section
 
 
+// -----------------------------
+// DOM Elements
+// -----------------------------
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
-const productCountEl = document.getElementById("product-count-admin");
+const productCountAdmin = document.getElementById("product-count-admin");
 const previewGrid = document.getElementById("preview-grid");
 
 const productsCol = collection(db, "merch");
 
 // -----------------------------
-// Render products in table
+// Fetch Products
 // -----------------------------
-async function renderTable(products) {
-  tableBody.innerHTML = "";
-  productCountEl.textContent = products.length;
+async function fetchProducts() {
+  const snapshot = await getDocs(query(productsCol, orderBy("order", "asc")));
+  const products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  renderTable(products);
+  renderPreview(products);
+  productCountAdmin.textContent = products.length;
+  return products;
+}
 
+// -----------------------------
+// Render Table
+// -----------------------------
+function renderTable(products) {
+  tableBody.innerHTML = "";
   products.forEach(product => {
     const finalPrice = product.discount
       ? (product.price * (1 - product.discount / 100)).toFixed(2)
       : Number(product.price).toFixed(2);
 
-    let stockClass = "";
-    switch (product.stock) {
-      case "in-stock": stockClass = "badge-green"; break;
-      case "low-stock": stockClass = "badge-yellow"; break;
-      case "out-of-stock": stockClass = "badge-gray"; break;
-    }
-
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${product.name}</td>
       <td>${product.category}</td>
-      <td>
-        ${product.discount 
-          ? `<span class="original-price">$${Number(product.price).toFixed(2)}</span>
-             <span class="discount-price">$${finalPrice}</span>`
-          : `$${finalPrice}`
-        }
-      </td>
+      <td>$${finalPrice}</td>
       <td>${product.discount || 0}%</td>
-      <td><span class="stock-badge ${stockClass}">${product.stock.replace("-", " ")}</span></td>
-      <td>${product.sale ? '<span class="sale-badge">Sale</span>' : 'No'}</td>
+      <td>${product.stock}</td>
+      <td>${product.sale ? "Yes" : "No"}</td>
       <td>
         <button onclick="editProduct('${product.id}')">Edit</button>
         <button onclick="deleteProduct('${product.id}')">Delete</button>
@@ -295,10 +295,11 @@ async function renderTable(products) {
 }
 
 // -----------------------------
-// Render live preview grid
+// Render Live Preview
 // -----------------------------
 function renderPreview(products) {
   previewGrid.innerHTML = "";
+
   products.forEach(product => {
     const finalPrice = product.discount
       ? (product.price * (1 - product.discount / 100)).toFixed(2)
@@ -306,38 +307,32 @@ function renderPreview(products) {
 
     const priceHTML = product.discount
       ? `<span class="original-price">$${Number(product.price).toFixed(2)}</span>
-         <span class="discount-price">$${finalPrice}</span>`
-      : `$${finalPrice}`;
+         <span class="discount-price">$${finalPrice}</span>
+         <span class="sale-badge">-${product.discount}% Off</span>`
+      : `<span class="regular-price">$${finalPrice}</span>`;
 
     const productItem = document.createElement("div");
     productItem.classList.add("product-item");
+
+    const isDisabled = product.stock === "out-of-stock";
+    const buttonHTML = `<button class="buy-now" 
+                          ${isDisabled ? 'disabled style="background:#888; cursor:not-allowed;"' : `onclick="window.open('${product.link}', '_blank')"`}>
+                          Buy Now
+                        </button>`;
+
     productItem.innerHTML = `
-      <a href="${product.link}" target="_blank">
-        <div class="product-image-container">
-          <img src="${product.image}" alt="${product.name}">
-        </div>
+      <div class="product-image-container">
+        <img src="${product.image}" alt="${product.name}">
         ${product.sale ? '<div class="sale-ribbon">Sale</div>' : ''}
         <div class="stock-ribbon ${product.stock}">${product.stock.replace("-", " ")}</div>
-        <h3>${product.name}</h3>
-        <p class="price">${priceHTML}</p>
-        <span class="buy-now">Buy Now</span>
-      </a>
+      </div>
+      <h3>${product.name}</h3>
+      <p class="price">${priceHTML}</p>
+      ${buttonHTML}
     `;
+
     previewGrid.appendChild(productItem);
   });
-}
-
-// -----------------------------
-// Fetch all products
-// -----------------------------
-async function fetchProducts() {
-  const snapshot = await getDocs(productsCol);
-  const products = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
-
-  renderTable(products);
-  renderPreview(products);
-
-  return products;
 }
 
 // -----------------------------
@@ -346,7 +341,6 @@ async function fetchProducts() {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const id = document.getElementById("product-id").value;
-
   const productData = {
     name: document.getElementById("product-name").value,
     category: document.getElementById("product-category").value,
@@ -373,17 +367,18 @@ form.addEventListener("submit", async (e) => {
 // Edit Product
 // -----------------------------
 window.editProduct = async (id) => {
-  const dataSnap = await (await doc(db, "merch", id).get()).data();
+  const docSnap = await getDoc(doc(db, "merch", id));
+  const data = docSnap.data();
 
   document.getElementById("product-id").value = id;
-  document.getElementById("product-name").value = dataSnap.name;
-  document.getElementById("product-category").value = dataSnap.category;
-  document.getElementById("product-price").value = dataSnap.price;
-  document.getElementById("product-discount").value = dataSnap.discount || 0;
-  document.getElementById("product-stock").value = dataSnap.stock;
-  document.getElementById("product-sale").value = dataSnap.sale;
-  document.getElementById("product-image").value = dataSnap.image;
-  document.getElementById("product-link").value = dataSnap.link;
+  document.getElementById("product-name").value = data.name;
+  document.getElementById("product-category").value = data.category;
+  document.getElementById("product-price").value = data.price;
+  document.getElementById("product-discount").value = data.discount || 0;
+  document.getElementById("product-stock").value = data.stock;
+  document.getElementById("product-sale").value = data.sale ? "true" : "false";
+  document.getElementById("product-image").value = data.image;
+  document.getElementById("product-link").value = data.link;
 };
 
 // -----------------------------
@@ -397,7 +392,7 @@ window.deleteProduct = async (id) => {
 };
 
 // -----------------------------
-// Initial fetch
+// Initial Fetch
 // -----------------------------
 fetchProducts();
 
