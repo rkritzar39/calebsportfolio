@@ -2908,8 +2908,11 @@ body.dark-mode .g_id_signin > div[role="button"] {
   color: var(--text-color);
 }
 
-.form-group input,
-.form-group select {
+/* =========================================
+   3. Inputs & Selects (Dark Mode Friendly)
+   ========================================= */
+#product-form input,
+#product-form select {
   padding: 12px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
@@ -2918,16 +2921,43 @@ body.dark-mode .g_id_signin > div[role="button"] {
   font-size: 1rem;
   width: 100%;
   box-sizing: border-box;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, background 0.3s ease;
+  cursor: text;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+#product-form input::placeholder,
+#product-form select::placeholder {
+  color: #aaa;
+}
+
+#product-form input:focus,
+#product-form select:focus {
   outline: none;
   border-color: var(--accent-color);
+  background: var(--bg-color);
 }
 
-/* Form Actions */
+/* Base Price */
+#base-price {
+  background: var(--bg-color);
+  color: var(--text-color);
+  cursor: text;
+  font-weight: bold;
+}
+
+#base-price:read-only {
+  background: #e9ecef;
+  cursor: not-allowed;
+  color: #555;
+}
+
+#base-price::placeholder {
+  color: #888;
+}
+
+/* =========================================
+   4. Form Actions & Buttons
+   ========================================= */
 .form-actions {
   grid-column: 1 / -1;
   display: flex;
@@ -2969,7 +2999,7 @@ body.dark-mode .g_id_signin > div[role="button"] {
 }
 
 /* =========================================
-   3. Variations Styling
+   5. Variations Styling
    ========================================= */
 #variations-container .variation {
   display: grid;
@@ -2982,9 +3012,22 @@ body.dark-mode .g_id_signin > div[role="button"] {
 #variations-container .variation input,
 #variations-container .variation select {
   padding: 8px;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 
+#variations-container .variation input:focus,
+#variations-container .variation select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background: var(--bg-color);
+}
+
+/* Remove button */
 #variations-container .variation button.remove-variation {
   background: #ff4444;
   color: #fff;
@@ -2999,15 +3042,8 @@ body.dark-mode .g_id_signin > div[role="button"] {
   transform: translateY(-1px);
 }
 
-/* Base Price */
-#base-price {
-  background: #e9ecef;
-  cursor: not-allowed;
-  font-weight: bold;
-}
-
 /* =========================================
-   4. Table Styling
+   6. Table Styling
    ========================================= */
 .table-responsive {
   width: 100%;
@@ -3032,12 +3068,6 @@ body.dark-mode .g_id_signin > div[role="button"] {
   vertical-align: top;
 }
 
-#product-table td:first-child, 
-#product-table th:first-child {
-  max-width: 150px;
-  min-width: 100px;
-}
-
 #product-table th {
   background-color: rgba(255,255,255,0.05);
   font-weight: 600;
@@ -3058,7 +3088,7 @@ body.dark-mode .g_id_signin > div[role="button"] {
 #product-table button:last-child { background: #ff4444; color: #fff; }
 
 /* =========================================
-   5. Product Grid / Live Preview
+   7. Product Grid / Live Preview
    ========================================= */
 .product-grid {
   display: grid;
@@ -3142,7 +3172,7 @@ body.dark-mode .g_id_signin > div[role="button"] {
 }
 
 /* =========================================
-   6. Badges & Ribbons
+   8. Badges & Ribbons
    ========================================= */
 .stock-ribbon, .sale-ribbon {
   position: absolute;
