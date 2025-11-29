@@ -245,6 +245,9 @@ let allDisabilities = [];
 let allTechItems = []; // For Tech section
 
 
+import { db } from './firebase-init.js';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
 // DOM Elements
 const form = document.getElementById("product-form");
 const tableBody = document.querySelector("#product-table tbody");
@@ -475,7 +478,6 @@ window.editProduct = async id => {
   document.getElementById("product-image").value = product.image;
   document.getElementById("product-link").value = product.link;
 
-  // Load variations
   variationsContainer.innerHTML = "";
   product.variations.forEach(v => {
     const variationDiv = document.createElement("div");
@@ -512,7 +514,7 @@ window.deleteProduct = async id => {
   }
 };
 
-// Reset variations to 1 row
+// Reset variations to one empty row
 function resetVariations() {
   variationsContainer.innerHTML = `
     <div class="variation">
@@ -539,6 +541,7 @@ fetchProducts();
 attachPriceListeners();
 addRemoveListeners();
 updateBasePrice();
+
 
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
