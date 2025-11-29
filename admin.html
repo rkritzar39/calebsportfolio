@@ -305,9 +305,10 @@
       </select>
     </div>
 
+    <!-- Base Price (optional, can be auto-calculated from variations) -->
     <div class="form-group">
-      <label for="product-price">Price ($):</label>
-      <input type="number" id="product-price" step="0.01" required>
+      <label for="product-price">Base Price ($):</label>
+      <input type="number" id="product-price" step="0.01">
     </div>
 
     <div class="form-group">
@@ -342,6 +343,18 @@
       <input type="url" id="product-link" required>
     </div>
 
+    <!-- Variations Section -->
+    <div id="variations-container" class="form-group full-width">
+      <h4>Product Variations</h4>
+      <div class="variation">
+        <input type="text" class="variation-color" placeholder="Color" required>
+        <input type="text" class="variation-size" placeholder="Size" required>
+        <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
+        <button type="button" class="remove-variation">Remove</button>
+      </div>
+    </div>
+    <button type="button" id="add-variation">Add Variation</button>
+
     <input type="hidden" id="product-id">
     
     <div class="form-actions">
@@ -365,13 +378,13 @@
         </tr>
       </thead>
       <tbody>
-        </tbody>
+      </tbody>
     </table>
   </div>
 
   <h3>Live Preview</h3>
   <div id="preview-grid" class="product-grid">
-    </div>
+  </div>
 </section>
 
             
