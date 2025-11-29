@@ -337,11 +337,15 @@ form.addEventListener("submit", async e => {
   e.preventDefault();
 
   // Collect variations
-  const variations = Array.from(variationsContainer.querySelectorAll(".variation")).map(v => ({
-    color: v.querySelector(".variation-color").value,
-    size: v.querySelector(".variation-size").value,
-    price: parseFloat(v.querySelector(".variation-price").value.toFixed(2))
-  }));
+  const variations = Array.from(variationsContainer.querySelectorAll(".variation")).map(v => {
+    const priceValue = parseFloat(v.querySelector(".variation-price").value);
+    return {
+      color: v.querySelector(".variation-color").value,
+      size: v.querySelector(".variation-size").value,
+      price: parseFloat(priceValue.toFixed(2)), // ensures number with 2 decimals
+      stock: v.dataset.stock || "in-stock" // optional: you can add per-variation stock later
+    };
+  });
 
   const id = document.getElementById("product-id").value;
   const productData = {
@@ -352,7 +356,7 @@ form.addEventListener("submit", async e => {
     sale: document.getElementById("product-sale").value === "true",
     image: document.getElementById("product-image").value,
     link: document.getElementById("product-link").value,
-    variations,
+    variations, // now safe
     order: allProducts.length // optional ordering
   };
 
@@ -362,8 +366,11 @@ form.addEventListener("submit", async e => {
     } else {
       await addDoc(productsCol, productData);
     }
+
+    // Reset form
     form.reset();
     document.getElementById("product-id").value = "";
+
     // Reset variations container to 1 default row
     variationsContainer.innerHTML = `
       <div class="variation">
@@ -374,6 +381,7 @@ form.addEventListener("submit", async e => {
       </div>
     `;
     addRemoveListeners(); // reattach remove listeners
+
     fetchProducts();
   } catch (err) {
     console.error("Error saving product:", err);
