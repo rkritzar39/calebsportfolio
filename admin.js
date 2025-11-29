@@ -1,39 +1,38 @@
-// admin.js — Consolidated admin file (Manual Status, Goal Tracker, Live Status, Merch Admin)
-// Requires firebase-init.js to export: export { db, auth }
+   // admin.js (Version includes Preview Prep + Previous Features + Social Links)
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
-import { db, auth } from './firebase-init.js';
+// -------------------------
+// 🔥 FIREBASE INIT (ONE TIME ONLY)
+// -------------------------
+import { db, auth } from './firebase-init.js'; // ← KEEP THIS ONE
 
+// -------------------------
+// FIRESTORE FUNCTIONS
+// -------------------------
 import {
-  collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc,
-  serverTimestamp, getDoc, query, orderBy, writeBatch, deleteField, onSnapshot
+    getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc, setDoc,
+    serverTimestamp, getDoc, query, orderBy, where, limit, Timestamp,
+    deleteField, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
+// -------------------------
+// AUTH
+// -------------------------
+import {
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithCredential
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
-// ----------------------------
-// DOM helpers
-// ----------------------------
-const $ = id => document.getElementById(id);
-const qs = (sel, root = document) => root.querySelector(sel);
-const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-
-// ----------------------------
-// Firestore & Storage refs
-// ----------------------------
-const storage = getStorage();
-
-const MERCH_COL = collection(db, "merch");
-const CATEGORIES_COL = collection(db, "merchCategories");
-
-// ----------------------------
-// ----------------------------
-//  Manual Status (manualStatus/site)
-// ----------------------------
-// ----------------------------
 const MANUAL_DOC = doc(db, "manualStatus", "site");
 
-function showFeedback(msg, ok = true, selectorId = "manual-status-feedback") {
-  const el = $(selectorId);
+const $ = (id) => document.getElementById(id);
+
+function showFeedback(msg, ok = true) {
+  const el = $("manual-status-feedback");
   if (!el) return;
   el.textContent = msg;
   el.style.color = ok ? "" : "#ff6b6b";
@@ -44,23 +43,23 @@ async function loadManualStatusToForm() {
   try {
     const snap = await getDoc(MANUAL_DOC);
     if (!snap.exists()) {
-      // defaults
-      const t = $("manual-status-text"); if (t) t.value = "";
-      const i = $("manual-status-icon"); if (i) i.value = "manual";
-      const d = $("manual-status-duration"); if (d) d.value = 15;
-      const e = $("manual-status-enabled"); if (e) e.checked = false;
+      $("manual-status-text").value = "";
+      $("manual-status-icon").value = "manual";
+      $("manual-status-duration").value = 15;
+      $("manual-status-enabled").checked = false;
       return;
     }
     const data = snap.data();
-    const t = $("manual-status-text"); if (t) t.value = data.text || "";
-    const i = $("manual-status-icon"); if (i) i.value = data.icon || "manual";
+    $("manual-status-text").value = data.text || "";
+    $("manual-status-icon").value = data.icon || "manual";
+
     if (data.expiresAt && typeof data.expiresAt === "number") {
       const mins = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / 60000));
-      const d = $("manual-status-duration"); if (d) d.value = mins;
+      $("manual-status-duration").value = mins;
     } else {
-      const d = $("manual-status-duration"); if (d) d.value = data.persistent ? 0 : 15;
+      $("manual-status-duration").value = data.persistent ? 0 : 15;
     }
-    const e = $("manual-status-enabled"); if (e) e.checked = !!data.enabled;
+    $("manual-status-enabled").checked = !!data.enabled;
   } catch (err) {
     console.error("Load manual status error:", err);
     showFeedback("Failed to load manual status", false);
@@ -70,10 +69,10 @@ async function loadManualStatusToForm() {
 async function saveManualStatus(e) {
   e?.preventDefault();
   try {
-    const text = ($("manual-status-text")?.value || "").trim();
-    const icon = ($("manual-status-icon")?.value) || "manual";
-    const duration = Number($("manual-status-duration")?.value || 0);
-    const enabled = !!($("manual-status-enabled")?.checked);
+    const text = $("manual-status-text").value.trim();
+    const icon = $("manual-status-icon").value || "manual";
+    const duration = Number($("manual-status-duration").value || 0);
+    const enabled = !!$("manual-status-enabled").checked;
 
     const payload = {
       text: text || "",
@@ -83,8 +82,11 @@ async function saveManualStatus(e) {
       persistent: duration === 0,
     };
 
-    if (duration > 0) payload.expiresAt = Date.now() + Math.max(0, duration) * 60_000;
-    else payload.expiresAt = null;
+    if (duration > 0) {
+      payload.expiresAt = Date.now() + Math.max(0, duration) * 60_000;
+    } else {
+      payload.expiresAt = null;
+    }
 
     await setDoc(MANUAL_DOC, payload, { merge: true });
     showFeedback("Manual status saved");
@@ -104,6 +106,7 @@ async function clearManualStatus() {
       expiresAt: null,
       persistent: false
     }, { merge: true });
+
     await loadManualStatusToForm();
     showFeedback("Manual status cleared");
   } catch (err) {
@@ -112,591 +115,433 @@ async function clearManualStatus() {
   }
 }
 
-// init manual-status DOM handlers
 document.addEventListener("DOMContentLoaded", () => {
   const form = $("manual-status-form");
-  if (form) form.addEventListener("submit", saveManualStatus);
+  form?.addEventListener("submit", saveManualStatus);
 
-  const clearBtn = $("clear-manual-status-btn");
-  if (clearBtn) clearBtn.addEventListener("click", async () => {
+  $("clear-manual-status-btn")?.addEventListener("click", async () => {
     if (!confirm("Clear manual status? This will disable the manual override.")) return;
     await clearManualStatus();
   });
 
   loadManualStatusToForm();
 
-  // realtime reflection
-  try {
-    onSnapshot(MANUAL_DOC, (snap) => {
-      if (!snap.exists()) return;
-      const data = snap.data();
-      const t = $("manual-status-text"); if (t) t.value = data.text || "";
-      const i = $("manual-status-icon"); if (i) i.value = data.icon || "manual";
-      const e = $("manual-status-enabled"); if (e) e.checked = !!data.enabled;
-    });
-  } catch (err) {
-    console.warn("Realtime watch not enabled for manual status:", err);
-  }
+  (async () => {
+    try {
+      const { onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js");
+      onSnapshot(MANUAL_DOC, (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        $("manual-status-text").value = data.text || "";
+        $("manual-status-icon").value = data.icon || "manual";
+        $("manual-status-enabled").checked = !!data.enabled;
+      });
+    } catch (e) {
+      console.warn("Realtime watch not enabled:", e);
+    }
+  })();
 });
 
-// ----------------------------
-// ----------------------------
-//  Goal Tracker
-// ----------------------------
-// ----------------------------
+// -----------------------------
+// GOAL TRACKER
+// -----------------------------
 async function loadGoalTracker() {
-  try {
-    const ref = doc(db, "siteSettings", "goalTracker");
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      const data = snap.data();
-      const el = $("goal-title"); if (el) el.value = data.goalTitle ?? "";
-      const total = $("goal-total"); if (total) total.value = data.goalTotal ?? 0;
-      const raised = $("goal-raised"); if (raised) raised.value = data.goalRaised ?? 0;
-      const remaining = $("goal-remaining"); if (remaining) remaining.value = data.goalRemaining ?? 0;
-    }
-  } catch (err) {
-    console.error("loadGoalTracker error:", err);
+  const ref = doc(db, "siteSettings", "goalTracker");
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    const data = snap.data();
+    document.getElementById("goal-title").value = data.goalTitle ?? "";
+    document.getElementById("goal-total").value = data.goalTotal ?? 0;
+    document.getElementById("goal-raised").value = data.goalRaised ?? 0;
+    document.getElementById("goal-remaining").value = data.goalRemaining ?? 0;
   }
 }
+
 loadGoalTracker();
 
-const goalTitleInput = $("goal-title"), goalTotalInput = $("goal-total"), goalRaisedInput = $("goal-raised"), goalRemainingInput = $("goal-remaining");
+const goalTitleInput = document.getElementById("goal-title");
+const goalTotalInput = document.getElementById("goal-total");
+const goalRaisedInput = document.getElementById("goal-raised");
+const goalRemainingInput = document.getElementById("goal-remaining");
 
 function updateRemaining() {
-  const total = Number(goalTotalInput?.value) || 0;
-  const raised = Number(goalRaisedInput?.value) || 0;
-  if (goalRemainingInput) goalRemainingInput.value = Math.max(total - raised, 0);
+  const total = Number(goalTotalInput.value) || 0;
+  const raised = Number(goalRaisedInput.value) || 0;
+  goalRemainingInput.value = Math.max(total - raised, 0);
 }
-if (goalTotalInput) goalTotalInput.addEventListener("input", updateRemaining);
-if (goalRaisedInput) goalRaisedInput.addEventListener("input", updateRemaining);
 
-const goalForm = $("goal-form");
-if (goalForm) goalForm.addEventListener("submit", async (e) => {
+goalTotalInput.addEventListener("input", updateRemaining);
+goalRaisedInput.addEventListener("input", updateRemaining);
+
+document.getElementById("goal-form").addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  const title = goalTitleInput.value.trim();
+  const total = Number(goalTotalInput.value);
+  const raised = Number(goalRaisedInput.value);
+  const remaining = Math.max(total - raised, 0);
+
   try {
-    const title = goalTitleInput.value.trim();
-    const total = Number(goalTotalInput.value);
-    const raised = Number(goalRaisedInput.value);
-    const remaining = Math.max(total - raised, 0);
     await setDoc(doc(db, "goals", "goalTracker"), {
       goalTitle: title,
       goalTotal: total,
       goalRaised: raised,
       goalRemaining: remaining,
-      ownerId: auth?.currentUser?.uid || null
+      ownerId: auth.currentUser.uid
     });
-    const msg = $("goal-status-message"); if (msg) { msg.textContent = "Goal Tracker Saved!"; msg.classList.add("success"); }
+
+    const msg = document.getElementById("goal-status-message");
+    msg.textContent = "Goal Tracker Saved!";
+    msg.classList.add("success");
   } catch (err) {
-    console.error("saveGoalTracker error:", err);
-    const msg = $("goal-status-message"); if (msg) { msg.textContent = "Error saving goal tracker."; msg.classList.add("error"); }
+    console.error(err);
+    const msg = document.getElementById("goal-status-message");
+    msg.textContent = "Error saving goal tracker.";
+    msg.classList.add("error");
   }
 });
 
-// ----------------------------
-// ----------------------------
-//  Live Status
-// ----------------------------
-// ----------------------------
+// -----------------------------
+// LIVE STATUS
+// -----------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  const input = $("live-status-input");
-  const updateBtn = $("update-live-status-btn");
-  const clearBtn = $("clear-live-status-btn");
-  const resultMsg = $("live-status-result");
+  const input = document.getElementById("live-status-input");
+  const updateBtn = document.getElementById("update-live-status-btn");
+  const clearBtn = document.getElementById("clear-live-status-btn");
+  const resultMsg = document.getElementById("live-status-result");
 
-  if (updateBtn) updateBtn.addEventListener("click", async () => {
-    const message = input?.value.trim();
-    if (!message) { if (resultMsg) resultMsg.textContent = "Please enter a status first."; return; }
+  updateBtn?.addEventListener("click", async () => {
+    const message = input.value.trim();
+    if (!message) {
+      resultMsg.textContent = "Please enter a status first.";
+      return;
+    }
+
     try {
       await setDoc(doc(db, "live_status", "current"), { message });
-      if (resultMsg) resultMsg.textContent = "✅ Live status updated successfully!";
-      if (input) input.value = "";
+      resultMsg.textContent = "✅ Live status updated successfully!";
+      input.value = "";
     } catch (err) {
       console.error("Error updating live status:", err);
-      if (resultMsg) resultMsg.textContent = "❌ Failed to update live status.";
+      resultMsg.textContent = "❌ Failed to update live status.";
     }
   });
 
-  if (clearBtn) clearBtn.addEventListener("click", async () => {
+  clearBtn?.addEventListener("click", async () => {
     try {
       await deleteDoc(doc(db, "live_status", "current"));
-      if (resultMsg) resultMsg.textContent = "🧹 Live status cleared.";
+      resultMsg.textContent = "🧹 Live status cleared.";
     } catch (err) {
       console.error("Error clearing live status:", err);
-      if (resultMsg) resultMsg.textContent = "❌ Failed to clear status.";
+      resultMsg.textContent = "❌ Failed to clear status.";
     }
   });
 });
 
-// ----------------------------
-// ----------------------------
-//  MERCH SYSTEM (Option D behavior + ranges + images + categories)
-// ----------------------------
+// -----------------------------
+// STORAGE
+// -----------------------------
+const storage = getStorage();
 
-// DOM refs for merch
-const merchForm = $("product-form");
+// -----------------------------
+// GLOBAL DATA ARRAYS
+// -----------------------------
+let allShoutouts = { tiktok: [], instagram: [], youtube: [] };
+let allUsefulLinks = [];
+let allSocialLinks = [];
+let allDisabilities = [];
+let allTechItems = [];
+
+//---------------------------------------------------------------------
+// MERCH SYSTEM (FULLY FIXED VERSION) — Drop-in replacement
+//---------------------------------------------------------------------
+
+// Elements
+const merchForm = document.getElementById("product-form");
 const merchTableBody = document.querySelector("#product-table tbody");
-const merchPreviewGrid = $("preview-grid");
-const merchCountAdmin = $("product-count-admin");
+const merchPreviewGrid = document.getElementById("preview-grid");
+const merchCountAdmin = document.getElementById("product-count-admin");
 
-const variationsContainer = $("variations-container");
-const addVariationBtn = $("add-variation");
-const basePriceInput = $("base-price");
+const merchVariationsContainer = document.getElementById("variations-container");
+const merchAddVariationBtn = document.getElementById("add-variation");
+const merchBasePriceInput = document.getElementById("base-price");
 
-const categorySelect = $("product-category");
-const newCategoryInput = $("new-category-input");
-const addCategoryBtn = $("add-category-btn");
-const categoryList = $("category-list");
+// Firestore reference
+const merchCol = collection(db, "merch");
 
-const analyticsTotal = $("analytics-total");
-const analyticsInStock = $("analytics-instock");
-const analyticsSale = $("analytics-sale");
-
-const productImageFile = $("product-image-file");
-const productImageURLInput = $("product-image");
-
+// Local products array
 let allProducts = [];
-let allCategories = [];
 
-// utility parse & escape
-function parsePrice(val) {
-  const n = parseFloat(val);
-  return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0;
-}
-function escapeHtml(s) {
-  if (s === undefined || s === null) return "";
-  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-// price info for display (raw & discounted range)
-function getPriceInfo(product) {
-  const variations = Array.isArray(product.variations) ? product.variations : [];
-  if (variations.length === 0) {
-    const base = parsePrice(product.price || 0);
-    const raw = `$${base.toFixed(2)}`;
-    if (product.discount && product.discount > 0) {
-      const disc = (base * (1 - product.discount / 100));
-      return { displayRaw: raw, displayDiscount: `$${disc.toFixed(2)}`, low: base, high: base, isRange: false };
-    }
-    return { displayRaw: raw, displayDiscount: null, low: base, high: base, isRange: false };
-  }
-  const prices = variations.map(v => parsePrice(v.price)).sort((a,b)=>a-b);
-  const low = prices[0] ?? 0;
-  const high = prices[prices.length - 1] ?? low;
-  const raw = (low === high) ? `$${low.toFixed(2)}` : `$${low.toFixed(2)} – $${high.toFixed(2)}`;
-  if (product.discount && product.discount > 0) {
-    const multiplier = 1 - (product.discount / 100);
-    const lowD = (low * multiplier);
-    const highD = (high * multiplier);
-    const discStr = (low === high) ? `$${lowD.toFixed(2)}` : `$${lowD.toFixed(2)} – $${highD.toFixed(2)}`;
-    return { displayRaw: raw, displayDiscount: discStr, low, high, isRange: (low !== high) };
-  }
-  return { displayRaw: raw, displayDiscount: null, low, high, isRange: (low !== high) };
-}
-
-// Base price behavior (Option D)
+// -------------------------------------------------
+// Variation price → base price calculator
+// -------------------------------------------------
 function updateBasePrice() {
-  const priceInputs = qsa(".variation-price", variationsContainer);
-  const prices = priceInputs.map(i => parsePrice(i.value));
-  const valid = prices.filter(p => p > 0);
-  if (valid.length) basePriceInput.value = Math.min(...valid).toFixed(2);
-  else basePriceInput.value = "";
-}
+  const prices = Array.from(
+    merchVariationsContainer.querySelectorAll(".variation-price")
+  ).map(i => parseFloat(i.value) || 0);
 
-function updateBasePriceState() {
-  const variationCount = qsa(".variation", variationsContainer).length;
-  if (variationCount === 0) {
-    if (basePriceInput) { basePriceInput.disabled = false; basePriceInput.required = true; basePriceInput.placeholder = "Enter base price"; }
-  } else {
-    if (basePriceInput) { basePriceInput.disabled = true; basePriceInput.required = false; basePriceInput.placeholder = ""; updateBasePrice(); }
+  if (!prices.length) {
+    merchBasePriceInput.value = "";
+    return;
   }
+
+  merchBasePriceInput.value = Math.min(...prices).toFixed(2);
 }
 
 function attachPriceListeners() {
-  qsa(".variation-price", variationsContainer).forEach(inp => {
-    inp.removeEventListener("input", updateBasePriceState);
-    inp.addEventListener("input", updateBasePriceState);
+  document.querySelectorAll(".variation-price").forEach(input => {
+    input.removeEventListener("input", updateBasePrice);
+    input.addEventListener("input", updateBasePrice);
   });
 }
 
 function addRemoveListeners() {
-  qsa(".remove-variation", variationsContainer).forEach(btn => {
+  document.querySelectorAll(".remove-variation").forEach(btn => {
     btn.onclick = () => {
-      const row = btn.closest(".variation"); if (row) row.remove();
-      updateBasePriceState();
+      btn.parentElement.remove();
+      updateBasePrice();
     };
   });
 }
 
-// create variation row helper
-function addVariationRow(data = {}) {
+// -------------------------------------------------
+// Add new variation row
+// -------------------------------------------------
+merchAddVariationBtn.addEventListener("click", () => {
   const div = document.createElement("div");
   div.classList.add("variation");
   div.innerHTML = `
-    <input type="text" class="variation-color" placeholder="Color" value="${escapeHtml(data.color || "")}" required>
-    <input type="text" class="variation-size" placeholder="Size" value="${escapeHtml(data.size || "")}" required>
-    <input type="number" class="variation-price" placeholder="Price" step="0.01" value="${data.price !== undefined ? parsePrice(data.price).toFixed(2) : ""}" required>
+    <input type="text" class="variation-color" placeholder="Color" required>
+    <input type="text" class="variation-size" placeholder="Size" required>
+    <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
     <select class="variation-stock">
-      <option value="in-stock" ${data.stock === "in-stock" ? "selected" : ""}>In Stock</option>
-      <option value="low-stock" ${data.stock === "low-stock" ? "selected" : ""}>Low Stock</option>
-      <option value="out-of-stock" ${data.stock === "out-of-stock" ? "selected" : ""}>Out of Stock</option>
+      <option value="in-stock">In Stock</option>
+      <option value="low-stock">Low Stock</option>
+      <option value="out-of-stock">Out of Stock</option>
     </select>
     <button type="button" class="remove-variation">Remove</button>
   `;
-  variationsContainer.appendChild(div);
-  addRemoveListeners();
+
+  merchVariationsContainer.appendChild(div);
   attachPriceListeners();
-  updateBasePriceState();
-}
-
-if (addVariationBtn) addVariationBtn.addEventListener("click", () => addVariationRow());
-
-// image upload
-async function uploadImageFile(file, productId = `product-${Date.now()}`) {
-  if (!file) return null;
-  const ext = (file.name.split(".").pop() || "jpg");
-  const path = `merch_images/${productId}-${Date.now()}.${ext}`;
-  const r = storageRef(storage, path);
-  await uploadBytes(r, file);
-  return await getDownloadURL(r);
-}
-
-// Categories: fetch & render
-async function fetchCategories() {
-  try {
-    const q = query(CATEGORIES_COL, orderBy("name", "asc"));
-    const snap = await getDocs(q);
-    allCategories = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  } catch (err) {
-    console.error("fetchCategories error:", err);
-    allCategories = [];
-  }
-  renderCategoryUI();
-}
-
-function renderCategoryUI() {
-  if (!categorySelect) return;
-  categorySelect.innerHTML = `<option value="">-- Select Category --</option>`;
-  allCategories.forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c.name;
-    opt.textContent = c.name;
-    categorySelect.appendChild(opt);
-  });
-
-  if (!categoryList) return;
-  categoryList.innerHTML = "";
-  allCategories.forEach(c => {
-    const li = document.createElement("li");
-    li.style.display = "flex";
-    li.style.justifyContent = "space-between";
-    li.style.alignItems = "center";
-    li.style.marginBottom = "6px";
-    li.innerHTML = `<span>${escapeHtml(c.name)}</span><button data-id="${c.id}" class="remove-cat-btn">Remove</button>`;
-    categoryList.appendChild(li);
-  });
-
-  qsa(".remove-cat-btn", categoryList).forEach(btn => {
-    btn.onclick = async () => {
-      const id = btn.dataset.id;
-      if (!confirm("Remove category? (products won't be deleted)")) return;
-      try {
-        await deleteDoc(doc(db, "merchCategories", id));
-        await fetchCategories();
-      } catch (err) {
-        console.error("remove category error:", err);
-        alert("Failed to remove category.");
-      }
-    };
-  });
-}
-
-if (addCategoryBtn) addCategoryBtn.addEventListener("click", async () => {
-  const name = (newCategoryInput.value || "").trim();
-  if (!name) return;
-  try {
-    await addDoc(CATEGORIES_COL, { name });
-    newCategoryInput.value = "";
-    await fetchCategories();
-  } catch (err) {
-    console.error("add category error:", err);
-    alert("Failed to add category.");
-  }
+  addRemoveListeners();
+  updateBasePrice();
 });
 
+// -------------------------------------------------
 // Fetch products
+// -------------------------------------------------
 async function fetchProducts() {
-  try {
-    const q = query(MERCH_COL, orderBy("order", "asc"));
-    const snap = await getDocs(q);
-    allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderProducts();
-    updateAnalytics();
-  } catch (err) {
-    console.error("fetchProducts error:", err);
-    allProducts = [];
-  }
+  const q = query(merchCol, orderBy("order", "asc"));
+  const snap = await getDocs(q);
+
+  allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderProducts();
 }
 
-function updateAnalytics() {
-  if (!analyticsTotal) return;
-  analyticsTotal.textContent = allProducts.length;
-  let instock = 0, saleCount = 0;
-  allProducts.forEach(p => {
-    if (Array.isArray(p.variations) && p.variations.length) {
-      p.variations.forEach(v => { if (v.stock !== "out-of-stock") instock++; });
-    } else {
-      if (p.stock !== "out-of-stock") instock++;
-    }
-    if (p.sale || (p.discount && p.discount > 0)) saleCount++;
-  });
-  if (analyticsInStock) analyticsInStock.textContent = instock;
-  if (analyticsSale) analyticsSale.textContent = saleCount;
-}
-
-// render products
+// -------------------------------------------------
+// Render products (table + preview)
+// -------------------------------------------------
 function renderProducts() {
-  if (merchTableBody) merchTableBody.innerHTML = "";
-  if (merchPreviewGrid) merchPreviewGrid.innerHTML = "";
-  if (merchCountAdmin) merchCountAdmin.textContent = allProducts.length;
+  merchTableBody.innerHTML = "";
+  merchPreviewGrid.innerHTML = "";
+  merchCountAdmin.textContent = allProducts.length;
 
   allProducts.forEach(product => {
-    const priceInfo = getPriceInfo(product);
+    const variations = product.variations || [];
 
-    // table row
-    if (merchTableBody) {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${escapeHtml(product.name)}</td>
-        <td>${escapeHtml(product.category || "")}</td>
-        <td>${priceInfo.displayDiscount ? `<span class="original-price">${priceInfo.displayRaw}</span> <br><span class="discount-price">${priceInfo.displayDiscount}</span>` : `<span class="regular-price">${priceInfo.displayRaw}</span>`}</td>
-        <td>${product.discount || 0}%</td>
-        <td>${escapeHtml(product.stock || "")}</td>
-        <td>${product.sale ? "Yes" : "No"}</td>
-        <td style="white-space:nowrap;">
-          <button data-id="${product.id}" class="move-up-btn">↑</button>
-          <button data-id="${product.id}" class="move-down-btn">↓</button>
-        </td>
-        <td>
-          <button onclick="editProduct('${product.id}')">Edit</button>
-          <button onclick="deleteProduct('${product.id}')">Delete</button>
-        </td>
-      `;
-      merchTableBody.appendChild(tr);
+    const inStock = variations.filter(v => v.stock !== "out-of-stock");
+    const basePrice = inStock.length
+      ? Math.min(...inStock.map(v => v.price))
+      : product.price || 0;
+
+    const finalPrice = product.discount
+      ? (basePrice * (1 - product.discount / 100)).toFixed(2)
+      : basePrice.toFixed(2);
+
+    // -------------------------------------------------
+    // TABLE ROW
+    // -------------------------------------------------
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${product.name}</td>
+      <td>${product.category}</td>
+      <td>$${finalPrice}</td>
+      <td>${product.discount || 0}%</td>
+      <td>${product.stock}</td>
+      <td>${product.sale ? "Yes" : "No"}</td>
+      <td>
+        <button onclick="editProduct('${product.id}')">Edit</button>
+        <button onclick="deleteProduct('${product.id}')">Delete</button>
+      </td>
+    `;
+    merchTableBody.appendChild(tr);
+
+    // -------------------------------------------------
+    // PREVIEW CARD
+    // -------------------------------------------------
+    const card = document.createElement("div");
+    card.classList.add("product-item");
+
+    let variationSelect = "";
+    if (variations.length > 1) {
+      variationSelect = `<select class="variation-select">`;
+      variations.forEach((v, i) => {
+        const label = `${v.color} - ${v.size}`;
+        variationSelect += `<option value="${i}" ${v.stock === "out-of-stock" ? "disabled" : ""}>${label}</option>`;
+      });
+      variationSelect += `</select>`;
     }
 
-    // preview card
-    if (merchPreviewGrid) {
-      const card = document.createElement("div");
-      card.classList.add("product-item");
-      const variations = Array.isArray(product.variations) ? product.variations : [];
-      let variationSelectHTML = "";
-      if (variations.length > 1) {
-        variationSelectHTML = `<select class="variation-select">`;
-        variations.forEach((v, i) => {
-          const disabled = v.stock === "out-of-stock" ? "disabled" : "";
-          const label = `${escapeHtml(v.color || "")} - ${escapeHtml(v.size || "")}`;
-          variationSelectHTML += `<option value="${i}" ${disabled}>${label}</option>`;
-        });
-        variationSelectHTML += `</select>`;
-      }
-      const priceHTML = priceInfo.displayDiscount
-        ? `<span class="original-price">${priceInfo.displayRaw}</span><br><span class="discount-price">${priceInfo.displayDiscount}</span><span class="sale-badge">-${product.discount}% Off</span>`
-        : `<span class="regular-price">${priceInfo.displayRaw}</span>`;
+    const priceHTML = product.discount
+      ? `<span class="original-price">$${basePrice.toFixed(2)}</span>
+         <span class="discount-price">$${finalPrice}</span>
+         <span class="sale-badge">-${product.discount}% Off</span>`
+      : `<span class="regular-price">$${finalPrice}</span>`;
 
-      const inStockVariations = variations.filter(v => v.stock !== "out-of-stock");
-      const buyDisabled = (variations.length && inStockVariations.length === 0) || (!variations.length && product.stock === "out-of-stock");
+    const disabled =
+      (variations.length && !inStock.length) ||
+      (!variations.length && product.stock === "out-of-stock");
 
-      card.innerHTML = `
-        <div class="product-image-container">
-          <img src="${escapeHtml(product.image || '')}" alt="${escapeHtml(product.name)}">
-          ${product.sale ? '<div class="sale-ribbon">Sale</div>' : ''}
-          <div class="stock-ribbon ${escapeHtml(product.stock || '')}">${escapeHtml((product.stock || "").replace("-", " "))}</div>
-        </div>
-        <h3>${escapeHtml(product.name)}</h3>
-        ${variationSelectHTML}
-        <p class="price">${priceHTML}</p>
-        <button class="buy-now" ${buyDisabled ? "disabled" : ""}>Buy Now</button>
-      `;
-      merchPreviewGrid.appendChild(card);
+    const buttonHTML = `
+      <button class="buy-now" ${disabled ? "disabled" : ""}>
+        Buy Now
+      </button>
+    `;
 
-      // preview behavior
-      const selectEl = qs(".variation-select", card);
-      const priceEl = qs(".price", card);
-      const buyBtn = qs(".buy-now", card);
-      const updatePreview = () => {
-        let selected = variations[0] || { price: product.price || 0, stock: product.stock || "in-stock" };
-        if (selectEl) selected = variations[selectEl.value];
-        const low = selected.price !== undefined ? parsePrice(selected.price) : parsePrice(product.price || 0);
-        if (product.discount) {
-          const discounted = (low * (1 - product.discount / 100));
-          priceEl.innerHTML = `<span class="original-price">$${low.toFixed(2)}</span><br><span class="discount-price">$${discounted.toFixed(2)}</span><span class="sale-badge">-${product.discount}% Off</span>`;
-        } else {
-          priceEl.innerHTML = `<span class="regular-price">$${low.toFixed(2)}</span>`;
-        }
-        buyBtn.disabled = selected.stock === "out-of-stock";
-      };
-      if (selectEl) selectEl.addEventListener("change", updatePreview);
-      updatePreview();
-    }
+    card.innerHTML = `
+      <div class="product-image-container">
+        <img src="${product.image}">
+        ${product.sale ? `<div class="sale-ribbon">Sale</div>` : ""}
+        <div class="stock-ribbon ${product.stock}">${product.stock}</div>
+      </div>
+
+      <h3>${product.name}</h3>
+      ${variationSelect}
+      <p class="price">${priceHTML}</p>
+      ${buttonHTML}
+    `;
+
+    merchPreviewGrid.appendChild(card);
   });
-
-  // attach move handlers
-  qsa(".move-up-btn").forEach(btn => btn.onclick = () => moveProduct(btn.dataset.id, -1));
-  qsa(".move-down-btn").forEach(btn => btn.onclick = () => moveProduct(btn.dataset.id, +1));
 }
 
-// move product
-async function moveProduct(productId, dir) {
-  const idx = allProducts.findIndex(p => p.id === productId);
-  if (idx === -1) return;
-  const newIndex = idx + dir;
-  if (newIndex < 0 || newIndex >= allProducts.length) return;
-  const a = allProducts[idx];
-  const b = allProducts[newIndex];
-  const aOrder = (typeof a.order === "number") ? a.order : idx;
-  const bOrder = (typeof b.order === "number") ? b.order : newIndex;
-  const batch = writeBatch(db);
-  batch.update(doc(db, "merch", a.id), { order: bOrder });
-  batch.update(doc(db, "merch", b.id), { order: aOrder });
-  try {
-    await batch.commit();
-    await fetchProducts();
-  } catch (err) {
-    console.error("moveProduct error:", err);
-  }
-}
-
-// save product
-if (merchForm) merchForm.addEventListener("submit", async (e) => {
+// -------------------------------------------------
+// Save product
+// -------------------------------------------------
+merchForm.addEventListener("submit", async e => {
   e.preventDefault();
-  const id = $("product-id")?.value || null;
-  const name = $("product-name")?.value.trim();
-  const category = $("product-category")?.value.trim();
-  const link = $("product-link")?.value.trim();
-  if (!name || !category || !link) {
-    alert("Please provide product name, category, and link.");
-    return;
-  }
 
-  const variationRows = qsa(".variation", variationsContainer);
-  const variations = variationRows.map(r => {
-    const color = qs(".variation-color", r).value.trim();
-    const size = qs(".variation-size", r).value.trim();
-    const price = parsePrice(qs(".variation-price", r).value);
-    const stock = qs(".variation-stock", r).value;
-    return { color, size, price, stock };
-  });
+  const id = document.getElementById("product-id").value;
 
-  let imageUrl = (productImageURLInput?.value || "").trim();
-  const file = productImageFile?.files?.[0];
-  try {
-    if (file) {
-      const uploadId = id || `new-${Date.now()}`;
-      const uploaded = await uploadImageFile(file, uploadId);
-      if (uploaded) imageUrl = uploaded;
-    }
-  } catch (err) {
-    console.error("image upload failed:", err);
-    alert("Image upload failed. Use an image URL or try again.");
-    return;
-  }
+  const variations = Array.from(
+    merchVariationsContainer.querySelectorAll(".variation")
+  ).map(v => ({
+    color: v.querySelector(".variation-color").value,
+    size: v.querySelector(".variation-size").value,
+    price: parseFloat(v.querySelector(".variation-price").value),
+    stock: v.querySelector(".variation-stock").value
+  }));
 
-  const payload = {
-    name,
-    category,
-    discount: parseFloat($("product-discount")?.value) || 0,
-    stock: $("product-stock")?.value,
-    sale: ($("product-sale")?.value === "true"),
-    image: imageUrl || "",
-    link,
-    updatedAt: serverTimestamp()
+  const product = {
+    name: document.getElementById("product-name").value,
+    category: document.getElementById("product-category").value,
+    discount: parseFloat(document.getElementById("product-discount").value),
+    stock: document.getElementById("product-stock").value,
+    sale: document.getElementById("product-sale").value === "true",
+    image: document.getElementById("product-image").value,
+    link: document.getElementById("product-link").value,
+    variations,
+    order: id ? undefined : allProducts.length
   };
 
-  if (variations.length === 0) {
-    const manualPrice = parsePrice(basePriceInput?.value);
-    if (!manualPrice || manualPrice <= 0) {
-      alert("Please enter a base price for products without variations.");
-      return;
-    }
-    payload.price = manualPrice;
-    payload.variations = [];
-  } else {
-    payload.variations = variations;
-    // delete top-level price if present
-    payload.price = deleteField ? deleteField() : undefined;
-  }
+  if (id) await updateDoc(doc(db, "merch", id), product);
+  else await addDoc(merchCol, product);
 
-  if (!id) payload.order = allProducts.length;
-
-  try {
-    if (id) await updateDoc(doc(db, "merch", id), payload);
-    else await addDoc(MERCH_COL, payload);
-    merchForm.reset();
-    resetVariations();
-    if (productImageFile) productImageFile.value = "";
-    await fetchProducts();
-  } catch (err) {
-    console.error("save product error:", err);
-    alert("Failed to save product.");
-  }
+  merchForm.reset();
+  resetVariations();
+  fetchProducts();
 });
 
-// edit product
-window.editProduct = async function(id) {
+// -------------------------------------------------
+// Edit product
+// -------------------------------------------------
+window.editProduct = id => {
   const p = allProducts.find(x => x.id === id);
   if (!p) return;
-  $("product-id").value = id;
-  $("product-name").value = p.name || "";
-  $("product-category").value = p.category || "";
-  $("product-discount").value = p.discount || 0;
-  $("product-stock").value = p.stock || "in-stock";
-  $("product-sale").value = p.sale ? "true" : "false";
-  $("product-image").value = p.image || "";
-  $("product-link").value = p.link || "";
 
-  variationsContainer.innerHTML = "";
-  if (Array.isArray(p.variations) && p.variations.length) {
-    p.variations.forEach(v => addVariationRow({ color: v.color, size: v.size, price: v.price, stock: v.stock }));
-  } else {
-    updateBasePriceState();
-    if (p.price) basePriceInput.value = parsePrice(p.price).toFixed(2);
-  }
-  updateBasePriceState();
+  document.getElementById("product-id").value = id;
+  document.getElementById("product-name").value = p.name;
+  document.getElementById("product-category").value = p.category;
+  document.getElementById("product-discount").value = p.discount || 0;
+  document.getElementById("product-stock").value = p.stock;
+  document.getElementById("product-sale").value = p.sale ? "true" : "false";
+  document.getElementById("product-image").value = p.image;
+  document.getElementById("product-link").value = p.link;
+
+  merchVariationsContainer.innerHTML = "";
+  p.variations.forEach(v => {
+    const div = document.createElement("div");
+    div.classList.add("variation");
+    div.innerHTML = `
+      <input type="text" class="variation-color" value="${v.color}">
+      <input type="text" class="variation-size" value="${v.size}">
+      <input type="number" class="variation-price" step="0.01" value="${v.price}">
+      <select class="variation-stock">
+        <option value="in-stock" ${v.stock === "in-stock" ? "selected" : ""}>In Stock</option>
+        <option value="low-stock" ${v.stock === "low-stock" ? "selected" : ""}>Low Stock</option>
+        <option value="out-of-stock" ${v.stock === "out-of-stock" ? "selected" : ""}>Out of Stock</option>
+      </select>
+      <button type="button" class="remove-variation">Remove</button>
+    `;
+    merchVariationsContainer.appendChild(div);
+  });
+
+  addRemoveListeners();
+  attachPriceListeners();
+  updateBasePrice();
 };
 
-// delete product
-window.deleteProduct = async function(id) {
-  if (!confirm("Are you sure you want to delete this product?")) return;
-  try {
-    await deleteDoc(doc(db, "merch", id));
-    await fetchProducts();
-  } catch (err) {
-    console.error("deleteProduct error:", err);
-    alert("Failed to delete product.");
-  }
+// -------------------------------------------------
+// Delete product
+// -------------------------------------------------
+window.deleteProduct = async id => {
+  if (!confirm("Delete product?")) return;
+  await deleteDoc(doc(db, "merch", id));
+  fetchProducts();
 };
 
-// reset variations
+// -------------------------------------------------
+// Reset variations
+// -------------------------------------------------
 function resetVariations() {
-  variationsContainer.innerHTML = "";
-  updateBasePriceState();
+  merchVariationsContainer.innerHTML = `
+    <div class="variation">
+      <input type="text" class="variation-color" placeholder="Color">
+      <input type="text" class="variation-size" placeholder="Size">
+      <input type="number" class="variation-price" placeholder="Price" step="0.01">
+      <select class="variation-stock">
+        <option value="in-stock">In Stock</option>
+        <option value="low-stock">Low Stock</option>
+        <option value="out-of-stock">Out of Stock</option>
+      </select>
+      <button type="button" class="remove-variation">Remove</button>
+    </div>
+  `;
+  addRemoveListeners();
+  attachPriceListeners();
+  updateBasePrice();
 }
 
-// init
-(async function init() {
-  resetVariations();
-  await fetchCategories();
-  await fetchProducts();
-  attachPriceListeners();
-  addRemoveListeners();
-  updateBasePriceState();
-})();
+// -------------------------------------------------
+// INIT
+// -------------------------------------------------
+fetchProducts();
+attachPriceListeners();
+addRemoveListeners();
+updateBasePrice();
 
-// expose helpers
-window.fetchProducts = fetchProducts;
-window.fetchCategories = fetchCategories;
-window.resetVariations = resetVariations;
 
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
