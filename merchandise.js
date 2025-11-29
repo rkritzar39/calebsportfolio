@@ -1,31 +1,19 @@
-// merchandise.js (Public Merch Page)
+// merchandise.js
 import { db } from './firebase-init.js';
-import {
-  collection,
-  getDocs,
-  query,
-  orderBy
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-// -----------------------------
-// DOM Elements
-// -----------------------------
+// DOM elements
 const productGrid = document.getElementById("product-grid");
 const categorySelect = document.getElementById("categories");
 const sectionTitle = document.getElementById("section-title");
 const productCount = document.getElementById("product-count");
 
-// -----------------------------
-// Firestore Reference
-// -----------------------------
+// Firestore collection
 const productsCol = collection(db, "merch");
 const productsQuery = query(productsCol, orderBy("order", "asc"));
 
-// -----------------------------
 // State
-// -----------------------------
 let allProducts = [];
-let categories = ["All Products"];
 
 // -----------------------------
 // Render products in grid
@@ -68,10 +56,8 @@ function renderProducts(products) {
 // -----------------------------
 function renderCategories(products) {
   const uniqueCategories = Array.from(new Set(products.map(p => p.category))).sort();
-  categories = ["All Products", ...uniqueCategories];
-
-  categorySelect.innerHTML = "";
-  categories.forEach(cat => {
+  categorySelect.innerHTML = `<option value="All Products">All Products</option>`;
+  uniqueCategories.forEach(cat => {
     const option = document.createElement("option");
     option.value = cat;
     option.textContent = cat;
@@ -80,12 +66,11 @@ function renderCategories(products) {
 }
 
 // -----------------------------
-// Filter products by category
+// Filter by category
 // -----------------------------
 categorySelect.addEventListener("change", () => {
   const selected = categorySelect.value;
   sectionTitle.textContent = selected;
-
   if (selected === "All Products") {
     renderProducts(allProducts);
   } else {
@@ -104,7 +89,5 @@ async function loadProducts() {
   renderProducts(allProducts);
 }
 
-// -----------------------------
 // Initial load
-// -----------------------------
 loadProducts();
