@@ -2985,9 +2985,10 @@ body.dark-mode .g_id_signin > div[role="button"] {
 }
 
 /* =========================================
-   3. Table Styling (Responsive Wrapper)
+   3. Table Styling (Fixed Text Wrapping)
    ========================================= */
-/* Wrapper allows scrolling without breaking layout */
+
+/* The wrapper handles the overflow if the table is still too big */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -3000,14 +3001,25 @@ body.dark-mode .g_id_signin > div[role="button"] {
 #product-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 700px; /* Forces scroll on small screens instead of squishing */
+  /* Removed min-width so it tries to fit the screen first */
 }
 
 #product-table th, #product-table td {
-  padding: 12px 15px;
+  padding: 12px 10px; /* Slightly reduced padding */
   text-align: left;
   border-bottom: 1px solid var(--border-color);
-  white-space: nowrap; /* Prevents text from wrapping awkwardly */
+  
+  /* CRITICAL FIX: Allow text to wrap to the next line */
+  white-space: normal; 
+  word-wrap: break-word; /* Breaks long words if necessary */
+  vertical-align: top;   /* Aligns text to top if it wraps */
+}
+
+/* Constrain the "Name" column so it wraps instead of stretching */
+#product-table td:first-child, 
+#product-table th:first-child {
+  max-width: 150px; /* Adjust this number if you need it wider/narrower */
+  min-width: 100px;
 }
 
 #product-table th {
@@ -3019,18 +3031,21 @@ body.dark-mode .g_id_signin > div[role="button"] {
   background-color: rgba(255,255,255,0.03);
 }
 
+/* Button Actions in Table */
 #product-table button {
   padding: 6px 10px;
   font-size: 0.85rem;
   border-radius: 6px;
   cursor: pointer;
   border: none;
+  white-space: nowrap; /* Keep buttons on one line though */
 }
 
 #product-table button:first-child {
   background: var(--accent-color);
   color: #fff;
   margin-right: 5px;
+  margin-bottom: 4px; /* Stack buttons on very small screens if needed */
 }
 
 #product-table button:last-child {
