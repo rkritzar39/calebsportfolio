@@ -282,10 +282,11 @@
 </section>
 
 <section id="merch-management">
+
   <h2>Manage Merchandise</h2>
 
   <form id="product-form">
-    
+
     <div class="form-group">
       <label for="product-name">Product Name:</label>
       <input type="text" id="product-name" required>
@@ -340,16 +341,16 @@
     <!-- Base Price -->
     <div class="form-group">
       <label for="base-price">Base Price ($):</label>
-      <input type="number" id="base-price" readonly>
+      <input type="number" id="base-price" step="0.01" placeholder="Enter price if no variations">
     </div>
 
     <!-- Variations Section -->
     <div id="variations-container" class="form-group full-width">
       <h4>Product Variations</h4>
       <div class="variation">
-        <input type="text" class="variation-color" placeholder="Color" required>
-        <input type="text" class="variation-size" placeholder="Size" required>
-        <input type="number" class="variation-price" placeholder="Price" step="0.01" required>
+        <input type="text" class="variation-color" placeholder="Color">
+        <input type="text" class="variation-size" placeholder="Size">
+        <input type="number" class="variation-price" placeholder="Price" step="0.01">
         <select class="variation-stock">
           <option value="in-stock">In Stock</option>
           <option value="low-stock">Low Stock</option>
@@ -358,17 +359,19 @@
         <button type="button" class="remove-variation">Remove</button>
       </div>
     </div>
+
     <button type="button" id="add-variation">Add Variation</button>
 
     <input type="hidden" id="product-id">
-    
+
     <div class="form-actions">
       <button type="submit">Save Product</button>
     </div>
+
   </form>
 
   <h3>Existing Products (<span id="product-count-admin">0</span>)</h3>
-  
+
   <div class="table-responsive">
     <table id="product-table">
       <thead>
@@ -388,7 +391,9 @@
 
   <h3>Live Preview</h3>
   <div id="preview-grid" class="product-grid"></div>
+
 </section>
+
 
 
              <section class="admin-section" id="president-management" aria-labelledby="president-heading">
