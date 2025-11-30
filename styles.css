@@ -3964,7 +3964,7 @@ body.maintenance-active {
 }
 
 /* ===================================== */
-/* === LISTS & HOURS LAYOUT (MATCHED WIDTH) === */
+/* === LISTS & HOURS LAYOUT – DAY LEFT, HOURS RIGHT === */
 /* ===================================== */
 
 .hours-list,
@@ -3980,7 +3980,7 @@ body.maintenance-active {
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    grid-template-columns: 1fr auto; /* Flexible day, time auto */
+    grid-template-columns: 1fr auto; /* Day left, hours right */
     align-items: center;
     gap: 15px;
 
@@ -3997,7 +3997,7 @@ body.maintenance-active {
     margin-bottom: 12px;
     box-sizing: border-box;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    min-width: 0; /* prevents overflow */
+    min-width: 0;
 }
 
 .hours-list li strong,
@@ -4011,39 +4011,31 @@ body.maintenance-active {
 }
 
 .hours-line,
+.hours-line.additional-hours,
 .special-hours-display .hours {
     display: block;
-    text-align: right;
-    color: var(--secondary-text);
+    text-align: right; /* right-align hours on desktop */
     font-weight: 500;
     font-size: 0.95em;
-    min-width: 0;
-    overflow-wrap: anywhere;
+    color: var(--secondary-text);
+    word-break: break-word;
 }
 
 /* Handle special dates / multi-line holiday info */
 .special-hours-display li .date-display,
 .special-hours-display li div:not(.hours) {
-    grid-column: 1 / -1; /* span both columns */
-    margin-top: 8px;
+    grid-column: 1 / -1; /* span both columns if grid used */
+    margin-top: 4px;
     text-align: left;
     font-size: 0.9em;
     color: var(--secondary-text);
     opacity: 0.8;
 }
 
-/* Additional hours logic */
-.hours-line.additional-hours {
-    margin-top: 4px;
-}
-
 /* Highlight current day */
 .hours-list li.current-day {
     border-color: var(--accent-color);
     box-shadow: 0 0 15px color-mix(in srgb, var(--accent-color) 20%, transparent);
-}
-.hours-list li.current-day strong {
-    color: var(--accent-color);
 }
 
 /* Hover Effect */
@@ -4129,24 +4121,24 @@ body.maintenance-active {
     .business-info-section { padding: 22px; }
     
     .hours-list li, .special-hours-display li { 
-        grid-template-columns: 1fr 1fr; /* equal split on smaller screens */
-        gap: 10px;
+        grid-template-columns: 1fr; /* stack on tablet/mobile */
+        text-align: left; /* hours stacked under day */
+        gap: 6px;
     }
     
-    .hours-line, .special-hours-display .hours {
+    .hours-line, .hours-line.additional-hours, .special-hours-display .hours {
+        text-align: left; /* stacked hours left-aligned on mobile */
         font-size: 0.9em;
     }
 }
 
 @media screen and (max-width: 480px) {
     .hours-list li, .special-hours-display li { 
-        grid-template-columns: 1fr; /* stack label and time */
-        text-align: left;
-        gap: 6px;
+        padding: 12px 14px;
+        gap: 4px;
     }
 
-    .hours-line, .special-hours-display .hours {
-        text-align: left;
+    .hours-line, .hours-line.additional-hours, .special-hours-display .hours {
         font-size: 0.88em;
     }
 }
