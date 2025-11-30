@@ -3973,10 +3973,11 @@ body.maintenance-active {
     border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
+/* Regular list items: day label left, main times right */
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    grid-template-columns: 1fr auto; /* Day label left, time right */
+    grid-template-columns: 1fr auto; /* left: day label, right: times */
     align-items: start;
     gap: 8px;
     padding: 14px 16px;
@@ -3988,7 +3989,6 @@ body.maintenance-active {
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
     margin-bottom: 12px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Hover effect */
@@ -4016,14 +4016,15 @@ body.maintenance-active {
     font-weight: 500;
 }
 
-/* Additional hours: no container, right-aligned */
+/* Additional hours now occupy the second column only */
 .hours-line.additional-hours {
-    text-align: right;
-    color: var(--secondary-text);
+    grid-column: 2;        /* force it to the right column */
+    text-align: right;     /* right-aligned */
+    margin: 2px 0 0 0;
+    padding-left: 0;
+    white-space: nowrap;
     font-weight: 500;
-    margin-top: 2px;
-    margin-bottom: 0;
-    padding-left: 0; /* remove any left indent */
+    color: var(--secondary-text);
 }
 
 /* Highlight current day */
