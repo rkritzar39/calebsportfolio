@@ -95,10 +95,17 @@
         <main id="admin-content" style="display: none;" tabindex="-1">
             <header class="admin-header">
                 <h2>Manage Content</h2>
-                <span id="admin-greeting" aria-live="polite"></span>
+            
+                <div class="admin-profile-display">
+                    <img id="admin-profile-pic" class="admin-profile-pic" src="" alt="Admin Profile Picture">
+                    <span id="admin-greeting" aria-live="polite"></span>
+                </div>
+            
                 <span id="inactivity-timer-display" class="timer-display"></span>
+            
                 <button type="button" id="logout-button">Logout</button>
             </header>
+
 
             <div id="admin-status" class="status-message" role="status" aria-live="polite"></div>
 
