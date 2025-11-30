@@ -696,6 +696,30 @@
   <section class="admin-section" id="business-info-management" aria-labelledby="business-info-heading">
     <h3 id="business-info-heading" class="onyx-heading">Manage Business Information</h3>
 
+    <!-- ============================ -->
+    <!-- TEMPLATE FOR HOURS ENTRIES  -->
+    <!-- ============================ -->
+    <template id="hours-range-template">
+      <div class="hours-range">
+        <select class="day-select">
+          <option value="monday">Monday</option>
+          <option value="tuesday">Tuesday</option>
+          <option value="wednesday">Wednesday</option>
+          <option value="thursday">Thursday</option>
+          <option value="friday">Friday</option>
+          <option value="saturday">Saturday</option>
+          <option value="sunday">Sunday</option>
+        </select>
+
+        <input type="time" class="open-time">
+        <input type="time" class="close-time">
+
+        <button type="button" class="remove-hours button-secondary small-button">
+          Remove
+        </button>
+      </div>
+    </template>
+
     <form id="business-info-form" class="onyx-form">
       <div class="form-group">
         <label for="business-contact-email">Contact Email</label>
@@ -706,7 +730,55 @@
       <p class="onyx-note">
         <small><i>Enter all times based on US Eastern Time (ET / New York). They will be automatically converted for visitors.</i></small>
       </p>
-      <div id="regular-hours-container" class="hours-grid"></div>
+
+      <!-- ============================= -->
+      <!-- FULL REGULAR HOURS CONTAINER  -->
+      <!-- ============================= -->
+      <div id="regular-hours-container" class="hours-grid">
+
+        <div class="day-block" data-day="monday">
+          <h5>Monday</h5>
+          <div class="hours-list"></div>
+          <button type="button" class="add-hours button-secondary small-button">+ Add Hours</button>
+        </div>
+
+        <div class="day-block" data-day="tuesday">
+          <h5>Tuesday</h5>
+          <div class="hours-list"></div>
+          <button type="button" class="add-hours button-secondary small-button">+ Add Hours</button>
+        </div>
+
+        <div class="day-block" data-day="wednesday">
+          <h5>Wednesday</h5>
+          <div class="hours-list"></div>
+          <button type="button" class="add-hours button-secondary small-button">+ Add Hours</button>
+        </div>
+
+        <div class="day-block" data-day="thursday">
+          <h5>Thursday</h5>
+          <div class="hours-list"></div>
+          <button type="button" class="add-hours button-secondary small-button">+ Add Hours</button>
+        </div>
+
+        <div class="day-block" data-day="friday">
+          <h5>Friday</h5>
+          <div class="hours-list"></div>
+          <button type="button" class="add-hours button-secondary small-button">+ Add Hours</button>
+        </div>
+
+        <div class="day-block" data-day="saturday">
+          <h5>Saturday</h5>
+          <div class="hours-list"></div>
+          <button type="button" class="add-hours button-secondary small-button">+ Add Hours</button>
+        </div>
+
+        <div class="day-block" data-day="sunday">
+          <h5>Sunday</h5>
+          <div class="hours-list"></div>
+          <button type="button" class="add-hours button-secondary small-button">+ Add Hours</button>
+        </div>
+
+      </div>
 
       <h4 class="onyx-subheading">Holiday Hours / Specific Date Closures</h4>
       <p class="onyx-note">
@@ -758,8 +830,7 @@
 
     <div id="business-info-status-message" class="status-message" role="status" aria-live="polite"></div>
   </section>
-</div>
-            
+</div>            
              <section class="admin-section" id="tech-management" aria-labelledby="tech-heading">
                 <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
 
