@@ -1890,14 +1890,6 @@ if (document.readyState === 'loading') {
     displayBusinessInfo();
 }
 
-/* -------------------------
-   Hook: call displayBusinessInfo on load
-   ------------------------- */
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', displayBusinessInfo);
-} else {
-    displayBusinessInfo();
-}
 
 // Optionally, if you want the status to refresh periodically (e.g. every 60s) uncomment below.
 // setInterval(displayBusinessInfo, 60000);
