@@ -3873,7 +3873,7 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* == Business Info Section – Onyx Bubble Glass == */
+/* == Business Info Section – Onyx Bubble Glass (Centered) == */
 /* ======================================== */
 
 .business-info-section {
@@ -3881,18 +3881,18 @@ body.maintenance-active {
 	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-xl);
 	padding: clamp(20px, 4vw, 30px);
-	margin: 30px 0;
+	margin: 30px auto; /* centered */
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	border: 1px solid var(--border-color);
 	backdrop-filter: var(--backdrop-blur) saturate(120%);
 	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
 	width: 100%;
+	max-width: 900px; /* keeps it centered */
 	box-sizing: border-box;
 	position: relative;
 	overflow: hidden;
 	transition: background 0.3s ease, box-shadow 0.3s ease;
 	color: var(--text-color);
-	max-width: 100%;
 }
 
 /* Section Header */
@@ -3905,8 +3905,6 @@ body.maintenance-active {
 	text-align: center;
 	padding-bottom: 12px;
 	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	word-wrap: break-word;
-	overflow-wrap: break-word;
 }
 
 /* --- Status Display --- */
@@ -3919,7 +3917,6 @@ body.maintenance-active {
 	text-align: center;
 }
 
-/* Status Bubble */
 .status-main-text {
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
@@ -3927,7 +3924,6 @@ body.maintenance-active {
 	border: 1px solid var(--border-color);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-	position: relative;
 	display: inline-flex;
 	align-items: center;
 	gap: 10px;
@@ -3935,15 +3931,10 @@ body.maintenance-active {
 	font-size: 1.1em;
 	padding: 10px 24px;
 	border-radius: 9999px;
-	letter-spacing: 0.3px;
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
 }
 
 .status-main-text::before {
 	content: '';
-	display: block;
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
@@ -3966,106 +3957,87 @@ body.maintenance-active {
 	font-weight: 500;
 	color: var(--secondary-text);
 	max-width: 400px;
-	word-wrap: break-word;
-	overflow-wrap: break-word;
+	text-align: center;
 }
 
 /* ===================================== */
-/* === LISTS & HOURS CLEAN LAYOUT (FULLY RESPONSIVE + CENTERED) === */
+/* === HOURS LAYOUT (CENTERED + RESPONSIVE) === */
 
-/* Center the whole hours section */
+/* Wrap containers centered */
 .hours-list,
 .special-hours-display {
-    max-width: 700px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
+	max-width: 700px;
+	margin: 0 auto; /* centered */
+	width: 100%;
+	padding: 0;
+	box-sizing: border-box;
+	list-style: none;
+	border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* Individual cards centered and clean */
+/* Cards */
 .hours-list li,
 .special-hours-display li {
-    width: 100%;
-    margin-left: auto;
-    margin-right: auto;
+	width: 100%;
+	margin: 0 auto 12px auto; /* PERFECT CENTER */
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: 12px;
+	align-items: start;
 
-    display: grid;
-    grid-template-columns: 1fr 2fr; /* more room for time */
-    align-items: start;
-    gap: 12px;
-    padding: 14px 16px;
+	padding: 14px 16px;
+	border-radius: var(--radius-lg);
 
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur);
 
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-
-    margin-bottom: 12px;
-
-    max-width: 100%;
-    min-width: 0;
-    word-wrap: break-word;
-    overflow-wrap: anywhere;
+	box-sizing: border-box;
 }
 
-/* Hover effect */
+/* hover */
 .hours-list li:hover,
 .special-hours-display li:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
+	transform: translateY(-3px);
+	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
-/* Left column (day) */
+/* Left side (day) */
 .hours-list li strong,
 .special-hours-display li strong {
-    text-align: left;
-    font-weight: 700;
-    color: var(--text-color);
+	font-weight: 700;
+	color: var(--text-color);
+	text-align: left;
 }
 
-/* Right column (times) */
+/* Right side (time) */
 .hours-line,
 .hours-line.additional-hours,
 .special-hours-details,
 .special-hours-display .hours {
-    display: block;
-    text-align: right;
-    color: var(--secondary-text);
-    font-weight: 500;
-
-    white-space: normal !important;
-    word-break: break-word;
-    overflow-wrap: anywhere;
+	text-align: right;
+	font-weight: 500;
+	color: var(--secondary-text);
+	word-break: break-word;
 }
 
-/* Additional hours stick right side */
+/* Additional hours right-aligned */
 .hours-line.additional-hours {
-    grid-column: 2;
-    margin-top: 2px;
+	grid-column: 2;
 }
 
-/* Current day highlight */
+/* Highlight today */
 .hours-list li.current-day {
-    border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
+	border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
-.hours-list li.current-day strong,
-.hours-list li.current-day span {
-    color: var(--accent-color);
-    font-weight: 700;
+.hours-list li.current-day * {
+	color: var(--accent-color);
 }
 
-/* --- CENTER HOLIDAY & TEMP HOURS LIST --- */
-.special-hours-display {
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* --- Contact Button --- */
+/* ===================================== */
+/* === Contact Button === */
 .contact-info {
 	text-align: center;
 	margin-top: 30px;
@@ -4076,16 +4048,12 @@ body.maintenance-active {
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	border: 1px solid var(--border-color);
 	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	display: inline-block;
 	padding: 14px 36px;
-	color: var(--accent-color);
 	border-radius: 9999px;
-	text-decoration: none;
 	font-weight: 700;
-	word-wrap: break-word;
-	overflow-wrap: anywhere;
-	transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+	color: var(--accent-color);
+	text-decoration: none;
+	display: inline-block;
 }
 .contact-info a:hover {
 	transform: translateY(-3px);
@@ -4093,33 +4061,22 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* == Admin Panel Styles (Clean & Modern Upgrade) == */
+/* == Admin Preview (Centered Too) == */
 /* ======================================== */
 
-/* Center admin preview too */
 .admin-preview-container {
 	max-width: 700px;
-	margin-left: auto;
-	margin-right: auto;
-	border: 1px solid var(--border-color);
+	margin: 30px auto 0 auto; /* CENTERED */
 	background: var(--bg-color);
+	border: 1px solid var(--border-color);
 	padding: 25px;
 	border-radius: 16px;
-	box-sizing: border-box;
 }
 
-.admin-preview-container h3 {
-	margin-top: 0;
-	margin-bottom: 20px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid var(--border-color);
-	font-size: 1.2em;
-	color: var(--accent-color);
-	word-wrap: break-word;
-	overflow-wrap: anywhere;
-}
+/* ======================================== */
+/* == Admin Panel Styles == */
+/* ======================================== */
 
-/* Inputs */
 .admin-form-input,
 .day-hours-group input[type="time"],
 .special-hours-list input[type="time"],
@@ -4127,142 +4084,52 @@ body.maintenance-active {
 .special-hours-list input[type="text"] {
 	width: 100%;
 	padding: 12px 14px;
+	border-radius: 10px;
+	box-sizing: border-box;
 	border: 1px solid var(--border-color);
 	background-color: var(--bg-color);
-	border-radius: 10px;
-	font-size: 1em;
-	color: var(--text-color);
-	transition: border-color 0.2s ease, box-shadow 0.2s ease;
-	box-sizing: border-box;
-	word-wrap: break-word;
-	overflow-wrap: anywhere;
 }
 
-.admin-form-input:focus,
-.day-hours-group input[type="time"]:focus,
-.special-hours-list input[type="time"]:focus,
-.special-hours-list input[type="date"]:focus,
-.special-hours-list input[type="text"]:focus {
-	outline: none;
-	border-color: var(--accent-color);
-	box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.15);
-}
-
-/* Admin section cards */
+/* cards in admin */
 .admin-section-card {
 	background: color-mix(in srgb, var(--border-color) 15%, transparent);
 	padding: 20px 25px;
 	border-radius: 16px;
-	margin-bottom: 25px;
 	border: 1px solid var(--border-color);
-	max-width: 100%;
-	box-sizing: border-box;
+	margin-bottom: 25px;
 }
 
-.admin-section-card h3 {
-	margin-top: 0;
-	margin-bottom: 20px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid var(--border-color);
-	font-size: 1.3em;
-	color: var(--text-color);
-	word-wrap: break-word;
-	overflow-wrap: anywhere;
-}
-
-/* Hours grid in admin */
+/* hours grid */
 .hours-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 	gap: 20px;
 }
 
-/* Day hours group */
+/* day group */
 .day-hours-group {
 	background: var(--bg-color);
 	padding: 20px;
 	border-radius: 12px;
 	border: 1px solid var(--border-color);
-	transition: box-shadow 0.2s ease;
-	box-sizing: border-box;
 }
 
-.day-hours-group:focus-within {
-	box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
-}
-
-.day-hours-group > label {
-	display: block;
-	margin-bottom: 15px;
-	font-weight: 600;
-	font-size: 1.1em;
-	color: var(--text-color);
-}
-
-.day-hours-group .time-inputs {
-	display: flex;
-	gap: 10px;
-	margin-bottom: 15px;
-	flex-wrap: wrap;
-}
-
-.day-hours-group .form-group.checkbox-group {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px;
-	border-radius: 8px;
-	background-color: color-mix(in srgb, var(--border-color) 30%, transparent);
-}
-
-.day-hours-group .form-group.checkbox-group label {
-	margin-bottom: 0;
-	font-weight: 500;
-	color: var(--secondary-text);
-	cursor: pointer;
-}
-
-/* Admin special hours */
+/* special hours admin */
 .special-hours-list .hour-entry {
 	background: var(--bg-color);
 	padding: 20px;
 	border-radius: 12px;
 	border: 1px solid var(--border-color);
-	position: relative;
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 	gap: 15px;
-	box-sizing: border-box;
-}
-
-.special-hours-list .hour-entry .form-group:has(label[for*="-label-"]),
-.special-hours-list .hour-entry .time-inputs,
-.special-hours-list .hour-entry .checkbox-group {
-	grid-column: 1 / -1;
-}
-
-.special-hours-list .hour-entry .remove-hour-button {
-	position: absolute;
-	top: 12px;
-	right: 12px;
-	background: none;
-	border: none;
-	color: var(--secondary-text);
-	cursor: pointer;
-	padding: 5px;
-	font-size: 1.4em;
-	opacity: 0.6;
-	transition: opacity 0.2s, transform 0.2s ease;
-}
-
-.special-hours-list .hour-entry .remove-hour-button:hover {
-	opacity: 1;
-	transform: scale(1.1);
-	color: var(--color-danger);
+	position: relative;
 }
 
 /* ======================================== */
-/* --- Responsive Adjustments --- */
+/* == Responsive == */
+/* ======================================== */
+
 @media screen and (max-width: 768px) {
 	.hours-list li,
 	.special-hours-display li {
@@ -4272,9 +4139,6 @@ body.maintenance-active {
 	.hours-line,
 	.hours-line.additional-hours {
 		text-align: left;
-	}
-	.admin-preview-container {
-		max-width: 100%;
 	}
 }
 
