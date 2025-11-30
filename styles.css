@@ -3992,10 +3992,10 @@ body.maintenance-active {
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
-    width: 100%; /* full width of container */
-    max-width: calc(100% - 40px); /* almost full width of section */
-    min-width: 0; /* prevents squashing */
-    padding: clamp(12px, 2vw, 16px) 20px;
+    width: 100%;
+    max-width: calc(100% - 20px); /* less inset from main container */
+    min-width: 0;
+    padding: clamp(12px, 2vw, 16px) 12px; /* top/bottom clamp, left/right smaller */
     margin-bottom: 12px;
     box-sizing: border-box;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
