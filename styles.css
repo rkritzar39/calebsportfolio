@@ -3986,31 +3986,32 @@ body.maintenance-active {
 	padding: 0;
 }
 
-/* Cards centered + symmetrical */
+/* ======================================== */
+/* == Centered Cards – With Safe Margins == */
+/* ======================================== */
+
 .hours-list li,
 .special-hours-display li {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	border: 1px solid var(--border-color);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
 
-	display: grid;
-	grid-template-columns: 1fr auto;
-	align-items: center;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
 
-	border-radius: var(--radius-lg);
-	padding: 16px 22px;
-	margin-bottom: 14px;
+    padding: 16px 22px;
+    margin-bottom: 14px;
 
-	/* THE FIX THAT CENTERS EVERYTHING */
-	max-width: 600px;
-	width: 100%;
-	margin-left: auto;
-	margin-right: auto;
+    /* FIX: center + add inner breathing room */
+    max-width: 650px;
+    width: calc(100% - 30px); /* safe inset so cards don't touch */
+    margin-left: auto;
+    margin-right: auto;
 
-	transition: 0.2s ease;
+    transition: 0.2s ease;
 }
 
 .hours-list li:hover,
