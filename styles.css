@@ -3894,7 +3894,6 @@ body.maintenance-active {
 	color: var(--text-color);
 }
 
-/* Section Title */
 .business-info-section h2 {
 	text-align: center;
 	margin-top: 0;
@@ -3951,17 +3950,18 @@ body.maintenance-active {
 	50% { transform: scale(1.25); opacity: 0.7; }
 }
 
-/* Status color overlays */
 .status-main-text.status-open {
 	color: var(--status-open-color);
 	background-image: linear-gradient(rgba(40,167,69,.18), rgba(40,167,69,.18)), var(--bubble-gradient);
 	border-color: rgba(40,167,69,.5);
 }
+
 .status-main-text.status-closed {
 	color: var(--status-closed-color);
 	background-image: linear-gradient(rgba(220,53,69,.18), rgba(220,53,69,.18)), var(--bubble-gradient);
 	border-color: rgba(220,53,69,.5);
 }
+
 .status-main-text.status-unavailable {
 	color: var(--status-unavailable-color);
 	background-image: linear-gradient(rgba(253,126,20,.18), rgba(253,126,20,.18)), var(--bubble-gradient);
@@ -3976,7 +3976,7 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* == Hours Section – Perfect Symmetry == */
+/* == Hours Section – Centered Cards == */
 /* ======================================== */
 
 .hours-list,
@@ -3986,6 +3986,7 @@ body.maintenance-active {
 	padding: 0;
 }
 
+/* Cards centered + symmetrical */
 .hours-list li,
 .special-hours-display li {
 	background: var(--content-bg);
@@ -4000,11 +4001,12 @@ body.maintenance-active {
 	align-items: center;
 
 	border-radius: var(--radius-lg);
-	padding: 16px 18px;
+	padding: 16px 22px;
 	margin-bottom: 14px;
 
+	/* THE FIX THAT CENTERS EVERYTHING */
+	max-width: 600px;
 	width: 100%;
-	max-width: 95%;
 	margin-left: auto;
 	margin-right: auto;
 
@@ -4024,6 +4026,7 @@ body.maintenance-active {
 	font-size: 1.05em;
 }
 
+/* Hours text right aligned on desktop */
 .hours-line,
 .additional-hours-line {
 	text-align: right;
@@ -4075,15 +4078,17 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* == Mobile Layout Fix (Hours under day) == */
+/* == Mobile Layout == */
 /* ======================================== */
 
 @media (max-width: 768px) {
+
 	.hours-list li,
 	.special-hours-display li {
 		grid-template-columns: 1fr;
 		text-align: center;
 		padding: 14px 16px;
+		max-width: 100%;
 	}
 
 	.hours-line,
@@ -4091,13 +4096,7 @@ body.maintenance-active {
 		text-align: center;
 		margin-top: 6px;
 	}
-
-	.hours-list li,
-	.special-hours-display li {
-		max-width: 100%;
-	}
 }
-
 
 /* Prevent printing of the page */
 @media print {
