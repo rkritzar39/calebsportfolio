@@ -4015,18 +4015,18 @@ body.maintenance-active {
     text-align: right;
 }
 
-/* Additional hours (LEFT ALIGNED now) */
+/* Additional hours – RIGHT aligned */
 .additional-hours {
-    padding-left: 16px; /* optional indent for readability */
+    padding-left: 0;   /* remove indent */
     margin-top: 4px;
     margin-bottom: 0;
 }
 
 .additional-hours li {
-    list-style: none; /* remove bullets */
+    list-style: none;  /* remove bullets */
     margin: 0;
     padding: 0;
-    text-align: left; /* LEFT align additional hours */
+    text-align: right; /* RIGHT align additional hours */
     color: var(--secondary-text);
     font-weight: 500;
     white-space: nowrap;
