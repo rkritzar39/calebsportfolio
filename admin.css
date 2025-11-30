@@ -2298,79 +2298,72 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 }
 
 /* ======================================== */
-/* Business Info Section Styles (Onyx Refined) */
+/* Business Info & Admin Styles – Onyx Refined */
 /* ======================================== */
 
+/* ---------------------------------------- */
+/* Admin & Container Reset */
+/* ---------------------------------------- */
 #business-info-management {
-    background-color: transparent;
+    background: transparent;
     border: none;
     box-shadow: none;
     padding: 0;
 }
 
 #business-info-management h3 {
-    margin-bottom: 32px;
-    font-size: 1.6em;
+    font-size: 1.7em;
     font-weight: 700;
     text-align: center;
+    color: var(--text-color);
+    margin-bottom: 32px;
+    letter-spacing: 0.3px;
+}
+
+/* ---------------------------------------- */
+/* Card Styling */
+/* ---------------------------------------- */
+.admin-section-card {
+    background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+    padding: 28px 32px;
+    border-radius: var(--border-radius-lg);
+    border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+    backdrop-filter: blur(14px) saturate(130%);
+    -webkit-backdrop-filter: blur(14px) saturate(130%);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px color-mix(in srgb, var(--accent-color) 15%, var(--shadow-color));
+}
+
+.admin-section-card h4 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.35em;
+    font-weight: 600;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
+    padding-bottom: 10px;
     color: var(--text-color);
     letter-spacing: 0.3px;
 }
 
-/* Card styling for each major group */
-.admin-section-card {
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	padding: 28px 34px;
-	border-radius: var(--border-radius-lg);
-	margin-bottom: 32px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-	box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 60%, transparent);
-	backdrop-filter: blur(14px) saturate(130%);
-	-webkit-backdrop-filter: blur(14px) saturate(130%);
-	transition: transform var(--transition-speed) var(--transition-timing),
-				box-shadow var(--transition-speed) var(--transition-timing);
-}
-
-.admin-section-card:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 8px 24px color-mix(in srgb, var(--accent-color) 15%, var(--shadow-color));
-}
-
-.admin-section-card h4 {
-	margin-top: 0;
-	margin-bottom: 10px;
-	padding-bottom: 12px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
-	font-size: 1.35em;
-	color: var(--text-color);
-	font-weight: 600;
-	letter-spacing: 0.3px;
-}
-
-.admin-section-card p > small > i {
-	color: var(--secondary-text);
-	font-size: 0.9em;
-	line-height: 1.4;
-	margin-bottom: 20px;
-	display: block;
-}
-
-
-/* ============================================================
-   📅 Multi-Range Business Hours Editor (Apple Onyx Design)
-============================================================ */
-
+/* ---------------------------------------- */
+/* Multi-Range Hours Grid (Editor) */
+/* ---------------------------------------- */
 .hours-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 22px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
 }
 
 .day-hours-block {
     background: color-mix(in srgb, var(--content-bg) 88%, transparent);
     border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
     border-radius: var(--border-radius-lg);
-    padding: 18px 20px;
+    padding: 20px;
     box-shadow: 0 4px 14px color-mix(in srgb, var(--shadow-color) 35%, transparent);
     backdrop-filter: blur(14px) saturate(160%);
     -webkit-backdrop-filter: blur(14px) saturate(160%);
@@ -2385,12 +2378,11 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 .day-title {
     font-size: 1.05rem;
     font-weight: 600;
+    color: var(--text-color);
     margin-bottom: 14px;
     letter-spacing: 0.3px;
-    color: var(--text-color);
 }
 
-/* Time Ranges */
 .time-range {
     display: flex;
     align-items: center;
@@ -2413,24 +2405,27 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 .time-range input[type="time"]:focus {
     outline: none;
     border-color: var(--input-focus-border-color);
-    box-shadow: 0 0 0 3px var(--input-focus-shadow-color),
-                inset 0 1px 0 rgba(255,255,255,0.12);
+    box-shadow: 0 0 0 3px var(--input-focus-shadow-color), inset 0 1px 0 rgba(255,255,255,0.12);
 }
 
-/* Remove Button */
+/* Remove/Add Buttons */
+.remove-range-btn, .add-range-btn {
+    cursor: pointer;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    transition: 0.25s ease;
+}
+
 .remove-range-btn {
-    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-    border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
-    color: var(--error-text-color);
     width: 34px;
     height: 34px;
-    border-radius: 50%;
-    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    color: var(--error-text-color);
+    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
     box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 35%, transparent);
-    transition: 0.25s ease;
 }
 
 .remove-range-btn:hover {
@@ -2438,18 +2433,12 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
     transform: scale(1.08);
 }
 
-/* Add Hours Button */
 .add-range-btn {
-    margin-top: 10px;
-    width: 100%;
-    text-align: center;
     background: color-mix(in srgb, var(--content-bg) 90%, transparent);
-    border-radius: var(--border-radius-md);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
     padding: 8px 12px;
     color: var(--accent-color);
-    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
-    font-weight: 600;
-    transition: 0.25s ease;
+    text-align: center;
 }
 
 .add-range-btn:hover {
@@ -2457,300 +2446,143 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
     transform: translateY(-1px);
 }
 
-
-/* ============================================================
-   Special Hours (Holiday/Temporary)
-============================================================ */
-
+/* ---------------------------------------- */
+/* Special Hours (Holiday/Temporary) */
+/* ---------------------------------------- */
 .special-hours-list {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
-	margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
 }
 
 .special-hours-list .hour-entry {
-	background: color-mix(in srgb, var(--bg-color) 92%, transparent);
-	padding: 22px;
-	border-radius: var(--border-radius-md);
-	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
-	display: flex;
-	flex-wrap: wrap;
-	gap: 15px 20px;
-	align-items: flex-end;
-	position: relative;
-	box-shadow: 0 3px 10px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-	z-index: 0;
+    background: color-mix(in srgb, var(--bg-color) 92%, transparent);
+    padding: 22px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px 20px;
+    align-items: flex-end;
+    position: relative;
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
-.special-hours-list .hour-entry .remove-hour-button {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	z-index: 10;
-	width: 32px;
-	height: 32px;
-	font-size: 1.1rem;
-	cursor: pointer;
-	color: var(--secondary-text);
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
-	border-radius: 50%;
-	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 35%, transparent);
-	backdrop-filter: blur(10px) saturate(140%);
-	opacity: 0.8;
-	transition: background 0.25s, color 0.25s, transform 0.2s, opacity 0.25s;
+.special-hours-list .remove-hour-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--secondary-text);
+    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+    opacity: 0.8;
+    transition: 0.25s ease;
 }
 
-.special-hours-list .hour-entry .remove-hour-button:hover {
-	color: var(--color-danger);
-	background: color-mix(in srgb, var(--color-danger) 15%, var(--content-bg));
-	opacity: 1;
-	transform: scale(1.08);
+.special-hours-list .remove-hour-button:hover {
+    color: var(--color-danger);
+    background: color-mix(in srgb, var(--color-danger) 15%, var(--content-bg));
+    opacity: 1;
+    transform: scale(1.08);
 }
 
-#add-holiday-button,
-#add-temporary-button {
-	margin-top: 22px;
-}
-
-
-/* ============================================================
-   🟢 Live Preview — Apple Maps UI (Onyx)
-============================================================ */
-
-:root {
-	--status-open-color: #34c759;
-	--status-closed-color: #ff453a;
-	--status-unavailable-color: #ff9f0a;
-}
-
+/* ---------------------------------------- */
+/* Live Preview (Business Frontend) */
+/* ---------------------------------------- */
 .admin-preview-container.business-preview {
-	--bubble-gradient: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 65%);
-	--bubble-shadow: 0 8px 30px rgba(0,0,0,0.4);
-	--backdrop-blur: blur(24px);
+    --bubble-gradient: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 65%);
+    --bubble-highlight: inset 1px 1px 2px rgba(255,255,255,0.1);
+    --bubble-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    --backdrop-blur: blur(24px);
 
-	background: color-mix(in srgb, var(--content-bg) 88%, transparent);
-	background-image: var(--bubble-gradient);
-	border-radius: 30px;
-	padding: clamp(22px, 4vw, 34px);
-	box-shadow: var(--bubble-shadow);
-	backdrop-filter: var(--backdrop-blur) saturate(125%);
-	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);    
-	margin-top: 35px;
+    background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+    background-image: var(--bubble-gradient);
+    border-radius: 30px;
+    padding: clamp(22px, 4vw, 34px);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    backdrop-filter: var(--backdrop-blur) saturate(125%);
+    -webkit-backdrop-filter: var(--backdrop-blur) saturate(125%);
+    border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+    color: var(--text-color);
+    margin-top: 35px;
+    transition: box-shadow 0.2s ease;
 }
 
+/* Status Bubble */
 .preview-status .status-main-text {
-	display: inline-flex;
-	align-items: center;
-	gap: 10px;
-	font-weight: 700;
-	font-size: 1.05em;
-	padding: 10px 26px;
-	border-radius: 9999px;
-	border: 1px solid color-mix(in srgb, currentColor 30%,透明);
-	background: color-mix(in srgb, currentColor 8%, transparent);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 1.05em;
+    padding: 10px 26px;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+    background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
 .preview-status .status-open { color: var(--status-open-color); }
 .preview-status .status-closed { color: var(--status-closed-color); }
 .preview-status .status-unavailable { color: var(--status-unavailable-color); }
-
-.preview-hours li {
-	display: grid;
-	grid-template-columns: 1fr auto;
-	align-items: center;
-	padding: 14px 18px;
-	margin-bottom: 10px;
-	border-radius: 16px;
-	background: color-mix(in srgb, var(--content-bg) 75%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
-}
-
-.preview-hours li.current-day-preview {
-	background: color-mix(in srgb, var(--accent-color) 15%, transparent);
-	border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
-}
-/* ======================================== */
-/* Business Info PREVIEW Styles (Onyx)      */
-/* ======================================== */
-
-:root {
-	--status-open-color: #34c759;
-	--status-closed-color: #ff453a;
-	--status-unavailable-color: #ff9f0a;
-}
-
-/* --- Main Preview Container --- */
-.admin-preview-container.business-preview {
-	--bubble-gradient: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 65%);
-	--bubble-highlight: inset 1px 1px 2px rgba(255,255,255,0.1);
-	--bubble-shadow: 0 8px 30px rgba(0,0,0,0.4);
-	--backdrop-blur: blur(24px);
-
-	background: color-mix(in srgb, var(--content-bg) 88%, transparent);
-	background-image: var(--bubble-gradient);
-	border-radius: 30px;
-	padding: clamp(22px, 4vw, 34px);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur) saturate(125%);
-	-webkit-backdrop-filter: var(--backdrop-blur) saturate(125%);
-	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-	color: var(--text-color);
-	margin-top: 35px;
-	transition: box-shadow var(--transition-speed);
-}
-body.light-mode .admin-preview-container.business-preview {
-	--bubble-gradient: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.25), rgba(255,255,255,0.1) 70%);
-}
-
-/* --- Preview Header --- */
-.admin-preview-container.business-preview h4 {
-	margin-top: 0;
-	margin-bottom: 18px;
-	font-size: 1.55em;
-	font-weight: 700;
-	text-align: center;
-	padding-bottom: 12px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
-	letter-spacing: 0.4px;
-	color: var(--text-color);
-}
-
-/* --- Preview Status Display --- */
-.preview-content .preview-status {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin-bottom: 26px;
-	gap: 10px;
-	text-align: center;
-}
-
-.preview-status .status-main-text {
-	display: inline-flex;
-	align-items: center;
-	gap: 10px;
-	font-weight: 700;
-	font-size: 1.05em;
-	padding: 10px 26px;
-	border-radius: 9999px;
-	border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
-	background: color-mix(in srgb, currentColor 8%, transparent);
-	backdrop-filter: blur(6px);
-	box-shadow: 0 2px 6px color-mix(in srgb, currentColor 15%, transparent);
-}
 
 .preview-status .status-main-text::before {
-	content: '';
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	background-color: currentColor;
-	box-shadow: 0 0 6px currentColor, 0 0 14px color-mix(in srgb, currentColor 50%, transparent);
-	animation: pulse-status 2s infinite;
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: currentColor;
+    box-shadow: 0 0 6px currentColor, 0 0 14px color-mix(in srgb, currentColor 50%, transparent);
+    animation: pulse-status 2s infinite;
 }
 
-.preview-status .status-open { color: var(--status-open-color); }
-.preview-status .status-closed { color: var(--status-closed-color); }
-.preview-status .status-unavailable { color: var(--status-unavailable-color); }
-
-.preview-status .status-reason,
-.preview-status .status-countdown-text {
-	font-size: 0.95em;
-	font-weight: 500;
-	color: var(--secondary-text);
-}
-
-/* --- Preview Hours List --- */
-.preview-hours {
-	margin: 25px 0;
-	border-radius: 20px;
-}
-
+/* Preview Hours List */
 .preview-hours li {
-	display: grid;
-	grid-template-columns: 1fr auto;
-	align-items: center;
-	padding: 14px 18px;
-	border-radius: 16px;
-	margin-bottom: 10px;
-	background: color-mix(in srgb, var(--content-bg) 75%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
-	box-shadow: 0 4px 16px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-	transition: background 0.2s ease, transform 0.2s ease;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 14px 18px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    background: color-mix(in srgb, var(--content-bg) 75%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+    transition: background 0.2s ease, transform 0.2s ease;
 }
+
 .preview-hours li:hover {
-	transform: translateY(-2px);
-	background: color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
 }
+
 .preview-hours li.current-day-preview {
-	background: color-mix(in srgb, var(--accent-color) 15%, transparent);
-	border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
+    background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
 }
-.preview-hours li strong {
-	color: var(--text-color);
-	font-weight: 600;
-}
-.preview-hours li span {
-	color: var(--secondary-text);
-	font-weight: 500;
-}
+
+.preview-hours li strong { color: var(--text-color); font-weight: 600; }
+.preview-hours li span { color: var(--secondary-text); font-weight: 500; }
 .preview-hours li.current-day-preview strong,
 .preview-hours li.current-day-preview span {
-	color: var(--accent-color);
-	font-weight: 700;
+    color: var(--accent-color);
+    font-weight: 700;
 }
 
-/* --- Special Hours Preview --- */
-.preview-hours ul.special-hours-preview li {
-	grid-template-columns: 1fr;
-}
-.preview-hours ul.special-hours-preview li .special-hours-details {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-top: 4px;
-}
-.preview-hours ul.special-hours-preview li .dates,
-.preview-hours ul.special-hours-preview li .date {
-	font-size: 0.9em;
-	color: var(--secondary-text);
-}
-.preview-hours .preview-timezone-note {
-	font-size: 0.8em;
-	text-align: center;
-	color: var(--secondary-text);
-	margin-top: 15px;
-	opacity: 0.8;
+/* Additional hours aligned right */
+.preview-hours .hours-line.additional-hours {
+    grid-column: 2;
+    text-align: right;
+    margin-top: 4px;
+    font-weight: 500;
+    color: var(--secondary-text);
 }
 
-/* --- Preview Contact --- */
-.preview-contact {
-	margin-top: 34px;
-	padding-top: 25px;
-	border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-	text-align: center;
-}
-.preview-contact a {
-	display: inline-block;
-	padding: 14px 38px;
-	background: color-mix(in srgb, var(--content-bg) 90%, transparent);
-	background-image: var(--bubble-gradient);
-	color: var(--accent-color);
-	border-radius: 9999px;
-	text-decoration: none;
-	font-weight: 700;
-	border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	transition: transform 0.2s ease, box-shadow 0.3s ease, color 0.3s ease;
-}
-.preview-contact a:hover {
-	transform: translateY(-3px);
-	color: #fff;
-	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent);
-}
 
 /* ======================================== */
 /* Google Sign-In Button    */
