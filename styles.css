@@ -3892,6 +3892,7 @@ body.maintenance-active {
 	overflow: hidden;
 	transition: background 0.3s ease, box-shadow 0.3s ease;
 	color: var(--text-color);
+	max-width: 100%;
 }
 
 /* Section Header */
@@ -3904,6 +3905,8 @@ body.maintenance-active {
 	text-align: center;
 	padding-bottom: 12px;
 	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 /* --- Status Display --- */
@@ -3934,6 +3937,8 @@ body.maintenance-active {
 	border-radius: 9999px;
 	letter-spacing: 0.3px;
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 .status-main-text::before {
@@ -3961,23 +3966,27 @@ body.maintenance-active {
 	font-weight: 500;
 	color: var(--secondary-text);
 	max-width: 400px;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 /* ===================================== */
 /* === LISTS & HOURS CLEAN LAYOUT === */
 .hours-list,
 .special-hours-display {
-    list-style: none; /* Remove bullets */
+    list-style: none;
     margin: 0;
     padding: 0;
     border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 /* Regular list items: day label left, main times right */
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    grid-template-columns: 1fr auto; /* left: day label, right: times */
+    grid-template-columns: 1fr auto;
     align-items: start;
     gap: 8px;
     padding: 14px 16px;
@@ -3989,6 +3998,10 @@ body.maintenance-active {
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
     margin-bottom: 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Hover effect */
@@ -4014,12 +4027,14 @@ body.maintenance-active {
     text-align: right;
     color: var(--secondary-text);
     font-weight: 500;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Additional hours now occupy the second column only */
 .hours-line.additional-hours {
-    grid-column: 2;        /* force it to the right column */
-    text-align: right;     /* right-aligned */
+    grid-column: 2;
+    text-align: right;
     margin: 2px 0 0 0;
     padding-left: 0;
     white-space: nowrap;
@@ -4056,6 +4071,8 @@ body.maintenance-active {
 	text-decoration: none;
 	font-weight: 700;
 	transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 .contact-info a:hover {
 	transform: translateY(-3px);
@@ -4069,7 +4086,10 @@ body.maintenance-active {
 	.hours-line.additional-hours,
 	.special-hours-display li .hours { font-size: 0.95em; }
 	.contact-info a { padding: 12px 28px; font-size: 0.95em; }
+	.hours-grid { grid-template-columns: 1fr; }
+	.special-hours-list .hour-entry { grid-template-columns: 1fr; }
 }
+
 @media screen and (max-width: 400px) {
 	.business-info-section { padding: 16px; }
 	.hours-list li, .special-hours-display li { padding: 10px 12px; font-size: 0.9em; }
@@ -4096,6 +4116,9 @@ body.maintenance-active {
 	font-size: 1em;
 	color: var(--text-color);
 	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	box-sizing: border-box;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 .admin-form-input:focus,
 .day-hours-group input[type="time"]:focus,
@@ -4114,6 +4137,8 @@ body.maintenance-active {
 	border-radius: 16px;
 	margin-bottom: 25px;
 	border: 1px solid var(--border-color);
+	max-width: 100%;
+	box-sizing: border-box;
 }
 
 .admin-section-card h3 {
@@ -4123,21 +4148,25 @@ body.maintenance-active {
 	border-bottom: 1px solid var(--border-color);
 	font-size: 1.3em;
 	color: var(--text-color);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 /* --- Hours Grid --- */
 .hours-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 	gap: 20px;
 }
 
+/* Day hours group */
 .day-hours-group {
 	background: var(--bg-color);
 	padding: 20px;
 	border-radius: 12px;
 	border: 1px solid var(--border-color);
 	transition: box-shadow 0.2s ease;
+	box-sizing: border-box;
 }
 .day-hours-group:focus-within {
 	box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
@@ -4149,12 +4178,17 @@ body.maintenance-active {
 	font-size: 1.1em;
 	color: var(--text-color);
 }
+
+/* Time inputs inside day group */
 .day-hours-group .time-inputs {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	margin-bottom: 15px;
+	flex-wrap: wrap;
 }
+
+/* Checkbox groups */
 .day-hours-group .form-group.checkbox-group {
 	display: flex;
 	align-items: center;
@@ -4178,9 +4212,10 @@ body.maintenance-active {
 	border: 1px solid var(--border-color);
 	position: relative;
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 	gap: 15px 20px;
 	align-items: flex-start;
+	box-sizing: border-box;
 }
 .special-hours-list .hour-entry .form-group:has(label[for*="-label-"]),
 .special-hours-list .hour-entry .time-inputs,
@@ -4214,6 +4249,8 @@ body.maintenance-active {
 	padding: 25px;
 	border-radius: 16px;
 	margin-top: 30px;
+	max-width: 100%;
+	box-sizing: border-box;
 }
 .admin-preview-container h3 {
 	margin-top: 0;
@@ -4222,6 +4259,25 @@ body.maintenance-active {
 	border-bottom: 1px solid var(--border-color);
 	font-size: 1.2em;
 	color: var(--accent-color);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+/* ======================================== */
+/* --- Responsive tweaks to ensure no overflow --- */
+@media screen and (max-width: 768px) {
+	.day-hours-group .time-inputs,
+	.special-hours-list .hour-entry {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media screen and (max-width: 400px) {
+	.day-hours-group .time-inputs,
+	.special-hours-list .hour-entry {
+		grid-template-columns: 1fr;
+		padding: 12px;
+	}
 }
 
 
