@@ -3880,43 +3880,46 @@ body.maintenance-active {
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-xl);
-	padding: clamp(22px, 4vw, 32px);
-	margin: 32px 0;
+	padding: clamp(20px, 4vw, 30px);
+	margin: 30px 0;
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	border: 1px solid var(--border-color);
 	backdrop-filter: var(--backdrop-blur) saturate(120%);
 	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
 	width: 100%;
-	max-width: 100%;
 	box-sizing: border-box;
 	position: relative;
 	overflow: hidden;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
 	color: var(--text-color);
+	max-width: 100%;
 }
 
+/* Section Header */
 .business-info-section h2 {
-	text-align: center;
 	margin-top: 0;
 	margin-bottom: 18px;
+	font-size: 1.6em;
 	font-weight: 700;
-	font-size: 1.65em;
+	color: var(--text-color);
+	text-align: center;
 	padding-bottom: 12px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
+	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
-/* ======================================== */
-/* == Status Display == */
-/* ======================================== */
-
+/* --- Status Display --- */
 .business-status {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	margin-bottom: 25px;
 	gap: 10px;
-	margin-bottom: 28px;
 	text-align: center;
 }
 
+/* Status Bubble */
 .status-main-text {
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
@@ -3924,19 +3927,23 @@ body.maintenance-active {
 	border: 1px solid var(--border-color);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
+	position: relative;
 	display: inline-flex;
 	align-items: center;
-	padding: 10px 26px;
 	gap: 10px;
-	border-radius: 999px;
 	font-weight: 700;
 	font-size: 1.1em;
+	padding: 10px 24px;
+	border-radius: 9999px;
 	letter-spacing: 0.3px;
-	transition: 0.2s ease;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 .status-main-text::before {
-	content: "";
+	content: '';
+	display: block;
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
@@ -3946,116 +3953,123 @@ body.maintenance-active {
 }
 
 @keyframes pulse-status {
-	0%,100% { transform: scale(1); opacity: 1; }
+	0%, 100% { transform: scale(1); opacity: 1; }
 	50% { transform: scale(1.25); opacity: 0.7; }
 }
 
-.status-main-text.status-open {
-	color: var(--status-open-color);
-	background-image: linear-gradient(rgba(40,167,69,.18), rgba(40,167,69,.18)), var(--bubble-gradient);
-	border-color: rgba(40,167,69,.5);
-}
-
-.status-main-text.status-closed {
-	color: var(--status-closed-color);
-	background-image: linear-gradient(rgba(220,53,69,.18), rgba(220,53,69,.18)), var(--bubble-gradient);
-	border-color: rgba(220,53,69,.5);
-}
-
-.status-main-text.status-unavailable {
-	color: var(--status-unavailable-color);
-	background-image: linear-gradient(rgba(253,126,20,.18), rgba(253,126,20,.18)), var(--bubble-gradient);
-	border-color: rgba(253,126,20,.5);
-}
+.status-main-text.status-open { color: var(--status-open-color, #28a745); }
+.status-main-text.status-closed { color: var(--status-closed-color, #dc3545); }
+.status-main-text.status-unavailable { color: var(--status-unavailable-color, #fd7e14); }
 
 .status-message {
 	font-size: 0.95em;
 	font-weight: 500;
 	color: var(--secondary-text);
 	max-width: 400px;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
-/* ======================================== */
-/* == Hours Section – Centered Cards == */
-/* ======================================== */
+/* ===================================== */
+/* === LISTS & HOURS CLEAN LAYOUT (FULLY RESPONSIVE + CENTERED) === */
 
+/* Center the whole hours section */
 .hours-list,
 .special-hours-display {
-	list-style: none;
-	margin: 0;
-	padding: 0;
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* ======================================== */
-/* == Centered Cards – With Safe Margins == */
-/* ======================================== */
-
+/* Individual cards centered and clean */
 .hours-list li,
 .special-hours-display li {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* more room for time */
+    align-items: start;
+    gap: 12px;
+    padding: 14px 16px;
+
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
     box-shadow: var(--bubble-shadow), var(--bubble-highlight);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
 
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
 
-    padding: 16px 22px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 
-    /* FIX: center + add inner breathing room */
-    max-width: 650px;
-    width: calc(100% - 30px); /* safe inset so cards don't touch */
-    margin-left: auto;
-    margin-right: auto;
-
-    transition: 0.2s ease;
+    max-width: 100%;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
+/* Hover effect */
 .hours-list li:hover,
 .special-hours-display li:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
+/* Left column (day) */
 .hours-list li strong,
 .special-hours-display li strong {
-	font-weight: 700;
-	color: var(--text-color);
-	font-size: 1.05em;
+    text-align: left;
+    font-weight: 700;
+    color: var(--text-color);
 }
 
-/* Hours text right aligned on desktop */
+/* Right column (times) */
 .hours-line,
-.additional-hours-line {
-	text-align: right;
-	color: var(--secondary-text);
-	font-weight: 500;
-	font-size: 0.95em;
+.hours-line.additional-hours,
+.special-hours-details,
+.special-hours-display .hours {
+    display: block;
+    text-align: right;
+    color: var(--secondary-text);
+    font-weight: 500;
+
+    white-space: normal !important;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
-/* Highlight current day */
+/* Additional hours stick right side */
+.hours-line.additional-hours {
+    grid-column: 2;
+    margin-top: 2px;
+}
+
+/* Current day highlight */
 .hours-list li.current-day {
-	border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
 }
-
 .hours-list li.current-day strong,
 .hours-list li.current-day span {
-	color: var(--accent-color);
-	font-weight: 700;
+    color: var(--accent-color);
+    font-weight: 700;
 }
 
-/* ======================================== */
-/* == Contact Button == */
-/* ======================================== */
+/* --- CENTER HOLIDAY & TEMP HOURS LIST --- */
+.special-hours-display {
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
+/* --- Contact Button --- */
 .contact-info {
 	text-align: center;
-	margin-top: 32px;
+	margin-top: 30px;
 }
-
 .contact-info a {
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
@@ -4063,39 +4077,212 @@ body.maintenance-active {
 	border: 1px solid var(--border-color);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-
 	display: inline-block;
 	padding: 14px 36px;
-	border-radius: 999px;
-	font-weight: 700;
 	color: var(--accent-color);
+	border-radius: 9999px;
 	text-decoration: none;
-	transition: 0.25s ease;
+	font-weight: 700;
+	word-wrap: break-word;
+	overflow-wrap: anywhere;
+	transition: transform 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
 }
-
 .contact-info a:hover {
 	transform: translateY(-3px);
 	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent), var(--bubble-highlight);
 }
 
 /* ======================================== */
-/* == Mobile Layout == */
+/* == Admin Panel Styles (Clean & Modern Upgrade) == */
 /* ======================================== */
 
-@media (max-width: 768px) {
+/* Center admin preview too */
+.admin-preview-container {
+	max-width: 700px;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid var(--border-color);
+	background: var(--bg-color);
+	padding: 25px;
+	border-radius: 16px;
+	box-sizing: border-box;
+}
 
+.admin-preview-container h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--border-color);
+	font-size: 1.2em;
+	color: var(--accent-color);
+	word-wrap: break-word;
+	overflow-wrap: anywhere;
+}
+
+/* Inputs */
+.admin-form-input,
+.day-hours-group input[type="time"],
+.special-hours-list input[type="time"],
+.special-hours-list input[type="date"],
+.special-hours-list input[type="text"] {
+	width: 100%;
+	padding: 12px 14px;
+	border: 1px solid var(--border-color);
+	background-color: var(--bg-color);
+	border-radius: 10px;
+	font-size: 1em;
+	color: var(--text-color);
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	box-sizing: border-box;
+	word-wrap: break-word;
+	overflow-wrap: anywhere;
+}
+
+.admin-form-input:focus,
+.day-hours-group input[type="time"]:focus,
+.special-hours-list input[type="time"]:focus,
+.special-hours-list input[type="date"]:focus,
+.special-hours-list input[type="text"]:focus {
+	outline: none;
+	border-color: var(--accent-color);
+	box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0.15);
+}
+
+/* Admin section cards */
+.admin-section-card {
+	background: color-mix(in srgb, var(--border-color) 15%, transparent);
+	padding: 20px 25px;
+	border-radius: 16px;
+	margin-bottom: 25px;
+	border: 1px solid var(--border-color);
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+.admin-section-card h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--border-color);
+	font-size: 1.3em;
+	color: var(--text-color);
+	word-wrap: break-word;
+	overflow-wrap: anywhere;
+}
+
+/* Hours grid in admin */
+.hours-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 20px;
+}
+
+/* Day hours group */
+.day-hours-group {
+	background: var(--bg-color);
+	padding: 20px;
+	border-radius: 12px;
+	border: 1px solid var(--border-color);
+	transition: box-shadow 0.2s ease;
+	box-sizing: border-box;
+}
+
+.day-hours-group:focus-within {
+	box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
+}
+
+.day-hours-group > label {
+	display: block;
+	margin-bottom: 15px;
+	font-weight: 600;
+	font-size: 1.1em;
+	color: var(--text-color);
+}
+
+.day-hours-group .time-inputs {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 15px;
+	flex-wrap: wrap;
+}
+
+.day-hours-group .form-group.checkbox-group {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px;
+	border-radius: 8px;
+	background-color: color-mix(in srgb, var(--border-color) 30%, transparent);
+}
+
+.day-hours-group .form-group.checkbox-group label {
+	margin-bottom: 0;
+	font-weight: 500;
+	color: var(--secondary-text);
+	cursor: pointer;
+}
+
+/* Admin special hours */
+.special-hours-list .hour-entry {
+	background: var(--bg-color);
+	padding: 20px;
+	border-radius: 12px;
+	border: 1px solid var(--border-color);
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 15px;
+	box-sizing: border-box;
+}
+
+.special-hours-list .hour-entry .form-group:has(label[for*="-label-"]),
+.special-hours-list .hour-entry .time-inputs,
+.special-hours-list .hour-entry .checkbox-group {
+	grid-column: 1 / -1;
+}
+
+.special-hours-list .hour-entry .remove-hour-button {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	background: none;
+	border: none;
+	color: var(--secondary-text);
+	cursor: pointer;
+	padding: 5px;
+	font-size: 1.4em;
+	opacity: 0.6;
+	transition: opacity 0.2s, transform 0.2s ease;
+}
+
+.special-hours-list .hour-entry .remove-hour-button:hover {
+	opacity: 1;
+	transform: scale(1.1);
+	color: var(--color-danger);
+}
+
+/* ======================================== */
+/* --- Responsive Adjustments --- */
+@media screen and (max-width: 768px) {
 	.hours-list li,
 	.special-hours-display li {
 		grid-template-columns: 1fr;
-		text-align: center;
-		padding: 14px 16px;
+		text-align: left;
+	}
+	.hours-line,
+	.hours-line.additional-hours {
+		text-align: left;
+	}
+	.admin-preview-container {
 		max-width: 100%;
 	}
+}
 
-	.hours-line,
-	.additional-hours-line {
-		text-align: center;
-		margin-top: 6px;
+@media screen and (max-width: 400px) {
+	.hours-list li,
+	.special-hours-display li {
+		font-size: 0.9em;
+		padding: 10px 12px;
 	}
 }
 
