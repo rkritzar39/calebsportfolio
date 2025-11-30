@@ -3982,13 +3982,13 @@ body.maintenance-active {
     box-sizing: border-box;
 }
 
-/* Regular list items: day label left, main times right */
+/* Regular list items: left = day, right = times */
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* left: day label, right: times */
+    grid-template-columns: 1fr 2fr; /* LEFT: 1 fraction, RIGHT: 2 fractions */
     align-items: start;
-    gap: 8px;
+    gap: 12px; /* slightly more space between columns */
     padding: 14px 16px;
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
@@ -3999,7 +3999,7 @@ body.maintenance-active {
     -webkit-backdrop-filter: var(--backdrop-blur);
     margin-bottom: 12px;
     max-width: 100%;
-    min-width: 0; /* allow right column to shrink and wrap */
+    min-width: 0; /* important for wrapping */
     word-wrap: break-word;
     overflow-wrap: anywhere;
 }
