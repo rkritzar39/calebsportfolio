@@ -3964,80 +3964,84 @@ body.maintenance-active {
 }
 
 /* ===================================== */
-/* === LISTS & HOURS === */
+/* === LISTS & HOURS CLEAN LAYOUT === */
 .hours-list,
 .special-hours-display,
 .additional-hours {
-	list-style: none; /* remove bullets */
-	margin: 0;
-	padding: 0;
-	border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+    list-style: none; /* remove bullets */
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
+/* Main list items */
 .hours-list li,
 .special-hours-display li {
-	display: grid;
-	grid-template-columns: 1fr auto;
-	align-items: start;
-	gap: 8px;
-	padding: 14px 16px;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	border: 1px solid var(--border-color);
-	border-radius: var(--radius-lg);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	margin-bottom: 12px;
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 8px;
+    padding: 14px 16px;
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    margin-bottom: 12px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Hover effect */
 .hours-list li:hover,
 .special-hours-display li:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
-/* Label left, times right */
+/* Day label left, main times right */
 .hours-list li strong,
 .special-hours-display li strong {
-	text-align: left;
-	font-weight: 700;
-	color: var(--text-color);
+    text-align: left;
+    font-weight: 700;
+    color: var(--text-color);
 }
 
-/* Times container right-aligned */
+/* Times container right-aligned for main hours */
 .hours-line,
-.special-hours-details,
-.additional-hours {
-	display: block;
-	text-align: right;
+.special-hours-details {
+    display: block;
+    text-align: right;
 }
 
+/* Additional hours (LEFT ALIGNED now) */
 .additional-hours {
-	padding-left: 0;
-	margin: 0;
+    padding-left: 16px; /* optional indent for readability */
+    margin-top: 4px;
+    margin-bottom: 0;
 }
 
 .additional-hours li {
-	list-style: none; /* remove bullets */
-	margin: 0;
-	padding: 0;
-	text-align: right;
-	color: var(--secondary-text);
-	font-weight: 500;
-	white-space: nowrap;
+    list-style: none; /* remove bullets */
+    margin: 0;
+    padding: 0;
+    text-align: left; /* LEFT align additional hours */
+    color: var(--secondary-text);
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 /* Highlight current day */
 .hours-list li.current-day {
-	border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
+    border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
 }
 .hours-list li.current-day strong,
 .hours-list li.current-day span {
-	color: var(--accent-color);
-	font-weight: 700;
+    color: var(--accent-color);
+    font-weight: 700;
 }
+
 
 /* --- Contact Button --- */
 .contact-info {
