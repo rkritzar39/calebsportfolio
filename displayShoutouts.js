@@ -1821,16 +1821,11 @@ displayOrder.forEach(day => {
         displayHoursListHtml += `<div class="hours-line">No hours added</div>`;
     } else {
         const ranges = dayObj.ranges;
-        // First range inline
-        displayHoursListHtml += `<div class="hours-line">${formatDisplayTimeBI(ranges[0].open, visitorTimezone)} - ${formatDisplayTimeBI(ranges[0].close, visitorTimezone)}</div>`;
-        // Additional ranges as proper ul
-        if (ranges.length > 1) {
-            displayHoursListHtml += '<ul class="additional-hours">';
-            ranges.slice(1).forEach(r => {
-                displayHoursListHtml += `<li>${formatDisplayTimeBI(r.open, visitorTimezone)} - ${formatDisplayTimeBI(r.close, visitorTimezone)}</li>`;
-            });
-            displayHoursListHtml += '</ul>';
-        }
+
+        // Render all ranges right-aligned without extra container
+        ranges.forEach(r => {
+            displayHoursListHtml += `<div class="hours-line additional-hours">${formatDisplayTimeBI(r.open, visitorTimezone)} - ${formatDisplayTimeBI(r.close, visitorTimezone)}</div>`;
+        });
     }
 
     displayHoursListHtml += '</li>';
