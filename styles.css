@@ -3924,7 +3924,6 @@ body.maintenance-active {
 	border: 1px solid var(--border-color);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -3990,19 +3989,19 @@ body.maintenance-active {
 
 .hours-list ul,
 .special-hours-display {
-	list-style: none;
+	list-style: none; /* remove bullets */
 	padding: 0;
 	margin: 0;
 }
 
 /* ============================================= */
-/* === Business Hours – Right Aligned Times === */
+/* === Business Hours – Left Days, Right Times === */
 /* ============================================= */
 
 .hours-list li {
 	display: grid;
-	grid-template-columns: 1fr auto;
-	align-items: start;
+	grid-template-columns: 1fr auto; /* left = day, right = time */
+	align-items: center; /* vertical alignment */
 	gap: 8px;
 	padding: 14px 16px;
 
@@ -4023,17 +4022,18 @@ body.maintenance-active {
 	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
+/* Left column = days */
 .hours-list li strong {
 	color: var(--text-color);
 	font-weight: 700;
 	text-align: left;
 }
 
-/* Right aligned multi-range times */
+/* Right column = times */
 .hours-time-stack {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-end;
+	align-items: flex-end; /* right align */
 	gap: 4px;
 	text-align: right;
 }
@@ -4139,6 +4139,7 @@ body.maintenance-active {
 	.special-hours-display li { padding: 12px 14px; font-size: 0.9em; }
 	.contact-info a { padding: 10px 24px; font-size: 0.9em; }
 }
+
 
 /* ======================================== */
 /* == Admin Panel Styles (Clean & Modern Upgrade) == */
