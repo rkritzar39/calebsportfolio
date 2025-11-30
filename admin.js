@@ -1566,22 +1566,34 @@ function updateAdminPreview() {
     else if (currentStatus === 'Temporarily Unavailable') statusClass = 'status-unavailable';
     adminPreviewStatus.innerHTML = `<span class="${statusClass}">${currentStatus}</span> <span class="status-reason">(${reason})</span>`;
 
-    // Render hours preview (stacked)
-    let html = '<h4>Regular Hours</h4><ul>';
-    daysOfWeek.forEach(day => {
-        const d = previewData.regularHours[day] || { isClosed: true, ranges: [] };
-        html += `<li><strong>${capitalizeFirstLetter(day)}:</strong> `;
-        if (d.isClosed) html += '<span>Closed</span>';
-        else if (!Array.isArray(d.ranges) || d.ranges.length === 0) html += '<span>No hours added</span>';
-        else {
-            d.ranges.forEach((r, i) => {
-                const disp = (r.open && r.close) ? `${formatTimeForAdminPreview(r.open)} – ${formatTimeForAdminPreview(r.close)} ET` : (r.text || 'See details');
-                html += `<div class="${i === 0 ? 'hours-line' : 'hours-line additional-hours'}">${i === 0 ? '' : '• '}${disp}</div>`;
-            });
-        }
-        html += '</li>';
-    });
-    html += '</ul>';
+   // Render hours preview (stacked, multi-range, right-aligned)
+let html = '<h4>Regular Hours</h4><ul>';
+daysOfWeek.forEach(day => {
+    const d = previewData.regularHours[day] || { isClosed: true, ranges: [] };
+    html += `<li><strong>${capitalizeFirstLetter(day)}:</strong>`;
+
+    if (d.isClosed) {
+        html += '<span class="hours-line">Closed</span>';
+    } else if (!Array.isArray(d.ranges) || d.ranges.length === 0) {
+        html += '<span class="hours-line">No hours added</span>';
+    } else {
+        d.ranges.forEach((r, i) => {
+            const disp = (r.open && r.close) 
+                ? `${formatTimeForAdminPreview(r.open)} – ${formatTimeForAdminPreview(r.close)} ET` 
+                : (r.text || 'See details');
+            
+            if (i === 0) {
+                html += `<span class="hours-line">${disp}</span>`;
+            } else {
+                html += `<div class="hours-line additional-hours">${disp}</div>`;
+            }
+        });
+    }
+
+    html += '</li>';
+});
+html += '</ul>';
+
 
     if (previewData.temporaryHours.length) {
         html += '<h4>Temporary Hours</h4><ul>';
