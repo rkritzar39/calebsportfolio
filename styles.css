@@ -3964,7 +3964,7 @@ body.maintenance-active {
 }
 
 /* ===================================== */
-/* === LISTS & HOURS LAYOUT – DAY LEFT, HOURS RIGHT === */
+/* === HOURS LIST – DAY LEFT, HOURS RIGHT === */
 /* ===================================== */
 
 .hours-list,
@@ -3992,12 +3992,13 @@ body.maintenance-active {
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
-    width: 100%;
+    width: 100%; /* full width of container */
+    max-width: calc(100% - 40px); /* almost full width of section */
+    min-width: 0; /* prevents squashing */
     padding: clamp(12px, 2vw, 16px) 20px;
     margin-bottom: 12px;
     box-sizing: border-box;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    min-width: 0;
 }
 
 .hours-list li strong,
@@ -4024,7 +4025,7 @@ body.maintenance-active {
 /* Handle special dates / multi-line holiday info */
 .special-hours-display li .date-display,
 .special-hours-display li div:not(.hours) {
-    grid-column: 1 / -1; /* span both columns if grid used */
+    grid-column: 1 / -1; /* span full width */
     margin-top: 4px;
     text-align: left;
     font-size: 0.9em;
@@ -4120,29 +4121,35 @@ body.maintenance-active {
 @media screen and (max-width: 768px) {
     .business-info-section { padding: 22px; }
     
-    .hours-list li, .special-hours-display li { 
-        grid-template-columns: 1fr; /* stack on tablet/mobile */
-        text-align: left; /* hours stacked under day */
-        gap: 6px;
+    .hours-list li,
+    .special-hours-display li {
+        grid-template-columns: 1fr; /* stack day + hours */
+        text-align: left; /* stacked left on mobile */
+        gap: 4px;
+        max-width: 100%; /* fill container on mobile */
     }
-    
-    .hours-line, .hours-line.additional-hours, .special-hours-display .hours {
-        text-align: left; /* stacked hours left-aligned on mobile */
+
+    .hours-line,
+    .hours-line.additional-hours,
+    .special-hours-display .hours {
+        text-align: left; /* hours below day */
         font-size: 0.9em;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .hours-list li, .special-hours-display li { 
+    .hours-list li,
+    .special-hours-display li {
         padding: 12px 14px;
-        gap: 4px;
+        gap: 3px;
     }
 
-    .hours-line, .hours-line.additional-hours, .special-hours-display .hours {
+    .hours-line,
+    .hours-line.additional-hours,
+    .special-hours-display .hours {
         font-size: 0.88em;
     }
 }
-
 /* Prevent printing of the page */
 @media print {
 	html, body {
