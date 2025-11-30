@@ -3964,74 +3964,88 @@ body.maintenance-active {
 }
 
 /* ===================================== */
-/* === SEPARATE CONTAINER CARDS LAYOUT === */
+/* === LISTS & HOURS LAYOUT (FIXED WIDTH) === */
 /* ===================================== */
 
+/* Container Reset: Removes default browser padding that causes width mismatch */
 .hours-list,
 .special-hours-display {
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 !important; /* Critical fix for width alignment */
     width: 100%;
     box-sizing: border-box;
+    display: block;
 }
 
-/* Individual Cards (Bubbles) for Each Day */
+/* Individual Cards (Bubbles) */
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    /* Grid Layout: Left Column fits text, Right Column takes ALL remaining space */
+    /* Grid: Label takes minimum space needed, Time takes ALL remaining space */
     grid-template-columns: min-content 1fr; 
-    align-items: center; /* Vertically center items */
+    align-items: center; 
     gap: 15px; 
     
-    /* Card/Bubble Styling */
+    /* Bubble Appearance */
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
     box-shadow: var(--bubble-shadow), var(--bubble-highlight);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg); /* Rounded corners for separate cards */
+    border-radius: var(--radius-lg);
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
     
+    /* Dimensions & Spacing */
+    width: 100%; /* Forces full width */
     padding: 16px 20px;
-    margin-bottom: 12px; /* Spacing between the separate containers */
-    width: 100%; 
+    margin-bottom: 12px; 
     box-sizing: border-box;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Hover Effect for Cards */
+/* Hover Effect */
 .hours-list li:hover,
 .special-hours-display li:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px color-mix(in srgb, var(--shadow-color) 30%, transparent), var(--bubble-highlight);
 }
 
-/* Day Name (Left) */
+/* Day Name / Holiday Name (Left Side) */
 .hours-list li strong,
 .special-hours-display li strong {
     text-align: left;
     font-weight: 700;
     font-size: 1.05em;
     color: var(--text-color);
-    /* Essential: Prevents "Friday" from wrapping */
+    /* Prevents "Friday" or "Christmas Eve" from wrapping awkwardly */
     white-space: nowrap; 
 }
 
-/* Time / Details (Right) */
+/* Time Display (Right Side) */
 .hours-line,
 .hours-line.additional-hours,
 .special-hours-details,
 .special-hours-display .hours {
     display: block;
     width: 100%;
-    /* Essential: Pushes text to the far right */
-    text-align: right; 
+    text-align: right; /* Forces time to the far right */
     color: var(--secondary-text);
     font-weight: 500;
     font-size: 0.95em;
-    word-break: break-word; /* Safety for very long text */
+    word-break: break-word; 
+}
+
+/* Handle Dates inside Holiday Cards (e.g., "Wednesday, Dec 24") */
+/* Forces the date to drop to the next line and span the full width */
+.special-hours-display li .date-display, 
+.special-hours-display li div:not(.hours) {
+    grid-column: 1 / -1; /* Spans across both grid columns */
+    margin-top: 8px;
+    text-align: left;
+    font-size: 0.9em;
+    color: var(--secondary-text);
+    opacity: 0.8;
 }
 
 /* Additional hours logic */
@@ -4125,19 +4139,18 @@ body.maintenance-active {
 	.business-info-section { padding: 22px; }
 	
 	.hours-list li, .special-hours-display li { 
-		/* Keep side-by-side even on tablets/phones */
+		/* Ensures side-by-side layout is maintained on mobile */
 		grid-template-columns: min-content 1fr; 
 		padding: 14px; 
         gap: 10px;
 	}
     
-    /* Ensure font size scales down slightly to fit on one line */
-    .hours-list li strong { font-size: 1em; }
-    .hours-line { font-size: 0.9em; }
+    .hours-line, .special-hours-display .hours {
+        font-size: 0.9em; /* Slight shrink to prevent wrapping of long times */
+    }
 }
 
 @media screen and (max-width: 400px) {
-    /* Very small screens: Reduce padding inside the bubble cards */
 	.hours-list li, .special-hours-display li { 
         padding: 12px 14px; 
     }
