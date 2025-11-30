@@ -3894,7 +3894,7 @@ body.maintenance-active {
     max-width: 100%;
 }
 
-/* Section Header */
+/ Section Header /
 .business-info-section h2 {
     margin-top: 0;
     margin-bottom: 20px;
@@ -3906,7 +3906,7 @@ body.maintenance-active {
     border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* --- Status Display --- */
+/ --- Status Display --- /
 .business-status {
     display: flex;
     flex-direction: column;
@@ -3916,7 +3916,7 @@ body.maintenance-active {
     text-align: center;
 }
 
-/* Status Bubble */
+/ Status Bubble /
 .status-main-text {
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
@@ -3963,9 +3963,9 @@ body.maintenance-active {
     max-width: 400px;
 }
 
-/* ===================================== */
-/* === HOURS LIST – DAY LEFT, HOURS RIGHT === */
-/* ===================================== */
+/ ===================================== /
+/ === HOURS LIST – DAY LEFT, HOURS RIGHT === /
+/ ===================================== /
 
 .hours-list,
 .special-hours-display {
@@ -3980,10 +3980,9 @@ body.maintenance-active {
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    grid-template-columns: 1fr auto; /* Day left, hours right */
+    grid-template-columns: 1fr auto;
     align-items: center;
     gap: 15px;
-
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
     box-shadow: var(--bubble-shadow), var(--bubble-highlight);
@@ -3991,11 +3990,10 @@ body.maintenance-active {
     border-radius: var(--radius-lg);
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
-
     width: 100%;
-    max-width: calc(100% - 20px); /* less inset from main container */
+    max-width: calc(100% - 20px);
     min-width: 0;
-    padding: clamp(12px, 2vw, 16px) 12px; /* top/bottom clamp, left/right smaller */
+    padding: clamp(12px, 2vw, 16px) 12px;
     margin-bottom: 12px;
     box-sizing: border-box;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -4015,17 +4013,17 @@ body.maintenance-active {
 .hours-line.additional-hours,
 .special-hours-display .hours {
     display: block;
-    text-align: right; /* right-align hours on desktop */
+    text-align: right;
     font-weight: 500;
     font-size: 0.95em;
     color: var(--secondary-text);
     word-break: break-word;
 }
 
-/* Handle special dates / multi-line holiday info */
+/ Handle special dates / multi-line holiday info /
 .special-hours-display li .date-display,
 .special-hours-display li div:not(.hours) {
-    grid-column: 1 / -1; /* span full width */
+    grid-column: 1 / -1;
     margin-top: 4px;
     text-align: left;
     font-size: 0.9em;
@@ -4033,20 +4031,20 @@ body.maintenance-active {
     opacity: 0.8;
 }
 
-/* Highlight current day */
+/ Highlight current day /
 .hours-list li.current-day {
     border-color: var(--accent-color);
     box-shadow: 0 0 15px color-mix(in srgb, var(--accent-color) 20%, transparent);
 }
 
-/* Hover Effect */
+/ Hover Effect /
 .hours-list li:hover,
 .special-hours-display li:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px color-mix(in srgb, var(--shadow-color) 30%, transparent), var(--bubble-highlight);
 }
 
-/* --- Contact Button --- */
+/ --- Contact Button --- /
 .contact-info {
     text-align: center;
     margin-top: 30px;
@@ -4071,9 +4069,9 @@ body.maintenance-active {
     box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent), var(--bubble-highlight);
 }
 
-/* ======================================== */
-/* == Admin Panel Styles == */
-/* ======================================== */
+/ ======================================== /
+/ == Admin Panel Styles == /
+/ ======================================== /
 
 .admin-form-input,
 .day-hours-group input,
@@ -4116,23 +4114,23 @@ body.maintenance-active {
     flex-wrap: wrap;
 }
 
-/* ======================================== */
-/* --- Responsive Tweaks --- */
+/ ======================================== /
+/ --- Responsive Tweaks --- */
 @media screen and (max-width: 768px) {
     .business-info-section { padding: 22px; }
     
     .hours-list li,
     .special-hours-display li {
-        grid-template-columns: 1fr; /* stack day + hours */
-        text-align: left; /* stacked left on mobile */
+        grid-template-columns: 1fr;
+        text-align: left;
         gap: 4px;
-        max-width: 100%; /* fill container on mobile */
+        max-width: 100%;
     }
 
     .hours-line,
     .hours-line.additional-hours,
     .special-hours-display .hours {
-        text-align: left; /* hours below day */
+        text-align: left;
         font-size: 0.9em;
     }
 }
@@ -4150,6 +4148,7 @@ body.maintenance-active {
         font-size: 0.88em;
     }
 }
+
 /* Prevent printing of the page */
 @media print {
 	html, body {
