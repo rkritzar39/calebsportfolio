@@ -2574,15 +2574,16 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
     font-weight: 700;
 }
 
-/* Additional hours aligned right */
+/* Additional ranges align under the time column, right-aligned */
 .preview-hours .hours-line.additional-hours {
-    grid-column: 2;
+    display: block;
+    grid-column: 2; /* ensures it aligns under the time column */
     text-align: right;
-    margin-top: 4px;
-    font-weight: 500;
+    margin-top: 2px;
     color: var(--secondary-text);
+    font-weight: 500;
+    line-height: 1.4;
 }
-
 
 /* ======================================== */
 /* Google Sign-In Button    */
