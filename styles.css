@@ -3873,86 +3873,98 @@ body.maintenance-active {
 }
 
 /* ======================================== */
-/* == Business Info Section – Modern Redesign == */
+/* == Business Info Section – Onyx Bubble Glass == */
 /* ======================================== */
 
 .business-info-section {
-    /* Main Container Styles */
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-    border-radius: var(--radius-xl);
-    padding: clamp(20px, 4vw, 35px); /* Responsive padding */
-    margin: 30px 0;
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-    border: 1px solid var(--border-color);
-    backdrop-filter: var(--backdrop-blur) saturate(120%);
-    -webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
-    width: 100%;
-    box-sizing: border-box;
-    position: relative;
-    overflow: hidden;
-    color: var(--text-color);
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
+	padding: clamp(20px, 4vw, 30px);
+	margin: 30px 0;
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur) saturate(120%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+	width: 100%;
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+	color: var(--text-color);
+	max-width: 100%;
 }
 
 /* Section Header */
 .business-info-section h2 {
-    margin-top: 0;
-    margin-bottom: 25px;
-    font-size: 1.6em;
-    font-weight: 700;
-    color: var(--text-color);
-    text-align: center;
-    letter-spacing: -0.5px;
+	margin-top: 0;
+	margin-bottom: 20px;
+	font-size: 1.6em;
+	font-weight: 700;
+	color: var(--text-color);
+	text-align: center;
+	padding-bottom: 12px;
+	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* --- Status Bubble (The "Open/Closed" Pill) --- */
+/* --- Status Display --- */
 .business-status {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
-    width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-bottom: 25px;
+	gap: 10px;
+	text-align: center;
 }
 
+/* Status Bubble */
 .status-main-text {
-    background: rgba(0, 0, 0, 0.2); /* Slightly darker backing for contrast */
-    border: 1px solid var(--border-color);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: 700;
-    font-size: 1.1em;
-    padding: 12px 28px;
-    border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font-weight: 700;
+	font-size: 1.1em;
+	padding: 10px 24px;
+	border-radius: 9999px;
+	letter-spacing: 0.3px;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .status-main-text::before {
-    content: '';
-    display: block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: currentColor;
-    box-shadow: 0 0 10px currentColor;
-    animation: pulse-status 2s infinite;
+	content: '';
+	display: block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background-color: currentColor;
+	box-shadow: 0 0 6px currentColor;
+	animation: pulse-status 2s infinite;
 }
 
-/* Status Colors */
-.status-main-text.status-open { color: #28a745; background: rgba(40, 167, 69, 0.1); border-color: rgba(40, 167, 69, 0.2); }
-.status-main-text.status-closed { color: #dc3545; background: rgba(220, 53, 69, 0.1); border-color: rgba(220, 53, 69, 0.2); }
-.status-main-text.status-unavailable { color: #fd7e14; background: rgba(253, 126, 20, 0.1); border-color: rgba(253, 126, 20, 0.2); }
-
 @keyframes pulse-status {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.4); opacity: 0.5; }
-    100% { transform: scale(1); opacity: 1; }
+	0%, 100% { transform: scale(1); opacity: 1; }
+	50% { transform: scale(1.25); opacity: 0.7; }
+}
+
+.status-main-text.status-open { color: var(--status-open-color, #28a745); }
+.status-main-text.status-closed { color: var(--status-closed-color, #dc3545); }
+.status-main-text.status-unavailable { color: var(--status-unavailable-color, #fd7e14); }
+
+.status-message {
+	font-size: 0.95em;
+	font-weight: 500;
+	color: var(--secondary-text);
+	max-width: 400px;
 }
 
 /* ===================================== */
-/* === THE UNIFIED HOURS CARD DESIGN === */
+/* === SEPARATE CONTAINER CARDS LAYOUT === */
 /* ===================================== */
 
 .hours-list,
@@ -3960,154 +3972,174 @@ body.maintenance-active {
     list-style: none;
     margin: 0;
     padding: 0;
-    /* Create the "Single Card" Look */
-    background: rgba(255, 255, 255, 0.03); /* Subtle internal background */
-    border: 1px solid var(--border-color);
-    border-radius: 16px; /* Rounded corners for the whole list */
-    overflow: hidden; /* Clips the children to the rounded corners */
-    width: 100%;
-}
-
-/* Individual Rows */
-.hours-list li,
-.special-hours-display li {
-    display: grid;
-    /* This Grid is Magic: Day takes min space, Time takes the rest */
-    grid-template-columns: auto 1fr; 
-    align-items: center; /* Vertically center the text */
-    gap: 20px;
-    padding: 16px 20px;
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 15%, transparent);
-    transition: background 0.2s ease;
-}
-
-/* Remove border from the very last item so it looks clean */
-.hours-list li:last-child,
-.special-hours-display li:last-child {
-    border-bottom: none;
-}
-
-/* Zebra Striping: Alternating colors for readability */
-.hours-list li:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-/* Hover Effect for Rows */
-.hours-list li:hover {
-    background-color: rgba(255, 255, 255, 0.06);
-}
-
-/* --- Typography --- */
-
-/* Day Name (Left) */
-.hours-list li strong,
-.special-hours-display li strong {
-    font-weight: 600;
-    font-size: 1.05em;
-    color: var(--text-color);
-    white-space: nowrap; /* Never break "Friday" */
-}
-
-/* Time (Right) */
-.hours-line, 
-.special-hours-details, 
-.special-hours-display .hours {
-    text-align: right; /* Force right alignment */
-    font-size: 0.95em;
-    font-weight: 500;
-    color: var(--secondary-text); /* Slightly softer white/grey */
-    opacity: 0.9;
-}
-
-/* Current Day Highlight */
-.hours-list li.current-day {
-    background: color-mix(in srgb, var(--accent-color) 10%, transparent); /* Subtle tint */
-    border-left: 4px solid var(--accent-color); /* Visual indicator on left */
-    padding-left: 16px; /* Adjust padding to account for border */
-}
-
-.hours-list li.current-day strong {
-    color: var(--accent-color);
-    font-weight: 700;
-}
-
-.hours-list li.current-day .hours-line {
-    color: var(--text-color); /* Make time brighter for today */
-    font-weight: 600;
-}
-
-/* ======================================== */
-/* == Admin Panel & Inputs == */
-/* ======================================== */
-.admin-section-card {
-    background: rgba(0,0,0,0.2);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.hours-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 15px;
-}
-
-.day-hours-group {
-    background: var(--bg-color);
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-}
-
-.admin-form-input, input[type="time"], input[type="date"], input[type="text"] {
-    background: var(--bg-color);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    padding: 10px;
-    border-radius: 8px;
     width: 100%;
     box-sizing: border-box;
 }
 
-/* ======================================== */
-/* == Mobile Optimization (The "Neat" Part) == */
-/* ======================================== */
-
-@media screen and (max-width: 600px) {
-    /* Reduce padding on the main container */
-    .business-info-section {
-        padding: 20px 15px;
-        border-radius: 20px;
-    }
-
-    /* On mobile, tighten the row padding slightly */
-    .hours-list li,
-    .special-hours-display li {
-        padding: 14px 15px;
-        gap: 10px;
-        font-size: 0.95rem; /* Slightly smaller text for fit */
-    }
-
-    /* Ensure the Day text doesn't dominate the space */
-    .hours-list li strong {
-        font-size: 1em;
-    }
+/* Individual Cards (Bubbles) for Each Day */
+.hours-list li,
+.special-hours-display li {
+    display: grid;
+    /* Grid Layout: Left Column fits text, Right Column takes ALL remaining space */
+    grid-template-columns: min-content 1fr; 
+    align-items: center; /* Vertically center items */
+    gap: 15px; 
     
-    /* Ensure the Time text wraps prettily if it's really long */
-    .hours-line {
-        font-size: 0.9em;
-        line-height: 1.3;
-    }
+    /* Card/Bubble Styling */
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg); /* Rounded corners for separate cards */
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    
+    padding: 16px 20px;
+    margin-bottom: 12px; /* Spacing between the separate containers */
+    width: 100%; 
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Very Small Screens (iPhone SE / Folded devices) */
-@media screen and (max-width: 360px) {
-    .hours-list li {
-        /* If screen is TINY, allow column to stack cleanly if needed, 
-           BUT for this design, usually reducing font size is neater */
-        font-size: 0.85rem; 
-        padding: 12px 10px;
+/* Hover Effect for Cards */
+.hours-list li:hover,
+.special-hours-display li:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--shadow-color) 30%, transparent), var(--bubble-highlight);
+}
+
+/* Day Name (Left) */
+.hours-list li strong,
+.special-hours-display li strong {
+    text-align: left;
+    font-weight: 700;
+    font-size: 1.05em;
+    color: var(--text-color);
+    /* Essential: Prevents "Friday" from wrapping */
+    white-space: nowrap; 
+}
+
+/* Time / Details (Right) */
+.hours-line,
+.hours-line.additional-hours,
+.special-hours-details,
+.special-hours-display .hours {
+    display: block;
+    width: 100%;
+    /* Essential: Pushes text to the far right */
+    text-align: right; 
+    color: var(--secondary-text);
+    font-weight: 500;
+    font-size: 0.95em;
+    word-break: break-word; /* Safety for very long text */
+}
+
+/* Additional hours logic */
+.hours-line.additional-hours {
+    grid-column: 2;
+    margin-top: 4px;
+}
+
+/* Highlight current day */
+.hours-list li.current-day {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+.hours-list li.current-day strong {
+    color: var(--accent-color);
+}
+
+/* --- Contact Button --- */
+.contact-info {
+	text-align: center;
+	margin-top: 30px;
+}
+.contact-info a {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid var(--border-color);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	display: inline-block;
+	padding: 14px 36px;
+	color: var(--accent-color);
+	border-radius: 9999px;
+	text-decoration: none;
+	font-weight: 700;
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.contact-info a:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent), var(--bubble-highlight);
+}
+
+/* ======================================== */
+/* == Admin Panel Styles == */
+/* ======================================== */
+
+.admin-form-input,
+.day-hours-group input,
+.special-hours-list input {
+	width: 100%;
+	padding: 12px 14px;
+	border: 1px solid var(--border-color);
+	background-color: var(--bg-color);
+	border-radius: 10px;
+	font-size: 1em;
+	color: var(--text-color);
+	box-sizing: border-box;
+}
+
+.admin-section-card {
+	background: color-mix(in srgb, var(--border-color) 15%, transparent);
+	padding: 20px;
+	border-radius: 16px;
+	margin-bottom: 25px;
+	border: 1px solid var(--border-color);
+}
+
+.hours-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 20px;
+}
+
+.day-hours-group {
+	background: var(--bg-color);
+	padding: 20px;
+	border-radius: 12px;
+	border: 1px solid var(--border-color);
+}
+
+.day-hours-group .time-inputs {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 15px;
+	flex-wrap: wrap;
+}
+
+/* ======================================== */
+/* --- Responsive Tweaks --- */
+@media screen and (max-width: 768px) {
+	.business-info-section { padding: 22px; }
+	
+	.hours-list li, .special-hours-display li { 
+		/* Keep side-by-side even on tablets/phones */
+		grid-template-columns: min-content 1fr; 
+		padding: 14px; 
+        gap: 10px;
+	}
+    
+    /* Ensure font size scales down slightly to fit on one line */
+    .hours-list li strong { font-size: 1em; }
+    .hours-line { font-size: 0.9em; }
+}
+
+@media screen and (max-width: 400px) {
+    /* Very small screens: Reduce padding inside the bubble cards */
+	.hours-list li, .special-hours-display li { 
+        padding: 12px 14px; 
     }
 }
 
