@@ -3986,8 +3986,8 @@ body.maintenance-active {
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    /* FIX APPLIED: min-content ensures the left column is always wide enough for text like "Friday" */
-    grid-template-columns: min-content 1fr; 
+    /* Grid Config: Day takes minimum needed space, Times take ALL remaining space (1fr) */
+    grid-template-columns: min-content 1fr;
     align-items: start;
     gap: 15px; 
     padding: 14px 16px;
@@ -3999,10 +3999,13 @@ body.maintenance-active {
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
     margin-bottom: 12px;
+    /* Force full width */
+    width: 100%; 
     max-width: 100%;
     min-width: 0; 
     word-wrap: break-word;
     overflow-wrap: anywhere;
+    box-sizing: border-box;
 }
 
 /* Hover effect */
@@ -4018,17 +4021,18 @@ body.maintenance-active {
     text-align: left;
     font-weight: 700;
     color: var(--text-color);
-    /* FIX APPLIED: Forces the day name to stay on one line */
+    /* Keeps Day Name on one line */
     white-space: nowrap; 
 }
 
-/* Main time lines right-aligned and fully wrapable */
+/* Main time lines: Forces text to the right side of the card */
 .hours-line,
 .hours-line.additional-hours,
 .special-hours-details,
 .special-hours-display .hours {
     display: block;
-    text-align: right;
+    width: 100%;
+    text-align: right; /* ALIGNMENT SET HERE */
     color: var(--secondary-text);
     font-weight: 500;
     white-space: normal !important;
@@ -4251,12 +4255,17 @@ body.maintenance-active {
 	.business-info-section { padding: 22px; }
 	
 	.hours-list li, .special-hours-display li { 
-		/* FIX APPLIED: Changed from 1fr to min-content 1fr to keep side-by-side layout on mobile */
+		/* Ensure Grid stays side-by-side even on mobile */
 		grid-template-columns: min-content 1fr; 
 		padding: 12px 14px; 
 	}
 	
-	.hours-line, .hours-line.additional-hours, .special-hours-details, .special-hours-display .hours { text-align: left; font-size: 0.95em; }
+	/* UPDATED: text-align set to right for mobile as well */
+	.hours-line, .hours-line.additional-hours, .special-hours-details, .special-hours-display .hours { 
+		text-align: right; 
+		font-size: 0.95em; 
+	}
+	
 	.contact-info a { padding: 12px 28px; font-size: 0.95em; }
 	.hours-grid { grid-template-columns: 1fr; }
 	.special-hours-list .hour-entry { grid-template-columns: 1fr; }
@@ -4270,8 +4279,6 @@ body.maintenance-active {
 	.day-hours-group .time-inputs,
 	.special-hours-list .hour-entry { grid-template-columns: 1fr; padding: 12px; }
 }
-
-
 
 /* Prevent printing of the page */
 @media print {
