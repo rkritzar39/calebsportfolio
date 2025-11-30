@@ -2379,6 +2379,22 @@ onAuthStateChanged(auth, user => {
             if (adminGreeting) {
                 adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
             }
+
+            // --- START: ADD THIS CODE ---
+            const adminProfilePic = document.getElementById('admin-profile-pic');
+            if (adminProfilePic) {
+                if (user.photoURL) {
+                    // If the user has a Google photo URL, use it
+                    adminProfilePic.src = user.photoURL;
+                    adminProfilePic.style.display = 'inline-block'; // Or 'block' based on your CSS
+                } else {
+                    // Optional: Use a default image if they logged in via email/pass
+                    // or if their Google account has no photo.
+                    adminProfilePic.src = 'images/default-profile.jpg'; // Make sure this path is correct
+                    adminProfilePic.style.display = 'inline-block';
+                }
+            }
+            // --- END: ADD THIS CODE ---
             if (authStatus) authStatus.textContent = '';
             if (adminStatusElement) adminStatusElement.textContent = '';
             
@@ -2447,6 +2463,15 @@ onAuthStateChanged(auth, user => {
         if (loginSection) loginSection.style.display = 'block';
         if (adminContent) adminContent.style.display = 'none';
         
+        // --- START: ADD THIS CODE ---
+        // Hide the profile picture on logout
+        const adminProfilePic = document.getElementById('admin-profile-pic');
+        if (adminProfilePic) {
+            adminProfilePic.src = '';
+            adminProfilePic.style.display = 'none';
+        }
+        // --- END: ADD THIS CODE ---
+
         removeActivityListeners();
     }
 });
