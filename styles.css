@@ -3995,13 +3995,14 @@ body.maintenance-active {
 }
 
 /* ============================================= */
-/* === Business Hours – Left Days, Right Times === */
+/* === All Hours – Left Days, Right Times === */
 /* ============================================= */
 
-.hours-list li {
+.hours-list li,
+.special-hours-display li {
 	display: grid;
-	grid-template-columns: 1fr auto; /* left = day, right = time */
-	align-items: center; /* vertical alignment */
+	grid-template-columns: 1fr auto; /* left = day/label, right = time */
+	align-items: center;
 	gap: 8px;
 	padding: 14px 16px;
 
@@ -4017,28 +4018,32 @@ body.maintenance-active {
 	transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.hours-list li:hover {
+.hours-list li:hover,
+.special-hours-display li:hover {
 	transform: translateY(-3px);
 	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
-/* Left column = days */
-.hours-list li strong {
+/* Left column = day or label */
+.hours-list li strong,
+.special-hours-display li strong {
 	color: var(--text-color);
 	font-weight: 700;
 	text-align: left;
 }
 
 /* Right column = times */
-.hours-time-stack {
+.hours-time-stack,
+.special-hours-details {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-end; /* right align */
+	align-items: flex-end; /* right align all times */
 	gap: 4px;
 	text-align: right;
 }
 
-.hours-line {
+.hours-line,
+.special-hours-details .hours {
 	color: var(--secondary-text);
 	font-weight: 600;
 	text-align: right;
@@ -4063,39 +4068,6 @@ body.maintenance-active {
 .hours-list li.current-day span {
 	color: var(--accent-color);
 	font-weight: 700;
-}
-
-/* ==== SPECIAL HOURS DISPLAY ==== */
-.special-hours-display li {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	border: 1px solid var(--border-color);
-	border-radius: var(--radius-lg);
-	padding: 14px 16px;
-	margin-bottom: 12px;
-	transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.special-hours-display li:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
-}
-
-.special-hours-display strong {
-	color: var(--text-color);
-	font-weight: 600;
-}
-
-.special-hours-details {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-top: 6px;
-}
-
-.special-hours-details .hours {
-	font-weight: 600;
-	color: var(--text-color);
 }
 
 /* --- Contact Button --- */
@@ -4128,18 +4100,17 @@ body.maintenance-active {
 @media screen and (max-width: 768px) {
 	.business-info-section { padding: 22px; }
 	.status-main-text { padding: 8px 18px; font-size: 1em; }
-	.hours-list li { padding: 12px 14px; }
-	.special-hours-display li { padding: 14px 18px; }
+	.hours-list li,
+	.special-hours-display li { padding: 12px 14px; }
 	.contact-info a { padding: 12px 28px; font-size: 0.95em; }
 }
 @media screen and (max-width: 400px) {
 	.business-info-section { padding: 16px; }
 	.status-main-text { padding: 6px 14px; font-size: 0.95em; }
-	.hours-list li { padding: 10px 12px; font-size: 0.9em; }
-	.special-hours-display li { padding: 12px 14px; font-size: 0.9em; }
+	.hours-list li,
+	.special-hours-display li { padding: 10px 12px; font-size: 0.9em; }
 	.contact-info a { padding: 10px 24px; font-size: 0.9em; }
 }
-
 
 /* ======================================== */
 /* == Admin Panel Styles (Clean & Modern Upgrade) == */
