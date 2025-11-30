@@ -3231,3 +3231,18 @@ body.dark-mode .g_id_signin > div[role="button"] {
 .stock-ribbon.in-stock { background: #28a745; }
 .stock-ribbon.low-stock { background: #ffc107; color:#333; }
 .stock-ribbon.out-of-stock { background: #6c757d; }
+
+.admin-profile-display {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  margin-right: 1rem;
+}
+
+.admin-profile-pic {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-color, #4a9cff);
+}
