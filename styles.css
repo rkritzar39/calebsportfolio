@@ -3982,13 +3982,13 @@ body.maintenance-active {
     box-sizing: border-box;
 }
 
-/* Regular list items: left = day, right = times */
+/* Regular list items: left = day, right = times with more space */
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    grid-template-columns: 1fr 2fr; /* LEFT: 1 fraction, RIGHT: 2 fractions */
+    grid-template-columns: 1fr 2fr; /* LEFT: day label, RIGHT: times (wider) */
     align-items: start;
-    gap: 12px; /* slightly more space between columns */
+    gap: 12px; /* more space between columns */
     padding: 14px 16px;
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
@@ -3999,7 +3999,7 @@ body.maintenance-active {
     -webkit-backdrop-filter: var(--backdrop-blur);
     margin-bottom: 12px;
     max-width: 100%;
-    min-width: 0; /* important for wrapping */
+    min-width: 0; /* important for wrapping in right column */
     word-wrap: break-word;
     overflow-wrap: anywhere;
 }
@@ -4011,7 +4011,7 @@ body.maintenance-active {
     box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
-/* Day label left, main times right */
+/* Day label left */
 .hours-list li strong,
 .special-hours-display li strong {
     text-align: left;
