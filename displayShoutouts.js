@@ -1413,13 +1413,24 @@ function formatDate(dateStr) {
 }
 
 /* -------------------------
-   MAIN: DOM ELEMENTS & REF
+   MAIN: DOM ELEMENTS & SAFE FIRESTORE REF
    ------------------------- */
 
-// Firestore ref - ensure db/doc/getDoc are available globally
-const businessDocRef = (typeof doc !== 'undefined' && typeof db !== 'undefined')
-    ? doc(db, "site_config", "businessDetails")
-    : null;
+// NOTE: Use a local safe-ref variable to avoid redeclaring `businessDocRef` if it's already defined elsewhere.
+let businessDocRefLocal;
+try {
+    if (typeof businessDocRef !== 'undefined' && businessDocRef) {
+        // use existing global if present
+        businessDocRefLocal = businessDocRef;
+    } else if (typeof doc !== 'undefined' && typeof db !== 'undefined') {
+        // create a ref if Firestore helpers exist
+        businessDocRefLocal = doc(db, "site_config", "businessDetails");
+    } else {
+        businessDocRefLocal = null;
+    }
+} catch (e) {
+    businessDocRefLocal = null;
+}
 
 /* -------------------------
    ENTRY: displayBusinessInfo
@@ -1438,17 +1449,19 @@ async function displayBusinessInfo() {
         return;
     }
 
-    if (!businessDocRef || typeof getDoc !== 'function') {
-        console.error("Firestore helpers not available (businessDocRef/getDoc).");
-        localBusinessStatusDisplay.querySelector('.status-main-text').textContent = 'Status: Error';
+    if (!businessDocRefLocal || typeof getDoc !== 'function') {
+        console.error("Firestore helpers not available (businessDocRefLocal/getDoc).");
+        const statusMain = localBusinessStatusDisplay.querySelector('.status-main-text');
+        if (statusMain) statusMain.textContent = 'Status: Error';
         return;
     }
 
     try {
-        const docSnap = await getDoc(businessDocRef);
+        const docSnap = await getDoc(businessDocRefLocal);
         if (!docSnap.exists()) {
             console.warn("Business details not found in Firestore.");
-            localBusinessStatusDisplay.querySelector('.status-main-text').textContent = 'N/A';
+            const statusMain = localBusinessStatusDisplay.querySelector('.status-main-text');
+            if (statusMain) statusMain.textContent = 'N/A';
             localBusinessHoursDisplay.innerHTML = '<p>Hours not available.</p>';
             return;
         }
@@ -1465,7 +1478,8 @@ async function displayBusinessInfo() {
 
     } catch (err) {
         console.error("Error loading business info:", err);
-        localBusinessStatusDisplay.querySelector('.status-main-text').textContent = 'Error Loading';
+        const statusMain = localBusinessStatusDisplay.querySelector('.status-main-text');
+        if (statusMain) statusMain.textContent = 'Error Loading';
     }
 }
 
@@ -1874,7 +1888,7 @@ function calculateAndDisplayStatusConvertedBI(businessData = {}) {
                     <li>
                         <div class="hours-container">
                             <strong>${t.label || 'Temporary Schedule'}</strong>
-                            <span class="hours">${t.isClosed ? 'Closed' : `${formatDisplayTimeBI(t.open || '', visitorTimezone)} - ${formatDisplayTimeBI(t.close || '', visitorTimezone)}`}</span>
+                            <span class="hours">${t.isClosed ? 'Closed' : `${formatDisplayTimeBI(t.open || '', visitorTimezone)} - ${formatDisplayTimeBI(t.close || '', visitor_timezone)}`}</span>
                         </div>
                         <span class="dates">${formatDate(t.startDate)} to ${formatDate(t.endDate)}</span>
                         <div class="temp-status-countdown-text">${tempCountdownStr}</div>
@@ -1945,6 +1959,15 @@ function calculateAndDisplayStatusConvertedBI(businessData = {}) {
     if (localContactEmailDisplay) localContactEmailDisplay.innerHTML = contactEmail ? `Contact: <a href="mailto:${contactEmail}">${contactEmail}</a>` : '';
 
 } // end calculateAndDisplayStatusConvertedBI
+
+/* -------------------------
+   Hook: call displayBusinessInfo on load
+   ------------------------- */
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', displayBusinessInfo);
+} else {
+    displayBusinessInfo();
+}
 
 /* -------------------------
    Hook: call displayBusinessInfo on load
