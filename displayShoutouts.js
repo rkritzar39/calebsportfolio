@@ -1410,9 +1410,11 @@ async function displayBusinessInfo() {
     const localBusinessStatusDisplay = document.getElementById('business-status-display');
     const localTemporaryHoursDisplay = document.getElementById('temporary-hours-display');
     const localHolidayHoursDisplay = document.getElementById('holiday-hours-display');
+    // ADDED: Additional Hours Element Check
+    const localAdditionalHoursDisplay = document.getElementById('additional-hours-display');
 
     if (!localContactEmailDisplay || !localBusinessHoursDisplay || !localBusinessStatusDisplay || !localTemporaryHoursDisplay || !localHolidayHoursDisplay) {
-        console.warn("One or more Business info display elements missing in displayBusinessInfo.");
+        console.warn("One or more Business info display elements missing in displayBusinessInfo. (Check HTML IDs)");
         return;
     }
 
@@ -1445,13 +1447,15 @@ async function displayBusinessInfo() {
     }
 }
 
-// --- CALCULATION AND DISPLAY LOGIC (FIXED) ---
+// --- CALCULATION AND DISPLAY LOGIC ---
 function calculateAndDisplayStatusConvertedBI(businessData) {
+    // 1. Get Elements
     const localContactEmailDisplay = document.getElementById('contact-email-display');
     const localBusinessHoursDisplay = document.getElementById('business-hours-display');
     const localBusinessStatusDisplay = document.getElementById('business-status-display');
     const localTemporaryHoursDisplay = document.getElementById('temporary-hours-display');
     const localHolidayHoursDisplay = document.getElementById('holiday-hours-display');
+    const localAdditionalHoursDisplay = document.getElementById('additional-hours-display'); // Added
 
     const statusMainTextEl = localBusinessStatusDisplay ? localBusinessStatusDisplay.querySelector('.status-main-text') : null;
     const statusCountdownTextEl = localBusinessStatusDisplay ? localBusinessStatusDisplay.querySelector('.status-countdown-text') : null;
@@ -1471,7 +1475,8 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
         return;
     }
 
-    const { regularHours = {}, holidayHours = [], temporaryHours = [], statusOverride = 'auto' } = businessData;
+    // 2. Destructure Data (Included additionalHours)
+    const { regularHours = {}, holidayHours = [], temporaryHours = [], additionalHours = [], statusOverride = 'auto' } = businessData;
     
     let finalCurrentStatus = 'Closed'; 
     let finalActiveRule = null;     
@@ -1490,7 +1495,7 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
     const businessDateStr = nowInBizTZLuxon.toISODate();
     const businessDayName = nowInBizTZLuxon.toFormat('cccc').toLowerCase();
 
-    // 1. Determine baseline status from REGULAR hours
+    // 3. Determine baseline status from REGULAR hours
     const todayRegularHours = regularHours[businessDayName];
     let baseStatus = 'Closed';
     let baseRule = { ...(todayRegularHours || { isClosed: true, open: null, close: null }), type: 'regular', day: businessDayName, reasonOriginal: 'Regular Hours' };
@@ -1551,7 +1556,7 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
     statusMainTextEl.textContent = finalCurrentStatus;
     statusReasonEl.textContent = `(${finalActiveRule?.reason || 'Status Determined'})`;
 
-    // --- REFINED MAIN COUNTDOWN LOGIC with 30-MINUTE WINDOWS & STATIC MESSAGES ---
+    // --- REFINED MAIN COUNTDOWN LOGIC (30-MINUTE WINDOWS) ---
     let countdownMessage = "";
     let nextEventTargetTime = null; 
     let eventTypeForMsg = "";       
@@ -1747,7 +1752,36 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
     displayHoursListHtml += `<p class="hours-timezone-note">Hours displayed in your local time zone: ${visitorTimezone.replace(/_/g, ' ')}</p>`;
     if(localBusinessHoursDisplay) localBusinessHoursDisplay.innerHTML = displayHoursListHtml;
 
-    // --- TEMPORARY HOURS DISPLAY (FIXED & ROBUST) ---
+    // --- ADDITIONAL HOURS DISPLAY (ADDED) ---
+    if (localAdditionalHoursDisplay) {
+        if (additionalHours && additionalHours.length > 0) {
+            console.log(`Render: Displaying ${additionalHours.length} additional hour entries.`);
+            localAdditionalHoursDisplay.className = 'special-hours-list';
+            let addHtml = '<h4>Additional Hours</h4><ul class="special-hours-display">';
+            
+            additionalHours.forEach(item => {
+                let timeDisplay = item.text || (item.open && item.close ? `${formatDisplayTimeBI(item.open, visitorTimezone)} - ${formatDisplayTimeBI(item.close, visitorTimezone)}` : 'See Details');
+                addHtml += `
+                    <li>
+                        <div class="hours-container">
+                            <strong>${item.label || 'Special Schedule'}</strong>
+                            <span class="hours">${timeDisplay}</span>
+                        </div>
+                    </li>`;
+            });
+            
+            addHtml += '</ul>';
+            localAdditionalHoursDisplay.innerHTML = addHtml;
+            localAdditionalHoursDisplay.style.display = 'block';
+        } else {
+            console.log("Render: No additionalHours found in database.");
+            localAdditionalHoursDisplay.style.display = 'none';
+        }
+    } else {
+        console.warn("Render: HTML Element 'additional-hours-display' missing.");
+    }
+
+    // --- TEMPORARY HOURS DISPLAY (FIXED & LOGGING) ---
     if (localTemporaryHoursDisplay) {
         // Filter: Ensure date fields exist, and end date is not in the past
         const relevantTemporaryHours = (temporaryHours || [])
@@ -1759,6 +1793,8 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
             })
             .sort((a, b) => (a.startDate > b.startDate ? 1 : -1));
 
+        console.log(`Render: Found ${relevantTemporaryHours.length} valid temporary hours.`);
+
         if (relevantTemporaryHours.length > 0) {
             localTemporaryHoursDisplay.className = 'special-hours-list';
             let tempHoursHtml = '<h4>Upcoming/Active Temporary Hours</h4><ul class="special-hours-display">';
@@ -1768,7 +1804,6 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
                 const startOfTodayInBiz = nowInBizTZLuxon.startOf('day');
         
                 if (businessDateStr === temp.startDate) {
-                    // Today
                     if (temp.isClosed) {
                         tempCountdownStr = `Closed Today (Temporary: ${temp.label || 'Event'})`;
                     } else if (temp.open && temp.close) {
@@ -1782,7 +1817,6 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
                         }
                     }
                 } else {
-                    // Future or Tomorrow
                     const diffInCalendarDays = Math.ceil(tempStartLuxonDate.diff(startOfTodayInBiz, 'days').days);
                     if (diffInCalendarDays === 1) {
                          tempCountdownStr = temp.isClosed ? "Closed Tomorrow" : `Tomorrow at ${formatDisplayTimeBI(temp.open, visitorTimezone)}`;
@@ -1812,7 +1846,7 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
         }
     }
 
-    // --- HOLIDAY HOURS DISPLAY (FIXED & ROBUST) ---
+    // --- HOLIDAY HOURS DISPLAY (FIXED & LOGGING) ---
     if (localHolidayHoursDisplay) {
         const upcomingHolidayHours = (holidayHours || [])
             .filter(h => {
@@ -1823,6 +1857,8 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
             })
             .sort((a, b) => (a.date > b.date ? 1 : -1));
     
+        console.log(`Render: Found ${upcomingHolidayHours.length} valid holiday hours.`);
+
         if (upcomingHolidayHours.length > 0) {
             localHolidayHoursDisplay.className = 'special-hours-list';
             let holidayHoursHtml = '<h4>Upcoming Holiday Hours</h4><ul class="special-hours-display">';
@@ -1885,6 +1921,7 @@ function calculateAndDisplayStatusConvertedBI(businessData) {
         }
    }
 }
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
