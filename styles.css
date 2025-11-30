@@ -3982,13 +3982,14 @@ body.maintenance-active {
     box-sizing: border-box;
 }
 
-/* Regular list items: left = day, right = times with more space */
+/* Regular list items */
 .hours-list li,
 .special-hours-display li {
     display: grid;
-    grid-template-columns: 1fr 2fr; /* LEFT: day label, RIGHT: times (wider) */
+    /* FIX APPLIED: min-content ensures the left column is always wide enough for text like "Friday" */
+    grid-template-columns: min-content 1fr; 
     align-items: start;
-    gap: 12px; /* more space between columns */
+    gap: 15px; 
     padding: 14px 16px;
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
@@ -3999,7 +4000,7 @@ body.maintenance-active {
     -webkit-backdrop-filter: var(--backdrop-blur);
     margin-bottom: 12px;
     max-width: 100%;
-    min-width: 0; /* important for wrapping in right column */
+    min-width: 0; 
     word-wrap: break-word;
     overflow-wrap: anywhere;
 }
@@ -4017,6 +4018,8 @@ body.maintenance-active {
     text-align: left;
     font-weight: 700;
     color: var(--text-color);
+    /* FIX APPLIED: Forces the day name to stay on one line */
+    white-space: nowrap; 
 }
 
 /* Main time lines right-aligned and fully wrapable */
@@ -4246,7 +4249,13 @@ body.maintenance-active {
 /* --- Fully Responsive tweaks --- */
 @media screen and (max-width: 768px) {
 	.business-info-section { padding: 22px; }
-	.hours-list li, .special-hours-display li { grid-template-columns: 1fr; padding: 12px 14px; }
+	
+	.hours-list li, .special-hours-display li { 
+		/* FIX APPLIED: Changed from 1fr to min-content 1fr to keep side-by-side layout on mobile */
+		grid-template-columns: min-content 1fr; 
+		padding: 12px 14px; 
+	}
+	
 	.hours-line, .hours-line.additional-hours, .special-hours-details, .special-hours-display .hours { text-align: left; font-size: 0.95em; }
 	.contact-info a { padding: 12px 28px; font-size: 0.95em; }
 	.hours-grid { grid-template-columns: 1fr; }
@@ -4261,6 +4270,7 @@ body.maintenance-active {
 	.day-hours-group .time-inputs,
 	.special-hours-list .hour-entry { grid-template-columns: 1fr; padding: 12px; }
 }
+
 
 
 /* Prevent printing of the page */
