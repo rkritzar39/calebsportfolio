@@ -6,7 +6,7 @@ body {
   color: var(--text-color);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
   margin: 0;
-  padding: 24px;
+  padding: 0;
   line-height: 1.65;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
@@ -20,7 +20,7 @@ body {
 .resume-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -41,6 +41,7 @@ body {
   box-shadow: var(--bubble-shadow), inset 0 1px 2px rgba(255, 255, 255, 0.05);
   transition: background 0.3s ease, box-shadow 0.3s ease;
   overflow: hidden;
+  width: 100%;
 }
 
 /* Reflection overlay */
@@ -69,9 +70,8 @@ body {
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
   box-shadow: var(--bubble-shadow);
-  margin-bottom: 32px;
-  transition: background 0.3s ease;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .header-photo {
@@ -231,8 +231,8 @@ li {
 }
 
 @media (max-width: 768px) {
-  body {
-    padding: 16px;
+  .resume-container {
+    padding: 0 8px;
   }
 
   .section {
