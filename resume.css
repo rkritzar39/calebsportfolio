@@ -2,240 +2,264 @@
 /* Base Styles              */
 /* ======================== */
 body {
-  background: var(--bg-color);
-  color: var(--text-color);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
-  margin: 0;
-  padding: 32px 16px;
-  line-height: 1.65;
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background 0.4s ease, color 0.4s ease;
+	background: var(--bg-color);
+	color: var(--text-color);
+	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
+	margin: 0;
+	padding: 32px;
+	line-height: var(--line-height-base);
+	font-size: var(--font-size-base, 20px);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	transition: background 0.4s ease, color 0.4s ease;
 }
 
 /* ======================== */
 /* Resume Container         */
 /* ======================== */
 .resume-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  padding-right: 16px; /* margin on right to prevent touching edges */
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 16px; /* prevents touching sides */
+	display: flex;
+	flex-direction: column;
+	gap: 32px; /* spacing between sections */
 }
 
 /* ======================== */
-/* Cards / Sections         */
-/* ======================== */
-.card {
-  position: relative;
-  background: var(--content-bg);
-  border-radius: 20px;
-  border: 1px solid var(--border-color);
-  padding: 24px;
-  box-shadow: var(--bubble-shadow);
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-  width: 100%;
-  margin-right: 16px; /* extra right margin */
-}
-
-/* ======================== */
-/* Frosted Header           */
+/* Header Frosted Card      */
 /* ======================== */
 .site-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border-radius: 20px;
-  background: var(--content-bg);
-  backdrop-filter: blur(12px) saturate(180%) contrast(110%);
-  -webkit-backdrop-filter: blur(12px) saturate(180%) contrast(110%);
-  box-shadow: var(--bubble-shadow);
-  width: 100%;
+	background: var(--content-bg);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	border-radius: var(--radius-xl);
+	border: 1px solid var(--border-color);
+	padding: 24px;
+	margin: 0 auto 32px auto; /* space below header */
+	max-width: 1200px;
+	box-shadow:
+		var(--bubble-shadow),
+		inset 0 1px 2px rgba(255, 255, 255, 0.05);
+	position: relative;
+	overflow: hidden;
 }
 
-/* Header Photo & Text */
+/* Optional reflection overlay for header */
+.site-header::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: 0.45;
+	pointer-events: none;
+}
+
+/* Header inner layout */
+.header-inner {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
 .header-photo {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
+	width: 120px;
+	height: 120px;
+	object-fit: cover;
+	border-radius: 50%;
+	border: 2px solid var(--accent-color);
 }
 
 .header-text h1 {
-  margin: 0 0 4px 0;
-  font-size: 1.8rem;
+	margin: 0;
+	font-size: 2rem;
+	color: var(--text-color);
 }
 
 .contact-line {
-  font-size: 0.95rem;
-  color: var(--secondary-text);
+	font-size: 0.95rem;
+	color: var(--secondary-text);
+}
+
+.contact-line .pipe {
+	margin: 0 6px;
 }
 
 .email-link {
-  color: var(--link-color);
-  text-decoration: none;
+	display: block;
+	color: var(--link-color);
+	text-decoration: none;
+	margin-top: 4px;
+	transition: color var(--transition-fast);
 }
 
 .email-link:hover {
-  color: var(--hover-color);
-  text-decoration: underline;
+	color: var(--hover-color);
 }
 
 /* ======================== */
-/* Skills / Languages       */
+/* Sections Styling         */
+/* ======================== */
+section {
+	background: var(--content-bg);
+	border-radius: var(--radius-lg);
+	border: 1px solid var(--border-color);
+	padding: 24px;
+	margin-bottom: 32px;
+	position: relative;
+	overflow: hidden;
+}
+
+/* Optional reflection overlay for sections */
+section::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: 0.2;
+	pointer-events: none;
+}
+
+/* ======================== */
+/* Headings inside sections  */
+/* ======================== */
+section h2 {
+	margin-top: 0;
+	margin-bottom: 16px;
+	color: var(--text-color);
+	font-size: 1.5rem;
+	border-bottom: 1px solid var(--border-color);
+	padding-bottom: 8px;
+}
+
+/* ======================== */
+/* Skills & Languages Lists */
+/* ======================== */
 .skills-list,
 .languages-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
 }
 
 .skills-list span,
 .languages-list span {
-  background: var(--content-bg);
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  border: 1px solid var(--border-color);
+	background: var(--content-bg);
+	border: 1px solid var(--border-color);
+	padding: 6px 12px;
+	border-radius: var(--radius-md);
+	font-size: 0.9rem;
+	color: var(--text-color);
+	backdrop-filter: var(--backdrop-blur);
 }
 
 /* ======================== */
-/* Jobs / Education         */
-.job,
+/* Job Experience           */
+/* ======================== */
+.job {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 16px;
+}
+
+.job-left h3 {
+	margin: 0;
+	color: var(--text-color);
+	font-size: 1.1rem;
+}
+
+.company {
+	font-size: 0.9rem;
+	color: var(--secondary-text);
+}
+
+.job-dates {
+	font-size: 0.85rem;
+	color: var(--secondary-text);
+	margin-top: 4px;
+	margin-bottom: 6px;
+}
+
+.job ul {
+	margin: 0;
+	padding-left: 20px;
+}
+
+/* ======================== */
+/* Education                */
+/* ======================== */
 .education-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+	margin-bottom: 16px;
 }
 
-.job-left,
-.edu-left {
-  display: flex;
-  flex-direction: column;
-}
-
-.job h3,
 .edu-left h3 {
-  margin: 0;
-  font-size: 1.1rem;
+	margin: 0;
+	color: var(--text-color);
+	font-size: 1.1rem;
 }
 
-.company,
 .school {
-  font-size: 0.9rem;
-  color: var(--secondary-text);
+	font-size: 0.9rem;
+	color: var(--secondary-text);
 }
 
-.job-dates,
 .education-dates {
-  font-size: 0.85rem;
-  color: var(--secondary-text);
-  align-self: flex-start;
-}
-
-/* ======================== */
-/* Lists                     */
-ul {
-  padding-left: 20px;
-  margin: 8px 0 0 0;
-}
-
-li {
-  margin-bottom: 6px;
-}
-
-/* ======================== */
-/* Download Button           */
-.download-container {
-  display: flex;
-  justify-content: center;
-  margin: 24px 0;
-}
-
-#download-btn {
-  background: var(--accent-color);
-  color: var(--text-color);
-  border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: background 0.3s ease;
-}
-
-#download-btn:hover {
-  background: var(--hover-color);
+	font-size: 0.85rem;
+	color: var(--secondary-text);
+	margin-top: 4px;
 }
 
 /* ======================== */
 /* Footer                   */
+/* ======================== */
 .site-footer {
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--secondary-text);
-  margin-top: 32px;
+	text-align: center;
+	margin-top: 32px;
+	font-size: 0.9rem;
+	color: var(--secondary-text);
 }
 
 /* ======================== */
-/* Responsive Tweaks        */
-@media (max-width: 1024px) {
-  .resume-container {
-    padding: 0 12px;
-  }
-
-  .site-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .header-photo {
-    width: 70px;
-    height: 70px;
-  }
+/* Download Button          */
+/* ======================== */
+.download-container {
+	text-align: center;
+	margin-top: 16px;
 }
 
+#download-btn {
+	background: var(--accent-color);
+	color: #fff;
+	border: none;
+	padding: 10px 24px;
+	border-radius: var(--radius-md);
+	cursor: pointer;
+	transition: background var(--transition-fast);
+}
+
+#download-btn:hover {
+	background: var(--hover-color);
+}
+
+/* ======================== */
+/* Responsive Adjustments   */
+/* ======================== */
 @media (max-width: 768px) {
-  .resume-container {
-    padding: 0 8px;
-  }
-
-  .card {
-    padding: 16px;
-    margin-right: 8px;
-  }
-
-  .skills-list span,
-  .languages-list span {
-    font-size: 0.85rem;
-    padding: 4px 10px;
-  }
-
-  #download-btn {
-    padding: 10px 18px;
-    font-size: 0.95rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .header-photo {
-    width: 60px;
-    height: 60px;
-  }
-
-  .header-text h1 {
-    font-size: 1.5rem;
-  }
-
-  .skills-list,
-  .languages-list {
-    gap: 8px;
-  }
+	.header-inner {
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+	.header-photo {
+		width: 100px;
+		height: 100px;
+	}
+	.resume-container {
+		padding: 0 12px;
+	}
 }
