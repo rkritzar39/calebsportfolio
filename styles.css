@@ -474,7 +474,6 @@ a.corner-button {
   --accent-color: #007AFF; /* System Blue */
   
   /* Active Pill */
-  --active-bg: #FFFFFF;
   --active-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
@@ -536,7 +535,6 @@ a.corner-button {
 }
 
 /* --- 1. The Spotlight Glow (Vision OS Signature) --- */
-/* Uses the JS variables --x and --y to follow mouse */
 .dock-item::before {
   content: "";
   position: absolute;
@@ -547,12 +545,12 @@ a.corner-button {
     rgba(0, 0, 0, 0.08),
     transparent 100%
   );
-  opacity: 0; /* Hidden by default */
+  opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .dock-item:hover::before {
-  opacity: 1; /* Show glow on hover */
+  opacity: 1;
 }
 
 /* --- 2. Typography & Icons --- */
@@ -568,7 +566,7 @@ a.corner-button {
   width: 24px;
   height: 24px;
   stroke-width: 2px;
-  transition: color 0.3s ease, transform 0.1s linear; /* Linear for instant physics */
+  transition: color 0.3s ease, transform 0.1s linear;
   
   /* PARALLAX PHYSICS: Icons move slightly opposite to mouse */
   transform: translate(calc(var(--dx) * 5px), calc(var(--dy) * 5px));
@@ -580,25 +578,25 @@ a.corner-button {
 
 /* Hover Lift */
 .dock-item:hover {
-  transform: scale(1.08) translateY(-2px); /* Buoyant lift */
+  transform: scale(1.08) translateY(-2px);
   color: var(--text-primary);
 }
 
 /* Active State (The "Pill" sits ON TOP of glass) */
 .dock-item.active {
-  background: var(--active-bg);
+  background: var(--accent-color); /* Full accent color */
   box-shadow: var(--active-shadow);
-  color: var(--accent-color);
-  transform: scale(1); /* Active item is grounded */
+  color: #fff; /* Text white for contrast */
+  transform: scale(1);
 }
 
 .dock-item.active .dock-icon {
-  stroke: var(--accent-color);
+  stroke: #fff; /* Icon white for contrast */
   stroke-width: 2.5px;
 }
 
 .dock-item.active::before {
-  display: none; /* No hover spotlight on the active item */
+  display: none; /* No hover glow for active tab */
 }
 
 /* ======================================================= */
