@@ -1,21 +1,22 @@
 document.getElementById('download-btn').addEventListener('click', () => {
-  const element = document.querySelector('.resume-container');
+  const original = document.querySelector('.resume-container');
 
-  // Clone the container to avoid altering the live page
-  const clone = element.cloneNode(true);
+  // Clone the container for printing
+  const clone = original.cloneNode(true);
 
-  // Off-screen so it doesn't mess with layout
-  clone.style.position = "absolute";
-  clone.style.left = "-9999px";
-  clone.style.width = "210mm"; // A4 width
-  clone.style.display = "block";
-  clone.style.background = "#FFFFFF"; // white page
-  clone.style.color = "#000000"; // black text
+  // Basic page styling
+  clone.style.width = "210mm";   // A4 width
+  clone.style.minHeight = "297mm"; // A4 height
+  clone.style.background = "#FFFFFF"; // white background
+  clone.style.color = "#000000";     // black text
   clone.style.padding = "0";
   clone.style.margin = "0";
   clone.style.boxShadow = "none";
+  clone.style.overflow = "visible";
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px"; // offscreen
 
-  // Remove all Liquid Glass effects
+  // Remove Liquid Glass & colors from all child elements
   clone.querySelectorAll("*").forEach(el => {
     el.style.background = "transparent";
     el.style.color = "#000000";
@@ -24,25 +25,35 @@ document.getElementById('download-btn').addEventListener('click', () => {
     el.style.textShadow = "none";
     el.style.filter = "none";
     el.style.backdropFilter = "none";
-    el.style.borderRadius = "0"; // keep it clean and simple
+    el.style.borderRadius = "0";
+    el.style.display = "block";
+    el.style.width = "100%";
+    el.style.padding = "0"; // reset padding for cleaner PDF
+    el.style.margin = "0"; // reset margin
   });
 
-  // Add subtle separation lines for sections
+  // Add clear separation lines for sections and header
   clone.querySelectorAll("section, .site-header").forEach(section => {
     section.style.borderBottom = "1px solid #000000";
     section.style.padding = "12px 0";
+    section.style.pageBreakInside = "avoid"; // prevent section split
+    section.style.pageBreakAfter = "auto";
   });
 
-  // Append off-screen
+  // Prevent items from breaking mid-element
+  clone.querySelectorAll(".job, .education-item, .skills-list span, .languages-list span, ul li").forEach(el => {
+    el.style.pageBreakInside = "avoid";
+  });
+
+  // Append off-screen for html2pdf to render
   document.body.appendChild(clone);
 
-  // Generate PDF
   html2pdf().from(clone).set({
     margin: [10, 15, 10, 15], // top, left, bottom, right
     filename: 'Caleb_Kritzar_Resume.pdf',
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
   }).save().finally(() => {
-    document.body.removeChild(clone); // clean up
+    document.body.removeChild(clone);
   });
 });
