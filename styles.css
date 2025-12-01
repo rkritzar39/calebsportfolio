@@ -585,13 +585,13 @@ a.corner-button {
 /* Active State (The "Pill" sits ON TOP of glass) */
 .dock-item.active {
   background: var(--accent-color); /* Full accent color */
+  color: var(--accent-color);      /* Text matches accent */
   box-shadow: var(--active-shadow);
-  color: #fff; /* Text white for contrast */
   transform: scale(1);
 }
 
 .dock-item.active .dock-icon {
-  stroke: #fff; /* Icon white for contrast */
+  stroke: var(--accent-color);     /* Icon matches accent */
   stroke-width: 2.5px;
 }
 
