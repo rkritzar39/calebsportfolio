@@ -258,33 +258,39 @@
       }).save();
     });
 
-    // Onyx dock active state & hover effect
-    document.addEventListener("DOMContentLoaded", () => {
-      const links = document.querySelectorAll('.onyx-dock .dock-item');
-      let current = window.location.pathname.split("/").pop();
-      if (current === "" || current === "/") current = "index.html";
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const links = document.querySelectorAll('.onyx-dock .dock-item');
 
-      links.forEach(link => {
-        if (link.getAttribute("href") === current) link.classList.add("active");
+  // Get current page filename
+  let current = window.location.pathname.split("/").pop();
+  if (!current) current = "index.html"; // default
 
-        link.addEventListener('mousemove', e => {
-          const rect = link.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const dx = (x / rect.width) - 0.5;
-          const dy = (y / rect.height) - 0.5;
-          link.style.setProperty('--x', `${x}px`);
-          link.style.setProperty('--y', `${y}px`);
-          link.style.setProperty('--dx', dx);
-          link.style.setProperty('--dy', dy);
-        });
+  links.forEach(link => {
+    const href = link.getAttribute("href");
+    if (href === current) {
+      link.classList.add("active");
+    }
 
-        link.addEventListener('mouseleave', () => {
-          link.style.setProperty('--dx', 0);
-          link.style.setProperty('--dy', 0);
-        });
-      });
+    // Hover effect
+    link.addEventListener('mousemove', e => {
+      const rect = link.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const dx = (x / rect.width) - 0.5;
+      const dy = (y / rect.height) - 0.5;
+      link.style.setProperty('--x', `${x}px`);
+      link.style.setProperty('--y', `${y}px`);
+      link.style.setProperty('--dx', dx);
+      link.style.setProperty('--dy', dy);
     });
-  </script>
+
+    link.addEventListener('mouseleave', () => {
+      link.style.setProperty('--dx', 0);
+      link.style.setProperty('--dy', 0);
+    });
+  });
+});
+</script>
 </body>
 </html>
