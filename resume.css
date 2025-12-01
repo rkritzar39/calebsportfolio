@@ -1,143 +1,102 @@
-/* -------------------------------------------
-   Ultra-Professional Resume CSS (Corporate)
-   ------------------------------------------- */
-
-:root {
-    --bg: #ffffff;
-    --text: #1a1a1a;
-    --subtext: #4d4d4d;
-    --accent: #0a66c2; /* Subtle LinkedIn blue */
-    --radius: 8px;
-    --max-width: 900px;
-    --font-main: "Inter", "Segoe UI", Arial, sans-serif;
-}
-
 body {
-    margin: 0;
-    background: var(--bg);
-    font-family: var(--font-main);
-    color: var(--text);
-    padding: 40px 20px;
-    display: flex;
-    justify-content: center;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: #f8f9fa;
+  color: #222;
 }
 
-.resume-wrapper {
-    width: 100%;
-    max-width: var(--max-width);
-    padding: 40px 55px;
-    border: 1px solid #e5e5e5;
-    border-radius: var(--radius);
-    box-sizing: border-box;
+.site-header {
+  background: #1f1f1f;
+  color: white;
+  padding: 20px;
 }
 
-/* Header */
-.resume-header {
-    text-align: center;
-    margin-bottom: 40px;
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
-.resume-header h1 {
-    font-size: 2.2rem;
-    margin: 0;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+.header-photo {
+  width: 100px;
+  border-radius: 50%;
 }
 
-.resume-header .role {
-    margin-top: 8px;
-    font-size: 1.1rem;
-    color: var(--subtext);
+.header-text h1 {
+  margin: 0;
+  font-weight: 800;
 }
 
-.contact-info {
-    margin-top: 15px;
-    font-size: 0.95rem;
-    color: var(--subtext);
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 14px;
+.contact-line, .email-link {
+  font-weight: 400;
+  font-size: 0.9rem;
 }
 
-/* Section Titles */
-.section-title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-top: 40px;
-    margin-bottom: 12px;
-    color: var(--text);
-    border-bottom: 2px solid #dedede;
-    padding-bottom: 4px;
+.resume-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
 }
 
-/* Experience */
-.experience-item {
-    margin-bottom: 25px;
+.resume-content section {
+  margin-bottom: 30px;
 }
 
-.experience-item h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
+.resume-content h2 {
+  font-weight: 600;
+  border-bottom: 2px solid #1f1f1f;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
 }
 
-.experience-item .meta {
-    margin-top: 3px;
-    color: var(--subtext);
-    font-size: 0.95rem;
+.skills-list span {
+  display: inline-block;
+  background: #1f1f1f;
+  color: white;
+  padding: 5px 10px;
+  margin: 3px;
+  border-radius: 5px;
+  font-size: 0.85rem;
 }
 
-.experience-item ul {
-    margin: 8px 0 0;
-    padding-left: 20px;
+.job, .education-item {
+  margin-bottom: 20px;
 }
 
-.experience-item ul li {
-    margin-bottom: 6px;
-    line-height: 1.45;
+.job-left h3, .edu-left h3 {
+  margin: 0;
+  font-weight: 600;
 }
 
-/* Education */
-.education-item {
-    margin-bottom: 18px;
+.job-dates, .education-dates {
+  font-size: 0.85rem;
+  color: #555;
 }
 
-.education-item h4 {
-    margin: 0;
-    font-size: 1.05rem;
-    font-weight: 600;
+.pdf-download {
+  text-align: center;
+  margin: 20px 0;
 }
 
-.education-item .meta {
-    margin-top: 2px;
-    color: var(--subtext);
-    font-size: 0.95rem;
+.pdf-download button {
+  background: #1f1f1f;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
 }
 
-/* Skills */
-.skill-list {
-    columns: 2;
-    column-gap: 40px;
-    font-size: 0.95rem;
+.pdf-download button:hover {
+  background: #333;
 }
 
-.skill-list li {
-    margin-bottom: 6px;
-}
-
-/* Mobile Optimized */
-@media (max-width: 650px) {
-    .resume-wrapper {
-        padding: 30px 25px;
-    }
-    .skill-list {
-        columns: 1;
-    }
-    .resume-header h1 {
-        font-size: 1.8rem;
-    }
-    .section-title {
-        font-size: 1.2rem;
-    }
+.site-footer {
+  text-align: center;
+  padding: 20px;
+  background: #1f1f1f;
+  color: white;
 }
