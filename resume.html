@@ -8,11 +8,14 @@
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   
-  <!-- CSS -->
+  <!-- External CSS -->
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="settings.css">
   <link rel="stylesheet" href="resume.css">
 </head>
 <body>
 
+  <!-- Header -->
   <header class="site-header">
     <div class="header-inner">
       <img src="IMG_7115.png" alt="Caleb Kritzar" class="header-photo">
@@ -21,21 +24,22 @@
         <div class="contact-line">
           Weston, OH <span class="pipe">|</span> +1 (567) 436-0735
         </div>
-        <a href="mailto:ckritzar53@busarmydude.org" class="email-link">
-          ckritzar53@busarmydude.org
-        </a>
+        <a href="mailto:ckritzar53@busarmydude.org" class="email-link">ckritzar53@busarmydude.org</a>
       </div>
     </div>
   </header>
 
-  <div class="resume-container" id="resume-content">
-    <main class="resume-content">
+  <!-- Main Resume -->
+  <div class="resume-container">
+    <main class="resume-content" id="resume-content">
 
+      <!-- Summary -->
       <section id="summary">
         <h2>Summary</h2>
         <p>I have experience in customer service and food preparation roles, including pizza making and restaurant crew positions. I consistently demonstrate strong customer service skills, efficient operation of POS systems, and the ability to adapt to customer requests in fast-paced environments.</p>
       </section>
 
+      <!-- Skills -->
       <section id="skills">
         <h2>Skills</h2>
         <div class="skills-list">
@@ -51,6 +55,19 @@
         </div>
       </section>
 
+      <!-- IT Languages -->
+      <section id="languages">
+        <h2>Languages</h2>
+        <div class="languages-list">
+          <span>HTML & CSS</span>
+          <span>JavaScript</span>
+          <span>Python</span>
+          <span>SQL</span>
+          <span>Networking & Hardware</span>
+        </div>
+      </section>
+
+      <!-- Experience -->
       <section id="experience">
         <h2>Experience</h2>
 
@@ -73,8 +90,8 @@
           </div>
           <span class="job-dates">Apr 2025 – Sep 2025</span>
           <ul>
-            <li>Prepared pizzas, modifying standard recipes for customer requests.</li>
-            <li>Assisting with taking orders over the phone.</li>
+            <li>Prepared pizzas, modifying standard recipes to account for customer requests and substitutions</li>
+            <li>Assisting with taking orders over the phone</li>
           </ul>
         </div>
 
@@ -85,7 +102,7 @@
           </div>
           <span class="job-dates">Jan 2024 – Apr 2024</span>
           <ul>
-            <li>Prepared pizzas, modifying standard recipes for customer requests.</li>
+            <li>Prepared pizzas and dishes, modifying recipes based on customer requests</li>
           </ul>
         </div>
 
@@ -96,8 +113,8 @@
           </div>
           <span class="job-dates">Mar 2023 – Jul 2023</span>
           <ul>
-            <li>Excellent customer service and POS cash register operation</li>
-            <li>Prepared sandwiches to customer specifications using proper food safety measures</li>
+            <li>Excellent customer service and POS operation</li>
+            <li>Prepared sandwiches according to customer specifications</li>
           </ul>
         </div>
 
@@ -108,9 +125,8 @@
           </div>
           <span class="job-dates">Jun 2022 – Apr 2023</span>
           <ul>
-            <li>Excellent customer service and POS cash register operation</li>
-            <li>Received orders through the drive-thru and accurately relayed orders</li>
-            <li>Carefully reviewed orders and delivered customer food at the drive-thru</li>
+            <li>Excellent customer service and POS operation</li>
+            <li>Received and delivered drive-thru orders accurately</li>
           </ul>
         </div>
 
@@ -121,8 +137,8 @@
           </div>
           <span class="job-dates">Apr 2022 – Jun 2022</span>
           <ul>
-            <li>Prepared pizzas, modifying standard recipes for customer requests</li>
-            <li>Performed proper washing and sanitizing of dishes, maintaining a clean and orderly kitchen</li>
+            <li>Prepared pizzas and dishes per customer requests</li>
+            <li>Maintained kitchen cleanliness and hygiene</li>
           </ul>
         </div>
 
@@ -133,12 +149,14 @@
           </div>
           <span class="job-dates">Jul 2021 – Dec 2021</span>
           <ul>
-            <li>Received orders through the drive-thru and accurately relayed orders</li>
-            <li>Pleasantly greeted and welcomed customers before taking orders</li>
+            <li>Received drive-thru orders accurately</li>
+            <li>Greeted customers and provided excellent service</li>
           </ul>
         </div>
+
       </section>
 
+      <!-- Education -->
       <section id="education">
         <h2>Education</h2>
         <div class="education-item">
@@ -159,6 +177,7 @@
         </div>
       </section>
 
+      <!-- Certifications -->
       <section id="certifications">
         <h2>Certifications</h2>
         <ul>
@@ -169,96 +188,96 @@
         </ul>
       </section>
 
+      <!-- Projects -->
+      <section id="projects">
+        <h2>Projects</h2>
+        <ul>
+          <li>Personal Website – Built with HTML, CSS, JS</li>
+          <li>Interactive JavaScript Game – Browser project</li>
+          <li>PC Build Guide – Hardware tutorials</li>
+        </ul>
+      </section>
+
+      <!-- Download PDF -->
+      <div class="download-container">
+        <button id="download-btn">Download PDF</button>
+      </div>
+
     </main>
   </div>
 
-  <button id="download-pdf" class="download-btn">Download PDF</button>
-
+  <!-- Footer -->
   <footer class="site-footer">
     <p>&copy; <span id="current-year"></span> Caleb Kritzar</p>
   </footer>
 
-  <!-- JS -->
+  <!-- Onyx Dock -->
+  <nav class="onyx-dock">
+    <a href="index.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24">
+        <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Home</span>
+    </a>
+    <a href="resume.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Resume</span>
+    </a>
+    <a href="settings.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Settings</span>
+    </a>
+  </nav>
+
+  <!-- Scripts -->
+  <script src="settings.js"></script>
+  <script src="script.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="resume.js"></script>
-<script>
-  const yearEl = document.getElementById('current-year');
-  if(yearEl) yearEl.textContent = new Date().getFullYear();
-</script>
-<nav class="onyx-dock">
-  
-  <a href="index.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Home</span>
-  </a>
+  <script>
+    // Dynamic year in footer
+    document.getElementById('current-year').textContent = new Date().getFullYear();
 
-  <a href="resume.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Resume</span>
-  </a>
+    // PDF Download
+    document.getElementById('download-btn').addEventListener('click', () => {
+      const element = document.getElementById('resume-content');
+      html2pdf().from(element).set({
+        margin: 10,
+        filename: 'Caleb_Kritzar_Resume.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+      }).save();
+    });
 
-  <a href="settings.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Settings</span>
-  </a>
-
-</nav>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const links = document.querySelectorAll('.onyx-dock .dock-item');
-    
-    // 1. Get current page for Active State
-    let current = window.location.pathname.split("/").pop();
-    if (current === "" || current === "/") current = "index.html";
-
-    links.forEach(link => {
-      // --- LOGIC A: Set Active State ---
-      const target = link.getAttribute("href");
-      if (target === current) {
-        link.classList.add("active");
-      }
-
-      // --- LOGIC B: Vision OS Mouse Tracking ---
-      link.addEventListener('mousemove', (e) => {
-        const rect = link.getBoundingClientRect();
-        
-        // Calculate X/Y of mouse relative to the button
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Calculate offset from center (for parallax)
-        // Ranges from -0.5 to 0.5
-        const dx = (x / rect.width) - 0.5;
-        const dy = (y / rect.height) - 0.5;
-
-        // Set CSS variables
-        link.style.setProperty('--x', `${x}px`);
-        link.style.setProperty('--y', `${y}px`);
-        link.style.setProperty('--dx', dx);
-        link.style.setProperty('--dy', dy);
-      });
-
-      // Reset when mouse leaves (optional, but looks cleaner)
-      link.addEventListener('mouseleave', () => {
-        link.style.setProperty('--dx', 0);
-        link.style.setProperty('--dy', 0);
-        // Note: We don't reset X/Y so the light fades out where you left it
+    // Onyx dock active state & hover effect
+    document.addEventListener("DOMContentLoaded", () => {
+      const links = document.querySelectorAll('.onyx-dock .dock-item');
+      let current = window.location.pathname.split("/").pop() || "index.html";
+      links.forEach(link => {
+        if(link.getAttribute('href') === current) link.classList.add('active');
+        link.addEventListener('mousemove', e => {
+          const rect = link.getBoundingClientRect();
+          const dx = (e.clientX - rect.left) / rect.width - 0.5;
+          const dy = (e.clientY - rect.top) / rect.height - 0.5;
+          link.style.setProperty('--dx', dx);
+          link.style.setProperty('--dy', dy);
+        });
+        link.addEventListener('mouseleave', () => {
+          link.style.setProperty('--dx', 0);
+          link.style.setProperty('--dy', 0);
+        });
       });
     });
-  });
-</script>
+  </script>
+
 </body>
 </html>
