@@ -23,12 +23,13 @@ body {
   display: flex;
   flex-direction: column;
   gap: 32px;
+  padding-right: 16px; /* margin on right to prevent touching edges */
 }
 
 /* ======================== */
 /* Cards / Sections         */
 /* ======================== */
-.section {
+.card {
   position: relative;
   background: var(--content-bg);
   border-radius: 20px;
@@ -37,15 +38,12 @@ body {
   box-shadow: var(--bubble-shadow);
   transition: background 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
-}
-
-/* Prevent touching edges */
-.section-inner {
-  margin: 0 8px; /* adjusts the hug from edges */
+  margin-right: 16px; /* extra right margin */
 }
 
 /* ======================== */
-/* Header                   */
+/* Frosted Header           */
+/* ======================== */
 .site-header {
   display: flex;
   align-items: center;
@@ -53,10 +51,13 @@ body {
   padding: 16px;
   border-radius: 20px;
   background: var(--content-bg);
+  backdrop-filter: blur(12px) saturate(180%) contrast(110%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%) contrast(110%);
   box-shadow: var(--bubble-shadow);
   width: 100%;
 }
 
+/* Header Photo & Text */
 .header-photo {
   width: 80px;
   height: 80px;
@@ -86,7 +87,7 @@ body {
 }
 
 /* ======================== */
-/* Skills / Languages        */
+/* Skills / Languages       */
 .skills-list,
 .languages-list {
   display: flex;
@@ -104,7 +105,7 @@ body {
 }
 
 /* ======================== */
-/* Jobs / Education          */
+/* Jobs / Education         */
 .job,
 .education-item {
   display: flex;
@@ -206,8 +207,9 @@ li {
     padding: 0 8px;
   }
 
-  .section {
+  .card {
     padding: 16px;
+    margin-right: 8px;
   }
 
   .skills-list span,
