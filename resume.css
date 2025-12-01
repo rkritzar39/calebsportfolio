@@ -6,7 +6,7 @@ body {
   color: var(--text-color);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
   margin: 0;
-  padding: 0;
+  padding: 32px 16px;
   line-height: 1.65;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
@@ -20,46 +20,32 @@ body {
 .resume-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 /* ======================== */
-/* Sections / Cards         */
+/* Cards / Sections         */
 /* ======================== */
 .section {
   position: relative;
   background: var(--content-bg);
-  background-image: var(--bubble-gradient), var(--liquid-refraction);
   border-radius: 20px;
   border: 1px solid var(--border-color);
   padding: 24px;
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  box-shadow: var(--bubble-shadow), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+  box-shadow: var(--bubble-shadow);
   transition: background 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
   width: 100%;
 }
 
-/* Reflection overlay */
-.section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--liquid-reflection);
-  mix-blend-mode: soft-light;
-  opacity: 0.45;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
+/* Prevent touching edges */
+.section-inner {
+  margin: 0 8px; /* adjusts the hug from edges */
 }
 
 /* ======================== */
 /* Header                   */
-/* ======================== */
 .site-header {
   display: flex;
   align-items: center;
@@ -67,10 +53,7 @@ body {
   padding: 16px;
   border-radius: 20px;
   background: var(--content-bg);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
   box-shadow: var(--bubble-shadow);
-  flex-wrap: wrap;
   width: 100%;
 }
 
@@ -95,7 +78,6 @@ body {
 .email-link {
   color: var(--link-color);
   text-decoration: none;
-  font-size: 0.95rem;
 }
 
 .email-link:hover {
@@ -104,8 +86,7 @@ body {
 }
 
 /* ======================== */
-/* Skills and Languages      */
-/* ======================== */
+/* Skills / Languages        */
 .skills-list,
 .languages-list {
   display: flex;
@@ -115,21 +96,15 @@ body {
 
 .skills-list span,
 .languages-list span {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--content-bg);
   padding: 6px 12px;
   border-radius: 12px;
   font-size: 0.95rem;
-  transition: background 0.3s ease;
-}
-
-.skills-list span:hover,
-.languages-list span:hover {
-  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--border-color);
 }
 
 /* ======================== */
-/* Jobs / Experience Cards   */
-/* ======================== */
+/* Jobs / Education          */
 .job,
 .education-item {
   display: flex;
@@ -165,7 +140,6 @@ body {
 
 /* ======================== */
 /* Lists                     */
-/* ======================== */
 ul {
   padding-left: 20px;
   margin: 8px 0 0 0;
@@ -177,7 +151,6 @@ li {
 
 /* ======================== */
 /* Download Button           */
-/* ======================== */
 .download-container {
   display: flex;
   justify-content: center;
@@ -202,7 +175,6 @@ li {
 
 /* ======================== */
 /* Footer                   */
-/* ======================== */
 .site-footer {
   text-align: center;
   font-size: 0.9rem;
@@ -212,7 +184,6 @@ li {
 
 /* ======================== */
 /* Responsive Tweaks        */
-/* ======================== */
 @media (max-width: 1024px) {
   .resume-container {
     padding: 0 12px;
