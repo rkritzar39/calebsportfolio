@@ -1,5 +1,5 @@
 /* ================================ */
-/* Dark Mode Resume Styling         */
+/* Resume CSS - Light & Dark Mode   */
 /* ================================ */
 
 /* Base Fonts & Layout */
@@ -9,17 +9,25 @@ body, html {
   line-height: 1.65;
   margin: 0;
   padding: 0;
-  color: #f0f0f0;
-  background: #1c1c1e;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ================================ */
+/* Light Mode Defaults              */
+/* ================================ */
+body {
+  background: #fdfdfd;
+  color: #1c1c1e;
 }
 
 .resume-container {
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem;
-  background: #2c2c2e;
+  background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Header */
@@ -43,10 +51,10 @@ body, html {
 .header-text h1 {
   margin: 0;
   font-size: 2rem;
-  color: #ffffff;
+  color: #1c1c1e;
 }
 .contact-line {
-  color: #a0a0a0;
+  color: #666666;
   margin: 0.2rem 0;
 }
 .email-link {
@@ -62,9 +70,9 @@ section {
 section h2 {
   font-size: 1.6rem;
   margin-bottom: 1rem;
-  border-bottom: 2px solid #444444;
+  border-bottom: 2px solid #e0e0e0;
   padding-bottom: 0.2rem;
-  color: #ffffff;
+  color: #1c1c1e;
 }
 
 /* Skills / Languages */
@@ -74,17 +82,17 @@ section h2 {
   gap: 0.5rem 1rem;
 }
 .skills-list span, .languages-list span {
-  background: #3a3a3c;
+  background: #f0f0f0;
   padding: 0.4rem 0.8rem;
   border-radius: 12px;
   font-size: 0.95rem;
-  color: #f0f0f0;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-  transition: transform 0.2s ease;
+  color: #1c1c1e;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, background 0.3s ease;
 }
 .skills-list span:hover, .languages-list span:hover {
   transform: scale(1.05);
-  background: #505052;
+  background: #e0e0e0;
 }
 
 /* Job & Education Entries */
@@ -93,15 +101,15 @@ section h2 {
   justify-content: space-between;
   flex-wrap: wrap;
   margin-bottom: 1.3rem;
-  background: #3a3a3c;
+  background: #f7f7f7;
   padding: 1rem;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
 }
 .job:hover, .education-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
 }
 .job-left, .edu-left {
   flex: 1 1 60%;
@@ -109,20 +117,19 @@ section h2 {
 .job-dates, .education-dates {
   flex: 1 1 35%;
   text-align: right;
-  color: #a0a0a0;
+  color: #666666;
 }
 .job ul, .education-item p {
   margin: 0.5rem 0 0 1rem;
-  color: #e0e0e0;
 }
 .job h3, .edu-left h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #ffffff;
+  color: #1c1c1e;
 }
 .company, .school {
   font-size: 0.95rem;
-  color: #c0c0c0;
+  color: #888888;
 }
 
 /* Certifications & Projects */
@@ -131,7 +138,6 @@ section h2 {
 }
 #certifications li, #projects li {
   margin-bottom: 0.4rem;
-  color: #f0f0f0;
 }
 
 /* Footer */
@@ -164,39 +170,43 @@ section h2 {
 }
 
 /* ================================ */
-/* Print / PDF Friendly             */
+/* Dark Mode Support                 */
 /* ================================ */
-@media print {
+@media (prefers-color-scheme: dark) {
   body {
-    font-size: 12pt;
-    color: #000 !important;
-    background: #fff !important;
+    background: #1c1c1e;
+    color: #f0f0f0;
   }
-
   .resume-container {
-    width: 100%;
-    max-width: 210mm;
-    margin: 0 auto;
-    padding: 15mm;
-    box-shadow: none;
-    background: #fff !important;
+    background: #2c2c2e;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   }
-
-  .site-header img {
-    max-width: 50mm;
-    height: auto;
+  section h2 {
+    border-color: #444444;
+    color: #f0f0f0;
   }
-
-  .site-header, .site-footer, .onyx-dock, .download-container {
-    display: none !important;
+  .skills-list span, .languages-list span {
+    background: #3a3a3c;
+    color: #f0f0f0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
   }
-
-  h1, h2, h3 {
-    page-break-after: avoid;
-    page-break-inside: avoid;
+  .skills-list span:hover, .languages-list span:hover {
+    background: #505052;
   }
-
-  section {
-    page-break-inside: avoid;
+  .job, .education-item {
+    background: #3a3a3c;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  .job:hover, .education-item:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  }
+  .job-dates, .education-dates {
+    color: #a0a0a0;
+  }
+  .company, .school {
+    color: #c0c0c0;
+  }
+  .site-footer {
+    color: #888888;
   }
 }
