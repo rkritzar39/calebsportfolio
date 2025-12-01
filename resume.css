@@ -1,32 +1,32 @@
 /* ================================ */
-/* Resume Styling - Standalone CSS  */
+/* Dark Mode Resume Styling         */
 /* ================================ */
 
-/ Base Fonts & Layout /
+/* Base Fonts & Layout */
 body, html {
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   line-height: 1.65;
   margin: 0;
   padding: 0;
-  color: #000000;
-  background: #f7f7f7;
+  color: #f0f0f0;
+  background: #1c1c1e;
 }
 
 .resume-container {
   max-width: 900px;
   margin: 2rem auto;
-  padding: 1.5rem;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  padding: 2rem;
+  background: #2c2c2e;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 }
 
-/ Header /
+/* Header */
 .site-header {
   display: flex;
   justify-content: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 .header-inner {
   display: flex;
@@ -38,51 +38,70 @@ body, html {
   height: 100px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid #007AFF;
 }
 .header-text h1 {
   margin: 0;
   font-size: 2rem;
+  color: #ffffff;
 }
 .contact-line {
-  color: #666666;
+  color: #a0a0a0;
   margin: 0.2rem 0;
 }
 .email-link {
-  color: #007AFF;
+  color: #0a84ff;
   text-decoration: none;
+  font-weight: 500;
 }
 
-/ Sections /
+/* Sections */
 section {
-  margin-bottom: 2rem;
+  margin-bottom: 2.2rem;
 }
 section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 0.8rem;
-  border-bottom: 1px solid #dddddd;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #444444;
   padding-bottom: 0.2rem;
+  color: #ffffff;
 }
 
-/ Skills / Languages /
+/* Skills / Languages */
 .skills-list, .languages-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
 }
 .skills-list span, .languages-list span {
-  background: #f0f0f0;
-  padding: 0.3rem 0.6rem;
-  border-radius: 8px;
+  background: #3a3a3c;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
   font-size: 0.95rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  color: #f0f0f0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  transition: transform 0.2s ease;
+}
+.skills-list span:hover, .languages-list span:hover {
+  transform: scale(1.05);
+  background: #505052;
 }
 
-/ Job & Education Entries /
+/* Job & Education Entries */
 .job, .education-item {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: 1.3rem;
+  background: #3a3a3c;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.job:hover, .education-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
 .job-left, .edu-left {
   flex: 1 1 60%;
@@ -90,58 +109,63 @@ section h2 {
 .job-dates, .education-dates {
   flex: 1 1 35%;
   text-align: right;
-  color: #666666;
+  color: #a0a0a0;
 }
 .job ul, .education-item p {
   margin: 0.5rem 0 0 1rem;
+  color: #e0e0e0;
 }
 .job h3, .edu-left h3 {
   margin: 0;
   font-size: 1.1rem;
+  color: #ffffff;
 }
 .company, .school {
   font-size: 0.95rem;
-  color: #666666;
+  color: #c0c0c0;
 }
 
-/ Certifications & Projects /
+/* Certifications & Projects */
 #certifications ul, #projects ul {
   padding-left: 1.2rem;
 }
 #certifications li, #projects li {
   margin-bottom: 0.4rem;
+  color: #f0f0f0;
 }
 
-/ Footer /
+/* Footer */
 .site-footer {
   text-align: center;
   margin: 3rem 0 1rem 0;
   font-size: 0.9rem;
-  color: #666666;
+  color: #888888;
 }
 
-/ Download Button /
+/* Download Button */
 .download-container {
   text-align: center;
   margin: 2rem 0;
 }
 #download-btn {
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1.4rem;
   font-size: 1rem;
   border: none;
-  border-radius: 8px;
-  background: #007AFF;
-  color: #fff;
+  border-radius: 10px;
+  background: #0a84ff;
+  color: #ffffff;
   cursor: pointer;
-  transition: background 0.3s ease;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 #download-btn:hover {
-  background: #005BBB;
+  background: #006edc;
+  transform: scale(1.05);
 }
 
-/ ================================ /
-/ Print / PDF Friendly              /
-/ ================================ /
+/* ================================ */
+/* Print / PDF Friendly             */
+/* ================================ */
 @media print {
   body {
     font-size: 12pt;
@@ -151,7 +175,7 @@ section h2 {
 
   .resume-container {
     width: 100%;
-    max-width: 210mm; / A4 */
+    max-width: 210mm;
     margin: 0 auto;
     padding: 15mm;
     box-shadow: none;
