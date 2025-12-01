@@ -198,10 +198,10 @@
         </ul>
       </section>
 
-    <!-- Download Button -->
-<div class="download-container">
-  <button id="download-btn">Download PDF</button>
-</div>
+      <!-- Download Button -->
+      <div class="download-container">
+        <button id="download-btn">Download PDF</button>
+      </div>
 
     </main>
   </div>
@@ -249,7 +249,7 @@
 
     // PDF Download
     document.getElementById('download-btn').addEventListener('click', () => {
-      const element = document.getElementById('resume-content');
+      const element = document.querySelector('.resume-container');
       html2pdf().from(element).set({
         margin: 10,
         filename: 'Caleb_Kritzar_Resume.pdf',
@@ -259,22 +259,32 @@
     });
 
     // Onyx dock active state & hover effect
-     document.getElementById('download-btn').addEventListener('click', () => {
-    // Select the entire resume container
-    const resume = document.querySelector('.resume-container');
+    document.addEventListener("DOMContentLoaded", () => {
+      const links = document.querySelectorAll('.onyx-dock .dock-item');
+      let current = window.location.pathname.split("/").pop();
+      if (current === "" || current === "/") current = "index.html";
 
-    // PDF options
-    const opt = {
-      margin: 0.3,
-      filename: 'Caleb_Kritzar_Resume.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, logging: true, scrollY: 0 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
+      links.forEach(link => {
+        if (link.getAttribute("href") === current) link.classList.add("active");
 
-    // Generate PDF
-    html2pdf().set(opt).from(resume).save();
-  });
-</script>
+        link.addEventListener('mousemove', e => {
+          const rect = link.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const dx = (x / rect.width) - 0.5;
+          const dy = (y / rect.height) - 0.5;
+          link.style.setProperty('--x', `${x}px`);
+          link.style.setProperty('--y', `${y}px`);
+          link.style.setProperty('--dx', dx);
+          link.style.setProperty('--dy', dy);
+        });
+
+        link.addEventListener('mouseleave', () => {
+          link.style.setProperty('--dx', 0);
+          link.style.setProperty('--dy', 0);
+        });
+      });
+    });
+  </script>
 </body>
 </html>
