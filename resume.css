@@ -6,8 +6,9 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.5;
-  color: #1a1a1a;
-  background: #f7f7f7;
+  color: var(--text-color, #1a1a1a);
+  background: var(--bg-color, #f7f7f7);
+  transition: background 0.3s, color 0.3s;
 }
 
 /* ========================================
@@ -16,28 +17,29 @@ body {
 .resume-container {
   max-width: 900px;
   margin: 30px auto;
-  background: #fff;
+  background: var(--card-bg, #fff);
   padding: clamp(20px, 4vw, 40px);
   border-radius: 12px;
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 .resume-content h2 {
-  border-bottom: 2px solid #ccc;
+  border-bottom: 2px solid var(--divider-color, #ccc);
   padding-bottom: 6px;
   margin-bottom: 12px;
   font-weight: 600;
+  color: var(--heading-color, #111);
 }
 
 /* ========================================
    Header
 ======================================== */
 .site-header {
-  background: #fff;
+  background: var(--card-bg, #fff);
   padding: 20px;
   display: flex;
   justify-content: center;
-  border-bottom: 2px solid #ddd;
+  border-bottom: 2px solid var(--divider-color, #ddd);
 }
 
 .header-inner {
@@ -60,12 +62,13 @@ body {
 .header-text h1 {
   margin: 0;
   font-size: clamp(1.8rem, 3vw, 2.4rem);
+  color: var(--heading-color, #111);
 }
 
 .contact-line {
   font-size: 0.95rem;
   margin-top: 4px;
-  color: #555;
+  color: var(--subtext-color, #555);
 }
 
 .pipe {
@@ -76,7 +79,7 @@ body {
   display: inline-block;
   margin-top: 4px;
   text-decoration: none;
-  color: #0077cc;
+  color: var(--link-color, #0077cc);
 }
 
 /* ========================================
@@ -89,8 +92,8 @@ body {
 }
 
 .skills-list span {
-  background: #0077cc;
-  color: #fff;
+  background: var(--skill-bg, #0077cc);
+  color: var(--skill-color, #fff);
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -114,7 +117,7 @@ body {
   flex: 1 1 35%;
   text-align: right;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--subtext-color, #555);
 }
 
 .job ul, .project-item ul {
@@ -126,11 +129,12 @@ body {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
+  color: var(--heading-color, #111);
 }
 
 .company, .school {
   font-size: 0.9rem;
-  color: #555;
+  color: var(--subtext-color, #555);
 }
 
 /* ========================================
@@ -152,8 +156,8 @@ body {
 }
 
 .it-languages span {
-  background: #ff6f61;
-  color: #fff;
+  background: var(--language-bg, #ff6f61);
+  color: var(--language-color, #fff);
   padding: 5px 10px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -168,8 +172,8 @@ body {
 }
 
 #download-btn {
-  background: #0077cc;
-  color: #fff;
+  background: var(--button-bg, #0077cc);
+  color: var(--button-color, #fff);
   border: none;
   padding: 10px 18px;
   border-radius: 8px;
@@ -179,7 +183,7 @@ body {
 }
 
 #download-btn:hover {
-  background: #005fa3;
+  background: var(--button-hover-bg, #005fa3);
 }
 
 /* ========================================
@@ -189,7 +193,7 @@ body {
   text-align: center;
   padding: 15px 10px;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--subtext-color, #555);
 }
 
 /* ========================================
@@ -223,7 +227,7 @@ body {
     color: #000;
   }
 
-  .onyx-dock, #download-btn {
+  .download-container {
     display: none !important;
   }
 
@@ -236,5 +240,27 @@ body {
 
   .skills-list span, .it-languages span {
     page-break-inside: avoid;
+  }
+}
+
+/* ========================================
+   Dark Mode Variables
+======================================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --heading-color: #fff;
+    --subtext-color: #bbb;
+    --link-color: #4da6ff;
+    --skill-bg: #3399ff;
+    --skill-color: #fff;
+    --language-bg: #ff7f61;
+    --language-color: #fff;
+    --button-bg: #3399ff;
+    --button-color: #fff;
+    --button-hover-bg: #1a73e8;
+    --divider-color: #555;
   }
 }
