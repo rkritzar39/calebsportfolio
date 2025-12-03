@@ -1326,7 +1326,6 @@ function setupCreatorSearch() {
   console.log("Creator search inputs initialized and synced with sorting.");
 }
 
-// displayShoutouts.js
 // ======================================================
 // ========== BUSINESS HOURS DISPLAY (MULTI-RANGE) ======
 // ======================================================
@@ -1376,7 +1375,7 @@ function formatDisplayTimeBI(timeString, visitorTimezone) {
         const [hour, minute] = timeString.split(':').map(Number);
         const nowBiz = DateTime.now().setZone(assumedBusinessTimezone);
         const bizDt = nowBiz.set({ hour, minute, second: 0, millisecond: 0 });
-        const visitorDt = bizDt.setZone(visitorTimezone);
+        const visitorDt = bizDt.setZone(visitorTimezone || assumedBusinessTimezone);
         return visitorDt.toFormat('h:mm a ZZZZ');
     } catch (e) {
         console.error("Error formatting time:", e);
@@ -1407,7 +1406,7 @@ function daysUntil(dateStr) {
     const target = DateTime ? DateTime.fromISO(dateStr, { zone: assumedBusinessTimezone }).startOf('day') : new Date(dateStr);
     if (!target) return '';
     let diffDays;
-    if (DateTime) diffDays = Math.ceil(target.diff(now, 'days').days);
+    if (DateTime && target.diff) diffDays = Math.ceil(target.diff(now, 'days').days);
     else diffDays = Math.ceil((target - now) / (24*60*60*1000));
     return diffDays >= 0 ? diffDays : 0;
 }
@@ -1470,7 +1469,6 @@ function renderBusinessStatus(data) {
     const statusEl = document.getElementById('business-status-display');
     const tempEl = document.getElementById('temporary-hours-display');
     const holidayEl = document.getElementById('holiday-hours-display');
-    const contactEl = document.getElementById('contact-email-display');
 
     const statusMainEl = statusEl.querySelector('.status-main-text');
     const statusReasonEl = statusEl.querySelector('.status-reason-text');
@@ -1599,7 +1597,7 @@ function renderBusinessStatus(data) {
    ------------------------- */
 if(typeof document!=='undefined'){
     document.addEventListener('DOMContentLoaded', displayBusinessInfo);
-    setInterval(displayBusinessInfo, 60000); // Refresh every 60s for live status/countdown
+    setInterval(displayBusinessInfo, 60000); // Refresh every 60s
 }
 
 document.addEventListener("DOMContentLoaded", () => {
