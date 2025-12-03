@@ -3875,75 +3875,75 @@ body.maintenance-active {
 /* ======================================== */
 
 .business-info-section {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border-radius: var(--radius-xl);
-	padding: clamp(20px, 4vw, 30px);
-	margin: 30px auto; /* centered */
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	border: 1px solid var(--border-color);
-	backdrop-filter: var(--backdrop-blur) saturate(120%);
-	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
-	width: 100%;
-	max-width: 900px; /* keeps it centered */
-	box-sizing: border-box;
-	position: relative;
-	overflow: hidden;
-	transition: background 0.3s ease, box-shadow 0.3s ease;
-	color: var(--text-color);
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  border-radius: var(--radius-xl);
+  padding: clamp(20px, 4vw, 30px);
+  margin: 30px auto;
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  border: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur) saturate(120%);
+  -webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
+  width: 100%;
+  max-width: 900px;
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  color: var(--text-color);
 }
 
 /* Section Header */
 .business-info-section h2 {
-	margin-top: 0;
-	margin-bottom: 18px;
-	font-size: 1.6em;
-	font-weight: 700;
-	color: var(--text-color);
-	text-align: center;
-	padding-bottom: 12px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 1.6em;
+  font-weight: 700;
+  color: var(--text-color);
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* --- Status Display --- */
+/* — Status Display — */
 .business-status {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin-bottom: 25px;
-	gap: 10px;
-	text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px;
+  gap: 10px;
+  text-align: center;
 }
 
 .status-main-text {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	border: 1px solid var(--border-color);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	display: inline-flex;
-	align-items: center;
-	gap: 10px;
-	font-weight: 700;
-	font-size: 1.1em;
-	padding: 10px 24px;
-	border-radius: 9999px;
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  border: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1.1em;
+  padding: 10px 24px;
+  border-radius: 9999px;
 }
 
 .status-main-text::before {
-	content: '';
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	background-color: currentColor;
-	box-shadow: 0 0 6px currentColor;
-	animation: pulse-status 2s infinite;
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: currentColor;
+  box-shadow: 0 0 6px currentColor;
+  animation: pulse-status 2s infinite;
 }
 
 @keyframes pulse-status {
-	0%, 100% { transform: scale(1); opacity: 1; }
-	50% { transform: scale(1.25); opacity: 0.7; }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.25); opacity: 0.7; }
 }
 
 .status-main-text.status-open { color: var(--status-open-color, #28a745); }
@@ -3951,21 +3951,20 @@ body.maintenance-active {
 .status-main-text.status-unavailable { color: var(--status-unavailable-color, #fd7e14); }
 
 .status-message {
-	font-size: 0.95em;
-	font-weight: 500;
-	color: var(--secondary-text);
-	max-width: 400px;
-	text-align: center;
+  font-size: 0.95em;
+  font-weight: 500;
+  color: var(--secondary-text);
+  max-width: 400px;
+  text-align: center;
 }
 
 /* ===================================== */
 /* === HOURS LAYOUT (CENTERED + RESPONSIVE) === */
 
-/* Wrap containers centered */
 .hours-list,
 .special-hours-display {
-  max-width: 700px;   /* same width */
-  margin: 0 auto;     /* centered */
+  max-width: 700px;
+  margin: 0 auto;
   width: 100%;
   padding: 0;
   box-sizing: border-box;
@@ -3973,41 +3972,38 @@ body.maintenance-active {
   border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* Cards unified */
+/* Cards */
 .hours-list li,
 .special-hours-display li {
-  max-width: 700px;   /* ensure same width as container */
-  margin: 0 auto 12px auto; /* perfectly centered */
+  max-width: 700px;
+  margin: 0 auto 12px auto;
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 12px;
   align-items: start;
-
   padding: 14px 16px;
   border-radius: var(--radius-lg);
-
   background: var(--content-bg);
   background-image: var(--bubble-gradient);
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
   border: 1px solid var(--border-color);
   backdrop-filter: var(--backdrop-blur);
-
   box-sizing: border-box;
 }
 
 /* hover */
 .hours-list li:hover,
 .special-hours-display li:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
 /* Left side (day) */
 .hours-list li strong,
 .special-hours-display li strong {
-	font-weight: 700;
-	color: var(--text-color);
-	text-align: left;
+  font-weight: 700;
+  color: var(--text-color);
+  text-align: left;
 }
 
 /* Right side (time) */
@@ -4015,47 +4011,47 @@ body.maintenance-active {
 .hours-line.additional-hours,
 .special-hours-details,
 .special-hours-display .hours {
-	text-align: right;
-	font-weight: 500;
-	color: var(--secondary-text);
-	word-break: break-word;
+  text-align: right;
+  font-weight: 500;
+  color: var(--secondary-text);
+  word-break: break-word;
 }
 
 /* Additional hours right-aligned */
 .hours-line.additional-hours {
-	grid-column: 2;
+  grid-column: 2;
 }
 
 /* Highlight today */
 .hours-list li.current-day {
-	border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
+  border-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 .hours-list li.current-day * {
-	color: var(--accent-color);
+  color: var(--accent-color);
 }
 
 /* ===================================== */
 /* === Contact Button === */
 .contact-info {
-	text-align: center;
-	margin-top: 30px;
+  text-align: center;
+  margin-top: 30px;
 }
 .contact-info a {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	border: 1px solid var(--border-color);
-	backdrop-filter: var(--backdrop-blur);
-	padding: 14px 36px;
-	border-radius: 9999px;
-	font-weight: 700;
-	color: var(--accent-color);
-	text-decoration: none;
-	display: inline-block;
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  border: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur);
+  padding: 14px 36px;
+  border-radius: 9999px;
+  font-weight: 700;
+  color: var(--accent-color);
+  text-decoration: none;
+  display: inline-block;
 }
 .contact-info a:hover {
-	transform: translateY(-3px);
-	box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent), var(--bubble-highlight);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 50%, transparent), var(--bubble-highlight);
 }
 
 /* ======================================== */
@@ -4063,12 +4059,12 @@ body.maintenance-active {
 /* ======================================== */
 
 .admin-preview-container {
-	max-width: 700px;
-	margin: 30px auto 0 auto; /* CENTERED */
-	background: var(--bg-color);
-	border: 1px solid var(--border-color);
-	padding: 25px;
-	border-radius: 16px;
+  max-width: 700px;
+  margin: 30px auto 0 auto;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  padding: 25px;
+  border-radius: 16px;
 }
 
 /* ======================================== */
@@ -4080,48 +4076,48 @@ body.maintenance-active {
 .special-hours-list input[type="time"],
 .special-hours-list input[type="date"],
 .special-hours-list input[type="text"] {
-	width: 100%;
-	padding: 12px 14px;
-	border-radius: 10px;
-	box-sizing: border-box;
-	border: 1px solid var(--border-color);
-	background-color: var(--bg-color);
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
 }
 
 /* cards in admin */
 .admin-section-card {
-	background: color-mix(in srgb, var(--border-color) 15%, transparent);
-	padding: 20px 25px;
-	border-radius: 16px;
-	border: 1px solid var(--border-color);
-	margin-bottom: 25px;
+  background: color-mix(in srgb, var(--border-color) 15%, transparent);
+  padding: 20px 25px;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 25px;
 }
 
 /* hours grid */
 .hours-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 
 /* day group */
 .day-hours-group {
-	background: var(--bg-color);
-	padding: 20px;
-	border-radius: 12px;
-	border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
 }
 
 /* special hours admin */
 .special-hours-list .hour-entry {
-	background: var(--bg-color);
-	padding: 20px;
-	border-radius: 12px;
-	border: 1px solid var(--border-color);
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-	gap: 15px;
-	position: relative;
+  background: var(--bg-color);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  position: relative;
 }
 
 /* ======================================== */
@@ -4129,23 +4125,25 @@ body.maintenance-active {
 /* ======================================== */
 
 @media screen and (max-width: 768px) {
-	.hours-list li,
-	.special-hours-display li {
-		grid-template-columns: 1fr;
-		text-align: left;
-	}
-	.hours-line,
-	.hours-line.additional-hours {
-		text-align: left;
-	}
+  .hours-list li,
+  .special-hours-display li {
+    grid-template-columns: 1fr;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .hours-line,
+  .hours-line.additional-hours {
+    text-align: left;
+  }
 }
 
 @media screen and (max-width: 400px) {
-	.hours-list li,
-	.special-hours-display li {
-		font-size: 0.9em;
-		padding: 10px 12px;
-	}
+  .hours-list li,
+  .special-hours-display li {
+    font-size: 0.9em;
+    padding: 10px 12px;
+  }
 }
 
 /* Prevent printing of the page */
