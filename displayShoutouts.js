@@ -1562,36 +1562,69 @@ function renderBusinessStatus(data) {
     // -----------------------
     // Temporary Hours
     // -----------------------
-    if(tempHours.length>0){
-        let tmpHtml = '<h4>Upcoming/Active Temporary Hours</h4><ul class="special-hours-display">';
-        tempHours.forEach(t=>{
-            const daysAwayText = t.startDate ? ` (${daysUntil(t.startDate)} day${daysUntil(t.startDate)===1?'':'s'} away)` : '';
-            const activeClass = (bizDateStr>=t.startDate && bizDateStr<=t.endDate)?'active-hour':'';
-            tmpHtml += `<li class="${activeClass}"><strong>${t.label||'Temporary Schedule'}</strong>
-                <span class="hours">${t.isClosed?'Closed':`${formatDisplayTimeBI(t.open||'',visitorTZ)} - ${formatDisplayTimeBI(t.close||'',visitorTZ)}`}</span>
-                <span class="dates">${formatDate(t.startDate)} to ${formatDate(t.endDate)}${daysAwayText}</span>
-            </li>`;
-        });
-        tmpHtml += '</ul>'; tempEl.innerHTML=tmpHtml; tempEl.style.display='block';
-    } else tempEl.style.display='none';
+    if (tempHours.length > 0) {
+    let tmpHtml = '<h4>Upcoming/Active Temporary Hours</h4><ul class="special-hours-display">';
 
+    tempHours.forEach(t => {
+        const daysAwayText = t.startDate
+            ? ` (${daysUntil(t.startDate)} day${daysUntil(t.startDate) === 1 ? '' : 's'} away)`
+            : '';
+
+        const isActive = (bizDateStr >= t.startDate && bizDateStr <= t.endDate);
+        const isOpen = !t.isClosed && t.open && t.close && isRangeActive(t);
+
+        const activeClass = isActive ? 'active-hour' : '';
+        const statusClass = isActive ? (isOpen ? 'status-open' : 'status-closed') : '';
+
+        tmpHtml += `
+        <li class="${activeClass} ${statusClass}">
+            <strong>${t.label || 'Temporary Schedule'}</strong>
+            <span class="hours">
+                ${t.isClosed ? 'Closed' : `${formatDisplayTimeBI(t.open || '', visitorTZ)} - ${formatDisplayTimeBI(t.close || '', visitorTZ)}`}
+            </span>
+            <span class="dates">${formatDate(t.startDate)} to ${formatDate(t.endDate)}${daysAwayText}</span>
+        </li>`;
+    });
+
+    tmpHtml += '</ul>';
+    tempEl.innerHTML = tmpHtml;
+    tempEl.style.display = 'block';
+} else {
+    tempEl.style.display = 'none';
+}
     // -----------------------
     // Holiday Hours
     // -----------------------
-    if(holidayHours.length>0){
-        let holHtml = '<h4>Upcoming Holiday Hours</h4><ul class="special-hours-display">';
-        holidayHours.forEach(h=>{
-            const daysAwayText = h.date ? ` (${daysUntil(h.date)} day${daysUntil(h.date)===1?'':'s'} away)` : '';
-            const activeClass = (bizDateStr===h.date)?'active-hour':'';
-            holHtml += `<li class="${activeClass}"><strong>${h.label||'Holiday'}</strong>
-                <span class="hours">${h.isClosed?'Closed':`${formatDisplayTimeBI(h.open||'',visitorTZ)} - ${formatDisplayTimeBI(h.close||'',visitorTZ)}`}</span>
-                <span class="dates">${formatDate(h.date)}${daysAwayText}</span>
-            </li>`;
-        });
-        holHtml += '</ul>'; holidayEl.innerHTML=holHtml; holidayEl.style.display='block';
-    } else holidayEl.style.display='none';
-}
+    if (holidayHours.length > 0) {
+    let holHtml = '<h4>Upcoming Holiday Hours</h4><ul class="special-hours-display">';
 
+    holidayHours.forEach(h => {
+        const daysAwayText = h.date
+            ? ` (${daysUntil(h.date)} day${daysUntil(h.date) === 1 ? '' : 's'} away)`
+            : '';
+
+        const isActive = (bizDateStr === h.date);
+        const isOpen = !h.isClosed && h.open && h.close && isRangeActive(h);
+
+        const activeClass = isActive ? 'active-hour' : '';
+        const statusClass = isActive ? (isOpen ? 'status-open' : 'status-closed') : '';
+
+        holHtml += `
+        <li class="${activeClass} ${statusClass}">
+            <strong>${h.label || 'Holiday'}</strong>
+            <span class="hours">
+                ${h.isClosed ? 'Closed' : `${formatDisplayTimeBI(h.open || '', visitorTZ)} - ${formatDisplayTimeBI(h.close || '', visitorTZ)}`}
+            </span>
+            <span class="dates">${formatDate(h.date)}${daysAwayText}</span>
+        </li>`;
+    });
+
+    holHtml += '</ul>';
+    holidayEl.innerHTML = holHtml;
+    holidayEl.style.display = 'block';
+} else {
+    holidayEl.style.display = 'none';
+}
 /* -------------------------
    AUTO INIT + LIVE REFRESH
    ------------------------- */
