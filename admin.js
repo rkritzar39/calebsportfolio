@@ -1445,7 +1445,6 @@ async function saveBusinessInfoData(e) {
    ------------------------- */
 
 function updateAdminPreview() {
-    // Build a snapshot of the current form (not reading Firestore)
     const adminPreviewStatus = document.getElementById('admin-preview-status');
     const adminPreviewHours = document.getElementById('admin-preview-hours');
     const adminPreviewContact = document.getElementById('admin-preview-contact');
@@ -1455,13 +1454,12 @@ function updateAdminPreview() {
         return;
     }
 
-    // Read form state
     const contactEmail = document.getElementById('business-contact-email')?.value?.trim() || null;
     const statusOverride = document.getElementById('business-status-override')?.value || 'auto';
 
     const previewData = { contactEmail, statusOverride, regularHours: {}, holidayHours: [], temporaryHours: [] };
 
-    // Regular hours - read multi-range UI
+    // Regular hours read
     document.querySelectorAll('.day-block').forEach(block => {
         const day = block.dataset.day;
         const isClosed = block.querySelector('.closed-all-day')?.checked || false;
@@ -1497,64 +1495,63 @@ function updateAdminPreview() {
         previewData.temporaryHours.push({ startDate, endDate, label, isClosed, open, close });
     });
 
-    // Compute status for preview (simple order: override > holiday > temporary > regular)
+    // Compute current status
     const now = new Date();
-    const previewDateStr = now.toISOString().slice(0,10); // YYYY-MM-DD
-    const previewDayName = daysOfWeek[(now.getDay() + 6) % 7]; // align Sunday->last
+    const previewDateStr = now.toISOString().slice(0,10);
+    const previewDayName = daysOfWeek[(now.getDay() + 6) % 7]; // Align Sunday last
     const previewMinutes = now.getHours() * 60 + now.getMinutes();
 
     let currentStatus = 'Closed';
     let reason = 'Regular Hours';
 
+    // Override handling
     if (previewData.statusOverride !== 'auto') {
-        currentStatus = previewData.statusOverride === 'open' ? 'Open' : (previewData.statusOverride === 'closed' ? 'Closed' : 'Temporarily Unavailable');
+        currentStatus = previewData.statusOverride === 'open'
+            ? 'Open'
+            : previewData.statusOverride === 'closed'
+                ? 'Closed'
+                : 'Temporarily Unavailable';
         reason = 'Manual Override';
     } else {
-        // Holiday check
+        // Holiday
         const todayHoliday = previewData.holidayHours.find(h => h.date === previewDateStr);
         if (todayHoliday) {
             reason = `Holiday (${todayHoliday.label || todayHoliday.date})`;
             if (todayHoliday.isClosed) currentStatus = 'Closed';
             else if (todayHoliday.open && todayHoliday.close) {
-                const openM = timeStringToMinutesBI(todayHoliday.open);
-                const closeM = timeStringToMinutesBI(todayHoliday.close);
-                if (openM !== null && closeM !== null && previewMinutes >= openM && previewMinutes < closeM) currentStatus = 'Open';
-                else currentStatus = 'Closed';
-            } else currentStatus = 'Closed';
+                const o = timeStringToMinutesBI(todayHoliday.open);
+                const c = timeStringToMinutesBI(todayHoliday.close);
+                currentStatus = (o !== null && c !== null && previewMinutes >= o && previewMinutes < c) ? 'Open' : 'Closed';
+            }
         } else {
-            // Temporary check
+            // Temporary
             const activeTemp = previewData.temporaryHours.find(t => previewDateStr >= t.startDate && previewDateStr <= t.endDate);
             if (activeTemp) {
                 if (activeTemp.isClosed) {
                     currentStatus = 'Closed';
                     reason = `Temporary (${activeTemp.label || 'Period'}) - Closed`;
                 } else if (activeTemp.open && activeTemp.close) {
-                    const openM = timeStringToMinutesBI(activeTemp.open);
-                    const closeM = timeStringToMinutesBI(activeTemp.close);
-                    if (openM !== null && closeM !== null && previewMinutes >= openM && previewMinutes < closeM) {
+                    const o = timeStringToMinutesBI(activeTemp.open);
+                    const c = timeStringToMinutesBI(activeTemp.close);
+                    if (o !== null && c !== null && previewMinutes >= o && previewMinutes < c) {
                         currentStatus = 'Temporarily Unavailable';
                         reason = `Temporary (${activeTemp.label || 'Period'})`;
-                    } else {
-                        // fall through to regular
                     }
                 }
             }
 
             if (reason === 'Regular Hours') {
-                const todayRegular = previewData.regularHours[previewDayName];
-                if (todayRegular && !todayRegular.isClosed && Array.isArray(todayRegular.ranges) && todayRegular.ranges.length) {
-                    // if any range active now => Open
-                    const active = todayRegular.ranges.some(r => {
-                        const openM = timeStringToMinutesBI(r.open);
-                        const closeM = timeStringToMinutesBI(r.close);
-                        if (openM === null || closeM === null) return false;
-                        if (closeM > openM) return previewMinutes >= openM && previewMinutes < closeM;
-                        // overnight: treat active if >= open or < close
-                        return (previewMinutes >= openM) || (previewMinutes < closeM);
+                const cur = previewData.regularHours[previewDayName];
+                if (cur && !cur.isClosed && Array.isArray(cur.ranges)) {
+                    const openNow = cur.ranges.some(r => {
+                        const o = timeStringToMinutesBI(r.open);
+                        const c = timeStringToMinutesBI(r.close);
+                        if (o == null || c == null) return false;
+                        return c > o
+                            ? previewMinutes >= o && previewMinutes < c
+                            : previewMinutes >= o || previewMinutes < c; // Overnight
                     });
-                    currentStatus = active ? 'Open' : 'Closed';
-                } else {
-                    currentStatus = 'Closed';
+                    currentStatus = openNow ? 'Open' : 'Closed';
                 }
             }
         }
@@ -1564,41 +1561,43 @@ function updateAdminPreview() {
     let statusClass = 'status-closed';
     if (currentStatus === 'Open') statusClass = 'status-open';
     else if (currentStatus === 'Temporarily Unavailable') statusClass = 'status-unavailable';
-    adminPreviewStatus.innerHTML = `<span class="${statusClass}">${currentStatus}</span> <span class="status-reason">(${reason})</span>`;
 
-   // Render hours preview (stacked, multi-range, right-aligned)
-let html = '<h4>Regular Hours</h4><ul>';
-daysOfWeek.forEach(day => {
-    const d = previewData.regularHours[day] || { isClosed: true, ranges: [] };
-    html += `<li><strong>${capitalizeFirstLetter(day)}:</strong>`;
+    adminPreviewStatus.innerHTML =
+        `<span class="${statusClass}">${currentStatus}</span> <span class="status-reason">(${reason})</span>`;
 
-    if (d.isClosed) {
-        html += '<span class="hours-line">Closed</span>';
-    } else if (!Array.isArray(d.ranges) || d.ranges.length === 0) {
-        html += '<span class="hours-line">No hours added</span>';
-    } else {
-        d.ranges.forEach((r, i) => {
-            const disp = (r.open && r.close) 
-                ? `${formatTimeForAdminPreview(r.open)} – ${formatTimeForAdminPreview(r.close)} ET` 
-                : (r.text || 'See details');
-            
-            if (i === 0) {
-                html += `<span class="hours-line">${disp}</span>`;
-            } else {
-                html += `<div class="hours-line additional-hours">${disp}</div>`;
-            }
-        });
-    }
+    // Render hours with TODAY highlight
+    let html = '<h4>Regular Hours</h4><ul>';
 
-    html += '</li>';
-});
-html += '</ul>';
+    daysOfWeek.forEach(day => {
+        const isToday = day === previewDayName;
+        const d = previewData.regularHours[day] || { isClosed: true, ranges: [] };
 
+        html += `<li class="${isToday ? 'today-highlight' : ''}"><strong>${capitalizeFirstLetter(day)}:</strong>`;
+
+        if (d.isClosed) {
+            html += '<span class="hours-line">Closed</span>';
+        } else if (!d.ranges.length) {
+            html += '<span class="hours-line">No hours added</span>';
+        } else {
+            d.ranges.forEach((r, i) => {
+                const disp = (r.open && r.close)
+                    ? `${formatTimeForAdminPreview(r.open)} – ${formatTimeForAdminPreview(r.close)} ET`
+                    : 'See details';
+
+                if (i === 0) html += `<span class="hours-line">${disp}</span>`;
+                else html += `<div class="hours-line additional-hours">${disp}</div>`;
+            });
+        }
+        html += '</li>';
+    });
+
+    html += '</ul>';
 
     if (previewData.temporaryHours.length) {
         html += '<h4>Temporary Hours</h4><ul>';
         previewData.temporaryHours.forEach(t => {
-            html += `<li><strong>${t.label || 'Temporary'}:</strong> <div>${t.startDate} → ${t.endDate} ${t.isClosed ? '<span>Closed</span>' : `<span>${formatTimeForAdminPreview(t.open) || '?'} - ${formatTimeForAdminPreview(t.close) || '?' } ET</span>`}</div></li>`;
+            html += `<li><strong>${t.label || 'Temporary'}:</strong> <div>${t.startDate} → ${t.endDate} ${t.isClosed ? '<span>Closed</span>' :
+                `<span>${formatTimeForAdminPreview(t.open) || '?'} - ${formatTimeForAdminPreview(t.close) || '?'} ET</span>`}</div></li>`;
         });
         html += '</ul>';
     }
@@ -1606,15 +1605,20 @@ html += '</ul>';
     if (previewData.holidayHours.length) {
         html += '<h4>Holiday Hours</h4><ul>';
         previewData.holidayHours.forEach(h => {
-            html += `<li><strong>${h.label || 'Holiday'}:</strong> <div>${h.date} ${h.isClosed ? '<span>Closed</span>' : `<span>${formatTimeForAdminPreview(h.open) || '?'} - ${formatTimeForAdminPreview(h.close) || '?' } ET</span>`}</div></li>`;
+            html += `<li><strong>${h.label || 'Holiday'}:</strong> <div>${h.date} ${h.isClosed ? '<span>Closed</span>' :
+                `<span>${formatTimeForAdminPreview(h.open) || '?'} - ${formatTimeForAdminPreview(h.close) || '?'} ET</span>`}</div></li>`;
         });
         html += '</ul>';
     }
 
     html += '<p class="preview-timezone-note">Preview based on your browser time. Hours entered as ET.</p>';
+
     adminPreviewHours.innerHTML = html;
 
-    adminPreviewContact.innerHTML = previewData.contactEmail ? `Contact: <a href="mailto:${previewData.contactEmail}" target="_blank">${previewData.contactEmail}</a>` : '';
+    adminPreviewContact.innerHTML =
+        previewData.contactEmail
+            ? `Contact: <a href="mailto:${previewData.contactEmail}" target="_blank">${previewData.contactEmail}</a>`
+            : '';
 }
 
 /* -------------------------
