@@ -1363,7 +1363,7 @@ function formatTime12hSimple(t) {
 function formatDisplayTimeBI(timeString, visitorTimezone) {
   if (!timeString) return '?';
   if (typeof luxon === 'undefined' || !luxon.DateTime) {
-    return `${formatTime12hSimple(timeString)} ET`;
+    return `${formatTime12hSimple(timeString)}`;
   }
 
   try {
@@ -1472,20 +1472,12 @@ function renderBusinessStatus(data) {
     const holiday = holidayHours.find(h => h.date === bizDateStr);
     if (holiday) {
       reasonText = `Holiday (${holiday.label || 'Event'})`;
-      currentStatus = holiday.isClosed
-        ? 'Closed'
-        : isRangeActive(holiday)
-        ? 'Open'
-        : 'Closed';
+      currentStatus = holiday.isClosed ? 'Closed' : isRangeActive(holiday) ? 'Open' : 'Closed';
     } else {
       const temp = tempHours.find(t => bizDateStr >= t.startDate && bizDateStr <= t.endDate);
       if (temp) {
         reasonText = `Temporary (${temp.label || 'Schedule'})`;
-        currentStatus = temp.isClosed
-          ? 'Closed'
-          : isRangeActive(temp)
-          ? 'Open'
-          : 'Temporarily Unavailable';
+        currentStatus = temp.isClosed ? 'Closed' : isRangeActive(temp) ? 'Open' : 'Temporarily Unavailable';
       } else {
         const today = regularHours[bizDay];
         if (today && !today.isClosed && today.ranges.some(r => isRangeActive(r))) {
@@ -1509,45 +1501,14 @@ function renderBusinessStatus(data) {
   statusMain.textContent = currentStatus;
   statusReason.textContent = `(${reasonText})`;
 
-  /* -------- REGULAR HOURS -------- */
-  const order = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
-  let regHtml = `<ul class="hours-list">`;
-
-  order.forEach(day => {
-    const dayObj = regularHours[day] || { isClosed: true, ranges: [] };
-    let liClass = '';
-    if (day === bizDay) {
-      liClass =
-        dayObj.isClosed ? 'status-closed' :
-        dayObj.ranges.some(isRangeActive) ? 'status-open' : 'status-closed';
-      liClass += ' current-day';
-    }
-
-    regHtml += `<li class="${liClass}">
-      <strong>${capitalizeFirstLetter(day)}</strong>`;
-
-    if (dayObj.isClosed) {
-      regHtml += `<div class="hours-line">Closed</div>`;
-    } else {
-      dayObj.ranges.forEach(r => {
-        regHtml += `<div class="hours-line additional-hours">
-          ${formatDisplayTimeBI(r.open, visitorTZ)} - ${formatDisplayTimeBI(r.close, visitorTZ)}
-        </div>`;
-      });
-    }
-
-    regHtml += `</li>`;
-  });
-
-  regHtml += `</ul>`;
-  hoursEl.innerHTML = regHtml;
-
-  /* -------- TEMP HOURS -------- */
+  /* -------- TEMP HOURS (WITH DAYS UNTIL) -------- */
   if (tempHours.length) {
     let tmpHtml = `<h4>Temporary Hours</h4><ul class="special-hours-display">`;
 
     tempHours.forEach(t => {
       const active = bizDateStr >= t.startDate && bizDateStr <= t.endDate;
+      const daysAway = daysUntil(t.startDate);
+
       const cls =
         t.isClosed ? 'status-closed' :
         active && isRangeActive(t) ? 'status-open' :
@@ -1556,7 +1517,7 @@ function renderBusinessStatus(data) {
       tmpHtml += `<li class="${cls}">
         <strong>${t.label}</strong>
         <span class="hours">${t.isClosed ? 'Closed' : formatDisplayTimeBI(t.open, visitorTZ) + ' - ' + formatDisplayTimeBI(t.close, visitorTZ)}</span>
-        <span class="dates">${formatDate(t.startDate)} → ${formatDate(t.endDate)}</span>
+        <span class="dates">${formatDate(t.startDate)} → ${formatDate(t.endDate)} ${!active ? `(${daysAway} days away)` : ''}</span>
       </li>`;
     });
 
@@ -1567,12 +1528,14 @@ function renderBusinessStatus(data) {
     tempEl.style.display = 'none';
   }
 
-  /* -------- HOLIDAY HOURS -------- */
+  /* -------- HOLIDAY HOURS (WITH DAYS UNTIL) -------- */
   if (holidayHours.length) {
     let holHtml = `<h4>Holiday Hours</h4><ul class="special-hours-display">`;
 
     holidayHours.forEach(h => {
       const active = bizDateStr === h.date;
+      const daysAway = daysUntil(h.date);
+
       const cls =
         h.isClosed ? 'status-closed' :
         active && isRangeActive(h) ? 'status-open' :
@@ -1581,7 +1544,7 @@ function renderBusinessStatus(data) {
       holHtml += `<li class="${cls}">
         <strong>${h.label}</strong>
         <span class="hours">${h.isClosed ? 'Closed' : formatDisplayTimeBI(h.open, visitorTZ) + ' - ' + formatDisplayTimeBI(h.close, visitorTZ)}</span>
-        <span class="dates">${formatDate(h.date)}</span>
+        <span class="dates">${formatDate(h.date)} ${!active ? `(${daysAway} days away)` : ''}</span>
       </li>`;
     });
 
