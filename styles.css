@@ -4145,7 +4145,6 @@ body.maintenance-active {
     padding: 10px 12px;
   }
 }
-
 /* Prevent printing of the page */
 @media print {
 	html, body {
