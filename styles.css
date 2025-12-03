@@ -3964,35 +3964,35 @@ body.maintenance-active {
 /* Wrap containers centered */
 .hours-list,
 .special-hours-display {
-	max-width: 700px;
-	margin: 0 auto; /* centered */
-	width: 100%;
-	padding: 0;
-	box-sizing: border-box;
-	list-style: none;
-	border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  max-width: 700px;   /* same width */
+  margin: 0 auto;     /* centered */
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  list-style: none;
+  border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* Cards */
+/* Cards unified */
 .hours-list li,
 .special-hours-display li {
-	width: 100%;
-	margin: 0 auto 12px auto; /* PERFECT CENTER */
-	display: grid;
-	grid-template-columns: 1fr 2fr;
-	gap: 12px;
-	align-items: start;
+  max-width: 700px;   /* ensure same width as container */
+  margin: 0 auto 12px auto; /* perfectly centered */
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+  align-items: start;
 
-	padding: 14px 16px;
-	border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
 
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	border: 1px solid var(--border-color);
-	backdrop-filter: var(--backdrop-blur);
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  border: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur);
 
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 /* hover */
