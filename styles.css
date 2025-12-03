@@ -3972,15 +3972,14 @@ body.maintenance-active {
   border-top: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* Cards */
+/* Cards — unified layout and alignment */
 .hours-list li,
 .special-hours-display li {
   max-width: 700px;
   margin: 0 auto 12px auto;
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 12px;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   padding: 14px 16px;
   border-radius: var(--radius-lg);
   background: var(--content-bg);
@@ -3998,22 +3997,23 @@ body.maintenance-active {
   box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
-/* Left side (day) */
+/* Day label */
 .hours-list li strong,
 .special-hours-display li strong {
   font-weight: 700;
   color: var(--text-color);
   text-align: left;
+  margin-bottom: 6px;
 }
 
-/* Right side (time) */
+/* Time label */
 .hours-line,
 .hours-line.additional-hours,
 .special-hours-details,
 .special-hours-display .hours {
-  text-align: right;
   font-weight: 500;
   color: var(--secondary-text);
+  text-align: left;
   word-break: break-word;
 }
 
@@ -4127,8 +4127,8 @@ body.maintenance-active {
 @media screen and (max-width: 768px) {
   .hours-list li,
   .special-hours-display li {
-    grid-template-columns: 1fr;
-    text-align: left;
+    flex-direction: column;
+    align-items: flex-start;
     max-width: 100%;
   }
 
