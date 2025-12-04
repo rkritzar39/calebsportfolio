@@ -393,5 +393,4 @@ async function sendMessage() {
 // Event listeners
 sendBtn.addEventListener('click', sendMessage);
 inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
-
 document.addEventListener("DOMContentLoaded", () => {
