@@ -394,147 +394,66 @@ async function sendMessage() {
 sendBtn.addEventListener('click', sendMessage);
 inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
 
-// -----------------------------
-// Robust Auto-Refresh + Countdown
-// Paste into script.js (replace older snippet)
-// -----------------------------
-(function () {
-  const DEBUG = true; // set false to silence console logs
-  const defaultMinutes = 5; // fallback interval
-  // Try to read from HTML data attribute on the countdown element: <span id="refresh-countdown" data-minutes="5">
-  function log(...args) { if (DEBUG) console.log("[AutoRefresh]", ...args); }
+document.addEventListener("DOMContentLoaded", () => {
 
-  let refreshIntervalMinutes = defaultMinutes;
-  let countdownEl = null;
+    // ============================
+    // Auto-Refresh Settings
+    // ============================
+    let refreshInterval = 30; // seconds between soft refreshes
+    let fullReloadMinutes = 30; // full reload every 30 minutes
+    let cycle = 0;
 
-  let remainingMs = 0;
-  let countdownTimer = null;
-  let refreshTimer = null;
-  let running = false;
+    // Convert full reload timer to seconds
+    let fullReloadTimer = fullReloadMinutes * 60;
 
-  function formatTime(ms) {
-    const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${String(seconds).padStart(2, "0")}`;
-  }
+    const countdownEl = document.getElementById("refresh-countdown");
 
-  function clearAllTimers() {
-    if (countdownTimer) clearInterval(countdownTimer);
-    if (refreshTimer) clearInterval(refreshTimer);
-    countdownTimer = null;
-    refreshTimer = null;
-    running = false;
-  }
+    // ============================
+    // Minimal Countdown Loop
+    // ============================
+    function updateCountdown() {
+        const secondsLeft = refreshInterval - cycle;
 
-  function updateCountdownDisplay() {
-    if (!countdownEl) return;
-    countdownEl.textContent = formatTime(remainingMs);
-  }
+        countdownEl.textContent = `${secondsLeft}s`;
+        cycle++;
 
-  function tickCountdown() {
-    remainingMs -= 1000;
-    if (remainingMs < 0) remainingMs = 0;
-    updateCountdownDisplay();
-    if (remainingMs <= 0) {
-      log("Timer reached zero, attempting reload (visible:", document.visibilityState === "visible", ")");
-      // double-check visibility at the moment of reload
-      if (document.visibilityState === "visible") {
-        location.reload();
-      } else {
-        // If not visible, wait until visible
-        log("Tab hidden at zero — waiting for visibility to reload.");
-      }
-    }
-  }
-
-  function startTimers() {
-    if (running) {
-      log("Auto-refresh already running — skipping start.");
-      return;
-    }
-
-    remainingMs = refreshIntervalMinutes * 60 * 1000;
-    updateCountdownDisplay();
-
-    // Countdown tick every 1s (update display)
-    countdownTimer = setInterval(tickCountdown, 1000);
-
-    // Backup refresh: reload on interval boundary, but visibility-checked
-    refreshTimer = setInterval(() => {
-      if (document.visibilityState === "visible") {
-        log("Interval elapsed and document visible → reload");
-        location.reload();
-      } else {
-        log("Interval elapsed but tab not visible; skipping reload.");
-      }
-    }, refreshIntervalMinutes * 60 * 1000);
-
-    running = true;
-    log("Started auto-refresh:", refreshIntervalMinutes, "minutes");
-  }
-
-  function stopTimers() {
-    clearAllTimers();
-    log("Stopped auto-refresh timers.");
-  }
-
-  function initAutoRefresh() {
-    // Find element
-    countdownEl = document.getElementById("refresh-countdown");
-    if (!countdownEl) {
-      log("No element with id 'refresh-countdown' found. Add this HTML:\n<li id=\"refresh-timer-info\"><span class=\"version-label\">🔁 <strong>Auto-Refresh:</strong></span><span class=\"version-value\" id=\"refresh-countdown\">Starting...</span></li>");
-      return;
-    }
-
-    // Read optional minutes from data-minutes attribute on the countdown element
-    const attr = countdownEl.getAttribute("data-minutes");
-    if (attr && !isNaN(Number(attr))) {
-      refreshIntervalMinutes = Math.max(0.1, Number(attr));
-    }
-
-    // set initial display
-    remainingMs = refreshIntervalMinutes * 60 * 1000;
-    updateCountdownDisplay();
-
-    // start when page loads and tab is visible
-    if (document.visibilityState === "visible") startTimers();
-
-    // Pause when tab hidden; resume when visible (avoid duplicate starts)
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") {
-        log("visibilitychange → visible");
-        startTimers();
-        // if timer reached 0 while hidden, reload now
-        if (remainingMs <= 0) {
-          log("Reloading now because timer reached 0 while hidden.");
-          location.reload();
+        // Trigger soft refresh
+        if (cycle >= refreshInterval) {
+            cycle = 0;
+            softRefresh();
         }
-      } else {
-        log("visibilitychange → hidden");
-        stopTimers();
-      }
-    });
 
-    // Defensive: stop timers when the page is unloaded
-    window.addEventListener("beforeunload", () => clearAllTimers());
-  }
+        // Trigger full reload
+        fullReloadTimer--;
+        if (fullReloadTimer <= 0) {
+            location.reload();
+        }
+    }
 
-  // Public debug helper (call from console)
-  window.autoRefreshDebug = function () {
-    return {
-      running,
-      refreshIntervalMinutes,
-      remainingMs,
-      elementFound: !!countdownEl,
-      visibility: document.visibilityState,
-    };
-  };
+    // ============================
+    // Soft Refresh (low reads)
+    // ============================
+    function softRefresh() {
+        countdownEl.textContent = "Refreshing…";
 
-  // Initialize once DOM is ready
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initAutoRefresh);
-  } else {
-    initAutoRefresh();
-  }
-})();
+        console.log("🔄 Soft refresh triggered");
+
+        // Only refresh lightweight data
+        if (window.updateStatus) window.updateStatus();
+        if (window.updateShoutouts) window.updateShoutouts();
+        if (window.updateWeather) window.updateWeather();
+        if (window.updateCountdown) window.updateCountdown();
+
+        // Restore countdown after 1 second
+        setTimeout(() => {
+            countdownEl.textContent = `${refreshInterval - cycle}s`;
+        }, 1000);
+    }
+
+    // ============================
+    // Start everything
+    // ============================
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+});
