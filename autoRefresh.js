@@ -1,5 +1,6 @@
+// autoRefresh.js
 document.addEventListener("DOMContentLoaded", () => {
-    const REFRESH_INTERVAL = 60; // seconds
+    const REFRESH_INTERVAL = 60; // seconds until auto-refresh
     const countdownEl = document.getElementById('refresh-countdown');
 
     if (!countdownEl) {
@@ -21,8 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const minutes = Math.floor(remaining / 60);
         const seconds = remaining % 60;
-
-        countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2,'0')}`;
+        countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     }
 
     updateCountdown();
