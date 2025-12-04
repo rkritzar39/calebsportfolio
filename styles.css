@@ -3950,7 +3950,8 @@ body.maintenance-active {
 .status-main-text.status-closed { color: #dc3545; }
 .status-main-text.status-unavailable { color: #fd7e14; }
 
-.status-message {
+.status-message,
+.status-reason-text {
   font-size: 0.95em;
   font-weight: 500;
   color: var(--secondary-text);
@@ -3995,7 +3996,7 @@ body.maintenance-active {
 .hours-list li:hover,
 .special-hours-display li:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4), var(--bubble-highlight);
+  box-shadow: 0 10px 25px color-mix(in srgb, var(--shadow-color, rgba(0,0,0,0.4)) 40%, transparent), var(--bubble-highlight);
 }
 
 /* Day label */
@@ -4003,6 +4004,7 @@ body.maintenance-active {
 .special-hours-display li strong {
   font-weight: 700;
   color: var(--text-color);
+  text-align: left;
   margin-bottom: 6px;
 }
 
@@ -4013,14 +4015,21 @@ body.maintenance-active {
 .special-hours-display .hours {
   font-weight: 500;
   color: var(--secondary-text);
+  text-align: left;
+  word-break: break-word;
+}
+
+/* Additional hours right-aligned */
+.hours-line.additional-hours {
+  grid-column: 2;
 }
 
 /* Highlight today */
 .hours-list li.current-day {
-  border-color: var(--accent-color);
+  border-color: color-mix(in srgb, var(--accent-color, #00ffff) 40%, transparent);
 }
 .hours-list li.current-day * {
-  color: var(--accent-color);
+  color: var(--accent-color, #00ffff);
 }
 
 /* ======================================== */
@@ -4039,7 +4048,7 @@ body.maintenance-active {
   color: #28a745;
 }
 .special-hours-display li.status-open {
-  box-shadow: 0 0 12px rgba(40,167,69,0.35), var(--bubble-highlight);
+  box-shadow: 0 0 12px rgba(40,167,69,0.18), var(--bubble-highlight);
 }
 
 /* RED = CLOSED */
@@ -4054,7 +4063,7 @@ body.maintenance-active {
   color: #dc3545;
 }
 .special-hours-display li.status-closed {
-  box-shadow: 0 0 12px rgba(220,53,69,0.35), var(--bubble-highlight);
+  box-shadow: 0 0 12px rgba(220,53,69,0.18), var(--bubble-highlight);
 }
 
 /* ORANGE = TEMP */
@@ -4069,7 +4078,12 @@ body.maintenance-active {
   color: #fd7e14;
 }
 .special-hours-display li.status-temp {
-  box-shadow: 0 0 12px rgba(253,126,20,0.35), var(--bubble-highlight);
+  box-shadow: 0 0 12px rgba(253,126,20,0.18), var(--bubble-highlight);
+}
+
+/* Active highlight extra */
+.special-hours-display li.active-hour {
+  outline: 2px solid color-mix(in srgb, var(--accent-color, #00ffff) 15%, transparent);
 }
 
 /* ===================================== */
@@ -4126,6 +4140,7 @@ body.maintenance-active {
   background-color: var(--bg-color);
 }
 
+/* cards in admin */
 .admin-section-card {
   background: color-mix(in srgb, var(--border-color) 15%, transparent);
   padding: 20px 25px;
@@ -4134,12 +4149,14 @@ body.maintenance-active {
   margin-bottom: 25px;
 }
 
+/* hours grid */
 .hours-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
 }
 
+/* day group */
 .day-hours-group {
   background: var(--bg-color);
   padding: 20px;
@@ -4147,6 +4164,7 @@ body.maintenance-active {
   border: 1px solid var(--border-color);
 }
 
+/* special hours admin */
 .special-hours-list .hour-entry {
   background: var(--bg-color);
   padding: 20px;
@@ -4155,6 +4173,7 @@ body.maintenance-active {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 15px;
+  position: relative;
 }
 
 /* ======================================== */
@@ -4168,6 +4187,11 @@ body.maintenance-active {
     align-items: flex-start;
     max-width: 100%;
   }
+
+  .hours-line,
+  .hours-line.additional-hours {
+    text-align: left;
+  }
 }
 
 @media screen and (max-width: 400px) {
@@ -4177,6 +4201,7 @@ body.maintenance-active {
     padding: 10px 12px;
   }
 }
+
 /* Prevent printing of the page */
 @media print {
 	html, body {
