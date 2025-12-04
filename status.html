@@ -9,31 +9,33 @@
   <script src="scripts.js" defer></script>
     <script src="settings.js" defer></script>
 </head>
-<body>
+<body class="dark-mode">
 
   <!-- ========================= -->
   <!-- STATUS PAGE -->
   <!-- ========================= -->
 
-  <header>
+  <header class="section">
     <h1>Status Page</h1>
     <p id="last-updated">Last Updated: --</p>
   </header>
 
   <!-- Profile -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Profile</button>
     <div class="content">
       <p>Profile Picture</p>
       <p>Status</p>
-      <section class="collapsible-group">
+      <section class="section collapsible-group">
         <button class="collapsible">Live Status</button>
         <div class="content">
           <p>GitHub</p>
           <p>TikTok Upload</p>
           <p>Reddit</p>
           <p>Custom Status</p>
-          <section class="collapsible-group">
+
+          <!-- Spotify Nested -->
+          <section class="section collapsible-group">
             <button class="collapsible">Spotify</button>
             <div class="content">
               <p>Status</p>
@@ -46,6 +48,7 @@
               <p>Song Accent Color</p>
             </div>
           </section>
+
           <p>Discord Status</p>
         </div>
       </section>
@@ -53,7 +56,7 @@
   </section>
 
   <!-- Useful Links -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Useful Links</button>
     <div class="content">
       <p>Search Bar</p>
@@ -62,7 +65,7 @@
   </section>
 
   <!-- President -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">President</button>
     <div class="content">
       <p>Picture</p>
@@ -76,7 +79,7 @@
   </section>
 
   <!-- TikTok Creator Shoutouts 1 -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">TikTok Creator Shoutouts</button>
     <div class="content">
       <p>Search Bar</p>
@@ -88,7 +91,7 @@
         <li>A → Z</li>
         <li>Z → A</li>
       </ul>
-      <section class="collapsible-group">
+      <section class="section collapsible-group">
         <button class="collapsible">Creator Card</button>
         <div class="content">
           <p>Profile Picture</p>
@@ -102,8 +105,8 @@
     </div>
   </section>
 
-  <!-- TikTok Creator Shoutouts 2 (repeat structure) -->
-  <section class="collapsible-group">
+  <!-- TikTok Creator Shoutouts 2 -->
+  <section class="section collapsible-group">
     <button class="collapsible">TikTok Creator Shoutouts</button>
     <div class="content">
       <p>Search Bar</p>
@@ -115,7 +118,7 @@
         <li>A → Z</li>
         <li>Z → A</li>
       </ul>
-      <section class="collapsible-group">
+      <section class="section collapsible-group">
         <button class="collapsible">Creator Card</button>
         <div class="content">
           <p>Profile Picture</p>
@@ -130,7 +133,7 @@
   </section>
 
   <!-- YouTube Creator Shoutouts -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">YouTube Creator Shoutouts</button>
     <div class="content">
       <p>Search Bar</p>
@@ -142,7 +145,7 @@
         <li>A → Z</li>
         <li>Z → A</li>
       </ul>
-      <section class="collapsible-group">
+      <section class="section collapsible-group">
         <button class="collapsible">Creator Card</button>
         <div class="content">
           <p>Profile Picture</p>
@@ -158,7 +161,7 @@
   </section>
 
   <!-- Countdown -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Countdown</button>
     <div class="content">
       <p>Years</p>
@@ -173,7 +176,7 @@
   </section>
 
   <!-- Business -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Business</button>
     <div class="content">
       <p>Status</p>
@@ -208,7 +211,7 @@
   </section>
 
   <!-- Tech Info -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Tech Info</button>
     <div class="content">
       <p>Device Name</p>
@@ -227,7 +230,7 @@
   </section>
 
   <!-- Quote of the Day -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Quote of the Day</button>
     <div class="content">
       <p>Date</p>
@@ -235,7 +238,8 @@
       <p>Category</p>
       <p>Custom Category</p>
       <p>Next Quote</p>
-      <section class="collapsible-group">
+
+      <section class="section collapsible-group">
         <button class="collapsible">Add Custom Quote</button>
         <div class="content">
           <p>Custom Quote</p>
@@ -244,7 +248,8 @@
           <p>Custom Category</p>
         </div>
       </section>
-      <section class="collapsible-group">
+
+      <section class="section collapsible-group">
         <button class="collapsible">Manage Quotes</button>
         <div class="content">
           <p>Category</p>
@@ -255,24 +260,18 @@
     </div>
   </section>
 
-  <!-- Useful Links -->
-  <section class="collapsible-group">
+  <!-- Remaining Sections -->
+  <section class="section collapsible-group">
     <button class="collapsible">Useful Links</button>
-    <div class="content">
-      <p>Search Useful Links</p>
-    </div>
+    <div class="content"><p>Search Useful Links</p></div>
   </section>
 
-  <!-- Disabilities -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Disabilities</button>
-    <div class="content">
-      <p>Search Disabilities</p>
-    </div>
+    <div class="content"><p>Search Disabilities</p></div>
   </section>
 
-  <!-- Version Info -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Version Info</button>
     <div class="content">
       <p>Version</p>
@@ -291,8 +290,7 @@
     </div>
   </section>
 
-  <!-- Back to Top -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Back to Top</button>
     <div class="content">
       <p>Arrow</p>
@@ -301,8 +299,7 @@
     </div>
   </section>
 
-  <!-- Tool Bar -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Tool Bar</button>
     <div class="content">
       <p>Home</p>
@@ -314,24 +311,21 @@
     </div>
   </section>
 
-  <!-- Footer Year -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Footer Year</button>
-    <div class="content">
-      <p>Year</p>
-    </div>
+    <div class="content"><p>Year</p></div>
   </section>
 
   <!-- ========================= -->
   <!-- SETTINGS PAGE -->
   <!-- ========================= -->
 
-  <header>
+  <header class="section">
     <h1>Settings Page</h1>
   </header>
 
   <!-- Appearance -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Appearance</button>
     <div class="content">
       <p>Appearance Mode</p>
@@ -361,7 +355,7 @@
   </section>
 
   <!-- Notifications -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Notifications</button>
     <div class="content">
       <p>In-Site Notifications</p>
@@ -374,7 +368,7 @@
   </section>
 
   <!-- Homepage Sections -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Homepage Sections</button>
     <div class="content">
       <p>Social Links</p>
@@ -394,7 +388,7 @@
   </section>
 
   <!-- Accessibility -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Accessibility</button>
     <div class="content">
       <p>Text Size</p>
@@ -406,7 +400,7 @@
   </section>
 
   <!-- Danger Zone -->
-  <section class="collapsible-group">
+  <section class="section collapsible-group">
     <button class="collapsible">Danger Zone</button>
     <div class="content">
       <p>Reset to Factory Settings</p>
