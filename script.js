@@ -396,64 +396,32 @@ inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessa
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // ============================
-    // Auto-Refresh Settings
-    // ============================
-    let refreshInterval = 30; // seconds between soft refreshes
-    let fullReloadMinutes = 30; // full reload every 30 minutes
-    let cycle = 0;
+// autoRefresh.js
 
-    // Convert full reload timer to seconds
-    let fullReloadTimer = fullReloadMinutes * 60;
+// Set refresh interval in seconds
+const REFRESH_INTERVAL = 60; // 60 seconds
+let countdown = REFRESH_INTERVAL;
 
-    const countdownEl = document.getElementById("refresh-countdown");
+const countdownEl = document.getElementById('refresh-countdown');
 
-    // ============================
-    // Minimal Countdown Loop
-    // ============================
-    function updateCountdown() {
-        const secondsLeft = refreshInterval - cycle;
+function updateCountdown() {
+  if (!countdownEl) return;
 
-        countdownEl.textContent = `${secondsLeft}s`;
-        cycle++;
+  let minutes = Math.floor(countdown / 60);
+  let seconds = countdown % 60;
 
-        // Trigger soft refresh
-        if (cycle >= refreshInterval) {
-            cycle = 0;
-            softRefresh();
-        }
+  countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
 
-        // Trigger full reload
-        fullReloadTimer--;
-        if (fullReloadTimer <= 0) {
-            location.reload();
-        }
-    }
+  countdown--;
 
-    // ============================
-    // Soft Refresh (low reads)
-    // ============================
-    function softRefresh() {
-        countdownEl.textContent = "Refreshing…";
+  if (countdown < 0) {
+    countdown = REFRESH_INTERVAL;
+    location.reload(); // refresh the page
+  }
+}
 
-        console.log("🔄 Soft refresh triggered");
+// Start countdown immediately
+updateCountdown();
 
-        // Only refresh lightweight data
-        if (window.updateStatus) window.updateStatus();
-        if (window.updateShoutouts) window.updateShoutouts();
-        if (window.updateWeather) window.updateWeather();
-        if (window.updateCountdown) window.updateCountdown();
-
-        // Restore countdown after 1 second
-        setTimeout(() => {
-            countdownEl.textContent = `${refreshInterval - cycle}s`;
-        }, 1000);
-    }
-
-    // ============================
-    // Start everything
-    // ============================
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-
-});
+// Update every second
+setInterval(updateCountdown, 1000);
