@@ -396,32 +396,29 @@ inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessa
 
 document.addEventListener("DOMContentLoaded", () => {
 
-// autoRefresh.js
-
-// Set refresh interval in seconds
-const REFRESH_INTERVAL = 60; // 60 seconds
-let countdown = REFRESH_INTERVAL;
-
-const countdownEl = document.getElementById('refresh-countdown');
-
-function updateCountdown() {
+document.addEventListener("DOMContentLoaded", () => {
+  const REFRESH_INTERVAL = 60; // seconds
+  const countdownEl = document.getElementById('refresh-countdown');
   if (!countdownEl) return;
 
-  let minutes = Math.floor(countdown / 60);
-  let seconds = countdown % 60;
+  const refreshTime = Date.now() + REFRESH_INTERVAL * 1000;
 
-  countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  function updateCountdown() {
+    const now = Date.now();
+    let remaining = Math.round((refreshTime - now) / 1000);
 
-  countdown--;
+    if (remaining <= 0) {
+      countdownEl.textContent = "0:00";
+      // Only reload page if user hasn't clicked anything in the last second
+      setTimeout(() => location.reload(), 0);
+      return;
+    }
 
-  if (countdown < 0) {
-    countdown = REFRESH_INTERVAL;
-    location.reload(); // refresh the page
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+    countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
-}
 
-// Start countdown immediately
-updateCountdown();
-
-// Update every second
-setInterval(updateCountdown, 1000);
+  updateCountdown();
+  setInterval(updateCountdown, 500);
+});
