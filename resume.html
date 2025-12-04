@@ -218,7 +218,6 @@
     </svg>
     <span class="dock-label">Home</span>
   </a>
-
   <a href="resume.html" class="dock-item">
     <svg class="dock-icon" viewBox="0 0 24 24">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -229,7 +228,6 @@
     </svg>
     <span class="dock-label">Resume</span>
   </a>
-
   <a href="settings.html" class="dock-item">
     <svg class="dock-icon" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -238,6 +236,7 @@
     <span class="dock-label">Settings</span>
   </a>
 </nav>
+
 <!-- Scripts -->
 <script src="settings.js"></script>
 <script src="script.js"></script>
@@ -264,33 +263,32 @@
   }
 
   // Onyx Dock Active + Hover
-  <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const links = document.querySelectorAll('.onyx-dock .dock-item');
-  let current = window.location.pathname.split("/").pop();
-  if (!current) current = "index.html";
+  document.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelectorAll('.onyx-dock .dock-item');
+    let current = window.location.pathname.split("/").pop();
+    if (!current) current = "index.html";
 
-  links.forEach(link => {
-    if (link.getAttribute("href") === current) link.classList.add("active");
+    links.forEach(link => {
+      if (link.getAttribute("href") === current) link.classList.add("active");
 
-    link.addEventListener('mousemove', e => {
-      const rect = link.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const dx = (x / rect.width) - 0.5;
-      const dy = (y / rect.height) - 0.5;
-      link.style.setProperty('--x', `${x}px`);
-      link.style.setProperty('--y', `${y}px`);
-      link.style.setProperty('--dx', dx);
-      link.style.setProperty('--dy', dy);
-    });
+      link.addEventListener('mousemove', e => {
+        const rect = link.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const dx = (x / rect.width) - 0.5;
+        const dy = (y / rect.height) - 0.5;
+        link.style.setProperty('--x', `${x}px`);
+        link.style.setProperty('--y', `${y}px`);
+        link.style.setProperty('--dx', dx);
+        link.style.setProperty('--dy', dy);
+      });
 
-    link.addEventListener('mouseleave', () => {
-      link.style.setProperty('--dx', 0);
-      link.style.setProperty('--dy', 0);
+      link.addEventListener('mouseleave', () => {
+        link.style.setProperty('--dx', 0);
+        link.style.setProperty('--dy', 0);
+      });
     });
   });
-});
 </script>
 </body>
 </html>
