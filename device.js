@@ -63,10 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
    * Version / Build
    * -------------------------- */
   if (versionEl) {
-    safeSet(versionEl, "v26.1.2");
+    safeSet(versionEl, "v26.5");
   }
   if (buildEl) {
-    safeSet(buildEl, "2025.9.20");
+    safeSet(buildEl, "2025.12.4");
   }
 
   /* ----------------------------
