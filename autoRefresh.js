@@ -1,11 +1,12 @@
-// autorefresh.js
 document.addEventListener("DOMContentLoaded", () => {
-    const REFRESH_INTERVAL = 60; // seconds until auto-refresh
+    const REFRESH_INTERVAL = 60; // seconds
     const countdownEl = document.getElementById('refresh-countdown');
 
-    if (!countdownEl) return; // exit if element not found
+    if (!countdownEl) {
+        console.error("❌ #refresh-countdown element not found.");
+        return;
+    }
 
-    // Calculate the exact timestamp when the page should reload
     const refreshTime = Date.now() + REFRESH_INTERVAL * 1000;
 
     function updateCountdown() {
@@ -14,19 +15,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (remaining <= 0) {
             countdownEl.textContent = "0:00";
-            setTimeout(() => location.reload(), 0); // reload page immediately
+            setTimeout(() => location.reload(), 0);
             return;
         }
 
         const minutes = Math.floor(remaining / 60);
         const seconds = remaining % 60;
 
-        countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2,'0')}`;
     }
 
-    // Initial update
     updateCountdown();
-
-    // Update every 500ms to stay accurate even if tab is inactive
     setInterval(updateCountdown, 500);
 });
