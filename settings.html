@@ -10,35 +10,38 @@
   <link rel="stylesheet" href="style.css" />
 
   <script>
-  (function() {
-    try {
-      const storedSettings = localStorage.getItem('websiteSettings');
-      if (!storedSettings) return;
-      const settings = JSON.parse(storedSettings);
-      
-      // Apply dark/light mode
-      if (settings.appearanceMode === 'dark') {
-        document.documentElement.classList.add('dark-mode');
-      } else if (settings.appearanceMode === 'light') {
-        document.documentElement.classList.add('light-mode');
-      }
-      
-      // Apply font size
-      if (settings.fontSize) {
-         document.documentElement.style.setProperty('--font-size-base', `${settings.fontSize}px`);
-      }
-      
-      // Apply dyslexia font
-      if (settings.dyslexiaFont === 'enabled') {
-         document.documentElement.classList.add('dyslexia-font');
-      }
-      
-    } catch (e) {
-      console.error("Flicker-prevention script error:", e);
-    }
-  })();
-  </script>
+(function() {
+  try {
+    const storedSettings = localStorage.getItem('websiteSettings');
+    if (!storedSettings) return;
+    const settings = JSON.parse(storedSettings);
 
+    // Remove any previous classes
+    document.body.classList.remove('dark-mode', 'light-e');
+
+    // Apply dark/light mode
+    if (settings.appearanceMode === 'dark') {
+      document.body.classList.add('dark-mode');
+    } else if (settings.appearanceMode === 'light') {
+      document.body.classList.add('light-e');
+    }
+
+    // Apply font size
+    if (settings.fontSize) {
+       document.body.style.setProperty('--font-size-base', `${settings.fontSize}px`);
+    }
+
+    // Apply dyslexia font
+    if (settings.dyslexiaFont === 'enabled') {
+       document.body.classList.add('dyslexia-font');
+    }
+
+  } catch (e) {
+    console.error("Flicker-prevention script error:", e);
+  }
+})();
+</script>
+  
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
