@@ -395,30 +395,3 @@ sendBtn.addEventListener('click', sendMessage);
 inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
 
 document.addEventListener("DOMContentLoaded", () => {
-
-document.addEventListener("DOMContentLoaded", () => {
-  const REFRESH_INTERVAL = 60; // seconds
-  const countdownEl = document.getElementById('refresh-countdown');
-  if (!countdownEl) return;
-
-  const refreshTime = Date.now() + REFRESH_INTERVAL * 1000;
-
-  function updateCountdown() {
-    const now = Date.now();
-    let remaining = Math.round((refreshTime - now) / 1000);
-
-    if (remaining <= 0) {
-      countdownEl.textContent = "0:00";
-      // Only reload page if user hasn't clicked anything in the last second
-      setTimeout(() => location.reload(), 0);
-      return;
-    }
-
-    const minutes = Math.floor(remaining / 60);
-    const seconds = remaining % 60;
-    countdownEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  }
-
-  updateCountdown();
-  setInterval(updateCountdown, 500);
-});
