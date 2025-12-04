@@ -1,49 +1,415 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Status – Caleb’s Systems</title>
-
-  <link rel="stylesheet" href="status.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status & Settings Page</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="scripts.js" defer></script>
 </head>
-
 <body>
 
-  <div class="status-container">
+  <!-- ========================= -->
+  <!-- STATUS PAGE -->
+  <!-- ========================= -->
 
-    <h1 class="title">System Status</h1>
-    <p class="subtitle">Live service health for Caleb's Website</p>
+  <header>
+    <h1>Status Page</h1>
+    <p id="last-updated">Last Updated: --</p>
+  </header>
 
-    <div class="status-grid">
-
-      <!-- Main Website -->
-      <div class="status-card" data-check="https://www.busarmydude.org">
-        <h2>Main Website</h2>
-        <div class="status-indicator"></div>
-        <p class="status-text">Checking...</p>
-      </div>
-
-      <!-- GitHub API -->
-      <div class="status-card" data-check="https://api.github.com">
-        <h2>GitHub API</h2>
-        <div class="status-indicator"></div>
-        <p class="status-text">Checking...</p>
-      </div>
-
-      <!-- Portfolio CDN (example) -->
-      <div class="status-card" data-check="https://raw.githubusercontent.com">
-        <h2>Asset CDN</h2>
-        <div class="status-indicator"></div>
-        <p class="status-text">Checking...</p>
-      </div>
-
+  <!-- Profile -->
+  <section class="collapsible-group">
+    <button class="collapsible">Profile</button>
+    <div class="content">
+      <p>Profile Picture</p>
+      <p>Status</p>
+      <section class="collapsible-group">
+        <button class="collapsible">Live Status</button>
+        <div class="content">
+          <p>GitHub</p>
+          <p>TikTok Upload</p>
+          <p>Reddit</p>
+          <p>Custom Status</p>
+          <section class="collapsible-group">
+            <button class="collapsible">Spotify</button>
+            <div class="content">
+              <p>Status</p>
+              <p>Album Cover</p>
+              <p>Progress Bar</p>
+              <p>Start Time</p>
+              <p>Time Remaining</p>
+              <p>End Time</p>
+              <p>Accent Color Override</p>
+              <p>Song Accent Color</p>
+            </div>
+          </section>
+          <p>Discord Status</p>
+        </div>
+      </section>
     </div>
+  </section>
 
-    <p class="footer">Last updated: <span id="last-updated">…</span></p>
+  <!-- Useful Links -->
+  <section class="collapsible-group">
+    <button class="collapsible">Useful Links</button>
+    <div class="content">
+      <p>Search Bar</p>
+      <p>Links</p>
+    </div>
+  </section>
 
-  </div>
+  <!-- President -->
+  <section class="collapsible-group">
+    <button class="collapsible">President</button>
+    <div class="content">
+      <p>Picture</p>
+      <p>Name</p>
+      <p>Date of Birth</p>
+      <p>Height</p>
+      <p>Party</p>
+      <p>Term</p>
+      <p>VP</p>
+    </div>
+  </section>
 
-  <script src="status.js"></script>
+  <!-- TikTok Creator Shoutouts 1 -->
+  <section class="collapsible-group">
+    <button class="collapsible">TikTok Creator Shoutouts</button>
+    <div class="content">
+      <p>Search Bar</p>
+      <p>Last Updated</p>
+      <p>Filter:</p>
+      <ul>
+        <li>Followers High → Low</li>
+        <li>Followers Low → High</li>
+        <li>A → Z</li>
+        <li>Z → A</li>
+      </ul>
+      <section class="collapsible-group">
+        <button class="collapsible">Creator Card</button>
+        <div class="content">
+          <p>Profile Picture</p>
+          <p>Nickname</p>
+          <p>Username</p>
+          <p>Verified</p>
+          <p>Bio</p>
+          <p>Followers</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- TikTok Creator Shoutouts 2 (repeat structure) -->
+  <section class="collapsible-group">
+    <button class="collapsible">TikTok Creator Shoutouts</button>
+    <div class="content">
+      <p>Search Bar</p>
+      <p>Last Updated</p>
+      <p>Filter:</p>
+      <ul>
+        <li>Followers High → Low</li>
+        <li>Followers Low → High</li>
+        <li>A → Z</li>
+        <li>Z → A</li>
+      </ul>
+      <section class="collapsible-group">
+        <button class="collapsible">Creator Card</button>
+        <div class="content">
+          <p>Profile Picture</p>
+          <p>Nickname</p>
+          <p>Username</p>
+          <p>Verified</p>
+          <p>Bio</p>
+          <p>Followers</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- YouTube Creator Shoutouts -->
+  <section class="collapsible-group">
+    <button class="collapsible">YouTube Creator Shoutouts</button>
+    <div class="content">
+      <p>Search Bar</p>
+      <p>Last Updated</p>
+      <p>Filter:</p>
+      <ul>
+        <li>Subscribers High → Low</li>
+        <li>Subscribers Low → High</li>
+        <li>A → Z</li>
+        <li>Z → A</li>
+      </ul>
+      <section class="collapsible-group">
+        <button class="collapsible">Creator Card</button>
+        <div class="content">
+          <p>Profile Picture</p>
+          <p>Cover Photo</p>
+          <p>Nickname</p>
+          <p>Username</p>
+          <p>Verified</p>
+          <p>Bio</p>
+          <p>Subscribers</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Countdown -->
+  <section class="collapsible-group">
+    <button class="collapsible">Countdown</button>
+    <div class="content">
+      <p>Years</p>
+      <p>Months</p>
+      <p>Days</p>
+      <p>Hours</p>
+      <p>Minutes</p>
+      <p>Seconds</p>
+      <p>Date of Event</p>
+      <p>Motivation Quote</p>
+    </div>
+  </section>
+
+  <!-- Business -->
+  <section class="collapsible-group">
+    <button class="collapsible">Business</button>
+    <div class="content">
+      <p>Status</p>
+      <ul>
+        <li>Open</li>
+        <li>Closed</li>
+        <li>Temporary Unavailable</li>
+      </ul>
+      <p>Regular Hours</p>
+      <ul>
+        <li>Monday</li>
+        <li>Tuesday</li>
+        <li>Etc</li>
+      </ul>
+      <p>Timezone</p>
+      <p>Upcoming Holiday</p>
+      <ul>
+        <li>Name</li>
+        <li>Date</li>
+        <li>Status</li>
+        <li>Counter</li>
+      </ul>
+      <p>Temp Hours</p>
+      <ul>
+        <li>Name</li>
+        <li>Date</li>
+        <li>Status</li>
+        <li>Counter</li>
+      </ul>
+      <p>Contact</p>
+    </div>
+  </section>
+
+  <!-- Tech Info -->
+  <section class="collapsible-group">
+    <button class="collapsible">Tech Info</button>
+    <div class="content">
+      <p>Device Name</p>
+      <p>Model</p>
+      <p>Material</p>
+      <p>Storage</p>
+      <p>Battery Capacity</p>
+      <p>Color</p>
+      <p>Price</p>
+      <p>Date Released</p>
+      <p>Date Bought</p>
+      <p>OS Version</p>
+      <p>Battery Health</p>
+      <p>Battery Charge Cycles</p>
+    </div>
+  </section>
+
+  <!-- Quote of the Day -->
+  <section class="collapsible-group">
+    <button class="collapsible">Quote of the Day</button>
+    <div class="content">
+      <p>Date</p>
+      <p>Quote</p>
+      <p>Category</p>
+      <p>Custom Category</p>
+      <p>Next Quote</p>
+      <section class="collapsible-group">
+        <button class="collapsible">Add Custom Quote</button>
+        <div class="content">
+          <p>Custom Quote</p>
+          <p>Author</p>
+          <p>Category</p>
+          <p>Custom Category</p>
+        </div>
+      </section>
+      <section class="collapsible-group">
+        <button class="collapsible">Manage Quotes</button>
+        <div class="content">
+          <p>Category</p>
+          <p>Save Quote</p>
+          <p>Delete Quote</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- Useful Links -->
+  <section class="collapsible-group">
+    <button class="collapsible">Useful Links</button>
+    <div class="content">
+      <p>Search Useful Links</p>
+    </div>
+  </section>
+
+  <!-- Disabilities -->
+  <section class="collapsible-group">
+    <button class="collapsible">Disabilities</button>
+    <div class="content">
+      <p>Search Disabilities</p>
+    </div>
+  </section>
+
+  <!-- Version Info -->
+  <section class="collapsible-group">
+    <button class="collapsible">Version Info</button>
+    <div class="content">
+      <p>Version</p>
+      <p>Build</p>
+      <p>Synced</p>
+      <p>OS</p>
+      <p>Device</p>
+      <p>Browser</p>
+      <p>Resolution</p>
+      <p>Connection</p>
+      <p>Network</p>
+      <p>Sunrise</p>
+      <p>Sunset</p>
+      <p>Weather</p>
+      <p>Status</p>
+    </div>
+  </section>
+
+  <!-- Back to Top -->
+  <section class="collapsible-group">
+    <button class="collapsible">Back to Top</button>
+    <div class="content">
+      <p>Arrow</p>
+      <p>Percentage</p>
+      <p>Progress Ring</p>
+    </div>
+  </section>
+
+  <!-- Tool Bar -->
+  <section class="collapsible-group">
+    <button class="collapsible">Tool Bar</button>
+    <div class="content">
+      <p>Home</p>
+      <p>Resume</p>
+      <p>Status</p>
+      <p>Settings</p>
+      <p>Accent Color</p>
+      <p>Tab Highlight</p>
+    </div>
+  </section>
+
+  <!-- Footer Year -->
+  <section class="collapsible-group">
+    <button class="collapsible">Footer Year</button>
+    <div class="content">
+      <p>Year</p>
+    </div>
+  </section>
+
+  <!-- ========================= -->
+  <!-- SETTINGS PAGE -->
+  <!-- ========================= -->
+
+  <header>
+    <h1>Settings Page</h1>
+  </header>
+
+  <!-- Appearance -->
+  <section class="collapsible-group">
+    <button class="collapsible">Appearance</button>
+    <div class="content">
+      <p>Appearance Mode</p>
+      <ul>
+        <li>Light Mode</li>
+        <li>Dark Mode</li>
+        <li>Match Device</li>
+      </ul>
+      <p>Custom Background</p>
+      <ul>
+        <li>Add File</li>
+        <li>File Name</li>
+        <li>Remove</li>
+        <li>Preview Image</li>
+        <li>Wallpaper Blur</li>
+      </ul>
+      <p>Accent Color</p>
+      <p>Match Song Accent</p>
+      <p>Dark Mode Scheduler</p>
+      <ul>
+        <li>Off</li>
+        <li>Scheduled</li>
+        <li>Start Time</li>
+        <li>End Time</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Notifications -->
+  <section class="collapsible-group">
+    <button class="collapsible">Notifications</button>
+    <div class="content">
+      <p>In-Site Notifications</p>
+      <ul>
+        <li>Website Updates</li>
+        <li>Live Activity Alerts</li>
+        <li>Creator & Social Link Updates</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Homepage Sections -->
+  <section class="collapsible-group">
+    <button class="collapsible">Homepage Sections</button>
+    <div class="content">
+      <p>Social Links</p>
+      <p>President Section</p>
+      <p>TikTok Shoutouts</p>
+      <p>Instagram Shoutouts</p>
+      <p>YouTube Shoutouts</p>
+      <p>Useful Links</p>
+      <p>Countdown</p>
+      <p>Business Section</p>
+      <p>Tech Information</p>
+      <p>Disabilities Section</p>
+      <p>Quote of the Day</p>
+      <p>Live Activity</p>
+      <p>Reset Visible Sections</p>
+    </div>
+  </section>
+
+  <!-- Accessibility -->
+  <section class="collapsible-group">
+    <button class="collapsible">Accessibility</button>
+    <div class="content">
+      <p>Text Size</p>
+      <p>Focus Outline</p>
+      <p>High Contrast</p>
+      <p>Dyslexia-Friendly Font</p>
+      <p>Underline Links</p>
+    </div>
+  </section>
+
+  <!-- Danger Zone -->
+  <section class="collapsible-group">
+    <button class="collapsible">Danger Zone</button>
+    <div class="content">
+      <p>Reset to Factory Settings</p>
+    </div>
+  </section>
+
 </body>
 </html>
