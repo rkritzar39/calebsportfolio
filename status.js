@@ -1,51 +1,62 @@
-// ------------------------------------------
-// VisionOS Glass Status Checker (IMG-PING)
-// ------------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // ==========================================
+    // 1. AUTO-UPDATE TIMESTAMP
+    // ==========================================
+    // Status pages need to show when they were last checked.
+    // This grabs the current time and puts it in the header.
+    const lastUpdatedElement = document.getElementById("last-updated");
+    if (lastUpdatedElement) {
+        const now = new Date();
+        // Format: "Last Updated: 12/4/2023, 10:30:00 AM"
+        lastUpdatedElement.textContent = `Last Updated: ${now.toLocaleString()}`;
+    }
 
-function checkService(card) {
-  const url = card.dataset.check;
-  const indicator = card.querySelector(".status-indicator");
-  const text = card.querySelector(".status-text");
 
-  // Reset to "checking" state
-  indicator.style.background = "#888";
-  indicator.style.boxShadow = "0 0 8px #444";
-  text.textContent = "Checking...";
+    // ==========================================
+    // 2. INCIDENT / STATUS COLLAPSIBLES
+    // ==========================================
+    const collapsibles = document.querySelectorAll(".collapsible");
 
-  // Add a cache-buster to avoid browser caching
-  const testURL = `${url}?_=${Date.now()}`;
+    collapsibles.forEach((button) => {
+        button.addEventListener("click", function() {
+            // Toggle the visual "active" state of the button (the +/- rotation)
+            this.classList.toggle("active");
+            
+            // Get the details panel (the content div)
+            const content = this.nextElementSibling;
 
-  const img = new Image();
-  const startTime = performance.now();
+            // Logic: Is it currently showing incident details?
+            if (content.style.maxHeight) {
+                // CLOSE IT
+                content.style.maxHeight = null;
+                content.classList.remove("open");
+            } else {
+                // OPEN IT (Show details)
+                content.classList.add("open");
+                content.style.maxHeight = content.scrollHeight + "px";
+                
+                // IMPORTANT: If this status is nested inside another category
+                // (e.g., Spotify inside Live Status), resize the parent too.
+                updateParentHeight(content);
+            }
+        });
+    });
 
-  img.onload = () => {
-    const latency = Math.round(performance.now() - startTime);
-
-    indicator.style.background = "#00ff88";
-    indicator.style.boxShadow = "0 0 12px #00ff88";
-    text.textContent = `Online • ${latency}ms`;
-  };
-
-  img.onerror = () => {
-    indicator.style.background = "#ff4444";
-    indicator.style.boxShadow = "0 0 12px #ff4444";
-    text.textContent = "Offline";
-  };
-
-  // Trigger the load
-  img.src = testURL;
-}
-
-function updateAll() {
-  const cards = document.querySelectorAll(".status-card");
-  cards.forEach(card => checkService(card));
-
-  const timestamp = new Date().toLocaleTimeString();
-  document.getElementById("last-updated").textContent = timestamp;
-}
-
-// Run once on load
-updateAll();
-
-// Refresh every 30 seconds
-setInterval(updateAll, 30000);
+    // Helper function to prevent nested incident reports from being cut off
+    function updateParentHeight(element) {
+        let parentContent = element.parentElement.closest('.content');
+        
+        while (parentContent) {
+            if (parentContent.style.maxHeight) {
+                // Add the child's height to the parent's current height
+                const currentHeight = parseInt(parentContent.style.maxHeight);
+                const additionalHeight = element.scrollHeight;
+                
+                parentContent.style.maxHeight = (currentHeight + additionalHeight) + "px";
+            }
+            // Keep moving up to the main container
+            parentContent = parentContent.parentElement.closest('.content');
+        }
+    }
+});
