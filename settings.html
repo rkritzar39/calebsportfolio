@@ -10,38 +10,35 @@
   <link rel="stylesheet" href="style.css" />
 
   <script>
-(function() {
-  try {
-    const storedSettings = localStorage.getItem('websiteSettings');
-    if (!storedSettings) return;
-    const settings = JSON.parse(storedSettings);
-
-    // Remove any previous classes
-    document.body.classList.remove('dark-mode', 'light-e');
-
-    // Apply dark/light mode
-    if (settings.appearanceMode === 'dark') {
-      document.body.classList.add('dark-mode');
-    } else if (settings.appearanceMode === 'light') {
-      document.body.classList.add('light-e');
+  (function() {
+    try {
+      const storedSettings = localStorage.getItem('websiteSettings');
+      if (!storedSettings) return;
+      const settings = JSON.parse(storedSettings);
+      
+      // Apply dark/light mode
+      if (settings.appearanceMode === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+      } else if (settings.appearanceMode === 'light') {
+        document.documentElement.classList.add('light-mode');
+      }
+      
+      // Apply font size
+      if (settings.fontSize) {
+         document.documentElement.style.setProperty('--font-size-base', `${settings.fontSize}px`);
+      }
+      
+      // Apply dyslexia font
+      if (settings.dyslexiaFont === 'enabled') {
+         document.documentElement.classList.add('dyslexia-font');
+      }
+      
+    } catch (e) {
+      console.error("Flicker-prevention script error:", e);
     }
+  })();
+  </script>
 
-    // Apply font size
-    if (settings.fontSize) {
-       document.body.style.setProperty('--font-size-base', `${settings.fontSize}px`);
-    }
-
-    // Apply dyslexia font
-    if (settings.dyslexiaFont === 'enabled') {
-       document.body.classList.add('dyslexia-font');
-    }
-
-  } catch (e) {
-    console.error("Flicker-prevention script error:", e);
-  }
-})();
-</script>
-  
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -511,72 +508,98 @@
     </div>
   </footer>
 
-  <!-- Onyx Dock -->
-<nav class="onyx-dock">
-  <a href="index.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Home</span>
-  </a>
+  <nav class="onyx-dock">
+    <a href="index.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24">
+        <path d="M3 10.5L12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 19.5v-9Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 21v-6h6v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Home</span>
+    </a>
 
-  <a href="resume.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Resume</span>
-  </a>
+    <a href="resume.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Resume</span>
+    </a>
 
-  <a href="status.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Status</span>
-  </a>
+    <a href="settings.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Settings</span>
+    </a>
 
-  <a href="settings.html" class="dock-item">
-    <svg class="dock-icon" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-    <span class="dock-label">Settings</span>
-  </a>
-</nav>
+    <a href="status.html" class="dock-item">
+      <svg class="dock-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09A1.65 1.65 0 0 0 9 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="dock-label">Status</span>
+    </a>
+  </nav>
 
-<!-- Scripts -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const links = document.querySelectorAll('.onyx-dock .dock-item');
-  let current = window.location.pathname.split("/").pop();
-  if (!current) current = "index.html";
+  <script src="settings.js"></script>
+  <script src="script.js"></script>
 
-  links.forEach(link => {
-    if (link.getAttribute("href") === current) link.classList.add("active");
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const links = document.querySelectorAll('.onyx-dock .dock-item');
+      
+      // 1. Get current page for Active State (Robust Check)
+      // Removes query params and .html extension for clean matching
+      let currentPath = window.location.pathname.split("?")[0]; 
+      let currentPage = currentPath.split("/").pop();
+      
+      // Strip .html if present
+      currentPage = currentPage.replace('.html', '');
+      
+      // Default to 'index' if root
+      if (currentPage === "" || currentPage === "/") currentPage = "index";
 
-    link.addEventListener('mousemove', e => {
-      const rect = link.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const dx = (x / rect.width) - 0.5;
-      const dy = (y / rect.height) - 0.5;
-      link.style.setProperty('--x', `${x}px`);
-      link.style.setProperty('--y', `${y}px`);
-      link.style.setProperty('--dx', dx);
-      link.style.setProperty('--dy', dy);
+      links.forEach(link => {
+        // --- LOGIC A: Set Active State ---
+        const targetHref = link.getAttribute("href");
+        // Strip .html from href for comparison
+        const targetPage = targetHref.replace('.html', '');
+
+        if (targetPage === currentPage) {
+          link.classList.add("active");
+        }
+
+        // --- LOGIC B: Vision OS Mouse Tracking ---
+        link.addEventListener('mousemove', (e) => {
+          const rect = link.getBoundingClientRect();
+          
+          // Calculate X/Y of mouse relative to the button
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          // Calculate offset from center (for parallax)
+          // Ranges from -0.5 to 0.5
+          const dx = (x / rect.width) - 0.5;
+          const dy = (y / rect.height) - 0.5;
+
+          // Set CSS variables
+          link.style.setProperty('--x', `${x}px`);
+          link.style.setProperty('--y', `${y}px`);
+          link.style.setProperty('--dx', dx);
+          link.style.setProperty('--dy', dy);
+        });
+
+        // Reset when mouse leaves
+        link.addEventListener('mouseleave', () => {
+          link.style.setProperty('--dx', 0);
+          link.style.setProperty('--dy', 0);
+        });
+      });
     });
-
-    link.addEventListener('mouseleave', () => {
-      link.style.setProperty('--dx', 0);
-      link.style.setProperty('--dy', 0);
-    });
-  });
-});
-</script>
+  </script>
 </body>
 </html>
