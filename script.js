@@ -1,12 +1,10 @@
 // --- HTTPS Redirect ---
-// Run this check immediately, before waiting for DOM content.
 if (window.location.protocol !== "https:" && window.location.hostname !== "localhost" && !window.location.hostname.startsWith("127.")) {
     console.log("Redirecting to HTTPS...");
     window.location.href = "https://" + window.location.host + window.location.pathname + window.location.search;
 }
 
 // --- Page Load Animation ---
-// 'load' fires after all resources (images, css) are loaded, which is appropriate for fade-in effects.
 window.addEventListener('load', () => {
     document.body.classList.add('loaded');
 });
@@ -52,14 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
     // --- Enhanced Interaction Control (Copy Protection, Drag Prevention, Context Menu) ---
     const enhancedInteractionControl = {
         init() {
-            // Prevent context menu (right-click/long-press menu)
             document.addEventListener('contextmenu', e => e.preventDefault());
 
-            // Prevent text selection globally, but allow in inputs/textareas
             document.addEventListener('selectstart', e => {
                 const target = e.target;
                 if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA' && !target.isContentEditable) {
@@ -67,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Prevent copying globally, but allow from inputs/textareas
             document.addEventListener('copy', e => {
                 const target = e.target;
                 if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA' && !target.isContentEditable) {
@@ -75,14 +69,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Prevent dragging of links and buttons
             document.addEventListener('dragstart', e => {
                 if (e.target.closest('a, .social-button, .link-button, .settings-button, .merch-button, .weather-button, .disabilities-section a, .visit-profile')) {
                     e.preventDefault();
                 }
             });
 
-            // Attempt to suppress long-press actions on specific links/buttons (mainly for mobile)
             const interactiveElements = document.querySelectorAll(
                 'a, .social-button, .link-button, .settings-button, .merch-button, .weather-button, .disabilities-section a, .visit-profile'
             );
@@ -106,103 +98,84 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const formattedDateTime = `${datePart} at ${timePart}`;
 
-        // Update main date/time section
         const dateTimeSectionElement = document.querySelector('.datetime-section .current-datetime');
         if (dateTimeSectionElement) {
             dateTimeSectionElement.textContent = formattedDateTime;
         }
 
-        // Update version info section time
         const versionTimeElement = document.querySelector('.version-info-section .update-time .version-value');
         if (versionTimeElement) {
             versionTimeElement.textContent = formattedDateTime;
         }
     }
-
     updateTime();
     setInterval(updateTime, 1000);
 
-(function() {
-  const scrollBtn = document.getElementById('scrollToTopBtn');
-  const progressIndicator = document.getElementById('progressIndicator');
-  const scrollPercent = document.getElementById('scrollPercent');
-  const scrollArrow = document.getElementById('scrollArrow');
-  if (!scrollBtn || !progressIndicator) return;
+    // --- Back to Top & Scroll Progress ---
+    (function() {
+        const scrollBtn = document.getElementById('scrollToTopBtn');
+        const progressIndicator = document.getElementById('progressIndicator');
+        const scrollPercent = document.getElementById('scrollPercent');
+        const scrollArrow = document.getElementById('scrollArrow');
+        if (!scrollBtn || !progressIndicator) return;
 
-  const radius = progressIndicator.r.baseVal.value;
-  const circumference = 2 * Math.PI * radius;
-  progressIndicator.style.strokeDasharray = `${circumference}`;
-  progressIndicator.style.strokeDashoffset = `${circumference}`;
+        const radius = progressIndicator.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        progressIndicator.style.strokeDasharray = `${circumference}`;
+        progressIndicator.style.strokeDashoffset = `${circumference}`;
 
-  let lastScrollTop = 0;
+        let lastScrollTop = 0;
 
-  function updateScrollProgress() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const scrolled = docHeight > 0 ? scrollTop / docHeight : 0;
+        function updateScrollProgress() {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = docHeight > 0 ? scrollTop / docHeight : 0;
 
-    // Update ring
-    const offset = circumference - scrolled * circumference;
-    progressIndicator.style.strokeDashoffset = offset;
+            const offset = circumference - scrolled * circumference;
+            progressIndicator.style.strokeDashoffset = offset;
 
-    // Update percentage text
-    const percent = Math.round(scrolled * 100);
-    scrollPercent.textContent = `${percent}%`;
+            const percent = Math.round(scrolled * 100);
+            if (scrollPercent) scrollPercent.textContent = `${percent}%`;
 
-    // Show/hide orb
-    if (scrollTop > window.innerHeight * 0.2) {
-      scrollBtn.classList.remove('hidden');
-    } else {
-      scrollBtn.classList.add('hidden');
-    }
+            if (scrollTop > window.innerHeight * 0.2) {
+                scrollBtn.classList.remove('hidden');
+            } else {
+                scrollBtn.classList.add('hidden');
+            }
 
-    // Vision Pro arrow:
-    // No rotation. No direction class.
-    // Just fade the arrow slightly depending on scroll direction.
-    if (scrollArrow) {
-      if (scrollTop > lastScrollTop + 5) {
-        // scrolling down → arrow slightly dim
-        scrollArrow.style.opacity = "0.65";
-      } else if (scrollTop < lastScrollTop - 5) {
-        // scrolling up → arrow full brightness
-        scrollArrow.style.opacity = "1";
-      }
-    }
+            if (scrollArrow) {
+                if (scrollTop > lastScrollTop + 5) scrollArrow.style.opacity = "0.65";
+                else if (scrollTop < lastScrollTop - 5) scrollArrow.style.opacity = "1";
+            }
 
-    lastScrollTop = Math.max(scrollTop, 0);
-  }
+            lastScrollTop = Math.max(scrollTop, 0);
+        }
 
-  window.addEventListener('scroll', updateScrollProgress);
-  window.addEventListener('resize', updateScrollProgress);
-  updateScrollProgress();
+        window.addEventListener('scroll', updateScrollProgress);
+        window.addEventListener('resize', updateScrollProgress);
+        updateScrollProgress();
 
-  scrollBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (scrollArrow) scrollArrow.style.opacity = "1";
+        });
+    })();
 
-    // Reset arrow brightness after scroll
-    if (scrollArrow) {
-      scrollArrow.style.opacity = "1";
-    }
-  });
-})();
+    // --- Percentage fade-in & timeout ---
+    (function() {
+        const scrollPercent = document.getElementById('scrollPercent');
+        let fadeTimeout;
+        window.addEventListener('scroll', () => {
+            if (!scrollPercent) return;
+            scrollPercent.classList.add('visible');
 
-/* ============================= */
-/*  Percentage fade-in & timeout */
-/* ============================= */
-(function() {
-  const scrollPercent = document.getElementById('scrollPercent');
-  let fadeTimeout;
-  window.addEventListener('scroll', () => {
-    if (!scrollPercent) return;
-    scrollPercent.classList.add('visible');
+            clearTimeout(fadeTimeout);
+            fadeTimeout = setTimeout(() => {
+                scrollPercent.classList.remove('visible');
+            }, 1500);
+        });
+    })();
 
-    clearTimeout(fadeTimeout);
-    fadeTimeout = setTimeout(() => {
-      scrollPercent.classList.remove('visible');
-    }, 1500);
-  });
-})();
-	
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
     const acceptCookiesBtn = document.getElementById('cookieAccept');
@@ -220,130 +193,115 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Update footer year dynamically ---
     function updateFooterYear() {
         const yearElement = document.getElementById('year');
-        if (yearElement) {
-            yearElement.textContent = new Date().getFullYear();
-        }
+        if (yearElement) yearElement.textContent = new Date().getFullYear();
     }
     updateFooterYear();
 
-}); // --- END OF DOMContentLoaded ---
+}); // END OF DOMContentLoaded
 
+// --- Section Jump Menu ---
 document.addEventListener("DOMContentLoaded", () => {
-  const wrapper = document.querySelector(".section-jump-wrapper");
-  const toggle = document.querySelector(".section-jump-toggle");
-  const menu = document.querySelector(".section-jump-menu");
-  const links = menu.querySelectorAll("a");
+    const wrapper = document.querySelector(".section-jump-wrapper");
+    const toggle = document.querySelector(".section-jump-toggle");
+    const menu = document.querySelector(".section-jump-menu");
+    const links = menu.querySelectorAll("a");
 
-  // Toggle menu on mobile
-  toggle.addEventListener("click", () => {
-    wrapper.classList.toggle("active");
-  });
+    toggle.addEventListener("click", () => wrapper.classList.toggle("active"));
 
-  // Smooth scroll + close on mobile
-  links.forEach(link => {
-    link.addEventListener("click", e => {
-      e.preventDefault();
-      const targetId = link.getAttribute("href").replace("#", "");
-      const target = document.getElementById(targetId);
+    links.forEach(link => {
+        link.addEventListener("click", e => {
+            e.preventDefault();
+            const targetId = link.getAttribute("href").replace("#", "");
+            const target = document.getElementById(targetId);
 
-      if (target) {
-        const offset = 80; // adjust for header
-        const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
+            if (target) {
+                const offset = 80;
+                const top = target.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({ top, behavior: "smooth" });
+            }
 
-      // close menu on mobile
-      if (window.innerWidth < 1024) wrapper.classList.remove("active");
+            if (window.innerWidth < 1024) wrapper.classList.remove("active");
+        });
     });
-  });
 
-  // Highlight section
-  const sections = Array.from(links).map(link => document.getElementById(link.getAttribute("href").replace("#","")));
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const link = menu.querySelector(`a[href="#${entry.target.id}"]`);
-      if (entry.isIntersecting) {
-        links.forEach(l => l.classList.remove("active"));
-        if (link) link.classList.add("active");
-      }
+    const sections = Array.from(links).map(link => document.getElementById(link.getAttribute("href").replace("#","")));
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const link = menu.querySelector(`a[href="#${entry.target.id}"]`);
+            if (entry.isIntersecting) {
+                links.forEach(l => l.classList.remove("active"));
+                if (link) link.classList.add("active");
+            }
+        });
+    }, { threshold: 0.4 });
+
+    sections.forEach(section => { if(section) observer.observe(section); });
+
+    document.addEventListener("click", e => {
+        if(window.innerWidth < 1024 && !wrapper.contains(e.target)) wrapper.classList.remove("active");
     });
-  }, { threshold: 0.4 });
 
-  sections.forEach(section => { if(section) observer.observe(section); });
-
-  // Click outside closes menu (mobile)
-  document.addEventListener("click", e => {
-    if(window.innerWidth < 1024 && !wrapper.contains(e.target)) wrapper.classList.remove("active");
-  });
-
-  // Close menu on resize
-  window.addEventListener("resize", () => { if(window.innerWidth >= 1024) wrapper.classList.remove("active"); });
+    window.addEventListener("resize", () => { if(window.innerWidth >= 1024) wrapper.classList.remove("active"); });
 });
 
+// --- System Health Fetch ---
 document.addEventListener("DOMContentLoaded", async () => {
-  const summaryEl = document.getElementById("system-health-summary");
-  const incidentsEl = document.getElementById("system-health-incidents");
-  if (!summaryEl) return;
+    const summaryEl = document.getElementById("system-health-summary");
+    const incidentsEl = document.getElementById("system-health-incidents");
+    if (!summaryEl) return;
 
-  const proxyUrl = "https://api.allorigins.win/get?url=";
-  const target = encodeURIComponent("https://calebs-status-page.instatus.com/summary.json");
-  const apiUrl = `${proxyUrl}${target}`;
+    const proxyUrl = "https://api.allorigins.win/get?url=";
+    const target = encodeURIComponent("https://calebs-status-page.instatus.com/summary.json");
+    const apiUrl = `${proxyUrl}${target}`;
 
-  try {
-    const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error("Network response failed: " + res.status);
-    const raw = await res.json();
-    const data = JSON.parse(raw.contents);
+    try {
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error("Network response failed: " + res.status);
+        const raw = await res.json();
+        const data = JSON.parse(raw.contents);
 
-    const status = data.status.indicator || "unknown";
-    const desc = data.status.description || "No status available";
+        const status = data.status.indicator || "unknown";
+        const desc = data.status.description || "No status available";
 
-    // Determine color
-    let colorClass = "green";
-    if (status === "major") colorClass = "red";
-    else if (status === "minor" || status === "degraded") colorClass = "orange";
+        let colorClass = "green";
+        if (status === "major") colorClass = "red";
+        else if (status === "minor" || status === "degraded") colorClass = "orange";
 
-    summaryEl.innerHTML = `
-      <p><strong>Current Status:</strong></p>
-      <div class="status-pill ${colorClass}">${desc}</div>
-    `;
-    summaryEl.classList.remove("loading");
+        summaryEl.innerHTML = `
+            <p><strong>Current Status:</strong></p>
+            <div class="status-pill ${colorClass}">${desc}</div>
+        `;
+        summaryEl.classList.remove("loading");
 
-    // Render incidents
-    if (data.incidents && data.incidents.length > 0) {
-      incidentsEl.innerHTML = `<h3>Recent Incidents</h3>` +
-        data.incidents
-          .slice(0, 3)
-          .map(i => `
-            <div class="incident">
-              <strong>${i.name || "Incident"}</strong>
-              <p>${i.shortlink ? `<a href="${i.shortlink}" target="_blank">View Details</a>` : ""}</p>
-              <small>${new Date(i.created_at).toLocaleString()}</small>
-            </div>
-          `)
-          .join("");
-      incidentsEl.classList.remove("hidden");
-    } else {
-      incidentsEl.innerHTML = `<p>✅ No active or recent incidents.</p>`;
-      incidentsEl.classList.remove("hidden");
+        if (data.incidents && data.incidents.length > 0) {
+            incidentsEl.innerHTML = `<h3>Recent Incidents</h3>` +
+                data.incidents.slice(0, 3).map(i => `
+                    <div class="incident">
+                        <strong>${i.name || "Incident"}</strong>
+                        <p>${i.shortlink ? `<a href="${i.shortlink}" target="_blank">View Details</a>` : ""}</p>
+                        <small>${new Date(i.created_at).toLocaleString()}</small>
+                    </div>
+                `).join("");
+            incidentsEl.classList.remove("hidden");
+        } else {
+            incidentsEl.innerHTML = `<p>✅ No active or recent incidents.</p>`;
+            incidentsEl.classList.remove("hidden");
+        }
+    } catch (err) {
+        console.error("❌ Failed to fetch system health:", err);
+        summaryEl.innerHTML = `<p>⚠️ Could not load system health data.</p>`;
     }
-  } catch (err) {
-    console.error("❌ Failed to fetch system health:", err);
-    summaryEl.innerHTML = `<p>⚠️ Could not load system health data.</p>`;
-  }
 });
 
-// Elements
+// --- AI Chatbot ---
 const chatbot = document.getElementById('ai-chatbot');
 const closeBtn = document.getElementById('ai-chatbot-close');
 const messagesContainer = document.getElementById('ai-chatbot-messages');
 const inputField = document.getElementById('ai-chatbot-input');
 const sendBtn = document.getElementById('ai-chatbot-send');
 
-// Close chat
 closeBtn.addEventListener('click', () => chatbot.style.display = 'none');
 
-// Append message function
 function appendMessage(sender, text) {
     const message = document.createElement('div');
     const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
@@ -353,7 +311,6 @@ function appendMessage(sender, text) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-// Typing indicator
 function showTypingIndicator() {
     const typing = document.createElement('div');
     typing.classList.add('ai-typing');
@@ -363,7 +320,6 @@ function showTypingIndicator() {
     return typing;
 }
 
-// Send message function
 async function sendMessage() {
     const text = inputField.value.trim();
     if (!text) return;
@@ -373,7 +329,6 @@ async function sendMessage() {
     const typing = showTypingIndicator();
 
     try {
-        // Example AI API call
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -390,7 +345,5 @@ async function sendMessage() {
     }
 }
 
-// Event listeners
 sendBtn.addEventListener('click', sendMessage);
 inputField.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
-document.addEventListener("DOMContentLoaded", () => {
