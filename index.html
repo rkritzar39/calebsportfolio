@@ -393,20 +393,25 @@
   <h2>Quote of the Day</h2>
 
   <!-- Quote date -->
-  <p id="quote-date" class="quote-date"></p>
+  <p id="quote-date" class="quote-date">Loading date...</p>
 
-  <!-- Quote content -->
+  <!-- Quote text -->
   <p id="quote-text" class="quote-text">Loading inspiration...</p>
+
+  <!-- Author placeholder (kept for CSS, hidden if empty) -->
+  <small id="quote-author" class="quote-author" style="display:none;"></small>
 
   <!-- Controls -->
   <div id="quote-controls">
     <select id="quote-category"></select>
 
+    <!-- Custom category input (hidden by default) -->
     <div id="custom-category-container" style="display:none;">
       <input type="text" id="custom-category-input" placeholder="New category name">
       <button id="save-custom-category">Save</button>
     </div>
 
+    <!-- Main control button -->
     <button id="next-quote-btn">🔄 Next Quote</button>
   </div>
 </div>
