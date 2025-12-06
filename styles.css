@@ -51,34 +51,35 @@
 	--social-icon-text-color: var(--dark-text);
 
 	/* ======================== */
-	/* Apple-Grade Glass Effects */
+	/* Apple Liquid Glass Optics */
 	/* ======================== */
-	--backdrop-blur: blur(32px) saturate(180%);
+	--backdrop-blur: blur(28px) saturate(180%) contrast(110%);
 	--bubble-gradient: radial-gradient(
-		circle at 30% 20%,
-		rgba(255, 255, 255, 0.12),
-		transparent 70%
+		circle at 25% 20%,
+		rgba(255, 255, 255, 0.15),
+		transparent 72%
 	);
-	--bubble-highlight: inset 0 1px 3px rgba(255, 255, 255, 0.2);
+	--bubble-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.18);
 	--bubble-shadow:
-		inset 0 0 12px rgba(255, 255, 255, 0.05),
-		0 20px 60px rgba(0, 0, 0, 0.45);
+		0 28px 60px rgba(0, 0, 0, 0.45),
+		inset 0 0 16px rgba(255, 255, 255, 0.05);
+
 	--liquid-reflection: linear-gradient(
-		180deg,
-		rgba(255, 255, 255, 0.18),
-		rgba(255, 255, 255, 0.04),
-		transparent 70%
+		120deg,
+		rgba(255,255,255,0.35),
+		rgba(255,255,255,0.05) 45%,
+		rgba(255,255,255,0.02)
 	);
 	--liquid-refraction: linear-gradient(
 		135deg,
-		rgba(255,255,255,0.08),
+		rgba(255,255,255,0.12),
 		rgba(255,255,255,0.02)
 	);
 
 	/* ======================== */
 	/* Radii & Transitions      */
 	/* ======================== */
-	--radius-xl: 32px;
+	--radius-xl: 28px;
 	--radius-lg: 20px;
 	--radius-md: 14px;
 
@@ -105,15 +106,15 @@ body.light-e {
 
 	--bubble-gradient: radial-gradient(
 		circle at 40% 25%,
-		rgba(255, 255, 255, 0.6),
+		rgba(255, 255, 255, 0.65),
 		transparent 65%
 	);
 	--bubble-shadow:
-		inset 0 0 8px rgba(255, 255, 255, 0.2),
-		0 18px 50px rgba(0, 0, 0, 0.15);
+		0 18px 45px rgba(0, 0, 0, 0.15),
+		inset 0 0 10px rgba(255, 255, 255, 0.25);
 
-	--bubble-highlight: inset 0 1px 3px rgba(0, 0, 0, 0.08);
-	--backdrop-blur: blur(32px) saturate(180%);
+	--bubble-highlight: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+	--backdrop-blur: blur(26px) saturate(190%) contrast(108%);
 }
 
 /* ======================== */
@@ -256,10 +257,14 @@ p, span, li {
 /* ======================== */
 .section {
 	position: relative;
-	background-color: color-mix(in srgb, var(--content-bg) 92%, white 8%);
-	background-image: var(--bubble-gradient), var(--liquid-refraction);
+
+	background:
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		var(--content-bg);
+
 	border-radius: var(--radius-xl);
-	border: 1px solid color-mix(in srgb, var(--border-color) 60%, white 40%);
+	border: 1px solid var(--border-color);
 	padding: 24px;
 	margin-bottom: 32px;
 
@@ -267,18 +272,19 @@ p, span, li {
 	-webkit-backdrop-filter: var(--backdrop-blur);
 
 	box-shadow:
-		0 20px 60px rgba(0, 0, 0, 0.35),
+		0 22px 55px rgba(0, 0, 0, 0.4),
 		inset 0 1px 1px rgba(255, 255, 255, 0.08);
 
 	transition:
 		background var(--transition-medium),
-		box-shadow var(--transition-medium),
-		transform var(--transition-fast);
+		box-shadow var(--transition-medium);
 
 	overflow: hidden;
 }
 
-/* Reflection Layer */
+/* ======================== */
+/* Optical Reflection Layer */
+/* ======================== */
 .section::before {
 	content: "";
 	position: absolute;
@@ -286,27 +292,36 @@ p, span, li {
 	border-radius: inherit;
 	background: var(--liquid-reflection);
 	mix-blend-mode: soft-light;
-	opacity: 0.55;
+	opacity: 0.5;
 	pointer-events: none;
 }
 
-/* Apple Pressed Motion */
+/* ======================== */
+/* Optional Apple Press     */
+/* Remove this block if you */
+/* want ZERO motion         */
+/* ======================== */
 .section:active {
 	transform: scale(0.985);
 	box-shadow:
-		0 12px 32px rgba(0, 0, 0, 0.35),
-		inset 0 1px 2px rgba(0, 0, 0, 0.4);
+		0 14px 34px rgba(0, 0, 0, 0.35),
+		inset 0 1px 2px rgba(0, 0, 0, 0.45);
 }
 
 /* ======================== */
 /* Apple Light Mode Glass   */
 /* ======================== */
 body.light-e .section {
-	background-color: rgba(255, 255, 255, 0.65);
+	background:
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		rgba(255, 255, 255, 0.65);
+
+	border: 1px solid rgba(255, 255, 255, 0.5);
+
 	box-shadow:
-		0 18px 50px rgba(0, 0, 0, 0.12),
-		inset 0 1px 0 rgba(255, 255, 255, 0.7);
-	border: 1px solid rgba(255, 255, 255, 0.6);
+		0 18px 48px rgba(0, 0, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 /* ======================================== */
