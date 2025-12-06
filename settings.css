@@ -1,1175 +1,372 @@
+/* ======================================================= */
+/* ========== APPLE MUSIC BLACK LIQUID (A2) ============== */
+/* ======================================================= */
+
+/* -------------------------- */
+/* Keep your root variables   */
+/* -------------------------- */
 :root {
-    /* ======================================================= */
-    /* === Onyx (macOS/iOS 26 Inspired) Theme Defaults ===== */
-    /* ======================================================= */
-
-    /* Base Defaults */
+    /* Base */
     --font-size-base: 16px;
-    --accent-color: #007aff; /* Standard Apple blue */
-    --accent-text-color: #fff;
+    --line-height-base: 1.65;
 
-    /* Light Mode */
+    /* Accent */
+    --accent-color: #007aff;
+    --accent-color-rgb: 0,122,255;
+
+    /* Light variables (fallback) */
     --light-bg: #f2f2f7;
     --light-content-bg: #ffffff;
     --light-text: #000;
     --light-secondary-text: #8a8a8e;
     --light-border: #c6c6c8;
-    --light-hover: rgba(0, 0, 0, 0.05);
-    --light-toggle-on: var(--accent-color);
-    --light-toggle-off: #e9e9eb;
-    --light-red-color: #ff3b30;
-    --light-slider-track: #e9e9eb;
-    --light-slider-thumb: #fff;
 
-    /* Dark Mode (Onyx) */
+    /* Dark variables (fallback) */
     --dark-bg: #000;
     --dark-content-bg: #1c1c1e;
     --dark-text: #fff;
     --dark-secondary-text: #8d8d93;
     --dark-border: #38383a;
-    --dark-hover: rgba(255, 255, 255, 0.1);
-    --dark-toggle-on: var(--accent-color);
-    --dark-toggle-off: #39393d;
-    --dark-red-color: #ff453a;
-    --dark-slider-track: #2f2f31;
-    --dark-slider-thumb: #e6e6e6;
 
-    /* Default theme */
+    /* Radii */
+    --radius-xl: 26px;
+    --radius-lg: 20px;
+    --radius-md: 12px;
+
+    /* Glass control (optional backdrop usage) */
+    --glass-blur: blur(24px) saturate(160%) contrast(105%);
+
+    /* Button sizes */
+    --btn-padding-y: 10px;
+    --btn-padding-x: 18px;
+
+    /* Shadows */
+    --shadow-deep: 0 20px 48px rgba(0,0,0,0.55);
+    --shadow-soft: 0 12px 30px rgba(0,0,0,0.25);
+
+    /* Accessibility */
+    --focus-ring: 0 0 0 3px rgba(0,122,255,0.18);
+}
+
+/* -------------------------- */
+/* Theme base (applied values)*/
+/* -------------------------- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    padding: 32px;
+    line-height: var(--line-height-base);
+    font-size: var(--font-size-base);
+    background-color: var(--bg-color, var(--light-bg));
+    color: var(--text-color, var(--light-text));
+}
+
+/* -------------------------- */
+/* Light / Dark theme rules   */
+/* -------------------------- */
+body.light-e {
     --bg-color: var(--light-bg);
     --content-bg: var(--light-content-bg);
     --text-color: var(--light-text);
     --secondary-text: var(--light-secondary-text);
     --border-color: var(--light-border);
-    --hover-color: var(--light-hover);
-    --toggle-on: var(--light-toggle-on);
-    --toggle-off: var(--light-toggle-off);
-    --red-color: var(--light-red-color);
-    --slider-track-color: var(--light-slider-track);
-    --slider-track-filled-color: var(--accent-color);
-    --slider-thumb-color: var(--light-slider-thumb);
-    --shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.08);
-    --shadow-elevation-2: 0 6px 20px rgba(0,0,0,0.12);
 
-    /* Glass Material */
-    --glass-blur: blur(30px) saturate(150%) brightness(1.05);
-    --glass-bg-light: rgba(242, 242, 247, 0.8);
-    --glass-border-light: rgba(0, 0, 0, 0.1);
-    --glass-bg-dark: rgba(28, 28, 30, 0.75);
-    --glass-border-dark: rgba(255, 255, 255, 0.15);
+    /* Light-mode liquid base (pearly) */
+    --liquid-base-bg: linear-gradient(135deg,
+        rgba(255,255,255,0.92) 0%,
+        rgba(250,250,250,0.95) 60%);
+    --liquid-top-sheen: radial-gradient(circle at 50% 8%,
+        rgba(255,255,255,0.95),
+        rgba(255,255,255,0.65) 36%,
+        transparent 70%);
+    --liquid-bottom-curve: radial-gradient(circle at 50% 100%,
+        rgba(0,0,0,0.06),
+        transparent 70%);
+    --liquid-border: rgba(0,0,0,0.06);
+    --liquid-inner-highlight: rgba(255,255,255,0.85);
+    --liquid-text: #111;
+    --liquid-subtext: #444;
+    --panel-shadow: 0 18px 48px rgba(0,0,0,0.12);
 }
 
-/* Dark Mode */
 body.dark-mode {
     --bg-color: var(--dark-bg);
     --content-bg: var(--dark-content-bg);
     --text-color: var(--dark-text);
     --secondary-text: var(--dark-secondary-text);
     --border-color: var(--dark-border);
-    --hover-color: var(--dark-hover);
-    --toggle-on: var(--dark-toggle-on);
-    --toggle-off: var(--dark-toggle-off);
-    --red-color: var(--dark-red-color);
-    --slider-track-color: var(--dark-slider-track);
-    --slider-thumb-color: var(--dark-slider-thumb);
-    --shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.3);
-    --shadow-elevation-2: 0 12px 28px rgba(0,0,0,0.35);
+
+    /* Dark-mode liquid base (black gel) */
+    --liquid-base-bg: linear-gradient(145deg,
+        rgba(255,255,255,0.20) 0%,
+        rgba(255,255,255,0.06) 40%,
+        rgba(0,0,0,0.85) 100%);
+    --liquid-top-sheen: radial-gradient(circle at 50% 6%,
+        rgba(255,255,255,0.60),
+        rgba(255,255,255,0.20) 36%,
+        transparent 70%);
+    --liquid-bottom-curve: radial-gradient(circle at 50% 100%,
+        rgba(0,0,0,0.40),
+        transparent 70%);
+    --liquid-border: rgba(255,255,255,0.12);
+    --liquid-inner-highlight: rgba(255,255,255,0.14);
+    --liquid-text: #fff;
+    --liquid-subtext: #cfcfcf;
+    --panel-shadow: var(--shadow-deep);
 }
 
-/* Base body */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-}
+/* -------------------------- */
+/* Base typography & spacing  */
+/* -------------------------- */
+h1,h2,h3 { font-weight: 600; letter-spacing: -0.02em; margin: 0 0 8px 0; color: var(--liquid-text); }
+p, span, li { color: var(--secondary-text, var(--liquid-subtext)); margin: 0; }
 
-/* Glass Panels */
-.settings-header,
-.settings-subsection,
-footer,
-#cookie-consent-banner {
-    background: var(--glass-bg-light);
-    border: 1px solid var(--glass-border-light);
-    border-radius: 1.5rem;
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: 
-        inset 0 0 0 1.5px rgba(255,255,255,0.2),
-        0 20px 40px -10px rgba(0,0,0,0.25);
-}
+/* ================================================== */
+/* ================ LIQUID PANELS =================== */
+/* ================================================== */
 
-body.dark-mode .settings-header,
-body.dark-mode .settings-subsection,
-body.dark-mode footer,
-body.dark-mode #cookie-consent-banner {
-    background: var(--glass-bg-dark);
-    border: 1px solid var(--glass-border-dark);
-    box-shadow: 
-        inset 0 0 0 1.5px rgba(255,255,255,0.1),
-        0 20px 40px -10px rgba(0,0,0,0.5);
-}
-
-/* Clear & Tinted Modes */
-body.clear-mode {
-    --glass-bg-light: rgba(255,255,255,0.45);
-    --glass-bg-dark: rgba(28,28,30,0.45);
-}
-
-body.tinted-mode {
-    --glass-bg-light: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
-    --glass-bg-dark: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-dark));
-}
-
-/* High Contrast Mode */
-body.high-contrast {
-    --accent-color: #ffcc00;
-    --accent-text-color: #000;
-    --bg-color: color-mix(in srgb, var(--dark-bg) 90%, #000 10%);
-    --content-bg: color-mix(in srgb, var(--dark-content-bg) 90%, #000 10%);
-    --glass-bg-light: rgba(255,255,255,0.55);
-    --glass-bg-dark: rgba(22,22,22,0.85);
-    --glass-border-light: rgba(0,0,0,0.35);
-    --glass-border-dark: rgba(255,255,255,0.35);
-    --text-color: #fff;
-    --secondary-text: rgba(255,255,255,0.92);
-    --border-color: rgba(255,255,255,0.6);
-    --slider-track-color: rgba(255,255,255,0.25);
-    --slider-thumb-color: #fff;
-    --toggle-on: var(--accent-color);
-    --toggle-off: rgba(255,255,255,0.25);
-    --red-color: #ff6666;
-    --glass-blur: blur(20px) saturate(180%);
-}
-
-/* === Panels & Cards ==================================== */
-body.high-contrast .settings-header,
-body.high-contrast .settings-subsection,
-body.high-contrast footer,
-body.high-contrast #cookie-consent-banner,
-body.high-contrast .setting-card,
-body.high-contrast .profile-card {
-  background: color-mix(in srgb, var(--glass-bg-dark) 90%, transparent);
-  border: 1px solid var(--glass-border-dark);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.65),
-    inset 0 0 12px rgba(255, 255, 255, 0.08);
-}
-
-/* === Text ============================================== */
-body.high-contrast h1,
-body.high-contrast h2,
-body.high-contrast h3,
-body.high-contrast p,
-body.high-contrast .setting-title,
-body.high-contrast .setting-description,
-body.high-contrast .file-name {
-  color: var(--text-color) !important;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-}
-
-/* === Buttons, sliders, and toggles ===================== */
-body.high-contrast .custom-bg-label,
-body.high-contrast #removeCustomBg,
-body.high-contrast .button,
-body.high-contrast .segmented-control button {
-  filter: brightness(1.25) saturate(1.3);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow:
-    0 0 6px rgba(255, 255, 255, 0.3),
-    inset 0 0 4px rgba(255, 255, 255, 0.25);
-  color: var(--accent-text-color);
-  background: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-dark));
-}
-
-/* === Profile & circular elements ======================== */
-body.high-contrast .profile-card {
-  background: rgba(20, 20, 20, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow:
-    0 4px 25px rgba(0, 0, 0, 0.75),
-    inset 0 0 8px rgba(255, 255, 255, 0.1);
-}
-
-body.high-contrast #customBgPreviewContainer {
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.35),
-    inset 0 0 12px rgba(255, 255, 255, 0.25);
-}
-
-/* === Divider & Separator =============================== */
-body.high-contrast .custom-bg-separator {
-  opacity: 1;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.7) 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0.2) 100%
-  );
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.25),
-    inset 0 0 6px rgba(255, 255, 255, 0.25);
-}
-
-/* === Accent elements (verified badge, icons, etc.) ===== */
-body.high-contrast .verified-badge,
-body.high-contrast .icon-accent,
-body.high-contrast .accent-color-preview {
-  filter: brightness(1.3);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-}
-
-/* === Focus outlines for accessibility ================== */
-body.high-contrast :focus-visible {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 4px;
-  border-radius: 6px;
-  box-shadow:
-    0 0 12px color-mix(in srgb, var(--accent-color) 60%, white 25%),
-    0 0 20px color-mix(in srgb, var(--accent-color) 45%, transparent);
-}
-
-/* ===================== */
-/* Motion & Effects Fix  */
-/* ===================== */
-.motion-disabled * {
-  transition: none !important;
-  animation: none !important;
-}
-.motion-disabled a:hover,
-.motion-disabled button:hover,
-.motion-disabled .hover-effect {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Dyslexia-Friendly Font */
-body.dyslexia-font {
-    font-family: "OpenDyslexic", "Arial", sans-serif !important;
-}
-
-/* Underline Links */
-body.underline-links a {
-    text-decoration: underline !important;
-}
-
-/* ========== General Styles ========== */
-body.settings-page {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-size: 1rem; /* This ensures the settings page inherits the root font size */
-    line-height: 1.4;
-    margin: 0;
-    padding: 0;
-}
-
-/* ========== Container ========== */
-body.settings-page .container {
-    max-width: 57.5rem;
-    margin: 0 auto;
-    padding: 1.875rem 1.25rem;
-}
-
-/* ========== Settings Header ========== */
-/* CLEANED: Removed redundant glass styles */
-body.settings-page .settings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.875rem;
-    padding: 1rem 1.25rem;
-}
-
-body.settings-page .settings-header h1 {
-    font-size: 1.5rem; /* Slightly smaller for a more desktop-like feel */
-    font-weight: 600; /* Semibold is common for titles in macOS */
-    margin: 0;
-    color: var(--text-color);
-}
-
-body.settings-page .version {
-    font-size: 0.8125rem;
-    color: var(--secondary-text);
-    background-color: var(--border-color);
-    padding: 0.1875rem 0.5rem;
-    border-radius: 0.375rem;
-}
-
-/* ========== Settings Subsection ========== */
-/* CLEANED: Removed redundant glass styles */
-body.settings-page .settings-subsection {
-    border-radius: 1rem; /* iOS 26: Larger radius */
-    margin-bottom: 1.5rem;
+/* Generic .section (Apple Music style liquid) */
+.section {
+    position: relative;
+    padding: 28px;
+    margin-bottom: 32px;
+    border-radius: var(--radius-xl);
     overflow: hidden;
+    background: var(--liquid-base-bg);
+    border: 1px solid var(--liquid-border);
+    box-shadow:
+        var(--panel-shadow),
+        inset 0 1px 1px rgba(255,255,255,0.03);
+    transition: background 0.12s ease, box-shadow 0.12s ease;
 }
 
-body.settings-page .subsection-title {
-    font-size: 0.8125rem; /* 13px is standard for macOS subsection titles */
+/* Top glossy sheen (always visible) */
+.section::before {
+    content: "";
+    position: absolute;
+    top: -18%;
+    left: 0;
+    right: 0;
+    height: 52%;
+    pointer-events: none;
+    background: var(--liquid-top-sheen);
+    opacity: 0.85;
+    mix-blend-mode: screen;
+}
+
+/* Bottom curve for depth */
+.section::after {
+    content: "";
+    position: absolute;
+    bottom: -18%;
+    left: 0;
+    right: 0;
+    height: 55%;
+    pointer-events: none;
+    background: var(--liquid-bottom-curve);
+    opacity: 0.85;
+    mix-blend-mode: multiply;
+}
+
+/* Light-mode overrides for text */
+body.light-e .section h1, body.light-e .section h2, body.light-e .section h3 { color: var(--liquid-text); }
+body.light-e .section p, body.light-e .section span, body.light-e .section li { color: var(--liquid-subtext); }
+
+/* Dark-mode text */
+body.dark-mode .section h1, body.dark-mode .section h2, body.dark-mode .section h3 { color: var(--liquid-text); }
+body.dark-mode .section p, body.dark-mode .section span, body.dark-mode .section li { color: var(--liquid-subtext); }
+
+/* ================================================== */
+/* =================== BUTTONS ======================= */
+/* ================================================== */
+
+/* Base button used across UI */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    border-radius: 12px;
     font-weight: 600;
-    padding: 0.75rem 1.25rem;
-    margin: 0;
-    text-transform: uppercase; /* macOS often uses uppercase for these titles */
-    color: var(--secondary-text); /* Titles are often secondary color */
-    border-bottom: 0.0625rem solid var(--border-color);
-}
-
-/* ========== Setting Card ========== */
-body.settings-page .setting-card {
-    padding: 1rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 3.5rem;
-    border-bottom: 0.0625rem solid var(--border-color);
+    cursor: pointer;
+    text-decoration: none;
+    border: 1px solid transparent;
     position: relative;
     overflow: hidden;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    gap: 1rem; /* ADDED: Space for icons */
-}
-body.settings-page .setting-card:last-child { border-bottom: none; }
-body.settings-page .setting-card:hover {
-    background-color: color-mix(in srgb, var(--bg-color) 50%, var(--content-bg));
-    box-shadow: var(--shadow-elevation-2);
+    transition: transform .06s ease, box-shadow .12s ease, background .12s ease;
+    -webkit-font-smoothing: antialiased;
 }
 
-body.settings-page .setting-label { flex: 1; padding-right: 0.75rem; }
-body.settings-page .setting-title { font-size: 0.9375rem; font-weight: 500; margin: 0 0 0.25rem 0; }
-body.settings-page .setting-description { font-size: 0.8125rem; color: var(--secondary-text); margin: 0; }
-
-/* Ripple */
-body.settings-page .setting-card:active::after {
-    width: 18.75rem; height: 18.75rem; opacity: 0.14;
-    transition: width 0s, height 0s;
+/* Prominent accent button (like Play / Follow) */
+.button-prominent {
+    color: #fff;
+    background:
+      linear-gradient(135deg, color-mix(in srgb, var(--accent-color) 18%, black) 0%, var(--accent-color) 100%);
+    box-shadow:
+      0 8px 26px rgba(var(--accent-color-rgb), 0.28),
+      inset 0 1px 0 rgba(255,255,255,0.12);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 28%, transparent);
 }
 
-/* Chevron */
-body.settings-page .chevron { margin-left: 0.75rem; color: var(--secondary-text); font-size: 1.25rem; }
+/* Subtle secondary button (dark-light adapted) */
+.button-subtle {
+    color: var(--liquid-text);
+    background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid color-mix(in srgb, var(--content-bg) 30%, transparent);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 6px 18px rgba(0,0,0,0.18);
+}
 
-/* ========== Modern Dark Mode Scheduler ========== */
-#darkModeScheduler {
-    appearance: none;
-    background: var(--glass-bg-light);
-    border: 0.0625rem solid var(--glass-border-light);
-    border-radius: 0.75rem;
-    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
-    font-size: 0.875rem;
-    color: var(--text-color);
-    cursor: pointer;
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: var(--shadow-elevation-1);
-    transition: background 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-}
-#darkModeScheduler option {
-    font-size: 0.875rem;
-    color: var(--text-color);
-    background: var(--content-bg);
-}
-/* Hover & Dark adjustments */
-#darkModeScheduler:hover {
-    background: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
-    box-shadow: var(--shadow-elevation-2);
-}
-body.dark-mode #darkModeScheduler {
-    background: var(--glass-bg-dark);
-    border: 0.0625rem solid var(--glass-border-dark);
-}
-#darkModeScheduler::after {
-    content: "▾";
+/* Button glossy sheen */
+.button::before {
+    content: "";
     position: absolute;
-    right: 0.75rem;
-    color: var(--secondary-text);
+    top: -35%;
+    left: 0;
+    right: 0;
+    height: 60%;
     pointer-events: none;
+    background: radial-gradient(circle at 50% 0%,
+        rgba(255,255,255,0.38),
+        rgba(255,255,255,0.14) 40%,
+        transparent 80%);
+    opacity: 0.85;
 }
 
-/* ========== Modern Accent Color Picker ========== */
-#accentColorPicker {
-    -webkit-appearance: none;
-    appearance: none;
-    border: none;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.2);
-    border: 0.125rem solid var(--border-color);
-    background: transparent;
-    padding: 0;
-    position: relative;
-}
-#accentColorPicker::-webkit-color-swatch {
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-}
-#accentColorPicker::-moz-color-swatch {
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-}
-#accentColorPicker::after {
-    content: '';
-    position: absolute;
-    top: -0.25rem;
-    left: -0.25rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    border: 0.125rem solid var(--accent-color);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-#accentColorPicker.selected::after {
-    opacity: 1;
-}
-#accentColorPicker:hover {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
+/* Button focus */
+.button:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-color: color-mix(in srgb, var(--accent-color) 50%, transparent);
 }
 
-/* ========== Appearance Mode Select ========== */
-body.settings-page #appearanceModeSelect {
-    font-size: 0.9375rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    border: 0.0625rem solid var(--border-color);
-    background: var(--bg-color);
-    color: var(--text-color);
-    margin-left: 0.625rem;
-}
+/* Button sizes */
+.button-sm { padding: 8px 12px; border-radius: 10px; font-size: .875rem; }
+.button-lg { padding: 12px 22px; border-radius: 14px; font-size: 1rem; }
 
-/* ======================================================= */
-/* === PURE iOS 26 TOGGLE – FIXED ACCENT LOGIC ============ */
-/* ======================================================= */
+/* Light / Dark tweaks */
+body.light-e .button-subtle { background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.75)); border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 8px 20px rgba(0,0,0,0.06); color: #111; }
+body.dark-mode .button-subtle { background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03)); color: var(--liquid-text); }
+
+/* ================================================== */
+/* =================== TOGGLE (MD SWITCH) =========== */
+/* ================================================== */
 .md-switch {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
-  width: 52px;
-  height: 32px;
-}
-.md-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  width: 56px;
+  height: 34px;
+  border-radius: 999px;
+  padding: 4px;
+  box-sizing: border-box;
 }
 
-/* Default track */
 .md-switch .track {
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  background: var(--toggle-off);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
-  box-shadow:
-    inset 0 1px 2px rgba(0,0,0,0.1),
-    inset 0 -1px 2px rgba(255,255,255,0.2);
-  transition: background 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.3s ease;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.08));
+  border: 1px solid color-mix(in srgb, var(--content-bg) 18%, transparent);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.04), 0 6px 16px rgba(0,0,0,0.18);
+  transition: background .24s ease, box-shadow .24s ease;
 }
 
-/* Thumb */
 .md-switch .thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
+  position: relative;
   width: 28px;
   height: 28px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(6px) saturate(180%);
-  -webkit-backdrop-filter: blur(6px) saturate(180%);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.9),
-    inset 0 -1px 2px rgba(0,0,0,0.1),
-    0 2px 4px rgba(0,0,0,0.15),
-    0 6px 12px rgba(0,0,0,0.10);
-  transition:
-    transform 0.35s cubic-bezier(.25,.8,.25,1),
-    width 0.25s ease,
-    background 0.25s ease,
-    box-shadow 0.25s ease;
-}
-.md-switch:active .thumb {
-  width: 30px;
-  border-radius: 15px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.88));
+  box-shadow: 0 6px 14px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.9);
+  transform: translateX(0);
+  transition: transform .28s cubic-bezier(.25,.8,.25,1), box-shadow .12s ease;
 }
 
-/* === FIXED ACCENT COLOR LINK === */
+/* Checked state via input:checked + .track (assumes markup: input + .track with .thumb inside) */
 .md-switch input:checked + .track {
-  background: var(--toggle-on);
-  box-shadow:
-    0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent),
-    inset 0 0 0 1px rgba(255,255,255,0.25);
-  animation: togglePulse 2.5s ease-in-out infinite;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent-color) 55%, black), var(--accent-color));
+  box-shadow: 0 8px 26px color-mix(in srgb, var(--accent-color) 30%, rgba(0,0,0,0.25));
+  border-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
-.md-switch input:checked + .track .thumb {
-  transform: translateX(20px);
-  background: rgba(255,255,255,0.9);
-  box-shadow:
-    0 0 6px color-mix(in srgb, var(--accent-color) 30%, transparent),
-    0 2px 4px rgba(0,0,0,0.2);
-}
+.md-switch input:checked + .track .thumb { transform: translateX(22px); background: rgba(255,255,255,0.98); box-shadow: 0 10px 28px color-mix(in srgb, var(--accent-color) 22%, rgba(0,0,0,0.3)); }
 
-/* Dark mode adjustment */
-body.dark-mode .md-switch .track {
-  background: rgba(255,255,255,0.15);
-}
-/* Dark mode accent sync */
-body.dark-mode .md-switch input:checked + .track {
-  background: var(--toggle-on);
-  box-shadow:
-    0 0 10px color-mix(in srgb, var(--accent-color) 55%, transparent),
-    inset 0 0 0 1px rgba(255,255,255,0.1);
-}
+/* Accessibility Disabled */
+.md-switch.disabled { opacity: 0.5; pointer-events: none; }
 
-/* Disabled */
-.md-switch.disabled,
-.md-switch input[disabled] + .track {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-/* ========== Text Size Slider --- iOS 26 REDESIGN ========== */
-.setting-card:has(.text-size-control) { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
-.setting-card:has(.text-size-control) > *:first-child { flex: 1; min-width: 15.625rem; }
-.text-size-control { flex-shrink: 0; width: 17.5rem; display: flex; flex-direction: column; align-items: center; }
-.font-size-badge {
-    padding: 0.25rem 0.75rem;
-    background-color: var(--accent-color);
-    color: var(--accent-text-color, white); /* FIX: Use the new contrast variable */
-    border-radius: 0.75rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    margin-bottom: 0.75rem;
-}
-#text-size-slider {
+/* ================================================== */
+/* =================== SLIDER ======================== */
+/* ================================================== */
+input[type="range"] {
   -webkit-appearance: none;
-  appearance: none;
   width: 100%;
   height: 10px;
+  background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-color) var(--_fill, 30%), var(--slider-track-color, #e9e9eb) var(--_fill, 30%), var(--slider-track-color, #e9e9eb) 100%);
   border-radius: 999px;
   outline: none;
-  background: linear-gradient(
-    to right,
-    var(--accent-color) 0%,
-    var(--accent-color) var(--_fill, 0%),
-    var(--slider-track-color) var(--_fill, 0%),
-    var(--slider-track-color) 100%
-  );
-  transition: background .15s linear;
+  border: 0;
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.06);
 }
-#text-size-slider::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  width: 28px; height: 28px; border-radius: 50%;
   background: #fff;
-  border: 0.5px solid rgba(0,0,0,0.05);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25),
-    0 6px 16px rgba(0,0,0,.2);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.85);
+  border: 1px solid rgba(0,0,0,0.06);
   cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-#text-size-slider::-webkit-slider-thumb:active {
-  transform: scale(1.05);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.35),
-    0 10px 20px color-mix(in srgb,var(--accent-color) 35%,rgba(0,0,0,.25));
-}
-#text-size-slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #fff;
-  border: none;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25),
-    0 6px 16px rgba(0,0,0,.2);
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-#text-size-slider::-moz-range-thumb:active {
-  transform: scale(1.05);
 }
 
-/* ========== Responsive ========== */
-@media (max-width: 600px) {
-    .setting-card:has(.text-size-control) { flex-direction: column; align-items: flex-start; }
-    .text-size-control { width: 100%; align-items: flex-start; }
-    #text-size-slider { max-width: 100%; }
-}
-@media (max-width: 768px) {
-    body.settings-page .container { padding: 1.25rem 0.9375rem; }
-    body.settings-page .settings-header h1 { font-size: 1.625rem; }
-    body.settings-page .setting-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1rem; }
-    body.settings-page .setting-label { width: 100%; }
-    body.settings-page #cookie-consent-banner { flex-direction: column; text-align: center; width: 90%; gap: 0.75rem; }
-}
-@media (max-width: 480px) {
-    body.settings-page .container { padding: 0.9375rem 0.625rem; }
-    body.settings-page .settings-header h1 { font-size: 1.375rem; }
-    body.settings-page footer { padding: 0.9375rem; flex-direction: column; gap: 0.625rem; }
-}
-
-/* ========== Danger Zone ========== */
-body.settings-page .danger-zone .settings-subsection {
-    background: color-mix(in srgb, var(--red-color) 15%, var(--glass-bg-light));
-    border: 0.0625rem solid color-mix(in srgb, var(--red-color) 50%, transparent);
-}
-body.dark-mode .danger-zone .settings-subsection {
-    background: color-mix(in srgb, var(--red-color) 20%, var(--glass-bg-dark));
-    border: 0.0625rem solid color-mix(in srgb, var(--red-color) 50%, transparent);
-}
-
-/* ========== Buttons ========== */
-body.settings-page .button {
-    /* Base styles for all buttons */
-    border-radius: 0.5rem;
-    font-size: 0.8125rem; /* Authentic 13px macOS button font size */
-    font-weight: 500;
-    cursor: pointer;
-    padding: 0.375rem 0.875rem; /* More compact padding */
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    -webkit-font-smoothing: antialiased;
-}
-
-.reset-button,
-#cookie-consent-banner button {
-    /* Style for standard gray material buttons */
-    color: var(--text-color);
-    background-color: var(--light-slider-track); /* A subtle material fill */
-    border: 1px solid var(--light-border);
-}
-
-body.settings-page .reset-button:hover,
-body.settings-page #cookie-consent-banner button:hover {
-    background-color: var(--light-border); /* Subtle hover effect */
-}
-
-/* Dark Mode Overrides for Standard Buttons */
-body.dark-mode .reset-button,
-body.dark-mode #cookie-consent-banner button {
-    background-color: var(--dark-slider-track);
-    border: 1px solid var(--dark-border);
-}
-
-body.dark-mode .reset-button:hover,
-body.dark-mode #cookie-consent-banner button:hover {
-    background-color: var(--dark-border);
-}
-
-/* Style for a prominent, accent-colored button */
-.button-prominent {
-    background-color: var(--accent-color);
-    border: 1px solid transparent;
-    color: #fff; /* Text should be white for contrast */
-}
-
-.button-prominent:hover {
-    /* Darken the accent color slightly on hover */
-    background-color: color-mix(in srgb, var(--accent-color) 85%, black);
-}
-
-/* ========== Footer & Back Link ========== */
-body.settings-page .back-link { display: inline-flex; align-items: center; color: var(--accent-color); text-decoration: none; font-size: 1rem; }
-body.settings-page .back-link:hover { color: var(--hover-color); }
-/* CLEANED: Removed redundant glass styles */
-body.settings-page footer {
-    text-align: center; padding: 1.25rem; font-size: 0.875rem; color: var(--secondary-text);
-}
-
-/* ========== Cookie Consent Banner ========== */
-/* CLEANED: Removed redundant glass styles */
-body.settings-page #cookie-consent-banner {
-    position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
-    border-radius: 0.75rem;
-    padding: 1rem;
-    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-    max-width: 92%; width: 40rem; z-index: 1000;
-}
-
-/* ============================== */
-/* Focus outline                  */
-/* ============================== */
-body.settings-page :focus-visible {
-  outline: 0.125rem solid var(--accent-color);
-  outline-offset: 0.125rem;
-  border-radius: 0.375rem;
-}
-body.settings-page.focus-outline-disabled :focus-visible {
-    outline: none !important;
-    outline-offset: 0 !important;
-}
-
-/* ======================================================= */
-/* === LIQUID GLASS SEGMENTED CONTROL ==================== */
-/* ======================================================= */
+/* ================================================== */
+/* ============== SEGMENTED CONTROL ================== */
+/* ================================================== */
 .segmented-control {
   position: relative;
   display: flex;
   align-items: center;
-  background: color-mix(in srgb,var(--content-bg) 60%,transparent);
+  background: color-mix(in srgb, var(--content-bg) 72%, transparent);
   border-radius: 999px;
-  padding: 0.125rem;
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid color-mix(in srgb,var(--accent-color) 15%,transparent);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
+  padding: 4px;
+  gap: 6px;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 12%, transparent);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
 }
+
 .segmented-control button {
   position: relative;
   z-index: 2;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  flex: 1;
-  border: none;
   background: transparent;
-  color: var(--text-color);
+  border: none;
+  padding: 8px 14px;
   border-radius: 999px;
-  padding: 0.35rem 0.75rem;
+  color: var(--text-color);
+  font-weight: 600;
   cursor: pointer;
-  transition: color .2s ease;
-}
-.segmented-control button:hover {
-  color: var(--accent-color);
 }
 .segmented-control .seg-bg {
   position: absolute;
   z-index: 1;
-  top: 3px;
-  bottom: 3px;
-  left: 3px;
-  width: calc(33% - 6px);
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc(33% - 8px);
   border-radius: 999px;
-  background: color-mix(in srgb,var(--accent-color) 35%,var(--content-bg));
+  background: color-mix(in srgb,var(--accent-color) 36%, var(--content-bg));
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25),
-    0 6px 14px color-mix(in srgb,var(--accent-color) 25%,rgba(0,0,0,.25));
-  transition: left .3s cubic-bezier(.25,1,.5,1), width .3s cubic-bezier(.25,1,.5,1);
+    inset 0 0 0 1px rgba(255,255,255,0.06),
+    0 8px 20px color-mix(in srgb,var(--accent-color) 8%, rgba(0,0,0,0.2));
+  transition: left .28s cubic-bezier(.22,.98,.45,1), width .28s cubic-bezier(.22,.98,.45,1);
 }
 
-/* Dark-mode tuning */
-body.dark-mode .segmented-control {
-  background: color-mix(in srgb,var(--glass-bg-dark) 80%,transparent);
-  border-color: color-mix(in srgb,var(--accent-color) 15%,transparent);
-}
-body.dark-mode .segmented-control .seg-bg {
-  background: color-mix(in srgb,var(--accent-color) 30%,var(--glass-bg-dark));
-}
+/* Dark-mode segmented tuning */
+body.dark-mode .segmented-control .seg-bg { background: color-mix(in srgb,var(--accent-color) 40%, color-mix(in srgb,var(--content-bg) 20%, black)); }
 
-/* ===================== */
-/* Mouse Trail Effect    */
-/* ===================== */
-#mouse-trail {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-}
-.trail {
-  width: 10px;
-  height: 10px;
-  background: var(--accent-color, #3ddc84);
-  border-radius: 50%;
-  position: absolute;
-  opacity: 0.6;
-  transform: scale(1);
-  animation: fadeOut 0.8s forwards;
-}
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: scale(2);
-  }
-}
-
-/* ===================== */
-/* Focus Outline Control */
-/* ===================== */
-body:not(.focus-outline-disabled) :focus {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
-}
-body.focus-outline-disabled :focus {
-  outline: none !important;
-}
-
-/* Add this new, specific rule to settings.css */
-.accent-color-card {
-  flex-wrap: wrap;
-}
-
-/* Add or replace the .color-warning rule with this one */
-.color-warning {
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  background-color: #fffbe6;
-  color: #9c6f00;
-  border: 1px solid #ffe58f;
-  border-radius: var(--border-radius-md, 8px);
-  font-size: 0.875rem;
-  box-sizing: border-box;
-}
-
-body.dark-mode .color-warning {
-  background-color: #4d3c1a;
-  color: #ffeca7;
-  border-color: #8b6b1f;
-}
-
-/* ======================================================= */
-/* === iOS-26 Animated Capsule Dropdown & Time Inputs ==== */
-/* ======================================================= */
-
-/* Dropdown */
-#themeModeSelect {
-  position: relative;
-  appearance: none;
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-color);
-  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 15%, var(--border-color));
-  border-radius: 999px;
-  padding: 0.55rem 2.25rem 0.55rem 0.9rem;
-  cursor: pointer;
-  backdrop-filter: var(--glass-blur) saturate(150%);
-  -webkit-backdrop-filter: var(--glass-blur) saturate(150%);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.15),
-    0 4px 10px rgba(0,0,0,0.15);
-  transition:
-    background 0.3s ease,
-    box-shadow 0.35s cubic-bezier(.25,.8,.25,1),
-    border-color 0.3s ease,
-    transform 0.25s ease;
-  width: 100%;
-  background-image: linear-gradient(45deg, transparent 50%, var(--secondary-text) 50%), 
-                    linear-gradient(135deg, var(--secondary-text) 50%, transparent 50%);
-  background-position: right 0.9rem top 50%, right 0.65rem top 50%;
-  background-size: 0.5rem 0.5rem;
-  background-repeat: no-repeat;
-}
-#themeModeSelect:hover {
-  background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.25),
-    0 6px 18px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
-  transform: translateY(-1px);
-}
-#themeModeSelect:focus {
-  outline: none;
-  border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--accent-color) 45%, transparent),
-    0 0 12px color-mix(in srgb, var(--accent-color) 30%, transparent);
-  animation: capsulePulse 2s ease-in-out infinite;
-}
-@keyframes capsulePulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--accent-color) 40%, transparent),
-      0 0 10px color-mix(in srgb, var(--accent-color) 30%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0 0 3px color-mix(in srgb, var(--accent-color) 60%, transparent),
-      0 0 18px color-mix(in srgb, var(--accent-color) 45%, transparent);
-  }
-}
-body.dark-mode #themeModeSelect {
-  background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
-  border-color: color-mix(in srgb, var(--accent-color) 15%, var(--glass-border-dark));
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.08),
-    0 4px 14px rgba(0,0,0,0.5);
-}
-body.dark-mode #themeModeSelect:hover {
-  background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
-}
-
-/* ======================================================= */
-/* == Custom Background Upload – iOS 26 Glass Alignment == */
-/* ======================================================= */
-
-.custom-background {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: nowrap;
-}
-
-/* --- Left Side (Title + Controls) --- */
-.custom-bg-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.custom-bg-left .setting-label {
-  text-align: left;
-  margin-bottom: 0.5rem;
-}
-
-/* --- Controls Row --- */
-.custom-bg-controls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.75rem;
-  flex-wrap: nowrap; /* ✅ Always one line */
-}
-
-/* Hide default file input */
-#customBgUpload {
-  display: none;
-}
-
-/* --- Choose File Button --- */
-.custom-bg-label {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--accent-text-color, #fff);
-  padding: 0.45rem 1rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
-  background: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-light));
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-  transition: background 0.25s ease;
-}
-
-/* --- File name --- */
-.file-name {
-  font-size: 0.8125rem;
-  color: var(--secondary-text);
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* --- Remove button --- */
-#removeCustomBg {
-  font-size: 0.8125rem;
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
-  background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
-  color: var(--accent-text-color, #fff);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-}
-#removeCustomBg.visible,
-#removeCustomBg[style*="inline-block"] {
-  opacity: 1;
-}
-
-/* ======================================================= */
-/* == Adaptive Glass Separator Line ====================== */
-/* ======================================================= */
-.custom-bg-separator {
-  position: relative;
-  width: 1px;
-  height: 100px;
-  border-radius: 2px;
-  opacity: 0;
-  transform: scaleY(0.9);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-  backdrop-filter: blur(6px) brightness(1.2);
-  -webkit-backdrop-filter: blur(6px) brightness(1.2);
-
-  /* subtle dual-layer gradient for depth */
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  box-shadow:
-    0 0 8px rgba(255, 255, 255, 0.15),
-    inset 0 0 4px rgba(255, 255, 255, 0.12);
-}
-
-/* --- Visible state --- */
-.custom-bg-separator.visible {
-  opacity: 0.85;
-  transform: scaleY(1);
-}
-
-/* --- Automatic color adjustment based on mode --- */
-.light-mode .custom-bg-separator {
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.1) 50%,
-    rgba(0, 0, 0, 0.05) 100%
-  );
-  box-shadow:
-    0 0 6px rgba(0, 0, 0, 0.08),
-    inset 0 0 3px rgba(0, 0, 0, 0.08);
-}
-
-.dark-mode .custom-bg-separator {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  box-shadow:
-    0 0 8px rgba(255, 255, 255, 0.15),
-    inset 0 0 4px rgba(255, 255, 255, 0.12);
-}
-
-/* ======================================================= */
-/* == Right Side (Preview Bubble) ======================== */
-/* ======================================================= */
-.custom-bg-right {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 120px;
-}
-
-#customBgPreviewContainer {
-  display: none;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
-  box-shadow:
-    0 3px 10px rgba(0, 0, 0, 0.25),
-    inset 0 0 12px color-mix(in srgb, var(--accent-color) 15%, transparent);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-#customBgPreviewContainer.visible {
-  display: block;
-  opacity: 1;
-  transform: scale(1);
-}
-
-#customBgPreview {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-  -webkit-touch-callout: none;
-}
-#customBgPreview.loaded {
-  opacity: 1;
-}
-
-/* ======================================================= */
-/* == Mobile Layout ===================================== */
-/* ======================================================= */
-@media (max-width: 768px) {
-  .custom-background {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .custom-bg-left {
-    width: 100%;
-    align-items: center;
-    text-align: center;
-  }
-
-  /* Controls remain inline on mobile */
-  .custom-bg-controls {
-    justify-content: center;
-    flex-wrap: nowrap;
-  }
-
-  /* Horizontal Separator for mobile */
-  .custom-bg-separator {
-    width: 80%;
-    height: 1px;
-    margin: 1rem 0;
-    transform: scaleX(0.9);
-  }
-  .custom-bg-separator.visible {
-    transform: scaleX(1);
-  }
-
-  .light-mode .custom-bg-separator {
-    background: linear-gradient(
-      to right,
-      rgba(0, 0, 0, 0.15) 0%,
-      rgba(0, 0, 0, 0.1) 50%,
-      rgba(0, 0, 0, 0.05) 100%
-    );
-  }
-
-  .dark-mode .custom-bg-separator {
-    background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.35) 0%,
-      rgba(255, 255, 255, 0.15) 50%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-  }
-
-  /* Center preview bubble */
-  .custom-bg-right {
-    justify-content: center;
-  }
-
-  #customBgPreviewContainer {
-    width: 95px;
-    height: 95px;
-  }
-}
-
-/* ===== iOS-26 Blur Card Fade ===== */
-#wallpaperBlurCard {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-#wallpaperBlurCard.hidden {
-  opacity: 0;
-  transform: translateY(-6px);
-  pointer-events: none;
-}
-
-/* ============================================= */
-/* 🔬 VISION OS DOCK (Adaptive & Compact)       */
-/* ============================================= */
-
-/* --- 1. DOCK CONTAINER --- */
+/* ================================================== */
+/* ================= DOCK (onyx-dock) ================ */
+/* ================================================== */
 .onyx-dock {
   position: fixed;
   bottom: 20px;
@@ -1177,116 +374,196 @@ body.dark-mode #themeModeSelect:hover {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  padding: 6px 8px;
-  
-  /* UPDATED: Fully rounded capsule shape */
-  border-radius: 999px; 
-  
-  width: fit-content;
-  max-width: 90vw;
-  background: var(--content-bg);
-  border: 1px solid var(--border-color);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.25);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--content-bg) 82%, transparent);
+  border: 1px solid color-mix(in srgb,var(--border-color) 70%, transparent);
+  box-shadow: 0 8px 26px rgba(0,0,0,0.32);
   z-index: 9999;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
 }
 
-/* --- 2. DOCK ITEMS --- */
 .dock-item {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 16px;
-  min-width: 52px;
-  text-decoration: none;
-  
-  /* UPDATED: Matches the parent capsule shape for hover states */
+  gap: 6px;
+  padding: 8px 12px;
   border-radius: 999px;
-  
   color: var(--text-color);
-  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease, background 0.3s ease;
-  isolation: isolate;
-  overflow: hidden;
+  text-decoration: none;
+  transition: transform 0.12s ease, color 0.12s ease;
 }
 
-/* --- 3. SPOTLIGHT GLOW --- */
+.dock-item:hover { transform: translateY(-6px) scale(1.06); color: var(--accent-color); }
+.dock-item.active { background: color-mix(in srgb, var(--accent-color) 12%, transparent); box-shadow: 0 8px 22px color-mix(in srgb,var(--accent-color) 10%, rgba(0,0,0,0.25)); color: var(--accent-color); }
+
+/* Spotlight glow (subtle) */
 .dock-item::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: transparent;
-  background-image: radial-gradient(
-    45px circle at var(--x, 50%) var(--y, 50%),
-    rgba(var(--accent-color-rgb, 0, 122, 255), 0.2),
-    transparent 60%
-  );
+  background-image: radial-gradient(40px circle at var(--x,50%) var(--y,50%), rgba(var(--accent-color-rgb),0.12), transparent 60%);
   opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+.dock-item:hover::before { opacity: 1; }
+
+/* Dock icon transform (parallax) */
+.dock-icon { width: 18px; height: 18px; margin-bottom: 2px; transition: transform .12s linear; }
+
+/* ================================================== */
+/* ============ CUSTOM BG PREVIEW (BUBBLE) ========== */
+/* ================================================== */
+#customBgPreviewContainer {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: none;
+  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.28), inset 0 0 16px rgba(255,255,255,0.03);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  transition: transform .28s cubic-bezier(.25,.8,.25,1), opacity .28s ease;
+}
+#customBgPreviewContainer.visible { display: block; opacity: 1; transform: scale(1); }
+
+/* Preview image */
+#customBgPreview { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ================================================== */
+/* ============= COOKIE BANNER & FOOTER ============= */
+/* ================================================== */
+#cookie-consent-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--liquid-base-bg);
+  border: 1px solid var(--liquid-border);
+  box-shadow: var(--shadow-soft);
+  z-index: 12000;
 }
 
-/* --- 4. HOVER INTERACTIONS --- */
-.dock-item:hover {
-  transform: scale(1.1);
-  color: var(--accent-color);
-  z-index: 10;
+/* Footer */
+body.settings-page footer {
+  text-align: center;
+  padding: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--secondary-text);
 }
 
-.dock-item:hover::before {
-  opacity: 1;
+/* ================================================== */
+/* ================== HIGH CONTRAST ================== */
+/* ================================================== */
+body.high-contrast {
+  --accent-color: #ffcc00;
+  --accent-color-rgb: 255,204,0;
+  --liquid-base-bg: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(250,250,250,0.98));
+  --liquid-top-sheen: radial-gradient(circle at 50% 6%, rgba(255,255,255,1), rgba(255,255,255,0.8) 40%, transparent 70%);
+  --liquid-bottom-curve: radial-gradient(circle at 50% 100%, rgba(0,0,0,0.12), transparent 70%);
+  --liquid-border: rgba(0,0,0,0.85);
+  --text-color: #fff;
+  --secondary-text: #fff;
+  --panel-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  filter: none;
 }
 
-.dock-item:hover .dock-label,
-.dock-item:hover .dock-icon {
-  filter: drop-shadow(0 0 4px var(--accent-color));
+/* ================================================== */
+/* ================= ACCESSIBILITY =================== */
+/* ================================================== */
+:focus { outline: none; }
+:focus-visible {
+  box-shadow: var(--focus-ring);
 }
 
-/* --- 5. ACTIVE STATE --- */
-.dock-item.active {
-  color: var(--accent-color);
-  background: rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
-  box-shadow: inset 0 0 0 1px rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
+/* Motion disabled helper */
+.motion-disabled * { transition: none !important; animation: none !important; }
+
+/* ================================================== */
+/* =================== UTILITIES ===================== */
+/* ================================================== */
+.container { max-width: 1150px; margin: 0 auto; padding: 0 20px; }
+
+/* small helpers for spacing */
+.row { display:flex; gap:12px; align-items:center; }
+.col { display:flex; flex-direction:column; gap:8px; }
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .section { padding: 20px; margin-bottom: 18px; border-radius: 18px; }
+  .onyx-dock { bottom: 12px; padding: 6px; gap: 6px; }
+  .container { padding: 0 14px; }
 }
 
-.dock-item.active .dock-label {
-  font-weight: 600;
+/* ================================================== */
+/* ============ BACKWARDS COMPAT (legacy classes) ==== */
+/* ================================================== */
+/* Keep compatibility with previously named classes in your codebase */
+.settings-header, .settings-subsection, .profile-card, .setting-card {
+    /* Make these the liquid style too */
+    background: var(--liquid-base-bg);
+    border: 1px solid var(--liquid-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--panel-shadow);
+    padding: 12px;
 }
 
-/* --- 6. CONTENT STYLING --- */
-.dock-icon {
-  width: 18px;
-  height: 18px;
-  margin-bottom: 3px;
-  stroke: currentColor;
-  stroke-width: 2px;
-  transition: transform 0.1s linear;
-  transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
+/* .setting-card hover */
+.setting-card:hover { transform: translateY(-3px); box-shadow: 0 28px 64px rgba(0,0,0,0.45); }
+
+/* Danger zone tint preserved but liquid-ified */
+.danger-zone .settings-subsection {
+  background: color-mix(in srgb, var(--red-color, #ff3b30) 12%, var(--liquid-base-bg));
+  border: 1px solid color-mix(in srgb, var(--red-color, #ff3b30) 40%, transparent);
 }
 
-.dock-label {
-  font-size: 10px;
-  line-height: 1;
-  font-weight: 500;
-  letter-spacing: 0.2px;
+/* ================================================== */
+/* ============ CONSUMER-SIDE INLINE FIXES ========== */
+/* ================================================== */
+
+/* If you use inline small profile icon containers */
+.profile-pic-wrapper { display:inline-flex; align-items:center; gap:12px; }
+.profile-pic {
+  width: 84px; height:84px; border-radius: 20px; object-fit:cover;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.06);
 }
 
-.custom-bg-preview {
-  width: 100%;
-  height: 200px;
-  background-size: 100% auto;
-  background-position: center center;
-  background-repeat: no-repeat;
-  cursor: grab;
-  border: 1px solid #ccc;
-  transition: background-position 0.1s ease, background-size 0.1s ease;
+/* Status badges */
+.status-online { background: linear-gradient(180deg, #1dd760, #0f9a3a); box-shadow: 0 6px 14px rgba(0,0,0,0.28); border-radius:999px; padding:4px 8px; color:#fff; font-weight:600; }
+
+/* Toast container (liquid) */
+#toast-container { position: fixed; right: 20px; bottom: 20px; z-index: 15000; display:flex; flex-direction:column; gap:10px; }
+
+/* ================================================== */
+/* ============ FINAL TUNES & FALLBACKS ============= */
+/* ================================================== */
+/* Make sure default content background variable exists */
+:root { --content-bg: var(--light-content-bg); }
+body.dark-mode { --content-bg: var(--dark-content-bg); }
+
+/* Ensure sliders, selects and dropdowns match liquid */
+select, textarea, input[type="text"], input[type="search"], .search-container input {
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--content-bg) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+  color: var(--text-color);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
-.custom-bg-preview.dragging {
-  cursor: grabbing;
-}
+/* ================================================== */
+/* ================ END OF FILE ===================== */
+/* ================================================== */
