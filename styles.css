@@ -748,15 +748,19 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — LIQUID GLASS THEME ============= */
+/* === 🎧 LIVE ACTIVITY — LIQUID GLASS WITH ACCENT ======= */
 /* ======================================================= */
 
 .live-activity {
   position: relative;
-  background: var(--content-bg);
+  background: color-mix(
+    in srgb,
+    var(--dynamic-accent) 10%,
+    var(--content-bg) 90%
+  ); /* subtle dynamic accent tint */
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 25px var(--shadow-color);
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--dynamic-accent) 20%, var(--shadow-color));
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
   padding: 36px 24px;
@@ -901,7 +905,11 @@ a.corner-button {
 .music-progress-container {
   width: 100%;
   height: 6px;
-  background: var(--content-bg);
+  background: color-mix(
+    in srgb,
+    var(--dynamic-accent) 10%,
+    var(--content-bg) 90%
+  ); /* subtle tint for liquid glass */
   border-radius: var(--radius-xl);
   overflow: hidden;
   position: relative;
