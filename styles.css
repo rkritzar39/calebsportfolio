@@ -748,19 +748,19 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — LIQUID GLASS WITH ACCENT ======= */
+/* === 🎧 LIVE ACTIVITY — DYNAMIC ACCENT GLASS =========== */
 /* ======================================================= */
 
 .live-activity {
   position: relative;
-  background: color-mix(
-    in srgb,
-    var(--dynamic-accent) 10%,
-    var(--content-bg) 90%
-  ); /* subtle dynamic accent tint */
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dynamic-accent) 20%, var(--content-bg) 80%),
+    color-mix(in srgb, var(--dynamic-accent) 15%, var(--content-bg) 85%)
+  ); /* stronger accent tint for visibility in both modes */
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 25px color-mix(in srgb, var(--dynamic-accent) 20%, var(--shadow-color));
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--dynamic-accent) 25%, var(--shadow-color));
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
   padding: 36px 24px;
@@ -899,17 +899,17 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === MUSIC PROGRESS BAR — LIQUID GLASS STATIC ========= */
+/* === MUSIC PROGRESS BAR — DYNAMIC ACCENT GLASS ========= */
 /* ======================================================= */
 
 .music-progress-container {
   width: 100%;
   height: 6px;
-  background: color-mix(
-    in srgb,
-    var(--dynamic-accent) 10%,
-    var(--content-bg) 90%
-  ); /* subtle tint for liquid glass */
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--dynamic-accent) 20%, var(--content-bg) 80%),
+    color-mix(in srgb, var(--dynamic-accent) 15%, var(--content-bg) 85%)
+  ); /* stronger accent tint */
   border-radius: var(--radius-xl);
   overflow: hidden;
   position: relative;
