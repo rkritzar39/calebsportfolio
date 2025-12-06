@@ -964,20 +964,18 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR (Full Width + Balanced) ============== */
+/* === MUSIC PROGRESS BAR — PREMIUM GLOW ================= */
 /* ======================================================= */
 
 .music-progress-container {
-  width: 100%; /* ✅ Full width of card */
-  max-width: none;
+  width: 100%;
   height: 6px;
   background: color-mix(in srgb, var(--border-color) 25%, transparent);
   border-radius: 50px;
   overflow: hidden;
   position: relative;
   margin: 28px 0 16px 0;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35);
-  align-self: stretch; /* ✅ expands flex child */
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
 }
 
 .music-progress-bar {
@@ -989,13 +987,27 @@ a.corner-button {
   border-radius: inherit;
   background: linear-gradient(
     90deg,
-    var(--dynamic-accent, var(--accent-color, #1DB954)) 0%,
-    color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 60%, #000) 100%
+    var(--dynamic-accent, #1DB954) 0%,
+    color-mix(in srgb, var(--dynamic-accent, #1DB954) 65%, #000) 100%
   );
   box-shadow:
-    0 0 10px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 60%, transparent),
-    0 0 20px color-mix(in srgb, var(--dynamic-accent, var(--accent-color)) 40%, transparent);
-  transition: width 0.4s linear;
+    0 0 6px color-mix(in srgb, var(--dynamic-accent, #1DB954) 50%, transparent),
+    0 0 12px color-mix(in srgb, var(--dynamic-accent, #1DB954) 30%, transparent);
+  transition: width 0.4s linear, box-shadow 0.4s ease-in-out;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 6px color-mix(in srgb, var(--dynamic-accent, #1DB954) 50%, transparent),
+      0 0 12px color-mix(in srgb, var(--dynamic-accent, #1DB954) 30%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 10px color-mix(in srgb, var(--dynamic-accent, #1DB954) 70%, transparent),
+      0 0 18px color-mix(in srgb, var(--dynamic-accent, #1DB954) 50%, transparent);
+  }
 }
 
 /* ======================================================= */
