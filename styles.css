@@ -9,29 +9,29 @@
   /* Dark Liquid Glass Palette */
   /* ======================== */
   --dark-bg: #0E0E0E;
-  --dark-content-bg: rgba(24,24,24,0.55);
+  --dark-content-bg: rgba(24, 24, 24, 0.55);
   --dark-text: #F5F7FA;
   --dark-secondary-text: #A9A9A9;
-  --dark-border: rgba(255,255,255,0.08);
+  --dark-border: rgba(255, 255, 255, 0.08);
   --dark-accent: #4EA8FF;
   --dark-hover: #3F8CE0;
   --dark-link: var(--dark-accent);
-  --dark-shadow: rgba(0,0,0,0.55);
-  --dark-glow: rgba(255,255,255,0.08);
+  --dark-shadow: rgba(0, 0, 0, 0.55);
+  --dark-glow: rgba(255, 255, 255, 0.08);
   --dark-icon: #E3E3E3;
 
   /* ======================== */
   /* Light Liquid Glass Palette */
   /* ======================== */
   --light-bg-gradient: linear-gradient(120deg, #d9f0ff 0%, #f5f9ff 100%);
-  --light-content-bg: rgba(255,255,255,0.45);
+  --light-content-bg: rgba(255, 255, 255, 0.45);
   --light-text: #111111;
   --light-secondary-text: #4B5563;
-  --light-shadow: rgba(0,0,0,0.15);
+  --light-shadow: rgba(0, 0, 0, 0.15);
   --light-accent: #007AFF;
   --light-hover: #005FCC;
   --light-link: var(--light-accent);
-  --light-glow: rgba(255,255,255,0.7);
+  --light-glow: rgba(255, 255, 255, 0.7);
   --light-icon: #2C2C2E;
 
   /* ======================== */
@@ -54,11 +54,11 @@
   /* Apple Liquid Glass Optics */
   /* ======================== */
   --backdrop-blur: blur(28px) saturate(180%) contrast(110%);
-  --bubble-gradient: radial-gradient(circle at 25% 20%, rgba(255,255,255,0.15), transparent 72%);
-  --bubble-highlight: inset 0 1px 2px rgba(255,255,255,0.18);
-  --bubble-shadow: 0 28px 60px rgba(0,0,0,0.45), inset 0 0 16px rgba(255,255,255,0.05);
-  --liquid-reflection: linear-gradient(120deg, rgba(255,255,255,0.35), rgba(255,255,255,0.05) 45%, rgba(255,255,255,0.02));
-  --liquid-refraction: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+  --bubble-gradient: radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.15), transparent 72%);
+  --bubble-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.18);
+  --bubble-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), inset 0 0 16px rgba(255, 255, 255, 0.05);
+  --liquid-reflection: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.02));
+  --liquid-refraction: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
 
   /* ======================== */
   /* Radii & Transitions      */
@@ -79,7 +79,7 @@ body.light-e {
   --content-bg: var(--light-content-bg);
   --text-color: var(--light-text);
   --secondary-text: var(--light-secondary-text);
-  --border-color: rgba(255,255,255,0.45);
+  --border-color: rgba(255, 255, 255, 0.45);
   --hover-color: var(--light-hover);
   --link-color: var(--light-link);
   --shadow-color: var(--light-shadow);
@@ -87,9 +87,9 @@ body.light-e {
   --icon-color: var(--light-icon);
   --social-icon-text-color: var(--light-text);
 
-  --bubble-gradient: radial-gradient(circle at 40% 25%, rgba(255,255,255,0.65), transparent 65%);
-  --bubble-shadow: 0 18px 45px rgba(0,0,0,0.15), inset 0 0 10px rgba(255,255,255,0.25);
-  --bubble-highlight: inset 0 1px 2px rgba(0,0,0,0.08);
+  --bubble-gradient: radial-gradient(circle at 40% 25%, rgba(255, 255, 255, 0.65), transparent 65%);
+  --bubble-shadow: 0 18px 45px rgba(0, 0, 0, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.25);
+  --bubble-highlight: inset 0 1px 2px rgba(0, 0, 0, 0.08);
   --backdrop-blur: blur(26px) saturate(190%) contrast(108%);
 }
 
@@ -101,6 +101,41 @@ body.dark-mode {
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-content-bg);
   --text-color: var(--dark-text);
+}
+
+/* ======================== */
+/* Apple Glass Effect Block */
+/* ======================== */
+.glass {
+  background: var(--content-bg);
+  border-radius: var(--radius-xl);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--bubble-shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Reflection Layer */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--liquid-reflection);
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Refraction/Bubble Layer */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bubble-gradient);
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
 
 /* ================================================== */
