@@ -60,19 +60,31 @@
 
 <div id="main-content-wrapper">
     </div>
-<div class="profile-section">
+<div class="profile-section section">
 
   <!-- Profile Picture -->
   <div class="profile-pic-wrapper">
-    <img src="path/to/default-profile.jpg" alt="Profile Picture" class="profile-pic" id="profile-pic-main" />
-    <div class="profile-status-container status-online" id="profile-status-main-container"></div>
+    <img 
+      src="path/to/default-profile.jpg" 
+      alt="Profile Picture" 
+      class="profile-pic" 
+      id="profile-pic-main"
+    />
+    <div 
+      class="profile-status-container status-online" 
+      id="profile-status-main-container">
+    </div>
   </div>
 
   <!-- Username + Status -->
   <div class="username-checkmark">
     <h1 id="profile-username-main">Caleb Kritzar</h1>
     <img src="check.png" alt="Verified" class="verified" />
-    <p class="profile-status-text status-online" id="profile-status-text-main">Active</p>
+    <p 
+      class="profile-status-text status-online" 
+      id="profile-status-text-main">
+      Active
+    </p>
   </div>
 
   <!-- Bio -->
@@ -82,17 +94,18 @@
 
   <!-- 🎧 LIVE ACTIVITY SYSTEM -->
   <div class="live-activity hidden" id="live-activity">
+
     <!-- Status Line -->
-  <!-- Status Line -->
-<div class="status-line" id="status-line">
-  <img
-    id="status-icon"
-    class="status-icon"
-    src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
-    alt="Status Icon"
-  />
-  <span id="status-line-text">Loading status…</span>
-</div>
+    <div class="status-line" id="status-line">
+      <img
+        id="status-icon"
+        class="status-icon"
+        src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
+        alt="Status Icon"
+      />
+      <span id="status-line-text">Loading status…</span>
+    </div>
+
     <!-- Spotify Card -->
     <div
       class="spotify-card hidden"
@@ -114,7 +127,10 @@
         <div class="live-artist" id="live-song-artist">—</div>
 
         <div class="music-progress-container">
-          <div class="music-progress-bar" id="music-progress-bar"></div>
+          <div 
+            class="music-progress-bar" 
+            id="music-progress-bar">
+          </div>
         </div>
 
         <div class="music-progress-time">
@@ -126,40 +142,46 @@
     </div>
 
     <!-- Last Updated Label -->
-    <div class="la-updated" id="live-activity-updated">Updated just now</div>
+    <div class="la-updated" id="live-activity-updated">
+      Updated just now
+    </div>
+
   </div>
   <!-- End Live Activity -->
+
 </div>
 
 <!-- 🔔 Toast Notifications -->
 <div id="toast-container"></div>
         
-<div class="social-links-section" id="social-links-section" data-section-id="social-links">
-    <h2>Follow Me</h2>
+<div class="social-links-section section" id="social-links-section" data-section-id="social-links">
+  <h2>Follow Me</h2>
 
-    <div class="search-container unified">
-        <span class="search-icon"></span>
-        <input 
-            type="text" 
-            class="creator-search"
-            placeholder="Search social links..."
-            data-target="social-links-container"
-        />
-    </div>
+  <div class="search-container unified">
+    <span class="search-icon"></span>
+    <input 
+      type="text" 
+      class="creator-search"
+      placeholder="Search social links..."
+      data-target="social-links-container"
+    />
+  </div>
 
-    <!-- MUST be OUTSIDE the container you're filtering -->
-    <p class="no-results" id="no-results-social" style="display:none;">No results found.</p>
+  <!-- MUST be OUTSIDE the container you're filtering -->
+  <p class="no-results" id="no-results-social" style="display:none;">
+    No results found.
+  </p>
 
-    <div id="social-links-container" class="social-links-container">
-        <p>Loading social links...</p>
-    </div>
+  <div id="social-links-container" class="social-links-container">
+    <p>Loading social links...</p>
+  </div>
 </div>
 
 
-    <div id="president-section" data-section-id="president">
-        <div id="president-placeholder"></div>
-    </div>
-
+    <div id="president-section" class="section" data-section-id="president">
+  <div id="president-placeholder"></div>
+</div>
+        
 <!-- TikTok Section -->
 <div class="shoutouts-section section" id="tiktok-shoutouts-section" data-section-id="tiktok-shoutouts">
   <div id="tiktok-shoutouts">
@@ -242,7 +264,7 @@
   <div class="youtube-creator-grid"></div>
 </div>
 
-<div class="countdown-section" id="countdown-section" data-section-id="countdown">
+<div class="section countdown-section" id="countdown-section" data-section-id="countdown">
 
     <h2 class="countdown-title">Countdown</h2>
 
@@ -324,37 +346,28 @@
 
     <!-- INFO & STATUS -->
     <div class="countdown-info">
-
         <div id="local-time-display" class="local-time-display"></div>
-
         <div class="countdown-status">
             <span id="status-message">Preparing countdown…</span>
         </div>
     </div>
 </div>
         
-    <div class="business-info-section" id="business-section" data-section-id="business-info">
-        <h2>Business Status & Hours</h2>
+<div class="section business-info-section" id="business-section" data-section-id="business-info">
+    <h2>Business Status & Hours</h2>
 
-        <div id="business-status-display" class="business-status">
-            <span class="status-main-text">Loading Status...</span>
-            <span class="status-countdown-text"></span>
-            <div class="status-reason-text"></div>
-        </div>
-
-        <div id="business-hours-display" class="hours-list">
-            </div>
-
-        <div id="temporary-hours-display">
-            </div>
-
-        <div id="holiday-hours-display">
-            </div>
-
-        <div id="contact-email-display" class="contact-info">
-            </div>
+    <div id="business-status-display" class="business-status">
+        <span class="status-main-text">Loading Status...</span>
+        <span class="status-countdown-text"></span>
+        <div class="status-reason-text"></div>
     </div>
 
+    <div id="business-hours-display" class="hours-list"></div>
+    <div id="temporary-hours-display" class="hours-list"></div>
+    <div id="holiday-hours-display" class="hours-list"></div>
+    <div id="contact-email-display" class="contact-info"></div>
+</div>
+        
  <div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
     <h2><i class="fas fa-microchip"></i> Tech Information</h2>
 
@@ -368,16 +381,16 @@
       <!-- ========================= -->
 <!-- Quote of the Day Section -->
 <!-- ========================= -->
-<div class="section" id="quote-section" data-section-id="quote">
+<div class="section glass-section" id="quote-section" data-section-id="quote">
   <h2>Quote of the Day</h2>
   <p id="quote-date" class="quote-date"></p>
   <p id="quote-text" class="quote-text">Loading inspiration...</p>
   <small id="quote-author" class="quote-author"></small>
 
-  <div id="quote-controls">
+  <div id="quote-controls" class="quote-controls">
     <select id="quote-category"></select>
 
-    <div id="custom-category-container" style="display:none;">
+    <div id="custom-category-container" class="custom-category-container" style="display:none;">
       <input type="text" id="custom-category-input" placeholder="New category name">
       <button id="save-custom-category">Save</button>
     </div>
@@ -389,7 +402,7 @@
 </div>
 
 <!-- Add Custom Quote Modal -->
-<div id="custom-quote-modal" class="category-modal hidden">
+<div id="custom-quote-modal" class="category-modal hidden glass-section">
   <div class="category-modal-content">
     <h3>Add Custom Quote</h3>
 
@@ -410,7 +423,7 @@
       <label for="new-quote-category">Category</label>
     </div>
 
-    <div>
+    <div class="modal-buttons">
       <button id="save-custom-quote">Save Quote</button>
       <button id="cancel-custom-quote">Cancel</button>
     </div>
@@ -418,7 +431,7 @@
 </div>
 
 <!-- Custom Quote Manager -->
-<div id="custom-quotes-manager" class="category-modal hidden">
+<div id="custom-quotes-manager" class="category-modal hidden glass-section">
   <div class="category-modal-content">
     <h3>Manage Custom Quotes</h3>
     <label>Category:</label>
@@ -470,7 +483,10 @@
 </div>
 </div>
         
-<div class="version-info-container">
+<!-- ========================= -->
+<!-- Version Information Section -->
+<!-- ========================= -->
+<div class="version-info-container glass-section">
   <div class="version-info-section">
     <div class="version-header">Version Information</div>
     <ul class="version-list">
@@ -538,8 +554,11 @@
     </ul>
   </div>
 </div>
-        
-<div class="legal-section">
+
+<!-- ========================= -->
+<!-- Legal Section -->
+<!-- ========================= -->
+<div class="legal-section glass-section">
     <div class="legal-header">Legal Notices</div>
     <div class="copy-protection-message">
         A watermark protects this content. Unauthorized use is prohibited.
