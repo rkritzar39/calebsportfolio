@@ -178,7 +178,8 @@
 </div>
 
 
-    <div class="section" id="president-section" data-section-id="president">
+    <div id="president-section" data-section-id="president">
+    <div id="president-placeholder"></div>
 </div>
         
 <!-- TikTok Section -->
@@ -381,49 +382,63 @@
 <!-- Quote of the Day Section -->
 <!-- ========================= -->
 <div class="section" id="quote-section" data-section-id="quote">
-    <h2>Quote of the Day</h2>
-    <p id="quote-date" class="quote-date"></p>
-    <p id="quote-text" class="quote-text">Loading inspiration...</p>
-    <small id="quote-author" class="quote-author"></small>
+  <h2>Quote of the Day</h2>
+  <p id="quote-date" class="quote-date"></p>
+  <p id="quote-text" class="quote-text">Loading inspiration...</p>
+  <small id="quote-author" class="quote-author"></small>
 
-    <div class="quote-controls">
-        <select id="quote-category"></select>
+  <div id="quote-controls">
+    <select id="quote-category"></select>
 
-        <div id="custom-category-container" class="hidden">
-            <input type="text" id="custom-category-input" placeholder="New category name">
-            <button id="save-custom-category">Save</button>
-        </div>
-
-        <button id="next-quote-btn">🔄 Next Quote</button>
-        <button id="add-custom-quote-btn">➕ Add Custom Quote</button>
-        <button id="manage-custom-quotes-btn">🗂️ Manage Quotes</button>
+    <div id="custom-category-container" style="display:none;">
+      <input type="text" id="custom-category-input" placeholder="New category name">
+      <button id="save-custom-category">Save</button>
     </div>
+
+    <button id="next-quote-btn">🔄 Next Quote</button>
+    <button id="add-custom-quote-btn">➕ Add Custom Quote</button>
+    <button id="manage-custom-quotes-btn">🗂️ Manage Quotes</button>
+  </div>
 </div>
 
 <!-- Add Custom Quote Modal -->
-<div id="custom-quote-modal" class="modal hidden">
-    <div class="modal-content">
-        <h3>Add Custom Quote</h3>
-        <textarea id="new-quote-text" placeholder="Quote" rows="3"></textarea>
-        <input type="text" id="new-quote-author" placeholder="Author (optional)">
-        <select id="new-quote-category">
-            <option value="">Select a category...</option>
-        </select>
-        <div class="modal-buttons">
-            <button id="save-custom-quote">Save Quote</button>
-            <button id="cancel-custom-quote">Cancel</button>
-        </div>
+<div id="custom-quote-modal" class="category-modal hidden">
+  <div class="category-modal-content">
+    <h3>Add Custom Quote</h3>
+
+    <div class="form-floating">
+      <textarea id="new-quote-text" placeholder=" " rows="3"></textarea>
+      <label for="new-quote-text">Quote</label>
     </div>
+
+    <div class="form-floating">
+      <input type="text" id="new-quote-author" placeholder=" ">
+      <label for="new-quote-author">Author (optional)</label>
+    </div>
+
+    <div class="form-floating">
+      <select id="new-quote-category">
+        <option value="">Select a category...</option>
+      </select>
+      <label for="new-quote-category">Category</label>
+    </div>
+
+    <div>
+      <button id="save-custom-quote">Save Quote</button>
+      <button id="cancel-custom-quote">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <!-- Custom Quote Manager -->
-<div id="custom-quotes-manager" class="modal hidden">
-    <div class="modal-content">
-        <h3>Manage Custom Quotes</h3>
-        <select id="manager-category-select"></select>
-        <ul id="custom-quote-list"></ul>
-        <button id="close-manager-btn">Close</button>
-    </div>
+<div id="custom-quotes-manager" class="category-modal hidden">
+  <div class="category-modal-content">
+    <h3>Manage Custom Quotes</h3>
+    <label>Category:</label>
+    <select id="manager-category-select"></select>
+    <ul id="custom-quote-list"></ul>
+    <button id="close-manager-btn" style="margin-top:1rem;">Close</button>
+  </div>
 </div>
 
     <div class="useful-links-section section" id="useful-links-section" data-section-id="useful-links">
@@ -471,28 +486,79 @@
 <!-- ========================= -->
 <!-- Version Information Section -->
 <!-- ========================= -->
-<div class="section" id="version-section" data-section-id="version">
-    <h2>Version Information</h2>
+<!-- ========================= -->
+<!-- Version & Legal Section -->
+<!-- ========================= -->
+<div class="version-info-container">
+  <div class="version-info-section">
+    <div class="version-header">Version Information</div>
     <ul class="version-list">
-        <li id="version-info"><strong>Version:</strong> <span id="version-value">v26.5</span></li>
-        <li id="build-info"><strong>Build:</strong> <span id="build-value">2025.11.25</span></li>
-        <li id="synced-info"><strong>Synced:</strong> <span id="synced">Detecting...</span></li>
-        <li id="os-info"><strong>OS:</strong> <span id="os">Detecting...</span></li>
-        <li id="device-info"><strong>Device:</strong> <span id="device">Detecting...</span></li>
-        <li id="browser-info"><strong>Browser:</strong> <span id="browser">Detecting...</span></li>
-        <li id="resolution-info"><strong>Resolution:</strong> <span id="resolution">Detecting...</span></li>
-        <li id="connection-info"><strong>Connection:</strong> <span id="connection">Detecting...</span></li>
-        <li id="network-info"><strong>Network:</strong> <span id="network">Detecting...</span></li>
-        <li id="sunrise-info"><strong>Sunrise:</strong> <span id="sunrise">Loading...</span></li>
-        <li id="sunset-info"><strong>Sunset:</strong> <span id="sunset">Loading...</span></li>
-        <li id="weather-info"><strong>Weather:</strong> <span id="weather">Detecting...</span></li>
+      <li id="version-info">
+        <span class="version-label">🔢 <strong>Version:</strong></span>
+        <span class="version-value">v26.5</span>
+      </li>
+      <li id="build-info">
+        <span class="version-label">🏗️ <strong>Build:</strong></span>
+        <span class="version-value">2025.11.25</span>
+      </li>
+      <li id="synced-info">
+        <span class="version-label">🕒 <strong>Synced:</strong></span>
+        <span class="version-value" id="synced">Detecting...</span>
+      </li>
+      <li id="os-info">
+        <span class="version-label">💻 <strong>OS:</strong></span>
+        <span class="version-value" id="os">Detecting...</span>
+      </li>
+      <li id="device-info">
+        <span class="version-label">📱 <strong>Device:</strong></span>
+        <span class="version-value" id="device">Detecting...</span>
+      </li>
+      <li id="browser-info">
+        <span class="version-label">🌐 <strong>Browser:</strong></span>
+        <span class="version-value" id="browser">Detecting...</span>
+      </li>
+      <li id="resolution-info">
+        <span class="version-label">🖥️ <strong>Resolution:</strong></span>
+        <span class="version-value" id="resolution">Detecting...</span>
+      </li>
+      <li id="connection-info">
+        <span class="version-label">📶 <strong>Connection:</strong></span>
+        <span class="version-value" id="connection">Detecting...</span>
+      </li>
+      <li id="network-info">
+        <span class="version-label">📡 <strong>Network:</strong></span>
+        <span class="version-value" id="network">Detecting...</span>
+      </li>
+      <li id="sunrise-info">
+        <span class="version-label">🌅 <strong>Sunrise:</strong></span>
+        <span class="version-value" id="sunrise">Loading...</span>
+      </li>
+      <li id="sunset-info">
+        <span class="version-label">🌇 <strong>Sunset:</strong></span>
+        <span class="version-value" id="sunset">Loading...</span>
+      </li>
+      <li id="weather-info">
+        <span class="version-label">🌤️ <strong>Weather:</strong></span>
+        <span class="version-value" id="weather">Detecting...</span>
+      </li>
     </ul>
-
-    <h2>Legal Notices</h2>
-    <p class="copy-protection-message">A watermark protects this content. Unauthorized use is prohibited.</p>
-    <p class="legal-protection-message">All content and materials on this website are legally protected.</p>
-    <p class="watermark-note">Protected by Watermark</p>
+  </div>
 </div>
+
+<div class="legal-section">
+    <div class="legal-header">Legal Notices</div>
+    <div class="copy-protection-message">
+        A watermark protects this content. Unauthorized use is prohibited.
+    </div>
+    <div class="legal-protection-message">
+        All content and materials on this website are legally protected.
+    </div>
+    <div class="watermark-note">
+        Protected by Watermark
+    </div>
+</div>
+
+
             
    </div> 
    
