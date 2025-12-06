@@ -748,17 +748,17 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — FINAL STABLE LAYOUT ============ */
+/* === 🎧 LIVE ACTIVITY — LIQUID GLASS THEME ============= */
 /* ======================================================= */
 
 .live-activity {
   position: relative;
-  background: var(--dynamic-bg, color-mix(in srgb, var(--content-bg) 94%, transparent));
-  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-  border-radius: 20px;
-  box-shadow: 0 8px 25px color-mix(in srgb, var(--shadow-color) 55%, transparent);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 25px var(--shadow-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   padding: 36px 24px;
   margin: 22px auto;
   width: calc(100% - 40px);
@@ -772,29 +772,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === LIGHT / DARK MODE ICON VISIBILITY FIX ============= */
-/* ======================================================= */
-
-:root {
-  --icon-github: #ffffff;
-  --icon-tiktok: #ffffff;
-  --icon-discord: #5865F2;
-  --icon-spotify: #1DB954;
-  --icon-twitch: #9146FF;
-  --icon-youtube: #FF0000;
-  --icon-reddit: #FF4500;
-  --dynamic-accent: #1DB954; /* fallback Spotify green */
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --icon-github: #000000;
-    --icon-tiktok: #000000;
-  }
-}
-
-/* ======================================================= */
-/* === STATUS LINE (CLEAN, OFFICIAL ICONS) =============== */
+/* === STATUS LINE ======================================= */
 /* ======================================================= */
 
 .status-line {
@@ -804,12 +782,11 @@ a.corner-button {
   gap: 10px;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--text-color, #f5f5f5);
+  color: var(--text-color);
   text-align: center;
   margin-bottom: 24px;
   opacity: 0.95;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  text-shadow: 0 0 6px color-mix(in srgb, var(--dynamic-accent) 40%, transparent);
+  text-shadow: 0 0 6px var(--accent-color);
 }
 
 .status-line.hidden {
@@ -823,25 +800,6 @@ a.corner-button {
   height: 22px;
   object-fit: contain;
   filter: none;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-.status-icon:hover {
-  transform: scale(1.1);
-  opacity: 0.9;
-}
-
-.status-icon.glow {
-  animation: pulseGlow 1.4s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    filter: drop-shadow(0 0 0 transparent);
-  }
-  50% {
-    filter: drop-shadow(0 0 8px var(--dynamic-accent, #3ddc84));
-  }
 }
 
 /* ======================================================= */
@@ -854,12 +812,6 @@ a.corner-button {
   align-items: center;
   justify-content: center;
   width: 100%;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.spotify-card:hover {
-  transform: translateY(-3px);
 }
 
 /* ======================================================= */
@@ -874,12 +826,10 @@ a.corner-button {
   margin: 0 auto 26px auto;
   width: 260px;
   height: 260px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow:
-    0 0 25px color-mix(in srgb, var(--dynamic-accent) 35%, transparent),
-    0 10px 25px rgba(0, 0, 0, 0.45);
-  transition: transform 0.35s ease;
+  box-shadow: 0 0 25px var(--accent-color),
+              0 10px 25px var(--shadow-color);
 }
 
 .live-album-art img {
@@ -887,24 +837,6 @@ a.corner-button {
   height: 100%;
   object-fit: cover;
   border-radius: inherit;
-  transition: transform 0.35s ease;
-}
-
-.spotify-card:hover .live-album-art img {
-  transform: scale(1.05);
-}
-
-/* Optional dynamic glow animation */
-@keyframes accentPulse {
-  0%, 100% {
-    box-shadow: 0 0 20px color-mix(in srgb, var(--dynamic-accent) 35%, transparent);
-  }
-  50% {
-    box-shadow: 0 0 35px color-mix(in srgb, var(--dynamic-accent) 65%, transparent);
-  }
-}
-.live-album-art.dynamic-glow {
-  animation: accentPulse 4s ease-in-out infinite;
 }
 
 /* ======================================================= */
@@ -922,7 +854,6 @@ a.corner-button {
   padding: 20px;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  transition: opacity 0.3s ease;
 }
 
 .no-activity-overlay.hidden {
@@ -952,29 +883,32 @@ a.corner-button {
 .live-song-title {
   font-size: 1.35rem;
   font-weight: 600;
-  color: var(--text-color, #fff);
+  color: var(--text-color);
   margin-bottom: 2px;
   word-break: break-word;
 }
 
 .live-artist {
   font-size: 1rem;
-  color: var(--secondary-text, #b6b6b6);
+  color: var(--secondary-text);
   margin-bottom: 6px;
 }
 
 /* ======================================================= */
-/* === MUSIC PROGRESS BAR — PREMIUM GLOW ================= */
+/* === MUSIC PROGRESS BAR — LIQUID GLASS STATIC ========= */
 /* ======================================================= */
 
 .music-progress-container {
   width: 100%;
   height: 6px;
-  background: color-mix(in srgb, var(--border-color) 25%, transparent);
-  border-radius: 50px;
+  background: var(--content-bg);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   position: relative;
   margin: 28px 0 16px 0;
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--border-color);
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
 }
 
@@ -984,41 +918,25 @@ a.corner-button {
   left: 0;
   height: 100%;
   width: 0%;
-  border-radius: inherit;
+  border-radius: var(--radius-xl);
   background: linear-gradient(
     90deg,
-    var(--dynamic-accent, #1DB954) 0%,
-    color-mix(in srgb, var(--dynamic-accent, #1DB954) 65%, #000) 100%
+    var(--accent-color) 0%,
+    color-mix(in srgb, var(--accent-color) 65%, #000) 100%
   );
-  box-shadow:
-    0 0 6px color-mix(in srgb, var(--dynamic-accent, #1DB954) 50%, transparent),
-    0 0 12px color-mix(in srgb, var(--dynamic-accent, #1DB954) 30%, transparent);
-  transition: width 0.4s linear, box-shadow 0.4s ease-in-out;
-  animation: glowPulse 3s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% {
-    box-shadow:
-      0 0 6px color-mix(in srgb, var(--dynamic-accent, #1DB954) 50%, transparent),
-      0 0 12px color-mix(in srgb, var(--dynamic-accent, #1DB954) 30%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0 10px color-mix(in srgb, var(--dynamic-accent, #1DB954) 70%, transparent),
-      0 0 18px color-mix(in srgb, var(--dynamic-accent, #1DB954) 50%, transparent);
-  }
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.25);
+  transition: width 0.4s linear;
 }
 
 /* ======================================================= */
-/* === TIME DISPLAY (Full Width + Clean) ================= */
+/* === TIME DISPLAY ====================================== */
 /* ======================================================= */
 
 .music-progress-time {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%; /* ✅ full width */
+  width: 100%;
   max-width: none;
   margin: 0;
   padding: 6px 0 0 0;
@@ -1026,7 +944,6 @@ a.corner-button {
   font-weight: 500;
   color: color-mix(in srgb, var(--text-color) 85%, #ddd);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  align-self: stretch;
 }
 
 .music-progress-time span {
@@ -1053,7 +970,7 @@ a.corner-button {
 
 .la-updated {
   font-size: 0.82rem;
-  color: var(--secondary-text, #999);
+  color: var(--secondary-text);
   margin-top: 18px;
   opacity: 0.85;
 }
@@ -1101,7 +1018,6 @@ a.corner-button {
     padding: 4px 0 0 0;
   }
 }
-
 
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
