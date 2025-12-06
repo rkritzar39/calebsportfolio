@@ -263,63 +263,152 @@ p, span, li {
 	color: var(--secondary-text);
 }
 
+
 /* ======================== */
-/* Apple Liquid Glass Cards */
+/* Apple Music Liquid Cards */
 /* ======================== */
+
 .section {
 	position: relative;
-
-	background:
-		var(--bubble-gradient),
-		var(--liquid-refraction),
-		var(--content-bg);
-
-	border-radius: var(--radius-xl);
-	border: 1px solid var(--border-color);
-	padding: 24px;
+	padding: 28px;
 	margin-bottom: 32px;
-
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-
-	box-shadow:
-		0 22px 55px rgba(0, 0, 0, 0.4),
-		inset 0 1px 1px rgba(255, 255, 255, 0.08);
-
+	border-radius: var(--radius-xl);
 	overflow: hidden;
 
-	/* Remove transitions if you want zero motion */
+	/* DARK MODE LIQUID PANEL */
+	background:
+		linear-gradient(135deg,
+			rgba(255, 255, 255, 0.22),
+			rgba(255, 255, 255, 0.06)
+		),
+		linear-gradient(215deg,
+			rgba(255, 255, 255, 0.08),
+			rgba(0, 0, 0, 0.28)
+		),
+		rgba(18, 18, 18, 1);
+
+	border: 1px solid rgba(255, 255, 255, 0.16);
+
+	box-shadow:
+		0 22px 55px rgba(0, 0, 0, 0.55),
+		inset 0 1px 1px rgba(255, 255, 255, 0.10),
+		inset 0 -4px 12px rgba(0, 0, 0, 0.55);
+
 	transition: none;
 }
 
-/* ======================== */
-/* Optical Reflection Layer */
-/* ======================== */
+
+/* ========================================= */
+/* Top Gloss (Dark & Light Mode Compatible)  */
+/* ========================================= */
 .section::before {
 	content: "";
 	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: 0.5;
+	top: -20%;
+	left: 0;
+	right: 0;
+	height: 52%;
 	pointer-events: none;
+
+	background: radial-gradient(
+		circle at 50% 0%,
+		rgba(255, 255, 255, 0.55),
+		rgba(255, 255, 255, 0.15) 40%,
+		transparent 80%
+	);
+
+	opacity: 0.7;
 }
 
+
+/* ========================================= */
+/* Bottom Curve Shadow (Dark/Light Safe)     */
+/* ========================================= */
+.section::after {
+	content: "";
+	position: absolute;
+	bottom: -20%;
+	left: 0;
+	right: 0;
+	height: 55%;
+	pointer-events: none;
+
+	background: radial-gradient(
+		circle at 50% 100%,
+		rgba(0, 0, 0, 0.35),
+		transparent 70%
+	);
+
+	opacity: 0.6;
+}
+
+
 /* ======================== */
-/* Apple Light Mode Glass   */
+/* TRUE LIGHT MODE LIQUID   */
 /* ======================== */
 body.light-e .section {
 	background:
-		var(--bubble-gradient),
-		var(--liquid-refraction),
-		rgba(255, 255, 255, 0.65);
+		linear-gradient(135deg,
+			rgba(255, 255, 255, 0.5),
+			rgba(255, 255, 255, 0.28)
+		),
+		linear-gradient(215deg,
+			rgba(255, 255, 255, 0.12),
+			rgba(0, 0, 0, 0.10)
+		),
+		rgba(255, 255, 255, 0.82);
 
-	border: 1px solid rgba(255, 255, 255, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.8);
 
 	box-shadow:
-		0 18px 48px rgba(0, 0, 0, 0.15),
-		inset 0 1px 0 rgba(255, 255, 255, 0.65);
+		0 20px 48px rgba(0, 0, 0, 0.25),
+		inset 0 1px 1px rgba(255, 255, 255, 0.85),
+		inset 0 -3px 8px rgba(0, 0, 0, 0.10);
+}
+
+body.light-e .section::before {
+	background: radial-gradient(
+		circle at 50% 0%,
+		rgba(255, 255, 255, 0.9),
+		rgba(255, 255, 255, 0.45) 40%,
+		transparent 80%
+	);
+}
+
+body.light-e .section::after {
+	background: radial-gradient(
+		circle at 50% 100%,
+		rgba(0, 0, 0, 0.18),
+		transparent 70%
+	);
+}
+
+
+/* ======================== */
+/* Text Colors              */
+/* ======================== */
+.section h1,
+.section h2,
+.section h3 {
+	color: #ffffff;
+}
+
+.section p,
+.section span,
+.section li {
+	color: #d0d0d0;
+}
+
+body.light-e .section h1,
+body.light-e .section h2,
+body.light-e .section h3 {
+	color: #111;
+}
+
+body.light-e .section p,
+body.light-e .section span,
+body.light-e .section li {
+	color: #444;
 }
 
 /* ======================================== */
