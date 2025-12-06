@@ -1485,74 +1485,57 @@ body.dark-mode .bubble {
   }
 }
 
-/* ======================================== */
-/* == President Section – Onyx Bubble Glass == */
-/* ======================================== */
+/* ========================================================= */
+/* == PRESIDENT SECTION – SINGLE GLASS CONTAINER == */
+/* ========================================================= */
 .president-section {
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	padding: 30px;
-	border-radius: var(--radius-xl);
-	margin-bottom: 30px;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	width: 100%;
-	box-sizing: border-box;
-	color: var(--text-color);
-	transition: background 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient), var(--liquid-refraction);
+  border-radius: var(--radius-xl);
+  padding: 30px;
+  margin-bottom: 32px;
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  color: var(--text-color);
+  overflow: hidden;
 }
 
-/* President info layout */
+.president-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--liquid-reflection);
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Layout inside president section */
 .president-info {
-	display: flex;
-	align-items: center;
-	gap: 30px;
-	padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
-
-/* Photo */
 .president-photo {
-	width: 150px;
-	height: 150px;
-	border-radius: 50%;
-	object-fit: cover;
-	flex-shrink: 0;
-	border: 2px solid rgba(255,255,255,0.08); /* subtle border for contrast */
-	box-shadow: var(--bubble-shadow);
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.08);
+  box-shadow: var(--bubble-shadow);
 }
-
-/* Details */
 .president-details {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
-
-/* Name and Title */
-.president-name {
-	font-size: calc(var(--font-size-base, 20px) * 1.2); /* ✨ Updated for text scaling ✨ */
-	font-weight: 700;
-	color: var(--text-color);
-	margin: 0;
-}
-
-.president-title {
-	font-size: calc(var(--font-size-base, 20px) * 0.85); /* ✨ Updated for text scaling ✨ */
-	color: var(--secondary-text);
-	font-weight: 500;
-	font-style: italic;
-	margin: 4px 0 12px 0;
-}
-
-/* Description */
-.president-description {
-	font-size: calc(var(--font-size-base, 20px) * 0.8); /* ✨ Updated for text scaling ✨ */
-	line-height: 1.6;
-	color: var(--text-color);
-	opacity: 0.9;
-	margin: 0;
-}
+.president-name { font-size: 1.3rem; font-weight: 700; color: var(--text-color); margin:0; }
+.president-title { font-size: 1rem; font-style: italic; color: var(--secondary-text); margin:4px 0 12px; }
+.president-description { font-size: 0.9rem; line-height: 1.6; color: var(--text-color); opacity:0.9; margin:0; }
 
 /* ======================== */
 /* Responsive Design */
@@ -2531,19 +2514,25 @@ body.dark-mode .bubble {
 /* ========================================================= */
 
 #quote-section {
+  position: relative;
   width: 100%;
-  box-sizing: border-box;
   padding: 64px 8%;
+  box-sizing: border-box;
+
+  /* Glass effect */
   background: var(--content-bg);
-  background-image: var(--bubble-gradient), var(--liquid-reflection);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+  background-image: var(--bubble-gradient), var(--liquid-refraction);
+  border-radius: var(--radius-xl);
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
   box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+
   color: var(--text-color);
-  position: relative;
   overflow: hidden;
+
+  /* Animation */
   opacity: 0;
   transform: translateY(15px);
   animation: fadeInQuote 0.6s ease-out forwards;
@@ -2554,16 +2543,11 @@ body.dark-mode .bubble {
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--liquid-refraction);
-  opacity: 0.6;
+  border-radius: inherit;
+  background: var(--liquid-reflection);
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
   pointer-events: none;
-}
-
-@keyframes fadeInQuote {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ========================================================= */
@@ -2575,8 +2559,8 @@ body.dark-mode .bubble {
   font-size: 1.7rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
   padding-bottom: 0.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent-color) 25%, transparent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2609,7 +2593,7 @@ body.dark-mode .bubble {
   margin: 0 auto 0.75rem;
   letter-spacing: 0.3px;
   max-width: 800px;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
 
 .quote-author {
@@ -2639,7 +2623,7 @@ body.dark-mode .bubble {
   font-size: 0.95rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255,255,255,0.08);
   color: var(--text-color);
   padding: 0.5rem 0.9rem;
   transition: background var(--transition-fast), transform var(--transition-fast);
@@ -2649,22 +2633,22 @@ body.dark-mode .bubble {
 #quote-controls input:hover,
 #quote-controls button:hover {
   border-color: var(--accent-color);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255,255,255,0.12);
 }
 
 #quote-controls button {
   background: var(--accent-color);
   border: none;
-  color: white;
+  color: #fff;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
 }
 
 #quote-controls button:hover {
   background: var(--hover-color);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 #next-quote-btn.new-day {
@@ -2677,251 +2661,13 @@ body.dark-mode .bubble {
 }
 
 /* ========================================================= */
-/* == Base Modal == */
+/* == Fade-in Animation == */
 /* ========================================================= */
-
-.category-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.65);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-}
-
-.category-modal.hidden {
-  display: none;
-}
-
-.category-modal-content {
-  background: var(--content-bg);
-  color: var(--text-color);
-  padding: 1.6rem;
-  border-radius: var(--radius-lg);
-  max-width: 440px;
-  width: 90%;
-  box-shadow: var(--bubble-shadow);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  animation: fadeInModal 0.4s ease-out;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 20%, var(--border-color));
-}
-
-@keyframes fadeInModal {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ========================================================= */
-/* == Custom Quote Modal (Fixed Padding + Floating Labels) == */
-/* ========================================================= */
-
-#custom-quote-modal .category-modal-content {
-  background: var(--content-bg);
-  padding: 2rem 2.5rem; /* ✅ Fix: added side padding */
-  border-radius: var(--radius-lg);
-  color: var(--text-color);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  animation: fadeInModal 0.45s ease-out;
-  width: 95%;
-  max-width: 480px;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 25%, var(--border-color));
-  box-sizing: border-box;
-}
-
-.form-floating {
-  position: relative;
-  margin-bottom: 1.6rem;
-}
-
-.form-floating input,
-.form-floating textarea,
-.form-floating select {
-  width: 100%;
-  padding: 1.2rem 1.3rem 0.7rem 1.3rem; /* ✅ Fixed inner spacing */
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-color);
-  font-size: 1rem;
-  line-height: 1.5;
-  outline: none;
-  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
-  resize: none;
-  box-sizing: border-box;
-}
-
-.form-floating input::placeholder,
-.form-floating textarea::placeholder {
-  color: transparent;
-}
-
-.form-floating input:focus,
-.form-floating textarea:focus,
-.form-floating select:focus {
-  border-color: var(--accent-color);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 40%, transparent);
-}
-
-.form-floating label {
-  position: absolute;
-  left: 1.3rem;
-  top: 1.05rem;
-  color: var(--secondary-text);
-  font-size: 0.95rem;
-  pointer-events: none;
-  transition: all 0.25s ease;
-  opacity: 0.85;
-}
-
-.form-floating input:focus + label,
-.form-floating textarea:focus + label,
-.form-floating select:focus + label,
-.form-floating input:not(:placeholder-shown) + label,
-.form-floating textarea:not(:placeholder-shown) + label,
-.form-floating select:not([value=""]) + label {
-  top: -0.6rem;
-  left: 1.1rem;
-  font-size: 0.78rem;
-  color: var(--accent-color);
-  background: var(--content-bg);
-  padding: 0 0.3rem;
-  border-radius: 6px;
-  opacity: 1;
-}
-
-/* Buttons */
-#custom-quote-modal .category-modal-content > div:last-child {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1.8rem;
-}
-
-#save-custom-quote,
-#cancel-custom-quote {
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0.6rem 1.4rem;
-  font-size: 0.95rem;
-  transition: all 0.25s ease;
-}
-
-#save-custom-quote {
-  background: var(--accent-color);
-  color: #fff;
-  border: none;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-}
-
-#save-custom-quote:hover {
-  background: var(--hover-color);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-}
-
-#cancel-custom-quote {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
-}
-
-#cancel-custom-quote:hover {
-  color: var(--accent-color);
-  border-color: var(--accent-color);
-  transform: translateY(-2px);
-}
-
-/* ========================================================= */
-/* == Manage Custom Quotes Modal == */
-/* ========================================================= */
-
-#custom-quotes-manager .category-modal-content {
-  max-width: 600px;
-  padding: 2rem;
-  border-radius: var(--radius-lg);
-  background: var(--content-bg);
-  backdrop-filter: var(--backdrop-blur);
-  color: var(--text-color);
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
-}
-
-#custom-quotes-manager h3 {
-  color: var(--accent-color);
-  text-align: center;
-  font-weight: 700;
-  font-size: 1.4rem;
-  margin-bottom: 1.4rem;
-}
-
-#manager-category-select {
-  width: 100%;
-  padding: 0.6rem 0.9rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-color);
-  margin-bottom: 1rem;
-}
-
-/* Quote cards */
-#custom-quote-list {
-  list-style: none;
-  padding: 0;
-  margin: 1rem 0;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-#custom-quote-list li {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 20%, var(--border-color));
-  border-left: 4px solid var(--accent-color);
-  border-radius: var(--radius-md);
-  padding: 0.8rem 1rem;
-  margin-bottom: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  color: var(--text-color);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, background 0.3s ease;
-}
-
-#custom-quote-list li:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-#custom-quote-list .quote-text-small {
-  font-size: 0.95rem;
-  opacity: 0.9;
-  margin-bottom: 0.3rem;
-}
-
-#custom-quote-list .quote-author-small {
-  font-size: 0.85rem;
-  color: var(--accent-color);
-  opacity: 0.85;
-}
-
-#custom-quote-list button {
-  align-self: flex-end;
-  margin-top: 0.4rem;
-  background: #ff4d4f;
-  border: none;
-  color: white;
-  border-radius: var(--radius-md);
-  padding: 0.3rem 0.6rem;
-  cursor: pointer;
-  font-size: 0.85rem;
-  transition: background var(--transition-fast);
-}
-
-#custom-quote-list button:hover {
-  background: #d9363e;
+@keyframes fadeInQuote {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ========================================================= */
