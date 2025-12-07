@@ -870,80 +870,128 @@ class SettingsManager {
   }
 
   applySetting(key) {
-    const actions = {
-      appearanceMode: () => this.applyAppearanceMode(),
-      accentColor: () => this.applyAccentColor(),
-      fontSize: () => this.applyFontSize(),
-      focusOutline: () =>
-        document.body.classList.toggle(
-          "focus-outline-disabled",
-          this.settings.focusOutline === "disabled"
-        ),
-      motionEffects: () => this.applyMotionEffects(),
-      highContrast: () =>
-        document.body.classList.toggle(
-          "high-contrast",
-          this.settings.highContrast === "enabled"
-        ),
-      dyslexiaFont: () =>
-        document.body.classList.toggle(
-          "dyslexia-font",
-          this.settings.dyslexiaFont === "enabled"
-        ),
-      underlineLinks: () =>
-        document.body.classList.toggle(
-          "underline-links",
-          this.settings.underlineLinks === "enabled"
-        ),
-      mouseTrail: () =>
-        document.body.classList.toggle(
-          "mouse-trail-enabled",
-          this.settings.mouseTrail === "enabled"
-        ),
-    };
+  const actions = {
+    appearanceMode: () => this.applyAppearanceMode(),
+    accentColor: () => this.applyAccentColor(),
+    fontSize: () => this.applyFontSize(),
+    focusOutline: () =>
+      document.body.classList.toggle(
+        "focus-outline-disabled",
+        this.settings.focusOutline === "disabled"
+      ),
+    motionEffects: () => this.applyMotionEffects(),
+    highContrast: () =>
+      document.body.classList.toggle(
+        "high-contrast",
+        this.settings.highContrast === "enabled"
+      ),
+    dyslexiaFont: () =>
+      document.body.classList.toggle(
+        "dyslexia-font",
+        this.settings.dyslexiaFont === "enabled"
+      ),
+    underlineLinks: () =>
+      document.body.classList.toggle(
+        "underline-links",
+        this.settings.underlineLinks === "enabled"
+      ),
+    mouseTrail: () =>
+      document.body.classList.toggle(
+        "mouse-trail-enabled",
+        this.settings.mouseTrail === "enabled"
+      ),
+  };
 
-    actions[key]?.();
+  actions[key]?.();
 
-    if (key.startsWith("show")) {
-      const sectionId = key
-        .replace(/^show/, "")
-        .replace(/^[A-Z]/, (m) => m.toLowerCase())
-        .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+  // ----------------------------
+  // Smooth section show/hide
+  // ----------------------------
+  if (key.startsWith("show")) {
+    const sectionId = key
+      .replace(/^show/, "")
+      .replace(/^[A-Z]/, (m) => m.toLowerCase())
+      .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
 
-      const el =
-        document.getElementById(`${sectionId}-section`) ||
-        document.querySelector(`[data-section-id="${sectionId}"]`);
+    const el =
+      document.getElementById(`${sectionId}-section`) ||
+      document.querySelector(`[data-section-id="${sectionId}"]`);
 
-      if (el) {
-        const visible = this.settings[key] === "enabled";
-        el.style.transition = "opacity 0.3s ease";
-        if (visible) {
-          el.style.display = "";
-          requestAnimationFrame(() => (el.style.opacity = "1"));
-        } else {
-          el.style.opacity = "0";
-          setTimeout(() => (el.style.display = "none"), 300);
-        }
-      }
-    }
+    if (el) {
+      const visible = this.settings[key] === "enabled";
 
-    if (key === "showLiveActivity") {
-      const liveActivity = document.getElementById("live-activity");
-      if (liveActivity) {
-        const visible = this.settings.showLiveActivity === "enabled";
-        if (visible) {
-          liveActivity.style.display = "";
-          requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
-          if (typeof updateLiveStatus === "function") {
-            setTimeout(() => updateLiveStatus(), 300);
+      // Ensure transitions are set
+      el.style.transition =
+        "opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease";
+      el.style.overflow = "hidden";
+
+      if (visible) {
+        el.style.display = "";
+        const height = el.scrollHeight + "px";
+        el.style.maxHeight = "0";
+        el.style.opacity = "0";
+
+        requestAnimationFrame(() => {
+          el.style.maxHeight = height;
+          el.style.opacity = "1";
+        });
+
+        // Reset max-height after transition to allow dynamic height
+        el.addEventListener(
+          "transitionend",
+          function handler() {
+            el.style.maxHeight = "";
+            el.removeEventListener("transitionend", handler);
           }
-        } else {
-          liveActivity.style.opacity = "0";
-          setTimeout(() => (liveActivity.style.display = "none"), 250);
-        }
+        );
+      } else {
+        const height = el.scrollHeight + "px";
+        el.style.maxHeight = height;
+        el.style.opacity = "1";
+
+        requestAnimationFrame(() => {
+          el.style.maxHeight = "0";
+          el.style.opacity = "0";
+          el.style.paddingTop = "0";
+          el.style.paddingBottom = "0";
+          el.style.marginTop = "0";
+          el.style.marginBottom = "0";
+        });
+
+        el.addEventListener(
+          "transitionend",
+          function handler() {
+            el.style.display = "none";
+            // Reset padding/margin for future show
+            el.style.paddingTop = "";
+            el.style.paddingBottom = "";
+            el.style.marginTop = "";
+            el.style.marginBottom = "";
+            el.removeEventListener("transitionend", handler);
+          }
+        );
       }
     }
   }
+
+  // ----------------------------
+  // Live activity (if used)
+  // ----------------------------
+  if (key === "showLiveActivity") {
+    const liveActivity = document.getElementById("live-activity");
+    if (liveActivity) {
+      const visible = this.settings.showLiveActivity === "enabled";
+      if (visible) {
+        liveActivity.style.display = "";
+        requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
+        if (typeof updateLiveStatus === "function") setTimeout(() => updateLiveStatus(), 300);
+      } else {
+        liveActivity.style.opacity = "0";
+        setTimeout(() => (liveActivity.style.display = "none"), 250);
+      }
+    }
+  }
+}
 
   /* =============================
      In-Site Notifications
