@@ -433,17 +433,16 @@ body.reduced-motion .mouse-trail-container {
 
 
 /* ======================================== */
-/* == Profile Section – Glass + Status == */
+/* == Profile Section – Onyx Bubble Glass == */
 /* ======================================== */
-
 .profile-section {
 	position: relative;
 	text-align: center;
-	margin: 1.25rem 0 1.875rem;
+	margin: 1.25rem 0 1.875rem 0;
 	padding: 1.875rem;
-	border-radius: var(--radius-xl);
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
@@ -460,61 +459,59 @@ body.reduced-motion .mouse-trail-container {
 	height: var(--profile-pic-size);
 	margin: 0 auto;
 	border-radius: 50%;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
+	overflow: hidden;
+
+	/* Optional glass overlay */
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	background: var(--content-bg);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-	overflow: hidden;
+	border: 1px solid var(--border-color);
 }
 
-/* --- Profile Pic --- */
 .profile-pic {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	border-radius: 50%;
-	border: 2px solid rgba(255, 255, 255, 0.1);
 	box-shadow: var(--bubble-shadow);
+	border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-/* --- Status Dot (Desktop Corner) --- */
+/* --- Profile Status (Glass Dot on Bottom Right) --- */
 .profile-status-container {
 	position: absolute;
-	width: calc(var(--profile-pic-size) * 0.19);
-	aspect-ratio: 1 / 1;
-	border-radius: 50%;
-	border: 3px solid var(--content-bg);
+	width: 2.25rem;
+	height: 2.25rem;
 	bottom: 0;
 	right: 0;
 	transform: translate(25%, 25%);
-	z-index: 2;
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border-radius: 50%;
 	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 2px solid var(--border-color);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
 }
 
-.profile-status-container.status-online    { background-color: #31a24c; }
-.profile-status-container.status-idle      { background-color: #ffc107; }
-.profile-status-container.status-dnd       { background-color: #dc3545; }
-.profile-status-container.status-offline   { background-color: #747f8d; }
-
-/* --- Text-Based Profile Status Badge (Optional Mobile) --- */
-.profile-status-text {
-	display: none;
-	font-size: 0.85rem;
-	font-weight: 700;
-	margin-top: 0.35rem;
-	padding: 0.25em 0.8em;
-	border-radius: 999px;
-	line-height: 1;
+/* Inner Status Dot */
+.status-dot {
+	width: 60%;
+	height: 60%;
+	border-radius: 50%;
+	background-color: currentColor;
 }
 
-.profile-status-text.status-online { background-color: #31a24c; color: #ffffff; }
-.profile-status-text.status-idle   { background-color: #ffc107; color: #1f1f1f; }
-.profile-status-text.status-dnd    { background-color: #dc3545; color: #ffffff; }
-.profile-status-text.status-offline{ background-color: #747f8d; color: #ffffff; }
+/* Status Colors */
+.status-online { color: #31a24c; }
+.status-idle { color: #ffc107; }
+.status-dnd { color: #dc3545; }
+.status-offline { color: #747f8d; }
 
 /* --- Username & Verified --- */
 .username-checkmark {
@@ -530,7 +527,7 @@ body.reduced-motion .mouse-trail-container {
 	margin: 0;
 	font-size: clamp(1.5rem, 5vw, 2.25rem);
 	font-weight: 800;
-	color: var(--accent-color); /* solid color matching accent */
+	color: var(--accent-color); /* Solid accent color */
 }
 
 .verified {
@@ -538,6 +535,22 @@ body.reduced-motion .mouse-trail-container {
 	height: 1.25rem;
 	flex-shrink: 0;
 }
+
+/* --- Text-Based Profile Status Badge (Hidden on Desktop) --- */
+.profile-status-text {
+	display: none;
+	font-size: 0.85rem;
+	font-weight: 700;
+	margin-top: 0.35rem;
+	padding: 0.25em 0.8em;
+	border-radius: 999px;
+	line-height: 1;
+}
+
+.profile-status-text.status-online { background-color: #31a24c; color: #ffffff; }
+.profile-status-text.status-idle { background-color: #ffc107; color: #1f1f1f; }
+.profile-status-text.status-dnd { background-color: #dc3545; color: #ffffff; }
+.profile-status-text.status-offline { background-color: #747f8d; color: #ffffff; }
 
 /* --- Profile Bio --- */
 .profile-bio {
