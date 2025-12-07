@@ -207,10 +207,14 @@ function slideOutCard(cardEl){
   },360); 
 }
 
-function isManualActive(){ 
-  if(!manualStatus?.enabled) return false; 
-  const exp = manualStatus.expiresAt ? Number(manualStatus.expiresAt) : null; 
-  return !exp || Date.now() < exp; 
+function isManualActive() {
+  if (!manualStatus?.enabled) return false;
+
+  const exp = manualStatus.expiresAt;
+
+  if (!exp || typeof exp !== "number" || Number.isNaN(exp)) return true;
+
+  return Date.now() < exp;
 }
 
 /* ======================================================= */
@@ -362,18 +366,46 @@ async function getTikTok(){
 /* === MANUAL FIRESTORE ================================== */
 /* ======================================================= */
 
-try{
-  const manualRef=doc(db,"manualStatus","site");
-  onSnapshot(manualRef,snap=>{
-    if(!snap.exists()){manualStatus=null;return;}
-    const d=snap.data();
-    if(d.expiresAt!=null) d.expiresAt=Number(d.expiresAt);
-    manualStatus=d;
-  },err=>console.warn("manual listener error:",err));
-}catch(e){
-  console.warn("Firestore manual disabled:",e);
-}
+try {
+  const manualRef = doc(db, "manualStatus", "site");
 
+  onSnapshot(manualRef, async (snap) => {
+    if (!snap.exists()) {
+      manualStatus = null;
+      return;
+    }
+
+    const d = snap.data();
+
+    // ✅ Proper Timestamp → Number conversion
+    if (d.expiresAt?.toMillis) {
+      d.expiresAt = d.expiresAt.toMillis();
+    } else if (typeof d.expiresAt === "number") {
+      // already valid
+    } else {
+      d.expiresAt = null;
+    }
+
+    manualStatus = d;
+
+    // ✅ AUTO-CLEAR WHEN EXPIRED
+    if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
+      await setDoc(manualRef, {
+        enabled: false,
+        text: "",
+        expiresAt: null,
+        persistent: false,
+        updated_at: Date.now()
+      }, { merge: true });
+
+      manualStatus = null;
+    }
+
+  }, err => console.warn("manual listener error:", err));
+
+} catch (e) {
+  console.warn("Firestore manual disabled:", e);
+}
 /* ======================================================= */
 /* === STATUS PRIORITY LOGIC ============================= */
 /* ======================================================= */
