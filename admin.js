@@ -43,10 +43,11 @@ async function loadManualStatusToForm() {
 
 async function saveManualStatus(e) {
   e?.preventDefault();
+
   try {
     const text = $("manual-status-text").value.trim();
     const icon = $("manual-status-icon").value || "manual";
-    const duration = Number($("manual-status-duration").value || 0);
+    const duration = Math.max(0, Number($("manual-status-duration").value || 0));
     const enabled = !!$("manual-status-enabled").checked;
 
     const payload = {
@@ -58,12 +59,13 @@ async function saveManualStatus(e) {
     };
 
     if (duration > 0) {
-      payload.expiresAt = Date.now() + Math.max(0, duration) * 60_000;
+      payload.expiresAt = Date.now() + duration * 60_000;
     } else {
       payload.expiresAt = null;
     }
 
     await setDoc(MANUAL_DOC, payload, { merge: true });
+
     showFeedback("Manual status saved");
   } catch (err) {
     console.error("Save manual status error:", err);
