@@ -1532,36 +1532,45 @@ function calculateAndDisplayStatusConvertedBI(businessData={}) {
     statusMainTextEl.textContent=finalCurrentStatus;
 
     // ----------------------------
-    // ✅ ✅ ✅ FIXED SUB-STATUS (ONLY CHANGE MADE)
+    // SUB-STATUS: Open till / Opens in / Opens tomorrow / Day name
+    // (REPLACED: respects tomorrow + visitor timezone + skips closed days)
     // ----------------------------
     function getMainStatusSubText(rule){
-        const COUNTDOWN_WINDOW_MINUTES = 30;
-        const displayOrder = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+        const COUNTDOWN_WINDOW_MINUTES=30;
+        const displayOrder=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
         const todayIndex = displayOrder.indexOf(businessDayName);
 
-        // If currently open → show closing time
-        if (rule.ranges?.length) {
+        // 1) If currently open → show closing time (and short countdown if within window)
+        if (rule.ranges && rule.ranges.length) {
             for (let r of rule.ranges) {
                 const openM = timeStringToMinutes(r.open);
                 const closeM = timeStringToMinutes(r.close);
+                if (isNaN(openM) || isNaN(closeM)) continue;
                 if (currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM) {
-                    return `Open till ${formatDisplayTimeBI(r.close,visitorTimezone)}`;
+                    const minutesLeft = closeM - currentMinutesInBizTZ;
+                    if (minutesLeft <= COUNTDOWN_WINDOW_MINUTES) return `Closes in ${minutesLeft} min`;
+                    return `Open till ${formatDisplayTimeBI(r.close, visitorTimezone)}`;
                 }
             }
         }
 
-        // Find NEXT real open day (skips closed days)
+        // 2) Find next real open day (skip closed days, holidays and temp closures are handled earlier in finalActiveRule determination)
         for (let offset = 1; offset <= 7; offset++) {
             const checkIndex = (todayIndex + offset) % 7;
             const checkDay = displayOrder[checkIndex];
             const dayObj = regularHours[checkDay];
 
-            if (!dayObj || dayObj.isClosed || !dayObj.ranges?.length) continue;
+            if (!dayObj || dayObj.isClosed || !Array.isArray(dayObj.ranges) || dayObj.ranges.length === 0) continue;
 
             const firstRange = dayObj.ranges[0];
-            const dayLabel = capitalizeFirstLetter(checkDay);
 
-            return `Opens ${dayLabel} at ${formatDisplayTimeBI(firstRange.open,visitorTimezone)}`;
+            // If next open is literally tomorrow, show "Opens tomorrow at ..."
+            if (offset === 1) {
+                return `Opens tomorrow at ${formatDisplayTimeBI(firstRange.open, visitorTimezone)}`;
+            }
+
+            // Otherwise show day name (converted time to visitor timezone)
+            return `Opens ${capitalizeFirstLetter(checkDay)} at ${formatDisplayTimeBI(firstRange.open, visitorTimezone)}`;
         }
 
         return '';
@@ -1648,6 +1657,7 @@ function calculateAndDisplayStatusConvertedBI(businessData={}) {
 ------------------------- */
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',displayBusinessInfo);
 else displayBusinessInfo();
+
 document.addEventListener("DOMContentLoaded", () => {
   // === GLOW TYPING LOGIC (your original) ===
   document.querySelectorAll(".search-container.unified .creator-search").forEach(input => {
@@ -1661,13 +1671,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
-    setTyping();
-
     input.addEventListener("input", setTyping);
-    input.addEventListener("change", setTyping);
-    input.addEventListener("blur", setTyping);
-  });
+    input.addEventListener("focus", setTyping);
+    input.addEventListener("blur", () => {
+      if (!input.value.trim()) {
+        container.classList.remove("typing");
+      }
+    });
 
+    // initialize state
+    setTyping();
+  });
+});
   // === SEARCH + NO RESULTS LOGIC ===
   document.querySelectorAll(".creator-search").forEach(input => {
     input.addEventListener("input", () => {
