@@ -1532,28 +1532,39 @@ function calculateAndDisplayStatusConvertedBI(businessData={}) {
     statusMainTextEl.textContent=finalCurrentStatus;
 
     // ----------------------------
-    // SUB-STATUS: Open till / Opens in / Opens tomorrow
+    // ✅ ✅ ✅ FIXED SUB-STATUS (ONLY CHANGE MADE)
     // ----------------------------
     function getMainStatusSubText(rule){
-        const COUNTDOWN_WINDOW_MINUTES=30;
-        let nowMinutes=currentMinutesInBizTZ;
-        let nextEvent=null, nextDayOffset=0;
-        const ranges=rule.ranges&&rule.ranges.length?rule.ranges:[{open:rule.open,close:rule.close}];
-        if(!ranges||ranges.length===0) return '';
+        const COUNTDOWN_WINDOW_MINUTES = 30;
+        const displayOrder = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+        const todayIndex = displayOrder.indexOf(businessDayName);
 
-        for(let r of ranges){
-            const openM=timeStringToMinutes(r.open), closeM=timeStringToMinutes(r.close);
-            if(isNaN(openM)||isNaN(closeM)) continue;
-            if(nowMinutes>=openM && nowMinutes<closeM) return `Open till ${formatDisplayTimeBI(r.close,visitorTimezone)}`;
-            if(openM>nowMinutes){nextEvent=openM; nextDayOffset=0; break;}
+        // If currently open → show closing time
+        if (rule.ranges?.length) {
+            for (let r of rule.ranges) {
+                const openM = timeStringToMinutes(r.open);
+                const closeM = timeStringToMinutes(r.close);
+                if (currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM) {
+                    return `Open till ${formatDisplayTimeBI(r.close,visitorTimezone)}`;
+                }
+            }
         }
 
-        if(!nextEvent && ranges.length>0){nextEvent=timeStringToMinutes(ranges[0].open); nextDayOffset=1;}
-        if(!nextEvent) return '';
-        const minutesUntil=(nextEvent+nextDayOffset*1440)-nowMinutes;
-        if(minutesUntil<=COUNTDOWN_WINDOW_MINUTES) return `Opens in ${minutesUntil} min`;
-        if(nextDayOffset===1) return `Opens tomorrow at ${formatDisplayTimeBI(ranges[0].open,visitorTimezone)}`;
-        return `Opens at ${formatDisplayTimeBI(ranges[0].open,visitorTimezone)}`;
+        // Find NEXT real open day (skips closed days)
+        for (let offset = 1; offset <= 7; offset++) {
+            const checkIndex = (todayIndex + offset) % 7;
+            const checkDay = displayOrder[checkIndex];
+            const dayObj = regularHours[checkDay];
+
+            if (!dayObj || dayObj.isClosed || !dayObj.ranges?.length) continue;
+
+            const firstRange = dayObj.ranges[0];
+            const dayLabel = capitalizeFirstLetter(checkDay);
+
+            return `Opens ${dayLabel} at ${formatDisplayTimeBI(firstRange.open,visitorTimezone)}`;
+        }
+
+        return '';
     }
 
     statusCountdownTextEl.textContent = getMainStatusSubText(finalActiveRule);
