@@ -1,13 +1,12 @@
-/* live-activity.js — Cleaned + No Pause Logic */
+/* live-activity.js — Cleaned + No Pause Logic (GitHub Removed) */
 
-import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
 const CONFIG = {
   discord: { userId: "850815059093356594" },
   twitch:  { username: "calebkritzar" },
   reddit:  { username: "Electronic_Row_1262" },
-  github:  { username: "rkritzar39" },
   tiktok:  { username: "calebkritzar" },
 };
 
@@ -21,7 +20,6 @@ let currentSpotifyUrl = null;
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
-let lastGitHubEventId = null;
 let lastRedditPostId  = null;
 let lastTikTokVideoId = null;
 
@@ -38,9 +36,7 @@ const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
-  youtube: "https://cdn.simpleicons.org/youtube/FF0000",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
-  github:  "https://cdn.simpleicons.org/github/000000",
   tiktok:  "https://cdn.simpleicons.org/tiktok/000000",
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
@@ -121,91 +117,8 @@ function setupProgress(startMs, endMs) {
 }
 
 /* ======================================================= */
-/* === DYNAMIC COLORS  =================================== */
+/* === MANUAL STATUS ===================================== */
 /* ======================================================= */
-
-function updateDynamicColors(imageUrl) {
-  const activity = document.querySelector(".live-activity");
-  if (!activity) return;
-
-  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent  = settings.accentColor || "#1DB954";
-
-  if (!matchAccent || !imageUrl) {
-    activity.style.setProperty("--dynamic-bg", "none");
-    activity.style.setProperty("--dynamic-accent", userAccent);
-    return;
-  }
-
-  const img = new Image();
-  img.crossOrigin = "anonymous";
-  img.src = imageUrl;
-
-  img.onload = () => {
-    try {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      canvas.width = img.width || 64;
-      canvas.height = img.height || 64;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let r=0, g=0, b=0, count=0;
-
-      for (let i = 0; i < data.length; i += 4) {
-        r += data[i];
-        g += data[i+1];
-        b += data[i+2];
-        count++;
-      }
-
-      r = Math.floor(r/count); 
-      g = Math.floor(g/count); 
-      b = Math.floor(b/count);
-
-      const accent = `rgb(${r},${g},${b})`;
-
-      activity.style.setProperty("--dynamic-accent", accent);
-      activity.style.setProperty("--dynamic-bg",
-        `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
-      );
-    } catch {
-      activity.style.setProperty("--dynamic-accent", userAccent);
-      activity.style.setProperty("--dynamic-bg", "none");
-    }
-  };
-
-  img.onerror = () => {
-    activity.style.setProperty("--dynamic-accent", userAccent);
-    activity.style.setProperty("--dynamic-bg", "none");
-  };
-}
-
-/* ======================================================= */
-/* === ANIMATION HELPERS ================================= */
-/* ======================================================= */
-
-function slideInCard(cardEl){ 
-  if(!cardEl) return;
-  cardEl.classList.remove("slide-out", "hidden"); 
-  cardEl.classList.add("slide-in"); 
-  cardEl.style.display = ""; 
-  cardEl.style.opacity = "1"; 
-}
-
-function slideOutCard(cardEl){ 
-  if(!cardEl) return;
-  cardEl.classList.remove("slide-in"); 
-  cardEl.classList.add("slide-out"); 
-  setTimeout(()=>{ 
-    if(cardEl.classList.contains("slide-out")){
-      cardEl.style.opacity = "0"; 
-      cardEl.style.display = "none";
-      cardEl.classList.add("hidden");
-    } 
-  },360); 
-}
 
 function isManualActive() {
   if (!manualStatus?.enabled) return false;
@@ -221,14 +134,11 @@ function isManualActive() {
 /* === DISCORD / SPOTIFY  ================================ */
 /* ======================================================= */
 
-let lastSpotifyTrackId = null;
-
 async function getDiscord() {
   if (isManualActive()) {
     const card = $$("spotify-card");
-    if (card) slideOutCard(card);
+    if (card) card.style.display = "none";
     clearInterval(progressInterval);
-    updateDynamicColors(null);
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
 
@@ -238,65 +148,29 @@ async function getDiscord() {
       { cache: "no-store" }
     );
 
-    if (!res.ok) throw new Error(`Lanyard ${res.status}`);
-
     const json = await res.json();
     const data = json.data;
     if (!data) return null;
 
-    /* ============================
-       SPOTIFY (NO PAUSE LOGIC)
-    ============================ */
     if (data.spotify) {
       const sp = data.spotify;
-      const now = Date.now();
-
-      const startMs = sp.timestamps?.start ?? now;
-      const endMs   = sp.timestamps?.end   ?? (startMs + (sp.duration_ms || 0));
-
-      lastSpotifyTrackId = sp.track_id;
-
-      const card = $$("spotify-card");
-      if (card) slideInCard(card);
 
       $$("live-song-title").textContent  = sp.song   || "Unknown";
       $$("live-song-artist").textContent = sp.artist || "Unknown";
-
-      const coverEl = $$("live-activity-cover");
-      if (coverEl && coverEl.src !== sp.album_art_url) {
-        coverEl.src = sp.album_art_url;
-      }
+      $$("live-activity-cover").src      = sp.album_art_url;
 
       currentSpotifyUrl = sp.track_id
         ? `https://open.spotify.com/track/${sp.track_id}`
         : null;
 
-      setupProgress(startMs, endMs);
-      updateDynamicColors(sp.album_art_url);
+      setupProgress(sp.timestamps.start, sp.timestamps.end);
 
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    /* ============================
-       NO SPOTIFY
-    ============================ */
-    const map = {
-      online: "Online on Discord",
-      idle: "Idle on Discord",
-      dnd: "Do Not Disturb",
-      offline: "No Current Active Activities",
-    };
+    return { text: "Online on Discord", source: "discord" };
 
-    const status = map[data.discord_status] || "No Current Active Activities";
-
-    const card = $$("spotify-card");
-    if (card) slideOutCard(card);
-
-    updateDynamicColors(null);
-    return { text: status, source: "discord" };
-
-  } catch (e) {
-    console.warn("Lanyard error:", e);
+  } catch {
     return null;
   }
 }
@@ -312,22 +186,7 @@ async function getTwitch(){
     const r=await fetch(`https://decapi.me/twitch/live/${u}`,{cache:"no-store"});
     const t=(await r.text()).toLowerCase();
     if(t.includes("is live")) return { text:"Now Live on Twitch", source:"twitch" };
-  } catch(e){ console.warn("Twitch error:",e); }
-  return null;
-}
-
-async function getGitHub(){
-  const u=CONFIG.github.username;
-  if(!u) return null;
-  try{
-    const r=await fetch(`https://api.github.com/users/${u}/events/public`,{cache:"no-store"});
-    const events=await r.json();
-    const evt=Array.isArray(events)?events.find(e=>["PushEvent","CreateEvent","PullRequestEvent"].includes(e.type)):null;
-    if(evt && evt.id!==lastGitHubEventId){
-      lastGitHubEventId=evt.id;
-      return { text:"Committed on GitHub", source:"github", isTemp:true };
-    }
-  } catch(e){ console.warn("GitHub error:",e); }
+  } catch{}
   return null;
 }
 
@@ -342,7 +201,7 @@ async function getReddit(){
       lastRedditPostId=post.id;
       return { text:"Shared on Reddit", source:"reddit", isTemp:true };
     }
-  } catch(e){ console.warn("Reddit error:",e); }
+  } catch{}
   return null;
 }
 
@@ -358,12 +217,12 @@ async function getTikTok(){
       lastTikTokVideoId=videoId;
       return { text:"Posted on TikTok", source:"tiktok", isTemp:true };
     }
-  } catch(e){ console.warn("TikTok error:",e); }
+  } catch{}
   return null;
 }
 
 /* ======================================================= */
-/* === MANUAL FIRESTORE ================================== */
+/* === MANUAL FIRESTORE AUTO-EXPIRY ====================== */
 /* ======================================================= */
 
 try {
@@ -377,18 +236,14 @@ try {
 
     const d = snap.data();
 
-    // ✅ Proper Timestamp → Number conversion
     if (d.expiresAt?.toMillis) {
       d.expiresAt = d.expiresAt.toMillis();
-    } else if (typeof d.expiresAt === "number") {
-      // already valid
-    } else {
+    } else if (typeof d.expiresAt !== "number") {
       d.expiresAt = null;
     }
 
     manualStatus = d;
 
-    // ✅ AUTO-CLEAR WHEN EXPIRED
     if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
       await setDoc(manualRef, {
         enabled: false,
@@ -400,12 +255,10 @@ try {
 
       manualStatus = null;
     }
+  });
 
-  }, err => console.warn("manual listener error:", err));
+} catch {}
 
-} catch (e) {
-  console.warn("Firestore manual disabled:", e);
-}
 /* ======================================================= */
 /* === STATUS PRIORITY LOGIC ============================= */
 /* ======================================================= */
@@ -436,19 +289,13 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 
 async function mainLoop() {
 
-  const [discord, twitch, reddit, github, tiktok] = await Promise.all([
-    getDiscord(), getTwitch(), getReddit(), getGitHub(), getTikTok()
+  const [discord, twitch, reddit, tiktok] = await Promise.all([
+    getDiscord(), getTwitch(), getReddit(), getTikTok()
   ]);
 
-  const primary =
-    (discord?.source==="manual") 
-      ? discord
-      : (discord?.source==="spotify"
-          ? discord
-          : (twitch || discord || { text:"No Current Active Activities", source:"discord" })
-        );
+  const primary = twitch || discord || { text:"No Current Active Activities", source:"discord" };
 
-  let tempHit = [reddit,github,tiktok].find(r=>r && r.isTemp);
+  let tempHit = [reddit, tiktok].find(r=>r && r.isTemp);
   if(tempHit){
     tempBanner={ 
       text: tempHit.text, 
@@ -465,8 +312,6 @@ async function mainLoop() {
     twitchLive: !!twitch,
     temp: tempBanner
   });
-
-  $$("live-activity")?.classList.remove("hidden");
 }
 
 /* ======================================================= */
