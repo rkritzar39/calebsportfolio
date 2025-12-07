@@ -433,18 +433,17 @@ body.reduced-motion .mouse-trail-container {
 
 
 /* ======================================== */
-/* == Profile Section – Onyx Bubble Glass == */
-/* (Final Version with Button Animations + Glass Status) */
+/* == Profile Section – Glass + Status == */
 /* ======================================== */
 
 .profile-section {
 	position: relative;
 	text-align: center;
-	margin: 1.25rem 0 1.875rem 0;
+	margin: 1.25rem 0 1.875rem;
 	padding: 1.875rem;
+	border-radius: var(--radius-xl);
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
-	border-radius: var(--radius-xl);
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
@@ -460,63 +459,62 @@ body.reduced-motion .mouse-trail-container {
 	width: var(--profile-pic-size);
 	height: var(--profile-pic-size);
 	margin: 0 auto;
-	transition: width 0.3s ease, height 0.3s ease;
+	border-radius: 50%;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	overflow: hidden;
 }
 
+/* --- Profile Pic --- */
 .profile-pic {
 	width: 100%;
 	height: 100%;
-	border-radius: 50%;
 	object-fit: cover;
-	box-shadow: var(--bubble-shadow);
+	border-radius: 50%;
 	border: 2px solid rgba(255, 255, 255, 0.1);
+	box-shadow: var(--bubble-shadow);
 }
 
-/* --- Profile Status (Desktop Circle) --- */
+/* --- Status Dot (Desktop Corner) --- */
 .profile-status-container {
 	position: absolute;
 	width: calc(var(--profile-pic-size) * 0.19);
 	aspect-ratio: 1 / 1;
 	border-radius: 50%;
-	border: 2px solid rgba(255, 255, 255, 0.12);
+	border: 3px solid var(--content-bg);
+	bottom: 0;
+	right: 0;
+	transform: translate(25%, 25%);
 	z-index: 2;
-	top: 87%;
-	left: 87%;
-	transform: translate(-50%, -50%);
-	overflow: hidden;
-
-	/* Glass effect */
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	background: var(--content-bg);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	position: relative;
 }
 
-.profile-status-container::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--liquid-reflection);
-	opacity: 0.35;
-	pointer-events: none;
-	mix-blend-mode: screen;
+.profile-status-container.status-online    { background-color: #31a24c; }
+.profile-status-container.status-idle      { background-color: #ffc107; }
+.profile-status-container.status-dnd       { background-color: #dc3545; }
+.profile-status-container.status-offline   { background-color: #747f8d; }
+
+/* --- Text-Based Profile Status Badge (Optional Mobile) --- */
+.profile-status-text {
+	display: none;
+	font-size: 0.85rem;
+	font-weight: 700;
+	margin-top: 0.35rem;
+	padding: 0.25em 0.8em;
+	border-radius: 999px;
+	line-height: 1;
 }
 
-.profile-status-container::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--bubble-gradient);
-	pointer-events: none;
-	mix-blend-mode: overlay;
-}
-
-/* Optional color tint per status */
-.profile-status-container.status-online    { background-color: rgba(49, 162, 76, 0.35); }
-.profile-status-container.status-idle      { background-color: rgba(255, 193, 7, 0.35); }
-.profile-status-container.status-dnd       { background-color: rgba(220, 53, 69, 0.35); }
-.profile-status-container.status-offline   { background-color: rgba(116, 127, 141, 0.35); }
+.profile-status-text.status-online { background-color: #31a24c; color: #ffffff; }
+.profile-status-text.status-idle   { background-color: #ffc107; color: #1f1f1f; }
+.profile-status-text.status-dnd    { background-color: #dc3545; color: #ffffff; }
+.profile-status-text.status-offline{ background-color: #747f8d; color: #ffffff; }
 
 /* --- Username & Verified --- */
 .username-checkmark {
@@ -532,10 +530,7 @@ body.reduced-motion .mouse-trail-container {
 	margin: 0;
 	font-size: clamp(1.5rem, 5vw, 2.25rem);
 	font-weight: 800;
-	background: linear-gradient(120deg, var(--secondary-text), var(--accent-color));
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
+	color: var(--accent-color); /* solid color matching accent */
 }
 
 .verified {
@@ -543,51 +538,6 @@ body.reduced-motion .mouse-trail-container {
 	height: 1.25rem;
 	flex-shrink: 0;
 }
-
-/* --- Text-Based Profile Status Badge (Mobile / Fallback) --- */
-.profile-status-text {
-	display: none;
-	font-size: 0.85rem;
-	font-weight: 700;
-	margin-top: 0.35rem;
-	padding: 0.25em 0.8em;
-	border-radius: 999px;
-	line-height: 1;
-	overflow: hidden;
-
-	/* Glass effect */
-	background: var(--content-bg);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	position: relative;
-	color: var(--text-color);
-}
-
-.profile-status-text::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--liquid-reflection);
-	opacity: 0.35;
-	pointer-events: none;
-	mix-blend-mode: screen;
-}
-
-.profile-status-text::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--bubble-gradient);
-	pointer-events: none;
-	mix-blend-mode: overlay;
-}
-
-/* Status color tints */
-.profile-status-text.status-online { background-color: rgba(49, 162, 76, 0.35); color: #fff; }
-.profile-status-text.status-idle   { background-color: rgba(255, 193, 7, 0.35); color: #1f1f1f; }
-.profile-status-text.status-dnd    { background-color: rgba(220, 53, 69, 0.35); color: #fff; }
-.profile-status-text.status-offline{ background-color: rgba(116, 127, 141, 0.35); color: #fff; }
 
 /* --- Profile Bio --- */
 .profile-bio {
@@ -622,7 +572,7 @@ body.reduced-motion .mouse-trail-container {
 .settings-button { top: 1.25rem; right: 1.25rem; }
 .merch-button    { top: 1.25rem; left: 1.25rem; }
 .blog-button     { bottom: 1.25rem; left: 1.25rem; }
-.tracker-button  { bottom: 1.25rem; right: 1.25rem; } /* New button */
+.tracker-button  { bottom: 1.25rem; right: 1.25rem; }
 
 .corner-button:hover,
 .corner-button:focus-visible {
@@ -644,7 +594,7 @@ body.reduced-motion .mouse-trail-container {
 }
 
 a.corner-button {
-    text-decoration: none;
+	text-decoration: none;
 }
 
 /* ============================================= */
