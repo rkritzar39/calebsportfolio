@@ -1334,63 +1334,79 @@ function setupCreatorSearch() {
 /* -------------------------
    HELPER FUNCTIONS
 ------------------------- */
+/* ========================================
+   displayShoutouts.js - Business Hours & Status
+   FULL FILE — preserves overrides, temporary & holiday rules,
+   visitor timezone conversion, and fixed "next open" logic
+   ======================================== */
+
+/* -------------------------
+   HELPER FUNCTIONS
+------------------------- */
 function capitalizeFirstLetter(string) {
-    if (!string) return '';
-    return string.charAt(0).toUpperCase() + string.slice(1);
+  if (!string) return '';
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function timeStringToMinutes(timeStr) {
-    if (!timeStr || typeof timeStr !== 'string' || !timeStr.includes(':')) return null;
-    const parts = timeStr.split(':');
-    if (parts.length < 2) return null;
-    const hours = Number(parts[0]); 
-    const minutes = Number(parts[1]);
-    if (isNaN(hours) || isNaN(minutes)) return null;
-    return hours * 60 + minutes;
+  if (!timeStr || typeof timeStr !== 'string' || !timeStr.includes(':')) return null;
+  const parts = timeStr.split(':');
+  if (parts.length < 2) return null;
+  const hours = Number(parts[0]);
+  const minutes = Number(parts[1]);
+  if (isNaN(hours) || isNaN(minutes)) return null;
+  return hours * 60 + minutes;
 }
 
 function formatTime12hSimple(t) {
-    if (!t) return '?';
-    const [hStr, mStr] = t.split(':');
-    const h = parseInt(hStr, 10);
-    const m = parseInt(mStr || '0', 10);
-    if (isNaN(h) || isNaN(m)) return 'Invalid';
-    const suffix = h >= 12 ? 'PM' : 'AM';
-    const hh = h % 12 || 12;
-    return `${hh}:${String(m).padStart(2,'0')} ${suffix}`;
+  if (!t) return '?';
+  const [hStr, mStr] = t.split(':');
+  const h = parseInt(hStr, 10);
+  const m = parseInt(mStr || '0', 10);
+  if (isNaN(h) || isNaN(m)) return 'Invalid';
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  const hh = h % 12 || 12;
+  return `${hh}:${String(m).padStart(2,'0')} ${suffix}`;
 }
 
 function formatDisplayTimeBI(timeString, visitorTimezone) {
-    if (!timeString) return '?';
-    if (typeof luxon === 'undefined' || !luxon.DateTime) return `${formatTime12hSimple(timeString)} ET (Lib Err)`;
-    if (typeof assumedBusinessTimezone === 'undefined') return `${formatTime12hSimple(timeString)} (?)`;
-    try {
-        const { DateTime } = luxon;
-        const [hour, minute] = timeString.split(':').map(Number);
-        if (isNaN(hour) || isNaN(minute)) return formatTime12hSimple(timeString);
-        const nowBiz = DateTime.now().setZone(assumedBusinessTimezone);
-        const bizDt = nowBiz.set({ hour, minute, second:0, millisecond:0 });
-        const visitorDt = bizDt.setZone(visitorTimezone);
-        return visitorDt.toFormat('h:mm a ZZZZ');
-    } catch (e) {
-        return formatTime12hSimple(timeString) + " (Err)";
-    }
+  if (!timeString) return '?';
+  // If luxon not available, fall back to simple formatting + hint
+  if (typeof luxon === 'undefined' || !luxon.DateTime) {
+    return `${formatTime12hSimple(timeString)} ET (Lib Err)`;
+  }
+  if (typeof assumedBusinessTimezone === 'undefined') {
+    return `${formatTime12hSimple(timeString)} (?)`;
+  }
+  try {
+    const { DateTime } = luxon;
+    const [hour, minute] = timeString.split(':').map(Number);
+    if (isNaN(hour) || isNaN(minute)) return formatTime12hSimple(timeString);
+    // create DateTime in business zone at that hour/minute on "today" in business timezone
+    const nowBiz = DateTime.now().setZone(assumedBusinessTimezone);
+    const bizDt = nowBiz.set({ hour, minute, second: 0, millisecond: 0 });
+    const visitorDt = bizDt.setZone(visitorTimezone);
+    return visitorDt.toFormat('h:mm a ZZZZ');
+  } catch (e) {
+    return formatTime12hSimple(timeString) + " (Err)";
+  }
 }
 
 function formatDate(dateStr) {
-    if (!dateStr) return '?';
-    if (typeof luxon === 'undefined' || !luxon.DateTime) {
-        try {
-            const parts = dateStr.split('-');
-            const d = new Date(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])));
-            return d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-        } catch (e) {
-            return dateStr;
-        }
+  if (!dateStr) return '?';
+  if (typeof luxon === 'undefined' || !luxon.DateTime) {
+    // naive fallback
+    try {
+      const parts = dateStr.split('-');
+      const d = new Date(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])));
+      return d.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    } catch (e) {
+      return dateStr;
     }
-    const { DateTime } = luxon;
-    const dt = DateTime.fromISO(dateStr, { zone: assumedBusinessTimezone || 'UTC' });
-    return dt.isValid ? dt.toFormat('cccc, LLLL d, yyyy') : dateStr;
+  }
+  const { DateTime } = luxon;
+  const dt = DateTime.fromISO(dateStr, { zone: assumedBusinessTimezone || 'UTC' });
+  return dt.isValid ? dt.toFormat('cccc, LLLL d, yyyy') : dateStr;
 }
 
 /* -------------------------
@@ -1398,238 +1414,282 @@ function formatDate(dateStr) {
 ------------------------- */
 let businessDocRefLocal;
 try {
-    if (typeof businessDocRef !== 'undefined' && businessDocRef) businessDocRefLocal = businessDocRef;
-    else if (typeof doc !== 'undefined' && typeof db !== 'undefined') businessDocRefLocal = doc(db,"site_config","businessDetails");
-    else businessDocRefLocal = null;
-} catch(e){ businessDocRefLocal = null; }
+  if (typeof businessDocRef !== 'undefined' && businessDocRef) businessDocRefLocal = businessDocRef;
+  else if (typeof doc !== 'undefined' && typeof db !== 'undefined') businessDocRefLocal = doc(db,"site_config","businessDetails");
+  else businessDocRefLocal = null;
+} catch(e){
+  businessDocRefLocal = null;
+}
 
 /* -------------------------
    DISPLAY FUNCTION
 ------------------------- */
 async function displayBusinessInfo() {
-    const contactEl = document.getElementById('contact-email-display');
-    const hoursEl = document.getElementById('business-hours-display');
-    const statusEl = document.getElementById('business-status-display');
-    const tempEl = document.getElementById('temporary-hours-display');
-    const holidayEl = document.getElementById('holiday-hours-display');
+  const contactEl = document.getElementById('contact-email-display');
+  const hoursEl = document.getElementById('business-hours-display');
+  const statusEl = document.getElementById('business-status-display');
+  const tempEl = document.getElementById('temporary-hours-display');
+  const holidayEl = document.getElementById('holiday-hours-display');
 
-    if (!contactEl || !hoursEl || !statusEl || !tempEl || !holidayEl) return;
+  if (!contactEl || !hoursEl || !statusEl || !tempEl || !holidayEl) return;
 
-    if (!businessDocRefLocal || typeof getDoc !== 'function') {
-        const statusMain = statusEl.querySelector('.status-main-text');
-        if (statusMain) statusMain.textContent = 'Status: Error';
-        return;
+  if (!businessDocRefLocal || typeof getDoc !== 'function') {
+    const statusMain = statusEl.querySelector('.status-main-text');
+    if (statusMain) statusMain.textContent = 'Status: Error';
+    return;
+  }
+
+  try {
+    const docSnap = await getDoc(businessDocRefLocal);
+    if (!docSnap.exists()) {
+      hoursEl.innerHTML = '<p>Hours not available.</p>';
+      return;
     }
-
-    try {
-        const docSnap = await getDoc(businessDocRefLocal);
-        if (!docSnap.exists()) {
-            hoursEl.innerHTML = '<p>Hours not available.</p>';
-            return;
-        }
-
-        const data = docSnap.data() || {};
-        if (data.contactEmail) contactEl.innerHTML = `Contact: <a href="mailto:${data.contactEmail}">${data.contactEmail}</a>`;
-        calculateAndDisplayStatusConvertedBI(data);
-
-    } catch (err) {
-        const statusMain = statusEl.querySelector('.status-main-text');
-        if (statusMain) statusMain.textContent = 'Error Loading';
-        console.error(err);
-    }
+    const data = docSnap.data() || {};
+    if (data.contactEmail) contactEl.innerHTML = `Contact: <a href="mailto:${data.contactEmail}">${data.contactEmail}</a>`;
+    calculateAndDisplayStatusConvertedBI(data);
+  } catch (err) {
+    const statusMain = statusEl.querySelector('.status-main-text');
+    if (statusMain) statusMain.textContent = 'Error Loading';
+    console.error(err);
+  }
 }
 
 /* -------------------------
    CALCULATE & RENDER STATUS
 ------------------------- */
 function calculateAndDisplayStatusConvertedBI(businessData={}) {
-    const hoursEl = document.getElementById('business-hours-display');
-    const statusEl = document.getElementById('business-status-display');
-    const tempEl = document.getElementById('temporary-hours-display');
-    const holidayEl = document.getElementById('holiday-hours-display');
-    const contactEl = document.getElementById('contact-email-display');
+  const hoursEl = document.getElementById('business-hours-display');
+  const statusEl = document.getElementById('business-status-display');
+  const tempEl = document.getElementById('temporary-hours-display');
+  const holidayEl = document.getElementById('holiday-hours-display');
+  const contactEl = document.getElementById('contact-email-display');
 
-    const statusMainTextEl = statusEl.querySelector('.status-main-text');
-    const statusCountdownTextEl = statusEl.querySelector('.status-countdown-text');
-    const statusReasonEl = statusEl.querySelector('.status-reason-text');
+  const statusMainTextEl = statusEl.querySelector('.status-main-text');
+  const statusCountdownTextEl = statusEl.querySelector('.status-countdown-text');
+  const statusReasonEl = statusEl.querySelector('.status-reason-text');
 
-    if (!statusMainTextEl || !statusCountdownTextEl || !statusReasonEl) return;
+  if (!statusMainTextEl || !statusCountdownTextEl || !statusReasonEl) return;
 
-    if (typeof assumedBusinessTimezone === 'undefined') {
-        statusMainTextEl.textContent = 'Config Error';
-        statusMainTextEl.className = 'status-main-text status-unavailable';
-        statusReasonEl.textContent = 'Missing Timezone';
-        return;
-    }
+  if (typeof assumedBusinessTimezone === 'undefined') {
+    statusMainTextEl.textContent = 'Config Error';
+    statusMainTextEl.className = 'status-main-text status-unavailable';
+    statusReasonEl.textContent = 'Missing Timezone';
+    return;
+  }
 
-    const regularHours = businessData.regularHours || {};
-    const holidayHours = businessData.holidayHours || [];
-    const temporaryHours = businessData.temporaryHours || [];
-    const statusOverride = businessData.statusOverride || 'auto';
+  const regularHours = businessData.regularHours || {};
+  const holidayHours = businessData.holidayHours || [];
+  const temporaryHours = businessData.temporaryHours || [];
+  const statusOverride = businessData.statusOverride || 'auto';
 
-    const { DateTime } = (typeof luxon !== 'undefined' && luxon.DateTime) ? luxon : { DateTime:null };
-    let visitorTimezone = 'UTC';
-    try { visitorTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch(e){}
+  const { DateTime } = (typeof luxon !== 'undefined' && luxon.DateTime) ? luxon : { DateTime:null };
+  let visitorTimezone = 'UTC';
+  try { visitorTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch(e){}
 
-    const nowInBizTZ = DateTime ? DateTime.now().setZone(assumedBusinessTimezone) : new Date();
-    const currentMinutesInBizTZ = DateTime ? (nowInBizTZ.hour * 60 + nowInBizTZ.minute) : (new Date()).getHours()*60 + (new Date()).getMinutes();
-    const businessDateStr = DateTime ? nowInBizTZ.toISODate() : (new Date()).toISOString().slice(0,10);
-    const businessDayName = DateTime ? nowInBizTZ.toFormat('cccc').toLowerCase() : ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][(new Date()).getDay()];
+  const nowInBizTZ = DateTime ? DateTime.now().setZone(assumedBusinessTimezone) : new Date();
+  const currentMinutesInBizTZ = DateTime ? (nowInBizTZ.hour * 60 + nowInBizTZ.minute) : (new Date()).getHours()*60 + (new Date()).getMinutes();
+  const businessDateStr = DateTime ? nowInBizTZ.toISODate() : (new Date()).toISOString().slice(0,10);
+  const businessDayName = DateTime ? nowInBizTZ.toFormat('cccc').toLowerCase() : ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][(new Date()).getDay()];
 
-    function isRangeActive(range) {
-        if (!range || (!range.open && !range.close)) return false;
-        const openM = timeStringToMinutes(range.open);
-        const closeM = timeStringToMinutes(range.close);
-        if (openM === null || closeM === null) return false;
-        if (closeM > openM) return currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM;
-        else return (currentMinutesInBizTZ >= openM) || (currentMinutesInBizTZ < closeM);
-    }
+  function isRangeActive(range) {
+    if (!range || (!range.open && !range.close)) return false;
+    const openM = timeStringToMinutes(range.open);
+    const closeM = timeStringToMinutes(range.close);
+    if (openM === null || closeM === null) return false;
+    if (closeM > openM) return currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM;
+    else return (currentMinutesInBizTZ >= openM) || (currentMinutesInBizTZ < closeM);
+  }
 
-    // ----------------------------
-    // Determine final status
-    // ----------------------------
-    const todayRegular = (regularHours[businessDayName] || { isClosed:true, ranges:[] });
-    const todayRanges = Array.isArray(todayRegular.ranges) ? todayRegular.ranges : [];
-    let finalCurrentStatus = !todayRegular.isClosed && todayRanges.some(r=>isRangeActive(r)) ? 'Open' : 'Closed';
-    let finalActiveRule = { ...todayRegular, type:'regular', day:businessDayName, reasonOriginal:'Regular Hours' };
+  // ----------------------------
+  // Determine final status
+  // ----------------------------
+  const todayRegular = (regularHours[businessDayName] || { isClosed:true, ranges:[] });
+  const todayRanges = Array.isArray(todayRegular.ranges) ? todayRegular.ranges : [];
+  let finalCurrentStatus = !todayRegular.isClosed && todayRanges.some(r=>isRangeActive(r)) ? 'Open' : 'Closed';
+  let finalActiveRule = { ...todayRegular, type:'regular', day:businessDayName, reasonOriginal:'Regular Hours' };
 
-    if (statusOverride !== 'auto') {
-        finalCurrentStatus = statusOverride==='open'?'Open':(statusOverride==='closed'?'Closed':'Temporarily Unavailable');
-        finalActiveRule = { type:'override', reasonOriginal:'Manual Override', isClosed:(finalCurrentStatus!=='Open') };
+  if (statusOverride !== 'auto') {
+    finalCurrentStatus = statusOverride==='open'?'Open':(statusOverride==='closed'?'Closed':'Temporarily Unavailable');
+    finalActiveRule = { type:'override', reasonOriginal:'Manual Override', isClosed:(finalCurrentStatus!=='Open') };
+  } else {
+    const todayHoliday = holidayHours.find(h=>h.date===businessDateStr);
+    if(todayHoliday) {
+      finalActiveRule = {...todayHoliday,type:'holiday',reasonOriginal:`Holiday (${todayHoliday.label||'Event'})`};
+      if(todayHoliday.isClosed||!todayHoliday.open||!todayHoliday.close) finalCurrentStatus='Closed';
+      else finalCurrentStatus = isRangeActive(todayHoliday)?'Open':'Closed';
     } else {
-        const todayHoliday = holidayHours.find(h=>h.date===businessDateStr);
-        if(todayHoliday) {
-            finalActiveRule = {...todayHoliday,type:'holiday',reasonOriginal:`Holiday (${todayHoliday.label||'Event'})`};
-            if(todayHoliday.isClosed||!todayHoliday.open||!todayHoliday.close) finalCurrentStatus='Closed';
-            else finalCurrentStatus = isRangeActive(todayHoliday)?'Open':'Closed';
-        } else {
-            const activeTemp = temporaryHours.find(t=>{
-                if(!t.startDate||!t.endDate) return false;
-                if(!(businessDateStr>=t.startDate && businessDateStr<=t.endDate)) return false;
-                if(t.isClosed===true) return true;
-                if(t.open && t.close){
-                    const oM=timeStringToMinutes(t.open), cM=timeStringToMinutes(t.close);
-                    if(oM===null||cM===null) return false;
-                    return cM>oM?currentMinutesInBizTZ>=oM && currentMinutesInBizTZ<cM:currentMinutesInBizTZ>=oM || currentMinutesInBizTZ<cM;
-                }
-                return false;
-            });
-            if(activeTemp){finalActiveRule={...activeTemp,type:'temporary',reasonOriginal:`Temporary (${activeTemp.label||'Schedule'})`};
-                finalCurrentStatus = activeTemp.isClosed?'Closed':'Temporarily Unavailable';
-            }
+      const activeTemp = temporaryHours.find(t=>{
+        if(!t.startDate||!t.endDate) return false;
+        if(!(businessDateStr>=t.startDate && businessDateStr<=t.endDate)) return false;
+        if(t.isClosed===true) return true;
+        if(t.open && t.close){
+          const oM=timeStringToMinutes(t.open), cM=timeStringToMinutes(t.close);
+          if(oM===null||cM===null) return false;
+          return cM>oM?currentMinutesInBizTZ>=oM && currentMinutesInBizTZ<cM:currentMinutesInBizTZ>=oM || currentMinutesInBizTZ<cM;
         }
+        return false;
+      });
+      if(activeTemp){
+        finalActiveRule={...activeTemp,type:'temporary',reasonOriginal:`Temporary (${activeTemp.label||'Schedule'})`};
+        finalCurrentStatus = activeTemp.isClosed?'Closed':'Temporarily Unavailable';
+      }
+    }
+  }
+
+  if(finalActiveRule) finalActiveRule.reason=`${finalActiveRule.reasonOriginal} - Currently ${finalCurrentStatus}`;
+  else finalActiveRule={reason:`Status Determined`,type:'default',isClosed:finalCurrentStatus==='Closed'};
+
+  let statusClass = 'status-closed';
+  if(finalCurrentStatus==='Open') statusClass='status-open';
+  else if(finalCurrentStatus==='Temporarily Unavailable') statusClass='status-unavailable';
+
+  statusMainTextEl.className='status-main-text';
+  statusMainTextEl.classList.add(statusClass);
+  statusMainTextEl.textContent=finalCurrentStatus;
+
+  // ----------------------------
+  // SUB-STATUS: Open till / Opens in / Opens tomorrow / Opens Monday...
+  //  — Fixed logic: scans forward up to 7 days and respects closed days
+  // ----------------------------
+  function getMainStatusSubText(rule){
+    const COUNTDOWN_WINDOW_MINUTES=30;
+    let nowMinutes=currentMinutesInBizTZ;
+
+    // build ranges to check for "Open till"
+    const ranges = rule.ranges && rule.ranges.length ? rule.ranges : [{open:rule.open,close:rule.close}];
+    if(!ranges || ranges.length===0) return '';
+
+    // If currently open, show closing time for the active range
+    for(let r of ranges){
+      const openM=timeStringToMinutes(r.open), closeM=timeStringToMinutes(r.close);
+      if(openM===null||closeM===null) continue;
+      if(nowMinutes>=openM && nowMinutes<closeM) return `Open till ${formatDisplayTimeBI(r.close,visitorTimezone)}`;
     }
 
-    if(finalActiveRule) finalActiveRule.reason=`${finalActiveRule.reasonOriginal} - Currently ${finalCurrentStatus}`;
-    else finalActiveRule={reason:`Status Determined`,type:'default',isClosed:finalCurrentStatus==='Closed'};
+    // Need to find the next actual opening time (could be same day later, or next open day)
+    const orderedDays = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    const todayIndex = orderedDays.indexOf(businessDayName);
 
-    let statusClass = 'status-closed';
-    if(finalCurrentStatus==='Open') statusClass='status-open';
-    else if(finalCurrentStatus==='Temporarily Unavailable') statusClass='status-unavailable';
-
-    statusMainTextEl.className='status-main-text';
-    statusMainTextEl.classList.add(statusClass);
-    statusMainTextEl.textContent=finalCurrentStatus;
-
-    // ----------------------------
-    // SUB-STATUS: Open till / Opens in / Opens tomorrow
-    // ----------------------------
-    function getMainStatusSubText(rule){
-        const COUNTDOWN_WINDOW_MINUTES=30;
-        let nowMinutes=currentMinutesInBizTZ;
-        let nextEvent=null, nextDayOffset=0;
-        const ranges=rule.ranges&&rule.ranges.length?rule.ranges:[{open:rule.open,close:rule.close}];
-        if(!ranges||ranges.length===0) return '';
-
-        for(let r of ranges){
-            const openM=timeStringToMinutes(r.open), closeM=timeStringToMinutes(r.close);
-            if(isNaN(openM)||isNaN(closeM)) continue;
-            if(nowMinutes>=openM && nowMinutes<closeM) return `Open till ${formatDisplayTimeBI(r.close,visitorTimezone)}`;
-            if(openM>nowMinutes){nextEvent=openM; nextDayOffset=0; break;}
-        }
-
-        if(!nextEvent && ranges.length>0){nextEvent=timeStringToMinutes(ranges[0].open); nextDayOffset=1;}
-        if(!nextEvent) return '';
-        const minutesUntil=(nextEvent+nextDayOffset*1440)-nowMinutes;
-        if(minutesUntil<=COUNTDOWN_WINDOW_MINUTES) return `Opens in ${minutesUntil} min`;
-        if(nextDayOffset===1) return `Opens tomorrow at ${formatDisplayTimeBI(ranges[0].open,visitorTimezone)}`;
-        return `Opens at ${formatDisplayTimeBI(ranges[0].open,visitorTimezone)}`;
+    // Helper to get day object with ranges for a given day name
+    function getDayObj(dayName){
+      return regularHours[dayName] || { isClosed:true, ranges:[] };
     }
 
-    statusCountdownTextEl.textContent = getMainStatusSubText(finalActiveRule);
-    statusReasonEl.textContent = finalActiveRule.reason;
+    // First, check later ranges today (if any) that start after now
+    if(Array.isArray(todayRegular.ranges) && todayRegular.ranges.length){
+      for(let r of todayRegular.ranges){
+        const openM=timeStringToMinutes(r.open);
+        if(openM===null) continue;
+        if(openM > nowMinutes) {
+          const minutesUntil = openM - nowMinutes;
+          if(minutesUntil <= COUNTDOWN_WINDOW_MINUTES) return `Opens in ${minutesUntil} min`;
+          return `Opens at ${formatDisplayTimeBI(r.open,visitorTimezone)}`;
+        }
+      }
+    }
 
-    // ----------------------------
-    // RENDER REGULAR HOURS
-    // ----------------------------
-    const displayOrder=['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
-    const visitorLocalDayName=DateTime?DateTime.now().setZone(visitorTimezone).toFormat('cccc').toLowerCase():new Date().toLocaleString('en-US',{weekday:'long'}).toLowerCase();
-    let displayHoursListHtml='<ul class="regular-hours-list">';
-    displayOrder.forEach(day=>{
-        const dayObj=regularHours[day]||{isClosed:true,ranges:[]};
-        const isCurrent=day===visitorLocalDayName;
-        const itemClass=isCurrent?'current-day':'';
-        displayHoursListHtml+=`<li class="${itemClass}"><strong>${capitalizeFirstLetter(day)}:</strong>`;
-        if(dayObj.isClosed) displayHoursListHtml+=`<div class="hours-line">Closed</div>`;
-        else if(!Array.isArray(dayObj.ranges)||dayObj.ranges.length===0) displayHoursListHtml+=`<div class="hours-line">No hours added</div>`;
-        else dayObj.ranges.forEach(r=>{displayHoursListHtml+=`<div class="hours-line additional-hours">${formatDisplayTimeBI(r.open,visitorTimezone)} - ${formatDisplayTimeBI(r.close,visitorTimezone)}</div>`;});
-        displayHoursListHtml+='</li>';
+    // Otherwise scan next 6 days for the first actually open day with a valid range
+    for(let offset=1; offset<8; offset++){
+      const checkIndex = (todayIndex + offset) % 7;
+      const checkDay = orderedDays[checkIndex];
+      const dayObj = getDayObj(checkDay);
+
+      if(!dayObj || dayObj.isClosed) continue; // skip closed days
+      const dayRanges = Array.isArray(dayObj.ranges) ? dayObj.ranges : (dayObj.open && dayObj.close ? [{open: dayObj.open, close: dayObj.close}] : []);
+      if(!dayRanges.length) continue;
+
+      // Use the first range's start as canonical "opens" for that day
+      const firstRange = dayRanges[0];
+      const openM = timeStringToMinutes(firstRange.open);
+      if(openM===null) continue;
+
+      // minutes until that next opening (account for day offset)
+      const minutesUntil = (openM + offset*1440) - nowMinutes;
+
+      if(minutesUntil <= COUNTDOWN_WINDOW_MINUTES) return `Opens in ${minutesUntil} min`;
+      if(offset === 1) return `Opens tomorrow at ${formatDisplayTimeBI(firstRange.open,visitorTimezone)}`;
+      return `Opens ${capitalizeFirstLetter(checkDay)} at ${formatDisplayTimeBI(firstRange.open,visitorTimezone)}`;
+    }
+
+    // No future opening found
+    return '';
+  }
+
+  statusCountdownTextEl.textContent = getMainStatusSubText(finalActiveRule);
+  statusReasonEl.textContent = finalActiveRule.reason;
+
+  // ----------------------------
+  // RENDER REGULAR HOURS (visitor-local times)
+  // ----------------------------
+  const displayOrder=['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+  const visitorLocalDayName=DateTime?DateTime.now().setZone(visitorTimezone).toFormat('cccc').toLowerCase():new Date().toLocaleString('en-US',{weekday:'long'}).toLowerCase();
+  let displayHoursListHtml='<ul class="regular-hours-list">';
+  displayOrder.forEach(day=>{
+    const dayObj=regularHours[day]||{isClosed:true,ranges:[]};
+    const isCurrent=day===visitorLocalDayName;
+    const itemClass=isCurrent?'current-day':'';
+    displayHoursListHtml+=`<li class="${itemClass}"><strong>${capitalizeFirstLetter(day)}:</strong>`;
+    if(dayObj.isClosed) displayHoursListHtml+=`<div class="hours-line">Closed</div>`;
+    else if(!Array.isArray(dayObj.ranges)||dayObj.ranges.length===0) displayHoursListHtml+=`<div class="hours-line">No hours added</div>`;
+    else dayObj.ranges.forEach(r=>{displayHoursListHtml+=`<div class="hours-line additional-hours">${formatDisplayTimeBI(r.open,visitorTimezone)} - ${formatDisplayTimeBI(r.close,visitorTimezone)}</div>`;});
+    displayHoursListHtml+='</li>';
+  });
+  displayHoursListHtml+='</ul>';
+  displayHoursListHtml+=`<p class="hours-timezone-note">Hours displayed in your local time zone: ${visitorTimezone.replace(/_/g,' ')}</p>`;
+  hoursEl.innerHTML=displayHoursListHtml;
+
+  // ----------------------------
+  // TEMPORARY HOURS
+  // ----------------------------
+  if(temporaryHours.length>0){
+    let tmpHtml='<h4>Upcoming/Active Temporary Hours</h4><ul class="special-hours-display">';
+    temporaryHours.forEach(t=>{
+      let daysUntil='';
+      if(DateTime){
+        const nowDT=DateTime.now().setZone(visitorTimezone);
+        const startDT=DateTime.fromISO(t.startDate,{zone:visitorTimezone});
+        const diff=Math.ceil(startDT.diff(nowDT,'days').days);
+        daysUntil=diff>0?`(${diff} day${diff>1?'s':''} away)`:diff===0?'(Today)':'(Started)';
+      }
+      tmpHtml+=`<li><strong>${t.label||'Temporary Schedule'}</strong>
+          <span class="hours">${t.isClosed?'Closed':`${formatDisplayTimeBI(t.open||'',visitorTimezone)} - ${formatDisplayTimeBI(t.close||'',visitorTimezone)}`}</span>
+          <span class="dates">${formatDate(t.startDate)} to ${formatDate(t.endDate)}</span>
+          <span class="days-until">${daysUntil}</span></li>`;
     });
-    displayHoursListHtml+='</ul>';
-    displayHoursListHtml+=`<p class="hours-timezone-note">Hours displayed in your local time zone: ${visitorTimezone.replace(/_/g,' ')}</p>`;
-    hoursEl.innerHTML=displayHoursListHtml;
+    tmpHtml+='</ul>';
+    tempEl.innerHTML=tmpHtml;
+    tempEl.style.display='block';
+  } else { tempEl.innerHTML=''; tempEl.style.display='none'; }
 
-    // ----------------------------
-    // TEMPORARY HOURS
-    // ----------------------------
-    if(temporaryHours.length>0){
-        let tmpHtml='<h4>Upcoming/Active Temporary Hours</h4><ul class="special-hours-display">';
-        temporaryHours.forEach(t=>{
-            let daysUntil='';
-            if(DateTime){
-                const nowDT=DateTime.now().setZone(visitorTimezone);
-                const startDT=DateTime.fromISO(t.startDate,{zone:visitorTimezone});
-                const diff=Math.ceil(startDT.diff(nowDT,'days').days);
-                daysUntil=diff>0?`(${diff} day${diff>1?'s':''} away)`:diff===0?'(Today)':'(Started)';
-            }
-            tmpHtml+=`<li><strong>${t.label||'Temporary Schedule'}</strong>
-                <span class="hours">${t.isClosed?'Closed':`${formatDisplayTimeBI(t.open||'',visitorTimezone)} - ${formatDisplayTimeBI(t.close||'',visitorTimezone)}`}</span>
-                <span class="dates">${formatDate(t.startDate)} to ${formatDate(t.endDate)}</span>
-                <span class="days-until">${daysUntil}</span></li>`;
-        });
-        tmpHtml+='</ul>';
-        tempEl.innerHTML=tmpHtml;
-        tempEl.style.display='block';
-    } else { tempEl.innerHTML=''; tempEl.style.display='none'; }
+  // ----------------------------
+  // HOLIDAY HOURS
+  // ----------------------------
+  if(holidayHours.length>0){
+    let holidayHtml='<h4>Upcoming Holiday Hours</h4><ul class="special-hours-display">';
+    holidayHours.forEach(h=>{
+      let daysUntil='';
+      if(DateTime){
+        const nowDT=DateTime.now().setZone(visitorTimezone);
+        const hDT=DateTime.fromISO(h.date,{zone:visitorTimezone});
+        const diff=Math.ceil(hDT.diff(nowDT,'days').days);
+        daysUntil=diff>0?`(${diff} day${diff>1?'s':''} away)`:diff===0?'(Today)':'(Started)';
+      }
+      holidayHtml+=`<li><strong>${h.label||'Holiday'}</strong>
+          <span class="hours">${h.isClosed?'Closed':`${formatDisplayTimeBI(h.open||'',visitorTimezone)} - ${formatDisplayTimeBI(h.close||'',visitorTimezone)}`}</span>
+          <span class="dates">${formatDate(h.date)}</span>
+          <span class="days-until">${daysUntil}</span></li>`;
+    });
+    holidayHtml+='</ul>';
+    holidayEl.innerHTML=holidayHtml;
+    holidayEl.style.display='block';
+  } else { holidayEl.innerHTML=''; holidayEl.style.display='none'; }
 
-    // ----------------------------
-    // HOLIDAY HOURS
-    // ----------------------------
-    if(holidayHours.length>0){
-        let holidayHtml='<h4>Upcoming Holiday Hours</h4><ul class="special-hours-display">';
-        holidayHours.forEach(h=>{
-            let daysUntil='';
-            if(DateTime){
-                const nowDT=DateTime.now().setZone(visitorTimezone);
-                const hDT=DateTime.fromISO(h.date,{zone:visitorTimezone});
-                const diff=Math.ceil(hDT.diff(nowDT,'days').days);
-                daysUntil=diff>0?`(${diff} day${diff>1?'s':''} away)`:diff===0?'(Today)':'(Started)';
-            }
-            holidayHtml+=`<li><strong>${h.label||'Holiday'}</strong>
-                <span class="hours">${h.isClosed?'Closed':`${formatDisplayTimeBI(h.open||'',visitorTimezone)} - ${formatDisplayTimeBI(h.close||'',visitorTimezone)}`}</span>
-                <span class="dates">${formatDate(h.date)}</span>
-                <span class="days-until">${daysUntil}</span></li>`;
-        });
-        holidayHtml+='</ul>';
-        holidayEl.innerHTML=holidayHtml;
-        holidayEl.style.display='block';
-    } else { holidayEl.innerHTML=''; holidayEl.style.display='none'; }
-
-    // ----------------------------
-    // CONTACT EMAIL
-    // ----------------------------
-    const contactEmail = businessData.contactEmail||'';
-    if(contactEl) contactEl.innerHTML = contactEmail ? `Contact: <a href="mailto:${contactEmail}">${contactEmail}</a>` : '';
+  // ----------------------------
+  // CONTACT EMAIL (re-affirm)
+  // ----------------------------
+  const contactEmail = businessData.contactEmail||'';
+  if(contactEl) contactEl.innerHTML = contactEmail ? `Contact: <a href="mailto:${contactEmail}">${contactEmail}</a>` : '';
 }
 
 /* -------------------------
@@ -1637,10 +1697,14 @@ function calculateAndDisplayStatusConvertedBI(businessData={}) {
 ------------------------- */
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',displayBusinessInfo);
 else displayBusinessInfo();
+
+/* -------------------------
+   GLOW TYPING LOGIC (original)
+------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
-  // === GLOW TYPING LOGIC (your original) ===
   document.querySelectorAll(".search-container.unified .creator-search").forEach(input => {
     const container = input.closest(".search-container.unified");
+    if (!container) return;
 
     const setTyping = () => {
       if (input.value.trim()) {
@@ -1650,7 +1714,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
 
+    input.addEventListener('input', setTyping);
     setTyping();
+  });
+});
 
     input.addEventListener("input", setTyping);
     input.addEventListener("change", setTyping);
