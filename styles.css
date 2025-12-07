@@ -434,7 +434,7 @@ body.reduced-motion .mouse-trail-container {
 
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
-/* (Final Version with Button Animations + Glass Status) */
+/* (Final Version with Button Animations)   */
 /* ======================================== */
 
 .profile-section {
@@ -472,51 +472,26 @@ body.reduced-motion .mouse-trail-container {
 	border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-/* --- Profile Status (Desktop Circle) --- */
+/* --- Profile Status (Desktop Default) --- */
 .profile-status-container {
 	position: absolute;
 	width: calc(var(--profile-pic-size) * 0.19);
 	aspect-ratio: 1 / 1;
+	background-clip: content-box;
 	border-radius: 50%;
-	border: 2px solid rgba(255, 255, 255, 0.12);
+	border: 3px solid var(--content-bg);
 	z-index: 2;
+	transition: all 0.3s ease;
 	top: 87%;
 	left: 87%;
 	transform: translate(-50%, -50%);
-	overflow: hidden;
-
-	/* Glass effect */
-	background: var(--content-bg);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	position: relative;
 }
 
-.profile-status-container::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--liquid-reflection);
-	opacity: 0.35;
-	pointer-events: none;
-	mix-blend-mode: screen;
-}
+.profile-status-container.status-online    { background-color: #31a24c; }
+.profile-status-container.status-idle      { background-color: #ffc107; }
+.profile-status-container.status-dnd       { background-color: #dc3545; }
+.profile-status-container.status-offline   { background-color: #747f8d; }
 
-.profile-status-container::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--bubble-gradient);
-	pointer-events: none;
-	mix-blend-mode: overlay;
-}
-
-/* Optional color tint per status */
-.profile-status-container.status-online    { background-color: rgba(49, 162, 76, 0.35); }
-.profile-status-container.status-idle      { background-color: rgba(255, 193, 7, 0.35); }
-.profile-status-container.status-dnd       { background-color: rgba(220, 53, 69, 0.35); }
-.profile-status-container.status-offline   { background-color: rgba(116, 127, 141, 0.35); }
 
 /* --- Username & Verified --- */
 .username-checkmark {
@@ -544,7 +519,7 @@ body.reduced-motion .mouse-trail-container {
 	flex-shrink: 0;
 }
 
-/* --- Text-Based Profile Status Badge (Mobile / Fallback) --- */
+/* --- Text-Based Profile Status Badge (Hidden on Desktop) --- */
 .profile-status-text {
 	display: none;
 	font-size: 0.85rem;
@@ -553,41 +528,25 @@ body.reduced-motion .mouse-trail-container {
 	padding: 0.25em 0.8em;
 	border-radius: 999px;
 	line-height: 1;
-	overflow: hidden;
-
-	/* Glass effect */
-	background: var(--content-bg);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	position: relative;
-	color: var(--text-color);
 }
 
-.profile-status-text::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--liquid-reflection);
-	opacity: 0.35;
-	pointer-events: none;
-	mix-blend-mode: screen;
+.profile-status-text.status-online {
+	background-color: #31a24c;
+	color: #ffffff;
+}
+.profile-status-text.status-idle {
+	background-color: #ffc107;
+	color: #1f1f1f;
+}
+.profile-status-text.status-dnd {
+	background-color: #dc3545;
+	color: #ffffff;
+}
+.profile-status-text.status-offline {
+	background-color: #747f8d;
+	color: #ffffff;
 }
 
-.profile-status-text::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--bubble-gradient);
-	pointer-events: none;
-	mix-blend-mode: overlay;
-}
-
-/* Status color tints */
-.profile-status-text.status-online { background-color: rgba(49, 162, 76, 0.35); color: #fff; }
-.profile-status-text.status-idle   { background-color: rgba(255, 193, 7, 0.35); color: #1f1f1f; }
-.profile-status-text.status-dnd    { background-color: rgba(220, 53, 69, 0.35); color: #fff; }
-.profile-status-text.status-offline{ background-color: rgba(116, 127, 141, 0.35); color: #fff; }
 
 /* --- Profile Bio --- */
 .profile-bio {
@@ -622,7 +581,7 @@ body.reduced-motion .mouse-trail-container {
 .settings-button { top: 1.25rem; right: 1.25rem; }
 .merch-button    { top: 1.25rem; left: 1.25rem; }
 .blog-button     { bottom: 1.25rem; left: 1.25rem; }
-.tracker-button  { bottom: 1.25rem; right: 1.25rem; } /* New button */
+.tracker-button  { bottom: 1.25rem; right: 1.25rem; } /* This is the new button */
 
 .corner-button:hover,
 .corner-button:focus-visible {
