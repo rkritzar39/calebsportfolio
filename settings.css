@@ -1290,3 +1290,31 @@ body.dark-mode #themeModeSelect:hover {
 .custom-bg-preview.dragging {
   cursor: grabbing;
 }
+
+/* ======================== */
+/* Section Icon Containers  */
+/* ======================== */
+
+.setting-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  font-size: 22px;
+  color: #fff;
+  background-color: var(--accent-color, #007aff); /* MATCHES ACCENT COLOR */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Optional: Gradient version that follows accent color */
+.setting-icon-container {
+  background: linear-gradient(135deg, var(--accent-color, #007aff), color-mix(in srgb, var(--accent-color, #007aff) 70%, black 30%));
+}
+
+/* If you want a lighter gradient automatically */
+.setting-icon-container i {
+  color: #fff;
+}
