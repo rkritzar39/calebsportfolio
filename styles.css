@@ -827,6 +827,7 @@ a.corner-button {
   height: 270px;
   border-radius: var(--radius-lg);
   overflow: hidden;
+  margin-bottom: 20px; /* added space below album */
   transition: transform 0.3s ease;
 }
 
@@ -839,11 +840,11 @@ a.corner-button {
 }
 
 .live-album-art:hover {
-  transform: scale(1.05) rotate(-2deg);
+  transform: scale(1.05); /* just grows, no rotation */
 }
 
 .live-album-art:hover img {
-  transform: scale(1.05) rotate(2deg);
+  transform: scale(1.05);
 }
 
 /* ======================================================= */
@@ -855,7 +856,7 @@ a.corner-button {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
+  gap: 12px; /* more space between song title and artist */
   width: 100%;
 }
 
@@ -863,7 +864,7 @@ a.corner-button {
   font-size: 1.35rem;
   font-weight: 600;
   color: #eee;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .live-artist {
