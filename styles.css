@@ -748,31 +748,41 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — DYNAMIC ACCENT GLASS =========== */
+/* === 🎧 LIVE ACTIVITY — DARK DYNAMIC ACCENT ============ */
 /* ======================================================= */
 
 .live-activity {
   position: relative;
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--dynamic-accent) 20%, var(--content-bg) 80%),
-    color-mix(in srgb, var(--dynamic-accent) 15%, var(--content-bg) 85%)
-  ); /* stronger accent tint for visibility in both modes */
-  border: 1px solid var(--border-color);
+    color-mix(in srgb, var(--dynamic-accent) 20%, color-mix(in srgb, var(--content-bg) 90%, #000 10%)),
+    color-mix(in srgb, var(--dynamic-accent) 15%, color-mix(in srgb, var(--content-bg) 90%, #000 10%))
+  );
+  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 40%, #000 60%);
   border-radius: var(--radius-lg);
-  box-shadow: 0 8px 25px color-mix(in srgb, var(--dynamic-accent) 25%, var(--shadow-color));
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+  box-shadow: 
+    0 15px 35px color-mix(in srgb, var(--dynamic-accent) 25%, #000 75%),
+    0 8px 15px rgba(0,0,0,0.6);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   padding: 36px 24px;
   margin: 22px auto;
   width: calc(100% - 40px);
-  max-width: 620px;
+  max-width: 640px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  animation: fadeInCard 0.4s ease forwards;
+  animation: fadeInCard 0.5s ease forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.live-activity:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 20px 50px color-mix(in srgb, var(--dynamic-accent) 35%, #000 65%),
+    0 10px 25px rgba(0,0,0,0.65);
 }
 
 /* ======================================================= */
@@ -790,7 +800,7 @@ a.corner-button {
   text-align: center;
   margin-bottom: 24px;
   opacity: 0.95;
-  text-shadow: 0 0 6px var(--dynamic-accent);
+  text-shadow: 0 0 6px color-mix(in srgb, var(--dynamic-accent) 50%, #000 50%);
 }
 
 .status-line.hidden {
@@ -807,7 +817,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === SPOTIFY CARD CONTAINER ============================ */
+/* === SPOTIFY CARD ====================================== */
 /* ======================================================= */
 
 .spotify-card {
@@ -828,12 +838,15 @@ a.corner-button {
   justify-content: center;
   align-items: center;
   margin: 0 auto 26px auto;
-  width: 260px;
-  height: 260px;
+  width: 270px;
+  height: 270px;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 0 25px var(--dynamic-accent),
-              0 10px 25px var(--shadow-color);
+  box-shadow: 
+    0 0 35px color-mix(in srgb, var(--dynamic-accent) 35%, #000 65%),
+    0 10px 25px rgba(0,0,0,0.45);
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              box-shadow 0.4s ease, filter 0.4s ease;
 }
 
 .live-album-art img {
@@ -841,6 +854,20 @@ a.corner-button {
   height: 100%;
   object-fit: cover;
   border-radius: inherit;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              filter 0.4s ease;
+}
+
+.live-album-art:hover {
+  transform: scale(1.07) rotate(-2deg);
+  box-shadow: 
+    0 0 50px color-mix(in srgb, var(--dynamic-accent) 50%, #000 50%),
+    0 15px 35px rgba(0,0,0,0.55);
+}
+
+.live-album-art:hover img {
+  transform: scale(1.05) rotate(1.5deg);
+  filter: brightness(1.05) contrast(1.1);
 }
 
 /* ======================================================= */
@@ -850,7 +877,7 @@ a.corner-button {
 .no-activity-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -887,19 +914,21 @@ a.corner-button {
 .live-song-title {
   font-size: 1.35rem;
   font-weight: 600;
-  color: var(--text-color);
+  color: color-mix(in srgb, var(--dynamic-accent) 60%, #111 40%);
   margin-bottom: 2px;
   word-break: break-word;
+  text-shadow: 0 2px 6px color-mix(in srgb, var(--dynamic-accent) 40%, #000 60%);
 }
 
 .live-artist {
   font-size: 1rem;
-  color: var(--secondary-text);
+  color: color-mix(in srgb, var(--dynamic-accent) 50%, #333 50%);
   margin-bottom: 6px;
+  text-shadow: 0 1px 4px color-mix(in srgb, var(--dynamic-accent) 30%, #000 70%);
 }
 
 /* ======================================================= */
-/* === MUSIC PROGRESS BAR — DYNAMIC ACCENT GLASS ========= */
+/* === MUSIC PROGRESS BAR — DARK ACCENT ================= */
 /* ======================================================= */
 
 .music-progress-container {
@@ -907,17 +936,17 @@ a.corner-button {
   height: 6px;
   background: linear-gradient(
     90deg,
-    color-mix(in srgb, var(--dynamic-accent) 20%, var(--content-bg) 80%),
-    color-mix(in srgb, var(--dynamic-accent) 15%, var(--content-bg) 85%)
-  ); /* stronger accent tint */
+    color-mix(in srgb, var(--dynamic-accent) 25%, #111 75%),
+    color-mix(in srgb, var(--dynamic-accent) 20%, #111 80%)
+  );
   border-radius: var(--radius-xl);
   overflow: hidden;
   position: relative;
   margin: 28px 0 16px 0;
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  border: 1px solid var(--border-color);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 40%, #000 60%);
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.45);
 }
 
 .music-progress-bar {
@@ -930,10 +959,10 @@ a.corner-button {
   background: linear-gradient(
     90deg,
     var(--dynamic-accent) 0%,
-    color-mix(in srgb, var(--dynamic-accent) 65%, #000) 100%
+    color-mix(in srgb, var(--dynamic-accent) 75%, #000 25%) 100%
   );
-  box-shadow: inset 0 1px 2px rgba(255,255,255,0.25);
-  transition: width 0.4s linear;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--dynamic-accent) 60%, #000 40%) inset;
+  transition: width 0.3s ease;
 }
 
 /* ======================================================= */
@@ -945,7 +974,6 @@ a.corner-button {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: none;
   margin: 0;
   padding: 6px 0 0 0;
   font-size: 0.95rem;
@@ -954,20 +982,14 @@ a.corner-button {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-.music-progress-time span {
-  flex: 1;
-}
-
 .music-progress-time span:first-child {
   text-align: left;
 }
-
 .music-progress-time span:nth-child(2) {
   text-align: center;
   font-weight: 400;
   color: color-mix(in srgb, var(--text-color) 70%, #aaa);
 }
-
 .music-progress-time span:last-child {
   text-align: right;
 }
