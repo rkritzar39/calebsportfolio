@@ -748,23 +748,21 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — DARK DYNAMIC ACCENT ============ */
+/* === 🎧 LIVE ACTIVITY — DARK SIMPLE ACCENT ============ */
 /* ======================================================= */
 
 .live-activity {
   position: relative;
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--dynamic-accent) 20%, color-mix(in srgb, var(--content-bg) 90%, #000 10%)),
-    color-mix(in srgb, var(--dynamic-accent) 15%, color-mix(in srgb, var(--content-bg) 90%, #000 10%))
+    color-mix(in srgb, var(--dynamic-accent) 20%, #111 80%),
+    color-mix(in srgb, var(--dynamic-accent) 15%, #111 85%)
   );
-  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 40%, #000 60%);
+  border: 1px solid #222;
   border-radius: var(--radius-lg);
-  box-shadow: 
-    0 15px 35px color-mix(in srgb, var(--dynamic-accent) 25%, #000 75%),
-    0 8px 15px rgba(0,0,0,0.6);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 36px 24px;
   margin: 22px auto;
   width: calc(100% - 40px);
@@ -774,15 +772,11 @@ a.corner-button {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  animation: fadeInCard 0.5s ease forwards;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .live-activity:hover {
-  transform: translateY(-4px);
-  box-shadow: 
-    0 20px 50px color-mix(in srgb, var(--dynamic-accent) 35%, #000 65%),
-    0 10px 25px rgba(0,0,0,0.65);
+  transform: translateY(-3px);
 }
 
 /* ======================================================= */
@@ -797,10 +791,7 @@ a.corner-button {
   font-size: 1rem;
   font-weight: 500;
   color: var(--text-color);
-  text-align: center;
   margin-bottom: 24px;
-  opacity: 0.95;
-  text-shadow: 0 0 6px color-mix(in srgb, var(--dynamic-accent) 50%, #000 50%);
 }
 
 .status-line.hidden {
@@ -813,7 +804,6 @@ a.corner-button {
   width: 22px;
   height: 22px;
   object-fit: contain;
-  filter: none;
 }
 
 /* ======================================================= */
@@ -833,20 +823,11 @@ a.corner-button {
 /* ======================================================= */
 
 .live-album-art {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto 26px auto;
   width: 270px;
   height: 270px;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 
-    0 0 35px color-mix(in srgb, var(--dynamic-accent) 35%, #000 65%),
-    0 10px 25px rgba(0,0,0,0.45);
-  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
-              box-shadow 0.4s ease, filter 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
 .live-album-art img {
@@ -854,48 +835,15 @@ a.corner-button {
   height: 100%;
   object-fit: cover;
   border-radius: inherit;
-  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-              filter 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
 .live-album-art:hover {
-  transform: scale(1.07) rotate(-2deg);
-  box-shadow: 
-    0 0 50px color-mix(in srgb, var(--dynamic-accent) 50%, #000 50%),
-    0 15px 35px rgba(0,0,0,0.55);
+  transform: scale(1.05) rotate(-2deg);
 }
 
 .live-album-art:hover img {
-  transform: scale(1.05) rotate(1.5deg);
-  filter: brightness(1.05) contrast(1.1);
-}
-
-/* ======================================================= */
-/* === "NO ACTIVITY" OVERLAY ============================= */
-/* ======================================================= */
-
-.no-activity-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 20px;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
-.no-activity-overlay.hidden {
-  display: none;
-}
-
-.no-activity-overlay p {
-  font-size: 1.05rem;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--text-color) 70%, #ccc);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  transform: scale(1.05) rotate(2deg);
 }
 
 /* ======================================================= */
@@ -907,46 +855,35 @@ a.corner-button {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
 }
 
 .live-song-title {
   font-size: 1.35rem;
   font-weight: 600;
-  color: color-mix(in srgb, var(--dynamic-accent) 60%, #111 40%);
+  color: #eee;
   margin-bottom: 2px;
-  word-break: break-word;
-  text-shadow: 0 2px 6px color-mix(in srgb, var(--dynamic-accent) 40%, #000 60%);
 }
 
 .live-artist {
   font-size: 1rem;
-  color: color-mix(in srgb, var(--dynamic-accent) 50%, #333 50%);
+  color: #ccc;
   margin-bottom: 6px;
-  text-shadow: 0 1px 4px color-mix(in srgb, var(--dynamic-accent) 30%, #000 70%);
 }
 
 /* ======================================================= */
-/* === MUSIC PROGRESS BAR — DARK ACCENT ================= */
+/* === MUSIC PROGRESS BAR ================================= */
 /* ======================================================= */
 
 .music-progress-container {
   width: 100%;
   height: 6px;
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--dynamic-accent) 25%, #111 75%),
-    color-mix(in srgb, var(--dynamic-accent) 20%, #111 80%)
-  );
+  background: #222;
   border-radius: var(--radius-xl);
   overflow: hidden;
   position: relative;
   margin: 28px 0 16px 0;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 40%, #000 60%);
-  box-shadow: inset 0 3px 6px rgba(0,0,0,0.45);
 }
 
 .music-progress-bar {
@@ -956,13 +893,8 @@ a.corner-button {
   height: 100%;
   width: 0%;
   border-radius: var(--radius-xl);
-  background: linear-gradient(
-    90deg,
-    var(--dynamic-accent) 0%,
-    color-mix(in srgb, var(--dynamic-accent) 75%, #000 25%) 100%
-  );
-  box-shadow: 0 0 10px color-mix(in srgb, var(--dynamic-accent) 60%, #000 40%) inset;
-  transition: width 0.3s ease;
+  background: var(--dynamic-accent);
+  transition: width 0.3s linear;
 }
 
 /* ======================================================= */
@@ -972,14 +904,11 @@ a.corner-button {
 .music-progress-time {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   width: 100%;
+  font-size: 0.95rem;
+  color: #aaa;
   margin: 0;
   padding: 6px 0 0 0;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: color-mix(in srgb, var(--text-color) 85%, #ddd);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .music-progress-time span:first-child {
@@ -987,37 +916,9 @@ a.corner-button {
 }
 .music-progress-time span:nth-child(2) {
   text-align: center;
-  font-weight: 400;
-  color: color-mix(in srgb, var(--text-color) 70%, #aaa);
 }
 .music-progress-time span:last-child {
   text-align: right;
-}
-
-/* ======================================================= */
-/* === LAST UPDATED ====================================== */
-/* ======================================================= */
-
-.la-updated {
-  font-size: 0.82rem;
-  color: var(--secondary-text);
-  margin-top: 18px;
-  opacity: 0.85;
-}
-
-/* ======================================================= */
-/* === ANIMATIONS ======================================== */
-/* ======================================================= */
-
-@keyframes fadeInCard {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 /* ======================================================= */
