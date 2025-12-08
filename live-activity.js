@@ -1,4 +1,4 @@
-/* live-activity.js — GitHub Removed + Fixed Manual Expiry */
+/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -69,6 +69,13 @@ function showStatusLineWithFade(text, source = "manual") {
     if (["spotify", "twitch"].includes(source)) icon.classList.add("glow");
 
     line.style.opacity = "1";
+
+    // --- SAVE STATUS LOCALLY FOR PERSISTENCE ---
+    localStorage.setItem("lastStatus", JSON.stringify({
+      text,
+      source,
+      timestamp: Date.now()
+    }));
   }, 180);
 
   lastUpdateTime = Date.now();
@@ -312,7 +319,6 @@ async function getReddit(){
   if(!u) return null;
   try{
     const r=await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`,{cache:"no-store"});
-    const j=await r.json();
     const post=j?.data?.children?.[0]?.data;
     if(post && post.id!==lastRedditPostId){
       lastRedditPostId=post.id;
@@ -411,7 +417,6 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 /* ======================================================= */
 
 async function mainLoop() {
-
   const [discord, twitch, reddit, tiktok] = await Promise.all([
     getDiscord(), getTwitch(), getReddit(), getTikTok()
   ]);
@@ -455,6 +460,15 @@ document.addEventListener("DOMContentLoaded",()=>{
     card.addEventListener("click",()=>{
       if(currentSpotifyUrl) window.open(currentSpotifyUrl,"_blank");
     });
+  }
+
+  // --- RESTORE LAST STATUS ON PAGE LOAD ---
+  const saved = localStorage.getItem("lastStatus");
+  if (saved) {
+    try {
+      const { text, source } = JSON.parse(saved);
+      showStatusLineWithFade(text, source);
+    } catch(e){ console.warn("Failed to restore last status:", e); }
   }
 
   mainLoop();
