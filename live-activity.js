@@ -1,4 +1,4 @@
-/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status */
+/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status + Manual Priority */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -319,6 +319,7 @@ async function getReddit(){
   if(!u) return null;
   try{
     const r=await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`,{cache:"no-store"});
+    const j = await r.json();
     const post=j?.data?.children?.[0]?.data;
     if(post && post.id!==lastRedditPostId){
       lastRedditPostId=post.id;
@@ -467,7 +468,14 @@ document.addEventListener("DOMContentLoaded",()=>{
   if (saved) {
     try {
       const { text, source } = JSON.parse(saved);
-      showStatusLineWithFade(text, source);
+
+      // Only restore if manual is NOT active
+      if (!isManualActive()) {
+        showStatusLineWithFade(text, source);
+      } else {
+        showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
+      }
+
     } catch(e){ console.warn("Failed to restore last status:", e); }
   }
 
