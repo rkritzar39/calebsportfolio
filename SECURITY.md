@@ -12,7 +12,7 @@
 ### 2. Content Security
 - User-generated content restrictions
 - Protected profile images
-- Secure external links (using target="_blank")
+- Secure external links (using target="_blank") 
 - Image drag protection
 - Media controls disabled for video content
 
