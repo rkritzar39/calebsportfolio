@@ -607,22 +607,15 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🍎 Vision OS / iOS Future Theme Variables */
+/* 🍎 Liquid Glass Dock - iOS 26 Style */
 /* ============================================= */
+
 :root {
-  /* The Glass Material */
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.8);
-  --glass-blur: 25px;
-  --dock-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  
-  /* Text & Colors */
-  --text-primary: #000000;
-  --text-secondary: #666666;
   --accent-color: #007AFF; /* System Blue */
-  
-  /* Active Pill */
-  --active-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.25);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-blur: 30px;
+  --dock-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) inset;
 }
 
 /* ============================================= */
@@ -637,29 +630,27 @@ a.corner-button {
 
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px;
+  gap: 16px;
+  padding: 12px 16px;
 
-  /* The Vision OS Frosted Glass Effect */
+  /* Liquid Glass Effect */
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--glass-border);
   box-shadow: var(--dock-shadow);
-  
-  /* Smooth container entry */
-  animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes floatUp {
-  from { opacity: 0; transform: translate(-50%, 20px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+/* Hover slightly intensifies glass effect */
+.onyx-dock:hover {
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18) inset;
 }
 
 /* ============================================= */
-/* 🛸 The Interactive Items */
+/* 🛸 Dock Items */
 /* ============================================= */
 .dock-item {
   position: relative;
@@ -667,22 +658,17 @@ a.corner-button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
-  min-width: 60px;
-  padding: 12px 20px;
+
+  padding: 10px 18px;
   border-radius: 999px;
-  
   text-decoration: none;
-  color: var(--text-secondary);
+  color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  
-  /* Clip the lighting glow */
-  overflow: hidden;
-  isolation: isolate; /* Create new stacking context for glow */
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  isolation: isolate;
 }
 
-/* --- 1. The Spotlight Glow (Vision OS Signature) --- */
+/* Spotlight Glow Behind Item */
 .dock-item::before {
   content: "";
   position: absolute;
@@ -690,7 +676,7 @@ a.corner-button {
   z-index: -1;
   background: radial-gradient(
     80px circle at var(--x, 50%) var(--y, 50%),
-    rgba(0, 0, 0, 0.08),
+    rgba(255, 255, 255, 0.25),
     transparent 100%
   );
   opacity: 0;
@@ -701,50 +687,63 @@ a.corner-button {
   opacity: 1;
 }
 
-/* --- 2. Typography & Icons --- */
+/* Icon & Label */
+.dock-icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+  transition: transform 0.15s ease, color 0.3s ease;
+  transform: translate(calc(var(--dx,0)*5px), calc(var(--dy,0)*5px));
+}
+
 .dock-label {
   font-size: 11px;
   font-weight: 600;
   margin-top: 4px;
   opacity: 0.8;
-  transition: transform 0.2s;
+  color: inherit;
+  transition: transform 0.2s ease;
 }
 
-.dock-icon {
-  width: 24px;
-  height: 24px;
-  stroke-width: 2px;
-  transition: color 0.3s ease, transform 0.1s linear;
-  
-  /* PARALLAX PHYSICS: Icons move slightly opposite to mouse */
-  transform: translate(calc(var(--dx) * 5px), calc(var(--dy) * 5px));
-}
-
-/* ============================================= */
-/* ✨ Active & Hover States */
-/* ============================================= */
-
-/* Hover Lift */
+/* Hover Lift & Accent */
 .dock-item:hover {
   transform: scale(1.08) translateY(-2px);
-  color: var(--text-primary);
+  color: var(--accent-color);
 }
 
-/* Active State (The "Pill" sits ON TOP of glass) */
+/* ============================================= */
+/* ✨ Active Pill */
+/* ============================================= */
 .dock-item.active {
-  background: var(--accent-color); /* Full accent color */
-  color: var(--accent-color);      /* Text matches accent */
-  box-shadow: var(--active-shadow);
-  transform: scale(1);
+  background: var(--accent-color);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 122, 255, 0.35);
+  transform: scale(1.1) translateY(-4px);
 }
 
 .dock-item.active .dock-icon {
-  stroke: var(--accent-color);     /* Icon matches accent */
+  stroke: #fff;
   stroke-width: 2.5px;
 }
 
 .dock-item.active::before {
-  display: none; /* No hover glow for active tab */
+  display: none;
+}
+
+/* ============================================= */
+/* Responsive Adjustments */
+@media (max-width: 500px) {
+  .onyx-dock {
+    gap: 12px;
+    padding: 8px 12px;
+  }
+  .dock-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .dock-label {
+    font-size: 10px;
+  }
 }
 
 /* ======================================================= */
