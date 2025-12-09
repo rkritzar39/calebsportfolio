@@ -755,14 +755,14 @@ a.corner-button {
   position: relative;
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--dynamic-accent) 20%, #111 80%),
-    color-mix(in srgb, var(--dynamic-accent) 15%, #111 85%)
+    color-mix(in srgb, var(--dynamic-accent) 45%, #111 55%),
+    color-mix(in srgb, var(--dynamic-accent) 35%, #111 65%)
   );
-  border: 1px solid #222;
+  border: 1px solid rgba(255,255,255,0.18);
   border-radius: var(--radius-lg);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   padding: 36px 24px;
   margin: 22px auto;
   width: calc(100% - 40px);
@@ -790,7 +790,7 @@ a.corner-button {
   gap: 10px;
   font-size: 1rem;
   font-weight: 500;
-  color: #ffffff; /* pure white */
+  color: #ffffff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   margin-bottom: 24px;
 }
@@ -864,14 +864,14 @@ a.corner-button {
 .live-song-title {
   font-size: 1.35rem;
   font-weight: 600;
-  color: #ffffff; /* pure white */
+  color: #ffffff;
   text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   margin-bottom: 4px;
 }
 
 .live-artist {
   font-size: 1rem;
-  color: #ffffff; /* pure white */
+  color: #ffffff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   margin-bottom: 6px;
 }
@@ -910,7 +910,7 @@ a.corner-button {
   justify-content: space-between;
   width: 100%;
   font-size: 0.95rem;
-  color: #ffffff; /* pure white */
+  color: #ffffff;
   text-shadow: 0 1px 2px rgba(0,0,0,0.4);
   margin: 0;
   padding: 6px 0 0 0;
@@ -924,6 +924,22 @@ a.corner-button {
 }
 .music-progress-time span:last-child {
   text-align: right;
+}
+
+/* ======================================================= */
+/* === FORCE METADATA TO BE READABLE ===================== */
+/* ======================================================= */
+
+.status-details,
+.status-details *,
+.status-extra,
+.status-updated,
+.status-start,
+.status-end,
+.status-remaining {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.75) !important;
+  font-weight: 500;
 }
 
 /* ======================================================= */
@@ -954,6 +970,7 @@ a.corner-button {
     padding: 4px 0 0 0;
   }
 }
+
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
