@@ -607,11 +607,11 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🍎 Liquid Glass Dock — True iOS 26 / News App */
+/* 🍎 Liquid Glass Dock — iOS 26 / News App Glass */
 /* ============================================= */
 
 :root {
-  --accent-color: #007AFF; /* Active pill color */
+  --accent-color: #007AFF;
   --glass-bg: rgba(255, 255, 255, 0.25);
   --glass-border: rgba(255, 255, 255, 0.2);
   --glass-blur: 30px;
@@ -631,7 +631,7 @@ a.corner-button {
   padding: 12px 20px;
   border-radius: 999px;
 
-  /* Liquid Glass background */
+  /* Glass background */
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur)) saturate(180%);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
@@ -643,7 +643,6 @@ a.corner-button {
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Slight intensification on hover */
 .onyx-dock:hover {
   background: rgba(255,255,255,0.35);
 }
@@ -687,32 +686,35 @@ a.corner-button {
 }
 
 /* -----------------------------
-   Active Pill
-   Floating above dock
+   Active Pill (Glass)
 ------------------------------ */
 .dock-item.active::after {
   content: "";
   position: absolute;
-  top: -12px; /* lift pill above dock */
+  top: -12px; /* floats above dock */
   left: 50%;
   transform: translateX(-50%);
   width: 48px;
   height: 28px;
   border-radius: 16px;
-  background: var(--accent-color);
-  box-shadow: 0 8px 20px rgba(0, 122, 255, 0.35);
-  z-index: -1; /* behind icon but above dock */
+
+  /* Glass effect on pill */
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.2);
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  z-index: -1;
 }
 
-/* Active icon color */
+/* Active icon & label color */
 .dock-item.active .dock-icon {
-  stroke: #fff;
+  stroke: var(--accent-color);
   stroke-width: 2.5px;
 }
-
-/* Label on active can remain white or accent */
 .dock-item.active .dock-label {
-  color: #fff;
+  color: var(--accent-color);
 }
 
 /* -----------------------------
@@ -731,7 +733,6 @@ a.corner-button {
     font-size: 10px;
   }
 }
-
 /* ======================================================= */
 /* === 🎧 LIVE ACTIVITY — DARK SIMPLE ACCENT ============ */
 /* ======================================================= */
