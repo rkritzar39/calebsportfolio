@@ -1543,8 +1543,11 @@ function calculateAndDisplayStatusBI(businessData={}) {
             for(let r of rule.ranges){
                 const openM = timeStringToMinutes(r.open);
                 const closeM = timeStringToMinutes(r.close);
-                if(currentMinutesInBizTZ>=openM && currentMinutesInBizTZ<closeM){
-                    const { hour:closeH, minute:closeMin } = { hour:parseInt(r.close.split(':')[0]), minute:parseInt(r.close.split(':')[1]) };
+                if(openM === null || closeM === null) continue;
+                const currentlyOpen = closeM > openM ? (currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM) : (currentMinutesInBizTZ >= openM || currentMinutesInBizTZ < closeM);
+                if(currentlyOpen){
+                    const closeH = parseInt(r.close.split(':')[0],10);
+                    const closeMin = parseInt(r.close.split(':')[1],10);
                     const closeTime = DateTime.now().setZone(assumedBusinessTimezone).set({hour:closeH,minute:closeMin,second:0,millisecond:0});
                     const diffSec = Math.max(0, Math.floor(closeTime.diff(DateTime.now().setZone(visitorTimezone),'seconds').seconds));
                     const h = Math.floor(diffSec/3600), m=Math.floor((diffSec%3600)/60), s=diffSec%60;
@@ -1553,16 +1556,41 @@ function calculateAndDisplayStatusBI(businessData={}) {
             }
         }
 
-        // Closed → find next opening
+        // Closed → find next opening (smart same-day handling)
         for(let offset=0; offset<7; offset++){
             const idx=(todayIndex+offset)%7;
             const checkDay=displayOrder[idx];
             const dayObj=regularHours[checkDay];
             if(!dayObj||dayObj.isClosed||!dayObj.ranges?.length) continue;
-            const firstRange=dayObj.ranges[0];
-            const dayLabel = offset===0?'Today':offset===1?'Tomorrow':capitalizeFirstLetter(checkDay);
-            const openTimeStr = formatDisplayTimeBI(firstRange.open,visitorTimezone);
-            return `Opens ${dayLabel} at ${openTimeStr}`;
+
+            // If we're checking today, look for a range that starts later than now
+            if(offset===0){
+                let nextTodayRange = null;
+                for(let r of dayObj.ranges){
+                    const oM = timeStringToMinutes(r.open);
+                    if(oM === null) continue;
+                    // If open time is later than current minutes, it's a future opening today
+                    if(oM > currentMinutesInBizTZ){
+                        nextTodayRange = r;
+                        break;
+                    }
+                    // If the range is overnight (open > close) and current time is before close (which should be captured by "open now" earlier),
+                    // skip it; we only want future starts today.
+                }
+                if(nextTodayRange){
+                    const openTimeStr = formatDisplayTimeBI(nextTodayRange.open,visitorTimezone);
+                    return `Opens Today at ${openTimeStr}`;
+                }
+                // otherwise no more openings today, continue to next day
+            } else {
+                // future day — use the first valid opening range for that day
+                const firstRange = dayObj.ranges.find(r=>timeStringToMinutes(r.open)!==null);
+                if(firstRange){
+                    const dayLabel = offset===1?'Tomorrow':capitalizeFirstLetter(checkDay);
+                    const openTimeStr = formatDisplayTimeBI(firstRange.open,visitorTimezone);
+                    return `Opens ${dayLabel} at ${openTimeStr}`;
+                }
+            }
         }
 
         return '';
