@@ -607,14 +607,14 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🍎 Liquid Glass Dock — iOS 26 / News App Glass */
+/* 🍎 Liquid Glass Dock — iOS 26 / News App Style */
 /* ============================================= */
 
 :root {
-  --accent-color: #007AFF;
-  --glass-bg: rgba(255, 255, 255, 0.25);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --glass-blur: 30px;
+  --accent-color: #007AFF; /* active pill color */
+  --dock-bg: rgba(255, 255, 255, 0.15); /* subtle glass for dock */
+  --dock-border: rgba(255, 255, 255, 0.1);
+  --dock-blur: 30px;
 }
 
 /* -----------------------------
@@ -631,20 +631,20 @@ a.corner-button {
   padding: 12px 20px;
   border-radius: 999px;
 
-  /* Glass background */
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  border: 1px solid var(--glass-border);
+  /* Subtle glass — no pill effect here */
+  background: var(--dock-bg);
+  backdrop-filter: blur(var(--dock-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--dock-blur)) saturate(180%);
+  border: 1px solid var(--dock-border);
 
-  /* Dock shadow */
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15) inset;
+  /* Subtle shadow */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05) inset;
   z-index: 1000;
   transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .onyx-dock:hover {
-  background: rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.2);
 }
 
 /* -----------------------------
@@ -676,6 +676,7 @@ a.corner-button {
   stroke-width: 2;
   transition: transform 0.15s ease, color 0.3s ease;
 }
+
 .dock-label {
   font-size: 11px;
   font-weight: 600;
@@ -686,7 +687,7 @@ a.corner-button {
 }
 
 /* -----------------------------
-   Active Pill (Glass)
+   Active Pill — Floating Glass
 ------------------------------ */
 .dock-item.active::after {
   content: "";
@@ -698,14 +699,15 @@ a.corner-button {
   height: 28px;
   border-radius: 16px;
 
-  /* Glass effect on pill */
-  background: rgba(255, 255, 255, 0.2);
+  /* True glass effect for active pill */
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.2);
 
+  /* Subtle shadow */
   box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  z-index: -1;
+  z-index: -1; /* behind icon */
 }
 
 /* Active icon & label color */
@@ -713,6 +715,7 @@ a.corner-button {
   stroke: var(--accent-color);
   stroke-width: 2.5px;
 }
+
 .dock-item.active .dock-label {
   color: var(--accent-color);
 }
@@ -733,6 +736,7 @@ a.corner-button {
     font-size: 10px;
   }
 }
+
 /* ======================================================= */
 /* === 🎧 LIVE ACTIVITY — DARK SIMPLE ACCENT ============ */
 /* ======================================================= */
