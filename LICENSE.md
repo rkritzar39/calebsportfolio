@@ -39,4 +39,4 @@ Any violation of these terms will be subject to legal action and prosecution to 
 
 **Last Updated:** 01-03-2025 11:54 PM EST
 
-**Updated By:** Bus Army Dude
+**Updated By:** Caleb Kritzar
