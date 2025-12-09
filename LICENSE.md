@@ -31,7 +31,7 @@ Access to view this Software is granted solely for:
 
 This repository is protected by copyright laws. You may not clone, fork, or redistribute this repository in any form. Unauthorized use of the repository may result in legal action.
 
-**Copyright (c) 2025 Bus Army Dude. All rights reserved.**
+**Copyright (c) 2025 Caleb Kritzar. All rights reserved.**
 
   
 ### Enforcement
