@@ -1512,7 +1512,8 @@ function calculateAndDisplayStatusBI(businessData={}) {
                 }
                 return false;
             });
-            if(activeTemp){finalActiveRule={...activeTemp,type:'temporary',reasonOriginal:`Temporary (${activeTemp.label||'Schedule'})`};
+            if(activeTemp){
+                finalActiveRule={...activeTemp,type:'temporary',reasonOriginal:`Temporary (${activeTemp.label||'Schedule'})`};
                 finalCurrentStatus = activeTemp.isClosed?'Closed':'Temporarily Unavailable';
             }
         }
@@ -1529,68 +1530,90 @@ function calculateAndDisplayStatusBI(businessData={}) {
     statusMainTextEl.classList.add(statusClass);
     statusMainTextEl.textContent=finalCurrentStatus;
 
-    // ----------------------------
-    // Sub-status & Countdown
-    // ----------------------------
+    /* ========================================
+       UPDATED SUB-STATUS + COUNTDOWN LOGIC
+       (Temporary closed days now override today)
+    ======================================== */
     function getSubStatusAndCountdown(rule){
         if (!DateTime) return '';
 
         const displayOrder = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
         const todayIndex = displayOrder.indexOf(businessDayName);
 
-        // Currently open → show closing countdown
-        if(rule.ranges?.length){
+        // If currently open → show closing countdown
+        if(rule.ranges?.length && rule.isClosed !== true){
             for(let r of rule.ranges){
                 const openM = timeStringToMinutes(r.open);
                 const closeM = timeStringToMinutes(r.close);
                 if(openM === null || closeM === null) continue;
-                const currentlyOpen = closeM > openM ? (currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM) : (currentMinutesInBizTZ >= openM || currentMinutesInBizTZ < closeM);
+
+                const currentlyOpen = closeM > openM 
+                    ? (currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM)
+                    : (currentMinutesInBizTZ >= openM || currentMinutesInBizTZ < closeM);
+
                 if(currentlyOpen){
                     const closeH = parseInt(r.close.split(':')[0],10);
                     const closeMin = parseInt(r.close.split(':')[1],10);
-                    const closeTime = DateTime.now().setZone(assumedBusinessTimezone).set({hour:closeH,minute:closeMin,second:0,millisecond:0});
-                    const diffSec = Math.max(0, Math.floor(closeTime.diff(DateTime.now().setZone(visitorTimezone),'seconds').seconds));
-                    const h = Math.floor(diffSec/3600), m=Math.floor((diffSec%3600)/60), s=diffSec%60;
+                    const closeTime = DateTime.now().setZone(assumedBusinessTimezone)
+                        .set({hour:closeH,minute:closeMin,second:0,millisecond:0});
+                        
+                    const diffSec = Math.max(
+                        0,
+                        Math.floor(closeTime.diff(DateTime.now().setZone(visitorTimezone),'seconds').seconds)
+                    );
+                    const h = Math.floor(diffSec/3600);
+                    const m = Math.floor((diffSec%3600)/60);
+                    const s = diffSec%60;
+
                     return `Open till ${formatDisplayTimeBI(r.close,visitorTimezone)} (${h}h ${m}m ${s}s)`;
                 }
             }
         }
 
-        // Closed → find next opening (smart same-day handling)
-        for(let offset=0; offset<7; offset++){
-            const idx=(todayIndex+offset)%7;
-            const checkDay=displayOrder[idx];
-            const dayObj=regularHours[checkDay];
-            if(!dayObj||dayObj.isClosed||!dayObj.ranges?.length) continue;
+        // If temp says Closed All Day → skip today completely
+        const todayClosedByOverride = rule.type === 'temporary' && rule.isClosed === true;
 
-            // If we're checking today, look for a range that starts later than now
-            if(offset===0){
-                let nextTodayRange = null;
-                for(let r of dayObj.ranges){
-                    const oM = timeStringToMinutes(r.open);
-                    if(oM === null) continue;
-                    // If open time is later than current minutes, it's a future opening today
-                    if(oM > currentMinutesInBizTZ){
-                        nextTodayRange = r;
-                        break;
-                    }
-                    // If the range is overnight (open > close) and current time is before close (which should be captured by "open now" earlier),
-                    // skip it; we only want future starts today.
-                }
-                if(nextTodayRange){
-                    const openTimeStr = formatDisplayTimeBI(nextTodayRange.open,visitorTimezone);
-                    return `Opens Today at ${openTimeStr}`;
-                }
-                // otherwise no more openings today, continue to next day
-            } else {
-                // future day — use the first valid opening range for that day
-                const firstRange = dayObj.ranges.find(r=>timeStringToMinutes(r.open)!==null);
-                if(firstRange){
-                    const dayLabel = offset===1?'Tomorrow':capitalizeFirstLetter(checkDay);
-                    const openTimeStr = formatDisplayTimeBI(firstRange.open,visitorTimezone);
-                    return `Opens ${dayLabel} at ${openTimeStr}`;
+        function getDaySchedule(offset){
+            const targetDate = nowInBizTZ.plus({days: offset}).toISODate();
+
+            const h = holidayHours.find(x => x.date === targetDate);
+            if(h){
+                return { type:'holiday', schedule:h };
+            }
+
+            const t = temporaryHours.find(x => targetDate >= x.startDate && targetDate <= x.endDate);
+            if(t){
+                return { type:'temporary', schedule:t };
+            }
+
+            const regDay = displayOrder[(todayIndex + offset) % 7];
+            return { type:'regular', schedule:regularHours[regDay] };
+        }
+
+        for(let offset=0; offset<7; offset++){
+            const { type, schedule } = getDaySchedule(offset);
+            if(!schedule) continue;
+
+            const isClosedAllDay = schedule.isClosed === true || !schedule.ranges?.length;
+
+            if(isClosedAllDay) continue;
+
+            const firstRange = schedule.ranges[0];
+            if(!firstRange) continue;
+
+            // Check same-day future opening ONLY if NOT temp-closed
+            if(offset === 0 && !todayClosedByOverride){
+                const openM = timeStringToMinutes(firstRange.open);
+                if(openM > currentMinutesInBizTZ){
+                    return `Opens Today at ${formatDisplayTimeBI(firstRange.open, visitorTimezone)}`;
                 }
             }
+
+            // Future day
+            const label = offset === 1 ? "Tomorrow" : 
+                capitalizeFirstLetter(displayOrder[(todayIndex + offset) % 7]);
+
+            return `Opens ${label} at ${formatDisplayTimeBI(firstRange.open, visitorTimezone)}`;
         }
 
         return '';
@@ -1599,9 +1622,9 @@ function calculateAndDisplayStatusBI(businessData={}) {
     statusCountdownTextEl.textContent = getSubStatusAndCountdown(finalActiveRule);
     statusReasonEl.textContent = finalActiveRule.reason;
 
-    // ----------------------------
-    // Render Regular Hours
-    // ----------------------------
+    /* -------------------------
+       Render Regular Hours
+    ------------------------- */
     const displayOrder=['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
     const visitorLocalDayName=DateTime?DateTime.now().setZone(visitorTimezone).toFormat('cccc').toLowerCase():new Date().toLocaleString('en-US',{weekday:'long'}).toLowerCase();
     let displayHoursListHtml='<ul class="regular-hours-list">';
@@ -1619,9 +1642,9 @@ function calculateAndDisplayStatusBI(businessData={}) {
     displayHoursListHtml+=`<p class="hours-timezone-note">Hours displayed in your local time zone: ${visitorTimezone.replace(/_/g,' ')}</p>`;
     hoursEl.innerHTML=displayHoursListHtml;
 
-    // ----------------------------
-    // Temporary & Holiday Hours (updated labels)
-    // ----------------------------
+    /* -------------------------
+       Temporary & Holiday Hours
+    ------------------------- */
     if(temporaryHours.length>0){
         let tmpHtml='<h4>Active/Temporary Hours</h4><ul class="special-hours-display">';
         temporaryHours.forEach(t=>{
@@ -1662,9 +1685,7 @@ function calculateAndDisplayStatusBI(businessData={}) {
         holidayEl.style.display='block';
     } else { holidayEl.innerHTML=''; holidayEl.style.display='none'; }
 
-    // ----------------------------
-    // Contact Email
-    // ----------------------------
+    // Contact
     const contactEmail = businessData.contactEmail||'';
     if(contactEl) contactEl.innerHTML = contactEmail ? `Contact: <a href="mailto:${contactEmail}">${contactEmail}</a>` : '';
 }
