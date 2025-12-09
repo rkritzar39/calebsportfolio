@@ -1329,6 +1329,7 @@ function setupCreatorSearch() {
 /* ========================================
    displayShoutouts.js - Business Hours & Status
    Full version with dynamic sub-status + countdown
+   Fixed "Opens Tomorrow" logic
    ======================================== */
 
 /* -------------------------
@@ -1533,15 +1534,14 @@ function calculateAndDisplayStatusBI(businessData={}) {
     statusMainTextEl.classList.add(statusClass);
     statusMainTextEl.textContent=finalCurrentStatus;
 
-    /* --------------------------------------------------
-       ✔ FIXED VERSION OF getSubStatusAndCountdown
-       -------------------------------------------------- */
+    /* -------------------------
+       FIXED getSubStatusAndCountdown
+    ------------------------- */
     function getSubStatusAndCountdown(rule){
         if (!DateTime) return '';
 
         const displayOrder = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
         const todayIndex = displayOrder.indexOf(businessDayName);
-
         const visitorNow = DateTime.now().setZone(visitorTimezone);
 
         function parseBizDate(str){
@@ -1572,9 +1572,7 @@ function calculateAndDisplayStatusBI(businessData={}) {
             return {type:'regular',schedule:regularHours[dayName]};
         }
 
-        /* --------------------------------------------------
-           If OPEN, show “Open till 9:00 PM …”
-        -------------------------------------------------- */
+        // Open hours countdown
         if(rule.ranges?.length && !rule.isClosed){
             for(let r of rule.ranges){
                 const openM = timeStringToMinutes(r.open);
@@ -1605,17 +1603,10 @@ function calculateAndDisplayStatusBI(businessData={}) {
             }
         }
 
-        /* --------------------------------------------------
-           FIXED LOGIC:
-           Only show “Opens Today” if VISITOR is still
-           on the same day AND hasn't reached the opening time.
-        -------------------------------------------------- */
-        const skipToday = rule.type==='temporary' && rule.isClosed===true;
-
+        // Find next opening
         for(let offset=0; offset<7; offset++){
             const { schedule } = getDaySchedule(offset);
             if(!schedule) continue;
-
             if(schedule.isClosed || !schedule.ranges?.length) continue;
 
             const firstRange = schedule.ranges[0];
@@ -1626,32 +1617,10 @@ function calculateAndDisplayStatusBI(businessData={}) {
                 minute: parseInt(firstRange.open.split(':')[1],10),
                 second: 0
             });
-
             const visitorOpen = bizOpen.setZone(visitorTimezone);
 
-            const visitorDayDiff = Math.round(
-                visitorOpen.startOf('day').diff(visitorNow.startOf('day'),'days').days
-            );
-
-            /* --------------------------
-               ✔ Correct Today check
-            -------------------------- */
-            if(offset === 0 && !skipToday){
-                if(visitorDayDiff === 0 && visitorNow < visitorOpen){
-                    return `Opens Today at ${formatDisplayTimeBI(firstRange.open, visitorTimezone)}`;
-                }
-            }
-
-            /* --------------------------
-               ✔ Correct Tomorrow check
-            -------------------------- */
-            let label;
-            if (visitorDayDiff === 1) label = "Tomorrow";
-            else if (visitorDayDiff === 0) label = "Today";
-            else {
-                const idx = (todayIndex + offset) % 7;
-                label = capitalizeFirstLetter(displayOrder[idx]);
-            }
+            // Correct label
+            const label = visitorNow < visitorOpen ? (offset===0?'Today':'Tomorrow') : 'Tomorrow';
 
             return `Opens ${label} at ${formatDisplayTimeBI(firstRange.open, visitorTimezone)}`;
         }
@@ -1664,7 +1633,7 @@ function calculateAndDisplayStatusBI(businessData={}) {
 
     /* -------------------------
        NORMAL HOURS RENDER
-------------------------- */
+    ------------------------- */
     const displayOrder=['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
     const visitorLocalDayName=DateTime?DateTime.now().setZone(visitorTimezone).toFormat('cccc').toLowerCase():new Date().toLocaleString('en-US',{weekday:'long'}).toLowerCase();
     let displayHoursListHtml='<ul class="regular-hours-list">';
@@ -1685,7 +1654,7 @@ function calculateAndDisplayStatusBI(businessData={}) {
 
     /* -------------------------
        TEMP HOURS
-------------------------- */
+    ------------------------- */
     if(temporaryHours.length>0){
         let tmpHtml='<h4>Active/Temporary Hours</h4><ul class="special-hours-display">';
         temporaryHours.forEach(t=>{
@@ -1710,7 +1679,7 @@ function calculateAndDisplayStatusBI(businessData={}) {
 
     /* -------------------------
        HOLIDAYS
-------------------------- */
+    ------------------------- */
     if(holidayHours.length>0){
         let holidayHtml='<h4>Active/Holiday Hours</h4><ul class="special-hours-display">';
         holidayHours.forEach(h=>{
