@@ -748,166 +748,220 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 SPOTIFY STATUS — CLEAN + READABLE + ACCENT ===== */
+/* === 🎧 LIVE ACTIVITY — DARK SIMPLE ACCENT ============ */
 /* ======================================================= */
 
 .live-activity {
   position: relative;
-  /* Soft but noticeable accent background */
   background: linear-gradient(
     135deg,
     color-mix(in srgb, var(--dynamic-accent) 55%, #1a1a1a 45%),
-    color-mix(in srgb, var(--dynamic-accent) 40%, #111 60%)
+    color-mix(in srgb, var(--dynamic-accent) 45%, #111 55%)
   );
-
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 18px;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
-
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-
-  padding: 32px 26px;
-  margin: 26px auto;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 32px rgba(0,0,0,0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 36px 24px;
+  margin: 22px auto;
   width: calc(100% - 40px);
   max-width: 640px;
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.live-activity:hover {
+  transform: translateY(-3px);
 }
 
 /* ======================================================= */
-/* === TEXT — ALWAYS BRIGHT AND READABLE ================= */
+/* === TEXT READABILITY — GLOBAL FIX ===================== */
 /* ======================================================= */
 
 .live-activity,
 .live-activity * {
   color: #ffffff !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.75);
+}
+
+/* ======================================================= */
+/* === STATUS LINE ======================================= */
+/* ======================================================= */
+
+.status-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.status-line.hidden {
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+}
+
+.status-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+/* ======================================================= */
+/* === SPOTIFY CARD ====================================== */
+/* ======================================================= */
+
+.spotify-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 /* ======================================================= */
 /* === ALBUM COVER — ONLY ELEMENT WITH HOVER ============= */
 /* ======================================================= */
 
-.album-cover {
-  width: 180px;
-  height: 180px;
-  border-radius: 12px;
+.live-album-art {
+  width: 270px;
+  height: 270px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
+  margin-bottom: 20px;
   transition: transform 0.25s ease;
 }
 
-.album-cover img {
+.live-album-art img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit;
+  transition: transform 0.25s ease;
 }
 
-/* grow on hover only */
-.album-cover:hover {
+.live-album-art:hover {
+  transform: scale(1.06);
+}
+
+.live-album-art:hover img {
   transform: scale(1.06);
 }
 
 /* ======================================================= */
-/* === TEXT SPACING FIX — NO CROWDING ==================== */
+/* === SONG INFO ========================================= */
 /* ======================================================= */
 
-.song-name {
-  margin-top: 18px;
-  font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-}
-
-.artist-name {
-  margin-top: 6px;
-  font-size: 1.05rem;
-  font-weight: 500;
-  opacity: 0.9;
-}
-
-/* ======================================================= */
-/* === ONYX PROGRESS BAR — POLISHED DARK STONE LOOK ====== */
-/* ======================================================= */
-
-.progress-container {
+.live-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
   width: 100%;
-  max-width: 440px;
-  margin-top: 22px;
-  background: #0d0d0d;
-  background: linear-gradient(
-    145deg,
-    #0c0c0c,
-    #1a1a1a
-  );
-  border-radius: 10px;
-  height: 12px;
-  overflow: hidden;
+}
 
+.live-song-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.live-artist {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+/* ======================================================= */
+/* === MUSIC PROGRESS BAR — ONYX STYLE =================== */
+/* ======================================================= */
+
+.music-progress-container {
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(145deg, #0c0c0c, #1a1a1a);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  position: relative;
+  margin: 28px 0 16px 0;
   box-shadow:
-    inset 0 1px 3px rgba(255, 255, 255, 0.08),
-    inset 0 -1px 3px rgba(0, 0, 0, 0.9),
+    inset 0 1px 3px rgba(255,255,255,0.06),
+    inset 0 -1px 3px rgba(0,0,0,0.9),
     0 2px 6px rgba(0,0,0,0.4);
 }
 
-.progress-bar {
+.music-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
   height: 100%;
-  background: var(--dynamic-accent);
+  width: 0%;
+  border-radius: var(--radius-xl);
   background: linear-gradient(
     135deg,
     color-mix(in srgb, var(--dynamic-accent) 80%, #ffffff 20%),
     color-mix(in srgb, var(--dynamic-accent) 65%, #000000 35%)
   );
-  transition: width 0.3s ease;
+  transition: width 0.3s linear;
 }
 
 /* ======================================================= */
-/* === STATUS BLOCKS (TIME, UPDATED, ETC) ================ */
+/* === TIME DISPLAY ====================================== */
 /* ======================================================= */
 
-.status-details {
-  margin-top: 22px;
-  opacity: 1;
-}
-
-.status-details p {
-  margin: 4px 0;
+.music-progress-time {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
   font-size: 0.95rem;
-  font-weight: 500;
+  margin: 0;
+  padding: 6px 0 0 0;
+}
+
+.music-progress-time span:first-child {
+  text-align: left;
+}
+.music-progress-time span:nth-child(2) {
+  text-align: center;
+}
+.music-progress-time span:last-child {
+  text-align: right;
 }
 
 /* ======================================================= */
-/* === LIGHT MODE SUPPORT (readable everywhere) ========== */
+/* === RESPONSIVE DESIGN ================================= */
 /* ======================================================= */
 
-@media (prefers-color-scheme: light) {
-  .live-activity {
-    /* stays soft but visible in light mode too */
-    background: linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--dynamic-accent) 50%, #ffffff 50%),
-      color-mix(in srgb, var(--dynamic-accent) 35%, #eaeaea 65%)
-    );
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.25);
+@media (max-width: 600px) {
+  .live-album-art {
+    width: 200px;
+    height: 200px;
   }
 
-  .live-activity,
-  .live-activity * {
-    color: #000000 !important;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+  .live-song-title {
+    font-size: 1.15rem;
   }
 
-  .progress-container {
-    background: linear-gradient(
-      145deg,
-      #efefef,
-      #d7d7d7
-    );
+  .live-artist {
+    font-size: 0.95rem;
+  }
+
+  .music-progress-container {
+    height: 8px;
+    margin: 22px 0 18px 0;
+  }
+
+  .music-progress-time {
+    font-size: 0.9rem;
+    padding: 4px 0 0 0;
   }
 }
 
