@@ -1535,7 +1535,7 @@ function calculateAndDisplayStatusBI(businessData={}) {
     statusMainTextEl.textContent=finalCurrentStatus;
 
     /* -------------------------
-       FIXED getSubStatusAndCountdown
+       FIXED getSubStatusAndCountdown (NO COUNTDOWN)
     ------------------------- */
     function getSubStatusAndCountdown(rule){
         if (!DateTime) return '';
@@ -1572,7 +1572,7 @@ function calculateAndDisplayStatusBI(businessData={}) {
             return {type:'regular',schedule:regularHours[dayName]};
         }
 
-        // Open hours countdown
+        // OPEN — return clean close time (no countdown)
         if(rule.ranges?.length && !rule.isClosed){
             for(let r of rule.ranges){
                 const openM = timeStringToMinutes(r.open);
@@ -1584,26 +1584,12 @@ function calculateAndDisplayStatusBI(businessData={}) {
                     : (currentMinutesInBizTZ>=openM||currentMinutesInBizTZ<closeM);
 
                 if(active){
-                    let closeDate = nowInBizTZ.set({
-                        hour: parseInt(r.close.split(':')[0],10),
-                        minute: parseInt(r.close.split(':')[1],10),
-                        second: 0
-                    });
-
-                    if (closeM <= openM && currentMinutesInBizTZ >= openM) {
-                        closeDate = closeDate.plus({days:1});
-                    }
-
-                    const visitorClose = closeDate.setZone(visitorTimezone);
-                    const diff = Math.max(0, Math.floor(visitorClose.diff(visitorNow,'seconds').seconds));
-                    const h = Math.floor(diff/3600), m = Math.floor((diff%3600)/60), s = diff%60;
-
-                    return `Open till ${formatDisplayTimeBI(r.close,visitorTimezone)} (${h}h ${m}m ${s}s)`;
+                    return `Open till ${formatDisplayTimeBI(r.close,visitorTimezone)}`;
                 }
             }
         }
 
-        // Find next opening
+        // Find next opening — return only label + time, no countdown
         for(let offset=0; offset<7; offset++){
             const { schedule } = getDaySchedule(offset);
             if(!schedule) continue;
@@ -1619,8 +1605,16 @@ function calculateAndDisplayStatusBI(businessData={}) {
             });
             const visitorOpen = bizOpen.setZone(visitorTimezone);
 
-            // Correct label
-            const label = visitorNow < visitorOpen ? (offset===0?'Today':'Tomorrow') : 'Tomorrow';
+            // Determine visitor-day distance
+            const visitorDayDiff = Math.round(visitorOpen.startOf('day').diff(visitorNow.startOf('day'),'days').days);
+
+            let label;
+            if (visitorDayDiff === 0) label = 'Today';
+            else if (visitorDayDiff === 1) label = 'Tomorrow';
+            else {
+                const idx = (todayIndex + offset) % 7;
+                label = capitalizeFirstLetter(displayOrder[idx]);
+            }
 
             return `Opens ${label} at ${formatDisplayTimeBI(firstRange.open, visitorTimezone)}`;
         }
