@@ -3,7 +3,7 @@
 ## Security Features
 
 ### 1. Enhanced Copy Protection
-- Context menu prevention
+- Context menu prevention 
 - Text selection prevention
 - Copy prevention
 - Drag-and-drop prevention for images and content
