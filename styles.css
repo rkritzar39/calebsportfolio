@@ -969,11 +969,11 @@ a.corner-button {
 /* === LAST UPDATED ====================================== */
 /* ======================================================= */
 
-.last-updated {
+#live-activity-updated {
   font-size: 0.85rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  color: rgba(200, 200, 200, 0.7); /* subtle gray */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   margin-top: 16px;
   text-align: center;
   letter-spacing: 0.5px;
