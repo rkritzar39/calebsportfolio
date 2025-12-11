@@ -4534,3 +4534,25 @@ body.ultra-minimal .btn {
 @media(max-width: 1023px) {
   .section-jump-toggle { display: block; }
 }
+
+.tiktok-card {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  border-radius: 22px;
+  padding: 16px;
+  backdrop-filter: blur(20px) saturate(180%);
+  background: color-mix(in srgb, var(--content-bg) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+  box-shadow: 0 8px 20px color-mix(in srgb, #000 65%, transparent);
+  overflow: hidden;
+  transition: 0.25s ease;
+}
+
+.tiktok-card:hover {
+  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+}
+
+.tiktok-card blockquote {
+  margin: 0;
+}
