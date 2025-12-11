@@ -4535,18 +4535,22 @@ body.ultra-minimal .btn {
   .section-jump-toggle { display: block; }
 }
 
+/* ======================== */
+/* TikTok Section — Full Themed Version */
+/* ======================== */
+
 .tiktok-card {
     width: 100%;
-    max-width: 460px; /* SAME width as countdown-section */
-    margin: 40px auto; /* SAME spacing top + bottom */
+    max-width: 460px; /* Matches countdown width */
+    margin: 40px auto; /* Perfect spacing top + bottom */
 
     padding: 26px;
+    border-radius: var(--radius-xl);
 
-    /* Liquid glass background + optics */
+    /* Liquid glass background + layers */
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
     box-shadow: var(--bubble-shadow);
 
     backdrop-filter: var(--backdrop-blur);
@@ -4568,7 +4572,7 @@ body.ultra-minimal .btn {
     pointer-events: none;
 }
 
-/* Bubble highlight layer */
+/* Bubble optical overlay */
 .tiktok-card::after {
     content: "";
     position: absolute;
@@ -4578,7 +4582,17 @@ body.ultra-minimal .btn {
     pointer-events: none;
 }
 
-/* Remove margin from TikTok embed blockquote */
+/* Force TikTok embed to never overflow right side */
+.tiktok-card iframe,
 .tiktok-card blockquote {
+    width: 100% !important;
+    max-width: 100% !important;
     margin: 0;
+    border-radius: var(--radius-lg);
+}
+
+/* Ensure TikTok internal wrapper doesn't break layout */
+.tiktok-card .tiktok-embed {
+    width: 100% !important;
+    max-width: 100% !important;
 }
