@@ -544,30 +544,6 @@ function renderYouTubeCard(account) {
             </div>`;
 }
 
-const tiktokContainer = document.getElementById("latest-tiktok-section");
-const ref = doc(db, "admin", "globalSettings");
-
-onSnapshot(ref, snap => {
-  const data = snap.data();
-  const url = data.latestTikTok;
-  if (!url) {
-    tiktokContainer.innerHTML = "";
-    return;
-  }
-
-  tiktokContainer.innerHTML = `
-    <blockquote class="tiktok-embed" cite="${url}" data-video-id="${extractID(url)}">
-      <section></section>
-    </blockquote>
-    <script async src="https://www.tiktok.com/embed.js"></script>
-  `;
-});
-
-function extractID(url) {
-  const match = url.match(/video\/(\d+)/);
-  return match ? match[1] : "";
-}
-
 /* ------------------------------------------------------------
    GLOBAL STORAGE
 ------------------------------------------------------------ */
