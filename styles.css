@@ -4539,60 +4539,49 @@ body.ultra-minimal .btn {
 /* TikTok Section — Full Themed Version */
 /* ======================== */
 
+/* ========================================================= */
+/* == TIKTOK SECTION – MATCHING PRESIDENT SECTION WIDTH == */
+/* ========================================================= */
 .tiktok-card {
-    width: 100%;
-    max-width: 460px; /* Matches countdown width */
-    margin: 40px auto; /* Perfect spacing top + bottom */
+  position: relative;
 
-    padding: 26px;
-    border-radius: var(--radius-xl);
+  /* SAME width behavior */
+  width: 100%;
+  margin-bottom: 32px;
 
-    /* Liquid glass background + layers */
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--bubble-shadow);
+  /* SAME padding */
+  padding: 30px;
 
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
+  /* SAME glass background + optics */
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient), var(--liquid-refraction);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
 
-    position: relative;
-    overflow: hidden;
-    transition: var(--transition-medium);
+  overflow: hidden;
 }
 
-/* Reflection layer */
+/* SAME reflection layer */
 .tiktok-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--liquid-reflection);
-    opacity: 0.33;
-    mix-blend-mode: screen;
-    pointer-events: none;
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--liquid-reflection);
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-/* Bubble optical overlay */
-.tiktok-card::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: var(--bubble-gradient);
-    mix-blend-mode: overlay;
-    pointer-events: none;
-}
-
-/* Force TikTok embed to never overflow right side */
+/* Make the TikTok embed scale properly */
+.tiktok-card blockquote,
 .tiktok-card iframe,
-.tiktok-card blockquote {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0;
-    border-radius: var(--radius-lg);
-}
-
-/* Ensure TikTok internal wrapper doesn't break layout */
 .tiktok-card .tiktok-embed {
-    width: 100% !important;
-    max-width: 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0;
+  border-radius: var(--radius-lg);
 }
