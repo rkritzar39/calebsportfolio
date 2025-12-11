@@ -4536,23 +4536,49 @@ body.ultra-minimal .btn {
 }
 
 .tiktok-card {
-  width: 100%;
-  max-width: 420px;
-  margin: 0 auto;
-  border-radius: 22px;
-  padding: 16px;
-  backdrop-filter: blur(20px) saturate(180%);
-  background: color-mix(in srgb, var(--content-bg) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
-  box-shadow: 0 8px 20px color-mix(in srgb, #000 65%, transparent);
-  overflow: hidden;
-  transition: 0.25s ease;
+    width: 100%;
+    max-width: 460px; /* SAME width as countdown-section */
+    margin: 40px auto; /* SAME spacing top + bottom */
+
+    padding: 26px;
+
+    /* Liquid glass background + optics */
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--bubble-shadow);
+
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-medium);
 }
 
-.tiktok-card:hover {
-  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+/* Reflection layer */
+.tiktok-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--liquid-reflection);
+    opacity: 0.33;
+    mix-blend-mode: screen;
+    pointer-events: none;
 }
 
+/* Bubble highlight layer */
+.tiktok-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--bubble-gradient);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+/* Remove margin from TikTok embed blockquote */
 .tiktok-card blockquote {
-  margin: 0;
+    margin: 0;
 }
