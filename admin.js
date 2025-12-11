@@ -175,8 +175,7 @@ function isTikTokURL(url) {
   return /tiktok\.com\/@[\w.-]+\/video\/\d+/.test(url);
 }
 
-// Render preview
-function renderPreview(url) {
+// Render previewfunction renderPreview(url) {
   if (!isTikTokURL(url)) {
     preview.innerHTML = "";
     return;
@@ -188,10 +187,18 @@ function renderPreview(url) {
     <blockquote class="tiktok-embed" cite="${url}" data-video-id="${id}">
       <section></section>
     </blockquote>
-    <script async src="https://www.tiktok.com/embed.js"></script>
   `;
-}
 
+  // Re-run TikTok’s embed parser safely
+  if (window.tiktokEmbedLoaded) {
+    window.tiktokEmbedLoaded();
+  } else {
+    const s = document.createElement("script");
+    s.src = "https://www.tiktok.com/embed.js";
+    document.body.appendChild(s);
+    window.tiktokEmbedLoaded = () => window.tiktokEmbedLoaded; // placeholder to prevent double injection
+  }
+}
 // Save
 button.addEventListener("click", async () => {
   const url = input.value.trim();
