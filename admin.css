@@ -3078,3 +3078,61 @@ body.dark-mode .g_id_signin > div[role="button"] {
   object-fit: cover;
   border: 2px solid var(--accent-color, #4a9cff);
 }
+
+.admin-card {
+  width: 100%;
+  max-width: 480px;
+  margin: 20px auto;
+  padding: 24px;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--content-bg) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+  backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: 0 8px 20px color-mix(in srgb, #000 60%, transparent);
+}
+
+.admin-title {
+  margin-bottom: 15px;
+}
+
+.admin-label {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 8px 0 16px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+  backdrop-filter: blur(20px);
+  outline: none;
+}
+
+.admin-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 14px;
+  border: none;
+  background: var(--accent-color);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.admin-btn:hover {
+  opacity: 0.9;
+}
+
+.admin-status {
+  min-height: 20px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.tiktok-preview {
+  margin-top: 18px;
+}
