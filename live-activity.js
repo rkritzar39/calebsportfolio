@@ -38,15 +38,16 @@ const ICON_MAP = {
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
-  manual:
-    "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
-  default:
-    "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
+  manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
 };
 
 /* ======================================================= */
 /* === UI HELPERS ======================================== */
 /* ======================================================= */
+
+let lastRenderedText = null;
+let lastRenderedSource = null;
 
 function showStatusLineWithFade(text, source = "manual") {
   const txt = $$("status-line-text");
@@ -54,10 +55,20 @@ function showStatusLineWithFade(text, source = "manual") {
   const icon = $$("status-icon");
   if (!txt || !line || !icon) return;
 
-  const iconUrl = ICON_MAP[source] || ICON_MAP.default;
+  const sameText = text === lastRenderedText;
+  const sameSource = source === lastRenderedSource;
+
+  if (!sameText || !sameSource) {
+    lastUpdateTime = Date.now();
+  }
+
+  lastRenderedText = text;
+  lastRenderedSource = source;
 
   line.style.transition = "opacity .22s ease";
   line.style.opacity = "0";
+
+  const iconUrl = ICON_MAP[source] || ICON_MAP.default;
 
   setTimeout(() => {
     icon.src = iconUrl;
@@ -78,8 +89,6 @@ function showStatusLineWithFade(text, source = "manual") {
       })
     );
   }, 180);
-
-  lastUpdateTime = Date.now();
 }
 
 function updateLastUpdated() {
@@ -92,6 +101,7 @@ function updateLastUpdated() {
   }
 
   const s = Math.floor((Date.now() - lastUpdateTime) / 1000);
+
   el.textContent =
     s < 5
       ? "Updated just now"
@@ -141,9 +151,7 @@ function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  const settings = JSON.parse(
-    localStorage.getItem("websiteSettings") || "{}"
-  );
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent = settings.accentColor || "#1DB954";
 
@@ -167,12 +175,7 @@ function updateDynamicColors(imageUrl) {
 
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      const data = ctx.getImageData(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      ).data;
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
       let r = 0,
         g = 0,
@@ -236,7 +239,7 @@ function slideOutCard(cardEl) {
 }
 
 /* ======================================================= */
-/* === MANUAL ============================================ */
+/* === MANUAL STATUS ==================================== */
 /* ======================================================= */
 
 function isManualActive() {
@@ -257,8 +260,10 @@ async function getDiscord() {
   if (isManualActive()) {
     const card = $$("spotify-card");
     if (card) slideOutCard(card);
+
     clearInterval(progressInterval);
     updateDynamicColors(null);
+
     return {
       text: manualStatus?.text || "Status (manual)",
       source: "manual"
@@ -307,16 +312,14 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    const statusMap = {
+    const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
       dnd: "Do Not Disturb",
       offline: "No Current Active Activities"
     };
 
-    const status =
-      statusMap[data.discord_status] ||
-      "No Current Active Activities";
+    const status = map[data.discord_status] || "No Current Active Activities";
 
     const card = $$("spotify-card");
     if (card) slideOutCard(card);
@@ -331,48 +334,33 @@ async function getDiscord() {
 }
 
 /* ======================================================= */
-/* === TWITCH LIVE (FULLY WORKING VERSION) =============== */
+/* === TWITCH LIVE (Decapi — clean + reliable) =========== */
 /* ======================================================= */
 
 async function getTwitch() {
   const user = (CONFIG.twitch.username || "").trim().toLowerCase();
   if (!user) return null;
 
-  const endpoint = `https://decapi.me/twitch/live/${user}`;
+  const url = `https://decapi.me/twitch/live/${user}`;
 
-  const fetchCheck = async () => {
-    try {
-      const res = await fetch(endpoint, { cache: "no-store" });
-      if (!res.ok) return null;
-      return (await res.text()).toLowerCase().trim();
-    } catch (err) {
-      console.warn("Twitch fetch error:", err);
-      return null;
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    const txt = (await res.text()).toLowerCase().trim();
+
+    if (
+      txt.includes("is live") ||
+      txt.includes("currently live") ||
+      txt.includes("live") ||
+      txt.includes("streaming")
+    ) {
+      return { text: "Now Live on Twitch", source: "twitch" };
     }
-  };
 
-  let txt = await fetchCheck();
-  if (!txt) txt = await fetchCheck();
-  if (!txt) return null;
-
-  const liveWords = [
-    "is live",
-    "live",
-    "streaming",
-    "currently live",
-    "is streaming"
-  ];
-
-  const offlineWords = ["not live", "offline", "no stream"];
-
-  const isLive = liveWords.some((k) => txt.includes(k));
-  const isOffline = offlineWords.some((k) => txt.includes(k));
-
-  if (isLive && !isOffline) {
-    return { text: "Now Live on Twitch", source: "twitch" };
+    return null;
+  } catch (err) {
+    console.warn("Twitch error:", err);
+    return null;
   }
-
-  return null;
 }
 
 /* ======================================================= */
@@ -380,15 +368,13 @@ async function getTwitch() {
 /* ======================================================= */
 
 async function getReddit() {
-  const user = CONFIG.reddit.username;
-  if (!user) return null;
+  const u = CONFIG.reddit.username;
+  if (!u) return null;
 
   try {
     const r = await fetch(
-      `https://www.reddit.com/user/${user}/submitted.json?limit=1`,
-      {
-        cache: "no-store"
-      }
+      `https://www.reddit.com/user/${u}/submitted.json?limit=1`,
+      { cache: "no-store" }
     );
 
     const j = await r.json();
@@ -396,6 +382,7 @@ async function getReddit() {
 
     if (post && post.id !== lastRedditPostId) {
       lastRedditPostId = post.id;
+
       return {
         text: "Shared on Reddit",
         source: "reddit",
@@ -457,7 +444,7 @@ try {
 }
 
 /* ======================================================= */
-/* === PRIORITY LOGIC ==================================== */
+/* === PRIORITY ========================================== */
 /* ======================================================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
@@ -470,21 +457,28 @@ function applyStatusDecision({ main, twitchLive, temp }) {
   }
 
   if (temp && Date.now() < temp.expiresAt) {
-    showStatusLineWithFade(temp.text, temp.source || "default");
+    showStatusLineWithFade(temp.text, temp.source);
     return;
   }
 
   if (main?.source === "spotify") {
     showStatusLineWithFade("Listening to Spotify", "spotify");
-  } else if (twitchLive) {
-    showStatusLineWithFade("Now Live on Twitch", "twitch");
-  } else {
-    showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source);
+    return;
   }
+
+  if (twitchLive) {
+    showStatusLineWithFade("Now Live on Twitch", "twitch");
+    return;
+  }
+
+  showStatusLineWithFade(
+    main?.text || "No Current Active Activities",
+    main?.source || "discord"
+  );
 }
 
 /* ======================================================= */
-/* === MAIN LOOP (UPDATED) =============================== */
+/* === MAIN LOOP (timestamp FIXED) ======================= */
 /* ======================================================= */
 
 async function mainLoop() {
@@ -522,9 +516,6 @@ async function mainLoop() {
     twitchLive: !!twitch,
     temp: tempBanner
   });
-
-  /* 🔥 ALWAYS UPDATE TIMESTAMP — FIXED */
-  lastUpdateTime = Date.now();
 
   $$("live-activity")?.classList.remove("hidden");
 }
