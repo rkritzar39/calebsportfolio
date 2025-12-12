@@ -6,7 +6,7 @@ import { db } from "./firebase-init.js";
 const CONFIG = {
   discord: { userId: "850815059093356594" },
   twitch:  { username: "calebkritzar" },
-  reddit:  { username: "Electronic_Row_1262" },
+  reddit:  { username: "Maleficent_Line6570" },
 };
 
 /* ======================================================= */
