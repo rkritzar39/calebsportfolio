@@ -298,15 +298,27 @@ async function getTwitch(){
 async function getReddit(){
   const u=CONFIG.reddit.username;
   if(!u) return null;
-  try{
-    const r=await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`,{cache:"no-store"});
+
+  try {
+    const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, { cache: "no-store" });
     const j = await r.json();
-    const post=j?.data?.children?.[0]?.data;
-    if(post && post.id!==lastRedditPostId){
-      lastRedditPostId=post.id;
+    const post = j?.data?.children?.[0]?.data;
+    if (!post) return null;
+
+    // Get the last post ID we already showed from localStorage
+    const lastShownId = localStorage.getItem("lastRedditShownId");
+
+    if(post.id !== lastShownId){
+      lastRedditPostId = post.id;
+      // save it so we don’t show it again until a new post
+      localStorage.setItem("lastRedditShownId", post.id);
       return { text:"Shared on Reddit", source:"reddit", isTemp:true };
     }
-  } catch(e){ console.warn("Reddit error:",e); }
+
+  } catch(e){
+    console.warn("Reddit error:", e);
+  }
+
   return null;
 }
 
