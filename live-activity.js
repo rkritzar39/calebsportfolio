@@ -1,4 +1,4 @@
-/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status + Manual Priority + Fixed Last Updated */
+/* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -33,7 +33,6 @@ const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
-  youtube: "https://cdn.simpleicons.org/youtube/FF0000",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
@@ -66,15 +65,12 @@ function showStatusLineWithFade(text, source = "manual") {
 
     line.style.opacity = "1";
 
-    // Persist status in localStorage with timestamp
+    lastUpdateTime = Date.now();
     localStorage.setItem("lastStatus", JSON.stringify({
       text,
       source,
-      timestamp: Date.now()
+      timestamp: lastUpdateTime
     }));
-
-    // Update lastUpdateTime
-    lastUpdateTime = Date.now();
   }, 180);
 }
 
@@ -84,7 +80,6 @@ function updateLastUpdated() {
 
   let referenceTime = lastUpdateTime;
 
-  // Use lastStatus timestamp if lastUpdateTime is not set
   if (!referenceTime) {
     const saved = localStorage.getItem("lastStatus");
     if (saved) {
@@ -95,10 +90,7 @@ function updateLastUpdated() {
     }
   }
 
-  if (!referenceTime) {
-    el.textContent = "Updated just now";
-    return;
-  }
+  if (!referenceTime) referenceTime = Date.now();
 
   const s = Math.floor((Date.now() - referenceTime) / 1000);
 
@@ -173,15 +165,10 @@ function updateDynamicColors(imageUrl) {
       let r=0, g=0, b=0, count=0;
 
       for (let i = 0; i < data.length; i += 4) {
-        r += data[i];
-        g += data[i+1];
-        b += data[i+2];
-        count++;
+        r += data[i]; g += data[i+1]; b += data[i+2]; count++;
       }
 
-      r = Math.floor(r/count); 
-      g = Math.floor(g/count); 
-      b = Math.floor(b/count);
+      r = Math.floor(r/count); g = Math.floor(g/count); b = Math.floor(b/count);
 
       activity.style.setProperty("--dynamic-accent", `rgb(${r},${g},${b})`);
       activity.style.setProperty("--dynamic-bg",
@@ -246,10 +233,7 @@ async function getDiscord() {
   }
 
   try {
-    const res = await fetch(
-      `https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}?_ts=${Date.now()}`,
-      { cache: "no-store" }
-    );
+    const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}?_ts=${Date.now()}`, { cache: "no-store" });
     if (!res.ok) throw new Error(`Lanyard ${res.status}`);
     const json = await res.json();
     const data = json.data;
@@ -416,6 +400,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   }
 
   mainLoop();
-  setInterval(mainLoop, 30000);
-  setInterval(updateLastUpdated, 1000);
+  setInterval(mainLoop, 30000); // refresh every 30s
+  setInterval(updateLastUpdated, 1000); // update "Last Updated" every second
 });
