@@ -261,7 +261,6 @@ async function getDiscord() {
     slideOutCard($$("spotify-card"));
     clearInterval(progressInterval);
     updateDynamicColors(null);
-
     return { text: manualStatus.text, source: "manual" };
   }
 
@@ -373,29 +372,37 @@ async function getReddit() {
 /* ======================================================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
+  // Manual always overrides everything
   if (isManualActive()) {
     showStatusLineWithFade(
       manualStatus.text || "Status (manual)",
       manualStatus.icon || "manual"
     );
+    slideOutCard($$("spotify-card"));
+    clearInterval(progressInterval);
+    updateDynamicColors(null);
     return;
   }
 
+  // Temporary banners (like Reddit) only if not manual
   if (temp && Date.now() < temp.expiresAt) {
     showStatusLineWithFade(temp.text, temp.source);
     return;
   }
 
+  // Spotify has priority over Twitch if active
   if (main?.source === "spotify") {
     showStatusLineWithFade("Listening to Spotify", "spotify");
     return;
   }
 
+  // Twitch live next
   if (twitchLive) {
     showStatusLineWithFade("Now Live on Twitch", "twitch");
     return;
   }
 
+  // Fallback to Discord or default
   showStatusLineWithFade(
     main?.text || "No Current Active Activities",
     main?.source || "discord"
@@ -414,16 +421,13 @@ async function mainLoop() {
   ]);
 
   const primary =
-    discord?.source === "manual" ? discord :
     discord?.source === "spotify" ? discord :
-    twitch || discord || { text: "No Current Active Activities", source: "discord" };
+    discord || { text: "No Current Active Activities", source: "discord" };
 
-  const hit = reddit?.isTemp ? reddit : null;
-
-  if (hit) {
+  if (reddit?.isTemp) {
     tempBanner = {
-      text: hit.text,
-      source: hit.source,
+      text: reddit.text,
+      source: reddit.source,
       expiresAt: Date.now() + TEMP_BANNER_MS
     };
   } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
@@ -456,10 +460,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (saved) {
     try {
       const { text, source } = JSON.parse(saved);
-
       if (!isManualActive()) {
         showStatusLineWithFade(text, source);
-      } else {
+      } else if (manualStatus) {
         showStatusLineWithFade(
           manualStatus.text || "Status (manual)",
           manualStatus.icon || "manual"
