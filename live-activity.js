@@ -1,4 +1,4 @@
-/* live-activity.js — Manual Priority + Spotify + Discord + Twitch + Reddit */
+/* live-activity.js — Manual Status + Spotify + Discord + Twitch + Reddit (30s Auto-Refresh) */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -14,20 +14,22 @@ const CONFIG = {
 /* ======================================================= */
 
 let lastUpdateTime = null;
+let lastRenderedText = null;
+let lastRenderedSource = null;
+
 let progressInterval = null;
 let currentSpotifyUrl = null;
 
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
-let lastRedditPostId = null;
+let lastRedditPostId  = null;
 let lastSpotifyTrackId = null;
 
 let manualStatus = null;
 
-const $$ = (id) => document.getElementById(id);
-const fmt = (s) =>
-  `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+const $$  = (id) => document.getElementById(id);
+const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /* ======================================================= */
 /* === ICONS ============================================= */
@@ -39,31 +41,25 @@ const ICON_MAP = {
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
-  default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
+  default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
 /* ======================================================= */
 /* === UI HELPERS ======================================== */
 /* ======================================================= */
 
-let lastRenderedText = null;
-let lastRenderedSource = null;
-
 function showStatusLineWithFade(text, source = "manual") {
-  const txt = $$("status-line-text");
+  const txt  = $$("status-line-text");
   const line = $$("status-line");
   const icon = $$("status-icon");
   if (!txt || !line || !icon) return;
 
-  const sameText = text === lastRenderedText;
-  const sameSource = source === lastRenderedSource;
+  const changed = text !== lastRenderedText || source !== lastRenderedSource;
 
-  if (!sameText || !sameSource) {
-    lastUpdateTime = Date.now();
+  if (changed) {
+    lastRenderedText = text;
+    lastRenderedSource = source;
   }
-
-  lastRenderedText = text;
-  lastRenderedSource = source;
 
   line.style.transition = "opacity .22s ease";
   line.style.opacity = "0";
@@ -76,51 +72,38 @@ function showStatusLineWithFade(text, source = "manual") {
     txt.textContent = text;
 
     icon.classList.remove("glow");
-    if (["spotify", "twitch"].includes(source)) icon.classList.add("glow");
+    if (source === "spotify" || source === "twitch") {
+      icon.classList.add("glow");
+    }
 
     line.style.opacity = "1";
 
-    localStorage.setItem(
-      "lastStatus",
-      JSON.stringify({
-        text,
-        source,
-        timestamp: Date.now()
-      })
-    );
+    localStorage.setItem("lastStatus", JSON.stringify({ text, source, timestamp: Date.now() }));
   }, 180);
 }
 
 function updateLastUpdated() {
   const el = $$("live-activity-updated");
-  if (!el) return;
-
-  if (!lastUpdateTime) {
-    el.textContent = "—";
-    return;
-  }
+  if (!el || !lastUpdateTime) return;
 
   const s = Math.floor((Date.now() - lastUpdateTime) / 1000);
 
   el.textContent =
-    s < 5
-      ? "Updated just now"
-      : s < 60
-      ? `Updated ${s}s ago`
-      : s < 3600
-      ? `Updated ${Math.floor(s / 60)}m ago`
-      : `${Math.floor(s / 3600)}h ago`;
+    s < 5 ? "Updated just now" :
+    s < 60 ? `Updated ${s}s ago` :
+    s < 3600 ? `Updated ${Math.floor(s/60)}m ago` :
+    `${Math.floor(s/3600)}h ago`;
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR ====================================== */
+/* === SPOTIFY BAR ======================================= */
 /* ======================================================= */
 
 function setupProgress(startMs, endMs) {
   const bar = $$("music-progress-bar");
   const elapsedEl = $$("elapsed-time");
   const remainEl = $$("remaining-time");
-  const totalEl = $$("total-time");
+  const totalEl  = $$("total-time");
 
   if (!bar || !startMs || !endMs) return;
 
@@ -147,23 +130,23 @@ function setupProgress(startMs, endMs) {
 /* === COLORS ============================================ */
 /* ======================================================= */
 
-function updateDynamicColors(imageUrl) {
-  const activity = document.querySelector(".live-activity");
-  if (!activity) return;
+function updateDynamicColors(url) {
+  const box = document.querySelector(".live-activity");
+  if (!box) return;
 
   const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent = settings.accentColor || "#1DB954";
+  const userAccent  = settings.accentColor || "#1DB954";
 
-  if (!matchAccent || !imageUrl) {
-    activity.style.setProperty("--dynamic-bg", "none");
-    activity.style.setProperty("--dynamic-accent", userAccent);
+  if (!matchAccent || !url) {
+    box.style.setProperty("--dynamic-accent", userAccent);
+    box.style.setProperty("--dynamic-bg", "none");
     return;
   }
 
   const img = new Image();
   img.crossOrigin = "anonymous";
-  img.src = imageUrl;
+  img.src = url;
 
   img.onload = () => {
     try {
@@ -175,81 +158,98 @@ function updateDynamicColors(imageUrl) {
 
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-
-      let r = 0,
-        g = 0,
-        b = 0,
-        count = 0;
+      let r=0,g=0,b=0,count=0;
+      const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
 
       for (let i = 0; i < data.length; i += 4) {
-        r += data[i];
-        g += data[i + 1];
-        b += data[i + 2];
-        count++;
+        r+=data[i]; g+=data[i+1]; b+=data[i+2]; count++;
       }
 
-      r = Math.floor(r / count);
-      g = Math.floor(g / count);
-      b = Math.floor(b / count);
+      r=Math.floor(r/count); g=Math.floor(g/count); b=Math.floor(b/count);
+      const accent = `rgb(${r},${g},${b})`;
 
-      const accent = `rgb(${r}, ${g}, ${b})`;
-
-      activity.style.setProperty("--dynamic-accent", accent);
-      activity.style.setProperty(
-        "--dynamic-bg",
-        `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
-      );
+      box.style.setProperty("--dynamic-accent", accent);
+      box.style.setProperty("--dynamic-bg", `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`);
     } catch {
-      activity.style.setProperty("--dynamic-accent", userAccent);
-      activity.style.setProperty("--dynamic-bg", "none");
+      box.style.setProperty("--dynamic-accent", userAccent);
+      box.style.setProperty("--dynamic-bg", "none");
     }
   };
 
   img.onerror = () => {
-    activity.style.setProperty("--dynamic-accent", userAccent);
-    activity.style.setProperty("--dynamic-bg", "none");
+    box.style.setProperty("--dynamic-accent", userAccent);
+    box.style.setProperty("--dynamic-bg", "none");
   };
 }
 
 /* ======================================================= */
-/* === ANIMATION ========================================= */
+/* === ANIMATIONS ======================================== */
 /* ======================================================= */
 
-function slideInCard(cardEl) {
-  if (!cardEl) return;
-  cardEl.classList.remove("hidden", "slide-out");
-  cardEl.classList.add("slide-in");
-  cardEl.style.display = "";
-  cardEl.style.opacity = "1";
+function slideInCard(card) {
+  if (!card) return;
+  card.classList.remove("hidden","slide-out");
+  card.classList.add("slide-in");
+  card.style.display = "";
+  card.style.opacity = "1";
 }
 
-function slideOutCard(cardEl) {
-  if (!cardEl) return;
-  cardEl.classList.remove("slide-in");
-  cardEl.classList.add("slide-out");
-
+function slideOutCard(card) {
+  if (!card) return;
+  card.classList.remove("slide-in");
+  card.classList.add("slide-out");
   setTimeout(() => {
-    if (cardEl.classList.contains("slide-out")) {
-      cardEl.style.opacity = "0";
-      cardEl.style.display = "none";
-      cardEl.classList.add("hidden");
+    if (card.classList.contains("slide-out")) {
+      card.style.opacity = "0";
+      card.style.display = "none";
+      card.classList.add("hidden");
     }
   }, 360);
 }
 
 /* ======================================================= */
-/* === MANUAL STATUS ==================================== */
+/* === MANUAL FIRESTORE ================================= */
 /* ======================================================= */
 
 function isManualActive() {
   if (!manualStatus?.enabled) return false;
 
   const exp = manualStatus.expiresAt;
-
-  if (!exp || typeof exp !== "number" || Number.isNaN(exp)) return true;
+  if (!exp || typeof exp !== "number") return true;
 
   return Date.now() < exp;
+}
+
+try {
+  const ref = doc(db, "manualStatus", "site");
+
+  onSnapshot(ref, async (snap) => {
+    if (!snap.exists()) { manualStatus = null; return; }
+
+    const d = snap.data();
+
+    if (d.expiresAt?.toMillis) {
+      d.expiresAt = d.expiresAt.toMillis();
+    } else if (typeof d.expiresAt !== "number") {
+      d.expiresAt = null;
+    }
+
+    manualStatus = d;
+
+    if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
+      await setDoc(ref, {
+        enabled: false,
+        text: "",
+        expiresAt: null,
+        persistent: false,
+        updated_at: Date.now()
+      }, { merge: true });
+
+      manualStatus = null;
+    }
+  });
+} catch (e) {
+  console.warn("Firestore manual disabled:", e);
 }
 
 /* ======================================================= */
@@ -258,16 +258,11 @@ function isManualActive() {
 
 async function getDiscord() {
   if (isManualActive()) {
-    const card = $$("spotify-card");
-    if (card) slideOutCard(card);
-
+    slideOutCard($$("spotify-card"));
     clearInterval(progressInterval);
     updateDynamicColors(null);
 
-    return {
-      text: manualStatus?.text || "Status (manual)",
-      source: "manual"
-    };
+    return { text: manualStatus.text, source: "manual" };
   }
 
   try {
@@ -276,91 +271,72 @@ async function getDiscord() {
       { cache: "no-store" }
     );
 
-    if (!res.ok) throw new Error(`Lanyard ${res.status}`);
-
     const json = await res.json();
     const data = json.data;
     if (!data) return null;
 
     if (data.spotify) {
       const sp = data.spotify;
-
       const now = Date.now();
-      const startMs = sp.timestamps?.start ?? now;
-      const endMs = sp.timestamps?.end ?? (startMs + (sp.duration_ms || 0));
+      const start = sp.timestamps?.start ?? now;
+      const end   = sp.timestamps?.end   ?? (start + (sp.duration_ms||0));
 
       lastSpotifyTrackId = sp.track_id;
 
-      const card = $$("spotify-card");
-      if (card) slideInCard(card);
-
-      $$("live-song-title").textContent = sp.song || "Unknown";
+      slideInCard($$("spotify-card"));
+      $$("live-song-title").textContent = sp.song   || "Unknown";
       $$("live-song-artist").textContent = sp.artist || "Unknown";
 
-      const coverEl = $$("live-activity-cover");
-      if (coverEl && coverEl.src !== sp.album_art_url) {
-        coverEl.src = sp.album_art_url;
-      }
+      const cover = $$("live-activity-cover");
+      if (cover && cover.src !== sp.album_art_url) cover.src = sp.album_art_url;
 
-      currentSpotifyUrl = sp.track_id
-        ? `https://open.spotify.com/track/${sp.track_id}`
-        : null;
+      currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
-      setupProgress(startMs, endMs);
+      setupProgress(start,end);
       updateDynamicColors(sp.album_art_url);
 
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    const map = {
-      online: "Online on Discord",
-      idle: "Idle on Discord",
-      dnd: "Do Not Disturb",
-      offline: "No Current Active Activities"
-    };
-
-    const status = map[data.discord_status] || "No Current Active Activities";
-
-    const card = $$("spotify-card");
-    if (card) slideOutCard(card);
-
+    slideOutCard($$("spotify-card"));
     updateDynamicColors(null);
 
-    return { text: status, source: "discord" };
-  } catch (err) {
-    console.warn("Discord error:", err);
+    return {
+      text: ({
+        online:  "Online on Discord",
+        idle:    "Idle on Discord",
+        dnd:     "Do Not Disturb",
+        offline: "No Current Active Activities",
+      }[data.discord_status]) || "No Current Active Activities",
+      source: "discord"
+    };
+
+  } catch (e) {
+    console.warn("Discord Error:", e);
     return null;
   }
 }
 
 /* ======================================================= */
-/* === TWITCH LIVE (Decapi — clean + reliable) =========== */
+/* === TWITCH LIVE ======================================= */
 /* ======================================================= */
 
 async function getTwitch() {
-  const user = (CONFIG.twitch.username || "").trim().toLowerCase();
-  if (!user) return null;
-
-  const url = `https://decapi.me/twitch/live/${user}`;
+  const u = CONFIG.twitch.username;
+  if (!u) return null;
 
   try {
-    const res = await fetch(url, { cache: "no-store" });
-    const txt = (await res.text()).toLowerCase().trim();
+    const res = await fetch(`https://decapi.me/twitch/live/${u}`, { cache: "no-store" });
+    const txt = (await res.text()).toLowerCase();
 
-    if (
-      txt.includes("is live") ||
-      txt.includes("currently live") ||
-      txt.includes("live") ||
-      txt.includes("streaming")
-    ) {
+    if (txt.includes("is live") || txt.includes("currently live") || txt.includes("streaming")) {
       return { text: "Now Live on Twitch", source: "twitch" };
     }
-
-    return null;
-  } catch (err) {
-    console.warn("Twitch error:", err);
-    return null;
+  } catch (e) {
+    console.warn("Twitch Error:", e);
   }
+
+  return null;
 }
 
 /* ======================================================= */
@@ -372,79 +348,28 @@ async function getReddit() {
   if (!u) return null;
 
   try {
-    const r = await fetch(
+    const res = await fetch(
       `https://www.reddit.com/user/${u}/submitted.json?limit=1`,
       { cache: "no-store" }
     );
 
-    const j = await r.json();
-    const post = j?.data?.children?.[0]?.data;
+    const json = await res.json();
+    const post = json?.data?.children?.[0]?.data;
 
     if (post && post.id !== lastRedditPostId) {
       lastRedditPostId = post.id;
 
-      return {
-        text: "Shared on Reddit",
-        source: "reddit",
-        isTemp: true
-      };
+      return { text: "Shared on Reddit", source: "reddit", isTemp: true };
     }
-  } catch (err) {
-    console.warn("Reddit error:", err);
+  } catch (e) {
+    console.warn("Reddit Error:", e);
   }
 
   return null;
 }
 
 /* ======================================================= */
-/* === FIRESTORE (MANUAL) ================================ */
-/* ======================================================= */
-
-try {
-  const ref = doc(db, "manualStatus", "site");
-
-  onSnapshot(
-    ref,
-    async (snap) => {
-      if (!snap.exists()) {
-        manualStatus = null;
-        return;
-      }
-
-      const d = snap.data();
-
-      if (d.expiresAt?.toMillis) {
-        d.expiresAt = d.expiresAt.toMillis();
-      } else if (typeof d.expiresAt !== "number") {
-        d.expiresAt = null;
-      }
-
-      manualStatus = d;
-
-      if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
-        await setDoc(
-          ref,
-          {
-            enabled: false,
-            text: "",
-            expiresAt: null,
-            persistent: false,
-            updated_at: Date.now()
-          },
-          { merge: true }
-        );
-
-        manualStatus = null;
-      }
-    },
-    (err) => console.warn("manual listener error:", err)
-  );
-} catch (err) {
-  console.warn("Firestore manual disabled:", err);
-}
-
-/* ======================================================= */
-/* === PRIORITY ========================================== */
+/* === PRIORITY LOGIC ==================================== */
 /* ======================================================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
@@ -478,7 +403,7 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 }
 
 /* ======================================================= */
-/* === MAIN LOOP (timestamp FIXED) ======================= */
+/* === MAIN LOOP (30s REFRESH) =========================== */
 /* ======================================================= */
 
 async function mainLoop() {
@@ -489,22 +414,16 @@ async function mainLoop() {
   ]);
 
   const primary =
-    discord?.source === "manual"
-      ? discord
-      : discord?.source === "spotify"
-      ? discord
-      : twitch ||
-        discord || {
-          text: "No Current Active Activities",
-          source: "discord"
-        };
+    discord?.source === "manual" ? discord :
+    discord?.source === "spotify" ? discord :
+    twitch || discord || { text: "No Current Active Activities", source: "discord" };
 
-  const tempHit = reddit?.isTemp ? reddit : null;
+  const hit = reddit?.isTemp ? reddit : null;
 
-  if (tempHit) {
+  if (hit) {
     tempBanner = {
-      text: tempHit.text,
-      source: tempHit.source,
+      text: hit.text,
+      source: hit.source,
       expiresAt: Date.now() + TEMP_BANNER_MS
     };
   } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
@@ -517,7 +436,7 @@ async function mainLoop() {
     temp: tempBanner
   });
 
-  $$("live-activity")?.classList.remove("hidden");
+  lastUpdateTime = Date.now();
 }
 
 /* ======================================================= */
@@ -534,7 +453,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const saved = localStorage.getItem("lastStatus");
-
   if (saved) {
     try {
       const { text, source } = JSON.parse(saved);
@@ -543,16 +461,14 @@ document.addEventListener("DOMContentLoaded", () => {
         showStatusLineWithFade(text, source);
       } else {
         showStatusLineWithFade(
-          manualStatus?.text || "Status (manual)",
-          manualStatus?.icon || "manual"
+          manualStatus.text || "Status (manual)",
+          manualStatus.icon || "manual"
         );
       }
-    } catch (e) {
-      console.warn("Failed to restore last status:", e);
-    }
+    } catch (e) {}
   }
 
   mainLoop();
-  setInterval(mainLoop, 5000);
+  setInterval(mainLoop, 30000);
   setInterval(updateLastUpdated, 1000);
 });
