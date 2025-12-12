@@ -1,4 +1,4 @@
-/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status + Manual Priority */
+/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status + Manual Priority + Fixed Last Updated */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -66,26 +66,41 @@ function showStatusLineWithFade(text, source = "manual") {
 
     line.style.opacity = "1";
 
+    // Persist status in localStorage with timestamp
     localStorage.setItem("lastStatus", JSON.stringify({
       text,
       source,
       timestamp: Date.now()
     }));
-  }, 180);
 
-  lastUpdateTime = Date.now();
+    // Update lastUpdateTime
+    lastUpdateTime = Date.now();
+  }, 180);
 }
 
 function updateLastUpdated() {
   const el = $$("live-activity-updated");
   if (!el) return;
 
-  if (!lastUpdateTime) {
+  let referenceTime = lastUpdateTime;
+
+  // Use lastStatus timestamp if lastUpdateTime is not set
+  if (!referenceTime) {
+    const saved = localStorage.getItem("lastStatus");
+    if (saved) {
+      try {
+        const { timestamp } = JSON.parse(saved);
+        if (timestamp) referenceTime = timestamp;
+      } catch {}
+    }
+  }
+
+  if (!referenceTime) {
     el.textContent = "Updated just now";
     return;
   }
 
-  const s = Math.floor((Date.now() - lastUpdateTime) / 1000);
+  const s = Math.floor((Date.now() - referenceTime) / 1000);
 
   if (s < 5) el.textContent = "Updated just now";
   else if (s < 60) el.textContent = `Updated ${s}s ago`;
@@ -319,11 +334,7 @@ try {
   const manualRef = doc(db, "manualStatus", "site");
 
   onSnapshot(manualRef, async (snap) => {
-    if (!snap.exists()) {
-      manualStatus = null;
-      return;
-    }
-
+    if (!snap.exists()) { manualStatus = null; return; }
     const d = snap.data();
 
     if (d.expiresAt?.toMillis) d.expiresAt = d.expiresAt.toMillis();
