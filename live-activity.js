@@ -1,4 +1,8 @@
-/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status + Manual Priority */
+/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status + Manual Priority + Fixed Twitch/TikTok */
+
+/* ======================================================= */
+/* === IMPORTS =========================================== */
+/* ======================================================= */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -17,15 +21,17 @@ const CONFIG = {
 let lastUpdateTime = null;
 let progressInterval = null;
 let currentSpotifyUrl = null;
+
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
 let lastRedditPostId  = null;
 let lastTikTokVideoId = null;
+let lastSpotifyTrackId = null;
 
 let manualStatus = null;
 
-const $$  = (id) => document.getElementById(id);
+const $$ = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /* ======================================================= */
@@ -70,7 +76,6 @@ function showStatusLineWithFade(text, source = "manual") {
 
     line.style.opacity = "1";
 
-    // --- SAVE STATUS LOCALLY FOR PERSISTENCE ---
     localStorage.setItem("lastStatus", JSON.stringify({
       text,
       source,
@@ -94,14 +99,14 @@ function updateLastUpdated() {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR  ===================================== */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 function setupProgress(startMs, endMs) {
-  const bar       = $$("music-progress-bar");
+  const bar = $$("music-progress-bar");
   const elapsedEl = $$("elapsed-time");
-  const remainEl  = $$("remaining-time");
-  const totalEl   = $$("total-time");
+  const remainEl = $$("remaining-time");
+  const totalEl = $$("total-time");
 
   if (!bar || !startMs || !endMs) return;
 
@@ -116,6 +121,7 @@ function setupProgress(startMs, endMs) {
     const left = Math.max(totalSec - elapsedSec, 0);
 
     bar.style.width = `${(elapsedSec / totalSec) * 100}%`;
+
     if (elapsedEl) elapsedEl.textContent = fmt(elapsedSec);
     if (remainEl) remainEl.textContent = `-${fmt(left)}`;
   }
@@ -125,7 +131,7 @@ function setupProgress(startMs, endMs) {
 }
 
 /* ======================================================= */
-/* === DYNAMIC COLORS  =================================== */
+/* === DYNAMIC COLORS ==================================== */
 /* ======================================================= */
 
 function updateDynamicColors(imageUrl) {
@@ -155,8 +161,8 @@ function updateDynamicColors(imageUrl) {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let r=0, g=0, b=0, count=0;
 
+      let r = 0, g = 0, b = 0, count = 0;
       for (let i = 0; i < data.length; i += 4) {
         r += data[i];
         g += data[i+1];
@@ -164,9 +170,9 @@ function updateDynamicColors(imageUrl) {
         count++;
       }
 
-      r = Math.floor(r/count); 
-      g = Math.floor(g/count); 
-      b = Math.floor(b/count);
+      r = Math.floor(r / count);
+      g = Math.floor(g / count);
+      b = Math.floor(b / count);
 
       const accent = `rgb(${r},${g},${b})`;
 
@@ -190,25 +196,25 @@ function updateDynamicColors(imageUrl) {
 /* === ANIMATION HELPERS ================================= */
 /* ======================================================= */
 
-function slideInCard(cardEl){ 
-  if(!cardEl) return;
-  cardEl.classList.remove("slide-out", "hidden"); 
-  cardEl.classList.add("slide-in"); 
-  cardEl.style.display = ""; 
-  cardEl.style.opacity = "1"; 
+function slideInCard(cardEl){
+  if (!cardEl) return;
+  cardEl.classList.remove("slide-out", "hidden");
+  cardEl.classList.add("slide-in");
+  cardEl.style.display = "";
+  cardEl.style.opacity = "1";
 }
 
-function slideOutCard(cardEl){ 
-  if(!cardEl) return;
-  cardEl.classList.remove("slide-in"); 
-  cardEl.classList.add("slide-out"); 
-  setTimeout(()=>{ 
-    if(cardEl.classList.contains("slide-out")){
-      cardEl.style.opacity = "0"; 
+function slideOutCard(cardEl){
+  if (!cardEl) return;
+  cardEl.classList.remove("slide-in");
+  cardEl.classList.add("slide-out");
+  setTimeout(() => {
+    if (cardEl.classList.contains("slide-out")) {
+      cardEl.style.opacity = "0";
       cardEl.style.display = "none";
       cardEl.classList.add("hidden");
-    } 
-  },360); 
+    }
+  }, 360);
 }
 
 function isManualActive() {
@@ -222,10 +228,8 @@ function isManualActive() {
 }
 
 /* ======================================================= */
-/* === DISCORD / SPOTIFY  ================================ */
+/* === DISCORD / SPOTIFY ================================= */
 /* ======================================================= */
-
-let lastSpotifyTrackId = null;
 
 async function getDiscord() {
   if (isManualActive()) {
@@ -300,48 +304,135 @@ async function getDiscord() {
 }
 
 /* ======================================================= */
-/* === OTHER SOURCES ===================================== */
+/* === FIXED TWITCH: RELIABLE DETECTION ================== */
 /* ======================================================= */
 
-async function getTwitch(){
-  const u=(CONFIG.twitch.username||"").toLowerCase();
-  if(!u) return null;
-  try{
-    const r=await fetch(`https://decapi.me/twitch/live/${u}`,{cache:"no-store"});
-    const t=(await r.text()).toLowerCase();
-    if(t.includes("is live")) return { text:"Now Live on Twitch", source:"twitch" };
-  } catch(e){ console.warn("Twitch error:",e); }
+async function getTwitch() {
+  const u = (CONFIG.twitch.username || "").trim().toLowerCase();
+  if (!u) return null;
+
+  const endpoint = (username) =>
+    `https://decapi.me/twitch/live/${username}`;
+
+  const tryFetch = async () => {
+    try {
+      const r = await fetch(endpoint(u), { cache: "no-store" });
+      if (!r.ok) throw new Error(`decapi ${r.status}`);
+      return (await r.text()).toLowerCase().trim();
+    } catch (err) {
+      console.warn("Twitch fetch err:", err);
+      return null;
+    }
+  };
+
+  let txt = await tryFetch();
+  if (txt === null) txt = await tryFetch();
+
+  if (!txt) return null;
+
+  const liveKeywords     = ["is live", "live", "streaming", "currently live", "is streaming"];
+  const offlineKeywords  = ["not live", "offline", "no stream"];
+
+  const isLive = liveKeywords.some(k => txt.includes(k));
+  const isOffline = offlineKeywords.some(k => txt.includes(k));
+
+  if (isLive && !isOffline) {
+    return { text: "Now Live on Twitch", source: "twitch" };
+  }
+
   return null;
 }
 
-async function getReddit(){
-  const u=CONFIG.reddit.username;
-  if(!u) return null;
-  try{
-    const r=await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`,{cache:"no-store"});
+/* ======================================================= */
+/* === REDDIT ============================================ */
+/* ======================================================= */
+
+async function getReddit() {
+  const u = CONFIG.reddit.username;
+  if (!u) return null;
+
+  try {
+    const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, { cache: "no-store" });
     const j = await r.json();
-    const post=j?.data?.children?.[0]?.data;
-    if(post && post.id!==lastRedditPostId){
-      lastRedditPostId=post.id;
-      return { text:"Shared on Reddit", source:"reddit", isTemp:true };
+    const post = j?.data?.children?.[0]?.data;
+
+    if (post && post.id !== lastRedditPostId) {
+      lastRedditPostId = post.id;
+      return { text: "Shared on Reddit", source: "reddit", isTemp: true };
     }
-  } catch(e){ console.warn("Reddit error:",e); }
+  } catch (e) {
+    console.warn("Reddit error:", e);
+  }
+
   return null;
 }
 
-async function getTikTok(){
-  const u=CONFIG.tiktok.username;
-  if(!u) return null;
-  try{
-    const res=await fetch(`https://r.jina.ai/http://www.tiktok.com/@${u}`,{cache:"no-store"});
-    const html=await res.text();
-    const m=html.match(/\/video\/(\d+)/);
-    const videoId=m?.[1];
-    if(videoId && videoId!==lastTikTokVideoId){
-      lastTikTokVideoId=videoId;
-      return { text:"Posted on TikTok", source:"tiktok", isTemp:true };
+/* ======================================================= */
+/* === FIXED TIKTOK: MORE RELIABLE SCRAPER =============== */
+/* ======================================================= */
+
+async function getTikTok() {
+  const u = (CONFIG.tiktok.username || "").trim();
+  if (!u) return null;
+
+  const jina = (path) => `https://r.jina.ai/http://www.tiktok.com/${path}`;
+
+  const attempts = [
+    jina(`@${u}`),
+    jina(`@${u}/video`),
+    jina(`@${u}/?lang=en`)
+  ];
+
+  const fetchText = async (url) => {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error(`jina ${res.status}`);
+      return await res.text();
+    } catch (err) {
+      console.warn("TikTok err @", url, err);
+      return null;
     }
-  } catch(e){ console.warn("TikTok error:",e); }
+  };
+
+  let html = null;
+  for (let i = 0; i < attempts.length; i++) {
+    html = await fetchText(attempts[i]);
+    if (html && html.length > 80) break;
+    await new Promise(r => setTimeout(r, 250));
+  }
+
+  if (!html) return null;
+
+  const patterns = [
+    /\/video\/(\d{6,})/i,
+    /\/v\/(\d{6,})/i,
+    /playAddr[^"']*["'].*?\/(\d{6,})\./i,
+    /"video":{"id":"(\d{6,})"/i,
+    /"id":\s*"(\d{6,})"\s*,\s*"desc":/i
+  ];
+
+  let match = null;
+  for (const re of patterns) {
+    match = html.match(re);
+    if (match && match[1]) break;
+  }
+
+  if (!match || !match[1]) {
+    const l = html.toLowerCase();
+    if (l.includes("no posts yet") || l.includes("user has no posts") || l.includes("not found")) {
+      return null;
+    }
+    console.warn("TikTok: no video ID extracted");
+    return null;
+  }
+
+  const videoId = match[1];
+
+  if (videoId && videoId !== lastTikTokVideoId) {
+    lastTikTokVideoId = videoId;
+    return { text: "Posted on TikTok", source: "tiktok", isTemp: true };
+  }
+
   return null;
 }
 
@@ -350,9 +441,9 @@ async function getTikTok(){
 /* ======================================================= */
 
 try {
-  const manualRef = doc(db, "manualStatus", "site");
+  const ref = doc(db, "manualStatus", "site");
 
-  onSnapshot(manualRef, async (snap) => {
+  onSnapshot(ref, async (snap) => {
     if (!snap.exists()) {
       manualStatus = null;
       return;
@@ -362,17 +453,14 @@ try {
 
     if (d.expiresAt?.toMillis) {
       d.expiresAt = d.expiresAt.toMillis();
-    } else if (typeof d.expiresAt === "number") {
-      // ok
-    } else {
+    } else if (typeof d.expiresAt !== "number") {
       d.expiresAt = null;
     }
 
     manualStatus = d;
 
-    // Auto-clear if expired
     if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
-      await setDoc(manualRef, {
+      await setDoc(ref, {
         enabled: false,
         text: "",
         expiresAt: null,
@@ -382,33 +470,31 @@ try {
 
       manualStatus = null;
     }
-
-  }, err => console.warn("manual listener error:", err));
-
+  });
 } catch (e) {
   console.warn("Firestore manual disabled:", e);
 }
 
 /* ======================================================= */
-/* === STATUS PRIORITY LOGIC ============================= */
+/* === PRIORITY LOGIC ==================================== */
 /* ======================================================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
-  if(isManualActive()){
-    showStatusLineWithFade(manualStatus.text||"Status (manual)", manualStatus.icon||"manual");
+  if (isManualActive()) {
+    showStatusLineWithFade(manualStatus.text || "Status (manual)", manualStatus.icon || "manual");
     return;
   }
-  if(temp && Date.now() < temp.expiresAt){
-    showStatusLineWithFade(temp.text, temp.source||"default");
+
+  if (temp && Date.now() < temp.expiresAt) {
+    showStatusLineWithFade(temp.text, temp.source || "default");
     return;
   }
-  if(main?.source === "spotify") {
+
+  if (main?.source === "spotify") {
     showStatusLineWithFade("Listening to Spotify", "spotify");
-  }
-  else if(twitchLive) {
+  } else if (twitchLive) {
     showStatusLineWithFade("Now Live on Twitch", "twitch");
-  }
-  else {
+  } else {
     showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
   }
 }
@@ -423,23 +509,22 @@ async function mainLoop() {
   ]);
 
   const primary =
-    (discord?.source==="manual") 
+    (discord?.source === "manual")
       ? discord
-      : (discord?.source==="spotify"
+      : (discord?.source === "spotify"
           ? discord
-          : (twitch || discord || { text:"No Current Active Activities", source:"discord" })
+          : (twitch || discord || { text: "No Current Active Activities", source: "discord" })
         );
 
-  let tempHit = [reddit,tiktok].find(r=>r && r.isTemp);
-  if(tempHit){
-    tempBanner={ 
-      text: tempHit.text, 
-      source: tempHit.source, 
-      expiresAt: Date.now()+TEMP_BANNER_MS 
+  const hit = [reddit, tiktok].find(r => r && r.isTemp);
+  if (hit) {
+    tempBanner = {
+      text: hit.text,
+      source: hit.source,
+      expiresAt: Date.now() + TEMP_BANNER_MS
     };
-  }
-  else if(tempBanner && Date.now()>=tempBanner.expiresAt){
-    tempBanner=null;
+  } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
+    tempBanner = null;
   }
 
   applyStatusDecision({
@@ -455,28 +540,31 @@ async function mainLoop() {
 /* === INIT ============================================== */
 /* ======================================================= */
 
-document.addEventListener("DOMContentLoaded",()=>{
-  const card=$$("spotify-card");
-  if(card){
-    card.addEventListener("click",()=>{
-      if(currentSpotifyUrl) window.open(currentSpotifyUrl,"_blank");
+document.addEventListener("DOMContentLoaded", () => {
+  const card = $$("spotify-card");
+  if (card) {
+    card.addEventListener("click", () => {
+      if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank");
     });
   }
 
-  // --- RESTORE LAST STATUS ON PAGE LOAD ---
   const saved = localStorage.getItem("lastStatus");
   if (saved) {
     try {
       const { text, source } = JSON.parse(saved);
 
-      // Only restore if manual is NOT active
       if (!isManualActive()) {
         showStatusLineWithFade(text, source);
       } else {
-        showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
+        showStatusLineWithFade(
+          manualStatus?.text || "Status (manual)",
+          manualStatus?.icon || "manual"
+        );
       }
 
-    } catch(e){ console.warn("Failed to restore last status:", e); }
+    } catch (e) {
+      console.warn("Failed to restore last status:", e);
+    }
   }
 
   mainLoop();
