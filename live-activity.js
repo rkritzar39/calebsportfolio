@@ -1,8 +1,4 @@
-/* live-activity.js — GitHub Removed + Fixed Manual Expiry + Persistent Status + Manual Priority + Fixed Twitch/TikTok */
-
-/* ======================================================= */
-/* === IMPORTS =========================================== */
-/* ======================================================= */
+/* live-activity.js — Manual Priority + Spotify + Discord + Twitch + Reddit */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -10,8 +6,7 @@ import { db } from "./firebase-init.js";
 const CONFIG = {
   discord: { userId: "850815059093356594" },
   twitch:  { username: "calebkritzar" },
-  reddit:  { username: "Electronic_Row_1262" },
-  tiktok:  { username: "calebkritzar" },
+  reddit:  { username: "Electronic_Row_1262" }
 };
 
 /* ======================================================= */
@@ -25,14 +20,14 @@ let currentSpotifyUrl = null;
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
-let lastRedditPostId  = null;
-let lastTikTokVideoId = null;
+let lastRedditPostId = null;
 let lastSpotifyTrackId = null;
 
 let manualStatus = null;
 
 const $$ = (id) => document.getElementById(id);
-const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+const fmt = (s) =>
+  `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /* ======================================================= */
 /* === ICONS ============================================= */
@@ -42,11 +37,11 @@ const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
-  youtube: "https://cdn.simpleicons.org/youtube/FF0000",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
-  tiktok:  "https://cdn.simpleicons.org/tiktok/000000",
-  manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
-  default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  manual:
+    "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  default:
+    "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
 };
 
 /* ======================================================= */
@@ -58,8 +53,6 @@ function showStatusLineWithFade(text, source = "manual") {
   const line = $$("status-line");
   const icon = $$("status-icon");
   if (!txt || !line || !icon) return;
-
-  if (txt.textContent === text && icon.alt === `${source} icon`) return;
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
 
@@ -76,11 +69,14 @@ function showStatusLineWithFade(text, source = "manual") {
 
     line.style.opacity = "1";
 
-    localStorage.setItem("lastStatus", JSON.stringify({
-      text,
-      source,
-      timestamp: Date.now()
-    }));
+    localStorage.setItem(
+      "lastStatus",
+      JSON.stringify({
+        text,
+        source,
+        timestamp: Date.now()
+      })
+    );
   }, 180);
 
   lastUpdateTime = Date.now();
@@ -89,13 +85,21 @@ function showStatusLineWithFade(text, source = "manual") {
 function updateLastUpdated() {
   const el = $$("live-activity-updated");
   if (!el) return;
-  if (!lastUpdateTime) { el.textContent = "—"; return; }
+
+  if (!lastUpdateTime) {
+    el.textContent = "—";
+    return;
+  }
+
   const s = Math.floor((Date.now() - lastUpdateTime) / 1000);
   el.textContent =
-    s < 5    ? "Updated just now" :
-    s < 60   ? `Updated ${s}s ago` :
-    s < 3600 ? `Updated ${Math.floor(s / 60)}m ago` :
-               `${Math.floor(s / 3600)}h ago`;
+    s < 5
+      ? "Updated just now"
+      : s < 60
+      ? `Updated ${s}s ago`
+      : s < 3600
+      ? `Updated ${Math.floor(s / 60)}m ago`
+      : `${Math.floor(s / 3600)}h ago`;
 }
 
 /* ======================================================= */
@@ -121,7 +125,6 @@ function setupProgress(startMs, endMs) {
     const left = Math.max(totalSec - elapsedSec, 0);
 
     bar.style.width = `${(elapsedSec / totalSec) * 100}%`;
-
     if (elapsedEl) elapsedEl.textContent = fmt(elapsedSec);
     if (remainEl) remainEl.textContent = `-${fmt(left)}`;
   }
@@ -131,16 +134,18 @@ function setupProgress(startMs, endMs) {
 }
 
 /* ======================================================= */
-/* === DYNAMIC COLORS ==================================== */
+/* === COLORS ============================================ */
 /* ======================================================= */
 
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const settings = JSON.parse(
+    localStorage.getItem("websiteSettings") || "{}"
+  );
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent  = settings.accentColor || "#1DB954";
+  const userAccent = settings.accentColor || "#1DB954";
 
   if (!matchAccent || !imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
@@ -156,17 +161,28 @@ function updateDynamicColors(imageUrl) {
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
+
       canvas.width = img.width || 64;
       canvas.height = img.height || 64;
+
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const data = ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      ).data;
 
-      let r = 0, g = 0, b = 0, count = 0;
+      let r = 0,
+        g = 0,
+        b = 0,
+        count = 0;
+
       for (let i = 0; i < data.length; i += 4) {
         r += data[i];
-        g += data[i+1];
-        b += data[i+2];
+        g += data[i + 1];
+        b += data[i + 2];
         count++;
       }
 
@@ -174,10 +190,11 @@ function updateDynamicColors(imageUrl) {
       g = Math.floor(g / count);
       b = Math.floor(b / count);
 
-      const accent = `rgb(${r},${g},${b})`;
+      const accent = `rgb(${r}, ${g}, ${b})`;
 
       activity.style.setProperty("--dynamic-accent", accent);
-      activity.style.setProperty("--dynamic-bg",
+      activity.style.setProperty(
+        "--dynamic-bg",
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
@@ -193,21 +210,22 @@ function updateDynamicColors(imageUrl) {
 }
 
 /* ======================================================= */
-/* === ANIMATION HELPERS ================================= */
+/* === ANIMATION ========================================= */
 /* ======================================================= */
 
-function slideInCard(cardEl){
+function slideInCard(cardEl) {
   if (!cardEl) return;
-  cardEl.classList.remove("slide-out", "hidden");
+  cardEl.classList.remove("hidden", "slide-out");
   cardEl.classList.add("slide-in");
   cardEl.style.display = "";
   cardEl.style.opacity = "1";
 }
 
-function slideOutCard(cardEl){
+function slideOutCard(cardEl) {
   if (!cardEl) return;
   cardEl.classList.remove("slide-in");
   cardEl.classList.add("slide-out");
+
   setTimeout(() => {
     if (cardEl.classList.contains("slide-out")) {
       cardEl.style.opacity = "0";
@@ -216,6 +234,10 @@ function slideOutCard(cardEl){
     }
   }, 360);
 }
+
+/* ======================================================= */
+/* === MANUAL ============================================ */
+/* ======================================================= */
 
 function isManualActive() {
   if (!manualStatus?.enabled) return false;
@@ -237,7 +259,10 @@ async function getDiscord() {
     if (card) slideOutCard(card);
     clearInterval(progressInterval);
     updateDynamicColors(null);
-    return { text: manualStatus?.text || "Status (manual)", source: "manual" };
+    return {
+      text: manualStatus?.text || "Status (manual)",
+      source: "manual"
+    };
   }
 
   try {
@@ -254,17 +279,17 @@ async function getDiscord() {
 
     if (data.spotify) {
       const sp = data.spotify;
-      const now = Date.now();
 
+      const now = Date.now();
       const startMs = sp.timestamps?.start ?? now;
-      const endMs   = sp.timestamps?.end   ?? (startMs + (sp.duration_ms || 0));
+      const endMs = sp.timestamps?.end ?? (startMs + (sp.duration_ms || 0));
 
       lastSpotifyTrackId = sp.track_id;
 
       const card = $$("spotify-card");
       if (card) slideInCard(card);
 
-      $$("live-song-title").textContent  = sp.song   || "Unknown";
+      $$("live-song-title").textContent = sp.song || "Unknown";
       $$("live-song-artist").textContent = sp.artist || "Unknown";
 
       const coverEl = $$("live-activity-cover");
@@ -282,59 +307,66 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    const map = {
+    const statusMap = {
       online: "Online on Discord",
       idle: "Idle on Discord",
       dnd: "Do Not Disturb",
-      offline: "No Current Active Activities",
+      offline: "No Current Active Activities"
     };
 
-    const status = map[data.discord_status] || "No Current Active Activities";
+    const status =
+      statusMap[data.discord_status] ||
+      "No Current Active Activities";
 
     const card = $$("spotify-card");
     if (card) slideOutCard(card);
 
     updateDynamicColors(null);
-    return { text: status, source: "discord" };
 
-  } catch (e) {
-    console.warn("Lanyard error:", e);
+    return { text: status, source: "discord" };
+  } catch (err) {
+    console.warn("Discord error:", err);
     return null;
   }
 }
 
 /* ======================================================= */
-/* === FIXED TWITCH: RELIABLE DETECTION ================== */
+/* === TWITCH LIVE (FULLY WORKING VERSION) =============== */
 /* ======================================================= */
 
 async function getTwitch() {
-  const u = (CONFIG.twitch.username || "").trim().toLowerCase();
-  if (!u) return null;
+  const user = (CONFIG.twitch.username || "").trim().toLowerCase();
+  if (!user) return null;
 
-  const endpoint = (username) =>
-    `https://decapi.me/twitch/live/${username}`;
+  const endpoint = `https://decapi.me/twitch/live/${user}`;
 
-  const tryFetch = async () => {
+  const fetchCheck = async () => {
     try {
-      const r = await fetch(endpoint(u), { cache: "no-store" });
-      if (!r.ok) throw new Error(`decapi ${r.status}`);
-      return (await r.text()).toLowerCase().trim();
+      const res = await fetch(endpoint, { cache: "no-store" });
+      if (!res.ok) return null;
+      return (await res.text()).toLowerCase().trim();
     } catch (err) {
-      console.warn("Twitch fetch err:", err);
+      console.warn("Twitch fetch error:", err);
       return null;
     }
   };
 
-  let txt = await tryFetch();
-  if (txt === null) txt = await tryFetch();
-
+  let txt = await fetchCheck();
+  if (!txt) txt = await fetchCheck();
   if (!txt) return null;
 
-  const liveKeywords     = ["is live", "live", "streaming", "currently live", "is streaming"];
-  const offlineKeywords  = ["not live", "offline", "no stream"];
+  const liveWords = [
+    "is live",
+    "live",
+    "streaming",
+    "currently live",
+    "is streaming"
+  ];
 
-  const isLive = liveKeywords.some(k => txt.includes(k));
-  const isOffline = offlineKeywords.some(k => txt.includes(k));
+  const offlineWords = ["not live", "offline", "no stream"];
+
+  const isLive = liveWords.some((k) => txt.includes(k));
+  const isOffline = offlineWords.some((k) => txt.includes(k));
 
   if (isLive && !isOffline) {
     return { text: "Now Live on Twitch", source: "twitch" };
@@ -348,131 +380,80 @@ async function getTwitch() {
 /* ======================================================= */
 
 async function getReddit() {
-  const u = CONFIG.reddit.username;
-  if (!u) return null;
+  const user = CONFIG.reddit.username;
+  if (!user) return null;
 
   try {
-    const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, { cache: "no-store" });
+    const r = await fetch(
+      `https://www.reddit.com/user/${user}/submitted.json?limit=1`,
+      {
+        cache: "no-store"
+      }
+    );
+
     const j = await r.json();
     const post = j?.data?.children?.[0]?.data;
 
     if (post && post.id !== lastRedditPostId) {
       lastRedditPostId = post.id;
-      return { text: "Shared on Reddit", source: "reddit", isTemp: true };
+      return {
+        text: "Shared on Reddit",
+        source: "reddit",
+        isTemp: true
+      };
     }
-  } catch (e) {
-    console.warn("Reddit error:", e);
+  } catch (err) {
+    console.warn("Reddit error:", err);
   }
 
   return null;
 }
 
 /* ======================================================= */
-/* === FIXED TIKTOK: MORE RELIABLE SCRAPER =============== */
-/* ======================================================= */
-
-async function getTikTok() {
-  const u = (CONFIG.tiktok.username || "").trim();
-  if (!u) return null;
-
-  const jina = (path) => `https://r.jina.ai/http://www.tiktok.com/${path}`;
-
-  const attempts = [
-    jina(`@${u}`),
-    jina(`@${u}/video`),
-    jina(`@${u}/?lang=en`)
-  ];
-
-  const fetchText = async (url) => {
-    try {
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(`jina ${res.status}`);
-      return await res.text();
-    } catch (err) {
-      console.warn("TikTok err @", url, err);
-      return null;
-    }
-  };
-
-  let html = null;
-  for (let i = 0; i < attempts.length; i++) {
-    html = await fetchText(attempts[i]);
-    if (html && html.length > 80) break;
-    await new Promise(r => setTimeout(r, 250));
-  }
-
-  if (!html) return null;
-
-  const patterns = [
-    /\/video\/(\d{6,})/i,
-    /\/v\/(\d{6,})/i,
-    /playAddr[^"']*["'].*?\/(\d{6,})\./i,
-    /"video":{"id":"(\d{6,})"/i,
-    /"id":\s*"(\d{6,})"\s*,\s*"desc":/i
-  ];
-
-  let match = null;
-  for (const re of patterns) {
-    match = html.match(re);
-    if (match && match[1]) break;
-  }
-
-  if (!match || !match[1]) {
-    const l = html.toLowerCase();
-    if (l.includes("no posts yet") || l.includes("user has no posts") || l.includes("not found")) {
-      return null;
-    }
-    console.warn("TikTok: no video ID extracted");
-    return null;
-  }
-
-  const videoId = match[1];
-
-  if (videoId && videoId !== lastTikTokVideoId) {
-    lastTikTokVideoId = videoId;
-    return { text: "Posted on TikTok", source: "tiktok", isTemp: true };
-  }
-
-  return null;
-}
-
-/* ======================================================= */
-/* === MANUAL FIRESTORE ================================== */
+/* === FIRESTORE (MANUAL) ================================ */
 /* ======================================================= */
 
 try {
   const ref = doc(db, "manualStatus", "site");
 
-  onSnapshot(ref, async (snap) => {
-    if (!snap.exists()) {
-      manualStatus = null;
-      return;
-    }
+  onSnapshot(
+    ref,
+    async (snap) => {
+      if (!snap.exists()) {
+        manualStatus = null;
+        return;
+      }
 
-    const d = snap.data();
+      const d = snap.data();
 
-    if (d.expiresAt?.toMillis) {
-      d.expiresAt = d.expiresAt.toMillis();
-    } else if (typeof d.expiresAt !== "number") {
-      d.expiresAt = null;
-    }
+      if (d.expiresAt?.toMillis) {
+        d.expiresAt = d.expiresAt.toMillis();
+      } else if (typeof d.expiresAt !== "number") {
+        d.expiresAt = null;
+      }
 
-    manualStatus = d;
+      manualStatus = d;
 
-    if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
-      await setDoc(ref, {
-        enabled: false,
-        text: "",
-        expiresAt: null,
-        persistent: false,
-        updated_at: Date.now()
-      }, { merge: true });
+      if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
+        await setDoc(
+          ref,
+          {
+            enabled: false,
+            text: "",
+            expiresAt: null,
+            persistent: false,
+            updated_at: Date.now()
+          },
+          { merge: true }
+        );
 
-      manualStatus = null;
-    }
-  });
-} catch (e) {
-  console.warn("Firestore manual disabled:", e);
+        manualStatus = null;
+      }
+    },
+    (err) => console.warn("manual listener error:", err)
+  );
+} catch (err) {
+  console.warn("Firestore manual disabled:", err);
 }
 
 /* ======================================================= */
@@ -481,7 +462,10 @@ try {
 
 function applyStatusDecision({ main, twitchLive, temp }) {
   if (isManualActive()) {
-    showStatusLineWithFade(manualStatus.text || "Status (manual)", manualStatus.icon || "manual");
+    showStatusLineWithFade(
+      manualStatus.text || "Status (manual)",
+      manualStatus.icon || "manual"
+    );
     return;
   }
 
@@ -495,32 +479,38 @@ function applyStatusDecision({ main, twitchLive, temp }) {
   } else if (twitchLive) {
     showStatusLineWithFade("Now Live on Twitch", "twitch");
   } else {
-    showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
+    showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source);
   }
 }
 
 /* ======================================================= */
-/* === MAIN LOOP ========================================= */
+/* === MAIN LOOP (UPDATED) =============================== */
 /* ======================================================= */
 
 async function mainLoop() {
-  const [discord, twitch, reddit, tiktok] = await Promise.all([
-    getDiscord(), getTwitch(), getReddit(), getTikTok()
+  const [discord, twitch, reddit] = await Promise.all([
+    getDiscord(),
+    getTwitch(),
+    getReddit()
   ]);
 
   const primary =
-    (discord?.source === "manual")
+    discord?.source === "manual"
       ? discord
-      : (discord?.source === "spotify"
-          ? discord
-          : (twitch || discord || { text: "No Current Active Activities", source: "discord" })
-        );
+      : discord?.source === "spotify"
+      ? discord
+      : twitch ||
+        discord || {
+          text: "No Current Active Activities",
+          source: "discord"
+        };
 
-  const hit = [reddit, tiktok].find(r => r && r.isTemp);
-  if (hit) {
+  const tempHit = reddit?.isTemp ? reddit : null;
+
+  if (tempHit) {
     tempBanner = {
-      text: hit.text,
-      source: hit.source,
+      text: tempHit.text,
+      source: tempHit.source,
       expiresAt: Date.now() + TEMP_BANNER_MS
     };
   } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
@@ -533,6 +523,9 @@ async function mainLoop() {
     temp: tempBanner
   });
 
+  /* 🔥 ALWAYS UPDATE TIMESTAMP — FIXED */
+  lastUpdateTime = Date.now();
+
   $$("live-activity")?.classList.remove("hidden");
 }
 
@@ -542,6 +535,7 @@ async function mainLoop() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const card = $$("spotify-card");
+
   if (card) {
     card.addEventListener("click", () => {
       if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank");
@@ -549,6 +543,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const saved = localStorage.getItem("lastStatus");
+
   if (saved) {
     try {
       const { text, source } = JSON.parse(saved);
@@ -561,7 +556,6 @@ document.addEventListener("DOMContentLoaded", () => {
           manualStatus?.icon || "manual"
         );
       }
-
     } catch (e) {
       console.warn("Failed to restore last status:", e);
     }
