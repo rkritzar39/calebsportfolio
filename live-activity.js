@@ -1,4 +1,8 @@
-/* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit */
+/* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit
+   - Twitch: uses decapi.net status endpoint with decapi.me fallback and robust parsing
+   - Reddit: persists last shown post via localStorage so banner shows only once per new post
+   - All original features preserved (manual via Firestore, Spotify via Lanyard, progress bar, dynamic colors)
+*/
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
@@ -19,7 +23,7 @@ let currentSpotifyUrl = null;
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
-let lastRedditPostId  = null;
+let lastRedditPostId  = null; // runtime variable (kept for compatibility)
 let manualStatus = null;
 
 const $$  = (id) => document.getElementById(id);
@@ -48,6 +52,7 @@ function showStatusLineWithFade(text, source = "manual") {
   const icon = $$("status-icon");
   if (!txt || !line || !icon) return;
 
+  // avoid unnecessary reflow if exact same content
   if (txt.textContent === text && icon.alt === `${source} icon`) return;
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
@@ -281,41 +286,99 @@ async function getDiscord() {
 }
 
 /* ======================================================= */
-/* === OTHER SOURCES ===================================== */
+/* === T W I T C H  (robust) ============================= */
 /* ======================================================= */
+/*
+  Strategy:
+   1) Primary: decapi.net status endpoint (https://api.decapi.net/twitch/status/<username>)
+   2) Fallback: decapi.me/twitch/live/<username> (older but sometimes useful)
+   3) Robust parsing: look for "live" and avoid false-positives like "offline", "not found", "does not exist"
+*/
+
+async function parseTwitchStatusText(text) {
+  if (!text || typeof text !== "string") return false;
+  const t = text.trim().toLowerCase();
+
+  // quick rejects
+  if (!t) return false;
+  if (t.includes("not found") || t.includes("no user") || t.includes("does not exist") || t.includes("invalid")) return false;
+  if (t.includes("offline") && !t.includes("live")) return false;
+
+  // common positive patterns:
+  // - "<user> is live playing xyz"
+  // - "live: playing xyz"
+  // - contains "live" but not "offline"
+  if (t.includes("live") && !t.includes("offline")) return true;
+
+  return false;
+}
 
 async function getTwitch(){
-  const u=(CONFIG.twitch.username||"").toLowerCase();
-  if(!u) return null;
-  try{
-    const r=await fetch(`https://decapi.me/twitch/live/${u}`,{cache:"no-store"});
-    const t=(await r.text()).toLowerCase();
-    if(t.includes("is live")) return { text:"Now Live on Twitch", source:"twitch" };
-  } catch(e){ console.warn("Twitch error:",e); }
+  const username = CONFIG.twitch.username?.toLowerCase();
+  if (!username) return null;
+
+  // helper to try an endpoint and interpret its text
+  async function tryEndpoint(url) {
+    try {
+      const r = await fetch(url, { cache: "no-store" });
+      if (!r) return null;
+      const txt = await r.text();
+      if (await parseTwitchStatusText(txt)) return true;
+    } catch (e) {
+      // swallow, we'll fallback
+      console.warn("Twitch endpoint error:", e, url);
+    }
+    return false;
+  }
+
+  // Primary: decapi.net status (recommended)
+  const primaryUrl = `https://api.decapi.net/twitch/status/${username}`;
+  const fallbackUrl = `https://decapi.me/twitch/live/${username}`;
+  const legacyDecapi = `https://decapi.net/twitch/status/${username}`; // sometimes works in certain regions
+
+  try {
+    const isLivePrimary = await tryEndpoint(primaryUrl);
+    if (isLivePrimary) return { text: "Now Live on Twitch", source: "twitch" };
+
+    // fallback to decapi.me (older endpoint)
+    const isLiveFallback = await tryEndpoint(fallbackUrl);
+    if (isLiveFallback) return { text: "Now Live on Twitch", source: "twitch" };
+
+    // extra fallback: legacy decapi domain
+    const isLiveLegacy = await tryEndpoint(legacyDecapi);
+    if (isLiveLegacy) return { text: "Now Live on Twitch", source: "twitch" };
+
+  } catch (e) {
+    console.warn("getTwitch error:", e);
+  }
+
   return null;
 }
 
+/* ======================================================= */
+/* === OTHER SOURCES (Reddit) ============================ */
+/* ======================================================= */
+
 async function getReddit(){
-  const u=CONFIG.reddit.username;
-  if(!u) return null;
+  const u = CONFIG.reddit.username;
+  if (!u) return null;
 
   try {
     const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, { cache: "no-store" });
+    if (!r.ok) throw new Error(`Reddit fetch ${r.status}`);
     const j = await r.json();
     const post = j?.data?.children?.[0]?.data;
     if (!post) return null;
 
-    // Get the last post ID we already showed from localStorage
+    // Persist the last shown post ID in localStorage so we don't show repeatedly
     const lastShownId = localStorage.getItem("lastRedditShownId");
 
-    if(post.id !== lastShownId){
+    if (post.id !== lastShownId) {
       lastRedditPostId = post.id;
-      // save it so we don’t show it again until a new post
       localStorage.setItem("lastRedditShownId", post.id);
-      return { text:"Shared on Reddit", source:"reddit", isTemp:true };
+      return { text: "Shared on Reddit", source: "reddit", isTemp: true };
     }
-
-  } catch(e){
+  } catch (e) {
     console.warn("Reddit error:", e);
   }
 
@@ -338,14 +401,19 @@ try {
 
     manualStatus = d;
 
+    // auto-disable expired manual statuses server-side-ish
     if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
-      await setDoc(manualRef, {
-        enabled: false,
-        text: "",
-        expiresAt: null,
-        persistent: false,
-        updated_at: Date.now()
-      }, { merge: true });
+      try {
+        await setDoc(manualRef, {
+          enabled: false,
+          text: "",
+          expiresAt: null,
+          persistent: false,
+          updated_at: Date.now()
+        }, { merge: true });
+      } catch (err) {
+        console.warn("Failed to clear expired manual status:", err);
+      }
       manualStatus = null;
     }
 
@@ -360,16 +428,16 @@ try {
 /* ======================================================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
-  if(isManualActive()){
-    showStatusLineWithFade(manualStatus.text||"Status (manual)", manualStatus.icon||"manual");
+  if (isManualActive()) {
+    showStatusLineWithFade(manualStatus.text || "Status (manual)", manualStatus.icon || "manual");
     return;
   }
-  if(temp && Date.now() < temp.expiresAt){
-    showStatusLineWithFade(temp.text, temp.source||"default");
+  if (temp && Date.now() < temp.expiresAt) {
+    showStatusLineWithFade(temp.text, temp.source || "default");
     return;
   }
-  if(main?.source === "spotify") showStatusLineWithFade("Listening to Spotify", "spotify");
-  else if(twitchLive) showStatusLineWithFade("Now Live on Twitch", "twitch");
+  if (main?.source === "spotify") showStatusLineWithFade("Listening to Spotify", "spotify");
+  else if (twitchLive) showStatusLineWithFade("Now Live on Twitch", "twitch");
   else showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
 }
 
@@ -378,17 +446,23 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 /* ======================================================= */
 
 async function mainLoop() {
+  // gather all sources in parallel
   const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
 
   const primary =
-    (discord?.source==="manual") ? discord
-    : (discord?.source==="spotify") ? discord
-    : (twitch || discord || { text:"No Current Active Activities", source:"discord" });
+    (discord?.source === "manual") ? discord
+    : (discord?.source === "spotify") ? discord
+    : (twitch || discord || { text: "No Current Active Activities", source: "discord" });
 
   const tempHit = reddit?.isTemp ? reddit : null;
 
-  if(tempHit) tempBanner={ text: tempHit.text, source: tempHit.source, expiresAt: Date.now()+TEMP_BANNER_MS };
-  else if(tempBanner && Date.now()>=tempBanner.expiresAt) tempBanner=null;
+  // manage temp banner lifecycle
+  if (tempHit) {
+    // set or replace tempBanner with fresh expiry
+    tempBanner = { text: tempHit.text, source: tempHit.source, expiresAt: Date.now() + TEMP_BANNER_MS };
+  } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
+    tempBanner = null;
+  }
 
   applyStatusDecision({ main: primary, twitchLive: !!twitch, temp: tempBanner });
   $$("live-activity")?.classList.remove("hidden");
@@ -398,19 +472,21 @@ async function mainLoop() {
 /* === INIT ============================================== */
 /* ======================================================= */
 
-document.addEventListener("DOMContentLoaded",()=>{
-  const card=$$("spotify-card");
-  if(card) card.addEventListener("click",()=>{ if(currentSpotifyUrl) window.open(currentSpotifyUrl,"_blank"); });
+document.addEventListener("DOMContentLoaded", () => {
+  const card = $$("spotify-card");
+  if (card) card.addEventListener("click", () => { if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank"); });
 
+  // restore last status visual if available
   const saved = localStorage.getItem("lastStatus");
-  if(saved){
-    try{
+  if (saved) {
+    try {
       const { text, source } = JSON.parse(saved);
-      if(!isManualActive()) showStatusLineWithFade(text, source);
+      if (!isManualActive()) showStatusLineWithFade(text, source);
       else showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
-    } catch(e){ console.warn("Failed to restore last status:", e); }
+    } catch (e) { console.warn("Failed to restore last status:", e); }
   }
 
+  // kick off loop and polling timers
   mainLoop();
   setInterval(mainLoop, 30000); // refresh every 30s
   setInterval(updateLastUpdated, 1000); // update "Last Updated" every second
