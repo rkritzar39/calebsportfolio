@@ -18,6 +18,7 @@ const CONFIG = {
 /* ======================================================= */
 
 let lastUpdateTime = null;
+let lastPollTime   = Date.now(); // last background refresh
 let progressInterval = null;
 let currentSpotifyUrl = null;
 let tempBanner = null;
@@ -83,7 +84,7 @@ function updateLastUpdated() {
   const el = $$("live-activity-updated");
   if (!el) return;
 
-  let referenceTime = lastUpdateTime;
+  let referenceTime = lastPollTime || lastUpdateTime;
 
   if (!referenceTime) {
     const saved = localStorage.getItem("lastStatus");
@@ -466,6 +467,8 @@ async function mainLoop() {
 
   applyStatusDecision({ main: primary, twitchLive: !!twitch, temp: tempBanner });
   $$("live-activity")?.classList.remove("hidden");
+
+  lastPollTime = Date.now();
 }
 
 /* ======================================================= */
@@ -488,6 +491,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // kick off loop and polling timers
   mainLoop();
-  setInterval(mainLoop, 30000); // refresh every 30s
+  setInterval(mainLoop, 10000);
   setInterval(updateLastUpdated, 1000); // update "Last Updated" every second
 });
