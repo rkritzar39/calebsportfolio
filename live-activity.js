@@ -491,6 +491,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // kick off loop and polling timers
   mainLoop();
-  setInterval(mainLoop, 10000);
+  setInterval(mainLoop, 30000);
   setInterval(updateLastUpdated, 1000); // update "Last Updated" every second
 });
