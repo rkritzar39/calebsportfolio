@@ -235,13 +235,6 @@ a:hover {
   margin-top: 4px;
 }
 
-/* Optional: visually gray out disabled toggle */
-.checkbox-group input[disabled] + label::before {
-  filter: grayscale(80%) brightness(0.6);
-  opacity: 0.5;
-  box-shadow: none;
-}
-
 /* ===================================== */
 /* 🪟 Windows 11 + iOS Glass Login Design (Fixed Desktop) */
 /* ===================================== */
