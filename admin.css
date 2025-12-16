@@ -1103,14 +1103,17 @@ select {
 }
 
 /* ======================== */
-/* Toggle Styles – iOS 26 Onyx Enhanced */
+/* Toggle Styles – iOS 26 Onyx Enhanced (Fixed Alignment) */
 /* ======================== */
 .checkbox-group {
     display: flex;
-    align-items: center;
+    flex-direction: row;
+    justify-content: flex-start; /* Forces content to the left */
+    align-items: flex-start;    /* Aligns items to the top */
     flex-wrap: wrap;
     gap: 16px;
     padding-top: 4px;
+    width: 100%;                /* Ensures container spans full width */
     position: relative;
 }
 
@@ -1127,10 +1130,12 @@ select {
 /* Label Styling */
 .checkbox-group label {
     position: relative;
-    padding-left: 64px; /* space for toggle track */
+    padding-left: 64px; 
     line-height: 32px;
-    display: flex;
-    align-items: center; /* vertically centers text with knob */
+    display: inline-flex;       /* inline-flex prevents stretching */
+    align-items: center; 
+    justify-content: flex-start;
+    text-align: left;           /* Forces text alignment */
     cursor: pointer;
     color: var(--text-color);
     font-weight: 400;
@@ -1193,6 +1198,7 @@ select {
 .checkbox-group small {
     flex-basis: 100%;
     margin-top: 2px;
+    text-align: left;           /* Ensures helper text stays left */
     color: var(--secondary-text);
     font-size: 0.85em;
     line-height: 1.3;
