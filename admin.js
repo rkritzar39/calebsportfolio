@@ -241,6 +241,10 @@ import {
 // *** Global Variable for Client-Side Filtering ***
 let allShoutouts = { tiktok: [], instagram: [], youtube: [] }; // Stores the full lists for filtering
 
+// ===== STATUS SAFETY LAYER =====
+let statusMode = "manual"; // manual | auto
+let manualStatus = "offline";
+
 let allUsefulLinks = [];
 let allSocialLinks = [];
 let allDisabilities = [];
@@ -333,6 +337,10 @@ document.addEventListener('DOMContentLoaded', () => { //
     const profilePicUrlInput = document.getElementById('profile-pic-url'); //
     const profileBioInput = document.getElementById('profile-bio'); //
     const profileStatusInput = document.getElementById('profile-status'); //
+    statusSelect.addEventListener("change", () => {
+  statusMode = "manual";
+  manualStatus = statusSelect.value;
+});
     const profileStatusMessage = document.getElementById('profile-status-message'); //
     const adminPfpPreview = document.getElementById('admin-pfp-preview'); //
 
