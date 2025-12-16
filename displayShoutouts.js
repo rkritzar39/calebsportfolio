@@ -688,7 +688,11 @@ function renderFaqItemHomepage(faqData) {
             </div>`;
 }
 
-function displayProfileData(profileData) {
+// [In displayShoutouts.js] - Replace the entire displayProfileData function
+
+const DISCORD_USER_ID = "850815059093356594"; // Your Discord User ID
+
+async function displayProfileData(profileData) {
     const profileUsernameElement = document.getElementById('profile-username-main');
     const profilePicElement = document.getElementById('profile-pic-main');
     const profileBioElement = document.getElementById('profile-bio-main');
@@ -701,12 +705,13 @@ function displayProfileData(profileData) {
         return;
     }
 
-    // Define default values for when data isn't available
+    // Define default values
     const defaultUsername = "Username";
     const defaultBio = "";
     const defaultProfilePic = "images/default-profile.jpg";
 
     if (!profileData) {
+        // Fallback if no data provided
         profileUsernameElement.textContent = defaultUsername;
         profilePicElement.src = defaultProfilePic;
         profileBioElement.textContent = defaultBio;
@@ -718,16 +723,35 @@ function displayProfileData(profileData) {
         return;
     }
 
-    // Update the main profile info
+    // Update basic text info immediately
     profileUsernameElement.textContent = profileData.username || defaultUsername;
     profilePicElement.src = profileData.profilePicUrl || defaultProfilePic;
     profileBioElement.textContent = profileData.bio || defaultBio;
 
-    // --- Status Update Logic ---
-    const statusKey = profileData.status || 'offline';
-    let statusText = ''; // Initialize an empty string for the display text
+    // --- Status Logic ---
+    let statusKey = profileData.status || 'offline'; // Default to manual status first
 
-    // Map the status key from the database to the desired full text
+    // If Auto-Detect is enabled, fetch real status from Discord
+    if (profileData.autoStatusEnabled) {
+        try {
+            const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+            const json = await response.json();
+            
+            if (json.success && json.data) {
+                // Lanyard returns: 'online', 'idle', 'dnd', or 'offline'
+                statusKey = json.data.discord_status;
+                console.log("Auto-detect status from Lanyard:", statusKey);
+            }
+        } catch (error) {
+            console.warn("Auto-detect failed (Lanyard API error), falling back to manual status.", error);
+            // We keep statusKey as the manual value set above
+        }
+    } else {
+        console.log("Auto-detect disabled. Using manual status:", statusKey);
+    }
+
+    // Map status key to display text
+    let statusText = '';
     switch (statusKey) {
         case 'online':
             statusText = 'Active';
@@ -736,27 +760,26 @@ function displayProfileData(profileData) {
             statusText = 'Idle';
             break;
         case 'dnd':
-            statusText = 'Do Not Disturb'; // This is the change you wanted
+            statusText = 'Do Not Disturb';
             break;
         case 'offline':
             statusText = 'Offline';
             break;
         default:
-            // As a fallback, just capitalize any unknown status
             statusText = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
     }
 
-    // Update the desktop corner status indicator
+    // Update the visual indicators
     if (profileStatusContainerElement) {
+        // Reset classes and add the correct status class
         profileStatusContainerElement.className = `profile-status-container status-${statusKey}`;
     }
 
-    // Update the mobile text status indicator
     if (profileStatusTextElement) {
         profileStatusTextElement.textContent = statusText;
         profileStatusTextElement.className = `profile-status-text status-${statusKey}`;
     }
-
+    
     console.log("Profile section updated with status:", statusKey);
 }
 
@@ -2685,21 +2708,21 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     updateCountdown();
 }
 
-// --- MASTER INITIALIZATION FUNCTION ---
+// [In displayShoutouts.js] - Replace the entire initializeHomepageContent function
+
 async function initializeHomepageContent() {
     console.log("Initializing homepage content (v_with_countdown_and_biz_refresh)...");
     const mainContentWrapper = document.getElementById('main-content-wrapper');
     const maintenanceOverlay = document.getElementById('maintenanceLoadingOverlay');
-    const countdownSection = document.querySelector('.countdown-section'); // For the main event countdown
+    const countdownSection = document.querySelector('.countdown-section');
     const usefulLinksSection = document.querySelector('.useful-links-section');
     const bodyElement = document.body;
     const tiktokHeaderContainer = document.getElementById('tiktok-shoutouts');
     const tiktokGridContainer = document.querySelector('#tiktok-shoutouts ~ .creator-grid');
     const tiktokUnavailableMessage = document.querySelector('#tiktok-shoutouts ~ .creator-grid ~ .unavailable-message');
     
-    // Ensure Firebase and necessary Firestore document references are initialized globally before this function runs
     if (!firebaseAppInitialized || !db || !profileDocRef) {
-        console.error("Firebase not ready or key Firestore document references (e.g., profileDocRef) are missing. Site cannot load settings properly.");
+        console.error("Firebase not ready or key Firestore document references missing.");
         if (mainContentWrapper) mainContentWrapper.innerHTML = "<p class='error' style='text-align:center;padding:20px;'>Critical error: Could not initialize site settings.</p>";
         return;
     }
@@ -2709,7 +2732,7 @@ async function initializeHomepageContent() {
     let maintenanceTitle = "Site Under Maintenance";
     let maintenanceMessage = "We are currently performing scheduled maintenance. Please check back later for updates.";
     let hideTikTokSection = false;
-    let countdownTargetDate = null; // Will hold Firestore Timestamp or null
+    let countdownTargetDate = null;
     let countdownTitle = null;
     let countdownExpiredMessage = null;
 
@@ -2728,7 +2751,6 @@ async function initializeHomepageContent() {
         } else {
             console.warn("Site settings document ('site_config/mainProfile') not found. Using defaults.");
         }
-        console.log("Settings fetched:", { maintenanceEnabled, hideTikTokSection, countdownSet: !!countdownTargetDate });
     } catch (error) {
         console.error("Critical Error fetching site settings:", error);
         if (mainContentWrapper) mainContentWrapper.innerHTML = "<p class='error' style='text-align:center;padding:20px;'>Error loading site configuration.</p>";
@@ -2746,10 +2768,8 @@ async function initializeHomepageContent() {
             maintenanceOverlay.classList.add('active');
             document.body.classList.add('maintenance-active');
             if (mainContentWrapper) mainContentWrapper.style.display = 'none';
-        } else {
-            console.error("Maintenance overlay element not found!");
         }
-        return; // Stop further content loading
+        return; 
     } else {
         // Maintenance mode OFF
         console.log("Maintenance mode OFF.");
@@ -2761,45 +2781,26 @@ async function initializeHomepageContent() {
         const rearrangeableContainer = document.getElementById('rearrangeable-container');
 
         if (savedOrder && rearrangeableContainer) {
-            console.log("Applying saved section order:", savedOrder);
             savedOrder.forEach(sectionId => {
                 const section = document.querySelector(`[data-section-id="${sectionId}"]`);
-                if (section) {
-                    rearrangeableContainer.appendChild(section);
-                } else {
-                    console.warn(`Could not find section with data-section-id: ${sectionId} to reorder.`);
-                }
+                if (section) rearrangeableContainer.appendChild(section);
             });
         }
         
         if (countdownTargetDate && typeof startEventCountdown === 'function') {
-            if (countdownSection) {
-                countdownSection.style.display = 'block'; 
-            } else {
-                console.warn("HTML element for '.countdown-section' not found.");
-            }
+            if (countdownSection) countdownSection.style.display = 'block'; 
             startEventCountdown(countdownTargetDate, countdownTitle, countdownExpiredMessage);
         } else {
-            if (countdownSection) {
-                countdownSection.style.display = 'none'; 
-            }
-            if (!countdownTargetDate) console.log("No valid countdown target date set from Firestore. Main event countdown section hidden.");
-            if (typeof startEventCountdown !== 'function') console.warn("startEventCountdown function is not defined. Main event countdown will not run.");
+            if (countdownSection) countdownSection.style.display = 'none'; 
         }
 
-        const oldMaintenanceMessageElement = document.getElementById('maintenanceModeMessage');
-        if (oldMaintenanceMessageElement) oldMaintenanceMessageElement.style.display = 'none';
-        if (usefulLinksSection) {
-            usefulLinksSection.style.display = 'block';
-        }
+        if (usefulLinksSection) usefulLinksSection.style.display = 'block';
 
         let isTikTokVisible = false;
         if (!tiktokHeaderContainer || !tiktokGridContainer) {
-            console.warn("Could not find TikTok header or grid containers for visibility check.");
             if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
         } else {
             if (hideTikTokSection) {
-                console.log("Hiding TikTok section as per settings.");
                 tiktokHeaderContainer.style.display = 'none';
                 tiktokGridContainer.style.display = 'none';
                 if (tiktokUnavailableMessage) {
@@ -2808,7 +2809,6 @@ async function initializeHomepageContent() {
                 }
                 isTikTokVisible = false;
             } else {
-                console.log("Showing TikTok section.");
                 tiktokHeaderContainer.style.display = ''; 
                 tiktokGridContainer.style.display = ''; 
                 if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
@@ -2818,60 +2818,54 @@ async function initializeHomepageContent() {
 
         console.log("Initiating loading of other content sections...");
 
+        // Setup Business Hours
         if (firebaseAppInitialized && typeof displayBusinessInfo === 'function' && db && businessDocRef) {
             await displayBusinessInfo(); 
-            if (window.businessInfoRefreshInterval) { 
-                clearInterval(window.businessInfoRefreshInterval);
-            }
+            if (window.businessInfoRefreshInterval) clearInterval(window.businessInfoRefreshInterval);
             window.businessInfoRefreshInterval = setInterval(async () => {
                 if (document.hidden) return;
                 await displayBusinessInfo();
             }, 60000); 
-            console.log("Business info display and periodic refresh initiated.");
-        } else {
-            console.error("Business info cannot be loaded/refreshed. Checks: firebaseAppInitialized, displayBusinessInfo function, db, businessDocRef.");
-            const biContainer = document.getElementById('business-status-display');
-            const statusMainTextElLocal = biContainer ? biContainer.querySelector('.status-main-text') : null;
-            if(statusMainTextElLocal) {
-                 statusMainTextElLocal.textContent = "Info Unavailable";
-                 statusMainTextElLocal.className = 'status-main-text status-unavailable';
-            } else if (biContainer) {
-                biContainer.innerHTML = "<span class='status-unavailable'>Business info could not be loaded.</span>";
-            }
         }
 
+        // --- LOAD ALL CONTENT ---
         const loadPromises = [
-            (typeof displayProfileData === 'function' ? displayProfileData(siteSettings) : Promise.resolve(console.warn("displayProfileData function not defined"))),
-            (typeof displayPresidentData === 'function' ? displayPresidentData() : Promise.resolve(console.warn("displayPresidentData function not defined"))),
-            (typeof loadShoutoutPlatformData === 'function' ? loadShoutoutPlatformData('instagram', document.getElementById('instagram-last-updated-timestamp')) : Promise.resolve(console.warn("loadShoutoutPlatformData for Instagram not defined"))),
-            (typeof loadShoutoutPlatformData === 'function' ? loadShoutoutPlatformData('youtube', document.getElementById('youtube-last-updated-timestamp')) : Promise.resolve(console.warn("loadShoutoutPlatformData for YouTube not defined"))),
-            (typeof loadAndDisplayUsefulLinks === 'function' ? loadAndDisplayUsefulLinks() : Promise.resolve(console.warn("loadAndDisplayUsefulLinks function not defined"))),
-            (typeof loadAndDisplaySocialLinks === 'function' ? loadAndDisplaySocialLinks() : Promise.resolve(console.warn("loadAndDisplaySocialLinks function not defined"))),
-            (typeof loadAndDisplayDisabilities === 'function' ? loadAndDisplayDisabilities() : Promise.resolve(console.warn("loadAndDisplayDisabilities function not defined"))),
-            (typeof loadAndDisplayTechItems === 'function' ? loadAndDisplayTechItems() : Promise.resolve(console.warn("loadAndDisplayTechItems function not defined"))),
-            (typeof loadAndDisplayFaqs === 'function' ? loadAndDisplayFaqs() : Promise.resolve(console.warn("loadAndDisplayFaqs function not defined")))
+            (typeof displayProfileData === 'function' ? displayProfileData(siteSettings) : Promise.resolve()),
+            (typeof displayPresidentData === 'function' ? displayPresidentData() : Promise.resolve()),
+            (typeof loadShoutoutPlatformData === 'function' ? loadShoutoutPlatformData('instagram', document.getElementById('instagram-last-updated-timestamp')) : Promise.resolve()),
+            (typeof loadShoutoutPlatformData === 'function' ? loadShoutoutPlatformData('youtube', document.getElementById('youtube-last-updated-timestamp')) : Promise.resolve()),
+            (typeof loadAndDisplayUsefulLinks === 'function' ? loadAndDisplayUsefulLinks() : Promise.resolve()),
+            (typeof loadAndDisplaySocialLinks === 'function' ? loadAndDisplaySocialLinks() : Promise.resolve()),
+            (typeof loadAndDisplayDisabilities === 'function' ? loadAndDisplayDisabilities() : Promise.resolve()),
+            (typeof loadAndDisplayTechItems === 'function' ? loadAndDisplayTechItems() : Promise.resolve()),
+            (typeof loadAndDisplayFaqs === 'function' ? loadAndDisplayFaqs() : Promise.resolve())
         ];
 
         if (isTikTokVisible && typeof loadShoutoutPlatformData === 'function') {
             loadPromises.push(loadShoutoutPlatformData('tiktok', document.getElementById('tiktok-last-updated-timestamp')));
-        } else if (isTikTokVisible) {
-            console.warn("TikTok section was intended to be visible but loadShoutoutPlatformData is not defined.");
         }
 
-        const results = await Promise.allSettled(loadPromises);
-        results.forEach((result, index) => {
-            if (result.status === 'rejected') {
-                console.error(`Error loading a content section (promise index ${index}):`, result.reason);
-            }
-        });
+        await Promise.allSettled(loadPromises);
 
-        // --- NEW: Set up the search functionality AFTER all data has been loaded ---
+        // --- NEW: AUTO-STATUS POLLING ---
+        if (siteSettings.autoStatusEnabled && typeof displayProfileData === 'function') {
+            console.log("Auto-status enabled. Starting 30s polling...");
+            // Store interval ID globally so we don't duplicate it
+            if (window.statusPollInterval) clearInterval(window.statusPollInterval);
+            
+            window.statusPollInterval = setInterval(() => {
+                // Re-run displayProfileData to fetch fresh Lanyard data
+                displayProfileData(siteSettings); 
+            }, 30000); // Check every 30 seconds
+        }
+        // --------------------------------
+
         setupCreatorSearch();
         setupCreatorSorting();
         
-        console.log("All other dynamic content loading initiated/completed.");
+        console.log("All content loaded.");
     }
-} // --- End of initializeHomepageContent function ---
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   if (firebaseAppInitialized && db) {
