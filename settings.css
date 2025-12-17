@@ -121,115 +121,174 @@ body.tinted-mode {
     --glass-bg-dark: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-dark));
 }
 
-/* High Contrast Mode */
+/* =======================================================
+   HIGH CONTRAST MODE — REAL, ACCESSIBILITY-FIRST
+   ======================================================= */
+
 body.high-contrast {
-    --accent-color: #ffcc00;
-    --accent-text-color: #000;
-    --bg-color: color-mix(in srgb, var(--dark-bg) 90%, #000 10%);
-    --content-bg: color-mix(in srgb, var(--dark-content-bg) 90%, #000 10%);
-    --glass-bg-light: rgba(255,255,255,0.55);
-    --glass-bg-dark: rgba(22,22,22,0.85);
-    --glass-border-light: rgba(0,0,0,0.35);
-    --glass-border-dark: rgba(255,255,255,0.35);
-    --text-color: #fff;
-    --secondary-text: rgba(255,255,255,0.92);
-    --border-color: rgba(255,255,255,0.6);
-    --slider-track-color: rgba(255,255,255,0.25);
-    --slider-thumb-color: #fff;
-    --toggle-on: var(--accent-color);
-    --toggle-off: rgba(255,255,255,0.25);
-    --red-color: #ff6666;
-    --glass-blur: blur(20px) saturate(180%);
+  /* Core colors */
+  --hc-bg: #000000;
+  --hc-panel: #000000;
+  --hc-text: #ffffff;
+  --hc-border: #ffffff;
+  --hc-accent: #ffcc00;
+  --hc-danger: #ff4444;
+
+  background-color: var(--hc-bg) !important;
+  color: var(--hc-text) !important;
 }
 
-/* === Panels & Cards ==================================== */
+/* =======================================================
+   GLOBAL HARD OVERRIDES
+   ======================================================= */
+
+body.high-contrast * {
+  background-image: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* =======================================================
+   PANELS, CARDS, SECTIONS
+   ======================================================= */
+
 body.high-contrast .settings-header,
 body.high-contrast .settings-subsection,
 body.high-contrast footer,
 body.high-contrast #cookie-consent-banner,
 body.high-contrast .setting-card,
-body.high-contrast .profile-card {
-  background: color-mix(in srgb, var(--glass-bg-dark) 90%, transparent);
-  border: 1px solid var(--glass-border-dark);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.65),
-    inset 0 0 12px rgba(255, 255, 255, 0.08);
+body.high-contrast .profile-card,
+body.high-contrast #customBgPreviewContainer {
+  background-color: var(--hc-panel) !important;
+  border: 2px solid var(--hc-border) !important;
 }
 
-/* === Text ============================================== */
+/* =======================================================
+   TEXT
+   ======================================================= */
+
 body.high-contrast h1,
 body.high-contrast h2,
 body.high-contrast h3,
+body.high-contrast h4,
 body.high-contrast p,
+body.high-contrast span,
+body.high-contrast label,
 body.high-contrast .setting-title,
 body.high-contrast .setting-description,
 body.high-contrast .file-name {
-  color: var(--text-color) !important;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+  color: var(--hc-text) !important;
 }
 
-/* === Buttons, sliders, and toggles ===================== */
-body.high-contrast .custom-bg-label,
-body.high-contrast #removeCustomBg,
+/* =======================================================
+   LINKS
+   ======================================================= */
+
+body.high-contrast a {
+  color: #00ffff !important;
+  text-decoration: underline !important;
+  font-weight: 600;
+}
+
+/* =======================================================
+   BUTTONS & CONTROLS
+   ======================================================= */
+
+body.high-contrast button,
 body.high-contrast .button,
-body.high-contrast .segmented-control button {
-  filter: brightness(1.25) saturate(1.3);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow:
-    0 0 6px rgba(255, 255, 255, 0.3),
-    inset 0 0 4px rgba(255, 255, 255, 0.25);
-  color: var(--accent-text-color);
-  background: color-mix(in srgb, var(--accent-color) 25%, var(--glass-bg-dark));
+body.high-contrast .segmented-control button,
+body.high-contrast #removeCustomBg,
+body.high-contrast .custom-bg-label {
+  background-color: var(--hc-accent) !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+  font-weight: 700;
 }
 
-/* === Profile & circular elements ======================== */
-body.high-contrast .profile-card {
-  background: rgba(20, 20, 20, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow:
-    0 4px 25px rgba(0, 0, 0, 0.75),
-    inset 0 0 8px rgba(255, 255, 255, 0.1);
+/* Disabled controls */
+body.high-contrast button:disabled {
+  background-color: #444 !important;
+  color: #ccc !important;
+  border-color: #ccc !important;
 }
 
-body.high-contrast #customBgPreviewContainer {
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.35),
-    inset 0 0 12px rgba(255, 255, 255, 0.25);
+/* =======================================================
+   FORM ELEMENTS
+   ======================================================= */
+
+body.high-contrast input,
+body.high-contrast select,
+body.high-contrast textarea {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
 }
 
-/* === Divider & Separator =============================== */
+/* =======================================================
+   TOGGLES & SLIDERS
+   ======================================================= */
+
+body.high-contrast input[type="range"] {
+  accent-color: var(--hc-accent);
+}
+
+body.high-contrast .toggle-on {
+  background-color: var(--hc-accent) !important;
+}
+
+body.high-contrast .toggle-off {
+  background-color: #444444 !important;
+}
+
+/* =======================================================
+   DIVIDERS & SEPARATORS
+   ======================================================= */
+
+body.high-contrast hr,
 body.high-contrast .custom-bg-separator {
-  opacity: 1;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.7) 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    rgba(255, 255, 255, 0.2) 100%
-  );
-  box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.25),
-    inset 0 0 6px rgba(255, 255, 255, 0.25);
+  background-color: #ffffff !important;
+  height: 2px;
+  opacity: 1 !important;
 }
 
-/* === Accent elements (verified badge, icons, etc.) ===== */
+/* =======================================================
+   ICONS & BADGES
+   ======================================================= */
+
 body.high-contrast .verified-badge,
 body.high-contrast .icon-accent,
-body.high-contrast .accent-color-preview {
-  filter: brightness(1.3);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+body.high-contrast svg,
+body.high-contrast svg path {
+  color: var(--hc-text) !important;
+  fill: var(--hc-text) !important;
 }
 
-/* === Focus outlines for accessibility ================== */
+/* =======================================================
+   IMAGES
+   ======================================================= */
+
+body.high-contrast img {
+  filter: contrast(200%) brightness(110%);
+}
+
+/* =======================================================
+   FOCUS STATES (EXTREMELY VISIBLE)
+   ======================================================= */
+
 body.high-contrast :focus-visible {
-  outline: 2px solid var(--accent-color);
+  outline: 4px solid #ffff00 !important;
   outline-offset: 4px;
-  border-radius: 6px;
-  box-shadow:
-    0 0 12px color-mix(in srgb, var(--accent-color) 60%, white 25%),
-    0 0 20px color-mix(in srgb, var(--accent-color) 45%, transparent);
+}
+
+/* =======================================================
+   SELECTION
+   ======================================================= */
+
+body.high-contrast ::selection {
+  background: var(--hc-accent);
+  color: #000000;
 }
 
 /* ===================== */
