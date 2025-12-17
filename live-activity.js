@@ -246,29 +246,34 @@ async function getDiscord() {
     if (!data) return null;
 
     if (data.spotify) {
-      const sp = data.spotify;
-      const now = Date.now();
-      const startMs = sp.timestamps?.start ?? now;
-      const endMs   = sp.timestamps?.end   ?? (startMs + (sp.duration_ms || 0));
+  const sp = data.spotify;
+  const now = Date.now();
+  const startMs = sp.timestamps?.start ?? now;
+  const endMs   = sp.timestamps?.end   ?? (startMs + (sp.duration_ms || 0));
 
-      lastSpotifyTrackId = sp.track_id;
+  lastSpotifyTrackId = sp.track_id;
 
-      slideInCard($$("spotify-card"));
+  slideInCard($$("spotify-card"));
 
-      $$("live-song-title").textContent  = sp.song   || "Unknown";
-      $$("live-song-artist").textContent = sp.artist || "Unknown";
+  $$("live-song-title").textContent  = sp.song   || "Unknown";
+  $$("live-song-artist").textContent = sp.artist || "Unknown";
 
-      const coverEl = $$("live-activity-cover");
-      if (coverEl && coverEl.src !== sp.album_art_url) coverEl.src = sp.album_art_url;
+  const coverEl = $$("live-activity-cover");
+  if (coverEl && coverEl.src !== sp.album_art_url) coverEl.src = sp.album_art_url;
 
-      currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
+  currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
-      setupProgress(startMs, endMs);
-      updateDynamicColors(sp.album_art_url);
+  setupProgress(startMs, endMs);
+  updateDynamicColors(sp.album_art_url);
 
-      return { text: "Listening to Spotify", source: "spotify" };
-    }
+  // ===== Explicit Badge =====
+  const explicitEl = $$("explicit-badge");
+  if (explicitEl) {
+    explicitEl.style.display = sp?.explicit ? "inline-block" : "none";
+  }
 
+  return { text: "Listening to Spotify", source: "spotify" };
+}
     const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
