@@ -1909,13 +1909,26 @@ body.dark-mode .bubble {
 }
 
 /* ======================================== */
+/* == Global Box Sizing & Reset == */
+/* ======================================== */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+/* ======================================== */
 /* == Tech Information Section – Grid Layout == */
 /* ======================================== */
-
 .tech-section {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+	gap: 2rem; /* spacing between cards */
+	padding: 2rem;
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
-	padding: 2rem;
 	border-radius: var(--radius-lg);
 	margin-bottom: 2rem;
 	border: 1px solid var(--border-color);
@@ -1925,15 +1938,8 @@ body.dark-mode .bubble {
 		var(--bubble-highlight);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-	width: 100%;
-	box-sizing: border-box;
 	color: var(--text-color);
 	transition: background var(--transition-medium), box-shadow var(--transition-medium);
-
-	/* Grid layout */
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-	gap: 1.5rem;
 }
 
 /* ======================== */
@@ -1952,6 +1958,7 @@ body.dark-mode .bubble {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+	width: 100%;
 }
 
 .tech-item:hover {
@@ -1965,7 +1972,6 @@ body.dark-mode .bubble {
 /* Titles and Icons         */
 /* ======================== */
 .tech-item h3 {
-	margin: 0;
 	display: flex;
 	align-items: center;
 	gap: 0.6rem;
@@ -2069,6 +2075,13 @@ body.dark-mode .bubble {
 /* ======================== */
 /* Responsive Adjustments   */
 /* ======================== */
+@media screen and (max-width: 1024px) {
+	.tech-section {
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 1.5rem;
+	}
+}
+
 @media screen and (max-width: 768px) {
 	.tech-section { padding: 1.5rem; }
 	.tech-item { padding: 1.2rem; }
@@ -2076,7 +2089,10 @@ body.dark-mode .bubble {
 }
 
 @media screen and (max-width: 480px) {
-	.tech-section { padding: 1rem; grid-template-columns: 1fr; }
+	.tech-section {
+		padding: 1rem;
+		grid-template-columns: 1fr;
+	}
 	.tech-item { padding: 1rem; }
 	.battery-icon { width: 8rem; height: 1.8rem; }
 	.battery-percentage { font-size: calc(var(--font-size-base) * 0.65); }
