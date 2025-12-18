@@ -3674,13 +3674,16 @@ body.maintenance-active {
 	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-xl);
 	padding: clamp(20px, 4vw, 30px);
-	margin: 30px auto; /* centered */
+
+	/* FULL WIDTH */
+	width: 100%;
+	max-width: none;
+	margin: 0 0 30px 0;
+
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	border: 1px solid var(--border-color);
 	backdrop-filter: var(--backdrop-blur) saturate(120%);
 	-webkit-backdrop-filter: var(--backdrop-blur) saturate(120%);
-	width: 100%;
-	max-width: 900px; /* keeps it centered */
 	box-sizing: border-box;
 	position: relative;
 	overflow: hidden;
