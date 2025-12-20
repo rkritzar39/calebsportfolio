@@ -122,17 +122,16 @@ body.tinted-mode {
 }
 
 /* =======================================================
-   HIGH CONTRAST MODE — LIGHT + DARK AWARE
+   HIGH CONTRAST MODE — YELLOW ON BLACK (REAL AF)
    ======================================================= */
 
 body.high-contrast {
-  /* Defaults (dark mode fallback) */
   --hc-bg: #000000;
   --hc-panel: #000000;
-  --hc-text: #ffffff;
-  --hc-border: #ffffff;
+  --hc-text: #ffff00;        /* PURE YELLOW */
+  --hc-border: #ffff00;
+  --hc-accent: #ffff00;
   --hc-link: #00ffff;
-  --hc-accent: #ffcc00;
   --hc-danger: #ff3333;
 
   background-color: var(--hc-bg) !important;
@@ -140,21 +139,7 @@ body.high-contrast {
 }
 
 /* =======================================================
-   LIGHT MODE OVERRIDES
-   ======================================================= */
-
-body.high-contrast.light-mode {
-  --hc-bg: #ffffff;
-  --hc-panel: #ffffff;
-  --hc-text: #000000;
-  --hc-border: #000000;
-  --hc-link: #0033cc;
-  --hc-accent: #ffb700;
-  --hc-danger: #cc0000;
-}
-
-/* =======================================================
-   GLOBAL HARD OVERRIDES
+   GLOBAL NUKES (NO VISUAL NOISE)
    ======================================================= */
 
 body.high-contrast * {
@@ -166,7 +151,7 @@ body.high-contrast * {
 }
 
 /* =======================================================
-   PANELS, CARDS, SECTIONS
+   PANELS / CARDS / SECTIONS
    ======================================================= */
 
 body.high-contrast .settings-header,
@@ -176,12 +161,12 @@ body.high-contrast #cookie-consent-banner,
 body.high-contrast .setting-card,
 body.high-contrast .profile-card,
 body.high-contrast #customBgPreviewContainer {
-  background-color: var(--hc-panel) !important;
-  border: 2px solid var(--hc-border) !important;
+  background-color: #000000 !important;
+  border: 3px solid var(--hc-border) !important;
 }
 
 /* =======================================================
-   TEXT
+   ALL TEXT — FORCE VISIBILITY
    ======================================================= */
 
 body.high-contrast h1,
@@ -191,6 +176,8 @@ body.high-contrast h4,
 body.high-contrast p,
 body.high-contrast span,
 body.high-contrast label,
+body.high-contrast li,
+body.high-contrast small,
 body.high-contrast .setting-title,
 body.high-contrast .setting-description,
 body.high-contrast .file-name {
@@ -198,17 +185,17 @@ body.high-contrast .file-name {
 }
 
 /* =======================================================
-   LINKS
+   LINKS — CYAN SO THEY POP
    ======================================================= */
 
 body.high-contrast a {
   color: var(--hc-link) !important;
   text-decoration: underline !important;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 /* =======================================================
-   BUTTONS & CONTROLS
+   BUTTONS & CONTROLS — INVERTED FOR CLARITY
    ======================================================= */
 
 body.high-contrast button,
@@ -216,15 +203,15 @@ body.high-contrast .button,
 body.high-contrast .segmented-control button,
 body.high-contrast #removeCustomBg,
 body.high-contrast .custom-bg-label {
-  background-color: var(--hc-accent) !important;
+  background-color: #ffff00 !important;
   color: #000000 !important;
-  border: 2px solid #000000 !important;
-  font-weight: 800;
+  border: 3px solid #000000 !important;
+  font-weight: 900;
 }
 
-/* Disabled */
+/* Disabled = obvious */
 body.high-contrast button:disabled {
-  background-color: #777 !important;
+  background-color: #555 !important;
   color: #222 !important;
   border-color: #222 !important;
 }
@@ -236,9 +223,9 @@ body.high-contrast button:disabled {
 body.high-contrast input,
 body.high-contrast select,
 body.high-contrast textarea {
-  background-color: var(--hc-bg) !important;
-  color: var(--hc-text) !important;
-  border: 2px solid var(--hc-border) !important;
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+  border: 3px solid #ffff00 !important;
 }
 
 /* =======================================================
@@ -246,15 +233,15 @@ body.high-contrast textarea {
    ======================================================= */
 
 body.high-contrast input[type="range"] {
-  accent-color: var(--hc-accent);
+  accent-color: #ffff00;
 }
 
 body.high-contrast .toggle-on {
-  background-color: var(--hc-accent) !important;
+  background-color: #ffff00 !important;
 }
 
 body.high-contrast .toggle-off {
-  background-color: #666 !important;
+  background-color: #333 !important;
 }
 
 /* =======================================================
@@ -263,38 +250,39 @@ body.high-contrast .toggle-off {
 
 body.high-contrast hr,
 body.high-contrast .custom-bg-separator {
-  background-color: var(--hc-border) !important;
-  height: 2px;
+  background-color: #ffff00 !important;
+  height: 3px;
   opacity: 1 !important;
 }
 
 /* =======================================================
-   ICONS & SVGs
+   ICONS / SVGs — FORCE YELLOW
    ======================================================= */
 
 body.high-contrast svg,
 body.high-contrast svg path,
+body.high-contrast i,
 body.high-contrast .verified-badge,
 body.high-contrast .icon-accent {
-  fill: var(--hc-text) !important;
-  color: var(--hc-text) !important;
+  fill: #ffff00 !important;
+  color: #ffff00 !important;
 }
 
 /* =======================================================
-   IMAGES
+   IMAGES — OPTIONAL BUT HELPFUL
    ======================================================= */
 
 body.high-contrast img {
-  filter: contrast(160%) brightness(105%);
+  filter: contrast(180%) brightness(110%);
 }
 
 /* =======================================================
-   FOCUS STATES (UNMISSABLE)
+   FOCUS STATES — YOU CANNOT MISS THIS
    ======================================================= */
 
 body.high-contrast :focus-visible {
-  outline: 4px solid #ffea00 !important;
-  outline-offset: 4px;
+  outline: 5px solid #ffff00 !important;
+  outline-offset: 5px;
 }
 
 /* =======================================================
@@ -302,7 +290,7 @@ body.high-contrast :focus-visible {
    ======================================================= */
 
 body.high-contrast ::selection {
-  background: var(--hc-accent);
+  background: #ffff00;
   color: #000000;
 }
 
