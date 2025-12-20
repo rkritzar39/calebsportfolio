@@ -122,20 +122,35 @@ body.tinted-mode {
 }
 
 /* =======================================================
-   HIGH CONTRAST MODE — REAL, ACCESSIBILITY-FIRST
+   HIGH CONTRAST MODE — LIGHT + DARK AWARE
    ======================================================= */
 
 body.high-contrast {
-  /* Core colors */
+  /* Defaults (dark mode fallback) */
   --hc-bg: #000000;
   --hc-panel: #000000;
   --hc-text: #ffffff;
   --hc-border: #ffffff;
+  --hc-link: #00ffff;
   --hc-accent: #ffcc00;
-  --hc-danger: #ff4444;
+  --hc-danger: #ff3333;
 
   background-color: var(--hc-bg) !important;
   color: var(--hc-text) !important;
+}
+
+/* =======================================================
+   LIGHT MODE OVERRIDES
+   ======================================================= */
+
+body.high-contrast.light-mode {
+  --hc-bg: #ffffff;
+  --hc-panel: #ffffff;
+  --hc-text: #000000;
+  --hc-border: #000000;
+  --hc-link: #0033cc;
+  --hc-accent: #ffb700;
+  --hc-danger: #cc0000;
 }
 
 /* =======================================================
@@ -187,9 +202,9 @@ body.high-contrast .file-name {
    ======================================================= */
 
 body.high-contrast a {
-  color: #00ffff !important;
+  color: var(--hc-link) !important;
   text-decoration: underline !important;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* =======================================================
@@ -204,14 +219,14 @@ body.high-contrast .custom-bg-label {
   background-color: var(--hc-accent) !important;
   color: #000000 !important;
   border: 2px solid #000000 !important;
-  font-weight: 700;
+  font-weight: 800;
 }
 
-/* Disabled controls */
+/* Disabled */
 body.high-contrast button:disabled {
-  background-color: #444 !important;
-  color: #ccc !important;
-  border-color: #ccc !important;
+  background-color: #777 !important;
+  color: #222 !important;
+  border-color: #222 !important;
 }
 
 /* =======================================================
@@ -221,9 +236,9 @@ body.high-contrast button:disabled {
 body.high-contrast input,
 body.high-contrast select,
 body.high-contrast textarea {
-  background-color: #000000 !important;
-  color: #ffffff !important;
-  border: 2px solid #ffffff !important;
+  background-color: var(--hc-bg) !important;
+  color: var(--hc-text) !important;
+  border: 2px solid var(--hc-border) !important;
 }
 
 /* =======================================================
@@ -239,30 +254,30 @@ body.high-contrast .toggle-on {
 }
 
 body.high-contrast .toggle-off {
-  background-color: #444444 !important;
+  background-color: #666 !important;
 }
 
 /* =======================================================
-   DIVIDERS & SEPARATORS
+   DIVIDERS
    ======================================================= */
 
 body.high-contrast hr,
 body.high-contrast .custom-bg-separator {
-  background-color: #ffffff !important;
+  background-color: var(--hc-border) !important;
   height: 2px;
   opacity: 1 !important;
 }
 
 /* =======================================================
-   ICONS & BADGES
+   ICONS & SVGs
    ======================================================= */
 
-body.high-contrast .verified-badge,
-body.high-contrast .icon-accent,
 body.high-contrast svg,
-body.high-contrast svg path {
-  color: var(--hc-text) !important;
+body.high-contrast svg path,
+body.high-contrast .verified-badge,
+body.high-contrast .icon-accent {
   fill: var(--hc-text) !important;
+  color: var(--hc-text) !important;
 }
 
 /* =======================================================
@@ -270,20 +285,20 @@ body.high-contrast svg path {
    ======================================================= */
 
 body.high-contrast img {
-  filter: contrast(200%) brightness(110%);
+  filter: contrast(160%) brightness(105%);
 }
 
 /* =======================================================
-   FOCUS STATES (EXTREMELY VISIBLE)
+   FOCUS STATES (UNMISSABLE)
    ======================================================= */
 
 body.high-contrast :focus-visible {
-  outline: 4px solid #ffff00 !important;
+  outline: 4px solid #ffea00 !important;
   outline-offset: 4px;
 }
 
 /* =======================================================
-   SELECTION
+   TEXT SELECTION
    ======================================================= */
 
 body.high-contrast ::selection {
