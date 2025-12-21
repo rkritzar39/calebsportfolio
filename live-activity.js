@@ -292,70 +292,60 @@ async function getDiscord() {
 }
 
 /* ======================================================= */
-/* === T W I T C H  (robust) ============================= */
+/* === T W I T C H  (Fixed) ============================== */
 /* ======================================================= */
-/*
-  Strategy:
-   1) Primary: decapi.net status endpoint (https://api.decapi.net/twitch/status/<username>)
-   2) Fallback: decapi.me/twitch/live/<username> (older but sometimes useful)
-   3) Robust parsing: look for "live" and avoid false-positives like "offline", "not found", "does not exist"
+/* Strategy:
+   - Uses decapi.me/twitch/uptime (Industry standard for no-key checks)
+   - If response contains "offline" or "not found" -> User is Offline.
+   - If response is a duration (e.g. "1 hour, 20 mins") -> User is LIVE.
 */
 
 async function parseTwitchStatusText(text) {
   if (!text || typeof text !== "string") return false;
   const t = text.trim().toLowerCase();
 
-  // quick rejects
+  // Quick rejects for empty responses
   if (!t) return false;
-  if (t.includes("not found") || t.includes("no user") || t.includes("does not exist") || t.includes("invalid")) return false;
-  if (t.includes("offline") && !t.includes("live")) return false;
-
-  // common positive patterns:
-  // - "<user> is live playing xyz"
-  // - "live: playing xyz"
-  // - contains "live" but not "offline"
-  if (t.includes("live") && !t.includes("offline")) return true;
-
-  return false;
-}
-
-async function getTwitch(){
-  const username = CONFIG.twitch.username?.toLowerCase();
-  if (!username) return null;
-
-  // helper to try an endpoint and interpret its text
-  async function tryEndpoint(url) {
-    try {
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r) return null;
-      const txt = await r.text();
-      if (await parseTwitchStatusText(txt)) return true;
-    } catch (e) {
-      // swallow, we'll fallback
-      console.warn("Twitch endpoint error:", e, url);
-    }
+  
+  // DecAPI returns strings like "calebkritzar is offline" or "channel is not live"
+  if (t.includes("offline") || t.includes("not live") || t.includes("not found")) {
     return false;
   }
 
-  // Primary: decapi.net status (recommended)
-  const primaryUrl = `https://api.decapi.net/twitch/status/${username}`;
-  const fallbackUrl = `https://decapi.me/twitch/live/${username}`;
-  const legacyDecapi = `https://decapi.net/twitch/status/${username}`; // sometimes works in certain regions
+  // If the text exists and DOESN'T say "offline", it is a time duration.
+  // Therefore, the stream is live.
+  return true;
+}
 
-  try {
-    const isLivePrimary = await tryEndpoint(primaryUrl);
-    if (isLivePrimary) return { text: "Now Live on Twitch", source: "twitch" };
+async function getTwitch() {
+  const username = CONFIG.twitch.username?.toLowerCase();
+  if (!username) return null;
 
-    // fallback to decapi.me (older endpoint)
-    const isLiveFallback = await tryEndpoint(fallbackUrl);
-    if (isLiveFallback) return { text: "Now Live on Twitch", source: "twitch" };
+  // We use the 'uptime' endpoint because it is binary: 
+  // It either gives a time (Live) or says "offline" (Not Live).
+  const urls = [
+    `https://decapi.me/twitch/uptime/${username}`,
+    `https://api.decapi.net/twitch/uptime/${username}` // Mirror
+  ];
 
-    // extra fallback: legacy decapi domain
-    const isLiveLegacy = await tryEndpoint(legacyDecapi);
-    if (isLiveLegacy) return { text: "Now Live on Twitch", source: "twitch" };
-
-  } catch (e) {
-    console.warn("getTwitch error:", e);
+  for (const url of urls) {
+    try {
+      // We append a timestamp to the URL to force the browser to ignore cache.
+      // This ensures we don't get a stale "offline" response if you just went live.
+      const r = await fetch(`${url}?_=${Date.now()}`, { cache: "no-store" });
+      
+      if (r.ok) {
+        const txt = await r.text();
+        const isLive = await parseTwitchStatusText(txt);
+        
+        if (isLive) {
+          return { text: "Now Live on Twitch", source: "twitch" };
+        }
+      }
+    } catch (e) {
+      console.warn("Twitch fetch error:", url, e);
+      // If primary fails, the loop will try the secondary mirror automatically
+    }
   }
 
   return null;
