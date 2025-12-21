@@ -292,73 +292,41 @@ async function getDiscord() {
 }
 
 /* ======================================================= */
-/* === T W I T C H  (robust) ============================= */
+/* === T W I T C H  (REAL, RELIABLE) ====================== */
 /* ======================================================= */
 /*
-  Strategy:
-   1) Primary: decapi.net status endpoint (https://api.decapi.net/twitch/status/<username>)
-   2) Fallback: decapi.me/twitch/live/<username> (older but sometimes useful)
-   3) Robust parsing: look for "live" and avoid false-positives like "offline", "not found", "does not exist"
+  Uses DecAPI streaminfo endpoint.
+  Contract:
+   - returns "offline" (plain text) when offline
+   - returns stream data text when live
+  Anything that is NOT "offline" = LIVE
 */
 
-async function parseTwitchStatusText(text) {
-  if (!text || typeof text !== "string") return false;
-  const t = text.trim().toLowerCase();
-
-  // quick rejects
-  if (!t) return false;
-  if (t.includes("not found") || t.includes("no user") || t.includes("does not exist") || t.includes("invalid")) return false;
-  if (t.includes("offline") && !t.includes("live")) return false;
-
-  // common positive patterns:
-  // - "<user> is live playing xyz"
-  // - "live: playing xyz"
-  // - contains "live" but not "offline"
-  if (t.includes("live") && !t.includes("offline")) return true;
-
-  return false;
-}
-
-async function getTwitch(){
-  const username = CONFIG.twitch.username?.toLowerCase();
+async function getTwitch() {
+  const username = CONFIG.twitch.username;
   if (!username) return null;
 
-  // helper to try an endpoint and interpret its text
-  async function tryEndpoint(url) {
-    try {
-      const r = await fetch(url, { cache: "no-store" });
-      if (!r) return null;
-      const txt = await r.text();
-      if (await parseTwitchStatusText(txt)) return true;
-    } catch (e) {
-      // swallow, we'll fallback
-      console.warn("Twitch endpoint error:", e, url);
-    }
-    return false;
-  }
-
-  // Primary: decapi.net status (recommended)
-  const primaryUrl = `https://api.decapi.net/twitch/status/${username}`;
-  const fallbackUrl = `https://decapi.me/twitch/live/${username}`;
-  const legacyDecapi = `https://decapi.net/twitch/status/${username}`; // sometimes works in certain regions
-
   try {
-    const isLivePrimary = await tryEndpoint(primaryUrl);
-    if (isLivePrimary) return { text: "Now Live on Twitch", source: "twitch" };
+    const res = await fetch(
+      `https://api.decapi.net/twitch/streaminfo/${username}`,
+      { cache: "no-store" }
+    );
 
-    // fallback to decapi.me (older endpoint)
-    const isLiveFallback = await tryEndpoint(fallbackUrl);
-    if (isLiveFallback) return { text: "Now Live on Twitch", source: "twitch" };
+    if (!res.ok) return null;
 
-    // extra fallback: legacy decapi domain
-    const isLiveLegacy = await tryEndpoint(legacyDecapi);
-    if (isLiveLegacy) return { text: "Now Live on Twitch", source: "twitch" };
+    const text = (await res.text()).trim().toLowerCase();
 
-  } catch (e) {
-    console.warn("getTwitch error:", e);
+    if (text === "offline") return null;
+
+    return {
+      text: "Now Live on Twitch",
+      source: "twitch"
+    };
+
+  } catch (err) {
+    console.warn("Twitch status check failed:", err);
+    return null;
   }
-
-  return null;
 }
 
 /* ======================================================= */
