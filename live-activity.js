@@ -318,37 +318,25 @@ async function parseTwitchStatusText(text) {
 }
 
 async function getTwitch() {
-  const username = CONFIG.twitch.username?.toLowerCase();
-  if (!username) return null;
+  const u = CONFIG.twitch.username?.toLowerCase();
+  if (!u) return null;
 
-  // We use the 'uptime' endpoint because it is binary: 
-  // It either gives a time (Live) or says "offline" (Not Live).
-  const urls = [
-    `https://decapi.me/twitch/uptime/${username}`,
-    `https://api.decapi.net/twitch/uptime/${username}` // Mirror
-  ];
+  // We use a proxy to stop the browser from blocking the "uptime" request.
+  const proxy = "https://corsproxy.io/?";
+  const target = `https://decapi.me/twitch/uptime/${u}`;
+  
+  try {
+    const res = await fetch(`${proxy}${encodeURIComponent(target)}?_=${Date.now()}`);
+    const text = (await res.text()).toLowerCase();
 
-  for (const url of urls) {
-    try {
-      // We append a timestamp to the URL to force the browser to ignore cache.
-      // This ensures we don't get a stale "offline" response if you just went live.
-      const r = await fetch(`${url}?_=${Date.now()}`, { cache: "no-store" });
-      
-      if (r.ok) {
-        const txt = await r.text();
-        const isLive = await parseTwitchStatusText(txt);
-        
-        if (isLive) {
-          return { text: "Now Live on Twitch", source: "twitch" };
-        }
-      }
-    } catch (e) {
-      console.warn("Twitch fetch error:", url, e);
-      // If primary fails, the loop will try the secondary mirror automatically
-    }
+    // Logic: If you're offline, DecAPI says "offline". If you're live, it gives a time.
+    const isOffline = text.includes("offline") || text.includes("not live") || text.includes("not found") || !text.trim();
+
+    return isOffline ? null : { live: true };
+  } catch (e) {
+    console.warn("Twitch check failed:", e);
+    return null;
   }
-
-  return null;
 }
 
 /* ======================================================= */
