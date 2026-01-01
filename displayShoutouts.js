@@ -2536,6 +2536,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+/* ------------------------------------------------------------ */
+/*  START EVENT COUNTDOWN                                       */
+/* ------------------------------------------------------------ */
 function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOverride) {
 
     /* ------------------------------------------------------------ */
@@ -2566,11 +2569,23 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
 
 
     /* ------------------------------------------------------------ */
-    /*  PARSE DATE                                                  */
+    /*  PARSE DATE & LOCAL TIME                                      */
     /* ------------------------------------------------------------ */
     let targetDate;
-    try { targetDate = targetTimestamp.toDate(); }
-    catch { targetDate = targetTimestamp instanceof Date ? targetTimestamp : null; }
+
+    try {
+        // If using Firestore timestamp, convert
+        targetDate = targetTimestamp.toDate();
+    } catch {
+        // If plain Date object, use it
+        targetDate = targetTimestamp instanceof Date ? targetTimestamp : null;
+    }
+
+    // --- Convert to local timezone for display and countdown ---
+    if (targetDate) {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        targetDate = new Date(targetDate.toLocaleString("en-US", { timeZone: tz }));
+    }
 
     const title = countdownTitle || "Event";
     titleEl.textContent = title;
@@ -2589,8 +2604,7 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
             timeZone: tz
         });
 
-        localTimeEl.textContent =
-            `${title} begins at ${timeString} (${tz}).`;
+        localTimeEl.textContent = `${title} begins at ${timeString} (${tz}).`;
     }
     updateLocalTime();
 
