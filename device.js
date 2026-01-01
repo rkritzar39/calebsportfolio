@@ -1,22 +1,23 @@
 /**
- * device.js — v15 SAFE+ (ACTUALLY FIXED)
- * ✅ One geolocation request total
- * ✅ Cached across reloads & visits
- * ✅ Sunrise / Sunset / Weather share location
+ * device.js — v15 SAFE+ (FINAL CORRECTED)
+ * ✅ One geolocation prompt total
+ * ✅ Cached across visits
+ * ✅ Accurate OS + VERSION (UA + UA-CH hybrid)
+ * ✅ Sunrise / Sunset / Day-Night
+ * ✅ Weather WITH current conditions
  * ✅ iOS / Android / Desktop safe
- * ✅ No duplicate helpers
  */
 
 /* ===========================================================
  * 📍 GLOBAL LOCATION SERVICE (SINGLE SOURCE OF TRUTH)
  * =========================================================== */
 const LocationService = (() => {
-  let cachedCoords = null;
-  let pendingPromise = null;
+  let cached = null;
+  let pending = null;
 
   return {
     async get() {
-      if (cachedCoords) return cachedCoords;
+      if (cached) return cached;
 
       if (localStorage.getItem("geoDenied") === "true") {
         throw new Error("Geolocation denied");
@@ -24,23 +25,23 @@ const LocationService = (() => {
 
       const saved = localStorage.getItem("userCoords");
       if (saved) {
-        cachedCoords = JSON.parse(saved);
-        return cachedCoords;
+        cached = JSON.parse(saved);
+        return cached;
       }
 
-      if (pendingPromise) return pendingPromise;
+      if (pending) return pending;
 
-      pendingPromise = new Promise((resolve, reject) => {
+      pending = new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
-          reject(new Error("Geolocation not supported"));
+          reject(new Error("Geolocation unsupported"));
           return;
         }
 
         navigator.geolocation.getCurrentPosition(
           pos => {
-            cachedCoords = pos.coords;
-            localStorage.setItem("userCoords", JSON.stringify(cachedCoords));
-            resolve(cachedCoords);
+            cached = pos.coords;
+            localStorage.setItem("userCoords", JSON.stringify(cached));
+            resolve(cached);
           },
           err => {
             localStorage.setItem("geoDenied", "true");
@@ -54,7 +55,7 @@ const LocationService = (() => {
         );
       });
 
-      return pendingPromise;
+      return pending;
     }
   };
 })();
@@ -89,39 +90,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* 🕒 CLOCK */
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
-  setInterval(() => {
+  const updateClock = () => {
     const now = new Date();
     syncedEl.innerHTML =
-      `${now.toLocaleDateString(undefined, { weekday:"long", month:"long", day:"numeric", year:"numeric" })} at
-       ${now.toLocaleTimeString(undefined, { hour:"2-digit", minute:"2-digit", second:"2-digit" })}
-       <span class="tz-tag">${tzName}</span>`;
+      `${now.toLocaleDateString(undefined, {
+        weekday:"long", month:"long", day:"numeric", year:"numeric"
+      })} at ${now.toLocaleTimeString(undefined, {
+        hour:"2-digit", minute:"2-digit", second:"2-digit"
+      })} <span class="tz-tag">${tzName}</span>`;
     syncedEl.style.opacity = "1";
-  }, 1000);
+  };
+  updateClock();
+  setInterval(updateClock, 1000);
 
-  /* 💻 OS */
-  const ua = navigator.userAgent;
-  safeSet(osEl,
-    /iPhone/.test(ua) ? "iOS" :
-    /iPad/.test(ua) ? "iPadOS" :
-    /Android/.test(ua) ? "Android" :
-    /Mac/.test(ua) ? "macOS" :
-    /Windows/.test(ua) ? "Windows" :
-    /Linux/.test(ua) ? "Linux" : "Unknown"
-  );
+  /* ===========================================================
+   * 💻 OS + VERSION (SAFE HYBRID)
+   * =========================================================== */
+  function detectOSVersionFallback() {
+    const ua = navigator.userAgent || "";
+    let os = "Unknown", ver = "";
+
+    const isiPad = /iPad/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    if (isiPad) { os = "iPadOS"; const m = ua.match(/OS (\d+([_.]\d+)*)/); if (m) ver = m[1].replace(/_/g,"."); }
+    else if (/iPhone|iPod/i.test(ua)) { os = "iOS"; const m = ua.match(/OS (\d+([_.]\d+)*)/); if (m) ver = m[1].replace(/_/g,"."); }
+    else if (/Android/i.test(ua)) { os = "Android"; const m = ua.match(/Android (\d+(\.\d+)?)/); if (m) ver = m[1]; }
+    else if (/Mac OS X/i.test(ua)) { os = "macOS"; const m = ua.match(/Mac OS X (\d+([_.]\d+)*)/); if (m) ver = m[1].replace(/_/g,"."); }
+    else if (/Windows NT/i.test(ua)) {
+      os = "Windows";
+      const map = { "10.0":"11 / 10", "6.3":"8.1", "6.2":"8", "6.1":"7" };
+      const m = ua.match(/Windows NT (\d+\.\d+)/);
+      if (m) ver = map[m[1]] || m[1];
+    }
+    return ver ? `${os} ${ver}` : os;
+  }
+
+  async function detectOSVersion() {
+    if (navigator.userAgentData) {
+      try {
+        const uaData = await navigator.userAgentData.getHighEntropyValues(["platform","platformVersion"]);
+        let os = uaData.platform || "Unknown";
+        let ver = uaData.platformVersion || "";
+        if (ver) {
+          if (os === "Windows") {
+            ver = parseInt(ver.split(".")[0],10) >= 13 ? "11" : "10";
+          } else {
+            ver = ver.split(".").slice(0,2).join(".");
+          }
+        }
+        return ver ? `${os} ${ver}` : os;
+      } catch {
+        return detectOSVersionFallback();
+      }
+    }
+    return detectOSVersionFallback();
+  }
+
+  detectOSVersion().then(v => safeSet(osEl, v));
 
   /* 📱 DEVICE */
+  const ua = navigator.userAgent;
   safeSet(deviceEl,
-    /iPhone/.test(ua) ? "iPhone" :
     /iPad/.test(ua) ? "iPad" :
+    /iPhone/.test(ua) ? "iPhone" :
     /Android/.test(ua) ? "Android Device" :
     /Mac/.test(ua) ? "Mac" :
     /Windows/.test(ua) ? "Windows PC" :
+    /Linux/.test(ua) ? "Linux Device" :
     "Unknown Device"
   );
 
   /* 🌐 BROWSER */
   safeSet(browserEl,
     ua.includes("CriOS") ? "Chrome (iOS)" :
+    ua.includes("EdgiOS") ? "Edge (iOS)" :
+    ua.includes("FxiOS") ? "Firefox (iOS)" :
     ua.includes("Edg") ? "Microsoft Edge" :
     ua.includes("Chrome") ? "Google Chrome" :
     ua.includes("Safari") ? "Safari" :
@@ -130,8 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   /* 🖥️ RESOLUTION */
-  const setRes = () =>
-    safeSet(resolutionEl, `${screen.width} × ${screen.height}`);
+  const setRes = () => safeSet(resolutionEl, `${screen.width} × ${screen.height}`);
   setRes();
   window.addEventListener("resize", setRes);
 
@@ -157,63 +198,74 @@ document.addEventListener("DOMContentLoaded", () => {
       const refresh = async () => {
         const resp = await fetch(
           `https://api.sunrise-sunset.org/json?lat=${latitude}&lng=${longitude}&formatted=0`,
-          { cache: "no-store" }
+          { cache:"no-store" }
         );
         const data = await resp.json();
-
         const sunrise = new Date(data.results.sunrise);
         const sunset  = new Date(data.results.sunset);
 
         safeSet(sunriseEl, sunrise.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" }));
-        safeSet(sunsetEl, sunset.toLocaleTimeString([], { hour:"2-digit", minute:"2-digit" }));
+        safeSet(sunsetEl,  sunset.toLocaleTimeString([],  { hour:"2-digit", minute:"2-digit" }));
 
         const now = new Date();
         const status = now >= sunrise && now < sunset ? "Daytime ☀️" : "Nighttime 🌙";
 
-        let statusLi = document.getElementById("day-status-info");
-        if (!statusLi) {
-          statusLi = document.createElement("li");
-          statusLi.id = "day-status-info";
-          statusLi.innerHTML =
-            `<span class="version-label">🌞 <strong>Status:</strong></span>
-             <span class="version-value"></span>`;
-          document.querySelector(".version-list").appendChild(statusLi);
+        let li = document.getElementById("day-status-info");
+        if (!li) {
+          li = document.createElement("li");
+          li.id = "day-status-info";
+          li.innerHTML = `<span class="version-label">🌞 <strong>Status:</strong></span><span class="version-value"></span>`;
+          document.querySelector(".version-list").appendChild(li);
         }
-        safeSet(statusLi.querySelector(".version-value"), status);
+        safeSet(li.querySelector(".version-value"), status);
       };
 
       refresh();
       setInterval(refresh, 60000);
 
     } catch {
-      safeSet(sunriseEl, "Unavailable");
-      safeSet(sunsetEl, "Unavailable");
+      safeSet(sunriseEl,"Unavailable");
+      safeSet(sunsetEl,"Unavailable");
     }
   })();
 });
 
 /* ===========================================================
- * 🌤️ WEATHER (USES SAME LOCATION SERVICE)
+ * 🌤️ WEATHER — CURRENT CONDITIONS + TEMP
  * =========================================================== */
 async function detectWeather() {
   const el = document.querySelector("#weather-info .version-value");
   if (!el) return;
 
+  const safeSet = (t) => {
+    el.textContent = t;
+    el.style.opacity = "1";
+    el.style.transition = "opacity .3s";
+  };
+
   try {
     const { latitude, longitude } = await LocationService.get();
-
     const resp = await fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode&timezone=auto`
     );
     const data = await resp.json();
 
     const tempF = Math.round((data.current.temperature_2m * 9) / 5 + 32);
-    el.textContent = `${tempF}°F`;
-    el.style.opacity = "1";
+    const code = data.current.weathercode;
+
+    const map = {
+      0:"☀️ Clear",1:"🌤️ Mostly clear",2:"⛅ Partly cloudy",3:"☁️ Cloudy",
+      45:"🌫️ Fog",48:"🌫️ Fog",51:"🌦️ Light drizzle",53:"🌦️ Drizzle",
+      55:"🌧️ Drizzle",61:"🌧️ Rain",63:"🌧️ Rain showers",65:"🌧️ Heavy rain",
+      71:"🌨️ Snow",73:"🌨️ Snow",75:"❄️ Heavy snow",77:"🌨️ Snow grains",
+      80:"🌧️ Rain showers",81:"🌧️ Moderate rain",82:"⛈️ Thunderstorm",
+      95:"⛈️ Thunderstorm",99:"⛈️ Severe storm"
+    };
+
+    safeSet(`${map[code] || "🌡️ Weather"} • ${tempF}°F`);
 
   } catch {
-    el.textContent = "Weather unavailable";
-    el.style.opacity = "1";
+    safeSet("Weather unavailable");
   }
 }
 
