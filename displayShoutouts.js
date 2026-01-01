@@ -2537,7 +2537,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 /* ------------------------------------------------------------ */
-/*  START EVENT COUNTDOWN                                       */
+/*  START EVENT COUNTDOWN (FIXED LOCAL TIME PARSING)           */
 /* ------------------------------------------------------------ */
 function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOverride) {
 
@@ -2567,29 +2567,33 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     const localTimeEl = document.getElementById('local-time-display');
     const statusEl = document.getElementById('status-message');
 
-
     /* ------------------------------------------------------------ */
     /*  PARSE DATE & LOCAL TIME                                      */
     /* ------------------------------------------------------------ */
-    let targetDate;
+    let targetDate = null;
 
-    try {
-        // If using Firestore timestamp, convert
-        targetDate = targetTimestamp.toDate();
-    } catch {
-        // If plain Date object, use it
-        targetDate = targetTimestamp instanceof Date ? targetTimestamp : null;
-    }
-
-    // --- Convert to local timezone for display and countdown ---
-    if (targetDate) {
-        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        targetDate = new Date(targetDate.toLocaleString("en-US", { timeZone: tz }));
+    if (typeof targetTimestamp === "string") {
+        // Parse string as local time (YYYY-MM-DDTHH:MM:SS)
+        const parts = targetTimestamp.split(/[-T:]/);
+        targetDate = new Date(
+            parts[0],           // year
+            (parts[1] || 1) - 1, // month (0-indexed)
+            parts[2] || 1,      // day
+            parts[3] || 0,      // hour
+            parts[4] || 0,      // minute
+            parts[5] || 0       // second
+        );
+    } else {
+        try { 
+            // Firestore Timestamp object
+            targetDate = targetTimestamp.toDate(); 
+        } catch {
+            targetDate = targetTimestamp instanceof Date ? targetTimestamp : null;
+        }
     }
 
     const title = countdownTitle || "Event";
     titleEl.textContent = title;
-
 
     /* ------------------------------------------------------------ */
     /*  LOCAL TIME DISPLAY                                          */
@@ -2601,6 +2605,7 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
         const timeString = targetDate.toLocaleString([], {
             hour: "2-digit",
             minute: "2-digit",
+            second: "2-digit",
             timeZone: tz
         });
 
@@ -2608,13 +2613,11 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     }
     updateLocalTime();
 
-
     /* ------------------------------------------------------------ */
     /*  AI-POWERED STATUS MESSAGES                                  */
     /* ------------------------------------------------------------ */
     function generateAIMessages(title) {
         const t = title.trim();
-
         const base = [
             `Anticipation builds as ${t} approaches…`,
             `Every moment brings us closer to ${t}…`,
@@ -2626,7 +2629,6 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
             `All paths lead toward ${t}…`,
             `A new moment begins soon: ${t}…`
         ];
-
         return base.sort(() => Math.random() - 0.5).slice(0, 5);
     }
 
@@ -2638,7 +2640,6 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
         statusEl.textContent = aiMessages[msgIndex];
         msgIndex = (msgIndex + 1) % aiMessages.length;
     }, 3500);
-
 
     /* ------------------------------------------------------------ */
     /*  COUNTDOWN LOGIC                                             */
@@ -2721,7 +2722,6 @@ function startEventCountdown(targetTimestamp, countdownTitle, expiredMessageOver
     const loop = setInterval(updateCountdown, 1000);
     updateCountdown();
 }
-
 // [In displayShoutouts.js] - Replace the entire initializeHomepageContent function
 
 async function initializeHomepageContent() {
