@@ -1,7 +1,10 @@
 // WeatherAPI setup
-// Base URL + endpoints are documented here: http://api.weatherapi.com/v1 with /search.json and /forecast.json etc. :contentReference[oaicite:5]{index=5}
-const WEATHERAPI_KEY = "06cd381424154ba99a5180218260301";
+const WEATHERAPI_KEY = "06cd381424154ba99a5180218260301"; // <-- rotate your key + paste here
 const BASE = "https://api.weatherapi.com/v1";
+
+// Free plan safe settings
+const DAYS = 3;                 // WeatherAPI free plan forecast is 3 days
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
 
 // UI
 const card = document.getElementById("weather-card");
@@ -13,7 +16,7 @@ const searchBtn = document.getElementById("searchBtn");
 
 const suggestionsEl = document.getElementById("suggestions");
 
-// Debounce helper (keeps API calls chill)
+// ---------- Helpers ----------
 function debounce(fn, ms = 250) {
   let t;
   return (...args) => {
@@ -36,6 +39,40 @@ function clearError() {
   errorEl.textContent = "";
 }
 
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+// ---------- Caching (saves quota) ----------
+const cacheKey = (q) => `wx-cache:${q.toLowerCase()}`;
+
+function getCached(q) {
+  try {
+    const raw = localStorage.getItem(cacheKey(q));
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (!obj?.time || !obj?.data) return null;
+    if (Date.now() - obj.time > CACHE_TTL_MS) return null;
+    return obj.data;
+  } catch {
+    return null;
+  }
+}
+
+function setCached(q, data) {
+  try {
+    localStorage.setItem(cacheKey(q), JSON.stringify({ time: Date.now(), data }));
+  } catch {
+    // ignore storage failures
+  }
+}
+
+// ---------- Suggestions UI ----------
 function hideSuggestions() {
   suggestionsEl.classList.add("hidden");
   suggestionsEl.innerHTML = "";
@@ -46,14 +83,13 @@ function showSuggestions(items) {
 
   suggestionsEl.innerHTML = items
     .slice(0, 8)
-    .map((loc, idx) => {
+    .map((loc) => {
       const name = loc.name ?? "";
       const region = loc.region ?? "";
       const country = loc.country ?? "";
-      const id = loc.id; // usable as q=id:<id> per docs :contentReference[oaicite:6]{index=6}
-      const label = [name, region, country].filter(Boolean).join(", ");
+      const id = loc.id; // q=id:<id>
       return `
-        <div class="suggestion" role="option" data-id="${id}" data-label="${escapeHtml(label)}">
+        <div class="suggestion" role="option" data-id="${id}">
           <div>${escapeHtml(name)}</div>
           <div class="sub">${escapeHtml([region, country].filter(Boolean).join(", "))}</div>
         </div>
@@ -64,26 +100,13 @@ function showSuggestions(items) {
   suggestionsEl.classList.remove("hidden");
 }
 
-function escapeHtml(str) {
-  return String(str)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-// --- Autocomplete (Search API) ---
-// /search.json exists and returns locations; you can then call forecast with q=id:<id>. :contentReference[oaicite:7]{index=7}
+// ---------- Autocomplete ----------
 const doAutocomplete = debounce(async () => {
   const q = cityInput.value.trim();
   clearError();
 
-  // Don’t spam when user typed 1 letter
   if (q.length < 2) return hideSuggestions();
-
-  // If user is typing a ZIP, autocomplete isn’t super helpful; let them just search
-  if (/^\d{3,}$/.test(q)) return hideSuggestions();
+  if (/^\d{3,}$/.test(q)) return hideSuggestions(); // ZIP: don’t spam suggestions
 
   try {
     setChip("Searching…");
@@ -92,14 +115,14 @@ const doAutocomplete = debounce(async () => {
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
-      throw new Error(data?.error?.message || `WeatherAPI error ${res.status}`);
+      const msg = data?.error?.message || `WeatherAPI error ${res.status}`;
+      throw new Error(msg);
     }
 
     showSuggestions(data);
     setChip("Ready");
   } catch (e) {
-    // Autocomplete failure shouldn’t kill the whole page
-    console.error(e);
+    console.error("Autocomplete failed:", e);
     hideSuggestions();
     setChip("Ready");
   }
@@ -117,7 +140,6 @@ cityInput.addEventListener("keydown", (e) => {
 });
 
 document.addEventListener("click", (e) => {
-  // click outside suggestions closes it
   if (!suggestionsEl.contains(e.target) && e.target !== cityInput) hideSuggestions();
 });
 
@@ -127,11 +149,9 @@ suggestionsEl.addEventListener("click", (e) => {
   if (!row) return;
 
   const id = row.getAttribute("data-id");
-  const label = row.getAttribute("data-label") || "";
   hideSuggestions();
 
-  cityInput.value = label;
-  // Use q=id:<id> for precise location selection :contentReference[oaicite:8]{index=8}
+  // Use ID query for precision
   doSearch(`id:${id}`);
 });
 
@@ -141,8 +161,7 @@ searchBtn.addEventListener("click", () => {
   doSearch(cityInput.value.trim());
 });
 
-// --- Forecast (current + hourly + daily) ---
-// /forecast.json with days param (1–14) per docs. :contentReference[oaicite:9]{index=9}
+// ---------- Forecast ----------
 async function doSearch(query) {
   if (!query) return showError("Type a city or ZIP first.");
 
@@ -151,26 +170,38 @@ async function doSearch(query) {
     setChip("Loading…");
     card.classList.add("hidden");
 
-    // days range 1..14 per docs; we’ll do 7. :contentReference[oaicite:10]{index=10}
+    // Use cache first
+    const cached = getCached(query);
+    if (cached) {
+      renderWeather(cached);
+      setChip("Cached");
+      card.classList.remove("hidden");
+      return;
+    }
+
+    // Free plan safe: days=3, aqi=no, alerts=no
     const url =
       `${BASE}/forecast.json?key=${encodeURIComponent(WEATHERAPI_KEY)}` +
       `&q=${encodeURIComponent(query)}` +
-      `&days=7` +
-      `&aqi=yes` +
-      `&alerts=yes`;
+      `&days=${DAYS}` +
+      `&aqi=no` +
+      `&alerts=no`;
 
     const res = await fetch(url);
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
-      throw new Error(data?.error?.message || `WeatherAPI error ${res.status}`);
+      const msg = data?.error?.message || `WeatherAPI error ${res.status}`;
+      throw new Error(msg);
     }
 
+    setCached(query, data);
     renderWeather(data);
+
     setChip("Live");
     card.classList.remove("hidden");
   } catch (e) {
-    console.error(e);
+    console.error("Forecast fetch failed:", e);
     showError(e.message || "Something broke.");
   }
 }
@@ -182,7 +213,7 @@ function renderWeather(data) {
 
   // Header/main
   document.getElementById("weather-location").textContent =
-    `${loc.name}, ${loc.region ? loc.region + ", " : ""}${loc.country}`;
+    `${loc.name}${loc.region ? ", " + loc.region : ""}, ${loc.country}`;
 
   document.getElementById("weather-desc").textContent =
     cur.condition?.text ?? "—";
@@ -195,39 +226,45 @@ function renderWeather(data) {
 
   // Hi/Lo today
   const today = forecastDays[0]?.day;
-  if (today) {
-    document.getElementById("weather-hi-lo").textContent =
-      `H: ${Math.round(today.maxtemp_f)}°  ·  L: ${Math.round(today.mintemp_f)}°`;
-  } else {
-    document.getElementById("weather-hi-lo").textContent = "";
-  }
+  document.getElementById("weather-hi-lo").textContent = today
+    ? `H: ${Math.round(today.maxtemp_f)}°  ·  L: ${Math.round(today.mintemp_f)}°`
+    : "";
 
   // Stats
   document.getElementById("weather-feels").textContent = `${Math.round(cur.feelslike_f)}°F`;
   document.getElementById("weather-humidity").textContent = `${cur.humidity}%`;
   document.getElementById("weather-wind").textContent = `${Math.round(cur.wind_mph)} mph`;
-  document.getElementById("weather-uv").textContent = `${cur.uv}`;
+  document.getElementById("weather-uv").textContent = `${cur.uv ?? "—"}`;
 
   // Icon
   const iconEl = document.getElementById("weather-icon");
-  const iconUrl = cur.condition?.icon ? (cur.condition.icon.startsWith("//") ? `https:${cur.condition.icon}` : cur.condition.icon) : "";
+  const iconUrl = cur.condition?.icon
+    ? (cur.condition.icon.startsWith("//") ? `https:${cur.condition.icon}` : cur.condition.icon)
+    : "";
   iconEl.src = iconUrl;
   iconEl.alt = cur.condition?.text ?? "";
 
-  // Hourly (next 6 hours from today's hour array)
+  // Hourly: next 6 hours, even across midnight (uses forecastday[0] and [1])
   const hourlyEl = document.getElementById("hourly");
   hourlyEl.innerHTML = "";
-  const hours = forecastDays[0]?.hour || [];
-  const nowEpoch = cur.last_updated_epoch || Math.floor(Date.now() / 1000);
 
-  const next = hours
+  const nowEpoch = cur.last_updated_epoch || Math.floor(Date.now() / 1000);
+  const allHours = [
+    ...(forecastDays[0]?.hour || []),
+    ...(forecastDays[1]?.hour || []),
+  ];
+
+  const next = allHours
     .filter(h => h.time_epoch >= nowEpoch)
     .slice(0, 6);
 
   next.forEach(h => {
     const t = new Date(h.time_epoch * 1000);
     const label = t.toLocaleTimeString([], { hour: "numeric" });
-    const hIcon = h.condition?.icon ? (h.condition.icon.startsWith("//") ? `https:${h.condition.icon}` : h.condition.icon) : "";
+    const hIcon = h.condition?.icon
+      ? (h.condition.icon.startsWith("//") ? `https:${h.condition.icon}` : h.condition.icon)
+      : "";
+
     hourlyEl.insertAdjacentHTML("beforeend", `
       <div class="hour">
         <span class="t">${label}</span>
@@ -237,11 +274,11 @@ function renderWeather(data) {
     `);
   });
 
-  // Daily (7-day)
+  // Daily: show up to DAYS (free = 3)
   const dailyEl = document.getElementById("daily");
   dailyEl.innerHTML = "";
 
-  forecastDays.slice(0, 7).forEach(fd => {
+  forecastDays.slice(0, DAYS).forEach(fd => {
     const d = new Date(fd.date + "T00:00:00");
     const dayName = d.toLocaleDateString([], { weekday: "short" });
     const cond = fd.day?.condition?.text ?? "";
@@ -258,7 +295,5 @@ function renderWeather(data) {
   });
 
   document.getElementById("weather-updated").textContent =
-    `Updated: ${new Date(cur.last_updated_epoch * 1000).toLocaleString()}`;
+    `Updated: ${new Date((cur.last_updated_epoch || nowEpoch) * 1000).toLocaleString()}`;
 }
-
-// FYI: If you exceed monthly quota, WeatherAPI stops returning data until reset (UTC 1st of month). :contentReference[oaicite:11]{index=11}
