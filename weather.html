@@ -5,81 +5,157 @@
   <title>Weather</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- IMPORTANT:
-       If your site is https://username.github.io/repo-name/
-       then leading "/" can break. If that happens, change /style.css -> ./style.css (same for scripts). -->
+  <!-- Use your global theme (settings.js controls light/dark variables) -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="weather.css" />
 </head>
 <body>
 
-  <section class="section glass weather-page" data-section-id="weather-page">
-    <div class="weather-header">
-      <div>
-        <h1 class="weather-title">Weather</h1>
-        <p class="weather-subtitle">Search a city or ZIP — like <span>43604</span> or <span>Toledo</span></p>
-      </div>
-      <div class="weather-chip" id="statusChip">Ready</div>
-    </div>
-
-    <div class="weather-search-wrap">
-      <div class="weather-search">
-        <input
-          id="cityInput"
-          type="text"
-          placeholder="City or ZIP…"
-          autocomplete="off"
-          aria-autocomplete="list"
-          aria-controls="suggestions"
-        />
-        <button id="searchBtn" type="button">Go</button>
+  <section class="section weather-shell" data-section-id="weather-page">
+    <header class="wx-top">
+      <div class="wx-title">
+        <h1>Weather</h1>
+        <p class="wx-sub">City, ZIP, or postal code. Full app vibes. Free-plan safe.</p>
       </div>
 
-      <div id="suggestions" class="suggestions hidden" role="listbox"></div>
-    </div>
+      <div class="wx-actions">
+        <button class="wx-btn wx-btn-ghost" id="geoBtn" type="button">Use my location</button>
 
-    <div id="weather-card" class="weather-card hidden" aria-live="polite">
-      <div class="weather-main">
-        <div class="weather-icon-wrap">
-          <img id="weather-icon" alt="" />
+        <div class="wx-toggle" role="group" aria-label="Units">
+          <button class="wx-toggle-btn is-on" id="unitF" type="button">°F</button>
+          <button class="wx-toggle-btn" id="unitC" type="button">°C</button>
         </div>
 
-        <div class="weather-main-text">
-          <h2 id="weather-location"></h2>
-          <p id="weather-desc"></p>
-          <p id="weather-meta"></p>
-        </div>
-
-        <div class="weather-temp-block">
-          <div id="weather-temp" class="weather-temp"></div>
-          <div id="weather-hi-lo" class="weather-hi-lo"></div>
-        </div>
+        <div class="wx-chip" id="statusChip">Ready</div>
       </div>
+    </header>
 
-      <div class="weather-stats">
-        <div class="stat"><span class="label">Feels</span><span id="weather-feels" class="value"></span></div>
-        <div class="stat"><span class="label">Humidity</span><span id="weather-humidity" class="value"></span></div>
-        <div class="stat"><span class="label">Wind</span><span id="weather-wind" class="value"></span></div>
-        <div class="stat"><span class="label">UV</span><span id="weather-uv" class="value"></span></div>
+    <div class="wx-search-wrap">
+      <div class="wx-search">
+        <input id="cityInput" type="text" placeholder="Search… (ex: 43604, Toledo, London)" autocomplete="off" />
+        <button class="wx-btn" id="searchBtn" type="button">Search</button>
       </div>
-
-      <h3 class="mini-title">Next 6 hours</h3>
-      <div id="hourly" class="hourly"></div>
-
-      <h3 class="mini-title">7-day</h3>
-      <div id="daily" class="daily"></div>
-
-      <div class="weather-footer">
-        <span id="weather-updated"></span>
-        <span class="credit">Powered by WeatherAPI.com</span>
-      </div>
+      <div id="suggestions" class="wx-suggestions hidden" role="listbox"></div>
+      <p id="weather-error" class="wx-error" aria-live="assertive"></p>
     </div>
 
-    <p id="weather-error" class="weather-error" aria-live="assertive"></p>
+    <main class="wx-grid">
+      <!-- LEFT: NOW -->
+      <section class="wx-panel wx-now hidden" id="nowPanel" aria-live="polite">
+        <div class="wx-now-head">
+          <div>
+            <h2 id="wxLocation">—</h2>
+            <p class="wx-muted" id="wxLocalTime">—</p>
+          </div>
+          <button class="wx-star" id="favBtn" type="button" title="Save to favorites" aria-label="Save to favorites">
+            ★
+          </button>
+        </div>
+
+        <div class="wx-now-body">
+          <div class="wx-iconbox">
+            <img id="wxIcon" alt="" />
+          </div>
+
+          <div class="wx-tempbox">
+            <div class="wx-temp" id="wxTemp">—</div>
+            <div class="wx-cond" id="wxCond">—</div>
+            <div class="wx-hilo" id="wxHiLo">—</div>
+          </div>
+        </div>
+
+        <div class="wx-kpis">
+          <div class="wx-kpi">
+            <span class="k">Feels</span>
+            <span class="v" id="wxFeels">—</span>
+          </div>
+          <div class="wx-kpi">
+            <span class="k">Humidity</span>
+            <span class="v" id="wxHumidity">—</span>
+          </div>
+          <div class="wx-kpi">
+            <span class="k">Wind</span>
+            <span class="v" id="wxWind">—</span>
+          </div>
+          <div class="wx-kpi">
+            <span class="k">UV</span>
+            <span class="v" id="wxUV">—</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: DETAILS -->
+      <section class="wx-panel wx-details hidden" id="detailsPanel">
+        <h3>Details</h3>
+
+        <div class="wx-detail-grid">
+          <div class="wx-detail">
+            <span class="k">Pressure</span>
+            <span class="v" id="wxPressure">—</span>
+          </div>
+          <div class="wx-detail">
+            <span class="k">Visibility</span>
+            <span class="v" id="wxVis">—</span>
+          </div>
+          <div class="wx-detail">
+            <span class="k">Cloud</span>
+            <span class="v" id="wxCloud">—</span>
+          </div>
+          <div class="wx-detail">
+            <span class="k">Gust</span>
+            <span class="v" id="wxGust">—</span>
+          </div>
+          <div class="wx-detail">
+            <span class="k">Precip</span>
+            <span class="v" id="wxPrecip">—</span>
+          </div>
+          <div class="wx-detail">
+            <span class="k">Dew Point</span>
+            <span class="v" id="wxDew">—</span>
+          </div>
+        </div>
+
+        <div class="wx-mini">
+          <h4>Favorites</h4>
+          <div class="wx-list" id="favList"></div>
+        </div>
+
+        <div class="wx-mini">
+          <h4>Recent</h4>
+          <div class="wx-list" id="recentList"></div>
+        </div>
+      </section>
+
+      <!-- FULL WIDTH: HOURLY -->
+      <section class="wx-panel wx-hourly hidden" id="hourlyPanel">
+        <div class="wx-panel-head">
+          <h3>Next hours</h3>
+          <p class="wx-muted">Free plan safe: pulled from forecast hours.</p>
+        </div>
+        <div class="wx-hour-strip" id="hourStrip"></div>
+      </section>
+
+      <!-- FULL WIDTH: FORECAST -->
+      <section class="wx-panel wx-forecast hidden" id="forecastPanel">
+        <div class="wx-panel-head">
+          <h3>3-day forecast</h3>
+          <p class="wx-muted">WeatherAPI free plan supports up to 3 days.</p>
+        </div>
+        <div class="wx-days" id="dayList"></div>
+
+        <footer class="wx-foot">
+          <span id="wxUpdated">—</span>
+          <span class="wx-muted">Powered by WeatherAPI.com</span>
+        </footer>
+      </section>
+    </main>
   </section>
 
+  <!-- Your existing theme scripts -->
   <script src="settings.js"></script>
   <script src="script.js"></script>
+
+  <!-- Weather -->
   <script src="weather.js"></script>
 </body>
 </html>
