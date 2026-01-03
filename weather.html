@@ -5,55 +5,81 @@
   <title>Weather</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Global styles -->
+  <!-- Your global styles -->
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Weather styles -->
+  <!-- Weather-only styles -->
   <link rel="stylesheet" href="weather.css" />
 </head>
 <body>
 
-  <section class="section glass" data-section-id="weather-page">
-    <h1>Local Weather</h1>
-
-    <div class="weather-search">
-      <input id="cityInput" type="text" placeholder="Search city…" />
-      <button id="searchBtn">Check</button>
+  <section class="section glass weather-page" data-section-id="weather-page">
+    <div class="weather-header">
+      <div>
+        <h1 class="weather-title">Local Weather</h1>
+        <p class="weather-subtitle">Search any city — ex: <span>Toledo,US</span></p>
+      </div>
+      <div class="weather-chip" id="statusChip">Ready</div>
     </div>
 
-    <div id="weather-card" class="weather-card hidden">
+    <div class="weather-search">
+      <input
+        id="cityInput"
+        type="text"
+        placeholder="Search city… (ex: London,US)"
+        autocomplete="off"
+      />
+      <button id="searchBtn" type="button">Check</button>
+    </div>
+
+    <div class="weather-hint">
+      Tip: if a city is ambiguous, use <code>City,US</code> or <code>City,State,US</code>.
+      Example: <code>Toledo,OH,US</code>
+    </div>
+
+    <div id="weather-card" class="weather-card hidden" aria-live="polite">
       <div class="weather-main">
-        <img id="weather-icon" />
-        <div>
+        <div class="weather-icon-wrap">
+          <img id="weather-icon" alt="" />
+        </div>
+        <div class="weather-main-text">
           <h2 id="weather-location"></h2>
           <p id="weather-desc"></p>
+        </div>
+        <div class="weather-temp-block">
+          <div id="weather-temp" class="weather-temp"></div>
+          <div id="weather-hi-lo" class="weather-hi-lo"></div>
         </div>
       </div>
 
       <div class="weather-stats">
-        <div>
-          <span class="label">Temp</span>
-          <span id="weather-temp"></span>
-        </div>
-        <div>
+        <div class="stat">
           <span class="label">Feels</span>
-          <span id="weather-feels"></span>
+          <span id="weather-feels" class="value"></span>
         </div>
-        <div>
+        <div class="stat">
           <span class="label">Humidity</span>
-          <span id="weather-humidity"></span>
+          <span id="weather-humidity" class="value"></span>
         </div>
-        <div>
+        <div class="stat">
           <span class="label">Wind</span>
-          <span id="weather-wind"></span>
+          <span id="weather-wind" class="value"></span>
         </div>
+        <div class="stat">
+          <span class="label">Pressure</span>
+          <span id="weather-pressure" class="value"></span>
+        </div>
+      </div>
+
+      <div class="weather-footer">
+        <span id="weather-updated"></span>
       </div>
     </div>
 
-    <p id="weather-error" class="weather-error"></p>
+    <p id="weather-error" class="weather-error" aria-live="assertive"></p>
   </section>
 
-  <!-- Existing site logic -->
+  <!-- Your existing site logic -->
   <script src="settings.js"></script>
   <script src="script.js"></script>
 
