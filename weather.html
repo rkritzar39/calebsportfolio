@@ -5,10 +5,10 @@
   <title>Weather</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Your global styles -->
+  <!-- IMPORTANT:
+       If your site is https://username.github.io/repo-name/
+       then leading "/" can break. If that happens, change /style.css -> ./style.css (same for scripts). -->
   <link rel="stylesheet" href="style.css" />
-
-  <!-- Weather-only styles -->
   <link rel="stylesheet" href="weather.css" />
 </head>
 <body>
@@ -16,25 +16,26 @@
   <section class="section glass weather-page" data-section-id="weather-page">
     <div class="weather-header">
       <div>
-        <h1 class="weather-title">Local Weather</h1>
-        <p class="weather-subtitle">Search any city — ex: <span>Toledo,US</span></p>
+        <h1 class="weather-title">Weather</h1>
+        <p class="weather-subtitle">Search a city or ZIP — like <span>43604</span> or <span>Toledo</span></p>
       </div>
       <div class="weather-chip" id="statusChip">Ready</div>
     </div>
 
-    <div class="weather-search">
-      <input
-        id="cityInput"
-        type="text"
-        placeholder="Search city… (ex: London,US)"
-        autocomplete="off"
-      />
-      <button id="searchBtn" type="button">Check</button>
-    </div>
+    <div class="weather-search-wrap">
+      <div class="weather-search">
+        <input
+          id="cityInput"
+          type="text"
+          placeholder="City or ZIP…"
+          autocomplete="off"
+          aria-autocomplete="list"
+          aria-controls="suggestions"
+        />
+        <button id="searchBtn" type="button">Go</button>
+      </div>
 
-    <div class="weather-hint">
-      Tip: if a city is ambiguous, use <code>City,US</code> or <code>City,State,US</code>.
-      Example: <code>Toledo,OH,US</code>
+      <div id="suggestions" class="suggestions hidden" role="listbox"></div>
     </div>
 
     <div id="weather-card" class="weather-card hidden" aria-live="polite">
@@ -42,10 +43,13 @@
         <div class="weather-icon-wrap">
           <img id="weather-icon" alt="" />
         </div>
+
         <div class="weather-main-text">
           <h2 id="weather-location"></h2>
           <p id="weather-desc"></p>
+          <p id="weather-meta"></p>
         </div>
+
         <div class="weather-temp-block">
           <div id="weather-temp" class="weather-temp"></div>
           <div id="weather-hi-lo" class="weather-hi-lo"></div>
@@ -53,37 +57,29 @@
       </div>
 
       <div class="weather-stats">
-        <div class="stat">
-          <span class="label">Feels</span>
-          <span id="weather-feels" class="value"></span>
-        </div>
-        <div class="stat">
-          <span class="label">Humidity</span>
-          <span id="weather-humidity" class="value"></span>
-        </div>
-        <div class="stat">
-          <span class="label">Wind</span>
-          <span id="weather-wind" class="value"></span>
-        </div>
-        <div class="stat">
-          <span class="label">Pressure</span>
-          <span id="weather-pressure" class="value"></span>
-        </div>
+        <div class="stat"><span class="label">Feels</span><span id="weather-feels" class="value"></span></div>
+        <div class="stat"><span class="label">Humidity</span><span id="weather-humidity" class="value"></span></div>
+        <div class="stat"><span class="label">Wind</span><span id="weather-wind" class="value"></span></div>
+        <div class="stat"><span class="label">UV</span><span id="weather-uv" class="value"></span></div>
       </div>
+
+      <h3 class="mini-title">Next 6 hours</h3>
+      <div id="hourly" class="hourly"></div>
+
+      <h3 class="mini-title">7-day</h3>
+      <div id="daily" class="daily"></div>
 
       <div class="weather-footer">
         <span id="weather-updated"></span>
+        <span class="credit">Powered by WeatherAPI.com</span>
       </div>
     </div>
 
     <p id="weather-error" class="weather-error" aria-live="assertive"></p>
   </section>
 
-  <!-- Your existing site logic -->
   <script src="settings.js"></script>
   <script src="script.js"></script>
-
-  <!-- Weather logic -->
   <script src="weather.js"></script>
 </body>
 </html>
