@@ -1,4 +1,4 @@
-const API_KEY = "PUT_YOUR_OPENWEATHER_KEY_HERE";
+const API_KEY = "4db1d129a3a21885b8474decfde9570c";
 
 const weatherEl = document.getElementById("weather");
 const errorEl = document.getElementById("error");
