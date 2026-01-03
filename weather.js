@@ -1,5 +1,5 @@
 // ✅ Put your OpenWeather API key here
-const API_KEY = "4db1d129a3a21885b8474decfde9570c";
+const API_KEY = "57e2ef8d1ddf45ced53b8444e23ce2b7";
 
 // Elements
 const card = document.getElementById("weather-card");
