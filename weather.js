@@ -1,51 +1,48 @@
 const API_KEY = "4db1d129a3a21885b8474decfde9570c";
 
-const weatherEl = document.getElementById("weather");
-const errorEl = document.getElementById("error");
+const card = document.getElementById("weather-card");
+const errorEl = document.getElementById("weather-error");
 
-document.getElementById("searchBtn").addEventListener("click", getWeatherByCity);
-
-function getWeatherByCity() {
+document.getElementById("searchBtn").addEventListener("click", () => {
   const city = document.getElementById("cityInput").value.trim();
-  if (!city) return;
+  if (city) fetchWeather(city);
+});
 
-  fetchWeather(
-    `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=imperial&appid=${API_KEY}`
-  );
-}
-
-function fetchWeather(url) {
+function fetchWeather(city) {
   errorEl.textContent = "";
-  weatherEl.classList.add("hidden");
+  card.classList.add("hidden");
 
-  fetch(url)
-    .then(res => {
-      if (!res.ok) throw new Error("City not found");
-      return res.json();
+  fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=imperial&appid=${API_KEY}`)
+    .then(r => {
+      if (!r.ok) throw new Error("City not found");
+      return r.json();
     })
-    .then(data => showWeather(data))
-    .catch(err => {
-      errorEl.textContent = err.message;
-    });
+    .then(showWeather)
+    .catch(err => errorEl.textContent = err.message);
 }
 
 function showWeather(data) {
-  document.getElementById("location").textContent =
+  document.getElementById("weather-location").textContent =
     `${data.name}, ${data.sys.country}`;
 
-  document.getElementById("temp").textContent =
-    `${Math.round(data.main.temp)}°F`;
-
-  document.getElementById("desc").textContent =
+  document.getElementById("weather-desc").textContent =
     data.weather[0].description;
 
-  document.getElementById("extra").textContent =
-    `Humidity: ${data.main.humidity}% · Wind: ${Math.round(data.wind.speed)} mph`;
+  document.getElementById("weather-temp").textContent =
+    `${Math.round(data.main.temp)}°F`;
+
+  document.getElementById("weather-feels").textContent =
+    `${Math.round(data.main.feels_like)}°F`;
+
+  document.getElementById("weather-humidity").textContent =
+    `${data.main.humidity}%`;
+
+  document.getElementById("weather-wind").textContent =
+    `${Math.round(data.wind.speed)} mph`;
 
   const icon = data.weather[0].icon;
-  const iconEl = document.getElementById("icon");
-  iconEl.src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
-  iconEl.alt = data.weather[0].description;
+  document.getElementById("weather-icon").src =
+    `https://openweathermap.org/img/wn/${icon}@2x.png`;
 
-  weatherEl.classList.remove("hidden");
+  card.classList.remove("hidden");
 }
