@@ -242,6 +242,93 @@
 </section>
 
            
+            
+       <section class="admin-section" id="blog-management" aria-labelledby="blog-heading">
+  <h3 id="blog-heading">Blog Management</h3>
+
+  <div class="form-group">
+    <!-- Inputs -->
+    <input type="text" id="post-title" placeholder="Post Title" class="admin-input">
+    <input type="text" id="post-author" placeholder="Author Name" class="admin-input">
+    <input type="text" id="post-author-pfp" placeholder="Author Profile Picture URL" class="admin-input">
+    <input type="text" id="post-category" placeholder="Category (e.g., Tech, Updates)" class="admin-input">
+
+    <!-- Featured Post Toggle -->
+    <label class="admin-checkbox-label">
+      <input type="checkbox" id="post-featured">
+      <span class="toggle-switch"></span>
+      Mark as Featured Post
+    </label>
+
+    <!-- Rich Text Editor -->
+    <div id="post-content-editor" class="admin-editor"></div>
+
+    <!-- Optional Image Upload for Featured Image -->
+    <div class="image-upload">
+      <label for="post-image">Featured Image (optional):</label>
+      <input type="file" id="post-image" accept="image/*">
+      <div id="post-image-preview" class="image-preview"></div>
+    </div>
+
+    <input type="hidden" id="post-id">
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" onclick="savePost()" class="admin-btn is-primary">Save Post</button>
+      <button type="button" onclick="resetPostForm()" class="admin-btn is-secondary">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Existing Posts List -->
+  <h3>Existing Posts</h3>
+  <div id="posts-list" class="admin-list"></div>
+</section>
+
+             <section class="admin-section" id="president-management" aria-labelledby="president-heading">
+                <h3 id="president-heading">Manage Current President Info</h3>
+
+                <form id="president-form">
+                    <div class="form-group">
+                        <label for="president-name">President's Name:</label>
+                        <input type="text" id="president-name" name="name" placeholder="e.g., Donald J. Trump">
+                    </div>
+                    <div class="form-group">
+                        <label for="president-born">Born Date:</label>
+                        <input type="text" id="president-born" name="born" placeholder="e.g., June 14, 1946">
+                    </div>
+                    <div class="form-group">
+                        <label for="president-height">Height:</label>
+                        <input type="text" id="president-height" name="height" placeholder="e.g., 6'3\" (190.5 cm)">
+                    </div>
+                    <div class="form-group">
+                        <label for="president-party">Party:</label>
+                        <input type="text" id="president-party" name="party" placeholder="e.g., Republican Party">
+                    </div>
+                     <div class="form-group">
+                        <label for="president-term">Presidential Term:</label>
+                        <input type="text" id="president-term" name="term" placeholder="e.g., 1/20/25 at 12:00 PM - 1/20/29 at 12:00 PM">
+                     </div>
+                     <div class="form-group">
+                        <label for="president-vp">Vice President:</label>
+                        <input type="text" id="president-vp" name="vp" placeholder="e.g., James David Vance">
+                     </div>
+                    <div class="form-group">
+                        <label for="president-image-url">President Image URL:</label>
+                        <input type="url" id="president-image-url" name="imageUrl" placeholder="https://..." inputmode="url">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preview:</label>
+                        <div id="president-preview" class="president-preview-area"> <p><small>Preview will appear here as you type.</small></p>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="save-president-button" class="button-primary">Save President Info</button>
+                    </div>
+                </form>
+                 <div id="president-status-message" class="status-message" role="status" aria-live="polite"></div>
+            </section>
+
             <section class="admin-section" id="social-links-management" aria-labelledby="social-links-heading">
     <h3 id="social-links-heading">Manage Social Links</h3>
 
@@ -518,6 +605,42 @@
 
     </section>
 
+           <section class="admin-section" id="goal-management" aria-labelledby="goal-management-heading">
+  <h3 id="goal-management-heading">Project Goal Tracker</h3>
+
+  <form id="goal-form">
+
+    <div class="form-group">
+      <label for="goal-title">Goal Title</label>
+      <input type="text" id="goal-title" name="goalTitle" placeholder="e.g., New Studio Setup" required>
+    </div>
+
+    <div class="form-group">
+      <label for="goal-total">Goal Amount ($)</label>
+      <input type="number" id="goal-total" name="goalTotal" placeholder="e.g., 5000" required>
+    </div>
+
+    <div class="form-group">
+      <label for="goal-raised">Raised Amount ($)</label>
+      <input type="number" id="goal-raised" name="goalRaised" placeholder="e.g., 1200" required>
+    </div>
+
+    <div class="form-group">
+      <label for="goal-remaining">Remaining ($)</label>
+      <input type="number" id="goal-remaining" name="goalRemaining" readonly disabled>
+      <small>Calculated automatically.</small>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" id="save-goal-button" class="button-primary">
+        Save Goal Tracker
+      </button>
+    </div>
+  </form>
+
+  <div id="goal-status-message" class="status-message" role="status" aria-live="polite"></div>
+</section>
+
             <!-- Manual Live Status (Admin) -->
 <section id="manual-status-section" class="admin-subsection" aria-labelledby="manual-status-heading">
   <h4 id="manual-status-heading">Manual Live Status (website-only)</h4>
@@ -536,6 +659,7 @@
         <option value="spotify">Spotify</option>
         <option value="twitch">Twitch</option>
         <option value="discord">Discord</option>
+        <option value="github">GitHub</option>
         <option value="reddit">Reddit</option>
         <option value="youtube">YouTube</option>
       </select>
