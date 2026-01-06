@@ -1654,6 +1654,54 @@ if (document.readyState === 'loading') {
     loadBusinessInfoData();
 }
 
+// Make sure this exists globally (or in the same module scope as loadShoutoutsAdmin)
+let allShoutouts = window.allShoutouts || { tiktok: [], instagram: [], youtube: [] };
+window.allShoutouts = allShoutouts;
+
+function displayFilteredShoutouts(platform) {
+  const listContainer = document.getElementById(`shoutouts-${platform}-list-admin`);
+  const countElement = document.getElementById(`${platform}-count`);
+  const searchInput = document.getElementById(`search-${platform}`);
+
+  if (!listContainer || !countElement) {
+    console.error(`Missing list/count elements for ${platform}`);
+    return;
+  }
+
+  const searchTerm = (searchInput?.value || "").trim().toLowerCase();
+  const items = (allShoutouts?.[platform] || []);
+
+  const filtered = items.filter(item => {
+    if (!searchTerm) return true;
+    const username = (item.username || "").toLowerCase();
+    const nickname = (item.nickname || "").toLowerCase();
+    const bio = (item.bio || "").toLowerCase();
+    return username.includes(searchTerm) || nickname.includes(searchTerm) || bio.includes(searchTerm);
+  });
+
+  countElement.textContent = `(${filtered.length})`;
+  listContainer.innerHTML = "";
+
+  if (filtered.length === 0) {
+    listContainer.innerHTML = `<p>No ${platform} shoutouts found.</p>`;
+    return;
+  }
+
+  // Render each item (basic list view; you can swap in your fancier card markup)
+  filtered.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "list-item-admin";
+    div.innerHTML = `
+      <div class="item-content">
+        <strong>${item.nickname || "N/A"}</strong>
+        <div class="muted">@${item.username || "N/A"}</div>
+      </div>
+    `;
+    listContainer.appendChild(div);
+  });
+}
+
+    
 
 // [In admin.js] - Replace the entire loadProfileData function
 
