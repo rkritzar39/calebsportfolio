@@ -125,6 +125,68 @@ document.addEventListener("DOMContentLoaded", () => {
   })();
 });
 
+// Load existing Project Goal Data
+async function loadGoalTracker() {
+  const ref = doc(db, "siteSettings", "goalTracker");
+  const snap = await getDoc(ref);
+
+  if (snap.exists()) {
+    const data = snap.data();
+
+    document.getElementById("goal-title").value = data.goalTitle ?? "";
+    document.getElementById("goal-total").value = data.goalTotal ?? 0;
+    document.getElementById("goal-raised").value = data.goalRaised ?? 0;
+    document.getElementById("goal-remaining").value = data.goalRemaining ?? 0;
+  }
+}
+
+loadGoalTracker();
+
+const goalTitleInput = document.getElementById("goal-title");
+const goalTotalInput = document.getElementById("goal-total");
+const goalRaisedInput = document.getElementById("goal-raised");
+const goalRemainingInput = document.getElementById("goal-remaining");
+
+function updateRemaining() {
+  const total = Number(goalTotalInput.value) || 0;
+  const raised = Number(goalRaisedInput.value) || 0;
+  goalRemainingInput.value = Math.max(total - raised, 0);
+}
+
+goalTotalInput.addEventListener("input", updateRemaining);
+goalRaisedInput.addEventListener("input", updateRemaining);
+
+
+document.getElementById("goal-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const title = goalTitleInput.value.trim();
+  const total = Number(goalTotalInput.value);
+  const raised = Number(goalRaisedInput.value);
+  const remaining = Math.max(total - raised, 0);
+
+  try {
+    // Save to /goals collection with ownerId
+    await setDoc(doc(db, "goals", "goalTracker"), {
+      goalTitle: title,
+      goalTotal: total,
+      goalRaised: raised,
+      goalRemaining: remaining,
+      ownerId: auth.currentUser.uid // ⚡ Required for Firestore rule
+    });
+
+    const msg = document.getElementById("goal-status-message");
+    msg.textContent = "Goal Tracker Saved!";
+    msg.classList.add("success");
+  } catch (err) {
+    console.error(err); // Log Firestore error
+    const msg = document.getElementById("goal-status-message");
+    msg.textContent = "Error saving goal tracker.";
+    msg.classList.add("error");
+  }
+});
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("live-status-input");
   const updateBtn = document.getElementById("update-live-status-btn");
@@ -202,6 +264,11 @@ document.addEventListener('DOMContentLoaded', () => { //
     // --- Firestore Reference for Social Links ---
     // IMPORTANT: Assumes you have a Firestore collection named 'social_links'
     const socialLinksCollectionRef = collection(db, "social_links");
+    // Reference for President Info
+    const presidentDocRef = doc(db, "site_config", "currentPresident"); 
+    // Reference for Blog Posts
+    const postsCollectionRef = collection(db, "posts"); // Blog collection reference
+
 
     // Firestore Reference for Disabilities
     const disabilitiesCollectionRef = collection(db, "disabilities");
@@ -1654,54 +1721,272 @@ if (document.readyState === 'loading') {
     loadBusinessInfoData();
 }
 
-// Make sure this exists globally (or in the same module scope as loadShoutoutsAdmin)
-let allShoutouts = window.allShoutouts || { tiktok: [], instagram: [], youtube: [] };
-window.allShoutouts = allShoutouts;
+// End of admin-business-hours-v16.js
 
-function displayFilteredShoutouts(platform) {
-  const listContainer = document.getElementById(`shoutouts-${platform}-list-admin`);
-  const countElement = document.getElementById(`${platform}-count`);
-  const searchInput = document.getElementById(`search-${platform}`);
 
-  if (!listContainer || !countElement) {
-    console.error(`Missing list/count elements for ${platform}`);
-    return;
-  }
+// ======================================
+// BLOG MANAGEMENT FUNCTIONS (FULL)
+// ======================================
 
-  const searchTerm = (searchInput?.value || "").trim().toLowerCase();
-  const items = (allShoutouts?.[platform] || []);
+// Initialize Quill with full formatting options
+const quill = new Quill('#post-content-editor', {
+    theme: 'snow',
+    modules: {
+        toolbar: [
+            [{ 'header': [1, 2, 3, false] }],
+            [{ 'font': [] }, { 'size': ['small', false, 'large', 'huge'] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'align': [] }],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+            ['link', 'image', 'video'],
+            ['clean']
+        ]
+    }
+});
+// ----------------------------
+// Save or update a blog post
+// ----------------------------
+async function savePost() {
+    const postId = document.getElementById('post-id').value;
+    const title = document.getElementById('post-title').value.trim();
+    const author = document.getElementById('post-author').value.trim();
+    const authorPfpUrl = document.getElementById('post-author-pfp').value.trim();
+    const category = document.getElementById('post-category').value.trim();
+    const isFeatured = document.getElementById('post-featured').checked;
+    const content = quill.root.innerHTML;
+    const imageFile = document.getElementById('post-image')?.files[0];
 
-  const filtered = items.filter(item => {
-    if (!searchTerm) return true;
-    const username = (item.username || "").toLowerCase();
-    const nickname = (item.nickname || "").toLowerCase();
-    const bio = (item.bio || "").toLowerCase();
-    return username.includes(searchTerm) || nickname.includes(searchTerm) || bio.includes(searchTerm);
-  });
+    if (!title || !author || !category) {
+        alert('Please fill out Title, Author, and Category.');
+        return;
+    }
+    if (content.trim() === '<p><br></p>' || content.trim() === '') {
+        alert('Post Content cannot be empty.');
+        return;
+    }
 
-  countElement.textContent = `(${filtered.length})`;
-  listContainer.innerHTML = "";
+    try {
+        const batch = writeBatch(db);
+        let imageUrl = null;
 
-  if (filtered.length === 0) {
-    listContainer.innerHTML = `<p>No ${platform} shoutouts found.</p>`;
-    return;
-  }
+        // Un-feature other posts if this one is featured
+        if (isFeatured) {
+            const featuredQuery = query(postsCollectionRef, where('isFeatured', '==', true));
+            const featuredSnapshot = await getDocs(featuredQuery);
+            featuredSnapshot.forEach(docSnap => {
+                if (docSnap.id !== postId) batch.update(docSnap.ref, { isFeatured: false });
+            });
+        }
 
-  // Render each item (basic list view; you can swap in your fancier card markup)
-  filtered.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "list-item-admin";
-    div.innerHTML = `
-      <div class="item-content">
-        <strong>${item.nickname || "N/A"}</strong>
-        <div class="muted">@${item.username || "N/A"}</div>
-      </div>
-    `;
-    listContainer.appendChild(div);
-  });
+        // Handle image upload
+        if (imageFile) {
+            // Delete old image if editing
+            if (postId) {
+                const oldDoc = await getDoc(doc(db, 'posts', postId));
+                if (oldDoc.exists() && oldDoc.data().imageUrl) {
+                    try {
+                        const oldRef = ref(storage, oldDoc.data().imageUrl);
+                        await deleteObject(oldRef);
+                    } catch {}
+                }
+            }
+            const storageRef = ref(storage, `blogImages/${Date.now()}_${imageFile.name}`);
+            await uploadBytes(storageRef, imageFile);
+            imageUrl = await getDownloadURL(storageRef);
+        }
+
+        // Prepare post data
+        const postData = {
+            title, author, authorPfpUrl, category, content,
+            isFeatured, updatedAt: serverTimestamp()
+        };
+        if (imageUrl) postData.imageUrl = imageUrl;
+
+        if (postId) {
+            const postRef = doc(db, 'posts', postId);
+            batch.update(postRef, postData);
+        } else {
+            postData.createdAt = serverTimestamp();
+            const newPostRef = doc(postsCollectionRef);
+            batch.set(newPostRef, postData);
+        }
+
+        await batch.commit();
+        alert(`Post ${postId ? 'updated' : 'saved'} successfully!`);
+        resetPostForm();
+        loadPosts();
+
+    } catch (error) {
+        console.error('Error saving post:', error);
+        alert('Error saving post. Check console for details.');
+    }
 }
 
+// ----------------------------
+// Reset post form
+// ----------------------------
+function resetPostForm() {
+    document.getElementById('post-id').value = '';
+    document.getElementById('post-title').value = '';
+    document.getElementById('post-author').value = '';
+    document.getElementById('post-author-pfp').value = '';
+    document.getElementById('post-category').value = '';
+    document.getElementById('post-featured').checked = false;
+    quill.root.innerHTML = '';
+    const imgInput = document.getElementById('post-image');
+    if (imgInput) imgInput.value = '';
+    const previewContainer = document.getElementById('post-image-preview');
+    if (previewContainer) previewContainer.innerHTML = '';
+}
+
+// ----------------------------
+// Load posts for admin
+// ----------------------------
+async function loadPosts() {
+    const postsList = document.getElementById('posts-list');
+    if (!postsList) return;
+
+    postsList.innerHTML = '<p>Loading posts...</p>';
+
+    try {
+        const postsQuery = query(postsCollectionRef, orderBy('createdAt', 'desc'));
+        const snapshot = await getDocs(postsQuery);
+        if (snapshot.empty) {
+            postsList.innerHTML = '<p>No posts found.</p>';
+            return;
+        }
+
+        postsList.innerHTML = '';
+        snapshot.forEach(docSnap => {
+            const post = docSnap.data();
+            const postId = docSnap.id;
+
+            const html = `
+                <div class="admin-list-item" data-id="${postId}">
+                    <div>
+                        <strong>${post.title || 'Untitled'}</strong>
+                        <small>${post.category || 'Uncategorized'}</small>
+                        ${post.isFeatured ? '<span style="color:var(--accent-color,#3ddc84);">Featured</span>' : ''}
+                    </div>
+                    <div>
+                        <button onclick="editPost('${postId}')" class="admin-btn is-secondary">Edit</button>
+                        <button onclick="deletePost('${postId}')" class="admin-btn is-secondary">Delete</button>
+                    </div>
+                </div>
+            `;
+            postsList.innerHTML += html;
+        });
+
+    } catch (error) {
+        console.error('Error loading posts:', error);
+        postsList.innerHTML = '<p>Error loading posts.</p>';
+    }
+}
+
+// ----------------------------
+// Edit post
+// ----------------------------
+async function editPost(postId) {
+    try {
+        const docRef = doc(db, 'posts', postId);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) return alert('Post not found.');
+
+        const post = docSnap.data();
+        document.getElementById('post-id').value = postId;
+        document.getElementById('post-title').value = post.title || '';
+        document.getElementById('post-author').value = post.author || '';
+        document.getElementById('post-author-pfp').value = post.authorPfpUrl || '';
+        document.getElementById('post-category').value = post.category || '';
+        document.getElementById('post-featured').checked = post.isFeatured || false;
+        quill.root.innerHTML = post.content || '';
+
+        const previewContainer = document.getElementById('post-image-preview');
+        if (previewContainer) {
+            if (post.imageUrl) {
+                previewContainer.innerHTML = `
+                    <img src="${post.imageUrl}" style="max-width:150px;">
+                    <small>Choose a new file below to replace this image.</small>
+                `;
+            } else previewContainer.innerHTML = `<p>No image uploaded yet.</p>`;
+        }
+
+    } catch (error) {
+        console.error('Error loading post for edit:', error);
+        alert('Error loading post.');
+    }
+}
+
+// ----------------------------
+// Delete post
+// ----------------------------
+async function deletePost(postId) {
+    if (!confirm('Are you sure you want to delete this post?')) return;
+    try {
+        await deleteDoc(doc(db, 'posts', postId));
+        alert('Post deleted successfully!');
+        loadPosts();
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        alert('Error deleting post.');
+    }
+}
     
+/** Filters and displays shoutouts in the admin list */
+function displayFilteredShoutouts(platform) {
+    const listContainer = document.getElementById(`shoutouts-${platform}-list-admin`);
+    const countElement = document.getElementById(`${platform}-count`);
+    const searchInput = document.getElementById(`search-${platform}`);
+
+    if (!listContainer || !searchInput || !allShoutouts || !allShoutouts[platform]) {
+        console.error(`Missing elements or data for filtering platform: ${platform}.`);
+        if(listContainer) listContainer.innerHTML = `<p class="error">Error displaying filtered list.</p>`;
+        return;
+    }
+
+    const searchTerm = searchInput.value.trim().toLowerCase();
+    const fullList = allShoutouts[platform];
+
+    const filteredList = fullList.filter(account => {
+        if (!searchTerm) return true;
+        const nickname = (account.nickname || '').toLowerCase();
+        const username = (account.username || '').toLowerCase();
+        return nickname.includes(searchTerm) || username.includes(searchTerm);
+    });
+
+    listContainer.innerHTML = ''; // Clear the current list
+
+    if (filteredList.length > 0) {
+        filteredList.forEach(account => {
+            if (typeof renderAdminListItem === 'function') {
+                // *** CHANGE HERE: Pass the whole 'account' object as itemData ***
+                renderAdminListItem(
+                    listContainer,
+                    account.id,     // Document ID
+                    platform,       // Platform name
+                    account,        // <<< Pass the full account data object
+                    handleDeleteShoutout, // Pass delete handler
+                    openEditModal       // Pass edit handler
+                );
+            } else {
+                console.error("renderAdminListItem function is not defined during filtering!");
+                listContainer.innerHTML = `<p class="error">Critical Error: Rendering function missing.</p>`;
+                return; // Stop rendering this list
+            }
+        });
+    } else {
+        if (searchTerm) {
+            listContainer.innerHTML = `<p>No shoutouts found matching "${searchInput.value}".</p>`;
+        } else {
+            listContainer.innerHTML = `<p>No ${platform} shoutouts found.</p>`;
+        }
+    }
+
+    if (countElement) {
+        countElement.textContent = `(${filteredList.length})`;
+    }
+}
 
 // [In admin.js] - Replace the entire loadProfileData function
 
@@ -2273,6 +2558,7 @@ onAuthStateChanged(auth, user => {
             // 2. Safely load all data
             try {
                 console.log("Loading all admin panel data...");
+                loadPosts(); // Load blog posts
                 loadProfileData();
                 loadBusinessInfoData();
                 setupBusinessInfoListeners();
@@ -2286,7 +2572,31 @@ onAuthStateChanged(auth, user => {
                 loadTechItemsAdmin();
                 loadLegislationAdmin();
 
-            
+                // ===============================================
+                // == THIS IS THE NEW CODE TO ADD ================
+                // ===============================================
+                
+                console.log("Initializing Rich Text Editor...");
+                window.quill = quill;
+                console.log("✅ Rich Text Editor initialized.");
+                // ===============================================
+                // == THIS IS THE FIX: CONNECT THE FORM TO THE SCRIPT ==
+                // ===============================================
+                const blogForm = document.getElementById('blog-management-form'); // Use the CORRECT ID
+                if (blogForm) {
+                    // This prevents adding the same listener multiple times
+                    if (!blogForm.dataset.listenerAttached) {
+                        blogForm.addEventListener('submit', (e) => {
+                            e.preventDefault(); // CRITICAL: stops the page from reloading
+                            console.log("Save Post form submitted via listener.");
+                            savePost();
+                        });
+                        blogForm.dataset.listenerAttached = 'true';
+                    }
+                } else {
+                    console.error("CRITICAL ERROR: Blog management form with ID 'blog-management-form' not found!");
+                }
+
                 resetInactivityTimer();
                 addActivityListeners();
             } catch (error) {
@@ -4504,6 +4814,18 @@ async function loadDisabilitiesAdmin() {
         if (event.target === editDisabilityModal) { closeEditDisabilityModal(); }
         if (event.target === editTechItemModal) { closeEditTechItemModal(); }
     });
+
+    // ======================================================
+    // ===== GLOBAL HANDLERS (THE CORRECT LOCATION) ======
+    // ======================================================
+    // This section makes functions inside the module accessible to the HTML's onclick attributes.
+    // It MUST be INSIDE the DOMContentLoaded listener, after the functions are defined.
+    
+    // Blog Functions
+    window.savePost = savePost;
+    window.editPost = editPost;
+    window.deletePost = deletePost;
+
     // Google Sign-In
     window.handleGoogleSignIn = handleGoogleSignIn;
 
