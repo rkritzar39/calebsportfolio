@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Weather</title>
 
-  <!-- Your global theme variables (the :root + body.light-e stuff) -->
+  <!-- Your global theme variables -->
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Leaflet (map) -->
@@ -30,7 +30,8 @@
           <p id="subtitle">Current • hourly • daily • air quality • map layers</p>
         </div>
 
-        <button class="btn" id="settingsBtn" type="button" title="Settings">Settings</button>
+        <!-- IMPORTANT: namespaced ID -->
+        <button class="btn" id="weatherSettingsBtn" type="button" title="Settings">Settings</button>
       </header>
 
       <section class="weather-panel" aria-label="Weather controls and results">
@@ -138,7 +139,7 @@
               </div>
             </div>
             <div id="map" class="map"></div>
-            <div class="tiny-note">Overlays: OpenWeather Maps 1.0 tiles :contentReference[oaicite:7]{index=7}</div>
+            <div class="tiny-note">Overlays: OpenWeather Maps tiles</div>
           </section>
         </div>
 
@@ -149,13 +150,14 @@
     </div>
   </main>
 
-  <!-- Settings Modal -->
-  <div class="modal" id="settingsModal" hidden>
-    <div class="modal-backdrop" id="settingsClose"></div>
+  <!-- SETTINGS MODAL (namespaced IDs) -->
+  <div class="modal" id="weatherSettingsModal" hidden>
+    <div class="modal-backdrop" id="weatherSettingsClose"></div>
+
     <div class="modal-card" role="dialog" aria-modal="true" aria-label="Weather settings">
       <div class="modal-head">
         <div class="modal-title">Settings</div>
-        <button class="btn ghost" id="settingsX" type="button">Close</button>
+        <button class="btn ghost" id="weatherSettingsX" type="button">Close</button>
       </div>
 
       <div class="modal-body">
@@ -202,7 +204,7 @@
               <input id="autoLocate" type="checkbox" />
               <span class="slider"></span>
             </label>
-            <span class="tiny-note">If off, location is only fetched when user clicks “Use my location”.</span>
+            <span class="tiny-note">If off, location only fetches when user clicks “Use my location”.</span>
           </div>
         </div>
 
@@ -241,13 +243,13 @@
         <div class="setting">
           <div class="setting-label">Save settings</div>
           <div class="setting-control">
-            <button class="btn primary" id="saveSettings" type="button">Save</button>
-            <button class="btn" id="resetSettings" type="button">Reset</button>
+            <button class="btn primary" id="weatherSaveSettings" type="button">Save</button>
+            <button class="btn" id="weatherResetSettings" type="button">Reset</button>
           </div>
         </div>
 
         <div class="tiny-note">
-          Weather Maps 1.0 tile endpoint format: :contentReference[oaicite:8]{index=8}
+          Reset here only resets weather settings, not your website’s global settings.
         </div>
       </div>
     </div>
