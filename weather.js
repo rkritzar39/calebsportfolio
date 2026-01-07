@@ -1,28 +1,39 @@
 // =====================================================
-// Weather Page JS (OpenWeather)
-// - search city
-// - geolocation
-// - F/C toggle
-// - hourly + daily preview
-// - saves last city + units
+// Weather Website (OpenWeather free endpoints)
+// - Geocoding (direct/reverse)
+// - Current weather
+// - 5 day / 3 hour forecast (hourly + daily derived)
+// - Air pollution (AQI + pollutants)
+// - Units toggle + time format toggle + unit display pill
+// - Saves last location + prefs
+//
+// Notes:
+// - OpenWeather recommends using Geocoding API; built-in geocoding is deprecated. :contentReference[oaicite:8]{index=8}
 // =====================================================
 
 // ====== CONFIG ======
-const OPENWEATHER_KEY = "57e2ef8d1ddf45ced53b8444e23ce2b7"; // <-- put your OpenWeather API key here
+const OPENWEATHER_KEY = "57e2ef8d1ddf45ced53b8444e23ce2b7";
+
+// Base host for free calls is api.openweathermap.org :contentReference[oaicite:9]{index=9}
+const API = "https://api.openweathermap.org";
 
 // ====== DOM ======
 const $ = (id) => document.getElementById(id);
 
-const searchForm  = $("searchForm");
-const cityInput   = $("cityInput");
-const geoBtn      = $("geoBtn");
-const refreshBtn  = $("refreshBtn");
-const statusEl    = $("status");
+const searchForm = $("searchForm");
+const cityInput  = $("cityInput");
+const geoBtn     = $("geoBtn");
+const refreshBtn = $("refreshBtn");
+const statusEl   = $("status");
+const unitPill   = $("unitPill");
 
 const unitF = $("unitF");
 const unitC = $("unitC");
+const time12 = $("time12");
+const time24 = $("time24");
 
 const currentCard = $("currentCard");
+const airCard     = $("airCard");
 const hourlyCard  = $("hourlyCard");
 const dailyCard   = $("dailyCard");
 
@@ -44,14 +55,32 @@ const cloudsEl = $("clouds");
 const hourlyEl = $("hourly");
 const dailyEl  = $("daily");
 
+// Air quality
+const aqiBadge = $("aqiBadge");
+const aqiText  = $("aqiText");
+const pm25El   = $("pm25");
+const pm10El   = $("pm10");
+const o3El     = $("o3");
+const no2El    = $("no2");
+const so2El    = $("so2");
+const coEl     = $("co");
+
 // ====== STATE ======
 let units = localStorage.getItem("weather_units") || "imperial"; // imperial=F, metric=C
+let timeFormat = localStorage.getItem("weather_time") || "12";   // "12" or "24"
+
 let lastCity = localStorage.getItem("weather_city") || "";
 let lastCoords = JSON.parse(localStorage.getItem("weather_coords") || "null");
 
 // ====== HELPERS ======
-function setStatus(msg) {
-  statusEl.textContent = msg || "";
+function setStatus(msg) { statusEl.textContent = msg || ""; }
+
+function ensureKey() {
+  if (!OPENWEATHER_KEY || OPENWEATHER_KEY.includes("YOUR_API_KEY_HERE")) {
+    setStatus("Add your OpenWeather API key in weather.js (OPENWEATHER_KEY).");
+    return false;
+  }
+  return true;
 }
 
 function setUnits(nextUnits) {
@@ -63,11 +92,27 @@ function setUnits(nextUnits) {
   unitC.classList.toggle("is-active", !isF);
   unitF.setAttribute("aria-pressed", String(isF));
   unitC.setAttribute("aria-pressed", String(!isF));
+  updateUnitPill();
 }
 
-function iconUrl(icon) {
-  return `https://openweathermap.org/img/wn/${icon}@2x.png`;
+function setTimeFormat(next) {
+  timeFormat = next;
+  localStorage.setItem("weather_time", timeFormat);
+
+  const is12 = timeFormat === "12";
+  time12.classList.toggle("is-active", is12);
+  time24.classList.toggle("is-active", !is12);
+  time12.setAttribute("aria-pressed", String(is12));
+  time24.setAttribute("aria-pressed", String(!is12));
 }
+
+function updateUnitPill() {
+  const tempUnit = units === "imperial" ? "°F" : "°C";
+  const windUnit = units === "imperial" ? "mph" : "m/s";
+  unitPill.textContent = `${tempUnit} • wind ${windUnit} • time ${timeFormat}h`;
+}
+
+function iconUrl(icon) { return `https://openweathermap.org/img/wn/${icon}@2x.png`; }
 
 function fmtTemp(x) {
   if (x === undefined || x === null || Number.isNaN(x)) return "—";
@@ -84,25 +129,36 @@ function fmtKm(meters) {
   return `${(meters / 1000).toFixed(1)} km`;
 }
 
-function pad2(n) {
-  return String(n).padStart(2, "0");
+function pad2(n) { return String(n).padStart(2, "0"); }
+
+// Build a Date object representing the location-local time using timezone offset seconds.
+function dateFromUnixLocal(unixSeconds, tzOffsetSeconds) {
+  const ms = (unixSeconds + tzOffsetSeconds) * 1000;
+  return new Date(ms);
 }
 
-function localTimeFromUnix(unixSeconds, tzOffsetSeconds) {
-  // OpenWeather timezone offset is seconds from UTC
-  const ms = (unixSeconds + tzOffsetSeconds) * 1000;
-  const d = new Date(ms);
+function formatLocalTime(unixSeconds, tzOffsetSeconds) {
+  const d = dateFromUnixLocal(unixSeconds, tzOffsetSeconds);
+  const hh = d.getUTCHours();
+  const mm = d.getUTCMinutes();
+
+  if (timeFormat === "24") return `${pad2(hh)}:${pad2(mm)}`;
+
+  const ampm = hh >= 12 ? "PM" : "AM";
+  const h12 = ((hh + 11) % 12) + 1;
+  return `${h12}:${pad2(mm)} ${ampm}`;
+}
+
+function formatLocalDateTime(unixSeconds, tzOffsetSeconds) {
+  const d = dateFromUnixLocal(unixSeconds, tzOffsetSeconds);
   const y = d.getUTCFullYear();
   const mo = pad2(d.getUTCMonth() + 1);
   const da = pad2(d.getUTCDate());
-  const hh = pad2(d.getUTCHours());
-  const mm = pad2(d.getUTCMinutes());
-  return `${y}-${mo}-${da} ${hh}:${mm}`;
+  return `${y}-${mo}-${da} ${formatLocalTime(unixSeconds, tzOffsetSeconds)}`;
 }
 
 function dayKeyFromUnix(unixSeconds, tzOffsetSeconds) {
-  const ms = (unixSeconds + tzOffsetSeconds) * 1000;
-  const d = new Date(ms);
+  const d = dateFromUnixLocal(unixSeconds, tzOffsetSeconds);
   const y = d.getUTCFullYear();
   const mo = pad2(d.getUTCMonth() + 1);
   const da = pad2(d.getUTCDate());
@@ -110,7 +166,6 @@ function dayKeyFromUnix(unixSeconds, tzOffsetSeconds) {
 }
 
 function weekdayLabelFromKey(key) {
-  // key: YYYY-MM-DD (in that location's local date)
   const [y, m, d] = key.split("-").map(Number);
   const date = new Date(Date.UTC(y, m - 1, d));
   return date.toLocaleDateString(undefined, { weekday: "short" });
@@ -131,82 +186,128 @@ async function fetchJSON(url) {
 
 function showCards(show) {
   currentCard.hidden = !show;
+  airCard.hidden     = !show;
   hourlyCard.hidden  = !show;
   dailyCard.hidden   = !show;
 }
 
-// ====== API ======
-async function loadByCity(city) {
-  if (!city?.trim()) {
-    setStatus("Type a city first.");
+// ====== OPENWEATHER ENDPOINTS ======
+// Geocoding API :contentReference[oaicite:10]{index=10}
+async function geocodeDirect(query) {
+  const q = encodeURIComponent(query);
+  const url = `${API}/geo/1.0/direct?q=${q}&limit=5&appid=${OPENWEATHER_KEY}`;
+  return fetchJSON(url);
+}
+
+async function geocodeReverse(lat, lon) {
+  const url = `${API}/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${OPENWEATHER_KEY}`;
+  return fetchJSON(url);
+}
+
+// Current Weather :contentReference[oaicite:11]{index=11}
+async function getCurrent(lat, lon) {
+  const url = `${API}/data/2.5/weather?lat=${lat}&lon=${lon}&units=${units}&appid=${OPENWEATHER_KEY}`;
+  return fetchJSON(url);
+}
+
+// 5 day / 3 hour forecast :contentReference[oaicite:12]{index=12}
+async function getForecast(lat, lon) {
+  const url = `${API}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${units}&appid=${OPENWEATHER_KEY}`;
+  return fetchJSON(url);
+}
+
+// Air Pollution API :contentReference[oaicite:13]{index=13}
+async function getAir(lat, lon) {
+  const url = `${API}/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_KEY}`;
+  return fetchJSON(url);
+}
+
+// ====== LOADERS ======
+async function loadByQuery(searchText) {
+  if (!ensureKey()) return;
+  const q = searchText?.trim();
+  if (!q) return setStatus("Type a city first.");
+
+  setStatus("Finding location…");
+  const matches = await geocodeDirect(q);
+
+  if (!matches?.length) {
+    showCards(false);
+    setStatus("No matching city found. Try adding state/country like “Toledo, OH, US”.");
     return;
   }
-  if (!OPENWEATHER_KEY || OPENWEATHER_KEY.includes("YOUR_API_KEY_HERE")) {
-    setStatus("Add your OpenWeather API key in weather.js (OPENWEATHER_KEY).");
-    return;
-  }
+
+  // Pick the top match
+  const top = matches[0];
+  const lat = top.lat;
+  const lon = top.lon;
+
+  localStorage.setItem("weather_city", q);
+  localStorage.setItem("weather_coords", JSON.stringify({ lat, lon }));
+  lastCity = q;
+  lastCoords = { lat, lon };
+
+  await loadByCoords(lat, lon, top);
+}
+
+async function loadByCoords(lat, lon, geoHint = null) {
+  if (!ensureKey()) return;
 
   setStatus("Loading weather…");
 
-  const q = encodeURIComponent(city.trim());
-  const currentUrl =
-    `https://api.openweathermap.org/data/2.5/weather?q=${q}&appid=${OPENWEATHER_KEY}&units=${units}`;
+  // If we don’t have a nice name, reverse geocode it
+  let geo = geoHint;
+  if (!geo) {
+    try {
+      const rev = await geocodeReverse(lat, lon);
+      geo = rev?.[0] || null;
+    } catch {
+      geo = null;
+    }
+  }
 
-  const current = await fetchJSON(currentUrl);
-  const { lat, lon } = current.coord;
+  // Fetch in parallel
+  const [current, forecast, air] = await Promise.all([
+    getCurrent(lat, lon),
+    getForecast(lat, lon),
+    getAir(lat, lon),
+  ]);
 
-  const forecastUrl =
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_KEY}&units=${units}`;
-
-  const forecast = await fetchJSON(forecastUrl);
-
-  localStorage.setItem("weather_city", city.trim());
-  localStorage.setItem("weather_coords", JSON.stringify({ lat, lon }));
-  lastCity = city.trim();
-  lastCoords = { lat, lon };
-
-  render(current, forecast);
+  renderAll(current, forecast, air, geo);
   setStatus("");
 }
 
-async function loadByCoords(lat, lon) {
-  if (!OPENWEATHER_KEY || OPENWEATHER_KEY.includes("YOUR_API_KEY_HERE")) {
-    setStatus("Add your OpenWeather API key in weather.js (OPENWEATHER_KEY).");
-    return;
+function aqiLabel(aqi) {
+  // OpenWeather AQI scale: 1..5
+  // 1=Good, 2=Fair, 3=Moderate, 4=Poor, 5=Very Poor :contentReference[oaicite:14]{index=14}
+  switch (aqi) {
+    case 1: return ["Good", "Air is clean."];
+    case 2: return ["Fair", "Air is okay; sensitive folks might notice."];
+    case 3: return ["Moderate", "Sensitive groups should take it easy."];
+    case 4: return ["Poor", "Limit outdoor activity if you can."];
+    case 5: return ["Very Poor", "Avoid long outdoor exposure."];
+    default: return ["—", "—"];
   }
-
-  setStatus("Loading weather for your location…");
-
-  const currentUrl =
-    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_KEY}&units=${units}`;
-  const current = await fetchJSON(currentUrl);
-
-  const forecastUrl =
-    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_KEY}&units=${units}`;
-  const forecast = await fetchJSON(forecastUrl);
-
-  localStorage.setItem("weather_city", current?.name || "");
-  localStorage.setItem("weather_coords", JSON.stringify({ lat, lon }));
-  lastCity = current?.name || "";
-  lastCoords = { lat, lon };
-
-  render(current, forecast);
-  setStatus("");
 }
 
 // ====== RENDER ======
-function render(current, forecast) {
+function renderAll(current, forecast, air, geo) {
   showCards(true);
+  updateUnitPill();
 
-  const name = current?.name ?? "Unknown location";
-  const country = current?.sys?.country ? `, ${current.sys.country}` : "";
-  placeEl.textContent = `${name}${country}`;
+  // Location display
+  const name = geo?.name || current?.name || "Unknown location";
+  const state = geo?.state ? `, ${geo.state}` : "";
+  const country = geo?.country ? `, ${geo.country}` : (current?.sys?.country ? `, ${current.sys.country}` : "");
+  placeEl.textContent = `${name}${state}${country}`;
 
+  // Meta line
   const desc = current?.weather?.[0]?.description ?? "—";
   const tz = current?.timezone ?? 0;
-  const updated = current?.dt ? localTimeFromUnix(current.dt, tz) : "—";
+  const updated = current?.dt ? formatLocalDateTime(current.dt, tz) : "—";
   metaEl.textContent = `${desc} • Updated ${updated}`;
 
+  // Icon
   const icon = current?.weather?.[0]?.icon;
   if (icon) {
     iconEl.src = iconUrl(icon);
@@ -216,6 +317,7 @@ function render(current, forecast) {
     iconEl.alt = "";
   }
 
+  // Numbers
   tempEl.textContent = fmtTemp(current?.main?.temp);
   feelsEl.textContent = `Feels like ${fmtTemp(current?.main?.feels_like)}`;
 
@@ -224,8 +326,9 @@ function render(current, forecast) {
   pressureEl.textContent = current?.main?.pressure != null ? `${current.main.pressure} hPa` : "—";
   visibilityEl.textContent = fmtKm(current?.visibility);
 
-  const sunrise = current?.sys?.sunrise ? localTimeFromUnix(current.sys.sunrise, tz).split(" ")[1] : "—";
-  const sunset  = current?.sys?.sunset  ? localTimeFromUnix(current.sys.sunset, tz).split(" ")[1] : "—";
+  // Extras
+  const sunrise = current?.sys?.sunrise ? formatLocalTime(current.sys.sunrise, tz) : "—";
+  const sunset  = current?.sys?.sunset  ? formatLocalTime(current.sys.sunset, tz) : "—";
   sunEl.textContent = `Sun: ${sunrise} ↑  ${sunset} ↓`;
 
   const hi = current?.main?.temp_max != null ? fmtTemp(current.main.temp_max) : "—";
@@ -237,17 +340,18 @@ function render(current, forecast) {
 
   renderHourly(forecast);
   renderDaily(forecast);
+  renderAir(air);
 }
 
 function renderHourly(forecast) {
   const list = forecast?.list || [];
   const tzOffset = forecast?.city?.timezone ?? 0;
 
-  // next 8 blocks = 24 hours (3h steps)
+  // Next 24 hours = 8 blocks of 3 hours
   const next = list.slice(0, 8);
 
   hourlyEl.innerHTML = next.map(item => {
-    const time = item?.dt ? localTimeFromUnix(item.dt, tzOffset).split(" ")[1] : "—";
+    const time = item?.dt ? formatLocalTime(item.dt, tzOffset) : "—";
     const t = fmtTemp(item?.main?.temp);
     const icon = item?.weather?.[0]?.icon;
     const main = item?.weather?.[0]?.main ?? "";
@@ -265,7 +369,6 @@ function renderDaily(forecast) {
   const list = forecast?.list || [];
   const tzOffset = forecast?.city?.timezone ?? 0;
 
-  // Group forecast entries by local-day key
   const byDay = new Map();
   for (const item of list) {
     const key = dayKeyFromUnix(item.dt, tzOffset);
@@ -273,26 +376,24 @@ function renderDaily(forecast) {
     byDay.get(key).push(item);
   }
 
-  // Take next 5 days (including today)
   const days = Array.from(byDay.entries()).slice(0, 5);
 
   dailyEl.innerHTML = days.map(([key, items]) => {
     let min = Infinity;
     let max = -Infinity;
 
-    // pick "midday-ish" icon/desc (closest to 12:00)
+    // choose an entry closest to 12:00 for icon/desc
     let best = items[0];
     let bestDist = Infinity;
 
     for (const it of items) {
-      const t = it?.main?.temp;
-      if (typeof t === "number") {
-        min = Math.min(min, t);
-        max = Math.max(max, t);
+      const temp = it?.main?.temp;
+      if (typeof temp === "number") {
+        min = Math.min(min, temp);
+        max = Math.max(max, temp);
       }
-
-      const local = localTimeFromUnix(it.dt, tzOffset);
-      const hour = Number(local.split(" ")[1].slice(0, 2));
+      const d = dateFromUnixLocal(it.dt, tzOffset);
+      const hour = d.getUTCHours();
       const dist = Math.abs(hour - 12);
       if (dist < bestDist) {
         bestDist = dist;
@@ -320,13 +421,29 @@ function renderDaily(forecast) {
   }).join("");
 }
 
+function renderAir(air) {
+  const entry = air?.list?.[0];
+  const aqi = entry?.main?.aqi;
+  const comps = entry?.components || {};
+
+  aqiBadge.textContent = aqi ? `AQI: ${aqi}` : "AQI: —";
+  const [label, tip] = aqiLabel(aqi);
+  aqiText.textContent = aqi ? `${label} • ${tip}` : "—";
+
+  // μg/m³ per OpenWeather Air Pollution API :contentReference[oaicite:15]{index=15}
+  pm25El.textContent = comps.pm2_5 != null ? `${comps.pm2_5}` : "—";
+  pm10El.textContent = comps.pm10 != null ? `${comps.pm10}` : "—";
+  o3El.textContent   = comps.o3 != null ? `${comps.o3}` : "—";
+  no2El.textContent  = comps.no2 != null ? `${comps.no2}` : "—";
+  so2El.textContent  = comps.so2 != null ? `${comps.so2}` : "—";
+  coEl.textContent   = comps.co != null ? `${comps.co}` : "—";
+}
+
 // ====== EVENTS ======
 searchForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const city = cityInput.value;
-
   try {
-    await loadByCity(city);
+    await loadByQuery(cityInput.value);
   } catch (err) {
     showCards(false);
     setStatus(`Couldn’t load weather: ${err.message}`);
@@ -334,25 +451,27 @@ searchForm.addEventListener("submit", async (e) => {
 });
 
 geoBtn.addEventListener("click", () => {
-  if (!navigator.geolocation) {
-    setStatus("Geolocation isn’t supported in this browser.");
-    return;
-  }
+  if (!ensureKey()) return;
+  if (!navigator.geolocation) return setStatus("Geolocation isn’t supported in this browser.");
 
   setStatus("Requesting location permission…");
 
   navigator.geolocation.getCurrentPosition(
     async (pos) => {
       try {
-        await loadByCoords(pos.coords.latitude, pos.coords.longitude);
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        localStorage.setItem("weather_coords", JSON.stringify({ lat, lon }));
+        lastCoords = { lat, lon };
+
+        await loadByCoords(lat, lon);
       } catch (err) {
         showCards(false);
         setStatus(`Couldn’t load weather: ${err.message}`);
       }
     },
-    (err) => {
-      setStatus(`Location blocked/failed: ${err.message}`);
-    },
+    (err) => setStatus(`Location blocked/failed: ${err.message}`),
     { enableHighAccuracy: true, timeout: 12000 }
   );
 });
@@ -364,7 +483,7 @@ refreshBtn.addEventListener("click", async () => {
       return;
     }
     if (lastCity) {
-      await loadByCity(lastCity);
+      await loadByQuery(lastCity);
       return;
     }
     setStatus("Nothing to refresh yet. Search a city or use your location.");
@@ -377,10 +496,9 @@ refreshBtn.addEventListener("click", async () => {
 unitF.addEventListener("click", async () => {
   if (units === "imperial") return;
   setUnits("imperial");
-
   try {
     if (lastCoords) await loadByCoords(lastCoords.lat, lastCoords.lon);
-    else if (lastCity) await loadByCity(lastCity);
+    else if (lastCity) await loadByQuery(lastCity);
   } catch (err) {
     showCards(false);
     setStatus(`Couldn’t reload in °F: ${err.message}`);
@@ -390,26 +508,43 @@ unitF.addEventListener("click", async () => {
 unitC.addEventListener("click", async () => {
   if (units === "metric") return;
   setUnits("metric");
-
   try {
     if (lastCoords) await loadByCoords(lastCoords.lat, lastCoords.lon);
-    else if (lastCity) await loadByCity(lastCity);
+    else if (lastCity) await loadByQuery(lastCity);
   } catch (err) {
     showCards(false);
     setStatus(`Couldn’t reload in °C: ${err.message}`);
   }
 });
 
+time12.addEventListener("click", () => {
+  if (timeFormat === "12") return;
+  setTimeFormat("12");
+  updateUnitPill();
+  // Re-render by reloading (keeps it simple + consistent)
+  if (lastCoords) loadByCoords(lastCoords.lat, lastCoords.lon).catch(err => setStatus(err.message));
+  else if (lastCity) loadByQuery(lastCity).catch(err => setStatus(err.message));
+});
+
+time24.addEventListener("click", () => {
+  if (timeFormat === "24") return;
+  setTimeFormat("24");
+  updateUnitPill();
+  if (lastCoords) loadByCoords(lastCoords.lat, lastCoords.lon).catch(err => setStatus(err.message));
+  else if (lastCity) loadByQuery(lastCity).catch(err => setStatus(err.message));
+});
+
 // ====== INIT ======
 setUnits(units);
+setTimeFormat(timeFormat);
+updateUnitPill();
 
 if (lastCity) {
   cityInput.value = lastCity;
-  // Auto-load last searched city on open
-  loadByCity(lastCity).catch((err) => {
+  loadByQuery(lastCity).catch((err) => {
     showCards(false);
     setStatus(`Couldn’t load saved city: ${err.message}`);
   });
 } else {
-  setStatus("Search a city or use your location.");
+  setStatus("Search a city (try “Toledo, OH, US”) or use your location.");
 }
