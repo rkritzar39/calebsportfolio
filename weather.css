@@ -265,3 +265,7 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* CRITICAL: make the hidden attribute actually hide the modal */
+.modal[hidden] { display: none !important; }
+
