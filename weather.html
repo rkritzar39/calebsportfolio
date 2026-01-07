@@ -146,108 +146,148 @@
   </main>
 
   <!-- SETTINGS MODAL -->
-  <div class="modal" id="weatherSettingsModal" hidden>
-    <div class="modal-backdrop" id="weatherSettingsClose" data-weather-close></div>
+<div class="modal" id="weatherSettingsModal" hidden>
+  <div class="modal-backdrop" id="weatherSettingsClose"></div>
 
-    <div class="modal-card" role="dialog" aria-modal="true" aria-label="Weather settings">
-      <div class="modal-head">
-        <div class="modal-title">Settings</div>
-        <button class="btn ghost" id="weatherSettingsX" type="button" data-weather-close>Close</button>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Weather settings">
+    <div class="modal-head">
+      <div class="modal-title">Settings</div>
+      <button class="btn ghost" id="weatherSettingsX" type="button">Close</button>
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Temperature -->
+      <div class="setting">
+        <div class="setting-label">Temperature unit</div>
+        <div class="setting-control">
+          <button class="chip" id="unitF" type="button">°F</button>
+          <button class="chip" id="unitC" type="button">°C</button>
+        </div>
       </div>
 
-      <div class="modal-body">
-        <div class="setting">
-          <div class="setting-label">Temperature units</div>
-          <div class="setting-control">
-            <button class="chip" id="unitF" type="button">°F</button>
-            <button class="chip" id="unitC" type="button">°C</button>
-          </div>
+      <!-- Time -->
+      <div class="setting">
+        <div class="setting-label">Time format</div>
+        <div class="setting-control">
+          <button class="chip" id="time12" type="button">12h</button>
+          <button class="chip" id="time24" type="button">24h</button>
         </div>
+      </div>
 
-        <div class="setting">
-          <div class="setting-label">Time format</div>
-          <div class="setting-control">
-            <button class="chip" id="time12" type="button">12h</button>
-            <button class="chip" id="time24" type="button">24h</button>
-          </div>
+      <!-- Wind -->
+      <div class="setting">
+        <div class="setting-label">Wind speed unit</div>
+        <div class="setting-control">
+          <select id="windUnit">
+            <option value="mph">mph</option>
+            <option value="kmh">km/h</option>
+            <option value="ms">m/s</option>
+          </select>
         </div>
+      </div>
 
-        <div class="setting">
-          <div class="setting-label">Language</div>
-          <div class="setting-control">
-            <select id="lang">
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
-              <option value="de">Deutsch</option>
-              <option value="it">Italiano</option>
-              <option value="pt">Português</option>
-              <option value="nl">Nederlands</option>
-              <option value="pl">Polski</option>
-              <option value="ru">Русский</option>
-              <option value="ja">日本語</option>
-              <option value="ko">한국어</option>
-              <option value="zh_cn">中文(简体)</option>
-            </select>
-          </div>
+      <!-- Pressure -->
+      <div class="setting">
+        <div class="setting-label">Pressure unit</div>
+        <div class="setting-control">
+          <select id="pressureUnit">
+            <option value="hpa">hPa</option>
+            <option value="inhg">inHg</option>
+            <option value="mmhg">mmHg</option>
+          </select>
         </div>
+      </div>
 
-        <div class="setting">
-          <div class="setting-label">Auto-locate on page load</div>
-          <div class="setting-control">
-            <label class="switch">
-              <input id="autoLocate" type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
+      <!-- Visibility -->
+      <div class="setting">
+        <div class="setting-label">Visibility unit</div>
+        <div class="setting-control">
+          <select id="visibilityUnit">
+            <option value="mi">miles</option>
+            <option value="km">kilometers</option>
+          </select>
         </div>
+      </div>
 
-        <div class="setting">
-          <div class="setting-label">Load last location</div>
-          <div class="setting-control">
-            <label class="switch">
-              <input id="loadLast" type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
+      <!-- Language -->
+      <div class="setting">
+        <div class="setting-label">Language</div>
+        <div class="setting-control">
+          <select id="lang">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="de">Deutsch</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Português</option>
+            <option value="nl">Nederlands</option>
+            <option value="pl">Polski</option>
+            <option value="ru">Русский</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="zh_cn">中文(简体)</option>
+          </select>
         </div>
+      </div>
 
-        <div class="setting">
-          <div class="setting-label">Auto refresh</div>
-          <div class="setting-control">
-            <select id="autoRefresh">
-              <option value="0">Off</option>
-              <option value="5">Every 5 min</option>
-              <option value="10">Every 10 min</option>
-              <option value="30">Every 30 min</option>
-            </select>
-          </div>
+      <!-- Behavior -->
+      <div class="setting">
+        <div class="setting-label">Auto-locate on page load</div>
+        <div class="setting-control">
+          <label class="switch">
+            <input id="autoLocate" type="checkbox" />
+            <span class="slider"></span>
+          </label>
         </div>
+      </div>
 
-        <div class="setting">
-          <div class="setting-label">Map enabled</div>
-          <div class="setting-control">
-            <label class="switch">
-              <input id="mapEnabled" type="checkbox" />
-              <span class="slider"></span>
-            </label>
-          </div>
+      <div class="setting">
+        <div class="setting-label">Load last location</div>
+        <div class="setting-control">
+          <label class="switch">
+            <input id="loadLast" type="checkbox" />
+            <span class="slider"></span>
+          </label>
         </div>
+      </div>
 
-        <div class="setting">
-          <div class="setting-label">Save</div>
-          <div class="setting-control">
-            <button class="btn primary" id="weatherSaveSettings" type="button">Save</button>
-            <button class="btn" id="weatherResetSettings" type="button">Reset</button>
-          </div>
+      <div class="setting">
+        <div class="setting-label">Auto refresh</div>
+        <div class="setting-control">
+          <select id="autoRefresh">
+            <option value="0">Off</option>
+            <option value="5">Every 5 min</option>
+            <option value="10">Every 10 min</option>
+            <option value="30">Every 30 min</option>
+          </select>
         </div>
+      </div>
 
-        <div class="tiny-note">
-          Reset here only resets weather settings (not your website’s global settings).
+      <div class="setting">
+        <div class="setting-label">Map enabled</div>
+        <div class="setting-control">
+          <label class="switch">
+            <input id="mapEnabled" type="checkbox" />
+            <span class="slider"></span>
+          </label>
         </div>
+      </div>
+
+      <div class="setting">
+        <div class="setting-label">Save</div>
+        <div class="setting-control">
+          <button class="btn primary" id="weatherSaveSettings" type="button">Save</button>
+          <button class="btn" id="weatherResetSettings" type="button">Reset</button>
+        </div>
+      </div>
+
+      <div class="tiny-note">
+        Reset here only resets weather settings (not your whole website).
       </div>
     </div>
   </div>
+</div>
 
   <!-- Leaflet -->
   <script
