@@ -1,232 +1,334 @@
-/* If your settings.js sets a theme attribute, map it here */
-:root{
-  --bg: #0b0b0f;
-  --surface: #14141c;
-  --surface2: #1b1b26;
-  --border: rgba(255,255,255,.10);
-  --text: #f5f7fa;
-  --muted: rgba(245,247,250,.72);
-  --accent: #4EA8FF;
-  --accent2: #2f7bd6;
-  --shadow: rgba(0,0,0,.35);
-  --radius: 16px;
-  --max: 980px;
-  --gap: 14px;
+/* =========================================================
+   Weather Page UI — uses YOUR theme variables
+   No frosted / no backdrop-filter.
+   ========================================================= */
+
+.weather-page {
+  min-height: 100vh;
+  background: var(--bg-color);
+  color: var(--text-color);
+  padding: 32px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
 }
 
-[data-theme="light"]{
-  --bg: #f6f7fb;
-  --surface: #ffffff;
-  --surface2: #f1f3f8;
-  --border: rgba(0,0,0,.10);
-  --text: #101114;
-  --muted: rgba(16,17,20,.70);
-  --accent: #2563eb;
-  --accent2: #1d4ed8;
-  --shadow: rgba(0,0,0,.10);
-}
-
-*{ box-sizing: border-box; }
-html,body{ height:100%; }
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
-.wrap{
-  max-width: var(--max);
+.weather-wrap {
+  max-width: 1050px;
   margin: 0 auto;
-  padding: 28px 18px 32px;
+  display: grid;
+  gap: 18px;
 }
 
-.header{
-  margin-bottom: 18px;
-}
-.title{
+.weather-header h1 {
   margin: 0 0 6px;
   font-size: clamp(28px, 3vw, 40px);
-  letter-spacing: .2px;
-}
-.subtitle{
-  margin: 0;
-  color: var(--muted);
+  letter-spacing: -0.02em;
+  color: var(--text-color);
 }
 
-.panel{
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 6px);
-  box-shadow: 0 10px 30px var(--shadow);
+.weather-header p {
+  margin: 0;
+  color: var(--secondary-text);
+}
+
+.weather-panel {
+  border-radius: var(--radius-xl);
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--content-bg) 40%, var(--bg-color));
+  box-shadow: 0 18px 50px color-mix(in srgb, var(--shadow-color) 65%, transparent);
   padding: 18px;
 }
 
-.controls{
-  display:flex;
-  flex-direction: column;
-  gap: var(--gap);
-  margin-bottom: 10px;
+.weather-controls {
+  display: grid;
+  gap: 12px;
 }
 
-.search{
-  display:flex;
+.weather-search {
+  display: flex;
   gap: 10px;
-  width: 100%;
+  flex-wrap: wrap;
 }
-.search input{
-  flex:1;
-  padding: 12px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text);
-  outline: none;
-}
-.search input::placeholder{ color: var(--muted); }
 
-.actions{
-  display:flex;
+.weather-search input {
+  flex: 1;
+  min-width: 240px;
+  padding: 12px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
+  color: var(--text-color);
+  outline: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.weather-search input::placeholder {
+  color: color-mix(in srgb, var(--secondary-text) 85%, transparent);
+}
+
+.weather-actions {
+  display: flex;
   gap: 10px;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.btn{
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text);
+.btn {
+  border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 60%, #ffffff 3%);
+  color: var(--text-color);
   padding: 11px 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   cursor: pointer;
+  transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
 }
-.btn:hover{ border-color: color-mix(in srgb, var(--border) 40%, var(--accent)); }
-.btn.primary{
-  background: var(--accent);
-  border-color: transparent;
-  color: white;
-}
-.btn.primary:hover{ background: var(--accent2); }
 
-.toggle{
-  display:flex;
+.btn:hover {
+  border-color: color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
+  transform: translateY(-1px);
+}
+
+.btn.primary {
+  background: var(--accent-color);
+  color: #fff;
+  border-color: transparent;
+}
+
+.btn.primary:hover {
+  background: var(--hover-color);
+}
+
+.btn.ghost {
+  background: transparent;
+}
+
+.unit-toggle {
+  display: inline-flex;
   gap: 8px;
   align-items: center;
 }
-.chip{
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  color: var(--text);
+
+.chip {
+  border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 60%, #ffffff 3%);
+  color: var(--text-color);
   padding: 9px 12px;
   border-radius: 999px;
-  cursor:pointer;
-}
-.chip.is-active{
-  border-color: color-mix(in srgb, var(--accent) 70%, transparent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
 
-.status{
+.chip.is-active {
+  border-color: color-mix(in srgb, var(--accent-color) 75%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 22%, transparent);
+}
+
+.weather-status {
   min-height: 22px;
-  padding: 6px 2px 14px;
-  color: var(--muted);
+  margin-top: 6px;
+  color: var(--secondary-text);
 }
 
-.grid{
-  display:grid;
+.weather-grid {
+  margin-top: 12px;
+  display: grid;
+  gap: 14px;
   grid-template-columns: 1fr;
-  gap: var(--gap);
 }
 
-@media (min-width: 860px){
-  .controls{ flex-direction: row; align-items: center; justify-content: space-between; }
-  .search{ max-width: 560px; }
-  .grid{ grid-template-columns: 1.1fr .9fr; align-items: start; }
+@media (min-width: 920px) {
+  .weather-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    align-items: start;
+  }
+  .weather-card.full {
+    grid-column: 1 / -1;
+  }
 }
 
-.card{
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+.weather-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--content-bg) 40%, var(--bg-color));
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--shadow-color) 55%, transparent);
   padding: 16px;
+  overflow: hidden;
 }
 
-.card-head{
-  display:flex;
+.card-head {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 14px;
-  align-items: center;
 }
-.place{ font-weight: 700; font-size: 18px; }
-.meta{ color: var(--muted); font-size: 13px; margin-top: 2px; }
-.icon{ width: 64px; height: 64px; }
 
-.temp-row{
-  display:flex;
+.place {
+  font-weight: 650;
+  font-size: 18px;
+  color: var(--text-color);
+}
+
+.meta {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--secondary-text);
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+}
+
+.temp-row {
+  display: flex;
   align-items: baseline;
   gap: 14px;
   margin: 10px 0 12px;
 }
-.temp{
+
+.temp {
   font-size: 54px;
   font-weight: 800;
   line-height: 1;
-}
-.feels{
-  color: var(--muted);
+  color: var(--text-color);
 }
 
-.stats{
-  display:grid;
+.feels {
+  color: var(--secondary-text);
+}
+
+.stats {
+  display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
-.stat{
-  display:flex;
+
+.stat {
+  display: flex;
   justify-content: space-between;
   gap: 10px;
-  border: 1px solid var(--border);
-  background: var(--surface);
   padding: 10px 12px;
-  border-radius: 12px;
-}
-.k{ color: var(--muted); }
-.v{ font-weight: 600; }
-
-.card-title{
-  font-weight: 800;
-  margin-bottom: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
 }
 
-.forecast{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
+.stat .k {
+  color: var(--secondary-text);
+}
+
+.stat .v {
+  font-weight: 650;
+  color: var(--text-color);
+}
+
+.extras {
+  display: flex;
   gap: 10px;
-}
-@media (min-width: 520px){
-  .forecast{ grid-template-columns: repeat(4, 1fr); }
-}
-.hour{
-  border: 1px solid var(--border);
-  background: var(--surface);
-  padding: 10px 10px;
-  border-radius: 14px;
-  text-align: center;
-}
-.hour .t{ font-weight: 800; margin-top: 6px; }
-.hour .h{ color: var(--muted); font-size: 12px; }
-.hour img{ width: 42px; height: 42px; }
-
-.foot{
+  flex-wrap: wrap;
   margin-top: 12px;
-  color: var(--muted);
+}
+
+.pill {
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
+  color: var(--secondary-text);
   font-size: 13px;
 }
 
-.sr-only{
-  position:absolute;
-  width:1px; height:1px;
-  padding:0; margin:-1px;
-  overflow:hidden; clip:rect(0,0,0,0);
-  white-space:nowrap; border:0;
+.card-title {
+  font-weight: 750;
+  color: var(--text-color);
+  margin-bottom: 10px;
+}
+
+.forecast {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 520px) {
+  .forecast {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.hour {
+  text-align: center;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
+}
+
+.hour .h {
+  font-size: 12px;
+  color: var(--secondary-text);
+}
+
+.hour .t {
+  margin-top: 6px;
+  font-weight: 800;
+  color: var(--text-color);
+}
+
+.hour img {
+  width: 42px;
+  height: 42px;
+}
+
+.daily {
+  display: grid;
+  gap: 10px;
+}
+
+.day {
+  display: grid;
+  grid-template-columns: 110px 1fr 140px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
+}
+
+@media (max-width: 560px) {
+  .day {
+    grid-template-columns: 1fr;
+  }
+}
+
+.day .name {
+  font-weight: 750;
+  color: var(--text-color);
+}
+
+.day .desc {
+  color: var(--secondary-text);
+  font-size: 13px;
+}
+
+.day .range {
+  justify-self: end;
+  font-weight: 750;
+  color: var(--text-color);
+}
+
+.foot {
+  margin-top: 14px;
+  color: var(--secondary-text);
+  font-size: 13px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
