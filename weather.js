@@ -2,7 +2,7 @@
 // FULL OpenWeather (free-friendly) Weather Website
 // =====================================================
 
-const OPENWEATHER_KEY = "57e2ef8d1ddf45ced53b8444e23ce2b7"; // rotate your key since it was posted
+const OPENWEATHER_KEY = "57e2ef8d1ddf45ced53b8444e23ce2b7"; // rotate this key ASAP
 const API = "https://api.openweathermap.org";
 
 // ---------- WEATHER NAMESPACED KEYS (prevents global collisions) ----------
@@ -108,7 +108,7 @@ let refreshTimer = null;
 function setStatus(msg) { statusEl.textContent = msg || ""; }
 
 function ensureKey() {
-  if (!OPENWEATHER_KEY || OPENWEATHER_KEY.includes("PASTE_YOUR_NEW_KEY_HERE")) {
+  if (!OPENWEATHER_KEY) {
     setStatus("Add your OpenWeather API key in weather.js (OPENWEATHER_KEY).");
     return false;
   }
@@ -183,19 +183,24 @@ function applyAutoRefresh() {
 function pad2(n) { return String(n).padStart(2, "0"); }
 function iconUrl(icon) { return `https://openweathermap.org/img/wn/${icon}@2x.png`; }
 
+// ✅ UPDATED: show units in temps everywhere
 function fmtTemp(x) {
   if (x === undefined || x === null || Number.isNaN(x)) return "—";
-  return `${Math.round(x)}°`;
+  const unit = settings.units === "imperial" ? "°F" : "°C";
+  return `${Math.round(x)}${unit}`;
 }
+
 function fmtWind(speed) {
   if (speed === undefined || speed === null || Number.isNaN(speed)) return "—";
   return settings.units === "imperial" ? `${Math.round(speed)} mph` : `${Math.round(speed)} m/s`;
 }
+
 function fmtKm(meters) {
   if (meters == null) return "—";
   return `${(meters / 1000).toFixed(1)} km`;
 }
 
+// OpenWeather gives timezone offset seconds for current/forecast city
 function dateFromUnixLocal(unixSeconds, tzOffsetSeconds) {
   return new Date((unixSeconds + tzOffsetSeconds) * 1000);
 }
@@ -205,6 +210,7 @@ function formatLocalTime(unixSeconds, tzOffsetSeconds) {
   const mm = d.getUTCMinutes();
 
   if (settings.timeFormat === "24") return `${pad2(hh)}:${pad2(mm)}`;
+
   const ampm = hh >= 12 ? "PM" : "AM";
   const h12 = ((hh + 11) % 12) + 1;
   return `${h12}:${pad2(mm)} ${ampm}`;
@@ -325,8 +331,8 @@ function renderAll(current, forecast, air, geo) {
 function renderHourly(forecast) {
   const list = forecast?.list || [];
   const tzOffset = forecast?.city?.timezone ?? 0;
-  const next = list.slice(0, 8);
 
+  const next = list.slice(0, 8); // 24h via 3-hour blocks
   hourlyEl.innerHTML = next.map(item => {
     const time = item?.dt ? formatLocalTime(item.dt, tzOffset) : "—";
     const t = fmtTemp(item?.main?.temp);
@@ -553,14 +559,13 @@ function setMapView(lat, lon) {
   if (marker) marker.setLatLng([lat, lon]);
 }
 
-// ---------- MODAL (bulletproof close) ----------
+// ---------- MODAL ----------
 function openSettings(e) {
   if (e) { e.preventDefault(); e.stopPropagation(); }
   settingsModal.hidden = false;
   document.body.style.overflow = "hidden";
   syncSettingsUI();
 }
-
 function closeSettings(e) {
   if (e) { e.preventDefault(); e.stopPropagation(); }
   settingsModal.hidden = true;
@@ -632,7 +637,7 @@ time24.addEventListener("click", () => { saveSettings({ timeFormat: "24" }); ref
 
 langSel.addEventListener("change", () => { saveSettings({ lang: langSel.value }); refresh().catch(()=>{}); });
 
-// Save/reset buttons (close modal guaranteed)
+// Save/reset buttons
 saveSettingsBtn.addEventListener("click", (e) => {
   e.preventDefault();
   saveSettings({
