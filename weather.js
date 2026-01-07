@@ -13,7 +13,7 @@
 //   but may require paid subscription depending on your account/plan. :contentReference[oaicite:15]{index=15}
 // =====================================================
 
-const OPENWEATHER_KEY = "YOUR_API_KEY_HERE";
+const OPENWEATHER_KEY = "57e2ef8d1ddf45ced53b8444e23ce2b7";
 const API = "https://api.openweathermap.org";
 
 // Leaflet map globals
