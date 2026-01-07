@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Weather</title>
 
-  <!-- Your global theme variables + light/dark system -->
+  <!-- IMPORTANT: load your global theme variables -->
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Weather page styles (uses your variables) -->
+  <!-- Weather page styles -->
   <link rel="stylesheet" href="weather.css" />
 </head>
 
@@ -18,7 +18,7 @@
 
       <header class="weather-header">
         <h1>Weather</h1>
-        <p id="subtitle">Current conditions • hourly • 5-day</p>
+        <p id="subtitle">Current • hourly • daily • air quality</p>
       </header>
 
       <section class="weather-panel" aria-label="Weather controls and results">
@@ -29,7 +29,7 @@
             <input
               id="cityInput"
               type="text"
-              placeholder="Search city (e.g., Toledo, OH)"
+              placeholder="Search city (e.g., Toledo, OH, US)"
               inputmode="text"
             />
             <button class="btn primary" type="submit">Search</button>
@@ -38,10 +38,17 @@
           <div class="weather-actions">
             <button class="btn" id="geoBtn" type="button">Use my location</button>
 
-            <div class="unit-toggle" role="group" aria-label="Units">
+            <div class="unit-toggle" role="group" aria-label="Temperature units">
               <button class="chip is-active" id="unitF" type="button" aria-pressed="true">°F</button>
               <button class="chip" id="unitC" type="button" aria-pressed="false">°C</button>
             </div>
+
+            <div class="unit-toggle" role="group" aria-label="Time format">
+              <button class="chip is-active" id="time12" type="button" aria-pressed="true">12h</button>
+              <button class="chip" id="time24" type="button" aria-pressed="false">24h</button>
+            </div>
+
+            <div class="unit-pill" id="unitPill" aria-live="polite">—</div>
 
             <button class="btn ghost" id="refreshBtn" type="button">Refresh</button>
           </div>
@@ -66,18 +73,10 @@
             </div>
 
             <div class="stats">
-              <div class="stat">
-                <span class="k">Wind</span><span class="v" id="wind">—</span>
-              </div>
-              <div class="stat">
-                <span class="k">Humidity</span><span class="v" id="humidity">—</span>
-              </div>
-              <div class="stat">
-                <span class="k">Pressure</span><span class="v" id="pressure">—</span>
-              </div>
-              <div class="stat">
-                <span class="k">Visibility</span><span class="v" id="visibility">—</span>
-              </div>
+              <div class="stat"><span class="k">Wind</span><span class="v" id="wind">—</span></div>
+              <div class="stat"><span class="k">Humidity</span><span class="v" id="humidity">—</span></div>
+              <div class="stat"><span class="k">Pressure</span><span class="v" id="pressure">—</span></div>
+              <div class="stat"><span class="k">Visibility</span><span class="v" id="visibility">—</span></div>
             </div>
 
             <div class="extras">
@@ -87,15 +86,33 @@
             </div>
           </section>
 
+          <!-- AIR QUALITY -->
+          <section class="weather-card" id="airCard" hidden>
+            <div class="card-title">Air quality</div>
+            <div class="aqi-row">
+              <div class="aqi-badge" id="aqiBadge">AQI: —</div>
+              <div class="aqi-text" id="aqiText">—</div>
+            </div>
+            <div class="stats aqi-stats">
+              <div class="stat"><span class="k">PM2.5</span><span class="v" id="pm25">—</span></div>
+              <div class="stat"><span class="k">PM10</span><span class="v" id="pm10">—</span></div>
+              <div class="stat"><span class="k">O₃</span><span class="v" id="o3">—</span></div>
+              <div class="stat"><span class="k">NO₂</span><span class="v" id="no2">—</span></div>
+              <div class="stat"><span class="k">SO₂</span><span class="v" id="so2">—</span></div>
+              <div class="stat"><span class="k">CO</span><span class="v" id="co">—</span></div>
+            </div>
+            <div class="tiny-note">Units: μg/m³ (OpenWeather)</div>
+          </section>
+
           <!-- HOURLY -->
           <section class="weather-card" id="hourlyCard" hidden>
-            <div class="card-title">Next hours</div>
+            <div class="card-title">Next 24 hours</div>
             <div class="forecast" id="hourly"></div>
           </section>
 
           <!-- DAILY -->
           <section class="weather-card full" id="dailyCard" hidden>
-            <div class="card-title">Next days</div>
+            <div class="card-title">Next 5 days</div>
             <div class="daily" id="daily"></div>
           </section>
         </div>
