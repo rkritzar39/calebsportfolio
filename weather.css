@@ -1,8 +1,3 @@
-/* =========================================================
-   Weather Page UI — uses YOUR theme variables
-   No frosted / no backdrop-filter.
-   ========================================================= */
-
 .weather-page {
   min-height: 100vh;
   background: var(--bg-color);
@@ -12,7 +7,7 @@
 }
 
 .weather-wrap {
-  max-width: 1050px;
+  max-width: 1100px;
   margin: 0 auto;
   display: grid;
   gap: 18px;
@@ -38,10 +33,7 @@
   padding: 18px;
 }
 
-.weather-controls {
-  display: grid;
-  gap: 12px;
-}
+.weather-controls { display: grid; gap: 12px; }
 
 .weather-search {
   display: flex;
@@ -58,7 +50,6 @@
   background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
   color: var(--text-color);
   outline: none;
-  -webkit-font-smoothing: antialiased;
 }
 
 .weather-search input::placeholder {
@@ -92,20 +83,11 @@
   color: #fff;
   border-color: transparent;
 }
+.btn.primary:hover { background: var(--hover-color); }
 
-.btn.primary:hover {
-  background: var(--hover-color);
-}
+.btn.ghost { background: transparent; }
 
-.btn.ghost {
-  background: transparent;
-}
-
-.unit-toggle {
-  display: inline-flex;
-  gap: 8px;
-  align-items: center;
-}
+.unit-toggle { display: inline-flex; gap: 8px; align-items: center; }
 
 .chip {
   border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
@@ -114,12 +96,20 @@
   padding: 9px 12px;
   border-radius: 999px;
   cursor: pointer;
-  transition: transform var(--transition-fast), border-color var(--transition-fast);
 }
 
 .chip.is-active {
   border-color: color-mix(in srgb, var(--accent-color) 75%, transparent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 22%, transparent);
+}
+
+.unit-pill{
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
+  color: var(--secondary-text);
+  font-size: 13px;
 }
 
 .weather-status {
@@ -136,13 +126,8 @@
 }
 
 @media (min-width: 920px) {
-  .weather-grid {
-    grid-template-columns: 1.1fr 0.9fr;
-    align-items: start;
-  }
-  .weather-card.full {
-    grid-column: 1 / -1;
-  }
+  .weather-grid { grid-template-columns: 1.1fr 0.9fr; align-items: start; }
+  .weather-card.full { grid-column: 1 / -1; }
 }
 
 .weather-card {
@@ -161,22 +146,10 @@
   gap: 14px;
 }
 
-.place {
-  font-weight: 650;
-  font-size: 18px;
-  color: var(--text-color);
-}
+.place { font-weight: 650; font-size: 18px; color: var(--text-color); }
+.meta  { margin-top: 2px; font-size: 13px; color: var(--secondary-text); }
 
-.meta {
-  margin-top: 2px;
-  font-size: 13px;
-  color: var(--secondary-text);
-}
-
-.icon {
-  width: 64px;
-  height: 64px;
-}
+.icon { width: 64px; height: 64px; }
 
 .temp-row {
   display: flex;
@@ -184,17 +157,8 @@
   gap: 14px;
   margin: 10px 0 12px;
 }
-
-.temp {
-  font-size: 54px;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--text-color);
-}
-
-.feels {
-  color: var(--secondary-text);
-}
+.temp { font-size: 54px; font-weight: 800; line-height: 1; color: var(--text-color); }
+.feels{ color: var(--secondary-text); }
 
 .stats {
   display: grid;
@@ -211,23 +175,10 @@
   border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
   background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
 }
+.stat .k { color: var(--secondary-text); }
+.stat .v { font-weight: 650; color: var(--text-color); }
 
-.stat .k {
-  color: var(--secondary-text);
-}
-
-.stat .v {
-  font-weight: 650;
-  color: var(--text-color);
-}
-
-.extras {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 12px;
-}
-
+.extras { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 .pill {
   padding: 9px 12px;
   border-radius: 999px;
@@ -237,23 +188,10 @@
   font-size: 13px;
 }
 
-.card-title {
-  font-weight: 750;
-  color: var(--text-color);
-  margin-bottom: 10px;
-}
+.card-title { font-weight: 750; color: var(--text-color); margin-bottom: 10px; }
 
-.forecast {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-@media (min-width: 520px) {
-  .forecast {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
+.forecast { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (min-width: 520px){ .forecast{ grid-template-columns: repeat(4, 1fr); } }
 
 .hour {
   text-align: center;
@@ -262,27 +200,11 @@
   border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
   background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
 }
+.hour .h { font-size: 12px; color: var(--secondary-text); }
+.hour .t { margin-top: 6px; font-weight: 800; color: var(--text-color); }
+.hour img { width: 42px; height: 42px; }
 
-.hour .h {
-  font-size: 12px;
-  color: var(--secondary-text);
-}
-
-.hour .t {
-  margin-top: 6px;
-  font-weight: 800;
-  color: var(--text-color);
-}
-
-.hour img {
-  width: 42px;
-  height: 42px;
-}
-
-.daily {
-  display: grid;
-  gap: 10px;
-}
+.daily { display: grid; gap: 10px; }
 
 .day {
   display: grid;
@@ -294,34 +216,24 @@
   border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
   background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
 }
+@media (max-width: 560px){ .day{ grid-template-columns: 1fr; } }
 
-@media (max-width: 560px) {
-  .day {
-    grid-template-columns: 1fr;
-  }
-}
+.day .name { font-weight: 750; color: var(--text-color); }
+.day .desc { color: var(--secondary-text); font-size: 13px; }
+.day .range { justify-self: end; font-weight: 750; color: var(--text-color); }
 
-.day .name {
+.aqi-row{ display:flex; gap:10px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+.aqi-badge{
+  padding: 9px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
   font-weight: 750;
-  color: var(--text-color);
 }
+.aqi-text{ color: var(--secondary-text); }
+.tiny-note{ margin-top:10px; color: var(--secondary-text); font-size: 12px; }
 
-.day .desc {
-  color: var(--secondary-text);
-  font-size: 13px;
-}
-
-.day .range {
-  justify-self: end;
-  font-weight: 750;
-  color: var(--text-color);
-}
-
-.foot {
-  margin-top: 14px;
-  color: var(--secondary-text);
-  font-size: 13px;
-}
+.foot { margin-top: 14px; color: var(--secondary-text); font-size: 13px; }
 
 .sr-only {
   position: absolute;
