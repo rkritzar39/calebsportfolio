@@ -5,19 +5,16 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Weather</title>
 
-  <!-- Your global theme variables -->
+  <link rel="stylesheet" href="weather.css" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Leaflet (map) -->
+  <!-- Leaflet -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""
   />
-
-  <!-- Weather page styles -->
-  <link rel="stylesheet" href="weather.css" />
 </head>
 
 <body>
@@ -27,18 +24,15 @@
       <header class="weather-header">
         <div>
           <h1>Weather</h1>
-          <p id="subtitle">Current • hourly • daily • air quality • map layers</p>
+          <p class="sub">Current • hourly • daily • air quality • maps</p>
         </div>
 
-        <!-- IMPORTANT: namespaced ID -->
-        <button class="btn" id="weatherSettingsBtn" type="button" title="Settings">Settings</button>
+        <button class="btn" id="weatherSettingsBtn" type="button">Settings</button>
       </header>
 
-      <section class="weather-panel" aria-label="Weather controls and results">
-
+      <section class="weather-panel">
         <div class="weather-controls">
           <form class="weather-search" id="searchForm" autocomplete="off">
-            <label class="sr-only" for="cityInput">City</label>
             <input id="cityInput" type="text" placeholder="Search city (e.g., Toledo, OH, US)" />
             <button class="btn primary" type="submit">Search</button>
           </form>
@@ -46,7 +40,7 @@
           <div class="weather-actions">
             <button class="btn" id="geoBtn" type="button">Use my location</button>
             <button class="btn ghost" id="refreshBtn" type="button">Refresh</button>
-            <div class="unit-pill" id="unitPill" aria-live="polite">—</div>
+            <div class="unit-pill" id="unitPill">—</div>
           </div>
         </div>
 
@@ -82,13 +76,14 @@
             </div>
           </section>
 
-          <!-- AIR QUALITY -->
+          <!-- AIR -->
           <section class="weather-card" id="airCard" hidden>
             <div class="card-title">Air quality</div>
             <div class="aqi-row">
               <div class="aqi-badge" id="aqiBadge">AQI: —</div>
               <div class="aqi-text" id="aqiText">—</div>
             </div>
+
             <div class="stats aqi-stats">
               <div class="stat"><span class="k">PM2.5</span><span class="v" id="pm25">—</span></div>
               <div class="stat"><span class="k">PM10</span><span class="v" id="pm10">—</span></div>
@@ -97,7 +92,8 @@
               <div class="stat"><span class="k">SO₂</span><span class="v" id="so2">—</span></div>
               <div class="stat"><span class="k">CO</span><span class="v" id="co">—</span></div>
             </div>
-            <div class="tiny-note">Units: μg/m³ (OpenWeather)</div>
+
+            <div class="tiny-note">Units: μg/m³</div>
           </section>
 
           <!-- HOURLY -->
@@ -112,7 +108,7 @@
             <div class="daily" id="daily"></div>
           </section>
 
-          <!-- OPTIONAL: 16-DAY (auto-hides if not accessible) -->
+          <!-- 16 DAY (auto-hides if unavailable) -->
           <section class="weather-card full" id="daily16Card" hidden>
             <div class="card-title">Extended daily (up to 16 days)</div>
             <div class="tiny-note" id="daily16Note"></div>
@@ -122,6 +118,7 @@
           <!-- MAP -->
           <section class="weather-card full" id="mapCard">
             <div class="card-title">Weather map</div>
+
             <div class="mapbar">
               <div class="mapbar-left">
                 <span class="tiny-note">Layer:</span>
@@ -133,31 +130,29 @@
                   <option value="wind_new">Wind</option>
                 </select>
               </div>
+
               <div class="mapbar-right">
                 <span class="tiny-note">Opacity</span>
                 <input id="mapOpacity" type="range" min="0" max="100" value="70" />
               </div>
             </div>
-            <div id="map" class="map"></div>
-            <div class="tiny-note">Overlays: OpenWeather Maps tiles</div>
-          </section>
-        </div>
 
-        <div class="foot">
-          <span>Data: OpenWeather</span>
+            <div id="map" class="map"></div>
+            <div class="tiny-note">Overlay tiles: OpenWeather</div>
+          </section>
         </div>
       </section>
     </div>
   </main>
 
-  <!-- SETTINGS MODAL (namespaced IDs) -->
+  <!-- SETTINGS MODAL -->
   <div class="modal" id="weatherSettingsModal" hidden>
-    <div class="modal-backdrop" id="weatherSettingsClose"></div>
+    <div class="modal-backdrop" id="weatherSettingsClose" data-weather-close></div>
 
     <div class="modal-card" role="dialog" aria-modal="true" aria-label="Weather settings">
       <div class="modal-head">
         <div class="modal-title">Settings</div>
-        <button class="btn ghost" id="weatherSettingsX" type="button">Close</button>
+        <button class="btn ghost" id="weatherSettingsX" type="button" data-weather-close>Close</button>
       </div>
 
       <div class="modal-body">
@@ -178,7 +173,7 @@
         </div>
 
         <div class="setting">
-          <div class="setting-label">Language (descriptions)</div>
+          <div class="setting-label">Language</div>
           <div class="setting-control">
             <select id="lang">
               <option value="en">English</option>
@@ -204,12 +199,11 @@
               <input id="autoLocate" type="checkbox" />
               <span class="slider"></span>
             </label>
-            <span class="tiny-note">If off, location only fetches when user clicks “Use my location”.</span>
           </div>
         </div>
 
         <div class="setting">
-          <div class="setting-label">Load last location on open</div>
+          <div class="setting-label">Load last location</div>
           <div class="setting-control">
             <label class="switch">
               <input id="loadLast" type="checkbox" />
@@ -241,7 +235,7 @@
         </div>
 
         <div class="setting">
-          <div class="setting-label">Save settings</div>
+          <div class="setting-label">Save</div>
           <div class="setting-control">
             <button class="btn primary" id="weatherSaveSettings" type="button">Save</button>
             <button class="btn" id="weatherResetSettings" type="button">Reset</button>
@@ -249,7 +243,7 @@
         </div>
 
         <div class="tiny-note">
-          Reset here only resets weather settings, not your website’s global settings.
+          Reset here only resets weather settings (not your website’s global settings).
         </div>
       </div>
     </div>
