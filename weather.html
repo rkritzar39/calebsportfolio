@@ -1,73 +1,110 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark-mode">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Weather</title>
-  <link rel="stylesheet" href="weather.css" />
+
+  <!-- Your global theme variables + light/dark system -->
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="settings.css" />
+
+  <!-- Weather page styles (uses your variables) -->
+  <link rel="stylesheet" href="weather.css" />
 </head>
+
 <body>
-  <main class="wrap">
-    <header class="header">
-      <h1 class="title">Weather</h1>
-      <p class="subtitle" id="subtitle">Live conditions + forecast</p>
-    </header>
+  <main class="weather-page">
+    <div class="weather-wrap">
 
-    <section class="panel">
-      <div class="controls">
-        <form id="searchForm" class="search" autocomplete="off">
-          <label class="sr-only" for="cityInput">City</label>
-          <input id="cityInput" type="text" placeholder="Search city (e.g., Toledo, OH)" />
-          <button class="btn primary" type="submit">Search</button>
-        </form>
+      <header class="weather-header">
+        <h1>Weather</h1>
+        <p id="subtitle">Current conditions • hourly • 5-day</p>
+      </header>
 
-        <div class="actions">
-          <button class="btn" id="geoBtn" type="button">Use my location</button>
+      <section class="weather-panel" aria-label="Weather controls and results">
 
-          <div class="toggle" role="group" aria-label="Units">
-            <button class="chip is-active" id="unitF" type="button" aria-pressed="true">°F</button>
-            <button class="chip" id="unitC" type="button" aria-pressed="false">°C</button>
+        <div class="weather-controls">
+          <form class="weather-search" id="searchForm" autocomplete="off">
+            <label class="sr-only" for="cityInput">City</label>
+            <input
+              id="cityInput"
+              type="text"
+              placeholder="Search city (e.g., Toledo, OH)"
+              inputmode="text"
+            />
+            <button class="btn primary" type="submit">Search</button>
+          </form>
+
+          <div class="weather-actions">
+            <button class="btn" id="geoBtn" type="button">Use my location</button>
+
+            <div class="unit-toggle" role="group" aria-label="Units">
+              <button class="chip is-active" id="unitF" type="button" aria-pressed="true">°F</button>
+              <button class="chip" id="unitC" type="button" aria-pressed="false">°C</button>
+            </div>
+
+            <button class="btn ghost" id="refreshBtn" type="button">Refresh</button>
           </div>
         </div>
-      </div>
 
-      <div class="status" id="status" aria-live="polite"></div>
+        <div class="weather-status" id="status" aria-live="polite"></div>
 
-      <div class="grid">
-        <section class="card" id="currentCard" hidden>
-          <div class="card-head">
-            <div>
-              <div class="place" id="place">—</div>
-              <div class="meta" id="meta">—</div>
+        <div class="weather-grid">
+          <!-- CURRENT -->
+          <section class="weather-card" id="currentCard" hidden>
+            <div class="card-head">
+              <div>
+                <div class="place" id="place">—</div>
+                <div class="meta" id="meta">—</div>
+              </div>
+              <img class="icon" id="icon" alt="" />
             </div>
-            <img id="icon" class="icon" alt="" />
-          </div>
 
-          <div class="temp-row">
-            <div class="temp" id="temp">—</div>
-            <div class="feels" id="feels">—</div>
-          </div>
+            <div class="temp-row">
+              <div class="temp" id="temp">—</div>
+              <div class="feels" id="feels">—</div>
+            </div>
 
-          <div class="stats">
-            <div class="stat"><span class="k">Wind</span><span class="v" id="wind">—</span></div>
-            <div class="stat"><span class="k">Humidity</span><span class="v" id="humidity">—</span></div>
-            <div class="stat"><span class="k">Pressure</span><span class="v" id="pressure">—</span></div>
-            <div class="stat"><span class="k">Visibility</span><span class="v" id="visibility">—</span></div>
-          </div>
-        </section>
+            <div class="stats">
+              <div class="stat">
+                <span class="k">Wind</span><span class="v" id="wind">—</span>
+              </div>
+              <div class="stat">
+                <span class="k">Humidity</span><span class="v" id="humidity">—</span>
+              </div>
+              <div class="stat">
+                <span class="k">Pressure</span><span class="v" id="pressure">—</span>
+              </div>
+              <div class="stat">
+                <span class="k">Visibility</span><span class="v" id="visibility">—</span>
+              </div>
+            </div>
 
-        <section class="card" id="forecastCard" hidden>
-          <div class="card-title">Next hours</div>
-          <div class="forecast" id="forecast"></div>
-        </section>
-      </div>
-    </section>
+            <div class="extras">
+              <div class="pill" id="sun">Sun: —</div>
+              <div class="pill" id="hiLo">H/L: —</div>
+              <div class="pill" id="clouds">Clouds: —</div>
+            </div>
+          </section>
 
-    <footer class="foot">
-      <span>Data: OpenWeather</span>
-    </footer>
+          <!-- HOURLY -->
+          <section class="weather-card" id="hourlyCard" hidden>
+            <div class="card-title">Next hours</div>
+            <div class="forecast" id="hourly"></div>
+          </section>
+
+          <!-- DAILY -->
+          <section class="weather-card full" id="dailyCard" hidden>
+            <div class="card-title">Next days</div>
+            <div class="daily" id="daily"></div>
+          </section>
+        </div>
+
+        <div class="foot">
+          <span>Data: OpenWeather</span>
+        </div>
+      </section>
+    </div>
   </main>
 
   <script src="weather.js"></script>
