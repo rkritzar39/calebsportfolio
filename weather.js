@@ -1,12 +1,13 @@
 // =====================================================
 // FULL OpenWeather (free-friendly) Weather Website
+// Users can customize ALL units
 // =====================================================
 
 const OPENWEATHER_KEY = "57e2ef8d1ddf45ced53b8444e23ce2b7"; // rotate this key ASAP
 const API = "https://api.openweathermap.org";
 
-// ---------- WEATHER NAMESPACED KEYS (prevents global collisions) ----------
-const WEATHER_SETTINGS_KEY = "caleb_weather_settings_v1";
+// ---------- WEATHER NAMESPACED KEYS ----------
+const WEATHER_SETTINGS_KEY = "caleb_weather_settings_v2";
 const WEATHER_CITY_KEY     = "caleb_weather_city_v1";
 const WEATHER_COORDS_KEY   = "caleb_weather_coords_v1";
 
@@ -67,7 +68,7 @@ const daily16Note = $("daily16Note");
 const mapLayerSel = $("mapLayer");
 const mapOpacity  = $("mapOpacity");
 
-// Settings modal (namespaced IDs)
+// Settings modal
 const settingsBtn = $("weatherSettingsBtn");
 const settingsModal = $("weatherSettingsModal");
 const settingsClose = $("weatherSettingsClose");
@@ -86,14 +87,27 @@ const loadLastChk = $("loadLast");
 const autoRefreshSel = $("autoRefresh");
 const mapEnabledChk = $("mapEnabled");
 
+// NEW unit selectors
+const windUnitSel = $("windUnit");
+const pressureUnitSel = $("pressureUnit");
+const visibilityUnitSel = $("visibilityUnit");
+
 // ---------- SETTINGS ----------
 const DEFAULT_SETTINGS = {
-  units: "imperial",      // imperial | metric
-  timeFormat: "12",       // 12 | 24
-  lang: "en",             // OpenWeather descriptions language
-  autoLocate: false,      // default OFF
+  // temp units influence OpenWeather request
+  tempUnit: "F",            // F | C
+  timeFormat: "12",         // 12 | 24
+  lang: "en",
+
+  // user-chosen display units (we convert locally)
+  windUnit: "mph",          // mph | kmh | ms
+  pressureUnit: "hpa",      // hpa | inhg | mmhg
+  visibilityUnit: "mi",     // mi | km
+
+  autoLocate: false,
   loadLast: true,
-  autoRefreshMin: 0,      // 0 off, else minutes
+  autoRefreshMin: 0,
+
   mapEnabled: true,
   mapLayer: "clouds_new",
   mapOpacity: 0.7
@@ -115,6 +129,11 @@ function ensureKey() {
   return true;
 }
 
+// OpenWeather units parameter only supports "imperial" or "metric"
+function owmUnits() {
+  return settings.tempUnit === "F" ? "imperial" : "metric";
+}
+
 function saveSettings(next) {
   settings = { ...settings, ...next };
   localStorage.setItem(WEATHER_SETTINGS_KEY, JSON.stringify(settings));
@@ -134,7 +153,6 @@ function loadSettings() {
 }
 
 function resetSettings() {
-  // ONLY reset WEATHER settings. Never touch global/localStorage.clear().
   localStorage.removeItem(WEATHER_SETTINGS_KEY);
   settings = { ...DEFAULT_SETTINGS };
   localStorage.setItem(WEATHER_SETTINGS_KEY, JSON.stringify(settings));
@@ -146,28 +164,40 @@ function resetSettings() {
 }
 
 function syncSettingsUI() {
-  const isF = settings.units === "imperial";
+  // Temp chips
+  const isF = settings.tempUnit === "F";
   unitF.classList.toggle("is-active", isF);
   unitC.classList.toggle("is-active", !isF);
 
+  // Time chips
   const is12 = settings.timeFormat === "12";
   time12.classList.toggle("is-active", is12);
   time24.classList.toggle("is-active", !is12);
 
+  // Selectors
   langSel.value = settings.lang;
+
+  windUnitSel.value = settings.windUnit;
+  pressureUnitSel.value = settings.pressureUnit;
+  visibilityUnitSel.value = settings.visibilityUnit;
+
+  // Toggles
   autoLocateChk.checked = !!settings.autoLocate;
   loadLastChk.checked = !!settings.loadLast;
   autoRefreshSel.value = String(settings.autoRefreshMin);
   mapEnabledChk.checked = !!settings.mapEnabled;
 
+  // Map controls
   mapLayerSel.value = settings.mapLayer;
   mapOpacity.value = String(Math.round(settings.mapOpacity * 100));
 }
 
 function updateUnitPill() {
-  const tempUnit = settings.units === "imperial" ? "°F" : "°C";
-  const windUnit = settings.units === "imperial" ? "mph" : "m/s";
-  unitPill.textContent = `${tempUnit} • wind ${windUnit} • time ${settings.timeFormat}h • lang ${settings.lang}`;
+  const tempUnit = settings.tempUnit === "F" ? "°F" : "°C";
+  const windUnit = settings.windUnit === "mph" ? "mph" : (settings.windUnit === "kmh" ? "km/h" : "m/s");
+  const pressureUnit = settings.pressureUnit === "hpa" ? "hPa" : (settings.pressureUnit === "inhg" ? "inHg" : "mmHg");
+  const visUnit = settings.visibilityUnit === "mi" ? "mi" : "km";
+  unitPill.textContent = `${tempUnit} • wind ${windUnit} • pressure ${pressureUnit} • vis ${visUnit} • time ${settings.timeFormat}h • lang ${settings.lang}`;
 }
 
 function applyAutoRefresh() {
@@ -183,24 +213,60 @@ function applyAutoRefresh() {
 function pad2(n) { return String(n).padStart(2, "0"); }
 function iconUrl(icon) { return `https://openweathermap.org/img/wn/${icon}@2x.png`; }
 
-// ✅ UPDATED: show units in temps everywhere
+// ---------- UNIT CONVERSIONS ----------
 function fmtTemp(x) {
-  if (x === undefined || x === null || Number.isNaN(x)) return "—";
-  const unit = settings.units === "imperial" ? "°F" : "°C";
+  if (x == null || Number.isNaN(x)) return "—";
+  const unit = settings.tempUnit === "F" ? "°F" : "°C";
   return `${Math.round(x)}${unit}`;
 }
 
-function fmtWind(speed) {
-  if (speed === undefined || speed === null || Number.isNaN(speed)) return "—";
-  return settings.units === "imperial" ? `${Math.round(speed)} mph` : `${Math.round(speed)} m/s`;
+// OpenWeather returns wind speed in m/s (metric) or mph (imperial)
+function fmtWind(speedFromOWM) {
+  if (speedFromOWM == null || Number.isNaN(speedFromOWM)) return "—";
+
+  // Convert to m/s baseline first
+  const baseMs = (owmUnits() === "imperial")
+    ? (speedFromOWM * 0.44704) // mph -> m/s
+    : speedFromOWM;            // already m/s
+
+  if (settings.windUnit === "ms") {
+    return `${Math.round(baseMs)} m/s`;
+  }
+  if (settings.windUnit === "kmh") {
+    const kmh = baseMs * 3.6;
+    return `${Math.round(kmh)} km/h`;
+  }
+  // mph
+  const mph = baseMs / 0.44704;
+  return `${Math.round(mph)} mph`;
 }
 
-function fmtKm(meters) {
-  if (meters == null) return "—";
-  return `${(meters / 1000).toFixed(1)} km`;
+// OpenWeather gives pressure in hPa
+function fmtPressure(hPa) {
+  if (hPa == null || Number.isNaN(hPa)) return "—";
+
+  if (settings.pressureUnit === "hpa") return `${Math.round(hPa)} hPa`;
+  if (settings.pressureUnit === "inhg") {
+    const inHg = hPa * 0.0295299830714;
+    return `${inHg.toFixed(2)} inHg`;
+  }
+  // mmHg
+  const mmHg = hPa * 0.750061683;
+  return `${Math.round(mmHg)} mmHg`;
 }
 
-// OpenWeather gives timezone offset seconds for current/forecast city
+// OpenWeather gives visibility in meters
+function fmtVisibility(meters) {
+  if (meters == null || Number.isNaN(meters)) return "—";
+
+  if (settings.visibilityUnit === "km") {
+    const km = meters / 1000;
+    return `${km.toFixed(1)} km`;
+  }
+  const miles = meters / 1609.344;
+  return `${miles.toFixed(1)} mi`;
+}
+
 function dateFromUnixLocal(unixSeconds, tzOffsetSeconds) {
   return new Date((unixSeconds + tzOffsetSeconds) * 1000);
 }
@@ -210,7 +276,6 @@ function formatLocalTime(unixSeconds, tzOffsetSeconds) {
   const mm = d.getUTCMinutes();
 
   if (settings.timeFormat === "24") return `${pad2(hh)}:${pad2(mm)}`;
-
   const ampm = hh >= 12 ? "PM" : "AM";
   const h12 = ((hh + 11) % 12) + 1;
   return `${h12}:${pad2(mm)} ${ampm}`;
@@ -258,10 +323,10 @@ async function geocodeReverse(lat, lon) {
   return fetchJSON(`${API}/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${OPENWEATHER_KEY}`);
 }
 async function getCurrent(lat, lon) {
-  return fetchJSON(`${API}/data/2.5/weather?lat=${lat}&lon=${lon}&units=${settings.units}&lang=${settings.lang}&appid=${OPENWEATHER_KEY}`);
+  return fetchJSON(`${API}/data/2.5/weather?lat=${lat}&lon=${lon}&units=${owmUnits()}&lang=${settings.lang}&appid=${OPENWEATHER_KEY}`);
 }
 async function getForecast(lat, lon) {
-  return fetchJSON(`${API}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${settings.units}&lang=${settings.lang}&appid=${OPENWEATHER_KEY}`);
+  return fetchJSON(`${API}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=${owmUnits()}&lang=${settings.lang}&appid=${OPENWEATHER_KEY}`);
 }
 async function getAir(lat, lon) {
   return fetchJSON(`${API}/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_KEY}`);
@@ -270,7 +335,7 @@ async function getAir(lat, lon) {
 // Optional 16-day endpoint (auto-hides)
 async function getDaily16(lat, lon) {
   const cnt = 16;
-  return fetchJSON(`${API}/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=${cnt}&units=${settings.units}&lang=${settings.lang}&appid=${OPENWEATHER_KEY}`);
+  return fetchJSON(`${API}/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=${cnt}&units=${owmUnits()}&lang=${settings.lang}&appid=${OPENWEATHER_KEY}`);
 }
 
 // ---------- RENDER ----------
@@ -306,8 +371,8 @@ function renderAll(current, forecast, air, geo) {
 
   windEl.textContent = fmtWind(current?.wind?.speed);
   humidityEl.textContent = current?.main?.humidity != null ? `${current.main.humidity}%` : "—";
-  pressureEl.textContent = current?.main?.pressure != null ? `${current.main.pressure} hPa` : "—";
-  visibilityEl.textContent = fmtKm(current?.visibility);
+  pressureEl.textContent = fmtPressure(current?.main?.pressure);
+  visibilityEl.textContent = fmtVisibility(current?.visibility);
 
   const sunrise = current?.sys?.sunrise ? formatLocalTime(current.sys.sunrise, tz) : "—";
   const sunset  = current?.sys?.sunset  ? formatLocalTime(current.sys.sunset, tz) : "—";
@@ -331,8 +396,8 @@ function renderAll(current, forecast, air, geo) {
 function renderHourly(forecast) {
   const list = forecast?.list || [];
   const tzOffset = forecast?.city?.timezone ?? 0;
+  const next = list.slice(0, 8);
 
-  const next = list.slice(0, 8); // 24h via 3-hour blocks
   hourlyEl.innerHTML = next.map(item => {
     const time = item?.dt ? formatLocalTime(item.dt, tzOffset) : "—";
     const t = fmtTemp(item?.main?.temp);
@@ -571,19 +636,11 @@ function closeSettings(e) {
   settingsModal.hidden = true;
   document.body.style.overflow = "";
 }
-
-// Close on ESC
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !settingsModal.hidden) closeSettings(e);
 });
-
-// Clicking outside closes
 settingsClose.addEventListener("click", closeSettings);
-
-// Clicking inside modal should NOT close
 settingsModal.querySelector(".modal-card")?.addEventListener("click", (e) => e.stopPropagation());
-
-// Buttons
 settingsBtn.addEventListener("click", openSettings);
 settingsX.addEventListener("click", closeSettings);
 
@@ -628,16 +685,21 @@ refreshBtn.addEventListener("click", async () => {
 mapLayerSel.addEventListener("change", () => saveSettings({ mapLayer: mapLayerSel.value }));
 mapOpacity.addEventListener("input", () => saveSettings({ mapOpacity: Number(mapOpacity.value) / 100 }));
 
-// Settings chips
-unitF.addEventListener("click", () => { saveSettings({ units: "imperial" }); refresh().catch(()=>{}); });
-unitC.addEventListener("click", () => { saveSettings({ units: "metric" }); refresh().catch(()=>{}); });
+// Chips: temp + time
+unitF.addEventListener("click", () => { saveSettings({ tempUnit: "F" }); refresh().catch(()=>{}); });
+unitC.addEventListener("click", () => { saveSettings({ tempUnit: "C" }); refresh().catch(()=>{}); });
 
 time12.addEventListener("click", () => { saveSettings({ timeFormat: "12" }); refresh().catch(()=>{}); });
 time24.addEventListener("click", () => { saveSettings({ timeFormat: "24" }); refresh().catch(()=>{}); });
 
 langSel.addEventListener("change", () => { saveSettings({ lang: langSel.value }); refresh().catch(()=>{}); });
 
-// Save/reset buttons
+// NEW selects: wind/pressure/visibility (no API refetch needed, but we refresh to re-render cleanly)
+windUnitSel.addEventListener("change", () => { saveSettings({ windUnit: windUnitSel.value }); refresh().catch(()=>{}); });
+pressureUnitSel.addEventListener("change", () => { saveSettings({ pressureUnit: pressureUnitSel.value }); refresh().catch(()=>{}); });
+visibilityUnitSel.addEventListener("change", () => { saveSettings({ visibilityUnit: visibilityUnitSel.value }); refresh().catch(()=>{}); });
+
+// Save/reset
 saveSettingsBtn.addEventListener("click", (e) => {
   e.preventDefault();
   saveSettings({
@@ -665,13 +727,11 @@ resetSettingsBtn.addEventListener("click", (e) => {
   initMap();
   applyMapSettings();
 
-  // Don’t auto-fetch location unless enabled
   if (settings.autoLocate) {
     geoBtn.click();
     return;
   }
 
-  // Load last location if enabled
   if (settings.loadLast) {
     if (lastCity) {
       cityInput.value = lastCity;
