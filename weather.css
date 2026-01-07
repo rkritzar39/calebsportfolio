@@ -283,3 +283,12 @@
 /* CRITICAL: make the hidden attribute actually hide the modal */
 .modal[hidden] { display: none !important; }
 
+@media (max-width: 520px) {
+  .weather-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-color);
+    padding-bottom: 12px;
+  }
+}
