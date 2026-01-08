@@ -388,8 +388,51 @@ function getOWMTileUrl(layer){
   return `https://tile.openweathermap.org/map/${layer}/{z}/{x}/{y}.png?appid=${OPENWEATHER_KEY}`;
 }
 
-// ---------- 1) Severe weather "alerts" (rule-based) ----------
-function computeLocalAlerts(current, forecast){
+// =====================================================
+// 1) Weather Alerts (REAL first, fallback if needed)
+// =====================================================
+
+async function fetchNWSAlerts(lat, lon){
+  const res = await fetch(`https://api.weather.gov/alerts/active?point=${lat},${lon}`, {
+    headers: {
+      // NWS asks for a UA + contact info
+      "User-Agent": "CalebWeatherSite (calebkritzar@gmail.com)"
+    }
+  });
+  if (!res.ok) throw new Error(`NWS alerts failed (${res.status})`);
+  const data = await res.json();
+
+  const features = data?.features || [];
+  return features.map(f => {
+    const p = f.properties || {};
+    return {
+      source: "NWS",
+      title: p.event || "Weather Alert",
+      detail: p.headline || p.description || "",
+      severity: p.severity || "",
+      ends: p.ends || null
+    };
+  });
+}
+
+async function fetchOpenWeatherAlertsOneCall(lat, lon){
+  // OpenWeather alerts are in One Call (may require plan)
+  const units = apiUnits();
+  const url = `${API}/data/3.0/onecall?lat=${lat}&lon=${lon}&units=${units}&lang=${settings.lang}&appid=${OPENWEATHER_KEY}`;
+  const data = await fetchJSON(url);
+
+  const alerts = data?.alerts || [];
+  return alerts.map(a => ({
+    source: "OpenWeather",
+    title: a.event || "Weather Alert",
+    detail: a.description || "",
+    severity: a.tags?.join(", ") || "",
+    ends: a.end ? (a.end * 1000) : null
+  }));
+}
+
+// Your old “computeLocalAlerts”, but now it’s explicitly a fallback heads-up
+function computeLocalHeadsUp(current, forecast){
   const alerts = [];
   const units = apiUnits();
 
@@ -397,55 +440,99 @@ function computeLocalAlerts(current, forecast){
   const wind = current?.wind?.speed;
   const id = current?.weather?.[0]?.id;
 
-  // thunderstorm codes 200-232
   if (typeof id === "number" && id >= 200 && id < 300) alerts.push("Thunderstorm conditions detected.");
-  // extreme temps
+
   const tC = convertTempFromAPI(temp, units);
   if (tC != null){
     const tF = toFFromC(tC);
     if (tF <= 20) alerts.push("Extreme cold risk (very low temperatures).");
     if (tF >= 95) alerts.push("Extreme heat risk (very high temperatures).");
   }
-  // wind
+
   const w = convertWindFromAPI(wind, units);
   if (w && ((w.u === "mph" && w.v >= 30) || (w.u === "km/h" && w.v >= 50) || (w.u === "m/s" && w.v >= 13))){
     alerts.push("High winds — secure loose items and use caution outdoors.");
   }
 
-  // heavy precip upcoming (next 6h)
   const list = forecast?.list || [];
   const next = list.slice(0, 2); // 6h
   const heavy = next.some(it => {
     const rain = it?.rain?.["3h"] || 0;
     const snow = it?.snow?.["3h"] || 0;
-    return (rain + snow) >= 10; // mm in 3h
+    return (rain + snow) >= 10;
   });
   if (heavy) alerts.push("Heavy precipitation expected in the next few hours.");
 
   return alerts;
 }
 
-function shouldShowAlert(alerts){
-  if (!alerts.length) return false;
+function shouldShowAlert(){
   const dismissedUntil = Number(localStorage.getItem(WEATHER_ALERT_DISMISS_KEY) || "0");
   return Date.now() > dismissedUntil;
 }
 
-function showAlert(alerts){
+function showAlertBanner({ title, text }){
   alertBanner.hidden = false;
-  alertTitle.textContent = "⚠️ Weather heads-up";
-  alertText.textContent = alerts.join(" ");
+  alertTitle.textContent = title;
+  alertText.textContent = text;
 }
 
-function hideAlert(){
+function hideAlertBanner(){
   alertBanner.hidden = true;
 }
 
 dismissAlertBtn.addEventListener("click", () => {
-  // dismiss for 6 hours
   localStorage.setItem(WEATHER_ALERT_DISMISS_KEY, String(Date.now() + 6*60*60*1000));
-  hideAlert();
+  hideAlertBanner();
 });
+
+async function updateAlerts(lat, lon, geo, current, forecast){
+  if (!shouldShowAlert()){
+    hideAlertBanner();
+    return;
+  }
+
+  try{
+    const country = (geo?.country || current?.sys?.country || "").toUpperCase();
+
+    // US: official NWS alerts
+    if (country === "US"){
+      const nws = await fetchNWSAlerts(lat, lon);
+      if (nws.length){
+        const top = nws[0];
+        showAlertBanner({
+          title: `⚠️ ${top.title} (Official)`,
+          text: top.detail || "An official weather alert is active for this area."
+        });
+        return;
+      }
+    }
+
+    // Try OpenWeather One Call alerts (may fail if plan doesn’t include it)
+    const ow = await fetchOpenWeatherAlertsOneCall(lat, lon);
+    if (ow.length){
+      const top = ow[0];
+      showAlertBanner({
+        title: `⚠️ ${top.title}`,
+        text: (top.detail || "").slice(0, 280) || "A weather alert is active for this area."
+      });
+      return;
+    }
+  } catch (err){
+    console.warn("Real alerts unavailable:", err);
+  }
+
+  // Fallback: rule-based heads-up
+  const headsUp = computeLocalHeadsUp(current, forecast);
+  if (headsUp.length){
+    showAlertBanner({
+      title: "⚠️ Weather heads-up",
+      text: headsUp.join(" ")
+    });
+  } else {
+    hideAlertBanner();
+  }
+}
 
 // ---------- 13) Smart greeting ----------
 function setGreeting(current, tz){
@@ -463,11 +550,9 @@ function setGreeting(current, tz){
 
 // ---------- 12) Weather-based theming ----------
 function applyWeatherTheme(current){
-  // subtle: tweak accent a bit
   const id = current?.weather?.[0]?.id;
   if (typeof id !== "number") return;
 
-  // 2xx storms, 3xx drizzle, 5xx rain, 6xx snow, 7xx atmosphere, 800 clear, 80x clouds
   let mode = "default";
   if (id >= 200 && id < 300) mode = "storm";
   else if (id >= 300 && id < 600) mode = "rain";
@@ -477,7 +562,6 @@ function applyWeatherTheme(current){
 
   weatherPage.dataset.weatherMode = mode;
 
-  // optional: adjust accent via inline CSS variable (doesn't overwrite your global theme permanently)
   const map = {
     storm: "#8b5cf6",
     rain: "#38bdf8",
@@ -496,7 +580,6 @@ function buildImpactPills(current, forecast){
   const units = apiUnits();
 
   const t = current?.main?.temp;
-  const feels = current?.main?.feels_like;
   const humidity = current?.main?.humidity;
   const wind = current?.wind?.speed;
   const vis = current?.visibility;
@@ -506,7 +589,15 @@ function buildImpactPills(current, forecast){
   if (tC != null){
     const tF = toFFromC(tC);
     if (tF <= 40) pills.push("🧥 Dress warm");
-    if (tF >= 85) pills.push("🧴 Heat caution");
+
+    // 🔥 FIX: base heat messaging on feels-like / humidity, not just temp
+    const feelsApi = current?.main?.feels_like;
+    const feelsC = convertTempFromAPI(feelsApi, units);
+    if (feelsC != null){
+      const feelsF = toFFromC(feelsC);
+      if (feelsF >= 90) pills.push("🧴 Heat caution");
+      else if (tF >= 88 && typeof humidity === "number" && humidity >= 60) pills.push("🧴 Muggy heat");
+    }
   }
 
   // wind
@@ -549,7 +640,6 @@ function feelsLikeExplanation(current){
 
   if (Math.abs(diffF) < 3) return "Feels close to actual temperature.";
 
-  // simple heuristics
   if (diffF < -3 && wind != null) return "Feels colder mainly due to wind (wind chill).";
   if (diffF > 3 && humidity != null && humidity > 60) return "Feels hotter mainly due to humidity (heat index).";
   return diffF < 0 ? "Feels colder due to conditions (wind/humidity)." : "Feels hotter due to conditions (humidity/sun).";
@@ -561,17 +651,14 @@ function updatePressureTrend(lat, lon, pressureHpa, tz){
     pressureTrendEl.textContent = "Pressure trend: —";
     return;
   }
-  // store series
   const key = `p_${lat.toFixed(3)}_${lon.toFixed(3)}`;
   const raw = localStorage.getItem(WEATHER_HISTORY_KEY);
   const data = raw ? JSON.parse(raw) : {};
   if (!data[key]) data[key] = [];
   data[key].push({ t: Date.now(), p: pressureHpa });
-  // keep last 24h
   data[key] = data[key].filter(x => Date.now() - x.t < 24*60*60*1000);
   localStorage.setItem(WEATHER_HISTORY_KEY, JSON.stringify(data));
 
-  // compare last 3 hours
   const now = Date.now();
   const past = data[key].slice().reverse().find(x => now - x.t > 3*60*60*1000);
   if (!past){
@@ -604,31 +691,23 @@ function renderSunBar(current, tz){
 
 // ---------- 3) UV estimate ----------
 function estimateUV(lat, lon, unix, tz, cloudsPct){
-  // very rough: UV ~ f(solar elevation) adjusted by cloudiness
-  // returns 0-11+ estimate, labeled as estimate in UI.
   const d = dateFromUnixLocal(unix, tz);
   const dayOfYear = Math.floor((Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) - Date.UTC(d.getUTCFullYear(),0,0)) / 86400000);
 
-  // solar declination approximation
   const decl = 23.44 * Math.sin((2*Math.PI/365) * (dayOfYear - 81)) * (Math.PI/180);
   const latRad = lat * Math.PI/180;
 
-  // local solar time approx using UTC hour (we're already shifted by tz)
   const hour = d.getUTCHours() + d.getUTCMinutes()/60;
   const hourAngle = (Math.PI/12) * (hour - 12);
 
-  // elevation angle
   const sinElev = Math.sin(latRad)*Math.sin(decl) + Math.cos(latRad)*Math.cos(decl)*Math.cos(hourAngle);
   const elev = Math.asin(Math.max(-1, Math.min(1, sinElev)));
 
-  // base UV from elevation (simple curve)
   let uv = Math.max(0, (Math.sin(elev) ** 1.2) * 12);
 
-  // clouds reduce
   const cloudFactor = 1 - (Math.min(Math.max(cloudsPct ?? 0, 0), 100) / 100) * 0.6;
   uv *= cloudFactor;
 
-  // night time
   if (elev <= 0) uv = 0;
 
   return Math.round(uv * 10) / 10;
@@ -657,7 +736,6 @@ function renderPrecip(forecast){
   const snow = next?.snow?.["3h"] ?? 0;
 
   precipChance.textContent = pop == null ? "—" : `${pop}%`;
-  // mm to inches display is optional; keep mm to avoid confusion; add both for imperial
   const mm = rain + snow;
   const inches = mm * 0.0393701;
   precipAmount.textContent = mm > 0
@@ -772,7 +850,6 @@ function pushHistory(lat, lon, payload){
   let data = [];
   try { data = JSON.parse(localStorage.getItem(WEATHER_HISTORY_KEY) || "[]"); } catch { data = []; }
 
-  // store minimal snapshot
   const units = apiUnits();
   const snap = {
     key,
@@ -785,7 +862,6 @@ function pushHistory(lat, lon, payload){
   };
 
   data.push(snap);
-  // keep last 72h
   data = data.filter(x => Date.now() - x.t < 72*60*60*1000);
   localStorage.setItem(WEATHER_HISTORY_KEY, JSON.stringify(data));
 }
@@ -800,7 +876,6 @@ function renderHistory(lat, lon, current){
   const nowTxt = fmtTempFromAPI(now, apiUnits());
   histNow.textContent = `${nowTxt} • ${current?.weather?.[0]?.description || "—"}`;
 
-  // find closest to 24h ago
   const target = Date.now() - 24*60*60*1000;
   let best = null;
   let bestDist = Infinity;
@@ -818,7 +893,6 @@ function renderHistory(lat, lon, current){
   const oldTempTxt = fmtTempFromAPI(best.temp, best.units);
   hist24.textContent = `${oldTempTxt} • ${best.desc || best.main || "—"}`;
 
-  // delta in your chosen unit
   const nowC = convertTempFromAPI(now, apiUnits());
   const oldC = convertTempFromAPI(best.temp, best.units);
   if (nowC == null || oldC == null){
@@ -843,16 +917,11 @@ function renderAll(payload, isFromCache=false){
   const lon = current?.coord?.lon;
   const tz = current?.timezone ?? 0;
 
-  // 14) offline banner
   setOfflineBanner(isFromCache, isFromCache ? "This is cached data from your last successful fetch." : "");
 
-  // 12) theming
   applyWeatherTheme(current);
-
-  // 13) greeting
   setGreeting(current, tz);
 
-  // Basic fields
   showCards(true);
 
   const name = geo?.name || current?.name || "Unknown location";
@@ -888,14 +957,11 @@ function renderAll(payload, isFromCache=false){
 
   cloudsEl.textContent = `Clouds: ${current?.clouds?.all != null ? `${current.clouds.all}%` : "—"}`;
 
-  // 2) impact pills
   const pills = buildImpactPills(current, forecast);
   impactPills.innerHTML = pills.map(p => `<div class="pill">${p}</div>`).join("") || `<div class="pill">✅ Looks normal</div>`;
 
-  // 4) precip card
   renderPrecip(forecast);
 
-  // 3) UV estimate
   if (typeof lat === "number" && typeof lon === "number" && current?.dt){
     const uv = estimateUV(lat, lon, current.dt, tz, current?.clouds?.all ?? 0);
     const [cat, tip] = uvCategory(uv);
@@ -906,33 +972,21 @@ function renderAll(payload, isFromCache=false){
     uvDesc.textContent = "—";
   }
 
-  // 7) sunbar
   renderSunBar(current, tz);
 
-  // 9) pressure trend
   if (typeof lat === "number" && typeof lon === "number") {
     updatePressureTrend(lat, lon, current?.main?.pressure ?? null, tz);
   }
 
-  // Air
   renderAir(air);
-
-  // Forecast blocks
   renderHourly(forecast, tz);
   renderDaily(forecast);
 
-  // History
   if (typeof lat === "number" && typeof lon === "number"){
     renderHistory(lat, lon, current);
   }
 
-  // Map
   if (typeof lat === "number" && typeof lon === "number") setMapView(lat, lon);
-
-  // 1) alerts (rule-based)
-  const alerts = computeLocalAlerts(current, forecast);
-  if (shouldShowAlert(alerts)) showAlert(alerts);
-  else hideAlert();
 }
 
 function renderHourly(forecast, tzOffset){
@@ -1075,20 +1129,28 @@ async function loadByCoords(lat, lon, geoHint=null){
 
     const payload = { current, forecast, air, geo, fetchedAt: Date.now() };
 
-    // store cache for offline fallback
     localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify(payload));
-
-    // store history snapshot
     pushHistory(lat, lon, payload);
 
     renderAll(payload, false);
+
+    // ✅ REAL alerts update (banner)
+    updateAlerts(lat, lon, geo, current, forecast).catch(()=>{});
+
     setStatus("");
   } catch(err){
-    // 14) Offline fallback: use last good cache
     const raw = localStorage.getItem(WEATHER_CACHE_KEY);
     if (raw){
       const cached = JSON.parse(raw);
       renderAll(cached, true);
+
+      // ✅ Alerts even for cached (best effort)
+      const cLat = cached?.current?.coord?.lat;
+      const cLon = cached?.current?.coord?.lon;
+      if (typeof cLat === "number" && typeof cLon === "number"){
+        updateAlerts(cLat, cLon, cached.geo, cached.current, cached.forecast).catch(()=>{});
+      }
+
       setStatus(`Live fetch failed: ${err.message}`);
       return;
     }
@@ -1251,13 +1313,11 @@ resetSettingsBtn.addEventListener("click", (e)=>{
   initMap();
   applyMapSettings();
 
-  // Auto-locate only if enabled
   if (settings.autoLocate){
     geoBtn.click();
     return;
   }
 
-  // Load last
   if (settings.loadLast){
     if (lastCity){
       cityInput.value = lastCity;
