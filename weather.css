@@ -15,19 +15,24 @@
   gap: 12px;
 }
 
-.weather-header-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-wrap: wrap;
+.weather-header-left{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
 }
 
-.back-home {
-  text-decoration: none;
-  font-size: 14px;
-  white-space: nowrap;
+.weather-header-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
+.back-home{
+  text-decoration:none;
+  white-space:nowrap;
+}
 
 .weather-header h1 {
   margin: 0 0 6px;
@@ -112,9 +117,15 @@
 .meta  { margin-top: 2px; font-size: 13px; color: var(--secondary-text); }
 .icon { width: 64px; height: 64px; }
 
-.temp-row { display: flex; align-items: baseline; gap: 14px; margin: 10px 0 12px; }
+.temp-row { display: flex; align-items: baseline; gap: 14px; margin: 10px 0 6px; }
 .temp { font-size: 54px; font-weight: 800; line-height: 1; color: var(--text-color); }
 .feels{ color: var(--secondary-text); }
+
+.explain{
+  margin: 2px 0 10px;
+  color: var(--secondary-text);
+  font-size: 13px;
+}
 
 .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .stat {
@@ -158,7 +169,7 @@
 .daily { display: grid; gap: 10px; }
 .day {
   display: grid;
-  grid-template-columns: 110px 1fr 140px;
+  grid-template-columns: 110px 1fr 160px;
   gap: 10px;
   align-items: center;
   padding: 10px 12px;
@@ -194,13 +205,150 @@
   align-items: center;
   margin-bottom: 10px;
 }
-.mapbar select, .modal-body select {
+.mapbar select, .modal-body select,
+.compare-controls input, .favorites select {
   padding: 10px 10px;
   border-radius: var(--radius-md);
   border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
   background: color-mix(in srgb, var(--bg-color) 70%, #ffffff 2%);
   color: var(--text-color);
 }
+
+/* 1) Alerts + 13) Greeting + 14) Offline */
+.banner{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  background: color-mix(in srgb, var(--accent-color) 15%, var(--bg-color));
+}
+.banner.subtle{
+  background: color-mix(in srgb, var(--content-bg) 55%, var(--bg-color));
+}
+.banner-left{ display:grid; gap:4px; }
+.banner-title{ font-weight: 800; color: var(--text-color); }
+.banner-text{ color: var(--secondary-text); }
+
+/* 5) Favorites */
+.favorites{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin: 12px 0 6px;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  background: color-mix(in srgb, var(--content-bg) 45%, var(--bg-color));
+}
+.favorites-left, .favorites-right{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+.favorites-title{ font-weight: 800; color: var(--text-color); }
+
+/* 2) Impact pills */
+.impact{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top: 12px;
+}
+.impact .pill{
+  border-radius: 999px;
+}
+
+/* 3) UV */
+.uv-row{ display:flex; gap:12px; align-items:center; }
+.uv-big{ font-size: 44px; font-weight: 900; color: var(--text-color); }
+.uv-desc{ color: var(--secondary-text); }
+
+/* 7) Sun bar */
+.sunbar{ margin-top: 14px; }
+.sunbar-row{
+  display:flex;
+  justify-content:space-between;
+  color: var(--secondary-text);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.sunbar-track{
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 75%, #ffffff 1%);
+  overflow: hidden;
+}
+.sunbar-fill{
+  position:absolute;
+  height:100%;
+  left:0; top:0;
+  width: 0%;
+  background: color-mix(in srgb, var(--accent-color) 55%, transparent);
+}
+.sunbar-dot{
+  position:absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent-color) 20%, transparent);
+  left: 0%;
+}
+
+/* 10) Compare */
+.compare-controls{
+  display:grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap:10px;
+}
+@media (max-width: 760px){
+  .compare-controls{ grid-template-columns: 1fr; }
+}
+.compare-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+@media (max-width: 760px){
+  .compare-grid{ grid-template-columns: 1fr; }
+}
+.compare-box{
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 72%, #ffffff 1%);
+  padding: 12px;
+}
+.compare-title{ font-weight: 900; color: var(--text-color); margin-bottom: 6px; }
+.compare-line{ color: var(--secondary-text); font-size: 13px; margin-top: 4px; }
+
+/* 11) History */
+.history-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 760px){
+  .history-grid{ grid-template-columns: 1fr; }
+}
+.history-box{
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+  background: color-mix(in srgb, var(--bg-color) 72%, #ffffff 1%);
+  padding: 12px;
+}
+.history-label{ color: var(--secondary-text); font-size: 12px; }
+.history-value{ font-weight: 900; color: var(--text-color); margin-top: 6px; }
 
 /* Modal */
 .modal { position: fixed; inset: 0; display: grid; place-items: center; z-index: 9999; }
@@ -233,6 +381,11 @@
 }
 .setting-label { font-weight: 700; color: var(--text-color); }
 .setting-control { display:flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+.stack{
+  display:grid;
+  gap:6px;
+}
 
 .chip {
   border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
@@ -280,15 +433,6 @@
   border: 0;
 }
 
-/* CRITICAL: make the hidden attribute actually hide the modal */
+/* CRITICAL: make hidden attribute actually hide modal (and any hidden banners) */
 .modal[hidden] { display: none !important; }
-
-@media (max-width: 520px) {
-  .weather-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: var(--bg-color);
-    padding-bottom: 12px;
-  }
-}
+.banner[hidden] { display: none !important; }
