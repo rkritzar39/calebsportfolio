@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Weather</title>
 
-  <link rel="stylesheet" href="weather.css" />
+  <!-- Your global theme variables -->
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="weather.css" />
 
   <!-- Leaflet -->
   <link
@@ -18,29 +19,55 @@
 </head>
 
 <body>
-  <main class="weather-page">
+  <main class="weather-page" id="weatherPage">
     <div class="weather-wrap">
 
-     <header class="weather-header">
-  <div class="weather-header-left">
-    <a href="index.html" class="btn ghost back-home">
-      ← Home
-    </a>
+      <header class="weather-header">
+        <div class="weather-header-left">
+          <a class="btn ghost back-home" href="index.html">← Home</a>
+          <div>
+            <h1>Weather</h1>
+            <p id="subtitle">Smart • actionable • fast</p>
+          </div>
+        </div>
 
-    <div>
-      <h1>Weather</h1>
-      <p>Current • hourly • daily • air quality • maps</p>
-    </div>
-  </div>
+        <div class="weather-header-right">
+          <div class="unit-pill" id="unitPill" aria-live="polite">—</div>
+          <button class="btn" id="weatherSettingsBtn" type="button">Settings</button>
+        </div>
+      </header>
 
-  <button class="btn" id="weatherSettingsBtn" type="button">
-    Settings
-  </button>
-</header>
+      <!-- 1) Severe weather alerts banner -->
+      <section class="banner" id="alertBanner" hidden>
+        <div class="banner-left">
+          <div class="banner-title" id="alertTitle">⚠️ Alert</div>
+          <div class="banner-text" id="alertText">—</div>
+        </div>
+        <button class="btn ghost" id="dismissAlertBtn" type="button">Dismiss</button>
+      </section>
+
+      <!-- 13) Smart greeting -->
+      <section class="banner subtle" id="greetingBanner" hidden>
+        <div class="banner-left">
+          <div class="banner-title" id="greetingTitle">—</div>
+          <div class="banner-text" id="greetingText">—</div>
+        </div>
+      </section>
+
+      <!-- 14) Offline fallback banner -->
+      <section class="banner subtle" id="offlineBanner" hidden>
+        <div class="banner-left">
+          <div class="banner-title">📦 Showing cached weather</div>
+          <div class="banner-text" id="offlineText">Data may be outdated.</div>
+        </div>
+      </section>
 
       <section class="weather-panel">
+
+        <!-- Search / location -->
         <div class="weather-controls">
           <form class="weather-search" id="searchForm" autocomplete="off">
+            <label class="sr-only" for="cityInput">City</label>
             <input id="cityInput" type="text" placeholder="Search city (e.g., Toledo, OH, US)" />
             <button class="btn primary" type="submit">Search</button>
           </form>
@@ -48,13 +75,28 @@
           <div class="weather-actions">
             <button class="btn" id="geoBtn" type="button">Use my location</button>
             <button class="btn ghost" id="refreshBtn" type="button">Refresh</button>
-            <div class="unit-pill" id="unitPill">—</div>
           </div>
         </div>
+
+        <!-- 5) Favorites -->
+        <section class="favorites" aria-label="Favorites">
+          <div class="favorites-left">
+            <div class="favorites-title">⭐ Favorites</div>
+            <select id="favoritesSelect" aria-label="Favorite locations">
+              <option value="">No favorites yet</option>
+            </select>
+            <button class="btn" id="favGoBtn" type="button">Go</button>
+          </div>
+          <div class="favorites-right">
+            <button class="btn" id="favSaveBtn" type="button">Save current</button>
+            <button class="btn ghost" id="favRemoveBtn" type="button">Remove selected</button>
+          </div>
+        </section>
 
         <div class="weather-status" id="status" aria-live="polite"></div>
 
         <div class="weather-grid">
+
           <!-- CURRENT -->
           <section class="weather-card" id="currentCard" hidden>
             <div class="card-head">
@@ -70,6 +112,9 @@
               <div class="feels" id="feels">—</div>
             </div>
 
+            <!-- 6) Feels-like explanation -->
+            <div class="explain" id="feelsExplain">—</div>
+
             <div class="stats">
               <div class="stat"><span class="k">Wind</span><span class="v" id="wind">—</span></div>
               <div class="stat"><span class="k">Humidity</span><span class="v" id="humidity">—</span></div>
@@ -77,21 +122,58 @@
               <div class="stat"><span class="k">Visibility</span><span class="v" id="visibility">—</span></div>
             </div>
 
+            <!-- 2) Impact indicators -->
+            <div class="impact" id="impactPills"></div>
+
             <div class="extras">
               <div class="pill" id="sun">Sun: —</div>
               <div class="pill" id="hiLo">H/L: —</div>
               <div class="pill" id="clouds">Clouds: —</div>
+
+              <!-- 9) Pressure trend -->
+              <div class="pill" id="pressureTrend">Pressure trend: —</div>
+            </div>
+
+            <!-- 7) Sunrise / sunset visualization -->
+            <div class="sunbar" aria-label="Sunrise and sunset progress">
+              <div class="sunbar-row">
+                <span class="sunbar-label" id="sunriseLbl">Sunrise —</span>
+                <span class="sunbar-label" id="sunsetLbl">Sunset —</span>
+              </div>
+              <div class="sunbar-track">
+                <div class="sunbar-fill" id="sunbarFill"></div>
+                <div class="sunbar-dot" id="sunbarDot" title="Current sun position"></div>
+              </div>
             </div>
           </section>
 
-          <!-- AIR -->
+          <!-- 3) UV (Estimate) -->
+          <section class="weather-card" id="uvCard" hidden>
+            <div class="card-title">UV (estimate)</div>
+            <div class="uv-row">
+              <div class="uv-big" id="uvValue">—</div>
+              <div class="uv-desc" id="uvDesc">—</div>
+            </div>
+            <div class="tiny-note">Estimate based on sun angle + cloud cover (not official UV index).</div>
+          </section>
+
+          <!-- 4) Precip probability & amount -->
+          <section class="weather-card" id="precipCard" hidden>
+            <div class="card-title">Precipitation</div>
+            <div class="stats">
+              <div class="stat"><span class="k">Chance (next)</span><span class="v" id="precipChance">—</span></div>
+              <div class="stat"><span class="k">Amount (next 3h)</span><span class="v" id="precipAmount">—</span></div>
+            </div>
+            <div class="tiny-note" id="precipNote">—</div>
+          </section>
+
+          <!-- AIR QUALITY -->
           <section class="weather-card" id="airCard" hidden>
             <div class="card-title">Air quality</div>
             <div class="aqi-row">
               <div class="aqi-badge" id="aqiBadge">AQI: —</div>
               <div class="aqi-text" id="aqiText">—</div>
             </div>
-
             <div class="stats aqi-stats">
               <div class="stat"><span class="k">PM2.5</span><span class="v" id="pm25">—</span></div>
               <div class="stat"><span class="k">PM10</span><span class="v" id="pm10">—</span></div>
@@ -100,7 +182,6 @@
               <div class="stat"><span class="k">SO₂</span><span class="v" id="so2">—</span></div>
               <div class="stat"><span class="k">CO</span><span class="v" id="co">—</span></div>
             </div>
-
             <div class="tiny-note">Units: μg/m³</div>
           </section>
 
@@ -116,17 +197,43 @@
             <div class="daily" id="daily"></div>
           </section>
 
-          <!-- 16 DAY (auto-hides if unavailable) -->
-          <section class="weather-card full" id="daily16Card" hidden>
-            <div class="card-title">Extended daily (up to 16 days)</div>
-            <div class="tiny-note" id="daily16Note"></div>
-            <div class="daily" id="daily16"></div>
+          <!-- 8) Advanced units lives in Settings modal -->
+
+          <!-- 11) Weather history -->
+          <section class="weather-card full" id="historyCard" hidden>
+            <div class="card-title">History (approx)</div>
+            <div class="history-grid">
+              <div class="history-box">
+                <div class="history-label">Now</div>
+                <div class="history-value" id="histNow">—</div>
+              </div>
+              <div class="history-box">
+                <div class="history-label">~24h ago</div>
+                <div class="history-value" id="hist24">—</div>
+              </div>
+              <div class="history-box">
+                <div class="history-label">Change</div>
+                <div class="history-value" id="histDelta">—</div>
+              </div>
+            </div>
+            <div class="tiny-note">Uses your last saved fetches (local cache).</div>
+          </section>
+
+          <!-- 10) Compare two locations -->
+          <section class="weather-card full" id="compareCard">
+            <div class="card-title">Compare two locations</div>
+            <div class="compare-controls">
+              <input id="compareA" placeholder="Location A (e.g., Toledo, OH, US)" />
+              <input id="compareB" placeholder="Location B (e.g., Detroit, MI, US)" />
+              <button class="btn primary" id="compareBtn" type="button">Compare</button>
+            </div>
+            <div class="compare-grid" id="compareGrid"></div>
+            <div class="tiny-note">Compare uses the same OpenWeather APIs (current + forecast summary).</div>
           </section>
 
           <!-- MAP -->
           <section class="weather-card full" id="mapCard">
             <div class="card-title">Weather map</div>
-
             <div class="mapbar">
               <div class="mapbar-left">
                 <span class="tiny-note">Layer:</span>
@@ -138,164 +245,156 @@
                   <option value="wind_new">Wind</option>
                 </select>
               </div>
-
               <div class="mapbar-right">
                 <span class="tiny-note">Opacity</span>
                 <input id="mapOpacity" type="range" min="0" max="100" value="70" />
               </div>
             </div>
-
             <div id="map" class="map"></div>
-            <div class="tiny-note">Overlay tiles: OpenWeather</div>
+            <div class="tiny-note">Overlay tiles: OpenWeather • Base map: OpenStreetMap</div>
           </section>
+        </div>
+
+        <div class="foot">
+          <span>Data: OpenWeather</span>
         </div>
       </section>
     </div>
   </main>
 
   <!-- SETTINGS MODAL -->
-<div class="modal" id="weatherSettingsModal" hidden>
-  <div class="modal-backdrop" id="weatherSettingsClose"></div>
+  <div class="modal" id="weatherSettingsModal" hidden>
+    <div class="modal-backdrop" id="weatherSettingsClose"></div>
 
-  <div class="modal-card" role="dialog" aria-modal="true" aria-label="Weather settings">
-    <div class="modal-head">
-      <div class="modal-title">Settings</div>
-      <button class="btn ghost" id="weatherSettingsX" type="button">Close</button>
-    </div>
-
-    <div class="modal-body">
-
-      <!-- Temperature -->
-      <div class="setting">
-        <div class="setting-label">Temperature unit</div>
-        <div class="setting-control">
-          <button class="chip" id="unitF" type="button">°F</button>
-          <button class="chip" id="unitC" type="button">°C</button>
-        </div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-label="Weather settings">
+      <div class="modal-head">
+        <div class="modal-title">Weather Settings</div>
+        <button class="btn ghost" id="weatherSettingsX" type="button">Close</button>
       </div>
 
-      <!-- Time -->
-      <div class="setting">
-        <div class="setting-label">Time format</div>
-        <div class="setting-control">
-          <button class="chip" id="time12" type="button">12h</button>
-          <button class="chip" id="time24" type="button">24h</button>
+      <div class="modal-body">
+        <div class="setting">
+          <div class="setting-label">Temperature units</div>
+          <div class="setting-control">
+            <button class="chip" id="unitF" type="button">°F</button>
+            <button class="chip" id="unitC" type="button">°C</button>
+            <button class="chip" id="unitK" type="button">K</button>
+          </div>
+          <div class="tiny-note">K = Kelvin (nerd mode).</div>
         </div>
-      </div>
 
-      <!-- Wind -->
-      <div class="setting">
-        <div class="setting-label">Wind speed unit</div>
-        <div class="setting-control">
-          <select id="windUnit">
-            <option value="mph">mph</option>
-            <option value="kmh">km/h</option>
-            <option value="ms">m/s</option>
-          </select>
+        <div class="setting">
+          <div class="setting-label">Time format</div>
+          <div class="setting-control">
+            <button class="chip" id="time12" type="button">12h</button>
+            <button class="chip" id="time24" type="button">24h</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Pressure -->
-      <div class="setting">
-        <div class="setting-label">Pressure unit</div>
-        <div class="setting-control">
-          <select id="pressureUnit">
-            <option value="hpa">hPa</option>
-            <option value="inhg">inHg</option>
-            <option value="mmhg">mmHg</option>
-          </select>
+        <div class="setting">
+          <div class="setting-label">Language (descriptions)</div>
+          <div class="setting-control">
+            <select id="lang">
+              <option value="en">English</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="it">Italiano</option>
+              <option value="pt">Português</option>
+              <option value="nl">Nederlands</option>
+              <option value="pl">Polski</option>
+              <option value="ru">Русский</option>
+              <option value="ja">日本語</option>
+              <option value="ko">한국어</option>
+              <option value="zh_cn">中文(简体)</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <!-- Visibility -->
-      <div class="setting">
-        <div class="setting-label">Visibility unit</div>
-        <div class="setting-control">
-          <select id="visibilityUnit">
-            <option value="mi">miles</option>
-            <option value="km">kilometers</option>
-          </select>
+        <!-- 8) Advanced units -->
+        <div class="setting">
+          <div class="setting-label">Advanced units</div>
+          <div class="setting-control">
+            <div class="stack">
+              <label class="tiny-note">Wind</label>
+              <select id="windUnit">
+                <option value="mph">mph</option>
+                <option value="kmh">km/h</option>
+                <option value="ms">m/s</option>
+                <option value="kt">knots</option>
+              </select>
+            </div>
+            <div class="stack">
+              <label class="tiny-note">Pressure</label>
+              <select id="pressureUnit">
+                <option value="hpa">hPa</option>
+                <option value="inhg">inHg</option>
+              </select>
+            </div>
+            <div class="stack">
+              <label class="tiny-note">Visibility</label>
+              <select id="visUnit">
+                <option value="km">km</option>
+                <option value="mi">miles</option>
+              </select>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Language -->
-      <div class="setting">
-        <div class="setting-label">Language</div>
-        <div class="setting-control">
-          <select id="lang">
-            <option value="en">English</option>
-            <option value="es">Español</option>
-            <option value="fr">Français</option>
-            <option value="de">Deutsch</option>
-            <option value="it">Italiano</option>
-            <option value="pt">Português</option>
-            <option value="nl">Nederlands</option>
-            <option value="pl">Polski</option>
-            <option value="ru">Русский</option>
-            <option value="ja">日本語</option>
-            <option value="ko">한국어</option>
-            <option value="zh_cn">中文(简体)</option>
-          </select>
+        <div class="setting">
+          <div class="setting-label">Auto-locate on page load</div>
+          <div class="setting-control">
+            <label class="switch">
+              <input id="autoLocate" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+            <span class="tiny-note">Off = no automatic location fetch.</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Behavior -->
-      <div class="setting">
-        <div class="setting-label">Auto-locate on page load</div>
-        <div class="setting-control">
-          <label class="switch">
-            <input id="autoLocate" type="checkbox" />
-            <span class="slider"></span>
-          </label>
+        <div class="setting">
+          <div class="setting-label">Load last location on open</div>
+          <div class="setting-control">
+            <label class="switch">
+              <input id="loadLast" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
-      </div>
 
-      <div class="setting">
-        <div class="setting-label">Load last location</div>
-        <div class="setting-control">
-          <label class="switch">
-            <input id="loadLast" type="checkbox" />
-            <span class="slider"></span>
-          </label>
+        <div class="setting">
+          <div class="setting-label">Auto refresh</div>
+          <div class="setting-control">
+            <select id="autoRefresh">
+              <option value="0">Off</option>
+              <option value="5">Every 5 min</option>
+              <option value="10">Every 10 min</option>
+              <option value="30">Every 30 min</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div class="setting">
-        <div class="setting-label">Auto refresh</div>
-        <div class="setting-control">
-          <select id="autoRefresh">
-            <option value="0">Off</option>
-            <option value="5">Every 5 min</option>
-            <option value="10">Every 10 min</option>
-            <option value="30">Every 30 min</option>
-          </select>
+        <div class="setting">
+          <div class="setting-label">Map enabled</div>
+          <div class="setting-control">
+            <label class="switch">
+              <input id="mapEnabled" type="checkbox" />
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
-      </div>
 
-      <div class="setting">
-        <div class="setting-label">Map enabled</div>
-        <div class="setting-control">
-          <label class="switch">
-            <input id="mapEnabled" type="checkbox" />
-            <span class="slider"></span>
-          </label>
+        <div class="setting">
+          <div class="setting-label">Save / reset weather settings</div>
+          <div class="setting-control">
+            <button class="btn primary" id="weatherSaveSettings" type="button">Save</button>
+            <button class="btn" id="weatherResetSettings" type="button">Reset</button>
+          </div>
+          <div class="tiny-note">Reset only resets weather settings (not website global settings).</div>
         </div>
-      </div>
-
-      <div class="setting">
-        <div class="setting-label">Save</div>
-        <div class="setting-control">
-          <button class="btn primary" id="weatherSaveSettings" type="button">Save</button>
-          <button class="btn" id="weatherResetSettings" type="button">Reset</button>
-        </div>
-      </div>
-
-      <div class="tiny-note">
-        Reset here only resets weather settings (not your whole website).
       </div>
     </div>
   </div>
-</div>
 
   <!-- Leaflet -->
   <script
