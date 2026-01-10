@@ -1427,7 +1427,6 @@ async function loadRegionalLeader() {
     return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=${width}`;
   };
 
-  // --- Fetch helper with timeout + better errors ---
   async function safeFetch(url, options = {}, timeoutMs = 9000) {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeoutMs);
@@ -1439,16 +1438,13 @@ async function loadRegionalLeader() {
     }
   }
 
-  // --- Geo detection: try locale first (no network), then APIs ---
   function countryFromLocale() {
-    // Try navigator.language like "en-US"
     const lang = navigator.language || "";
     const match = lang.match(/-([A-Z]{2})$/i);
     return match ? match[1].toUpperCase() : null;
   }
 
   async function countryFromGeoApis() {
-    // Try multiple IP APIs because adblockers and rate limits are real.
     const providers = [
       {
         name: "ipapi",
@@ -1480,29 +1476,24 @@ async function loadRegionalLeader() {
             name: out.name ? String(out.name) : null,
           };
         }
-      } catch (e) {
-        // Keep trying the next provider
-      }
+      } catch (e) {}
     }
     return null;
   }
 
   setLoading();
 
-  // Default fallback
   let countryCode = "US";
   let countryName = "United States";
   let geoSource = "fallback";
 
   try {
-    // 1) Locale-based detection first (won't throw "Failed to fetch")
     const localeCode = countryFromLocale();
     if (localeCode) {
       countryCode = localeCode;
       geoSource = "locale";
     }
 
-    // 2) Try geo APIs to get better accuracy + countryName
     const geo = await countryFromGeoApis();
     if (geo?.code) {
       countryCode = geo.code;
@@ -1512,7 +1503,6 @@ async function loadRegionalLeader() {
 
     subtitleEl.textContent = `Detected: ${countryName} (${countryCode})`;
 
-    // 3) Wikidata query
     const sparql = `
       SELECT
         ?hosLabel ?hosImg ?hosStart ?hosEnd
@@ -1545,11 +1535,11 @@ async function loadRegionalLeader() {
       "https://query.wikidata.org/sparql?format=json&query=" +
       encodeURIComponent(sparql);
 
-    const wdRes = await safeFetch(wdUrl, {
-      headers: {
-        Accept: "application/sparql-results+json",
-      },
-    }, 12000);
+    const wdRes = await safeFetch(
+      wdUrl,
+      { headers: { Accept: "application/sparql-results+json" } },
+      12000
+    );
 
     if (!wdRes.ok) throw new Error(`Wikidata HTTP ${wdRes.status}`);
 
@@ -1593,9 +1583,7 @@ async function loadRegionalLeader() {
       hosName !== "Not available" && hosName === hogName
         ? `Same person holds both roles. (Geo: ${geoSource})`
         : `Live data from Wikidata. (Geo: ${geoSource})`;
-
   } catch (err) {
-    // This message is your debugging friend
     subtitleEl.textContent = `Leader lookup failed. Showing default ${countryName} (${countryCode}).`;
     hosNameEl.textContent = "Unavailable";
     hogNameEl.textContent = "Unavailable";
@@ -1608,111 +1596,6 @@ async function loadRegionalLeader() {
 
 document.addEventListener("DOMContentLoaded", () => {
   loadRegionalLeader();
-  const refreshBtn = document.getElementById("leader-refresh");
-  if (refreshBtn) refreshBtn.addEventListener("click", loadRegionalLeader);
-});
-
-
-    /* ------------------------------------------------------ */
-    /* 2) Wikidata query: Names + Images + Term qualifiers     */
-    /*    - Head of State: P35                                 */
-    /*    - Head of Government: P6                              */
-    /*    - Image: P18                                          */
-    /*    - Start/End term qualifiers: P580 / P582              */
-    /* ------------------------------------------------------ */
-    const sparql = `
-      SELECT
-        ?hosLabel ?hosImg ?hosStart ?hosEnd
-        ?hogLabel ?hogImg ?hogStart ?hogEnd
-      WHERE {
-        ?country wdt:P297 "${countryCode}".
-
-        OPTIONAL {
-          ?country p:P35 ?hosStmt.
-          ?hosStmt ps:P35 ?hos.
-          OPTIONAL { ?hos wdt:P18 ?hosImg. }
-          OPTIONAL { ?hosStmt pq:P580 ?hosStart. }
-          OPTIONAL { ?hosStmt pq:P582 ?hosEnd. }
-        }
-
-        OPTIONAL {
-          ?country p:P6 ?hogStmt.
-          ?hogStmt ps:P6 ?hog.
-          OPTIONAL { ?hog wdt:P18 ?hogImg. }
-          OPTIONAL { ?hogStmt pq:P580 ?hogStart. }
-          OPTIONAL { ?hogStmt pq:P582 ?hogEnd. }
-        }
-
-        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-      }
-      LIMIT 1
-    `;
-
-    const url =
-      "https://query.wikidata.org/sparql?format=json&query=" +
-      encodeURIComponent(sparql);
-
-    const wdRes = await fetch(url, {
-      headers: { Accept: "application/sparql-results+json" },
-    });
-    if (!wdRes.ok) throw new Error("Wikidata query failed");
-
-    const data = await wdRes.json();
-    const row = data?.results?.bindings?.[0] || {};
-
-    const hosName = row?.hosLabel?.value || "Not available";
-    const hogName = row?.hogLabel?.value || "Not available";
-
-    const hosImg = row?.hosImg?.value || null;
-    const hogImg = row?.hogImg?.value || null;
-
-    const hosStart = row?.hosStart?.value || null;
-    const hosEnd = row?.hosEnd?.value || null;
-
-    const hogStart = row?.hogStart?.value || null;
-    const hogEnd = row?.hogEnd?.value || null;
-
-    hosNameEl.textContent = hosName;
-    hogNameEl.textContent = hogName;
-
-    hosTermEl.textContent = formatTerm(hosStart, hosEnd);
-    hogTermEl.textContent = formatTerm(hogStart, hogEnd);
-
-    const hosImgUrl = commonsFileToUrl(hosImg, 256);
-    const hogImgUrl = commonsFileToUrl(hogImg, 256);
-
-    if (hosImgUrl) {
-      hosImgEl.src = hosImgUrl;
-      hosImgEl.alt = `${hosName} photo`;
-      hosImgEl.style.display = "block";
-    }
-
-    if (hogImgUrl) {
-      hogImgEl.src = hogImgUrl;
-      hogImgEl.alt = `${hogName} photo`;
-      hogImgEl.style.display = "block";
-    }
-
-    if (hosName !== "Not available" && hosName === hogName) {
-      footnoteEl.textContent = "Same person holds both roles (common in presidential systems).";
-    } else {
-      footnoteEl.textContent = "Live data from Wikidata.";
-    }
-  } catch (err) {
-    subtitleEl.textContent = `Couldn’t fetch leader info. Defaulting to ${countryName} (${countryCode}).`;
-    hosNameEl.textContent = "Unavailable";
-    hogNameEl.textContent = "Unavailable";
-    hosTermEl.textContent = "—";
-    hogTermEl.textContent = "—";
-    footnoteEl.textContent = "Network blocked or rate-limited.";
-    console.warn(err);
-  }
-}
-
-/* Run on load + allow refresh */
-document.addEventListener("DOMContentLoaded", () => {
-  loadRegionalLeader();
-
   const refreshBtn = document.getElementById("leader-refresh");
   if (refreshBtn) refreshBtn.addEventListener("click", loadRegionalLeader);
 });
