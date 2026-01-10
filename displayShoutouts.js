@@ -1574,16 +1574,31 @@ async function loadRegionalLeader() {
     const hosImgUrl = commonsFileToUrl(hosImg, 256);
     const hogImgUrl = commonsFileToUrl(hogImg, 256);
 
-    if (hosImgEl && hosImgUrl) {
-      hosImgEl.src = hosImgUrl;
-      hosImgEl.alt = `${hosName} photo`;
-      hosImgEl.style.display = "block";
-    }
-    if (hogImgEl && hogImgUrl) {
-      hogImgEl.src = hogImgUrl;
-      hogImgEl.alt = `${hogName} photo`;
-      hogImgEl.style.display = "block";
-    }
+   if (hosImgEl && hosImgUrl) {
+  hosImgEl.onerror = () => {
+    console.warn("HOS image failed to load:", hosImgUrl, "raw:", hosImg);
+    hosImgEl.style.display = "none";
+  };
+  hosImgEl.onload = () => {
+    console.log("HOS image loaded:", hosImgUrl);
+  };
+  hosImgEl.src = hosImgUrl;
+  hosImgEl.alt = `${hosName} photo`;
+  hosImgEl.style.display = "block";
+}
+
+if (hogImgEl && hogImgUrl) {
+  hogImgEl.onerror = () => {
+    console.warn("HOG image failed to load:", hogImgUrl, "raw:", hogImg);
+    hogImgEl.style.display = "none";
+  };
+  hogImgEl.onload = () => {
+    console.log("HOG image loaded:", hogImgUrl);
+  };
+  hogImgEl.src = hogImgUrl;
+  hogImgEl.alt = `${hogName} photo`;
+  hogImgEl.style.display = "block";
+}
 
     footnoteEl.textContent =
       hosName !== "Not available" && hosName === hogName
