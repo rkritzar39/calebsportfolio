@@ -154,26 +154,35 @@
 
 </div>
 
-        <section class="section leader-section" id="leader-section">
-  <div class="section-header">
-    <h2>Current Leader (Your Region)</h2>
-    <p class="muted" id="leader-subtitle">Detecting your country…</p>
-  </div>
+  <section class="section" id="leader-section" data-section-id="leader">
+  <div class="leader-wrap">
+    <div class="leader-header">
+      <div>
+        <h2 class="leader-title">Current Leader (Your Region)</h2>
+        <p class="leader-sub" id="leader-subtitle">Detecting your region…</p>
+      </div>
 
-  <div class="leader-card" id="leader-card" aria-live="polite">
-    <div class="leader-row">
-      <div class="leader-label">Head of State</div>
-      <div class="leader-value" id="head-of-state">Loading…</div>
+      <button class="leader-refresh" id="leader-refresh" type="button" aria-label="Refresh leader data">
+        ↻
+      </button>
     </div>
 
-    <div class="leader-row">
-      <div class="leader-label">Head of Government</div>
-      <div class="leader-value" id="head-of-government">Loading…</div>
+    <div class="leader-grid">
+      <div class="leader-card">
+        <div class="leader-label">Head of State</div>
+        <div class="leader-value" id="head-of-state">Loading…</div>
+      </div>
+
+      <div class="leader-card">
+        <div class="leader-label">Head of Government</div>
+        <div class="leader-value" id="head-of-government">Loading…</div>
+      </div>
     </div>
 
-    <div class="leader-footnote muted" id="leader-footnote"></div>
+    <div class="leader-foot muted" id="leader-footnote"></div>
   </div>
 </section>
+
 
 
 <!-- 🔔 Toast Notifications -->
