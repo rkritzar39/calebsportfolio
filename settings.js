@@ -159,6 +159,7 @@ class SettingsManager {
       showDisabilitiesSection: "enabled",
       showQuoteSection: "enabled",
       showLiveActivity: "enabled",
+      showLeader: "enabled",
     };
 
     /* =============================
