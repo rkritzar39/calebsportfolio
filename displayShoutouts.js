@@ -1373,6 +1373,78 @@ function setupCreatorSearch() {
   console.log("Creator search inputs initialized and synced with sorting.");
 }
 
+
+async function loadRegionalLeader() {
+  const subtitleEl = document.getElementById("leader-subtitle");
+  const hosEl = document.getElementById("head-of-state");
+  const hogEl = document.getElementById("head-of-government");
+  const footnoteEl = document.getElementById("leader-footnote");
+
+  // Default fallback (in case anything fails)
+  let countryCode = "US";
+  let countryName = "United States";
+
+  try {
+    // 1) Detect country (IP-based)
+    const geoRes = await fetch("https://ipapi.co/json/");
+    if (geoRes.ok) {
+      const geo = await geoRes.json();
+      if (geo?.country_code) countryCode = String(geo.country_code).toUpperCase();
+      if (geo?.country_name) countryName = geo.country_name;
+    }
+
+    subtitleEl.textContent = `Detected: ${countryName} (${countryCode})`;
+
+    // 2) Query Wikidata for current heads
+    const sparql = `
+      SELECT ?countryLabel ?hosLabel ?hogLabel WHERE {
+        ?country wdt:P297 "${countryCode}".
+        OPTIONAL { ?country wdt:P35 ?hos. }
+        OPTIONAL { ?country wdt:P6 ?hog. }
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+      }
+      LIMIT 1
+    `;
+
+    const url = "https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(sparql);
+
+    const wdRes = await fetch(url, {
+      headers: {
+        "Accept": "application/sparql-results+json"
+      }
+    });
+
+    if (!wdRes.ok) throw new Error("Wikidata request failed");
+
+    const data = await wdRes.json();
+    const row = data?.results?.bindings?.[0];
+
+    const hos = row?.hosLabel?.value || "Unknown / not listed";
+    const hog = row?.hogLabel?.value || "Unknown / not listed";
+
+    hosEl.textContent = hos;
+    hogEl.textContent = hog;
+
+    // If they’re the same person, call it out (common in presidential systems)
+    if (hos !== "Unknown / not listed" && hos === hog) {
+      footnoteEl.textContent = "Same person holds both roles.";
+    } else {
+      footnoteEl.textContent = "Data source: Wikidata (live query).";
+    }
+  } catch (err) {
+    // Fallback UI
+    subtitleEl.textContent = `Couldn’t auto-detect region. Showing ${countryName} (${countryCode}).`;
+    hosEl.textContent = "Unavailable";
+    hogEl.textContent = "Unavailable";
+    footnoteEl.textContent = "Network blocked or API rate-limited.";
+    console.warn(err);
+  }
+}
+
+// Run on page load
+document.addEventListener("DOMContentLoaded", loadRegionalLeader);
+
+
 /* ========================================
    displayShoutouts.js - Business Hours & Status
    Full version with dynamic sub-status (NO countdown)
