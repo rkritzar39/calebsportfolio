@@ -1399,7 +1399,6 @@ async function loadRegionalLeader() {
 
     footnoteEl.textContent = "";
 
-    // hide images until we have them
     hosImgEl.style.display = "none";
     hogImgEl.style.display = "none";
     hosImgEl.removeAttribute("src");
@@ -1423,30 +1422,196 @@ async function loadRegionalLeader() {
     return "Term: Not listed";
   };
 
-  // Wikidata P18 is a Wikimedia Commons file name; this creates a usable image URL
   const commonsFileToUrl = (fileName, width = 256) => {
     if (!fileName) return null;
     return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=${width}`;
   };
 
+  // --- Fetch helper with timeout + better errors ---
+  async function safeFetch(url, options = {}, timeoutMs = 9000) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      return res;
+    } finally {
+      clearTimeout(id);
+    }
+  }
+
+  // --- Geo detection: try locale first (no network), then APIs ---
+  function countryFromLocale() {
+    // Try navigator.language like "en-US"
+    const lang = navigator.language || "";
+    const match = lang.match(/-([A-Z]{2})$/i);
+    return match ? match[1].toUpperCase() : null;
+  }
+
+  async function countryFromGeoApis() {
+    // Try multiple IP APIs because adblockers and rate limits are real.
+    const providers = [
+      {
+        name: "ipapi",
+        url: "https://ipapi.co/json/",
+        parse: (j) => ({ code: j?.country_code, name: j?.country_name }),
+      },
+      {
+        name: "ipwhois",
+        url: "https://ipwho.is/",
+        parse: (j) => ({ code: j?.country_code, name: j?.country }),
+      },
+      {
+        name: "ipinfo (no key, limited)",
+        url: "https://ipinfo.io/json",
+        parse: (j) => ({ code: j?.country, name: null }),
+      },
+    ];
+
+    for (const p of providers) {
+      try {
+        const res = await safeFetch(p.url, {}, 9000);
+        if (!res.ok) continue;
+        const j = await res.json();
+        const out = p.parse(j);
+        if (out?.code) {
+          return {
+            provider: p.name,
+            code: String(out.code).toUpperCase(),
+            name: out.name ? String(out.name) : null,
+          };
+        }
+      } catch (e) {
+        // Keep trying the next provider
+      }
+    }
+    return null;
+  }
+
   setLoading();
 
-  // Fallback if anything fails
+  // Default fallback
   let countryCode = "US";
   let countryName = "United States";
+  let geoSource = "fallback";
 
   try {
-    /* -------------------------------------------- */
-    /* 1) Detect country (IP-based, no permissions) */
-    /* -------------------------------------------- */
-    const geoRes = await fetch("https://ipapi.co/json/");
-    if (geoRes.ok) {
-      const geo = await geoRes.json();
-      if (geo?.country_code) countryCode = String(geo.country_code).toUpperCase();
-      if (geo?.country_name) countryName = String(geo.country_name);
+    // 1) Locale-based detection first (won't throw "Failed to fetch")
+    const localeCode = countryFromLocale();
+    if (localeCode) {
+      countryCode = localeCode;
+      geoSource = "locale";
+    }
+
+    // 2) Try geo APIs to get better accuracy + countryName
+    const geo = await countryFromGeoApis();
+    if (geo?.code) {
+      countryCode = geo.code;
+      if (geo.name) countryName = geo.name;
+      geoSource = geo.provider;
     }
 
     subtitleEl.textContent = `Detected: ${countryName} (${countryCode})`;
+
+    // 3) Wikidata query
+    const sparql = `
+      SELECT
+        ?hosLabel ?hosImg ?hosStart ?hosEnd
+        ?hogLabel ?hogImg ?hogStart ?hogEnd
+      WHERE {
+        ?country wdt:P297 "${countryCode}".
+
+        OPTIONAL {
+          ?country p:P35 ?hosStmt.
+          ?hosStmt ps:P35 ?hos.
+          OPTIONAL { ?hos wdt:P18 ?hosImg. }
+          OPTIONAL { ?hosStmt pq:P580 ?hosStart. }
+          OPTIONAL { ?hosStmt pq:P582 ?hosEnd. }
+        }
+
+        OPTIONAL {
+          ?country p:P6 ?hogStmt.
+          ?hogStmt ps:P6 ?hog.
+          OPTIONAL { ?hog wdt:P18 ?hogImg. }
+          OPTIONAL { ?hogStmt pq:P580 ?hogStart. }
+          OPTIONAL { ?hogStmt pq:P582 ?hogEnd. }
+        }
+
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+      }
+      LIMIT 1
+    `;
+
+    const wdUrl =
+      "https://query.wikidata.org/sparql?format=json&query=" +
+      encodeURIComponent(sparql);
+
+    const wdRes = await safeFetch(wdUrl, {
+      headers: {
+        Accept: "application/sparql-results+json",
+      },
+    }, 12000);
+
+    if (!wdRes.ok) throw new Error(`Wikidata HTTP ${wdRes.status}`);
+
+    const data = await wdRes.json();
+    const row = data?.results?.bindings?.[0] || {};
+
+    const hosName = row?.hosLabel?.value || "Not available";
+    const hogName = row?.hogLabel?.value || "Not available";
+
+    const hosImg = row?.hosImg?.value || null;
+    const hogImg = row?.hogImg?.value || null;
+
+    const hosStart = row?.hosStart?.value || null;
+    const hosEnd = row?.hosEnd?.value || null;
+
+    const hogStart = row?.hogStart?.value || null;
+    const hogEnd = row?.hogEnd?.value || null;
+
+    hosNameEl.textContent = hosName;
+    hogNameEl.textContent = hogName;
+
+    hosTermEl.textContent = formatTerm(hosStart, hosEnd);
+    hogTermEl.textContent = formatTerm(hogStart, hogEnd);
+
+    const hosImgUrl = commonsFileToUrl(hosImg, 256);
+    const hogImgUrl = commonsFileToUrl(hogImg, 256);
+
+    if (hosImgUrl) {
+      hosImgEl.src = hosImgUrl;
+      hosImgEl.alt = `${hosName} photo`;
+      hosImgEl.style.display = "block";
+    }
+
+    if (hogImgUrl) {
+      hogImgEl.src = hogImgUrl;
+      hogImgEl.alt = `${hogName} photo`;
+      hogImgEl.style.display = "block";
+    }
+
+    footnoteEl.textContent =
+      hosName !== "Not available" && hosName === hogName
+        ? `Same person holds both roles. (Geo: ${geoSource})`
+        : `Live data from Wikidata. (Geo: ${geoSource})`;
+
+  } catch (err) {
+    // This message is your debugging friend
+    subtitleEl.textContent = `Leader lookup failed. Showing default ${countryName} (${countryCode}).`;
+    hosNameEl.textContent = "Unavailable";
+    hogNameEl.textContent = "Unavailable";
+    hosTermEl.textContent = "—";
+    hogTermEl.textContent = "—";
+    footnoteEl.textContent = `Error: ${err?.name || "Unknown"} — ${err?.message || "Failed to fetch"}`;
+    console.warn("Leader widget error:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadRegionalLeader();
+  const refreshBtn = document.getElementById("leader-refresh");
+  if (refreshBtn) refreshBtn.addEventListener("click", loadRegionalLeader);
+});
+
 
     /* ------------------------------------------------------ */
     /* 2) Wikidata query: Names + Images + Term qualifiers     */
