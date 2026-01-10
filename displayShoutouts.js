@@ -1428,11 +1428,22 @@ async function loadRegionalLeader() {
     return "Term: Not listed";
   };
 
-  // Wikidata P18 is a Commons file name, so we convert it to a usable URL:
-  const commonsFileToUrl = (fileName, width = 256) => {
-    if (!fileName) return null;
-    return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=${width}`;
-  };
+ const commonsFileToUrl = (value, width = 256) => {
+  if (!value) return null;
+
+  // If Wikidata already gave us a URL, use it directly
+  if (/^https?:\/\//i.test(value)) {
+    // If it's a FilePath URL, optionally add width
+    if (value.includes("Special:FilePath/") && !value.includes("width=")) {
+      const join = value.includes("?") ? "&" : "?";
+      return `${value}${join}width=${width}`;
+    }
+    return value;
+  }
+
+  // Otherwise assume it's a filename like "Some_Image.jpg"
+  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(value)}?width=${width}`;
+};
 
   async function safeFetch(url, options = {}, timeoutMs = 9000) {
     const controller = new AbortController();
