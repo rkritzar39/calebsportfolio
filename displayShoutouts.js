@@ -1376,73 +1376,181 @@ function setupCreatorSearch() {
 
 async function loadRegionalLeader() {
   const subtitleEl = document.getElementById("leader-subtitle");
-  const hosEl = document.getElementById("head-of-state");
-  const hogEl = document.getElementById("head-of-government");
+
+  const hosNameEl = document.getElementById("head-of-state");
+  const hogNameEl = document.getElementById("head-of-government");
+
+  const hosImgEl = document.getElementById("hos-img");
+  const hogImgEl = document.getElementById("hog-img");
+
+  const hosTermEl = document.getElementById("hos-term");
+  const hogTermEl = document.getElementById("hog-term");
+
   const footnoteEl = document.getElementById("leader-footnote");
 
-  // Default fallback (in case anything fails)
+  const setLoading = () => {
+    subtitleEl.textContent = "Detecting your region…";
+
+    hosNameEl.textContent = "Loading…";
+    hogNameEl.textContent = "Loading…";
+
+    hosTermEl.textContent = "—";
+    hogTermEl.textContent = "—";
+
+    footnoteEl.textContent = "";
+
+    // hide images until we have them
+    hosImgEl.style.display = "none";
+    hogImgEl.style.display = "none";
+    hosImgEl.removeAttribute("src");
+    hogImgEl.removeAttribute("src");
+    hosImgEl.alt = "";
+    hogImgEl.alt = "";
+  };
+
+  const formatDate = (iso) => {
+    if (!iso) return null;
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return null;
+    return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  };
+
+  const formatTerm = (startIso, endIso) => {
+    const start = formatDate(startIso);
+    const end = formatDate(endIso);
+    if (start && end) return `${start} → ${end}`;
+    if (start && !end) return `${start} → Present`;
+    return "Term: Not listed";
+  };
+
+  // Wikidata P18 is a Wikimedia Commons file name; this creates a usable image URL
+  const commonsFileToUrl = (fileName, width = 256) => {
+    if (!fileName) return null;
+    return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=${width}`;
+  };
+
+  setLoading();
+
+  // Fallback if anything fails
   let countryCode = "US";
   let countryName = "United States";
 
   try {
-    // 1) Detect country (IP-based)
+    /* -------------------------------------------- */
+    /* 1) Detect country (IP-based, no permissions) */
+    /* -------------------------------------------- */
     const geoRes = await fetch("https://ipapi.co/json/");
     if (geoRes.ok) {
       const geo = await geoRes.json();
       if (geo?.country_code) countryCode = String(geo.country_code).toUpperCase();
-      if (geo?.country_name) countryName = geo.country_name;
+      if (geo?.country_name) countryName = String(geo.country_name);
     }
 
     subtitleEl.textContent = `Detected: ${countryName} (${countryCode})`;
 
-    // 2) Query Wikidata for current heads
+    /* ------------------------------------------------------ */
+    /* 2) Wikidata query: Names + Images + Term qualifiers     */
+    /*    - Head of State: P35                                 */
+    /*    - Head of Government: P6                              */
+    /*    - Image: P18                                          */
+    /*    - Start/End term qualifiers: P580 / P582              */
+    /* ------------------------------------------------------ */
     const sparql = `
-      SELECT ?countryLabel ?hosLabel ?hogLabel WHERE {
+      SELECT
+        ?hosLabel ?hosImg ?hosStart ?hosEnd
+        ?hogLabel ?hogImg ?hogStart ?hogEnd
+      WHERE {
         ?country wdt:P297 "${countryCode}".
-        OPTIONAL { ?country wdt:P35 ?hos. }
-        OPTIONAL { ?country wdt:P6 ?hog. }
+
+        OPTIONAL {
+          ?country p:P35 ?hosStmt.
+          ?hosStmt ps:P35 ?hos.
+          OPTIONAL { ?hos wdt:P18 ?hosImg. }
+          OPTIONAL { ?hosStmt pq:P580 ?hosStart. }
+          OPTIONAL { ?hosStmt pq:P582 ?hosEnd. }
+        }
+
+        OPTIONAL {
+          ?country p:P6 ?hogStmt.
+          ?hogStmt ps:P6 ?hog.
+          OPTIONAL { ?hog wdt:P18 ?hogImg. }
+          OPTIONAL { ?hogStmt pq:P580 ?hogStart. }
+          OPTIONAL { ?hogStmt pq:P582 ?hogEnd. }
+        }
+
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
       }
       LIMIT 1
     `;
 
-    const url = "https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(sparql);
+    const url =
+      "https://query.wikidata.org/sparql?format=json&query=" +
+      encodeURIComponent(sparql);
 
     const wdRes = await fetch(url, {
-      headers: {
-        "Accept": "application/sparql-results+json"
-      }
+      headers: { Accept: "application/sparql-results+json" },
     });
-
-    if (!wdRes.ok) throw new Error("Wikidata request failed");
+    if (!wdRes.ok) throw new Error("Wikidata query failed");
 
     const data = await wdRes.json();
-    const row = data?.results?.bindings?.[0];
+    const row = data?.results?.bindings?.[0] || {};
 
-    const hos = row?.hosLabel?.value || "Unknown / not listed";
-    const hog = row?.hogLabel?.value || "Unknown / not listed";
+    const hosName = row?.hosLabel?.value || "Not available";
+    const hogName = row?.hogLabel?.value || "Not available";
 
-    hosEl.textContent = hos;
-    hogEl.textContent = hog;
+    const hosImg = row?.hosImg?.value || null;
+    const hogImg = row?.hogImg?.value || null;
 
-    // If they’re the same person, call it out (common in presidential systems)
-    if (hos !== "Unknown / not listed" && hos === hog) {
-      footnoteEl.textContent = "Same person holds both roles.";
+    const hosStart = row?.hosStart?.value || null;
+    const hosEnd = row?.hosEnd?.value || null;
+
+    const hogStart = row?.hogStart?.value || null;
+    const hogEnd = row?.hogEnd?.value || null;
+
+    hosNameEl.textContent = hosName;
+    hogNameEl.textContent = hogName;
+
+    hosTermEl.textContent = formatTerm(hosStart, hosEnd);
+    hogTermEl.textContent = formatTerm(hogStart, hogEnd);
+
+    const hosImgUrl = commonsFileToUrl(hosImg, 256);
+    const hogImgUrl = commonsFileToUrl(hogImg, 256);
+
+    if (hosImgUrl) {
+      hosImgEl.src = hosImgUrl;
+      hosImgEl.alt = `${hosName} photo`;
+      hosImgEl.style.display = "block";
+    }
+
+    if (hogImgUrl) {
+      hogImgEl.src = hogImgUrl;
+      hogImgEl.alt = `${hogName} photo`;
+      hogImgEl.style.display = "block";
+    }
+
+    if (hosName !== "Not available" && hosName === hogName) {
+      footnoteEl.textContent = "Same person holds both roles (common in presidential systems).";
     } else {
-      footnoteEl.textContent = "Data source: Wikidata (live query).";
+      footnoteEl.textContent = "Live data from Wikidata.";
     }
   } catch (err) {
-    // Fallback UI
-    subtitleEl.textContent = `Couldn’t auto-detect region. Showing ${countryName} (${countryCode}).`;
-    hosEl.textContent = "Unavailable";
-    hogEl.textContent = "Unavailable";
-    footnoteEl.textContent = "Network blocked or API rate-limited.";
+    subtitleEl.textContent = `Couldn’t fetch leader info. Defaulting to ${countryName} (${countryCode}).`;
+    hosNameEl.textContent = "Unavailable";
+    hogNameEl.textContent = "Unavailable";
+    hosTermEl.textContent = "—";
+    hogTermEl.textContent = "—";
+    footnoteEl.textContent = "Network blocked or rate-limited.";
     console.warn(err);
   }
 }
 
-// Run on page load
-document.addEventListener("DOMContentLoaded", loadRegionalLeader);
+/* Run on load + allow refresh */
+document.addEventListener("DOMContentLoaded", () => {
+  loadRegionalLeader();
+
+  const refreshBtn = document.getElementById("leader-refresh");
+  if (refreshBtn) refreshBtn.addEventListener("click", loadRegionalLeader);
+});
 
 
 /* ========================================
