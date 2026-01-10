@@ -1387,24 +1387,30 @@ async function loadRegionalLeader() {
   const hogTermEl = document.getElementById("hog-term");
 
   const footnoteEl = document.getElementById("leader-footnote");
+  const refreshBtn = document.getElementById("leader-refresh");
+
+  // If the section isn't on this page, silently do nothing.
+  if (!subtitleEl || !hosNameEl || !hogNameEl || !hosTermEl || !hogTermEl || !footnoteEl) return;
 
   const setLoading = () => {
     subtitleEl.textContent = "Detecting your region…";
-
     hosNameEl.textContent = "Loading…";
     hogNameEl.textContent = "Loading…";
-
     hosTermEl.textContent = "—";
     hogTermEl.textContent = "—";
-
     footnoteEl.textContent = "";
 
-    hosImgEl.style.display = "none";
-    hogImgEl.style.display = "none";
-    hosImgEl.removeAttribute("src");
-    hogImgEl.removeAttribute("src");
-    hosImgEl.alt = "";
-    hogImgEl.alt = "";
+    // hide images until we have them
+    if (hosImgEl) {
+      hosImgEl.style.display = "none";
+      hosImgEl.removeAttribute("src");
+      hosImgEl.alt = "";
+    }
+    if (hogImgEl) {
+      hogImgEl.style.display = "none";
+      hogImgEl.removeAttribute("src");
+      hogImgEl.alt = "";
+    }
   };
 
   const formatDate = (iso) => {
@@ -1422,6 +1428,7 @@ async function loadRegionalLeader() {
     return "Term: Not listed";
   };
 
+  // Wikidata P18 is a Commons file name, so we convert it to a usable URL:
   const commonsFileToUrl = (fileName, width = 256) => {
     if (!fileName) return null;
     return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fileName)}?width=${width}`;
@@ -1431,8 +1438,7 @@ async function loadRegionalLeader() {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const res = await fetch(url, { ...options, signal: controller.signal });
-      return res;
+      return await fetch(url, { ...options, signal: controller.signal });
     } finally {
       clearTimeout(id);
     }
@@ -1446,21 +1452,9 @@ async function loadRegionalLeader() {
 
   async function countryFromGeoApis() {
     const providers = [
-      {
-        name: "ipapi",
-        url: "https://ipapi.co/json/",
-        parse: (j) => ({ code: j?.country_code, name: j?.country_name }),
-      },
-      {
-        name: "ipwhois",
-        url: "https://ipwho.is/",
-        parse: (j) => ({ code: j?.country_code, name: j?.country }),
-      },
-      {
-        name: "ipinfo (no key, limited)",
-        url: "https://ipinfo.io/json",
-        parse: (j) => ({ code: j?.country, name: null }),
-      },
+      { name: "ipapi", url: "https://ipapi.co/json/", parse: (j) => ({ code: j?.country_code, name: j?.country_name }) },
+      { name: "ipwhois", url: "https://ipwho.is/", parse: (j) => ({ code: j?.country_code, name: j?.country }) },
+      { name: "ipinfo", url: "https://ipinfo.io/json", parse: (j) => ({ code: j?.country, name: null }) },
     ];
 
     for (const p of providers) {
@@ -1488,12 +1482,14 @@ async function loadRegionalLeader() {
   let geoSource = "fallback";
 
   try {
+    // Locale fallback first (no network)
     const localeCode = countryFromLocale();
     if (localeCode) {
       countryCode = localeCode;
       geoSource = "locale";
     }
 
+    // Try IP-based geo (more accurate)
     const geo = await countryFromGeoApis();
     if (geo?.code) {
       countryCode = geo.code;
@@ -1503,6 +1499,7 @@ async function loadRegionalLeader() {
 
     subtitleEl.textContent = `Detected: ${countryName} (${countryCode})`;
 
+    // One SPARQL query: names + images + term qualifiers
     const sparql = `
       SELECT
         ?hosLabel ?hosImg ?hosStart ?hosEnd
@@ -1540,7 +1537,6 @@ async function loadRegionalLeader() {
       { headers: { Accept: "application/sparql-results+json" } },
       12000
     );
-
     if (!wdRes.ok) throw new Error(`Wikidata HTTP ${wdRes.status}`);
 
     const data = await wdRes.json();
@@ -1567,13 +1563,12 @@ async function loadRegionalLeader() {
     const hosImgUrl = commonsFileToUrl(hosImg, 256);
     const hogImgUrl = commonsFileToUrl(hogImg, 256);
 
-    if (hosImgUrl) {
+    if (hosImgEl && hosImgUrl) {
       hosImgEl.src = hosImgUrl;
       hosImgEl.alt = `${hosName} photo`;
       hosImgEl.style.display = "block";
     }
-
-    if (hogImgUrl) {
+    if (hogImgEl && hogImgUrl) {
       hogImgEl.src = hogImgUrl;
       hogImgEl.alt = `${hogName} photo`;
       hogImgEl.style.display = "block";
@@ -1592,13 +1587,17 @@ async function loadRegionalLeader() {
     footnoteEl.textContent = `Error: ${err?.name || "Unknown"} — ${err?.message || "Failed to fetch"}`;
     console.warn("Leader widget error:", err);
   }
+
+  // Add refresh click ONCE
+  if (refreshBtn && !refreshBtn.dataset.bound) {
+    refreshBtn.dataset.bound = "1";
+    refreshBtn.addEventListener("click", loadRegionalLeader);
+  }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  loadRegionalLeader();
-  const refreshBtn = document.getElementById("leader-refresh");
-  if (refreshBtn) refreshBtn.addEventListener("click", loadRegionalLeader);
-});
+// Run after DOM is ready
+document.addEventListener("DOMContentLoaded", loadRegionalLeader);
+
 
 
 /* ========================================
