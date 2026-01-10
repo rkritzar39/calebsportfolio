@@ -4550,3 +4550,98 @@ body.ultra-minimal .btn {
 @media(max-width: 1023px) {
   .section-jump-toggle { display: block; }
 }
+
+/* =============================== */
+/* Leader Section (Matches Onyx UI) */
+/* =============================== */
+
+.section[data-section-id="leader"] .leader-wrap {
+  position: relative;
+  z-index: 2; /* above your ::before/::after gloss layers */
+}
+
+.leader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.leader-title {
+  margin: 0 0 6px;
+  font-size: clamp(20px, 2.2vw, 28px);
+  color: var(--text-color);
+}
+
+.leader-sub {
+  margin: 0;
+  color: var(--secondary-text);
+  font-size: 0.98rem;
+}
+
+.leader-refresh {
+  border: 1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+  background: color-mix(in srgb, var(--content-bg) 78%, transparent);
+  color: var(--text-color);
+  border-radius: 999px;
+  padding: 10px 12px;
+  line-height: 1;
+  cursor: pointer;
+
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+  transition: transform var(--transition-fast), background var(--transition-fast);
+}
+
+.leader-refresh:hover {
+  background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+  transform: translateY(-1px);
+}
+
+.leader-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.leader-card {
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+
+  background: color-mix(in srgb, var(--content-bg) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+}
+
+.leader-label {
+  font-weight: 600;
+  color: var(--secondary-text);
+  letter-spacing: 0.2px;
+  margin-bottom: 8px;
+}
+
+.leader-value {
+  font-weight: 750;
+  color: var(--text-color);
+  font-size: 1.12rem;
+  letter-spacing: -0.01em;
+  word-break: break-word;
+}
+
+.leader-foot {
+  margin-top: 14px;
+  color: var(--secondary-text);
+  font-size: 0.95rem;
+}
+
+/* Make it behave on mobile */
+@media (max-width: 720px) {
+  .leader-grid {
+    grid-template-columns: 1fr;
+  }
+}
