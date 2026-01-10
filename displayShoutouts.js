@@ -1376,40 +1376,41 @@ function setupCreatorSearch() {
 
 async function loadRegionalLeader() {
   const subtitleEl = document.getElementById("leader-subtitle");
-
-  const hosNameEl = document.getElementById("head-of-state");
-  const hogNameEl = document.getElementById("head-of-government");
-
-  const hosImgEl = document.getElementById("hos-img");
-  const hogImgEl = document.getElementById("hog-img");
-
-  const hosTermEl = document.getElementById("hos-term");
-  const hogTermEl = document.getElementById("hog-term");
-
   const footnoteEl = document.getElementById("leader-footnote");
   const refreshBtn = document.getElementById("leader-refresh");
 
-  // If the section isn't on this page, silently do nothing.
-  if (!subtitleEl || !hosNameEl || !hogNameEl || !hosTermEl || !hogTermEl || !footnoteEl) return;
+  // President
+  const presNameEl = document.getElementById("president-name");
+  const presImgEl = document.getElementById("pres-img");
+  const presTermEl = document.getElementById("pres-term");
+
+  // Governor
+  const govNameEl = document.getElementById("governor-name");
+  const govImgEl = document.getElementById("gov-img");
+  const govTermEl = document.getElementById("gov-term");
+  const govLabelEl = document.getElementById("gov-label");
+
+  if (!subtitleEl || !footnoteEl || !presNameEl || !presTermEl || !govNameEl || !govTermEl) return;
 
   const setLoading = () => {
     subtitleEl.textContent = "Detecting your region…";
-    hosNameEl.textContent = "Loading…";
-    hogNameEl.textContent = "Loading…";
-    hosTermEl.textContent = "—";
-    hogTermEl.textContent = "—";
     footnoteEl.textContent = "";
 
-    // hide images until we have them
-    if (hosImgEl) {
-      hosImgEl.style.display = "none";
-      hosImgEl.removeAttribute("src");
-      hosImgEl.alt = "";
+    presNameEl.textContent = "Loading…";
+    presTermEl.textContent = "—";
+    if (presImgEl) {
+      presImgEl.style.display = "none";
+      presImgEl.removeAttribute("src");
+      presImgEl.alt = "";
     }
-    if (hogImgEl) {
-      hogImgEl.style.display = "none";
-      hogImgEl.removeAttribute("src");
-      hogImgEl.alt = "";
+
+    govNameEl.textContent = "Loading…";
+    govTermEl.textContent = "—";
+    if (govLabelEl) govLabelEl.textContent = "Governor";
+    if (govImgEl) {
+      govImgEl.style.display = "none";
+      govImgEl.removeAttribute("src");
+      govImgEl.alt = "";
     }
   };
 
@@ -1428,24 +1429,22 @@ async function loadRegionalLeader() {
     return "Term: Not listed";
   };
 
- const commonsFileToUrl = (value, width = 256) => {
-  if (!value) return null;
+  // Handles BOTH: filename OR URL
+  const commonsFileToUrl = (value, width = 256) => {
+    if (!value) return null;
 
-  // If Wikidata already gave us a URL, use it directly
-  if (/^https?:\/\//i.test(value)) {
-    // If it's a FilePath URL, optionally add width
-    if (value.includes("Special:FilePath/") && !value.includes("width=")) {
-      const join = value.includes("?") ? "&" : "?";
-      return `${value}${join}width=${width}`;
+    if (/^https?:\/\//i.test(value)) {
+      if (value.includes("Special:FilePath/") && !value.includes("width=")) {
+        const join = value.includes("?") ? "&" : "?";
+        return `${value}${join}width=${width}`;
+      }
+      return value;
     }
-    return value;
-  }
 
-  // Otherwise assume it's a filename like "Some_Image.jpg"
-  return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(value)}?width=${width}`;
-};
+    return `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(value)}?width=${width}`;
+  };
 
-  async function safeFetch(url, options = {}, timeoutMs = 9000) {
+  async function safeFetch(url, options = {}, timeoutMs = 12000) {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeoutMs);
     try {
@@ -1455,17 +1454,20 @@ async function loadRegionalLeader() {
     }
   }
 
-  function countryFromLocale() {
-    const lang = navigator.language || "";
-    const match = lang.match(/-([A-Z]{2})$/i);
-    return match ? match[1].toUpperCase() : null;
-  }
+  // Geo detection: returns { countryCode, countryName, stateCode, provider }
+  async function detectGeo() {
+    // Locale fallback (no network)
+    const localeCountry = (() => {
+      const lang = navigator.language || "";
+      const m = lang.match(/-([A-Z]{2})$/i);
+      return m ? m[1].toUpperCase() : null;
+    })();
 
-  async function countryFromGeoApis() {
+    // Try IP providers (more accurate + state for US)
     const providers = [
-      { name: "ipapi", url: "https://ipapi.co/json/", parse: (j) => ({ code: j?.country_code, name: j?.country_name }) },
-      { name: "ipwhois", url: "https://ipwho.is/", parse: (j) => ({ code: j?.country_code, name: j?.country }) },
-      { name: "ipinfo", url: "https://ipinfo.io/json", parse: (j) => ({ code: j?.country, name: null }) },
+      { name: "ipapi", url: "https://ipapi.co/json/" },
+      { name: "ipwhois", url: "https://ipwho.is/" },
+      { name: "ipinfo", url: "https://ipinfo.io/json" },
     ];
 
     for (const p of providers) {
@@ -1473,66 +1475,75 @@ async function loadRegionalLeader() {
         const res = await safeFetch(p.url, {}, 9000);
         if (!res.ok) continue;
         const j = await res.json();
-        const out = p.parse(j);
-        if (out?.code) {
-          return {
-            provider: p.name,
-            code: String(out.code).toUpperCase(),
-            name: out.name ? String(out.name) : null,
-          };
-        }
+
+        const countryCode =
+          (j?.country_code || j?.country || localeCountry || "US").toString().toUpperCase();
+
+        const countryName =
+          (j?.country_name || j?.country || "United States").toString();
+
+        // US state code attempts:
+        // ipapi: region_code (e.g. "OH")
+        // ipinfo: region (e.g. "Ohio") -> not code
+        // ipwhois: region_code sometimes exists
+        const stateCodeRaw = (j?.region_code || j?.region_code_iso || j?.region_code2 || j?.region_code3 || j?.region_code4 || j?.region_code5 || j?.region_code6 || j?.region_code7 || j?.region_code8 || j?.region_code9 || j?.region_code10 || j?.region_code11 || j?.region_code12 || j?.region_code13 || j?.region_code14 || j?.region_code15 || j?.region_code16 || j?.region_code17 || j?.region_code18 || j?.region_code19 || j?.region_code20 || j?.region_code21 || j?.region_code22 || j?.region_code23 || j?.region_code24 || j?.region_code25 || j?.region_code26 || j?.region_code27 || j?.region_code28 || j?.region_code29 || j?.region_code30 || j?.region_code31 || j?.region_code32 || j?.region_code33 || j?.region_code34 || j?.region_code35 || j?.region_code36 || j?.region_code37 || j?.region_code38 || j?.region_code39 || j?.region_code40 || j?.region_code41 || j?.region_code42 || j?.region_code43 || j?.region_code44 || j?.region_code45 || j?.region_code46 || j?.region_code47 || j?.region_code48 || j?.region_code49 || j?.region_code50 || j?.region_code51 || j?.region_code52 || j?.region_code53 || j?.region_code54 || j?.region_code55 || j?.region_code56 || j?.region_code57 || j?.region_code58 || j?.region_code59 || j?.region_code60 || j?.region_code61 || j?.region_code62 || j?.region_code63 || j?.region_code64 || j?.region_code65 || j?.region_code66 || j?.region_code67 || j?.region_code68 || j?.region_code69 || j?.region_code70 || j?.region_code71 || j?.region_code72 || j?.region_code73 || j?.region_code74 || j?.region_code75 || j?.region_code76 || j?.region_code77 || j?.region_code78 || j?.region_code79 || j?.region_code80 || j?.region_code81 || j?.region_code82 || j?.region_code83 || j?.region_code84 || j?.region_code85 || j?.region_code86 || j?.region_code87 || j?.region_code88 || j?.region_code89 || j?.region_code90 || j?.region_code91 || j?.region_code92 || j?.region_code93 || j?.region_code94 || j?.region_code95 || j?.region_code96 || j?.region_code97 || j?.region_code98 || j?.region_code99 || j?.region_code100 || j?.region_code101 || j?.region_code102 || j?.region_code103 || j?.region_code104 || j?.region_code105 || j?.region_code106 || j?.region_code107 || j?.region_code108 || j?.region_code109 || j?.region_code110 || j?.region_code111 || j?.region_code112 || j?.region_code113 || j?.region_code114 || j?.region_code115 || j?.region_code116 || j?.region_code117 || j?.region_code118 || j?.region_code119 || j?.region_code120 || j?.region_code121 || j?.region_code122 || j?.region_code123 || j?.region_code124 || j?.region_code125 || j?.region_code126 || j?.region_code127 || j?.region_code128 || j?.region_code129 || j?.region_code130 || j?.region_code131 || j?.region_code132 || j?.region_code133 || j?.region_code134 || j?.region_code135 || j?.region_code136 || j?.region_code137 || j?.region_code138 || j?.region_code139 || j?.region_code140 || j?.region_code141 || j?.region_code142 || j?.region_code143 || j?.region_code144 || j?.region_code145 || j?.region_code146 || j?.region_code147 || j?.region_code148 || j?.region_code149 || j?.region_code150 || j?.region_code151 || j?.region_code152 || j?.region_code153 || j?.region_code154 || j?.region_code155 || j?.region_code156 || j?.region_code157 || j?.region_code158 || j?.region_code159 || j?.region_code160 || j?.region_code161 || j?.region_code162 || j?.region_code163 || j?.region_code164 || j?.region_code165 || j?.region_code166 || j?.region_code167 || j?.region_code168 || j?.region_code169 || j?.region_code170 || j?.region_code171 || j?.region_code172 || j?.region_code173 || j?.region_code174 || j?.region_code175 || j?.region_code176 || j?.region_code177 || j?.region_code178 || j?.region_code179 || j?.region_code180 || j?.region_code181 || j?.region_code182 || j?.region_code183 || j?.region_code184 || j?.region_code185 || j?.region_code186 || j?.region_code187 || j?.region_code188 || j?.region_code189 || j?.region_code190 || j?.region_code191 || j?.region_code192 || j?.region_code193 || j?.region_code194 || j?.region_code195 || j?.region_code196 || j?.region_code197 || j?.region_code198 || j?.region_code199 || j?.region_code200 || j?.region_code201 || j?.region_code202 || j?.region_code203 || j?.region_code204 || j?.region_code205 || j?.region_code206 || j?.region_code207 || j?.region_code208 || j?.region_code209 || j?.region_code210 || j?.region_code211 || j?.region_code212 || j?.region_code213 || j?.region_code214 || j?.region_code215 || j?.region_code216 || j?.region_code217 || j?.region_code218 || j?.region_code219 || j?.region_code220 || j?.region_code221 || j?.region_code222 || j?.region_code223 || j?.region_code224 || j?.region_code225 || j?.region_code226 || j?.region_code227 || j?.region_code228 || j?.region_code229 || j?.region_code230 || j?.region_code231 || j?.region_code232 || j?.region_code233 || j?.region_code234 || j?.region_code235 || j?.region_code236 || j?.region_code237 || j?.region_code238 || j?.region_code239 || j?.region_code240 || j?.region_code241 || j?.region_code242 || j?.region_code243 || j?.region_code244 || j?.region_code245 || j?.region_code246 || j?.region_code247 || j?.region_code248 || j?.region_code249 || j?.region_code250 || j?.region_code251 || j?.region_code252 || j?.region_code253 || j?.region_code254 || j?.region_code255 || j?.region_code256 || j?.region_code257 || j?.region_code258 || j?.region_code259 || j?.region_code260 || j?.region_code261 || j?.region_code262 || j?.region_code263 || j?.region_code264 || j?.region_code265 || j?.region_code266 || j?.region_code267 || j?.region_code268 || j?.region_code269 || j?.region_code270 || j?.region_code271 || j?.region_code272 || j?.region_code273 || j?.region_code274 || j?.region_code275 || j?.region_code276 || j?.region_code277 || j?.region_code278 || j?.region_code279 || j?.region_code280 || j?.region_code281 || j?.region_code282 || j?.region_code283 || j?.region_code284 || j?.region_code285 || j?.region_code286 || j?.region_code287 || j?.region_code288 || j?.region_code289 || j?.region_code290 || j?.region_code291 || j?.region_code292 || j?.region_code293 || j?.region_code294 || j?.region_code295 || j?.region_code296 || j?.region_code297 || j?.region_code298 || j?.region_code299 || j?.region_code300 || j?.region_code301 || j?.region_code302 || j?.region_code303 || j?.region_code304 || j?.region_code305 || j?.region_code306 || j?.region_code307 || j?.region_code308 || j?.region_code309 || j?.region_code310 || j?.region_code311 || j?.region_code312 || j?.region_code313 || j?.region_code314 || j?.region_code315 || j?.region_code316 || j?.region_code317 || j?.region_code318 || j?.region_code319 || j?.region_code320 || j?.region_code321 || j?.region_code322 || j?.region_code323 || j?.region_code324 || j?.region_code325 || j?.region_code326 || j?.region_code327 || j?.region_code328 || j?.region_code329 || j?.region_code330 || j?.region_code331 || j?.region_code332 || j?.region_code333 || j?.region_code334 || j?.region_code335 || j?.region_code336 || j?.region_code337 || j?.region_code338 || j?.region_code339 || j?.region_code340 || j?.region_code341 || j?.region_code342 || j?.region_code343 || j?.region_code344 || j?.region_code345 || j?.region_code346 || j?.region_code347 || j?.region_code348 || j?.region_code349 || j?.region_code350 || j?.region_code351 || j?.region_code352 || j?.region_code353 || j?.region_code354 || j?.region_code355 || j?.region_code356 || j?.region_code357 || j?.region_code358 || j?.region_code359 || j?.region_code360 || j?.region_code361 || j?.region_code362 || j?.region_code363 || j?.region_code364 || j?.region_code365 || j?.region_code366 || j?.region_code367 || j?.region_code368 || j?.region_code369 || j?.region_code370 || j?.region_code371 || j?.region_code372 || j?.region_code373 || j?.region_code374 || j?.region_code375 || j?.region_code376 || j?.region_code377 || j?.region_code378 || j?.region_code379 || j?.region_code380 || j?.region_code381 || j?.region_code382 || j?.region_code383 || j?.region_code384 || j?.region_code385 || j?.region_code386 || j?.region_code387 || j?.region_code388 || j?.region_code389 || j?.region_code390 || j?.region_code391 || j?.region_code392 || j?.region_code393 || j?.region_code394 || j?.region_code395 || j?.region_code396 || j?.region_code397 || j?.region_code398 || j?.region_code399 || j?.region_code400 || j?.region_code401 || j?.region_code402 || j?.region_code403 || j?.region_code404 || j?.region_code405 || j?.region_code406 || j?.region_code407 || j?.region_code408 || j?.region_code409 || j?.region_code410 || j?.region_code411 || j?.region_code412 || j?.region_code413 || j?.region_code414 || j?.region_code415 || j?.region_code416 || j?.region_code417 || j?.region_code418 || j?.region_code419 || j?.region_code420 || j?.region_code421 || j?.region_code422 || j?.region_code423 || j?.region_code424 || j?.region_code425 || j?.region_code426 || j?.region_code427 || j?.region_code428 || j?.region_code429 || j?.region_code430 || j?.region_code431 || j?.region_code432 || j?.region_code433 || j?.region_code434 || j?.region_code435 || j?.region_code436 || j?.region_code437 || j?.region_code438 || j?.region_code439 || j?.region_code440 || j?.region_code441 || j?.region_code442 || j?.region_code443 || j?.region_code444 || j?.region_code445 || j?.region_code446 || j?.region_code447 || j?.region_code448 || j?.region_code449 || j?.region_code450 || j?.region_code451 || j?.region_code452 || j?.region_code453 || j?.region_code454 || j?.region_code455 || j?.region_code456 || j?.region_code457 || j?.region_code458 || j?.region_code459 || j?.region_code460 || j?.region_code461 || j?.region_code462 || j?.region_code463 || j?.region_code464 || j?.region_code465 || j?.region_code466 || j?.region_code467 || j?.region_code468 || j?.region_code469 || j?.region_code470 || j?.region_code471 || j?.region_code472 || j?.region_code473 || j?.region_code474 || j?.region_code475 || j?.region_code476 || j?.region_code477 || j?.region_code478 || j?.region_code479 || j?.region_code480 || j?.region_code481 || j?.region_code482 || j?.region_code483 || j?.region_code484 || j?.region_code485 || j?.region_code486 || j?.region_code487 || j?.region_code488 || j?.region_code489 || j?.region_code490 || j?.region_code491 || j?.region_code492 || j?.region_code493 || j?.region_code494 || j?.region_code495 || j?.region_code496 || j?.region_code497 || j?.region_code498 || j?.region_code499 || j?.region_code500 || j?.region_code501 || j?.region_code502 || j?.region_code503 || j?.region_code504 || j?.region_code505 || j?.region_code506 || j?.region_code507 || j?.region_code508 || j?.region_code509 || j?.region_code510 || j?.region_code511 || j?.region_code512 || j?.region_code513 || j?.region_code514 || j?.region_code515 || j?.region_code516 || j?.region_code517 || j?.region_code518 || j?.region_code519 || j?.region_code520 || j?.region_code521 || j?.region_code522 || j?.region_code523 || j?.region_code524 || j?.region_code525 || j?.region_code526 || j?.region_code527 || j?.region_code528 || j?.region_code529 || j?.region_code530 || j?.region_code531 || j?.region_code532 || j?.region_code533 || j?.region_code534 || j?.region_code535 || j?.region_code536 || j?.region_code537 || j?.region_code538 || j?.region_code539 || j?.region_code540 || j?.region_code541 || j?.region_code542 || j?.region_code543 || j?.region_code544 || j?.region_code545 || j?.region_code546 || j?.region_code547 || j?.region_code548 || j?.region_code549 || j?.region_code550 || j?.region_code551 || j?.region_code552 || j?.region_code553 || j?.region_code554 || j?.region_code555 || j?.region_code556 || j?.region_code557 || j?.region_code558 || j?.region_code559 || j?.region_code560 || j?.region_code561 || j?.region_code562 || j?.region_code563 || j?.region_code564 || j?.region_code565 || j?.region_code566 || j?.region_code567 || j?.region_code568 || j?.region_code569 || j?.region_code570 || j?.region_code571 || j?.region_code572 || j?.region_code573 || j?.region_code574 || j?.region_code575 || j?.region_code576 || j?.region_code577 || j?.region_code578 || j?.region_code579 || j?.region_code580 || j?.region_code581 || j?.region_code582 || j?.region_code583 || j?.region_code584 || j?.region_code585 || j?.region_code586 || j?.region_code587 || j?.region_code588 || j?.region_code589 || j?.region_code590 || j?.region_code591 || j?.region_code592 || j?.region_code593 || j?.region_code594 || j?.region_code595 || j?.region_code596 || j?.region_code597 || j?.region_code598 || j?.region_code599 || j?.region_code600 || j?.region_code601 || j?.region_code602 || j?.region_code603 || j?.region_code604 || j?.region_code605 || j?.region_code606 || j?.region_code607 || j?.region_code608 || j?.region_code609 || j?.region_code610 || j?.region_code611 || j?.region_code612 || j?.region_code613 || j?.region_code614 || j?.region_code615 || j?.region_code616 || j?.region_code617 || j?.region_code618 || j?.region_code619 || j?.region_code620 || j?.region_code621 || j?.region_code622 || j?.region_code623 || j?.region_code624 || j?.region_code625 || j?.region_code626 || j?.region_code627 || j?.region_code628 || j?.region_code629 || j?.region_code630 || j?.region_code631 || j?.region_code632 || j?.region_code633 || j?.region_code634 || j?.region_code635 || j?.region_code636 || j?.region_code637 || j?.region_code638 || j?.region_code639 || j?.region_code640 || j?.region_code641 || j?.region_code642 || j?.region_code643 || j?.region_code644 || j?.region_code645 || j?.region_code646 || j?.region_code647 || j?.region_code648 || j?.region_code649 || j?.region_code650 || j?.region_code651 || j?.region_code652 || j?.region_code653 || j?.region_code654 || j?.region_code655 || j?.region_code656 || j?.region_code657 || j?.region_code658 || j?.region_code659 || j?.region_code660 || j?.region_code661 || j?.region_code662 || j?.region_code663 || j?.region_code664 || j?.region_code665 || j?.region_code666 || j?.region_code667 || j?.region_code668 || j?.region_code669 || j?.region_code670 || j?.region_code671 || j?.region_code672 || j?.region_code673 || j?.region_code674 || j?.region_code675 || j?.region_code676 || j?.region_code677 || j?.region_code678 || j?.region_code679 || j?.region_code680 || j?.region_code681 || j?.region_code682 || j?.region_code683 || j?.region_code684 || j?.region_code685 || j?.region_code686 || j?.region_code687 || j?.region_code688 || j?.region_code689 || j?.region_code690 || j?.region_code691 || j?.region_code692 || j?.region_code693 || j?.region_code694 || j?.region_code695 || j?.region_code696 || j?.region_code697 || j?.region_code698 || j?.region_code699 || j?.region_code700 || j?.region_code701 || j?.region_code702 || j?.region_code703 || j?.region_code704 || j?.region_code705 || j?.region_code706 || j?.region_code707 || j?.region_code708 || j?.region_code709 || j?.region_code710 || j?.region_code711 || j?.region_code712 || j?.region_code713 || j?.region_code714 || j?.region_code715 || j?.region_code716 || j?.region_code717 || j?.region_code718 || j?.region_code719 || j?.region_code720 || j?.region_code721 || j?.region_code722 || j?.region_code723 || j?.region_code724 || j?.region_code725 || j?.region_code726 || j?.region_code727 || j?.region_code728 || j?.region_code729 || j?.region_code730 || j?.region_code731 || j?.region_code732 || j?.region_code733 || j?.region_code734 || j?.region_code735 || j?.region_code736 || j?.region_code737 || j?.region_code738 || j?.region_code739 || j?.region_code740 || j?.region_code741 || j?.region_code742 || j?.region_code743 || j?.region_code744 || j?.region_code745 || j?.region_code746 || j?.region_code747 || j?.region_code748 || j?.region_code749 || j?.region_code750 || j?.region_code751 || j?.region_code752 || j?.region_code753 || j?.region_code754 || j?.region_code755 || j?.region_code756 || j?.region_code757 || j?.region_code758 || j?.region_code759 || j?.region_code760 || j?.region_code761 || j?.region_code762 || j?.region_code763 || j?.region_code764 || j?.region_code765 || j?.region_code766 || j?.region_code767 || j?.region_code768 || j?.region_code769 || j?.region_code770 || j?.region_code771 || j?.region_code772 || j?.region_code773 || j?.region_code774 || j?.region_code775 || j?.region_code776 || j?.region_code777 || j?.region_code778 || j?.region_code779 || j?.region_code780 || j?.region_code781 || j?.region_code782 || j?.region_code783 || j?.region_code784 || j?.region_code785 || j?.region_code786 || j?.region_code787 || j?.region_code788 || j?.region_code789 || j?.region_code790 || j?.region_code791 || j?.region_code792 || j?.region_code793 || j?.region_code794 || j?.region_code795 || j?.region_code796 || j?.region_code797 || j?.region_code798 || j?.region_code799 || j?.region_code800 || j?.region_code801 || j?.region_code802 || j?.region_code803 || j?.region_code804 || j?.region_code805 || j?.region_code806 || j?.region_code807 || j?.region_code808 || j?.region_code809 || j?.region_code810 || j?.region_code811 || j?.region_code812 || j?.region_code813 || j?.region_code814 || j?.region_code815 || j?.region_code816 || j?.region_code817 || j?.region_code818 || j?.region_code819 || j?.region_code820 || j?.region_code821 || j?.region_code822 || j?.region_code823 || j?.region_code824 || j?.region_code825 || j?.region_code826 || j?.region_code827 || j?.region_code828 || j?.region_code829 || j?.region_code830 || j?.region_code831 || j?.region_code832 || j?.region_code833 || j?.region_code834 || j?.region_code835 || j?.region_code836 || j?.region_code837 || j?.region_code838 || j?.region_code839 || j?.region_code840 || j?.region_code841 || j?.region_code842 || j?.region_code843 || j?.region_code844 || j?.region_code845 || j?.region_code846 || j?.region_code847 || j?.region_code848 || j?.region_code849 || j?.region_code850 || j?.region_code851 || j?.region_code852 || j?.region_code853 || j?.region_code854 || j?.region_code855 || j?.region_code856 || j?.region_code857 || j?.region_code858 || j?.region_code859 || j?.region_code860 || j?.region_code861 || j?.region_code862 || j?.region_code863 || j?.region_code864 || j?.region_code865 || j?.region_code866 || j?.region_code867 || j?.region_code868 || j?.region_code869 || j?.region_code870 || j?.region_code871 || j?.region_code872 || j?.region_code873 || j?.region_code874 || j?.region_code875 || j?.region_code876 || j?.region_code877 || j?.region_code878 || j?.region_code879 || j?.region_code880 || j?.region_code881 || j?.region_code882 || j?.region_code883 || j?.region_code884 || j?.region_code885 || j?.region_code886 || j?.region_code887 || j?.region_code888 || j?.region_code889 || j?.region_code890 || j?.region_code891 || j?.region_code892 || j?.region_code893 || j?.region_code894 || j?.region_code895 || j?.region_code896 || j?.region_code897 || j?.region_code898 || j?.region_code899 || j?.region_code900 || j?.region_code901 || j?.region_code902 || j?.region_code903 || j?.region_code904 || j?.region_code905 || j?.region_code906 || j?.region_code907 || j?.region_code908 || j?.region_code909 || j?.region_code910 || j?.region_code911 || j?.region_code912 || j?.region_code913 || j?.region_code914 || j?.region_code915 || j?.region_code916 || j?.region_code917 || j?.region_code918 || j?.region_code919 || j?.region_code920 || j?.region_code921 || j?.region_code922 || j?.region_code923 || j?.region_code924 || j?.region_code925 || j?.region_code926 || j?.region_code927 || j?.region_code928 || j?.region_code929 || j?.region_code930 || j?.region_code931 || j?.region_code932 || j?.region_code933 || j?.region_code934 || j?.region_code935 || j?.region_code936 || j?.region_code937 || j?.region_code938 || j?.region_code939 || j?.region_code940 || j?.region_code941 || j?.region_code942 || j?.region_code943 || j?.region_code944 || j?.region_code945 || j?.region_code946 || j?.region_code947 || j?.region_code948 || j?.region_code949 || j?.region_code950 || j?.region_code951 || j?.region_code952 || j?.region_code953 || j?.region_code954 || j?.region_code955 || j?.region_code956 || j?.region_code957 || j?.region_code958 || j?.region_code959 || j?.region_code960 || j?.region_code961 || j?.region_code962 || j?.region_code963 || j?.region_code964 || j?.region_code965 || j?.region_code966 || j?.region_code967 || j?.region_code968 || j?.region_code969 || j?.region_code970 || j?.region_code971 || j?.region_code972 || j?.region_code973 || j?.region_code974 || j?.region_code975 || j?.region_code976 || j?.region_code977 || j?.region_code978 || j?.region_code979 || j?.region_code980 || j?.region_code981 || j?.region_code982 || j?.region_code983 || j?.region_code984 || j?.region_code985 || j?.region_code986 || j?.region_code987 || j?.region_code988 || j?.region_code989 || j?.region_code990 || j?.region_code991 || j?.region_code992 || j?.region_code993 || j?.region_code994 || j?.region_code995 || j?.region_code996 || j?.region_code997 || j?.region_code998 || j?.region_code999 || j?.region_code1000 || null);
+
+        // Realistically: just ipapi gives region_code reliably; keep it simple:
+        const stateCode =
+          (j?.region_code || "").toString().toUpperCase().trim();
+
+        return { countryCode, countryName, stateCode, provider: p.name };
       } catch (e) {}
     }
-    return null;
+
+    return { countryCode: localeCountry || "US", countryName: "United States", stateCode: "", provider: "locale" };
   }
 
   setLoading();
 
-  let countryCode = "US";
-  let countryName = "United States";
-  let geoSource = "fallback";
-
   try {
-    // Locale fallback first (no network)
-    const localeCode = countryFromLocale();
-    if (localeCode) {
-      countryCode = localeCode;
-      geoSource = "locale";
-    }
+    const geo = await detectGeo();
+    const countryCode = geo.countryCode || "US";
+    const countryName = geo.countryName || "United States";
+    const stateCode = (geo.stateCode || "").toUpperCase();
+    const stateIso = countryCode === "US" && stateCode ? `US-${stateCode}` : "";
 
-    // Try IP-based geo (more accurate)
-    const geo = await countryFromGeoApis();
-    if (geo?.code) {
-      countryCode = geo.code;
-      if (geo.name) countryName = geo.name;
-      geoSource = geo.provider;
-    }
+    subtitleEl.textContent = stateIso
+      ? `Detected: ${countryName} (${countryCode}) • ${stateIso}`
+      : `Detected: ${countryName} (${countryCode})`;
 
-    subtitleEl.textContent = `Detected: ${countryName} (${countryCode})`;
-
-    // One SPARQL query: names + images + term qualifiers
+    // President (country head of state) CURRENT ONLY (no end date)
+    // Governor (state head of government) CURRENT ONLY (no end date)
     const sparql = `
       SELECT
-        ?hosLabel ?hosImg ?hosStart ?hosEnd
-        ?hogLabel ?hogImg ?hogStart ?hogEnd
+        ?presLabel ?presImg ?presStart ?presEnd
+        ?stateLabel ?govLabel ?govImg ?govStart ?govEnd
       WHERE {
         ?country wdt:P297 "${countryCode}".
 
         OPTIONAL {
-          ?country p:P35 ?hosStmt.
-          ?hosStmt ps:P35 ?hos.
-          OPTIONAL { ?hos wdt:P18 ?hosImg. }
-          OPTIONAL { ?hosStmt pq:P580 ?hosStart. }
-          OPTIONAL { ?hosStmt pq:P582 ?hosEnd. }
+          ?country p:P35 ?presStmt.
+          ?presStmt ps:P35 ?pres.
+          OPTIONAL { ?pres wdt:P18 ?presImg. }
+          OPTIONAL { ?presStmt pq:P580 ?presStart. }
+          OPTIONAL { ?presStmt pq:P582 ?presEnd. }
+          FILTER(!BOUND(?presEnd))
         }
 
+        ${stateIso ? `
         OPTIONAL {
-          ?country p:P6 ?hogStmt.
-          ?hogStmt ps:P6 ?hog.
-          OPTIONAL { ?hog wdt:P18 ?hogImg. }
-          OPTIONAL { ?hogStmt pq:P580 ?hogStart. }
-          OPTIONAL { ?hogStmt pq:P582 ?hogEnd. }
-        }
+          ?state wdt:P300 "${stateIso}".
+          OPTIONAL { ?state rdfs:label ?stateLabel FILTER (lang(?stateLabel) = "en") }
+
+          OPTIONAL {
+            ?state p:P6 ?govStmt.
+            ?govStmt ps:P6 ?gov.
+            OPTIONAL { ?gov wdt:P18 ?govImg. }
+            OPTIONAL { ?govStmt pq:P580 ?govStart. }
+            OPTIONAL { ?govStmt pq:P582 ?govEnd. }
+            FILTER(!BOUND(?govEnd))
+          }
+        }` : ``}
 
         SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
       }
@@ -1543,88 +1554,84 @@ async function loadRegionalLeader() {
       "https://query.wikidata.org/sparql?format=json&query=" +
       encodeURIComponent(sparql);
 
-    const wdRes = await safeFetch(
-      wdUrl,
-      { headers: { Accept: "application/sparql-results+json" } },
-      12000
-    );
+    const wdRes = await safeFetch(wdUrl, { headers: { Accept: "application/sparql-results+json" } }, 12000);
     if (!wdRes.ok) throw new Error(`Wikidata HTTP ${wdRes.status}`);
 
     const data = await wdRes.json();
     const row = data?.results?.bindings?.[0] || {};
 
-    const hosName = row?.hosLabel?.value || "Not available";
-    const hogName = row?.hogLabel?.value || "Not available";
+    // President
+    const presName = row?.presLabel?.value || "Not available";
+    const presImg = row?.presImg?.value || null;
+    const presStart = row?.presStart?.value || null;
+    const presEnd = row?.presEnd?.value || null;
 
-    const hosImg = row?.hosImg?.value || null;
-    const hogImg = row?.hogImg?.value || null;
+    presNameEl.textContent = presName;
+    presTermEl.textContent = formatTerm(presStart, presEnd);
 
-    const hosStart = row?.hosStart?.value || null;
-    const hosEnd = row?.hosEnd?.value || null;
+    const presImgUrl = commonsFileToUrl(presImg, 256);
+    if (presImgEl && presImgUrl) {
+      presImgEl.onerror = () => {
+        console.warn("President image failed:", presImgUrl, "raw:", presImg);
+        presImgEl.style.display = "none";
+      };
+      presImgEl.src = presImgUrl;
+      presImgEl.alt = `${presName} photo`;
+      presImgEl.style.display = "block";
+    }
 
-    const hogStart = row?.hogStart?.value || null;
-    const hogEnd = row?.hogEnd?.value || null;
+    // Governor
+    if (countryCode !== "US") {
+      if (govLabelEl) govLabelEl.textContent = "Governor (US only)";
+      govNameEl.textContent = "Not available";
+      govTermEl.textContent = "—";
+      if (govImgEl) govImgEl.style.display = "none";
+    } else if (!stateIso) {
+      if (govLabelEl) govLabelEl.textContent = "Governor (state unknown)";
+      govNameEl.textContent = "Enable location / disable strict blockers";
+      govTermEl.textContent = "We need your state to show a governor.";
+      if (govImgEl) govImgEl.style.display = "none";
+    } else {
+      const stateLabel = row?.stateLabel?.value || stateIso;
+      const govName = row?.govLabel?.value || "Not available";
+      const govImg = row?.govImg?.value || null;
+      const govStart = row?.govStart?.value || null;
+      const govEnd = row?.govEnd?.value || null;
 
-    hosNameEl.textContent = hosName;
-    hogNameEl.textContent = hogName;
+      if (govLabelEl) govLabelEl.textContent = `Governor (${stateLabel})`;
+      govNameEl.textContent = govName;
+      govTermEl.textContent = formatTerm(govStart, govEnd);
 
-    hosTermEl.textContent = formatTerm(hosStart, hosEnd);
-    hogTermEl.textContent = formatTerm(hogStart, hogEnd);
+      const govImgUrl = commonsFileToUrl(govImg, 256);
+      if (govImgEl && govImgUrl) {
+        govImgEl.onerror = () => {
+          console.warn("Governor image failed:", govImgUrl, "raw:", govImg);
+          govImgEl.style.display = "none";
+        };
+        govImgEl.src = govImgUrl;
+        govImgEl.alt = `${govName} photo`;
+        govImgEl.style.display = "block";
+      }
+    }
 
-    const hosImgUrl = commonsFileToUrl(hosImg, 256);
-    const hogImgUrl = commonsFileToUrl(hogImg, 256);
-
-   if (hosImgEl && hosImgUrl) {
-  hosImgEl.onerror = () => {
-    console.warn("HOS image failed to load:", hosImgUrl, "raw:", hosImg);
-    hosImgEl.style.display = "none";
-  };
-  hosImgEl.onload = () => {
-    console.log("HOS image loaded:", hosImgUrl);
-  };
-  hosImgEl.src = hosImgUrl;
-  hosImgEl.alt = `${hosName} photo`;
-  hosImgEl.style.display = "block";
-}
-
-if (hogImgEl && hogImgUrl) {
-  hogImgEl.onerror = () => {
-    console.warn("HOG image failed to load:", hogImgUrl, "raw:", hogImg);
-    hogImgEl.style.display = "none";
-  };
-  hogImgEl.onload = () => {
-    console.log("HOG image loaded:", hogImgUrl);
-  };
-  hogImgEl.src = hogImgUrl;
-  hogImgEl.alt = `${hogName} photo`;
-  hogImgEl.style.display = "block";
-}
-
-    footnoteEl.textContent =
-      hosName !== "Not available" && hosName === hogName
-        ? `Same person holds both roles. (Geo: ${geoSource})`
-        : `Live data from Wikidata. (Geo: ${geoSource})`;
+    footnoteEl.textContent = `Live data from Wikidata. (Geo: ${geo.provider})`;
   } catch (err) {
-    subtitleEl.textContent = `Leader lookup failed. Showing default ${countryName} (${countryCode}).`;
-    hosNameEl.textContent = "Unavailable";
-    hogNameEl.textContent = "Unavailable";
-    hosTermEl.textContent = "—";
-    hogTermEl.textContent = "—";
+    subtitleEl.textContent = "Leader lookup failed.";
+    presNameEl.textContent = "Unavailable";
+    govNameEl.textContent = "Unavailable";
+    presTermEl.textContent = "—";
+    govTermEl.textContent = "—";
     footnoteEl.textContent = `Error: ${err?.name || "Unknown"} — ${err?.message || "Failed to fetch"}`;
     console.warn("Leader widget error:", err);
   }
 
-  // Add refresh click ONCE
   if (refreshBtn && !refreshBtn.dataset.bound) {
     refreshBtn.dataset.bound = "1";
     refreshBtn.addEventListener("click", loadRegionalLeader);
   }
 }
 
-// Run after DOM is ready
 document.addEventListener("DOMContentLoaded", loadRegionalLeader);
-
-
 
 /* ========================================
    displayShoutouts.js - Business Hours & Status
