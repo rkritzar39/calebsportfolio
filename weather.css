@@ -426,7 +426,7 @@
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
-  padding: 0; margin: -1px;
+  padding: 0; margin: -0.5px;
   overflow: hidden;
   clip: rect(0,0,0,0);
   white-space: nowrap;
@@ -436,3 +436,113 @@
 /* CRITICAL: make hidden attribute actually hide modal (and any hidden banners) */
 .modal[hidden] { display: none !important; }
 .banner[hidden] { display: none !important; }
+
+
+/* ===========================================
+   Responsive polish — makes it fit ALL devices
+   Put this at the VERY bottom of your CSS
+   =========================================== */
+
+/* Safer sizing everywhere */
+*, *::before, *::after { box-sizing: border-box; }
+img, svg { max-width: 100%; height: auto; }
+
+/* Page padding that scales instead of snapping */
+.weather-page { padding: clamp(14px, 3vw, 32px); }
+
+/* Header: don’t force the two sides to fight each other */
+.weather-header { flex-wrap: wrap; align-items: flex-start; }
+.weather-header-left,
+.weather-header-right { width: 100%; justify-content: space-between; }
+@media (min-width: 720px) {
+  .weather-header-left,
+  .weather-header-right { width: auto; }
+  .weather-header { align-items: center; }
+}
+
+/* Search + actions: always wrap cleanly, never overflow */
+.weather-search input { width: 100%; min-width: 0; }
+.weather-search,
+.weather-actions { width: 100%; }
+@media (min-width: 720px) {
+  .weather-search { flex-wrap: nowrap; }
+  .weather-actions { width: auto; }
+}
+
+/* Buttons: slightly denser on small screens */
+@media (max-width: 480px) {
+  .btn { padding: 10px 11px; }
+  .unit-pill { padding: 8px 10px; font-size: 12px; }
+}
+
+/* Main grid: your 920px breakpoint is fine; add a mid one too */
+.weather-grid { grid-template-columns: 1fr; }
+@media (min-width: 740px) {
+  .weather-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 920px) {
+  .weather-grid { grid-template-columns: 1.1fr 0.9fr; }
+}
+
+/* Big temp text scales down gracefully */
+.temp { font-size: clamp(34px, 7vw, 54px); }
+.icon { width: clamp(44px, 9vw, 64px); height: clamp(44px, 9vw, 64px); }
+
+/* Stats: stack on narrow screens */
+.stats { grid-template-columns: 1fr 1fr; }
+@media (max-width: 520px) {
+  .stats { grid-template-columns: 1fr; }
+}
+
+/* Forecast grid: auto-fit makes it “just work” on any width */
+.forecast {
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+}
+
+/* Daily rows: stop hard-coding widths that break phones */
+.day {
+  grid-template-columns: minmax(90px, 120px) 1fr minmax(120px, 160px);
+}
+@media (max-width: 560px) {
+  .day { grid-template-columns: 1fr; }
+  .day .range { justify-self: start; }
+}
+
+/* Compare: already stacks at 760px, but make controls bulletproof */
+.compare-controls input,
+.mapbar select, .modal-body select,
+.favorites select {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Compare/history grids: use minmax so they shrink nicely */
+.compare-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.history-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* Map: responsive height so it’s not massive on mobile */
+.map { height: clamp(260px, 50vh, 420px); }
+
+/* Modal: add breathing room on tiny screens */
+.modal-card { width: min(720px, calc(100vw - 18px)); }
+@media (max-width: 420px) {
+  .modal-body { padding: 12px; }
+  .modal-head { padding: 12px; }
+}
+
+/* Pills + long text: avoid overflow */
+.pill, .unit-pill, .aqi-badge {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Optional: reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
