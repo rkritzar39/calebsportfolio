@@ -135,7 +135,7 @@ This website is built using a combination of **JavaScript**, **CSS**, and **HTML
    JavaScript powers the interactive elements of the website, such as settings management, dynamic weather updates, and user interface interactions.
 
 - **CSS**: 24.9%  
-   CSS controls the visual styling and ensures the website is fully responsive, including support for both light and dark themes, as well as device-specific layouts.
+   CSS controls the visual styling and ensures the website is fully responsive, including support for both light and dark themes, as well as device-specific layouts. 
 
 - **HTML**: 14.2%  
    HTML provides the basic structure and content of the site, serving as the backbone of the Home Page, Weather Page, and Settings Page.
