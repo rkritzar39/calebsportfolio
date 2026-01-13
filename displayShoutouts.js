@@ -1636,7 +1636,7 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
 /* ========================================
    displayShoutouts.js - Business Hours & Status
    Full version with dynamic sub-status (NO countdown)
-   Fixed temporary hours status + next-open logic
+   Fixed temp hours: ACTIVE => Temporarily Unavailable (always)
    ======================================== */
 
 /* -------------------------
@@ -1825,16 +1825,9 @@ function calculateAndDisplayStatusBI(businessData = {}) {
         );
     }
 
-    /* -------------------------
-       ACTIVE RANGE CHECK (supports both ranges & open/close)
-    ------------------------- */
     function normalizeToRanges(obj) {
-        // If already has ranges, use them.
         if (obj && Array.isArray(obj.ranges)) return obj.ranges;
-
-        // If single open/close exists (temp/holiday style), normalize.
         if (obj && obj.open && obj.close) return [{ open: obj.open, close: obj.close }];
-
         return [];
     }
 
@@ -1868,109 +1861,99 @@ function calculateAndDisplayStatusBI(businessData = {}) {
     };
 
     /* -------------------------
-   OVERRIDES / TEMP / HOLIDAY (FIXED)
-------------------------- */
-if (statusOverride !== 'auto') {
-    finalCurrentStatus =
-        statusOverride === 'open'
-            ? 'Open'
-            : statusOverride === 'closed'
-            ? 'Closed'
-            : 'Temporarily Unavailable';
-
-    finalActiveRule = {
-        type: 'override',
-        reasonOriginal: 'Manual Override',
-        isClosed: finalCurrentStatus !== 'Open',
-        ranges: []
-    };
-} else {
-    // Holiday first
-    const todayHoliday = holidayHours.find((h) => h.date === businessDateStr);
-
-    if (todayHoliday) {
-        const hRanges = normalizeToRanges(todayHoliday);
+       OVERRIDES / TEMP / HOLIDAY
+       TEMP ACTIVE => Temporarily Unavailable (always)
+    ------------------------- */
+    if (statusOverride !== 'auto') {
+        finalCurrentStatus =
+            statusOverride === 'open'
+                ? 'Open'
+                : statusOverride === 'closed'
+                ? 'Closed'
+                : 'Temporarily Unavailable';
 
         finalActiveRule = {
-            ...todayHoliday,
-            type: 'holiday',
-            reasonOriginal: `Holiday (${todayHoliday.label || 'Event'})`,
-            ranges: hRanges,
-            isClosed: !!todayHoliday.isClosed || hRanges.length === 0
+            type: 'override',
+            reasonOriginal: 'Manual Override',
+            isClosed: finalCurrentStatus !== 'Open',
+            ranges: []
         };
-
-        finalCurrentStatus = finalActiveRule.isClosed
-            ? 'Closed'
-            : hRanges.some((r) => isRangeActive(r))
-            ? 'Open'
-            : 'Closed';
     } else {
-        // Temporary override next (TEMP WINDOW BEHAVIOR)
-        const activeTemp = temporaryHours.find((t) => {
-            const start = parseDate(t.startDate);
-            const end = parseDate(t.endDate);
-            if (!start || !end) return false;
+        const todayHoliday = holidayHours.find((h) => h.date === businessDateStr);
 
-            // Active for the whole date range, inclusive
-            return nowInBizTZ >= start.startOf('day') && nowInBizTZ <= end.endOf('day');
-        });
-
-        if (activeTemp) {
-            const hasTimeWindow = !!(activeTemp.open && activeTemp.close);
-            const tempRange = hasTimeWindow
-                ? { open: activeTemp.open, close: activeTemp.close }
-                : null;
-
-            // Keep ranges for display compatibility if you want, but not required
-            const tRanges = normalizeToRanges(activeTemp);
+        if (todayHoliday) {
+            const hRanges = normalizeToRanges(todayHoliday);
 
             finalActiveRule = {
-                ...activeTemp,
-                type: 'temporary',
-                reasonOriginal: `Temporary (${activeTemp.label || 'Schedule'})`,
-                ranges: tRanges,
-                // isClosed only means "force closed the whole window"
-                isClosed: !!activeTemp.isClosed
+                ...todayHoliday,
+                type: 'holiday',
+                reasonOriginal: `Holiday (${todayHoliday.label || 'Event'})`,
+                ranges: hRanges,
+                isClosed: !!todayHoliday.isClosed || hRanges.length === 0
             };
 
-            if (activeTemp.isClosed) {
-                // Forced closure for whole temp window
-                finalCurrentStatus = 'Closed';
-            } else if (hasTimeWindow) {
-                // Inside the time window => Closed
-                // Outside the time window (but still within date range) => Temporarily Unavailable
-                finalCurrentStatus = isRangeActive(tempRange) ? 'Closed' : 'Temporarily Unavailable';
-            } else {
-                // No open/close provided => treat whole window as unavailable
-                finalCurrentStatus = 'Temporarily Unavailable';
+            finalCurrentStatus = finalActiveRule.isClosed
+                ? 'Closed'
+                : hRanges.some((r) => isRangeActive(r))
+                ? 'Open'
+                : 'Closed';
+        } else {
+            const activeTemp = temporaryHours.find((t) => {
+                const start = parseDate(t.startDate);
+                const end = parseDate(t.endDate);
+                if (!start || !end) return false;
+                return nowInBizTZ >= start.startOf('day') && nowInBizTZ <= end.endOf('day');
+            });
+
+            if (activeTemp) {
+                const tRanges = normalizeToRanges(activeTemp);
+
+                finalActiveRule = {
+                    ...activeTemp,
+                    type: 'temporary',
+                    reasonOriginal: `Temporary (${activeTemp.label || 'Schedule'})`,
+                    ranges: tRanges,
+                    isClosed: !!activeTemp.isClosed
+                };
+
+                // ✅ YOUR RULE:
+                // active temp => Temporarily Unavailable (always)
+                // unless explicitly isClosed => Closed
+                finalCurrentStatus = activeTemp.isClosed ? 'Closed' : 'Temporarily Unavailable';
             }
         }
     }
-}
 
-if (finalActiveRule)
-    finalActiveRule.reason = `${finalActiveRule.reasonOriginal} - Currently ${finalCurrentStatus}`;
-else
-    finalActiveRule = {
-        reason: `Status Determined`,
-        type: 'default',
-        isClosed: finalCurrentStatus === 'Closed',
-        ranges: []
-    };
+    if (finalActiveRule)
+        finalActiveRule.reason = `${finalActiveRule.reasonOriginal} - Currently ${finalCurrentStatus}`;
+    else
+        finalActiveRule = {
+            reason: `Status Determined`,
+            type: 'default',
+            isClosed: finalCurrentStatus === 'Closed',
+            ranges: []
+        };
 
-let statusClass = 'status-closed';
-if (finalCurrentStatus === 'Open') statusClass = 'status-open';
-else if (finalCurrentStatus === 'Temporarily Unavailable')
-    statusClass = 'status-unavailable';
+    let statusClass = 'status-closed';
+    if (finalCurrentStatus === 'Open') statusClass = 'status-open';
+    else if (finalCurrentStatus === 'Temporarily Unavailable')
+        statusClass = 'status-unavailable';
 
-statusMainTextEl.className = 'status-main-text';
-statusMainTextEl.classList.add(statusClass);
-statusMainTextEl.textContent = finalCurrentStatus;
+    statusMainTextEl.className = 'status-main-text';
+    statusMainTextEl.classList.add(statusClass);
+    statusMainTextEl.textContent = finalCurrentStatus;
+
     /* -------------------------
-       NEXT-OPEN LOGIC (now supports temp + holiday too)
+       SUB-STATUS
+       (Temp should NOT say "Open till ...")
     ------------------------- */
     function getSubStatusAndCountdown(rule) {
         if (!DateTime) return '';
+
+        // ✅ If temp is active, keep sub-status aligned with main status
+        if (rule.type === 'temporary') {
+            return rule.isClosed ? 'Closed (Temporary)' : 'Temporarily Unavailable (Temporary)';
+        }
 
         const displayOrder = [
             'sunday','monday','tuesday','wednesday','thursday','friday','saturday',
@@ -2021,6 +2004,10 @@ statusMainTextEl.textContent = finalCurrentStatus;
             const { schedule } = getDaySchedule(offset);
             if (!schedule) continue;
 
+            // If temp is found in the future, we still don't say "Opens..." for it
+            // because temp doesn't mean "open", it means "unavailable".
+            if (schedule && schedule.startDate && schedule.endDate) continue;
+
             const ranges = normalizeToRanges(schedule);
             const isClosed = !!schedule.isClosed || ranges.length === 0;
             if (isClosed) continue;
@@ -2053,7 +2040,7 @@ statusMainTextEl.textContent = finalCurrentStatus;
     statusReasonEl.textContent = finalActiveRule.reason;
 
     /* -------------------------
-       NORMAL HOURS RENDER (UNCHANGED)
+       NORMAL HOURS RENDER
     ------------------------- */
     const displayOrder = [
         'monday','tuesday','wednesday','thursday','friday','saturday','sunday',
@@ -2087,7 +2074,7 @@ statusMainTextEl.textContent = finalCurrentStatus;
     hoursEl.innerHTML = displayHoursListHtml;
 
     /* -------------------------
-       TEMP HOURS (UNCHANGED)
+       TEMP HOURS
     ------------------------- */
     if (temporaryHours.length > 0) {
         let tmpHtml = '<h4>Active/Temporary Hours</h4><ul class="special-hours-display">';
@@ -2123,7 +2110,7 @@ statusMainTextEl.textContent = finalCurrentStatus;
     }
 
     /* -------------------------
-       HOLIDAY HOURS (UNCHANGED)
+       HOLIDAY HOURS
     ------------------------- */
     if (holidayHours.length > 0) {
         let holidayHtml = '<h4>Active/Holiday Hours</h4><ul class="special-hours-display">';
