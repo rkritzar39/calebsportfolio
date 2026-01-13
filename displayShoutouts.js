@@ -1868,88 +1868,104 @@ function calculateAndDisplayStatusBI(businessData = {}) {
     };
 
     /* -------------------------
-       OVERRIDES / TEMP / HOLIDAY (FIXED)
-    ------------------------- */
-    if (statusOverride !== 'auto') {
-        finalCurrentStatus =
-            statusOverride === 'open'
-                ? 'Open'
-                : statusOverride === 'closed'
-                ? 'Closed'
-                : 'Temporarily Unavailable';
+   OVERRIDES / TEMP / HOLIDAY (FIXED)
+------------------------- */
+if (statusOverride !== 'auto') {
+    finalCurrentStatus =
+        statusOverride === 'open'
+            ? 'Open'
+            : statusOverride === 'closed'
+            ? 'Closed'
+            : 'Temporarily Unavailable';
+
+    finalActiveRule = {
+        type: 'override',
+        reasonOriginal: 'Manual Override',
+        isClosed: finalCurrentStatus !== 'Open',
+        ranges: []
+    };
+} else {
+    // Holiday first
+    const todayHoliday = holidayHours.find((h) => h.date === businessDateStr);
+
+    if (todayHoliday) {
+        const hRanges = normalizeToRanges(todayHoliday);
+
         finalActiveRule = {
-            type: 'override',
-            reasonOriginal: 'Manual Override',
-            isClosed: finalCurrentStatus !== 'Open',
-            ranges: []
+            ...todayHoliday,
+            type: 'holiday',
+            reasonOriginal: `Holiday (${todayHoliday.label || 'Event'})`,
+            ranges: hRanges,
+            isClosed: !!todayHoliday.isClosed || hRanges.length === 0
         };
+
+        finalCurrentStatus = finalActiveRule.isClosed
+            ? 'Closed'
+            : hRanges.some((r) => isRangeActive(r))
+            ? 'Open'
+            : 'Closed';
     } else {
-        // Holiday first
-        const todayHoliday = holidayHours.find((h) => h.date === businessDateStr);
-        if (todayHoliday) {
-            const hRanges = normalizeToRanges(todayHoliday);
+        // Temporary override next (TEMP WINDOW BEHAVIOR)
+        const activeTemp = temporaryHours.find((t) => {
+            const start = parseDate(t.startDate);
+            const end = parseDate(t.endDate);
+            if (!start || !end) return false;
+
+            // Active for the whole date range, inclusive
+            return nowInBizTZ >= start.startOf('day') && nowInBizTZ <= end.endOf('day');
+        });
+
+        if (activeTemp) {
+            const hasTimeWindow = !!(activeTemp.open && activeTemp.close);
+            const tempRange = hasTimeWindow
+                ? { open: activeTemp.open, close: activeTemp.close }
+                : null;
+
+            // Keep ranges for display compatibility if you want, but not required
+            const tRanges = normalizeToRanges(activeTemp);
 
             finalActiveRule = {
-                ...todayHoliday,
-                type: 'holiday',
-                reasonOriginal: `Holiday (${todayHoliday.label || 'Event'})`,
-                ranges: hRanges,
-                isClosed: !!todayHoliday.isClosed || hRanges.length === 0
+                ...activeTemp,
+                type: 'temporary',
+                reasonOriginal: `Temporary (${activeTemp.label || 'Schedule'})`,
+                ranges: tRanges,
+                // isClosed only means "force closed the whole window"
+                isClosed: !!activeTemp.isClosed
             };
 
-            finalCurrentStatus = finalActiveRule.isClosed
-                ? 'Closed'
-                : hRanges.some((r) => isRangeActive(r))
-                ? 'Open'
-                : 'Closed';
-        } else {
-            // Temporary override next
-            const activeTemp = temporaryHours.find((t) => {
-                const start = parseDate(t.startDate);
-                const end = parseDate(t.endDate);
-                if (!start || !end) return false;
-                return nowInBizTZ >= start.startOf('day') && nowInBizTZ <= end.endOf('day');
-            });
-
-            if (activeTemp) {
-                const tRanges = normalizeToRanges(activeTemp);
-
-                finalActiveRule = {
-                    ...activeTemp,
-                    type: 'temporary',
-                    reasonOriginal: `Temporary (${activeTemp.label || 'Schedule'})`,
-                    ranges: tRanges,
-                    isClosed: !!activeTemp.isClosed || tRanges.length === 0
-                };
-
-                finalCurrentStatus = finalActiveRule.isClosed
-                    ? 'Closed'
-                    : tRanges.some((r) => isRangeActive(r))
-                    ? 'Open'
-                    : 'Closed';
+            if (activeTemp.isClosed) {
+                // Forced closure for whole temp window
+                finalCurrentStatus = 'Closed';
+            } else if (hasTimeWindow) {
+                // Inside the time window => Closed
+                // Outside the time window (but still within date range) => Temporarily Unavailable
+                finalCurrentStatus = isRangeActive(tempRange) ? 'Closed' : 'Temporarily Unavailable';
+            } else {
+                // No open/close provided => treat whole window as unavailable
+                finalCurrentStatus = 'Temporarily Unavailable';
             }
         }
     }
+}
 
-    if (finalActiveRule)
-        finalActiveRule.reason = `${finalActiveRule.reasonOriginal} - Currently ${finalCurrentStatus}`;
-    else
-        finalActiveRule = {
-            reason: `Status Determined`,
-            type: 'default',
-            isClosed: finalCurrentStatus === 'Closed',
-            ranges: []
-        };
+if (finalActiveRule)
+    finalActiveRule.reason = `${finalActiveRule.reasonOriginal} - Currently ${finalCurrentStatus}`;
+else
+    finalActiveRule = {
+        reason: `Status Determined`,
+        type: 'default',
+        isClosed: finalCurrentStatus === 'Closed',
+        ranges: []
+    };
 
-    let statusClass = 'status-closed';
-    if (finalCurrentStatus === 'Open') statusClass = 'status-open';
-    else if (finalCurrentStatus === 'Temporarily Unavailable')
-        statusClass = 'status-unavailable';
+let statusClass = 'status-closed';
+if (finalCurrentStatus === 'Open') statusClass = 'status-open';
+else if (finalCurrentStatus === 'Temporarily Unavailable')
+    statusClass = 'status-unavailable';
 
-    statusMainTextEl.className = 'status-main-text';
-    statusMainTextEl.classList.add(statusClass);
-    statusMainTextEl.textContent = finalCurrentStatus;
-
+statusMainTextEl.className = 'status-main-text';
+statusMainTextEl.classList.add(statusClass);
+statusMainTextEl.textContent = finalCurrentStatus;
     /* -------------------------
        NEXT-OPEN LOGIC (now supports temp + holiday too)
     ------------------------- */
