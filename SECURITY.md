@@ -1,6 +1,6 @@
 # Security Policy
  
-## Security Features
+## Security Features 
 
 ### 1. Enhanced Copy Protection
 - Context menu prevention 
