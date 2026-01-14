@@ -748,15 +748,13 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — TRUE LIQUID GLASS (USES :root) == */
+/* === 🎧 LIVE ACTIVITY — LIQUID GLASS (MATCHES YOUR HTML) */
 /* ======================================================= */
 
 /* If JS doesn't set dynamic accent, fall back to site accent */
-.live-activity {
-  --dynamic-accent: var(--accent-color);
-}
+.live-activity { --dynamic-accent: var(--accent-color); }
 
-/* Main card */
+/* Main container */
 .live-activity {
   position: relative;
   isolation: isolate;
@@ -770,7 +768,7 @@ a.corner-button {
   border-radius: var(--radius-xl);
   background: color-mix(in srgb, var(--content-bg) 92%, transparent);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 90%, rgba(255,255,255,0.08));
+  border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
   box-shadow: var(--bubble-shadow);
 
   backdrop-filter: var(--backdrop-blur);
@@ -782,10 +780,15 @@ a.corner-button {
   text-align: center;
 
   transform: translateZ(0);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
 }
 
-/* Lift */
+/* Hide/show behavior (you use .hidden in JS) */
+.live-activity.hidden {
+  display: none;
+}
+
+/* Hover lift */
 .live-activity:hover {
   transform: translateY(-4px) scale(1.01);
   border-color: color-mix(in srgb, var(--dynamic-accent) 35%, var(--border-color));
@@ -794,7 +797,7 @@ a.corner-button {
     inset 0 0 0 1px rgba(255,255,255,0.08);
 }
 
-/* Liquid reflection layer (matches your .glass::before idea) */
+/* Liquid reflection layer */
 .live-activity::before {
   content: "";
   position: absolute;
@@ -806,7 +809,7 @@ a.corner-button {
   z-index: 2;
 }
 
-/* Refraction / bubble layer (matches your .glass::after idea) */
+/* Bubble + aura refraction layer */
 .live-activity::after {
   content: "";
   position: absolute;
@@ -834,25 +837,7 @@ a.corner-button {
   z-index: 1;
 }
 
-/* Optional subtle grain (cheap but elite) */
-.live-activity .glass-grain {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0.10;
-  background:
-    repeating-linear-gradient(
-      135deg,
-      rgba(255,255,255,0.05) 0px,
-      rgba(255,255,255,0.05) 1px,
-      transparent 1px,
-      transparent 7px
-    );
-  mix-blend-mode: overlay;
-}
-
-/* Keep real content above glass layers */
+/* Keep content above glass layers */
 .live-activity > * {
   position: relative;
   z-index: 4;
@@ -891,12 +876,6 @@ body.light-e .live-activity * {
   opacity: 0.95;
 }
 
-.status-line.hidden {
-  opacity: 0;
-  transform: translateY(-10px);
-  pointer-events: none;
-}
-
 .status-icon {
   width: 22px;
   height: 22px;
@@ -904,7 +883,6 @@ body.light-e .live-activity * {
   filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
 }
 
-/* little glow when you add .glow in JS */
 .status-icon.glow {
   filter:
     drop-shadow(0 10px 20px rgba(0,0,0,0.35))
@@ -912,16 +890,36 @@ body.light-e .live-activity * {
 }
 
 /* ======================================================= */
-/* === SPOTIFY / MUSIC CARD ============================== */
+/* === SPOTIFY CARD / MUSIC CARD ========================= */
 /* ======================================================= */
 
 .spotify-card {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  gap: 6px;
+
+  gap: 8px;
+  outline: none;
+  user-select: none;
+}
+
+/* Your JS toggles .hidden on the card */
+.spotify-card.hidden {
+  display: none;
+}
+
+/* Make it feel clickable */
+.spotify-card[role="button"] {
+  cursor: pointer;
+}
+
+/* Keyboard focus */
+.spotify-card:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--dynamic-accent) 55%, rgba(255,255,255,0.25));
+  outline-offset: 6px;
+  border-radius: var(--radius-lg);
 }
 
 /* ======================================================= */
@@ -933,12 +931,13 @@ body.light-e .live-activity * {
   height: 275px;
   border-radius: calc(var(--radius-lg) + 8px);
   overflow: hidden;
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 
   position: relative;
 
   background: color-mix(in srgb, var(--content-bg) 55%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color) 90%, rgba(255,255,255,0.12));
+  border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.12));
+
   box-shadow:
     0 26px 60px rgba(0,0,0,0.55),
     inset 0 1px 2px rgba(255,255,255,0.14);
@@ -987,15 +986,15 @@ body.light-e .live-activity * {
   transition: transform var(--transition-fast), filter var(--transition-fast);
 }
 
-/* Hover: subtle 3D premium feel */
-.live-album-art:hover {
+/* Hover premium feel */
+.spotify-card:hover .live-album-art {
   transform: translateY(-3px) scale(1.03);
   box-shadow:
     0 34px 80px rgba(0,0,0,0.65),
     0 0 0 1px rgba(255,255,255,0.10) inset;
 }
 
-.live-album-art:hover img {
+.spotify-card:hover .live-album-art img {
   transform: scale(1.05);
   filter: saturate(1.05) contrast(1.04);
 }
@@ -1011,6 +1010,15 @@ body.light-e .live-activity * {
   text-align: center;
   gap: 10px;
   width: 100%;
+}
+
+/* Title + Explicit badge wrapper */
+.live-song-title-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .live-song-title {
@@ -1029,38 +1037,30 @@ body.light-e .live-activity * {
   color: color-mix(in srgb, var(--secondary-text) 92%, var(--text-color));
 }
 
-/* Explicit badge: make it "Apple pill", not red scream */
+/* Explicit badge becomes a liquid pill */
 .explicit-badge {
   display: inline-block;
-  padding: 3px 7px;
-  border-radius: 8px;
+  padding: 3px 8px;
+  border-radius: 10px;
+
   font-size: 0.74rem;
-  font-weight: 750;
+  font-weight: 800;
   letter-spacing: 0.02em;
 
   color: var(--text-color);
-  background: color-mix(in srgb, var(--dynamic-accent) 30%, rgba(255,255,255,0.10));
+  background: color-mix(in srgb, var(--dynamic-accent) 26%, rgba(255,255,255,0.10));
   border: 1px solid color-mix(in srgb, var(--dynamic-accent) 45%, rgba(255,255,255,0.12));
 
   box-shadow:
-    0 8px 18px rgba(0,0,0,0.35),
+    0 10px 20px rgba(0,0,0,0.35),
     inset 0 1px 2px rgba(255,255,255,0.14);
 }
 
-/* In light mode: keep it clean */
 body.light-e .explicit-badge {
   color: #111;
-  background: color-mix(in srgb, var(--dynamic-accent) 18%, rgba(255,255,255,0.85));
+  background: color-mix(in srgb, var(--dynamic-accent) 16%, rgba(255,255,255,0.85));
   border: 1px solid rgba(0,0,0,0.08);
   box-shadow: 0 10px 22px rgba(0,0,0,0.12);
-}
-
-/* ======================================================= */
-/* === MUSIC PROGRESS WRAP (so JS can hide it) =========== */
-/* ======================================================= */
-
-#music-progress-wrap {
-  width: 100%;
 }
 
 /* ======================================================= */
@@ -1074,10 +1074,10 @@ body.light-e .explicit-badge {
   overflow: hidden;
   position: relative;
 
-  margin: 28px 0 14px 0;
+  margin: 26px 0 12px 0;
 
   background: color-mix(in srgb, var(--content-bg) 70%, rgba(0,0,0,0.35));
-  border: 1px solid color-mix(in srgb, var(--border-color) 90%, rgba(255,255,255,0.08));
+  border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
 
   box-shadow:
     inset 0 1px 3px rgba(255,255,255,0.06),
@@ -1102,7 +1102,7 @@ body.light-e .explicit-badge {
   overflow: hidden;
 }
 
-/* Sheen sweep */
+/* Sheen sweep animation */
 .music-progress-bar::after {
   content: "";
   position: absolute;
@@ -1117,17 +1117,16 @@ body.light-e .explicit-badge {
   to { transform: translateX(40%); }
 }
 
-/* ======================================================= */
-/* === TIME DISPLAY ====================================== */
-/* ======================================================= */
-
+/* Time row */
 .music-progress-time {
   display: flex;
   justify-content: space-between;
   width: 100%;
+
   font-size: 0.95rem;
   margin: 0;
   padding: 6px 0 0 0;
+
   color: var(--secondary-text);
 }
 
@@ -1139,6 +1138,7 @@ body.light-e .explicit-badge {
 /* === LAST UPDATED ====================================== */
 /* ======================================================= */
 
+.la-updated,
 #live-activity-updated {
   font-size: 0.86rem;
   font-weight: 450;
