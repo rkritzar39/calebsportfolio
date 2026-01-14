@@ -748,13 +748,18 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — LIQUID GLASS (MATCHES YOUR HTML) */
+/* === 🎧 LIVE ACTIVITY — TRUE LIQUID GLASS (FULL) ======= */
+/* === Matches your HTML exactly + song accent tint ======= */
 /* ======================================================= */
 
-/* If JS doesn't set dynamic accent, fall back to site accent */
-.live-activity { --dynamic-accent: var(--accent-color); }
+/* JS sets --dynamic-accent on .live-activity when Spotify is running.
+   Default is transparent so the card is normal liquid glass until music is active. */
+.live-activity { --dynamic-accent: transparent; }
 
-/* Main container */
+/* ======================================================= */
+/* === MAIN CONTAINER ==================================== */
+/* ======================================================= */
+
 .live-activity {
   position: relative;
   isolation: isolate;
@@ -766,7 +771,19 @@ a.corner-button {
   padding: 38px 26px;
 
   border-radius: var(--radius-xl);
-  background: color-mix(in srgb, var(--content-bg) 92%, transparent);
+
+  /* ✅ SONG ACCENT TINT (when --dynamic-accent is set by JS) */
+  background:
+    /* accent tint layer */
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--dynamic-accent) 34%, rgba(10,10,10,0.72)),
+      color-mix(in srgb, var(--dynamic-accent) 18%, rgba(10,10,10,0.60))
+    ),
+    /* refraction base */
+    var(--liquid-refraction),
+    /* base glass panel */
+    color-mix(in srgb, var(--content-bg) 92%, transparent);
 
   border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
   box-shadow: var(--bubble-shadow);
@@ -780,24 +797,29 @@ a.corner-button {
   text-align: center;
 
   transform: translateZ(0);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast),
+    opacity var(--transition-fast);
 }
 
-/* Hide/show behavior (you use .hidden in JS) */
-.live-activity.hidden {
-  display: none;
-}
+/* Your JS toggles .hidden */
+.live-activity.hidden { display: none; }
 
-/* Hover lift */
 .live-activity:hover {
   transform: translateY(-4px) scale(1.01);
-  border-color: color-mix(in srgb, var(--dynamic-accent) 35%, var(--border-color));
+  border-color: color-mix(in srgb, var(--dynamic-accent) 55%, var(--border-color));
   box-shadow:
     0 28px 72px color-mix(in srgb, var(--shadow-color) 75%, transparent),
-    inset 0 0 0 1px rgba(255,255,255,0.08);
+    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 22%, rgba(255,255,255,0.10)) inset;
 }
 
-/* Liquid reflection layer */
+/* ======================================================= */
+/* === LIQUID GLASS LAYERS =============================== */
+/* ======================================================= */
+
+/* reflection */
 .live-activity::before {
   content: "";
   position: absolute;
@@ -809,7 +831,7 @@ a.corner-button {
   z-index: 2;
 }
 
-/* Bubble + aura refraction layer */
+/* bubbles + aura */
 .live-activity::after {
   content: "";
   position: absolute;
@@ -837,14 +859,42 @@ a.corner-button {
   z-index: 1;
 }
 
-/* Keep content above glass layers */
-.live-activity > * {
-  position: relative;
-  z-index: 4;
+/* subtle grain (no HTML changes required) */
+.live-activity .glass-grain,
+.live-activity[data-grain="on"]::marker { /* harmless */
+  display: none;
+}
+.live-activity::selection { background: rgba(255,255,255,0.12); }
+
+/* Grain without extra elements */
+.live-activity ._noop { display:none; }
+.live-activity .__grain { display:none; }
+
+/* CSS-only grain using an extra pseudo layer via background on content elements is messy,
+   so we add a tiny grain overlay here using a nested pseudo on status-line (always present). */
+.status-line::after {
+  content: "";
+  position: absolute;
+  inset: -120px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.09;
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255,255,255,0.05) 0px,
+    rgba(255,255,255,0.05) 1px,
+    transparent 1px,
+    transparent 7px
+  );
+  mix-blend-mode: overlay;
 }
 
+/* keep real content above overlays */
+.live-activity > * { position: relative; z-index: 4; }
+.status-line { position: relative; }
+
 /* ======================================================= */
-/* === TEXT / READABILITY ================================= */
+/* === TEXT / READABILITY ================================ */
 /* ======================================================= */
 
 .live-activity,
@@ -883,6 +933,7 @@ body.light-e .live-activity * {
   filter: drop-shadow(0 6px 12px rgba(0,0,0,0.35));
 }
 
+/* your JS adds .glow for spotify/twitch */
 .status-icon.glow {
   filter:
     drop-shadow(0 10px 20px rgba(0,0,0,0.35))
@@ -890,7 +941,7 @@ body.light-e .live-activity * {
 }
 
 /* ======================================================= */
-/* === SPOTIFY CARD / MUSIC CARD ========================= */
+/* === SPOTIFY CARD ====================================== */
 /* ======================================================= */
 
 .spotify-card {
@@ -905,17 +956,10 @@ body.light-e .live-activity * {
   user-select: none;
 }
 
-/* Your JS toggles .hidden on the card */
-.spotify-card.hidden {
-  display: none;
-}
+.spotify-card.hidden { display: none; }
 
-/* Make it feel clickable */
-.spotify-card[role="button"] {
-  cursor: pointer;
-}
+.spotify-card[role="button"] { cursor: pointer; }
 
-/* Keyboard focus */
 .spotify-card:focus-visible {
   outline: 2px solid color-mix(in srgb, var(--dynamic-accent) 55%, rgba(255,255,255,0.25));
   outline-offset: 6px;
@@ -945,7 +989,6 @@ body.light-e .live-activity * {
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-/* Top highlight */
 .live-album-art::before {
   content: "";
   position: absolute;
@@ -960,7 +1003,6 @@ body.light-e .live-activity * {
   z-index: 2;
 }
 
-/* Edge sheen */
 .live-album-art::after {
   content: "";
   position: absolute;
@@ -986,7 +1028,6 @@ body.light-e .live-activity * {
   transition: transform var(--transition-fast), filter var(--transition-fast);
 }
 
-/* Hover premium feel */
 .spotify-card:hover .live-album-art {
   transform: translateY(-3px) scale(1.03);
   box-shadow:
@@ -1012,7 +1053,6 @@ body.light-e .live-activity * {
   width: 100%;
 }
 
-/* Title + Explicit badge wrapper */
 .live-song-title-wrapper {
   display: inline-flex;
   align-items: center;
@@ -1037,7 +1077,7 @@ body.light-e .live-activity * {
   color: color-mix(in srgb, var(--secondary-text) 92%, var(--text-color));
 }
 
-/* Explicit badge becomes a liquid pill */
+/* Explicit badge = liquid pill (not aggressive red) */
 .explicit-badge {
   display: inline-block;
   padding: 3px 8px;
@@ -1102,7 +1142,6 @@ body.light-e .explicit-badge {
   overflow: hidden;
 }
 
-/* Sheen sweep animation */
 .music-progress-bar::after {
   content: "";
   position: absolute;
@@ -1186,6 +1225,7 @@ body.light-e .explicit-badge {
 /* ======================================================= */
 /* === REDUCED MOTION ==================================== */
 /* ======================================================= */
+
 @media (prefers-reduced-motion: reduce) {
   .live-activity,
   .live-album-art,
