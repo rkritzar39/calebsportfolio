@@ -1,7 +1,10 @@
 /* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit
-   - Twitch: uses decapi.net status endpoint with decapi.me fallback and robust parsing
-   - Reddit: persists last shown post via localStorage so banner shows only once per new post
-   - All original features preserved (manual via Firestore, Spotify via Lanyard, progress bar, dynamic colors)
+   UPDATED:
+   - Adds UNIVERSAL music detection via Discord activities[] (PreMiD / Music Presence / many players)
+   - Keeps Spotify via Lanyard as best-quality source (progress, album art, timestamps)
+   - Non-Spotify music shows title/artist/artwork when available; hides progress if not available
+   - Twitch: decapi uptime via corsproxy
+   - Reddit: one-time banner per new post via localStorage
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -18,13 +21,13 @@ const CONFIG = {
 /* ======================================================= */
 
 let lastUpdateTime = null;
-let lastPollTime   = Date.now(); // last background refresh
+let lastPollTime   = Date.now();
 let progressInterval = null;
 let currentSpotifyUrl = null;
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
-let lastRedditPostId  = null; // runtime variable (kept for compatibility)
+let lastRedditPostId  = null;
 let manualStatus = null;
 
 const $$  = (id) => document.getElementById(id);
@@ -40,6 +43,7 @@ const ICON_MAP = {
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  music:   "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
@@ -53,7 +57,6 @@ function showStatusLineWithFade(text, source = "manual") {
   const icon = $$("status-icon");
   if (!txt || !line || !icon) return;
 
-  // avoid unnecessary reflow if exact same content
   if (txt.textContent === text && icon.alt === `${source} icon`) return;
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
@@ -67,7 +70,7 @@ function showStatusLineWithFade(text, source = "manual") {
     txt.textContent = text;
 
     icon.classList.remove("glow");
-    if (["spotify", "twitch"].includes(source)) icon.classList.add("glow");
+    if (["spotify", "twitch", "music"].includes(source)) icon.classList.add("glow");
 
     line.style.opacity = "1";
 
@@ -107,7 +110,63 @@ function updateLastUpdated() {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR  ===================================== */
+/* === MUSIC CARD HELPERS ================================ */
+/* ======================================================= */
+
+function clearMusicUI() {
+  slideOutCard($$("spotify-card"));
+  clearInterval(progressInterval);
+  progressInterval = null;
+  currentSpotifyUrl = null;
+
+  // Reset progress UI (hide it)
+  const wrap = $$("music-progress-wrap");
+  if (wrap) wrap.style.display = "none";
+
+  const bar = $$("music-progress-bar");
+  if (bar) bar.style.width = "0%";
+
+  const elapsedEl = $$("elapsed-time");
+  const remainEl  = $$("remaining-time");
+  const totalEl   = $$("total-time");
+  if (elapsedEl) elapsedEl.textContent = "0:00";
+  if (remainEl)  remainEl.textContent  = "-0:00";
+  if (totalEl)   totalEl.textContent   = "0:00";
+
+  const explicitEl = $$("explicit-badge");
+  if (explicitEl) explicitEl.style.display = "none";
+}
+
+function showMusicUI({ title, artist, coverUrl, isExplicit = false, startMs = null, endMs = null, clickUrl = null }) {
+  slideInCard($$("spotify-card"));
+
+  $$("live-song-title").textContent  = title  || "Unknown";
+  $$("live-song-artist").textContent = artist || "Unknown";
+
+  const coverEl = $$("live-activity-cover");
+  if (coverEl && coverUrl && coverEl.src !== coverUrl) coverEl.src = coverUrl;
+
+  currentSpotifyUrl = clickUrl || null;
+
+  const explicitEl = $$("explicit-badge");
+  if (explicitEl) explicitEl.style.display = isExplicit ? "inline-block" : "none";
+
+  // Progress only when timestamps exist
+  const wrap = $$("music-progress-wrap");
+  if (startMs && endMs && endMs > startMs) {
+    if (wrap) wrap.style.display = "";
+    setupProgress(startMs, endMs);
+  } else {
+    if (wrap) wrap.style.display = "none";
+    clearInterval(progressInterval);
+    progressInterval = null;
+  }
+
+  updateDynamicColors(coverUrl || null);
+}
+
+/* ======================================================= */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 function setupProgress(startMs, endMs) {
@@ -138,7 +197,7 @@ function setupProgress(startMs, endMs) {
 }
 
 /* ======================================================= */
-/* === DYNAMIC COLORS  =================================== */
+/* === DYNAMIC COLORS =================================== */
 /* ======================================================= */
 
 function updateDynamicColors(imageUrl) {
@@ -225,15 +284,68 @@ function isManualActive() {
 }
 
 /* ======================================================= */
-/* === DISCORD / SPOTIFY  ================================ */
+/* === DISCORD ASSET URL RESOLVER ======================== */
+/* ======================================================= */
+
+function resolveDiscordAssetUrl(activity) {
+  // Works for many PreMiD activities:
+  // - Sometimes assets.large_image is "mp:external/..." (already a remote-ish path)
+  // - Sometimes it's a normal Discord app asset id (needs cdn URL)
+  const a = activity?.assets;
+  if (!a) return "";
+
+  const large = a.large_image || "";
+  const appId = activity?.application_id;
+
+  if (!large) return "";
+
+  // "mp:" assets (Discord proxy) – this can work as-is in many cases:
+  // Examples: "mp:external/...."
+  if (large.startsWith("mp:")) {
+    // Most browsers accept it as a direct "https://media.discordapp.net/" style URL is not provided here.
+    // Lanyard often returns mp: URLs that still render in Discord but not always in browsers.
+    // We’ll try to convert mp:external to a media.discordapp.net URL if it’s formatted that way.
+    // If it doesn't render, it's fine — your UI will just keep existing cover or default.
+    return `https://media.discordapp.net/${large.replace(/^mp:/, "")}`;
+  }
+
+  // If it looks like a plain hash and we have an app id, use Discord app-assets CDN:
+  if (appId) {
+    return `https://cdn.discordapp.com/app-assets/${appId}/${large}.png`;
+  }
+
+  return "";
+}
+
+function findGenericListeningActivity(activities = []) {
+  // Spotify is handled separately via data.spotify
+  // We want "Listening" style activities, usually type 2, but PreMiD sometimes uses other types.
+  return activities.find(a => {
+    const name = (a?.name || "").toLowerCase();
+    const details = (a?.details || "").toLowerCase();
+
+    // Avoid obvious non-music
+    if (!a) return false;
+    if (name.includes("visual studio") || name.includes("chrome")) return false;
+
+    // Strong signals
+    if (a.type === 2) return true; // Listening
+    if (details.includes("by ") || details.includes(" - ")) return true;
+    if (name.includes("music") || name.includes("soundcloud") || name.includes("youtube") || name.includes("apple")) return true;
+
+    return false;
+  });
+}
+
+/* ======================================================= */
+/* === DISCORD / SPOTIFY (UPDATED) ======================= */
 /* ======================================================= */
 
 let lastSpotifyTrackId = null;
 
 async function getDiscord() {
   if (isManualActive()) {
-    slideOutCard($$("spotify-card"));
-    clearInterval(progressInterval);
+    clearMusicUI();
     updateDynamicColors(null);
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
@@ -245,35 +357,55 @@ async function getDiscord() {
     const data = json.data;
     if (!data) return null;
 
+    // 1) Best-quality: Spotify block
     if (data.spotify) {
-  const sp = data.spotify;
-  const now = Date.now();
-  const startMs = sp.timestamps?.start ?? now;
-  const endMs   = sp.timestamps?.end   ?? (startMs + (sp.duration_ms || 0));
+      const sp = data.spotify;
+      const now = Date.now();
+      const startMs = sp.timestamps?.start ?? now;
+      const endMs   = sp.timestamps?.end   ?? (startMs + (sp.duration_ms || 0));
 
-  lastSpotifyTrackId = sp.track_id;
+      lastSpotifyTrackId = sp.track_id;
 
-  slideInCard($$("spotify-card"));
+      showMusicUI({
+        title: sp.song,
+        artist: sp.artist,
+        coverUrl: sp.album_art_url,
+        isExplicit: !!sp?.explicit,
+        startMs,
+        endMs,
+        clickUrl: sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null
+      });
 
-  $$("live-song-title").textContent  = sp.song   || "Unknown";
-  $$("live-song-artist").textContent = sp.artist || "Unknown";
+      return { text: "Listening to Spotify", source: "spotify" };
+    }
 
-  const coverEl = $$("live-activity-cover");
-  if (coverEl && coverEl.src !== sp.album_art_url) coverEl.src = sp.album_art_url;
+    // 2) Universal: any “Listening” activity (PreMiD / Music Presence / etc.)
+    const act = findGenericListeningActivity(data.activities || []);
+    if (act) {
+      // Common patterns:
+      // - act.details = track title
+      // - act.state   = artist OR "by Artist"
+      // - act.name    = app/platform name
+      const title = act.details || act.name || "Listening";
+      const artist = act.state || act?.assets?.large_text || "";
 
-  currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
+      const coverUrl = resolveDiscordAssetUrl(act);
 
-  setupProgress(startMs, endMs);
-  updateDynamicColors(sp.album_art_url);
+      // No timestamps -> hide progress bar; clickUrl is unknown generally
+      showMusicUI({
+        title,
+        artist,
+        coverUrl,
+        isExplicit: false,
+        startMs: null,
+        endMs: null,
+        clickUrl: null
+      });
 
-  // ===== Explicit Badge =====
-  const explicitEl = $$("explicit-badge");
-  if (explicitEl) {
-    explicitEl.style.display = sp?.explicit ? "inline-block" : "none";
-  }
+      return { text: `Listening on ${act.name || "Music"}`, source: "music" };
+    }
 
-  return { text: "Listening to Spotify", source: "spotify" };
-}
+    // 3) No music: fall back to discord presence text
     const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
@@ -281,7 +413,7 @@ async function getDiscord() {
       offline: "No Current Active Activities",
     };
 
-    slideOutCard($$("spotify-card"));
+    clearMusicUI();
     updateDynamicColors(null);
     return { text: map[data.discord_status] || "No Current Active Activities", source: "discord" };
 
@@ -294,34 +426,11 @@ async function getDiscord() {
 /* ======================================================= */
 /* === T W I T C H  (Fixed) ============================== */
 /* ======================================================= */
-/* Strategy:
-   - Uses decapi.me/twitch/uptime (Industry standard for no-key checks)
-   - If response contains "offline" or "not found" -> User is Offline.
-   - If response is a duration (e.g. "1 hour, 20 mins") -> User is LIVE.
-*/
-
-async function parseTwitchStatusText(text) {
-  if (!text || typeof text !== "string") return false;
-  const t = text.trim().toLowerCase();
-
-  // Quick rejects for empty responses
-  if (!t) return false;
-  
-  // DecAPI returns strings like "calebkritzar is offline" or "channel is not live"
-  if (t.includes("offline") || t.includes("not live") || t.includes("not found")) {
-    return false;
-  }
-
-  // If the text exists and DOESN'T say "offline", it is a time duration.
-  // Therefore, the stream is live.
-  return true;
-}
 
 async function getTwitch() {
   const u = CONFIG.twitch.username?.toLowerCase();
   if (!u) return null;
 
-  // We use a proxy to stop the browser from blocking the "uptime" request.
   const proxy = "https://corsproxy.io/?";
   const target = `https://decapi.me/twitch/uptime/${u}`;
   
@@ -329,9 +438,7 @@ async function getTwitch() {
     const res = await fetch(`${proxy}${encodeURIComponent(target)}?_=${Date.now()}`);
     const text = (await res.text()).toLowerCase();
 
-    // Logic: If you're offline, DecAPI says "offline". If you're live, it gives a time.
     const isOffline = text.includes("offline") || text.includes("not live") || text.includes("not found") || !text.trim();
-
     return isOffline ? null : { live: true };
   } catch (e) {
     console.warn("Twitch check failed:", e);
@@ -354,7 +461,6 @@ async function getReddit(){
     const post = j?.data?.children?.[0]?.data;
     if (!post) return null;
 
-    // Persist the last shown post ID in localStorage so we don't show repeatedly
     const lastShownId = localStorage.getItem("lastRedditShownId");
 
     if (post.id !== lastShownId) {
@@ -385,7 +491,6 @@ try {
 
     manualStatus = d;
 
-    // auto-disable expired manual statuses server-side-ish
     if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
       try {
         await setDoc(manualRef, {
@@ -421,6 +526,7 @@ function applyStatusDecision({ main, twitchLive, temp }) {
     return;
   }
   if (main?.source === "spotify") showStatusLineWithFade("Listening to Spotify", "spotify");
+  else if (main?.source === "music") showStatusLineWithFade(main?.text || "Listening to Music", "music");
   else if (twitchLive) showStatusLineWithFade("Now Live on Twitch", "twitch");
   else showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
 }
@@ -430,19 +536,17 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 /* ======================================================= */
 
 async function mainLoop() {
-  // gather all sources in parallel
   const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
 
   const primary =
     (discord?.source === "manual") ? discord
     : (discord?.source === "spotify") ? discord
+    : (discord?.source === "music") ? discord
     : (twitch || discord || { text: "No Current Active Activities", source: "discord" });
 
   const tempHit = reddit?.isTemp ? reddit : null;
 
-  // manage temp banner lifecycle
   if (tempHit) {
-    // set or replace tempBanner with fresh expiry
     tempBanner = { text: tempHit.text, source: tempHit.source, expiresAt: Date.now() + TEMP_BANNER_MS };
   } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
     tempBanner = null;
@@ -462,7 +566,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const card = $$("spotify-card");
   if (card) card.addEventListener("click", () => { if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank"); });
 
-  // restore last status visual if available
   const saved = localStorage.getItem("lastStatus");
   if (saved) {
     try {
@@ -472,8 +575,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) { console.warn("Failed to restore last status:", e); }
   }
 
-  // kick off loop and polling timers
   mainLoop();
   setInterval(mainLoop, 30000);
-  setInterval(updateLastUpdated, 1000); // update "Last Updated" every second
+  setInterval(updateLastUpdated, 1000);
 });
