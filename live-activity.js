@@ -196,9 +196,11 @@ function setupProgress(startMs, endMs) {
   progressInterval = setInterval(tick, 1000);
 }
 
-/* ======================================================= */
-/* === DYNAMIC COLORS =================================== */
-/* ======================================================= */
+// =======================================================
+// ✅ UPDATE THIS FUNCTION IN YOUR live-activity.js
+// This makes the container match the song accent ONLY when Spotify cover exists.
+// When no imageUrl -> no tint (dynamic accent becomes transparent).
+// =======================================================
 
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
@@ -208,9 +210,10 @@ function updateDynamicColors(imageUrl) {
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent  = settings.accentColor || "#1DB954";
 
+  // ✅ No Spotify / no image = no song tint
   if (!matchAccent || !imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
-    activity.style.setProperty("--dynamic-accent", userAccent);
+    activity.style.setProperty("--dynamic-accent", "transparent");
     return;
   }
 
@@ -240,6 +243,7 @@ function updateDynamicColors(imageUrl) {
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
+      // If canvas fails, fall back to user accent tint (still better than nothing)
       activity.style.setProperty("--dynamic-accent", userAccent);
       activity.style.setProperty("--dynamic-bg", "none");
     }
