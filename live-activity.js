@@ -1,10 +1,12 @@
 /* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit
-   UPDATED:
-   - Adds UNIVERSAL music detection via Discord activities[] (PreMiD / Music Presence / many players)
-   - Keeps Spotify via Lanyard as best-quality source (progress, album art, timestamps)
-   - Non-Spotify music shows title/artist/artwork when available; hides progress if not available
-   - Twitch: decapi uptime via corsproxy
-   - Reddit: one-time banner per new post via localStorage
+   UPDATED (FULL FILE):
+   ✅ Spotify via Lanyard: real timestamps -> real progress bar
+   ✅ PreMiD / other music activities via Lanyard activities[]:
+      - shows title/artist/cover
+      - NO timestamps -> progress becomes INDTERMINATE (nice animated bar) OR hides if you switch flag
+   ✅ Manual Firestore overrides everything
+   ✅ Twitch via decapi uptime
+   ✅ Reddit one-time banner per new post via localStorage
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -15,6 +17,15 @@ const CONFIG = {
   twitch:  { username: "calebkritzar" },
   reddit:  { username: "Maleficent_Line6570" },
 };
+
+/* ======================================================= */
+/* === SETTINGS ========================================== */
+/* ======================================================= */
+
+/* Choose how non-Spotify music should behave:
+   - "indeterminate" = animated loading-style bar
+   - "hide" = progress bar + times disappear entirely */
+const NON_SPOTIFY_PROGRESS_MODE = "indeterminate";
 
 /* ======================================================= */
 /* === GLOBAL STATE ====================================== */
@@ -42,8 +53,8 @@ const ICON_MAP = {
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
-  manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   music:   "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
+  manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
@@ -110,21 +121,37 @@ function updateLastUpdated() {
 }
 
 /* ======================================================= */
-/* === MUSIC CARD HELPERS ================================ */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
-function clearMusicUI() {
-  slideOutCard($$("spotify-card"));
-  clearInterval(progressInterval);
-  progressInterval = null;
-  currentSpotifyUrl = null;
+function setProgressVisibility(mode) {
+  const barWrap = document.querySelector(".music-progress-container");
+  const timeRow = document.querySelector(".music-progress-time");
+  if (!barWrap || !timeRow) return;
 
-  // Reset progress UI (hide it)
-  const wrap = $$("music-progress-wrap");
-  if (wrap) wrap.style.display = "none";
+  // Reset state
+  barWrap.classList.remove("indeterminate");
+  barWrap.style.display = "";
+  timeRow.style.display = "";
 
+  if (mode === "hide") {
+    barWrap.style.display = "none";
+    timeRow.style.display = "none";
+    return;
+  }
+
+  if (mode === "indeterminate") {
+    // show bar but hide times (no real timestamps)
+    barWrap.classList.add("indeterminate");
+    timeRow.style.display = "none";
+  }
+}
+
+function resetProgress() {
   const bar = $$("music-progress-bar");
   if (bar) bar.style.width = "0%";
+  clearInterval(progressInterval);
+  progressInterval = null;
 
   const elapsedEl = $$("elapsed-time");
   const remainEl  = $$("remaining-time");
@@ -132,42 +159,7 @@ function clearMusicUI() {
   if (elapsedEl) elapsedEl.textContent = "0:00";
   if (remainEl)  remainEl.textContent  = "-0:00";
   if (totalEl)   totalEl.textContent   = "0:00";
-
-  const explicitEl = $$("explicit-badge");
-  if (explicitEl) explicitEl.style.display = "none";
 }
-
-function showMusicUI({ title, artist, coverUrl, isExplicit = false, startMs = null, endMs = null, clickUrl = null }) {
-  slideInCard($$("spotify-card"));
-
-  $$("live-song-title").textContent  = title  || "Unknown";
-  $$("live-song-artist").textContent = artist || "Unknown";
-
-  const coverEl = $$("live-activity-cover");
-  if (coverEl && coverUrl && coverEl.src !== coverUrl) coverEl.src = coverUrl;
-
-  currentSpotifyUrl = clickUrl || null;
-
-  const explicitEl = $$("explicit-badge");
-  if (explicitEl) explicitEl.style.display = isExplicit ? "inline-block" : "none";
-
-  // Progress only when timestamps exist
-  const wrap = $$("music-progress-wrap");
-  if (startMs && endMs && endMs > startMs) {
-    if (wrap) wrap.style.display = "";
-    setupProgress(startMs, endMs);
-  } else {
-    if (wrap) wrap.style.display = "none";
-    clearInterval(progressInterval);
-    progressInterval = null;
-  }
-
-  updateDynamicColors(coverUrl || null);
-}
-
-/* ======================================================= */
-/* === PROGRESS BAR ====================================== */
-/* ======================================================= */
 
 function setupProgress(startMs, endMs) {
   const bar       = $$("music-progress-bar");
@@ -175,7 +167,16 @@ function setupProgress(startMs, endMs) {
   const remainEl  = $$("remaining-time");
   const totalEl   = $$("total-time");
 
-  if (!bar || !startMs || !endMs) return;
+  if (!bar || !startMs || !endMs || endMs <= startMs) return;
+
+  // Make sure progress UI is visible and NOT indeterminate
+  const barWrap = document.querySelector(".music-progress-container");
+  const timeRow = document.querySelector(".music-progress-time");
+  if (barWrap) {
+    barWrap.classList.remove("indeterminate");
+    barWrap.style.display = "";
+  }
+  if (timeRow) timeRow.style.display = "";
 
   const totalSec = Math.max((endMs - startMs) / 1000, 1);
   if (totalEl) totalEl.textContent = fmt(totalSec);
@@ -196,11 +197,11 @@ function setupProgress(startMs, endMs) {
   progressInterval = setInterval(tick, 1000);
 }
 
-// =======================================================
-// ✅ UPDATE THIS FUNCTION IN YOUR live-activity.js
-// This makes the container match the song accent ONLY when Spotify cover exists.
-// When no imageUrl -> no tint (dynamic accent becomes transparent).
-// =======================================================
+/* ======================================================= */
+/* === DYNAMIC COLORS =================================== */
+/* ======================================================= */
+/* IMPORTANT: This version tints ONLY when imageUrl exists.
+   Otherwise, it removes tint (transparent). */
 
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
@@ -210,7 +211,6 @@ function updateDynamicColors(imageUrl) {
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent  = settings.accentColor || "#1DB954";
 
-  // ✅ No Spotify / no image = no song tint
   if (!matchAccent || !imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", "transparent");
@@ -243,7 +243,6 @@ function updateDynamicColors(imageUrl) {
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
-      // If canvas fails, fall back to user accent tint (still better than nothing)
       activity.style.setProperty("--dynamic-accent", userAccent);
       activity.style.setProperty("--dynamic-bg", "none");
     }
@@ -288,32 +287,23 @@ function isManualActive() {
 }
 
 /* ======================================================= */
-/* === DISCORD ASSET URL RESOLVER ======================== */
+/* === DISCORD / SPOTIFY + GENERIC MUSIC ================= */
 /* ======================================================= */
 
 function resolveDiscordAssetUrl(activity) {
-  // Works for many PreMiD activities:
-  // - Sometimes assets.large_image is "mp:external/..." (already a remote-ish path)
-  // - Sometimes it's a normal Discord app asset id (needs cdn URL)
   const a = activity?.assets;
   if (!a) return "";
 
   const large = a.large_image || "";
   const appId = activity?.application_id;
-
   if (!large) return "";
 
-  // "mp:" assets (Discord proxy) – this can work as-is in many cases:
-  // Examples: "mp:external/...."
+  // PreMiD often gives "mp:external/...." which isn't reliably browser-renderable.
+  // We'll attempt a conversion; if it fails, your UI still works without it.
   if (large.startsWith("mp:")) {
-    // Most browsers accept it as a direct "https://media.discordapp.net/" style URL is not provided here.
-    // Lanyard often returns mp: URLs that still render in Discord but not always in browsers.
-    // We’ll try to convert mp:external to a media.discordapp.net URL if it’s formatted that way.
-    // If it doesn't render, it's fine — your UI will just keep existing cover or default.
     return `https://media.discordapp.net/${large.replace(/^mp:/, "")}`;
   }
 
-  // If it looks like a plain hash and we have an app id, use Discord app-assets CDN:
   if (appId) {
     return `https://cdn.discordapp.com/app-assets/${appId}/${large}.png`;
   }
@@ -322,18 +312,17 @@ function resolveDiscordAssetUrl(activity) {
 }
 
 function findGenericListeningActivity(activities = []) {
-  // Spotify is handled separately via data.spotify
-  // We want "Listening" style activities, usually type 2, but PreMiD sometimes uses other types.
   return activities.find(a => {
-    const name = (a?.name || "").toLowerCase();
-    const details = (a?.details || "").toLowerCase();
-
-    // Avoid obvious non-music
     if (!a) return false;
+
+    const name = (a.name || "").toLowerCase();
+    const details = (a.details || "").toLowerCase();
+
+    // Avoid obvious non-music noise
     if (name.includes("visual studio") || name.includes("chrome")) return false;
 
-    // Strong signals
-    if (a.type === 2) return true; // Listening
+    // Strong music signals
+    if (a.type === 2) return true; // Discord "Listening"
     if (details.includes("by ") || details.includes(" - ")) return true;
     if (name.includes("music") || name.includes("soundcloud") || name.includes("youtube") || name.includes("apple")) return true;
 
@@ -341,15 +330,11 @@ function findGenericListeningActivity(activities = []) {
   });
 }
 
-/* ======================================================= */
-/* === DISCORD / SPOTIFY (UPDATED) ======================= */
-/* ======================================================= */
-
-let lastSpotifyTrackId = null;
-
 async function getDiscord() {
   if (isManualActive()) {
-    clearMusicUI();
+    slideOutCard($$("spotify-card"));
+    resetProgress();
+    setProgressVisibility("hide");
     updateDynamicColors(null);
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
@@ -361,55 +346,68 @@ async function getDiscord() {
     const data = json.data;
     if (!data) return null;
 
-    // 1) Best-quality: Spotify block
+    // 1) Spotify: timestamps exist -> real progress
     if (data.spotify) {
       const sp = data.spotify;
       const now = Date.now();
       const startMs = sp.timestamps?.start ?? now;
       const endMs   = sp.timestamps?.end   ?? (startMs + (sp.duration_ms || 0));
 
-      lastSpotifyTrackId = sp.track_id;
+      slideInCard($$("spotify-card"));
 
-      showMusicUI({
-        title: sp.song,
-        artist: sp.artist,
-        coverUrl: sp.album_art_url,
-        isExplicit: !!sp?.explicit,
-        startMs,
-        endMs,
-        clickUrl: sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null
-      });
+      $$("live-song-title").textContent  = sp.song   || "Unknown";
+      $$("live-song-artist").textContent = sp.artist || "Unknown";
+
+      const coverEl = $$("live-activity-cover");
+      if (coverEl && coverEl.src !== sp.album_art_url) coverEl.src = sp.album_art_url;
+
+      currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
+
+      // show full progress with times
+      setupProgress(startMs, endMs);
+
+      // song tint
+      updateDynamicColors(sp.album_art_url);
+
+      // explicit
+      const explicitEl = $$("explicit-badge");
+      if (explicitEl) explicitEl.style.display = sp?.explicit ? "inline-block" : "none";
 
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    // 2) Universal: any “Listening” activity (PreMiD / Music Presence / etc.)
+    // 2) Generic music (PreMiD / other services): no timestamps -> indeterminate or hide
     const act = findGenericListeningActivity(data.activities || []);
     if (act) {
-      // Common patterns:
-      // - act.details = track title
-      // - act.state   = artist OR "by Artist"
-      // - act.name    = app/platform name
+      slideInCard($$("spotify-card"));
+
       const title = act.details || act.name || "Listening";
       const artist = act.state || act?.assets?.large_text || "";
 
-      const coverUrl = resolveDiscordAssetUrl(act);
+      $$("live-song-title").textContent  = title;
+      $$("live-song-artist").textContent = artist || "—";
 
-      // No timestamps -> hide progress bar; clickUrl is unknown generally
-      showMusicUI({
-        title,
-        artist,
-        coverUrl,
-        isExplicit: false,
-        startMs: null,
-        endMs: null,
-        clickUrl: null
-      });
+      const coverUrl = resolveDiscordAssetUrl(act);
+      const coverEl = $$("live-activity-cover");
+      if (coverEl && coverUrl) coverEl.src = coverUrl;
+
+      currentSpotifyUrl = null; // can't open the track reliably
+
+      // No real progress info -> choose behavior
+      resetProgress();
+      setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
+
+      // tint: only if cover url exists (if mp: conversion fails, it won't tint)
+      updateDynamicColors(coverUrl || null);
+
+      // explicit off
+      const explicitEl = $$("explicit-badge");
+      if (explicitEl) explicitEl.style.display = "none";
 
       return { text: `Listening on ${act.name || "Music"}`, source: "music" };
     }
 
-    // 3) No music: fall back to discord presence text
+    // 3) No music: show discord presence
     const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
@@ -417,8 +415,11 @@ async function getDiscord() {
       offline: "No Current Active Activities",
     };
 
-    clearMusicUI();
+    slideOutCard($$("spotify-card"));
+    resetProgress();
+    setProgressVisibility("hide");
     updateDynamicColors(null);
+
     return { text: map[data.discord_status] || "No Current Active Activities", source: "discord" };
 
   } catch (e) {
@@ -428,7 +429,7 @@ async function getDiscord() {
 }
 
 /* ======================================================= */
-/* === T W I T C H  (Fixed) ============================== */
+/* === T W I T C H  ====================================== */
 /* ======================================================= */
 
 async function getTwitch() {
@@ -437,7 +438,7 @@ async function getTwitch() {
 
   const proxy = "https://corsproxy.io/?";
   const target = `https://decapi.me/twitch/uptime/${u}`;
-  
+
   try {
     const res = await fetch(`${proxy}${encodeURIComponent(target)}?_=${Date.now()}`);
     const text = (await res.text()).toLowerCase();
@@ -451,7 +452,7 @@ async function getTwitch() {
 }
 
 /* ======================================================= */
-/* === OTHER SOURCES (Reddit) ============================ */
+/* === REDDIT ============================================ */
 /* ======================================================= */
 
 async function getReddit(){
