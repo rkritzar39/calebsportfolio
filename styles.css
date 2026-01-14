@@ -1189,6 +1189,33 @@ body.light-e .explicit-badge {
 }
 
 /* ======================================================= */
+/* ✅ ADD THIS TO YOUR CSS (indeterminate progress mode)   */
+/* This makes the progress bar animate nicely for PreMiD. */
+/* ======================================================= */
+
+.music-progress-container.indeterminate {
+  overflow: hidden;
+}
+
+.music-progress-container.indeterminate .music-progress-bar {
+  width: 35% !important;
+  animation: indeterminateMove 1.6s ease-in-out infinite;
+}
+
+@keyframes indeterminateMove {
+  0%   { transform: translateX(-55%); }
+  50%  { transform: translateX(160%); }
+  100% { transform: translateX(-55%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-progress-container.indeterminate .music-progress-bar {
+    animation: none !important;
+  }
+}
+
+
+/* ======================================================= */
 /* === RESPONSIVE ======================================== */
 /* ======================================================= */
 
