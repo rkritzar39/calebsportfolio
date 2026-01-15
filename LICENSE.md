@@ -9,7 +9,7 @@ This software, including its source code, documentation, designs, and all associ
 **No Reproduction or Distribution**
 - This Software may not be reproduced, distributed, or copied in any form
 No part of this Software may be modified, merged, published, or sublicensed
-The Software may not be used as a template or basis for any other project
+The Software may not be used as a template or basis for any other project  
 
 **No Commercial Use**
 - This Software may not be sold, leased, or monetized in any way
