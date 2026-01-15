@@ -8,9 +8,9 @@
    ✅ Twitch via decapi uptime
    ✅ Reddit one-time banner per new post via localStorage
 
-   FIXES ADDED:
-   ✅ "Match theme of song" OFF = truly neutral (NO fallback to user accent)
-   ✅ Adds/removes .song-theme-off class on .live-activity to fully disable tint/glow
+   FIXES ADDED (WITHOUT MESSING YOUR STRUCTURE):
+   ✅ Match song accent OFF = uses user's website accentColor (matches theme)
+   ✅ Async race-condition fix: request token so older image loads can't overwrite newer state
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -45,6 +45,9 @@ const TEMP_BANNER_MS = 15000;
 let lastRedditPostId  = null;
 let manualStatus = null;
 
+/* ✅ NEW: protects against async overwrites (no refresh spam) */
+let dynamicColorRequestId = 0;
+
 const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
@@ -67,7 +70,7 @@ const ICON_MAP = {
 /* ======================================================= */
 /* websiteSettings.matchSongAccent:
      "enabled"  => tint from album art
-     anything else => NO tint (neutral), do NOT fall back to user accent
+     anything else => use website accentColor (matches theme)
 */
 
 function getWebsiteSettings() {
@@ -83,18 +86,21 @@ function isMatchSongAccentEnabled() {
   return settings.matchSongAccent === "enabled";
 }
 
-/* Keep CSS in sync: .song-theme-off kills aura/tint/glow via CSS */
+/* Keep CSS in sync: we keep your class, but do NOT force transparent here anymore */
 function applySongThemeClass() {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  const matchAccent = isMatchSongAccentEnabled();
+  const settings = getWebsiteSettings();
+  const matchAccent = settings.matchSongAccent === "enabled";
+  const userAccent  = settings.accentColor || "#1DB954";
+
   activity.classList.toggle("song-theme-off", !matchAccent);
 
-  // Hard neutral when OFF, prevents any “accent fallback” tinting.
+  // ✅ When OFF, match website accent (NOT transparent)
   if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
-    activity.style.setProperty("--dynamic-accent", "transparent");
+    activity.style.setProperty("--dynamic-accent", userAccent);
   }
 }
 
@@ -246,8 +252,10 @@ function setupProgress(startMs, endMs) {
 /* === DYNAMIC COLORS =================================== */
 /* ======================================================= */
 /* IMPORTANT:
-   - Only tint when matchSongAccent is enabled AND imageUrl exists.
-   - When OFF, stay neutral (transparent). No user accent fallback.
+   - OFF -> website accentColor
+   - ON + imageUrl -> album extracted color
+   - ON + no image -> website accentColor
+   - async-safe: request token prevents old loads overriding new state
 */
 
 function updateDynamicColors(imageUrl) {
@@ -258,14 +266,16 @@ function updateDynamicColors(imageUrl) {
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent  = settings.accentColor || "#1DB954";
 
-  // ✅ OFF = match the user's WEBSITE accent theme
+  const requestId = ++dynamicColorRequestId;
+
+  // ✅ OFF = website accent
   if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
-  // ✅ ON but no image -> fall back to website accent (keeps it pretty, not transparent)
+  // ✅ ON but no image -> website accent
   if (!imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
@@ -274,14 +284,18 @@ function updateDynamicColors(imageUrl) {
 
   const img = new Image();
   img.crossOrigin = "anonymous";
+  img.decoding = "async";
   img.src = imageUrl;
 
   img.onload = () => {
+    // ignore if a newer request happened
+    if (requestId !== dynamicColorRequestId) return;
+
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-      canvas.width = img.width || 64;
-      canvas.height = img.height || 64;
+      canvas.width = img.naturalWidth || img.width || 64;
+      canvas.height = img.naturalHeight || img.height || 64;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -304,13 +318,13 @@ function updateDynamicColors(imageUrl) {
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
-      // ✅ if extraction fails, use website accent (NOT transparent)
       activity.style.setProperty("--dynamic-accent", userAccent);
       activity.style.setProperty("--dynamic-bg", "none");
     }
   };
 
   img.onerror = () => {
+    if (requestId !== dynamicColorRequestId) return;
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-bg", "none");
   };
@@ -360,8 +374,6 @@ function resolveDiscordAssetUrl(activity) {
   const appId = activity?.application_id;
   if (!large) return "";
 
-  // PreMiD often gives "mp:external/...." which isn't reliably browser-renderable.
-  // We'll attempt a conversion; if it fails, your UI still works without it.
   if (large.startsWith("mp:")) {
     return `https://media.discordapp.net/${large.replace(/^mp:/, "")}`;
   }
@@ -380,11 +392,9 @@ function findGenericListeningActivity(activities = []) {
     const name = (a.name || "").toLowerCase();
     const details = (a.details || "").toLowerCase();
 
-    // Avoid obvious non-music noise
     if (name.includes("visual studio") || name.includes("chrome")) return false;
 
-    // Strong music signals
-    if (a.type === 2) return true; // Discord "Listening"
+    if (a.type === 2) return true;
     if (details.includes("by ") || details.includes(" - ")) return true;
     if (name.includes("music") || name.includes("soundcloud") || name.includes("youtube") || name.includes("apple")) return true;
 
@@ -408,7 +418,6 @@ async function getDiscord() {
     const data = json.data;
     if (!data) return null;
 
-    // 1) Spotify: timestamps exist -> real progress
     if (data.spotify) {
       const sp = data.spotify;
       const now = Date.now();
@@ -425,20 +434,15 @@ async function getDiscord() {
 
       currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
-      // show full progress with times
       setupProgress(startMs, endMs);
-
-      // song tint (respects toggle)
       updateDynamicColors(sp.album_art_url);
 
-      // explicit
       const explicitEl = $$("explicit-badge");
       if (explicitEl) explicitEl.style.display = sp?.explicit ? "inline-block" : "none";
 
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    // 2) Generic music (PreMiD / other services): no timestamps -> indeterminate or hide
     const act = findGenericListeningActivity(data.activities || []);
     if (act) {
       slideInCard($$("spotify-card"));
@@ -453,23 +457,19 @@ async function getDiscord() {
       const coverEl = $$("live-activity-cover");
       if (coverEl && coverUrl) coverEl.src = coverUrl;
 
-      currentSpotifyUrl = null; // can't open the track reliably
+      currentSpotifyUrl = null;
 
-      // No real progress info -> choose behavior
       resetProgress();
       setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
 
-      // tint: only if cover url exists AND toggle is on
       updateDynamicColors(coverUrl || null);
 
-      // explicit off
       const explicitEl = $$("explicit-badge");
       if (explicitEl) explicitEl.style.display = "none";
 
       return { text: `Listening on ${act.name || "Music"}`, source: "music" };
     }
 
-    // 3) No music: show discord presence
     const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
@@ -603,7 +603,6 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 /* ======================================================= */
 
 async function mainLoop() {
-  // keep class synced even if settings change elsewhere
   applySongThemeClass();
 
   const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
@@ -647,7 +646,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) { console.warn("Failed to restore last status:", e); }
   }
 
-  mainLoop();
+  // ✅ tiny delay prevents “refresh multiple times” on cold loads
+  setTimeout(() => {
+    mainLoop();
+  }, 50);
+
   setInterval(mainLoop, 30000);
   setInterval(updateLastUpdated, 1000);
 });
