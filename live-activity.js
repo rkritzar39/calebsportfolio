@@ -1,17 +1,16 @@
 /* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit
    UPDATED (FULL FILE):
    ✅ Spotify via Lanyard: real timestamps -> real progress bar
-   ✅ PreMiD / other music activities via Lanyard activities[]:
+   ✅ PreMiD / other music/video activities via Lanyard activities[]:
       - shows title/artist/cover
-      - NO timestamps -> progress becomes INDTERMINATE (nice animated bar) OR hides if you switch flag
+      - USES timestamps IF PRESENT -> real progress bar (YouTube/YouTube Music/Amazon Music when provided)
+      - NO timestamps -> progress becomes INDTERMINATE (animated) OR hides if you switch flag
    ✅ Manual Firestore overrides everything
    ✅ Twitch via decapi uptime
    ✅ Reddit one-time banner per new post via localStorage
-
-   FIXES (NO REFRESH NEEDED):
-   ✅ Settings changes apply instantly (same tab) via a lightweight watcher
-   ✅ Match song accent OFF => card matches user's accentColor
-   ✅ Match song accent ON  => snaps back to song accent immediately using last known cover
+   ✅ Settings changes apply instantly (same tab) — no refresh
+   ✅ Match song accent OFF => user accentColor (matches theme)
+   ✅ Match song accent ON  => snaps to song accent using last cover immediately
    ✅ Async race fix: token prevents old image loads overwriting newer state
 */
 
@@ -28,7 +27,7 @@ const CONFIG = {
 /* === SETTINGS ========================================== */
 /* ======================================================= */
 
-/* Choose how non-Spotify music should behave:
+/* Choose how non-Spotify music should behave when timestamps are NOT available:
    - "indeterminate" = animated loading-style bar
    - "hide" = progress bar + times disappear entirely */
 const NON_SPOTIFY_PROGRESS_MODE = "indeterminate";
@@ -41,19 +40,20 @@ let lastUpdateTime = null;
 let lastPollTime   = Date.now();
 let progressInterval = null;
 let currentSpotifyUrl = null;
+
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
 
 let lastRedditPostId  = null;
 let manualStatus = null;
 
-/* ✅ Prevent async overwrites (image load races) */
+/* ✅ prevents old image loads overwriting newer state */
 let dynamicColorRequestId = 0;
 
-/* ✅ Remember last cover so toggling matchSongAccent ON instantly re-applies song accent */
+/* ✅ remembers last cover so toggling ON snaps back immediately */
 let lastCoverUrl = null;
 
-/* ✅ Track settings in THIS tab (storage event won't fire in same tab) */
+/* ✅ same-tab settings watcher (storage event doesn't fire same tab) */
 let lastSettingsRaw = null;
 
 const $$  = (id) => document.getElementById(id);
@@ -74,7 +74,7 @@ const ICON_MAP = {
 };
 
 /* ======================================================= */
-/* === THEME / MATCH SONG ACCENT ========================= */
+/* === SETTINGS HELPERS ================================== */
 /* ======================================================= */
 
 function getWebsiteSettings() {
@@ -90,9 +90,7 @@ function isMatchSongAccentEnabled() {
   return settings.matchSongAccent === "enabled";
 }
 
-/* Keep CSS class in sync if you use it elsewhere.
-   IMPORTANT: We do NOT force transparent here anymore.
-   We want OFF => user's accentColor. */
+/* Keep CSS class in sync if you use it elsewhere. */
 function applySongThemeClass() {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
@@ -103,15 +101,14 @@ function applySongThemeClass() {
 
   activity.classList.toggle("song-theme-off", !matchAccent);
 
-  // ✅ OFF => match user's accent color
+  // OFF => match user's accent color
   if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
   }
 }
 
-/* ✅ Settings change watcher (works in same tab without refresh)
-   - if user flips toggle or changes accentColor, we re-apply instantly */
+/* Same-tab live watcher */
 function watchWebsiteSettings() {
   const raw = localStorage.getItem("websiteSettings") || "{}";
   if (raw === lastSettingsRaw) return;
@@ -119,21 +116,19 @@ function watchWebsiteSettings() {
 
   applySongThemeClass();
 
-  // Re-apply the correct accent immediately
+  // Re-apply correct accent immediately
   if (isMatchSongAccentEnabled()) {
-    // If we have a last cover, use it right now
     if (lastCoverUrl) updateDynamicColors(lastCoverUrl);
-    else updateDynamicColors(null); // falls back to user's accent until a cover appears
+    else updateDynamicColors(null);
   } else {
-    // OFF => user's accent
     updateDynamicColors(null);
   }
 }
 
-/* Optional: still keep storage event for other tabs */
+/* Cross-tab */
 window.addEventListener("storage", (e) => {
   if (e.key === "websiteSettings") {
-    lastSettingsRaw = null; // force refresh
+    lastSettingsRaw = null;
     watchWebsiteSettings();
   }
 });
@@ -221,7 +216,6 @@ function setProgressVisibility(mode) {
   }
 
   if (mode === "indeterminate") {
-    // show bar but hide times (no real timestamps)
     barWrap.classList.add("indeterminate");
     timeRow.style.display = "none";
   }
@@ -249,7 +243,7 @@ function setupProgress(startMs, endMs) {
 
   if (!bar || !startMs || !endMs || endMs <= startMs) return;
 
-  // Make sure progress UI is visible and NOT indeterminate
+  // Ensure visible + not indeterminate
   const barWrap = document.querySelector(".music-progress-container");
   const timeRow = document.querySelector(".music-progress-time");
   if (barWrap) {
@@ -277,14 +271,28 @@ function setupProgress(startMs, endMs) {
   progressInterval = setInterval(tick, 1000);
 }
 
+/* ✅ Use Discord activity timestamps when available (YouTube/YouTube Music/Amazon Music via PreMiD, etc.) */
+function toEpochMs(v) {
+  if (!v || typeof v !== "number") return null;
+  return v < 1e12 ? v * 1000 : v; // seconds -> ms if needed
+}
+
+function setupProgressFromActivityTimestamps(act) {
+  const startMs = toEpochMs(act?.timestamps?.start);
+  const endMs   = toEpochMs(act?.timestamps?.end);
+  if (!startMs || !endMs || endMs <= startMs) return false;
+  setupProgress(startMs, endMs);
+  return true;
+}
+
 /* ======================================================= */
 /* === DYNAMIC COLORS =================================== */
 /* ======================================================= */
 /* Behavior:
-   - OFF => user's accentColor (card matches theme)
-   - ON + image => song accent (auto)
+   - OFF => user's accentColor
+   - ON + image => album extracted color
    - ON + no image => user's accentColor
-   - race-safe: token prevents old loads from overwriting new state
+   - race-safe: token prevents old loads overriding new state
 */
 
 function updateDynamicColors(imageUrl) {
@@ -295,19 +303,16 @@ function updateDynamicColors(imageUrl) {
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent  = settings.accentColor || "#1DB954";
 
-  // Remember latest cover candidate so toggling ON can instantly reapply
   if (imageUrl) lastCoverUrl = imageUrl;
 
   const requestId = ++dynamicColorRequestId;
 
-  // ✅ OFF => website accent
   if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
-  // ✅ ON but no image => website accent until we get a cover
   if (!imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
@@ -325,6 +330,8 @@ function updateDynamicColors(imageUrl) {
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("No canvas ctx");
+
       canvas.width = img.naturalWidth || img.width || 64;
       canvas.height = img.naturalHeight || img.height || 64;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -394,7 +401,7 @@ function isManualActive() {
 }
 
 /* ======================================================= */
-/* === DISCORD / SPOTIFY + GENERIC MUSIC ================= */
+/* === DISCORD / SPOTIFY + GENERIC MUSIC/VIDEO =========== */
 /* ======================================================= */
 
 function resolveDiscordAssetUrl(activity) {
@@ -405,6 +412,7 @@ function resolveDiscordAssetUrl(activity) {
   const appId = activity?.application_id;
   if (!large) return "";
 
+  // PreMiD often gives "mp:external/...." which isn't reliably browser-renderable.
   if (large.startsWith("mp:")) {
     return `https://media.discordapp.net/${large.replace(/^mp:/, "")}`;
   }
@@ -423,11 +431,15 @@ function findGenericListeningActivity(activities = []) {
     const name = (a.name || "").toLowerCase();
     const details = (a.details || "").toLowerCase();
 
+    // Avoid obvious non-media noise
     if (name.includes("visual studio") || name.includes("chrome")) return false;
 
-    if (a.type === 2) return true; // Listening
+    // Discord "Listening" / "Watching" types can carry timestamps
+    if (a.type === 2 || a.type === 3) return true;
+
+    // Strong signals
     if (details.includes("by ") || details.includes(" - ")) return true;
-    if (name.includes("music") || name.includes("soundcloud") || name.includes("youtube") || name.includes("apple")) return true;
+    if (name.includes("music") || name.includes("soundcloud") || name.includes("youtube") || name.includes("amazon")) return true;
 
     return false;
   });
@@ -449,7 +461,7 @@ async function getDiscord() {
     const data = json.data;
     if (!data) return null;
 
-    // 1) Spotify
+    // 1) Spotify: real timestamps -> real progress
     if (data.spotify) {
       const sp = data.spotify;
       const now = Date.now();
@@ -468,7 +480,6 @@ async function getDiscord() {
 
       setupProgress(startMs, endMs);
 
-      // song tint
       updateDynamicColors(sp.album_art_url);
 
       const explicitEl = $$("explicit-badge");
@@ -477,12 +488,12 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    // 2) Generic music
+    // 2) Generic media (YouTube / YouTube Music / Amazon Music / etc.)
     const act = findGenericListeningActivity(data.activities || []);
     if (act) {
       slideInCard($$("spotify-card"));
 
-      const title = act.details || act.name || "Listening";
+      const title = act.details || act.name || "Now Playing";
       const artist = act.state || act?.assets?.large_text || "";
 
       $$("live-song-title").textContent  = title;
@@ -494,18 +505,28 @@ async function getDiscord() {
 
       currentSpotifyUrl = null;
 
+      // Progress: use timestamps if present, else fallback
       resetProgress();
-      setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
+      const hasRealProgress = setupProgressFromActivityTimestamps(act);
+
+      if (!hasRealProgress) {
+        setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
+      }
 
       updateDynamicColors(coverUrl || null);
 
       const explicitEl = $$("explicit-badge");
       if (explicitEl) explicitEl.style.display = "none";
 
-      return { text: `Listening on ${act.name || "Music"}`, source: "music" };
+      const sourceName = act.name || "Media";
+      const pretty = sourceName.toLowerCase().includes("youtube") ? "YouTube"
+                    : sourceName.toLowerCase().includes("amazon") ? "Amazon Music"
+                    : sourceName;
+
+      return { text: `Active on ${pretty}`, source: "music" };
     }
 
-    // 3) No music
+    // 3) No media: show discord presence
     const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
@@ -629,7 +650,7 @@ function applyStatusDecision({ main, twitchLive, temp }) {
     return;
   }
   if (main?.source === "spotify") showStatusLineWithFade("Listening to Spotify", "spotify");
-  else if (main?.source === "music") showStatusLineWithFade(main?.text || "Listening to Music", "music");
+  else if (main?.source === "music") showStatusLineWithFade(main?.text || "Active Media", "music");
   else if (twitchLive) showStatusLineWithFade("Now Live on Twitch", "twitch");
   else showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
 }
@@ -639,7 +660,6 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 /* ======================================================= */
 
 async function mainLoop() {
-  // Keep theme synced (in case settings changed)
   applySongThemeClass();
 
   const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
@@ -672,7 +692,9 @@ document.addEventListener("DOMContentLoaded", () => {
   applySongThemeClass();
 
   const card = $$("spotify-card");
-  if (card) card.addEventListener("click", () => { if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank"); });
+  if (card) card.addEventListener("click", () => {
+    if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank");
+  });
 
   const saved = localStorage.getItem("lastStatus");
   if (saved) {
@@ -683,11 +705,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) { console.warn("Failed to restore last status:", e); }
   }
 
-  // ✅ Start settings watcher (instant toggle response, no refresh)
+  // ✅ instant settings response (same tab)
   watchWebsiteSettings();
   setInterval(watchWebsiteSettings, 300);
 
-  // Start loop (tiny delay helps cold loads where websiteSettings is written right after load)
+  // ✅ start loop
   setTimeout(() => {
     mainLoop();
   }, 50);
