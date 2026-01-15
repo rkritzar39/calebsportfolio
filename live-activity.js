@@ -1,10 +1,11 @@
 /* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit
    UPDATED (FULL FILE):
    ✅ Spotify via Lanyard: real timestamps -> real progress bar
-   ✅ PreMiD / other music/video activities via Lanyard activities[]:
+   ✅ Other music platforms via Lanyard activities[]:
       - shows title/artist/cover
-      - USES timestamps IF PRESENT -> real progress bar (YouTube/YouTube Music/Amazon Music when provided)
+      - USES timestamps IF PRESENT -> real progress bar (works across platforms)
       - NO timestamps -> progress becomes INDTERMINATE (animated) OR hides if you switch flag
+   ✅ If NOT a music activity -> progress bar + time row are hidden
    ✅ Manual Firestore overrides everything
    ✅ Twitch via decapi uptime
    ✅ Reddit one-time banner per new post via localStorage
@@ -90,7 +91,6 @@ function isMatchSongAccentEnabled() {
   return settings.matchSongAccent === "enabled";
 }
 
-/* Keep CSS class in sync if you use it elsewhere. */
 function applySongThemeClass() {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
@@ -108,7 +108,6 @@ function applySongThemeClass() {
   }
 }
 
-/* Same-tab live watcher */
 function watchWebsiteSettings() {
   const raw = localStorage.getItem("websiteSettings") || "{}";
   if (raw === lastSettingsRaw) return;
@@ -116,7 +115,6 @@ function watchWebsiteSettings() {
 
   applySongThemeClass();
 
-  // Re-apply correct accent immediately
   if (isMatchSongAccentEnabled()) {
     if (lastCoverUrl) updateDynamicColors(lastCoverUrl);
     else updateDynamicColors(null);
@@ -125,7 +123,6 @@ function watchWebsiteSettings() {
   }
 }
 
-/* Cross-tab */
 window.addEventListener("storage", (e) => {
   if (e.key === "websiteSettings") {
     lastSettingsRaw = null;
@@ -204,7 +201,6 @@ function setProgressVisibility(mode) {
   const timeRow = document.querySelector(".music-progress-time");
   if (!barWrap || !timeRow) return;
 
-  // Reset state
   barWrap.classList.remove("indeterminate");
   barWrap.style.display = "";
   timeRow.style.display = "";
@@ -243,7 +239,6 @@ function setupProgress(startMs, endMs) {
 
   if (!bar || !startMs || !endMs || endMs <= startMs) return;
 
-  // Ensure visible + not indeterminate
   const barWrap = document.querySelector(".music-progress-container");
   const timeRow = document.querySelector(".music-progress-time");
   if (barWrap) {
@@ -271,7 +266,6 @@ function setupProgress(startMs, endMs) {
   progressInterval = setInterval(tick, 1000);
 }
 
-/* ✅ Use Discord activity timestamps when available (YouTube/YouTube Music/Amazon Music via PreMiD, etc.) */
 function toEpochMs(v) {
   if (!v || typeof v !== "number") return null;
   return v < 1e12 ? v * 1000 : v; // seconds -> ms if needed
@@ -288,12 +282,6 @@ function setupProgressFromActivityTimestamps(act) {
 /* ======================================================= */
 /* === DYNAMIC COLORS =================================== */
 /* ======================================================= */
-/* Behavior:
-   - OFF => user's accentColor
-   - ON + image => album extracted color
-   - ON + no image => user's accentColor
-   - race-safe: token prevents old loads overriding new state
-*/
 
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
@@ -401,7 +389,7 @@ function isManualActive() {
 }
 
 /* ======================================================= */
-/* === DISCORD / SPOTIFY + GENERIC MUSIC/VIDEO =========== */
+/* === DISCORD / SPOTIFY + OTHER MUSIC =================== */
 /* ======================================================= */
 
 function resolveDiscordAssetUrl(activity) {
@@ -412,7 +400,6 @@ function resolveDiscordAssetUrl(activity) {
   const appId = activity?.application_id;
   if (!large) return "";
 
-  // PreMiD often gives "mp:external/...." which isn't reliably browser-renderable.
   if (large.startsWith("mp:")) {
     return `https://media.discordapp.net/${large.replace(/^mp:/, "")}`;
   }
@@ -424,25 +411,55 @@ function resolveDiscordAssetUrl(activity) {
   return "";
 }
 
-function findGenericListeningActivity(activities = []) {
-  return activities.find(a => {
-    if (!a) return false;
+/* Broad music platform detection (works even if act.type is weird) */
+const MUSIC_KEYWORDS = [
+  "youtube music", "yt music", "youtubemusic",
+  "spotify",
+  "amazon music", "prime music", "amazonmusic",
+  "apple music", "itunes",
+  "soundcloud",
+  "tidal",
+  "deezer",
+  "pandora",
+  "bandcamp",
+  "audiomack",
+  "audius",
+  "napster",
+  "qobuz",
+  "mixcloud",
+  "iheartradio",
+  "music"
+];
 
-    const name = (a.name || "").toLowerCase();
-    const details = (a.details || "").toLowerCase();
+function isMusicActivity(act) {
+  if (!act) return false;
 
-    // Avoid obvious non-media noise
-    if (name.includes("visual studio") || name.includes("chrome")) return false;
+  // Discord "Listening" is very likely music (type 2)
+  if (act.type === 2) return true;
 
-    // Discord "Listening" / "Watching" types can carry timestamps
-    if (a.type === 2 || a.type === 3) return true;
+  const name = (act.name || "").toLowerCase();
+  const details = (act.details || "").toLowerCase();
+  const state = (act.state || "").toLowerCase();
+  const largeText = (act?.assets?.large_text || "").toLowerCase();
 
-    // Strong signals
-    if (details.includes("by ") || details.includes(" - ")) return true;
-    if (name.includes("music") || name.includes("soundcloud") || name.includes("youtube") || name.includes("amazon")) return true;
+  const hay = `${name} ${details} ${state} ${largeText}`.trim();
 
-    return false;
-  });
+  // keywords
+  if (MUSIC_KEYWORDS.some(k => hay.includes(k))) return true;
+
+  // If details looks like "Song - Artist" or "Song by Artist", it’s probably music
+  if (details.includes(" by ") || details.includes(" - ")) return true;
+
+  return false;
+}
+
+function pickBestMusicActivity(activities = []) {
+  // Prefer actual Listening activities first
+  const listening = activities.find(a => a && isMusicActivity(a) && a.type === 2);
+  if (listening) return listening;
+
+  // Otherwise any activity that looks like music
+  return activities.find(a => a && isMusicActivity(a));
 }
 
 async function getDiscord() {
@@ -461,7 +478,7 @@ async function getDiscord() {
     const data = json.data;
     if (!data) return null;
 
-    // 1) Spotify: real timestamps -> real progress
+    /* 1) Spotify */
     if (data.spotify) {
       const sp = data.spotify;
       const now = Date.now();
@@ -479,7 +496,6 @@ async function getDiscord() {
       currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
       setupProgress(startMs, endMs);
-
       updateDynamicColors(sp.album_art_url);
 
       const explicitEl = $$("explicit-badge");
@@ -488,8 +504,8 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    // 2) Generic media (YouTube / YouTube Music / Amazon Music / etc.)
-    const act = findGenericListeningActivity(data.activities || []);
+    /* 2) Other music platforms */
+    const act = pickBestMusicActivity(data.activities || []);
     if (act) {
       slideInCard($$("spotify-card"));
 
@@ -505,39 +521,33 @@ async function getDiscord() {
 
       currentSpotifyUrl = null;
 
-      // Progress: use timestamps if present, else fallback
+      // ✅ Music progress logic:
+      // - if timestamps exist: real progress
+      // - else: indeterminate/hide (your setting)
       resetProgress();
       const hasRealProgress = setupProgressFromActivityTimestamps(act);
-
-      if (!hasRealProgress) {
-        setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
-      }
+      if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
 
       updateDynamicColors(coverUrl || null);
 
       const explicitEl = $$("explicit-badge");
       if (explicitEl) explicitEl.style.display = "none";
 
-      const sourceName = act.name || "Media";
-      const pretty = sourceName.toLowerCase().includes("youtube") ? "YouTube"
-                    : sourceName.toLowerCase().includes("amazon") ? "Amazon Music"
-                    : sourceName;
-
-      return { text: `Active on ${pretty}`, source: "music" };
+      return { text: `Listening on ${act.name || "Music"}`, source: "music" };
     }
 
-    // 3) No media: show discord presence
+    /* 3) Not music: hide progress + card UI */
+    slideOutCard($$("spotify-card"));
+    resetProgress();
+    setProgressVisibility("hide");
+    updateDynamicColors(null);
+
     const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
       dnd: "Do Not Disturb",
       offline: "No Current Active Activities",
     };
-
-    slideOutCard($$("spotify-card"));
-    resetProgress();
-    setProgressVisibility("hide");
-    updateDynamicColors(null);
 
     return { text: map[data.discord_status] || "No Current Active Activities", source: "discord" };
 
@@ -650,7 +660,7 @@ function applyStatusDecision({ main, twitchLive, temp }) {
     return;
   }
   if (main?.source === "spotify") showStatusLineWithFade("Listening to Spotify", "spotify");
-  else if (main?.source === "music") showStatusLineWithFade(main?.text || "Active Media", "music");
+  else if (main?.source === "music") showStatusLineWithFade(main?.text || "Listening to Music", "music");
   else if (twitchLive) showStatusLineWithFade("Now Live on Twitch", "twitch");
   else showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
 }
@@ -705,11 +715,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) { console.warn("Failed to restore last status:", e); }
   }
 
-  // ✅ instant settings response (same tab)
+  // instant settings response (same tab)
   watchWebsiteSettings();
   setInterval(watchWebsiteSettings, 300);
 
-  // ✅ start loop
+  // start loop
   setTimeout(() => {
     mainLoop();
   }, 50);
