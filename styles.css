@@ -748,7 +748,8 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — TRUE LIQUID GLASS (FINAL) ===== */
+/* === 🎧 LIVE ACTIVITY — TRUE LIQUID GLASS (FINAL+) ===== */
+/* === Polished time row + last updated (pretty) ========= */
 /* ======================================================= */
 
 .live-activity { --dynamic-accent: transparent; }
@@ -839,10 +840,7 @@ a.corner-button {
   z-index: 1;
 }
 
-.live-activity > * {
-  position: relative;
-  z-index: 3;
-}
+.live-activity > * { position: relative; z-index: 3; }
 
 /* ======================================================= */
 /* === TEXT ============================================== */
@@ -881,7 +879,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === ALBUM ART ======================================== */
+/* === ALBUM ART ========================================= */
 /* ======================================================= */
 
 .live-album-art {
@@ -938,7 +936,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR ===================================== */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 .music-progress-container {
@@ -972,21 +970,87 @@ a.corner-button {
     color-mix(in srgb, var(--dynamic-accent) 60%, rgba(0,0,0,0.35))
   );
 
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--dynamic-accent) 32%, transparent),
+    inset 0 1px 2px rgba(255,255,255,0.16);
+
   transition: width 0.32s linear;
 }
 
 /* ======================================================= */
-/* === TIME ROW ========================================== */
+/* ✅ TIME ROW — BEAUTIFIED ============================== */
 /* ======================================================= */
+/* Works with your HTML spans: elapsed | remaining | total */
 
 .music-progress-time {
   width: calc(100% - 16px);
-  margin: 0 auto;
+  margin: 8px auto 0;
+
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  font-size: 0.95rem;
-  padding-top: 6px;
-  color: var(--secondary-text);
+  align-items: center;
+
+  font-size: 0.86rem;
+  letter-spacing: 0.35px;
+
+  /* subtle pill row look */
+  padding: 8px 12px;
+  border-radius: 14px;
+
+  background: color-mix(in srgb, var(--content-bg) 72%, rgba(0,0,0,0.35));
+  border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
+
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.06),
+    inset 0 -1px 2px rgba(0,0,0,0.55);
+
+  color: color-mix(in srgb, var(--secondary-text) 88%, var(--text-color));
+}
+
+.music-progress-time span {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums; /* no jitter */
+  font-feature-settings: "tnum" 1;
+}
+
+.music-progress-time span:first-child {
+  justify-self: start;
+}
+
+.music-progress-time span:nth-child(2) {
+  justify-self: center;
+  font-weight: 650;
+  color: color-mix(in srgb, var(--dynamic-accent) 62%, var(--text-color));
+}
+
+.music-progress-time span:last-child {
+  justify-self: end;
+  opacity: 0.95;
+}
+
+/* ======================================================= */
+/* ✅ LAST UPDATED — BEAUTIFIED ========================== */
+/* ======================================================= */
+
+#live-activity-updated {
+  width: fit-content;
+  max-width: calc(100% - 16px);
+  margin: 14px auto 0;
+
+  padding: 7px 12px;
+  border-radius: 999px;
+
+  font-size: 0.82rem;
+  letter-spacing: 0.55px;
+  text-transform: uppercase;
+
+  color: color-mix(in srgb, var(--secondary-text) 88%, var(--text-color));
+  background: color-mix(in srgb, var(--content-bg) 70%, rgba(0,0,0,0.35));
+  border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
+
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.06),
+    inset 0 -1px 2px rgba(0,0,0,0.55);
 }
 
 /* ======================================================= */
@@ -1017,6 +1081,25 @@ body.light-e .live-activity * {
   text-shadow: 0 1px 2px rgba(0,0,0,0.12);
 }
 
+body.light-e .live-artist {
+  color: rgba(0,0,0,0.62);
+}
+
+/* Light mode: time row + updated look clean */
+body.light-e .music-progress-time,
+body.light-e #live-activity-updated {
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(0,0,0,0.10);
+  box-shadow:
+    inset 0 1px 2px rgba(255,255,255,0.70),
+    inset 0 -1px 2px rgba(0,0,0,0.10);
+  color: rgba(0,0,0,0.66);
+}
+
+body.light-e .music-progress-time span:nth-child(2) {
+  color: color-mix(in srgb, var(--dynamic-accent) 70%, #111);
+}
+
 body.light-e .music-progress-container {
   background:
     linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55)),
@@ -1036,6 +1119,23 @@ body.light-e .music-progress-container {
   .live-album-art {
     width: 210px;
     height: 210px;
+  }
+
+  .music-progress-container {
+    width: calc(100% - 14px);
+    height: 10px;
+    margin: 22px auto 10px;
+  }
+
+  .music-progress-time {
+    width: calc(100% - 14px);
+    font-size: 0.84rem;
+    padding: 7px 10px;
+  }
+
+  #live-activity-updated {
+    font-size: 0.80rem;
+    padding: 7px 11px;
   }
 }
 
