@@ -1,5 +1,5 @@
 ### Proprietary License
-Copyright (c) 2026 Caleb Kritzar. All rights reserved. 
+Copyright (c) 2026 Caleb Kritzar. All rights reserved.  
 
 ### Terms of Use
 This software, including its source code, documentation, designs, and all associated materials (collectively, the "Software") is the proprietary property of BusArmyDude.
