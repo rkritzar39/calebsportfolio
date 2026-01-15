@@ -8,9 +8,11 @@
    ✅ Twitch via decapi uptime
    ✅ Reddit one-time banner per new post via localStorage
 
-   FIXES ADDED (WITHOUT MESSING YOUR STRUCTURE):
-   ✅ Match song accent OFF = uses user's website accentColor (matches theme)
-   ✅ Async race-condition fix: request token so older image loads can't overwrite newer state
+   FIXES (NO REFRESH NEEDED):
+   ✅ Settings changes apply instantly (same tab) via a lightweight watcher
+   ✅ Match song accent OFF => card matches user's accentColor
+   ✅ Match song accent ON  => snaps back to song accent immediately using last known cover
+   ✅ Async race fix: token prevents old image loads overwriting newer state
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -45,8 +47,14 @@ const TEMP_BANNER_MS = 15000;
 let lastRedditPostId  = null;
 let manualStatus = null;
 
-/* ✅ NEW: protects against async overwrites (no refresh spam) */
+/* ✅ Prevent async overwrites (image load races) */
 let dynamicColorRequestId = 0;
+
+/* ✅ Remember last cover so toggling matchSongAccent ON instantly re-applies song accent */
+let lastCoverUrl = null;
+
+/* ✅ Track settings in THIS tab (storage event won't fire in same tab) */
+let lastSettingsRaw = null;
 
 const $$  = (id) => document.getElementById(id);
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -68,10 +76,6 @@ const ICON_MAP = {
 /* ======================================================= */
 /* === THEME / MATCH SONG ACCENT ========================= */
 /* ======================================================= */
-/* websiteSettings.matchSongAccent:
-     "enabled"  => tint from album art
-     anything else => use website accentColor (matches theme)
-*/
 
 function getWebsiteSettings() {
   try {
@@ -86,7 +90,9 @@ function isMatchSongAccentEnabled() {
   return settings.matchSongAccent === "enabled";
 }
 
-/* Keep CSS in sync: we keep your class, but do NOT force transparent here anymore */
+/* Keep CSS class in sync if you use it elsewhere.
+   IMPORTANT: We do NOT force transparent here anymore.
+   We want OFF => user's accentColor. */
 function applySongThemeClass() {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
@@ -97,16 +103,39 @@ function applySongThemeClass() {
 
   activity.classList.toggle("song-theme-off", !matchAccent);
 
-  // ✅ When OFF, match website accent (NOT transparent)
+  // ✅ OFF => match user's accent color
   if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
   }
 }
 
-/* Optional: live-react when settings change in another tab */
+/* ✅ Settings change watcher (works in same tab without refresh)
+   - if user flips toggle or changes accentColor, we re-apply instantly */
+function watchWebsiteSettings() {
+  const raw = localStorage.getItem("websiteSettings") || "{}";
+  if (raw === lastSettingsRaw) return;
+  lastSettingsRaw = raw;
+
+  applySongThemeClass();
+
+  // Re-apply the correct accent immediately
+  if (isMatchSongAccentEnabled()) {
+    // If we have a last cover, use it right now
+    if (lastCoverUrl) updateDynamicColors(lastCoverUrl);
+    else updateDynamicColors(null); // falls back to user's accent until a cover appears
+  } else {
+    // OFF => user's accent
+    updateDynamicColors(null);
+  }
+}
+
+/* Optional: still keep storage event for other tabs */
 window.addEventListener("storage", (e) => {
-  if (e.key === "websiteSettings") applySongThemeClass();
+  if (e.key === "websiteSettings") {
+    lastSettingsRaw = null; // force refresh
+    watchWebsiteSettings();
+  }
 });
 
 /* ======================================================= */
@@ -251,11 +280,11 @@ function setupProgress(startMs, endMs) {
 /* ======================================================= */
 /* === DYNAMIC COLORS =================================== */
 /* ======================================================= */
-/* IMPORTANT:
-   - OFF -> website accentColor
-   - ON + imageUrl -> album extracted color
-   - ON + no image -> website accentColor
-   - async-safe: request token prevents old loads overriding new state
+/* Behavior:
+   - OFF => user's accentColor (card matches theme)
+   - ON + image => song accent (auto)
+   - ON + no image => user's accentColor
+   - race-safe: token prevents old loads from overwriting new state
 */
 
 function updateDynamicColors(imageUrl) {
@@ -266,16 +295,19 @@ function updateDynamicColors(imageUrl) {
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent  = settings.accentColor || "#1DB954";
 
+  // Remember latest cover candidate so toggling ON can instantly reapply
+  if (imageUrl) lastCoverUrl = imageUrl;
+
   const requestId = ++dynamicColorRequestId;
 
-  // ✅ OFF = website accent
+  // ✅ OFF => website accent
   if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
-  // ✅ ON but no image -> website accent
+  // ✅ ON but no image => website accent until we get a cover
   if (!imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
@@ -288,7 +320,6 @@ function updateDynamicColors(imageUrl) {
   img.src = imageUrl;
 
   img.onload = () => {
-    // ignore if a newer request happened
     if (requestId !== dynamicColorRequestId) return;
 
     try {
@@ -394,7 +425,7 @@ function findGenericListeningActivity(activities = []) {
 
     if (name.includes("visual studio") || name.includes("chrome")) return false;
 
-    if (a.type === 2) return true;
+    if (a.type === 2) return true; // Listening
     if (details.includes("by ") || details.includes(" - ")) return true;
     if (name.includes("music") || name.includes("soundcloud") || name.includes("youtube") || name.includes("apple")) return true;
 
@@ -418,6 +449,7 @@ async function getDiscord() {
     const data = json.data;
     if (!data) return null;
 
+    // 1) Spotify
     if (data.spotify) {
       const sp = data.spotify;
       const now = Date.now();
@@ -435,6 +467,8 @@ async function getDiscord() {
       currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
       setupProgress(startMs, endMs);
+
+      // song tint
       updateDynamicColors(sp.album_art_url);
 
       const explicitEl = $$("explicit-badge");
@@ -443,6 +477,7 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
+    // 2) Generic music
     const act = findGenericListeningActivity(data.activities || []);
     if (act) {
       slideInCard($$("spotify-card"));
@@ -470,6 +505,7 @@ async function getDiscord() {
       return { text: `Listening on ${act.name || "Music"}`, source: "music" };
     }
 
+    // 3) No music
     const map = {
       online: "Online on Discord",
       idle: "Idle on Discord",
@@ -603,6 +639,7 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 /* ======================================================= */
 
 async function mainLoop() {
+  // Keep theme synced (in case settings changed)
   applySongThemeClass();
 
   const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
@@ -646,7 +683,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) { console.warn("Failed to restore last status:", e); }
   }
 
-  // ✅ tiny delay prevents “refresh multiple times” on cold loads
+  // ✅ Start settings watcher (instant toggle response, no refresh)
+  watchWebsiteSettings();
+  setInterval(watchWebsiteSettings, 300);
+
+  // Start loop (tiny delay helps cold loads where websiteSettings is written right after load)
   setTimeout(() => {
     mainLoop();
   }, 50);
