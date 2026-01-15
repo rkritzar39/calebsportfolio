@@ -254,14 +254,21 @@ function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  // Keep class synced with toggle
-  applySongThemeClass();
+  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const matchAccent = settings.matchSongAccent === "enabled";
+  const userAccent  = settings.accentColor || "#1DB954";
 
-  const matchAccent = isMatchSongAccentEnabled();
-
-  if (!matchAccent || !imageUrl) {
+  // ✅ OFF = match the user's WEBSITE accent theme
+  if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
-    activity.style.setProperty("--dynamic-accent", "transparent");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    return;
+  }
+
+  // ✅ ON but no image -> fall back to website accent (keeps it pretty, not transparent)
+  if (!imageUrl) {
+    activity.style.setProperty("--dynamic-bg", "none");
+    activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
@@ -273,8 +280,6 @@ function updateDynamicColors(imageUrl) {
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("No canvas context");
-
       canvas.width = img.width || 64;
       canvas.height = img.height || 64;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -299,15 +304,14 @@ function updateDynamicColors(imageUrl) {
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
-      // ✅ stay neutral if extraction fails
-      activity.style.setProperty("--dynamic-accent", "transparent");
+      // ✅ if extraction fails, use website accent (NOT transparent)
+      activity.style.setProperty("--dynamic-accent", userAccent);
       activity.style.setProperty("--dynamic-bg", "none");
     }
   };
 
   img.onerror = () => {
-    // ✅ stay neutral if image fails
-    activity.style.setProperty("--dynamic-accent", "transparent");
+    activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-bg", "none");
   };
 }
