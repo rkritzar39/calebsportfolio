@@ -765,9 +765,12 @@ a.corner-button {
   isolation: isolate;
   overflow: hidden;
 
-  width: calc(100% - 40px);
-  max-width: 680px;
-  margin: 24px auto;
+  /* ✅ HARD CENTER (fixes right-side drift) */
+  box-sizing: border-box;
+  width: min(680px, calc(100% - 40px));
+  margin-inline: auto;
+  margin-block: 24px;
+
   padding: 38px 26px;
 
   border-radius: var(--radius-xl);
@@ -813,6 +816,32 @@ a.corner-button {
   box-shadow:
     0 28px 72px color-mix(in srgb, var(--shadow-color) 75%, transparent),
     0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 22%, rgba(255,255,255,0.10)) inset;
+}
+
+/* ======================================================= */
+/* ✅ SONG THEME OFF — DO NOT USE USER ACCENT COLOR         */
+/* ======================================================= */
+/* When users turn OFF "match theme of song", we remove tint + aura entirely. */
+.live-activity.song-theme-off {
+  --dynamic-accent: transparent; /* hard neutral */
+  background:
+    /* refraction base */
+    var(--liquid-refraction),
+    /* base glass panel */
+    color-mix(in srgb, var(--content-bg) 92%, transparent);
+}
+
+.live-activity.song-theme-off::after {
+  /* only bubbles, no accent aura blobs */
+  background: var(--bubble-gradient);
+}
+
+.live-activity.song-theme-off:hover {
+  /* neutral hover (no accent border) */
+  border-color: color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
+  box-shadow:
+    0 28px 72px color-mix(in srgb, var(--shadow-color) 75%, transparent),
+    0 0 0 1px rgba(255,255,255,0.10) inset;
 }
 
 /* ======================================================= */
@@ -938,6 +967,11 @@ body.light-e .live-activity * {
   filter:
     drop-shadow(0 10px 20px rgba(0,0,0,0.35))
     drop-shadow(0 0 12px color-mix(in srgb, var(--dynamic-accent) 60%, transparent));
+}
+
+/* ✅ When song theme is OFF, kill the accent glow too */
+.live-activity.song-theme-off .status-icon.glow {
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.35));
 }
 
 /* ======================================================= */
@@ -1214,7 +1248,6 @@ body.light-e .explicit-badge {
   }
 }
 
-
 /* ======================================================= */
 /* === RESPONSIVE ======================================== */
 /* ======================================================= */
@@ -1222,7 +1255,8 @@ body.light-e .explicit-badge {
 @media (max-width: 600px) {
   .live-activity {
     padding: 30px 18px;
-    width: calc(100% - 24px);
+    width: calc(100% - 24px); /* keep your tighter mobile padding */
+    margin-inline: auto;
   }
 
   .live-album-art {
@@ -1263,7 +1297,6 @@ body.light-e .explicit-badge {
     animation: none !important;
   }
 }
-
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
