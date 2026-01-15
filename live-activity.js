@@ -7,6 +7,10 @@
    ✅ Manual Firestore overrides everything
    ✅ Twitch via decapi uptime
    ✅ Reddit one-time banner per new post via localStorage
+
+   FIXES ADDED:
+   ✅ "Match theme of song" OFF = truly neutral (NO fallback to user accent)
+   ✅ Adds/removes .song-theme-off class on .live-activity to fully disable tint/glow
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -57,6 +61,47 @@ const ICON_MAP = {
   manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
+
+/* ======================================================= */
+/* === THEME / MATCH SONG ACCENT ========================= */
+/* ======================================================= */
+/* websiteSettings.matchSongAccent:
+     "enabled"  => tint from album art
+     anything else => NO tint (neutral), do NOT fall back to user accent
+*/
+
+function getWebsiteSettings() {
+  try {
+    return JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function isMatchSongAccentEnabled() {
+  const settings = getWebsiteSettings();
+  return settings.matchSongAccent === "enabled";
+}
+
+/* Keep CSS in sync: .song-theme-off kills aura/tint/glow via CSS */
+function applySongThemeClass() {
+  const activity = document.querySelector(".live-activity");
+  if (!activity) return;
+
+  const matchAccent = isMatchSongAccentEnabled();
+  activity.classList.toggle("song-theme-off", !matchAccent);
+
+  // Hard neutral when OFF, prevents any “accent fallback” tinting.
+  if (!matchAccent) {
+    activity.style.setProperty("--dynamic-bg", "none");
+    activity.style.setProperty("--dynamic-accent", "transparent");
+  }
+}
+
+/* Optional: live-react when settings change in another tab */
+window.addEventListener("storage", (e) => {
+  if (e.key === "websiteSettings") applySongThemeClass();
+});
 
 /* ======================================================= */
 /* === UI HELPERS ======================================== */
@@ -200,16 +245,19 @@ function setupProgress(startMs, endMs) {
 /* ======================================================= */
 /* === DYNAMIC COLORS =================================== */
 /* ======================================================= */
-/* IMPORTANT: This version tints ONLY when imageUrl exists.
-   Otherwise, it removes tint (transparent). */
+/* IMPORTANT:
+   - Only tint when matchSongAccent is enabled AND imageUrl exists.
+   - When OFF, stay neutral (transparent). No user accent fallback.
+*/
 
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent  = settings.accentColor || "#1DB954";
+  // Keep class synced with toggle
+  applySongThemeClass();
+
+  const matchAccent = isMatchSongAccentEnabled();
 
   if (!matchAccent || !imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
@@ -225,31 +273,41 @@ function updateDynamicColors(imageUrl) {
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("No canvas context");
+
       canvas.width = img.width || 64;
       canvas.height = img.height || 64;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let r=0, g=0, b=0, count=0;
+      let r = 0, g = 0, b = 0, count = 0;
 
       for (let i = 0; i < data.length; i += 4) {
-        r += data[i]; g += data[i+1]; b += data[i+2]; count++;
+        r += data[i];
+        g += data[i + 1];
+        b += data[i + 2];
+        count++;
       }
 
-      r = Math.floor(r/count); g = Math.floor(g/count); b = Math.floor(b/count);
+      r = Math.floor(r / count);
+      g = Math.floor(g / count);
+      b = Math.floor(b / count);
 
       activity.style.setProperty("--dynamic-accent", `rgb(${r},${g},${b})`);
-      activity.style.setProperty("--dynamic-bg",
+      activity.style.setProperty(
+        "--dynamic-bg",
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
-      activity.style.setProperty("--dynamic-accent", userAccent);
+      // ✅ stay neutral if extraction fails
+      activity.style.setProperty("--dynamic-accent", "transparent");
       activity.style.setProperty("--dynamic-bg", "none");
     }
   };
 
   img.onerror = () => {
-    activity.style.setProperty("--dynamic-accent", userAccent);
+    // ✅ stay neutral if image fails
+    activity.style.setProperty("--dynamic-accent", "transparent");
     activity.style.setProperty("--dynamic-bg", "none");
   };
 }
@@ -366,7 +424,7 @@ async function getDiscord() {
       // show full progress with times
       setupProgress(startMs, endMs);
 
-      // song tint
+      // song tint (respects toggle)
       updateDynamicColors(sp.album_art_url);
 
       // explicit
@@ -397,7 +455,7 @@ async function getDiscord() {
       resetProgress();
       setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
 
-      // tint: only if cover url exists (if mp: conversion fails, it won't tint)
+      // tint: only if cover url exists AND toggle is on
       updateDynamicColors(coverUrl || null);
 
       // explicit off
@@ -541,6 +599,9 @@ function applyStatusDecision({ main, twitchLive, temp }) {
 /* ======================================================= */
 
 async function mainLoop() {
+  // keep class synced even if settings change elsewhere
+  applySongThemeClass();
+
   const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
 
   const primary =
@@ -568,6 +629,8 @@ async function mainLoop() {
 /* ======================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
+  applySongThemeClass();
+
   const card = $$("spotify-card");
   if (card) card.addEventListener("click", () => { if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank"); });
 
