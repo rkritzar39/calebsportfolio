@@ -83,22 +83,310 @@ function fmt(seconds) {
   return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
-/* ======================================================= */
-/* === ICONS ============================================= */
-/* ======================================================= */
-
 const ICON_MAP = {
-  spotify:      "https://cdn.simpleicons.org/spotify/1DB954",
-  youtube:      "https://cdn.simpleicons.org/youtube/FF0000",
+  /* =========================
+     MUSIC
+  ========================= */
+  spotify: "https://cdn.simpleicons.org/spotify/1DB954",
+  apple_music: "https://cdn.simpleicons.org/applemusic/FA57C1",
   youtubemusic: "https://cdn.simpleicons.org/youtubemusic/FF0000",
-  discord:      "https://cdn.simpleicons.org/discord/5865F2",
-  twitch:       "https://cdn.simpleicons.org/twitch/9146FF",
-  reddit:       "https://cdn.simpleicons.org/reddit/FF4500",
-  activity:     "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/activity.svg",
-  music:        "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
-  manual:       "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
-  default:      "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  youtube: "https://cdn.simpleicons.org/youtube/FF0000",
+  soundcloud: "https://cdn.simpleicons.org/soundcloud/FF5500",
+  tidal: "https://cdn.simpleicons.org/tidal/000000",
+  deezer: "https://cdn.simpleicons.org/deezer/FEAA2D",
+  pandora: "https://cdn.simpleicons.org/pandora/224099",
+  amazonmusic: "https://cdn.simpleicons.org/amazonmusic/00A8E1",
+  bandcamp: "https://cdn.simpleicons.org/bandcamp/408294",
+  audiomack: "https://cdn.simpleicons.org/audiomack/FFA200",
+
+  /* =========================
+     VIDEO / STREAMING
+  ========================= */
+  netflix: "https://cdn.simpleicons.org/netflix/E50914",
+  disneyplus: "https://cdn.simpleicons.org/disneyplus/113CCF",
+  primevideo: "https://cdn.simpleicons.org/primevideo/1F2E3E",
+  hulu: "https://cdn.simpleicons.org/hulu/1CE783",
+  hbomax: "https://cdn.simpleicons.org/hbomax/3D1A78",
+  peacock: "https://cdn.simpleicons.org/peacock/000000",
+  paramountplus: "https://cdn.simpleicons.org/paramountplus/0064FF",
+  crunchyroll: "https://cdn.simpleicons.org/crunchyroll/F47521",
+  funimation: "https://cdn.simpleicons.org/funimation/5B0BB5",
+  plex: "https://cdn.simpleicons.org/plex/E5A00D",
+  jellyfin: "https://cdn.simpleicons.org/jellyfin/00A4DC",
+
+  /* =========================
+     SOCIAL
+  ========================= */
+  discord: "https://cdn.simpleicons.org/discord/5865F2",
+  reddit: "https://cdn.simpleicons.org/reddit/FF4500",
+  x: "https://cdn.simpleicons.org/x/000000",
+  twitter: "https://cdn.simpleicons.org/x/000000",
+  instagram: "https://cdn.simpleicons.org/instagram/E4405F",
+  tiktok: "https://cdn.simpleicons.org/tiktok/000000",
+  facebook: "https://cdn.simpleicons.org/facebook/1877F2",
+  messenger: "https://cdn.simpleicons.org/messenger/00B2FF",
+  snapchat: "https://cdn.simpleicons.org/snapchat/FFFC00",
+  whatsapp: "https://cdn.simpleicons.org/whatsapp/25D366",
+  telegram: "https://cdn.simpleicons.org/telegram/26A5E4",
+  signal: "https://cdn.simpleicons.org/signal/3A76F0",
+
+  /* =========================
+     LIVE / CREATOR
+  ========================= */
+  twitch: "https://cdn.simpleicons.org/twitch/9146FF",
+  kick: "https://cdn.simpleicons.org/kick/53FC19",
+  patreon: "https://cdn.simpleicons.org/patreon/F96854",
+  ko_fi: "https://cdn.simpleicons.org/kofi/FF5E5B",
+
+  /* =========================
+     GAMING / LAUNCHERS
+  ========================= */
+  steam: "https://cdn.simpleicons.org/steam/000000",
+  epicgames: "https://cdn.simpleicons.org/epicgames/000000",
+  gog: "https://cdn.simpleicons.org/gogdotcom/86328A",
+  ubisoft: "https://cdn.simpleicons.org/ubisoft/000000",
+  ea: "https://cdn.simpleicons.org/electronicarts/000000",
+  battlenet: "https://cdn.simpleicons.org/battledotnet/148EFF",
+  roblox: "https://cdn.simpleicons.org/roblox/000000",
+  minecraft: "https://cdn.simpleicons.org/minecraft/62B47A",
+
+  /* =========================
+     DEV / PRODUCTIVITY
+  ========================= */
+  github: "https://cdn.simpleicons.org/github/000000",
+  gitlab: "https://cdn.simpleicons.org/gitlab/FC6D26",
+  bitbucket: "https://cdn.simpleicons.org/bitbucket/0052CC",
+  stackoverflow: "https://cdn.simpleicons.org/stackoverflow/F58025",
+  vscode: "https://cdn.simpleicons.org/visualstudiocode/007ACC",
+  replit: "https://cdn.simpleicons.org/replit/F26207",
+  vercel: "https://cdn.simpleicons.org/vercel/000000",
+  netlify: "https://cdn.simpleicons.org/netlify/00C7B7",
+  firebase: "https://cdn.simpleicons.org/firebase/FFCA28",
+  notion: "https://cdn.simpleicons.org/notion/000000",
+  trello: "https://cdn.simpleicons.org/trello/0052CC",
+  slack: "https://cdn.simpleicons.org/slack/4A154B",
+  zoom: "https://cdn.simpleicons.org/zoom/2D8CFF",
+
+  /* =========================
+     GOOGLE / MICROSOFT
+  ========================= */
+  google: "https://cdn.simpleicons.org/google/4285F4",
+  googledocs: "https://cdn.simpleicons.org/googledocs/4285F4",
+  googlesheets: "https://cdn.simpleicons.org/googlesheets/34A853",
+  googleslides: "https://cdn.simpleicons.org/googleslides/FBBC04",
+  googlemeet: "https://cdn.simpleicons.org/googlemeet/00897B",
+  googlemaps: "https://cdn.simpleicons.org/googlemaps/4285F4",
+  gmail: "https://cdn.simpleicons.org/gmail/EA4335",
+  outlook: "https://cdn.simpleicons.org/microsoftoutlook/0078D4",
+  teams: "https://cdn.simpleicons.org/microsoftteams/6264A7",
+  onedrive: "https://cdn.simpleicons.org/microsoftonedrive/0078D4",
+
+  /* =========================
+     SHOPPING / MARKETPLACES
+  ========================= */
+  amazon: "https://cdn.simpleicons.org/amazon/FF9900",
+  ebay: "https://cdn.simpleicons.org/ebay/E53238",
+  walmart: "https://cdn.simpleicons.org/walmart/0071CE",
+  target: "https://cdn.simpleicons.org/target/CC0000",
+  bestbuy: "https://cdn.simpleicons.org/bestbuy/003B64",
+  etsy: "https://cdn.simpleicons.org/etsy/F16521",
+  aliexpress: "https://cdn.simpleicons.org/aliexpress/FF4747",
+  temu: "https://cdn.simpleicons.org/temu/FF7A00",
+  shein: "https://cdn.simpleicons.org/shein/000000",
+  wayfair: "https://cdn.simpleicons.org/wayfair/7F187F",
+  homedepot: "https://cdn.simpleicons.org/homedepot/F96302",
+  lowes: "https://cdn.simpleicons.org/lowes/004990",
+  costco: "https://cdn.simpleicons.org/costco/005DAA",
+  samsclub: "https://cdn.simpleicons.org/samsclub/004B87",
+  ikea: "https://cdn.simpleicons.org/ikea/0058A3",
+  chewy: "https://cdn.simpleicons.org/chewy/0055A5",
+  newegg: "https://cdn.simpleicons.org/newegg/FF6600",
+  microcenter: "https://cdn.simpleicons.org/microcenter/CC0000",
+
+  /* =========================
+     PAYMENTS
+  ========================= */
+  paypal: "https://cdn.simpleicons.org/paypal/00457C",
+  venmo: "https://cdn.simpleicons.org/venmo/3D95CE",
+  cashapp: "https://cdn.simpleicons.org/cashapp/00C244",
+  applepay: "https://cdn.simpleicons.org/applepay/000000",
+  googlepay: "https://cdn.simpleicons.org/googlepay/4285F4",
+  stripe: "https://cdn.simpleicons.org/stripe/008CDD",
+  klarna: "https://cdn.simpleicons.org/klarna/FFB3C7",
+  affirm: "https://cdn.simpleicons.org/affirm/000000",
+
+  /* =========================
+     FOOD / DELIVERY
+  ========================= */
+  doordash: "https://cdn.simpleicons.org/doordash/FF3008",
+  ubereats: "https://cdn.simpleicons.org/ubereats/000000",
+  grubhub: "https://cdn.simpleicons.org/grubhub/F63440",
+  postmates: "https://cdn.simpleicons.org/postmates/000000",
+  instacart: "https://cdn.simpleicons.org/instacart/43B02A",
+
+  /* =========================
+     TRAVEL
+  ========================= */
+  airbnb: "https://cdn.simpleicons.org/airbnb/FF5A5F",
+  booking: "https://cdn.simpleicons.org/bookingdotcom/003580",
+  expedia: "https://cdn.simpleicons.org/expedia/00355F",
+  uber: "https://cdn.simpleicons.org/uber/000000",
+  lyft: "https://cdn.simpleicons.org/lyft/FF00BF",
+
+  /* =========================
+     FALLBACKS
+  ========================= */
+  activity: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/activity.svg",
+  music: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
+  manual: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
+
+function normAppName(s = "") {
+  return String(s || "").trim().toLowerCase();
+}
+
+const PREMID_RULES = [
+  // MUSIC
+  { re: /spotify/i, key: "spotify", pretty: "Spotify" },
+  { re: /apple\s*music|itunes/i, key: "apple_music", pretty: "Apple Music" },
+  { re: /amazon\s*music|prime\s*music/i, key: "amazonmusic", pretty: "Amazon Music" },
+  { re: /soundcloud/i, key: "soundcloud", pretty: "SoundCloud" },
+  { re: /tidal/i, key: "tidal", pretty: "TIDAL" },
+  { re: /deezer/i, key: "deezer", pretty: "Deezer" },
+  { re: /pandora/i, key: "pandora", pretty: "Pandora" },
+  { re: /bandcamp/i, key: "bandcamp", pretty: "Bandcamp" },
+  { re: /audiomack/i, key: "audiomack", pretty: "Audiomack" },
+
+  // YOUTUBE
+  { re: /youtube\s*music|yt\s*music|youtubemusic/i, key: "youtubemusic", pretty: "YouTube Music" },
+  { re: /youtube/i, key: "youtube", pretty: "YouTube" },
+
+  // VIDEO / STREAMING
+  { re: /netflix/i, key: "netflix", pretty: "Netflix" },
+  { re: /disney\+|disneyplus/i, key: "disneyplus", pretty: "Disney+" },
+  { re: /prime\s*video|amazon\s*prime\s*video/i, key: "primevideo", pretty: "Prime Video" },
+  { re: /hulu/i, key: "hulu", pretty: "Hulu" },
+  { re: /\bhbo\b|hbo\s*max|max\b/i, key: "hbomax", pretty: "Max" },
+  { re: /peacock/i, key: "peacock", pretty: "Peacock" },
+  { re: /paramount\+|paramountplus/i, key: "paramountplus", pretty: "Paramount+" },
+  { re: /crunchyroll/i, key: "crunchyroll", pretty: "Crunchyroll" },
+  { re: /funimation/i, key: "funimation", pretty: "Funimation" },
+  { re: /plex/i, key: "plex", pretty: "Plex" },
+  { re: /jellyfin/i, key: "jellyfin", pretty: "Jellyfin" },
+
+  // SOCIAL / COMMS
+  { re: /discord/i, key: "discord", pretty: "Discord" },
+  { re: /reddit/i, key: "reddit", pretty: "Reddit" },
+  { re: /^x$|twitter/i, key: "x", pretty: "X" },
+  { re: /instagram/i, key: "instagram", pretty: "Instagram" },
+  { re: /tiktok/i, key: "tiktok", pretty: "TikTok" },
+  { re: /facebook/i, key: "facebook", pretty: "Facebook" },
+  { re: /messenger/i, key: "messenger", pretty: "Messenger" },
+  { re: /snapchat/i, key: "snapchat", pretty: "Snapchat" },
+  { re: /whatsapp/i, key: "whatsapp", pretty: "WhatsApp" },
+  { re: /telegram/i, key: "telegram", pretty: "Telegram" },
+  { re: /signal/i, key: "signal", pretty: "Signal" },
+
+  // LIVE / CREATOR
+  { re: /twitch/i, key: "twitch", pretty: "Twitch" },
+  { re: /\bkick\b/i, key: "kick", pretty: "Kick" },
+  { re: /patreon/i, key: "patreon", pretty: "Patreon" },
+  { re: /ko-?fi|kofi/i, key: "ko_fi", pretty: "Ko-fi" },
+
+  // GAMING / LAUNCHERS
+  { re: /steam/i, key: "steam", pretty: "Steam" },
+  { re: /epic\s*games|epicgames/i, key: "epicgames", pretty: "Epic Games" },
+  { re: /\bgog\b|gog\.com|gogdotcom/i, key: "gog", pretty: "GOG" },
+  { re: /ubisoft/i, key: "ubisoft", pretty: "Ubisoft" },
+  { re: /\bea\b|electronic\s*arts/i, key: "ea", pretty: "EA" },
+  { re: /battle\.?net|battlenet/i, key: "battlenet", pretty: "Battle.net" },
+  { re: /roblox/i, key: "roblox", pretty: "Roblox" },
+  { re: /minecraft/i, key: "minecraft", pretty: "Minecraft" },
+
+  // DEV / PRODUCTIVITY
+  { re: /github/i, key: "github", pretty: "GitHub" },
+  { re: /gitlab/i, key: "gitlab", pretty: "GitLab" },
+  { re: /bitbucket/i, key: "bitbucket", pretty: "Bitbucket" },
+  { re: /stack\s*overflow/i, key: "stackoverflow", pretty: "Stack Overflow" },
+  { re: /visual\s*studio\s*code|vscode/i, key: "vscode", pretty: "VS Code" },
+  { re: /replit/i, key: "replit", pretty: "Replit" },
+  { re: /vercel/i, key: "vercel", pretty: "Vercel" },
+  { re: /netlify/i, key: "netlify", pretty: "Netlify" },
+  { re: /firebase/i, key: "firebase", pretty: "Firebase" },
+  { re: /notion/i, key: "notion", pretty: "Notion" },
+  { re: /trello/i, key: "trello", pretty: "Trello" },
+  { re: /slack/i, key: "slack", pretty: "Slack" },
+  { re: /zoom/i, key: "zoom", pretty: "Zoom" },
+
+  // GOOGLE / MICROSOFT
+  { re: /google\s*docs|docs\.google/i, key: "googledocs", pretty: "Google Docs" },
+  { re: /google\s*sheets|sheets\.google/i, key: "googlesheets", pretty: "Google Sheets" },
+  { re: /google\s*slides|slides\.google/i, key: "googleslides", pretty: "Google Slides" },
+  { re: /google\s*meet|meet\.google/i, key: "googlemeet", pretty: "Google Meet" },
+  { re: /google\s*maps|maps\.google/i, key: "googlemaps", pretty: "Google Maps" },
+  { re: /\bgmail\b/i, key: "gmail", pretty: "Gmail" },
+  { re: /outlook/i, key: "outlook", pretty: "Outlook" },
+  { re: /microsoft\s*teams|\bteams\b/i, key: "teams", pretty: "Microsoft Teams" },
+  { re: /one\s*drive|onedrive/i, key: "onedrive", pretty: "OneDrive" },
+
+  // SHOPPING / MARKETPLACES
+  { re: /\bamazon\b/i, key: "amazon", pretty: "Amazon" },
+  { re: /\bebay\b/i, key: "ebay", pretty: "eBay" },
+  { re: /\bwalmart\b/i, key: "walmart", pretty: "Walmart" },
+  { re: /\btarget\b/i, key: "target", pretty: "Target" },
+  { re: /best\s*buy|bestbuy/i, key: "bestbuy", pretty: "Best Buy" },
+  { re: /\betsi\b/i, key: "etsy", pretty: "Etsy" },
+  { re: /ali\s*express|aliexpress/i, key: "aliexpress", pretty: "AliExpress" },
+  { re: /\btemu\b/i, key: "temu", pretty: "Temu" },
+  { re: /\bshein\b/i, key: "shein", pretty: "SHEIN" },
+  { re: /\bwayfair\b/i, key: "wayfair", pretty: "Wayfair" },
+  { re: /home\s*depot|homedepot/i, key: "homedepot", pretty: "Home Depot" },
+  { re: /\blowe'?s\b|\blowes\b/i, key: "lowes", pretty: "Lowe’s" },
+  { re: /\bcostco\b/i, key: "costco", pretty: "Costco" },
+  { re: /sam'?s\s*club|samsclub/i, key: "samsclub", pretty: "Sam’s Club" },
+  { re: /\bikea\b/i, key: "ikea", pretty: "IKEA" },
+  { re: /\bchewy\b/i, key: "chewy", pretty: "Chewy" },
+  { re: /new\s*egg|newegg/i, key: "newegg", pretty: "Newegg" },
+  { re: /micro\s*center|microcenter/i, key: "microcenter", pretty: "Micro Center" },
+
+  // PAYMENTS
+  { re: /paypal/i, key: "paypal", pretty: "PayPal" },
+  { re: /\bvenmo\b/i, key: "venmo", pretty: "Venmo" },
+  { re: /cash\s*app|cashapp/i, key: "cashapp", pretty: "Cash App" },
+  { re: /apple\s*pay|applepay/i, key: "applepay", pretty: "Apple Pay" },
+  { re: /google\s*pay|googlepay/i, key: "googlepay", pretty: "Google Pay" },
+  { re: /\bstripe\b/i, key: "stripe", pretty: "Stripe" },
+  { re: /\bklarna\b/i, key: "klarna", pretty: "Klarna" },
+  { re: /\baffirm\b/i, key: "affirm", pretty: "Affirm" },
+
+  // FOOD / DELIVERY
+  { re: /door\s*dash|doordash/i, key: "doordash", pretty: "DoorDash" },
+  { re: /uber\s*eats|ubereats/i, key: "ubereats", pretty: "Uber Eats" },
+  { re: /grubhub/i, key: "grubhub", pretty: "Grubhub" },
+  { re: /postmates/i, key: "postmates", pretty: "Postmates" },
+  { re: /instacart/i, key: "instacart", pretty: "Instacart" },
+
+  // TRAVEL
+  { re: /airbnb/i, key: "airbnb", pretty: "Airbnb" },
+  { re: /booking\.?com|booking/i, key: "booking", pretty: "Booking.com" },
+  { re: /expedia/i, key: "expedia", pretty: "Expedia" },
+  { re: /\buber\b/i, key: "uber", pretty: "Uber" },
+  { re: /\blyft\b/i, key: "lyft", pretty: "Lyft" },
+];
+
+function resolvePremidMeta(appName = "", act = null) {
+  const raw = appName || act?.name || "";
+  const n = normAppName(raw);
+
+  for (const rule of PREMID_RULES) {
+    if (rule.re.test(n)) return { key: rule.key, pretty: rule.pretty };
+  }
+
+  // fallback
+  const fallbackPretty = raw?.trim() || "Activity";
+  return { key: "activity", pretty: fallbackPretty };
+}
 
 /* ======================================================= */
 /* === SETTINGS HELPERS ================================== */
@@ -425,28 +713,62 @@ function isManualActive() {
 function getActivityVerb(appName = "", act = null) {
   const n = (appName || "").toLowerCase();
 
-  // YouTube Music explicitly
-  if (n.includes("youtube music")) return "Listening to";
+  // Music apps
+  if (
+    n.includes("youtube music") ||
+    n.includes("spotify") ||
+    n.includes("apple music") ||
+    n.includes("soundcloud") ||
+    n.includes("tidal") ||
+    n.includes("deezer") ||
+    n.includes("pandora") ||
+    n.includes("amazon music")
+  ) return "Listening to";
 
-  // Spotify-like
-  if (n.includes("spotify") || n.includes("apple music") || n.includes("soundcloud") || n.includes("tidal") || n.includes("deezer")) {
-    return "Listening to";
-  }
-
-  // YouTube special case: listening vs watching
+  // YouTube listening vs watching
   if (n.includes("youtube")) {
     if (act && isYouTubeMusicLike(act)) return "Listening to";
     return "Watching";
   }
 
-  // streaming video
-  if (n.includes("twitch") || n.includes("netflix") || n.includes("hulu")) return "Watching";
+  // Streaming video
+  if (
+    n.includes("twitch") ||
+    n.includes("netflix") ||
+    n.includes("hulu") ||
+    n.includes("disney") ||
+    n.includes("prime video") ||
+    n.includes("max") ||
+    n.includes("peacock") ||
+    n.includes("paramount")
+  ) return "Watching";
 
-  // browsing
+  // Shopping
+  if (
+    n.includes("amazon") || n.includes("ebay") || n.includes("walmart") || n.includes("target") ||
+    n.includes("etsy") || n.includes("aliexpress") || n.includes("temu") || n.includes("shein") ||
+    n.includes("best buy") || n.includes("newegg") || n.includes("micro center") ||
+    n.includes("ikea") || n.includes("costco") || n.includes("sam’s") || n.includes("sams") ||
+    n.includes("home depot") || n.includes("lowe")
+  ) return "Shopping on";
+
+  // Payments
+  if (
+    n.includes("paypal") || n.includes("venmo") || n.includes("cash app") ||
+    n.includes("apple pay") || n.includes("google pay") || n.includes("stripe") ||
+    n.includes("klarna") || n.includes("affirm")
+  ) return "Paying with";
+
+  // Delivery
+  if (
+    n.includes("doordash") || n.includes("uber eats") || n.includes("grubhub") ||
+    n.includes("postmates") || n.includes("instacart")
+  ) return "Ordering on";
+
+  // Browsing / socials
   if (n.includes("reddit")) return "Browsing";
-  if (n.includes("twitter") || n === "x") return "Scrolling";
+  if (n === "x" || n.includes("twitter") || n.includes("instagram") || n.includes("tiktok") || n.includes("facebook")) return "Scrolling";
 
-  // default
   return "Active on";
 }
 
@@ -612,72 +934,67 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    /* 2) PreMiD / ALL activities */
-    if (SHOW_ALL_PREMID_ACTIVITIES) {
-      const act = pickBestPremidActivity(data.activities || []);
-      if (act) {
-        slideInCard($$("spotify-card"));
+   /* 2) PreMiD / ALL activities */
+if (SHOW_ALL_PREMID_ACTIVITIES) {
+  const act = pickBestPremidActivity(data.activities || []);
+  if (act) {
+    slideInCard($$("spotify-card"));
 
-        let appName = act.name || "Activity";
+    const appName = act.name || "Activity";
 
-        // Normalize YouTube naming for better wording/icon selection
-        const n = appName.toLowerCase();
-        const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
-        const isYT  = n.includes("youtube");
+    // YouTube checks
+    const n = appName.toLowerCase();
+    const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
+    const isYT  = n.includes("youtube");
 
-        // If it's plain YouTube but looks like music, we want "Listening to YouTube"
-        // (not "Watching YouTube")
-        const ytMusicLike = isYT && isYouTubeMusicLike(act);
+    const title = act.details || appName;
+    const sub   = act.state || act?.assets?.large_text || appName;
 
-        const title = act.details || appName;
-        const sub   = act.state || act?.assets?.large_text || appName;
+    $$("live-song-title").textContent  = title;
+    $$("live-song-artist").textContent = sub;
 
-        $$("live-song-title").textContent  = title;
-        $$("live-song-artist").textContent = sub;
-
-        const coverUrl = resolveDiscordAssetUrl(act);
-        const coverEl = $$("live-activity-cover");
-        if (coverEl && coverUrl) coverEl.src = coverUrl;
-
-        currentSpotifyUrl = null;
-
-        const explicitEl = $$("explicit-badge");
-        if (explicitEl) explicitEl.style.display = "none";
-
-        // Progress rules:
-        resetProgress();
-        if (isMusicActivity(act)) {
-          const hasRealProgress = setupProgressFromActivityTimestamps(act);
-          if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
-        } else {
-          setProgressVisibility("hide");
-        }
-
-        // Accent tint only if we actually have an image URL
-        updateDynamicColors(coverUrl || null);
-
-        // Source/icon selection:
-        let source = "activity";
-        if (isYTM) source = "youtubemusic";
-        else if (isYT) source = "youtube";
-        else if (n.includes("twitch")) source = "twitch";
-        else if (n.includes("spotify")) source = "spotify";
-
-        // Wording selection:
-        const verb = getActivityVerb(appName, act);
-
-        // Slightly nicer appName for display:
-        let prettyApp = appName;
-        if (isYTM) prettyApp = "YouTube Music";
-        else if (isYT) prettyApp = "YouTube";
-
-        // If plain YouTube but music-like, we still say YouTube (Listening to YouTube)
-        // The verb function handles that already.
-        const statusText = `${verb} ${prettyApp}`;
-
-        return { text: statusText, source };
-      }
+    const coverUrl = resolveDiscordAssetUrl(act);
+    const coverEl = $$("live-activity-cover");
+    if (coverEl) {
+      if (coverUrl) coverEl.src = coverUrl;
+      // optional: if no coverUrl, you could hide the image in CSS/JS
     }
+
+    currentSpotifyUrl = null;
+
+    const explicitEl = $$("explicit-badge");
+    if (explicitEl) explicitEl.style.display = "none";
+
+    // Progress rules
+    resetProgress();
+    if (isMusicActivity(act)) {
+      const hasRealProgress = setupProgressFromActivityTimestamps(act);
+      if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
+    } else {
+      setProgressVisibility("hide");
+    }
+
+    // Accent tint only if we actually have an image URL
+    updateDynamicColors(coverUrl || null);
+
+    // Resolve icon + clean display name (covers shopping/payment/etc)
+    const meta = resolvePremidMeta(appName, act);
+
+    // Let YouTube logic still win for naming + icon selection
+    let prettyApp = meta.pretty;
+    if (isYTM) prettyApp = "YouTube Music";
+    else if (isYT) prettyApp = "YouTube";
+
+    const verb = getActivityVerb(prettyApp, act);
+
+    let source = meta.key;
+    if (isYTM) source = "youtubemusic";
+    else if (isYT) source = "youtube";
+
+    const statusText = `${verb} ${prettyApp}`;
+    return { text: statusText, source };
+  }
+}
 
     /* 3) Nothing else: hide card and show presence */
     slideOutCard($$("spotify-card"));
