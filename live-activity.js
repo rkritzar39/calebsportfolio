@@ -3,7 +3,7 @@
    ✅ PreMiD (ALL activities) via Lanyard activities[]:
       - shows app + details/state + artwork when available
       - if it’s a MUSIC-ish activity:
-          - uses timestamps if present -> real progress
+          - uses timestamps if present -> real progress bar
           - else indeterminate/hide based on NON_SPOTIFY_PROGRESS_MODE
       - if it’s NOT music -> progress bar + time row are hidden
    ✅ Manual Firestore overrides everything
@@ -13,6 +13,9 @@
    ✅ Match song accent OFF => user accentColor (matches theme)
    ✅ Match song accent ON  => snaps to last cover immediately when available
    ✅ Async race fix: token prevents old image loads overwriting newer state
+
+   ✅ UPDATE IN THIS VERSION:
+   - Time format is ALWAYS hh:mm:ss (0:03:42, 1:12:09, etc.)
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -61,7 +64,20 @@ let lastCoverUrl = null;
 let lastSettingsRaw = null;
 
 const $$  = (id) => document.getElementById(id);
-const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+/* ======================================================= */
+/* ✅ TIME FORMAT — ALWAYS HH:MM:SS ======================= */
+/* ======================================================= */
+
+function fmt(seconds) {
+  seconds = Math.max(0, Math.floor(seconds));
+
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+
+  return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
 
 /* ======================================================= */
 /* === ICONS ============================================= */
@@ -230,9 +246,11 @@ function resetProgress() {
   const elapsedEl = $$("elapsed-time");
   const remainEl  = $$("remaining-time");
   const totalEl   = $$("total-time");
-  if (elapsedEl) elapsedEl.textContent = "0:00";
-  if (remainEl)  remainEl.textContent  = "-0:00";
-  if (totalEl)   totalEl.textContent   = "0:00";
+
+  // ✅ hh:mm:ss defaults
+  if (elapsedEl) elapsedEl.textContent = "0:00:00";
+  if (remainEl)  remainEl.textContent  = "-0:00:00";
+  if (totalEl)   totalEl.textContent   = "0:00:00";
 }
 
 function setupProgress(startMs, endMs) {
