@@ -736,20 +736,30 @@ function isYouTubeMusicLike(act) {
   const name = (act.name || "").toLowerCase();
   if (!name.includes("youtube")) return false;
 
-  const hasTs = !!(act?.timestamps?.start && act?.timestamps?.end);
-  if (!hasTs) return false;
-
   const title = (act.details || "").toLowerCase();
   const state = (act.state || "").toLowerCase();
+  const largeText = (act?.assets?.large_text || "").toLowerCase();
+  const hay = `${title} ${state} ${largeText}`.trim();
 
+  // Strong music keywords
   const musicPatterns = [
-    "mix", "playlist", "album", "full album", "lyrics", "lyric", "audio",
-    "official music video", "official video", "remastered", "topic"
+    "lyrics", "lyric", "audio", "official audio",
+    "music video", "official music video",
+    "official video", "mv", "vevo",
+    "topic", "remastered", "single", "album",
+    "playlist", "mix", "full album"
   ];
-  if (musicPatterns.some(p => title.includes(p))) return true;
+  if (musicPatterns.some(p => hay.includes(p))) return true;
 
+  // Common "Song - Artist" or "Song by Artist" patterns
   if (title.includes(" - ") || title.includes(" • ") || title.includes(" | ") || title.includes(" by ")) return true;
+
+  // If state looks like an artist/channel line (short-ish), usually music-ish
   if (state && state.length <= 50) return true;
+
+  // If it has timestamps, that’s extra confidence (but not required)
+  const hasTs = !!(act?.timestamps?.start && act?.timestamps?.end);
+  if (hasTs) return true;
 
   return false;
 }
