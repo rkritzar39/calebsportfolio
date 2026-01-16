@@ -736,31 +736,50 @@ function isYouTubeMusicLike(act) {
   const name = (act.name || "").toLowerCase();
   if (!name.includes("youtube")) return false;
 
-  const title = (act.details || "").toLowerCase();
-  const state = (act.state || "").toLowerCase();
-  const largeText = (act?.assets?.large_text || "").toLowerCase();
-  const hay = `${title} ${state} ${largeText}`.trim();
+  const title = (act.details || "").trim();
+  const state = (act.state || "").trim();
+  const largeText = (act?.assets?.large_text || "").trim();
 
-  // Strong music keywords
-  const musicPatterns = [
-    "lyrics", "lyric", "audio", "official audio",
+  const t = title.toLowerCase();
+  const s = state.toLowerCase();
+  const l = largeText.toLowerCase();
+
+  // Strong music keywords (ONLY these trigger music mode)
+  const strongMusicSignals = [
+    "lyrics", "lyric video", "official lyrics",
+    "official audio", "audio",
     "music video", "official music video",
-    "official video", "mv", "vevo",
-    "topic", "remastered", "single", "album",
-    "playlist", "mix", "full album"
+    "vevo",
+    "provided to youtube",
+    "topic",                 // auto-generated music channels often include "Topic"
+    "album", "full album",
+    "track", "single",
+    "remastered"
   ];
-  if (musicPatterns.some(p => hay.includes(p))) return true;
 
-  // Common "Song - Artist" or "Song by Artist" patterns
-  if (title.includes(" - ") || title.includes(" • ") || title.includes(" | ") || title.includes(" by ")) return true;
+  const hay = `${t} ${s} ${l}`;
 
-  // If state looks like an artist/channel line (short-ish), usually music-ish
-  if (state && state.length <= 50) return true;
+  // If we see any strong signal anywhere, it's music-like
+  if (strongMusicSignals.some(k => hay.includes(k))) return true;
 
-  // If it has timestamps, that’s extra confidence (but not required)
-  const hasTs = !!(act?.timestamps?.start && act?.timestamps?.end);
-  if (hasTs) return true;
+  // Obvious music formatting in the TITLE: "Song - Artist"
+  // (This is a very common pattern for music uploads)
+  const hasDashFormat =
+    t.includes(" - ") &&
+    t.split(" - ").every(part => part.trim().length >= 2);
 
+  if (hasDashFormat) return true;
+
+  // Some presences put the artist in state and the track in details.
+  // Only treat as music if BOTH look like music fields (avoid short-channel false positives).
+  const detailsLooksLikeTrack =
+    t.length >= 6 && (t.includes(" - ") || t.includes(" by ") || t.includes(" • "));
+  const stateLooksLikeArtist =
+    s.length >= 3 && s.length <= 80 && !s.includes("watching") && !s.includes("views");
+
+  if (detailsLooksLikeTrack && stateLooksLikeArtist) return true;
+
+  // Otherwise: assume normal YouTube video
   return false;
 }
 
