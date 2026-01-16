@@ -938,12 +938,19 @@ async function getDiscord() {
         if (explicitEl) explicitEl.style.display = "none";
 
         resetProgress();
-        if (isMusicActivity(act)) {
-          const hasRealProgress = setupProgressFromActivityTimestamps(act);
-          if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
-        } else {
-          setProgressVisibility("hide");
-        }
+
+         // 1) If Discord activity provides timestamps, ALWAYS show real progress
+         const hasRealProgress = setupProgressFromActivityTimestamps(act);
+         if (hasRealProgress) {
+           // real bar + time row already shown by setupProgress()
+         } else {
+           // 2) No timestamps: only show indeterminate for music-ish things
+           if (isMusicActivity(act) || isYouTubeMusicLike(act)) {
+             setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE); // indeterminate or hide
+           } else {
+             setProgressVisibility("hide");
+           }
+         }
 
         updateDynamicColors(coverUrl || null);
 
