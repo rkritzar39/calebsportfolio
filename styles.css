@@ -823,7 +823,16 @@ a.corner-button {
 /* === ALBUM ART ========================================= */
 /* ======================================================= */
 
+/* ======================================================= */
+/* === ALBUM ART — ALWAYS DEAD CENTER =================== */
+/* ======================================================= */
+
 .live-album-art {
+  /* force absolute centering in the card column */
+  align-self: center;
+  margin-left: auto;
+  margin-right: auto;
+
   width: 275px;
   height: 275px;
   margin-bottom: 16px;
@@ -838,8 +847,9 @@ a.corner-button {
     0 22px 52px rgba(0,0,0,0.55),
     inset 0 1px 2px rgba(255,255,255,0.14);
 
-  transition: transform .35s cubic-bezier(.2,.8,.2,1),
-              box-shadow .35s cubic-bezier(.2,.8,.2,1);
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .35s cubic-bezier(.2,.8,.2,1);
 }
 
 .live-album-art img {
