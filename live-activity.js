@@ -1,27 +1,13 @@
 /* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit
-   ✅ Spotify via Lanyard: real timestamps -> real progress bar
-   ✅ PreMiD (ALL activities) via Lanyard activities[]:
-      - shows app + details/state + artwork when available
-      - if it’s a MUSIC-ish activity:
-          - uses timestamps if present -> real progress bar
-          - else indeterminate/hide based on NON_SPOTIFY_PROGRESS_MODE
-      - if it’s NOT music -> progress bar + time row are hidden
-   ✅ Manual Firestore overrides everything
-   ✅ Twitch via decapi uptime
-   ✅ Reddit one-time banner per new post via localStorage
-   ✅ Settings changes apply instantly (same tab) — no refresh
-   ✅ Match song accent OFF => user accentColor (matches theme)
-   ✅ Match song accent ON  => snaps to last cover immediately when available
-   ✅ Async race fix: token prevents old image loads overwriting newer state
-   ✅ Time format is ALWAYS hh:mm:ss (0:03:42, 1:12:09, etc.)
-
-   ✅ UPDATE IN THIS VERSION:
-   - Platform logos for YouTube / YouTube Music
-   - Smart wording:
-       * YouTube Music -> "Listening to YouTube Music"
-       * YouTube (music-like) -> "Listening to YouTube"
-       * YouTube (video) -> "Watching YouTube"
-       * Otherwise -> "Active on {App}"
+   Spotify via Lanyard (real timestamps -> real progress)
+   PreMiD via Lanyard activities[] (show ALL activities)
+   Manual Firestore overrides everything
+   Twitch via decapi uptime
+   Reddit one-time banner per new post
+   Settings apply instantly (same tab)
+   Match song accent OFF => user accentColor
+   Match song accent ON  => average color from cover
+   Time format ALWAYS hh:mm:ss
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -33,21 +19,16 @@ const CONFIG = {
   reddit:  { username: "Maleficent_Line6570" },
 };
 
-/* ======================================================= */
-/* === SETTINGS ========================================== */
-/* ======================================================= */
+/* =========================
+   SETTINGS
+========================= */
 
-/* Non-Spotify music when timestamps are NOT available:
-   - "indeterminate" = animated bar
-   - "hide" = hide bar + times */
-const NON_SPOTIFY_PROGRESS_MODE = "indeterminate";
-
-/* ✅ Turn this ON to show ALL PreMiD/Discord activities, not just music */
+const NON_SPOTIFY_PROGRESS_MODE = "indeterminate"; // "indeterminate" | "hide"
 const SHOW_ALL_PREMID_ACTIVITIES = true;
 
-/* ======================================================= */
-/* === GLOBAL STATE ====================================== */
-/* ======================================================= */
+/* =========================
+   GLOBAL STATE
+========================= */
 
 let lastUpdateTime = null;
 let lastPollTime   = Date.now();
@@ -60,20 +41,15 @@ const TEMP_BANNER_MS = 15000;
 let lastRedditPostId  = null;
 let manualStatus = null;
 
-/* prevents old image loads overwriting newer state */
 let dynamicColorRequestId = 0;
-
-/* remembers last cover so toggling ON snaps back immediately */
 let lastCoverUrl = null;
-
-/* same-tab settings watcher (storage event doesn't fire same tab) */
 let lastSettingsRaw = null;
 
-const $$  = (id) => document.getElementById(id);
+const $$ = (id) => document.getElementById(id);
 
-/* ======================================================= */
-/* ✅ TIME FORMAT — ALWAYS HH:MM:SS ======================= */
-/* ======================================================= */
+/* =========================
+   TIME FORMAT
+========================= */
 
 function fmt(seconds) {
   seconds = Math.max(0, Math.floor(seconds));
@@ -83,10 +59,12 @@ function fmt(seconds) {
   return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
+/* =========================
+   ICONS (with some safe fallbacks)
+========================= */
+
 const ICON_MAP = {
-  /* =========================
-     MUSIC
-  ========================= */
+  // MUSIC
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   apple_music: "https://cdn.simpleicons.org/applemusic/FA57C1",
   youtubemusic: "https://cdn.simpleicons.org/youtubemusic/FF0000",
@@ -99,9 +77,7 @@ const ICON_MAP = {
   bandcamp: "https://cdn.simpleicons.org/bandcamp/408294",
   audiomack: "https://cdn.simpleicons.org/audiomack/FFA200",
 
-  /* =========================
-     VIDEO / STREAMING
-  ========================= */
+  // VIDEO / STREAMING
   netflix: "https://cdn.simpleicons.org/netflix/E50914",
   disneyplus: "https://cdn.simpleicons.org/disneyplus/113CCF",
   primevideo: "https://cdn.simpleicons.org/primevideo/1F2E3E",
@@ -114,9 +90,7 @@ const ICON_MAP = {
   plex: "https://cdn.simpleicons.org/plex/E5A00D",
   jellyfin: "https://cdn.simpleicons.org/jellyfin/00A4DC",
 
-  /* =========================
-     SOCIAL
-  ========================= */
+  // SOCIAL
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   reddit: "https://cdn.simpleicons.org/reddit/FF4500",
   x: "https://cdn.simpleicons.org/x/000000",
@@ -130,17 +104,13 @@ const ICON_MAP = {
   telegram: "https://cdn.simpleicons.org/telegram/26A5E4",
   signal: "https://cdn.simpleicons.org/signal/3A76F0",
 
-  /* =========================
-     LIVE / CREATOR
-  ========================= */
+  // LIVE / CREATOR
   twitch: "https://cdn.simpleicons.org/twitch/9146FF",
   kick: "https://cdn.simpleicons.org/kick/53FC19",
   patreon: "https://cdn.simpleicons.org/patreon/F96854",
   ko_fi: "https://cdn.simpleicons.org/kofi/FF5E5B",
 
-  /* =========================
-     GAMING / LAUNCHERS
-  ========================= */
+  // GAMING / LAUNCHERS
   steam: "https://cdn.simpleicons.org/steam/000000",
   epicgames: "https://cdn.simpleicons.org/epicgames/000000",
   gog: "https://cdn.simpleicons.org/gogdotcom/86328A",
@@ -150,9 +120,7 @@ const ICON_MAP = {
   roblox: "https://cdn.simpleicons.org/roblox/000000",
   minecraft: "https://cdn.simpleicons.org/minecraft/62B47A",
 
-  /* =========================
-     DEV / PRODUCTIVITY
-  ========================= */
+  // DEV / PRODUCTIVITY
   github: "https://cdn.simpleicons.org/github/000000",
   gitlab: "https://cdn.simpleicons.org/gitlab/FC6D26",
   bitbucket: "https://cdn.simpleicons.org/bitbucket/0052CC",
@@ -167,9 +135,7 @@ const ICON_MAP = {
   slack: "https://cdn.simpleicons.org/slack/4A154B",
   zoom: "https://cdn.simpleicons.org/zoom/2D8CFF",
 
-  /* =========================
-     GOOGLE / MICROSOFT
-  ========================= */
+  // GOOGLE / MICROSOFT
   google: "https://cdn.simpleicons.org/google/4285F4",
   googledocs: "https://cdn.simpleicons.org/googledocs/4285F4",
   googlesheets: "https://cdn.simpleicons.org/googlesheets/34A853",
@@ -181,9 +147,7 @@ const ICON_MAP = {
   teams: "https://cdn.simpleicons.org/microsoftteams/6264A7",
   onedrive: "https://cdn.simpleicons.org/microsoftonedrive/0078D4",
 
-  /* =========================
-     SHOPPING / MARKETPLACES
-  ========================= */
+  // SHOPPING / MARKETPLACES
   amazon: "https://cdn.simpleicons.org/amazon/FF9900",
   ebay: "https://cdn.simpleicons.org/ebay/E53238",
   walmart: "https://cdn.simpleicons.org/walmart/0071CE",
@@ -191,21 +155,19 @@ const ICON_MAP = {
   bestbuy: "https://cdn.simpleicons.org/bestbuy/003B64",
   etsy: "https://cdn.simpleicons.org/etsy/F16521",
   aliexpress: "https://cdn.simpleicons.org/aliexpress/FF4747",
-  temu: "https://cdn.simpleicons.org/temu/FF7A00",
+  temu: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/shopping-cart.svg",
   shein: "https://cdn.simpleicons.org/shein/000000",
   wayfair: "https://cdn.simpleicons.org/wayfair/7F187F",
   homedepot: "https://cdn.simpleicons.org/homedepot/F96302",
   lowes: "https://cdn.simpleicons.org/lowes/004990",
-  costco: "https://cdn.simpleicons.org/costco/005DAA",
+  costco: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/shopping-cart.svg",
   samsclub: "https://cdn.simpleicons.org/samsclub/004B87",
   ikea: "https://cdn.simpleicons.org/ikea/0058A3",
   chewy: "https://cdn.simpleicons.org/chewy/0055A5",
   newegg: "https://cdn.simpleicons.org/newegg/FF6600",
-  microcenter: "https://cdn.simpleicons.org/microcenter/CC0000",
+  microcenter: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/cpu.svg",
 
-  /* =========================
-     PAYMENTS
-  ========================= */
+  // PAYMENTS
   paypal: "https://cdn.simpleicons.org/paypal/00457C",
   venmo: "https://cdn.simpleicons.org/venmo/3D95CE",
   cashapp: "https://cdn.simpleicons.org/cashapp/00C244",
@@ -215,32 +177,92 @@ const ICON_MAP = {
   klarna: "https://cdn.simpleicons.org/klarna/FFB3C7",
   affirm: "https://cdn.simpleicons.org/affirm/000000",
 
-  /* =========================
-     FOOD / DELIVERY
-  ========================= */
+  // FOOD / DELIVERY
   doordash: "https://cdn.simpleicons.org/doordash/FF3008",
   ubereats: "https://cdn.simpleicons.org/ubereats/000000",
   grubhub: "https://cdn.simpleicons.org/grubhub/F63440",
   postmates: "https://cdn.simpleicons.org/postmates/000000",
   instacart: "https://cdn.simpleicons.org/instacart/43B02A",
 
-  /* =========================
-     TRAVEL
-  ========================= */
+  // TRAVEL
   airbnb: "https://cdn.simpleicons.org/airbnb/FF5A5F",
   booking: "https://cdn.simpleicons.org/bookingdotcom/003580",
   expedia: "https://cdn.simpleicons.org/expedia/00355F",
   uber: "https://cdn.simpleicons.org/uber/000000",
   lyft: "https://cdn.simpleicons.org/lyft/FF00BF",
 
-  /* =========================
-     FALLBACKS
-  ========================= */
+  // FALLBACKS
   activity: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/activity.svg",
   music: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
   manual: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
+
+/* Safe image set so icons never go blank */
+function setImgWithFallback(imgEl, primaryUrl, fallbackUrl) {
+  if (!imgEl) return;
+  imgEl.onerror = null;
+  imgEl.src = primaryUrl;
+  imgEl.onerror = () => {
+    imgEl.onerror = null;
+    imgEl.src = fallbackUrl || ICON_MAP.default;
+  };
+}
+
+/* =========================
+   SETTINGS HELPERS
+========================= */
+
+function getWebsiteSettings() {
+  try { return JSON.parse(localStorage.getItem("websiteSettings") || "{}"); }
+  catch { return {}; }
+}
+
+function isMatchSongAccentEnabled() {
+  const settings = getWebsiteSettings();
+  return settings.matchSongAccent === "enabled";
+}
+
+function applySongThemeClass() {
+  const activity = document.querySelector(".live-activity");
+  if (!activity) return;
+
+  const settings = getWebsiteSettings();
+  const matchAccent = settings.matchSongAccent === "enabled";
+  const userAccent  = settings.accentColor || "#1DB954";
+
+  activity.classList.toggle("song-theme-off", !matchAccent);
+
+  if (!matchAccent) {
+    activity.style.setProperty("--dynamic-bg", "none");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+  }
+}
+
+function watchWebsiteSettings() {
+  const raw = localStorage.getItem("websiteSettings") || "{}";
+  if (raw === lastSettingsRaw) return;
+  lastSettingsRaw = raw;
+
+  applySongThemeClass();
+
+  if (isMatchSongAccentEnabled()) {
+    if (lastCoverUrl) updateDynamicColors(lastCoverUrl);
+  } else {
+    updateDynamicColors(null);
+  }
+}
+
+window.addEventListener("storage", (e) => {
+  if (e.key === "websiteSettings") {
+    lastSettingsRaw = null;
+    watchWebsiteSettings();
+  }
+});
+
+/* =========================
+   PREMiD RESOLVER
+========================= */
 
 function normAppName(s = "") {
   return String(s || "").trim().toLowerCase();
@@ -382,71 +404,12 @@ function resolvePremidMeta(appName = "", act = null) {
   for (const rule of PREMID_RULES) {
     if (rule.re.test(n)) return { key: rule.key, pretty: rule.pretty };
   }
-
-  // fallback
-  const fallbackPretty = raw?.trim() || "Activity";
-  return { key: "activity", pretty: fallbackPretty };
+  return { key: "activity", pretty: raw?.trim() || "Activity" };
 }
 
-/* ======================================================= */
-/* === SETTINGS HELPERS ================================== */
-/* ======================================================= */
-
-function getWebsiteSettings() {
-  try {
-    return JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function isMatchSongAccentEnabled() {
-  const settings = getWebsiteSettings();
-  return settings.matchSongAccent === "enabled";
-}
-
-function applySongThemeClass() {
-  const activity = document.querySelector(".live-activity");
-  if (!activity) return;
-
-  const settings = getWebsiteSettings();
-  const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent  = settings.accentColor || "#1DB954";
-
-  activity.classList.toggle("song-theme-off", !matchAccent);
-
-  // OFF => match user's accent color
-  if (!matchAccent) {
-    activity.style.setProperty("--dynamic-bg", "none");
-    activity.style.setProperty("--dynamic-accent", userAccent);
-  }
-}
-
-function watchWebsiteSettings() {
-  const raw = localStorage.getItem("websiteSettings") || "{}";
-  if (raw === lastSettingsRaw) return;
-  lastSettingsRaw = raw;
-
-  applySongThemeClass();
-
-  // If accent matching is ON, snap to last cover immediately if we have it
-  if (isMatchSongAccentEnabled()) {
-    if (lastCoverUrl) updateDynamicColors(lastCoverUrl);
-  } else {
-    updateDynamicColors(null);
-  }
-}
-
-window.addEventListener("storage", (e) => {
-  if (e.key === "websiteSettings") {
-    lastSettingsRaw = null;
-    watchWebsiteSettings();
-  }
-});
-
-/* ======================================================= */
-/* === UI HELPERS ======================================== */
-/* ======================================================= */
+/* =========================
+   UI HELPERS
+========================= */
 
 function showStatusLineWithFade(text, source = "manual") {
   const txt = $$("status-line-text");
@@ -462,7 +425,7 @@ function showStatusLineWithFade(text, source = "manual") {
   line.style.opacity = "0";
 
   setTimeout(() => {
-    icon.src = iconUrl;
+    setImgWithFallback(icon, iconUrl, ICON_MAP.default);
     icon.alt = `${source} icon`;
     txt.textContent = text;
 
@@ -474,11 +437,7 @@ function showStatusLineWithFade(text, source = "manual") {
     line.style.opacity = "1";
 
     lastUpdateTime = Date.now();
-    localStorage.setItem("lastStatus", JSON.stringify({
-      text,
-      source,
-      timestamp: lastUpdateTime
-    }));
+    localStorage.setItem("lastStatus", JSON.stringify({ text, source, timestamp: lastUpdateTime }));
   }, 180);
 }
 
@@ -508,9 +467,9 @@ function updateLastUpdated() {
   else el.textContent = `Updated ${Math.floor(s / 3600)}h ago`;
 }
 
-/* ======================================================= */
-/* === PROGRESS BAR ====================================== */
-/* ======================================================= */
+/* =========================
+   PROGRESS BAR
+========================= */
 
 function setProgressVisibility(mode) {
   const barWrap = document.querySelector(".music-progress-container");
@@ -596,9 +555,9 @@ function setupProgressFromActivityTimestamps(act) {
   return true;
 }
 
-/* ======================================================= */
-/* === DYNAMIC COLORS =================================== */
-/* ======================================================= */
+/* =========================
+   DYNAMIC COLORS
+========================= */
 
 function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
@@ -612,14 +571,12 @@ function updateDynamicColors(imageUrl) {
 
   const requestId = ++dynamicColorRequestId;
 
-  // Accent matching OFF -> always user accent
   if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
-  // Accent matching ON but no image -> fall back to user accent
   if (!imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
@@ -658,7 +615,8 @@ function updateDynamicColors(imageUrl) {
       b = Math.floor(b / count);
 
       activity.style.setProperty("--dynamic-accent", `rgb(${r},${g},${b})`);
-      activity.style.setProperty("--dynamic-bg",
+      activity.style.setProperty(
+        "--dynamic-bg",
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
@@ -674,29 +632,29 @@ function updateDynamicColors(imageUrl) {
   };
 }
 
-/* ======================================================= */
-/* === ANIMATION HELPERS ================================= */
-/* ======================================================= */
+/* =========================
+   ANIMATION HELPERS
+========================= */
 
-function slideInCard(cardEl){ 
-  if(!cardEl) return;
-  cardEl.classList.remove("slide-out", "hidden"); 
-  cardEl.classList.add("slide-in"); 
-  cardEl.style.display = ""; 
-  cardEl.style.opacity = "1"; 
+function slideInCard(cardEl) {
+  if (!cardEl) return;
+  cardEl.classList.remove("slide-out", "hidden");
+  cardEl.classList.add("slide-in");
+  cardEl.style.display = "";
+  cardEl.style.opacity = "1";
 }
 
-function slideOutCard(cardEl){ 
-  if(!cardEl) return;
-  cardEl.classList.remove("slide-in"); 
-  cardEl.classList.add("slide-out"); 
-  setTimeout(()=>{ 
-    if(cardEl.classList.contains("slide-out")){
-      cardEl.style.opacity = "0"; 
+function slideOutCard(cardEl) {
+  if (!cardEl) return;
+  cardEl.classList.remove("slide-in");
+  cardEl.classList.add("slide-out");
+  setTimeout(() => {
+    if (cardEl.classList.contains("slide-out")) {
+      cardEl.style.opacity = "0";
       cardEl.style.display = "none";
       cardEl.classList.add("hidden");
-    } 
-  },360); 
+    }
+  }, 360);
 }
 
 function isManualActive() {
@@ -706,9 +664,9 @@ function isManualActive() {
   return Date.now() < exp;
 }
 
-/* ======================================================= */
-/* === ACTIVITY LABELING (verbs + YouTube music detection) */
-/* ======================================================= */
+/* =========================
+   ACTIVITY LABELING
+========================= */
 
 function getActivityVerb(appName = "", act = null) {
   const n = (appName || "").toLowerCase();
@@ -778,32 +736,27 @@ function isYouTubeMusicLike(act) {
   const name = (act.name || "").toLowerCase();
   if (!name.includes("youtube")) return false;
 
-  // Needs timestamps to be “media-like”
   const hasTs = !!(act?.timestamps?.start && act?.timestamps?.end);
   if (!hasTs) return false;
 
   const title = (act.details || "").toLowerCase();
   const state = (act.state || "").toLowerCase();
 
-  // obvious music keywords
   const musicPatterns = [
     "mix", "playlist", "album", "full album", "lyrics", "lyric", "audio",
     "official music video", "official video", "remastered", "topic"
   ];
   if (musicPatterns.some(p => title.includes(p))) return true;
 
-  // common song formatting
   if (title.includes(" - ") || title.includes(" • ") || title.includes(" | ") || title.includes(" by ")) return true;
-
-  // if state is short-ish, usually a channel/artist line
   if (state && state.length <= 50) return true;
 
   return false;
 }
 
-/* ======================================================= */
-/* === DISCORD / SPOTIFY + PreMiD ALL ACTIVITIES ========= */
-/* ======================================================= */
+/* =========================
+   DISCORD / SPOTIFY + PreMiD
+========================= */
 
 function resolveDiscordAssetUrl(activity) {
   const a = activity?.assets;
@@ -824,7 +777,6 @@ function resolveDiscordAssetUrl(activity) {
   return "";
 }
 
-/* Music detection (kept for progress behavior) */
 const MUSIC_KEYWORDS = [
   "youtube music", "yt music", "youtubemusic",
   "spotify",
@@ -846,7 +798,7 @@ const MUSIC_KEYWORDS = [
 
 function isMusicActivity(act) {
   if (!act) return false;
-  if (act.type === 2) return true; // Discord “Listening”
+  if (act.type === 2) return true;
 
   const name = (act.name || "").toLowerCase();
   const details = (act.details || "").toLowerCase();
@@ -854,19 +806,13 @@ function isMusicActivity(act) {
   const largeText = (act?.assets?.large_text || "").toLowerCase();
   const hay = `${name} ${details} ${state} ${largeText}`.trim();
 
-  // keywords
   if (MUSIC_KEYWORDS.some(k => hay.includes(k))) return true;
-
-  // If details looks like "Song - Artist" or "Song by Artist"
   if (details.includes(" by ") || details.includes(" - ")) return true;
-
-  // YouTube video but music-like
   if (name.includes("youtube") && isYouTubeMusicLike(act)) return true;
 
   return false;
 }
 
-/* Ignore low-value/noise activities */
 function isIgnorableActivity(a) {
   if (!a) return true;
   if (a.type === 4) return true; // custom status
@@ -876,7 +822,6 @@ function isIgnorableActivity(a) {
   return false;
 }
 
-/* Pick best overall PreMiD activity (not Spotify) */
 function pickBestPremidActivity(activities = []) {
   const candidates = (activities || []).filter(a => !isIgnorableActivity(a));
 
@@ -908,7 +853,7 @@ async function getDiscord() {
     const data = json.data;
     if (!data) return null;
 
-    /* 1) Spotify (best quality) */
+    // 1) Spotify
     if (data.spotify) {
       const sp = data.spotify;
       const now = Date.now();
@@ -934,69 +879,63 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-   /* 2) PreMiD / ALL activities */
-if (SHOW_ALL_PREMID_ACTIVITIES) {
-  const act = pickBestPremidActivity(data.activities || []);
-  if (act) {
-    slideInCard($$("spotify-card"));
+    // 2) PreMiD / All activities
+    if (SHOW_ALL_PREMID_ACTIVITIES) {
+      const act = pickBestPremidActivity(data.activities || []);
+      if (act) {
+        slideInCard($$("spotify-card"));
 
-    const appName = act.name || "Activity";
+        const appName = act.name || "Activity";
 
-    // YouTube checks
-    const n = appName.toLowerCase();
-    const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
-    const isYT  = n.includes("youtube");
+        const n = appName.toLowerCase();
+        const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
+        const isYT  = n.includes("youtube");
 
-    const title = act.details || appName;
-    const sub   = act.state || act?.assets?.large_text || appName;
+        const title = act.details || appName;
+        const sub   = act.state || act?.assets?.large_text || appName;
 
-    $$("live-song-title").textContent  = title;
-    $$("live-song-artist").textContent = sub;
+        $$("live-song-title").textContent  = title;
+        $$("live-song-artist").textContent = sub;
 
-    const coverUrl = resolveDiscordAssetUrl(act);
-    const coverEl = $$("live-activity-cover");
-    if (coverEl) {
-      if (coverUrl) coverEl.src = coverUrl;
-      // optional: if no coverUrl, you could hide the image in CSS/JS
+        const coverUrl = resolveDiscordAssetUrl(act);
+        const coverEl = $$("live-activity-cover");
+        if (coverEl) {
+          if (coverUrl) coverEl.src = coverUrl;
+        }
+
+        currentSpotifyUrl = null;
+
+        const explicitEl = $$("explicit-badge");
+        if (explicitEl) explicitEl.style.display = "none";
+
+        resetProgress();
+        if (isMusicActivity(act)) {
+          const hasRealProgress = setupProgressFromActivityTimestamps(act);
+          if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
+        } else {
+          setProgressVisibility("hide");
+        }
+
+        updateDynamicColors(coverUrl || null);
+
+        const meta = resolvePremidMeta(appName, act);
+
+        let prettyApp = meta.pretty;
+        if (isYTM) prettyApp = "YouTube Music";
+        else if (isYT) prettyApp = "YouTube";
+
+        const verb = getActivityVerb(prettyApp, act);
+
+        let source = meta.key;
+        if (isYTM) source = "youtubemusic";
+        else if (isYT) source = "youtube";
+
+        const statusText = `${verb} ${prettyApp}`;
+        return { text: statusText, source };
+      }
     }
 
-    currentSpotifyUrl = null;
-
-    const explicitEl = $$("explicit-badge");
-    if (explicitEl) explicitEl.style.display = "none";
-
-    // Progress rules
-    resetProgress();
-    if (isMusicActivity(act)) {
-      const hasRealProgress = setupProgressFromActivityTimestamps(act);
-      if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
-    } else {
-      setProgressVisibility("hide");
-    }
-
-    // Accent tint only if we actually have an image URL
-    updateDynamicColors(coverUrl || null);
-
-    // Resolve icon + clean display name (covers shopping/payment/etc)
-    const meta = resolvePremidMeta(appName, act);
-
-    // Let YouTube logic still win for naming + icon selection
-    let prettyApp = meta.pretty;
-    if (isYTM) prettyApp = "YouTube Music";
-    else if (isYT) prettyApp = "YouTube";
-
-    const verb = getActivityVerb(prettyApp, act);
-
-    let source = meta.key;
-    if (isYTM) source = "youtubemusic";
-    else if (isYT) source = "youtube";
-
-    const statusText = `${verb} ${prettyApp}`;
-    return { text: statusText, source };
-  }
-}
-
-    /* 3) Nothing else: hide card and show presence */
+    // 3) Nothing else
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
@@ -1017,9 +956,9 @@ if (SHOW_ALL_PREMID_ACTIVITIES) {
   }
 }
 
-/* ======================================================= */
-/* === T W I T C H  ====================================== */
-/* ======================================================= */
+/* =========================
+   TWITCH
+========================= */
 
 async function getTwitch() {
   const u = CONFIG.twitch.username?.toLowerCase();
@@ -1032,7 +971,9 @@ async function getTwitch() {
     const res = await fetch(`${proxy}${encodeURIComponent(target)}?_=${Date.now()}`);
     const text = (await res.text()).toLowerCase();
 
-    const isOffline = text.includes("offline") || text.includes("not live") || text.includes("not found") || !text.trim();
+    const isOffline =
+      text.includes("offline") || text.includes("not live") || text.includes("not found") || !text.trim();
+
     return isOffline ? null : { live: true };
   } catch (e) {
     console.warn("Twitch check failed:", e);
@@ -1040,11 +981,11 @@ async function getTwitch() {
   }
 }
 
-/* ======================================================= */
-/* === REDDIT ============================================ */
-/* ======================================================= */
+/* =========================
+   REDDIT
+========================= */
 
-async function getReddit(){
+async function getReddit() {
   const u = CONFIG.reddit.username;
   if (!u) return null;
 
@@ -1069,9 +1010,9 @@ async function getReddit(){
   return null;
 }
 
-/* ======================================================= */
-/* === MANUAL FIRESTORE ================================== */
-/* ======================================================= */
+/* =========================
+   MANUAL FIRESTORE
+========================= */
 
 try {
   const manualRef = doc(db, "manualStatus", "site");
@@ -1099,16 +1040,15 @@ try {
       }
       manualStatus = null;
     }
-
   }, err => console.warn("manual listener error:", err));
 
 } catch (e) {
   console.warn("Firestore manual disabled:", e);
 }
 
-/* ======================================================= */
-/* === STATUS PRIORITY LOGIC ============================= */
-/* ======================================================= */
+/* =========================
+   STATUS PRIORITY
+========================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
   if (isManualActive()) {
@@ -1137,9 +1077,9 @@ function applyStatusDecision({ main, twitchLive, temp }) {
   }
 }
 
-/* ======================================================= */
-/* === MAIN LOOP ========================================= */
-/* ======================================================= */
+/* =========================
+   MAIN LOOP
+========================= */
 
 async function mainLoop() {
   applySongThemeClass();
@@ -1169,9 +1109,9 @@ async function mainLoop() {
   lastPollTime = Date.now();
 }
 
-/* ======================================================= */
-/* === INIT ============================================== */
-/* ======================================================= */
+/* =========================
+   INIT
+========================= */
 
 document.addEventListener("DOMContentLoaded", () => {
   applySongThemeClass();
@@ -1187,14 +1127,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const { text, source } = JSON.parse(saved);
       if (!isManualActive()) showStatusLineWithFade(text, source);
       else showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
-    } catch (e) { console.warn("Failed to restore last status:", e); }
+    } catch (e) {
+      console.warn("Failed to restore last status:", e);
+    }
   }
 
-  // instant settings response (same tab)
   watchWebsiteSettings();
   setInterval(watchWebsiteSettings, 300);
 
-  // start loop
   setTimeout(() => { mainLoop(); }, 50);
 
   setInterval(mainLoop, 30000);
