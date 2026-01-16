@@ -13,9 +13,15 @@
    ✅ Match song accent OFF => user accentColor (matches theme)
    ✅ Match song accent ON  => snaps to last cover immediately when available
    ✅ Async race fix: token prevents old image loads overwriting newer state
+   ✅ Time format is ALWAYS hh:mm:ss (0:03:42, 1:12:09, etc.)
 
    ✅ UPDATE IN THIS VERSION:
-   - Time format is ALWAYS hh:mm:ss (0:03:42, 1:12:09, etc.)
+   - Platform logos for YouTube / YouTube Music
+   - Smart wording:
+       * YouTube Music -> "Listening to YouTube Music"
+       * YouTube (music-like) -> "Listening to YouTube"
+       * YouTube (video) -> "Watching YouTube"
+       * Otherwise -> "Active on {App}"
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -71,11 +77,9 @@ const $$  = (id) => document.getElementById(id);
 
 function fmt(seconds) {
   seconds = Math.max(0, Math.floor(seconds));
-
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
-
   return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
 }
 
@@ -84,14 +88,16 @@ function fmt(seconds) {
 /* ======================================================= */
 
 const ICON_MAP = {
-  spotify: "https://cdn.simpleicons.org/spotify/1DB954",
-  discord: "https://cdn.simpleicons.org/discord/5865F2",
-  activity:"https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/activity.svg",
-  twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
-  reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
-  music:   "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
-  manual:  "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
-  default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  spotify:      "https://cdn.simpleicons.org/spotify/1DB954",
+  youtube:      "https://cdn.simpleicons.org/youtube/FF0000",
+  youtubemusic: "https://cdn.simpleicons.org/youtubemusic/FF0000",
+  discord:      "https://cdn.simpleicons.org/discord/5865F2",
+  twitch:       "https://cdn.simpleicons.org/twitch/9146FF",
+  reddit:       "https://cdn.simpleicons.org/reddit/FF4500",
+  activity:     "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/activity.svg",
+  music:        "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
+  manual:       "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
+  default:      "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
 /* ======================================================= */
@@ -173,7 +179,9 @@ function showStatusLineWithFade(text, source = "manual") {
     txt.textContent = text;
 
     icon.classList.remove("glow");
-    if (["spotify", "twitch", "music"].includes(source)) icon.classList.add("glow");
+    if (["spotify", "twitch", "music", "youtube", "youtubemusic"].includes(source)) {
+      icon.classList.add("glow");
+    }
 
     line.style.opacity = "1";
 
@@ -247,7 +255,6 @@ function resetProgress() {
   const remainEl  = $$("remaining-time");
   const totalEl   = $$("total-time");
 
-  // ✅ hh:mm:ss defaults
   if (elapsedEl) elapsedEl.textContent = "0:00:00";
   if (remainEl)  remainEl.textContent  = "-0:00:00";
   if (totalEl)   totalEl.textContent   = "0:00:00";
@@ -412,6 +419,67 @@ function isManualActive() {
 }
 
 /* ======================================================= */
+/* === ACTIVITY LABELING (verbs + YouTube music detection) */
+/* ======================================================= */
+
+function getActivityVerb(appName = "", act = null) {
+  const n = (appName || "").toLowerCase();
+
+  // YouTube Music explicitly
+  if (n.includes("youtube music")) return "Listening to";
+
+  // Spotify-like
+  if (n.includes("spotify") || n.includes("apple music") || n.includes("soundcloud") || n.includes("tidal") || n.includes("deezer")) {
+    return "Listening to";
+  }
+
+  // YouTube special case: listening vs watching
+  if (n.includes("youtube")) {
+    if (act && isYouTubeMusicLike(act)) return "Listening to";
+    return "Watching";
+  }
+
+  // streaming video
+  if (n.includes("twitch") || n.includes("netflix") || n.includes("hulu")) return "Watching";
+
+  // browsing
+  if (n.includes("reddit")) return "Browsing";
+  if (n.includes("twitter") || n === "x") return "Scrolling";
+
+  // default
+  return "Active on";
+}
+
+function isYouTubeMusicLike(act) {
+  if (!act) return false;
+
+  const name = (act.name || "").toLowerCase();
+  if (!name.includes("youtube")) return false;
+
+  // Needs timestamps to be “media-like”
+  const hasTs = !!(act?.timestamps?.start && act?.timestamps?.end);
+  if (!hasTs) return false;
+
+  const title = (act.details || "").toLowerCase();
+  const state = (act.state || "").toLowerCase();
+
+  // obvious music keywords
+  const musicPatterns = [
+    "mix", "playlist", "album", "full album", "lyrics", "lyric", "audio",
+    "official music video", "official video", "remastered", "topic"
+  ];
+  if (musicPatterns.some(p => title.includes(p))) return true;
+
+  // common song formatting
+  if (title.includes(" - ") || title.includes(" • ") || title.includes(" | ") || title.includes(" by ")) return true;
+
+  // if state is short-ish, usually a channel/artist line
+  if (state && state.length <= 50) return true;
+
+  return false;
+}
+
+/* ======================================================= */
 /* === DISCORD / SPOTIFY + PreMiD ALL ACTIVITIES ========= */
 /* ======================================================= */
 
@@ -464,17 +532,16 @@ function isMusicActivity(act) {
   const largeText = (act?.assets?.large_text || "").toLowerCase();
   const hay = `${name} ${details} ${state} ${largeText}`.trim();
 
+  // keywords
   if (MUSIC_KEYWORDS.some(k => hay.includes(k))) return true;
+
+  // If details looks like "Song - Artist" or "Song by Artist"
   if (details.includes(" by ") || details.includes(" - ")) return true;
 
-  return false;
-}
+  // YouTube video but music-like
+  if (name.includes("youtube") && isYouTubeMusicLike(act)) return true;
 
-/* Pick best music activity */
-function pickBestMusicActivity(activities = []) {
-  const listening = activities.find(a => a && isMusicActivity(a) && a.type === 2);
-  if (listening) return listening;
-  return activities.find(a => a && isMusicActivity(a));
+  return false;
 }
 
 /* Ignore low-value/noise activities */
@@ -483,7 +550,7 @@ function isIgnorableActivity(a) {
   if (a.type === 4) return true; // custom status
   const name = (a.name || "").toLowerCase();
   if (!name) return true;
-  if (name === "discord") return true; // usually not useful
+  if (name === "discord") return true;
   return false;
 }
 
@@ -491,11 +558,9 @@ function isIgnorableActivity(a) {
 function pickBestPremidActivity(activities = []) {
   const candidates = (activities || []).filter(a => !isIgnorableActivity(a));
 
-  // Prefer ones with details/state (PreMiD usually has these)
   const rich = candidates.find(a => (a.details && a.details.trim()) || (a.state && a.state.trim()));
   if (rich) return rich;
 
-  // Next: ones with artwork
   const withArt = candidates.find(a => a.assets?.large_image);
   if (withArt) return withArt;
 
@@ -547,15 +612,25 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    /* 2) If you want ALL PreMiD activities, do it here */
+    /* 2) PreMiD / ALL activities */
     if (SHOW_ALL_PREMID_ACTIVITIES) {
       const act = pickBestPremidActivity(data.activities || []);
       if (act) {
         slideInCard($$("spotify-card"));
 
-        const appName = act.name || "Activity";
-        const title   = act.details || appName;
-        const sub     = act.state || act?.assets?.large_text || appName;
+        let appName = act.name || "Activity";
+
+        // Normalize YouTube naming for better wording/icon selection
+        const n = appName.toLowerCase();
+        const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
+        const isYT  = n.includes("youtube");
+
+        // If it's plain YouTube but looks like music, we want "Listening to YouTube"
+        // (not "Watching YouTube")
+        const ytMusicLike = isYT && isYouTubeMusicLike(act);
+
+        const title = act.details || appName;
+        const sub   = act.state || act?.assets?.large_text || appName;
 
         $$("live-song-title").textContent  = title;
         $$("live-song-artist").textContent = sub;
@@ -570,10 +645,7 @@ async function getDiscord() {
         if (explicitEl) explicitEl.style.display = "none";
 
         // Progress rules:
-        // - if music activity: real timestamps -> real progress else indeterminate/hide
-        // - if NOT music: hide progress/time entirely
         resetProgress();
-
         if (isMusicActivity(act)) {
           const hasRealProgress = setupProgressFromActivityTimestamps(act);
           if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
@@ -584,40 +656,30 @@ async function getDiscord() {
         // Accent tint only if we actually have an image URL
         updateDynamicColors(coverUrl || null);
 
-        return { text: `Active: ${appName}`, source: "activity" };
+        // Source/icon selection:
+        let source = "activity";
+        if (isYTM) source = "youtubemusic";
+        else if (isYT) source = "youtube";
+        else if (n.includes("twitch")) source = "twitch";
+        else if (n.includes("spotify")) source = "spotify";
+
+        // Wording selection:
+        const verb = getActivityVerb(appName, act);
+
+        // Slightly nicer appName for display:
+        let prettyApp = appName;
+        if (isYTM) prettyApp = "YouTube Music";
+        else if (isYT) prettyApp = "YouTube";
+
+        // If plain YouTube but music-like, we still say YouTube (Listening to YouTube)
+        // The verb function handles that already.
+        const statusText = `${verb} ${prettyApp}`;
+
+        return { text: statusText, source };
       }
     }
 
-    /* 3) If NOT showing all activities, fall back to “other music platforms only” */
-    const act = pickBestMusicActivity(data.activities || []);
-    if (act) {
-      slideInCard($$("spotify-card"));
-
-      const title = act.details || act.name || "Now Playing";
-      const artist = act.state || act?.assets?.large_text || "";
-
-      $$("live-song-title").textContent  = title;
-      $$("live-song-artist").textContent = artist || "—";
-
-      const coverUrl = resolveDiscordAssetUrl(act);
-      const coverEl = $$("live-activity-cover");
-      if (coverEl && coverUrl) coverEl.src = coverUrl;
-
-      currentSpotifyUrl = null;
-
-      resetProgress();
-      const hasRealProgress = setupProgressFromActivityTimestamps(act);
-      if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
-
-      updateDynamicColors(coverUrl || null);
-
-      const explicitEl = $$("explicit-badge");
-      if (explicitEl) explicitEl.style.display = "none";
-
-      return { text: `Listening on ${act.name || "Music"}`, source: "music" };
-    }
-
-    /* 4) Nothing else: hide card and show presence */
+    /* 3) Nothing else: hide card and show presence */
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
@@ -742,7 +804,11 @@ function applyStatusDecision({ main, twitchLive, temp }) {
   }
 
   if (main?.source === "spotify") {
-    showStatusLineWithFade("Listening to Spotify", "spotify");
+    showStatusLineWithFade(main?.text || "Listening to Spotify", "spotify");
+  } else if (main?.source === "youtubemusic") {
+    showStatusLineWithFade(main?.text || "Listening to YouTube Music", "youtubemusic");
+  } else if (main?.source === "youtube") {
+    showStatusLineWithFade(main?.text || "Watching YouTube", "youtube");
   } else if (main?.source === "music") {
     showStatusLineWithFade(main?.text || "Listening to Music", "music");
   } else if (main?.source === "activity") {
@@ -766,6 +832,8 @@ async function mainLoop() {
   const primary =
     (discord?.source === "manual") ? discord
     : (discord?.source === "spotify") ? discord
+    : (discord?.source === "youtubemusic") ? discord
+    : (discord?.source === "youtube") ? discord
     : (discord?.source === "music") ? discord
     : (discord?.source === "activity") ? discord
     : (twitch || discord || { text: "No Current Active Activities", source: "discord" });
