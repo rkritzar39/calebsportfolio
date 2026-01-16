@@ -1,17 +1,17 @@
 /* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit
-   UPDATED (FULL FILE):
    ✅ Spotify via Lanyard: real timestamps -> real progress bar
-   ✅ Other music platforms via Lanyard activities[]:
-      - shows title/artist/cover
-      - USES timestamps IF PRESENT -> real progress bar (works across platforms)
-      - NO timestamps -> progress becomes INDTERMINATE (animated) OR hides if you switch flag
-   ✅ If NOT a music activity -> progress bar + time row are hidden
+   ✅ PreMiD (ALL activities) via Lanyard activities[]:
+      - shows app + details/state + artwork when available
+      - if it’s a MUSIC-ish activity:
+          - uses timestamps if present -> real progress
+          - else indeterminate/hide based on NON_SPOTIFY_PROGRESS_MODE
+      - if it’s NOT music -> progress bar + time row are hidden
    ✅ Manual Firestore overrides everything
    ✅ Twitch via decapi uptime
    ✅ Reddit one-time banner per new post via localStorage
    ✅ Settings changes apply instantly (same tab) — no refresh
    ✅ Match song accent OFF => user accentColor (matches theme)
-   ✅ Match song accent ON  => snaps to song accent using last cover immediately
+   ✅ Match song accent ON  => snaps to last cover immediately when available
    ✅ Async race fix: token prevents old image loads overwriting newer state
 */
 
@@ -28,10 +28,13 @@ const CONFIG = {
 /* === SETTINGS ========================================== */
 /* ======================================================= */
 
-/* Choose how non-Spotify music should behave when timestamps are NOT available:
-   - "indeterminate" = animated loading-style bar
-   - "hide" = progress bar + times disappear entirely */
+/* Non-Spotify music when timestamps are NOT available:
+   - "indeterminate" = animated bar
+   - "hide" = hide bar + times */
 const NON_SPOTIFY_PROGRESS_MODE = "indeterminate";
+
+/* ✅ Turn this ON to show ALL PreMiD/Discord activities, not just music */
+const SHOW_ALL_PREMID_ACTIVITIES = true;
 
 /* ======================================================= */
 /* === GLOBAL STATE ====================================== */
@@ -48,13 +51,13 @@ const TEMP_BANNER_MS = 15000;
 let lastRedditPostId  = null;
 let manualStatus = null;
 
-/* ✅ prevents old image loads overwriting newer state */
+/* prevents old image loads overwriting newer state */
 let dynamicColorRequestId = 0;
 
-/* ✅ remembers last cover so toggling ON snaps back immediately */
+/* remembers last cover so toggling ON snaps back immediately */
 let lastCoverUrl = null;
 
-/* ✅ same-tab settings watcher (storage event doesn't fire same tab) */
+/* same-tab settings watcher (storage event doesn't fire same tab) */
 let lastSettingsRaw = null;
 
 const $$  = (id) => document.getElementById(id);
@@ -67,6 +70,7 @@ const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(
 const ICON_MAP = {
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   discord: "https://cdn.simpleicons.org/discord/5865F2",
+  activity:"https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/activity.svg",
   twitch:  "https://cdn.simpleicons.org/twitch/9146FF",
   reddit:  "https://cdn.simpleicons.org/reddit/FF4500",
   music:   "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
@@ -115,9 +119,9 @@ function watchWebsiteSettings() {
 
   applySongThemeClass();
 
+  // If accent matching is ON, snap to last cover immediately if we have it
   if (isMatchSongAccentEnabled()) {
     if (lastCoverUrl) updateDynamicColors(lastCoverUrl);
-    else updateDynamicColors(null);
   } else {
     updateDynamicColors(null);
   }
@@ -268,7 +272,7 @@ function setupProgress(startMs, endMs) {
 
 function toEpochMs(v) {
   if (!v || typeof v !== "number") return null;
-  return v < 1e12 ? v * 1000 : v; // seconds -> ms if needed
+  return v < 1e12 ? v * 1000 : v;
 }
 
 function setupProgressFromActivityTimestamps(act) {
@@ -287,7 +291,7 @@ function updateDynamicColors(imageUrl) {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
-  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+  const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent  = settings.accentColor || "#1DB954";
 
@@ -295,12 +299,14 @@ function updateDynamicColors(imageUrl) {
 
   const requestId = ++dynamicColorRequestId;
 
+  // Accent matching OFF -> always user accent
   if (!matchAccent) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     return;
   }
 
+  // Accent matching ON but no image -> fall back to user accent
   if (!imageUrl) {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
@@ -339,8 +345,7 @@ function updateDynamicColors(imageUrl) {
       b = Math.floor(b / count);
 
       activity.style.setProperty("--dynamic-accent", `rgb(${r},${g},${b})`);
-      activity.style.setProperty(
-        "--dynamic-bg",
+      activity.style.setProperty("--dynamic-bg",
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
@@ -389,7 +394,7 @@ function isManualActive() {
 }
 
 /* ======================================================= */
-/* === DISCORD / SPOTIFY + OTHER MUSIC =================== */
+/* === DISCORD / SPOTIFY + PreMiD ALL ACTIVITIES ========= */
 /* ======================================================= */
 
 function resolveDiscordAssetUrl(activity) {
@@ -411,7 +416,7 @@ function resolveDiscordAssetUrl(activity) {
   return "";
 }
 
-/* Broad music platform detection (works even if act.type is weird) */
+/* Music detection (kept for progress behavior) */
 const MUSIC_KEYWORDS = [
   "youtube music", "yt music", "youtubemusic",
   "spotify",
@@ -433,33 +438,50 @@ const MUSIC_KEYWORDS = [
 
 function isMusicActivity(act) {
   if (!act) return false;
-
-  // Discord "Listening" is very likely music (type 2)
-  if (act.type === 2) return true;
+  if (act.type === 2) return true; // Discord “Listening”
 
   const name = (act.name || "").toLowerCase();
   const details = (act.details || "").toLowerCase();
   const state = (act.state || "").toLowerCase();
   const largeText = (act?.assets?.large_text || "").toLowerCase();
-
   const hay = `${name} ${details} ${state} ${largeText}`.trim();
 
-  // keywords
   if (MUSIC_KEYWORDS.some(k => hay.includes(k))) return true;
-
-  // If details looks like "Song - Artist" or "Song by Artist", it’s probably music
   if (details.includes(" by ") || details.includes(" - ")) return true;
 
   return false;
 }
 
+/* Pick best music activity */
 function pickBestMusicActivity(activities = []) {
-  // Prefer actual Listening activities first
   const listening = activities.find(a => a && isMusicActivity(a) && a.type === 2);
   if (listening) return listening;
-
-  // Otherwise any activity that looks like music
   return activities.find(a => a && isMusicActivity(a));
+}
+
+/* Ignore low-value/noise activities */
+function isIgnorableActivity(a) {
+  if (!a) return true;
+  if (a.type === 4) return true; // custom status
+  const name = (a.name || "").toLowerCase();
+  if (!name) return true;
+  if (name === "discord") return true; // usually not useful
+  return false;
+}
+
+/* Pick best overall PreMiD activity (not Spotify) */
+function pickBestPremidActivity(activities = []) {
+  const candidates = (activities || []).filter(a => !isIgnorableActivity(a));
+
+  // Prefer ones with details/state (PreMiD usually has these)
+  const rich = candidates.find(a => (a.details && a.details.trim()) || (a.state && a.state.trim()));
+  if (rich) return rich;
+
+  // Next: ones with artwork
+  const withArt = candidates.find(a => a.assets?.large_image);
+  if (withArt) return withArt;
+
+  return candidates[0] || null;
 }
 
 async function getDiscord() {
@@ -472,13 +494,16 @@ async function getDiscord() {
   }
 
   try {
-    const res = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}?_ts=${Date.now()}`, { cache: "no-store" });
+    const res = await fetch(
+      `https://api.lanyard.rest/v1/users/${CONFIG.discord.userId}?_ts=${Date.now()}`,
+      { cache: "no-store" }
+    );
     if (!res.ok) throw new Error(`Lanyard ${res.status}`);
     const json = await res.json();
     const data = json.data;
     if (!data) return null;
 
-    /* 1) Spotify */
+    /* 1) Spotify (best quality) */
     if (data.spotify) {
       const sp = data.spotify;
       const now = Date.now();
@@ -504,7 +529,48 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    /* 2) Other music platforms */
+    /* 2) If you want ALL PreMiD activities, do it here */
+    if (SHOW_ALL_PREMID_ACTIVITIES) {
+      const act = pickBestPremidActivity(data.activities || []);
+      if (act) {
+        slideInCard($$("spotify-card"));
+
+        const appName = act.name || "Activity";
+        const title   = act.details || appName;
+        const sub     = act.state || act?.assets?.large_text || appName;
+
+        $$("live-song-title").textContent  = title;
+        $$("live-song-artist").textContent = sub;
+
+        const coverUrl = resolveDiscordAssetUrl(act);
+        const coverEl = $$("live-activity-cover");
+        if (coverEl && coverUrl) coverEl.src = coverUrl;
+
+        currentSpotifyUrl = null;
+
+        const explicitEl = $$("explicit-badge");
+        if (explicitEl) explicitEl.style.display = "none";
+
+        // Progress rules:
+        // - if music activity: real timestamps -> real progress else indeterminate/hide
+        // - if NOT music: hide progress/time entirely
+        resetProgress();
+
+        if (isMusicActivity(act)) {
+          const hasRealProgress = setupProgressFromActivityTimestamps(act);
+          if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
+        } else {
+          setProgressVisibility("hide");
+        }
+
+        // Accent tint only if we actually have an image URL
+        updateDynamicColors(coverUrl || null);
+
+        return { text: `Active: ${appName}`, source: "activity" };
+      }
+    }
+
+    /* 3) If NOT showing all activities, fall back to “other music platforms only” */
     const act = pickBestMusicActivity(data.activities || []);
     if (act) {
       slideInCard($$("spotify-card"));
@@ -521,9 +587,6 @@ async function getDiscord() {
 
       currentSpotifyUrl = null;
 
-      // ✅ Music progress logic:
-      // - if timestamps exist: real progress
-      // - else: indeterminate/hide (your setting)
       resetProgress();
       const hasRealProgress = setupProgressFromActivityTimestamps(act);
       if (!hasRealProgress) setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
@@ -536,7 +599,7 @@ async function getDiscord() {
       return { text: `Listening on ${act.name || "Music"}`, source: "music" };
     }
 
-    /* 3) Not music: hide progress + card UI */
+    /* 4) Nothing else: hide card and show presence */
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
@@ -659,10 +722,18 @@ function applyStatusDecision({ main, twitchLive, temp }) {
     showStatusLineWithFade(temp.text, temp.source || "default");
     return;
   }
-  if (main?.source === "spotify") showStatusLineWithFade("Listening to Spotify", "spotify");
-  else if (main?.source === "music") showStatusLineWithFade(main?.text || "Listening to Music", "music");
-  else if (twitchLive) showStatusLineWithFade("Now Live on Twitch", "twitch");
-  else showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
+
+  if (main?.source === "spotify") {
+    showStatusLineWithFade("Listening to Spotify", "spotify");
+  } else if (main?.source === "music") {
+    showStatusLineWithFade(main?.text || "Listening to Music", "music");
+  } else if (main?.source === "activity") {
+    showStatusLineWithFade(main?.text || "Active", "activity");
+  } else if (twitchLive) {
+    showStatusLineWithFade("Now Live on Twitch", "twitch");
+  } else {
+    showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
+  }
 }
 
 /* ======================================================= */
@@ -678,6 +749,7 @@ async function mainLoop() {
     (discord?.source === "manual") ? discord
     : (discord?.source === "spotify") ? discord
     : (discord?.source === "music") ? discord
+    : (discord?.source === "activity") ? discord
     : (twitch || discord || { text: "No Current Active Activities", source: "discord" });
 
   const tempHit = reddit?.isTemp ? reddit : null;
@@ -720,9 +792,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(watchWebsiteSettings, 300);
 
   // start loop
-  setTimeout(() => {
-    mainLoop();
-  }, 50);
+  setTimeout(() => { mainLoop(); }, 50);
 
   setInterval(mainLoop, 30000);
   setInterval(updateLastUpdated, 1000);
