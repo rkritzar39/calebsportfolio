@@ -156,7 +156,6 @@
       <p class="setting-description">Automatically switch between light and dark modes.</p>
     </div>
 
-    <!-- UPDATED OPTIONS -->
     <select id="darkModeScheduler" aria-label="Dark mode schedule">
       <option value="off">Off</option>
       <option value="custom">Custom Schedule</option>
@@ -165,7 +164,7 @@
     </select>
   </div>
 
-  <!-- STATUS + LOCATION (only used for sunset/sunrise modes) -->
+  <!-- STATUS + LOCATION -->
   <div class="setting-card" id="darkModeStatusCard">
     <div class="setting-icon-container" style="background-color: #34c759;">
       <i class="fa-solid fa-circle-info"></i>
@@ -175,7 +174,6 @@
       <p class="setting-description" id="darkModeStatusText">—</p>
     </div>
 
-    <!-- Hidden by default; show this only when user chooses a sun-based mode and no location saved -->
     <button id="setLocationBtn" class="button" type="button" style="display:none;">Use My Location</button>
   </div>
 
@@ -201,6 +199,138 @@
         <p class="setting-description">Time when light mode reactivates.</p>
       </div>
       <input type="time" id="darkModeEnd" value="06:00" />
+    </div>
+  </div>
+
+  <!-- PER-DAY SCHEDULING TOGGLE -->
+  <label class="setting-card" for="darkModePerDayToggle">
+    <div class="setting-icon-container" style="background-color: #5856d6;">
+      <i class="fa-solid fa-calendar-days"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Per-Day Scheduling</strong>
+      <p class="setting-description">Use different rules for weekdays, weekends, and holidays.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="darkModePerDayToggle" role="switch" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- PER-DAY SCHEDULING PANEL -->
+  <div id="perDaySchedulePanel" style="display:none;">
+    <div class="setting-card">
+      <div class="setting-icon-container" style="background-color:#8e8e93;">
+        <i class="fa-solid fa-layer-group"></i>
+      </div>
+      <div class="setting-label">
+        <strong class="setting-title">Edit Schedule Group</strong>
+        <p class="setting-description">Choose a group to configure.</p>
+      </div>
+      <select id="perDayGroupSelect" aria-label="Per-day group">
+        <option value="weekdays">Weekdays (Mon–Fri)</option>
+        <option value="weekends">Weekends (Sat–Sun)</option>
+        <option value="holidays">Holidays</option>
+      </select>
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-icon-container" style="background-color:#34c759;">
+        <i class="fa-solid fa-sliders"></i>
+      </div>
+      <div class="setting-label">
+        <strong class="setting-title">Group Mode</strong>
+        <p class="setting-description">How this group controls theme.</p>
+      </div>
+      <select id="perDayModeSelect" aria-label="Per-day mode">
+        <option value="off">Off</option>
+        <option value="custom">Custom Schedule</option>
+        <option value="sunset_to_sunrise">Sunset → Sunrise</option>
+        <option value="sunrise_to_sunset">Sunrise → Sunset</option>
+        <option value="always_dark">Always Dark</option>
+        <option value="always_light">Always Light</option>
+      </select>
+    </div>
+
+    <!-- Per-day custom times only when perDayModeSelect = custom -->
+    <div class="schedule-group" id="perDayCustomTimes" style="display:none;">
+      <div class="setting-card">
+        <div class="setting-icon-container" style="background-color:#ff9500;">
+          <i class="fa-solid fa-sun"></i>
+        </div>
+        <div class="setting-label">
+          <strong class="setting-title">Start Time</strong>
+          <p class="setting-description">When dark mode activates.</p>
+        </div>
+        <input type="time" id="perDayStartTime" value="20:00" />
+      </div>
+
+      <div class="setting-card">
+        <div class="setting-icon-container" style="background-color:#5856d6;">
+          <i class="fa-solid fa-moon"></i>
+        </div>
+        <div class="setting-label">
+          <strong class="setting-title">End Time</strong>
+          <p class="setting-description">When light mode returns.</p>
+        </div>
+        <input type="time" id="perDayEndTime" value="06:00" />
+      </div>
+    </div>
+
+    <!-- Holiday Dates -->
+    <div class="setting-card" id="holidayDatesCard">
+      <div class="setting-icon-container" style="background-color:#ff2d55;">
+        <i class="fa-solid fa-calendar-plus"></i>
+      </div>
+      <div class="setting-label">
+        <strong class="setting-title">Holiday Dates</strong>
+        <p class="setting-description">Add dates that should use the “Holidays” rules.</p>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap;">
+        <input type="date" id="holidayDateInput" />
+        <button class="button" id="addHolidayDateBtn" type="button">Add</button>
+      </div>
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-icon-container" style="background-color:#8e8e93;">
+        <i class="fa-solid fa-list"></i>
+      </div>
+      <div class="setting-label">
+        <strong class="setting-title">Saved Holidays</strong>
+        <p class="setting-description" id="holidayListText">None</p>
+      </div>
+      <button class="button reset-button" id="clearHolidayDatesBtn" type="button">Clear</button>
+    </div>
+  </div>
+
+  <!-- AUTO-RECOMMEND TOGGLE -->
+  <label class="setting-card" for="autoRecommendSchedulerToggle">
+    <div class="setting-icon-container" style="background-color:#ff9500;">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Auto-Recommend Scheduler</strong>
+      <p class="setting-description">Suggest a schedule if you regularly switch around the same time.</p>
+    </div>
+    <div class="md-switch">
+      <input type="checkbox" id="autoRecommendSchedulerToggle" role="switch" />
+      <div class="track"><div class="thumb"></div></div>
+    </div>
+  </label>
+
+  <!-- RECOMMENDATION CARD (hidden until triggered by JS) -->
+  <div class="setting-card" id="scheduleRecommendationCard" style="display:none;">
+    <div class="setting-icon-container" style="background-color:#ff9500;">
+      <i class="fa-solid fa-lightbulb"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Suggested Schedule</strong>
+      <p class="setting-description" id="scheduleRecommendationText">—</p>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
+      <button class="button" id="applyScheduleRecommendationBtn" type="button">Apply</button>
+      <button class="button reset-button" id="dismissScheduleRecommendationBtn" type="button">Dismiss</button>
     </div>
   </div>
 </div>
