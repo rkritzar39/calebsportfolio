@@ -138,18 +138,33 @@ class SettingsManager {
       // Cache sunrise/sunset for today (prevents flicker + reduces compute)
       darkModeSunCache: null,
 
+      // Per-day scheduling
+      darkModePerDayEnabled: "disabled", // enabled | disabled
+      darkModePerDayRules: {
+        weekdays: { mode: "sunset_to_sunrise", start: "20:00", end: "06:00" },
+        weekends: { mode: "custom", start: "21:00", end: "07:00" },
+        holidays: { mode: "always_dark", start: "20:00", end: "06:00" },
+      },
+      darkModeHolidayDates: [],
+
+      // Auto-recommend scheduler
+      autoRecommendScheduler: "enabled", // enabled | disabled
+      themeBehaviorLog: [], // [{t:ms, mode:"dark"|"light"}]
+      dismissedRecommendations: {}, // { recId: true }
+      pendingScheduleRecommendation: null, // { recId, start, end }
+
       // Typography & a11y
       fontSize: 16,
-      focusOutline: "enabled", // enabled | disabled
-      motionEffects: "enabled", // enabled | disabled
-      highContrast: "disabled", // enabled | disabled
-      dyslexiaFont: "disabled", // enabled | disabled
-      underlineLinks: "disabled", // enabled | disabled
+      focusOutline: "enabled",
+      motionEffects: "enabled",
+      highContrast: "disabled",
+      dyslexiaFont: "disabled",
+      underlineLinks: "disabled",
 
       // Fun / perf
-      loadingScreen: "disabled", // enabled | disabled
-      mouseTrail: "disabled", // enabled | disabled
-      liveStatus: "disabled", // enabled | disabled
+      loadingScreen: "disabled",
+      mouseTrail: "disabled",
+      liveStatus: "disabled",
 
       // Reordering
       rearrangingEnabled: "disabled",
@@ -203,8 +218,10 @@ class SettingsManager {
       if (window.matchMedia) {
         this.deviceThemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
         this.deviceThemeMedia.addEventListener("change", () => {
-          // Only auto-apply device theme if scheduler is OFF
-          if (this.settings.appearanceMode === "device" && this.settings.darkModeScheduler === "off") {
+          // Only auto-apply device theme if scheduler is OFF (and per-day not controlling)
+          const eff = this.getEffectiveScheduleForNow();
+          const schedulerActive = eff.mode && eff.mode !== "off";
+          if (this.settings.appearanceMode === "device" && !schedulerActive) {
             this.applyAppearanceMode();
             this.applyCustomBackground(false);
           }
@@ -231,13 +248,12 @@ class SettingsManager {
           this.applyAllSettings();
           this.initializeControls();
           this.applyCustomBackground(false);
-          this.toggleScheduleInputs(this.settings.darkModeScheduler);
+          this.toggleScheduleInputs(); // uses effective mode now
           this.syncWallpaperUIVisibility();
           this.initCustomBackgroundControls();
           this.initWallpaperBlurControl();
           this.applyNotificationUI();
 
-          // NEW
           this.updateDarkModeStatusUI();
           this.syncLocationButtonUI();
         }
@@ -323,7 +339,7 @@ class SettingsManager {
     if (startInput) startInput.value = this.settings.darkModeStart;
     if (endInput) endInput.value = this.settings.darkModeEnd;
 
-    this.toggleScheduleInputs(this.settings.darkModeScheduler);
+    this.toggleScheduleInputs();
 
     const toggles = Object.keys(this.defaultSettings).filter(
       (k) =>
@@ -334,9 +350,15 @@ class SettingsManager {
 
     this.syncWallpaperUIVisibility();
 
-    // NEW
+    // Scheduler UI helpers
     this.updateDarkModeStatusUI();
     this.syncLocationButtonUI();
+
+    // Per-day + auto recommend UI
+    this.initPerDayControlsUI();
+    this.initAutoRecommendUI();
+    this.renderHolidayListUI();
+    this.renderScheduleRecommendationUI();
   }
 
   initSegmentedControl(controlId, value) {
@@ -388,7 +410,10 @@ class SettingsManager {
         const btn = e.target.closest("button");
         if (!btn || !btn.dataset.value) return;
 
-        if (this.settings.darkModeScheduler !== "off") {
+        // Block manual changes if scheduler is active (global OR per-day)
+        const eff = this.getEffectiveScheduleForNow();
+        const schedulerActive = eff.mode && eff.mode !== "off";
+        if (schedulerActive) {
           alert("Appearance mode is controlled by the Scheduler. Disable it to make manual changes.");
           this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
           this.updateSegmentedBackground("appearanceModeControl");
@@ -398,6 +423,13 @@ class SettingsManager {
         this.settings.appearanceMode = btn.dataset.value;
         this.applySetting("appearanceMode");
         this.saveSettings();
+
+        // Learn behavior only when user explicitly picks light/dark
+        if (btn.dataset.value === "dark" || btn.dataset.value === "light") {
+          this.logThemeBehavior(btn.dataset.value);
+          this.maybeRecommendSchedule();
+          this.renderScheduleRecommendationUI();
+        }
 
         appearanceControl.querySelectorAll("button").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
@@ -443,6 +475,7 @@ class SettingsManager {
       });
     }
 
+    // Global scheduler select + custom times
     const schedulerSelect = document.getElementById("darkModeScheduler");
     const startInput = document.getElementById("darkModeStart");
     const endInput = document.getElementById("darkModeEnd");
@@ -452,7 +485,7 @@ class SettingsManager {
       this.settings.darkModeScheduler = val;
       this.saveSettings();
 
-      this.toggleScheduleInputs(val);
+      this.toggleScheduleInputs();
       this.syncLocationButtonUI();
       this.updateDarkModeStatusUI();
       this.checkDarkModeSchedule(true);
@@ -472,11 +505,133 @@ class SettingsManager {
       this.updateDarkModeStatusUI();
     });
 
-    // NEW: location button
+    // Location button (sun modes)
     document.getElementById("setLocationBtn")?.addEventListener("click", () => {
       this.requestUserLocation();
     });
 
+    // Per-day scheduling toggle
+    document.getElementById("darkModePerDayToggle")?.addEventListener("change", (e) => {
+      this.settings.darkModePerDayEnabled = e.target.checked ? "enabled" : "disabled";
+      this.saveSettings();
+      this.initPerDayControlsUI();
+      this.toggleScheduleInputs();
+      this.updateDarkModeStatusUI();
+      this.syncLocationButtonUI();
+      this.checkDarkModeSchedule(true);
+    });
+
+    // Per-day group select
+    document.getElementById("perDayGroupSelect")?.addEventListener("change", () => {
+      this.syncPerDayEditorFromSettings();
+    });
+
+    // Per-day mode select
+    document.getElementById("perDayModeSelect")?.addEventListener("change", (e) => {
+      const group = document.getElementById("perDayGroupSelect")?.value || "weekdays";
+      this.ensurePerDayRule(group);
+      this.settings.darkModePerDayRules[group].mode = e.target.value;
+      this.saveSettings();
+      this.syncPerDayEditorFromSettings();
+      this.toggleScheduleInputs();
+      this.updateDarkModeStatusUI();
+      this.syncLocationButtonUI();
+      this.checkDarkModeSchedule(true);
+    });
+
+    // Per-day start/end
+    document.getElementById("perDayStartTime")?.addEventListener("change", (e) => {
+      const group = document.getElementById("perDayGroupSelect")?.value || "weekdays";
+      this.ensurePerDayRule(group);
+      this.settings.darkModePerDayRules[group].start = e.target.value;
+      this.saveSettings();
+      this.toggleScheduleInputs();
+      this.updateDarkModeStatusUI();
+      this.checkDarkModeSchedule(true);
+    });
+
+    document.getElementById("perDayEndTime")?.addEventListener("change", (e) => {
+      const group = document.getElementById("perDayGroupSelect")?.value || "weekdays";
+      this.ensurePerDayRule(group);
+      this.settings.darkModePerDayRules[group].end = e.target.value;
+      this.saveSettings();
+      this.toggleScheduleInputs();
+      this.updateDarkModeStatusUI();
+      this.checkDarkModeSchedule(true);
+    });
+
+    // Holiday add/clear
+    document.getElementById("addHolidayDateBtn")?.addEventListener("click", () => {
+      const input = document.getElementById("holidayDateInput");
+      const val = input?.value;
+      if (!val) return;
+
+      const arr = Array.isArray(this.settings.darkModeHolidayDates) ? this.settings.darkModeHolidayDates : [];
+      if (!arr.includes(val)) arr.push(val);
+      arr.sort();
+      this.settings.darkModeHolidayDates = arr;
+      this.saveSettings();
+      this.renderHolidayListUI();
+      this.toggleScheduleInputs();
+      this.updateDarkModeStatusUI();
+      this.checkDarkModeSchedule(true);
+    });
+
+    document.getElementById("clearHolidayDatesBtn")?.addEventListener("click", () => {
+      this.settings.darkModeHolidayDates = [];
+      this.saveSettings();
+      this.renderHolidayListUI();
+      this.toggleScheduleInputs();
+      this.updateDarkModeStatusUI();
+      this.checkDarkModeSchedule(true);
+    });
+
+    // Auto-recommend toggle
+    document.getElementById("autoRecommendSchedulerToggle")?.addEventListener("change", (e) => {
+      this.settings.autoRecommendScheduler = e.target.checked ? "enabled" : "disabled";
+      this.saveSettings();
+    });
+
+    // Apply / Dismiss recommendation
+    document.getElementById("applyScheduleRecommendationBtn")?.addEventListener("click", () => {
+      const rec = this.settings.pendingScheduleRecommendation;
+      if (!rec) return;
+
+      // Apply as a global custom schedule
+      this.settings.darkModeScheduler = "custom";
+      this.settings.darkModeStart = rec.start;
+      this.settings.darkModeEnd = rec.end;
+
+      this.settings.pendingScheduleRecommendation = null;
+      this.saveSettings();
+
+      // Sync UI
+      const schedulerSelect2 = document.getElementById("darkModeScheduler");
+      const startInput2 = document.getElementById("darkModeStart");
+      const endInput2 = document.getElementById("darkModeEnd");
+      if (schedulerSelect2) schedulerSelect2.value = "custom";
+      if (startInput2) startInput2.value = rec.start;
+      if (endInput2) endInput2.value = rec.end;
+
+      this.toggleScheduleInputs();
+      this.renderScheduleRecommendationUI();
+      this.showToast("Schedule Applied", `Dark mode will follow ${rec.start} → ${rec.end}.`);
+      this.updateDarkModeStatusUI();
+      this.checkDarkModeSchedule(true);
+    });
+
+    document.getElementById("dismissScheduleRecommendationBtn")?.addEventListener("click", () => {
+      const rec = this.settings.pendingScheduleRecommendation;
+      if (rec?.recId) {
+        this.settings.dismissedRecommendations = this.settings.dismissedRecommendations || {};
+        this.settings.dismissedRecommendations[rec.recId] = true;
+      }
+      this.settings.pendingScheduleRecommendation = null;
+      this.saveSettings();
+      this.renderScheduleRecommendationUI();
+    });
+
+    // Generic toggles
     const toggleKeys = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
@@ -516,11 +671,9 @@ class SettingsManager {
   ============================= */
 
   setThemeClasses(isDark) {
-    // 1. Control the html classes
     document.documentElement.classList.toggle("dark-mode", isDark);
     document.documentElement.classList.toggle("light-mode", !isDark);
 
-    // 2. Control the body classes (for specific stylesheets)
     document.body.classList.toggle("dark-mode", isDark);
     document.body.classList.toggle("light-e", !isDark);
   }
@@ -532,8 +685,6 @@ class SettingsManager {
         window.matchMedia("(prefers-color-scheme: dark)").matches);
 
     this.setThemeClasses(isDark);
-
-    // Re-apply accent color after theme change to ensure it overrides
     this.applyAccentColor();
   }
 
@@ -541,15 +692,12 @@ class SettingsManager {
     const accent = this.settings.accentColor;
     const contrast = this.getContrastColor(accent);
 
-    // 1. Set on HTML (Global)
     document.documentElement.style.setProperty("--accent-color", accent);
     document.documentElement.style.setProperty("--accent-text-color", contrast);
 
-    // 2. Set on BODY (Override Specificity)
     document.body.style.setProperty("--accent-color", accent);
     document.body.style.setProperty("--accent-text-color", contrast);
 
-    // Update preview box
     const preview = document.getElementById("accentColorPreview");
     if (preview) preview.style.backgroundColor = accent;
 
@@ -767,7 +915,6 @@ class SettingsManager {
       layer.style.opacity = "0";
     }
 
-    // Use scheduler-decided theme when scheduler is active
     const isDark =
       document.documentElement.classList.contains("dark-mode") ||
       document.body.classList.contains("dark-mode");
@@ -817,6 +964,184 @@ class SettingsManager {
   }
 
   /* =============================
+     Per-Day Scheduling + Auto-Recommend
+  ============================= */
+
+  isWeekend(d = new Date()) {
+    const day = d.getDay();
+    return day === 0 || day === 6;
+  }
+
+  todayISO(d = new Date()) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const da = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${da}`;
+  }
+
+  ensurePerDayRule(groupKey) {
+    this.settings.darkModePerDayRules = this.settings.darkModePerDayRules || {};
+    if (!this.settings.darkModePerDayRules[groupKey]) {
+      this.settings.darkModePerDayRules[groupKey] = { mode: "off", start: "20:00", end: "06:00" };
+    }
+  }
+
+  getEffectiveScheduleForNow() {
+    if (this.settings.darkModePerDayEnabled === "enabled") {
+      const today = this.todayISO(new Date());
+      const holidays = Array.isArray(this.settings.darkModeHolidayDates) ? this.settings.darkModeHolidayDates : [];
+      const isHoliday = holidays.includes(today);
+
+      const groupKey = isHoliday ? "holidays" : (this.isWeekend() ? "weekends" : "weekdays");
+      const rule = this.settings.darkModePerDayRules?.[groupKey];
+
+      if (rule && rule.mode) {
+        return {
+          source: `per_day:${groupKey}`,
+          mode: rule.mode,
+          start: rule.start ?? this.settings.darkModeStart,
+          end: rule.end ?? this.settings.darkModeEnd,
+        };
+      }
+    }
+
+    return {
+      source: "global",
+      mode: this.settings.darkModeScheduler || "off",
+      start: this.settings.darkModeStart,
+      end: this.settings.darkModeEnd,
+    };
+  }
+
+  initPerDayControlsUI() {
+    const toggle = document.getElementById("darkModePerDayToggle");
+    const panel = document.getElementById("perDaySchedulePanel");
+    if (toggle) toggle.checked = this.settings.darkModePerDayEnabled === "enabled";
+    if (panel) panel.style.display = this.settings.darkModePerDayEnabled === "enabled" ? "" : "none";
+
+    this.syncPerDayEditorFromSettings();
+  }
+
+  syncPerDayEditorFromSettings() {
+    const groupSel = document.getElementById("perDayGroupSelect");
+    const modeSel = document.getElementById("perDayModeSelect");
+    const startEl = document.getElementById("perDayStartTime");
+    const endEl = document.getElementById("perDayEndTime");
+    const customBox = document.getElementById("perDayCustomTimes");
+
+    if (!groupSel || !modeSel) return;
+
+    const group = groupSel.value || "weekdays";
+    this.ensurePerDayRule(group);
+
+    const rule = this.settings.darkModePerDayRules[group];
+    modeSel.value = rule.mode || "off";
+
+    const showCustom = rule.mode === "custom";
+    if (customBox) customBox.style.display = showCustom ? "" : "none";
+    if (startEl) startEl.value = rule.start || "20:00";
+    if (endEl) endEl.value = rule.end || "06:00";
+  }
+
+  renderHolidayListUI() {
+    const el = document.getElementById("holidayListText");
+    if (!el) return;
+    const arr = Array.isArray(this.settings.darkModeHolidayDates) ? this.settings.darkModeHolidayDates : [];
+    el.textContent = arr.length ? arr.join(", ") : "None";
+  }
+
+  initAutoRecommendUI() {
+    const t = document.getElementById("autoRecommendSchedulerToggle");
+    if (t) t.checked = this.settings.autoRecommendScheduler !== "disabled";
+  }
+
+  renderScheduleRecommendationUI() {
+    const card = document.getElementById("scheduleRecommendationCard");
+    const text = document.getElementById("scheduleRecommendationText");
+    if (!card || !text) return;
+
+    const rec = this.settings.pendingScheduleRecommendation;
+    if (!rec) {
+      card.style.display = "none";
+      return;
+    }
+
+    card.style.display = "";
+    text.textContent = `You often switch around the same time. Auto-schedule dark mode from ${rec.start} → ${rec.end}?`;
+  }
+
+  logThemeBehavior(newMode) {
+    if (newMode !== "dark" && newMode !== "light") return;
+
+    const entry = { t: Date.now(), mode: newMode };
+    const log = Array.isArray(this.settings.themeBehaviorLog) ? this.settings.themeBehaviorLog : [];
+    log.push(entry);
+    while (log.length > 60) log.shift();
+
+    this.settings.themeBehaviorLog = log;
+    this.saveSettings();
+  }
+
+  minutesSinceMidnight(ts) {
+    const d = new Date(ts);
+    return d.getHours() * 60 + d.getMinutes();
+  }
+
+  median(nums) {
+    const a = [...nums].sort((x, y) => x - y);
+    const mid = Math.floor(a.length / 2);
+    return a.length % 2 ? a[mid] : Math.round((a[mid - 1] + a[mid]) / 2);
+  }
+
+  stddev(nums) {
+    const mean = nums.reduce((s, n) => s + n, 0) / nums.length;
+    const v = nums.reduce((s, n) => s + (n - mean) ** 2, 0) / nums.length;
+    return Math.sqrt(v);
+  }
+
+  minutesToHHMM(mins) {
+    const h = String(Math.floor(mins / 60)).padStart(2, "0");
+    const m = String(mins % 60).padStart(2, "0");
+    return `${h}:${m}`;
+  }
+
+  maybeRecommendSchedule() {
+    if (this.settings.autoRecommendScheduler === "disabled") return;
+    if (this.settings.darkModeScheduler !== "off") return;
+    if (this.settings.pendingScheduleRecommendation) return;
+
+    const log = Array.isArray(this.settings.themeBehaviorLog) ? this.settings.themeBehaviorLog : [];
+    if (log.length < 6) return;
+
+    const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
+    const recent = log.filter((e) => e.t >= cutoff);
+
+    const darkEvents = recent.filter((e) => e.mode === "dark");
+    const lightEvents = recent.filter((e) => e.mode === "light");
+    if (darkEvents.length < 3 || lightEvents.length < 3) return;
+
+    const darkMins = darkEvents.map((e) => this.minutesSinceMidnight(e.t));
+    const lightMins = lightEvents.map((e) => this.minutesSinceMidnight(e.t));
+
+    const darkMed = this.median(darkMins);
+    const lightMed = this.median(lightMins);
+
+    const darkSd = this.stddev(darkMins);
+    const lightSd = this.stddev(lightMins);
+
+    if (darkSd > 35 || lightSd > 35) return;
+
+    const recId = `autoSched_${darkMed}_${lightMed}`;
+    if (this.settings.dismissedRecommendations?.[recId]) return;
+
+    const start = this.minutesToHHMM(darkMed);
+    const end = this.minutesToHHMM(lightMed);
+
+    this.settings.pendingScheduleRecommendation = { recId, start, end };
+    this.saveSettings();
+  }
+
+  /* =============================
      Dark Mode Scheduler
   ============================= */
   initSchedulerInterval() {
@@ -825,7 +1150,6 @@ class SettingsManager {
     this.schedulerInterval = setInterval(() => this.checkDarkModeSchedule(), 60000);
   }
 
-  // NEW helpers for sun times + status text
   dateKey(d = new Date()) {
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
   }
@@ -872,7 +1196,9 @@ class SettingsManager {
     const btn = document.getElementById("setLocationBtn");
     if (!btn) return;
 
-    const mode = this.settings.darkModeScheduler || "off";
+    const eff = this.getEffectiveScheduleForNow();
+    const mode = eff.mode || "off";
+
     const needsLocation =
       (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") &&
       (this.settings.darkModeLat == null || this.settings.darkModeLon == null);
@@ -884,8 +1210,10 @@ class SettingsManager {
     const el = document.getElementById("darkModeStatusText");
     if (!el) return;
 
-    const mode = this.settings.darkModeScheduler || "off";
+    const eff = this.getEffectiveScheduleForNow();
+    const mode = eff.mode || "off";
     const now = new Date();
+    const tag = eff.source?.startsWith("per_day:") ? ` • ${eff.source.replace("per_day:", "").toUpperCase()}` : "";
 
     const setText = (t) => (el.textContent = t);
 
@@ -894,9 +1222,19 @@ class SettingsManager {
       return;
     }
 
+    if (mode === "always_dark") {
+      setText(`Dark mode is always on.${tag}`);
+      return;
+    }
+
+    if (mode === "always_light") {
+      setText(`Light mode is always on.${tag}`);
+      return;
+    }
+
     if (mode === "custom") {
-      const [sh, sm] = this.settings.darkModeStart.split(":").map(Number);
-      const [eh, em] = this.settings.darkModeEnd.split(":").map(Number);
+      const [sh, sm] = (eff.start || this.settings.darkModeStart).split(":").map(Number);
+      const [eh, em] = (eff.end || this.settings.darkModeEnd).split(":").map(Number);
 
       const start = new Date(now);
       start.setHours(sh, sm, 0, 0);
@@ -909,7 +1247,6 @@ class SettingsManager {
 
       if (end <= start) {
         isDark = now >= start || now < end;
-
         if (isDark) {
           nextSwitch = new Date(end);
           if (now >= start) nextSwitch.setDate(nextSwitch.getDate() + 1);
@@ -921,7 +1258,7 @@ class SettingsManager {
         nextSwitch = isDark ? end : start;
       }
 
-      setText(`${isDark ? "Dark mode" : "Light mode"} until ${this.formatTime12h(nextSwitch)}.`);
+      setText(`${isDark ? "Dark mode" : "Light mode"} until ${this.formatTime12h(nextSwitch)}.${tag}`);
       return;
     }
 
@@ -930,13 +1267,13 @@ class SettingsManager {
       const lon = this.settings.darkModeLon;
 
       if (lat == null || lon == null) {
-        setText("Needs location to calculate sunrise/sunset.");
+        setText(`Needs location to calculate sunrise/sunset.${tag}`);
         return;
       }
 
       const sun = this.ensureSunCache();
       if (!sun) {
-        setText("Sun times unavailable (SunCalc missing).");
+        setText(`Sun times unavailable (SunCalc missing).${tag}`);
         return;
       }
 
@@ -958,11 +1295,11 @@ class SettingsManager {
           : `sunrise (${this.formatTime12h(sunrise)})`;
       }
 
-      setText(`${isDark ? "Dark mode" : "Light mode"} until ${nextLabel}.`);
+      setText(`${isDark ? "Dark mode" : "Light mode"} until ${nextLabel}.${tag}`);
       return;
     }
 
-    setText("Unknown scheduler mode.");
+    setText(`Unknown scheduler mode.${tag}`);
   }
 
   requestUserLocation() {
@@ -995,10 +1332,10 @@ class SettingsManager {
   }
 
   checkDarkModeSchedule(force = false) {
-    const mode = this.settings.darkModeScheduler || "off";
-    this.toggleScheduleInputs(mode);
+    const eff = this.getEffectiveScheduleForNow();
+    const mode = eff.mode || "off";
 
-    // keep UI labels fresh
+    this.toggleScheduleInputs();
     this.updateDarkModeStatusUI();
     this.syncLocationButtonUI();
 
@@ -1011,11 +1348,25 @@ class SettingsManager {
       return;
     }
 
+    if (mode === "always_dark") {
+      this.setThemeClasses(true);
+      this.applyAccentColor();
+      this.applyCustomBackground(false);
+      return;
+    }
+
+    if (mode === "always_light") {
+      this.setThemeClasses(false);
+      this.applyAccentColor();
+      this.applyCustomBackground(false);
+      return;
+    }
+
     // CUSTOM schedule (time-based)
     if (mode === "custom") {
       const now = new Date();
-      const [startH, startM] = this.settings.darkModeStart.split(":").map(Number);
-      const [endH, endM] = this.settings.darkModeEnd.split(":").map(Number);
+      const [startH, startM] = (eff.start || this.settings.darkModeStart).split(":").map(Number);
+      const [endH, endM] = (eff.end || this.settings.darkModeEnd).split(":").map(Number);
 
       const start = new Date(now);
       start.setHours(startH, startM, 0, 0);
@@ -1084,11 +1435,12 @@ class SettingsManager {
     }
   }
 
-  toggleScheduleInputs(mode) {
-    // IMPORTANT: must match your updated HTML wrapper id
+  toggleScheduleInputs() {
     const group = document.getElementById("customScheduleGroup");
     if (!group) return;
-    group.style.display = mode === "custom" ? "" : "none";
+
+    const eff = this.getEffectiveScheduleForNow();
+    group.style.display = eff.mode === "custom" ? "" : "none";
   }
 
   /* =============================
@@ -1097,12 +1449,16 @@ class SettingsManager {
   applyAllSettings() {
     Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
     this.applyCustomBackground(false);
-    this.toggleScheduleInputs(this.settings.darkModeScheduler);
+    this.toggleScheduleInputs();
     this.syncWallpaperUIVisibility();
 
-    // NEW
     this.updateDarkModeStatusUI();
     this.syncLocationButtonUI();
+
+    this.initPerDayControlsUI();
+    this.initAutoRecommendUI();
+    this.renderHolidayListUI();
+    this.renderScheduleRecommendationUI();
   }
 
   applySetting(key) {
@@ -1121,22 +1477,14 @@ class SettingsManager {
       dyslexiaFont: () =>
         document.body.classList.toggle("dyslexia-font", this.settings.dyslexiaFont === "enabled"),
       underlineLinks: () =>
-        document.body.classList.toggle(
-          "underline-links",
-          this.settings.underlineLinks === "enabled"
-        ),
+        document.body.classList.toggle("underline-links", this.settings.underlineLinks === "enabled"),
       mouseTrail: () =>
-        document.body.classList.toggle(
-          "mouse-trail-enabled",
-          this.settings.mouseTrail === "enabled"
-        ),
+        document.body.classList.toggle("mouse-trail-enabled", this.settings.mouseTrail === "enabled"),
     };
 
     actions[key]?.();
 
-    // ----------------------------
     // Smooth section show/hide
-    // ----------------------------
     if (key.startsWith("show")) {
       const sectionId = key
         .replace(/^show/, "")
@@ -1201,9 +1549,7 @@ class SettingsManager {
       }
     }
 
-    // ----------------------------
-    // Live activity (if used)
-    // ----------------------------
+    // Live activity
     if (key === "showLiveActivity") {
       const liveActivity = document.getElementById("live-activity");
       if (liveActivity) {
@@ -1247,7 +1593,8 @@ class SettingsManager {
     const container = this.ensureToastContainer();
     const toast = document.createElement("div");
     toast.className = "toast";
-    const accent = getComputedStyle(document.body).getPropertyValue("--accent-color") || "#007aff";
+    const accent =
+      getComputedStyle(document.body).getPropertyValue("--accent-color") || "#007aff";
 
     Object.assign(toast.style, {
       background: accent.trim(),
@@ -1346,7 +1693,8 @@ class SettingsManager {
         };
         state.categories[key] = el.checked;
         this.setNotificationSettings(state);
-        const label = el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
+        const label =
+          el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
         this.showToast("Preference Saved", `${label} notifications updated.`);
       });
     };
