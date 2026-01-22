@@ -120,28 +120,36 @@ class SettingsManager {
     ============================= */
     this.defaultSettings = {
       // Appearance
-      appearanceMode: "device",   // "device" | "light" | "dark"
+      appearanceMode: "device", // "device" | "light" | "dark"
       themeStyle: "clear",
       accentColor: "#3ddc84",
       matchSongAccent: "enabled",
 
       // Scheduler
-      darkModeScheduler: "off",   // "off" | "auto"
+      // "off" | "custom" | "sunset_to_sunrise" | "sunrise_to_sunset"
+      darkModeScheduler: "off",
       darkModeStart: "20:00",
       darkModeEnd: "06:00",
 
+      // Sun-based scheduler needs location
+      darkModeLat: null,
+      darkModeLon: null,
+
+      // Cache sunrise/sunset for today (prevents flicker + reduces compute)
+      darkModeSunCache: null,
+
       // Typography & a11y
       fontSize: 16,
-      focusOutline: "enabled",    // enabled | disabled
-      motionEffects: "enabled",   // enabled | disabled
-      highContrast: "disabled",   // enabled | disabled
-      dyslexiaFont: "disabled",   // enabled | disabled
+      focusOutline: "enabled", // enabled | disabled
+      motionEffects: "enabled", // enabled | disabled
+      highContrast: "disabled", // enabled | disabled
+      dyslexiaFont: "disabled", // enabled | disabled
       underlineLinks: "disabled", // enabled | disabled
 
       // Fun / perf
-      loadingScreen: "disabled",  // enabled | disabled
-      mouseTrail: "disabled",     // enabled | disabled
-      liveStatus: "disabled",     // enabled | disabled
+      loadingScreen: "disabled", // enabled | disabled
+      mouseTrail: "disabled", // enabled | disabled
+      liveStatus: "disabled", // enabled | disabled
 
       // Reordering
       rearrangingEnabled: "disabled",
@@ -195,7 +203,8 @@ class SettingsManager {
       if (window.matchMedia) {
         this.deviceThemeMedia = window.matchMedia("(prefers-color-scheme: dark)");
         this.deviceThemeMedia.addEventListener("change", () => {
-          if (this.settings.appearanceMode === "device") {
+          // Only auto-apply device theme if scheduler is OFF
+          if (this.settings.appearanceMode === "device" && this.settings.darkModeScheduler === "off") {
             this.applyAppearanceMode();
             this.applyCustomBackground(false);
           }
@@ -227,6 +236,10 @@ class SettingsManager {
           this.initCustomBackgroundControls();
           this.initWallpaperBlurControl();
           this.applyNotificationUI();
+
+          // NEW
+          this.updateDarkModeStatusUI();
+          this.syncLocationButtonUI();
         }
         if (
           e.key === "customBackground" ||
@@ -264,7 +277,7 @@ class SettingsManager {
       return { ...this.defaultSettings };
     }
   }
-  
+
   saveSettings() {
     const toSave = {};
     for (const key in this.defaultSettings) {
@@ -309,17 +322,21 @@ class SettingsManager {
     if (schedulerSelect) schedulerSelect.value = this.settings.darkModeScheduler;
     if (startInput) startInput.value = this.settings.darkModeStart;
     if (endInput) endInput.value = this.settings.darkModeEnd;
+
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
 
     const toggles = Object.keys(this.defaultSettings).filter(
       (k) =>
         typeof this.defaultSettings[k] === "string" &&
-        (this.defaultSettings[k] === "enabled" ||
-          this.defaultSettings[k] === "disabled")
+        (this.defaultSettings[k] === "enabled" || this.defaultSettings[k] === "disabled")
     );
     toggles.forEach((key) => this.setToggle(key));
 
     this.syncWallpaperUIVisibility();
+
+    // NEW
+    this.updateDarkModeStatusUI();
+    this.syncLocationButtonUI();
   }
 
   initSegmentedControl(controlId, value) {
@@ -371,7 +388,7 @@ class SettingsManager {
         const btn = e.target.closest("button");
         if (!btn || !btn.dataset.value) return;
 
-        if (this.settings.darkModeScheduler === "auto") {
+        if (this.settings.darkModeScheduler !== "off") {
           alert("Appearance mode is controlled by the Scheduler. Disable it to make manual changes.");
           this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
           this.updateSegmentedBackground("appearanceModeControl");
@@ -434,7 +451,10 @@ class SettingsManager {
       const val = e.target.value;
       this.settings.darkModeScheduler = val;
       this.saveSettings();
+
       this.toggleScheduleInputs(val);
+      this.syncLocationButtonUI();
+      this.updateDarkModeStatusUI();
       this.checkDarkModeSchedule(true);
     });
 
@@ -442,12 +462,19 @@ class SettingsManager {
       this.settings.darkModeStart = e.target.value;
       this.saveSettings();
       this.checkDarkModeSchedule(true);
+      this.updateDarkModeStatusUI();
     });
 
     endInput?.addEventListener("change", (e) => {
       this.settings.darkModeEnd = e.target.value;
       this.saveSettings();
       this.checkDarkModeSchedule(true);
+      this.updateDarkModeStatusUI();
+    });
+
+    // NEW: location button
+    document.getElementById("setLocationBtn")?.addEventListener("click", () => {
+      this.requestUserLocation();
     });
 
     const toggleKeys = Object.keys(this.defaultSettings).filter(
@@ -487,28 +514,15 @@ class SettingsManager {
   /* =============================
      Appearance & Theme
   ============================= */
-  
+
   setThemeClasses(isDark) {
     // 1. Control the html classes
     document.documentElement.classList.toggle("dark-mode", isDark);
     document.documentElement.classList.toggle("light-mode", !isDark);
 
     // 2. Control the body classes (for specific stylesheets)
-    document.body.classList.toggle("dark-mode", isDark); 
+    document.body.classList.toggle("dark-mode", isDark);
     document.body.classList.toggle("light-e", !isDark);
-
-    // 3. Settings page specific handling
-    // If we are on the settings page in light mode, we might want to ensure 
-    // the "light-e" class doesn't conflict with local styles, OR we might need it.
-    // *UPDATE*: Removing logic that strips 'light-e' to prevent variable loss.
-    // If you specifically need to strip it for layout reasons, uncomment below:
-    /*
-    if (document.body.classList.contains("settings-page")) {
-      if (!isDark) {
-        document.body.classList.remove("light-e");
-      }
-    }
-    */
   }
 
   applyAppearanceMode() {
@@ -516,18 +530,13 @@ class SettingsManager {
       this.settings.appearanceMode === "dark" ||
       (this.settings.appearanceMode === "device" &&
         window.matchMedia("(prefers-color-scheme: dark)").matches);
-    
+
     this.setThemeClasses(isDark);
-    
+
     // Re-apply accent color after theme change to ensure it overrides
     this.applyAccentColor();
   }
 
-  /**
-   * UPDATED: applyAccentColor
-   * Now sets properties on both <html> and <body> to ensure
-   * Light Mode CSS stylesheets don't override the custom color.
-   */
   applyAccentColor() {
     const accent = this.settings.accentColor;
     const contrast = this.getContrastColor(accent);
@@ -537,7 +546,6 @@ class SettingsManager {
     document.documentElement.style.setProperty("--accent-text-color", contrast);
 
     // 2. Set on BODY (Override Specificity)
-    // This forces the custom color to win over 'body.light-mode' CSS rules.
     document.body.style.setProperty("--accent-color", accent);
     document.body.style.setProperty("--accent-text-color", contrast);
 
@@ -549,10 +557,7 @@ class SettingsManager {
   }
 
   applyFontSize() {
-    document.documentElement.style.setProperty(
-      "--font-size-base",
-      `${this.settings.fontSize}px`
-    );
+    document.documentElement.style.setProperty("--font-size-base", `${this.settings.fontSize}px`);
   }
 
   applyMotionEffects() {
@@ -589,7 +594,6 @@ class SettingsManager {
     const r = parseInt(hex.substr(1, 2), 16),
       g = parseInt(hex.substr(3, 2), 16),
       b = parseInt(hex.substr(5, 2), 16);
-    // If color is very bright and we are in light mode, show warning
     const isLightColor = r > 240 && g > 240 && b > 240;
     warn.style.display = isLightColor && isLight ? "block" : "none";
   }
@@ -683,7 +687,8 @@ class SettingsManager {
         localStorage.setItem("customBackgroundName", file.name);
 
         const blurSlider = document.getElementById("blur-slider");
-        const blurValue = blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
+        const blurValue =
+          blurSlider ? blurSlider.value : localStorage.getItem("wallpaperBlur") || "0";
         localStorage.setItem("wallpaperBlur", blurValue);
 
         this.applyCustomBackground(true);
@@ -762,14 +767,12 @@ class SettingsManager {
       layer.style.opacity = "0";
     }
 
+    // Use scheduler-decided theme when scheduler is active
     const isDark =
-      this.settings.appearanceMode === "dark" ||
-      (this.settings.appearanceMode === "device" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.classList.contains("dark-mode") ||
+      document.body.classList.contains("dark-mode");
 
-    tint.style.background = isDark
-      ? "rgba(0, 0, 0, 0.45)"
-      : "rgba(255, 255, 255, 0.15)";
+    tint.style.background = isDark ? "rgba(0, 0, 0, 0.45)" : "rgba(255, 255, 255, 0.15)";
 
     const blurValue = localStorage.getItem("wallpaperBlur") ?? "0";
     this.applyWallpaperBlur(blurValue);
@@ -819,9 +822,175 @@ class SettingsManager {
   initSchedulerInterval() {
     clearInterval(this.schedulerInterval);
     this.checkDarkModeSchedule(true);
-    this.schedulerInterval = setInterval(
-      () => this.checkDarkModeSchedule(),
-      60000
+    this.schedulerInterval = setInterval(() => this.checkDarkModeSchedule(), 60000);
+  }
+
+  // NEW helpers for sun times + status text
+  dateKey(d = new Date()) {
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  }
+
+  formatTime12h(date) {
+    const d = new Date(date);
+    const h = d.getHours();
+    const m = d.getMinutes();
+    const ampm = h >= 12 ? "PM" : "AM";
+    const hh = ((h + 11) % 12) + 1;
+    const mm = String(m).padStart(2, "0");
+    return `${hh}:${mm} ${ampm}`;
+  }
+
+  ensureSunCache() {
+    if (typeof SunCalc === "undefined") return null;
+
+    const lat = this.settings.darkModeLat;
+    const lon = this.settings.darkModeLon;
+    if (lat == null || lon == null) return null;
+
+    const todayKey = this.dateKey(new Date());
+    const cached = this.settings.darkModeSunCache;
+
+    if (cached && cached.dateKey === todayKey && cached.lat === lat && cached.lon === lon) {
+      return cached;
+    }
+
+    const times = SunCalc.getTimes(new Date(), lat, lon);
+    const next = {
+      dateKey: todayKey,
+      lat,
+      lon,
+      sunriseISO: times.sunrise.toISOString(),
+      sunsetISO: times.sunset.toISOString(),
+    };
+
+    this.settings.darkModeSunCache = next;
+    this.saveSettings();
+    return next;
+  }
+
+  syncLocationButtonUI() {
+    const btn = document.getElementById("setLocationBtn");
+    if (!btn) return;
+
+    const mode = this.settings.darkModeScheduler || "off";
+    const needsLocation =
+      (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") &&
+      (this.settings.darkModeLat == null || this.settings.darkModeLon == null);
+
+    btn.style.display = needsLocation ? "" : "none";
+  }
+
+  updateDarkModeStatusUI() {
+    const el = document.getElementById("darkModeStatusText");
+    if (!el) return;
+
+    const mode = this.settings.darkModeScheduler || "off";
+    const now = new Date();
+
+    const setText = (t) => (el.textContent = t);
+
+    if (mode === "off") {
+      setText("Scheduler is off.");
+      return;
+    }
+
+    if (mode === "custom") {
+      const [sh, sm] = this.settings.darkModeStart.split(":").map(Number);
+      const [eh, em] = this.settings.darkModeEnd.split(":").map(Number);
+
+      const start = new Date(now);
+      start.setHours(sh, sm, 0, 0);
+
+      const end = new Date(now);
+      end.setHours(eh, em, 0, 0);
+
+      let isDark;
+      let nextSwitch;
+
+      if (end <= start) {
+        isDark = now >= start || now < end;
+
+        if (isDark) {
+          nextSwitch = new Date(end);
+          if (now >= start) nextSwitch.setDate(nextSwitch.getDate() + 1);
+        } else {
+          nextSwitch = start;
+        }
+      } else {
+        isDark = now >= start && now < end;
+        nextSwitch = isDark ? end : start;
+      }
+
+      setText(`${isDark ? "Dark mode" : "Light mode"} until ${this.formatTime12h(nextSwitch)}.`);
+      return;
+    }
+
+    if (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") {
+      const lat = this.settings.darkModeLat;
+      const lon = this.settings.darkModeLon;
+
+      if (lat == null || lon == null) {
+        setText("Needs location to calculate sunrise/sunset.");
+        return;
+      }
+
+      const sun = this.ensureSunCache();
+      if (!sun) {
+        setText("Sun times unavailable (SunCalc missing).");
+        return;
+      }
+
+      const sunrise = new Date(sun.sunriseISO);
+      const sunset = new Date(sun.sunsetISO);
+
+      let isDark = false;
+      let nextLabel;
+
+      if (mode === "sunset_to_sunrise") {
+        isDark = now >= sunset || now < sunrise;
+        nextLabel = isDark
+          ? `sunrise (${this.formatTime12h(sunrise)})`
+          : `sunset (${this.formatTime12h(sunset)})`;
+      } else {
+        isDark = now >= sunrise && now < sunset;
+        nextLabel = isDark
+          ? `sunset (${this.formatTime12h(sunset)})`
+          : `sunrise (${this.formatTime12h(sunrise)})`;
+      }
+
+      setText(`${isDark ? "Dark mode" : "Light mode"} until ${nextLabel}.`);
+      return;
+    }
+
+    setText("Unknown scheduler mode.");
+  }
+
+  requestUserLocation() {
+    if (!navigator.geolocation) {
+      alert("Geolocation isn’t supported on this browser.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.settings.darkModeLat = pos.coords.latitude;
+        this.settings.darkModeLon = pos.coords.longitude;
+
+        this.settings.darkModeSunCache = null;
+        this.saveSettings();
+
+        this.showToast("Location Saved", "Sunrise/sunset scheduling is now ready.");
+        this.syncLocationButtonUI();
+        this.checkDarkModeSchedule(true);
+        this.updateDarkModeStatusUI();
+      },
+      (err) => {
+        console.error("Location error:", err);
+        alert("Couldn’t get your location. Please allow location permission.");
+        this.syncLocationButtonUI();
+        this.updateDarkModeStatusUI();
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 3600000 }
     );
   }
 
@@ -829,35 +998,97 @@ class SettingsManager {
     const mode = this.settings.darkModeScheduler || "off";
     this.toggleScheduleInputs(mode);
 
-    if (mode !== "auto") {
-      if (force) this.applyAppearanceMode();
+    // keep UI labels fresh
+    this.updateDarkModeStatusUI();
+    this.syncLocationButtonUI();
+
+    // OFF → appearance decides theme
+    if (mode === "off") {
+      if (force) {
+        this.applyAppearanceMode();
+        this.applyCustomBackground(false);
+      }
       return;
     }
 
-    const now = new Date();
-    const [startH, startM] = this.settings.darkModeStart.split(":").map(Number);
-    const [endH, endM] = this.settings.darkModeEnd.split(":").map(Number);
+    // CUSTOM schedule (time-based)
+    if (mode === "custom") {
+      const now = new Date();
+      const [startH, startM] = this.settings.darkModeStart.split(":").map(Number);
+      const [endH, endM] = this.settings.darkModeEnd.split(":").map(Number);
 
-    const start = new Date();
-    start.setHours(startH, startM, 0, 0);
-    const end = new Date();
-    end.setHours(endH, endM, 0, 0);
+      const start = new Date(now);
+      start.setHours(startH, startM, 0, 0);
 
-    let isDark;
-    if (end <= start) {
-      isDark = now >= start || now < end;
-    } else {
-      isDark = now >= start && now < end;
+      const end = new Date(now);
+      end.setHours(endH, endM, 0, 0);
+
+      let isDark;
+      if (end <= start) {
+        isDark = now >= start || now < end;
+      } else {
+        isDark = now >= start && now < end;
+      }
+
+      this.setThemeClasses(isDark);
+      this.applyAccentColor();
+      this.applyCustomBackground(false);
+      return;
     }
 
-    this.setThemeClasses(isDark);
-    this.applyCustomBackground(false);
+    // SUN schedule
+    if (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") {
+      const lat = this.settings.darkModeLat;
+      const lon = this.settings.darkModeLon;
+
+      // No location => fallback to appearance
+      if (lat == null || lon == null) {
+        if (force) {
+          this.applyAppearanceMode();
+          this.applyCustomBackground(false);
+        }
+        return;
+      }
+
+      const sun = this.ensureSunCache();
+      if (!sun) {
+        if (force) {
+          this.applyAppearanceMode();
+          this.applyCustomBackground(false);
+        }
+        return;
+      }
+
+      const now = new Date();
+      const sunrise = new Date(sun.sunriseISO);
+      const sunset = new Date(sun.sunsetISO);
+
+      let isDark = false;
+
+      if (mode === "sunset_to_sunrise") {
+        isDark = now >= sunset || now < sunrise;
+      } else {
+        isDark = now >= sunrise && now < sunset;
+      }
+
+      this.setThemeClasses(isDark);
+      this.applyAccentColor();
+      this.applyCustomBackground(false);
+      return;
+    }
+
+    // Fallback
+    if (force) {
+      this.applyAppearanceMode();
+      this.applyCustomBackground(false);
+    }
   }
 
   toggleScheduleInputs(mode) {
-    const group = document.querySelector(".schedule-group");
+    // IMPORTANT: must match your updated HTML wrapper id
+    const group = document.getElementById("customScheduleGroup");
     if (!group) return;
-    group.style.display = mode === "auto" ? "" : "none";
+    group.style.display = mode === "custom" ? "" : "none";
   }
 
   /* =============================
@@ -868,131 +1099,126 @@ class SettingsManager {
     this.applyCustomBackground(false);
     this.toggleScheduleInputs(this.settings.darkModeScheduler);
     this.syncWallpaperUIVisibility();
+
+    // NEW
+    this.updateDarkModeStatusUI();
+    this.syncLocationButtonUI();
   }
 
   applySetting(key) {
-  const actions = {
-    appearanceMode: () => this.applyAppearanceMode(),
-    accentColor: () => this.applyAccentColor(),
-    fontSize: () => this.applyFontSize(),
-    focusOutline: () =>
-      document.body.classList.toggle(
-        "focus-outline-disabled",
-        this.settings.focusOutline === "disabled"
-      ),
-    motionEffects: () => this.applyMotionEffects(),
-    highContrast: () =>
-      document.body.classList.toggle(
-        "high-contrast",
-        this.settings.highContrast === "enabled"
-      ),
-    dyslexiaFont: () =>
-      document.body.classList.toggle(
-        "dyslexia-font",
-        this.settings.dyslexiaFont === "enabled"
-      ),
-    underlineLinks: () =>
-      document.body.classList.toggle(
-        "underline-links",
-        this.settings.underlineLinks === "enabled"
-      ),
-    mouseTrail: () =>
-      document.body.classList.toggle(
-        "mouse-trail-enabled",
-        this.settings.mouseTrail === "enabled"
-      ),
-  };
+    const actions = {
+      appearanceMode: () => this.applyAppearanceMode(),
+      accentColor: () => this.applyAccentColor(),
+      fontSize: () => this.applyFontSize(),
+      focusOutline: () =>
+        document.body.classList.toggle(
+          "focus-outline-disabled",
+          this.settings.focusOutline === "disabled"
+        ),
+      motionEffects: () => this.applyMotionEffects(),
+      highContrast: () =>
+        document.body.classList.toggle("high-contrast", this.settings.highContrast === "enabled"),
+      dyslexiaFont: () =>
+        document.body.classList.toggle("dyslexia-font", this.settings.dyslexiaFont === "enabled"),
+      underlineLinks: () =>
+        document.body.classList.toggle(
+          "underline-links",
+          this.settings.underlineLinks === "enabled"
+        ),
+      mouseTrail: () =>
+        document.body.classList.toggle(
+          "mouse-trail-enabled",
+          this.settings.mouseTrail === "enabled"
+        ),
+    };
 
-  actions[key]?.();
+    actions[key]?.();
 
-  // ----------------------------
-  // Smooth section show/hide
-  // ----------------------------
-  if (key.startsWith("show")) {
-    const sectionId = key
-      .replace(/^show/, "")
-      .replace(/^[A-Z]/, (m) => m.toLowerCase())
-      .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+    // ----------------------------
+    // Smooth section show/hide
+    // ----------------------------
+    if (key.startsWith("show")) {
+      const sectionId = key
+        .replace(/^show/, "")
+        .replace(/^[A-Z]/, (m) => m.toLowerCase())
+        .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
 
-    const el =
-      document.getElementById(`${sectionId}-section`) ||
-      document.querySelector(`[data-section-id="${sectionId}"]`);
+      const el =
+        document.getElementById(`${sectionId}-section`) ||
+        document.querySelector(`[data-section-id="${sectionId}"]`);
 
-    if (el) {
-      const visible = this.settings[key] === "enabled";
+      if (el) {
+        const visible = this.settings[key] === "enabled";
 
-      // Ensure transitions are set
-      el.style.transition =
-        "opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease";
-      el.style.overflow = "hidden";
+        el.style.transition =
+          "opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease";
+        el.style.overflow = "hidden";
 
-      if (visible) {
-        el.style.display = "";
-        const height = el.scrollHeight + "px";
-        el.style.maxHeight = "0";
-        el.style.opacity = "0";
-
-        requestAnimationFrame(() => {
-          el.style.maxHeight = height;
-          el.style.opacity = "1";
-        });
-
-        // Reset max-height after transition to allow dynamic height
-        el.addEventListener(
-          "transitionend",
-          function handler() {
-            el.style.maxHeight = "";
-            el.removeEventListener("transitionend", handler);
-          }
-        );
-      } else {
-        const height = el.scrollHeight + "px";
-        el.style.maxHeight = height;
-        el.style.opacity = "1";
-
-        requestAnimationFrame(() => {
+        if (visible) {
+          el.style.display = "";
+          const height = el.scrollHeight + "px";
           el.style.maxHeight = "0";
           el.style.opacity = "0";
-          el.style.paddingTop = "0";
-          el.style.paddingBottom = "0";
-          el.style.marginTop = "0";
-          el.style.marginBottom = "0";
-        });
 
-        el.addEventListener(
-          "transitionend",
-          function handler() {
-            el.style.display = "none";
-            // Reset padding/margin for future show
-            el.style.paddingTop = "";
-            el.style.paddingBottom = "";
-            el.style.marginTop = "";
-            el.style.marginBottom = "";
-            el.removeEventListener("transitionend", handler);
-          }
-        );
+          requestAnimationFrame(() => {
+            el.style.maxHeight = height;
+            el.style.opacity = "1";
+          });
+
+          el.addEventListener(
+            "transitionend",
+            function handler() {
+              el.style.maxHeight = "";
+              el.removeEventListener("transitionend", handler);
+            }
+          );
+        } else {
+          const height = el.scrollHeight + "px";
+          el.style.maxHeight = height;
+          el.style.opacity = "1";
+
+          requestAnimationFrame(() => {
+            el.style.maxHeight = "0";
+            el.style.opacity = "0";
+            el.style.paddingTop = "0";
+            el.style.paddingBottom = "0";
+            el.style.marginTop = "0";
+            el.style.marginBottom = "0";
+          });
+
+          el.addEventListener(
+            "transitionend",
+            function handler() {
+              el.style.display = "none";
+              el.style.paddingTop = "";
+              el.style.paddingBottom = "";
+              el.style.marginTop = "";
+              el.style.marginBottom = "";
+              el.removeEventListener("transitionend", handler);
+            }
+          );
+        }
+      }
+    }
+
+    // ----------------------------
+    // Live activity (if used)
+    // ----------------------------
+    if (key === "showLiveActivity") {
+      const liveActivity = document.getElementById("live-activity");
+      if (liveActivity) {
+        const visible = this.settings.showLiveActivity === "enabled";
+        if (visible) {
+          liveActivity.style.display = "";
+          requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
+          if (typeof updateLiveStatus === "function") setTimeout(() => updateLiveStatus(), 300);
+        } else {
+          liveActivity.style.opacity = "0";
+          setTimeout(() => (liveActivity.style.display = "none"), 250);
+        }
       }
     }
   }
-
-  // ----------------------------
-  // Live activity (if used)
-  // ----------------------------
-  if (key === "showLiveActivity") {
-    const liveActivity = document.getElementById("live-activity");
-    if (liveActivity) {
-      const visible = this.settings.showLiveActivity === "enabled";
-      if (visible) {
-        liveActivity.style.display = "";
-        requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
-        if (typeof updateLiveStatus === "function") setTimeout(() => updateLiveStatus(), 300);
-      } else {
-        liveActivity.style.opacity = "0";
-        setTimeout(() => (liveActivity.style.display = "none"), 250);
-      }
-    }
-  }
-}
 
   /* =============================
      In-Site Notifications
@@ -1021,9 +1247,7 @@ class SettingsManager {
     const container = this.ensureToastContainer();
     const toast = document.createElement("div");
     toast.className = "toast";
-    const accent =
-      getComputedStyle(document.body).getPropertyValue("--accent-color") ||
-      "#007aff";
+    const accent = getComputedStyle(document.body).getPropertyValue("--accent-color") || "#007aff";
 
     Object.assign(toast.style, {
       background: accent.trim(),
@@ -1122,8 +1346,7 @@ class SettingsManager {
         };
         state.categories[key] = el.checked;
         this.setNotificationSettings(state);
-        const label =
-          el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
+        const label = el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
         this.showToast("Preference Saved", `${label} notifications updated.`);
       });
     };
@@ -1149,9 +1372,7 @@ class SettingsManager {
 
   resetSettings() {
     if (
-      confirm(
-        "Reset all settings to factory defaults? This will also clear your custom background."
-      )
+      confirm("Reset all settings to factory defaults? This will also clear your custom background.")
     ) {
       this.settings = { ...this.defaultSettings };
       this.saveSettings();
