@@ -144,46 +144,66 @@
       </div>
 
       <div class="settings-subsection animate-slide-in">
-        <h2 class="subsection-title">Dark Mode Scheduler</h2>
+  <h2 class="subsection-title">Dark Mode Scheduler</h2>
 
-        <div class="setting-card">
-          <div class="setting-icon-container" style="background-color: #5856d6;">
-            <i class="fa-solid fa-clock"></i>
-          </div>
-          <div class="setting-label">
-            <strong class="setting-title">Automatic Theme Switching</strong>
-            <p class="setting-description">Automatically switch between light and dark modes.</p>
-          </div>
-          <select id="darkModeScheduler" aria-label="Dark mode schedule">
-            <option value="off">Off</option>
-            <option value="auto">Scheduled</option>
-          </select>
-        </div>
+  <!-- MODE SELECT -->
+  <div class="setting-card">
+    <div class="setting-icon-container" style="background-color: #5856d6;">
+      <i class="fa-solid fa-clock"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Automatic Theme Switching</strong>
+      <p class="setting-description">Automatically switch between light and dark modes.</p>
+    </div>
 
-        <div class="schedule-group">
-          <div class="setting-card">
-            <div class="setting-icon-container" style="background-color: #ff9500;">
-              <i class="fa-solid fa-sun"></i>
-            </div>
-            <div class="setting-label">
-              <strong class="setting-title">Start Time</strong>
-              <p class="setting-description">Time when dark mode activates.</p>
-            </div>
-            <input type="time" id="darkModeStart" value="20:00" />
-          </div>
+    <!-- UPDATED OPTIONS -->
+    <select id="darkModeScheduler" aria-label="Dark mode schedule">
+      <option value="off">Off</option>
+      <option value="custom">Custom Schedule</option>
+      <option value="sunset_to_sunrise">Sunset → Sunrise</option>
+      <option value="sunrise_to_sunset">Sunrise → Sunset</option>
+    </select>
+  </div>
 
-          <div class="setting-card">
-            <div class="setting-icon-container" style="background-color: #5856d6;">
-              <i class="fa-solid fa-moon"></i>
-            </div>
-            <div class="setting-label">
-              <strong class="setting-title">End Time</strong>
-              <p class="setting-description">Time when light mode reactivates.</p>
-            </div>
-            <input type="time" id="darkModeEnd" value="06:00" />
-          </div>
-        </div>
+  <!-- STATUS + LOCATION (only used for sunset/sunrise modes) -->
+  <div class="setting-card" id="darkModeStatusCard">
+    <div class="setting-icon-container" style="background-color: #34c759;">
+      <i class="fa-solid fa-circle-info"></i>
+    </div>
+    <div class="setting-label">
+      <strong class="setting-title">Schedule Status</strong>
+      <p class="setting-description" id="darkModeStatusText">—</p>
+    </div>
+
+    <!-- Hidden by default; show this only when user chooses a sun-based mode and no location saved -->
+    <button id="setLocationBtn" class="button" type="button" style="display:none;">Use My Location</button>
+  </div>
+
+  <!-- CUSTOM SCHEDULE TIMES (only show when mode = custom) -->
+  <div class="schedule-group" id="customScheduleGroup">
+    <div class="setting-card">
+      <div class="setting-icon-container" style="background-color: #ff9500;">
+        <i class="fa-solid fa-sun"></i>
       </div>
+      <div class="setting-label">
+        <strong class="setting-title">Start Time</strong>
+        <p class="setting-description">Time when dark mode activates.</p>
+      </div>
+      <input type="time" id="darkModeStart" value="20:00" />
+    </div>
+
+    <div class="setting-card">
+      <div class="setting-icon-container" style="background-color: #5856d6;">
+        <i class="fa-solid fa-moon"></i>
+      </div>
+      <div class="setting-label">
+        <strong class="setting-title">End Time</strong>
+        <p class="setting-description">Time when light mode reactivates.</p>
+      </div>
+      <input type="time" id="darkModeEnd" value="06:00" />
+    </div>
+  </div>
+</div>
 
       <div class="settings-subsection animate-slide-in">
         <h2 class="subsection-title">Homepage Sections</h2>
