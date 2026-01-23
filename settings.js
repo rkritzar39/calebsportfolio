@@ -281,6 +281,13 @@ class SettingsManager {
     });
   }
 
+  isAppearanceManualAllowed() {
+  return (
+    this.settings.darkModeScheduler === "off" &&
+    this.settings.darkModePerDayEnabled !== "enabled"
+  );
+}
+
   /* =============================
      Load / Save
   ============================= */
@@ -410,15 +417,12 @@ class SettingsManager {
         const btn = e.target.closest("button");
         if (!btn || !btn.dataset.value) return;
 
-        // Block manual changes if scheduler is active (global OR per-day)
-        const eff = this.getEffectiveScheduleForNow();
-        const schedulerActive = eff.mode && eff.mode !== "off";
-        if (schedulerActive) {
-          alert("Appearance mode is controlled by the Scheduler. Disable it to make manual changes.");
-          this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
-          this.updateSegmentedBackground("appearanceModeControl");
-          return;
-        }
+// Block manual changes unless scheduler is COMPLETELY OFF
+if (!this.isAppearanceManualAllowed()) {
+  alert("Appearance mode is controlled by the Scheduler. Turn it OFF to change this.");
+  this.checkDarkModeSchedule(true); // snaps UI back to the real state
+  return;
+}
 
         this.settings.appearanceMode = btn.dataset.value;
         this.applySetting("appearanceMode");
@@ -692,11 +696,7 @@ class SettingsManager {
      Appearance Lock UI (Scheduler owns the wheel)
   ============================= */
 
-  isSchedulerActiveNow() {
-    const eff = this.getEffectiveScheduleForNow();
-    const mode = eff.mode || "off";
-    return mode !== "off";
-  }
+  
 
   syncAppearanceModeUIForScheduler(isDark) {
     // 1) Force segmented control to show the *effective* mode
@@ -717,7 +717,7 @@ class SettingsManager {
     this.updateSegmentedBackground("appearanceModeControl");
 
     const row = document.getElementById("appearanceModeRow");
-    if (row) row.classList.toggle("disabled", false);
+    if (row) row.classList.toggle("disabled", !this.isAppearanceManualAllowed());
   }
 
   applyAccentColor() {
