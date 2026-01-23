@@ -1367,11 +1367,15 @@ class SettingsManager {
   const eff = this.getEffectiveScheduleForNow();
   const mode = eff.mode || "off";
 
+  // Keep UI helpers in sync
   this.toggleScheduleInputs();
   this.updateDarkModeStatusUI();
   this.syncLocationButtonUI();
 
-  // OFF → appearance decides theme + manual UI unlocked
+  /* =============================
+     SCHEDULER OFF
+     → manual appearance controls
+  ============================= */
   if (mode === "off") {
     this.syncAppearanceModeUIForManual();
 
@@ -1382,6 +1386,9 @@ class SettingsManager {
     return;
   }
 
+  /* =============================
+     ALWAYS DARK
+  ============================= */
   if (mode === "always_dark") {
     this.setThemeClasses(true);
     this.applyAccentColor();
@@ -1391,6 +1398,9 @@ class SettingsManager {
     return;
   }
 
+  /* =============================
+     ALWAYS LIGHT
+  ============================= */
   if (mode === "always_light") {
     this.setThemeClasses(false);
     this.applyAccentColor();
@@ -1400,7 +1410,9 @@ class SettingsManager {
     return;
   }
 
-  // CUSTOM schedule (time-based)
+  /* =============================
+     CUSTOM TIME RANGE
+  ============================= */
   if (mode === "custom") {
     const now = new Date();
     const [startH, startM] = (eff.start || this.settings.darkModeStart).split(":").map(Number);
@@ -1414,6 +1426,7 @@ class SettingsManager {
 
     let isDark;
     if (end <= start) {
+      // Overnight range
       isDark = now >= start || now < end;
     } else {
       isDark = now >= start && now < end;
@@ -1427,12 +1440,14 @@ class SettingsManager {
     return;
   }
 
-  // SUN schedule
+  /* =============================
+     SUN-BASED SCHEDULING
+  ============================= */
   if (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") {
     const lat = this.settings.darkModeLat;
     const lon = this.settings.darkModeLon;
 
-    // No location => you *can't* actually automate, so don't lock UI
+    // No location → cannot automate → unlock UI
     if (lat == null || lon == null) {
       this.syncAppearanceModeUIForManual();
 
@@ -1458,7 +1473,7 @@ class SettingsManager {
     const sunrise = new Date(sun.sunriseISO);
     const sunset = new Date(sun.sunsetISO);
 
-    let isDark = false;
+    let isDark;
     if (mode === "sunset_to_sunrise") {
       isDark = now >= sunset || now < sunrise;
     } else {
@@ -1473,61 +1488,15 @@ class SettingsManager {
     return;
   }
 
-  // Fallback
+  /* =============================
+     SAFETY FALLBACK
+  ============================= */
   this.syncAppearanceModeUIForManual();
   if (force) {
     this.applyAppearanceMode();
     this.applyCustomBackground(false);
   }
 }
-
-    // SUN schedule
-    if (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") {
-      const lat = this.settings.darkModeLat;
-      const lon = this.settings.darkModeLon;
-
-      // No location => fallback to appearance
-      if (lat == null || lon == null) {
-        if (force) {
-          this.applyAppearanceMode();
-          this.applyCustomBackground(false);
-        }
-        return;
-      }
-
-      const sun = this.ensureSunCache();
-      if (!sun) {
-        if (force) {
-          this.applyAppearanceMode();
-          this.applyCustomBackground(false);
-        }
-        return;
-      }
-
-      const now = new Date();
-      const sunrise = new Date(sun.sunriseISO);
-      const sunset = new Date(sun.sunsetISO);
-
-      let isDark = false;
-
-      if (mode === "sunset_to_sunrise") {
-        isDark = now >= sunset || now < sunrise;
-      } else {
-        isDark = now >= sunrise && now < sunset;
-      }
-
-      this.setThemeClasses(isDark);
-      this.applyAccentColor();
-      this.applyCustomBackground(false);
-      return;
-    }
-
-    // Fallback
-    if (force) {
-      this.applyAppearanceMode();
-      this.applyCustomBackground(false);
-    }
-  }
 
   toggleScheduleInputs() {
     const group = document.getElementById("customScheduleGroup");
