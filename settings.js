@@ -688,6 +688,38 @@ class SettingsManager {
     this.applyAccentColor();
   }
 
+    /* =============================
+     Appearance Lock UI (Scheduler owns the wheel)
+  ============================= */
+
+  isSchedulerActiveNow() {
+    const eff = this.getEffectiveScheduleForNow();
+    const mode = eff.mode || "off";
+    return mode !== "off";
+  }
+
+  syncAppearanceModeUIForScheduler(isDark) {
+    // 1) Force segmented control to show the *effective* mode
+    const effectiveValue = isDark ? "dark" : "light";
+    this.initSegmentedControl("appearanceModeControl", effectiveValue);
+    this.updateSegmentedBackground("appearanceModeControl");
+
+    // 2) Grey out the appearance row while scheduler is active
+    // You need an element that wraps the appearance control row.
+    // If you don't have one yet, add id="appearanceModeRow" in HTML around it.
+    const row = document.getElementById("appearanceModeRow");
+    if (row) row.classList.toggle("disabled", true);
+  }
+
+  syncAppearanceModeUIForManual() {
+    // When scheduler is off, restore UI to the user's saved setting
+    this.initSegmentedControl("appearanceModeControl", this.settings.appearanceMode);
+    this.updateSegmentedBackground("appearanceModeControl");
+
+    const row = document.getElementById("appearanceModeRow");
+    if (row) row.classList.toggle("disabled", false);
+  }
+
   applyAccentColor() {
     const accent = this.settings.accentColor;
     const contrast = this.getContrastColor(accent);
@@ -1332,15 +1364,78 @@ class SettingsManager {
   }
 
   checkDarkModeSchedule(force = false) {
-    const eff = this.getEffectiveScheduleForNow();
-    const mode = eff.mode || "off";
+  const eff = this.getEffectiveScheduleForNow();
+  const mode = eff.mode || "off";
 
-    this.toggleScheduleInputs();
-    this.updateDarkModeStatusUI();
-    this.syncLocationButtonUI();
+  this.toggleScheduleInputs();
+  this.updateDarkModeStatusUI();
+  this.syncLocationButtonUI();
 
-    // OFF → appearance decides theme
-    if (mode === "off") {
+  // OFF → appearance decides theme + manual UI unlocked
+  if (mode === "off") {
+    this.syncAppearanceModeUIForManual();
+
+    if (force) {
+      this.applyAppearanceMode();
+      this.applyCustomBackground(false);
+    }
+    return;
+  }
+
+  if (mode === "always_dark") {
+    this.setThemeClasses(true);
+    this.applyAccentColor();
+    this.applyCustomBackground(false);
+
+    this.syncAppearanceModeUIForScheduler(true);
+    return;
+  }
+
+  if (mode === "always_light") {
+    this.setThemeClasses(false);
+    this.applyAccentColor();
+    this.applyCustomBackground(false);
+
+    this.syncAppearanceModeUIForScheduler(false);
+    return;
+  }
+
+  // CUSTOM schedule (time-based)
+  if (mode === "custom") {
+    const now = new Date();
+    const [startH, startM] = (eff.start || this.settings.darkModeStart).split(":").map(Number);
+    const [endH, endM] = (eff.end || this.settings.darkModeEnd).split(":").map(Number);
+
+    const start = new Date(now);
+    start.setHours(startH, startM, 0, 0);
+
+    const end = new Date(now);
+    end.setHours(endH, endM, 0, 0);
+
+    let isDark;
+    if (end <= start) {
+      isDark = now >= start || now < end;
+    } else {
+      isDark = now >= start && now < end;
+    }
+
+    this.setThemeClasses(isDark);
+    this.applyAccentColor();
+    this.applyCustomBackground(false);
+
+    this.syncAppearanceModeUIForScheduler(isDark);
+    return;
+  }
+
+  // SUN schedule
+  if (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") {
+    const lat = this.settings.darkModeLat;
+    const lon = this.settings.darkModeLon;
+
+    // No location => you *can't* actually automate, so don't lock UI
+    if (lat == null || lon == null) {
+      this.syncAppearanceModeUIForManual();
+
       if (force) {
         this.applyAppearanceMode();
         this.applyCustomBackground(false);
@@ -1348,44 +1443,43 @@ class SettingsManager {
       return;
     }
 
-    if (mode === "always_dark") {
-      this.setThemeClasses(true);
-      this.applyAccentColor();
-      this.applyCustomBackground(false);
-      return;
-    }
+    const sun = this.ensureSunCache();
+    if (!sun) {
+      this.syncAppearanceModeUIForManual();
 
-    if (mode === "always_light") {
-      this.setThemeClasses(false);
-      this.applyAccentColor();
-      this.applyCustomBackground(false);
-      return;
-    }
-
-    // CUSTOM schedule (time-based)
-    if (mode === "custom") {
-      const now = new Date();
-      const [startH, startM] = (eff.start || this.settings.darkModeStart).split(":").map(Number);
-      const [endH, endM] = (eff.end || this.settings.darkModeEnd).split(":").map(Number);
-
-      const start = new Date(now);
-      start.setHours(startH, startM, 0, 0);
-
-      const end = new Date(now);
-      end.setHours(endH, endM, 0, 0);
-
-      let isDark;
-      if (end <= start) {
-        isDark = now >= start || now < end;
-      } else {
-        isDark = now >= start && now < end;
+      if (force) {
+        this.applyAppearanceMode();
+        this.applyCustomBackground(false);
       }
-
-      this.setThemeClasses(isDark);
-      this.applyAccentColor();
-      this.applyCustomBackground(false);
       return;
     }
+
+    const now = new Date();
+    const sunrise = new Date(sun.sunriseISO);
+    const sunset = new Date(sun.sunsetISO);
+
+    let isDark = false;
+    if (mode === "sunset_to_sunrise") {
+      isDark = now >= sunset || now < sunrise;
+    } else {
+      isDark = now >= sunrise && now < sunset;
+    }
+
+    this.setThemeClasses(isDark);
+    this.applyAccentColor();
+    this.applyCustomBackground(false);
+
+    this.syncAppearanceModeUIForScheduler(isDark);
+    return;
+  }
+
+  // Fallback
+  this.syncAppearanceModeUIForManual();
+  if (force) {
+    this.applyAppearanceMode();
+    this.applyCustomBackground(false);
+  }
+}
 
     // SUN schedule
     if (mode === "sunset_to_sunrise" || mode === "sunrise_to_sunset") {
@@ -1451,7 +1545,7 @@ class SettingsManager {
     this.applyCustomBackground(false);
     this.toggleScheduleInputs();
     this.syncWallpaperUIVisibility();
-
+    this.checkDarkModeSchedule(true);
     this.updateDarkModeStatusUI();
     this.syncLocationButtonUI();
 
