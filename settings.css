@@ -1380,3 +1380,9 @@ body.dark-mode #themeModeSelect:hover {
 .setting-icon-container i {
   color: #fff;
 }
+
+#appearanceModeRow.disabled {
+  opacity: 0.45;
+  filter: grayscale(1);
+  pointer-events: none;
+}
