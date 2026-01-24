@@ -330,10 +330,14 @@ function dayKeyFromUnix(unixSeconds, tzOffsetSeconds){
   return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth()+1)}-${pad2(d.getUTCDate())}`;
 }
 
+/**
+ * ✅ FIX: lock weekday label to the key (no user-timezone drift)
+ * Using noon UTC avoids edge-cases where midnight shifts the date.
+ */
 function weekdayLabelFromKey(key){
   const [y,m,d] = key.split("-").map(Number);
-  const dt = new Date(Date.UTC(y, m-1, d));
-  return dt.toLocaleDateString(undefined, { weekday: "short" });
+  const dt = new Date(Date.UTC(y, m-1, d, 12, 0, 0));
+  return dt.toLocaleDateString(undefined, { weekday: "short", timeZone: "UTC" });
 }
 
 async function fetchJSON(url){
@@ -1011,6 +1015,11 @@ function renderHourly(forecast, tzOffset){
   }).join("");
 }
 
+/**
+ * ✅ FIX: prevent the "5 day" from starting on yesterday.
+ * OpenWeather 3-hour blocks can include a partial "yesterday" day bucket
+ * depending on forecast city timezone. We drop any dayKey < todayKey (in city tz).
+ */
 function renderDaily(forecast){
   const list = forecast?.list || [];
   const tzOffset = forecast?.city?.timezone ?? 0;
@@ -1023,7 +1032,12 @@ function renderDaily(forecast){
     byDay.get(key).push(item);
   }
 
-  const days = Array.from(byDay.entries()).slice(0, 5);
+  const nowUnix = Math.floor(Date.now() / 1000);
+  const todayKey = dayKeyFromUnix(nowUnix, tzOffset);
+
+  const days = Array.from(byDay.entries())
+    .filter(([key]) => key >= todayKey) // drop yesterday/past days
+    .slice(0, 5);
 
   dailyEl.innerHTML = days.map(([key, items]) => {
     let min = Infinity, max = -Infinity;
