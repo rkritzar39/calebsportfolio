@@ -681,23 +681,38 @@ function buildImpactPills(current, forecast){
     pills.push("💨 Windy");
   }
 
-  // humidity
+  // humidity (make it human-realistic)
   if (typeof humidity === "number"){
-    if (humidity >= 80) pills.push("💦 Very humid");
+    const tF = (tC != null) ? toFFromC(tC) : null;
+
+    // "Very humid" only when warm enough to feel humid
+    if (humidity >= 80 && tF != null && tF >= 60) pills.push("💦 Very humid");
+
+    // Dry air is still relevant anytime
     if (humidity <= 25) pills.push("🌵 Dry air");
+
+    // Optional: winter-friendly replacement when RH is high in cold/snow
+    if (humidity >= 85 && tF != null && tF <= 40) pills.push("❄️ Damp air (winter)");
   }
 
   // visibility
   if (typeof vis === "number" && vis < 3000) pills.push("🌫 Low visibility");
 
-  // precipitation soon
+  // precipitation soon (rain vs snow vs generic)
   const next = (forecast?.list || [])[0];
   const pop = next?.pop;
-  if (typeof pop === "number" && pop >= 0.5) pills.push("☔ Rain likely");
+
+  if (typeof pop === "number" && pop >= 0.5){
+    const rainMm = next?.rain?.["3h"] || 0;
+    const snowMm = next?.snow?.["3h"] || 0;
+
+    if (snowMm > rainMm && snowMm > 0) pills.push("❄️ Snow likely");
+    else if (rainMm > 0) pills.push("☔ Rain likely");
+    else pills.push("🌧️ Precip likely");
+  }
 
   return pills;
 }
-
 // ---------- 6) Feels-like explanation ----------
 function feelsLikeExplanation(current){
   const units = apiUnits();
