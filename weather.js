@@ -393,6 +393,77 @@ function getOWMTileUrl(layer){
 }
 
 // =====================================================
+// 0) ✅ FIX: normalize conditions so "fog" doesn't win over "snow"
+// =====================================================
+
+function normalizeConditions(current, forecast){
+  const w0 = current?.weather?.[0] || {};
+  const id = w0.id;
+  const main = w0.main || "";
+  const desc = w0.description || "";
+  const icon = w0.icon || "";
+
+  // Active precip signals from CURRENT payload
+  const snowNow =
+    (current?.snow && ((current.snow["1h"] || 0) > 0 || (current.snow["3h"] || 0) > 0)) ||
+    (typeof id === "number" && id >= 600 && id < 700);
+
+  const rainNow =
+    (current?.rain && ((current.rain["1h"] || 0) > 0 || (current.rain["3h"] || 0) > 0)) ||
+    (typeof id === "number" && id >= 500 && id < 600);
+
+  // Near-term forecast (first 3h block) often corrects the "fog/mist" label
+  const next = forecast?.list?.[0];
+  const forecastSnow = (next?.snow?.["3h"] || 0) > 0;
+  const forecastRain = (next?.rain?.["3h"] || 0) > 0;
+
+  // If OpenWeather says fog/mist/etc (7xx or 50x icon), but precip is happening, override
+  const looksLikeFog =
+    (typeof id === "number" && id >= 700 && id < 800) ||
+    (icon && icon.startsWith("50"));
+
+  // Decide what to show
+  let out = { id, main, desc, icon };
+
+  // Snow wins over rain if both exist (common during transition)
+  const shouldShowSnow = snowNow || forecastSnow;
+  const shouldShowRain = !shouldShowSnow && (rainNow || forecastRain);
+
+  if (looksLikeFog && (shouldShowSnow || shouldShowRain)){
+    const night = icon.endsWith("n");
+    if (shouldShowSnow){
+      out = {
+        id: 601,
+        main: "Snow",
+        desc: "snowing",
+        icon: night ? "13n" : "13d"
+      };
+    } else if (shouldShowRain){
+      out = {
+        id: 501,
+        main: "Rain",
+        desc: "raining",
+        icon: night ? "10n" : "10d"
+      };
+    }
+  }
+
+  // Even if it doesn't "look like fog", still fix some common Toledo winter weirdness:
+  // if current says Mist but snow volume exists, force snow.
+  if (!looksLikeFog && main.toLowerCase() === "mist" && shouldShowSnow){
+    const night = icon.endsWith("n");
+    out = {
+      id: 601,
+      main: "Snow",
+      desc: "snowing",
+      icon: night ? "13n" : "13d"
+    };
+  }
+
+  return out;
+}
+
+// =====================================================
 // 1) Weather Alerts (REAL first, fallback if needed)
 // =====================================================
 
@@ -915,7 +986,16 @@ function renderHistory(lat, lon, current){
 
 // ---------- Rendering main ----------
 function renderAll(payload, isFromCache=false){
-  const { current, forecast, air, geo } = payload;
+  let { current, forecast, air, geo } = payload;
+
+  // ✅ normalize current conditions so "fog" doesn't override active snow/rain
+  const norm = normalizeConditions(current, forecast);
+  if (norm && current?.weather?.[0]){
+    current = {
+      ...current,
+      weather: [{ ...current.weather[0], id: norm.id, main: norm.main, description: norm.desc, icon: norm.icon }]
+    };
+  }
 
   const lat = current?.coord?.lat;
   const lon = current?.coord?.lon;
