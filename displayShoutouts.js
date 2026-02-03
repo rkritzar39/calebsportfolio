@@ -2020,68 +2020,101 @@ function calculateAndDisplayStatusBI(businessData = {}) {
             }
         }
 
-        // 4) If closed now: find next opening in regular/holiday (no future temp counted as “opens”)
-        const displayOrder = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-        const todayIndex = displayOrder.indexOf(businessDayName);
+    // 4) If closed now: find next opening in regular/holiday (no future temp counted as “opens”)
+const displayOrder = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+const todayIndex = displayOrder.indexOf(businessDayName);
 
-        function parseBizDate(str) {
-            if (!str) return null;
-            const parts = str.split('-').map((n) => parseInt(n, 10));
-            if (parts.length !== 3) return null;
-            const [y, m, d] = parts;
-            return DateTime.fromObject({ year: y, month: m, day: d }, { zone: assumedBusinessTimezone });
-        }
+function parseBizDate(str) {
+  if (!str) return null;
+  const parts = str.split('-').map((n) => parseInt(n, 10));
+  if (parts.length !== 3) return null;
+  const [y, m, d] = parts;
+  return DateTime.fromObject({ year: y, month: m, day: d }, { zone: assumedBusinessTimezone });
+}
 
-        function getDaySchedule(offset) {
-            const targetDate = nowInBizTZ.plus({ days: offset }).startOf('day');
+function getDaySchedule(offset) {
+  const targetDate = nowInBizTZ.plus({ days: offset }).startOf('day');
 
-            const h = holidayHours.find((x) => {
-                const dt = parseBizDate(x.date);
-                return dt && dt.hasSame(targetDate, 'day');
-            });
-            if (h) return { type: 'holiday', schedule: h };
+  const h = holidayHours.find((x) => {
+    const dt = parseBizDate(x.date);
+    return dt && dt.hasSame(targetDate, 'day');
+  });
+  if (h) return { type: 'holiday', schedule: h };
 
-            const dayName = displayOrder[targetDate.weekday % 7];
-            return { type: 'regular', schedule: regularHours[dayName] };
-        }
+  const dayName = displayOrder[targetDate.weekday % 7];
+  return { type: 'regular', schedule: regularHours[dayName] };
+}
 
-        for (let offset = 0; offset < 7; offset++) {
-            const { schedule } = getDaySchedule(offset);
-            if (!schedule) continue;
+// Finds the next opening time string for a given day offset.
+// For offset=0 (today), it returns the first opening that is STILL in the future.
+// For offset>0, it returns the first opening (ranges[0].open).
+function getNextOpenTimeStrForOffset(offset, schedule) {
+  const ranges = normalizeToRanges(schedule);
+  if (!ranges.length) return null;
 
-            const ranges = normalizeToRanges(schedule);
-            const isClosed = !!schedule.isClosed || ranges.length === 0;
-            if (isClosed) continue;
+  if (offset !== 0) {
+    return ranges[0]?.open || null;
+  }
 
-            const first = ranges[0];
-            if (!first || !first.open) continue;
+  // Today: pick the soonest opening that is still ahead of now
+  let bestOpen = null;
+  let bestOpenM = null;
 
-            // build open dt in biz tz
-            const openDT = nowInBizTZ.plus({ days: offset }).set({
-                hour: parseInt(first.open.split(':')[0], 10),
-                minute: parseInt(first.open.split(':')[1], 10),
-                second: 0,
-                millisecond: 0,
-            });
+  for (const r of ranges) {
+    const openM = timeStringToMinutes(r.open);
+    if (openM === null) continue;
 
-            const m = minutesUntil(openDT);
+    // only count openings that are still ahead today
+    if (openM > currentMinutesInBizTZ) {
+      if (bestOpenM === null || openM < bestOpenM) {
+        bestOpenM = openM;
+        bestOpen = r.open;
+      }
+    }
+  }
 
-            if (offset === 0 && m !== null && m > 0 && m <= THRESHOLD_MIN) {
-                statusSubTextEl.textContent = `Opens in ${formatDuration(m)}`;
-                return;
-            }
+  return bestOpen; // null if no future openings today
+}
 
-            // label
-            let label;
-            if (offset === 0) label = 'Today';
-            else if (offset === 1) label = 'Tomorrow';
-            else label = capitalizeFirstLetter(displayOrder[(todayIndex + offset) % 7]);
+for (let offset = 0; offset < 7; offset++) {
+  const { schedule } = getDaySchedule(offset);
+  if (!schedule) continue;
 
-            statusSubTextEl.textContent = `Opens ${label} at ${formatDisplayTimeBI(first.open, visitorTimezone)}`;
-            return;
-        }
+  const ranges = normalizeToRanges(schedule);
+  const isClosed = !!schedule.isClosed || ranges.length === 0;
+  if (isClosed) continue;
 
-        statusSubTextEl.textContent = '';
+  const nextOpenStr = getNextOpenTimeStrForOffset(offset, schedule);
+  if (!nextOpenStr) continue;
+
+  // build open dt in biz tz
+  const openParts = nextOpenStr.split(':');
+  const openDT = nowInBizTZ.plus({ days: offset }).set({
+    hour: parseInt(openParts[0], 10),
+    minute: parseInt(openParts[1], 10),
+    second: 0,
+    millisecond: 0,
+  });
+
+  const m = minutesUntil(openDT);
+
+  // If it's today and opening is soon, show "Opens in ..."
+  if (offset === 0 && m !== null && m > 0 && m <= THRESHOLD_MIN) {
+    statusSubTextEl.textContent = `Opens in ${formatDuration(m)}`;
+    return;
+  }
+
+  // label
+  let label;
+  if (offset === 0) label = 'Today';
+  else if (offset === 1) label = 'Tomorrow';
+  else label = capitalizeFirstLetter(displayOrder[(todayIndex + offset) % 7]);
+
+  statusSubTextEl.textContent = `Opens ${label} at ${formatDisplayTimeBI(nextOpenStr, visitorTimezone)}`;
+  return;
+}
+
+statusSubTextEl.textContent = '';
     })();
 
     /* -------------------------
