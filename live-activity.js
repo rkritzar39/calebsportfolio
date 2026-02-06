@@ -1,4 +1,4 @@
-/* live-activity.js — Fully Reliable Version: Manual + Spotify + Twitch + Discord + Reddit
+/* live-activity.js — Optimized Version
    Spotify via Lanyard (real timestamps -> real progress)
    PreMiD via Lanyard activities[] (show ALL activities)
    Manual Firestore overrides everything
@@ -15,19 +15,16 @@ import { db } from "./firebase-init.js";
 
 const CONFIG = {
   discord: { userId: "850815059093356594" },
+  twitch:  { username: "calebkritzar" },
   reddit:  { username: "Maleficent_Line6570" },
 };
 
 /* =========================
-   SETTINGS
+   SETTINGS & STATE
 ========================= */
 
 const NON_SPOTIFY_PROGRESS_MODE = "indeterminate"; // "indeterminate" | "hide"
 const SHOW_ALL_PREMID_ACTIVITIES = true;
-
-/* =========================
-   GLOBAL STATE
-========================= */
 
 let lastUpdateTime = null;
 let lastPollTime   = Date.now();
@@ -59,7 +56,7 @@ function fmt(seconds) {
 }
 
 /* =========================
-   ICONS (with some safe fallbacks)
+   ICONS
 ========================= */
 
 const ICON_MAP = {
@@ -104,11 +101,12 @@ const ICON_MAP = {
   signal: "https://cdn.simpleicons.org/signal/3A76F0",
 
   // LIVE / CREATOR
+  twitch: "https://cdn.simpleicons.org/twitch/9146FF",
   kick: "https://cdn.simpleicons.org/kick/53FC19",
   patreon: "https://cdn.simpleicons.org/patreon/F96854",
   ko_fi: "https://cdn.simpleicons.org/kofi/FF5E5B",
 
-  // GAMING / LAUNCHERS
+  // GAMING
   steam: "https://cdn.simpleicons.org/steam/000000",
   epicgames: "https://cdn.simpleicons.org/epicgames/000000",
   gog: "https://cdn.simpleicons.org/gogdotcom/86328A",
@@ -118,7 +116,7 @@ const ICON_MAP = {
   roblox: "https://cdn.simpleicons.org/roblox/000000",
   minecraft: "https://cdn.simpleicons.org/minecraft/62B47A",
 
-  // DEV / PRODUCTIVITY
+  // DEV
   github: "https://cdn.simpleicons.org/github/000000",
   gitlab: "https://cdn.simpleicons.org/gitlab/FC6D26",
   bitbucket: "https://cdn.simpleicons.org/bitbucket/0052CC",
@@ -133,7 +131,7 @@ const ICON_MAP = {
   slack: "https://cdn.simpleicons.org/slack/4A154B",
   zoom: "https://cdn.simpleicons.org/zoom/2D8CFF",
 
-  // GOOGLE / MICROSOFT
+  // GOOGLE / MS
   google: "https://cdn.simpleicons.org/google/4285F4",
   googledocs: "https://cdn.simpleicons.org/googledocs/4285F4",
   googlesheets: "https://cdn.simpleicons.org/googlesheets/34A853",
@@ -145,7 +143,7 @@ const ICON_MAP = {
   teams: "https://cdn.simpleicons.org/microsoftteams/6264A7",
   onedrive: "https://cdn.simpleicons.org/microsoftonedrive/0078D4",
 
-  // SHOPPING / MARKETPLACES
+  // SHOPPING
   amazon: "https://cdn.simpleicons.org/amazon/FF9900",
   ebay: "https://cdn.simpleicons.org/ebay/E53238",
   walmart: "https://cdn.simpleicons.org/walmart/0071CE",
@@ -175,7 +173,7 @@ const ICON_MAP = {
   klarna: "https://cdn.simpleicons.org/klarna/FFB3C7",
   affirm: "https://cdn.simpleicons.org/affirm/000000",
 
-  // FOOD / DELIVERY
+  // FOOD
   doordash: "https://cdn.simpleicons.org/doordash/FF3008",
   ubereats: "https://cdn.simpleicons.org/ubereats/000000",
   grubhub: "https://cdn.simpleicons.org/grubhub/F63440",
@@ -282,7 +280,7 @@ const PREMID_RULES = [
   { re: /youtube\s*music|yt\s*music|youtubemusic/i, key: "youtubemusic", pretty: "YouTube Music" },
   { re: /youtube/i, key: "youtube", pretty: "YouTube" },
 
-  // VIDEO / STREAMING
+  // VIDEO
   { re: /netflix/i, key: "netflix", pretty: "Netflix" },
   { re: /disney\+|disneyplus/i, key: "disneyplus", pretty: "Disney+" },
   { re: /prime\s*video|amazon\s*prime\s*video/i, key: "primevideo", pretty: "Prime Video" },
@@ -295,7 +293,7 @@ const PREMID_RULES = [
   { re: /plex/i, key: "plex", pretty: "Plex" },
   { re: /jellyfin/i, key: "jellyfin", pretty: "Jellyfin" },
 
-  // SOCIAL / COMMS
+  // SOCIAL
   { re: /discord/i, key: "discord", pretty: "Discord" },
   { re: /reddit/i, key: "reddit", pretty: "Reddit" },
   { re: /^x$|twitter/i, key: "x", pretty: "X" },
@@ -308,12 +306,13 @@ const PREMID_RULES = [
   { re: /telegram/i, key: "telegram", pretty: "Telegram" },
   { re: /signal/i, key: "signal", pretty: "Signal" },
 
-  // LIVE / CREATOR
+  // CREATOR
+  { re: /twitch/i, key: "twitch", pretty: "Twitch" },
   { re: /\bkick\b/i, key: "kick", pretty: "Kick" },
   { re: /patreon/i, key: "patreon", pretty: "Patreon" },
   { re: /ko-?fi|kofi/i, key: "ko_fi", pretty: "Ko-fi" },
 
-  // GAMING / LAUNCHERS
+  // GAMING
   { re: /steam/i, key: "steam", pretty: "Steam" },
   { re: /epic\s*games|epicgames/i, key: "epicgames", pretty: "Epic Games" },
   { re: /\bgog\b|gog\.com|gogdotcom/i, key: "gog", pretty: "GOG" },
@@ -323,7 +322,7 @@ const PREMID_RULES = [
   { re: /roblox/i, key: "roblox", pretty: "Roblox" },
   { re: /minecraft/i, key: "minecraft", pretty: "Minecraft" },
 
-  // DEV / PRODUCTIVITY
+  // DEV
   { re: /github/i, key: "github", pretty: "GitHub" },
   { re: /gitlab/i, key: "gitlab", pretty: "GitLab" },
   { re: /bitbucket/i, key: "bitbucket", pretty: "Bitbucket" },
@@ -338,7 +337,7 @@ const PREMID_RULES = [
   { re: /slack/i, key: "slack", pretty: "Slack" },
   { re: /zoom/i, key: "zoom", pretty: "Zoom" },
 
-  // GOOGLE / MICROSOFT
+  // GOOGLE / MS
   { re: /google\s*docs|docs\.google/i, key: "googledocs", pretty: "Google Docs" },
   { re: /google\s*sheets|sheets\.google/i, key: "googlesheets", pretty: "Google Sheets" },
   { re: /google\s*slides|slides\.google/i, key: "googleslides", pretty: "Google Slides" },
@@ -349,7 +348,7 @@ const PREMID_RULES = [
   { re: /microsoft\s*teams|\bteams\b/i, key: "teams", pretty: "Microsoft Teams" },
   { re: /one\s*drive|onedrive/i, key: "onedrive", pretty: "OneDrive" },
 
-  // SHOPPING / MARKETPLACES
+  // SHOPPING
   { re: /\bamazon\b/i, key: "amazon", pretty: "Amazon" },
   { re: /\bebay\b/i, key: "ebay", pretty: "eBay" },
   { re: /\bwalmart\b/i, key: "walmart", pretty: "Walmart" },
@@ -379,7 +378,7 @@ const PREMID_RULES = [
   { re: /\bklarna\b/i, key: "klarna", pretty: "Klarna" },
   { re: /\baffirm\b/i, key: "affirm", pretty: "Affirm" },
 
-  // FOOD / DELIVERY
+  // FOOD
   { re: /door\s*dash|doordash/i, key: "doordash", pretty: "DoorDash" },
   { re: /uber\s*eats|ubereats/i, key: "ubereats", pretty: "Uber Eats" },
   { re: /grubhub/i, key: "grubhub", pretty: "Grubhub" },
@@ -427,7 +426,7 @@ function showStatusLineWithFade(text, source = "manual") {
     txt.textContent = text;
 
     icon.classList.remove("glow");
-    if (["spotify", "music", "youtube", "youtubemusic"].includes(source)) {
+    if (["spotify", "twitch", "music", "youtube", "youtubemusic"].includes(source)) {
       icon.classList.add("glow");
     }
 
@@ -568,15 +567,14 @@ function updateDynamicColors(imageUrl) {
 
   const requestId = ++dynamicColorRequestId;
 
-  if (!matchAccent) {
+  // Helper to reset to default/user accent
+  const resetColors = () => {
     activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
-    return;
-  }
+  };
 
-  if (!imageUrl) {
-    activity.style.setProperty("--dynamic-bg", "none");
-    activity.style.setProperty("--dynamic-accent", userAccent);
+  if (!matchAccent || !imageUrl) {
+    resetColors();
     return;
   }
 
@@ -593,8 +591,9 @@ function updateDynamicColors(imageUrl) {
       const ctx = canvas.getContext("2d");
       if (!ctx) throw new Error("No canvas ctx");
 
-      canvas.width = img.naturalWidth || img.width || 64;
-      canvas.height = img.naturalHeight || img.height || 64;
+      // Optimization: Draw small to save CPU
+      canvas.width = 50;
+      canvas.height = 50;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -617,20 +616,18 @@ function updateDynamicColors(imageUrl) {
         `linear-gradient(180deg, rgba(${r},${g},${b},0.35), rgba(${r},${g},${b},0.12))`
       );
     } catch {
-      activity.style.setProperty("--dynamic-accent", userAccent);
-      activity.style.setProperty("--dynamic-bg", "none");
+      resetColors();
     }
   };
 
   img.onerror = () => {
     if (requestId !== dynamicColorRequestId) return;
-    activity.style.setProperty("--dynamic-accent", userAccent);
-    activity.style.setProperty("--dynamic-bg", "none");
+    resetColors();
   };
 }
 
 /* =========================
-   ANIMATION HELPERS
+   ANIMATION & STATE CHECKS
 ========================= */
 
 function slideInCard(cardEl) {
@@ -688,6 +685,7 @@ function getActivityVerb(appName = "", act = null) {
 
   // Streaming video
   if (
+    n.includes("twitch") ||
     n.includes("netflix") ||
     n.includes("hulu") ||
     n.includes("disney") ||
@@ -740,34 +738,30 @@ function isYouTubeMusicLike(act) {
   const s = state.toLowerCase();
   const l = largeText.toLowerCase();
 
-  // Strong music keywords (ONLY these trigger music mode)
+  // Strong music keywords
   const strongMusicSignals = [
     "lyrics", "lyric video", "official lyrics",
     "official audio", "audio",
     "music video", "official music video",
     "vevo",
     "provided to youtube",
-    "topic",                 // auto-generated music channels often include "Topic"
+    "topic",
     "album", "full album",
     "track", "single",
     "remastered"
   ];
 
   const hay = `${t} ${s} ${l}`;
-
-  // If we see any strong signal anywhere, it's music-like
   if (strongMusicSignals.some(k => hay.includes(k))) return true;
 
-  // Obvious music formatting in the TITLE: "Song - Artist"
-  // (This is a very common pattern for music uploads)
+  // "Song - Artist" format check
   const hasDashFormat =
     t.includes(" - ") &&
     t.split(" - ").every(part => part.trim().length >= 2);
 
   if (hasDashFormat) return true;
 
-  // Some presences put the artist in state and the track in details.
-  // Only treat as music if BOTH look like music fields (avoid short-channel false positives).
+  // Heuristic check
   const detailsLooksLikeTrack =
     t.length >= 6 && (t.includes(" - ") || t.includes(" by ") || t.includes(" • "));
   const stateLooksLikeArtist =
@@ -775,7 +769,6 @@ function isYouTubeMusicLike(act) {
 
   if (detailsLooksLikeTrack && stateLooksLikeArtist) return true;
 
-  // Otherwise: assume normal YouTube video
   return false;
 }
 
@@ -823,7 +816,7 @@ const MUSIC_KEYWORDS = [
 
 function isMusicActivity(act) {
   if (!act) return false;
-  if (act.type === 2) return true;
+  if (act.type === 2) return true; // 'Listening' type
 
   const name = (act.name || "").toLowerCase();
   const details = (act.details || "").toLowerCase();
@@ -893,6 +886,7 @@ async function getDiscord() {
       const coverEl = $$("live-activity-cover");
       if (coverEl && coverEl.src !== sp.album_art_url) coverEl.src = sp.album_art_url;
 
+      // FIXED: Correct Spotify URL
       currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
       setupProgress(startMs, endMs);
@@ -925,7 +919,8 @@ async function getDiscord() {
         const coverUrl = resolveDiscordAssetUrl(act);
         const coverEl = $$("live-activity-cover");
         if (coverEl) {
-          if (coverUrl) coverEl.src = coverUrl;
+          // Only update src if it changed to prevent flickering
+          if (coverUrl && coverEl.src !== coverUrl) coverEl.src = coverUrl;
         }
 
         currentSpotifyUrl = null;
@@ -935,14 +930,12 @@ async function getDiscord() {
 
         resetProgress();
 
-         // 1) If Discord activity provides timestamps, ALWAYS show real progress
+         // 1) If activity has timestamps, use real progress
          const hasRealProgress = setupProgressFromActivityTimestamps(act);
-         if (hasRealProgress) {
-           // real bar + time row already shown by setupProgress()
-         } else {
+         if (!hasRealProgress) {
            // 2) No timestamps: only show indeterminate for music-ish things
            if (isMusicActivity(act) || isYouTubeMusicLike(act)) {
-             setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE); // indeterminate or hide
+             setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
            } else {
              setProgressVisibility("hide");
            }
@@ -951,19 +944,16 @@ async function getDiscord() {
         updateDynamicColors(coverUrl || null);
 
         const meta = resolvePremidMeta(appName, act);
-
         let prettyApp = meta.pretty;
         if (isYTM) prettyApp = "YouTube Music";
         else if (isYT) prettyApp = "YouTube";
 
         const verb = getActivityVerb(prettyApp, act);
-
         let source = meta.key;
         if (isYTM) source = "youtubemusic";
         else if (isYT) source = "youtube";
 
-        const statusText = `${verb} ${prettyApp}`;
-        return { text: statusText, source };
+        return { text: `${verb} ${prettyApp}`, source };
       }
     }
 
@@ -989,8 +979,26 @@ async function getDiscord() {
 }
 
 /* =========================
-   REDDIT
+   TWITCH & REDDIT
 ========================= */
+
+async function getTwitch() {
+  const u = CONFIG.twitch.username?.toLowerCase();
+  if (!u) return null;
+
+  const proxy = "https://corsproxy.io/?";
+  const target = `https://decapi.me/twitch/uptime/${u}`;
+
+  try {
+    const res = await fetch(`${proxy}${encodeURIComponent(target)}?_=${Date.now()}`);
+    const text = (await res.text()).toLowerCase();
+    const isOffline = text.includes("offline") || text.includes("not live") || text.includes("not found") || !text.trim();
+    return isOffline ? null : { live: true };
+  } catch (e) {
+    console.warn("Twitch check failed:", e);
+    return null;
+  }
+}
 
 async function getReddit() {
   const u = CONFIG.reddit.username;
@@ -1004,7 +1012,6 @@ async function getReddit() {
     if (!post) return null;
 
     const lastShownId = localStorage.getItem("lastRedditShownId");
-
     if (post.id !== lastShownId) {
       lastRedditPostId = post.id;
       localStorage.setItem("lastRedditShownId", post.id);
@@ -1013,7 +1020,6 @@ async function getReddit() {
   } catch (e) {
     console.warn("Reddit error:", e);
   }
-
   return null;
 }
 
@@ -1028,11 +1034,13 @@ try {
     if (!snap.exists()) { manualStatus = null; return; }
     const d = snap.data();
 
+    // Parse timestamp
     if (d.expiresAt?.toMillis) d.expiresAt = d.expiresAt.toMillis();
     else if (typeof d.expiresAt !== "number") d.expiresAt = null;
 
     manualStatus = d;
 
+    // Self-cleaning expired status
     if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
       try {
         await setDoc(manualRef, {
@@ -1054,7 +1062,7 @@ try {
 }
 
 /* =========================
-   STATUS PRIORITY
+   MAIN LOOP
 ========================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
@@ -1067,32 +1075,22 @@ function applyStatusDecision({ main, twitchLive, temp }) {
     return;
   }
 
-  if (main?.source === "spotify") {
-    showStatusLineWithFade(main?.text || "Listening to Spotify", "spotify");
-  } else if (main?.source === "youtubemusic") {
-    showStatusLineWithFade(main?.text || "Listening to YouTube Music", "youtubemusic");
-  } else if (main?.source === "youtube") {
-    showStatusLineWithFade(main?.text || "Watching YouTube", "youtube");
-  } else if (main?.source === "music") {
-    showStatusLineWithFade(main?.text || "Listening to Music", "music");
-  } else if (main?.source === "activity") {
-    showStatusLineWithFade(main?.text || "Active", "activity");
-  } else if (twitchLive) {
+  if (twitchLive) {
     showStatusLineWithFade("Now Live on Twitch", "twitch");
-  } else {
-    showStatusLineWithFade(main?.text || "No Current Active Activities", main?.source || "discord");
+    return;
   }
-}
 
-/* =========================
-   MAIN LOOP
-========================= */
+  const text = main?.text || "No Current Active Activities";
+  const source = main?.source || "discord";
+  showStatusLineWithFade(text, source);
+}
 
 async function mainLoop() {
   applySongThemeClass();
 
   const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
 
+  // Priority Chain
   const primary =
     (discord?.source === "manual") ? discord
     : (discord?.source === "spotify") ? discord
@@ -1100,7 +1098,7 @@ async function mainLoop() {
     : (discord?.source === "youtube") ? discord
     : (discord?.source === "music") ? discord
     : (discord?.source === "activity") ? discord
-    : (twitch || discord || { text: "No Current Active Activities", source: "discord" });
+    : (discord || { text: "No Current Active Activities", source: "discord" });
 
   const tempHit = reddit?.isTemp ? reddit : null;
 
