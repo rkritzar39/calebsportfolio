@@ -15,7 +15,6 @@ import { db } from "./firebase-init.js";
 
 const CONFIG = {
   discord: { userId: "850815059093356594" },
-  twitch:  { username: "calebkritzar" },
   reddit:  { username: "Maleficent_Line6570" },
 };
 
@@ -105,7 +104,6 @@ const ICON_MAP = {
   signal: "https://cdn.simpleicons.org/signal/3A76F0",
 
   // LIVE / CREATOR
-  twitch: "https://cdn.simpleicons.org/twitch/9146FF",
   kick: "https://cdn.simpleicons.org/kick/53FC19",
   patreon: "https://cdn.simpleicons.org/patreon/F96854",
   ko_fi: "https://cdn.simpleicons.org/kofi/FF5E5B",
@@ -311,7 +309,6 @@ const PREMID_RULES = [
   { re: /signal/i, key: "signal", pretty: "Signal" },
 
   // LIVE / CREATOR
-  { re: /twitch/i, key: "twitch", pretty: "Twitch" },
   { re: /\bkick\b/i, key: "kick", pretty: "Kick" },
   { re: /patreon/i, key: "patreon", pretty: "Patreon" },
   { re: /ko-?fi|kofi/i, key: "ko_fi", pretty: "Ko-fi" },
@@ -430,7 +427,7 @@ function showStatusLineWithFade(text, source = "manual") {
     txt.textContent = text;
 
     icon.classList.remove("glow");
-    if (["spotify", "twitch", "music", "youtube", "youtubemusic"].includes(source)) {
+    if (["spotify", "music", "youtube", "youtubemusic"].includes(source)) {
       icon.classList.add("glow");
     }
 
@@ -691,7 +688,6 @@ function getActivityVerb(appName = "", act = null) {
 
   // Streaming video
   if (
-    n.includes("twitch") ||
     n.includes("netflix") ||
     n.includes("hulu") ||
     n.includes("disney") ||
@@ -988,31 +984,6 @@ async function getDiscord() {
 
   } catch (e) {
     console.warn("Lanyard error:", e);
-    return null;
-  }
-}
-
-/* =========================
-   TWITCH
-========================= */
-
-async function getTwitch() {
-  const u = CONFIG.twitch.username?.toLowerCase();
-  if (!u) return null;
-
-  const proxy = "https://corsproxy.io/?";
-  const target = `https://decapi.me/twitch/uptime/${u}`;
-
-  try {
-    const res = await fetch(`${proxy}${encodeURIComponent(target)}?_=${Date.now()}`);
-    const text = (await res.text()).toLowerCase();
-
-    const isOffline =
-      text.includes("offline") || text.includes("not live") || text.includes("not found") || !text.trim();
-
-    return isOffline ? null : { live: true };
-  } catch (e) {
-    console.warn("Twitch check failed:", e);
     return null;
   }
 }
