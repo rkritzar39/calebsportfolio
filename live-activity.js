@@ -986,19 +986,37 @@ async function getTwitch() {
   const u = CONFIG.twitch.username?.toLowerCase();
   if (!u) return null;
 
+  // Use a cache-buster to prevent stale data
   const proxy = "https://corsproxy.io/?";
   const target = `https://decapi.me/twitch/uptime/${u}`;
 
   try {
     const res = await fetch(`${proxy}${encodeURIComponent(target)}?_=${Date.now()}`);
-    const text = (await res.text()).toLowerCase();
-    const isOffline = text.includes("offline") || text.includes("not live") || text.includes("not found") || !text.trim();
-    return isOffline ? null : { live: true };
+    if (!res.ok) return null; // If the fetch fails, assume offline
+    
+    const text = (await res.text()).trim();
+
+    // STRICT CHECK: If it contains "offline", "not found", or is empty -> Offline
+    if (!text || 
+        text.toLowerCase().includes("offline") || 
+        text.toLowerCase().includes("not found") ||
+        text.toLowerCase().includes("not live")) {
+      return null;
+    }
+
+    // EXTRA SAFETY: Ensure it looks like a time string (contains digits)
+    // DecAPI returns things like "1 hour, 20 mins" or "30 mins" when live.
+    if (!/\d/.test(text)) { 
+        return null; 
+    }
+
+    return { live: true };
   } catch (e) {
     console.warn("Twitch check failed:", e);
     return null;
   }
 }
+
 
 async function getReddit() {
   const u = CONFIG.reddit.username;
