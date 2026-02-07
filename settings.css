@@ -1386,3 +1386,23 @@ body.dark-mode #themeModeSelect:hover {
   filter: grayscale(1);
   pointer-events: none;
 }
+
+/* =========================================
+   ACCENT-POWERED SETTING ICONS
+   ========================================= */
+
+.setting-icon-container.accent-icon {
+  background-color: var(--accent-color);
+  color: var(--accent-text-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.setting-icon-container.accent-icon i {
+  color: inherit;
+}
