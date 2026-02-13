@@ -398,25 +398,26 @@
     </div>
 </div>
         
-<section class="section business-info-section" id="business-section" data-section-id="business-info" aria-label="Business information">
+<section class="section business-info-section" id="business-section" data-section-id="business-info">
   <div class="business-head">
     <div class="business-head-left">
       <h2>Business Status & Hours</h2>
       <p class="business-subtitle">
-        Live status and hours are shown in your local timezone. Store time is America/New_York.
+        Hours shown in your local timezone. Store timezone: <strong>America/New_York</strong>.
       </p>
     </div>
 
     <div class="business-head-right">
       <button class="biz-action" type="button" id="copyTodayBtn">Copy Today</button>
-      <button class="biz-action biz-action-ghost" type="button" id="toggleHoursBtn" aria-expanded="true" aria-controls="hoursPanel">
+      <button class="biz-action biz-action-ghost" type="button" id="toggleHoursBtn"
+              aria-expanded="true" aria-controls="hoursPanel">
         Toggle Hours
       </button>
     </div>
   </div>
 
   <div class="business-grid">
-    <!-- LEFT: Status / Summary -->
+    <!-- LEFT: Status -->
     <div class="biz-panel">
       <div class="biz-panel-title">
         <span class="biz-dot" id="bizDot" aria-hidden="true"></span>
@@ -424,13 +425,12 @@
         <span class="biz-chip" id="bizChip">AUTO</span>
       </div>
 
-      <div id="business-status-display" class="business-status" role="status" aria-live="polite">
+      <div id="business-status-display" class="business-status">
         <span class="status-main-text status-unavailable">Loading…</span>
         <span class="status-countdown-text"></span>
         <div class="status-reason-text"></div>
       </div>
 
-      <!-- Meta rows (script will fill these) -->
       <div class="biz-meta">
         <div class="biz-meta__row">
           <span class="biz-meta__label">Your timezone</span>
@@ -454,7 +454,6 @@
         <span class="biz-muted" id="bizLocalTime">Local time: …</span>
       </div>
 
-      <!-- Your script writes HTML into these -->
       <div id="business-hours-display" class="hours-wrap"></div>
 
       <details class="biz-details" id="temporaryDetails" open>
