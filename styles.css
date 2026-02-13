@@ -3998,6 +3998,147 @@ body.maintenance-active {
   }
 }
 
+/* ===== Premium header + grid helpers (safe overrides) ===== */
+.business-head{
+  display:flex; justify-content:space-between; align-items:flex-start;
+  gap:16px; padding-bottom:14px; margin-bottom:18px;
+  border-bottom:1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+}
+.business-head-left h2{
+  margin:0; text-align:left; padding-bottom:0; border-bottom:none;
+}
+.business-subtitle{
+  margin:8px 0 0 0; color:var(--secondary-text); line-height:1.45; max-width:72ch;
+}
+.business-head-right{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+
+.biz-action{
+  appearance:none;
+  border:1px solid var(--border-color);
+  background:var(--content-bg);
+  background-image:var(--bubble-gradient);
+  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
+  backdrop-filter:var(--backdrop-blur);
+  -webkit-backdrop-filter:var(--backdrop-blur);
+  border-radius:9999px;
+  padding:10px 14px;
+  font-weight:800;
+  color:var(--text-color);
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.biz-action:hover{
+  transform:translateY(-2px);
+  box-shadow:0 14px 28px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
+}
+.biz-action-ghost{ color:var(--accent-color); }
+
+.business-grid{
+  display:grid;
+  grid-template-columns:1.05fr 1.35fr;
+  gap:18px;
+  align-items:start;
+}
+.biz-panel{
+  background:var(--content-bg);
+  background-image:var(--bubble-gradient);
+  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
+  border:1px solid var(--border-color);
+  border-radius:var(--radius-xl);
+  padding:18px;
+  backdrop-filter:var(--backdrop-blur) saturate(120%);
+  -webkit-backdrop-filter:var(--backdrop-blur) saturate(120%);
+}
+.biz-panel-title{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.biz-panel-title--split{ justify-content:space-between; gap:12px; }
+.biz-muted{ color:var(--secondary-text); font-weight:650; font-size:.95em; }
+
+.biz-dot{
+  width:10px; height:10px; border-radius:50%;
+  background:color-mix(in srgb, var(--secondary-text) 55%, transparent);
+  box-shadow:0 0 8px color-mix(in srgb, var(--secondary-text) 40%, transparent);
+}
+.biz-chip{
+  margin-left:auto;
+  font-weight:900;
+  font-size:.85em;
+  padding:6px 10px;
+  border-radius:9999px;
+  border:1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  background:color-mix(in srgb, var(--content-bg) 85%, transparent);
+  color:var(--secondary-text);
+}
+
+.hours-wrap .regular-hours-list,
+.hours-wrap .special-hours-display{ margin:0; padding:0; list-style:none; }
+
+/* ===== Contact pill fix (works even if script includes label text) ===== */
+.contact-info{
+  text-align:center;
+  margin-top:14px; /* tighter inside panel */
+}
+
+/* Optional label (used by the updated script below) */
+.contact-info .contact-label{
+  display:block;
+  margin-bottom:10px;
+  color:var(--secondary-text);
+  font-weight:650;
+}
+
+/* Force the anchor to always look like the pill button */
+.contact-info a{
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  border: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+
+  padding: 14px 36px;
+  border-radius: 9999px;
+  font-weight: 900;
+  color: var(--accent-color);
+  text-decoration: none;
+
+  display: inline-flex;        /* <- important */
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 240px;
+
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.contact-info a:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent-color) 45%, transparent), var(--bubble-highlight);
+}
+
+.contact-info a:focus-visible{
+  outline:none;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent-color) 22%, transparent),
+    var(--bubble-shadow),
+    var(--bubble-highlight);
+  border-color: color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
+}
+
+/* Collapse support */
+#hoursPanel.is-collapsed .hours-wrap,
+#hoursPanel.is-collapsed details,
+#hoursPanel.is-collapsed .biz-divider,
+#hoursPanel.is-collapsed .biz-contact{ display:none; }
+
+@media (max-width: 980px){
+  .business-head{ flex-direction:column; align-items:stretch; }
+  .business-head-right{ justify-content:flex-start; }
+  .business-grid{ grid-template-columns:1fr; }
+  .business-head-left h2{ text-align:center; }
+  .business-subtitle{ text-align:center; margin-left:auto; margin-right:auto; }
+}
+
+
 /* Prevent printing of the page */
 @media print {
 	html, body {
