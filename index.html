@@ -409,7 +409,7 @@
 
     <div class="business-head-right">
       <button class="biz-action" type="button" id="copyTodayBtn">Copy Today</button>
-      <button class="biz-action biz-action-ghost" type="button" id="toggleHoursBtn" aria-expanded="true">
+      <button class="biz-action biz-action-ghost" type="button" id="toggleHoursBtn" aria-expanded="true" aria-controls="hoursPanel">
         Toggle Hours
       </button>
     </div>
@@ -421,15 +421,16 @@
       <div class="biz-panel-title">
         <span class="biz-dot" id="bizDot" aria-hidden="true"></span>
         <h3>Live Status</h3>
-        <span class="biz-chip" id="bizChip">Checking…</span>
+        <span class="biz-chip" id="bizChip">AUTO</span>
       </div>
 
       <div id="business-status-display" class="business-status" role="status" aria-live="polite">
-        <span class="status-main-text status-unavailable">Loading Status...</span>
+        <span class="status-main-text status-unavailable">Loading…</span>
         <span class="status-countdown-text"></span>
         <div class="status-reason-text"></div>
       </div>
 
+      <!-- Meta rows (script will fill these) -->
       <div class="biz-meta">
         <div class="biz-meta__row">
           <span class="biz-meta__label">Your timezone</span>
@@ -453,17 +454,17 @@
         <span class="biz-muted" id="bizLocalTime">Local time: …</span>
       </div>
 
-      <!-- Keep IDs exactly -->
-      <ul id="business-hours-display" class="hours-list" aria-label="Weekly hours"></ul>
+      <!-- Your script writes HTML into these -->
+      <div id="business-hours-display" class="hours-wrap"></div>
 
       <details class="biz-details" id="temporaryDetails" open>
         <summary>Temporary Hours</summary>
-        <ul id="temporary-hours-display" class="hours-list" aria-label="Temporary hours"></ul>
+        <div id="temporary-hours-display" class="hours-wrap"></div>
       </details>
 
       <details class="biz-details" id="holidayDetails">
         <summary>Holiday Hours</summary>
-        <ul id="holiday-hours-display" class="hours-list" aria-label="Holiday hours"></ul>
+        <div id="holiday-hours-display" class="hours-wrap"></div>
       </details>
 
       <div class="biz-divider" role="separator" aria-hidden="true"></div>
@@ -475,6 +476,7 @@
     </div>
   </div>
 </section>
+
         
  <div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
     <h2><i class="fas fa-microchip"></i> Tech Information</h2>
