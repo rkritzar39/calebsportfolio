@@ -398,20 +398,83 @@
     </div>
 </div>
         
-<div class="section business-info-section" id="business-section" data-section-id="business-info">
-    <h2>Business Status & Hours</h2>
-
-    <div id="business-status-display" class="business-status">
-        <span class="status-main-text">Loading Status...</span>
-        <span class="status-countdown-text"></span>
-        <div class="status-reason-text"></div>
+<section class="section business-info-section" id="business-section" data-section-id="business-info" aria-label="Business information">
+  <div class="business-head">
+    <div class="business-head-left">
+      <h2>Business Status & Hours</h2>
+      <p class="business-subtitle">
+        Live status and hours are shown in your local timezone. Store time is America/New_York.
+      </p>
     </div>
 
-    <div id="business-hours-display" class="hours-list"></div>
-    <div id="temporary-hours-display" class="hours-list"></div>
-    <div id="holiday-hours-display" class="hours-list"></div>
-    <div id="contact-email-display" class="contact-info"></div>
-</div>
+    <div class="business-head-right">
+      <button class="biz-action" type="button" id="copyTodayBtn">Copy Today</button>
+      <button class="biz-action biz-action-ghost" type="button" id="toggleHoursBtn" aria-expanded="true">
+        Toggle Hours
+      </button>
+    </div>
+  </div>
+
+  <div class="business-grid">
+    <!-- LEFT: Status / Summary -->
+    <div class="biz-panel">
+      <div class="biz-panel-title">
+        <span class="biz-dot" id="bizDot" aria-hidden="true"></span>
+        <h3>Live Status</h3>
+        <span class="biz-chip" id="bizChip">Checking…</span>
+      </div>
+
+      <div id="business-status-display" class="business-status" role="status" aria-live="polite">
+        <span class="status-main-text status-unavailable">Loading Status...</span>
+        <span class="status-countdown-text"></span>
+        <div class="status-reason-text"></div>
+      </div>
+
+      <div class="biz-meta">
+        <div class="biz-meta__row">
+          <span class="biz-meta__label">Your timezone</span>
+          <span class="biz-meta__value" id="bizUserTz">Detecting…</span>
+        </div>
+        <div class="biz-meta__row">
+          <span class="biz-meta__label">Today</span>
+          <span class="biz-meta__value" id="bizTodayHours">Loading…</span>
+        </div>
+        <div class="biz-meta__row">
+          <span class="biz-meta__label">Next open</span>
+          <span class="biz-meta__value" id="bizNextOpen">Loading…</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Hours -->
+    <div class="biz-panel" id="hoursPanel">
+      <div class="biz-panel-title biz-panel-title--split">
+        <h3>Weekly Hours</h3>
+        <span class="biz-muted" id="bizLocalTime">Local time: …</span>
+      </div>
+
+      <!-- Keep IDs exactly -->
+      <ul id="business-hours-display" class="hours-list" aria-label="Weekly hours"></ul>
+
+      <details class="biz-details" id="temporaryDetails" open>
+        <summary>Temporary Hours</summary>
+        <ul id="temporary-hours-display" class="hours-list" aria-label="Temporary hours"></ul>
+      </details>
+
+      <details class="biz-details" id="holidayDetails">
+        <summary>Holiday Hours</summary>
+        <ul id="holiday-hours-display" class="hours-list" aria-label="Holiday hours"></ul>
+      </details>
+
+      <div class="biz-divider" role="separator" aria-hidden="true"></div>
+
+      <div class="biz-contact">
+        <h4>Contact</h4>
+        <div id="contact-email-display" class="contact-info"></div>
+      </div>
+    </div>
+  </div>
+</section>
         
  <div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
     <h2><i class="fas fa-microchip"></i> Tech Information</h2>
