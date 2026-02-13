@@ -1636,8 +1636,12 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
 /* ========================================
    displayShoutouts.js - Business Hours & Status
    Full version with dynamic sub-status (NO countdown)
-   UPGRADE UI: Copy Today + Toggle Hours + meta rows + dot/chip + local time
-   FIX: next-open search weekday mapping reliability
+   FINAL: Temp hours apply ONLY during time window and show Temporarily Unavailable (never Closed)
+   UPGRADE: Closed-state substatus finds TRUE next opening time (supports split shifts)
+   FIXES:
+     - Next open never stuck on "Loading..."
+     - Contact button always clean pill
+     - Buttons: Copy Today + Toggle Hours (persist)
    ======================================== */
 
 /* -------------------------
@@ -1673,7 +1677,7 @@ function formatDisplayTimeBI(timeString, visitorTimezone) {
   if (!timeString) return '?';
   if (typeof luxon === 'undefined' || !luxon.DateTime)
     return `${formatTime12hSimple(timeString)} ET (Lib Err)`;
-  if (typeof assumedBusinessTimezone === 'undefined')
+  if (typeof window.assumedBusinessTimezone === 'undefined')
     return `${formatTime12hSimple(timeString)} (?)`;
 
   try {
@@ -1681,7 +1685,7 @@ function formatDisplayTimeBI(timeString, visitorTimezone) {
     const [hour, minute] = timeString.split(':').map(Number);
     if (isNaN(hour) || isNaN(minute)) return formatTime12hSimple(timeString);
 
-    const nowBiz = DateTime.now().setZone(assumedBusinessTimezone);
+    const nowBiz = DateTime.now().setZone(window.assumedBusinessTimezone);
     const bizDt = nowBiz.set({ hour, minute, second: 0, millisecond: 0 });
     const visitorDt = bizDt.setZone(visitorTimezone);
 
@@ -1708,7 +1712,7 @@ function formatDate(dateStr) {
     }
   }
   const { DateTime } = luxon;
-  const dt = DateTime.fromISO(dateStr, { zone: assumedBusinessTimezone || 'UTC' });
+  const dt = DateTime.fromISO(dateStr, { zone: window.assumedBusinessTimezone || 'UTC' });
   return dt.isValid ? dt.toFormat('cccc, LLLL d, yyyy') : dateStr;
 }
 
@@ -1729,10 +1733,32 @@ try {
 /* -------------------------
    UI HELPERS
 ------------------------- */
+function setMetaRow(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
+
+function setLocalTimeLine(visitorTimezone) {
+  const el = document.getElementById('bizLocalTime');
+  if (!el) return;
+
+  try {
+    const now = new Date();
+    const formatted = new Intl.DateTimeFormat('en-US', {
+      timeZone: visitorTimezone,
+      weekday: 'short',
+      hour: 'numeric',
+      minute: '2-digit',
+    }).format(now);
+    el.textContent = `Local time: ${formatted}`;
+  } catch (e) {
+    el.textContent = 'Local time: —';
+  }
+}
+
 function setChipAndDot(statusText) {
   const dot = document.getElementById('bizDot');
   const chip = document.getElementById('bizChip');
-
   if (!dot && !chip) return;
 
   const openColor = 'var(--status-open-color, #28a745)';
@@ -1758,29 +1784,6 @@ function setChipAndDot(statusText) {
     dot.style.background = `color-mix(in srgb, ${color} 85%, transparent)`;
     dot.style.boxShadow = `0 0 10px color-mix(in srgb, ${color} 55%, transparent)`;
   }
-}
-
-function setLocalTimeLine(visitorTimezone) {
-  const el = document.getElementById('bizLocalTime');
-  if (!el) return;
-
-  try {
-    const now = new Date();
-    const formatted = new Intl.DateTimeFormat('en-US', {
-      timeZone: visitorTimezone,
-      weekday: 'short',
-      hour: 'numeric',
-      minute: '2-digit',
-    }).format(now);
-    el.textContent = `Local time: ${formatted}`;
-  } catch (e) {
-    el.textContent = 'Local time: —';
-  }
-}
-
-function setMetaRow(id, value) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = value;
 }
 
 function installPanelToggle() {
@@ -1810,11 +1813,11 @@ function installCopyToday() {
     const status = document.querySelector('#business-status-display .status-main-text')?.textContent?.trim() || '';
     const today = document.getElementById('bizTodayHours')?.textContent?.trim() || '';
     const next = document.getElementById('bizNextOpen')?.textContent?.trim() || '';
-    const tz = document.getElementById('bizUserTz')?.textContent?.trim() || '';
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
     const text = [
       "Caleb’s Merch Store",
-      tz ? `Timezone: ${tz}` : '',
+      `Timezone: ${tz}`,
       status ? `Status: ${status}` : '',
       today ? `Today: ${today}` : '',
       next && next !== '—' ? `Next open: ${next}` : ''
@@ -1826,7 +1829,6 @@ function installCopyToday() {
       btn.textContent = 'Copied!';
       setTimeout(() => (btn.textContent = old), 900);
     } catch (e) {
-      // fallback
       alert(text);
     }
   });
@@ -1844,17 +1846,21 @@ async function displayBusinessInfo() {
 
   if (!contactEl || !hoursEl || !statusEl || !tempEl || !holidayEl) return;
 
-  // Install UI actions once
   installPanelToggle();
   installCopyToday();
 
-  // Visitor timezone
+  // visitor timezone
   let visitorTimezone = 'UTC';
   try {
     visitorTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
   } catch (e) {}
+
   setMetaRow('bizUserTz', visitorTimezone);
   setLocalTimeLine(visitorTimezone);
+
+  // never leave Loading...
+  setMetaRow('bizNextOpen', '—');
+  setMetaRow('bizTodayHours', '—');
 
   if (!businessDocRefLocal || typeof getDoc !== 'function') {
     const statusMain = statusEl.querySelector('.status-main-text');
@@ -1871,9 +1877,12 @@ async function displayBusinessInfo() {
 
     const data = docSnap.data() || {};
 
-    // CONTACT
+    // CONTACT (pill button only)
     if (data.contactEmail) {
-      contactEl.innerHTML = `Contact: <a href="mailto:${data.contactEmail}">${data.contactEmail}</a>`;
+      contactEl.innerHTML = `
+        <span class="contact-label">Email</span>
+        <a href="mailto:${data.contactEmail}">${data.contactEmail}</a>
+      `;
     } else {
       contactEl.innerHTML = '';
     }
@@ -1902,10 +1911,11 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
 
   if (!statusMainTextEl || !statusSubTextEl || !statusReasonEl) return;
 
-  if (typeof assumedBusinessTimezone === 'undefined') {
+  if (typeof window.assumedBusinessTimezone === 'undefined') {
     statusMainTextEl.textContent = 'Config Error';
     statusMainTextEl.className = 'status-main-text status-unavailable';
     statusReasonEl.textContent = 'Missing Timezone';
+    setMetaRow('bizNextOpen', '—');
     return;
   }
 
@@ -1917,7 +1927,7 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
   const { DateTime } =
     typeof luxon !== 'undefined' && luxon.DateTime ? luxon : { DateTime: null };
 
-  const nowInBizTZ = DateTime ? DateTime.now().setZone(assumedBusinessTimezone) : null;
+  const nowInBizTZ = DateTime ? DateTime.now().setZone(window.assumedBusinessTimezone) : null;
 
   const currentMinutesInBizTZ = DateTime
     ? nowInBizTZ.hour * 60 + nowInBizTZ.minute
@@ -1934,7 +1944,7 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
     const parts = str.split('-').map((n) => parseInt(n, 10));
     if (parts.length !== 3) return null;
     const [y, m, d] = parts;
-    return DateTime.fromObject({ year: y, month: m, day: d }, { zone: assumedBusinessTimezone });
+    return DateTime.fromObject({ year: y, month: m, day: d }, { zone: window.assumedBusinessTimezone });
   }
 
   function normalizeToRanges(obj) {
@@ -1948,9 +1958,7 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
     const openM = timeStringToMinutes(range.open);
     const closeM = timeStringToMinutes(range.close);
     if (openM === null || closeM === null) return false;
-    if (closeM > openM) {
-      return currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM;
-    }
+    if (closeM > openM) return currentMinutesInBizTZ >= openM && currentMinutesInBizTZ < closeM;
     return currentMinutesInBizTZ >= openM || currentMinutesInBizTZ < closeM;
   }
 
@@ -2018,7 +2026,6 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
       ranges: []
     };
   } else {
-    // Holiday for today (full-day override)
     const todayHoliday = holidayHours.find((h) => h.date === businessDateStr);
     if (todayHoliday) {
       const hRanges = normalizeToRanges(todayHoliday);
@@ -2037,7 +2044,6 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
         ? 'Open'
         : 'Closed';
     } else {
-      // Temp ACTIVE only during its open->close window (and in date range)
       const activeTemp = temporaryHours.find((t) => {
         if (!t || !t.open || !t.close) return false;
         if (!isInDateWindow(t)) return false;
@@ -2052,17 +2058,13 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
           isClosed: false,
           ranges: normalizeToRanges(activeTemp)
         };
-
-        // Always "Temporarily Unavailable" while temp is active
         finalCurrentStatus = 'Temporarily Unavailable';
       }
     }
   }
 
-  // reason text
   finalActiveRule.reason = `${finalActiveRule.reasonOriginal} - Currently ${finalCurrentStatus}`;
 
-  // main status class
   let statusClass = 'status-closed';
   if (finalCurrentStatus === 'Open') statusClass = 'status-open';
   else if (finalCurrentStatus === 'Temporarily Unavailable') statusClass = 'status-unavailable';
@@ -2072,30 +2074,66 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
   statusMainTextEl.textContent = finalCurrentStatus;
 
   statusReasonEl.textContent = finalActiveRule.reason;
+
   setChipAndDot(finalCurrentStatus);
   setLocalTimeLine(visitorTimezone);
 
   /* -------------------------
+     TODAY META ROW
+  ------------------------- */
+  (function setTodayMeta() {
+    const schedule = finalActiveRule.type === 'holiday' ? finalActiveRule : todayRegular;
+    const ranges = normalizeToRanges(schedule);
+
+    if (finalActiveRule.type === 'temporary') {
+      if (todayRegular.isClosed || !todayRanges.length) {
+        setMetaRow('bizTodayHours', 'Temporarily Unavailable');
+      } else {
+        const r = todayRanges[0];
+        setMetaRow('bizTodayHours', `${formatDisplayTimeBI(r.open, visitorTimezone)} – ${formatDisplayTimeBI(r.close, visitorTimezone)}`);
+      }
+      return;
+    }
+
+    if (!ranges.length || schedule.isClosed) {
+      setMetaRow('bizTodayHours', 'Closed');
+      return;
+    }
+
+    if (ranges.length === 1) {
+      setMetaRow('bizTodayHours', `${formatDisplayTimeBI(ranges[0].open, visitorTimezone)} – ${formatDisplayTimeBI(ranges[0].close, visitorTimezone)}`);
+      return;
+    }
+
+    const joined = ranges
+      .map(r => `${formatDisplayTimeBI(r.open, visitorTimezone)}–${formatDisplayTimeBI(r.close, visitorTimezone)}`)
+      .join(', ');
+    setMetaRow('bizTodayHours', joined);
+  })();
+
+  /* -------------------------
      SUB-STATUS (30-min logic)
   ------------------------- */
-  (function setSubStatus() {
+  (function setSubStatusAndNextOpen() {
     const THRESHOLD_MIN = 30;
 
-    // 1) If temp is active: "Opens again in" near end, else generic
+    // Default next open so it never stays "Loading..."
+    setMetaRow('bizNextOpen', '—');
+
+    // 1) temp active
     if (finalActiveRule.type === 'temporary') {
       const endDT = dtTodayAt(finalActiveRule.close);
       const m = minutesUntil(endDT);
 
       if (m !== null && m > 0 && m <= THRESHOLD_MIN) {
         statusSubTextEl.textContent = `Opens again in ${formatDuration(m)}`;
-        return;
+      } else {
+        statusSubTextEl.textContent = 'Temporarily Unavailable';
       }
-
-      statusSubTextEl.textContent = 'Temporarily Unavailable';
       return;
     }
 
-    // 2) If a temp window starts within 30 minutes: "Temporarily unavailable in"
+    // 2) temp starts soon
     let soonestTempStartMins = null;
     for (const t of temporaryHours) {
       if (!t || !t.open || !t.close) continue;
@@ -2103,11 +2141,8 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
 
       const startDT = dtTodayAt(t.open);
       const m = minutesUntil(startDT);
-
       if (m !== null && m > 0 && m <= THRESHOLD_MIN) {
-        if (soonestTempStartMins === null || m < soonestTempStartMins) {
-          soonestTempStartMins = m;
-        }
+        if (soonestTempStartMins === null || m < soonestTempStartMins) soonestTempStartMins = m;
       }
     }
     if (soonestTempStartMins !== null) {
@@ -2115,7 +2150,7 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
       return;
     }
 
-    // 3) If open now: "Closes in" within 30 min else "Open till"
+    // 3) open now
     if (finalCurrentStatus === 'Open') {
       const activeRange = todayRanges.find((r) => isRangeActive(r));
       if (activeRange) {
@@ -2124,23 +2159,23 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
 
         if (m !== null && m > 0 && m <= THRESHOLD_MIN) {
           statusSubTextEl.textContent = `Closes in ${formatDuration(m)}`;
-          return;
+        } else {
+          statusSubTextEl.textContent = `Open till ${formatDisplayTimeBI(activeRange.close, visitorTimezone)}`;
         }
 
-        statusSubTextEl.textContent = `Open till ${formatDisplayTimeBI(activeRange.close, visitorTimezone)}`;
+        // When open, next open is not relevant
+        setMetaRow('bizNextOpen', '—');
         return;
       }
     }
 
-    // 4) If closed now: find TRUE next opening (regular/holiday), skip past earlier openings today
-    const displayOrder = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
-
+    // 4) closed: find TRUE next opening (holiday/regular), skip past earlier openings today
     function parseBizDate(str) {
       if (!str || !DateTime) return null;
       const parts = str.split('-').map((n) => parseInt(n, 10));
       if (parts.length !== 3) return null;
       const [y, m, d] = parts;
-      return DateTime.fromObject({ year: y, month: m, day: d }, { zone: assumedBusinessTimezone });
+      return DateTime.fromObject({ year: y, month: m, day: d }, { zone: window.assumedBusinessTimezone });
     }
 
     function getDayNameFromDateTime(dt) {
@@ -2168,14 +2203,12 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
 
       if (offset !== 0) return ranges[0]?.open || null;
 
-      // Today: soonest opening still ahead
       let bestOpen = null;
       let bestOpenM = null;
 
       for (const r of ranges) {
         const openM = timeStringToMinutes(r.open);
         if (openM === null) continue;
-
         if (openM > currentMinutesInBizTZ) {
           if (bestOpenM === null || openM < bestOpenM) {
             bestOpenM = openM;
@@ -2206,17 +2239,20 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
       const nextOpenStr = getNextOpenTimeStrForOffset(offset, schedule);
       if (!nextOpenStr) continue;
 
-      const [oh, om] = nextOpenStr.split(':').map((x) => parseInt(x, 10));
-      const openDT = nowInBizTZ.plus({ days: offset }).set({ hour: oh, minute: om, second: 0, millisecond: 0 });
-      const m = minutesUntil(openDT);
+      // Meta row: next open
+      const prettyTime = formatDisplayTimeBI(nextOpenStr, visitorTimezone);
+      if (offset === 0) setMetaRow('bizNextOpen', `Today • ${prettyTime}`);
+      else if (offset === 1) setMetaRow('bizNextOpen', `Tomorrow • ${prettyTime}`);
+      else setMetaRow('bizNextOpen', `${capitalizeFirstLetter(dayName)} • ${prettyTime}`);
 
-      // meta row: next open (first match wins)
-      try {
-        const prettyNext = openDT.setZone(visitorTimezone).toFormat('ccc, LLL d • h:mm a ZZZZ');
-        setMetaRow('bizNextOpen', prettyNext);
-      } catch (e) {
-        setMetaRow('bizNextOpen', formatDisplayTimeBI(nextOpenStr, visitorTimezone));
-      }
+      // Sub status: opens in (if within 30 min) else opens wording
+      const openDT = nowInBizTZ.plus({ days: offset }).set({
+        hour: parseInt(nextOpenStr.split(':')[0], 10),
+        minute: parseInt(nextOpenStr.split(':')[1], 10),
+        second: 0,
+        millisecond: 0
+      });
+      const m = minutesUntil(openDT);
 
       if (offset === 0 && m !== null && m > 0 && m <= THRESHOLD_MIN) {
         statusSubTextEl.textContent = `Opens in ${formatDuration(m)}`;
@@ -2226,60 +2262,22 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
       if (offset === 0) {
         const reopen = hadAnyOpenEarlierToday(schedule);
         statusSubTextEl.textContent = reopen
-          ? `Opens again at ${formatDisplayTimeBI(nextOpenStr, visitorTimezone)}`
-          : `Opens Today at ${formatDisplayTimeBI(nextOpenStr, visitorTimezone)}`;
+          ? `Opens again at ${prettyTime}`
+          : `Opens Today at ${prettyTime}`;
         return;
       }
 
       if (offset === 1) {
-        statusSubTextEl.textContent = `Opens Tomorrow at ${formatDisplayTimeBI(nextOpenStr, visitorTimezone)}`;
+        statusSubTextEl.textContent = `Opens Tomorrow at ${prettyTime}`;
         return;
       }
 
-      statusSubTextEl.textContent = `Opens ${capitalizeFirstLetter(dayName)} at ${formatDisplayTimeBI(nextOpenStr, visitorTimezone)}`;
+      statusSubTextEl.textContent = `Opens ${capitalizeFirstLetter(dayName)} at ${prettyTime}`;
       return;
     }
 
-    // If nothing found
-    setMetaRow('bizNextOpen', '—');
     statusSubTextEl.textContent = '';
-  })();
-
-  /* -------------------------
-     TODAY META ROW ("Today")
-  ------------------------- */
-  (function setTodayMeta() {
-    // If holiday has explicit closed or no ranges
-    const schedule = finalActiveRule.type === 'holiday' ? finalActiveRule : todayRegular;
-    const ranges = normalizeToRanges(schedule);
-
-    if (finalActiveRule.type === 'temporary') {
-      // While temp is active, keep the "Today" row meaningful: show regular hours but indicate temp state
-      if (todayRegular.isClosed || !todayRanges.length) {
-        setMetaRow('bizTodayHours', 'Temporarily Unavailable');
-      } else {
-        // show first regular range
-        const r = todayRanges[0];
-        setMetaRow('bizTodayHours', `${formatDisplayTimeBI(r.open, visitorTimezone)} – ${formatDisplayTimeBI(r.close, visitorTimezone)}`);
-      }
-      return;
-    }
-
-    if (!ranges.length || schedule.isClosed) {
-      setMetaRow('bizTodayHours', 'Closed');
-      return;
-    }
-
-    if (ranges.length === 1) {
-      setMetaRow('bizTodayHours', `${formatDisplayTimeBI(ranges[0].open, visitorTimezone)} – ${formatDisplayTimeBI(ranges[0].close, visitorTimezone)}`);
-      return;
-    }
-
-    // multiple ranges (split shifts)
-    const joined = ranges
-      .map(r => `${formatDisplayTimeBI(r.open, visitorTimezone)}–${formatDisplayTimeBI(r.close, visitorTimezone)}`)
-      .join(', ');
-    setMetaRow('bizTodayHours', joined);
+    setMetaRow('bizNextOpen', '—');
   })();
 
   /* -------------------------
@@ -2397,11 +2395,11 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
     holidayEl.style.display = 'none';
   }
 
-  /* CONTACT (keep it synced if doc changes) */
+  /* CONTACT sync (pill button only) */
   const contactEmail = businessData.contactEmail || '';
   if (contactEl) {
     contactEl.innerHTML = contactEmail
-      ? `Contact: <a href="mailto:${contactEmail}">${contactEmail}</a>`
+      ? `<span class="contact-label">Email</span><a href="mailto:${contactEmail}">${contactEmail}</a>`
       : '';
   }
 }
@@ -2411,14 +2409,15 @@ function calculateAndDisplayStatusBI(businessData = {}, visitorTimezone = 'UTC')
 ------------------------- */
 function startBusinessInfoRefresh() {
   displayBusinessInfo();
-  // Refresh UI periodically (no countdown, but status can flip at boundaries)
-  setInterval(displayBusinessInfo, 60 * 1000); // every minute
+  // Refresh every minute so status flips at boundaries (no countdown)
+  setInterval(displayBusinessInfo, 60 * 1000);
 }
 
 if (document.readyState === 'loading')
   document.addEventListener('DOMContentLoaded', startBusinessInfoRefresh);
 else
   startBusinessInfoRefresh();
+
 
 document.addEventListener("DOMContentLoaded", () => {
   // === GLOW TYPING LOGIC (your original) ===
