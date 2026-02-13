@@ -1,76 +1,80 @@
-// rearrange.js — FINAL, FIXED, MOBILE READY VERSION (+ locked sections)
+// rearrange.js — FINAL, FIXED, MOBILE READY VERSION (LOCKED SECTIONS FIX)
 
 document.addEventListener("DOMContentLoaded", () => {
-  initRearranging(); // Run once on page load
+  initRearranging();
 
-  // Detect settings changed from Settings page or other tabs
   window.addEventListener("storage", (e) => {
-    if (e.key === "websiteSettings") {
-      initRearranging();
-    }
+    if (e.key === "websiteSettings") initRearranging();
   });
 });
 
 function initRearranging() {
   console.log("🔄 Checking rearrangingEnabled setting…");
 
-  // ✅ Default should match your SettingsManager default:
-  // settings.js defaultSettings.rearrangingEnabled = "disabled"
+  // Match your settings.js default: "disabled"
   let rearrangingEnabled = false;
 
-  // Load the setting from settings.js via localStorage
   try {
     const stored = localStorage.getItem("websiteSettings");
     if (stored) {
       const settings = JSON.parse(stored);
-
-      // Setting is stored as "enabled" or "disabled"
-      if (settings.rearrangingEnabled === "enabled") {
-        rearrangingEnabled = true;
-      }
+      rearrangingEnabled = settings.rearrangingEnabled === "enabled";
     }
   } catch (error) {
     console.error("⚠ Failed to read rearranging setting. Defaulting to disabled.", error);
   }
 
   const container = document.getElementById("rearrangeable-container");
-
   if (!container) {
     console.warn("⚠ No #rearrangeable-container found — rearranging disabled on this page.");
     return;
   }
 
-  // Ensure SortableJS is loaded
   if (typeof Sortable === "undefined") {
     console.error("❌ SortableJS is NOT loaded. Rearranging will NOT work.");
     return;
   }
 
-  // REARRANGING ENABLED
+  // ENABLED
   if (rearrangingEnabled) {
     console.log("✅ Rearranging is ENABLED.");
 
-    // Prevent multiple Sortable instances
     if (!container._sortableInstance) {
       container._sortableInstance = new Sortable(container, {
         animation: 160,
         ghostClass: "sortable-ghost",
 
-        // ✅ Only allow dragging of sections that are NOT locked
-        draggable: ".section:not(.no-rearrange)",
+        // ✅ ONLY allow dragging real moveable sections:
+        // - must be a .section
+        // - must have data-section-id
+        // - must NOT have .no-rearrange
+        draggable: ".section[data-section-id]:not(.no-rearrange)",
 
-        // Optional but helps prevent weird text selection while dragging
+        // ✅ Extra safety: never move these if something weird matches
         filter: ".no-rearrange",
+
+        // Keep clicks working inside filtered elements
         preventOnFilter: false,
 
-        // Make mobile & tablet dragging work better
+        // Better touch behavior
         forceFallback: true,
         touchStartThreshold: 3,
 
+        // ✅ Hard stop: if either side is locked, block the move
+        onMove(evt) {
+          const dragged = evt.dragged;
+          const related = evt.related;
+
+          if (dragged?.classList?.contains("no-rearrange")) return false;
+          if (related?.classList?.contains("no-rearrange")) return false;
+
+          return true;
+        },
+
         onEnd() {
-          // Save new layout order
+          // Save only the movable sections
           const newOrder = Array.from(
-            container.querySelectorAll("[data-section-id]")
+            container.querySelectorAll(".section[data-section-id]")
           ).map((el) => el.dataset.sectionId);
 
           localStorage.setItem("sectionOrder", JSON.stringify(newOrder));
@@ -79,13 +83,12 @@ function initRearranging() {
       });
     }
 
-    return; // done
+    return;
   }
 
-  // REARRANGING DISABLED
+  // DISABLED
   console.log("🚫 Rearranging is DISABLED by user setting.");
 
-  // Destroy Sortable instance if it exists
   if (container._sortableInstance) {
     container._sortableInstance.destroy();
     container._sortableInstance = null;
