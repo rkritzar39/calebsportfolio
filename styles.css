@@ -4868,3 +4868,10 @@ body.ultra-minimal .btn {
   }
 }
 
+.no-rearrange {
+  cursor: not-allowed;
+}
+
+.no-rearrange * {
+  cursor: inherit;
+}
