@@ -363,27 +363,30 @@
           </div>
         </label>
 
-        <section class="setting-card" id="layoutSettingsCard">
-  <div class="setting-row">
-    <div>
-      <div class="setting-title">Layout</div>
-      <div class="setting-desc">
-        Reset your homepage section order back to the default layout.
-      </div>
+        <section class="setting-card layout-reset-card" id="layoutSettingsCard">
+  <div class="setting-icon-container layout-reset-icon">
+    <i class="fa-solid fa-layer-group"></i>
+  </div>
+
+  <div class="setting-label">
+    <strong class="setting-title">Layout</strong>
+    <p class="setting-description">
+      Reset your homepage section order back to the default layout.
+    </p>
+
+    <div class="layout-meta">
+      <span class="pill"><i class="fa-solid fa-grip-vertical"></i> Section order</span>
+      <span class="pill subtle"><i class="fa-solid fa-database"></i> Clears <code>sectionOrder</code></span>
     </div>
   </div>
 
-  <div class="setting-row" style="gap:10px;flex-wrap:wrap;">
-   <button class="button reset-button layout-reset-btn" id="resetLayoutBtn" type="button">
-  <i class="fa-solid fa-arrow-rotate-left"></i>
-  Reset Layout
-</button>
-
+  <div class="layout-actions">
+    <button class="button layout-reset-btn" id="resetLayoutBtn" type="button">
+      <i class="fa-solid fa-arrow-rotate-left"></i>
+      Reset Layout
+    </button>
+    <div class="layout-hint">Takes effect on refresh / Home page load</div>
   </div>
-
-  <p class="muted small" style="margin:10px 0 0;">
-    This clears your saved section order (sectionOrder) and restores the default order.
-  </p>
 </section>
         
 
