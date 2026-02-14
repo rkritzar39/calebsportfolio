@@ -1416,6 +1416,17 @@ body.dark-mode #themeModeSelect:hover {
   gap: 14px;
 }
 
+/* Force the Layout icon bubble to match the current accent color */
+.setting-card.layout-reset-card .layout-reset-icon{
+  background: var(--accent-color) !important;
+  color: var(--accent-text-color) !important;
+}
+
+/* If your icon container has its own icon color rules, this guarantees it */
+.setting-card.layout-reset-card .layout-reset-icon i{
+  color: var(--accent-text-color) !important;
+}
+
 /* Accent-tinted icon bubble that still looks like the rest */
 .setting-card.layout-reset-card .layout-reset-icon{
   background: color-mix(in srgb, var(--accent-color) 22%, #8e8e93);
