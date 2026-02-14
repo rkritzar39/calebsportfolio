@@ -1406,3 +1406,108 @@ body.dark-mode #themeModeSelect:hover {
 .setting-icon-container.accent-icon i {
   color: inherit;
 }
+
+/* =======================================================
+   Layout Reset Card — Accent-Aware (uses your --accent-color)
+   ======================================================= */
+
+/* Card layout (matches your setting-card style) */
+.setting-card.layout-reset-card {
+  align-items: center;
+  gap: 14px;
+}
+
+.layout-reset-card .setting-label {
+  flex: 1;
+  min-width: 240px;
+}
+
+.layout-reset-card .layout-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* Accent button */
+.layout-reset-card .layout-reset-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 10px 14px;
+  border-radius: 14px;
+
+  background: var(--accent-color);
+  color: var(--accent-text-color);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 65%, var(--border-color));
+
+  font-weight: 800;
+  letter-spacing: .2px;
+
+  box-shadow: var(--shadow-elevation-2);
+  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+
+/* Hover/active feel (visionOS-ish) */
+.layout-reset-card .layout-reset-btn:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.03) saturate(1.05);
+  box-shadow: 0 14px 34px rgba(0,0,0,.18);
+}
+
+.layout-reset-card .layout-reset-btn:active{
+  transform: translateY(0px) scale(.99);
+  filter: brightness(.98);
+}
+
+/* Subtle hint text */
+.layout-reset-card .layout-hint{
+  font-size: 12px;
+  color: var(--secondary-text);
+  text-align: right;
+  line-height: 1.2;
+}
+
+/* Pills under description */
+.layout-reset-card .layout-meta{
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.layout-reset-card .pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  background: color-mix(in srgb, var(--content-bg) 75%, var(--accent-color) 10%);
+  border: 1px solid color-mix(in srgb, var(--border-color) 65%, var(--accent-color) 15%);
+  color: var(--text-color);
+}
+
+.layout-reset-card .pill.subtle{
+  opacity: .88;
+}
+
+/* Mobile: stack button under text */
+@media (max-width: 640px){
+  .setting-card.layout-reset-card{
+    align-items: flex-start;
+  }
+  .layout-reset-card .layout-actions{
+    width: 100%;
+    align-items: stretch;
+  }
+  .layout-reset-card .layout-hint{
+    text-align: left;
+  }
+}
