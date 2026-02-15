@@ -4138,6 +4138,56 @@ body.maintenance-active {
   .business-subtitle{ text-align:center; margin-left:auto; margin-right:auto; }
 }
 
+/* =========================================================
+   FIX: Prevent business card/panels from touching container sides
+   Paste at the very bottom of business CSS
+   ========================================================= */
+
+/* 1) Add outer gutters so panels never touch the screen edges */
+#business,
+.business,
+.business-section,
+section#businessSection,
+main .business-section{
+  padding-left: max(env(safe-area-inset-left), clamp(14px, 4vw, 26px));
+  padding-right: max(env(safe-area-inset-right), clamp(14px, 4vw, 26px));
+  box-sizing: border-box;
+}
+
+/* 2) Center and constrain the whole business area */
+#business .business-grid,
+.business-section .business-grid,
+.business-grid{
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 3) Make sure panels respect the new gutters and never overflow */
+.biz-panel,
+.business-head,
+.business-grid{
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 4) Common culprit: a child using 100vw forces edge-touching */
+.business-grid *{
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* If anything inside uses viewport width, clamp it safely */
+.business-grid [style*="100vw"],
+.business-grid .full-bleed{
+  width: 100% !important;
+}
+
+/* 5) Optional: slightly reduce gap on very small screens so it breathes better */
+@media (max-width: 420px){
+  .business-grid{ gap: 14px; }
+  .biz-panel{ padding: 16px; }
+}
 
 /* Prevent printing of the page */
 @media print {
