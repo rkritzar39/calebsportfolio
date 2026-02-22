@@ -1134,96 +1134,185 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ============================================= */
-/* Vision OS dock                                */
+/* Vision OS dock (iOS 26.4 Settings-style)      */
+/* Start with your current dock, upgraded safely */
 /* ============================================= */
+
+/* Dock container */
 .onyx-dock {
   position: fixed;
-  bottom: 20px;
   left: 50%;
+  bottom: max(14px, env(safe-area-inset-bottom));
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 6px 8px;
+
+  gap: 6px;
+  padding: 7px 8px;
+
   border-radius: 999px;
   width: fit-content;
-  max-width: 90vw;
-  background: var(--content-bg);
-  border: 1px solid var(--border-color);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.25);
+  max-width: calc(100vw - 22px);
+
+  /* iOS 26.4 glass material */
+  background: color-mix(in srgb, var(--content-bg) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    0 14px 34px -18px rgba(0,0,0,0.45);
+
   z-index: 9999;
+
+  /* Prevent “shimmer” on scroll */
+  -webkit-transform: translateX(-50%) translateZ(0);
+  transform: translateX(-50%) translateZ(0);
 }
 
+/* Dark mode tuning */
+body.dark-mode .onyx-dock {
+  background: color-mix(in srgb, var(--glass-bg-dark) 78%, transparent);
+  border-color: color-mix(in srgb, rgba(255,255,255,0.18) 55%, transparent);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 18px 46px -22px rgba(0,0,0,0.72);
+}
+
+/* Dock items */
 .dock-item {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  min-width: 52px;
+  display: grid;
+  place-items: center;
+  grid-auto-flow: row;
+
+  padding: 8px 14px;
+  min-width: 54px;
+
   text-decoration: none;
   border-radius: 999px;
+
   color: var(--text-color);
-  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease, background 0.3s ease;
   isolation: isolate;
   overflow: hidden;
+
+  /* iOS-ish motion curve */
+  transition:
+    transform 0.22s cubic-bezier(.22,1,.36,1),
+    color 0.18s ease,
+    background-color 0.22s ease,
+    box-shadow 0.22s ease;
 }
 
+/* Spotlight layer (mouse tracking uses --x/--y) */
 .dock-item::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -2;
+
+  background-image: radial-gradient(
+    44px circle at var(--x, 50%) var(--y, 50%),
+    color-mix(in srgb, var(--accent-color) 22%, transparent),
+    transparent 62%
+  );
+
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+/* Subtle “glass highlight” edge */
+.dock-item::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: transparent;
-  background-image: radial-gradient(
-    45px circle at var(--x, 50%) var(--y, 50%),
-    rgba(var(--accent-color-rgb, 0, 122, 255), 0.2),
-    transparent 60%
-  );
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.22s ease;
   pointer-events: none;
 }
 
+/* Hover (desktop) */
 .dock-item:hover {
-  transform: scale(1.1);
+  transform: translateY(-1px) scale(1.06);
   color: var(--accent-color);
-  z-index: 10;
 }
 .dock-item:hover::before { opacity: 1; }
-.dock-item:hover .dock-label,
-.dock-item:hover .dock-icon {
-  filter: drop-shadow(0 0 4px var(--accent-color));
-}
+.dock-item:hover::after { opacity: 1; }
 
+/* Active (current page) */
 .dock-item.active {
   color: var(--accent-color);
-  background: rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
-  box-shadow: inset 0 0 0 1px rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
+  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 25%, transparent);
 }
-.dock-item.active .dock-label { font-weight: 600; }
+.dock-item.active::after { opacity: 1; }
 
+/* Tap feedback (mobile) */
+.dock-item:active {
+  transform: scale(0.98);
+  background: color-mix(in srgb, var(--accent-color) 10%, transparent);
+}
+
+/* Icon */
 .dock-icon {
   width: 18px;
   height: 18px;
   margin-bottom: 3px;
+
   stroke: currentColor;
   stroke-width: 2px;
-  transition: transform 0.1s linear;
-  transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
+
+  transition: transform 0.12s linear, filter 0.18s ease;
+  transform: translate(
+    calc(var(--dx, 0) * 2px),
+    calc(var(--dy, 0) * 2px)
+  );
 }
 
+/* Label */
 .dock-label {
   font-size: 10px;
   line-height: 1;
-  font-weight: 500;
-  letter-spacing: 0.2px;
+  font-weight: 600;
+  letter-spacing: 0.18px;
+  opacity: 0.92;
 }
 
+/* Glow on hover */
+.dock-item:hover .dock-icon,
+.dock-item:hover .dock-label {
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent-color) 55%, transparent));
+}
+
+/* Accessibility: focus ring */
+.dock-item:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent-color) 65%, transparent);
+  outline-offset: 3px;
+}
+
+/* Small screens: tighter */
+@media (max-width: 420px) {
+  .onyx-dock { gap: 4px; padding: 7px 7px; }
+  .dock-item { padding: 8px 12px; min-width: 50px; }
+}
+
+/* Reduce motion respect */
+@media (prefers-reduced-motion: reduce) {
+  .dock-item,
+  .dock-item::before,
+  .dock-item::after,
+  .dock-icon {
+    transition: none !important;
+  }
+}
 .custom-bg-preview {
   width: 100%;
   height: 200px;
