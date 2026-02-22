@@ -387,19 +387,23 @@ body.settings-page .version {
    ======================================================= */
 
 body.settings-page .settings-subsection {
-  border-radius: 1rem;
-  margin-bottom: 1.5rem;
+  background: var(--glass-bg-light);
+  /* The secret to iOS 26 is the high-contrast border + inner shine */
+  border: 0.5px solid rgba(255, 255, 255, 0.4); 
+  border-radius: 1.25rem;
+  margin-bottom: 2rem;
   overflow: hidden;
+  backdrop-filter: blur(40px) saturate(180%) brightness(1.1);
+  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.1);
+  box-shadow: 
+    0 10px 30px rgba(0,0,0,0.1),
+    inset 0 0 0 0.5px rgba(255,255,255,0.2); /* Subtle inner rim */
 }
 
-body.settings-page .subsection-title {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  padding: 0.75rem 1.25rem;
-  margin: 0;
-  text-transform: uppercase;
-  color: var(--secondary-text);
-  border-bottom: 0.0625rem solid var(--border-color);
+body.dark-mode .settings-subsection {
+  background: rgba(30, 30, 30, 0.4);
+  border: 0.5px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
 }
 
 /* =======================================================
@@ -561,56 +565,33 @@ body.settings-page #appearanceModeSelect {
    OVAL TOGGLE (Matched to Image 3)
    ======================================================= */
 .md-switch {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 58px; /* Slightly wider to accommodate the oval */
-  height: 32px;
-}
-.md-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+  width: 52px;
+  height: 31px;
 }
 
-/* Default track */
 .md-switch .track {
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: var(--toggle-off);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-  transition: background 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.3s ease;
+  border-radius: 16px;
+  background: #e9e9eb; /* Light grey track */
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* OVAL Thumb */
 .md-switch .thumb {
-  position: absolute;
   top: 2px;
   left: 2px;
-  width: 34px; /* Wider than height creates the oval */
-  height: 28px;
-  border-radius: 14px; /* Half of height */
+  width: 27px; /* Becomes an oval when combined with the radius */
+  height: 27px;
+  border-radius: 13px; /* Slightly less than half height for "squircle" look */
   background: #ffffff;
-  box-shadow:
-    0 2px 4px rgba(0,0,0,0.15),
-    0 4px 8px rgba(0,0,0,0.10);
-  transition:
-    transform 0.35s cubic-bezier(.25,.8,.25,1),
-    width 0.25s ease,
-    background 0.25s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.05);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Accent sync & Active State */
 .md-switch input:checked + .track {
-  background: #65C466; /* Standard iOS Green from the photo */
+  background: #34C759; /* Bright Apple Green */
 }
+
 .md-switch input:checked + .track .thumb {
-  transform: translateX(20px); /* 58 (width) - 4 (padding) - 34 (thumb width) = 20 */
-  background: #ffffff;
+  transform: translateX(21px); /* Perfect alignment for the 52px track */
 }
 
 /* Dark mode adjustment */
@@ -1306,14 +1287,16 @@ body.dark-mode #themeModeSelect:hover {
 }
 .dock-item.active {
   color: var(--accent-color);
-  /* Creates the inner pill highlight seen on 'Today' */
-  background: rgba(255, 255, 255, 0.45); 
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  /* This creates that "glass-on-glass" depth from your photo */
+  background: rgba(255, 255, 255, 0.3); 
+  box-shadow: 
+    inset 0 1px 2px rgba(255,255,255,0.4),
+    0 1px 3px rgba(0,0,0,0.05);
+  backdrop-filter: blur(10px);
 }
 
 body.dark-mode .dock-item.active {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
 }
 .dock-item.active .dock-label { font-weight: 600; }
 .dock-icon {
@@ -1390,6 +1373,23 @@ body.dark-mode .dock-item.active {
     box-shadow 0.35s ease;
 }
 .setting-icon-container.accent-icon i { color: inherit; }
+
+/* Inset separators like photo #3 */
+.setting-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 60px; /* Align with the start of the text, skipping the icon */
+  right: 0;
+  height: 0.5px;
+  background: var(--border-color);
+  opacity: 0.5;
+}
+
+/* Remove border from the actual card container */
+.setting-card {
+  border-bottom: none !important;
+}
 
 /* =======================================================
    Layout Reset Card — matches setting-card pattern
