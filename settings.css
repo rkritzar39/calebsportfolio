@@ -51,11 +51,11 @@
     --shadow-elevation-2: 0 6px 20px rgba(0,0,0,0.12);
 
     /* Glass Material */
-   --glass-blur: blur(40px) saturate(180%) brightness(1.1);
-   --glass-bg-light: rgba(255, 255, 255, 0.72);
-   --glass-border-light: rgba(255, 255, 255, 0.6);
-   --glass-bg-dark: rgba(30, 30, 32, 0.70);
-   --glass-border-dark: rgba(255, 255, 255, 0.18);
+    --glass-blur: blur(30px) saturate(150%) brightness(1.05);
+    --glass-bg-light: rgba(242, 242, 247, 0.8);
+    --glass-border-light: rgba(0, 0, 0, 0.1);
+    --glass-bg-dark: rgba(28, 28, 30, 0.75);
+    --glass-border-dark: rgba(255, 255, 255, 0.15);
 }
 
 /* Dark Mode */
@@ -84,31 +84,30 @@ body {
     color: var(--text-color);
 }
 
-/* Specular rim — the bright top edge seen in the dock/mini-player */
+/* Glass Panels */
 .settings-header,
 .settings-subsection,
 footer,
 #cookie-consent-banner {
-  background: var(--glass-bg-light);
-  border: 1px solid var(--glass-border-light);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.75),   /* bright top rim */
-    inset 0 -1px 0 rgba(0, 0, 0, 0.04),
-    0 20px 48px -10px rgba(0, 0, 0, 0.18);
+    background: var(--glass-bg-light);
+    border: 1px solid var(--glass-border-light);
+    border-radius: 1.5rem;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: 
+        inset 0 0 0 1.5px rgba(255,255,255,0.2),
+        0 20px 40px -10px rgba(0,0,0,0.25);
 }
 
 body.dark-mode .settings-header,
 body.dark-mode .settings-subsection,
 body.dark-mode footer,
 body.dark-mode #cookie-consent-banner {
-  background: var(--glass-bg-dark);
-  border: 1px solid var(--glass-border-dark);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 20px 48px -10px rgba(0, 0, 0, 0.55);
+    background: var(--glass-bg-dark);
+    border: 1px solid var(--glass-border-dark);
+    box-shadow: 
+        inset 0 0 0 1.5px rgba(255,255,255,0.1),
+        0 20px 40px -10px rgba(0,0,0,0.5);
 }
 
 /* Clear & Tinted Modes */
@@ -321,23 +320,13 @@ body.underline-links a {
 
 /* ========== General Styles ========== */
 body.settings-page {
-  background:
-    radial-gradient(
-      ellipse 140% 55% at 50% -5%,
-      color-mix(in srgb, var(--accent-color) 9%, transparent),
-      transparent 65%
-    ),
-    var(--bg-color);
-}
-
-body.dark-mode.settings-page {
-  background:
-    radial-gradient(
-      ellipse 140% 55% at 50% -5%,
-      color-mix(in srgb, var(--accent-color) 14%, transparent),
-      transparent 60%
-    ),
-    var(--dark-bg);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1rem; /* This ensures the settings page inherits the root font size */
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
 }
 
 /* ========== Container ========== */
@@ -518,58 +507,84 @@ body.settings-page #appearanceModeSelect {
     margin-left: 0.625rem;
 }
 
-/* ── 2. OVAL TOGGLE THUMB ───────────────────────────────
-   The single biggest visual change in iOS 26.4.
-   Thumb is now a portrait rounded-rect, not a circle.
-   ───────────────────────────────────────────────────── */
+/* ======================================================= */
+/* === PURE iOS 26 TOGGLE – FIXED ACCENT LOGIC ============ */
+/* ======================================================= */
 .md-switch {
-  width: 51px;
-  height: 31px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 52px;
+  height: 32px;
+}
+.md-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
-.md-switch .thumb {
-  top: 3px;
-  left: 3px;
-  width: 22px;        /* narrower than tall = oval */
-  height: 25px;
-  border-radius: 10px; /* rounded rect */
-  background: #fff;
-  backdrop-filter: none; /* real iOS doesn't blur the thumb */
-  -webkit-backdrop-filter: none;
+/* Default track */
+.md-switch .track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--toggle-off);
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
   box-shadow:
-    0 1px 4px rgba(0, 0, 0, 0.28),
-    0 3px 8px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 1);
+    inset 0 1px 2px rgba(0,0,0,0.1),
+    inset 0 -1px 2px rgba(255,255,255,0.2);
+  transition: background 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.3s ease;
+}
+
+/* Thumb */
+.md-switch .thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px) saturate(180%);
+  -webkit-backdrop-filter: blur(6px) saturate(180%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.9),
+    inset 0 -1px 2px rgba(0,0,0,0.1),
+    0 2px 4px rgba(0,0,0,0.15),
+    0 6px 12px rgba(0,0,0,0.10);
   transition:
-    transform 0.32s cubic-bezier(0.25, 0.8, 0.25, 1),
-    width 0.2s ease,
-    border-radius 0.2s ease;
+    transform 0.35s cubic-bezier(.25,.8,.25,1),
+    width 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
 }
-
-/* Squish: thumb stretches on press */
 .md-switch:active .thumb {
-  width: 27px;
-  border-radius: 11px;
+  width: 30px;
+  border-radius: 15px;
 }
 
-/* Checked: slide right */
-.md-switch input:checked + .track .thumb {
-  transform: translateX(23px);
-}
-
-/* Checked + pressed: stretch left */
-.md-switch:active input:checked + .track .thumb {
-  transform: translateX(18px);
-  width: 27px;
-}
-
-/* ON track — iOS 26.4 dropped the pulsing animation */
+/* === FIXED ACCENT COLOR LINK === */
 .md-switch input:checked + .track {
   background: var(--toggle-on);
-  box-shadow: none;
-  animation: none;
+  box-shadow:
+    0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent),
+    inset 0 0 0 1px rgba(255,255,255,0.25);
+  animation: togglePulse 2.5s ease-in-out infinite;
+}
+.md-switch input:checked + .track .thumb {
+  transform: translateX(20px);
+  background: rgba(255,255,255,0.9);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--accent-color) 30%, transparent),
+    0 2px 4px rgba(0,0,0,0.2);
 }
 
+/* Dark mode adjustment */
+body.dark-mode .md-switch .track {
+  background: rgba(255,255,255,0.15);
+}
 /* Dark mode accent sync */
 body.dark-mode .md-switch input:checked + .track {
   background: var(--toggle-on);
@@ -1212,194 +1227,115 @@ body.dark-mode #themeModeSelect:hover {
   pointer-events: none;
 }
 
-/* ── 4. DOCK — iOS 26.4 tab-bar style ──────────────────
-   From screenshot 1: items are HORIZONTAL (icon + label),
-   active state is a neutral frosted pill, no accent color
-   ───────────────────────────────────────────────────── */
+/* ============================================= */
+/* 🔬 VISION OS DOCK (Adaptive & Compact)       */
+/* ============================================= */
+
+/* --- 1. DOCK CONTAINER --- */
 .onyx-dock {
-  bottom: 24px;
-  padding: 5px 6px;
-  gap: 2px;
-  background: var(--glass-bg-light);
-  border: 1px solid var(--glass-border-light);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 12px 40px rgba(0, 0, 0, 0.22),
-    0 2px 8px rgba(0, 0, 0, 0.10);
-}
-
-body.dark-mode .onyx-dock {
-  background: var(--glass-bg-dark);
-  border-color: var(--glass-border-dark);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    0 12px 40px rgba(0, 0, 0, 0.55),
-    0 2px 8px rgba(0, 0, 0, 0.35);
-}
-
-/* Items: horizontal layout */
-.dock-item {
-  flex-direction: row;   /* icon + label side by side */
-  gap: 5px;
-  padding: 8px 14px;
-  min-width: unset;
-  color: var(--secondary-text);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.dock-icon {
-  width: 16px;
-  height: 16px;
-  margin-bottom: 0;       /* was 3px, now inline */
-}
-
-.dock-label {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: -0.1px;
-}
-
-/* Hover: subtle, no scale, no glow */
-.dock-item:hover {
-  transform: none;
-  color: var(--text-color);
-  background: color-mix(in srgb, var(--border-color) 40%, transparent);
-}
-
-.dock-item:hover::before { display: none; }
-.dock-item:hover .dock-label,
-.dock-item:hover .dock-icon { filter: none; }
-
-/* Active: neutral frosted pill — NOT accent colored */
-.dock-item.active {
-  color: var(--text-color);
-  font-weight: 600;
-  background: color-mix(in srgb, var(--content-bg) 80%, var(--border-color));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
-body.dark-mode .dock-item.active {
-  background: rgba(255, 255, 255, 0.13);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-.dock-item.active .dock-label { font-weight: 600; }
-
-/* ── 6. MINI PLAYER (new in iOS 26 — image 3) ───────────
-   Floating frosted bar above the dock.
-   Add class="mini-player" to your now-playing element.
-   ───────────────────────────────────────────────────── */
-.mini-player {
   position: fixed;
-  bottom: 88px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 32px);
-  max-width: 600px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  border-radius: 20px;
-  background: var(--glass-bg-light);
-  border: 1px solid var(--glass-border-light);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 8px 32px rgba(0, 0, 0, 0.16),
-    0 2px 8px rgba(0, 0, 0, 0.08);
-  z-index: 9998;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-body.dark-mode .mini-player {
-  background: var(--glass-bg-dark);
-  border-color: var(--glass-border-dark);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    0 8px 32px rgba(0, 0, 0, 0.45),
-    0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* ── 5. SCROLLBAR ───────────────────────────────────────
-   iOS 26 uses thin overlay-style scrollbars
-   ───────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: rgba(120, 120, 128, 0.35);
-  border-radius: 999px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(120, 120, 128, 0.55);
-}
-
-.mini-player:active { transform: translateX(-50%) scale(0.99); }
-
-.mini-player-art {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  object-fit: cover;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-.mini-player-info { flex: 1; min-width: 0; }
-
-.mini-player-title {
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--text-color);
-}
-
-.mini-player-artist {
-  font-size: 12px;
-  color: var(--secondary-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mini-player-controls {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  flex-shrink: 0;
-}
-
-.mini-player-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  color: var(--text-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0.85;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  gap: 8px;
+  padding: 6px 8px;
+  
+  /* UPDATED: Fully rounded capsule shape */
+  border-radius: 999px; 
+  
+  width: fit-content;
+  max-width: 90vw;
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.25);
+  z-index: 9999;
 }
 
-.mini-player-btn:hover { opacity: 1; transform: scale(1.1); }
-.mini-player-btn:active { transform: scale(0.9); opacity: 0.7; }
+/* --- 2. DOCK ITEMS --- */
+.dock-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  min-width: 52px;
+  text-decoration: none;
+  
+  /* UPDATED: Matches the parent capsule shape for hover states */
+  border-radius: 999px;
+  
+  color: var(--text-color);
+  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease, background 0.3s ease;
+  isolation: isolate;
+  overflow: hidden;
+}
 
-.mini-player-btn svg {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
+/* --- 3. SPOTLIGHT GLOW --- */
+.dock-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: transparent;
+  background-image: radial-gradient(
+    45px circle at var(--x, 50%) var(--y, 50%),
+    rgba(var(--accent-color-rgb, 0, 122, 255), 0.2),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* --- 4. HOVER INTERACTIONS --- */
+.dock-item:hover {
+  transform: scale(1.1);
+  color: var(--accent-color);
+  z-index: 10;
+}
+
+.dock-item:hover::before {
+  opacity: 1;
+}
+
+.dock-item:hover .dock-label,
+.dock-item:hover .dock-icon {
+  filter: drop-shadow(0 0 4px var(--accent-color));
+}
+
+/* --- 5. ACTIVE STATE --- */
+.dock-item.active {
+  color: var(--accent-color);
+  background: rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
+  box-shadow: inset 0 0 0 1px rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
+}
+
+.dock-item.active .dock-label {
+  font-weight: 600;
+}
+
+/* --- 6. CONTENT STYLING --- */
+.dock-icon {
+  width: 18px;
+  height: 18px;
+  margin-bottom: 3px;
+  stroke: currentColor;
+  stroke-width: 2px;
+  transition: transform 0.1s linear;
+  transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
+}
+
+.dock-label {
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.2px;
 }
 
 .custom-bg-preview {
