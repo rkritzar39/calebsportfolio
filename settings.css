@@ -122,13 +122,13 @@ body.tinted-mode {
 }
 
 /* =======================================================
-   HIGH CONTRAST MODE — YELLOW ON BLACK (REAL AF)
+   HIGH CONTRAST MODE — YELLOW ON BLACK
    ======================================================= */
 
 body.high-contrast {
   --hc-bg: #000000;
   --hc-panel: #000000;
-  --hc-text: #ffff00;        /* PURE YELLOW */
+  --hc-text: #ffff00;
   --hc-border: #ffff00;
   --hc-accent: #ffff00;
   --hc-link: #00ffff;
@@ -185,7 +185,7 @@ body.high-contrast .file-name {
 }
 
 /* =======================================================
-   LINKS — CYAN SO THEY POP
+   LINKS — CYAN
    ======================================================= */
 
 body.high-contrast a {
@@ -195,7 +195,7 @@ body.high-contrast a {
 }
 
 /* =======================================================
-   BUTTONS & CONTROLS — INVERTED FOR CLARITY
+   BUTTONS & CONTROLS
    ======================================================= */
 
 body.high-contrast button,
@@ -232,17 +232,9 @@ body.high-contrast textarea {
    TOGGLES & SLIDERS
    ======================================================= */
 
-body.high-contrast input[type="range"] {
-  accent-color: #ffff00;
-}
-
-body.high-contrast .toggle-on {
-  background-color: #ffff00 !important;
-}
-
-body.high-contrast .toggle-off {
-  background-color: #333 !important;
-}
+body.high-contrast input[type="range"] { accent-color: #ffff00; }
+body.high-contrast .toggle-on { background-color: #ffff00 !important; }
+body.high-contrast .toggle-off { background-color: #333 !important; }
 
 /* =======================================================
    DIVIDERS
@@ -256,7 +248,7 @@ body.high-contrast .custom-bg-separator {
 }
 
 /* =======================================================
-   ICONS / SVGs — FORCE YELLOW
+   ICONS / SVGs
    ======================================================= */
 
 body.high-contrast svg,
@@ -269,15 +261,13 @@ body.high-contrast .icon-accent {
 }
 
 /* =======================================================
-   IMAGES — OPTIONAL BUT HELPFUL
+   IMAGES
    ======================================================= */
 
-body.high-contrast img {
-  filter: contrast(180%) brightness(110%);
-}
+body.high-contrast img { filter: contrast(180%) brightness(110%); }
 
 /* =======================================================
-   FOCUS STATES — YOU CANNOT MISS THIS
+   FOCUS STATES
    ======================================================= */
 
 body.high-contrast :focus-visible {
@@ -309,21 +299,17 @@ body.high-contrast ::selection {
 }
 
 /* Dyslexia-Friendly Font */
-body.dyslexia-font {
-    font-family: "OpenDyslexic", "Arial", sans-serif !important;
-}
+body.dyslexia-font { font-family: "OpenDyslexic", "Arial", sans-serif !important; }
 
 /* Underline Links */
-body.underline-links a {
-    text-decoration: underline !important;
-}
+body.underline-links a { text-decoration: underline !important; }
 
 /* ========== General Styles ========== */
 body.settings-page {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-size: 1rem; /* This ensures the settings page inherits the root font size */
+    font-size: 1rem;
     line-height: 1.4;
     margin: 0;
     padding: 0;
@@ -337,7 +323,6 @@ body.settings-page .container {
 }
 
 /* ========== Settings Header ========== */
-/* CLEANED: Removed redundant glass styles */
 body.settings-page .settings-header {
     display: flex;
     justify-content: space-between;
@@ -347,8 +332,8 @@ body.settings-page .settings-header {
 }
 
 body.settings-page .settings-header h1 {
-    font-size: 1.5rem; /* Slightly smaller for a more desktop-like feel */
-    font-weight: 600; /* Semibold is common for titles in macOS */
+    font-size: 1.5rem;
+    font-weight: 600;
     margin: 0;
     color: var(--text-color);
 }
@@ -362,20 +347,19 @@ body.settings-page .version {
 }
 
 /* ========== Settings Subsection ========== */
-/* CLEANED: Removed redundant glass styles */
 body.settings-page .settings-subsection {
-    border-radius: 1rem; /* iOS 26: Larger radius */
+    border-radius: 1rem;
     margin-bottom: 1.5rem;
     overflow: hidden;
 }
 
 body.settings-page .subsection-title {
-    font-size: 0.8125rem; /* 13px is standard for macOS subsection titles */
+    font-size: 0.8125rem;
     font-weight: 600;
     padding: 0.75rem 1.25rem;
     margin: 0;
-    text-transform: uppercase; /* macOS often uses uppercase for these titles */
-    color: var(--secondary-text); /* Titles are often secondary color */
+    text-transform: uppercase;
+    color: var(--secondary-text);
     border-bottom: 0.0625rem solid var(--border-color);
 }
 
@@ -390,7 +374,7 @@ body.settings-page .setting-card {
     position: relative;
     overflow: hidden;
     transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    gap: 1rem; /* ADDED: Space for icons */
+    gap: 1rem;
 }
 body.settings-page .setting-card:last-child { border-bottom: none; }
 body.settings-page .setting-card:hover {
@@ -432,7 +416,6 @@ body.settings-page .chevron { margin-left: 0.75rem; color: var(--secondary-text)
     color: var(--text-color);
     background: var(--content-bg);
 }
-/* Hover & Dark adjustments */
 #darkModeScheduler:hover {
     background: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
     box-shadow: var(--shadow-elevation-2);
@@ -488,9 +471,7 @@ body.dark-mode #darkModeScheduler {
     pointer-events: none;
     transition: opacity 0.2s ease;
 }
-#accentColorPicker.selected::after {
-    opacity: 1;
-}
+#accentColorPicker.selected::after { opacity: 1; }
 #accentColorPicker:hover {
     transform: scale(1.1);
     transition: transform 0.2s ease;
@@ -582,9 +563,7 @@ body.settings-page #appearanceModeSelect {
 }
 
 /* Dark mode adjustment */
-body.dark-mode .md-switch .track {
-  background: rgba(255,255,255,0.15);
-}
+body.dark-mode .md-switch .track { background: rgba(255,255,255,0.15); }
 /* Dark mode accent sync */
 body.dark-mode .md-switch input:checked + .track {
   background: var(--toggle-on);
@@ -607,7 +586,7 @@ body.dark-mode .md-switch input:checked + .track {
 .font-size-badge {
     padding: 0.25rem 0.75rem;
     background-color: var(--accent-color);
-    color: var(--accent-text-color, white); /* FIX: Use the new contrast variable */
+    color: var(--accent-text-color, white);
     border-radius: 0.75rem;
     font-weight: 600;
     font-size: 0.875rem;
@@ -660,9 +639,7 @@ body.dark-mode .md-switch input:checked + .track {
     0 6px 16px rgba(0,0,0,.2);
   transition: transform .2s ease, box-shadow .2s ease;
 }
-#text-size-slider::-moz-range-thumb:active {
-  transform: scale(1.05);
-}
+#text-size-slider::-moz-range-thumb:active { transform: scale(1.05); }
 
 /* ========== Responsive ========== */
 @media (max-width: 600px) {
@@ -695,27 +672,25 @@ body.dark-mode .danger-zone .settings-subsection {
 
 /* ========== Buttons ========== */
 body.settings-page .button {
-    /* Base styles for all buttons */
     border-radius: 0.5rem;
-    font-size: 0.8125rem; /* Authentic 13px macOS button font size */
+    font-size: 0.8125rem;
     font-weight: 500;
     cursor: pointer;
-    padding: 0.375rem 0.875rem; /* More compact padding */
+    padding: 0.375rem 0.875rem;
     transition: background-color 0.2s ease, border-color 0.2s ease;
     -webkit-font-smoothing: antialiased;
 }
 
 .reset-button,
 #cookie-consent-banner button {
-    /* Style for standard gray material buttons */
     color: var(--text-color);
-    background-color: var(--light-slider-track); /* A subtle material fill */
+    background-color: var(--light-slider-track);
     border: 1px solid var(--light-border);
 }
 
 body.settings-page .reset-button:hover,
 body.settings-page #cookie-consent-banner button:hover {
-    background-color: var(--light-border); /* Subtle hover effect */
+    background-color: var(--light-border);
 }
 
 /* Dark Mode Overrides for Standard Buttons */
@@ -734,24 +709,19 @@ body.dark-mode #cookie-consent-banner button:hover {
 .button-prominent {
     background-color: var(--accent-color);
     border: 1px solid transparent;
-    color: #fff; /* Text should be white for contrast */
+    color: #fff;
 }
 
 .button-prominent:hover {
-    /* Darken the accent color slightly on hover */
     background-color: color-mix(in srgb, var(--accent-color) 85%, black);
 }
 
 /* ========== Footer & Back Link ========== */
 body.settings-page .back-link { display: inline-flex; align-items: center; color: var(--accent-color); text-decoration: none; font-size: 1rem; }
 body.settings-page .back-link:hover { color: var(--hover-color); }
-/* CLEANED: Removed redundant glass styles */
-body.settings-page footer {
-    text-align: center; padding: 1.25rem; font-size: 0.875rem; color: var(--secondary-text);
-}
+body.settings-page footer { text-align: center; padding: 1.25rem; font-size: 0.875rem; color: var(--secondary-text); }
 
 /* ========== Cookie Consent Banner ========== */
-/* CLEANED: Removed redundant glass styles */
 body.settings-page #cookie-consent-banner {
     position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
     border-radius: 0.75rem;
@@ -803,9 +773,7 @@ body.settings-page.focus-outline-disabled :focus-visible {
   cursor: pointer;
   transition: color .2s ease;
 }
-.segmented-control button:hover {
-  color: var(--accent-color);
-}
+.segmented-control button:hover { color: var(--accent-color); }
 .segmented-control .seg-bg {
   position: absolute;
   z-index: 1;
@@ -851,10 +819,7 @@ body.dark-mode .segmented-control .seg-bg {
   animation: fadeOut 0.8s forwards;
 }
 @keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: scale(2);
-  }
+  to { opacity: 0; transform: scale(2); }
 }
 
 /* ===================== */
@@ -864,16 +829,12 @@ body:not(.focus-outline-disabled) :focus {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
-body.focus-outline-disabled :focus {
-  outline: none !important;
-}
+body.focus-outline-disabled :focus { outline: none !important; }
 
-/* Add this new, specific rule to settings.css */
-.accent-color-card {
-  flex-wrap: wrap;
-}
+/* Accent Color card layout fix */
+.accent-color-card { flex-wrap: wrap; }
 
-/* Add or replace the .color-warning rule with this one */
+/* Warning banner */
 .color-warning {
   width: 100%;
   margin-top: 1rem;
@@ -885,7 +846,6 @@ body.focus-outline-disabled :focus {
   font-size: 0.875rem;
   box-sizing: border-box;
 }
-
 body.dark-mode .color-warning {
   background-color: #4d3c1a;
   color: #ffeca7;
@@ -896,7 +856,6 @@ body.dark-mode .color-warning {
 /* === iOS-26 Animated Capsule Dropdown & Time Inputs ==== */
 /* ======================================================= */
 
-/* Dropdown */
 #themeModeSelect {
   position: relative;
   appearance: none;
@@ -976,7 +935,6 @@ body.dark-mode #themeModeSelect:hover {
   flex-wrap: nowrap;
 }
 
-/* --- Left Side (Title + Controls) --- */
 .custom-bg-left {
   flex: 1;
   display: flex;
@@ -989,21 +947,16 @@ body.dark-mode #themeModeSelect:hover {
   margin-bottom: 0.5rem;
 }
 
-/* --- Controls Row --- */
 .custom-bg-controls {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   gap: 0.75rem;
-  flex-wrap: nowrap; /* ✅ Always one line */
+  flex-wrap: nowrap;
 }
 
-/* Hide default file input */
-#customBgUpload {
-  display: none;
-}
+#customBgUpload { display: none; }
 
-/* --- Choose File Button --- */
 .custom-bg-label {
   font-size: 0.8125rem;
   font-weight: 500;
@@ -1019,7 +972,6 @@ body.dark-mode #themeModeSelect:hover {
   transition: background 0.25s ease;
 }
 
-/* --- File name --- */
 .file-name {
   font-size: 0.8125rem;
   color: var(--secondary-text);
@@ -1029,7 +981,6 @@ body.dark-mode #themeModeSelect:hover {
   white-space: nowrap;
 }
 
-/* --- Remove button --- */
 #removeCustomBg {
   font-size: 0.8125rem;
   padding: 0.45rem 0.85rem;
@@ -1043,13 +994,9 @@ body.dark-mode #themeModeSelect:hover {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 #removeCustomBg.visible,
-#removeCustomBg[style*="inline-block"] {
-  opacity: 1;
-}
+#removeCustomBg[style*="inline-block"] { opacity: 1; }
 
-/* ======================================================= */
-/* == Adaptive Glass Separator Line ====================== */
-/* ======================================================= */
+/* Adaptive Separator */
 .custom-bg-separator {
   position: relative;
   width: 1px;
@@ -1060,8 +1007,6 @@ body.dark-mode #themeModeSelect:hover {
   transition: opacity 0.35s ease, transform 0.35s ease;
   backdrop-filter: blur(6px) brightness(1.2);
   -webkit-backdrop-filter: blur(6px) brightness(1.2);
-
-  /* subtle dual-layer gradient for depth */
   background: linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0.35) 0%,
@@ -1072,14 +1017,10 @@ body.dark-mode #themeModeSelect:hover {
     0 0 8px rgba(255, 255, 255, 0.15),
     inset 0 0 4px rgba(255, 255, 255, 0.12);
 }
-
-/* --- Visible state --- */
 .custom-bg-separator.visible {
   opacity: 0.85;
   transform: scaleY(1);
 }
-
-/* --- Automatic color adjustment based on mode --- */
 .light-mode .custom-bg-separator {
   background: linear-gradient(
     to bottom,
@@ -1091,7 +1032,6 @@ body.dark-mode #themeModeSelect:hover {
     0 0 6px rgba(0, 0, 0, 0.08),
     inset 0 0 3px rgba(0, 0, 0, 0.08);
 }
-
 .dark-mode .custom-bg-separator {
   background: linear-gradient(
     to bottom,
@@ -1104,9 +1044,7 @@ body.dark-mode #themeModeSelect:hover {
     inset 0 0 4px rgba(255, 255, 255, 0.12);
 }
 
-/* ======================================================= */
-/* == Right Side (Preview Bubble) ======================== */
-/* ======================================================= */
+/* Preview bubble */
 .custom-bg-right {
   display: flex;
   align-items: center;
@@ -1149,43 +1087,20 @@ body.dark-mode #themeModeSelect:hover {
   -webkit-user-drag: none;
   -webkit-touch-callout: none;
 }
-#customBgPreview.loaded {
-  opacity: 1;
-}
+#customBgPreview.loaded { opacity: 1; }
 
-/* ======================================================= */
-/* == Mobile Layout ===================================== */
-/* ======================================================= */
+/* Mobile layout */
 @media (max-width: 768px) {
-  .custom-background {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .custom-bg-left {
-    width: 100%;
-    align-items: center;
-    text-align: center;
-  }
-
-  /* Controls remain inline on mobile */
-  .custom-bg-controls {
-    justify-content: center;
-    flex-wrap: nowrap;
-  }
-
-  /* Horizontal Separator for mobile */
+  .custom-background { flex-direction: column; align-items: center; text-align: center; }
+  .custom-bg-left { width: 100%; align-items: center; text-align: center; }
+  .custom-bg-controls { justify-content: center; flex-wrap: nowrap; }
   .custom-bg-separator {
     width: 80%;
     height: 1px;
     margin: 1rem 0;
     transform: scaleX(0.9);
   }
-  .custom-bg-separator.visible {
-    transform: scaleX(1);
-  }
-
+  .custom-bg-separator.visible { transform: scaleX(1); }
   .light-mode .custom-bg-separator {
     background: linear-gradient(
       to right,
@@ -1194,7 +1109,6 @@ body.dark-mode #themeModeSelect:hover {
       rgba(0, 0, 0, 0.05) 100%
     );
   }
-
   .dark-mode .custom-bg-separator {
     background: linear-gradient(
       to right,
@@ -1203,19 +1117,11 @@ body.dark-mode #themeModeSelect:hover {
       rgba(255, 255, 255, 0.05) 100%
     );
   }
-
-  /* Center preview bubble */
-  .custom-bg-right {
-    justify-content: center;
-  }
-
-  #customBgPreviewContainer {
-    width: 95px;
-    height: 95px;
-  }
+  .custom-bg-right { justify-content: center; }
+  #customBgPreviewContainer { width: 95px; height: 95px; }
 }
 
-/* ===== iOS-26 Blur Card Fade ===== */
+/* Blur card fade */
 #wallpaperBlurCard {
   opacity: 1;
   transform: translateY(0);
@@ -1228,10 +1134,8 @@ body.dark-mode #themeModeSelect:hover {
 }
 
 /* ============================================= */
-/* 🔬 VISION OS DOCK (Adaptive & Compact)       */
+/* Vision OS dock                                */
 /* ============================================= */
-
-/* --- 1. DOCK CONTAINER --- */
 .onyx-dock {
   position: fixed;
   bottom: 20px;
@@ -1242,10 +1146,7 @@ body.dark-mode #themeModeSelect:hover {
   justify-content: center;
   gap: 8px;
   padding: 6px 8px;
-  
-  /* UPDATED: Fully rounded capsule shape */
-  border-radius: 999px; 
-  
+  border-radius: 999px;
   width: fit-content;
   max-width: 90vw;
   background: var(--content-bg);
@@ -1256,7 +1157,6 @@ body.dark-mode #themeModeSelect:hover {
   z-index: 9999;
 }
 
-/* --- 2. DOCK ITEMS --- */
 .dock-item {
   position: relative;
   display: flex;
@@ -1266,17 +1166,13 @@ body.dark-mode #themeModeSelect:hover {
   padding: 8px 16px;
   min-width: 52px;
   text-decoration: none;
-  
-  /* UPDATED: Matches the parent capsule shape for hover states */
   border-radius: 999px;
-  
   color: var(--text-color);
   transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease, background 0.3s ease;
   isolation: isolate;
   overflow: hidden;
 }
 
-/* --- 3. SPOTLIGHT GLOW --- */
 .dock-item::before {
   content: "";
   position: absolute;
@@ -1293,34 +1189,24 @@ body.dark-mode #themeModeSelect:hover {
   pointer-events: none;
 }
 
-/* --- 4. HOVER INTERACTIONS --- */
 .dock-item:hover {
   transform: scale(1.1);
   color: var(--accent-color);
   z-index: 10;
 }
-
-.dock-item:hover::before {
-  opacity: 1;
-}
-
+.dock-item:hover::before { opacity: 1; }
 .dock-item:hover .dock-label,
 .dock-item:hover .dock-icon {
   filter: drop-shadow(0 0 4px var(--accent-color));
 }
 
-/* --- 5. ACTIVE STATE --- */
 .dock-item.active {
   color: var(--accent-color);
   background: rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
   box-shadow: inset 0 0 0 1px rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
 }
+.dock-item.active .dock-label { font-weight: 600; }
 
-.dock-item.active .dock-label {
-  font-weight: 600;
-}
-
-/* --- 6. CONTENT STYLING --- */
 .dock-icon {
   width: 18px;
   height: 18px;
@@ -1348,10 +1234,7 @@ body.dark-mode #themeModeSelect:hover {
   border: 1px solid #ccc;
   transition: background-position 0.1s ease, background-size 0.1s ease;
 }
-
-.custom-bg-preview.dragging {
-  cursor: grabbing;
-}
+.custom-bg-preview.dragging { cursor: grabbing; }
 
 /* ======================== */
 /* Section Icon Containers  */
@@ -1367,19 +1250,15 @@ body.dark-mode #themeModeSelect:hover {
   flex-shrink: 0;
   font-size: 22px;
   color: #fff;
-  background-color: var(--accent-color, #007aff); /* MATCHES ACCENT COLOR */
+  background-color: var(--accent-color, #007aff);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Optional: Gradient version that follows accent color */
+/* Gradient version */
 .setting-icon-container {
   background: linear-gradient(135deg, var(--accent-color, #007aff), color-mix(in srgb, var(--accent-color, #007aff) 70%, black 30%));
 }
-
-/* If you want a lighter gradient automatically */
-.setting-icon-container i {
-  color: #fff;
-}
+.setting-icon-container i { color: #fff; }
 
 #appearanceModeRow.disabled {
   opacity: 0.45;
@@ -1387,10 +1266,7 @@ body.dark-mode #themeModeSelect:hover {
   pointer-events: none;
 }
 
-/* =========================================
-   ACCENT-POWERED SETTING ICONS
-   ========================================= */
-
+/* Accent-powered setting icons */
 .setting-icon-container.accent-icon {
   background-color: var(--accent-color);
   color: var(--accent-text-color);
@@ -1402,38 +1278,22 @@ body.dark-mode #themeModeSelect:hover {
     color 0.35s ease,
     box-shadow 0.35s ease;
 }
+.setting-icon-container.accent-icon i { color: inherit; }
 
-.setting-icon-container.accent-icon i {
-  color: inherit;
-}
-
-/* =======================================================
-   Layout Reset Card — matches setting-card pattern
-   ======================================================= */
-
-.setting-card.layout-reset-card{
-  align-items: center;
-  gap: 14px;
-}
-
-/* Force the Layout icon bubble to match the current accent color */
+/* Layout Reset Card */
+.setting-card.layout-reset-card { align-items: center; gap: 14px; }
 .setting-card.layout-reset-card .layout-reset-icon{
   background: var(--accent-color) !important;
   color: var(--accent-text-color) !important;
 }
+.setting-card.layout-reset-card .layout-reset-icon i{ color: var(--accent-text-color) !important; }
 
-/* If your icon container has its own icon color rules, this guarantees it */
-.setting-card.layout-reset-card .layout-reset-icon i{
-  color: var(--accent-text-color) !important;
-}
-
-/* Accent-tinted icon bubble that still looks like the rest */
+/* Accent-tinted icon bubble */
 .setting-card.layout-reset-card .layout-reset-icon{
   background: color-mix(in srgb, var(--accent-color) 22%, #8e8e93);
   color: #fff;
 }
 
-/* Right-side actions */
 .layout-reset-card .layout-actions{
   display: flex;
   flex-direction: column;
@@ -1442,7 +1302,6 @@ body.dark-mode #themeModeSelect:hover {
   min-width: 220px;
 }
 
-/* Pills */
 .layout-reset-card .layout-meta{
   margin-top: 10px;
   display: flex;
@@ -1462,7 +1321,6 @@ body.dark-mode #themeModeSelect:hover {
   border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color) 15%);
   color: var(--text-color);
 }
-
 .layout-reset-card .pill.subtle{ opacity: .9; }
 
 .layout-reset-card code{
@@ -1474,7 +1332,6 @@ body.dark-mode #themeModeSelect:hover {
   border: 1px solid color-mix(in srgb, var(--border-color) 80%, #000 10%);
 }
 
-/* Accent button that still feels like your other .button elements */
 .layout-reset-card .layout-reset-btn{
   display: inline-flex;
   align-items: center;
@@ -1482,27 +1339,22 @@ body.dark-mode #themeModeSelect:hover {
   gap: 10px;
   padding: 10px 14px;
   border-radius: 14px;
-
   background: var(--accent-color);
   color: var(--accent-text-color);
   border: 1px solid color-mix(in srgb, var(--accent-color) 65%, var(--border-color));
-
   font-weight: 800;
   box-shadow: var(--shadow-elevation-1);
   transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
 }
-
 .layout-reset-card .layout-reset-btn:hover{
   transform: translateY(-1px);
   filter: brightness(1.03) saturate(1.05);
   box-shadow: var(--shadow-elevation-2);
 }
-
 .layout-reset-card .layout-reset-btn:active{
   transform: translateY(0) scale(.99);
   filter: brightness(.98);
 }
-
 .layout-reset-card .layout-hint{
   font-size: 12px;
   color: var(--secondary-text);
@@ -1510,17 +1362,120 @@ body.dark-mode #themeModeSelect:hover {
   line-height: 1.25;
 }
 
-/* Responsive: stack button under text */
 @media (max-width: 640px){
-  .setting-card.layout-reset-card{
-    align-items: flex-start;
-  }
+  .setting-card.layout-reset-card{ align-items: flex-start; }
   .layout-reset-card .layout-actions{
     width: 100%;
     min-width: 0;
     align-items: stretch;
   }
-  .layout-reset-card .layout-hint{
-    text-align: left;
-  }
+  .layout-reset-card .layout-hint{ text-align: left; }
+}
+
+/* =======================================================
+   iOS 26.4 POLISH PATCH (SAFE OVERRIDES)
+   - Makes it feel more iOS 26.4
+   - Makes toggle THUMB OVAL (pill) instead of circle
+   ======================================================= */
+
+/* 1) Slightly improved glass tuning + iOS rounding vars */
+:root{
+  --glass-blur: blur(34px) saturate(165%) brightness(1.06);
+
+  --glass-bg-light: rgba(242, 242, 247, 0.72);
+  --glass-border-light: rgba(0, 0, 0, 0.10);
+
+  --glass-bg-dark: rgba(28, 28, 30, 0.70);
+  --glass-border-dark: rgba(255, 255, 255, 0.14);
+
+  --ios-radius-xl: 22px;
+  --ios-radius-lg: 18px;
+  --ios-radius-md: 14px;
+
+  --ios-separator-light: rgba(60, 60, 67, 0.20);
+  --ios-separator-dark: rgba(84, 84, 88, 0.65);
+}
+
+/* Panels: iOS-like depth, but safe */
+.settings-header,
+.settings-subsection,
+footer,
+#cookie-consent-banner{
+  border-radius: var(--ios-radius-xl);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.18),
+    0 18px 44px -14px rgba(0,0,0,0.22);
+}
+
+body.dark-mode .settings-header,
+body.dark-mode .settings-subsection,
+body.dark-mode footer,
+body.dark-mode #cookie-consent-banner{
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 22px 54px -16px rgba(0,0,0,0.55);
+}
+
+/* Less “lift” on hover = more iOS */
+body.settings-page .setting-card:hover{
+  background-color: color-mix(in srgb, var(--content-bg) 86%, var(--accent-color) 6%);
+  box-shadow: none;
+}
+body.settings-page .setting-card:active{
+  background-color: color-mix(in srgb, var(--content-bg) 78%, var(--accent-color) 10%);
+}
+
+/* Section titles slightly more iOS */
+body.settings-page .subsection-title{
+  letter-spacing: 0.08em;
+  padding: 0.85rem 1.25rem;
+}
+
+/* Capsule buttons */
+body.settings-page .button,
+.reset-button,
+#cookie-consent-banner button,
+.button-prominent{
+  border-radius: 999px;
+}
+
+/* =======================================================
+   TOGGLE: OVAL THUMB (pill) + correct travel distance
+   ======================================================= */
+.md-switch{
+  width: 54px;   /* small iOS bump */
+  height: 32px;
+}
+
+/* Track stays iOS-like */
+.md-switch .track{
+  border-radius: 999px;
+}
+
+/* OVAl thumb: wider than tall */
+.md-switch .thumb{
+  top: 3px;
+  left: 3px;
+  height: 26px;
+  width: 30px;
+  border-radius: 999px;
+}
+
+/* Press squish */
+.md-switch:active .thumb{
+  width: 33px;
+  border-radius: 999px;
+}
+
+/* Checked translate must match: 54 - (3*2) - 30 = 18 */
+.md-switch input:checked + .track .thumb{
+  transform: translateX(18px);
+}
+
+/* Icon bubbles: more “liquid” */
+.setting-icon-container{
+  border-radius: 999px;
+  box-shadow:
+    0 6px 18px rgba(0,0,0,0.10),
+    inset 0 0 0 1px rgba(255,255,255,0.20);
 }
