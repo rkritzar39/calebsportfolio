@@ -1479,3 +1479,35 @@ body.settings-page .button,
     0 6px 18px rgba(0,0,0,0.10),
     inset 0 0 0 1px rgba(255,255,255,0.20);
 }
+
+/* ================================
+   FIX: Instagram + Layout icon bubbles going black in dark mode
+   Paste at very bottom of settings.css
+   ================================ */
+
+/* 1) Instagram bubble: force a real Instagram gradient in ALL modes */
+.setting-icon-container.instagram-icon{
+  background: radial-gradient(circle at 30% 110%,
+    #fdf497 0%,
+    #fdf497 5%,
+    #fd5949 45%,
+    #d6249f 60%,
+    #285AEB 90%) !important;
+  color: #fff !important;
+}
+.setting-icon-container.instagram-icon i{
+  color: #fff !important;
+}
+
+/* 2) Layout reset bubble: force it to follow accent, even in dark mode */
+.setting-card.layout-reset-card .layout-reset-icon{
+  background: linear-gradient(
+    135deg,
+    var(--accent-color),
+    color-mix(in srgb, var(--accent-color) 70%, black 30%)
+  ) !important;
+  color: var(--accent-text-color, #fff) !important;
+}
+.setting-card.layout-reset-card .layout-reset-icon i{
+  color: var(--accent-text-color, #fff) !important;
+}
