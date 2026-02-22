@@ -1,18 +1,22 @@
 /* =========================================================
-   CALEB PORTFOLIO — iOS 26 LIQUID GLASS SYSTEM
-   Full Production styles.css
+   CALEB PORTFOLIO — LIQUID GLASS (SITE-WIDE)
+   styles.css (Single Source of Truth)
    ========================================================= */
 
 /* =========================================================
-   ROOT SYSTEM (YOUR ORIGINAL — KEPT INTACT)
+   ROOT VARIABLES — YOUR MAIN DESIGN SYSTEM (KEPT + EXTENDED)
    ========================================================= */
 
 :root {
-
+  /* ======================== */
+  /* Base Sizing              */
+  /* ======================== */
   --font-size-base: 16px;
   --line-height-base: 1.65;
 
-  /* Dark */
+  /* ======================== */
+  /* Dark Liquid Glass Palette */
+  /* ======================== */
   --dark-bg: #0E0E0E;
   --dark-content-bg: rgba(24, 24, 24, 0.55);
   --dark-text: #F5F7FA;
@@ -20,9 +24,14 @@
   --dark-border: rgba(255, 255, 255, 0.08);
   --dark-accent: #4EA8FF;
   --dark-hover: #3F8CE0;
+  --dark-link: var(--dark-accent);
   --dark-shadow: rgba(0, 0, 0, 0.55);
+  --dark-glow: rgba(255, 255, 255, 0.08);
+  --dark-icon: #E3E3E3;
 
-  /* Light */
+  /* ======================== */
+  /* Light Liquid Glass Palette */
+  /* ======================== */
   --light-bg-gradient: linear-gradient(120deg, #d9f0ff 0%, #f5f9ff 100%);
   --light-content-bg: rgba(255, 255, 255, 0.45);
   --light-text: #111111;
@@ -30,8 +39,13 @@
   --light-shadow: rgba(0, 0, 0, 0.15);
   --light-accent: #007AFF;
   --light-hover: #005FCC;
+  --light-link: var(--light-accent);
+  --light-glow: rgba(255, 255, 255, 0.7);
+  --light-icon: #2C2C2E;
 
-  /* Default = Dark */
+  /* ======================== */
+  /* Default Theme (Dark)     */
+  /* ======================== */
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-content-bg);
   --text-color: var(--dark-text);
@@ -39,90 +53,154 @@
   --border-color: var(--dark-border);
   --accent-color: var(--dark-accent);
   --hover-color: var(--dark-hover);
+  --link-color: var(--dark-link);
   --shadow-color: var(--dark-shadow);
+  --glow-color: var(--dark-glow);
+  --icon-color: var(--dark-icon);
+  --social-icon-text-color: var(--dark-text);
 
-  /* Glass Optics */
+  /* ======================== */
+  /* Apple Liquid Glass Optics */
+  /* ======================== */
   --backdrop-blur: blur(28px) saturate(180%) contrast(110%);
-  --bubble-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), inset 0 0 16px rgba(255, 255, 255, 0.05);
+  --bubble-gradient: radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.15), transparent 72%);
   --bubble-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.18);
-  --liquid-reflection: linear-gradient(120deg, rgba(255,255,255,.35), rgba(255,255,255,.05) 45%, rgba(255,255,255,.02));
-  --bubble-gradient: radial-gradient(circle at 25% 20%, rgba(255,255,255,.15), transparent 72%);
+  --bubble-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), inset 0 0 16px rgba(255, 255, 255, 0.05);
+  --liquid-reflection: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.02));
+  --liquid-refraction: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
 
-  /* Radii */
+  /* ======================== */
+  /* Radii & Transitions      */
+  /* ======================== */
   --radius-xl: 28px;
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-pill: 999px;
 
-  /* Motion */
-  --transition-fast: .18s ease;
-  --transition-medium: .3s ease;
-  --transition-slow: .5s ease;
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* ======================== */
+  /* Extended UI (site-wide)  */
+  /* ======================== */
+  --container: 1100px;
+
+  /* Accent text contrast helper (settings + badges) */
+  --accent-text-color: #ffffff;
+
+  /* Subtle surface levels */
+  --surface-1: color-mix(in srgb, var(--content-bg) 92%, transparent);
+  --surface-2: color-mix(in srgb, var(--content-bg) 82%, transparent);
+  --surface-3: color-mix(in srgb, var(--content-bg) 72%, transparent);
+
+  --shadow-elevation-1: 0 6px 18px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+  --shadow-elevation-2: 0 16px 36px color-mix(in srgb, var(--shadow-color) 70%, transparent);
+
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
-/* =========================================================
-   LIGHT MODE
-   ========================================================= */
-
+/* ======================== */
+/* Light Mode Overrides     */
+/* ======================== */
 body.light-e {
   --bg-color: var(--light-bg-gradient);
   --content-bg: var(--light-content-bg);
   --text-color: var(--light-text);
   --secondary-text: var(--light-secondary-text);
-  --accent-color: var(--light-accent);
+  --border-color: rgba(255, 255, 255, 0.45);
   --hover-color: var(--light-hover);
+  --link-color: var(--light-link);
   --shadow-color: var(--light-shadow);
+  --glow-color: var(--light-glow);
+  --icon-color: var(--light-icon);
+  --social-icon-text-color: var(--light-text);
 
-  --bubble-shadow: 0 18px 45px rgba(0,0,0,.15),
-                   inset 0 0 10px rgba(255,255,255,.25);
+  --bubble-gradient: radial-gradient(circle at 40% 25%, rgba(255, 255, 255, 0.65), transparent 65%);
+  --bubble-shadow: 0 18px 45px rgba(0, 0, 0, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.25);
+  --bubble-highlight: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+  --backdrop-blur: blur(26px) saturate(190%) contrast(108%);
+}
+
+/* ======================== */
+/* Dark Mode Wrapper        */
+/* ======================== */
+html.dark-mode body,
+body.dark-mode {
+  --bg-color: var(--dark-bg);
+  --content-bg: var(--dark-content-bg);
+  --text-color: var(--dark-text);
 }
 
 /* =========================================================
-   GLOBAL BASE
+   BASE / RESET
    ========================================================= */
 
 * { box-sizing: border-box; }
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Segoe UI, Roboto, Arial, sans-serif;
+html, body { height: 100%; }
+
+body{
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Roboto", sans-serif;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
-  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background: var(--bg-color);
+  color: var(--text-color);
   transition: background var(--transition-slow), color var(--transition-medium);
 }
 
-/* Center container */
-.container {
-  width: min(1100px, calc(100% - 28px));
-  margin: auto;
+/* Selection */
+::selection{
+  background: color-mix(in srgb, var(--accent-color) 45%, transparent);
+  color: var(--text-color);
+}
+
+/* Links */
+a{
+  color: var(--link-color);
+  text-decoration: none;
+}
+a:hover{
+  color: var(--hover-color);
+  text-decoration: underline;
+}
+
+/* Layout container */
+.container{
+  width: min(var(--container), calc(100% - 28px));
+  margin: 0 auto;
 }
 
 /* =========================================================
-   GLASS COMPONENT
+   GLASS COMPONENT (YOUR ORIGINAL — KEPT)
    ========================================================= */
 
 .glass {
   background: var(--content-bg);
   border-radius: var(--radius-xl);
-  border: 1px solid var(--border-color);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
+  border: 1px solid var(--border-color);
   box-shadow: var(--bubble-shadow);
-  position: relative;
   overflow: hidden;
+  position: relative;
 }
 
+/* Reflection Layer */
 .glass::before {
   content: "";
   position: absolute;
   inset: 0;
   background: var(--liquid-reflection);
-  opacity: .35;
+  opacity: 0.35;
+  mix-blend-mode: screen;
   pointer-events: none;
 }
 
+/* Refraction/Bubble Layer */
 .glass::after {
   content: "";
   position: absolute;
@@ -132,67 +210,191 @@ body {
   pointer-events: none;
 }
 
+/* Content inside glass should sit above effects */
+.glass > *{ position: relative; z-index: 1; }
+
+/* Extra surface variants (optional utility) */
+.glass.soft{ background: var(--surface-3); }
+.glass.strong{ background: var(--surface-1); }
+
 /* =========================================================
-   NAVBAR (Floating Pill)
+   PAGE BACKGROUND LAYERS (iOS vibe)
    ========================================================= */
 
-header nav {
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(900px 500px at 18% -10%, color-mix(in srgb, var(--accent-color) 22%, transparent), transparent 60%),
+    radial-gradient(850px 520px at 90% 8%, rgba(255,255,255,.06), transparent 55%),
+    radial-gradient(900px 650px at 50% 120%, rgba(120,180,255,.10), transparent 60%);
+  opacity: .95;
+}
+
+/* Ensure app content stays above background layer */
+header, main, footer{ position: relative; z-index: 1; }
+
+/* =========================================================
+   NAV — FLOATING PILL (site-wide)
+   Works with: <header><nav>...</nav></header>
+   ========================================================= */
+
+header nav{
   position: sticky;
-  top: 16px;
+  top: 14px;
   z-index: 100;
-  margin: 16px auto;
-  padding: 8px 14px;
-  width: min(1100px, calc(100% - 28px));
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: min(var(--container), calc(100% - 28px));
+  margin: 14px auto;
+  padding: 10px 12px;
   border-radius: var(--radius-pill);
-  background: var(--content-bg);
-  border: 1px solid var(--border-color);
+  background: var(--surface-2);
+  border: 1px solid color-mix(in srgb, var(--border-color) 85%, rgba(255,255,255,.10));
+  box-shadow: var(--shadow-elevation-2);
   backdrop-filter: var(--backdrop-blur);
-  box-shadow: 0 20px 45px rgba(0,0,0,.35);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-nav ul {
-  list-style: none;
-  display: flex;
+header nav .brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width: 160px;
+}
+
+header nav .brand .logo{
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-color) 28%, var(--content-bg));
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+  box-shadow: var(--shadow-elevation-1);
+}
+
+header nav ul{
+  list-style:none;
+  display:flex;
+  align-items:center;
   gap: 8px;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-nav a {
-  padding: 10px 16px;
+header nav a{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 10px 14px;
   border-radius: var(--radius-pill);
-  font-weight: 600;
-  transition: var(--transition-fast);
+  font-weight: 700;
+  color: var(--text-color);
+  transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast);
+  border: 1px solid transparent;
 }
 
-nav a:hover {
-  background: rgba(255,255,255,.08);
+header nav a:hover{
+  background: var(--surface-3);
+  transform: translateY(-1px);
 }
 
-nav a.active {
-  background: rgba(78,168,255,.18);
-  border: 1px solid rgba(78,168,255,.35);
+header nav a.active{
+  background: color-mix(in srgb, var(--accent-color) 22%, var(--surface-2));
+  border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
 }
 
 /* =========================================================
-   SECTIONS
+   HERO / HEADERS
    ========================================================= */
 
-.section {
-  margin: 40px auto;
-  padding: 40px;
-  border-radius: var(--radius-xl);
+.hero{
+  padding: 36px 0 10px;
 }
 
-.section h2 {
-  margin-top: 0;
-  font-size: 1.8rem;
+.hero-card{
+  padding: 26px 24px;
 }
 
-/* Micro Sections (Time/Weather/etc) */
+.hero h1{
+  margin: 0 0 10px 0;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+}
+
+.hero p{
+  margin: 0;
+  color: var(--secondary-text);
+  max-width: 70ch;
+}
+
+/* =========================================================
+   SECTIONS + CARDS
+   ========================================================= */
+
+.section{
+  margin: 22px 0;
+}
+
+.section-card{
+  padding: 22px;
+}
+
+.section-title{
+  margin: 0 0 12px 0;
+  font-size: 1.25rem;
+  letter-spacing: -0.2px;
+}
+
+.section-subtitle{
+  margin: 0 0 18px 0;
+  color: var(--secondary-text);
+}
+
+/* Card grid */
+.grid{
+  display:grid;
+  gap: 14px;
+}
+
+.grid.two{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.three{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 900px){
+  .grid.three{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px){
+  .grid.two, .grid.three{ grid-template-columns: 1fr; }
+}
+
+/* Generic card */
+.card{
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  border: 1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+  box-shadow: var(--shadow-elevation-1);
+}
+.card h3{
+  margin:0 0 6px 0;
+  font-size: 1.05rem;
+}
+.card p{
+  margin:0;
+  color: var(--secondary-text);
+}
+
+/* =========================================================
+   MICRO-SECTIONS — YOUR ORIGINAL (KEPT)
+   ========================================================= */
+
 .section[data-section-id="time"],
 .section[data-section-id="weather"],
 .section[data-section-id="focus"],
@@ -200,45 +402,147 @@ nav a.active {
   display: flex;
   justify-content: center;
   align-items: center;
+  text-align: center;
   padding: 18px 22px;
   border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--content-bg) 85%, transparent);
   backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
   box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+  transition: background var(--transition-medium);
 }
-
-
 
 /* =========================================================
-   SECTIONS
+   BUTTONS / CHIPS
    ========================================================= */
 
-.section {
-  margin: 40px auto;
-  padding: 40px;
-  border-radius: var(--radius-xl);
+.btn{
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--border-color) 85%, rgba(255,255,255,.10));
+  background: var(--surface-2);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  box-shadow: var(--shadow-elevation-1);
+  color: var(--text-color);
+  padding: 11px 16px;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  letter-spacing: .2px;
+  cursor:pointer;
+  transition: transform var(--transition-fast), filter var(--transition-fast), box-shadow var(--transition-fast);
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
 }
 
-.section h2 {
-  margin-top: 0;
-  font-size: 1.8rem;
+.btn:hover{
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-elevation-2);
 }
 
-/* Micro Sections (Time/Weather/etc) */
-.section[data-section-id="time"],
-.section[data-section-id="weather"],
-.section[data-section-id="focus"],
-.section[data-section-id="battery"] {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 18px 22px;
-  border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-  backdrop-filter: blur(14px) saturate(130%);
-  box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color) 60%, transparent);
+.btn:active{
+  transform: translateY(0) scale(.99);
+  filter: brightness(.98);
 }
 
+.btn.primary{
+  background: var(--accent-color);
+  color: var(--accent-text-color);
+  border-color: color-mix(in srgb, var(--accent-color) 70%, transparent);
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--accent-color) 28%, rgba(0,0,0,.35));
+}
+
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 800;
+  background: color-mix(in srgb, var(--accent-color) 14%, var(--surface-2));
+  border: 1px solid color-mix(in srgb, var(--accent-color) 25%, rgba(255,255,255,.10));
+}
+
+/* =========================================================
+   FORMS (site-wide)
+   ========================================================= */
+
+.input, input, select, textarea{
+  font: inherit;
+}
+
+.field{
+  display:flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+label{
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="time"],
+input[type="number"],
+select,
+textarea{
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 85%, rgba(255,255,255,.10));
+  background: var(--surface-2);
+  color: var(--text-color);
+  box-shadow: var(--shadow-elevation-1);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  outline: none;
+  transition: box-shadow var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+textarea{ min-height: 110px; resize: vertical; }
+
+input:focus, select:focus, textarea:focus{
+  border-color: color-mix(in srgb, var(--accent-color) 55%, transparent);
+  box-shadow: var(--focus-ring), var(--shadow-elevation-1);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer{
+  margin: 30px auto 26px;
+  width: min(var(--container), calc(100% - 28px));
+  padding: 18px;
+  text-align:center;
+  color: var(--secondary-text);
+}
+
+/* =========================================================
+   ACCESSIBILITY HELPERS (site-wide)
+   ========================================================= */
+
+.motion-disabled *{
+  transition: none !important;
+  animation: none !important;
+}
+.motion-disabled a:hover,
+.motion-disabled button:hover{
+  transform: none !important;
+}
+
+/* Optional link underline preference */
+body.underline-links a{ text-decoration: underline !important; }
+
+/* Dyslexia-friendly font toggle */
+body.dyslexia-font{
+  font-family: "OpenDyslexic", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif !important;
+}
 
 /* 🕒 Live Time */
 #live-time {
