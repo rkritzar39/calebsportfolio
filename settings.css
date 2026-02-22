@@ -1874,3 +1874,43 @@ body.settings-page .button,
 .setting-card.layout-reset-card .layout-reset-icon i{
   color: var(--accent-text-color, #fff) !important;
 }
+
+/* =======================================================
+   HARD FIX: Instagram + Layout icon bubbles (wins conflicts)
+   Paste at VERY BOTTOM of settings.css
+   ======================================================= */
+
+/* Ensure icon bubbles always render correctly (no weird overrides) */
+.setting-icon-container.instagram-icon,
+.setting-card.layout-reset-card .layout-reset-icon{
+  /* Force a stable “iOS” gradient based on accent */
+  background: linear-gradient(
+    135deg,
+    var(--accent-color),
+    color-mix(in srgb, var(--accent-color) 70%, black 30%)
+  ) !important;
+
+  /* Keep glyph readable */
+  color: var(--accent-text-color, #fff) !important;
+
+  /* Make sure nothing (like old rules) sets it to black */
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* Icon glyph inherits the bubble color */
+.setting-icon-container.instagram-icon i,
+.setting-card.layout-reset-card .layout-reset-icon i{
+  color: inherit !important;
+}
+
+/* If any earlier rule tries to force a gradient on ALL icon containers,
+   this preserves it generally BUT the two above stay correct. */
+body.dark-mode .setting-icon-container.instagram-icon,
+body.dark-mode .setting-card.layout-reset-card .layout-reset-icon{
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-color) 92%, transparent),
+    color-mix(in srgb, var(--accent-color) 62%, black 38%)
+  ) !important;
+}
