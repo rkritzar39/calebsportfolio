@@ -1,159 +1,156 @@
 :root {
-    /* ======================================================= */
-    /* === Onyx (macOS/iOS 26 Inspired) Theme Defaults ===== */
-    /* ======================================================= */
+/* ======================================================= */
+/* === Onyx (iOS 26.4) Theme Defaults ================== */
+/* ======================================================= */
 
-    /* Base Defaults */
-    --font-size-base: 16px;
-    --accent-color: #007aff; /* Standard Apple blue */
-    --accent-text-color: #fff;
+```
+--font-size-base: 16px;
+--accent-color: #007aff;
+--accent-text-color: #fff;
 
-    /* Light Mode */
-    --light-bg: #f2f2f7;
-    --light-content-bg: #ffffff;
-    --light-text: #000;
-    --light-secondary-text: #8a8a8e;
-    --light-border: #c6c6c8;
-    --light-hover: rgba(0, 0, 0, 0.05);
-    --light-toggle-on: var(--accent-color);
-    --light-toggle-off: #e9e9eb;
-    --light-red-color: #ff3b30;
-    --light-slider-track: #e9e9eb;
-    --light-slider-thumb: #fff;
+/* Light Mode */
+--light-bg: #f2f2f7;
+--light-content-bg: #ffffff;
+--light-text: #000;
+--light-secondary-text: #8a8a8e;
+--light-border: #c6c6c8;
+--light-hover: rgba(0, 0, 0, 0.05);
+--light-toggle-on: var(--accent-color);
+--light-toggle-off: #e9e9eb;
+--light-red-color: #ff3b30;
+--light-slider-track: #e9e9eb;
+--light-slider-thumb: #fff;
 
-    /* Dark Mode (Onyx) */
-    --dark-bg: #000;
-    --dark-content-bg: #1c1c1e;
-    --dark-text: #fff;
-    --dark-secondary-text: #8d8d93;
-    --dark-border: #38383a;
-    --dark-hover: rgba(255, 255, 255, 0.1);
-    --dark-toggle-on: var(--accent-color);
-    --dark-toggle-off: #39393d;
-    --dark-red-color: #ff453a;
-    --dark-slider-track: #2f2f31;
-    --dark-slider-thumb: #e6e6e6;
+/* Dark Mode (Onyx) */
+--dark-bg: #000;
+--dark-content-bg: #1c1c1e;
+--dark-text: #fff;
+--dark-secondary-text: #8d8d93;
+--dark-border: #38383a;
+--dark-hover: rgba(255, 255, 255, 0.1);
+--dark-toggle-on: var(--accent-color);
+--dark-toggle-off: #39393d;
+--dark-red-color: #ff453a;
+--dark-slider-track: #2f2f31;
+--dark-slider-thumb: #e6e6e6;
 
-    /* Default theme */
-    --bg-color: var(--light-bg);
-    --content-bg: var(--light-content-bg);
-    --text-color: var(--light-text);
-    --secondary-text: var(--light-secondary-text);
-    --border-color: var(--light-border);
-    --hover-color: var(--light-hover);
-    --toggle-on: var(--light-toggle-on);
-    --toggle-off: var(--light-toggle-off);
-    --red-color: var(--light-red-color);
-    --slider-track-color: var(--light-slider-track);
-    --slider-track-filled-color: var(--accent-color);
-    --slider-thumb-color: var(--light-slider-thumb);
-    --shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.08);
-    --shadow-elevation-2: 0 6px 20px rgba(0,0,0,0.12);
+/* Active theme */
+--bg-color: var(--light-bg);
+--content-bg: var(--light-content-bg);
+--text-color: var(--light-text);
+--secondary-text: var(--light-secondary-text);
+--border-color: var(--light-border);
+--hover-color: var(--light-hover);
+--toggle-on: var(--light-toggle-on);
+--toggle-off: var(--light-toggle-off);
+--red-color: var(--light-red-color);
+--slider-track-color: var(--light-slider-track);
+--slider-track-filled-color: var(--accent-color);
+--slider-thumb-color: var(--light-slider-thumb);
+--shadow-elevation-1: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+--shadow-elevation-2: 0 8px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
 
-    /* Glass Material */
-    --glass-blur: blur(30px) saturate(150%) brightness(1.05);
-    --glass-bg-light: rgba(242, 242, 247, 0.8);
-    --glass-border-light: rgba(0, 0, 0, 0.1);
-    --glass-bg-dark: rgba(28, 28, 30, 0.75);
-    --glass-border-dark: rgba(255, 255, 255, 0.15);
+/* iOS 26.4 Glass Material — brighter, blurrier, specular rim */
+--glass-blur: blur(40px) saturate(180%) brightness(1.1);
+--glass-bg-light: rgba(255, 255, 255, 0.72);
+--glass-border-light: rgba(255, 255, 255, 0.6);
+--glass-bg-dark: rgba(30, 30, 32, 0.70);
+--glass-border-dark: rgba(255, 255, 255, 0.18);
+
+/* Radii */
+--radius-pill: 999px;
+```
+
 }
 
-/* Dark Mode */
+/* ========== Dark Mode ========== */
 body.dark-mode {
-    --bg-color: var(--dark-bg);
-    --content-bg: var(--dark-content-bg);
-    --text-color: var(--dark-text);
-    --secondary-text: var(--dark-secondary-text);
-    --border-color: var(--dark-border);
-    --hover-color: var(--dark-hover);
-    --toggle-on: var(--dark-toggle-on);
-    --toggle-off: var(--dark-toggle-off);
-    --red-color: var(--dark-red-color);
-    --slider-track-color: var(--dark-slider-track);
-    --slider-thumb-color: var(--dark-slider-thumb);
-    --shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.3);
-    --shadow-elevation-2: 0 12px 28px rgba(0,0,0,0.35);
+–bg-color: var(–dark-bg);
+–content-bg: var(–dark-content-bg);
+–text-color: var(–dark-text);
+–secondary-text: var(–dark-secondary-text);
+–border-color: var(–dark-border);
+–hover-color: var(–dark-hover);
+–toggle-on: var(–dark-toggle-on);
+–toggle-off: var(–dark-toggle-off);
+–red-color: var(–dark-red-color);
+–slider-track-color: var(–dark-slider-track);
+–slider-thumb-color: var(–dark-slider-thumb);
+–shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.3);
+–shadow-elevation-2: 0 12px 28px rgba(0,0,0,0.35);
 }
 
-/* Base body */
+/* ========== Base Body ========== */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, “Helvetica Neue”, “Roboto”, sans-serif;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+background-color: var(–bg-color);
+color: var(–text-color);
+letter-spacing: -0.01em;
 }
 
-/* Glass Panels */
+/* ========== Glass Panels — iOS 26.4 specular rim ========== */
 .settings-header,
 .settings-subsection,
 footer,
+.settings-footer,
 #cookie-consent-banner {
-    background: var(--glass-bg-light);
-    border: 1px solid var(--glass-border-light);
-    border-radius: 1.5rem;
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: 
-        inset 0 0 0 1.5px rgba(255,255,255,0.2),
-        0 20px 40px -10px rgba(0,0,0,0.25);
+background: var(–glass-bg-light);
+border: 1px solid var(–glass-border-light);
+border-radius: 1.5rem;
+backdrop-filter: var(–glass-blur);
+-webkit-backdrop-filter: var(–glass-blur);
+box-shadow:
+inset 0 1px 0 rgba(255, 255, 255, 0.75),
+inset 0 -1px 0 rgba(0, 0, 0, 0.04),
+0 20px 48px -10px rgba(0, 0, 0, 0.18);
 }
 
 body.dark-mode .settings-header,
 body.dark-mode .settings-subsection,
 body.dark-mode footer,
+body.dark-mode .settings-footer,
 body.dark-mode #cookie-consent-banner {
-    background: var(--glass-bg-dark);
-    border: 1px solid var(--glass-border-dark);
-    box-shadow: 
-        inset 0 0 0 1.5px rgba(255,255,255,0.1),
-        0 20px 40px -10px rgba(0,0,0,0.5);
+background: var(–glass-bg-dark);
+border: 1px solid var(–glass-border-dark);
+box-shadow:
+inset 0 1px 0 rgba(255, 255, 255, 0.12),
+inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+0 20px 48px -10px rgba(0, 0, 0, 0.55);
 }
 
 /* Clear & Tinted Modes */
 body.clear-mode {
-    --glass-bg-light: rgba(255,255,255,0.45);
-    --glass-bg-dark: rgba(28,28,30,0.45);
+–glass-bg-light: rgba(255,255,255,0.45);
+–glass-bg-dark: rgba(28,28,30,0.45);
 }
-
 body.tinted-mode {
-    --glass-bg-light: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
-    --glass-bg-dark: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-dark));
+–glass-bg-light: color-mix(in srgb, var(–accent-color) 15%, var(–glass-bg-light));
+–glass-bg-dark: color-mix(in srgb, var(–accent-color) 20%, var(–glass-bg-dark));
 }
 
 /* =======================================================
-   HIGH CONTRAST MODE — YELLOW ON BLACK (REAL AF)
-   ======================================================= */
-
+HIGH CONTRAST MODE — YELLOW ON BLACK
+======================================================= */
 body.high-contrast {
-  --hc-bg: #000000;
-  --hc-panel: #000000;
-  --hc-text: #ffff00;        /* PURE YELLOW */
-  --hc-border: #ffff00;
-  --hc-accent: #ffff00;
-  --hc-link: #00ffff;
-  --hc-danger: #ff3333;
-
-  background-color: var(--hc-bg) !important;
-  color: var(--hc-text) !important;
+–hc-bg: #000000;
+–hc-panel: #000000;
+–hc-text: #ffff00;
+–hc-border: #ffff00;
+–hc-accent: #ffff00;
+–hc-link: #00ffff;
+–hc-danger: #ff3333;
+background-color: var(–hc-bg) !important;
+color: var(–hc-text) !important;
 }
-
-/* =======================================================
-   GLOBAL NUKES (NO VISUAL NOISE)
-   ======================================================= */
-
 body.high-contrast * {
-  background-image: none !important;
-  box-shadow: none !important;
-  text-shadow: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+background-image: none !important;
+box-shadow: none !important;
+text-shadow: none !important;
+backdrop-filter: none !important;
+-webkit-backdrop-filter: none !important;
 }
-
-/* =======================================================
-   PANELS / CARDS / SECTIONS
-   ======================================================= */
-
 body.high-contrast .settings-header,
 body.high-contrast .settings-subsection,
 body.high-contrast footer,
@@ -161,1366 +158,850 @@ body.high-contrast #cookie-consent-banner,
 body.high-contrast .setting-card,
 body.high-contrast .profile-card,
 body.high-contrast #customBgPreviewContainer {
-  background-color: #000000 !important;
-  border: 3px solid var(--hc-border) !important;
+background-color: #000000 !important;
+border: 3px solid var(–hc-border) !important;
 }
-
-/* =======================================================
-   ALL TEXT — FORCE VISIBILITY
-   ======================================================= */
-
-body.high-contrast h1,
-body.high-contrast h2,
-body.high-contrast h3,
-body.high-contrast h4,
-body.high-contrast p,
-body.high-contrast span,
-body.high-contrast label,
-body.high-contrast li,
-body.high-contrast small,
-body.high-contrast .setting-title,
-body.high-contrast .setting-description,
+body.high-contrast h1, body.high-contrast h2, body.high-contrast h3,
+body.high-contrast h4, body.high-contrast p, body.high-contrast span,
+body.high-contrast label, body.high-contrast li, body.high-contrast small,
+body.high-contrast .setting-title, body.high-contrast .setting-description,
 body.high-contrast .file-name {
-  color: var(--hc-text) !important;
+color: var(–hc-text) !important;
 }
-
-/* =======================================================
-   LINKS — CYAN SO THEY POP
-   ======================================================= */
-
 body.high-contrast a {
-  color: var(--hc-link) !important;
-  text-decoration: underline !important;
-  font-weight: 800;
+color: var(–hc-link) !important;
+text-decoration: underline !important;
+font-weight: 800;
 }
-
-/* =======================================================
-   BUTTONS & CONTROLS — INVERTED FOR CLARITY
-   ======================================================= */
-
-body.high-contrast button,
-body.high-contrast .button,
+body.high-contrast button, body.high-contrast .button,
 body.high-contrast .segmented-control button,
-body.high-contrast #removeCustomBg,
-body.high-contrast .custom-bg-label {
-  background-color: #ffff00 !important;
-  color: #000000 !important;
-  border: 3px solid #000000 !important;
-  font-weight: 900;
+body.high-contrast #removeCustomBg, body.high-contrast .custom-bg-label {
+background-color: #ffff00 !important;
+color: #000000 !important;
+border: 3px solid #000000 !important;
+font-weight: 900;
 }
-
-/* Disabled = obvious */
 body.high-contrast button:disabled {
-  background-color: #555 !important;
-  color: #222 !important;
-  border-color: #222 !important;
+background-color: #555 !important;
+color: #222 !important;
+border-color: #222 !important;
 }
-
-/* =======================================================
-   FORM ELEMENTS
-   ======================================================= */
-
-body.high-contrast input,
-body.high-contrast select,
-body.high-contrast textarea {
-  background-color: #000000 !important;
-  color: #ffff00 !important;
-  border: 3px solid #ffff00 !important;
+body.high-contrast input, body.high-contrast select, body.high-contrast textarea {
+background-color: #000000 !important;
+color: #ffff00 !important;
+border: 3px solid #ffff00 !important;
 }
-
-/* =======================================================
-   TOGGLES & SLIDERS
-   ======================================================= */
-
-body.high-contrast input[type="range"] {
-  accent-color: #ffff00;
+body.high-contrast input[type=“range”] { accent-color: #ffff00; }
+body.high-contrast .toggle-on { background-color: #ffff00 !important; }
+body.high-contrast .toggle-off { background-color: #333 !important; }
+body.high-contrast hr, body.high-contrast .custom-bg-separator {
+background-color: #ffff00 !important;
+height: 3px;
+opacity: 1 !important;
 }
-
-body.high-contrast .toggle-on {
-  background-color: #ffff00 !important;
+body.high-contrast svg, body.high-contrast svg path, body.high-contrast i,
+body.high-contrast .verified-badge, body.high-contrast .icon-accent {
+fill: #ffff00 !important;
+color: #ffff00 !important;
 }
-
-body.high-contrast .toggle-off {
-  background-color: #333 !important;
-}
-
-/* =======================================================
-   DIVIDERS
-   ======================================================= */
-
-body.high-contrast hr,
-body.high-contrast .custom-bg-separator {
-  background-color: #ffff00 !important;
-  height: 3px;
-  opacity: 1 !important;
-}
-
-/* =======================================================
-   ICONS / SVGs — FORCE YELLOW
-   ======================================================= */
-
-body.high-contrast svg,
-body.high-contrast svg path,
-body.high-contrast i,
-body.high-contrast .verified-badge,
-body.high-contrast .icon-accent {
-  fill: #ffff00 !important;
-  color: #ffff00 !important;
-}
-
-/* =======================================================
-   IMAGES — OPTIONAL BUT HELPFUL
-   ======================================================= */
-
-body.high-contrast img {
-  filter: contrast(180%) brightness(110%);
-}
-
-/* =======================================================
-   FOCUS STATES — YOU CANNOT MISS THIS
-   ======================================================= */
-
+body.high-contrast img { filter: contrast(180%) brightness(110%); }
 body.high-contrast :focus-visible {
-  outline: 5px solid #ffff00 !important;
-  outline-offset: 5px;
+outline: 5px solid #ffff00 !important;
+outline-offset: 5px;
 }
+body.high-contrast ::selection { background: #ffff00; color: #000000; }
 
-/* =======================================================
-   TEXT SELECTION
-   ======================================================= */
-
-body.high-contrast ::selection {
-  background: #ffff00;
-  color: #000000;
+/* ========== Motion & Accessibility ========== */
+.motion-disabled * { transition: none !important; animation: none !important; }
+.motion-disabled a:hover, .motion-disabled button:hover, .motion-disabled .hover-effect {
+transform: none !important;
+box-shadow: none !important;
 }
+body.dyslexia-font { font-family: “OpenDyslexic”, “Arial”, sans-serif !important; }
+body.underline-links a { text-decoration: underline !important; }
 
-/* ===================== */
-/* Motion & Effects Fix  */
-/* ===================== */
-.motion-disabled * {
-  transition: none !important;
-  animation: none !important;
-}
-.motion-disabled a:hover,
-.motion-disabled button:hover,
-.motion-disabled .hover-effect {
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-/* Dyslexia-Friendly Font */
-body.dyslexia-font {
-    font-family: "OpenDyslexic", "Arial", sans-serif !important;
-}
-
-/* Underline Links */
-body.underline-links a {
-    text-decoration: underline !important;
-}
-
-/* ========== General Styles ========== */
+/* ========== Settings Page ========== */
 body.settings-page {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-size: 1rem; /* This ensures the settings page inherits the root font size */
-    line-height: 1.4;
-    margin: 0;
-    padding: 0;
+font-family: -apple-system, BlinkMacSystemFont, “SF Pro Text”, “Helvetica Neue”, “Roboto”, sans-serif;
+color: var(–text-color);
+font-size: 1rem;
+line-height: 1.4;
+margin: 0;
+padding: 0;
+/* iOS 26.4: faint accent-tinted glow from top */
+background:
+radial-gradient(
+ellipse 140% 55% at 50% -5%,
+color-mix(in srgb, var(–accent-color) 9%, transparent),
+transparent 65%
+),
+var(–bg-color);
+}
+body.dark-mode.settings-page {
+background:
+radial-gradient(
+ellipse 140% 55% at 50% -5%,
+color-mix(in srgb, var(–accent-color) 14%, transparent),
+transparent 60%
+),
+var(–dark-bg);
 }
 
 /* ========== Container ========== */
 body.settings-page .container {
-    max-width: 57.5rem;
-    margin: 0 auto;
-    padding: 1.875rem 1.25rem;
+max-width: 57.5rem;
+margin: 0 auto;
+padding: 1.875rem 1.25rem 7.5rem; /* bottom clears the dock */
 }
 
 /* ========== Settings Header ========== */
-/* CLEANED: Removed redundant glass styles */
 body.settings-page .settings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.875rem;
-    padding: 1rem 1.25rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 1.875rem;
+padding: 1rem 1.25rem;
 }
-
 body.settings-page .settings-header h1 {
-    font-size: 1.5rem; /* Slightly smaller for a more desktop-like feel */
-    font-weight: 600; /* Semibold is common for titles in macOS */
-    margin: 0;
-    color: var(--text-color);
+font-size: 1.5rem;
+font-weight: 700;
+letter-spacing: -0.03em;
+margin: 0;
+color: var(–text-color);
 }
-
 body.settings-page .version {
-    font-size: 0.8125rem;
-    color: var(--secondary-text);
-    background-color: var(--border-color);
-    padding: 0.1875rem 0.5rem;
-    border-radius: 0.375rem;
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 0.02em;
+color: var(–secondary-text);
+background-color: var(–border-color);
+padding: 2px 8px;
+border-radius: 8px;
 }
 
 /* ========== Settings Subsection ========== */
-/* CLEANED: Removed redundant glass styles */
 body.settings-page .settings-subsection {
-    border-radius: 1rem; /* iOS 26: Larger radius */
-    margin-bottom: 1.5rem;
-    overflow: hidden;
+border-radius: 1.375rem; /* iOS 26.4: slightly rounder */
+margin-bottom: 1.5rem;
+overflow: hidden;
 }
-
 body.settings-page .subsection-title {
-    font-size: 0.8125rem; /* 13px is standard for macOS subsection titles */
-    font-weight: 600;
-    padding: 0.75rem 1.25rem;
-    margin: 0;
-    text-transform: uppercase; /* macOS often uses uppercase for these titles */
-    color: var(--secondary-text); /* Titles are often secondary color */
-    border-bottom: 0.0625rem solid var(--border-color);
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 0.06em;
+padding: 0.75rem 1.25rem;
+margin: 0;
+text-transform: uppercase;
+color: var(–secondary-text);
+border-bottom: 0.0625rem solid var(–border-color);
+opacity: 0.7;
 }
 
 /* ========== Setting Card ========== */
 body.settings-page .setting-card {
-    padding: 1rem 1.25rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 3.5rem;
-    border-bottom: 0.0625rem solid var(--border-color);
-    position: relative;
-    overflow: hidden;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-    gap: 1rem; /* ADDED: Space for icons */
+padding: 1rem 1.25rem;
+display: flex;
+justify-content: space-between;
+align-items: center;
+min-height: 3.5rem;
+border-bottom: 0.0625rem solid var(–border-color);
+position: relative;
+overflow: hidden;
+transition: background-color 0.2s ease;
+gap: 1rem;
 }
 body.settings-page .setting-card:last-child { border-bottom: none; }
 body.settings-page .setting-card:hover {
-    background-color: color-mix(in srgb, var(--bg-color) 50%, var(--content-bg));
-    box-shadow: var(--shadow-elevation-2);
+background-color: color-mix(in srgb, var(–bg-color) 50%, var(–content-bg));
 }
-
 body.settings-page .setting-label { flex: 1; padding-right: 0.75rem; }
 body.settings-page .setting-title { font-size: 0.9375rem; font-weight: 500; margin: 0 0 0.25rem 0; }
-body.settings-page .setting-description { font-size: 0.8125rem; color: var(--secondary-text); margin: 0; }
+body.settings-page .setting-description { font-size: 0.8125rem; color: var(–secondary-text); margin: 0; }
+body.settings-page .chevron { margin-left: 0.75rem; color: var(–secondary-text); font-size: 1.25rem; }
 
-/* Ripple */
-body.settings-page .setting-card:active::after {
-    width: 18.75rem; height: 18.75rem; opacity: 0.14;
-    transition: width 0s, height 0s;
+/* ========== Section Icon Containers — iOS 26.4 squircle ========== */
+.setting-icon-container {
+display: flex;
+align-items: center;
+justify-content: center;
+width: 36px;
+height: 36px;
+border-radius: 12px; /* squircle, not circle */
+flex-shrink: 0;
+font-size: 16px;
+color: #fff;
+background: linear-gradient(135deg, var(–accent-color, #007aff), color-mix(in srgb, var(–accent-color, #007aff) 70%, black 30%));
+box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.setting-icon-container i { color: #fff; }
+
+.setting-icon-container.accent-icon {
+background-color: var(–accent-color);
+color: var(–accent-text-color);
+transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+}
+.setting-icon-container.accent-icon i { color: inherit; }
+
+#appearanceModeRow.disabled {
+opacity: 0.45;
+filter: grayscale(1);
+pointer-events: none;
 }
 
-/* Chevron */
-body.settings-page .chevron { margin-left: 0.75rem; color: var(--secondary-text); font-size: 1.25rem; }
-
-/* ========== Modern Dark Mode Scheduler ========== */
+/* ========== Dark Mode Scheduler Dropdown ========== */
 #darkModeScheduler {
-    appearance: none;
-    background: var(--glass-bg-light);
-    border: 0.0625rem solid var(--glass-border-light);
-    border-radius: 0.75rem;
-    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
-    font-size: 0.875rem;
-    color: var(--text-color);
-    cursor: pointer;
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: var(--shadow-elevation-1);
-    transition: background 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
+appearance: none;
+background: var(–glass-bg-light);
+border: 0.0625rem solid var(–glass-border-light);
+border-radius: 0.75rem;
+padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+font-size: 0.875rem;
+color: var(–text-color);
+cursor: pointer;
+backdrop-filter: var(–glass-blur);
+-webkit-backdrop-filter: var(–glass-blur);
+box-shadow: var(–shadow-elevation-1);
+transition: background 0.2s ease, box-shadow 0.2s ease;
+position: relative;
 }
-#darkModeScheduler option {
-    font-size: 0.875rem;
-    color: var(--text-color);
-    background: var(--content-bg);
-}
-/* Hover & Dark adjustments */
+#darkModeScheduler option { font-size: 0.875rem; color: var(–text-color); background: var(–content-bg); }
 #darkModeScheduler:hover {
-    background: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
-    box-shadow: var(--shadow-elevation-2);
+background: color-mix(in srgb, var(–accent-color) 15%, var(–glass-bg-light));
+box-shadow: var(–shadow-elevation-2);
 }
 body.dark-mode #darkModeScheduler {
-    background: var(--glass-bg-dark);
-    border: 0.0625rem solid var(--glass-border-dark);
-}
-#darkModeScheduler::after {
-    content: "▾";
-    position: absolute;
-    right: 0.75rem;
-    color: var(--secondary-text);
-    pointer-events: none;
+background: var(–glass-bg-dark);
+border: 0.0625rem solid var(–glass-border-dark);
 }
 
-/* ========== Modern Accent Color Picker ========== */
+/* ========== Accent Color Picker ========== */
 #accentColorPicker {
-    -webkit-appearance: none;
-    appearance: none;
-    border: none;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.2);
-    border: 0.125rem solid var(--border-color);
-    background: transparent;
-    padding: 0;
-    position: relative;
+-webkit-appearance: none;
+appearance: none;
+border: none;
+width: 28px;
+height: 28px;
+border-radius: 50%;
+overflow: hidden;
+cursor: pointer;
+box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.2);
+border: 0.125rem solid var(–border-color);
+background: transparent;
+padding: 0;
+position: relative;
 }
-#accentColorPicker::-webkit-color-swatch {
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-}
-#accentColorPicker::-moz-color-swatch {
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-}
-#accentColorPicker::after {
-    content: '';
-    position: absolute;
-    top: -0.25rem;
-    left: -0.25rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    border: 0.125rem solid var(--accent-color);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-#accentColorPicker.selected::after {
-    opacity: 1;
-}
-#accentColorPicker:hover {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
-}
+#accentColorPicker::-webkit-color-swatch { border-radius: 50%; border: none; padding: 0; }
+#accentColorPicker::-moz-color-swatch { border-radius: 50%; border: none; }
+#accentColorPicker:hover { transform: scale(1.1); transition: transform 0.2s ease; }
 
 /* ========== Appearance Mode Select ========== */
 body.settings-page #appearanceModeSelect {
-    font-size: 0.9375rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    border: 0.0625rem solid var(--border-color);
-    background: var(--bg-color);
-    color: var(--text-color);
-    margin-left: 0.625rem;
+font-size: 0.9375rem;
+padding: 0.5rem 0.75rem;
+border-radius: 0.5rem;
+border: 0.0625rem solid var(–border-color);
+background: var(–bg-color);
+color: var(–text-color);
+margin-left: 0.625rem;
 }
 
 /* ======================================================= */
-/* === PURE iOS 26 TOGGLE – FIXED ACCENT LOGIC ============ */
+/* === iOS 26.4 TOGGLE — OVAL THUMB ==================== */
 /* ======================================================= */
 .md-switch {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  width: 52px;
-  height: 32px;
+position: relative;
+display: inline-flex;
+align-items: center;
+justify-content: flex-end;
+width: 51px;
+height: 31px;
 }
-.md-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+.md-switch input { opacity: 0; width: 0; height: 0; }
 
-/* Default track */
+/* Track */
 .md-switch .track {
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: var(--toggle-off);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
-  box-shadow:
-    inset 0 1px 2px rgba(0,0,0,0.1),
-    inset 0 -1px 2px rgba(255,255,255,0.2);
-  transition: background 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.3s ease;
+position: absolute;
+inset: 0;
+border-radius: 999px;
+background: var(–toggle-off);
+box-shadow:
+inset 0 1px 2px rgba(0,0,0,0.1),
+inset 0 -1px 2px rgba(255,255,255,0.2);
+transition: background 0.32s cubic-bezier(.25,.8,.25,1);
 }
 
-/* Thumb */
+/* Oval thumb — the key iOS 26.4 change */
 .md-switch .thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 28px;
-  height: 28px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(6px) saturate(180%);
-  -webkit-backdrop-filter: blur(6px) saturate(180%);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.9),
-    inset 0 -1px 2px rgba(0,0,0,0.1),
-    0 2px 4px rgba(0,0,0,0.15),
-    0 6px 12px rgba(0,0,0,0.10);
-  transition:
-    transform 0.35s cubic-bezier(.25,.8,.25,1),
-    width 0.25s ease,
-    background 0.25s ease,
-    box-shadow 0.25s ease;
-}
-.md-switch:active .thumb {
-  width: 30px;
-  border-radius: 15px;
+position: absolute;
+top: 3px;
+left: 3px;
+width: 22px;
+height: 25px;
+border-radius: 10px; /* portrait rounded-rect = oval */
+background: #fff;
+box-shadow:
+0 1px 4px rgba(0,0,0,0.28),
+0 3px 8px rgba(0,0,0,0.12),
+inset 0 1px 0 rgba(255,255,255,1);
+transition:
+transform 0.32s cubic-bezier(0.25, 0.8, 0.25, 1),
+width 0.2s ease,
+border-radius 0.2s ease;
 }
 
-/* === FIXED ACCENT COLOR LINK === */
+/* Squish on press */
+.md-switch:active .thumb {
+width: 27px;
+border-radius: 11px;
+}
+
+/* Checked: slide right */
 .md-switch input:checked + .track {
-  background: var(--toggle-on);
-  box-shadow:
-    0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent),
-    inset 0 0 0 1px rgba(255,255,255,0.25);
-  animation: togglePulse 2.5s ease-in-out infinite;
+background: var(–toggle-on);
+animation: none; /* iOS 26.4 dropped the pulse */
+box-shadow: none;
 }
 .md-switch input:checked + .track .thumb {
-  transform: translateX(20px);
-  background: rgba(255,255,255,0.9);
-  box-shadow:
-    0 0 6px color-mix(in srgb, var(--accent-color) 30%, transparent),
-    0 2px 4px rgba(0,0,0,0.2);
+transform: translateX(23px);
 }
 
-/* Dark mode adjustment */
-body.dark-mode .md-switch .track {
-  background: rgba(255,255,255,0.15);
+/* Checked + pressed: stretch back left */
+.md-switch:active input:checked + .track .thumb {
+transform: translateX(18px);
+width: 27px;
 }
-/* Dark mode accent sync */
-body.dark-mode .md-switch input:checked + .track {
-  background: var(--toggle-on);
-  box-shadow:
-    0 0 10px color-mix(in srgb, var(--accent-color) 55%, transparent),
-    inset 0 0 0 1px rgba(255,255,255,0.1);
-}
+
+/* Dark mode */
+body.dark-mode .md-switch .track { background: rgba(255,255,255,0.15); }
+body.dark-mode .md-switch input:checked + .track { background: var(–toggle-on); }
 
 /* Disabled */
-.md-switch.disabled,
-.md-switch input[disabled] + .track {
-  opacity: 0.5;
-  pointer-events: none;
-}
+.md-switch.disabled, .md-switch input[disabled] + .track { opacity: 0.5; pointer-events: none; }
 
-/* ========== Text Size Slider --- iOS 26 REDESIGN ========== */
+/* ========== Text Size Slider ========== */
 .setting-card:has(.text-size-control) { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
 .setting-card:has(.text-size-control) > *:first-child { flex: 1; min-width: 15.625rem; }
 .text-size-control { flex-shrink: 0; width: 17.5rem; display: flex; flex-direction: column; align-items: center; }
 .font-size-badge {
-    padding: 0.25rem 0.75rem;
-    background-color: var(--accent-color);
-    color: var(--accent-text-color, white); /* FIX: Use the new contrast variable */
-    border-radius: 0.75rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    margin-bottom: 0.75rem;
+padding: 0.25rem 0.75rem;
+background-color: var(–accent-color);
+color: var(–accent-text-color, white);
+border-radius: 0.75rem;
+font-weight: 600;
+font-size: 0.875rem;
+margin-bottom: 0.75rem;
 }
 #text-size-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 10px;
-  border-radius: 999px;
-  outline: none;
-  background: linear-gradient(
-    to right,
-    var(--accent-color) 0%,
-    var(--accent-color) var(--_fill, 0%),
-    var(--slider-track-color) var(--_fill, 0%),
-    var(--slider-track-color) 100%
-  );
-  transition: background .15s linear;
+-webkit-appearance: none;
+appearance: none;
+width: 100%;
+height: 10px;
+border-radius: 999px;
+outline: none;
+background: linear-gradient(
+to right,
+var(–accent-color) 0%,
+var(–accent-color) var(–_fill, 0%),
+var(–slider-track-color) var(–_fill, 0%),
+var(–slider-track-color) 100%
+);
+transition: background .15s linear;
 }
 #text-size-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #fff;
-  border: 0.5px solid rgba(0,0,0,0.05);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25),
-    0 6px 16px rgba(0,0,0,.2);
-  cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
+-webkit-appearance: none;
+appearance: none;
+width: 28px;
+height: 28px;
+border-radius: 50%;
+background: #fff;
+border: 0.5px solid rgba(0,0,0,0.05);
+box-shadow: inset 0 0 0 1px rgba(255,255,255,.25), 0 6px 16px rgba(0,0,0,.2);
+cursor: pointer;
+transition: transform .2s ease, box-shadow .2s ease;
 }
 #text-size-slider::-webkit-slider-thumb:active {
-  transform: scale(1.05);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.35),
-    0 10px 20px color-mix(in srgb,var(--accent-color) 35%,rgba(0,0,0,.25));
+transform: scale(1.05);
+box-shadow: inset 0 0 0 1px rgba(255,255,255,.35), 0 10px 20px color-mix(in srgb,var(–accent-color) 35%,rgba(0,0,0,.25));
 }
 #text-size-slider::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #fff;
-  border: none;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25),
-    0 6px 16px rgba(0,0,0,.2);
-  transition: transform .2s ease, box-shadow .2s ease;
+width: 28px;
+height: 28px;
+border-radius: 50%;
+background: #fff;
+border: none;
+box-shadow: inset 0 0 0 1px rgba(255,255,255,.25), 0 6px 16px rgba(0,0,0,.2);
+transition: transform .2s ease, box-shadow .2s ease;
 }
-#text-size-slider::-moz-range-thumb:active {
-  transform: scale(1.05);
-}
-
-/* ========== Responsive ========== */
-@media (max-width: 600px) {
-    .setting-card:has(.text-size-control) { flex-direction: column; align-items: flex-start; }
-    .text-size-control { width: 100%; align-items: flex-start; }
-    #text-size-slider { max-width: 100%; }
-}
-@media (max-width: 768px) {
-    body.settings-page .container { padding: 1.25rem 0.9375rem; }
-    body.settings-page .settings-header h1 { font-size: 1.625rem; }
-    body.settings-page .setting-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1rem; }
-    body.settings-page .setting-label { width: 100%; }
-    body.settings-page #cookie-consent-banner { flex-direction: column; text-align: center; width: 90%; gap: 0.75rem; }
-}
-@media (max-width: 480px) {
-    body.settings-page .container { padding: 0.9375rem 0.625rem; }
-    body.settings-page .settings-header h1 { font-size: 1.375rem; }
-    body.settings-page footer { padding: 0.9375rem; flex-direction: column; gap: 0.625rem; }
-}
+#text-size-slider::-moz-range-thumb:active { transform: scale(1.05); }
 
 /* ========== Danger Zone ========== */
 body.settings-page .danger-zone .settings-subsection {
-    background: color-mix(in srgb, var(--red-color) 15%, var(--glass-bg-light));
-    border: 0.0625rem solid color-mix(in srgb, var(--red-color) 50%, transparent);
+background: color-mix(in srgb, var(–red-color) 15%, var(–glass-bg-light));
+border: 0.0625rem solid color-mix(in srgb, var(–red-color) 50%, transparent);
 }
 body.dark-mode .danger-zone .settings-subsection {
-    background: color-mix(in srgb, var(--red-color) 20%, var(--glass-bg-dark));
-    border: 0.0625rem solid color-mix(in srgb, var(--red-color) 50%, transparent);
+background: color-mix(in srgb, var(–red-color) 20%, var(–glass-bg-dark));
+border: 0.0625rem solid color-mix(in srgb, var(–red-color) 50%, transparent);
 }
 
 /* ========== Buttons ========== */
 body.settings-page .button {
-    /* Base styles for all buttons */
-    border-radius: 0.5rem;
-    font-size: 0.8125rem; /* Authentic 13px macOS button font size */
-    font-weight: 500;
-    cursor: pointer;
-    padding: 0.375rem 0.875rem; /* More compact padding */
-    transition: background-color 0.2s ease, border-color 0.2s ease;
-    -webkit-font-smoothing: antialiased;
+border-radius: 0.5rem;
+font-size: 0.8125rem;
+font-weight: 500;
+cursor: pointer;
+padding: 0.375rem 0.875rem;
+transition: background-color 0.2s ease, border-color 0.2s ease;
+-webkit-font-smoothing: antialiased;
 }
-
-.reset-button,
-#cookie-consent-banner button {
-    /* Style for standard gray material buttons */
-    color: var(--text-color);
-    background-color: var(--light-slider-track); /* A subtle material fill */
-    border: 1px solid var(--light-border);
+.reset-button, #cookie-consent-banner button {
+color: var(–text-color);
+background-color: var(–light-slider-track);
+border: 1px solid var(–light-border);
 }
-
 body.settings-page .reset-button:hover,
-body.settings-page #cookie-consent-banner button:hover {
-    background-color: var(--light-border); /* Subtle hover effect */
-}
-
-/* Dark Mode Overrides for Standard Buttons */
+body.settings-page #cookie-consent-banner button:hover { background-color: var(–light-border); }
 body.dark-mode .reset-button,
 body.dark-mode #cookie-consent-banner button {
-    background-color: var(--dark-slider-track);
-    border: 1px solid var(--dark-border);
+background-color: var(–dark-slider-track);
+border: 1px solid var(–dark-border);
 }
-
 body.dark-mode .reset-button:hover,
-body.dark-mode #cookie-consent-banner button:hover {
-    background-color: var(--dark-border);
-}
-
-/* Style for a prominent, accent-colored button */
+body.dark-mode #cookie-consent-banner button:hover { background-color: var(–dark-border); }
 .button-prominent {
-    background-color: var(--accent-color);
-    border: 1px solid transparent;
-    color: #fff; /* Text should be white for contrast */
+background-color: var(–accent-color);
+border: 1px solid transparent;
+color: #fff;
+}
+.button-prominent:hover { background-color: color-mix(in srgb, var(–accent-color) 85%, black); }
+
+/* ========== Footer ========== */
+body.settings-page .back-link { display: inline-flex; align-items: center; color: var(–accent-color); text-decoration: none; font-size: 1rem; }
+body.settings-page .back-link:hover { opacity: 0.8; }
+
+body.settings-page footer,
+.settings-footer {
+text-align: center;
+padding: 1.25rem;
+font-size: 0.875rem;
+color: var(–secondary-text);
+margin: 0 0 6.25rem; /* clears the fixed dock */
 }
 
-.button-prominent:hover {
-    /* Darken the accent color slightly on hover */
-    background-color: color-mix(in srgb, var(--accent-color) 85%, black);
+.footer-content {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 0.5rem;
 }
-
-/* ========== Footer & Back Link ========== */
-body.settings-page .back-link { display: inline-flex; align-items: center; color: var(--accent-color); text-decoration: none; font-size: 1rem; }
-body.settings-page .back-link:hover { color: var(--hover-color); }
-/* CLEANED: Removed redundant glass styles */
-body.settings-page footer {
-    text-align: center; padding: 1.25rem; font-size: 0.875rem; color: var(--secondary-text);
+.footer-links {
+display: flex;
+gap: 1.25rem;
+flex-wrap: wrap;
+justify-content: center;
 }
+.footer-links a {
+color: var(–accent-color);
+text-decoration: none;
+font-size: 0.8125rem;
+}
+.footer-links a:hover { text-decoration: underline; }
 
 /* ========== Cookie Consent Banner ========== */
-/* CLEANED: Removed redundant glass styles */
 body.settings-page #cookie-consent-banner {
-    position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
-    border-radius: 0.75rem;
-    padding: 1rem;
-    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-    max-width: 92%; width: 40rem; z-index: 1000;
+position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
+border-radius: 0.75rem;
+padding: 1rem;
+display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+max-width: 92%; width: 40rem; z-index: 1000;
 }
 
-/* ============================== */
-/* Focus outline                  */
-/* ============================== */
+/* ========== Focus Outline ========== */
 body.settings-page :focus-visible {
-  outline: 0.125rem solid var(--accent-color);
-  outline-offset: 0.125rem;
-  border-radius: 0.375rem;
+outline: 0.125rem solid var(–accent-color);
+outline-offset: 0.125rem;
+border-radius: 0.375rem;
 }
-body.settings-page.focus-outline-disabled :focus-visible {
-    outline: none !important;
-    outline-offset: 0 !important;
-}
+body.settings-page.focus-outline-disabled :focus-visible { outline: none !important; outline-offset: 0 !important; }
+body:not(.focus-outline-disabled) :focus { outline: 2px solid var(–accent-color); outline-offset: 2px; }
+body.focus-outline-disabled :focus { outline: none !important; }
 
 /* ======================================================= */
 /* === LIQUID GLASS SEGMENTED CONTROL ==================== */
 /* ======================================================= */
 .segmented-control {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background: color-mix(in srgb,var(--content-bg) 60%,transparent);
-  border-radius: 999px;
-  padding: 0.125rem;
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid color-mix(in srgb,var(--accent-color) 15%,transparent);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
+position: relative;
+display: flex;
+align-items: center;
+background: color-mix(in srgb, var(–content-bg) 75%, var(–bg-color));
+border-radius: 999px;
+padding: 3px;
+backdrop-filter: var(–glass-blur);
+-webkit-backdrop-filter: var(–glass-blur);
+border: 1px solid color-mix(in srgb, var(–border-color) 60%, transparent);
+box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
 }
 .segmented-control button {
-  position: relative;
-  z-index: 2;
-  font-family: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  flex: 1;
-  border: none;
-  background: transparent;
-  color: var(--text-color);
-  border-radius: 999px;
-  padding: 0.35rem 0.75rem;
-  cursor: pointer;
-  transition: color .2s ease;
+position: relative;
+z-index: 2;
+font-family: inherit;
+font-size: 0.8125rem;
+font-weight: 500;
+flex: 1;
+border: none;
+background: transparent;
+color: var(–secondary-text);
+border-radius: 999px;
+padding: 0.35rem 0.75rem;
+cursor: pointer;
+transition: color .2s ease;
 }
-.segmented-control button:hover {
-  color: var(--accent-color);
-}
+.segmented-control button:hover { color: var(–text-color); }
 .segmented-control .seg-bg {
-  position: absolute;
-  z-index: 1;
-  top: 3px;
-  bottom: 3px;
-  left: 3px;
-  width: calc(33% - 6px);
-  border-radius: 999px;
-  background: color-mix(in srgb,var(--accent-color) 35%,var(--content-bg));
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25),
-    0 6px 14px color-mix(in srgb,var(--accent-color) 25%,rgba(0,0,0,.25));
-  transition: left .3s cubic-bezier(.25,1,.5,1), width .3s cubic-bezier(.25,1,.5,1);
+position: absolute;
+z-index: 1;
+top: 3px;
+bottom: 3px;
+left: 3px;
+width: calc(33% - 6px);
+border-radius: 999px;
+background: var(–content-bg);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.8),
+0 1px 4px rgba(0,0,0,0.12),
+0 2px 8px rgba(0,0,0,0.06);
+transition: left .3s cubic-bezier(.25,1,.5,1), width .3s cubic-bezier(.25,1,.5,1);
 }
-
-/* Dark-mode tuning */
 body.dark-mode .segmented-control {
-  background: color-mix(in srgb,var(--glass-bg-dark) 80%,transparent);
-  border-color: color-mix(in srgb,var(--accent-color) 15%,transparent);
+background: color-mix(in srgb, var(–glass-bg-dark) 80%, transparent);
+border-color: color-mix(in srgb, var(–accent-color) 15%, transparent);
 }
 body.dark-mode .segmented-control .seg-bg {
-  background: color-mix(in srgb,var(--accent-color) 30%,var(--glass-bg-dark));
-}
-
-/* ===================== */
-/* Mouse Trail Effect    */
-/* ===================== */
-#mouse-trail {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-}
-.trail {
-  width: 10px;
-  height: 10px;
-  background: var(--accent-color, #3ddc84);
-  border-radius: 50%;
-  position: absolute;
-  opacity: 0.6;
-  transform: scale(1);
-  animation: fadeOut 0.8s forwards;
-}
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: scale(2);
-  }
-}
-
-/* ===================== */
-/* Focus Outline Control */
-/* ===================== */
-body:not(.focus-outline-disabled) :focus {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
-}
-body.focus-outline-disabled :focus {
-  outline: none !important;
-}
-
-/* Add this new, specific rule to settings.css */
-.accent-color-card {
-  flex-wrap: wrap;
-}
-
-/* Add or replace the .color-warning rule with this one */
-.color-warning {
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  background-color: #fffbe6;
-  color: #9c6f00;
-  border: 1px solid #ffe58f;
-  border-radius: var(--border-radius-md, 8px);
-  font-size: 0.875rem;
-  box-sizing: border-box;
-}
-
-body.dark-mode .color-warning {
-  background-color: #4d3c1a;
-  color: #ffeca7;
-  border-color: #8b6b1f;
+background: color-mix(in srgb, #fff 14%, var(–dark-content-bg));
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 1px 4px rgba(0,0,0,0.4);
 }
 
 /* ======================================================= */
-/* === iOS-26 Animated Capsule Dropdown & Time Inputs ==== */
+/* === iOS-26 Animated Capsule Dropdown ================== */
 /* ======================================================= */
-
-/* Dropdown */
 #themeModeSelect {
-  position: relative;
-  appearance: none;
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-color);
-  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 15%, var(--border-color));
-  border-radius: 999px;
-  padding: 0.55rem 2.25rem 0.55rem 0.9rem;
-  cursor: pointer;
-  backdrop-filter: var(--glass-blur) saturate(150%);
-  -webkit-backdrop-filter: var(--glass-blur) saturate(150%);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.15),
-    0 4px 10px rgba(0,0,0,0.15);
-  transition:
-    background 0.3s ease,
-    box-shadow 0.35s cubic-bezier(.25,.8,.25,1),
-    border-color 0.3s ease,
-    transform 0.25s ease;
-  width: 100%;
-  background-image: linear-gradient(45deg, transparent 50%, var(--secondary-text) 50%), 
-                    linear-gradient(135deg, var(--secondary-text) 50%, transparent 50%);
-  background-position: right 0.9rem top 50%, right 0.65rem top 50%;
-  background-size: 0.5rem 0.5rem;
-  background-repeat: no-repeat;
+position: relative;
+appearance: none;
+font-family: inherit;
+font-size: 0.875rem;
+font-weight: 500;
+color: var(–text-color);
+background: color-mix(in srgb, var(–glass-bg-light) 85%, transparent);
+border: 1px solid color-mix(in srgb, var(–accent-color) 15%, var(–border-color));
+border-radius: 999px;
+padding: 0.55rem 2.25rem 0.55rem 0.9rem;
+cursor: pointer;
+backdrop-filter: var(–glass-blur) saturate(150%);
+-webkit-backdrop-filter: var(–glass-blur) saturate(150%);
+box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15), 0 4px 10px rgba(0,0,0,0.15);
+transition: background 0.3s ease, box-shadow 0.35s cubic-bezier(.25,.8,.25,1), transform 0.25s ease;
+width: 100%;
+background-image: linear-gradient(45deg, transparent 50%, var(–secondary-text) 50%),
+linear-gradient(135deg, var(–secondary-text) 50%, transparent 50%);
+background-position: right 0.9rem top 50%, right 0.65rem top 50%;
+background-size: 0.5rem 0.5rem;
+background-repeat: no-repeat;
 }
 #themeModeSelect:hover {
-  background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.25),
-    0 6px 18px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
-  transform: translateY(-1px);
+background: color-mix(in srgb, var(–accent-color) 10%, var(–glass-bg-light));
+box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25), 0 6px 18px color-mix(in srgb, var(–accent-color) 25%, rgba(0,0,0,0.25));
+transform: translateY(-1px);
 }
 #themeModeSelect:focus {
-  outline: none;
-  border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--accent-color) 45%, transparent),
-    0 0 12px color-mix(in srgb, var(--accent-color) 30%, transparent);
-  animation: capsulePulse 2s ease-in-out infinite;
+outline: none;
+border-color: color-mix(in srgb, var(–accent-color) 60%, transparent);
+animation: capsulePulse 2s ease-in-out infinite;
 }
 @keyframes capsulePulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--accent-color) 40%, transparent),
-      0 0 10px color-mix(in srgb, var(--accent-color) 30%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0 0 3px color-mix(in srgb, var(--accent-color) 60%, transparent),
-      0 0 18px color-mix(in srgb, var(--accent-color) 45%, transparent);
-  }
+0%, 100% { box-shadow: 0 0 0 2px color-mix(in srgb, var(–accent-color) 40%, transparent), 0 0 10px color-mix(in srgb, var(–accent-color) 30%, transparent); }
+50%       { box-shadow: 0 0 0 3px color-mix(in srgb, var(–accent-color) 60%, transparent), 0 0 18px color-mix(in srgb, var(–accent-color) 45%, transparent); }
 }
 body.dark-mode #themeModeSelect {
-  background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
-  border-color: color-mix(in srgb, var(--accent-color) 15%, var(--glass-border-dark));
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.08),
-    0 4px 14px rgba(0,0,0,0.5);
+background: color-mix(in srgb, var(–glass-bg-dark) 85%, transparent);
+border-color: color-mix(in srgb, var(–accent-color) 15%, var(–glass-border-dark));
 }
-body.dark-mode #themeModeSelect:hover {
-  background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
-}
+body.dark-mode #themeModeSelect:hover { background: color-mix(in srgb, var(–accent-color) 8%, var(–glass-bg-dark)); }
 
 /* ======================================================= */
-/* == Custom Background Upload – iOS 26 Glass Alignment == */
+/* == Custom Background Upload =========================== */
 /* ======================================================= */
-
-.custom-background {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: nowrap;
-}
-
-/* --- Left Side (Title + Controls) --- */
-.custom-bg-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.custom-bg-left .setting-label {
-  text-align: left;
-  margin-bottom: 0.5rem;
-}
-
-/* --- Controls Row --- */
-.custom-bg-controls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 0.75rem;
-  flex-wrap: nowrap; /* ✅ Always one line */
-}
-
-/* Hide default file input */
-#customBgUpload {
-  display: none;
-}
-
-/* --- Choose File Button --- */
+.custom-background { display: flex; align-items: flex-start; justify-content: space-between; gap: 2rem; flex-wrap: nowrap; }
+.custom-bg-left { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+.custom-bg-left .setting-label { text-align: left; margin-bottom: 0.5rem; }
+.custom-bg-controls { display: flex; align-items: center; justify-content: flex-start; gap: 0.75rem; flex-wrap: nowrap; }
+#customBgUpload { display: none; }
 .custom-bg-label {
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: var(--accent-text-color, #fff);
-  padding: 0.45rem 1rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 40%, transparent);
-  background: color-mix(in srgb, var(--accent-color) 20%, var(--glass-bg-light));
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-  transition: background 0.25s ease;
+font-size: 0.8125rem;
+font-weight: 500;
+color: var(–accent-text-color, #fff);
+padding: 0.45rem 1rem;
+border-radius: 999px;
+border: 1px solid color-mix(in srgb, var(–accent-color) 40%, transparent);
+background: color-mix(in srgb, var(–accent-color) 20%, var(–glass-bg-light));
+backdrop-filter: var(–glass-blur);
+-webkit-backdrop-filter: var(–glass-blur);
+cursor: pointer;
+box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+transition: background 0.25s ease;
 }
-
-/* --- File name --- */
-.file-name {
-  font-size: 0.8125rem;
-  color: var(--secondary-text);
-  max-width: 180px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* --- Remove button --- */
+.file-name { font-size: 0.8125rem; color: var(–secondary-text); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #removeCustomBg {
-  font-size: 0.8125rem;
-  padding: 0.45rem 0.85rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
-  background: color-mix(in srgb, var(--accent-color) 18%, var(--glass-bg-light));
-  color: var(--accent-text-color, #fff);
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+font-size: 0.8125rem;
+padding: 0.45rem 0.85rem;
+border-radius: 999px;
+border: 1px solid color-mix(in srgb, var(–accent-color) 50%, transparent);
+background: color-mix(in srgb, var(–accent-color) 18%, var(–glass-bg-light));
+color: var(–accent-text-color, #fff);
+cursor: pointer;
+opacity: 0;
+transition: opacity 0.3s ease;
+box-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
-#removeCustomBg.visible,
-#removeCustomBg[style*="inline-block"] {
-  opacity: 1;
-}
+#removeCustomBg.visible, #removeCustomBg[style*=“inline-block”] { opacity: 1; }
 
-/* ======================================================= */
-/* == Adaptive Glass Separator Line ====================== */
-/* ======================================================= */
+/* Separator */
 .custom-bg-separator {
-  position: relative;
-  width: 1px;
-  height: 100px;
-  border-radius: 2px;
-  opacity: 0;
-  transform: scaleY(0.9);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-  backdrop-filter: blur(6px) brightness(1.2);
-  -webkit-backdrop-filter: blur(6px) brightness(1.2);
-
-  /* subtle dual-layer gradient for depth */
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  box-shadow:
-    0 0 8px rgba(255, 255, 255, 0.15),
-    inset 0 0 4px rgba(255, 255, 255, 0.12);
+position: relative; width: 1px; height: 100px; border-radius: 2px;
+opacity: 0; transform: scaleY(0.9);
+transition: opacity 0.35s ease, transform 0.35s ease;
+background: linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 100%);
 }
+.custom-bg-separator.visible { opacity: 0.85; transform: scaleY(1); }
+.light-mode .custom-bg-separator { background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.05) 100%); }
+.dark-mode .custom-bg-separator { background: linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.05) 100%); }
 
-/* --- Visible state --- */
-.custom-bg-separator.visible {
-  opacity: 0.85;
-  transform: scaleY(1);
-}
-
-/* --- Automatic color adjustment based on mode --- */
-.light-mode .custom-bg-separator {
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.1) 50%,
-    rgba(0, 0, 0, 0.05) 100%
-  );
-  box-shadow:
-    0 0 6px rgba(0, 0, 0, 0.08),
-    inset 0 0 3px rgba(0, 0, 0, 0.08);
-}
-
-.dark-mode .custom-bg-separator {
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.15) 50%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  box-shadow:
-    0 0 8px rgba(255, 255, 255, 0.15),
-    inset 0 0 4px rgba(255, 255, 255, 0.12);
-}
-
-/* ======================================================= */
-/* == Right Side (Preview Bubble) ======================== */
-/* ======================================================= */
-.custom-bg-right {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 120px;
-}
-
+/* Preview bubble */
+.custom-bg-right { display: flex; align-items: center; justify-content: center; min-width: 120px; }
 #customBgPreviewContainer {
-  display: none;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  overflow: hidden;
-  position: relative;
-  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
-  box-shadow:
-    0 3px 10px rgba(0, 0, 0, 0.25),
-    inset 0 0 12px color-mix(in srgb, var(--accent-color) 15%, transparent);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  opacity: 0;
-  transform: scale(0.95);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+display: none; width: 110px; height: 110px; border-radius: 50%; overflow: hidden; position: relative;
+background: color-mix(in srgb, var(–glass-bg-light) 85%, transparent);
+box-shadow: 0 3px 10px rgba(0,0,0,0.25), inset 0 0 12px color-mix(in srgb, var(–accent-color) 15%, transparent);
+backdrop-filter: var(–glass-blur); -webkit-backdrop-filter: var(–glass-blur);
+opacity: 0; transform: scale(0.95); transition: opacity 0.4s ease, transform 0.4s ease;
 }
-#customBgPreviewContainer.visible {
-  display: block;
-  opacity: 1;
-  transform: scale(1);
-}
-
+#customBgPreviewContainer.visible { display: block; opacity: 1; transform: scale(1); }
 #customBgPreview {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-  -webkit-touch-callout: none;
+width: 100%; height: 100%; border-radius: 50%; object-fit: cover; opacity: 0;
+transition: opacity 0.4s ease; pointer-events: none; user-select: none;
+-webkit-user-drag: none; -webkit-touch-callout: none;
 }
-#customBgPreview.loaded {
-  opacity: 1;
-}
+#customBgPreview.loaded { opacity: 1; }
+
+/* Wallpaper blur card */
+#wallpaperBlurCard { opacity: 1; transform: translateY(0); transition: opacity 0.35s ease, transform 0.35s ease; }
+#wallpaperBlurCard.hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
 
 /* ======================================================= */
-/* == Mobile Layout ===================================== */
+/* === iOS 26.4 DOCK — Tab bar style ==================== */
 /* ======================================================= */
-@media (max-width: 768px) {
-  .custom-background {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .custom-bg-left {
-    width: 100%;
-    align-items: center;
-    text-align: center;
-  }
-
-  /* Controls remain inline on mobile */
-  .custom-bg-controls {
-    justify-content: center;
-    flex-wrap: nowrap;
-  }
-
-  /* Horizontal Separator for mobile */
-  .custom-bg-separator {
-    width: 80%;
-    height: 1px;
-    margin: 1rem 0;
-    transform: scaleX(0.9);
-  }
-  .custom-bg-separator.visible {
-    transform: scaleX(1);
-  }
-
-  .light-mode .custom-bg-separator {
-    background: linear-gradient(
-      to right,
-      rgba(0, 0, 0, 0.15) 0%,
-      rgba(0, 0, 0, 0.1) 50%,
-      rgba(0, 0, 0, 0.05) 100%
-    );
-  }
-
-  .dark-mode .custom-bg-separator {
-    background: linear-gradient(
-      to right,
-      rgba(255, 255, 255, 0.35) 0%,
-      rgba(255, 255, 255, 0.15) 50%,
-      rgba(255, 255, 255, 0.05) 100%
-    );
-  }
-
-  /* Center preview bubble */
-  .custom-bg-right {
-    justify-content: center;
-  }
-
-  #customBgPreviewContainer {
-    width: 95px;
-    height: 95px;
-  }
-}
-
-/* ===== iOS-26 Blur Card Fade ===== */
-#wallpaperBlurCard {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-#wallpaperBlurCard.hidden {
-  opacity: 0;
-  transform: translateY(-6px);
-  pointer-events: none;
-}
-
-/* ============================================= */
-/* 🔬 VISION OS DOCK (Adaptive & Compact)       */
-/* ============================================= */
-
-/* --- 1. DOCK CONTAINER --- */
 .onyx-dock {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 6px 8px;
-  
-  /* UPDATED: Fully rounded capsule shape */
-  border-radius: 999px; 
-  
-  width: fit-content;
-  max-width: 90vw;
-  background: var(--content-bg);
-  border: 1px solid var(--border-color);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.05), 0 8px 20px rgba(0,0,0,0.25);
-  z-index: 9999;
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 2px;
+padding: 5px 6px;
+border-radius: 999px;
+width: fit-content;
+max-width: 90vw;
+/* iOS 26.4 glass */
+background: var(–glass-bg-light);
+border: 1px solid var(–glass-border-light);
+backdrop-filter: var(–glass-blur);
+-webkit-backdrop-filter: var(–glass-blur);
+box-shadow:
+inset 0 1px 0 rgba(255, 255, 255, 0.75),
+0 12px 40px rgba(0, 0, 0, 0.2),
+0 2px 8px rgba(0, 0, 0, 0.08);
+z-index: 9999;
+}
+body.dark-mode .onyx-dock {
+background: var(–glass-bg-dark);
+border-color: var(–glass-border-dark);
+box-shadow:
+inset 0 1px 0 rgba(255, 255, 255, 0.10),
+0 12px 40px rgba(0, 0, 0, 0.55),
+0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
-/* --- 2. DOCK ITEMS --- */
+/* Dock items — horizontal, matching App Store tab bar in screenshot */
 .dock-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  min-width: 52px;
-  text-decoration: none;
-  
-  /* UPDATED: Matches the parent capsule shape for hover states */
-  border-radius: 999px;
-  
-  color: var(--text-color);
-  transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), color 0.2s ease, background 0.3s ease;
-  isolation: isolate;
-  overflow: hidden;
+position: relative;
+display: flex;
+flex-direction: row; /* iOS 26.4: icon + label side by side */
+align-items: center;
+justify-content: center;
+gap: 5px;
+padding: 8px 14px;
+text-decoration: none;
+border-radius: 999px;
+color: var(–secondary-text);
+font-size: 13px;
+font-weight: 500;
+transition: background 0.2s ease, color 0.2s ease;
+isolation: isolate;
+overflow: hidden;
 }
 
-/* --- 3. SPOTLIGHT GLOW --- */
-.dock-item::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: transparent;
-  background-image: radial-gradient(
-    45px circle at var(--x, 50%) var(--y, 50%),
-    rgba(var(--accent-color-rgb, 0, 122, 255), 0.2),
-    transparent 60%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-/* --- 4. HOVER INTERACTIONS --- */
+/* Hover: subtle, no scale, no glow */
 .dock-item:hover {
-  transform: scale(1.1);
-  color: var(--accent-color);
-  z-index: 10;
+color: var(–text-color);
+background: rgba(120, 120, 128, 0.1);
 }
 
-.dock-item:hover::before {
-  opacity: 1;
-}
-
-.dock-item:hover .dock-label,
-.dock-item:hover .dock-icon {
-  filter: drop-shadow(0 0 4px var(--accent-color));
-}
-
-/* --- 5. ACTIVE STATE --- */
+/* Active: neutral frosted pill — NOT accent colored */
 .dock-item.active {
-  color: var(--accent-color);
-  background: rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
-  box-shadow: inset 0 0 0 1px rgba(var(--accent-color-rgb, 0, 122, 255), 0.15);
+color: var(–text-color);
+font-weight: 600;
+background: rgba(120, 120, 128, 0.18);
+box-shadow:
+inset 0 1px 0 rgba(255, 255, 255, 0.55),
+0 1px 3px rgba(0, 0, 0, 0.1);
 }
-
-.dock-item.active .dock-label {
-  font-weight: 600;
+body.dark-mode .dock-item.active {
+background: rgba(255, 255, 255, 0.14);
+color: #fff;
+box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 1px 3px rgba(0,0,0,0.3);
 }
+.dock-item.active .dock-label { font-weight: 600; }
 
-/* --- 6. CONTENT STYLING --- */
+/* Icon & label */
 .dock-icon {
-  width: 18px;
-  height: 18px;
-  margin-bottom: 3px;
-  stroke: currentColor;
-  stroke-width: 2px;
-  transition: transform 0.1s linear;
-  transform: translate(calc(var(--dx, 0) * 2px), calc(var(--dy, 0) * 2px));
+width: 16px;
+height: 16px;
+stroke: currentColor;
+stroke-width: 2px;
+flex-shrink: 0;
+/* Subtle parallax from JS */
+transition: transform 0.1s linear;
+transform: translate(calc(var(–dx, 0) * 2px), calc(var(–dy, 0) * 2px));
 }
-
 .dock-label {
-  font-size: 10px;
-  line-height: 1;
-  font-weight: 500;
-  letter-spacing: 0.2px;
+font-size: 13px;
+line-height: 1;
+font-weight: 500;
+letter-spacing: -0.1px;
 }
 
+/* ======================================================= */
+/* === Mouse Trail ======================================= */
+/* ======================================================= */
+#mouse-trail { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; }
+.trail {
+width: 10px; height: 10px;
+background: var(–accent-color, #3ddc84);
+border-radius: 50%; position: absolute;
+opacity: 0.6; transform: scale(1);
+animation: fadeOut 0.8s forwards;
+}
+@keyframes fadeOut { to { opacity: 0; transform: scale(2); } }
+
+/* ======================================================= */
+/* === Accent Color & Warning ============================ */
+/* ======================================================= */
+.accent-color-card { flex-wrap: wrap; }
+.color-warning {
+width: 100%; margin-top: 1rem; padding: 0.75rem 1rem;
+background-color: #fffbe6; color: #9c6f00;
+border: 1px solid #ffe58f; border-radius: 8px;
+font-size: 0.875rem; box-sizing: border-box;
+}
+body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
+
+/* ======================================================= */
+/* === Layout Reset Card ================================= */
+/* ======================================================= */
+.setting-card.layout-reset-card { align-items: center; gap: 14px; }
+.setting-card.layout-reset-card .layout-reset-icon {
+background: linear-gradient(135deg, var(–accent-color), color-mix(in srgb, var(–accent-color) 70%, black)) !important;
+color: #fff !important;
+}
+.setting-card.layout-reset-card .layout-reset-icon i { color: #fff !important; }
+.layout-reset-card .layout-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 220px; }
+.layout-reset-card .layout-meta { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+.layout-reset-card .pill {
+display: inline-flex; align-items: center; gap: 7px; padding: 6px 10px;
+border-radius: 999px; font-size: 12px; font-weight: 700;
+background: color-mix(in srgb, var(–content-bg) 86%, var(–accent-color) 10%);
+border: 1px solid color-mix(in srgb, var(–border-color) 70%, var(–accent-color) 15%);
+color: var(–text-color);
+}
+.layout-reset-card .pill.subtle { opacity: .9; }
+.layout-reset-card code {
+font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, “Liberation Mono”, monospace;
+font-size: 11px; padding: 2px 6px; border-radius: 8px;
+background: color-mix(in srgb, var(–content-bg) 80%, #000 8%);
+border: 1px solid color-mix(in srgb, var(–border-color) 80%, #000 10%);
+}
+.layout-reset-card .layout-reset-btn {
+display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+padding: 10px 14px; border-radius: 14px;
+background: var(–accent-color); color: var(–accent-text-color);
+border: 1px solid color-mix(in srgb, var(–accent-color) 65%, var(–border-color));
+font-weight: 800; box-shadow: var(–shadow-elevation-1);
+transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+}
+.layout-reset-card .layout-reset-btn:hover { transform: translateY(-1px); filter: brightness(1.03) saturate(1.05); box-shadow: var(–shadow-elevation-2); }
+.layout-reset-card .layout-reset-btn:active { transform: translateY(0) scale(.99); filter: brightness(.98); }
+.layout-reset-card .layout-hint { font-size: 12px; color: var(–secondary-text); text-align: right; line-height: 1.25; }
+
+/* Draggable preview */
 .custom-bg-preview {
-  width: 100%;
-  height: 200px;
-  background-size: 100% auto;
-  background-position: center center;
-  background-repeat: no-repeat;
-  cursor: grab;
-  border: 1px solid #ccc;
-  transition: background-position 0.1s ease, background-size 0.1s ease;
+width: 100%; height: 200px;
+background-size: 100% auto; background-position: center; background-repeat: no-repeat;
+cursor: grab; border: 1px solid #ccc;
+transition: background-position 0.1s ease, background-size 0.1s ease;
 }
+.custom-bg-preview.dragging { cursor: grabbing; }
 
-.custom-bg-preview.dragging {
-  cursor: grabbing;
+/* ======================================================= */
+/* === SCROLLBAR — thin iOS overlay style ================ */
+/* ======================================================= */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(120,120,128,0.3); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(120,120,128,0.5); }
+
+/* ======================================================= */
+/* === RESPONSIVE ======================================== */
+/* ======================================================= */
+@media (max-width: 600px) {
+.setting-card:has(.text-size-control) { flex-direction: column; align-items: flex-start; }
+.text-size-control { width: 100%; align-items: flex-start; }
+#text-size-slider { max-width: 100%; }
 }
-
-/* ======================== */
-/* Section Icon Containers  */
-/* ======================== */
-
-.setting-icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  font-size: 22px;
-  color: #fff;
-  background-color: var(--accent-color, #007aff); /* MATCHES ACCENT COLOR */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+@media (max-width: 640px) {
+.setting-card.layout-reset-card { align-items: flex-start; }
+.layout-reset-card .layout-actions { width: 100%; min-width: 0; align-items: stretch; }
+.layout-reset-card .layout-hint { text-align: left; }
 }
-
-/* Optional: Gradient version that follows accent color */
-.setting-icon-container {
-  background: linear-gradient(135deg, var(--accent-color, #007aff), color-mix(in srgb, var(--accent-color, #007aff) 70%, black 30%));
+@media (max-width: 768px) {
+body.settings-page .container { padding: 1.25rem 0.9375rem 7.5rem; }
+body.settings-page .settings-header h1 { font-size: 1.625rem; }
+body.settings-page .setting-card { flex-direction: column; align-items: flex-start; gap: 0.75rem; padding: 1rem; }
+body.settings-page .setting-label { width: 100%; }
+body.settings-page #cookie-consent-banner { flex-direction: column; text-align: center; width: 90%; gap: 0.75rem; }
+.custom-background { flex-direction: column; align-items: center; text-align: center; }
+.custom-bg-left { width: 100%; align-items: center; text-align: center; }
+.custom-bg-controls { justify-content: center; flex-wrap: nowrap; }
+.custom-bg-separator { width: 80%; height: 1px; margin: 1rem 0; transform: scaleX(0.9); }
+.custom-bg-separator.visible { transform: scaleX(1); }
+.custom-bg-right { justify-content: center; }
+#customBgPreviewContainer { width: 95px; height: 95px; }
+.onyx-dock { bottom: 12px; padding: 4px 5px; gap: 1px; }
+.dock-item { padding: 8px 10px; font-size: 11px; }
+.dock-label { font-size: 11px; }
 }
-
-/* If you want a lighter gradient automatically */
-.setting-icon-container i {
-  color: #fff;
-}
-
-#appearanceModeRow.disabled {
-  opacity: 0.45;
-  filter: grayscale(1);
-  pointer-events: none;
-}
-
-/* =========================================
-   ACCENT-POWERED SETTING ICONS
-   ========================================= */
-
-.setting-icon-container.accent-icon {
-  background-color: var(--accent-color);
-  color: var(--accent-text-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition:
-    background-color 0.35s ease,
-    color 0.35s ease,
-    box-shadow 0.35s ease;
-}
-
-.setting-icon-container.accent-icon i {
-  color: inherit;
-}
-
-/* =======================================================
-   Layout Reset Card — matches setting-card pattern
-   ======================================================= */
-
-.setting-card.layout-reset-card{
-  align-items: center;
-  gap: 14px;
-}
-
-/* Force the Layout icon bubble to match the current accent color */
-.setting-card.layout-reset-card .layout-reset-icon{
-  background: var(--accent-color) !important;
-  color: var(--accent-text-color) !important;
-}
-
-/* If your icon container has its own icon color rules, this guarantees it */
-.setting-card.layout-reset-card .layout-reset-icon i{
-  color: var(--accent-text-color) !important;
-}
-
-/* Accent-tinted icon bubble that still looks like the rest */
-.setting-card.layout-reset-card .layout-reset-icon{
-  background: color-mix(in srgb, var(--accent-color) 22%, #8e8e93);
-  color: #fff;
-}
-
-/* Right-side actions */
-.layout-reset-card .layout-actions{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-  min-width: 220px;
-}
-
-/* Pills */
-.layout-reset-card .layout-meta{
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.layout-reset-card .pill{
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  background: color-mix(in srgb, var(--content-bg) 86%, var(--accent-color) 10%);
-  border: 1px solid color-mix(in srgb, var(--border-color) 70%, var(--accent-color) 15%);
-  color: var(--text-color);
-}
-
-.layout-reset-card .pill.subtle{ opacity: .9; }
-
-.layout-reset-card code{
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--content-bg) 80%, #000 8%);
-  border: 1px solid color-mix(in srgb, var(--border-color) 80%, #000 10%);
-}
-
-/* Accent button that still feels like your other .button elements */
-.layout-reset-card .layout-reset-btn{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border-radius: 14px;
-
-  background: var(--accent-color);
-  color: var(--accent-text-color);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 65%, var(--border-color));
-
-  font-weight: 800;
-  box-shadow: var(--shadow-elevation-1);
-  transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
-}
-
-.layout-reset-card .layout-reset-btn:hover{
-  transform: translateY(-1px);
-  filter: brightness(1.03) saturate(1.05);
-  box-shadow: var(--shadow-elevation-2);
-}
-
-.layout-reset-card .layout-reset-btn:active{
-  transform: translateY(0) scale(.99);
-  filter: brightness(.98);
-}
-
-.layout-reset-card .layout-hint{
-  font-size: 12px;
-  color: var(--secondary-text);
-  text-align: right;
-  line-height: 1.25;
-}
-
-/* Responsive: stack button under text */
-@media (max-width: 640px){
-  .setting-card.layout-reset-card{
-    align-items: flex-start;
-  }
-  .layout-reset-card .layout-actions{
-    width: 100%;
-    min-width: 0;
-    align-items: stretch;
-  }
-  .layout-reset-card .layout-hint{
-    text-align: left;
-  }
+@media (max-width: 480px) {
+body.settings-page .container { padding: 0.9375rem 0.625rem 7.5rem; }
+body.settings-page .settings-header h1 { font-size: 1.375rem; }
+body.settings-page footer { padding: 0.9375rem; flex-direction: column; gap: 0.625rem; }
 }
