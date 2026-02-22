@@ -340,13 +340,13 @@ body.underline-links a {
    ======================================================= */
 
 body.settings-page {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Roboto", sans-serif;
   background-color: var(--bg-color);
-  color: var(--text-color);
-  font-size: 1rem; /* inherits root font size */
-  line-height: 1.4;
-  margin: 0;
-  padding: 0;
+  /* This creates that soft, futuristic glow behind the glass panels */
+  background-image: 
+    radial-gradient(at 0% 0%, color-mix(in srgb, var(--accent-color) 15%, transparent) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, color-mix(in srgb, var(--accent-color) 10%, transparent) 0px, transparent 50%);
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 body.settings-page .container {
@@ -387,23 +387,27 @@ body.settings-page .version {
    ======================================================= */
 
 body.settings-page .settings-subsection {
-  background: var(--glass-bg-light);
-  /* The secret to iOS 26 is the high-contrast border + inner shine */
-  border: 0.5px solid rgba(255, 255, 255, 0.4); 
-  border-radius: 1.25rem;
-  margin-bottom: 2rem;
-  overflow: hidden;
-  backdrop-filter: blur(40px) saturate(180%) brightness(1.1);
-  -webkit-backdrop-filter: blur(40px) saturate(180%) brightness(1.1);
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
   box-shadow: 
-    0 10px 30px rgba(0,0,0,0.1),
-    inset 0 0 0 0.5px rgba(255,255,255,0.2); /* Subtle inner rim */
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3); /* The "Light catch" on the top edge */
 }
 
 body.dark-mode .settings-subsection {
   background: rgba(30, 30, 30, 0.4);
   border: 0.5px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Section labels above the glass containers */
+.settings-section-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--secondary-text);
+  margin-left: 1.5rem; /* Aligns with the text inside the cards */
+  margin-bottom: 0.5rem;
 }
 
 /* =======================================================
@@ -1335,14 +1339,15 @@ body.dark-mode .dock-item.active {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  width: 34px; /* Slightly smaller for a tighter look */
+  height: 34px;
+  /* Use a 22.5% border radius for the perfect Apple squircle */
+  border-radius: 10px; 
   flex-shrink: 0;
-  font-size: 22px;
+  font-size: 18px;
   color: #fff;
-  background-color: var(--accent-color, #007aff);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 80%, black));
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 /* Optional: Gradient version that follows accent color */
 .setting-icon-container {
