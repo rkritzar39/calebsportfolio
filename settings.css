@@ -395,103 +395,220 @@ body.settings-page .setting-card:active::after {
 /* Chevron */
 body.settings-page .chevron { margin-left: 0.75rem; color: var(--secondary-text); font-size: 1.25rem; }
 
-/* ========== Modern Dark Mode Scheduler ========== */
-#darkModeScheduler {
-    appearance: none;
-    background: var(--glass-bg-light);
-    border: 0.0625rem solid var(--glass-border-light);
-    border-radius: 0.75rem;
-    padding: 0.5rem 2.25rem 0.5rem 0.75rem;
-    font-size: 0.875rem;
-    color: var(--text-color);
-    cursor: pointer;
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    box-shadow: var(--shadow-elevation-1);
-    transition: background 0.2s ease, box-shadow 0.2s ease;
-    position: relative;
-}
-#darkModeScheduler option {
-    font-size: 0.875rem;
-    color: var(--text-color);
-    background: var(--content-bg);
-}
-#darkModeScheduler:hover {
-    background: color-mix(in srgb, var(--accent-color) 15%, var(--glass-bg-light));
-    box-shadow: var(--shadow-elevation-2);
-}
-body.dark-mode #darkModeScheduler {
-    background: var(--glass-bg-dark);
-    border: 0.0625rem solid var(--glass-border-dark);
-}
-#darkModeScheduler::after {
-    content: "▾";
-    position: absolute;
-    right: 0.75rem;
-    color: var(--secondary-text);
-    pointer-events: none;
+/* =======================================================
+   iOS 26.4 CONTROLS POLISH (Scheduler, Accent Picker, Selects, Toggles, Slider)
+   Drop-in replacement for the blocks you pasted
+   ======================================================= */
+
+/* ========== Dark Mode Scheduler (capsule, iOS 26.4) ========== */
+#darkModeScheduler{
+  position: relative;
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: auto;
+  min-width: 220px;
+
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+
+  color: var(--text-color);
+  cursor: pointer;
+
+  padding: 0.58rem 2.35rem 0.58rem 0.95rem;
+  border-radius: 999px;
+
+  background: color-mix(in srgb, var(--content-bg) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    0 10px 24px -18px rgba(0,0,0,0.25);
+
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.26s cubic-bezier(.22,1,.36,1),
+    transform 0.18s cubic-bezier(.22,1,.36,1);
+
+  /* Chevron */
+  background-image:
+    linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--secondary-text) 85%, transparent) 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--secondary-text) 85%, transparent) 50%, transparent 50%);
+  background-position: right 0.95rem top 50%, right 0.72rem top 50%;
+  background-size: 0.52rem 0.52rem;
+  background-repeat: no-repeat;
 }
 
-/* ========== Modern Accent Color Picker ========== */
-#accentColorPicker {
-    -webkit-appearance: none;
-    appearance: none;
-    border: none;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    overflow: hidden;
-    cursor: pointer;
-    box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.2);
-    border: 0.125rem solid var(--border-color);
-    background: transparent;
-    padding: 0;
-    position: relative;
-}
-#accentColorPicker::-webkit-color-swatch {
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-}
-#accentColorPicker::-moz-color-swatch {
-    border-radius: 50%;
-    border: none;
-    padding: 0;
-}
-#accentColorPicker::after {
-    content: '';
-    position: absolute;
-    top: -0.25rem;
-    left: -0.25rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    border: 0.125rem solid var(--accent-color);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-#accentColorPicker.selected::after { opacity: 1; }
-#accentColorPicker:hover {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
+/* Options */
+#darkModeScheduler option{
+  font-size: 0.875rem;
+  color: var(--text-color);
+  background: var(--content-bg);
 }
 
-/* ========== Appearance Mode Select ========== */
-body.settings-page #appearanceModeSelect {
-    font-size: 0.9375rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
-    border: 0.0625rem solid var(--border-color);
-    background: var(--bg-color);
-    color: var(--text-color);
-    margin-left: 0.625rem;
+/* Hover */
+#darkModeScheduler:hover{
+  background: color-mix(in srgb, var(--content-bg) 78%, var(--accent-color) 6%);
+  border-color: color-mix(in srgb, var(--border-color) 55%, var(--accent-color) 10%);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.18),
+    0 14px 30px -22px rgba(0,0,0,0.30);
 }
 
-/* ======================================================= */
-/* === PURE iOS 26 TOGGLE – FIXED ACCENT LOGIC ============ */
-/* ======================================================= */
-.md-switch {
+/* Focus ring */
+#darkModeScheduler:focus{ outline: none; }
+#darkModeScheduler:focus-visible{
+  border-color: color-mix(in srgb, var(--accent-color) 55%, transparent);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent-color) 40%, transparent),
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    0 14px 30px -22px rgba(0,0,0,0.30);
+}
+
+/* Dark mode tuning */
+body.dark-mode #darkModeScheduler{
+  background: color-mix(in srgb, var(--glass-bg-dark) 72%, transparent);
+  border-color: color-mix(in srgb, rgba(255,255,255,0.18) 55%, transparent);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 16px 42px -26px rgba(0,0,0,0.80);
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--secondary-text) 90%, transparent) 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--secondary-text) 90%, transparent) 50%, transparent 50%);
+}
+body.dark-mode #darkModeScheduler:hover{
+  background: color-mix(in srgb, var(--glass-bg-dark) 80%, var(--accent-color) 5%);
+}
+
+/* ========== Accent Color Picker (iOS 26.4 ring + depth) ========== */
+#accentColorPicker{
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+
+  width: 2.05rem;
+  height: 2.05rem;
+  border-radius: 999px;
+  overflow: hidden;
+
+  cursor: pointer;
+  background: transparent;
+  padding: 0;
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    0 10px 20px -14px rgba(0,0,0,0.35);
+
+  transition:
+    transform 0.18s cubic-bezier(.22,1,.36,1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+
+#accentColorPicker::-webkit-color-swatch{
+  border-radius: 999px;
+  border: none;
+}
+#accentColorPicker::-moz-color-swatch{
+  border-radius: 999px;
+  border: none;
+}
+
+/* Accent “selected” ring */
+#accentColorPicker::after{
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--accent-color) 70%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+#accentColorPicker.selected::after{ opacity: 1; }
+
+#accentColorPicker:hover{
+  transform: scale(1.06);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.16),
+    0 14px 26px -16px rgba(0,0,0,0.45);
+}
+
+/* ========== Appearance Mode Select (capsule, iOS 26.4) ========== */
+body.settings-page #appearanceModeSelect{
+  appearance: none;
+  -webkit-appearance: none;
+
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+
+  padding: 0.58rem 2.35rem 0.58rem 0.95rem;
+  border-radius: 999px;
+
+  background: color-mix(in srgb, var(--content-bg) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+  color: var(--text-color);
+
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    0 10px 24px -18px rgba(0,0,0,0.25);
+
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.26s cubic-bezier(.22,1,.36,1),
+    transform 0.18s cubic-bezier(.22,1,.36,1);
+
+  margin-left: 0.625rem;
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--secondary-text) 85%, transparent) 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--secondary-text) 85%, transparent) 50%, transparent 50%);
+  background-position: right 0.95rem top 50%, right 0.72rem top 50%;
+  background-size: 0.52rem 0.52rem;
+  background-repeat: no-repeat;
+}
+body.settings-page #appearanceModeSelect:hover{
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--content-bg) 78%, var(--accent-color) 6%);
+}
+body.settings-page #appearanceModeSelect:focus{ outline: none; }
+body.settings-page #appearanceModeSelect:focus-visible{
+  border-color: color-mix(in srgb, var(--accent-color) 55%, transparent);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent-color) 40%, transparent),
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    0 14px 30px -22px rgba(0,0,0,0.30);
+}
+body.dark-mode body.settings-page #appearanceModeSelect{
+  background: color-mix(in srgb, var(--glass-bg-dark) 72%, transparent);
+  border-color: color-mix(in srgb, rgba(255,255,255,0.18) 55%, transparent);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 16px 42px -26px rgba(0,0,0,0.80);
+}
+
+/* =======================================================
+   iOS 26.4 TOGGLE (oval thumb) — drop-in replacement
+   - Track stays capsule
+   - Thumb becomes “pill” (oval), not a circle
+   ======================================================= */
+.md-switch{
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -499,106 +616,133 @@ body.settings-page #appearanceModeSelect {
   width: 52px;
   height: 32px;
 }
-.md-switch input {
+.md-switch input{
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-/* Default track */
-.md-switch .track {
+/* Track */
+.md-switch .track{
   position: absolute;
   inset: 0;
   border-radius: 999px;
   background: var(--toggle-off);
-  backdrop-filter: blur(10px) saturate(180%);
-  -webkit-backdrop-filter: blur(10px) saturate(180%);
-  box-shadow:
-    inset 0 1px 2px rgba(0,0,0,0.1),
-    inset 0 -1px 2px rgba(255,255,255,0.2);
-  transition: background 0.35s cubic-bezier(.25,.8,.25,1), box-shadow 0.3s ease;
-}
 
-/* Thumb */
-.md-switch .thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 28px;
-  height: 28px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(6px) saturate(180%);
-  -webkit-backdrop-filter: blur(6px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.9),
-    inset 0 -1px 2px rgba(0,0,0,0.1),
-    0 2px 4px rgba(0,0,0,0.15),
-    0 6px 12px rgba(0,0,0,0.10);
+    inset 0 0 0 1px rgba(255,255,255,0.16),
+    inset 0 1px 2px rgba(0,0,0,0.12);
+
   transition:
-    transform 0.35s cubic-bezier(.25,.8,.25,1),
-    width 0.25s ease,
-    background 0.25s ease,
-    box-shadow 0.25s ease;
+    background-color 0.26s cubic-bezier(.22,1,.36,1),
+    box-shadow 0.26s ease;
 }
-.md-switch:active .thumb {
+
+/* Thumb (OVAL) */
+.md-switch .thumb{
+  position: absolute;
+  top: 3px;
+  left: 3px;
+
+  width: 26px;          /* narrower than height -> oval */
+  height: 26px;
+  border-radius: 999px; /* pill */
+
+  background: rgba(255,255,255,0.88);
+
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.22),
+    0 10px 18px -14px rgba(0,0,0,0.55);
+
+  transition:
+    transform 0.28s cubic-bezier(.22,1,.36,1),
+    width 0.18s cubic-bezier(.22,1,.36,1),
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+/* Press stretches like iOS */
+.md-switch:active .thumb{
   width: 30px;
-  border-radius: 15px;
 }
 
-/* === FIXED ACCENT COLOR LINK === */
-.md-switch input:checked + .track {
+/* Checked state */
+.md-switch input:checked + .track{
   background: var(--toggle-on);
   box-shadow:
-    0 0 8px color-mix(in srgb, var(--accent-color) 45%, transparent),
-    inset 0 0 0 1px rgba(255,255,255,0.25);
-  animation: togglePulse 2.5s ease-in-out infinite;
+    inset 0 0 0 1px rgba(255,255,255,0.22),
+    0 0 10px color-mix(in srgb, var(--accent-color) 35%, transparent);
 }
-.md-switch input:checked + .track .thumb {
+
+/* Move thumb across track */
+.md-switch input:checked + .track .thumb{
   transform: translateX(20px);
-  background: rgba(255,255,255,0.9);
-  box-shadow:
-    0 0 6px color-mix(in srgb, var(--accent-color) 30%, transparent),
-    0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Dark mode adjustment */
-body.dark-mode .md-switch .track { background: rgba(255,255,255,0.15); }
-/* Dark mode accent sync */
-body.dark-mode .md-switch input:checked + .track {
+/* Dark mode track */
+body.dark-mode .md-switch .track{
+  background: rgba(255,255,255,0.14);
+}
+body.dark-mode .md-switch input:checked + .track{
   background: var(--toggle-on);
   box-shadow:
-    0 0 10px color-mix(in srgb, var(--accent-color) 55%, transparent),
-    inset 0 0 0 1px rgba(255,255,255,0.1);
+    inset 0 0 0 1px rgba(255,255,255,0.10),
+    0 0 12px color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
 
 /* Disabled */
 .md-switch.disabled,
-.md-switch input[disabled] + .track {
-  opacity: 0.5;
+.md-switch input[disabled] + .track{
+  opacity: 0.55;
   pointer-events: none;
 }
 
-/* ========== Text Size Slider --- iOS 26 REDESIGN ========== */
-.setting-card:has(.text-size-control) { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
-.setting-card:has(.text-size-control) > *:first-child { flex: 1; min-width: 15.625rem; }
-.text-size-control { flex-shrink: 0; width: 17.5rem; display: flex; flex-direction: column; align-items: center; }
-.font-size-badge {
-    padding: 0.25rem 0.75rem;
-    background-color: var(--accent-color);
-    color: var(--accent-text-color, white);
-    border-radius: 0.75rem;
-    font-weight: 600;
-    font-size: 0.875rem;
-    margin-bottom: 0.75rem;
+/* ========== Text Size Slider (kept, tiny iOS polish) ========== */
+.setting-card:has(.text-size-control){
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
 }
-#text-size-slider {
+.setting-card:has(.text-size-control) > *:first-child{
+  flex: 1;
+  min-width: 15.625rem;
+}
+.text-size-control{
+  flex-shrink: 0;
+  width: 17.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Badge */
+.font-size-badge{
+  padding: 0.25rem 0.75rem;
+  background-color: var(--accent-color);
+  color: var(--accent-text-color, #fff);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 10px 20px -14px rgba(0,0,0,0.45);
+}
+
+/* Slider track */
+#text-size-slider{
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
   height: 10px;
   border-radius: 999px;
   outline: none;
+
   background: linear-gradient(
     to right,
     var(--accent-color) 0%,
@@ -606,40 +750,64 @@ body.dark-mode .md-switch input:checked + .track {
     var(--slider-track-color) var(--_fill, 0%),
     var(--slider-track-color) 100%
   );
-  transition: background .15s linear;
+
+  transition: background 0.15s linear;
 }
-#text-size-slider::-webkit-slider-thumb {
+
+/* Slider thumb */
+#text-size-slider::-webkit-slider-thumb{
   -webkit-appearance: none;
   appearance: none;
+
   width: 28px;
   height: 28px;
-  border-radius: 50%;
-  background: #fff;
-  border: 0.5px solid rgba(0,0,0,0.05);
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(0,0,0,0.06);
+
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25),
-    0 6px 16px rgba(0,0,0,.2);
+    inset 0 0 0 1px rgba(255,255,255,0.20),
+    0 14px 22px -16px rgba(0,0,0,0.55);
+
   cursor: pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-#text-size-slider::-webkit-slider-thumb:active {
+
+#text-size-slider::-webkit-slider-thumb:active{
   transform: scale(1.05);
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.35),
-    0 10px 20px color-mix(in srgb,var(--accent-color) 35%,rgba(0,0,0,.25));
+    inset 0 0 0 1px rgba(255,255,255,0.28),
+    0 18px 28px -18px color-mix(in srgb, var(--accent-color) 35%, rgba(0,0,0,0.55));
 }
-#text-size-slider::-moz-range-thumb {
+
+#text-size-slider::-moz-range-thumb{
   width: 28px;
   height: 28px;
-  border-radius: 50%;
-  background: #fff;
-  border: none;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(0,0,0,0.06);
   box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,.25),
-    0 6px 16px rgba(0,0,0,.2);
-  transition: transform .2s ease, box-shadow .2s ease;
+    inset 0 0 0 1px rgba(255,255,255,0.20),
+    0 14px 22px -16px rgba(0,0,0,0.55);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
-#text-size-slider::-moz-range-thumb:active { transform: scale(1.05); }
+
+#text-size-slider::-moz-range-thumb:active{
+  transform: scale(1.05);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  #darkModeScheduler,
+  #appearanceModeSelect,
+  #accentColorPicker,
+  .md-switch .track,
+  .md-switch .thumb,
+  #text-size-slider::-webkit-slider-thumb{
+    transition: none !important;
+  }
+}
 
 /* ========== Responsive ========== */
 @media (max-width: 600px) {
@@ -923,77 +1091,107 @@ body.dark-mode .color-warning {
   border-color: #8b6b1f;
 }
 
-/* ======================================================= */
-/* === iOS-26 Animated Capsule Dropdown & Time Inputs ==== */
-/* ======================================================= */
+/* =======================================================
+   iOS 26.4 CAPSULE DROPDOWN (Theme Mode Select)
+   Drop-in replacement for your #themeModeSelect block
+   - Keeps your custom chevron via background-image
+   - More “Settings app” material + calmer animations
+   ======================================================= */
 
-#themeModeSelect {
+#themeModeSelect{
   position: relative;
   appearance: none;
+  -webkit-appearance: none;
+
   font-family: inherit;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;                 /* iOS control weight */
+  letter-spacing: -0.01em;
+
   color: var(--text-color);
-  background: color-mix(in srgb, var(--glass-bg-light) 85%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 15%, var(--border-color));
-  border-radius: 999px;
-  padding: 0.55rem 2.25rem 0.55rem 0.9rem;
-  cursor: pointer;
-  backdrop-filter: var(--glass-blur) saturate(150%);
-  -webkit-backdrop-filter: var(--glass-blur) saturate(150%);
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.15),
-    0 4px 10px rgba(0,0,0,0.15);
-  transition:
-    background 0.3s ease,
-    box-shadow 0.35s cubic-bezier(.25,.8,.25,1),
-    border-color 0.3s ease,
-    transform 0.25s ease;
+
   width: 100%;
-  background-image: linear-gradient(45deg, transparent 50%, var(--secondary-text) 50%), 
-                    linear-gradient(135deg, var(--secondary-text) 50%, transparent 50%);
-  background-position: right 0.9rem top 50%, right 0.65rem top 50%;
-  background-size: 0.5rem 0.5rem;
+  padding: 0.58rem 2.35rem 0.58rem 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+
+  /* iOS 26.4 glass */
+  background: color-mix(in srgb, var(--content-bg) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    0 10px 24px -18px rgba(0,0,0,0.25);
+
+  transition:
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.26s cubic-bezier(.22,1,.36,1),
+    transform 0.18s cubic-bezier(.22,1,.36,1);
+
+  /* Chevron */
+  background-image:
+    linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--secondary-text) 85%, transparent) 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--secondary-text) 85%, transparent) 50%, transparent 50%);
+  background-position: right 0.95rem top 50%, right 0.72rem top 50%;
+  background-size: 0.52rem 0.52rem;
   background-repeat: no-repeat;
 }
-#themeModeSelect:hover {
-  background: color-mix(in srgb, var(--accent-color) 10%, var(--glass-bg-light));
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.25),
-    0 6px 18px color-mix(in srgb, var(--accent-color) 25%, rgba(0,0,0,0.25));
+
+/* Hover (desktop): subtle lift, not “buttony” */
+#themeModeSelect:hover{
+  background: color-mix(in srgb, var(--content-bg) 78%, var(--accent-color) 6%);
+  border-color: color-mix(in srgb, var(--border-color) 55%, var(--accent-color) 10%);
   transform: translateY(-1px);
-}
-#themeModeSelect:focus {
-  outline: none;
-  border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--accent-color) 45%, transparent),
-    0 0 12px color-mix(in srgb, var(--accent-color) 30%, transparent);
-  animation: capsulePulse 2s ease-in-out infinite;
-}
-@keyframes capsulePulse {
-  0%, 100% {
-    box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--accent-color) 40%, transparent),
-      0 0 10px color-mix(in srgb, var(--accent-color) 30%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0 0 3px color-mix(in srgb, var(--accent-color) 60%, transparent),
-      0 0 18px color-mix(in srgb, var(--accent-color) 45%, transparent);
-  }
-}
-body.dark-mode #themeModeSelect {
-  background: color-mix(in srgb, var(--glass-bg-dark) 85%, transparent);
-  border-color: color-mix(in srgb, var(--accent-color) 15%, var(--glass-border-dark));
-  box-shadow:
-    inset 0 0 0 1px rgba(255,255,255,0.08),
-    0 4px 14px rgba(0,0,0,0.5);
-}
-body.dark-mode #themeModeSelect:hover {
-  background: color-mix(in srgb, var(--accent-color) 8%, var(--glass-bg-dark));
+    inset 0 0 0 1px rgba(255,255,255,0.18),
+    0 14px 30px -22px rgba(0,0,0,0.30);
 }
 
+/* Focus: iOS ring (no infinite pulse) */
+#themeModeSelect:focus{
+  outline: none;
+}
+#themeModeSelect:focus-visible{
+  border-color: color-mix(in srgb, var(--accent-color) 55%, transparent);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--accent-color) 40%, transparent),
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    0 14px 30px -22px rgba(0,0,0,0.30);
+}
+
+/* Active press */
+#themeModeSelect:active{
+  transform: translateY(0) scale(0.99);
+}
+
+/* Dark mode tuning */
+body.dark-mode #themeModeSelect{
+  background: color-mix(in srgb, var(--glass-bg-dark) 72%, transparent);
+  border-color: color-mix(in srgb, rgba(255,255,255,0.18) 55%, transparent);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 16px 42px -26px rgba(0,0,0,0.80);
+
+  background-image:
+    linear-gradient(45deg, transparent 50%, color-mix(in srgb, var(--secondary-text) 90%, transparent) 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--secondary-text) 90%, transparent) 50%, transparent 50%);
+}
+
+body.dark-mode #themeModeSelect:hover{
+  background: color-mix(in srgb, var(--glass-bg-dark) 80%, var(--accent-color) 5%);
+  border-color: color-mix(in srgb, rgba(255,255,255,0.20) 50%, var(--accent-color) 10%);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  #themeModeSelect{
+    transition: none !important;
+  }
+}
 /* ======================================================= */
 /* == Custom Background Upload – iOS 26 Glass Alignment == */
 /* ======================================================= */
