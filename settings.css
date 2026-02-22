@@ -1485,18 +1485,23 @@ body.settings-page .button,
    Paste at very bottom of settings.css
    ================================ */
 
-/* 1) Instagram bubble: force a real Instagram gradient in ALL modes */
+/* ================================
+   Instagram icon bubble SHOULD match accent color
+   ================================ */
+
+/* Force Instagram bubble to use accent color in ALL modes */
 .setting-icon-container.instagram-icon{
-  background: radial-gradient(circle at 30% 110%,
-    #fdf497 0%,
-    #fdf497 5%,
-    #fd5949 45%,
-    #d6249f 60%,
-    #285AEB 90%) !important;
-  color: #fff !important;
+  background: linear-gradient(
+    135deg,
+    var(--accent-color),
+    color-mix(in srgb, var(--accent-color) 70%, black 30%)
+  ) !important;
+  color: var(--accent-text-color, #fff) !important;
 }
+
+/* Make sure the icon itself inherits the bubble color */
 .setting-icon-container.instagram-icon i{
-  color: #fff !important;
+  color: inherit !important;
 }
 
 /* 2) Layout reset bubble: force it to follow accent, even in dark mode */
