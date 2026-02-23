@@ -1914,3 +1914,41 @@ body.dark-mode .setting-card.layout-reset-card .layout-reset-icon{
     color-mix(in srgb, var(--accent-color) 62%, black 38%)
   ) !important;
 }
+
+/* =======================================================
+   FINAL ICON OVERRIDES (Instagram + Layout) — paste last
+   Fixes them being “messed up again” after iOS skin rules
+   ======================================================= */
+
+/* 1) Instagram: match ACCENT (not black, not random) */
+body.settings-page .setting-icon-container.instagram-icon{
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-color) 92%, #fff 8%),
+    color-mix(in srgb, var(--accent-color) 72%, #000 28%)
+  ) !important;
+  color: var(--accent-text-color, #fff) !important;
+}
+
+/* 2) Layout: match ACCENT (same treatment) */
+body.settings-page .setting-card.layout-reset-card .setting-icon-container.layout-reset-icon{
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent-color) 92%, #fff 8%),
+    color-mix(in srgb, var(--accent-color) 72%, #000 28%)
+  ) !important;
+  color: var(--accent-text-color, #fff) !important;
+}
+
+/* Glyphs must inherit (prevents “black icon” in dark mode) */
+body.settings-page .setting-icon-container.instagram-icon i,
+body.settings-page .setting-card.layout-reset-card .setting-icon-container.layout-reset-icon i{
+  color: inherit !important;
+}
+
+/* If any old rule applied filters (grayscale/brightness), cancel it */
+body.settings-page .setting-icon-container.instagram-icon,
+body.settings-page .setting-card.layout-reset-card .setting-icon-container.layout-reset-icon{
+  filter: none !important;
+  opacity: 1 !important;
+}
