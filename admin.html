@@ -518,7 +518,7 @@
     </section>
 
             <!-- Manual Live Status (Admin) -->
-<section id="manual-status-section" class="admin-section" aria-labelledby="manual-status-heading">
+<section id="manual-status-section" class="admin-subsection" aria-labelledby="manual-status-heading">
   <h4 id="manual-status-heading">Manual Live Status (website-only)</h4>
 
   <form id="manual-status-form" class="manual-status-form" aria-label="Manual live status form">
@@ -564,6 +564,7 @@
 </section>
 
 
+           <div class="business-container onyx-surface">
   <section class="admin-section" id="business-info-management" aria-labelledby="business-info-heading">
     <h3 id="business-info-heading" class="onyx-heading">Manage Business Information</h3>
 
@@ -788,87 +789,38 @@
                 </div>
             </section>
 
-             <section class="admin-section disabilities-management-section" id="disabilities-management" aria-labelledby="disabilities-heading">
-  <div class="section-header">
-    <div>
-      <h3 id="disabilities-heading">Manage Disabilities List</h3>
-      <p class="section-subtext">Add, search, and manage disability resource links.</p>
-    </div>
-  </div>
+             <section class="admin-section" id="disabilities-management" aria-labelledby="disabilities-heading">
+                <h3 id="disabilities-heading">Manage Disabilities List</h3>
 
-  <form id="add-disability-form" class="admin-form-card" aria-labelledby="add-disability-heading">
-    <h5 id="add-disability-heading">Add New Disability Link</h5>
+                <form id="add-disability-form" aria-labelledby="add-disability-heading">
+                    <h5 id="add-disability-heading">Add New Disability Link</h5>
+                    <div class="form-group">
+                        <label for="disability-name">Disability Name (Displayed Text):</label>
+                        <input type="text" id="disability-name" name="name" required placeholder="e.g., Autism Spectrum Disorder (ASD)">
+                    </div>
+                    <div class="form-group">
+                        <label for="disability-url">Information URL:</label>
+                        <input type="url" id="disability-url" name="url" required placeholder="https://..." inputmode="url">
+                    </div>
+                    <div class="form-group">
+                        <label for="disability-order">Display Order:</label>
+                        <input type="number" id="disability-order" name="order" min="0" step="1" required placeholder="e.g., 1, 2, 3...">
+                    </div>
+                    <div class="form-actions">
+                       <button type="submit" class="button-primary">Add Disability Link</button>
+                    </div>
+                </form>
 
-    <div class="admin-form-grid">
-      <div class="form-group">
-        <label for="disability-name">Disability Name (Displayed Text):</label>
-        <input
-          type="text"
-          id="disability-name"
-          name="name"
-          required
-          placeholder="e.g., Autism Spectrum Disorder (ASD)"
-        >
-      </div>
-
-      <div class="form-group">
-        <label for="disability-url">Information URL:</label>
-        <input
-          type="url"
-          id="disability-url"
-          name="url"
-          required
-          placeholder="https://..."
-          inputmode="url"
-        >
-      </div>
-
-      <div class="form-group form-group-order">
-        <label for="disability-order">Display Order:</label>
-        <input
-          type="number"
-          id="disability-order"
-          name="order"
-          min="0"
-          step="1"
-          required
-          placeholder="e.g., 1, 2, 3..."
-        >
-      </div>
-    </div>
-
-    <div class="form-actions">
-      <button type="submit" class="button-primary">Add Disability Link</button>
-    </div>
-  </form>
-
-  <div class="list-header-block">
-    <div class="list-title-row">
-      <h5 id="existing-disabilities-heading">
-        Existing Disability Links
-        <span id="disabilities-count" class="list-count"></span>
-      </h5>
-    </div>
-
-    <div class="list-controls">
-      <input
-        type="search"
-        id="search-disabilities"
-        placeholder="Search Disability Links..."
-        aria-label="Search Disability Links"
-      >
-    </div>
-  </div>
-
-  <div
-    id="disabilities-list-admin"
-    class="list-container-admin disabilities-admin-grid"
-    role="list"
-    aria-labelledby="existing-disabilities-heading"
-  >
-    <p>Loading disability links...</p>
-  </div>
-</section>
+                <h5 id="existing-disabilities-heading">
+                    Existing Disability Links <span id="disabilities-count" class="list-count"></span>
+                </h5>
+                <div class="list-controls">
+                     <input type="search" id="search-disabilities" placeholder="Search Disability Links..." aria-label="Search Disability Links">
+                   </div>
+                <div id="disabilities-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-disabilities-heading">
+                    <p>Loading disability links...</p>
+                    </div>
+            </section>
             <div id="edit-disability-modal" class="modal" style="display: none;"
                  role="dialog" aria-modal="true" aria-labelledby="edit-disability-modal-heading">
                 <div class="modal-content">
