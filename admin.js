@@ -3910,433 +3910,283 @@ function displayFilteredActivityLog() {
         searchInputSocialLinks.addEventListener('input', displayFilteredSocialLinks);
     }
 
-/* =========================================================
-   DISABILITY LINKS ADMIN SECTION
-   Full JS for add / load / search / render / edit / delete
-   No DOM reference declarations included
-   ========================================================= */
 
-let allDisabilities = [];
-
-/* -------------------------
-   Function to display filtered disability links
-------------------------- */
-function displayFilteredDisabilities() {
-    if (!disabilitiesListAdmin) return;
-
-    const searchTerm = searchDisabilities?.value.trim().toLowerCase() || '';
-    disabilitiesListAdmin.innerHTML = '';
-
-    const filtered = allDisabilities.filter(item => {
-        const name = (item.name || '').toLowerCase();
-        const url = (item.url || '').toLowerCase();
-        return name.includes(searchTerm) || url.includes(searchTerm);
-    });
-
-    if (disabilitiesCount) {
-        disabilitiesCount.textContent = `(${filtered.length})`;
-    }
-
-    if (!filtered.length) {
-        disabilitiesListAdmin.innerHTML = `<p>No disability links found.</p>`;
-        return;
-    }
-
-    filtered.forEach(item => {
-        renderDisabilityAdminListItem(
-            disabilitiesListAdmin,
-            item.id,
-            item.name,
-            item.url,
-            item.order,
-            handleDeleteDisability,
-            openEditDisabilityModal
-        );
-    });
-}
-
-/* -------------------------
-   Function to render a single disability item
-------------------------- */
-function renderDisabilityAdminListItem(container, docId, name, url, order, deleteHandler, editHandler) {
-    if (!container) {
-        console.warn("Disabilities list container not found during render.");
-        return;
-    }
-
-    const itemDiv = document.createElement('div');
-    itemDiv.className = 'list-item-admin disability-admin-card';
-    itemDiv.setAttribute('data-id', docId);
-    itemDiv.setAttribute('role', 'listitem');
-
-    let displayUrl = url || 'N/A';
-    let visitUrl = '#';
-    let isValidUrl = false;
-
-    try {
-        if (url) {
-            visitUrl = new URL(url).href;
-            isValidUrl = true;
+    // Function to render a single Disability Link item in the admin list
+    function renderDisabilityAdminListItem(container, docId, name, url, order, deleteHandler, editHandler) {
+        if (!container) {
+             console.warn("Disabilities list container not found during render.");
+             return;
         }
-    } catch (e) {
-        console.warn(`Invalid URL for disability link ${docId}: ${url}`);
-        displayUrl = `${displayUrl} (Invalid URL)`;
-    }
 
-    itemDiv.innerHTML = `
-        <div class="disability-admin-card-header">
-            <div class="disability-admin-title-wrap">
-                <h6 class="disability-admin-title">${name || 'N/A'}</h6>
-            </div>
-            <span class="disability-admin-order">Order: ${order ?? 'N/A'}</span>
-        </div>
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'list-item-admin'; // Use the same class as other list items
+        itemDiv.setAttribute('data-id', docId);
 
-        <div class="disability-admin-meta">
-            <div class="disability-admin-meta-row">
-                <span class="disability-admin-meta-label">Link:</span>
-            </div>
-            ${
-                isValidUrl
-                    ? `<a href="${visitUrl}" target="_blank" rel="noopener noreferrer" class="disability-admin-url" title="${displayUrl}">
-                        ${displayUrl}
-                       </a>`
-                    : `<span class="disability-admin-url invalid-url" title="${displayUrl}">
-                        ${displayUrl}
-                       </span>`
+        // Basic validation for URL before creating the visit link
+        let displayUrl = url || 'N/A';
+        let visitUrl = '#';
+        try {
+            if (url) {
+                visitUrl = new URL(url).href; // Ensures it's a valid structure
             }
-        </div>
-
-        <div class="item-actions disability-admin-actions">
-            <a
-                href="${visitUrl}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="direct-link small-button"
-                title="Visit Info Link"
-                ${!isValidUrl ? 'aria-disabled="true" tabindex="-1"' : ''}
-            >
-                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
-                <span>Visit</span>
-            </a>
-
-            <button type="button" class="edit-button small-button">Edit</button>
-            <button type="button" class="delete-button small-button">Delete</button>
-        </div>
-    `;
-
-    const visitLink = itemDiv.querySelector('.direct-link');
-    if (visitLink && !isValidUrl) {
-        visitLink.style.pointerEvents = 'none';
-        visitLink.style.opacity = '0.5';
-    }
-
-    const editButton = itemDiv.querySelector('.edit-button');
-    if (editButton) {
-        editButton.addEventListener('click', () => editHandler(docId));
-    }
-
-    const deleteButton = itemDiv.querySelector('.delete-button');
-    if (deleteButton) {
-        deleteButton.addEventListener('click', () => deleteHandler(docId, itemDiv));
-    }
-
-    container.appendChild(itemDiv);
-}
-
-/* -------------------------
-   Function to show status inside edit disability modal
-------------------------- */
-function showEditDisabilityStatus(message, isError = false) {
-    if (!editDisabilityStatusMessage) {
-        console.warn("Edit disability status message element not found");
-        return;
-    }
-
-    editDisabilityStatusMessage.textContent = message;
-    editDisabilityStatusMessage.className = `status-message ${isError ? 'error' : 'success'}`;
-
-    setTimeout(() => {
-        if (editDisabilityStatusMessage) {
-            editDisabilityStatusMessage.textContent = '';
-            editDisabilityStatusMessage.className = 'status-message';
+        } catch (e) {
+            console.warn(`Invalid URL for disability link ${docId}: ${url}`);
+            displayUrl += " (Invalid URL)";
         }
-    }, 3000);
-}
 
-/* -------------------------
-   Function to load disabilities from Firestore
-------------------------- */
-async function loadDisabilitiesAdmin() {
-    if (!disabilitiesListAdmin) {
-        console.error("Disabilities list container missing.");
-        return;
+        itemDiv.innerHTML = `
+            <div class="item-content">
+                <div class="item-details">
+                    <strong>${name || 'N/A'}</strong>
+                    <span>(${displayUrl})</span>
+                    <small>Order: ${order ?? 'N/A'}</small>
+                </div>
+            </div>
+            <div class="item-actions">
+                <a href="${visitUrl}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Info Link" ${visitUrl === '#' ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
+                    <i class="fas fa-external-link-alt"></i> Visit
+                </a>
+                <button type="button" class="edit-button small-button">Edit</button>
+                <button type="button" class="delete-button small-button">Delete</button>
+            </div>`;
+
+        // Add event listeners for Edit and Delete buttons
+        const editButton = itemDiv.querySelector('.edit-button');
+        if (editButton) editButton.addEventListener('click', () => editHandler(docId)); // Pass docId to edit handler
+
+        const deleteButton = itemDiv.querySelector('.delete-button');
+        if (deleteButton) deleteButton.addEventListener('click', () => deleteHandler(docId, itemDiv)); // Pass docId and the element to delete handler
+
+        container.appendChild(itemDiv);
     }
 
+    // Function to show status messages inside the Edit Disability modal
+    function showEditDisabilityStatus(message, isError = false) {
+        // Uses the 'editDisabilityStatusMessage' element const defined earlier
+        if (!editDisabilityStatusMessage) { console.warn("Edit disability status message element not found"); return; }
+        editDisabilityStatusMessage.textContent = message;
+        editDisabilityStatusMessage.className = `status-message ${isError ? 'error' : 'success'}`;
+        // Clear message after 3 seconds
+        setTimeout(() => { if (editDisabilityStatusMessage) { editDisabilityStatusMessage.textContent = ''; editDisabilityStatusMessage.className = 'status-message'; } }, 3000);
+    }
+
+    /** Displays status messages in the tech edit modal */
+     function showEditTechItemStatus(message, isError = false) {
+         if (!editTechStatusMessage) { console.warn("Edit tech status message element not found"); return; }
+         editTechStatusMessage.textContent = message;
+         editTechStatusMessage.className = `status-message ${isError ? 'error' : 'success'}`;
+         if (!isError) setTimeout(() => { if (editTechStatusMessage && editTechStatusMessage.textContent === message) { editTechStatusMessage.textContent = ''; editTechStatusMessage.className = 'status-message'; } }, 3000);
+     }
+
+    // *** CORRECTED Function to Load Disabilities ***
+async function loadDisabilitiesAdmin() {
+    if (!disabilitiesListAdmin) { console.error("Disabilities list container missing."); return; }
     if (disabilitiesCount) disabilitiesCount.textContent = '';
     disabilitiesListAdmin.innerHTML = `<p>Loading disability links...</p>`;
-    allDisabilities = [];
+    allDisabilities = []; // Clear the global array
 
     try {
         const disabilityQuery = query(disabilitiesCollectionRef, orderBy("order", "asc"));
         const querySnapshot = await getDocs(disabilityQuery);
 
-        querySnapshot.forEach((docSnap) => {
-            allDisabilities.push({ id: docSnap.id, ...docSnap.data() });
+        // Populate the global array
+        querySnapshot.forEach((doc) => {
+            allDisabilities.push({ id: doc.id, ...doc.data() }); // Store data in the array
         });
-
         console.log(`Stored ${allDisabilities.length} disability links.`);
+
+        // Call the filter function to display initially (will show all)
         displayFilteredDisabilities();
+
     } catch (error) {
         console.error("Error loading disabilities:", error);
-
         let errorMsg = "Error loading disabilities.";
         if (error.code === 'failed-precondition') {
             errorMsg = "Error: Missing Firestore index for disabilities (order).";
             showAdminStatus(errorMsg, true);
         } else {
-            showAdminStatus(`${errorMsg}: ${error.message}`, true);
+            showAdminStatus(errorMsg + `: ${error.message}`, true);
         }
-
         disabilitiesListAdmin.innerHTML = `<p class="error">${errorMsg}</p>`;
         if (disabilitiesCount) disabilitiesCount.textContent = '(Error)';
     }
 }
 
-/* -------------------------
-   Function to handle adding a new disability link
-------------------------- */
-async function handleAddDisability(event) {
-    event.preventDefault();
-    if (!addDisabilityForm) return;
+    // Function to Handle Adding a New Disability Link
+    async function handleAddDisability(event) {
+        event.preventDefault(); // Prevent default form submission
+        // Use const defined earlier for the add form
+        if (!addDisabilityForm) return;
 
-    const nameInput = addDisabilityForm.querySelector('#disability-name');
-    const urlInput = addDisabilityForm.querySelector('#disability-url');
-    const orderInput = addDisabilityForm.querySelector('#disability-order');
+        // Get values from the add disability form
+        const nameInput = addDisabilityForm.querySelector('#disability-name');
+        const urlInput = addDisabilityForm.querySelector('#disability-url');
+        const orderInput = addDisabilityForm.querySelector('#disability-order');
 
-    const name = nameInput?.value.trim();
-    const url = urlInput?.value.trim();
-    const orderStr = orderInput?.value.trim();
-    const order = parseInt(orderStr, 10);
+        const name = nameInput?.value.trim();
+        const url = urlInput?.value.trim();
+        const orderStr = orderInput?.value.trim();
+        const order = parseInt(orderStr);
 
-    if (!name || !url || !orderStr || isNaN(order) || order < 0) {
-        showAdminStatus(
-            "Invalid input for Disability Link. Check required fields and ensure Order is non-negative.",
-            true
-        );
-        return;
+        // Basic validation
+        if (!name || !url || !orderStr || isNaN(order) || order < 0) {
+            showAdminStatus("Invalid input for Disability Link. Check required fields and ensure Order is non-negative.", true);
+            return;
+        }
+        // Basic URL validation
+        try {
+            new URL(url);
+        } catch (_) {
+            showAdminStatus("Invalid URL format. Please enter a valid URL.", true);
+            return;
+        }
+
+        const disabilityData = {
+            name: name,
+            url: url,
+            order: order,
+            createdAt: serverTimestamp() // Add a timestamp
+        };
+
+        showAdminStatus("Adding disability link...");
+        try {
+            // Use the disabilitiesCollectionRef defined earlier
+            const docRef = await addDoc(disabilitiesCollectionRef, disabilityData);
+            console.log("Disability link added with ID:", docRef.id);
+            showAdminStatus("Disability link added successfully.", false);
+            addDisabilityForm.reset(); // Reset the form
+            loadDisabilitiesAdmin(); // Reload the list
+
+        } catch (error) {
+            console.error("Error adding disability link:", error);
+            showAdminStatus(`Error adding disability link: ${error.message}`, true);
+        }
     }
 
-    try {
-        new URL(url);
-    } catch (_) {
-        showAdminStatus("Invalid URL format. Please enter a valid URL.", true);
-        return;
+    // Function to Handle Deleting a Disability Link
+    async function handleDeleteDisability(docId, listItemElement) {
+        if (!confirm("Are you sure you want to permanently delete this disability link?")) {
+            return; // Do nothing if user cancels
+        }
+
+        showAdminStatus("Deleting disability link...");
+        try {
+             // Use the disabilitiesCollectionRef defined earlier
+            await deleteDoc(doc(db, 'disabilities', docId));
+            showAdminStatus("Disability link deleted successfully.", false);
+            loadDisabilitiesAdmin(); // Reload list is simplest
+
+        } catch (error) {
+            console.error(`Error deleting disability link (ID: ${docId}):`, error);
+            showAdminStatus(`Error deleting disability link: ${error.message}`, true);
+        }
     }
 
-    const disabilityData = {
-        name,
-        url,
-        order,
-        createdAt: serverTimestamp()
-    };
+     // Function to Open and Populate the Edit Disability Modal
+    function openEditDisabilityModal(docId) {
+        // Use consts defined earlier for modal elements
+        if (!editDisabilityModal || !editDisabilityForm) {
+            console.error("Edit disability modal elements not found.");
+            showAdminStatus("UI Error: Cannot open edit form.", true);
+            return;
+        }
 
-    showAdminStatus("Adding disability link...");
+        // Use the disabilitiesCollectionRef defined earlier
+        const docRef = doc(db, 'disabilities', docId);
+        showEditDisabilityStatus("Loading disability data..."); // Use specific status func
 
-    try {
-        const docRef = await addDoc(disabilitiesCollectionRef, disabilityData);
-        console.log("Disability link added with ID:", docRef.id);
-        showAdminStatus("Disability link added successfully.", false);
-        addDisabilityForm.reset();
-        loadDisabilitiesAdmin();
-    } catch (error) {
-        console.error("Error adding disability link:", error);
-        showAdminStatus(`Error adding disability link: ${error.message}`, true);
-    }
-}
-
-/* -------------------------
-   Function to handle deleting a disability link
-------------------------- */
-async function handleDeleteDisability(docId, listItemElement) {
-    if (!confirm("Are you sure you want to permanently delete this disability link?")) {
-        return;
-    }
-
-    showAdminStatus("Deleting disability link...");
-
-    try {
-        await deleteDoc(doc(db, 'disabilities', docId));
-        showAdminStatus("Disability link deleted successfully.", false);
-        loadDisabilitiesAdmin();
-    } catch (error) {
-        console.error(`Error deleting disability link (ID: ${docId}):`, error);
-        showAdminStatus(`Error deleting disability link: ${error.message}`, true);
-    }
-}
-
-/* -------------------------
-   Function to open and populate edit disability modal
-------------------------- */
-function openEditDisabilityModal(docId) {
-    if (!editDisabilityModal || !editDisabilityForm) {
-        console.error("Edit disability modal elements not found.");
-        showAdminStatus("UI Error: Cannot open edit form.", true);
-        return;
-    }
-
-    const docRef = doc(db, 'disabilities', docId);
-    showEditDisabilityStatus("Loading disability data...");
-
-    getDoc(docRef)
-        .then(docSnap => {
+        getDoc(docRef).then(docSnap => {
             if (docSnap.exists()) {
                 const data = docSnap.data();
-
-                editDisabilityForm.setAttribute('data-doc-id', docId);
-
+                editDisabilityForm.setAttribute('data-doc-id', docId); // Store doc ID on the form
+                // Populate modal inputs using consts defined earlier
                 if (editDisabilityNameInput) editDisabilityNameInput.value = data.name || '';
                 if (editDisabilityUrlInput) editDisabilityUrlInput.value = data.url || '';
                 if (editDisabilityOrderInput) editDisabilityOrderInput.value = data.order ?? '';
 
-                editDisabilityModal.style.display = 'block';
-                showEditDisabilityStatus('');
+                editDisabilityModal.style.display = 'block'; // Show the modal
+                showEditDisabilityStatus(""); // Clear loading message
             } else {
                 showAdminStatus("Error: Could not load disability data for editing.", true);
-                showEditDisabilityStatus("Error: Link not found.", true);
+                showEditDisabilityStatus("Error: Link not found.", true); // Show error inside modal
             }
-        })
-        .catch(error => {
+        }).catch(error => {
             console.error("Error getting disability document for edit:", error);
             showAdminStatus(`Error loading disability data: ${error.message}`, true);
             showEditDisabilityStatus(`Error: ${error.message}`, true);
         });
-}
-
-/* -------------------------
-   Function to close the edit disability modal
-------------------------- */
-function closeEditDisabilityModal() {
-    if (editDisabilityModal) editDisabilityModal.style.display = 'none';
-    if (editDisabilityForm) editDisabilityForm.reset();
-    editDisabilityForm?.removeAttribute('data-doc-id');
-
-    if (editDisabilityStatusMessage) {
-        editDisabilityStatusMessage.textContent = '';
-        editDisabilityStatusMessage.className = 'status-message';
-    }
-}
-
-/* -------------------------
-   Function to update a disability link
-------------------------- */
-async function handleUpdateDisability(event) {
-    event.preventDefault();
-    if (!editDisabilityForm) return;
-
-    const docId = editDisabilityForm.getAttribute('data-doc-id');
-    if (!docId) {
-        showEditDisabilityStatus("Error: Missing document ID...", true);
-        return;
     }
 
-    console.log("Attempting to update disability link:", docId);
-
-    const name = editDisabilityNameInput?.value.trim();
-    const url = editDisabilityUrlInput?.value.trim();
-    const orderStr = editDisabilityOrderInput?.value.trim();
-    const order = parseInt(orderStr, 10);
-
-    if (!name || !url || !orderStr || isNaN(order) || order < 0) {
-        showEditDisabilityStatus("Invalid input. Please check all fields.", true);
-        return;
+    // Function to Close the Edit Disability Modal
+    function closeEditDisabilityModal() {
+        // Use consts defined earlier
+        if (editDisabilityModal) editDisabilityModal.style.display = 'none';
+        if (editDisabilityForm) editDisabilityForm.reset();
+        editDisabilityForm?.removeAttribute('data-doc-id');
+        if (editDisabilityStatusMessage) editDisabilityStatusMessage.textContent = ''; // Clear status message inside modal
     }
 
-    try {
-        new URL(url);
-    } catch (_) {
-        showEditDisabilityStatus("Invalid URL format.", true);
-        return;
-    }
+    // --- Function to Handle Updating a Disability Link (with DETAILED Logging) ---
+    async function handleUpdateDisability(event) {
+        event.preventDefault();
+        if (!editDisabilityForm) return;
+        const docId = editDisabilityForm.getAttribute('data-doc-id');
+        if (!docId) { showEditDisabilityStatus("Error: Missing document ID...", true); return; }
+        console.log("Attempting to update disability link (detailed log):", docId);
 
-    const newDataFromForm = { name, url, order };
-    showEditDisabilityStatus("Saving changes...");
+        // 1. Get NEW data from form
+        const name = editDisabilityNameInput?.value.trim();
+        const url = editDisabilityUrlInput?.value.trim();
+        const orderStr = editDisabilityOrderInput?.value.trim();
+        const order = parseInt(orderStr);
 
-    const docRef = doc(db, 'disabilities', docId);
+        if (!name || !url || !orderStr || isNaN(order) || order < 0) { showEditDisabilityStatus("Invalid input...", true); return; }
+        try { new URL(url); } catch (_) { showEditDisabilityStatus("Invalid URL format.", true); return; }
 
-    try {
-        let oldData = {};
-        const oldDataSnap = await getDoc(docRef);
-        if (oldDataSnap.exists()) {
-            oldData = oldDataSnap.data();
-        }
+        const newDataFromForm = { name: name, url: url, order: order };
+        showEditDisabilityStatus("Saving changes...");
+        const docRef = doc(db, 'disabilities', docId); // Define once
 
-        await updateDoc(docRef, {
-            ...newDataFromForm,
-            lastModified: serverTimestamp()
-        });
+        try {
+            // 2. Get OLD data BEFORE saving
+            let oldData = {};
+            const oldDataSnap = await getDoc(docRef);
+            if (oldDataSnap.exists()) { oldData = oldDataSnap.data(); }
 
-        console.log("Disability link update successful:", docId);
+            // 3. Save NEW data
+            await updateDoc(docRef, { ...newDataFromForm, lastModified: serverTimestamp() });
+            console.log("Disability link update successful:", docId);
 
-        const changes = {};
-        let hasChanges = false;
-
-        for (const key in newDataFromForm) {
-            if (oldData[key] !== newDataFromForm[key]) {
-                changes[key] = { to: newDataFromForm[key] };
-                hasChanges = true;
+            // 4. Compare and find changes
+            const changes = {};
+            let hasChanges = false;
+            for (const key in newDataFromForm) {
+                if (oldData[key] !== newDataFromForm[key]) {
+                    changes[key] = { to: newDataFromForm[key] };
+                    hasChanges = true;
+                }
             }
-        }
 
-        if (hasChanges) {
-            console.log("DEBUG: Detected disability link changes:", changes);
-            if (typeof logAdminActivity === 'function') {
-                logAdminActivity('DISABILITY_LINK_UPDATE', {
-                    id: docId,
-                    name,
-                    changes
-                });
+             // 5. Log ONLY actual changes
+            if (hasChanges) {
+                console.log("DEBUG: Detected disability link changes:", changes);
+                 if (typeof logAdminActivity === 'function') {
+                    logAdminActivity('DISABILITY_LINK_UPDATE', { id: docId, name: name, changes: changes });
+                 } else { console.error("logAdminActivity function not found!");}
             } else {
-                console.error("logAdminActivity function not found!");
+                 console.log("DEBUG: Disability link update saved, but no values changed.");
             }
-        } else {
-            console.log("DEBUG: Disability link update saved, but no values changed.");
+
+            showAdminStatus("Disability link updated successfully.", false);
+            closeEditDisabilityModal();
+            loadDisabilitiesAdmin();
+
+        } catch (error) {
+            console.error(`Error updating disability link (ID: ${docId}):`, error);
+            showEditDisabilityStatus(`Error saving: ${error.message}`, true);
+            showAdminStatus(`Error updating disability link: ${error.message}`, true);
         }
-
-        showAdminStatus("Disability link updated successfully.", false);
-        closeEditDisabilityModal();
-        loadDisabilitiesAdmin();
-    } catch (error) {
-        console.error(`Error updating disability link (ID: ${docId}):`, error);
-        showEditDisabilityStatus(`Error saving: ${error.message}`, true);
-        showAdminStatus(`Error updating disability link: ${error.message}`, true);
     }
-}
-
-/* -------------------------
-   Event listeners
-------------------------- */
-if (addDisabilityForm) {
-    addDisabilityForm.addEventListener('submit', handleAddDisability);
-}
-
-if (searchDisabilities) {
-    searchDisabilities.addEventListener('input', displayFilteredDisabilities);
-}
-
-if (editDisabilityForm) {
-    editDisabilityForm.addEventListener('submit', handleUpdateDisability);
-}
-
-/* Optional modal close bindings */
-if (typeof closeEditDisabilityBtn !== 'undefined' && closeEditDisabilityBtn) {
-    closeEditDisabilityBtn.addEventListener('click', closeEditDisabilityModal);
-}
-
-window.addEventListener('click', (event) => {
-    if (event.target === editDisabilityModal) {
-        closeEditDisabilityModal();
-    }
-});
 // --- Attach Event Listeners for Section Forms & Modals ---
 
     // Profile Save Form
