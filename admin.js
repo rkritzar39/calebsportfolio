@@ -3910,56 +3910,134 @@ function displayFilteredActivityLog() {
         searchInputSocialLinks.addEventListener('input', displayFilteredSocialLinks);
     }
 
+function displayFilteredDisabilities() {
+    if (!disabilitiesListAdmin) return;
 
-    // Function to render a single Disability Link item in the admin list
-    function renderDisabilityAdminListItem(container, docId, name, url, order, deleteHandler, editHandler) {
-        if (!container) {
-             console.warn("Disabilities list container not found during render.");
-             return;
-        }
+    const searchTerm = searchDisabilities?.value.trim().toLowerCase() || '';
+    disabilitiesListAdmin.innerHTML = '';
 
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'list-item-admin'; // Use the same class as other list items
-        itemDiv.setAttribute('data-id', docId);
+    const filtered = allDisabilities.filter(item => {
+        const name = (item.name || '').toLowerCase();
+        const url = (item.url || '').toLowerCase();
+        return name.includes(searchTerm) || url.includes(searchTerm);
+    });
 
-        // Basic validation for URL before creating the visit link
-        let displayUrl = url || 'N/A';
-        let visitUrl = '#';
-        try {
-            if (url) {
-                visitUrl = new URL(url).href; // Ensures it's a valid structure
-            }
-        } catch (e) {
-            console.warn(`Invalid URL for disability link ${docId}: ${url}`);
-            displayUrl += " (Invalid URL)";
-        }
-
-        itemDiv.innerHTML = `
-            <div class="item-content">
-                <div class="item-details">
-                    <strong>${name || 'N/A'}</strong>
-                    <span>(${displayUrl})</span>
-                    <small>Order: ${order ?? 'N/A'}</small>
-                </div>
-            </div>
-            <div class="item-actions">
-                <a href="${visitUrl}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Info Link" ${visitUrl === '#' ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
-                    <i class="fas fa-external-link-alt"></i> Visit
-                </a>
-                <button type="button" class="edit-button small-button">Edit</button>
-                <button type="button" class="delete-button small-button">Delete</button>
-            </div>`;
-
-        // Add event listeners for Edit and Delete buttons
-        const editButton = itemDiv.querySelector('.edit-button');
-        if (editButton) editButton.addEventListener('click', () => editHandler(docId)); // Pass docId to edit handler
-
-        const deleteButton = itemDiv.querySelector('.delete-button');
-        if (deleteButton) deleteButton.addEventListener('click', () => deleteHandler(docId, itemDiv)); // Pass docId and the element to delete handler
-
-        container.appendChild(itemDiv);
+    if (disabilitiesCount) {
+        disabilitiesCount.textContent = `(${filtered.length})`;
     }
 
+    if (!filtered.length) {
+        disabilitiesListAdmin.innerHTML = `<p>No disability links found.</p>`;
+        return;
+    }
+
+    filtered.forEach(item => {
+        renderDisabilityAdminListItem(
+            disabilitiesListAdmin,
+            item.id,
+            item.name,
+            item.url,
+            item.order,
+            handleDeleteDisability,
+            openEditDisabilityModal
+        );
+    });
+}
+
+
+ // Function to render a single Disability Link item in the admin list
+function renderDisabilityAdminListItem(container, docId, name, url, order, deleteHandler, editHandler) {
+    if (!container) {
+        console.warn("Disabilities list container not found during render.");
+        return;
+    }
+
+    const itemDiv = document.createElement('div');
+    itemDiv.className = 'list-item-admin disability-admin-card';
+    itemDiv.setAttribute('data-id', docId);
+    itemDiv.setAttribute('role', 'listitem');
+
+    // Basic validation for URL before creating the visit link
+    let displayUrl = url || 'N/A';
+    let visitUrl = '#';
+    let isValidUrl = false;
+
+    try {
+        if (url) {
+            visitUrl = new URL(url).href;
+            isValidUrl = true;
+        }
+    } catch (e) {
+        console.warn(`Invalid URL for disability link ${docId}: ${url}`);
+        displayUrl = `${displayUrl} (Invalid URL)`;
+    }
+
+    itemDiv.innerHTML = `
+        <div class="disability-admin-card-header">
+            <div class="disability-admin-title-wrap">
+                <h6 class="disability-admin-title">${name || 'N/A'}</h6>
+            </div>
+            <span class="disability-admin-order">Order: ${order ?? 'N/A'}</span>
+        </div>
+
+        <div class="disability-admin-meta">
+            <div class="disability-admin-meta-row">
+                <span class="disability-admin-meta-label">Link:</span>
+            </div>
+            ${
+                isValidUrl
+                    ? `<a href="${visitUrl}" target="_blank" rel="noopener noreferrer" class="disability-admin-url" title="${displayUrl}">
+                           ${displayUrl}
+                       </a>`
+                    : `<span class="disability-admin-url invalid-url" title="${displayUrl}">
+                           ${displayUrl}
+                       </span>`
+            }
+        </div>
+
+        <div class="item-actions disability-admin-actions">
+            <a
+                href="${visitUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="direct-link small-button"
+                title="Visit Info Link"
+                ${!isValidUrl ? 'aria-disabled="true" tabindex="-1"' : ''}
+            >
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>Visit</span>
+            </a>
+
+            <button type="button" class="edit-button small-button">
+                Edit
+            </button>
+
+            <button type="button" class="delete-button small-button">
+                Delete
+            </button>
+        </div>
+    `;
+
+    const visitLink = itemDiv.querySelector('.direct-link');
+    if (visitLink && !isValidUrl) {
+        visitLink.style.pointerEvents = 'none';
+        visitLink.style.opacity = '0.5';
+    }
+
+    // Add event listeners for Edit and Delete buttons
+    const editButton = itemDiv.querySelector('.edit-button');
+    if (editButton) {
+        editButton.addEventListener('click', () => editHandler(docId));
+    }
+
+    const deleteButton = itemDiv.querySelector('.delete-button');
+    if (deleteButton) {
+        deleteButton.addEventListener('click', () => deleteHandler(docId, itemDiv));
+    }
+
+    container.appendChild(itemDiv);
+}
+    
     // Function to show status messages inside the Edit Disability modal
     function showEditDisabilityStatus(message, isError = false) {
         // Uses the 'editDisabilityStatusMessage' element const defined earlier
