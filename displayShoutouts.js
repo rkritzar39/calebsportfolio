@@ -3431,7 +3431,7 @@ async function initializeHomepageContent() {
     const tiktokHeaderContainer = document.getElementById('tiktok-shoutouts');
     const tiktokGridContainer = document.querySelector('#tiktok-shoutouts ~ .creator-grid');
     const tiktokUnavailableMessage = document.querySelector('#tiktok-shoutouts ~ .creator-grid ~ .unavailable-message');
-    const onyxDoc = document.getElementById('onyx-doc');
+    const onyxDock = document.querySelector('.onyx-dock');
     
     if (!firebaseAppInitialized || !db || !profileDocRef) {
         console.error("Firebase not ready or key Firestore document references missing.");
@@ -3482,10 +3482,10 @@ async function initializeHomepageContent() {
             if (mainContentWrapper) mainContentWrapper.style.display = 'none';
         }
 
-        if (onyxDoc) {
-            onyxDoc.style.display = 'none';
-            onyxDoc.hidden = true;
-        }
+        if (onyxDock) {
+           onyxDock.style.display = 'none';
+           onyxDock.hidden = true;
+         }
 
         return; 
     } else {
@@ -3495,10 +3495,10 @@ async function initializeHomepageContent() {
         if (maintenanceOverlay) maintenanceOverlay.style.display = 'none';
         bodyElement.classList.remove('maintenance-active');
 
-        if (onyxDoc) {
-            onyxDoc.style.display = '';
-            onyxDoc.hidden = false;
-        }
+        if (onyxDock) {
+    onyxDock.style.display = '';
+    onyxDock.hidden = false;
+}
 
         const savedOrder = JSON.parse(localStorage.getItem('sectionOrder'));
         const rearrangeableContainer = document.getElementById('rearrangeable-container');
