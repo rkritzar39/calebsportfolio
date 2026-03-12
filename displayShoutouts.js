@@ -3431,6 +3431,7 @@ async function initializeHomepageContent() {
     const tiktokHeaderContainer = document.getElementById('tiktok-shoutouts');
     const tiktokGridContainer = document.querySelector('#tiktok-shoutouts ~ .creator-grid');
     const tiktokUnavailableMessage = document.querySelector('#tiktok-shoutouts ~ .creator-grid ~ .unavailable-message');
+    const onyxDoc = document.getElementById('onyx-doc');
     
     if (!firebaseAppInitialized || !db || !profileDocRef) {
         console.error("Firebase not ready or key Firestore document references missing.");
@@ -3480,6 +3481,12 @@ async function initializeHomepageContent() {
             document.body.classList.add('maintenance-active');
             if (mainContentWrapper) mainContentWrapper.style.display = 'none';
         }
+
+        if (onyxDoc) {
+            onyxDoc.style.display = 'none';
+            onyxDoc.hidden = true;
+        }
+
         return; 
     } else {
         // Maintenance mode OFF
@@ -3487,6 +3494,11 @@ async function initializeHomepageContent() {
         if (mainContentWrapper) mainContentWrapper.style.display = '';
         if (maintenanceOverlay) maintenanceOverlay.style.display = 'none';
         bodyElement.classList.remove('maintenance-active');
+
+        if (onyxDoc) {
+            onyxDoc.style.display = '';
+            onyxDoc.hidden = false;
+        }
 
         const savedOrder = JSON.parse(localStorage.getItem('sectionOrder'));
         const rearrangeableContainer = document.getElementById('rearrangeable-container');
@@ -3561,15 +3573,12 @@ async function initializeHomepageContent() {
         // --- NEW: AUTO-STATUS POLLING ---
         if (siteSettings.autoStatusEnabled && typeof displayProfileData === 'function') {
             console.log("Auto-status enabled. Starting 30s polling...");
-            // Store interval ID globally so we don't duplicate it
             if (window.statusPollInterval) clearInterval(window.statusPollInterval);
             
             window.statusPollInterval = setInterval(() => {
-                // Re-run displayProfileData to fetch fresh Lanyard data
                 displayProfileData(siteSettings); 
-            }, 30000); // Check every 30 seconds
+            }, 30000);
         }
-        // --------------------------------
 
         setupCreatorSearch();
         setupCreatorSorting();
