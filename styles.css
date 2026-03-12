@@ -4926,6 +4926,6 @@ body.ultra-minimal .btn {
   cursor: inherit;
 }
 
-body.maintenance-active #onyx-doc {
+body.maintenance-active .onyx-dock {
   display: none !important;
 }
