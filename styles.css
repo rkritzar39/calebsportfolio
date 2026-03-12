@@ -4925,3 +4925,7 @@ body.ultra-minimal .btn {
 .no-rearrange * {
   cursor: inherit;
 }
+
+body.maintenance-active #onyx-doc {
+  display: none !important;
+}
