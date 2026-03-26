@@ -2311,6 +2311,10 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
     box-shadow: 0 3px 15px -5px var(--shadow-color);
 }
 
+#manual-status-section {
+    margin-bottom: 40px;
+}
+
 #tech-management {
     margin-top: 40px;
     clear: both;
