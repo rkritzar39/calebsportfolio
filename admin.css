@@ -2303,10 +2303,17 @@ body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
 /* Admin & Container Reset */
 /* ---------------------------------------- */
 #business-info-management {
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
+    margin-bottom: 40px;
+    padding: 30px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    background-color: var(--content-bg);
+    box-shadow: 0 3px 15px -5px var(--shadow-color);
+}
+
+#tech-management {
+    margin-top: 40px;
+    clear: both;
 }
 
 #business-info-management h3 {
