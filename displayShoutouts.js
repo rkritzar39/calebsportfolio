@@ -1875,16 +1875,25 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     light.classList.remove('is-active', 'is-blinking');
   });
 
+  // Holiday closed = blinking red
   if (statusType === 'holiday' && statusText !== 'Open') {
     redLight.classList.add('is-active', 'is-blinking');
     return;
   }
 
+  // Temporary active = blinking yellow
   if (statusType === 'temporary') {
     yellowLight.classList.add('is-active', 'is-blinking');
     return;
   }
 
+  // Temporary starting soon = blinking yellow
+  if (subStatusText.includes('Temporarily unavailable in')) {
+    yellowLight.classList.add('is-active', 'is-blinking');
+    return;
+  }
+
+  // General warning states = solid yellow
   if (
     subStatusText.includes('Opens in') ||
     subStatusText.includes('Closes in') ||
@@ -1895,16 +1904,19 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     return;
   }
 
+  // Holiday open = solid yellow
   if (statusType === 'holiday' && statusText === 'Open') {
     yellowLight.classList.add('is-active');
     return;
   }
 
+  // Normal open = solid green
   if (statusText === 'Open') {
     greenLight.classList.add('is-active');
     return;
   }
 
+  // Default closed = solid red
   redLight.classList.add('is-active');
 }
 
