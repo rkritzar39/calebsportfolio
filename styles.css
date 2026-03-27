@@ -8,17 +8,25 @@
   /* ======================== */
   /* Dark Liquid Glass Palette */
   /* ======================== */
-  --dark-bg: #0E0E0E;
-  --dark-content-bg: rgba(24, 24, 24, 0.55);
+  --dark-bg:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.035), transparent 35%),
+    radial-gradient(circle at 80% 90%, rgba(255,255,255,0.025), transparent 45%),
+    linear-gradient(180deg, #090a0c 0%, #0d0f12 100%);
+
+  --dark-content-bg: rgba(15, 17, 20, 0.72);
+  --dark-content-bg-strong: rgba(10, 11, 13, 0.84);
+
   --dark-text: #F5F7FA;
-  --dark-secondary-text: #A9A9A9;
-  --dark-border: rgba(255, 255, 255, 0.08);
-  --dark-accent: #4EA8FF;
-  --dark-hover: #3F8CE0;
-  --dark-link: var(--dark-accent);
-  --dark-shadow: rgba(0, 0, 0, 0.55);
-  --dark-glow: rgba(255, 255, 255, 0.08);
-  --dark-icon: #E3E3E3;
+  --dark-secondary-text: #A5ADB8;
+  --dark-border: rgba(255, 255, 255, 0.075);
+
+  --dark-accent: #DDE7F5;
+  --dark-hover: #FFFFFF;
+  --dark-link: #8EC5FF;
+
+  --dark-shadow: rgba(0, 0, 0, 0.62);
+  --dark-glow: rgba(255, 255, 255, 0.06);
+  --dark-icon: #ECEFF4;
 
   /* ======================== */
   /* Light Liquid Glass Palette */
@@ -53,12 +61,35 @@
   /* ======================== */
   /* Apple Liquid Glass Optics */
   /* ======================== */
-  --backdrop-blur: blur(28px) saturate(180%) contrast(110%);
-  --bubble-gradient: radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.15), transparent 72%);
-  --bubble-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.18);
-  --bubble-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), inset 0 0 16px rgba(255, 255, 255, 0.05);
-  --liquid-reflection: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.02));
-  --liquid-refraction: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+  --backdrop-blur: blur(24px) saturate(150%) contrast(108%);
+  --bubble-gradient:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.08), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,0.035), rgba(0,0,0,0.20));
+
+  --bubble-highlight:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+
+  --bubble-shadow:
+    0 24px 55px rgba(0, 0, 0, 0.58),
+    0 8px 24px rgba(0, 0, 0, 0.42),
+    inset 0 0 12px rgba(255, 255, 255, 0.025);
+
+  --liquid-reflection:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(255, 255, 255, 0.035) 22%,
+      rgba(255, 255, 255, 0.01) 40%,
+      transparent 68%
+    );
+
+  --liquid-refraction:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.07),
+      rgba(255, 255, 255, 0.015)
+    );
 
   /* ======================== */
   /* Radii & Transitions      */
@@ -101,6 +132,14 @@ body.dark-mode {
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-content-bg);
   --text-color: var(--dark-text);
+  --secondary-text: var(--dark-secondary-text);
+  --border-color: var(--dark-border);
+  --accent-color: var(--dark-accent);
+  --hover-color: var(--dark-hover);
+  --link-color: var(--dark-link);
+  --shadow-color: var(--dark-shadow);
+  --glow-color: var(--dark-glow);
+  --icon-color: var(--dark-icon);
 }
 
 /* ======================== */
@@ -269,79 +308,76 @@ p, span, li {
 /* ======================== */
 
 .section {
-	position: relative;
-	padding: 28px;
-	margin-bottom: 32px;
-	border-radius: var(--radius-xl);
-	overflow: hidden;
+  position: relative;
+  padding: 28px;
+  margin-bottom: 32px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
 
-	/* DARK MODE LIQUID PANEL */
-	background:
-		linear-gradient(135deg,
-			rgba(255, 255, 255, 0.22),
-			rgba(255, 255, 255, 0.06)
-		),
-		linear-gradient(215deg,
-			rgba(255, 255, 255, 0.08),
-			rgba(0, 0, 0, 0.28)
-		),
-		rgba(18, 18, 18, 1);
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.055),
+      rgba(255, 255, 255, 0.015) 20%,
+      rgba(0, 0, 0, 0.16) 100%
+    ),
+    rgba(12, 13, 16, 0.82);
 
-	border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
 
-	box-shadow:
-		0 22px 55px rgba(0, 0, 0, 0.55),
-		inset 0 1px 1px rgba(255, 255, 255, 0.10),
-		inset 0 -4px 12px rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 
-	transition: none;
+  box-shadow:
+    0 26px 60px rgba(0, 0, 0, 0.62),
+    0 10px 22px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -8px 18px rgba(0, 0, 0, 0.45);
+
+  transition: none;
 }
-
 
 /* ========================================= */
 /* Top Gloss (Dark & Light Mode Compatible)  */
 /* ========================================= */
 .section::before {
-	content: "";
-	position: absolute;
-	top: -20%;
-	left: 0;
-	right: 0;
-	height: 52%;
-	pointer-events: none;
+  content: "";
+  position: absolute;
+  top: -16%;
+  left: 0;
+  right: 0;
+  height: 42%;
+  pointer-events: none;
 
-	background: radial-gradient(
-		circle at 50% 0%,
-		rgba(255, 255, 255, 0.55),
-		rgba(255, 255, 255, 0.15) 40%,
-		transparent 80%
-	);
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.08) 34%,
+    transparent 72%
+  );
 
-	opacity: 0.7;
+  opacity: 0.55;
 }
-
 
 /* ========================================= */
 /* Bottom Curve Shadow (Dark/Light Safe)     */
 /* ========================================= */
 .section::after {
-	content: "";
-	position: absolute;
-	bottom: -20%;
-	left: 0;
-	right: 0;
-	height: 55%;
-	pointer-events: none;
+  content: "";
+  position: absolute;
+  bottom: -18%;
+  left: 0;
+  right: 0;
+  height: 52%;
+  pointer-events: none;
 
-	background: radial-gradient(
-		circle at 50% 100%,
-		rgba(0, 0, 0, 0.35),
-		transparent 70%
-	);
+  background: radial-gradient(
+    circle at 50% 100%,
+    rgba(0, 0, 0, 0.42),
+    transparent 72%
+  );
 
-	opacity: 0.6;
+  opacity: 0.72;
 }
-
 
 /* ======================== */
 /* TRUE LIGHT MODE LIQUID   */
@@ -390,13 +426,13 @@ body.light-e .section::after {
 .section h1,
 .section h2,
 .section h3 {
-	color: #ffffff;
+  color: #F7F8FA;
 }
 
 .section p,
 .section span,
 .section li {
-	color: #d0d0d0;
+  color: #AAB2BD;
 }
 
 body.light-e .section h1,
