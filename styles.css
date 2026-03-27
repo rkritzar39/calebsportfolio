@@ -3832,7 +3832,7 @@ body.maintenance-active {
 .biz-panel-title{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
   margin-bottom:12px;
 }
 
@@ -3857,13 +3857,6 @@ body.maintenance-active {
 /* -------------------------
    Status dot and chip
 ------------------------- */
-.biz-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:color-mix(in srgb, var(--secondary-text) 55%, transparent);
-  box-shadow:0 0 8px color-mix(in srgb, var(--secondary-text) 40%, transparent);
-}
 
 .biz-chip{
   margin-left:auto;
@@ -3874,6 +3867,76 @@ body.maintenance-active {
   border:1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
   background:color-mix(in srgb, var(--content-bg) 85%, transparent);
   color:var(--secondary-text);
+}
+
+/* -------------------------
+   Traffic light signal
+------------------------- */
+.biz-signal{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:8px;
+  border-radius:999px;
+  background:color-mix(in srgb, var(--content-bg) 88%, transparent);
+  border:1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
+  flex-shrink:0;
+}
+
+.biz-signal__light{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  opacity:.18;
+  transform:scale(.95);
+  transition:
+    opacity .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease,
+    filter .2s ease;
+}
+
+.biz-signal__light--green{
+  background:#22c55e;
+}
+
+.biz-signal__light--yellow{
+  background:#facc15;
+}
+
+.biz-signal__light--red{
+  background:#ef4444;
+}
+
+.biz-signal__light.is-active{
+  opacity:1;
+  transform:scale(1);
+}
+
+.biz-signal__light--green.is-active{
+  box-shadow:0 0 14px rgba(34, 197, 94, .65);
+}
+
+.biz-signal__light--yellow.is-active{
+  box-shadow:0 0 14px rgba(250, 204, 21, .75);
+}
+
+.biz-signal__light--red.is-active{
+  box-shadow:0 0 14px rgba(239, 68, 68, .70);
+}
+
+@keyframes bizBlink {
+  0%, 100%{
+    opacity:1;
+  }
+  50%{
+    opacity:.18;
+  }
+}
+
+.biz-signal__light.is-blinking{
+  animation:bizBlink 1s infinite ease-in-out;
 }
 
 /* -------------------------
@@ -4174,6 +4237,16 @@ main .business-section{
 @media (max-width: 420px){
   .business-grid{
     gap:14px;
+  }
+
+    .biz-signal{
+    padding:7px;
+    gap:7px;
+  }
+
+  .biz-signal__light{
+    width:12px;
+    height:12px;
   }
 
   .biz-panel{
