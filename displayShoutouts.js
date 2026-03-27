@@ -1868,36 +1868,43 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     light.classList.remove('is-active', 'is-blinking');
   });
 
+  // Holiday closed all day = blinking red
   if (statusType === 'holiday' && statusText !== 'Open') {
     redLight.classList.add('is-active', 'is-blinking');
     return;
   }
 
+  // Temporary unavailable = blinking yellow
   if (statusType === 'temporary') {
     yellowLight.classList.add('is-active', 'is-blinking');
     return;
   }
 
+  // Warning states = solid yellow
   if (
     subStatusText.includes('Opens in') ||
     subStatusText.includes('Closes in') ||
     subStatusText.includes('Opens again today') ||
-    subStatusText.includes('Opens again at')
+    subStatusText.includes('Opens again at') ||
+    subStatusText.includes('Temporarily unavailable in')
   ) {
     yellowLight.classList.add('is-active');
     return;
   }
 
+  // Holiday hours active = solid yellow
   if (statusType === 'holiday' && statusText === 'Open') {
     yellowLight.classList.add('is-active');
     return;
   }
 
+  // Normal open = solid green
   if (statusText === 'Open') {
     greenLight.classList.add('is-active');
     return;
   }
 
+  // Default closed = solid red
   redLight.classList.add('is-active');
 }
 
