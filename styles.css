@@ -3726,9 +3726,13 @@ body.maintenance-active {
 
 /* =========================================================
    Business Section – Premium Layout Add-ons
-   Paste UNDER your existing business CSS
+   Full cleaned version
+   Paste under your existing business CSS
    ========================================================= */
 
+/* -------------------------
+   Header
+------------------------- */
 .business-head{
   display:flex;
   justify-content:space-between;
@@ -3738,18 +3742,21 @@ body.maintenance-active {
   margin-bottom:18px;
   border-bottom:1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
 }
+
 .business-head-left h2{
   margin:0;
   text-align:left;
   padding-bottom:0;
   border-bottom:none;
 }
+
 .business-subtitle{
   margin:8px 0 0 0;
   color:var(--secondary-text);
   line-height:1.45;
   max-width:72ch;
 }
+
 .business-head-right{
   display:flex;
   gap:10px;
@@ -3757,7 +3764,9 @@ body.maintenance-active {
   justify-content:flex-end;
 }
 
-/* Buttons */
+/* -------------------------
+   Action buttons
+------------------------- */
 .biz-action{
   appearance:none;
   border:1px solid var(--border-color);
@@ -3773,24 +3782,40 @@ body.maintenance-active {
   cursor:pointer;
   transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
+
 .biz-action:hover{
   transform:translateY(-2px);
   box-shadow:0 14px 28px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
+
 .biz-action:focus-visible{
   outline:none;
-  box-shadow:0 0 0 4px color-mix(in srgb, var(--accent-color) 22%, transparent), var(--bubble-shadow), var(--bubble-highlight);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--accent-color) 22%, transparent),
+    var(--bubble-shadow),
+    var(--bubble-highlight);
   border-color:color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
 }
-.biz-action-ghost{ color:var(--accent-color); }
 
-/* Grid */
+.biz-action-ghost{
+  color:var(--accent-color);
+}
+
+/* -------------------------
+   Main grid and panels
+------------------------- */
 .business-grid{
   display:grid;
   grid-template-columns:1.05fr 1.35fr;
   gap:18px;
   align-items:start;
+  max-width:920px;
+  margin-left:auto;
+  margin-right:auto;
+  max-width:100%;
+  box-sizing:border-box;
 }
+
 .biz-panel{
   background:var(--content-bg);
   background-image:var(--bubble-gradient);
@@ -3800,35 +3825,46 @@ body.maintenance-active {
   padding:18px;
   backdrop-filter:var(--backdrop-blur) saturate(120%);
   -webkit-backdrop-filter:var(--backdrop-blur) saturate(120%);
+  max-width:100%;
+  box-sizing:border-box;
 }
+
 .biz-panel-title{
   display:flex;
   align-items:center;
   gap:10px;
   margin-bottom:12px;
 }
+
 .biz-panel-title--split{
   justify-content:space-between;
   gap:12px;
 }
+
 .biz-panel-title h3{
   margin:0;
   font-size:1.05em;
   font-weight:900;
   letter-spacing:.2px;
 }
+
 .biz-muted{
   color:var(--secondary-text);
   font-weight:650;
   font-size:.95em;
 }
 
-/* Dot + chip */
+/* -------------------------
+   Status dot and chip
+------------------------- */
 .biz-dot{
-  width:10px;height:10px;border-radius:50%;
+  width:10px;
+  height:10px;
+  border-radius:50%;
   background:color-mix(in srgb, var(--secondary-text) 55%, transparent);
   box-shadow:0 0 8px color-mix(in srgb, var(--secondary-text) 40%, transparent);
 }
+
 .biz-chip{
   margin-left:auto;
   font-weight:900;
@@ -3840,12 +3876,15 @@ body.maintenance-active {
   color:var(--secondary-text);
 }
 
-/* Meta rows */
+/* -------------------------
+   Meta rows
+------------------------- */
 .biz-meta{
   margin-top:14px;
   display:grid;
   gap:10px;
 }
+
 .biz-meta__row{
   display:flex;
   justify-content:space-between;
@@ -3855,10 +3894,12 @@ body.maintenance-active {
   border:1px solid color-mix(in srgb, var(--border-color) 28%, transparent);
   background:color-mix(in srgb, var(--content-bg) 88%, transparent);
 }
+
 .biz-meta__label{
   color:var(--secondary-text);
   font-weight:750;
 }
+
 .biz-meta__value{
   color:var(--text-color);
   font-weight:900;
@@ -3866,7 +3907,9 @@ body.maintenance-active {
   font-variant-numeric:tabular-nums;
 }
 
-/* Details blocks */
+/* -------------------------
+   Details blocks
+------------------------- */
 .biz-details{
   margin-top:12px;
   border-radius:var(--radius-lg);
@@ -3874,6 +3917,7 @@ body.maintenance-active {
   background:color-mix(in srgb, var(--content-bg) 85%, transparent);
   overflow:hidden;
 }
+
 .biz-details summary{
   cursor:pointer;
   list-style:none;
@@ -3884,23 +3928,37 @@ body.maintenance-active {
   align-items:center;
   justify-content:space-between;
 }
-.biz-details summary::-webkit-details-marker{ display:none; }
+
+.biz-details summary::-webkit-details-marker{
+  display:none;
+}
+
 .biz-details summary::after{
   content:"▾";
   opacity:.8;
   transition:transform .18s ease;
 }
-.biz-details[open] summary::after{ transform:rotate(180deg); }
-.biz-details .hours-wrap{ padding:12px; }
 
-/* Divider */
+.biz-details[open] summary::after{
+  transform:rotate(180deg);
+}
+
+.biz-details .hours-wrap{
+  padding:12px;
+}
+
+/* -------------------------
+   Divider
+------------------------- */
 .biz-divider{
   height:1px;
   margin:16px 0;
   background:color-mix(in srgb, var(--border-color) 25%, transparent);
 }
 
-/* Your script’s lists */
+/* -------------------------
+   List resets
+------------------------- */
 .hours-wrap .regular-hours-list,
 .hours-wrap .special-hours-display{
   margin:0;
@@ -3908,7 +3966,9 @@ body.maintenance-active {
   list-style:none;
 }
 
-/* You already style .hours-list li; your script uses .regular-hours-list li */
+/* -------------------------
+   Regular and special list cards
+------------------------- */
 .regular-hours-list li,
 .special-hours-display li{
   width:100%;
@@ -3927,13 +3987,13 @@ body.maintenance-active {
   box-sizing:border-box;
   transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
+
 .regular-hours-list li:hover,
 .special-hours-display li:hover{
   transform:translateY(-2px);
   box-shadow:0 14px 28px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
 }
 
-/* Day label */
 .regular-hours-list li strong,
 .special-hours-display li strong{
   font-weight:900;
@@ -3941,7 +4001,6 @@ body.maintenance-active {
   text-align:left;
 }
 
-/* Right side times */
 .regular-hours-list .hours-line,
 .special-hours-display .hours{
   text-align:right;
@@ -3951,19 +4010,28 @@ body.maintenance-active {
   font-variant-numeric:tabular-nums;
 }
 
-/* Stop “current-day makes everything neon” */
+/* -------------------------
+   Current day highlight
+------------------------- */
 .regular-hours-list li.current-day{
   border-color:color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
-  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent-color) 14%, transparent), var(--bubble-shadow), var(--bubble-highlight);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent-color) 14%, transparent),
+    var(--bubble-shadow),
+    var(--bubble-highlight);
 }
+
 .regular-hours-list li.current-day strong{
   color:var(--accent-color);
 }
+
 .regular-hours-list li.current-day .hours-line{
   color:color-mix(in srgb, var(--accent-color) 70%, var(--secondary-text));
 }
 
-/* Note line */
+/* -------------------------
+   Timezone note
+------------------------- */
 .hours-timezone-note{
   margin:12px 0 0 0;
   color:var(--secondary-text);
@@ -3971,114 +4039,14 @@ body.maintenance-active {
   font-weight:650;
 }
 
-/* Contact button stays from your existing CSS */
-#hoursPanel.is-collapsed .hours-wrap,
-#hoursPanel.is-collapsed details,
-#hoursPanel.is-collapsed .biz-divider,
-#hoursPanel.is-collapsed .biz-contact{
-  display:none;
-}
-
-/* Responsive */
-@media (max-width: 980px){
-  .business-head{ flex-direction:column; align-items:stretch; }
-  .business-head-right{ justify-content:flex-start; }
-  .business-grid{ grid-template-columns:1fr; }
-  .business-head-left h2{ text-align:center; }
-  .business-subtitle{ text-align:center; margin-left:auto; margin-right:auto; }
-}
-@media (max-width: 768px){
-  .regular-hours-list li,
-  .special-hours-display li{
-    grid-template-columns:1fr;
-  }
-  .regular-hours-list .hours-line,
-  .special-hours-display .hours{
-    text-align:left;
-  }
-}
-
-/* ===== Premium header + grid helpers (safe overrides) ===== */
-.business-head{
-  display:flex; justify-content:space-between; align-items:flex-start;
-  gap:16px; padding-bottom:14px; margin-bottom:18px;
-  border-bottom:1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-}
-.business-head-left h2{
-  margin:0; text-align:left; padding-bottom:0; border-bottom:none;
-}
-.business-subtitle{
-  margin:8px 0 0 0; color:var(--secondary-text); line-height:1.45; max-width:72ch;
-}
-.business-head-right{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-
-.biz-action{
-  appearance:none;
-  border:1px solid var(--border-color);
-  background:var(--content-bg);
-  background-image:var(--bubble-gradient);
-  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
-  backdrop-filter:var(--backdrop-blur);
-  -webkit-backdrop-filter:var(--backdrop-blur);
-  border-radius:9999px;
-  padding:10px 14px;
-  font-weight:800;
-  color:var(--text-color);
-  cursor:pointer;
-  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-}
-.biz-action:hover{
-  transform:translateY(-2px);
-  box-shadow:0 14px 28px color-mix(in srgb, var(--shadow-color) 40%, transparent), var(--bubble-highlight);
-}
-.biz-action-ghost{ color:var(--accent-color); }
-
-.business-grid{
-  display:grid;
-  grid-template-columns:1.05fr 1.35fr;
-  gap:18px;
-  align-items:start;
-}
-.biz-panel{
-  background:var(--content-bg);
-  background-image:var(--bubble-gradient);
-  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
-  border:1px solid var(--border-color);
-  border-radius:var(--radius-xl);
-  padding:18px;
-  backdrop-filter:var(--backdrop-blur) saturate(120%);
-  -webkit-backdrop-filter:var(--backdrop-blur) saturate(120%);
-}
-.biz-panel-title{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-.biz-panel-title--split{ justify-content:space-between; gap:12px; }
-.biz-muted{ color:var(--secondary-text); font-weight:650; font-size:.95em; }
-
-.biz-dot{
-  width:10px; height:10px; border-radius:50%;
-  background:color-mix(in srgb, var(--secondary-text) 55%, transparent);
-  box-shadow:0 0 8px color-mix(in srgb, var(--secondary-text) 40%, transparent);
-}
-.biz-chip{
-  margin-left:auto;
-  font-weight:900;
-  font-size:.85em;
-  padding:6px 10px;
-  border-radius:9999px;
-  border:1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
-  background:color-mix(in srgb, var(--content-bg) 85%, transparent);
-  color:var(--secondary-text);
-}
-
-.hours-wrap .regular-hours-list,
-.hours-wrap .special-hours-display{ margin:0; padding:0; list-style:none; }
-
-/* ===== Contact pill fix (works even if script includes label text) ===== */
+/* -------------------------
+   Contact section
+------------------------- */
 .contact-info{
   text-align:center;
-  margin-top:14px; /* tighter inside panel */
+  margin-top:14px;
 }
 
-/* Optional label (used by the updated script below) */
 .contact-info .contact-label{
   display:block;
   margin-bottom:10px;
@@ -4086,33 +4054,32 @@ body.maintenance-active {
   font-weight:650;
 }
 
-/* Force the anchor to always look like the pill button */
 .contact-info a{
-  background: var(--content-bg);
-  background-image: var(--bubble-gradient);
-  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-  border: 1px solid var(--border-color);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+  background:var(--content-bg);
+  background-image:var(--bubble-gradient);
+  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
+  border:1px solid var(--border-color);
+  backdrop-filter:var(--backdrop-blur);
+  -webkit-backdrop-filter:var(--backdrop-blur);
 
-  padding: 14px 36px;
-  border-radius: 9999px;
-  font-weight: 900;
-  color: var(--accent-color);
-  text-decoration: none;
+  padding:14px 36px;
+  border-radius:9999px;
+  font-weight:900;
+  color:var(--accent-color);
+  text-decoration:none;
 
-  display: inline-flex;        /* <- important */
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-width: 240px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-width:240px;
 
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
 }
 
 .contact-info a:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px color-mix(in srgb, var(--accent-color) 45%, transparent), var(--bubble-highlight);
+  transform:translateY(-2px);
+  box-shadow:0 14px 30px color-mix(in srgb, var(--accent-color) 45%, transparent), var(--bubble-highlight);
 }
 
 .contact-info a:focus-visible{
@@ -4121,72 +4088,97 @@ body.maintenance-active {
     0 0 0 4px color-mix(in srgb, var(--accent-color) 22%, transparent),
     var(--bubble-shadow),
     var(--bubble-highlight);
-  border-color: color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
+  border-color:color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
 }
 
-/* Collapse support */
+/* -------------------------
+   Collapse support
+------------------------- */
 #hoursPanel.is-collapsed .hours-wrap,
 #hoursPanel.is-collapsed details,
 #hoursPanel.is-collapsed .biz-divider,
-#hoursPanel.is-collapsed .biz-contact{ display:none; }
-
-@media (max-width: 980px){
-  .business-head{ flex-direction:column; align-items:stretch; }
-  .business-head-right{ justify-content:flex-start; }
-  .business-grid{ grid-template-columns:1fr; }
-  .business-head-left h2{ text-align:center; }
-  .business-subtitle{ text-align:center; margin-left:auto; margin-right:auto; }
+#hoursPanel.is-collapsed .biz-contact{
+  display:none;
 }
 
-/* =========================================================
-   FIX: Prevent business card/panels from touching container sides
-   Paste at the very bottom of business CSS
-   ========================================================= */
-
-/* 1) Add outer gutters so panels never touch the screen edges */
+/* -------------------------
+   Outer section spacing fix
+------------------------- */
 #business,
 .business,
 .business-section,
 section#businessSection,
 main .business-section{
-  padding-left: max(env(safe-area-inset-left), clamp(14px, 4vw, 26px));
-  padding-right: max(env(safe-area-inset-right), clamp(14px, 4vw, 26px));
-  box-sizing: border-box;
+  padding-left:max(env(safe-area-inset-left), clamp(14px, 4vw, 26px));
+  padding-right:max(env(safe-area-inset-right), clamp(14px, 4vw, 26px));
+  box-sizing:border-box;
 }
 
-/* 2) Center and constrain the whole business area */
-#business .business-grid,
-.business-section .business-grid,
-.business-grid{
-  max-width: 920px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* 3) Make sure panels respect the new gutters and never overflow */
-.biz-panel,
 .business-head,
-.business-grid{
-  max-width: 100%;
-  box-sizing: border-box;
+.business-grid,
+.biz-panel{
+  max-width:100%;
+  box-sizing:border-box;
 }
 
-/* 4) Common culprit: a child using 100vw forces edge-touching */
 .business-grid *{
-  max-width: 100%;
-  box-sizing: border-box;
+  max-width:100%;
+  box-sizing:border-box;
 }
 
-/* If anything inside uses viewport width, clamp it safely */
 .business-grid [style*="100vw"],
 .business-grid .full-bleed{
-  width: 100% !important;
+  width:100% !important;
 }
 
-/* 5) Optional: slightly reduce gap on very small screens so it breathes better */
+/* -------------------------
+   Responsive
+------------------------- */
+@media (max-width: 980px){
+  .business-head{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .business-head-right{
+    justify-content:flex-start;
+  }
+
+  .business-grid{
+    grid-template-columns:1fr;
+  }
+
+  .business-head-left h2{
+    text-align:center;
+  }
+
+  .business-subtitle{
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+  }
+}
+
+@media (max-width: 768px){
+  .regular-hours-list li,
+  .special-hours-display li{
+    grid-template-columns:1fr;
+  }
+
+  .regular-hours-list .hours-line,
+  .special-hours-display .hours{
+    text-align:left;
+  }
+}
+
 @media (max-width: 420px){
-  .business-grid{ gap: 14px; }
-  .biz-panel{ padding: 16px; }
+  .business-grid{
+    gap:14px;
+  }
+
+  .biz-panel{
+    padding:16px;
+  }
 }
 
 /* Prevent printing of the page */
