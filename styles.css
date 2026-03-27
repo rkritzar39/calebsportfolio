@@ -3878,36 +3878,46 @@ body.maintenance-active {
   gap:8px;
   padding:8px;
   border-radius:999px;
-  background:color-mix(in srgb, var(--content-bg) 88%, transparent);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.08)),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
   border:1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
-  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -1px 0 rgba(0,0,0,.18),
+    var(--bubble-shadow),
+    var(--bubble-highlight);
   flex-shrink:0;
 }
 
 .biz-signal__light{
+  position:relative;
   width:14px;
   height:14px;
   border-radius:50%;
-  opacity:.18;
-  transform:scale(.95);
+  opacity:.14;
+  transform:scale(.96);
   transition:
-    opacity .2s ease,
-    transform .2s ease,
-    box-shadow .2s ease,
-    filter .2s ease;
+    opacity .18s linear,
+    transform .18s linear,
+    box-shadow .18s linear,
+    filter .18s linear;
 }
 
-.biz-signal__light--green{
-  background:#22c55e;
+.biz-signal__light::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  background:inherit;
+  opacity:0;
+  filter:blur(4px);
+  transition:opacity .18s linear, filter .18s linear;
 }
 
-.biz-signal__light--yellow{
-  background:#facc15;
-}
-
-.biz-signal__light--red{
-  background:#ef4444;
-}
+.biz-signal__light--green{ background:#22c55e; }
+.biz-signal__light--yellow{ background:#facc15; }
+.biz-signal__light--red{ background:#ef4444; }
 
 .biz-signal__light.is-active{
   opacity:1;
@@ -3915,15 +3925,59 @@ body.maintenance-active {
 }
 
 .biz-signal__light--green.is-active{
-  box-shadow:0 0 14px rgba(34, 197, 94, .65);
+  box-shadow:
+    0 0 4px rgba(34,197,94,.9),
+    0 0 10px rgba(34,197,94,.7),
+    0 0 18px rgba(34,197,94,.35);
+}
+.biz-signal__light--green.is-active::before{
+  opacity:.85;
+  filter:blur(5px);
 }
 
 .biz-signal__light--yellow.is-active{
-  box-shadow:0 0 14px rgba(250, 204, 21, .75);
+  box-shadow:
+    0 0 4px rgba(250,204,21,.95),
+    0 0 10px rgba(250,204,21,.75),
+    0 0 18px rgba(250,204,21,.38);
+}
+.biz-signal__light--yellow.is-active::before{
+  opacity:.9;
+  filter:blur(5px);
 }
 
 .biz-signal__light--red.is-active{
-  box-shadow:0 0 14px rgba(239, 68, 68, .70);
+  box-shadow:
+    0 0 4px rgba(239,68,68,.95),
+    0 0 10px rgba(239,68,68,.75),
+    0 0 18px rgba(239,68,68,.4);
+}
+.biz-signal__light--red.is-active::before{
+  opacity:.9;
+  filter:blur(5px);
+}
+
+@keyframes trafficBlink {
+  0%, 49% {
+    opacity:1;
+    transform:scale(1);
+  }
+  50%, 100% {
+    opacity:.12;
+    transform:scale(.96);
+  }
+}
+
+.biz-signal__light.is-blinking{
+  animation:trafficBlink 1s steps(1, end) infinite;
+}
+
+.biz-signal__light--yellow.is-blinking{
+  animation-duration:1s;
+}
+
+.biz-signal__light--red.is-blinking{
+  animation-duration:1s;
 }
 
 @keyframes bizBlink {
