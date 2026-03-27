@@ -8,25 +8,17 @@
   /* ======================== */
   /* Dark Liquid Glass Palette */
   /* ======================== */
-  --dark-bg:
-    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.035), transparent 35%),
-    radial-gradient(circle at 80% 90%, rgba(255,255,255,0.025), transparent 45%),
-    linear-gradient(180deg, #090a0c 0%, #0d0f12 100%);
-
-  --dark-content-bg: rgba(15, 17, 20, 0.72);
-  --dark-content-bg-strong: rgba(10, 11, 13, 0.84);
-
+  --dark-bg: #0E0E0E;
+  --dark-content-bg: rgba(24, 24, 24, 0.55);
   --dark-text: #F5F7FA;
-  --dark-secondary-text: #A5ADB8;
-  --dark-border: rgba(255, 255, 255, 0.075);
-
-  --dark-accent: #DDE7F5;
-  --dark-hover: #FFFFFF;
-  --dark-link: #8EC5FF;
-
-  --dark-shadow: rgba(0, 0, 0, 0.62);
-  --dark-glow: rgba(255, 255, 255, 0.06);
-  --dark-icon: #ECEFF4;
+  --dark-secondary-text: #A9A9A9;
+  --dark-border: rgba(255, 255, 255, 0.08);
+  --dark-accent: #4EA8FF;
+  --dark-hover: #3F8CE0;
+  --dark-link: var(--dark-accent);
+  --dark-shadow: rgba(0, 0, 0, 0.55);
+  --dark-glow: rgba(255, 255, 255, 0.08);
+  --dark-icon: #E3E3E3;
 
   /* ======================== */
   /* Light Liquid Glass Palette */
@@ -61,35 +53,12 @@
   /* ======================== */
   /* Apple Liquid Glass Optics */
   /* ======================== */
-  --backdrop-blur: blur(24px) saturate(150%) contrast(108%);
-  --bubble-gradient:
-    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.08), transparent 60%),
-    linear-gradient(180deg, rgba(255,255,255,0.035), rgba(0,0,0,0.20));
-
-  --bubble-highlight:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.02);
-
-  --bubble-shadow:
-    0 24px 55px rgba(0, 0, 0, 0.58),
-    0 8px 24px rgba(0, 0, 0, 0.42),
-    inset 0 0 12px rgba(255, 255, 255, 0.025);
-
-  --liquid-reflection:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.10) 0%,
-      rgba(255, 255, 255, 0.035) 22%,
-      rgba(255, 255, 255, 0.01) 40%,
-      transparent 68%
-    );
-
-  --liquid-refraction:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.07),
-      rgba(255, 255, 255, 0.015)
-    );
+  --backdrop-blur: blur(28px) saturate(180%) contrast(110%);
+  --bubble-gradient: radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.15), transparent 72%);
+  --bubble-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.18);
+  --bubble-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), inset 0 0 16px rgba(255, 255, 255, 0.05);
+  --liquid-reflection: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.02));
+  --liquid-refraction: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
 
   /* ======================== */
   /* Radii & Transitions      */
@@ -132,14 +101,6 @@ body.dark-mode {
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-content-bg);
   --text-color: var(--dark-text);
-  --secondary-text: var(--dark-secondary-text);
-  --border-color: var(--dark-border);
-  --accent-color: var(--dark-accent);
-  --hover-color: var(--dark-hover);
-  --link-color: var(--dark-link);
-  --shadow-color: var(--dark-shadow);
-  --glow-color: var(--dark-glow);
-  --icon-color: var(--dark-icon);
 }
 
 /* ======================== */
@@ -308,76 +269,79 @@ p, span, li {
 /* ======================== */
 
 .section {
-  position: relative;
-  padding: 28px;
-  margin-bottom: 32px;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+	position: relative;
+	padding: 28px;
+	margin-bottom: 32px;
+	border-radius: var(--radius-xl);
+	overflow: hidden;
 
-  background:
-    linear-gradient(180deg,
-      rgba(255, 255, 255, 0.055),
-      rgba(255, 255, 255, 0.015) 20%,
-      rgba(0, 0, 0, 0.16) 100%
-    ),
-    rgba(12, 13, 16, 0.82);
+	/* DARK MODE LIQUID PANEL */
+	background:
+		linear-gradient(135deg,
+			rgba(255, 255, 255, 0.22),
+			rgba(255, 255, 255, 0.06)
+		),
+		linear-gradient(215deg,
+			rgba(255, 255, 255, 0.08),
+			rgba(0, 0, 0, 0.28)
+		),
+		rgba(18, 18, 18, 1);
 
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+	border: 1px solid rgba(255, 255, 255, 0.16);
 
-  border: 1px solid rgba(255, 255, 255, 0.08);
+	box-shadow:
+		0 22px 55px rgba(0, 0, 0, 0.55),
+		inset 0 1px 1px rgba(255, 255, 255, 0.10),
+		inset 0 -4px 12px rgba(0, 0, 0, 0.55);
 
-  box-shadow:
-    0 26px 60px rgba(0, 0, 0, 0.62),
-    0 10px 22px rgba(0, 0, 0, 0.42),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    inset 0 -8px 18px rgba(0, 0, 0, 0.45);
-
-  transition: none;
+	transition: none;
 }
+
 
 /* ========================================= */
 /* Top Gloss (Dark & Light Mode Compatible)  */
 /* ========================================= */
 .section::before {
-  content: "";
-  position: absolute;
-  top: -16%;
-  left: 0;
-  right: 0;
-  height: 42%;
-  pointer-events: none;
+	content: "";
+	position: absolute;
+	top: -20%;
+	left: 0;
+	right: 0;
+	height: 52%;
+	pointer-events: none;
 
-  background: radial-gradient(
-    circle at 50% 0%,
-    rgba(255, 255, 255, 0.22),
-    rgba(255, 255, 255, 0.08) 34%,
-    transparent 72%
-  );
+	background: radial-gradient(
+		circle at 50% 0%,
+		rgba(255, 255, 255, 0.55),
+		rgba(255, 255, 255, 0.15) 40%,
+		transparent 80%
+	);
 
-  opacity: 0.55;
+	opacity: 0.7;
 }
+
 
 /* ========================================= */
 /* Bottom Curve Shadow (Dark/Light Safe)     */
 /* ========================================= */
 .section::after {
-  content: "";
-  position: absolute;
-  bottom: -18%;
-  left: 0;
-  right: 0;
-  height: 52%;
-  pointer-events: none;
+	content: "";
+	position: absolute;
+	bottom: -20%;
+	left: 0;
+	right: 0;
+	height: 55%;
+	pointer-events: none;
 
-  background: radial-gradient(
-    circle at 50% 100%,
-    rgba(0, 0, 0, 0.42),
-    transparent 72%
-  );
+	background: radial-gradient(
+		circle at 50% 100%,
+		rgba(0, 0, 0, 0.35),
+		transparent 70%
+	);
 
-  opacity: 0.72;
+	opacity: 0.6;
 }
+
 
 /* ======================== */
 /* TRUE LIGHT MODE LIQUID   */
@@ -426,13 +390,13 @@ body.light-e .section::after {
 .section h1,
 .section h2,
 .section h3 {
-  color: #F7F8FA;
+	color: #ffffff;
 }
 
 .section p,
 .section span,
 .section li {
-  color: #AAB2BD;
+	color: #d0d0d0;
 }
 
 body.light-e .section h1,
@@ -5083,276 +5047,4 @@ body.ultra-minimal .btn {
 
 body.maintenance-active .onyx-dock {
   display: none !important;
-}
-
-/* =========================================================
-   SOLID ONYX OVERRIDES
-   President, Business, Version, Legal
-   Paste at the very bottom
-   ========================================================= */
-
-/* -------------------------
-   Outer section shells
-------------------------- */
-#leader-section,
-#business-section,
-#version-info-section,
-#legal-section {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.035),
-      rgba(255, 255, 255, 0.01) 18%,
-      rgba(0, 0, 0, 0.22) 100%
-    ),
-    rgba(11, 12, 15, 0.96) !important;
-
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-
-  box-shadow:
-    0 18px 40px rgba(0, 0, 0, 0.62),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    inset 0 -6px 14px rgba(0, 0, 0, 0.55) !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  background-image:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.035),
-      rgba(255, 255, 255, 0.01) 18%,
-      rgba(0, 0, 0, 0.22) 100%
-    ) !important;
-}
-
-/* remove frosted gloss overlays from the outer cards */
-#leader-section::before,
-#leader-section::after,
-#business-section::before,
-#business-section::after,
-#version-info-section::before,
-#version-info-section::after,
-#legal-section::before,
-#legal-section::after {
-  display: none !important;
-}
-
-/* -------------------------
-   Leader inner cards
-------------------------- */
-#leader-section .leader-card,
-#leader-section .leader-refresh {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.03),
-      rgba(255,255,255,0.008) 20%,
-      rgba(0,0,0,0.16)
-    ),
-    rgba(16, 17, 21, 0.94) !important;
-
-  border-color: rgba(255,255,255,0.06) !important;
-
-  box-shadow:
-    0 12px 26px rgba(0,0,0,0.48),
-    inset 0 1px 0 rgba(255,255,255,0.03) !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-#leader-section .leader-avatar {
-  background: rgba(18, 19, 23, 0.98) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-  box-shadow:
-    0 10px 22px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.03) !important;
-}
-
-/* -------------------------
-   Business inner panels
-------------------------- */
-#business-section .biz-panel,
-#business-section .biz-details,
-#business-section .biz-meta__row,
-#business-section .regular-hours-list li,
-#business-section .special-hours-display li,
-#business-section .contact-info a,
-#business-section .biz-action {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.03),
-      rgba(255,255,255,0.008) 22%,
-      rgba(0,0,0,0.18)
-    ),
-    rgba(14, 15, 18, 0.95) !important;
-
-  background-image: none !important;
-  border-color: rgba(255,255,255,0.06) !important;
-
-  box-shadow:
-    0 12px 26px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.03) !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-#business-section .biz-details summary {
-  background: rgba(16, 17, 20, 0.96);
-}
-
-#business-section .biz-chip {
-  background: rgba(20, 21, 26, 0.98) !important;
-  border-color: rgba(255,255,255,0.08) !important;
-}
-
-/* -------------------------
-   Version section
-------------------------- */
-#version-info-section,
-#version-info-section.version-info-section {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.035),
-      rgba(255,255,255,0.01) 18%,
-      rgba(0,0,0,0.22) 100%
-    ),
-    rgba(11, 12, 15, 0.96) !important;
-
-  background-image: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-#version-info-section .version-list li {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.03),
-      rgba(255,255,255,0.008) 20%,
-      rgba(0,0,0,0.16)
-    ),
-    rgba(16, 17, 21, 0.94) !important;
-
-  background-image: none !important;
-  border-color: rgba(255,255,255,0.06) !important;
-  box-shadow:
-    0 10px 22px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.03) !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-/* -------------------------
-   Legal section
-------------------------- */
-#legal-section,
-#legal-section.legal-section {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.035),
-      rgba(255,255,255,0.01) 18%,
-      rgba(0,0,0,0.22) 100%
-    ),
-    rgba(11, 12, 15, 0.96) !important;
-
-  background-image: none !important;
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-#legal-section .copy-protection-message,
-#legal-section .legal-protection-message {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.03),
-      rgba(255,255,255,0.008) 20%,
-      rgba(0,0,0,0.16)
-    ),
-    rgba(16, 17, 21, 0.94) !important;
-
-  background-image: none !important;
-  border-color: rgba(255,255,255,0.06) !important;
-  box-shadow:
-    0 10px 22px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.03) !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-/* -------------------------
-   Light mode versions
-------------------------- */
-body.light-e #leader-section,
-body.light-e #business-section,
-body.light-e #version-info-section,
-body.light-e #legal-section {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.72),
-      rgba(255,255,255,0.52) 20%,
-      rgba(0,0,0,0.05) 100%
-    ),
-    rgba(255,255,255,0.94) !important;
-
-  border-color: rgba(0,0,0,0.08) !important;
-
-  box-shadow:
-    0 18px 36px rgba(0,0,0,0.12),
-    inset 0 1px 0 rgba(255,255,255,0.75),
-    inset 0 -4px 10px rgba(0,0,0,0.05) !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-body.light-e #leader-section::before,
-body.light-e #leader-section::after,
-body.light-e #business-section::before,
-body.light-e #business-section::after,
-body.light-e #version-info-section::before,
-body.light-e #version-info-section::after,
-body.light-e #legal-section::before,
-body.light-e #legal-section::after {
-  display: none !important;
-}
-
-body.light-e #leader-section .leader-card,
-body.light-e #leader-section .leader-refresh,
-body.light-e #business-section .biz-panel,
-body.light-e #business-section .biz-details,
-body.light-e #business-section .biz-meta__row,
-body.light-e #business-section .regular-hours-list li,
-body.light-e #business-section .special-hours-display li,
-body.light-e #business-section .contact-info a,
-body.light-e #business-section .biz-action,
-body.light-e #version-info-section .version-list li,
-body.light-e #legal-section .copy-protection-message,
-body.light-e #legal-section .legal-protection-message {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.82),
-      rgba(255,255,255,0.64) 20%,
-      rgba(0,0,0,0.04)
-    ),
-    rgba(255,255,255,0.96) !important;
-
-  background-image: none !important;
-  border-color: rgba(0,0,0,0.08) !important;
-
-  box-shadow:
-    0 10px 20px rgba(0,0,0,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.85) !important;
-
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
 }
