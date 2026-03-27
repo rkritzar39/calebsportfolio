@@ -1645,17 +1645,22 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
    - True next-opening finder with split shifts and holiday support
    - Temporary hours only apply during their active time window
    - Temporary hours can show the next real reopening time
+   - Holiday handling supports open later today, split shifts, and closed all day
    - Safer rendering
    - Copy Today and Toggle Hours persistence
-   - Status dot and chip always update
-   - Holiday status styling works correctly
+   - Status chip updates correctly
+   - Traffic light status system
    - Today's hours use the correct base schedule during temporary hours
 
    Assumptions:
    - Luxon is loaded as `luxon` (optional fallback supported)
    - Firestore helpers are available globally
    - window.assumedBusinessTimezone exists
-   - Required DOM ids/classes already exist
+   - Required DOM ids and classes already exist
+   - Traffic light HTML ids exist:
+       #bizLightGreen
+       #bizLightYellow
+       #bizLightRed
 ======================================== */
 
 /* -------------------------
@@ -1822,15 +1827,14 @@ function setLocalTimeLine(visitorTimezone) {
 }
 
 function setChipAndDot(statusText, statusType = 'regular') {
-  const dot = document.getElementById('bizDot');
   const chip = document.getElementById('bizChip');
-
-  if (!dot && !chip) return;
+  if (!chip) return;
 
   const openColor = 'var(--status-open-color, #28a745)';
   const closedColor = 'var(--status-closed-color, #dc3545)';
   const temporaryColor = 'var(--status-unavailable-color, #fd7e14)';
   const holidayColor = 'var(--status-holiday-color, #a855f7)';
+  const overrideColor = 'var(--status-override-color, #0ea5e9)';
 
   let color = closedColor;
   let label = 'CLOSED';
@@ -1838,6 +1842,9 @@ function setChipAndDot(statusText, statusType = 'regular') {
   if (statusType === 'holiday') {
     color = holidayColor;
     label = 'HOLIDAY';
+  } else if (statusType === 'override') {
+    color = overrideColor;
+    label = 'OVERRIDE';
   } else if (statusText === 'Open') {
     color = openColor;
     label = 'OPEN';
@@ -1846,15 +1853,52 @@ function setChipAndDot(statusText, statusType = 'regular') {
     label = 'TEMPORARY';
   }
 
-  if (chip) {
-    chip.textContent = label;
-    chip.style.color = color;
+  chip.textContent = label;
+  chip.style.color = color;
+}
+
+function setTrafficLight(statusText, statusType = 'regular', subStatusText = '') {
+  const greenLight = document.getElementById('bizLightGreen');
+  const yellowLight = document.getElementById('bizLightYellow');
+  const redLight = document.getElementById('bizLightRed');
+
+  if (!greenLight || !yellowLight || !redLight) return;
+
+  [greenLight, yellowLight, redLight].forEach((light) => {
+    light.classList.remove('is-active', 'is-blinking');
+  });
+
+  if (statusType === 'holiday' && statusText !== 'Open') {
+    redLight.classList.add('is-active', 'is-blinking');
+    return;
   }
 
-  if (dot) {
-    dot.style.background = `color-mix(in srgb, ${color} 85%, transparent)`;
-    dot.style.boxShadow = `0 0 10px color-mix(in srgb, ${color} 55%, transparent)`;
+  if (statusType === 'temporary') {
+    yellowLight.classList.add('is-active', 'is-blinking');
+    return;
   }
+
+  if (
+    subStatusText.includes('Opens in') ||
+    subStatusText.includes('Closes in') ||
+    subStatusText.includes('Opens again today') ||
+    subStatusText.includes('Opens again at')
+  ) {
+    yellowLight.classList.add('is-active');
+    return;
+  }
+
+  if (statusType === 'holiday' && statusText === 'Open') {
+    yellowLight.classList.add('is-active');
+    return;
+  }
+
+  if (statusText === 'Open') {
+    greenLight.classList.add('is-active');
+    return;
+  }
+
+  redLight.classList.add('is-active');
 }
 
 function installPanelToggle() {
@@ -2324,6 +2368,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     statusReasonElement.textContent = 'Missing timezone';
     statusSubTextElement.textContent = '';
     setChipAndDot('Temporarily Unavailable', 'override');
+    setTrafficLight('Temporarily Unavailable', 'override', '');
     return;
   }
 
@@ -2420,7 +2465,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
   statusMainTextElement.textContent = displayStatusText;
   statusReasonElement.textContent = `${finalReason} • ${displayStatusText}`;
-  setChipAndDot(finalStatus, finalType);
 
   /* -------------------------
      TODAY META ROW
@@ -2474,112 +2518,183 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     setMetaRow('bizTodayHours', joinedRanges);
   })();
 
-/* -------------------------
-   SUB STATUS AND NEXT OPEN
-------------------------- */
-(function setSubStatusAndNextOpen() {
-  const thresholdMinutes = 30;
+  /* -------------------------
+     SUB STATUS AND NEXT OPEN
+  ------------------------- */
+  (function setSubStatusAndNextOpen() {
+    const thresholdMinutes = 30;
 
-  statusSubTextElement.textContent = '';
-  setMetaRow('bizNextOpen', '—');
+    statusSubTextElement.textContent = '';
+    setMetaRow('bizNextOpen', '—');
 
-  /* ---------------------------------
-     TEMPORARY HOURS
-     Treat the end of the active temporary
-     window as the reopening time
-  --------------------------------- */
-  if (finalType === 'temporary') {
-    const activeRange = activeTemporarySchedule?.activeRange;
+    /* ---------------------------------
+       TEMPORARY HOURS
+       Treat the end of the active temporary
+       window as the reopening time
+    --------------------------------- */
+    if (finalType === 'temporary') {
+      const activeRange = activeTemporarySchedule?.activeRange;
 
-    if (!LuxonLibrary || !nowInBusinessTimezone || !activeRange?.close) {
-      statusSubTextElement.textContent = 'Temporarily Unavailable';
-      setMetaRow('bizNextOpen', '—');
+      if (!LuxonLibrary || !nowInBusinessTimezone || !activeRange?.close) {
+        statusSubTextElement.textContent = 'Temporarily Unavailable';
+        setMetaRow('bizNextOpen', '—');
+        return;
+      }
+
+      const temporaryCloseMinutes = timeStringToMinutes(activeRange.close);
+
+      if (temporaryCloseMinutes == null) {
+        statusSubTextElement.textContent = 'Temporarily Unavailable';
+        setMetaRow('bizNextOpen', '—');
+        return;
+      }
+
+      const reopeningDateTime = nowInBusinessTimezone.startOf('day').plus({
+        minutes: temporaryCloseMinutes
+      });
+
+      const reopeningTimeText = formatDisplayTimeBusinessInfo(
+        activeRange.close,
+        visitorTimezone
+      );
+
+      const minutesAway = minutesUntilLuxon(
+        nowInBusinessTimezone,
+        reopeningDateTime
+      );
+
+      setMetaRow('bizNextOpen', `Today • ${reopeningTimeText}`);
+
+      if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+        statusSubTextElement.textContent = `Reopens in ${formatDuration(minutesAway)}`;
+      } else {
+        statusSubTextElement.textContent = `Reopens today at ${reopeningTimeText}`;
+      }
+
       return;
     }
 
-    const temporaryCloseMinutes = timeStringToMinutes(activeRange.close);
+    /* ---------------------------------
+       HOLIDAY HOURS
+       Smart handling for:
+       - holiday opens later today
+       - holiday open now
+       - holiday closed for the day
+       - holiday split shifts
+    --------------------------------- */
+    if (finalType === 'holiday') {
+      if (!LuxonLibrary || !nowInBusinessTimezone) {
+        statusSubTextElement.textContent = '';
+        setMetaRow('bizNextOpen', '—');
+        return;
+      }
 
-    if (temporaryCloseMinutes == null) {
-      statusSubTextElement.textContent = 'Temporarily Unavailable';
-      setMetaRow('bizNextOpen', '—');
-      return;
-    }
+      const holidaySchedule = baseSchedule;
+      const holidayActiveRange = findActiveRange(currentMinutes, holidaySchedule.ranges);
 
-    const reopeningDateTime = nowInBusinessTimezone.startOf('day').plus({
-      minutes: temporaryCloseMinutes
-    });
+      /* Holiday open now */
+      if (finalStatus === 'Open' && holidayActiveRange) {
+        const closeMinutes = timeStringToMinutes(holidayActiveRange.close);
 
-    const reopeningTimeText = formatDisplayTimeBusinessInfo(
-      activeRange.close,
-      visitorTimezone
-    );
+        if (closeMinutes != null) {
+          const closeDateTime = nowInBusinessTimezone.startOf('day').plus({
+            minutes: closeMinutes
+          });
 
-    const minutesAway = minutesUntilLuxon(
-      nowInBusinessTimezone,
-      reopeningDateTime
-    );
+          const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, closeDateTime);
 
-    setMetaRow('bizNextOpen', `Today • ${reopeningTimeText}`);
+          const nextHolidayOpeningToday = getNextOpenForDay(
+            currentMinutes,
+            0,
+            {
+              schedule: holidaySchedule,
+              targetDay: nowInBusinessTimezone.startOf('day'),
+              labelDay: getBusinessDayName(nowInBusinessTimezone),
+              type: 'holiday'
+            }
+          );
 
-    if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
-      statusSubTextElement.textContent = `Reopens in ${formatDuration(minutesAway)}`;
-    } else {
-      statusSubTextElement.textContent = `Reopens today at ${reopeningTimeText}`;
-    }
+          if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+            statusSubTextElement.textContent = `Closes in ${formatDuration(minutesAway)}`;
+          } else {
+            statusSubTextElement.textContent =
+              `Open until ${formatDisplayTimeBusinessInfo(holidayActiveRange.close, visitorTimezone)}`;
+          }
 
-    return;
-  }
+          if (nextHolidayOpeningToday) {
+            const prettyNextTime = formatDisplayTimeBusinessInfo(nextHolidayOpeningToday, visitorTimezone);
+            setMetaRow('bizNextOpen', `Today • ${prettyNextTime}`);
+          } else {
+            setMetaRow('bizNextOpen', '—');
+          }
+        } else {
+          statusSubTextElement.textContent = '';
+          setMetaRow('bizNextOpen', '—');
+        }
 
-  /* ---------------------------------
-     HOLIDAY HOURS
-     Smart handling for:
-     - holiday opens later today
-     - holiday open now
-     - holiday closed for the day
-     - holiday split shifts
-  --------------------------------- */
-  if (finalType === 'holiday') {
-    if (!LuxonLibrary || !nowInBusinessTimezone) {
-      statusSubTextElement.textContent = '';
-      setMetaRow('bizNextOpen', '—');
-      return;
-    }
+        return;
+      }
 
-    const holidaySchedule = baseSchedule;
-    const holidayActiveRange = findActiveRange(currentMinutes, holidaySchedule.ranges);
-
-    /* Holiday open now */
-    if (finalStatus === 'Open' && holidayActiveRange) {
-      const closeMinutes = timeStringToMinutes(holidayActiveRange.close);
-
-      if (closeMinutes != null) {
-        const closeDateTime = nowInBusinessTimezone.startOf('day').plus({
-          minutes: closeMinutes
-        });
-
-        const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, closeDateTime);
-
-        /* Check if holiday has another opening later today */
+      /* Holiday closed but opens later today */
+      if (!holidaySchedule.isClosed && holidaySchedule.ranges.length) {
         const nextHolidayOpeningToday = getNextOpenForDay(
           currentMinutes,
           0,
           {
-            schedule: holidaySchedule
+            schedule: holidaySchedule,
+            targetDay: nowInBusinessTimezone.startOf('day'),
+            labelDay: getBusinessDayName(nowInBusinessTimezone),
+            type: 'holiday'
           }
         );
 
-        if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
-          statusSubTextElement.textContent = `Closes in ${formatDuration(minutesAway)}`;
-        } else {
-          statusSubTextElement.textContent =
-            `Open until ${formatDisplayTimeBusinessInfo(holidayActiveRange.close, visitorTimezone)}`;
-        }
-
         if (nextHolidayOpeningToday) {
-          const prettyNextTime = formatDisplayTimeBusinessInfo(nextHolidayOpeningToday, visitorTimezone);
-          setMetaRow('bizNextOpen', `Today • ${prettyNextTime}`);
+          const prettyTime = formatDisplayTimeBusinessInfo(nextHolidayOpeningToday, visitorTimezone);
+          const openingMinutes = timeStringToMinutes(nextHolidayOpeningToday);
+          const openingDateTime = nowInBusinessTimezone.startOf('day').plus({
+            minutes: openingMinutes == null ? 0 : openingMinutes
+          });
+
+          const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, openingDateTime);
+
+          setMetaRow('bizNextOpen', `Today • ${prettyTime}`);
+
+          if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+            statusSubTextElement.textContent = `Opens in ${formatDuration(minutesAway)}`;
+          } else if (hadAnyOpenEarlierToday(currentMinutes, holidaySchedule)) {
+            statusSubTextElement.textContent = `Opens again today at ${prettyTime}`;
+          } else {
+            statusSubTextElement.textContent = `Opens today at ${prettyTime}`;
+          }
+
+          return;
+        }
+      }
+
+      /* Holiday fully closed for the rest of today */
+      const nextOpeningAfterHoliday = getNextOpeningInfo(
+        nowInBusinessTimezone,
+        currentMinutes,
+        regularHours,
+        holidayHours,
+        {
+          startOffset: 1,
+          minMinutesToday: currentMinutes
+        }
+      );
+
+      if (nextOpeningAfterHoliday) {
+        const prettyTime = formatDisplayTimeBusinessInfo(
+          nextOpeningAfterHoliday.timeString,
+          visitorTimezone
+        );
+
+        setMetaRow('bizNextOpen', `${nextOpeningAfterHoliday.dayLabel} • ${prettyTime}`);
+
+        if (nextOpeningAfterHoliday.offset === 1) {
+          statusSubTextElement.textContent = `Reopens tomorrow at ${prettyTime}`;
         } else {
-          setMetaRow('bizNextOpen', '—');
+          statusSubTextElement.textContent = `Reopens ${nextOpeningAfterHoliday.dayLabel} at ${prettyTime}`;
         }
       } else {
         statusSubTextElement.textContent = '';
@@ -2589,206 +2704,143 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       return;
     }
 
-    /* Holiday closed but opens later today */
-    if (!holidaySchedule.isClosed && holidaySchedule.ranges.length) {
-      const nextHolidayOpeningToday = getNextOpenForDay(
-        currentMinutes,
-        0,
-        {
-          schedule: holidaySchedule
-        }
-      );
+    /* ---------------------------------
+       TEMPORARY HOURS STARTING SOON
+    --------------------------------- */
+    let soonestTemporaryStart = null;
 
-      if (nextHolidayOpeningToday) {
-        const prettyTime = formatDisplayTimeBusinessInfo(nextHolidayOpeningToday, visitorTimezone);
-        const openingMinutes = timeStringToMinutes(nextHolidayOpeningToday);
-        const openingDateTime = nowInBusinessTimezone.startOf('day').plus({
-          minutes: openingMinutes == null ? 0 : openingMinutes
-        });
-
-        const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, openingDateTime);
-
-        setMetaRow('bizNextOpen', `Today • ${prettyTime}`);
-
-        if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
-          statusSubTextElement.textContent = `Opens in ${formatDuration(minutesAway)}`;
-        } else if (hadAnyOpenEarlierToday(currentMinutes, holidaySchedule)) {
-          statusSubTextElement.textContent = `Opens again today at ${prettyTime}`;
-        } else {
-          statusSubTextElement.textContent = `Opens today at ${prettyTime}`;
+    if (LuxonLibrary && nowInBusinessTimezone) {
+      for (const temporarySchedule of temporaryHours) {
+        if (!isInDateWindow(nowInBusinessTimezone, temporarySchedule.startDate, temporarySchedule.endDate)) {
+          continue;
         }
 
-        return;
-      }
-    }
+        for (const range of temporarySchedule.ranges) {
+          const openMinutes = timeStringToMinutes(range.open);
+          if (openMinutes == null) continue;
 
-    /* Holiday fully closed for the rest of today */
-    let nextOpeningAfterHoliday = getNextOpeningInfo(
-      nowInBusinessTimezone,
-      currentMinutes,
-      regularHours,
-      holidayHours,
-      {
-        startOffset: 1,
-        minMinutesToday: currentMinutes
-      }
-    );
+          const startDateTime = nowInBusinessTimezone.startOf('day').plus({
+            minutes: openMinutes
+          });
 
-    if (nextOpeningAfterHoliday) {
-      const prettyTime = formatDisplayTimeBusinessInfo(
-        nextOpeningAfterHoliday.timeString,
-        visitorTimezone
-      );
+          const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, startDateTime);
 
-      setMetaRow('bizNextOpen', `${nextOpeningAfterHoliday.dayLabel} • ${prettyTime}`);
-
-      if (nextOpeningAfterHoliday.offset === 1) {
-        statusSubTextElement.textContent = `Reopens tomorrow at ${prettyTime}`;
-      } else {
-        statusSubTextElement.textContent = `Reopens ${nextOpeningAfterHoliday.dayLabel} at ${prettyTime}`;
-      }
-    } else {
-      statusSubTextElement.textContent = '';
-      setMetaRow('bizNextOpen', '—');
-    }
-
-    return;
-  }
-
-  /* ---------------------------------
-     TEMPORARY HOURS STARTING SOON
-  --------------------------------- */
-  let soonestTemporaryStart = null;
-
-  if (LuxonLibrary && nowInBusinessTimezone) {
-    for (const temporarySchedule of temporaryHours) {
-      if (!isInDateWindow(nowInBusinessTimezone, temporarySchedule.startDate, temporarySchedule.endDate)) {
-        continue;
-      }
-
-      for (const range of temporarySchedule.ranges) {
-        const openMinutes = timeStringToMinutes(range.open);
-        if (openMinutes == null) continue;
-
-        const startDateTime = nowInBusinessTimezone.startOf('day').plus({
-          minutes: openMinutes
-        });
-
-        const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, startDateTime);
-
-        if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
-          if (soonestTemporaryStart == null || minutesAway < soonestTemporaryStart) {
-            soonestTemporaryStart = minutesAway;
+          if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+            if (soonestTemporaryStart == null || minutesAway < soonestTemporaryStart) {
+              soonestTemporaryStart = minutesAway;
+            }
           }
         }
       }
     }
-  }
 
-  if (soonestTemporaryStart != null) {
-    statusSubTextElement.textContent = `Temporarily unavailable in ${formatDuration(soonestTemporaryStart)}`;
-    return;
-  }
-
-  /* ---------------------------------
-     REGULAR OPEN STATE
-  --------------------------------- */
-  if (finalStatus === 'Open') {
-    const activeRange = baseActiveRange;
-
-    if (activeRange && LuxonLibrary && nowInBusinessTimezone) {
-      const closeMinutes = timeStringToMinutes(activeRange.close);
-
-      if (closeMinutes != null) {
-        const closeDateTime = nowInBusinessTimezone.startOf('day').plus({
-          minutes: closeMinutes
-        });
-
-        const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, closeDateTime);
-
-        if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
-          statusSubTextElement.textContent = `Closes in ${formatDuration(minutesAway)}`;
-        } else {
-          statusSubTextElement.textContent =
-            `Open until ${formatDisplayTimeBusinessInfo(activeRange.close, visitorTimezone)}`;
-        }
-      } else {
-        statusSubTextElement.textContent = '';
-      }
+    if (soonestTemporaryStart != null) {
+      statusSubTextElement.textContent = `Temporarily unavailable in ${formatDuration(soonestTemporaryStart)}`;
+      return;
     }
 
-    setMetaRow('bizNextOpen', '—');
-    return;
-  }
+    /* ---------------------------------
+       REGULAR OPEN STATE
+    --------------------------------- */
+    if (finalStatus === 'Open') {
+      const activeRange = baseActiveRange;
 
-  /* ---------------------------------
-     GENERAL CLOSED STATE
-  --------------------------------- */
-  if (!LuxonLibrary || !nowInBusinessTimezone) {
+      if (activeRange && LuxonLibrary && nowInBusinessTimezone) {
+        const closeMinutes = timeStringToMinutes(activeRange.close);
+
+        if (closeMinutes != null) {
+          const closeDateTime = nowInBusinessTimezone.startOf('day').plus({
+            minutes: closeMinutes
+          });
+
+          const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, closeDateTime);
+
+          if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+            statusSubTextElement.textContent = `Closes in ${formatDuration(minutesAway)}`;
+          } else {
+            statusSubTextElement.textContent =
+              `Open until ${formatDisplayTimeBusinessInfo(activeRange.close, visitorTimezone)}`;
+          }
+        } else {
+          statusSubTextElement.textContent = '';
+        }
+      }
+
+      setMetaRow('bizNextOpen', '—');
+      return;
+    }
+
+    /* ---------------------------------
+       GENERAL CLOSED STATE
+    --------------------------------- */
+    if (!LuxonLibrary || !nowInBusinessTimezone) {
+      statusSubTextElement.textContent = '';
+      setMetaRow('bizNextOpen', '—');
+      return;
+    }
+
+    for (let offset = 0; offset < 7; offset += 1) {
+      const scheduleObject = getScheduleForOffset(
+        nowInBusinessTimezone,
+        offset,
+        regularHours,
+        holidayHours
+      );
+
+      if (!scheduleObject) continue;
+
+      const schedule = scheduleObject.schedule;
+      if (!schedule || schedule.isClosed || !schedule.ranges.length) continue;
+
+      const nextOpenTime = getNextOpenForDay(currentMinutes, offset, scheduleObject);
+      if (!nextOpenTime) continue;
+
+      const prettyTime = formatDisplayTimeBusinessInfo(nextOpenTime, visitorTimezone);
+
+      if (offset === 0) {
+        setMetaRow('bizNextOpen', `Today • ${prettyTime}`);
+      } else if (offset === 1) {
+        setMetaRow('bizNextOpen', `Tomorrow • ${prettyTime}`);
+      } else {
+        setMetaRow('bizNextOpen', `${capitalizeFirstLetter(scheduleObject.labelDay)} • ${prettyTime}`);
+      }
+
+      const openMinutes = timeStringToMinutes(nextOpenTime);
+      const openDateTime = scheduleObject.targetDay.plus({
+        minutes: openMinutes == null ? 0 : openMinutes
+      });
+
+      const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, openDateTime);
+
+      if (offset === 0 && minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+        statusSubTextElement.textContent = `Opens in ${formatDuration(minutesAway)}`;
+        return;
+      }
+
+      if (offset === 0) {
+        const reopensLaterToday = hadAnyOpenEarlierToday(currentMinutes, schedule);
+        statusSubTextElement.textContent = reopensLaterToday
+          ? `Opens again at ${prettyTime}`
+          : `Opens today at ${prettyTime}`;
+        return;
+      }
+
+      if (offset === 1) {
+        statusSubTextElement.textContent = `Opens tomorrow at ${prettyTime}`;
+        return;
+      }
+
+      statusSubTextElement.textContent =
+        `Opens ${capitalizeFirstLetter(scheduleObject.labelDay)} at ${prettyTime}`;
+      return;
+    }
+
     statusSubTextElement.textContent = '';
     setMetaRow('bizNextOpen', '—');
-    return;
-  }
+  })();
 
-  for (let offset = 0; offset < 7; offset += 1) {
-    const scheduleObject = getScheduleForOffset(
-      nowInBusinessTimezone,
-      offset,
-      regularHours,
-      holidayHours
-    );
-
-    if (!scheduleObject) continue;
-
-    const schedule = scheduleObject.schedule;
-    if (!schedule || schedule.isClosed || !schedule.ranges.length) continue;
-
-    const nextOpenTime = getNextOpenForDay(currentMinutes, offset, scheduleObject);
-    if (!nextOpenTime) continue;
-
-    const prettyTime = formatDisplayTimeBusinessInfo(nextOpenTime, visitorTimezone);
-
-    if (offset === 0) {
-      setMetaRow('bizNextOpen', `Today • ${prettyTime}`);
-    } else if (offset === 1) {
-      setMetaRow('bizNextOpen', `Tomorrow • ${prettyTime}`);
-    } else {
-      setMetaRow('bizNextOpen', `${capitalizeFirstLetter(scheduleObject.labelDay)} • ${prettyTime}`);
-    }
-
-    const openMinutes = timeStringToMinutes(nextOpenTime);
-    const openDateTime = scheduleObject.targetDay.plus({
-      minutes: openMinutes == null ? 0 : openMinutes
-    });
-
-    const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, openDateTime);
-
-    if (offset === 0 && minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
-      statusSubTextElement.textContent = `Opens in ${formatDuration(minutesAway)}`;
-      return;
-    }
-
-    if (offset === 0) {
-      const reopensLaterToday = hadAnyOpenEarlierToday(currentMinutes, schedule);
-      statusSubTextElement.textContent = reopensLaterToday
-        ? `Opens again at ${prettyTime}`
-        : `Opens today at ${prettyTime}`;
-      return;
-    }
-
-    if (offset === 1) {
-      statusSubTextElement.textContent = `Opens tomorrow at ${prettyTime}`;
-      return;
-    }
-
-    statusSubTextElement.textContent =
-      `Opens ${capitalizeFirstLetter(scheduleObject.labelDay)} at ${prettyTime}`;
-    return;
-  }
-
-  statusSubTextElement.textContent = '';
-  setMetaRow('bizNextOpen', '—');
-})();
+  setChipAndDot(finalStatus, finalType);
+  setTrafficLight(finalStatus, finalType, statusSubTextElement.textContent || '');
 
   /* -------------------------
      REGULAR HOURS RENDER
@@ -2993,6 +3045,7 @@ function renderErrorState(message = 'Error Loading') {
   setMetaRow('bizNextOpen', '—');
   setMetaRow('bizTodayHours', '—');
   setChipAndDot('Temporarily Unavailable', 'override');
+  setTrafficLight('Temporarily Unavailable', 'override', '');
 }
 
 function renderFromCache() {
