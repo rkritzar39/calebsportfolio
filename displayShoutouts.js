@@ -1651,6 +1651,7 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
    - Status chip updates correctly
    - Traffic light status system
    - Today's hours use the correct base schedule during temporary hours
+   - Temporary-hours warning window set to 15 minutes
 
    Assumptions:
    - Luxon is loaded as `luxon` (optional fallback supported)
@@ -1662,6 +1663,12 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
        #bizLightYellow
        #bizLightRed
 ======================================== */
+
+/* -------------------------
+   CONFIGURATION
+------------------------- */
+const TEMPORARY_WARNING_MINUTES = 15;
+const GENERAL_WARNING_MINUTES = 30;
 
 /* -------------------------
    HELPERS
@@ -1826,7 +1833,7 @@ function setLocalTimeLine(visitorTimezone) {
   }
 }
 
-function setChipAndDot(statusText, statusType = 'regular') {
+function setStatusChip(statusText, statusType = 'regular') {
   const chip = document.getElementById('bizChip');
   if (!chip) return;
 
@@ -1868,43 +1875,36 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     light.classList.remove('is-active', 'is-blinking');
   });
 
-  // Holiday closed all day = blinking red
   if (statusType === 'holiday' && statusText !== 'Open') {
     redLight.classList.add('is-active', 'is-blinking');
     return;
   }
 
-  // Temporary unavailable = blinking yellow
   if (statusType === 'temporary') {
     yellowLight.classList.add('is-active', 'is-blinking');
     return;
   }
 
-  // Warning states = solid yellow
   if (
     subStatusText.includes('Opens in') ||
     subStatusText.includes('Closes in') ||
     subStatusText.includes('Opens again today') ||
-    subStatusText.includes('Opens again at') ||
-    subStatusText.includes('Temporarily unavailable in')
+    subStatusText.includes('Opens again at')
   ) {
     yellowLight.classList.add('is-active');
     return;
   }
 
-  // Holiday hours active = solid yellow
   if (statusType === 'holiday' && statusText === 'Open') {
     yellowLight.classList.add('is-active');
     return;
   }
 
-  // Normal open = solid green
   if (statusText === 'Open') {
     greenLight.classList.add('is-active');
     return;
   }
 
-  // Default closed = solid red
   redLight.classList.add('is-active');
 }
 
@@ -2374,7 +2374,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     statusMainTextElement.className = 'status-main-text status-unavailable';
     statusReasonElement.textContent = 'Missing timezone';
     statusSubTextElement.textContent = '';
-    setChipAndDot('Temporarily Unavailable', 'override');
+    setStatusChip('Temporarily Unavailable', 'override');
     setTrafficLight('Temporarily Unavailable', 'override', '');
     return;
   }
@@ -2529,8 +2529,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
      SUB STATUS AND NEXT OPEN
   ------------------------- */
   (function setSubStatusAndNextOpen() {
-    const thresholdMinutes = 30;
-
     statusSubTextElement.textContent = '';
     setMetaRow('bizNextOpen', '—');
 
@@ -2572,7 +2570,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       setMetaRow('bizNextOpen', `Today • ${reopeningTimeText}`);
 
-      if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+      if (minutesAway != null && minutesAway > 0 && minutesAway <= TEMPORARY_WARNING_MINUTES) {
         statusSubTextElement.textContent = `Reopens in ${formatDuration(minutesAway)}`;
       } else {
         statusSubTextElement.textContent = `Reopens today at ${reopeningTimeText}`;
@@ -2599,7 +2597,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       const holidaySchedule = baseSchedule;
       const holidayActiveRange = findActiveRange(currentMinutes, holidaySchedule.ranges);
 
-      /* Holiday open now */
       if (finalStatus === 'Open' && holidayActiveRange) {
         const closeMinutes = timeStringToMinutes(holidayActiveRange.close);
 
@@ -2621,7 +2618,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
             }
           );
 
-          if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+          if (minutesAway != null && minutesAway > 0 && minutesAway <= GENERAL_WARNING_MINUTES) {
             statusSubTextElement.textContent = `Closes in ${formatDuration(minutesAway)}`;
           } else {
             statusSubTextElement.textContent =
@@ -2642,7 +2639,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         return;
       }
 
-      /* Holiday closed but opens later today */
       if (!holidaySchedule.isClosed && holidaySchedule.ranges.length) {
         const nextHolidayOpeningToday = getNextOpenForDay(
           currentMinutes,
@@ -2666,7 +2662,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
           setMetaRow('bizNextOpen', `Today • ${prettyTime}`);
 
-          if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+          if (minutesAway != null && minutesAway > 0 && minutesAway <= GENERAL_WARNING_MINUTES) {
             statusSubTextElement.textContent = `Opens in ${formatDuration(minutesAway)}`;
           } else if (hadAnyOpenEarlierToday(currentMinutes, holidaySchedule)) {
             statusSubTextElement.textContent = `Opens again today at ${prettyTime}`;
@@ -2678,7 +2674,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       }
 
-      /* Holiday fully closed for the rest of today */
       const nextOpeningAfterHoliday = getNextOpeningInfo(
         nowInBusinessTimezone,
         currentMinutes,
@@ -2713,6 +2708,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
     /* ---------------------------------
        TEMPORARY HOURS STARTING SOON
+       15-minute warning window
     --------------------------------- */
     let soonestTemporaryStart = null;
 
@@ -2732,7 +2728,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
           const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, startDateTime);
 
-          if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+          if (minutesAway != null && minutesAway > 0 && minutesAway <= TEMPORARY_WARNING_MINUTES) {
             if (soonestTemporaryStart == null || minutesAway < soonestTemporaryStart) {
               soonestTemporaryStart = minutesAway;
             }
@@ -2762,7 +2758,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
           const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, closeDateTime);
 
-          if (minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+          if (minutesAway != null && minutesAway > 0 && minutesAway <= GENERAL_WARNING_MINUTES) {
             statusSubTextElement.textContent = `Closes in ${formatDuration(minutesAway)}`;
           } else {
             statusSubTextElement.textContent =
@@ -2819,7 +2815,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, openDateTime);
 
-      if (offset === 0 && minutesAway != null && minutesAway > 0 && minutesAway <= thresholdMinutes) {
+      if (offset === 0 && minutesAway != null && minutesAway > 0 && minutesAway <= GENERAL_WARNING_MINUTES) {
         statusSubTextElement.textContent = `Opens in ${formatDuration(minutesAway)}`;
         return;
       }
@@ -2846,7 +2842,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     setMetaRow('bizNextOpen', '—');
   })();
 
-  setChipAndDot(finalStatus, finalType);
+  setStatusChip(finalStatus, finalType);
   setTrafficLight(finalStatus, finalType, statusSubTextElement.textContent || '');
 
   /* -------------------------
@@ -3051,7 +3047,7 @@ function renderErrorState(message = 'Error Loading') {
 
   setMetaRow('bizNextOpen', '—');
   setMetaRow('bizTodayHours', '—');
-  setChipAndDot('Temporarily Unavailable', 'override');
+  setStatusChip('Temporarily Unavailable', 'override');
   setTrafficLight('Temporarily Unavailable', 'override', '');
 }
 
