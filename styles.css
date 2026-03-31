@@ -434,7 +434,7 @@ body.reduced-motion .mouse-trail-container {
 
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
-/* Full version with Onyx status styling    */
+/* (Original layout, only status restyled)  */
 /* ======================================== */
 
 .profile-section {
@@ -482,12 +482,9 @@ body.reduced-motion .mouse-trail-container {
 	top: 87%;
 	left: 87%;
 	transform: translate(-50%, -50%);
-	transition:
-		transform 0.25s ease,
-		box-shadow 0.25s ease,
-		border-color 0.25s ease,
-		background 0.25s ease;
+	transition: all 0.3s ease;
 
+	/* onyx shell */
 	padding: 2px;
 	background:
 		linear-gradient(
@@ -496,12 +493,10 @@ body.reduced-motion .mouse-trail-container {
 			transparent 60%
 		),
 		color-mix(in srgb, var(--content-bg) 88%, transparent);
-
-	border: 2px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+	border: 2px solid color-mix(in srgb, var(--border-color) 78%, transparent);
 	box-shadow:
 		0 4px 12px color-mix(in srgb, var(--shadow-color) 40%, transparent),
 		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
-
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
 	overflow: hidden;
@@ -515,7 +510,7 @@ body.reduced-motion .mouse-trail-container {
 	background: currentColor;
 	box-shadow:
 		inset 0 1px 1px rgba(255,255,255,0.18),
-		0 0 10px currentColor;
+		0 0 8px currentColor;
 	opacity: 0.95;
 }
 
@@ -537,10 +532,6 @@ body.reduced-motion .mouse-trail-container {
 .profile-status-container.status-idle { color: #ffc107; }
 .profile-status-container.status-dnd { color: #dc3545; }
 .profile-status-container.status-offline { color: #747f8d; }
-
-.profile-pic-wrapper:hover .profile-status-container {
-	transform: translate(-50%, -50%) scale(1.04);
-}
 
 /* --- Username & Verified --- */
 .username-checkmark {
@@ -573,14 +564,13 @@ body.reduced-motion .mouse-trail-container {
 	display: none;
 	font-size: 0.85rem;
 	font-weight: 700;
-	margin-top: 0.45rem;
-	padding: 0.42em 0.9em;
+	margin-top: 0.35rem;
+	padding: 0.32em 0.8em;
 	border-radius: 999px;
 	line-height: 1;
-	letter-spacing: 0.02em;
-	position: relative;
-	overflow: hidden;
+	letter-spacing: 0.01em;
 
+	/* onyx badge */
 	background:
 		linear-gradient(
 			180deg,
@@ -588,26 +578,12 @@ body.reduced-motion .mouse-trail-container {
 			transparent 58%
 		),
 		color-mix(in srgb, var(--content-bg) 88%, transparent);
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 76%, transparent);
 	box-shadow:
-		0 6px 16px color-mix(in srgb, var(--shadow-color) 34%, transparent),
+		0 4px 12px color-mix(in srgb, var(--shadow-color) 32%, transparent),
 		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
-
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-}
-
-.profile-status-text::before {
-	content: "";
-	display: inline-block;
-	width: 0.52em;
-	height: 0.52em;
-	border-radius: 50%;
-	margin-right: 0.5em;
-	vertical-align: middle;
-	background: currentColor;
-	box-shadow: 0 0 8px currentColor;
 }
 
 .profile-status-text.status-online {
@@ -657,9 +633,9 @@ body.reduced-motion .mouse-trail-container {
 }
 
 .settings-button { top: 1.25rem; right: 1.25rem; }
-.merch-button { top: 1.25rem; left: 1.25rem; }
-.blog-button { bottom: 1.25rem; left: 1.25rem; }
-.tracker-button { bottom: 1.25rem; right: 1.25rem; }
+.merch-button    { top: 1.25rem; left: 1.25rem; }
+.blog-button     { bottom: 1.25rem; left: 1.25rem; }
+.tracker-button  { bottom: 1.25rem; right: 1.25rem; }
 
 .corner-button:hover,
 .corner-button:focus-visible {
@@ -699,25 +675,20 @@ a.corner-button {
 		padding: 1.5rem;
 		padding-bottom: 4rem;
 	}
-
 	.profile-pic-wrapper {
 		--profile-pic-size: 7.5rem;
 	}
-
 	.profile-status-container {
 		display: none;
 	}
-
 	.profile-status-text {
 		display: block;
 		flex-basis: 100%;
 	}
-
 	.corner-button {
 		width: 2.375rem;
 		height: 2.375rem;
 	}
-
 	.profile-bio {
 		font-size: 0.95rem;
 	}
@@ -729,40 +700,19 @@ a.corner-button {
 		padding-bottom: 4rem;
 		margin: 1rem 0;
 	}
-
 	.profile-pic-wrapper {
 		--profile-pic-size: 6.25rem;
 	}
-
 	.corner-button {
 		width: 2.25rem;
 		height: 2.25rem;
 		top: 0.9375rem;
 	}
-
-	.blog-button {
-		top: auto;
-		bottom: 0.9375rem;
-		left: 0.9375rem;
-	}
-
-	.tracker-button {
-		top: auto;
-		bottom: 0.9375rem;
-		right: 0.9375rem;
-	}
-
-	.settings-button {
-		right: 0.9375rem;
-	}
-
-	.merch-button {
-		left: 0.9375rem;
-	}
-
-	.profile-bio {
-		font-size: 0.9rem;
-	}
+	.blog-button { top: auto; bottom: 0.9375rem; left: 0.9375rem; }
+	.tracker-button { top: auto; bottom: 0.9375rem; right: 0.9375rem; }
+	.settings-button { right: 0.9375rem; }
+	.merch-button { left: 0.9375rem; }
+	.profile-bio { font-size: 0.9rem; }
 }
 
 /* ============================================= */
