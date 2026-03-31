@@ -3698,7 +3698,7 @@ body.dark-mode .bubble {
 }
 
 /* ===================================================== */
-/* Apple Vision Pro – Spatial Glass Scroll Orb (Final)   */
+/* Apple Vision Pro – Spatial Glass Scroll Orb (Refined) */
 /* ===================================================== */
 
 .scroll-to-top {
@@ -3710,9 +3710,15 @@ body.dark-mode .bubble {
 	height: 64px;
 	border-radius: 50%;
 
-	/* Spatial glass */
-	background: color-mix(in srgb, var(--content-bg) 60%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 10%, transparent),
+			transparent 42%
+		),
+		color-mix(in srgb, var(--content-bg) 68%, transparent);
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 48%, transparent);
 
 	backdrop-filter: blur(32px) saturate(180%);
 	-webkit-backdrop-filter: blur(32px) saturate(180%);
@@ -3728,26 +3734,61 @@ body.dark-mode .bubble {
 	z-index: 9999;
 	cursor: pointer;
 
-	/* Vision Pro depth */
 	box-shadow:
-		0 0 0.7px rgba(255,255,255,0.65) inset,
-		0 1px 3px rgba(0,0,0,0.18),
-		0 12px 28px rgba(0,0,0,0.45),
-		0 32px 60px rgba(0,0,0,0.35);
+		0 0 0.8px rgba(255,255,255,0.55) inset,
+		0 2px 6px rgba(0,0,0,0.20),
+		0 12px 28px rgba(0,0,0,0.38),
+		0 24px 48px rgba(0,0,0,0.28);
 
 	transition:
 		transform .25s ease,
 		box-shadow .3s ease,
-		opacity .4s ease;
+		opacity .4s ease,
+		background .3s ease,
+		border-color .3s ease;
+}
+
+.scroll-to-top::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: 0.38;
+	pointer-events: none;
+}
+
+.scroll-to-top::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	pointer-events: none;
+	background: radial-gradient(
+		circle at 50% 100%,
+		rgba(0,0,0,0.18),
+		transparent 68%
+	);
+	opacity: 0.35;
 }
 
 .scroll-to-top:hover {
 	transform: scale(1.04);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 12%, transparent),
+			transparent 42%
+		),
+		color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
+	border-color: color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
 	box-shadow:
-		0 0 1px rgba(255,255,255,0.8) inset,
-		0 2px 6px rgba(0,0,0,0.22),
-		0 18px 36px rgba(0,0,0,0.55),
-		0 40px 70px rgba(0,0,0,0.45);
+		0 0 1px rgba(255,255,255,0.72) inset,
+		0 3px 8px rgba(0,0,0,0.22),
+		0 16px 34px rgba(0,0,0,0.44),
+		0 30px 58px rgba(0,0,0,0.34),
+		0 0 14px color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
 .scroll-to-top.hidden {
@@ -3756,7 +3797,7 @@ body.dark-mode .bubble {
 }
 
 /* ===================================================== */
-/* Progress Ring – Vision Pro                            */
+/* Progress Ring                                         */
 /* ===================================================== */
 
 .progress-ring {
@@ -3773,13 +3814,13 @@ body.dark-mode .bubble {
 	fill: none;
 	stroke: color-mix(in srgb, var(--accent-color) 18%, transparent);
 	stroke-width: 3.3;
-	opacity: 0.22;
+	opacity: 0.2;
 	stroke-linecap: round;
 }
 
 .progress-indicator {
 	fill: none;
-	stroke: var(--accent-color);
+	stroke: color-mix(in srgb, var(--accent-color) 88%, white 6%);
 	stroke-width: 3.3;
 	stroke-linecap: round;
 
@@ -3787,23 +3828,22 @@ body.dark-mode .bubble {
 	stroke-dashoffset: 141;
 
 	transition: stroke-dashoffset .25s ease;
-	filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 45%, transparent));
+	filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 32%, transparent));
 }
 
 /* ===================================================== */
-/* Chevron Icon – Vision Pro spatial arrow               */
+/* Chevron Icon                                          */
 /* ===================================================== */
 
 .arrow-icon {
 	position: absolute;
-	top: 38%;   /* Moved up for perfect spacing */
+	top: 38%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 
 	width: 20px;
 	height: 20px;
 
-	/* Inline SVG as background-image */
 	background-image: url("data:image/svg+xml;utf8,\
 	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>\
 	  <path d='M6 14L12 8L18 14' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/>\
@@ -3812,10 +3852,9 @@ body.dark-mode .bubble {
 	background-repeat: no-repeat;
 	background-position: center;
 
-	color: var(--accent-color);
-	opacity: 0.95;
+	opacity: 0.94;
 
-	filter: drop-shadow(0 0 4px rgba(0,0,0,0.28));
+	filter: drop-shadow(0 0 4px rgba(0,0,0,0.24));
 
 	transition:
 		transform .22s ease,
@@ -3826,35 +3865,45 @@ body.dark-mode .bubble {
 .scroll-to-top:hover .arrow-icon {
 	opacity: 1;
 	transform: translate(-50%, -52%);
-	filter: drop-shadow(0 0 6px rgba(0,0,0,0.35));
+	filter: drop-shadow(0 0 6px rgba(0,0,0,0.30));
 }
 
 /* ===================================================== */
-/* Percentage – Floating VisionOS micro-badge            */
+/* Percentage Badge                                      */
 /* ===================================================== */
 
 .percentage {
 	position: absolute;
-	top: 66%;   /* Lowered slightly for clean spacing */
+	top: 66%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 
 	font-size: 0.48rem;
-	font-weight: 600;
+	font-weight: 650;
+	letter-spacing: 0.02em;
 
-	color: var(--accent-color);
+	color: color-mix(in srgb, var(--accent-color) 80%, var(--text-color));
 	opacity: 0;
 
-	padding: 1.5px 4.5px;
-	border-radius: 4px;
+	padding: 2px 5px;
+	border-radius: 999px;
 
-	background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 10%, transparent),
+			transparent 60%
+		),
+		color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+
+	border: 1px solid color-mix(in srgb, var(--accent-color) 24%, transparent);
+
 	backdrop-filter: blur(6px);
 	-webkit-backdrop-filter: blur(6px);
 
 	box-shadow:
-		0 0 0.3px rgba(255,255,255,0.5) inset,
-		0 1px 2px rgba(0,0,0,0.18);
+		0 0 0.4px rgba(255,255,255,0.42) inset,
+		0 2px 5px rgba(0,0,0,0.18);
 
 	pointer-events: none;
 	transition: opacity .35s ease;
@@ -3873,11 +3922,13 @@ body.dark-mode .bubble {
 		width: 56px;
 		height: 56px;
 	}
+
 	.arrow-icon {
 		width: 17px;
 		height: 17px;
 		top: 38%;
 	}
+
 	.percentage {
 		font-size: 0.44rem;
 		top: 66%;
