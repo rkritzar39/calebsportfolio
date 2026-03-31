@@ -626,7 +626,7 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 💎 The Glass Dock Container */
+/* 💎 ONYX GLASS DOCK CONTAINER */
 /* ============================================= */
 .onyx-dock {
   position: fixed;
@@ -638,18 +638,27 @@ a.corner-button {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px;
+  padding: 10px 12px;
 
-  /* The Vision OS Frosted Glass Effect */
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 10%, transparent),
+      transparent 55%
+    ),
+    color-mix(in srgb, var(--content-bg) 90%, transparent);
+
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: var(--dock-shadow);
-  
-  /* Smooth container entry */
+  border: 1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+
+  box-shadow:
+    0 14px 34px color-mix(in srgb, var(--shadow-color) 62%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, black 14%, transparent);
+
   animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
@@ -659,7 +668,7 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🛸 The Interactive Items */
+/* 🛸 THE INTERACTIVE ITEMS */
 /* ============================================= */
 .dock-item {
   position: relative;
@@ -667,30 +676,36 @@ a.corner-button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+
   min-width: 60px;
-  padding: 12px 20px;
+  padding: 12px 18px;
   border-radius: 999px;
-  
+
   text-decoration: none;
-  color: var(--text-secondary);
+  color: var(--secondary-text);
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  
-  /* Clip the lighting glow */
+
+  transition:
+    transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+    background var(--transition-medium),
+    color var(--transition-medium),
+    box-shadow var(--transition-medium),
+    border-color var(--transition-medium);
+
   overflow: hidden;
-  isolation: isolate; /* Create new stacking context for glow */
+  isolation: isolate;
+  border: 1px solid transparent;
 }
 
-/* --- 1. The Spotlight Glow (Vision OS Signature) --- */
+/* Soft reflective hover glow */
 .dock-item::before {
   content: "";
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
   z-index: -1;
   background: radial-gradient(
-    80px circle at var(--x, 50%) var(--y, 50%),
-    rgba(0, 0, 0, 0.08),
+    90px circle at var(--x, 50%) var(--y, 50%),
+    color-mix(in srgb, white 12%, transparent),
     transparent 100%
   );
   opacity: 0;
@@ -701,50 +716,83 @@ a.corner-button {
   opacity: 1;
 }
 
-/* --- 2. Typography & Icons --- */
+/* ============================================= */
+/* ✍️ TYPOGRAPHY & ICONS */
+/* ============================================= */
 .dock-label {
   font-size: 11px;
   font-weight: 600;
   margin-top: 4px;
-  opacity: 0.8;
-  transition: transform 0.2s;
+  opacity: 0.82;
+  transition: transform 0.2s, opacity 0.2s;
 }
 
 .dock-icon {
   width: 24px;
   height: 24px;
   stroke-width: 2px;
-  transition: color 0.3s ease, transform 0.1s linear;
-  
-  /* PARALLAX PHYSICS: Icons move slightly opposite to mouse */
+  stroke: currentColor;
+  transition:
+    color 0.3s ease,
+    transform 0.1s linear,
+    stroke-width 0.2s ease;
+
   transform: translate(calc(var(--dx) * 5px), calc(var(--dy) * 5px));
 }
 
 /* ============================================= */
-/* ✨ Active & Hover States */
+/* ✨ HOVER */
 /* ============================================= */
-
-/* Hover Lift */
 .dock-item:hover {
   transform: scale(1.08) translateY(-2px);
-  color: var(--text-primary);
+  color: var(--text-color);
+  background: color-mix(in srgb, var(--content-bg) 82%, transparent);
+  border-color: color-mix(in srgb, var(--border-color) 70%, transparent);
+  box-shadow:
+    0 6px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
 }
 
-/* Active State (The "Pill" sits ON TOP of glass) */
+.dock-item:hover .dock-label {
+  opacity: 1;
+}
+
+/* ============================================= */
+/* 🔵 ACTIVE */
+/* ============================================= */
 .dock-item.active {
-  background: var(--accent-color); /* Full accent color */
-  color: var(--accent-color);      /* Text matches accent */
-  box-shadow: var(--active-shadow);
-  transform: scale(1);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 10%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, var(--accent-color) 18%, var(--content-bg));
+
+  color: var(--text-color);
+  border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-color) 24%, transparent),
+    0 8px 22px color-mix(in srgb, var(--shadow-color) 50%, transparent),
+    0 0 14px color-mix(in srgb, var(--accent-color) 16%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+
+  transform: scale(1.02);
 }
 
 .dock-item.active .dock-icon {
-  stroke: var(--accent-color);     /* Icon matches accent */
-  stroke-width: 2.5px;
+  stroke: var(--accent-color);
+  stroke-width: 2.4px;
+}
+
+.dock-item.active .dock-label {
+  color: var(--text-color);
+  opacity: 1;
 }
 
 .dock-item.active::before {
-  display: none; /* No hover glow for active tab */
+  display: none;
 }
 
 /* ======================================================= */
