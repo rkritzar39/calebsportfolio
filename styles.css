@@ -1687,75 +1687,177 @@ body.dark-mode .bubble {
 
 /* ========================================================= */
 /* == PRESIDENT SECTION – SINGLE GLASS CONTAINER == */
+/* == Refined Onyx Version                               == */
 /* ========================================================= */
 .president-section {
-  position: relative;
-  background: var(--content-bg);
-  background-image: var(--bubble-gradient), var(--liquid-refraction);
-  border-radius: var(--radius-xl);
-  padding: 30px;
-  margin-bottom: 32px;
-  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  color: var(--text-color);
-  overflow: hidden;
+	position: relative;
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient), var(--liquid-refraction);
+	border-radius: var(--radius-xl);
+	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+	padding: 30px;
+	margin-bottom: 32px;
+	color: var(--text-color);
+	overflow: hidden;
+
+	box-shadow:
+		var(--bubble-shadow),
+		var(--bubble-highlight);
+
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
 }
 
 .president-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--liquid-reflection);
-  mix-blend-mode: soft-light;
-  opacity: 0.5;
-  pointer-events: none;
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.president-section::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: radial-gradient(
+		circle at 50% 100%,
+		color-mix(in srgb, black 16%, transparent),
+		transparent 65%
+	);
+	opacity: 0.4;
 }
 
 /* Layout inside president section */
 .president-info {
-  display: flex;
-  align-items: center;
-  gap: 30px;
+	position: relative;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	gap: 30px;
 }
+
 .president-photo {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  border: 2px solid rgba(255,255,255,0.08);
-  box-shadow: var(--bubble-shadow);
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+
+	border: 2px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+	box-shadow:
+		0 14px 30px color-mix(in srgb, var(--shadow-color) 55%, transparent),
+		0 0 0 6px color-mix(in srgb, var(--content-bg) 55%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
 }
+
 .president-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
 }
-.president-name { font-size: 1.3rem; font-weight: 700; color: var(--text-color); margin:0; }
-.president-title { font-size: 1rem; font-style: italic; color: var(--secondary-text); margin:4px 0 12px; }
-.president-description { font-size: 0.9rem; line-height: 1.6; color: var(--text-color); opacity:0.9; margin:0; }
+
+.president-name {
+	font-size: 1.35rem;
+	font-weight: 750;
+	letter-spacing: -0.02em;
+	line-height: 1.15;
+	color: var(--text-color);
+	margin: 0;
+}
+
+.president-title {
+	font-size: 1rem;
+	font-style: italic;
+	line-height: 1.4;
+	color: var(--secondary-text);
+	margin: 6px 0 14px;
+}
+
+.president-description {
+	font-size: 0.96rem;
+	line-height: 1.7;
+	color: var(--text-color);
+	opacity: 0.92;
+	margin: 0;
+	max-width: 62ch;
+}
 
 /* ======================== */
 /* Responsive Design */
 /* ======================== */
 @media screen and (max-width: 768px) {
-	.president-section { padding: 20px; }
-	.president-info { gap: 20px; }
-	.president-photo { width: 120px; height: 120px; }
-	.president-name { font-size: var(--font-size-base, 20px); } /* ✨ Updated for text scaling ✨ */
-	.president-title { font-size: calc(var(--font-size-base, 20px) * 0.8); } /* ✨ Updated for text scaling ✨ */
+	.president-section {
+		padding: 22px;
+	}
+
+	.president-info {
+		gap: 20px;
+		align-items: flex-start;
+	}
+
+	.president-photo {
+		width: 120px;
+		height: 120px;
+	}
+
+	.president-name {
+		font-size: clamp(1.15rem, 3.4vw, 1.3rem);
+	}
+
+	.president-title {
+		font-size: calc(var(--font-size-base, 16px) * 0.9);
+		margin: 5px 0 12px;
+	}
+
+	.president-description {
+		font-size: calc(var(--font-size-base, 16px) * 0.92);
+		line-height: 1.65;
+	}
 }
 
 @media screen and (max-width: 480px) {
-	.president-section { padding: 20px; }
+	.president-section {
+		padding: 20px;
+	}
+
 	.president-info {
 		flex-direction: column;
+		align-items: center;
 		text-align: center;
+		gap: 16px;
 	}
-	.president-photo { width: 100px; height: 100px; margin-bottom: 15px; }
-	.president-description { font-size: calc(var(--font-size-base, 20px) * 0.7); } /* ✨ Updated for text scaling ✨ */
+
+	.president-photo {
+		width: 100px;
+		height: 100px;
+		margin-bottom: 0;
+	}
+
+	.president-details {
+		align-items: center;
+	}
+
+	.president-name {
+		font-size: clamp(1.1rem, 5vw, 1.25rem);
+	}
+
+	.president-title {
+		font-size: calc(var(--font-size-base, 16px) * 0.82);
+		margin: 4px 0 10px;
+	}
+
+	.president-description {
+		font-size: calc(var(--font-size-base, 16px) * 0.84);
+		line-height: 1.6;
+		max-width: 100%;
+	}
 }
 
 /* ======================================== */
