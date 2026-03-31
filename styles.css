@@ -4365,14 +4365,63 @@ body.dark-mode .bubble {
 }
 
 /* ======================== */
-/* Legal Section            */
+/* Legal Section — Onyx Redesign */
 /* ======================== */
+
 .legal-section {
-  padding: 25px;
+  position: relative;
+  padding: 26px;
   margin: 35px 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 8%, transparent),
+      transparent 42%
+    ),
+    var(--bubble-gradient),
+    color-mix(in srgb, var(--content-bg) 92%, transparent);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 42%, transparent);
+  border-radius: var(--radius-xl);
+
+  box-shadow:
+    var(--bubble-shadow),
+    var(--bubble-highlight),
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+
+  backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%)) contrast(110%);
+  -webkit-backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%)) contrast(110%);
+
+  overflow: hidden;
+}
+
+.legal-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--liquid-reflection);
+  mix-blend-mode: soft-light;
+  opacity: 0.34;
+}
+
+.legal-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 100%,
+    color-mix(in srgb, black 14%, transparent),
+    transparent 68%
+  );
+  opacity: 0.28;
 }
 
 /* Header */
@@ -4380,11 +4429,11 @@ body.dark-mode .bubble {
   position: relative;
   z-index: 1;
   color: var(--text-color);
-  font-size: 1.3em;
-  font-weight: 700;
+  font-size: 1.28em;
+  font-weight: 750;
   letter-spacing: -0.02em;
   padding-bottom: 12px;
-  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 26%, transparent);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -4392,45 +4441,61 @@ body.dark-mode .bubble {
 
 .legal-header::before {
   content: "⚖️";
-  font-size: 1.2em;
-  opacity: 0.85;
+  font-size: 1.15em;
+  opacity: 0.9;
 }
 
-/* Messages */
+/* Shared alert card */
 .copy-protection-message,
 .legal-protection-message {
   position: relative;
   z-index: 1;
-  padding: 16px 20px;
-  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 14px;
+
+  padding: 16px 18px;
+  border-radius: calc(var(--radius-md) + 2px);
+
   font-size: 0.95em;
   font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: color-mix(in srgb, var(--content-bg) calc(var(--glass-opacity, 1) * 100%), transparent);
-  background-image: var(--bubble-gradient);
-  border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  line-height: 1.55;
+  color: var(--text-color);
+
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 8%, transparent),
+      transparent 48%
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 26%, transparent);
+
   box-shadow:
-    0 6px 18px color-mix(in srgb, var(--shadow-color) 42%, transparent),
+    0 6px 18px color-mix(in srgb, var(--shadow-color) 38%, transparent),
     inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+
   backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%));
+
   transition:
-    background 0.3s ease,
+    transform 0.25s ease,
     box-shadow 0.3s ease,
     border-color 0.3s ease,
-    transform 0.25s ease;
+    background 0.3s ease;
 }
 
 .copy-protection-message:hover,
 .legal-protection-message:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow:
-    0 10px 24px color-mix(in srgb, var(--shadow-color) 50%, transparent),
+    0 10px 24px color-mix(in srgb, var(--shadow-color) 48%, transparent),
     0 0 10px color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
-/* Types */
+/* Accent rail */
 .copy-protection-message {
   border-left: 4px solid #ff4757;
 }
@@ -4439,13 +4504,71 @@ body.dark-mode .bubble {
   border-left: 4px solid #ffa502;
 }
 
-/* Icons */
+/* Icon bubble */
 .copy-protection-message::before,
 .legal-protection-message::before {
   content: "⚠️";
-  font-size: 1.2em;
-  min-width: 24px;
-  opacity: 0.9;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 1rem;
+  line-height: 1;
+
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 12%, transparent),
+      transparent 55%
+    ),
+    color-mix(in srgb, var(--content-bg) 82%, transparent);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 26%, transparent);
+  box-shadow:
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 28%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+
+  opacity: 0.96;
+}
+
+.copy-protection-message::before {
+  box-shadow:
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 28%, transparent),
+    0 0 10px color-mix(in srgb, #ff4757 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+}
+
+.legal-protection-message::before {
+  box-shadow:
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 28%, transparent),
+    0 0 10px color-mix(in srgb, #ffa502 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+}
+
+/* Optional stronger tint by type */
+.copy-protection-message {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 8%, transparent),
+      transparent 48%
+    ),
+    color-mix(in srgb, #ff4757 7%, var(--content-bg));
+  border-color: color-mix(in srgb, #ff4757 20%, var(--border-color));
+}
+
+.legal-protection-message {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 8%, transparent),
+      transparent 48%
+    ),
+    color-mix(in srgb, #ffa502 7%, var(--content-bg));
+  border-color: color-mix(in srgb, #ffa502 20%, var(--border-color));
 }
 
 /* Watermark Footer */
@@ -4453,65 +4576,62 @@ body.dark-mode .bubble {
   position: relative;
   z-index: 1;
   text-align: center;
-  font-size: 0.85em;
+  font-size: 0.84em;
   color: var(--secondary-text);
-  margin-top: 12px;
+  margin-top: 10px;
   padding-top: 12px;
-  border-top: 1px dashed color-mix(in srgb, var(--border-color) 55%, transparent);
-  letter-spacing: 0.3px;
+  border-top: 1px dashed color-mix(in srgb, var(--border-color) 50%, transparent);
+  letter-spacing: 0.25px;
 }
 
 /* ======================== */
 /* Responsive Layout        */
 /* ======================== */
 @media screen and (max-width: 768px) {
-  .version-info-section {
-    padding: 22px;
-  }
-
-  .version-header {
-    font-size: 1.2em;
-  }
-
-  .version-list li {
-    font-size: 0.92em;
-  }
-
   .legal-section {
     padding: 20px;
+    gap: 14px;
   }
 
   .legal-header {
-    font-size: 1.2em;
+    font-size: 1.18em;
+  }
+
+  .copy-protection-message,
+  .legal-protection-message {
+    padding: 14px 16px;
+    font-size: 0.92em;
+    gap: 12px;
+  }
+
+  .watermark-note {
+    font-size: 0.82em;
   }
 }
 
 @media screen and (max-width: 400px) {
-  .version-info-section {
-    padding: 16px;
-  }
-
-  .version-header {
-    font-size: 1.1em;
-  }
-
-  .version-list li::before {
-    left: 10px;
-    width: 8px;
-    height: 8px;
-  }
-
-  .version-list li {
-    padding-left: 30px;
-    font-size: 0.9em;
-  }
-
   .legal-section {
     padding: 16px;
+    gap: 12px;
   }
 
   .legal-header {
-    font-size: 1.1em;
+    font-size: 1.08em;
+  }
+
+  .copy-protection-message,
+  .legal-protection-message {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 13px 14px;
+    font-size: 0.9em;
+  }
+
+  .copy-protection-message::before,
+  .legal-protection-message::before {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
   }
 }
 
