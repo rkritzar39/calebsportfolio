@@ -1652,6 +1652,9 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
    - Traffic light status system
    - Today's hours use the correct base schedule during temporary hours
    - Temporary-hours warning window set to 15 minutes
+   - Visual section state classes:
+       #business-section.state-open / .state-closing / .state-closed
+       #business-section.theme-morning / .theme-day / .theme-night
 
    Assumptions:
    - Luxon is loaded as `luxon` (optional fallback supported)
@@ -1897,9 +1900,9 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
 
   /* Temporary starting soon */
   if (subStatusText.includes('Temporarily unavailable in')) {
-  yellowLight.classList.add('is-active', 'is-blinking');
-  return;
-}
+    yellowLight.classList.add('is-active', 'is-blinking');
+    return;
+  }
 
   /* General warning states */
   if (
@@ -1926,6 +1929,88 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
 
   /* Default closed */
   redLight.classList.add('is-active');
+}
+
+/* -------------------------
+   VISUAL STATE HELPERS
+------------------------- */
+function getBusinessTimeTheme(nowInBusinessTimezone) {
+  if (!nowInBusinessTimezone) return 'day';
+
+  const hour = nowInBusinessTimezone.hour;
+
+  if (hour < 12) return 'morning';
+  if (hour < 19) return 'day';
+  return 'night';
+}
+
+function applyBusinessVisualState({
+  state = 'closed',
+  theme = 'day'
+} = {}) {
+  const businessSection = document.getElementById('business-section');
+  if (!businessSection) return;
+
+  businessSection.classList.remove(
+    'state-open',
+    'state-closing',
+    'state-closed',
+    'theme-morning',
+    'theme-day',
+    'theme-night'
+  );
+
+  businessSection.classList.add(`state-${state}`);
+  businessSection.classList.add(`theme-${theme}`);
+}
+
+function getVisualBusinessState({
+  finalStatus,
+  finalType,
+  subStatusText,
+  nowInBusinessTimezone,
+  baseActiveRange
+}) {
+  if (finalType === 'temporary') return 'closed';
+  if (finalStatus !== 'Open') return 'closed';
+
+  if (
+    typeof subStatusText === 'string' &&
+    subStatusText.includes('Temporarily unavailable in')
+  ) {
+    return 'closing';
+  }
+
+  if (!nowInBusinessTimezone || !baseActiveRange?.close) {
+    return 'open';
+  }
+
+  const closeMinutes = timeStringToMinutes(baseActiveRange.close);
+  if (closeMinutes == null) return 'open';
+
+  const closeDateTime = nowInBusinessTimezone.startOf('day').plus({
+    minutes: closeMinutes
+  });
+
+  const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, closeDateTime);
+
+  if (minutesAway != null && minutesAway > 0 && minutesAway <= GENERAL_WARNING_MINUTES) {
+    return 'closing';
+  }
+
+  if (
+    typeof subStatusText === 'string' &&
+    (
+      subStatusText.includes('Closes in') ||
+      subStatusText.includes('Opens in') ||
+      subStatusText.includes('Opens again today') ||
+      subStatusText.includes('Opens again at')
+    )
+  ) {
+    return 'closing';
+  }
+
+  return 'open';
 }
 
 function installPanelToggle() {
@@ -2396,6 +2481,10 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     statusSubTextElement.textContent = '';
     setStatusChip('Temporarily Unavailable', 'override');
     setTrafficLight('Temporarily Unavailable', 'override', '');
+    applyBusinessVisualState({
+      state: 'closed',
+      theme: 'day'
+    });
     return;
   }
 
@@ -2862,8 +2951,22 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     setMetaRow('bizNextOpen', '—');
   })();
 
+  const subStatusText = statusSubTextElement.textContent || '';
+  const visualTheme = getBusinessTimeTheme(nowInBusinessTimezone);
+  const visualState = getVisualBusinessState({
+    finalStatus,
+    finalType,
+    subStatusText,
+    nowInBusinessTimezone,
+    baseActiveRange
+  });
+
   setStatusChip(finalStatus, finalType);
-  setTrafficLight(finalStatus, finalType, statusSubTextElement.textContent || '');
+  setTrafficLight(finalStatus, finalType, subStatusText);
+  applyBusinessVisualState({
+    state: visualState,
+    theme: visualTheme
+  });
 
   /* -------------------------
      REGULAR HOURS RENDER
@@ -3069,6 +3172,10 @@ function renderErrorState(message = 'Error Loading') {
   setMetaRow('bizTodayHours', '—');
   setStatusChip('Temporarily Unavailable', 'override');
   setTrafficLight('Temporarily Unavailable', 'override', '');
+  applyBusinessVisualState({
+    state: 'closed',
+    theme: 'day'
+  });
 }
 
 function renderFromCache() {
