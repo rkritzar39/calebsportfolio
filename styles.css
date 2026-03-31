@@ -796,13 +796,11 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === 🎧 LIVE ACTIVITY — TRUE LIQUID GLASS (REFINED) ==== */
-/* === Layout-safe, onyx-consistent, cleaner motion ====== */
+/* === 🎧 LIVE ACTIVITY — TRUE LIQUID GLASS (FINAL) ====== */
+/* === Neat on all devices: consistent inset + fixed width */
 /* ======================================================= */
 
-.live-activity {
-  --dynamic-accent: transparent;
-}
+.live-activity { --dynamic-accent: transparent; }
 
 /* ======================================================= */
 /* === MAIN CONTAINER ==================================== */
@@ -830,10 +828,7 @@ a.corner-button {
     color-mix(in srgb, var(--content-bg) 92%, transparent);
 
   border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
-
-  box-shadow:
-    var(--bubble-shadow),
-    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+  box-shadow: var(--bubble-shadow);
 
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
@@ -843,34 +838,10 @@ a.corner-button {
   align-items: center;
   text-align: center;
 
-  --la-inset: clamp(10px, 2.2vw, 16px);
-  --la-track-h: clamp(9px, 1.2vw, 10px);
-  --la-pill-r: 14px;
-}
-
-.live-activity::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: var(--liquid-reflection);
-  mix-blend-mode: soft-light;
-  opacity: 0.42;
-  pointer-events: none;
-}
-
-.live-activity::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 50% 100%,
-    color-mix(in srgb, black 16%, transparent),
-    transparent 65%
-  );
-  opacity: 0.34;
+  /* ✅ ONE SYSTEM for “near edge but not touching” */
+  --la-inset: clamp(10px, 2.2vw, 16px);  /* how close to the sides */
+  --la-track-h: clamp(9px, 1.2vw, 10px); /* bar height */
+  --la-pill-r: 14px;                     /* time pill radius */
 }
 
 .live-activity > * {
@@ -900,7 +871,12 @@ a.corner-button {
 /* === ALBUM ART ========================================= */
 /* ======================================================= */
 
+/* ======================================================= */
+/* === ALBUM ART — ALWAYS DEAD CENTER =================== */
+/* ======================================================= */
+
 .live-album-art {
+  /* force absolute centering in the card column */
   align-self: center;
   margin-left: auto;
   margin-right: auto;
@@ -920,29 +896,28 @@ a.corner-button {
     inset 0 1px 2px rgba(255,255,255,0.14);
 
   transition:
-    transform .3s cubic-bezier(.2,.8,.2,1),
-    box-shadow .3s cubic-bezier(.2,.8,.2,1);
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .35s cubic-bezier(.2,.8,.2,1);
 }
 
 .live-album-art img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition:
-    transform .3s cubic-bezier(.2,.8,.2,1),
-    filter .3s cubic-bezier(.2,.8,.2,1);
+  transition: transform .35s cubic-bezier(.2,.8,.2,1),
+              filter .35s cubic-bezier(.2,.8,.2,1);
 }
 
 .spotify-card:hover .live-album-art {
-  transform: translateY(-4px) scale(1.03);
+  transform: translateY(-6px) scale(1.045);
   box-shadow:
-    0 30px 72px rgba(0,0,0,0.66),
-    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 22%, rgba(255,255,255,0.14)) inset;
+    0 36px 88px rgba(0,0,0,0.70),
+    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 28%, rgba(255,255,255,0.14)) inset;
 }
 
 .spotify-card:hover .live-album-art img {
-  transform: scale(1.05);
-  filter: saturate(1.06) contrast(1.04);
+  transform: scale(1.08);
+  filter: saturate(1.08) contrast(1.05);
 }
 
 /* ======================================================= */
@@ -952,7 +927,6 @@ a.corner-button {
 .live-song-title {
   font-size: 1.48rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
 }
 
 .live-artist {
@@ -961,8 +935,10 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR ====================================== */
+/* === PROGRESS BAR — FIXED WIDTH SYSTEM ================= */
 /* ======================================================= */
+/* ✅ Full width inside card, but not touching: width is locked by --la-inset.
+   ✅ Same width for bar AND time row (so it looks intentional). */
 
 .music-progress-container {
   width: calc(100% - (var(--la-inset) * 2));
@@ -1003,7 +979,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === TIME ROW ========================================== */
+/* === TIME ROW — FIXED WIDTH + CLEAN ==================== */
 /* ======================================================= */
 
 .music-progress-time {
@@ -1036,24 +1012,16 @@ a.corner-button {
   white-space: nowrap;
 }
 
-.music-progress-time span:first-child {
-  justify-self: start;
-  opacity: 0.92;
-}
-
+.music-progress-time span:first-child { justify-self: start; opacity: 0.92; }
 .music-progress-time span:nth-child(2) {
   justify-self: center;
   font-weight: 650;
   color: color-mix(in srgb, var(--dynamic-accent) 62%, var(--text-color));
 }
-
-.music-progress-time span:last-child {
-  justify-self: end;
-  opacity: 0.92;
-}
+.music-progress-time span:last-child { justify-self: end; opacity: 0.92; }
 
 /* ======================================================= */
-/* === LAST UPDATED ====================================== */
+/* === LAST UPDATED — MATCH WIDTH + CLEAN ================ */
 /* ======================================================= */
 
 #live-activity-updated {
@@ -1110,6 +1078,8 @@ body.light-e .music-progress-time span:nth-child(2) {
 @media (max-width: 600px) {
   .live-activity {
     padding: 30px 18px;
+
+    /* tighten the inset slightly on phones */
     --la-inset: clamp(8px, 2.6vw, 12px);
   }
 
@@ -1125,11 +1095,73 @@ body.light-e .music-progress-time span:nth-child(2) {
 
 @media (prefers-reduced-motion: reduce) {
   .live-album-art,
-  .live-album-art img,
   .music-progress-bar {
     transition: none !important;
   }
 }
+/* =================================== */
+/* === Responsive Breakpoint Rules === */
+/* =================================== */
+
+@media screen and (max-width: 1024px) {
+	.profile-pic-wrapper {
+		--profile-pic-size: 8.5rem;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.profile-section {
+		padding: 1.5rem;
+        /* Added padding to prevent content overlap with bottom buttons */
+        padding-bottom: 4rem; 
+	}
+	.profile-pic-wrapper {
+		--profile-pic-size: 7.5rem;
+	}
+	/* HIDE the corner circle on mobile */
+	.profile-status-container {
+		display: none;
+	}
+	/* SHOW the text status on mobile */
+	.profile-status-text {
+		display: block;
+		flex-basis: 100%;
+	}
+	.corner-button {
+		width: 2.375rem;
+		height: 2.375rem;
+	}
+	.profile-bio {
+		font-size: 0.95rem;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.profile-section {
+		padding: 1.25rem;
+        padding-bottom: 4rem;
+		margin: 1rem 0;
+	}
+	.profile-pic-wrapper {
+		--profile-pic-size: 6.25rem;
+	}
+	.corner-button {
+		width: 2.25rem;
+		height: 2.25rem;
+		top: 0.9375rem;
+	}
+	.blog-button { top: auto; bottom: 0.9375rem; left: 0.9375rem; }
+    .tracker-button { top: auto; bottom: 0.9375rem; right: 0.9375rem; }
+	.settings-button { right: 0.9375rem; }
+	.merch-button { left: 0.9375rem; }
+	.profile-bio { font-size: 0.9rem; }
+}
+
+#status-widget {
+  width: 100%;
+  max-width: 100%; /* Ensures it doesn't overflow its container */
+}
+
 
 /* Current Date/Time Section */
 .datetime-section {
