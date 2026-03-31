@@ -434,7 +434,7 @@ body.reduced-motion .mouse-trail-container {
 
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
-/* == FINAL (Spacing Fully Fixed)          == */
+/* (Final Version with Button Animations)   */
 /* ======================================== */
 
 .profile-section {
@@ -442,63 +442,25 @@ body.reduced-motion .mouse-trail-container {
 	text-align: center;
 	margin: 1.25rem 0 1.875rem 0;
 	padding: 1.875rem;
-	width: 100%;
-	box-sizing: border-box;
-	overflow: hidden;
-
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
 	border-radius: var(--radius-xl);
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-
-	box-shadow:
-		var(--bubble-shadow),
-		var(--bubble-highlight);
-
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
+	width: 100%;
+	box-sizing: border-box;
+	transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Top reflection */
-.profile-section::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	pointer-events: none;
-	background: linear-gradient(
-		180deg,
-		color-mix(in srgb, white 18%, transparent) 0%,
-		transparent 42%
-	);
-	opacity: 0.45;
-}
-
-/* Bottom depth */
-.profile-section::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	pointer-events: none;
-	background: radial-gradient(
-		circle at 50% 100%,
-		color-mix(in srgb, black 18%, transparent),
-		transparent 65%
-	);
-	opacity: 0.5;
-}
-
-/* ======================================== */
-/* Profile Picture */
-/* ======================================== */
+/* --- Profile Pic Wrapper --- */
 .profile-pic-wrapper {
 	position: relative;
 	--profile-pic-size: 9.375rem;
 	width: var(--profile-pic-size);
 	height: var(--profile-pic-size);
 	margin: 0 auto;
-	z-index: 1;
+	transition: width 0.3s ease, height 0.3s ease;
 }
 
 .profile-pic {
@@ -506,68 +468,46 @@ body.reduced-motion .mouse-trail-container {
 	height: 100%;
 	border-radius: 50%;
 	object-fit: cover;
-	border: 2px solid color-mix(in srgb, var(--border-color) 88%, transparent);
-
-	box-shadow:
-		0 14px 30px color-mix(in srgb, var(--shadow-color) 55%, transparent),
-		0 0 0 6px color-mix(in srgb, var(--content-bg) 55%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
+	box-shadow: var(--bubble-shadow);
+	border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-/* ======================================== */
-/* Status Dot */
-/* ======================================== */
+/* --- Profile Status (Desktop Default) --- */
 .profile-status-container {
 	position: absolute;
 	width: calc(var(--profile-pic-size) * 0.19);
 	aspect-ratio: 1 / 1;
+	background-clip: content-box;
 	border-radius: 50%;
-	border: 3px solid color-mix(in srgb, var(--content-bg) 95%, transparent);
-
-	box-shadow:
-		0 0 0 2px color-mix(in srgb, white 6%, transparent),
-		0 4px 10px color-mix(in srgb, var(--shadow-color) 40%, transparent);
-
+	border: 3px solid var(--content-bg);
+	z-index: 2;
+	transition: all 0.3s ease;
 	top: 87%;
 	left: 87%;
 	transform: translate(-50%, -50%);
-	z-index: 2;
 }
 
-.profile-status-container.status-online { background-color: #31a24c; }
-.profile-status-container.status-idle { background-color: #ffc107; }
-.profile-status-container.status-dnd { background-color: #dc3545; }
-.profile-status-container.status-offline { background-color: #747f8d; }
+.profile-status-container.status-online    { background-color: #31a24c; }
+.profile-status-container.status-idle      { background-color: #ffc107; }
+.profile-status-container.status-dnd       { background-color: #dc3545; }
+.profile-status-container.status-offline   { background-color: #747f8d; }
 
-/* ======================================== */
-/* Username + Verified */
-/* ======================================== */
+
+/* --- Username & Verified --- */
 .username-checkmark {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
+	margin: 1.875rem 0 0.625rem;
 	flex-wrap: wrap;
-
-	/* FIXED spacing from profile pic */
-	margin-top: calc(var(--profile-pic-size) * 0.32);
-	margin-bottom: 0;
-
-	position: relative;
-	z-index: 1;
 }
 
 .username-checkmark h1 {
 	margin: 0;
 	font-size: clamp(1.5rem, 5vw, 2.25rem);
 	font-weight: 800;
-
-	background: linear-gradient(
-		135deg,
-		var(--text-color),
-		var(--accent-color)
-	);
-
+	background: linear-gradient(120deg, var(--secondary-text), var(--accent-color));
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
@@ -576,105 +516,94 @@ body.reduced-motion .mouse-trail-container {
 .verified {
 	width: 1.25rem;
 	height: 1.25rem;
+	flex-shrink: 0;
 }
 
-/* ======================================== */
-/* STATUS BAR (FIXED SPACING HERE) */
-/* ======================================== */
-.profile-status {
-	margin-top: 1.1rem;
-	margin-bottom: 0.8rem;
-
-	padding: 0.6rem 1rem;
+/* --- Text-Based Profile Status Badge (Hidden on Desktop) --- */
+.profile-status-text {
+	display: none;
+	font-size: 0.85rem;
+	font-weight: 700;
+	margin-top: 0.35rem;
+	padding: 0.25em 0.8em;
 	border-radius: 999px;
-
-	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
-
-	font-weight: 600;
-	color: var(--text-color);
-
-	backdrop-filter: var(--backdrop-blur);
+	line-height: 1;
 }
 
-/* ======================================== */
-/* Bio */
-/* ======================================== */
+.profile-status-text.status-online {
+	background-color: #31a24c;
+	color: #ffffff;
+}
+.profile-status-text.status-idle {
+	background-color: #ffc107;
+	color: #1f1f1f;
+}
+.profile-status-text.status-dnd {
+	background-color: #dc3545;
+	color: #ffffff;
+}
+.profile-status-text.status-offline {
+	background-color: #747f8d;
+	color: #ffffff;
+}
+
+
+/* --- Profile Bio --- */
 .profile-bio {
-	font-size: 1rem;
+	font-size: var(--font-size-base, 1rem);
 	color: var(--secondary-text);
-	line-height: 1.7;
+	line-height: 1.6;
 	max-width: 37.5rem;
-
-	/* balanced spacing */
-	margin: 0 auto 1.5rem;
-
-	position: relative;
-	z-index: 1;
+	margin: 0.625rem auto 1.25rem;
 }
 
-/* ======================================== */
-/* Activity Card */
-/* ======================================== */
-.activity-card {
-	margin-top: 1.2rem;
-	padding: 1.5rem;
-	border-radius: var(--radius-lg);
-
-	background: linear-gradient(
-		135deg,
-		color-mix(in srgb, var(--accent-color) 15%, transparent),
-		color-mix(in srgb, var(--accent-color) 5%, transparent)
-	);
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
-}
-
-/* ======================================== */
-/* Corner Buttons (NO HOVER) */
-/* ======================================== */
+/* --- Corner Buttons --- */
 .corner-button {
 	position: absolute;
 	width: 2.75rem;
 	height: 2.75rem;
 	border-radius: var(--radius-lg);
-	border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
-
+	border: none;
+	cursor: pointer;
+	z-index: 10;
 	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-
 	color: var(--icon-color);
+	transition: transform 0.25s ease, box-shadow 0.25s ease, width 0.3s ease, height 0.3s ease;
 }
 
 .settings-button { top: 1.25rem; right: 1.25rem; }
-.merch-button { top: 1.25rem; left: 1.25rem; }
-.blog-button { bottom: 1.25rem; left: 1.25rem; }
-.tracker-button { bottom: 1.25rem; right: 1.25rem; }
+.merch-button    { top: 1.25rem; left: 1.25rem; }
+.blog-button     { bottom: 1.25rem; left: 1.25rem; }
+.tracker-button  { bottom: 1.25rem; right: 1.25rem; } /* This is the new button */
 
-/* Press only */
+.corner-button:hover,
+.corner-button:focus-visible {
+	transform: translateY(-3px) scale(1.05);
+	box-shadow: 0 8px 24px var(--shadow-color), 0 0 12px var(--accent-color);
+	outline: none;
+}
+
 .corner-button:active {
-	transform: scale(0.92);
+	transform: scale(0.9);
+	box-shadow: 0 4px 12px var(--shadow-color), inset 0 2px 4px rgba(255, 255, 255, 0.1);
 }
 
-/* ======================================== */
-/* Mobile */
-/* ======================================== */
-@media (max-width: 768px) {
-	.profile-pic-wrapper {
-		--profile-pic-size: 7.5rem;
-	}
+.corner-button > * {
+	width: 1.25rem;
+	height: 1.25rem;
+	font-size: 1.25rem;
+	object-fit: contain;
 }
 
-@media (max-width: 560px) {
-	.profile-pic-wrapper {
-		--profile-pic-size: 6.8rem;
-	}
-
-	.profile-status-container {
-		display: none;
-	}
+a.corner-button {
+    text-decoration: none;
 }
 
 /* ============================================= */
