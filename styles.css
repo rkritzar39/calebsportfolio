@@ -2041,6 +2041,7 @@ body.dark-mode .bubble {
 /* ======================================== */
 /* == Useful Links Section – Onyx Bubble Glass == */
 /* ======================================== */
+
 .useful-links-section {
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
@@ -2058,7 +2059,7 @@ body.dark-mode .bubble {
 
 /* Title Styling */
 .useful-links-section h2 {
-	font-size: calc(var(--font-size-base, 20px) * 1.44); /* ✨ Updated for text scaling ✨ */
+	font-size: calc(var(--font-size-base, 20px) * 1.44);
 	margin-bottom: 25px;
 	color: var(--text-color);
 	text-align: center;
@@ -2080,14 +2081,15 @@ body.dark-mode .bubble {
 	align-items: center;
 	justify-content: center;
 	padding: 14px 24px;
+	padding-right: 46px; /* space for arrow */
 	width: 100%;
 	text-decoration: none;
 	font-weight: 600;
 	letter-spacing: 0.5px;
 	box-sizing: border-box;
 	border-radius: 999px;
+	position: relative; /* needed for arrow */
 
-	/* Onyx Bubble Glass styling */
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
 	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
@@ -2096,6 +2098,26 @@ body.dark-mode .bubble {
 
 	color: var(--text-color);
 	transition: all 0.3s ease;
+}
+
+/* ========================================
+   RIGHT-SIDE ARROW (iOS style)
+======================================== */
+.link-button::after {
+	content: "";
+	position: absolute;
+	right: 18px;
+	top: 50%;
+	transform: translateY(-50%) rotate(45deg);
+
+	width: 8px;
+	height: 8px;
+
+	border-top: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
+	border-right: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
+
+	opacity: 0.7;
+	transition: all 0.25s ease;
 }
 
 /* Hover / Active State */
@@ -2108,18 +2130,26 @@ body.dark-mode .bubble {
 				  0 0 12px var(--accent-color);
 }
 
+/* Arrow reacts on hover */
+.link-button:hover::after {
+	border-top-color: var(--content-bg);
+	border-right-color: var(--content-bg);
+	opacity: 1;
+	transform: translateY(-50%) rotate(45deg) translateX(2px);
+}
+
 /* --- Responsive Design --- */
 @media screen and (max-width: 768px) {
 	.useful-links-section { padding: 20px; }
 	.links-container { grid-template-columns: 1fr; gap: 15px; }
-	.link-button { padding: 12px 20px; font-size: 0.95em; }
-	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.28); } /* ✨ Updated for text scaling ✨ */
+	.link-button { padding: 12px 20px; padding-right: 42px; font-size: 0.95em; }
+	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.28); }
 }
 
 @media screen and (max-width: 480px) {
 	.useful-links-section { padding: 15px; }
-	.link-button { padding: 12px 16px; }
-	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.12); } /* ✨ Updated for text scaling ✨ */
+	.link-button { padding: 12px 16px; padding-right: 38px; }
+	.useful-links-section h2 { font-size: calc(var(--font-size-base, 20px) * 1.12); }
 }
 
 /* ======================================== */
