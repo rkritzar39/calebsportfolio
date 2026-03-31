@@ -2643,7 +2643,8 @@ body.dark-mode .bubble {
 
 /* ======================== */
 /* Shoutouts Section – Onyx Bubble Glass */
-/* Layout-safe visual upgrade */
+/* Fully updated with improved onyx buttons
+   and better bottom spacing inside cards
 /* ======================== */
 
 .shoutouts-section {
@@ -2735,7 +2736,6 @@ body.dark-mode .bubble {
 }
 
 /* Creator Grids */
-/* layout untouched */
 .creator-grid,
 .instagram-creator-grid,
 .youtube-creator-grid {
@@ -2750,7 +2750,7 @@ body.dark-mode .bubble {
 	z-index: 1;
 }
 
-/* Creator Cards – visual only */
+/* Creator Cards – Bubble Glass */
 .creator-card,
 .instagram-creator-card,
 .youtube-creator-card {
@@ -2775,7 +2775,7 @@ body.dark-mode .bubble {
 	position: relative;
 	overflow: visible;
 	min-height: fit-content;
-	height: auto;
+	height: 100%;
 }
 
 .creator-card::before,
@@ -2821,6 +2821,7 @@ body.dark-mode .bubble {
 	flex-direction: column;
 	width: 100%;
 	padding: 0;
+	flex: 1;
 }
 
 /* Profile Pictures */
@@ -2931,46 +2932,109 @@ body.dark-mode .bubble {
 	z-index: 1;
 }
 
-/* Visit Profile Buttons – upgraded, layout-safe */
+/* Visit Profile Buttons – true onyx style */
 .visit-profile,
 .instagram-visit-profile,
 .youtube-visit-profile {
-	background: color-mix(in srgb, var(--content-bg) 82%, transparent);
-	border: 1px solid color-mix(in srgb, var(--accent-color) 48%, var(--border-color));
-	color: var(--accent-color);
-	padding: 10px 20px;
+	margin-top: 18px;
+	margin-bottom: 2px;
+	padding: 12px 18px;
 	border-radius: 999px;
 	text-decoration: none;
-	font-weight: 650;
-	transition:
-		background var(--transition-fast),
-		border-color var(--transition-fast),
-		color var(--transition-fast),
-		box-shadow var(--transition-fast),
-		transform var(--transition-fast);
 	text-align: center;
+	font-weight: 700;
+	letter-spacing: 0.2px;
 	position: relative;
-	overflow: hidden;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	align-self: flex-start;
+	min-height: 44px;
+	min-width: 140px;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 10%, transparent),
+			transparent 55%
+		),
+		color-mix(in srgb, var(--content-bg) 88%, transparent);
+
+	border: 1px solid color-mix(in srgb, var(--accent-color) 36%, var(--border-color));
+	color: var(--text-color);
+
+	box-shadow:
+		0 6px 16px color-mix(in srgb, var(--shadow-color) 42%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 8%, transparent);
+
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-	box-shadow:
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+
+	transition:
+		transform var(--transition-fast),
+		box-shadow var(--transition-fast),
+		border-color var(--transition-fast),
+		background var(--transition-fast),
+		color var(--transition-fast);
+}
+
+.visit-profile::before,
+.instagram-visit-profile::before,
+.youtube-visit-profile::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: linear-gradient(
+		90deg,
+		color-mix(in srgb, var(--accent-color) 10%, transparent),
+		transparent 45%,
+		color-mix(in srgb, var(--accent-color) 8%, transparent)
+	);
+	opacity: 0.7;
 }
 
 .visit-profile:hover,
 .instagram-visit-profile:hover,
 .youtube-visit-profile:hover {
-	background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
-	border-color: color-mix(in srgb, var(--accent-color) 70%, var(--border-color));
-	color: var(--accent-color);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 12%, transparent),
+			transparent 55%
+		),
+		color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+	border-color: color-mix(in srgb, var(--accent-color) 60%, var(--border-color));
+	color: var(--text-color);
 	box-shadow:
-		0 0 10px color-mix(in srgb, var(--accent-color) 20%, transparent),
-		0 6px 16px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+		0 10px 24px color-mix(in srgb, var(--shadow-color) 50%, transparent),
+		0 0 14px color-mix(in srgb, var(--accent-color) 16%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
 	transform: translateY(-2px);
 }
 
-/* Unavailable Message */
+.visit-profile:active,
+.instagram-visit-profile:active,
+.youtube-visit-profile:active {
+	transform: scale(0.98);
+	box-shadow:
+		0 5px 12px color-mix(in srgb, var(--shadow-color) 45%, transparent),
+		inset 0 2px 4px color-mix(in srgb, black 14%, transparent);
+}
+
+.visit-profile:focus-visible,
+.instagram-visit-profile:focus-visible,
+.youtube-visit-profile:focus-visible {
+	outline: none;
+	border-color: color-mix(in srgb, var(--accent-color) 70%, var(--border-color));
+	box-shadow:
+		0 0 0 4px color-mix(in srgb, var(--accent-color) 18%, transparent),
+		0 10px 24px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+}
+
+/* Unavailable Message – Bubble Glass */
 .unavailable-message {
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
@@ -2992,7 +3056,7 @@ body.dark-mode .bubble {
 }
 
 /* Responsive Layout */
-/* layout rules preserved */
+
 @media screen and (max-width: 1400px) {
 	.creator-grid,
 	.instagram-creator-grid,
@@ -3003,8 +3067,15 @@ body.dark-mode .bubble {
 
 @media screen and (max-width: 768px) {
 	.disabilities-section,
-	.shoutouts-section { padding: 20px; margin-bottom: 20px; }
-	.disabilities-section a { padding: 10px 16px; font-size: 0.95em; }
+	.shoutouts-section {
+		padding: 20px;
+		margin-bottom: 20px;
+	}
+
+	.disabilities-section a {
+		padding: 10px 16px;
+		font-size: 0.95em;
+	}
 
 	.creator-grid,
 	.instagram-creator-grid,
@@ -3012,76 +3083,137 @@ body.dark-mode .bubble {
 		grid-template-columns: 1fr;
 		gap: 15px;
 	}
+
 	.creator-card,
 	.instagram-creator-card,
-	.youtube-creator-card { padding: 12px; min-height: fit-content; }
-	.youtube-cover-photo { width: calc(100% + 24px); margin: -12px -12px 15px -12px; }
+	.youtube-creator-card {
+		padding: 12px;
+		min-height: fit-content;
+	}
+
+	.youtube-cover-photo {
+		width: calc(100% + 24px);
+		margin: -12px -12px 15px -12px;
+	}
+
 	.username-container,
 	.instagram-username-container,
-	.youtube-username-container { padding-right: 6px; }
+	.youtube-username-container {
+		padding-right: 6px;
+	}
+
 	.creator-username,
 	.instagram-creator-username,
-	.youtube-creator-username { font-size: 0.85em; }
+	.youtube-creator-username {
+		font-size: 0.85em;
+	}
+
+	.visit-profile,
+	.instagram-visit-profile,
+	.youtube-visit-profile {
+		min-width: 132px;
+		padding: 11px 16px;
+		margin-top: 16px;
+	}
 }
 
 @media screen and (max-width: 480px) {
 	.disabilities-section,
-	.shoutouts-section { padding: 15px; }
-	.disabilities-section a { padding: 8px 14px; font-size: 0.9em; }
+	.shoutouts-section {
+		padding: 15px;
+	}
+
+	.disabilities-section a {
+		padding: 8px 14px;
+		font-size: 0.9em;
+	}
+
+	.visit-profile,
+	.instagram-visit-profile,
+	.youtube-visit-profile {
+		min-width: 124px;
+		padding: 10px 15px;
+	}
 }
 
 @media screen and (max-width: 380px) {
-	.shoutouts-section { padding: 10px; }
+	.shoutouts-section {
+		padding: 10px;
+	}
+
 	.creator-grid,
 	.instagram-creator-grid,
-	.youtube-creator-grid { gap: 10px; }
+	.youtube-creator-grid {
+		gap: 10px;
+	}
+
 	.creator-card,
 	.instagram-creator-card,
-	.youtube-creator-card { padding: 10px; min-height: fit-content; }
-	.youtube-cover-photo { width: calc(100% + 20px); margin: -10px -10px 15px -10px; }
+	.youtube-creator-card {
+		padding: 10px;
+		min-height: fit-content;
+	}
+
+	.youtube-cover-photo {
+		width: calc(100% + 20px);
+		margin: -10px -10px 15px -10px;
+	}
+
 	.username-container,
 	.instagram-username-container,
-	.youtube-username-container { padding-right: 4px; }
+	.youtube-username-container {
+		padding-right: 4px;
+	}
+
 	.creator-username,
 	.instagram-creator-username,
-	.youtube-creator-username { font-size: 0.8em; }
+	.youtube-creator-username {
+		font-size: 0.8em;
+	}
+
+	.visit-profile,
+	.instagram-visit-profile,
+	.youtube-visit-profile {
+		min-width: 118px;
+		padding: 10px 14px;
+		margin-top: 14px;
+	}
 }
 
-/* Sort controls */
 .creator-sort-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 12px 0 20px;
-  font-size: 0.95em;
-  justify-content: flex-start;
-  position: relative;
-  z-index: 1;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 12px 0 20px;
+	font-size: 0.95em;
+	justify-content: flex-start;
+	position: relative;
+	z-index: 1;
 }
 
 .creator-sort-controls label {
-  font-weight: 500;
-  color: var(--text-color);
+	font-weight: 500;
+	color: var(--text-color);
 }
 
 .creator-sort-controls select {
-  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 6px 12px;
-  color: var(--text-color);
-  font-size: 0.9em;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 40%, transparent);
-  transition: all 0.25s ease;
+	background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+	border: 1px solid var(--border-color);
+	border-radius: 14px;
+	padding: 6px 12px;
+	color: var(--text-color);
+	font-size: 0.9em;
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+	transition: all 0.25s ease;
 }
 
 .creator-sort-controls select:hover,
 .creator-sort-controls select:focus {
-  border-color: var(--accent-color);
-  outline: none;
-  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 60%, transparent);
+	border-color: var(--accent-color);
+	outline: none;
+	box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 60%, transparent);
 }
 
 :root {
