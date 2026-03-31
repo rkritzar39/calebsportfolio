@@ -1861,125 +1861,180 @@ body.dark-mode .bubble {
 }
 
 /* ======================================== */
-/* == Social Links Section – Onyx Bubble Glass == */
+/* == Social Links Section – Onyx Glass   == */
+/* == iOS-Style List + Chevron           == */
 /* ======================================== */
+
 .social-links-section {
+	position: relative;
 	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
+	background-image: var(--bubble-gradient), var(--liquid-refraction);
 	padding: 30px;
 	border-radius: var(--radius-xl);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
 	margin: 20px 0;
-	text-align: center;
 	width: 100%;
 	box-sizing: border-box;
 	color: var(--text-color);
-	transition: background 0.3s ease, box-shadow 0.3s ease;
+	overflow: hidden;
+
+	box-shadow:
+		var(--bubble-shadow),
+		var(--bubble-highlight);
+
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
 }
 
-/* Section Header */
-.social-links-section h3 {
-	font-size: calc(var(--font-size-base, 20px) * 1.2); /* ✨ Updated for text scaling ✨ */
+/* Reflection */
+.social-links-section::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: 0.45;
+	pointer-events: none;
+}
+
+/* Header */
+.social-links-section h2 {
+	font-size: calc(var(--font-size-base, 20px) * 1.2);
 	font-weight: 700;
 	margin-top: 0;
-	margin-bottom: 25px;
+	margin-bottom: 20px;
+	text-align: center;
 }
 
-/* Grid Container */
+/* ======================================== */
+/* Search */
+/* ======================================== */
+.search-container.unified {
+	margin-bottom: 20px;
+}
+
+/* ======================================== */
+/* Container (iOS list style) */
+/* ======================================== */
 .social-links-container {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
 	width: 100%;
-	box-sizing: border-box;
 }
 
-/* --- Social Buttons – Onyx Bubble Glass --- */
+/* ======================================== */
+/* Social Button (iOS Row) */
+/* ======================================== */
 .social-button {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	padding: 14px 20px;
-	text-decoration: none;
-	font-weight: 600;
-	letter-spacing: 0.2px;
-	position: relative;
-	overflow: hidden;
+	gap: 14px;
 	width: 100%;
-	box-sizing: border-box;
-	border-radius: 999px;
+	padding: 14px 18px;
+	padding-right: 44px;
 
-	/* Onyx Bubble Glass look */
+	border-radius: 14px;
+	text-decoration: none;
+	position: relative;
+	box-sizing: border-box;
+
+	/* Glass style */
 	background: var(--content-bg);
 	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+	border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+
+	box-shadow:
+		0 6px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
 
 	color: var(--text-color);
-	transition: all 0.3s ease;
+	font-weight: 600;
+	letter-spacing: 0.2px;
 }
 
-/* Icon & Text */
+/* Icon */
 .social-button .social-icon {
-	font-size: 1em; /* ✨ This will now scale relative to the body's font size ✨ */
-	margin-right: 12px;
-	flex-shrink: 0;
+	font-size: 1.1em;
 	color: var(--icon-color);
-	transition: color 0.3s ease;
+	flex-shrink: 0;
 }
 
+/* Text */
 .social-button span {
 	flex-grow: 1;
 	text-align: left;
 	color: var(--text-color);
-	transition: color 0.3s ease;
 }
 
-/* Hover / Active State */
-.social-button:hover {
-	background: var(--accent-color);
-	transform: translateY(-2px);
-	box-shadow: 0 6px 18px var(--shadow-color),
-				  0 0 12px var(--accent-color);
+/* ======================================== */
+/* iOS Chevron */
+/* ======================================== */
+.social-button::after {
+	content: "";
+	position: absolute;
+	right: 16px;
+	top: 50%;
+	transform: translateY(-50%) rotate(45deg);
+
+	width: 8px;
+	height: 8px;
+
+	border-right: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
+	border-top: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
+
+	opacity: 0.7;
 }
 
-.social-button:hover .social-icon,
-.social-button:hover span {
-	color: var(--content-bg);
+/* Press only (no hover animation) */
+.social-button:active {
+	transform: scale(0.97);
 }
 
+.social-button:active::after {
+	opacity: 1;
+}
+
+/* ======================================== */
+/* No Results */
+/* ======================================== */
+.no-results {
+	margin-top: 10px;
+	color: var(--secondary-text);
+}
+
+/* ======================================== */
 /* Responsive */
-@media screen and (max-width: 768px) {
+/* ======================================== */
+@media (max-width: 768px) {
 	.social-links-section {
-		padding: 20px;
+		padding: 22px;
 		border-radius: var(--radius-lg);
 	}
-	.social-links-container {
-		grid-template-columns: 1fr;
-		gap: 15px;
-	}
+
 	.social-button {
-		padding: 12px 20px;
-		font-size: 0.95em;
-	}
-	.social-button span {
-		text-align: center;
+		padding: 13px 16px;
+		padding-right: 42px;
 	}
 }
 
-@media screen and (max-width: 480px) {
+@media (max-width: 480px) {
 	.social-links-section {
-		padding: 15px;
+		padding: 18px;
 	}
+
 	.social-button {
-		padding: 12px 16px;
+		padding: 12px 14px;
+		padding-right: 40px;
+		font-size: 0.95em;
 	}
+
 	.social-button .social-icon {
-		font-size: 0.9em; /* ✨ This will now scale relative to the body's font size ✨ */
-		margin-right: 12px;
+		font-size: 1em;
 	}
 }
 
