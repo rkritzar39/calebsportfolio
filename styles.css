@@ -434,7 +434,7 @@ body.reduced-motion .mouse-trail-container {
 
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
-/* == Final Version — Clean + Balanced     == */
+/* == Updated (Username Spacing Fixed)     == */
 /* ======================================== */
 
 .profile-section {
@@ -561,8 +561,8 @@ body.reduced-motion .mouse-trail-container {
 	gap: 0.5rem;
 	flex-wrap: wrap;
 
-	/* FIXED SPACING */
-	margin-top: calc(var(--profile-pic-size) * 0.28);
+	/* ✅ FIXED SPACING (UPDATED HERE) */
+	margin-top: calc(var(--profile-pic-size) * 0.32);
 	margin-bottom: 0.625rem;
 
 	position: relative;
@@ -671,7 +671,7 @@ body.reduced-motion .mouse-trail-container {
 .blog-button { bottom: 1.25rem; left: 1.25rem; }
 .tracker-button { bottom: 1.25rem; right: 1.25rem; }
 
-/* Focus (accessible) */
+/* Focus only */
 .corner-button:focus-visible {
 	outline: none;
 	border-color: color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
