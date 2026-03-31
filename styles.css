@@ -2562,35 +2562,75 @@ body.dark-mode .bubble {
 
 /* ======================== */
 /* Disabilities Section – Onyx Bubble Glass */
+/* Refined, layout-safe version */
 /* ======================== */
+
 .disabilities-section {
+	position: relative;
 	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
+	background-image: var(--bubble-gradient), var(--liquid-refraction);
 	border-radius: var(--radius-xl);
 	padding: 30px;
 	margin-bottom: 30px;
-	border: 1px solid var(--border-color);
+	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
 	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
-	transition: background var(--transition-medium), box-shadow var(--transition-medium);
+	overflow: hidden;
+	transition:
+		background var(--transition-medium),
+		box-shadow var(--transition-medium),
+		border-color var(--transition-medium);
+}
+
+.disabilities-section::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: 0.42;
+	pointer-events: none;
+}
+
+.disabilities-section::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: radial-gradient(
+		circle at 50% 100%,
+		color-mix(in srgb, black 16%, transparent),
+		transparent 65%
+	);
+	opacity: 0.32;
 }
 
 .disabilities-section h2 {
+	position: relative;
+	z-index: 1;
 	margin-bottom: 15px;
 	color: var(--text-color);
 	font-size: 1.6em;
-	font-weight: 600;
+	font-weight: 700;
+	letter-spacing: -0.02em;
 }
 
 .disabilities-section p {
+	position: relative;
+	z-index: 1;
 	margin-bottom: 20px;
 	color: var(--secondary-text);
 	font-size: 1em;
-	line-height: 1.5;
+	line-height: 1.6;
+	max-width: 70ch;
 }
 
 .disabilities-section ul {
+	position: relative;
+	z-index: 1;
 	list-style: none;
 	padding: 0;
 	margin: 0;
@@ -2598,47 +2638,165 @@ body.dark-mode .bubble {
 	gap: 12px;
 }
 
-/* Modern Button Links – Bubble Glass */
+/* Modern Button Links – true onyx pill */
 .disabilities-section a {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	color: var(--accent-color);
-	font-weight: 500;
-	text-decoration: none;
+	justify-content: flex-start;
+	gap: 12px;
+	width: 100%;
+	min-height: 48px;
 	padding: 12px 18px;
-	border-radius: 25px;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-highlight);
-	transition: transform var(--transition-medium), background var(--transition-medium), color var(--transition-medium), box-shadow var(--transition-medium);
-	text-align: center;
+	padding-right: 46px;
+	border-radius: 999px;
+	text-decoration: none;
+	text-align: left;
 	position: relative;
 	overflow: hidden;
+
+	color: var(--text-color);
+	font-weight: 600;
+	letter-spacing: 0.2px;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 10%, transparent),
+			transparent 55%
+		),
+		color-mix(in srgb, var(--content-bg) 88%, transparent);
+
+	border: 1px solid color-mix(in srgb, var(--accent-color) 26%, var(--border-color));
+
+	box-shadow:
+		0 6px 16px color-mix(in srgb, var(--shadow-color) 40%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 8%, transparent);
+
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	transition:
+		transform var(--transition-fast),
+		background var(--transition-fast),
+		color var(--transition-fast),
+		border-color var(--transition-fast),
+		box-shadow var(--transition-fast);
+}
+
+.disabilities-section a::before {
+	content: "";
+	position: absolute;
+	left: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 4px;
+	height: 58%;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--accent-color) 82%, white 8%);
+	box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 30%, transparent);
+	opacity: 0.95;
+}
+
+/* iOS-style chevron on right */
+.disabilities-section a::after {
+	content: "";
+	position: absolute;
+	right: 18px;
+	top: 50%;
+	transform: translateY(-50%) rotate(45deg);
+	width: 8px;
+	height: 8px;
+	border-top: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
+	border-right: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
+	opacity: 0.72;
+	transition:
+		opacity var(--transition-fast),
+		transform var(--transition-fast),
+		border-color var(--transition-fast);
 }
 
 .disabilities-section a span.button-text {
 	flex-grow: 1;
-	text-align: center;
+	text-align: left;
+	padding-left: 6px;
 }
 
 .disabilities-section a i {
-	margin-left: 10px;
+	margin-left: 0;
 	flex-shrink: 0;
+	color: var(--accent-color);
+	font-size: 0.95em;
 }
 
+/* Hover */
 .disabilities-section a:hover {
-	background: var(--hover-color);
-	color: var(--dark-text);
-	transform: translateY(-3px);
-	box-shadow: 0 0 12px var(--accent-color), 0 0 24px var(--accent-color);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 12%, transparent),
+			transparent 55%
+		),
+		color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+	border-color: color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
+	color: var(--text-color);
+	transform: translateY(-2px);
+	box-shadow:
+		0 10px 22px color-mix(in srgb, var(--shadow-color) 45%, transparent),
+		0 0 14px color-mix(in srgb, var(--accent-color) 14%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
 }
 
+.disabilities-section a:hover::after {
+	border-top-color: color-mix(in srgb, var(--accent-color) 78%, white 10%);
+	border-right-color: color-mix(in srgb, var(--accent-color) 78%, white 10%);
+	opacity: 1;
+	transform: translateY(-50%) rotate(45deg) translateX(2px);
+}
+
+/* Press */
+.disabilities-section a:active {
+	transform: scale(0.985);
+	box-shadow:
+		0 4px 10px color-mix(in srgb, var(--shadow-color) 40%, transparent),
+		inset 0 2px 4px color-mix(in srgb, black 14%, transparent);
+}
+
+/* Focus */
 .disabilities-section a:focus-visible {
 	outline: none;
-	box-shadow: 0 0 0 4px var(--dark-hover);
+	border-color: color-mix(in srgb, var(--accent-color) 68%, var(--border-color));
+	box-shadow:
+		0 0 0 4px color-mix(in srgb, var(--accent-color) 18%, transparent),
+		0 8px 18px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+	.disabilities-section {
+		padding: 20px;
+		margin-bottom: 20px;
+	}
+
+	.disabilities-section a {
+		padding: 11px 16px;
+		padding-right: 42px;
+		font-size: 0.95em;
+		min-height: 46px;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.disabilities-section {
+		padding: 15px;
+	}
+
+	.disabilities-section a {
+		padding: 10px 14px;
+		padding-right: 38px;
+		font-size: 0.9em;
+		min-height: 44px;
+	}
 }
 
 /* ======================== */
