@@ -559,7 +559,7 @@ body.reduced-motion .mouse-trail-container {
 	flex-shrink: 0;
 }
 
-/* --- Text-Based Profile Status Badge (Hidden on Desktop) --- */
+/* --- Text-Based Profile Status Badge (Fixed: Color + Onyx) --- */
 .profile-status-text {
 	display: none;
 	font-size: 0.85rem;
@@ -570,36 +570,78 @@ body.reduced-motion .mouse-trail-container {
 	line-height: 1;
 	letter-spacing: 0.01em;
 
-	/* onyx badge */
+	position: relative;
+	overflow: hidden;
+
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+
+	border: 1px solid transparent;
+
+	box-shadow:
+		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
+
+	color: #fff;
+}
+
+/* --- STATUS COLORS (restored but upgraded) --- */
+
+.profile-status-text.status-online {
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, white 10%, transparent),
-			transparent 58%
+			color-mix(in srgb, white 18%, transparent),
+			transparent 60%
 		),
-		color-mix(in srgb, var(--content-bg) 88%, transparent);
-	border: 1px solid color-mix(in srgb, var(--border-color) 76%, transparent);
+		color-mix(in srgb, #31a24c 35%, var(--content-bg));
+	border-color: color-mix(in srgb, #31a24c 55%, transparent);
 	box-shadow:
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 32%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-}
-
-.profile-status-text.status-online {
-	color: #31a24c;
+		0 0 10px color-mix(in srgb, #31a24c 35%, transparent),
+		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 .profile-status-text.status-idle {
-	color: #d6a400;
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 18%, transparent),
+			transparent 60%
+		),
+		color-mix(in srgb, #ffc107 40%, var(--content-bg));
+	border-color: color-mix(in srgb, #ffc107 55%, transparent);
+	color: #1f1f1f;
+	box-shadow:
+		0 0 10px color-mix(in srgb, #ffc107 35%, transparent),
+		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 .profile-status-text.status-dnd {
-	color: #dc3545;
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 18%, transparent),
+			transparent 60%
+		),
+		color-mix(in srgb, #dc3545 38%, var(--content-bg));
+	border-color: color-mix(in srgb, #dc3545 55%, transparent);
+	box-shadow:
+		0 0 10px color-mix(in srgb, #dc3545 35%, transparent),
+		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 .profile-status-text.status-offline {
-	color: #8a93a0;
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 12%, transparent),
+			transparent 60%
+		),
+		color-mix(in srgb, #747f8d 35%, var(--content-bg));
+	border-color: color-mix(in srgb, #747f8d 50%, transparent);
+	box-shadow:
+		0 0 8px color-mix(in srgb, #747f8d 25%, transparent),
+		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 /* --- Profile Bio --- */
