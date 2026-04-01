@@ -1708,8 +1708,7 @@ const GENERAL_WARNING_MINUTES = 30;
 /* -------------------------
    GLOBAL TIMEZONE
 ------------------------- */
-const assumedBusinessTimezone = 'America/New_York';
-window.assumedBusinessTimezone = assumedBusinessTimezone;
+window.assumedBusinessTimezone = window.assumedBusinessTimezone || 'America/New_York';
 
 /* -------------------------
    HELPERS
