@@ -1706,6 +1706,12 @@ const TEMPORARY_WARNING_MINUTES = 15;
 const GENERAL_WARNING_MINUTES = 30;
 
 /* -------------------------
+   GLOBAL TIMEZONE
+------------------------- */
+const assumedBusinessTimezone = 'America/New_York';
+window.assumedBusinessTimezone = assumedBusinessTimezone;
+
+/* -------------------------
    HELPERS
 ------------------------- */
 function escapeHtml(value = '') {
@@ -1976,12 +1982,19 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     return;
   }
 
-  /* General warning states */
+  /* Closing soon = blink */
+  if (subStatusText.includes('Closes in')) {
+    yellowLight.classList.add('is-active', 'is-blinking');
+    return;
+  }
+
+  /* Opening / reopening soon = solid yellow */
   if (
     subStatusText.includes('Opens in') ||
-    subStatusText.includes('Closes in') ||
     subStatusText.includes('Opens again today') ||
-    subStatusText.includes('Opens again at')
+    subStatusText.includes('Opens again at') ||
+    subStatusText.includes('Opens today at') ||
+    subStatusText.includes('Opens tomorrow at')
   ) {
     yellowLight.classList.add('is-active');
     return;
@@ -3278,6 +3291,18 @@ async function oneTimeFetchFallback() {
   }
 }
 
+function stopBusinessInfoRefresh() {
+  if (typeof unsubscribeBusinessListener === 'function') {
+    unsubscribeBusinessListener();
+    unsubscribeBusinessListener = null;
+  }
+
+  if (minuteRefreshTimer) {
+    clearInterval(minuteRefreshTimer);
+    minuteRefreshTimer = null;
+  }
+}
+
 function startBusinessInfoRefresh() {
   installPanelToggle();
   installCopyToday();
@@ -3318,6 +3343,17 @@ function startBusinessInfoRefresh() {
   }
 
   minuteRefreshTimer = setInterval(renderFromCache, 60 * 1000);
+}
+
+/* -------------------------
+   OPTIONAL COMPATIBILITY WRAPPER
+------------------------- */
+async function displayBusinessInfo() {
+  renderFromCache();
+
+  if (!cachedBusinessData) {
+    await oneTimeFetchFallback();
+  }
 }
 
 /* -------------------------
