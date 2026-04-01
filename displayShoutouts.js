@@ -1944,7 +1944,7 @@ function setStatusChip(statusText, statusType = 'regular', isManualOverride = fa
   chip.style.borderColor = `color-mix(in srgb, ${color} 40%, transparent)`;
 }
 
-function setTrafficLight(statusText, statusType = 'regular', subStatusText = '') {
+function setTrafficLight(statusText, statusType = 'regular', subStatusText = '', isManualOverride = false) {
   const greenLight = document.getElementById('bizLightGreen');
   const yellowLight = document.getElementById('bizLightYellow');
   const redLight = document.getElementById('bizLightRed');
@@ -1954,6 +1954,24 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
   [greenLight, yellowLight, redLight].forEach((light) => {
     light.classList.remove('is-active', 'is-blinking');
   });
+
+  /* Manual override states */
+  if (isManualOverride) {
+    if (statusText === 'Open') {
+      greenLight.classList.add('is-active');
+      return;
+    }
+
+    if (statusText === 'Closed') {
+      redLight.classList.add('is-active');
+      return;
+    }
+
+    if (statusText === 'Temporarily Unavailable') {
+      redLight.classList.add('is-active');
+      return;
+    }
+  }
 
   /* Holiday closed */
   if (statusType === 'holiday' && statusText !== 'Open') {
@@ -1981,7 +1999,7 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     return;
   }
 
-  /* Closing soon = blink */
+  /* Closing soon = blinking yellow */
   if (subStatusText.includes('Closes in')) {
     yellowLight.classList.add('is-active', 'is-blinking');
     return;
@@ -2014,7 +2032,6 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
   /* Default closed */
   redLight.classList.add('is-active');
 }
-
 /* -------------------------
    VISUAL STATE HELPERS
 ------------------------- */
@@ -3032,7 +3049,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   });
 
   setStatusChip(finalStatus, finalType, isManualOverride);
-  setTrafficLight(finalStatus, finalType, subStatusText);
+  setTrafficLight(finalStatus, finalType, subStatusText, isManualOverride);
   applyBusinessVisualState({
     state: visualState,
     theme: visualTheme
