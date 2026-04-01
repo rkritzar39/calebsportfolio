@@ -1955,23 +1955,24 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '',
     light.classList.remove('is-active', 'is-blinking');
   });
 
-  /* Manual override states */
+  /* =========================
+     MANUAL OVERRIDE STATES
+     ========================= */
   if (isManualOverride) {
     if (statusText === 'Open') {
       greenLight.classList.add('is-active');
       return;
     }
 
-    if (statusText === 'Closed') {
-      redLight.classList.add('is-active');
-      return;
-    }
-
-    if (statusText === 'Temporarily Unavailable') {
+    if (statusText === 'Closed' || statusText === 'Temporarily Unavailable') {
       redLight.classList.add('is-active');
       return;
     }
   }
+
+  /* =========================
+     AUTOMATIC STATES
+     ========================= */
 
   /* Holiday closed */
   if (statusType === 'holiday' && statusText !== 'Open') {
@@ -1993,27 +1994,21 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '',
     return;
   }
 
+  /* Open and closing soon */
+  if (statusText === 'Open' && subStatusText.includes('Closes in')) {
+    yellowLight.classList.add('is-active', 'is-blinking');
+    return;
+  }
+
+  /* Closed and opening soon */
+  if (statusText !== 'Open' && subStatusText.includes('Opens in')) {
+    yellowLight.classList.add('is-active');
+    return;
+  }
+
   /* Temporary starting soon */
   if (subStatusText.includes('Temporarily unavailable in')) {
     yellowLight.classList.add('is-active', 'is-blinking');
-    return;
-  }
-
-  /* Closing soon = blinking yellow */
-  if (subStatusText.includes('Closes in')) {
-    yellowLight.classList.add('is-active', 'is-blinking');
-    return;
-  }
-
-  /* Opening / reopening soon = solid yellow */
-  if (
-    subStatusText.includes('Opens in') ||
-    subStatusText.includes('Opens again today') ||
-    subStatusText.includes('Opens again at') ||
-    subStatusText.includes('Opens today at') ||
-    subStatusText.includes('Opens tomorrow at')
-  ) {
-    yellowLight.classList.add('is-active');
     return;
   }
 
@@ -2032,6 +2027,7 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '',
   /* Default closed */
   redLight.classList.add('is-active');
 }
+
 /* -------------------------
    VISUAL STATE HELPERS
 ------------------------- */
