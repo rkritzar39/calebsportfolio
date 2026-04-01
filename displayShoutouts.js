@@ -25,6 +25,8 @@ import {
   query,
   where
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+let unsubscribeLiveStatus = null;
+
 function watchLiveStatus() {
   if (!db) {
     console.warn("Firestore not ready yet, retrying...");
@@ -32,25 +34,55 @@ function watchLiveStatus() {
     return;
   }
 
-  const el = document.getElementById("status-line-text");
+  const el = document.getElementById("live-activity-text");
   const container = document.getElementById("live-activity");
-  const ref = doc(db, "live_status", "current");
 
-  onSnapshot(ref, (snap) => {
-    if (snap.exists()) {
-      const data = snap.data();
-      el.textContent = data.message;
-      container.classList.remove("hidden");
-      container.classList.add("active");
-    } else {
+  if (!el || !container) {
+    console.warn("Live activity elements not found.");
+    return;
+  }
+
+  const liveStatusRef = doc(db, "live_status", "current");
+
+  if (unsubscribeLiveStatus) {
+    unsubscribeLiveStatus();
+    unsubscribeLiveStatus = null;
+  }
+
+  unsubscribeLiveStatus = onSnapshot(
+    liveStatusRef,
+    (snap) => {
+      if (!snap.exists()) {
+        el.textContent = "🛌 Offline";
+        container.classList.remove("active");
+        container.classList.add("hidden");
+        return;
+      }
+
+      const data = snap.data() || {};
+      const message = (data.message || "").trim();
+      const isActive = data.isActive === true || message.length > 0;
+
+      if (isActive) {
+        el.textContent = message || "🟢 Active";
+        container.classList.remove("hidden");
+        container.classList.add("active");
+      } else {
+        el.textContent = "🛌 Offline";
+        container.classList.remove("active");
+        container.classList.add("hidden");
+      }
+    },
+    (error) => {
+      console.error("Live status listener error:", error);
       el.textContent = "🛌 Offline";
       container.classList.remove("active");
+      container.classList.add("hidden");
     }
-  });
+  );
 }
 
 document.addEventListener("DOMContentLoaded", watchLiveStatus);
-// In displayShoutouts.js, REPLACE the loadAndDisplayLegislation function
 
 async function loadAndDisplayLegislation() {
     const legislationList = document.getElementById('legislation-list');
@@ -229,10 +261,9 @@ async function initializePushNotifications() {
   }
 }
 
-// --- Initialize push notifications when Firebase is ready ---
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   if (firebaseAppInitialized && db) {
-    initializePushNotifications();
+    setupSmartRealtimeNotifications();
   }
 });
 
@@ -656,7 +687,7 @@ function renderTechList() {
    FIRESTORE LISTENER
 ------------------------------------------------------------ */
 function loadTechItems() {
-    const ref = collection(db, "techItems");
+    const ref = collection(db, "tech_items");
 
     onSnapshot(ref, snapshot => {
         allTechItems = snapshot.docs.map(doc => ({
