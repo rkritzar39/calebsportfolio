@@ -32,7 +32,7 @@ function watchLiveStatus() {
     return;
   }
 
-  const el = document.getElementById("live-activity-text");
+  const el = document.getElementById("status-line-text");
   const container = document.getElementById("live-activity");
   const ref = doc(db, "live_status", "current");
 
@@ -396,7 +396,7 @@ function setupSmartRealtimeNotifications() {
   console.log("✅ Smart Firestore notifications initialized (all collections).");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   if (firebaseAppInitialized && db) {
     setupSmartRealtimeNotifications();
   }
