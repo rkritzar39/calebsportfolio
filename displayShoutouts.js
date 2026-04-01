@@ -1635,7 +1635,7 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
 
 /* ========================================
    displayShoutouts.js - Business Hours and Status
-   Full version
+   FULL CLEAN FINAL VERSION
    Dynamic sub-status
    No live countdown timer
 
@@ -1646,6 +1646,7 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
    - Temporary hours only apply during their active time window
    - Temporary hours can show the next real reopening time
    - Holiday handling supports open later today, split shifts, and closed all day
+   - Manual override clearly distinguished from scheduled temporary hours
    - Safer rendering
    - Copy Today and Toggle Hours persistence
    - Status chip updates correctly
@@ -1836,7 +1837,39 @@ function setLocalTimeLine(visitorTimezone) {
   }
 }
 
-function setStatusChip(statusText, statusType = 'regular') {
+function normalizeDisplayStatus(finalStatus, finalType, finalReason, isManualOverride) {
+  let displayStatusText = finalStatus;
+  let displayReasonText = finalReason;
+
+  if (finalType === 'holiday' && finalStatus === 'Closed') {
+    displayStatusText = 'Closed for Holiday';
+  } else if (finalType === 'holiday' && finalStatus === 'Open') {
+    displayStatusText = 'Holiday Hours Active';
+  } else if (finalType === 'temporary') {
+    displayStatusText = 'Temporarily Unavailable';
+  }
+
+  if (isManualOverride) {
+    if (finalType === 'temporary') {
+      displayReasonText = 'Manual Override • Temporarily Unavailable';
+    } else if (finalStatus === 'Open') {
+      displayReasonText = 'Manual Override • Forced Open';
+    } else if (finalStatus === 'Closed') {
+      displayReasonText = 'Manual Override • Forced Closed';
+    } else {
+      displayReasonText = `Manual Override • ${displayStatusText}`;
+    }
+  } else {
+    displayReasonText = `${finalReason} • ${displayStatusText}`;
+  }
+
+  return {
+    displayStatusText,
+    displayReasonText
+  };
+}
+
+function setStatusChip(statusText, statusType = 'regular', isManualOverride = false) {
   const chip = document.getElementById('bizChip');
   if (!chip) return;
 
@@ -1844,27 +1877,35 @@ function setStatusChip(statusText, statusType = 'regular') {
   const closedColor = 'var(--status-closed-color, #dc3545)';
   const temporaryColor = 'var(--status-unavailable-color, #fd7e14)';
   const holidayColor = 'var(--status-holiday-color, #a855f7)';
-  const overrideColor = 'var(--status-override-color, #0ea5e9)';
+  const manualColor = 'var(--status-override-color, #0ea5e9)';
 
   let color = closedColor;
-  let label = 'CLOSED';
+  let label = 'Closed';
 
   if (statusType === 'holiday') {
     color = holidayColor;
-    label = 'HOLIDAY';
-  } else if (statusType === 'override') {
-    color = overrideColor;
-    label = 'OVERRIDE';
+    label = 'Holiday';
+  } else if (statusType === 'temporary') {
+    color = temporaryColor;
+    label = 'Temporary';
   } else if (statusText === 'Open') {
     color = openColor;
-    label = 'OPEN';
-  } else if (statusText === 'Temporarily Unavailable') {
-    color = temporaryColor;
-    label = 'TEMPORARY';
+    label = 'Open';
+  } else {
+    color = closedColor;
+    label = 'Closed';
+  }
+
+  if (isManualOverride) {
+    chip.textContent = `${label} • Manual`;
+    chip.style.color = manualColor;
+    chip.style.borderColor = `color-mix(in srgb, ${manualColor} 40%, transparent)`;
+    return;
   }
 
   chip.textContent = label;
   chip.style.color = color;
+  chip.style.borderColor = `color-mix(in srgb, ${color} 40%, transparent)`;
 }
 
 function setTrafficLight(statusText, statusType = 'regular', subStatusText = '') {
@@ -1878,16 +1919,11 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     light.classList.remove('is-active', 'is-blinking');
   });
 
-  /* Holiday closed = blinking red */
   if (statusType === 'holiday' && statusText !== 'Open') {
     redLight.classList.add('is-active', 'is-blinking');
     return;
   }
 
-  /* Temporary active:
-     - solid yellow normally
-     - blinking yellow when close to reopening/end of temp window
-  */
   if (statusType === 'temporary') {
     yellowLight.classList.add('is-active');
 
@@ -1898,13 +1934,11 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     return;
   }
 
-  /* Temporary starting soon */
   if (subStatusText.includes('Temporarily unavailable in')) {
-    yellowLight.classList.add('is-active', 'is-blinking');
+    yellowLight.classList.add('is-active');
     return;
   }
 
-  /* General warning states */
   if (
     subStatusText.includes('Opens in') ||
     subStatusText.includes('Closes in') ||
@@ -1915,19 +1949,16 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '')
     return;
   }
 
-  /* Holiday open */
   if (statusType === 'holiday' && statusText === 'Open') {
     yellowLight.classList.add('is-active');
     return;
   }
 
-  /* Normal open */
   if (statusText === 'Open') {
     greenLight.classList.add('is-active');
     return;
   }
 
-  /* Default closed */
   redLight.classList.add('is-active');
 }
 
@@ -2479,8 +2510,8 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     statusMainTextElement.className = 'status-main-text status-unavailable';
     statusReasonElement.textContent = 'Missing timezone';
     statusSubTextElement.textContent = '';
-    setStatusChip('Temporarily Unavailable', 'override');
-    setTrafficLight('Temporarily Unavailable', 'override', '');
+    setStatusChip('Temporarily Unavailable', 'temporary', true);
+    setTrafficLight('Temporarily Unavailable', 'temporary', '');
     applyBusinessVisualState({
       state: 'closed',
       theme: 'day'
@@ -2541,18 +2572,24 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   let finalStatus = baseStatus;
   let finalType = baseType;
   let finalReason = baseReason;
+  let isManualOverride = false;
 
   if (statusOverride !== 'auto') {
+    isManualOverride = true;
+
     if (statusOverride === 'open') {
       finalStatus = 'Open';
+      finalType = 'regular';
+      finalReason = 'Manual Override';
     } else if (statusOverride === 'closed') {
       finalStatus = 'Closed';
+      finalType = 'regular';
+      finalReason = 'Manual Override';
     } else {
       finalStatus = 'Temporarily Unavailable';
+      finalType = 'temporary';
+      finalReason = 'Manual Override';
     }
-
-    finalType = 'override';
-    finalReason = 'Manual Override';
   } else if (activeTemporarySchedule) {
     finalStatus = 'Temporarily Unavailable';
     finalType = 'temporary';
@@ -2569,18 +2606,15 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   statusMainTextElement.className = 'status-main-text';
   statusMainTextElement.classList.add(statusClass);
 
-  let displayStatusText = finalStatus;
+  const normalizedDisplay = normalizeDisplayStatus(
+    finalStatus,
+    finalType,
+    finalReason,
+    isManualOverride
+  );
 
-  if (finalType === 'holiday' && finalStatus === 'Closed') {
-    displayStatusText = 'Closed for Holiday';
-  } else if (finalType === 'holiday' && finalStatus === 'Open') {
-    displayStatusText = 'Holiday Hours Active';
-  } else if (finalType === 'temporary') {
-    displayStatusText = 'Temporarily Unavailable';
-  }
-
-  statusMainTextElement.textContent = displayStatusText;
-  statusReasonElement.textContent = `${finalReason} • ${displayStatusText}`;
+  statusMainTextElement.textContent = normalizedDisplay.displayStatusText;
+  statusReasonElement.textContent = normalizedDisplay.displayReasonText;
 
   /* -------------------------
      TODAY META ROW
@@ -2641,12 +2675,13 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     statusSubTextElement.textContent = '';
     setMetaRow('bizNextOpen', '—');
 
-    /* ---------------------------------
-       TEMPORARY HOURS
-       Treat the end of the active temporary
-       window as the reopening time
-    --------------------------------- */
-    if (finalType === 'temporary') {
+    if (finalType === 'temporary' && isManualOverride) {
+      statusSubTextElement.textContent = 'Manual temporary override is active';
+      setMetaRow('bizNextOpen', '—');
+      return;
+    }
+
+    if (finalType === 'temporary' && !isManualOverride) {
       const activeRange = activeTemporarySchedule?.activeRange;
 
       if (!LuxonLibrary || !nowInBusinessTimezone || !activeRange?.close) {
@@ -2688,14 +2723,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       return;
     }
 
-    /* ---------------------------------
-       HOLIDAY HOURS
-       Smart handling for:
-       - holiday opens later today
-       - holiday open now
-       - holiday closed for the day
-       - holiday split shifts
-    --------------------------------- */
     if (finalType === 'holiday') {
       if (!LuxonLibrary || !nowInBusinessTimezone) {
         statusSubTextElement.textContent = '';
@@ -2815,10 +2842,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       return;
     }
 
-    /* ---------------------------------
-       TEMPORARY HOURS STARTING SOON
-       15-minute warning window
-    --------------------------------- */
     let soonestTemporaryStart = null;
 
     if (LuxonLibrary && nowInBusinessTimezone) {
@@ -2851,9 +2874,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       return;
     }
 
-    /* ---------------------------------
-       REGULAR OPEN STATE
-    --------------------------------- */
     if (finalStatus === 'Open') {
       const activeRange = baseActiveRange;
 
@@ -2882,9 +2902,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       return;
     }
 
-    /* ---------------------------------
-       GENERAL CLOSED STATE
-    --------------------------------- */
     if (!LuxonLibrary || !nowInBusinessTimezone) {
       statusSubTextElement.textContent = '';
       setMetaRow('bizNextOpen', '—');
@@ -2961,7 +2978,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     baseActiveRange
   });
 
-  setStatusChip(finalStatus, finalType);
+  setStatusChip(finalStatus, finalType, isManualOverride);
   setTrafficLight(finalStatus, finalType, subStatusText);
   applyBusinessVisualState({
     state: visualState,
@@ -3170,8 +3187,8 @@ function renderErrorState(message = 'Error Loading') {
 
   setMetaRow('bizNextOpen', '—');
   setMetaRow('bizTodayHours', '—');
-  setStatusChip('Temporarily Unavailable', 'override');
-  setTrafficLight('Temporarily Unavailable', 'override', '');
+  setStatusChip('Temporarily Unavailable', 'temporary', true);
+  setTrafficLight('Temporarily Unavailable', 'temporary', '');
   applyBusinessVisualState({
     state: 'closed',
     theme: 'day'
