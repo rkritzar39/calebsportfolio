@@ -147,10 +147,10 @@ class SettingsManager {
 
       // Experience
       reduceMotion: false,
-      showMouseTrail: true,
+      showMouseTrail: false,
       dockHoverEffects: true,
       layoutDensity: "comfortable",
-      cornerStyle: "soft",
+      cornerStyle: "rounded",
 
       // Fun / perf
       loadingScreen: "disabled",
