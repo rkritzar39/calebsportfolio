@@ -1964,8 +1964,13 @@ function setTrafficLight(statusText, statusType = 'regular', subStatusText = '',
       return;
     }
 
-    if (statusText === 'Closed' || statusText === 'Temporarily Unavailable') {
+    if (statusText === 'Closed') {
       redLight.classList.add('is-active');
+      return;
+    }
+
+    if (statusText === 'Temporarily Unavailable') {
+      yellowLight.classList.add('is-active');
       return;
     }
   }
