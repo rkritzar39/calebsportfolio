@@ -1865,12 +1865,53 @@ function setLocalTimeLine(visitorTimezone) {
       weekday: 'short',
       hour: 'numeric',
       minute: '2-digit',
+      second: '2-digit'
     }).format(now);
 
     element.textContent = `Local time: ${formatted}`;
   } catch (error) {
     element.textContent = 'Local time: —';
   }
+}
+
+function startLiveLocalClock() {
+  if (localClockTimer) {
+    clearInterval(localClockTimer);
+    localClockTimer = null;
+  }
+
+  const tick = () => {
+    cachedVisitorTimezone = getVisitorTimezoneSafe();
+    setMetaRow('bizUserTz', cachedVisitorTimezone);
+    setLocalTimeLine(cachedVisitorTimezone);
+  };
+
+  tick();
+  localClockTimer = setInterval(tick, 1000);
+}
+
+function startMinuteAlignedRefresh() {
+  if (minuteRefreshTimer) {
+    clearInterval(minuteRefreshTimer);
+    minuteRefreshTimer = null;
+  }
+
+  if (minuteBoundaryTimeout) {
+    clearTimeout(minuteBoundaryTimeout);
+    minuteBoundaryTimeout = null;
+  }
+
+  const now = new Date();
+  const msUntilNextMinute =
+    ((60 - now.getSeconds()) * 1000) - now.getMilliseconds();
+
+  minuteBoundaryTimeout = setTimeout(() => {
+    renderFromCache();
+
+    minuteRefreshTimer = setInterval(() => {
+      renderFromCache();
+    }, 60 * 1000);
+  }, msUntilNextMinute);
 }
 
 function normalizeDisplayStatus(finalStatus, finalType, finalReason, isManualOverride) {
@@ -3226,6 +3267,8 @@ let cachedBusinessData = null;
 let cachedVisitorTimezone = 'UTC';
 let unsubscribeBusinessListener = null;
 let minuteRefreshTimer = null;
+let minuteBoundaryTimeout = null;
+let localClockTimer = null;
 
 function getVisitorTimezoneSafe() {
   try {
@@ -3318,6 +3361,16 @@ function stopBusinessInfoRefresh() {
     clearInterval(minuteRefreshTimer);
     minuteRefreshTimer = null;
   }
+
+  if (minuteBoundaryTimeout) {
+    clearTimeout(minuteBoundaryTimeout);
+    minuteBoundaryTimeout = null;
+  }
+
+  if (localClockTimer) {
+    clearInterval(localClockTimer);
+    localClockTimer = null;
+  }
 }
 
 function startBusinessInfoRefresh() {
@@ -3329,6 +3382,8 @@ function startBusinessInfoRefresh() {
   setLocalTimeLine(cachedVisitorTimezone);
   setMetaRow('bizNextOpen', '—');
   setMetaRow('bizTodayHours', '—');
+
+  startLiveLocalClock();
 
   if (businessDocumentReferenceLocal && typeof onSnapshot === 'function') {
     try {
@@ -3355,11 +3410,7 @@ function startBusinessInfoRefresh() {
     oneTimeFetchFallback();
   }
 
-  if (minuteRefreshTimer) {
-    clearInterval(minuteRefreshTimer);
-  }
-
-  minuteRefreshTimer = setInterval(renderFromCache, 60 * 1000);
+  startMinuteAlignedRefresh();
 }
 
 /* -------------------------
