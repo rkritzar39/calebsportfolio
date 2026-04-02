@@ -3172,7 +3172,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     return;
   }
 
-  let html = '<h4>Temporary Hours</h4><ul class="special-hours-display">';
+  let html = '<h4>Active and Temporary Hours</h4><ul class="special-hours-display">';
 
   for (const temporarySchedule of visibleTemporaryHours) {
     let daysUntilText = '';
@@ -3228,7 +3228,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   temporaryHoursElement.innerHTML = html;
   temporaryHoursElement.style.display = 'block';
 })();
-
+    
 /* -------------------------
    HOLIDAY HOURS RENDER
 ------------------------- */
@@ -3256,7 +3256,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     return;
   }
 
-  let html = '<h4>Holiday Hours</h4><ul class="special-hours-display">';
+  let html = '<h4>Active and Holiday Hours</h4><ul class="special-hours-display">';
 
   for (const holiday of visibleHolidayHours) {
     let daysUntilText = '';
@@ -3306,6 +3306,8 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   holidayHoursElement.innerHTML = html;
   holidayHoursElement.style.display = 'block';
 })();
+}
+
 /* -------------------------
    DATA LOAD AND REFRESH STRATEGY
 ------------------------- */
