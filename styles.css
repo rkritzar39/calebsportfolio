@@ -77,26 +77,39 @@
 /* ======================== */
 body.light-e {
   --bg-color: var(--light-bg-gradient);
-  --content-bg: var(--light-content-bg);
+  --content-bg: rgba(255, 255, 255, 0.38);
   --text-color: var(--light-text);
   --secondary-text: var(--light-secondary-text);
-  --border-color: var(--light-border);
-  --accent-color: var(--light-accent);
+  --border-color: rgba(255, 255, 255, 0.42);
   --hover-color: var(--light-hover);
   --link-color: var(--light-link);
-  --shadow-color: var(--light-shadow);
-  --glow-color: var(--light-glow);
+  --shadow-color: rgba(0, 0, 0, 0.16);
+  --glow-color: rgba(255, 255, 255, 0.76);
   --icon-color: var(--light-icon);
   --social-icon-text-color: var(--light-text);
 
-  --bubble-gradient: radial-gradient(circle at 38% 20%, rgba(255, 255, 255, 0.72), transparent 62%);
+  --bubble-gradient: radial-gradient(
+    circle at 38% 22%,
+    rgba(255, 255, 255, 0.72),
+    rgba(255, 255, 255, 0.18) 42%,
+    transparent 68%
+  );
+
   --bubble-shadow:
-    0 2px 6px rgba(15, 23, 42, 0.06),
-    0 18px 40px rgba(15, 23, 42, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    inset 0 -8px 18px rgba(148, 163, 184, 0.08);
-  --bubble-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.72);
-  --backdrop-blur: blur(24px) saturate(170%) contrast(105%);
+    0 10px 30px rgba(0, 0, 0, 0.12),
+    0 20px 44px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.72),
+    inset 0 -1px 8px rgba(255, 255, 255, 0.18);
+
+  --bubble-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.68);
+  --backdrop-blur: blur(26px) saturate(185%) contrast(108%);
+  --liquid-reflection: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.52) 0%,
+    rgba(255, 255, 255, 0.16) 34%,
+    rgba(255, 255, 255, 0.05) 52%,
+    rgba(255, 255, 255, 0.00) 72%
+  );
 }
 
 /* ======================== */
@@ -121,6 +134,16 @@ body.dark-mode {
   box-shadow: var(--bubble-shadow);
   overflow: hidden;
   position: relative;
+}
+
+body.light-e .glass {
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.12),
+    0 24px 50px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.72),
+    inset 0 -1px 10px rgba(255, 255, 255, 0.20);
 }
 
 /* Reflection Layer */
@@ -178,15 +201,13 @@ body.light-e .section[data-section-id="time"],
 body.light-e .section[data-section-id="weather"],
 body.light-e .section[data-section-id="focus"],
 body.light-e .section[data-section-id="battery"] {
-  background:
-    linear-gradient(180deg,
-      rgba(255, 255, 255, 0.78) 0%,
-      rgba(239, 244, 248, 0.88) 100%);
-  border: 1px solid rgba(30, 41, 59, 0.10);
+  background: rgba(255, 255, 255, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(18px) saturate(175%);
+  -webkit-backdrop-filter: blur(18px) saturate(175%);
   box-shadow:
-    0 8px 20px rgba(15, 23, 42, 0.08),
-    0 1px 3px rgba(15, 23, 42, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    0 8px 22px rgba(0, 0, 0, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.70);
 }
 
 /* 🕒 Live Time */
@@ -424,51 +445,47 @@ p, span, li {
 /* ========================================= */
 body.light-e .section {
   background:
-    linear-gradient(180deg,
-      rgba(248, 250, 252, 0.96) 0%,
-      rgba(233, 238, 243, 0.94) 100%
-    ),
     linear-gradient(135deg,
-      rgba(255, 255, 255, 0.78) 0%,
-      rgba(255, 255, 255, 0.24) 34%,
-      rgba(255, 255, 255, 0.00) 60%
+      rgba(255, 255, 255, 0.46),
+      rgba(255, 255, 255, 0.22)
     ),
     linear-gradient(215deg,
-      rgba(0, 0, 0, 0.05) 0%,
-      rgba(0, 0, 0, 0.00) 48%
-    );
+      rgba(255, 255, 255, 0.12),
+      rgba(0, 0, 0, 0.08)
+    ),
+    rgba(255, 255, 255, 0.32);
 
-  border: 1px solid rgba(30, 41, 59, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+
+  backdrop-filter: blur(26px) saturate(185%) contrast(108%);
+  -webkit-backdrop-filter: blur(26px) saturate(185%) contrast(108%);
 
   box-shadow:
-    0 2px 6px rgba(15, 23, 42, 0.06),
-    0 16px 34px rgba(15, 23, 42, 0.10),
-    0 28px 52px rgba(15, 23, 42, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    inset 0 -10px 18px rgba(148, 163, 184, 0.08);
+    0 12px 30px rgba(0, 0, 0, 0.12),
+    0 24px 46px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.78),
+    inset 0 -2px 10px rgba(255, 255, 255, 0.18);
 }
 
 body.light-e .section::before {
-  background:
-    radial-gradient(
-      ellipse at 50% 0%,
-      rgba(255, 255, 255, 0.90) 0%,
-      rgba(255, 255, 255, 0.44) 35%,
-      rgba(255, 255, 255, 0.08) 55%,
-      transparent 78%
-    );
-  opacity: 0.95;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.92),
+    rgba(255, 255, 255, 0.38) 36%,
+    rgba(255, 255, 255, 0.08) 56%,
+    transparent 80%
+  );
+  opacity: 0.88;
 }
 
 body.light-e .section::after {
-  background:
-    radial-gradient(
-      ellipse at 50% 100%,
-      rgba(71, 85, 105, 0.18) 0%,
-      rgba(71, 85, 105, 0.08) 30%,
-      transparent 72%
-    );
-  opacity: 0.90;
+  background: radial-gradient(
+    circle at 50% 100%,
+    rgba(0, 0, 0, 0.14),
+    rgba(0, 0, 0, 0.05) 34%,
+    transparent 72%
+  );
+  opacity: 0.42;
 }
 
 /* ======================== */
