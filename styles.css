@@ -2040,7 +2040,7 @@ body.dark-mode .bubble {
 
 /* ======================================== */
 /* == Social Links Section – Onyx Glass   == */
-/* == iOS-Style List + Chevron           == */
+/* == iOS-Style Pill Rows + Chevron       == */
 /* ======================================== */
 
 .social-links-section {
@@ -2078,6 +2078,8 @@ body.dark-mode .bubble {
 
 /* Header */
 .social-links-section h2 {
+	position: relative;
+	z-index: 1;
 	font-size: calc(var(--font-size-base, 20px) * 1.2);
 	font-weight: 700;
 	margin-top: 0;
@@ -2089,43 +2091,61 @@ body.dark-mode .bubble {
 /* Search */
 /* ======================================== */
 .search-container.unified {
+	position: relative;
+	z-index: 1;
 	margin-bottom: 20px;
 }
 
 /* ======================================== */
-/* Container (iOS list style) */
+/* Container */
 /* ======================================== */
 .social-links-container {
+	position: relative;
+	z-index: 1;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
+	gap: 12px;
 	width: 100%;
 }
 
 /* ======================================== */
-/* Social Button (iOS Row) */
+/* Social Button – True Pill Style */
 /* ======================================== */
 .social-button {
 	display: flex;
 	align-items: center;
 	gap: 14px;
 	width: 100%;
-	padding: 14px 18px;
-	padding-right: 44px;
+	min-height: 56px;
+	padding: 14px 20px;
+	padding-right: 50px;
 
-	border-radius: 14px;
-	text-decoration: none;
 	position: relative;
 	box-sizing: border-box;
+	text-decoration: none;
+	border-radius: 9999px;
 
-	/* Glass style */
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 8%, transparent),
+			color-mix(in srgb, white 2%, transparent)
+		),
+		var(--content-bg);
+	background-image:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 8%, transparent),
+			color-mix(in srgb, white 2%, transparent)
+		),
+		var(--bubble-gradient);
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
 
 	box-shadow:
-		0 6px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+		0 8px 24px color-mix(in srgb, var(--shadow-color) 42%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 14%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, black 8%, transparent);
 
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
@@ -2133,44 +2153,94 @@ body.dark-mode .bubble {
 	color: var(--text-color);
 	font-weight: 600;
 	letter-spacing: 0.2px;
+
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.12s ease;
+}
+
+/* Soft glass sheen inside each pill */
+.social-button::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(
+		180deg,
+		color-mix(in srgb, white 16%, transparent) 0%,
+		color-mix(in srgb, white 6%, transparent) 35%,
+		transparent 100%
+	);
+	opacity: 0.55;
+	pointer-events: none;
 }
 
 /* Icon */
 .social-button .social-icon {
-	font-size: 1.1em;
+	position: relative;
+	z-index: 1;
+	font-size: 1.08em;
 	color: var(--icon-color);
 	flex-shrink: 0;
+	width: 20px;
+	text-align: center;
 }
 
 /* Text */
 .social-button span {
-	flex-grow: 1;
+	position: relative;
+	z-index: 1;
+	flex: 1 1 auto;
 	text-align: left;
 	color: var(--text-color);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-/* ======================================== */
-/* iOS Chevron */
-/* ======================================== */
+/* Chevron */
 .social-button::after {
 	content: "";
 	position: absolute;
-	right: 16px;
+	right: 20px;
 	top: 50%;
 	transform: translateY(-50%) rotate(45deg);
+	z-index: 1;
 
 	width: 8px;
 	height: 8px;
 
-	border-right: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
-	border-top: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
+	border-top: 2px solid color-mix(in srgb, var(--text-color) 58%, transparent);
+	border-right: 2px solid color-mix(in srgb, var(--text-color) 58%, transparent);
 
-	opacity: 0.7;
+	opacity: 0.85;
+	pointer-events: none;
 }
 
-/* Press only (no hover animation) */
+/* Hover */
+.social-button:hover {
+	border-color: color-mix(in srgb, var(--border-color) 92%, white 8%);
+	box-shadow:
+		0 10px 28px color-mix(in srgb, var(--shadow-color) 48%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 16%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, black 10%, transparent);
+}
+
+/* Keyboard focus */
+.social-button:focus-visible {
+	outline: none;
+	border-color: color-mix(in srgb, var(--accent-color, #4EA8FF) 52%, var(--border-color));
+	box-shadow:
+		0 0 0 3px color-mix(in srgb, var(--accent-color, #4EA8FF) 20%, transparent),
+		0 10px 28px color-mix(in srgb, var(--shadow-color) 48%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 16%, transparent);
+}
+
+/* Press */
 .social-button:active {
-	transform: scale(0.97);
+	transform: scale(0.985);
 }
 
 .social-button:active::after {
@@ -2181,8 +2251,11 @@ body.dark-mode .bubble {
 /* No Results */
 /* ======================================== */
 .no-results {
+	position: relative;
+	z-index: 1;
 	margin-top: 10px;
 	color: var(--secondary-text);
+	text-align: center;
 }
 
 /* ======================================== */
@@ -2194,9 +2267,14 @@ body.dark-mode .bubble {
 		border-radius: var(--radius-lg);
 	}
 
+	.social-links-container {
+		gap: 10px;
+	}
+
 	.social-button {
-		padding: 13px 16px;
-		padding-right: 42px;
+		min-height: 54px;
+		padding: 13px 18px;
+		padding-right: 46px;
 	}
 }
 
@@ -2206,13 +2284,21 @@ body.dark-mode .bubble {
 	}
 
 	.social-button {
-		padding: 12px 14px;
-		padding-right: 40px;
+		min-height: 52px;
+		padding: 12px 16px;
+		padding-right: 42px;
 		font-size: 0.95em;
 	}
 
 	.social-button .social-icon {
 		font-size: 1em;
+		width: 18px;
+	}
+
+	.social-button::after {
+		right: 16px;
+		width: 7px;
+		height: 7px;
 	}
 }
 
