@@ -3160,28 +3160,31 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     for (const temporarySchedule of temporaryHours) {
       let daysUntilText = '';
 
-      if (LuxonLibrary) {
-        const nowInVisitorTimezone = LuxonLibrary.DateTime.now().setZone(visitorTimezone);
-        const startDateTime = parseBusinessIsoDate(temporarySchedule.startDate);
+if (LuxonLibrary) {
+  const nowInBusinessTimezone = getNowInBusinessTimezone();
+  const startDateTime = parseBusinessIsoDate(temporarySchedule.startDate);
+  const endDateTime = parseBusinessIsoDate(temporarySchedule.endDate);
 
-        if (startDateTime) {
-          const differenceInDays = Math.ceil(
-            startDateTime
-              .setZone(visitorTimezone)
-              .startOf('day')
-              .diff(nowInVisitorTimezone.startOf('day'), 'days')
-              .days
-          );
+  if (nowInBusinessTimezone && startDateTime && endDateTime) {
+    const todayBusiness = nowInBusinessTimezone.startOf('day');
+    const startBusiness = startDateTime.startOf('day');
+    const endBusiness = endDateTime.startOf('day');
 
-          daysUntilText =
-            differenceInDays > 0
-              ? `(${differenceInDays} day${differenceInDays > 1 ? 's' : ''} away)`
-              : differenceInDays === 0
-                ? '(Today)'
-                : '(Started)';
-        }
-      }
+    if (todayBusiness < startBusiness) {
+      const differenceInDays = Math.round(
+        startBusiness.diff(todayBusiness, 'days').days
+      );
 
+      daysUntilText = `(${differenceInDays} day${differenceInDays !== 1 ? 's' : ''} away)`;
+    } else if (todayBusiness > endBusiness) {
+      daysUntilText = '(Ended)';
+    } else if (+todayBusiness === +startBusiness) {
+      daysUntilText = '(Starts Today)';
+    } else {
+      daysUntilText = '(Active Now)';
+    }
+  }
+}
       const rangeText = temporarySchedule.ranges
         .map((range) =>
           `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
@@ -3216,27 +3219,27 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     for (const holiday of holidayHours) {
       let daysUntilText = '';
 
-      if (LuxonLibrary) {
-        const nowInVisitorTimezone = LuxonLibrary.DateTime.now().setZone(visitorTimezone);
-        const holidayDateTime = parseBusinessIsoDate(holiday.date);
+if (LuxonLibrary) {
+  const nowInBusinessTimezone = getNowInBusinessTimezone();
+  const holidayDateTime = parseBusinessIsoDate(holiday.date);
 
-        if (holidayDateTime) {
-          const differenceInDays = Math.ceil(
-            holidayDateTime
-              .setZone(visitorTimezone)
-              .startOf('day')
-              .diff(nowInVisitorTimezone.startOf('day'), 'days')
-              .days
-          );
+  if (nowInBusinessTimezone && holidayDateTime) {
+    const todayBusiness = nowInBusinessTimezone.startOf('day');
+    const holidayBusiness = holidayDateTime.startOf('day');
 
-          daysUntilText =
-            differenceInDays > 0
-              ? `(${differenceInDays} day${differenceInDays > 1 ? 's' : ''} away)`
-              : differenceInDays === 0
-                ? '(Today)'
-                : '(Started)';
-        }
-      }
+    if (todayBusiness < holidayBusiness) {
+      const differenceInDays = Math.round(
+        holidayBusiness.diff(todayBusiness, 'days').days
+      );
+
+      daysUntilText = `(${differenceInDays} day${differenceInDays !== 1 ? 's' : ''} away)`;
+    } else if (+todayBusiness === +holidayBusiness) {
+      daysUntilText = '(Today)';
+    } else {
+      daysUntilText = '(Passed)';
+    }
+  }
+}
 
       const rangeText = holiday.isClosed
         ? 'Closed'
