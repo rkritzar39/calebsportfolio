@@ -731,57 +731,43 @@
   <script src="script.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const links = document.querySelectorAll('.onyx-dock .dock-item');
-      
-      // 1. Get current page for Active State (Robust Check)
-      // Removes query params and .html extension for clean matching
-      let currentPath = window.location.pathname.split("?")[0]; 
-      let currentPage = currentPath.split("/").pop();
-      
-      // Strip .html if present
-      currentPage = currentPage.replace('.html', '');
-      
-      // Default to 'index' if root
-      if (currentPage === "" || currentPage === "/") currentPage = "index";
+  document.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelectorAll('.onyx-dock .dock-item');
 
-      links.forEach(link => {
-        // --- LOGIC A: Set Active State ---
-        const targetHref = link.getAttribute("href");
-        // Strip .html from href for comparison
-        const targetPage = targetHref.replace('.html', '');
+    let currentPath = window.location.pathname.split("?")[0];
+    let currentPage = currentPath.split("/").pop();
+    currentPage = currentPage.replace('.html', '');
+    if (currentPage === "" || currentPage === "/") currentPage = "index";
 
-        if (targetPage === currentPage) {
-          link.classList.add("active");
-        }
+    links.forEach(link => {
+      const targetHref = link.getAttribute("href");
+      const targetPage = targetHref.replace('.html', '');
 
-        // --- LOGIC B: Vision OS Mouse Tracking ---
-        link.addEventListener('mousemove', (e) => {
-          const rect = link.getBoundingClientRect();
-          
-          // Calculate X/Y of mouse relative to the button
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
+      if (targetPage === currentPage) {
+        link.classList.add("active");
+      }
 
-          // Calculate offset from center (for parallax)
-          // Ranges from -0.5 to 0.5
-          const dx = (x / rect.width) - 0.5;
-          const dy = (y / rect.height) - 0.5;
+      link.addEventListener('mousemove', (e) => {
+        if (document.documentElement.classList.contains('disable-dock-hover-effects')) return;
 
-          // Set CSS variables
-          link.style.setProperty('--x', `${x}px`);
-          link.style.setProperty('--y', `${y}px`);
-          link.style.setProperty('--dx', dx);
-          link.style.setProperty('--dy', dy);
-        });
+        const rect = link.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const dx = (x / rect.width) - 0.5;
+        const dy = (y / rect.height) - 0.5;
 
-        // Reset when mouse leaves
-        link.addEventListener('mouseleave', () => {
-          link.style.setProperty('--dx', 0);
-          link.style.setProperty('--dy', 0);
-        });
+        link.style.setProperty('--x', `${x}px`);
+        link.style.setProperty('--y', `${y}px`);
+        link.style.setProperty('--dx', dx);
+        link.style.setProperty('--dy', dy);
+      });
+
+      link.addEventListener('mouseleave', () => {
+        link.style.setProperty('--dx', 0);
+        link.style.setProperty('--dy', 0);
       });
     });
-  </script>
+  });
+</script>
 </body>
 </html>
