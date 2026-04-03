@@ -5163,7 +5163,6 @@ body.maintenance-active {
 /* -------------------------
    Status dot and chip
 ------------------------- */
-
 .biz-chip{
   margin-left:auto;
   font-weight:900;
@@ -5202,12 +5201,12 @@ body.maintenance-active {
   height:14px;
   border-radius:50%;
   opacity:.14;
-  transform:scale(.96);
+  transform:none;
   transition:
-    opacity .18s linear,
-    transform .18s linear,
-    box-shadow .18s linear,
-    filter .18s linear;
+    opacity .08s linear,
+    box-shadow .08s linear,
+    filter .08s linear,
+    background-color .08s linear;
 }
 
 .biz-signal__light::before{
@@ -5218,7 +5217,7 @@ body.maintenance-active {
   background:inherit;
   opacity:0;
   filter:blur(4px);
-  transition:opacity .18s linear, filter .18s linear;
+  transition:opacity .08s linear, filter .08s linear;
 }
 
 .biz-signal__light--green{ background:#22c55e; }
@@ -5227,7 +5226,7 @@ body.maintenance-active {
 
 .biz-signal__light.is-active{
   opacity:1;
-  transform:scale(1);
+  transform:none;
 }
 
 .biz-signal__light--green.is-active{
@@ -5261,6 +5260,26 @@ body.maintenance-active {
 .biz-signal__light--red.is-active::before{
   opacity:.9;
   filter:blur(5px);
+}
+
+/* -------------------------
+   Real LED traffic-light blink
+------------------------- */
+@keyframes bizStateBlink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0.14;
+  }
+}
+
+.biz-signal__light.is-blinking{
+  animation: bizStateBlink 1s steps(1, end) infinite;
+}
+
+.biz-signal__light.is-blinking::before{
+  animation: bizStateBlink 1s steps(1, end) infinite;
 }
 
 /* -------------------------
@@ -5563,7 +5582,7 @@ main .business-section{
     gap:14px;
   }
 
-    .biz-signal{
+  .biz-signal{
     padding:7px;
     gap:7px;
   }
@@ -5736,44 +5755,6 @@ main .business-section{
   border-color: color-mix(in srgb, var(--biz-closed-color) 38%, var(--border-color));
   background: color-mix(in srgb, var(--biz-closed-color) 12%, var(--content-bg));
   box-shadow: 0 0 12px color-mix(in srgb, var(--biz-closed-color) 14%, transparent);
-}
-
-/* -------------------------
-   Traffic light transition polish
-------------------------- */
-.biz-signal__light{
-  transition:
-    opacity .28s ease,
-    transform .28s ease,
-    box-shadow .28s ease,
-    filter .28s ease,
-    background-color .28s ease;
-}
-
-/* Active light breathes softly */
-@keyframes bizSignalPulse {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.18); }
-}
-
-.biz-signal__light.is-active{
-  animation: bizSignalPulse 2.2s ease-in-out infinite;
-}
-
-/* Clean single blink animation */
-@keyframes bizStateBlink {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: .18;
-    transform: scale(.96);
-  }
-}
-
-.biz-signal__light.is-blinking{
-  animation: bizStateBlink 1s ease-in-out infinite;
 }
 
 /* -------------------------
