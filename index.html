@@ -365,7 +365,7 @@
 <section class="section business-info-section" id="business-section" data-section-id="business-info">
   <div class="business-head">
     <div class="business-head-left">
-      <h2>Business Status & Hours</h2>
+      <h2>Business Status &amp; Hours</h2>
       <p class="business-subtitle">
         Hours shown in your local timezone. Store timezone: <strong>America/New_York</strong>.
       </p>
@@ -383,25 +383,41 @@
         aria-expanded="true"
         aria-controls="hoursPanel"
       >
-        Toggle Hours
+        Hide Full Hours
       </button>
 
-      <!-- ✅ NEW: 12h / 24h Toggle -->
-      <button
-        class="biz-action biz-time-toggle"
-        type="button"
-        id="bizTimeFormatToggle"
-        aria-pressed="false"
-        title="Toggle 12-hour and 24-hour time"
+      <div
+        class="biz-segmented-time"
+        id="bizTimeFormatSegment"
+        role="group"
+        aria-label="Time format"
       >
-        12h
-      </button>
+        <button
+          type="button"
+          class="biz-segmented-time__option is-active"
+          id="bizTime12Btn"
+          data-format="12"
+          aria-pressed="true"
+        >
+          12h
+        </button>
+
+        <button
+          type="button"
+          class="biz-segmented-time__option"
+          id="bizTime24Btn"
+          data-format="24"
+          aria-pressed="false"
+        >
+          24h
+        </button>
+      </div>
     </div>
   </div>
 
   <div class="business-grid">
     <!-- =========================
-         LEFT PANEL — STATUS
+         LEFT PANEL — LIVE STATUS
     ========================== -->
     <div class="biz-panel">
       <div class="biz-panel-title">
@@ -421,10 +437,17 @@
         <div class="status-reason-text"></div>
       </div>
 
+      <div class="biz-status-hint" id="bizStatusHint"></div>
+
       <div class="biz-meta">
         <div class="biz-meta__row">
           <span class="biz-meta__label">Your timezone</span>
           <span class="biz-meta__value" id="bizUserTz">Detecting…</span>
+        </div>
+
+        <div class="biz-meta__row">
+          <span class="biz-meta__label">Store time</span>
+          <span class="biz-meta__value" id="bizStoreTime">Loading…</span>
         </div>
 
         <div class="biz-meta__row">
@@ -435,6 +458,23 @@
         <div class="biz-meta__row">
           <span class="biz-meta__label">Next open</span>
           <span class="biz-meta__value" id="bizNextOpen">Loading…</span>
+        </div>
+      </div>
+
+      <div
+        class="biz-today-timeline"
+        id="bizTodayTimeline"
+        aria-label="Today's schedule timeline"
+      >
+        <div class="biz-today-timeline__bar">
+          <span class="biz-today-timeline__fill" id="bizTodayTimelineFill"></span>
+          <span class="biz-today-timeline__now" id="bizTodayTimelineNow"></span>
+        </div>
+
+        <div class="biz-today-timeline__labels">
+          <span id="bizTimelineStart">—</span>
+          <span id="bizTimelineNowLabel">Now</span>
+          <span id="bizTimelineEnd">—</span>
         </div>
       </div>
     </div>
@@ -450,13 +490,11 @@
 
       <div id="business-hours-display" class="hours-wrap"></div>
 
-      <!-- TEMP HOURS -->
       <details class="biz-details" id="temporaryDetails" open>
         <summary>Temporary Hours</summary>
         <div id="temporary-hours-display" class="hours-wrap"></div>
       </details>
 
-      <!-- HOLIDAY HOURS -->
       <details class="biz-details" id="holidayDetails">
         <summary>Holiday Hours</summary>
         <div id="holiday-hours-display" class="hours-wrap"></div>
@@ -464,7 +502,6 @@
 
       <div class="biz-divider" role="separator" aria-hidden="true"></div>
 
-      <!-- CONTACT -->
       <div class="biz-contact">
         <h4>Contact</h4>
         <div id="contact-email-display" class="contact-info"></div>
