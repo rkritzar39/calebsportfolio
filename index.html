@@ -372,7 +372,10 @@
     </div>
 
     <div class="business-head-right">
-      <button class="biz-action" type="button" id="copyTodayBtn">Copy Today</button>
+      <button class="biz-action" type="button" id="copyTodayBtn">
+        Copy Today
+      </button>
+
       <button
         class="biz-action biz-action-ghost"
         type="button"
@@ -382,10 +385,24 @@
       >
         Toggle Hours
       </button>
+
+      <!-- ✅ NEW: 12h / 24h Toggle -->
+      <button
+        class="biz-action biz-time-toggle"
+        type="button"
+        id="bizTimeFormatToggle"
+        aria-pressed="false"
+        title="Toggle 12-hour and 24-hour time"
+      >
+        12h
+      </button>
     </div>
   </div>
 
   <div class="business-grid">
+    <!-- =========================
+         LEFT PANEL — STATUS
+    ========================== -->
     <div class="biz-panel">
       <div class="biz-panel-title">
         <div class="biz-signal" aria-hidden="true">
@@ -409,10 +426,12 @@
           <span class="biz-meta__label">Your timezone</span>
           <span class="biz-meta__value" id="bizUserTz">Detecting…</span>
         </div>
+
         <div class="biz-meta__row">
           <span class="biz-meta__label">Today</span>
           <span class="biz-meta__value" id="bizTodayHours">Loading…</span>
         </div>
+
         <div class="biz-meta__row">
           <span class="biz-meta__label">Next open</span>
           <span class="biz-meta__value" id="bizNextOpen">Loading…</span>
@@ -420,6 +439,9 @@
       </div>
     </div>
 
+    <!-- =========================
+         RIGHT PANEL — HOURS
+    ========================== -->
     <div class="biz-panel" id="hoursPanel">
       <div class="biz-panel-title biz-panel-title--split">
         <h3>Weekly Hours</h3>
@@ -428,11 +450,13 @@
 
       <div id="business-hours-display" class="hours-wrap"></div>
 
+      <!-- TEMP HOURS -->
       <details class="biz-details" id="temporaryDetails" open>
         <summary>Temporary Hours</summary>
         <div id="temporary-hours-display" class="hours-wrap"></div>
       </details>
 
+      <!-- HOLIDAY HOURS -->
       <details class="biz-details" id="holidayDetails">
         <summary>Holiday Hours</summary>
         <div id="holiday-hours-display" class="hours-wrap"></div>
@@ -440,6 +464,7 @@
 
       <div class="biz-divider" role="separator" aria-hidden="true"></div>
 
+      <!-- CONTACT -->
       <div class="biz-contact">
         <h4>Contact</h4>
         <div id="contact-email-display" class="contact-info"></div>
