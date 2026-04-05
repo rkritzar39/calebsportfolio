@@ -1666,19 +1666,22 @@ document.addEventListener("DOMContentLoaded", loadRegionalLeader);
 
 /* ========================================
    displayShoutouts.js - Business Hours and Status
-   Professional Final Version
+   Premium Final Version
 
    Features:
    - Firestore realtime updates with onSnapshot
    - Minute-aligned business status refresh
    - Live local clock display
+   - Store-time display
    - Strong schedule normalization
    - Holiday and temporary schedule handling
    - Manual override support
    - Business status chip + traffic light state
+   - Premium status hint
+   - Today timeline
    - Copy Today button
    - Toggle Hours collapse persistence
-   - 12h / 24h time format toggle persistence
+   - Segmented 12h / 24h time format persistence
    - Visitor-local time conversion
    - Business visual state themes
 ======================================== */
@@ -2271,33 +2274,74 @@ function setLocalTimeLine(visitorTimezone) {
   }
 }
 
-function updateBizTimeFormatToggleUI() {
-  const button = document.getElementById('bizTimeFormatToggle');
-  if (!button) return;
+function formatStoreLocalTime() {
+  const element = document.getElementById('bizStoreTime');
+  if (!element) return;
 
-  button.textContent = use24HourBusinessTime ? '24h' : '12h';
-  button.setAttribute('aria-pressed', String(use24HourBusinessTime));
-  button.classList.toggle('is-24h', use24HourBusinessTime);
+  try {
+    const now = new Date();
+    const formatted = new Intl.DateTimeFormat('en-US', {
+      timeZone: window.assumedBusinessTimezone,
+      hour: use24HourBusinessTime ? '2-digit' : 'numeric',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: !use24HourBusinessTime
+    }).format(now);
+
+    element.textContent = formatted;
+  } catch (error) {
+    element.textContent = '—';
+  }
+}
+
+function setStatusHint(text = '') {
+  const element = document.getElementById('bizStatusHint');
+  if (!element) return;
+  element.textContent = text;
+}
+
+function updateBizTimeFormatToggleUI() {
+  const button12 = document.getElementById('bizTime12Btn');
+  const button24 = document.getElementById('bizTime24Btn');
+
+  if (!button12 || !button24) return;
+
+  const is24 = use24HourBusinessTime;
+
+  button12.classList.toggle('is-active', !is24);
+  button24.classList.toggle('is-active', is24);
+
+  button12.setAttribute('aria-pressed', String(!is24));
+  button24.setAttribute('aria-pressed', String(is24));
 }
 
 function installBusinessTimeFormatToggle() {
-  const button = document.getElementById('bizTimeFormatToggle');
-  if (!button) return;
+  const button12 = document.getElementById('bizTime12Btn');
+  const button24 = document.getElementById('bizTime24Btn');
+
+  if (!button12 || !button24) return;
 
   updateBizTimeFormatToggleUI();
 
-  if (button.dataset.bound === 'true') return;
-  button.dataset.bound = 'true';
+  if (button12.dataset.bound !== 'true') {
+    button12.dataset.bound = 'true';
+    button12.addEventListener('click', () => {
+      use24HourBusinessTime = false;
+      localStorage.setItem(BUSINESS_TIME_FORMAT_STORAGE_KEY, '12');
+      updateBizTimeFormatToggleUI();
+      renderFromCache();
+    });
+  }
 
-  button.addEventListener('click', () => {
-    use24HourBusinessTime = !use24HourBusinessTime;
-    localStorage.setItem(
-      BUSINESS_TIME_FORMAT_STORAGE_KEY,
-      use24HourBusinessTime ? '24' : '12'
-    );
-    updateBizTimeFormatToggleUI();
-    renderFromCache();
-  });
+  if (button24.dataset.bound !== 'true') {
+    button24.dataset.bound = 'true';
+    button24.addEventListener('click', () => {
+      use24HourBusinessTime = true;
+      localStorage.setItem(BUSINESS_TIME_FORMAT_STORAGE_KEY, '24');
+      updateBizTimeFormatToggleUI();
+      renderFromCache();
+    });
+  }
 }
 
 function startLiveLocalClock() {
@@ -2310,6 +2354,7 @@ function startLiveLocalClock() {
     cachedVisitorTimezone = getVisitorTimezoneSafe();
     setMetaRow('bizUserTz', cachedVisitorTimezone);
     setLocalTimeLine(cachedVisitorTimezone);
+    formatStoreLocalTime();
   };
 
   tick();
@@ -2419,6 +2464,61 @@ function installCopyToday() {
   });
 }
 
+function renderTodayTimeline({
+  schedule,
+  currentMinutes,
+  visitorTimezone
+}) {
+  const fillElement = document.getElementById('bizTodayTimelineFill');
+  const nowElement = document.getElementById('bizTodayTimelineNow');
+  const startElement = document.getElementById('bizTimelineStart');
+  const endElement = document.getElementById('bizTimelineEnd');
+
+  if (!fillElement || !nowElement || !startElement || !endElement) return;
+
+  if (!schedule || schedule.isClosed || !Array.isArray(schedule.ranges) || !schedule.ranges.length) {
+    fillElement.style.width = '0%';
+    nowElement.style.left = '0%';
+    startElement.textContent = 'Closed';
+    endElement.textContent = 'Closed';
+    return;
+  }
+
+  let earliestOpen = null;
+  let latestClose = null;
+
+  schedule.ranges.forEach((range) => {
+    const openMinutes = timeStringToMinutes(range.open);
+    const closeMinutes = timeStringToMinutes(range.close);
+
+    if (openMinutes != null && (earliestOpen == null || openMinutes < earliestOpen)) {
+      earliestOpen = openMinutes;
+    }
+
+    if (closeMinutes != null && (latestClose == null || closeMinutes > latestClose)) {
+      latestClose = closeMinutes;
+    }
+  });
+
+  if (earliestOpen == null || latestClose == null || latestClose <= earliestOpen) {
+    fillElement.style.width = '0%';
+    nowElement.style.left = '0%';
+    startElement.textContent = '—';
+    endElement.textContent = '—';
+    return;
+  }
+
+  const totalWindow = latestClose - earliestOpen;
+  const clampedCurrent = Math.max(earliestOpen, Math.min(currentMinutes, latestClose));
+  const percent = ((clampedCurrent - earliestOpen) / totalWindow) * 100;
+
+  fillElement.style.width = `${percent}%`;
+  nowElement.style.left = `${percent}%`;
+
+  startElement.textContent = formatDisplayTimeBusinessInfo(minutesToTimeString(earliestOpen), visitorTimezone);
+  endElement.textContent = formatDisplayTimeBusinessInfo(minutesToTimeString(latestClose), visitorTimezone);
+}
+
 /* -------------------------
    STATUS / VISUAL HELPERS
 ------------------------- */
@@ -2460,6 +2560,54 @@ function normalizeDisplayStatus(finalStatus, finalType, finalReason, isManualOve
     displayStatusText,
     displayReasonText
   };
+}
+
+function buildPremiumStatusHint({
+  finalStatus,
+  finalType,
+  isManualOverride,
+  isClosingSoon,
+  isOpeningSoon,
+  isTemporaryStartingSoon,
+  isTemporaryEndingSoon,
+  statusSubText
+}) {
+  if (isManualOverride) {
+    return 'Manual override is currently active.';
+  }
+
+  if (finalType === 'holiday') {
+    return 'Holiday hours are affecting today’s schedule.';
+  }
+
+  if (finalType === 'temporary') {
+    if (isTemporaryEndingSoon) {
+      return 'Temporary closure is ending soon.';
+    }
+    return 'Temporary hours are currently active.';
+  }
+
+  if (finalStatus === 'Open' && isClosingSoon) {
+    return 'Business is open and approaching closing time.';
+  }
+
+  if (finalStatus !== 'Open' && isOpeningSoon) {
+    return 'Business is closed but opening soon.';
+  }
+
+  if (isTemporaryStartingSoon) {
+    return 'A temporary schedule change begins soon.';
+  }
+
+  if (typeof statusSubText === 'string' && statusSubText.trim()) {
+    return statusSubText;
+  }
+
+  if (finalStatus === 'Open') {
+    return 'Business is currently open under the regular schedule.';
+  }
+
+  return 'Business is currently closed under the regular schedule.';
 }
 
 function setStatusChip(statusText, statusType = 'regular', isManualOverride = false) {
@@ -2691,6 +2839,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
   setMetaRow('bizUserTz', visitorTimezone);
   setLocalTimeLine(visitorTimezone);
+  formatStoreLocalTime();
   setMetaRow('bizNextOpen', '—');
   setMetaRow('bizTodayHours', '—');
 
@@ -2699,6 +2848,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     statusMainTextElement.className = 'status-main-text status-unavailable';
     statusReasonElement.textContent = 'Missing timezone';
     statusSubTextElement.textContent = '';
+    setStatusHint('Business timezone configuration is missing.');
     setStatusChip('Temporarily Unavailable', 'temporary', true);
     setTrafficLight({
       statusText: 'Temporarily Unavailable',
@@ -2708,6 +2858,11 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     applyBusinessVisualState({
       state: 'closed',
       theme: 'day'
+    });
+    renderTodayTimeline({
+      schedule: { isClosed: true, ranges: [] },
+      currentMinutes: 0,
+      visitorTimezone
     });
     return;
   }
@@ -3245,6 +3400,25 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     baseActiveRange
   });
 
+  setStatusHint(
+    buildPremiumStatusHint({
+      finalStatus,
+      finalType,
+      isManualOverride,
+      isClosingSoon,
+      isOpeningSoon,
+      isTemporaryStartingSoon,
+      isTemporaryEndingSoon,
+      statusSubText: statusSubTextElement.textContent || ''
+    })
+  );
+
+  renderTodayTimeline({
+    schedule: baseSchedule,
+    currentMinutes,
+    visitorTimezone
+  });
+
   setStatusChip(finalStatus, finalType, isManualOverride);
   setTrafficLight({
     statusText: finalStatus,
@@ -3540,6 +3714,7 @@ function renderErrorState(message = 'Error Loading') {
     reasonElement.textContent = '';
   }
 
+  setStatusHint('Business information is temporarily unavailable.');
   setMetaRow('bizNextOpen', '—');
   setMetaRow('bizTodayHours', '—');
   setStatusChip('Temporary Closure', 'temporary', true);
@@ -3552,12 +3727,18 @@ function renderErrorState(message = 'Error Loading') {
     state: 'closed',
     theme: 'day'
   });
+  renderTodayTimeline({
+    schedule: { isClosed: true, ranges: [] },
+    currentMinutes: 0,
+    visitorTimezone: cachedVisitorTimezone || 'UTC'
+  });
 }
 
 function renderFromCache() {
   cachedVisitorTimezone = getVisitorTimezoneSafe();
   setMetaRow('bizUserTz', cachedVisitorTimezone);
   setLocalTimeLine(cachedVisitorTimezone);
+  formatStoreLocalTime();
   updateBizTimeFormatToggleUI();
 
   if (!cachedBusinessData) return;
@@ -3630,6 +3811,7 @@ function startBusinessInfoRefresh() {
   cachedVisitorTimezone = getVisitorTimezoneSafe();
   setMetaRow('bizUserTz', cachedVisitorTimezone);
   setLocalTimeLine(cachedVisitorTimezone);
+  formatStoreLocalTime();
   setMetaRow('bizNextOpen', '—');
   setMetaRow('bizTodayHours', '—');
   updateBizTimeFormatToggleUI();
