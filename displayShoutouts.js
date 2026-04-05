@@ -1894,6 +1894,67 @@ function formatDuration(totalMinutes) {
   return `${hours} hour${hours === 1 ? '' : 's'} ${minutes} minute${minutes === 1 ? '' : 's'}`;
 }
 
+function getScheduledLabel({
+  nowInBusinessTimezone,
+  startDateTime,
+  endDateTime,
+  earliestOpenMinutes,
+  latestCloseMinutes,
+  isClosedAllDay = false
+}) {
+  if (!nowInBusinessTimezone || !startDateTime || !endDateTime) {
+    return '';
+  }
+
+  const todayStart = nowInBusinessTimezone.startOf('day');
+  const targetStart = startDateTime.startOf('day');
+  const differenceInDays = Math.round(targetStart.diff(todayStart, 'days').days);
+
+  if (differenceInDays > 1) {
+    return `Scheduled in ${differenceInDays} days`;
+  }
+
+  if (differenceInDays === 1) {
+    return 'Scheduled for Tomorrow';
+  }
+
+  if (differenceInDays < 0) {
+    return 'Concluded';
+  }
+
+  if (isClosedAllDay) {
+    return 'In Effect Today';
+  }
+
+  if (earliestOpenMinutes == null || latestCloseMinutes == null) {
+    return 'In Effect Today';
+  }
+
+  const startOfSchedule = nowInBusinessTimezone.startOf('day').plus({
+    minutes: earliestOpenMinutes
+  });
+
+  const endOfSchedule = nowInBusinessTimezone.startOf('day').plus({
+    minutes: latestCloseMinutes
+  });
+
+  if (nowInBusinessTimezone < startOfSchedule) {
+    const minutesUntilStart = minutesUntilLuxon(nowInBusinessTimezone, startOfSchedule);
+
+    if (minutesUntilStart != null && minutesUntilStart > 0) {
+      return `Starts in ${formatDuration(minutesUntilStart)}`;
+    }
+
+    return 'Scheduled for Today';
+  }
+
+  if (nowInBusinessTimezone >= startOfSchedule && nowInBusinessTimezone <= endOfSchedule) {
+    return 'In Effect Today';
+  }
+
+  return 'Concluded';
+}
+
 /* -------------------------
    DATETIME CORE
 ------------------------- */
@@ -2969,9 +3030,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   let isTemporaryStartingSoon = false;
   let isTemporaryEndingSoon = false;
 
-  /* -------------------------
-     TODAY META ROW
-  ------------------------- */
   (function setTodayMeta() {
     if (finalType === 'temporary') {
       const todaySourceSchedule = baseSchedule;
@@ -3021,9 +3079,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     setMetaRow('bizTodayHours', joinedRanges);
   })();
 
-  /* -------------------------
-     SUB STATUS AND NEXT OPEN
-  ------------------------- */
   (function setSubStatusAndNextOpen() {
     statusSubTextElement.textContent = '';
     setMetaRow('bizNextOpen', '—');
@@ -3434,9 +3489,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     theme: visualTheme
   });
 
-  /* -------------------------
-     REGULAR HOURS RENDER
-  ------------------------- */
   (function renderRegularHours() {
     const weekOrder = [
       'monday',
@@ -3482,9 +3534,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     regularHoursElement.innerHTML = html;
   })();
 
-  /* -------------------------
-     TEMPORARY HOURS RENDER
-  ------------------------- */
   (function renderTemporaryHours() {
     if (!temporaryHours.length) {
       temporaryHoursElement.innerHTML = '';
@@ -3502,66 +3551,43 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         const endDateTime = parseBusinessIsoDate(temporarySchedule.endDate);
 
         if (startDateTime && endDateTime) {
+          let earliestOpenMinutes = null;
+          let latestCloseMinutes = null;
+
+          temporarySchedule.ranges.forEach((range) => {
+            const openMinutes = timeStringToMinutes(range.open);
+            const closeMinutes = timeStringToMinutes(range.close);
+
+            if (openMinutes != null && (earliestOpenMinutes == null || openMinutes < earliestOpenMinutes)) {
+              earliestOpenMinutes = openMinutes;
+            }
+
+            if (closeMinutes != null && (latestCloseMinutes == null || closeMinutes > latestCloseMinutes)) {
+              latestCloseMinutes = closeMinutes;
+            }
+          });
+
           const isSingleDaySchedule =
-            temporarySchedule.startDate === temporarySchedule.endDate &&
-            temporarySchedule.ranges.length > 0;
+            temporarySchedule.startDate === temporarySchedule.endDate;
 
           if (isSingleDaySchedule) {
-            let earliestOpenMinutes = null;
-            let latestCloseMinutes = null;
-
-            temporarySchedule.ranges.forEach((range) => {
-              const openMinutes = timeStringToMinutes(range.open);
-              const closeMinutes = timeStringToMinutes(range.close);
-
-              if (openMinutes != null && (earliestOpenMinutes == null || openMinutes < earliestOpenMinutes)) {
-                earliestOpenMinutes = openMinutes;
-              }
-
-              if (closeMinutes != null && (latestCloseMinutes == null || closeMinutes > latestCloseMinutes)) {
-                latestCloseMinutes = closeMinutes;
-              }
+            statusLabel = getScheduledLabel({
+              nowInBusinessTimezone,
+              startDateTime,
+              endDateTime,
+              earliestOpenMinutes,
+              latestCloseMinutes,
+              isClosedAllDay: temporarySchedule.ranges.length === 0
             });
-
-            if (
-              nowInBusinessTimezone.toISODate() === temporarySchedule.startDate &&
-              earliestOpenMinutes != null &&
-              latestCloseMinutes != null
-            ) {
-              const startOfSchedule = nowInBusinessTimezone.startOf('day').plus({
-                minutes: earliestOpenMinutes
-              });
-
-              const endOfSchedule = nowInBusinessTimezone.startOf('day').plus({
-                minutes: latestCloseMinutes
-              });
-
-              if (nowInBusinessTimezone < startOfSchedule) {
-                statusLabel = 'Scheduled for Today';
-              } else if (nowInBusinessTimezone >= startOfSchedule && nowInBusinessTimezone <= endOfSchedule) {
-                statusLabel = 'In Effect Today';
-              } else {
-                statusLabel = 'Concluded';
-              }
-            } else {
-              const differenceInDays = Math.ceil(
-                startDateTime.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
-              );
-
-              if (differenceInDays > 0) {
-                statusLabel = `Scheduled in ${differenceInDays} day${differenceInDays > 1 ? 's' : ''}`;
-              } else if (nowInBusinessTimezone > endDateTime.endOf('day')) {
-                statusLabel = 'Concluded';
-              } else {
-                statusLabel = 'In Effect';
-              }
-            }
           } else {
-            if (nowInBusinessTimezone < startDateTime.startOf('day')) {
-              const differenceInDays = Math.ceil(
-                startDateTime.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
-              );
-              statusLabel = `Scheduled in ${differenceInDays} day${differenceInDays > 1 ? 's' : ''}`;
+            const differenceInDays = Math.round(
+              startDateTime.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
+            );
+
+            if (differenceInDays > 1) {
+              statusLabel = `Scheduled in ${differenceInDays} days`;
+            } else if (differenceInDays === 1) {
+              statusLabel = 'Scheduled for Tomorrow';
             } else if (nowInBusinessTimezone > endDateTime.endOf('day')) {
               statusLabel = 'Concluded';
             } else {
@@ -3590,9 +3616,6 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     temporaryHoursElement.style.display = 'block';
   })();
 
-  /* -------------------------
-     HOLIDAY HOURS RENDER
-  ------------------------- */
   (function renderHolidayHours() {
     if (!holidayHours.length) {
       holidayHoursElement.innerHTML = '';
@@ -3609,62 +3632,32 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         const holidayDateTime = parseBusinessIsoDate(holiday.date);
 
         if (holidayDateTime) {
-          const isToday = nowInBusinessTimezone.toISODate() === holiday.date;
-          const isFuture = holidayDateTime.startOf('day') > nowInBusinessTimezone.startOf('day');
-          const isPast = holidayDateTime.endOf('day') < nowInBusinessTimezone;
+          let earliestOpenMinutes = null;
+          let latestCloseMinutes = null;
 
-          if (isFuture) {
-            const differenceInDays = Math.ceil(
-              holidayDateTime.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
-            );
-            statusLabel = `Scheduled in ${differenceInDays} day${differenceInDays > 1 ? 's' : ''}`;
-          } else if (isPast) {
-            statusLabel = 'Concluded';
-          } else if (isToday) {
-            if (holiday.isClosed) {
-              statusLabel = 'In Effect Today';
-            } else if (holiday.ranges && holiday.ranges.length) {
-              let earliestOpenMinutes = null;
-              let latestCloseMinutes = null;
+          if (holiday.ranges && holiday.ranges.length) {
+            holiday.ranges.forEach((range) => {
+              const openMinutes = timeStringToMinutes(range.open);
+              const closeMinutes = timeStringToMinutes(range.close);
 
-              holiday.ranges.forEach((range) => {
-                const openMinutes = timeStringToMinutes(range.open);
-                const closeMinutes = timeStringToMinutes(range.close);
-
-                if (openMinutes != null && (earliestOpenMinutes == null || openMinutes < earliestOpenMinutes)) {
-                  earliestOpenMinutes = openMinutes;
-                }
-
-                if (closeMinutes != null && (latestCloseMinutes == null || closeMinutes > latestCloseMinutes)) {
-                  latestCloseMinutes = closeMinutes;
-                }
-              });
-
-              if (earliestOpenMinutes != null && latestCloseMinutes != null) {
-                const startOfHolidayHours = nowInBusinessTimezone.startOf('day').plus({
-                  minutes: earliestOpenMinutes
-                });
-
-                const endOfHolidayHours = nowInBusinessTimezone.startOf('day').plus({
-                  minutes: latestCloseMinutes
-                });
-
-                if (nowInBusinessTimezone < startOfHolidayHours) {
-                  statusLabel = 'Scheduled for Today';
-                } else if (nowInBusinessTimezone >= startOfHolidayHours && nowInBusinessTimezone <= endOfHolidayHours) {
-                  statusLabel = 'In Effect Today';
-                } else {
-                  statusLabel = 'Concluded';
-                }
-              } else {
-                statusLabel = 'In Effect Today';
+              if (openMinutes != null && (earliestOpenMinutes == null || openMinutes < earliestOpenMinutes)) {
+                earliestOpenMinutes = openMinutes;
               }
-            } else {
-              statusLabel = 'In Effect Today';
-            }
-          } else {
-            statusLabel = 'In Effect';
+
+              if (closeMinutes != null && (latestCloseMinutes == null || closeMinutes > latestCloseMinutes)) {
+                latestCloseMinutes = closeMinutes;
+              }
+            });
           }
+
+          statusLabel = getScheduledLabel({
+            nowInBusinessTimezone,
+            startDateTime: holidayDateTime,
+            endDateTime: holidayDateTime,
+            earliestOpenMinutes,
+            latestCloseMinutes,
+            isClosedAllDay: !!holiday.isClosed
+          });
         }
       }
 
