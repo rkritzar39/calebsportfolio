@@ -5108,6 +5108,34 @@ body.maintenance-active {
 }
 
 /* -------------------------
+   12h / 24h toggle
+------------------------- */
+.biz-time-toggle{
+  min-width:72px;
+  text-align:center;
+  font-weight:900;
+  letter-spacing:.02em;
+  font-variant-numeric:tabular-nums;
+  position:relative;
+}
+
+.biz-time-toggle.is-24h{
+  color:var(--accent-color);
+  border-color:color-mix(in srgb, var(--accent-color) 42%, var(--border-color));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-color) 18%, transparent),
+    0 10px 24px color-mix(in srgb, var(--accent-color) 14%, transparent),
+    var(--bubble-highlight);
+}
+
+.biz-time-toggle.is-24h:hover{
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent-color) 22%, transparent),
+    0 14px 30px color-mix(in srgb, var(--accent-color) 20%, transparent),
+    var(--bubble-highlight);
+}
+
+/* -------------------------
    Main grid and panels
 ------------------------- */
 .business-grid{
@@ -5594,6 +5622,10 @@ main .business-section{
 
   .biz-panel{
     padding:16px;
+  }
+
+  .biz-time-toggle{
+    min-width:64px;
   }
 }
 
