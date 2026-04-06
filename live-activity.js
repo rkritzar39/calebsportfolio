@@ -228,7 +228,11 @@ function applySongThemeClass() {
   const userAccent  = settings.accentColor || "#1DB954";
 
   activity.classList.toggle("song-theme-off", !matchAccent);
-  activity.style.setProperty("--dynamic-accent", userAccent);
+
+  if (!matchAccent) {
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    activity.style.setProperty("--dynamic-bg", "none");
+  }
 }
 
 function watchWebsiteSettings() {
@@ -565,6 +569,7 @@ function updateDynamicColors(imageUrl) {
 
   const resetColors = () => {
     activity.style.setProperty("--dynamic-accent", userAccent);
+    activity.style.setProperty("--dynamic-bg", "none");
   };
 
   if (!matchAccent || !imageUrl) {
@@ -585,11 +590,11 @@ function updateDynamicColors(imageUrl) {
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) throw new Error("No canvas context");
 
-      canvas.width = 48;
-      canvas.height = 48;
+      canvas.width = 50;
+      canvas.height = 50;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
       let best = null;
       let bestScore = -Infinity;
@@ -633,9 +638,16 @@ function updateDynamicColors(imageUrl) {
         b: Math.min(255, Math.round(best.b * 1.08))
       };
 
+      const accent = `rgb(${boosted.r}, ${boosted.g}, ${boosted.b})`;
+
+      activity.style.setProperty("--dynamic-accent", accent);
       activity.style.setProperty(
-        "--dynamic-accent",
-        `rgb(${boosted.r}, ${boosted.g}, ${boosted.b})`
+        "--dynamic-bg",
+        `linear-gradient(
+          180deg,
+          rgba(${boosted.r}, ${boosted.g}, ${boosted.b}, 0.34),
+          rgba(${boosted.r}, ${boosted.g}, ${boosted.b}, 0.12)
+        )`
       );
     } catch (error) {
       console.warn("Dynamic color extraction failed:", error);
