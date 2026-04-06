@@ -947,7 +947,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === LIVE ACTIVITY — APPLE MUSIC STYLE LIQUID GLASS ==== */
+/* === LIVE ACTIVITY — APPLE MUSIC LIQUID GLASS =========== */
 /* ======================================================= */
 
 .live-activity {
@@ -963,46 +963,45 @@ a.corner-button {
   box-sizing: border-box;
   width: min(680px, calc(100% - 40px));
   margin: 24px auto;
-
-  padding: 38px 26px;
+  padding: 36px 24px;
   border-radius: var(--radius-xl);
 
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--dynamic-accent-soft) 18%, rgba(10, 10, 10, 0.78)),
-      color-mix(in srgb, var(--dynamic-accent) 8%, rgba(10, 10, 10, 0.64))
+      color-mix(in srgb, var(--dynamic-accent-soft) 11%, rgba(10,10,10,0.80)),
+      color-mix(in srgb, var(--dynamic-accent) 5%, rgba(10,10,10,0.68))
     ),
     var(--dynamic-bg),
     var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 92%, transparent);
+    color-mix(in srgb, var(--content-bg) 94%, transparent);
 
   border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
 
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 12%, transparent),
     0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 14%, transparent),
-    0 10px 40px rgba(0,0,0,0.42),
+    0 12px 42px rgba(0,0,0,0.45),
     var(--bubble-shadow),
     inset 0 1px 0 rgba(255,255,255,0.08);
 
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 
-  --la-inset: clamp(10px, 2.2vw, 16px);
-  --la-track-h: clamp(9px, 1.2vw, 10px);
-  --la-pill-r: 14px;
-
   transition:
     background .45s ease,
     border-color .45s ease,
     box-shadow .45s ease;
 }
+
+/* ======================================================= */
+/* === AMBIENT GLOW ====================================== */
+/* ======================================================= */
 
 .live-activity::before {
   content: "";
@@ -1011,7 +1010,7 @@ a.corner-button {
   border-radius: inherit;
   background: var(--liquid-reflection);
   mix-blend-mode: soft-light;
-  opacity: 0.34;
+  opacity: 0.35;
   pointer-events: none;
 }
 
@@ -1021,31 +1020,30 @@ a.corner-button {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+
   background:
     radial-gradient(
-      circle at 50% 16%,
-      color-mix(in srgb, var(--dynamic-accent-soft) 24%, transparent),
-      transparent 56%
+      circle at 50% 24%,
+      color-mix(in srgb, var(--dynamic-accent-soft) 30%, transparent),
+      transparent 42%
+    ),
+    radial-gradient(
+      circle at 50% 46%,
+      color-mix(in srgb, var(--dynamic-accent-glow) 14%, transparent),
+      transparent 58%
     ),
     radial-gradient(
       circle at 50% 100%,
       rgba(0,0,0,0.18),
       transparent 66%
     );
-  opacity: 0.46;
+
+  opacity: 0.55;
 }
 
 .live-activity > * {
   position: relative;
-  z-index: 3;
-}
-
-/* ======================================================= */
-/* === HIDDEN ============================================ */
-/* ======================================================= */
-
-.hidden {
-  display: none !important;
+  z-index: 2;
 }
 
 /* ======================================================= */
@@ -1055,32 +1053,21 @@ a.corner-button {
 .status-line {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 10px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
+
   font-size: 1rem;
-  font-weight: 560;
+  font-weight: 600;
   color: var(--text-color);
 }
 
 .status-icon {
   width: 22px;
   height: 22px;
-  flex-shrink: 0;
-  object-fit: contain;
-  opacity: 0.94;
-  filter:
-    drop-shadow(0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent));
-}
-
-.status-icon.glow {
-  filter:
-    drop-shadow(0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent))
-    drop-shadow(0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent));
 }
 
 /* ======================================================= */
-/* === CARD ============================================== */
+/* === SPOTIFY CARD ====================================== */
 /* ======================================================= */
 
 .spotify-card {
@@ -1088,43 +1075,19 @@ a.corner-button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
   cursor: pointer;
-  border-radius: calc(var(--radius-xl) - 6px);
-  outline: none;
-  transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    box-shadow .35s cubic-bezier(.2,.8,.2,1),
-    background .35s ease;
-}
-
-.spotify-card:hover,
-.spotify-card:focus-visible {
-  transform: translateY(-2px);
-}
-
-.spotify-card:focus-visible {
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 36%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 10%, transparent);
 }
 
 /* ======================================================= */
 /* === ALBUM ART ========================================= */
 /* ======================================================= */
 
-.live-album-art-shell {
+.live-album-art {
   position: relative;
   margin-bottom: 16px;
-}
 
-.live-album-art {
-  align-self: center;
-  margin-left: auto;
-  margin-right: auto;
-
-  width: 275px;
-  height: 275px;
+  width: min(275px, 78vw);
+  aspect-ratio: 1 / 1;
 
   border-radius: calc(var(--radius-lg) + 8px);
   overflow: hidden;
@@ -1135,12 +1098,29 @@ a.corner-button {
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 14%, transparent),
     0 0 32px color-mix(in srgb, var(--dynamic-accent-glow) 14%, transparent),
-    0 22px 52px rgba(0,0,0,0.55),
-    inset 0 1px 2px rgba(255,255,255,0.14);
+    0 22px 52px rgba(0,0,0,0.55);
 
   transition:
     transform .35s cubic-bezier(.2,.8,.2,1),
     box-shadow .35s cubic-bezier(.2,.8,.2,1);
+}
+
+.live-album-art::before {
+  content: "";
+  position: absolute;
+  inset: -16px;
+  border-radius: calc(var(--radius-lg) + 20px);
+
+  background:
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
+      transparent 72%
+    );
+
+  filter: blur(16px);
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .live-album-art::after {
@@ -1148,16 +1128,18 @@ a.corner-button {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  pointer-events: none;
+
   background:
     linear-gradient(
       180deg,
       rgba(255,255,255,0.16),
-      transparent 36%,
+      transparent 34%,
       transparent 72%,
-      rgba(0,0,0,0.12)
+      rgba(0,0,0,0.14)
     );
+
   mix-blend-mode: screen;
+  pointer-events: none;
 }
 
 .live-album-art img,
@@ -1165,7 +1147,9 @@ a.corner-button {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: inherit;
   display: block;
+
   transition:
     transform .35s cubic-bezier(.2,.8,.2,1),
     filter .35s cubic-bezier(.2,.8,.2,1);
@@ -1174,87 +1158,48 @@ a.corner-button {
 .spotify-card:hover .live-album-art,
 .spotify-card:focus-visible .live-album-art {
   transform: translateY(-4px) scale(1.025);
+
   box-shadow:
     0 28px 68px rgba(0,0,0,0.60),
     0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 18%, rgba(255,255,255,0.14)) inset,
     0 0 40px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
 }
 
-.spotify-card:hover .live-album-art img,
-.spotify-card:focus-visible .live-album-art img,
-.spotify-card:hover #live-activity-cover,
-.spotify-card:focus-visible #live-activity-cover {
+.spotify-card:hover img,
+.spotify-card:focus-visible img {
   transform: scale(1.04);
   filter: saturate(1.04) contrast(1.03);
 }
 
 /* ======================================================= */
-/* === INFO ============================================== */
+/* === SONG INFO ========================================= */
 /* ======================================================= */
 
-.live-info {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.live-song-title-wrapper {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 2px;
-  flex-wrap: wrap;
-}
-
 .live-song-title {
-  font-size: 1.48rem;
+  font-size: 1.45rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-color);
+
   text-shadow:
-    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
-    0 0 26px color-mix(in srgb, var(--dynamic-accent-soft) 10%, transparent);
+    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
 }
 
 .live-artist {
-  font-size: 1.02rem;
+  font-size: 1rem;
   color: var(--secondary-text);
-  margin-top: 4px;
-}
-
-.explicit-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 5px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1;
-  background: color-mix(in srgb, var(--dynamic-accent-soft) 22%, rgba(255,255,255,0.08));
-  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 28%, rgba(255,255,255,0.12));
-  color: var(--text-color);
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.10),
-    0 0 12px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+  margin-bottom: 12px;
 }
 
 /* ======================================================= */
-/* === PROGRESS ========================================== */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 .music-progress-container {
-  position: relative;
-  overflow: hidden;
+  width: 100%;
+  height: 10px;
+  margin: 16px 0;
 
-  width: calc(100% - (var(--la-inset) * 2));
-  margin: 26px auto 10px;
-
-  height: var(--la-track-h);
   border-radius: 999px;
 
   background:
@@ -1265,22 +1210,7 @@ a.corner-button {
 
   box-shadow:
     inset 0 1px 3px rgba(255,255,255,0.06),
-    inset 0 -1px 3px rgba(0,0,0,0.75),
-    0 2px 10px rgba(0,0,0,0.35);
-}
-
-.music-progress-container::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, white 12%, transparent),
-    transparent 70%
-  );
-  opacity: 0.32;
+    inset 0 -1px 3px rgba(0,0,0,0.75);
 }
 
 .music-progress-bar {
@@ -1296,25 +1226,7 @@ a.corner-button {
 
   box-shadow:
     inset 0 1px 2px rgba(255,255,255,0.16),
-    0 0 18px color-mix(in srgb, var(--dynamic-accent-glow) 30%, transparent),
-    0 0 34px color-mix(in srgb, var(--dynamic-accent-soft) 16%, transparent);
-
-  transition: width .32s linear;
-}
-
-.music-progress-container.indeterminate {
-  overflow: hidden;
-}
-
-.music-progress-container.indeterminate .music-progress-bar {
-  width: 42%;
-  animation: liveActivityIndeterminate 1.4s ease-in-out infinite;
-}
-
-@keyframes liveActivityIndeterminate {
-  0%   { transform: translateX(-120%); }
-  50%  { transform: translateX(95%); }
-  100% { transform: translateX(240%); }
+    0 0 18px color-mix(in srgb, var(--dynamic-accent-glow) 30%, transparent);
 }
 
 /* ======================================================= */
@@ -1322,110 +1234,40 @@ a.corner-button {
 /* ======================================================= */
 
 .music-progress-time {
-  width: calc(100% - (var(--la-inset) * 2));
-  margin: 8px auto 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-
-  font-size: clamp(0.82rem, 1.8vw, 0.88rem);
-  letter-spacing: 0.35px;
-
-  padding: 9px 12px;
-  border-radius: var(--la-pill-r);
+  padding: 10px 14px;
+  border-radius: 14px;
 
   background: color-mix(in srgb, var(--content-bg) 72%, rgba(0,0,0,0.35));
   border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
 
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.06),
-    inset 0 -1px 2px rgba(0,0,0,0.55);
-
-  color: color-mix(in srgb, var(--secondary-text) 88%, var(--text-color));
-}
-
-.music-progress-time span {
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-  white-space: nowrap;
-}
-
-.music-progress-time span:first-child {
-  justify-self: start;
-  opacity: 0.92;
 }
 
 .music-progress-time span:nth-child(2) {
-  justify-self: center;
-  font-weight: 650;
   color: color-mix(in srgb, var(--dynamic-accent-soft) 72%, var(--text-color));
-}
-
-.music-progress-time span:last-child {
-  justify-self: end;
-  opacity: 0.92;
+  font-weight: 600;
 }
 
 /* ======================================================= */
 /* === UPDATED LABEL ===================================== */
 /* ======================================================= */
 
-.la-updated,
 #live-activity-updated {
-  width: fit-content;
-  max-width: calc(100% - (var(--la-inset) * 2));
-  margin: 14px auto 0;
+  margin-top: 14px;
 
   padding: 7px 12px;
   border-radius: 999px;
 
-  font-size: clamp(0.78rem, 1.6vw, 0.82rem);
-  letter-spacing: 0.55px;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
 
   background: color-mix(in srgb, var(--content-bg) 70%, rgba(0,0,0,0.35));
   border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
-
-  color: color-mix(in srgb, var(--secondary-text) 88%, var(--text-color));
-
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.06),
-    inset 0 -1px 2px rgba(0,0,0,0.55);
-}
-
-/* ======================================================= */
-/* === CARD IN / OUT ===================================== */
-/* ======================================================= */
-
-.spotify-card.slide-in {
-  animation: liveCardIn .36s cubic-bezier(.2,.8,.2,1);
-}
-
-.spotify-card.slide-out {
-  animation: liveCardOut .36s cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes liveCardIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(.985);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes liveCardOut {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(8px) scale(.985);
-  }
 }
 
 /* ======================================================= */
@@ -1442,45 +1284,6 @@ body.light-e .live-activity {
     var(--dynamic-bg),
     var(--liquid-refraction),
     rgba(255,255,255,0.72);
-
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 12%, transparent),
-    0 0 24px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
-    0 8px 28px rgba(0,0,0,0.10),
-    var(--bubble-shadow),
-    inset 0 1px 0 rgba(255,255,255,0.36);
-}
-
-body.light-e .music-progress-time,
-body.light-e .la-updated,
-body.light-e #live-activity-updated {
-  background: rgba(255,255,255,0.74);
-  border: 1px solid rgba(0,0,0,0.10);
-  color: rgba(0,0,0,0.66);
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.70),
-    inset 0 -1px 2px rgba(0,0,0,0.10);
-}
-
-body.light-e .music-progress-time span:nth-child(2) {
-  color: color-mix(in srgb, var(--dynamic-accent-soft) 78%, #111);
-}
-
-body.light-e .music-progress-container {
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.04)),
-    rgba(255,255,255,0.55);
-  border: 1px solid rgba(0,0,0,0.10);
-  box-shadow:
-    inset 0 1px 3px rgba(255,255,255,0.7),
-    inset 0 -1px 3px rgba(0,0,0,0.08),
-    0 2px 10px rgba(0,0,0,0.10);
-}
-
-body.light-e .explicit-badge {
-  background: color-mix(in srgb, var(--dynamic-accent-soft) 16%, rgba(255,255,255,0.82));
-  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 28%, rgba(0,0,0,0.10));
-  color: rgba(0,0,0,0.78);
 }
 
 /* ======================================================= */
@@ -1488,22 +1291,8 @@ body.light-e .explicit-badge {
 /* ======================================================= */
 
 @media (max-width: 600px) {
-  .live-activity {
-    padding: 30px 18px;
-    --la-inset: clamp(8px, 2.6vw, 12px);
-  }
-
   .live-album-art {
-    width: 210px;
-    height: 210px;
-  }
-
-  .live-song-title {
-    font-size: 1.24rem;
-  }
-
-  .live-artist {
-    font-size: 0.96rem;
+    width: min(210px, 74vw);
   }
 }
 
@@ -1512,12 +1301,7 @@ body.light-e .explicit-badge {
 /* ======================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .spotify-card,
-  .live-album-art,
-  .live-album-art img,
-  #live-activity-cover,
-  .music-progress-bar,
-  .live-activity {
+  * {
     transition: none !important;
     animation: none !important;
   }
