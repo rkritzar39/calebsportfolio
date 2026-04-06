@@ -947,21 +947,15 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === LIVE ACTIVITY — TRUE ONYX LIQUID GLASS (FINAL) ==== */
-/* === Preserves Onyx design + supports dynamic accent ==== */
+/* === LIVE ACTIVITY — TRUE ONYX LIQUID GLASS (UPDATED) == */
+/* === Matches your actual HTML structure ================= */
 /* ======================================================= */
 
 .live-activity {
-  --dynamic-accent: var(--accent-color);
+  --dynamic-accent: var(--accent-color, #4ea8ff);
   --dynamic-accent-rgb: 78, 168, 255;
   --dynamic-bg: none;
-}
 
-/* ======================================================= */
-/* === MAIN CONTAINER ==================================== */
-/* ======================================================= */
-
-.live-activity {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -976,8 +970,8 @@ a.corner-button {
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--dynamic-accent) 14%, rgba(10,10,10,0.76)),
-      color-mix(in srgb, var(--dynamic-accent) 6%, rgba(10,10,10,0.62))
+      color-mix(in srgb, var(--dynamic-accent) 20%, rgba(10,10,10,0.76)),
+      color-mix(in srgb, var(--dynamic-accent) 10%, rgba(10,10,10,0.62))
     ),
     var(--dynamic-bg, none),
     var(--liquid-refraction),
@@ -986,8 +980,8 @@ a.corner-button {
   border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.08));
 
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 10%, transparent),
-    0 0 26px color-mix(in srgb, var(--dynamic-accent) 10%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 18%, transparent),
+    0 0 34px color-mix(in srgb, var(--dynamic-accent) 18%, transparent),
     var(--bubble-shadow),
     inset 0 1px 0 rgba(255,255,255,0.08);
 
@@ -1029,7 +1023,7 @@ a.corner-button {
   background:
     radial-gradient(
       circle at 50% 18%,
-      color-mix(in srgb, var(--dynamic-accent) 18%, transparent),
+      color-mix(in srgb, var(--dynamic-accent) 28%, transparent),
       transparent 56%
     ),
     radial-gradient(
@@ -1037,12 +1031,20 @@ a.corner-button {
       rgba(0,0,0,0.18),
       transparent 65%
     );
-  opacity: 0.38;
+  opacity: 0.48;
 }
 
 .live-activity > * {
   position: relative;
   z-index: 3;
+}
+
+/* ======================================================= */
+/* === HIDDEN STATE ====================================== */
+/* ======================================================= */
+
+.hidden {
+  display: none !important;
 }
 
 /* ======================================================= */
@@ -1052,6 +1054,7 @@ a.corner-button {
 .status-line {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   margin-bottom: 22px;
   font-size: 1rem;
@@ -1063,6 +1066,40 @@ a.corner-button {
   width: 22px;
   height: 22px;
   flex-shrink: 0;
+  object-fit: contain;
+  opacity: 0.92;
+  filter:
+    drop-shadow(0 0 8px color-mix(in srgb, var(--dynamic-accent) 20%, transparent));
+}
+
+/* ======================================================= */
+/* === SPOTIFY CARD / INTERACTIVE REGION ================= */
+/* ======================================================= */
+
+.spotify-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  border-radius: calc(var(--radius-xl) - 6px);
+  outline: none;
+  transition:
+    transform .35s cubic-bezier(.2,.8,.2,1),
+    box-shadow .35s cubic-bezier(.2,.8,.2,1),
+    background .35s ease;
+}
+
+.spotify-card:hover,
+.spotify-card:focus-visible {
+  transform: translateY(-2px);
+}
+
+.spotify-card:focus-visible {
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 40%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--dynamic-accent) 12%, transparent);
 }
 
 /* ======================================================= */
@@ -1085,8 +1122,8 @@ a.corner-button {
   border: 1px solid color-mix(in srgb, var(--border-color) 92%, rgba(255,255,255,0.12));
 
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 12%, transparent),
-    0 0 30px color-mix(in srgb, var(--dynamic-accent) 10%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 18%, transparent),
+    0 0 38px color-mix(in srgb, var(--dynamic-accent) 18%, transparent),
     0 22px 52px rgba(0,0,0,0.55),
     inset 0 1px 2px rgba(255,255,255,0.14);
 
@@ -1095,16 +1132,19 @@ a.corner-button {
     box-shadow .35s cubic-bezier(.2,.8,.2,1);
 }
 
-.live-album-art img {
+.live-album-art img,
+#live-activity-cover {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   transition:
     transform .35s cubic-bezier(.2,.8,.2,1),
     filter .35s cubic-bezier(.2,.8,.2,1);
 }
 
-.spotify-card:hover .live-album-art {
+.spotify-card:hover .live-album-art,
+.spotify-card:focus-visible .live-album-art {
   transform: translateY(-4px) scale(1.03);
   box-shadow:
     0 30px 72px rgba(0,0,0,0.66),
@@ -1112,7 +1152,10 @@ a.corner-button {
     0 0 42px color-mix(in srgb, var(--dynamic-accent) 16%, transparent);
 }
 
-.spotify-card:hover .live-album-art img {
+.spotify-card:hover .live-album-art img,
+.spotify-card:focus-visible .live-album-art img,
+.spotify-card:hover #live-activity-cover,
+.spotify-card:focus-visible #live-activity-cover {
   transform: scale(1.05);
   filter: saturate(1.06) contrast(1.04);
 }
@@ -1121,21 +1164,59 @@ a.corner-button {
 /* === SONG INFO ========================================= */
 /* ======================================================= */
 
+.live-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.live-song-title-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
 .live-song-title {
   font-size: 1.48rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--text-color);
-  text-shadow: 0 0 18px color-mix(in srgb, var(--dynamic-accent) 10%, transparent);
+  text-shadow:
+    0 0 18px color-mix(in srgb, var(--dynamic-accent) 16%, transparent),
+    0 0 28px color-mix(in srgb, var(--dynamic-accent) 10%, transparent);
 }
 
 .live-artist {
   font-size: 1.02rem;
   color: var(--secondary-text);
+  margin-top: 4px;
+}
+
+.explicit-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  background: color-mix(in srgb, var(--dynamic-accent) 22%, rgba(255,255,255,0.08));
+  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 28%, rgba(255,255,255,0.12));
+  color: var(--text-color);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.10),
+    0 0 12px color-mix(in srgb, var(--dynamic-accent) 12%, transparent);
 }
 
 /* ======================================================= */
-/* === PROGRESS BAR — FIXED WIDTH SYSTEM ================= */
+/* === PROGRESS BAR ====================================== */
 /* ======================================================= */
 
 .music-progress-container {
@@ -1181,19 +1262,18 @@ a.corner-button {
 
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--dynamic-accent) 90%, rgba(255,255,255,0.18)),
-    color-mix(in srgb, var(--dynamic-accent) 62%, rgba(0,0,0,0.35))
+    color-mix(in srgb, var(--dynamic-accent) 96%, rgba(255,255,255,0.22)),
+    color-mix(in srgb, var(--dynamic-accent) 72%, rgba(0,0,0,0.28))
   );
 
   box-shadow:
     inset 0 1px 2px rgba(255,255,255,0.16),
-    0 0 18px color-mix(in srgb, var(--dynamic-accent) 34%, transparent),
-    0 0 36px color-mix(in srgb, var(--dynamic-accent) 16%, transparent);
+    0 0 24px color-mix(in srgb, var(--dynamic-accent) 42%, transparent),
+    0 0 44px color-mix(in srgb, var(--dynamic-accent) 22%, transparent);
 
   transition: width .32s linear;
 }
 
-/* optional indeterminate mode */
 .music-progress-container.indeterminate {
   overflow: hidden;
 }
@@ -1210,7 +1290,7 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === TIME ROW — FIXED WIDTH + CLEAN ==================== */
+/* === TIME ROW ========================================== */
 /* ======================================================= */
 
 .music-progress-time {
@@ -1218,7 +1298,7 @@ a.corner-button {
   margin: 8px auto 0;
 
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
 
   font-size: clamp(0.82rem, 1.8vw, 0.88rem);
@@ -1251,7 +1331,7 @@ a.corner-button {
 .music-progress-time span:nth-child(2) {
   justify-self: center;
   font-weight: 650;
-  color: color-mix(in srgb, var(--dynamic-accent) 62%, var(--text-color));
+  color: color-mix(in srgb, var(--dynamic-accent) 68%, var(--text-color));
 }
 
 .music-progress-time span:last-child {
@@ -1260,9 +1340,10 @@ a.corner-button {
 }
 
 /* ======================================================= */
-/* === LAST UPDATED — MATCH WIDTH + CLEAN ================ */
+/* === LAST UPDATED ====================================== */
 /* ======================================================= */
 
+.la-updated,
 #live-activity-updated {
   width: fit-content;
   max-width: calc(100% - (var(--la-inset) * 2));
@@ -1293,20 +1374,21 @@ body.light-e .live-activity {
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--dynamic-accent) 18%, rgba(255,255,255,0.86)),
-      color-mix(in srgb, var(--dynamic-accent) 10%, rgba(255,255,255,0.78))
+      color-mix(in srgb, var(--dynamic-accent) 24%, rgba(255,255,255,0.88)),
+      color-mix(in srgb, var(--dynamic-accent) 14%, rgba(255,255,255,0.80))
     ),
     var(--liquid-refraction),
-    rgba(255,255,255,0.70);
+    rgba(255,255,255,0.72);
 
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 10%, transparent),
-    0 0 22px color-mix(in srgb, var(--dynamic-accent) 10%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--dynamic-accent) 16%, transparent),
+    0 0 28px color-mix(in srgb, var(--dynamic-accent) 18%, transparent),
     var(--bubble-shadow),
     inset 0 1px 0 rgba(255,255,255,0.36);
 }
 
 body.light-e .music-progress-time,
+body.light-e .la-updated,
 body.light-e #live-activity-updated {
   background: rgba(255,255,255,0.72);
   border: 1px solid rgba(0,0,0,0.10);
@@ -1317,7 +1399,7 @@ body.light-e #live-activity-updated {
 }
 
 body.light-e .music-progress-time span:nth-child(2) {
-  color: color-mix(in srgb, var(--dynamic-accent) 70%, #111);
+  color: color-mix(in srgb, var(--dynamic-accent) 82%, #111);
 }
 
 body.light-e .music-progress-container {
@@ -1329,6 +1411,12 @@ body.light-e .music-progress-container {
     inset 0 1px 3px rgba(255,255,255,0.7),
     inset 0 -1px 3px rgba(0,0,0,0.08),
     0 2px 10px rgba(0,0,0,0.10);
+}
+
+body.light-e .explicit-badge {
+  background: color-mix(in srgb, var(--dynamic-accent) 16%, rgba(255,255,255,0.82));
+  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 28%, rgba(0,0,0,0.10));
+  color: rgba(0,0,0,0.78);
 }
 
 /* ======================================================= */
@@ -1345,6 +1433,14 @@ body.light-e .music-progress-container {
     width: 210px;
     height: 210px;
   }
+
+  .live-song-title {
+    font-size: 1.24rem;
+  }
+
+  .live-artist {
+    font-size: 0.96rem;
+  }
 }
 
 /* ======================================================= */
@@ -1352,8 +1448,10 @@ body.light-e .music-progress-container {
 /* ======================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+  .spotify-card,
   .live-album-art,
   .live-album-art img,
+  #live-activity-cover,
   .music-progress-bar,
   .live-activity {
     transition: none !important;
