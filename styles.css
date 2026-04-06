@@ -954,6 +954,7 @@ a.corner-button {
 .live-activity {
   --dynamic-accent: var(--accent-color);
   --dynamic-accent-rgb: 78, 168, 255;
+  --dynamic-bg: none;
 }
 
 /* ======================================================= */
@@ -978,6 +979,7 @@ a.corner-button {
       color-mix(in srgb, var(--dynamic-accent) 14%, rgba(10,10,10,0.76)),
       color-mix(in srgb, var(--dynamic-accent) 6%, rgba(10,10,10,0.62))
     ),
+    var(--dynamic-bg, none),
     var(--liquid-refraction),
     color-mix(in srgb, var(--content-bg) 92%, transparent);
 
