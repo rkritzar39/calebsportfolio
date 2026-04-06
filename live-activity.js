@@ -6,7 +6,7 @@
    Reddit one-time banner per new post
    Settings apply instantly (same tab)
    Match song accent OFF => user accentColor
-   Match song accent ON  => enhanced accent from cover art
+   Match song accent ON  => stronger cover-art accent without breaking Onyx design
    Time format ALWAYS hh:mm:ss
 */
 
@@ -60,6 +60,7 @@ function fmt(seconds) {
 ========================= */
 
 const ICON_MAP = {
+  // MUSIC
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   apple_music: "https://cdn.simpleicons.org/applemusic/FA57C1",
   youtubemusic: "https://cdn.simpleicons.org/youtubemusic/FF0000",
@@ -72,6 +73,7 @@ const ICON_MAP = {
   bandcamp: "https://cdn.simpleicons.org/bandcamp/408294",
   audiomack: "https://cdn.simpleicons.org/audiomack/FFA200",
 
+  // VIDEO / STREAMING
   netflix: "https://cdn.simpleicons.org/netflix/E50914",
   disneyplus: "https://cdn.simpleicons.org/disneyplus/113CCF",
   primevideo: "https://cdn.simpleicons.org/primevideo/1F2E3E",
@@ -84,6 +86,7 @@ const ICON_MAP = {
   plex: "https://cdn.simpleicons.org/plex/E5A00D",
   jellyfin: "https://cdn.simpleicons.org/jellyfin/00A4DC",
 
+  // SOCIAL
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   reddit: "https://cdn.simpleicons.org/reddit/FF4500",
   x: "https://cdn.simpleicons.org/x/000000",
@@ -97,11 +100,13 @@ const ICON_MAP = {
   telegram: "https://cdn.simpleicons.org/telegram/26A5E4",
   signal: "https://cdn.simpleicons.org/signal/3A76F0",
 
+  // LIVE / CREATOR
   twitch: "https://cdn.simpleicons.org/twitch/9146FF",
   kick: "https://cdn.simpleicons.org/kick/53FC19",
   patreon: "https://cdn.simpleicons.org/patreon/F96854",
   ko_fi: "https://cdn.simpleicons.org/kofi/FF5E5B",
 
+  // GAMING
   steam: "https://cdn.simpleicons.org/steam/000000",
   epicgames: "https://cdn.simpleicons.org/epicgames/000000",
   gog: "https://cdn.simpleicons.org/gogdotcom/86328A",
@@ -111,6 +116,7 @@ const ICON_MAP = {
   roblox: "https://cdn.simpleicons.org/roblox/000000",
   minecraft: "https://cdn.simpleicons.org/minecraft/62B47A",
 
+  // DEV
   github: "https://cdn.simpleicons.org/github/000000",
   gitlab: "https://cdn.simpleicons.org/gitlab/FC6D26",
   bitbucket: "https://cdn.simpleicons.org/bitbucket/0052CC",
@@ -125,6 +131,7 @@ const ICON_MAP = {
   slack: "https://cdn.simpleicons.org/slack/4A154B",
   zoom: "https://cdn.simpleicons.org/zoom/2D8CFF",
 
+  // GOOGLE / MS
   google: "https://cdn.simpleicons.org/google/4285F4",
   googledocs: "https://cdn.simpleicons.org/googledocs/4285F4",
   googlesheets: "https://cdn.simpleicons.org/googlesheets/34A853",
@@ -136,6 +143,7 @@ const ICON_MAP = {
   teams: "https://cdn.simpleicons.org/microsoftteams/6264A7",
   onedrive: "https://cdn.simpleicons.org/microsoftonedrive/0078D4",
 
+  // SHOPPING
   amazon: "https://cdn.simpleicons.org/amazon/FF9900",
   ebay: "https://cdn.simpleicons.org/ebay/E53238",
   walmart: "https://cdn.simpleicons.org/walmart/0071CE",
@@ -155,6 +163,7 @@ const ICON_MAP = {
   newegg: "https://cdn.simpleicons.org/newegg/FF6600",
   microcenter: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/cpu.svg",
 
+  // PAYMENTS
   paypal: "https://cdn.simpleicons.org/paypal/00457C",
   venmo: "https://cdn.simpleicons.org/venmo/3D95CE",
   cashapp: "https://cdn.simpleicons.org/cashapp/00C244",
@@ -164,24 +173,28 @@ const ICON_MAP = {
   klarna: "https://cdn.simpleicons.org/klarna/FFB3C7",
   affirm: "https://cdn.simpleicons.org/affirm/000000",
 
+  // FOOD
   doordash: "https://cdn.simpleicons.org/doordash/FF3008",
   ubereats: "https://cdn.simpleicons.org/ubereats/000000",
   grubhub: "https://cdn.simpleicons.org/grubhub/F63440",
   postmates: "https://cdn.simpleicons.org/postmates/000000",
   instacart: "https://cdn.simpleicons.org/instacart/43B02A",
 
+  // TRAVEL
   airbnb: "https://cdn.simpleicons.org/airbnb/FF5A5F",
   booking: "https://cdn.simpleicons.org/bookingdotcom/003580",
   expedia: "https://cdn.simpleicons.org/expedia/00355F",
   uber: "https://cdn.simpleicons.org/uber/000000",
   lyft: "https://cdn.simpleicons.org/lyft/FF00BF",
 
+  // FALLBACKS
   activity: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/activity.svg",
   music: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
   manual: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
+/* Safe image set so icons never go blank */
 function setImgWithFallback(imgEl, primaryUrl, fallbackUrl) {
   if (!imgEl) return;
   imgEl.onerror = null;
@@ -206,43 +219,16 @@ function isMatchSongAccentEnabled() {
   return settings.matchSongAccent === "enabled";
 }
 
-function hexToRgbString(hex) {
-  if (!hex || typeof hex !== "string") return "78, 168, 255";
-  let value = hex.trim().replace("#", "");
-  if (value.length === 3) value = value.split("").map(c => c + c).join("");
-  if (!/^[0-9a-fA-F]{6}$/.test(value)) return "78, 168, 255";
-  const r = parseInt(value.slice(0, 2), 16);
-  const g = parseInt(value.slice(2, 4), 16);
-  const b = parseInt(value.slice(4, 6), 16);
-  return `${r}, ${g}, ${b}`;
-}
-
-function setActivityAccent(colorValue, rgbString = null) {
-  const activity = document.querySelector(".live-activity");
-  if (!activity) return;
-
-  const settings = getWebsiteSettings();
-  const fallbackAccent = settings.accentColor || "#4EA8FF";
-  const resolvedColor = colorValue || fallbackAccent;
-  const resolvedRgb = rgbString || hexToRgbString(resolvedColor);
-
-  activity.style.setProperty("--dynamic-accent", resolvedColor);
-  activity.style.setProperty("--dynamic-accent-rgb", resolvedRgb);
-}
-
 function applySongThemeClass() {
   const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent  = settings.accentColor || "#4EA8FF";
+  const userAccent  = settings.accentColor || "#1DB954";
 
   activity.classList.toggle("song-theme-off", !matchAccent);
-
-  if (!matchAccent) {
-    setActivityAccent(userAccent, hexToRgbString(userAccent));
-  }
+  activity.style.setProperty("--dynamic-accent", userAccent);
 }
 
 function watchWebsiteSettings() {
@@ -267,143 +253,6 @@ window.addEventListener("storage", (e) => {
 });
 
 /* =========================
-   COLOR HELPERS
-========================= */
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
-}
-
-function rgbToHsl(r, g, b) {
-  r /= 255;
-  g /= 255;
-  b /= 255;
-
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const delta = max - min;
-
-  let h = 0;
-  let s = 0;
-  const l = (max + min) / 2;
-
-  if (delta !== 0) {
-    s = delta / (1 - Math.abs(2 * l - 1));
-
-    switch (max) {
-      case r:
-        h = 60 * (((g - b) / delta) % 6);
-        break;
-      case g:
-        h = 60 * (((b - r) / delta) + 2);
-        break;
-      case b:
-        h = 60 * (((r - g) / delta) + 4);
-        break;
-    }
-  }
-
-  if (h < 0) h += 360;
-  return { h, s, l };
-}
-
-function hslToRgb(h, s, l) {
-  const c = (1 - Math.abs(2 * l - 1)) * s;
-  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-  const m = l - c / 2;
-
-  let rPrime = 0, gPrime = 0, bPrime = 0;
-
-  if (h >= 0 && h < 60) {
-    rPrime = c; gPrime = x; bPrime = 0;
-  } else if (h < 120) {
-    rPrime = x; gPrime = c; bPrime = 0;
-  } else if (h < 180) {
-    rPrime = 0; gPrime = c; bPrime = x;
-  } else if (h < 240) {
-    rPrime = 0; gPrime = x; bPrime = c;
-  } else if (h < 300) {
-    rPrime = x; gPrime = 0; bPrime = c;
-  } else {
-    rPrime = c; gPrime = 0; bPrime = x;
-  }
-
-  return {
-    r: Math.round((rPrime + m) * 255),
-    g: Math.round((gPrime + m) * 255),
-    b: Math.round((bPrime + m) * 255)
-  };
-}
-
-function scorePixel(r, g, b, a) {
-  if (a < 180) return -1;
-
-  const { s, l } = rgbToHsl(r, g, b);
-
-  if (l < 0.08 || l > 0.92) return -1;
-
-  const saturationScore = s * 100;
-  const lightnessScore = 100 - Math.abs((l * 100) - 52);
-  return saturationScore + (lightnessScore * 0.35);
-}
-
-function enhanceAccent(r, g, b) {
-  const hsl = rgbToHsl(r, g, b);
-
-  const boosted = {
-    h: hsl.h,
-    s: clamp(hsl.s, 0.55, 0.9),
-    l: clamp(hsl.l, 0.42, 0.58)
-  };
-
-  return hslToRgb(boosted.h, boosted.s, boosted.l);
-}
-
-function getDominantAccentFromImage(img) {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  if (!ctx) return null;
-
-  const sampleSize = 48;
-  canvas.width = sampleSize;
-  canvas.height = sampleSize;
-
-  ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
-  const { data } = ctx.getImageData(0, 0, sampleSize, sampleSize);
-
-  let bestPixel = null;
-  let bestScore = -Infinity;
-
-  for (let index = 0; index < data.length; index += 4) {
-    const r = data[index];
-    const g = data[index + 1];
-    const b = data[index + 2];
-    const a = data[index + 3];
-
-    const score = scorePixel(r, g, b, a);
-    if (score > bestScore) {
-      bestScore = score;
-      bestPixel = { r, g, b };
-    }
-  }
-
-  if (!bestPixel) return null;
-  return enhanceAccent(bestPixel.r, bestPixel.g, bestPixel.b);
-}
-
-/* =========================
-   TIME FORMAT
-========================= */
-
-function fmt(seconds) {
-  seconds = Math.max(0, Math.floor(seconds));
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-  return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-}
-
-/* =========================
    PREMiD RESOLVER
 ========================= */
 
@@ -412,6 +261,7 @@ function normAppName(s = "") {
 }
 
 const PREMID_RULES = [
+  // MUSIC
   { re: /spotify/i, key: "spotify", pretty: "Spotify" },
   { re: /apple\s*music|itunes/i, key: "apple_music", pretty: "Apple Music" },
   { re: /amazon\s*music|prime\s*music/i, key: "amazonmusic", pretty: "Amazon Music" },
@@ -422,9 +272,11 @@ const PREMID_RULES = [
   { re: /bandcamp/i, key: "bandcamp", pretty: "Bandcamp" },
   { re: /audiomack/i, key: "audiomack", pretty: "Audiomack" },
 
+  // YOUTUBE
   { re: /youtube\s*music|yt\s*music|youtubemusic/i, key: "youtubemusic", pretty: "YouTube Music" },
   { re: /youtube/i, key: "youtube", pretty: "YouTube" },
 
+  // VIDEO
   { re: /netflix/i, key: "netflix", pretty: "Netflix" },
   { re: /disney\+|disneyplus/i, key: "disneyplus", pretty: "Disney+" },
   { re: /prime\s*video|amazon\s*prime\s*video/i, key: "primevideo", pretty: "Prime Video" },
@@ -437,6 +289,7 @@ const PREMID_RULES = [
   { re: /plex/i, key: "plex", pretty: "Plex" },
   { re: /jellyfin/i, key: "jellyfin", pretty: "Jellyfin" },
 
+  // SOCIAL
   { re: /discord/i, key: "discord", pretty: "Discord" },
   { re: /reddit/i, key: "reddit", pretty: "Reddit" },
   { re: /^x$|twitter/i, key: "x", pretty: "X" },
@@ -449,11 +302,13 @@ const PREMID_RULES = [
   { re: /telegram/i, key: "telegram", pretty: "Telegram" },
   { re: /signal/i, key: "signal", pretty: "Signal" },
 
+  // CREATOR
   { re: /twitch/i, key: "twitch", pretty: "Twitch" },
   { re: /\bkick\b/i, key: "kick", pretty: "Kick" },
   { re: /patreon/i, key: "patreon", pretty: "Patreon" },
   { re: /ko-?fi|kofi/i, key: "ko_fi", pretty: "Ko-fi" },
 
+  // GAMING
   { re: /steam/i, key: "steam", pretty: "Steam" },
   { re: /epic\s*games|epicgames/i, key: "epicgames", pretty: "Epic Games" },
   { re: /\bgog\b|gog\.com|gogdotcom/i, key: "gog", pretty: "GOG" },
@@ -463,6 +318,7 @@ const PREMID_RULES = [
   { re: /roblox/i, key: "roblox", pretty: "Roblox" },
   { re: /minecraft/i, key: "minecraft", pretty: "Minecraft" },
 
+  // DEV
   { re: /github/i, key: "github", pretty: "GitHub" },
   { re: /gitlab/i, key: "gitlab", pretty: "GitLab" },
   { re: /bitbucket/i, key: "bitbucket", pretty: "Bitbucket" },
@@ -477,6 +333,7 @@ const PREMID_RULES = [
   { re: /slack/i, key: "slack", pretty: "Slack" },
   { re: /zoom/i, key: "zoom", pretty: "Zoom" },
 
+  // GOOGLE / MS
   { re: /google\s*docs|docs\.google/i, key: "googledocs", pretty: "Google Docs" },
   { re: /google\s*sheets|sheets\.google/i, key: "googlesheets", pretty: "Google Sheets" },
   { re: /google\s*slides|slides\.google/i, key: "googleslides", pretty: "Google Slides" },
@@ -487,6 +344,7 @@ const PREMID_RULES = [
   { re: /microsoft\s*teams|\bteams\b/i, key: "teams", pretty: "Microsoft Teams" },
   { re: /one\s*drive|onedrive/i, key: "onedrive", pretty: "OneDrive" },
 
+  // SHOPPING
   { re: /\bamazon\b/i, key: "amazon", pretty: "Amazon" },
   { re: /\bebay\b/i, key: "ebay", pretty: "eBay" },
   { re: /\bwalmart\b/i, key: "walmart", pretty: "Walmart" },
@@ -506,6 +364,7 @@ const PREMID_RULES = [
   { re: /new\s*egg|newegg/i, key: "newegg", pretty: "Newegg" },
   { re: /micro\s*center|microcenter/i, key: "microcenter", pretty: "Micro Center" },
 
+  // PAYMENTS
   { re: /paypal/i, key: "paypal", pretty: "PayPal" },
   { re: /\bvenmo\b/i, key: "venmo", pretty: "Venmo" },
   { re: /cash\s*app|cashapp/i, key: "cashapp", pretty: "Cash App" },
@@ -515,12 +374,14 @@ const PREMID_RULES = [
   { re: /\bklarna\b/i, key: "klarna", pretty: "Klarna" },
   { re: /\baffirm\b/i, key: "affirm", pretty: "Affirm" },
 
+  // FOOD
   { re: /door\s*dash|doordash/i, key: "doordash", pretty: "DoorDash" },
   { re: /uber\s*eats|ubereats/i, key: "ubereats", pretty: "Uber Eats" },
   { re: /grubhub/i, key: "grubhub", pretty: "Grubhub" },
   { re: /postmates/i, key: "postmates", pretty: "Postmates" },
   { re: /instacart/i, key: "instacart", pretty: "Instacart" },
 
+  // TRAVEL
   { re: /airbnb/i, key: "airbnb", pretty: "Airbnb" },
   { re: /booking\.?com|booking/i, key: "booking", pretty: "Booking.com" },
   { re: /expedia/i, key: "expedia", pretty: "Expedia" },
@@ -696,14 +557,14 @@ function updateDynamicColors(imageUrl) {
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent  = settings.accentColor || "#4EA8FF";
+  const userAccent  = settings.accentColor || "#1DB954";
 
   if (imageUrl) lastCoverUrl = imageUrl;
 
   const requestId = ++dynamicColorRequestId;
 
   const resetColors = () => {
-    setActivityAccent(userAccent, hexToRgbString(userAccent));
+    activity.style.setProperty("--dynamic-accent", userAccent);
   };
 
   if (!matchAccent || !imageUrl) {
@@ -720,16 +581,64 @@ function updateDynamicColors(imageUrl) {
     if (requestId !== dynamicColorRequestId) return;
 
     try {
-      const accent = getDominantAccentFromImage(img);
-      if (!accent) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) throw new Error("No canvas context");
+
+      canvas.width = 48;
+      canvas.height = 48;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      let best = null;
+      let bestScore = -Infinity;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const a = data[i + 3];
+
+        if (a < 180) continue;
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const delta = max - min;
+
+        const brightness = (r + g + b) / 3;
+        const saturation = delta;
+
+        if (brightness < 35 || brightness > 225) continue;
+        if (saturation < 35) continue;
+
+        const score =
+          saturation * 1.6 +
+          (255 - Math.abs(140 - brightness)) * 0.35;
+
+        if (score > bestScore) {
+          bestScore = score;
+          best = { r, g, b };
+        }
+      }
+
+      if (!best) {
         resetColors();
         return;
       }
 
-      const cssColor = `rgb(${accent.r}, ${accent.g}, ${accent.b})`;
-      const rgbString = `${accent.r}, ${accent.g}, ${accent.b}`;
-      setActivityAccent(cssColor, rgbString);
-    } catch {
+      const boosted = {
+        r: Math.min(255, Math.round(best.r * 1.08)),
+        g: Math.min(255, Math.round(best.g * 1.08)),
+        b: Math.min(255, Math.round(best.b * 1.08))
+      };
+
+      activity.style.setProperty(
+        "--dynamic-accent",
+        `rgb(${boosted.r}, ${boosted.g}, ${boosted.b})`
+      );
+    } catch (error) {
+      console.warn("Dynamic color extraction failed:", error);
       resetColors();
     }
   };
@@ -779,6 +688,7 @@ function isManualActive() {
 function getActivityVerb(appName = "", act = null) {
   const n = (appName || "").toLowerCase();
 
+  // Music apps
   if (
     n.includes("youtube music") ||
     n.includes("spotify") ||
@@ -790,11 +700,13 @@ function getActivityVerb(appName = "", act = null) {
     n.includes("amazon music")
   ) return "Listening to";
 
+  // YouTube listening vs watching
   if (n.includes("youtube")) {
     if (act && isYouTubeMusicLike(act)) return "Listening to";
     return "Watching";
   }
 
+  // Streaming video
   if (
     n.includes("twitch") ||
     n.includes("netflix") ||
@@ -806,6 +718,7 @@ function getActivityVerb(appName = "", act = null) {
     n.includes("paramount")
   ) return "Watching";
 
+  // Shopping
   if (
     n.includes("amazon") || n.includes("ebay") || n.includes("walmart") || n.includes("target") ||
     n.includes("etsy") || n.includes("aliexpress") || n.includes("temu") || n.includes("shein") ||
@@ -814,17 +727,20 @@ function getActivityVerb(appName = "", act = null) {
     n.includes("home depot") || n.includes("lowe")
   ) return "Shopping on";
 
+  // Payments
   if (
     n.includes("paypal") || n.includes("venmo") || n.includes("cash app") ||
     n.includes("apple pay") || n.includes("google pay") || n.includes("stripe") ||
     n.includes("klarna") || n.includes("affirm")
   ) return "Paying with";
 
+  // Delivery
   if (
     n.includes("doordash") || n.includes("uber eats") || n.includes("grubhub") ||
     n.includes("postmates") || n.includes("instacart")
   ) return "Ordering on";
 
+  // Browsing / socials
   if (n.includes("reddit")) return "Browsing";
   if (n === "x" || n.includes("twitter") || n.includes("instagram") || n.includes("tiktok") || n.includes("facebook")) return "Scrolling";
 
@@ -845,6 +761,7 @@ function isYouTubeMusicLike(act) {
   const s = state.toLowerCase();
   const l = largeText.toLowerCase();
 
+  // Strong music keywords
   const strongMusicSignals = [
     "lyrics", "lyric video", "official lyrics",
     "official audio", "audio",
@@ -860,12 +777,14 @@ function isYouTubeMusicLike(act) {
   const hay = `${t} ${s} ${l}`;
   if (strongMusicSignals.some(k => hay.includes(k))) return true;
 
+  // "Song - Artist" format check
   const hasDashFormat =
     t.includes(" - ") &&
     t.split(" - ").every(part => part.trim().length >= 2);
 
   if (hasDashFormat) return true;
 
+  // Heuristic check
   const detailsLooksLikeTrack =
     t.length >= 6 && (t.includes(" - ") || t.includes(" by ") || t.includes(" • "));
   const stateLooksLikeArtist =
@@ -920,7 +839,7 @@ const MUSIC_KEYWORDS = [
 
 function isMusicActivity(act) {
   if (!act) return false;
-  if (act.type === 2) return true;
+  if (act.type === 2) return true; // 'Listening' type
 
   const name = (act.name || "").toLowerCase();
   const details = (act.details || "").toLowerCase();
@@ -937,7 +856,7 @@ function isMusicActivity(act) {
 
 function isIgnorableActivity(a) {
   if (!a) return true;
-  if (a.type === 4) return true;
+  if (a.type === 4) return true; // custom status
   const name = (a.name || "").toLowerCase();
   if (!name) return true;
   if (name === "discord") return true;
@@ -975,6 +894,7 @@ async function getDiscord() {
     const data = json.data;
     if (!data) return null;
 
+    // 1) Spotify
     if (data.spotify) {
       const sp = data.spotify;
       const now = Date.now();
@@ -989,6 +909,7 @@ async function getDiscord() {
       const coverEl = $$("live-activity-cover");
       if (coverEl && coverEl.src !== sp.album_art_url) coverEl.src = sp.album_art_url;
 
+      // FIXED: Correct Spotify URL
       currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
       setupProgress(startMs, endMs);
@@ -1000,6 +921,7 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
+    // 2) PreMiD / All activities
     if (SHOW_ALL_PREMID_ACTIVITIES) {
       const act = pickBestPremidActivity(data.activities || []);
       if (act) {
@@ -1020,6 +942,7 @@ async function getDiscord() {
         const coverUrl = resolveDiscordAssetUrl(act);
         const coverEl = $$("live-activity-cover");
         if (coverEl) {
+          // Only update src if it changed to prevent flickering
           if (coverUrl && coverEl.src !== coverUrl) coverEl.src = coverUrl;
         }
 
@@ -1030,8 +953,10 @@ async function getDiscord() {
 
         resetProgress();
 
+        // 1) If activity has timestamps, use real progress
         const hasRealProgress = setupProgressFromActivityTimestamps(act);
         if (!hasRealProgress) {
+          // 2) No timestamps: only show indeterminate for music-ish things
           if (isMusicActivity(act) || isYouTubeMusicLike(act)) {
             setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
           } else {
@@ -1055,6 +980,7 @@ async function getDiscord() {
       }
     }
 
+    // 3) Nothing else
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
@@ -1083,15 +1009,17 @@ async function getTwitch() {
   const u = CONFIG.twitch.username?.toLowerCase();
   if (!u) return null;
 
+  // Use a cache-buster to prevent stale data
   const proxy = "https://corsproxy.io/?";
   const target = `https://decapi.me/twitch/uptime/${u}`;
 
   try {
     const res = await fetch(`${proxy}${encodeURIComponent(target)}?_=${Date.now()}`);
-    if (!res.ok) return null;
+    if (!res.ok) return null; // If the fetch fails, assume offline
     
     const text = (await res.text()).trim();
 
+    // STRICT CHECK: If it contains "offline", "not found", or is empty -> Offline
     if (!text || 
         text.toLowerCase().includes("offline") || 
         text.toLowerCase().includes("not found") ||
@@ -1099,8 +1027,10 @@ async function getTwitch() {
       return null;
     }
 
-    if (!/\d/.test(text)) {
-      return null;
+    // EXTRA SAFETY: Ensure it looks like a time string (contains digits)
+    // DecAPI returns things like "1 hour, 20 mins" or "30 mins" when live.
+    if (!/\d/.test(text)) { 
+      return null; 
     }
 
     return { live: true };
@@ -1144,11 +1074,13 @@ try {
     if (!snap.exists()) { manualStatus = null; return; }
     const d = snap.data();
 
+    // Parse timestamp
     if (d.expiresAt?.toMillis) d.expiresAt = d.expiresAt.toMillis();
     else if (typeof d.expiresAt !== "number") d.expiresAt = null;
 
     manualStatus = d;
 
+    // Self-cleaning expired status
     if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
       try {
         await setDoc(manualRef, {
@@ -1198,6 +1130,7 @@ async function mainLoop() {
 
   const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
 
+  // Priority Chain
   const primary =
     (discord?.source === "manual") ? discord
     : (discord?.source === "spotify") ? discord
@@ -1229,11 +1162,9 @@ document.addEventListener("DOMContentLoaded", () => {
   applySongThemeClass();
 
   const card = $$("spotify-card");
-  if (card) {
-    card.addEventListener("click", () => {
-      if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank");
-    });
-  }
+  if (card) card.addEventListener("click", () => {
+    if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank");
+  });
 
   const saved = localStorage.getItem("lastStatus");
   if (saved) {
