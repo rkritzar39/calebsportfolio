@@ -5031,17 +5031,29 @@ body.maintenance-active {
 }
 
 /* =========================================================
-   Business Section – Premium Final CSS
-   Includes:
-   - Premium header/actions
-   - Live status card
-   - Segmented 12h / 24h control
-   - Timeline
-   - Hours panels
-   - Traffic light states
-   - Live visual tinting
-   - Mobile polish
+   Business Section – Root-Matched Liquid Glass
+   Matches the site root tokens and section optics
 ========================================================= */
+
+/* -------------------------
+   Business section wrapper
+------------------------- */
+#business-section.business-info-section{
+  position:relative;
+  color:var(--text-color);
+}
+
+#business-section.business-info-section,
+#business-section.business-info-section h1,
+#business-section.business-info-section h2,
+#business-section.business-info-section h3,
+#business-section.business-info-section h4,
+#business-section.business-info-section p,
+#business-section.business-info-section span,
+#business-section.business-info-section li,
+#business-section.business-info-section strong{
+  color:inherit;
+}
 
 /* -------------------------
    Header
@@ -5053,14 +5065,14 @@ body.maintenance-active {
   gap:16px;
   padding-bottom:14px;
   margin-bottom:18px;
-  border-bottom:1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+  border-bottom:1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
 }
 
 .business-head-left h2{
   margin:0;
-  text-align:left;
   padding-bottom:0;
   border-bottom:none;
+  color:var(--text-color);
 }
 
 .business-subtitle{
@@ -5079,21 +5091,22 @@ body.maintenance-active {
 }
 
 /* -------------------------
-   Action buttons
+   Shared glass button style
 ------------------------- */
 .biz-action{
   appearance:none;
-  border:1px solid var(--border-color);
+  position:relative;
+  overflow:hidden;
+  border:1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
   background:var(--content-bg);
-  background-image:var(--bubble-gradient);
-  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
-  backdrop-filter:var(--backdrop-blur);
-  -webkit-backdrop-filter:var(--backdrop-blur);
+  color:var(--text-color);
   border-radius:9999px;
   padding:10px 14px;
   font-weight:800;
-  color:var(--text-color);
   cursor:pointer;
+  backdrop-filter:var(--backdrop-blur);
+  -webkit-backdrop-filter:var(--backdrop-blur);
+  box-shadow:var(--bubble-shadow);
   transition:
     transform .18s ease,
     box-shadow .18s ease,
@@ -5102,19 +5115,37 @@ body.maintenance-active {
     background .18s ease;
 }
 
+.biz-action::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--liquid-reflection);
+  opacity:.20;
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
+
+.biz-action::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--bubble-gradient);
+  mix-blend-mode:overlay;
+  pointer-events:none;
+}
+
 .biz-action:hover{
   transform:translateY(-2px);
   box-shadow:
-    0 14px 28px color-mix(in srgb, var(--shadow-color) 40%, transparent),
-    var(--bubble-highlight);
+    0 14px 28px color-mix(in srgb, var(--shadow-color) 36%, transparent),
+    var(--bubble-shadow);
 }
 
 .biz-action:focus-visible{
   outline:none;
   box-shadow:
     0 0 0 4px color-mix(in srgb, var(--accent-color) 22%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
+    var(--bubble-shadow);
   border-color:color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
 }
 
@@ -5126,26 +5157,43 @@ body.maintenance-active {
    Segmented time control
 ------------------------- */
 .biz-segmented-time{
+  position:relative;
   display:inline-flex;
   align-items:center;
   gap:4px;
   padding:4px;
   border-radius:9999px;
-  border:1px solid color-mix(in srgb, var(--border-color) 38%, transparent);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.08)),
-    color-mix(in srgb, var(--content-bg) 88%, transparent);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.06),
-    inset 0 -1px 0 rgba(0,0,0,.12),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
+  border:1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+  background:var(--content-bg);
   backdrop-filter:var(--backdrop-blur);
   -webkit-backdrop-filter:var(--backdrop-blur);
+  box-shadow:var(--bubble-shadow);
+  overflow:hidden;
+}
+
+.biz-segmented-time::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--liquid-reflection);
+  opacity:.18;
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
+
+.biz-segmented-time::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--bubble-gradient);
+  mix-blend-mode:overlay;
+  pointer-events:none;
 }
 
 .biz-segmented-time__option{
   appearance:none;
+  position:relative;
+  z-index:1;
   border:none;
   background:transparent;
   color:var(--secondary-text);
@@ -5166,64 +5214,72 @@ body.maintenance-active {
 
 .biz-segmented-time__option.is-active{
   color:var(--text-color);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03)),
-    color-mix(in srgb, var(--content-bg) 94%, transparent);
+  background:color-mix(in srgb, var(--content-bg) 86%, rgba(255,255,255,.08));
   box-shadow:
-    0 1px 0 rgba(255,255,255,.10) inset,
-    0 8px 18px color-mix(in srgb, var(--shadow-color) 24%, transparent);
+    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 30%, transparent),
+    0 8px 18px color-mix(in srgb, var(--shadow-color) 20%, transparent);
 }
 
 .biz-segmented-time__option:focus-visible{
   outline:none;
   box-shadow:
     0 0 0 4px color-mix(in srgb, var(--accent-color) 20%, transparent),
-    0 1px 0 rgba(255,255,255,.10) inset,
-    0 8px 18px color-mix(in srgb, var(--shadow-color) 24%, transparent);
+    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 30%, transparent);
 }
 
 /* -------------------------
-   Main grid and panels
+   Main grid
 ------------------------- */
 .business-grid{
   display:grid;
   grid-template-columns:1.05fr 1.35fr;
   gap:18px;
   align-items:start;
-  margin-left:auto;
-  margin-right:auto;
   max-width:100%;
   box-sizing:border-box;
 }
 
+/* -------------------------
+   Panels - root matched
+------------------------- */
 .biz-panel{
   position:relative;
   overflow:hidden;
   background:var(--content-bg);
-  background-image:var(--bubble-gradient);
-  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
-  border:1px solid var(--border-color);
+  border:1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
   border-radius:var(--radius-xl);
   padding:18px;
-  backdrop-filter:var(--backdrop-blur) saturate(120%);
-  -webkit-backdrop-filter:var(--backdrop-blur) saturate(120%);
+  backdrop-filter:var(--backdrop-blur);
+  -webkit-backdrop-filter:var(--backdrop-blur);
+  box-shadow:var(--bubble-shadow);
   max-width:100%;
   box-sizing:border-box;
+}
+
+.biz-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--liquid-reflection);
+  opacity:.22;
+  mix-blend-mode:screen;
+  pointer-events:none;
 }
 
 .biz-panel::after{
   content:"";
   position:absolute;
-  inset:auto 0 0 0;
-  height:1px;
+  inset:0;
+  background:
+    var(--bubble-gradient),
+    var(--liquid-refraction);
+  mix-blend-mode:overlay;
   pointer-events:none;
-  background:linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in srgb, white 18%, transparent),
-    transparent
-  );
-  opacity:.45;
+}
+
+.biz-panel > *{
+  position:relative;
+  z-index:1;
 }
 
 .biz-panel-title{
@@ -5243,6 +5299,7 @@ body.maintenance-active {
   font-size:1.05em;
   font-weight:900;
   letter-spacing:.2px;
+  color:var(--text-color);
 }
 
 .biz-muted{
@@ -5252,7 +5309,7 @@ body.maintenance-active {
 }
 
 /* -------------------------
-   Status chip
+   Chip
 ------------------------- */
 .biz-chip{
   margin-left:auto;
@@ -5260,9 +5317,10 @@ body.maintenance-active {
   font-size:.85em;
   padding:6px 10px;
   border-radius:9999px;
-  border:1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  border:1px solid color-mix(in srgb, var(--border-color) 44%, transparent);
   background:color-mix(in srgb, var(--content-bg) 85%, transparent);
   color:var(--secondary-text);
+  box-shadow:inset 0 1px 1px color-mix(in srgb, var(--glow-color) 18%, transparent);
   transition:
     color .3s ease,
     border-color .3s ease,
@@ -5271,7 +5329,7 @@ body.maintenance-active {
 }
 
 /* -------------------------
-   Traffic light signal
+   Traffic light
 ------------------------- */
 .biz-signal{
   display:flex;
@@ -5279,16 +5337,24 @@ body.maintenance-active {
   gap:8px;
   padding:8px;
   border-radius:999px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.08)),
-    color-mix(in srgb, var(--content-bg) 88%, transparent);
-  border:1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+  background:color-mix(in srgb, var(--content-bg) 82%, transparent);
+  border:1px solid color-mix(in srgb, var(--border-color) 38%, transparent);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.08),
-    inset 0 -1px 0 rgba(0,0,0,.18),
     var(--bubble-shadow),
-    var(--bubble-highlight);
+    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 16%, transparent);
   flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+}
+
+.biz-signal::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--liquid-reflection);
+  opacity:.16;
+  mix-blend-mode:screen;
+  pointer-events:none;
 }
 
 .biz-signal__light{
@@ -5356,9 +5422,6 @@ body.maintenance-active {
   filter:blur(5px);
 }
 
-/* -------------------------
-   Real LED blink
-------------------------- */
 @keyframes bizStateBlink {
   0%, 49% { opacity:1; }
   50%, 100% { opacity:.14; }
@@ -5367,13 +5430,12 @@ body.maintenance-active {
 .biz-signal__light.is-blinking{
   animation:bizStateBlink 1s steps(1, end) infinite;
 }
-
 .biz-signal__light.is-blinking::before{
   animation:bizStateBlink 1s steps(1, end) infinite;
 }
 
 /* -------------------------
-   Business status text
+   Status text
 ------------------------- */
 .business-status{
   display:flex;
@@ -5410,9 +5472,6 @@ body.maintenance-active {
   color:var(--status-unavailable-color, #f59e0b);
 }
 
-/* -------------------------
-   Premium status hint
-------------------------- */
 .biz-status-hint{
   margin-top:10px;
   color:var(--secondary-text);
@@ -5436,8 +5495,9 @@ body.maintenance-active {
   gap:14px;
   padding:10px 12px;
   border-radius:var(--radius-lg);
-  border:1px solid color-mix(in srgb, var(--border-color) 28%, transparent);
-  background:color-mix(in srgb, var(--content-bg) 88%, transparent);
+  border:1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+  background:color-mix(in srgb, var(--content-bg) 84%, transparent);
+  box-shadow:inset 0 1px 1px color-mix(in srgb, var(--glow-color) 12%, transparent);
   transition:
     border-color .25s ease,
     background .25s ease,
@@ -5457,14 +5517,15 @@ body.maintenance-active {
 }
 
 /* -------------------------
-   Today timeline
+   Timeline
 ------------------------- */
 .biz-today-timeline{
   margin-top:14px;
   padding:12px 14px;
   border-radius:var(--radius-lg);
-  border:1px solid color-mix(in srgb, var(--border-color) 28%, transparent);
-  background:color-mix(in srgb, var(--content-bg) 88%, transparent);
+  border:1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+  background:color-mix(in srgb, var(--content-bg) 84%, transparent);
+  box-shadow:inset 0 1px 1px color-mix(in srgb, var(--glow-color) 12%, transparent);
 }
 
 .biz-today-timeline__bar{
@@ -5472,12 +5533,10 @@ body.maintenance-active {
   height:12px;
   border-radius:999px;
   overflow:hidden;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.08)),
-    color-mix(in srgb, var(--content-bg) 70%, transparent);
+  background:color-mix(in srgb, var(--content-bg) 70%, transparent);
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,.05),
-    inset 0 -1px 1px rgba(0,0,0,.10);
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 12%, transparent),
+    inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 14%, transparent);
 }
 
 .biz-today-timeline__fill{
@@ -5486,13 +5545,11 @@ body.maintenance-active {
   width:0%;
   border-radius:999px;
   background:
-    linear-gradient(
-      90deg,
+    linear-gradient(90deg,
       color-mix(in srgb, var(--accent-color) 72%, white 8%),
       color-mix(in srgb, var(--accent-color) 92%, white 4%)
     );
-  box-shadow:
-    0 0 14px color-mix(in srgb, var(--accent-color) 18%, transparent);
+  box-shadow:0 0 14px color-mix(in srgb, var(--accent-color) 18%, transparent);
   transition:width .35s ease;
 }
 
@@ -5524,13 +5581,14 @@ body.maintenance-active {
 }
 
 /* -------------------------
-   Details blocks
+   Details
 ------------------------- */
 .biz-details{
   margin-top:12px;
   border-radius:var(--radius-lg);
-  border:1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-  background:color-mix(in srgb, var(--content-bg) 85%, transparent);
+  border:1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+  background:color-mix(in srgb, var(--content-bg) 84%, transparent);
+  box-shadow:inset 0 1px 1px color-mix(in srgb, var(--glow-color) 10%, transparent);
   overflow:hidden;
 }
 
@@ -5563,9 +5621,6 @@ body.maintenance-active {
   padding:12px;
 }
 
-/* -------------------------
-   Divider
-------------------------- */
 .biz-divider{
   height:1px;
   margin:16px 0;
@@ -5592,13 +5647,16 @@ body.maintenance-active {
   align-items:start;
   padding:14px 16px;
   border-radius:var(--radius-lg);
-  background:var(--content-bg);
-  background-image:var(--bubble-gradient);
-  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
-  border:1px solid var(--border-color);
+  background:color-mix(in srgb, var(--content-bg) 88%, transparent);
+  border:1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+  box-shadow:
+    var(--bubble-shadow),
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 10%, transparent);
   backdrop-filter:var(--backdrop-blur);
   -webkit-backdrop-filter:var(--backdrop-blur);
   box-sizing:border-box;
+  position:relative;
+  overflow:hidden;
   transition:
     transform .18s ease,
     box-shadow .18s ease,
@@ -5606,12 +5664,23 @@ body.maintenance-active {
     background .18s ease;
 }
 
+.regular-hours-list li::before,
+.special-hours-display li::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--liquid-reflection);
+  opacity:.12;
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
+
 .regular-hours-list li:hover,
 .special-hours-display li:hover{
   transform:translateY(-2px);
   box-shadow:
-    0 14px 28px color-mix(in srgb, var(--shadow-color) 40%, transparent),
-    var(--bubble-highlight);
+    0 14px 28px color-mix(in srgb, var(--shadow-color) 30%, transparent),
+    var(--bubble-shadow);
 }
 
 .regular-hours-list li strong,
@@ -5639,14 +5708,13 @@ body.maintenance-active {
 }
 
 /* -------------------------
-   Current day highlight
+   Current day
 ------------------------- */
 .regular-hours-list li.current-day{
   border-color:color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
   box-shadow:
     0 0 0 3px color-mix(in srgb, var(--accent-color) 14%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
+    var(--bubble-shadow);
 }
 
 .regular-hours-list li.current-day strong{
@@ -5657,9 +5725,6 @@ body.maintenance-active {
   color:color-mix(in srgb, var(--accent-color) 70%, var(--secondary-text));
 }
 
-/* -------------------------
-   Timezone note
-------------------------- */
 .hours-timezone-note{
   margin:12px 0 0 0;
   color:var(--secondary-text);
@@ -5668,12 +5733,13 @@ body.maintenance-active {
 }
 
 /* -------------------------
-   Contact section
+   Contact
 ------------------------- */
 .biz-contact h4{
   margin:0 0 10px 0;
   font-size:1rem;
   font-weight:900;
+  color:var(--text-color);
 }
 
 .contact-info{
@@ -5689,12 +5755,13 @@ body.maintenance-active {
 }
 
 .contact-info a{
+  position:relative;
+  overflow:hidden;
   background:var(--content-bg);
-  background-image:var(--bubble-gradient);
-  box-shadow:var(--bubble-shadow), var(--bubble-highlight);
-  border:1px solid var(--border-color);
+  border:1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
   backdrop-filter:var(--backdrop-blur);
   -webkit-backdrop-filter:var(--backdrop-blur);
+  box-shadow:var(--bubble-shadow);
   padding:14px 36px;
   border-radius:9999px;
   font-weight:900;
@@ -5711,19 +5778,37 @@ body.maintenance-active {
     border-color .18s ease;
 }
 
+.contact-info a::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--liquid-reflection);
+  opacity:.18;
+  mix-blend-mode:screen;
+  pointer-events:none;
+}
+
+.contact-info a::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:var(--bubble-gradient);
+  mix-blend-mode:overlay;
+  pointer-events:none;
+}
+
 .contact-info a:hover{
   transform:translateY(-2px);
   box-shadow:
-    0 14px 30px color-mix(in srgb, var(--accent-color) 45%, transparent),
-    var(--bubble-highlight);
+    0 14px 30px color-mix(in srgb, var(--accent-color) 28%, transparent),
+    var(--bubble-shadow);
 }
 
 .contact-info a:focus-visible{
   outline:none;
   box-shadow:
     0 0 0 4px color-mix(in srgb, var(--accent-color) 22%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
+    var(--bubble-shadow);
   border-color:color-mix(in srgb, var(--accent-color) 40%, var(--border-color));
 }
 
@@ -5738,7 +5823,7 @@ body.maintenance-active {
 }
 
 /* -------------------------
-   Outer spacing protection
+   Section spacing safety
 ------------------------- */
 #business,
 .business,
@@ -5762,23 +5847,15 @@ main .business-section{
   box-sizing:border-box;
 }
 
-.business-grid [style*="100vw"],
-.business-grid .full-bleed{
-  width:100% !important;
-}
-
-/* =========================================================
-   Live State Transitions + Time Tints
-========================================================= */
+/* -------------------------
+   Live state tints
+------------------------- */
 #business-section,
 .business-info-section{
   --biz-open-color:#22c55e;
   --biz-closing-color:#facc15;
   --biz-closed-color:#ef4444;
-
   --biz-state-color:var(--biz-open-color);
-  --biz-state-glow:rgba(34, 197, 94, 0.22);
-
   --biz-time-tint:transparent;
   --biz-time-edge:color-mix(in srgb, var(--border-color) 35%, transparent);
 }
@@ -5804,87 +5881,28 @@ main .business-section{
 #business-section.state-open,
 .business-info-section.state-open{
   --biz-state-color:var(--biz-open-color);
-  --biz-state-glow:rgba(34, 197, 94, 0.24);
 }
 
 #business-section.state-closing,
 .business-info-section.state-closing{
   --biz-state-color:var(--biz-closing-color);
-  --biz-state-glow:rgba(250, 204, 21, 0.26);
 }
 
 #business-section.state-closed,
 .business-info-section.state-closed{
   --biz-state-color:var(--biz-closed-color);
-  --biz-state-glow:rgba(239, 68, 68, 0.26);
 }
 
 #business-section .biz-panel,
 .business-info-section .biz-panel{
   border-color:color-mix(in srgb, var(--biz-time-edge) 65%, transparent);
-  transition:
-    border-color .35s ease,
-    box-shadow .35s ease,
-    background .35s ease;
 }
 
-#business-section .biz-panel::before,
-.business-info-section .biz-panel::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, white 7%, transparent),
-      transparent 42%
-    ),
-    linear-gradient(
-      180deg,
-      var(--biz-time-tint),
-      transparent 65%
-    );
-  opacity:.55;
-}
-
-#business-section.state-open .biz-panel,
-.business-info-section.state-open .biz-panel{
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--biz-state-color) 12%, transparent),
-    0 0 18px color-mix(in srgb, var(--biz-state-color) 10%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
-}
-
-#business-section.state-closing .biz-panel,
-.business-info-section.state-closing .biz-panel{
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--biz-state-color) 14%, transparent),
-    0 0 18px color-mix(in srgb, var(--biz-state-color) 12%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
-}
-
-#business-section.state-closed .biz-panel,
-.business-info-section.state-closed .biz-panel{
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--biz-state-color) 14%, transparent),
-    0 0 18px color-mix(in srgb, var(--biz-state-color) 12%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
-}
-
-/* -------------------------
-   State-aware chip
-------------------------- */
 #business-section.state-open .biz-chip,
 .business-info-section.state-open .biz-chip{
   color:var(--biz-open-color);
   border-color:color-mix(in srgb, var(--biz-open-color) 35%, var(--border-color));
   background:color-mix(in srgb, var(--biz-open-color) 10%, var(--content-bg));
-  box-shadow:0 0 12px color-mix(in srgb, var(--biz-open-color) 12%, transparent);
 }
 
 #business-section.state-closing .biz-chip,
@@ -5892,7 +5910,6 @@ main .business-section{
   color:#d6a500;
   border-color:color-mix(in srgb, var(--biz-closing-color) 38%, var(--border-color));
   background:color-mix(in srgb, var(--biz-closing-color) 12%, var(--content-bg));
-  box-shadow:0 0 12px color-mix(in srgb, var(--biz-closing-color) 14%, transparent);
 }
 
 #business-section.state-closed .biz-chip,
@@ -5900,65 +5917,6 @@ main .business-section{
   color:#ff7b7b;
   border-color:color-mix(in srgb, var(--biz-closed-color) 38%, var(--border-color));
   background:color-mix(in srgb, var(--biz-closed-color) 12%, var(--content-bg));
-  box-shadow:0 0 12px color-mix(in srgb, var(--biz-closed-color) 14%, transparent);
-}
-
-/* -------------------------
-   State-aware meta hover
-------------------------- */
-#business-section.state-open .biz-meta__row:hover,
-.business-info-section.state-open .biz-meta__row:hover{
-  border-color:color-mix(in srgb, var(--biz-open-color) 28%, var(--border-color));
-  background:color-mix(in srgb, var(--biz-open-color) 6%, var(--content-bg));
-}
-
-#business-section.state-closing .biz-meta__row:hover,
-.business-info-section.state-closing .biz-meta__row:hover{
-  border-color:color-mix(in srgb, var(--biz-closing-color) 30%, var(--border-color));
-  background:color-mix(in srgb, var(--biz-closing-color) 7%, var(--content-bg));
-}
-
-#business-section.state-closed .biz-meta__row:hover,
-.business-info-section.state-closed .biz-meta__row:hover{
-  border-color:color-mix(in srgb, var(--biz-closed-color) 30%, var(--border-color));
-  background:color-mix(in srgb, var(--biz-closed-color) 7%, var(--content-bg));
-}
-
-/* -------------------------
-   State-aware current day
-------------------------- */
-.regular-hours-list li.current-day{
-  transition:
-    border-color .3s ease,
-    box-shadow .3s ease,
-    background .3s ease;
-}
-
-#business-section.state-open .regular-hours-list li.current-day,
-.business-info-section.state-open .regular-hours-list li.current-day{
-  border-color:color-mix(in srgb, var(--biz-open-color) 42%, var(--border-color));
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--biz-open-color) 12%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
-}
-
-#business-section.state-closing .regular-hours-list li.current-day,
-.business-info-section.state-closing .regular-hours-list li.current-day{
-  border-color:color-mix(in srgb, var(--biz-closing-color) 42%, var(--border-color));
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--biz-closing-color) 12%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
-}
-
-#business-section.state-closed .regular-hours-list li.current-day,
-.business-info-section.state-closed .regular-hours-list li.current-day{
-  border-color:color-mix(in srgb, var(--biz-closed-color) 42%, var(--border-color));
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--biz-closed-color) 12%, transparent),
-    var(--bubble-shadow),
-    var(--bubble-highlight);
 }
 
 /* -------------------------
