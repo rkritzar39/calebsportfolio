@@ -1,4 +1,4 @@
-/* live-activity.js — Updated to match current HTML/CSS
+/* live-activity.js — Apple Music style dynamic accent version
    Spotify via Lanyard (real timestamps -> real progress)
    PreMiD via Lanyard activities[] (show ALL activities)
    Manual Firestore overrides everything
@@ -6,7 +6,7 @@
    Reddit one-time banner per new post
    Settings apply instantly (same tab)
    Match song accent OFF => user accentColor
-   Match song accent ON  => stronger cover-art accent without breaking Onyx design
+   Match song accent ON  => Apple Music style cover-art ambient tint
    Time format ALWAYS h:mm:ss
 */
 
@@ -15,8 +15,8 @@ import { db } from "./firebase-init.js";
 
 const CONFIG = {
   discord: { userId: "850815059093356594" },
-  twitch:  { username: "calebkritzar" },
-  reddit:  { username: "Maleficent_Line6570" },
+  twitch: { username: "calebkritzar" },
+  reddit: { username: "Maleficent_Line6570" },
 };
 
 const NON_SPOTIFY_PROGRESS_MODE = "indeterminate"; // "indeterminate" | "hide"
@@ -29,7 +29,6 @@ let progressInterval = null;
 let currentSpotifyUrl = null;
 
 let tempBanner = null;
-let lastRedditPostId = null;
 let manualStatus = null;
 
 let dynamicColorRequestId = 0;
@@ -240,6 +239,8 @@ function applySongThemeClass() {
 
   if (!matchAccent) {
     liveActivity.style.setProperty("--dynamic-accent", userAccent);
+    liveActivity.style.setProperty("--dynamic-accent-soft", userAccent);
+    liveActivity.style.setProperty("--dynamic-accent-glow", userAccent);
     liveActivity.style.setProperty("--dynamic-bg", "none");
   }
 }
@@ -379,7 +380,7 @@ const PREMID_RULES = [
 
   { re: /door\s*dash|doordash/i, key: "doordash", pretty: "DoorDash" },
   { re: /uber\s*eats|ubereats/i, key: "ubereats", pretty: "Uber Eats" },
-  { re: /grubhub/i, key: "grubhub", pretty: "Grubhub" },
+  { re: /grubhub/i, key: "grubhub", pretty: "GrubHub" },
   { re: /postmates/i, key: "postmates", pretty: "Postmates" },
   { re: /instacart/i, key: "instacart", pretty: "Instacart" },
 
@@ -397,6 +398,7 @@ function resolvePremidMeta(appName = "", act = null) {
   for (const rule of PREMID_RULES) {
     if (rule.re.test(n)) return { key: rule.key, pretty: rule.pretty };
   }
+
   return { key: "activity", pretty: raw?.trim() || "Activity" };
 }
 
@@ -463,7 +465,7 @@ function updateLastUpdated() {
 }
 
 /* =========================
-   CARD / PROGRESS HELPERS
+   CARD / PROGRESS
 ========================= */
 
 function getProgressNodes() {
@@ -501,10 +503,7 @@ function resetProgress() {
   const { bar, elapsed, remain, total, barWrap } = getProgressNodes();
 
   if (bar) bar.style.width = "0%";
-
-  if (barWrap) {
-    barWrap.classList.remove("indeterminate");
-  }
+  if (barWrap) barWrap.classList.remove("indeterminate");
 
   clearInterval(progressInterval);
   progressInterval = null;
@@ -525,7 +524,6 @@ function setupProgress(startMs, endMs) {
   if (timeRow) timeRow.style.display = "";
 
   const totalSec = Math.max((endMs - startMs) / 1000, 1);
-
   if (total) total.textContent = fmt(totalSec);
 
   clearInterval(progressInterval);
@@ -569,6 +567,7 @@ function showCard() {
 function hideCard() {
   const { spotifyCard } = els();
   if (!spotifyCard) return;
+
   spotifyCard.classList.remove("slide-in");
   spotifyCard.classList.add("slide-out");
 
@@ -606,6 +605,8 @@ function updateDynamicColors(imageUrl) {
 
   const resetColors = () => {
     liveActivity.style.setProperty("--dynamic-accent", userAccent);
+    liveActivity.style.setProperty("--dynamic-accent-soft", userAccent);
+    liveActivity.style.setProperty("--dynamic-accent-glow", userAccent);
     liveActivity.style.setProperty("--dynamic-bg", "none");
   };
 
@@ -627,8 +628,8 @@ function updateDynamicColors(imageUrl) {
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) throw new Error("No canvas context");
 
-      canvas.width = 50;
-      canvas.height = 50;
+      canvas.width = 64;
+      canvas.height = 64;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
@@ -651,12 +652,12 @@ function updateDynamicColors(imageUrl) {
         const brightness = (r + g + b) / 3;
         const saturation = delta;
 
-        if (brightness < 35 || brightness > 225) continue;
-        if (saturation < 35) continue;
+        if (brightness < 30 || brightness > 230) continue;
+        if (saturation < 28) continue;
 
         const score =
-          saturation * 1.6 +
-          (255 - Math.abs(140 - brightness)) * 0.35;
+          saturation * 1.35 +
+          (255 - Math.abs(150 - brightness)) * 0.45;
 
         if (score > bestScore) {
           bestScore = score;
@@ -669,22 +670,63 @@ function updateDynamicColors(imageUrl) {
         return;
       }
 
-      const boosted = {
-        r: Math.min(255, Math.round(best.r * 1.08)),
-        g: Math.min(255, Math.round(best.g * 1.08)),
-        b: Math.min(255, Math.round(best.b * 1.08)),
+      const soften = (value, amount = 0.18) =>
+        Math.round(value + (255 - value) * amount);
+
+      const deepen = (value, amount = 0.12) =>
+        Math.round(value * (1 - amount));
+
+      const primary = {
+        r: soften(best.r, 0.10),
+        g: soften(best.g, 0.10),
+        b: soften(best.b, 0.10)
       };
 
-      const accent = `rgb(${boosted.r}, ${boosted.g}, ${boosted.b})`;
+      const soft = {
+        r: soften(best.r, 0.28),
+        g: soften(best.g, 0.28),
+        b: soften(best.b, 0.28)
+      };
 
-      liveActivity.style.setProperty("--dynamic-accent", accent);
+      const glow = {
+        r: soften(best.r, 0.18),
+        g: soften(best.g, 0.18),
+        b: soften(best.b, 0.18)
+      };
+
+      const shadow = {
+        r: deepen(best.r, 0.20),
+        g: deepen(best.g, 0.20),
+        b: deepen(best.b, 0.20)
+      };
+
+      const primaryCss = `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
+      const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
+      const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
+
+      liveActivity.style.setProperty("--dynamic-accent", primaryCss);
+      liveActivity.style.setProperty("--dynamic-accent-soft", softCss);
+      liveActivity.style.setProperty("--dynamic-accent-glow", glowCss);
+
       liveActivity.style.setProperty(
         "--dynamic-bg",
-        `linear-gradient(
+        `
+        radial-gradient(
+          circle at 50% 18%,
+          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.30),
+          transparent 56%
+        ),
+        radial-gradient(
+          circle at 50% 100%,
+          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.18),
+          transparent 70%
+        ),
+        linear-gradient(
           180deg,
-          rgba(${boosted.r}, ${boosted.g}, ${boosted.b}, 0.34),
-          rgba(${boosted.r}, ${boosted.g}, ${boosted.b}, 0.12)
-        )`
+          rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.18),
+          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.08)
+        )
+        `
       );
     } catch (error) {
       console.warn("Dynamic color extraction failed:", error);
@@ -699,7 +741,7 @@ function updateDynamicColors(imageUrl) {
 }
 
 /* =========================
-   STATE CHECKS
+   MANUAL STATUS
 ========================= */
 
 function isManualActive() {
@@ -814,7 +856,7 @@ function isYouTubeMusicLike(act) {
 }
 
 /* =========================
-   DISCORD / SPOTIFY + PREMID
+   DISCORD / SPOTIFY / PREMID
 ========================= */
 
 function resolveDiscordAssetUrl(activity) {
@@ -901,10 +943,8 @@ function renderSpotify(sp) {
   if (title) title.textContent = sp.song || "Unknown";
   if (artist) artist.textContent = sp.artist || "Unknown";
 
-  if (cover) {
-    if (cover.src !== sp.album_art_url) {
-      setImgWithFallback(cover, sp.album_art_url, "");
-    }
+  if (cover && cover.src !== sp.album_art_url) {
+    setImgWithFallback(cover, sp.album_art_url, "");
   }
 
   currentSpotifyUrl = sp.track_id
@@ -940,10 +980,8 @@ function renderPremid(act) {
   if (artist) artist.textContent = act.state || act?.assets?.large_text || appName;
 
   const coverUrl = resolveDiscordAssetUrl(act);
-  if (cover && coverUrl) {
-    if (cover.src !== coverUrl) {
-      setImgWithFallback(cover, coverUrl, "");
-    }
+  if (cover && coverUrl && cover.src !== coverUrl) {
+    setImgWithFallback(cover, coverUrl, "");
   }
 
   currentSpotifyUrl = null;
@@ -1003,9 +1041,7 @@ async function getDiscord() {
 
     if (SHOW_ALL_PREMID_ACTIVITIES) {
       const act = pickBestPremidActivity(data.activities || []);
-      if (act) {
-        return renderPremid(act);
-      }
+      if (act) return renderPremid(act);
     }
 
     hideCard();
@@ -1023,7 +1059,7 @@ async function getDiscord() {
 
     return {
       text: map[data.discord_status] || "No Current Active Activities",
-      source: "discord"
+      source: "discord",
     };
   } catch (e) {
     console.warn("Lanyard error:", e);
@@ -1032,7 +1068,7 @@ async function getDiscord() {
 }
 
 /* =========================
-   TWITCH & REDDIT
+   TWITCH / REDDIT
 ========================= */
 
 async function getTwitch() {
@@ -1040,13 +1076,14 @@ async function getTwitch() {
   if (!u) return null;
 
   const proxy = "https://corsproxy.io/?";
-  const target = `https://decapi.me/twitch/uptime/${u}`;
+  const target = `https://decapi.me/twitch/uptime/${u}?_=${Date.now()}`;
 
   try {
-    const res = await fetch(`${proxy}${encodeURIComponent(target)}&_=${Date.now()}`);
+    const res = await fetch(`${proxy}${encodeURIComponent(target)}`);
     if (!res.ok) return null;
 
     const text = (await res.text()).trim();
+
     if (
       !text ||
       text.toLowerCase().includes("offline") ||
@@ -1070,7 +1107,9 @@ async function getReddit() {
   if (!u) return null;
 
   try {
-    const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, { cache: "no-store" });
+    const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, {
+      cache: "no-store"
+    });
     if (!r.ok) throw new Error(`Reddit fetch ${r.status}`);
 
     const j = await r.json();
@@ -1079,7 +1118,6 @@ async function getReddit() {
 
     const lastShownId = localStorage.getItem("lastRedditShownId");
     if (post.id !== lastShownId) {
-      lastRedditPostId = post.id;
       localStorage.setItem("lastRedditShownId", post.id);
       return { text: "Shared on Reddit", source: "reddit", isTemp: true };
     }
@@ -1091,7 +1129,7 @@ async function getReddit() {
 }
 
 /* =========================
-   MANUAL FIRESTORE
+   FIRESTORE MANUAL STATUS
 ========================= */
 
 try {
@@ -1121,7 +1159,7 @@ try {
               text: "",
               expiresAt: null,
               persistent: false,
-              updated_at: Date.now(),
+              updated_at: Date.now()
             },
             { merge: true }
           );
@@ -1138,7 +1176,7 @@ try {
 }
 
 /* =========================
-   MAIN LOOP
+   STATUS DECISION
 ========================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
@@ -1161,6 +1199,10 @@ function applyStatusDecision({ main, twitchLive, temp }) {
   const source = main?.source || "discord";
   showStatusLineWithFade(text, source);
 }
+
+/* =========================
+   MAIN LOOP
+========================= */
 
 async function mainLoop() {
   applySongThemeClass();
@@ -1215,7 +1257,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (spotifyCard) {
     spotifyCard.addEventListener("click", () => {
-      if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
+      if (currentSpotifyUrl) {
+        window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
+      }
     });
 
     spotifyCard.addEventListener("keydown", (e) => {
