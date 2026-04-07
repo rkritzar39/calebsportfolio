@@ -502,18 +502,48 @@ function renderTikTokCard(account) {
     const bio = account.bio || '';
     const followers = account.followers || 'N/A';
     const isVerified = account.isVerified || false;
-    const profileUrl = username !== 'N/A' ? `https://tiktok.com/@${encodeURIComponent(username)}` : '#';
-    const verifiedBadge = isVerified ? '<img src="check.png" alt="Verified" class="verified-badge">' : '';
-    return `<div class="creator-card">
-              <img src="${profilePic}" alt="@${username}" class="creator-pic" onerror="this.src='images/default-profile.jpg'">
-              <div class="creator-info">
-                <div class="creator-header"><h3>${nickname}</h3></div>
-                <p class="creator-username">@${username} ${verifiedBadge}</p>
-                <p class="creator-bio">${bio}</p>
-                <p class="follower-count">${followers} Followers</p>
-                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="visit-profile"> Visit Profile </a>
-              </div>
-            </div>`;
+
+    const safeUsername = username !== 'N/A' ? username.replace(/^@/, '') : 'N/A';
+    const profileUrl = safeUsername !== 'N/A'
+        ? `https://tiktok.com/@${encodeURIComponent(safeUsername)}`
+        : '#';
+
+    const verifiedBadge = isVerified
+        ? `<img src="check.png" alt="Verified" class="verified-badge">`
+        : '';
+
+    return `
+        <div class="creator-card">
+            <img
+                src="${profilePic}"
+                alt="@${safeUsername}"
+                class="creator-pic"
+                onerror="this.src='images/default-profile.jpg'"
+            >
+
+            <div class="creator-header">
+                <h3>${nickname}</h3>
+                ${verifiedBadge}
+            </div>
+
+            <div class="username-container">
+                <p class="creator-username">@${safeUsername}</p>
+            </div>
+
+            <p class="creator-bio">${bio}</p>
+
+            <p class="follower-count">${followers} Followers</p>
+
+            <a
+                href="${profileUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="visit-profile"
+            >
+                Visit Profile
+            </a>
+        </div>
+    `;
 }
 
 function renderInstagramCard(account) {
@@ -523,56 +553,122 @@ function renderInstagramCard(account) {
     const bio = account.bio || '';
     const followers = account.followers || 'N/A';
     const isVerified = account.isVerified || false;
-    const profileUrl = username !== 'N/A' ? `https://instagram.com/${encodeURIComponent(username)}` : '#';
-    const verifiedBadge = isVerified ? '<img src="instagramcheck.png" alt="Verified" class="instagram-verified-badge">' : '';
-    return `<div class="instagram-creator-card">
-              <img src="${profilePic}" alt="${nickname}" class="instagram-creator-pic" onerror="this.src='images/default-profile.jpg'">
-              <div class="instagram-creator-info">
-                <div class="instagram-creator-header"><h3>${nickname}</h3></div>
-                <p class="instagram-creator-username">@${username} ${verifiedBadge}</p>
+
+    const safeUsername = username !== 'N/A' ? username.replace(/^@/, '') : 'N/A';
+    const profileUrl = safeUsername !== 'N/A'
+        ? `https://instagram.com/${encodeURIComponent(safeUsername)}`
+        : '#';
+
+    const verifiedBadge = isVerified
+        ? `<img src="instagramcheck.png" alt="Verified" class="instagram-verified-badge">`
+        : '';
+
+    return `
+        <div class="instagram-creator-card">
+            <img
+                src="${profilePic}"
+                alt="${nickname}"
+                class="instagram-creator-pic"
+                onerror="this.src='images/default-profile.jpg'"
+            >
+
+            <div class="instagram-creator-info">
+                <div class="instagram-creator-header">
+                    <h3>${nickname}</h3>
+                    ${verifiedBadge}
+                </div>
+
+                <div class="instagram-username-container">
+                    <p class="instagram-creator-username">@${safeUsername}</p>
+                </div>
+
                 <p class="instagram-creator-bio">${bio}</p>
+
                 <p class="instagram-follower-count">${followers} Followers</p>
-                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="instagram-visit-profile"> Visit Profile </a>
-              </div>
-            </div>`;
+
+                <a
+                    href="${profileUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="instagram-visit-profile"
+                >
+                    Visit Profile
+                </a>
+            </div>
+        </div>
+    `;
 }
 
 function renderYouTubeCard(account) {
     const profilePic = account.profilePic || 'images/default-profile.jpg';
-    const usernameFromDb = account.username || 'N/A'; // Username/handle from Firestore
-    const nickname = account.nickname || 'N/A';      // Channel name
+    const usernameFromDb = account.username || 'N/A';
+    const nickname = account.nickname || 'N/A';
     const bio = account.bio || '';
     const subscribers = account.subscribers || 'N/A';
     const coverPhoto = account.coverPhoto || null;
     const isVerified = account.isVerified || false;
-    
-    let displayHandle = 'N/A';
+
+    let displayHandle = '';
     let channelUrl = '#';
 
-    if (usernameFromDb !== 'N/A' && usernameFromDb.trim() !== '' && usernameFromDb.trim() !== '@') {
-        displayHandle = usernameFromDb.startsWith('@') ? usernameFromDb : `@${usernameFromDb}`;
-        channelUrl = `https://www.youtube.com/${displayHandle}`; 
-    } else {
-        displayHandle = ''; 
+    if (
+        usernameFromDb !== 'N/A' &&
+        usernameFromDb.trim() !== '' &&
+        usernameFromDb.trim() !== '@'
+    ) {
+        const cleanHandle = usernameFromDb.replace(/^@/, '');
+        displayHandle = `@${cleanHandle}`;
+        channelUrl = `https://www.youtube.com/${cleanHandle.startsWith('@') ? cleanHandle : `@${cleanHandle}`}`;
+        channelUrl = `https://www.youtube.com/${displayHandle}`;
     }
 
-    // This log is still useful for debugging the URL if the redirect issue persists later
-    // console.log(`[YouTube Card Render] DB Username: "${usernameFromDb}", Display Handle: "${displayHandle}", Channel URL: "${channelUrl}"`);
+    const verifiedBadge = isVerified
+        ? `<img src="youtubecheck.png" alt="Verified" class="youtube-verified-badge">`
+        : '';
 
-    const verifiedBadge = isVerified ? '<img src="youtubecheck.png" alt="Verified" class="youtube-verified-badge">' : '';
+    return `
+        <div class="youtube-creator-card">
+            ${coverPhoto ? `
+                <img
+                    src="${coverPhoto}"
+                    alt="${nickname} Cover Photo"
+                    class="youtube-cover-photo"
+                    onerror="this.style.display='none'"
+                >
+            ` : ''}
 
-    // Ensure this entire return statement is enclosed in BACKTICKS (`), not single or double quotes.
-    return `<div class="youtube-creator-card">
-              ${coverPhoto ? `<img src="${coverPhoto}" alt="${nickname} Cover Photo" class="youtube-cover-photo" onerror="this.style.display='none'">` : ''}
-              <img src="${profilePic}" alt="${nickname}" class="youtube-creator-pic" onerror="this.src='images/default-profile.jpg'">
-              <div class="youtube-creator-info">
-                <div class="youtube-creator-header"><h3>${nickname} ${verifiedBadge}</h3></div>
-                <div class="username-container"><p class="youtube-creator-username">${displayHandle}</p></div>
+            <div class="youtube-creator-info">
+                <img
+                    src="${profilePic}"
+                    alt="${nickname}"
+                    class="youtube-creator-pic"
+                    onerror="this.src='images/default-profile.jpg'"
+                >
+
+                <div class="youtube-creator-header">
+                    <h3>${nickname}</h3>
+                    ${verifiedBadge}
+                </div>
+
+                <div class="youtube-username-container">
+                    <p class="youtube-creator-username">${displayHandle}</p>
+                </div>
+
                 <p class="youtube-creator-bio">${bio}</p>
+
                 <p class="youtube-subscriber-count">${subscribers} Subscribers</p>
-                <a href="${channelUrl}" target="_blank" rel="noopener noreferrer" class="youtube-visit-profile"> Visit Channel </a>
-              </div>
-            </div>`;
+
+                <a
+                    href="${channelUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="youtube-visit-profile"
+                >
+                    Visit Channel
+                </a>
+            </div>
+        </div>
+    `;
 }
 
 const tiktokContainer = document.getElementById("latest-tiktok-section");
