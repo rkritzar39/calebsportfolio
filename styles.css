@@ -2336,321 +2336,216 @@ body.dark-mode .bubble {
 }
 
 /* =========================================================
-   LEADER SECTION – PRESIDENT + GOVERNOR
-   FINAL ONYX VERSION (NO OUTER SHELL)
+   LEADER SECTION – CLEAN ONYX CONTAINER
 ========================================================= */
 
 /* =========================
-   SECTION RESET
+   OUTER CONTAINER (THE ONE YOU WANT)
 ========================= */
-#leader-section,
-#leader-section.section {
+#leader-section {
 	position: relative;
-	padding: 0;
-	margin-bottom: 32px;
+	margin: 0 12px 32px;
+	border-radius: var(--radius-xl);
+	padding: 20px;
 
-	background: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 3%, transparent),
+			color-mix(in srgb, black 12%, transparent)
+		),
+		var(--content-bg);
 
-	backdrop-filter: none !important;
-	-webkit-backdrop-filter: none !important;
+	background-image:
+		var(--bubble-gradient),
+		var(--liquid-refraction);
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+
+	box-shadow:
+		0 18px 40px color-mix(in srgb, var(--shadow-color) 40%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, black 12%, transparent);
+
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	overflow: hidden;
+}
+
+/* subtle reflection (NOT heavy) */
+#leader-section::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	opacity: 0.25;
+	pointer-events: none;
 }
 
 /* =========================
-   REMOVE OUTER CONTAINER
+   REMOVE EXTRA WRAP STYLING
 ========================= */
 #leader-section .leader-wrap {
-	position: relative;
-	padding: 0 !important;
-	margin: 0 !important;
+	padding: 0;
+	margin: 0;
 
-	background: transparent !important;
-	background-image: none !important;
-
-	border: none !important;
-	border-radius: 0 !important;
-
-	box-shadow: none !important;
-
-	backdrop-filter: none !important;
-	-webkit-backdrop-filter: none !important;
-
-	overflow: visible !important;
-	isolation: auto !important;
-}
-
-#leader-section .leader-wrap::before,
-#leader-section .leader-wrap::after {
-	display: none !important;
-	content: none !important;
+	background: transparent;
+	border: none;
+	box-shadow: none;
 }
 
 /* =========================
    HEADER
 ========================= */
-#leader-section .leader-header {
+.leader-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
-	gap: 16px;
-
-	padding-bottom: 16px;
-	margin-bottom: 20px;
-
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 20%, transparent);
+	margin-bottom: 18px;
 }
 
-#leader-section .leader-title {
-	margin: 0;
-	font-size: 1.35rem;
+.leader-title {
+	font-size: 1.3rem;
 	font-weight: 800;
-	letter-spacing: -0.02em;
 	color: var(--text-color);
+	margin: 0;
 }
 
-#leader-section .leader-sub {
-	margin-top: 8px;
+.leader-sub {
+	margin-top: 6px;
 	color: var(--secondary-text);
-	font-size: 0.96rem;
-	line-height: 1.45;
+	font-size: 0.95rem;
 }
 
 /* =========================
-   REFRESH BUTTON (GLASS)
+   BUTTON
 ========================= */
-#leader-section .leader-refresh {
-	appearance: none;
-	position: relative;
-	overflow: hidden;
+.leader-refresh {
+	width: 42px;
+	height: 42px;
+	border-radius: 999px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
-	width: 46px;
-	height: 46px;
-
-	border-radius: 9999px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 6%, transparent),
-			color-mix(in srgb, white 1%, transparent)
-		),
-		var(--content-bg);
-
-	background-image:
-		var(--bubble-gradient),
-		var(--liquid-refraction);
-
+	background: var(--content-bg);
 	color: var(--text-color);
-	font-size: 1.15rem;
-	font-weight: 900;
-
-	cursor: pointer;
 
 	box-shadow:
-		0 10px 24px color-mix(in srgb, var(--shadow-color) 34%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 10%, transparent);
+		inset 0 1px 0 rgba(255,255,255,0.08),
+		0 8px 18px rgba(0,0,0,0.3);
 
 	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-
-	transition: all .18s ease;
-}
-
-#leader-section .leader-refresh::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: .32;
-}
-
-#leader-section .leader-refresh:hover {
-	transform: translateY(-2px) rotate(8deg);
+	cursor: pointer;
 }
 
 /* =========================
    GRID
 ========================= */
-#leader-section .leader-grid {
+.leader-grid {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 18px;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 16px;
 }
 
 /* =========================
-   LEADER CARD (ONYX GLASS)
+   INNER CARDS (LIGHTER GLASS)
 ========================= */
-#leader-section .leader-card {
-	position: relative;
-	overflow: hidden;
-	isolation: isolate;
-
-	border-radius: var(--radius-xl);
-	padding: 20px;
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent);
+.leader-card {
+	border-radius: calc(var(--radius-xl) - 4px);
+	padding: 18px;
 
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, white 4%, transparent),
-			color-mix(in srgb, black 10%, transparent)
+			color-mix(in srgb, white 2%, transparent),
+			color-mix(in srgb, black 8%, transparent)
 		),
 		var(--content-bg);
 
-	background-image:
-		var(--bubble-gradient),
-		var(--liquid-refraction);
+	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
 
 	box-shadow:
-		0 16px 38px color-mix(in srgb, var(--shadow-color) 34%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 12%, transparent),
-		var(--bubble-shadow),
-		var(--bubble-highlight);
+		0 10px 24px rgba(0,0,0,0.35),
+		inset 0 1px 0 rgba(255,255,255,0.05);
 
-	backdrop-filter: var(--backdrop-blur) saturate(124%);
-	-webkit-backdrop-filter: var(--backdrop-blur) saturate(124%);
-
-	transition:
-		transform .25s ease,
-		box-shadow .25s ease,
-		border-color .25s ease;
-}
-
-#leader-section .leader-card::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: .4;
-}
-
-#leader-section .leader-card:hover {
-	transform: translateY(-3px);
-	box-shadow:
-		0 20px 44px color-mix(in srgb, var(--shadow-color) 38%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 12%, transparent),
-		var(--bubble-shadow),
-		var(--bubble-highlight);
+	backdrop-filter: var(--backdrop-blur);
 }
 
 /* =========================
-   CARD CONTENT
+   CONTENT
 ========================= */
-#leader-section .leader-top {
+.leader-top {
 	display: flex;
 	align-items: center;
-	gap: 18px;
+	gap: 14px;
 }
 
-/* Avatar */
-#leader-section .leader-avatar {
-	width: 96px;
-	height: 96px;
+.leader-avatar {
+	width: 80px;
+	height: 80px;
 	border-radius: 50%;
 	object-fit: cover;
-	flex-shrink: 0;
 
-	border: 2px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+	border: 2px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
 	box-shadow:
-		0 16px 34px color-mix(in srgb, var(--shadow-color) 50%, transparent),
-		0 0 0 6px color-mix(in srgb, var(--content-bg) 55%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+		0 10px 20px rgba(0,0,0,0.4),
+		0 0 0 4px rgba(0,0,0,0.3);
 }
 
-/* Text block */
-#leader-section .leader-meta {
+.leader-meta {
 	display: flex;
 	flex-direction: column;
-	min-width: 0;
 }
 
-/* Label chip */
-#leader-section .leader-label {
-	display: inline-flex;
-	align-items: center;
-
-	padding: 6px 10px;
-	margin-bottom: 6px;
-
-	border-radius: 9999px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 42%, transparent);
-
-	background:
-		linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.01)),
-		color-mix(in srgb, var(--content-bg) 90%, transparent);
-
-	color: var(--secondary-text);
-	font-size: .75rem;
-	font-weight: 900;
-	letter-spacing: .03em;
-	text-transform: uppercase;
-
-	box-shadow:
-		inset 0 1px 0 rgba(255,255,255,.06),
-		0 6px 14px color-mix(in srgb, var(--shadow-color) 16%, transparent);
-}
-
-/* Name */
-#leader-section .leader-value {
-	font-size: 1.2rem;
+.leader-label {
+	font-size: 0.7rem;
 	font-weight: 800;
-	line-height: 1.15;
+	padding: 5px 10px;
+	border-radius: 999px;
+
+	background: rgba(255,255,255,0.05);
+	color: var(--secondary-text);
+
+	margin-bottom: 6px;
+	width: fit-content;
+}
+
+.leader-value {
+	font-size: 1.15rem;
+	font-weight: 800;
 	color: var(--text-color);
 }
 
-/* Term */
-#leader-section .leader-term {
-	margin-top: 4px;
-	font-size: .95rem;
+.leader-term {
+	font-size: 0.9rem;
 	color: var(--secondary-text);
+	margin-top: 3px;
 }
 
 /* =========================
    FOOTNOTE
 ========================= */
-#leader-section .leader-foot {
-	margin-top: 18px;
-	padding-top: 14px;
-	border-top: 1px solid color-mix(in srgb, var(--border-color) 20%, transparent);
-
+.leader-foot {
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid rgba(255,255,255,0.06);
+	font-size: 0.85rem;
 	color: var(--secondary-text);
-	font-size: .9rem;
-	line-height: 1.5;
 }
 
 /* =========================
-   RESPONSIVE
+   MOBILE
 ========================= */
-@media (max-width: 900px) {
-	#leader-section .leader-grid {
+@media (max-width: 768px) {
+	.leader-grid {
 		grid-template-columns: 1fr;
 	}
-}
 
-@media (max-width: 600px) {
 	#leader-section {
-		padding-left: 10px;
-		padding-right: 10px;
-	}
-
-	#leader-section .leader-card {
+		margin: 0 10px 28px;
 		padding: 18px;
-	}
-
-	#leader-section .leader-avatar {
-		width: 80px;
-		height: 80px;
 	}
 }
 
