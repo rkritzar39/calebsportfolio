@@ -2336,26 +2336,58 @@ body.dark-mode .bubble {
 }
 
 /* ========================================================= */
-/* == PRESIDENT SECTION – SINGLE GLASS CONTAINER == */
-/* == Refined Onyx Version                               == */
+/* == PRESIDENT SECTION – SINGLE GLASS CONTAINER          == */
+/* == ONYX GLASS FULL VERSION                             == */
 /* ========================================================= */
+
 .president-section {
 	position: relative;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient), var(--liquid-refraction);
+	overflow: hidden;
+	isolation: isolate;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 4%, transparent),
+			color-mix(in srgb, black 10%, transparent)
+		),
+		var(--content-bg);
+	background-image:
+		var(--bubble-gradient),
+		radial-gradient(
+			circle at 14% 12%,
+			color-mix(in srgb, white 7%, transparent) 0%,
+			transparent 34%
+		),
+		radial-gradient(
+			circle at 86% 88%,
+			color-mix(in srgb, black 18%, transparent) 0%,
+			transparent 42%
+		),
+		var(--liquid-refraction);
+
 	border-radius: var(--radius-xl);
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+
 	padding: 30px;
 	margin-bottom: 32px;
 	color: var(--text-color);
-	overflow: hidden;
 
 	box-shadow:
+		0 18px 42px color-mix(in srgb, var(--shadow-color) 30%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, black 14%, transparent),
 		var(--bubble-shadow),
 		var(--bubble-highlight);
 
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	backdrop-filter: var(--backdrop-blur) saturate(125%);
+	-webkit-backdrop-filter: var(--backdrop-blur) saturate(125%);
+
+	transition:
+		border-color .3s ease,
+		box-shadow .3s ease,
+		background .3s ease,
+		transform .3s ease;
 }
 
 .president-section::before {
@@ -2363,10 +2395,18 @@ body.dark-mode .bubble {
 	position: absolute;
 	inset: 0;
 	border-radius: inherit;
-	background: var(--liquid-reflection);
+	background:
+		var(--liquid-reflection),
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 14%, transparent) 0%,
+			color-mix(in srgb, white 5%, transparent) 24%,
+			transparent 62%
+		);
 	mix-blend-mode: soft-light;
-	opacity: 0.5;
+	opacity: 0.52;
 	pointer-events: none;
+	z-index: 0;
 }
 
 .president-section::after {
@@ -2375,35 +2415,81 @@ body.dark-mode .bubble {
 	inset: 0;
 	border-radius: inherit;
 	pointer-events: none;
-	background: radial-gradient(
-		circle at 50% 100%,
-		color-mix(in srgb, black 16%, transparent),
-		transparent 65%
-	);
-	opacity: 0.4;
+	z-index: 0;
+	background:
+		radial-gradient(
+			circle at 50% 100%,
+			color-mix(in srgb, black 18%, transparent),
+			transparent 65%
+		),
+		linear-gradient(
+			135deg,
+			color-mix(in srgb, white 4%, transparent),
+			transparent 45%
+		);
+	opacity: 0.5;
 }
 
+/* keep content above overlays */
+.president-section > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* ========================================================= */
 /* Layout inside president section */
+/* ========================================================= */
+
 .president-info {
 	position: relative;
 	z-index: 1;
 	display: flex;
 	align-items: center;
 	gap: 30px;
+	min-width: 0;
 }
 
 .president-photo {
+	position: relative;
 	width: 150px;
 	height: 150px;
 	border-radius: 50%;
 	object-fit: cover;
 	flex-shrink: 0;
+	display: block;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 5%, transparent),
+			color-mix(in srgb, black 10%, transparent)
+		),
+		var(--content-bg);
 
 	border: 2px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+
 	box-shadow:
-		0 14px 30px color-mix(in srgb, var(--shadow-color) 55%, transparent),
+		0 16px 34px color-mix(in srgb, var(--shadow-color) 50%, transparent),
 		0 0 0 6px color-mix(in srgb, var(--content-bg) 55%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+		inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, black 12%, transparent);
+
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	transition:
+		transform .22s ease,
+		box-shadow .22s ease,
+		border-color .22s ease;
+}
+
+.president-photo:hover {
+	transform: translateY(-2px);
+	box-shadow:
+		0 20px 40px color-mix(in srgb, var(--shadow-color) 54%, transparent),
+		0 0 0 6px color-mix(in srgb, var(--content-bg) 55%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, black 12%, transparent);
 }
 
 .president-details {
@@ -2415,11 +2501,12 @@ body.dark-mode .bubble {
 
 .president-name {
 	font-size: 1.35rem;
-	font-weight: 750;
+	font-weight: 800;
 	letter-spacing: -0.02em;
 	line-height: 1.15;
 	color: var(--text-color);
 	margin: 0;
+	text-shadow: 0 1px 0 color-mix(in srgb, black 18%, transparent);
 }
 
 .president-title {
@@ -2428,6 +2515,7 @@ body.dark-mode .bubble {
 	line-height: 1.4;
 	color: var(--secondary-text);
 	margin: 6px 0 14px;
+	opacity: 0.96;
 }
 
 .president-description {
@@ -2439,9 +2527,45 @@ body.dark-mode .bubble {
 	max-width: 62ch;
 }
 
-/* ======================== */
+/* ========================================================= */
+/* Optional inner glass text group treatment                */
+/* Uncomment if you want the text block itself to feel like */
+/* a soft glass slab inside the shell                       */
+/* ========================================================= */
+/*
+.president-details {
+	position: relative;
+	overflow: hidden;
+	padding: 16px 18px;
+	border-radius: var(--radius-lg);
+	border: 1px solid color-mix(in srgb, var(--border-color) 34%, transparent);
+	background:
+		linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)),
+		color-mix(in srgb, var(--content-bg) 90%, transparent);
+	background-image:
+		linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)),
+		var(--bubble-gradient);
+	box-shadow:
+		inset 0 1px 0 rgba(255,255,255,.05),
+		0 8px 18px color-mix(in srgb, var(--shadow-color) 14%, transparent);
+}
+
+.president-details::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: .18;
+	pointer-events: none;
+}
+*/
+
+/* ========================================================= */
 /* Responsive Design */
-/* ======================== */
+/* ========================================================= */
+
 @media screen and (max-width: 768px) {
 	.president-section {
 		padding: 22px;
