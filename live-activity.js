@@ -593,21 +593,22 @@ function clearCardContent() {
 ========================= */
 
 function updateDynamicColors(imageUrl) {
-  const { liveActivity } = els();
-  if (!liveActivity) return;
+  const activity = document.querySelector(".live-activity");
+  if (!activity) return;
 
-  const matchAccent = isMatchSongAccentEnabled();
-  const userAccent = getUserAccent();
+  const settings = getWebsiteSettings();
+  const matchAccent = settings.matchSongAccent === "enabled";
+  const userAccent = settings.accentColor || "#1DB954";
 
   if (imageUrl) lastCoverUrl = imageUrl;
 
   const requestId = ++dynamicColorRequestId;
 
   const resetColors = () => {
-    liveActivity.style.setProperty("--dynamic-accent", userAccent);
-    liveActivity.style.setProperty("--dynamic-accent-soft", userAccent);
-    liveActivity.style.setProperty("--dynamic-accent-glow", userAccent);
-    liveActivity.style.setProperty("--dynamic-bg", "none");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    activity.style.setProperty("--dynamic-accent-soft", userAccent);
+    activity.style.setProperty("--dynamic-accent-glow", userAccent);
+    activity.style.setProperty("--dynamic-bg", "none");
   };
 
   if (!matchAccent || !imageUrl) {
@@ -628,14 +629,14 @@ function updateDynamicColors(imageUrl) {
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) throw new Error("No canvas context");
 
-      canvas.width = 64;
-      canvas.height = 64;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const size = 72;
+      canvas.width = size;
+      canvas.height = size;
+      ctx.drawImage(img, 0, 0, size, size);
 
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const { data } = ctx.getImageData(0, 0, size, size);
 
-      let best = null;
-      let bestScore = -Infinity;
+      const buckets = new Map();
 
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
@@ -648,16 +649,62 @@ function updateDynamicColors(imageUrl) {
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
         const delta = max - min;
-
         const brightness = (r + g + b) / 3;
         const saturation = delta;
 
-        if (brightness < 30 || brightness > 230) continue;
-        if (saturation < 28) continue;
+        if (brightness < 22 || brightness > 238) continue;
+        if (saturation < 24) continue;
+
+        const qr = Math.round(r / 24) * 24;
+        const qg = Math.round(g / 24) * 24;
+        const qb = Math.round(b / 24) * 24;
+        const key = `${qr},${qg},${qb}`;
+
+        const weight =
+          saturation * 1.45 +
+          (255 - Math.abs(148 - brightness)) * 0.55;
+
+        const prev = buckets.get(key) || {
+          r: 0,
+          g: 0,
+          b: 0,
+          count: 0,
+          weight: 0
+        };
+
+        prev.r += r;
+        prev.g += g;
+        prev.b += b;
+        prev.count += 1;
+        prev.weight += weight;
+
+        buckets.set(key, prev);
+      }
+
+      if (!buckets.size) {
+        resetColors();
+        return;
+      }
+
+      let best = null;
+      let bestScore = -Infinity;
+
+      for (const bucket of buckets.values()) {
+        const r = Math.round(bucket.r / bucket.count);
+        const g = Math.round(bucket.g / bucket.count);
+        const b = Math.round(bucket.b / bucket.count);
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const delta = max - min;
+        const brightness = (r + g + b) / 3;
+        const saturation = delta;
 
         const score =
-          saturation * 1.35 +
-          (255 - Math.abs(150 - brightness)) * 0.45;
+          bucket.weight +
+          saturation * 1.2 +
+          (255 - Math.abs(150 - brightness)) * 0.45 +
+          bucket.count * 0.9;
 
         if (score > bestScore) {
           bestScore = score;
@@ -670,61 +717,58 @@ function updateDynamicColors(imageUrl) {
         return;
       }
 
-      const soften = (value, amount = 0.18) =>
-        Math.round(value + (255 - value) * amount);
-
-      const deepen = (value, amount = 0.12) =>
-        Math.round(value * (1 - amount));
+      const mixTowardWhite = (v, amt) => Math.round(v + (255 - v) * amt);
+      const mixTowardBlack = (v, amt) => Math.round(v * (1 - amt));
 
       const primary = {
-        r: soften(best.r, 0.10),
-        g: soften(best.g, 0.10),
-        b: soften(best.b, 0.10)
+        r: mixTowardWhite(best.r, 0.08),
+        g: mixTowardWhite(best.g, 0.08),
+        b: mixTowardWhite(best.b, 0.08)
       };
 
       const soft = {
-        r: soften(best.r, 0.28),
-        g: soften(best.g, 0.28),
-        b: soften(best.b, 0.28)
+        r: mixTowardWhite(best.r, 0.22),
+        g: mixTowardWhite(best.g, 0.22),
+        b: mixTowardWhite(best.b, 0.22)
       };
 
       const glow = {
-        r: soften(best.r, 0.18),
-        g: soften(best.g, 0.18),
-        b: soften(best.b, 0.18)
+        r: mixTowardWhite(best.r, 0.14),
+        g: mixTowardWhite(best.g, 0.14),
+        b: mixTowardWhite(best.b, 0.14)
       };
 
       const shadow = {
-        r: deepen(best.r, 0.20),
-        g: deepen(best.g, 0.20),
-        b: deepen(best.b, 0.20)
+        r: mixTowardBlack(best.r, 0.24),
+        g: mixTowardBlack(best.g, 0.24),
+        b: mixTowardBlack(best.b, 0.24)
       };
 
       const primaryCss = `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
       const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
       const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
 
-      liveActivity.style.setProperty("--dynamic-accent", primaryCss);
-      liveActivity.style.setProperty("--dynamic-accent-soft", softCss);
-      liveActivity.style.setProperty("--dynamic-accent-glow", glowCss);
+      activity.style.setProperty("--dynamic-accent", primaryCss);
+      activity.style.setProperty("--dynamic-accent-soft", softCss);
+      activity.style.setProperty("--dynamic-accent-glow", glowCss);
 
-      liveActivity.style.setProperty(
+      activity.style.setProperty(
         "--dynamic-bg",
         `
         radial-gradient(
-          circle at 50% 18%,
-          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.30),
-          transparent 56%
+          80% 46% at 50% 22%,
+          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.24),
+          transparent 58%
         ),
         radial-gradient(
-          circle at 50% 100%,
-          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.18),
-          transparent 70%
+          70% 38% at 50% 46%,
+          rgba(${glow.r}, ${glow.g}, ${glow.b}, 0.14),
+          transparent 62%
         ),
-        linear-gradient(
-          180deg,
-          rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.18),
-          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.08)
+        radial-gradient(
+          90% 48% at 50% 100%,
+          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.14),
+          transparent 70%
         )
         `
       );
