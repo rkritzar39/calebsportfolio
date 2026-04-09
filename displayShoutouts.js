@@ -2427,24 +2427,19 @@ function startMinuteAlignedRefresh() {
     clearInterval(minuteRefreshTimer);
     minuteRefreshTimer = null;
   }
-
   if (minuteBoundaryTimeout) {
     clearTimeout(minuteBoundaryTimeout);
     minuteBoundaryTimeout = null;
   }
 
-  const now = new Date();
-  const msUntilNextMinute =
-    ((60 - now.getSeconds()) * 1000) - now.getMilliseconds();
-
-  minuteBoundaryTimeout = setTimeout(() => {
+  // This checks the status every 5 seconds.
+  // This way, when it turns 5:00 PM, the store closes 
+  // almost instantly instead of waiting for a 60-second timer.
+  minuteRefreshTimer = setInterval(() => {
     renderFromCache();
-
-    minuteRefreshTimer = setInterval(() => {
-      renderFromCache();
-    }, 60 * 1000);
-  }, msUntilNextMinute);
+  }, 5000);
 }
+
 
 function installPanelToggle() {
   const button = document.getElementById('toggleHoursBtn');
