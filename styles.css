@@ -8121,15 +8121,15 @@ body.maintenance-active .onyx-dock {
   display: none !important;
 }
 
-/* Container Spacing & Alignment */
+/* Container Layout */
 .quote-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
-/* Glassy Tag Styling */
+/* Base Tag Style */
 .quote-tag {
   font-size: 0.65rem;
   font-weight: 700;
@@ -8137,10 +8137,46 @@ body.maintenance-active .onyx-dock {
   letter-spacing: 1.2px;
   padding: 5px 12px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(5px);
   border: 1px solid var(--dark-border);
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Color Coding Logic */
+.tag-autism { 
+  color: #4EA8FF; 
+  background: color-mix(in srgb, #4EA8FF 12%, transparent);
+  border-color: color-mix(in srgb, #4EA8FF 35%, transparent);
+}
+
+.tag-adhd { 
+  color: #ff9f43; 
+  background: color-mix(in srgb, #ff9f43 12%, transparent);
+  border-color: color-mix(in srgb, #ff9f43 35%, transparent);
+}
+
+.tag-anxiety { 
+  color: #2ecc71; 
+  background: color-mix(in srgb, #2ecc71 12%, transparent);
+  border-color: color-mix(in srgb, #2ecc71 35%, transparent);
+}
+
+.tag-depression { 
+  color: #a29bfe; 
+  background: color-mix(in srgb, #a29bfe 12%, transparent);
+  border-color: color-mix(in srgb, #a29bfe 35%, transparent);
+}
+
+.tag-ptsd { 
+  color: #ff7675; 
+  background: color-mix(in srgb, #ff7675 12%, transparent);
+  border-color: color-mix(in srgb, #ff7675 35%, transparent);
+}
+
+.tag-neurodiversity { 
+  color: var(--dark-accent); 
+  background: color-mix(in srgb, var(--dark-accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--dark-accent) 35%, transparent);
 }
 
 /* Sleek Copy Button */
@@ -8148,14 +8184,14 @@ body.maintenance-active .onyx-dock {
   background: transparent;
   border: 1px solid var(--dark-border);
   color: var(--dark-secondary-text);
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
 .copy-btn:hover {
@@ -8166,35 +8202,30 @@ body.maintenance-active .onyx-dock {
 }
 
 .copy-btn.copied {
-  border-color: #2ecc71;
-  color: #2ecc71;
-  background: rgba(46, 204, 113, 0.1);
+  border-color: #2ecc71 !important;
+  color: #2ecc71 !important;
+  background: color-mix(in srgb, #2ecc71 10%, transparent) !important;
 }
 
-/* Disorder Color Profiles */
-.tag-autism { color: #4EA8FF; border-color: rgba(78, 168, 255, 0.3); }
-.tag-adhd { color: #ff9f43; border-color: rgba(255, 159, 67, 0.3); }
-.tag-anxiety { color: #2ecc71; border-color: rgba(46, 204, 113, 0.3); }
-.tag-depression { color: #a29bfe; border-color: rgba(162, 155, 254, 0.3); }
-.tag-ptsd { color: #ff7675; border-color: rgba(255, 118, 117, 0.3); }
-
-/* Quote Content Styling */
+/* Quote Text Styling */
 .quote-icon {
-  font-size: 1.2rem;
-  opacity: 0.15;
+  font-size: 1.1rem;
+  opacity: 0.2;
   color: var(--dark-accent);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 #daily-quote-text {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--dark-text);
+  margin: 0 0 10px 0;
   font-weight: 400;
-  line-height: 1.5;
-  margin: 0 0 12px 0;
 }
 
 #daily-quote-author {
   font-size: 0.85rem;
-  opacity: 0.6;
+  color: var(--dark-secondary-text);
   font-style: italic;
+  opacity: 0.7;
 }
