@@ -350,9 +350,8 @@ async function initDailyQuote() {
 
   if (!section) return;
 
-  // 1. Visibility Check
-  const storedSettings = localStorage.getItem('websiteSettings');
-  const settings = storedSettings ? JSON.parse(storedSettings) : {};
+  // 1. Settings Visibility Check (Matches your root logic)
+  const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
   if (settings.showQuoteSection === "disabled") {
     section.style.display = 'none';
     return;
@@ -361,12 +360,11 @@ async function initDailyQuote() {
   // 2. Setup Copy Functionality
   if (copyBtn) {
     copyBtn.addEventListener('click', () => {
-      const fullText = `${textEl.innerText} ${authorEl.innerText}`;
-      navigator.clipboard.writeText(fullText).then(() => {
+      const fullQuote = `${textEl.innerText} ${authorEl.innerText}`;
+      navigator.clipboard.writeText(fullQuote).then(() => {
         const icon = copyBtn.querySelector('i');
         icon.className = 'fa-solid fa-check';
         copyBtn.classList.add('copied');
-        
         setTimeout(() => {
           icon.className = 'fa-solid fa-copy';
           copyBtn.classList.remove('copied');
@@ -378,25 +376,20 @@ async function initDailyQuote() {
   const today = new Date().toDateString();
   const lastUpdate = localStorage.getItem('quoteLastUpdate');
 
-  // 3. Daily Persistence Check
+  // 3. Load Saved Quote or Fetch New
   if (lastUpdate === today) {
     const saved = JSON.parse(localStorage.getItem('currentQuote'));
     if (saved) return updateQuoteUI(saved, textEl, authorEl, tagEl);
   }
 
-  // 4. API Fetch via AllOrigins Proxy
   try {
-    const api = "https://zenquotes.io/api/random";
-    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(api)}`;
-    
-    const response = await fetch(proxy);
+    const response = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://zenquotes.io/api/random"));
     const data = await response.json();
     const raw = JSON.parse(data.contents)[0];
 
-    // 5. Advanced Disorder Detection (RegEx)
+    // 4. Disorder Detection Logic
     let type = "Neurodiversity";
     const low = raw.q.toLowerCase();
-    
     if (low.match(/autism|autistic|unique|spectrum|different/)) type = "Autism";
     else if (low.match(/focus|attention|adhd|energy|distract|mind/)) type = "ADHD";
     else if (low.match(/anxious|worry|calm|peace|anxiety|fear/)) type = "Anxiety";
@@ -404,24 +397,21 @@ async function initDailyQuote() {
     else if (low.match(/trauma|past|survive|strength|ptsd/)) type = "PTSD";
 
     const final = { text: raw.q, author: raw.a, type: type };
-    
     localStorage.setItem('currentQuote', JSON.stringify(final));
     localStorage.setItem('quoteLastUpdate', today);
     updateQuoteUI(final, textEl, authorEl, tagEl);
 
-  } catch (err) {
-    console.error("Quote fetch error", err);
+  } catch (e) {
+    // Fallback if API fails
     updateQuoteUI({ text: "I am different, not less.", author: "Temple Grandin", type: "Autism" }, textEl, authorEl, tagEl);
   }
 }
 
 function updateQuoteUI(quote, text, author, tag) {
-  if (text) text.textContent = `"${quote.text}"`;
-  if (author) author.textContent = `— ${quote.author}`;
-  if (tag) {
-    tag.textContent = quote.type;
-    tag.className = `quote-tag tag-${quote.type.toLowerCase()}`;
-  }
+  text.textContent = `"${quote.text}"`;
+  author.textContent = `— ${quote.author}`;
+  tag.textContent = quote.type;
+  tag.className = `quote-tag tag-${quote.type.toLowerCase()}`;
 }
 
 document.addEventListener('DOMContentLoaded', initDailyQuote);
