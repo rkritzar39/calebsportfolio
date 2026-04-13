@@ -342,106 +342,98 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 /**
- * Daily Quote System with Disorder Detection
- * Pulls from ZenQuotes via a proxy to avoid CORS errors.
+ * Daily Quote System: Web Fetch + Disorder Detection + Copy Button
  */
 async function initDailyQuote() {
   const section = document.getElementById('daily-quote-section');
+  const copyBtn = document.getElementById('copy-quote-btn');
   const textEl = document.getElementById('daily-quote-text');
   const authorEl = document.getElementById('daily-quote-author');
   const tagEl = document.getElementById('daily-quote-tag');
 
   if (!section) return;
 
-  // 1. Settings Visibility Check
-  // Check if the user has disabled the quote section in settings.html
+  // 1. Visibility Check (Uses your Settings logic)
   const storedSettings = localStorage.getItem('websiteSettings');
   const settings = storedSettings ? JSON.parse(storedSettings) : {};
-  
   if (settings.showQuoteSection === "disabled") {
     section.style.display = 'none';
-    return; 
-  } else {
-    section.style.display = 'block';
+    return;
+  }
+
+  // 2. Setup Copy Button
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const fullQuote = `${textEl.innerText} ${authorEl.innerText}`;
+      navigator.clipboard.writeText(fullQuote).then(() => {
+        const icon = copyBtn.querySelector('i');
+        icon.className = 'fa-solid fa-check';
+        copyBtn.classList.add('copied');
+        
+        setTimeout(() => {
+          icon.className = 'fa-solid fa-copy';
+          copyBtn.classList.remove('copied');
+        }, 2000);
+      });
+    });
   }
 
   const today = new Date().toDateString();
   const lastUpdate = localStorage.getItem('quoteLastUpdate');
 
-  // 2. Daily Persistence Logic
-  // If it's still the same day, use the quote we already saved
+  // 3. Daily persistence: Don't waste API calls on every refresh
   if (lastUpdate === today) {
-    const savedQuote = JSON.parse(localStorage.getItem('currentQuote'));
-    if (savedQuote) {
-      updateQuoteUI(savedQuote, textEl, authorEl, tagEl);
-      return;
-    }
+    const saved = JSON.parse(localStorage.getItem('currentQuote'));
+    if (saved) return updateQuoteUI(saved, textEl, authorEl, tagEl);
   }
 
-  // 3. Fetch New Quote from Web (via Proxy)
+  // 4. Fetch New Quote via Proxy
   try {
     const apiUrl = "https://zenquotes.io/api/random";
-    // Using AllOrigins proxy to fix the "Inspiration Loading" hang
     const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
 
     const response = await fetch(proxyUrl);
-    if (!response.ok) throw new Error("Network response was not ok");
-    
     const data = await response.json();
-    const quoteArray = JSON.parse(data.contents);
-    const rawQuote = quoteArray[0];
+    const raw = JSON.parse(data.contents)[0];
 
-    // 4. Disorder Detection
-    // Scans the quote text for keywords to set the correct tag
-    let disorderType = "Neurodiversity"; // Default
-    const lowerText = rawQuote.q.toLowerCase();
-
-    if (lowerText.includes("autism") || lowerText.includes("autistic") || lowerText.includes("different")) {
-      disorderType = "Autism";
-    } else if (lowerText.includes("focus") || lowerText.includes("attention") || lowerText.includes("mind") || lowerText.includes("energy")) {
-      disorderType = "ADHD";
+    // 5. Disorder Keyword Detection
+    let type = "Neurodiversity";
+    const lower = raw.q.toLowerCase();
+    
+    if (lower.includes("autism") || lower.includes("different") || lower.includes("unique")) {
+      type = "Autism";
+    } else if (lower.includes("focus") || lower.includes("attention") || lower.includes("mind") || lower.includes("energy")) {
+      type = "ADHD";
     }
 
-    const finalQuote = {
-      text: rawQuote.q,
-      author: rawQuote.a,
-      type: disorderType
-    };
+    const finalQuote = { text: raw.q, author: raw.a, type: type };
 
-    // Save to localStorage so it stays the same all day
     localStorage.setItem('currentQuote', JSON.stringify(finalQuote));
     localStorage.setItem('quoteLastUpdate', today);
-
     updateQuoteUI(finalQuote, textEl, authorEl, tagEl);
 
-  } catch (error) {
-    console.error("Quote Fetch Error:", error);
-    // Fallback if API fails or user is offline
-    const fallback = { 
-      text: "I am different, not less.", 
-      author: "Temple Grandin", 
-      type: "Autism" 
-    };
-    updateQuoteUI(fallback, textEl, authorEl, tagEl);
+  } catch (e) {
+    console.error("Quote Fetch Error:", e);
+    // Fallback if offline
+    updateQuoteUI({ 
+        text: "I am different, not less.", 
+        author: "Temple Grandin", 
+        type: "Autism" 
+    }, textEl, authorEl, tagEl);
   }
 }
 
-/**
- * Helper function to inject data into the HTML
- */
-function updateQuoteUI(quote, textEl, authorEl, tagEl) {
-  if (textEl) textEl.textContent = `"${quote.text}"`;
-  if (authorEl) authorEl.textContent = `— ${quote.author}`;
-  if (tagEl) {
-    tagEl.textContent = quote.type;
-    // Cleans classes and adds the specific disorder class for CSS colors
-    tagEl.className = 'quote-tag'; 
-    tagEl.classList.add(`tag-${quote.type.toLowerCase()}`);
+function updateQuoteUI(quote, text, author, tag) {
+  if (text) text.textContent = `"${quote.text}"`;
+  if (author) author.textContent = `— ${quote.author}`;
+  if (tag) {
+    tag.textContent = quote.type;
+    tag.className = `quote-tag tag-${quote.type.toLowerCase()}`;
   }
 }
 
-// Run on page load
 document.addEventListener('DOMContentLoaded', initDailyQuote);
+
 
 // --- AI Chatbot ---
 const chatbot = document.getElementById('ai-chatbot');
