@@ -111,71 +111,119 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-    // --- Back to Top & Scroll Progress ---
-    (function() {
-        const scrollBtn = document.getElementById('scrollToTopBtn');
-        const progressIndicator = document.getElementById('progressIndicator');
-        const scrollPercent = document.getElementById('scrollPercent');
-        const scrollArrow = document.getElementById('scrollArrow');
-        if (!scrollBtn || !progressIndicator) return;
+    // =====================================================
+// Back to Top + Scroll Progress (Unified System)
+// =====================================================
 
-        const radius = progressIndicator.r.baseVal.value;
-        const circumference = 2 * Math.PI * radius;
-        progressIndicator.style.strokeDasharray = `${circumference}`;
-        progressIndicator.style.strokeDashoffset = `${circumference}`;
+(() => {
+    const scrollBtn = document.getElementById('scrollToTopBtn');
+    const progressIndicator = document.getElementById('progressIndicator');
+    const scrollPercent = document.getElementById('scrollPercent');
+    const scrollArrow = document.getElementById('scrollArrow');
 
-        let lastScrollTop = 0;
+    if (!scrollBtn || !progressIndicator) return;
 
-        function updateScrollProgress() {
-            const scrollTop = window.scrollY || document.documentElement.scrollTop;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrolled = docHeight > 0 ? scrollTop / docHeight : 0;
+    // --- Circle setup ---
+    const radius = progressIndicator.r.baseVal.value;
+    const circumference = 2 * Math.PI * radius;
 
-            const offset = circumference - scrolled * circumference;
-            progressIndicator.style.strokeDashoffset = offset;
+    progressIndicator.style.strokeDasharray = `${circumference}`;
+    progressIndicator.style.strokeDashoffset = `${circumference}`;
 
-            const percent = Math.round(scrolled * 100);
-            if (scrollPercent) scrollPercent.textContent = `${percent}%`;
+    // --- State ---
+    let lastScrollTop = 0;
+    let ticking = false;
+    let fadeTimeout = null;
 
-            if (scrollTop > window.innerHeight * 0.2) {
-                scrollBtn.classList.remove('hidden');
-            } else {
-                scrollBtn.classList.add('hidden');
-            }
+    // =====================================================
+    // Core update loop
+    // =====================================================
+    function updateScrollState() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
 
-            if (scrollArrow) {
-                if (scrollTop > lastScrollTop + 5) scrollArrow.style.opacity = "0.65";
-                else if (scrollTop < lastScrollTop - 5) scrollArrow.style.opacity = "1";
-            }
+        const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+        const percent = Math.round(progress * 100);
 
-            lastScrollTop = Math.max(scrollTop, 0);
+        // --- progress ring ---
+        const offset = circumference - progress * circumference;
+        progressIndicator.style.strokeDashoffset = offset;
+
+        // --- percentage text ---
+        if (scrollPercent) {
+            scrollPercent.textContent = `${percent}%`;
         }
 
-        window.addEventListener('scroll', updateScrollProgress);
-        window.addEventListener('resize', updateScrollProgress);
-        updateScrollProgress();
+        // --- visibility toggle ---
+        if (scrollTop > window.innerHeight * 0.2) {
+            scrollBtn.classList.remove('hidden');
+        } else {
+            scrollBtn.classList.add('hidden');
+        }
 
-        scrollBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (scrollArrow) scrollArrow.style.opacity = "1";
-        });
-    })();
+        // =====================================================
+        // Scroll direction detection (stable threshold)
+        // =====================================================
+        const delta = scrollTop - lastScrollTop;
 
-    // --- Percentage fade-in & timeout ---
-    (function() {
-        const scrollPercent = document.getElementById('scrollPercent');
-        let fadeTimeout;
-        window.addEventListener('scroll', () => {
-            if (!scrollPercent) return;
+        if (Math.abs(delta) > 3) {
+            if (delta > 0) {
+                scrollBtn.classList.add('scroll-down');
+                scrollBtn.classList.remove('scroll-up');
+            } else {
+                scrollBtn.classList.add('scroll-up');
+                scrollBtn.classList.remove('scroll-down');
+            }
+        }
+
+        lastScrollTop = scrollTop;
+
+        // =====================================================
+        // Percentage fade behavior
+        // =====================================================
+        if (scrollPercent) {
             scrollPercent.classList.add('visible');
 
             clearTimeout(fadeTimeout);
             fadeTimeout = setTimeout(() => {
                 scrollPercent.classList.remove('visible');
-            }, 1500);
-        });
-    })();
+            }, 1200);
+        }
 
+        ticking = false;
+    }
+
+    // =====================================================
+    // rAF scroll handler (performance optimized)
+    // =====================================================
+    function onScroll() {
+        if (!ticking) {
+            window.requestAnimationFrame(updateScrollState);
+            ticking = true;
+        }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+
+    // initial render
+    updateScrollState();
+
+    // =====================================================
+    // Scroll to top action
+    // =====================================================
+    scrollBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
+        // reset arrow visibility state if used
+        if (scrollArrow) {
+            scrollArrow.style.opacity = "1";
+        }
+    });
+})();
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
     const acceptCookiesBtn = document.getElementById('cookieAccept');
