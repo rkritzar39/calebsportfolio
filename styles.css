@@ -8121,40 +8121,46 @@ body.maintenance-active .onyx-dock {
   display: none !important;
 }
 
-.quote-section {
-  padding: 24px;
-  text-align: center;
-  background: var(--dark-content-bg);
-  backdrop-filter: blur(14px) saturate(130%);
-  border: 1px solid var(--dark-border);
-  border-radius: var(--radius-lg);
-  margin-bottom: 20px;
-}
-
-.quote-tag {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  padding: 5px 14px;
-  border-radius: 50px;
+/* Container Layout */
+.quote-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 15px;
-  /* Glassy Accent style */
-  background: color-mix(in srgb, var(--dark-accent) 20%, transparent);
-  color: var(--dark-accent);
+}
+
+/* Tag & Button Styling */
+.quote-tag {
+  margin-bottom: 0 !important; /* Header handles spacing now */
+  transition: background 0.3s ease;
+}
+
+.copy-btn {
+  background: color-mix(in srgb, var(--dark-accent) 15%, transparent);
   border: 1px solid var(--dark-border);
+  color: var(--dark-accent);
+  padding: 8px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#daily-quote-text {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: var(--dark-text);
-  margin: 10px 0;
+.copy-btn:hover {
+  background: var(--dark-accent);
+  color: white;
+  transform: scale(1.05);
 }
 
-#daily-quote-author {
-  font-size: 0.9rem;
-  color: var(--dark-secondary-text);
-  font-style: italic;
+.copy-btn.copied {
+  background: #2ecc71 !important;
+  color: white !important;
+  border-color: #2ecc71 !important;
 }
+
+/* Disorder Colors */
+.tag-autism { background: color-mix(in srgb, #4EA8FF 25%, transparent); color: #4EA8FF; }
+.tag-adhd { background: color-mix(in srgb, #ff9f43 25%, transparent); color: #ff9f43; }
+.tag-neurodiversity { background: color-mix(in srgb, #a29bfe 25%, transparent); color: #a29bfe; }
