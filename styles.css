@@ -8106,28 +8106,35 @@ body.maintenance-active .onyx-dock {
 }
 
 .quote-section {
+  padding: 24px;
   text-align: center;
-  padding: 25px;
-  background: var(--dark-content-bg); /* Matches Liquid Glass theme */
+  background: var(--dark-content-bg);
   backdrop-filter: blur(14px) saturate(130%);
   border: 1px solid var(--dark-border);
   border-radius: var(--radius-lg);
   margin-bottom: 20px;
 }
 
-.quote-icon {
-  font-size: 1.5rem;
-  color: var(--dark-accent);
+.quote-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 5px 14px;
+  border-radius: 50px;
   margin-bottom: 15px;
-  opacity: 0.6;
+  /* Glassy Accent style */
+  background: color-mix(in srgb, var(--dark-accent) 20%, transparent);
+  color: var(--dark-accent);
+  border: 1px solid var(--dark-border);
 }
 
 #daily-quote-text {
-  font-size: 1.2rem;
-  font-weight: 500;
-  line-height: 1.5;
+  font-size: 1.1rem;
+  line-height: 1.6;
   color: var(--dark-text);
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 
 #daily-quote-author {
