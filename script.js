@@ -294,45 +294,46 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 const disabilityQuotes = [
-  { text: "Different is not less.", author: "Temple Grandin" },
-  { text: "My disability has opened my eyes to see my true abilities.", author: "Robert M. Hensel" },
-  { text: "Focus on what you can do, not what you can't.", author: "Unknown" },
-  { text: "Your perspective is your superpower.", author: "Unknown" },
-  { text: "Autism offers a chance for us to glimpse an awe-filled world.", author: "Dr. Sean Barron" },
-  { text: "Ability is what you're capable of doing. Motivation determines what you do.", author: "Lou Holtz" },
-  { text: "The only limit to our realization of tomorrow will be our doubts of today.", author: "Franklin D. Roosevelt" }
+  { text: "Autism is not a processing error; it’s a different operating system.", author: "Unknown", type: "Autism" },
+  { text: "ADHD is like having a Ferrari engine for a brain with bicycle brakes.", author: "Dr. Edward Hallowell", type: "ADHD" },
+  { text: "Different is not less.", author: "Temple Grandin", type: "Autism" },
+  { text: "My disability has opened my eyes to see my true abilities.", author: "Robert M. Hensel", type: "General" }
 ];
 
-function updateDailyQuote() {
-  const quoteText = document.getElementById('daily-quote-text');
-  const quoteAuthor = document.getElementById('daily-quote-author');
-  const quoteSection = document.getElementById('daily-quote-section');
+function initDailyQuote() {
+  const section = document.getElementById('daily-quote-section');
+  const tagEl = document.getElementById('daily-quote-tag');
+  const textEl = document.getElementById('daily-quote-text');
+  const authorEl = document.getElementById('daily-quote-author');
 
-  if (!quoteText) return;
+  if (!section) return;
 
-  // Logic to show a different quote every day without repeating 
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now - start;
-  const oneDay = 1000 * 60 * 60 * 24;
-  const dayOfYear = Math.floor(diff / oneDay);
-  
-  const dailyQuote = disabilityQuotes[dayOfYear % disabilityQuotes.length];
-
-  quoteText.textContent = `"${dailyQuote.text}"`;
-  quoteAuthor.textContent = `— ${dailyQuote.author}`;
-
-  // Check visibility setting from localStorage
+  // --- THE FIX: This checks your websiteSettings to hide the section ---
   const storedSettings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-  if (storedSettings.showQuoteSection === false) {
-    quoteSection.style.display = 'none';
+  
+  // Use 'showQuotes' as the key to match the toggle
+  if (storedSettings.showQuotes === false) {
+    section.style.display = 'none';
+    return; // Stop here if it's hidden
   } else {
-    quoteSection.style.display = 'block';
+    section.style.display = 'block';
   }
+
+  // --- Daily Non-Repeating Logic ---
+  const now = new Date();
+  const daysSinceEpoch = Math.floor(now.getTime() / (1000 * 60 * 60 * 24));
+  const quoteIndex = daysSinceEpoch % disabilityQuotes.length;
+  const todayQuote = disabilityQuotes[quoteIndex];
+
+  // Update UI
+  if(tagEl) tagEl.textContent = todayQuote.type;
+  if(textEl) textEl.textContent = `"${todayQuote.text}"`;
+  if(authorEl) authorEl.textContent = `— ${todayQuote.author}`;
 }
 
-// Call this function when the DOM is loaded
-document.addEventListener('DOMContentLoaded', updateDailyQuote);
+// Run it when the page loads
+document.addEventListener('DOMContentLoaded', initDailyQuote);
+
 
 
 // --- AI Chatbot ---
