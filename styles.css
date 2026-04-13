@@ -8121,46 +8121,80 @@ body.maintenance-active .onyx-dock {
   display: none !important;
 }
 
-/* Container Layout */
-.quote-header {
+/* Container Spacing & Alignment */
+.quote-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-/* Tag & Button Styling */
+/* Glassy Tag Styling */
 .quote-tag {
-  margin-bottom: 0 !important; /* Header handles spacing now */
-  transition: background 0.3s ease;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--dark-border);
+  transition: all 0.3s ease;
 }
 
+/* Sleek Copy Button */
 .copy-btn {
-  background: color-mix(in srgb, var(--dark-accent) 15%, transparent);
+  background: transparent;
   border: 1px solid var(--dark-border);
-  color: var(--dark-accent);
-  padding: 8px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--dark-secondary-text);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .copy-btn:hover {
-  background: var(--dark-accent);
-  color: white;
-  transform: scale(1.05);
+  border-color: var(--dark-accent);
+  color: var(--dark-accent);
+  background: color-mix(in srgb, var(--dark-accent) 10%, transparent);
+  transform: translateY(-2px);
 }
 
 .copy-btn.copied {
-  background: #2ecc71 !important;
-  color: white !important;
-  border-color: #2ecc71 !important;
+  border-color: #2ecc71;
+  color: #2ecc71;
+  background: rgba(46, 204, 113, 0.1);
 }
 
-/* Disorder Colors */
-.tag-autism { background: color-mix(in srgb, #4EA8FF 25%, transparent); color: #4EA8FF; }
-.tag-adhd { background: color-mix(in srgb, #ff9f43 25%, transparent); color: #ff9f43; }
-.tag-neurodiversity { background: color-mix(in srgb, #a29bfe 25%, transparent); color: #a29bfe; }
+/* Disorder Color Profiles */
+.tag-autism { color: #4EA8FF; border-color: rgba(78, 168, 255, 0.3); }
+.tag-adhd { color: #ff9f43; border-color: rgba(255, 159, 67, 0.3); }
+.tag-anxiety { color: #2ecc71; border-color: rgba(46, 204, 113, 0.3); }
+.tag-depression { color: #a29bfe; border-color: rgba(162, 155, 254, 0.3); }
+.tag-ptsd { color: #ff7675; border-color: rgba(255, 118, 117, 0.3); }
+
+/* Quote Content Styling */
+.quote-icon {
+  font-size: 1.2rem;
+  opacity: 0.15;
+  color: var(--dark-accent);
+  margin-bottom: 8px;
+}
+
+#daily-quote-text {
+  font-size: 1.15rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+#daily-quote-author {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  font-style: italic;
+}
