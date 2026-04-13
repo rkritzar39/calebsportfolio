@@ -4870,7 +4870,7 @@ body.dark-mode .bubble {
 }
 
 /* ===================================================== */
-/* Apple Vision Pro – Spatial Glass Scroll Orb (Refined) */
+/* Apple Vision Pro – Spatial Glass Scroll Orb (Full) */
 /* ===================================================== */
 
 .scroll-to-top {
@@ -4945,6 +4945,7 @@ body.dark-mode .bubble {
 	opacity: 0.35;
 }
 
+/* Hover state */
 .scroll-to-top:hover {
 	transform: scale(1.04);
 	background:
@@ -4963,13 +4964,33 @@ body.dark-mode .bubble {
 		0 0 14px color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
+/* Hidden state */
 .scroll-to-top.hidden {
 	opacity: 0;
 	pointer-events: none;
+	transform: translateY(10px);
 }
 
 /* ===================================================== */
-/* Progress Ring                                         */
+/* Direction states (arrow rotation control) */
+/* ===================================================== */
+
+.scroll-to-top .arrow-icon {
+	transform: translate(-50%, -50%) rotate(0deg);
+	transform-origin: center;
+	transition: transform .22s ease, opacity .22s ease, filter .22s ease;
+}
+
+.scroll-to-top.scroll-down .arrow-icon {
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.scroll-to-top.scroll-up .arrow-icon {
+	transform: translate(-50%, -50%) rotate(0deg);
+}
+
+/* ===================================================== */
+/* Progress Ring */
 /* ===================================================== */
 
 .progress-ring {
@@ -5004,14 +5025,14 @@ body.dark-mode .bubble {
 }
 
 /* ===================================================== */
-/* Chevron Icon                                          */
+/* Arrow Icon */
 /* ===================================================== */
 
 .arrow-icon {
 	position: absolute;
 	top: 38%;
 	left: 50%;
-	transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%) rotate(0deg);
 
 	width: 20px;
 	height: 20px;
@@ -5025,23 +5046,18 @@ body.dark-mode .bubble {
 	background-position: center;
 
 	opacity: 0.94;
-
 	filter: drop-shadow(0 0 4px rgba(0,0,0,0.24));
-
-	transition:
-		transform .22s ease,
-		opacity .22s ease,
-		filter .22s ease;
 }
 
+/* Hover arrow micro lift */
 .scroll-to-top:hover .arrow-icon {
 	opacity: 1;
-	transform: translate(-50%, -52%);
+	transform: translate(-50%, -52%) rotate(0deg);
 	filter: drop-shadow(0 0 6px rgba(0,0,0,0.30));
 }
 
 /* ===================================================== */
-/* Percentage Badge                                      */
+/* Percentage Badge */
 /* ===================================================== */
 
 .percentage {
@@ -5086,7 +5102,7 @@ body.dark-mode .bubble {
 }
 
 /* ===================================================== */
-/* Responsive scaling                                    */
+/* Responsive scaling */
 /* ===================================================== */
 
 @media (max-width: 480px) {
