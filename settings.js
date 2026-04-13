@@ -177,6 +177,7 @@ class SettingsManager {
       showYoutubeShoutouts: "enabled",
       showUsefulLinks: "enabled",
       showCountdown: "enabled",
+      showQuoteSection: "enabled", // <--- Add this line here
       showBusinessSection: "enabled",
       showTechInformation: "enabled",
       showDisabilitiesSection: "enabled",
