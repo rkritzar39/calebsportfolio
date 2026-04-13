@@ -345,48 +345,56 @@ async function initDailyQuote() {
   const section = document.getElementById('daily-quote-section');
   if (!section) return;
 
-  // 1. Settings Visibility Check
-  const stored = localStorage.getItem('websiteSettings');
-  const settings = stored ? JSON.parse(stored) : {};
+  // 1. Visibility Check
+  const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
   if (settings.showQuoteSection === "disabled") {
     section.style.display = 'none';
-    return; 
+    return;
   }
 
   const today = new Date().toDateString();
   const lastUpdate = localStorage.getItem('quoteLastUpdate');
-  
-  // 2. Check if we already have today's quote saved
+
+  // 2. Daily Check: Only fetch once per day to stay within API limits
   if (lastUpdate === today) {
-    const savedQuote = JSON.parse(localStorage.getItem('currentQuote'));
-    displayQuote(savedQuote);
+    const saved = JSON.parse(localStorage.getItem('currentQuote'));
+    displayQuote(saved);
     return;
   }
 
-  // 3. Fetch from the Web if it's a new day
   try {
-    // We use an API that provides inspirational/motivational quotes
-    const response = await fetch("https://type.fit/api/quotes");
-    const allQuotes = await response.json();
+    // We use a proxy to avoid 'CORS' errors which happen with ZenQuotes
+    const response = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://zenquotes.io/api/random"));
+    const data = await response.json();
+    const quoteData = JSON.parse(data.contents)[0];
 
-    // Pick a random one from the thousands available online
-    const randomIndex = Math.floor(Math.random() * allQuotes.length);
-    const selectedQuote = allQuotes[randomIndex];
+    const quoteText = quoteData.q;
+    const quoteAuthor = quoteData.a;
 
-    // Clean up the author name (APIs often return "type.fit" or null)
-    if (!selectedQuote.author || selectedQuote.author.includes("type.fit")) {
-        selectedQuote.author = "Unknown";
+    // 3. The "Disorder Detector"
+    // This looks at the words in the quote to decide what the 'Tag' should be
+    let disorderTag = "Neurodiversity"; // Default
+    const lowerText = quoteText.toLowerCase();
+
+    if (lowerText.includes("autism") || lowerText.includes("autistic")) {
+      disorderTag = "Autism";
+    } else if (lowerText.includes("adhd") || lowerText.includes("focus") || lowerText.includes("attention")) {
+      disorderTag = "ADHD";
+    } else if (lowerText.includes("mind") || lowerText.includes("different")) {
+      disorderTag = "Mindset";
     }
 
-    // Save for the rest of the day
-    localStorage.setItem('currentQuote', JSON.stringify(selectedQuote));
-    localStorage.setItem('quoteLastUpdate', today);
+    const finalQuote = { text: quoteText, author: quoteAuthor, type: disorderTag };
 
-    displayQuote(selectedQuote);
+    // 4. Save and Display
+    localStorage.setItem('currentQuote', JSON.stringify(finalQuote));
+    localStorage.setItem('quoteLastUpdate', today);
+    displayQuote(finalQuote);
+
   } catch (error) {
-    console.error("Failed to fetch quote:", error);
-    // Fallback if the internet is down
-    displayQuote({ text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" });
+    console.error("API Error:", error);
+    // Fallback if the internet or API fails
+    displayQuote({ text: "I am different, not less.", author: "Temple Grandin", type: "Autism" });
   }
 }
 
@@ -397,7 +405,11 @@ function displayQuote(quote) {
 
   if (textEl) textEl.textContent = `"${quote.text}"`;
   if (authorEl) authorEl.textContent = `— ${quote.author}`;
-  if (tagEl) tagEl.textContent = "Daily Inspiration"; // Since web quotes vary
+  if (tagEl) {
+    tagEl.textContent = quote.type;
+    // Optional: Add a CSS class based on the type for different colors
+    tagEl.className = `quote-tag tag-${quote.type.toLowerCase()}`;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initDailyQuote);
