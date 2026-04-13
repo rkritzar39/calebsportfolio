@@ -341,77 +341,106 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
+/**
+ * Daily Quote System with Disorder Detection
+ * Pulls from ZenQuotes via a proxy to avoid CORS errors.
+ */
 async function initDailyQuote() {
   const section = document.getElementById('daily-quote-section');
+  const textEl = document.getElementById('daily-quote-text');
+  const authorEl = document.getElementById('daily-quote-author');
+  const tagEl = document.getElementById('daily-quote-tag');
+
   if (!section) return;
 
-  // 1. Visibility Check
-  const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+  // 1. Settings Visibility Check
+  // Check if the user has disabled the quote section in settings.html
+  const storedSettings = localStorage.getItem('websiteSettings');
+  const settings = storedSettings ? JSON.parse(storedSettings) : {};
+  
   if (settings.showQuoteSection === "disabled") {
     section.style.display = 'none';
-    return;
+    return; 
+  } else {
+    section.style.display = 'block';
   }
 
   const today = new Date().toDateString();
   const lastUpdate = localStorage.getItem('quoteLastUpdate');
 
-  // 2. Daily Check: Only fetch once per day to stay within API limits
+  // 2. Daily Persistence Logic
+  // If it's still the same day, use the quote we already saved
   if (lastUpdate === today) {
-    const saved = JSON.parse(localStorage.getItem('currentQuote'));
-    displayQuote(saved);
-    return;
+    const savedQuote = JSON.parse(localStorage.getItem('currentQuote'));
+    if (savedQuote) {
+      updateQuoteUI(savedQuote, textEl, authorEl, tagEl);
+      return;
+    }
   }
 
+  // 3. Fetch New Quote from Web (via Proxy)
   try {
-    // We use a proxy to avoid 'CORS' errors which happen with ZenQuotes
-    const response = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://zenquotes.io/api/random"));
+    const apiUrl = "https://zenquotes.io/api/random";
+    // Using AllOrigins proxy to fix the "Inspiration Loading" hang
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(apiUrl)}`;
+
+    const response = await fetch(proxyUrl);
+    if (!response.ok) throw new Error("Network response was not ok");
+    
     const data = await response.json();
-    const quoteData = JSON.parse(data.contents)[0];
+    const quoteArray = JSON.parse(data.contents);
+    const rawQuote = quoteArray[0];
 
-    const quoteText = quoteData.q;
-    const quoteAuthor = quoteData.a;
+    // 4. Disorder Detection
+    // Scans the quote text for keywords to set the correct tag
+    let disorderType = "Neurodiversity"; // Default
+    const lowerText = rawQuote.q.toLowerCase();
 
-    // 3. The "Disorder Detector"
-    // This looks at the words in the quote to decide what the 'Tag' should be
-    let disorderTag = "Neurodiversity"; // Default
-    const lowerText = quoteText.toLowerCase();
-
-    if (lowerText.includes("autism") || lowerText.includes("autistic")) {
-      disorderTag = "Autism";
-    } else if (lowerText.includes("adhd") || lowerText.includes("focus") || lowerText.includes("attention")) {
-      disorderTag = "ADHD";
-    } else if (lowerText.includes("mind") || lowerText.includes("different")) {
-      disorderTag = "Mindset";
+    if (lowerText.includes("autism") || lowerText.includes("autistic") || lowerText.includes("different")) {
+      disorderType = "Autism";
+    } else if (lowerText.includes("focus") || lowerText.includes("attention") || lowerText.includes("mind") || lowerText.includes("energy")) {
+      disorderType = "ADHD";
     }
 
-    const finalQuote = { text: quoteText, author: quoteAuthor, type: disorderTag };
+    const finalQuote = {
+      text: rawQuote.q,
+      author: rawQuote.a,
+      type: disorderType
+    };
 
-    // 4. Save and Display
+    // Save to localStorage so it stays the same all day
     localStorage.setItem('currentQuote', JSON.stringify(finalQuote));
     localStorage.setItem('quoteLastUpdate', today);
-    displayQuote(finalQuote);
+
+    updateQuoteUI(finalQuote, textEl, authorEl, tagEl);
 
   } catch (error) {
-    console.error("API Error:", error);
-    // Fallback if the internet or API fails
-    displayQuote({ text: "I am different, not less.", author: "Temple Grandin", type: "Autism" });
+    console.error("Quote Fetch Error:", error);
+    // Fallback if API fails or user is offline
+    const fallback = { 
+      text: "I am different, not less.", 
+      author: "Temple Grandin", 
+      type: "Autism" 
+    };
+    updateQuoteUI(fallback, textEl, authorEl, tagEl);
   }
 }
 
-function displayQuote(quote) {
-  const textEl = document.getElementById('daily-quote-text');
-  const authorEl = document.getElementById('daily-quote-author');
-  const tagEl = document.getElementById('daily-quote-tag');
-
+/**
+ * Helper function to inject data into the HTML
+ */
+function updateQuoteUI(quote, textEl, authorEl, tagEl) {
   if (textEl) textEl.textContent = `"${quote.text}"`;
   if (authorEl) authorEl.textContent = `— ${quote.author}`;
   if (tagEl) {
     tagEl.textContent = quote.type;
-    // Optional: Add a CSS class based on the type for different colors
-    tagEl.className = `quote-tag tag-${quote.type.toLowerCase()}`;
+    // Cleans classes and adds the specific disorder class for CSS colors
+    tagEl.className = 'quote-tag'; 
+    tagEl.classList.add(`tag-${quote.type.toLowerCase()}`);
   }
 }
 
+// Run on page load
 document.addEventListener('DOMContentLoaded', initDailyQuote);
 
 // --- AI Chatbot ---
