@@ -293,36 +293,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-const disabilityQuotes = [
-  { text: "Autism is not a processing error; it’s a different operating system.", author: "Unknown", type: "Autism" },
-  { text: "ADHD is like having a Ferrari engine for a brain with bicycle brakes.", author: "Dr. Edward Hallowell", type: "ADHD" },
-  { text: "Different is not less.", author: "Temple Grandin", type: "Autism" }
-];
-
-function initDailyQuote() {
+async function initDailyQuote() {
   const section = document.getElementById('daily-quote-section');
   if (!section) return;
 
-  // 1. Check the central SettingsManager storage
+  // 1. Settings Visibility Check
   const stored = localStorage.getItem('websiteSettings');
   const settings = stored ? JSON.parse(stored) : {};
-
-  // 2. Immediate Visibility Check
-  // If set to disabled, hide it before the user even sees "Inspiration loading..."
   if (settings.showQuoteSection === "disabled") {
     section.style.display = 'none';
     return; 
   }
 
-  // 3. Daily Rotation Logic
-  const now = new Date();
-  const dateSeed = Math.floor(now.getTime() / (1000 * 60 * 60 * 24));
-  const todayQuote = disabilityQuotes[dateSeed % disabilityQuotes.length];
+  const today = new Date().toDateString();
+  const lastUpdate = localStorage.getItem('quoteLastUpdate');
+  
+  // 2. Check if we already have today's quote saved
+  if (lastUpdate === today) {
+    const savedQuote = JSON.parse(localStorage.getItem('currentQuote'));
+    displayQuote(savedQuote);
+    return;
+  }
 
-  // 4. Update UI
-  document.getElementById('daily-quote-tag').textContent = todayQuote.type;
-  document.getElementById('daily-quote-text').textContent = `"${todayQuote.text}"`;
-  document.getElementById('daily-quote-author').textContent = `— ${todayQuote.author}`;
+  // 3. Fetch from the Web if it's a new day
+  try {
+    // We use an API that provides inspirational/motivational quotes
+    const response = await fetch("https://type.fit/api/quotes");
+    const allQuotes = await response.json();
+
+    // Pick a random one from the thousands available online
+    const randomIndex = Math.floor(Math.random() * allQuotes.length);
+    const selectedQuote = allQuotes[randomIndex];
+
+    // Clean up the author name (APIs often return "type.fit" or null)
+    if (!selectedQuote.author || selectedQuote.author.includes("type.fit")) {
+        selectedQuote.author = "Unknown";
+    }
+
+    // Save for the rest of the day
+    localStorage.setItem('currentQuote', JSON.stringify(selectedQuote));
+    localStorage.setItem('quoteLastUpdate', today);
+
+    displayQuote(selectedQuote);
+  } catch (error) {
+    console.error("Failed to fetch quote:", error);
+    // Fallback if the internet is down
+    displayQuote({ text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" });
+  }
+}
+
+function displayQuote(quote) {
+  const textEl = document.getElementById('daily-quote-text');
+  const authorEl = document.getElementById('daily-quote-author');
+  const tagEl = document.getElementById('daily-quote-tag');
+
+  if (textEl) textEl.textContent = `"${quote.text}"`;
+  if (authorEl) authorEl.textContent = `— ${quote.author}`;
+  if (tagEl) tagEl.textContent = "Daily Inspiration"; // Since web quotes vary
 }
 
 document.addEventListener('DOMContentLoaded', initDailyQuote);
