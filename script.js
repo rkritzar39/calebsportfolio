@@ -296,45 +296,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 const disabilityQuotes = [
   { text: "Autism is not a processing error; it’s a different operating system.", author: "Unknown", type: "Autism" },
   { text: "ADHD is like having a Ferrari engine for a brain with bicycle brakes.", author: "Dr. Edward Hallowell", type: "ADHD" },
-  { text: "Different is not less.", author: "Temple Grandin", type: "Autism" },
-  { text: "My disability has opened my eyes to see my true abilities.", author: "Robert M. Hensel", type: "General" }
+  { text: "Different is not less.", author: "Temple Grandin", type: "Autism" }
 ];
 
 function initDailyQuote() {
   const section = document.getElementById('daily-quote-section');
-  const tagEl = document.getElementById('daily-quote-tag');
-  const textEl = document.getElementById('daily-quote-text');
-  const authorEl = document.getElementById('daily-quote-author');
-
   if (!section) return;
 
-  // --- THE FIX: This checks your websiteSettings to hide the section ---
-  const storedSettings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-  
-  // Use 'showQuotes' as the key to match the toggle
-  if (storedSettings.showQuotes === false) {
+  // 1. Check the central SettingsManager storage
+  const stored = localStorage.getItem('websiteSettings');
+  const settings = stored ? JSON.parse(stored) : {};
+
+  // 2. Immediate Visibility Check
+  // If set to disabled, hide it before the user even sees "Inspiration loading..."
+  if (settings.showQuoteSection === "disabled") {
     section.style.display = 'none';
-    return; // Stop here if it's hidden
-  } else {
-    section.style.display = 'block';
+    return; 
   }
 
-  // --- Daily Non-Repeating Logic ---
+  // 3. Daily Rotation Logic
   const now = new Date();
-  const daysSinceEpoch = Math.floor(now.getTime() / (1000 * 60 * 60 * 24));
-  const quoteIndex = daysSinceEpoch % disabilityQuotes.length;
-  const todayQuote = disabilityQuotes[quoteIndex];
+  const dateSeed = Math.floor(now.getTime() / (1000 * 60 * 60 * 24));
+  const todayQuote = disabilityQuotes[dateSeed % disabilityQuotes.length];
 
-  // Update UI
-  if(tagEl) tagEl.textContent = todayQuote.type;
-  if(textEl) textEl.textContent = `"${todayQuote.text}"`;
-  if(authorEl) authorEl.textContent = `— ${todayQuote.author}`;
+  // 4. Update UI
+  document.getElementById('daily-quote-tag').textContent = todayQuote.type;
+  document.getElementById('daily-quote-text').textContent = `"${todayQuote.text}"`;
+  document.getElementById('daily-quote-author').textContent = `— ${todayQuote.author}`;
 }
 
-// Run it when the page loads
 document.addEventListener('DOMContentLoaded', initDailyQuote);
-
-
 
 // --- AI Chatbot ---
 const chatbot = document.getElementById('ai-chatbot');
