@@ -8104,3 +8104,34 @@ body.ultra-minimal .btn {
 body.maintenance-active .onyx-dock {
   display: none !important;
 }
+
+.quote-section {
+  text-align: center;
+  padding: 25px;
+  background: var(--dark-content-bg); /* Matches Liquid Glass theme */
+  backdrop-filter: blur(14px) saturate(130%);
+  border: 1px solid var(--dark-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+}
+
+.quote-icon {
+  font-size: 1.5rem;
+  color: var(--dark-accent);
+  margin-bottom: 15px;
+  opacity: 0.6;
+}
+
+#daily-quote-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--dark-text);
+  margin-bottom: 10px;
+}
+
+#daily-quote-author {
+  font-size: 0.9rem;
+  color: var(--dark-secondary-text);
+  font-style: italic;
+}
