@@ -293,6 +293,48 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
+const disabilityQuotes = [
+  { text: "Different is not less.", author: "Temple Grandin" },
+  { text: "My disability has opened my eyes to see my true abilities.", author: "Robert M. Hensel" },
+  { text: "Focus on what you can do, not what you can't.", author: "Unknown" },
+  { text: "Your perspective is your superpower.", author: "Unknown" },
+  { text: "Autism offers a chance for us to glimpse an awe-filled world.", author: "Dr. Sean Barron" },
+  { text: "Ability is what you're capable of doing. Motivation determines what you do.", author: "Lou Holtz" },
+  { text: "The only limit to our realization of tomorrow will be our doubts of today.", author: "Franklin D. Roosevelt" }
+];
+
+function updateDailyQuote() {
+  const quoteText = document.getElementById('daily-quote-text');
+  const quoteAuthor = document.getElementById('daily-quote-author');
+  const quoteSection = document.getElementById('daily-quote-section');
+
+  if (!quoteText) return;
+
+  // Logic to show a different quote every day without repeating 
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now - start;
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dayOfYear = Math.floor(diff / oneDay);
+  
+  const dailyQuote = disabilityQuotes[dayOfYear % disabilityQuotes.length];
+
+  quoteText.textContent = `"${dailyQuote.text}"`;
+  quoteAuthor.textContent = `— ${dailyQuote.author}`;
+
+  // Check visibility setting from localStorage
+  const storedSettings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+  if (storedSettings.showQuoteSection === false) {
+    quoteSection.style.display = 'none';
+  } else {
+    quoteSection.style.display = 'block';
+  }
+}
+
+// Call this function when the DOM is loaded
+document.addEventListener('DOMContentLoaded', updateDailyQuote);
+
+
 // --- AI Chatbot ---
 const chatbot = document.getElementById('ai-chatbot');
 const closeBtn = document.getElementById('ai-chatbot-close');
