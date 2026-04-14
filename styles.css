@@ -8122,59 +8122,60 @@ body.maintenance-active .onyx-dock {
 }
 
 /* ========================================
-   DAILY QUOTE — ONYX BUBBLE GLASS (FIXED)
+   DAILY QUOTE — MATCHES SOCIAL LINKS
 ======================================== */
 
-/* ---- Section Wrapper (NO OUTER CONTAINER) ---- */
 .quote-section {
-  margin-bottom: 30px;
-
-  /* Remove any inherited "outer container" behavior */
-  padding: 0;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  max-width: none;
-}
-
-/* ---- Inner Container (NOW MATCHES SITE WIDTH) ---- */
-.quote-container {
   position: relative;
 
-  /* This ensures it aligns with other sections */
+  /* SAME LAYOUT SYSTEM */
   width: 100%;
-  max-width: var(--section-max-width, 1100px);
-  margin: 0 auto;
+  margin: 20px 0;
   padding: 30px;
+  box-sizing: border-box;
+
+  /* SAME GLASS SYSTEM */
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient), var(--liquid-refraction);
 
   border-radius: var(--radius-xl);
-
-  background: var(--content-bg);
-  background-image: var(--bubble-gradient);
-
   border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
 
+  color: var(--text-color);
+  overflow: hidden;
+
   box-shadow:
-    var(--bubble-highlight),
-    var(--bubble-shadow);
+    var(--bubble-shadow),
+    var(--bubble-highlight);
 
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
+}
 
-  transition:
-    background var(--transition-medium),
-    box-shadow var(--transition-medium);
+/* Reflection (same as social section) */
+.quote-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--liquid-reflection);
+  mix-blend-mode: soft-light;
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 /* ---- Controls ---- */
 .quote-controls {
+  position: relative;
+  z-index: 1;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 18px;
 }
 
-/* ---- Tag (Glass Chip Style) ---- */
+/* ---- Tag ---- */
 .quote-tag {
   font-size: 0.7rem;
   font-weight: 700;
@@ -8261,10 +8262,11 @@ body.maintenance-active .onyx-dock {
 
 /* ---- Content ---- */
 .quote-content {
+  position: relative;
+  z-index: 1;
   margin-top: 10px;
 }
 
-/* Icon */
 .quote-icon {
   font-size: 1.5rem;
   opacity: 0.25;
@@ -8272,7 +8274,6 @@ body.maintenance-active .onyx-dock {
   margin-bottom: 12px;
 }
 
-/* Text */
 #daily-quote-text {
   font-size: 1.2rem;
   font-weight: 500;
@@ -8281,9 +8282,26 @@ body.maintenance-active .onyx-dock {
   margin-bottom: 14px;
 }
 
-/* Author */
 #daily-quote-author {
   font-size: 0.95rem;
   color: var(--secondary-text);
   font-style: italic;
+}
+
+/* ---- Responsive (MATCHED) ---- */
+@media (max-width: 768px) {
+  .quote-section {
+    padding: 22px;
+    border-radius: var(--radius-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .quote-section {
+    padding: 18px;
+  }
+
+  #daily-quote-text {
+    font-size: 1.05rem;
+  }
 }
