@@ -8121,17 +8121,65 @@ body.maintenance-active .onyx-dock {
   display: none !important;
 }
 
-/* Layout Alignment */
+/* =========================================
+   DAILY QUOTE — ONYX LIQUID GLASS SYSTEM
+========================================= */
+
+.section[data-section-id="daily-quote"] {
+  display: flex;
+  justify-content: center;
+}
+
+/* ---- Container (matches .glass system) ---- */
+.quote-container {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  padding: 22px;
+  border-radius: var(--radius-xl);
+
+  background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+
+  border: 1px solid var(--border-color);
+  box-shadow: var(--bubble-shadow);
+
+  overflow: hidden;
+}
+
+/* Reflection Layer */
+.quote-container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--liquid-reflection);
+  opacity: 0.35;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* Refraction Layer */
+.quote-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--bubble-gradient);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+/* ---- Controls ---- */
 .quote-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   position: relative;
-  z-index: 10; /* Above the gloss layers */
+  z-index: 2;
 }
 
-/* Glassy Tag - Using your --dark-border and --accent-color */
+/* ---- Tag ---- */
 .quote-tag {
   font-size: 0.7rem;
   font-weight: 700;
@@ -8139,31 +8187,31 @@ body.maintenance-active .onyx-dock {
   letter-spacing: 1.2px;
   padding: 6px 14px;
   border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--content-bg) 40%, transparent);
-  border: 1px solid var(--border-color);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+
+  background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
+  color: var(--accent-color);
+
+  backdrop-filter: blur(8px);
 }
 
-/* Color Coding for Disorders using your Palette */
-.tag-autism { color: #4EA8FF; border-color: color-mix(in srgb, #4EA8FF 40%, transparent); }
-.tag-adhd { color: #ff9f43; border-color: color-mix(in srgb, #ff9f43 40%, transparent); }
-.tag-anxiety { color: #2ecc71; border-color: color-mix(in srgb, #2ecc71 40%, transparent); }
-.tag-depression { color: #a29bfe; border-color: color-mix(in srgb, #a29bfe 40%, transparent); }
-.tag-ptsd { color: #ff7675; border-color: color-mix(in srgb, #ff7675 40%, transparent); }
-
-/* Copy Button - Integrated with your Apple Liquid UI */
+/* ---- Copy Button ---- */
 .copy-btn {
-  background: color-mix(in srgb, var(--content-bg) 50%, transparent);
-  border: 1px solid var(--border-color);
-  color: var(--text-color);
   width: 38px;
   height: 38px;
   border-radius: var(--radius-md);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  background: color-mix(in srgb, var(--content-bg) 80%, transparent);
+  border: 1px solid var(--border-color);
+
+  color: var(--icon-color);
   cursor: pointer;
+
+  backdrop-filter: blur(10px);
   transition: var(--transition-medium);
 }
 
@@ -8171,35 +8219,42 @@ body.maintenance-active .onyx-dock {
   background: var(--accent-color);
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--accent-color) 40%, transparent);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--accent-color) 40%, transparent);
 }
 
 .copy-btn.copied {
   background: #2ecc71 !important;
   border-color: #2ecc71 !important;
-  color: white !important;
+  color: #fff !important;
 }
 
-/* Quote Typography */
+/* ---- Content ---- */
+.quote-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Icon */
 .quote-icon {
   font-size: 1.4rem;
   opacity: 0.25;
   color: var(--accent-color);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
+/* Text */
 #daily-quote-text {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--text-color);
-  margin: 0 0 14px 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
 }
 
+/* Author */
 #daily-quote-author {
   font-size: 0.9rem;
   color: var(--secondary-text);
   font-style: italic;
-  letter-spacing: 0.3px;
 }
