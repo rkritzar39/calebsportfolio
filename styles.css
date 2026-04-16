@@ -5700,13 +5700,61 @@ img {
 	}
 }
 
-/* Footer */
+/* ======================== */
+/* Footer – Liquid Glass Match */
+/* ======================== */
+
 footer {
+	position: relative;
 	text-align: center;
-	padding: 20px;
+	padding: 18px 22px;
 	margin-top: 40px;
+	border-radius: var(--radius-lg);
+
+	/* glass surface */
+	background: color-mix(in srgb, var(--content-bg) 82%, transparent);
+	backdrop-filter: blur(14px) saturate(130%);
+	-webkit-backdrop-filter: blur(14px) saturate(130%);
+
+	border: 1px solid var(--border-color);
+
+	box-shadow:
+		0 10px 30px color-mix(in srgb, var(--shadow-color) 55%, transparent),
+		inset 0 1px 2px color-mix(in srgb, var(--glow-color) 50%, transparent);
+
 	color: var(--secondary-text);
-	border-top: 1px solid var(--border-color);
+	overflow: hidden;
+}
+
+/* subtle liquid reflection layer */
+footer::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: var(--liquid-reflection);
+	opacity: 0.25;
+	mix-blend-mode: screen;
+	pointer-events: none;
+}
+
+/* bubble highlight */
+footer::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: var(--bubble-gradient);
+	opacity: 0.35;
+	mix-blend-mode: overlay;
+	pointer-events: none;
+}
+
+/* text should stay readable above layers */
+footer p {
+	position: relative;
+	margin: 0;
+	color: var(--secondary-text);
+	font-size: 0.95rem;
+	letter-spacing: 0.2px;
 }
 
 /* Responsive Design */
