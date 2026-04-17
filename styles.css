@@ -5193,42 +5193,44 @@ body.dark-mode .bubble {
 }
 
 /* ======================================================= */
-/* Onyx Liquid Glass – Version & Legal Sections            */
-/* Refined, layout-safe version                            */
+/* ONYX GLASS v2 – Version & Legal Sections               */
+/* Cleaner depth, better light/dark balance               */
 /* ======================================================= */
 
-/* Shared Base for Both */
 .version-info-section,
 .legal-section {
   position: relative;
   overflow: hidden;
 
-  background: color-mix(in srgb, var(--content-bg) calc(var(--glass-opacity, 1) * 100%), transparent);
-  background-image: var(--bubble-gradient), var(--liquid-refraction);
+  /* Core glass surface */
+  background: color-mix(in srgb, var(--content-bg) 82%, transparent);
   border-radius: var(--radius-xl);
 
-  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-  backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%)) contrast(110%);
-  -webkit-backdrop-filter: blur(var(--glass-blur, 24px)) saturate(var(--glass-saturate, 170%)) contrast(110%);
+  /* Reduced noise, more depth */
+  box-shadow:
+    0 18px 50px color-mix(in srgb, var(--shadow-color) 35%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+  backdrop-filter: blur(22px) saturate(140%) contrast(105%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%) contrast(105%);
 
-  transition:
-    background 0.3s ease,
-    backdrop-filter 0.3s ease,
-    box-shadow 0.3s ease,
-    border 0.3s ease;
+  border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
+
+  transition: all 0.3s ease;
 }
 
+/* Subtle liquid reflection (reduced intensity) */
 .version-info-section::before,
 .legal-section::before {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  background: var(--liquid-reflection);
-  mix-blend-mode: soft-light;
-  opacity: 0.38;
+  background: radial-gradient(
+    circle at 50% 0%,
+    color-mix(in srgb, white 10%, transparent),
+    transparent 60%
+  );
+  opacity: 0.22;
   pointer-events: none;
 }
 
@@ -5237,195 +5239,127 @@ body.dark-mode .bubble {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at 50% 100%,
-    color-mix(in srgb, black 16%, transparent),
-    transparent 65%
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, white 6%, transparent),
+    transparent 40%,
+    color-mix(in srgb, black 8%, transparent)
   );
-  opacity: 0.3;
+  opacity: 0.18;
+  pointer-events: none;
 }
 
 /* ======================== */
 /* Version Info Section     */
 /* ======================== */
+
 .version-info-section {
-  padding: 28px;
-  margin-bottom: 40px;
+  padding: 26px;
+  margin-bottom: 36px;
 }
 
 /* Header */
 .version-header {
   position: relative;
   z-index: 1;
-  color: var(--text-color);
-  margin-bottom: 18px;
-  font-size: 1.35em;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  padding-bottom: 12px;
-  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
+
   display: flex;
   align-items: center;
   gap: 10px;
+
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--text-color);
+
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color) 22%, transparent);
 }
 
 .version-header::before {
   content: "📊";
-  font-size: 1.2em;
-  opacity: 0.85;
+  opacity: 0.8;
 }
 
-/* Version list as Bubble Cards */
+/* ======================== */
+/* List Items              */
+/* ======================== */
+
 .version-list {
   position: relative;
   z-index: 1;
-  list-style: none;
-  padding: 0;
-  margin: 0;
   display: grid;
-  gap: 14px;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .version-list li {
   position: relative;
-  background: color-mix(in srgb, var(--content-bg) calc(var(--glass-opacity, 1) * 100%), transparent);
-  background-image: var(--bubble-gradient);
-  padding: 14px 18px 14px 36px;
-  border-radius: var(--radius-md);
+
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-size: 1em;
-  color: var(--text-color);
-  font-weight: 500;
+  gap: 12px;
+
+  padding: 14px 16px 14px 38px;
+
+  border-radius: var(--radius-md);
+
+  background: color-mix(in srgb, var(--content-bg) 70%, transparent);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 20%, transparent);
+
   box-shadow:
-    0 6px 18px color-mix(in srgb, var(--shadow-color) 42%, transparent),
-    inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--border-color) 25%, transparent);
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease,
-    background 0.25s ease,
-    border-color 0.25s ease;
-  min-height: 44px;
-  line-height: 1.5;
-  overflow: hidden;
+    0 10px 24px color-mix(in srgb, var(--shadow-color) 25%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-.version-list li::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, white 8%, transparent),
-    transparent 45%
-  );
-  opacity: 0.3;
-}
-
+/* Cleaner glow dot */
 .version-list li::before {
   content: "";
   position: absolute;
-  left: 12px;
-  width: 10px;
-  height: 10px;
+  left: 14px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-color), color-mix(in srgb, var(--accent-color) 60%, white));
-  box-shadow:
-    0 0 6px rgba(var(--accent-rgb, 78,168,255), 0.6),
-    0 0 12px rgba(var(--accent-rgb, 78,168,255), 0.3);
-  animation: pulse-dot 2.5s infinite ease-in-out;
+
+  background: linear-gradient(
+    135deg,
+    var(--accent-color),
+    color-mix(in srgb, var(--accent-color) 60%, white)
+  );
+
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 45%, transparent);
+  opacity: 0.9;
 }
 
+/* Soft hover lift */
 .version-list li:hover {
   transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent-color) 28%, var(--border-color));
+
   box-shadow:
-    0 12px 28px color-mix(in srgb, var(--shadow-color) 50%, transparent),
-    0 0 12px color-mix(in srgb, var(--accent-color) 10%, transparent);
-  border-color: color-mix(in srgb, var(--accent-color) 24%, var(--border-color));
+    0 16px 34px color-mix(in srgb, var(--shadow-color) 35%, transparent),
+    0 0 14px color-mix(in srgb, var(--accent-color) 12%, transparent);
 }
 
-.version-list li:hover::before {
-  box-shadow:
-    0 0 10px rgba(var(--accent-rgb, 78,168,255), 0.8),
-    0 0 20px rgba(var(--accent-rgb, 78,168,255), 0.5);
-  transform: scale(1.2);
-}
-
-@keyframes pulse-dot {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.25); opacity: 0.72; }
-}
-
+/* Labels */
 .version-label {
-  margin-right: 8px;
+  font-weight: 600;
   color: var(--secondary-text);
-  font-weight: 650;
 }
 
 .version-value {
-  opacity: 0;
-  transition: opacity 0.4s ease, color 0.3s ease;
-}
-
-.version-value[style*="opacity: 1"] {
-  opacity: 1;
-}
-
-#connection-info {
-  transition: opacity 0.3s ease;
-}
-
-#connection-info .version-value {
-  font-family: var(--mono-font, 'SF Mono', monospace);
-  font-size: 0.95em;
-  letter-spacing: 0.3px;
+  font-family: var(--mono-font, ui-monospace, SFMono-Regular, monospace);
   color: var(--text-color);
-  transition: color 0.3s ease, opacity 0.3s ease;
-}
-
-/* Pulse when strong connection detected */
-.pulse-signal {
-  animation: pulse-signal 1.6s infinite ease-in-out;
-}
-
-@keyframes pulse-signal {
-  0%, 100% {
-    text-shadow:
-      0 0 4px color-mix(in srgb, var(--accent-color) 40%, transparent),
-      0 0 8px color-mix(in srgb, var(--accent-color) 20%, transparent);
-    transform: scale(1);
-  }
-  50% {
-    text-shadow:
-      0 0 10px color-mix(in srgb, var(--accent-color) 80%, transparent),
-      0 0 20px color-mix(in srgb, var(--accent-color) 40%, transparent);
-    transform: scale(1.04);
-  }
-}
-
-/* Accent Timezone Tag */
-.tz-tag {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--accent-color) 88%, white 6%);
-  color: var(--accent-text-color, #fff);
-  font-weight: 600;
-  font-size: 0.8em;
-  letter-spacing: 0.2px;
-  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent-color) 50%, transparent);
-  vertical-align: middle;
 }
 
 /* ======================== */
-/* System Detection Styling */
+/* System States           */
 /* ======================== */
 
 #browser-info::before {
@@ -5444,30 +5378,58 @@ body.dark-mode .bubble {
   background: linear-gradient(135deg, #30d158, #1ecf4a);
 }
 
-/* Battery dot changes with level */
+/* Battery states */
 .version-list li.low-battery::before {
-  background: linear-gradient(135deg, #ff3b30, #ff453a);
-  box-shadow: 0 0 10px rgba(255, 59, 48, 0.6);
+  background: linear-gradient(135deg, #ff453a, #ff3b30);
 }
 
 .version-list li.medium-battery::before {
-  background: linear-gradient(135deg, #ffcc00, #ffd60a);
-  box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+  background: linear-gradient(135deg, #ffd60a, #ffcc00);
 }
 
 .version-list li.full-battery::before {
   background: linear-gradient(135deg, #30d158, #1ecf4a);
-  box-shadow: 0 0 10px rgba(48, 209, 88, 0.6);
 }
 
-/* Hover effect on system rows */
+/* Hover state refinement */
 #browser-info:hover,
 #resolution-info:hover,
 #connection-info:hover,
 #battery-info:hover {
-  background: color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
-  border-color: color-mix(in srgb, var(--accent-color) 38%, transparent);
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+  border-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+/* ======================== */
+/* Dark Mode Refinement     */
+/* ======================== */
+
+@media (prefers-color-scheme: dark) {
+  .version-info-section,
+  .legal-section {
+    backdrop-filter: blur(26px) saturate(155%) contrast(110%);
+  }
+
+  .version-list li {
+    background: color-mix(in srgb, var(--content-bg) 78%, transparent);
+  }
+}
+
+/* ======================== */
+/* Light Mode Refinement    */
+/* ======================== */
+
+@media (prefers-color-scheme: light) {
+  .version-info-section,
+  .legal-section {
+    box-shadow:
+      0 18px 45px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  .version-list li {
+    background: rgba(255, 255, 255, 0.65);
+  }
 }
 
 /* ======================== */
