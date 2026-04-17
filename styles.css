@@ -4130,62 +4130,59 @@ body.dark-mode .bubble {
 	z-index: 1;
 }
 
-/* Visit Profile Buttons – strong Onyx design */
+/* ======================== */
+/* Visit Profile – Onyx Glass (Refined) */
+/* ======================== */
+
 .visit-profile,
 .instagram-visit-profile,
 .youtube-visit-profile {
-	margin-top: 18px;
-	margin-bottom: 2px;
-	padding: 12px 18px;
-	min-height: 44px;
-	min-width: 140px;
-
+	position: relative;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	align-self: flex-start;
 
-	position: relative;
+	padding: 12px 20px;
+	min-height: 44px;
 	border-radius: 999px;
-	text-decoration: none;
-	text-align: center;
-	font-weight: 700;
+
+	font-weight: 600;
 	letter-spacing: 0.2px;
-	line-height: 1;
-	white-space: nowrap;
+	text-decoration: none;
+
+	color: var(--text-color);
+
+	/* TRUE ONYX GLASS BASE */
+	background: linear-gradient(
+		180deg,
+		color-mix(in srgb, white 10%, transparent),
+		color-mix(in srgb, white 2%, transparent) 40%,
+		transparent 100%
+	),
+	var(--content-bg);
+
+	border: 1px solid color-mix(in srgb, white 8%, var(--border-color));
+
+	backdrop-filter: blur(14px) saturate(140%);
+	-webkit-backdrop-filter: blur(14px) saturate(140%);
+
+	/* Depth */
+	box-shadow:
+		inset 0 1px 0 rgba(255,255,255,0.08),
+		inset 0 -1px 0 rgba(0,0,0,0.25),
+		0 6px 16px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+
 	overflow: hidden;
 
-	color: var(--accent-color);
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 14%, transparent),
-			color-mix(in srgb, white 4%, transparent) 38%,
-			transparent 100%
-		),
-		var(--content-bg),
-		var(--bubble-gradient);
-
-	border: 1px solid color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
-
-	box-shadow:
-		var(--bubble-highlight),
-		0 8px 18px color-mix(in srgb, var(--shadow-color) 40%, transparent),
-		0 0 0 1px color-mix(in srgb, var(--accent-color) 10%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
-
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-
 	transition:
-		transform var(--transition-fast),
-		box-shadow var(--transition-fast),
-		border-color var(--transition-fast),
-		background var(--transition-fast),
-		color var(--transition-fast);
+		transform 0.2s ease,
+		box-shadow 0.2s ease,
+		border-color 0.2s ease,
+		background 0.2s ease;
 }
 
+/* Subtle glass reflection sweep */
 .visit-profile::before,
 .instagram-visit-profile::before,
 .youtube-visit-profile::before {
@@ -4193,60 +4190,60 @@ body.dark-mode .bubble {
 	position: absolute;
 	inset: 0;
 	border-radius: inherit;
+
+	background: linear-gradient(
+		120deg,
+		transparent 30%,
+		color-mix(in srgb, white 20%, transparent),
+		transparent 70%
+	);
+
+	opacity: 0;
+	transition: opacity 0.25s ease;
 	pointer-events: none;
-	background:
-		linear-gradient(
-			120deg,
-			color-mix(in srgb, var(--accent-color) 14%, transparent),
-			transparent 42%,
-			color-mix(in srgb, var(--accent-color) 10%, transparent)
-		);
-	opacity: 0.8;
 }
 
+/* Hover – clean lift + glow */
 .visit-profile:hover,
 .instagram-visit-profile:hover,
 .youtube-visit-profile:hover {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 16%, transparent),
-			color-mix(in srgb, white 6%, transparent) 38%,
-			transparent 100%
-		),
-		color-mix(in srgb, var(--accent-color) 12%, var(--content-bg)),
-		var(--bubble-gradient);
+	transform: translateY(-2px);
 
-	border-color: color-mix(in srgb, var(--accent-color) 62%, var(--border-color));
-	color: var(--text-color);
+	border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
 
 	box-shadow:
-		0 12px 26px color-mix(in srgb, var(--shadow-color) 50%, transparent),
-		0 0 14px color-mix(in srgb, var(--accent-color) 18%, transparent),
-		0 0 24px color-mix(in srgb, var(--accent-color) 10%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 16%, transparent);
-
-	transform: translateY(-2px);
+		inset 0 1px 0 rgba(255,255,255,0.12),
+		0 10px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent),
+		0 0 12px color-mix(in srgb, var(--accent-color) 18%, transparent);
 }
 
+/* Activate the reflection */
+.visit-profile:hover::before,
+.instagram-visit-profile:hover::before,
+.youtube-visit-profile:hover::before {
+	opacity: 0.6;
+}
+
+/* Pressed */
 .visit-profile:active,
 .instagram-visit-profile:active,
 .youtube-visit-profile:active {
-	transform: scale(0.98);
+	transform: scale(0.97);
+
 	box-shadow:
-		0 5px 12px color-mix(in srgb, var(--shadow-color) 45%, transparent),
-		inset 0 2px 4px color-mix(in srgb, black 14%, transparent);
+		inset 0 2px 6px rgba(0,0,0,0.35),
+		0 4px 10px color-mix(in srgb, var(--shadow-color) 45%, transparent);
 }
 
+/* Focus accessibility */
 .visit-profile:focus-visible,
 .instagram-visit-profile:focus-visible,
 .youtube-visit-profile:focus-visible {
 	outline: none;
-	border-color: color-mix(in srgb, var(--accent-color) 70%, var(--border-color));
+
 	box-shadow:
-		0 0 0 4px color-mix(in srgb, var(--accent-color) 18%, transparent),
-		0 10px 24px color-mix(in srgb, var(--shadow-color) 45%, transparent),
-		0 0 18px color-mix(in srgb, var(--accent-color) 14%, transparent);
+		0 0 0 3px color-mix(in srgb, var(--accent-color) 25%, transparent),
+		0 8px 20px color-mix(in srgb, var(--shadow-color) 45%, transparent);
 }
 
 /* Unavailable Message – Bubble Glass */
