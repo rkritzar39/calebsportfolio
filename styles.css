@@ -3369,116 +3369,154 @@ body.dark-mode .bubble {
 }
 
 /* ======================================== */
-/* == Tech Information Section – Onyx Refined == */
+/* == Tech Information Section – Onyx Glass System == */
 /* ======================================== */
 
+/* ======================== */
+/* Section Container        */
+/* ======================== */
 .tech-section {
 	position: relative;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient), var(--liquid-refraction);
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 6%, transparent),
+			transparent 45%
+		),
+		var(--content-bg);
+
 	padding: 30px;
 	border-radius: var(--radius-xl);
 	margin-bottom: 30px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+	border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+
+	backdrop-filter: blur(18px) saturate(140%);
+	-webkit-backdrop-filter: blur(18px) saturate(140%);
+
 	box-shadow:
-		var(--bubble-shadow),
-		inset 0 1px 2px var(--glow-color),
-		var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	width: 100%;
-	box-sizing: border-box;
+		inset 0 1px 0 rgba(255,255,255,0.06),
+		inset 0 -1px 0 rgba(0,0,0,0.35),
+		0 12px 32px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+
 	color: var(--text-color);
 	overflow: hidden;
-	transition:
-		background var(--transition-medium),
-		box-shadow var(--transition-medium),
-		border-color var(--transition-medium);
 }
 
+/* Directional reflection */
 .tech-section::before {
 	content: "";
 	position: absolute;
 	inset: 0;
 	border-radius: inherit;
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: 0.45;
+
+	background: linear-gradient(
+		120deg,
+		transparent 20%,
+		color-mix(in srgb, white 18%, transparent),
+		transparent 60%
+	);
+
+	opacity: 0.25;
 	pointer-events: none;
 }
 
+/* Bottom depth shading */
 .tech-section::after {
 	content: "";
 	position: absolute;
 	inset: 0;
 	border-radius: inherit;
-	pointer-events: none;
+
 	background: radial-gradient(
 		circle at 50% 100%,
-		color-mix(in srgb, black 16%, transparent),
-		transparent 65%
+		color-mix(in srgb, black 18%, transparent),
+		transparent 70%
 	);
-	opacity: 0.4;
+
+	opacity: 0.35;
+	pointer-events: none;
 }
 
 /* ======================== */
-/* Tech Cards / Items       */
+/* Tech Items (Glass Tiles) */
 /* ======================== */
 .tech-item {
 	position: relative;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border: 1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 8%, transparent),
+			transparent 50%
+		),
+		var(--content-bg);
+
 	border-radius: var(--radius-lg);
 	padding: 20px;
 	margin-bottom: 16px;
+
+	border: 1px solid color-mix(in srgb, white 5%, var(--border-color));
+
+	backdrop-filter: blur(14px) saturate(135%);
+	-webkit-backdrop-filter: blur(14px) saturate(135%);
+
 	box-shadow:
-		inset 0 1px 2px var(--glow-color),
-		0 6px 20px color-mix(in srgb, var(--shadow-color) 65%, transparent);
-	overflow: hidden;
+		inset 0 1px 0 rgba(255,255,255,0.05),
+		inset 0 -1px 0 rgba(0,0,0,0.3),
+		0 8px 20px color-mix(in srgb, var(--shadow-color) 50%, transparent);
+
 	transition:
-		transform var(--transition-fast),
-		box-shadow var(--transition-medium),
-		border-color var(--transition-medium),
-		background var(--transition-medium);
+		transform 0.2s ease,
+		box-shadow 0.25s ease,
+		border-color 0.25s ease;
 }
 
+/* Subtle glass highlight */
 .tech-item::before {
 	content: "";
 	position: absolute;
 	inset: 0;
 	border-radius: inherit;
-	pointer-events: none;
+
 	background: linear-gradient(
 		180deg,
 		color-mix(in srgb, white 10%, transparent),
 		transparent 45%
 	);
-	opacity: 0.35;
+
+	opacity: 0.25;
+	pointer-events: none;
 }
 
-/* Subtle hover */
+/* Hover lift */
 .tech-item:hover {
-	transform: translateY(-2px);
+	transform: translateY(-3px);
+
+	border-color: color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
+
 	box-shadow:
-		0 10px 24px color-mix(in srgb, var(--shadow-color) 62%, transparent),
-		inset 0 1px 2px var(--glow-color);
-	border-color: color-mix(in srgb, var(--accent-color) 22%, var(--border-color));
+		inset 0 1px 0 rgba(255,255,255,0.08),
+		0 14px 30px color-mix(in srgb, var(--shadow-color) 60%, transparent),
+		0 0 10px color-mix(in srgb, var(--accent-color) 14%, transparent);
 }
 
 /* ======================== */
-/* Titles and Icons         */
+/* Titles                  */
 /* ======================== */
 .tech-item h3 {
 	margin: 0 0 15px 0;
 	display: flex;
 	align-items: center;
 	gap: 10px;
+
 	color: var(--accent-color);
 	font-size: calc(var(--font-size-base) * 1.05);
 	font-weight: 700;
 	letter-spacing: -0.01em;
-	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+
+	text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 	position: relative;
 	z-index: 1;
 }
@@ -3496,6 +3534,7 @@ body.dark-mode .bubble {
 	align-items: center;
 	gap: 10px;
 	margin: 10px 0;
+
 	color: var(--text-color);
 	position: relative;
 	z-index: 1;
@@ -3504,22 +3543,24 @@ body.dark-mode .bubble {
 .tech-detail i {
 	width: 20px;
 	height: 20px;
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
 	color: var(--accent-color);
 	font-size: calc(var(--font-size-base) * 0.85);
 	flex-shrink: 0;
 }
 
 .tech-detail span {
-	font-weight: 650;
+	font-weight: 600;
 	color: var(--secondary-text);
-	margin-right: 8px;
+	margin-right: 6px;
 }
 
 /* ======================== */
-/* Battery Indicator        */
+/* Battery Container        */
 /* ======================== */
 .battery-container {
 	display: flex;
@@ -3530,68 +3571,99 @@ body.dark-mode .bubble {
 	z-index: 1;
 }
 
+/* Battery Shell */
 .battery-icon {
 	position: relative;
+
 	width: 180px;
 	height: 40px;
-	border: 2px solid color-mix(in srgb, var(--border-color) 88%, transparent);
 	border-radius: 10px;
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
+
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, white 6%, transparent),
-			transparent 65%
+			color-mix(in srgb, white 10%, transparent),
+			transparent 60%
 		),
 		var(--content-bg);
+
+	border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+
 	box-shadow:
-		inset 0 1px 6px color-mix(in srgb, var(--shadow-color) 80%, transparent),
-		0 4px 14px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+		inset 0 2px 6px rgba(0,0,0,0.6),
+		inset 0 -1px 0 rgba(255,255,255,0.05),
+		0 4px 14px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+
+	backdrop-filter: blur(10px);
+
 	overflow: hidden;
 }
 
 /* Battery Cap */
 .battery-icon::after {
-	content: '';
+	content: "";
 	position: absolute;
-	right: -9px;
+	right: -8px;
 	top: 50%;
 	transform: translateY(-50%);
-	width: 7px;
-	height: 20px;
-	background-color: color-mix(in srgb, var(--border-color) 92%, transparent);
-	border-radius: 3px;
-	box-shadow: inset 0 1px 1px color-mix(in srgb, white 8%, transparent);
+
+	width: 6px;
+	height: 18px;
+
+	border-radius: 2px;
+
+	background: color-mix(in srgb, var(--border-color) 90%, transparent);
+	box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
 }
 
 /* Battery Fill */
 .battery-level {
+	position: relative;
 	height: 100%;
-	background: var(--accent-color);
-	border-radius: 1px;
+	border-radius: 6px;
+
+	background: linear-gradient(
+		90deg,
+		color-mix(in srgb, var(--accent-color) 85%, white 10%),
+		var(--accent-color)
+	);
+
 	box-shadow:
-		inset 0 0 5px rgba(0,0,0,0.2),
-		0 0 10px color-mix(in srgb, var(--accent-color) 22%, transparent);
-	transition:
-		width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-		background var(--transition-medium),
-		box-shadow var(--transition-medium);
+		inset 0 0 6px rgba(0,0,0,0.25),
+		0 0 12px color-mix(in srgb, var(--accent-color) 30%, transparent);
+
+	transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* Animated energy shimmer */
+.battery-level::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+
+	background: linear-gradient(
+		120deg,
+		transparent 20%,
+		rgba(255,255,255,0.25),
+		transparent 80%
+	);
+
+	opacity: 0.4;
+	animation: batteryShimmer 2.5s linear infinite;
+}
+
+@keyframes batteryShimmer {
+	from { transform: translateX(-100%); }
+	to { transform: translateX(100%); }
+}
+
+/* Battery States */
 .low-power .battery-level {
 	background: #FFCC00;
-	box-shadow:
-		inset 0 0 5px rgba(0,0,0,0.2),
-		0 0 10px rgba(255, 204, 0, 0.22);
 }
 
 .critical .battery-level {
 	background: #FF3B30;
-	box-shadow:
-		inset 0 0 5px rgba(0,0,0,0.2),
-		0 0 10px rgba(255, 59, 48, 0.24);
 }
 
 /* Percentage Text */
@@ -3600,20 +3672,20 @@ body.dark-mode .bubble {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+
 	color: var(--text-color);
 	font-weight: 700;
 	font-size: calc(var(--font-size-base) * 0.75);
+
 	text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-	letter-spacing: 0.01em;
 }
 
 /* ======================== */
-/* Responsive Adjustments   */
+/* Responsive               */
 /* ======================== */
 @media screen and (max-width: 768px) {
 	.tech-section {
 		padding: 20px;
-		border-radius: var(--radius-lg);
 	}
 
 	.tech-item {
