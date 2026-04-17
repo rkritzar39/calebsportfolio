@@ -3717,76 +3717,117 @@ body.dark-mode .bubble {
 	}
 }
 
+/* ======================== */
+/* Disabilities Section – Onyx Bubble Glass */
+/* ======================== */
+.disabilities-section {
+	background: var(--content-bg);
+	background-image: var(--bubble-gradient);
+	border-radius: var(--radius-xl);
+	padding: 30px;
+	margin-bottom: 30px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+	box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+	transition: background var(--transition-medium), box-shadow var(--transition-medium);
+}
+
+.disabilities-section h2 {
+	margin-bottom: 15px;
+	color: var(--text-color);
+	font-size: 1.6em;
+	font-weight: 600;
+}
+
+.disabilities-section p {
+	margin-bottom: 20px;
+	color: var(--secondary-text);
+	font-size: 1em;
+	line-height: 1.5;
+}
+
+.disabilities-section ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	gap: 12px;
+}
+
 /* ========================================
-   Button Links – True Onyx Glass
+   Button Links – Onyx Glass Matched
 ======================================== */
 .disabilities-section a {
-	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 10px;
-
 	width: 100%;
-	padding: 12px 20px;
-	padding-right: 46px;
-
-	border-radius: 999px;
+	padding: 12px 18px;
+	padding-right: 44px;
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+	text-align: center;
 	text-decoration: none;
 	font-weight: 600;
 	letter-spacing: 0.2px;
+	border-radius: 9999px;
 
-	color: var(--text-color);
-
-	/* CLEAN GLASS SURFACE */
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, white 10%, transparent),
-			transparent 45%
+			color-mix(in srgb, white 8%, transparent),
+			color-mix(in srgb, white 2%, transparent)
 		),
 		var(--content-bg);
 
-	border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+	background-image:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 8%, transparent),
+			color-mix(in srgb, white 2%, transparent)
+		),
+		var(--bubble-gradient);
 
-	backdrop-filter: blur(14px) saturate(140%);
-	-webkit-backdrop-filter: blur(14px) saturate(140%);
+	border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
 
-	/* TRUE DEPTH (top light + bottom compression) */
 	box-shadow:
-		inset 0 1px 0 rgba(255,255,255,0.08),
-		inset 0 -1px 0 rgba(0,0,0,0.3),
-		0 6px 16px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+		0 8px 24px color-mix(in srgb, var(--shadow-color) 42%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 14%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, black 8%, transparent);
 
-	overflow: hidden;
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	color: var(--text-color);
 
 	transition:
-		transform 0.18s ease,
-		box-shadow 0.22s ease,
-		border-color 0.22s ease,
-		background 0.22s ease;
+		background 0.2s ease,
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.12s ease,
+		color 0.2s ease;
 }
 
-/* Directional reflection (NOT always visible fog) */
+/* Soft glass sheen */
 .disabilities-section a::before {
 	content: "";
 	position: absolute;
 	inset: 0;
 	border-radius: inherit;
-
 	background: linear-gradient(
-		120deg,
-		transparent 25%,
-		color-mix(in srgb, white 20%, transparent),
-		transparent 70%
+		180deg,
+		color-mix(in srgb, white 16%, transparent) 0%,
+		color-mix(in srgb, white 6%, transparent) 35%,
+		transparent 100%
 	);
-
-	opacity: 0;
-	transition: opacity 0.25s ease;
+	opacity: 0.55;
 	pointer-events: none;
 }
 
-/* Chevron (cleaner + more native) */
+/* iOS-style chevron */
 .disabilities-section a::after {
 	content: "";
 	position: absolute;
@@ -3794,22 +3835,24 @@ body.dark-mode .bubble {
 	top: 50%;
 	transform: translateY(-50%) rotate(45deg);
 
-	width: 7px;
-	height: 7px;
+	width: 8px;
+	height: 8px;
 
-	border-top: 2px solid color-mix(in srgb, var(--text-color) 55%, transparent);
-	border-right: 2px solid color-mix(in srgb, var(--text-color) 55%, transparent);
+	border-top: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
+	border-right: 2px solid color-mix(in srgb, var(--text-color) 60%, transparent);
 
-	opacity: 0.7;
-	transition: all 0.2s ease;
+	opacity: 0.75;
+	pointer-events: none;
+	transition: border-color 0.2s ease, opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* Content layers */
 .disabilities-section a span.button-text {
 	position: relative;
 	z-index: 1;
 	flex-grow: 1;
 	text-align: center;
+	color: var(--text-color);
+	transition: color 0.2s ease;
 }
 
 .disabilities-section a i {
@@ -3818,57 +3861,55 @@ body.dark-mode .bubble {
 	margin-left: 10px;
 	flex-shrink: 0;
 	color: var(--icon-color, var(--text-color));
+	transition: color 0.2s ease;
 }
 
-/* ======================== */
-/* Hover – Real Onyx Lift   */
-/* ======================== */
+/* Hover – same accent glass treatment */
 .disabilities-section a:hover {
-	transform: translateY(-2px);
-
-	border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
-
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, white 14%, transparent),
-			transparent 45%
+			color-mix(in srgb, white 12%, transparent),
+			color-mix(in srgb, white 4%, transparent)
 		),
-		color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+		color-mix(in srgb, var(--accent-color, #4EA8FF) 18%, var(--content-bg));
+
+	border-color: color-mix(in srgb, var(--accent-color, #4EA8FF) 60%, var(--border-color));
 
 	box-shadow:
-		inset 0 1px 0 rgba(255,255,255,0.12),
-		0 12px 26px color-mix(in srgb, var(--shadow-color) 55%, transparent),
-		0 0 10px color-mix(in srgb, var(--accent-color) 18%, transparent);
+		0 10px 28px color-mix(in srgb, var(--accent-color, #4EA8FF) 25%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 16%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, black 10%, transparent);
+
+	transform: translateY(-2px);
 }
 
-/* Activate reflection only on interaction */
-.disabilities-section a:hover::before {
-	opacity: 0.6;
+.disabilities-section a:hover span.button-text {
+	color: color-mix(in srgb, var(--accent-color, #4EA8FF) 85%, white 15%);
+}
+
+.disabilities-section a:hover i {
+	color: var(--accent-color, #4EA8FF);
 }
 
 .disabilities-section a:hover::after {
-	border-color: var(--accent-color);
-	transform: translateY(-50%) rotate(45deg) translateX(2px);
+	border-top-color: var(--accent-color, #4EA8FF);
+	border-right-color: var(--accent-color, #4EA8FF);
 	opacity: 1;
+	transform: translateY(-50%) rotate(45deg) translateX(2px);
 }
 
-/* Pressed */
-.disabilities-section a:active {
-	transform: scale(0.97);
-
-	box-shadow:
-		inset 0 2px 6px rgba(0,0,0,0.4),
-		0 4px 10px color-mix(in srgb, var(--shadow-color) 45%, transparent);
-}
-
-/* Focus */
 .disabilities-section a:focus-visible {
 	outline: none;
-
+	border-color: color-mix(in srgb, var(--accent-color, #4EA8FF) 52%, var(--border-color));
 	box-shadow:
-		0 0 0 3px color-mix(in srgb, var(--accent-color) 25%, transparent),
-		0 8px 20px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+		0 0 0 3px color-mix(in srgb, var(--accent-color, #4EA8FF) 20%, transparent),
+		0 10px 28px color-mix(in srgb, var(--shadow-color) 48%, transparent),
+		inset 0 1px 0 color-mix(in srgb, white 16%, transparent);
+}
+
+.disabilities-section a:active {
+	transform: scale(0.985);
 }
 
 /* ======================== */
