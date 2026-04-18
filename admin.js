@@ -1701,168 +1701,142 @@ function displayFilteredShoutouts(platform) {
     }
 }
 
-// admin.js
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
-import { doc, getDoc, setDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-
-// --- Configuration & Constants ---
-const DISCORD_USER_ID = "850815059093356594";
-const MANUAL_DOC = doc(db, "manualStatus", "site");
-const profileDocRef = doc(db, "siteSettings", "profile");
-
-// --- DOM Element Selectors ---
-const $ = (id) => document.getElementById(id);
-
-// Profile Management Elements
-const profileForm = $('profile-form');
-const profileUsernameInput = $('profile-username');
-const profilePicUrlInput = $('profile-pic-url');
-const profileBioInput = $('profile-bio');
-const profileStatusInput = $('profile-status');
-const adminPfpPreview = $('admin-pfp-preview');
-const profileStatusMessage = $('profile-status-message');
-
-// Toggles
-const autoStatusToggle = $('auto-status-toggle');
-const discordSyncToggle = $('discord-sync-toggle');
-const maintenanceModeToggle = $('maintenance-mode-toggle');
-const hideTikTokSectionToggle = $('hide-tiktok-toggle');
-
-// Countdown Elements
-const countdownTitleInput = $('countdown-title');
-const countdownDatetimeInput = $('countdown-date');
-const countdownExpiredMessageInput = $('countdown-expired-msg');
-
-// ======================================================
-// ===== HELPER FUNCTIONS =====
-// ======================================================
-
-function showProfileStatus(msg, isError = false) {
-    if (!profileStatusMessage) return;
-    profileStatusMessage.textContent = msg;
-    profileStatusMessage.className = isError ? "status-message error" : "status-message success";
-    setTimeout(() => { if (profileStatusMessage.textContent === msg) profileStatusMessage.textContent = ""; }, 5000);
-}
-
-// ======================================================
-// ===== DISCORD SYNC LOGIC =====
-// ======================================================
-
-async function syncWithDiscord() {
-    if (!discordSyncToggle || !discordSyncToggle.checked) return;
-
-    showProfileStatus("Syncing with Discord...");
-    try {
-        const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-        const json = await response.json();
-
-        if (json.success && json.data?.discord_user) {
-            const user = json.data.discord_user;
-            
-            // Update Username
-            if (profileUsernameInput) {
-                profileUsernameInput.value = user.global_name || user.username || "";
-            }
-
-            // Update Profile Picture
-            if (profilePicUrlInput && user.avatar) {
-                const isAnimated = user.avatar.startsWith('a_');
-                const avatarUrl = `https://cdn.discordapp.com/avatars/${DISCORD_USER_ID}/${user.avatar}.${isAnimated ? 'gif' : 'png'}?size=512`;
-                profilePicUrlInput.value = avatarUrl;
-                
-                if (adminPfpPreview) {
-                    adminPfpPreview.src = avatarUrl;
-                    adminPfpPreview.style.display = 'inline-block';
-                }
-            }
-
-            // Force Auto-Status ON for consistency when syncing
-            if (autoStatusToggle && !autoStatusToggle.checked) {
-                autoStatusToggle.checked = true;
-                if(profileStatusInput) profileStatusInput.disabled = true;
-            }
-
-            showProfileStatus("Discord profile synced!", false);
-        } else {
-            showProfileStatus("Discord user not found.", true);
-        }
-    } catch (error) {
-        console.error("Discord Sync Error:", error);
-        showProfileStatus("Error fetching Discord data.", true);
-    }
-}
-
-function handleDiscordSyncUI() {
-    const isSyncing = discordSyncToggle?.checked;
-    
-    // Disable manual inputs if syncing is active
-    if (profileUsernameInput) profileUsernameInput.disabled = isSyncing;
-    if (profilePicUrlInput) profilePicUrlInput.disabled = isSyncing;
-    
-    if (isSyncing) syncWithDiscord();
-}
-
-// ======================================================
-// ===== PROFILE DATA HANDLING =====
-// ======================================================
+// [In admin.js] - Replace the entire loadProfileData function
 
 async function loadProfileData() {
-    if (!auth || !auth.currentUser) return;
+    // Ensure user is logged in
+    if (!auth || !auth.currentUser) {
+        console.warn("Auth not ready or user not logged in when trying to load profile.");
+        return;
+    }
+    // Check required form elements exist
+    if (!profileForm || !maintenanceModeToggle || !hideTikTokSectionToggle ||
+        !countdownTitleInput || !countdownDatetimeInput || !countdownExpiredMessageInput ||
+        !adminPfpPreview || !profileStatusInput) {
+        console.error("One or more profile/settings form elements missing in admin.html!");
+        if (profileStatusMessage) showProfileStatus("Error: Page structure incorrect.", true);
+        else if(settingsStatusMessage) showSettingsStatus("Error: Page structure incorrect.", true);
+        return;
+    }
 
+    console.log("Attempting to load profile & countdown data from:", profileDocRef.path);
     try {
-        const docSnap = await getDoc(profileDocRef);
+        const docSnap = await getDoc(profileDocRef); // Fetch the profile/settings document
 
         if (docSnap.exists()) {
             const data = docSnap.data();
+            console.log("Loaded profile/settings data:", data);
 
-            // Populate text fields
+            // --- Populate fields ---
             if(profileUsernameInput) profileUsernameInput.value = data.username || '';
             if(profilePicUrlInput) profilePicUrlInput.value = data.profilePicUrl || '';
             if(profileBioInput) profileBioInput.value = data.bio || '';
             if(profileStatusInput) profileStatusInput.value = data.status || 'offline';
 
-            // Discord Sync Toggle
-            if (discordSyncToggle) {
-                discordSyncToggle.checked = data.discordSyncEnabled || false;
-                handleDiscordSyncUI(); // Set initial disabled states
-                discordSyncToggle.addEventListener('change', handleDiscordSyncUI);
-            }
-
-            // Auto-Detect Status Toggle
+            // --- ADDED: Load Auto-Detect Toggle ---
+            const autoStatusToggle = document.getElementById('auto-status-toggle');
             if (autoStatusToggle) {
                 autoStatusToggle.checked = data.autoStatusEnabled || false;
+                
+                // Visually disable the manual dropdown if auto is checked
                 if(profileStatusInput) profileStatusInput.disabled = autoStatusToggle.checked;
                 
-                autoStatusToggle.addEventListener('change', (e) => {
+                // Add listener to toggle the dropdown's disabled state instantly when clicked
+                // (We remove old listeners first to avoid duplicates if this runs multiple times)
+                const newToggle = autoStatusToggle.cloneNode(true);
+                autoStatusToggle.parentNode.replaceChild(newToggle, autoStatusToggle);
+                
+                newToggle.addEventListener('change', (e) => {
                     if(profileStatusInput) profileStatusInput.disabled = e.target.checked;
                 });
+                // Note: We replaced the node, so if you reference autoStatusToggle later in this scope, grab it again or use newToggle
             }
+            // -----------------------------------------
 
-            // Other Toggles
-            if(maintenanceModeToggle) maintenanceModeToggle.checked = data.isMaintenanceModeEnabled || false;
-            if(hideTikTokSectionToggle) hideTikTokSectionToggle.checked = data.hideTikTokSection || false;
+            // Toggles
+            maintenanceModeToggle.checked = data.isMaintenanceModeEnabled || false;
+            maintenanceModeToggle.disabled = false;
+            hideTikTokSectionToggle.checked = data.hideTikTokSection || false;
+            hideTikTokSectionToggle.disabled = false;
 
-            // Countdown Settings
-            if (countdownTitleInput) countdownTitleInput.value = data.countdownTitle || '';
-            if (countdownDatetimeInput && data.countdownTargetDateTime) {
-                countdownDatetimeInput.value = data.countdownTargetDateTime;
+            // *** Load Countdown Settings ***
+            if (countdownTitleInput) {
+                countdownTitleInput.value = data.countdownTitle || '';
+                countdownTitleInput.disabled = false;
+            }
+            if (countdownDatetimeInput) {
+                if (data.countdownTargetDate && data.countdownTargetDate instanceof Timestamp) {
+                    try {
+                        const targetDate = data.countdownTargetDate.toDate();
+                        // Format to YYYY-MM-DDTHH:MM:SS for datetime-local input
+                        const year = targetDate.getFullYear();
+                        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+                        const day = String(targetDate.getDate()).padStart(2, '0');
+                        const hours = String(targetDate.getHours()).padStart(2, '0');
+                        const minutes = String(targetDate.getMinutes()).padStart(2, '0');
+                        const seconds = String(targetDate.getSeconds()).padStart(2, '0');
+                        countdownDatetimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+                    } catch (dateError) {
+                        console.error("Error processing countdown timestamp:", dateError);
+                        countdownDatetimeInput.value = '';
+                    }
+                } else {
+                    countdownDatetimeInput.value = '';
+                }
+                countdownDatetimeInput.disabled = false;
+            }
+            if (countdownExpiredMessageInput) {
+                countdownExpiredMessageInput.value = data.countdownExpiredMessage || '';
+                countdownExpiredMessageInput.disabled = false;
             }
 
             // Profile Picture Preview
-            if (adminPfpPreview && data.profilePicUrl) {
-                adminPfpPreview.src = data.profilePicUrl;
-                adminPfpPreview.style.display = 'inline-block';
+            if (adminPfpPreview) {
+                 if (data.profilePicUrl) {
+                    adminPfpPreview.src = data.profilePicUrl;
+                    adminPfpPreview.style.display = 'inline-block';
+                    adminPfpPreview.onerror = () => {
+                        console.warn("Admin Preview: Image failed to load from URL:", adminPfpPreview.src);
+                        adminPfpPreview.style.display = 'none';
+                        if(profilePicUrlInput) profilePicUrlInput.classList.add('input-error');
+                    };
+                 } else {
+                    adminPfpPreview.src = '';
+                    adminPfpPreview.style.display = 'none';
+                 }
             }
+
+        } else {
+            // Handle doc not existing
+            console.warn(`Profile document ('${profileDocRef.path}') not found. Displaying defaults.`);
+            if (profileForm) profileForm.reset();
+            if (profileStatusInput) profileStatusInput.value = 'offline';
+            maintenanceModeToggle.checked = false; maintenanceModeToggle.disabled = false;
+            hideTikTokSectionToggle.checked = false; hideTikTokSectionToggle.disabled = false;
+            
+            // Clear inputs
+            if (countdownTitleInput) { countdownTitleInput.value = ''; countdownTitleInput.disabled = true; }
+            if (countdownDatetimeInput) { countdownDatetimeInput.value = ''; countdownDatetimeInput.disabled = true; }
+            if (countdownExpiredMessageInput) { countdownExpiredMessageInput.value = ''; countdownExpiredMessageInput.disabled = true; }
+            if(adminPfpPreview) adminPfpPreview.style.display = 'none';
         }
     } catch (error) {
-        console.error("Error loading profile data:", error);
-        showProfileStatus("Error loading profile data.", true);
+        console.error("Error loading profile/settings data:", error);
+        if(profileStatusMessage) showProfileStatus("Error loading profile data.", true);
     }
 }
+
+
+    // [In admin.js] - Replace the entire saveProfileData function
 
 async function saveProfileData(event) {
     event.preventDefault();
     if (!auth || !auth.currentUser) { showProfileStatus("Error: Not logged in.", true); return; }
+    if (!profileForm) return;
+    console.log("Attempting to save profile data...");
+
+    // Get the toggle state
+    const autoStatusToggle = document.getElementById('auto-status-toggle'); // Ensure this ID matches your HTML
 
     const newData = {
         username: profileUsernameInput?.value.trim() || "",
@@ -1870,69 +1844,66 @@ async function saveProfileData(event) {
         bio: profileBioInput?.value.trim() || "",
         status: profileStatusInput?.value || "offline",
         
-        // Settings/Toggles
+        // --- ADDED: Save Auto-Detect Setting ---
         autoStatusEnabled: autoStatusToggle ? autoStatusToggle.checked : false,
-        discordSyncEnabled: discordSyncToggle ? discordSyncToggle.checked : false,
-        isMaintenanceModeEnabled: maintenanceModeToggle ? maintenanceModeToggle.checked : false,
-        hideTikTokSection: hideTikTokSectionToggle ? hideTikTokSectionToggle.checked : false,
+        // -------------------------------------
         
-        // Countdown
         countdownTitle: countdownTitleInput?.value.trim() || "",
         countdownTargetDateTime: countdownDatetimeInput?.value.trim() || ""
     };
 
+    // Basic validation for the datetime string format
+    const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+    if (newData.countdownTargetDateTime && !dateTimeRegex.test(newData.countdownTargetDateTime)) {
+         showProfileStatus("Invalid Countdown Date/Time format. Please use YYYY-MM-DDTHH:MM:SS", true);
+         return;
+    }
+
     showProfileStatus("Saving profile...");
     try {
         await setDoc(profileDocRef, { ...newData, lastUpdated: serverTimestamp() }, { merge: true });
+        console.log("Profile data save successful:", profileDocRef.path);
         showProfileStatus("Profile updated successfully!", false);
         
+        // Update preview image
         if (adminPfpPreview && newData.profilePicUrl) {
             adminPfpPreview.src = newData.profilePicUrl;
             adminPfpPreview.style.display = 'inline-block';
+        } else if (adminPfpPreview) {
+            adminPfpPreview.src = '';
+            adminPfpPreview.style.display = 'none';
         }
+
     } catch (error) {
         console.error("Error saving profile data:", error);
-        showProfileStatus(`Error saving: ${error.message}`, true);
+        showProfileStatus(`Error saving profile: ${error.message}`, true);
     }
 }
 
-// ======================================================
-// ===== INITIALIZATION & EVENTS =====
-// ======================================================
-
-document.addEventListener("DOMContentLoaded", () => {
-    // Auth State Listener
-    auth.onAuthStateChanged((user) => {
-        if (user) loadProfileData();
-    });
-
-    // Form Submit
-    if (profileForm) {
-        profileForm.addEventListener('submit', saveProfileData);
-    }
-
-    // Live Preview for Manual URL input
-    if (profilePicUrlInput && adminPfpPreview) {
-        profilePicUrlInput.addEventListener('input', () => {
-            const url = profilePicUrlInput.value.trim();
-            if (url) {
-                adminPfpPreview.src = url;
-                adminPfpPreview.style.display = 'inline-block';
-            } else {
-                adminPfpPreview.style.display = 'none';
+    // Event listener for profile picture URL input to update preview (optional but helpful)
+    if (profilePicUrlInput && adminPfpPreview) { //
+        profilePicUrlInput.addEventListener('input', () => { //
+            const url = profilePicUrlInput.value.trim(); //
+            if (url) { //
+                adminPfpPreview.src = url; //
+                adminPfpPreview.style.display = 'inline-block'; //
+            } else { //
+                adminPfpPreview.style.display = 'none'; //
             }
         });
-        
-        adminPfpPreview.onerror = () => {
-            adminPfpPreview.style.display = 'none';
-            profilePicUrlInput.classList.add('input-error');
+        // Handle image loading errors for the preview
+        adminPfpPreview.onerror = () => { //
+            console.warn("Preview image failed to load from URL:", adminPfpPreview.src); //
+            // Optionally show a placeholder or hide the preview on error
+            // adminPfpPreview.src = 'path/to/error-placeholder.png';
+             adminPfpPreview.style.display = 'none'; //
+             profilePicUrlInput.classList.add('input-error'); // Add error class to input
         };
-        
-        profilePicUrlInput.addEventListener('focus', () => {
-            profilePicUrlInput.classList.remove('input-error');
-        });
+         // Remove error class when input changes
+         profilePicUrlInput.addEventListener('focus', () => { //
+            profilePicUrlInput.classList.remove('input-error'); //
+         });
     }
-});
 
 // *** NEW FUNCTION TO SAVE Hide TikTok Section Status ***
     async function saveHideTikTokSectionStatus(isEnabled) {
