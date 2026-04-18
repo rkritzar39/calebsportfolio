@@ -109,7 +109,7 @@
 
             <div id="admin-status" class="status-message" role="status" aria-live="polite"></div>
 
-     <section class="admin-section" id="profile-management" aria-labelledby="profile-heading">
+   <section class="admin-section" id="profile-management" aria-labelledby="profile-heading">
   <h3 id="profile-heading">Manage Homepage Profile</h3>
 
   <form id="profile-form">
@@ -121,6 +121,50 @@
         Sync profile with Discord
       </label>
     </div>
+
+    <!-- Discord Sync Panel (shown when toggle is on) -->
+    <div id="discord-sync-panel" style="display:none;">
+      <div class="form-group">
+        <label for="discord-user-id">Discord User ID:</label>
+        <input
+          type="text"
+          id="discord-user-id"
+          placeholder="e.g. 123456789012345678"
+          inputmode="numeric"
+        >
+        <small>Enable Developer Mode in Discord → Settings → Advanced, then right-click your name → Copy User ID.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="discord-username">Discord Username:</label>
+        <input
+          type="text"
+          id="discord-username"
+          placeholder="Paste your Discord username"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="discord-bio-input">Discord Bio (About Me):</label>
+        <textarea
+          id="discord-bio-input"
+          rows="3"
+          placeholder="Paste your Discord About Me text here"
+        ></textarea>
+        <small>Discord doesn't allow bots to read bios publicly — paste yours manually here.</small>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="fetch-discord-btn" class="button-secondary">
+          ⬇️ Apply Discord Data to Profile
+        </button>
+      </div>
+
+      <div id="discord-sync-status" class="status-message" role="status" aria-live="polite"></div>
+    </div>
+
+    <!-- Divider -->
+    <hr style="margin: 16px 0;">
 
     <!-- Username -->
     <div class="form-group">
@@ -208,7 +252,8 @@
     role="status"
     aria-live="polite"
   ></div>
-</section>         <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
+</section>
+         <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
   <h3 id="settings-heading">Site Settings</h3>
 
   <div class="form-group checkbox-group apple-toggle-group">
