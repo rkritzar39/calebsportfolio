@@ -719,101 +719,123 @@ function renderFaqItemHomepage(faqData) {
             </div>`;
 }
 
-// [In displayShoutouts.js] - Replace the entire displayProfileData function
+const DISCORD_USER_ID = "850815059093356594";
 
-const DISCORD_USER_ID = "850815059093356594"; // Your Discord User ID
+// simple cache to prevent spam
+let cachedStatus = null;
+let lastFetchTime = 0;
+
+async function fetchDiscordStatus() {
+    const now = Date.now();
+
+    // cache for 15 seconds
+    if (cachedStatus && (now - lastFetchTime < 15000)) {
+        return cachedStatus;
+    }
+
+    try {
+        const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+        const json = await response.json();
+
+        const status = json?.data?.discord_status || null;
+
+        cachedStatus = status;
+        lastFetchTime = now;
+
+        return status;
+
+    } catch (error) {
+        console.warn("Lanyard fetch failed:", error);
+        return null;
+    }
+}
 
 async function displayProfileData(profileData) {
+
     const profileUsernameElement = document.getElementById('profile-username-main');
     const profilePicElement = document.getElementById('profile-pic-main');
     const profileBioElement = document.getElementById('profile-bio-main');
     const profileStatusContainerElement = document.getElementById('profile-status-main-container');
     const profileStatusTextElement = document.getElementById('profile-status-text-main');
 
-    // Check for the essential HTML elements
     if (!profileUsernameElement || !profilePicElement || !profileBioElement) {
-        console.warn("Core profile display elements missing.");
+        console.warn("Core profile elements missing.");
         return;
     }
 
-    // Define default values
+    // ============================
+    // DEFAULTS
+    // ============================
     const defaultUsername = "Username";
     const defaultBio = "";
     const defaultProfilePic = "images/default-profile.jpg";
 
+    // ============================
+    // FALLBACK (NO DATA)
+    // ============================
     if (!profileData) {
-        // Fallback if no data provided
         profileUsernameElement.textContent = defaultUsername;
         profilePicElement.src = defaultProfilePic;
         profileBioElement.textContent = defaultBio;
-        if (profileStatusContainerElement) profileStatusContainerElement.className = "profile-status-container status-offline";
-        if (profileStatusTextElement) {
-            profileStatusTextElement.textContent = 'Offline';
-            profileStatusTextElement.className = "profile-status-text status-offline";
-        }
+
+        applyStatus("offline");
         return;
     }
 
-    // Update basic text info immediately
+    // ============================
+    // BASIC PROFILE RENDER
+    // ============================
     profileUsernameElement.textContent = profileData.username || defaultUsername;
     profilePicElement.src = profileData.profilePicUrl || defaultProfilePic;
     profileBioElement.textContent = profileData.bio || defaultBio;
 
-    // --- Status Logic ---
-    let statusKey = profileData.status || 'offline'; // Default to manual status first
+    // ============================
+    // STATUS LOGIC
+    // ============================
+    let statusKey = profileData.status || "offline";
 
-    // If Auto-Detect is enabled, fetch real status from Discord
     if (profileData.autoStatusEnabled) {
-        try {
-            const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-            const json = await response.json();
-            
-            if (json.success && json.data) {
-                // Lanyard returns: 'online', 'idle', 'dnd', or 'offline'
-                statusKey = json.data.discord_status;
-                console.log("Auto-detect status from Lanyard:", statusKey);
-            }
-        } catch (error) {
-            console.warn("Auto-detect failed (Lanyard API error), falling back to manual status.", error);
-            // We keep statusKey as the manual value set above
+
+        const discordStatus = await fetchDiscordStatus();
+
+        if (discordStatus) {
+            statusKey = discordStatus;
         }
-    } else {
-        console.log("Auto-detect disabled. Using manual status:", statusKey);
     }
 
-    // Map status key to display text
-    let statusText = '';
-    switch (statusKey) {
-        case 'online':
-            statusText = 'Active';
-            break;
-        case 'idle':
-            statusText = 'Idle';
-            break;
-        case 'dnd':
-            statusText = 'Do Not Disturb';
-            break;
-        case 'offline':
-            statusText = 'Offline';
-            break;
-        default:
-            statusText = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+    applyStatus(statusKey);
+
+    // ============================
+    // STATUS APPLIER
+    // ============================
+    function applyStatus(key) {
+
+        const statusMap = {
+            online: "Active",
+            idle: "Idle",
+            dnd: "Do Not Disturb",
+            offline: "Offline"
+        };
+
+        const label = statusMap[key] || "Unknown";
+
+        if (profileStatusContainerElement) {
+            profileStatusContainerElement.className =
+                `profile-status-container status-${key}`;
+        }
+
+        if (profileStatusTextElement) {
+            profileStatusTextElement.textContent = label;
+            profileStatusTextElement.className =
+                `profile-status-text status-${key}`;
+        }
     }
 
-    // Update the visual indicators
-    if (profileStatusContainerElement) {
-        // Reset classes and add the correct status class
-        profileStatusContainerElement.className = `profile-status-container status-${statusKey}`;
-    }
-
-    if (profileStatusTextElement) {
-        profileStatusTextElement.textContent = statusText;
-        profileStatusTextElement.className = `profile-status-text status-${statusKey}`;
-    }
-    
-    console.log("Profile section updated with status:", statusKey);
+    console.log("Profile updated:", {
+        username: profileUsernameElement.textContent,
+        status: statusKey
+    });
 }
-
 
 async function displayPresidentData() {
     const placeholderElement = document.getElementById('president-placeholder');
