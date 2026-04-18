@@ -719,9 +719,37 @@ function renderFaqItemHomepage(faqData) {
             </div>`;
 }
 
-// [In displayShoutouts.js] - Replace the entire displayProfileData function
+// displayShoutouts.js
 
-const DISCORD_USER_ID = "850815059093356594"; // Your Discord User ID
+const firebaseConfig = {
+    apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0",
+    authDomain: "busarmydudewebsite.firebaseapp.com",
+    projectId: "busarmydudewebsite",
+    storageBucket: "busarmydudewebsite.firebasestorage.app",
+    messagingSenderId: "42980404680",
+    appId: "1:42980404680:web:f4f1e54789902a4295e4fd",
+    measurementId: "G-DQPH8YL789"
+};
+
+// Import necessary Firebase functions
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+import { 
+  getFirestore,
+  doc,
+  getDoc,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// --- Discord Configuration ---
+const DISCORD_USER_ID = "850815059093356594"; 
+
+// ======================================================
+// ===== PROFILE DISPLAY LOGIC =====
+// ======================================================
 
 async function displayProfileData(profileData) {
     const profileUsernameElement = document.getElementById('profile-username-main');
@@ -730,79 +758,57 @@ async function displayProfileData(profileData) {
     const profileStatusContainerElement = document.getElementById('profile-status-main-container');
     const profileStatusTextElement = document.getElementById('profile-status-text-main');
 
-    // Check for the essential HTML elements
     if (!profileUsernameElement || !profilePicElement || !profileBioElement) {
         console.warn("Core profile display elements missing.");
         return;
     }
 
-    // Define default values
     const defaultUsername = "Username";
     const defaultBio = "";
     const defaultProfilePic = "images/default-profile.jpg";
 
     if (!profileData) {
-        // Fallback if no data provided
         profileUsernameElement.textContent = defaultUsername;
         profilePicElement.src = defaultProfilePic;
         profileBioElement.textContent = defaultBio;
         if (profileStatusContainerElement) profileStatusContainerElement.className = "profile-status-container status-offline";
-        if (profileStatusTextElement) {
-            profileStatusTextElement.textContent = 'Offline';
-            profileStatusTextElement.className = "profile-status-text status-offline";
-        }
         return;
     }
 
-    // Update basic text info immediately
+    // Update text and image
     profileUsernameElement.textContent = profileData.username || defaultUsername;
     profilePicElement.src = profileData.profilePicUrl || defaultProfilePic;
     profileBioElement.textContent = profileData.bio || defaultBio;
 
     // --- Status Logic ---
-    let statusKey = profileData.status || 'offline'; // Default to manual status first
+    let statusKey = profileData.status || 'offline'; 
 
-    // If Auto-Detect is enabled, fetch real status from Discord
+    // If Auto-Detect is enabled, fetch live status from Discord
     if (profileData.autoStatusEnabled) {
         try {
             const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
             const json = await response.json();
             
             if (json.success && json.data) {
-                // Lanyard returns: 'online', 'idle', 'dnd', or 'offline'
-                statusKey = json.data.discord_status;
-                console.log("Auto-detect status from Lanyard:", statusKey);
+                statusKey = json.data.discord_status; // 'online', 'idle', 'dnd', 'offline'
             }
         } catch (error) {
-            console.warn("Auto-detect failed (Lanyard API error), falling back to manual status.", error);
-            // We keep statusKey as the manual value set above
+            console.warn("Lanyard fetch failed, falling back to manual status.");
         }
-    } else {
-        console.log("Auto-detect disabled. Using manual status:", statusKey);
     }
 
-    // Map status key to display text
+    // Map status to readable text
     let statusText = '';
     switch (statusKey) {
-        case 'online':
-            statusText = 'Active';
-            break;
-        case 'idle':
-            statusText = 'Idle';
-            break;
-        case 'dnd':
-            statusText = 'Do Not Disturb';
-            break;
-        case 'offline':
-            statusText = 'Offline';
-            break;
-        default:
-            statusText = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+        case 'online': statusText = 'Active'; break;
+        case 'idle': statusText = 'Idle'; break;
+        case 'dnd': statusText = 'Do Not Disturb'; break;
+        case 'offline': statusText = 'Offline'; break;
+        default: statusText = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
     }
 
-    // Update the visual indicators
+    // Update visual classes
     if (profileStatusContainerElement) {
-        // Reset classes and add the correct status class
         profileStatusContainerElement.className = `profile-status-container status-${statusKey}`;
     }
 
@@ -810,10 +816,55 @@ async function displayProfileData(profileData) {
         profileStatusTextElement.textContent = statusText;
         profileStatusTextElement.className = `profile-status-text status-${statusKey}`;
     }
-    
-    console.log("Profile section updated with status:", statusKey);
 }
 
+// ======================================================
+// ===== LIVE OBSERVERS =====
+// ======================================================
+
+function watchProfile() {
+  const ref = doc(db, "siteSettings", "profile");
+  onSnapshot(ref, (docSnap) => {
+    if (docSnap.exists()) {
+      displayProfileData(docSnap.data());
+    }
+  });
+}
+
+// --- Goal Tracker Loader ---
+async function loadGoalTrackerHomepage() {
+  try {
+    const ref = doc(db, "siteSettings", "goalTracker");
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+    const titleEl = document.querySelector(".goals-title");
+    if (titleEl) titleEl.textContent = data.goalTitle || "Project Goal";
+
+    const totalEl = document.getElementById("goalTotal");
+    const raisedEl = document.getElementById("goalRaised");
+    const remainingEl = document.getElementById("goalRemaining");
+
+    if (totalEl) totalEl.textContent = data.goalTotal ?? 0;
+    if (raisedEl) raisedEl.textContent = data.goalRaised ?? 0;
+    if (remainingEl) remainingEl.textContent = data.goalRemaining ?? 0;
+
+    const fill = document.getElementById("goalFill");
+    if (fill && data.goalTotal > 0) {
+      const pct = Math.min((data.goalRaised / data.goalTotal) * 100, 100);
+      fill.style.width = pct + "%";
+    }
+  } catch (error) {
+    console.error("Error loading goal tracker:", error);
+  }
+}
+
+// Initialize on load
+document.addEventListener("DOMContentLoaded", () => {
+  watchProfile();
+  loadGoalTrackerHomepage();
+});
 
 async function displayPresidentData() {
     const placeholderElement = document.getElementById('president-placeholder');
