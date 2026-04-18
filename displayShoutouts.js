@@ -721,35 +721,25 @@ function renderFaqItemHomepage(faqData) {
 
 const DISCORD_USER_ID = "850815059093356594";
 
-// simple cache to prevent spam
-let cachedStatus = null;
-let lastFetchTime = 0;
-
+// ============================
+// DISCORD STATUS FETCH
+// ============================
 async function fetchDiscordStatus() {
-    const now = Date.now();
-
-    // cache for 15 seconds
-    if (cachedStatus && (now - lastFetchTime < 15000)) {
-        return cachedStatus;
-    }
-
     try {
-        const response = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-        const json = await response.json();
+        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+        const json = await res.json();
 
-        const status = json?.data?.discord_status || null;
+        return json?.data?.discord_status || null;
 
-        cachedStatus = status;
-        lastFetchTime = now;
-
-        return status;
-
-    } catch (error) {
-        console.warn("Lanyard fetch failed:", error);
+    } catch (err) {
+        console.warn("Lanyard API failed:", err);
         return null;
     }
 }
 
+// ============================
+// MAIN PROFILE FUNCTION
+// ============================
 async function displayProfileData(profileData) {
 
     const profileUsernameElement = document.getElementById('profile-username-main');
@@ -764,7 +754,12 @@ async function displayProfileData(profileData) {
     }
 
     // ============================
-    // DEFAULTS
+    // DEBUG (KEEP THIS WHILE TESTING)
+    // ============================
+    console.log("PROFILE DATA RECEIVED:", profileData);
+
+    // ============================
+    // DEFAULT VALUES
     // ============================
     const defaultUsername = "Username";
     const defaultBio = "";
@@ -783,11 +778,24 @@ async function displayProfileData(profileData) {
     }
 
     // ============================
-    // BASIC PROFILE RENDER
+    // SAFE PROFILE FIELD MAPPING
+    // (THIS FIXES YOUR ISSUE)
     // ============================
-    profileUsernameElement.textContent = profileData.username || defaultUsername;
-    profilePicElement.src = profileData.profilePicUrl || defaultProfilePic;
-    profileBioElement.textContent = profileData.bio || defaultBio;
+    profileUsernameElement.textContent =
+        profileData?.username ||
+        profileData?.displayName ||
+        defaultUsername;
+
+    profilePicElement.src =
+        profileData?.profilePicUrl ||
+        profileData?.profilePic ||
+        profileData?.avatar ||
+        defaultProfilePic;
+
+    profileBioElement.textContent =
+        profileData?.bio ||
+        profileData?.about ||
+        defaultBio;
 
     // ============================
     // STATUS LOGIC
@@ -795,9 +803,7 @@ async function displayProfileData(profileData) {
     let statusKey = profileData.status || "offline";
 
     if (profileData.autoStatusEnabled) {
-
         const discordStatus = await fetchDiscordStatus();
-
         if (discordStatus) {
             statusKey = discordStatus;
         }
@@ -806,7 +812,7 @@ async function displayProfileData(profileData) {
     applyStatus(statusKey);
 
     // ============================
-    // STATUS APPLIER
+    // APPLY STATUS UI
     // ============================
     function applyStatus(key) {
 
@@ -831,7 +837,7 @@ async function displayProfileData(profileData) {
         }
     }
 
-    console.log("Profile updated:", {
+    console.log("Profile updated successfully:", {
         username: profileUsernameElement.textContent,
         status: statusKey
     });
