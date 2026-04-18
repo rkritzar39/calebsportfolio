@@ -109,10 +109,19 @@
 
             <div id="admin-status" class="status-message" role="status" aria-live="polite"></div>
 
-      <section class="admin-section" id="profile-management" aria-labelledby="profile-heading">
+     <section class="admin-section" id="profile-management" aria-labelledby="profile-heading">
   <h3 id="profile-heading">Manage Homepage Profile</h3>
 
   <form id="profile-form">
+
+    <!-- Discord Sync Toggle -->
+    <div class="form-group checkbox-group">
+      <input type="checkbox" id="discord-sync-toggle">
+      <label for="discord-sync-toggle">
+        Sync profile with Discord
+      </label>
+    </div>
+
     <!-- Username -->
     <div class="form-group">
       <label for="profile-username">Username:</label>
@@ -121,6 +130,7 @@
         id="profile-username"
         name="username"
         placeholder="Enter homepage username"
+        data-manual
       >
     </div>
 
@@ -134,6 +144,7 @@
           name="profilePicUrl"
           placeholder="https://..."
           inputmode="url"
+          data-manual
         >
         <img
           src="path/to/placeholder-image.png"
@@ -154,13 +165,14 @@
         name="bio"
         rows="4"
         placeholder="Enter profile bio text..."
+        data-manual
       ></textarea>
     </div>
 
-    <!-- Manual Status -->
+    <!-- Status -->
     <div class="form-group">
       <label for="profile-status">Status:</label>
-      <select id="profile-status" name="status">
+      <select id="profile-status" name="status" data-manual>
         <option value="online">Online (🟢)</option>
         <option value="idle">Idle (🟡)</option>
         <option value="offline">Offline (⚪️)</option>
@@ -168,13 +180,14 @@
       </select>
     </div>
 
-  <!-- Auto-Detect Toggle (temporarily disabled) -->
-<div class="form-group checkbox-group">
-  <input type="checkbox" id="auto-status-toggle">
-  <label for="auto-status-toggle">
-    Auto-detect when I'm online
-  </label>
-</div>
+    <!-- Auto Status Toggle -->
+    <div class="form-group checkbox-group">
+      <input type="checkbox" id="auto-status-toggle">
+      <label for="auto-status-toggle">
+        Auto-detect when I'm online
+      </label>
+    </div>
+
     <!-- Submit -->
     <div class="form-actions">
       <button
@@ -185,15 +198,17 @@
         Save Profile Changes
       </button>
     </div>
+
   </form>
 
+  <!-- Status Message -->
   <div
     id="profile-status-message"
     class="status-message"
     role="status"
     aria-live="polite"
   ></div>
-</section>            <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
+</section>         <section class="admin-section" id="site-settings" aria-labelledby="settings-heading">
   <h3 id="settings-heading">Site Settings</h3>
 
   <div class="form-group checkbox-group apple-toggle-group">
