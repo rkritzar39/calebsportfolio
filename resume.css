@@ -1,14 +1,5 @@
 /* ========================= */
-/* ROOT IMPROVEMENTS         */
-/* ========================= */
-:root {
-    --section-gap: 28px;
-    --card-radius: 20px;
-    --card-padding: 26px;
-}
-
-/* ========================= */
-/* BASE STYLES               */
+/* BASE                     */
 /* ========================= */
 body {
     background: var(--bg-color);
@@ -22,14 +13,11 @@ body {
     line-height: var(--line-height-base);
     font-size: var(--font-size-base);
 
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
     overflow-x: hidden;
 }
 
 /* ========================= */
-/* MAIN WRAPPER              */
+/* PAGE WRAPPER             */
 /* ========================= */
 .resume-container {
     max-width: 980px;
@@ -37,21 +25,21 @@ body {
 
     display: flex;
     flex-direction: column;
-    gap: var(--section-gap);
+    gap: 26px;
 }
 
 /* ========================= */
-/* GLASS CARD SYSTEM         */
-/* (USED BY ALL SECTIONS)    */
+/* CARD SYSTEM (CONTAINERS)  */
 /* ========================= */
-.glass-card {
+.site-header,
+section,
+.download-btn {
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
 
-    border-radius: var(--card-radius);
-    border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+    border-radius: 20px;
 
-    padding: var(--card-padding);
+    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
 
     box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 
@@ -60,12 +48,11 @@ body {
 
     position: relative;
     overflow: hidden;
-
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* subtle glass sheen */
-.glass-card::before {
+/* glass reflection */
+.site-header::before,
+section::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -77,28 +64,31 @@ body {
     pointer-events: none;
 }
 
-/* hover depth */
-.glass-card:hover {
-    transform: translateY(-2px);
+/* ensures content sits above glass */
+.site-header > *,
+section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* spacing so NOTHING touches */
+.site-header {
+    padding: 24px;
+    margin-bottom: 6px;
+}
+
+section {
+    padding: 24px;
+    margin: 0;
 }
 
 /* ========================= */
-/* HEADER (CARD)             */
+/* HEADER                   */
 /* ========================= */
-.site-header {
-    composes: glass-card;
-}
-
-.site-header {
-    display: flex;
-    justify-content: center;
-}
-
 .header-inner {
     display: flex;
     align-items: center;
     gap: 22px;
-    width: 100%;
 }
 
 .header-photo {
@@ -116,28 +106,12 @@ body {
 }
 
 /* ========================= */
-/* SECTION CARDS             */
-/* ========================= */
-section {
-    composes: glass-card;
-    display: block;
-
-    scroll-margin-top: 80px;
-}
-
-/* ensures spacing consistency */
-section:not(:last-child) {
-    margin-bottom: var(--section-gap);
-}
-
-/* ========================= */
-/* SECTION TITLE             */
+/* SECTION TITLES           */
 /* ========================= */
 section h2 {
     margin: 0 0 14px 0;
 
     font-size: 1.5rem;
-    font-weight: 650;
 
     padding-bottom: 10px;
 
@@ -148,19 +122,29 @@ section h2 {
     gap: 10px;
 }
 
-/* accent bar */
 section h2::before {
     content: "";
     width: 4px;
     height: 16px;
-
     background: var(--accent-color);
     border-radius: 3px;
 }
 
 /* ========================= */
-/* SUMMARY IMPROVEMENT       */
+/* TEXT CONTENT             */
 /* ========================= */
+.contact-line,
+.email-link {
+    display: block;
+    color: var(--secondary-text);
+}
+
+.email-link {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+/* summary spacing fix (your issue) */
 #summary p {
     margin: 0;
     color: var(--secondary-text);
@@ -168,7 +152,7 @@ section h2::before {
 }
 
 /* ========================= */
-/* SKILLS / LANGUAGES        */
+/* SKILLS / TAGS            */
 /* ========================= */
 .skills-list,
 .languages-list {
@@ -183,14 +167,15 @@ section h2::before {
 
     border-radius: 999px;
 
-    background: color-mix(in srgb, var(--content-bg) 86%, transparent);
+    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+
     border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
     font-size: 0.9rem;
 }
 
 /* ========================= */
-/* EXPERIENCE / EDUCATION    */
+/* EXPERIENCE / EDUCATION   */
 /* ========================= */
 .job,
 .education-item {
@@ -213,20 +198,6 @@ section h2::before {
     flex: 1;
 }
 
-.job-left h3,
-.edu-left h3 {
-    margin: 0;
-    font-size: 1.05rem;
-}
-
-.company,
-.school {
-    display: block;
-    font-size: 0.9rem;
-    color: var(--secondary-text);
-    margin-top: 2px;
-}
-
 .job-dates,
 .education-dates {
     white-space: nowrap;
@@ -235,42 +206,21 @@ section h2::before {
 }
 
 /* ========================= */
-/* BULLETS                   */
+/* LISTS                    */
 /* ========================= */
 ul {
     margin: 8px 0 0 18px;
-    padding: 0;
-}
-
-li {
-    margin-bottom: 6px;
 }
 
 /* ========================= */
-/* FOOTER                    */
-/* ========================= */
-.site-footer {
-    text-align: center;
-    padding: 18px 0;
-
-    color: var(--secondary-text);
-}
-
-/* ========================= */
-/* DOWNLOAD BUTTON           */
+/* DOWNLOAD BUTTON          */
 /* ========================= */
 .download-btn {
     display: inline-block;
-    margin-top: 10px;
 
     padding: 12px 22px;
 
     border-radius: 999px;
-
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-
-    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
 
     font-weight: 600;
 
@@ -282,31 +232,26 @@ li {
 }
 
 /* ========================= */
-/* LIGHT MODE FIXES          */
-/* (CRITICAL VISIBILITY FIX)  */
+/* LIGHT MODE FIX (CRITICAL) */
 /* ========================= */
-body[data-theme="light"] section,
-body[data-theme="light"] .site-header {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+body[data-theme="light"] .site-header,
+body[data-theme="light"] section {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.08);
 }
 
-/* stronger separation lines in light mode */
+/* stronger section separation in light mode */
 body[data-theme="light"] section h2 {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid rgba(0,0,0,0.12);
 }
 
-/* make cards visible in light mode */
-body[data-theme="light"] .glass-card {
-    border: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-/* ensure text contrast */
+/* text clarity */
 body[data-theme="light"] {
     color: #111827;
 }
 
 /* ========================= */
-/* RESPONSIVE                */
+/* RESPONSIVE               */
 /* ========================= */
 @media (max-width: 768px) {
     body {
