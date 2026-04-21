@@ -1,237 +1,206 @@
-/* ======================== */
-/* DESIGN TOKENS (SPACING)  */
-/* ======================== */
-
+/* ========================= */
+/* ROOT IMPROVEMENTS         */
+/* ========================= */
 :root {
-    --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
-    --space-5: 24px;
-    --space-6: 32px;
-    --space-7: 48px;
+    --section-gap: 28px;
+    --card-radius: 20px;
+    --card-padding: 26px;
 }
 
-/* ======================== */
-/* BASE                     */
-/* ======================== */
-
+/* ========================= */
+/* BASE STYLES               */
+/* ========================= */
 body {
     background: var(--bg-color);
     color: var(--text-color);
 
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
 
     margin: 0;
-    padding: var(--space-6) var(--space-3);
+    padding: 32px 10px;
 
-    line-height: 1.65;
-    font-size: 15.5px;
+    line-height: var(--line-height-base);
+    font-size: var(--font-size-base);
 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    overflow-x: hidden;
 }
 
-/* ======================== */
-/* LAYOUT CONTAINER         */
-/* ======================== */
-
+/* ========================= */
+/* MAIN WRAPPER              */
+/* ========================= */
 .resume-container {
-    max-width: 1050px;
+    max-width: 980px;
     margin: 0 auto;
 
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    gap: var(--section-gap);
 }
 
-/* ======================== */
-/* GLASS BASE (CONTROLLED)  */
-/* ======================== */
-
-.site-header,
-section {
+/* ========================= */
+/* GLASS CARD SYSTEM         */
+/* (USED BY ALL SECTIONS)    */
+/* ========================= */
+.glass-card {
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
+
+    border-radius: var(--card-radius);
+    border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+
+    padding: var(--card-padding);
+
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
-    border-radius: 16px;
-
-    border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
-
-    box-shadow:
-        0 8px 24px color-mix(in srgb, var(--shadow-color) 14%, transparent);
-
     position: relative;
     overflow: hidden;
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* subtle glass sheen (reduced for professionalism) */
-.site-header::before,
-section::before {
+/* subtle glass sheen */
+.glass-card::before {
     content: "";
     position: absolute;
     inset: 0;
 
     background: var(--liquid-reflection);
-    opacity: 0.12;
+    opacity: 0.22;
 
     mix-blend-mode: soft-light;
-
     pointer-events: none;
 }
 
-/* ======================== */
-/* HEADER (PROFESSIONAL)    */
-/* ======================== */
+/* hover depth */
+.glass-card:hover {
+    transform: translateY(-2px);
+}
+
+/* ========================= */
+/* HEADER (CARD)             */
+/* ========================= */
+.site-header {
+    composes: glass-card;
+}
 
 .site-header {
-    padding: var(--space-5);
+    display: flex;
+    justify-content: center;
 }
 
 .header-inner {
     display: flex;
     align-items: center;
-    gap: var(--space-5);
+    gap: 22px;
+    width: 100%;
 }
 
 .header-photo {
-    width: 96px;
-    height: 96px;
-
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     object-fit: cover;
 
     border: 2px solid var(--accent-color);
-
-    box-shadow:
-        0 0 0 3px color-mix(in srgb, var(--content-bg) 70%, transparent);
 }
 
 .header-text h1 {
-    font-size: 1.9rem;
-    margin: 0 0 var(--space-1) 0;
-    font-weight: 700;
+    margin: 0 0 6px 0;
+    font-size: 2rem;
 }
 
-/* contact block */
-.contact-line,
-.email-link {
-    display: block;
-    font-size: 0.92rem;
-    color: var(--secondary-text);
-}
-
-.email-link {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
-/* ======================== */
-/* SECTIONS (CLEAR CARDING) */
-/* ======================== */
-
+/* ========================= */
+/* SECTION CARDS             */
+/* ========================= */
 section {
-    padding: var(--space-5);
+    composes: glass-card;
+    display: block;
 
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
+    scroll-margin-top: 80px;
 }
 
-/* spacing separation between sections */
-section + section {
-    margin-top: var(--space-2);
+/* ensures spacing consistency */
+section:not(:last-child) {
+    margin-bottom: var(--section-gap);
 }
 
-/* ======================== */
-/* SECTION TITLE SYSTEM     */
-/* ======================== */
-
+/* ========================= */
+/* SECTION TITLE             */
+/* ========================= */
 section h2 {
-    margin: 0;
+    margin: 0 0 14px 0;
 
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 1.5rem;
+    font-weight: 650;
 
-    letter-spacing: 0.2px;
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
 
     display: flex;
     align-items: center;
-    gap: var(--space-2);
-
-    padding-bottom: var(--space-2);
-
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+    gap: 10px;
 }
 
-/* minimal professional accent */
+/* accent bar */
 section h2::before {
     content: "";
-    width: 3px;
-    height: 14px;
+    width: 4px;
+    height: 16px;
 
     background: var(--accent-color);
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
-/* ======================== */
-/* TEXT / CONTENT           */
-/* ======================== */
-
-p {
+/* ========================= */
+/* SUMMARY IMPROVEMENT       */
+/* ========================= */
+#summary p {
     margin: 0;
-    color: var(--text-color);
+    color: var(--secondary-text);
+    line-height: 1.6;
 }
 
-ul {
-    margin: var(--space-2) 0 0 0;
-    padding-left: 18px;
-}
-
-li {
-    margin-bottom: 6px;
-}
-
-/* ======================== */
-/* SKILLS / TAGS (CLEAN)    */
-/* ======================== */
-
+/* ========================= */
+/* SKILLS / LANGUAGES        */
+/* ========================= */
 .skills-list,
 .languages-list {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    gap: 10px;
 }
 
 .skills-list span,
 .languages-list span {
-    padding: 5px 10px;
+    padding: 7px 12px;
+
+    border-radius: 999px;
+
+    background: color-mix(in srgb, var(--content-bg) 86%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
     font-size: 0.9rem;
-
-    border-radius: 8px;
-
-    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-
-    border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
 }
 
-/* ======================== */
-/* EXPERIENCE / EDUCATION   */
-/* ======================== */
-
+/* ========================= */
+/* EXPERIENCE / EDUCATION    */
+/* ========================= */
 .job,
 .education-item {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
+    gap: 16px;
 
-    padding: var(--space-3) 0;
+    padding: 14px 0;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
 }
 
 .job:last-child,
@@ -241,36 +210,59 @@ li {
 
 .job-left,
 .edu-left {
-    flex: 1 1 70%;
+    flex: 1;
 }
 
 .job-left h3,
 .edu-left h3 {
-    margin: 0 0 4px 0;
-    font-size: 1rem;
-    font-weight: 600;
+    margin: 0;
+    font-size: 1.05rem;
 }
 
 .company,
 .school {
+    display: block;
     font-size: 0.9rem;
     color: var(--secondary-text);
+    margin-top: 2px;
 }
 
 .job-dates,
 .education-dates {
-    flex: 1 1 30%;
-    text-align: right;
+    white-space: nowrap;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+}
 
-    font-size: 0.85rem;
+/* ========================= */
+/* BULLETS                   */
+/* ========================= */
+ul {
+    margin: 8px 0 0 18px;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 6px;
+}
+
+/* ========================= */
+/* FOOTER                    */
+/* ========================= */
+.site-footer {
+    text-align: center;
+    padding: 18px 0;
+
     color: var(--secondary-text);
 }
 
-/* ======================== */
-/* DOWNLOAD BUTTON          */
-/* ======================== */
-
+/* ========================= */
+/* DOWNLOAD BUTTON           */
+/* ========================= */
 .download-btn {
+    display: inline-block;
+    margin-top: 10px;
+
     padding: 12px 22px;
 
     border-radius: 999px;
@@ -278,76 +270,62 @@ li {
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
 
     font-weight: 600;
 
-    cursor: pointer;
-
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 12%, transparent);
-
-    transition: transform 0.18s ease;
+    transition: transform 0.2s ease;
 }
 
 .download-btn:hover {
     transform: translateY(-2px);
 }
 
-/* ======================== */
-/* FOOTER                   */
-/* ======================== */
-
-.site-footer {
-    text-align: center;
-
-    padding: var(--space-5) 0;
-
-    color: var(--secondary-text);
-
-    border-top: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+/* ========================= */
+/* LIGHT MODE FIXES          */
+/* (CRITICAL VISIBILITY FIX)  */
+/* ========================= */
+body[data-theme="light"] section,
+body[data-theme="light"] .site-header {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
-/* ======================== */
-/* LIGHT MODE IMPROVEMENT   */
-/* ======================== */
-
-@media (prefers-color-scheme: light) {
-
-    section,
-    .site-header {
-        border: 1px solid rgba(0, 0, 0, 0.08);
-
-        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
-    }
-
-    section h2 {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-    }
-
-    .company,
-    .school,
-    .job-dates,
-    .education-dates {
-        color: rgba(0, 0, 0, 0.55);
-    }
+/* stronger separation lines in light mode */
+body[data-theme="light"] section h2 {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-/* ======================== */
-/* RESPONSIVE               */
-/* ======================== */
+/* make cards visible in light mode */
+body[data-theme="light"] .glass-card {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
 
+/* ensure text contrast */
+body[data-theme="light"] {
+    color: #111827;
+}
+
+/* ========================= */
+/* RESPONSIVE                */
+/* ========================= */
 @media (max-width: 768px) {
+    body {
+        padding: 14px 6px;
+    }
 
     .header-inner {
         flex-direction: column;
         text-align: center;
     }
 
-    .job-left,
-    .edu-left,
+    .job,
+    .education-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .job-dates,
     .education-dates {
-        flex: 1 1 100%;
-        text-align: left;
+        align-self: flex-start;
     }
 }
