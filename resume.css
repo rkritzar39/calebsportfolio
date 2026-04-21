@@ -2,58 +2,55 @@
 /* Base Styles              */
 /* ======================== */
 body {
-    background: radial-gradient(circle at top, #0f172a, #020617);
-    color: #e5e7eb;
-    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
     margin: 0;
-    padding: 32px 12px;
+    padding: 28px 10px;
     line-height: 1.6;
-    font-size: 15px;
+    font-size: var(--font-size-base);
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background 0.3s ease, color 0.3s ease;
     overflow-x: hidden;
 }
 
 /* ======================== */
-/* Resume Container         */
+/* Layout                   */
 /* ======================== */
 .resume-container {
-    max-width: 920px;
+    width: 100%;
+    max-width: 980px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
 /* ======================== */
-/* Glass Base               */
-/* ======================== */
-:root {
-    --glass-bg: rgba(255, 255, 255, 0.06);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --glass-highlight: rgba(255, 255, 255, 0.25);
-    --accent: #3b82f6;
-}
-
-/* ======================== */
-/* Header                   */
+/* Header (Cleaned Glass)   */
 /* ======================== */
 .site-header {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border-radius: 18px;
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    box-shadow: var(--bubble-shadow);
     position: relative;
     overflow: hidden;
 }
 
-.site-header::after {
+.site-header::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(120deg, transparent, var(--glass-highlight), transparent);
-    opacity: 0.2;
+    background: var(--liquid-reflection);
+    opacity: 0.18;
     pointer-events: none;
 }
 
@@ -61,31 +58,35 @@ body {
     display: flex;
     align-items: center;
     gap: 20px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .header-photo {
-    width: 95px;
-    height: 95px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.2);
+    border: 2px solid var(--accent-color);
 }
 
 .header-text h1 {
     margin: 0;
-    font-size: 2.1rem;
+    font-size: 1.9rem;
     font-weight: 700;
-    letter-spacing: -0.5px;
 }
 
-.contact-line {
-    font-size: 0.9rem;
-    color: #9ca3af;
+/* cleaner text hierarchy */
+.contact-line,
+.email-link {
+    display: block;
+    color: var(--secondary-text);
+    font-size: 0.92rem;
 }
 
 .email-link {
-    color: var(--accent);
-    font-size: 0.9rem;
+    color: var(--accent-color);
     text-decoration: none;
 }
 
@@ -94,26 +95,34 @@ body {
 }
 
 /* ======================== */
-/* Sections (Glass Cards)   */
+/* Sections (Refined Glass) */
 /* ======================== */
 section {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-radius: 16px;
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
     padding: 20px;
+    box-shadow: var(--bubble-shadow);
     position: relative;
+    overflow: hidden;
 }
 
-/* subtle shine */
-section::after {
+/* toned-down reflection (less distraction) */
+section::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(140deg, transparent, rgba(255,255,255,0.15), transparent);
-    opacity: 0.15;
+    background: var(--liquid-reflection);
+    opacity: 0.12;
     pointer-events: none;
+}
+
+section > * {
+    position: relative;
+    z-index: 1;
 }
 
 /* ======================== */
@@ -121,11 +130,9 @@ section::after {
 /* ======================== */
 section h2 {
     margin: 0 0 12px 0;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: #9ca3af;
-    border-bottom: 1px solid rgba(255,255,255,0.12);
+    font-size: 1.25rem;
+    font-weight: 600;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
     padding-bottom: 6px;
 }
 
@@ -136,49 +143,46 @@ section h2 {
 .languages-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 14px;
+    gap: 10px;
 }
 
 .skills-list span,
 .languages-list span {
-    font-size: 0.9rem;
-    color: #d1d5db;
+    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+    padding: 5px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+    font-size: 0.92rem;
 }
 
 /* ======================== */
-/* Jobs and Education       */
+/* Experience Layout        */
 /* ======================== */
 .job,
 .education-item {
-    margin-bottom: 14px;
-}
-
-.job-header,
-.edu-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
 }
 
-.job-title,
-.edu-title {
-    font-weight: 600;
-    font-size: 1rem;
-    color: #f9fafb;
+.job:last-child,
+.education-item:last-child {
+    border-bottom: none;
 }
 
-.company,
-.school {
-    font-size: 0.85rem;
-    color: #9ca3af;
+.job-left,
+.edu-left {
+    flex: 1 1 70%;
 }
 
 .job-dates,
 .education-dates {
-    font-size: 0.8rem;
-    color: #6b7280;
-    white-space: nowrap;
+    flex: 1 1 30%;
+    text-align: right;
+    color: var(--secondary-text);
+    font-size: 0.88rem;
 }
 
 /* ======================== */
@@ -190,29 +194,30 @@ ul {
 }
 
 li {
-    margin-bottom: 4px;
-    color: #d1d5db;
+    margin-bottom: 5px;
 }
 
 /* ======================== */
-/* Download Button          */
+/* Button (clean glass)     */
 /* ======================== */
 .download-btn {
     display: inline-block;
-    padding: 10px 18px;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
-    color: #ffffff;
+    padding: 12px 22px;
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    color: var(--text-color);
     font-weight: 600;
     border-radius: 999px;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
+    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
+    box-shadow: var(--bubble-shadow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .download-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(59,130,246,0.35);
+    box-shadow: 0 10px 20px color-mix(in srgb, var(--shadow-color) 35%, transparent);
 }
 
 /* ======================== */
@@ -220,50 +225,33 @@ li {
 /* ======================== */
 .site-footer {
     text-align: center;
-    font-size: 0.8rem;
-    color: #6b7280;
+    padding: 14px 0;
+    color: var(--secondary-text);
+    font-size: 0.85rem;
 }
 
 /* ======================== */
-/* Responsive               */
+/* Mobile                   */
 /* ======================== */
 @media (max-width: 768px) {
+    body {
+        padding: 16px 6px;
+    }
+
     .header-inner {
         flex-direction: column;
         text-align: center;
     }
 
-    .job-header,
-    .edu-header {
-        flex-direction: column;
-    }
-
+    .job-left,
+    .edu-left,
     .job-dates,
     .education-dates {
-        margin-top: 4px;
-    }
-}
-
-/* ======================== */
-/* PRINT (CRITICAL FIX)     */
-/* ======================== */
-@media print {
-    body {
-        background: #ffffff;
-        color: #000000;
+        flex: 1 1 100%;
+        text-align: left;
     }
 
-    section,
-    .site-header {
-        background: #ffffff;
-        backdrop-filter: none !important;
-        border: 1px solid #e5e7eb;
-        box-shadow: none;
-    }
-
-    .download-btn,
-    nav,
-    footer {
-        display: none;
+    .header-text h1 {
+        font-size: 1.7rem;
     }
 }
