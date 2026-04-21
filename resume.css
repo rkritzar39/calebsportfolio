@@ -2,16 +2,14 @@
 /* Base Styles              */
 /* ======================== */
 body {
-    background: var(--bg-color);
-    color: var(--text-color);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    color: #e5e7eb;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
-    padding: 32px 8px;
-    line-height: var(--line-height-base);
-    font-size: var(--font-size-base);
+    padding: 32px 12px;
+    line-height: 1.6;
+    font-size: 15px;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transition: background 0.4s ease, color 0.4s ease;
     overflow-x: hidden;
 }
 
@@ -19,150 +17,132 @@ body {
 /* Resume Container         */
 /* ======================== */
 .resume-container {
-    width: 100%;
-    max-width: 100%;
+    max-width: 920px;
     margin: 0 auto;
-    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 24px;
+}
+
+/* ======================== */
+/* Glass Base               */
+/* ======================== */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-highlight: rgba(255, 255, 255, 0.25);
+    --accent: #3b82f6;
 }
 
 /* ======================== */
 /* Header                   */
 /* ======================== */
 .site-header {
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    border-radius: var(--radius-xl);
-    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-    padding: 24px;
-    display: flex;
-    justify-content: center;
-    transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-    margin-bottom: 24px;
-    overflow: hidden;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-radius: 18px;
+    padding: 20px;
     position: relative;
+    overflow: hidden;
 }
 
-.site-header::before {
+.site-header::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: var(--liquid-reflection);
-    mix-blend-mode: soft-light;
-    opacity: 0.3;
+    background: linear-gradient(120deg, transparent, var(--glass-highlight), transparent);
+    opacity: 0.2;
     pointer-events: none;
 }
 
 .header-inner {
     display: flex;
     align-items: center;
-    gap: 24px;
-    width: 100%;
-    max-width: 100%;
-    position: relative;
-    z-index: 1;
+    gap: 20px;
 }
 
 .header-photo {
-    width: 120px;
-    height: 120px;
+    width: 95px;
+    height: 95px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--accent-color);
-    box-shadow:
-        0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
-        0 8px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+    border: 2px solid rgba(255,255,255,0.2);
 }
 
 .header-text h1 {
-    margin: 0 0 8px 0;
-    font-size: 2rem;
-    color: var(--text-color);
+    margin: 0;
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-.contact-line,
-.email-link {
-    display: block;
-    color: var(--secondary-text);
-    font-size: 0.95rem;
+.contact-line {
+    font-size: 0.9rem;
+    color: #9ca3af;
 }
 
 .email-link {
+    color: var(--accent);
+    font-size: 0.9rem;
     text-decoration: none;
-    color: var(--accent-color);
-    transition: color 0.2s ease;
 }
 
 .email-link:hover {
-    color: var(--hover-color);
+    text-decoration: underline;
 }
 
 /* ======================== */
-/* Sections                 */
+/* Sections (Glass Cards)   */
 /* ======================== */
 section {
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-    border-radius: var(--radius-xl);
-    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-    padding: 24px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 16px;
+    padding: 20px;
     position: relative;
-    transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    margin-bottom: 24px;
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    overflow: hidden;
 }
 
-section::before {
+/* subtle shine */
+section::after {
     content: "";
     position: absolute;
     inset: 0;
-    background: var(--liquid-reflection);
-    mix-blend-mode: soft-light;
-    opacity: 0.28;
+    background: linear-gradient(140deg, transparent, rgba(255,255,255,0.15), transparent);
+    opacity: 0.15;
     pointer-events: none;
 }
 
-section > * {
-    position: relative;
-    z-index: 1;
-}
-
+/* ======================== */
+/* Section Titles           */
+/* ======================== */
 section h2 {
-    margin-top: 0;
-    margin-bottom: 16px;
-    font-size: 1.6rem;
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
-    padding-bottom: 8px;
-    color: var(--text-color);
+    margin: 0 0 12px 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #9ca3af;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+    padding-bottom: 6px;
 }
 
 /* ======================== */
-/* Skills and Languages     */
+/* Skills / Languages       */
 /* ======================== */
 .skills-list,
 .languages-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px 14px;
 }
 
 .skills-list span,
 .languages-list span {
-    background: color-mix(in srgb, var(--content-bg) 88%, transparent);
-    padding: 6px 12px;
-    border-radius: var(--radius-md);
-    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
-    font-size: 0.95rem;
-    color: var(--text-color);
-    box-shadow: inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+    font-size: 0.9rem;
+    color: #d1d5db;
 }
 
 /* ======================== */
@@ -170,73 +150,69 @@ section h2 {
 /* ======================== */
 .job,
 .education-item {
+    margin-bottom: 14px;
+}
+
+.job-header,
+.edu-header {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 12px 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+    align-items: flex-start;
+    gap: 12px;
 }
 
-.job:last-child,
-.education-item:last-child {
-    border-bottom: none;
+.job-title,
+.edu-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #f9fafb;
 }
 
-.job-left,
-.edu-left {
-    flex: 1 1 70%;
+.company,
+.school {
+    font-size: 0.85rem;
+    color: #9ca3af;
 }
 
 .job-dates,
 .education-dates {
-    flex: 1 1 30%;
-    text-align: right;
-    color: var(--secondary-text);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+    white-space: nowrap;
 }
 
 /* ======================== */
 /* Lists                    */
 /* ======================== */
 ul {
-    padding-left: 20px;
-    margin: 8px 0 0 0;
+    padding-left: 18px;
+    margin: 6px 0 0 0;
 }
 
 li {
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    color: #d1d5db;
 }
 
 /* ======================== */
 /* Download Button          */
 /* ======================== */
-.download-wrapper {
-    text-align: center;
-    margin: 20px 0;
-}
-
 .download-btn {
     display: inline-block;
-    padding: 12px 24px;
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-    color: var(--text-color);
+    padding: 10px 18px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #ffffff;
     font-weight: 600;
     border-radius: 999px;
-    text-decoration: none;
-    border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .download-btn:hover {
     transform: translateY(-2px);
-    border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
-    box-shadow:
-        0 10px 24px color-mix(in srgb, var(--shadow-color) 40%, transparent),
-        0 0 12px color-mix(in srgb, var(--accent-color) 14%, transparent);
+    box-shadow: 0 8px 18px rgba(59,130,246,0.35);
 }
 
 /* ======================== */
@@ -244,39 +220,50 @@ li {
 /* ======================== */
 .site-footer {
     text-align: center;
-    padding: 16px 0;
-    color: var(--secondary-text);
-    border-top: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+    font-size: 0.8rem;
+    color: #6b7280;
 }
 
 /* ======================== */
-/* Media Queries            */
+/* Responsive               */
 /* ======================== */
 @media (max-width: 768px) {
-    body {
-        padding: 16px 4px;
-    }
-
-    .job-left,
-    .edu-left,
-    .job-dates,
-    .education-dates {
-        flex: 1 1 100%;
-        text-align: left;
-    }
-
     .header-inner {
         flex-direction: column;
-        align-items: center;
         text-align: center;
     }
 
-    .header-text h1 {
-        font-size: 1.8rem;
+    .job-header,
+    .edu-header {
+        flex-direction: column;
     }
 
-    .site-header,
-    section {
-        padding: 20px;
+    .job-dates,
+    .education-dates {
+        margin-top: 4px;
+    }
+}
+
+/* ======================== */
+/* PRINT (CRITICAL FIX)     */
+/* ======================== */
+@media print {
+    body {
+        background: #ffffff;
+        color: #000000;
+    }
+
+    section,
+    .site-header {
+        background: #ffffff;
+        backdrop-filter: none !important;
+        border: 1px solid #e5e7eb;
+        box-shadow: none;
+    }
+
+    .download-btn,
+    nav,
+    footer {
+        display: none;
     }
 }
