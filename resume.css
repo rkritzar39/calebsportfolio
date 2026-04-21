@@ -8,16 +8,16 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
 
     margin: 0;
-    padding: 32px 10px;
+    padding: 36px 12px;
 
-    line-height: var(--line-height-base);
-    font-size: var(--font-size-base);
+    line-height: 1.6;
 
     overflow-x: hidden;
 }
 
 /* ========================= */
-/* PAGE WRAPPER             */
+/* MAIN LAYOUT SPACING       */
+/* (THIS FIXES EVERYTHING)    */
 /* ========================= */
 .resume-container {
     max-width: 980px;
@@ -25,11 +25,12 @@ body {
 
     display: flex;
     flex-direction: column;
-    gap: 26px;
+
+    gap: 34px; /* 🔥 BIG GAP BETWEEN SECTIONS */
 }
 
 /* ========================= */
-/* CARD SYSTEM (CONTAINERS)  */
+/* GLASS CARD SYSTEM         */
 /* ========================= */
 .site-header,
 section,
@@ -39,7 +40,7 @@ section,
 
     border-radius: 20px;
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
     box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 
@@ -58,28 +59,41 @@ section::before {
     inset: 0;
 
     background: var(--liquid-reflection);
-    opacity: 0.22;
+    opacity: 0.2;
 
     mix-blend-mode: soft-light;
     pointer-events: none;
 }
 
-/* ensures content sits above glass */
+/* keep content above glass */
 .site-header > *,
 section > * {
     position: relative;
     z-index: 1;
 }
 
-/* spacing so NOTHING touches */
+/* ========================= */
+/* 🔥 CRITICAL FIX: SPACING  */
+/* ========================= */
 .site-header {
-    padding: 24px;
-    margin-bottom: 6px;
+    padding: 26px;
+    margin-bottom: 18px; /* prevents header touching first section */
 }
 
 section {
-    padding: 24px;
-    margin: 0;
+    padding: 26px;
+
+    margin-top: 18px;   /* TOP spacing */
+    margin-bottom: 18px; /* BOTTOM spacing */
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px; /* internal spacing between elements */
+}
+
+/* extra safety separation between consecutive sections */
+section + section {
+    margin-top: 22px;
 }
 
 /* ========================= */
@@ -100,22 +114,17 @@ section {
     border: 2px solid var(--accent-color);
 }
 
-.header-text h1 {
-    margin: 0 0 6px 0;
-    font-size: 2rem;
-}
-
 /* ========================= */
 /* SECTION TITLES           */
 /* ========================= */
 section h2 {
     margin: 0 0 14px 0;
 
-    font-size: 1.5rem;
+    font-size: 1.55rem;
 
     padding-bottom: 10px;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
 
     display: flex;
     align-items: center;
@@ -126,29 +135,18 @@ section h2::before {
     content: "";
     width: 4px;
     height: 16px;
+
     background: var(--accent-color);
     border-radius: 3px;
 }
 
 /* ========================= */
-/* TEXT CONTENT             */
+/* SUMMARY FIX (NO TOUCHING) */
 /* ========================= */
-.contact-line,
-.email-link {
-    display: block;
-    color: var(--secondary-text);
-}
-
-.email-link {
-    color: var(--accent-color);
-    text-decoration: none;
-}
-
-/* summary spacing fix (your issue) */
 #summary p {
     margin: 0;
     color: var(--secondary-text);
-    line-height: 1.6;
+    line-height: 1.65;
 }
 
 /* ========================= */
@@ -169,7 +167,7 @@ section h2::before {
 
     background: color-mix(in srgb, var(--content-bg) 85%, transparent);
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
 
     font-size: 0.9rem;
 }
@@ -181,11 +179,11 @@ section h2::before {
 .education-item {
     display: flex;
     justify-content: space-between;
-    gap: 16px;
+    gap: 14px;
 
     padding: 14px 0;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
 }
 
 .job:last-child,
@@ -212,6 +210,10 @@ ul {
     margin: 8px 0 0 18px;
 }
 
+li {
+    margin-bottom: 6px;
+}
+
 /* ========================= */
 /* DOWNLOAD BUTTON          */
 /* ========================= */
@@ -232,20 +234,30 @@ ul {
 }
 
 /* ========================= */
-/* LIGHT MODE FIX (CRITICAL) */
+/* FOOTER                   */
+/* ========================= */
+.site-footer {
+    text-align: center;
+    padding: 16px 0;
+
+    color: var(--secondary-text);
+}
+
+/* ========================= */
+/* LIGHT MODE FIX           */
 /* ========================= */
 body[data-theme="light"] .site-header,
 body[data-theme="light"] section {
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid rgba(0,0,0,0.10);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
 }
 
-/* stronger section separation in light mode */
+/* stronger separation in light mode */
 body[data-theme="light"] section h2 {
-    border-bottom: 1px solid rgba(0,0,0,0.12);
+    border-bottom: 1px solid rgba(0,0,0,0.14);
 }
 
-/* text clarity */
+/* improve readability */
 body[data-theme="light"] {
     color: #111827;
 }
@@ -255,7 +267,11 @@ body[data-theme="light"] {
 /* ========================= */
 @media (max-width: 768px) {
     body {
-        padding: 14px 6px;
+        padding: 16px 6px;
+    }
+
+    .resume-container {
+        gap: 22px;
     }
 
     .header-inner {
