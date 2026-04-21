@@ -2,8 +2,8 @@
 /* BASE STYLES              */
 /* ======================== */
 body {
-    background: #f5f7fb;
-    color: #111827;
+    background: var(--bg-color);
+    color: var(--text-color);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
     margin: 0;
     padding: 32px 8px;
@@ -16,11 +16,11 @@ body {
 }
 
 /* ======================== */
-/* LAYOUT CONTAINER         */
+/* RESUME CONTAINER         */
 /* ======================== */
 .resume-container {
     width: 100%;
-    max-width: 980px;
+    max-width: 100%;
     margin: 0 auto;
     padding: 0;
     display: flex;
@@ -29,46 +29,36 @@ body {
 }
 
 /* ======================== */
-/* GLASS SYSTEM (LIGHT MODE)*/
+/* HEADER (GLASS)           */
 /* ======================== */
-.site-header,
-section {
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(17, 24, 39, 0.08);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+.site-header {
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+
     border-radius: var(--radius-xl);
-    position: relative;
+    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+    padding: 24px;
+    display: flex;
+    justify-content: center;
+
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    margin-bottom: 24px;
+
     overflow: hidden;
+    position: relative;
 }
 
-/* soft reflection layer */
-.site-header::before,
-section::before {
+.site-header::before {
     content: "";
     position: absolute;
     inset: 0;
     background: var(--liquid-reflection);
-    opacity: 0.10;
+    mix-blend-mode: soft-light;
+    opacity: 0.3;
     pointer-events: none;
-}
-
-/* keep content above glass */
-.site-header *,
-section > * {
-    position: relative;
-    z-index: 1;
-}
-
-/* ======================== */
-/* HEADER                   */
-/* ======================== */
-.site-header {
-    padding: 24px;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 24px;
 }
 
 .header-inner {
@@ -76,6 +66,8 @@ section > * {
     align-items: center;
     gap: 24px;
     width: 100%;
+    position: relative;
+    z-index: 1;
 }
 
 .header-photo {
@@ -83,50 +75,84 @@ section > * {
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #2563eb;
+    border: 2px solid var(--accent-color);
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
+        0 8px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent);
 }
 
 .header-text h1 {
     margin: 0 0 8px 0;
     font-size: 2rem;
-    color: #0f172a;
+    color: var(--text-color);
 }
 
-/* contact info */
 .contact-line,
 .email-link {
     display: block;
+    color: var(--secondary-text);
     font-size: 0.95rem;
-    color: #4b5563;
 }
 
 .email-link {
-    color: #2563eb;
     text-decoration: none;
+    color: var(--accent-color);
+    transition: color 0.2s ease;
 }
 
 .email-link:hover {
-    text-decoration: underline;
+    color: var(--hover-color);
 }
 
 /* ======================== */
-/* SECTIONS                 */
+/* SECTIONS (GLASS)         */
 /* ======================== */
 section {
-    padding: 22px;
-    margin-bottom: 22px;
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+    padding: 24px;
+    position: relative;
+
+    margin-bottom: 24px;
+
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+
+    overflow: hidden;
 }
 
-/* section titles */
+section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--liquid-reflection);
+    mix-blend-mode: soft-light;
+    opacity: 0.28;
+    pointer-events: none;
+}
+
+section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ======================== */
+/* SECTION HEADERS          */
+/* ======================== */
 section h2 {
-    margin: 0 0 14px 0;
+    margin-top: 0;
+    margin-bottom: 16px;
+
+    font-size: 1.6rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
     padding-bottom: 8px;
 
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: #1f2937;
-
-    border-bottom: 1px solid rgba(17, 24, 39, 0.10);
+    color: var(--text-color);
 }
 
 /* accent bar */
@@ -136,7 +162,7 @@ section h2::before {
     width: 4px;
     height: 14px;
     margin-right: 10px;
-    background: #2563eb;
+    background: var(--accent-color);
     border-radius: 4px;
     vertical-align: -2px;
 }
@@ -153,12 +179,12 @@ section h2::before {
 
 .skills-list span,
 .languages-list span {
-    background: rgba(255, 255, 255, 0.9);
+    background: color-mix(in srgb, var(--content-bg) 88%, transparent);
     padding: 6px 12px;
     border-radius: var(--radius-md);
-    border: 1px solid rgba(17, 24, 39, 0.08);
+    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
     font-size: 0.95rem;
-    color: #374151;
+    color: var(--text-color);
 }
 
 /* ======================== */
@@ -170,7 +196,7 @@ section h2::before {
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 12px 0;
-    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 }
 
 .job:last-child,
@@ -187,8 +213,8 @@ section h2::before {
 .education-dates {
     flex: 1 1 30%;
     text-align: right;
-    font-size: 0.88rem;
-    color: #6b7280;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
 }
 
 /* ======================== */
@@ -201,7 +227,7 @@ ul {
 
 li {
     margin-bottom: 6px;
-    color: #374151;
+    color: var(--text-color);
 }
 
 /* ======================== */
@@ -210,19 +236,28 @@ li {
 .download-btn {
     display: inline-block;
     padding: 12px 24px;
-    background: #2563eb;
-    color: #ffffff;
+
+    background: var(--content-bg);
+    background-image: var(--bubble-gradient);
+
+    color: var(--text-color);
     font-weight: 600;
+
     border-radius: 999px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+    border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
+
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .download-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.30);
+    box-shadow:
+        0 10px 24px color-mix(in srgb, var(--shadow-color) 35%, transparent);
 }
 
 /* ======================== */
@@ -231,8 +266,52 @@ li {
 .site-footer {
     text-align: center;
     padding: 16px 0;
-    font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--secondary-text);
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+}
+
+/* ======================== */
+/* LIGHT MODE OPTIMIZATION   */
+/* (NO DESIGN CHANGES)       */
+/* ======================== */
+
+body {
+    color: #111827;
+}
+
+/* improve glass clarity only */
+.site-header,
+section {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.site-header::before {
+    opacity: 0.18;
+}
+
+section::before {
+    opacity: 0.12;
+}
+
+/* text contrast refinement */
+.contact-line,
+.email-link {
+    color: var(--secondary-text);
+}
+
+.email-link {
+    color: var(--accent-color);
+}
+
+/* headings clearer in light mode */
+section h2 {
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+}
+
+/* subtle polish only */
+.job-dates,
+.education-dates {
+    color: var(--secondary-text);
 }
 
 /* ======================== */
@@ -240,7 +319,7 @@ li {
 /* ======================== */
 @media (max-width: 768px) {
     body {
-        padding: 16px 6px;
+        padding: 16px 4px;
     }
 
     .header-inner {
@@ -257,18 +336,6 @@ li {
     }
 
     .header-text h1 {
-        font-size: 1.7rem;
+        font-size: 1.8rem;
     }
-}
-
-/* ======================== */
-/* HOVER POLISH (SUBTLE)    */
-/* ======================== */
-section {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-section:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
 }
