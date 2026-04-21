@@ -1,63 +1,69 @@
 /* ======================== */
-/* BASE                    */
+/* BASE SYSTEM              */
 /* ======================== */
 
 body {
     background: var(--bg-color);
     color: var(--text-color);
 
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
 
     margin: 0;
-    padding: 28px 12px;
+    padding: 34px 12px;
 
-    line-height: 1.55;
+    line-height: 1.65;
     font-size: 15.5px;
 
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
     transition: background 0.35s ease, color 0.35s ease;
+    overflow-x: hidden;
 }
 
 /* ======================== */
-/* MAIN LAYOUT             */
+/* PAGE STRUCTURE SPACING   */
 /* ======================== */
 
 .resume-container {
-    max-width: 860px;
+    max-width: 1100px;
     margin: 0 auto;
 
     display: flex;
     flex-direction: column;
+    gap: 26px;
+}
 
-    gap: 22px; /* IMPORTANT: guarantees no touching */
+/* ensures header never touches first section */
+.site-header {
+    margin-bottom: 26px;
 }
 
 /* ======================== */
-/* GLASS CARD BASE         */
+/* ONYX GLASS CORE SYSTEM   */
 /* ======================== */
 
 .site-header,
 section {
     background: var(--content-bg);
+    background-image: var(--bubble-gradient);
 
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
-    border-radius: 16px;
+    border-radius: var(--radius-xl);
 
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
     box-shadow:
-        0 10px 25px rgba(0,0,0,0.10);
+        0 12px 28px color-mix(in srgb, var(--shadow-color) 18%, transparent),
+        var(--bubble-highlight);
 
     position: relative;
     overflow: hidden;
-
-    padding: 20px 22px;
 }
 
-/* glass reflection (balanced for both modes) */
+/* glass sheen layer */
 .site-header::before,
 section::before {
     content: "";
@@ -65,13 +71,13 @@ section::before {
     inset: 0;
 
     background: var(--liquid-reflection);
+    mix-blend-mode: soft-light;
 
-    opacity: 0.18;
-
+    opacity: 0.22;
     pointer-events: none;
 }
 
-/* keep content above glass layer */
+/* keeps text above glass */
 .site-header *,
 section * {
     position: relative;
@@ -79,122 +85,155 @@ section * {
 }
 
 /* ======================== */
-/* IMPORTANT FIX: SPACING  */
-/* ======================== */
-
-/* ensures NOTHING ever touches visually */
-section {
-    margin-bottom: 6px;
-}
-
-/* extra breathing room between major blocks */
-section + section {
-    margin-top: 6px;
-}
-
-/* ======================== */
 /* HEADER                  */
 /* ======================== */
 
 .site-header {
+    padding: 26px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center;
 }
 
 .header-inner {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 22px;
+    width: 100%;
 }
 
 .header-photo {
-    width: 96px;
-    height: 96px;
+    width: 110px;
+    height: 110px;
 
     border-radius: 50%;
     object-fit: cover;
 
     border: 2px solid var(--accent-color);
+
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--content-bg) 65%, transparent),
+        0 12px 22px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 .header-text h1 {
-    margin: 0;
-    font-size: 1.85rem;
-    font-weight: 700;
+    margin: 0 0 6px 0;
+    font-size: 2rem;
 }
 
+/* contact */
 .contact-line,
 .email-link {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--secondary-text);
 }
 
+.email-link {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.email-link:hover {
+    color: var(--hover-color);
+}
+
 /* ======================== */
-/* SECTION TITLES          */
+/* SECTIONS (PRO CARD SYSTEM) */
 /* ======================== */
 
+section {
+    padding: 24px;
+
+    margin: 0; /* spacing handled globally */
+}
+
+/* adds separation between sections so NOTHING touches */
+section + section {
+    margin-top: 18px;
+}
+
+/* section title */
 section h2 {
+    margin: 0 0 14px 0;
+
+    font-size: 1.45rem;
+    font-weight: 600;
+
+    padding-bottom: 8px;
+
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+}
+
+/* accent bar */
+section h2::before {
+    content: "";
+    display: inline-block;
+
+    width: 4px;
+    height: 14px;
+
+    margin-right: 10px;
+
+    background: var(--accent-color);
+    border-radius: 4px;
+
+    vertical-align: -2px;
+}
+
+/* ======================== */
+/* CONTENT SPACING FIX      */
+/* ======================== */
+
+section p {
     margin: 0 0 12px 0;
+}
 
-    font-size: 1.05rem;
-    font-weight: 700;
+ul {
+    margin: 10px 0 0 0;
+    padding-left: 20px;
+}
 
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-
-    padding-bottom: 6px;
-
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+li {
+    margin-bottom: 6px;
 }
 
 /* ======================== */
-/* SUMMARY                 */
-/* ======================== */
-
-#summary p {
-    margin: 0;
-    color: var(--secondary-text);
-}
-
-/* ======================== */
-/* SKILLS / TAGS           */
+/* SKILLS / TAGS            */
 /* ======================== */
 
 .skills-list,
 .languages-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
 }
 
 .skills-list span,
 .languages-list span {
-    padding: 5px 10px;
+    padding: 6px 12px;
 
-    font-size: 0.85rem;
+    border-radius: var(--radius-md);
 
-    border-radius: 999px;
+    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
 
-    background: rgba(0,0,0,0.04);
+    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
-    border: 1px solid rgba(0,0,0,0.08);
+    font-size: 0.92rem;
 }
 
 /* ======================== */
-/* EXPERIENCE / EDUCATION  */
+/* EXPERIENCE / EDUCATION   */
 /* ======================== */
 
 .job,
 .education-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 6px 16px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 
-    padding: 10px 0;
+    padding: 12px 0;
 
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
 }
 
 .job:last-child,
@@ -202,145 +241,118 @@ section h2 {
     border-bottom: none;
 }
 
-.job-left h3,
-.education-item h3 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.company,
-.school {
-    font-size: 0.85rem;
-    color: var(--secondary-text);
+.job-left,
+.edu-left {
+    flex: 1 1 70%;
 }
 
 .job-dates,
 .education-dates {
-    font-size: 0.85rem;
-    color: var(--secondary-text);
-
+    flex: 1 1 30%;
     text-align: right;
-    white-space: nowrap;
-}
 
-/* ======================== */
-/* LISTS                   */
-/* ======================== */
-
-ul {
-    margin: 6px 0 0 18px;
-}
-
-li {
-    margin-bottom: 4px;
     color: var(--secondary-text);
+    font-size: 0.9rem;
 }
 
 /* ======================== */
-/* BUTTON                  */
+/* DOWNLOAD BUTTON          */
 /* ======================== */
 
 .download-btn {
-    margin-top: 6px;
+    display: inline-block;
 
-    padding: 10px 18px;
+    padding: 12px 24px;
 
     border-radius: 999px;
 
     background: var(--content-bg);
+    background-image: var(--bubble-gradient);
 
-    border: 1px solid rgba(0,0,0,0.10);
+    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
 
-    cursor: pointer;
+    box-shadow:
+        0 10px 26px color-mix(in srgb, var(--shadow-color) 18%, transparent),
+        var(--bubble-highlight);
+
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+
+    font-weight: 600;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 32px color-mix(in srgb, var(--shadow-color) 25%, transparent);
 }
 
 /* ======================== */
-/* FOOTER                  */
+/* FOOTER                   */
 /* ======================== */
 
 .site-footer {
     text-align: center;
 
-    padding: 14px 0;
-
-    font-size: 0.85rem;
+    padding: 18px 0;
 
     color: var(--secondary-text);
 
-    border-top: 1px solid rgba(0,0,0,0.08);
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
 }
 
 /* ======================== */
-/* LIGHT MODE FIXES        */
+/* LIGHT MODE FIX (IMPORTANT) */
 /* ======================== */
 
-.light section,
-.light .site-header {
-    border: 1px solid rgba(0,0,0,0.08);
+body {
+    color: var(--text-color);
 }
 
-.light section h2 {
-    border-bottom: 1px solid rgba(0,0,0,0.10);
-}
+/* stronger separation in light mode ONLY */
+@media (prefers-color-scheme: light) {
 
-.light .skills-list span,
-.light .languages-list span {
-    background: rgba(0,0,0,0.03);
-    border: 1px solid rgba(0,0,0,0.08);
-}
+    .site-header,
+    section {
+        border: 1px solid rgba(0, 0, 0, 0.08);
 
-.light .job,
-.light .education-item {
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-}
+        box-shadow:
+            0 10px 24px rgba(0, 0, 0, 0.06),
+            0 1px 0 rgba(255, 255, 255, 0.6);
+    }
 
-/* ======================== */
-/* DARK MODE IMPROVEMENTS  */
-/* ======================== */
+    section h2 {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    }
 
-body:not(.light) section,
-body:not(.light) .site-header {
-    border: 1px solid rgba(255,255,255,0.10);
-}
-
-body:not(.light) .skills-list span,
-body:not(.light) .languages-list span {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-}
-
-body:not(.light) section h2 {
-    border-bottom: 1px solid rgba(255,255,255,0.10);
-}
-
-body:not(.light) .job,
-body:not(.light) .education-item {
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    section::before,
+    .site-header::before {
+        opacity: 0.12;
+    }
 }
 
 /* ======================== */
-/* RESPONSIVE              */
+/* RESPONSIVE               */
 /* ======================== */
 
 @media (max-width: 768px) {
     body {
-        padding: 14px 6px;
+        padding: 16px 6px;
     }
 
-    .site-header {
+    .header-inner {
         flex-direction: column;
         text-align: center;
-        gap: 10px;
     }
 
-    .job,
-    .education-item {
-        grid-template-columns: 1fr;
-    }
-
+    .job-left,
+    .edu-left,
     .job-dates,
     .education-dates {
+        flex: 1 1 100%;
         text-align: left;
     }
 }
