@@ -1,46 +1,52 @@
 /* ======================== */
-/* BASE SYSTEM              */
+/* DESIGN TOKENS (SPACING)  */
+/* ======================== */
+
+:root {
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+}
+
+/* ======================== */
+/* BASE                     */
 /* ======================== */
 
 body {
     background: var(--bg-color);
     color: var(--text-color);
 
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", Roboto, sans-serif;
 
     margin: 0;
-    padding: 34px 12px;
+    padding: var(--space-6) var(--space-3);
 
     line-height: 1.65;
     font-size: 15.5px;
 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-
-    transition: background 0.35s ease, color 0.35s ease;
-    overflow-x: hidden;
 }
 
 /* ======================== */
-/* PAGE STRUCTURE SPACING   */
+/* LAYOUT CONTAINER         */
 /* ======================== */
 
 .resume-container {
-    max-width: 1100px;
+    max-width: 1050px;
     margin: 0 auto;
 
     display: flex;
     flex-direction: column;
-    gap: 26px;
-}
-
-/* ensures header never touches first section */
-.site-header {
-    margin-bottom: 26px;
+    gap: var(--space-5);
 }
 
 /* ======================== */
-/* ONYX GLASS CORE SYSTEM   */
+/* GLASS BASE (CONTROLLED)  */
 /* ======================== */
 
 .site-header,
@@ -51,19 +57,18 @@ section {
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
-    border-radius: var(--radius-xl);
+    border-radius: 16px;
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
 
     box-shadow:
-        0 12px 28px color-mix(in srgb, var(--shadow-color) 18%, transparent),
-        var(--bubble-highlight);
+        0 8px 24px color-mix(in srgb, var(--shadow-color) 14%, transparent);
 
     position: relative;
     overflow: hidden;
 }
 
-/* glass sheen layer */
+/* subtle glass sheen (reduced for professionalism) */
 .site-header::before,
 section::before {
     content: "";
@@ -71,39 +76,30 @@ section::before {
     inset: 0;
 
     background: var(--liquid-reflection);
+    opacity: 0.12;
+
     mix-blend-mode: soft-light;
 
-    opacity: 0.22;
     pointer-events: none;
 }
 
-/* keeps text above glass */
-.site-header *,
-section * {
-    position: relative;
-    z-index: 1;
-}
-
 /* ======================== */
-/* HEADER                  */
+/* HEADER (PROFESSIONAL)    */
 /* ======================== */
 
 .site-header {
-    padding: 26px;
-    display: flex;
-    justify-content: center;
+    padding: var(--space-5);
 }
 
 .header-inner {
     display: flex;
     align-items: center;
-    gap: 22px;
-    width: 100%;
+    gap: var(--space-5);
 }
 
 .header-photo {
-    width: 110px;
-    height: 110px;
+    width: 96px;
+    height: 96px;
 
     border-radius: 50%;
     object-fit: cover;
@@ -111,20 +107,20 @@ section * {
     border: 2px solid var(--accent-color);
 
     box-shadow:
-        0 0 0 4px color-mix(in srgb, var(--content-bg) 65%, transparent),
-        0 12px 22px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+        0 0 0 3px color-mix(in srgb, var(--content-bg) 70%, transparent);
 }
 
 .header-text h1 {
-    margin: 0 0 6px 0;
-    font-size: 2rem;
+    font-size: 1.9rem;
+    margin: 0 0 var(--space-1) 0;
+    font-weight: 700;
 }
 
-/* contact */
+/* contact block */
 .contact-line,
 .email-link {
     display: block;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: var(--secondary-text);
 }
 
@@ -133,64 +129,66 @@ section * {
     text-decoration: none;
 }
 
-.email-link:hover {
-    color: var(--hover-color);
-}
-
 /* ======================== */
-/* SECTIONS (PRO CARD SYSTEM) */
+/* SECTIONS (CLEAR CARDING) */
 /* ======================== */
 
 section {
-    padding: 24px;
+    padding: var(--space-5);
 
-    margin: 0; /* spacing handled globally */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
 }
 
-/* adds separation between sections so NOTHING touches */
+/* spacing separation between sections */
 section + section {
-    margin-top: 18px;
+    margin-top: var(--space-2);
 }
 
-/* section title */
+/* ======================== */
+/* SECTION TITLE SYSTEM     */
+/* ======================== */
+
 section h2 {
-    margin: 0 0 14px 0;
+    margin: 0;
 
-    font-size: 1.45rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 700;
 
-    padding-bottom: 8px;
+    letter-spacing: 0.2px;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    padding-bottom: var(--space-2);
+
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
 }
 
-/* accent bar */
+/* minimal professional accent */
 section h2::before {
     content: "";
-    display: inline-block;
-
-    width: 4px;
+    width: 3px;
     height: 14px;
 
-    margin-right: 10px;
-
     background: var(--accent-color);
-    border-radius: 4px;
-
-    vertical-align: -2px;
+    border-radius: 2px;
 }
 
 /* ======================== */
-/* CONTENT SPACING FIX      */
+/* TEXT / CONTENT           */
 /* ======================== */
 
-section p {
-    margin: 0 0 12px 0;
+p {
+    margin: 0;
+    color: var(--text-color);
 }
 
 ul {
-    margin: 10px 0 0 0;
-    padding-left: 20px;
+    margin: var(--space-2) 0 0 0;
+    padding-left: 18px;
 }
 
 li {
@@ -198,27 +196,27 @@ li {
 }
 
 /* ======================== */
-/* SKILLS / TAGS            */
+/* SKILLS / TAGS (CLEAN)    */
 /* ======================== */
 
 .skills-list,
 .languages-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: var(--space-2);
 }
 
 .skills-list span,
 .languages-list span {
-    padding: 6px 12px;
+    padding: 5px 10px;
 
-    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+
+    border-radius: 8px;
 
     background: color-mix(in srgb, var(--content-bg) 85%, transparent);
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-
-    font-size: 0.92rem;
+    border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
 }
 
 /* ======================== */
@@ -231,9 +229,9 @@ li {
     justify-content: space-between;
     flex-wrap: wrap;
 
-    padding: 12px 0;
+    padding: var(--space-3) 0;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
 }
 
 .job:last-child,
@@ -246,13 +244,26 @@ li {
     flex: 1 1 70%;
 }
 
+.job-left h3,
+.edu-left h3 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.company,
+.school {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+}
+
 .job-dates,
 .education-dates {
     flex: 1 1 30%;
     text-align: right;
 
+    font-size: 0.85rem;
     color: var(--secondary-text);
-    font-size: 0.9rem;
 }
 
 /* ======================== */
@@ -260,34 +271,26 @@ li {
 /* ======================== */
 
 .download-btn {
-    display: inline-block;
-
-    padding: 12px 24px;
+    padding: 12px 22px;
 
     border-radius: 999px;
 
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
-
-    box-shadow:
-        0 10px 26px color-mix(in srgb, var(--shadow-color) 18%, transparent),
-        var(--bubble-highlight);
-
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
+    border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
 
     font-weight: 600;
 
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--shadow-color) 12%, transparent);
+
+    transition: transform 0.18s ease;
 }
 
 .download-btn:hover {
     transform: translateY(-2px);
-
-    box-shadow:
-        0 14px 32px color-mix(in srgb, var(--shadow-color) 25%, transparent);
 }
 
 /* ======================== */
@@ -297,40 +300,35 @@ li {
 .site-footer {
     text-align: center;
 
-    padding: 18px 0;
+    padding: var(--space-5) 0;
 
     color: var(--secondary-text);
 
-    border-top: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
 }
 
 /* ======================== */
-/* LIGHT MODE FIX (IMPORTANT) */
+/* LIGHT MODE IMPROVEMENT   */
 /* ======================== */
 
-body {
-    color: var(--text-color);
-}
-
-/* stronger separation in light mode ONLY */
 @media (prefers-color-scheme: light) {
 
-    .site-header,
-    section {
+    section,
+    .site-header {
         border: 1px solid rgba(0, 0, 0, 0.08);
 
-        box-shadow:
-            0 10px 24px rgba(0, 0, 0, 0.06),
-            0 1px 0 rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
     }
 
     section h2 {
         border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
 
-    section::before,
-    .site-header::before {
-        opacity: 0.12;
+    .company,
+    .school,
+    .job-dates,
+    .education-dates {
+        color: rgba(0, 0, 0, 0.55);
     }
 }
 
@@ -339,9 +337,6 @@ body {
 /* ======================== */
 
 @media (max-width: 768px) {
-    body {
-        padding: 16px 6px;
-    }
 
     .header-inner {
         flex-direction: column;
