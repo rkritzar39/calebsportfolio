@@ -4,13 +4,18 @@
 body {
     background: var(--bg-color);
     color: var(--text-color);
+
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
+
     margin: 0;
     padding: 32px 8px;
+
     line-height: var(--line-height-base);
     font-size: var(--font-size-base);
+
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
     transition: background 0.4s ease, color 0.4s ease;
     overflow-x: hidden;
 }
@@ -21,8 +26,10 @@ body {
 .resume-container {
     width: 100%;
     max-width: 100%;
+
     margin: 0 auto;
     padding: 0;
+
     display: flex;
     flex-direction: column;
     gap: 32px;
@@ -34,6 +41,7 @@ body {
 .site-header {
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
+
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
@@ -41,10 +49,12 @@ body {
     border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
 
     padding: 24px;
+
     display: flex;
     justify-content: center;
 
     box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+
     margin-bottom: 24px;
 
     overflow: hidden;
@@ -55,38 +65,50 @@ body {
     content: "";
     position: absolute;
     inset: 0;
+
     background: var(--liquid-reflection);
     mix-blend-mode: soft-light;
+
     opacity: 0.3;
     pointer-events: none;
 }
 
+/* ======================== */
+/* HEADER INNER             */
+/* ======================== */
 .header-inner {
     display: flex;
     align-items: center;
     gap: 24px;
+
     width: 100%;
     position: relative;
     z-index: 1;
 }
 
+/* PROFILE IMAGE */
 .header-photo {
     width: 120px;
     height: 120px;
+
     border-radius: 50%;
     object-fit: cover;
+
     border: 2px solid var(--accent-color);
+
     box-shadow:
         0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
         0 8px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent);
 }
 
+/* NAME */
 .header-text h1 {
     margin: 0 0 8px 0;
     font-size: 2rem;
     color: var(--text-color);
 }
 
+/* CONTACT INFO */
 .contact-line,
 .email-link {
     display: block;
@@ -105,50 +127,55 @@ body {
 }
 
 /* ======================== */
-/* SECTIONS (GLASS)         */
+/* SECTIONS (GLASS CARDS)   */
 /* ======================== */
 section {
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
-    border-radius: var(--radius-xl);
-    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-
-    padding: 24px;
-    position: relative;
-
-    margin-bottom: 24px;
-
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
+    border-radius: var(--radius-xl);
+    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+    padding: 24px;
+
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+
+    position: relative;
     overflow: hidden;
+
+    margin-bottom: 24px;
 }
 
 section::before {
     content: "";
     position: absolute;
     inset: 0;
+
     background: var(--liquid-reflection);
     mix-blend-mode: soft-light;
+
     opacity: 0.28;
     pointer-events: none;
 }
 
+/* ensures text stays above glass */
 section > * {
     position: relative;
     z-index: 1;
 }
 
 /* ======================== */
-/* SECTION HEADERS          */
+/* SECTION TITLES           */
 /* ======================== */
 section h2 {
     margin-top: 0;
     margin-bottom: 16px;
 
     font-size: 1.6rem;
+
     border-bottom: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
     padding-bottom: 8px;
 
@@ -159,11 +186,15 @@ section h2 {
 section h2::before {
     content: "";
     display: inline-block;
+
     width: 4px;
     height: 14px;
+
     margin-right: 10px;
+
     background: var(--accent-color);
     border-radius: 4px;
+
     vertical-align: -2px;
 }
 
@@ -180,9 +211,13 @@ section h2::before {
 .skills-list span,
 .languages-list span {
     background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+
     padding: 6px 12px;
+
     border-radius: var(--radius-md);
+
     border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
+
     font-size: 0.95rem;
     color: var(--text-color);
 }
@@ -195,7 +230,9 @@ section h2::before {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+
     padding: 12px 0;
+
     border-bottom: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 }
 
@@ -213,6 +250,7 @@ section h2::before {
 .education-dates {
     flex: 1 1 30%;
     text-align: right;
+
     color: var(--secondary-text);
     font-size: 0.9rem;
 }
@@ -235,6 +273,7 @@ li {
 /* ======================== */
 .download-btn {
     display: inline-block;
+
     padding: 12px 24px;
 
     background: var(--content-bg);
@@ -244,6 +283,7 @@ li {
     font-weight: 600;
 
     border-radius: 999px;
+
     border: 1px solid color-mix(in srgb, var(--border-color) 80%, transparent);
 
     box-shadow: var(--bubble-shadow), var(--bubble-highlight);
@@ -265,53 +305,12 @@ li {
 /* ======================== */
 .site-footer {
     text-align: center;
+
     padding: 16px 0;
+
     color: var(--secondary-text);
+
     border-top: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
-}
-
-/* ======================== */
-/* LIGHT MODE OPTIMIZATION   */
-/* (NO DESIGN CHANGES)       */
-/* ======================== */
-
-body {
-    color: #111827;
-}
-
-/* improve glass clarity only */
-.site-header,
-section {
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-}
-
-.site-header::before {
-    opacity: 0.18;
-}
-
-section::before {
-    opacity: 0.12;
-}
-
-/* text contrast refinement */
-.contact-line,
-.email-link {
-    color: var(--secondary-text);
-}
-
-.email-link {
-    color: var(--accent-color);
-}
-
-/* headings clearer in light mode */
-section h2 {
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
-}
-
-/* subtle polish only */
-.job-dates,
-.education-dates {
-    color: var(--secondary-text);
 }
 
 /* ======================== */
