@@ -9,16 +9,18 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, sans-serif;
 
     margin: 0;
-    padding: 28px 10px;
+    padding: 28px 12px;
 
     line-height: 1.55;
     font-size: 15.5px;
 
     -webkit-font-smoothing: antialiased;
+
+    transition: background 0.35s ease, color 0.35s ease;
 }
 
 /* ======================== */
-/* PAGE CONTAINER          */
+/* MAIN LAYOUT             */
 /* ======================== */
 
 .resume-container {
@@ -27,7 +29,8 @@ body {
 
     display: flex;
     flex-direction: column;
-    gap: 18px; /* tighter = more professional */
+
+    gap: 22px; /* IMPORTANT: guarantees no touching */
 }
 
 /* ======================== */
@@ -37,14 +40,16 @@ body {
 .site-header,
 section {
     background: var(--content-bg);
+
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
-    border-radius: 14px;
+    border-radius: 16px;
 
-    border: 1px solid rgba(255,255,255,0.10);
+    border: 1px solid rgba(0,0,0,0.08);
 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    box-shadow:
+        0 10px 25px rgba(0,0,0,0.10);
 
     position: relative;
     overflow: hidden;
@@ -52,7 +57,7 @@ section {
     padding: 20px 22px;
 }
 
-/* subtle reflection (reduced for professionalism) */
+/* glass reflection (balanced for both modes) */
 .site-header::before,
 section::before {
     content: "";
@@ -60,13 +65,35 @@ section::before {
     inset: 0;
 
     background: var(--liquid-reflection);
-    opacity: 0.15;
+
+    opacity: 0.18;
 
     pointer-events: none;
 }
 
+/* keep content above glass layer */
+.site-header *,
+section * {
+    position: relative;
+    z-index: 1;
+}
+
 /* ======================== */
-/* HEADER (MORE FORMAL)    */
+/* IMPORTANT FIX: SPACING  */
+/* ======================== */
+
+/* ensures NOTHING ever touches visually */
+section {
+    margin-bottom: 6px;
+}
+
+/* extra breathing room between major blocks */
+section + section {
+    margin-top: 6px;
+}
+
+/* ======================== */
+/* HEADER                  */
 /* ======================== */
 
 .site-header {
@@ -82,8 +109,8 @@ section::before {
 }
 
 .header-photo {
-    width: 92px;
-    height: 92px;
+    width: 96px;
+    height: 96px;
 
     border-radius: 50%;
     object-fit: cover;
@@ -93,11 +120,10 @@ section::before {
 
 .header-text h1 {
     margin: 0;
-    font-size: 1.8rem;
+    font-size: 1.85rem;
     font-weight: 700;
 }
 
-/* contact stacked cleanly */
 .contact-line,
 .email-link {
     display: block;
@@ -106,26 +132,21 @@ section::before {
 }
 
 /* ======================== */
-/* SECTION STRUCTURE       */
+/* SECTION TITLES          */
 /* ======================== */
 
 section h2 {
     margin: 0 0 12px 0;
 
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 700;
+
     letter-spacing: 0.08em;
     text-transform: uppercase;
 
-    color: var(--text-color);
-
-    border-bottom: 1px solid rgba(255,255,255,0.10);
     padding-bottom: 6px;
-}
 
-/* remove decorative overload */
-section h2::before {
-    display: none;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
 /* ======================== */
@@ -150,19 +171,19 @@ section h2::before {
 
 .skills-list span,
 .languages-list span {
-    font-size: 0.85rem;
-
     padding: 5px 10px;
+
+    font-size: 0.85rem;
 
     border-radius: 999px;
 
-    background: rgba(255,255,255,0.05);
+    background: rgba(0,0,0,0.04);
 
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(0,0,0,0.08);
 }
 
 /* ======================== */
-/* EXPERIENCE LAYOUT       */
+/* EXPERIENCE / EDUCATION  */
 /* ======================== */
 
 .job,
@@ -173,7 +194,7 @@ section h2::before {
 
     padding: 10px 0;
 
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
 .job:last-child,
@@ -181,7 +202,6 @@ section h2::before {
     border-bottom: none;
 }
 
-/* title + role */
 .job-left h3,
 .education-item h3 {
     margin: 0;
@@ -189,23 +209,25 @@ section h2::before {
     font-weight: 600;
 }
 
-/* location/company */
 .company,
 .school {
     font-size: 0.85rem;
     color: var(--secondary-text);
 }
 
-/* dates aligned right */
 .job-dates,
 .education-dates {
     font-size: 0.85rem;
     color: var(--secondary-text);
+
     text-align: right;
     white-space: nowrap;
 }
 
-/* bullet lists */
+/* ======================== */
+/* LISTS                   */
+/* ======================== */
+
 ul {
     margin: 6px 0 0 18px;
 }
@@ -216,7 +238,7 @@ li {
 }
 
 /* ======================== */
-/* BUTTON (MINIMAL)        */
+/* BUTTON                  */
 /* ======================== */
 
 .download-btn {
@@ -228,15 +250,13 @@ li {
 
     background: var(--content-bg);
 
-    border: 1px solid rgba(255,255,255,0.12);
-
-    color: var(--text-color);
+    border: 1px solid rgba(0,0,0,0.10);
 
     cursor: pointer;
 }
 
 /* ======================== */
-/* FOOTER (CLEAN)          */
+/* FOOTER                  */
 /* ======================== */
 
 .site-footer {
@@ -248,19 +268,70 @@ li {
 
     color: var(--secondary-text);
 
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid rgba(0,0,0,0.08);
 }
 
 /* ======================== */
-/* MOBILE                  */
+/* LIGHT MODE FIXES        */
+/* ======================== */
+
+.light section,
+.light .site-header {
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.light section h2 {
+    border-bottom: 1px solid rgba(0,0,0,0.10);
+}
+
+.light .skills-list span,
+.light .languages-list span {
+    background: rgba(0,0,0,0.03);
+    border: 1px solid rgba(0,0,0,0.08);
+}
+
+.light .job,
+.light .education-item {
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+/* ======================== */
+/* DARK MODE IMPROVEMENTS  */
+/* ======================== */
+
+body:not(.light) section,
+body:not(.light) .site-header {
+    border: 1px solid rgba(255,255,255,0.10);
+}
+
+body:not(.light) .skills-list span,
+body:not(.light) .languages-list span {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+body:not(.light) section h2 {
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+
+body:not(.light) .job,
+body:not(.light) .education-item {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ======================== */
+/* RESPONSIVE              */
 /* ======================== */
 
 @media (max-width: 768px) {
+    body {
+        padding: 14px 6px;
+    }
 
     .site-header {
         flex-direction: column;
         text-align: center;
-        gap: 12px;
+        gap: 10px;
     }
 
     .job,
