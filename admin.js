@@ -927,310 +927,331 @@ function renderYouTubeCard(account) {
     }
     // *** END updateShoutoutPreview FUNCTION ***
 
+// ==============================
+// FIRESTORE REFERENCE
+// ==============================
 const resumeRef = doc(db, "resume", "main");
 
-// ==============================
-
-// LOAD EXISTING DATA INTO ADMIN UI
 
 // ==============================
+// STATE (edit system)
+// ==============================
+let currentEditType = null;
+let currentEditIndex = null;
 
+
+// ==============================
+// LOAD DATA INTO ADMIN UI
+// ==============================
 async function loadAdminData() {
-
   const snap = await getDoc(resumeRef);
-
   if (!snap.exists()) return;
 
   const data = snap.data();
 
-  // Basic Info
+  // Basic fields
+  set("name", data.name);
+  set("contact", data.contact);
+  set("email", data.email);
+  set("summary", data.summary);
 
-  setValue("name", data.name);
+  // Lists
+  renderList("skills-list", data.skills, "skills");
+  renderList("languages-list", data.languages, "languages");
+  renderList("cert-list", data.certifications, "certifications");
+  renderList("project-list", data.projects, "projects");
 
-  setValue("contact", data.contact);
-
-  setValue("email", data.email);
-
-  setValue("summary", data.summary);
-
-  // Previews
-
-  renderTags("skills-preview", data.skills);
-
-  renderTags("languages-preview", data.languages);
-
-  renderTags("certifications-preview", data.certifications);
-
-  renderTags("projects-preview", data.projects);
-
+  // Structured
+  renderExperience(data.experience);
+  renderEducation(data.education);
 }
 
 loadAdminData();
 
-// ==============================
 
+// ==============================
 // BASIC INFO SAVE
-
 // ==============================
-
 async function saveBasicInfo() {
-
   await updateDoc(resumeRef, {
-
-    name: getValue("name"),
-
-    contact: getValue("contact"),
-
-    email: getValue("email"),
-
-    summary: getValue("summary")
-
+    name: get("name"),
+    contact: get("contact"),
+    email: get("email"),
+    summary: get("summary")
   });
-
-  alert("Basic info saved");
-
 }
 
-// ==============================
-
-// ADD SKILL
 
 // ==============================
-
-async function addSkill() {
-
-  const value = getValue("skill-input");
-
+// ADD SIMPLE ARRAY ITEM
+// ==============================
+async function addToArray(field, inputId) {
+  const value = get(inputId);
   if (!value) return;
 
-  await updateDoc(resumeRef, {
+  const snap = await getDoc(resumeRef);
+  const data = snap.data();
 
-    skills: arrayUnion(value)
-
-  });
-
-  clear("skill-input");
-
-}
-
-// ==============================
-
-// ADD LANGUAGE
-
-// ==============================
-
-async function addLanguage() {
-
-  const value = getValue("language-input");
-
-  if (!value) return;
+  const updated = [...(data[field] || []), value];
 
   await updateDoc(resumeRef, {
-
-    languages: arrayUnion(value)
-
+    [field]: updated
   });
 
-  clear("language-input");
-
+  clear(inputId);
+  loadAdminData();
 }
 
-// ==============================
 
-// ADD CERTIFICATION
+// Wrappers
+function addSkill() { addToArray("skills", "skill-input"); }
+function addLanguage() { addToArray("languages", "language-input"); }
+function addCertification() { addToArray("certifications", "cert-input"); }
+function addProject() { addToArray("projects", "project-input"); }
 
-// ==============================
-
-async function addCertification() {
-
-  const value = getValue("cert-input");
-
-  if (!value) return;
-
-  await updateDoc(resumeRef, {
-
-    certifications: arrayUnion(value)
-
-  });
-
-  clear("cert-input");
-
-}
 
 // ==============================
-
-// ADD PROJECT
-
+// EXPERIENCE ADD
 // ==============================
-
-async function addProject() {
-
-  const value = getValue("project-input");
-
-  if (!value) return;
-
-  await updateDoc(resumeRef, {
-
-    projects: arrayUnion(value)
-
-  });
-
-  clear("project-input");
-
-}
-
-// ==============================
-
-// ADD EXPERIENCE (STRUCTURED)
-
-// ==============================
-
 async function addExperience() {
+  const snap = await getDoc(resumeRef);
+  const data = snap.data();
 
-  const bullets = getValue("job-bullets")
-
-    .split("\n")
-
-    .filter(b => b.trim());
-
-  await updateDoc(resumeRef, {
-
-    experience: arrayUnion({
-
+  const updated = [
+    ...(data.experience || []),
+    {
       id: Date.now().toString(),
+      title: get("job-title"),
+      location: get("job-location"),
+      dates: get("job-dates"),
+      bullets: get("job-bullets")
+        .split("\n")
+        .filter(b => b.trim())
+    }
+  ];
 
-      title: getValue("job-title"),
-
-      location: getValue("job-location"),
-
-      dates: getValue("job-dates"),
-
-      bullets
-
-    })
-
-  });
+  await updateDoc(resumeRef, { experience: updated });
 
   clear("job-title");
-
   clear("job-location");
-
   clear("job-dates");
-
   clear("job-bullets");
 
+  loadAdminData();
 }
 
-// ==============================
-
-// ADD EDUCATION
 
 // ==============================
-
+// EDUCATION ADD
+// ==============================
 async function addEducation() {
+  const snap = await getDoc(resumeRef);
+  const data = snap.data();
 
-  await updateDoc(resumeRef, {
-
-    education: arrayUnion({
-
+  const updated = [
+    ...(data.education || []),
+    {
       id: Date.now().toString(),
+      school: get("school"),
+      location: get("edu-location"),
+      dates: get("edu-dates"),
+      details: get("edu-details")
+    }
+  ];
 
-      school: getValue("school"),
-
-      location: getValue("edu-location"),
-
-      dates: getValue("edu-dates"),
-
-      details: getValue("edu-details")
-
-    })
-
-  });
+  await updateDoc(resumeRef, { education: updated });
 
   clear("school");
-
   clear("edu-location");
-
   clear("edu-dates");
-
   clear("edu-details");
 
+  loadAdminData();
 }
 
-// ==============================
-
-// PREVIEW RENDERER (TAGS)
 
 // ==============================
-
-function renderTags(id, items = []) {
-
+// RENDER SIMPLE LISTS
+// ==============================
+function renderList(id, items = [], type) {
   const el = document.getElementById(id);
-
   if (!el) return;
 
-  el.innerHTML = (items || [])
+  el.innerHTML = "";
 
-    .map(item => `<span class="tag">${item}</span>`)
+  (items || []).forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "item";
 
-    .join("");
+    div.innerHTML = `
+      <span>${item}</span>
+      <div>
+        <button onclick="editItem('${type}', ${index})">Edit</button>
+        <button onclick="deleteItem('${type}', ${index})">Delete</button>
+      </div>
+    `;
 
+    el.appendChild(div);
+  });
 }
 
-// ==============================
 
+// ==============================
+// EXPERIENCE RENDER
+// ==============================
+function renderExperience(items = []) {
+  const el = document.getElementById("experience-list");
+  if (!el) return;
+
+  el.innerHTML = "";
+
+  items.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "item";
+
+    div.innerHTML = `
+      <div>
+        <strong>${item.title}</strong><br>
+        ${item.location} | ${item.dates}
+      </div>
+
+      <button onclick="deleteStructured('experience', ${index})">
+        Delete
+      </button>
+    `;
+
+    el.appendChild(div);
+  });
+}
+
+
+// ==============================
+// EDUCATION RENDER
+// ==============================
+function renderEducation(items = []) {
+  const el = document.getElementById("education-list");
+  if (!el) return;
+
+  el.innerHTML = "";
+
+  items.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "item";
+
+    div.innerHTML = `
+      <div>
+        <strong>${item.school}</strong><br>
+        ${item.location} | ${item.dates}
+      </div>
+
+      <button onclick="deleteStructured('education', ${index})">
+        Delete
+      </button>
+    `;
+
+    el.appendChild(div);
+  });
+}
+
+
+// ==============================
+// DELETE SIMPLE ITEMS
+// ==============================
+async function deleteItem(type, index) {
+  const snap = await getDoc(resumeRef);
+  const data = snap.data();
+
+  const updated = [...(data[type] || [])];
+  updated.splice(index, 1);
+
+  await updateDoc(resumeRef, {
+    [type]: updated
+  });
+
+  loadAdminData();
+}
+
+
+// ==============================
+// DELETE STRUCTURED ITEMS
+// ==============================
+async function deleteStructured(type, index) {
+  const snap = await getDoc(resumeRef);
+  const data = snap.data();
+
+  const updated = [...(data[type] || [])];
+  updated.splice(index, 1);
+
+  await updateDoc(resumeRef, {
+    [type]: updated
+  });
+
+  loadAdminData();
+}
+
+
+// ==============================
+// EDIT SYSTEM
+// ==============================
+function editItem(type, index) {
+  currentEditType = type;
+  currentEditIndex = index;
+
+  getDoc(resumeRef).then(snap => {
+    const data = snap.data();
+    document.getElementById("edit-title").value =
+      data[type][index];
+
+    document.getElementById("edit-modal").classList.remove("hidden");
+  });
+}
+
+
+// ==============================
+// SAVE EDIT
+// ==============================
+async function saveEdit() {
+  const snap = await getDoc(resumeRef);
+  const data = snap.data();
+
+  const updated = [...data[currentEditType]];
+  updated[currentEditIndex] =
+    document.getElementById("edit-title").value;
+
+  await updateDoc(resumeRef, {
+    [currentEditType]: updated
+  });
+
+  closeModal();
+  loadAdminData();
+}
+
+
+// ==============================
+// MODAL CONTROL
+// ==============================
+function closeModal() {
+  document.getElementById("edit-modal")
+    .classList.add("hidden");
+}
+
+
+// ==============================
 // HELPERS
-
 // ==============================
-
-function getValue(id) {
-
+function get(id) {
   const el = document.getElementById(id);
-
   return el ? el.value : "";
-
 }
 
-function setValue(id, value) {
-
+function set(id, value) {
   const el = document.getElementById(id);
-
   if (el) el.value = value || "";
-
 }
 
 function clear(id) {
-
   const el = document.getElementById(id);
-
   if (el) el.value = "";
-
-}
-
-// ==============================
-
-// OPTIONAL: REMOVE FUNCTIONS
-
-// ==============================
-
-async function removeSkill(skill) {
-
-  await updateDoc(resumeRef, {
-
-    skills: arrayRemove(skill)
-
-  });
-
-}
-
-async function removeLanguage(lang) {
-
-  await updateDoc(resumeRef, {
-
-    languages: arrayRemove(lang)
-
-  });
-
 }
     
     // Global Click Listener for Modals (Defined ONCE)
