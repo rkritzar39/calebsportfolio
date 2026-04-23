@@ -542,6 +542,112 @@
     </div>
   </div>
 </section>
+
+            <!-- ========================= -->
+<!-- BASIC INFO -->
+<!-- ========================= -->
+<section class="admin-section">
+  <h2>Basic Info</h2>
+
+  <input id="name" placeholder="Full Name">
+  <input id="contact" placeholder="Contact (City | Phone)">
+  <input id="email" placeholder="Email">
+
+  <textarea id="summary" placeholder="Professional Summary"></textarea>
+
+  <button onclick="saveBasicInfo()">Save Basic Info</button>
+</section>
+
+<!-- ========================= -->
+<!-- SKILLS -->
+<!-- ========================= -->
+<section class="admin-section">
+  <h2>Skills</h2>
+
+  <input id="skill-input" placeholder="Add skill">
+  <button onclick="addSkill()">Add Skill</button>
+
+  <div id="skills-preview"></div>
+</section>
+
+<!-- ========================= -->
+<!-- LANGUAGES / TECHNOLOGIES -->
+<!-- ========================= -->
+<section class="admin-section">
+  <h2>Languages / Technologies</h2>
+
+  <input id="language-input" placeholder="Add language or tech">
+  <button onclick="addLanguage()">Add</button>
+
+  <div id="languages-preview"></div>
+</section>
+
+<!-- ========================= -->
+<!-- EXPERIENCE -->
+<!-- ========================= -->
+<section class="admin-section">
+  <h2>Experience</h2>
+
+  <input id="job-title" placeholder="Job Title / Role">
+  <input id="job-location" placeholder="Location">
+  <input id="job-dates" placeholder="Dates (e.g. Apr 2025 – Sep 2025)">
+
+  <textarea id="job-bullets" placeholder="Bullet points (one per line)"></textarea>
+
+  <button onclick="addExperience()">Add Experience</button>
+
+  <div id="experience-preview"></div>
+</section>
+
+<!-- ========================= -->
+<!-- EDUCATION -->
+<!-- ========================= -->
+<section class="admin-section">
+  <h2>Education</h2>
+
+  <input id="school" placeholder="School Name">
+  <input id="edu-location" placeholder="Location">
+  <input id="edu-dates" placeholder="Dates (e.g. 2026 – Expected)">
+
+  <textarea id="edu-details" placeholder="Degree / Notes / Achievements"></textarea>
+
+  <button onclick="addEducation()">Add Education</button>
+
+  <div id="education-preview"></div>
+</section>
+
+<!-- ========================= -->
+<!-- CERTIFICATIONS -->
+<!-- ========================= -->
+<section class="admin-section">
+  <h2>Certifications</h2>
+
+  <input id="cert-input" placeholder="Certification name">
+  <button onclick="addCertification()">Add Certification</button>
+
+  <div id="certifications-preview"></div>
+</section>
+
+<!-- ========================= -->
+<!-- PROJECTS -->
+<!-- ========================= -->
+<section class="admin-section">
+  <h2>Projects</h2>
+
+  <input id="project-input" placeholder="Project name">
+  <button onclick="addProject()">Add Project</button>
+
+  <div id="projects-preview"></div>
+</section>
+
+<!-- ========================= -->
+<!-- SAVE ALL -->
+<!-- ========================= -->
+<section class="admin-section">
+  <button class="save-btn" onclick="saveAllResume()">
+    Save All Changes
+  </button>
+</section>
             
              <section class="admin-section" id="useful-links-management" aria-labelledby="useful-links-heading">
     <h3 id="useful-links-heading">Manage Useful Links</h3>
