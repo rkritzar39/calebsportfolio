@@ -195,6 +195,91 @@ document.addEventListener('DOMContentLoaded', () => { //
 
     // --- Firestore Reference for Profile / Site Config ---
     const profileDocRef = doc(db, "site_config", "mainProfile"); //
+
+    // ===== Resume Editor =====
+const resumeForm = document.getElementById("resume-form");
+const resumeSaveStatus = document.getElementById("resume-save-status");
+
+function linesToArray(text) {
+  return (text || "")
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean);
+}
+
+function parseJsonArray(text, fallback = []) {
+  const trimmed = (text || "").trim();
+  if (!trimmed) return fallback;
+  return JSON.parse(trimmed);
+}
+
+async function loadResumeEditor() {
+  try {
+    const snap = await getDoc(profileDocRef);
+
+    if (!snap.exists()) {
+      console.log("No resume/profile doc found yet.");
+      return;
+    }
+
+    const data = snap.data();
+
+    $("resume-name-input").value = data.name || "";
+    $("resume-contact-input").value = data.contact || "";
+    $("resume-email-input").value = data.email || "";
+    $("resume-summary-input").value = data.summary || "";
+
+    $("resume-skills-input").value = (data.skills || []).join("\n");
+    $("resume-languages-input").value = (data.languages || []).join("\n");
+    $("resume-certifications-input").value = (data.certifications || []).join("\n");
+    $("resume-projects-input").value = (data.projects || []).join("\n");
+
+    $("resume-experience-input").value = JSON.stringify(data.experience || [], null, 2);
+    $("resume-education-input").value = JSON.stringify(data.education || [], null, 2);
+  } catch (err) {
+    console.error("Error loading resume editor:", err);
+    if (resumeSaveStatus) {
+      resumeSaveStatus.textContent = "Failed to load resume data.";
+      resumeSaveStatus.style.color = "red";
+    }
+  }
+}
+
+resumeForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  try {
+    const payload = {
+      name: $("resume-name-input").value.trim(),
+      contact: $("resume-contact-input").value.trim(),
+      email: $("resume-email-input").value.trim(),
+      summary: $("resume-summary-input").value.trim(),
+      skills: linesToArray($("resume-skills-input").value),
+      languages: linesToArray($("resume-languages-input").value),
+      certifications: linesToArray($("resume-certifications-input").value),
+      projects: linesToArray($("resume-projects-input").value),
+      experience: parseJsonArray($("resume-experience-input").value, []),
+      education: parseJsonArray($("resume-education-input").value, []),
+      updatedAt: serverTimestamp()
+    };
+
+    await setDoc(profileDocRef, payload, { merge: true });
+
+    if (resumeSaveStatus) {
+      resumeSaveStatus.textContent = "Resume saved successfully.";
+      resumeSaveStatus.style.color = "green";
+    }
+  } catch (err) {
+    console.error("Error saving resume:", err);
+    if (resumeSaveStatus) {
+      resumeSaveStatus.textContent = "Save failed. Check your JSON in Experience or Education.";
+      resumeSaveStatus.style.color = "red";
+    }
+  }
+});
+
+loadResumeEditor();
+    
     // Reference for Shoutout Metadata (used for timestamps)
     const shoutoutsMetaRef = doc(db, 'siteConfig', 'shoutoutsMetadata'); //
     // *** Firestore Reference for Useful Links ***
