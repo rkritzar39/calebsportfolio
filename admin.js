@@ -927,6 +927,312 @@ function renderYouTubeCard(account) {
     }
     // *** END updateShoutoutPreview FUNCTION ***
 
+const resumeRef = doc(db, "resume", "main");
+
+// ==============================
+
+// LOAD EXISTING DATA INTO ADMIN UI
+
+// ==============================
+
+async function loadAdminData() {
+
+  const snap = await getDoc(resumeRef);
+
+  if (!snap.exists()) return;
+
+  const data = snap.data();
+
+  // Basic Info
+
+  setValue("name", data.name);
+
+  setValue("contact", data.contact);
+
+  setValue("email", data.email);
+
+  setValue("summary", data.summary);
+
+  // Previews
+
+  renderTags("skills-preview", data.skills);
+
+  renderTags("languages-preview", data.languages);
+
+  renderTags("certifications-preview", data.certifications);
+
+  renderTags("projects-preview", data.projects);
+
+}
+
+loadAdminData();
+
+// ==============================
+
+// BASIC INFO SAVE
+
+// ==============================
+
+async function saveBasicInfo() {
+
+  await updateDoc(resumeRef, {
+
+    name: getValue("name"),
+
+    contact: getValue("contact"),
+
+    email: getValue("email"),
+
+    summary: getValue("summary")
+
+  });
+
+  alert("Basic info saved");
+
+}
+
+// ==============================
+
+// ADD SKILL
+
+// ==============================
+
+async function addSkill() {
+
+  const value = getValue("skill-input");
+
+  if (!value) return;
+
+  await updateDoc(resumeRef, {
+
+    skills: arrayUnion(value)
+
+  });
+
+  clear("skill-input");
+
+}
+
+// ==============================
+
+// ADD LANGUAGE
+
+// ==============================
+
+async function addLanguage() {
+
+  const value = getValue("language-input");
+
+  if (!value) return;
+
+  await updateDoc(resumeRef, {
+
+    languages: arrayUnion(value)
+
+  });
+
+  clear("language-input");
+
+}
+
+// ==============================
+
+// ADD CERTIFICATION
+
+// ==============================
+
+async function addCertification() {
+
+  const value = getValue("cert-input");
+
+  if (!value) return;
+
+  await updateDoc(resumeRef, {
+
+    certifications: arrayUnion(value)
+
+  });
+
+  clear("cert-input");
+
+}
+
+// ==============================
+
+// ADD PROJECT
+
+// ==============================
+
+async function addProject() {
+
+  const value = getValue("project-input");
+
+  if (!value) return;
+
+  await updateDoc(resumeRef, {
+
+    projects: arrayUnion(value)
+
+  });
+
+  clear("project-input");
+
+}
+
+// ==============================
+
+// ADD EXPERIENCE (STRUCTURED)
+
+// ==============================
+
+async function addExperience() {
+
+  const bullets = getValue("job-bullets")
+
+    .split("\n")
+
+    .filter(b => b.trim());
+
+  await updateDoc(resumeRef, {
+
+    experience: arrayUnion({
+
+      id: Date.now().toString(),
+
+      title: getValue("job-title"),
+
+      location: getValue("job-location"),
+
+      dates: getValue("job-dates"),
+
+      bullets
+
+    })
+
+  });
+
+  clear("job-title");
+
+  clear("job-location");
+
+  clear("job-dates");
+
+  clear("job-bullets");
+
+}
+
+// ==============================
+
+// ADD EDUCATION
+
+// ==============================
+
+async function addEducation() {
+
+  await updateDoc(resumeRef, {
+
+    education: arrayUnion({
+
+      id: Date.now().toString(),
+
+      school: getValue("school"),
+
+      location: getValue("edu-location"),
+
+      dates: getValue("edu-dates"),
+
+      details: getValue("edu-details")
+
+    })
+
+  });
+
+  clear("school");
+
+  clear("edu-location");
+
+  clear("edu-dates");
+
+  clear("edu-details");
+
+}
+
+// ==============================
+
+// PREVIEW RENDERER (TAGS)
+
+// ==============================
+
+function renderTags(id, items = []) {
+
+  const el = document.getElementById(id);
+
+  if (!el) return;
+
+  el.innerHTML = (items || [])
+
+    .map(item => `<span class="tag">${item}</span>`)
+
+    .join("");
+
+}
+
+// ==============================
+
+// HELPERS
+
+// ==============================
+
+function getValue(id) {
+
+  const el = document.getElementById(id);
+
+  return el ? el.value : "";
+
+}
+
+function setValue(id, value) {
+
+  const el = document.getElementById(id);
+
+  if (el) el.value = value || "";
+
+}
+
+function clear(id) {
+
+  const el = document.getElementById(id);
+
+  if (el) el.value = "";
+
+}
+
+// ==============================
+
+// OPTIONAL: REMOVE FUNCTIONS
+
+// ==============================
+
+async function removeSkill(skill) {
+
+  await updateDoc(resumeRef, {
+
+    skills: arrayRemove(skill)
+
+  });
+
+}
+
+async function removeLanguage(lang) {
+
+  await updateDoc(resumeRef, {
+
+    languages: arrayRemove(lang)
+
+  });
+
+}
+    
     // Global Click Listener for Modals (Defined ONCE)
     if (!window.adminModalClickListenerAttached) {
         window.addEventListener('click', (event) => {
