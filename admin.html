@@ -543,109 +543,97 @@
   </div>
 </section>
 
-     <section class="admin-card" id="resume-admin-section">
-  <h2>Resume Editor</h2>
-  <p>Edit the content for your resume page.</p>
+     <section class="admin-card resume-editor-card" id="resume-admin-section">
+  <div class="section-header">
+    <div>
+      <h2>Resume Editor</h2>
+      <p>Edit the content for your resume page.</p>
+    </div>
+  </div>
 
-  <form id="resume-form">
-    <div class="form-group">
-      <label for="resume-name-input">Full Name</label>
-      <input type="text" id="resume-name-input" />
+  <form id="resume-form" class="resume-form">
+    <div class="editor-section">
+      <h3>Basic Information</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="resume-name-input">Full Name</label>
+          <input type="text" id="resume-name-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="resume-email-input">Email</label>
+          <input type="email" id="resume-email-input" />
+        </div>
+
+        <div class="form-group full-width">
+          <label for="resume-contact-input">Contact Line</label>
+          <input
+            type="text"
+            id="resume-contact-input"
+            placeholder="City, State • Phone • Website"
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label for="resume-summary-input">Summary</label>
+          <textarea id="resume-summary-input" rows="5"></textarea>
+        </div>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="resume-contact-input">Contact Line</label>
-      <input
-        type="text"
-        id="resume-contact-input"
-        placeholder="City, State • Phone • Website"
-      />
+    <div class="editor-section">
+      <div class="section-title-row">
+        <h3>Skills</h3>
+        <button type="button" class="secondary-btn" id="add-skill-btn">+ Add Skill</button>
+      </div>
+      <div id="skills-container" class="simple-list-container"></div>
     </div>
 
-    <div class="form-group">
-      <label for="resume-email-input">Email</label>
-      <input type="email" id="resume-email-input" />
+    <div class="editor-section">
+      <div class="section-title-row">
+        <h3>Languages</h3>
+        <button type="button" class="secondary-btn" id="add-language-btn">+ Add Language</button>
+      </div>
+      <div id="languages-container" class="simple-list-container"></div>
     </div>
 
-    <div class="form-group">
-      <label for="resume-summary-input">Summary</label>
-      <textarea id="resume-summary-input" rows="5"></textarea>
+    <div class="editor-section">
+      <div class="section-title-row">
+        <h3>Certifications</h3>
+        <button type="button" class="secondary-btn" id="add-certification-btn">+ Add Certification</button>
+      </div>
+      <div id="certifications-container" class="simple-list-container"></div>
     </div>
 
-    <div class="form-group">
-      <label for="resume-skills-input">Skills</label>
-      <textarea
-        id="resume-skills-input"
-        rows="5"
-        placeholder="One skill per line"
-      ></textarea>
+    <div class="editor-section">
+      <div class="section-title-row">
+        <h3>Projects</h3>
+        <button type="button" class="secondary-btn" id="add-project-btn">+ Add Project</button>
+      </div>
+      <div id="projects-container" class="simple-list-container"></div>
     </div>
 
-    <div class="form-group">
-      <label for="resume-languages-input">Languages</label>
-      <textarea
-        id="resume-languages-input"
-        rows="4"
-        placeholder="One language per line"
-      ></textarea>
+    <div class="editor-section">
+      <div class="section-title-row">
+        <h3>Experience</h3>
+        <button type="button" class="secondary-btn" id="add-experience-btn">+ Add Experience</button>
+      </div>
+      <div id="experience-container" class="complex-list-container"></div>
     </div>
 
-    <div class="form-group">
-      <label for="resume-experience-input">Experience</label>
-      <textarea
-        id="resume-experience-input"
-        rows="8"
-        placeholder='Example:
-[
-  {
-    "title": "Job Title",
-    "company": "Company Name",
-    "dates": "2023 - Present",
-    "details": ["Did this", "Did that"]
-  }
-]'
-      ></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="resume-education-input">Education</label>
-      <textarea
-        id="resume-education-input"
-        rows="6"
-        placeholder='Example:
-[
-  {
-    "school": "School Name",
-    "degree": "Degree Name",
-    "dates": "2020 - 2024"
-  }
-]'
-      ></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="resume-certifications-input">Certifications</label>
-      <textarea
-        id="resume-certifications-input"
-        rows="5"
-        placeholder="One certification per line"
-      ></textarea>
-    </div>
-
-    <div class="form-group">
-      <label for="resume-projects-input">Projects</label>
-      <textarea
-        id="resume-projects-input"
-        rows="5"
-        placeholder="One project per line"
-      ></textarea>
+    <div class="editor-section">
+      <div class="section-title-row">
+        <h3>Education</h3>
+        <button type="button" class="secondary-btn" id="add-education-btn">+ Add Education</button>
+      </div>
+      <div id="education-container" class="complex-list-container"></div>
     </div>
 
     <div class="button-row">
-      <button type="submit" id="save-resume-btn">Save Resume</button>
+      <button type="submit" id="save-resume-btn" class="primary-btn">Save Resume</button>
     </div>
 
-    <p id="resume-save-status"></p>
+    <p id="resume-save-status" class="save-status"></p>
   </form>
 </section>
 
