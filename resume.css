@@ -25,11 +25,11 @@ body {
     display: flex;
     flex-direction: column;
 
-    gap: 34px;
+    gap: 28px;
 }
 
 /* ========================= */
-/* GLASS CARD SYSTEM (UNCHANGED ONYX CORE) */
+/* GLASS CARD SYSTEM        */
 /* ========================= */
 .site-header,
 section,
@@ -72,11 +72,15 @@ section > * {
 }
 
 /* ========================= */
-/* HEADER (PROFESSIONAL REWRITE) */
+/* HEADER                   */
 /* ========================= */
 .site-header {
-    padding: 28px;
-    margin-bottom: 18px;
+    padding: 30px;
+
+    box-shadow:
+        var(--bubble-shadow),
+        var(--bubble-highlight),
+        0 12px 30px rgba(0,0,0,0.18);
 }
 
 .header-inner {
@@ -105,18 +109,16 @@ section > * {
     gap: 6px;
 }
 
-/* NAME (PRIMARY EMPHASIS) */
+/* NAME */
 .header-text h1 {
     margin: 0;
 
     font-size: 1.95rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-
-    color: var(--text-color);
 }
 
-/* TITLE (SECONDARY IDENTITY) */
+/* TITLE */
 .professional-title {
     margin: 0;
 
@@ -127,14 +129,14 @@ section > * {
 }
 
 /* ========================= */
-/* CONTACT LINE (CLEAN META SYSTEM) */
+/* CONTACT LINE             */
 /* ========================= */
 .contact-line {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
 
-    margin-top: 6px;
+    margin-top: 8px;
 
     font-size: 0.9rem;
     color: var(--secondary-text);
@@ -147,7 +149,7 @@ section > * {
     align-items: center;
 }
 
-/* separator styling */
+/* separator */
 .contact-line span:not(:last-child)::after,
 .contact-line a:not(:last-child)::after {
     content: "•";
@@ -158,12 +160,30 @@ section > * {
     color: color-mix(in srgb, var(--secondary-text) 60%, transparent);
 }
 
-/* links */
+/* IMPROVED LINKS */
 .contact-line a {
-    color: var(--secondary-text);
+    position: relative;
+
+    color: var(--text-color);
     text-decoration: none;
 
-    transition: color 0.2s ease, transform 0.2s ease;
+    font-weight: 500;
+
+    transition: color 0.25s ease, transform 0.2s ease;
+}
+
+.contact-line a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+
+    width: 0%;
+    height: 1px;
+
+    background: var(--accent-color);
+
+    transition: width 0.25s ease;
 }
 
 .contact-line a:hover {
@@ -171,30 +191,29 @@ section > * {
     transform: translateY(-1px);
 }
 
+.contact-line a:hover::after {
+    width: 100%;
+}
+
 /* ========================= */
 /* SECTIONS                 */
 /* ========================= */
 section {
-    padding: 26px;
+    padding: 28px;
 
-    margin-top: 18px;
-    margin-bottom: 18px;
+    margin-top: 16px;
+    margin-bottom: 16px;
 
     display: flex;
     flex-direction: column;
-    gap: 14px;
-}
-
-/* spacing safety */
-section + section {
-    margin-top: 22px;
+    gap: 18px;
 }
 
 /* ========================= */
 /* SECTION TITLES           */
 /* ========================= */
 section h2 {
-    margin: 0 0 14px 0;
+    margin: 0 0 18px 0;
 
     font-size: 1.25rem;
     font-weight: 700;
@@ -225,8 +244,13 @@ section h2::before {
 /* ========================= */
 #summary p {
     margin: 0;
+
+    font-size: 0.98rem;
+    line-height: 1.75;
+
+    max-width: 75ch;
+
     color: var(--secondary-text);
-    line-height: 1.65;
 }
 
 /* ========================= */
@@ -241,15 +265,23 @@ section h2::before {
 
 .skills-list span,
 .languages-list span {
-    padding: 7px 12px;
+    padding: 7px 14px;
 
     border-radius: 999px;
 
-    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+    background: color-mix(in srgb, var(--content-bg) 80%, transparent);
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
 
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+
+    transition: transform 0.2s ease, border 0.2s ease;
+}
+
+.skills-list span:hover,
+.languages-list span:hover {
+    transform: translateY(-2px);
+    border: 1px solid var(--accent-color);
 }
 
 /* ========================= */
@@ -261,9 +293,9 @@ section h2::before {
     justify-content: space-between;
     gap: 14px;
 
-    padding: 14px 0;
+    padding: 16px 0;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
 }
 
 .job:last-child,
@@ -274,6 +306,18 @@ section h2::before {
 .job-left,
 .edu-left {
     flex: 1;
+}
+
+.job-left strong,
+.edu-left strong {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.job-left p,
+.edu-left p {
+    margin: 4px 0 0 0;
+    color: var(--secondary-text);
 }
 
 .job-dates,
@@ -292,6 +336,7 @@ ul {
 
 li {
     margin-bottom: 6px;
+    color: var(--secondary-text);
 }
 
 /* ========================= */
@@ -349,7 +394,7 @@ body[data-theme="light"] {
     }
 
     .resume-container {
-        gap: 22px;
+        gap: 20px;
     }
 
     .header-inner {
