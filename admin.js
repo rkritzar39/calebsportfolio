@@ -200,13 +200,24 @@ document.addEventListener('DOMContentLoaded', () => { //
 const resumeForm = document.getElementById("resume-form");
 const resumeSaveStatus = document.getElementById("resume-save-status");
 
-function $(id) {
+// ===== Resume Editor =====
+
+function el(id) {
   return document.getElementById(id);
 }
 
+let resumeForm = null;
+let resumeSaveStatus = null;
+
+function setStatus(message = "", type = "info") {
+  if (!resumeSaveStatus) return;
+  resumeSaveStatus.textContent = message;
+  resumeSaveStatus.className = `save-status${type ? ` ${type}` : ""}`;
+}
+
 function clearContainer(id) {
-  const el = $(id);
-  if (el) el.innerHTML = "";
+  const container = el(id);
+  if (container) container.innerHTML = "";
 }
 
 function createButton(text, className, type = "button") {
@@ -216,6 +227,43 @@ function createButton(text, className, type = "button") {
   btn.textContent = text;
   return btn;
 }
+
+function getInputValue(id) {
+  return el(id)?.value.trim() || "";
+}
+
+function resetBasicFields() {
+  [
+    "resume-name-input",
+    "resume-title-input",
+    "resume-location-input",
+    "resume-phone-input",
+    "resume-email-input",
+    "resume-website-input",
+    "resume-linkedin-input",
+    "resume-summary-input"
+  ].forEach((id) => {
+    const field = el(id);
+    if (field) field.value = "";
+  });
+}
+
+function fillBasicFields(data = {}) {
+  if (el("resume-name-input")) el("resume-name-input").value = data.name || "";
+  if (el("resume-title-input")) el("resume-title-input").value = data.title || "";
+  if (el("resume-location-input")) el("resume-location-input").value = data.location || "";
+  if (el("resume-phone-input")) el("resume-phone-input").value = data.phone || "";
+  if (el("resume-email-input")) el("resume-email-input").value = data.email || "";
+  if (el("resume-website-input")) el("resume-website-input").value = data.website || "";
+  if (el("resume-linkedin-input")) el("resume-linkedin-input").value = data.linkedin || "";
+  if (el("resume-summary-input")) el("resume-summary-input").value = data.summary || "";
+}
+
+function buildContactLine({ location = "", phone = "", website = "" } = {}) {
+  return [location, phone, website].map((item) => item.trim()).filter(Boolean).join(" • ");
+}
+
+// ===== Simple Lists =====
 
 function createSimpleListItem(value = "", placeholder = "Enter item") {
   const wrapper = document.createElement("div");
@@ -228,7 +276,9 @@ function createSimpleListItem(value = "", placeholder = "Enter item") {
   input.value = value;
 
   const removeBtn = createButton("Remove", "danger-btn");
-  removeBtn.addEventListener("click", () => wrapper.remove());
+  removeBtn.addEventListener("click", () => {
+    wrapper.remove();
+  });
 
   wrapper.appendChild(input);
   wrapper.appendChild(removeBtn);
@@ -237,19 +287,21 @@ function createSimpleListItem(value = "", placeholder = "Enter item") {
 }
 
 function addSimpleListItem(containerId, value = "", placeholder = "Enter item") {
-  const container = $(containerId);
+  const container = el(containerId);
   if (!container) return;
   container.appendChild(createSimpleListItem(value, placeholder));
 }
 
 function collectSimpleList(containerId) {
-  const container = $(containerId);
+  const container = el(containerId);
   if (!container) return [];
 
   return [...container.querySelectorAll(".simple-item-input")]
-    .map(input => input.value.trim())
+    .map((input) => input.value.trim())
     .filter(Boolean);
 }
+
+// ===== Experience Detail Items =====
 
 function createDetailItem(value = "") {
   const wrapper = document.createElement("div");
@@ -258,17 +310,81 @@ function createDetailItem(value = "") {
   const input = document.createElement("input");
   input.type = "text";
   input.className = "detail-input";
-  input.placeholder = "Bullet point / responsibility";
+  input.placeholder = "Describe a responsibility or achievement";
   input.value = value;
 
   const removeBtn = createButton("Remove", "danger-btn");
-  removeBtn.addEventListener("click", () => wrapper.remove());
+  removeBtn.addEventListener("click", () => {
+    wrapper.remove();
+  });
 
   wrapper.appendChild(input);
   wrapper.appendChild(removeBtn);
 
   return wrapper;
 }
+
+// ===== Projects =====
+
+function createProjectItem(data = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "project-item";
+
+  wrapper.innerHTML = `
+    <div class="project-grid">
+      <div class="form-group">
+        <label>Project Name</label>
+        <input type="text" class="project-name" placeholder="Portfolio Website" />
+      </div>
+
+      <div class="form-group">
+        <label>Project Link</label>
+        <input type="text" class="project-link" placeholder="https://yourproject.com" />
+      </div>
+
+      <div class="form-group full-width">
+        <label>Tech Stack</label>
+        <input type="text" class="project-stack" placeholder="HTML, CSS, JavaScript" />
+      </div>
+
+      <div class="form-group full-width">
+        <label>Description</label>
+        <textarea class="project-description" rows="4" placeholder="Briefly describe what this project does and your role."></textarea>
+      </div>
+    </div>
+
+    <div class="item-actions"></div>
+  `;
+
+  wrapper.querySelector(".project-name").value = data.name || "";
+  wrapper.querySelector(".project-link").value = data.link || "";
+  wrapper.querySelector(".project-stack").value = data.stack || "";
+  wrapper.querySelector(".project-description").value = data.description || "";
+
+  const removeBtn = createButton("Remove Project", "danger-btn");
+  removeBtn.addEventListener("click", () => {
+    wrapper.remove();
+  });
+
+  wrapper.querySelector(".item-actions").appendChild(removeBtn);
+
+  return wrapper;
+}
+
+function collectProjects() {
+  return [...document.querySelectorAll("#projects-container .project-item")]
+    .map((item) => {
+      const name = item.querySelector(".project-name")?.value.trim() || "";
+      const link = item.querySelector(".project-link")?.value.trim() || "";
+      const stack = item.querySelector(".project-stack")?.value.trim() || "";
+      const description = item.querySelector(".project-description")?.value.trim() || "";
+
+      return { name, link, stack, description };
+    })
+    .filter((project) => project.name || project.link || project.stack || project.description);
+}
+
+// ===== Experience =====
 
 function createExperienceItem(data = {}) {
   const wrapper = document.createElement("div");
@@ -278,54 +394,80 @@ function createExperienceItem(data = {}) {
     <div class="experience-grid">
       <div class="form-group">
         <label>Job Title</label>
-        <input type="text" class="exp-title" value="${data.title || ""}" placeholder="Frontend Developer" />
+        <input type="text" class="exp-title" placeholder="Frontend Developer" />
       </div>
 
       <div class="form-group">
         <label>Company</label>
-        <input type="text" class="exp-company" value="${data.company || ""}" placeholder="Company Name" />
+        <input type="text" class="exp-company" placeholder="Company Name" />
       </div>
 
-      <div class="form-group full-width">
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" class="exp-location" placeholder="Dallas, TX" />
+      </div>
+
+      <div class="form-group">
         <label>Dates</label>
-        <input type="text" class="exp-dates" value="${data.dates || ""}" placeholder="2023 - Present" />
+        <input type="text" class="exp-dates" placeholder="2023 - Present" />
       </div>
     </div>
 
     <div class="subsection">
       <div class="section-title-row">
-        <h4>Details</h4>
+        <h4>Responsibilities / Achievements</h4>
         <button type="button" class="ghost-btn add-detail-btn">+ Add Detail</button>
       </div>
+
       <div class="detail-list"></div>
     </div>
 
-    <div class="item-actions">
-      <button type="button" class="danger-btn remove-experience-btn">Remove Experience</button>
-    </div>
+    <div class="item-actions"></div>
   `;
 
-  const detailList = wrapper.querySelector(".detail-list");
-  const details = Array.isArray(data.details) ? data.details : [];
+  wrapper.querySelector(".exp-title").value = data.title || "";
+  wrapper.querySelector(".exp-company").value = data.company || "";
+  wrapper.querySelector(".exp-location").value = data.location || "";
+  wrapper.querySelector(".exp-dates").value = data.dates || "";
 
-  if (details.length) {
-    details.forEach(detail => {
-      detailList.appendChild(createDetailItem(detail));
-    });
-  } else {
-    detailList.appendChild(createDetailItem(""));
-  }
+  const detailList = wrapper.querySelector(".detail-list");
+  const details = Array.isArray(data.details) && data.details.length ? data.details : [""];
+
+  details.forEach((detail) => {
+    detailList.appendChild(createDetailItem(detail));
+  });
 
   wrapper.querySelector(".add-detail-btn").addEventListener("click", () => {
     detailList.appendChild(createDetailItem(""));
   });
 
-  wrapper.querySelector(".remove-experience-btn").addEventListener("click", () => {
+  const removeBtn = createButton("Remove Experience", "danger-btn");
+  removeBtn.addEventListener("click", () => {
     wrapper.remove();
   });
 
+  wrapper.querySelector(".item-actions").appendChild(removeBtn);
+
   return wrapper;
 }
+
+function collectExperience() {
+  return [...document.querySelectorAll("#experience-container .experience-item")]
+    .map((item) => {
+      const title = item.querySelector(".exp-title")?.value.trim() || "";
+      const company = item.querySelector(".exp-company")?.value.trim() || "";
+      const location = item.querySelector(".exp-location")?.value.trim() || "";
+      const dates = item.querySelector(".exp-dates")?.value.trim() || "";
+      const details = [...item.querySelectorAll(".detail-input")]
+        .map((input) => input.value.trim())
+        .filter(Boolean);
+
+      return { title, company, location, dates, details };
+    })
+    .filter((job) => job.title || job.company || job.location || job.dates || job.details.length);
+}
+
+// ===== Education =====
 
 function createEducationItem(data = {}) {
   const wrapper = document.createElement("div");
@@ -334,89 +476,111 @@ function createEducationItem(data = {}) {
   wrapper.innerHTML = `
     <div class="education-grid">
       <div class="form-group">
-        <label>School</label>
-        <input type="text" class="edu-school" value="${data.school || ""}" placeholder="University Name" />
+        <label>Education Type</label>
+        <select class="edu-type">
+          <option value="">Select type</option>
+          <option value="High School">High School</option>
+          <option value="Vocational School">Vocational School</option>
+          <option value="College">College</option>
+        </select>
       </div>
 
       <div class="form-group">
-        <label>Degree</label>
-        <input type="text" class="edu-degree" value="${data.degree || ""}" placeholder="B.S. in Computer Science" />
+        <label>School Name</label>
+        <input type="text" class="edu-school" placeholder="School Name" />
+      </div>
+
+      <div class="form-group">
+        <label>Program / Degree / Diploma</label>
+        <input type="text" class="edu-degree" placeholder="Diploma, Certificate, A.A., B.S., etc." />
+      </div>
+
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" class="edu-location" placeholder="City, State" />
       </div>
 
       <div class="form-group full-width">
         <label>Dates</label>
-        <input type="text" class="edu-dates" value="${data.dates || ""}" placeholder="2020 - 2024" />
+        <input type="text" class="edu-dates" placeholder="2020 - 2024" />
+      </div>
+
+      <div class="form-group full-width">
+        <label>Notes</label>
+        <textarea class="edu-notes" rows="3" placeholder="Honors, GPA, coursework, achievements, or additional details"></textarea>
       </div>
     </div>
 
-    <div class="item-actions">
-      <button type="button" class="danger-btn remove-education-btn">Remove Education</button>
-    </div>
+    <div class="item-actions"></div>
   `;
 
-  wrapper.querySelector(".remove-education-btn").addEventListener("click", () => {
+  wrapper.querySelector(".edu-type").value = data.type || "";
+  wrapper.querySelector(".edu-school").value = data.school || "";
+  wrapper.querySelector(".edu-degree").value = data.degree || "";
+  wrapper.querySelector(".edu-location").value = data.location || "";
+  wrapper.querySelector(".edu-dates").value = data.dates || "";
+  wrapper.querySelector(".edu-notes").value = data.notes || "";
+
+  const removeBtn = createButton("Remove Education", "danger-btn");
+  removeBtn.addEventListener("click", () => {
     wrapper.remove();
   });
+
+  wrapper.querySelector(".item-actions").appendChild(removeBtn);
 
   return wrapper;
 }
 
-function collectExperience() {
-  return [...document.querySelectorAll("#experience-container .experience-item")]
-    .map(item => {
-      const title = item.querySelector(".exp-title")?.value.trim() || "";
-      const company = item.querySelector(".exp-company")?.value.trim() || "";
-      const dates = item.querySelector(".exp-dates")?.value.trim() || "";
-      const details = [...item.querySelectorAll(".detail-input")]
-        .map(input => input.value.trim())
-        .filter(Boolean);
-
-      return { title, company, dates, details };
-    })
-    .filter(item => item.title || item.company || item.dates || item.details.length);
-}
-
 function collectEducation() {
   return [...document.querySelectorAll("#education-container .education-item")]
-    .map(item => {
+    .map((item) => {
+      const type = item.querySelector(".edu-type")?.value.trim() || "";
       const school = item.querySelector(".edu-school")?.value.trim() || "";
       const degree = item.querySelector(".edu-degree")?.value.trim() || "";
+      const location = item.querySelector(".edu-location")?.value.trim() || "";
       const dates = item.querySelector(".edu-dates")?.value.trim() || "";
+      const notes = item.querySelector(".edu-notes")?.value.trim() || "";
 
-      return { school, degree, dates };
+      return { type, school, degree, location, dates, notes };
     })
-    .filter(item => item.school || item.degree || item.dates);
+    .filter((edu) => edu.type || edu.school || edu.degree || edu.location || edu.dates || edu.notes);
 }
 
-function bindResumeAddButtons() {
-  $("add-skill-btn")?.addEventListener("click", () => {
-    addSimpleListItem("skills-container", "", "Skill");
-  });
+// ===== Render Defaults =====
 
-  $("add-language-btn")?.addEventListener("click", () => {
-    addSimpleListItem("languages-container", "", "Language");
-  });
+function renderInitialResumeFields() {
+  clearContainer("skills-container");
+  clearContainer("languages-container");
+  clearContainer("certifications-container");
+  clearContainer("projects-container");
+  clearContainer("experience-container");
+  clearContainer("education-container");
 
-  $("add-certification-btn")?.addEventListener("click", () => {
-    addSimpleListItem("certifications-container", "", "Certification");
-  });
+  addSimpleListItem("skills-container", "", "Skill");
+  addSimpleListItem("languages-container", "", "Language");
+  addSimpleListItem("certifications-container", "", "Certification");
 
-  $("add-project-btn")?.addEventListener("click", () => {
-    addSimpleListItem("projects-container", "", "Project");
-  });
-
-  $("add-experience-btn")?.addEventListener("click", () => {
-    $("experience-container")?.appendChild(createExperienceItem());
-  });
-
-  $("add-education-btn")?.addEventListener("click", () => {
-    $("education-container")?.appendChild(createEducationItem());
-  });
+  el("projects-container")?.appendChild(createProjectItem());
+  el("experience-container")?.appendChild(createExperienceItem());
+  el("education-container")?.appendChild(createEducationItem());
 }
+
+// ===== Load =====
 
 async function loadResumeEditor() {
   try {
     const snap = await getDoc(profileDocRef);
+
+    if (!snap.exists()) {
+      resetBasicFields();
+      renderInitialResumeFields();
+      setStatus("", "info");
+      return;
+    }
+
+    const data = snap.data() || {};
+
+    fillBasicFields(data);
 
     clearContainer("skills-container");
     clearContainer("languages-container");
@@ -425,92 +589,133 @@ async function loadResumeEditor() {
     clearContainer("experience-container");
     clearContainer("education-container");
 
-    if (!snap.exists()) {
-      $("skills-container")?.appendChild(createSimpleListItem("", "Skill"));
-      $("languages-container")?.appendChild(createSimpleListItem("", "Language"));
-      $("certifications-container")?.appendChild(createSimpleListItem("", "Certification"));
-      $("projects-container")?.appendChild(createSimpleListItem("", "Project"));
-      $("experience-container")?.appendChild(createExperienceItem());
-      $("education-container")?.appendChild(createEducationItem());
-      return;
-    }
+    const skills = Array.isArray(data.skills) ? data.skills : [];
+    const languages = Array.isArray(data.languages) ? data.languages : [];
+    const certifications = Array.isArray(data.certifications) ? data.certifications : [];
+    const projects = Array.isArray(data.projects) ? data.projects : [];
+    const experience = Array.isArray(data.experience) ? data.experience : [];
+    const education = Array.isArray(data.education) ? data.education : [];
 
-    const data = snap.data();
-
-    $("resume-name-input").value = data.name || "";
-    $("resume-contact-input").value = data.contact || "";
-    $("resume-email-input").value = data.email || "";
-    $("resume-summary-input").value = data.summary || "";
-
-    (data.skills || []).forEach(skill => {
-      addSimpleListItem("skills-container", skill, "Skill");
-    });
-
-    (data.languages || []).forEach(language => {
-      addSimpleListItem("languages-container", language, "Language");
-    });
-
-    (data.certifications || []).forEach(cert => {
-      addSimpleListItem("certifications-container", cert, "Certification");
-    });
-
-    (data.projects || []).forEach(project => {
-      addSimpleListItem("projects-container", project, "Project");
-    });
-
-    (data.experience || []).forEach(exp => {
-      $("experience-container")?.appendChild(createExperienceItem(exp));
-    });
-
-    (data.education || []).forEach(edu => {
-      $("education-container")?.appendChild(createEducationItem(edu));
-    });
-
-    if (!(data.skills || []).length) {
+    if (skills.length) {
+      skills.forEach((skill) => addSimpleListItem("skills-container", skill, "Skill"));
+    } else {
       addSimpleListItem("skills-container", "", "Skill");
     }
 
-    if (!(data.languages || []).length) {
+    if (languages.length) {
+      languages.forEach((language) => addSimpleListItem("languages-container", language, "Language"));
+    } else {
       addSimpleListItem("languages-container", "", "Language");
     }
 
-    if (!(data.certifications || []).length) {
+    if (certifications.length) {
+      certifications.forEach((cert) => addSimpleListItem("certifications-container", cert, "Certification"));
+    } else {
       addSimpleListItem("certifications-container", "", "Certification");
     }
 
-    if (!(data.projects || []).length) {
-      addSimpleListItem("projects-container", "", "Project");
+    if (projects.length) {
+      projects.forEach((project) => {
+        if (typeof project === "string") {
+          el("projects-container")?.appendChild(
+            createProjectItem({
+              name: project,
+              link: "",
+              stack: "",
+              description: ""
+            })
+          );
+        } else {
+          el("projects-container")?.appendChild(createProjectItem(project || {}));
+        }
+      });
+    } else {
+      el("projects-container")?.appendChild(createProjectItem());
     }
 
-    if (!(data.experience || []).length) {
-      $("experience-container")?.appendChild(createExperienceItem());
+    if (experience.length) {
+      experience.forEach((job) => {
+        el("experience-container")?.appendChild(createExperienceItem(job || {}));
+      });
+    } else {
+      el("experience-container")?.appendChild(createExperienceItem());
     }
 
-    if (!(data.education || []).length) {
-      $("education-container")?.appendChild(createEducationItem());
+    if (education.length) {
+      education.forEach((school) => {
+        el("education-container")?.appendChild(createEducationItem(school || {}));
+      });
+    } else {
+      el("education-container")?.appendChild(createEducationItem());
     }
+
+    setStatus("", "info");
   } catch (err) {
     console.error("Error loading resume editor:", err);
-    if (resumeSaveStatus) {
-      resumeSaveStatus.textContent = "Failed to load resume data.";
-      resumeSaveStatus.style.color = "red";
-    }
+    setStatus("Failed to load resume data.", "error");
   }
 }
 
-resumeForm?.addEventListener("submit", async (e) => {
+// ===== Add Buttons =====
+
+function bindResumeAddButtons() {
+  el("add-skill-btn")?.addEventListener("click", () => {
+    addSimpleListItem("skills-container", "", "Skill");
+  });
+
+  el("add-language-btn")?.addEventListener("click", () => {
+    addSimpleListItem("languages-container", "", "Language");
+  });
+
+  el("add-certification-btn")?.addEventListener("click", () => {
+    addSimpleListItem("certifications-container", "", "Certification");
+  });
+
+  el("add-project-btn")?.addEventListener("click", () => {
+    el("projects-container")?.appendChild(createProjectItem());
+  });
+
+  el("add-experience-btn")?.addEventListener("click", () => {
+    el("experience-container")?.appendChild(createExperienceItem());
+  });
+
+  el("add-education-btn")?.addEventListener("click", () => {
+    el("education-container")?.appendChild(createEducationItem());
+  });
+}
+
+// ===== Save =====
+
+async function handleResumeSubmit(e) {
   e.preventDefault();
 
+  const saveBtn = el("save-resume-btn");
+
   try {
+    if (saveBtn) saveBtn.disabled = true;
+    setStatus("Saving resume...", "info");
+
+    const location = getInputValue("resume-location-input");
+    const phone = getInputValue("resume-phone-input");
+    const website = getInputValue("resume-website-input");
+
     const payload = {
-      name: $("resume-name-input").value.trim(),
-      contact: $("resume-contact-input").value.trim(),
-      email: $("resume-email-input").value.trim(),
-      summary: $("resume-summary-input").value.trim(),
+      name: getInputValue("resume-name-input"),
+      title: getInputValue("resume-title-input"),
+      location,
+      phone,
+      email: getInputValue("resume-email-input"),
+      website,
+      linkedin: getInputValue("resume-linkedin-input"),
+      summary: getInputValue("resume-summary-input"),
+
+      // Backward-compatible contact line if your front-end still uses it
+      contact: buildContactLine({ location, phone, website }),
+
       skills: collectSimpleList("skills-container"),
       languages: collectSimpleList("languages-container"),
       certifications: collectSimpleList("certifications-container"),
-      projects: collectSimpleList("projects-container"),
+      projects: collectProjects(),
       experience: collectExperience(),
       education: collectEducation(),
       updatedAt: serverTimestamp()
@@ -518,21 +723,30 @@ resumeForm?.addEventListener("submit", async (e) => {
 
     await setDoc(profileDocRef, payload, { merge: true });
 
-    if (resumeSaveStatus) {
-      resumeSaveStatus.textContent = "Resume saved successfully.";
-      resumeSaveStatus.style.color = "green";
-    }
+    setStatus("Resume saved successfully.", "success");
   } catch (err) {
     console.error("Error saving resume:", err);
-    if (resumeSaveStatus) {
-      resumeSaveStatus.textContent = "Save failed. Please try again.";
-      resumeSaveStatus.style.color = "red";
-    }
+    setStatus("Save failed. Please try again.", "error");
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
   }
+}
+
+// ===== Init =====
+
+document.addEventListener("DOMContentLoaded", async () => {
+  resumeForm = el("resume-form");
+  resumeSaveStatus = el("resume-save-status");
+
+  if (!resumeForm) return;
+
+  bindResumeAddButtons();
+  renderInitialResumeFields();
+  resumeForm.addEventListener("submit", handleResumeSubmit);
+
+  await loadResumeEditor();
 });
 
-bindResumeAddButtons();
-loadResumeEditor();
 
     
     // Reference for Shoutout Metadata (used for timestamps)
