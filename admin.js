@@ -1,6 +1,6 @@
-```
+
 // admin.js (Version includes Preview Prep + Previous Features + Social Links)
-```
+
 
 import { getStorage, ref, uploadBytes, getDownloadURL } from “https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js”;
 
@@ -53,7 +53,7 @@ const icon = $(“manual-status-icon”).value || “manual”;
 const duration = Math.max(0, Number($(“manual-status-duration”).value || 0));
 const enabled = !!$(“manual-status-enabled”).checked;
 
-```
+
 const payload = {
   text: text || "",
   icon,
@@ -71,7 +71,7 @@ if (duration > 0) {
 await setDoc(MANUAL_DOC, payload, { merge: true });
 
 showFeedback("Manual status saved");
-```
+
 
 } catch (err) {
 console.error(“Save manual status error:”, err);
@@ -144,7 +144,7 @@ resultMsg.textContent = “Please enter a status first.”;
 return;
 }
 
-```
+
 try {
   await setDoc(doc(db, "live_status", "current"), { message });
   resultMsg.textContent = "✅ Live status updated successfully!";
@@ -153,7 +153,7 @@ try {
   console.error("Error updating live status:", err);
   resultMsg.textContent = "❌ Failed to update live status.";
 }
-```
+
 
 });
 
@@ -202,7 +202,7 @@ return; // Stop executing if Firebase isn’t ready
 }
 console.log(“Admin DOM Loaded. Setting up UI and CRUD functions.”); //
 
-```
+
 // --- Firestore Reference for Profile / Site Config ---
 const profileDocRef = doc(db, "site_config", "mainProfile"); //
 // Reference for Shoutout Metadata (used for timestamps)
@@ -370,7 +370,7 @@ const editSocialLinkIconClassInput = document.getElementById('edit-social-link-i
 const editSocialLinkStatusMessage = document.getElementById('edit-social-link-status-message');
 const cancelEditSocialLinkButton = document.getElementById('cancel-edit-social-link-button');
 const cancelEditSocialLinkButtonSecondary = document.getElementById('cancel-edit-social-link-button-secondary');
-```
+
 
 // — Helper Functions —
 // Displays status messages in the main admin status area
@@ -382,7 +382,7 @@ adminStatusElement.className = `status-message ${isError ? 'error' : 'success'}`
 setTimeout(() => { if (adminStatusElement) { adminStatusElement.textContent = ‘’; adminStatusElement.className = ‘status-message’; } }, 5000); //
 }
 
-```
+
 // Displays status messages in the profile section's status area
 function showProfileStatus(message, isError = false) { //
     if (!profileStatusMessage) { console.warn("Profile status message element not found"); showAdminStatus(message, isError); return; } // Fallback to admin status
@@ -419,14 +419,14 @@ addSubmitListenerOnce(addShoutoutYoutubeForm, () => handleAddShoutout('youtube',
 
 
 // --- REVISED + CORRECTED Filtering Function for Useful Links ---
-```
+
 
 function displayFilteredUsefulLinks() {
 const listContainer = usefulLinksListAdmin;
 const countElement = usefulLinksCount;
 const searchInput = document.getElementById(‘search-useful-links’);
 
-```
+
 if (!listContainer || !searchInput || typeof allUsefulLinks === 'undefined') {
     console.error("Useful Links Filter Error: Missing elements/data.");
     if(listContainer) listContainer.innerHTML = `<p class="error">Error displaying list.</p>`;
@@ -472,7 +472,7 @@ if (listToRender.length > 0) {
     }
 }
 if (countElement) { countElement.textContent = `(${listToRender.length})`; }
-```
+
 
 }
 
@@ -482,7 +482,7 @@ const listContainer = disabilitiesListAdmin;
 const countElement = disabilitiesCount;
 const searchInput = document.getElementById(‘search-disabilities’);
 
-```
+
 if (!listContainer || !searchInput || typeof allDisabilities === 'undefined') {
     console.error("Disabilities Filter Error: Missing elements/data.");
      if(listContainer) listContainer.innerHTML = `<p class="error">Error displaying list.</p>`;
@@ -528,13 +528,13 @@ if (listToRender.length > 0) {
      }
 }
 if (countElement) { countElement.textContent = `(${listToRender.length})`; }
-```
+
 
 }
 
-```
+
 // Search Listener for Useful Links (NEW)
-```
+
 
 const searchInputUsefulLinks = document.getElementById(‘search-useful-links’);
 if (searchInputUsefulLinks) {
@@ -552,7 +552,7 @@ if (searchInputDisabilities) {
 searchInputDisabilities.addEventListener(‘input’, displayFilteredDisabilities);
 }
 
-```
+
 // --- Add this near other status message functions ---
  function showEditSocialLinkStatus(message, isError = false) {
     const statusMsg = document.getElementById('edit-social-link-status-message'); // Re-select for safety
@@ -564,7 +564,7 @@ searchInputDisabilities.addEventListener(‘input’, displayFilteredDisabilitie
          setTimeout(() => { if (statusMsg && statusMsg.textContent === message) { statusMsg.textContent = ''; statusMsg.className = 'status-message'; } }, 3000);
     }
 }
-```
+
 
 // — Edit Modal Logic (UPDATED for Preview) —
 // Opens the modal and populates it with data for the selected shoutout
@@ -574,7 +574,7 @@ editForm.setAttribute(‘data-doc-id’, docId); // Store ID and platform on the
 editForm.setAttribute(‘data-platform’, platform); //
 const docRef = doc(db, ‘shoutouts’, docId); // Reference to the specific shoutout doc
 
-```
+
     getDoc(docRef).then(docSnap => { // Fetch the document
         if (docSnap.exists()) { //
             const data = docSnap.data(); //
@@ -660,44 +660,44 @@ window.addEventListener('click', (event) => { //
 });
 
 // Helper to safely add submit listener only once
-```
 
-    function addSubmitListenerOnce(formElement, handler) {
-      if (!formElement) {
-        console.warn(“Attempted to add listener to non-existent form:”, formElement);
-        return;
-      }
-      // Use a unique property name to avoid potential conflicts
-      const listenerAttachedFlag = ‘**busArmyDudeAdminSubmitListenerAttached**’;
 
-      // Get the existing handler reference if it was stored, otherwise create it
-      let submitHandlerWrapper = formElement[listenerAttachedFlag + ‘_handler’];
+    function addSubmitListenerOnce(formElement, handler) {
+      if (!formElement) {
+        console.warn(“Attempted to add listener to non-existent form:”, formElement);
+        return;
+      }
+      // Use a unique property name to avoid potential conflicts
+      const listenerAttachedFlag = ‘**busArmyDudeAdminSubmitListenerAttached**’;
 
-      if (!submitHandlerWrapper) {
-          submitHandlerWrapper = (e) => {
-              e.preventDefault(); // Prevent default submission
-              console.log(`DEBUG: Submit event triggered for ${formElement.id}`);
-              handler();          // Call the original handler logic
-          };
-          // Store the handler reference on the element
-          formElement[listenerAttachedFlag + ‘_handler’] = submitHandlerWrapper;
-          console.log(`DEBUG: Created submit handler wrapper for ${formElement.id}`);
-      }
+      // Get the existing handler reference if it was stored, otherwise create it
+      let submitHandlerWrapper = formElement[listenerAttachedFlag + ‘_handler’];
 
-      // — Logic to add/skip —
-      if (!formElement[listenerAttachedFlag]) { // Check if the flag is NOT set
-        formElement.addEventListener(‘submit’, submitHandlerWrapper);
-        formElement[listenerAttachedFlag] = true; // Mark listener as attached by setting the flag
-        console.log(`DEBUG: Added submit listener to ${formElement.id}`);
-      } else {
-         console.log(`DEBUG: Submit listener flag already set for ${formElement.id}, skipping addEventListener.`);
-      }
-    }
+      if (!submitHandlerWrapper) {
+          submitHandlerWrapper = (e) => {
+              e.preventDefault(); // Prevent default submission
+              console.log(`DEBUG: Submit event triggered for ${formElement.id}`);
+              handler();          // Call the original handler logic
+          };
+          // Store the handler reference on the element
+          formElement[listenerAttachedFlag + ‘_handler’] = submitHandlerWrapper;
+          console.log(`DEBUG: Created submit handler wrapper for ${formElement.id}`);
+      }
+
+      // — Logic to add/skip —
+      if (!formElement[listenerAttachedFlag]) { // Check if the flag is NOT set
+        formElement.addEventListener(‘submit’, submitHandlerWrapper);
+        formElement[listenerAttachedFlag] = true; // Mark listener as attached by setting the flag
+        console.log(`DEBUG: Added submit listener to ${formElement.id}`);
+      } else {
+         console.log(`DEBUG: Submit listener flag already set for ${formElement.id}, skipping addEventListener.`);
+      }
+    }
 /** Renders a single shoutout item in the admin list, including profile picture, follower/subscriber count and verified status */
 function renderAdminListItem(container, docId, platform, itemData, deleteHandler, editHandler) {
 if (!container) { console.warn(“List container not found for platform:”, platform); return; }
 
-```
+
 const itemDiv = document.createElement('div');
 itemDiv.className = 'list-item-admin';
 itemDiv.setAttribute('data-id', docId);
@@ -784,7 +784,7 @@ const deleteButton = itemDiv.querySelector('.delete-button');
 if (deleteButton) deleteButton.addEventListener('click', () => deleteHandler(docId, platform, itemDiv));
 
 container.appendChild(itemDiv);
-```
+
 
 }
 
@@ -803,7 +803,7 @@ const profileUrl = username !== ‘N/A’ ? `https://tiktok.com/@${encodeURIComp
 // *** This ternary operator is key: returns ‘’ if false ***
 const verifiedBadge = isVerified ? ‘<img src="check.png" alt="Verified" class="verified-badge">’ : ‘’;
 
-```
+
 return `
     <div class="creator-card">
         <img src="${profilePic}" alt="@${username}" class="creator-pic" onerror="this.onerror=null; this.src='images/default-profile.jpg';">
@@ -815,7 +815,7 @@ return `
             <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="visit-profile"> Visit Profile </a>
         </div>
     </div>`;
-```
+
 
 }
 
@@ -830,7 +830,7 @@ const profileUrl = username !== ‘N/A’ ? `https://instagram.com/${encodeURICo
 // *** This ternary operator is key: returns ‘’ if false ***
 const verifiedBadge = isVerified ? ‘<img src="instagramcheck.png" alt="Verified" class="instagram-verified-badge">’ : ‘’;
 
-```
+
 return `
     <div class="instagram-creator-card">
         <img src="${profilePic}" alt="${nickname}" class="instagram-creator-pic" onerror="this.onerror=null; this.src='images/default-profile.jpg';">
@@ -842,7 +842,7 @@ return `
             <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="instagram-visit-profile"> Visit Profile </a>
         </div>
     </div>`;
-```
+
 
 }
 
@@ -862,7 +862,7 @@ const channelUrl = username !== ‘N/A’ ? `https://www.youtube.com/${encodeURI
 // *** This ternary operator is key: returns ‘’ if false ***
 const verifiedBadge = isVerified ? ‘<img src="youtubecheck.png" alt="Verified" class="youtube-verified-badge">’ : ‘’;
 
-```
+
 return `
     <div class="youtube-creator-card">
         ${coverPhoto ? `<img src="${coverPhoto}" alt="${nickname} Cover Photo" class="youtube-cover-photo" onerror="this.style.display='none'">` : ''}
@@ -875,7 +875,7 @@ return `
             <a href="${channelUrl}" target="_blank" rel="noopener noreferrer" class="youtube-visit-profile"> Visit Channel </a>
         </div>
     </div>`;
-```
+
 
 }
 
@@ -885,7 +885,7 @@ let formElement; //
 let previewElement; //
 let accountData = {}; // Object to hold current form values
 
-```
+
     // 1. Determine which form and preview area to use
     if (formType === 'add') { //
         formElement = document.getElementById(`add-shoutout-${platform}-form`); //
@@ -966,7 +966,7 @@ let accountData = {}; // Object to hold current form values
     }
 }
 // *** END updateShoutoutPreview FUNCTION ***
-```
+
 
 // ==============================
 // FIRESTORE REFERENCE
@@ -1116,7 +1116,7 @@ el.innerHTML = “”;
 const div = document.createElement(“div”);
 div.className = “item”;
 
-```
+
 div.innerHTML = `
   <span>${item}</span>
   <div>
@@ -1126,7 +1126,7 @@ div.innerHTML = `
 `;
 
 el.appendChild(div);
-```
+
 
 });
 }
@@ -1144,7 +1144,7 @@ items.forEach((item, index) => {
 const div = document.createElement(“div”);
 div.className = “item”;
 
-```
+
 div.innerHTML = `
   <div>
     <strong>${item.title}</strong><br>
@@ -1157,7 +1157,7 @@ div.innerHTML = `
 `;
 
 el.appendChild(div);
-```
+
 
 });
 }
@@ -1175,7 +1175,7 @@ items.forEach((item, index) => {
 const div = document.createElement(“div”);
 div.className = “item”;
 
-```
+
 div.innerHTML = `
   <div>
     <strong>${item.school}</strong><br>
@@ -1188,7 +1188,7 @@ div.innerHTML = `
 `;
 
 el.appendChild(div);
-```
+
 
 });
 }
@@ -1239,9 +1239,9 @@ const data = snap.data();
 document.getElementById(“edit-title”).value =
 data[type][index];
 
-```
+
 document.getElementById("edit-modal").classList.remove("hidden");
-```
+
 
 });
 }
@@ -1291,7 +1291,7 @@ const el = document.getElementById(id);
 if (el) el.value = “”;
 }
 
-```
+
 // Global Click Listener for Modals (Defined ONCE)
 if (!window.adminModalClickListenerAttached) {
     window.addEventListener('click', (event) => {
@@ -1312,14 +1312,14 @@ if (!window.adminModalClickListenerAttached) {
     window.adminModalClickListenerAttached = true;
     console.log("Global modal click listener attached.");
 }
-```
+
 
 // — Google Sign-In Handler —
 async function handleGoogleSignIn(response) {
 console.log(“Received response from Google Sign-In…”);
 const authStatus = document.getElementById(‘auth-status’);
 
-```
+
     if (authStatus) {
         authStatus.textContent = 'Verifying with Google...';
         authStatus.className = 'status-message';
@@ -1344,7 +1344,7 @@ const authStatus = document.getElementById(‘auth-status’);
         }
     }
 }
-```
+
 
 // admin-business-hours-v16.js
 // ======================================================
@@ -1436,7 +1436,7 @@ const wrapper = document.createElement(‘div’);
 wrapper.className = ‘hours-range’;
 wrapper.innerHTML = `<input type="time" class="open-time" value="${open || ''}" /> <span class="range-sep"> — </span> <input type="time" class="close-time" value="${close || ''}" /> <button type="button" class="remove-hours" title="Remove range">×</button>`;
 
-```
+
 const removeBtn = wrapper.querySelector('.remove-hours');
 addListenerSafe(removeBtn, 'click', (e) => {
     wrapper.remove();
@@ -1448,7 +1448,7 @@ wrapper.querySelectorAll('input').forEach(inp => {
 });
 
 return wrapper;
-```
+
 
 }
 
@@ -1458,7 +1458,7 @@ const container = document.getElementById(‘regular-hours-container’);
 if (!container) { console.error(“regular-hours-container missing”); return; }
 container.innerHTML = ‘’;
 
-```
+
 daysOfWeek.forEach(day => {
     const dayData = data[day] || { isClosed: true, ranges: [] };
     const block = document.createElement('div');
@@ -1502,7 +1502,7 @@ daysOfWeek.forEach(day => {
 });
 
 updateAdminPreview();
-```
+
 
 }
 
@@ -1517,7 +1517,7 @@ const div = document.createElement(‘div’);
 div.className = ‘hour-entry holiday-entry’;
 div.setAttribute(‘data-id’, uniqueId);
 
-```
+
 div.innerHTML = `
     <button type="button" class="remove-hour-button" title="Remove">×</button>
     <div class="form-row">
@@ -1555,7 +1555,7 @@ addListenerSafe(isClosedCheckbox, 'change', (e) => {
 div.querySelectorAll('input').forEach((inp) => addListenerSafe(inp, 'input', updateAdminPreview, `hol_input_${uniqueId}_${inp.className}`));
 
 return div;
-```
+
 
 }
 
@@ -1565,7 +1565,7 @@ const div = document.createElement(‘div’);
 div.className = ‘hour-entry temporary-entry’;
 div.setAttribute(‘data-id’, uniqueId);
 
-```
+
 div.innerHTML = `
     <button type="button" class="remove-hour-button" title="Remove">×</button>
     <div class="form-row">
@@ -1607,7 +1607,7 @@ addListenerSafe(isClosedCheckbox, 'change', (e) => {
 div.querySelectorAll('input').forEach((inp) => addListenerSafe(inp, 'input', updateAdminPreview, `tmp_input_${uniqueId}_${inp.className}`));
 
 return div;
-```
+
 
 }
 
@@ -1622,7 +1622,7 @@ const statusOverrideSelect = document.getElementById(‘business-status-override
 const holidayHoursList = document.getElementById(‘holiday-hours-list’);
 const temporaryHoursList = document.getElementById(‘temporary-hours-list’);
 
-```
+
 if (!businessDocRef || typeof getDoc !== 'function') {
     console.error("Firestore helpers missing: cannot load business info.");
     return;
@@ -1662,7 +1662,7 @@ try {
     console.error("Error loading business info:", err);
     showBusinessInfoStatus("Error loading business info", true);
 }
-```
+
 
 }
 
@@ -1673,7 +1673,7 @@ SAVE DATA TO FIRESTORE
 async function saveBusinessInfoData(e) {
 e.preventDefault();
 
-```
+
 if (!auth || !auth.currentUser) {
     showBusinessInfoStatus("Not logged in.", true);
     return;
@@ -1741,7 +1741,7 @@ try {
     console.error("Error saving business info:", err);
     showBusinessInfoStatus(`Error saving: ${err.message || err}`, true);
 }
-```
+
 
 }
 
@@ -1754,7 +1754,7 @@ const adminPreviewStatus = document.getElementById(‘admin-preview-status’);
 const adminPreviewHours = document.getElementById(‘admin-preview-hours’);
 const adminPreviewContact = document.getElementById(‘admin-preview-contact’);
 
-```
+
 if (!adminPreviewStatus || !adminPreviewHours || !adminPreviewContact) {
     console.warn("Preview elements missing");
     return;
@@ -1955,7 +1955,7 @@ adminPreviewHours.innerHTML = html;
 adminPreviewContact.innerHTML = contactEmail
     ? `Contact: <a href="mailto:${contactEmail}" target="_blank">${contactEmail}</a>`
     : '';
-```
+
 
 }
 /* ———————––
@@ -1970,7 +1970,7 @@ const addTempBtn = document.getElementById(‘add-temporary-button’);
 const holidayList = document.getElementById(‘holiday-hours-list’);
 const tempList = document.getElementById(‘temporary-hours-list’);
 
-```
+
 if (!form) { console.error("business-info-form missing"); return; }
 
 // Prevent double-attach
@@ -2012,7 +2012,7 @@ const observer = new MutationObserver((mutationsList) => {
 });
 if (holidayListEl) observer.observe(holidayListEl, { childList: true, subtree: true });
 if (tempListEl) observer.observe(tempListEl, { childList: true, subtree: true });
-```
+
 
 }
 
@@ -2038,7 +2038,7 @@ const listContainer = document.getElementById(`shoutouts-${platform}-list-admin`
 const countElement = document.getElementById(`${platform}-count`);
 const searchInput = document.getElementById(`search-${platform}`);
 
-```
+
 if (!listContainer || !searchInput || !allShoutouts || !allShoutouts[platform]) {
     console.error(`Missing elements or data for filtering platform: ${platform}.`);
     if(listContainer) listContainer.innerHTML = `<p class="error">Error displaying filtered list.</p>`;
@@ -2086,7 +2086,7 @@ if (filteredList.length > 0) {
 if (countElement) {
     countElement.textContent = `(${filteredList.length})`;
 }
-```
+
 
 }
 
@@ -2108,7 +2108,7 @@ try {
 const res = await fetch(”/api/discord/profile”);
 if (!res.ok) return;
 
-```
+
     const data = await res.json();
 
     discordData = {
@@ -2121,7 +2121,7 @@ if (!res.ok) return;
 } catch (err) {
     console.warn("Discord fetch failed:", err);
 }
-```
+
 
 }
 
@@ -2130,7 +2130,7 @@ if (!res.ok) return;
 // ============================
 async function loadProfileData() {
 
-```
+
 if (!auth || !auth.currentUser) {
     console.warn("Auth not ready or user not logged in.");
     return;
@@ -2283,7 +2283,7 @@ try {
         showProfileStatus("Error loading profile data.", true);
     }
 }
-```
+
 
 }
 
@@ -2293,7 +2293,7 @@ try {
 async function saveProfileData(event) {
 event.preventDefault();
 
-```
+
 if (!auth || !auth.currentUser) {
     showProfileStatus("Error: Not logged in.", true);
     return;
@@ -2352,7 +2352,7 @@ try {
     console.error("Save error:", error);
     showProfileStatus("Error saving profile.", true);
 }
-```
+
 
 }
 
@@ -2361,7 +2361,7 @@ try {
 // ============================
 if (profilePicUrlInput && adminPfpPreview) {
 
-```
+
 profilePicUrlInput.addEventListener("input", () => {
 
     const url = profilePicUrlInput.value.trim();
@@ -2377,98 +2377,98 @@ profilePicUrlInput.addEventListener("input", () => {
 adminPfpPreview.onerror = () => {
     adminPfpPreview.style.display = "none";
 };
-```
+
 
 }
 
 // *** FUNCTION TO SAVE Maintenance Mode Status ***
 
-    async function saveMaintenanceModeStatus(isEnabled) { //
+    async function saveMaintenanceModeStatus(isEnabled) { //
 
-        // Ensure user is logged in
+        // Ensure user is logged in
 
-        if (!auth || !auth.currentUser) { //
+        if (!auth || !auth.currentUser) { //
 
-            showAdminStatus(“Error: Not logged in. Cannot save settings.”, true); // Use main admin status
+            showAdminStatus(“Error: Not logged in. Cannot save settings.”, true); // Use main admin status
 
-            // Revert checkbox state visually if save fails due to auth issue
+            // Revert checkbox state visually if save fails due to auth issue
 
-            if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
+            if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
 
-            return; //
+            return; //
 
-        }
+        }
 
-        // Use the specific status message area for settings, fallback to main admin status
+        // Use the specific status message area for settings, fallback to main admin status
 
-        const statusElement = settingsStatusMessage || adminStatusElement; //
+        const statusElement = settingsStatusMessage || adminStatusElement; //
 
-        // Show saving message
+        // Show saving message
 
-        if (statusElement) { //
+        if (statusElement) { //
 
-            statusElement.textContent = “Saving setting…”; //
+            statusElement.textContent = “Saving setting…”; //
 
-            statusElement.className = “status-message”; // Reset style
+            statusElement.className = “status-message”; // Reset style
 
-            statusElement.style.display = ‘block’; //
+            statusElement.style.display = ‘block’; //
 
-        }
+        }
 
-        try { //
+        try { //
 
-            // Use profileDocRef (site_config/mainProfile) to store the flag
+            // Use profileDocRef (site_config/mainProfile) to store the flag
 
-            // Use setDoc with merge: true to update only this field without overwriting others
+            // Use setDoc with merge: true to update only this field without overwriting others
 
-            await setDoc(profileDocRef, { //
+            await setDoc(profileDocRef, { //
 
-                isMaintenanceModeEnabled: isEnabled // Save the boolean value (true/false)
+                isMaintenanceModeEnabled: isEnabled // Save the boolean value (true/false)
 
-            }, { merge: true }); //
+            }, { merge: true }); //
 
-            console.log(“Maintenance mode status saved:”, isEnabled); //
+            console.log(“Maintenance mode status saved:”, isEnabled); //
 
-            // Show success message using the dedicated settings status element or fallback
+            // Show success message using the dedicated settings status element or fallback
 
-             if (statusElement === settingsStatusMessage && settingsStatusMessage) { // Check if we are using the specific element
+             if (statusElement === settingsStatusMessage && settingsStatusMessage) { // Check if we are using the specific element
 
-                 showSettingsStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); // Uses the settings-specific display/clear logic
+                 showSettingsStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); // Uses the settings-specific display/clear logic
 
-             } else { // Fallback if specific element wasn’t found initially
+             } else { // Fallback if specific element wasn’t found initially
 
-                showAdminStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); //
+                showAdminStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); //
 
-             }
+             }
 
-        } catch (error) { //
+        } catch (error) { //
 
-            console.error(“Error saving maintenance mode status:”, error); //
+            console.error(“Error saving maintenance mode status:”, error); //
 
-            // Show error message in the specific status area or fallback
+            // Show error message in the specific status area or fallback
 
-            if (statusElement === settingsStatusMessage && settingsStatusMessage) { //
+            if (statusElement === settingsStatusMessage && settingsStatusMessage) { //
 
-                 showSettingsStatus(`Error saving setting: ${error.message}`, true); //
+                 showSettingsStatus(`Error saving setting: ${error.message}`, true); //
 
-            } else { //
+            } else { //
 
-                showAdminStatus(`Error saving maintenance mode: ${error.message}`, true); //
+                showAdminStatus(`Error saving maintenance mode: ${error.message}`, true); //
 
-            }
+            }
 
-            // Revert checkbox state visually on error
+            // Revert checkbox state visually on error
 
-             if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
+             if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
 
-        }
+        }
 
-    }
+    }
 // *** END FUNCTION ***
 
 // — Inactivity Logout & Timer Display Functions —
 
-```
+
 // Updates the countdown timer display
 function updateTimerDisplay() { //
     if (!timerDisplayElement) return; // Exit if display element doesn't exist
@@ -2543,7 +2543,7 @@ function removeActivityListeners() { //
         document.removeEventListener(eventName, resetInactivityTimer, true); // Use capture phase
     });
 }
-```
+
 
 // — Optional: Add listeners to update the PREVIEW as the form changes —
 // (Requires the updateAdminPreview function and its helpers from the previous “preview” step)
@@ -2562,7 +2562,7 @@ updateAdminPreview();
 }
 });
 
-```
+
  // Also update preview when holiday/temp hours are added or removed
  const observer = new MutationObserver((mutationsList) => {
      for(let mutation of mutationsList) {
@@ -2578,16 +2578,16 @@ updateAdminPreview();
  // Observe changes in the holiday and temporary lists
  if (holidayHoursList) observer.observe(holidayHoursList, { childList: true });
  if (temporaryHoursList) observer.observe(temporaryHoursList, { childList: true });
-```
+
 
 } else if (businessInfoForm) {
 console.warn(“updateAdminPreview function not found, live preview will not update.”);
 }
 // — End Business Info Event Listeners —
 
-```
+
 // Add these functions to your admin.js file
-```
+
 
 // — Helper function for formatting time in the preview —
 function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
@@ -2611,7 +2611,7 @@ if (nextButton && emailInput && authStatus && emailGroup && passwordGroup && log
 nextButton.addEventListener(‘click’, () => { //
 const userEmail = emailInput.value.trim(); // Get entered email
 
-```
+
         // Check if email field is empty
         if (!userEmail) { //
              authStatus.textContent = 'Please enter your email address.'; //
@@ -2644,7 +2644,7 @@ const userEmail = emailInput.value.trim(); // Get entered email
      // Log warning if any elements for the two-step login are missing
      console.warn("Could not find all necessary elements for the 'Next' button functionality (Next Button, Email Input, Auth Status, Email Group, Password Group, Login Button)."); //
 }
-```
+
 
 // Listener for changes in authentication state (login/logout)
 onAuthStateChanged(auth, user => {
@@ -2652,7 +2652,7 @@ onAuthStateChanged(auth, user => {
 if (user) {
 const adminEmails = [“ckritzar53@busarmydude.org”, “rkritzar53@gmail.com”]; // Your authorized email
 
-```
+
     // Check if the signed-in user is on the admin list
     if (adminEmails.includes(user.email)) {
         console.log(`✅ Access GRANTED for admin: ${user.email}`);
@@ -2739,11 +2739,11 @@ const adminEmails = [“ckritzar53@busarmydude.org”, “rkritzar53@gmail.com�
 
     removeActivityListeners();
 }
-```
+
 
 });
 
-```
+
 // Login Form Submission (Handles the final step after password entry)
 if (loginForm) { //
     loginForm.addEventListener('submit', (e) => { //
@@ -2814,11 +2814,11 @@ if (logoutButton) { //
          });
     });
 }
-```
+
 
 // — Shoutouts Load/Add/Delete/Update —
 
-```
+
 // Helper function to get the reference to the metadata document
 // Used for storing last updated timestamps
 function getShoutoutsMetadataRef() { //
@@ -2906,12 +2906,12 @@ async function loadShoutoutsAdmin(platform) { //
     }
 }
 // --- END UPDATED: loadShoutoutsAdmin Function ---
-```
+
 
 async function handleAddShoutout(platform, formElement) {
 console.log(`DEBUG: handleAddShoutout triggered for ${platform}.`);
 
-```
+
 if (isAddingShoutout) {
     console.warn(`DEBUG: handleAddShoutout already running for ${platform}, ignoring duplicate call.`);
     return;
@@ -3012,11 +3012,11 @@ try {
     }, 1500);
     console.log(`DEBUG: handleAddShoutout processing END for ${platform} at ${new Date().toLocaleTimeString()}`);
 }
-```
+
 
 }
 
-```
+
 // --- Function to Handle Updates from Edit Modal (with DETAILED Logging) ---
 async function handleUpdateShoutout(event) {
     event.preventDefault();
@@ -3102,7 +3102,7 @@ async function handleUpdateShoutout(event) {
         showAdminStatus(`Error updating ${platform} shoutout: ${error.message}`, true);
     }
 }
-```
+
 
 // — MODIFIED: Function to Handle Deleting a Shoutout (with Logging) —
 async function handleDeleteShoutout(docId, platform, listItemElement) {
@@ -3111,7 +3111,7 @@ if (!confirm(`Are you sure you want to permanently delete this ${platform} shout
 return; // Do nothing if user cancels
 }
 
-```
+
     showAdminStatus("Deleting shoutout..."); // Feedback
     const docRef = doc(db, 'shoutouts', docId); // Define docRef once for fetching and deleting
 
@@ -3165,13 +3165,13 @@ return; // Do nothing if user cancels
          }
     }
 }
-```
+
 
 // *** Function to render a single Useful Link item in the admin list ***
 function renderUsefulLinkAdminListItem(container, docId, label, url, order, deleteHandler, editHandler) { //
 if (!container) return; //
 
-```
+
 const itemDiv = document.createElement('div'); //
 itemDiv.className = 'list-item-admin'; //
 itemDiv.setAttribute('data-id', docId); //
@@ -3200,7 +3200,7 @@ const deleteButton = itemDiv.querySelector('.delete-button'); //
 if (deleteButton) deleteButton.addEventListener('click', () => deleteHandler(docId, itemDiv)); // Pass docId and the item element
 
 container.appendChild(itemDiv); //
-```
+
 
 }
 
@@ -3211,7 +3211,7 @@ if (usefulLinksCount) usefulLinksCount.textContent = ‘’;
 usefulLinksListAdmin.innerHTML = `<p>Loading useful links...</p>`;
 allUsefulLinks = []; // Clear the global array
 
-```
+
 try {
     const linkQuery = query(usefulLinksCollectionRef, orderBy("order", "asc"));
     const querySnapshot = await getDocs(linkQuery);
@@ -3231,7 +3231,7 @@ try {
     if (usefulLinksCount) usefulLinksCount.textContent = '(Error)';
     showAdminStatus("Error loading useful links.", true);
 }
-```
+
 
 }
 
@@ -3240,7 +3240,7 @@ async function handleAddUsefulLink(event) { //
 event.preventDefault(); //
 if (!addUsefulLinkForm) return; //
 
-```
+
 const labelInput = addUsefulLinkForm.querySelector('#link-label'); //
 const urlInput = addUsefulLinkForm.querySelector('#link-url'); //
 const orderInput = addUsefulLinkForm.querySelector('#link-order'); //
@@ -3283,7 +3283,7 @@ try { //
     console.error("Error adding useful link:", error); //
     showAdminStatus(`Error adding useful link: ${error.message}`, true); //
 }
-```
+
 
 }
 
@@ -3293,7 +3293,7 @@ if (!confirm(“Are you sure you want to permanently delete this useful link?”
 return; //
 }
 
-```
+
 showAdminStatus("Deleting useful link..."); //
 try { //
     await deleteDoc(doc(db, 'useful_links', docId)); //
@@ -3305,7 +3305,7 @@ try { //
     console.error(`Error deleting useful link (ID: ${docId}):`, error); //
     showAdminStatus(`Error deleting useful link: ${error.message}`, true); //
 }
-```
+
 
 }
 
@@ -3317,7 +3317,7 @@ showAdminStatus(“UI Error: Cannot open edit form.”, true); //
 return; //
 }
 
-```
+
 const docRef = doc(db, 'useful_links', docId); //
 showEditLinkStatus("Loading link data..."); // Show status inside modal
 
@@ -3340,7 +3340,7 @@ getDoc(docRef).then(docSnap => { //
     showAdminStatus(`Error loading link data: ${error.message}`, true); //
     showEditLinkStatus(`Error: ${error.message}`, true); //
 });
-```
+
 
 }
 
@@ -3360,7 +3360,7 @@ const docId = editUsefulLinkForm.getAttribute(‘data-doc-id’);
 if (!docId) { showEditLinkStatus(“Error: Missing document ID…”, true); return; }
 console.log(“Attempting to update useful link (detailed log):”, docId);
 
-```
+
     // 1. Get NEW data from form
     const label = editLinkLabelInput?.value.trim();
     const url = editLinkUrlInput?.value.trim();
@@ -3415,13 +3415,13 @@ console.log(“Attempting to update useful link (detailed log):”, docId);
         showAdminStatus(`Error updating useful link: ${error.message}`, true);
     }
 }
-```
+
 
 // ========================================================
 // START: All Social Link Functions (Place INSIDE DOMContentLoaded)
 // ========================================================
 
-```
+
 /**
  * Renders a single Social Link item in the admin list view.
  */
@@ -3456,11 +3456,11 @@ function renderSocialLinkAdminListItem(container, docId, label, url, order, dele
    else if (deleteButton) { console.warn("Delete handler missing for social link:", docId); deleteButton.disabled = true; }
 
    container.appendChild(itemDiv);
-```
+
 
 }
 
-```
+
 /**
  * Loads social links from Firestore, stores them, and triggers display.
  */
@@ -3682,7 +3682,7 @@ async function handleUpdateSocialLink(event) {
 // ========================================================
 // END: All Social Link Functions
 // ========================================================
-```
+
 
 // — NEW: LOGIC FOR SMART CHECKBOXES —
 function setupLegislationCheckboxLogic() {
@@ -3693,7 +3693,7 @@ document.getElementById(‘status-passed-senate’),
 document.getElementById(‘status-became-law’)
 ];
 
-```
+
 checkboxes.forEach((checkbox, index) => {
     if (!checkbox) return;
     checkbox.addEventListener('change', () => {
@@ -3711,7 +3711,7 @@ checkboxes.forEach((checkbox, index) => {
         }
     });
 });
-```
+
 
 }
 // — END OF NEW LOGIC —
@@ -3724,7 +3724,7 @@ const q = query(legislationCollectionRef, orderBy(“order”, “asc”));
 const querySnapshot = await getDocs(q);
 const allItems = querySnapshot.docs.map(doc => ({ id: doc.id, …doc.data() }));
 
-```
+
     legislationListAdmin.innerHTML = '';
     if (allItems.length > 0) {
         allItems.forEach(item => renderLegislationAdminListItem(item));
@@ -3736,7 +3736,7 @@ const allItems = querySnapshot.docs.map(doc => ({ id: doc.id, …doc.data() }));
     console.error("Error loading legislation items:", error);
     legislationListAdmin.innerHTML = `<p class="error">Error loading items.</p>`;
 }
-```
+
 
 }
 
@@ -3745,7 +3745,7 @@ const itemDiv = document.createElement(‘div’);
 itemDiv.className = ‘list-item-admin’;
 itemDiv.setAttribute(‘data-id’, itemData.id);
 
-```
+
 let currentStatus = "Introduced";
 if (itemData.status?.becameLaw) currentStatus = "Became Law";
 else if (itemData.status?.toPresident) currentStatus = "To President";
@@ -3768,7 +3768,7 @@ itemDiv.innerHTML = `
 itemDiv.querySelector('.edit-button').addEventListener('click', () => populateLegislationForm(itemData));
 itemDiv.querySelector('.delete-button').addEventListener('click', () => handleDeleteLegislation(itemData.id));
 legislationListAdmin.appendChild(itemDiv);
-```
+
 
 }
 
@@ -3782,7 +3782,7 @@ document.getElementById(‘legislation-url’).value = itemData.url || ‘’;
 document.getElementById(‘legislation-description’).value = itemData.description || ‘’;
 document.getElementById(‘legislation-order’).value = itemData.order || 0;
 
-```
+
 document.getElementById('status-introduced').checked = itemData.status?.introduced || false;
 document.getElementById('status-passed-house').checked = itemData.status?.passedHouse || false;
 document.getElementById('status-passed-senate').checked = itemData.status?.passedSenate || false;
@@ -3790,7 +3790,7 @@ document.getElementById('status-to-president').checked = itemData.status?.toPres
 document.getElementById('status-became-law').checked = itemData.status?.becameLaw || false;
 
 window.scrollTo(0, addLegislationForm.offsetTop);
-```
+
 
 }
 
@@ -3805,7 +3805,7 @@ const docId = document.getElementById(‘legislation-id’).value;
 const billId = document.getElementById(‘legislation-bill-id’).value.trim();
 const title = document.getElementById(‘legislation-title’).value.trim();
 
-```
+
 if (!billId || !title) {
     showAdminStatus("Bill ID and Title are required.", true);
     return;
@@ -3845,7 +3845,7 @@ try {
     console.error("Error saving bill:", error);
     showAdminStatus(`Error: ${error.message}`, true);
 }
-```
+
 
 }
 
@@ -3862,7 +3862,7 @@ showAdminStatus(`Error: ${error.message}`, true);
 }
 }
 
-```
+
 // Add Shoutout Forms
 if (addShoutoutTiktokForm) { //
     addShoutoutTiktokForm.addEventListener('submit', (e) => { //
@@ -3894,12 +3894,12 @@ if (editForm) { //
 }
 
 // Maintenance Mode Toggle Listener (with defensive removal)
-```
+
 
 if (maintenanceModeToggle) {
 console.log(“DEBUG: Preparing maintenance mode listener for:”, maintenanceModeToggle);
 
-```
+
 // Define the handler function separately so we can refer to it
 const handleMaintenanceToggle = (e) => {
     // console.log(`DEBUG: Maintenance 'change' event fired! Checked: ${e.target.checked}`); // You can remove this debug line later
@@ -3912,13 +3912,13 @@ maintenanceModeToggle.removeEventListener('change', handleMaintenanceToggle);
 // Add the listener using the named handler function
 maintenanceModeToggle.addEventListener('change', handleMaintenanceToggle);
 console.log("DEBUG: Added/Re-added maintenance mode listener."); // You can remove this debug line later
-```
+
 
 } else {
 console.log(“DEBUG: Maintenance toggle element not found.”);
 }
 
-```
+
 // *** Search Input Event Listeners ***
 if (searchInputTiktok) { //
     searchInputTiktok.addEventListener('input', () => { //
@@ -3942,11 +3942,11 @@ if (searchInputYoutube) { //
     });
 }
 // *** END Search Listeners ***
-```
+
 
 // — ADD THESE FUNCTIONS —
 
-```
+
 async function loadActivityLog() {
 // Ensure necessary DOM elements are defined earlier or get them here
 const logListContainer = document.getElementById('activity-log-list');
@@ -3988,7 +3988,7 @@ try {
          showAdminStatus("Failed to load activity log.", true);
     }
 }
-```
+
 
 }
 
@@ -3998,7 +3998,7 @@ const logListContainer = document.getElementById(‘activity-log-list’);
 const searchInput = document.getElementById(‘search-activity-log’);
 const logCountElement = document.getElementById(‘activity-log-count’);
 
-```
+
 if (!logListContainer || !searchInput || !logCountElement) {
     console.error("Log display/search elements missing in displayFilteredActivityLog.");
     return;
@@ -4043,11 +4043,11 @@ if (filteredLogs.length === 0) {
 
 // Update count
 logCountElement.textContent = `(${filteredLogs.length})`;
-```
+
 
 }
 
-```
+
 // ========================================
 // == Tech Item Management Functions V2 ===
 // ========================================
@@ -4358,7 +4358,7 @@ if (saveCountdownSettingsButton) {
      if(settingsStatusMessage) { showSettingsStatus("Error: Save Countdown button missing from page.", true); }
 }
 // --- *** END Event Listener with Logging *** ---
-```
+
 
 // — Useful Links Event Listeners —
 if (addUsefulLinkForm) { //
@@ -4391,7 +4391,7 @@ if (searchInputSocialLinks) {
 searchInputSocialLinks.addEventListener(‘input’, displayFilteredSocialLinks);
 }
 
-```
+
 // Function to render a single Disability Link item in the admin list
 function renderDisabilityAdminListItem(container, docId, name, url, order, deleteHandler, editHandler) {
     if (!container) {
@@ -4460,7 +4460,7 @@ function showEditDisabilityStatus(message, isError = false) {
  }
 
 // *** CORRECTED Function to Load Disabilities ***
-```
+
 
 async function loadDisabilitiesAdmin() {
 if (!disabilitiesListAdmin) { console.error(“Disabilities list container missing.”); return; }
@@ -4468,7 +4468,7 @@ if (disabilitiesCount) disabilitiesCount.textContent = ‘’;
 disabilitiesListAdmin.innerHTML = `<p>Loading disability links...</p>`;
 allDisabilities = []; // Clear the global array
 
-```
+
 try {
     const disabilityQuery = query(disabilitiesCollectionRef, orderBy("order", "asc"));
     const querySnapshot = await getDocs(disabilityQuery);
@@ -4494,11 +4494,11 @@ try {
     disabilitiesListAdmin.innerHTML = `<p class="error">${errorMsg}</p>`;
     if (disabilitiesCount) disabilitiesCount.textContent = '(Error)';
 }
-```
+
 
 }
 
-```
+
 // Function to Handle Adding a New Disability Link
 async function handleAddDisability(event) {
     event.preventDefault(); // Prevent default form submission
@@ -4674,11 +4674,11 @@ async function handleUpdateDisability(event) {
         showAdminStatus(`Error updating disability link: ${error.message}`, true);
     }
 }
-```
+
 
 // — Attach Event Listeners for Section Forms & Modals —
 
-```
+
 // Profile Save Form
 if (profileForm) { profileForm.addEventListener('submit', saveProfileData); }
 
@@ -4762,7 +4762,7 @@ if (addShoutoutTiktokForm) attachPreviewListeners(addShoutoutTiktokForm, 'tiktok
 if (addShoutoutInstagramForm) attachPreviewListeners(addShoutoutInstagramForm, 'instagram', 'add');
 if (addShoutoutYoutubeForm) attachPreviewListeners(addShoutoutYoutubeForm, 'youtube', 'add');
 if (editForm) { const editPreviewInputs = [ editUsernameInput, editNicknameInput, editBioInput, editProfilePicInput, editIsVerifiedInput, editFollowersInput, editSubscribersInput, editCoverPhotoInput ]; editPreviewInputs.forEach(el => { if (el) { const eventType = (el.type === 'checkbox') ? 'change' : 'input'; el.addEventListener(eventType, () => { const currentPlatform = editForm.getAttribute('data-platform'); if (currentPlatform && typeof updateShoutoutPreview === 'function') { updateShoutoutPreview('edit', currentPlatform); } else if (!currentPlatform) { console.warn("Edit form platform not set."); } else { console.error("updateShoutoutPreview missing!"); } }); } }); }
-```
+
 
 if (addLegislationForm) {
 addLegislationForm.addEventListener(‘submit’, handleSaveLegislation);
@@ -4771,7 +4771,7 @@ document.getElementById(‘clear-legislation-form’).addEventListener(‘click�
 setupLegislationCheckboxLogic();
 }
 
-```
+
 // Profile Pic URL Preview Listener
 if (profilePicUrlInput && adminPfpPreview) { profilePicUrlInput.addEventListener('input', () => { const url = profilePicUrlInput.value.trim(); if (url) { adminPfpPreview.src = url; adminPfpPreview.style.display = 'inline-block'; } else { adminPfpPreview.style.display = 'none'; } }); adminPfpPreview.onerror = () => { console.warn("Preview image load failed:", adminPfpPreview.src); adminPfpPreview.style.display = 'none'; profilePicUrlInput.classList.add('input-error'); }; profilePicUrlInput.addEventListener('focus', () => { profilePicUrlInput.classList.remove('input-error'); }); }
 
@@ -4827,3 +4827,4 @@ window.handleGoogleSignIn(response);
 console.error(“Critical Error: handleGoogleSignIn is not globally available for the Google callback.”);
 }
 };
+
