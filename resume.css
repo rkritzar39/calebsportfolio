@@ -29,7 +29,7 @@ body {
 }
 
 /* ========================= */
-/* GLASS CARD SYSTEM (UNCHANGED CORE DESIGN) */
+/* GLASS CARD SYSTEM (UNCHANGED ONYX CORE) */
 /* ========================= */
 .site-header,
 section,
@@ -64,7 +64,7 @@ section::before {
     pointer-events: none;
 }
 
-/* content layering */
+/* content layer */
 .site-header > *,
 section > * {
     position: relative;
@@ -72,7 +72,7 @@ section > * {
 }
 
 /* ========================= */
-/* HEADER (REFINED PROFESSIONAL VERSION) */
+/* HEADER (PROFESSIONAL REWRITE) */
 /* ========================= */
 .site-header {
     padding: 28px;
@@ -85,10 +85,11 @@ section > * {
     gap: 22px;
 }
 
-/* Profile image refinement */
+/* profile image */
 .header-photo {
     width: 108px;
     height: 108px;
+
     border-radius: 50%;
     object-fit: cover;
 
@@ -97,40 +98,77 @@ section > * {
     box-shadow: 0 10px 24px rgba(0,0,0,0.18);
 }
 
-/* Header text block (new professional hierarchy) */
+/* text container */
 .header-text {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
-/* Name styling */
+/* NAME (PRIMARY EMPHASIS) */
 .header-text h1 {
     margin: 0;
 
-    font-size: 1.9rem;
+    font-size: 1.95rem;
     font-weight: 800;
     letter-spacing: -0.02em;
+
+    color: var(--text-color);
 }
 
-/* Subtitle / role line */
-.header-text p {
+/* TITLE (SECONDARY IDENTITY) */
+.professional-title {
     margin: 0;
 
-    color: var(--secondary-text);
     font-size: 1rem;
+    font-weight: 500;
+
+    color: var(--secondary-text);
 }
 
-/* optional meta line (email / links etc.) */
-.header-meta {
+/* ========================= */
+/* CONTACT LINE (CLEAN META SYSTEM) */
+/* ========================= */
+.contact-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
     margin-top: 6px;
 
     font-size: 0.9rem;
     color: var(--secondary-text);
+}
 
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+/* unify items */
+.contact-line span,
+.contact-line a {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* separator styling */
+.contact-line span:not(:last-child)::after,
+.contact-line a:not(:last-child)::after {
+    content: "•";
+
+    margin-left: 10px;
+    margin-right: 2px;
+
+    color: color-mix(in srgb, var(--secondary-text) 60%, transparent);
+}
+
+/* links */
+.contact-line a {
+    color: var(--secondary-text);
+    text-decoration: none;
+
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-line a:hover {
+    color: var(--accent-color);
+    transform: translateY(-1px);
 }
 
 /* ========================= */
@@ -147,7 +185,7 @@ section {
     gap: 14px;
 }
 
-/* extra separation safety */
+/* spacing safety */
 section + section {
     margin-top: 22px;
 }
@@ -212,8 +250,6 @@ section h2::before {
     border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
 
     font-size: 0.9rem;
-
-    transition: transform 0.2s ease;
 }
 
 /* ========================= */
