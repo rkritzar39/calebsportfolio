@@ -8,16 +8,19 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
 
     margin: 0;
-    padding: 36px 12px;
+    padding: 32px 12px;
 
     line-height: 1.6;
 
     overflow-x: hidden;
+
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 /* ========================= */
-/* MAIN LAYOUT SPACING       */
-/* (THIS FIXES EVERYTHING)    */
+/* MAIN LAYOUT SPACING      */
 /* ========================= */
 .resume-container {
     max-width: 980px;
@@ -26,23 +29,22 @@ body {
     display: flex;
     flex-direction: column;
 
-    gap: 34px; /* 🔥 BIG GAP BETWEEN SECTIONS */
+    gap: 28px;
 }
 
 /* ========================= */
-/* GLASS CARD SYSTEM         */
+/* GLASS CARD SYSTEM        */
 /* ========================= */
 .site-header,
 section,
 .download-btn {
     background: var(--content-bg);
-    background-image: var(--bubble-gradient);
 
-    border-radius: 20px;
+    border-radius: 16px;
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
 
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
@@ -51,21 +53,7 @@ section,
     overflow: hidden;
 }
 
-/* glass reflection */
-.site-header::before,
-section::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-
-    background: var(--liquid-reflection);
-    opacity: 0.2;
-
-    mix-blend-mode: soft-light;
-    pointer-events: none;
-}
-
-/* keep content above glass */
+/* keep content above */
 .site-header > *,
 section > * {
     position: relative;
@@ -73,36 +61,16 @@ section > * {
 }
 
 /* ========================= */
-/* 🔥 CRITICAL FIX: SPACING  */
+/* HEADER                  */
 /* ========================= */
 .site-header {
-    padding: 26px;
-    margin-bottom: 18px; /* prevents header touching first section */
+    padding: 24px;
 }
 
-section {
-    padding: 26px;
-
-    margin-top: 18px;   /* TOP spacing */
-    margin-bottom: 18px; /* BOTTOM spacing */
-
-    display: flex;
-    flex-direction: column;
-    gap: 14px; /* internal spacing between elements */
-}
-
-/* extra safety separation between consecutive sections */
-section + section {
-    margin-top: 22px;
-}
-
-/* ========================= */
-/* HEADER                   */
-/* ========================= */
 .header-inner {
     display: flex;
     align-items: center;
-    gap: 22px;
+    gap: 20px;
 }
 
 .header-photo {
@@ -115,20 +83,43 @@ section + section {
 }
 
 /* ========================= */
-/* SECTION TITLES           */
+/* SECTIONS                */
+/* ========================= */
+section {
+    padding: 24px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    margin: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+}
+
+/* ========================= */
+/* SECTION TITLES          */
 /* ========================= */
 section h2 {
-    margin: 0 0 14px 0;
+    margin: 0 0 12px 0;
 
-    font-size: 1.55rem;
+    font-size: 1.25rem;
+    font-weight: 700;
 
-    padding-bottom: 10px;
-
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 
     display: flex;
     align-items: center;
     gap: 10px;
+
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
 }
 
 section h2::before {
@@ -141,16 +132,15 @@ section h2::before {
 }
 
 /* ========================= */
-/* SUMMARY FIX (NO TOUCHING) */
+/* SUMMARY                */
 /* ========================= */
 #summary p {
     margin: 0;
     color: var(--secondary-text);
-    line-height: 1.65;
 }
 
 /* ========================= */
-/* SKILLS / TAGS            */
+/* SKILLS / TAGS          */
 /* ========================= */
 .skills-list,
 .languages-list {
@@ -161,29 +151,37 @@ section h2::before {
 
 .skills-list span,
 .languages-list span {
-    padding: 7px 12px;
+    padding: 6px 12px;
 
     border-radius: 999px;
 
-    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+    background: rgba(255,255,255,0.04);
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
 
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+
+    transition: transform 0.15s ease;
+}
+
+.skills-list span:hover,
+.languages-list span:hover {
+    transform: translateY(-1px);
 }
 
 /* ========================= */
-/* EXPERIENCE / EDUCATION   */
+/* EXPERIENCE / EDUCATION  */
 /* ========================= */
 .job,
 .education-item {
     display: flex;
     justify-content: space-between;
-    gap: 14px;
+    gap: 12px;
 
-    padding: 14px 0;
+    padding: 12px 0;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
 }
 
 .job:last-child,
@@ -196,6 +194,12 @@ section h2::before {
     flex: 1;
 }
 
+.job-left strong,
+.edu-left strong {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
 .job-dates,
 .education-dates {
     white-space: nowrap;
@@ -204,7 +208,7 @@ section h2::before {
 }
 
 /* ========================= */
-/* LISTS                    */
+/* LISTS                  */
 /* ========================= */
 ul {
     margin: 8px 0 0 18px;
@@ -212,10 +216,11 @@ ul {
 
 li {
     margin-bottom: 6px;
+    color: var(--secondary-text);
 }
 
 /* ========================= */
-/* DOWNLOAD BUTTON          */
+/* DOWNLOAD BUTTON        */
 /* ========================= */
 .download-btn {
     display: inline-block;
@@ -234,7 +239,7 @@ li {
 }
 
 /* ========================= */
-/* FOOTER                   */
+/* FOOTER                 */
 /* ========================= */
 .site-footer {
     text-align: center;
@@ -244,26 +249,25 @@ li {
 }
 
 /* ========================= */
-/* LIGHT MODE FIX           */
+/* LIGHT MODE             */
 /* ========================= */
 body[data-theme="light"] .site-header,
 body[data-theme="light"] section {
-    border: 1px solid rgba(0,0,0,0.10);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.06);
 }
 
-/* stronger separation in light mode */
 body[data-theme="light"] section h2 {
     border-bottom: 1px solid rgba(0,0,0,0.14);
 }
 
-/* improve readability */
 body[data-theme="light"] {
     color: #111827;
 }
 
 /* ========================= */
-/* RESPONSIVE               */
+/* RESPONSIVE            */
 /* ========================= */
 @media (max-width: 768px) {
     body {
@@ -271,7 +275,7 @@ body[data-theme="light"] {
     }
 
     .resume-container {
-        gap: 22px;
+        gap: 20px;
     }
 
     .header-inner {
