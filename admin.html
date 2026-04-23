@@ -552,85 +552,355 @@
   </div>
 
   <form id="resume-form" class="resume-form">
+    <!-- Basic Information -->
     <div class="editor-section">
       <h3>Basic Information</h3>
+
       <div class="form-grid">
         <div class="form-group">
           <label for="resume-name-input">Full Name</label>
-          <input type="text" id="resume-name-input" />
+          <input type="text" id="resume-name-input" placeholder="John Doe" />
+        </div>
+
+        <div class="form-group">
+          <label for="resume-title-input">Professional Title</label>
+          <input
+            type="text"
+            id="resume-title-input"
+            placeholder="Software Engineer"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="resume-location-input">Location</label>
+          <input
+            type="text"
+            id="resume-location-input"
+            placeholder="Dallas, TX"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="resume-phone-input">Phone</label>
+          <input
+            type="text"
+            id="resume-phone-input"
+            placeholder="(555) 123-4567"
+          />
         </div>
 
         <div class="form-group">
           <label for="resume-email-input">Email</label>
-          <input type="email" id="resume-email-input" />
+          <input
+            type="email"
+            id="resume-email-input"
+            placeholder="john@example.com"
+          />
         </div>
 
-        <div class="form-group full-width">
-          <label for="resume-contact-input">Contact Line</label>
+        <div class="form-group">
+          <label for="resume-website-input">Website</label>
           <input
             type="text"
-            id="resume-contact-input"
-            placeholder="City, State • Phone • Website"
+            id="resume-website-input"
+            placeholder="www.yourwebsite.com"
           />
         </div>
 
         <div class="form-group full-width">
-          <label for="resume-summary-input">Summary</label>
-          <textarea id="resume-summary-input" rows="5"></textarea>
+          <label for="resume-linkedin-input">LinkedIn</label>
+          <input
+            type="text"
+            id="resume-linkedin-input"
+            placeholder="linkedin.com/in/johndoe"
+          />
+        </div>
+
+        <div class="form-group full-width">
+          <label for="resume-summary-input">Professional Summary</label>
+          <textarea
+            id="resume-summary-input"
+            rows="5"
+            placeholder="Experienced professional with a strong background in..."
+          ></textarea>
         </div>
       </div>
     </div>
 
+    <!-- Skills -->
     <div class="editor-section">
       <div class="section-title-row">
         <h3>Skills</h3>
-        <button type="button" class="secondary-btn" id="add-skill-btn">+ Add Skill</button>
+        <button type="button" class="secondary-btn" id="add-skill-btn">
+          + Add Skill
+        </button>
       </div>
-      <div id="skills-container" class="simple-list-container"></div>
+
+      <div id="skills-container" class="simple-list-container">
+        <div class="simple-list-item">
+          <input
+            type="text"
+            class="simple-item-input"
+            placeholder="Skill"
+          />
+          <button type="button" class="danger-btn">Remove</button>
+        </div>
+      </div>
     </div>
 
+    <!-- Languages -->
     <div class="editor-section">
       <div class="section-title-row">
         <h3>Languages</h3>
-        <button type="button" class="secondary-btn" id="add-language-btn">+ Add Language</button>
+        <button type="button" class="secondary-btn" id="add-language-btn">
+          + Add Language
+        </button>
       </div>
-      <div id="languages-container" class="simple-list-container"></div>
+
+      <div id="languages-container" class="simple-list-container">
+        <div class="simple-list-item">
+          <input
+            type="text"
+            class="simple-item-input"
+            placeholder="Language"
+          />
+          <button type="button" class="danger-btn">Remove</button>
+        </div>
+      </div>
     </div>
 
+    <!-- Certifications -->
     <div class="editor-section">
       <div class="section-title-row">
         <h3>Certifications</h3>
-        <button type="button" class="secondary-btn" id="add-certification-btn">+ Add Certification</button>
+        <button type="button" class="secondary-btn" id="add-certification-btn">
+          + Add Certification
+        </button>
       </div>
-      <div id="certifications-container" class="simple-list-container"></div>
+
+      <div id="certifications-container" class="simple-list-container">
+        <div class="simple-list-item">
+          <input
+            type="text"
+            class="simple-item-input"
+            placeholder="Certification"
+          />
+          <button type="button" class="danger-btn">Remove</button>
+        </div>
+      </div>
     </div>
 
+    <!-- Projects -->
     <div class="editor-section">
       <div class="section-title-row">
         <h3>Projects</h3>
-        <button type="button" class="secondary-btn" id="add-project-btn">+ Add Project</button>
+        <button type="button" class="secondary-btn" id="add-project-btn">
+          + Add Project
+        </button>
       </div>
-      <div id="projects-container" class="simple-list-container"></div>
+
+      <div id="projects-container" class="complex-list-container">
+        <div class="project-item">
+          <div class="project-grid">
+            <div class="form-group">
+              <label>Project Name</label>
+              <input
+                type="text"
+                class="project-name"
+                placeholder="Portfolio Website"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Project Link</label>
+              <input
+                type="text"
+                class="project-link"
+                placeholder="https://yourproject.com"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Tech Stack</label>
+              <input
+                type="text"
+                class="project-stack"
+                placeholder="HTML, CSS, JavaScript"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Description</label>
+              <textarea
+                class="project-description"
+                rows="4"
+                placeholder="Briefly describe what this project does and your role."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="item-actions">
+            <button type="button" class="danger-btn">Remove Project</button>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- Experience -->
     <div class="editor-section">
       <div class="section-title-row">
         <h3>Experience</h3>
-        <button type="button" class="secondary-btn" id="add-experience-btn">+ Add Experience</button>
+        <button type="button" class="secondary-btn" id="add-experience-btn">
+          + Add Experience
+        </button>
       </div>
-      <div id="experience-container" class="complex-list-container"></div>
+
+      <div id="experience-container" class="complex-list-container">
+        <div class="experience-item">
+          <div class="experience-grid">
+            <div class="form-group">
+              <label>Job Title</label>
+              <input
+                type="text"
+                class="exp-title"
+                placeholder="Frontend Developer"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Company</label>
+              <input
+                type="text"
+                class="exp-company"
+                placeholder="Company Name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                class="exp-location"
+                placeholder="Dallas, TX"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Dates</label>
+              <input
+                type="text"
+                class="exp-dates"
+                placeholder="2023 - Present"
+              />
+            </div>
+          </div>
+
+          <div class="subsection">
+            <div class="section-title-row">
+              <h4>Responsibilities / Achievements</h4>
+              <button type="button" class="ghost-btn add-detail-btn">
+                + Add Detail
+              </button>
+            </div>
+
+            <div class="detail-list">
+              <div class="detail-item">
+                <input
+                  type="text"
+                  class="detail-input"
+                  placeholder="Describe a responsibility or achievement"
+                />
+                <button type="button" class="danger-btn">Remove</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="item-actions">
+            <button type="button" class="danger-btn">Remove Experience</button>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- Education -->
     <div class="editor-section">
       <div class="section-title-row">
         <h3>Education</h3>
-        <button type="button" class="secondary-btn" id="add-education-btn">+ Add Education</button>
+        <button type="button" class="secondary-btn" id="add-education-btn">
+          + Add Education
+        </button>
       </div>
-      <div id="education-container" class="complex-list-container"></div>
+
+      <div id="education-container" class="complex-list-container">
+        <div class="education-item">
+          <div class="education-grid">
+            <div class="form-group">
+              <label>Education Type</label>
+              <select class="edu-type">
+                <option value="">Select type</option>
+                <option value="High School">High School</option>
+                <option value="Vocational School">Vocational School</option>
+                <option value="College">College</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>School Name</label>
+              <input
+                type="text"
+                class="edu-school"
+                placeholder="School Name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Program / Degree / Diploma</label>
+              <input
+                type="text"
+                class="edu-degree"
+                placeholder="Diploma, Certificate, A.A., B.S., etc."
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                class="edu-location"
+                placeholder="City, State"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Dates</label>
+              <input
+                type="text"
+                class="edu-dates"
+                placeholder="2020 - 2024"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Notes</label>
+              <textarea
+                class="edu-notes"
+                rows="3"
+                placeholder="Honors, GPA, coursework, achievements, or additional details"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="item-actions">
+            <button type="button" class="danger-btn">Remove Education</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="button-row">
-      <button type="submit" id="save-resume-btn" class="primary-btn">Save Resume</button>
+      <button type="submit" id="save-resume-btn" class="primary-btn">
+        Save Resume
+      </button>
     </div>
 
     <p id="resume-save-status" class="save-status"></p>
