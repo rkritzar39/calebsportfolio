@@ -543,129 +543,112 @@
   </div>
 </section>
 
-            <div class="admin-container">
+     <section class="admin-card" id="resume-admin-section">
+  <h2>Resume Editor</h2>
+  <p>Edit the content for your resume page.</p>
 
-  <!-- ===================== -->
-  <!-- HEADER -->
-  <!-- ===================== -->
-  <header class="admin-header">
-    <h1>Resume Admin Dashboard</h1>
-    <p>Live CMS Control Panel</p>
-  </header>
+  <form id="resume-form">
+    <div class="form-group">
+      <label for="resume-name-input">Full Name</label>
+      <input type="text" id="resume-name-input" />
+    </div>
 
-  <!-- ===================== -->
-  <!-- BASIC INFO -->
-  <!-- ===================== -->
-  <section class="admin-card">
-    <h2>Basic Info</h2>
+    <div class="form-group">
+      <label for="resume-contact-input">Contact Line</label>
+      <input
+        type="text"
+        id="resume-contact-input"
+        placeholder="City, State • Phone • Website"
+      />
+    </div>
 
-    <input id="name" placeholder="Full Name">
-    <input id="contact" placeholder="Contact">
-    <input id="email" placeholder="Email">
+    <div class="form-group">
+      <label for="resume-email-input">Email</label>
+      <input type="email" id="resume-email-input" />
+    </div>
 
-    <textarea id="summary" placeholder="Summary"></textarea>
+    <div class="form-group">
+      <label for="resume-summary-input">Summary</label>
+      <textarea id="resume-summary-input" rows="5"></textarea>
+    </div>
 
-    <button onclick="saveBasicInfo()">Save Basic Info</button>
-  </section>
+    <div class="form-group">
+      <label for="resume-skills-input">Skills</label>
+      <textarea
+        id="resume-skills-input"
+        rows="5"
+        placeholder="One skill per line"
+      ></textarea>
+    </div>
 
-  <!-- ===================== -->
-  <!-- SKILLS -->
-  <!-- ===================== -->
-  <section class="admin-card">
-    <h2>Skills</h2>
+    <div class="form-group">
+      <label for="resume-languages-input">Languages</label>
+      <textarea
+        id="resume-languages-input"
+        rows="4"
+        placeholder="One language per line"
+      ></textarea>
+    </div>
 
-    <input id="skill-input" placeholder="Add skill">
-    <button onclick="addSkill()">Add</button>
+    <div class="form-group">
+      <label for="resume-experience-input">Experience</label>
+      <textarea
+        id="resume-experience-input"
+        rows="8"
+        placeholder='Example:
+[
+  {
+    "title": "Job Title",
+    "company": "Company Name",
+    "dates": "2023 - Present",
+    "details": ["Did this", "Did that"]
+  }
+]'
+      ></textarea>
+    </div>
 
-    <div id="skills-list" class="list"></div>
-  </section>
+    <div class="form-group">
+      <label for="resume-education-input">Education</label>
+      <textarea
+        id="resume-education-input"
+        rows="6"
+        placeholder='Example:
+[
+  {
+    "school": "School Name",
+    "degree": "Degree Name",
+    "dates": "2020 - 2024"
+  }
+]'
+      ></textarea>
+    </div>
 
-  <!-- ===================== -->
-  <!-- LANGUAGES -->
-  <!-- ===================== -->
-  <section class="admin-card">
-    <h2>Languages</h2>
+    <div class="form-group">
+      <label for="resume-certifications-input">Certifications</label>
+      <textarea
+        id="resume-certifications-input"
+        rows="5"
+        placeholder="One certification per line"
+      ></textarea>
+    </div>
 
-    <input id="language-input" placeholder="Add language">
-    <button onclick="addLanguage()">Add</button>
+    <div class="form-group">
+      <label for="resume-projects-input">Projects</label>
+      <textarea
+        id="resume-projects-input"
+        rows="5"
+        placeholder="One project per line"
+      ></textarea>
+    </div>
 
-    <div id="languages-list" class="list"></div>
-  </section>
+    <div class="button-row">
+      <button type="submit" id="save-resume-btn">Save Resume</button>
+    </div>
 
-  <!-- ===================== -->
-  <!-- EXPERIENCE -->
-  <!-- ===================== -->
-  <section class="admin-card">
-    <h2>Experience</h2>
+    <p id="resume-save-status"></p>
+  </form>
+</section>
 
-    <input id="job-title" placeholder="Title">
-    <input id="job-location" placeholder="Location">
-    <input id="job-dates" placeholder="Dates">
-    <textarea id="job-bullets" placeholder="One bullet per line"></textarea>
-
-    <button onclick="addExperience()">Add Experience</button>
-
-    <div id="experience-list"></div>
-  </section>
-
-  <!-- ===================== -->
-  <!-- EDUCATION -->
-  <!-- ===================== -->
-  <section class="admin-card">
-    <h2>Education</h2>
-
-    <input id="school" placeholder="School">
-    <input id="edu-location" placeholder="Location">
-    <input id="edu-dates" placeholder="Dates">
-    <textarea id="edu-details" placeholder="Details"></textarea>
-
-    <button onclick="addEducation()">Add Education</button>
-
-    <div id="education-list"></div>
-  </section>
-
-  <!-- ===================== -->
-  <!-- CERTIFICATIONS -->
-  <!-- ===================== -->
-  <section class="admin-card">
-    <h2>Certifications</h2>
-
-    <input id="cert-input" placeholder="Certification">
-    <button onclick="addCertification()">Add</button>
-
-    <div id="cert-list"></div>
-  </section>
-
-  <!-- ===================== -->
-  <!-- PROJECTS -->
-  <!-- ===================== -->
-  <section class="admin-card">
-    <h2>Projects</h2>
-
-    <input id="project-input" placeholder="Project">
-    <button onclick="addProject()">Add</button>
-
-    <div id="project-list"></div>
-  </section>
-
-</div>
-
-<!-- ===================== -->
-<!-- EDIT MODAL -->
-<!-- ===================== -->
-<div id="edit-modal" class="modal hidden">
-  <div class="modal-content">
-
-    <h2>Edit Item</h2>
-
-    <input id="edit-title">
-    <textarea id="edit-body"></textarea>
-
-    <button onclick="saveEdit()">Save</button>
-    <button onclick="closeModal()">Cancel</button>
-
-  </div>
-</div>
             
              <section class="admin-section" id="useful-links-management" aria-labelledby="useful-links-heading">
     <h3 id="useful-links-heading">Manage Useful Links</h3>
