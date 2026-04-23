@@ -1,59 +1,145 @@
-document.getElementById('download-btn').addEventListener('click', () => {
-  const original = document.querySelector('.resume-container');
+import { db } from "./firebase-init.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-  // Clone the container for printing
-  const clone = original.cloneNode(true);
+function setText(id, value = "") {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value;
+}
 
-  // Basic page styling
-  clone.style.width = "210mm";   // A4 width
-  clone.style.minHeight = "297mm"; // A4 height
-  clone.style.background = "#FFFFFF"; // white background
-  clone.style.color = "#000000";     // black text
-  clone.style.padding = "0";
-  clone.style.margin = "0";
-  clone.style.boxShadow = "none";
-  clone.style.overflow = "visible";
-  clone.style.position = "absolute";
-  clone.style.left = "-9999px"; // offscreen
+function renderTagList(containerId, items = []) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
 
-  // Remove Liquid Glass & colors from all child elements
-  clone.querySelectorAll("*").forEach(el => {
-    el.style.background = "transparent";
-    el.style.color = "#000000";
-    el.style.borderColor = "#000000";
-    el.style.boxShadow = "none";
-    el.style.textShadow = "none";
-    el.style.filter = "none";
-    el.style.backdropFilter = "none";
-    el.style.borderRadius = "0";
-    el.style.display = "block";
-    el.style.width = "100%";
-    el.style.padding = "0"; // reset padding for cleaner PDF
-    el.style.margin = "0"; // reset margin
+  container.innerHTML = "";
+
+  items.forEach(item => {
+    const span = document.createElement("span");
+    span.textContent = item;
+    container.appendChild(span);
   });
+}
 
-  // Add clear separation lines for sections and header
-  clone.querySelectorAll("section, .site-header").forEach(section => {
-    section.style.borderBottom = "1px solid #000000";
-    section.style.padding = "12px 0";
-    section.style.pageBreakInside = "avoid"; // prevent section split
-    section.style.pageBreakAfter = "auto";
+function renderSimpleList(containerId, items = []) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  items.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    container.appendChild(li);
   });
+}
 
-  // Prevent items from breaking mid-element
-  clone.querySelectorAll(".job, .education-item, .skills-list span, .languages-list span, ul li").forEach(el => {
-    el.style.pageBreakInside = "avoid";
+function renderExperience(items = []) {
+  const container = document.getElementById("experience-list");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  items.forEach(item => {
+    const job = document.createElement("article");
+    job.className = "job";
+
+    const title = document.createElement("h3");
+    title.textContent = item.title || "";
+
+    const meta = document.createElement("p");
+    meta.className = "job-meta";
+    meta.textContent = [item.company, item.dates].filter(Boolean).join(" • ");
+
+    job.appendChild(title);
+
+    if (meta.textContent) {
+      job.appendChild(meta);
+    }
+
+    if (Array.isArray(item.details) && item.details.length) {
+      const ul = document.createElement("ul");
+
+      item.details.forEach(detail => {
+        const li = document.createElement("li");
+        li.textContent = detail;
+        ul.appendChild(li);
+      });
+
+      job.appendChild(ul);
+    }
+
+    container.appendChild(job);
   });
+}
 
-  // Append off-screen for html2pdf to render
-  document.body.appendChild(clone);
+function renderEducation(items = []) {
+  const container = document.getElementById("education-list");
+  if (!container) return;
 
-  html2pdf().from(clone).set({
-    margin: [10, 15, 10, 15], // top, left, bottom, right
-    filename: 'Caleb_Kritzar_Resume.pdf',
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
-  }).save().finally(() => {
-    document.body.removeChild(clone);
+  container.innerHTML = "";
+
+  items.forEach(item => {
+    const edu = document.createElement("article");
+    edu.className = "education-item";
+
+    const school = document.createElement("h3");
+    school.textContent = item.school || "";
+
+    const degree = document.createElement("p");
+    degree.textContent = item.degree || "";
+
+    const dates = document.createElement("p");
+    dates.className = "education-dates";
+    dates.textContent = item.dates || "";
+
+    edu.appendChild(school);
+
+    if (degree.textContent) {
+      edu.appendChild(degree);
+    }
+
+    if (dates.textContent) {
+      edu.appendChild(dates);
+    }
+
+    container.appendChild(edu);
   });
+}
+
+async function loadResume() {
+  try {
+    const snap = await getDoc(doc(db, "site_config", "mainProfile"));
+
+    if (!snap.exists()) {
+      console.warn("Resume data not found.");
+      return;
+    }
+
+    const data = snap.data();
+
+    setText("name", data.name || "");
+    setText("contact", data.contact || "");
+    setText("summary", data.summary || "");
+
+    const emailEl = document.getElementById("email");
+    if (emailEl) {
+      emailEl.textContent = data.email || "";
+      emailEl.href = data.email ? `mailto:${data.email}` : "#";
+    }
+
+    renderTagList("skills-list", data.skills || []);
+    renderTagList("languages-list", data.languages || []);
+    renderExperience(data.experience || []);
+    renderEducation(data.education || []);
+    renderSimpleList("certifications-list", data.certifications || []);
+    renderSimpleList("projects-list", data.projects || []);
+  } catch (err) {
+    console.error("Error loading resume:", err);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  loadResume();
 });
