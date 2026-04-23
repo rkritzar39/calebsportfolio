@@ -3853,10 +3853,11 @@ textarea {
   }
 }
 
-/* ======================== */
+/* ===================================== */
 /* Resume Editor */
-/* ======================== */
-.resume-editor-card {
+/* ===================================== */
+
+#resume-admin-section.resume-editor-card {
     background: var(--content-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--glass-border-radius);
@@ -3867,240 +3868,350 @@ textarea {
     color: var(--text-color);
 }
 
-.resume-editor-card h2,
-.resume-editor-card h3,
-.resume-editor-card h4,
-.resume-editor-card label {
+#resume-admin-section .section-header {
+    margin-bottom: 20px;
+}
+
+#resume-admin-section .section-header h2 {
+    margin: 0 0 6px;
+    font-size: 1.7rem;
+    font-weight: 700;
     color: var(--text-color);
+    letter-spacing: -0.02em;
 }
 
-.resume-editor-card p {
+#resume-admin-section .section-header p {
+    margin: 0;
     color: var(--secondary-text);
+    font-size: 0.98rem;
 }
 
-.resume-form {
+#resume-admin-section .resume-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
 }
 
-.editor-section {
-    background: rgba(var(--accent-rgb), 0.04);
+#resume-admin-section .editor-section {
+    background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-lg);
     padding: 18px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
 }
 
-.section-title-row {
+body:not(.dark-mode) #resume-admin-section .editor-section,
+body.light-mode #resume-admin-section .editor-section {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+#resume-admin-section .editor-section h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-color);
+    letter-spacing: -0.01em;
+}
+
+#resume-admin-section .section-title-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
-.form-grid,
-.experience-grid,
-.education-grid {
+#resume-admin-section .form-grid,
+#resume-admin-section .experience-grid,
+#resume-admin-section .education-grid,
+#resume-admin-section .project-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
 }
 
-.full-width {
+#resume-admin-section .full-width {
     grid-column: 1 / -1;
 }
 
-.form-group {
+#resume-admin-section .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
 }
 
-.form-group label {
-    font-size: 0.95rem;
+#resume-admin-section .form-group label {
+    font-size: 0.92rem;
     font-weight: 600;
+    color: var(--text-color);
 }
 
-.form-group input,
-.form-group textarea,
-.simple-list-item input,
-.detail-item input,
-.experience-item input,
-.education-item input {
+#resume-admin-section input,
+#resume-admin-section textarea,
+#resume-admin-section select {
     width: 100%;
     box-sizing: border-box;
-    background: var(--input-bg-color);
     border: 1px solid var(--input-border-color);
+    background: var(--input-bg-color);
     color: var(--text-color);
-    border-radius: var(--border-radius-md);
+    border-radius: 12px;
     padding: 12px 14px;
     font-size: 0.95rem;
-    transition: border-color var(--transition-speed) var(--transition-timing),
-                box-shadow var(--transition-speed) var(--transition-timing),
-                background var(--transition-speed) var(--transition-timing);
+    font-family: inherit;
+    line-height: 1.45;
+    transition:
+        border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing),
+        background var(--transition-speed) var(--transition-timing),
+        transform var(--transition-speed) var(--transition-timing);
 }
 
-.form-group textarea {
+#resume-admin-section textarea {
     resize: vertical;
-    min-height: 120px;
+    min-height: 110px;
 }
 
-.form-group input::placeholder,
-.form-group textarea::placeholder,
-.simple-list-item input::placeholder,
-.detail-item input::placeholder,
-.experience-item input::placeholder,
-.education-item input::placeholder {
+#resume-admin-section input::placeholder,
+#resume-admin-section textarea::placeholder {
     color: var(--secondary-text);
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
-.form-group input:focus,
-.form-group textarea:focus,
-.simple-list-item input:focus,
-.detail-item input:focus,
-.experience-item input:focus,
-.education-item input:focus {
+#resume-admin-section input:focus,
+#resume-admin-section textarea:focus,
+#resume-admin-section select:focus {
     outline: none;
     border-color: var(--input-focus-border-color);
     box-shadow: 0 0 0 4px var(--input-focus-shadow-color);
 }
 
-.simple-list-container,
-.complex-list-container,
-.detail-list {
+#resume-admin-section select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: var(--select-arrow);
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 14px 14px;
+    padding-right: 40px;
+}
+
+#resume-admin-section .simple-list-container,
+#resume-admin-section .complex-list-container,
+#resume-admin-section .detail-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-height: 10px;
 }
 
-.simple-list-item,
-.detail-item {
+#resume-admin-section .simple-list-item,
+#resume-admin-section .detail-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: var(--content-bg);
+    background: var(--input-bg-color);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-md);
+    border-radius: 14px;
     padding: 12px;
 }
 
-.simple-list-item input,
-.detail-item input {
+#resume-admin-section .simple-list-item input,
+#resume-admin-section .detail-item input {
     flex: 1;
+    min-width: 0;
 }
 
-.experience-item,
-.education-item {
-    background: var(--content-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg);
-    padding: 16px;
+#resume-admin-section .experience-item,
+#resume-admin-section .education-item,
+#resume-admin-section .project-item {
     display: flex;
     flex-direction: column;
     gap: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px;
 }
 
-.subsection {
-    background: rgba(var(--accent-rgb), 0.03);
-    border: 1px dashed var(--border-color);
-    border-radius: var(--border-radius-md);
-    padding: 12px;
+body:not(.dark-mode) #resume-admin-section .experience-item,
+body:not(.dark-mode) #resume-admin-section .education-item,
+body:not(.dark-mode) #resume-admin-section .project-item,
+body.light-mode #resume-admin-section .experience-item,
+body.light-mode #resume-admin-section .education-item,
+body.light-mode #resume-admin-section .project-item {
+    background: rgba(255, 255, 255, 0.75);
 }
 
-.item-actions,
-.button-row {
+#resume-admin-section .subsection {
+    background: rgba(var(--accent-rgb), 0.05);
+    border: 1px dashed rgba(var(--accent-rgb), 0.22);
+    border-radius: 14px;
+    padding: 14px;
+}
+
+#resume-admin-section .subsection h4 {
+    margin: 0;
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+#resume-admin-section .item-actions,
+#resume-admin-section .button-row {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
 }
 
-.primary-btn,
-.secondary-btn,
-.ghost-btn,
-.danger-btn {
+#resume-admin-section .button-row {
+    margin-top: 4px;
+}
+
+#resume-admin-section .primary-btn,
+#resume-admin-section .secondary-btn,
+#resume-admin-section .ghost-btn,
+#resume-admin-section .danger-btn {
     appearance: none;
     border: 1px solid transparent;
     border-radius: 999px;
     padding: 10px 16px;
+    font-size: 0.92rem;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-family: inherit;
+    line-height: 1.2;
     cursor: pointer;
-    transition: transform var(--transition-speed) var(--transition-timing),
-                background var(--transition-speed) var(--transition-timing),
-                border-color var(--transition-speed) var(--transition-timing),
-                box-shadow var(--transition-speed) var(--transition-timing),
-                opacity var(--transition-speed) var(--transition-timing);
+    transition:
+        background var(--transition-speed) var(--transition-timing),
+        color var(--transition-speed) var(--transition-timing),
+        border-color var(--transition-speed) var(--transition-timing),
+        transform var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing),
+        opacity var(--transition-speed) var(--transition-timing);
 }
 
-.primary-btn {
-    background: var(--accent-color);
-    color: #fff;
-    box-shadow: 0 6px 18px rgba(var(--accent-rgb), 0.24);
-}
-
-.primary-btn:hover {
-    background: var(--hover-color);
+#resume-admin-section .primary-btn:hover,
+#resume-admin-section .secondary-btn:hover,
+#resume-admin-section .ghost-btn:hover,
+#resume-admin-section .danger-btn:hover {
     transform: translateY(-1px);
 }
 
-.secondary-btn {
-    background: rgba(var(--accent-rgb), 0.12);
-    color: var(--text-color);
-    border-color: rgba(var(--accent-rgb), 0.18);
+#resume-admin-section .primary-btn {
+    background: var(--accent-color);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(var(--accent-rgb), 0.24);
 }
 
-.secondary-btn:hover {
+#resume-admin-section .primary-btn:hover {
+    background: var(--hover-color);
+}
+
+#resume-admin-section .secondary-btn {
+    background: rgba(var(--accent-rgb), 0.12);
+    color: var(--text-color);
+    border-color: rgba(var(--accent-rgb), 0.16);
+}
+
+#resume-admin-section .secondary-btn:hover {
     background: rgba(var(--accent-rgb), 0.18);
 }
 
-.ghost-btn {
+#resume-admin-section .ghost-btn {
     background: transparent;
     color: var(--text-color);
     border-color: var(--border-color);
 }
 
-.ghost-btn:hover {
-    background: rgba(255, 255, 255, 0.04);
+#resume-admin-section .ghost-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
-.danger-btn {
+body:not(.dark-mode) #resume-admin-section .ghost-btn:hover,
+body.light-mode #resume-admin-section .ghost-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+#resume-admin-section .danger-btn {
     background: rgba(var(--danger-rgb), 0.12);
     color: var(--color-danger);
-    border-color: rgba(var(--danger-rgb), 0.18);
+    border-color: rgba(var(--danger-rgb), 0.16);
 }
 
-.danger-btn:hover {
+#resume-admin-section .danger-btn:hover {
     background: rgba(var(--danger-rgb), 0.18);
+    box-shadow: 0 8px 20px rgba(var(--danger-rgb), 0.12);
 }
 
-.save-status {
-    min-height: 20px;
-    margin-top: 6px;
+#resume-admin-section .save-status {
+    min-height: 22px;
+    margin: 0;
+    font-size: 0.94rem;
     font-weight: 600;
+    color: var(--secondary-text);
 }
 
-#resume-save-status.success {
+#resume-admin-section .save-status.success {
     color: var(--success-text-color);
 }
 
-#resume-save-status.error {
+#resume-admin-section .save-status.error {
     color: var(--error-text-color);
 }
 
-@media (max-width: 768px) {
-    .form-grid,
-    .experience-grid,
-    .education-grid {
-        grid-template-columns: 1fr;
+#resume-admin-section .save-status.info {
+    color: var(--secondary-text);
+}
+
+#resume-admin-section .muted-note {
+    color: var(--secondary-text);
+    font-size: 0.88rem;
+    margin-top: 4px;
+}
+
+/* Optional nicer spacing for starter buttons inside cards */
+#resume-admin-section .experience-item > .item-actions,
+#resume-admin-section .education-item > .item-actions,
+#resume-admin-section .project-item > .item-actions {
+    padding-top: 2px;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+    #resume-admin-section {
+        padding: 18px;
     }
 
-    .simple-list-item,
-    .detail-item {
+    #resume-admin-section .form-grid,
+    #resume-admin-section .experience-grid,
+    #resume-admin-section .education-grid,
+    #resume-admin-section .project-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    #resume-admin-section .section-title-row {
+        align-items: stretch;
+    }
+
+    #resume-admin-section .simple-list-item,
+    #resume-admin-section .detail-item {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    #resume-admin-section .item-actions,
+    #resume-admin-section .button-row {
+        flex-direction: column;
+    }
+
+    #resume-admin-section .primary-btn,
+    #resume-admin-section .secondary-btn,
+    #resume-admin-section .ghost-btn,
+    #resume-admin-section .danger-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
