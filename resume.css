@@ -8,15 +8,11 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", Roboto, sans-serif;
 
     margin: 0;
-    padding: 32px 12px;
+    padding: 36px 12px;
 
     line-height: 1.6;
 
     overflow-x: hidden;
-
-    font-size: 16px;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
 }
 
 /* ========================= */
@@ -29,22 +25,23 @@ body {
     display: flex;
     flex-direction: column;
 
-    gap: 28px;
+    gap: 34px;
 }
 
 /* ========================= */
-/* GLASS CARD SYSTEM        */
+/* GLASS CARD SYSTEM (UNCHANGED CORE DESIGN) */
 /* ========================= */
 .site-header,
 section,
 .download-btn {
     background: var(--content-bg);
+    background-image: var(--bubble-gradient);
 
-    border-radius: 16px;
+    border-radius: 20px;
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
 
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
@@ -53,7 +50,21 @@ section,
     overflow: hidden;
 }
 
-/* keep content above */
+/* glass reflection */
+.site-header::before,
+section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    background: var(--liquid-reflection);
+    opacity: 0.18;
+
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+}
+
+/* content layering */
 .site-header > *,
 section > * {
     position: relative;
@@ -61,51 +72,91 @@ section > * {
 }
 
 /* ========================= */
-/* HEADER                  */
+/* HEADER (REFINED PROFESSIONAL VERSION) */
 /* ========================= */
 .site-header {
-    padding: 24px;
+    padding: 28px;
+    margin-bottom: 18px;
 }
 
 .header-inner {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 22px;
 }
 
+/* Profile image refinement */
 .header-photo {
-    width: 110px;
-    height: 110px;
+    width: 108px;
+    height: 108px;
     border-radius: 50%;
     object-fit: cover;
 
     border: 2px solid var(--accent-color);
+
+    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+}
+
+/* Header text block (new professional hierarchy) */
+.header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Name styling */
+.header-text h1 {
+    margin: 0;
+
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+/* Subtitle / role line */
+.header-text p {
+    margin: 0;
+
+    color: var(--secondary-text);
+    font-size: 1rem;
+}
+
+/* optional meta line (email / links etc.) */
+.header-meta {
+    margin-top: 6px;
+
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 /* ========================= */
-/* SECTIONS                */
+/* SECTIONS                 */
 /* ========================= */
 section {
-    padding: 24px;
+    padding: 26px;
+
+    margin-top: 18px;
+    margin-bottom: 18px;
 
     display: flex;
     flex-direction: column;
     gap: 14px;
-
-    margin: 0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-section:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+/* extra separation safety */
+section + section {
+    margin-top: 22px;
 }
 
 /* ========================= */
-/* SECTION TITLES          */
+/* SECTION TITLES           */
 /* ========================= */
 section h2 {
-    margin: 0 0 12px 0;
+    margin: 0 0 14px 0;
 
     font-size: 1.25rem;
     font-weight: 700;
@@ -119,7 +170,7 @@ section h2 {
 
     padding-bottom: 10px;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
 }
 
 section h2::before {
@@ -132,15 +183,16 @@ section h2::before {
 }
 
 /* ========================= */
-/* SUMMARY                */
+/* SUMMARY                 */
 /* ========================= */
 #summary p {
     margin: 0;
     color: var(--secondary-text);
+    line-height: 1.65;
 }
 
 /* ========================= */
-/* SKILLS / TAGS          */
+/* SKILLS / TAGS           */
 /* ========================= */
 .skills-list,
 .languages-list {
@@ -151,23 +203,17 @@ section h2::before {
 
 .skills-list span,
 .languages-list span {
-    padding: 6px 12px;
+    padding: 7px 12px;
 
     border-radius: 999px;
 
-    background: rgba(255,255,255,0.04);
+    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
 
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.9rem;
 
-    transition: transform 0.15s ease;
-}
-
-.skills-list span:hover,
-.languages-list span:hover {
-    transform: translateY(-1px);
+    transition: transform 0.2s ease;
 }
 
 /* ========================= */
@@ -177,11 +223,11 @@ section h2::before {
 .education-item {
     display: flex;
     justify-content: space-between;
-    gap: 12px;
+    gap: 14px;
 
-    padding: 12px 0;
+    padding: 14px 0;
 
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
 }
 
 .job:last-child,
@@ -194,12 +240,6 @@ section h2::before {
     flex: 1;
 }
 
-.job-left strong,
-.edu-left strong {
-    font-size: 1rem;
-    font-weight: 600;
-}
-
 .job-dates,
 .education-dates {
     white-space: nowrap;
@@ -208,7 +248,7 @@ section h2::before {
 }
 
 /* ========================= */
-/* LISTS                  */
+/* LISTS                   */
 /* ========================= */
 ul {
     margin: 8px 0 0 18px;
@@ -216,11 +256,10 @@ ul {
 
 li {
     margin-bottom: 6px;
-    color: var(--secondary-text);
 }
 
 /* ========================= */
-/* DOWNLOAD BUTTON        */
+/* DOWNLOAD BUTTON         */
 /* ========================= */
 .download-btn {
     display: inline-block;
@@ -239,7 +278,7 @@ li {
 }
 
 /* ========================= */
-/* FOOTER                 */
+/* FOOTER                  */
 /* ========================= */
 .site-footer {
     text-align: center;
@@ -249,13 +288,12 @@ li {
 }
 
 /* ========================= */
-/* LIGHT MODE             */
+/* LIGHT MODE              */
 /* ========================= */
 body[data-theme="light"] .site-header,
 body[data-theme="light"] section {
-    background: #ffffff;
-    border: 1px solid rgba(0,0,0,0.08);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.10);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
 }
 
 body[data-theme="light"] section h2 {
@@ -267,7 +305,7 @@ body[data-theme="light"] {
 }
 
 /* ========================= */
-/* RESPONSIVE            */
+/* RESPONSIVE              */
 /* ========================= */
 @media (max-width: 768px) {
     body {
@@ -275,7 +313,7 @@ body[data-theme="light"] {
     }
 
     .resume-container {
-        gap: 20px;
+        gap: 22px;
     }
 
     .header-inner {
