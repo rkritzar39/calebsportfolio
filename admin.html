@@ -543,111 +543,129 @@
   </div>
 </section>
 
-            <!-- ========================= -->
-<!-- BASIC INFO -->
-<!-- ========================= -->
-<section class="admin-section">
-  <h2>Basic Info</h2>
+            <div class="admin-container">
 
-  <input id="name" placeholder="Full Name">
-  <input id="contact" placeholder="Contact (City | Phone)">
-  <input id="email" placeholder="Email">
+  <!-- ===================== -->
+  <!-- HEADER -->
+  <!-- ===================== -->
+  <header class="admin-header">
+    <h1>Resume Admin Dashboard</h1>
+    <p>Live CMS Control Panel</p>
+  </header>
 
-  <textarea id="summary" placeholder="Professional Summary"></textarea>
+  <!-- ===================== -->
+  <!-- BASIC INFO -->
+  <!-- ===================== -->
+  <section class="admin-card">
+    <h2>Basic Info</h2>
 
-  <button onclick="saveBasicInfo()">Save Basic Info</button>
-</section>
+    <input id="name" placeholder="Full Name">
+    <input id="contact" placeholder="Contact">
+    <input id="email" placeholder="Email">
 
-<!-- ========================= -->
-<!-- SKILLS -->
-<!-- ========================= -->
-<section class="admin-section">
-  <h2>Skills</h2>
+    <textarea id="summary" placeholder="Summary"></textarea>
 
-  <input id="skill-input" placeholder="Add skill">
-  <button onclick="addSkill()">Add Skill</button>
+    <button onclick="saveBasicInfo()">Save Basic Info</button>
+  </section>
 
-  <div id="skills-preview"></div>
-</section>
+  <!-- ===================== -->
+  <!-- SKILLS -->
+  <!-- ===================== -->
+  <section class="admin-card">
+    <h2>Skills</h2>
 
-<!-- ========================= -->
-<!-- LANGUAGES / TECHNOLOGIES -->
-<!-- ========================= -->
-<section class="admin-section">
-  <h2>Languages / Technologies</h2>
+    <input id="skill-input" placeholder="Add skill">
+    <button onclick="addSkill()">Add</button>
 
-  <input id="language-input" placeholder="Add language or tech">
-  <button onclick="addLanguage()">Add</button>
+    <div id="skills-list" class="list"></div>
+  </section>
 
-  <div id="languages-preview"></div>
-</section>
+  <!-- ===================== -->
+  <!-- LANGUAGES -->
+  <!-- ===================== -->
+  <section class="admin-card">
+    <h2>Languages</h2>
 
-<!-- ========================= -->
-<!-- EXPERIENCE -->
-<!-- ========================= -->
-<section class="admin-section">
-  <h2>Experience</h2>
+    <input id="language-input" placeholder="Add language">
+    <button onclick="addLanguage()">Add</button>
 
-  <input id="job-title" placeholder="Job Title / Role">
-  <input id="job-location" placeholder="Location">
-  <input id="job-dates" placeholder="Dates (e.g. Apr 2025 – Sep 2025)">
+    <div id="languages-list" class="list"></div>
+  </section>
 
-  <textarea id="job-bullets" placeholder="Bullet points (one per line)"></textarea>
+  <!-- ===================== -->
+  <!-- EXPERIENCE -->
+  <!-- ===================== -->
+  <section class="admin-card">
+    <h2>Experience</h2>
 
-  <button onclick="addExperience()">Add Experience</button>
+    <input id="job-title" placeholder="Title">
+    <input id="job-location" placeholder="Location">
+    <input id="job-dates" placeholder="Dates">
+    <textarea id="job-bullets" placeholder="One bullet per line"></textarea>
 
-  <div id="experience-preview"></div>
-</section>
+    <button onclick="addExperience()">Add Experience</button>
 
-<!-- ========================= -->
-<!-- EDUCATION -->
-<!-- ========================= -->
-<section class="admin-section">
-  <h2>Education</h2>
+    <div id="experience-list"></div>
+  </section>
 
-  <input id="school" placeholder="School Name">
-  <input id="edu-location" placeholder="Location">
-  <input id="edu-dates" placeholder="Dates (e.g. 2026 – Expected)">
+  <!-- ===================== -->
+  <!-- EDUCATION -->
+  <!-- ===================== -->
+  <section class="admin-card">
+    <h2>Education</h2>
 
-  <textarea id="edu-details" placeholder="Degree / Notes / Achievements"></textarea>
+    <input id="school" placeholder="School">
+    <input id="edu-location" placeholder="Location">
+    <input id="edu-dates" placeholder="Dates">
+    <textarea id="edu-details" placeholder="Details"></textarea>
 
-  <button onclick="addEducation()">Add Education</button>
+    <button onclick="addEducation()">Add Education</button>
 
-  <div id="education-preview"></div>
-</section>
+    <div id="education-list"></div>
+  </section>
 
-<!-- ========================= -->
-<!-- CERTIFICATIONS -->
-<!-- ========================= -->
-<section class="admin-section">
-  <h2>Certifications</h2>
+  <!-- ===================== -->
+  <!-- CERTIFICATIONS -->
+  <!-- ===================== -->
+  <section class="admin-card">
+    <h2>Certifications</h2>
 
-  <input id="cert-input" placeholder="Certification name">
-  <button onclick="addCertification()">Add Certification</button>
+    <input id="cert-input" placeholder="Certification">
+    <button onclick="addCertification()">Add</button>
 
-  <div id="certifications-preview"></div>
-</section>
+    <div id="cert-list"></div>
+  </section>
 
-<!-- ========================= -->
-<!-- PROJECTS -->
-<!-- ========================= -->
-<section class="admin-section">
-  <h2>Projects</h2>
+  <!-- ===================== -->
+  <!-- PROJECTS -->
+  <!-- ===================== -->
+  <section class="admin-card">
+    <h2>Projects</h2>
 
-  <input id="project-input" placeholder="Project name">
-  <button onclick="addProject()">Add Project</button>
+    <input id="project-input" placeholder="Project">
+    <button onclick="addProject()">Add</button>
 
-  <div id="projects-preview"></div>
-</section>
+    <div id="project-list"></div>
+  </section>
 
-<!-- ========================= -->
-<!-- SAVE ALL -->
-<!-- ========================= -->
-<section class="admin-section">
-  <button class="save-btn" onclick="saveAllResume()">
-    Save All Changes
-  </button>
-</section>
+</div>
+
+<!-- ===================== -->
+<!-- EDIT MODAL -->
+<!-- ===================== -->
+<div id="edit-modal" class="modal hidden">
+  <div class="modal-content">
+
+    <h2>Edit Item</h2>
+
+    <input id="edit-title">
+    <textarea id="edit-body"></textarea>
+
+    <button onclick="saveEdit()">Save</button>
+    <button onclick="closeModal()">Cancel</button>
+
+  </div>
+</div>
             
              <section class="admin-section" id="useful-links-management" aria-labelledby="useful-links-heading">
     <h3 id="useful-links-heading">Manage Useful Links</h3>
