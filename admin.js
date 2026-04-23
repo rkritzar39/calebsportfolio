@@ -196,29 +196,242 @@ document.addEventListener('DOMContentLoaded', () => { //
     // --- Firestore Reference for Profile / Site Config ---
     const profileDocRef = doc(db, "site_config", "mainProfile"); //
 
-    // ===== Resume Editor =====
+   // ===== Resume Editor =====
 const resumeForm = document.getElementById("resume-form");
 const resumeSaveStatus = document.getElementById("resume-save-status");
 
-function linesToArray(text) {
-  return (text || "")
-    .split("\n")
-    .map(line => line.trim())
+function $(id) {
+  return document.getElementById(id);
+}
+
+function clearContainer(id) {
+  const el = $(id);
+  if (el) el.innerHTML = "";
+}
+
+function createButton(text, className, type = "button") {
+  const btn = document.createElement("button");
+  btn.type = type;
+  btn.className = className;
+  btn.textContent = text;
+  return btn;
+}
+
+function createSimpleListItem(value = "", placeholder = "Enter item") {
+  const wrapper = document.createElement("div");
+  wrapper.className = "simple-list-item";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "simple-item-input";
+  input.placeholder = placeholder;
+  input.value = value;
+
+  const removeBtn = createButton("Remove", "danger-btn");
+  removeBtn.addEventListener("click", () => wrapper.remove());
+
+  wrapper.appendChild(input);
+  wrapper.appendChild(removeBtn);
+
+  return wrapper;
+}
+
+function addSimpleListItem(containerId, value = "", placeholder = "Enter item") {
+  const container = $(containerId);
+  if (!container) return;
+  container.appendChild(createSimpleListItem(value, placeholder));
+}
+
+function collectSimpleList(containerId) {
+  const container = $(containerId);
+  if (!container) return [];
+
+  return [...container.querySelectorAll(".simple-item-input")]
+    .map(input => input.value.trim())
     .filter(Boolean);
 }
 
-function parseJsonArray(text, fallback = []) {
-  const trimmed = (text || "").trim();
-  if (!trimmed) return fallback;
-  return JSON.parse(trimmed);
+function createDetailItem(value = "") {
+  const wrapper = document.createElement("div");
+  wrapper.className = "detail-item";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "detail-input";
+  input.placeholder = "Bullet point / responsibility";
+  input.value = value;
+
+  const removeBtn = createButton("Remove", "danger-btn");
+  removeBtn.addEventListener("click", () => wrapper.remove());
+
+  wrapper.appendChild(input);
+  wrapper.appendChild(removeBtn);
+
+  return wrapper;
+}
+
+function createExperienceItem(data = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "experience-item";
+
+  wrapper.innerHTML = `
+    <div class="experience-grid">
+      <div class="form-group">
+        <label>Job Title</label>
+        <input type="text" class="exp-title" value="${data.title || ""}" placeholder="Frontend Developer" />
+      </div>
+
+      <div class="form-group">
+        <label>Company</label>
+        <input type="text" class="exp-company" value="${data.company || ""}" placeholder="Company Name" />
+      </div>
+
+      <div class="form-group full-width">
+        <label>Dates</label>
+        <input type="text" class="exp-dates" value="${data.dates || ""}" placeholder="2023 - Present" />
+      </div>
+    </div>
+
+    <div class="subsection">
+      <div class="section-title-row">
+        <h4>Details</h4>
+        <button type="button" class="ghost-btn add-detail-btn">+ Add Detail</button>
+      </div>
+      <div class="detail-list"></div>
+    </div>
+
+    <div class="item-actions">
+      <button type="button" class="danger-btn remove-experience-btn">Remove Experience</button>
+    </div>
+  `;
+
+  const detailList = wrapper.querySelector(".detail-list");
+  const details = Array.isArray(data.details) ? data.details : [];
+
+  if (details.length) {
+    details.forEach(detail => {
+      detailList.appendChild(createDetailItem(detail));
+    });
+  } else {
+    detailList.appendChild(createDetailItem(""));
+  }
+
+  wrapper.querySelector(".add-detail-btn").addEventListener("click", () => {
+    detailList.appendChild(createDetailItem(""));
+  });
+
+  wrapper.querySelector(".remove-experience-btn").addEventListener("click", () => {
+    wrapper.remove();
+  });
+
+  return wrapper;
+}
+
+function createEducationItem(data = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "education-item";
+
+  wrapper.innerHTML = `
+    <div class="education-grid">
+      <div class="form-group">
+        <label>School</label>
+        <input type="text" class="edu-school" value="${data.school || ""}" placeholder="University Name" />
+      </div>
+
+      <div class="form-group">
+        <label>Degree</label>
+        <input type="text" class="edu-degree" value="${data.degree || ""}" placeholder="B.S. in Computer Science" />
+      </div>
+
+      <div class="form-group full-width">
+        <label>Dates</label>
+        <input type="text" class="edu-dates" value="${data.dates || ""}" placeholder="2020 - 2024" />
+      </div>
+    </div>
+
+    <div class="item-actions">
+      <button type="button" class="danger-btn remove-education-btn">Remove Education</button>
+    </div>
+  `;
+
+  wrapper.querySelector(".remove-education-btn").addEventListener("click", () => {
+    wrapper.remove();
+  });
+
+  return wrapper;
+}
+
+function collectExperience() {
+  return [...document.querySelectorAll("#experience-container .experience-item")]
+    .map(item => {
+      const title = item.querySelector(".exp-title")?.value.trim() || "";
+      const company = item.querySelector(".exp-company")?.value.trim() || "";
+      const dates = item.querySelector(".exp-dates")?.value.trim() || "";
+      const details = [...item.querySelectorAll(".detail-input")]
+        .map(input => input.value.trim())
+        .filter(Boolean);
+
+      return { title, company, dates, details };
+    })
+    .filter(item => item.title || item.company || item.dates || item.details.length);
+}
+
+function collectEducation() {
+  return [...document.querySelectorAll("#education-container .education-item")]
+    .map(item => {
+      const school = item.querySelector(".edu-school")?.value.trim() || "";
+      const degree = item.querySelector(".edu-degree")?.value.trim() || "";
+      const dates = item.querySelector(".edu-dates")?.value.trim() || "";
+
+      return { school, degree, dates };
+    })
+    .filter(item => item.school || item.degree || item.dates);
+}
+
+function bindResumeAddButtons() {
+  $("add-skill-btn")?.addEventListener("click", () => {
+    addSimpleListItem("skills-container", "", "Skill");
+  });
+
+  $("add-language-btn")?.addEventListener("click", () => {
+    addSimpleListItem("languages-container", "", "Language");
+  });
+
+  $("add-certification-btn")?.addEventListener("click", () => {
+    addSimpleListItem("certifications-container", "", "Certification");
+  });
+
+  $("add-project-btn")?.addEventListener("click", () => {
+    addSimpleListItem("projects-container", "", "Project");
+  });
+
+  $("add-experience-btn")?.addEventListener("click", () => {
+    $("experience-container")?.appendChild(createExperienceItem());
+  });
+
+  $("add-education-btn")?.addEventListener("click", () => {
+    $("education-container")?.appendChild(createEducationItem());
+  });
 }
 
 async function loadResumeEditor() {
   try {
     const snap = await getDoc(profileDocRef);
 
+    clearContainer("skills-container");
+    clearContainer("languages-container");
+    clearContainer("certifications-container");
+    clearContainer("projects-container");
+    clearContainer("experience-container");
+    clearContainer("education-container");
+
     if (!snap.exists()) {
-      console.log("No resume/profile doc found yet.");
+      $("skills-container")?.appendChild(createSimpleListItem("", "Skill"));
+      $("languages-container")?.appendChild(createSimpleListItem("", "Language"));
+      $("certifications-container")?.appendChild(createSimpleListItem("", "Certification"));
+      $("projects-container")?.appendChild(createSimpleListItem("", "Project"));
+      $("experience-container")?.appendChild(createExperienceItem());
+      $("education-container")?.appendChild(createEducationItem());
       return;
     }
 
@@ -229,13 +442,53 @@ async function loadResumeEditor() {
     $("resume-email-input").value = data.email || "";
     $("resume-summary-input").value = data.summary || "";
 
-    $("resume-skills-input").value = (data.skills || []).join("\n");
-    $("resume-languages-input").value = (data.languages || []).join("\n");
-    $("resume-certifications-input").value = (data.certifications || []).join("\n");
-    $("resume-projects-input").value = (data.projects || []).join("\n");
+    (data.skills || []).forEach(skill => {
+      addSimpleListItem("skills-container", skill, "Skill");
+    });
 
-    $("resume-experience-input").value = JSON.stringify(data.experience || [], null, 2);
-    $("resume-education-input").value = JSON.stringify(data.education || [], null, 2);
+    (data.languages || []).forEach(language => {
+      addSimpleListItem("languages-container", language, "Language");
+    });
+
+    (data.certifications || []).forEach(cert => {
+      addSimpleListItem("certifications-container", cert, "Certification");
+    });
+
+    (data.projects || []).forEach(project => {
+      addSimpleListItem("projects-container", project, "Project");
+    });
+
+    (data.experience || []).forEach(exp => {
+      $("experience-container")?.appendChild(createExperienceItem(exp));
+    });
+
+    (data.education || []).forEach(edu => {
+      $("education-container")?.appendChild(createEducationItem(edu));
+    });
+
+    if (!(data.skills || []).length) {
+      addSimpleListItem("skills-container", "", "Skill");
+    }
+
+    if (!(data.languages || []).length) {
+      addSimpleListItem("languages-container", "", "Language");
+    }
+
+    if (!(data.certifications || []).length) {
+      addSimpleListItem("certifications-container", "", "Certification");
+    }
+
+    if (!(data.projects || []).length) {
+      addSimpleListItem("projects-container", "", "Project");
+    }
+
+    if (!(data.experience || []).length) {
+      $("experience-container")?.appendChild(createExperienceItem());
+    }
+
+    if (!(data.education || []).length) {
+      $("education-container")?.appendChild(createEducationItem());
+    }
   } catch (err) {
     console.error("Error loading resume editor:", err);
     if (resumeSaveStatus) {
@@ -254,12 +507,12 @@ resumeForm?.addEventListener("submit", async (e) => {
       contact: $("resume-contact-input").value.trim(),
       email: $("resume-email-input").value.trim(),
       summary: $("resume-summary-input").value.trim(),
-      skills: linesToArray($("resume-skills-input").value),
-      languages: linesToArray($("resume-languages-input").value),
-      certifications: linesToArray($("resume-certifications-input").value),
-      projects: linesToArray($("resume-projects-input").value),
-      experience: parseJsonArray($("resume-experience-input").value, []),
-      education: parseJsonArray($("resume-education-input").value, []),
+      skills: collectSimpleList("skills-container"),
+      languages: collectSimpleList("languages-container"),
+      certifications: collectSimpleList("certifications-container"),
+      projects: collectSimpleList("projects-container"),
+      experience: collectExperience(),
+      education: collectEducation(),
       updatedAt: serverTimestamp()
     };
 
@@ -272,13 +525,15 @@ resumeForm?.addEventListener("submit", async (e) => {
   } catch (err) {
     console.error("Error saving resume:", err);
     if (resumeSaveStatus) {
-      resumeSaveStatus.textContent = "Save failed. Check your JSON in Experience or Education.";
+      resumeSaveStatus.textContent = "Save failed. Please try again.";
       resumeSaveStatus.style.color = "red";
     }
   }
 });
 
+bindResumeAddButtons();
 loadResumeEditor();
+
     
     // Reference for Shoutout Metadata (used for timestamps)
     const shoutoutsMetaRef = doc(db, 'siteConfig', 'shoutoutsMetadata'); //
