@@ -2,13 +2,14 @@ import { db } from "./firebase-init.js";
 import {
   doc,
   getDoc
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebasejs-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 const $ = (id) => document.getElementById(id);
 
 /* ========================= */
-/* HELPERS                   */
+/* HELPERS & NORMALIZATION   */
 /* ========================= */
+
 function setText(id, value = "") {
   const node = $(id);
   if (node) node.textContent = value || "";
@@ -44,8 +45,10 @@ function normalizeArray(value) {
 }
 
 function normalizeStringArray(value) {
-  if (Array.isArray(value)) return value.map(i => String(i).trim()).filter(Boolean);
-  if (typeof value === "string") return value.split(/\r?\n/).map(i => i.trim()).filter(Boolean);
+  if (Array.isArray(value)) return value.map((item) => String(item).trim()).filter(Boolean);
+  if (typeof value === "string") {
+    return value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
+  }
   return [];
 }
 
@@ -57,19 +60,20 @@ function normalizeUrl(url = "") {
 }
 
 function normalizePhoneHref(phone = "") {
-  const digits = String(phone).replace(/[^\d+]/g, "");
+  const digits = String(phone || "").replace(/[^\d+]/g, "");
   return digits ? `tel:${digits}` : "";
 }
 
 /* ========================= */
-/* RENDERING FUNCTIONS       */
+/* RENDERING LOGIC           */
 /* ========================= */
 
-// Renders Skill/Language Pills
+// Renders Skills & Languages as Pills
 function renderTagList(containerId, items = []) {
   const container = $(containerId);
   if (!container) return;
   container.innerHTML = "";
+
   normalizeStringArray(items).forEach((item) => {
     const span = document.createElement("span");
     span.textContent = item;
@@ -77,7 +81,7 @@ function renderTagList(containerId, items = []) {
   });
 }
 
-// Renders Experience with Logo Support
+// Renders Experience using the Bento/Logo structure
 function renderExperience(items = []) {
   const container = $("experience-list");
   if (!container) return;
@@ -87,16 +91,15 @@ function renderExperience(items = []) {
     const job = document.createElement("div");
     job.className = "job";
 
-    // Create the wrapper for Logo + Info
     const wrapper = document.createElement("div");
     wrapper.className = "item-wrapper";
 
-    // Add Logo if exists in Firebase
+    // Logo support
     if (item.logo) {
       const img = document.createElement("img");
       img.src = item.logo;
       img.className = "item-logo";
-      img.alt = `${item.company} logo`;
+      img.alt = `${item.company || 'Company'} logo`;
       wrapper.appendChild(img);
     }
 
@@ -106,15 +109,17 @@ function renderExperience(items = []) {
     const title = document.createElement("h3");
     title.textContent = item.title || "";
 
-    const company = document.createElement("p");
-    company.textContent = `${item.company || item.employer || ""} • ${item.dates || ""}`;
+    const meta = document.createElement("p");
+    const company = item.company || item.employer || "";
+    const dates = item.dates || item.date || "";
+    meta.textContent = [company, dates].filter(Boolean).join(" • ");
 
     info.appendChild(title);
-    info.appendChild(company);
+    info.appendChild(meta);
     wrapper.appendChild(info);
     job.appendChild(wrapper);
 
-    // Bullet points
+    // Bullets
     const details = item.details || item.bullets || [];
     if (details.length) {
       const ul = document.createElement("ul");
@@ -125,11 +130,12 @@ function renderExperience(items = []) {
       });
       job.appendChild(ul);
     }
+
     container.appendChild(job);
   });
 }
 
-// Renders Education with Logo Support
+// Renders Education using the Bento/Logo structure
 function renderEducation(items = []) {
   const container = $("education-list");
   if (!container) return;
@@ -156,7 +162,9 @@ function renderEducation(items = []) {
     school.textContent = item.school || item.institution || "";
 
     const degree = document.createElement("p");
-    degree.textContent = `${item.degree || item.program || ""} • ${item.dates || ""}`;
+    const program = item.degree || item.program || "";
+    const dates = item.dates || item.date || "";
+    degree.textContent = [program, dates].filter(Boolean).join(" • ");
 
     info.appendChild(school);
     info.appendChild(degree);
@@ -177,7 +185,8 @@ function renderCertifications(items = []) {
     if (typeof item === "string") {
       li.textContent = item;
     } else {
-      li.textContent = `${item.name || item.title} — ${item.issuer || ""}`;
+      const parts = [item.name || item.title, item.issuer || item.organization, item.date].filter(Boolean);
+      li.textContent = parts.join(" — ");
     }
     container.appendChild(li);
   });
@@ -190,38 +199,44 @@ function renderProjects(items = []) {
 
   normalizeArray(items).forEach((item) => {
     const li = document.createElement("li");
-    const name = item.name || item.title || "Project";
+    const name = item.name || item.title || "";
     const stack = item.stack || item.tech || "";
     const desc = item.description || "";
-    
-    li.innerHTML = `<strong>${name}</strong> ${stack ? `<em>(${stack})</em>` : ""} — ${desc}`;
+    const url = normalizeUrl(item.link || item.url || "");
+
+    if (url) {
+      li.innerHTML = `<a href="${url}" target="_blank"><strong>${name}</strong></a> ${stack ? `<em>(${stack})</em>` : ""} — ${desc}`;
+    } else {
+      li.innerHTML = `<strong>${name}</strong> ${stack ? `<em>(${stack})</em>` : ""} — ${desc}`;
+    }
     container.appendChild(li);
   });
 }
 
 /* ========================= */
-/* CORE LOAD LOGIC           */
+/* DATA LOADING              */
 /* ========================= */
+
 async function loadResume() {
   try {
     const snap = await getDoc(doc(db, "site_config", "mainProfile"));
     if (!snap.exists()) return;
 
-    const data = snap.data();
+    const data = snap.data() || {};
 
-    // Basic Info
+    // Basic Header Info
     setText("name", data.name);
     setText("professional-title", data.title || "IT & Cybersecurity Student");
     setText("summary", data.summary);
-    setText("location", data.location || "Toledo, OH");
+    setText("location", data.location || data.city);
 
-    // Contact Links
-    setLinkOrText("email", data.email, `mailto:${data.email}`);
+    // Links
+    setLinkOrText("email", data.email, data.email ? `mailto:${data.email}` : "");
     setLinkOrText("phone", data.phone, normalizePhoneHref(data.phone));
     setLinkOrText("website", data.website, normalizeUrl(data.website), true);
     setLinkOrText("linkedin", "LinkedIn", normalizeUrl(data.linkedin), true);
 
-    // Lists
+    // Bento Sections
     renderTagList("skills-list", data.skills);
     renderTagList("languages-list", data.languages);
     renderExperience(data.experience);
@@ -229,16 +244,15 @@ async function loadResume() {
     renderCertifications(data.certifications);
     renderProjects(data.projects);
 
-    // Set Footer Year
-    const yearNode = $("year");
-    if (yearNode) yearNode.textContent = new Date().getFullYear();
+    // Footer Year
+    if ($("year")) $("year").textContent = new Date().getFullYear();
 
   } catch (error) {
     console.error("Error loading resume:", error);
   }
 }
 
-// Initial Run
+// Bootstrap
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", loadResume);
 } else {
