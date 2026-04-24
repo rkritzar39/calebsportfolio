@@ -5,18 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Caleb Kritzar - Resume</title>
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="settings.css" />
   <link rel="stylesheet" href="resume.css" />
 </head>
+
 <body>
   <div id="resume-print-area">
+
+    <!-- HEADER -->
     <header class="site-header">
       <div class="header-inner">
+
         <img src="IMG_7115.png" alt="Caleb Kritzar" class="header-photo" />
 
         <div class="header-text">
@@ -27,72 +29,89 @@
             <span id="location"></span>
             <a id="phone"></a>
             <a id="email"></a>
-            <a id="website" target="_blank" rel="noopener noreferrer"></a>
-            <a id="linkedin" target="_blank" rel="noopener noreferrer"></a>
+            <a id="website" target="_blank"></a>
+            <a id="linkedin" target="_blank"></a>
           </div>
         </div>
+
       </div>
     </header>
 
+    <!-- MAIN GRID -->
     <div class="resume-container">
-      <main class="resume-content">
-        <section>
-          <h2>Summary</h2>
-          <p id="summary"></p>
-        </section>
+      <main class="resume-grid">
 
-        <section>
-          <h2>Skills</h2>
-          <div class="skills-list" id="skills-list"></div>
-        </section>
+        <!-- LEFT COLUMN -->
+        <div class="main-column">
 
-        <section>
-          <h2>Languages</h2>
-          <div class="languages-list" id="languages-list"></div>
-        </section>
+          <section>
+            <h2>Summary</h2>
+            <p id="summary"></p>
+          </section>
 
-        <section>
-          <h2>Experience</h2>
-          <div id="experience-list"></div>
-        </section>
+          <section>
+            <h2>Experience</h2>
+            <div id="experience-list"></div>
+          </section>
 
-        <section>
-          <h2>Education</h2>
-          <div id="education-list"></div>
-        </section>
+          <section>
+            <h2>Projects</h2>
+            <ul id="projects-list"></ul>
+          </section>
 
-        <section>
-          <h2>Certifications</h2>
-          <ul id="certifications-list"></ul>
-        </section>
+        </div>
 
-        <section>
-          <h2>Projects</h2>
-          <ul id="projects-list"></ul>
-        </section>
+        <!-- RIGHT COLUMN -->
+        <aside class="sidebar">
 
-        <button id="download-btn" class="download-btn">
-          Download Resume PDF
-        </button>
+          <section>
+            <h2>Skills</h2>
+            <div class="skills-list" id="skills-list"></div>
+          </section>
+
+          <section>
+            <h2>Languages</h2>
+            <div class="languages-list" id="languages-list"></div>
+          </section>
+
+          <section>
+            <h2>Education</h2>
+            <div id="education-list"></div>
+          </section>
+
+          <section>
+            <h2>Certifications</h2>
+            <ul id="certifications-list"></ul>
+          </section>
+
+          <button id="download-btn" class="download-btn">
+            Download Resume PDF
+          </button>
+
+        </aside>
+
       </main>
     </div>
   </div>
 
+  <!-- FOOTER -->
   <footer class="no-rearrange">
     <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
   </footer>
 
+  <!-- NAV -->
   <nav class="onyx-dock">
     <a href="index.html" class="dock-item">Home</a>
     <a href="resume.html" class="dock-item active">Resume</a>
     <a href="settings.html" class="dock-item">Settings</a>
   </nav>
 
+  <!-- SCRIPTS -->
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
   <script src="settings.js"></script>
   <script src="script.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script type="module" src="resume.js"></script>
 </body>
 </html>
