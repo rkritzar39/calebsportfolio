@@ -1,120 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Caleb Kritzar - Resume</title>
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="settings.css" />
-  <link rel="stylesheet" href="resume.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="settings.css">
+  <link rel="stylesheet" href="resume.css">
 </head>
 <body>
+
   <div id="resume-print-area">
     <header class="site-header">
       <div class="header-inner">
-        <img src="IMG_7115.png" alt="Caleb Kritzar" class="header-photo" />
+        <img src="IMG_7115.png" alt="Caleb Kritzar" class="header-photo">
 
         <div class="header-text">
-          <h1 id="name">Caleb Kritzar</h1>
-          <p class="professional-title" id="professional-title">IT & Cybersecurity Undergraduate Student</p>
-
-          <div class="contact-line contact-items">
-            <span id="location">Toledo, OH</span>
-            <a id="phone" href="tel:5672770214">(567) 277-0214</a>
-            <a id="email" href="mailto:calebkritzar@gmail.com">calebkritzar@gmail.com</a>
-            <a id="website" href="https://www.busarmydude.org/" target="_blank" rel="noopener noreferrer">busarmydude.org</a>
-            <a id="linkedin" href="#" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          </div>
+          <h1 id="resume-name"></h1>
+          <div class="contact-line" id="resume-contact"></div>
+          <a class="email-link" id="resume-email"></a>
         </div>
       </div>
     </header>
 
     <div class="resume-container">
-      <main class="resume-grid">
-        
-        <section class="card summary-card">
-          <div class="card-header">
-            <span class="icon">💡</span>
-            <h2>Professional Summary</h2>
-          </div>
-          <p id="summary">
-            Hardware-focused IT & Cybersecurity student with extensive customer service and POS operation experience. 
-            Dedicated to leveraging technical skills in computer maintenance and programming within a professional IT setting. 
-            Proven ability to adapt quickly to new technical challenges in fast-paced environments.
-          </p>
+      <main class="resume-content">
+        <section>
+          <h2>Summary</h2>
+          <p id="summary"></p>
         </section>
 
-        <section class="card skills-card">
-          <div class="card-header">
-            <span class="icon">🛠️</span>
-            <h2>Technical Skills</h2>
-          </div>
-          <div class="skills-list" id="skills-list">
-            </div>
+        <section>
+          <h2>Skills</h2>
+          <div class="skills-list" id="skills-list"></div>
         </section>
 
-        <section class="card languages-card">
-          <div class="card-header">
-            <span class="icon">💻</span>
-            <h2>Languages & Dev</h2>
-          </div>
-          <div class="languages-list" id="languages-list">
-            </div>
+        <section>
+          <h2>Languages</h2>
+          <div class="languages-list" id="languages-list"></div>
         </section>
 
-        <section class="card education-card">
-          <div class="card-header">
-            <span class="icon">🎓</span>
-            <h2>Education</h2>
-          </div>
-          <div id="education-list">
-            </div>
+        <section>
+          <h2>Experience</h2>
+          <div id="experience-list"></div>
         </section>
 
-        <section class="card certifications-card">
-          <div class="card-header">
-            <span class="icon">📜</span>
-            <h2>Certifications</h2>
-          </div>
-          <ul id="certifications-list">
-            </ul>
+        <section>
+          <h2>Education</h2>
+          <div id="education-list"></div>
         </section>
 
-        <section class="card experience-card">
-          <div class="card-header">
-            <span class="icon">💼</span>
-            <h2>Experience</h2>
-          </div>
-          <div id="experience-list">
-            </div>
+        <section>
+          <h2>Certifications</h2>
+          <ul id="certifications-list"></ul>
         </section>
 
-        <section class="card projects-card">
-          <div class="card-header">
-            <span class="icon">🚀</span>
-            <h2>Projects</h2>
-          </div>
-          <ul id="projects-list">
-            </ul>
+        <section>
+          <h2>Projects</h2>
+          <ul id="projects-list"></ul>
         </section>
 
-      </main>
-      
-      <div class="actions">
         <button id="download-btn" class="download-btn">
           Download Resume PDF
         </button>
-      </div>
+      </main>
     </div>
   </div>
 
   <footer class="no-rearrange">
-    <p>© <span id="year">2026</span> Caleb Kritzar. All Rights Reserved.</p>
+    <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
   </footer>
 
   <nav class="onyx-dock">
@@ -124,10 +80,10 @@
   </nav>
 
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  
   <script src="settings.js"></script>
   <script src="script.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <script type="module" src="resume.js"></script>
 </body>
 </html>
