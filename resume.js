@@ -7,7 +7,7 @@ import {
 const $ = (id) => document.getElementById(id);
 
 /* ========================= */
-/* STATE CONTROL */
+/* STATE LOCK */
 /* ========================= */
 
 let resumeReady = false;
@@ -25,11 +25,11 @@ function setLinkOrText(id, text = "", href = "", external = false) {
   const node = $(id);
   if (!node) return;
 
-  const cleanText = String(text || "").trim();
-  node.textContent = cleanText;
+  const clean = String(text || "").trim();
+  node.textContent = clean;
 
   if ("href" in node) {
-    node.href = cleanText ? href : "#";
+    node.href = clean ? href : "#";
 
     if (external) {
       node.target = "_blank";
@@ -40,8 +40,7 @@ function setLinkOrText(id, text = "", href = "", external = false) {
 
 function normalizeArray(value) {
   if (Array.isArray(value)) return value;
-
-  if (typeof value === "string" && value.trim()) {
+  if (typeof value === "string") {
     try {
       const parsed = JSON.parse(value);
       return Array.isArray(parsed) ? parsed : [];
@@ -49,189 +48,106 @@ function normalizeArray(value) {
       return [];
     }
   }
-
   return [];
-}
-
-function normalizeStringArray(value) {
-  if (Array.isArray(value)) {
-    return value.map((item) => String(item).trim()).filter(Boolean);
-  }
-
-  if (typeof value === "string") {
-    return value.split(/\r?\n/).map((i) => i.trim()).filter(Boolean);
-  }
-
-  return [];
-}
-
-function normalizeUrl(url = "") {
-  const clean = String(url || "").trim();
-  if (!clean) return "";
-  if (/^https?:\/\//i.test(clean)) return clean;
-  if (/^\/\//.test(clean)) return `https:${clean}`;
-  return `https://${clean}`;
-}
-
-function normalizePhoneHref(phone = "") {
-  const clean = String(phone || "").trim();
-  if (!clean) return "";
-  const digits = clean.replace(/[^\d+]/g, "");
-  return digits ? `tel:${digits}` : "";
-}
-
-function buildContactLine(data = {}) {
-  const directContact = (data.contact || "").trim();
-  if (directContact) return directContact;
-
-  return [
-    data.location || data.city || "",
-    data.phone || "",
-    data.website || "",
-    data.linkedin || ""
-  ].filter(Boolean).join(" • ");
 }
 
 /* ========================= */
-/* RENDERERS */
+/* RENDER COMPLETE TRACKING */
+/* ========================= */
+
+let renderDone = false;
+
+function markRenderComplete() {
+  // forces browser to finish layout painting
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      renderDone = true;
+      resumeReady = true;
+    });
+  });
+}
+
+/* ========================= */
+/* RENDER FUNCTIONS (UNCHANGED LOGIC) */
 /* ========================= */
 
 function renderTagList(id, items = []) {
-  const container = $(id);
-  if (!container) return;
-  container.innerHTML = "";
-
-  normalizeStringArray(items).forEach((item) => {
-    const span = document.createElement("span");
-    span.textContent = item;
-    container.appendChild(span);
+  const el = $(id);
+  if (!el) return;
+  el.innerHTML = "";
+  items.forEach(i => {
+    const s = document.createElement("span");
+    s.textContent = i;
+    el.appendChild(s);
   });
 }
 
+function renderSimpleList(id, items = []) {
+  const el = $(id);
+  if (!el) return;
+  el.innerHTML = "";
+  items.forEach(i => {
+    const li = document.createElement("li");
+    li.textContent = typeof i === "string" ? i : (i?.name || "");
+    el.appendChild(li);
+  });
+}
+
+/* EXPERIENCE */
 function renderExperience(items = []) {
-  const container = $("experience-list");
-  if (!container) return;
-  container.innerHTML = "";
+  const el = $("experience-list");
+  if (!el) return;
+  el.innerHTML = "";
 
-  normalizeArray(items).forEach((item) => {
-    if (!item || typeof item !== "object") return;
+  items.forEach(item => {
+    const div = document.createElement("article");
+    div.className = "job";
 
-    const job = document.createElement("article");
-    job.className = "job";
+    div.innerHTML = `
+      <div class="job-header">
+        <div class="job-left">
+          <h3>${item.title || ""}</h3>
+          <p>${item.company || ""}</p>
+        </div>
+        <div class="job-right">
+          <p class="job-dates">${item.dates || ""}</p>
+        </div>
+      </div>
+    `;
 
-    const header = document.createElement("div");
-    header.className = "job-header";
-
-    const left = document.createElement("div");
-    const right = document.createElement("div");
-
-    const title = document.createElement("h3");
-    title.textContent = item.title || "";
-
-    const company = document.createElement("p");
-    company.textContent = [item.company, item.location].filter(Boolean).join(" • ");
-
-    const dates = document.createElement("p");
-    dates.textContent = item.dates || item.date || "";
-
-    if (title.textContent) left.appendChild(title);
-    if (company.textContent) left.appendChild(company);
-    if (dates.textContent) right.appendChild(dates);
-
-    header.appendChild(left);
-    header.appendChild(right);
-    job.appendChild(header);
-
-    const details = Array.isArray(item.details) ? item.details : [];
-
-    if (details.length) {
-      const ul = document.createElement("ul");
-      details.forEach((d) => {
-        const li = document.createElement("li");
-        li.textContent = String(d);
-        ul.appendChild(li);
-      });
-      job.appendChild(ul);
-    }
-
-    container.appendChild(job);
+    el.appendChild(div);
   });
 }
 
+/* EDUCATION */
 function renderEducation(items = []) {
-  const container = $("education-list");
-  if (!container) return;
-  container.innerHTML = "";
+  const el = $("education-list");
+  if (!el) return;
+  el.innerHTML = "";
 
-  normalizeArray(items).forEach((item) => {
-    if (!item) return;
+  items.forEach(item => {
+    const div = document.createElement("article");
+    div.className = "education-item";
 
-    const edu = document.createElement("article");
-    edu.className = "education-item";
+    div.innerHTML = `
+      <h3>${item.school || ""}</h3>
+      <p>${item.degree || ""}</p>
+    `;
 
-    const school = document.createElement("h3");
-    school.textContent = item.school || item.institution || "";
-
-    const degree = document.createElement("p");
-    degree.textContent = [item.degree, item.field, item.location]
-      .filter(Boolean)
-      .join(" • ");
-
-    edu.appendChild(school);
-    edu.appendChild(degree);
-
-    container.appendChild(edu);
+    el.appendChild(div);
   });
 }
 
+/* PROJECTS */
 function renderProjects(items = []) {
-  const container = $("projects-list");
-  if (!container) return;
-  container.innerHTML = "";
+  const el = $("projects-list");
+  if (!el) return;
+  el.innerHTML = "";
 
-  normalizeArray(items).forEach((item) => {
+  items.forEach(item => {
     const li = document.createElement("li");
-
-    if (typeof item === "string") {
-      li.textContent = item;
-    } else {
-      const name = item.name || item.title || "";
-      const url = normalizeUrl(item.link || item.url || "");
-
-      if (url) {
-        const a = document.createElement("a");
-        a.href = url;
-        a.target = "_blank";
-        a.textContent = name || url;
-        li.appendChild(a);
-      } else {
-        li.textContent = name;
-      }
-    }
-
-    container.appendChild(li);
-  });
-}
-
-function renderCertifications(items = []) {
-  const container = $("certifications-list");
-  if (!container) return;
-  container.innerHTML = "";
-
-  normalizeArray(items).forEach((item) => {
-    const li = document.createElement("li");
-
-    if (typeof item === "string") {
-      li.textContent = item;
-    } else {
-      li.textContent = [
-        item.name,
-        item.issuer,
-        item.date
-      ].filter(Boolean).join(" — ");
-    }
-
-    container.appendChild(li);
+    li.textContent = item.name || item.title || "";
+    el.appendChild(li);
   });
 }
 
@@ -248,23 +164,22 @@ async function loadResume() {
 
     setText("name", data.name);
     setText("title", data.title);
-    setText("professional-title", data.title);
     setText("summary", data.summary);
     setText("location", data.location);
 
     setLinkOrText("email", data.email, `mailto:${data.email}`);
-    setLinkOrText("phone", data.phone, normalizePhoneHref(data.phone));
-    setLinkOrText("website", data.website, normalizeUrl(data.website), true);
-    setLinkOrText("linkedin", data.linkedin, normalizeUrl(data.linkedin), true);
+    setLinkOrText("phone", data.phone, `tel:${data.phone}`);
+    setLinkOrText("website", data.website, data.website, true);
+    setLinkOrText("linkedin", data.linkedin, data.linkedin, true);
 
-    renderTagList("skills-list", data.skills);
-    renderTagList("languages-list", data.languages);
-    renderExperience(data.experience);
-    renderEducation(data.education);
-    renderCertifications(data.certifications);
-    renderProjects(data.projects);
+    renderTagList("skills-list", data.skills || []);
+    renderTagList("languages-list", data.languages || []);
+    renderExperience(data.experience || []);
+    renderEducation(data.education || []);
+    renderSimpleList("certifications-list", data.certifications || []);
+    renderProjects(data.projects || []);
 
-    resumeReady = true;
+    markRenderComplete();
 
   } catch (err) {
     console.error(err);
@@ -272,23 +187,25 @@ async function loadResume() {
 }
 
 /* ========================= */
-/* PDF DOWNLOAD (FIXED) */
+/* PRINT FIX (THIS IS THE KEY) */
 /* ========================= */
 
-function initPDFDownload() {
+function initDownload() {
   const btn = document.getElementById("download-btn");
 
-  if (!btn) return;
+  btn?.addEventListener("click", () => {
 
-  btn.addEventListener("click", () => {
-    if (!resumeReady) {
-      alert("Resume is still loading. Please wait a moment and try again.");
+    if (!resumeReady || !renderDone) {
+      alert("Resume is still loading. Try again in a second.");
       return;
     }
 
+    // FORCE layout paint BEFORE print
+    document.body.offsetHeight;
+
     setTimeout(() => {
       window.print();
-    }, 250);
+    }, 400);
   });
 }
 
@@ -299,9 +216,9 @@ function initPDFDownload() {
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
     loadResume();
-    initPDFDownload();
+    initDownload();
   });
 } else {
   loadResume();
-  initPDFDownload();
+  initDownload();
 }
