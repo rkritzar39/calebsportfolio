@@ -4,16 +4,6 @@ import {
   getDoc
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-/* ========================= */
-/* STATE CONTROL (IMPORTANT) */
-/* ========================= */
-
-let resumeReady = false;
-
-/* ========================= */
-/* UTILITIES */
-/* ========================= */
-
 const $ = (id) => document.getElementById(id);
 
 function setText(id, value = "") {
@@ -100,10 +90,6 @@ function buildContactLine(data = {}) {
     .join(" • ");
 }
 
-/* ========================= */
-/* RENDER FUNCTIONS */
-/* ========================= */
-
 function renderTagList(containerId, items = []) {
   const container = $(containerId);
   if (!container) return;
@@ -114,6 +100,33 @@ function renderTagList(containerId, items = []) {
     const span = document.createElement("span");
     span.textContent = item;
     container.appendChild(span);
+  });
+}
+
+function renderSimpleList(containerId, items = []) {
+  const container = $(containerId);
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  normalizeArray(items).forEach((item) => {
+    const li = document.createElement("li");
+
+    if (typeof item === "string") {
+      li.textContent = item;
+    } else if (item && typeof item === "object") {
+      const parts = [
+        item.name || item.title || "",
+        item.issuer || item.organization || "",
+        item.date || ""
+      ].filter(Boolean);
+
+      li.textContent = parts.join(" — ");
+    }
+
+    if (li.textContent.trim()) {
+      container.appendChild(li);
+    }
   });
 }
 
@@ -129,17 +142,37 @@ function renderExperience(items = []) {
     const job = document.createElement("article");
     job.className = "job";
 
-    job.innerHTML = `
-      <div class="job-header">
-        <div class="job-left">
-          <h3>${item.title || ""}</h3>
-          <p>${item.company || item.employer || ""}</p>
-        </div>
-        <div class="job-right">
-          <p class="job-dates">${item.dates || item.date || ""}</p>
-        </div>
-      </div>
-    `;
+    const header = document.createElement("div");
+    header.className = "job-header";
+
+    const left = document.createElement("div");
+    left.className = "job-left";
+
+    const right = document.createElement("div");
+    right.className = "job-right";
+
+    const title = document.createElement("h3");
+    title.textContent = item.title || "";
+
+    const companyLine = document.createElement("p");
+    companyLine.className = "job-company";
+    companyLine.textContent = [item.company || item.employer || "", item.location || item.city || ""]
+      .filter(Boolean)
+      .join(" • ");
+
+    const dates = document.createElement("p");
+    dates.className = "job-dates";
+    dates.textContent = item.dates || item.date || "";
+
+    if (title.textContent.trim()) left.appendChild(title);
+    if (companyLine.textContent.trim()) left.appendChild(companyLine);
+    if (dates.textContent.trim()) right.appendChild(dates);
+
+    if (left.children.length || right.children.length) {
+      header.appendChild(left);
+      header.appendChild(right);
+      job.appendChild(header);
+    }
 
     const details = Array.isArray(item.details)
       ? item.details
@@ -150,16 +183,23 @@ function renderExperience(items = []) {
     if (details.length) {
       const ul = document.createElement("ul");
 
-      details.forEach((d) => {
-        const li = document.createElement("li");
-        li.textContent = String(d).trim();
-        ul.appendChild(li);
-      });
+      details
+        .map((detail) => String(detail).trim())
+        .filter(Boolean)
+        .forEach((detail) => {
+          const li = document.createElement("li");
+          li.textContent = detail;
+          ul.appendChild(li);
+        });
 
-      job.appendChild(ul);
+      if (ul.children.length) {
+        job.appendChild(ul);
+      }
     }
 
-    container.appendChild(job);
+    if (job.children.length) {
+      container.appendChild(job);
+    }
   });
 }
 
@@ -175,13 +215,72 @@ function renderEducation(items = []) {
     const edu = document.createElement("article");
     edu.className = "education-item";
 
-    edu.innerHTML = `
-      <h3>${item.school || item.institution || ""}</h3>
-      <p>${item.degree || item.program || ""}</p>
-      <p class="education-dates">${item.dates || ""}</p>
-    `;
+    const header = document.createElement("div");
+    header.className = "education-header";
 
-    container.appendChild(edu);
+    const left = document.createElement("div");
+    left.className = "education-left";
+
+    const right = document.createElement("div");
+    right.className = "education-right";
+
+    const school = document.createElement("h3");
+    school.textContent = item.school || item.institution || "";
+
+    const degreeLine = document.createElement("p");
+    degreeLine.className = "education-degree";
+
+    const degreeParts = [
+      item.type || "",
+      item.degree || item.program || item.field || "",
+      item.location || ""
+    ].filter(Boolean);
+
+    degreeLine.textContent = degreeParts.join(" • ");
+
+    const dates = document.createElement("p");
+    dates.className = "education-dates";
+    dates.textContent = item.dates || item.date || "";
+
+    if (school.textContent.trim()) left.appendChild(school);
+    if (degreeLine.textContent.trim()) left.appendChild(degreeLine);
+    if (dates.textContent.trim()) right.appendChild(dates);
+
+    if (left.children.length || right.children.length) {
+      header.appendChild(left);
+      header.appendChild(right);
+      edu.appendChild(header);
+    }
+
+    if (item.gpa) {
+      const gpa = document.createElement("p");
+      gpa.className = "education-gpa";
+      gpa.textContent = `GPA: ${item.gpa}`;
+      edu.appendChild(gpa);
+    }
+
+    const extraDetails = [
+      ...normalizeStringArray(item.details),
+      ...normalizeStringArray(item.notes)
+    ];
+
+    if (extraDetails.length) {
+      const ul = document.createElement("ul");
+
+      extraDetails.forEach((detail) => {
+        const li = document.createElement("li");
+        li.textContent = detail;
+        ul.appendChild(li);
+      });
+
+      if (ul.children.length) {
+        edu.appendChild(ul);
+      }
+    }
+
+    if (edu.children.length) {
+      container.appendChild(edu);
+    }
   });
 }
 
@@ -196,12 +295,39 @@ function renderProjects(items = []) {
 
     if (typeof item === "string") {
       li.textContent = item;
-    } else {
+    } else if (item && typeof item === "object") {
       const name = item.name || item.title || "";
-      li.textContent = name;
+      const description = item.description || "";
+      const stack = item.stack || item.tech || "";
+      const url = normalizeUrl(item.link || item.url || item.website || "");
+
+      if (url) {
+        const link = document.createElement("a");
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = name || url;
+        li.appendChild(link);
+
+        const extras = [];
+        if (stack) extras.push(`Tech: ${stack}`);
+        if (description) extras.push(description);
+
+        if (extras.length) {
+          li.appendChild(document.createTextNode(` — ${extras.join(" • ")}`));
+        }
+      } else {
+        const parts = [name];
+        if (stack) parts.push(`Tech: ${stack}`);
+        if (description) parts.push(description);
+
+        li.textContent = parts.filter(Boolean).join(" — ");
+      }
     }
 
-    container.appendChild(li);
+    if (li.textContent.trim() || li.querySelector("a")) {
+      container.appendChild(li);
+    }
   });
 }
 
@@ -216,36 +342,44 @@ function renderCertifications(items = []) {
 
     if (typeof item === "string") {
       li.textContent = item;
-    } else {
-      li.textContent = item.name || item.title || "";
+    } else if (item && typeof item === "object") {
+      const parts = [
+        item.name || item.title || "",
+        item.issuer || item.organization || "",
+        item.date || ""
+      ].filter(Boolean);
+
+      li.textContent = parts.join(" — ");
     }
 
-    container.appendChild(li);
+    if (li.textContent.trim()) {
+      container.appendChild(li);
+    }
   });
 }
-
-/* ========================= */
-/* FIREBASE LOAD */
-/* ========================= */
 
 async function loadResume() {
   try {
     const snap = await getDoc(doc(db, "site_config", "mainProfile"));
 
-    if (!snap.exists()) return;
+    if (!snap.exists()) {
+      console.warn("Resume document not found: site_config/mainProfile");
+      return;
+    }
 
-    const data = snap.data();
+    const data = snap.data() || {};
 
-    setText("name", data.name);
-    setText("title", data.title);
-    setText("professional-title", data.title);
-    setText("summary", data.summary);
-    setText("location", data.location || data.city);
+    setText("name", data.name || "");
+    setText("title", data.title || "");
+    setText("professional-title", data.title || "");
+    setText("contact", buildContactLine(data));
+    setText("location", data.location || data.city || "");
+    setText("summary", data.summary || "");
 
-    setLinkOrText("email", data.email, `mailto:${data.email}`);
-    setLinkOrText("phone", data.phone, `tel:${data.phone}`);
-    setLinkOrText("website", data.website, normalizeUrl(data.website), true);
-    setLinkOrText("linkedin", data.linkedin, normalizeUrl(data.linkedin), true);
+    setLinkOrText("email", data.email || "", data.email ? `mailto:${data.email}` : "");
+    setLinkOrText("phone", data.phone || "", normalizePhoneHref(data.phone || ""));
+    setLinkOrText("website", data.website || "", normalizeUrl(data.website || ""), true);
+    setLinkOrText("linkedin", data.linkedin || "", normalizeUrl(data.linkedin || ""), true);
 
     renderTagList("skills-list", data.skills || []);
     renderTagList("languages-list", data.languages || []);
@@ -253,51 +387,13 @@ async function loadResume() {
     renderEducation(data.education || []);
     renderCertifications(data.certifications || []);
     renderProjects(data.projects || []);
-
-    /* ✅ CRITICAL FIX: mark fully rendered */
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        resumeReady = true;
-      });
-    });
-
-  } catch (err) {
-    console.error("Resume load error:", err);
+  } catch (error) {
+    console.error("Error loading resume:", error);
   }
 }
 
-/* ========================= */
-/* DOWNLOAD HANDLER (FIXED) */
-/* ========================= */
-
-function initDownload() {
-  const btn = document.getElementById("download-btn");
-
-  btn?.addEventListener("click", () => {
-    if (!resumeReady) {
-      alert("Resume is still loading. Try again in a moment.");
-      return;
-    }
-
-    // force full layout paint before print
-    document.body.offsetHeight;
-
-    setTimeout(() => {
-      window.print();
-    }, 300);
-  });
-}
-
-/* ========================= */
-/* INIT */
-/* ========================= */
-
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    loadResume();
-    initDownload();
-  });
+  document.addEventListener("DOMContentLoaded", loadResume);
 } else {
   loadResume();
-  initDownload();
 }
