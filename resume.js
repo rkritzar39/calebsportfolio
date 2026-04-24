@@ -7,6 +7,12 @@ import {
 const $ = (id) => document.getElementById(id);
 
 /* ========================= */
+/* STATE CONTROL */
+/* ========================= */
+
+let resumeReady = false;
+
+/* ========================= */
 /* BASIC HELPERS */
 /* ========================= */
 
@@ -53,10 +59,7 @@ function normalizeStringArray(value) {
   }
 
   if (typeof value === "string") {
-    return value
-      .split(/\r?\n/)
-      .map((item) => item.trim())
-      .filter(Boolean);
+    return value.split(/\r?\n/).map((i) => i.trim()).filter(Boolean);
   }
 
   return [];
@@ -65,17 +68,14 @@ function normalizeStringArray(value) {
 function normalizeUrl(url = "") {
   const clean = String(url || "").trim();
   if (!clean) return "";
-
   if (/^https?:\/\//i.test(clean)) return clean;
   if (/^\/\//.test(clean)) return `https:${clean}`;
-
   return `https://${clean}`;
 }
 
 function normalizePhoneHref(phone = "") {
   const clean = String(phone || "").trim();
   if (!clean) return "";
-
   const digits = clean.replace(/[^\d+]/g, "");
   return digits ? `tel:${digits}` : "";
 }
@@ -89,19 +89,16 @@ function buildContactLine(data = {}) {
     data.phone || "",
     data.website || "",
     data.linkedin || ""
-  ]
-    .filter(Boolean)
-    .join(" • ");
+  ].filter(Boolean).join(" • ");
 }
 
 /* ========================= */
-/* RENDER FUNCTIONS */
+/* RENDERERS */
 /* ========================= */
 
-function renderTagList(containerId, items = []) {
-  const container = $(containerId);
+function renderTagList(id, items = []) {
+  const container = $(id);
   if (!container) return;
-
   container.innerHTML = "";
 
   normalizeStringArray(items).forEach((item) => {
@@ -114,7 +111,6 @@ function renderTagList(containerId, items = []) {
 function renderExperience(items = []) {
   const container = $("experience-list");
   if (!container) return;
-
   container.innerHTML = "";
 
   normalizeArray(items).forEach((item) => {
@@ -127,129 +123,70 @@ function renderExperience(items = []) {
     header.className = "job-header";
 
     const left = document.createElement("div");
-    left.className = "job-left";
-
     const right = document.createElement("div");
-    right.className = "job-right";
 
     const title = document.createElement("h3");
     title.textContent = item.title || "";
 
-    const companyLine = document.createElement("p");
-    companyLine.className = "job-company";
-    companyLine.textContent = [item.company || item.employer || "", item.location || item.city || ""]
-      .filter(Boolean)
-      .join(" • ");
+    const company = document.createElement("p");
+    company.textContent = [item.company, item.location].filter(Boolean).join(" • ");
 
     const dates = document.createElement("p");
-    dates.className = "job-dates";
     dates.textContent = item.dates || item.date || "";
 
-    if (title.textContent.trim()) left.appendChild(title);
-    if (companyLine.textContent.trim()) left.appendChild(companyLine);
-    if (dates.textContent.trim()) right.appendChild(dates);
+    if (title.textContent) left.appendChild(title);
+    if (company.textContent) left.appendChild(company);
+    if (dates.textContent) right.appendChild(dates);
 
-    if (left.children.length || right.children.length) {
-      header.appendChild(left);
-      header.appendChild(right);
-      job.appendChild(header);
-    }
+    header.appendChild(left);
+    header.appendChild(right);
+    job.appendChild(header);
 
-    const details = Array.isArray(item.details)
-      ? item.details
-      : Array.isArray(item.bullets)
-      ? item.bullets
-      : [];
+    const details = Array.isArray(item.details) ? item.details : [];
 
     if (details.length) {
       const ul = document.createElement("ul");
-
-      details
-        .map((d) => String(d).trim())
-        .filter(Boolean)
-        .forEach((d) => {
-          const li = document.createElement("li");
-          li.textContent = d;
-          ul.appendChild(li);
-        });
-
-      if (ul.children.length) job.appendChild(ul);
+      details.forEach((d) => {
+        const li = document.createElement("li");
+        li.textContent = String(d);
+        ul.appendChild(li);
+      });
+      job.appendChild(ul);
     }
 
-    if (job.children.length) container.appendChild(job);
+    container.appendChild(job);
   });
 }
 
 function renderEducation(items = []) {
   const container = $("education-list");
   if (!container) return;
-
   container.innerHTML = "";
 
   normalizeArray(items).forEach((item) => {
-    if (!item || typeof item !== "object") return;
+    if (!item) return;
 
     const edu = document.createElement("article");
     edu.className = "education-item";
 
-    const header = document.createElement("div");
-    header.className = "education-header";
-
-    const left = document.createElement("div");
-    left.className = "education-left";
-
-    const right = document.createElement("div");
-    right.className = "education-right";
-
     const school = document.createElement("h3");
     school.textContent = item.school || item.institution || "";
 
-    const degreeLine = document.createElement("p");
-    degreeLine.className = "education-degree";
+    const degree = document.createElement("p");
+    degree.textContent = [item.degree, item.field, item.location]
+      .filter(Boolean)
+      .join(" • ");
 
-    degreeLine.textContent = [
-      item.type || "",
-      item.degree || item.program || item.field || "",
-      item.location || ""
-    ].filter(Boolean).join(" • ");
+    edu.appendChild(school);
+    edu.appendChild(degree);
 
-    const dates = document.createElement("p");
-    dates.className = "education-dates";
-    dates.textContent = item.dates || item.date || "";
-
-    if (school.textContent.trim()) left.appendChild(school);
-    if (degreeLine.textContent.trim()) left.appendChild(degreeLine);
-    if (dates.textContent.trim()) right.appendChild(dates);
-
-    if (left.children.length || right.children.length) {
-      header.appendChild(left);
-      header.appendChild(right);
-      edu.appendChild(header);
-    }
-
-    const extraDetails = [
-      ...normalizeStringArray(item.details),
-      ...normalizeStringArray(item.notes)
-    ];
-
-    if (extraDetails.length) {
-      const ul = document.createElement("ul");
-      extraDetails.forEach((d) => {
-        const li = document.createElement("li");
-        li.textContent = d;
-        ul.appendChild(li);
-      });
-      edu.appendChild(ul);
-    }
-
-    if (edu.children.length) container.appendChild(edu);
+    container.appendChild(edu);
   });
 }
 
 function renderProjects(items = []) {
   const container = $("projects-list");
   if (!container) return;
-
   container.innerHTML = "";
 
   normalizeArray(items).forEach((item) => {
@@ -257,45 +194,28 @@ function renderProjects(items = []) {
 
     if (typeof item === "string") {
       li.textContent = item;
-    } else if (item && typeof item === "object") {
+    } else {
       const name = item.name || item.title || "";
-      const description = item.description || "";
-      const stack = item.stack || item.tech || "";
-      const url = normalizeUrl(item.link || item.url || item.website || "");
+      const url = normalizeUrl(item.link || item.url || "");
 
       if (url) {
-        const link = document.createElement("a");
-        link.href = url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.textContent = name || url;
-
-        li.appendChild(link);
-
-        const extras = [];
-        if (stack) extras.push(`Tech: ${stack}`);
-        if (description) extras.push(description);
-
-        if (extras.length) {
-          li.appendChild(document.createTextNode(` — ${extras.join(" • ")}`));
-        }
+        const a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.textContent = name || url;
+        li.appendChild(a);
       } else {
-        li.textContent = [name, stack, description]
-          .filter(Boolean)
-          .join(" — ");
+        li.textContent = name;
       }
     }
 
-    if (li.textContent.trim() || li.querySelector("a")) {
-      container.appendChild(li);
-    }
+    container.appendChild(li);
   });
 }
 
 function renderCertifications(items = []) {
   const container = $("certifications-list");
   if (!container) return;
-
   container.innerHTML = "";
 
   normalizeArray(items).forEach((item) => {
@@ -303,30 +223,16 @@ function renderCertifications(items = []) {
 
     if (typeof item === "string") {
       li.textContent = item;
-    } else if (item && typeof item === "object") {
+    } else {
       li.textContent = [
-        item.name || item.title || "",
-        item.issuer || item.organization || "",
-        item.date || ""
+        item.name,
+        item.issuer,
+        item.date
       ].filter(Boolean).join(" — ");
     }
 
-    if (li.textContent.trim()) container.appendChild(li);
+    container.appendChild(li);
   });
-}
-
-/* ========================= */
-/* PDF DOWNLOAD (IMPORTANT ADDITION) */
-/* ========================= */
-
-function initPDFDownload() {
-  const btn = document.getElementById("download-btn");
-
-  if (btn) {
-    btn.addEventListener("click", () => {
-      window.print();
-    });
-  }
 }
 
 /* ========================= */
@@ -336,33 +242,54 @@ function initPDFDownload() {
 async function loadResume() {
   try {
     const snap = await getDoc(doc(db, "site_config", "mainProfile"));
-
     if (!snap.exists()) return;
 
-    const data = snap.data() || {};
+    const data = snap.data();
 
-    setText("name", data.name || "");
-    setText("title", data.title || "");
-    setText("professional-title", data.title || "");
-    setText("contact", buildContactLine(data));
-    setText("location", data.location || data.city || "");
-    setText("summary", data.summary || "");
+    setText("name", data.name);
+    setText("title", data.title);
+    setText("professional-title", data.title);
+    setText("summary", data.summary);
+    setText("location", data.location);
 
-    setLinkOrText("email", data.email || "", data.email ? `mailto:${data.email}` : "");
-    setLinkOrText("phone", data.phone || "", normalizePhoneHref(data.phone || ""));
-    setLinkOrText("website", data.website || "", normalizeUrl(data.website || ""), true);
-    setLinkOrText("linkedin", data.linkedin || "", normalizeUrl(data.linkedin || ""), true);
+    setLinkOrText("email", data.email, `mailto:${data.email}`);
+    setLinkOrText("phone", data.phone, normalizePhoneHref(data.phone));
+    setLinkOrText("website", data.website, normalizeUrl(data.website), true);
+    setLinkOrText("linkedin", data.linkedin, normalizeUrl(data.linkedin), true);
 
-    renderTagList("skills-list", data.skills || []);
-    renderTagList("languages-list", data.languages || []);
-    renderExperience(data.experience || []);
-    renderEducation(data.education || []);
-    renderCertifications(data.certifications || []);
-    renderProjects(data.projects || []);
+    renderTagList("skills-list", data.skills);
+    renderTagList("languages-list", data.languages);
+    renderExperience(data.experience);
+    renderEducation(data.education);
+    renderCertifications(data.certifications);
+    renderProjects(data.projects);
+
+    resumeReady = true;
 
   } catch (err) {
-    console.error("Error loading resume:", err);
+    console.error(err);
   }
+}
+
+/* ========================= */
+/* PDF DOWNLOAD (FIXED) */
+/* ========================= */
+
+function initPDFDownload() {
+  const btn = document.getElementById("download-btn");
+
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+    if (!resumeReady) {
+      alert("Resume is still loading. Please wait a moment and try again.");
+      return;
+    }
+
+    setTimeout(() => {
+      window.print();
+    }, 250);
+  });
 }
 
 /* ========================= */
