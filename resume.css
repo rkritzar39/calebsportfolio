@@ -29,7 +29,7 @@ body {
 }
 
 /* ========================= */
-/* GLASS CARD SYSTEM        */
+/* GLASS CARD SYSTEM (UNCHANGED ONYX CORE) */
 /* ========================= */
 .site-header,
 section,
@@ -72,7 +72,7 @@ section > * {
 }
 
 /* ========================= */
-/* HEADER                   */
+/* HEADER (PROFESSIONAL REWRITE) */
 /* ========================= */
 .site-header {
     padding: 28px;
@@ -85,6 +85,7 @@ section > * {
     gap: 22px;
 }
 
+/* profile image */
 .header-photo {
     width: 108px;
     height: 108px;
@@ -97,28 +98,36 @@ section > * {
     box-shadow: 0 10px 24px rgba(0,0,0,0.18);
 }
 
+/* text container */
 .header-text {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
+/* NAME (PRIMARY EMPHASIS) */
 .header-text h1 {
     margin: 0;
 
     font-size: 1.95rem;
     font-weight: 800;
     letter-spacing: -0.02em;
+
+    color: var(--text-color);
 }
 
+/* TITLE (SECONDARY IDENTITY) */
 .professional-title {
     margin: 0;
+
     font-size: 1rem;
+    font-weight: 500;
+
     color: var(--secondary-text);
 }
 
 /* ========================= */
-/* CONTACT LINE             */
+/* CONTACT LINE (CLEAN META SYSTEM) */
 /* ========================= */
 .contact-line {
     display: flex;
@@ -131,9 +140,35 @@ section > * {
     color: var(--secondary-text);
 }
 
+/* unify items */
+.contact-line span,
+.contact-line a {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* separator styling */
+.contact-line span:not(:last-child)::after,
+.contact-line a:not(:last-child)::after {
+    content: "•";
+
+    margin-left: 10px;
+    margin-right: 2px;
+
+    color: color-mix(in srgb, var(--secondary-text) 60%, transparent);
+}
+
+/* links */
 .contact-line a {
     color: var(--secondary-text);
     text-decoration: none;
+
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-line a:hover {
+    color: var(--accent-color);
+    transform: translateY(-1px);
 }
 
 /* ========================= */
@@ -141,6 +176,7 @@ section > * {
 /* ========================= */
 section {
     padding: 26px;
+
     margin-top: 18px;
     margin-bottom: 18px;
 
@@ -149,19 +185,52 @@ section {
     gap: 14px;
 }
 
+/* spacing safety */
+section + section {
+    margin-top: 22px;
+}
+
 /* ========================= */
-/* HEADINGS                 */
+/* SECTION TITLES           */
 /* ========================= */
 section h2 {
     margin: 0 0 14px 0;
 
     font-size: 1.25rem;
     font-weight: 700;
+
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+}
+
+section h2::before {
+    content: "";
+    width: 4px;
+    height: 16px;
+
+    background: var(--accent-color);
+    border-radius: 3px;
 }
 
 /* ========================= */
-/* SKILLS                  */
+/* SUMMARY                 */
+/* ========================= */
+#summary p {
+    margin: 0;
+    color: var(--secondary-text);
+    line-height: 1.65;
+}
+
+/* ========================= */
+/* SKILLS / TAGS           */
 /* ========================= */
 .skills-list,
 .languages-list {
@@ -170,8 +239,21 @@ section h2 {
     gap: 10px;
 }
 
+.skills-list span,
+.languages-list span {
+    padding: 7px 12px;
+
+    border-radius: 999px;
+
+    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+
+    border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+
+    font-size: 0.9rem;
+}
+
 /* ========================= */
-/* EXPERIENCE + EDUCATION  */
+/* EXPERIENCE / EDUCATION  */
 /* ========================= */
 .job,
 .education-item {
@@ -181,7 +263,24 @@ section h2 {
 
     padding: 14px 0;
 
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+}
+
+.job:last-child,
+.education-item:last-child {
+    border-bottom: none;
+}
+
+.job-left,
+.edu-left {
+    flex: 1;
+}
+
+.job-dates,
+.education-dates {
+    white-space: nowrap;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
 }
 
 /* ========================= */
@@ -225,11 +324,32 @@ li {
 }
 
 /* ========================= */
+/* LIGHT MODE              */
+/* ========================= */
+body[data-theme="light"] .site-header,
+body[data-theme="light"] section {
+    border: 1px solid rgba(0,0,0,0.10);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+body[data-theme="light"] section h2 {
+    border-bottom: 1px solid rgba(0,0,0,0.14);
+}
+
+body[data-theme="light"] {
+    color: #111827;
+}
+
+/* ========================= */
 /* RESPONSIVE              */
 /* ========================= */
 @media (max-width: 768px) {
     body {
         padding: 16px 6px;
+    }
+
+    .resume-container {
+        gap: 22px;
     }
 
     .header-inner {
@@ -240,16 +360,21 @@ li {
     .job,
     .education-item {
         flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .job-dates,
+    .education-dates {
+        align-self: flex-start;
     }
 }
 
 /* ===================================================== */
-/* 🚨 PRINT FIX (THIS FIXES BLANK PDF ISSUE)             */
+/* 🚨 PRINT FIX (ONLY CHANGE FOR PDF STABILITY)          */
 /* ===================================================== */
 
 @media print {
 
-    /* FORCE CLEAN BACKGROUND */
     body {
         background: #fff !important;
         color: #000 !important;
@@ -257,7 +382,7 @@ li {
         print-color-adjust: exact;
     }
 
-    /* HIDE UI ELEMENTS */
+    /* hide UI */
     .download-btn,
     .onyx-dock,
     nav,
@@ -266,35 +391,27 @@ li {
         display: none !important;
     }
 
-    /* ENSURE RESUME IS VISIBLE */
+    /* ensure content is fully rendered */
     #resume-print-area {
         display: block !important;
         visibility: visible !important;
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
     }
 
-    /* FIX GLASS EFFECTS (MAJOR CAUSE OF BLANK PDF) */
+    /* remove glass effects that break printing */
     .site-header,
     section {
         background: #fff !important;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
         box-shadow: none !important;
-        border: 1px solid #ddd !important;
+        backdrop-filter: none !important;
     }
 
-    /* PREVENT CUT-OFF CONTENT */
+    /* prevent cut-off issues */
     section,
-    article,
-    .job,
-    .education-item {
+    article {
         break-inside: avoid;
         page-break-inside: avoid;
     }
 
-    /* FORCE TEXT RENDERING */
     * {
         color: #000 !important;
     }
