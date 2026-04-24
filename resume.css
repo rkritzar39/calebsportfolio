@@ -29,7 +29,7 @@ body {
 }
 
 /* ========================= */
-/* GLASS CARD SYSTEM (UNCHANGED ONYX CORE) */
+/* GLASS CARD SYSTEM        */
 /* ========================= */
 .site-header,
 section,
@@ -50,6 +50,7 @@ section,
     overflow: hidden;
 }
 
+/* glass reflection */
 .site-header::before,
 section::before {
     content: "";
@@ -63,6 +64,7 @@ section::before {
     pointer-events: none;
 }
 
+/* content layer */
 .site-header > *,
 section > * {
     position: relative;
@@ -70,7 +72,7 @@ section > * {
 }
 
 /* ========================= */
-/* HEADER */
+/* HEADER                   */
 /* ========================= */
 .site-header {
     padding: 28px;
@@ -103,8 +105,10 @@ section > * {
 
 .header-text h1 {
     margin: 0;
+
     font-size: 1.95rem;
     font-weight: 800;
+    letter-spacing: -0.02em;
 }
 
 .professional-title {
@@ -114,13 +118,15 @@ section > * {
 }
 
 /* ========================= */
-/* CONTACT LINE */
+/* CONTACT LINE             */
 /* ========================= */
 .contact-line {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+
     margin-top: 6px;
+
     font-size: 0.9rem;
     color: var(--secondary-text);
 }
@@ -131,7 +137,7 @@ section > * {
 }
 
 /* ========================= */
-/* SECTIONS */
+/* SECTIONS                 */
 /* ========================= */
 section {
     padding: 26px;
@@ -143,15 +149,19 @@ section {
     gap: 14px;
 }
 
+/* ========================= */
+/* HEADINGS                 */
+/* ========================= */
 section h2 {
     margin: 0 0 14px 0;
+
     font-size: 1.25rem;
     font-weight: 700;
     text-transform: uppercase;
 }
 
 /* ========================= */
-/* SKILLS */
+/* SKILLS                  */
 /* ========================= */
 .skills-list,
 .languages-list {
@@ -161,7 +171,7 @@ section h2 {
 }
 
 /* ========================= */
-/* EXPERIENCE */
+/* EXPERIENCE + EDUCATION  */
 /* ========================= */
 .job,
 .education-item {
@@ -170,30 +180,52 @@ section h2 {
     gap: 14px;
 
     padding: 14px 0;
+
     border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
 /* ========================= */
-/* DOWNLOAD BUTTON */
+/* LISTS                   */
 /* ========================= */
-.download-btn {
-    display: inline-block;
-    padding: 12px 22px;
-    border-radius: 999px;
-    font-weight: 600;
+ul {
+    margin: 8px 0 0 18px;
+}
+
+li {
+    margin-bottom: 6px;
 }
 
 /* ========================= */
-/* FOOTER */
+/* DOWNLOAD BUTTON         */
+/* ========================= */
+.download-btn {
+    display: inline-block;
+
+    padding: 12px 22px;
+
+    border-radius: 999px;
+
+    font-weight: 600;
+
+    transition: transform 0.2s ease;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ========================= */
+/* FOOTER                  */
 /* ========================= */
 .site-footer {
     text-align: center;
     padding: 16px 0;
+
     color: var(--secondary-text);
 }
 
 /* ========================= */
-/* RESPONSIVE */
+/* RESPONSIVE              */
 /* ========================= */
 @media (max-width: 768px) {
     body {
@@ -212,20 +244,20 @@ section h2 {
 }
 
 /* ===================================================== */
-/* 🚨 PRINT / PDF FIX (THIS FIXES YOUR BLANK PDF ISSUE) */
+/* 🚨 PRINT FIX (THIS FIXES BLANK PDF ISSUE)             */
 /* ===================================================== */
 
 @media print {
 
-    /* FORCE WHITE BACKGROUND (prevents blank rendering bugs) */
+    /* FORCE CLEAN BACKGROUND */
     body {
-        background: white !important;
-        color: black !important;
+        background: #fff !important;
+        color: #000 !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
-    /* REMOVE UI ELEMENTS */
+    /* HIDE UI ELEMENTS */
     .download-btn,
     .onyx-dock,
     nav,
@@ -243,33 +275,32 @@ section h2 {
         margin: 0 auto;
     }
 
-    /* PREVENT PAGE BREAK ISSUES */
+    /* FIX GLASS EFFECTS (MAJOR CAUSE OF BLANK PDF) */
+    .site-header,
+    section {
+        background: #fff !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+
+    /* PREVENT CUT-OFF CONTENT */
     section,
     article,
     .job,
-    .education-item,
-    ul {
+    .education-item {
         break-inside: avoid;
         page-break-inside: avoid;
     }
 
-    /* REMOVE GLASS EFFECTS FOR PRINT (prevents blank renders in Safari/Chrome) */
-    section,
-    .site-header,
-    .download-btn {
-        box-shadow: none !important;
-        backdrop-filter: none !important;
-        background: white !important;
-        border: 1px solid #ddd !important;
-    }
-
-    /* ENSURE TEXT IS ALWAYS VISIBLE */
+    /* FORCE TEXT RENDERING */
     * {
-        color: black !important;
+        color: #000 !important;
     }
 
     a {
-        color: black !important;
+        color: #000 !important;
         text-decoration: none !important;
     }
 }
