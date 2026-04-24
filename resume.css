@@ -16,44 +16,24 @@ body {
 }
 
 /* ========================= */
-/* BENTO GRID LAYOUT         */
+/* MAIN LAYOUT SPACING       */
+/* (THIS FIXES EVERYTHING)    */
 /* ========================= */
 .resume-container {
-    max-width: 1100px; /* Expanded for desktop grid */
+    max-width: 980px;
     margin: 0 auto;
 
     display: flex;
     flex-direction: column;
 
-    gap: 24px;
-}
-
-.resume-grid {
-    display: grid;
-    gap: 20px;
-    grid-template-columns: 1fr; /* Mobile default */
-}
-
-/* Desktop Bento Logic */
-@media (min-width: 992px) {
-    .resume-grid {
-        grid-template-columns: 1.2fr 1fr 1fr;
-    }
-
-    .summary-card { grid-column: span 2; }
-    .skills-card { grid-column: span 1; }
-    .languages-card { grid-column: span 1; }
-    .education-card { grid-column: span 1; }
-    .certifications-card { grid-column: span 1; }
-    .experience-card { grid-column: span 3; }
-    .projects-card { grid-column: span 3; }
+    gap: 34px; /* 🔥 BIG GAP BETWEEN SECTIONS */
 }
 
 /* ========================= */
 /* GLASS CARD SYSTEM         */
 /* ========================= */
 .site-header,
-.card,
+section,
 .download-btn {
     background: var(--content-bg);
     background-image: var(--bubble-gradient);
@@ -69,48 +49,56 @@ body {
 
     position: relative;
     overflow: hidden;
-    
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
-}
-
-.card {
-    padding: 26px;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
 }
 
 /* glass reflection */
 .site-header::before,
-.card::before {
+section::before {
     content: "";
     position: absolute;
     inset: 0;
 
     background: var(--liquid-reflection);
-    opacity: 0.18;
+    opacity: 0.2;
 
     mix-blend-mode: soft-light;
     pointer-events: none;
 }
 
-/* content layer */
+/* keep content above glass */
 .site-header > *,
-.card > * {
+section > * {
     position: relative;
     z-index: 1;
 }
 
 /* ========================= */
-/* HEADER                   */
+/* 🔥 CRITICAL FIX: SPACING  */
 /* ========================= */
 .site-header {
-    padding: 28px;
-    margin-bottom: 10px;
+    padding: 26px;
+    margin-bottom: 18px; /* prevents header touching first section */
 }
 
+section {
+    padding: 26px;
+
+    margin-top: 18px;   /* TOP spacing */
+    margin-bottom: 18px; /* BOTTOM spacing */
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px; /* internal spacing between elements */
+}
+
+/* extra safety separation between consecutive sections */
+section + section {
+    margin-top: 22px;
+}
+
+/* ========================= */
+/* HEADER                   */
+/* ========================= */
 .header-inner {
     display: flex;
     align-items: center;
@@ -118,97 +106,47 @@ body {
 }
 
 .header-photo {
-    width: 108px;
-    height: 108px;
+    width: 110px;
+    height: 110px;
     border-radius: 50%;
     object-fit: cover;
+
     border: 2px solid var(--accent-color);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.18);
 }
-
-.header-text h1 {
-    margin: 0;
-    font-size: 1.95rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-}
-
-.professional-title {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--secondary-text);
-}
-
-.contact-line {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 6px;
-    font-size: 0.9rem;
-    color: var(--secondary-text);
-}
-
-.contact-line a {
-    color: var(--secondary-text);
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.contact-line a:hover { color: var(--accent-color); }
 
 /* ========================= */
-/* CARD TITLES              */
+/* SECTION TITLES           */
 /* ========================= */
-.card h2 {
+section h2 {
     margin: 0 0 14px 0;
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+
+    font-size: 1.55rem;
+
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+
     display: flex;
     align-items: center;
     gap: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
 }
 
-.card h2::before {
+section h2::before {
     content: "";
     width: 4px;
     height: 16px;
+
     background: var(--accent-color);
     border-radius: 3px;
 }
 
 /* ========================= */
-/* LOGOS & ITEM LAYOUT      */
+/* SUMMARY FIX (NO TOUCHING) */
 /* ========================= */
-.item-wrapper {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 18px;
-}
-
-.item-logo {
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
-    object-fit: contain;
-    background: #fff;
-    border-radius: 10px;
-    padding: 5px;
-}
-
-.item-info h3 {
+#summary p {
     margin: 0;
-    font-size: 1.1rem;
-}
-
-.item-info p {
-    margin: 2px 0;
-    font-size: 0.9rem;
     color: var(--secondary-text);
+    line-height: 1.65;
 }
 
 /* ========================= */
@@ -224,42 +162,131 @@ body {
 .skills-list span,
 .languages-list span {
     padding: 7px 12px;
+
     border-radius: 999px;
+
     background: color-mix(in srgb, var(--content-bg) 85%, transparent);
+
     border: 1px solid color-mix(in srgb, var(--border-color) 65%, transparent);
+
     font-size: 0.9rem;
+}
+
+/* ========================= */
+/* EXPERIENCE / EDUCATION   */
+/* ========================= */
+.job,
+.education-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 14px 0;
+
+    border-bottom: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
+}
+
+.job:last-child,
+.education-item:last-child {
+    border-bottom: none;
+}
+
+.job-left,
+.edu-left {
+    flex: 1;
+}
+
+.job-dates,
+.education-dates {
+    white-space: nowrap;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+}
+
+/* ========================= */
+/* LISTS                    */
+/* ========================= */
+ul {
+    margin: 8px 0 0 18px;
+}
+
+li {
+    margin-bottom: 6px;
 }
 
 /* ========================= */
 /* DOWNLOAD BUTTON          */
 /* ========================= */
-.actions {
-    display: flex;
-    justify-content: center;
-    margin: 40px 0;
-}
-
 .download-btn {
     display: inline-block;
-    padding: 14px 28px;
+
+    padding: 12px 22px;
+
     border-radius: 999px;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    background: var(--accent-color);
-    color: white;
+
+    font-weight: 600;
+
+    transition: transform 0.2s ease;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ========================= */
+/* FOOTER                   */
+/* ========================= */
+.site-footer {
+    text-align: center;
+    padding: 16px 0;
+
+    color: var(--secondary-text);
+}
+
+/* ========================= */
+/* LIGHT MODE FIX           */
+/* ========================= */
+body[data-theme="light"] .site-header,
+body[data-theme="light"] section {
+    border: 1px solid rgba(0,0,0,0.10);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+/* stronger separation in light mode */
+body[data-theme="light"] section h2 {
+    border-bottom: 1px solid rgba(0,0,0,0.14);
+}
+
+/* improve readability */
+body[data-theme="light"] {
+    color: #111827;
 }
 
 /* ========================= */
 /* RESPONSIVE               */
 /* ========================= */
 @media (max-width: 768px) {
+    body {
+        padding: 16px 6px;
+    }
+
+    .resume-container {
+        gap: 22px;
+    }
+
     .header-inner {
         flex-direction: column;
         text-align: center;
     }
 
-    .contact-line {
-        justify-content: center;
+    .job,
+    .education-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .job-dates,
+    .education-dates {
+        align-self: flex-start;
     }
 }
