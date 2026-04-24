@@ -6,6 +6,10 @@ import {
 
 const $ = (id) => document.getElementById(id);
 
+/* ========================= */
+/* BASIC HELPERS */
+/* ========================= */
+
 function setText(id, value = "") {
   const node = $(id);
   if (node) node.textContent = value || "";
@@ -90,6 +94,10 @@ function buildContactLine(data = {}) {
     .join(" • ");
 }
 
+/* ========================= */
+/* RENDER FUNCTIONS */
+/* ========================= */
+
 function renderTagList(containerId, items = []) {
   const container = $(containerId);
   if (!container) return;
@@ -100,33 +108,6 @@ function renderTagList(containerId, items = []) {
     const span = document.createElement("span");
     span.textContent = item;
     container.appendChild(span);
-  });
-}
-
-function renderSimpleList(containerId, items = []) {
-  const container = $(containerId);
-  if (!container) return;
-
-  container.innerHTML = "";
-
-  normalizeArray(items).forEach((item) => {
-    const li = document.createElement("li");
-
-    if (typeof item === "string") {
-      li.textContent = item;
-    } else if (item && typeof item === "object") {
-      const parts = [
-        item.name || item.title || "",
-        item.issuer || item.organization || "",
-        item.date || ""
-      ].filter(Boolean);
-
-      li.textContent = parts.join(" — ");
-    }
-
-    if (li.textContent.trim()) {
-      container.appendChild(li);
-    }
   });
 }
 
@@ -184,22 +165,18 @@ function renderExperience(items = []) {
       const ul = document.createElement("ul");
 
       details
-        .map((detail) => String(detail).trim())
+        .map((d) => String(d).trim())
         .filter(Boolean)
-        .forEach((detail) => {
+        .forEach((d) => {
           const li = document.createElement("li");
-          li.textContent = detail;
+          li.textContent = d;
           ul.appendChild(li);
         });
 
-      if (ul.children.length) {
-        job.appendChild(ul);
-      }
+      if (ul.children.length) job.appendChild(ul);
     }
 
-    if (job.children.length) {
-      container.appendChild(job);
-    }
+    if (job.children.length) container.appendChild(job);
   });
 }
 
@@ -230,13 +207,11 @@ function renderEducation(items = []) {
     const degreeLine = document.createElement("p");
     degreeLine.className = "education-degree";
 
-    const degreeParts = [
+    degreeLine.textContent = [
       item.type || "",
       item.degree || item.program || item.field || "",
       item.location || ""
-    ].filter(Boolean);
-
-    degreeLine.textContent = degreeParts.join(" • ");
+    ].filter(Boolean).join(" • ");
 
     const dates = document.createElement("p");
     dates.className = "education-dates";
@@ -252,13 +227,6 @@ function renderEducation(items = []) {
       edu.appendChild(header);
     }
 
-    if (item.gpa) {
-      const gpa = document.createElement("p");
-      gpa.className = "education-gpa";
-      gpa.textContent = `GPA: ${item.gpa}`;
-      edu.appendChild(gpa);
-    }
-
     const extraDetails = [
       ...normalizeStringArray(item.details),
       ...normalizeStringArray(item.notes)
@@ -266,21 +234,15 @@ function renderEducation(items = []) {
 
     if (extraDetails.length) {
       const ul = document.createElement("ul");
-
-      extraDetails.forEach((detail) => {
+      extraDetails.forEach((d) => {
         const li = document.createElement("li");
-        li.textContent = detail;
+        li.textContent = d;
         ul.appendChild(li);
       });
-
-      if (ul.children.length) {
-        edu.appendChild(ul);
-      }
+      edu.appendChild(ul);
     }
 
-    if (edu.children.length) {
-      container.appendChild(edu);
-    }
+    if (edu.children.length) container.appendChild(edu);
   });
 }
 
@@ -307,6 +269,7 @@ function renderProjects(items = []) {
         link.target = "_blank";
         link.rel = "noopener noreferrer";
         link.textContent = name || url;
+
         li.appendChild(link);
 
         const extras = [];
@@ -317,11 +280,9 @@ function renderProjects(items = []) {
           li.appendChild(document.createTextNode(` — ${extras.join(" • ")}`));
         }
       } else {
-        const parts = [name];
-        if (stack) parts.push(`Tech: ${stack}`);
-        if (description) parts.push(description);
-
-        li.textContent = parts.filter(Boolean).join(" — ");
+        li.textContent = [name, stack, description]
+          .filter(Boolean)
+          .join(" — ");
       }
     }
 
@@ -343,29 +304,40 @@ function renderCertifications(items = []) {
     if (typeof item === "string") {
       li.textContent = item;
     } else if (item && typeof item === "object") {
-      const parts = [
+      li.textContent = [
         item.name || item.title || "",
         item.issuer || item.organization || "",
         item.date || ""
-      ].filter(Boolean);
-
-      li.textContent = parts.join(" — ");
+      ].filter(Boolean).join(" — ");
     }
 
-    if (li.textContent.trim()) {
-      container.appendChild(li);
-    }
+    if (li.textContent.trim()) container.appendChild(li);
   });
 }
+
+/* ========================= */
+/* PDF DOWNLOAD (IMPORTANT ADDITION) */
+/* ========================= */
+
+function initPDFDownload() {
+  const btn = document.getElementById("download-btn");
+
+  if (btn) {
+    btn.addEventListener("click", () => {
+      window.print();
+    });
+  }
+}
+
+/* ========================= */
+/* FIREBASE LOAD */
+/* ========================= */
 
 async function loadResume() {
   try {
     const snap = await getDoc(doc(db, "site_config", "mainProfile"));
 
-    if (!snap.exists()) {
-      console.warn("Resume document not found: site_config/mainProfile");
-      return;
-    }
+    if (!snap.exists()) return;
 
     const data = snap.data() || {};
 
@@ -387,13 +359,22 @@ async function loadResume() {
     renderEducation(data.education || []);
     renderCertifications(data.certifications || []);
     renderProjects(data.projects || []);
-  } catch (error) {
-    console.error("Error loading resume:", error);
+
+  } catch (err) {
+    console.error("Error loading resume:", err);
   }
 }
 
+/* ========================= */
+/* INIT */
+/* ========================= */
+
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", loadResume);
+  document.addEventListener("DOMContentLoaded", () => {
+    loadResume();
+    initPDFDownload();
+  });
 } else {
   loadResume();
+  initPDFDownload();
 }
