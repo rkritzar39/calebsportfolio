@@ -758,94 +758,95 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 💎 THE GLASS DOCK (iOS Style) */
+/* 💧 LIQUID GLASS DOCK - COMPACT EDITION */
 /* ============================================= */
 :root {
-  /* Light Mode Colors */
-  --dock-bg: rgba(255, 255, 255, 0.75); /* Translucent white */
-  --dock-border: rgba(255, 255, 255, 0.4);
-  --active-bg: rgba(0, 0, 0, 0.06); /* The "inner pill" for active items */
-  --text-active: #007AFF;
-  --text-inactive: #000000;
+  /* Ultra-clear glass colors */
+  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --active-highlight: rgba(255, 255, 255, 0.4);
+  --text-main: #000000;
+  --text-blue: #007AFF;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Dark Mode Colors */
-    --dock-bg: rgba(28, 28, 30, 0.7); /* Translucent dark gray */
-    --dock-border: rgba(255, 255, 255, 0.1);
-    --active-bg: rgba(255, 255, 255, 0.12);
-    --text-active: #0A84FF;
-    --text-inactive: #FFFFFF;
+    --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --active-highlight: rgba(255, 255, 255, 0.15);
+    --text-main: #ffffff;
+    --text-blue: #0A84FF;
   }
 }
 
 .onyx-dock {
   position: fixed;
-  bottom: 25px;
+  bottom: 1.5rem; /* Tucked closer to bottom */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 10px;
-  background: var(--dock-bg);
-  border-radius: 40px; /* Makes the main container a pill */
-  border: 1px solid var(--dock-border);
+  gap: 4px;
+  padding: 6px 10px; /* Slimmed down padding */
+  background: var(--glass-bg);
+  border-radius: 50px;
+  border: 0.5px solid var(--glass-border); /* Thinner "razor" edge */
   
-  /* THIS IS THE KEY: The frosted glass effect */
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  /* LIQUID EFFECT: Low blur, high saturation */
+  backdrop-filter: blur(8px) saturate(200%);
+  -webkit-backdrop-filter: blur(8px) saturate(200%);
   
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  z-index: 9999;
-  width: max-content;
+  /* The "Liquid" sheen shadow */
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.1), 
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  z-index: 1000;
 }
 
 /* ============================================= */
-/* 🛸 DOCK ITEMS */
+/* 🛸 COMPACT DOCK ITEMS */
 /* ============================================= */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  border-radius: 30px; /* Inner pill shape */
+  padding: 6px 14px; /* Narrower footprint */
+  border-radius: 20px;
   text-decoration: none;
-  color: var(--text-inactive);
-  transition: all 0.3s ease;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-main);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* The Icon (Emoji or SVG) */
-.dock-item span {
-  font-size: 22px;
+.dock-icon {
+  width: 20px; /* Scaled down icons */
+  height: 20px;
   margin-bottom: 2px;
 }
 
 .dock-label {
-  font-size: 12px;
+  font-size: 10px; /* Smaller, sharper font */
   font-weight: 500;
+  font-family: -apple-system, system-ui, sans-serif;
 }
 
 /* ============================================= */
-/* 🔵 THE ACTIVE PILL (Matches Image 3/4) */
+/* ✨ LIQUID ACTIVE STATE */
 /* ============================================= */
 .dock-item.active {
-  background: var(--active-bg); /* The soft gray/white background */
-  color: var(--text-active); /* Blue text like the screenshots */
+  background: var(--active-highlight);
+  color: var(--text-blue);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .dock-item.active .dock-label {
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* Hover effect for non-active items */
+/* Subtle hover for glass feel */
 .dock-item:not(.active):hover {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
-
 
 /* ======================================================= */
 /* === LIVE ACTIVITY — APPLE MUSIC / IOS STYLE =========== */
