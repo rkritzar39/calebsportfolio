@@ -758,102 +758,90 @@ a.corner-button {
 }
 
 /* ================================================== */
-/* 💧 iOS 26 LIQUID OPTICS - DUAL-MODE MASTER       */
+/* 💧 iOS 26 LIQUID OPTICS - 3D CURVED GLASS         */
 /* ================================================== */
 
 :root {
-  /* DARK MODE (Obsidian Liquid) */
-  --dock-bg: rgba(0, 0, 0, 0.05); 
+  --dock-height: 64px;
+  --dock-item-width: 70px;
+  
+  /* DARK MODE: 3D Obsidian */
+  --dock-surface: linear-gradient(to bottom, rgba(255,255,255,0.08), rgba(0,0,0,0.02));
   --dock-border: rgba(255, 255, 255, 0.15);
-  --item-active-bg: rgba(255, 255, 255, 0.08);
-  --text-primary: #ffffff;
   --accent-color: #0A84FF;
-  --glass-sheen: rgba(255, 255, 255, 0.2);
-  --dock-shadow: rgba(0, 0, 0, 0.4);
-  --lens-filter: blur(6px) saturate(280%) contrast(110%);
+  --text-main: #ffffff;
 }
 
-/* LIGHT MODE (Diamond Polished) */
 body.light-e {
-  --dock-bg: rgba(255, 255, 255, 0.2); 
-  --dock-border: rgba(255, 255, 255, 0.9); /* Sharp white edge */
-  --item-active-bg: rgba(0, 0, 0, 0.04);
-  --text-primary: #1d1d1f;
+  /* LIGHT MODE: 3D Crystal */
+  --dock-surface: linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
+  --dock-border: rgba(255, 255, 255, 0.9);
   --accent-color: #007AFF;
-  --glass-sheen: rgba(255, 255, 255, 1); /* Brilliant white highlight */
-  --dock-shadow: rgba(0, 0, 0, 0.08);
-  --lens-filter: blur(8px) saturate(180%) contrast(100%) brightness(1.02);
+  --text-main: #1d1d1f;
 }
 
-/* --- THE MAIN DOCK CONTAINER --- */
+/* --- THE DOCK (Fixed the Flatness) --- */
 .onyx-dock {
   position: fixed;
   bottom: 24px;
   left: 50%;
-  transform: translateX(-50%) translateZ(0);
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
+  height: var(--dock-height);
+  padding: 0 12px;
+  gap: 8px;
   z-index: 9999;
-  width: max-content;
 
-  background: var(--dock-bg); 
-  border-radius: 50px;
+  background: var(--dock-surface); 
+  border-radius: 40px;
   border: 0.5px solid var(--dock-border);
   
-  /* 🌀 THE LIQUID OPTIC FILTER */
-  backdrop-filter: var(--lens-filter);
-  -webkit-backdrop-filter: var(--lens-filter);
+  /* 🌀 CRYSTAL OPTICS (No Frost) */
+  backdrop-filter: blur(6px) saturate(280%) contrast(110%);
+  -webkit-backdrop-filter: blur(6px) saturate(280%) contrast(110%);
   
-  /* The "Liquid" Polish: A bright top-edge reflection */
+  /* 3D DEPTH: Heavy outer shadow + sharp inner highlight */
   box-shadow: 
-    0 15px 40px var(--dock-shadow),
-    inset 0 1px 1px var(--glass-sheen);
-    
-  will-change: backdrop-filter;
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4), /* Top Reflection */
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);    /* Bottom Edge */
 }
 
-/* --- DOCK ITEMS (The Links) --- */
+/* --- DOCK ITEMS (Fixed the Squishing) --- */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 8px 18px;
-  border-radius: 30px;
+  width: var(--dock-item-width); /* Hard width prevents squishing */
+  height: calc(var(--dock-height) - 12px);
+  border-radius: 20px;
   text-decoration: none;
-  color: var(--text-primary);
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  flex-shrink: 0; /* Forces the browser NOT to squish */
 }
 
 .dock-icon {
-  font-size: 22px; 
+  font-size: 24px; /* Scaled up for 2026 optics */
   line-height: 1;
+  display: block;
   margin-bottom: 2px;
-  transition: transform 0.25s ease;
 }
 
 .dock-label {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
-  opacity: 0.7;
-  transition: opacity 0.25s ease;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.2px;
+  color: var(--text-main);
+  opacity: 0.8;
 }
 
-/* --- ACTIVE STATE (The Liquid Bubble) --- */
+/* --- THE ACTIVE BUBBLE --- */
 .dock-item.active {
-  background: var(--item-active-bg);
-  color: var(--accent-color);
-}
-
-.dock-item.active .dock-icon {
-  transform: scale(1.15) translateY(-1px);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .dock-item.active .dock-icon,
@@ -862,35 +850,28 @@ body.light-e {
   opacity: 1;
 }
 
-/* --- INTERACTIVE STATES --- */
-.dock-item:hover:not(.active) {
-  background: rgba(128, 128, 128, 0.1);
-  transform: translateY(-3px);
+/* --- ANIMATION --- */
+.dock-item:hover {
+  transform: translateY(-8px) scale(1.1); /* The iOS floating effect */
 }
 
 .dock-item:active {
   transform: scale(0.9);
 }
 
-/* 📱 MOBILE RESPONSIVENESS */
+/* 📱 MOBILE RESPONSIVE (No Squish Edition) */
 @media (max-width: 600px) {
   .onyx-dock {
-    width: 90%;
-    max-width: 420px;
-    bottom: 16px;
-    padding: 6px;
-    justify-content: space-around;
+    width: 92%;
+    justify-content: space-between;
+    padding: 0 10px;
   }
-  
   .dock-item {
-    padding: 10px 0;
-    flex: 1;
-  }
-  
-  .dock-label {
-    font-size: 8px;
+    width: 30%; /* Equal 3-way split */
+    min-width: 60px;
   }
 }
+
 
 /* ======================================================= */
 /* === LIVE ACTIVITY — APPLE MUSIC / IOS STYLE =========== */
