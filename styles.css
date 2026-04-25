@@ -758,94 +758,95 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 💧 LIQUID GLASS DOCK - COMPACT EDITION */
+/* 💎 ULTRA-CLEAR LIQUID GLASS DOCK */
 /* ============================================= */
 :root {
-  /* Ultra-clear glass colors */
-  --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --active-highlight: rgba(255, 255, 255, 0.4);
+  /* High-transparency crystal colors */
+  --glass-bg: rgba(255, 255, 255, 0.05); /* Barely there */
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --active-pill: rgba(255, 255, 255, 0.15);
   --text-main: #000000;
-  --text-blue: #007AFF;
+  --text-active: #007AFF;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --active-highlight: rgba(255, 255, 255, 0.15);
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --active-pill: rgba(255, 255, 255, 0.08);
     --text-main: #ffffff;
-    --text-blue: #0A84FF;
+    --text-active: #0A84FF;
   }
 }
 
 .onyx-dock {
   position: fixed;
-  bottom: 1.5rem; /* Tucked closer to bottom */
+  bottom: 1.2rem; /* Tucked tight to the bottom */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 10px; /* Slimmed down padding */
+  gap: 2px;
+  padding: 4px 8px; /* Maximum compactness */
   background: var(--glass-bg);
   border-radius: 50px;
-  border: 0.5px solid var(--glass-border); /* Thinner "razor" edge */
+  border: 0.5px solid var(--glass-border);
   
-  /* LIQUID EFFECT: Low blur, high saturation */
-  backdrop-filter: blur(8px) saturate(200%);
-  -webkit-backdrop-filter: blur(8px) saturate(200%);
+  /* CRYSTAL EFFECT: Minimal blur for clarity, high saturation for pop */
+  backdrop-filter: blur(4px) saturate(200%);
+  -webkit-backdrop-filter: blur(4px) saturate(200%);
   
-  /* The "Liquid" sheen shadow */
+  /* Sharp edge reflection */
   box-shadow: 
-    0 4px 15px rgba(0, 0, 0, 0.1), 
-    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    0 4px 20px rgba(0, 0, 0, 0.08), 
+    inset 0 0.5px 0 rgba(255, 255, 255, 0.4);
   z-index: 1000;
 }
 
 /* ============================================= */
-/* 🛸 COMPACT DOCK ITEMS */
+/* 🛸 MICRO-DOCK ITEMS */
 /* ============================================= */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px 14px; /* Narrower footprint */
-  border-radius: 20px;
+  padding: 5px 12px;
+  border-radius: 25px;
   text-decoration: none;
   color: var(--text-main);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
 .dock-icon {
-  width: 20px; /* Scaled down icons */
-  height: 20px;
-  margin-bottom: 2px;
+  width: 18px; /* Even smaller for that "Liquid" feel */
+  height: 18px;
+  margin-bottom: 1px;
 }
 
 .dock-label {
-  font-size: 10px; /* Smaller, sharper font */
+  font-size: 9.5px; /* Sharp and tiny */
   font-weight: 500;
-  font-family: -apple-system, system-ui, sans-serif;
+  letter-spacing: -0.2px;
 }
 
 /* ============================================= */
-/* ✨ LIQUID ACTIVE STATE */
+/* ✨ THE LIQUID HIGHLIGHT */
 /* ============================================= */
 .dock-item.active {
-  background: var(--active-highlight);
-  color: var(--text-blue);
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  background: var(--active-pill);
+  color: var(--text-active);
+  /* Inner glow for the active item */
+  box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.3);
 }
 
 .dock-item.active .dock-label {
   font-weight: 700;
 }
 
-/* Subtle hover for glass feel */
+/* Clean hover state */
 .dock-item:not(.active):hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.03);
 }
 
 /* ======================================================= */
