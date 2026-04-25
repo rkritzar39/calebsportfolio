@@ -758,30 +758,27 @@ a.corner-button {
 }
 
 /* ================================================== */
-/* 💎 ONYX DOCK - ULTIMATE LIQUID GLASS (Full Code)  */
+/* 💧 TRUE LIQUID GLASS - NO FROST VERSION          */
 /* ================================================== */
 
 :root {
-  /* Dark Mode Default - Deep Crystal */
-  --dock-bg: rgba(10, 10, 10, 0.25);
-  --dock-border: rgba(255, 255, 255, 0.12);
+  /* DARK MODE: Almost 100% clear background */
+  --dock-bg: rgba(0, 0, 0, 0.05); 
+  --dock-border: rgba(255, 255, 255, 0.15);
   --item-active-bg: rgba(255, 255, 255, 0.1);
   --text-primary: #ffffff;
   --accent-blue: #0A84FF;
-  --glass-sheen: rgba(255, 255, 255, 0.15);
-  --distortion: blur(12px) saturate(250%) contrast(110%);
+  --glass-sheen: rgba(255, 255, 255, 0.2);
 }
 
-/* Light Mode Overrides - Sharp & Vibrant */
 body.light-e {
-  --dock-bg: rgba(255, 255, 255, 0.35); 
-  --dock-border: rgba(255, 255, 255, 0.9);
-  --item-active-bg: rgba(0, 0, 0, 0.06);
+  /* LIGHT MODE: Ultra-thin white tint */
+  --dock-bg: rgba(255, 255, 255, 0.1); 
+  --dock-border: rgba(255, 255, 255, 0.8);
+  --item-active-bg: rgba(0, 0, 0, 0.05);
   --text-primary: #1d1d1f;
   --accent-blue: #007AFF;
-  --glass-sheen: rgba(255, 255, 255, 0.9);
-  /* Light mode uses slightly different filters to prevent "muddy" colors */
-  --distortion: blur(14px) saturate(200%) contrast(95%) brightness(1.05);
+  --glass-sheen: rgba(255, 255, 255, 0.8);
 }
 
 /* --- THE MAIN DOCK CONTAINER --- */
@@ -801,16 +798,19 @@ body.light-e {
   border-radius: 50px;
   border: 0.5px solid var(--dock-border);
   
-  /* 🌀 APPLE DISTORTION EFFECT */
-  backdrop-filter: var(--distortion);
-  -webkit-backdrop-filter: var(--distortion);
+  /* 🌀 THE DISTORTION KEY:
+     1. Low blur (4px-8px) = Removes the "frosted" look.
+     2. High Saturation (250%) = Content "glows" as it passes under.
+     3. Contrast (110%) = Sharpens the items behind the glass.
+  */
+  backdrop-filter: blur(6px) saturate(250%) contrast(110%);
+  -webkit-backdrop-filter: blur(6px) saturate(250%) contrast(110%);
   
-  /* Polished Liquid Depth */
+  /* Adds that "Wet" edge reflection */
   box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.15),
-    inset 0 1px 2px var(--glass-sheen);
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    inset 0 1px 1px var(--glass-sheen);
     
-  /* Prevents lag during scroll distortion */
   will-change: backdrop-filter;
 }
 
@@ -831,12 +831,10 @@ body.light-e {
   font-size: 20px; 
   line-height: 1.1;
   margin-bottom: 2px;
-  color: var(--text-primary);
-  transition: transform 0.2s ease;
 }
 
 .dock-label {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   letter-spacing: -0.1px;
@@ -853,9 +851,9 @@ body.light-e {
   color: var(--accent-blue);
 }
 
-/* --- INTERACTIVE STATES --- */
+/* --- INTERACTIVE EFFECTS --- */
 .dock-item:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
 }
 
@@ -863,16 +861,14 @@ body.light-e {
   transform: scale(0.92);
 }
 
-/* 📱 MOBILE RESPONSIVE TWEAK */
+/* Mobile Tweak */
 @media (max-width: 600px) {
   .onyx-dock {
     padding: 5px;
-    bottom: 1rem;
-    gap: 2px;
+    bottom: 1.2rem;
   }
   .dock-item {
     padding: 6px 12px;
-    min-width: 60px;
   }
 }
 
