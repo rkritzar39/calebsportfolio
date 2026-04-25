@@ -1,29 +1,34 @@
 import { db } from "./firebase-init.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 const $ = (id) => document.getElementById(id);
 
 function setText(id, value = "") {
-  const el = $(id);
-  if (el) el.textContent = value || "";
+  const node = $(id);
+  if (node) node.textContent = value || "";
 }
 
-function normalizeStringArray(value) {
-  if (Array.isArray(value)) {
-    return value.map(item => String(item).trim()).filter(Boolean);
-  }
+function setLinkOrText(id, text = "", href = "", external = false) {
+  const node = $(id);
+  if (!node) return;
 
-  if (typeof value === "string") {
-    return value
-      .split("\n")
-      .map(item => item.trim())
-      .filter(Boolean);
-  }
+  const cleanText = String(text || "").trim();
+  node.textContent = cleanText;
 
-  return [];
+  if ("href" in node) {
+    node.href = cleanText ? href : "#";
+
+    if (external) {
+      node.target = "_blank";
+      node.rel = "noopener noreferrer";
+    }
+  }
 }
 
-function normalizeObjectArray(value) {
+function normalizeArray(value) {
   if (Array.isArray(value)) return value;
 
   if (typeof value === "string" && value.trim()) {
@@ -38,15 +43,51 @@ function normalizeObjectArray(value) {
   return [];
 }
 
-function buildContactLine(data) {
+function normalizeStringArray(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    return value
+      .split(/\r?\n/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+function normalizeUrl(url = "") {
+  const clean = String(url || "").trim();
+  if (!clean) return "";
+
+  if (/^https?:\/\//i.test(clean)) return clean;
+  if (/^\/\//.test(clean)) return `https:${clean}`;
+
+  return `https://${clean}`;
+}
+
+function normalizePhoneHref(phone = "") {
+  const clean = String(phone || "").trim();
+  if (!clean) return "";
+
+  const digits = clean.replace(/[^\d+]/g, "");
+  return digits ? `tel:${digits}` : "";
+}
+
+function buildContactLine(data = {}) {
   const directContact = (data.contact || "").trim();
   if (directContact) return directContact;
 
   return [
-    data.city || "",
+    data.location || data.city || "",
     data.phone || "",
-    data.website || ""
-  ].filter(Boolean).join(" • ");
+    data.website || "",
+    data.linkedin || ""
+  ]
+    .filter(Boolean)
+    .join(" • ");
 }
 
 function renderTagList(containerId, items = []) {
@@ -55,7 +96,7 @@ function renderTagList(containerId, items = []) {
 
   container.innerHTML = "";
 
-  normalizeStringArray(items).forEach(item => {
+  normalizeStringArray(items).forEach((item) => {
     const span = document.createElement("span");
     span.textContent = item;
     container.appendChild(span);
@@ -68,7 +109,7 @@ function renderSimpleList(containerId, items = []) {
 
   container.innerHTML = "";
 
-  items.forEach(item => {
+  normalizeArray(items).forEach((item) => {
     const li = document.createElement("li");
 
     if (typeof item === "string") {
@@ -95,7 +136,9 @@ function renderExperience(items = []) {
 
   container.innerHTML = "";
 
-  normalizeObjectArray(items).forEach(item => {
+  normalizeArray(items).forEach((item) => {
+    if (!item || typeof item !== "object") return;
+
     const job = document.createElement("article");
     job.className = "job";
 
@@ -113,13 +156,9 @@ function renderExperience(items = []) {
 
     const companyLine = document.createElement("p");
     companyLine.className = "job-company";
-
-    const companyLocation = [
-      item.company || item.employer || "",
-      item.location || item.city || ""
-    ].filter(Boolean).join(" • ");
-
-    companyLine.textContent = companyLocation;
+    companyLine.textContent = [item.company || item.employer || "", item.location || item.city || ""]
+      .filter(Boolean)
+      .join(" • ");
 
     const dates = document.createElement("p");
     dates.className = "job-dates";
@@ -144,13 +183,18 @@ function renderExperience(items = []) {
     if (details.length) {
       const ul = document.createElement("ul");
 
-      details.forEach(detail => {
-        const li = document.createElement("li");
-        li.textContent = detail;
-        ul.appendChild(li);
-      });
+      details
+        .map((detail) => String(detail).trim())
+        .filter(Boolean)
+        .forEach((detail) => {
+          const li = document.createElement("li");
+          li.textContent = detail;
+          ul.appendChild(li);
+        });
 
-      job.appendChild(ul);
+      if (ul.children.length) {
+        job.appendChild(ul);
+      }
     }
 
     if (job.children.length) {
@@ -165,7 +209,9 @@ function renderEducation(items = []) {
 
   container.innerHTML = "";
 
-  normalizeObjectArray(items).forEach(item => {
+  normalizeArray(items).forEach((item) => {
+    if (!item || typeof item !== "object") return;
+
     const edu = document.createElement("article");
     edu.className = "education-item";
 
@@ -185,8 +231,8 @@ function renderEducation(items = []) {
     degreeLine.className = "education-degree";
 
     const degreeParts = [
-      item.degree || "",
-      item.field || "",
+      item.type || "",
+      item.degree || item.program || item.field || "",
       item.location || ""
     ].filter(Boolean);
 
@@ -213,17 +259,23 @@ function renderEducation(items = []) {
       edu.appendChild(gpa);
     }
 
-    const details = Array.isArray(item.details) ? item.details : [];
-    if (details.length) {
+    const extraDetails = [
+      ...normalizeStringArray(item.details),
+      ...normalizeStringArray(item.notes)
+    ];
+
+    if (extraDetails.length) {
       const ul = document.createElement("ul");
 
-      details.forEach(detail => {
+      extraDetails.forEach((detail) => {
         const li = document.createElement("li");
         li.textContent = detail;
         ul.appendChild(li);
       });
 
-      edu.appendChild(ul);
+      if (ul.children.length) {
+        edu.appendChild(ul);
+      }
     }
 
     if (edu.children.length) {
@@ -238,7 +290,7 @@ function renderProjects(items = []) {
 
   container.innerHTML = "";
 
-  items.forEach(item => {
+  normalizeArray(items).forEach((item) => {
     const li = document.createElement("li");
 
     if (typeof item === "string") {
@@ -246,7 +298,8 @@ function renderProjects(items = []) {
     } else if (item && typeof item === "object") {
       const name = item.name || item.title || "";
       const description = item.description || "";
-      const url = item.url || "";
+      const stack = item.stack || item.tech || "";
+      const url = normalizeUrl(item.link || item.url || item.website || "");
 
       if (url) {
         const link = document.createElement("a");
@@ -256,11 +309,19 @@ function renderProjects(items = []) {
         link.textContent = name || url;
         li.appendChild(link);
 
-        if (description) {
-          li.appendChild(document.createTextNode(` — ${description}`));
+        const extras = [];
+        if (stack) extras.push(`Tech: ${stack}`);
+        if (description) extras.push(description);
+
+        if (extras.length) {
+          li.appendChild(document.createTextNode(` — ${extras.join(" • ")}`));
         }
       } else {
-        li.textContent = [name, description].filter(Boolean).join(" — ");
+        const parts = [name];
+        if (stack) parts.push(`Tech: ${stack}`);
+        if (description) parts.push(description);
+
+        li.textContent = parts.filter(Boolean).join(" — ");
       }
     }
 
@@ -276,7 +337,7 @@ function renderCertifications(items = []) {
 
   container.innerHTML = "";
 
-  items.forEach(item => {
+  normalizeArray(items).forEach((item) => {
     const li = document.createElement("li");
 
     if (typeof item === "string") {
@@ -309,15 +370,16 @@ async function loadResume() {
     const data = snap.data() || {};
 
     setText("name", data.name || "");
+    setText("title", data.title || "");
+    setText("professional-title", data.title || "");
     setText("contact", buildContactLine(data));
+    setText("location", data.location || data.city || "");
     setText("summary", data.summary || "");
 
-    const emailEl = $("email");
-    if (emailEl) {
-      const email = (data.email || "").trim();
-      emailEl.textContent = email;
-      emailEl.href = email ? `mailto:${email}` : "#";
-    }
+    setLinkOrText("email", data.email || "", data.email ? `mailto:${data.email}` : "");
+    setLinkOrText("phone", data.phone || "", normalizePhoneHref(data.phone || ""));
+    setLinkOrText("website", data.website || "", normalizeUrl(data.website || ""), true);
+    setLinkOrText("linkedin", data.linkedin || "", normalizeUrl(data.linkedin || ""), true);
 
     renderTagList("skills-list", data.skills || []);
     renderTagList("languages-list", data.languages || []);
@@ -330,134 +392,8 @@ async function loadResume() {
   }
 }
 
-function createPrintClone() {
-  const dedicatedPrintArea = document.getElementById("resume-print-area");
-  if (dedicatedPrintArea) {
-    return dedicatedPrintArea.cloneNode(true);
-  }
-
-  const header = document.querySelector(".site-header");
-  const resumeContainer = document.querySelector(".resume-container");
-
-  if (!header && !resumeContainer) return null;
-
-  const wrapper = document.createElement("div");
-  wrapper.id = "resume-print-area-clone";
-
-  if (header) wrapper.appendChild(header.cloneNode(true));
-  if (resumeContainer) wrapper.appendChild(resumeContainer.cloneNode(true));
-
-  return wrapper;
-}
-
-function prepareCloneForPdf(clone) {
-  const downloadBtn = clone.querySelector("#download-btn");
-  if (downloadBtn) downloadBtn.remove();
-
-  clone.querySelectorAll(".onyx-dock, footer").forEach(el => el.remove());
-
-  clone.style.width = "210mm";
-  clone.style.minHeight = "297mm";
-  clone.style.background = "#ffffff";
-  clone.style.color = "#000000";
-  clone.style.padding = "10mm";
-  clone.style.margin = "0";
-  clone.style.boxSizing = "border-box";
-  clone.style.boxShadow = "none";
-  clone.style.borderRadius = "0";
-
-  clone.querySelectorAll("*").forEach(el => {
-    el.style.boxShadow = "none";
-    el.style.textShadow = "none";
-    el.style.filter = "none";
-    el.style.backdropFilter = "none";
-  });
-
-  clone.querySelectorAll("section").forEach(section => {
-    section.style.pageBreakInside = "avoid";
-    section.style.breakInside = "avoid";
-  });
-
-  clone.querySelectorAll(".job, .education-item, ul li").forEach(el => {
-    el.style.pageBreakInside = "avoid";
-    el.style.breakInside = "avoid";
-  });
-
-  clone.querySelectorAll("a").forEach(link => {
-    link.style.color = "#000000";
-    link.style.textDecoration = "none";
-  });
-
-  const header = clone.querySelector(".site-header");
-  if (header) {
-    header.style.background = "#ffffff";
-    header.style.color = "#000000";
-    header.style.boxShadow = "none";
-  }
-}
-
-function setupDownloadButton() {
-  const downloadBtn = $("download-btn");
-  if (!downloadBtn) return;
-
-  downloadBtn.addEventListener("click", async () => {
-    if (typeof html2pdf === "undefined") {
-      alert("html2pdf is not loaded.");
-      return;
-    }
-
-    const clone = createPrintClone();
-    if (!clone) {
-      alert("Could not find resume content to print.");
-      return;
-    }
-
-    prepareCloneForPdf(clone);
-
-    const offscreen = document.createElement("div");
-    offscreen.style.position = "fixed";
-    offscreen.style.left = "-99999px";
-    offscreen.style.top = "0";
-    offscreen.style.width = "210mm";
-    offscreen.style.background = "#ffffff";
-    offscreen.style.zIndex = "-1";
-
-    offscreen.appendChild(clone);
-    document.body.appendChild(offscreen);
-
-    try {
-      await html2pdf()
-        .from(clone)
-        .set({
-          margin: [10, 10, 10, 10],
-          filename: "Caleb_Kritzar_Resume.pdf",
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: "#ffffff"
-          },
-          jsPDF: {
-            orientation: "portrait",
-            unit: "mm",
-            format: "a4"
-          }
-        })
-        .save();
-    } catch (error) {
-      console.error("PDF generation failed:", error);
-      alert("Failed to generate PDF.");
-    } finally {
-      offscreen.remove();
-    }
-  });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const yearEl = $("year");
-  if (yearEl) {
-    yearEl.textContent = new Date().getFullYear();
-  }
-
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadResume);
+} else {
   loadResume();
-  setupDownloadButton();
-});
+}
