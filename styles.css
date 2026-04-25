@@ -758,86 +758,104 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 💎 ULTRA-COMPACT LIQUID GLASS */
+/* 💎 iOS 26 LIQUID GLASS - FULL STYLESHEET */
 /* ============================================= */
+
 :root {
-  /* Light Mode - 95% Transparent */
-  --liquid-bg: rgba(255, 255, 255, 0.05); 
-  --liquid-border: rgba(255, 255, 255, 0.3);
-  --item-active: rgba(0, 0, 0, 0.05);
-  --text-main: #222222;
+  /* Ultra-Transparent Light Mode */
+  --dock-bg: rgba(255, 255, 255, 0.08); 
+  --dock-border: rgba(255, 255, 255, 0.4);
+  --item-active-bg: rgba(0, 0, 0, 0.05);
+  --text-primary: #1d1d1f;
+  --accent-blue: #007AFF;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Dark Mode - Near-Invisible */
-    --liquid-bg: rgba(255, 255, 255, 0.02);
-    --liquid-border: rgba(255, 255, 255, 0.15);
-    --item-active: rgba(255, 255, 255, 0.08);
-    --text-main: #ffffff;
+    /* Ultra-Transparent Dark Mode */
+    --dock-bg: rgba(0, 0, 0, 0.05);
+    --dock-border: rgba(255, 255, 255, 0.15);
+    --item-active-bg: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --accent-blue: #0A84FF;
   }
 }
 
+/* --- DOCK CONTAINER --- */
 .onyx-dock {
   position: fixed;
-  bottom: 1rem;
+  bottom: 1.25rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 4px 6px; /* Super slim padding */
-  background: var(--liquid-bg);
-  border-radius: 40px;
-  border: 0.5px solid var(--liquid-border);
+  gap: 4px;
+  padding: 5px 8px;
+  background: var(--dock-bg);
+  border-radius: 50px;
+  border: 0.5px solid var(--dock-border);
   
-  /* The "Liquid" Look: Minimal blur, high color saturation */
-  backdrop-filter: blur(3px) saturate(180%);
-  -webkit-backdrop-filter: blur(3px) saturate(180%);
+  /* The "Liquid" Effect: Sharp clarity, high color intensity */
+  backdrop-filter: blur(5px) saturate(210%);
+  -webkit-backdrop-filter: blur(5px) saturate(210%);
   
-  /* Top-edge light reflection */
+  /* Top-edge light reflection for the 'Glass' feel */
   box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.1),
-    inset 0 0.5px 0.5px rgba(255, 255, 255, 0.4);
-  z-index: 1000;
+    0 10px 30px rgba(0, 0, 0, 0.1),
+    inset 0 0.5px 1px rgba(255, 255, 255, 0.5);
+  z-index: 9999;
+  width: max-content;
 }
 
-/* ============================================= */
-/* 🛸 ICON & LABEL STYLING */
-/* ============================================= */
-.dock-item {
+/* --- DOCK ITEMS --- */
+.glass-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 10px;
+  justify-content: center;
+  padding: 6px 14px;
   border-radius: 30px;
   text-decoration: none;
-  color: var(--text-main);
-  transition: 0.2s ease;
+  color: var(--text-primary);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dock-icon {
-  font-size: 16px; /* Scaled down icons */
-  line-height: 1;
+  font-size: 18px; /* Compact icon size */
+  line-height: 1.1;
   margin-bottom: 1px;
+  transition: transform 0.2s ease;
 }
 
 .dock-label {
-  font-size: 9px; /* Sharp, tiny text */
+  font-size: 9px; /* Micro-label typography */
   font-weight: 600;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  letter-spacing: -0.1px;
 }
 
-/* Active State "Inner Pill" */
-.dock-item.active {
-  background: var(--item-active);
+/* --- ACTIVE STATE (The Inner Pill) --- */
+.glass-item.active {
+  background: var(--item-active-bg);
+  color: var(--accent-blue);
+  /* Gentle inner glow for active state */
   box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.2);
 }
 
-.dock-item.active .dock-label {
-  color: #007AFF; /* Modern blue highlight */
+.glass-item.active .dock-label {
+  font-weight: 700;
 }
 
+/* --- INTERACTION EFFECTS --- */
+.glass-item:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.glass-item:active {
+  transform: scale(0.94);
+  opacity: 0.8;
+}
 
 /* ======================================================= */
 /* === LIVE ACTIVITY — APPLE MUSIC / IOS STYLE =========== */
