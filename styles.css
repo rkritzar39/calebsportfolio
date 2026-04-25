@@ -757,35 +757,61 @@ a.corner-button {
 	.profile-bio { font-size: 0.9rem; }
 }
 
-/* ============================================= */
-/* 💎 iOS 26 LIQUID GLASS - NO FROST VERSION   */
-/* ============================================= */
+/* ================================================== */
+/* 💎 ONYX DOCK - ULTIMATE LIQUID GLASS (Full Code)  */
+/* ================================================== */
 
+:root {
+  /* Dark Mode Default - Deep Crystal */
+  --dock-bg: rgba(10, 10, 10, 0.25);
+  --dock-border: rgba(255, 255, 255, 0.12);
+  --item-active-bg: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --accent-blue: #0A84FF;
+  --glass-sheen: rgba(255, 255, 255, 0.15);
+  --distortion: blur(12px) saturate(250%) contrast(110%);
+}
+
+/* Light Mode Overrides - Sharp & Vibrant */
+body.light-e {
+  --dock-bg: rgba(255, 255, 255, 0.35); 
+  --dock-border: rgba(255, 255, 255, 0.9);
+  --item-active-bg: rgba(0, 0, 0, 0.06);
+  --text-primary: #1d1d1f;
+  --accent-blue: #007AFF;
+  --glass-sheen: rgba(255, 255, 255, 0.9);
+  /* Light mode uses slightly different filters to prevent "muddy" colors */
+  --distortion: blur(14px) saturate(200%) contrast(95%) brightness(1.05);
+}
+
+/* --- THE MAIN DOCK CONTAINER --- */
 .onyx-dock {
   position: fixed;
-  bottom: 1.25rem;
+  bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 5px 8px;
+  padding: 6px 10px;
   z-index: 9999;
   width: max-content;
 
-  /* THE LIQUID KEY: Low Alpha Background */
   background: var(--dock-bg); 
   border-radius: 50px;
   border: 0.5px solid var(--dock-border);
   
-  /* Crystal Clarity: Low blur (no frost), high color saturation */
-  backdrop-filter: blur(5px) saturate(210%);
-  -webkit-backdrop-filter: blur(5px) saturate(210%);
+  /* 🌀 APPLE DISTORTION EFFECT */
+  backdrop-filter: var(--distortion);
+  -webkit-backdrop-filter: var(--distortion);
   
-  /* Top-edge light reflection & faint shadow */
+  /* Polished Liquid Depth */
   box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.1),
-    inset 0 0.5px 1px rgba(255, 255, 255, 0.5);
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 2px var(--glass-sheen);
+    
+  /* Prevents lag during scroll distortion */
+  will-change: backdrop-filter;
 }
 
 /* --- DOCK ITEMS --- */
@@ -794,7 +820,7 @@ a.corner-button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 30px;
   text-decoration: none;
   color: var(--text-primary);
@@ -802,41 +828,53 @@ a.corner-button {
 }
 
 .dock-icon {
-  font-size: 18px; 
+  font-size: 20px; 
   line-height: 1.1;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
+  color: var(--text-primary);
   transition: transform 0.2s ease;
 }
 
 .dock-label {
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 600;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   letter-spacing: -0.1px;
 }
 
-/* --- ACTIVE STATE (The iOS 18+ Inner Pill) --- */
+/* --- ACTIVE STATE (The Inner Pill) --- */
 .dock-item.active {
   background: var(--item-active-bg);
   color: var(--accent-blue);
-  box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.2);
 }
 
+.dock-item.active .dock-icon,
 .dock-item.active .dock-label {
-  font-weight: 700;
+  color: var(--accent-blue);
 }
 
-/* --- INTERACTION EFFECTS --- */
+/* --- INTERACTIVE STATES --- */
 .dock-item:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
 .dock-item:active {
-  transform: scale(0.94);
-  opacity: 0.8;
+  transform: scale(0.92);
 }
 
+/* 📱 MOBILE RESPONSIVE TWEAK */
+@media (max-width: 600px) {
+  .onyx-dock {
+    padding: 5px;
+    bottom: 1rem;
+    gap: 2px;
+  }
+  .dock-item {
+    padding: 6px 12px;
+    min-width: 60px;
+  }
+}
 
 /* ======================================================= */
 /* === LIVE ACTIVITY — APPLE MUSIC / IOS STYLE =========== */
