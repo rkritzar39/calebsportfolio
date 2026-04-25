@@ -758,96 +758,86 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 💎 ULTRA-CLEAR LIQUID GLASS DOCK */
+/* 💎 ULTRA-COMPACT LIQUID GLASS */
 /* ============================================= */
 :root {
-  /* High-transparency crystal colors */
-  --glass-bg: rgba(255, 255, 255, 0.05); /* Barely there */
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --active-pill: rgba(255, 255, 255, 0.15);
-  --text-main: #000000;
-  --text-active: #007AFF;
+  /* Light Mode - 95% Transparent */
+  --liquid-bg: rgba(255, 255, 255, 0.05); 
+  --liquid-border: rgba(255, 255, 255, 0.3);
+  --item-active: rgba(0, 0, 0, 0.05);
+  --text-main: #222222;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --active-pill: rgba(255, 255, 255, 0.08);
+    /* Dark Mode - Near-Invisible */
+    --liquid-bg: rgba(255, 255, 255, 0.02);
+    --liquid-border: rgba(255, 255, 255, 0.15);
+    --item-active: rgba(255, 255, 255, 0.08);
     --text-main: #ffffff;
-    --text-active: #0A84FF;
   }
 }
 
 .onyx-dock {
   position: fixed;
-  bottom: 1.2rem; /* Tucked tight to the bottom */
+  bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 2px;
-  padding: 4px 8px; /* Maximum compactness */
-  background: var(--glass-bg);
-  border-radius: 50px;
-  border: 0.5px solid var(--glass-border);
+  padding: 4px 6px; /* Super slim padding */
+  background: var(--liquid-bg);
+  border-radius: 40px;
+  border: 0.5px solid var(--liquid-border);
   
-  /* CRYSTAL EFFECT: Minimal blur for clarity, high saturation for pop */
-  backdrop-filter: blur(4px) saturate(200%);
-  -webkit-backdrop-filter: blur(4px) saturate(200%);
+  /* The "Liquid" Look: Minimal blur, high color saturation */
+  backdrop-filter: blur(3px) saturate(180%);
+  -webkit-backdrop-filter: blur(3px) saturate(180%);
   
-  /* Sharp edge reflection */
+  /* Top-edge light reflection */
   box-shadow: 
-    0 4px 20px rgba(0, 0, 0, 0.08), 
-    inset 0 0.5px 0 rgba(255, 255, 255, 0.4);
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 0.5px 0.5px rgba(255, 255, 255, 0.4);
   z-index: 1000;
 }
 
 /* ============================================= */
-/* 🛸 MICRO-DOCK ITEMS */
+/* 🛸 ICON & LABEL STYLING */
 /* ============================================= */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 5px 12px;
-  border-radius: 25px;
+  padding: 4px 10px;
+  border-radius: 30px;
   text-decoration: none;
   color: var(--text-main);
-  transition: all 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .dock-icon {
-  width: 18px; /* Even smaller for that "Liquid" feel */
-  height: 18px;
+  font-size: 16px; /* Scaled down icons */
+  line-height: 1;
   margin-bottom: 1px;
 }
 
 .dock-label {
-  font-size: 9.5px; /* Sharp and tiny */
-  font-weight: 500;
-  letter-spacing: -0.2px;
+  font-size: 9px; /* Sharp, tiny text */
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* ============================================= */
-/* ✨ THE LIQUID HIGHLIGHT */
-/* ============================================= */
+/* Active State "Inner Pill" */
 .dock-item.active {
-  background: var(--active-pill);
-  color: var(--text-active);
-  /* Inner glow for the active item */
-  box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.3);
+  background: var(--item-active);
+  box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.2);
 }
 
 .dock-item.active .dock-label {
-  font-weight: 700;
+  color: #007AFF; /* Modern blue highlight */
 }
 
-/* Clean hover state */
-.dock-item:not(.active):hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: scale(1.03);
-}
 
 /* ======================================================= */
 /* === LIVE ACTIVITY — APPLE MUSIC / IOS STYLE =========== */
