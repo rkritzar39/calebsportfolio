@@ -758,30 +758,30 @@ a.corner-button {
 }
 
 /* ================================================== */
-/* 💎 THE LIQUID GLASS DOCK - MASTER STYLESHEET      */
+/* 💎 iOS 26 LIQUID GLASS - ULTRA-CLEAR EDITION     */
 /* ================================================== */
 
 :root {
-  /* DARK MODE: Deep Liquid */
-  --dock-bg: rgba(0, 0, 0, 0.1);
-  --dock-border: rgba(255, 255, 255, 0.12);
-  --item-active: rgba(255, 255, 255, 0.1);
+  /* DARK MODE: 5% opacity for maximum clarity */
+  --dock-bg: rgba(0, 0, 0, 0.05); 
+  --dock-border: rgba(255, 255, 255, 0.15);
+  --item-active: rgba(255, 255, 255, 0.08);
   --text-main: #ffffff;
   --accent: #0A84FF;
   --sheen: rgba(255, 255, 255, 0.2);
 }
 
 body.light-e {
-  /* LIGHT MODE: Polished Diamond */
-  --dock-bg: rgba(255, 255, 255, 0.2);
-  --dock-border: rgba(0, 0, 0, 0.05);
-  --item-active: rgba(0, 0, 0, 0.05);
+  /* LIGHT MODE: Polished Diamond clarity */
+  --dock-bg: rgba(255, 255, 255, 0.08); 
+  --dock-border: rgba(255, 255, 255, 0.9);
+  --item-active: rgba(0, 0, 0, 0.04);
   --text-main: #1d1d1f;
   --accent: #007AFF;
-  --sheen: rgba(255, 255, 255, 0.8);
+  --sheen: rgba(255, 255, 255, 0.95);
 }
 
-/* --- THE DOCK CONTAINER --- */
+/* --- THE MAIN DOCK CONTAINER --- */
 .onyx-dock {
   position: fixed;
   bottom: 24px;
@@ -789,49 +789,61 @@ body.light-e {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  padding: 8px 12px;
-  gap: 8px;
+  padding: 8px 14px;
+  gap: 6px;
   z-index: 9999;
+  width: max-content;
   
   background: var(--dock-bg);
-  border-radius: 100px; /* Perfect pill shape */
+  border-radius: 100px; 
   border: 0.5px solid var(--dock-border);
   
-  /* THE CRYSTAL EFFECT: Low blur + High Saturation */
-  backdrop-filter: blur(8px) saturate(210%) contrast(110%);
-  -webkit-backdrop-filter: blur(8px) saturate(210%) contrast(110%);
+  /* 🌀 THE ANTI-FROST FIX:
+     - 4px blur: Lowered from 8px to remove the "milkiness"
+     - 260% saturation: Makes colors behind the dock vibrant
+     - 110% contrast: Keeps text behind the dock sharp
+  */
+  backdrop-filter: blur(4px) saturate(260%) contrast(110%);
+  -webkit-backdrop-filter: blur(4px) saturate(260%) contrast(110%);
   
-  /* THE GLASS LOOK: Inner highlight makes it look 3D */
+  /* 3D GLASS POLISH */
   box-shadow: 
-    0 15px 35px rgba(0, 0, 0, 0.2),
-    inset 0 1px 2px var(--sheen); 
+    0 15px 35px rgba(0, 0, 0, 0.15),
+    inset 0 1px 1.5px var(--sheen), /* Sharp top reflection */
+    inset 0 -1px 1px rgba(0, 0, 0, 0.05); /* Subtle bottom edge */
 }
 
-/* --- DOCK ITEMS (Fixed Squishing) --- */
+/* --- DOCK ITEMS (Fixed Spacing & No Squishing) --- */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 75px; /* Ensures icons aren't squished */
+  min-width: 75px; 
   padding: 10px 0;
-  border-radius: 100px;
+  border-radius: 30px;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  
+  /* FIXED: Gap between Icon and Title */
+  gap: 5px; 
 }
 
 .dock-icon {
-  font-size: 22px; /* Large, clear icons */
-  margin-bottom: 2px;
-  display: block;
+  font-size: 22px; 
+  line-height: 1; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dock-label {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
   color: var(--text-main);
-  opacity: 0.8;
+  opacity: 0.75;
+  letter-spacing: -0.1px;
 }
 
 /* --- ACTIVE STATE --- */
@@ -845,25 +857,23 @@ body.light-e {
   opacity: 1;
 }
 
-/* --- HOVER / INTERACTION --- */
+/* --- INTERACTIONS --- */
 .dock-item:hover:not(.active) {
   background: rgba(255, 255, 255, 0.05);
-  transform: translateY(-4px); /* Floating effect */
+  transform: translateY(-4px);
 }
 
 .dock-item:active {
   transform: scale(0.92);
 }
 
-/* 📱 MOBILE RESPONSIVE (No Squish Edition) */
+/* 📱 MOBILE RESPONSIVE */
 @media (max-width: 600px) {
   .onyx-dock {
     width: 90%;
-    max-width: 400px;
     padding: 6px;
-    justify-content: space-around;
+    bottom: 16px;
   }
-  
   .dock-item {
     min-width: unset;
     flex: 1;
