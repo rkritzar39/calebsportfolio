@@ -758,26 +758,21 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🍎 Vision OS / iOS Future Theme Variables */
+/* 🍎 iOS 26 Style Dock Variables */
 /* ============================================= */
 :root {
-  --glass-bg: rgba(255, 255, 255, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.8);
-  --glass-blur: 25px;
-  --dock-shadow: 0 20px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  --dock-bg: rgba(255, 255, 255, 0.85);
+  --dock-border: rgba(255, 255, 255, 0.95);
+  --dock-blur: 10px;
+  --dock-shadow: 0 0 20px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
   --text-primary: #000000;
-  --text-secondary: #666666;
+  --text-secondary: rgba(0, 0, 0, 0.7);
   --accent-color: #007AFF;
-  --active-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  --backdrop-blur: blur(25px);
-  --content-bg: #ffffff;
-  --border-color: rgba(120, 120, 128, 0.16);
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --transition-medium: 0.3s ease;
+  --active-glow: 0 0 15px rgba(0, 122, 255, 0.4);
 }
 
 /* ============================================= */
-/* 💎 ONYX GLASS DOCK CONTAINER */
+/* 💎 DOCK CONTAINER */
 /* ============================================= */
 .onyx-dock {
   position: fixed;
@@ -787,24 +782,18 @@ a.corner-button {
   z-index: 1000;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 20px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
-  border-radius: 999px;
-  border: 1px solid var(--glass-border);
+  gap: 6px;
+  padding: 12px 18px;
+  background: var(--dock-bg);
+  backdrop-filter: blur(var(--dock-blur));
+  -webkit-backdrop-filter: blur(var(--dock-blur));
+  border-radius: 24px;
+  border: 1px solid var(--dock-border);
   box-shadow: var(--dock-shadow);
-  animation: floatUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-@keyframes floatUp {
-  from { opacity: 0; transform: translate(-50%, 20px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
 }
 
 /* ============================================= */
-/* 🛸 THE INTERACTIVE ITEMS */
+/* 🛸 DOCK ITEMS */
 /* ============================================= */
 .dock-item {
   position: relative;
@@ -812,65 +801,42 @@ a.corner-button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 60px;
-  padding: 12px 18px;
-  border-radius: 999px;
+  min-width: 54px;
+  padding: 10px 14px;
+  border-radius: 14px;
   text-decoration: none;
   color: var(--text-secondary);
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
-  overflow: hidden;
-  isolation: isolate;
-  border: 1px solid transparent;
-}
-
-.dock-item::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: radial-gradient(
-    90px circle at var(--x, 50%) var(--y, 50%),
-    rgba(255, 255, 255, 0.3),
-    transparent 80%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.dock-item:hover::before {
-  opacity: 1;
-}
-
-/* ============================================= */
-/* ✍️ TYPOGRAPHY & ICONS */
-/* ============================================= */
-.dock-label {
-  font-size: 11px;
-  font-weight: 600;
-  margin-top: 4px;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .dock-icon {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   stroke-width: 2px;
   stroke: currentColor;
   transition: all 0.2s ease;
-  transform: translate(calc(var(--dx, 0) * 6px), calc(var(--dy, 0) * 6px)) scale(1);
+}
+
+.dock-label {
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 4px;
+  opacity: 0;
+  transform: translateY(3px);
+  transition: all 0.2s ease;
 }
 
 /* ============================================= */
 /* ✨ HOVER EFFECTS */
 /* ============================================= */
 .dock-item:hover {
-  transform: scale(1.1) translateY(-4px);
-  background: rgba(255, 255, 255, 0.4);
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(1.08) translateY(-2px);
+}
+
+.dock-item:hover .dock-icon {
+  transform: scale(1.15);
 }
 
 .dock-item:hover .dock-label {
@@ -878,29 +844,22 @@ a.corner-button {
   transform: translateY(0);
 }
 
-.dock-item:hover .dock-icon {
-  transform: translate(calc(var(--dx, 0) * 8px), calc(var(--dy, 0) * 8px)) scale(1.15);
-}
-
 /* ============================================= */
 /* 🔵 ACTIVE STATE */
 /* ============================================= */
 .dock-item.active {
-  background: rgba(0, 122, 255, 0.12);
-  color: var(--accent-color);
-  border-color: rgba(0, 122, 255, 0.2);
-  box-shadow: 0 0 0 1px rgba(0, 122, 255, 0.2), 0 6px 20px rgba(0, 122, 255, 0.15);
+  background: rgba(0, 122, 255, 0.1);
 }
 
 .dock-item.active .dock-icon {
   stroke: var(--accent-color);
-  stroke-width: 2.4px;
 }
 
 .dock-item.active .dock-label {
   opacity: 1;
   transform: translateY(0);
   color: var(--accent-color);
+  font-weight: 600;
 }
 
 /* ======================================================= */
