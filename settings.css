@@ -948,132 +948,117 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== */
-/* 💎 iOS 26 LIQUID GLASS - FULL MASTER STYLESHEET   */
+/* 💎 iOS 26 LIQUID GLASS - COMPACT PILL EDITION    */
 /* ================================================== */
 
 :root {
-  /* DARK MODE: Crystal Clear Base */
   --dock-bg: rgba(0, 0, 0, 0.05);
   --dock-border: rgba(255, 255, 255, 0.15);
   --text-main: #ffffff;
-  --accent-color: #0A84FF; /* iOS Blue */
-  --glass-sheen: rgba(255, 255, 255, 0.2);
+  --accent-color: #0A84FF;
+  --glass-sheen: rgba(255, 255, 255, 0.25);
 }
 
 body.light-e {
-  /* LIGHT MODE: High-Gloss Diamond Base */
-  --dock-bg: rgba(255, 255, 255, 0.1);
+  --dock-bg: rgba(255, 255, 255, 0.08);
   --dock-border: rgba(255, 255, 255, 0.9);
   --text-main: #1d1d1f;
   --accent-color: #007AFF;
   --glass-sheen: rgba(255, 255, 255, 1);
 }
 
-/* --- THE MAIN DOCK --- */
+/* --- THE MAIN DOCK (Smaller & Sleeker) --- */
 .onyx-dock {
   position: fixed;
-  bottom: 24px;
+  bottom: 20px; /* Closer to the edge */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  padding: 8px 14px;
-  gap: 8px;
+  /* 🟢 SMALLER PADDING: Reduced for a tighter look */
+  padding: 5px 8px; 
+  gap: 4px; 
   z-index: 9999;
   width: max-content;
   
   background: var(--dock-bg);
-  /* 🟢 EXTRA ROUNDED: Perfect Pill Shape */
   border-radius: 100px; 
   border: 0.5px solid var(--dock-border);
   
-  /* 🌀 CRYSTAL OPTICS: 3px-4px blur kills the "frosted" look */
+  /* CRYSTAL OPTICS */
   backdrop-filter: blur(4px) saturate(280%) contrast(110%);
   -webkit-backdrop-filter: blur(4px) saturate(280%) contrast(110%);
   
-  /* 3D Liquid Polish */
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.15),
-    inset 0 1px 1.5px var(--glass-sheen),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+    0 12px 30px rgba(0, 0, 0, 0.12),
+    inset 0 1px 1px var(--glass-sheen);
 }
 
-/* --- DOCK ITEMS (Fixed Spacing & No Squishing) --- */
+/* --- DOCK ITEMS --- */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 78px; /* 🟢 NO SQUISH */
-  padding: 10px 0;
-  border-radius: 35px; /* Softer rounded selection */
+  /* 🟢 COMPACT WIDTH: Adjusted for smaller footprint */
+  min-width: 68px; 
+  padding: 8px 0;
   text-decoration: none;
   color: var(--text-main);
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  
-  /* 🟢 NO TOUCHING: Gap between Icon and Text */
-  gap: 6px; 
+  gap: 4px; 
+}
+
+/* --- 🟢 ACTIVE TAB: THE FLOATING PILL --- */
+.dock-item.active {
+  /* This creates the floating capsule look inside the dock */
+  background: color-mix(in srgb, var(--accent-color) 20%, transparent);
+  color: var(--accent-color);
+  border-radius: 100px; /* Perfect pill shape for the selection */
+  box-shadow: 
+    inset 0 0 8px color-mix(in srgb, var(--accent-color) 10%, transparent),
+    0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .dock-icon {
-  font-size: 24px; 
+  font-size: 20px; /* Slightly smaller for the compact dock */
   line-height: 1;
-  display: block;
   transition: transform 0.3s ease;
 }
 
 .dock-label {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: 0.1px;
   opacity: 0.7;
 }
 
-/* --- 🟢 HIGH-VISIBILITY ACTIVE STATE --- */
-.dock-item.active {
-  /* Vibrant background pull from your accent color */
-  background: color-mix(in srgb, var(--accent-color) 18%, transparent);
-  color: var(--accent-color);
-  
-  /* Inner glass glow to make it stand out */
-  box-shadow: 
-    inset 0 0 12px color-mix(in srgb, var(--accent-color) 15%, transparent),
-    0 4px 12px rgba(0, 0, 0, 0.1);
+.dock-item.active .dock-label {
+  opacity: 1;
+  font-weight: 800;
 }
 
 .dock-item.active .dock-icon {
-  transform: scale(1.15); /* Icon pops when active */
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent-color) 35%, transparent));
+  transform: scale(1.1);
 }
 
-.dock-item.active .dock-label {
-  opacity: 1;
-  font-weight: 800; /* Extra bold for active tab */
-}
-
-/* --- INTERACTIONS --- */
+/* --- HOVER EFFECT --- */
 .dock-item:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-4px); /* Liquid floating effect */
+  /* Subtle lift without the background pill */
+  transform: translateY(-3px);
 }
 
-.dock-item:active {
-  transform: scale(0.9);
-}
-
-/* 📱 MOBILE RESPONSIVE */
+/* 📱 MOBILE FIX */
 @media (max-width: 600px) {
   .onyx-dock {
-    width: 92%;
-    padding: 6px;
-    bottom: 16px;
-    gap: 4px;
+    width: 90%;
+    padding: 4px;
+    bottom: 12px;
   }
   .dock-item {
     min-width: unset;
     flex: 1;
-    border-radius: 25px;
   }
 }
 
