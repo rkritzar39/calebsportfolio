@@ -758,39 +758,43 @@ a.corner-button {
 }
 
 /* ================================================== */
-/* 💧 TRUE LIQUID GLASS - NO FROST VERSION          */
+/* 💧 iOS 26 LIQUID OPTICS - DUAL-MODE MASTER       */
 /* ================================================== */
 
 :root {
-  /* DARK MODE: Almost 100% clear background */
+  /* DARK MODE (Obsidian Liquid) */
   --dock-bg: rgba(0, 0, 0, 0.05); 
   --dock-border: rgba(255, 255, 255, 0.15);
-  --item-active-bg: rgba(255, 255, 255, 0.1);
+  --item-active-bg: rgba(255, 255, 255, 0.08);
   --text-primary: #ffffff;
-  --accent-blue: #0A84FF;
+  --accent-color: #0A84FF;
   --glass-sheen: rgba(255, 255, 255, 0.2);
+  --dock-shadow: rgba(0, 0, 0, 0.4);
+  --lens-filter: blur(6px) saturate(280%) contrast(110%);
 }
 
+/* LIGHT MODE (Diamond Polished) */
 body.light-e {
-  /* LIGHT MODE: Ultra-thin white tint */
-  --dock-bg: rgba(255, 255, 255, 0.1); 
-  --dock-border: rgba(255, 255, 255, 0.8);
-  --item-active-bg: rgba(0, 0, 0, 0.05);
+  --dock-bg: rgba(255, 255, 255, 0.2); 
+  --dock-border: rgba(255, 255, 255, 0.9); /* Sharp white edge */
+  --item-active-bg: rgba(0, 0, 0, 0.04);
   --text-primary: #1d1d1f;
-  --accent-blue: #007AFF;
-  --glass-sheen: rgba(255, 255, 255, 0.8);
+  --accent-color: #007AFF;
+  --glass-sheen: rgba(255, 255, 255, 1); /* Brilliant white highlight */
+  --dock-shadow: rgba(0, 0, 0, 0.08);
+  --lens-filter: blur(8px) saturate(180%) contrast(100%) brightness(1.02);
 }
 
 /* --- THE MAIN DOCK CONTAINER --- */
 .onyx-dock {
   position: fixed;
-  bottom: 1.5rem;
+  bottom: 24px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateZ(0);
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   z-index: 9999;
   width: max-content;
 
@@ -798,77 +802,93 @@ body.light-e {
   border-radius: 50px;
   border: 0.5px solid var(--dock-border);
   
-  /* 🌀 THE DISTORTION KEY:
-     1. Low blur (4px-8px) = Removes the "frosted" look.
-     2. High Saturation (250%) = Content "glows" as it passes under.
-     3. Contrast (110%) = Sharpens the items behind the glass.
-  */
-  backdrop-filter: blur(6px) saturate(250%) contrast(110%);
-  -webkit-backdrop-filter: blur(6px) saturate(250%) contrast(110%);
+  /* 🌀 THE LIQUID OPTIC FILTER */
+  backdrop-filter: var(--lens-filter);
+  -webkit-backdrop-filter: var(--lens-filter);
   
-  /* Adds that "Wet" edge reflection */
+  /* The "Liquid" Polish: A bright top-edge reflection */
   box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 15px 40px var(--dock-shadow),
     inset 0 1px 1px var(--glass-sheen);
     
   will-change: backdrop-filter;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
 }
 
-/* --- DOCK ITEMS --- */
+/* --- DOCK ITEMS (The Links) --- */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6px 16px;
+  padding: 8px 18px;
   border-radius: 30px;
   text-decoration: none;
   color: var(--text-primary);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .dock-icon {
-  font-size: 20px; 
-  line-height: 1.1;
+  font-size: 22px; 
+  line-height: 1;
   margin-bottom: 2px;
+  transition: transform 0.25s ease;
 }
 
 .dock-label {
-  font-size: 9.5px;
-  font-weight: 600;
+  font-size: 9px;
+  font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  letter-spacing: -0.1px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  opacity: 0.7;
+  transition: opacity 0.25s ease;
 }
 
-/* --- ACTIVE STATE (The Inner Pill) --- */
+/* --- ACTIVE STATE (The Liquid Bubble) --- */
 .dock-item.active {
   background: var(--item-active-bg);
-  color: var(--accent-blue);
+  color: var(--accent-color);
+}
+
+.dock-item.active .dock-icon {
+  transform: scale(1.15) translateY(-1px);
 }
 
 .dock-item.active .dock-icon,
 .dock-item.active .dock-label {
-  color: var(--accent-blue);
+  color: var(--accent-color);
+  opacity: 1;
 }
 
-/* --- INTERACTIVE EFFECTS --- */
+/* --- INTERACTIVE STATES --- */
 .dock-item:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  background: rgba(128, 128, 128, 0.1);
+  transform: translateY(-3px);
 }
 
 .dock-item:active {
-  transform: scale(0.92);
+  transform: scale(0.9);
 }
 
-/* Mobile Tweak */
+/* 📱 MOBILE RESPONSIVENESS */
 @media (max-width: 600px) {
   .onyx-dock {
-    padding: 5px;
-    bottom: 1.2rem;
+    width: 90%;
+    max-width: 420px;
+    bottom: 16px;
+    padding: 6px;
+    justify-content: space-around;
   }
+  
   .dock-item {
-    padding: 6px 12px;
+    padding: 10px 0;
+    flex: 1;
+  }
+  
+  .dock-label {
+    font-size: 8px;
   }
 }
 
