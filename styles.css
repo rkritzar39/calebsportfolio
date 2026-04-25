@@ -758,116 +758,94 @@ a.corner-button {
 }
 
 /* ============================================= */
-/* 🍎 iOS 26 Style - Adaptive & No Frost */
+/* 💎 THE GLASS DOCK (iOS Style) */
 /* ============================================= */
 :root {
-  /* Light Mode (Default) */
-  --dock-bg: rgba(245, 245, 245, 0.98);
-  --dock-border: rgba(0, 0, 0, 0.08);
-  --text-primary: #000000;
-  --text-secondary: rgba(0, 0, 0, 0.6);
-  --accent-color: #007AFF;
-  --item-hover: rgba(0, 0, 0, 0.05);
+  /* Light Mode Colors */
+  --dock-bg: rgba(255, 255, 255, 0.75); /* Translucent white */
+  --dock-border: rgba(255, 255, 255, 0.4);
+  --active-bg: rgba(0, 0, 0, 0.06); /* The "inner pill" for active items */
+  --text-active: #007AFF;
+  --text-inactive: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --dock-bg: rgba(28, 28, 30, 0.98);
+    /* Dark Mode Colors */
+    --dock-bg: rgba(28, 28, 30, 0.7); /* Translucent dark gray */
     --dock-border: rgba(255, 255, 255, 0.1);
-    --text-primary: #ffffff;
-    --text-secondary: rgba(255, 255, 255, 0.6);
-    --accent-color: #0A84FF; /* Slightly brighter for dark mode */
-    --item-hover: rgba(255, 255, 255, 0.1);
+    --active-bg: rgba(255, 255, 255, 0.12);
+    --text-active: #0A84FF;
+    --text-inactive: #FFFFFF;
   }
 }
 
-/* ============================================= */
-/* 💎 DOCK CONTAINER */
-/* ============================================= */
 .onyx-dock {
   position: fixed;
-  bottom: 2rem;
+  bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
+  gap: 12px;
+  padding: 8px 10px;
   background: var(--dock-bg);
-  border-radius: 32px; /* Increased for a more "pill" look */
+  border-radius: 40px; /* Makes the main container a pill */
   border: 1px solid var(--dock-border);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.05);
   
-  /* Explicitly keeping frost off */
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  /* THIS IS THE KEY: The frosted glass effect */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  width: max-content;
 }
 
 /* ============================================= */
 /* 🛸 DOCK ITEMS */
 /* ============================================= */
 .dock-item {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 60px;
-  padding: 8px 12px;
-  border-radius: 20px;
+  padding: 10px 20px;
+  border-radius: 30px; /* Inner pill shape */
   text-decoration: none;
-  color: var(--text-secondary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); /* Smoother spring */
+  color: var(--text-inactive);
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.dock-icon {
-  width: 24px;
-  height: 24px;
-  stroke-width: 2.2px; /* Slightly thicker for clarity */
-  stroke: currentColor;
-  fill: none; /* Keeps it clean/minimal */
-  transition: transform 0.3s ease, stroke 0.3s ease;
+/* The Icon (Emoji or SVG) */
+.dock-item span {
+  font-size: 22px;
+  margin-bottom: 2px;
 }
 
 .dock-label {
-  font-size: 11px;
-  font-weight: 600;
-  margin-top: 4px;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: all 0.25s ease;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* ============================================= */
-/* ✨ HOVER & ACTIVE STATES */
+/* 🔵 THE ACTIVE PILL (Matches Image 3/4) */
 /* ============================================= */
-.dock-item:hover {
-  background: var(--item-hover);
-  transform: translateY(-4px); /* Lift effect */
-}
-
-.dock-item:hover .dock-label {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .dock-item.active {
-  background: var(--item-hover); /* Or a very subtle color tint */
-  color: var(--accent-color);
-}
-
-.dock-item.active .dock-icon {
-  stroke: var(--accent-color);
-  transform: scale(1.1);
+  background: var(--active-bg); /* The soft gray/white background */
+  color: var(--text-active); /* Blue text like the screenshots */
 }
 
 .dock-item.active .dock-label {
-  opacity: 1;
-  transform: translateY(0);
-  color: var(--accent-color);
+  font-weight: 600;
 }
+
+/* Hover effect for non-active items */
+.dock-item:not(.active):hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
 
 /* ======================================================= */
 /* === LIVE ACTIVITY — APPLE MUSIC / IOS STYLE =========== */
