@@ -948,15 +948,15 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== */
-/* 💎 iOS 26 LIQUID GLASS - REFLECTIVE MASTER       */
+/* 💎 iOS 26 LIQUID CRYSTAL MASTER - FULL STYLESHEET */
 /* ================================================== */
 
 :root {
-  /* DARK MODE DEFAULTS */
+  /* DARK MODE (Default) */
   --dock-bg: rgba(255, 255, 255, 0.03); 
   --dock-border: rgba(255, 255, 255, 0.18);
   --text-main: #ffffff;
-  --accent-blue: #32ADE6; /* Refined Apple Blue */
+  --accent-blue: #32ADE6; 
   --glass-sheen: rgba(255, 255, 255, 0.55);
 }
 
@@ -969,47 +969,47 @@ body.light-e {
   --glass-sheen: rgba(255, 255, 255, 1);
 }
 
-/* --- THE DOCK WRAPPER (Keeps everything centered) --- */
+/* --- THE MASTER WRAPPER --- */
+/* Keeps Search + Dock side-by-side and centered */
 .dock-wrapper {
   position: fixed;
-  bottom: 24px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 12px; /* Gap between dock and search icon */
+  justify-content: center;
+  gap: 12px; /* 🟢 This creates the wall between icons */
   z-index: 9999;
   width: max-content;
 }
 
-/* --- THE MAIN DOCK PILL --- */
+/* --- THE MAIN DOCK --- */
 .onyx-dock {
   display: flex;
   align-items: center;
-  padding: 5px;
+  padding: 5px 8px;
   gap: 2px;
   border-radius: 100px;
   border: 0.5px solid var(--dock-border);
   
-  /* 🟢 REFLECTIVE BASE: Linear gradient creates the top-down light */
+  /* 🌀 CRYSTAL OPTICS: Linear gradient + High Blur */
   background: linear-gradient(
     180deg, 
     rgba(255, 255, 255, 0.12) 0%, 
     rgba(255, 255, 255, 0.02) 100%
   );
+  backdrop-filter: blur(14px) saturate(220%) contrast(115%);
+  -webkit-backdrop-filter: blur(14px) saturate(220%) contrast(115%);
   
-  /* 🌀 REFRACTIVE OPTICS (Image 2 Match) */
-  backdrop-filter: blur(12px) saturate(220%) contrast(115%);
-  -webkit-backdrop-filter: blur(12px) saturate(220%) contrast(115%);
-  
-  /* 💎 THE RIM: Creates 3D Glass Thickness */
+  /* 💎 THE RIM: Creates 3D depth and thickness */
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.35), 
+    0 24px 48px rgba(0, 0, 0, 0.4), 
     inset 0 2px 4px var(--glass-sheen), 
     inset 0 -1px 2px rgba(255, 255, 255, 0.1);
 }
 
-/* --- THE SEARCH CIRCLE --- */
+/* --- THE SEARCH SATELLITE --- */
 .search-pill {
   width: 52px;
   height: 52px;
@@ -1021,12 +1021,11 @@ body.light-e {
   border: 0.5px solid var(--dock-border);
   
   background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%);
-  backdrop-filter: blur(12px) saturate(220%) contrast(115%);
-  -webkit-backdrop-filter: blur(12px) saturate(220%) contrast(115%);
+  backdrop-filter: blur(14px) saturate(220%);
+  -webkit-backdrop-filter: blur(14px) saturate(220%);
   
-  /* Matches Dock Shadow & Sheen */
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.35),
+    0 24px 48px rgba(0, 0, 0, 0.4),
     inset 0 2px 4px var(--glass-sheen);
   transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
 }
@@ -1037,35 +1036,33 @@ body.light-e {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 66px;
+  min-width: 68px;
   padding: 8px 0;
   text-decoration: none;
   color: var(--text-main);
   border-radius: 100px;
-  transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.2, 1, 0.2, 1);
   gap: 3px;
 }
 
-/* --- 🟢 ACTIVE TAB: THE CAPSULE PILL --- */
+/* 🟢 ACTIVE PILL CAPSULE */
 .dock-item.active {
-  /* Soft blue-tinted cloud from Image 2 */
   background: color-mix(in srgb, var(--accent-blue) 22%, transparent);
   color: var(--accent-blue);
-  box-shadow: none; /* Keeps it borderless/soft */
 }
 
 .dock-icon, .search-icon {
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1;
   transition: transform 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .dock-label {
   font-size: 9.5px;
   font-weight: 700;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  letter-spacing: 0.15px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.2px;
   opacity: 0.75;
 }
 
@@ -1074,21 +1071,31 @@ body.light-e {
   font-weight: 800;
 }
 
-/* --- HOVER EFFECTS --- */
+/* --- INTERACTION --- */
 .dock-item:hover:not(.active), .search-pill:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-5px);
 }
 
 .search-pill:active, .dock-item:active {
-  transform: scale(0.92);
+  transform: scale(0.9);
 }
 
 /* 📱 MOBILE OPTIMIZATION */
 @media (max-width: 500px) {
-  .dock-wrapper { width: 95%; gap: 8px; }
-  .dock-item { min-width: unset; flex: 1; }
-  .search-pill { width: 48px; height: 48px; }
+  .dock-wrapper { 
+    width: 95%; 
+    gap: 8px; 
+    bottom: 18px;
+  }
+  .dock-item { 
+    min-width: unset; 
+    flex: 1; 
+  }
+  .search-pill { 
+    width: 48px; 
+    height: 48px; 
+  }
 }
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
