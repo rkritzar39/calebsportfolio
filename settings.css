@@ -948,15 +948,15 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== */
-/* 💎 iOS 26 LIQUID GLASS - COMPACT PILL EDITION    */
+/* 💎 iOS 26 LIQUID GLASS - COMPACT CAPSULE MASTER  */
 /* ================================================== */
 
 :root {
-  --dock-bg: rgba(0, 0, 0, 0.05);
-  --dock-border: rgba(255, 255, 255, 0.15);
+  --dock-bg: rgba(0, 0, 0, 0.04);
+  --dock-border: rgba(255, 255, 255, 0.12);
   --text-main: #ffffff;
   --accent-color: #0A84FF;
-  --glass-sheen: rgba(255, 255, 255, 0.25);
+  --glass-sheen: rgba(255, 255, 255, 0.2);
 }
 
 body.light-e {
@@ -964,20 +964,19 @@ body.light-e {
   --dock-border: rgba(255, 255, 255, 0.9);
   --text-main: #1d1d1f;
   --accent-color: #007AFF;
-  --glass-sheen: rgba(255, 255, 255, 1);
+  --glass-sheen: rgba(255, 255, 255, 0.95);
 }
 
-/* --- THE MAIN DOCK (Smaller & Sleeker) --- */
+/* --- THE MAIN DOCK (Tightened & Sleek) --- */
 .onyx-dock {
   position: fixed;
-  bottom: 20px; /* Closer to the edge */
+  bottom: 18px; /* Slightly lower profile */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  /* 🟢 SMALLER PADDING: Reduced for a tighter look */
-  padding: 5px 8px; 
-  gap: 4px; 
+  padding: 4px; /* Tight padding for that capsule look */
+  gap: 2px; /* Close grouping */
   z-index: 9999;
   width: max-content;
   
@@ -985,12 +984,12 @@ body.light-e {
   border-radius: 100px; 
   border: 0.5px solid var(--dock-border);
   
-  /* CRYSTAL OPTICS */
-  backdrop-filter: blur(4px) saturate(280%) contrast(110%);
-  -webkit-backdrop-filter: blur(4px) saturate(280%) contrast(110%);
+  /* 🌀 CRYSTAL OPTICS (Low blur = No Frost) */
+  backdrop-filter: blur(3px) saturate(280%) contrast(115%);
+  -webkit-backdrop-filter: blur(3px) saturate(280%) contrast(115%);
   
   box-shadow: 
-    0 12px 30px rgba(0, 0, 0, 0.12),
+    0 10px 30px rgba(0, 0, 0, 0.15),
     inset 0 1px 1px var(--glass-sheen);
 }
 
@@ -1000,34 +999,31 @@ body.light-e {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* 🟢 COMPACT WIDTH: Adjusted for smaller footprint */
-  min-width: 68px; 
+  min-width: 64px; /* Compact width */
   padding: 8px 0;
   text-decoration: none;
   color: var(--text-main);
-  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  gap: 4px; 
+  transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+  gap: 3px; /* Precise spacing so icons don't touch labels */
 }
 
-/* --- 🟢 ACTIVE TAB: THE FLOATING PILL --- */
+/* --- 🟢 ACTIVE TAB: THE PILL CAPSULE --- */
 .dock-item.active {
-  /* This creates the floating capsule look inside the dock */
-  background: color-mix(in srgb, var(--accent-color) 20%, transparent);
+  /* High visibility floating pill */
+  background: color-mix(in srgb, var(--accent-color) 16%, transparent);
   color: var(--accent-color);
-  border-radius: 100px; /* Perfect pill shape for the selection */
-  box-shadow: 
-    inset 0 0 8px color-mix(in srgb, var(--accent-color) 10%, transparent),
-    0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 100px; /* Perfect pill-shaped highlight */
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--accent-color) 20%, transparent);
 }
 
 .dock-icon {
-  font-size: 20px; /* Slightly smaller for the compact dock */
+  font-size: 18px; /* Refined size for compact nav */
   line-height: 1;
-  transition: transform 0.3s ease;
+  display: block;
 }
 
 .dock-label {
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   letter-spacing: 0.1px;
@@ -1039,22 +1035,21 @@ body.light-e {
   font-weight: 800;
 }
 
-.dock-item.active .dock-icon {
-  transform: scale(1.1);
-}
-
-/* --- HOVER EFFECT --- */
+/* --- HOVER / INTERACTION --- */
 .dock-item:hover:not(.active) {
-  /* Subtle lift without the background pill */
   transform: translateY(-3px);
 }
 
-/* 📱 MOBILE FIX */
+.dock-item:active {
+  transform: scale(0.92);
+}
+
+/* 📱 MOBILE OPTIMIZATION */
 @media (max-width: 600px) {
   .onyx-dock {
-    width: 90%;
-    padding: 4px;
+    width: 92%;
     bottom: 12px;
+    padding: 3px;
   }
   .dock-item {
     min-width: unset;
