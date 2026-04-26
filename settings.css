@@ -948,85 +948,124 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== */
-/* 💎 iOS 26 HIGH-REFLECTIVE CRYSTAL (IMAGE 2 MATCH)  */
+/* 💎 iOS 26 LIQUID GLASS - REFLECTIVE MASTER       */
 /* ================================================== */
 
 :root {
-  /* Ultra-Transparent base for light refraction */
+  /* DARK MODE DEFAULTS */
   --dock-bg: rgba(255, 255, 255, 0.03); 
-  --dock-border: rgba(255, 255, 255, 0.2);
+  --dock-border: rgba(255, 255, 255, 0.18);
   --text-main: #ffffff;
-  --accent-color: #32ADE6; 
+  --accent-blue: #32ADE6; /* Refined Apple Blue */
+  --glass-sheen: rgba(255, 255, 255, 0.55);
 }
 
-.onyx-dock {
+body.light-e {
+  /* LIGHT MODE ADAPTATION */
+  --dock-bg: rgba(255, 255, 255, 0.08);
+  --dock-border: rgba(255, 255, 255, 0.85);
+  --text-main: #1d1d1f;
+  --accent-blue: #007AFF;
+  --glass-sheen: rgba(255, 255, 255, 1);
+}
+
+/* --- THE DOCK WRAPPER (Keeps everything centered) --- */
+.dock-wrapper {
   position: fixed;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  padding: 5px; 
-  gap: 4px;
+  gap: 12px; /* Gap between dock and search icon */
   z-index: 9999;
   width: max-content;
+}
+
+/* --- THE MAIN DOCK PILL --- */
+.onyx-dock {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  gap: 2px;
   border-radius: 100px;
+  border: 0.5px solid var(--dock-border);
   
-  /* 🟢 THE REFLECTION: A linear-gradient sheen over the glass */
+  /* 🟢 REFLECTIVE BASE: Linear gradient creates the top-down light */
   background: linear-gradient(
     180deg, 
     rgba(255, 255, 255, 0.12) 0%, 
-    rgba(255, 255, 255, 0.05) 50%, 
-    rgba(255, 255, 255, 0.01) 100%
+    rgba(255, 255, 255, 0.02) 100%
   );
   
-  /* 🌀 REFRACTIVE OPTICS: The "Magnifying" bend */
-  backdrop-filter: blur(12px) saturate(220%) contrast(110%);
-  -webkit-backdrop-filter: blur(12px) saturate(220%) contrast(110%);
+  /* 🌀 REFRACTIVE OPTICS (Image 2 Match) */
+  backdrop-filter: blur(12px) saturate(220%) contrast(115%);
+  -webkit-backdrop-filter: blur(12px) saturate(220%) contrast(115%);
   
-  /* 🟢 THE GLASS RIM: Double white reflection to simulate thickness */
-  border: 0.5px solid var(--dock-border);
+  /* 💎 THE RIM: Creates 3D Glass Thickness */
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.4), /* Deep outer shadow */
-    inset 0 2px 5px rgba(255, 255, 255, 0.6), /* Thick top-edge highlight */
-    inset 0 -1px 2px rgba(255, 255, 255, 0.2); /* Subtle bottom-edge highlight */
+    0 20px 40px rgba(0, 0, 0, 0.35), 
+    inset 0 2px 4px var(--glass-sheen), 
+    inset 0 -1px 2px rgba(255, 255, 255, 0.1);
 }
 
-/* --- THE PILL CAPSULE (ACTIVE) --- */
+/* --- THE SEARCH CIRCLE --- */
+.search-pill {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border-radius: 50%; /* Perfect Circle */
+  border: 0.5px solid var(--dock-border);
+  
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%);
+  backdrop-filter: blur(12px) saturate(220%) contrast(115%);
+  -webkit-backdrop-filter: blur(12px) saturate(220%) contrast(115%);
+  
+  /* Matches Dock Shadow & Sheen */
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.35),
+    inset 0 2px 4px var(--glass-sheen);
+  transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+}
+
+/* --- DOCK ITEMS --- */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 68px;
+  min-width: 66px;
   padding: 8px 0;
   text-decoration: none;
   color: var(--text-main);
+  border-radius: 100px;
   transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
   gap: 3px;
-  border-radius: 100px; /* Pre-rounding for smooth transitions */
 }
 
+/* --- 🟢 ACTIVE TAB: THE CAPSULE PILL --- */
 .dock-item.active {
-  /* Soft, glowing pill cloud */
-  background: color-mix(in srgb, var(--accent-color) 25%, transparent);
-  color: var(--accent-color);
-  backdrop-filter: blur(2px);
+  /* Soft blue-tinted cloud from Image 2 */
+  background: color-mix(in srgb, var(--accent-blue) 22%, transparent);
+  color: var(--accent-blue);
+  box-shadow: none; /* Keeps it borderless/soft */
 }
 
-/* --- OPTICAL ENHANCEMENTS --- */
-.dock-icon {
-  font-size: 20px; 
+.dock-icon, .search-icon {
+  font-size: 18px;
+  line-height: 1;
   transition: transform 0.3s ease;
-  /* Gives emojis/icons a slightly glass-submerged look */
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
 }
 
 .dock-label {
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 700;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: 0.2px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  letter-spacing: 0.15px;
   opacity: 0.75;
 }
 
@@ -1035,16 +1074,22 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
   font-weight: 800;
 }
 
-/* --- INTERACTIVE GLOSS --- */
-.dock-item:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.05);
+/* --- HOVER EFFECTS --- */
+.dock-item:hover:not(.active), .search-pill:hover {
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-4px);
 }
 
-.dock-item:active {
-  transform: scale(0.94);
+.search-pill:active, .dock-item:active {
+  transform: scale(0.92);
 }
 
+/* 📱 MOBILE OPTIMIZATION */
+@media (max-width: 500px) {
+  .dock-wrapper { width: 95%; gap: 8px; }
+  .dock-item { min-width: unset; flex: 1; }
+  .search-pill { width: 48px; height: 48px; }
+}
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
 .setting-icon-container {
