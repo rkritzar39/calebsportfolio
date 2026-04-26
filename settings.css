@@ -948,86 +948,49 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== */
-/* 💎 iOS 26 LIQUID CRYSTAL MASTER - FULL STYLESHEET */
+/* 💎 iOS 26 LIQUID GLASS - COMPACT CAPSULE MASTER  */
 /* ================================================== */
 
 :root {
-  /* DARK MODE (Default) */
-  --dock-bg: rgba(255, 255, 255, 0.03); 
-  --dock-border: rgba(255, 255, 255, 0.18);
+  --dock-bg: rgba(0, 0, 0, 0.04);
+  --dock-border: rgba(255, 255, 255, 0.12);
   --text-main: #ffffff;
-  --accent-blue: #32ADE6; 
-  --glass-sheen: rgba(255, 255, 255, 0.55);
+  --accent-color: #0A84FF;
+  --glass-sheen: rgba(255, 255, 255, 0.2);
 }
 
 body.light-e {
-  /* LIGHT MODE ADAPTATION */
   --dock-bg: rgba(255, 255, 255, 0.08);
-  --dock-border: rgba(255, 255, 255, 0.85);
+  --dock-border: rgba(255, 255, 255, 0.9);
   --text-main: #1d1d1f;
-  --accent-blue: #007AFF;
-  --glass-sheen: rgba(255, 255, 255, 1);
+  --accent-color: #007AFF;
+  --glass-sheen: rgba(255, 255, 255, 0.95);
 }
 
-/* --- THE MASTER WRAPPER --- */
-/* Keeps Search + Dock side-by-side and centered */
-.dock-wrapper {
+/* --- THE MAIN DOCK (Tightened & Sleek) --- */
+.onyx-dock {
   position: fixed;
-  bottom: 28px;
+  bottom: 18px; /* Slightly lower profile */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px; /* 🟢 This creates the wall between icons */
+  padding: 4px; /* Tight padding for that capsule look */
+  gap: 2px; /* Close grouping */
   z-index: 9999;
   width: max-content;
-}
-
-/* --- THE MAIN DOCK --- */
-.onyx-dock {
-  display: flex;
-  align-items: center;
-  padding: 5px 8px;
-  gap: 2px;
-  border-radius: 100px;
+  
+  background: var(--dock-bg);
+  border-radius: 100px; 
   border: 0.5px solid var(--dock-border);
   
-  /* 🌀 CRYSTAL OPTICS: Linear gradient + High Blur */
-  background: linear-gradient(
-    180deg, 
-    rgba(255, 255, 255, 0.12) 0%, 
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  backdrop-filter: blur(14px) saturate(220%) contrast(115%);
-  -webkit-backdrop-filter: blur(14px) saturate(220%) contrast(115%);
-  
-  /* 💎 THE RIM: Creates 3D depth and thickness */
-  box-shadow: 
-    0 24px 48px rgba(0, 0, 0, 0.4), 
-    inset 0 2px 4px var(--glass-sheen), 
-    inset 0 -1px 2px rgba(255, 255, 255, 0.1);
-}
-
-/* --- THE SEARCH SATELLITE --- */
-.search-pill {
-  width: 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  border-radius: 50%; /* Perfect Circle */
-  border: 0.5px solid var(--dock-border);
-  
-  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%);
-  backdrop-filter: blur(14px) saturate(220%);
-  -webkit-backdrop-filter: blur(14px) saturate(220%);
+  /* 🌀 CRYSTAL OPTICS (Low blur = No Frost) */
+  backdrop-filter: blur(3px) saturate(280%) contrast(115%);
+  -webkit-backdrop-filter: blur(3px) saturate(280%) contrast(115%);
   
   box-shadow: 
-    0 24px 48px rgba(0, 0, 0, 0.4),
-    inset 0 2px 4px var(--glass-sheen);
-  transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+    0 10px 30px rgba(0, 0, 0, 0.15),
+    inset 0 1px 1px var(--glass-sheen);
 }
 
 /* --- DOCK ITEMS --- */
@@ -1036,34 +999,35 @@ body.light-e {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 68px;
+  min-width: 64px; /* Compact width */
   padding: 8px 0;
   text-decoration: none;
   color: var(--text-main);
-  border-radius: 100px;
-  transition: all 0.4s cubic-bezier(0.2, 1, 0.2, 1);
-  gap: 3px;
+  transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
+  gap: 3px; /* Precise spacing so icons don't touch labels */
 }
 
-/* 🟢 ACTIVE PILL CAPSULE */
+/* --- 🟢 ACTIVE TAB: THE PILL CAPSULE --- */
 .dock-item.active {
-  background: color-mix(in srgb, var(--accent-blue) 22%, transparent);
-  color: var(--accent-blue);
+  /* High visibility floating pill */
+  background: color-mix(in srgb, var(--accent-color) 16%, transparent);
+  color: var(--accent-color);
+  border-radius: 100px; /* Perfect pill-shaped highlight */
+  box-shadow: inset 0 0 0 0.5px color-mix(in srgb, var(--accent-color) 20%, transparent);
 }
 
-.dock-icon, .search-icon {
-  font-size: 19px;
+.dock-icon {
+  font-size: 18px; /* Refined size for compact nav */
   line-height: 1;
-  transition: transform 0.3s ease;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  display: block;
 }
 
 .dock-label {
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: 0.2px;
-  opacity: 0.75;
+  letter-spacing: 0.1px;
+  opacity: 0.7;
 }
 
 .dock-item.active .dock-label {
@@ -1071,30 +1035,25 @@ body.light-e {
   font-weight: 800;
 }
 
-/* --- INTERACTION --- */
-.dock-item:hover:not(.active), .search-pill:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-5px);
+/* --- HOVER / INTERACTION --- */
+.dock-item:hover:not(.active) {
+  transform: translateY(-3px);
 }
 
-.search-pill:active, .dock-item:active {
-  transform: scale(0.9);
+.dock-item:active {
+  transform: scale(0.92);
 }
 
 /* 📱 MOBILE OPTIMIZATION */
-@media (max-width: 500px) {
-  .dock-wrapper { 
-    width: 95%; 
-    gap: 8px; 
-    bottom: 18px;
+@media (max-width: 600px) {
+  .onyx-dock {
+    width: 92%;
+    bottom: 12px;
+    padding: 3px;
   }
-  .dock-item { 
-    min-width: unset; 
-    flex: 1; 
-  }
-  .search-pill { 
-    width: 48px; 
-    height: 48px; 
+  .dock-item {
+    min-width: unset;
+    flex: 1;
   }
 }
 
