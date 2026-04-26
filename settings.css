@@ -948,90 +948,86 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== */
-/* 💎 iOS 26 LIQUID GLASS - THICK CRYSTAL MATCH     */
+/* 💎 iOS 26 HIGH-REFLECTIVE CRYSTAL (IMAGE 2 MATCH)  */
 /* ================================================== */
 
 :root {
-  --dock-bg: rgba(0, 0, 0, 0.04);
-  --dock-border: rgba(255, 255, 255, 0.12);
+  /* Ultra-Transparent base for light refraction */
+  --dock-bg: rgba(255, 255, 255, 0.03); 
+  --dock-border: rgba(255, 255, 255, 0.2);
   --text-main: #ffffff;
-  /* Updated to match the soft blue from Image 2 */
   --accent-color: #32ADE6; 
-  --glass-sheen: rgba(255, 255, 255, 0.5); /* Brighter sheen for thick rim */
 }
 
-body.light-e {
-  --dock-bg: rgba(255, 255, 255, 0.08);
-  --dock-border: rgba(255, 255, 255, 0.9);
-  --text-main: #1d1d1f;
-  --accent-color: #007AFF;
-  --glass-sheen: rgba(255, 255, 255, 1);
-}
-
-/* --- THE MAIN DOCK (Thick Crystal Look) --- */
 .onyx-dock {
   position: fixed;
-  bottom: 18px; 
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  padding: 6px; /* Slightly more padding for the thick rim */
-  gap: 2px; 
+  padding: 5px; 
+  gap: 4px;
   z-index: 9999;
   width: max-content;
+  border-radius: 100px;
   
-  background: var(--dock-bg);
-  border-radius: 100px; 
+  /* 🟢 THE REFLECTION: A linear-gradient sheen over the glass */
+  background: linear-gradient(
+    180deg, 
+    rgba(255, 255, 255, 0.12) 0%, 
+    rgba(255, 255, 255, 0.05) 50%, 
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  
+  /* 🌀 REFRACTIVE OPTICS: The "Magnifying" bend */
+  backdrop-filter: blur(12px) saturate(220%) contrast(110%);
+  -webkit-backdrop-filter: blur(12px) saturate(220%) contrast(110%);
+  
+  /* 🟢 THE GLASS RIM: Double white reflection to simulate thickness */
   border: 0.5px solid var(--dock-border);
-  
-  /* 🌀 CRYSTAL OPTICS (Matches the bending effect in Image 2) */
-  backdrop-filter: blur(8px) saturate(200%) contrast(120%);
-  -webkit-backdrop-filter: blur(8px) saturate(200%) contrast(120%);
-  
-  /* 💎 THE RIM: This creates the heavy 3D glass edge */
   box-shadow: 
-    0 24px 48px rgba(0, 0, 0, 0.4), /* Deep outer drop shadow */
-    inset 0 2px 5px var(--glass-sheen), /* Thick top white reflection */
-    inset 0 -1px 2px rgba(255, 255, 255, 0.1); /* Subtle bottom reflection */
+    0 20px 40px rgba(0, 0, 0, 0.4), /* Deep outer shadow */
+    inset 0 2px 5px rgba(255, 255, 255, 0.6), /* Thick top-edge highlight */
+    inset 0 -1px 2px rgba(255, 255, 255, 0.2); /* Subtle bottom-edge highlight */
 }
 
-/* --- DOCK ITEMS --- */
+/* --- THE PILL CAPSULE (ACTIVE) --- */
 .dock-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 64px; 
+  min-width: 68px;
   padding: 8px 0;
   text-decoration: none;
   color: var(--text-main);
   transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
-  gap: 3px; 
+  gap: 3px;
+  border-radius: 100px; /* Pre-rounding for smooth transitions */
 }
 
-/* --- 🟢 ACTIVE TAB: SOFT BORDERLESS PILL --- */
 .dock-item.active {
-  /* Soft background cloud */
-  background: color-mix(in srgb, var(--accent-color) 20%, transparent);
+  /* Soft, glowing pill cloud */
+  background: color-mix(in srgb, var(--accent-color) 25%, transparent);
   color: var(--accent-color);
-  border-radius: 100px; 
-  /* KILLED THE OUTLINE: Box-shadow removed to match Image 2 */
-  box-shadow: none; 
+  backdrop-filter: blur(2px);
 }
 
+/* --- OPTICAL ENHANCEMENTS --- */
 .dock-icon {
-  font-size: 18px; 
-  line-height: 1;
-  display: block;
+  font-size: 20px; 
+  transition: transform 0.3s ease;
+  /* Gives emojis/icons a slightly glass-submerged look */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
 .dock-label {
   font-size: 9px;
   font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: 0.1px;
-  opacity: 0.7;
+  letter-spacing: 0.2px;
+  opacity: 0.75;
 }
 
 .dock-item.active .dock-label {
@@ -1039,27 +1035,16 @@ body.light-e {
   font-weight: 800;
 }
 
-/* --- HOVER / INTERACTION --- */
+/* --- INTERACTIVE GLOSS --- */
 .dock-item:hover:not(.active) {
-  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-4px);
 }
 
 .dock-item:active {
-  transform: scale(0.92);
+  transform: scale(0.94);
 }
 
-/* 📱 MOBILE OPTIMIZATION */
-@media (max-width: 600px) {
-  .onyx-dock {
-    width: 92%;
-    bottom: 12px;
-    padding: 3px;
-  }
-  .dock-item {
-    min-width: unset;
-    flex: 1;
-  }
-}
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
 .setting-icon-container {
