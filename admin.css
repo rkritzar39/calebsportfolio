@@ -350,7 +350,7 @@ a:hover::after {
 }
 
 /* ===================================== */
-/* 🪟 Windows 11 + iOS Glass Login Design (Fixed Desktop) */
+/* 🪟 iOS 26 LOGIN SYSTEM (REFINED)      */
 /* ===================================== */
 
 .modern-login {
@@ -358,48 +358,84 @@ a:hover::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at top left, #0b0b0b, #000);
-  background-size: cover;
+
+  font-family: var(--system-font-stack);
+  font-size: var(--base-font-size);
+  line-height: var(--line-height);
+
+  background: var(--bg-color);
+  color: var(--text-color);
+
   overflow: hidden;
-  color: #f5f5f5;
-  font-family: "Segoe UI Variable", "SF Pro Display", sans-serif;
+  position: relative;
 }
 
-/* Container Layout */
+/* Ambient background glow layer */
+.modern-login::before {
+  content: "";
+  position: fixed;
+  inset: -30%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(var(--accent-rgb), 0.14), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(var(--accent-rgb), 0.10), transparent 70%);
+  filter: blur(80px);
+  z-index: 0;
+}
+
+/* ========================= */
+/* MAIN WRAPPER (GLASS CARD) */
+/* ========================= */
+
 .login-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
+
   width: 90%;
   max-width: 1100px;
-  border-radius: 24px;
+
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
+
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--depth-2);
+
   animation: fadeIn 0.8s ease;
-  background: rgba(255, 255, 255, 0.05);
   position: relative;
   z-index: 1;
 }
 
-/* LEFT HERO SECTION (Desktop only) */
+/* ========================= */
+/* HERO PANEL               */
+/* ========================= */
+
 .login-hero {
-  background: linear-gradient(135deg, #00b7ff15, #00ff8820);
   padding: 60px 50px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  backdrop-filter: blur(10px);
+
+  background: linear-gradient(
+    135deg,
+    rgba(var(--accent-rgb), 0.12),
+    rgba(var(--accent-rgb), 0.04)
+  );
+
+  backdrop-filter: var(--glass-blur);
 }
 
 .login-hero h1 {
   font-size: 2.2rem;
   font-weight: 600;
-  color: #00b7ff;
+  color: var(--accent-color);
   margin-bottom: 12px;
 }
 
 .login-hero p {
-  color: #ccc;
+  color: var(--secondary-text);
   font-size: 1rem;
   line-height: 1.5;
   margin-bottom: 24px;
@@ -408,7 +444,7 @@ a:hover::after {
 .login-features {
   list-style: none;
   padding: 0;
-  color: #bbb;
+  color: var(--secondary-text);
 }
 
 .login-features li {
@@ -417,22 +453,33 @@ a:hover::after {
 }
 
 .login-features i {
-  color: #00b7ff;
+  color: var(--accent-color);
   margin-right: 8px;
 }
 
-/* RIGHT PANEL (FORM) */
+/* ========================= */
+/* FORM PANEL (GLASS)       */
+/* ========================= */
+
 .glass-panel {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(25px) saturate(180%);
   padding: 60px 50px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+
+  background: var(--content-bg);
+  backdrop-filter: var(--glass-blur);
+
+  border-left: 1px solid var(--border-color);
+
   position: relative;
   z-index: 2;
 }
+
+/* ========================= */
+/* BRAND SECTION            */
+/* ========================= */
 
 .login-brand {
   text-align: center;
@@ -441,7 +488,7 @@ a:hover::after {
 
 .login-brand i {
   font-size: 2.4rem;
-  color: #00b7ff;
+  color: var(--accent-color);
 }
 
 .login-brand h2 {
@@ -451,285 +498,177 @@ a:hover::after {
 
 .login-brand p {
   font-size: 0.9rem;
-  opacity: 0.8;
+  color: var(--secondary-text);
 }
 
-/* INPUTS */
+/* ========================= */
+/* INPUT SYSTEM             */
+/* ========================= */
+
 #login-section label {
   display: block;
   font-size: 0.9rem;
   margin-bottom: 6px;
-  opacity: 0.85;
+  color: var(--secondary-text);
 }
 
 #login-section input[type="email"],
 #login-section input[type="password"] {
   width: 100%;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  color: #fff;
+
+  background: var(--input-bg-color);
+  border: 1px solid var(--input-border-color);
+
+  border-radius: var(--border-radius-md);
+  color: var(--text-color);
+
   font-size: 0.95rem;
-  transition: 0.3s;
+
   outline: none;
+  transition: var(--transition-speed) var(--transition-timing);
 }
 
 #login-section input:focus {
-  border-color: #00b7ff;
-  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--input-focus-border-color);
+  box-shadow: 0 0 0 4px var(--input-focus-shadow-color);
+  background: var(--input-bg-color);
 }
 
-/* BUTTONS */
+/* ========================= */
+/* PRIMARY BUTTON           */
+/* ========================= */
+
 .login-btn.primary {
   width: 100%;
-  background: linear-gradient(135deg, #00b7ff, #0078ff);
-  border: none;
-  color: white;
+
+  background: var(--accent-color);
+  color: #fff;
+
   font-size: 1rem;
   font-weight: 500;
+
   padding: 12px 0;
-  border-radius: 14px;
+  border-radius: var(--border-radius-md);
+
+  border: none;
   cursor: pointer;
-  transition: 0.25s ease;
+
+  transition: var(--transition-speed) var(--transition-timing);
+
   margin-top: 16px;
 }
 
 .login-btn.primary:hover {
-  transform: scale(1.03);
-  opacity: 0.9;
-  box-shadow: 0 0 20px rgba(0, 183, 255, 0.4);
+  transform: translateY(-1px);
+  background: var(--hover-color);
+  box-shadow: var(--depth-1);
 }
 
-/* DIVIDER */
+/* ========================= */
+/* DIVIDER                  */
+/* ========================= */
+
 .divider {
   text-align: center;
   margin: 24px 0;
   position: relative;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--secondary-text);
 }
 
-.divider::before, .divider::after {
+.divider::before,
+.divider::after {
   content: "";
   position: absolute;
   top: 50%;
   width: 40%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border-color);
 }
 
 .divider::before { left: 0; }
 .divider::after { right: 0; }
 
-/* GOOGLE SIGN-IN (fixed inside container) */
+/* ========================= */
+/* GOOGLE SIGN-IN           */
+/* ========================= */
+
 .g_id_signin {
   width: 100% !important;
   display: block;
-  margin: 0 auto;
   margin-top: 10px;
-  border-radius: 12px !important;
+  border-radius: var(--border-radius-md) !important;
   overflow: hidden;
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  z-index: 3;
-  position: relative;
 }
 
-/* STATUS MESSAGE */
+/* ========================= */
+/* STATUS                   */
+/* ========================= */
+
 .status-message {
   margin-top: 14px;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--secondary-text);
   text-align: center;
 }
 
-/* ANIMATION */
+/* ========================= */
+/* ANIMATION                */
+/* ========================= */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===================================== */
-/* 📱 FINAL RESPONSIVE MOBILE DESIGN     */
-/* ===================================== */
+/* ========================= */
+/* MOBILE RESPONSIVE        */
+/* ========================= */
+
 @media (max-width: 900px) {
-  /* Hide desktop hero */
+
   .login-hero {
-    display: none !important;
+    display: none;
   }
 
-  /* Hide large "Admin Panel" title */
-  h1,
-  .admin-panel-title {
-    display: none !important;
-  }
-
-  /* Background */
   .modern-login {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
-    padding: 0;
-    min-height: 100dvh;
-    background: radial-gradient(circle at top, #001018, #000 90%);
-    overflow-y: auto;
   }
 
-  /* Make container full-width on phones */
   .login-wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
+
     width: 100%;
     max-width: none;
-    margin-top: 0;
+
     border-radius: 0;
     box-shadow: none;
+
     background: transparent;
   }
 
-  /* Full-width card */
   .glass-panel {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(20px) saturate(180%);
-    border-radius: 0;
-    padding: 48px 28px 64px;
     width: 100%;
     min-height: 100dvh;
+
+    padding: 48px 28px 64px;
+
     border: none;
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
   }
 
-  /* Brand / Header */
-  .login-brand {
-    text-align: center;
-    margin-bottom: 28px;
-  }
   .login-brand i {
     font-size: 2.8rem;
-    color: #00b7ff;
-    animation: pulseGlow 4s infinite ease-in-out;
-  }
-  .login-brand h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-top: 12px;
-  }
-  .login-brand p {
-    font-size: 0.9rem;
-    opacity: 0.75;
   }
 
-  /* Inputs */
-  #login-section label {
-    font-size: 0.9rem;
-    opacity: 0.85;
-  }
-
-  #login-section input[type="email"],
-  #login-section input[type="password"] {
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    color: #fff;
-  }
-
-  /* Primary Button */
   .login-btn.primary {
     font-size: 1.05rem;
-    font-weight: 600;
-    border-radius: 14px;
-    margin-top: 22px;
     padding: 14px 0;
-    background: linear-gradient(135deg, #0078ff, #00b7ff);
-    box-shadow: 0 0 20px rgba(0, 183, 255, 0.35);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    border: none;
-  }
-
-  .login-btn.primary:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 30px rgba(0, 183, 255, 0.5);
   }
 
   .divider {
     margin: 28px 0 20px;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  /* Google Sign-In: keep standard style */
-  .g_id_signin {
-    width: 100% !important;
-    margin: 0 auto;
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
-  }
-
-  /* Optional subtle animated background glow */
-  .modern-login::before {
-    content: "";
-    position: fixed;
-    top: -30%;
-    left: -30%;
-    width: 160%;
-    height: 160%;
-    background: radial-gradient(circle at 30% 30%, rgba(0,183,255,0.15), transparent 60%),
-                radial-gradient(circle at 80% 70%, rgba(0,255,180,0.1), transparent 70%);
-    filter: blur(80px);
-    animation: glowShift 14s infinite alternate;
-    z-index: 0;
-  }
-
-  @keyframes glowShift {
-    0% { transform: translate(0, 0); opacity: 0.9; }
-    100% { transform: translate(10%, 10%); opacity: 0.7; }
-  }
-
-  @keyframes pulseGlow {
-    0%, 100% { text-shadow: 0 0 10px rgba(0,183,255,0.6); }
-    50% { text-shadow: 0 0 20px rgba(0,183,255,0.8); }
-  }
-}
-
-/* Contain Google sign-in button globally */
-#login-section .g_id_signin {
-  width: 100% !important;
-  max-width: 100% !important;
-  display: block !important;
-  margin: 0 !important;
-  overflow: hidden; /* clip any stray artifacts */
-}
-
-/* Force the injected iframe to fit the container */
-#login-section .g_id_signin iframe,
-#login-section .g_id_signin > div {
-  width: 100% !important;
-  max-width: 100% !important;
-  min-width: 0 !important;    /* override Google’s inline min-width */
-  display: block !important;
-}
-
-/* Keep the card as the reference frame on mobile */
-@media (max-width: 900px) {
-  .glass-panel {
-    position: relative;
-    overflow: hidden;          /* ensures nothing bleeds out visually */
-  }
-
-  /* Keep the GSI button visually “native” on mobile */
-  #login-section .g_id_signin {
-    border: none !important;
-    background: none !important;
-    box-shadow: none !important;
   }
 }
 
