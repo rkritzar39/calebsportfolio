@@ -4783,28 +4783,33 @@ async function initializeHomepageContent() {
 
         if (usefulLinksSection) usefulLinksSection.style.display = 'block';
 
-// Force the variable to a true boolean
+// 1. Get the data from your source
+const hideTikTokSection = data.hideTikTokSection; 
+
+// 2. Select the elements based on your HTML
+const tiktokSection = document.getElementById('tiktok-shoutouts-section');
+const tiktokHeader = document.getElementById('tiktok-shoutouts');
+const tiktokGrid = tiktokSection.querySelector('.creator-grid');
+const tiktokMessage = tiktokSection.querySelector('.unavailable-message');
+
+// 3. Robust Boolean Check
 const shouldHide = String(hideTikTokSection) === 'true';
 
-let isTikTokVisible = false;
-
-if (!tiktokHeaderContainer || !tiktokGridContainer) {
-    if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
-} else {
-    if (shouldHide) {
-        tiktokHeaderContainer.style.display = 'none';
-        tiktokGridContainer.style.display = 'none';
-        if (tiktokUnavailableMessage) {
-            tiktokUnavailableMessage.innerHTML = '<p>TikTok shoutouts are currently hidden by the site administrator.</p>';
-            tiktokUnavailableMessage.style.display = 'block';
-        }
-        isTikTokVisible = false;
-    } else {
-        tiktokHeaderContainer.style.display = ''; 
-        tiktokGridContainer.style.display = ''; 
-        if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
-        isTikTokVisible = true;
+if (shouldHide) {
+    // Hide the content
+    if (tiktokHeader) tiktokHeader.style.display = 'none';
+    if (tiktokGrid) tiktokGrid.style.display = 'none';
+    
+    // Show the message
+    if (tiktokMessage) {
+        tiktokMessage.innerHTML = '<p style="text-align:center; padding: 40px; color: #888;">TikTok shoutouts are currently hidden by the site administrator.</p>';
+        tiktokMessage.style.display = 'block';
     }
+} else {
+    // Show everything
+    if (tiktokHeader) tiktokHeader.style.display = 'block';
+    if (tiktokGrid) tiktokGrid.style.display = 'grid'; // Matches your .creator-grid class
+    if (tiktokMessage) tiktokMessage.style.display = 'none';
 }
 
 
