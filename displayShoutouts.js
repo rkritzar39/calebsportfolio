@@ -4783,27 +4783,30 @@ async function initializeHomepageContent() {
 
         if (usefulLinksSection) usefulLinksSection.style.display = 'block';
 
-        let isTikTokVisible = false;
-        if (!tiktokHeaderContainer || !tiktokGridContainer) {
-            if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
-        } else {
-            if (hideTikTokSection) {
-                tiktokHeaderContainer.style.display = 'none';
-                tiktokGridContainer.style.display = 'none';
-                if (tiktokUnavailableMessage) {
-                    tiktokUnavailableMessage.innerHTML = '<p>TikTok shoutouts are currently hidden by the site administrator.</p>';
-                    tiktokUnavailableMessage.style.display = 'block';
-                }
-                isTikTokVisible = false;
-            } else {
-                tiktokHeaderContainer.style.display = ''; 
-                tiktokGridContainer.style.display = ''; 
-                if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
-                isTikTokVisible = true;
-            }
-        }
+// Force the variable to a true boolean
+const shouldHide = String(hideTikTokSection) === 'true';
 
-        console.log("Initiating loading of other content sections...");
+let isTikTokVisible = false;
+
+if (!tiktokHeaderContainer || !tiktokGridContainer) {
+    if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
+} else {
+    if (shouldHide) {
+        tiktokHeaderContainer.style.display = 'none';
+        tiktokGridContainer.style.display = 'none';
+        if (tiktokUnavailableMessage) {
+            tiktokUnavailableMessage.innerHTML = '<p>TikTok shoutouts are currently hidden by the site administrator.</p>';
+            tiktokUnavailableMessage.style.display = 'block';
+        }
+        isTikTokVisible = false;
+    } else {
+        tiktokHeaderContainer.style.display = ''; 
+        tiktokGridContainer.style.display = ''; 
+        if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
+        isTikTokVisible = true;
+    }
+}
+
 
         // Setup Business Hours
         if (firebaseAppInitialized && typeof displayBusinessInfo === 'function' && db && businessDocRef) {
