@@ -2199,20 +2199,24 @@ button.edit-button:hover,
     margin-top: 20px; /* Add space above search bar */
 }
 
-/* ======================================== */
-/* Business Info & Admin Styles – Onyx Refined */
-/* ======================================== */
+/* ===================================================== */
+/* BUSINESS INFO & ADMIN — ONYX SYSTEM REFINED          */
+/* ===================================================== */
 
-/* ---------------------------------------- */
-/* Admin & Container Reset */
-/* ---------------------------------------- */
+/* ======================== */
+/* BASE CONTAINERS         */
+/* ======================== */
+
 #business-info-management {
     margin-bottom: 40px;
     padding: 30px;
+
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
-    background-color: var(--content-bg);
-    box-shadow: 0 3px 15px -5px var(--shadow-color);
+
+    background: var(--content-bg);
+
+    box-shadow: var(--depth-2);
 }
 
 #manual-status-section {
@@ -2225,47 +2229,58 @@ button.edit-button:hover,
 }
 
 #business-info-management h3 {
-    font-size: 1.7em;
+    font-size: 1.7rem;
     font-weight: 700;
+
     text-align: center;
+
     color: var(--text-color);
+
     margin-bottom: 32px;
-    letter-spacing: 0.3px;
 }
 
-/* ---------------------------------------- */
-/* Card Styling */
-/* ---------------------------------------- */
+/* ======================== */
+/* ADMIN CARDS            */
+/* ======================== */
+
 .admin-section-card {
     background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+
     padding: 28px 32px;
+
     border-radius: var(--border-radius-lg);
     border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-    box-shadow: 0 6px 20px color-mix(in srgb, var(--shadow-color) 40%, transparent);
-    backdrop-filter: blur(14px) saturate(130%);
-    -webkit-backdrop-filter: blur(14px) saturate(130%);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    box-shadow: var(--depth-2);
+
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .admin-section-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 26px color-mix(in srgb, var(--accent-color) 15%, var(--shadow-color));
+
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--accent-color) 12%, var(--shadow-color));
 }
 
 .admin-section-card h4 {
-    margin-top: 0;
-    margin-bottom: 12px;
-    font-size: 1.35em;
+    margin: 0 0 12px 0;
+
+    font-size: 1.35rem;
     font-weight: 600;
+
     border-bottom: 1px solid color-mix(in srgb, var(--border-color) 30%, transparent);
     padding-bottom: 10px;
+
     color: var(--text-color);
-    letter-spacing: 0.3px;
 }
 
-/* ---------------------------------------- */
-/* Multi-Range Hours Grid (Editor) */
-/* ---------------------------------------- */
+/* ======================== */
+/* HOURS GRID             */
+/* ======================== */
+
 .hours-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -2274,94 +2289,122 @@ button.edit-button:hover,
 
 .day-hours-block {
     background: color-mix(in srgb, var(--content-bg) 88%, transparent);
+
     border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
     border-radius: var(--border-radius-lg);
+
     padding: 20px;
-    box-shadow: 0 4px 14px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+
+    box-shadow: var(--depth-1);
+
     backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
 
 .day-hours-block:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 22px color-mix(in srgb, var(--accent-color) 18%, var(--shadow-color));
+    box-shadow: var(--depth-2);
 }
 
 .day-title {
     font-size: 1.05rem;
     font-weight: 600;
+
     color: var(--text-color);
+
     margin-bottom: 14px;
-    letter-spacing: 0.3px;
 }
+
+/* ======================== */
+/* TIME INPUT ROW         */
+/* ======================== */
 
 .time-range {
     display: flex;
     align-items: center;
     gap: 14px;
+
     margin-bottom: 14px;
 }
 
 .time-range input[type="time"] {
     flex: 1;
+
     padding: 10px 14px;
+
     font-size: 0.95rem;
+
     border: 1px solid var(--input-border-color);
     border-radius: var(--border-radius-md);
+
     background: var(--input-bg-color);
     color: var(--text-color);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.28);
-    transition: border-color 0.2s, box-shadow 0.2s;
+
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
 .time-range input[type="time"]:focus {
     outline: none;
+
     border-color: var(--input-focus-border-color);
-    box-shadow: 0 0 0 3px var(--input-focus-shadow-color), inset 0 1px 0 rgba(255,255,255,0.12);
+
+    box-shadow: 0 0 0 3px var(--input-focus-shadow-color);
 }
 
-/* Remove/Add Buttons */
-.remove-range-btn, .add-range-btn {
+/* ======================== */
+/* RANGE BUTTONS          */
+/* ======================== */
+
+.remove-range-btn,
+.add-range-btn {
     cursor: pointer;
+
     border-radius: var(--border-radius-md);
+
     font-weight: 600;
-    transition: 0.25s ease;
+
+    transition: 0.2s ease;
 }
 
 .remove-range-btn {
     width: 34px;
     height: 34px;
-    display: inline-flex;
+
+    display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--error-text-color);
+
+    color: var(--color-danger);
+
     background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-    border: 1px solid color-mix(in srgb, var(--border-color) 55%, transparent);
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+    border: 1px solid var(--border-color);
 }
 
 .remove-range-btn:hover {
-    background: color-mix(in srgb, var(--error-text-color) 15%, var(--content-bg));
     transform: scale(1.08);
+
+    background: color-mix(in srgb, var(--color-danger) 12%, var(--content-bg));
 }
 
 .add-range-btn {
-    background: color-mix(in srgb, var(--content-bg) 90%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
     padding: 8px 12px;
+
     color: var(--accent-color);
-    text-align: center;
+
+    border: 1px solid color-mix(in srgb, var(--accent-color) 35%, transparent);
+
+    background: var(--content-bg);
 }
 
 .add-range-btn:hover {
-    background: color-mix(in srgb, var(--accent-color) 15%, var(--content-bg));
     transform: translateY(-1px);
+
+    background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
 }
 
-/* ---------------------------------------- */
-/* Special Hours (Holiday/Temporary) */
-/* ---------------------------------------- */
+/* ======================== */
+/* SPECIAL HOURS          */
+/* ======================== */
+
 .special-hours-list {
     display: flex;
     flex-direction: column;
@@ -2370,132 +2413,160 @@ button.edit-button:hover,
 }
 
 .special-hours-list .hour-entry {
-    background: color-mix(in srgb, var(--bg-color) 92%, transparent);
+    position: relative;
+
     padding: 22px;
+
     border-radius: var(--border-radius-md);
-    border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
+
+    background: var(--content-bg);
+
+    border: 1px solid var(--border-color);
+
+    box-shadow: var(--depth-1);
+
     display: flex;
     flex-wrap: wrap;
     gap: 15px 20px;
     align-items: flex-end;
-    position: relative;
-    box-shadow: 0 3px 10px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 .special-hours-list .remove-hour-button {
     position: absolute;
     top: 10px;
     right: 10px;
+
     width: 32px;
     height: 32px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    color: var(--secondary-text);
-    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-    border: 1px solid color-mix(in srgb, var(--border-color) 45%, transparent);
+
     border-radius: 50%;
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 35%, transparent);
-    opacity: 0.8;
-    transition: 0.25s ease;
+
+    border: 1px solid var(--border-color);
+
+    background: var(--content-bg);
+
+    cursor: pointer;
+
+    color: var(--secondary-text);
+
+    transition: 0.2s ease;
 }
 
 .special-hours-list .remove-hour-button:hover {
     color: var(--color-danger);
-    background: color-mix(in srgb, var(--color-danger) 15%, var(--content-bg));
-    opacity: 1;
+
     transform: scale(1.08);
+
+    background: color-mix(in srgb, var(--color-danger) 12%, var(--content-bg));
 }
 
-/* ---------------------------------------- */
-/* Live Preview (Business Frontend) */
-/* ---------------------------------------- */
+/* ======================== */
+/* LIVE PREVIEW SYSTEM     */
+/* ======================== */
+
 .admin-preview-container.business-preview {
-    --bubble-gradient: radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 65%);
-    --bubble-highlight: inset 1px 1px 2px rgba(255,255,255,0.1);
-    --bubble-shadow: 0 8px 30px rgba(0,0,0,0.4);
-    --backdrop-blur: blur(24px);
+    border-radius: 28px;
+
+    padding: clamp(22px, 4vw, 34px);
 
     background: color-mix(in srgb, var(--content-bg) 88%, transparent);
-    background-image: var(--bubble-gradient);
-    border-radius: 30px;
-    padding: clamp(22px, 4vw, 34px);
-    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-    backdrop-filter: var(--backdrop-blur) saturate(125%);
-    -webkit-backdrop-filter: var(--backdrop-blur) saturate(125%);
-    border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-    color: var(--text-color);
-    margin-top: 35px;
-    transition: box-shadow 0.2s ease;
+
+    box-shadow: var(--depth-3);
+
+    backdrop-filter: blur(24px) saturate(130%);
 }
 
-/* Status Bubble */
+/* status pill */
 .preview-status .status-main-text {
     display: inline-flex;
     align-items: center;
     gap: 10px;
+
+    padding: 10px 22px;
+
+    border-radius: 999px;
+
     font-weight: 700;
-    font-size: 1.05em;
-    padding: 10px 26px;
-    border-radius: 9999px;
-    border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
+
+    border: 1px solid color-mix(in srgb, currentColor 25%, transparent);
+
     background: color-mix(in srgb, currentColor 8%, transparent);
 }
 
+.preview-status .status-main-text::before {
+    content: "";
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: currentColor;
+
+    box-shadow: 0 0 10px currentColor;
+
+    animation: pulse-status 2s infinite;
+}
+
+/* colors */
 .preview-status .status-open { color: var(--status-open-color); }
 .preview-status .status-closed { color: var(--status-closed-color); }
 .preview-status .status-unavailable { color: var(--status-unavailable-color); }
 
-.preview-status .status-main-text::before {
-    content: '';
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: currentColor;
-    box-shadow: 0 0 6px currentColor, 0 0 14px color-mix(in srgb, currentColor 50%, transparent);
-    animation: pulse-status 2s infinite;
-}
+/* ======================== */
+/* HOURS PREVIEW LIST     */
+/* ======================== */
 
-/* Preview Hours List */
 .preview-hours li {
     display: grid;
     grid-template-columns: 1fr auto;
-    align-items: center;
+
     padding: 14px 18px;
-    border-radius: 16px;
+
+    border-radius: 14px;
+
     margin-bottom: 10px;
+
     background: color-mix(in srgb, var(--content-bg) 75%, transparent);
-    border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
-    box-shadow: 0 4px 16px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-    transition: background 0.2s ease, transform 0.2s ease;
+
+    border: 1px solid var(--border-color);
+
+    box-shadow: var(--depth-1);
+
+    transition: 0.2s ease;
 }
 
 .preview-hours li:hover {
     transform: translateY(-2px);
+
     background: color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
 }
 
 .preview-hours li.current-day-preview {
     background: color-mix(in srgb, var(--accent-color) 15%, transparent);
-    border-color: color-mix(in srgb, var(--accent-color) 35%, transparent);
 }
 
-.preview-hours li strong { color: var(--text-color); font-weight: 600; }
-.preview-hours li span { color: var(--secondary-text); font-weight: 500; }
+/* text */
+.preview-hours li strong {
+    color: var(--text-color);
+}
+
+.preview-hours li span {
+    color: var(--secondary-text);
+}
+
 .preview-hours li.current-day-preview strong,
 .preview-hours li.current-day-preview span {
     color: var(--accent-color);
-    font-weight: 700;
 }
 
-/* Additional ranges align under the time column, right-aligned */
+/* additional lines */
 .preview-hours .hours-line.additional-hours {
-    display: block;
-    grid-column: 2; /* ensures it aligns under the time column */
+    grid-column: 2;
+
     text-align: right;
-    margin-top: 2px;
+
     color: var(--secondary-text);
-    font-weight: 500;
-    line-height: 1.4;
 }
 
 /* ======================================== */
