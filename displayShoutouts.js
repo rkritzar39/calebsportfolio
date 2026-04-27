@@ -516,44 +516,6 @@ function renderTikTokCard(account) {
             </div>`;
 }
 
-// This assumes 'data' is the object returned from your Firebase document
-const hideTikTokSection = data.hideTikTokSection; 
-
-// 1. Select the containers based on your HTML
-const tiktokSection = document.getElementById('tiktok-shoutouts-section');
-const tiktokHeader = document.getElementById('tiktok-shoutouts');
-
-// Use querySelector because these use classes in your HTML
-const tiktokGrid = tiktokSection.querySelector('.creator-grid');
-const tiktokMessage = tiktokSection.querySelector('.unavailable-message');
-
-// 2. Determine visibility (handles both boolean true and string "true")
-const shouldHide = String(hideTikTokSection) === 'true';
-
-if (shouldHide) {
-    // Hide content
-    if (tiktokHeader) tiktokHeader.style.display = 'none';
-    if (tiktokGrid) tiktokGrid.style.display = 'none';
-    
-    // Show and customize the message
-    if (tiktokMessage) {
-        tiktokMessage.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: #888;">
-                <i class="fa-solid fa-eye-slash" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                <p>TikTok shoutouts are currently hidden by the site administrator.</p>
-            </div>
-        `;
-        tiktokMessage.style.display = 'block';
-    }
-} else {
-    // Show everything
-    if (tiktokHeader) tiktokHeader.style.display = 'block';
-    if (tiktokGrid) tiktokGrid.style.display = 'grid'; 
-    if (tiktokMessage) tiktokMessage.style.display = 'none';
-}
-
-
-
 function renderInstagramCard(account) {
     const profilePic = account.profilePic || 'images/default-profile.jpg';
     const username = account.username || 'N/A';
