@@ -493,6 +493,29 @@ function formatRelativeTime(createdAt, updatedAt) {
     return result;
 }
 
+// --- Functions to Render Cards (Shoutouts, Tech, FAQs) ---
+// (Your existing renderTikTokCard, renderInstagramCard, renderYouTubeCard, renderTechItemHomepage, renderFaqItemHomepage functions remain here, unchanged from your provided file)
+function renderTikTokCard(account) {
+    const profilePic = account.profilePic || 'images/default-profile.jpg';
+    const username = account.username || 'N/A';
+    const nickname = account.nickname || 'N/A';
+    const bio = account.bio || '';
+    const followers = account.followers || 'N/A';
+    const isVerified = account.isVerified || false;
+    const profileUrl = username !== 'N/A' ? `https://tiktok.com/@${encodeURIComponent(username)}` : '#';
+    const verifiedBadge = isVerified ? '<img src="check.png" alt="Verified" class="verified-badge">' : '';
+    return `<div class="creator-card">
+              <img src="${profilePic}" alt="@${username}" class="creator-pic" onerror="this.src='images/default-profile.jpg'">
+              <div class="creator-info">
+                <div class="creator-header"><h3>${nickname}</h3></div>
+                <p class="creator-username">@${username} ${verifiedBadge}</p>
+                <p class="creator-bio">${bio}</p>
+                <p class="follower-count">${followers} Followers</p>
+                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="visit-profile"> Visit Profile </a>
+              </div>
+            </div>`;
+}
+
 // This assumes 'data' is the object returned from your Firebase document
 const hideTikTokSection = data.hideTikTokSection; 
 
@@ -529,28 +552,7 @@ if (shouldHide) {
     if (tiktokMessage) tiktokMessage.style.display = 'none';
 }
 
-// --- Functions to Render Cards (Shoutouts, Tech, FAQs) ---
-// (Your existing renderTikTokCard, renderInstagramCard, renderYouTubeCard, renderTechItemHomepage, renderFaqItemHomepage functions remain here, unchanged from your provided file)
-function renderTikTokCard(account) {
-    const profilePic = account.profilePic || 'images/default-profile.jpg';
-    const username = account.username || 'N/A';
-    const nickname = account.nickname || 'N/A';
-    const bio = account.bio || '';
-    const followers = account.followers || 'N/A';
-    const isVerified = account.isVerified || false;
-    const profileUrl = username !== 'N/A' ? `https://tiktok.com/@${encodeURIComponent(username)}` : '#';
-    const verifiedBadge = isVerified ? '<img src="check.png" alt="Verified" class="verified-badge">' : '';
-    return `<div class="creator-card">
-              <img src="${profilePic}" alt="@${username}" class="creator-pic" onerror="this.src='images/default-profile.jpg'">
-              <div class="creator-info">
-                <div class="creator-header"><h3>${nickname}</h3></div>
-                <p class="creator-username">@${username} ${verifiedBadge}</p>
-                <p class="creator-bio">${bio}</p>
-                <p class="follower-count">${followers} Followers</p>
-                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="visit-profile"> Visit Profile </a>
-              </div>
-            </div>`;
-}
+
 
 function renderInstagramCard(account) {
     const profilePic = account.profilePic || 'images/default-profile.jpg';
@@ -4819,35 +4821,27 @@ async function initializeHomepageContent() {
 
         if (usefulLinksSection) usefulLinksSection.style.display = 'block';
 
-// 1. Get the data from your source
-const hideTikTokSection = data.hideTikTokSection; 
+        let isTikTokVisible = false;
+        if (!tiktokHeaderContainer || !tiktokGridContainer) {
+            if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
+        } else {
+            if (hideTikTokSection) {
+                tiktokHeaderContainer.style.display = 'none';
+                tiktokGridContainer.style.display = 'none';
+                if (tiktokUnavailableMessage) {
+                    tiktokUnavailableMessage.innerHTML = '<p>TikTok shoutouts are currently hidden by the site administrator.</p>';
+                    tiktokUnavailableMessage.style.display = 'block';
+                }
+                isTikTokVisible = false;
+            } else {
+                tiktokHeaderContainer.style.display = ''; 
+                tiktokGridContainer.style.display = ''; 
+                if (tiktokUnavailableMessage) tiktokUnavailableMessage.style.display = 'none';
+                isTikTokVisible = true;
+            }
+        }
 
-// 2. Select the elements based on your HTML
-const tiktokSection = document.getElementById('tiktok-shoutouts-section');
-const tiktokHeader = document.getElementById('tiktok-shoutouts');
-const tiktokGrid = tiktokSection.querySelector('.creator-grid');
-const tiktokMessage = tiktokSection.querySelector('.unavailable-message');
-
-// 3. Robust Boolean Check
-const shouldHide = String(hideTikTokSection) === 'true';
-
-if (shouldHide) {
-    // Hide the content
-    if (tiktokHeader) tiktokHeader.style.display = 'none';
-    if (tiktokGrid) tiktokGrid.style.display = 'none';
-    
-    // Show the message
-    if (tiktokMessage) {
-        tiktokMessage.innerHTML = '<p style="text-align:center; padding: 40px; color: #888;">TikTok shoutouts are currently hidden by the site administrator.</p>';
-        tiktokMessage.style.display = 'block';
-    }
-} else {
-    // Show everything
-    if (tiktokHeader) tiktokHeader.style.display = 'block';
-    if (tiktokGrid) tiktokGrid.style.display = 'grid'; // Matches your .creator-grid class
-    if (tiktokMessage) tiktokMessage.style.display = 'none';
-}
-
+        console.log("Initiating loading of other content sections...");
 
         // Setup Business Hours
         if (firebaseAppInitialized && typeof displayBusinessInfo === 'function' && db && businessDocRef) {
