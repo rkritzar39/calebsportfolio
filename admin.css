@@ -1443,9 +1443,9 @@ button.edit-button:hover,
 }
 
 
-/* ======================== */
-/* ADMIN LIST SYSTEM       */
-/* ======================== */
+/* ===================================================== */
+/* ADMIN LIST SYSTEM                                     */
+/* ===================================================== */
 
 .list-container-admin {
     margin-top: 20px;
@@ -1460,7 +1460,7 @@ button.edit-button:hover,
 }
 
 
-/* item card */
+/* ITEM CARD */
 .list-item-admin {
     display: flex;
     justify-content: space-between;
@@ -1480,19 +1480,24 @@ button.edit-button:hover,
 }
 
 
-/* content */
+/* CONTENT WRAPPER */
 .list-item-admin .item-content {
     display: flex;
     align-items: center;
+
     gap: 12px;
+
     flex-grow: 1;
+
+    min-width: 0;
 }
 
 
-/* profile image */
+/* PROFILE PICTURE */
 .admin-list-item-pfp-container {
     width: 50px;
     height: 50px;
+
     flex-shrink: 0;
 }
 
@@ -1504,88 +1509,151 @@ button.edit-button:hover,
     object-fit: cover;
 
     border: 1px solid var(--border-color);
+
     background: var(--input-bg-color);
 }
 
 
-/* text block */
+/* DETAILS COLUMN */
 .list-item-admin .item-details {
     display: flex;
     flex-direction: column;
+
     gap: 2px;
 
+    min-width: 0;
     overflow: hidden;
 }
 
-.list-item-admin strong {
-    color: var(--text-color);
-    font-weight: 500;
+
+/* ======================== */
+/* NAME LINE (CRITICAL FIX) */
+/* ======================== */
+
+.list-item-admin .name-line {
+    display: inline-flex;
+    align-items: center;
+
+    gap: 5px;
+
+    min-width: 0;
 }
 
+
+/* USERNAME */
+.list-item-admin .name-line strong {
+    font-weight: 500;
+    color: var(--text-color);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    display: inline;
+}
+
+
+/* ======================== */
+/* VERIFIED BADGE (FIXED)  */
+/* ======================== */
+
+.verified-badge,
+.instagram-verified-badge,
+.youtube-verified-badge,
+.verified-badge-admin-list {
+    width: 12px;
+    height: 12px;
+
+    flex-shrink: 0;
+
+    object-fit: contain;
+
+    display: inline-block;
+
+    vertical-align: middle;
+}
+
+
+/* SECONDARY TEXT */
 .list-item-admin span,
 .list-item-admin small {
     color: var(--secondary-text);
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 
-/* actions */
+/* ACTIONS */
 .list-item-admin .item-actions {
     display: flex;
     gap: 8px;
     align-items: center;
+
+    flex-shrink: 0;
 }
 
-/* ======================== */
-/* Creator Shoutouts Section */
-/* ======================== */
-#creator-shoutouts h3 { margin-bottom: 1em; } /* Reduce bottom margin */
+
+/* ===================================================== */
+/* PLATFORM SECTIONS                                     */
+/* ===================================================== */
 
 .shoutouts-platform-container {
     margin-bottom: 35px;
+
     padding: 25px;
+
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
-    background-color: var(--content-bg);
-}
-.shoutouts-platform-container:last-of-type { margin-bottom: 0; }
-.shoutouts-platform-container h4 {
-    color: var(--text-color);
-    margin-top: 0;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 10px;
-    font-size: 1.2rem;
-    opacity: 1;
-    margin-bottom: 1.5em; /* More space after platform heading */
+
+    background: var(--content-bg);
 }
 
-/* List Controls (Search + Bulk Actions) */
+.shoutouts-platform-container h4 {
+    margin: 0 0 1.5em;
+
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid var(--border-color);
+
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+
+/* ===================================================== */
+/* LIST CONTROLS                                         */
+/* ===================================================== */
+
 .list-controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    margin-top: 10px;
+
     gap: 15px;
+
+    margin: 10px 0 20px;
+
     flex-wrap: wrap;
 }
+
 .list-controls input[type="search"] {
     flex-grow: 1;
+
     min-width: 200px;
     max-width: 400px;
 }
+
 .list-controls button {
-    margin: 0; /* Override default button margin-top */
+    margin: 0;
     flex-shrink: 0;
 }
 
-/* ===================================================== */
-/* iOS 26 ONYX UI SYSTEM — FULL COMPLETE BUILD          */
-/* ===================================================== */
 
-
-/* ======================== */
-/* PREVIEW AREAS           */
-/* ======================== */
+/* ===================================================== */
+/* PREVIEW AREAS                                         */
+/* ===================================================== */
 
 .shoutout-preview-area,
 .president-preview-area {
@@ -1620,17 +1688,17 @@ button.edit-button:hover,
     color: var(--secondary-text);
     font-style: italic;
     font-size: 0.9rem;
-    text-align: center;
 }
 
 
-/* ======================== */
-/* INPUT + PREVIEW SYSTEM  */
-/* ======================== */
+/* ===================================================== */
+/* INPUT + PREVIEW                                       */
+/* ===================================================== */
 
 .input-with-preview {
     display: flex;
     align-items: center;
+
     gap: 20px;
 }
 
@@ -1638,7 +1706,6 @@ button.edit-button:hover,
     flex-grow: 1;
 }
 
-/* profile image preview */
 .pfp-preview-img {
     width: 100px;
     height: 100px;
@@ -1651,24 +1718,12 @@ button.edit-button:hover,
     background: var(--input-bg-color);
 
     flex-shrink: 0;
-
-    box-shadow: var(--depth-1);
-
-    transition: opacity 0.3s ease;
-}
-
-/* input error state */
-.input-with-preview input.input-error {
-    border-color: var(--color-danger);
-    box-shadow:
-        0 0 0 4px var(--color-danger-glow),
-        var(--depth-1);
 }
 
 
-/* ======================== */
-/* MODAL SYSTEM            */
-/* ======================== */
+/* ===================================================== */
+/* MODAL SYSTEM                                          */
+/* ===================================================== */
 
 .modal {
     display: none;
@@ -1681,13 +1736,6 @@ button.edit-button:hover,
     background: var(--modal-backdrop-color);
 
     backdrop-filter: blur(10px);
-
-    animation: modalFadeIn 0.25s ease-out;
-}
-
-@keyframes modalFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }
 
 .modal-content {
@@ -1705,22 +1753,10 @@ button.edit-button:hover,
     box-shadow: var(--depth-3);
 
     position: relative;
-
-    animation: modalSlideIn 0.35s cubic-bezier(0.2, 0.9, 0.2, 1);
 }
 
-@keyframes modalSlideIn {
-    from {
-        transform: translateY(-30px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
 
-/* close button */
+/* CLOSE BUTTON */
 .close-button {
     position: absolute;
     top: 18px;
@@ -1728,196 +1764,25 @@ button.edit-button:hover,
 
     font-size: 28px;
 
-    color: var(--secondary-text);
-
     background: none;
     border: none;
+
+    color: var(--secondary-text);
 
     cursor: pointer;
 
     opacity: 0.7;
-
-    transition: transform 0.2s ease, color var(--transition-speed);
 }
 
 .close-button:hover {
     color: var(--text-color);
-    transform: scale(1.1);
     opacity: 1;
 }
 
 
-/* ======================== */
-/* FORM ACTION ALIGNMENT   */
-/* ======================== */
-
-#edit-shoutout-form .form-actions button,
-#profile-form .form-actions button,
-#edit-disability-form .form-actions button,
-#edit-useful-link-form .form-actions button,
-#edit-social-link-form .form-actions button,
-#president-form .form-actions button {
-    margin-right: 8px;
-}
-
-#edit-shoutout-form .form-actions button:last-child,
-#profile-form .form-actions button:last-child,
-#edit-disability-form .form-actions button:last-child,
-#edit-useful-link-form .form-actions button:last-child,
-#edit-social-link-form .form-actions button:last-child,
-#president-form .form-actions button:last-child {
-    margin-right: 0;
-}
-
-
-/* ======================== */
-/* SITE SETTINGS           */
-/* ======================== */
-
-#site-settings .form-group {
-    padding: 20px;
-
-    border: 1px solid var(--border-color);
-
-    border-radius: var(--border-radius-md);
-
-    background: var(--content-bg);
-
-    margin-bottom: 25px;
-}
-
-#settings-status-message {
-    margin-top: 10px;
-}
-
-
-/* ======================== */
-/* LIST COUNT + TIMER      */
-/* ======================== */
-
-.list-count {
-    font-size: 0.85rem;
-    font-weight: normal;
-
-    color: var(--secondary-text);
-
-    margin-left: 8px;
-}
-
-.timer-display {
-    font-size: 0.85rem;
-
-    color: var(--secondary-text);
-
-    margin-left: 15px;
-
-    min-width: 50px;
-
-    display: inline-block;
-
-    text-align: right;
-}
-
-
-/* ======================== */
-/* LIST SYSTEM (ADMIN)     */
-/* ======================== */
-
-.list-container-admin {
-    margin-top: 20px;
-
-    max-height: 450px;
-
-    overflow-y: auto;
-
-    border: 1px solid var(--border-color);
-
-    border-radius: var(--border-radius-md);
-
-    background: var(--content-bg);
-}
-
-.list-item-admin {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    padding: 15px 20px;
-
-    border-bottom: 1px solid var(--border-color);
-
-    background: var(--content-bg);
-}
-
-.list-item-admin:hover {
-    background: rgba(var(--accent-rgb), 0.06);
-}
-
-
-/* item content */
-.list-item-admin .item-content {
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-
-    flex-grow: 1;
-}
-
-/* profile image */
-.admin-list-item-pfp-container {
-    width: 50px;
-    height: 50px;
-
-    flex-shrink: 0;
-}
-
-.admin-list-item-pfp {
-    width: 100%;
-    height: 100%;
-
-    border-radius: 50%;
-
-    object-fit: cover;
-
-    border: 1px solid var(--border-color);
-
-    background: var(--input-bg-color);
-}
-
-
-/* details */
-.list-item-admin .item-details {
-    display: flex;
-    flex-direction: column;
-
-    gap: 2px;
-
-    overflow: hidden;
-}
-
-.list-item-admin strong {
-    color: var(--text-color);
-    font-weight: 500;
-}
-
-.list-item-admin span,
-.list-item-admin small {
-    color: var(--secondary-text);
-}
-
-
-/* actions */
-.list-item-admin .item-actions {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-
-/* ======================== */
-/* SHOUTOUT PREVIEW CARDS  */
-/* ======================== */
+/* ===================================================== */
+/* SHOUTOUT CARDS                                        */
+/* ===================================================== */
 
 .shoutout-preview-area .creator-card,
 .shoutout-preview-area .instagram-creator-card,
@@ -1934,20 +1799,10 @@ button.edit-button:hover,
     background: var(--content-bg);
 
     border: 1px solid var(--border-color);
-
-    box-shadow: var(--depth-1);
-
-    align-items: flex-start;
-}
-
-.shoutout-preview-area .creator-card:hover,
-.shoutout-preview-area .instagram-creator-card:hover,
-.shoutout-preview-area .youtube-creator-card:hover {
-    box-shadow: var(--depth-2);
 }
 
 
-/* avatars */
+/* AVATARS */
 .shoutout-preview-area .creator-pic,
 .shoutout-preview-area .instagram-creator-pic,
 .shoutout-preview-area .youtube-creator-pic {
@@ -1955,14 +1810,11 @@ button.edit-button:hover,
     height: 50px;
 
     border-radius: 50%;
-
     object-fit: cover;
-
-    flex-shrink: 0;
 }
 
 
-/* info column */
+/* INFO COLUMN */
 .shoutout-preview-area .creator-info,
 .shoutout-preview-area .instagram-creator-info,
 .shoutout-preview-area .youtube-creator-info {
@@ -1975,7 +1827,7 @@ button.edit-button:hover,
 }
 
 
-/* header */
+/* HEADER */
 .shoutout-preview-area .creator-header,
 .shoutout-preview-area .instagram-creator-header,
 .shoutout-preview-area .youtube-creator-header {
@@ -1985,21 +1837,8 @@ button.edit-button:hover,
     gap: 6px;
 }
 
-.shoutout-preview-area .creator-header h3,
-.shoutout-preview-area .instagram-creator-header h3,
-.shoutout-preview-area .youtube-creator-header h3 {
-    font-size: 1rem;
-    font-weight: 600;
 
-    color: var(--text-color);
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-
-/* verified badges */
+/* VERIFIED BADGE (PREVIEW SIZE) */
 .shoutout-preview-area .verified-badge,
 .shoutout-preview-area .instagram-verified-badge,
 .shoutout-preview-area .youtube-verified-badge {
@@ -2010,78 +1849,37 @@ button.edit-button:hover,
 }
 
 
-/* text */
-.shoutout-preview-area .creator-username,
-.shoutout-preview-area .instagram-creator-username,
-.shoutout-preview-area .youtube-creator-username,
+/* TEXT */
 .shoutout-preview-area .creator-bio,
-.shoutout-preview-area .instagram-creator-bio,
-.shoutout-preview-area .youtube-creator-bio {
+.shoutout-preview-area .creator-username {
     color: var(--secondary-text);
-
     font-size: 0.85rem;
-
     line-height: 1.4;
-
-    margin: 4px 0;
-}
-
-
-/* follow counts */
-.shoutout-preview-area .follower-count,
-.shoutout-preview-area .instagram-follower-count,
-.shoutout-preview-area .youtube-subscriber-count {
-    color: var(--secondary-text);
-    font-size: 0.85rem;
-    font-weight: 500;
 }
 
 
 /* CTA */
-.shoutout-preview-area .visit-profile,
-.shoutout-preview-area .instagram-visit-profile,
-.shoutout-preview-area .youtube-visit-profile {
+.shoutout-preview-area .visit-profile {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
 
     padding: 6px 12px;
 
     border-radius: var(--border-radius-md);
 
     background: var(--accent-color);
-
     color: #fff;
 
     font-size: 0.8rem;
-    font-weight: 500;
 
     margin-top: 8px;
-
-    width: fit-content;
-}
-
-.shoutout-preview-area .visit-profile:hover,
-.shoutout-preview-area .instagram-visit-profile:hover,
-.shoutout-preview-area .youtube-visit-profile:hover {
-    background: var(--hover-color);
 }
 
 
-/* ======================== */
-/* RESPONSIVE              */
-/* ======================== */
+/* ===================================================== */
+/* RESPONSIVE                                            */
+/* ===================================================== */
 
 @media (max-width: 768px) {
-
-    body {
-        padding: 20px;
-    }
-
-    .modal-content {
-        margin: 8vh auto;
-        padding: 30px 25px;
-    }
 
     .input-with-preview {
         flex-direction: column;
@@ -2096,17 +1894,13 @@ button.edit-button:hover,
 
 @media (max-width: 480px) {
 
-    body {
-        padding: 15px;
+    .pfp-preview-img {
+        width: 60px;
+        height: 60px;
     }
 
     .modal-content {
         padding: 25px 15px;
-    }
-
-    .pfp-preview-img {
-        width: 60px;
-        height: 60px;
     }
 
     .close-button {
@@ -2115,7 +1909,6 @@ button.edit-button:hover,
         right: 15px;
     }
 }
-
 
 /* ============================================= */
 /* === ADMIN PRESIDENT PREVIEW STYLES          === */
