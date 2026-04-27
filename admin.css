@@ -1,137 +1,195 @@
-/* admin.css - Apple-Inspired Theme (Unified Preview Styles + President Preview + Toggles + Admin List PFP) */
+/* ========================= */
+/* iOS 26 FOUNDATION LAYER   */
+/* ========================= */
 :root {
-    /* --- Base & Typography --- */
-    --system-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    /* --- Typography --- */
+    --system-font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --base-font-size: 16px;
-    --line-height: 1.5;
+    --line-height: 1.45;
 
-    /* --- Border Radius & Transitions --- */
-    --border-radius-sm: 4px;
-    --border-radius-md: 8px;
-    --border-radius-lg: 12px;
-    --transition-speed: 0.2s;
-    --transition-timing: ease-in-out;
+    /* --- Radius System (More Fluid) --- */
+    --border-radius-sm: 6px;
+    --border-radius-md: 12px;
+    --border-radius-lg: 18px;
 
-    /* --- Glass Design Variables --- */
-    /* Onyx: much darker glass default, softer subtle highlight + deeper shadow */
-    --glass-background: rgba(18, 18, 20, 0.64);
-    --glass-blur: 14px;
-    --glass-shadow: 0 10px 36px rgba(0, 0, 0, 0.6);
-    --glass-border-radius: 16px;
+    /* --- Motion --- */
+    --transition-speed: 0.25s;
+    --transition-timing: cubic-bezier(.4, 0, .2, 1);
 
     /* ======================== */
-    /* Light Mode Colors (Apple Style) */
+    /* MATERIAL SYSTEM (iOS 26) */
     /* ======================== */
-    --apple-light-bg: #f2f2f6;
-    --apple-light-content-bg: rgba(255, 255, 255, 0.92);
-    --apple-light-text: #141416;
-    --apple-light-secondary-text: #59595d;
-    --apple-light-border: rgba(0, 0, 0, 0.06);
-    --apple-light-input-bg: rgba(255, 255, 255, 0.98);
+
+    /* True glass (adaptive, not flat) */
+    --glass-background: rgba(255, 255, 255, 0.55);
+    --glass-background-dark: rgba(20, 20, 24, 0.55);
+
+    --glass-blur: blur(22px) saturate(180%);
+    --glass-border-light: rgba(255, 255, 255, 0.35);
+    --glass-border-dark: rgba(255, 255, 255, 0.06);
+
+    /* Depth layers instead of heavy shadows */
+    --depth-1: 0 2px 10px rgba(0,0,0,0.08);
+    --depth-2: 0 10px 30px rgba(0,0,0,0.18);
+    --depth-3: 0 20px 60px rgba(0,0,0,0.35);
+
+    /* ======================== */
+    /* LIGHT MODE (REFINED)     */
+    /* ======================== */
+    --apple-light-bg: #f5f5f7;
+    --apple-light-content-bg: rgba(255, 255, 255, 0.72);
+    --apple-light-text: #0f0f10;
+    --apple-light-secondary-text: #6e6e73;
+
+    --apple-light-border: rgba(0, 0, 0, 0.05);
+
+    --apple-light-input-bg: rgba(255, 255, 255, 0.8);
     --apple-light-input-border: rgba(0, 0, 0, 0.08);
-    --apple-light-input-focus-border: #006aff;
-    --apple-light-input-focus-shadow: rgba(0, 106, 255, 0.14);
-    --apple-light-shadow: rgba(6, 10, 12, 0.06);
-    --apple-light-accent: #006aff;
-    --apple-light-accent-hover: #0a74f0;
-    --apple-light-link: #006aff;
-    --apple-light-success-bg: rgba(34, 139, 84, 0.08);
-    --apple-light-success-text: #166834;
-    --apple-light-error-bg: rgba(196, 30, 58, 0.06);
-    --apple-light-error-text: #9b1f28;
-    --apple-light-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2359595d' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-    --apple-light-modal-backdrop: rgba(242, 242, 246, 0.78);
+
+    --apple-light-input-focus-border: #0a84ff;
+    --apple-light-input-focus-shadow: rgba(10, 132, 255, 0.18);
+
+    --apple-light-shadow: rgba(0,0,0,0.06);
+
+    --apple-light-accent: #0a84ff;
+    --apple-light-accent-hover: #3b9cff;
+    --apple-light-link: #0a84ff;
+
+    --apple-light-success-bg: rgba(48, 209, 88, 0.12);
+    --apple-light-success-text: #1f8f4a;
+
+    --apple-light-error-bg: rgba(255, 69, 58, 0.10);
+    --apple-light-error-text: #c12f2f;
+
+    --apple-light-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236e6e73' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+
+    --apple-light-modal-backdrop: rgba(245, 245, 247, 0.6);
 
     /* ======================== */
-    /* Dark Mode Colors (Apple Style) */
+    /* DARK MODE (TRUE iOS)     */
     /* ======================== */
     --apple-dark-bg: #000000;
-    --apple-dark-content-bg: rgba(16, 16, 18, 0.78);
-    --apple-dark-text: #f6f6f7;
-    --apple-dark-secondary-text: #8b8b91;
-    --apple-dark-border: rgba(255, 255, 255, 0.04);
-    --apple-dark-input-bg: rgba(26, 26, 28, 0.90);
-    --apple-dark-input-border: rgba(255, 255, 255, 0.06);
+    --apple-dark-content-bg: rgba(18, 18, 22, 0.65);
+
+    --apple-dark-text: #f5f5f7;
+    --apple-dark-secondary-text: #8e8e93;
+
+    --apple-dark-border: rgba(255, 255, 255, 0.05);
+
+    --apple-dark-input-bg: rgba(28, 28, 32, 0.85);
+    --apple-dark-input-border: rgba(255, 255, 255, 0.08);
+
     --apple-dark-input-focus-border: #0a84ff;
-    --apple-dark-input-focus-shadow: rgba(10, 132, 255, 0.26);
-    --apple-dark-shadow: rgba(0, 0, 0, 0.6);
+    --apple-dark-input-focus-shadow: rgba(10, 132, 255, 0.28);
+
+    --apple-dark-shadow: rgba(0,0,0,0.5);
+
     --apple-dark-accent: #0a84ff;
-    --apple-dark-accent-hover: #3b9bff;
-    --apple-dark-link: #3b9bff;
-    --apple-dark-success-bg: rgba(48, 209, 88, 0.10);
-    --apple-dark-success-text: #26c258;
-    --apple-dark-error-bg: rgba(255, 69, 58, 0.10);
+    --apple-dark-accent-hover: #3b9cff;
+    --apple-dark-link: #3b9cff;
+
+    --apple-dark-success-bg: rgba(48, 209, 88, 0.15);
+    --apple-dark-success-text: #30d158;
+
+    --apple-dark-error-bg: rgba(255, 69, 58, 0.15);
     --apple-dark-error-text: #ff6b62;
-    --apple-dark-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238b8b91' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-    --apple-dark-modal-backdrop: rgba(0, 0, 0, 0.68);
+
+    --apple-dark-select-arrow: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238e8e93' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+
+    --apple-dark-modal-backdrop: rgba(0, 0, 0, 0.55);
 
     /* ======================== */
-    /* Alert & Action Colors */
+    /* ACTION COLORS (UNCHANGED BUT TUNED) */
     /* ======================== */
-    --color-danger: #ff3b30;
+    --color-danger: #ff453a;
     --color-danger-hover: #d1302f;
-    --color-danger-glow: rgba(255, 59, 48, 0.22);
-    --color-success-action: #34c759;
-    --color-success-action-hover: #2ca349;
-    --color-success-action-glow: rgba(52, 199, 89, 0.18);
+    --color-danger-glow: rgba(255, 69, 58, 0.25);
+
+    --color-success-action: #30d158;
+    --color-success-action-hover: #28b44a;
+    --color-success-action-glow: rgba(48, 209, 88, 0.22);
+
     --color-secondary-action: #8e8e93;
     --color-secondary-action-hover: #7a7a80;
-    --color-secondary-action-glow: rgba(142, 142, 147, 0.18);
-    --color-danger-disabled: #7a7a7a;
+    --color-secondary-action-glow: rgba(142, 142, 147, 0.2);
+
+    --color-danger-disabled: #6e6e73;
 
     /* ======================== */
-    /* Fallback / Default Colors (Dark Mode) */
+    /* DEFAULT (DARK MODE BASE) */
     /* ======================== */
     --bg-color: var(--apple-dark-bg);
     --content-bg: var(--apple-dark-content-bg);
+
     --text-color: var(--apple-dark-text);
     --secondary-text: var(--apple-dark-secondary-text);
+
     --border-color: var(--apple-dark-border);
+
     --input-bg-color: var(--apple-dark-input-bg);
     --input-border-color: var(--apple-dark-input-border);
+
     --input-focus-border-color: var(--apple-dark-input-focus-border);
     --input-focus-shadow-color: var(--apple-dark-input-focus-shadow);
+
     --shadow-color: var(--apple-dark-shadow);
+
     --accent-color: var(--apple-dark-accent);
     --hover-color: var(--apple-dark-accent-hover);
     --link-color: var(--apple-dark-link);
+
     --success-bg-color: var(--apple-dark-success-bg);
     --success-text-color: var(--apple-dark-success-text);
+
     --error-bg-color: var(--apple-dark-error-bg);
     --error-text-color: var(--apple-dark-error-text);
+
     --select-arrow: var(--apple-dark-select-arrow);
     --modal-backdrop-color: var(--apple-dark-modal-backdrop);
+
     --accent-glow-color: var(--apple-dark-input-focus-shadow);
+
     --accent-rgb: 10, 132, 255;
-    --danger-rgb: 255, 59, 48;
+    --danger-rgb: 255, 69, 58;
 }
 
 /* ======================== */
-/* Light Mode Overrides */
+/* LIGHT MODE OVERRIDE       */
 /* ======================== */
 body:not(.dark-mode),
 body.light-mode {
     --bg-color: var(--apple-light-bg);
     --content-bg: var(--apple-light-content-bg);
+
     --text-color: var(--apple-light-text);
     --secondary-text: var(--apple-light-secondary-text);
+
     --border-color: var(--apple-light-border);
+
     --input-bg-color: var(--apple-light-input-bg);
     --input-border-color: var(--apple-light-input-border);
+
     --input-focus-border-color: var(--apple-light-input-focus-border);
     --input-focus-shadow-color: var(--apple-light-input-focus-shadow);
+
     --shadow-color: var(--apple-light-shadow);
+
     --accent-color: var(--apple-light-accent);
     --hover-color: var(--apple-light-accent-hover);
     --link-color: var(--apple-light-link);
+
     --success-bg-color: var(--apple-light-success-bg);
     --success-text-color: var(--apple-light-success-text);
+
     --error-bg-color: var(--apple-light-error-bg);
     --error-text-color: var(--apple-light-error-text);
+
     --select-arrow: var(--apple-light-select-arrow);
     --modal-backdrop-color: var(--apple-light-modal-backdrop);
+
     --accent-glow-color: var(--apple-light-input-focus-shadow);
-    --accent-rgb: 0, 122, 255;
+
+    --accent-rgb: 10, 132, 255;
 }
 
 /* ======================== */
