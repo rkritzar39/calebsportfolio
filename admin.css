@@ -1052,11 +1052,12 @@ a:hover::after {
 }
 
 /* ===================================================== */
-/* FORM SYSTEM — iOS 26 ONYX (FULL CONSOLIDATION LAYER) */
+/* FORM SYSTEM — iOS 26 ONYX (FULL POLISHED SYSTEM)      */
 /* ===================================================== */
 
+
 /* ======================== */
-/* FORM STRUCTURE           */
+/* STRUCTURE               */
 /* ======================== */
 
 .form-group {
@@ -1071,11 +1072,12 @@ label {
     font-weight: 500;
 
     color: var(--text-color);
-    opacity: 0.9;
+    opacity: 0.92;
 }
 
+
 /* ======================== */
-/* BASE INPUT SYSTEM        */
+/* INPUT FOUNDATION LAYER   */
 /* ======================== */
 
 input,
@@ -1097,16 +1099,19 @@ textarea {
 
     backdrop-filter: var(--glass-blur);
 
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 1px 2px rgba(0,0,0,0.25);
 
     transition:
-        border-color var(--transition-speed) var(--transition-timing),
-        box-shadow var(--transition-speed) var(--transition-timing),
         transform var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing),
+        border-color var(--transition-speed) var(--transition-timing),
         background-color var(--transition-speed) var(--transition-timing);
 }
 
-/* Hover micro-lift */
+
+/* Hover lift */
 input:hover,
 select:hover,
 textarea:hover {
@@ -1114,7 +1119,8 @@ textarea:hover {
     transform: translateY(-1px);
 }
 
-/* Focus elevation system */
+
+/* Focus — Apple-style depth lock */
 input:focus,
 select:focus,
 textarea:focus {
@@ -1122,21 +1128,24 @@ textarea:focus {
 
     border-color: var(--input-focus-border-color);
 
+    background: var(--input-bg-color);
+
     box-shadow:
         0 0 0 4px var(--input-focus-shadow-color),
-        0 10px 24px rgba(var(--accent-rgb), 0.18);
-
-    background: var(--input-bg-color);
+        0 12px 28px rgba(var(--accent-rgb), 0.18),
+        inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
+
 /* ======================== */
-/* TEXTAREA                 */
+/* TEXTAREA                */
 /* ======================== */
 
 textarea {
     min-height: 120px;
     resize: vertical;
 }
+
 
 /* ======================== */
 /* SPECIAL INPUT TYPES      */
@@ -1146,20 +1155,24 @@ input[type="date"],
 input[type="time"],
 input[type="datetime-local"] {
     appearance: none;
+
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.3px;
+
     color-scheme: dark;
 }
 
-/* calendar icon */
+
+/* calendar icon refinement */
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) opacity(0.8);
+    filter: invert(1) opacity(0.75);
     cursor: pointer;
 }
 
+
 /* ======================== */
-/* SELECT SYSTEM            */
+/* SELECT                  */
 /* ======================== */
 
 select {
@@ -1173,17 +1186,19 @@ select {
     padding-right: 2.5rem;
 }
 
+
 /* ======================== */
-/* PLACEHOLDERS             */
+/* PLACEHOLDER             */
 /* ======================== */
 
 ::placeholder {
     color: var(--secondary-text);
-    opacity: 0.7;
+    opacity: 0.65;
 }
 
+
 /* ======================== */
-/* TOGGLE SYSTEM            */
+/* TOGGLE SYSTEM           */
 /* ======================== */
 
 .checkbox-group {
@@ -1193,12 +1208,14 @@ select {
     width: 100%;
 }
 
+
 /* hide native checkbox */
 .checkbox-group input[type="checkbox"] {
     position: absolute;
     opacity: 0;
     pointer-events: none;
 }
+
 
 /* label */
 .checkbox-group label {
@@ -1217,10 +1234,12 @@ select {
     user-select: none;
 }
 
+
 /* track */
 .checkbox-group label::before {
     content: "";
     position: absolute;
+
     left: 0;
     top: 0;
 
@@ -1229,13 +1248,14 @@ select {
 
     border-radius: 999px;
 
-    background: rgba(var(--accent-rgb), 0.12);
+    background: rgba(var(--accent-rgb), 0.10);
     border: 1px solid var(--border-color);
 
     backdrop-filter: var(--glass-blur);
 
     transition: all 0.25s var(--transition-timing);
 }
+
 
 /* knob */
 .checkbox-group label::after {
@@ -1257,6 +1277,7 @@ select {
     transition: transform 0.25s var(--transition-timing);
 }
 
+
 /* checked */
 .checkbox-group input[type="checkbox"]:checked + label::before {
     background: rgba(var(--accent-rgb), 0.35);
@@ -1267,28 +1288,32 @@ select {
     transform: translateX(22px);
 }
 
-/* focus */
+
+/* focus ring */
 .checkbox-group input[type="checkbox"]:focus-visible + label::before {
     box-shadow:
         0 0 0 3px var(--content-bg),
         0 0 0 6px var(--accent-glow-color);
 }
 
+
 /* ======================== */
-/* BUTTON SYSTEM            */
+/* BUTTON SYSTEM           */
 /* ======================== */
 
 button,
 .button-primary {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
     padding: 10px 20px;
 
-    border: none;
-    border-radius: var(--border-radius-md);
-
     font-size: 0.95rem;
     font-weight: 500;
+
+    border: none;
+    border-radius: var(--border-radius-md);
 
     cursor: pointer;
 
@@ -1303,6 +1328,8 @@ button,
         box-shadow var(--transition-speed);
 }
 
+
+/* hover elevation */
 button:hover,
 .button-primary:hover {
     background: var(--hover-color);
@@ -1310,23 +1337,27 @@ button:hover,
     box-shadow: var(--depth-2);
 }
 
+
+/* press state */
 button:active {
     transform: scale(0.98);
 }
 
+
+/* disabled */
 button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
+
 /* ======================== */
-/* SPECIAL BUTTONS          */
+/* BUTTON VARIANTS         */
 /* ======================== */
 
 #login-button {
     background: var(--color-success-action);
 }
-
 #login-button:hover {
     background: var(--color-success-action-hover);
 }
@@ -1336,7 +1367,6 @@ button.delete-button,
 button.bulk-delete-button {
     background: var(--color-danger);
 }
-
 #logout-button:hover,
 button.delete-button:hover,
 button.bulk-delete-button:hover {
@@ -1348,12 +1378,12 @@ button.edit-button,
 .list-item-admin button {
     background: var(--color-secondary-action);
 }
-
 button.secondary-button:hover,
 button.edit-button:hover,
 .list-item-admin button:hover {
     background: var(--color-secondary-action-hover);
 }
+
 
 /* danger outline */
 .danger-button {
@@ -1367,8 +1397,9 @@ button.edit-button:hover,
     color: #fff;
 }
 
+
 /* ======================== */
-/* FORM ACTIONS             */
+/* FORM ACTIONS            */
 /* ======================== */
 
 .form-actions {
@@ -1380,8 +1411,9 @@ button.edit-button:hover,
     text-align: right;
 }
 
+
 /* ======================== */
-/* STATUS SYSTEM            */
+/* STATUS SYSTEM           */
 /* ======================== */
 
 .status-message {
@@ -1410,8 +1442,9 @@ button.edit-button:hover,
     background: var(--error-bg-color);
 }
 
+
 /* ======================== */
-/* LIST SYSTEM (ADMIN)      */
+/* ADMIN LIST SYSTEM       */
 /* ======================== */
 
 .list-container-admin {
@@ -1426,6 +1459,8 @@ button.edit-button:hover,
     background: var(--content-bg);
 }
 
+
+/* item card */
 .list-item-admin {
     display: flex;
     justify-content: space-between;
@@ -1444,13 +1479,15 @@ button.edit-button:hover,
     background: rgba(var(--accent-rgb), 0.06);
 }
 
-/* content alignment */
+
+/* content */
 .list-item-admin .item-content {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-grow: 1;
 }
+
 
 /* profile image */
 .admin-list-item-pfp-container {
@@ -1462,6 +1499,7 @@ button.edit-button:hover,
 .admin-list-item-pfp {
     width: 100%;
     height: 100%;
+
     border-radius: 50%;
     object-fit: cover;
 
@@ -1469,11 +1507,13 @@ button.edit-button:hover,
     background: var(--input-bg-color);
 }
 
+
 /* text block */
 .list-item-admin .item-details {
     display: flex;
     flex-direction: column;
     gap: 2px;
+
     overflow: hidden;
 }
 
@@ -1486,6 +1526,7 @@ button.edit-button:hover,
 .list-item-admin small {
     color: var(--secondary-text);
 }
+
 
 /* actions */
 .list-item-admin .item-actions {
