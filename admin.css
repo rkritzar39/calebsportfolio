@@ -4215,3 +4215,22 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
         justify-content: center;
     }
 }
+
+/* Gray out the label when the feature is disabled */
+.disabled-label {
+    color: #888;
+    cursor: not-allowed;
+}
+
+/* Style for the "Coming Soon" badge */
+.coming-soon-tag {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #aaa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
