@@ -85,8 +85,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const sunriseEl    = q("sunrise-info");
   const sunsetEl     = q("sunset-info");
 
-  safeSet(versionEl, "v26.5");
-  safeSet(buildEl, "2025.12.4");
+  safeSet(versionEl, "v26.7");
+  safeSet(buildEl, "2025.04.26");
 
   /* 🕒 CLOCK */
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
