@@ -2484,6 +2484,46 @@ async function saveProfileData(event) {
     }
 }
 
+    document.addEventListener("DOMContentLoaded", () => {
+    const autoStatusToggle = document.getElementById('auto-status-toggle');
+    const profileStatusDropdown = document.getElementById('profile-status');
+    const discordToggle = document.getElementById('discord-sync-toggle');
+
+    // 1. Handle Auto-detect logic
+    if (autoStatusToggle && profileStatusDropdown) {
+        const updateStatusDropdown = () => {
+            // Disable dropdown if toggle is ON
+            profileStatusDropdown.disabled = autoStatusToggle.checked;
+            
+            // Optional: Visual styling for disabled state
+            if (autoStatusToggle.checked) {
+                profileStatusDropdown.style.opacity = "0.6";
+                profileStatusDropdown.style.cursor = "not-allowed";
+            } else {
+                profileStatusDropdown.style.opacity = "1";
+                profileStatusDropdown.style.cursor = "default";
+            }
+        };
+
+        // Run on load and whenever toggled
+        autoStatusToggle.addEventListener('change', updateStatusDropdown);
+        updateStatusDropdown(); 
+    }
+
+    // 2. Discord Sync "Coming Soon" behavior
+    if (discordToggle) {
+        discordToggle.addEventListener('click', (e) => {
+            // Prevent the user from checking it since it's not ready
+            if (!discordToggle.checked) return; 
+            
+            e.preventDefault();
+            discordToggle.checked = false;
+            alert("The Discord Sync feature is coming soon!");
+        });
+    }
+});
+
+
 // ============================
 // PROFILE PICTURE LIVE PREVIEW
 // ============================
