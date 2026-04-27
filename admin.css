@@ -1051,9 +1051,14 @@ a:hover::after {
     }
 }
 
+/* ===================================================== */
+/* FORM SYSTEM — iOS 26 ONYX (FULL CONSOLIDATION LAYER) */
+/* ===================================================== */
+
 /* ======================== */
-/* Form Element Styles – iOS 26 Onyx Enhanced */
+/* FORM STRUCTURE           */
 /* ======================== */
+
 .form-group {
     margin-bottom: 22px;
 }
@@ -1061,478 +1066,397 @@ a:hover::after {
 label {
     display: block;
     margin-bottom: 8px;
+
+    font-size: 0.95rem;
     font-weight: 500;
+
     color: var(--text-color);
-    font-size: 0.95em;
-    opacity: 0.95;
+    opacity: 0.9;
 }
 
-/* Unified iOS Onyx Inputs */
-input[type="email"],
-input[type="password"],
-input[type="text"],
-input[type="number"],
-input[type="url"],
-input[type="search"],
-input[type="datetime-local"],
-input[type="date"],
-input[type="time"],
+/* ======================== */
+/* BASE INPUT SYSTEM        */
+/* ======================== */
+
+input,
 select,
 textarea {
     width: 100%;
+
     padding: 12px 14px;
-    border: 1px solid var(--input-border-color);
-    border-radius: var(--border-radius-md);
-    font-size: 1rem;
+
     font-family: var(--system-font-stack);
-    background: rgba(28, 28, 30, 0.85);
+    font-size: 1rem;
+
     color: var(--text-color);
-    backdrop-filter: blur(14px) saturate(180%);
-    -webkit-backdrop-filter: blur(14px) saturate(180%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 3px rgba(0,0,0,0.4);
+
+    background: var(--input-bg-color);
+    border: 1px solid var(--input-border-color);
+
+    border-radius: var(--border-radius-md);
+
+    backdrop-filter: var(--glass-blur);
+
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+
     transition:
         border-color var(--transition-speed) var(--transition-timing),
         box-shadow var(--transition-speed) var(--transition-timing),
-        background-color var(--transition-speed) var(--transition-timing),
-        transform var(--transition-speed) ease;
+        transform var(--transition-speed) var(--transition-timing),
+        background-color var(--transition-speed) var(--transition-timing);
 }
 
+/* Hover micro-lift */
 input:hover,
 select:hover,
 textarea:hover {
     border-color: rgba(var(--accent-rgb), 0.45);
-    transform: translateY(-0.5px);
+    transform: translateY(-1px);
 }
 
+/* Focus elevation system */
 input:focus,
 select:focus,
 textarea:focus {
     outline: none;
+
     border-color: var(--input-focus-border-color);
-    background-color: rgba(50, 50, 54, 0.9);
-    box-shadow: 0 0 0 3px var(--input-focus-shadow-color),
-                0 2px 10px rgba(var(--accent-rgb), 0.25),
-                inset 0 1px 0 rgba(255,255,255,0.1);
+
+    box-shadow:
+        0 0 0 4px var(--input-focus-shadow-color),
+        0 10px 24px rgba(var(--accent-rgb), 0.18);
+
+    background: var(--input-bg-color);
 }
 
-input[type="date"],
-input[type="time"],
-input[type="datetime-local"] {
-    appearance: none;
-    background-image: none;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.5px;
-    color-scheme: dark;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator,
-input[type="time"]::-webkit-calendar-picker-indicator {
-    filter: invert(1) opacity(0.8);
-    cursor: pointer;
-    transition: filter 0.2s ease;
-}
-input[type="date"]::-webkit-calendar-picker-indicator:hover,
-input[type="time"]::-webkit-calendar-picker-indicator:hover {
-    filter: invert(1) opacity(1);
-}
+/* ======================== */
+/* TEXTAREA                 */
+/* ======================== */
 
 textarea {
     min-height: 120px;
     resize: vertical;
 }
 
+/* ======================== */
+/* SPECIAL INPUT TYPES      */
+/* ======================== */
+
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+    appearance: none;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.3px;
+    color-scheme: dark;
+}
+
+/* calendar icon */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) opacity(0.8);
+    cursor: pointer;
+}
+
+/* ======================== */
+/* SELECT SYSTEM            */
+/* ======================== */
+
 select {
     appearance: none;
+
     background-image: var(--select-arrow);
     background-repeat: no-repeat;
-    background-position: right 0.9rem center;
+    background-position: right 12px center;
     background-size: 12px 10px;
+
     padding-right: 2.5rem;
 }
 
+/* ======================== */
+/* PLACEHOLDERS             */
+/* ======================== */
+
 ::placeholder {
     color: var(--secondary-text);
-    opacity: 0.75;
+    opacity: 0.7;
 }
 
 /* ======================== */
-/* Toggle Styles – iOS 26 Onyx Enhanced (Fixed Alignment) */
+/* TOGGLE SYSTEM            */
 /* ======================== */
+
 .checkbox-group {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start; /* Forces content to the left */
-    align-items: flex-start;    /* Aligns items to the top */
     flex-wrap: wrap;
     gap: 16px;
-    padding-top: 4px;
-    width: 100%;                /* Ensures container spans full width */
-    position: relative;
+    width: 100%;
 }
 
-/* Hidden Checkbox Input */
+/* hide native checkbox */
 .checkbox-group input[type="checkbox"] {
-    opacity: 0;
     position: absolute;
-    width: 0;
-    height: 0;
-    appearance: none;
+    opacity: 0;
     pointer-events: none;
 }
 
-/* Label Styling */
+/* label */
 .checkbox-group label {
     position: relative;
-    padding-left: 64px; 
+
+    padding-left: 64px;
     line-height: 32px;
-    display: inline-flex;       /* inline-flex prevents stretching */
-    align-items: center; 
-    justify-content: flex-start;
-    text-align: left;           /* Forces text alignment */
-    cursor: pointer;
-    color: var(--text-color);
-    font-weight: 400;
+
+    display: inline-flex;
+    align-items: center;
+
     font-size: 0.97rem;
+    color: var(--text-color);
+
+    cursor: pointer;
     user-select: none;
 }
 
-/* Toggle Track */
+/* track */
 .checkbox-group label::before {
     content: "";
     position: absolute;
     left: 0;
     top: 0;
+
     width: 54px;
     height: 32px;
-    border-radius: 16px;
-    background: linear-gradient(to bottom, rgba(120,120,128,0.32), rgba(99,99,102,0.32));
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.25);
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-    transition: background 0.25s ease, box-shadow 0.25s ease;
+
+    border-radius: 999px;
+
+    background: rgba(var(--accent-rgb), 0.12);
+    border: 1px solid var(--border-color);
+
+    backdrop-filter: var(--glass-blur);
+
+    transition: all 0.25s var(--transition-timing);
 }
 
-/* Toggle Knob */
+/* knob */
 .checkbox-group label::after {
     content: "";
     position: absolute;
+
     left: 2px;
     top: 2px;
+
     width: 28px;
     height: 28px;
+
     border-radius: 50%;
-    background: #ffffff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.25), inset 0 1px 1px rgba(255,255,255,0.6);
-    transition: transform 0.25s ease, background 0.2s ease;
+
+    background: var(--content-bg);
+
+    box-shadow: var(--depth-1);
+
+    transition: transform 0.25s var(--transition-timing);
 }
 
-/* Checked State */
+/* checked */
 .checkbox-group input[type="checkbox"]:checked + label::before {
-    background: linear-gradient(to bottom, var(--color-success-action), var(--color-success-action-hover));
-    box-shadow: 0 0 8px rgba(var(--accent-rgb), 0.45);
+    background: rgba(var(--accent-rgb), 0.35);
+    border-color: rgba(var(--accent-rgb), 0.6);
 }
 
 .checkbox-group input[type="checkbox"]:checked + label::after {
     transform: translateX(22px);
 }
 
-/* Focus Glow */
+/* focus */
 .checkbox-group input[type="checkbox"]:focus-visible + label::before {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--content-bg), 0 0 0 4px var(--accent-color);
-}
-
-/* Hover Effects */
-.checkbox-group label:hover::before {
-    box-shadow: inset 0 1px 1px rgba(255,255,255,0.15), 0 2px 8px rgba(0,0,0,0.3);
-}
-
-/* Helper Text */
-.checkbox-group small {
-    flex-basis: 100%;
-    margin-top: 2px;
-    text-align: left;           /* Ensures helper text stays left */
-    color: var(--secondary-text);
-    font-size: 0.85em;
-    line-height: 1.3;
+    box-shadow:
+        0 0 0 3px var(--content-bg),
+        0 0 0 6px var(--accent-glow-color);
 }
 
 /* ======================== */
-/* Disability / Icon Styles */
+/* BUTTON SYSTEM            */
 /* ======================== */
-.disability-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-    color: var(--accent-color);
-}
-.disability-icon i {
-    font-size: 1.2em;
-}
 
-.icon-preview {
-    margin-top: 8px;
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(8px);
-}
-.icon-preview i {
-    font-size: 1.5em;
-    color: var(--accent-color);
-}
+button,
+.button-primary {
+    display: inline-block;
 
-select#disability-icon-select,
-select#edit-disability-icon-select {
-    margin-top: 4px;
-    width: 100%;
-}
-
-/* ======================== */
-/* Button Styles – iOS 26 Onyx */
-/* ======================== */
-button, .button-primary {
-    background-color: var(--accent-color);
-    color: #ffffff;
     padding: 10px 20px;
+
     border: none;
     border-radius: var(--border-radius-md);
-    cursor: pointer;
+
     font-size: 0.95rem;
     font-weight: 500;
-    letter-spacing: normal;
-    transition: 
-        background-color var(--transition-speed) var(--transition-timing),
+
+    cursor: pointer;
+
+    color: #fff;
+    background: var(--accent-color);
+
+    box-shadow: var(--depth-1);
+
+    transition:
         transform var(--transition-speed) var(--transition-timing),
-        box-shadow var(--transition-speed) var(--transition-timing);
-    margin-right: 10px;
-    margin-top: 8px;
-    text-decoration: none;
-    display: inline-block;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+        background-color var(--transition-speed),
+        box-shadow var(--transition-speed);
 }
 
-button:hover, .button-primary:hover {
-    background-color: var(--hover-color);
-    box-shadow: 0 4px 10px rgba(var(--accent-rgb), 0.25);
+button:hover,
+.button-primary:hover {
+    background: var(--hover-color);
+    transform: translateY(-1px);
+    box-shadow: var(--depth-2);
 }
 
-button:active, .button-primary:active {
+button:active {
     transform: scale(0.98);
 }
 
-button:disabled, .button-primary:disabled {
+button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background-color: var(--color-secondary-action);
 }
 
-/* Special Buttons */
-#login-button { background-color: var(--color-success-action); color: #fff; }
-#login-button:hover { background-color: var(--color-success-action-hover); }
+/* ======================== */
+/* SPECIAL BUTTONS          */
+/* ======================== */
+
+#login-button {
+    background: var(--color-success-action);
+}
+
+#login-button:hover {
+    background: var(--color-success-action-hover);
+}
 
 #logout-button,
 button.delete-button,
 button.bulk-delete-button {
-    background-color: var(--color-danger);
-    color: #fff;
+    background: var(--color-danger);
 }
+
 #logout-button:hover,
 button.delete-button:hover,
 button.bulk-delete-button:hover {
-    background-color: var(--color-danger-hover);
+    background: var(--color-danger-hover);
 }
 
 button.secondary-button,
-.list-item-admin button,
-button.edit-button {
-    background-color: var(--color-secondary-action);
+button.edit-button,
+.list-item-admin button {
+    background: var(--color-secondary-action);
+}
+
+button.secondary-button:hover,
+button.edit-button:hover,
+.list-item-admin button:hover {
+    background: var(--color-secondary-action-hover);
+}
+
+/* danger outline */
+.danger-button {
+    background: transparent;
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+}
+
+.danger-button:hover {
+    background: var(--color-danger);
     color: #fff;
 }
-button.secondary-button:hover,
-.list-item-admin button:hover,
-button.edit-button:hover {
-    background-color: var(--color-secondary-action-hover);
-}
 
-/* Danger Outline Button */
-.danger-button {
-    background-color: transparent;
-    color: var(--color-danger);
-    border: 1px solid var(--color-danger);
-    padding: 9px 19px;
-    border-radius: var(--border-radius-md);
-    cursor: pointer;
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin-right: 10px;
-    margin-top: 8px;
-    transition: 0.2s ease;
-}
-.danger-button:hover:not(:disabled) {
-    background-color: var(--color-danger);
-    color: white;
-}
-.danger-button:disabled {
-    border-color: var(--color-danger-disabled);
-    color: var(--color-danger-disabled);
-    cursor: not-allowed;
-    opacity: 0.6;
-}
+/* ======================== */
+/* FORM ACTIONS             */
+/* ======================== */
 
-/* Form Actions */
 .form-actions {
-    margin-top: 30px;
-    text-align: right;
-    padding-top: 20px;
+    margin-top: 28px;
+    padding-top: 18px;
+
     border-top: 1px solid var(--border-color);
-}
-#login-section .form-actions {
-    text-align: center;
-    border-top: none;
-    padding-top: 10px;
-}
 
-.small-button {
-    padding: 5px 12px !important;
-    font-size: 0.85em !important;
+    text-align: right;
 }
 
 /* ======================== */
-/* Status Message Styles    */
+/* STATUS SYSTEM            */
 /* ======================== */
+
 .status-message {
-    margin: 25px 0 20px 0;
-    padding: 12px 20px;
-    font-weight: 500;
-    text-align: center;
+    margin: 20px 0;
+    padding: 12px 16px;
+
     border-radius: var(--border-radius-md);
-    border: 1px solid transparent;
+
+    text-align: center;
+    font-size: 0.95rem;
+
     display: none;
-    clear: both;
-    font-size: 0.95em;
-    transition: background-color var(--transition-speed) var(--transition-timing),
-                color var(--transition-speed) var(--transition-timing),
-                border-color var(--transition-speed) var(--transition-timing);
 }
-.status-message:not(:empty) { display: block; }
+
+.status-message:not(:empty) {
+    display: block;
+}
 
 .status-message.success {
     color: var(--success-text-color);
-    background-color: var(--success-bg-color);
-    border-color: rgba(var(--color-success-action-glow), 0.5);
+    background: var(--success-bg-color);
 }
+
 .status-message.error {
     color: var(--error-text-color);
-    background-color: var(--error-bg-color);
-    border-color: rgba(var(--danger-rgb), 0.3);
+    background: var(--error-bg-color);
 }
 
 /* ======================== */
-/* Dynamic List Styles      */
+/* LIST SYSTEM (ADMIN)      */
 /* ======================== */
+
 .list-container-admin {
     margin-top: 20px;
+
     max-height: 450px;
     overflow-y: auto;
+
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius-md);
-    padding: 0;
-    background-color: var(--bg-color);
-    scrollbar-width: thin;
-    scrollbar-color: var(--secondary-text) transparent;
+
+    background: var(--content-bg);
 }
-.list-container-admin::-webkit-scrollbar { width: 8px; }
-.list-container-admin::-webkit-scrollbar-track { background: transparent; }
-.list-container-admin::-webkit-scrollbar-thumb { background-color: var(--secondary-text); border-radius: 4px; border: none; }
 
 .list-item-admin {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+
     padding: 15px 20px;
+
     border-bottom: 1px solid var(--border-color);
-    gap: 15px;
-    transition: background-color var(--transition-speed) var(--transition-timing);
-    background-color: var(--content-bg);
-}
-.list-item-admin:first-child { border-top-left-radius: var(--border-radius-md); border-top-right-radius: var(--border-radius-md); }
-.list-item-admin:last-child { border-bottom: none; border-bottom-left-radius: var(--border-radius-md); border-bottom-right-radius: var(--border-radius-md); }
-.list-item-admin:hover { background-color: rgba(var(--accent-rgb), 0.05); }
 
-.list-item-admin .item-content {
-    flex-grow: 1;
-    word-break: break-word;
-}
-.list-item-admin .item-content .apple-toggle-checkbox {}
-.list-item-admin .item-content .apple-toggle-label {}
+    background: var(--content-bg);
 
-.list-item-admin .item-details { flex-grow: 1; }
-
-.list-item-admin strong { color: var(--text-color); font-weight: 500; }
-.list-item-admin span { color: var(--secondary-text); font-size: 0.85em; margin-left: 8px; }
-.list-item-admin p { margin: 4px 0; font-size: 0.9em; line-height: 1.4; color: var(--secondary-text); }
-.list-item-admin small { color: var(--secondary-text); font-size: 0.75em; display: block; margin-top: 4px; opacity: 0.8; }
-
-.list-item-admin .item-actions {
-    flex-shrink: 0;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-.item-actions a.direct-link {
-    color: var(--secondary-text);
-    font-size: 1.1em;
-    text-decoration: none;
-    padding: 5px;
-    line-height: 1;
-    border-radius: var(--border-radius-sm);
-    transition: color 0.2s, background-color 0.2s;
-    display: inline-flex;
-    align-items: center;
-}
-.item-actions a.direct-link:hover {
-    color: var(--link-color);
-    background-color: rgba(var(--accent-rgb), 0.1);
-}
-.item-actions a.direct-link i { display: block; }
-
-.list-item-admin.disabled-item {
-    opacity: 0.5;
-    background-color: rgba(128, 128, 128, 0.05);
-}
-.list-item-admin.disabled-item .item-content strong {
-    text-decoration: line-through;
-    color: var(--secondary-text);
+    transition: background-color 0.2s ease;
 }
 
-/* =============================================== */
-/* Admin List Item Profile Picture Styles        */
-/* =============================================== */
+.list-item-admin:hover {
+    background: rgba(var(--accent-rgb), 0.06);
+}
 
-/* Styles for the admin list item content to align items */
+/* content alignment */
 .list-item-admin .item-content {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-grow: 1;
 }
 
-/* Container for the profile picture in the admin list */
+/* profile image */
 .admin-list-item-pfp-container {
-    flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 50px;
     height: 50px;
+    flex-shrink: 0;
 }
 
 .admin-list-item-pfp {
@@ -1540,82 +1464,34 @@ button.edit-button:hover {
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
+
     border: 1px solid var(--border-color);
-    background-color: var(--input-bg-color);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    background: var(--input-bg-color);
 }
 
-/* Ensure you have these styles from the previous fix for the name-line layout: */
+/* text block */
 .list-item-admin .item-details {
-    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: 2px;
     overflow: hidden;
 }
 
-.list-item-admin .item-details .name-line {
-    display: flex;
-    align-items: center;
-    gap: 5px; /* Adjust gap between nickname and badge image */
-}
-
-.list-item-admin .item-details .name-line > strong {
-    font-weight: 500;
+.list-item-admin strong {
     color: var(--text-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline;
+    font-weight: 500;
 }
 
-/* New style for the image-based verified badge in the admin list */
-.list-item-admin .item-details .name-line > .verified-badge-admin-list {
-    width: 14px;  /* Adjust to match your desired size, similar to preview areas */
-    height: 14px; /* Adjust to match your desired size */
-    /* vertical-align: middle; /* Flex align-items:center on parent should handle this */
-    flex-shrink: 0; /* Prevent badge from shrinking */
-    object-fit: contain; /* Ensures the image scales nicely within the dimensions */
-}
-
-/* Keep these styles for the username and small text to ensure they stack correctly */
-.list-item-admin .item-details > span {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.list-item-admin span,
+.list-item-admin small {
     color: var(--secondary-text);
-    font-size: 0.85em;
-    margin-left: 0;
 }
 
-.list-item-admin .item-details > small {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--secondary-text);
-    font-size: 0.75em;
-    margin-top: 2px;
-    opacity: 0.8;
-}
-
-/* REMOVE or COMMENT OUT the generic rule that made all children of .item-details block, if it exists like this: */
-/*
-.list-item-admin .item-details strong,
-.list-item-admin .item-details span,  // This was too broad
-.list-item-admin .item-details small {
-    display: block; // This caused the issue for the verified indicator if it was a span
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-*/
-/* INSTEAD, be more specific for the username span and small tag if they are not already covered by the rules above: */
-.list-item-admin .item-details > span:not(.verified-indicator):not(.name-line) { /* Specifically target username span */
-    display: block;
-    /* other styles for username span here if needed */
+/* actions */
+.list-item-admin .item-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
 /* ======================== */
