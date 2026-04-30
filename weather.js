@@ -464,7 +464,7 @@ function normalizeConditions(current, forecast){
 }
 
 // =====================================================
-// 1) Weather Alerts (REAL first, fallback if needed)
+// 1) Weather Alerts (REAL first, fallback removed)
 // =====================================================
 
 async function fetchNWSAlerts(lat, lon){
@@ -506,41 +506,6 @@ async function fetchOpenWeatherAlertsOneCall(lat, lon){
   }));
 }
 
-// Your old “computeLocalAlerts”, but now it’s explicitly a fallback heads-up
-function computeLocalHeadsUp(current, forecast){
-  const alerts = [];
-  const units = apiUnits();
-
-  const temp = current?.main?.temp;
-  const wind = current?.wind?.speed;
-  const id = current?.weather?.[0]?.id;
-
-  if (typeof id === "number" && id >= 200 && id < 300) alerts.push("Thunderstorm conditions detected.");
-
-  const tC = convertTempFromAPI(temp, units);
-  if (tC != null){
-    const tF = toFFromC(tC);
-    if (tF <= 20) alerts.push("Extreme cold risk (very low temperatures).");
-    if (tF >= 95) alerts.push("Extreme heat risk (very high temperatures).");
-  }
-
-  const w = convertWindFromAPI(wind, units);
-  if (w && ((w.u === "mph" && w.v >= 30) || (w.u === "km/h" && w.v >= 50) || (w.u === "m/s" && w.v >= 13))){
-    alerts.push("High winds — secure loose items and use caution outdoors.");
-  }
-
-  const list = forecast?.list || [];
-  const next = list.slice(0, 2); // 6h
-  const heavy = next.some(it => {
-    const rain = it?.rain?.["3h"] || 0;
-    const snow = it?.snow?.["3h"] || 0;
-    return (rain + snow) >= 10;
-  });
-  if (heavy) alerts.push("Heavy precipitation expected in the next few hours.");
-
-  return alerts;
-}
-
 function shouldShowAlert(){
   const dismissedUntil = Number(localStorage.getItem(WEATHER_ALERT_DISMISS_KEY) || "0");
   return Date.now() > dismissedUntil;
@@ -567,44 +532,39 @@ async function updateAlerts(lat, lon, geo, current, forecast){
     return;
   }
 
-  try{
+  try {
     const country = (geo?.country || current?.sys?.country || "").toUpperCase();
 
     // US: official NWS alerts
     if (country === "US"){
       const nws = await fetchNWSAlerts(lat, lon);
-      if (nws.length){
+      if (nws.length > 0){
         const top = nws[0];
         showAlertBanner({
-          title: `⚠️ ${top.title} (Official)`,
+          title: `⚠️ ${top.title} (Official NWS)`,
           text: top.detail || "An official weather alert is active for this area."
         });
-        return;
+        return; // Stop here if we have an NWS alert
       }
     }
 
-    // Try OpenWeather One Call alerts (may fail if plan doesn’t include it)
+    // Try OpenWeather One Call alerts (for non-US locations or if NWS fails)
     const ow = await fetchOpenWeatherAlertsOneCall(lat, lon);
-    if (ow.length){
+    if (ow.length > 0){
       const top = ow[0];
       showAlertBanner({
         title: `⚠️ ${top.title}`,
         text: (top.detail || "").slice(0, 280) || "A weather alert is active for this area."
       });
-      return;
+      return; // Stop here if we have an OpenWeather alert
     }
-  } catch (err){
-    console.warn("Real alerts unavailable:", err);
-  }
 
-  // Fallback: rule-based heads-up
-  const headsUp = computeLocalHeadsUp(current, forecast);
-  if (headsUp.length){
-    showAlertBanner({
-      title: "⚠️ Weather heads-up",
-      text: headsUp.join(" ")
-    });
-  } else {
+    // If we reach this point, the APIs succeeded but there are ZERO active alerts.
+    hideAlertBanner();
+
+  } catch (err){
+    console.warn("Official alerts unavailable or failed to load:", err);
+    // If the APIs go down, just hide the banner rather than showing fake info.
     hideAlertBanner();
   }
 }
