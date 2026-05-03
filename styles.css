@@ -758,24 +758,24 @@ a.corner-button {
 }
 
 /* ================================================== */
-/* 💎 iOS 26 LIQUID GLASS - ULTRA-CLEAR EDITION     */
+/* 💎 iOS LIQUID GLASS - APPLE VIBRANCY EDITION     */
 /* ================================================== */
 
 :root {
-  /* DARK MODE: 5% opacity for maximum clarity */
-  --dock-bg: rgba(0, 0, 0, 0.05); 
+  /* DARK MODE */
+  --dock-bg: rgba(0, 0, 0, 0.12); 
   --dock-border: rgba(255, 255, 255, 0.15);
-  --item-active: rgba(255, 255, 255, 0.08);
+  --item-active: rgba(255, 255, 255, 0.15);
   --text-main: #ffffff;
   --accent: #0A84FF;
-  --sheen: rgba(255, 255, 255, 0.2);
+  --sheen: rgba(255, 255, 255, 0.3);
 }
 
 body.light-e {
-  /* LIGHT MODE: Polished Diamond clarity */
-  --dock-bg: rgba(255, 255, 255, 0.08); 
-  --dock-border: rgba(255, 255, 255, 0.9);
-  --item-active: rgba(0, 0, 0, 0.04);
+  /* LIGHT MODE */
+  --dock-bg: rgba(255, 255, 255, 0.2); 
+  --dock-border: rgba(255, 255, 255, 0.6);
+  --item-active: rgba(255, 255, 255, 0.4);
   --text-main: #1d1d1f;
   --accent: #007AFF;
   --sheen: rgba(255, 255, 255, 0.95);
@@ -798,22 +798,23 @@ body.light-e {
   border-radius: 100px; 
   border: 0.5px solid var(--dock-border);
   
-  /* 🌀 THE ANTI-FROST FIX:
-     - 4px blur: Lowered from 8px to remove the "milkiness"
-     - 260% saturation: Makes colors behind the dock vibrant
-     - 110% contrast: Keeps text behind the dock sharp
+  /* 🔥 APPLE'S ACTUAL FORMULA:
+     - 35px blur: Heavy blur is THE KEY to vibrancy
+     - 280% saturation: Makes colors POP through the blur
+     - 105% brightness: Adds glow
   */
-  backdrop-filter: blur(4px) saturate(260%) contrast(110%);
-  -webkit-backdrop-filter: blur(4px) saturate(260%) contrast(110%);
+  backdrop-filter: blur(35px) saturate(280%) brightness(105%);
+  -webkit-backdrop-filter: blur(35px) saturate(280%) brightness(105%);
   
   /* 3D GLASS POLISH */
   box-shadow: 
-    0 15px 35px rgba(0, 0, 0, 0.15),
-    inset 0 1px 1.5px var(--sheen), /* Sharp top reflection */
-    inset 0 -1px 1px rgba(0, 0, 0, 0.05); /* Subtle bottom edge */
+    0 15px 35px rgba(0, 0, 0, 0.2),
+    0 5px 15px rgba(0, 0, 0, 0.15),
+    inset 0 1px 1.5px var(--sheen),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.05);
 }
 
-/* --- DOCK ITEMS (Fixed Spacing & No Squishing) --- */
+/* --- DOCK ITEMS --- */
 .dock-item {
   display: flex;
   flex-direction: column;
@@ -824,9 +825,8 @@ body.light-e {
   border-radius: 30px;
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-  
-  /* FIXED: Gap between Icon and Title */
   gap: 5px; 
+  color: var(--text-main);
 }
 
 .dock-icon {
@@ -841,7 +841,6 @@ body.light-e {
   font-size: 10px;
   font-weight: 700;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-  color: var(--text-main);
   opacity: 0.75;
   letter-spacing: -0.1px;
 }
@@ -849,6 +848,11 @@ body.light-e {
 /* --- ACTIVE STATE --- */
 .dock-item.active {
   background: var(--item-active);
+  backdrop-filter: blur(25px) saturate(280%) brightness(110%);
+  -webkit-backdrop-filter: blur(25px) saturate(280%) brightness(110%);
+  box-shadow:
+    0 4px 16px rgba(10, 132, 255, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 .dock-item.active .dock-icon,
@@ -859,7 +863,7 @@ body.light-e {
 
 /* --- INTERACTIONS --- */
 .dock-item:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   transform: translateY(-4px);
 }
 
