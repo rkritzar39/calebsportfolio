@@ -965,7 +965,7 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
   --shadow-ambient: rgba(0,0,0,0.25);
   --shadow-soft: rgba(0,0,0,0.18);
 
-  --blur-strength: 10px;
+  --blur-strength: 30px;
   --radius-full: 100px;
 
   --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
@@ -973,11 +973,11 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
 
 /* ---------- LIGHT MODE ---------- */
 body.light-e {
-  --dock-bg: rgba(255, 255, 255, 0.2);
+  --dock-bg: rgba(255, 255, 255, 0.35);
   --dock-border: rgba(255, 255, 255, 0.7);
   --text-main: #1d1d1f;
 
-  --glass-highlight: rgba(255,255,255,0.95);
+  --glass-highlight: rgba(255,255,255,1);
   --glass-mid: rgba(255,255,255,0.5);
   --glass-low: rgba(255,255,255,0.2);
 
@@ -1010,8 +1010,8 @@ body.light-e {
     linear-gradient(to bottom, var(--glass-mid), var(--glass-low)),
     var(--dock-bg);
 
-  backdrop-filter: blur(var(--blur-strength)) saturate(180%) contrast(110%);
-  -webkit-backdrop-filter: blur(var(--blur-strength)) saturate(180%) contrast(110%);
+  backdrop-filter: blur(var(--blur-strength)) saturate(200%) contrast(115%);
+  -webkit-backdrop-filter: blur(var(--blur-strength)) saturate(200%) contrast(115%);
 
   box-shadow:
     0 10px 30px var(--shadow-ambient),
@@ -1105,18 +1105,23 @@ body.light-e {
 
 .dock-item.active {
   background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,0.4), transparent 70%),
     linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--accent-color) 28%, white 12%),
-      color-mix(in srgb, var(--accent-color) 14%, transparent)
+      color-mix(in srgb, var(--accent-color) 35%, white 15%),
+      color-mix(in srgb, var(--accent-color) 18%, transparent)
     );
+
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
 
   color: var(--accent-color);
 
   box-shadow:
-    0 3px 10px color-mix(in srgb, var(--accent-color) 35%, transparent),
-    inset 0 1px 0 rgba(255,255,255,0.45),
-    inset 0 -1px 0 rgba(0,0,0,0.08);
+    0 4px 16px color-mix(in srgb, var(--accent-color) 40%, transparent),
+    0 2px 8px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
 }
 
 .dock-item.active .dock-label {
