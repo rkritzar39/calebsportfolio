@@ -71,13 +71,16 @@
           <ul id="projects-list"></ul>
         </section>
 
-        <button id="download-btn" class="download-btn">
+       <button id="download-btn" class="download-btn">
   View Resume PDF
 </button>
 
 <script>
 document.getElementById("download-btn").addEventListener("click", function () {
-  window.open("https://docs.google.com/document/d/1SWi6c3pT7RIbWeE6k3or6zqZ9hRh8e5QwlH6C1gOGYU/edit?usp=drivesdk", "_blank");
+  window.open(
+    "https://docs.google.com/document/d/1SWi6c3pT7RIbWeE6k3or6zqZ9hRh8e5QwlH6C1gOGYU/export?format=pdf",
+    "_blank"
+  );
 });
 </script>
       </main>
