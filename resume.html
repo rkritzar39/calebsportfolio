@@ -72,8 +72,14 @@
         </section>
 
         <button id="download-btn" class="download-btn">
-          Download Resume PDF
-        </button>
+  View Resume PDF
+</button>
+
+<script>
+document.getElementById("download-btn").addEventListener("click", function () {
+  window.open("https://docs.google.com/document/d/1SWi6c3pT7RIbWeE6k3or6zqZ9hRh8e5QwlH6C1gOGYU/edit?usp=drivesdk", "_blank");
+});
+</script>
       </main>
     </div>
   </div>
