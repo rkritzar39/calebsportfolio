@@ -6,60 +6,64 @@
 
 <title>Student Portal</title>
 
-<!-- Shared student styling -->
+<!-- Shared LMS styling -->
 <link rel="stylesheet" href="toledo.css">
 </head>
 
 <body>
 
-<!-- TOP BAR -->
+<!-- =========================
+     TOP BAR
+========================= -->
 <div class="topbar">
-  Student Portal • View Only Mode
+  Student Portal • Academic Dashboard
 </div>
 
-<!-- MAIN LAYOUT -->
-<div class="main">
+<!-- =========================
+     APP LAYOUT
+========================= -->
+<div class="app">
 
-  <!-- SYSTEM HEADER -->
-  <div class="card">
-    <h2>📘 Academic Feed</h2>
-    <p>
-      This page displays instructor-published coursework, assignments, and updates.
-      Content is read-only.
-    </p>
+  <!-- =========================
+       SIDEBAR NAVIGATION
+  ========================== -->
+  <div class="sidebar">
+
+    <!-- Dashboard -->
+    <div class="navItem" onclick="showDashboard()">
+      🏠 Dashboard
+    </div>
+
+    <!-- Courses Label -->
+    <div class="navItem">
+      📚 Courses
+    </div>
+
+    <!-- Dynamic course list injected by JS -->
+    <div id="courseList"></div>
+
+    <!-- Reset System -->
+    <div class="navItem" onclick="resetDemo()">
+      ♻ Reset System
+    </div>
+
   </div>
 
-  <!-- DASHBOARD SUMMARY -->
-  <div id="dashboard" class="card"></div>
+  <!-- =========================
+       MAIN CONTENT PANEL
+  ========================== -->
+  <div class="main">
 
-  <!-- COURSES SECTION -->
-  <div class="card">
-    <h3>📚 Courses</h3>
-    <div class="courseGrid"></div>
-  </div>
+    <!-- Dynamic content renders here -->
+    <div id="view"></div>
 
-  <!-- ASSIGNMENTS SECTION -->
-  <div class="card">
-    <h3>📝 Assignments</h3>
-    <div id="assignmentList"></div>
-  </div>
-
-  <!-- CALENDAR SECTION -->
-  <div class="card">
-    <h3>📅 Calendar</h3>
-    <div class="calendarGrid"></div>
-  </div>
-
-  <!-- FOOTER INFO -->
-  <div class="card">
-    <p style="opacity:0.7">
-      Live updates appear automatically when the instructor publishes new content.
-    </p>
   </div>
 
 </div>
 
-<!-- STUDENT LOGIC -->
+<!-- =========================
+     STUDENT LOGIC
+========================= -->
 <script src="toledo.js"></script>
 
 </body>
