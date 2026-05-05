@@ -1,5 +1,5 @@
 /* =========================
-   LMS DATA MODEL (SYSTEM STATE)
+   SYSTEM DATA MODEL
 ========================= */
 
 const DEFAULT_DATA = {
@@ -12,7 +12,8 @@ const DEFAULT_DATA = {
       id: "a1",
       title: "Intro to Cybersecurity",
       due: "2026-05-10",
-      course: "Cybersecurity 101"
+      course: "Cybersecurity 101",
+      score: 95
     }
   ]
 };
@@ -20,7 +21,7 @@ const DEFAULT_DATA = {
 let data = loadData();
 
 /* =========================
-   LOAD SYSTEM STATE
+   LOAD FROM STORAGE
 ========================= */
 
 function loadData(){
@@ -29,7 +30,7 @@ function loadData(){
 }
 
 /* =========================
-   SAVE + SYNC SYSTEM
+   SAVE + SYNC ENGINE
 ========================= */
 
 function save(){
@@ -40,18 +41,6 @@ function save(){
 
 function publish(){
   save();
-}
-
-/* =========================
-   RESET SYSTEM STATE
-========================= */
-
-function resetSystem(){
-  localStorage.removeItem("lms_teacher_data");
-  localStorage.removeItem("lms_sync_signal");
-  data = structuredClone(DEFAULT_DATA);
-  save();
-  render();
 }
 
 /* =========================
@@ -75,7 +64,7 @@ function addCourse(){
 }
 
 /* =========================
-   ASSIGNMENT CREATION
+   ASSIGNMENT CREATION (GRADEBOOK ENABLED)
 ========================= */
 
 function addAssignment(){
@@ -83,6 +72,9 @@ function addAssignment(){
   const title = document.getElementById("aTitle").value.trim();
   const due = document.getElementById("aDue").value;
   const course = document.getElementById("aCourse").value;
+  const scoreInput = document.getElementById("aScore");
+
+  const score = scoreInput ? Number(scoreInput.value) : null;
 
   if(!title || !due || !course) return;
 
@@ -90,17 +82,19 @@ function addAssignment(){
     id: "a" + Date.now(),
     title,
     due,
-    course
+    course,
+    score: isNaN(score) ? null : score
   });
 
   document.getElementById("aTitle").value = "";
   document.getElementById("aDue").value = "";
+  if(scoreInput) scoreInput.value = "";
 
   save();
 }
 
 /* =========================
-   UI RENDER (TEACHER DASHBOARD)
+   UI RENDER ENGINE
 ========================= */
 
 function render(){
@@ -110,7 +104,7 @@ function render(){
   const dropdown = document.getElementById("aCourse");
 
   /* =========================
-     COURSES DISPLAY
+     COURSE LIST
   ========================== */
 
   if(courseList){
@@ -122,7 +116,7 @@ function render(){
   }
 
   /* =========================
-     ASSIGNMENTS DISPLAY
+     ASSIGNMENT LIST
   ========================== */
 
   if(assignmentList){
@@ -130,13 +124,17 @@ function render(){
       <div class="assignment">
         📝 ${a.title}
         <br>
-        <small>Course: ${a.course} | Due: ${a.due}</small>
+        <small>
+          Course: ${a.course} |
+          Due: ${a.due} |
+          Score: ${a.score ?? "Not graded"}
+        </small>
       </div>
     `).join("");
   }
 
   /* =========================
-     COURSE DROPDOWN
+     DROPDOWN POPULATION
   ========================== */
 
   if(dropdown){
