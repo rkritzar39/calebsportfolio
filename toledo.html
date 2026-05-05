@@ -6,7 +6,6 @@
 
 <title>Student Portal</title>
 
-<!-- Shared LMS styling -->
 <link rel="stylesheet" href="toledo.css">
 </head>
 
@@ -20,7 +19,7 @@
 </div>
 
 <!-- =========================
-     APP LAYOUT
+     APP WRAPPER
 ========================= -->
 <div class="app">
 
@@ -29,20 +28,19 @@
   ========================== -->
   <div class="sidebar">
 
-    <!-- Dashboard -->
+    <!-- MAIN NAV -->
     <div class="navItem" onclick="showDashboard()">
       🏠 Dashboard
     </div>
 
-    <!-- Courses Label -->
-    <div class="navItem">
+    <div class="sectionLabel">
       📚 Courses
     </div>
 
-    <!-- Dynamic course list injected by JS -->
+    <!-- Dynamic course list -->
     <div id="courseList"></div>
 
-    <!-- Reset System -->
+    <!-- SYSTEM ACTIONS -->
     <div class="navItem" onclick="resetDemo()">
       ♻ Reset System
     </div>
@@ -50,12 +48,16 @@
   </div>
 
   <!-- =========================
-       MAIN CONTENT PANEL
+       MAIN CONTENT
   ========================== -->
   <div class="main">
 
-    <!-- Dynamic content renders here -->
-    <div id="view"></div>
+    <!-- Optional fallback UI -->
+    <div id="view">
+      <div class="card">
+        Loading student portal...
+      </div>
+    </div>
 
   </div>
 
