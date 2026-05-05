@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Portal</title>
+
+<link rel="stylesheet" href="schoology.css">
+</head>
+
+<body>
+
+<div class="topbar">
+  <div class="logo">Teacher Portal</div>
+</div>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div onclick="show('dashboard')">Dashboard</div>
+    <div onclick="show('courses')">Courses</div>
+    <div onclick="show('assignments')">Assignments</div>
+    <div onclick="show('gradebook')">Gradebook</div>
+    <div onclick="show('publish')">Publish</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="page active">
+      <h2>Teacher Dashboard</h2>
+
+      <div class="card">
+        <p>Total Courses: <span id="courseCount">0</span></p>
+        <p>Total Assignments: <span id="assignmentCount">0</span></p>
+      </div>
+    </div>
+
+    <!-- COURSES -->
+    <div id="courses" class="page">
+      <h2>Create Course</h2>
+
+      <div class="card">
+        <input id="courseName" placeholder="Course Name">
+        <button onclick="addCourse()">Add Course</button>
+      </div>
+
+      <div id="courseList" class="card"></div>
+    </div>
+
+    <!-- ASSIGNMENTS -->
+    <div id="assignments" class="page">
+      <h2>Create Assignment</h2>
+
+      <div class="card">
+
+        <input id="aTitle" placeholder="Assignment Title">
+        <input id="aDue" type="date">
+
+        <select id="aCourse"></select>
+
+        <button onclick="addAssignment()">Create Assignment</button>
+
+      </div>
+
+      <div id="assignmentList" class="card"></div>
+    </div>
+
+    <!-- GRADEBOOK -->
+    <div id="gradebook" class="page">
+      <h2>Gradebook</h2>
+
+      <div id="gradeList" class="card"></div>
+    </div>
+
+    <!-- PUBLISH -->
+    <div id="publish" class="page">
+      <h2>Publish to Students</h2>
+
+      <div class="card">
+        <p>Push all data to student portal</p>
+        <button onclick="publish()">Publish Data</button>
+      </div>
+
+      <div class="card">
+        <p id="status">Not published</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="teacher.js"></script>
+
+</body>
+</html>
