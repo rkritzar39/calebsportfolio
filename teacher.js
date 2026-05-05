@@ -1,69 +1,140 @@
+/* =========================
+   LMS TEACHER DATA MODEL
+========================= */
+
 let data = JSON.parse(localStorage.getItem("lms_teacher_data")) || {
-  courses: [],
-  assignments: []
+  courses: [
+    { id: "c1", name: "Cybersecurity 101" },
+    { id: "c2", name: "IT Systems Design" }
+  ],
+  assignments: [
+    {
+      id: "a1",
+      title: "Intro Quiz",
+      due: "2026-05-10",
+      course: "Cybersecurity 101"
+    }
+  ]
 };
 
-/* SAVE + SYNC */
+/* =========================
+   SAVE + PUBLISH SYSTEM
+========================= */
+
 function save(){
   localStorage.setItem("lms_teacher_data", JSON.stringify(data));
 
-  // real-time trigger
+  // triggers student live update
   localStorage.setItem("lms_sync_signal", Date.now());
 
-  updateStats();
+  render();
 }
 
-/* NAV */
-function show(page){
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(page).classList.add("active");
+/* optional explicit publish button (UI clarity) */
+function publish(){
+  save();
 }
 
-/* COURSES */
+/* =========================
+   RESET SYSTEM
+========================= */
+
+function resetDemo(){
+  localStorage.removeItem("lms_teacher_data");
+  localStorage.removeItem("lms_sync_signal");
+  location.reload();
+}
+
+/* =========================
+   COURSE SYSTEM
+========================= */
+
 function addCourse(){
-  let name = document.getElementById("courseName").value;
+
+  const input = document.getElementById("courseName");
+  const name = input.value.trim();
+
   if(!name) return;
 
-  data.courses.push({ name });
+  data.courses.push({
+    id: "c" + Date.now(),
+    name
+  });
+
+  input.value = "";
 
   save();
-  renderCourses();
 }
 
-function renderCourses(){
-  document.getElementById("courseList").innerHTML =
-    data.courses.map(c => `<div class="assignment">${c.name}</div>`).join("");
+/* =========================
+   ASSIGNMENT SYSTEM
+========================= */
 
-  document.getElementById("aCourse").innerHTML =
-    data.courses.map(c => `<option>${c.name}</option>`).join("");
-}
-
-/* ASSIGNMENTS */
 function addAssignment(){
-  let title = document.getElementById("aTitle").value;
-  let due = document.getElementById("aDue").value;
-  let course = document.getElementById("aCourse").value;
 
-  if(!title || !due) return;
+  const title = document.getElementById("aTitle").value.trim();
+  const due = document.getElementById("aDue").value;
+  const course = document.getElementById("aCourse").value;
 
-  data.assignments.push({ title, due, course });
+  if(!title || !due || !course) return;
+
+  data.assignments.push({
+    id: "a" + Date.now(),
+    title,
+    due,
+    course
+  });
+
+  document.getElementById("aTitle").value = "";
+  document.getElementById("aDue").value = "";
 
   save();
-  renderAssignments();
 }
 
-function renderAssignments(){
-  document.getElementById("assignmentList").innerHTML =
-    data.assignments.map(a =>
-      `<div class="assignment">${a.title} - ${a.course}</div>`
+/* =========================
+   RENDER SYSTEM (TEACHER UI)
+========================= */
+
+function render(){
+
+  /* COURSE LIST */
+  const courseList = document.getElementById("courseList");
+  if(courseList){
+    courseList.innerHTML = data.courses.map(c =>
+      `<div class="assignment">📚 ${c.name}</div>`
     ).join("");
+  }
+
+  /* ASSIGNMENT LIST */
+  const assignmentList = document.getElementById("assignmentList");
+  if(assignmentList){
+    assignmentList.innerHTML = data.assignments.map(a =>
+      `<div class="assignment">
+        📝 ${a.title} <br>
+        <small>Due: ${a.due} | Course: ${a.course}</small>
+      </div>`
+    ).join("");
+  }
+
+  /* COURSE DROPDOWN */
+  const dropdown = document.getElementById("aCourse");
+  if(dropdown){
+    dropdown.innerHTML = data.courses.map(c =>
+      `<option value="${c.name}">${c.name}</option>`
+    ).join("");
+  }
 }
 
-/* STATS */
-function updateStats(){
-  document.getElementById("stats").innerText =
-    `Courses: ${data.courses.length} | Assignments: ${data.assignments.length}`;
-}
+/* =========================
+   INIT
+========================= */
 
-/* INIT */
-updateStats();
+render();
+
+/* auto-sync if multiple tabs open */
+window.addEventListener("storage", (e) => {
+  if (e.key === "lms_sync_signal") {
+    data = JSON.parse(localStorage.getItem("lms_teacher_data")) || data;
+    render();
+  }
+});
