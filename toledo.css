@@ -1,6 +1,7 @@
 /* =========================
-   BASE RESET
+   GLOBAL RESET
 ========================= */
+
 * {
   margin: 0;
   padding: 0;
@@ -11,16 +12,19 @@
 /* =========================
    BODY
 ========================= */
+
 body {
   background: #0f172a;
   color: #e5e7eb;
+  overflow: hidden;
 }
 
 /* =========================
    TOP BAR
 ========================= */
+
 .topbar {
-  height: 55px;
+  height: 50px;
   background: #111827;
   display: flex;
   align-items: center;
@@ -31,76 +35,109 @@ body {
 }
 
 /* =========================
-   MAIN CONTAINER
+   APP LAYOUT
 ========================= */
-.main {
-  padding: 16px;
-  max-width: 1100px;
-  margin: auto;
+
+.app {
+  display: flex;
+  height: calc(100vh - 50px);
 }
 
 /* =========================
-   CARD COMPONENT
+   SIDEBAR (SCHOLOGY STYLE)
 ========================= */
+
+.sidebar {
+  width: 260px;
+  background: #0b1220;
+  border-right: 1px solid #1f2937;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-top: 8px;
+}
+
+/* NAV ITEMS */
+.navItem {
+  padding: 12px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 1px solid #111827;
+  transition: 0.2s;
+}
+
+.navItem:hover {
+  background: #111827;
+}
+
+/* COURSE ITEMS */
+.courseItem,
+.courseList .courseItem,
+#courseList .courseItem {
+  padding: 10px 12px;
+  margin: 4px 8px;
+  background: #0f172a;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  border: 1px solid #1f2937;
+  transition: 0.2s;
+}
+
+.courseItem:hover {
+  background: #1f2937;
+}
+
+/* =========================
+   MAIN CONTENT AREA
+========================= */
+
+.main {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* =========================
+   CARDS
+========================= */
+
 .card {
   background: #1f2937;
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 14px;
   margin-bottom: 12px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.25);
 }
 
-/* =========================
-   HEADINGS
-========================= */
-h2, h3 {
+/* HEADINGS */
+h1, h2, h3 {
   margin-bottom: 8px;
 }
 
+/* TEXT */
 p {
   line-height: 1.5;
   opacity: 0.9;
 }
 
 /* =========================
-   COURSE GRID
-========================= */
-.courseGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
-  margin-top: 10px;
-}
-
-/* COURSE CARD */
-.courseCard {
-  background: #111827;
-  padding: 12px;
-  border-radius: 10px;
-  text-align: center;
-  border: 1px solid #374151;
-  transition: 0.2s;
-}
-
-.courseCard:hover {
-  background: #1f2937;
-  transform: translateY(-2px);
-}
-
-/* =========================
    ASSIGNMENTS
 ========================= */
+
 .assignment {
   background: #111827;
   padding: 10px;
   border-radius: 8px;
   margin-top: 8px;
   border-left: 3px solid #3b82f6;
+  font-size: 14px;
 }
 
 /* =========================
    CALENDAR GRID
 ========================= */
+
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -110,31 +147,32 @@ p {
 
 .day {
   background: #111827;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 12px;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 11px;
   text-align: center;
-  border: 1px solid #374151;
+  border: 1px solid #1f2937;
 }
 
 /* =========================
-   INPUTS (TEACHER SIDE SUPPORT)
+   INPUT FIELDS (TEACHER USE)
 ========================= */
+
 input, select {
   width: 100%;
   padding: 10px;
   margin: 6px 0;
   border-radius: 8px;
-  border: none;
+  border: 1px solid #1f2937;
   background: #0f172a;
-  color: white;
+  color: #e5e7eb;
   outline: none;
-  border: 1px solid #374151;
 }
 
 /* =========================
    BUTTONS
 ========================= */
+
 button {
   padding: 10px 12px;
   background: #3b82f6;
@@ -143,8 +181,8 @@ button {
   border-radius: 8px;
   cursor: pointer;
   margin-top: 6px;
-  transition: 0.2s;
   font-weight: bold;
+  transition: 0.2s;
 }
 
 button:hover {
@@ -152,20 +190,16 @@ button:hover {
 }
 
 /* =========================
-   LAYOUT UTILITIES
+   SCROLLBAR
 ========================= */
-.hidden {
-  display: none;
+
+.sidebar::-webkit-scrollbar,
+.main::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* =========================
-   SCROLL CLEANUP
-========================= */
-body::-webkit-scrollbar {
-  width: 8px;
-}
-
-body::-webkit-scrollbar-thumb {
+.sidebar::-webkit-scrollbar-thumb,
+.main::-webkit-scrollbar-thumb {
   background: #374151;
   border-radius: 10px;
 }
@@ -173,17 +207,33 @@ body::-webkit-scrollbar-thumb {
 /* =========================
    RESPONSIVE DESIGN
 ========================= */
+
 @media (max-width: 768px) {
 
-  .main {
-    padding: 10px;
+  .sidebar {
+    width: 200px;
   }
 
   .calendarGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .courseGrid {
-    grid-template-columns: 1fr;
+  .day {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 500px) {
+
+  .sidebar {
+    display: none;
+  }
+
+  .app {
+    flex-direction: column;
+  }
+
+  .main {
+    height: auto;
   }
 }
