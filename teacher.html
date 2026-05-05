@@ -6,33 +6,29 @@
 
 <title>Teacher Portal</title>
 
-<!-- Shared LMS styling -->
-<link rel="stylesheet" href="schoology.css">
+<!-- SAME CSS AS STUDENT -->
+<link rel="stylesheet" href="toledo.css">
 </head>
 
 <body>
 
-<!-- TOP BAR -->
 <div class="topbar">
-  Teacher Portal • Content Management System
+  Teacher Portal • Content Manager
 </div>
 
-<!-- MAIN CONTAINER -->
 <div class="main">
 
-  <!-- SYSTEM INFO -->
   <div class="card">
-    <h2>📊 Instructor Control Panel</h2>
+    <h2>📊 Instructor Dashboard</h2>
     <p>
-      This panel manages all published academic content shown to students.
-      Changes are instantly reflected in the student portal.
+      This is the publishing control panel. All updates here appear in the student portal instantly.
     </p>
   </div>
 
-  <!-- RESET / CONTROL -->
+  <!-- SYSTEM CONTROLS -->
   <div class="card">
-    <h3>⚙️ System Controls</h3>
-    <button onclick="resetDemo()">Reset All Data</button>
+    <h3>⚙️ Controls</h3>
+    <button onclick="resetDemo()">Reset System</button>
     <button onclick="publish()">Publish Updates</button>
   </div>
 
@@ -40,7 +36,7 @@
   <div class="card">
     <h3>📚 Create Course</h3>
 
-    <input id="courseName" placeholder="Course Name">
+    <input id="courseName" placeholder="Course name">
     <button onclick="addCourse()">Add Course</button>
   </div>
 
@@ -48,7 +44,7 @@
   <div class="card">
     <h3>📝 Create Assignment</h3>
 
-    <input id="aTitle" placeholder="Assignment Title">
+    <input id="aTitle" placeholder="Assignment title">
     <input id="aDue" type="date">
 
     <select id="aCourse"></select>
@@ -56,9 +52,9 @@
     <button onclick="addAssignment()">Create Assignment</button>
   </div>
 
-  <!-- LIVE DATA PREVIEW -->
+  <!-- LIVE DATA VIEW -->
   <div class="card">
-    <h3>📦 Current Published Data</h3>
+    <h3>📦 Published Content</h3>
 
     <h4>Courses</h4>
     <div id="courseList"></div>
@@ -69,7 +65,6 @@
 
 </div>
 
-<!-- TEACHER LOGIC -->
 <script src="teacher.js"></script>
 
 </body>
