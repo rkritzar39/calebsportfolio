@@ -1,47 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Student Portal</title>
 
+<!-- Shared student styling -->
 <link rel="stylesheet" href="toledo.css">
 </head>
 
 <body>
 
-<div class="topbar">Student Portal</div>
+<!-- TOP BAR -->
+<div class="topbar">
+  Student Portal • View Only Mode
+</div>
 
-<div class="container">
+<!-- MAIN LAYOUT -->
+<div class="main">
 
-  <div class="sidebar">
-    <div onclick="show('dashboard')">Dashboard</div>
-    <div onclick="show('courses')">Courses</div>
-    <div onclick="show('assignments')">Assignments</div>
-    <div onclick="show('calendar')">Calendar</div>
+  <!-- SYSTEM HEADER -->
+  <div class="card">
+    <h2>📘 Academic Feed</h2>
+    <p>
+      This page displays instructor-published coursework, assignments, and updates.
+      Content is read-only.
+    </p>
   </div>
 
-  <div class="main">
+  <!-- DASHBOARD SUMMARY -->
+  <div id="dashboard" class="card"></div>
 
-    <div id="dashboard" class="page active"></div>
+  <!-- COURSES SECTION -->
+  <div class="card">
+    <h3>📚 Courses</h3>
+    <div class="courseGrid"></div>
+  </div>
 
-    <div id="courses" class="page">
-      <div class="courseGrid"></div>
-    </div>
+  <!-- ASSIGNMENTS SECTION -->
+  <div class="card">
+    <h3>📝 Assignments</h3>
+    <div id="assignmentList"></div>
+  </div>
 
-    <div id="assignments" class="page">
-      <div id="assignmentList" class="card"></div>
-    </div>
+  <!-- CALENDAR SECTION -->
+  <div class="card">
+    <h3>📅 Calendar</h3>
+    <div class="calendarGrid"></div>
+  </div>
 
-    <div id="calendar" class="page">
-      <div class="calendarGrid card"></div>
-    </div>
-
+  <!-- FOOTER INFO -->
+  <div class="card">
+    <p style="opacity:0.7">
+      Live updates appear automatically when the instructor publishes new content.
+    </p>
   </div>
 
 </div>
 
-<script src="schoology.js"></script>
+<!-- STUDENT LOGIC -->
+<script src="toledo.js"></script>
 
 </body>
 </html>
