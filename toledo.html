@@ -19,40 +19,36 @@
 </div>
 
 <!-- =========================
-     APP WRAPPER
+     APP LAYOUT
 ========================= -->
 <div class="app">
 
   <!-- =========================
-       SIDEBAR NAVIGATION
+       SIDEBAR
   ========================== -->
   <div class="sidebar">
 
-    <!-- MAIN NAV -->
+    <!-- NAV -->
     <div class="navItem" onclick="showDashboard()">
       🏠 Dashboard
     </div>
 
+    <!-- LABEL -->
     <div class="sectionLabel">
       📚 Courses
     </div>
 
-    <!-- Dynamic course list -->
+    <!-- DYNAMIC COURSES -->
     <div id="courseList"></div>
-
-    <!-- SYSTEM ACTIONS -->
-    <div class="navItem" onclick="resetDemo()">
-      ♻ Reset System
-    </div>
 
   </div>
 
   <!-- =========================
-       MAIN CONTENT
+       MAIN CONTENT AREA
   ========================== -->
   <div class="main">
 
-    <!-- Optional fallback UI -->
+    <!-- LMS RENDER TARGET -->
     <div id="view">
       <div class="card">
         Loading student portal...
