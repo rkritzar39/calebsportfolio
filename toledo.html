@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Portal</title>
+
+<link rel="stylesheet" href="schoology.css">
+</head>
+
+<body>
+
+<div class="topbar">
+  <div class="logo">Student Portal</div>
+</div>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div onclick="show('dashboard')">Dashboard</div>
+    <div onclick="show('courses')">Courses</div>
+    <div onclick="show('assignments')">Assignments</div>
+    <div onclick="show('calendar')">Calendar</div>
+    <div onclick="show('grades')">Grades</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div id="dashboard" class="page active"></div>
+
+    <div id="courses" class="page">
+      <h2>Your Courses</h2>
+      <div class="courseGrid"></div>
+      <div id="courseView" class="card hidden"></div>
+    </div>
+
+    <div id="assignments" class="page">
+      <h2>Assignments</h2>
+      <div id="assignmentList" class="card"></div>
+    </div>
+
+    <div id="calendar" class="page">
+      <h2>Calendar</h2>
+      <div class="card calendarGrid"></div>
+    </div>
+
+    <div id="grades" class="page">
+      <h2>Grades</h2>
+      <div class="card"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="schoology.js"></script>
+
+</body>
+</html>
