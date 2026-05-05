@@ -1,124 +1,189 @@
+/* =========================
+   BASE RESET
+========================= */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
 
+/* =========================
+   BODY
+========================= */
 body {
   background: #0f172a;
-  color: white;
+  color: #e5e7eb;
 }
 
-/* TOP BAR */
+/* =========================
+   TOP BAR
+========================= */
 .topbar {
-  height: 50px;
+  height: 55px;
   background: #111827;
   display: flex;
   align-items: center;
-  padding: 0 15px;
+  padding: 0 16px;
   font-weight: bold;
   border-bottom: 1px solid #1f2937;
+  font-size: 14px;
 }
 
-/* LAYOUT */
-.container {
-  display: flex;
-  height: calc(100vh - 50px);
-}
-
-/* SIDEBAR */
-.sidebar {
-  width: 220px;
-  background: #111827;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  border-right: 1px solid #1f2937;
-}
-
-.sidebar div {
-  padding: 10px;
-  background: #1f2937;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.sidebar div:hover {
-  background: #374151;
-}
-
-/* MAIN */
+/* =========================
+   MAIN CONTAINER
+========================= */
 .main {
-  flex: 1;
-  padding: 15px;
-  overflow-y: auto;
+  padding: 16px;
+  max-width: 1100px;
+  margin: auto;
 }
 
-/* PAGES */
-.page { display: none; }
-.active { display: block; }
-
-/* CARDS */
+/* =========================
+   CARD COMPONENT
+========================= */
 .card {
   background: #1f2937;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 10px;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
 }
 
-/* COURSES */
+/* =========================
+   HEADINGS
+========================= */
+h2, h3 {
+  margin-bottom: 8px;
+}
+
+p {
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* =========================
+   COURSE GRID
+========================= */
 .courseGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
+  margin-top: 10px;
 }
 
+/* COURSE CARD */
 .courseCard {
   background: #111827;
-  padding: 15px;
+  padding: 12px;
   border-radius: 10px;
   text-align: center;
-  cursor: pointer;
+  border: 1px solid #374151;
+  transition: 0.2s;
 }
 
-/* ASSIGNMENTS */
+.courseCard:hover {
+  background: #1f2937;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   ASSIGNMENTS
+========================= */
 .assignment {
   background: #111827;
   padding: 10px;
-  margin-top: 8px;
   border-radius: 8px;
+  margin-top: 8px;
+  border-left: 3px solid #3b82f6;
 }
 
-/* CALENDAR */
+/* =========================
+   CALENDAR GRID
+========================= */
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  gap: 6px;
+  margin-top: 10px;
 }
 
 .day {
   background: #111827;
   padding: 10px;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-size: 12px;
   text-align: center;
+  border: 1px solid #374151;
 }
 
-/* UTIL */
-.hidden { display: none; }
+/* =========================
+   INPUTS (TEACHER SIDE SUPPORT)
+========================= */
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin: 6px 0;
+  border-radius: 8px;
+  border: none;
+  background: #0f172a;
+  color: white;
+  outline: none;
+  border: 1px solid #374151;
+}
 
-/* RESPONSIVE */
-@media (max-width: 600px) {
-  .container { flex-direction: column; }
+/* =========================
+   BUTTONS
+========================= */
+button {
+  padding: 10px 12px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: 0.2s;
+  font-weight: bold;
+}
 
-  .sidebar {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
+button:hover {
+  background: #2563eb;
+}
+
+/* =========================
+   LAYOUT UTILITIES
+========================= */
+.hidden {
+  display: none;
+}
+
+/* =========================
+   SCROLL CLEANUP
+========================= */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 10px;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+@media (max-width: 768px) {
+
+  .main {
+    padding: 10px;
   }
 
-  .courseGrid { grid-template-columns: 1fr; }
+  .calendarGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-  .calendarGrid { grid-template-columns: repeat(2, 1fr); }
+  .courseGrid {
+    grid-template-columns: 1fr;
+  }
 }
