@@ -1,22 +1,51 @@
 /* =========================
-   DATA
+   DATA SOURCE (PERSISTENT LMS STATE)
 ========================= */
 
+const DEFAULT_DATA = {
+  courses: [
+    { id: "c1", name: "Cybersecurity 101" }
+  ],
+  assignments: [
+    {
+      id: "a1",
+      title: "Course Introduction Activity",
+      due: "2026-05-10",
+      course: "Cybersecurity 101"
+    }
+  ]
+};
+
 function getData(){
-  return JSON.parse(localStorage.getItem("lms_teacher_data")) || {
-    courses: [],
-    assignments: []
-  };
+  const stored = localStorage.getItem("lms_teacher_data");
+  return stored ? JSON.parse(stored) : DEFAULT_DATA;
 }
 
 /* =========================
-   STATE (CURRENT VIEW)
+   VIEW STATE
 ========================= */
 
-let currentCourse = null;
+let currentView = "dashboard";
+let selectedCourse = null;
 
 /* =========================
-   RESET DEMO
+   NAVIGATION FUNCTIONS
+========================= */
+
+function showDashboard(){
+  currentView = "dashboard";
+  selectedCourse = null;
+  render();
+}
+
+function openCourse(courseName){
+  currentView = "course";
+  selectedCourse = courseName;
+  render();
+}
+
+/* =========================
+   RESET SYSTEM (CLEAR ALL DATA)
 ========================= */
 
 function resetDemo(){
@@ -26,116 +55,115 @@ function resetDemo(){
 }
 
 /* =========================
-   NAVIGATION
+   SIDEBAR RENDER (COURSES)
 ========================= */
 
-function openCourse(courseName){
-  currentCourse = courseName;
-  render();
-}
+function renderSidebar(data){
+  const courseList = document.getElementById("courseList");
 
-function backToHome(){
-  currentCourse = null;
-  render();
+  if(!courseList) return;
+
+  courseList.innerHTML = data.courses.map(c => `
+    <div class="courseItem" onclick="openCourse('${c.name}')">
+      ${c.name}
+    </div>
+  `).join("");
 }
 
 /* =========================
-   MAIN RENDER
+   MAIN RENDER ENGINE
 ========================= */
 
 function render(){
 
   const data = getData();
 
+  renderSidebar(data);
+
+  const view = document.getElementById("view");
+
+  if(!view) return;
+
   /* =========================
      DASHBOARD VIEW
-  ========================= */
-  if(!currentCourse){
+  ========================== */
 
-    const dashboard = document.getElementById("dashboard");
+  if(currentView === "dashboard"){
 
-    dashboard.innerHTML = `
-      <h3>📊 Overview</h3>
-      <p><strong>Courses:</strong> ${data.courses.length}</p>
-      <p><strong>Assignments:</strong> ${data.assignments.length}</p>
-      <p style="opacity:0.7;">Click a course to view details</p>
+    view.innerHTML = `
+      <div class="card">
+        <h2>📊 Dashboard</h2>
+        <p><strong>Courses:</strong> ${data.courses.length}</p>
+        <p><strong>Assignments:</strong> ${data.assignments.length}</p>
+      </div>
+
+      <div class="card">
+        <h3>📌 Recent Assignments</h3>
+        ${
+          data.assignments.map(a => `
+            <div class="assignment">
+              📝 ${a.title} — ${a.course}
+              <br>
+              <small>Due: ${a.due}</small>
+            </div>
+          `).join("")
+        }
+      </div>
     `;
-
-    /* COURSES LIST (CLICKABLE) */
-    document.querySelector(".courseGrid").innerHTML =
-      data.courses.map(c => `
-        <div class="courseCard" onclick="openCourse('${c.name}')">
-          📚 ${c.name}
-        </div>
-      `).join("") || "<p>No courses</p>";
-
-    /* ALL ASSIGNMENTS */
-    document.getElementById("assignmentList").innerHTML =
-      data.assignments.map(a => `
-        <div class="assignment">
-          📝 ${a.title} — ${a.course}
-        </div>
-      `).join("") || "No assignments";
-
-    /* CALENDAR */
-    document.querySelector(".calendarGrid").innerHTML =
-      data.assignments.map(a => `
-        <div class="day">
-          ${a.due}<br><small>${a.title}</small>
-        </div>
-      `).join("");
-
-    return;
   }
 
   /* =========================
      COURSE DETAIL VIEW
-  ========================= */
+  ========================== */
 
-  const courseAssignments = getData().assignments.filter(
-    a => a.course === currentCourse
-  );
+  if(currentView === "course"){
 
-  document.getElementById("dashboard").innerHTML = `
-    <button onclick="backToHome()">← Back</button>
-    <h2>📚 ${currentCourse}</h2>
-    <p>Course details and assignments</p>
-  `;
+    const courseAssignments = data.assignments.filter(
+      a => a.course === selectedCourse
+    );
 
-  document.querySelector(".courseGrid").innerHTML = `
-    <div class="courseCard">
-      📘 Viewing Course
-    </div>
-  `;
+    view.innerHTML = `
+      <div class="card">
+        <h2>📚 ${selectedCourse}</h2>
+        <p>Course Overview & Assignments</p>
 
-  document.getElementById("assignmentList").innerHTML =
-    courseAssignments.map(a => `
-      <div class="assignment">
-        📝 ${a.title}<br>
-        <small>Due: ${a.due}</small>
+        <button onclick="showDashboard()">← Back to Dashboard</button>
       </div>
-    `).join("") || "<p>No assignments in this course</p>";
 
-  document.querySelector(".calendarGrid").innerHTML =
-    courseAssignments.map(a => `
-      <div class="day">
-        ${a.due}<br><small>${a.title}</small>
+      <div class="card">
+        <h3>📝 Assignments</h3>
+
+        ${
+          courseAssignments.length > 0
+            ? courseAssignments.map(a => `
+                <div class="assignment">
+                  ${a.title}
+                  <br>
+                  <small>Due: ${a.due}</small>
+                </div>
+              `).join("")
+            : "<p style='opacity:0.6;'>No assignments in this course</p>"
+        }
       </div>
-    `).join("");
+    `;
+  }
 }
 
 /* =========================
-   LIVE SYNC
+   LIVE SYNC (TEACHER UPDATES)
 ========================= */
 
-window.addEventListener("storage", (e) => {
+window.addEventListener("storage", (event) => {
   if (
-    e.key === "lms_teacher_data" ||
-    e.key === "lms_sync_signal"
+    event.key === "lms_teacher_data" ||
+    event.key === "lms_sync_signal"
   ) {
     render();
   }
 });
 
-/* INIT */
+/* =========================
+   INIT
+========================= */
+
 render();
