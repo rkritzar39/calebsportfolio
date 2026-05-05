@@ -1,22 +1,22 @@
 let data = JSON.parse(localStorage.getItem("lms_teacher_data")) || {
   courses: [],
-  assignments: [],
-  grades: {}
+  assignments: []
 };
 
+/* SAVE + SYNC */
 function save(){
   localStorage.setItem("lms_teacher_data", JSON.stringify(data));
 
-  // 🔥 real-time sync trigger
+  // real-time trigger
   localStorage.setItem("lms_sync_signal", Date.now());
 
   updateStats();
 }
 
 /* NAV */
-function show(id){
+function show(page){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
+  document.getElementById(page).classList.add("active");
 }
 
 /* COURSES */
@@ -25,6 +25,7 @@ function addCourse(){
   if(!name) return;
 
   data.courses.push({ name });
+
   save();
   renderCourses();
 }
@@ -46,6 +47,7 @@ function addAssignment(){
   if(!title || !due) return;
 
   data.assignments.push({ title, due, course });
+
   save();
   renderAssignments();
 }
@@ -57,16 +59,11 @@ function renderAssignments(){
     ).join("");
 }
 
-/* PUBLISH */
-function publish(){
-  save();
-  document.getElementById("status").innerText = "Published ✔";
-}
-
 /* STATS */
 function updateStats(){
   document.getElementById("stats").innerText =
     `Courses: ${data.courses.length} | Assignments: ${data.assignments.length}`;
 }
 
+/* INIT */
 updateStats();
