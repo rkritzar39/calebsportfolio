@@ -1,99 +1,219 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
 body {
-  margin:0;
-  font-family: Arial;
-  background:#0f172a;
-  color:white;
+  background: #0f172a;
+  color: white;
 }
 
+/* =========================
+   TOP BAR
+========================= */
 .topbar {
-  height:50px;
-  background:#111827;
-  display:flex;
-  align-items:center;
-  padding:0 15px;
+  height: 50px;
+  background: #111827;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  font-weight: bold;
+  border-bottom: 1px solid #1f2937;
 }
 
+/* =========================
+   MAIN LAYOUT
+========================= */
 .container {
-  display:flex;
-  height:calc(100vh - 50px);
+  display: flex;
+  height: calc(100vh - 50px);
 }
 
+/* =========================
+   SIDEBAR
+========================= */
 .sidebar {
-  width:220px;
-  background:#111827;
-  padding:10px;
+  width: 220px;
+  background: #111827;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-right: 1px solid #1f2937;
 }
 
 .sidebar div {
-  padding:10px;
-  margin:5px 0;
-  background:#1f2937;
-  border-radius:6px;
-  cursor:pointer;
+  padding: 10px;
+  background: #1f2937;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.2s;
 }
 
 .sidebar div:hover {
-  background:#374151;
+  background: #374151;
 }
 
+/* =========================
+   MAIN AREA
+========================= */
 .main {
-  flex:1;
-  padding:15px;
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
 }
 
+/* =========================
+   PAGES
+========================= */
 .page {
-  display:none;
+  display: none;
 }
 
 .active {
-  display:block;
+  display: block;
 }
 
+/* =========================
+   CARDS
+========================= */
 .card {
-  background:#1f2937;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:10px;
+  background: #1f2937;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
+/* =========================
+   COURSES GRID
+========================= */
 .courseGrid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .courseCard {
-  background:#111827;
-  padding:15px;
-  border-radius:10px;
-  text-align:center;
-  cursor:pointer;
+  background: #111827;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid #1f2937;
 }
 
 .courseCard:hover {
-  background:#374151;
+  background: #374151;
 }
 
+/* =========================
+   ASSIGNMENTS
+========================= */
 .assignment {
-  background:#111827;
-  padding:10px;
-  margin-top:8px;
-  border-radius:8px;
+  background: #111827;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
 }
 
+/* =========================
+   CALENDAR
+========================= */
 .calendarGrid {
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:5px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
 }
 
 .day {
-  background:#111827;
-  padding:10px;
-  border-radius:6px;
-  text-align:center;
+  background: #111827;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid #1f2937;
 }
 
+/* =========================
+   UTILITIES
+========================= */
 .hidden {
-  display:none;
+  display: none;
+}
+
+/* =========================
+   TABLET VIEW
+========================= */
+@media (max-width: 900px) {
+
+  .sidebar {
+    width: 180px;
+  }
+
+  .courseGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .calendarGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* =========================
+   MOBILE VIEW
+========================= */
+@media (max-width: 600px) {
+
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .sidebar div {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .main {
+    padding: 10px;
+  }
+
+  .courseGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendarGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .topbar {
+    font-size: 14px;
+  }
+}
+
+/* =========================
+   SMALL PHONES
+========================= */
+@media (max-width: 400px) {
+
+  .calendarGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 10px;
+  }
 }
