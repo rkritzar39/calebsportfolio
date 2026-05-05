@@ -1,52 +1,61 @@
 /* =========================
-   LMS TEACHER DATA MODEL
+   LMS DATA MODEL (SYSTEM STATE)
 ========================= */
 
-let data = JSON.parse(localStorage.getItem("lms_teacher_data")) || {
+const DEFAULT_DATA = {
   courses: [
     { id: "c1", name: "Cybersecurity 101" },
-    { id: "c2", name: "IT Systems Design" }
+    { id: "c2", name: "IT Systems Fundamentals" }
   ],
   assignments: [
     {
       id: "a1",
-      title: "Intro Quiz",
+      title: "Intro to Cybersecurity",
       due: "2026-05-10",
       course: "Cybersecurity 101"
     }
   ]
 };
 
+let data = loadData();
+
 /* =========================
-   SAVE + PUBLISH SYSTEM
+   LOAD SYSTEM STATE
+========================= */
+
+function loadData(){
+  const stored = localStorage.getItem("lms_teacher_data");
+  return stored ? JSON.parse(stored) : structuredClone(DEFAULT_DATA);
+}
+
+/* =========================
+   SAVE + SYNC SYSTEM
 ========================= */
 
 function save(){
   localStorage.setItem("lms_teacher_data", JSON.stringify(data));
-
-  // triggers student live update
   localStorage.setItem("lms_sync_signal", Date.now());
-
   render();
 }
 
-/* optional explicit publish button (UI clarity) */
 function publish(){
   save();
 }
 
 /* =========================
-   RESET SYSTEM
+   RESET SYSTEM STATE
 ========================= */
 
-function resetDemo(){
+function resetSystem(){
   localStorage.removeItem("lms_teacher_data");
   localStorage.removeItem("lms_sync_signal");
-  location.reload();
+  data = structuredClone(DEFAULT_DATA);
+  save();
+  render();
 }
 
 /* =========================
-   COURSE SYSTEM
+   COURSE CREATION
 ========================= */
 
 function addCourse(){
@@ -62,12 +71,11 @@ function addCourse(){
   });
 
   input.value = "";
-
   save();
 }
 
 /* =========================
-   ASSIGNMENT SYSTEM
+   ASSIGNMENT CREATION
 ========================= */
 
 function addAssignment(){
@@ -92,49 +100,68 @@ function addAssignment(){
 }
 
 /* =========================
-   RENDER SYSTEM (TEACHER UI)
+   UI RENDER (TEACHER DASHBOARD)
 ========================= */
 
 function render(){
 
-  /* COURSE LIST */
   const courseList = document.getElementById("courseList");
-  if(courseList){
-    courseList.innerHTML = data.courses.map(c =>
-      `<div class="assignment">📚 ${c.name}</div>`
-    ).join("");
-  }
-
-  /* ASSIGNMENT LIST */
   const assignmentList = document.getElementById("assignmentList");
-  if(assignmentList){
-    assignmentList.innerHTML = data.assignments.map(a =>
-      `<div class="assignment">
-        📝 ${a.title} <br>
-        <small>Due: ${a.due} | Course: ${a.course}</small>
-      </div>`
-    ).join("");
+  const dropdown = document.getElementById("aCourse");
+
+  /* =========================
+     COURSES DISPLAY
+  ========================== */
+
+  if(courseList){
+    courseList.innerHTML = data.courses.map(c => `
+      <div class="assignment">
+        📚 ${c.name}
+      </div>
+    `).join("");
   }
 
-  /* COURSE DROPDOWN */
-  const dropdown = document.getElementById("aCourse");
+  /* =========================
+     ASSIGNMENTS DISPLAY
+  ========================== */
+
+  if(assignmentList){
+    assignmentList.innerHTML = data.assignments.map(a => `
+      <div class="assignment">
+        📝 ${a.title}
+        <br>
+        <small>Course: ${a.course} | Due: ${a.due}</small>
+      </div>
+    `).join("");
+  }
+
+  /* =========================
+     COURSE DROPDOWN
+  ========================== */
+
   if(dropdown){
-    dropdown.innerHTML = data.courses.map(c =>
-      `<option value="${c.name}">${c.name}</option>`
-    ).join("");
+    dropdown.innerHTML = data.courses.map(c => `
+      <option value="${c.name}">${c.name}</option>
+    `).join("");
   }
 }
 
 /* =========================
-   INIT
+   INITIAL RENDER
 ========================= */
 
 render();
 
-/* auto-sync if multiple tabs open */
-window.addEventListener("storage", (e) => {
-  if (e.key === "lms_sync_signal") {
-    data = JSON.parse(localStorage.getItem("lms_teacher_data")) || data;
+/* =========================
+   LIVE SYNC LISTENER
+========================= */
+
+window.addEventListener("storage", (event) => {
+  if (
+    event.key === "lms_teacher_data" ||
+    event.key === "lms_sync_signal"
+  ) {
+    data = loadData();
     render();
   }
 });
