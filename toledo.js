@@ -9,9 +9,17 @@ const DEFAULT_DATA = {
   assignments: [
     {
       id: "a1",
-      title: "Course Introduction Activity",
+      title: "Intro to Cybersecurity",
       due: "2026-05-10",
-      course: "Cybersecurity 101"
+      course: "Cybersecurity 101",
+      score: 95
+    },
+    {
+      id: "a2",
+      title: "Network Basics Quiz",
+      due: "2026-05-15",
+      course: "Cybersecurity 101",
+      score: 88
     }
   ]
 };
@@ -45,7 +53,7 @@ function openCourse(courseName){
 }
 
 /* =========================
-   RESET SYSTEM
+   OPTIONAL RESET (NOT IN UI)
 ========================= */
 
 function resetDemo(){
@@ -70,6 +78,20 @@ function renderSidebar(data){
 }
 
 /* =========================
+   GRADE CALCULATION
+========================= */
+
+function calculateAverage(assignments){
+  const graded = assignments.filter(a => typeof a.score === "number");
+
+  if(!graded.length) return 0;
+
+  const total = graded.reduce((sum, a) => sum + a.score, 0);
+
+  return (total / graded.length).toFixed(1);
+}
+
+/* =========================
    MAIN RENDER ENGINE
 ========================= */
 
@@ -88,11 +110,14 @@ function render(){
 
   if(currentView === "dashboard"){
 
+    const avgAll = calculateAverage(data.assignments);
+
     view.innerHTML = `
       <div class="card">
         <h2>📊 Dashboard</h2>
         <p><strong>Courses:</strong> ${data.courses.length}</p>
         <p><strong>Assignments:</strong> ${data.assignments.length}</p>
+        <p><strong>Overall Average:</strong> ${avgAll}%</p>
       </div>
 
       <div class="card">
@@ -104,7 +129,10 @@ function render(){
                 <div class="assignment">
                   ${a.title} — ${a.course}
                   <br>
-                  <small>Due: ${a.due}</small>
+                  <small>
+                    Due: ${a.due} |
+                    Score: ${a.score ?? "Not graded"}%
+                  </small>
                 </div>
               `).join("")
             : "<p style='opacity:0.6;'>No assignments available</p>"
@@ -123,10 +151,12 @@ function render(){
       a => a.course === selectedCourse
     );
 
+    const avg = calculateAverage(courseAssignments);
+
     view.innerHTML = `
       <div class="card">
         <h2>📚 ${selectedCourse}</h2>
-        <p>Course details and assignments</p>
+        <p><strong>Class Average:</strong> ${avg}%</p>
 
         <button onclick="showDashboard()">← Back</button>
       </div>
@@ -140,7 +170,10 @@ function render(){
                 <div class="assignment">
                   ${a.title}
                   <br>
-                  <small>Due: ${a.due}</small>
+                  <small>
+                    Due: ${a.due} |
+                    Score: ${a.score ?? "Not graded"}%
+                  </small>
                 </div>
               `).join("")
             : "<p style='opacity:0.6;'>No assignments in this course</p>"
