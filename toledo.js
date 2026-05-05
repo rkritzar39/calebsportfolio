@@ -1,5 +1,5 @@
 /* =========================
-   DATA SOURCE (PERSISTENT LMS STATE)
+   SAFE DATA SOURCE
 ========================= */
 
 const DEFAULT_DATA = {
@@ -29,7 +29,7 @@ let currentView = "dashboard";
 let selectedCourse = null;
 
 /* =========================
-   NAVIGATION FUNCTIONS
+   NAVIGATION
 ========================= */
 
 function showDashboard(){
@@ -45,7 +45,7 @@ function openCourse(courseName){
 }
 
 /* =========================
-   RESET SYSTEM (CLEAR ALL DATA)
+   RESET SYSTEM
 ========================= */
 
 function resetDemo(){
@@ -55,17 +55,16 @@ function resetDemo(){
 }
 
 /* =========================
-   SIDEBAR RENDER (COURSES)
+   SIDEBAR RENDER
 ========================= */
 
 function renderSidebar(data){
   const courseList = document.getElementById("courseList");
-
   if(!courseList) return;
 
   courseList.innerHTML = data.courses.map(c => `
     <div class="courseItem" onclick="openCourse('${c.name}')">
-      ${c.name}
+      📘 ${c.name}
     </div>
   `).join("");
 }
@@ -81,7 +80,6 @@ function render(){
   renderSidebar(data);
 
   const view = document.getElementById("view");
-
   if(!view) return;
 
   /* =========================
@@ -98,22 +96,25 @@ function render(){
       </div>
 
       <div class="card">
-        <h3>📌 Recent Assignments</h3>
+        <h3>📝 Recent Assignments</h3>
+
         ${
-          data.assignments.map(a => `
-            <div class="assignment">
-              📝 ${a.title} — ${a.course}
-              <br>
-              <small>Due: ${a.due}</small>
-            </div>
-          `).join("")
+          data.assignments.length
+            ? data.assignments.map(a => `
+                <div class="assignment">
+                  ${a.title} — ${a.course}
+                  <br>
+                  <small>Due: ${a.due}</small>
+                </div>
+              `).join("")
+            : "<p style='opacity:0.6;'>No assignments available</p>"
         }
       </div>
     `;
   }
 
   /* =========================
-     COURSE DETAIL VIEW
+     COURSE VIEW
   ========================== */
 
   if(currentView === "course"){
@@ -125,16 +126,16 @@ function render(){
     view.innerHTML = `
       <div class="card">
         <h2>📚 ${selectedCourse}</h2>
-        <p>Course Overview & Assignments</p>
+        <p>Course details and assignments</p>
 
-        <button onclick="showDashboard()">← Back to Dashboard</button>
+        <button onclick="showDashboard()">← Back</button>
       </div>
 
       <div class="card">
         <h3>📝 Assignments</h3>
 
         ${
-          courseAssignments.length > 0
+          courseAssignments.length
             ? courseAssignments.map(a => `
                 <div class="assignment">
                   ${a.title}
@@ -150,7 +151,7 @@ function render(){
 }
 
 /* =========================
-   LIVE SYNC (TEACHER UPDATES)
+   LIVE SYNC SYSTEM
 ========================= */
 
 window.addEventListener("storage", (event) => {
