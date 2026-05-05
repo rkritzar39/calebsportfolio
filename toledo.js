@@ -1,5 +1,5 @@
 /* =========================
-   LMS STUDENT DATA ACCESS
+   DATA
 ========================= */
 
 function getData(){
@@ -10,7 +10,13 @@ function getData(){
 }
 
 /* =========================
-   RESET DEMO VIEW (OPTIONAL)
+   STATE (CURRENT VIEW)
+========================= */
+
+let currentCourse = null;
+
+/* =========================
+   RESET DEMO
 ========================= */
 
 function resetDemo(){
@@ -20,7 +26,21 @@ function resetDemo(){
 }
 
 /* =========================
-   MAIN RENDER FUNCTION
+   NAVIGATION
+========================= */
+
+function openCourse(courseName){
+  currentCourse = courseName;
+  render();
+}
+
+function backToHome(){
+  currentCourse = null;
+  render();
+}
+
+/* =========================
+   MAIN RENDER
 ========================= */
 
 function render(){
@@ -28,85 +48,94 @@ function render(){
   const data = getData();
 
   /* =========================
-     DASHBOARD
+     DASHBOARD VIEW
   ========================= */
-  const dashboard = document.getElementById("dashboard");
-  if(dashboard){
+  if(!currentCourse){
+
+    const dashboard = document.getElementById("dashboard");
+
     dashboard.innerHTML = `
       <h3>📊 Overview</h3>
       <p><strong>Courses:</strong> ${data.courses.length}</p>
       <p><strong>Assignments:</strong> ${data.assignments.length}</p>
-      <p style="opacity:0.7; margin-top:8px;">
-        View-only academic feed. Updates are published by instructor.
-      </p>
+      <p style="opacity:0.7;">Click a course to view details</p>
     `;
-  }
 
-  /* =========================
-     COURSES GRID
-  ========================= */
-  const courseGrid = document.querySelector(".courseGrid");
-  if(courseGrid){
-    courseGrid.innerHTML =
-      data.courses.map(course => `
-        <div class="courseCard">
-          📚 ${course.name}
+    /* COURSES LIST (CLICKABLE) */
+    document.querySelector(".courseGrid").innerHTML =
+      data.courses.map(c => `
+        <div class="courseCard" onclick="openCourse('${c.name}')">
+          📚 ${c.name}
         </div>
-      `).join("") || "<p style='opacity:0.6;'>No courses published</p>";
-  }
+      `).join("") || "<p>No courses</p>";
 
-  /* =========================
-     ASSIGNMENTS LIST
-  ========================= */
-  const assignmentList = document.getElementById("assignmentList");
-  if(assignmentList){
-    assignmentList.innerHTML =
+    /* ALL ASSIGNMENTS */
+    document.getElementById("assignmentList").innerHTML =
       data.assignments.map(a => `
         <div class="assignment">
-          📝 <strong>${a.title}</strong><br>
-          <small>Due: ${a.due} | Course: ${a.course}</small>
+          📝 ${a.title} — ${a.course}
         </div>
-      `).join("") || "<p style='opacity:0.6;'>No assignments published</p>";
+      `).join("") || "No assignments";
+
+    /* CALENDAR */
+    document.querySelector(".calendarGrid").innerHTML =
+      data.assignments.map(a => `
+        <div class="day">
+          ${a.due}<br><small>${a.title}</small>
+        </div>
+      `).join("");
+
+    return;
   }
 
   /* =========================
-     CALENDAR VIEW (SIMPLIFIED)
+     COURSE DETAIL VIEW
   ========================= */
-  const calendar = document.querySelector(".calendarGrid");
-  if(calendar){
-    calendar.innerHTML =
-      data.assignments.map(a => `
-        <div class="day">
-          ${a.due}<br>
-          <small>${a.title}</small>
-        </div>
-      `).join("") || "<p style='opacity:0.6;'>No calendar events</p>";
-  }
+
+  const courseAssignments = getData().assignments.filter(
+    a => a.course === currentCourse
+  );
+
+  document.getElementById("dashboard").innerHTML = `
+    <button onclick="backToHome()">← Back</button>
+    <h2>📚 ${currentCourse}</h2>
+    <p>Course details and assignments</p>
+  `;
+
+  document.querySelector(".courseGrid").innerHTML = `
+    <div class="courseCard">
+      📘 Viewing Course
+    </div>
+  `;
+
+  document.getElementById("assignmentList").innerHTML =
+    courseAssignments.map(a => `
+      <div class="assignment">
+        📝 ${a.title}<br>
+        <small>Due: ${a.due}</small>
+      </div>
+    `).join("") || "<p>No assignments in this course</p>";
+
+  document.querySelector(".calendarGrid").innerHTML =
+    courseAssignments.map(a => `
+      <div class="day">
+        ${a.due}<br><small>${a.title}</small>
+      </div>
+    `).join("");
 }
 
 /* =========================
-   REAL-TIME SYNC SYSTEM
+   LIVE SYNC
 ========================= */
 
-window.addEventListener("storage", (event) => {
+window.addEventListener("storage", (e) => {
   if (
-    event.key === "lms_teacher_data" ||
-    event.key === "lms_sync_signal"
+    e.key === "lms_teacher_data" ||
+    e.key === "lms_sync_signal"
   ) {
     render();
   }
 });
 
-/* =========================
-   OPTIONAL MANUAL INIT SYNC
-========================= */
-
-function init(){
-  render();
-}
-
-/* =========================
-   RUN ON LOAD
-========================= */
-
-init();
+/* INIT */
+render();
