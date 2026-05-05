@@ -10,45 +10,31 @@
 
 <body>
 
-<div class="topbar">
-  <div class="logo">Student Portal</div>
-</div>
+<div class="topbar">Student Portal</div>
 
 <div class="container">
 
-  <!-- SIDEBAR -->
   <div class="sidebar">
     <div onclick="show('dashboard')">Dashboard</div>
     <div onclick="show('courses')">Courses</div>
     <div onclick="show('assignments')">Assignments</div>
     <div onclick="show('calendar')">Calendar</div>
-    <div onclick="show('grades')">Grades</div>
   </div>
 
-  <!-- MAIN -->
   <div class="main">
 
     <div id="dashboard" class="page active"></div>
 
     <div id="courses" class="page">
-      <h2>Your Courses</h2>
       <div class="courseGrid"></div>
-      <div id="courseView" class="card hidden"></div>
     </div>
 
     <div id="assignments" class="page">
-      <h2>Assignments</h2>
       <div id="assignmentList" class="card"></div>
     </div>
 
     <div id="calendar" class="page">
-      <h2>Calendar</h2>
-      <div class="card calendarGrid"></div>
-    </div>
-
-    <div id="grades" class="page">
-      <h2>Grades</h2>
-      <div class="card"></div>
+      <div class="calendarGrid card"></div>
     </div>
 
   </div>
