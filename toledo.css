@@ -1,0 +1,99 @@
+body {
+  margin:0;
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+}
+
+.topbar {
+  height:50px;
+  background:#111827;
+  display:flex;
+  align-items:center;
+  padding:0 15px;
+}
+
+.container {
+  display:flex;
+  height:calc(100vh - 50px);
+}
+
+.sidebar {
+  width:220px;
+  background:#111827;
+  padding:10px;
+}
+
+.sidebar div {
+  padding:10px;
+  margin:5px 0;
+  background:#1f2937;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.sidebar div:hover {
+  background:#374151;
+}
+
+.main {
+  flex:1;
+  padding:15px;
+}
+
+.page {
+  display:none;
+}
+
+.active {
+  display:block;
+}
+
+.card {
+  background:#1f2937;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:10px;
+}
+
+.courseGrid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.courseCard {
+  background:#111827;
+  padding:15px;
+  border-radius:10px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.courseCard:hover {
+  background:#374151;
+}
+
+.assignment {
+  background:#111827;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+}
+
+.calendarGrid {
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+
+.day {
+  background:#111827;
+  padding:10px;
+  border-radius:6px;
+  text-align:center;
+}
+
+.hidden {
+  display:none;
+}
