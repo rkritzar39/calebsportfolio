@@ -1,65 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Teacher Portal</title>
 
-<link rel="stylesheet" href="toledo.css">
+<!-- Shared LMS styling -->
+<link rel="stylesheet" href="schoology.css">
 </head>
 
 <body>
 
-<div class="topbar">Teacher Portal</div>
+<!-- TOP BAR -->
+<div class="topbar">
+  Teacher Portal • Content Management System
+</div>
 
-<div class="container">
+<!-- MAIN CONTAINER -->
+<div class="main">
 
-  <div class="sidebar">
-    <div onclick="show('dashboard')">Dashboard</div>
-    <div onclick="show('courses')">Courses</div>
-    <div onclick="show('assignments')">Assignments</div>
-    <div onclick="show('publish')">Publish</div>
+  <!-- SYSTEM INFO -->
+  <div class="card">
+    <h2>📊 Instructor Control Panel</h2>
+    <p>
+      This panel manages all published academic content shown to students.
+      Changes are instantly reflected in the student portal.
+    </p>
   </div>
 
-  <div class="main">
+  <!-- RESET / CONTROL -->
+  <div class="card">
+    <h3>⚙️ System Controls</h3>
+    <button onclick="resetDemo()">Reset All Data</button>
+    <button onclick="publish()">Publish Updates</button>
+  </div>
 
-    <div id="dashboard" class="page active">
-      <div class="card">
-        <h3>Overview</h3>
-        <p id="stats"></p>
-      </div>
-    </div>
+  <!-- CREATE COURSE -->
+  <div class="card">
+    <h3>📚 Create Course</h3>
 
-    <div id="courses" class="page">
-      <div class="card">
-        <input id="courseName" placeholder="Course name">
-        <button onclick="addCourse()">Add Course</button>
-      </div>
+    <input id="courseName" placeholder="Course Name">
+    <button onclick="addCourse()">Add Course</button>
+  </div>
 
-      <div id="courseList" class="card"></div>
-    </div>
+  <!-- CREATE ASSIGNMENT -->
+  <div class="card">
+    <h3>📝 Create Assignment</h3>
 
-    <div id="assignments" class="page">
-      <div class="card">
-        <input id="aTitle" placeholder="Assignment title">
-        <input id="aDue" type="date">
-        <select id="aCourse"></select>
-        <button onclick="addAssignment()">Create</button>
-      </div>
+    <input id="aTitle" placeholder="Assignment Title">
+    <input id="aDue" type="date">
 
-      <div id="assignmentList" class="card"></div>
-    </div>
+    <select id="aCourse"></select>
 
-    <div id="publish" class="page">
-      <div class="card">
-        <button onclick="publish()">Publish to Students</button>
-        <p id="status"></p>
-      </div>
-    </div>
+    <button onclick="addAssignment()">Create Assignment</button>
+  </div>
 
+  <!-- LIVE DATA PREVIEW -->
+  <div class="card">
+    <h3>📦 Current Published Data</h3>
+
+    <h4>Courses</h4>
+    <div id="courseList"></div>
+
+    <h4 style="margin-top:10px;">Assignments</h4>
+    <div id="assignmentList"></div>
   </div>
 
 </div>
 
+<!-- TEACHER LOGIC -->
 <script src="teacher.js"></script>
 
 </body>
