@@ -1,6 +1,3 @@
-/* =========================
-   BASE RESET
-========================= */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -13,9 +10,7 @@ body {
   color: white;
 }
 
-/* =========================
-   TOP BAR
-========================= */
+/* TOP BAR */
 .topbar {
   height: 50px;
   background: #111827;
@@ -26,17 +21,13 @@ body {
   border-bottom: 1px solid #1f2937;
 }
 
-/* =========================
-   MAIN LAYOUT
-========================= */
+/* LAYOUT */
 .container {
   display: flex;
   height: calc(100vh - 50px);
 }
 
-/* =========================
-   SIDEBAR (SHARED)
-========================= */
+/* SIDEBAR */
 .sidebar {
   width: 220px;
   background: #111827;
@@ -52,37 +43,24 @@ body {
   background: #1f2937;
   border-radius: 6px;
   cursor: pointer;
-  transition: 0.2s;
-  text-align: left;
 }
 
 .sidebar div:hover {
   background: #374151;
 }
 
-/* =========================
-   MAIN CONTENT AREA
-========================= */
+/* MAIN */
 .main {
   flex: 1;
   padding: 15px;
   overflow-y: auto;
 }
 
-/* =========================
-   PAGE SYSTEM
-========================= */
-.page {
-  display: none;
-}
+/* PAGES */
+.page { display: none; }
+.active { display: block; }
 
-.active {
-  display: block;
-}
-
-/* =========================
-   CARDS (CORE UI BLOCK)
-========================= */
+/* CARDS */
 .card {
   background: #1f2937;
   padding: 15px;
@@ -90,54 +68,11 @@ body {
   margin-bottom: 10px;
 }
 
-/* =========================
-   INPUTS (TEACHER PORTAL)
-========================= */
-input, select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  border: none;
-  border-radius: 6px;
-  background: #111827;
-  color: white;
-  outline: none;
-  border: 1px solid #374151;
-}
-
-input:focus, select:focus {
-  border-color: #3b82f6;
-}
-
-/* =========================
-   BUTTONS (TEACHER PORTAL)
-========================= */
-button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
-  border: none;
-  border-radius: 6px;
-  background: #3b82f6;
-  color: white;
-  cursor: pointer;
-  transition: 0.2s;
-  font-weight: bold;
-}
-
-button:hover {
-  background: #2563eb;
-}
-
-/* =========================
-   COURSE GRID (STUDENT)
-========================= */
+/* COURSES */
 .courseGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  margin-top: 10px;
 }
 
 .courseCard {
@@ -146,28 +81,17 @@ button:hover {
   border-radius: 10px;
   text-align: center;
   cursor: pointer;
-  border: 1px solid #1f2937;
-  transition: 0.2s;
 }
 
-.courseCard:hover {
-  background: #374151;
-}
-
-/* =========================
-   ASSIGNMENTS
-========================= */
+/* ASSIGNMENTS */
 .assignment {
   background: #111827;
   padding: 10px;
   margin-top: 8px;
   border-radius: 8px;
-  border: 1px solid #1f2937;
 }
 
-/* =========================
-   CALENDAR GRID
-========================= */
+/* CALENDAR */
 .calendarGrid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -179,84 +103,22 @@ button:hover {
   padding: 10px;
   border-radius: 6px;
   text-align: center;
-  border: 1px solid #1f2937;
 }
 
-/* =========================
-   UTILITIES
-========================= */
-.hidden {
-  display: none;
-}
+/* UTIL */
+.hidden { display: none; }
 
-/* =========================
-   RESPONSIVE - TABLETS
-========================= */
-@media (max-width: 900px) {
-
-  .sidebar {
-    width: 180px;
-  }
-
-  .courseGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .calendarGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* =========================
-   RESPONSIVE - PHONES
-========================= */
+/* RESPONSIVE */
 @media (max-width: 600px) {
-
-  .container {
-    flex-direction: column;
-  }
+  .container { flex-direction: column; }
 
   .sidebar {
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
-    white-space: nowrap;
   }
 
-  .sidebar div {
-    flex: 1;
-    text-align: center;
-    font-size: 12px;
-    padding: 8px;
-  }
+  .courseGrid { grid-template-columns: 1fr; }
 
-  .main {
-    padding: 10px;
-  }
-
-  .courseGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .calendarGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .topbar {
-    font-size: 14px;
-  }
-}
-
-/* =========================
-   SMALL PHONES
-========================= */
-@media (max-width: 400px) {
-
-  .calendarGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .card {
-    padding: 10px;
-  }
+  .calendarGrid { grid-template-columns: repeat(2, 1fr); }
 }
