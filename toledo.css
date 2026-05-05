@@ -10,13 +10,14 @@
 }
 
 /* =========================
-   BODY
+   PAGE BASE
 ========================= */
 
-body {
+html, body {
+  height: 100%;
+  overflow: hidden;
   background: #0f172a;
   color: #e5e7eb;
-  overflow: hidden;
 }
 
 /* =========================
@@ -30,8 +31,8 @@ body {
   align-items: center;
   padding: 0 16px;
   font-weight: bold;
-  border-bottom: 1px solid #1f2937;
   font-size: 14px;
+  border-bottom: 1px solid #1f2937;
 }
 
 /* =========================
@@ -41,19 +42,19 @@ body {
 .app {
   display: flex;
   height: calc(100vh - 50px);
+  overflow: hidden;
 }
 
 /* =========================
-   SIDEBAR (SCHOLOGY STYLE)
+   SIDEBAR (SCHOOL STYLE LMS)
 ========================= */
 
 .sidebar {
   width: 260px;
   background: #0b1220;
   border-right: 1px solid #1f2937;
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
+  height: 100%;
   padding-top: 8px;
 }
 
@@ -70,10 +71,17 @@ body {
   background: #111827;
 }
 
-/* COURSE ITEMS */
-.courseItem,
-.courseList .courseItem,
-#courseList .courseItem {
+/* SECTION LABEL (NON-CLICKABLE HEADER) */
+.sectionLabel {
+  padding: 10px 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  opacity: 0.6;
+  letter-spacing: 1px;
+}
+
+/* COURSE ITEMS (INJECTED BY JS) */
+.courseItem {
   padding: 10px 12px;
   margin: 4px 8px;
   background: #0f172a;
@@ -96,10 +104,11 @@ body {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
+  height: 100%;
 }
 
 /* =========================
-   CARDS
+   CARDS (DASHBOARD + COURSE PAGES)
 ========================= */
 
 .card {
@@ -115,14 +124,14 @@ h1, h2, h3 {
   margin-bottom: 8px;
 }
 
-/* TEXT */
+/* PARAGRAPHS */
 p {
   line-height: 1.5;
   opacity: 0.9;
 }
 
 /* =========================
-   ASSIGNMENTS
+   ASSIGNMENTS (GRADEBOOK READY)
 ========================= */
 
 .assignment {
@@ -135,27 +144,7 @@ p {
 }
 
 /* =========================
-   CALENDAR GRID
-========================= */
-
-.calendarGrid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  margin-top: 10px;
-}
-
-.day {
-  background: #111827;
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 11px;
-  text-align: center;
-  border: 1px solid #1f2937;
-}
-
-/* =========================
-   INPUT FIELDS (TEACHER USE)
+   INPUT FIELDS (TEACHER PORTAL COMPATIBLE)
 ========================= */
 
 input, select {
@@ -190,7 +179,27 @@ button:hover {
 }
 
 /* =========================
-   SCROLLBAR
+   CALENDAR GRID (IF USED LATER)
+========================= */
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.day {
+  background: #111827;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  text-align: center;
+  border: 1px solid #1f2937;
+}
+
+/* =========================
+   SCROLLBAR STYLING
 ========================= */
 
 .sidebar::-webkit-scrollbar,
@@ -211,15 +220,11 @@ button:hover {
 @media (max-width: 768px) {
 
   .sidebar {
-    width: 200px;
+    width: 220px;
   }
 
   .calendarGrid {
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .day {
-    font-size: 10px;
   }
 }
 
