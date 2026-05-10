@@ -720,67 +720,6 @@ document.addEventListener('DOMContentLoaded', () => { //
       resumeFormEl.addEventListener("submit", saveResumeEditor);
     }
 
-
-    /* ==========================================================
-   🎓 ACADEMIC MANAGEMENT SYSTEM
-   ========================================================== */
-
-// This function builds the HTML for the academic tabs dynamically
-window.showAcademicTab = function(tabName) {
-    const content = $('admin-content'); // Ensure this ID exists in your HTML
-    if (!content) return;
-
-    content.innerHTML = `<p>Loading ${tabName}...</p>`;
-    const docRef = doc(db, "academic_stats", "current");
-
-    onSnapshot(docRef, (snap) => {
-        const data = snap.data() || {};
-        let html = `<div class="admin-card"><h3>Manage ${tabName.toUpperCase()}</h3>`;
-
-        // GPA and Semesters (Single Fields)
-        if (['gpa', 'semesters'].includes(tabName)) {
-            html += `
-                <div class="form-group">
-                    <input type="text" id="acad-single-input" value="${data[tabName] || ''}" placeholder="Enter ${tabName}">
-                    <button class="button-primary" onclick="saveAcademicField('${tabName}')">Update</button>
-                </div>`;
-        } 
-        // Courses and Skills (List Arrays)
-        else if (['courses', 'skills'].includes(tabName)) {
-            const list = data[tabName] || [];
-            html += `
-                <div class="form-group">
-                    <input type="text" id="acad-array-input" placeholder="Add new...">
-                    <button class="button-primary" onclick="addAcademicListItem('${tabName}')">Add</button>
-                </div>
-                <ul class="admin-list">
-                    ${list.map(item => `<li>${item} <button class="delete-btn" onclick="removeAcademicListItem('${tabName}', '${item}')">×</button></li>`).join('')}
-                </ul>`;
-        }
-        html += `</div>`;
-        content.innerHTML = html;
-    });
-};
-
-// Database Write Operations
-window.saveAcademicField = async (field) => {
-    const val = $('acad-single-input').value;
-    await setDoc(doc(db, "academic_stats", "current"), { [field]: val }, { merge: true });
-    window.showFeedback(`${field} updated!`);
-};
-
-window.addAcademicListItem = async (field) => {
-    const val = $('acad-array-input').value;
-    if (val) {
-        await updateDoc(doc(db, "academic_stats", "current"), { [field]: arrayUnion(val) });
-        $('acad-array-input').value = "";
-    }
-};
-
-window.removeAcademicListItem = async (field, value) => {
-    await updateDoc(doc(db, "academic_stats", "current"), { [field]: arrayRemove(value) });
-};
-
     
     // Reference for Shoutout Metadata (used for timestamps)
     const shoutoutsMetaRef = doc(db, 'siteConfig', 'shoutoutsMetadata'); //
@@ -2878,13 +2817,15 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
 
 // Listener for changes in authentication state (login/logout)
 onAuthStateChanged(auth, user => {
+    // --- User is signed IN ---
     if (user) {
-        const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"];
+        const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"]; // Your authorized email
 
+        // Check if the signed-in user is on the admin list
         if (adminEmails.includes(user.email)) {
             console.log(`✅ Access GRANTED for admin: ${user.email}`);
 
-            // 1. UI Visibility
+            // 1. Immediately show the admin panel
             const loginSection = document.getElementById('login-section');
             const adminContent = document.getElementById('admin-content');
             const logoutButton = document.getElementById('logout-button');
@@ -2895,31 +2836,31 @@ onAuthStateChanged(auth, user => {
             if (loginSection) loginSection.style.display = 'none';
             if (adminContent) adminContent.style.display = 'block';
             if (logoutButton) logoutButton.style.display = 'inline-block';
-            
             if (adminGreeting) {
                 adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
             }
 
-            // Profile Picture Logic
+            // --- START: ADD THIS CODE ---
             const adminProfilePic = document.getElementById('admin-profile-pic');
             if (adminProfilePic) {
-                adminProfilePic.src = user.photoURL || 'images/default-profile.jpg';
-                adminProfilePic.style.display = 'inline-block';
+                if (user.photoURL) {
+                    // If the user has a Google photo URL, use it
+                    adminProfilePic.src = user.photoURL;
+                    adminProfilePic.style.display = 'inline-block'; // Or 'block' based on your CSS
+                } else {
+                    // Optional: Use a default image if they logged in via email/pass
+                    // or if their Google account has no photo.
+                    adminProfilePic.src = 'images/default-profile.jpg'; // Make sure this path is correct
+                    adminProfilePic.style.display = 'inline-block';
+                }
             }
-
+            // --- END: ADD THIS CODE ---
             if (authStatus) authStatus.textContent = '';
             if (adminStatusElement) adminStatusElement.textContent = '';
             
             // 2. Safely load all data
             try {
                 console.log("Loading all admin panel data...");
-
-                // --- ADDED: Load Academic Tab First ---
-                if (typeof window.showAcademicTab === "function") {
-                    window.showAcademicTab('gpa'); 
-                }
-
-                // Existing functions
                 loadProfileData();
                 loadBusinessInfoData();
                 setupBusinessInfoListeners();
@@ -2935,37 +2876,39 @@ onAuthStateChanged(auth, user => {
                 resetInactivityTimer();
                 addActivityListeners();
             } catch (error) {
+                // If any data-loading function fails, it will be caught here
                 console.error("❌ CRITICAL ERROR during data loading:", error);
-                // Fallback if showAdminStatus isn't defined yet
-                const statusMsg = document.getElementById('admin-status');
-                if (statusMsg) statusMsg.textContent = `Error: ${error.message}`;
+                showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
             }
 
         } else {
-            console.warn(`❌ Access DENIED for user: ${user.email}`);
-            alert("Access Denied. Unauthorized account.");
+            // --- User is NOT an authorized admin ---
+            console.warn(`❌ Access DENIED for user: ${user.email}. Not in the admin list.`);
+            alert("Access Denied. This account is not authorized to access the admin panel.");
             signOut(auth);
         }
 
     } else {
-        console.log("User is signed out.");
+        // --- User is signed OUT ---
+        console.log("User is signed out. Displaying login screen.");
         const loginSection = document.getElementById('login-section');
         const adminContent = document.getElementById('admin-content');
         if (loginSection) loginSection.style.display = 'block';
         if (adminContent) adminContent.style.display = 'none';
         
+        // --- START: ADD THIS CODE ---
+        // Hide the profile picture on logout
         const adminProfilePic = document.getElementById('admin-profile-pic');
         if (adminProfilePic) {
             adminProfilePic.src = '';
             adminProfilePic.style.display = 'none';
         }
+        // --- END: ADD THIS CODE ---
 
-        if (typeof removeActivityListeners === "function") {
-            removeActivityListeners();
-        }
+        removeActivityListeners();
     }
 });
-
+    
     // Login Form Submission (Handles the final step after password entry)
     if (loginForm) { //
         loginForm.addEventListener('submit', (e) => { //
