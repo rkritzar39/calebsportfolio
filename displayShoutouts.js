@@ -14,41 +14,58 @@ const firebaseConfig = {
 // 2. IMPORTS
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { 
-  getFirestore, collection, getDocs, doc, onSnapshot, 
+  getFirestore, collection, getDocs, doc, getDoc, onSnapshot, 
   Timestamp, orderBy, query, where 
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
 
-// 3. INITIALIZATION
+// 3. GLOBAL VARIABLES & REFS
 let db;
 let firebaseAppInitialized = false;
 let unsubscribeLiveStatus = null;
 
-// Global variables for search data
+// Module-level references
+let profileDocRef, presidentDocRef, usefulLinksCollectionRef, socialLinksCollectionRef;
+let disabilitiesCollectionRef, techItemsCollectionRef, shoutoutsMetaRef;
+let faqsCollectionRef, businessDocRef, postsCollectionRef;
+
+// Data storage for searches
 let allTikTokCreators = [], allInstagramCreators = [], allYouTubeCreators = [];
 
+// 4. INITIALIZATION
 try {
     const app = initializeApp(firebaseConfig);
     db = getFirestore(app);
+
+    // Assigning your specific references
+    profileDocRef = doc(db, "site_config", "mainProfile"); 
+    businessDocRef = doc(db, "site_config", "businessDetails"); 
+    presidentDocRef = doc(db, "site_config", "currentPresident");
+    usefulLinksCollectionRef = collection(db, "useful_links");
+    socialLinksCollectionRef = collection(db, "social_links");
+    disabilitiesCollectionRef = collection(db, "disabilities");
+    techItemsCollectionRef = collection(db, "tech_items");
+    shoutoutsMetaRef = doc(db, 'siteConfig', 'shoutoutsMetadata');
+    faqsCollectionRef = collection(db, "faqs");
+    postsCollectionRef = collection(db, "posts");
+
     firebaseAppInitialized = true;
-    console.log("✅ Firebase initialized successfully.");
+    console.log("✅ Firebase initialized for display.");
 } catch (error) {
     console.error("❌ Firebase initialization failed:", error);
     const body = document.body;
     if (body) {
-        body.innerHTML = '<p class="error" style="text-align: center; padding: 50px; color: red;">Could not connect to required services. Please try again later.</p>';
+        body.innerHTML = '<p class="error" style="text-align: center; padding: 50px; color: red; font-size: 1.2em;">Could not connect to required services. Please try again later.</p>';
     }
 }
 
 /* ==========================================================
-   🎓 MASTER ACADEMIC DISPLAY SYSTEM
+   🎓 MASTER ACADEMIC DISPLAY (NEW)
    ========================================================== */
-
 function initAcademicMasterDisplay() {
     const collegeDiv = document.getElementById('college-content-dynamic');
     if (!collegeDiv) return;
 
-    // Single source of truth from your Admin Panel
     const academicRef = doc(db, "academic_stats", "current");
 
     onSnapshot(academicRef, (snap) => {
@@ -58,11 +75,8 @@ function initAcademicMasterDisplay() {
         }
 
         const d = snap.data();
-
         collegeDiv.innerHTML = `
             <div class="academic-container">
-                
-                <!-- TOP STATS: GPA & Semesters -->
                 <div class="academic-stats-row">
                     <div class="stat-card glass">
                         <span class="stat-label">Cumulative GPA</span>
@@ -73,55 +87,20 @@ function initAcademicMasterDisplay() {
                         <span class="stat-value">${d.semesters || '0'}</span>
                     </div>
                 </div>
-
                 <div class="academic-main-grid">
-                    <!-- LEFT COLUMN: Learning & Tasks -->
                     <div class="academic-column">
                         <div class="data-section glass">
-                            <h4><i class="fas fa-book"></i> Enrolled Courses</h4>
+                            <h4><i class="fas fa-book"></i> Courses</h4>
                             <ul class="clean-list">
                                 ${(d.courses || []).map(c => `<li><i class="fas fa-chevron-right"></i> ${c}</li>`).join('') || '<li>No courses listed</li>'}
                             </ul>
                         </div>
-
-                        <div class="data-section glass mt-20">
-                            <h4><i class="fas fa-tasks"></i> Upcoming Assignments</h4>
-                            <ul class="assignment-list">
-                                ${(d.assignments || []).map(a => `
-                                    <li>
-                                        <span class="a-title">${a.title}</span>
-                                        <span class="a-date">${a.date}</span>
-                                    </li>
-                                `).join('') || '<li>All caught up!</li>'}
-                            </ul>
-                        </div>
                     </div>
-
-                    <!-- RIGHT COLUMN: Experience & Future -->
                     <div class="academic-column">
                         <div class="data-section glass">
-                            <h4><i class="fas fa-brain"></i> Key Skills</h4>
+                            <h4><i class="fas fa-brain"></i> Skills</h4>
                             <div class="skills-flex">
-                                ${(d.skills || []).map(s => `<span class="skill-tag">${s}</span>`).join('') || '<span>Add skills in Admin</span>'}
-                            </div>
-                        </div>
-
-                        <div class="data-section glass mt-20">
-                            <h4><i class="fas fa-briefcase"></i> Internships</h4>
-                            <ul class="clean-list">
-                                ${(d.internships || []).map(i => `<li>${i}</li>`).join('') || '<li>Seeking opportunities</li>'}
-                            </ul>
-                        </div>
-
-                        <div class="data-section glass mt-20">
-                            <h4><i class="fas fa-chart-line"></i> GPA History</h4>
-                            <div class="history-track">
-                                ${(d.history || []).map(h => `
-                                    <div class="history-pill">
-                                        <span class="h-term">${h.term}</span>
-                                        <span class="h-val">${h.val}</span>
-                                    </div>
-                                `).join('') || 'No history recorded'}
+                                ${(d.skills || []).map(s => `<span class="skill-tag">${s}</span>`).join('') || '<span>Update in Admin</span>'}
                             </div>
                         </div>
                     </div>
@@ -132,40 +111,78 @@ function initAcademicMasterDisplay() {
 }
 
 /* ==========================================================
-   🔔 LIVE STATUS & NOTIFICATIONS
+   🏛️ LEGISLATION TRACKER (RESTORED ORIGINAL)
    ========================================================== */
+async function loadAndDisplayLegislation() {
+    const legislationList = document.getElementById('legislation-list');
+    if (!legislationList) return;
 
+    legislationList.innerHTML = '<p>Loading active legislation...</p>';
+    const q = query(collection(db, "legislation"), orderBy("order", "asc"));
+
+    try {
+        const querySnapshot = await getDocs(q);
+        legislationList.innerHTML = '';
+        if (querySnapshot.empty) {
+            legislationList.innerHTML = '<p>No bills are currently being tracked.</p>';
+        } else {
+            querySnapshot.forEach(doc => {
+                const item = doc.data();
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'legislation-item';
+                const status = item.status || {};
+                const steps = [
+                    { key: 'introduced', label: 'Introduced', completed: status.introduced },
+                    { key: 'passedHouse', label: 'Passed House', completed: status.passedHouse },
+                    { key: 'passedSenate', label: 'Passed Senate', completed: status.passedSenate },
+                    { key: 'toPresident', label: 'To President', completed: status.toPresident },
+                    { key: 'becameLaw', label: 'Became Law', completed: status.becameLaw },
+                ];
+                const currentIndex = steps.map(s => s.completed).lastIndexOf(true);
+                let stepsHtml = '';
+                steps.forEach((step, index) => {
+                    let stepClass = step.completed ? 'completed' : '';
+                    if (index === currentIndex) stepClass += ' current';
+                    stepsHtml += `<li class="progress-step-vertical ${stepClass}"><div class="step-dot"></div><div class="step-details"><span class="step-label">${step.label}</span></div></li>`;
+                });
+
+                itemDiv.innerHTML = `
+                    <div class="bill-info">
+                        <div class="bill-header"><span class="bill-id">${item.billId || 'N/A'}</span><h4>${item.title || 'No Title'}</h4></div>
+                        <div class="bill-details"><p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'}<br><strong>Introduced:</strong> ${item.date || 'N/A'}</p></div>
+                        <p class="bill-summary">${item.description || 'A summary is in progress.'}</p>
+                        ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
+                    </div>
+                    <div class="bill-progress"><ol class="progress-tracker-vertical">${stepsHtml}</ol></div>`;
+                legislationList.appendChild(itemDiv);
+            });
+        }
+    } catch (error) {
+        console.error("Error loading legislation:", error);
+    }
+}
+
+/* ==========================================================
+   🟢 LIVE STATUS & NOTIFICATIONS
+   ========================================================== */
 function watchLiveStatus() {
     const el = document.getElementById("live-activity-text");
     const container = document.getElementById("live-activity");
     if (!el || !container) return;
 
-    const liveStatusRef = doc(db, "live_status", "current");
-
-    onSnapshot(liveStatusRef, (snap) => {
-        if (!snap.exists()) {
-            el.textContent = "🛌 Offline";
-            container.classList.add("hidden");
-            return;
-        }
+    onSnapshot(doc(db, "live_status", "current"), (snap) => {
         const data = snap.data() || {};
-        const message = (data.message || "").trim();
-        const isActive = data.isActive === true || message.length > 0;
-
-        el.textContent = isActive ? (message || "🟢 Active") : "🛌 Offline";
-        container.classList.toggle("active", isActive);
-        container.classList.toggle("hidden", !isActive);
+        const isActive = data.isActive === true || (data.message || "").trim().length > 0;
+        el.textContent = isActive ? (data.message || "🟢 Active") : "🛌 Offline";
+        container.className = isActive ? "active" : "hidden";
     });
 }
 
 function showSmartToast(title, message) {
-    const container = document.getElementById('toast-container') || (() => {
-        const c = document.createElement('div');
-        c.id = 'toast-container';
-        document.body.appendChild(c);
-        return c;
+    let container = document.getElementById('toast-container') || (() => {
+        const c = document.createElement('div'); c.id = 'toast-container';
+        document.body.appendChild(c); return c;
     })();
-
     const toast = document.createElement('div');
     toast.className = 'toast glass';
     toast.innerHTML = `<strong>${title}</strong><br><span>${message}</span>`;
@@ -176,235 +193,30 @@ function showSmartToast(title, message) {
 function setupSmartRealtimeNotifications() {
     const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
     if (!settings.notifications?.enabled) return;
-
-    const collections = ["shoutouts", "social_links", "tech_items", "posts", "legislation"];
-    collections.forEach(col => {
+    ["shoutouts", "posts", "legislation"].forEach(col => {
         let firstLoad = true;
         onSnapshot(collection(db, col), (snap) => {
             if (firstLoad) { firstLoad = false; return; }
             snap.docChanges().forEach(change => {
-                if (change.type === "added") {
-                    showSmartToast("New Update", `A new item was added to ${col.replace('_', ' ')}!`);
-                }
+                if (change.type === "added") showSmartToast("Update", `New entry in ${col}`);
             });
         });
     });
 }
 
 /* ==========================================================
-   🏛️ LEGISLATION & SOCIAL RENDERING
-   ========================================================== */
-
-async function loadAndDisplayLegislation() {
-    const legislationList = document.getElementById('legislation-list');
-    if (!legislationList) return;
-
-    onSnapshot(query(collection(db, "legislation"), orderBy("order", "asc")), (snap) => {
-        legislationList.innerHTML = '';
-        if (snap.empty) {
-            legislationList.innerHTML = '<p>No bills are currently being tracked.</p>';
-            return;
-        }
-        snap.forEach(doc => {
-            const item = doc.data();
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'legislation-item glass';
-            // (Your existing vertical progress logic here)
-            // ... truncated for brevity, keep your existing legislation HTML generation
-            legislationList.appendChild(itemDiv);
-        });
-    });
-}
-
-// Helper Functions for Social Cards
-function renderTikTokCard(account) { /* Your existing TikTok HTML */ }
-function renderInstagramCard(account) { /* Your existing IG HTML */ }
-function renderYouTubeCard(account) { /* Your existing YT HTML */ }
-
-/* ==========================================================
    🚀 INITIALIZATION
    ========================================================== */
-
 document.addEventListener("DOMContentLoaded", () => {
     if (firebaseAppInitialized) {
         watchLiveStatus();
-        initAcademicMasterDisplay(); // Unified Academic View
+        initAcademicMasterDisplay();
         loadAndDisplayLegislation();
         setupSmartRealtimeNotifications();
-        
-        // Push notification setup
-        if ("Notification" in window) {
-            // initializePushNotifications(); 
-        }
     }
 });
 
 
-/* ==========================================================
-   🔔 SMART FIRESTORE NOTIFICATION SYSTEM (ALL SECTIONS)
-   ========================================================== */
-
-// --- Cache system to prevent duplicates ---
-const notifiedDocs = new Set(JSON.parse(sessionStorage.getItem('notifiedDocs') || "[]"));
-
-function rememberDoc(id) {
-  notifiedDocs.add(id);
-  sessionStorage.setItem('notifiedDocs', JSON.stringify([...notifiedDocs]));
-}
-
-function hasNotified(id) {
-  return notifiedDocs.has(id);
-}
-
-// --- Load user notification preferences ---
-function getNotifPrefs() {
-  const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-  return settings.notifications || { enabled: false, categories: {} };
-}
-
-// --- Toast Helper (uses in-site system) ---
-function showSmartToast(title, message) {
-  const container = document.getElementById('toast-container') || (() => {
-    const c = document.createElement('div');
-    c.id = 'toast-container';
-    Object.assign(c.style, {
-      position: 'fixed',
-      bottom: '30px',
-      right: '30px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px',
-      zIndex: '9999'
-    });
-    document.body.appendChild(c);
-    return c;
-  })();
-
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.style.cssText = `
-    background: var(--accent-color, #007aff);
-    color: #fff;
-    border-radius: 12px;
-    padding: 14px 18px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-    backdrop-filter: blur(16px);
-    font-size: 15px;
-    animation: fadeInCard 0.4s ease forwards;
-  `;
-  toast.innerHTML = `<strong>${title}</strong><br><span>${message}</span>`;
-  container.appendChild(toast);
-
-  setTimeout(() => toast.remove(), 4000);
-}
-
-// --- Initialize smart realtime notifications ---
-function setupSmartRealtimeNotifications() {
-  const prefs = getNotifPrefs();
-  if (!prefs.enabled) return;
-
-  // --- Utility ---
-  function setupCollectionListener(ref, sectionName, formatMessage) {
-    let firstLoad = false;
-    onSnapshot(ref, (snapshot) => {
-      if (!firstLoad) {
-        snapshot.docs.forEach(doc => rememberDoc(doc.id));
-        firstLoad = true;
-        return;
-      }
-      snapshot.docChanges().forEach(change => {
-        const id = change.doc.id;
-        if (hasNotified(id)) return;
-        const data = change.doc.data();
-        const { title, message } = formatMessage(change.type, data);
-        if (title && message) {
-          showSmartToast(title, message);
-          rememberDoc(id);
-        }
-      });
-    });
-  }
-
-  // === Creators ===
-  setupCollectionListener(collection(db, "shoutouts"), "Creators", (action, d) => {
-    const platform = d.platform || "Unknown";
-    const name = d.nickname || d.username || "Unnamed Creator";
-    const verb = action === "added" ? "joined" :
-                 action === "modified" ? "was updated" : "was removed";
-    return { title: `Creator ${action}`, message: `${name} ${verb} on ${platform}.` };
-  });
-
-  // === Social Links ===
-  setupCollectionListener(collection(db, "social_links"), "Social", (action, d) => ({
-    title: action === "added" ? "New Social Link" : action === "modified" ? "Social Link Updated" : "Social Link Removed",
-    message: `${d.label || "Link"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
-  }));
-
-  // === Useful Links ===
-  setupCollectionListener(collection(db, "useful_links"), "Links", (action, d) => ({
-    title: action === "added" ? "Useful Link Added" : action === "modified" ? "Useful Link Updated" : "Useful Link Removed",
-    message: `${d.label || "Link"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
-  }));
-
-  // === Tech Items ===
-  setupCollectionListener(collection(db, "tech_items"), "Tech", (action, d) => ({
-    title: action === "added" ? "New Tech Item" : action === "modified" ? "Tech Item Updated" : "Tech Item Removed",
-    message: `${d.name || "Device"} ${action === "added" ? "added" : action === "modified" ? "updated" : "removed"}.`
-  }));
-
-  // === FAQs ===
-  setupCollectionListener(collection(db, "faqs"), "FAQs", (action, d) => ({
-    title: action === "added" ? "New FAQ" : action === "modified" ? "FAQ Updated" : "FAQ Removed",
-    message: `${d.question || "Question"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
-  }));
-
-  // === Posts ===
-  setupCollectionListener(collection(db, "posts"), "Posts", (action, d) => ({
-    title: action === "added" ? "New Post" : action === "modified" ? "Post Updated" : "Post Removed",
-    message: `${d.title || "A post"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
-  }));
-
-  // === Legislation ===
-  setupCollectionListener(collection(db, "legislation"), "Legislation", (action, d) => ({
-    title: action === "added" ? "New Bill" : action === "modified" ? "Bill Updated" : "Bill Removed",
-    message: `${d.title || d.billId || "A bill"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
-  }));
-
-  // === Business Info ===
-  const bizRef = doc(db, "site_config", "businessDetails");
-  let firstBiz = false;
-  onSnapshot(bizRef, (snap) => {
-    if (!firstBiz) { firstBiz = true; rememberDoc("bizInfo"); return; }
-    showSmartToast("Business Info Updated", "Business hours or contact details changed.");
-    rememberDoc("bizInfo");
-  });
-
-  // === Main Profile ===
-  const mainRef = doc(db, "site_config", "mainProfile");
-  let firstMain = false;
-  onSnapshot(mainRef, (snap) => {
-    if (!firstMain) { firstMain = true; rememberDoc("mainProfile"); return; }
-    showSmartToast("Profile Updated", "Site profile or settings were modified.");
-    rememberDoc("mainProfile");
-  });
-
-  // === President Info ===
-  const presRef = doc(db, "site_config", "currentPresident");
-  let firstPres = false;
-  onSnapshot(presRef, (snap) => {
-    if (!firstPres) { firstPres = true; rememberDoc("presInfo"); return; }
-    showSmartToast("President Info Updated", "President data has changed.");
-    rememberDoc("presInfo");
-  });
-
-  console.log("✅ Smart Firestore notifications initialized (all collections).");
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (firebaseAppInitialized && db) {
-    setupSmartRealtimeNotifications();
-  }
-});
 // --- !! MOVED HERE FOR GLOBAL SCOPE !! ---
 const assumedBusinessTimezone = 'America/New_York'; // Your business's primary IANA timezone
 
