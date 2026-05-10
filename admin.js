@@ -1,77 +1,84 @@
-    // admin.js (Version includes Preview Prep + Previous Features + Social Links)
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
-async function updateGPA(newGpa) {
-  const academicRef = doc(db, "academic_stats", "current");
-  
-  try {
-    await updateDoc(academicRef, {
-      gpa: parseFloat(newGpa)
-    });
-    showSmartToast("Success", "GPA updated on homepage!");
-  } catch (error) {
-    console.error("Error updating GPA:", error);
-  }
-}
+import { 
+  getFirestore, doc, setDoc, updateDoc, arrayUnion, onSnapshot 
+} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-// Helper to show the specific form in the admin panel
+const db = getFirestore(); // Assumes Firebase app is already initialized in your main script
+
+// 1. Tab Logic: Injecting forms into your 'admin-content' div
 window.showTab = function(tabName) {
   const container = document.getElementById('admin-content');
-  const academicRef = doc(db, "academic_stats", "current");
+  const docRef = doc(db, "academic_data", "main");
 
-  // Fetch current data to pre-fill forms
-  onSnapshot(academicRef, (snap) => {
-    const data = snap.data() || { gpa: 0, courses: [], skills: [] };
+  // Show a loading state while we grab current values
+  container.innerHTML = `<p>Loading ${tabName} data...</p>`;
+
+  onSnapshot(docRef, (snap) => {
+    const data = snap.data() || { gpa: 0, courses: [], assignments: [], skills: [] };
     
+    let html = `<h3>Editing ${tabName.charAt(0).toUpperCase() + tabName.slice(1)}</h3>`;
+
     if (tabName === 'gpa') {
-      container.innerHTML = `
-        <h3>Update GPA</h3>
-        <input type="number" step="0.01" id="gpa-input" value="${data.gpa}">
-        <button class="save-btn" onclick="updateAcademicField('gpa')">Save GPA</button>
+      html += `
+        <div class="admin-form">
+          <label>Current Cumulative GPA</label>
+          <input type="number" step="0.01" id="gpa-input" value="${data.gpa}">
+          <button class="save-btn" onclick="saveToFirebase('gpa')">Update GPA</button>
+        </div>
       `;
     } else if (tabName === 'courses') {
-      container.innerHTML = `
-        <h3>Add Course</h3>
-        <input type="text" id="course-input" placeholder="Course Name (e.g. CS50)">
-        <button class="save-btn" onclick="updateAcademicField('courses')">Add Course</button>
-        <ul id="admin-course-list">${data.courses.map(c => `<li>${c}</li>`).join('')}</ul>
+      html += `
+        <div class="admin-form">
+          <input type="text" id="course-input" placeholder="New Course Name">
+          <button class="save-btn" onclick="saveToFirebase('courses')">Add Course</button>
+          <ul class="admin-list">
+            ${(data.courses || []).map(c => `<li>${c}</li>`).join('')}
+          </ul>
+        </div>
       `;
     } else if (tabName === 'skills') {
-      container.innerHTML = `
-        <h3>Add Skill</h3>
-        <input type="text" id="skill-input" placeholder="Skill (e.g. JavaScript)">
-        <button class="save-btn" onclick="updateAcademicField('skills')">Add Skill</button>
-        <p>Current: ${data.skills.join(', ')}</p>
+      html += `
+        <div class="admin-form">
+          <input type="text" id="skill-input" placeholder="Add Skill (e.g. Python)">
+          <button class="save-btn" onclick="saveToFirebase('skills')">Add Skill</button>
+          <p class="tag-display">${(data.skills || []).join(', ')}</p>
+        </div>
       `;
+    } else {
+      html += `<p>The ${tabName} module is ready for configuration.</p>`;
     }
+
+    container.innerHTML = html;
   });
 };
 
-// Function to push data to Firestore
-window.updateAcademicField = async function(type) {
-  const academicRef = doc(db, "academic_stats", "current");
-  
+// 2. Save Logic: Sending data to Firestore
+window.saveToFirebase = async function(type) {
+  const docRef = doc(db, "academic_data", "main");
+
   try {
     if (type === 'gpa') {
       const val = document.getElementById('gpa-input').value;
-      await setDoc(academicRef, { gpa: parseFloat(val) }, { merge: true });
+      await setDoc(docRef, { gpa: parseFloat(val) }, { merge: true });
     } 
     else if (type === 'courses') {
       const val = document.getElementById('course-input').value;
       if (!val) return;
-      await updateDoc(academicRef, {
-        courses: arrayUnion(val)
-      });
+      await updateDoc(docRef, { courses: arrayUnion(val) });
+      document.getElementById('course-input').value = ''; // Clear input
     }
     else if (type === 'skills') {
       const val = document.getElementById('skill-input').value;
       if (!val) return;
-      await updateDoc(academicRef, {
-        skills: arrayUnion(val)
-      });
+      await updateDoc(docRef, { skills: arrayUnion(val) });
+      document.getElementById('skill-input').value = '';
     }
-    showSmartToast("Updated", `${type} has been synced to the homepage.`);
+    
+    // Use your existing toast system
+    if (typeof showSmartToast === "function") {
+      showSmartToast("Success", `${type} updated successfully!`);
+    }
   } catch (e) {
-    console.error("Update failed", e);
+    console.error("Firebase Update Error: ", e);
   }
 };
 
