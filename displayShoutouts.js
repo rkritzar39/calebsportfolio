@@ -1,43 +1,196 @@
 // displayShoutouts.js
 
-// 1. FIREBASE CONFIGURATION
+// Use the same Firebase config as in admin.js (Ensure this is correct)
 const firebaseConfig = {
-    apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0",
+    apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0", // Use your actual API key
     authDomain: "busarmydudewebsite.firebaseapp.com",
     projectId: "busarmydudewebsite",
     storageBucket: "busarmydudewebsite.firebasestorage.app",
     messagingSenderId: "42980404680",
     appId: "1:42980404680:web:f4f1e54789902a4295e4fd",
-    measurementId: "G-DQPH8YL789"
+    measurementId: "G-DQPH8YL789" // Optional
 };
 
-// 2. IMPORTS
+// Import necessary Firebase functions (v9+ modular SDK)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { 
-  getFirestore, collection, getDocs, doc, getDoc, onSnapshot, 
-  Timestamp, orderBy, query, where 
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  onSnapshot,        // 👈 add this
+  Timestamp,
+  orderBy,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
-
-// 3. GLOBAL VARIABLES & REFS
-let db;
-let firebaseAppInitialized = false;
 let unsubscribeLiveStatus = null;
 
-// Module-level references
-let profileDocRef, presidentDocRef, usefulLinksCollectionRef, socialLinksCollectionRef;
-let disabilitiesCollectionRef, techItemsCollectionRef, shoutoutsMetaRef;
-let faqsCollectionRef, businessDocRef, postsCollectionRef;
+function watchLiveStatus() {
+  if (!db) {
+    console.warn("Firestore not ready yet, retrying...");
+    setTimeout(watchLiveStatus, 500);
+    return;
+  }
 
-// Data storage for searches
+  const el = document.getElementById("live-activity-text");
+  const container = document.getElementById("live-activity");
+
+  if (!el || !container) {
+    console.warn("Live activity elements not found.");
+    return;
+  }
+
+  const liveStatusRef = doc(db, "live_status", "current");
+
+  if (unsubscribeLiveStatus) {
+    unsubscribeLiveStatus();
+    unsubscribeLiveStatus = null;
+  }
+
+  unsubscribeLiveStatus = onSnapshot(
+    liveStatusRef,
+    (snap) => {
+      if (!snap.exists()) {
+        el.textContent = "🛌 Offline";
+        container.classList.remove("active");
+        container.classList.add("hidden");
+        return;
+      }
+
+      const data = snap.data() || {};
+      const message = (data.message || "").trim();
+      const isActive = data.isActive === true || message.length > 0;
+
+      if (isActive) {
+        el.textContent = message || "🟢 Active";
+        container.classList.remove("hidden");
+        container.classList.add("active");
+      } else {
+        el.textContent = "🛌 Offline";
+        container.classList.remove("active");
+        container.classList.add("hidden");
+      }
+    },
+    (error) => {
+      console.error("Live status listener error:", error);
+      el.textContent = "🛌 Offline";
+      container.classList.remove("active");
+      container.classList.add("hidden");
+    }
+  );
+}
+
+document.addEventListener("DOMContentLoaded", watchLiveStatus);
+
+async function loadAndDisplayLegislation() {
+    const legislationList = document.getElementById('legislation-list');
+    if (!legislationList) return;
+
+    legislationList.innerHTML = '<p>Loading active legislation...</p>';
+    const legislationCollectionRef = collection(db, "legislation");
+
+    try {
+        const q = query(legislationCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(q);
+
+        legislationList.innerHTML = '';
+        if (querySnapshot.empty) {
+            legislationList.innerHTML = '<p>No bills are currently being tracked.</p>';
+        } else {
+            querySnapshot.forEach(doc => {
+                const item = doc.data();
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'legislation-item';
+
+                const status = item.status || {};
+                const steps = [
+                    { key: 'introduced', label: 'Introduced', completed: status.introduced },
+                    { key: 'passedHouse', label: 'Passed House', completed: status.passedHouse },
+                    { key: 'passedSenate', label: 'Passed Senate', completed: status.passedSenate },
+                    { key: 'toPresident', label: 'To President', completed: status.toPresident },
+                    { key: 'becameLaw', label: 'Became Law', completed: status.becameLaw },
+                ];
+                
+                // Find the index of the current (most recent) step
+                const currentIndex = steps.map(s => s.completed).lastIndexOf(true);
+                
+                // Generate the HTML for the vertical steps
+                let stepsHtml = '';
+                steps.forEach((step, index) => {
+                    let stepClass = '';
+                    if (step.completed) {
+                        stepClass = 'completed';
+                    }
+                    // The last completed step is the "current" one
+                    if (index === currentIndex) {
+                        stepClass += ' current';
+                    }
+                    
+                    stepsHtml += `
+                        <li class="progress-step-vertical ${stepClass}">
+                            <div class="step-dot"></div>
+                            <div class="step-details">
+                                <span class="step-label">${step.label}</span>
+                            </div>
+                        </li>
+                    `;
+                });
+
+                // This is the new two-column HTML structure
+                itemDiv.innerHTML = `
+                    <div class="bill-info">
+                        <div class="bill-header">
+                            <span class="bill-id">${item.billId || 'N/A'}</span>
+                            <h4>${item.title || 'No Title'}</h4>
+                        </div>
+                        <div class="bill-details">
+                            <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'}<br>
+                               <strong>Introduced:</strong> ${item.date || 'N/A'}
+                            </p>
+                        </div>
+                        <p class="bill-summary">${item.description || 'A summary is in progress.'}</p>
+                        ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
+                    </div>
+                    <div class="bill-progress">
+                        <ol class="progress-tracker-vertical">
+                            ${stepsHtml}
+                        </ol>
+                    </div>
+                `;
+                legislationList.appendChild(itemDiv);
+            });
+        }
+    } catch (error) {
+        console.error("Error loading legislation for display:", error);
+        legislationList.innerHTML = '<p class="error">Could not load legislation data.</p>';
+    }
+}
+
+// --- Initialize Firebase ---
+let db;
+let firebaseAppInitialized = false;
+// Declare references in module scope
+let profileDocRef; 
+let presidentDocRef;
+let usefulLinksCollectionRef;
+let socialLinksCollectionRef;
+let disabilitiesCollectionRef;
+let techItemsCollectionRef;
+let shoutoutsMetaRef; 
+let faqsCollectionRef;
+let businessDocRef; 
+let postsCollectionRef; // 🔥 declare this too
+
+// --- NEW: Module-level variables to store all creator data for searching ---
 let allTikTokCreators = [], allInstagramCreators = [], allYouTubeCreators = [];
 
-// 4. INITIALIZATION
+
 try {
     const app = initializeApp(firebaseConfig);
     db = getFirestore(app);
-
-    // Assigning your specific references
+    // Assign references
     profileDocRef = doc(db, "site_config", "mainProfile"); 
     businessDocRef = doc(db, "site_config", "businessDetails"); 
     presidentDocRef = doc(db, "site_config", "currentPresident");
@@ -48,175 +201,237 @@ try {
     shoutoutsMetaRef = doc(db, 'siteConfig', 'shoutoutsMetadata');
     faqsCollectionRef = collection(db, "faqs");
     postsCollectionRef = collection(db, "posts");
-
     firebaseAppInitialized = true;
-    console.log("✅ Firebase initialized for display.");
+    console.log("Firebase initialized for display.");
 } catch (error) {
-    console.error("❌ Firebase initialization failed:", error);
+    console.error("Firebase initialization failed:", error);
     const body = document.body;
     if (body) {
         body.innerHTML = '<p class="error" style="text-align: center; padding: 50px; color: red; font-size: 1.2em;">Could not connect to required services. Please try again later.</p>';
     }
+    firebaseAppInitialized = false;
 }
 
 /* ==========================================================
-   🎓 MASTER ACADEMIC DISPLAY (NEW)
+   🔔 FIREBASE CLOUD MESSAGING — PUSH NOTIFICATION SETUP
    ========================================================== */
-function initAcademicMasterDisplay() {
-    const collegeDiv = document.getElementById('college-content-dynamic');
-    if (!collegeDiv) return;
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
 
-    const academicRef = doc(db, "academic_stats", "current");
-
-    onSnapshot(academicRef, (snap) => {
-        if (!snap.exists()) {
-            collegeDiv.innerHTML = `<p class="info-text">No academic data found. Update it in the Admin Panel!</p>`;
-            return;
-        }
-
-        const d = snap.data();
-        collegeDiv.innerHTML = `
-            <div class="academic-container">
-                <div class="academic-stats-row">
-                    <div class="stat-card glass">
-                        <span class="stat-label">Cumulative GPA</span>
-                        <span class="stat-value">${d.gpa || '0.00'}</span>
-                    </div>
-                    <div class="stat-card glass">
-                        <span class="stat-label">Semesters Completed</span>
-                        <span class="stat-value">${d.semesters || '0'}</span>
-                    </div>
-                </div>
-                <div class="academic-main-grid">
-                    <div class="academic-column">
-                        <div class="data-section glass">
-                            <h4><i class="fas fa-book"></i> Courses</h4>
-                            <ul class="clean-list">
-                                ${(d.courses || []).map(c => `<li><i class="fas fa-chevron-right"></i> ${c}</li>`).join('') || '<li>No courses listed</li>'}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="academic-column">
-                        <div class="data-section glass">
-                            <h4><i class="fas fa-brain"></i> Skills</h4>
-                            <div class="skills-flex">
-                                ${(d.skills || []).map(s => `<span class="skill-tag">${s}</span>`).join('') || '<span>Update in Admin</span>'}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-}
-
-/* ==========================================================
-   🏛️ LEGISLATION TRACKER (RESTORED ORIGINAL)
-   ========================================================== */
-async function loadAndDisplayLegislation() {
-    const legislationList = document.getElementById('legislation-list');
-    if (!legislationList) return;
-
-    legislationList.innerHTML = '<p>Loading active legislation...</p>';
-    const q = query(collection(db, "legislation"), orderBy("order", "asc"));
-
-    try {
-        const querySnapshot = await getDocs(q);
-        legislationList.innerHTML = '';
-        if (querySnapshot.empty) {
-            legislationList.innerHTML = '<p>No bills are currently being tracked.</p>';
-        } else {
-            querySnapshot.forEach(doc => {
-                const item = doc.data();
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'legislation-item';
-                const status = item.status || {};
-                const steps = [
-                    { key: 'introduced', label: 'Introduced', completed: status.introduced },
-                    { key: 'passedHouse', label: 'Passed House', completed: status.passedHouse },
-                    { key: 'passedSenate', label: 'Passed Senate', completed: status.passedSenate },
-                    { key: 'toPresident', label: 'To President', completed: status.toPresident },
-                    { key: 'becameLaw', label: 'Became Law', completed: status.becameLaw },
-                ];
-                const currentIndex = steps.map(s => s.completed).lastIndexOf(true);
-                let stepsHtml = '';
-                steps.forEach((step, index) => {
-                    let stepClass = step.completed ? 'completed' : '';
-                    if (index === currentIndex) stepClass += ' current';
-                    stepsHtml += `<li class="progress-step-vertical ${stepClass}"><div class="step-dot"></div><div class="step-details"><span class="step-label">${step.label}</span></div></li>`;
-                });
-
-                itemDiv.innerHTML = `
-                    <div class="bill-info">
-                        <div class="bill-header"><span class="bill-id">${item.billId || 'N/A'}</span><h4>${item.title || 'No Title'}</h4></div>
-                        <div class="bill-details"><p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'}<br><strong>Introduced:</strong> ${item.date || 'N/A'}</p></div>
-                        <p class="bill-summary">${item.description || 'A summary is in progress.'}</p>
-                        ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
-                    </div>
-                    <div class="bill-progress"><ol class="progress-tracker-vertical">${stepsHtml}</ol></div>`;
-                legislationList.appendChild(itemDiv);
-            });
-        }
-    } catch (error) {
-        console.error("Error loading legislation:", error);
+async function initializePushNotifications() {
+  try {
+    if (!("Notification" in window)) {
+      console.warn("Browser does not support notifications.");
+      return;
     }
-}
 
-/* ==========================================================
-   🟢 LIVE STATUS & NOTIFICATIONS
-   ========================================================== */
-function watchLiveStatus() {
-    const el = document.getElementById("live-activity-text");
-    const container = document.getElementById("live-activity");
-    if (!el || !container) return;
-
-    onSnapshot(doc(db, "live_status", "current"), (snap) => {
-        const data = snap.data() || {};
-        const isActive = data.isActive === true || (data.message || "").trim().length > 0;
-        el.textContent = isActive ? (data.message || "🟢 Active") : "🛌 Offline";
-        container.className = isActive ? "active" : "hidden";
-    });
-}
-
-function showSmartToast(title, message) {
-    let container = document.getElementById('toast-container') || (() => {
-        const c = document.createElement('div'); c.id = 'toast-container';
-        document.body.appendChild(c); return c;
-    })();
-    const toast = document.createElement('div');
-    toast.className = 'toast glass';
-    toast.innerHTML = `<strong>${title}</strong><br><span>${message}</span>`;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
-}
-
-function setupSmartRealtimeNotifications() {
-    const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
-    if (!settings.notifications?.enabled) return;
-    ["shoutouts", "posts", "legislation"].forEach(col => {
-        let firstLoad = true;
-        onSnapshot(collection(db, col), (snap) => {
-            if (firstLoad) { firstLoad = false; return; }
-            snap.docChanges().forEach(change => {
-                if (change.type === "added") showSmartToast("Update", `New entry in ${col}`);
-            });
-        });
-    });
-}
-
-/* ==========================================================
-   🚀 INITIALIZATION
-   ========================================================== */
-document.addEventListener("DOMContentLoaded", () => {
-    if (firebaseAppInitialized) {
-        watchLiveStatus();
-        initAcademicMasterDisplay();
-        loadAndDisplayLegislation();
-        setupSmartRealtimeNotifications();
+    // Ask user for permission
+    const permission = await Notification.requestPermission();
+    if (permission !== "granted") {
+      console.warn("Notification permission denied by user.");
+      return;
     }
+
+    const messaging = getMessaging();
+    const vapidKey = "BKqy5iyBspHj5HoS-bLlMWvIc8F-639K8HWjV3iiqtdnnDDBDUti78CL9RTCiBml16qMRjJ4RqMo9DERbt4C9xc"; // 🔑 Replace with your real VAPID key
+
+    // Register your service worker (must be at root)
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    console.log("✅ Service Worker registered for push notifications:", registration);
+
+    // Get an FCM token for this device
+    const token = await getToken(messaging, {
+      vapidKey,
+      serviceWorkerRegistration: registration
+    });
+    console.log("🔑 FCM Token:", token);
+
+    // Optionally save token to Firestore to identify this user later
+    // const tokenRef = doc(db, "user_tokens", token);
+    // await setDoc(tokenRef, { token, timestamp: Date.now() });
+
+    // Listen for foreground notifications (while site is open)
+    onMessage(messaging, (payload) => {
+      console.log("📩 Push message received in foreground:", payload);
+      const { title, body, icon } = payload.notification || {};
+      showSmartToast(title || "Notification", body || "You have a new update!");
+    });
+
+  } catch (err) {
+    console.error("❌ Push notification setup failed:", err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (firebaseAppInitialized && db) {
+    setupSmartRealtimeNotifications();
+  }
 });
 
+/* ==========================================================
+   🔔 SMART FIRESTORE NOTIFICATION SYSTEM (ALL SECTIONS)
+   ========================================================== */
 
+// --- Cache system to prevent duplicates ---
+const notifiedDocs = new Set(JSON.parse(sessionStorage.getItem('notifiedDocs') || "[]"));
+
+function rememberDoc(id) {
+  notifiedDocs.add(id);
+  sessionStorage.setItem('notifiedDocs', JSON.stringify([...notifiedDocs]));
+}
+
+function hasNotified(id) {
+  return notifiedDocs.has(id);
+}
+
+// --- Load user notification preferences ---
+function getNotifPrefs() {
+  const settings = JSON.parse(localStorage.getItem('websiteSettings') || '{}');
+  return settings.notifications || { enabled: false, categories: {} };
+}
+
+// --- Toast Helper (uses in-site system) ---
+function showSmartToast(title, message) {
+  const container = document.getElementById('toast-container') || (() => {
+    const c = document.createElement('div');
+    c.id = 'toast-container';
+    Object.assign(c.style, {
+      position: 'fixed',
+      bottom: '30px',
+      right: '30px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '12px',
+      zIndex: '9999'
+    });
+    document.body.appendChild(c);
+    return c;
+  })();
+
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.style.cssText = `
+    background: var(--accent-color, #007aff);
+    color: #fff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    backdrop-filter: blur(16px);
+    font-size: 15px;
+    animation: fadeInCard 0.4s ease forwards;
+  `;
+  toast.innerHTML = `<strong>${title}</strong><br><span>${message}</span>`;
+  container.appendChild(toast);
+
+  setTimeout(() => toast.remove(), 4000);
+}
+
+// --- Initialize smart realtime notifications ---
+function setupSmartRealtimeNotifications() {
+  const prefs = getNotifPrefs();
+  if (!prefs.enabled) return;
+
+  // --- Utility ---
+  function setupCollectionListener(ref, sectionName, formatMessage) {
+    let firstLoad = false;
+    onSnapshot(ref, (snapshot) => {
+      if (!firstLoad) {
+        snapshot.docs.forEach(doc => rememberDoc(doc.id));
+        firstLoad = true;
+        return;
+      }
+      snapshot.docChanges().forEach(change => {
+        const id = change.doc.id;
+        if (hasNotified(id)) return;
+        const data = change.doc.data();
+        const { title, message } = formatMessage(change.type, data);
+        if (title && message) {
+          showSmartToast(title, message);
+          rememberDoc(id);
+        }
+      });
+    });
+  }
+
+  // === Creators ===
+  setupCollectionListener(collection(db, "shoutouts"), "Creators", (action, d) => {
+    const platform = d.platform || "Unknown";
+    const name = d.nickname || d.username || "Unnamed Creator";
+    const verb = action === "added" ? "joined" :
+                 action === "modified" ? "was updated" : "was removed";
+    return { title: `Creator ${action}`, message: `${name} ${verb} on ${platform}.` };
+  });
+
+  // === Social Links ===
+  setupCollectionListener(collection(db, "social_links"), "Social", (action, d) => ({
+    title: action === "added" ? "New Social Link" : action === "modified" ? "Social Link Updated" : "Social Link Removed",
+    message: `${d.label || "Link"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Useful Links ===
+  setupCollectionListener(collection(db, "useful_links"), "Links", (action, d) => ({
+    title: action === "added" ? "Useful Link Added" : action === "modified" ? "Useful Link Updated" : "Useful Link Removed",
+    message: `${d.label || "Link"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Tech Items ===
+  setupCollectionListener(collection(db, "tech_items"), "Tech", (action, d) => ({
+    title: action === "added" ? "New Tech Item" : action === "modified" ? "Tech Item Updated" : "Tech Item Removed",
+    message: `${d.name || "Device"} ${action === "added" ? "added" : action === "modified" ? "updated" : "removed"}.`
+  }));
+
+  // === FAQs ===
+  setupCollectionListener(collection(db, "faqs"), "FAQs", (action, d) => ({
+    title: action === "added" ? "New FAQ" : action === "modified" ? "FAQ Updated" : "FAQ Removed",
+    message: `${d.question || "Question"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Posts ===
+  setupCollectionListener(collection(db, "posts"), "Posts", (action, d) => ({
+    title: action === "added" ? "New Post" : action === "modified" ? "Post Updated" : "Post Removed",
+    message: `${d.title || "A post"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Legislation ===
+  setupCollectionListener(collection(db, "legislation"), "Legislation", (action, d) => ({
+    title: action === "added" ? "New Bill" : action === "modified" ? "Bill Updated" : "Bill Removed",
+    message: `${d.title || d.billId || "A bill"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
+  }));
+
+  // === Business Info ===
+  const bizRef = doc(db, "site_config", "businessDetails");
+  let firstBiz = false;
+  onSnapshot(bizRef, (snap) => {
+    if (!firstBiz) { firstBiz = true; rememberDoc("bizInfo"); return; }
+    showSmartToast("Business Info Updated", "Business hours or contact details changed.");
+    rememberDoc("bizInfo");
+  });
+
+  // === Main Profile ===
+  const mainRef = doc(db, "site_config", "mainProfile");
+  let firstMain = false;
+  onSnapshot(mainRef, (snap) => {
+    if (!firstMain) { firstMain = true; rememberDoc("mainProfile"); return; }
+    showSmartToast("Profile Updated", "Site profile or settings were modified.");
+    rememberDoc("mainProfile");
+  });
+
+  // === President Info ===
+  const presRef = doc(db, "site_config", "currentPresident");
+  let firstPres = false;
+  onSnapshot(presRef, (snap) => {
+    if (!firstPres) { firstPres = true; rememberDoc("presInfo"); return; }
+    showSmartToast("President Info Updated", "President data has changed.");
+    rememberDoc("presInfo");
+  });
+
+  console.log("✅ Smart Firestore notifications initialized (all collections).");
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (firebaseAppInitialized && db) {
+    setupSmartRealtimeNotifications();
+  }
+});
 // --- !! MOVED HERE FOR GLOBAL SCOPE !! ---
 const assumedBusinessTimezone = 'America/New_York'; // Your business's primary IANA timezone
 
