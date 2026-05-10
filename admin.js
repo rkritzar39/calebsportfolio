@@ -1,6 +1,17 @@
     // admin.js (Version includes Preview Prep + Previous Features + Social Links)
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
-
+async function updateGPA(newGpa) {
+  const academicRef = doc(db, "academic_stats", "current");
+  
+  try {
+    await updateDoc(academicRef, {
+      gpa: parseFloat(newGpa)
+    });
+    showSmartToast("Success", "GPA updated on homepage!");
+  } catch (error) {
+    console.error("Error updating GPA:", error);
+  }
+}
 const MANUAL_DOC = doc(db, "manualStatus", "site");
 
 const $ = (id) => document.getElementById(id);
