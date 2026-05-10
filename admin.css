@@ -4234,3 +4234,135 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
     letter-spacing: 0.5px;
 }
 
+/* =============================== */
+/* ADMIN PANEL STRUCTURE LAYER     */
+/* =============================== */
+
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Navigation grid */
+.admin-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+/* Admin buttons (Apple-native glass style) */
+.admin-nav button {
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 10px 12px;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: var(--transition-speed) var(--transition-timing);
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+.admin-nav button:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.2);
+}
+
+/* Content panel */
+#admin-content {
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--glass-border-radius);
+  padding: 18px;
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--glass-shadow);
+}
+
+/* Inputs (Apple-style minimal fields) */
+#admin-content input,
+#admin-content select {
+  width: 100%;
+  padding: 10px 12px;
+  margin: 6px 0;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-color);
+  outline: none;
+}
+
+#admin-content input:focus,
+#admin-content select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+}
+
+/* Save button */
+.admin-save-btn {
+  margin-top: 10px;
+  padding: 10px 14px;
+  border-radius: var(--border-radius-md);
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-speed);
+}
+
+.admin-save-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* Admin cards (for previews inside admin) */
+.admin-card {
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+/* Admin list with profile images (PFP system) */
+.admin-user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: var(--border-radius-md);
+  background: var(--content-bg);
+  border: 1px solid var(--border-color);
+}
+
+.admin-user img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Status chips */
+.status-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.status-chip.active {
+  color: #34c759;
+}
+
+.status-chip.pending {
+  color: #ff9f0a;
+}
+
+.status-chip.offline {
+  color: var(--secondary-text);
+}
+
