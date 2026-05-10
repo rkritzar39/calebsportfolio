@@ -2878,13 +2878,13 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
 
 // Listener for changes in authentication state (login/logout)
 onAuthStateChanged(auth, user => {
-    // --- User is signed IN ---
     if (user) {
         const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"];
 
         if (adminEmails.includes(user.email)) {
             console.log(`✅ Access GRANTED for admin: ${user.email}`);
 
+            // 1. UI Visibility
             const loginSection = document.getElementById('login-section');
             const adminContent = document.getElementById('admin-content');
             const logoutButton = document.getElementById('logout-button');
@@ -2895,10 +2895,12 @@ onAuthStateChanged(auth, user => {
             if (loginSection) loginSection.style.display = 'none';
             if (adminContent) adminContent.style.display = 'block';
             if (logoutButton) logoutButton.style.display = 'inline-block';
+            
             if (adminGreeting) {
                 adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
             }
 
+            // Profile Picture Logic
             const adminProfilePic = document.getElementById('admin-profile-pic');
             if (adminProfilePic) {
                 adminProfilePic.src = user.photoURL || 'images/default-profile.jpg';
@@ -2911,13 +2913,13 @@ onAuthStateChanged(auth, user => {
             // 2. Safely load all data
             try {
                 console.log("Loading all admin panel data...");
-                
-                // --- ACADEMIC INITIALIZATION ---
-                // We call this first or alongside others to populate the academic tab
+
+                // --- ADDED: Load Academic Tab First ---
                 if (typeof window.showAcademicTab === "function") {
                     window.showAcademicTab('gpa'); 
                 }
 
+                // Existing functions
                 loadProfileData();
                 loadBusinessInfoData();
                 setupBusinessInfoListeners();
@@ -2934,14 +2936,14 @@ onAuthStateChanged(auth, user => {
                 addActivityListeners();
             } catch (error) {
                 console.error("❌ CRITICAL ERROR during data loading:", error);
-                if (typeof showAdminStatus === "function") {
-                    showAdminStatus(`Error loading admin data: ${error.message}`, true);
-                }
+                // Fallback if showAdminStatus isn't defined yet
+                const statusMsg = document.getElementById('admin-status');
+                if (statusMsg) statusMsg.textContent = `Error: ${error.message}`;
             }
 
         } else {
             console.warn(`❌ Access DENIED for user: ${user.email}`);
-            alert("Access Denied.");
+            alert("Access Denied. Unauthorized account.");
             signOut(auth);
         }
 
@@ -2958,7 +2960,9 @@ onAuthStateChanged(auth, user => {
             adminProfilePic.style.display = 'none';
         }
 
-        removeActivityListeners();
+        if (typeof removeActivityListeners === "function") {
+            removeActivityListeners();
+        }
     }
 });
 
