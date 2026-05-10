@@ -1,77 +1,22 @@
+// admin.js
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
 import { 
-  getFirestore, doc, setDoc, updateDoc, arrayUnion, onSnapshot 
+  getFirestore, doc, setDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot 
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-const db = getFirestore(); // Assumes Firebase app is already initialized in your main script
-
-// 1. Tab Logic: Injecting forms into your 'admin-content' div
-window.showTab = function(tabName) {
-  const container = document.getElementById('admin-content');
-  const docRef = doc(db, "academic_data", "main");
-
-  // Show a loading state while we grab current values
-  container.innerHTML = `<p>Loading ${tabName} data...</p>`;
-
-  onSnapshot(docRef, (snap) => {
-    const data = snap.data() || { gpa: 0, courses: [], assignments: [], skills: [] };
-    
-    let html = `<h3>Editing ${tabName.charAt(0).toUpperCase() + tabName.slice(1)}</h3>`;
-
-    if (tabName === 'gpa') {
-      html += `
-        <div class="admin-form">
-          <label>Current Cumulative GPA</label>
-          <input type="number" step="0.01" id="gpa-input" value="${data.gpa}">
-          <button class="save-btn" onclick="saveToFirebase('gpa')">Update GPA</button>
-        </div>
-      `;
-    } else if (tabName === 'courses') {
-      html += `
-        <div class="admin-form">
-          <input type="text" id="course-input" placeholder="New Course Name">
-          <button class="save-btn" onclick="saveToFirebase('courses')">Add Course</button>
-          <ul class="admin-list">
-            ${(data.courses || []).map(c => `<li>${c}</li>`).join('')}
-          </ul>
-        </div>
-      `;
-    } else if (tabName === 'skills') {
-      html += `
-        <div class="admin-form">
-          <input type="text" id="skill-input" placeholder="Add Skill (e.g. Python)">
-          <button class="save-btn" onclick="saveToFirebase('skills')">Add Skill</button>
-          <p class="tag-display">${(data.skills || []).join(', ')}</p>
-        </div>
-      `;
-    } else {
-      html += `<p>The ${tabName} module is ready for configuration.</p>`;
-    }
-
-    container.innerHTML = html;
-  });
+// 1. DATABASE SETUP
+const firebaseConfig = {
+    apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0",
+    authDomain: "busarmydudewebsite.firebaseapp.com",
+    projectId: "busarmydudewebsite",
+    storageBucket: "busarmydudewebsite.firebasestorage.app",
+    messagingSenderId: "42980404680",
+    appId: "1:42980404680:web:f4f1e54789902a4295e4fd"
 };
 
-// 2. Save Logic: Sending data to Firestore
-window.saveToFirebase = async function(type) {
-  const docRef = doc(db, "academic_data", "main");
-
-  try {
-    if (type === 'gpa') {
-      const val = document.getElementById('gpa-input').value;
-      await setDoc(docRef, { gpa: parseFloat(val) }, { merge: true });
-    } 
-    else if (type === 'courses') {
-      const val = document.getElementById('course-input').value;
-      if (!val) return;
-      await updateDoc(docRef, { courses: arrayUnion(val) });
-      document.getElementById('course-input').value = ''; // Clear input
-    }
-    else if (type === 'skills') {
-      const val = document.getElementById('skill-input').value;
-      if (!val) return;
-      await updateDoc(docRef, { skills: arrayUnion(val) });
-      document.getElementById('skill-input').value = '';
-    }
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
     
     // Use your existing toast system
     if (typeof showSmartToast === "function") {
@@ -801,6 +746,47 @@ document.addEventListener('DOMContentLoaded', () => { //
       loadResumeEditor();
       resumeFormEl.addEventListener("submit", saveResumeEditor);
     }
+
+
+  /* ==========================================================
+   🎓 ACADEMIC TAB SYSTEM
+   ========================================================== */
+window.showTab = function(tabName) {
+    const content = $('admin-content');
+    if (!content) return;
+
+    content.innerHTML = `<p>Loading ${tabName}...</p>`;
+    const docRef = doc(db, "academic_stats", "current");
+
+    onSnapshot(docRef, (snap) => {
+        const data = snap.data() || {};
+        let html = `<h3>Manage ${tabName.toUpperCase()}</h3>`;
+
+        if (['gpa', 'semesters'].includes(tabName)) {
+            html += `
+                <div class="admin-input-group">
+                    <input type="text" id="single-input" value="${data[tabName] || ''}" placeholder="Enter ${tabName}">
+                    <button onclick="saveField('${tabName}')">Update</button>
+                </div>`;
+        } else if (['courses', 'skills'].includes(tabName)) {
+            const list = data[tabName] || [];
+            html += `
+                <input type="text" id="array-input" placeholder="Add new...">
+                <button onclick="addItem('${tabName}')">Add</button>
+                <ul class="admin-list">
+                    ${list.map(item => `<li>${item} <button onclick="removeItem('${tabName}', '${item}')">×</button></li>`).join('')}
+                </ul>`;
+        }
+        content.innerHTML = html;
+    });
+};
+
+window.saveField = async (f) => await setDoc(doc(db, "academic_stats", "current"), {[f]: $('single-input').value}, {merge:true});
+window.addItem = async (f) => {
+    const val = $('array-input').value;
+    if(val) await updateDoc(doc(db, "academic_stats", "current"), {[f]: arrayUnion(val)});
+};
+window.removeItem = async (f, v) => await updateDoc(doc(db, "academic_stats", "current"), {[f]: arrayRemove(v)});
 
     
     // Reference for Shoutout Metadata (used for timestamps)
