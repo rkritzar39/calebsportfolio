@@ -8322,3 +8322,86 @@ body.maintenance-active .onyx-dock {
     font-size: 1.05rem;
   }
 }
+
+#college-content-dynamic {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Summary grid */
+.college-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+/* Glass cards */
+.college-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  backdrop-filter: var(--backdrop-blur);
+  box-shadow: var(--bubble-shadow);
+}
+
+.college-card.highlight {
+  border: 1px solid var(--accent-color);
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-color);
+}
+
+/* Tables */
+.college-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+}
+
+.college-table th,
+.college-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.college-table th {
+  color: var(--secondary-text);
+}
+
+/* Status badges */
+.status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.status.completed {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.status.pending {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.status.in-progress {
+  color: var(--accent-color);
+  background: rgba(78, 168, 255, 0.15);
+}
