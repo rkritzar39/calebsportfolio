@@ -12,6 +12,70 @@ async function updateGPA(newGpa) {
     console.error("Error updating GPA:", error);
   }
 }
+
+// Helper to show the specific form in the admin panel
+window.showTab = function(tabName) {
+  const container = document.getElementById('admin-content');
+  const academicRef = doc(db, "academic_stats", "current");
+
+  // Fetch current data to pre-fill forms
+  onSnapshot(academicRef, (snap) => {
+    const data = snap.data() || { gpa: 0, courses: [], skills: [] };
+    
+    if (tabName === 'gpa') {
+      container.innerHTML = `
+        <h3>Update GPA</h3>
+        <input type="number" step="0.01" id="gpa-input" value="${data.gpa}">
+        <button class="save-btn" onclick="updateAcademicField('gpa')">Save GPA</button>
+      `;
+    } else if (tabName === 'courses') {
+      container.innerHTML = `
+        <h3>Add Course</h3>
+        <input type="text" id="course-input" placeholder="Course Name (e.g. CS50)">
+        <button class="save-btn" onclick="updateAcademicField('courses')">Add Course</button>
+        <ul id="admin-course-list">${data.courses.map(c => `<li>${c}</li>`).join('')}</ul>
+      `;
+    } else if (tabName === 'skills') {
+      container.innerHTML = `
+        <h3>Add Skill</h3>
+        <input type="text" id="skill-input" placeholder="Skill (e.g. JavaScript)">
+        <button class="save-btn" onclick="updateAcademicField('skills')">Add Skill</button>
+        <p>Current: ${data.skills.join(', ')}</p>
+      `;
+    }
+  });
+};
+
+// Function to push data to Firestore
+window.updateAcademicField = async function(type) {
+  const academicRef = doc(db, "academic_stats", "current");
+  
+  try {
+    if (type === 'gpa') {
+      const val = document.getElementById('gpa-input').value;
+      await setDoc(academicRef, { gpa: parseFloat(val) }, { merge: true });
+    } 
+    else if (type === 'courses') {
+      const val = document.getElementById('course-input').value;
+      if (!val) return;
+      await updateDoc(academicRef, {
+        courses: arrayUnion(val)
+      });
+    }
+    else if (type === 'skills') {
+      const val = document.getElementById('skill-input').value;
+      if (!val) return;
+      await updateDoc(academicRef, {
+        skills: arrayUnion(val)
+      });
+    }
+    showSmartToast("Updated", `${type} has been synced to the homepage.`);
+  } catch (e) {
+    console.error("Update failed", e);
+  }
+};
+
+
 const MANUAL_DOC = doc(db, "manualStatus", "site");
 
 const $ = (id) => document.getElementById(id);
