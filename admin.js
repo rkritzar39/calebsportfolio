@@ -1,32 +1,5 @@
-// admin.js
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { 
-  getFirestore, doc, setDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot 
-} from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-
-// 1. DATABASE SETUP
-const firebaseConfig = {
-    apiKey: "AIzaSyCIZ0fri5V1E2si1xXpBPQQJqj1F_KuuG0",
-    authDomain: "busarmydudewebsite.firebaseapp.com",
-    projectId: "busarmydudewebsite",
-    storageBucket: "busarmydudewebsite.firebasestorage.app",
-    messagingSenderId: "42980404680",
-    appId: "1:42980404680:web:f4f1e54789902a4295e4fd"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-    
-    // Use your existing toast system
-    if (typeof showSmartToast === "function") {
-      showSmartToast("Success", `${type} updated successfully!`);
-    }
-  } catch (e) {
-    console.error("Firebase Update Error: ", e);
-  }
-};
-
+    // admin.js (Version includes Preview Prep + Previous Features + Social Links)
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
 const MANUAL_DOC = doc(db, "manualStatus", "site");
 
@@ -746,47 +719,6 @@ document.addEventListener('DOMContentLoaded', () => { //
       loadResumeEditor();
       resumeFormEl.addEventListener("submit", saveResumeEditor);
     }
-
-
-  /* ==========================================================
-   🎓 ACADEMIC TAB SYSTEM
-   ========================================================== */
-window.showTab = function(tabName) {
-    const content = $('admin-content');
-    if (!content) return;
-
-    content.innerHTML = `<p>Loading ${tabName}...</p>`;
-    const docRef = doc(db, "academic_stats", "current");
-
-    onSnapshot(docRef, (snap) => {
-        const data = snap.data() || {};
-        let html = `<h3>Manage ${tabName.toUpperCase()}</h3>`;
-
-        if (['gpa', 'semesters'].includes(tabName)) {
-            html += `
-                <div class="admin-input-group">
-                    <input type="text" id="single-input" value="${data[tabName] || ''}" placeholder="Enter ${tabName}">
-                    <button onclick="saveField('${tabName}')">Update</button>
-                </div>`;
-        } else if (['courses', 'skills'].includes(tabName)) {
-            const list = data[tabName] || [];
-            html += `
-                <input type="text" id="array-input" placeholder="Add new...">
-                <button onclick="addItem('${tabName}')">Add</button>
-                <ul class="admin-list">
-                    ${list.map(item => `<li>${item} <button onclick="removeItem('${tabName}', '${item}')">×</button></li>`).join('')}
-                </ul>`;
-        }
-        content.innerHTML = html;
-    });
-};
-
-window.saveField = async (f) => await setDoc(doc(db, "academic_stats", "current"), {[f]: $('single-input').value}, {merge:true});
-window.addItem = async (f) => {
-    const val = $('array-input').value;
-    if(val) await updateDoc(doc(db, "academic_stats", "current"), {[f]: arrayUnion(val)});
-};
-window.removeItem = async (f, v) => await updateDoc(doc(db, "academic_stats", "current"), {[f]: arrayRemove(v)});
 
     
     // Reference for Shoutout Metadata (used for timestamps)
