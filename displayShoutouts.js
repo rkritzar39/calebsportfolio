@@ -609,6 +609,51 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
+function initAcademicObserver() {
+  const collegeDiv = document.getElementById('college-content-dynamic');
+  if (!collegeDiv) return;
+
+  const academicRef = doc(db, "academic_stats", "current");
+
+  onSnapshot(academicRef, (snap) => {
+    if (!snap.exists()) {
+      collegeDiv.innerHTML = `<p>No academic data available. Use Admin to add some!</p>`;
+      return;
+    }
+
+    const data = snap.data();
+    
+    collegeDiv.innerHTML = `
+      <div class="academic-grid">
+        <div class="stat-card">
+          <span class="stat-label">Cumulative GPA</span>
+          <span class="stat-value">${data.gpa || '0.00'}</span>
+        </div>
+        <div class="academic-lists">
+          <div class="list-item">
+            <h4><i class="fas fa-book"></i> Current Courses</h4>
+            <ul>${(data.courses || []).map(c => `<li>${c}</li>`).join('')}</ul>
+          </div>
+          <div class="list-item">
+            <h4><i class="fas fa-brain"></i> Key Skills</h4>
+            <div class="skills-tags">
+              ${(data.skills || []).map(s => `<span class="skill-tag">${s}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// Call this in your existing DOMContentLoaded listener
+document.addEventListener('DOMContentLoaded', () => {
+    if (firebaseAppInitialized && db) {
+        initAcademicObserver();
+    }
+});
+
+
 
 const tiktokContainer = document.getElementById("latest-tiktok-section");
 const ref = doc(db, "admin", "globalSettings");
