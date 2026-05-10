@@ -575,6 +575,41 @@ function renderYouTubeCard(account) {
             </div>`;
 }
 
+// Function to watch for Academic Updates
+function watchAcademicProgress() {
+  const displayContainer = document.getElementById("college-content-dynamic");
+  if (!displayContainer) return;
+
+  // Reference to your academic document
+  const academicRef = doc(db, "academic_stats", "current");
+
+  onSnapshot(academicRef, (snap) => {
+    if (!snap.exists()) {
+      displayContainer.innerHTML = "<p>No academic data found.</p>";
+      return;
+    }
+
+    const data = snap.data();
+    
+    // Generate the HTML dynamically
+    displayContainer.innerHTML = `
+      <div class="academic-card">
+        <p><strong>Current GPA:</strong> ${data.gpa || 'N/A'}</p>
+        <p><strong>Courses:</strong> ${data.courses ? data.courses.join(", ") : 'None listed'}</p>
+        <p><strong>Top Skills:</strong> ${data.skills ? data.skills.join(", ") : 'None listed'}</p>
+      </div>
+    `;
+  });
+}
+
+// Call this inside your DOMContentLoaded listener
+document.addEventListener("DOMContentLoaded", () => {
+  if (firebaseAppInitialized) {
+    watchAcademicProgress();
+  }
+});
+
+
 const tiktokContainer = document.getElementById("latest-tiktok-section");
 const ref = doc(db, "admin", "globalSettings");
 
