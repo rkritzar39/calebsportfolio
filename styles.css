@@ -1808,7 +1808,7 @@ body.light-e #live-activity-updated {
 }
 
 /* ======================================================= */
-/* ONYX SEARCH + SORT — REFINED TO MATCH SITE GLASS SYSTEM */
+/* 🔍 NEXT-GEN ONYX SEARCH BAR — FULL SECTION               */
 /* ======================================================= */
 
 .search-container.unified {
@@ -1816,236 +1816,216 @@ body.light-e #live-activity-updated {
 	display: flex;
 	align-items: center;
 	width: calc(100% - 40px);
-	max-width: 500px;
-	margin: 0 auto 28px auto;
-	border-radius: var(--radius-md);
+	max-width: 520px;
+	margin: 0 auto 34px auto;
+	border-radius: 16px;
 
+	/* ✨ Layered glass background */
 	background:
-		linear-gradient(
-			135deg,
-			color-mix(in srgb, white 10%, transparent),
-			transparent 45%
-		),
-		color-mix(in srgb, var(--content-bg) 88%, transparent);
+		linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+		color-mix(in srgb, var(--content-bg) 82%, transparent);
 
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	backdrop-filter: blur(22px) saturate(160%);
+	-webkit-backdrop-filter: blur(22px) saturate(160%);
 
-	border: 1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
 
 	box-shadow:
-		0 10px 24px color-mix(in srgb, var(--shadow-color) 58%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 12%, transparent);
+		0 14px 34px rgba(0,0,0,0.35),
+		inset 0 1px 0 rgba(255,255,255,0.12),
+		inset 0 -1px 0 rgba(0,0,0,0.25);
 
 	overflow: hidden;
+
 	transition:
-		box-shadow var(--transition-medium),
-		border-color var(--transition-medium),
-		transform var(--transition-medium),
-		background var(--transition-medium);
+		transform 0.25s ease,
+		box-shadow 0.25s ease,
+		border-color 0.25s ease,
+		background 0.25s ease;
 }
 
-/* Optional soft gloss layer */
+/* ✨ subtle glass shine layer */
 .search-container.unified::after {
 	content: "";
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	border-radius: inherit;
-	background: linear-gradient(
-		180deg,
-		color-mix(in srgb, white 9%, transparent) 0%,
-		transparent 45%
-	);
-	opacity: 0.55;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255,255,255,0.18),
+			transparent 35%
+		);
+
+	opacity: 0.6;
 }
 
-/* Input field */
+/* ======================================================= */
+/* 🔍 SEARCH INPUT                                         */
+/* ======================================================= */
+
 .creator-search {
 	width: 100%;
-	padding: 11px 110px 11px 42px;
+	padding: 13px 120px 13px 44px;
+
 	border: none;
 	outline: none;
+
 	background: transparent;
+
 	color: var(--text-color);
-	font-size: var(--font-size-base);
-	font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-	line-height: 1.4;
-	position: relative;
-	z-index: 1;
+	font-size: 15.5px;
+	font-weight: 500;
+	letter-spacing: -0.01em;
+
+	z-index: 2;
 }
 
-/* Placeholder */
+/* placeholder */
 .creator-search::placeholder {
-	color: var(--secondary-text);
-	opacity: 0.88;
+	color: color-mix(in srgb, var(--secondary-text) 85%, transparent);
+	opacity: 0.9;
 }
 
-/* Container focus state */
-.search-container.unified:focus-within {
-	border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
-	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--accent-color) 30%, transparent),
-		0 0 0 6px color-mix(in srgb, var(--accent-color) 12%, transparent),
-		0 14px 30px color-mix(in srgb, var(--shadow-color) 62%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
-}
+/* ======================================================= */
+/* 🔎 SEARCH ICON                                          */
+/* ======================================================= */
 
-/* === Clean inline search icon === */
 .search-icon {
 	position: absolute;
 	left: 16px;
 	top: 50%;
 	transform: translateY(-50%);
-	width: 17px;
-	height: 17px;
-	pointer-events: none;
-	z-index: 1;
-	background: no-repeat center / contain
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23A9A9A9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
-	opacity: 0.85;
-	transition: filter 0.25s, transform 0.25s, opacity 0.25s;
-}
+	width: 18px;
+	height: 18px;
 
-/* Accent glow when focused or typing */
-.search-container.unified:focus-within .search-icon,
-.search-container.unified.typing .search-icon {
-	filter:
-		drop-shadow(0 0 4px var(--accent-color))
-		drop-shadow(0 0 8px color-mix(in srgb, var(--accent-color) 40%, transparent));
-	background: no-repeat center / contain
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%234EA8FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
-	opacity: 1;
-	transform: translateY(-50%) scale(1.05);
-}
+	opacity: 0.75;
+	transition: all 0.25s ease;
 
-/* Divider between input & dropdown */
-.search-container.unified::before {
-	content: "";
-	position: absolute;
-	right: 112px;
-	top: 8px;
-	bottom: 8px;
-	width: 1px;
-	background: linear-gradient(
-		to bottom,
-		color-mix(in srgb, var(--accent-color) 34%, transparent),
-		color-mix(in srgb, white 10%, transparent),
-		color-mix(in srgb, var(--accent-color) 12%, transparent)
-	);
-	border-radius: 999px;
-	opacity: 0.38;
-	transition: opacity var(--transition-medium);
-	z-index: 1;
-}
-
-.search-container.unified:focus-within::before {
-	opacity: 0.18;
-}
-
-/* Dropdown select */
-.sort-inline-select {
-	position: absolute;
-	right: 8px;
-	top: 50%;
-	transform: translateY(-50%);
-	border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-	outline: none;
-	appearance: none;
-	cursor: pointer;
-	font-size: 0.9em;
-	font-weight: 500;
-	color: var(--text-color);
 	z-index: 2;
 
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 7%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, var(--content-bg) 92%, transparent);
+	background: no-repeat center / contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' stroke='%23A9A9A9' fill='none' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8' stroke-width='2'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65' stroke-width='2'/%3E%3C/svg%3E");
+}
 
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
+/* ✨ focus + typing glow */
+.search-container.unified:focus-within .search-icon,
+.search-container.unified.typing .search-icon {
+	opacity: 1;
+	transform: translateY(-50%) scale(1.08);
 
-	padding: 6px 24px 6px 10px;
-	border-radius: 10px;
+	filter:
+		drop-shadow(0 0 6px var(--accent-color))
+		drop-shadow(0 0 12px color-mix(in srgb, var(--accent-color) 40%, transparent));
+}
+
+/* ======================================================= */
+/* 🎯 FOCUS STATE                                          */
+/* ======================================================= */
+
+.search-container.unified:focus-within {
+	transform: translateY(-2px);
+
+	border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
 
 	box-shadow:
-		0 2px 8px color-mix(in srgb, var(--shadow-color) 50%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 30%, transparent),
+		0 0 0 6px color-mix(in srgb, var(--accent-color) 10%, transparent),
+		0 18px 44px rgba(0,0,0,0.45),
+		inset 0 1px 0 rgba(255,255,255,0.2);
+}
 
-	transition:
-		background var(--transition-fast),
-		box-shadow var(--transition-fast),
-		border-color var(--transition-fast),
-		transform var(--transition-fast);
+/* ======================================================= */
+/* 🔽 SORT DROPDOWN                                        */
+/* ======================================================= */
+
+.sort-inline-select {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+
+	border-radius: 12px;
+	padding: 7px 26px 7px 12px;
+
+	font-size: 0.9em;
+	font-weight: 600;
+
+	color: var(--text-color);
+
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.08), transparent),
+		color-mix(in srgb, var(--content-bg) 88%, transparent);
+
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 75%, transparent);
+
+	box-shadow:
+		0 2px 8px rgba(0,0,0,0.35),
+		inset 0 1px 0 rgba(255,255,255,0.1);
+
+	cursor: pointer;
+
+	appearance: none;
 
 	background-image:
 		linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
 		linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
-	background-position: calc(100% - 12px) 50%, calc(100% - 8px) 50%;
-	background-size: 4px 4px, 4px 4px;
+	background-position:
+		calc(100% - 12px) 50%,
+		calc(100% - 8px) 50%;
+	background-size: 4px 4px;
 	background-repeat: no-repeat;
+
+	transition: all 0.22s ease;
 }
 
-/* Hover/focus glow */
-.sort-inline-select:hover,
-.sort-inline-select:focus {
+/* hover glow */
+.sort-inline-select:hover {
 	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 9%, transparent),
-			transparent 60%
-		),
+		linear-gradient(180deg, rgba(255,255,255,0.1), transparent),
 		color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
-	border-color: color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
+
 	box-shadow:
-		0 0 10px color-mix(in srgb, var(--accent-color) 22%, transparent),
-		0 2px 8px color-mix(in srgb, var(--shadow-color) 55%, transparent);
+		0 0 12px color-mix(in srgb, var(--accent-color) 20%, transparent),
+		0 2px 8px rgba(0,0,0,0.4);
 }
 
 /* ======================================================= */
-/* MOBILE */
+/* 📱 MOBILE                                               */
 /* ======================================================= */
+
 @media (max-width: 600px) {
+
 	.search-container.unified {
 		flex-direction: column;
 		align-items: stretch;
-		width: calc(100% - 36px);
-		padding: 8px 14px;
-		margin: 0 auto 36px auto;
-		border-radius: var(--radius-lg);
+
+		padding: 10px;
+		border-radius: 18px;
+		width: calc(100% - 30px);
 	}
 
 	.creator-search {
 		padding: 12px 12px 12px 42px;
 		font-size: 16px;
-		line-height: 1.4;
 	}
 
 	.search-icon {
-		left: 18px;
-		top: 31.2px;
-		transform: translateY(-50%);
-		width: 18px;
-		height: 18px;
+		top: 30px;
 	}
 
 	.sort-inline-select {
 		position: static;
 		transform: none;
+
 		width: 100%;
 		margin-top: 10px;
-		font-size: 0.95em;
-		padding: 10px;
-		border-radius: var(--radius-md);
-	}
 
-	.search-container.unified::before {
-		display: none;
+		padding: 10px;
+		border-radius: 14px;
 	}
 }
 
