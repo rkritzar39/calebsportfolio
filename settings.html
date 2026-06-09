@@ -639,8 +639,76 @@
     </div>
   </main>
 
+  <!-- Liquid Glass Fullscreen Panel -->
+  <section class="liquid-glass-panel" id="liquidGlassPanel" aria-hidden="true">
+    <div class="liquid-glass-topbar">
+      <button class="liquid-back-button" id="closeLiquidGlassPanel" type="button" aria-label="Back">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+
+      <h1>Liquid Glass</h1>
+    </div>
+
+    <div class="liquid-preview-card">
+      <div class="liquid-preview-scroll">
+        <div class="liquid-preview-hero">
+          <div class="liquid-preview-building"></div>
+        </div>
+
+        <div class="liquid-preview-body">
+          <h2>Welcome to Caleb’s Profile</h2>
+          <p>Customize how translucent controls look across your website.</p>
+
+          <div class="liquid-demo-content">
+            <div class="demo-row"></div>
+            <div class="demo-row short"></div>
+            <div class="demo-row medium"></div>
+            <div class="demo-card"></div>
+            <div class="demo-row"></div>
+            <div class="demo-row short"></div>
+          </div>
+        </div>
+
+        <div class="liquid-floating-controls">
+          <button class="liquid-floating-circle" type="button" aria-label="Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+
+          <div class="liquid-floating-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="liquid-slider-area">
+      <div class="liquid-slider-icons">
+        <i class="fa-regular fa-square liquid-clear-icon"></i>
+
+        <input
+          type="range"
+          id="liquidGlassSlider"
+          class="liquid-glass-slider"
+          min="0"
+          max="100"
+          value="18"
+          step="1"
+          aria-label="Liquid Glass transparency"
+        />
+
+        <i class="fa-solid fa-square liquid-tinted-icon"></i>
+      </div>
+
+      <p class="liquid-slider-description">
+        Clear is more transparent and tinted increases opacity, adding contrast to content and controls.
+      </p>
+    </div>
+  </section>
+
   <div id="toast-container"></div>
   <div id="mouse-trail"></div>
+
 
   <footer class="settings-footer">
     <div class="footer-content">
