@@ -681,12 +681,12 @@ if (!this.isAppearanceManualAllowed()) {
   ============================= */
 
   setThemeClasses(isDark) {
-    document.documentElement.classList.toggle("dark-mode", isDark);
-    document.documentElement.classList.toggle("light-mode", !isDark);
+  document.documentElement.classList.toggle("dark-mode", isDark);
+  document.documentElement.classList.toggle("light-mode", !isDark);
 
-    document.body.classList.toggle("dark-mode", isDark);
-    document.body.classList.toggle("light-e", !isDark);
-  }
+  document.body.classList.toggle("dark-mode", isDark);
+  document.body.classList.toggle("light-mode", !isDark);
+}
 
   applyAppearanceMode() {
     const isDark =
@@ -783,6 +783,89 @@ if (!this.isAppearanceManualAllowed()) {
     const isLightColor = r > 240 && g > 240 && b > 240;
     warn.style.display = isLightColor && isLight ? "block" : "none";
   }
+
+  /* =============================
+   Liquid Glass
+============================= */
+
+getLiquidGlassLabel(value) {
+  const level = Number(value);
+
+  if (level < 34) return "More Clear";
+  if (level < 67) return "Balanced";
+  return "More Tinted";
+}
+
+applyLiquidGlass(value = this.settings.liquidGlassLevel) {
+  const level = Number(value);
+
+  const opacity = 0.10 + level * 0.0054;
+  const blur = 16 + level * 0.18;
+  const saturation = 150 + level * 0.7;
+  const brightness = 1.03 + level * 0.001;
+
+  document.documentElement.style.setProperty("--liquid-level", level);
+  document.documentElement.style.setProperty("--liquid-opacity", opacity.toFixed(3));
+  document.documentElement.style.setProperty("--liquid-blur-amount", ${blur.toFixed(1)}px);
+  document.documentElement.style.setProperty("--liquid-saturation", ${saturation.toFixed(0)}%);
+  document.documentElement.style.setProperty("--liquid-brightness", brightness.toFixed(3));
+
+  const label = this.getLiquidGlassLabel(level);
+
+  this.settings.liquidGlassLevel = level;
+  this.settings.liquidGlassMode = label;
+
+  const modeText = document.getElementById("liquidGlassModeText");
+  if (modeText) {
+    modeText.textContent = label;
+  }
+
+  const slider = document.getElementById("liquidGlassSlider");
+  if (slider) {
+    slider.value = level;
+  }
+}
+
+initLiquidGlass() {
+  const openBtn = document.getElementById("openLiquidGlassPanel");
+  const closeBtn = document.getElementById("closeLiquidGlassPanel");
+  const panel = document.getElementById("liquidGlassPanel");
+  const slider = document.getElementById("liquidGlassSlider");
+
+  if (!openBtn || !closeBtn || !panel || !slider) {
+    console.warn("[Liquid Glass] Missing HTML elements. Check settings.html.");
+    return;
+  }
+
+  this.applyLiquidGlass(this.settings.liquidGlassLevel);
+
+  openBtn.addEventListener("click", () => {
+    panel.classList.add("open");
+    panel.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  });
+
+  closeBtn.addEventListener("click", () => {
+    panel.classList.remove("open");
+    panel.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  });
+
+  slider.addEventListener("input", (event) => {
+    const level = Number(event.target.value);
+
+    this.applyLiquidGlass(level);
+    this.saveSettings();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && panel.classList.contains("open")) {
+      panel.classList.remove("open");
+      panel.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+  });
+}
 
   /* =============================
      Custom Background & Blur
@@ -1516,124 +1599,167 @@ if (!this.isAppearanceManualAllowed()) {
      Apply Settings
   ============================= */
   applyAllSettings() {
-    Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));   this.applyLiquidGlass();
-    this.applyCustomBackground(false);
-    this.toggleScheduleInputs();
-    this.syncWallpaperUIVisibility();
-    this.checkDarkModeSchedule(true);
-    this.updateDarkModeStatusUI();
-    this.syncLocationButtonUI();
+  Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
 
-    this.initPerDayControlsUI();
-    this.initAutoRecommendUI();
-    this.renderHolidayListUI();
-    this.renderScheduleRecommendationUI();
-  }
+  this.applyLiquidGlass();
+
+  this.applyCustomBackground(false);
+  this.toggleScheduleInputs();
+  this.syncWallpaperUIVisibility();
+  this.checkDarkModeSchedule(true);
+  this.updateDarkModeStatusUI();
+  this.syncLocationButtonUI();
+
+  this.initPerDayControlsUI();
+  this.initAutoRecommendUI();
+  this.renderHolidayListUI();
+  this.renderScheduleRecommendationUI();
+}
 
   applySetting(key) {
-    const actions = {
-      appearanceMode: () => this.applyAppearanceMode(),
-      accentColor: () => this.applyAccentColor(),
-      fontSize: () => this.applyFontSize(),
-      focusOutline: () =>
-        document.body.classList.toggle(
-          "focus-outline-disabled",
-          this.settings.focusOutline === "disabled"
-        ),
-      motionEffects: () => this.applyMotionEffects(),
-      highContrast: () =>
-        document.body.classList.toggle("high-contrast", this.settings.highContrast === "enabled"),
-      dyslexiaFont: () =>
-        document.body.classList.toggle("dyslexia-font", this.settings.dyslexiaFont === "enabled"),
-      underlineLinks: () =>
-        document.body.classList.toggle("underline-links", this.settings.underlineLinks === "enabled"),
-      mouseTrail: () =>
-        document.body.classList.toggle("mouse-trail-enabled", this.settings.mouseTrail === "enabled"),
-    };
+  const actions = {
+    appearanceMode: () => this.applyAppearanceMode(),
+    accentColor: () => this.applyAccentColor(),
+    fontSize: () => this.applyFontSize(),
 
-    actions[key]?.();
+    // Liquid Glass
+    liquidGlassLevel: () => this.applyLiquidGlass(),
 
-    // Smooth section show/hide
-    if (key.startsWith("show")) {
-      const sectionId = key
-        .replace(/^show/, "")
-        .replace(/^[A-Z]/, (m) => m.toLowerCase())
-        .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+    focusOutline: () =>
+      document.body.classList.toggle(
+        "focus-outline-disabled",
+        this.settings.focusOutline === "disabled"
+      ),
 
-      const el =
-        document.getElementById(`${sectionId}-section`) ||
-        document.querySelector(`[data-section-id="${sectionId}"]`);
+    motionEffects: () => this.applyMotionEffects(),
 
-      if (el) {
-        const visible = this.settings[key] === "enabled";
+    highContrast: () =>
+      document.body.classList.toggle(
+        "high-contrast",
+        this.settings.highContrast === "enabled"
+      ),
 
-        el.style.transition =
-          "opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease";
-        el.style.overflow = "hidden";
+    dyslexiaFont: () =>
+      document.body.classList.toggle(
+        "dyslexia-font",
+        this.settings.dyslexiaFont === "enabled"
+      ),
 
-        if (visible) {
-          el.style.display = "";
-          const height = el.scrollHeight + "px";
-          el.style.maxHeight = "0";
-          el.style.opacity = "0";
+    underlineLinks: () =>
+      document.body.classList.toggle(
+        "underline-links",
+        this.settings.underlineLinks === "enabled"
+      ),
 
-          requestAnimationFrame(() => {
-            el.style.maxHeight = height;
-            el.style.opacity = "1";
-          });
+    mouseTrail: () =>
+      document.body.classList.toggle(
+        "mouse-trail-enabled",
+        this.settings.mouseTrail === "enabled"
+      ),
+  };
 
-          el.addEventListener(
-            "transitionend",
-            function handler() {
-              el.style.maxHeight = "";
-              el.removeEventListener("transitionend", handler);
-            }
-          );
-        } else {
-          const height = el.scrollHeight + "px";
+  actions[key]?.();
+
+  // Smooth homepage section show/hide
+  if (key.startsWith("show")) {
+    const sectionId = key
+      .replace(/^show/, "")
+      .replace(/^[A-Z]/, (m) => m.toLowerCase())
+      .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
+
+    const el =
+      document.getElementById(${sectionId}-section) ||
+      document.querySelector([data-section-id="${sectionId}"]);
+
+    if (el) {
+      const visible = this.settings[key] === "enabled";
+
+      el.style.transition =
+        "opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease";
+      el.style.overflow = "hidden";
+
+      if (visible) {
+        el.style.display = "";
+
+        const height = el.scrollHeight + "px";
+
+        el.style.maxHeight = "0";
+        el.style.opacity = "0";
+
+        requestAnimationFrame(() => {
           el.style.maxHeight = height;
           el.style.opacity = "1";
+        });
 
-          requestAnimationFrame(() => {
-            el.style.maxHeight = "0";
-            el.style.opacity = "0";
-            el.style.paddingTop = "0";
-            el.style.paddingBottom = "0";
-            el.style.marginTop = "0";
-            el.style.marginBottom = "0";
-          });
+        el.addEventListener(
+          "transitionend",
+          function handler() {
+            el.style.maxHeight = "";
+            el.style.paddingTop = "";
+            el.style.paddingBottom = "";
+            el.style.marginTop = "";
+            el.style.marginBottom = "";
+            el.removeEventListener("transitionend", handler);
+          }
+        );
+      } else {
+        const height = el.scrollHeight + "px";
 
-          el.addEventListener(
-            "transitionend",
-            function handler() {
-              el.style.display = "none";
-              el.style.paddingTop = "";
-              el.style.paddingBottom = "";
-              el.style.marginTop = "";
-              el.style.marginBottom = "";
-              el.removeEventListener("transitionend", handler);
-            }
-          );
-        }
-      }
-    }
+        el.style.maxHeight = height;
+        el.style.opacity = "1";
 
-    // Live activity
-    if (key === "showLiveActivity") {
-      const liveActivity = document.getElementById("live-activity");
-      if (liveActivity) {
-        const visible = this.settings.showLiveActivity === "enabled";
-        if (visible) {
-          liveActivity.style.display = "";
-          requestAnimationFrame(() => (liveActivity.style.opacity = "1"));
-          if (typeof updateLiveStatus === "function") setTimeout(() => updateLiveStatus(), 300);
-        } else {
-          liveActivity.style.opacity = "0";
-          setTimeout(() => (liveActivity.style.display = "none"), 250);
-        }
+        requestAnimationFrame(() => {
+          el.style.maxHeight = "0";
+          el.style.opacity = "0";
+          el.style.paddingTop = "0";
+          el.style.paddingBottom = "0";
+          el.style.marginTop = "0";
+          el.style.marginBottom = "0";
+        });
+
+        el.addEventListener(
+          "transitionend",
+          function handler() {
+            el.style.display = "none";
+            el.style.paddingTop = "";
+            el.style.paddingBottom = "";
+            el.style.marginTop = "";
+            el.style.marginBottom = "";
+            el.removeEventListener("transitionend", handler);
+          }
+        );
       }
     }
   }
+
+  // Live Activity special handling
+  if (key === "showLiveActivity") {
+    const liveActivity = document.getElementById("live-activity");
+
+    if (liveActivity) {
+      const visible = this.settings.showLiveActivity === "enabled";
+
+      if (visible) {
+        liveActivity.style.display = "";
+
+        requestAnimationFrame(() => {
+          liveActivity.style.opacity = "1";
+        });
+
+        if (typeof updateLiveStatus === "function") {
+          setTimeout(() => updateLiveStatus(), 300);
+        }
+      } else {
+        liveActivity.style.opacity = "0";
+
+        setTimeout(() => {
+          liveActivity.style.display = "none";
+        }, 250);
+      }
+    }
+  }
+}
+
 
   /* =============================
      In-Site Notifications
