@@ -806,10 +806,9 @@ applyLiquidGlass(value = this.settings.liquidGlassLevel) {
 
   document.documentElement.style.setProperty("--liquid-level", level);
   document.documentElement.style.setProperty("--liquid-opacity", opacity.toFixed(3));
-  document.documentElement.style.setProperty("--liquid-blur-amount", ${blur.toFixed(1)}px);
-  document.documentElement.style.setProperty("--liquid-saturation", ${saturation.toFixed(0)}%);
+  document.documentElement.style.setProperty("--liquid-blur-amount", `${blur.toFixed(1)}px`);
+  document.documentElement.style.setProperty("--liquid-saturation", `${saturation.toFixed(0)}%`);
   document.documentElement.style.setProperty("--liquid-brightness", brightness.toFixed(3));
-
   const label = this.getLiquidGlassLabel(level);
 
   this.settings.liquidGlassLevel = level;
@@ -1667,9 +1666,9 @@ initLiquidGlass() {
       .replace(/^[A-Z]/, (m) => m.toLowerCase())
       .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
 
-    const el =
-      document.getElementById(${sectionId}-section) ||
-      document.querySelector([data-section-id="${sectionId}"]);
+       const el =
+      document.getElementById(`${sectionId}-section`) ||
+      document.querySelector(`[data-section-id="${sectionId}"]`);
 
     if (el) {
       const visible = this.settings[key] === "enabled";
