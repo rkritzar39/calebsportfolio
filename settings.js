@@ -124,6 +124,9 @@ class SettingsManager {
       themeStyle: "clear",
       accentColor: "#3ddc84",
       matchSongAccent: "enabled",
+      liquidGlassLevel: 18,
+      liquidGlassMode: "More Clear",
+
 
       // Scheduler
       // "off" | "custom" | "sunset_to_sunrise" | "sunrise_to_sunset"
@@ -201,6 +204,8 @@ class SettingsManager {
       this.initializeControls();
       this.applyAllSettings();
       this.setupEventListeners();
+
+      this.initLiquidGlass();
 
       // Feature setup
       this.initMouseTrail();
@@ -1511,7 +1516,7 @@ if (!this.isAppearanceManualAllowed()) {
      Apply Settings
   ============================= */
   applyAllSettings() {
-    Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));
+    Object.keys(this.defaultSettings).forEach((k) => this.applySetting(k));   this.applyLiquidGlass();
     this.applyCustomBackground(false);
     this.toggleScheduleInputs();
     this.syncWallpaperUIVisibility();
