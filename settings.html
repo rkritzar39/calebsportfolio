@@ -55,111 +55,93 @@
       </div>
 
       <div class="settings-subsection animate-slide-in">
-  <h2 class="subsection-title">Appearance</h2>
+        <h2 class="subsection-title">Appearance</h2>
 
-  <div class="setting-card" id="appearanceModeRow">
-    <div class="setting-icon-container" style="background-color: #8e8e93;">
-      <i class="fa-solid fa-circle-half-stroke"></i>
-    </div>
-    <div class="setting-label">
-      <strong class="setting-title">Appearance Mode</strong>
-      <p class="setting-description">Choose light, dark, or follow your device setting.</p>
-    </div>
-    <div class="segmented-control" id="appearanceModeControl" role="group" aria-label="Appearance Mode">
-      <div class="seg-bg"></div>
-      <button type="button" data-value="device">Device</button>
-      <button type="button" data-value="light">Light</button>
-      <button type="button" data-value="dark">Dark</button>
-    </div>
-  </div>
+       <div class="setting-card" id="appearanceModeRow">
+          <div class="setting-icon-container" style="background-color: #8e8e93;">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+          </div>
+          <div class="setting-label">
+            <strong class="setting-title">Appearance Mode</strong>
+            <p class="setting-description">Choose light, dark, or follow your device setting.</p>
+          </div>
+          <div class="segmented-control" id="appearanceModeControl" role="group" aria-label="Appearance Mode">
+            <div class="seg-bg"></div>
+            <button type="button" data-value="device">Device</button>
+            <button type="button" data-value="light">Light</button>
+            <button type="button" data-value="dark">Dark</button>
+          </div>
+        </div>
 
-  <!-- Liquid Glass Row -->
-  <button class="setting-card liquid-glass-row" id="openLiquidGlassPanel" type="button">
-    <div class="setting-icon-container" style="background-color: #8e8e93;">
-      <i class="fa-solid fa-layer-group"></i>
-    </div>
+        <div class="setting-card custom-background">
+          <div class="setting-icon-container" style="background-color: #007aff;">
+            <i class="fa-solid fa-image"></i>
+          </div>
+          <div class="custom-bg-left">
+            <div class="setting-label">
+              <strong class="setting-title">Custom Background</strong>
+              <p class="setting-description">Upload your own image to use as the background.</p>
+            </div>
+            <div class="custom-bg-controls">
+              <label for="customBgUpload" class="custom-bg-label">Choose File</label>
+              <input type="file" id="customBgUpload" accept="image/*">
+              <span id="fileNameDisplay" class="file-name">No file chosen</span>
+              <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
+            </div>
+          </div>
+          <div class="custom-bg-separator" id="customBgSeparator"></div>
+          <div class="custom-bg-right">
+            <div id="customBgPreviewContainer">
+              <img id="customBgPreview" alt="Background preview" draggable="false" oncontextmenu="return false" />
+            </div>
+          </div>
+        </div>
 
-    <div class="setting-label">
-      <strong class="setting-title">Liquid Glass</strong>
-      <p class="setting-description">Liquid Glass dynamically adapts to the content beneath.</p>
-    </div>
+        <div class="setting-card" id="wallpaperBlurCard">
+          <div class="setting-icon-container" style="background-color: #5ac8fa;">
+            <i class="fa-solid fa-droplet"></i>
+          </div>
+          <div class="setting-label">
+            <strong class="setting-title">Wallpaper Blur</strong>
+            <p class="setting-description">Adjust the background blur strength.</p>
+          </div>
+          <div class="blur-slider-control">
+            <span id="blurValue" class="font-size-badge">15px</span>
+            <input type="range" id="blur-slider" min="0" max="40" step="1" value="15" aria-label="Adjust wallpaper blur" />
+          </div>
+        </div>
+      
+        <div class="setting-card accent-color-card">
+          <div class="setting-icon-container" style="background-color: #ff9500;">
+            <i class="fa-solid fa-palette"></i>
+          </div>
+          <label for="accentColorPicker" class="setting-label">
+            <strong class="setting-title">Accent Color</strong>
+            <p class="setting-description">Pick a custom highlight color.</p>
+          </label>
+          <div class="accent-picker-container">
+            <input type="color" id="accentColorPicker" value="#007AFF" aria-label="Choose accent color" />
+            <div id="accentColorPreview" class="accent-color-preview"></div>
+          </div>
+          <div id="whiteAccentWarning" class="color-warning" style="display:none;">
+            Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
+          </div>
+        </div>
 
-    <div class="liquid-row-value">
-      <span id="liquidGlassModeText">More Clear</span>
-      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-    </div>
-  </button>
-
-  <div class="setting-card custom-background">
-    <div class="setting-icon-container" style="background-color: #007aff;">
-      <i class="fa-solid fa-image"></i>
-    </div>
-    <div class="custom-bg-left">
-      <div class="setting-label">
-        <strong class="setting-title">Custom Background</strong>
-        <p class="setting-description">Upload your own image to use as the background.</p>
+        <label class="setting-card" for="matchSongAccentToggle">
+          <div class="setting-icon-container" style="background-color: #34c759;">
+            <i class="fa-solid fa-music"></i>
+          </div>
+          <div class="setting-label">
+            <strong class="setting-title">Match Song Accent</strong>
+            <p class="setting-description">Automatically change your accent color to match the current song’s album art.</p>
+          </div>
+          <div class="md-switch">
+            <input type="checkbox" id="matchSongAccentToggle" role="switch" checked />
+            <div class="track"><div class="thumb"></div></div>
+          </div>
+        </label>
       </div>
-      <div class="custom-bg-controls">
-        <label for="customBgUpload" class="custom-bg-label">Choose File</label>
-        <input type="file" id="customBgUpload" accept="image/*">
-        <span id="fileNameDisplay" class="file-name">No file chosen</span>
-        <button id="removeCustomBg" class="button" style="display:none;">Remove</button>
-      </div>
-    </div>
-    <div class="custom-bg-separator" id="customBgSeparator"></div>
-    <div class="custom-bg-right">
-      <div id="customBgPreviewContainer">
-        <img id="customBgPreview" alt="Background preview" draggable="false" oncontextmenu="return false" />
-      </div>
-    </div>
-  </div>
-
-  <div class="setting-card" id="wallpaperBlurCard">
-    <div class="setting-icon-container" style="background-color: #5ac8fa;">
-      <i class="fa-solid fa-droplet"></i>
-    </div>
-    <div class="setting-label">
-      <strong class="setting-title">Wallpaper Blur</strong>
-      <p class="setting-description">Adjust the background blur strength.</p>
-    </div>
-    <div class="blur-slider-control">
-      <span id="blurValue" class="font-size-badge">15px</span>
-      <input type="range" id="blur-slider" min="0" max="40" step="1" value="15" aria-label="Adjust wallpaper blur" />
-    </div>
-  </div>
-
-  <div class="setting-card accent-color-card">
-    <div class="setting-icon-container" style="background-color: #ff9500;">
-      <i class="fa-solid fa-palette"></i>
-    </div>
-    <label for="accentColorPicker" class="setting-label">
-      <strong class="setting-title">Accent Color</strong>
-      <p class="setting-description">Pick a custom highlight color.</p>
-    </label>
-    <div class="accent-picker-container">
-      <input type="color" id="accentColorPicker" value="#007AFF" aria-label="Choose accent color" />
-      <div id="accentColorPreview" class="accent-color-preview"></div>
-    </div>
-    <div id="whiteAccentWarning" class="color-warning" style="display:none;">
-      Warning: Using a white or very light accent color may cause visibility issues in some parts of the website in light mode.
-    </div>
-  </div>
-
-  <label class="setting-card" for="matchSongAccentToggle">
-    <div class="setting-icon-container" style="background-color: #34c759;">
-      <i class="fa-solid fa-music"></i>
-    </div>
-    <div class="setting-label">
-      <strong class="setting-title">Match Song Accent</strong>
-      <p class="setting-description">Automatically change your accent color to match the current song’s album art.</p>
-    </div>
-    <div class="md-switch">
-      <input type="checkbox" id="matchSongAccentToggle" role="switch" checked />
-      <div class="track"><div class="thumb"></div></div>
-    </div>
-  </label>
-</div>
-
 
       <div class="settings-subsection animate-slide-in">
   <h2 class="subsection-title">Dark Mode Scheduler</h2>
@@ -639,76 +621,8 @@
     </div>
   </main>
 
-  <!-- Liquid Glass Fullscreen Panel -->
-  <section class="liquid-glass-panel" id="liquidGlassPanel" aria-hidden="true">
-    <div class="liquid-glass-topbar">
-      <button class="liquid-back-button" id="closeLiquidGlassPanel" type="button" aria-label="Back">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
-
-      <h1>Liquid Glass</h1>
-    </div>
-
-    <div class="liquid-preview-card">
-      <div class="liquid-preview-scroll">
-        <div class="liquid-preview-hero">
-          <div class="liquid-preview-building"></div>
-        </div>
-
-        <div class="liquid-preview-body">
-          <h2>Welcome to Caleb’s Profile</h2>
-          <p>Customize how translucent controls look across your website.</p>
-
-          <div class="liquid-demo-content">
-            <div class="demo-row"></div>
-            <div class="demo-row short"></div>
-            <div class="demo-row medium"></div>
-            <div class="demo-card"></div>
-            <div class="demo-row"></div>
-            <div class="demo-row short"></div>
-          </div>
-        </div>
-
-        <div class="liquid-floating-controls">
-          <button class="liquid-floating-circle" type="button" aria-label="Menu">
-            <i class="fa-solid fa-bars"></i>
-          </button>
-
-          <div class="liquid-floating-search">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span>Search</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="liquid-slider-area">
-      <div class="liquid-slider-icons">
-        <i class="fa-regular fa-square liquid-clear-icon"></i>
-
-        <input
-          type="range"
-          id="liquidGlassSlider"
-          class="liquid-glass-slider"
-          min="0"
-          max="100"
-          value="18"
-          step="1"
-          aria-label="Liquid Glass transparency"
-        />
-
-        <i class="fa-solid fa-square liquid-tinted-icon"></i>
-      </div>
-
-      <p class="liquid-slider-description">
-        Clear is more transparent and tinted increases opacity, adding contrast to content and controls.
-      </p>
-    </div>
-  </section>
-
   <div id="toast-container"></div>
   <div id="mouse-trail"></div>
-
 
   <footer class="settings-footer">
     <div class="footer-content">
