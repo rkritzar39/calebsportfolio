@@ -695,7 +695,13 @@ function calculateUpgradeData(item) {
     const cycleVeryOld = cycles > 800;
 
     const ageOld = ageYears > 3;
+    const osStatus = checkOSStatus(item.osVersion);
     const ageVeryOld = ageYears > 4;
+    if (osStatus && osStatus.status !== "Latest") {
+    triggers.push("OS is outdated");
+    }
+
+    const outdatedOS = osStatus && osStatus.status === "Very Outdated";
 
     let status = "Great";
     let color = "green";
@@ -719,6 +725,47 @@ function calculateUpgradeData(item) {
     return { status, color, suggestion, triggers };
 }
 
+function checkOSStatus(osVersion) {
+    if (!osVersion) return null;
+
+    // Extract version number (e.g., "iOS 26.6" → 26.6)
+    const match = osVersion.match(/(\d+(\.\d+)?)/);
+    if (!match) return null;
+
+    const currentVersion = parseFloat(match[0]);
+
+    // You manually control this (VERY IMPORTANT)
+    const latestVersion = 26.6; // update this when new iOS releases
+
+    let status = "Latest";
+    let color = "green";
+
+    if (currentVersion < latestVersion) {
+        status = "Outdated";
+        color = "yellow";
+    }
+
+    if (currentVersion < latestVersion - 1) {
+        status = "Very Outdated";
+        color = "red";
+    }
+
+    return { status, color };
+}
+
+
+let osUpdateHtml = '';
+
+if (osStatus && osStatus.status !== "Latest") {
+    osUpdateHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-download"></i>
+        <span>Update:</span>
+        Software update recommended
+    </div>
+    `;
+}
+
 /* ------------------------------------------------------------
    RENDER FUNCTION (UNCHANGED)
 ------------------------------------------------------------ */
@@ -734,6 +781,7 @@ function renderTechItemHomepage(itemData) {
     const dateReleased = itemData.dateReleased || '';
     const dateBought = itemData.dateBought || '';
     const osVersion = itemData.osVersion || '';
+    const osStatus = checkOSStatus(itemData.osVersion);
     const batteryHealth = itemData.batteryHealth !== null && !isNaN(itemData.batteryHealth)
         ? parseInt(itemData.batteryHealth, 10)
         : null;
@@ -844,7 +892,8 @@ function renderTechItemHomepage(itemData) {
         ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ''}
         ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ''}
         ${ageHtml}
-        ${osVersion ? `<div class="tech-detail"><i class="fab fa-apple"></i><span>OS Version:</span> ${osVersion}</div>` : ''}
+        ${osVersion ? `<div class="tech-detail"> <i class="fab fa-apple"></i>  <span>OS Version:</span> ${osVersion} ${osStatus ? `<span class="os-badge ${osStatus.color}">${osStatus.status}</span>` : ''} </div>` : ''}
+        ${osUpdateHtml}
         ${batteryHtml}
         ${cyclesHtml}
         ${trendHtml}
