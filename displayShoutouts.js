@@ -1163,7 +1163,7 @@ async function loadAndDisplayTechItems() {
     techItemsListContainer.innerHTML = '<p>Loading Tech Info...</p>';
 
     try {
-        // Fixed: Updated orderBy to match the "displayOrder" database field we established earlier
+        // Use "displayOrder" to match your database schema
         const techQuery = query(techItemsCollectionRef, orderBy("displayOrder", "asc"));
         const querySnapshot = await getDocs(techQuery);
 
@@ -1198,9 +1198,7 @@ async function loadAndDisplayTechItems() {
     }
 }
 
-/* ------------------------------------------------------------
-   INIT
------------------------------------------------------------- */
+// Ensure it is only called once at the end of the file
 loadAndDisplayTechItems();
 
 
@@ -1529,43 +1527,6 @@ async function loadAndDisplayDisabilities() {
             console.error("Missing Firestore index for disabilities collection, ordered by 'order'.");
         }
         placeholderElement.innerHTML = `<li>${errorMsg}</li>`;
-    }
-}
-
-async function loadAndDisplayTechItems() {
-    const techItemsListContainer = document.getElementById('tech-items-list-dynamic');
-    if (!techItemsListContainer) { console.error("Tech Item Load Error: Container element #tech-items-list-dynamic not found."); return; }
-
-    if (!firebaseAppInitialized || !db || !techItemsCollectionRef) { console.error("Tech Item Load Error: Firebase not ready or collection ref missing."); techItemsListContainer.innerHTML = '<p class="error">Error loading tech data (DB connection/Config).</p>'; return; }
-
-    console.log("Fetching tech items for homepage...");
-    techItemsListContainer.innerHTML = '<p>Loading Tech Info...</p>';
-    try {
-        const techQuery = query(techItemsCollectionRef, orderBy("order", "asc"));
-        const querySnapshot = await getDocs(techQuery);
-        let allItemsHtml = '';
-
-        if (querySnapshot.empty) {
-            console.log("No tech items found in Firestore.");
-            allItemsHtml = '<p>No tech items to display currently.</p>';
-        } else {
-            console.log(`Found ${querySnapshot.size} tech items.`);
-            querySnapshot.forEach((doc) => {
-                allItemsHtml += renderTechItemHomepage(doc.data());
-            });
-        }
-        techItemsListContainer.innerHTML = allItemsHtml;
-        console.log("Tech items list updated on homepage.");
-    } catch (error) {
-        console.error("Error loading/displaying tech items:", error);
-        let errorMsg = "Could not load tech information at this time.";
-        if (error.code === 'failed-precondition') {
-            errorMsg = "Error: DB configuration needed for tech items (order).";
-            console.error("Missing Firestore index for tech_items collection, ordered by 'order'.");
-        } else {
-            errorMsg = `Could not load tech information: ${error.message}`;
-        }
-        techItemsListContainer.innerHTML = `<p class="error">${errorMsg}</p>`;
     }
 }
 
