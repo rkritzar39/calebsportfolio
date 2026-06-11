@@ -644,6 +644,7 @@ function calculateDeviceAge(dateBought) {
     const diffMs = now - bought;
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const years = parseFloat((days / 365).toFixed(1));
+
     return { days, years };
 }
 
@@ -654,7 +655,7 @@ function checkDeviceSupport(item) {
     const currentYear = new Date().getFullYear();
     const modelYear = item.modelYear ?? currentYear;
 
-    const osStatus = checkOSStatus(item.osVersion); // ✅ FIX
+    const osStatus = checkOSStatus(item.osVersion);
 
     const deviceType = item.name?.toLowerCase().includes("iphone")
         ? "phone"
@@ -700,6 +701,7 @@ function estimateBatteryTrend(item) {
     const estimatedOriginal = Math.min(100, currentHealth + estimatedLoss);
 
     const decline = Math.max(0, (estimatedOriginal - currentHealth)).toFixed(1);
+
     return {
         decline,
         trend: decline > 10 ? "Fast Decline" : "Normal"
@@ -765,6 +767,8 @@ function calculateUpgradeData(item) {
     const batteryCritical = batteryHealth < 75;
 
     const cycleOld = cycles > 500;
+    const cycleVeryOld = cycles > 800;
+
     const ageOld = ageYears > 3;
     const ageVeryOld = ageYears > 4;
 
@@ -788,11 +792,21 @@ function calculateUpgradeData(item) {
         triggers.push("Device no longer supported");
     }
 
-    if (batteryCritical || ageVeryOld || outdatedOS || !support.supported) {
+    if (
+        batteryCritical ||
+        cycleVeryOld ||
+        ageVeryOld ||
+        outdatedOS ||
+        !support.supported
+    ) {
         status = "Upgrade Recommended";
         color = "red";
         suggestion = "Consider upgrading soon";
-    } else if (batteryBad || cycleOld || ageOld) {
+    } else if (
+        batteryBad ||
+        cycleOld ||
+        ageOld
+    ) {
         status = "Aging";
         color = "yellow";
         suggestion = "Upgrade in 6–12 months";
@@ -806,8 +820,8 @@ function calculateUpgradeData(item) {
 ------------------------------------------------------------ */
 function renderTechItemHomepage(itemData) {
 
-    const osStatus = checkOSStatus(itemData.osVersion); // ✅ FIX
-    const support = checkDeviceSupport(itemData);       // ✅ FIX
+    const osStatus = checkOSStatus(itemData.osVersion);
+    const support = checkDeviceSupport(itemData);
 
     let osUpdateHtml = '';
     if (osStatus && osStatus.status !== "Latest") {
@@ -819,18 +833,37 @@ function renderTechItemHomepage(itemData) {
         </div>`;
     }
 
-    const supportHtml = 
+    const supportHtml = `
     <div class="tech-detail">
         <i class="fas fa-shield-check"></i>
         <span>Support Status:</span> ${support.supportLevel}
     </div>`;
+
+    const batteryHealth = itemData.batteryHealth !== null && !isNaN(itemData.batteryHealth)
+        ? parseInt(itemData.batteryHealth, 10)
+        : null;
+
+    const batteryCycles = itemData.batteryCycles !== null && !isNaN(itemData.batteryCycles)
+        ? itemData.batteryCycles
+        : null;
 
     const upgrade = calculateUpgradeData(itemData);
     const age = calculateDeviceAge(itemData.dateBought);
     const batteryTrend = estimateBatteryTrend(itemData);
     const upgradeScore = calculateUpgradeScore(itemData);
 
-    return 
+    let batteryHtml = '';
+    if (batteryHealth !== null) {
+        const displayHealth = Math.min(batteryHealth, 100);
+        batteryHtml = `<div>Battery: ${displayHealth}%</div>`;
+    }
+
+    let cyclesHtml = '';
+    if (batteryCycles !== null) {
+        cyclesHtml = `<div>Cycles: ${batteryCycles}</div>`;
+    }
+
+    return `
     <div class="tech-item">
         <h3>${itemData.name}</h3>
 
@@ -839,11 +872,14 @@ function renderTechItemHomepage(itemData) {
         ${itemData.osVersion ? `
         <div>
             OS: ${itemData.osVersion}
-            ${osStatus ? `<span class="${osStatus.color}">${osStatus.status}</span>` : ''}
+            <span class="${osStatus?.color}">${osStatus?.status}</span>
         </div>` : ''}
 
         ${osUpdateHtml}
         ${supportHtml}
+
+        ${batteryHtml}
+        ${cyclesHtml}
 
         ${batteryTrend ? `<div>${batteryTrend.trend}</div>` : ''}
 
@@ -856,10 +892,34 @@ function renderTechItemHomepage(itemData) {
 }
 
 /* ------------------------------------------------------------
+   LOAD
+------------------------------------------------------------ */
+async function loadAndDisplayTechItems() {
+    const container = document.getElementById('tech-items-list-dynamic');
+    if (!container) return;
+
+    container.innerHTML = "Loading...";
+
+    try {
+        const snapshot = await getDocs(query(techItemsCollectionRef, orderBy("order", "asc")));
+
+        let html = '';
+        snapshot.forEach(doc => {
+            html += renderTechItemHomepage(doc.data());
+        });
+
+        container.innerHTML = html || "No devices found.";
+
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = "Error loading devices.";
+    }
+}
+
+/* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
 loadAndDisplayTechItems();
-
 
 /* ------------------------------------------------------------
    INIT
