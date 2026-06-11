@@ -892,31 +892,6 @@ function renderTechItemHomepage(itemData) {
 }
 
 /* ------------------------------------------------------------
-   LOAD
------------------------------------------------------------- */
-async function loadAndDisplayTechItems() {
-    const container = document.getElementById('tech-items-list-dynamic');
-    if (!container) return;
-
-    container.innerHTML = "Loading...";
-
-    try {
-        const snapshot = await getDocs(query(techItemsCollectionRef, orderBy("order", "asc")));
-
-        let html = '';
-        snapshot.forEach(doc => {
-            html += renderTechItemHomepage(doc.data());
-        });
-
-        container.innerHTML = html || "No devices found.";
-
-    } catch (e) {
-        console.error(e);
-        container.innerHTML = "Error loading devices.";
-    }
-}
-
-/* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
 loadAndDisplayTechItems();
