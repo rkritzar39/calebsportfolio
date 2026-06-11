@@ -604,6 +604,50 @@ function extractID(url) {
 ------------------------------------------------------------ */
 let allTechItems = [];
 
+function calculateUpgradeData(item) {
+    const now = new Date();
+
+    const boughtDate = item.dateBought ? new Date(item.dateBought) : null;
+
+    let ageYears = 0;
+    if (boughtDate) {
+        ageYears = (now - boughtDate) / (1000 * 60 * 60 * 24 * 365);
+    }
+
+    const batteryHealth = item.batteryHealth ?? 100;
+    const cycles = item.batteryCycles ?? 0;
+
+    const batteryBad = batteryHealth < 85;
+    const batteryCritical = batteryHealth < 75;
+
+    const cycleOld = cycles > 500;
+    const cycleVeryOld = cycles > 800;
+
+    const ageOld = ageYears > 3;
+    const ageVeryOld = ageYears > 4;
+
+    let status = "Great";
+    let color = "green";
+    let suggestion = "No upgrade needed";
+    let triggers = [];
+
+    if (batteryBad) triggers.push("Battery health below 85%");
+    if (cycleOld) triggers.push("High charge cycles");
+    if (ageOld) triggers.push("Device older than 3 years");
+
+    if (batteryCritical || cycleVeryOld || ageVeryOld) {
+        status = "Upgrade Recommended";
+        color = "red";
+        suggestion = "Consider upgrading soon";
+    } else if (batteryBad || cycleOld || ageOld) {
+        status = "Aging";
+        color = "yellow";
+        suggestion = "Upgrade in 6–12 months";
+    }
+
+    return { status, color, suggestion, triggers };
+}
+
 /* ------------------------------------------------------------
    RENDER FUNCTION (UNCHANGED)
 ------------------------------------------------------------ */
@@ -625,6 +669,7 @@ function renderTechItemHomepage(itemData) {
     const batteryCycles = itemData.batteryCycles !== null && !isNaN(itemData.batteryCycles)
         ? itemData.batteryCycles
         : null;
+    const upgrade = calculateUpgradeData(itemData);
 
     let batteryHtml = '';
     if (batteryHealth !== null) {
@@ -652,6 +697,36 @@ function renderTechItemHomepage(itemData) {
             </div>`;
     }
 
+    const upgradeHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-arrow-up"></i>
+            <span>Upgrade Status:</span>
+            <span class="upgrade-badge ${upgrade.color}">
+                ${upgrade.status}
+            </span>
+        </div>
+        
+        <div class="tech-detail">
+            <i class="fas fa-lightbulb"></i>
+            <span>Suggestion:</span>
+            ${upgrade.suggestion}
+        </div>
+        `;
+        
+        let triggersHtml = '';
+        
+        if (upgrade.triggers.length > 0) {
+            triggersHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Upgrade Triggers:</span>
+            </div>
+            <ul class="upgrade-triggers">
+                ${upgrade.triggers.map(t => `<li>${t}</li>`).join('')}
+            </ul>
+            `;
+        }
+
     return `
     <div class="tech-item">
         <h3><i class="${iconClass}"></i> ${name}</h3>
@@ -666,6 +741,8 @@ function renderTechItemHomepage(itemData) {
         ${osVersion ? `<div class="tech-detail"><i class="fab fa-apple"></i><span>OS Version:</span> ${osVersion}</div>` : ''}
         ${batteryHtml}
         ${cyclesHtml}
+        ${upgradeHtml}
+        ${triggersHtml}
     </div>`;
 }
 
