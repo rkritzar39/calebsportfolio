@@ -604,6 +604,77 @@ function extractID(url) {
 ------------------------------------------------------------ */
 let allTechItems = [];
 
+// ======================
+// DEVICE AGE
+// ======================
+function calculateDeviceAge(dateBought) {
+    if (!dateBought) return null;
+
+    const now = new Date();
+    const bought = new Date(dateBought);
+
+    const diffMs = now - bought;
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const years = parseFloat((days / 365).toFixed(1));
+    return { days, years };
+}
+
+
+// ======================
+// BATTERY TREND
+// ======================
+function estimateBatteryTrend(item) {
+    const age = calculateDeviceAge(item.dateBought);
+    if (!age) return null;
+
+    const currentHealth = item.batteryHealth ?? 100;
+
+   const degradationRate = 5; // % per year
+    const estimatedLoss = age.years * degradationRate;
+    const estimatedOriginal = Math.min(100, currentHealth + estimatedLoss);
+    const decline = Math.max(0, (estimatedOriginal - currentHealth)).toFixed(1);
+    return {
+        decline,
+        trend: decline > 10 ? "Fast Decline" : "Normal"
+    };
+}
+
+
+// ======================
+// UPGRADE SCORE
+// ======================
+function calculateUpgradeScore(item) {
+    const age = calculateDeviceAge(item.dateBought);
+    const battery = item.batteryHealth ?? 100;
+    const cycles = item.batteryCycles ?? 0;
+
+    let score = 100;
+
+    if (age) score -= age.years * 10;
+    score -= (100 - battery) * 1.2;
+    score -= cycles * 0.02;
+
+    score = Math.max(0, Math.min(100, Math.round(score)));
+
+    let label = "Excellent";
+    let color = "green";
+
+    if (score < 80) {
+        label = "Good";
+        color = "yellow";
+    }
+    if (score < 60) {
+        label = "Aging";
+        color = "orange";
+    }
+    if (score < 40) {
+        label = "Upgrade Soon";
+        color = "red";
+    }
+
+    return { score, label, color };
+}
+
 function calculateUpgradeData(item) {
     const now = new Date();
 
@@ -670,6 +741,9 @@ function renderTechItemHomepage(itemData) {
         ? itemData.batteryCycles
         : null;
     const upgrade = calculateUpgradeData(itemData);
+    const age = calculateDeviceAge(itemData.dateBought);
+    const batteryTrend = estimateBatteryTrend(itemData);
+    const upgradeScore = calculateUpgradeScore(itemData);
 
     let batteryHtml = '';
     if (batteryHealth !== null) {
@@ -727,6 +801,37 @@ function renderTechItemHomepage(itemData) {
             `;
         }
 
+    // Device age
+        const ageHtml = age ? `
+        <div class="tech-detail">
+            <i class="fas fa-clock"></i>
+            <span>Device Age:</span>
+            ${age.days} days (${age.years} years)
+        </div>
+        ` : '';
+        
+        // Battery trend
+        const trendHtml = batteryTrend ? `
+        <div class="tech-detail">
+            <i class="fas fa-chart-line"></i>
+            <span>Battery Trend:</span>
+            ${batteryTrend.trend} (-${batteryTrend.decline}%)
+        </div>
+        ` : '';
+        
+        // Upgrade score
+        const scoreHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-gauge-high"></i>
+            <span>Upgrade Score:</span>
+            ${upgradeScore.label} (${upgradeScore.score}/100)
+        </div>
+        
+        <div class="score-bar">
+            <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%;"></div>
+        </div>
+        `;
+
     return `
     <div class="tech-item">
         <h3><i class="${iconClass}"></i> ${name}</h3>
@@ -738,9 +843,12 @@ function renderTechItemHomepage(itemData) {
         ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ''}
         ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ''}
         ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ''}
+        ${ageHtml}
         ${osVersion ? `<div class="tech-detail"><i class="fab fa-apple"></i><span>OS Version:</span> ${osVersion}</div>` : ''}
         ${batteryHtml}
         ${cyclesHtml}
+        ${trendHtml}
+        ${scoreHtml}
         ${upgradeHtml}
         ${triggersHtml}
     </div>`;
