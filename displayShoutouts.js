@@ -604,6 +604,31 @@ function extractID(url) {
 ------------------------------------------------------------ */
 let allTechItems = [];
 
+/* ------------------------------------------------------------
+   LATEST OS CONFIG
+   Update these manually when new OS versions release.
+------------------------------------------------------------ */
+const latestOSVersions = {
+    ios: 26.6,
+    ipados: 26.6,
+    macos: 26.6
+};
+
+// ======================
+// OS TYPE DETECTION
+// ======================
+function detectOSType(osVersion) {
+    if (!osVersion) return "unknown";
+
+    const os = osVersion.toLowerCase();
+
+    if (os.includes("ios")) return "ios";
+    if (os.includes("ipados")) return "ipados";
+    if (os.includes("macos")) return "macos";
+
+    return "unknown";
+}
+
 // ======================
 // OS STATUS
 // ======================
@@ -614,9 +639,17 @@ function checkOSStatus(osVersion) {
     if (!match) return null;
 
     const currentVersion = parseFloat(match[0]);
+    const osType = detectOSType(osVersion);
 
-    // Update this when the latest iOS/macOS version changes
-    const latestVersion = 26.6;
+    let latestVersion = latestOSVersions.ios;
+
+    if (osType === "ipados") {
+        latestVersion = latestOSVersions.ipados;
+    }
+
+    if (osType === "macos") {
+        latestVersion = latestOSVersions.macos;
+    }
 
     let status = "Latest";
     let color = "green";
@@ -631,7 +664,13 @@ function checkOSStatus(osVersion) {
         color = "red";
     }
 
-    return { status, color };
+    return {
+        status,
+        color,
+        currentVersion,
+        latestVersion,
+        osType
+    };
 }
 
 // ======================
@@ -640,16 +679,54 @@ function checkOSStatus(osVersion) {
 function calculateDeviceAge(dateBought) {
     if (!dateBought) return null;
 
-    const now = new Date();
-    const bought = new Date(dateBought);
+    let bought;
+
+    if (dateBought && typeof dateBought.toDate === "function") {
+        bought = dateBought.toDate();
+    } else {
+        bought = new Date(dateBought);
+    }
 
     if (isNaN(bought.getTime())) return null;
 
+    const now = new Date();
     const diffMs = now - bought;
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const years = parseFloat((days / 365).toFixed(1));
 
     return { days, years };
+}
+
+// ======================
+// DEVICE TYPE DETECTION
+// ======================
+function detectDeviceType(item) {
+    const name = (item.name || "").toLowerCase();
+    const model = (item.model || "").toLowerCase();
+    const iconClass = (item.iconClass || "").toLowerCase();
+
+    if (
+        name.includes("iphone") ||
+        name.includes("phone") ||
+        model.includes("iphone") ||
+        iconClass.includes("mobile")
+    ) {
+        return "phone";
+    }
+
+    if (
+        name.includes("mac") ||
+        name.includes("macbook") ||
+        name.includes("imac") ||
+        name.includes("computer") ||
+        model.includes("mac") ||
+        iconClass.includes("desktop") ||
+        iconClass.includes("laptop")
+    ) {
+        return "computer";
+    }
+
+    return "computer";
 }
 
 // ======================
@@ -660,23 +737,23 @@ function checkDeviceSupport(item) {
     const modelYear = item.modelYear ?? currentYear;
 
     const osStatus = checkOSStatus(item.osVersion);
-
-    const deviceType = item.name?.toLowerCase().includes("iphone")
-        ? "phone"
-        : "computer";
+    const deviceType = detectDeviceType(item);
 
     const yearsOld = currentYear - modelYear;
 
     let supported = true;
     let supportLevel = "Fully Supported";
+    let supportColor = "green";
 
     // 📱 PHONE RULES
     if (deviceType === "phone") {
         if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
             supported = false;
             supportLevel = "Unsupported";
+            supportColor = "red";
         } else if (yearsOld >= 4 || osStatus?.status === "Outdated") {
             supportLevel = "Limited Support";
+            supportColor = "yellow";
         }
     }
 
@@ -685,15 +762,20 @@ function checkDeviceSupport(item) {
         if (yearsOld >= 6 || osStatus?.status === "Very Outdated") {
             supported = false;
             supportLevel = "Unsupported";
+            supportColor = "red";
         } else if (yearsOld >= 5 || osStatus?.status === "Outdated") {
             supportLevel = "Limited Support";
+            supportColor = "yellow";
         }
     }
 
     return {
         supported,
         supportLevel,
-        yearsOld
+        supportColor,
+        yearsOld,
+        deviceType,
+        modelYear
     };
 }
 
@@ -709,7 +791,6 @@ function estimateBatteryTrend(item) {
     const degradationRate = 5; // % per year
     const estimatedLoss = age.years * degradationRate;
     const estimatedOriginal = Math.min(100, currentHealth + estimatedLoss);
-
     const decline = Math.max(0, (estimatedOriginal - currentHealth)).toFixed(1);
 
     return {
@@ -725,12 +806,21 @@ function calculateUpgradeScore(item) {
     const age = calculateDeviceAge(item.dateBought);
     const battery = item.batteryHealth ?? 100;
     const cycles = item.batteryCycles ?? 0;
+    const support = checkDeviceSupport(item);
+    const osStatus = checkOSStatus(item.osVersion);
 
     let score = 100;
 
     if (age) score -= age.years * 10;
+
     score -= (100 - battery) * 1.2;
     score -= cycles * 0.02;
+
+    if (osStatus?.status === "Outdated") score -= 8;
+    if (osStatus?.status === "Very Outdated") score -= 18;
+
+    if (support.supportLevel === "Limited Support") score -= 10;
+    if (!support.supported) score -= 25;
 
     score = Math.max(0, Math.min(100, Math.round(score)));
 
@@ -772,8 +862,10 @@ function calculateUpgradeData(item) {
     const cycles = item.batteryCycles ?? 0;
     const osStatus = checkOSStatus(item.osVersion);
     const support = checkDeviceSupport(item);
+    const deviceType = detectDeviceType(item);
 
-    const isPhone = item.name?.toLowerCase().includes("iphone");
+    const isPhone = deviceType === "phone";
+    const isComputer = deviceType === "computer";
 
     const batteryBad = batteryHealth < 85;
     const batteryCritical = batteryHealth < 75;
@@ -792,11 +884,21 @@ function calculateUpgradeData(item) {
 
     let triggers = [];
 
-    // ✅ YOUR PERSONAL RULES
+    // 📱 PHONE RULES
     if (isPhone && batteryBad) {
         triggers.push("Battery below 85%");
     }
 
+    if (isPhone && osStatus && osStatus.status !== "Latest") {
+        triggers.push("iOS support/update concern");
+    }
+
+    // 💻 COMPUTER RULES
+    if (isComputer && osStatus && osStatus.status !== "Latest") {
+        triggers.push("macOS support/update concern");
+    }
+
+    // Shared rules
     if (cycleOld) {
         triggers.push("High charge cycles");
     }
@@ -805,15 +907,11 @@ function calculateUpgradeData(item) {
         triggers.push("Device older than 3 years");
     }
 
-    if (osStatus && osStatus.status !== "Latest") {
-        triggers.push("OS is outdated");
-    }
-
     if (!support.supported) {
         triggers.push("Device no longer supported");
     }
 
-    // ✅ FINAL DECISION
+    // Final decision
     if (
         batteryCritical ||
         cycleVeryOld ||
@@ -827,14 +925,21 @@ function calculateUpgradeData(item) {
     } else if (
         batteryBad ||
         cycleOld ||
-        ageOld
+        ageOld ||
+        support.supportLevel === "Limited Support" ||
+        osStatus?.status === "Outdated"
     ) {
         status = "Aging";
         color = "yellow";
         suggestion = "Upgrade in 6–12 months";
     }
 
-    return { status, color, suggestion, triggers };
+    return {
+        status,
+        color,
+        suggestion,
+        triggers
+    };
 }
 
 /* ------------------------------------------------------------
@@ -869,8 +974,17 @@ function renderTechItemHomepage(itemData) {
     const supportHtml = `
     <div class="tech-detail">
         <i class="fas fa-shield-check"></i>
-        <span>Support Status:</span> ${support.supportLevel}
+        <span>Support Status:</span>
+        <span class="support-badge ${support.supportColor}">
+            ${support.supportLevel}
+        </span>
     </div>`;
+
+    const modelYearHtml = itemData.modelYear ? `
+    <div class="tech-detail">
+        <i class="fas fa-calendar"></i>
+        <span>Model Year:</span> ${itemData.modelYear}
+    </div>` : '';
 
     const batteryHealth = itemData.batteryHealth !== null && !isNaN(itemData.batteryHealth)
         ? parseInt(itemData.batteryHealth, 10)
@@ -984,6 +1098,7 @@ function renderTechItemHomepage(itemData) {
         <h3><i class="${iconClass}"></i> ${name}</h3>
 
         ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${model}</div>` : ''}
+        ${modelYearHtml}
         ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ''}
         ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${storage}</div>` : ''}
         ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${batteryCapacity}</div>` : ''}
