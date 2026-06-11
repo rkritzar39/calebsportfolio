@@ -687,7 +687,6 @@ function calculateUpgradeData(item) {
 
     const batteryHealth = item.batteryHealth ?? 100;
     const cycles = item.batteryCycles ?? 0;
-    const osStatus = checkOSStatus(item.osVersion);
 
     const batteryBad = batteryHealth < 85;
     const batteryCritical = batteryHealth < 75;
@@ -698,23 +697,16 @@ function calculateUpgradeData(item) {
     const ageOld = ageYears > 3;
     const ageVeryOld = ageYears > 4;
 
-    const outdatedOS = osStatus && osStatus.status === "Very Outdated";
-
     let status = "Great";
     let color = "green";
     let suggestion = "No upgrade needed";
-
-    let triggers = []; // ✅ defined BEFORE use
+    let triggers = [];
 
     if (batteryBad) triggers.push("Battery health below 85%");
     if (cycleOld) triggers.push("High charge cycles");
     if (ageOld) triggers.push("Device older than 3 years");
 
-    if (osStatus && osStatus.status !== "Latest") {
-        triggers.push("OS is outdated");
-    }
-
-    if (batteryCritical || cycleVeryOld || ageVeryOld || outdatedOS) {
+    if (batteryCritical || cycleVeryOld || ageVeryOld) {
         status = "Upgrade Recommended";
         color = "red";
         suggestion = "Consider upgrading soon";
@@ -727,35 +719,8 @@ function calculateUpgradeData(item) {
     return { status, color, suggestion, triggers };
 }
 
-
-function checkOSStatus(osVersion) {
-    if (!osVersion) return null;
-
-    const match = osVersion.match(/(\d+(\.\d+)?)/);
-    if (!match) return null;
-
-    const currentVersion = parseFloat(match[0]);
-
-    const latestVersion = 26.6; // 🔧 manually update when new iOS releases
-
-    let status = "Latest";
-    let color = "green";
-
-    if (currentVersion < latestVersion) {
-        status = "Outdated";
-        color = "yellow";
-    }
-
-    if (currentVersion < latestVersion - 1) {
-        status = "Very Outdated";
-        color = "red";
-    }
-
-    return { status, color };
-}
-
 /* ------------------------------------------------------------
-   RENDER FUNCTION
+   RENDER FUNCTION (UNCHANGED)
 ------------------------------------------------------------ */
 function renderTechItemHomepage(itemData) {
     const name = itemData.name || 'Unnamed Device';
@@ -769,36 +734,17 @@ function renderTechItemHomepage(itemData) {
     const dateReleased = itemData.dateReleased || '';
     const dateBought = itemData.dateBought || '';
     const osVersion = itemData.osVersion || '';
-
-    const osStatus = checkOSStatus(itemData.osVersion);
-
-    // ✅ FIXED: must be INSIDE function
-    let osUpdateHtml = '';
-    if (osStatus && osStatus.status !== "Latest") {
-        osUpdateHtml = `
-        <div class="tech-detail">
-            <i class="fas fa-download"></i>
-            <span>Update:</span>
-            Software update recommended
-        </div>`;
-    }
-
     const batteryHealth = itemData.batteryHealth !== null && !isNaN(itemData.batteryHealth)
         ? parseInt(itemData.batteryHealth, 10)
         : null;
-
     const batteryCycles = itemData.batteryCycles !== null && !isNaN(itemData.batteryCycles)
         ? itemData.batteryCycles
         : null;
-
     const upgrade = calculateUpgradeData(itemData);
     const age = calculateDeviceAge(itemData.dateBought);
     const batteryTrend = estimateBatteryTrend(itemData);
     const upgradeScore = calculateUpgradeScore(itemData);
 
-    // ======================
-    // Battery UI
-    // ======================
     let batteryHtml = '';
     if (batteryHealth !== null) {
         let batteryClass = '';
@@ -808,13 +754,10 @@ function renderTechItemHomepage(itemData) {
         const displayHealth = Math.min(batteryHealth, 100);
 
         batteryHtml = `
-            <div class="tech-detail">
-                <i class="fas fa-heart"></i>
-                <span>Battery Health:</span>
-            </div>
+            <div class="tech-detail"><i class="fas fa-heart"></i><span>Battery Health:</span></div>
             <div class="battery-container">
                 <div class="battery-icon ${batteryClass}">
-                    <div class="battery-level" style="width: ${displayHealth}%"></div>
+                    <div class="battery-level" style="width: ${displayHealth}%;"></div>
                     <div class="battery-percentage">${batteryHealth}%</div>
                 </div>
             </div>`;
@@ -823,15 +766,11 @@ function renderTechItemHomepage(itemData) {
     let cyclesHtml = '';
     if (batteryCycles !== null) {
         cyclesHtml = `
-        <div class="tech-detail">
-            <i class="fas fa-sync"></i>
-            <span>Battery Charge Cycles:</span> ${batteryCycles}
-        </div>`;
+            <div class="tech-detail"><i class="fas fa-sync"></i>
+                <span>Battery Charge Cycles:</span> ${batteryCycles}
+            </div>`;
     }
 
-    // ======================
-    // Upgrade UI
-    // ======================
     const upgradeHtml = `
         <div class="tech-detail">
             <i class="fas fa-arrow-up"></i>
@@ -840,60 +779,62 @@ function renderTechItemHomepage(itemData) {
                 ${upgrade.status}
             </span>
         </div>
-
+        
         <div class="tech-detail">
             <i class="fas fa-lightbulb"></i>
             <span>Suggestion:</span>
             ${upgrade.suggestion}
-        </div>`;
-
-    let triggersHtml = '';
-    if (upgrade.triggers.length > 0) {
-        triggersHtml = `
-        <div class="tech-detail">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>Upgrade Triggers:</span>
         </div>
-        <ul class="upgrade-triggers">
-            ${upgrade.triggers.map(t => `<li>${t}</li>`).join('')}
-        </ul>`;
-    }
+        `;
+        
+        let triggersHtml = '';
+        
+        if (upgrade.triggers.length > 0) {
+            triggersHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Upgrade Triggers:</span>
+            </div>
+            <ul class="upgrade-triggers">
+                ${upgrade.triggers.map(t => `<li>${t}</li>`).join('')}
+            </ul>
+            `;
+        }
 
-    // ======================
-    // Smart data UI
-    // ======================
-    const ageHtml = age ? `
-    <div class="tech-detail">
-        <i class="fas fa-clock"></i>
-        <span>Device Age:</span>
-        ${age.days} days (${age.years} years)
-    </div>` : '';
+    // Device age
+        const ageHtml = age ? `
+        <div class="tech-detail">
+            <i class="fas fa-clock"></i>
+            <span>Device Age:</span>
+            ${age.days} days (${age.years} years)
+        </div>
+        ` : '';
+        
+        // Battery trend
+        const trendHtml = batteryTrend ? `
+        <div class="tech-detail">
+            <i class="fas fa-chart-line"></i>
+            <span>Battery Trend:</span>
+            ${batteryTrend.trend} (-${batteryTrend.decline}%)
+        </div>
+        ` : '';
+        
+        // Upgrade score
+        const scoreHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-gauge-high"></i>
+            <span>Upgrade Score:</span>
+            ${upgradeScore.label} (${upgradeScore.score}/100)
+        </div>
+        
+        <div class="score-bar">
+            <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%;"></div>
+        </div>
+        `;
 
-    const trendHtml = batteryTrend ? `
-    <div class="tech-detail">
-        <i class="fas fa-chart-line"></i>
-        <span>Battery Trend:</span>
-        ${batteryTrend.trend} (-${batteryTrend.decline}%)
-    </div>` : '';
-
-    const scoreHtml = `
-    <div class="tech-detail">
-        <i class="fas fa-gauge-high"></i>
-        <span>Upgrade Score:</span>
-        ${upgradeScore.label} (${upgradeScore.score}/100)
-    </div>
-
-    <div class="score-bar">
-        <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%"></div>
-    </div>`;
-
-    // ======================
-    // FINAL OUTPUT
-    // ======================
     return `
     <div class="tech-item">
         <h3><i class="${iconClass}"></i> ${name}</h3>
-
         ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${model}</div>` : ''}
         ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ''}
         ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${storage}</div>` : ''}
@@ -902,17 +843,8 @@ function renderTechItemHomepage(itemData) {
         ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ''}
         ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ''}
         ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ''}
-
         ${ageHtml}
-
-        ${osVersion ? `
-        <div class="tech-detail">
-            <i class="fab fa-apple"></i>
-            <span>OS Version:</span> ${osVersion}
-            ${osStatus ? `<span class="os-badge ${osStatus.color}">${osStatus.status}</span>` : ''}
-        </div>` : ''}
-
-        ${osUpdateHtml}
+        ${osVersion ? `<div class="tech-detail"><i class="fab fa-apple"></i><span>OS Version:</span> ${osVersion}</div>` : ''}
         ${batteryHtml}
         ${cyclesHtml}
         ${trendHtml}
@@ -920,6 +852,35 @@ function renderTechItemHomepage(itemData) {
         ${upgradeHtml}
         ${triggersHtml}
     </div>`;
+}
+
+/* ------------------------------------------------------------
+   DOM REFERENCES
+------------------------------------------------------------ */
+const techListContainer = document.getElementById("tech-items-list-dynamic");
+
+/* ------------------------------------------------------------
+   RENDER ALL ITEMS (NO SEARCH)
+------------------------------------------------------------ */
+function renderTechList() {
+    techListContainer.innerHTML = allTechItems
+        .map(renderTechItemHomepage)
+        .join("");
+}
+
+/* ------------------------------------------------------------
+   FIRESTORE LISTENER
+------------------------------------------------------------ */
+function loadTechItems() {
+    const ref = collection(db, "tech_items");
+
+    onSnapshot(ref, snapshot => {
+        allTechItems = snapshot.docs.map(doc => ({
+            ...doc.data(),
+            id: doc.id
+        }));
+        renderTechList();
+    });
 }
 
 /* ------------------------------------------------------------
