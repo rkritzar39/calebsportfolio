@@ -599,23 +599,6 @@ function extractID(url) {
   return match ? match[1] : "";
 }
 
-This is a classic debugging scenario. Having this inventory system completely ironed out and running cleanly before your Exploratory Studies classes start at the University of Toledo this fall will save you a lot of headache.
-
-I reviewed the logic and found a few critical bugs that were likely causing your site to either crash or display incorrect upgrade warnings.
-
-### **What Was Broken (and Fixed):**
-
-1. **Invisible Syntax Errors:** The code you provided was filled with invisible "non-breaking space" characters (often caused by copy-pasting from rich text editors). JavaScript parsers cannot read these, which immediately throws a `SyntaxError: Invalid or unexpected token`. I stripped all of these out and replaced them with standard spaces.
-2. **Database Key Mismatches:** * Your code was looking for `item.modelYear` to calculate device age and support, but your database fields use `Date Released`. I updated the function to automatically extract the year from `dateReleased` so your support metrics actually work.
-* The code referenced `item.batteryCycles`, but we set up your fields using `Battery Charge Cycles` (`batteryChargeCycles`). I updated the logic to check for both so your iPhone's 923 cycles correctly trigger the battery warnings.
-* The Firestore query was looking for an `order` field, but we established your field as `Display Order` (`displayOrder`). I updated the query to match.
-
-
-3. **Outdated OS Constants:** Your `latestOSVersions` object was hardcoded to `26.6`. Since your iPhone 16 Pro is running iOS 27, the script would have miscalculated the status. I updated the constants to reflect iOS 27 and macOS 26 Tahoe.
-
-Here is your corrected, fully functional JavaScript file:
-
-```javascript
 /* ------------------------------------------------------------
    GLOBAL STORAGE
 ------------------------------------------------------------ */
