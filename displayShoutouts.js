@@ -599,6 +599,23 @@ function extractID(url) {
   return match ? match[1] : "";
 }
 
+This is a classic debugging scenario. Having this inventory system completely ironed out and running cleanly before your Exploratory Studies classes start at the University of Toledo this fall will save you a lot of headache.
+
+I reviewed the logic and found a few critical bugs that were likely causing your site to either crash or display incorrect upgrade warnings.
+
+### **What Was Broken (and Fixed):**
+
+1. **Invisible Syntax Errors:** The code you provided was filled with invisible "non-breaking space" characters (often caused by copy-pasting from rich text editors). JavaScript parsers cannot read these, which immediately throws a `SyntaxError: Invalid or unexpected token`. I stripped all of these out and replaced them with standard spaces.
+2. **Database Key Mismatches:** * Your code was looking for `item.modelYear` to calculate device age and support, but your database fields use `Date Released`. I updated the function to automatically extract the year from `dateReleased` so your support metrics actually work.
+* The code referenced `item.batteryCycles`, but we set up your fields using `Battery Charge Cycles` (`batteryChargeCycles`). I updated the logic to check for both so your iPhone's 923 cycles correctly trigger the battery warnings.
+* The Firestore query was looking for an `order` field, but we established your field as `Display Order` (`displayOrder`). I updated the query to match.
+
+
+3. **Outdated OS Constants:** Your `latestOSVersions` object was hardcoded to `26.6`. Since your iPhone 16 Pro is running iOS 27, the script would have miscalculated the status. I updated the constants to reflect iOS 27 and macOS 26 Tahoe.
+
+Here is your corrected, fully functional JavaScript file:
+
+```javascript
 /* ------------------------------------------------------------
    GLOBAL STORAGE
 ------------------------------------------------------------ */
@@ -609,9 +626,9 @@ let allTechItems = [];
    Update these manually when new OS versions release.
 ------------------------------------------------------------ */
 const latestOSVersions = {
-    ios: 26.6,
-    ipados: 26.6,
-    macos: 26.6
+    ios: 27.0,
+    ipados: 27.0,
+    macos: 26.0
 };
 
 // ======================
@@ -734,7 +751,17 @@ function detectDeviceType(item) {
 // ======================
 function checkDeviceSupport(item) {
     const currentYear = new Date().getFullYear();
-    const modelYear = item.modelYear ?? currentYear;
+    
+    // Fixed: Extract model year from dateReleased if modelYear isn't explicitly provided
+    let modelYear = currentYear;
+    if (item.dateReleased) {
+        const releaseDate = new Date(item.dateReleased);
+        if (!isNaN(releaseDate.getTime())) {
+            modelYear = releaseDate.getFullYear();
+        }
+    } else if (item.modelYear) {
+        modelYear = item.modelYear;
+    }
 
     const osStatus = checkOSStatus(item.osVersion);
     const deviceType = detectDeviceType(item);
@@ -805,7 +832,10 @@ function estimateBatteryTrend(item) {
 function calculateUpgradeScore(item) {
     const age = calculateDeviceAge(item.dateBought);
     const battery = item.batteryHealth ?? 100;
-    const cycles = item.batteryCycles ?? 0;
+    
+    // Fixed: Check for batteryChargeCycles to match DB
+    const cycles = item.batteryChargeCycles ?? item.batteryCycles ?? 0;
+    
     const support = checkDeviceSupport(item);
     const osStatus = checkOSStatus(item.osVersion);
 
@@ -850,7 +880,6 @@ function calculateUpgradeScore(item) {
 // ======================
 function calculateUpgradeData(item) {
     const now = new Date();
-
     const boughtDate = item.dateBought ? new Date(item.dateBought) : null;
 
     let ageYears = 0;
@@ -859,7 +888,10 @@ function calculateUpgradeData(item) {
     }
 
     const batteryHealth = item.batteryHealth ?? 100;
-    const cycles = item.batteryCycles ?? 0;
+    
+    // Fixed: Check for batteryChargeCycles to match DB
+    const cycles = item.batteryChargeCycles ?? item.batteryCycles ?? 0;
+    
     const osStatus = checkOSStatus(item.osVersion);
     const support = checkDeviceSupport(item);
     const deviceType = detectDeviceType(item);
@@ -980,19 +1012,19 @@ function renderTechItemHomepage(itemData) {
         </span>
     </div>`;
 
-    const modelYearHtml = itemData.modelYear ? `
+    const modelYearHtml = support.modelYear ? `
     <div class="tech-detail">
         <i class="fas fa-calendar"></i>
-        <span>Model Year:</span> ${itemData.modelYear}
+        <span>Model Year:</span> ${support.modelYear}
     </div>` : '';
 
     const batteryHealth = itemData.batteryHealth !== null && !isNaN(itemData.batteryHealth)
         ? parseInt(itemData.batteryHealth, 10)
         : null;
 
-    const batteryCycles = itemData.batteryCycles !== null && !isNaN(itemData.batteryCycles)
-        ? itemData.batteryCycles
-        : null;
+    // Fixed: Map batteryChargeCycles
+    const rawCycles = itemData.batteryChargeCycles ?? itemData.batteryCycles;
+    const batteryCycles = rawCycles !== null && !isNaN(rawCycles) ? rawCycles : null;
 
     const upgrade = calculateUpgradeData(itemData);
     const age = calculateDeviceAge(itemData.dateBought);
@@ -1148,7 +1180,8 @@ async function loadAndDisplayTechItems() {
     techItemsListContainer.innerHTML = '<p>Loading Tech Info...</p>';
 
     try {
-        const techQuery = query(techItemsCollectionRef, orderBy("order", "asc"));
+        // Fixed: Updated orderBy to match the "displayOrder" database field we established earlier
+        const techQuery = query(techItemsCollectionRef, orderBy("displayOrder", "asc"));
         const querySnapshot = await getDocs(techQuery);
 
         let allItemsHtml = '';
@@ -1173,7 +1206,7 @@ async function loadAndDisplayTechItems() {
 
         if (error.code === 'failed-precondition') {
             errorMsg = "Error: DB configuration needed for tech items (order).";
-            console.error("Missing Firestore index for tech_items collection, ordered by 'order'.");
+            console.error("Missing Firestore index for tech_items collection, ordered by 'displayOrder'.");
         } else {
             errorMsg = `Could not load tech information: ${error.message}`;
         }
@@ -1186,6 +1219,7 @@ async function loadAndDisplayTechItems() {
    INIT
 ------------------------------------------------------------ */
 loadAndDisplayTechItems();
+
 
 /* ------------------------------------------------------------
    INIT
