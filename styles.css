@@ -8449,3 +8449,26 @@ body.maintenance-active .onyx-dock {
 .score-fill.red {
     background: #FF3B30;
 }
+
+.os-badge {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.os-badge.green {
+    background: rgba(50, 205, 50, 0.15);
+    color: #32CD32;
+}
+
+.os-badge.yellow {
+    background: rgba(255, 204, 0, 0.15);
+    color: #FFCC00;
+}
+
+.os-badge.red {
+    background: rgba(255, 59, 48, 0.15);
+    color: #FF3B30;
+}
