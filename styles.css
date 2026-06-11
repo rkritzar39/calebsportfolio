@@ -8418,3 +8418,34 @@ body.maintenance-active .onyx-dock {
     font-size: 0.9rem;
 }
 
+/* Score bar */
+.score-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    margin: 6px 0 14px 0;
+    overflow: hidden;
+}
+
+.score-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+.score-fill.green {
+    background: #32CD32;
+}
+
+.score-fill.yellow {
+    background: #FFCC00;
+}
+
+.score-fill.orange {
+    background: #FF9500;
+}
+
+.score-fill.red {
+    background: #FF3B30;
+}
