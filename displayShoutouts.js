@@ -922,13 +922,16 @@ function renderTechItemHomepage(itemData) {
     </div>`;
 }
 
+
 /* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
-loadTechItems();
+loadAndDisplayTechItems();
 
 
-
+/* ------------------------------------------------------------
+   INIT
+------------------------------------------------------------ */
 function renderFaqItemHomepage(faqData) {
     const question = faqData.question || 'No Question Provided';
     const answerHtml = faqData.answer ? (faqData.answer.includes('<') ? faqData.answer : `<p>${faqData.answer}</p>`) : '<p>No Answer Provided.</p>';
