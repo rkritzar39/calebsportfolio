@@ -819,7 +819,7 @@ function renderTechItemHomepage(itemData) {
         </div>`;
     }
 
-    const supportHtml = `  // ✅ FIX
+    const supportHtml = 
     <div class="tech-detail">
         <i class="fas fa-shield-check"></i>
         <span>Support Status:</span> ${support.supportLevel}
@@ -830,7 +830,7 @@ function renderTechItemHomepage(itemData) {
     const batteryTrend = estimateBatteryTrend(itemData);
     const upgradeScore = calculateUpgradeScore(itemData);
 
-    return `
+    return 
     <div class="tech-item">
         <h3>${itemData.name}</h3>
 
