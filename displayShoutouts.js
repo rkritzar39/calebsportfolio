@@ -619,6 +619,47 @@ function calculateDeviceAge(dateBought) {
     return { days, years };
 }
 
+function checkDeviceSupport(item) {
+    const currentYear = new Date().getFullYear();
+    const modelYear = item.modelYear ?? currentYear;
+
+    const osStatus = checkOSStatus(item.osVersion);
+
+    const deviceType = item.name?.toLowerCase().includes("iphone")
+        ? "phone"
+        : "computer";
+
+    let yearsOld = currentYear - modelYear;
+
+    let supported = true;
+    let supportLevel = "Fully Supported";
+
+    // 📱 PHONE RULES
+    if (deviceType === "phone") {
+        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
+            supported = false;
+            supportLevel = "Unsupported";
+        } else if (yearsOld >= 4 || osStatus?.status === "Outdated") {
+            supportLevel = "Limited Support";
+        }
+    }
+
+    // 💻 COMPUTER RULES
+    if (deviceType === "computer") {
+        if (yearsOld >= 6 || osStatus?.status === "Very Outdated") {
+            supported = false;
+            supportLevel = "Unsupported";
+        } else if (yearsOld >= 5 || osStatus?.status === "Outdated") {
+            supportLevel = "Limited Support";
+        }
+    }
+
+    return {
+        supported,
+        supportLevel,
+        yearsOld
+    };
+}
 
 // ======================
 // BATTERY TREND
@@ -688,6 +729,9 @@ function calculateUpgradeData(item) {
     const batteryHealth = item.batteryHealth ?? 100;
     const cycles = item.batteryCycles ?? 0;
     const osStatus = checkOSStatus(item.osVersion);
+    const support = checkDeviceSupport(item);
+
+    const isPhone = item.name?.toLowerCase().includes("iphone");
 
     const batteryBad = batteryHealth < 85;
     const batteryCritical = batteryHealth < 75;
@@ -704,9 +748,14 @@ function calculateUpgradeData(item) {
     let color = "green";
     let suggestion = "No upgrade needed";
 
-    let triggers = []; // ✅ defined BEFORE use
+    let triggers = [];
 
-    if (batteryBad) triggers.push("Battery health below 85%");
+    // ✅ YOUR PERSONAL RULES
+
+    if (isPhone && batteryBad) {
+        triggers.push("Battery below 85%");
+    }
+
     if (cycleOld) triggers.push("High charge cycles");
     if (ageOld) triggers.push("Device older than 3 years");
 
@@ -714,44 +763,35 @@ function calculateUpgradeData(item) {
         triggers.push("OS is outdated");
     }
 
-    if (batteryCritical || cycleVeryOld || ageVeryOld || outdatedOS) {
+    if (!support.supported) {
+        triggers.push("Device no longer supported");
+    }
+
+    // ✅ FINAL DECISION
+
+    if (
+        batteryCritical ||
+        cycleVeryOld ||
+        ageVeryOld ||
+        outdatedOS ||
+        !support.supported
+    ) {
         status = "Upgrade Recommended";
         color = "red";
         suggestion = "Consider upgrading soon";
-    } else if (batteryBad || cycleOld || ageOld) {
+
+    } else if (
+        batteryBad ||
+        cycleOld ||
+        ageOld ||
+        !support.supported
+    ) {
         status = "Aging";
         color = "yellow";
         suggestion = "Upgrade in 6–12 months";
     }
 
     return { status, color, suggestion, triggers };
-}
-
-
-function checkOSStatus(osVersion) {
-    if (!osVersion) return null;
-
-    const match = osVersion.match(/(\d+(\.\d+)?)/);
-    if (!match) return null;
-
-    const currentVersion = parseFloat(match[0]);
-
-    const latestVersion = 26.6; // 🔧 manually update when new iOS releases
-
-    let status = "Latest";
-    let color = "green";
-
-    if (currentVersion < latestVersion) {
-        status = "Outdated";
-        color = "yellow";
-    }
-
-    if (currentVersion < latestVersion - 1) {
-        status = "Very Outdated";
-        color = "red";
-    }
-
-    return { status, color };
 }
 
 /* ------------------------------------------------------------
@@ -913,6 +953,7 @@ function renderTechItemHomepage(itemData) {
         </div>` : ''}
 
         ${osUpdateHtml}
+        ${supportHtml}
         ${batteryHtml}
         ${cyclesHtml}
         ${trendHtml}
