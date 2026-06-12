@@ -493,15 +493,26 @@ function formatRelativeTime(createdAt, updatedAt) {
     return result;
 }
 
-// --- Functions to Render Cards (Shoutouts, Tech, FAQs) ---
+/* ============================================================
+   CREATOR SHOUTOUT RENDER FUNCTIONS
+   TikTok / Instagram / YouTube
+   Top-profile-only layouts
+============================================================ */
 
-// ======================
-// SHOUTOUT HELPER FUNCTIONS
-// ======================
+/* ------------------------------------------------------------
+   Helper Functions
+------------------------------------------------------------ */
+
 function formatShoutoutNumber(value) {
     const num = Number(value);
 
-    if (isNaN(num)) return value || "0";
+    if (value === null || value === undefined || value === '') {
+        return "0";
+    }
+
+    if (isNaN(num)) {
+        return String(value);
+    }
 
     if (num >= 1000000) {
         return (num / 1000000)
@@ -519,8 +530,24 @@ function formatShoutoutNumber(value) {
 }
 
 function normalizeShoutoutHandle(username) {
-    if (!username || username === "N/A") return "";
+    if (!username || username === "N/A") {
+        return "";
+    }
+
     return String(username).replace("@", "").trim();
+}
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function escapeAttribute(value) {
+    return escapeHTML(value).replaceAll("`", "&#096;");
 }
 
 function getShoutoutProfilePic(account) {
@@ -532,18 +559,52 @@ function getShoutoutProfilePic(account) {
 }
 
 function renderShoutoutImage(src, className, altText, fallback = "images/default-profile.jpg") {
-    return `<img src="${src || fallback}" alt="${altText}" class="${className}" onerror="this.src='${fallback}'">`;
+    const safeSrc = escapeAttribute(src || fallback);
+    const safeClass = escapeAttribute(className || "");
+    const safeAlt = escapeAttribute(altText || "Profile image");
+    const safeFallback = escapeAttribute(fallback);
+
+    return `<img src="${safeSrc}" alt="${safeAlt}" class="${safeClass}" onerror="this.onerror=null; this.src='${safeFallback}';">`;
 }
 
 function renderShoutoutCover(src, className, altText, fallback = "images/default-cover.jpg") {
-    return `<img src="${src || fallback}" alt="${altText}" class="${className}" onerror="this.style.display='none'">`;
+    const safeSrc = escapeAttribute(src || fallback);
+    const safeClass = escapeAttribute(className || "");
+    const safeAlt = escapeAttribute(altText || "Cover image");
+    const safeFallback = escapeAttribute(fallback);
+
+    return `<img src="${safeSrc}" alt="${safeAlt}" class="${safeClass}" onerror="this.onerror=null; this.src='${safeFallback}';">`;
+}
+
+function getPlatformProfileUrl(platform, username) {
+    const cleanUsername = normalizeShoutoutHandle(username);
+
+    if (!cleanUsername) {
+        return "#";
+    }
+
+    if (platform === "tiktok") {
+        return `https://tiktok.com/@${encodeURIComponent(cleanUsername)}`;
+    }
+
+    if (platform === "instagram") {
+        return `https://instagram.com/${encodeURIComponent(cleanUsername)}`;
+    }
+
+    if (platform === "youtube") {
+        return `https://www.youtube.com/@${encodeURIComponent(cleanUsername)}`;
+    }
+
+    return "#";
 }
 
 /* ------------------------------------------------------------
-   TIKTOK STYLE CARD — TOP PROFILE ONLY
+   TikTok Card
 ------------------------------------------------------------ */
+
 function renderTikTokCard(account) {
     const profilePic = getShoutoutProfilePic(account);
+
     const usernameRaw = normalizeShoutoutHandle(account.username);
     const username = usernameRaw || "N/A";
 
@@ -554,7 +615,6 @@ function renderTikTokCard(account) {
 
     const bio = account.bio || "";
     const subtitle = account.subtitle || account.extraLine || "";
-    const education = account.education || account.school || "";
 
     const following = formatShoutoutNumber(account.following || 0);
     const followers = formatShoutoutNumber(account.followers || account.followerCount || 0);
@@ -566,72 +626,59 @@ function renderTikTokCard(account) {
         ? '<img src="check.png" alt="Verified" class="verified-badge">'
         : '';
 
-    const profileUrl = username !== "N/A"
-        ? `https://tiktok.com/@${encodeURIComponent(username)}`
-        : "#";
+    const profileUrl = getPlatformProfileUrl("tiktok", username);
 
     return `
     <article class="tiktok-profile-card platform-profile-only">
-        <div class="tiktok-topbar">
-            <i class="fas fa-chevron-left"></i>
-
-            <div class="tiktok-dynamic-island">
-                <i class="fas fa-link"></i>
-            </div>
-
-            <div class="tiktok-top-icons">
-                <i class="far fa-bell"></i>
-                <i class="fas fa-share"></i>
-            </div>
-        </div>
-
         <div class="tiktok-profile-main">
             ${renderShoutoutImage(profilePic, "tiktok-avatar", nickname)}
 
-            <h3>${nickname}</h3>
+            <h3>${escapeHTML(nickname)}</h3>
 
-            <p class="tiktok-username">@${username} ${verifiedBadge}</p>
+            <p class="tiktok-username">
+                @${escapeHTML(username)} ${verifiedBadge}
+            </p>
 
             <div class="tiktok-stats">
                 <div class="tiktok-stat">
-                    <strong>${following}</strong>
+                    <strong>${escapeHTML(following)}</strong>
                     <span>Following</span>
                 </div>
 
                 <div class="tiktok-stat">
-                    <strong>${followers}</strong>
+                    <strong>${escapeHTML(followers)}</strong>
                     <span>Followers</span>
                 </div>
 
                 <div class="tiktok-stat">
-                    <strong>${likes}</strong>
+                    <strong>${escapeHTML(likes)}</strong>
                     <span>Likes</span>
                 </div>
             </div>
 
-            <div class="single-visit-button-row">
+            <div class="single-visit-button-row center-button">
                 <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button tiktok-visit-button">
                     <i class="fab fa-tiktok"></i>
                     Visit Profile
                 </a>
             </div>
 
-            ${bio ? `<p class="tiktok-bio">${bio}</p>` : ""}
-            ${subtitle ? `<p class="tiktok-subtitle">${subtitle}</p>` : ""}
-            ${education ? `
-            <p class="tiktok-education">
-                <i class="fas fa-graduation-cap"></i>
-                ${education}
-            </p>` : ""}
+            ${bio ? `<p class="tiktok-bio">${escapeHTML(bio).replace(/\n/g, "<br>")}</p>` : ""}
+            ${subtitle ? `<p class="tiktok-subtitle">${escapeHTML(subtitle)}</p>` : ""}
         </div>
     </article>`;
 }
 
 /* ------------------------------------------------------------
-   INSTAGRAM STYLE CARD — TOP PROFILE ONLY
+   Instagram Card
+   Screenshot-style layout:
+   Avatar left, username/checkmark top right,
+   nickname below username, stats below nickname.
 ------------------------------------------------------------ */
+
 function renderInstagramCard(account) {
     const profilePic = getShoutoutProfilePic(account);
+
     const usernameRaw = normalizeShoutoutHandle(account.username);
     const username = usernameRaw || "creator";
 
@@ -726,8 +773,10 @@ function renderInstagramCard(account) {
 }
 
 /* ------------------------------------------------------------
-   YOUTUBE STYLE CARD — TOP CHANNEL ONLY
+   YouTube Card
+   Full bio/description shown. No "...more".
 ------------------------------------------------------------ */
+
 function renderYouTubeCard(account) {
     const profilePic = getShoutoutProfilePic(account);
 
@@ -741,6 +790,7 @@ function renderYouTubeCard(account) {
         "YouTube Creator";
 
     const bio = account.bio || account.description || "";
+
     const subscribers = formatShoutoutNumber(account.subscribers || account.followerCount || account.followers || 0);
     const videos = formatShoutoutNumber(account.videos || account.videoCount || 0);
 
@@ -770,22 +820,22 @@ function renderYouTubeCard(account) {
 
             <div class="youtube-channel-text">
                 <h3>
-                    ${nickname}
+                    ${escapeHTML(nickname)}
                     ${verifiedBadge}
                 </h3>
 
-                ${displayHandle ? `<p class="youtube-handle">${displayHandle}</p>` : ""}
+                ${displayHandle ? `<p class="youtube-handle">${escapeHTML(displayHandle)}</p>` : ""}
 
                 <p class="youtube-stats">
-                    ${subscribers} subscribers
-                    ${videos && videos !== "0" ? ` · ${videos} videos` : ""}
+                    ${escapeHTML(subscribers)} subscribers
+                    ${videos && videos !== "0" ? ` · ${escapeHTML(videos)} videos` : ""}
                 </p>
             </div>
         </div>
 
         ${bio ? `
         <p class="youtube-channel-description">
-            ${bio.replace(/\n/g, "<br>")}
+            ${escapeHTML(bio).replace(/\n/g, "<br>")}
         </p>` : ""}
 
         <div class="single-visit-button-row">
