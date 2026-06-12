@@ -8472,3 +8472,10 @@ body.maintenance-active .onyx-dock {
     background: rgba(255, 59, 48, 0.15);
     color: #FF3B30;
 }
+
+.os-badge.purple,
+.support-badge.purple,
+.upgrade-badge.purple {
+    background: rgba(175, 82, 222, 0.15);
+    color: #AF52DE;
+}
