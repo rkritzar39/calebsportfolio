@@ -9125,3 +9125,109 @@ body.light-e .tiktok-profile-card .single-visit-button-row {
     position: relative;
     z-index: 2;
 }
+
+/* ============================================================
+   TIKTOK LIGHT MODE CONTAINER FIX
+   Makes TikTok use the same light glass container style
+   as Instagram and YouTube in light mode
+============================================================ */
+
+/* Light mode TikTok card should NOT be black */
+body.light-e .tiktok-profile-card {
+    color: var(--text-color) !important;
+
+    background:
+        var(--bubble-gradient),
+        var(--liquid-refraction),
+        color-mix(in srgb, var(--content-bg) 88%, white 12%) !important;
+
+    border-color: color-mix(in srgb, var(--border-color) 86%, transparent) !important;
+
+    box-shadow:
+        var(--bubble-highlight),
+        var(--bubble-shadow) !important;
+
+    backdrop-filter: var(--backdrop-blur) !important;
+    -webkit-backdrop-filter: var(--backdrop-blur) !important;
+}
+
+/* TikTok text should use normal light mode text colors */
+body.light-e .tiktok-profile-card h3,
+body.light-e .tiktok-profile-card strong,
+body.light-e .tiktok-stat strong {
+    color: var(--text-color) !important;
+}
+
+body.light-e .tiktok-profile-card p,
+body.light-e .tiktok-profile-card span,
+body.light-e .tiktok-username,
+body.light-e .tiktok-stat span,
+body.light-e .tiktok-subtitle {
+    color: var(--secondary-text) !important;
+}
+
+/* TikTok bio should be readable in light mode */
+body.light-e .tiktok-bio {
+    color: var(--text-color) !important;
+}
+
+/* If education/school line already exists, keep it readable */
+body.light-e .tiktok-education {
+    color: var(--text-color) !important;
+}
+
+/* TikTok stat divider should match the light glass look */
+body.light-e .tiktok-stat:not(:last-child) {
+    border-right-color: color-mix(in srgb, var(--border-color) 85%, transparent) !important;
+}
+
+/* Avatar ring should match light mode glass */
+body.light-e .tiktok-avatar {
+    border-color: color-mix(in srgb, var(--accent-color) 55%, white 20%) !important;
+
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
+        0 10px 24px color-mix(in srgb, var(--shadow-color) 35%, transparent) !important;
+}
+
+/* Keep the TikTok button pink and readable */
+body.light-e .tiktok-visit-button,
+body.light-e .tiktok-profile-card .platform-visit-button {
+    color: #ffffff !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff2d55,
+            #fe2c55
+        ) !important;
+
+    border-color: rgba(255,255,255,0.28) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.18),
+        0 8px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent) !important;
+}
+
+/* Keep TikTok button hover clean */
+body.light-e .tiktok-visit-button:hover,
+body.light-e .tiktok-profile-card .platform-visit-button:hover {
+    color: #ffffff !important;
+
+    filter: brightness(1.08);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.22),
+        0 12px 24px color-mix(in srgb, var(--shadow-color) 40%, transparent) !important;
+}
+
+/* Verified badge stays normal */
+body.light-e .tiktok-profile-card .verified-badge {
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+/* Icons inside TikTok card should follow their parent color */
+body.light-e .tiktok-profile-card i {
+    color: inherit;
+}
