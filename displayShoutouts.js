@@ -1408,9 +1408,9 @@ function renderTechItemHomepage(itemData) {
 }
 
 /* ------------------------------------------------------------
-   LOAD AND DISPLAY TECH ITEMS
+   LOAD TECH ITEMS
 ------------------------------------------------------------ */
-async function loadAndDisplayTechItems() {
+async function loadTechItems() {
     const techItemsListContainer = document.getElementById('tech-items-list-dynamic');
 
     if (!techItemsListContainer) {
@@ -1432,6 +1432,7 @@ async function loadAndDisplayTechItems() {
         const querySnapshot = await getDocs(techQuery);
 
         let allItemsHtml = '';
+        allTechItems = [];
 
         if (querySnapshot.empty) {
             console.log("No tech items found in Firestore.");
@@ -1440,8 +1441,13 @@ async function loadAndDisplayTechItems() {
             console.log(`Found ${querySnapshot.size} tech items.`);
 
             querySnapshot.forEach((doc) => {
-                allTechItems.push({ id: doc.id, ...doc.data() });
-                allItemsHtml += renderTechItemHomepage(doc.data());
+                const itemData = {
+                    id: doc.id,
+                    ...doc.data()
+                };
+
+                allTechItems.push(itemData);
+                allItemsHtml += renderTechItemHomepage(itemData);
             });
         }
 
@@ -1467,7 +1473,7 @@ async function loadAndDisplayTechItems() {
 /* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
-loadAndDisplayTechItems();
+loadTechItems();
 
 /* ------------------------------------------------------------
    INIT
