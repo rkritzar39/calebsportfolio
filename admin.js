@@ -1068,133 +1068,509 @@ if (searchInputDisabilities) {
         }
     }
 
-// --- Edit Modal Logic (UPDATED for Preview) ---
-    // Opens the modal and populates it with data for the selected shoutout
-    function openEditModal(docId, platform) { //
-        if (!editModal || !editForm) { console.error("Edit modal/form not found."); showAdminStatus("UI Error: Cannot open edit form.", true); return; } //
-        editForm.setAttribute('data-doc-id', docId); // Store ID and platform on the form
-        editForm.setAttribute('data-platform', platform); //
-        const docRef = doc(db, 'shoutouts', docId); // Reference to the specific shoutout doc
+/* ============================================================
+   SHOUTOUT ADMIN JS
+   TikTok / Instagram / YouTube
+   Includes edit modal logic, admin list rendering, and preview
+============================================================ */
 
-        getDoc(docRef).then(docSnap => { // Fetch the document
-            if (docSnap.exists()) { //
-                const data = docSnap.data(); //
-                // Populate general fields
-                if (editUsernameInput) editUsernameInput.value = data.username || ''; //
-                if (editNicknameInput) editNicknameInput.value = data.nickname || ''; //
-                if (editOrderInput) editOrderInput.value = data.order ?? ''; //
-                if (editIsVerifiedInput) editIsVerifiedInput.checked = data.isVerified || false; //
-                if (editBioInput) editBioInput.value = data.bio || ''; //
-                if (editProfilePicInput) editProfilePicInput.value = data.profilePic || ''; //
-                // Populate enable/disable toggle (for future feature)
-                // if (editIsEnabledInput) editIsEnabledInput.checked = data.isEnabled ?? true;
+/* ------------------------------------------------------------
+   SHOUTOUT HELPER FUNCTIONS
+------------------------------------------------------------ */
 
-                // Handle platform-specific fields visibility and values
-                const followersDiv = editPlatformSpecificDiv?.querySelector('.edit-followers-group'); //
-                const subscribersDiv = editPlatformSpecificDiv?.querySelector('.edit-subscribers-group'); //
-                const coverPhotoDiv = editPlatformSpecificDiv?.querySelector('.edit-coverphoto-group'); //
+function formatShoutoutNumber(value) {
+    const num = Number(value);
 
-                // Hide all platform-specific sections first
-                if (followersDiv) followersDiv.style.display = 'none'; //
-                if (subscribersDiv) subscribersDiv.style.display = 'none'; //
-                if (coverPhotoDiv) coverPhotoDiv.style.display = 'none'; //
+    if (value === null || value === undefined || value === '') return "0";
 
-                // Show and populate the relevant section
-                if (platform === 'youtube') { //
-                    if (editSubscribersInput) editSubscribersInput.value = data.subscribers || 'N/A'; //
-                    if (editCoverPhotoInput) editCoverPhotoInput.value = data.coverPhoto || ''; //
-                    if (subscribersDiv) subscribersDiv.style.display = 'block'; //
-                    if (coverPhotoDiv) coverPhotoDiv.style.display = 'block'; //
-                } else { // TikTok or Instagram
-                    if (editFollowersInput) editFollowersInput.value = data.followers || 'N/A'; //
-                    if (followersDiv) followersDiv.style.display = 'block'; //
-                }
+    if (isNaN(num)) return String(value);
 
-                // Reset preview area and trigger initial update
-                const previewArea = document.getElementById('edit-shoutout-preview'); //
-                 if(previewArea) { //
-                     previewArea.innerHTML = '<p><small>Generating preview...</small></p>'; // Placeholder
-                     // *** ADDED: Trigger initial preview update ***
-                     if (typeof updateShoutoutPreview === 'function') { //
-                        updateShoutoutPreview('edit', platform); // Call the preview function
-                     }
-                     // *** END ADDED CODE ***
-                 }
-
-                editModal.style.display = 'block'; // Show the modal
-            } else { //
-                 showAdminStatus("Error: Could not load data for editing. Document not found.", true); //
-            }
-        }).catch(error => { //
-             console.error("Error getting document for edit:", error); //
-             showAdminStatus(`Error loading data: ${error.message}`, true); //
-         });
+    if (num >= 1000000) {
+        return (num / 1000000)
+            .toFixed(num >= 10000000 ? 0 : 1)
+            .replace(".0", "") + "M";
     }
 
-    // Closes the edit modal and resets the form
-    function closeEditModal() { //
-        if (editModal) editModal.style.display = 'none'; //
-        if (editForm) editForm.reset(); // Reset form fields
-        editForm?.removeAttribute('data-doc-id'); // Clear stored data
-        editForm?.removeAttribute('data-platform'); //
-         // Also clear the edit preview area
-         if(editShoutoutPreview) { //
-             editShoutoutPreview.innerHTML = '<p><small>Preview will appear here.</small></p>'; //
-         }
+    if (num >= 1000) {
+        return (num / 1000)
+            .toFixed(num >= 10000 ? 0 : 1)
+            .replace(".0", "") + "K";
     }
 
-    // Event listeners for closing the modal (X button and clicking outside)
-    if (cancelEditButton) cancelEditButton.addEventListener('click', closeEditModal); //
-    window.addEventListener('click', (event) => { //
-        // Close modal only if the direct click target is the modal backdrop itself
-        if (event.target === editModal) { //
-            closeEditModal(); //
-        }
-        // Add listener for clicking outside the useful link modal
-        if (event.target === editUsefulLinkModal) { //
-            closeEditUsefulLinkModal(); //
-        }
-        // Add listener for clicking outside the social link modal
-        if (event.target === editSocialLinkModal) {
-           closeEditSocialLinkModal();
-        }
+    return num.toLocaleString();
+}
+
+function normalizeShoutoutHandle(username) {
+    if (!username || username === "N/A") return "";
+    return String(username).replace("@", "").trim();
+}
+
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function escapeAttribute(value) {
+    return escapeHTML(value).replaceAll("`", "&#096;");
+}
+
+function getShoutoutProfilePic(account) {
+    return account.profilePic ||
+        account.profileImage ||
+        account.avatarUrl ||
+        account.imageUrl ||
+        "images/default-profile.jpg";
+}
+
+function renderShoutoutImage(src, className, altText, fallback = "images/default-profile.jpg") {
+    const safeSrc = escapeAttribute(src || fallback);
+    const safeClass = escapeAttribute(className || "");
+    const safeAlt = escapeAttribute(altText || "Profile image");
+    const safeFallback = escapeAttribute(fallback);
+
+    return `<img src="${safeSrc}" alt="${safeAlt}" class="${safeClass}" onerror="this.onerror=null; this.src='${safeFallback}';">`;
+}
+
+function renderShoutoutCover(src, className, altText, fallback = "images/default-cover.jpg") {
+    const safeSrc = escapeAttribute(src || fallback);
+    const safeClass = escapeAttribute(className || "");
+    const safeAlt = escapeAttribute(altText || "Cover image");
+    const safeFallback = escapeAttribute(fallback);
+
+    return `<img src="${safeSrc}" alt="${safeAlt}" class="${safeClass}" onerror="this.onerror=null; this.src='${safeFallback}';">`;
+}
+
+function getPlatformProfileUrl(platform, username) {
+    const cleanUsername = normalizeShoutoutHandle(username);
+
+    if (!cleanUsername) return "#";
+
+    if (platform === "tiktok") {
+        return `https://tiktok.com/@${encodeURIComponent(cleanUsername)}`;
+    }
+
+    if (platform === "instagram") {
+        return `https://instagram.com/${encodeURIComponent(cleanUsername)}`;
+    }
+
+    if (platform === "youtube") {
+        return `https://www.youtube.com/@${encodeURIComponent(cleanUsername)}`;
+    }
+
+    return "#";
+}
+
+/* ------------------------------------------------------------
+   SHOUTOUT CARD RENDERERS FOR ADMIN PREVIEW
+   These names match your existing preview system.
+------------------------------------------------------------ */
+
+function renderTikTokCard(account) {
+    const profilePic = getShoutoutProfilePic(account);
+    const usernameRaw = normalizeShoutoutHandle(account.username);
+    const username = usernameRaw || "N/A";
+
+    const nickname = account.nickname ||
+        account.displayName ||
+        account.name ||
+        "TikTok Creator";
+
+    const bio = account.bio || "";
+    const subtitle = account.subtitle || account.extraLine || "";
+
+    const following = formatShoutoutNumber(account.following || 0);
+    const followers = formatShoutoutNumber(account.followers || account.followerCount || 0);
+    const likes = formatShoutoutNumber(account.likes || account.likeCount || 0);
+
+    const isVerified = account.isVerified || account.verified || false;
+
+    const verifiedBadge = isVerified
+        ? '<img src="check.png" alt="Verified" class="verified-badge">'
+        : '';
+
+    const profileUrl = getPlatformProfileUrl("tiktok", username);
+
+    return `
+    <article class="tiktok-profile-card platform-profile-only">
+        <div class="tiktok-profile-main">
+            ${renderShoutoutImage(profilePic, "tiktok-avatar", nickname)}
+
+            <h3>${escapeHTML(nickname)}</h3>
+
+            <p class="tiktok-username">@${escapeHTML(username)} ${verifiedBadge}</p>
+
+            <div class="tiktok-stats">
+                <div class="tiktok-stat">
+                    <strong>${escapeHTML(following)}</strong>
+                    <span>Following</span>
+                </div>
+
+                <div class="tiktok-stat">
+                    <strong>${escapeHTML(followers)}</strong>
+                    <span>Followers</span>
+                </div>
+
+                <div class="tiktok-stat">
+                    <strong>${escapeHTML(likes)}</strong>
+                    <span>Likes</span>
+                </div>
+            </div>
+
+            <div class="single-visit-button-row center-button">
+                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button tiktok-visit-button">
+                    <i class="fab fa-tiktok"></i>
+                    Visit Profile
+                </a>
+            </div>
+
+            ${bio ? `<p class="tiktok-bio">${escapeHTML(bio).replace(/\n/g, "<br>")}</p>` : ""}
+            ${subtitle ? `<p class="tiktok-subtitle">${escapeHTML(subtitle)}</p>` : ""}
+        </div>
+    </article>`;
+}
+
+function renderInstagramCard(account) {
+    const profilePic = getShoutoutProfilePic(account);
+    const usernameRaw = normalizeShoutoutHandle(account.username);
+    const username = usernameRaw || "creator";
+
+    const nickname = account.nickname ||
+        account.displayName ||
+        account.name ||
+        "Instagram Creator";
+
+    const bio = account.bio || account.description || "";
+    const website = account.website || account.link || "";
+
+    const posts = formatShoutoutNumber(account.posts || account.postCount || 0);
+    const followers = formatShoutoutNumber(account.followers || account.followerCount || 0);
+    const following = formatShoutoutNumber(account.following || account.followingCount || 0);
+
+    const isVerified = account.isVerified || account.verified || false;
+
+    const verifiedBadge = isVerified
+        ? '<img src="instagramcheck.png" alt="Verified" class="instagram-verified-badge">'
+        : '';
+
+    const profileUrl = getPlatformProfileUrl("instagram", username);
+
+    return `
+    <article class="instagram-profile-card platform-profile-only">
+        <div class="instagram-profile-header">
+            <h3>
+                ${escapeHTML(username)}
+                ${verifiedBadge}
+            </h3>
+        </div>
+
+        <div class="instagram-profile-row">
+            ${renderShoutoutImage(profilePic, "instagram-avatar", nickname)}
+
+            <div class="instagram-profile-main">
+                <strong>${escapeHTML(nickname)}</strong>
+
+                <div class="instagram-stats">
+                    <div>
+                        <strong>${escapeHTML(posts)}</strong>
+                        <span>posts</span>
+                    </div>
+
+                    <div>
+                        <strong>${escapeHTML(followers)}</strong>
+                        <span>followers</span>
+                    </div>
+
+                    <div>
+                        <strong>${escapeHTML(following)}</strong>
+                        <span>following</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instagram-bio-block">
+            ${bio ? `<p>${escapeHTML(bio).replace(/\n/g, "<br>")}</p>` : ""}
+
+            ${website ? `
+            <a href="${escapeAttribute(website)}" target="_blank" rel="noopener noreferrer" class="instagram-website">
+                <i class="fas fa-link"></i>
+                ${escapeHTML(website.replace(/^https?:\/\//, ""))}
+            </a>` : ""}
+        </div>
+
+        <div class="single-visit-button-row">
+            <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button instagram-visit-button">
+                <i class="fab fa-instagram"></i>
+                Visit Profile
+            </a>
+        </div>
+    </article>`;
+}
+
+function renderYouTubeCard(account) {
+    const profilePic = getShoutoutProfilePic(account);
+
+    const usernameFromDb = account.username || "";
+    const usernameRaw = normalizeShoutoutHandle(usernameFromDb);
+
+    const nickname = account.nickname ||
+        account.displayName ||
+        account.channelName ||
+        account.name ||
+        "YouTube Creator";
+
+    const bio = account.bio || account.description || "";
+    const subscribers = formatShoutoutNumber(account.subscribers || account.followerCount || account.followers || 0);
+    const videos = formatShoutoutNumber(account.videos || account.videoCount || 0);
+
+    const coverPhoto = account.coverPhoto ||
+        account.bannerImage ||
+        account.coverImage ||
+        null;
+
+    const isVerified = account.isVerified || account.verified || false;
+
+    const displayHandle = usernameRaw ? `@${usernameRaw}` : "";
+    const channelUrl = usernameRaw ? `https://www.youtube.com/@${encodeURIComponent(usernameRaw)}` : "#";
+
+    const verifiedBadge = isVerified
+        ? '<img src="youtubecheck.png" alt="Verified" class="youtube-verified-badge">'
+        : '';
+
+    return `
+    <article class="youtube-channel-card platform-profile-only">
+        ${coverPhoto ? `
+        <div class="youtube-channel-banner">
+            ${renderShoutoutCover(coverPhoto, "youtube-cover-img", `${nickname} cover photo`)}
+        </div>` : ""}
+
+        <div class="youtube-channel-info">
+            ${renderShoutoutImage(profilePic, "youtube-channel-avatar", nickname)}
+
+            <div class="youtube-channel-text">
+                <h3>
+                    ${escapeHTML(nickname)}
+                    ${verifiedBadge}
+                </h3>
+
+                ${displayHandle ? `<p class="youtube-handle">${escapeHTML(displayHandle)}</p>` : ""}
+
+                <p class="youtube-stats">
+                    ${escapeHTML(subscribers)} subscribers
+                    ${videos && videos !== "0" ? ` · ${escapeHTML(videos)} videos` : ""}
+                </p>
+            </div>
+        </div>
+
+        ${bio ? `
+        <p class="youtube-channel-description">
+            ${escapeHTML(bio).replace(/\n/g, "<br>")}
+        </p>` : ""}
+
+        <div class="single-visit-button-row">
+            <a href="${channelUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button youtube-visit-button">
+                <i class="fab fa-youtube"></i>
+                Visit Channel
+            </a>
+        </div>
+    </article>`;
+}
+
+/* ------------------------------------------------------------
+   EDIT MODAL LOGIC
+------------------------------------------------------------ */
+
+function setPlatformGroupVisible(groupElement, shouldShow) {
+    if (!groupElement) return;
+
+    groupElement.style.display = shouldShow ? 'block' : 'none';
+
+    const fields = groupElement.querySelectorAll('input, textarea, select');
+
+    fields.forEach(field => {
+        field.disabled = !shouldShow;
     });
+}
 
-    // Helper to safely add submit listener only once
-    function addSubmitListenerOnce(formElement, handler) {
-      if (!formElement) {
-        console.warn("Attempted to add listener to non-existent form:", formElement);
-        return;
-      }
-      // Use a unique property name to avoid potential conflicts
-      const listenerAttachedFlag = '__busArmyDudeAdminSubmitListenerAttached__';
+// Opens the modal and populates it with data for the selected shoutout
+function openEditModal(docId, platform) {
+    if (!editModal || !editForm) {
+        console.error("Edit modal/form not found.");
+        showAdminStatus("UI Error: Cannot open edit form.", true);
+        return;
+    }
 
-      // Get the existing handler reference if it was stored, otherwise create it
-      let submitHandlerWrapper = formElement[listenerAttachedFlag + '_handler'];
+    editForm.setAttribute('data-doc-id', docId);
+    editForm.setAttribute('data-platform', platform);
 
-      if (!submitHandlerWrapper) {
-          submitHandlerWrapper = (e) => {
-              e.preventDefault(); // Prevent default submission
-              console.log(`DEBUG: Submit event triggered for ${formElement.id}`);
-              handler();          // Call the original handler logic
-          };
-          // Store the handler reference on the element
-          formElement[listenerAttachedFlag + '_handler'] = submitHandlerWrapper;
-          console.log(`DEBUG: Created submit handler wrapper for ${formElement.id}`);
-      }
+    const docRef = doc(db, 'shoutouts', docId);
 
-      // --- Logic to add/skip ---
-      if (!formElement[listenerAttachedFlag]) { // Check if the flag is NOT set
-        formElement.addEventListener('submit', submitHandlerWrapper);
-        formElement[listenerAttachedFlag] = true; // Mark listener as attached by setting the flag
-        console.log(`DEBUG: Added submit listener to ${formElement.id}`);
-      } else {
-         console.log(`DEBUG: Submit listener flag already set for ${formElement.id}, skipping addEventListener.`);
-      }
-    }
-/** Renders a single shoutout item in the admin list, including profile picture, follower/subscriber count and verified status */
+    getDoc(docRef).then(docSnap => {
+        if (!docSnap.exists()) {
+            showAdminStatus("Error: Could not load data for editing. Document not found.", true);
+            return;
+        }
+
+        const data = docSnap.data();
+
+        // General fields
+        if (editUsernameInput) editUsernameInput.value = data.username || '';
+        if (editNicknameInput) editNicknameInput.value = data.nickname || '';
+        if (editOrderInput) editOrderInput.value = data.order ?? '';
+        if (editIsVerifiedInput) editIsVerifiedInput.checked = data.isVerified || false;
+        if (editBioInput) editBioInput.value = data.bio || '';
+        if (editProfilePicInput) editProfilePicInput.value = data.profilePic || '';
+
+        // Groups
+        const followersDiv = editPlatformSpecificDiv?.querySelector('.edit-followers-group');
+        const followingDiv = editPlatformSpecificDiv?.querySelector('.edit-following-group');
+        const likesDiv = editPlatformSpecificDiv?.querySelector('.edit-likes-group');
+        const postsDiv = editPlatformSpecificDiv?.querySelector('.edit-posts-group');
+        const subscribersDiv = editPlatformSpecificDiv?.querySelector('.edit-subscribers-group');
+        const videosDiv = editPlatformSpecificDiv?.querySelector('.edit-videos-group');
+        const coverPhotoDiv = editPlatformSpecificDiv?.querySelector('.edit-coverphoto-group');
+
+        // Inputs
+        const editFollowersInputLocal = editForm.querySelector('[name="followers"]');
+        const editFollowingInputLocal = editForm.querySelector('[name="following"]');
+        const editLikesInputLocal = editForm.querySelector('[name="likes"]');
+        const editPostsInputLocal = editForm.querySelector('[name="posts"]');
+        const editSubscribersInputLocal = editForm.querySelector('[name="subscribers"]');
+        const editVideosInputLocal = editForm.querySelector('[name="videos"]');
+        const editCoverPhotoInputLocal = editForm.querySelector('[name="coverPhoto"]');
+
+        // Hide all groups first
+        setPlatformGroupVisible(followersDiv, false);
+        setPlatformGroupVisible(followingDiv, false);
+        setPlatformGroupVisible(likesDiv, false);
+        setPlatformGroupVisible(postsDiv, false);
+        setPlatformGroupVisible(subscribersDiv, false);
+        setPlatformGroupVisible(videosDiv, false);
+        setPlatformGroupVisible(coverPhotoDiv, false);
+
+        // Clear all platform fields
+        if (editFollowersInputLocal) editFollowersInputLocal.value = '';
+        if (editFollowingInputLocal) editFollowingInputLocal.value = '';
+        if (editLikesInputLocal) editLikesInputLocal.value = '';
+        if (editPostsInputLocal) editPostsInputLocal.value = '';
+        if (editSubscribersInputLocal) editSubscribersInputLocal.value = '';
+        if (editVideosInputLocal) editVideosInputLocal.value = '';
+        if (editCoverPhotoInputLocal) editCoverPhotoInputLocal.value = '';
+
+        // Show and populate by platform
+        if (platform === 'tiktok') {
+            if (editFollowersInputLocal) editFollowersInputLocal.value = data.followers || '';
+            if (editFollowingInputLocal) editFollowingInputLocal.value = data.following || '';
+            if (editLikesInputLocal) editLikesInputLocal.value = data.likes || '';
+
+            setPlatformGroupVisible(followersDiv, true);
+            setPlatformGroupVisible(followingDiv, true);
+            setPlatformGroupVisible(likesDiv, true);
+
+        } else if (platform === 'instagram') {
+            if (editPostsInputLocal) editPostsInputLocal.value = data.posts || '';
+            if (editFollowersInputLocal) editFollowersInputLocal.value = data.followers || '';
+            if (editFollowingInputLocal) editFollowingInputLocal.value = data.following || '';
+
+            setPlatformGroupVisible(postsDiv, true);
+            setPlatformGroupVisible(followersDiv, true);
+            setPlatformGroupVisible(followingDiv, true);
+
+        } else if (platform === 'youtube') {
+            if (editSubscribersInputLocal) editSubscribersInputLocal.value = data.subscribers || '';
+            if (editVideosInputLocal) editVideosInputLocal.value = data.videos || '';
+            if (editCoverPhotoInputLocal) editCoverPhotoInputLocal.value = data.coverPhoto || '';
+
+            setPlatformGroupVisible(subscribersDiv, true);
+            setPlatformGroupVisible(videosDiv, true);
+            setPlatformGroupVisible(coverPhotoDiv, true);
+        }
+
+        // Preview
+        const previewArea = document.getElementById('edit-shoutout-preview');
+
+        if (previewArea) {
+            previewArea.innerHTML = '<p><small>Generating preview...</small></p>';
+
+            if (typeof updateShoutoutPreview === 'function') {
+                updateShoutoutPreview('edit', platform);
+            }
+        }
+
+        editModal.style.display = 'block';
+
+    }).catch(error => {
+        console.error("Error getting document for edit:", error);
+        showAdminStatus(`Error loading data: ${error.message}`, true);
+    });
+}
+
+// Closes the edit modal and resets the form
+function closeEditModal() {
+    if (editModal) editModal.style.display = 'none';
+
+    if (editForm) {
+        editForm.reset();
+        editForm.removeAttribute('data-doc-id');
+        editForm.removeAttribute('data-platform');
+    }
+
+    if (editShoutoutPreview) {
+        editShoutoutPreview.innerHTML = '<p><small>Preview will appear here.</small></p>';
+    }
+}
+
+// Event listener for closing the edit modal
+if (cancelEditButton) {
+    cancelEditButton.addEventListener('click', closeEditModal);
+}
+
+/* ------------------------------------------------------------
+   SUBMIT LISTENER HELPER
+------------------------------------------------------------ */
+
+function addSubmitListenerOnce(formElement, handler) {
+    if (!formElement) {
+        console.warn("Attempted to add listener to non-existent form:", formElement);
+        return;
+    }
+
+    const listenerAttachedFlag = '__busArmyDudeAdminSubmitListenerAttached__';
+    let submitHandlerWrapper = formElement[listenerAttachedFlag + '_handler'];
+
+    if (!submitHandlerWrapper) {
+        submitHandlerWrapper = (e) => {
+            e.preventDefault();
+            console.log(`DEBUG: Submit event triggered for ${formElement.id}`);
+            handler();
+        };
+
+        formElement[listenerAttachedFlag + '_handler'] = submitHandlerWrapper;
+        console.log(`DEBUG: Created submit handler wrapper for ${formElement.id}`);
+    }
+
+    if (!formElement[listenerAttachedFlag]) {
+        formElement.addEventListener('submit', submitHandlerWrapper);
+        formElement[listenerAttachedFlag] = true;
+        console.log(`DEBUG: Added submit listener to ${formElement.id}`);
+    } else {
+        console.log(`DEBUG: Submit listener flag already set for ${formElement.id}, skipping addEventListener.`);
+    }
+}
+
+/* ------------------------------------------------------------
+   ADMIN LIST ITEM RENDERER
+------------------------------------------------------------ */
+
 function renderAdminListItem(container, docId, platform, itemData, deleteHandler, editHandler) {
-    if (!container) { console.warn("List container not found for platform:", platform); return; }
+    if (!container) {
+        console.warn("List container not found for platform:", platform);
+        return;
+    }
 
     const itemDiv = document.createElement('div');
     itemDiv.className = 'list-item-admin';
@@ -1204,73 +1580,80 @@ function renderAdminListItem(container, docId, platform, itemData, deleteHandler
     const username = itemData.username || 'N/A';
     const order = itemData.order ?? 'N/A';
     const isVerified = itemData.isVerified || false;
-    const profilePicUrl = itemData.profilePic || 'images/default-profile.jpg'; // Assuming 'images/' folder
+    const profilePicUrl = itemData.profilePic || 'images/default-profile.jpg';
+
     let countText = '';
 
     if (platform === 'youtube') {
         const subscribers = itemData.subscribers || 'N/A';
-        countText = `Subs: ${subscribers}`;
-    } else if (platform === 'tiktok' || platform === 'instagram') {
+        const videos = itemData.videos || 'N/A';
+
+        countText = `Subs: ${subscribers} | Videos: ${videos}`;
+
+    } else if (platform === 'tiktok') {
         const followers = itemData.followers || 'N/A';
-        countText = `Followers: ${followers}`;
+        const following = itemData.following || 'N/A';
+        const likes = itemData.likes || 'N/A';
+
+        countText = `Followers: ${followers} | Following: ${following} | Likes: ${likes}`;
+
+    } else if (platform === 'instagram') {
+        const posts = itemData.posts || 'N/A';
+        const followers = itemData.followers || 'N/A';
+        const following = itemData.following || 'N/A';
+
+        countText = `Posts: ${posts} | Followers: ${followers} | Following: ${following}`;
     }
 
-    let directLinkUrl = '#';
-    let safeUsername = username || '';
-    if (platform === 'tiktok' && safeUsername) {
-        directLinkUrl = `https://tiktok.com/@${encodeURIComponent(safeUsername)}`;
-    } else if (platform === 'instagram' && safeUsername) {
-        directLinkUrl = `https://instagram.com/${encodeURIComponent(safeUsername)}`;
-    } else if (platform === 'youtube' && safeUsername) {
-        let youtubeHandle = safeUsername.startsWith('@') ? safeUsername : `@${safeUsername}`;
-        directLinkUrl = `https://www.youtube.com/${encodeURIComponent(youtubeHandle)}`;
-    }
+    const directLinkUrl = getPlatformProfileUrl(platform, username);
 
-    let verifiedIndicatorHTML = ''; // Initialize as empty
+    let verifiedIndicatorHTML = '';
+
     if (isVerified) {
         let badgeSrc = '';
         const altText = 'Verified Badge';
-        // Assuming your checkmark images are in the root or an accessible 'images' folder
-        // Adjust path if they are in an 'images' subfolder, e.g., 'images/check.png'
+
         switch (platform) {
             case 'tiktok':
-                badgeSrc = 'check.png'; // Or 'images/check.png' if in a subfolder
+                badgeSrc = 'check.png';
                 break;
             case 'instagram':
-                badgeSrc = 'instagramcheck.png'; // Or 'images/instagramcheck.png'
+                badgeSrc = 'instagramcheck.png';
                 break;
             case 'youtube':
-                badgeSrc = 'youtubecheck.png'; // Or 'images/youtubecheck.png'
+                badgeSrc = 'youtubecheck.png';
                 break;
             default:
-                // Optional: Fallback if platform is somehow unknown
-                // verifiedIndicatorHTML = '<span class="verified-indicator" title="Verified">✓</span>';
                 break;
         }
+
         if (badgeSrc) {
-            verifiedIndicatorHTML = `<img src="${badgeSrc}" alt="${altText}" class="verified-badge-admin-list">`;
+            verifiedIndicatorHTML = renderShoutoutImage(badgeSrc, "verified-badge-admin-list", altText, badgeSrc);
         }
     }
 
-    // Build inner HTML - Uses the 'name-line' div from the previous fix
     itemDiv.innerHTML = `
         <div class="item-content">
             <div class="admin-list-item-pfp-container">
-                <img src="${profilePicUrl}" alt="PFP for ${nickname}" class="admin-list-item-pfp" onerror="this.onerror=null; this.src='images/default-profile.jpg';">
+                ${renderShoutoutImage(profilePicUrl, "admin-list-item-pfp", `PFP for ${nickname}`)}
             </div>
+
             <div class="item-details">
                 <div class="name-line">
-                    <strong>${nickname}</strong>
-                    ${verifiedIndicatorHTML} 
+                    <strong>${escapeHTML(nickname)}</strong>
+                    ${verifiedIndicatorHTML}
                 </div>
-                <span>(@${username})</span>
-                <small>Order: ${order} | ${countText}</small>
+
+                <span>(@${escapeHTML(username)})</span>
+                <small>Order: ${escapeHTML(order)} | ${escapeHTML(countText)}</small>
             </div>
         </div>
+
         <div class="item-actions">
             <a href="${directLinkUrl}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Profile/Channel">
                 <i class="fas fa-external-link-alt"></i> Visit
             </a>
+
             <button type="button" class="edit-button small-button">Edit</button>
             <button type="button" class="delete-button small-button">Delete</button>
         </div>`;
@@ -1284,225 +1667,224 @@ function renderAdminListItem(container, docId, platform, itemData, deleteHandler
     container.appendChild(itemDiv);
 }
 
-// --- Copied Shoutout Card Rendering Functions (for Admin Preview) ---
-// NOTE: Ensure image paths ('check.png', 'images/default-profile.jpg', etc.)
-//       are accessible from the admin page's context.
+/* ------------------------------------------------------------
+   SHOUTOUT PREVIEW UPDATER
+------------------------------------------------------------ */
 
-function renderTikTokCard(account) {
-    const profilePic = account.profilePic || 'images/default-profile.jpg';
-    const username = account.username || 'N/A';
-    const nickname = account.nickname || 'N/A';
-    const bio = account.bio || '';
-    const followers = account.followers || 'N/A';
-    const isVerified = account.isVerified || false; // Read current status
-    const profileUrl = username !== 'N/A' ? `https://tiktok.com/@${encodeURIComponent(username)}` : '#';
-    // *** This ternary operator is key: returns '' if false ***
-    const verifiedBadge = isVerified ? '<img src="check.png" alt="Verified" class="verified-badge">' : '';
+function updateShoutoutPreview(formType, platform) {
+    let formElement;
+    let previewElement;
+    let accountData = {};
 
-    return `
-        <div class="creator-card">
-            <img src="${profilePic}" alt="@${username}" class="creator-pic" onerror="this.onerror=null; this.src='images/default-profile.jpg';">
-            <div class="creator-info">
-                <div class="creator-header"><h3>${nickname}</h3></div>
-                <p class="creator-username">@${username} ${verifiedBadge}</p>
-                <p class="creator-bio">${bio}</p>
-                <p class="follower-count">${followers} Followers</p>
-                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="visit-profile"> Visit Profile </a>
-            </div>
-        </div>`;
-}
+    if (formType === 'add') {
+        formElement = document.getElementById(`add-shoutout-${platform}-form`);
+        previewElement = document.getElementById(`add-${platform}-preview`);
+    } else if (formType === 'edit') {
+        formElement = editForm;
+        previewElement = editShoutoutPreview;
 
-function renderInstagramCard(account) {
-    const profilePic = account.profilePic || 'images/default-profile.jpg';
-    const username = account.username || 'N/A';
-    const nickname = account.nickname || 'N/A';
-    const bio = account.bio || '';
-    const followers = account.followers || 'N/A';
-    const isVerified = account.isVerified || false; // Read current status
-    const profileUrl = username !== 'N/A' ? `https://instagram.com/${encodeURIComponent(username)}` : '#';
-    // *** This ternary operator is key: returns '' if false ***
-    const verifiedBadge = isVerified ? '<img src="instagramcheck.png" alt="Verified" class="instagram-verified-badge">' : '';
-
-    return `
-        <div class="instagram-creator-card">
-            <img src="${profilePic}" alt="${nickname}" class="instagram-creator-pic" onerror="this.onerror=null; this.src='images/default-profile.jpg';">
-            <div class="instagram-creator-info">
-                <div class="instagram-creator-header"><h3>${nickname}</h3></div>
-                <p class="instagram-creator-username">@${username} ${verifiedBadge}</p>
-                <p class="instagram-creator-bio">${bio}</p>
-                <p class="instagram-follower-count">${followers} Followers</p>
-                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="instagram-visit-profile"> Visit Profile </a>
-            </div>
-        </div>`;
-}
-
-function renderYouTubeCard(account) {
-    const profilePic = account.profilePic || 'images/default-profile.jpg';
-    const username = account.username || 'N/A'; // YouTube handle
-    const nickname = account.nickname || 'N/A'; // Channel name
-    const bio = account.bio || '';
-    const subscribers = account.subscribers || 'N/A';
-    const coverPhoto = account.coverPhoto || null;
-    const isVerified = account.isVerified || false; // Read current status
-    let safeUsername = username;
-    if (username !== 'N/A' && !username.startsWith('@')) {
-        safeUsername = `@${username}`;
-    }
-    const channelUrl = username !== 'N/A' ? `https://www.youtube.com/${encodeURIComponent(safeUsername)}` : '#'; // Corrected URL
-    // *** This ternary operator is key: returns '' if false ***
-    const verifiedBadge = isVerified ? '<img src="youtubecheck.png" alt="Verified" class="youtube-verified-badge">' : '';
-
-    return `
-        <div class="youtube-creator-card">
-            ${coverPhoto ? `<img src="${coverPhoto}" alt="${nickname} Cover Photo" class="youtube-cover-photo" onerror="this.style.display='none'">` : ''}
-            <img src="${profilePic}" alt="${nickname}" class="youtube-creator-pic" onerror="this.onerror=null; this.src='images/default-profile.jpg';">
-            <div class="youtube-creator-info">
-                <div class="youtube-creator-header"><h3>${nickname} ${verifiedBadge}</h3></div>
-                <div class="username-container"><p class="youtube-creator-username">${safeUsername}</p></div>
-                <p class="youtube-creator-bio">${bio}</p>
-                <p class="youtube-subscriber-count">${subscribers} Subscribers</p>
-                <a href="${channelUrl}" target="_blank" rel="noopener noreferrer" class="youtube-visit-profile"> Visit Channel </a>
-            </div>
-        </div>`;
-}
-    
-// *** NEW FUNCTION: Updates Shoutout Preview Area ***
-    function updateShoutoutPreview(formType, platform) { //
-        let formElement; //
-        let previewElement; //
-        let accountData = {}; // Object to hold current form values
-
-        // 1. Determine which form and preview area to use
-        if (formType === 'add') { //
-            formElement = document.getElementById(`add-shoutout-${platform}-form`); //
-            previewElement = document.getElementById(`add-${platform}-preview`); //
-        } else if (formType === 'edit') { //
-            formElement = editForm; // Use the existing reference to the edit modal form
-            previewElement = editShoutoutPreview; // Use the existing reference
-             // Ensure the platform matches the modal's current platform (safety check)
-             if (editForm.getAttribute('data-platform') !== platform) { //
-                 // console.warn(`Preview update skipped: Platform mismatch (form=${editForm.getAttribute('data-platform')}, requested=${platform})`);
-                 // Clear preview if platform mismatches (e.g., modal still open from previous edit)
-                 if(previewElement) previewElement.innerHTML = '<p><small>Preview unavailable.</small></p>'; //
-                 return; //
-             }
-        } else { //
-            console.error("Invalid formType provided to updateShoutoutPreview:", formType); //
-            return; //
-        }
-
-        if (!formElement || !previewElement) { //
-            console.error(`Preview Error: Could not find form or preview element for ${formType} ${platform}`); //
-            return; //
-        }
-
-        // 2. Read current values from the determined form's inputs
-        try { //
-            accountData.username = formElement.querySelector(`[name="username"]`)?.value.trim() || ''; //
-            accountData.nickname = formElement.querySelector(`[name="nickname"]`)?.value.trim() || ''; //
-            accountData.bio = formElement.querySelector(`[name="bio"]`)?.value.trim() || ''; //
-            accountData.profilePic = formElement.querySelector(`[name="profilePic"]`)?.value.trim() || ''; //
-            accountData.isVerified = formElement.querySelector(`[name="isVerified"]`)?.checked || false; //
-             accountData.order = parseInt(formElement.querySelector(`[name="order"]`)?.value.trim() || 0); // Needed for potential rendering logic, default 0
-
-            // Platform-specific fields
-            if (platform === 'youtube') { //
-                accountData.subscribers = formElement.querySelector(`[name="subscribers"]`)?.value.trim() || 'N/A'; //
-                accountData.coverPhoto = formElement.querySelector(`[name="coverPhoto"]`)?.value.trim() || null; //
-            } else { // TikTok or Instagram
-                accountData.followers = formElement.querySelector(`[name="followers"]`)?.value.trim() || 'N/A'; //
+        if (editForm.getAttribute('data-platform') !== platform) {
+            if (previewElement) {
+                previewElement.innerHTML = '<p><small>Preview unavailable.</small></p>';
             }
-        } catch(e) { //
-             console.error("Error reading form values for preview:", e); //
-             previewElement.innerHTML = '<p class="error"><small>Error reading form values.</small></p>'; //
-             return; //
+
+            return;
         }
-
-
-        // 3. Select the correct rendering function
-        let renderFunction; //
-        switch (platform) { //
-            case 'tiktok': //
-                renderFunction = renderTikTokCard; //
-                break; //
-            case 'instagram': //
-                renderFunction = renderInstagramCard; //
-                break; //
-            case 'youtube': //
-                renderFunction = renderYouTubeCard; //
-                break; //
-            default: //
-                console.error("Invalid platform for preview:", platform); //
-                previewElement.innerHTML = '<p class="error"><small>Invalid platform.</small></p>'; //
-                return; //
-        }
-
-        // 4. Call the rendering function and update the preview area
-        if (typeof renderFunction === 'function') { //
-            try { //
-                const cardHTML = renderFunction(accountData); // Generate the card HTML
-                previewElement.innerHTML = cardHTML; // Update the preview div
-            } catch (e) { //
-                 console.error(`Error rendering preview card for ${platform}:`, e); //
-                 previewElement.innerHTML = '<p class="error"><small>Error rendering preview.</small></p>'; //
-            }
-        } else { //
-             console.error(`Rendering function for ${platform} not found!`); //
-             previewElement.innerHTML = '<p class="error"><small>Preview engine error.</small></p>'; //
-        }
-    }
-    // *** END updateShoutoutPreview FUNCTION ***
-
-    // Global Click Listener for Modals (Defined ONCE)
-    if (!window.adminModalClickListenerAttached) {
-        window.addEventListener('click', (event) => {
-            // Re-select modals inside the handler for safety
-            const editShoutoutModalElem = document.getElementById('edit-shoutout-modal');
-            const editUsefulLinkModalElem = document.getElementById('edit-useful-link-modal');
-            const editSocialLinkModalElem = document.getElementById('edit-social-link-modal');
-            const editDisabilityModalElem = document.getElementById('edit-disability-modal');
-            const editTechItemModalElem = document.getElementById('edit-tech-item-modal');
-
-            // Check targets and call appropriate close functions *if they exist*
-            if (event.target === editShoutoutModalElem && typeof closeEditModal === 'function') { closeEditModal(); }
-            if (event.target === editUsefulLinkModalElem && typeof closeEditUsefulLinkModal === 'function') { closeEditUsefulLinkModal(); }
-            if (event.target === editSocialLinkModalElem && typeof closeEditSocialLinkModal === 'function') { closeEditSocialLinkModal(); } // Check added
-            if (event.target === editDisabilityModalElem && typeof closeEditDisabilityModal === 'function') { closeEditDisabilityModal(); }
-            if (event.target === editTechItemModalElem && typeof closeEditTechItemModal === 'function') { closeEditTechItemModal(); }
-        });
-        window.adminModalClickListenerAttached = true;
-        console.log("Global modal click listener attached.");
+    } else {
+        console.error("Invalid formType provided to updateShoutoutPreview:", formType);
+        return;
     }
 
- // --- Google Sign-In Handler ---
-    async function handleGoogleSignIn(response) {
-        console.log("Received response from Google Sign-In...");
-        const authStatus = document.getElementById('auth-status');
-        
-        if (authStatus) {
-            authStatus.textContent = 'Verifying with Google...';
-            authStatus.className = 'status-message';
-            authStatus.style.display = 'block';
+    if (!formElement || !previewElement) {
+        console.error(`Preview Error: Could not find form or preview element for ${formType} ${platform}`);
+        return;
+    }
+
+    try {
+        accountData.username = formElement.querySelector('[name="username"]')?.value.trim() || '';
+        accountData.nickname = formElement.querySelector('[name="nickname"]')?.value.trim() || '';
+        accountData.bio = formElement.querySelector('[name="bio"]')?.value.trim() || '';
+        accountData.profilePic = formElement.querySelector('[name="profilePic"]')?.value.trim() || '';
+        accountData.isVerified = formElement.querySelector('[name="isVerified"]')?.checked || false;
+        accountData.order = parseInt(formElement.querySelector('[name="order"]')?.value.trim() || 0, 10);
+
+        if (platform === 'tiktok') {
+            accountData.following = formElement.querySelector('[name="following"]')?.value.trim() || '0';
+            accountData.followers = formElement.querySelector('[name="followers"]')?.value.trim() || '0';
+            accountData.likes = formElement.querySelector('[name="likes"]')?.value.trim() || '0';
+
+        } else if (platform === 'instagram') {
+            accountData.posts = formElement.querySelector('[name="posts"]')?.value.trim() || '0';
+            accountData.followers = formElement.querySelector('[name="followers"]')?.value.trim() || '0';
+            accountData.following = formElement.querySelector('[name="following"]')?.value.trim() || '0';
+
+        } else if (platform === 'youtube') {
+            accountData.subscribers = formElement.querySelector('[name="subscribers"]')?.value.trim() || '0';
+            accountData.videos = formElement.querySelector('[name="videos"]')?.value.trim() || '0';
+            accountData.coverPhoto = formElement.querySelector('[name="coverPhoto"]')?.value.trim() || null;
         }
 
-        // Get the ID token from the Google response
-        const idToken = response.credential;
-        // Create a Google Auth provider credential
-        const credential = GoogleAuthProvider.credential(idToken);
+    } catch (e) {
+        console.error("Error reading form values for preview:", e);
+        previewElement.innerHTML = '<p class="error"><small>Error reading form values.</small></p>';
+        return;
+    }
 
+    let renderFunction;
+
+    switch (platform) {
+        case 'tiktok':
+            renderFunction = renderTikTokCard;
+            break;
+        case 'instagram':
+            renderFunction = renderInstagramCard;
+            break;
+        case 'youtube':
+            renderFunction = renderYouTubeCard;
+            break;
+        default:
+            console.error("Invalid platform for preview:", platform);
+            previewElement.innerHTML = '<p class="error"><small>Invalid platform.</small></p>';
+            return;
+    }
+
+    if (typeof renderFunction === 'function') {
         try {
-            // Sign in to Firebase with the credential
-            const result = await signInWithCredential(auth, credential);
-            console.log("Successfully signed in with Google:", result.user.displayName);
-            // The `onAuthStateChanged` listener will automatically handle showing the admin panel.
-        } catch (error) {
-            console.error("Firebase Google Sign-In Error:", error);
-            if (authStatus) {
-                authStatus.textContent = `Login Failed: ${error.message}`;
-                authStatus.className = 'status-message error';
-            }
+            const cardHTML = renderFunction(accountData);
+            previewElement.innerHTML = cardHTML;
+        } catch (e) {
+            console.error(`Error rendering preview card for ${platform}:`, e);
+            previewElement.innerHTML = '<p class="error"><small>Error rendering preview.</small></p>';
+        }
+    } else {
+        console.error(`Rendering function for ${platform} not found!`);
+        previewElement.innerHTML = '<p class="error"><small>Preview engine error.</small></p>';
+    }
+}
+
+/* ------------------------------------------------------------
+   PREVIEW LISTENERS
+------------------------------------------------------------ */
+
+function attachShoutoutPreviewListeners(formElement, platform, formType = 'add') {
+    if (!formElement) return;
+
+    const inputs = formElement.querySelectorAll('input[name], textarea[name], select[name]');
+
+    inputs.forEach(input => {
+        const eventType = input.type === 'checkbox' || input.tagName.toLowerCase() === 'select'
+            ? 'change'
+            : 'input';
+
+        const listenerFlag = `__shoutoutPreviewListener_${formType}_${platform}_${eventType}`;
+
+        if (!input[listenerFlag]) {
+            input.addEventListener(eventType, () => {
+                updateShoutoutPreview(formType, platform);
+            });
+
+            input[listenerFlag] = true;
+        }
+    });
+}
+
+// Attach add form preview listeners if forms exist
+attachShoutoutPreviewListeners(document.getElementById('add-shoutout-tiktok-form'), 'tiktok', 'add');
+attachShoutoutPreviewListeners(document.getElementById('add-shoutout-instagram-form'), 'instagram', 'add');
+attachShoutoutPreviewListeners(document.getElementById('add-shoutout-youtube-form'), 'youtube', 'add');
+
+// Attach edit form preview listener if edit form exists
+if (typeof editForm !== 'undefined' && editForm) {
+    const editInputs = editForm.querySelectorAll('input[name], textarea[name], select[name]');
+
+    editInputs.forEach(input => {
+        const eventType = input.type === 'checkbox' || input.tagName.toLowerCase() === 'select'
+            ? 'change'
+            : 'input';
+
+        const listenerFlag = `__shoutoutPreviewListener_edit_${eventType}`;
+
+        if (!input[listenerFlag]) {
+            input.addEventListener(eventType, () => {
+                const platform = editForm.getAttribute('data-platform');
+
+                if (platform) {
+                    updateShoutoutPreview('edit', platform);
+                }
+            });
+
+            input[listenerFlag] = true;
+        }
+    });
+}
+
+/* ------------------------------------------------------------
+   GLOBAL MODAL CLICK LISTENER
+------------------------------------------------------------ */
+
+if (!window.adminModalClickListenerAttached) {
+    window.addEventListener('click', (event) => {
+        const editShoutoutModalElem = document.getElementById('edit-shoutout-modal');
+        const editUsefulLinkModalElem = document.getElementById('edit-useful-link-modal');
+        const editSocialLinkModalElem = document.getElementById('edit-social-link-modal');
+        const editDisabilityModalElem = document.getElementById('edit-disability-modal');
+        const editTechItemModalElem = document.getElementById('edit-tech-item-modal');
+
+        if (event.target === editShoutoutModalElem && typeof closeEditModal === 'function') {
+            closeEditModal();
+        }
+
+        if (event.target === editUsefulLinkModalElem && typeof closeEditUsefulLinkModal === 'function') {
+            closeEditUsefulLinkModal();
+        }
+
+        if (event.target === editSocialLinkModalElem && typeof closeEditSocialLinkModal === 'function') {
+            closeEditSocialLinkModal();
+        }
+
+        if (event.target === editDisabilityModalElem && typeof closeEditDisabilityModal === 'function') {
+            closeEditDisabilityModal();
+        }
+
+        if (event.target === editTechItemModalElem && typeof closeEditTechItemModal === 'function') {
+            closeEditTechItemModal();
+        }
+    });
+
+    window.adminModalClickListenerAttached = true;
+    console.log("Global modal click listener attached.");
+}
+
+/* ------------------------------------------------------------
+   GOOGLE SIGN-IN HANDLER
+------------------------------------------------------------ */
+
+async function handleGoogleSignIn(response) {
+    console.log("Received response from Google Sign-In...");
+
+    const authStatus = document.getElementById('auth-status');
+
+    if (authStatus) {
+        authStatus.textContent = 'Verifying with Google...';
+        authStatus.className = 'status-message';
+        authStatus.style.display = 'block';
+    }
+
+    const idToken = response.credential;
+    const credential = GoogleAuthProvider.credential(idToken);
+
+    try {
+        const result = await signInWithCredential(auth, credential);
+        console.log("Successfully signed in with Google:", result.user.displayName);
+    } catch (error) {
+        console.error("Firebase Google Sign-In Error:", error);
+
+        if (authStatus) {
+            authStatus.textContent = `Login Failed: ${error.message}`;
+            authStatus.className = 'status-message error';
         }
     }
+}
 
 // admin-business-hours-v16.js
 // ======================================================
