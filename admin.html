@@ -347,7 +347,7 @@
 
     </section>
 
-      <section class="admin-section" id="creator-shoutouts" aria-labelledby="shoutouts-heading">
+<section class="admin-section" id="creator-shoutouts" aria-labelledby="shoutouts-heading">
   <h3 id="shoutouts-heading">Creator Shoutouts</h3>
 
   <!-- ===================== -->
@@ -376,8 +376,18 @@
       </div>
 
       <div class="form-group">
+        <label for="tiktok-following">Following</label>
+        <input type="text" id="tiktok-following" name="following" placeholder="941">
+      </div>
+
+      <div class="form-group">
         <label for="tiktok-followers">Followers</label>
         <input type="text" id="tiktok-followers" name="followers" placeholder="115.2M">
+      </div>
+
+      <div class="form-group">
+        <label for="tiktok-likes">Likes</label>
+        <input type="text" id="tiktok-likes" name="likes" placeholder="2.4M">
       </div>
 
       <div class="form-group">
@@ -449,8 +459,18 @@
       </div>
 
       <div class="form-group">
+        <label for="instagram-posts">Posts</label>
+        <input type="text" id="instagram-posts" name="posts" placeholder="915">
+      </div>
+
+      <div class="form-group">
         <label for="instagram-followers">Followers</label>
         <input type="text" id="instagram-followers" name="followers" placeholder="67.2M">
+      </div>
+
+      <div class="form-group">
+        <label for="instagram-following">Following</label>
+        <input type="text" id="instagram-following" name="following" placeholder="1,192">
       </div>
 
       <div class="form-group">
@@ -508,7 +528,7 @@
 
       <div class="form-group">
         <label for="youtube-username">Handle</label>
-        <input type="text" id="youtube-username" name="username" required>
+        <input type="text" id="youtube-username" name="username" required placeholder="@channelhandle">
       </div>
 
       <div class="form-group">
@@ -524,6 +544,11 @@
       <div class="form-group">
         <label for="youtube-subscribers">Subscribers</label>
         <input type="text" id="youtube-subscribers" name="subscribers" placeholder="383M">
+      </div>
+
+      <div class="form-group">
+        <label for="youtube-videos">Videos</label>
+        <input type="text" id="youtube-videos" name="videos" placeholder="4.5K">
       </div>
 
       <div class="form-group">
@@ -1432,6 +1457,7 @@
 
 </main>
 
+
 <!-- Edit Shoutout Modal -->
 <div id="edit-shoutout-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-modal-heading">
   <div class="modal-content">
@@ -1465,14 +1491,38 @@
       </div>
 
       <div id="edit-platform-specific">
+        <!-- TikTok + Instagram -->
         <div class="form-group edit-followers-group" style="display: none;">
           <label for="edit-followers">Followers:</label>
           <input type="text" id="edit-followers" name="followers" inputmode="text">
         </div>
 
+        <!-- TikTok only -->
+        <div class="form-group edit-following-group" style="display: none;">
+          <label for="edit-following">Following:</label>
+          <input type="text" id="edit-following" name="following" inputmode="text">
+        </div>
+
+        <div class="form-group edit-likes-group" style="display: none;">
+          <label for="edit-likes">Likes:</label>
+          <input type="text" id="edit-likes" name="likes" inputmode="text">
+        </div>
+
+        <!-- Instagram only -->
+        <div class="form-group edit-posts-group" style="display: none;">
+          <label for="edit-posts">Posts:</label>
+          <input type="text" id="edit-posts" name="posts" inputmode="text">
+        </div>
+
+        <!-- YouTube only -->
         <div class="form-group edit-subscribers-group" style="display: none;">
           <label for="edit-subscribers">Subscribers:</label>
           <input type="text" id="edit-subscribers" name="subscribers" inputmode="text">
+        </div>
+
+        <div class="form-group edit-videos-group" style="display: none;">
+          <label for="edit-videos">Videos:</label>
+          <input type="text" id="edit-videos" name="videos" inputmode="text">
         </div>
 
         <div class="form-group edit-coverphoto-group" style="display: none;">
@@ -1497,6 +1547,7 @@
         <button type="submit" class="button-primary">Save Changes</button>
       </div>
     </form>
+
     <div id="edit-shoutout-status-message" class="status-message" role="status" aria-live="polite"></div>
   </div>
 </div>
