@@ -4144,7 +4144,6 @@ body.dark-mode .bubble {
 
 /* ============================================================
    NEW PLATFORM PROFILE CARDS — TOP ONLY
-   These are the actual TikTok / Instagram / YouTube profile-style cards.
 ============================================================ */
 
 .tiktok-profile-card,
@@ -4208,6 +4207,8 @@ body.dark-mode .bubble {
 .instagram-profile-row,
 .instagram-profile-main,
 .instagram-bio-block,
+.instagram-username-row,
+.instagram-name-line,
 .youtube-channel-banner,
 .youtube-channel-info,
 .youtube-channel-text,
@@ -4411,11 +4412,11 @@ body.dark-mode .bubble {
 }
 
 /* ============================================================
-   Instagram Top Profile — NO Fake App Topbar
+   Instagram Profile — Screenshot-Style Top Layout
 ============================================================ */
 
 .instagram-profile-card {
-    max-width: 430px;
+    max-width: 520px;
     background:
         radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 45%),
         color-mix(in srgb, var(--content-bg) 90%, black 10%);
@@ -4428,74 +4429,169 @@ body.dark-mode .bubble {
     display: none !important;
 }
 
-.instagram-profile-row {
+/* Main row: avatar left, account info right */
+.instagram-profile-row,
+.instagram-profile-row.instagram-profile-row-full {
     display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: 18px;
+    grid-template-columns: 128px 1fr;
+    gap: 20px;
     align-items: center;
-    padding: 28px 22px 12px;
+    padding: 28px 22px 14px;
 }
 
-.instagram-avatar {
-    width: 92px;
-    height: 92px;
+/* Instagram avatar with gradient ring */
+.instagram-avatar,
+.instagram-profile-card .instagram-avatar {
+    width: 112px;
+    height: 112px;
     border-radius: 50%;
     object-fit: cover;
     background: #111;
-    border: 2px solid color-mix(in srgb, var(--accent-color) 55%, white 8%);
+    border: 3px solid transparent;
+    background-image:
+        linear-gradient(var(--content-bg), var(--content-bg)),
+        linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
     box-shadow:
         0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
         0 10px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 }
 
-.instagram-profile-main > strong {
-    display: block;
-    font-size: 1.14rem;
-    margin-bottom: 16px;
+/* Username row at top right */
+.instagram-username-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.instagram-username-row h3 {
+    margin: 0;
     color: var(--text-color);
+    font-size: 1.45rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* Dots after verified badge */
+.instagram-more-dots {
+    color: var(--secondary-text);
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+/* Verified badge beside username */
+.instagram-username-row .instagram-verified-badge {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    margin-left: 2px;
+    vertical-align: middle;
+}
+
+/* Name/pronouns line under username */
+.instagram-name-line {
+    margin: 0 0 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.instagram-name-line strong {
+    color: var(--text-color);
+    font-size: 0.98rem;
     font-weight: 800;
 }
 
-.instagram-stats {
+.instagram-name-line span {
+    color: var(--secondary-text);
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+/* Hide old standalone nickname line if old markup exists */
+.instagram-profile-main > strong {
+    display: none;
+}
+
+/* Stats row */
+.instagram-profile-card .instagram-stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(3, max-content);
+    gap: 20px;
+    align-items: start;
 }
 
-.instagram-stats strong {
-    display: block;
-    font-size: 1.35rem;
-    line-height: 1;
-    font-weight: 900;
+.instagram-profile-card .instagram-stats div {
+    min-width: fit-content;
+}
+
+.instagram-profile-card .instagram-stats strong {
+    display: inline;
     color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 900;
+    margin-right: 4px;
 }
 
-.instagram-stats span {
-    display: block;
-    margin-top: 5px;
+.instagram-profile-card .instagram-stats span {
+    display: inline;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* Bio section under row */
+.instagram-bio-block,
+.instagram-profile-card .instagram-bio-block {
+    padding: 10px 22px 12px;
     color: var(--secondary-text);
     font-size: 0.98rem;
-}
-
-.instagram-bio-block {
-    padding: 8px 22px 10px;
-    font-size: 1rem;
     line-height: 1.35;
-    color: var(--secondary-text);
 }
 
-.instagram-bio-block p {
-    margin: 0 0 8px;
-    color: var(--secondary-text);
+.instagram-profile-card .instagram-bio-block p {
+    margin: 0 0 4px;
 }
 
-.instagram-website {
-    color: var(--link-color);
+.instagram-category {
+    color: var(--secondary-text);
+    font-weight: 600;
+}
+
+.instagram-profile-card .instagram-website,
+.instagram-secondary-handle {
+    color: var(--text-color);
+    font-weight: 800;
     text-decoration: none;
-    font-weight: 700;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
+    margin-top: 4px;
+}
+
+.instagram-profile-card .instagram-website i,
+.instagram-secondary-handle i {
+    color: var(--text-color);
+    width: 16px;
+    text-align: center;
+}
+
+/* Keep your one real button */
+.instagram-real-button-row,
+.instagram-profile-card .single-visit-button-row {
+    padding-top: 14px;
+}
+
+.instagram-real-button-row .instagram-visit-button,
+.instagram-profile-card .instagram-visit-button {
+    min-width: 220px;
 }
 
 /* ============================================================
@@ -4566,13 +4662,21 @@ body.dark-mode .bubble {
     padding: 8px 22px 4px;
     margin: 0;
     color: var(--secondary-text);
-    line-height: 1.35;
+    line-height: 1.45;
     font-size: 1rem;
+
+    /* Show full bio */
+    white-space: normal;
+    overflow: visible;
+    text-overflow: initial;
+    display: block;
+    max-height: none;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
 }
 
 .youtube-more {
-    color: var(--text-color);
-    font-weight: 800;
+    display: none;
 }
 
 /* ============================================================
@@ -4602,12 +4706,16 @@ body.dark-mode .bubble {
     font-size: 0.95em;
     justify-content: flex-start;
     position: relative;
-    z-index: 1;
+    z-index: 100;
+    pointer-events: auto;
 }
 
 .creator-sort-controls label {
     font-weight: 500;
     color: var(--text-color);
+    position: relative;
+    z-index: 101;
+    pointer-events: auto;
 }
 
 .creator-sort-controls select {
@@ -4621,6 +4729,15 @@ body.dark-mode .bubble {
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 40%, transparent);
     transition: all var(--transition-fast);
+
+    position: relative;
+    z-index: 101;
+    pointer-events: auto;
+    cursor: pointer;
+
+    appearance: auto;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
 }
 
 .creator-sort-controls select:hover,
@@ -4628,6 +4745,94 @@ body.dark-mode .bubble {
     border-color: var(--accent-color);
     outline: none;
     box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 60%, transparent);
+}
+
+.creator-sort-controls select option {
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.shoutouts-section .creator-sort-controls {
+    z-index: 120;
+}
+
+/* ============================================================
+   Light Mode Fixes
+============================================================ */
+
+body.light-e .tiktok-profile-card {
+    color: var(--text-color) !important;
+    background:
+        var(--bubble-gradient),
+        var(--liquid-refraction),
+        color-mix(in srgb, var(--content-bg) 88%, white 12%) !important;
+    border-color: color-mix(in srgb, var(--border-color) 86%, transparent) !important;
+    box-shadow:
+        var(--bubble-highlight),
+        var(--bubble-shadow) !important;
+    backdrop-filter: var(--backdrop-blur) !important;
+    -webkit-backdrop-filter: var(--backdrop-blur) !important;
+}
+
+body.light-e .tiktok-profile-card h3,
+body.light-e .tiktok-profile-card strong,
+body.light-e .tiktok-stat strong,
+body.light-e .instagram-profile-card .instagram-username-row h3,
+body.light-e .instagram-profile-card .instagram-name-line strong,
+body.light-e .instagram-profile-card .instagram-stats strong,
+body.light-e .instagram-profile-card .instagram-stats span,
+body.light-e .instagram-profile-card .instagram-website,
+body.light-e .instagram-secondary-handle,
+body.light-e .instagram-profile-card .instagram-website i,
+body.light-e .instagram-secondary-handle i {
+    color: var(--text-color) !important;
+}
+
+body.light-e .tiktok-profile-card p,
+body.light-e .tiktok-profile-card span,
+body.light-e .tiktok-username,
+body.light-e .tiktok-stat span,
+body.light-e .tiktok-subtitle,
+body.light-e .instagram-profile-card .instagram-name-line span,
+body.light-e .instagram-profile-card .instagram-category,
+body.light-e .instagram-profile-card .instagram-bio-block,
+body.light-e .instagram-more-dots {
+    color: var(--secondary-text) !important;
+}
+
+body.light-e .tiktok-bio,
+body.light-e .tiktok-education {
+    color: var(--text-color) !important;
+}
+
+body.light-e .tiktok-stat:not(:last-child) {
+    border-right-color: color-mix(in srgb, var(--border-color) 85%, transparent) !important;
+}
+
+body.light-e .tiktok-avatar {
+    border-color: color-mix(in srgb, var(--accent-color) 55%, white 20%) !important;
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
+        0 10px 24px color-mix(in srgb, var(--shadow-color) 35%, transparent) !important;
+}
+
+body.light-e .tiktok-visit-button,
+body.light-e .tiktok-profile-card .platform-visit-button {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #ff2d55, #fe2c55) !important;
+    border-color: rgba(255,255,255,0.28) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.18),
+        0 8px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent) !important;
+}
+
+body.light-e .tiktok-profile-card .verified-badge {
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+body.light-e .tiktok-profile-card i {
+    color: inherit;
 }
 
 /* ============================================================
@@ -4702,23 +4907,37 @@ body.dark-mode .bubble {
         font-size: 1.35rem;
     }
 
-    .instagram-profile-row {
-        grid-template-columns: 78px 1fr;
-        padding-inline: 16px;
+    .instagram-profile-row,
+    .instagram-profile-row.instagram-profile-row-full {
+        grid-template-columns: 86px 1fr;
         gap: 14px;
+        padding: 24px 16px 12px;
     }
 
-    .instagram-avatar {
-        width: 76px;
-        height: 76px;
+    .instagram-avatar,
+    .instagram-profile-card .instagram-avatar {
+        width: 78px;
+        height: 78px;
     }
 
-    .instagram-stats {
-        gap: 12px;
+    .instagram-username-row h3 {
+        font-size: 1.18rem;
     }
 
-    .instagram-stats strong {
-        font-size: 1.12rem;
+    .instagram-profile-card .instagram-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .instagram-profile-card .instagram-stats strong,
+    .instagram-profile-card .instagram-stats span {
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .instagram-profile-card .instagram-stats span {
+        color: var(--secondary-text);
+        font-weight: 600;
     }
 
     .instagram-bio-block,
