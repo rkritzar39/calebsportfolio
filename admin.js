@@ -813,38 +813,49 @@ document.addEventListener('DOMContentLoaded', () => { //
     const hideTikTokSectionToggle = document.getElementById('hide-tiktok-section-toggle'); //
     const settingsStatusMessage = document.getElementById('settings-status-message'); //
 
+    
     // Shoutout Elements (Add Forms, Lists, Search)
-    const addShoutoutTiktokForm = document.getElementById('add-shoutout-tiktok-form'); //
-    const shoutoutsTiktokListAdmin = document.getElementById('shoutouts-tiktok-list-admin'); //
-    const addShoutoutInstagramForm = document.getElementById('add-shoutout-instagram-form'); //
-    const shoutoutsInstagramListAdmin = document.getElementById('shoutouts-instagram-list-admin'); //
-    const addShoutoutYoutubeForm = document.getElementById('add-shoutout-youtube-form'); //
-    const shoutoutsYoutubeListAdmin = document.getElementById('shoutouts-youtube-list-admin'); //
-    const searchInputTiktok = document.getElementById('search-tiktok'); //
-    const searchInputInstagram = document.getElementById('search-instagram'); //
-    const searchInputYoutube = document.getElementById('search-youtube'); //
-
+    const addShoutoutTiktokForm = document.getElementById('add-shoutout-tiktok-form');
+    const shoutoutsTiktokListAdmin = document.getElementById('shoutouts-tiktok-list-admin');
+    
+    const addShoutoutInstagramForm = document.getElementById('add-shoutout-instagram-form');
+    const shoutoutsInstagramListAdmin = document.getElementById('shoutouts-instagram-list-admin');
+    
+    const addShoutoutYoutubeForm = document.getElementById('add-shoutout-youtube-form');
+    const shoutoutsYoutubeListAdmin = document.getElementById('shoutouts-youtube-list-admin');
+    
+    const searchInputTiktok = document.getElementById('search-tiktok');
+    const searchInputInstagram = document.getElementById('search-instagram');
+    const searchInputYoutube = document.getElementById('search-youtube');
+    
     // Shoutout Edit Modal Elements
-    const editModal = document.getElementById('edit-shoutout-modal'); //
-    const editForm = document.getElementById('edit-shoutout-form'); //
-    const cancelEditButton = document.getElementById('cancel-edit-button'); //
-    const editUsernameInput = document.getElementById('edit-username'); //
-    const editNicknameInput = document.getElementById('edit-nickname'); //
-    const editOrderInput = document.getElementById('edit-order'); //
-    const editIsVerifiedInput = document.getElementById('edit-isVerified'); //
-    const editBioInput = document.getElementById('edit-bio'); //
-    const editProfilePicInput = document.getElementById('edit-profilePic'); //
-    const editIsEnabledInput = document.getElementById('edit-isEnabled'); // Reference for per-shoutout enable/disable (if added later)
-    const editFollowersInput = document.getElementById('edit-followers'); //
-    const editSubscribersInput = document.getElementById('edit-subscribers'); //
-    const editCoverPhotoInput = document.getElementById('edit-coverPhoto'); //
-    const editPlatformSpecificDiv = document.getElementById('edit-platform-specific'); //
-
+    const editModal = document.getElementById('edit-shoutout-modal');
+    const editForm = document.getElementById('edit-shoutout-form');
+    const cancelEditButton = document.getElementById('cancel-edit-button');
+    
+    const editUsernameInput = document.getElementById('edit-username');
+    const editNicknameInput = document.getElementById('edit-nickname');
+    const editOrderInput = document.getElementById('edit-order');
+    const editIsVerifiedInput = document.getElementById('edit-isVerified');
+    const editBioInput = document.getElementById('edit-bio');
+    const editProfilePicInput = document.getElementById('edit-profilePic');
+    const editIsEnabledInput = document.getElementById('edit-isEnabled');
+    
+    const editFollowersInput = document.getElementById('edit-followers');
+    const editFollowingInput = document.getElementById('edit-following');
+    const editLikesInput = document.getElementById('edit-likes');
+    const editPostsInput = document.getElementById('edit-posts');
+    const editSubscribersInput = document.getElementById('edit-subscribers');
+    const editVideosInput = document.getElementById('edit-videos');
+    const editCoverPhotoInput = document.getElementById('edit-coverPhoto');
+    
+    const editPlatformSpecificDiv = document.getElementById('edit-platform-specific');
+    
     // Shoutout Preview Area Elements
-    const addTiktokPreview = document.getElementById('add-tiktok-preview'); //
-    const addInstagramPreview = document.getElementById('add-instagram-preview'); //
-    const addYoutubePreview = document.getElementById('add-youtube-preview'); //
-    const editShoutoutPreview = document.getElementById('edit-shoutout-preview'); //
+    const addTiktokPreview = document.getElementById('add-tiktok-preview');
+    const addInstagramPreview = document.getElementById('add-instagram-preview');
+    const addYoutubePreview = document.getElementById('add-youtube-preview');
+    const editShoutoutPreview = document.getElementById('edit-shoutout-preview');
 
     // Tech Management Elements
     const addTechItemForm = document.getElementById('add-tech-item-form'); // Declared
@@ -1068,14 +1079,14 @@ if (searchInputDisabilities) {
         }
     }
 
+
 /* ============================================================
    SHOUTOUT ADMIN JS
    TikTok / Instagram / YouTube
-   Includes edit modal logic, admin list rendering, and preview
 ============================================================ */
 
 /* ------------------------------------------------------------
-   SHOUTOUT HELPER FUNCTIONS
+   HELPER FUNCTIONS
 ------------------------------------------------------------ */
 
 function formatShoutoutNumber(value) {
@@ -1166,7 +1177,6 @@ function getPlatformProfileUrl(platform, username) {
 
 /* ------------------------------------------------------------
    SHOUTOUT CARD RENDERERS FOR ADMIN PREVIEW
-   These names match your existing preview system.
 ------------------------------------------------------------ */
 
 function renderTikTokCard(account) {
@@ -1221,7 +1231,7 @@ function renderTikTokCard(account) {
             </div>
 
             <div class="single-visit-button-row center-button">
-                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button tiktok-visit-button">
+                <a href="${escapeAttribute(profileUrl)}" target="_blank" rel="noopener noreferrer" class="platform-visit-button tiktok-visit-button">
                     <i class="fab fa-tiktok"></i>
                     Visit Profile
                 </a>
@@ -1303,7 +1313,7 @@ function renderInstagramCard(account) {
         </div>
 
         <div class="single-visit-button-row">
-            <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button instagram-visit-button">
+            <a href="${escapeAttribute(profileUrl)}" target="_blank" rel="noopener noreferrer" class="platform-visit-button instagram-visit-button">
                 <i class="fab fa-instagram"></i>
                 Visit Profile
             </a>
@@ -1372,7 +1382,7 @@ function renderYouTubeCard(account) {
         </p>` : ""}
 
         <div class="single-visit-button-row">
-            <a href="${channelUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button youtube-visit-button">
+            <a href="${escapeAttribute(channelUrl)}" target="_blank" rel="noopener noreferrer" class="platform-visit-button youtube-visit-button">
                 <i class="fab fa-youtube"></i>
                 Visit Channel
             </a>
@@ -1383,6 +1393,7 @@ function renderYouTubeCard(account) {
 /* ------------------------------------------------------------
    EDIT MODAL LOGIC
 ------------------------------------------------------------ */
+
 
 function setPlatformGroupVisible(groupElement, shouldShow) {
     if (!groupElement) return;
@@ -1396,7 +1407,6 @@ function setPlatformGroupVisible(groupElement, shouldShow) {
     });
 }
 
-// Opens the modal and populates it with data for the selected shoutout
 function openEditModal(docId, platform) {
     if (!editModal || !editForm) {
         console.error("Edit modal/form not found.");
@@ -1417,7 +1427,6 @@ function openEditModal(docId, platform) {
 
         const data = docSnap.data();
 
-        // General fields
         if (editUsernameInput) editUsernameInput.value = data.username || '';
         if (editNicknameInput) editNicknameInput.value = data.nickname || '';
         if (editOrderInput) editOrderInput.value = data.order ?? '';
@@ -1425,7 +1434,6 @@ function openEditModal(docId, platform) {
         if (editBioInput) editBioInput.value = data.bio || '';
         if (editProfilePicInput) editProfilePicInput.value = data.profilePic || '';
 
-        // Groups
         const followersDiv = editPlatformSpecificDiv?.querySelector('.edit-followers-group');
         const followingDiv = editPlatformSpecificDiv?.querySelector('.edit-following-group');
         const likesDiv = editPlatformSpecificDiv?.querySelector('.edit-likes-group');
@@ -1434,16 +1442,6 @@ function openEditModal(docId, platform) {
         const videosDiv = editPlatformSpecificDiv?.querySelector('.edit-videos-group');
         const coverPhotoDiv = editPlatformSpecificDiv?.querySelector('.edit-coverphoto-group');
 
-        // Inputs
-        const editFollowersInputLocal = editForm.querySelector('[name="followers"]');
-        const editFollowingInputLocal = editForm.querySelector('[name="following"]');
-        const editLikesInputLocal = editForm.querySelector('[name="likes"]');
-        const editPostsInputLocal = editForm.querySelector('[name="posts"]');
-        const editSubscribersInputLocal = editForm.querySelector('[name="subscribers"]');
-        const editVideosInputLocal = editForm.querySelector('[name="videos"]');
-        const editCoverPhotoInputLocal = editForm.querySelector('[name="coverPhoto"]');
-
-        // Hide all groups first
         setPlatformGroupVisible(followersDiv, false);
         setPlatformGroupVisible(followingDiv, false);
         setPlatformGroupVisible(likesDiv, false);
@@ -1452,45 +1450,42 @@ function openEditModal(docId, platform) {
         setPlatformGroupVisible(videosDiv, false);
         setPlatformGroupVisible(coverPhotoDiv, false);
 
-        // Clear all platform fields
-        if (editFollowersInputLocal) editFollowersInputLocal.value = '';
-        if (editFollowingInputLocal) editFollowingInputLocal.value = '';
-        if (editLikesInputLocal) editLikesInputLocal.value = '';
-        if (editPostsInputLocal) editPostsInputLocal.value = '';
-        if (editSubscribersInputLocal) editSubscribersInputLocal.value = '';
-        if (editVideosInputLocal) editVideosInputLocal.value = '';
-        if (editCoverPhotoInputLocal) editCoverPhotoInputLocal.value = '';
+        if (editFollowersInput) editFollowersInput.value = '';
+        if (editFollowingInput) editFollowingInput.value = '';
+        if (editLikesInput) editLikesInput.value = '';
+        if (editPostsInput) editPostsInput.value = '';
+        if (editSubscribersInput) editSubscribersInput.value = '';
+        if (editVideosInput) editVideosInput.value = '';
+        if (editCoverPhotoInput) editCoverPhotoInput.value = '';
 
-        // Show and populate by platform
         if (platform === 'tiktok') {
-            if (editFollowersInputLocal) editFollowersInputLocal.value = data.followers || '';
-            if (editFollowingInputLocal) editFollowingInputLocal.value = data.following || '';
-            if (editLikesInputLocal) editLikesInputLocal.value = data.likes || '';
+            if (editFollowersInput) editFollowersInput.value = data.followers || '';
+            if (editFollowingInput) editFollowingInput.value = data.following || '';
+            if (editLikesInput) editLikesInput.value = data.likes || '';
 
             setPlatformGroupVisible(followersDiv, true);
             setPlatformGroupVisible(followingDiv, true);
             setPlatformGroupVisible(likesDiv, true);
 
         } else if (platform === 'instagram') {
-            if (editPostsInputLocal) editPostsInputLocal.value = data.posts || '';
-            if (editFollowersInputLocal) editFollowersInputLocal.value = data.followers || '';
-            if (editFollowingInputLocal) editFollowingInputLocal.value = data.following || '';
+            if (editPostsInput) editPostsInput.value = data.posts || '';
+            if (editFollowersInput) editFollowersInput.value = data.followers || '';
+            if (editFollowingInput) editFollowingInput.value = data.following || '';
 
             setPlatformGroupVisible(postsDiv, true);
             setPlatformGroupVisible(followersDiv, true);
             setPlatformGroupVisible(followingDiv, true);
 
         } else if (platform === 'youtube') {
-            if (editSubscribersInputLocal) editSubscribersInputLocal.value = data.subscribers || '';
-            if (editVideosInputLocal) editVideosInputLocal.value = data.videos || '';
-            if (editCoverPhotoInputLocal) editCoverPhotoInputLocal.value = data.coverPhoto || '';
+            if (editSubscribersInput) editSubscribersInput.value = data.subscribers || '';
+            if (editVideosInput) editVideosInput.value = data.videos || '';
+            if (editCoverPhotoInput) editCoverPhotoInput.value = data.coverPhoto || '';
 
             setPlatformGroupVisible(subscribersDiv, true);
             setPlatformGroupVisible(videosDiv, true);
             setPlatformGroupVisible(coverPhotoDiv, true);
         }
 
-        // Preview
         const previewArea = document.getElementById('edit-shoutout-preview');
 
         if (previewArea) {
@@ -1509,7 +1504,6 @@ function openEditModal(docId, platform) {
     });
 }
 
-// Closes the edit modal and resets the form
 function closeEditModal() {
     if (editModal) editModal.style.display = 'none';
 
@@ -1524,7 +1518,6 @@ function closeEditModal() {
     }
 }
 
-// Event listener for closing the edit modal
 if (cancelEditButton) {
     cancelEditButton.addEventListener('click', closeEditModal);
 }
@@ -1532,6 +1525,7 @@ if (cancelEditButton) {
 /* ------------------------------------------------------------
    SUBMIT LISTENER HELPER
 ------------------------------------------------------------ */
+
 
 function addSubmitListenerOnce(formElement, handler) {
     if (!formElement) {
@@ -1562,9 +1556,16 @@ function addSubmitListenerOnce(formElement, handler) {
     }
 }
 
+// Add Shoutout Forms using the helper
+addSubmitListenerOnce(addShoutoutTiktokForm, () => handleAddShoutout('tiktok', addShoutoutTiktokForm));
+addSubmitListenerOnce(addShoutoutInstagramForm, () => handleAddShoutout('instagram', addShoutoutInstagramForm));
+addSubmitListenerOnce(addShoutoutYoutubeForm, () => handleAddShoutout('youtube', addShoutoutYoutubeForm));
+
+
 /* ------------------------------------------------------------
    ADMIN LIST ITEM RENDERER
 ------------------------------------------------------------ */
+
 
 function renderAdminListItem(container, docId, platform, itemData, deleteHandler, editHandler) {
     if (!container) {
@@ -1587,21 +1588,18 @@ function renderAdminListItem(container, docId, platform, itemData, deleteHandler
     if (platform === 'youtube') {
         const subscribers = itemData.subscribers || 'N/A';
         const videos = itemData.videos || 'N/A';
-
         countText = `Subs: ${subscribers} | Videos: ${videos}`;
 
     } else if (platform === 'tiktok') {
         const followers = itemData.followers || 'N/A';
         const following = itemData.following || 'N/A';
         const likes = itemData.likes || 'N/A';
-
         countText = `Followers: ${followers} | Following: ${following} | Likes: ${likes}`;
 
     } else if (platform === 'instagram') {
         const posts = itemData.posts || 'N/A';
         const followers = itemData.followers || 'N/A';
         const following = itemData.following || 'N/A';
-
         countText = `Posts: ${posts} | Followers: ${followers} | Following: ${following}`;
     }
 
@@ -1650,7 +1648,7 @@ function renderAdminListItem(container, docId, platform, itemData, deleteHandler
         </div>
 
         <div class="item-actions">
-            <a href="${directLinkUrl}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Profile/Channel">
+            <a href="${escapeAttribute(directLinkUrl)}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Profile/Channel">
                 <i class="fas fa-external-link-alt"></i> Visit
             </a>
 
@@ -1670,6 +1668,7 @@ function renderAdminListItem(container, docId, platform, itemData, deleteHandler
 /* ------------------------------------------------------------
    SHOUTOUT PREVIEW UPDATER
 ------------------------------------------------------------ */
+
 
 function updateShoutoutPreview(formType, platform) {
     let formElement;
@@ -1766,6 +1765,11 @@ function updateShoutoutPreview(formType, platform) {
    PREVIEW LISTENERS
 ------------------------------------------------------------ */
 
+
+/* ------------------------------------------------------------
+   PREVIEW LISTENERS
+------------------------------------------------------------ */
+
 function attachShoutoutPreviewListeners(formElement, platform, formType = 'add') {
     if (!formElement) return;
 
@@ -1788,13 +1792,11 @@ function attachShoutoutPreviewListeners(formElement, platform, formType = 'add')
     });
 }
 
-// Attach add form preview listeners if forms exist
-attachShoutoutPreviewListeners(document.getElementById('add-shoutout-tiktok-form'), 'tiktok', 'add');
-attachShoutoutPreviewListeners(document.getElementById('add-shoutout-instagram-form'), 'instagram', 'add');
-attachShoutoutPreviewListeners(document.getElementById('add-shoutout-youtube-form'), 'youtube', 'add');
+attachShoutoutPreviewListeners(addShoutoutTiktokForm, 'tiktok', 'add');
+attachShoutoutPreviewListeners(addShoutoutInstagramForm, 'instagram', 'add');
+attachShoutoutPreviewListeners(addShoutoutYoutubeForm, 'youtube', 'add');
 
-// Attach edit form preview listener if edit form exists
-if (typeof editForm !== 'undefined' && editForm) {
+if (editForm) {
     const editInputs = editForm.querySelectorAll('input[name], textarea[name], select[name]');
 
     editInputs.forEach(input => {
@@ -3362,95 +3364,101 @@ onAuthStateChanged(auth, user => {
         });
     }
 
-// --- Shoutouts Load/Add/Delete/Update ---
 
-    // Helper function to get the reference to the metadata document
-    // Used for storing last updated timestamps
-    function getShoutoutsMetadataRef() { //
-        // Using 'siteConfig' collection and 'shoutoutsMetadata' document ID
-        // Ensure this document exists or is created if needed
-        return doc(db, 'siteConfig', 'shoutoutsMetadata'); //
+/* ------------------------------------------------------------
+   SHOUTOUTS LOAD / ADD / DELETE / UPDATE
+------------------------------------------------------------ */
+
+function getShoutoutsMetadataRef() {
+    return doc(db, 'siteConfig', 'shoutoutsMetadata');
+}
+
+async function updateMetadataTimestamp(platform) {
+    const metaRef = getShoutoutsMetadataRef();
+
+    try {
+        await setDoc(metaRef, {
+            [`lastUpdatedTime_${platform}`]: serverTimestamp()
+        }, { merge: true });
+
+        console.log(`Metadata timestamp updated for ${platform}.`);
+
+    } catch (error) {
+        console.error(`Error updating timestamp for ${platform}:`, error);
+        showAdminStatus(`Warning: Could not update site timestamp for ${platform}.`, true);
+    }
+}
+
+async function loadShoutoutsAdmin(platform) {
+    const listContainer = document.getElementById(`shoutouts-${platform}-list-admin`);
+    const countElement = document.getElementById(`${platform}-count`);
+
+    console.log(`DEBUG: loadShoutoutsAdmin called for ${platform} at ${new Date().toLocaleTimeString()}`);
+
+    if (!listContainer) {
+        console.error(`List container not found for platform: ${platform}`);
+        return;
     }
 
-    // Updates the 'lastUpdatedTime' field in the metadata document for a specific platform
-    async function updateMetadataTimestamp(platform) { //
-         const metaRef = getShoutoutsMetadataRef(); //
-         try { //
-             await setDoc(metaRef, { //
-                 [`lastUpdatedTime_${platform}`]: serverTimestamp() //
-             }, { merge: true }); //
-             console.log(`Metadata timestamp updated for ${platform}.`); //
-         } catch (error) { //
-             console.error(`Error updating timestamp for ${platform}:`, error); //
-             showAdminStatus(`Warning: Could not update site timestamp for ${platform}.`, true); //
-         }
+    if (countElement) countElement.textContent = '';
+
+    listContainer.innerHTML = `<p>Loading ${platform} shoutouts...</p>`;
+
+    if (typeof allShoutouts !== 'undefined' && allShoutouts && allShoutouts.hasOwnProperty(platform)) {
+        allShoutouts[platform] = [];
+    } else {
+        console.error(`allShoutouts variable or platform key '${platform}' is missing or not initialized.`);
+
+        if (typeof allShoutouts === 'undefined' || !allShoutouts) {
+            allShoutouts = { tiktok: [], instagram: [], youtube: [] };
+        } else if (!allShoutouts.hasOwnProperty(platform)) {
+            allShoutouts[platform] = [];
+        }
     }
 
-    // --- UPDATED: loadShoutoutsAdmin Function (Stores data, calls filter function) ---
-    async function loadShoutoutsAdmin(platform) { //
-        const listContainer = document.getElementById(`shoutouts-${platform}-list-admin`); //
-        const countElement = document.getElementById(`${platform}-count`); //
-        console.log(`DEBUG: loadShoutoutsAdmin called for ${platform} at ${new Date().toLocaleTimeString()}`); // <-- ADD THIS LINE
+    try {
+        const shoutoutsCol = collection(db, 'shoutouts');
 
+        const shoutoutQuery = query(
+            shoutoutsCol,
+            where("platform", "==", platform),
+            orderBy("order", "asc")
+        );
 
-        if (!listContainer) { //
-            console.error(`List container not found for platform: ${platform}`); //
-            return; //
-        }
-        if (countElement) countElement.textContent = ''; //
-        listContainer.innerHTML = `<p>Loading ${platform} shoutouts...</p>`; //
+        const querySnapshot = await getDocs(shoutoutQuery);
 
-        // Ensure the global storage for this platform exists and is clear
-        if (typeof allShoutouts !== 'undefined' && allShoutouts && allShoutouts.hasOwnProperty(platform)) { //
-             allShoutouts[platform] = []; //
-        } else { //
-            console.error(`allShoutouts variable or platform key '${platform}' is missing or not initialized.`); //
-             if (typeof allShoutouts === 'undefined' || !allShoutouts) { //
-                 allShoutouts = { tiktok: [], instagram: [], youtube: [] }; //
-             } else if (!allShoutouts.hasOwnProperty(platform)) { //
-                 allShoutouts[platform] = []; //
-             }
-        }
+        console.log(`Loaded ${querySnapshot.size} ${platform} documents.`);
 
-        try { //
-            const shoutoutsCol = collection(db, 'shoutouts'); //
-            // Query requires composite index (platform, order)
-            const shoutoutQuery = query( //
-                shoutoutsCol, //
-                where("platform", "==", platform), //
-                orderBy("order", "asc") //
-            );
-
-            const querySnapshot = await getDocs(shoutoutQuery); //
-            console.log(`Loaded ${querySnapshot.size} ${platform} documents.`); //
-
-            // Store fetched data in the global variable 'allShoutouts'
-            querySnapshot.forEach((docSnapshot) => { //
-                allShoutouts[platform].push({ id: docSnapshot.id, ...docSnapshot.data() }); //
+        querySnapshot.forEach((docSnapshot) => {
+            allShoutouts[platform].push({
+                id: docSnapshot.id,
+                ...docSnapshot.data()
             });
+        });
 
-            // Call the filtering/display function to initially render the list
-            if (typeof displayFilteredShoutouts === 'function') { //
-                displayFilteredShoutouts(platform); //
-            } else { //
-                 console.error(`displayFilteredShoutouts function is not yet defined when loading ${platform}`); //
-                 listContainer.innerHTML = `<p class="error">Error initializing display function.</p>`; //
-                 if (countElement) countElement.textContent = '(Error)'; //
-            }
+        if (typeof displayFilteredShoutouts === 'function') {
+            displayFilteredShoutouts(platform);
+        } else {
+            console.error(`displayFilteredShoutouts function is not yet defined when loading ${platform}`);
+            listContainer.innerHTML = `<p class="error">Error initializing display function.</p>`;
 
-        } catch (error) { //
-            console.error(`Error loading ${platform} shoutouts:`, error); //
-            if (error.code === 'failed-precondition') { //
-                 listContainer.innerHTML = `<p class="error">Error: Missing Firestore index for this query. Please create it using the link in the developer console (F12).</p>`; //
-                 showAdminStatus(`Error loading ${platform}: Missing database index. Check console.`, true); //
-            } else { //
-                 listContainer.innerHTML = `<p class="error">Error loading ${platform} shoutouts.</p>`; //
-                 showAdminStatus(`Failed to load ${platform} data: ${error.message}`, true); //
-            }
-            if (countElement) countElement.textContent = '(Error)'; //
+            if (countElement) countElement.textContent = '(Error)';
         }
+
+    } catch (error) {
+        console.error(`Error loading ${platform} shoutouts:`, error);
+
+        if (error.code === 'failed-precondition') {
+            listContainer.innerHTML = `<p class="error">Error: Missing Firestore index for this query. Please create it using the link in the developer console (F12).</p>`;
+            showAdminStatus(`Error loading ${platform}: Missing database index. Check console.`, true);
+        } else {
+            listContainer.innerHTML = `<p class="error">Error loading ${platform} shoutouts.</p>`;
+            showAdminStatus(`Failed to load ${platform} data: ${error.message}`, true);
+        }
+
+        if (countElement) countElement.textContent = '(Error)';
     }
-    // --- END UPDATED: loadShoutoutsAdmin Function ---
+}
 
 async function handleAddShoutout(platform, formElement) {
     console.log(`DEBUG: handleAddShoutout triggered for ${platform}.`);
@@ -3459,8 +3467,8 @@ async function handleAddShoutout(platform, formElement) {
         console.warn(`DEBUG: handleAddShoutout already running for ${platform}, ignoring duplicate call.`);
         return;
     }
+
     isAddingShoutout = true;
-    console.log(`DEBUG: Set isAddingShoutout = true for ${platform}`);
 
     if (!formElement) {
         console.error("Form element not provided to handleAddShoutout");
@@ -3468,244 +3476,263 @@ async function handleAddShoutout(platform, formElement) {
         return;
     }
 
-    // Get form values (ensure all relevant fields are captured)
-    const username = formElement.querySelector(`#${platform}-username`)?.value.trim();
-    const nickname = formElement.querySelector(`#${platform}-nickname`)?.value.trim();
-    const orderStr = formElement.querySelector(`#${platform}-order`)?.value.trim();
-    const order = parseInt(orderStr);
-    const isVerified = formElement.querySelector(`#${platform}-isVerified`)?.checked || false;
-    const bio = formElement.querySelector(`#${platform}-bio`)?.value.trim() || null;
-    const profilePic = formElement.querySelector(`#${platform}-profilePic`)?.value.trim() || null;
-    let followers = 'N/A';
-    let subscribers = 'N/A';
-    let coverPhoto = null;
-    if (platform === 'youtube') {
-        subscribers = formElement.querySelector(`#${platform}-subscribers`)?.value.trim() || 'N/A';
-        coverPhoto = formElement.querySelector(`#${platform}-coverPhoto`)?.value.trim() || null;
-    } else {
-        followers = formElement.querySelector(`#${platform}-followers`)?.value.trim() || 'N/A';
-    }
+    const username = formElement.querySelector('[name="username"]')?.value.trim();
+    const nickname = formElement.querySelector('[name="nickname"]')?.value.trim();
+    const orderStr = formElement.querySelector('[name="order"]')?.value.trim();
+    const order = parseInt(orderStr, 10);
+    const isVerified = formElement.querySelector('[name="isVerified"]')?.checked || false;
+    const bio = formElement.querySelector('[name="bio"]')?.value.trim() || null;
+    const profilePic = formElement.querySelector('[name="profilePic"]')?.value.trim() || null;
 
-
-    // Basic validation
     if (!username || !nickname || !orderStr || isNaN(order) || order < 0) {
         showAdminStatus(`Invalid input for ${platform}. Check required fields and ensure Order is a non-negative number.`, true);
-        isAddingShoutout = false; // Reset flag
+        isAddingShoutout = false;
         return;
     }
 
-    // Duplicate Check Logic
+    const accountData = {
+        platform,
+        username,
+        nickname,
+        order,
+        isVerified,
+        bio,
+        profilePic,
+        createdAt: serverTimestamp(),
+        isEnabled: true
+    };
+
+    if (platform === 'tiktok') {
+        accountData.following = formElement.querySelector('[name="following"]')?.value.trim() || '0';
+        accountData.followers = formElement.querySelector('[name="followers"]')?.value.trim() || '0';
+        accountData.likes = formElement.querySelector('[name="likes"]')?.value.trim() || '0';
+
+    } else if (platform === 'instagram') {
+        accountData.posts = formElement.querySelector('[name="posts"]')?.value.trim() || '0';
+        accountData.followers = formElement.querySelector('[name="followers"]')?.value.trim() || '0';
+        accountData.following = formElement.querySelector('[name="following"]')?.value.trim() || '0';
+
+    } else if (platform === 'youtube') {
+        accountData.subscribers = formElement.querySelector('[name="subscribers"]')?.value.trim() || '0';
+        accountData.videos = formElement.querySelector('[name="videos"]')?.value.trim() || '0';
+        accountData.coverPhoto = formElement.querySelector('[name="coverPhoto"]')?.value.trim() || null;
+    }
+
     try {
         const shoutoutsCol = collection(db, 'shoutouts');
-        const duplicateCheckQuery = query(shoutoutsCol, where("platform", "==", platform), where("username", "==", username), limit(1));
+
+        const duplicateCheckQuery = query(
+            shoutoutsCol,
+            where("platform", "==", platform),
+            where("username", "==", username),
+            limit(1)
+        );
+
         const querySnapshot = await getDocs(duplicateCheckQuery);
 
         if (!querySnapshot.empty) {
-            console.warn("Duplicate found for", platform, username);
             showAdminStatus(`Error: A shoutout for username '@${username}' on platform '${platform}' already exists.`, true);
-            isAddingShoutout = false; // Reset flag
+            isAddingShoutout = false;
             return;
         }
-        console.log("No duplicate found. Proceeding to add.");
 
-        // Prepare data
-        const accountData = {
-            platform: platform, username: username, nickname: nickname, order: order,
-            isVerified: isVerified, bio: bio, profilePic: profilePic,
-            createdAt: serverTimestamp(), isEnabled: true // Default to enabled
-        };
-        if (platform === 'youtube') {
-            accountData.subscribers = subscribers;
-            accountData.coverPhoto = coverPhoto;
-        } else {
-            accountData.followers = followers;
-        }
-
-        // Add document
-        console.log(`DEBUG: Attempting addDoc for ${username}...`);
         const docRef = await addDoc(collection(db, 'shoutouts'), accountData);
+
         console.log(`DEBUG: addDoc SUCCESS for ${username}. New ID: ${docRef.id}`);
 
+        await updateMetadataTimestamp(platform);
 
-        // ******************
-
-        await updateMetadataTimestamp(platform); // Update timestamp
         showAdminStatus(`${platform.charAt(0).toUpperCase() + platform.slice(1)} shoutout added successfully.`, false);
+
         formElement.reset();
 
-        // Reset preview area
-        const previewArea = formElement.querySelector(`#add-${platform}-preview`);
-        if (previewArea) { previewArea.innerHTML = '<p><small>Preview will appear here as you type.</small></p>'; }
+        const previewArea = document.getElementById(`add-${platform}-preview`);
+
+        if (previewArea) {
+            previewArea.innerHTML = '<p><small>Preview will appear here as you type.</small></p>';
+        }
 
         if (typeof loadShoutoutsAdmin === 'function') {
-            loadShoutoutsAdmin(platform); // Reload list
-        } else { console.error("loadShoutoutsAdmin function missing after add!"); }
+            loadShoutoutsAdmin(platform);
+        }
 
     } catch (error) {
         console.error(`Error during handleAddShoutout for ${platform}:`, error);
+
         showAdminStatus(`Error adding ${platform} shoutout: ${error.message}`, true);
-        // Optionally log failure here too if desired
-         if (typeof logAdminActivity === 'function') {
-             logAdminActivity('SHOUTOUT_ADD_FAILED', { platform: platform, username: username, error: error.message });
-         }
+
+        if (typeof logAdminActivity === 'function') {
+            logAdminActivity('SHOUTOUT_ADD_FAILED', {
+                platform,
+                username,
+                error: error.message
+            });
+        }
+
     } finally {
         setTimeout(() => {
             isAddingShoutout = false;
             console.log(`DEBUG: Reset isAddingShoutout = false for ${platform}`);
         }, 1500);
-        console.log(`DEBUG: handleAddShoutout processing END for ${platform} at ${new Date().toLocaleTimeString()}`);
     }
 }
 
-    // --- Function to Handle Updates from Edit Modal (with DETAILED Logging) ---
-    async function handleUpdateShoutout(event) {
-        event.preventDefault();
-        if (!editForm) return;
-        const docId = editForm.getAttribute('data-doc-id');
-        const platform = editForm.getAttribute('data-platform');
-        if (!docId || !platform) { showAdminStatus("Error: Missing doc ID or platform for update.", true); return; }
-        console.log(`Attempting to update shoutout (detailed log): ${platform} - ${docId}`);
+async function handleUpdateShoutout(event) {
+    event.preventDefault();
 
-        // 1. Get NEW data from form
-        const username = editUsernameInput?.value.trim();
-        const nickname = editNicknameInput?.value.trim();
-        const orderStr = editOrderInput?.value.trim();
-        const order = parseInt(orderStr);
+    if (!editForm) return;
 
-        if (!username || !nickname || !orderStr || isNaN(order) || order < 0) {
-             showAdminStatus(`Update Error: Invalid input...`, true); return;
-        }
+    const docId = editForm.getAttribute('data-doc-id');
+    const platform = editForm.getAttribute('data-platform');
 
-        const newDataFromForm = {
-            username: username,
-            nickname: nickname,
-            order: order,
-            isVerified: editIsVerifiedInput?.checked || false,
-            bio: editBioInput?.value.trim() || null,
-            profilePic: editProfilePicInput?.value.trim() || null,
-        };
-        if (platform === 'youtube') {
-            newDataFromForm.subscribers = editSubscribersInput?.value.trim() || 'N/A';
-            newDataFromForm.coverPhoto = editCoverPhotoInput?.value.trim() || null;
-        } else {
-            newDataFromForm.followers = editFollowersInput?.value.trim() || 'N/A';
-        }
-
-        showAdminStatus("Updating shoutout...");
-        const docRef = doc(db, 'shoutouts', docId); // Define docRef once
-
-        try {
-            // 2. Get OLD data BEFORE saving
-            let oldData = {};
-            const oldDataSnap = await getDoc(docRef);
-            if (oldDataSnap.exists()) {
-                oldData = oldDataSnap.data();
-                 console.log("DEBUG: Fetched old shoutout data:", oldData);
-            } else {
-                console.warn("Old shoutout data not found for comparison - this shouldn't happen on an update.");
-            }
-
-            // 3. Save NEW data
-            await updateDoc(docRef, { ...newDataFromForm, lastModified: serverTimestamp() });
-            console.log("Shoutout update successful:", docId);
-            await updateMetadataTimestamp(platform);
-            showAdminStatus(`${platform.charAt(0).toUpperCase() + platform.slice(1)} shoutout updated successfully.`, false);
-
-            // 4. Compare and find changes
-            const changes = {};
-            let hasChanges = false;
-            for (const key in newDataFromForm) {
-                // Special check for null/empty string equivalence if needed, otherwise direct compare
-                if (oldData[key] !== newDataFromForm[key]) {
-                    // Handle null/undefined vs empty string if necessary, e.g.:
-                    // if ((oldData[key] ?? "") !== (newDataFromForm[key] ?? "")) {
-                    changes[key] = { to: newDataFromForm[key] }; // Log only the new value for simplicity
-                    hasChanges = true;
-                }
-            }
-
-            // 5. Log ONLY actual changes
-            if (hasChanges) {
-                 console.log("DEBUG: Detected shoutout changes:", changes);
-                 if (typeof logAdminActivity === 'function') {
-                     logAdminActivity('SHOUTOUT_UPDATE', { id: docId, platform: platform, username: username, changes: changes });
-                 } else { console.error("logAdminActivity function not found!");}
-            } else {
-                 console.log("DEBUG: Shoutout update saved, but no values actually changed.");
-            }
-
-            if (typeof closeEditModal === 'function') closeEditModal();
-            if (typeof loadShoutoutsAdmin === 'function') loadShoutoutsAdmin(platform);
-
-        } catch (error) {
-            console.error(`Error updating ${platform} shoutout (ID: ${docId}):`, error);
-            showAdminStatus(`Error updating ${platform} shoutout: ${error.message}`, true);
-        }
+    if (!docId || !platform) {
+        showAdminStatus("Error: Missing doc ID or platform for update.", true);
+        return;
     }
 
+    const username = editUsernameInput?.value.trim();
+    const nickname = editNicknameInput?.value.trim();
+    const orderStr = editOrderInput?.value.trim();
+    const order = parseInt(orderStr, 10);
 
-   // --- MODIFIED: Function to Handle Deleting a Shoutout (with Logging) ---
-    async function handleDeleteShoutout(docId, platform, listItemElement) {
-        // Confirm deletion with the user
-        if (!confirm(`Are you sure you want to permanently delete this ${platform} shoutout? This cannot be undone.`)) {
-            return; // Do nothing if user cancels
-        }
-
-        showAdminStatus("Deleting shoutout..."); // Feedback
-        const docRef = doc(db, 'shoutouts', docId); // Define docRef once for fetching and deleting
-
-        try {
-            // *** Step 1: Fetch the data BEFORE deleting (for logging details) ***
-            let detailsToLog = { platform: platform, id: docId, username: 'N/A', nickname: 'N/A' }; // Default info
-            try {
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    detailsToLog.username = data.username || 'N/A'; // Get username if available
-                    detailsToLog.nickname = data.nickname || 'N/A'; // Get nickname if available
-                    console.log(`Preparing to delete shoutout: ${detailsToLog.nickname} (@${detailsToLog.username})`);
-                } else {
-                    // Document might already be gone? Log what we know.
-                    console.warn(`Document ${docId} not found before deletion, logging ID and platform only.`);
-                }
-            } catch (fetchError) {
-                 console.error(`Error fetching shoutout ${docId} data before deletion:`, fetchError);
-                 // Continue with deletion attempt, log will have less detail
-            }
-            // *** End Fetch Data ***
-
-            // *** Step 2: Delete the document from Firestore ***
-            await deleteDoc(docRef);
-            await updateMetadataTimestamp(platform); // Update site timestamp
-            showAdminStatus(`${platform.charAt(0).toUpperCase() + platform.slice(1)} shoutout deleted successfully.`, false);
-
-            // *** Step 3: Log the Deletion Activity AFTER successful deletion ***
-            if (typeof logAdminActivity === 'function') {
-                logAdminActivity('SHOUTOUT_DELETE', detailsToLog); // Log the details gathered before deletion
-            } else {
-                console.error("logAdminActivity function not found! Cannot log deletion.");
-            }
-            // *** End Log Activity ***
-
-
-            // Step 4: Reload the list to update UI and internal 'allShoutouts' array.
-            if (typeof loadShoutoutsAdmin === 'function') {
-                loadShoutoutsAdmin(platform);
-            }
-
-        } catch (error) {
-            console.error(`Error deleting ${platform} shoutout (ID: ${docId}):`, error);
-            showAdminStatus(`Error deleting ${platform} shoutout: ${error.message}`, true);
-
-            // *** Optionally log the FAILED delete attempt ***
-             if (typeof logAdminActivity === 'function') {
-                 // Log failure with details gathered before attempting delete (if fetch worked)
-                 logAdminActivity('SHOUTOUT_DELETE_FAILED', { ...detailsToLog, error: error.message });
-             }
-        }
+    if (!username || !nickname || !orderStr || isNaN(order) || order < 0) {
+        showAdminStatus(`Update Error: Invalid input.`, true);
+        return;
     }
 
-    
+    const newDataFromForm = {
+        username,
+        nickname,
+        order,
+        isVerified: editIsVerifiedInput?.checked || false,
+        bio: editBioInput?.value.trim() || null,
+        profilePic: editProfilePicInput?.value.trim() || null
+    };
+
+    if (platform === 'tiktok') {
+        newDataFromForm.followers = editFollowersInput?.value.trim() || '0';
+        newDataFromForm.following = editFollowingInput?.value.trim() || '0';
+        newDataFromForm.likes = editLikesInput?.value.trim() || '0';
+
+    } else if (platform === 'instagram') {
+        newDataFromForm.posts = editPostsInput?.value.trim() || '0';
+        newDataFromForm.followers = editFollowersInput?.value.trim() || '0';
+        newDataFromForm.following = editFollowingInput?.value.trim() || '0';
+
+    } else if (platform === 'youtube') {
+        newDataFromForm.subscribers = editSubscribersInput?.value.trim() || '0';
+        newDataFromForm.videos = editVideosInput?.value.trim() || '0';
+        newDataFromForm.coverPhoto = editCoverPhotoInput?.value.trim() || null;
+    }
+
+    showAdminStatus("Updating shoutout...");
+
+    const docRef = doc(db, 'shoutouts', docId);
+
+    try {
+        let oldData = {};
+        const oldDataSnap = await getDoc(docRef);
+
+        if (oldDataSnap.exists()) {
+            oldData = oldDataSnap.data();
+        }
+
+        await updateDoc(docRef, {
+            ...newDataFromForm,
+            lastModified: serverTimestamp()
+        });
+
+        await updateMetadataTimestamp(platform);
+
+        showAdminStatus(`${platform.charAt(0).toUpperCase() + platform.slice(1)} shoutout updated successfully.`, false);
+
+        const changes = {};
+        let hasChanges = false;
+
+        for (const key in newDataFromForm) {
+            if (oldData[key] !== newDataFromForm[key]) {
+                changes[key] = { to: newDataFromForm[key] };
+                hasChanges = true;
+            }
+        }
+
+        if (hasChanges && typeof logAdminActivity === 'function') {
+            logAdminActivity('SHOUTOUT_UPDATE', {
+                id: docId,
+                platform,
+                username,
+                changes
+            });
+        }
+
+        if (typeof closeEditModal === 'function') closeEditModal();
+        if (typeof loadShoutoutsAdmin === 'function') loadShoutoutsAdmin(platform);
+
+    } catch (error) {
+        console.error(`Error updating ${platform} shoutout (ID: ${docId}):`, error);
+        showAdminStatus(`Error updating ${platform} shoutout: ${error.message}`, true);
+    }
+}
+
+async function handleDeleteShoutout(docId, platform, listItemElement) {
+    if (!confirm(`Are you sure you want to permanently delete this ${platform} shoutout? This cannot be undone.`)) {
+        return;
+    }
+
+    showAdminStatus("Deleting shoutout...");
+
+    const docRef = doc(db, 'shoutouts', docId);
+
+    let detailsToLog = {
+        platform,
+        id: docId,
+        username: 'N/A',
+        nickname: 'N/A'
+    };
+
+    try {
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const data = docSnap.data();
+            detailsToLog.username = data.username || 'N/A';
+            detailsToLog.nickname = data.nickname || 'N/A';
+        }
+
+        await deleteDoc(docRef);
+
+        await updateMetadataTimestamp(platform);
+
+        showAdminStatus(`${platform.charAt(0).toUpperCase() + platform.slice(1)} shoutout deleted successfully.`, false);
+
+        if (typeof logAdminActivity === 'function') {
+            logAdminActivity('SHOUTOUT_DELETE', detailsToLog);
+        }
+
+        if (typeof loadShoutoutsAdmin === 'function') {
+            loadShoutoutsAdmin(platform);
+        }
+
+    } catch (error) {
+        console.error(`Error deleting ${platform} shoutout (ID: ${docId}):`, error);
+        showAdminStatus(`Error deleting ${platform} shoutout: ${error.message}`, true);
+
+        if (typeof logAdminActivity === 'function') {
+            logAdminActivity('SHOUTOUT_DELETE_FAILED', {
+                ...detailsToLog,
+                error: error.message
+            });
+        }
+    }
+}
+
+
+// Attach edit form submit listener
+if (editForm && !editForm.__shoutoutUpdateListenerAttached) {
+    editForm.addEventListener('submit', handleUpdateShoutout);
+    editForm.__shoutoutUpdateListenerAttached = true;
+}
+
 // *** Function to render a single Useful Link item in the admin list ***
 function renderUsefulLinkAdminListItem(container, docId, label, url, order, deleteHandler, editHandler) { //
     if (!container) return; //
