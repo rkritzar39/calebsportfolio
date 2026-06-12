@@ -4478,11 +4478,9 @@ body.dark-mode .bubble {
     gap: 7px;
 }
 
-/* Dots after verified badge */
+/* Remove dots if old markup still outputs them */
 .instagram-more-dots {
-    color: var(--secondary-text);
-    font-weight: 800;
-    letter-spacing: 1px;
+    display: none !important;
 }
 
 /* Verified badge beside username */
@@ -4520,31 +4518,38 @@ body.dark-mode .bubble {
     display: none;
 }
 
-/* Stats row */
+/* Stats row — labels below numbers and grayed */
 .instagram-profile-card .instagram-stats {
     display: grid;
-    grid-template-columns: repeat(3, max-content);
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
     align-items: start;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .instagram-profile-card .instagram-stats div {
-    min-width: fit-content;
+    min-width: 0;
+    text-align: left;
 }
 
 .instagram-profile-card .instagram-stats strong {
-    display: inline;
+    display: block;
     color: var(--text-color);
-    font-size: 1rem;
+    font-size: 1.15rem;
     font-weight: 900;
-    margin-right: 4px;
+    line-height: 1.1;
+    margin: 0;
 }
 
 .instagram-profile-card .instagram-stats span {
-    display: inline;
-    color: var(--text-color);
+    display: block;
+    color: var(--secondary-text);
     font-size: 0.95rem;
-    font-weight: 700;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 4px;
 }
 
 /* Bio section under row */
@@ -4574,6 +4579,8 @@ body.dark-mode .bubble {
     align-items: center;
     gap: 7px;
     margin-top: 4px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .instagram-profile-card .instagram-website i,
@@ -4581,6 +4588,7 @@ body.dark-mode .bubble {
     color: var(--text-color);
     width: 16px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 /* Keep your one real button */
@@ -4664,8 +4672,6 @@ body.dark-mode .bubble {
     color: var(--secondary-text);
     line-height: 1.45;
     font-size: 1rem;
-
-    /* Show full bio */
     white-space: normal;
     overflow: visible;
     text-overflow: initial;
@@ -4729,12 +4735,10 @@ body.dark-mode .bubble {
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 40%, transparent);
     transition: all var(--transition-fast);
-
     position: relative;
     z-index: 101;
     pointer-events: auto;
     cursor: pointer;
-
     appearance: auto;
     -webkit-appearance: menulist;
     -moz-appearance: menulist;
@@ -4780,7 +4784,6 @@ body.light-e .tiktok-stat strong,
 body.light-e .instagram-profile-card .instagram-username-row h3,
 body.light-e .instagram-profile-card .instagram-name-line strong,
 body.light-e .instagram-profile-card .instagram-stats strong,
-body.light-e .instagram-profile-card .instagram-stats span,
 body.light-e .instagram-profile-card .instagram-website,
 body.light-e .instagram-secondary-handle,
 body.light-e .instagram-profile-card .instagram-website i,
@@ -4796,7 +4799,7 @@ body.light-e .tiktok-subtitle,
 body.light-e .instagram-profile-card .instagram-name-line span,
 body.light-e .instagram-profile-card .instagram-category,
 body.light-e .instagram-profile-card .instagram-bio-block,
-body.light-e .instagram-more-dots {
+body.light-e .instagram-profile-card .instagram-stats span {
     color: var(--secondary-text) !important;
 }
 
@@ -4880,6 +4883,39 @@ body.light-e .tiktok-profile-card i {
         padding: 11px 16px;
         margin-top: 16px;
     }
+
+    .instagram-profile-card {
+        max-width: 100%;
+    }
+
+    .instagram-profile-row,
+    .instagram-profile-row.instagram-profile-row-full {
+        grid-template-columns: 104px 1fr;
+        gap: 16px;
+        padding: 26px 18px 12px;
+    }
+
+    .instagram-avatar,
+    .instagram-profile-card .instagram-avatar {
+        width: 96px;
+        height: 96px;
+    }
+
+    .instagram-username-row h3 {
+        font-size: 1.28rem;
+    }
+
+    .instagram-profile-card .instagram-stats {
+        gap: 14px;
+    }
+
+    .instagram-profile-card .instagram-stats strong {
+        font-size: 1rem;
+    }
+
+    .instagram-profile-card .instagram-stats span {
+        font-size: 0.88rem;
+    }
 }
 
 @media screen and (max-width: 520px) {
@@ -4909,41 +4945,81 @@ body.light-e .tiktok-profile-card i {
 
     .instagram-profile-row,
     .instagram-profile-row.instagram-profile-row-full {
-        grid-template-columns: 86px 1fr;
-        gap: 14px;
-        padding: 24px 16px 12px;
+        grid-template-columns: 82px 1fr;
+        gap: 12px;
+        padding: 22px 16px 10px;
+        align-items: center;
     }
 
     .instagram-avatar,
     .instagram-profile-card .instagram-avatar {
-        width: 78px;
-        height: 78px;
+        width: 76px;
+        height: 76px;
+        border-width: 2px;
+    }
+
+    .instagram-username-row {
+        gap: 6px;
+        margin-bottom: 3px;
     }
 
     .instagram-username-row h3 {
-        font-size: 1.18rem;
+        font-size: 1.08rem;
+        line-height: 1.15;
+    }
+
+    .instagram-username-row .instagram-verified-badge {
+        width: 15px;
+        height: 15px;
+    }
+
+    .instagram-name-line {
+        margin-bottom: 8px;
+        gap: 4px;
+    }
+
+    .instagram-name-line strong {
+        font-size: 0.9rem;
+    }
+
+    .instagram-name-line span {
+        font-size: 0.82rem;
     }
 
     .instagram-profile-card .instagram-stats {
         grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        gap: 6px;
+        width: 100%;
     }
 
-    .instagram-profile-card .instagram-stats strong,
-    .instagram-profile-card .instagram-stats span {
-        display: block;
-        font-size: 0.9rem;
+    .instagram-profile-card .instagram-stats strong {
+        font-size: 0.85rem;
+        line-height: 1.15;
     }
 
     .instagram-profile-card .instagram-stats span {
-        color: var(--secondary-text);
-        font-weight: 600;
+        font-size: 0.75rem;
+        line-height: 1.15;
+        margin-top: 2px;
     }
 
     .instagram-bio-block,
     .single-visit-button-row {
         padding-left: 16px;
         padding-right: 16px;
+    }
+
+    .instagram-profile-card .instagram-website,
+    .instagram-secondary-handle {
+        font-size: 0.9rem;
+        align-items: flex-start;
+    }
+
+    .instagram-real-button-row .instagram-visit-button,
+    .instagram-profile-card .instagram-visit-button,
+    .instagram-profile-card .platform-visit-button {
+        width: 100%;
+        min-width: 0;
     }
 
     .youtube-channel-card {
@@ -5027,6 +5103,58 @@ body.light-e .tiktok-profile-card i {
     .platform-visit-button {
         width: 100%;
         min-width: 0;
+    }
+
+    .instagram-profile-row,
+    .instagram-profile-row.instagram-profile-row-full {
+        grid-template-columns: 68px 1fr;
+        gap: 10px;
+        padding: 20px 12px 8px;
+    }
+
+    .instagram-avatar,
+    .instagram-profile-card .instagram-avatar {
+        width: 62px;
+        height: 62px;
+    }
+
+    .instagram-username-row h3 {
+        font-size: 0.98rem;
+    }
+
+    .instagram-username-row .instagram-verified-badge {
+        width: 13px;
+        height: 13px;
+    }
+
+    .instagram-name-line strong,
+    .instagram-name-line span {
+        font-size: 0.78rem;
+    }
+
+    .instagram-profile-card .instagram-stats {
+        gap: 4px;
+    }
+
+    .instagram-profile-card .instagram-stats strong {
+        font-size: 0.76rem;
+    }
+
+    .instagram-profile-card .instagram-stats span {
+        font-size: 0.68rem;
+    }
+
+    .instagram-bio-block,
+    .instagram-profile-card .instagram-bio-block {
+        padding-left: 12px;
+        padding-right: 12px;
+        font-size: 0.85rem;
+    }
+
+    .instagram-real-button-row,
+    .instagram-profile-card .single-visit-button-row {
+        padding-left: 12px;
+        padding-right: 12px;
     }
 }
 
