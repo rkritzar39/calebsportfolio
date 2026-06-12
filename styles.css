@@ -8479,3 +8479,129 @@ body.maintenance-active .onyx-dock {
     background: rgba(175, 82, 222, 0.15);
     color: #AF52DE;
 }
+
+/* =============================== */
+/* Tech Advanced Details Dropdown  */
+/* =============================== */
+
+.tech-advanced-details {
+    margin-top: 16px;
+    padding: 0;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            180deg,
+            color-mix(in srgb, white 7%, transparent),
+            transparent 60%
+        ),
+        color-mix(in srgb, var(--content-bg) 92%, black 8%);
+
+    border: 1px solid color-mix(in srgb, white 7%, var(--border-color));
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 6px 18px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+/* Dropdown header */
+.tech-advanced-details summary {
+    cursor: pointer;
+    list-style: none;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 13px 15px;
+
+    color: var(--secondary-text);
+    font-weight: 700;
+    font-size: 0.92rem;
+
+    user-select: none;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+/* Remove default browser arrow */
+.tech-advanced-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.tech-advanced-details summary::marker {
+    content: "";
+}
+
+/* Custom arrow */
+.tech-advanced-details summary::before {
+    content: "▸";
+    color: var(--accent-color);
+    font-size: 0.85rem;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+/* Optional icon after arrow */
+.tech-advanced-details summary::after {
+    content: "More specs";
+    margin-left: auto;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    padding: 3px 8px;
+    border-radius: 999px;
+
+    color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+}
+
+/* Hover effect */
+.tech-advanced-details summary:hover {
+    color: var(--text-color);
+    background: color-mix(in srgb, white 5%, transparent);
+}
+
+/* Open state */
+.tech-advanced-details[open] summary {
+    color: var(--text-color);
+    border-bottom: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+}
+
+.tech-advanced-details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.tech-advanced-details[open] summary::after {
+    content: "Hide specs";
+}
+
+/* Content spacing */
+.tech-advanced-details .tech-detail {
+    padding: 0 15px;
+    margin: 11px 0;
+}
+
+/* First detail after summary */
+.tech-advanced-details summary + .tech-detail {
+    margin-top: 14px;
+}
+
+/* Last detail spacing */
+.tech-advanced-details .tech-detail:last-child {
+    margin-bottom: 15px;
+}
+
+/* Slight indentation for advanced rows */
+.tech-advanced-details .tech-detail i {
+    opacity: 0.9;
+}
