@@ -3944,7 +3944,7 @@ body.dark-mode .bubble {
     z-index: 1;
 }
 
-/* Instagram needs a slightly wider minimum so the stats never get crushed */
+/* Instagram needs a safer minimum so stats do not get crushed */
 .instagram-creator-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
@@ -4240,6 +4240,10 @@ body.dark-mode .bubble {
     padding: 14px 22px 22px;
 }
 
+.center-button {
+    justify-content: center;
+}
+
 .platform-visit-button {
     min-width: 210px;
     min-height: 50px;
@@ -4319,7 +4323,7 @@ body.dark-mode .bubble {
 }
 
 /* ============================================================
-   TikTok Top Profile — NO Fake App Topbar
+   TikTok Top Profile — Refined Text Sizes
 ============================================================ */
 
 .tiktok-profile-card {
@@ -4355,8 +4359,8 @@ body.dark-mode .bubble {
 
 .tiktok-profile-main h3 {
     margin: 18px 0 4px;
-    font-size: 1.85rem;
-    line-height: 1.1;
+    font-size: 1.55rem;
+    line-height: 1.15;
     font-weight: 900;
     letter-spacing: -0.02em;
     color: var(--text-color);
@@ -4365,7 +4369,7 @@ body.dark-mode .bubble {
 .tiktok-username {
     margin: 0;
     color: var(--secondary-text);
-    font-size: 1.12rem;
+    font-size: 1rem;
     font-weight: 600;
 }
 
@@ -4381,8 +4385,8 @@ body.dark-mode .bubble {
 
 .tiktok-stat strong {
     display: block;
-    font-size: 1.55rem;
-    line-height: 1;
+    font-size: 1.25rem;
+    line-height: 1.05;
     font-weight: 900;
     color: var(--text-color);
 }
@@ -4391,7 +4395,7 @@ body.dark-mode .bubble {
     display: block;
     margin-top: 6px;
     color: var(--secondary-text);
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 .tiktok-profile-main .single-visit-button-row {
@@ -4405,7 +4409,7 @@ body.dark-mode .bubble {
     margin: 8px auto;
     max-width: 360px;
     line-height: 1.35;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: var(--secondary-text);
 }
 
@@ -5008,11 +5012,25 @@ body.light-e .tiktok-profile-card i {
     }
 
     .tiktok-profile-main h3 {
-        font-size: 1.55rem;
+        font-size: 1.35rem;
+    }
+
+    .tiktok-username {
+        font-size: 0.92rem;
     }
 
     .tiktok-stat strong {
-        font-size: 1.35rem;
+        font-size: 1.12rem;
+    }
+
+    .tiktok-stat span {
+        font-size: 0.82rem;
+    }
+
+    .tiktok-bio,
+    .tiktok-subtitle,
+    .tiktok-education {
+        font-size: 0.9rem;
     }
 
     .instagram-profile-row,
