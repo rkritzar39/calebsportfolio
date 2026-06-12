@@ -761,6 +761,13 @@ function detectOSType(osVersion) {
     return "ios";
 }
 
+function formatOSType(osType) {
+    if (osType === "ios") return "iOS";
+    if (osType === "ipados") return "iPadOS";
+    if (osType === "macos") return "macOS";
+    return "OS";
+}
+
 // ======================
 // VERSION PARSER
 // ======================
@@ -1066,7 +1073,7 @@ function renderTechItemHomepage(itemData) {
         
         <div class="tech-detail">
             <i class="fas fa-circle-info"></i>
-            <span>Public Latest:</span> ${osStatus.osType.toUpperCase()} ${osStatus.latestPublicVersion}
+            <span>Public Latest:</span> ${formatOSType(osStatus.osType)} ${osStatus.latestPublicVersion}
         </div>
         ` : ''}
         ` : ''}
