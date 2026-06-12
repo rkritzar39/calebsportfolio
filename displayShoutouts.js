@@ -603,21 +603,315 @@ function extractID(url) {
    GLOBAL STORAGE
 ------------------------------------------------------------ */
 let allTechItems = [];
+
+/* ------------------------------------------------------------
+   LATEST OS CONFIG
+   Update these manually when public releases change.
+------------------------------------------------------------ */
+const latestOSVersions = {
+    ios: "26.5.1",
+    ipados: "26.5",
+    macos: "26.5.1"
+};
+
+// ======================
+// OS TYPE DETECTION
+// ======================
+function detectOSType(osVersion) {
+    if (!osVersion) return "unknown";
+
+    const os = String(osVersion).toLowerCase();
+
+    if (os.includes("ipados")) return "ipados";
+    if (os.includes("ios")) return "ios";
+    if (os.includes("macos")) return "macos";
+
+    return "ios";
+}
+
+function formatOSType(osType) {
+    if (osType === "ios") return "iOS";
+    if (osType === "ipados") return "iPadOS";
+    if (osType === "macos") return "macOS";
+    return "OS";
+}
+
+// ======================
+// VERSION PARSER
+// ======================
+function extractVersionString(osVersion) {
+    if (!osVersion) return null;
+
+    const match = String(osVersion).match(/(\d+(?:\.\d+){0,2})/);
+    return match ? match[1] : null;
+}
+
+function normalizeVersion(version) {
+    return String(version)
+        .split(".")
+        .map(num => parseInt(num, 10))
+        .map(num => isNaN(num) ? 0 : num);
+}
+
+function compareVersions(a, b) {
+    const versionA = normalizeVersion(a);
+    const versionB = normalizeVersion(b);
+
+    const maxLength = Math.max(versionA.length, versionB.length);
+
+    for (let i = 0; i < maxLength; i++) {
+        const partA = versionA[i] || 0;
+        const partB = versionB[i] || 0;
+
+        if (partA > partB) return 1;
+        if (partA < partB) return -1;
+    }
+
+    return 0;
+}
+
+// ======================
+// BETA DETECTION
+// ======================
+function detectOSChannel(osVersion) {
+    if (!osVersion) return "public";
+
+    const os = String(osVersion).toLowerCase();
+
+    if (os.includes("developer beta") || os.includes("dev beta")) {
+        return "developer-beta";
+    }
+
+    if (os.includes("public beta")) {
+        return "public-beta";
+    }
+
+    if (os.includes("beta")) {
+        return "beta";
+    }
+
+    return "public";
+}
+
+// ======================
+// OS STATUS
+// ======================
+function checkOSStatus(osVersion) {
+    if (!osVersion) return null;
+
+    const osType = detectOSType(osVersion);
+    const currentVersion = extractVersionString(osVersion);
+    const latestPublicVersion = latestOSVersions[osType] || latestOSVersions.ios;
+    const channel = detectOSChannel(osVersion);
+
+    if (!currentVersion) return null;
+
+    const comparisonToPublic = compareVersions(currentVersion, latestPublicVersion);
+
+    let status = "Latest";
+    let color = "green";
+    let releaseChannel = "Public";
+    let description = "Running the latest public release.";
+
+    if (channel === "developer-beta") {
+        status = "Developer Beta";
+        color = "purple";
+        releaseChannel = "Developer Beta";
+        description = "Running a developer beta ahead of the public release.";
+    } else if (channel === "public-beta") {
+        status = "Public Beta";
+        color = "purple";
+        releaseChannel = "Public Beta";
+        description = "Running a public beta ahead of the public release.";
+    } else if (channel === "beta") {
+        status = "Beta";
+        color = "purple";
+        releaseChannel = "Beta";
+        description = "Running a beta build ahead of the public release.";
+    } else if (comparisonToPublic > 0) {
+        status = "Ahead of Public";
+        color = "purple";
+        releaseChannel = "Pre-release / Beta";
+        description = "This version is newer than the latest public release.";
+    } else if (comparisonToPublic < 0) {
+        status = "Outdated";
+        color = "yellow";
+        releaseChannel = "Public";
+        description = "A newer public release is available.";
+    }
+
+    if (comparisonToPublic < 0) {
+        const currentMajor = normalizeVersion(currentVersion)[0] || 0;
+        const latestMajor = normalizeVersion(latestPublicVersion)[0] || 0;
+
+        if (latestMajor - currentMajor >= 1) {
+            status = "Very Outdated";
+            color = "red";
+            description = "This OS version is significantly behind the latest public release.";
+        }
+    }
+
+    return {
+        status,
+        color,
+        osType,
+        currentVersion,
+        latestPublicVersion,
+        releaseChannel,
+        description,
+        isBeta: channel !== "public" || comparisonToPublic > 0,
+        isPublicLatest: comparisonToPublic === 0 && channel === "public",
+        isBehindPublic: comparisonToPublic < 0
+    };
+}
+
 // ======================
 // DEVICE AGE
 // ======================
 function calculateDeviceAge(dateBought) {
     if (!dateBought) return null;
 
-    const now = new Date();
-    const bought = new Date(dateBought);
+    let bought;
 
+    if (dateBought && typeof dateBought.toDate === "function") {
+        bought = dateBought.toDate();
+    } else {
+        bought = new Date(dateBought);
+    }
+
+    if (isNaN(bought.getTime())) return null;
+
+    const now = new Date();
     const diffMs = now - bought;
     const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const years = parseFloat((days / 365).toFixed(1));
+
     return { days, years };
 }
 
+// ======================
+// DEVICE TYPE DETECTION
+// ======================
+function detectDeviceType(item) {
+    const explicitType = (item.deviceType || "").toLowerCase();
+    if (explicitType) return explicitType;
+
+    const name = (item.name || "").toLowerCase();
+    const model = (item.model || "").toLowerCase();
+    const iconClass = (item.iconClass || "").toLowerCase();
+
+    if (
+        name.includes("iphone") ||
+        name.includes("phone") ||
+        model.includes("iphone") ||
+        iconClass.includes("mobile")
+    ) {
+        return "phone";
+    }
+
+    if (
+        name.includes("ipad") ||
+        name.includes("tablet") ||
+        model.includes("ipad")
+    ) {
+        return "tablet";
+    }
+
+    if (
+        name.includes("mac") ||
+        name.includes("macbook") ||
+        name.includes("imac") ||
+        name.includes("computer") ||
+        model.includes("mac") ||
+        iconClass.includes("desktop") ||
+        iconClass.includes("laptop")
+    ) {
+        return "computer";
+    }
+
+    if (
+        name.includes("watch") ||
+        model.includes("watch")
+    ) {
+        return "watch";
+    }
+
+    return "computer";
+}
+
+// ======================
+// DEVICE SUPPORT
+// ======================
+function checkDeviceSupport(item) {
+    const currentYear = new Date().getFullYear();
+    const modelYear = Number(item.modelYear ?? currentYear);
+
+    const osStatus = checkOSStatus(item.osVersion);
+    const deviceType = detectDeviceType(item);
+
+    const yearsOld = currentYear - modelYear;
+
+    let supported = true;
+    let supportLevel = "Fully Supported";
+    let supportColor = "green";
+
+    // 📱 PHONE RULES
+    if (deviceType === "phone") {
+        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (yearsOld >= 4 || osStatus?.isBehindPublic) {
+            supportLevel = "Limited Support";
+            supportColor = "yellow";
+        }
+    }
+
+    // 💻 COMPUTER RULES
+    if (deviceType === "computer") {
+        if (yearsOld >= 6 || osStatus?.status === "Very Outdated") {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (yearsOld >= 5 || osStatus?.isBehindPublic) {
+            supportLevel = "Limited Support";
+            supportColor = "yellow";
+        }
+    }
+
+    // 📱 TABLET RULES
+    if (deviceType === "tablet") {
+        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (yearsOld >= 4 || osStatus?.isBehindPublic) {
+            supportLevel = "Limited Support";
+            supportColor = "yellow";
+        }
+    }
+
+    // ⌚ WATCH / ACCESSORY FALLBACK
+    if (deviceType === "watch" || deviceType === "accessory") {
+        if (yearsOld >= 5) {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (yearsOld >= 4) {
+            supportLevel = "Limited Support";
+            supportColor = "yellow";
+        }
+    }
+
+    return {
+        supported,
+        supportLevel,
+        supportColor,
+        yearsOld,
+        deviceType,
+        modelYear
+    };
+}
 
 // ======================
 // BATTERY TREND
@@ -630,7 +924,7 @@ function estimateBatteryTrend(item) {
 
     if (isNaN(currentHealth)) return null;
 
-    const degradationRate = 5; // estimated % loss per year
+    const degradationRate = 5;
     const estimatedLoss = age.years * degradationRate;
     const estimatedOriginal = Math.min(100, currentHealth + estimatedLoss);
 
@@ -638,7 +932,7 @@ function estimateBatteryTrend(item) {
     const decline = declineValue.toFixed(1);
 
     return {
-        decline: decline,
+        decline,
         trend: declineValue > 10 ? "Fast Decline" : "Normal"
     };
 }
@@ -655,26 +949,17 @@ function calculateUpgradeScore(item) {
 
     let score = 100;
 
-    // Age impact
     if (age) score -= age.years * 10;
 
-    // Battery health impact
     score -= (100 - battery) * 1.2;
-
-    // Battery cycles impact
     score -= cycles * 0.02;
 
-    // Stronger penalty for very high cycles
     if (cycles > 800) score -= 10;
 
-    // OS impact
     if (osStatus?.isBehindPublic) score -= 8;
     if (osStatus?.status === "Very Outdated") score -= 18;
-
-    // Beta impact
     if (osStatus?.isBeta) score -= 5;
 
-    // Support impact
     if (support.supportLevel === "Limited Support") score -= 10;
     if (!support.supported) score -= 25;
 
@@ -707,7 +992,13 @@ function calculateUpgradeScore(item) {
 function calculateUpgradeData(item) {
     const now = new Date();
 
-    const boughtDate = item.dateBought ? new Date(item.dateBought) : null;
+    let boughtDate = null;
+
+    if (item.dateBought && typeof item.dateBought.toDate === "function") {
+        boughtDate = item.dateBought.toDate();
+    } else if (item.dateBought) {
+        boughtDate = new Date(item.dateBought);
+    }
 
     let ageYears = 0;
     if (boughtDate && !isNaN(boughtDate.getTime())) {
@@ -719,10 +1010,7 @@ function calculateUpgradeData(item) {
     const osStatus = checkOSStatus(item.osVersion);
     const support = checkDeviceSupport(item);
 
-    const deviceType = detectDeviceType ? detectDeviceType(item) : (
-        item.name?.toLowerCase().includes("iphone") ? "phone" : "computer"
-    );
-
+    const deviceType = detectDeviceType(item);
     const isPhone = deviceType === "phone";
     const isComputer = deviceType === "computer";
 
@@ -843,166 +1131,6 @@ function getRecommendedAction(item, upgrade, support, osStatus) {
     return "Keep";
 }
 
-// ======================
-// LATEST OS CONFIG
-// ======================
-const latestOSVersions = {
-    ios: "26.5.1",
-    ipados: "26.5",
-    macos: "26.5.1"
-};
-
-// ======================
-// OS TYPE DETECTION
-// ======================
-function detectOSType(osVersion) {
-    if (!osVersion) return "unknown";
-
-    const os = osVersion.toLowerCase();
-
-    if (os.includes("ipados")) return "ipados";
-    if (os.includes("ios")) return "ios";
-    if (os.includes("macos")) return "macos";
-
-    return "ios";
-}
-
-function formatOSType(osType) {
-    if (osType === "ios") return "iOS";
-    if (osType === "ipados") return "iPadOS";
-    if (osType === "macos") return "macOS";
-    return "OS";
-}
-
-// ======================
-// VERSION PARSER
-// ======================
-function extractVersionString(osVersion) {
-    if (!osVersion) return null;
-
-    const match = osVersion.match(/(\d+(?:\.\d+){0,2})/);
-    return match ? match[1] : null;
-}
-
-function normalizeVersion(version) {
-    return String(version)
-        .split(".")
-        .map(num => parseInt(num, 10))
-        .map(num => isNaN(num) ? 0 : num);
-}
-
-function compareVersions(a, b) {
-    const versionA = normalizeVersion(a);
-    const versionB = normalizeVersion(b);
-
-    const maxLength = Math.max(versionA.length, versionB.length);
-
-    for (let i = 0; i < maxLength; i++) {
-        const partA = versionA[i] || 0;
-        const partB = versionB[i] || 0;
-
-        if (partA > partB) return 1;
-        if (partA < partB) return -1;
-    }
-
-    return 0;
-}
-
-// ======================
-// BETA DETECTION
-// ======================
-function detectOSChannel(osVersion) {
-    if (!osVersion) return "public";
-
-    const os = osVersion.toLowerCase();
-
-    if (os.includes("developer beta") || os.includes("dev beta")) {
-        return "developer-beta";
-    }
-
-    if (os.includes("public beta")) {
-        return "public-beta";
-    }
-
-    if (os.includes("beta")) {
-        return "beta";
-    }
-
-    return "public";
-}
-
-// ======================
-// OS STATUS
-// ======================
-function checkOSStatus(osVersion) {
-    if (!osVersion) return null;
-
-    const osType = detectOSType(osVersion);
-    const currentVersion = extractVersionString(osVersion);
-    const latestPublicVersion = latestOSVersions[osType] || latestOSVersions.ios;
-    const channel = detectOSChannel(osVersion);
-
-    if (!currentVersion) return null;
-
-    const comparisonToPublic = compareVersions(currentVersion, latestPublicVersion);
-
-    let status = "Latest";
-    let color = "green";
-    let releaseChannel = "Public";
-    let description = "Running the latest public release.";
-
-    if (channel === "developer-beta") {
-        status = "Developer Beta";
-        color = "purple";
-        releaseChannel = "Developer Beta";
-        description = "Running a developer beta ahead of the public release.";
-    } else if (channel === "public-beta") {
-        status = "Public Beta";
-        color = "purple";
-        releaseChannel = "Public Beta";
-        description = "Running a public beta ahead of the public release.";
-    } else if (channel === "beta") {
-        status = "Beta";
-        color = "purple";
-        releaseChannel = "Beta";
-        description = "Running a beta build ahead of the public release.";
-    } else if (comparisonToPublic > 0) {
-        status = "Ahead of Public";
-        color = "purple";
-        releaseChannel = "Pre-release / Beta";
-        description = "This version is newer than the latest public release.";
-    } else if (comparisonToPublic < 0) {
-        status = "Outdated";
-        color = "yellow";
-        releaseChannel = "Public";
-        description = "A newer public release is available.";
-    }
-
-    if (comparisonToPublic < 0) {
-        const currentMajor = normalizeVersion(currentVersion)[0] || 0;
-        const latestMajor = normalizeVersion(latestPublicVersion)[0] || 0;
-
-        if (latestMajor - currentMajor >= 1) {
-            status = "Very Outdated";
-            color = "red";
-            description = "This OS version is significantly behind the latest public release.";
-        }
-    }
-
-    return {
-        status,
-        color,
-        osType,
-        currentVersion,
-        latestPublicVersion,
-        releaseChannel,
-        description,
-        isBeta: channel !== "public" || comparisonToPublic > 0,
-        isPublicLatest: comparisonToPublic === 0 && channel === "public",
-        isBehindPublic: comparisonToPublic < 0
-    };
-}
-
 /* ------------------------------------------------------------
    RENDER FUNCTION
 ------------------------------------------------------------ */
@@ -1053,7 +1181,7 @@ function renderTechItemHomepage(itemData) {
         <i class="fas fa-shield-check"></i>
         <span>Support Status:</span>
         <span class="support-badge ${support.supportColor || 'green'}">
-            ${support.supportLevel}
+            ${support.supportLevel || 'Fully Supported'}
         </span>
     </div>`;
 
@@ -1114,7 +1242,7 @@ function renderTechItemHomepage(itemData) {
             batteryClass = 'low-power';
         }
 
-        const displayHealth = Math.min(batteryHealth, 100);
+        const displayHealth = Math.min(Math.max(batteryHealth, 0), 100);
 
         batteryHtml = `
         <div class="tech-detail">
@@ -1160,7 +1288,7 @@ function renderTechItemHomepage(itemData) {
 
     let triggersHtml = '';
 
-    if (upgrade.triggers.length > 0) {
+    if (upgrade.triggers && upgrade.triggers.length > 0) {
         triggersHtml = `
         <div class="tech-detail">
             <i class="fas fa-exclamation-circle"></i>
@@ -1182,7 +1310,7 @@ function renderTechItemHomepage(itemData) {
         ${age.days} days (${age.years} years)
     </div>` : '';
 
-    const trendHtml = batteryTrend ? `
+    const trendHtml = batteryTrend && batteryTrend.decline !== undefined ? `
     <div class="tech-detail">
         <i class="fas fa-chart-line"></i>
         <span>Battery Trend:</span>
@@ -1203,10 +1331,7 @@ function renderTechItemHomepage(itemData) {
     // ======================
     // ADVANCED DETAILS
     // ======================
-    const advancedHtml = `
-    <details class="tech-advanced-details">
-        <summary>Advanced Details</summary>
-
+    const advancedDetailsContent = `
         ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ''}
         ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${batteryCapacity}</div>` : ''}
         ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ''}
@@ -1214,15 +1339,28 @@ function renderTechItemHomepage(itemData) {
         ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ''}
         ${cyclesHtml}
         ${trendHtml}
-    </details>`;
+    `;
+
+    const hasAdvancedDetails =
+        material ||
+        batteryCapacity ||
+        price ||
+        dateReleased ||
+        dateBought ||
+        cyclesHtml ||
+        trendHtml;
+
+    const advancedHtml = hasAdvancedDetails ? `
+    <details class="tech-advanced-details">
+        <summary>Advanced Details</summary>
+        ${advancedDetailsContent}
+    </details>` : '';
 
     // ======================
     // OS TYPE FORMAT FALLBACK
     // ======================
     const formattedOSType = osStatus
-        ? (typeof formatOSType === "function"
-            ? formatOSType(osStatus.osType)
-            : osStatus.osType.toUpperCase())
+        ? formatOSType(osStatus.osType)
         : '';
 
     // ======================
@@ -1267,6 +1405,63 @@ function renderTechItemHomepage(itemData) {
         ${triggersHtml}
         ${advancedHtml}
     </div>`;
+}
+
+/* ------------------------------------------------------------
+   LOAD AND DISPLAY TECH ITEMS
+------------------------------------------------------------ */
+async function loadAndDisplayTechItems() {
+    const techItemsListContainer = document.getElementById('tech-items-list-dynamic');
+
+    if (!techItemsListContainer) {
+        console.error("Tech Item Load Error: Container element #tech-items-list-dynamic not found.");
+        return;
+    }
+
+    if (!firebaseAppInitialized || !db || !techItemsCollectionRef) {
+        console.error("Tech Item Load Error: Firebase not ready or collection ref missing.");
+        techItemsListContainer.innerHTML = '<p class="error">Error loading tech data (DB connection/Config).</p>';
+        return;
+    }
+
+    console.log("Fetching tech items for homepage...");
+    techItemsListContainer.innerHTML = '<p>Loading Tech Info...</p>';
+
+    try {
+        const techQuery = query(techItemsCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(techQuery);
+
+        let allItemsHtml = '';
+
+        if (querySnapshot.empty) {
+            console.log("No tech items found in Firestore.");
+            allItemsHtml = '<p>No tech items to display currently.</p>';
+        } else {
+            console.log(`Found ${querySnapshot.size} tech items.`);
+
+            querySnapshot.forEach((doc) => {
+                allTechItems.push({ id: doc.id, ...doc.data() });
+                allItemsHtml += renderTechItemHomepage(doc.data());
+            });
+        }
+
+        techItemsListContainer.innerHTML = allItemsHtml;
+        console.log("Tech items list updated on homepage.");
+
+    } catch (error) {
+        console.error("Error loading/displaying tech items:", error);
+
+        let errorMsg = "Could not load tech information at this time.";
+
+        if (error.code === 'failed-precondition') {
+            errorMsg = "Error: DB configuration needed for tech items (order).";
+            console.error("Missing Firestore index for tech_items collection, ordered by 'order'.");
+        } else {
+            errorMsg = `Could not load tech information: ${error.message}`;
+        }
+
+        techItemsListContainer.innerHTML = `<p class="error">${errorMsg}</p>`;
+    }
 }
 
 /* ------------------------------------------------------------
