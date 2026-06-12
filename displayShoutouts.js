@@ -701,8 +701,7 @@ function calculateUpgradeData(item) {
     const ageOld = ageYears > 3;
     const ageVeryOld = ageYears > 4;
 
-    const outdatedOS = osStatus && osStatus.status === "Very Outdated";
-
+    const outdatedOS = osStatus?.isBehindPublic && osStatus.status === "Very Outdated";
     let status = "Great";
     let color = "green";
     let suggestion = "No upgrade needed";
@@ -713,8 +712,12 @@ function calculateUpgradeData(item) {
     if (cycleOld) triggers.push("High charge cycles");
     if (ageOld) triggers.push("Device older than 3 years");
 
-    if (osStatus && osStatus.status !== "Latest") {
+    if (osStatus?.isBehindPublic) {
         triggers.push("OS is outdated");
+    }
+    
+    if (osStatus?.isBeta) {
+        triggers.push("Running beta OS");
     }
 
     // Fixed: Unified conditional execution branch so "Aging" doesn't falsely override "Upgrade Recommended"
@@ -734,31 +737,157 @@ function calculateUpgradeData(item) {
 // ======================
 // OS STATUS
 // ======================
+// ======================
+// LATEST OS CONFIG
+// ======================
+const latestOSVersions = {
+    ios: "26.5.1",
+    ipados: "26.5",
+    macos: "26.5.1"
+};
+
+// ======================
+// OS TYPE DETECTION
+// ======================
+function detectOSType(osVersion) {
+    if (!osVersion) return "unknown";
+
+    const os = osVersion.toLowerCase();
+
+    if (os.includes("ipados")) return "ipados";
+    if (os.includes("ios")) return "ios";
+    if (os.includes("macos")) return "macos";
+
+    return "ios";
+}
+
+// ======================
+// VERSION PARSER
+// ======================
+function extractVersionString(osVersion) {
+    if (!osVersion) return null;
+
+    const match = osVersion.match(/(\d+(?:\.\d+){0,2})/);
+    return match ? match[1] : null;
+}
+
+function normalizeVersion(version) {
+    return String(version)
+        .split(".")
+        .map(num => parseInt(num, 10))
+        .map(num => isNaN(num) ? 0 : num);
+}
+
+function compareVersions(a, b) {
+    const versionA = normalizeVersion(a);
+    const versionB = normalizeVersion(b);
+
+    const maxLength = Math.max(versionA.length, versionB.length);
+
+    for (let i = 0; i < maxLength; i++) {
+        const partA = versionA[i] || 0;
+        const partB = versionB[i] || 0;
+
+        if (partA > partB) return 1;
+        if (partA < partB) return -1;
+    }
+
+    return 0;
+}
+
+// ======================
+// BETA DETECTION
+// ======================
+function detectOSChannel(osVersion) {
+    if (!osVersion) return "public";
+
+    const os = osVersion.toLowerCase();
+
+    if (os.includes("developer beta") || os.includes("dev beta")) {
+        return "developer-beta";
+    }
+
+    if (os.includes("public beta")) {
+        return "public-beta";
+    }
+
+    if (os.includes("beta")) {
+        return "beta";
+    }
+
+    return "public";
+}
+
+// ======================
+// OS STATUS
+// ======================
 function checkOSStatus(osVersion) {
     if (!osVersion) return null;
 
-    const match = osVersion.match(/(\d+(\.\d+)?)/);
-    if (!match) return null;
+    const osType = detectOSType(osVersion);
+    const currentVersion = extractVersionString(osVersion);
+    const latestPublicVersion = latestOSVersions[osType] || latestOSVersions.ios;
+    const channel = detectOSChannel(osVersion);
 
-    const currentVersion = parseFloat(match[0]);
+    if (!currentVersion) return null;
 
-    // Fixed: Adjusted baseline value to properly support current iOS versions 
-    const latestVersion = 27.0; 
+    const comparisonToPublic = compareVersions(currentVersion, latestPublicVersion);
 
     let status = "Latest";
     let color = "green";
+    let releaseChannel = "Public";
+    let description = "Running the latest public release.";
 
-    if (currentVersion < latestVersion) {
+    if (channel === "developer-beta") {
+        status = "Developer Beta";
+        color = "purple";
+        releaseChannel = "Developer Beta";
+        description = "Running a developer beta ahead of the public release.";
+    } else if (channel === "public-beta") {
+        status = "Public Beta";
+        color = "purple";
+        releaseChannel = "Public Beta";
+        description = "Running a public beta ahead of the public release.";
+    } else if (channel === "beta") {
+        status = "Beta";
+        color = "purple";
+        releaseChannel = "Beta";
+        description = "Running a beta build ahead of the public release.";
+    } else if (comparisonToPublic > 0) {
+        status = "Ahead of Public";
+        color = "purple";
+        releaseChannel = "Pre-release / Beta";
+        description = "This version is newer than the latest public release.";
+    } else if (comparisonToPublic < 0) {
         status = "Outdated";
         color = "yellow";
+        releaseChannel = "Public";
+        description = "A newer public release is available.";
     }
 
-    if (currentVersion < latestVersion - 1) {
-        status = "Very Outdated";
-        color = "red";
+    if (comparisonToPublic < 0) {
+        const currentMajor = normalizeVersion(currentVersion)[0] || 0;
+        const latestMajor = normalizeVersion(latestPublicVersion)[0] || 0;
+
+        if (latestMajor - currentMajor >= 1) {
+            status = "Very Outdated";
+            color = "red";
+            description = "This OS version is significantly behind the latest public release.";
+        }
     }
 
-    return { status, color };
+    return {
+        status,
+        color,
+        osType,
+        currentVersion,
+        latestPublicVersion,
+        releaseChannel,
+        description,
+        isBeta: channel !== "public" || comparisonToPublic > 0,
+        isPublicLatest: comparisonToPublic === 0 && channel === "public",
+        isBehindPublic: comparisonToPublic < 0
+    };
 }
 
 /* ------------------------------------------------------------
@@ -780,14 +909,24 @@ function renderTechItemHomepage(itemData) {
     const osStatus = checkOSStatus(itemData.osVersion);
 
     // ✅ FIXED: must be INSIDE function
-    let osUpdateHtml = '';
-    if (osStatus && osStatus.status !== "Latest") {
-        osUpdateHtml = `
-        <div class="tech-detail">
-            <i class="fas fa-download"></i>
-            <span>Update:</span>
-            Software update recommended
-        </div>`;
+   let osUpdateHtml = '';
+
+    if (osStatus) {
+        if (osStatus.isBehindPublic) {
+            osUpdateHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-download"></i>
+                <span>Update:</span>
+                Public software update recommended
+            </div>`;
+        } else if (osStatus.isBeta) {
+            osUpdateHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-flask"></i>
+                <span>Beta Notice:</span>
+                Running beta software ahead of public release
+            </div>`;
+        }
     }
 
     const batteryHealth = itemData.batteryHealth !== null && !isNaN(itemData.batteryHealth)
@@ -912,12 +1051,25 @@ function renderTechItemHomepage(itemData) {
 
         ${ageHtml}
 
-        ${osVersion ? `
+       ${osVersion ? `
         <div class="tech-detail">
             <i class="fab fa-apple"></i>
             <span>OS Version:</span> ${osVersion}
             ${osStatus ? `<span class="os-badge ${osStatus.color}">${osStatus.status}</span>` : ''}
-        </div>` : ''}
+        </div>
+        
+        ${osStatus ? `
+        <div class="tech-detail">
+            <i class="fas fa-code-branch"></i>
+            <span>Release Channel:</span> ${osStatus.releaseChannel}
+        </div>
+        
+        <div class="tech-detail">
+            <i class="fas fa-circle-info"></i>
+            <span>Public Latest:</span> ${osStatus.osType.toUpperCase()} ${osStatus.latestPublicVersion}
+        </div>
+        ` : ''}
+        ` : ''}
 
         ${osUpdateHtml}
         ${batteryHtml}
