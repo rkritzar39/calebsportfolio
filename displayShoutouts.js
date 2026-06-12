@@ -746,7 +746,7 @@ function renderYouTubeCard(account) {
     const isVerified = account.isVerified || account.verified || false;
 
     const displayHandle = usernameRaw ? `@${usernameRaw}` : "";
-    const channelUrl = displayHandle ? `https://www.youtube.com/${displayHandle}` : "#";
+    const channelUrl = usernameRaw ? `https://www.youtube.com/@${encodeURIComponent(usernameRaw)}` : "#";
 
     const verifiedBadge = isVerified
         ? '<img src="youtubecheck.png" alt="Verified" class="youtube-verified-badge">'
@@ -779,8 +779,7 @@ function renderYouTubeCard(account) {
 
         ${bio ? `
         <p class="youtube-channel-description">
-            ${bio}
-            ${bio.length > 95 ? `<span class="youtube-more"> ...more</span>` : ""}
+            ${bio.replace(/\n/g, "<br>")}
         </p>` : ""}
 
         <div class="single-visit-button-row">
