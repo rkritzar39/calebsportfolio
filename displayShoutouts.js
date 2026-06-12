@@ -717,8 +717,6 @@ function renderInstagramCard(account) {
                         ${escapeHTML(username)}
                         ${verifiedBadge}
                     </h3>
-
-                    <span class="instagram-more-dots">...</span>
                 </div>
 
                 <p class="instagram-name-line">
