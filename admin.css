@@ -1568,7 +1568,10 @@ button.edit-button:hover {
 /* ======================== */
 /* Creator Shoutouts Section */
 /* ======================== */
-#creator-shoutouts h3 { margin-bottom: 1em; } /* Reduce bottom margin */
+
+#creator-shoutouts h3 {
+    margin-bottom: 1em;
+}
 
 .shoutouts-platform-container {
     margin-bottom: 35px;
@@ -1577,7 +1580,11 @@ button.edit-button:hover {
     border-radius: var(--border-radius-md);
     background-color: var(--content-bg);
 }
-.shoutouts-platform-container:last-of-type { margin-bottom: 0; }
+
+.shoutouts-platform-container:last-of-type {
+    margin-bottom: 0;
+}
+
 .shoutouts-platform-container h4 {
     color: var(--text-color);
     margin-top: 0;
@@ -1585,10 +1592,13 @@ button.edit-button:hover {
     padding-bottom: 10px;
     font-size: 1.2rem;
     opacity: 1;
-    margin-bottom: 1.5em; /* More space after platform heading */
+    margin-bottom: 1.5em;
 }
 
-/* List Controls (Search + Bulk Actions) */
+/* ======================== */
+/* List Controls            */
+/* ======================== */
+
 .list-controls {
     display: flex;
     justify-content: space-between;
@@ -1598,20 +1608,24 @@ button.edit-button:hover {
     gap: 15px;
     flex-wrap: wrap;
 }
+
 .list-controls input[type="search"] {
     flex-grow: 1;
     min-width: 200px;
     max-width: 400px;
 }
+
 .list-controls button {
-    margin: 0; /* Override default button margin-top */
+    margin: 0;
     flex-shrink: 0;
 }
 
 /* ======================== */
 /* Preview Areas            */
 /* ======================== */
-.shoutout-preview-area, .president-preview-area {
+
+.shoutout-preview-area,
+.president-preview-area {
     border: 1px dashed var(--border-color);
     padding: 20px;
     margin-top: 20px;
@@ -1620,15 +1634,17 @@ button.edit-button:hover {
     min-height: 150px;
     display: flex;
     justify-content: center;
-    align-items: center; /* Center placeholder text */
+    align-items: center;
     overflow: hidden;
     position: relative;
 }
+
 .president-preview-area {
-    align-items: flex-start; /* Align president card top */
+    align-items: flex-start;
 }
 
-.shoutout-preview-area > p, .president-preview-area > p {
+.shoutout-preview-area > p,
+.president-preview-area > p {
     color: var(--secondary-text);
     font-style: italic;
     font-size: 0.9em;
@@ -1636,15 +1652,35 @@ button.edit-button:hover {
     margin: auto;
 }
 
+/* Make platform previews fit inside the admin preview box */
+.shoutout-preview-area .tiktok-profile-card,
+.shoutout-preview-area .instagram-profile-card,
+.shoutout-preview-area .youtube-channel-card {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+    transform: none;
+}
+
+/* YouTube can be a little wider */
+.shoutout-preview-area .youtube-channel-card {
+    max-width: 520px;
+}
+
 /* ======================== */
-/* Input with Preview Styles*/ /* Profile Pic Preview */
+/* Input with Preview Styles */
 /* ======================== */
+
 .input-with-preview {
     display: flex;
     align-items: center;
     gap: 20px;
 }
-.input-with-preview input { flex-grow: 1; }
+
+.input-with-preview input {
+    flex-grow: 1;
+}
+
 .pfp-preview-img {
     width: 100px;
     height: 100px;
@@ -1657,84 +1693,109 @@ button.edit-button:hover {
     transition: opacity 0.3s ease;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+
 .input-with-preview input.input-error {
     border-color: var(--color-danger);
-    box-shadow: 0 0 0 3px var(--color-danger-glow), 0 1px 2px rgba(0,0,0,0.02) inset;
+    box-shadow:
+        0 0 0 3px var(--color-danger-glow),
+        0 1px 2px rgba(0,0,0,0.02) inset;
 }
 
 /* ======================== */
 /* Edit Modal Styles        */
 /* ======================== */
+
 .modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: var(--modal-backdrop-color);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  animation: fadeIn 0.3s ease-out;
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--modal-backdrop-color);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease-out;
 }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
 .modal-content {
-  background-color: var(--content-bg);
-  margin: 10vh auto;
-  padding: 35px 45px;
-  border: none;
-  width: 90%;
-  max-width: 650px;
-  position: relative;
-  border-radius: var(--border-radius-lg);
-  box-shadow: 0 15px 40px -10px rgba(0,0,0,0.25);
-  animation: slideInFromTop 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background-color: var(--content-bg);
+    margin: 10vh auto;
+    padding: 35px 45px;
+    border: none;
+    width: 90%;
+    max-width: 650px;
+    position: relative;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 15px 40px -10px rgba(0,0,0,0.25);
+    animation: slideInFromTop 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-@keyframes slideInFromTop { from { transform: translateY(-40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+@keyframes slideInFromTop {
+    from {
+        transform: translateY(-40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 
 .close-button {
-  color: var(--secondary-text);
-  position: absolute;
-  top: 18px;
-  right: 20px;
-  font-size: 28px;
-  font-weight: normal;
-  line-height: 1;
-  transition: color var(--transition-speed) var(--transition-timing), transform 0.2s ease;
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  opacity: 0.7;
+    color: var(--secondary-text);
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: normal;
+    line-height: 1;
+    transition:
+        color var(--transition-speed) var(--transition-timing),
+        transform 0.2s ease;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.7;
 }
-.close-button:hover, .close-button:focus { color: var(--text-color); text-decoration: none; transform: scale(1.1); opacity: 1;}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--text-color);
+    text-decoration: none;
+    transform: scale(1.1);
+    opacity: 1;
+}
 
 #edit-shoutout-form .form-actions button,
 #profile-form .form-actions button,
 #edit-disability-form .form-actions button,
 #edit-useful-link-form .form-actions button,
 #edit-social-link-form .form-actions button,
-#president-form .form-actions button
-{
+#president-form .form-actions button {
     margin-right: 8px;
 }
+
 #edit-shoutout-form .form-actions button:last-child,
 #profile-form .form-actions button:last-child,
 #edit-disability-form .form-actions button:last-child,
 #edit-useful-link-form .form-actions button:last-child,
 #edit-social-link-form .form-actions button:last-child,
-#president-form .form-actions button:last-child
-{
+#president-form .form-actions button:last-child {
     margin-right: 0;
 }
 
 /* ======================== */
 /* Site Settings Section    */
 /* ======================== */
-#site-settings { }
 
 #site-settings .form-group {
     padding: 20px;
@@ -1743,183 +1804,346 @@ button.edit-button:hover {
     background-color: var(--content-bg);
     margin-bottom: 25px;
 }
-#site-settings label:not(.apple-toggle-label) { /* Exclude toggle visual label */
+
+#site-settings label:not(.apple-toggle-label) {
     text-transform: none;
     font-size: 1rem;
     font-weight: 500;
 }
-#site-settings small { /* Handled by base .checkbox-group small */
-    /* display: block; */
-    /* margin-top: 6px; */
-    /* color: var(--secondary-text); */
-    /* font-size: 0.85em; */
-}
-#settings-status-message { margin-top: 10px; }
 
+#settings-status-message {
+    margin-top: 10px;
+}
 
 /* ======================== */
-/* Responsive Adjustments   */
+/* List Count and Timer     */
 /* ======================== */
-@media (max-width: 768px) {
-    body { padding: 20px; }
-    .container { padding: 30px 25px; margin: 15px auto; }
-    h1 { font-size: 1.8rem; margin-bottom: 30px;}
-    h2 { font-size: 1.5rem; }
-    .admin-header { flex-direction: column; align-items: flex-start; }
-    .admin-header h2 { margin-bottom: 10px; font-size: 1.6rem; }
-    #admin-greeting { margin: 10px 0; }
-    .admin-section { padding: 20px; }
-    .form-actions:not(#login-section .form-actions) {
-        text-align: right;
-        padding-top: 15px;
-    }
-    .form-actions:not(#login-section .form-actions) button {
-        display: inline-block;
-        width: auto;
-        margin: 10px 0 0 10px !important;
-    }
-    .form-actions:not(#login-section .form-actions) button:first-child {
-        margin-left: 0 !important;
-    }
-    .modal-content { margin: 8vh auto; padding: 30px 25px; }
-    .list-controls { flex-direction: column; align-items: stretch; }
-    .list-controls input[type="search"] { max-width: none; }
-    .list-controls button { width: auto; margin-top: 10px;}
-    .pfp-preview-img { width: 80px; height: 80px; }
-}
 
-@media (max-width: 480px) {
-    body { padding: 15px; }
-    .container { padding: 25px 15px; }
-    h1 { font-size: 1.6rem; }
-    h2 { font-size: 1.3rem; }
-    h3 { font-size: 1.1rem; }
-    button, .button-primary { padding: 10px 18px; font-size: 0.95rem; width: 100%; margin-left: 0; margin-right: 0;}
-    button.small-button { width: auto !important; }
-    button.secondary-button, button.danger-button { width: auto !important;} /* Keep secondary/danger auto */
-    .form-actions button { width: 100%; margin-left: 0 !important; }
-    .list-controls button { width: 100%; margin-left: 0 !important; margin-right: 0 !important;}
-
-    input, select, textarea { padding: 10px 12px; font-size: 0.95rem; }
-    label:not(.apple-toggle-label) { font-size: 0.9rem; } /* Adjust non-toggle label size */
-
-    .list-item-admin { flex-direction: column; align-items: flex-start; padding: 15px; }
-    .list-item-admin .item-actions { margin-top: 15px; width: 100%; justify-content: flex-start; padding-top: 10px; border-top: 1px solid var(--border-color); flex-wrap: wrap;}
-    .list-item-admin .item-actions button { width: auto; margin-bottom: 5px;} /* Action buttons not full width */
-    .item-actions a.direct-link { margin-left: auto; }
-
-    .modal-content { padding: 25px 15px; }
-    .close-button { font-size: 26px; top: 12px; right: 15px; }
-    .pfp-preview-img { width: 60px; height: 60px; }
-    #login-section { padding: 25px; }
-    .input-with-preview { flex-direction: column; align-items: flex-start;}
-    .checkbox-group { gap: 5px; } /* Reduce gap */
-    .checkbox-group .apple-toggle-label + label { line-height: 1.4; } /* Adjust text label line height */
-
-    .log-entry .log-meta small { flex-basis: 100%; margin-bottom: 5px; } /* Stack timestamp */
-    .log-entry .log-action { flex-basis: 100%; } /* Action takes full width */
-}
-
-
-/* List Count and Timer Display */
 .list-count {
-  font-weight: normal;
-  font-size: 0.85em;
-  color: var(--secondary-text);
-  margin-left: 8px;
+    font-weight: normal;
+    font-size: 0.85em;
+    color: var(--secondary-text);
+    margin-left: 8px;
 }
+
 .timer-display {
-  font-size: 0.85em;
-  margin-left: 15px;
-  color: var(--secondary-text);
-  min-width: 50px;
-  display: inline-block;
-  text-align: right;
+    font-size: 0.85em;
+    margin-left: 15px;
+    color: var(--secondary-text);
+    min-width: 50px;
+    display: inline-block;
+    text-align: right;
 }
 
+/* ============================================= */
+/* ADMIN SHOUTOUT PREVIEW STYLES - Platform Cards */
+/* ============================================= */
 
-/* ============================================= */
-/* === ADMIN SHOUTOUT PREVIEW STYLES (Unified) === */
-/* ============================================= */
-.shoutout-preview-area .creator-card,
-.shoutout-preview-area .instagram-creator-card,
-.shoutout-preview-area .youtube-creator-card {
-    background-color: var(--content-bg);
-    border-radius: var(--border-radius-md);
-    padding: 15px;
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    transition: none;
-    box-shadow: 0 1px 3px var(--shadow-color);
-    width: 100%;
-    /* max-width: 380px; */ /* REMOVED for full width */
-    box-sizing: border-box;
+/* Shared platform preview cards */
+.shoutout-preview-area .tiktok-profile-card,
+.shoutout-preview-area .instagram-profile-card,
+.shoutout-preview-area .youtube-channel-card {
     position: relative;
-    overflow: hidden;
-    height: auto;
+    color: var(--text-color);
+    background:
+        radial-gradient(circle at 35% 0%, rgba(255,255,255,0.08), transparent 45%),
+        color-mix(in srgb, var(--content-bg) 90%, black 10%);
     border: 1px solid var(--border-color);
-    align-items: flex-start; /* Align items top */
-}
-.shoutout-preview-area .creator-card:hover,
-.shoutout-preview-area .instagram-creator-card:hover,
-.shoutout-preview-area .youtube-creator-card:hover {
-    transform: none;
-    box-shadow: 0 2px 5px var(--shadow-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+    overflow: hidden;
 }
 
-.shoutout-preview-area .youtube-cover-photo {
-    display: none;
+/* Keep preview content above pseudo layers if main site CSS adds them */
+.shoutout-preview-area .tiktok-profile-main,
+.shoutout-preview-area .instagram-profile-header,
+.shoutout-preview-area .instagram-profile-row,
+.shoutout-preview-area .instagram-bio-block,
+.shoutout-preview-area .youtube-channel-banner,
+.shoutout-preview-area .youtube-channel-info,
+.shoutout-preview-area .youtube-channel-description,
+.shoutout-preview-area .single-visit-button-row {
+    position: relative;
+    z-index: 2;
 }
 
-.shoutout-preview-area .creator-pic,
-.shoutout-preview-area .instagram-creator-pic,
-.shoutout-preview-area .youtube-creator-pic {
-    width: 50px;
-    height: 50px;
+/* ======================== */
+/* TikTok Preview           */
+/* ======================== */
+
+.shoutout-preview-area .tiktok-profile-main {
+    text-align: center;
+    padding: 26px 18px 20px;
+}
+
+.shoutout-preview-area .tiktok-avatar {
+    width: 92px;
+    height: 92px;
     border-radius: 50%;
     object-fit: cover;
-    border: none;
-    margin-bottom: 0;
-    position: relative;
-    z-index: 1;
-    margin-top: 0;
-    margin-left: 0;
-    flex-shrink: 0;
+    background: var(--input-bg-color);
+    border: 2px solid color-mix(in srgb, var(--accent-color) 55%, white 12%);
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
+        0 8px 18px color-mix(in srgb, var(--shadow-color) 40%, transparent);
 }
 
-.shoutout-preview-area .creator-info,
-.shoutout-preview-area .instagram-creator-info,
-.shoutout-preview-area .youtube-creator-info {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    padding: 0;
-    overflow: hidden;
+.shoutout-preview-area .tiktok-profile-main h3 {
+    margin: 14px 0 4px;
+    color: var(--text-color);
+    font-size: 1.25rem;
+    line-height: 1.1;
+    font-weight: 700;
 }
 
-.shoutout-preview-area .creator-header,
-.shoutout-preview-area .instagram-creator-header,
-.shoutout-preview-area .youtube-creator-header {
+.shoutout-preview-area .tiktok-username {
+    margin: 0;
+    color: var(--secondary-text);
+    font-size: 0.95rem;
+}
+
+.shoutout-preview-area .tiktok-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 18px 0 12px;
+}
+
+.shoutout-preview-area .tiktok-stat:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
+
+.shoutout-preview-area .tiktok-stat strong {
+    display: block;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.shoutout-preview-area .tiktok-stat span {
+    display: block;
+    margin-top: 4px;
+    color: var(--secondary-text);
+    font-size: 0.82rem;
+}
+
+.shoutout-preview-area .tiktok-bio,
+.shoutout-preview-area .tiktok-subtitle,
+.shoutout-preview-area .tiktok-education {
+    margin: 7px auto;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.shoutout-preview-area .tiktok-bio {
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+/* ======================== */
+/* Instagram Preview        */
+/* ======================== */
+
+.shoutout-preview-area .instagram-profile-header {
+    padding: 20px 18px 6px;
+}
+
+.shoutout-preview-area .instagram-profile-header h3 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 5px;
-    margin-bottom: 2px;
-    margin-top: 0;
+    gap: 6px;
 }
 
-.shoutout-preview-area .creator-header h3,
-.shoutout-preview-area .instagram-creator-header h3,
-.shoutout-preview-area .youtube-creator-header h3 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-color);
-    line-height: 1.3;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.shoutout-preview-area .instagram-profile-row {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 18px;
 }
+
+.shoutout-preview-area .instagram-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--input-bg-color);
+    border: 2px solid var(--border-color);
+}
+
+.shoutout-preview-area .instagram-profile-main > strong {
+    display: block;
+    color: var(--text-color);
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+}
+
+.shoutout-preview-area .instagram-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.shoutout-preview-area .instagram-stats strong {
+    display: block;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.shoutout-preview-area .instagram-stats span {
+    display: block;
+    color: var(--secondary-text);
+    font-size: 0.78rem;
+    margin-top: 3px;
+}
+
+.shoutout-preview-area .instagram-bio-block {
+    padding: 6px 18px 10px;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.shoutout-preview-area .instagram-bio-block p {
+    margin: 0 0 8px;
+}
+
+.shoutout-preview-area .instagram-education {
+    color: var(--text-color) !important;
+    font-weight: 700;
+}
+
+.shoutout-preview-area .instagram-website {
+    color: var(--link-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* ======================== */
+/* YouTube Preview          */
+/* ======================== */
+
+.shoutout-preview-area .youtube-channel-card {
+    max-width: 520px;
+}
+
+.shoutout-preview-area .youtube-channel-banner {
+    margin: 14px 14px 0;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--accent-color) 18%, black 82%);
+    border: 1px solid var(--border-color);
+}
+
+.shoutout-preview-area .youtube-cover-img {
+    width: 100%;
+    aspect-ratio: 16 / 4.35;
+    object-fit: cover;
+    display: block;
+}
+
+.shoutout-preview-area .youtube-channel-info {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 18px 18px 8px;
+}
+
+.shoutout-preview-area .youtube-channel-avatar {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--input-bg-color);
+    border: 2px solid var(--border-color);
+}
+
+.shoutout-preview-area .youtube-channel-text h3 {
+    margin: 0 0 4px;
+    color: var(--text-color);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.15;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.shoutout-preview-area .youtube-handle,
+.shoutout-preview-area .youtube-stats {
+    margin: 2px 0;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+}
+
+.shoutout-preview-area .youtube-channel-description {
+    padding: 8px 18px 6px;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+    line-height: 1.4;
+    white-space: normal;
+}
+
+/* ======================== */
+/* Preview Visit Buttons    */
+/* ======================== */
+
+.shoutout-preview-area .single-visit-button-row {
+    display: flex;
+    justify-content: flex-start;
+    padding: 10px 18px 18px;
+}
+
+.shoutout-preview-area .single-visit-button-row.center-button {
+    justify-content: center;
+}
+
+.shoutout-preview-area .platform-visit-button {
+    min-width: 160px;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 999px;
+    color: #fff !important;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+    transition: none;
+}
+
+.shoutout-preview-area .tiktok-visit-button {
+    background: linear-gradient(135deg, #ff2d55, #fe2c55);
+}
+
+.shoutout-preview-area .instagram-visit-button {
+    background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+}
+
+.shoutout-preview-area .youtube-visit-button {
+    background: #272727;
+}
+
+/* Disable hover animation inside admin preview */
+.shoutout-preview-area .platform-visit-button:hover {
+    transform: none;
+    filter: none;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+    text-decoration: none;
+}
+
+/* ======================== */
+/* Badge Sizing in Preview  */
+/* ======================== */
 
 .shoutout-preview-area .verified-badge,
 .shoutout-preview-area .instagram-verified-badge,
@@ -1928,83 +2152,289 @@ button.edit-button:hover {
     height: 14px;
     display: inline-block;
     vertical-align: middle;
+    object-fit: contain;
     flex-shrink: 0;
 }
 
-.shoutout-preview-area .creator-info > .creator-username,
-.shoutout-preview-area .instagram-creator-info > .instagram-creator-username,
-.shoutout-preview-area .youtube-creator-info .youtube-creator-username {
-    color: var(--secondary-text);
-    font-size: 0.85em;
-    margin: 0 0 8px 0;
-    line-height: 1.3;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.shoutout-preview-area .youtube-creator-info .username-container {
-    margin-bottom: 0;
-    gap: 4px;
+/* ======================== */
+/* Light Mode Preview Fix   */
+/* ======================== */
+
+body:not(.dark-mode) .shoutout-preview-area .tiktok-profile-card,
+body:not(.dark-mode) .shoutout-preview-area .instagram-profile-card,
+body:not(.dark-mode) .shoutout-preview-area .youtube-channel-card,
+body.light-mode .shoutout-preview-area .tiktok-profile-card,
+body.light-mode .shoutout-preview-area .instagram-profile-card,
+body.light-mode .shoutout-preview-area .youtube-channel-card {
+    color: var(--text-color);
+    background:
+        radial-gradient(circle at 35% 0%, rgba(255,255,255,0.75), transparent 50%),
+        var(--content-bg);
+    border-color: var(--border-color);
 }
 
-
-.shoutout-preview-area .creator-bio,
-.shoutout-preview-area .instagram-creator-bio,
-.shoutout-preview-area .youtube-creator-bio {
-    color: var(--secondary-text);
-    margin: 5px 0;
-    font-size: 0.85em;
-    line-height: 1.4;
-    word-break: break-word; /* Allow wrapping */
-    /* max-height: calc(1.4em * 2); */ /* Removed height limit */
-    /* overflow: hidden; */ /* Removed overflow */
-    /* text-overflow: ellipsis; */ /* Removed ellipsis */
-    /* display: -webkit-box; */
-    /* -webkit-line-clamp: 2; */
-    /* -webkit-box-orient: vertical; */
+body:not(.dark-mode) .shoutout-preview-area .tiktok-profile-card h3,
+body:not(.dark-mode) .shoutout-preview-area .instagram-profile-card h3,
+body:not(.dark-mode) .shoutout-preview-area .youtube-channel-card h3,
+body:not(.dark-mode) .shoutout-preview-area .tiktok-profile-card strong,
+body:not(.dark-mode) .shoutout-preview-area .instagram-profile-card strong,
+body:not(.dark-mode) .shoutout-preview-area .youtube-channel-card strong,
+body.light-mode .shoutout-preview-area .tiktok-profile-card h3,
+body.light-mode .shoutout-preview-area .instagram-profile-card h3,
+body.light-mode .shoutout-preview-area .youtube-channel-card h3,
+body.light-mode .shoutout-preview-area .tiktok-profile-card strong,
+body.light-mode .shoutout-preview-area .instagram-profile-card strong,
+body.light-mode .shoutout-preview-area .youtube-channel-card strong {
+    color: var(--text-color) !important;
 }
 
-.shoutout-preview-area .follower-count,
-.shoutout-preview-area .instagram-follower-count,
-.shoutout-preview-area .youtube-subscriber-count {
-    color: var(--secondary-text);
-    font-weight: 500;
-    margin: 5px 0;
-    font-size: 0.85em;
+body:not(.dark-mode) .shoutout-preview-area .tiktok-profile-card p,
+body:not(.dark-mode) .shoutout-preview-area .instagram-profile-card p,
+body:not(.dark-mode) .shoutout-preview-area .youtube-channel-card p,
+body:not(.dark-mode) .shoutout-preview-area .tiktok-profile-card span,
+body:not(.dark-mode) .shoutout-preview-area .instagram-profile-card span,
+body:not(.dark-mode) .shoutout-preview-area .youtube-channel-card span,
+body.light-mode .shoutout-preview-area .tiktok-profile-card p,
+body.light-mode .shoutout-preview-area .instagram-profile-card p,
+body.light-mode .shoutout-preview-area .youtube-channel-card p,
+body.light-mode .shoutout-preview-area .tiktok-profile-card span,
+body.light-mode .shoutout-preview-area .instagram-profile-card span,
+body.light-mode .shoutout-preview-area .youtube-channel-card span {
+    color: var(--secondary-text) !important;
 }
 
-.shoutout-preview-area .visit-profile,
-.shoutout-preview-area .instagram-visit-profile,
-.shoutout-preview-area .youtube-visit-profile {
-    display: inline-block;
-    background-color: var(--accent-color);
-    color: #ffffff;
-    text-decoration: none;
-    padding: 5px 12px;
-    border-radius: var(--border-radius-md);
-    margin-top: 8px;
-    transition: background-color var(--transition-speed) var(--transition-timing);
-    text-align: center;
-    font-weight: 500;
-    font-size: 0.8em;
-    border: none;
-    width: fit-content;
-}
-body:not(.dark-mode) .shoutout-preview-area .visit-profile,
-body:not(.dark-mode) .shoutout-preview-area .instagram-visit-profile,
-body:not(.dark-mode) .shoutout-preview-area .youtube-visit-profile {
-    color: #ffffff; /* Ensure white text in light mode too */
+/* ======================== */
+/* Responsive Adjustments   */
+/* ======================== */
+
+@media (max-width: 768px) {
+    body {
+        padding: 20px;
+    }
+
+    .container {
+        padding: 30px 25px;
+        margin: 15px auto;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .admin-header h2 {
+        margin-bottom: 10px;
+        font-size: 1.6rem;
+    }
+
+    #admin-greeting {
+        margin: 10px 0;
+    }
+
+    .admin-section {
+        padding: 20px;
+    }
+
+    .form-actions:not(#login-section .form-actions) {
+        text-align: right;
+        padding-top: 15px;
+    }
+
+    .form-actions:not(#login-section .form-actions) button {
+        display: inline-block;
+        width: auto;
+        margin: 10px 0 0 10px !important;
+    }
+
+    .form-actions:not(#login-section .form-actions) button:first-child {
+        margin-left: 0 !important;
+    }
+
+    .modal-content {
+        margin: 8vh auto;
+        padding: 30px 25px;
+    }
+
+    .list-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .list-controls input[type="search"] {
+        max-width: none;
+    }
+
+    .list-controls button {
+        width: auto;
+        margin-top: 10px;
+    }
+
+    .pfp-preview-img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .shoutout-preview-area {
+        padding: 14px;
+    }
 }
 
-.shoutout-preview-area .visit-profile:hover,
-.shoutout-preview-area .instagram-visit-profile:hover,
-.shoutout-preview-area .youtube-visit-profile:hover {
-    background-color: var(--hover-color);
-    /* color: #ffffff; */ /* Already set */
-    transform: none;
-    box-shadow: none;
+@media (max-width: 520px) {
+    .shoutout-preview-area .instagram-profile-row {
+        grid-template-columns: 68px 1fr;
+        gap: 12px;
+    }
+
+    .shoutout-preview-area .instagram-avatar {
+        width: 64px;
+        height: 64px;
+    }
+
+    .shoutout-preview-area .youtube-channel-info {
+        grid-template-columns: 62px 1fr;
+    }
+
+    .shoutout-preview-area .youtube-channel-avatar {
+        width: 58px;
+        height: 58px;
+    }
 }
 
+@media (max-width: 480px) {
+    body {
+        padding: 15px;
+    }
+
+    .container {
+        padding: 25px 15px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    h2 {
+        font-size: 1.3rem;
+    }
+
+    h3 {
+        font-size: 1.1rem;
+    }
+
+    button,
+    .button-primary {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    button.small-button {
+        width: auto !important;
+    }
+
+    button.secondary-button,
+    button.danger-button {
+        width: auto !important;
+    }
+
+    .form-actions button {
+        width: 100%;
+        margin-left: 0 !important;
+    }
+
+    .list-controls button {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    input,
+    select,
+    textarea {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+
+    label:not(.apple-toggle-label) {
+        font-size: 0.9rem;
+    }
+
+    .list-item-admin {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px;
+    }
+
+    .list-item-admin .item-actions {
+        margin-top: 15px;
+        width: 100%;
+        justify-content: flex-start;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-color);
+        flex-wrap: wrap;
+    }
+
+    .list-item-admin .item-actions button {
+        width: auto;
+        margin-bottom: 5px;
+    }
+
+    .item-actions a.direct-link {
+        margin-left: auto;
+    }
+
+    .modal-content {
+        padding: 25px 15px;
+    }
+
+    .close-button {
+        font-size: 26px;
+        top: 12px;
+        right: 15px;
+    }
+
+    .pfp-preview-img {
+        width: 60px;
+        height: 60px;
+    }
+
+    #login-section {
+        padding: 25px;
+    }
+
+    .input-with-preview {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .checkbox-group {
+        gap: 5px;
+    }
+
+    .checkbox-group .apple-toggle-label + label {
+        line-height: 1.4;
+    }
+
+    .log-entry .log-meta small {
+        flex-basis: 100%;
+        margin-bottom: 5px;
+    }
+
+    .log-entry .log-action {
+        flex-basis: 100%;
+    }
+}
 
 /* ============================================= */
 /* === ADMIN PRESIDENT PREVIEW STYLES          === */
