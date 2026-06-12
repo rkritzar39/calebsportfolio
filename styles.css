@@ -4751,9 +4751,20 @@ body.dark-mode .bubble {
     }
 
     .youtube-channel-description {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
+    padding: 8px 22px 4px;
+    margin: 0;
+    color: var(--secondary visible;    color: var(--secondary-text);
+    text-overflow: initial;
+    display: block;
+    max-height: none;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+}
+    line-height: 1.45;
+    font-size: 1rem;
+
+    /* Show full bio */
+    white-space: normal;
 }
 
 @media screen and (max-width: 480px) {
