@@ -643,6 +643,10 @@ function renderInstagramCard(account) {
     const bio = account.bio || account.description || "";
     const website = account.website || account.link || "";
 
+    const category = account.category || account.creatorType || "";
+    const pronouns = account.pronouns || "";
+    const secondaryHandle = account.secondaryHandle || account.altUsername || "";
+
     const posts = formatShoutoutNumber(account.posts || account.postCount || 0);
     const followers = formatShoutoutNumber(account.followers || account.followerCount || 0);
     const following = formatShoutoutNumber(account.following || account.followingCount || 0);
@@ -653,47 +657,41 @@ function renderInstagramCard(account) {
         ? '<img src="instagramcheck.png" alt="Verified" class="instagram-verified-badge">'
         : '';
 
-    const profileUrl = username !== "creator"
-        ? `https://instagram.com/${encodeURIComponent(username)}`
-        : "#";
+    const profileUrl = getPlatformProfileUrl("instagram", username);
 
     return `
     <article class="instagram-profile-card platform-profile-only">
-        <div class="instagram-topbar">
-            <button class="instagram-icon-btn" type="button" aria-label="Back">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-
-            <h3>
-                ${username}
-                ${verifiedBadge}
-            </h3>
-
-            <div class="instagram-top-actions">
-                <i class="far fa-bell"></i>
-                <i class="fas fa-ellipsis"></i>
-            </div>
-        </div>
-
-        <div class="instagram-profile-row">
+        <div class="instagram-profile-row instagram-profile-row-full">
             ${renderShoutoutImage(profilePic, "instagram-avatar", nickname)}
 
             <div class="instagram-profile-main">
-                <strong>${nickname}</strong>
+                <div class="instagram-username-row">
+                    <h3>
+                        ${escapeHTML(username)}
+                        ${verifiedBadge}
+                    </h3>
+
+                    <span class="instagram-more-dots">...</span>
+                </div>
+
+                <p class="instagram-name-line">
+                    <strong>${escapeHTML(nickname)}</strong>
+                    ${pronouns ? `<span>${escapeHTML(pronouns)}</span>` : ""}
+                </p>
 
                 <div class="instagram-stats">
                     <div>
-                        <strong>${posts}</strong>
+                        <strong>${escapeHTML(posts)}</strong>
                         <span>posts</span>
                     </div>
 
                     <div>
-                        <strong>${followers}</strong>
+                        <strong>${escapeHTML(followers)}</strong>
                         <span>followers</span>
                     </div>
 
                     <div>
-                        <strong>${following}</strong>
+                        <strong>${escapeHTML(following)}</strong>
                         <span>following</span>
                     </div>
                 </div>
@@ -701,16 +699,24 @@ function renderInstagramCard(account) {
         </div>
 
         <div class="instagram-bio-block">
-            ${bio ? `<p>${bio.replace(/\n/g, "<br>")}</p>` : ""}
+            ${category ? `<p class="instagram-category">${escapeHTML(category)}</p>` : ""}
+
+            ${bio ? `<p>${escapeHTML(bio).replace(/\n/g, "<br>")}</p>` : ""}
 
             ${website ? `
-            <a href="${website}" target="_blank" rel="noopener noreferrer" class="instagram-website">
+            <a href="${escapeAttribute(website)}" target="_blank" rel="noopener noreferrer" class="instagram-website">
                 <i class="fas fa-link"></i>
-                ${website.replace(/^https?:\/\//, "")}
+                ${escapeHTML(website.replace(/^https?:\/\//, ""))}
             </a>` : ""}
+
+            ${secondaryHandle ? `
+            <p class="instagram-secondary-handle">
+                <i class="fab fa-instagram"></i>
+                @${escapeHTML(normalizeShoutoutHandle(secondaryHandle))}
+            </p>` : ""}
         </div>
 
-        <div class="single-visit-button-row">
+        <div class="single-visit-button-row instagram-real-button-row">
             <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button instagram-visit-button">
                 <i class="fab fa-instagram"></i>
                 Visit Profile
