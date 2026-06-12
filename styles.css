@@ -8998,3 +8998,130 @@ body.maintenance-active .onyx-dock {
 .tech-advanced-details .tech-detail i {
     opacity: 0.9;
 }
+
+/* ============================================================
+   TIKTOK LIGHT MODE FIX
+   Keeps TikTok shoutout cards readable in light mode
+   No extra fields or layout changes added
+============================================================ */
+
+/* Keep TikTok card dark/readable in light mode */
+body.light-e .tiktok-profile-card {
+    color: #f5f5f5 !important;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(255,255,255,0.08),
+            transparent 42%
+        ),
+        #050505 !important;
+
+    border-color: rgba(255,255,255,0.12) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 18px 42px rgba(0,0,0,0.35) !important;
+}
+
+/* Keep TikTok name and stat numbers visible */
+body.light-e .tiktok-profile-card h3,
+body.light-e .tiktok-profile-card strong,
+body.light-e .tiktok-stat strong {
+    color: #f5f5f5 !important;
+}
+
+/* Keep TikTok username, stat labels, and normal text readable */
+body.light-e .tiktok-profile-card p,
+body.light-e .tiktok-profile-card span,
+body.light-e .tiktok-username,
+body.light-e .tiktok-stat span,
+body.light-e .tiktok-subtitle {
+    color: rgba(255,255,255,0.72) !important;
+}
+
+/* Keep TikTok bio readable */
+body.light-e .tiktok-bio {
+    color: #f5f5f5 !important;
+}
+
+/* If your TikTok card already has an education/school line, keep it readable */
+body.light-e .tiktok-education {
+    color: #f5f5f5 !important;
+}
+
+/* Keep stat divider lines visible */
+body.light-e .tiktok-stat:not(:last-child) {
+    border-right-color: rgba(255,255,255,0.14) !important;
+}
+
+/* Keep TikTok visit button readable and pink */
+body.light-e .tiktok-visit-button,
+body.light-e .tiktok-profile-card .platform-visit-button {
+    color: #ffffff !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff2d55,
+            #fe2c55
+        ) !important;
+
+    border-color: rgba(255,255,255,0.18) !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        0 8px 18px rgba(0,0,0,0.25) !important;
+}
+
+/* Keep TikTok visit button hover readable */
+body.light-e .tiktok-visit-button:hover,
+body.light-e .tiktok-profile-card .platform-visit-button:hover {
+    color: #ffffff !important;
+
+    filter: brightness(1.08);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.16),
+        0 12px 24px rgba(0,0,0,0.34) !important;
+}
+
+/* Keep TikTok avatar clean in light mode */
+body.light-e .tiktok-avatar {
+    border-color: rgba(255,255,255,0.24) !important;
+
+    box-shadow:
+        0 0 0 4px rgba(0,0,0,0.22),
+        0 10px 24px rgba(0,0,0,0.35) !important;
+}
+
+/* Keep TikTok verified badge normal */
+body.light-e .tiktok-profile-card .verified-badge {
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+/* If any global light mode rule affects links/buttons inside the TikTok card */
+body.light-e .tiktok-profile-card a {
+    color: #ffffff !important;
+}
+
+/* If the TikTok card contains icons, keep them visible */
+body.light-e .tiktok-profile-card i {
+    color: inherit;
+}
+
+/* Keep TikTok card text from inheriting global light-mode section text */
+body.light-e .tiktok-profile-card *,
+body.light-e .tiktok-profile-card p,
+body.light-e .tiktok-profile-card span,
+body.light-e .tiktok-profile-card strong {
+    text-shadow: none;
+}
+
+/* Make sure the TikTok card stays above glass/reflection layers */
+body.light-e .tiktok-profile-main,
+body.light-e .tiktok-profile-card .single-visit-button-row {
+    position: relative;
+    z-index: 2;
+}
