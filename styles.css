@@ -4433,7 +4433,7 @@ body.dark-mode .bubble {
 .instagram-profile-row,
 .instagram-profile-row.instagram-profile-row-full {
     display: grid;
-    grid-template-columns: 128px 1fr;
+    grid-template-columns: 128px minmax(0, 1fr);
     gap: 20px;
     align-items: center;
     padding: 28px 22px 14px;
@@ -4458,12 +4458,20 @@ body.dark-mode .bubble {
         0 10px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 }
 
+/* Right side content must be allowed to shrink */
+.instagram-profile-main {
+    min-width: 0;
+    max-width: 100%;
+}
+
 /* Username row at top right */
 .instagram-username-row {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 4px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .instagram-username-row h3 {
@@ -4476,6 +4484,10 @@ body.dark-mode .bubble {
     display: inline-flex;
     align-items: center;
     gap: 7px;
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* Remove dots if old markup still outputs them */
@@ -4490,6 +4502,7 @@ body.dark-mode .bubble {
     object-fit: contain;
     margin-left: 2px;
     vertical-align: middle;
+    flex-shrink: 0;
 }
 
 /* Name/pronouns line under username */
@@ -4499,6 +4512,9 @@ body.dark-mode .bubble {
     align-items: baseline;
     gap: 6px;
     flex-wrap: wrap;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .instagram-name-line strong {
@@ -4521,17 +4537,19 @@ body.dark-mode .bubble {
 /* Stats row — labels below numbers and grayed */
 .instagram-profile-card .instagram-stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
     align-items: start;
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .instagram-profile-card .instagram-stats div {
     min-width: 0;
+    max-width: 100%;
     text-align: left;
+    overflow: visible;
 }
 
 .instagram-profile-card .instagram-stats strong {
@@ -4541,6 +4559,9 @@ body.dark-mode .bubble {
     font-weight: 900;
     line-height: 1.1;
     margin: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: normal;
 }
 
 .instagram-profile-card .instagram-stats span {
@@ -4548,8 +4569,14 @@ body.dark-mode .bubble {
     color: var(--secondary-text);
     font-size: 0.95rem;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.15;
     margin-top: 4px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    overflow-wrap: normal;
+    word-break: normal;
+    max-width: 100%;
 }
 
 /* Bio section under row */
@@ -4563,6 +4590,9 @@ body.dark-mode .bubble {
 
 .instagram-profile-card .instagram-bio-block p {
     margin: 0 0 4px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .instagram-category {
@@ -4581,6 +4611,7 @@ body.dark-mode .bubble {
     margin-top: 4px;
     overflow-wrap: anywhere;
     word-break: break-word;
+    max-width: 100%;
 }
 
 .instagram-profile-card .instagram-website i,
@@ -4850,6 +4881,21 @@ body.light-e .tiktok-profile-card i {
     }
 }
 
+/* Split screen / medium desktop */
+@media screen and (max-width: 900px) {
+    .instagram-profile-card .instagram-stats {
+        gap: 8px;
+    }
+
+    .instagram-profile-card .instagram-stats strong {
+        font-size: 0.95rem;
+    }
+
+    .instagram-profile-card .instagram-stats span {
+        font-size: 0.78rem;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .disabilities-section,
     .shoutouts-section {
@@ -4890,7 +4936,7 @@ body.light-e .tiktok-profile-card i {
 
     .instagram-profile-row,
     .instagram-profile-row.instagram-profile-row-full {
-        grid-template-columns: 104px 1fr;
+        grid-template-columns: 104px minmax(0, 1fr);
         gap: 16px;
         padding: 26px 18px 12px;
     }
@@ -4906,15 +4952,43 @@ body.light-e .tiktok-profile-card i {
     }
 
     .instagram-profile-card .instagram-stats {
-        gap: 14px;
+        gap: 8px;
     }
 
     .instagram-profile-card .instagram-stats strong {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .instagram-profile-card .instagram-stats span {
-        font-size: 0.88rem;
+        font-size: 0.78rem;
+    }
+}
+
+/* Small split-screen / tablet */
+@media screen and (max-width: 650px) {
+    .instagram-profile-row,
+    .instagram-profile-row.instagram-profile-row-full {
+        grid-template-columns: 88px minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .instagram-avatar,
+    .instagram-profile-card .instagram-avatar {
+        width: 78px;
+        height: 78px;
+    }
+
+    .instagram-profile-card .instagram-stats {
+        gap: 6px;
+    }
+
+    .instagram-profile-card .instagram-stats strong {
+        font-size: 0.86rem;
+    }
+
+    .instagram-profile-card .instagram-stats span {
+        font-size: 0.7rem;
+        letter-spacing: -0.01em;
     }
 }
 
@@ -4945,7 +5019,7 @@ body.light-e .tiktok-profile-card i {
 
     .instagram-profile-row,
     .instagram-profile-row.instagram-profile-row-full {
-        grid-template-columns: 82px 1fr;
+        grid-template-columns: 82px minmax(0, 1fr);
         gap: 12px;
         padding: 22px 16px 10px;
         align-items: center;
@@ -4987,7 +5061,7 @@ body.light-e .tiktok-profile-card i {
     }
 
     .instagram-profile-card .instagram-stats {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 6px;
         width: 100%;
     }
@@ -5051,6 +5125,36 @@ body.light-e .tiktok-profile-card i {
     }
 }
 
+/* Very narrow split-screen */
+@media screen and (max-width: 430px) {
+    .instagram-profile-row,
+    .instagram-profile-row.instagram-profile-row-full {
+        grid-template-columns: 70px minmax(0, 1fr);
+        gap: 10px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .instagram-avatar,
+    .instagram-profile-card .instagram-avatar {
+        width: 62px;
+        height: 62px;
+    }
+
+    .instagram-profile-card .instagram-stats {
+        gap: 4px;
+    }
+
+    .instagram-profile-card .instagram-stats strong {
+        font-size: 0.74rem;
+    }
+
+    .instagram-profile-card .instagram-stats span {
+        font-size: 0.62rem;
+        line-height: 1.1;
+    }
+}
+
 @media screen and (max-width: 480px) {
     .shoutouts-section {
         padding: 15px;
@@ -5107,7 +5211,7 @@ body.light-e .tiktok-profile-card i {
 
     .instagram-profile-row,
     .instagram-profile-row.instagram-profile-row-full {
-        grid-template-columns: 68px 1fr;
+        grid-template-columns: 68px minmax(0, 1fr);
         gap: 10px;
         padding: 20px 12px 8px;
     }
@@ -5155,6 +5259,31 @@ body.light-e .tiktok-profile-card i {
     .instagram-profile-card .single-visit-button-row {
         padding-left: 12px;
         padding-right: 12px;
+    }
+}
+
+/* Ultra narrow fallback: stack stats cleanly instead of cutting off */
+@media screen and (max-width: 340px) {
+    .instagram-profile-card .instagram-stats {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .instagram-profile-card .instagram-stats div {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 6px;
+        align-items: baseline;
+    }
+
+    .instagram-profile-card .instagram-stats strong,
+    .instagram-profile-card .instagram-stats span {
+        display: inline;
+        font-size: 0.78rem;
+    }
+
+    .instagram-profile-card .instagram-stats span {
+        margin-top: 0;
     }
 }
 
