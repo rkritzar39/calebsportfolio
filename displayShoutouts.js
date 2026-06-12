@@ -494,85 +494,302 @@ function formatRelativeTime(createdAt, updatedAt) {
 }
 
 // --- Functions to Render Cards (Shoutouts, Tech, FAQs) ---
-// (Your existing renderTikTokCard, renderInstagramCard, renderYouTubeCard, renderTechItemHomepage, renderFaqItemHomepage functions remain here, unchanged from your provided file)
-function renderTikTokCard(account) {
-    const profilePic = account.profilePic || 'images/default-profile.jpg';
-    const username = account.username || 'N/A';
-    const nickname = account.nickname || 'N/A';
-    const bio = account.bio || '';
-    const followers = account.followers || 'N/A';
-    const isVerified = account.isVerified || false;
-    const profileUrl = username !== 'N/A' ? `https://tiktok.com/@${encodeURIComponent(username)}` : '#';
-    const verifiedBadge = isVerified ? '<img src="check.png" alt="Verified" class="verified-badge">' : '';
-    return `<div class="creator-card">
-              <img src="${profilePic}" alt="@${username}" class="creator-pic" onerror="this.src='images/default-profile.jpg'">
-              <div class="creator-info">
-                <div class="creator-header"><h3>${nickname}</h3></div>
-                <p class="creator-username">@${username} ${verifiedBadge}</p>
-                <p class="creator-bio">${bio}</p>
-                <p class="follower-count">${followers} Followers</p>
-                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="visit-profile"> Visit Profile </a>
-              </div>
-            </div>`;
-}
 
-function renderInstagramCard(account) {
-    const profilePic = account.profilePic || 'images/default-profile.jpg';
-    const username = account.username || 'N/A';
-    const nickname = account.nickname || 'N/A';
-    const bio = account.bio || '';
-    const followers = account.followers || 'N/A';
-    const isVerified = account.isVerified || false;
-    const profileUrl = username !== 'N/A' ? `https://instagram.com/${encodeURIComponent(username)}` : '#';
-    const verifiedBadge = isVerified ? '<img src="instagramcheck.png" alt="Verified" class="instagram-verified-badge">' : '';
-    return `<div class="instagram-creator-card">
-              <img src="${profilePic}" alt="${nickname}" class="instagram-creator-pic" onerror="this.src='images/default-profile.jpg'">
-              <div class="instagram-creator-info">
-                <div class="instagram-creator-header"><h3>${nickname}</h3></div>
-                <p class="instagram-creator-username">@${username} ${verifiedBadge}</p>
-                <p class="instagram-creator-bio">${bio}</p>
-                <p class="instagram-follower-count">${followers} Followers</p>
-                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="instagram-visit-profile"> Visit Profile </a>
-              </div>
-            </div>`;
-}
+// ======================
+// SHOUTOUT HELPER FUNCTIONS
+// ======================
+function formatShoutoutNumber(value) {
+    const num = Number(value);
 
-function renderYouTubeCard(account) {
-    const profilePic = account.profilePic || 'images/default-profile.jpg';
-    const usernameFromDb = account.username || 'N/A'; // Username/handle from Firestore
-    const nickname = account.nickname || 'N/A';      // Channel name
-    const bio = account.bio || '';
-    const subscribers = account.subscribers || 'N/A';
-    const coverPhoto = account.coverPhoto || null;
-    const isVerified = account.isVerified || false;
-    
-    let displayHandle = 'N/A';
-    let channelUrl = '#';
+    if (isNaN(num)) return value || "0";
 
-    if (usernameFromDb !== 'N/A' && usernameFromDb.trim() !== '' && usernameFromDb.trim() !== '@') {
-        displayHandle = usernameFromDb.startsWith('@') ? usernameFromDb : `@${usernameFromDb}`;
-        channelUrl = `https://www.youtube.com/${displayHandle}`; 
-    } else {
-        displayHandle = ''; 
+    if (num >= 1000000) {
+        return (num / 1000000)
+            .toFixed(num >= 10000000 ? 0 : 1)
+            .replace(".0", "") + "M";
     }
 
-    // This log is still useful for debugging the URL if the redirect issue persists later
-    // console.log(`[YouTube Card Render] DB Username: "${usernameFromDb}", Display Handle: "${displayHandle}", Channel URL: "${channelUrl}"`);
+    if (num >= 1000) {
+        return (num / 1000)
+            .toFixed(num >= 10000 ? 0 : 1)
+            .replace(".0", "") + "K";
+    }
 
-    const verifiedBadge = isVerified ? '<img src="youtubecheck.png" alt="Verified" class="youtube-verified-badge">' : '';
+    return num.toLocaleString();
+}
 
-    // Ensure this entire return statement is enclosed in BACKTICKS (`), not single or double quotes.
-    return `<div class="youtube-creator-card">
-              ${coverPhoto ? `<img src="${coverPhoto}" alt="${nickname} Cover Photo" class="youtube-cover-photo" onerror="this.style.display='none'">` : ''}
-              <img src="${profilePic}" alt="${nickname}" class="youtube-creator-pic" onerror="this.src='images/default-profile.jpg'">
-              <div class="youtube-creator-info">
-                <div class="youtube-creator-header"><h3>${nickname} ${verifiedBadge}</h3></div>
-                <div class="username-container"><p class="youtube-creator-username">${displayHandle}</p></div>
-                <p class="youtube-creator-bio">${bio}</p>
-                <p class="youtube-subscriber-count">${subscribers} Subscribers</p>
-                <a href="${channelUrl}" target="_blank" rel="noopener noreferrer" class="youtube-visit-profile"> Visit Channel </a>
-              </div>
-            </div>`;
+function normalizeShoutoutHandle(username) {
+    if (!username || username === "N/A") return "";
+    return String(username).replace("@", "").trim();
+}
+
+function getShoutoutProfilePic(account) {
+    return account.profilePic ||
+        account.profileImage ||
+        account.avatarUrl ||
+        account.imageUrl ||
+        "images/default-profile.jpg";
+}
+
+function renderShoutoutImage(src, className, altText, fallback = "images/default-profile.jpg") {
+    return `<img src="${src || fallback}" alt="${altText}" class="${className}" onerror="this.src='${fallback}'">`;
+}
+
+function renderShoutoutCover(src, className, altText, fallback = "images/default-cover.jpg") {
+    return `<img src="${src || fallback}" alt="${altText}" class="${className}" onerror="this.style.display='none'">`;
+}
+
+/* ------------------------------------------------------------
+   TIKTOK STYLE CARD — TOP PROFILE ONLY
+------------------------------------------------------------ */
+function renderTikTokCard(account) {
+    const profilePic = getShoutoutProfilePic(account);
+    const usernameRaw = normalizeShoutoutHandle(account.username);
+    const username = usernameRaw || "N/A";
+
+    const nickname = account.nickname ||
+        account.displayName ||
+        account.name ||
+        "TikTok Creator";
+
+    const bio = account.bio || "";
+    const subtitle = account.subtitle || account.extraLine || "";
+    const education = account.education || account.school || "";
+
+    const following = formatShoutoutNumber(account.following || 0);
+    const followers = formatShoutoutNumber(account.followers || account.followerCount || 0);
+    const likes = formatShoutoutNumber(account.likes || account.likeCount || 0);
+
+    const isVerified = account.isVerified || account.verified || false;
+
+    const verifiedBadge = isVerified
+        ? '<img src="check.png" alt="Verified" class="verified-badge">'
+        : '';
+
+    const profileUrl = username !== "N/A"
+        ? `https://tiktok.com/@${encodeURIComponent(username)}`
+        : "#";
+
+    return `
+    <article class="tiktok-profile-card platform-profile-only">
+        <div class="tiktok-topbar">
+            <i class="fas fa-chevron-left"></i>
+
+            <div class="tiktok-dynamic-island">
+                <i class="fas fa-link"></i>
+            </div>
+
+            <div class="tiktok-top-icons">
+                <i class="far fa-bell"></i>
+                <i class="fas fa-share"></i>
+            </div>
+        </div>
+
+        <div class="tiktok-profile-main">
+            ${renderShoutoutImage(profilePic, "tiktok-avatar", nickname)}
+
+            <h3>${nickname}</h3>
+
+            <p class="tiktok-username">@${username} ${verifiedBadge}</p>
+
+            <div class="tiktok-stats">
+                <div class="tiktok-stat">
+                    <strong>${following}</strong>
+                    <span>Following</span>
+                </div>
+
+                <div class="tiktok-stat">
+                    <strong>${followers}</strong>
+                    <span>Followers</span>
+                </div>
+
+                <div class="tiktok-stat">
+                    <strong>${likes}</strong>
+                    <span>Likes</span>
+                </div>
+            </div>
+
+            <div class="single-visit-button-row">
+                <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button tiktok-visit-button">
+                    <i class="fab fa-tiktok"></i>
+                    Visit Profile
+                </a>
+            </div>
+
+            ${bio ? `<p class="tiktok-bio">${bio}</p>` : ""}
+            ${subtitle ? `<p class="tiktok-subtitle">${subtitle}</p>` : ""}
+            ${education ? `
+            <p class="tiktok-education">
+                <i class="fas fa-graduation-cap"></i>
+                ${education}
+            </p>` : ""}
+        </div>
+    </article>`;
+}
+
+/* ------------------------------------------------------------
+   INSTAGRAM STYLE CARD — TOP PROFILE ONLY
+------------------------------------------------------------ */
+function renderInstagramCard(account) {
+    const profilePic = getShoutoutProfilePic(account);
+    const usernameRaw = normalizeShoutoutHandle(account.username);
+    const username = usernameRaw || "creator";
+
+    const nickname = account.nickname ||
+        account.displayName ||
+        account.name ||
+        "Instagram Creator";
+
+    const bio = account.bio || account.description || "";
+    const website = account.website || account.link || "";
+
+    const posts = formatShoutoutNumber(account.posts || account.postCount || 0);
+    const followers = formatShoutoutNumber(account.followers || account.followerCount || 0);
+    const following = formatShoutoutNumber(account.following || account.followingCount || 0);
+
+    const isVerified = account.isVerified || account.verified || false;
+
+    const verifiedBadge = isVerified
+        ? '<img src="instagramcheck.png" alt="Verified" class="instagram-verified-badge">'
+        : '';
+
+    const profileUrl = username !== "creator"
+        ? `https://instagram.com/${encodeURIComponent(username)}`
+        : "#";
+
+    return `
+    <article class="instagram-profile-card platform-profile-only">
+        <div class="instagram-topbar">
+            <button class="instagram-icon-btn" type="button" aria-label="Back">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <h3>
+                ${username}
+                ${verifiedBadge}
+            </h3>
+
+            <div class="instagram-top-actions">
+                <i class="far fa-bell"></i>
+                <i class="fas fa-ellipsis"></i>
+            </div>
+        </div>
+
+        <div class="instagram-profile-row">
+            ${renderShoutoutImage(profilePic, "instagram-avatar", nickname)}
+
+            <div class="instagram-profile-main">
+                <strong>${nickname}</strong>
+
+                <div class="instagram-stats">
+                    <div>
+                        <strong>${posts}</strong>
+                        <span>posts</span>
+                    </div>
+
+                    <div>
+                        <strong>${followers}</strong>
+                        <span>followers</span>
+                    </div>
+
+                    <div>
+                        <strong>${following}</strong>
+                        <span>following</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instagram-bio-block">
+            ${bio ? `<p>${bio.replace(/\n/g, "<br>")}</p>` : ""}
+
+            ${website ? `
+            <a href="${website}" target="_blank" rel="noopener noreferrer" class="instagram-website">
+                <i class="fas fa-link"></i>
+                ${website.replace(/^https?:\/\//, "")}
+            </a>` : ""}
+        </div>
+
+        <div class="single-visit-button-row">
+            <a href="${profileUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button instagram-visit-button">
+                <i class="fab fa-instagram"></i>
+                Visit Profile
+            </a>
+        </div>
+    </article>`;
+}
+
+/* ------------------------------------------------------------
+   YOUTUBE STYLE CARD — TOP CHANNEL ONLY
+------------------------------------------------------------ */
+function renderYouTubeCard(account) {
+    const profilePic = getShoutoutProfilePic(account);
+
+    const usernameFromDb = account.username || "";
+    const usernameRaw = normalizeShoutoutHandle(usernameFromDb);
+
+    const nickname = account.nickname ||
+        account.displayName ||
+        account.channelName ||
+        account.name ||
+        "YouTube Creator";
+
+    const bio = account.bio || account.description || "";
+    const subscribers = formatShoutoutNumber(account.subscribers || account.followerCount || account.followers || 0);
+    const videos = formatShoutoutNumber(account.videos || account.videoCount || 0);
+
+    const coverPhoto = account.coverPhoto ||
+        account.bannerImage ||
+        account.coverImage ||
+        null;
+
+    const isVerified = account.isVerified || account.verified || false;
+
+    const displayHandle = usernameRaw ? `@${usernameRaw}` : "";
+    const channelUrl = displayHandle ? `https://www.youtube.com/${displayHandle}` : "#";
+
+    const verifiedBadge = isVerified
+        ? '<img src="youtubecheck.png" alt="Verified" class="youtube-verified-badge">'
+        : '';
+
+    return `
+    <article class="youtube-channel-card platform-profile-only">
+        ${coverPhoto ? `
+        <div class="youtube-channel-banner">
+            ${renderShoutoutCover(coverPhoto, "youtube-cover-img", `${nickname} cover photo`)}
+        </div>` : ""}
+
+        <div class="youtube-channel-info">
+            ${renderShoutoutImage(profilePic, "youtube-channel-avatar", nickname)}
+
+            <div class="youtube-channel-text">
+                <h3>
+                    ${nickname}
+                    ${verifiedBadge}
+                </h3>
+
+                ${displayHandle ? `<p class="youtube-handle">${displayHandle}</p>` : ""}
+
+                <p class="youtube-stats">
+                    ${subscribers} subscribers
+                    ${videos && videos !== "0" ? ` · ${videos} videos` : ""}
+                </p>
+            </div>
+        </div>
+
+        ${bio ? `
+        <p class="youtube-channel-description">
+            ${bio}
+            ${bio.length > 95 ? `<span class="youtube-more"> ...more</span>` : ""}
+        </p>` : ""}
+
+        <div class="single-visit-button-row">
+            <a href="${channelUrl}" target="_blank" rel="noopener noreferrer" class="platform-visit-button youtube-visit-button">
+                <i class="fab fa-youtube"></i>
+                Visit Channel
+            </a>
+        </div>
+    </article>`;
 }
 
 const tiktokContainer = document.getElementById("latest-tiktok-section");
