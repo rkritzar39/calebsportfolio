@@ -604,6 +604,16 @@ function extractID(url) {
 ------------------------------------------------------------ */
 let allTechItems = [];
 
+// ======================
+// PERSONAL THRESHOLDS
+// ======================
+const techThresholds = {
+    cycleOld: 1500,
+    cycleVeryOld: 2000,
+    batteryBad: 85,
+    batteryCritical: 75
+};
+
 /* ------------------------------------------------------------
    LATEST OS CONFIG
    Update these manually when public releases change.
@@ -952,13 +962,16 @@ function calculateUpgradeScore(item) {
     if (age) score -= age.years * 10;
 
     score -= (100 - battery) * 1.2;
-    score -= cycles * 0.02;
 
-    if (cycles > 800) score -= 10;
+    // Adjusted for your high cycle tolerance
+    score -= cycles * 0.008;
+
+    if (cycles >= techThresholds.cycleVeryOld) score -= 10;
 
     if (osStatus?.isBehindPublic) score -= 8;
     if (osStatus?.status === "Very Outdated") score -= 18;
-    if (osStatus?.isBeta) score -= 5;
+
+    // Beta OS does not affect score
 
     if (support.supportLevel === "Limited Support") score -= 10;
     if (!support.supported) score -= 25;
@@ -1014,11 +1027,11 @@ function calculateUpgradeData(item) {
     const isPhone = deviceType === "phone";
     const isComputer = deviceType === "computer";
 
-    const batteryBad = batteryHealth < 85;
-    const batteryCritical = batteryHealth < 75;
+    const batteryBad = batteryHealth < techThresholds.batteryBad;
+    const batteryCritical = batteryHealth < techThresholds.batteryCritical;
 
-    const cycleOld = cycles > 500;
-    const cycleVeryOld = cycles > 800;
+    const cycleOld = cycles >= techThresholds.cycleOld;
+    const cycleVeryOld = cycles >= techThresholds.cycleVeryOld;
 
     const ageOld = ageYears > 3;
     const ageVeryOld = ageYears > 4;
@@ -1031,18 +1044,14 @@ function calculateUpgradeData(item) {
 
     let triggers = [];
 
-    // 📱 Phone-specific rule
+    // Phone-specific rule
     if (isPhone && batteryBad) {
         triggers.push("Battery below 85%");
     }
 
-    // OS rules
+    // OS rules — public outdated only
     if (osStatus?.isBehindPublic) {
         triggers.push("OS is outdated");
-    }
-
-    if (osStatus?.isBeta) {
-        triggers.push("Running beta OS");
     }
 
     // Computer-specific OS wording
@@ -1052,11 +1061,11 @@ function calculateUpgradeData(item) {
 
     // Shared rules
     if (cycleOld) {
-        triggers.push("High charge cycles");
+        triggers.push(`Charge cycles over ${techThresholds.cycleOld}`);
     }
 
     if (cycleVeryOld) {
-        triggers.push("Very high charge cycles");
+        triggers.push(`Charge cycles reached ${techThresholds.cycleVeryOld}+`);
     }
 
     if (ageOld) {
@@ -1082,8 +1091,7 @@ function calculateUpgradeData(item) {
         batteryBad ||
         cycleOld ||
         ageOld ||
-        support.supportLevel === "Limited Support" ||
-        osStatus?.isBeta
+        support.supportLevel === "Limited Support"
     ) {
         status = "Aging";
         color = "yellow";
@@ -1105,23 +1113,19 @@ function getRecommendedAction(item, upgrade, support, osStatus) {
     }
 
     if (upgrade.status === "Upgrade Recommended") {
-        if (cycles > 800 && batteryHealth >= 85) {
+        if (cycles >= techThresholds.cycleVeryOld && batteryHealth >= techThresholds.batteryBad) {
             return "Keep for now, but monitor battery cycles closely";
         }
 
         return "Plan upgrade soon";
     }
 
-    if (batteryHealth < 85 && batteryHealth >= 75) {
+    if (batteryHealth < techThresholds.batteryBad && batteryHealth >= techThresholds.batteryCritical) {
         return "Consider battery replacement";
     }
 
-    if (cycles > 800) {
+    if (cycles >= techThresholds.cycleVeryOld) {
         return "Monitor battery cycles closely";
-    }
-
-    if (osStatus?.isBeta) {
-        return "Monitor beta stability";
     }
 
     if (upgrade.status === "Aging") {
