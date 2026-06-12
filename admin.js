@@ -4338,24 +4338,899 @@ function displayFilteredActivityLog() {
     }
 
     // --- Tech Preview Rendering Functions ---
-     /** Generates HTML for the tech item preview based on data object */
-     function renderTechItemPreview(data) {
-        // ... (function code from previous response) ...
-         const name = data.name || 'Device Name'; const model = data.model || ''; const iconClass = data.iconClass || 'fas fa-question-circle'; const material = data.material || ''; const storage = data.storage || ''; const batteryCapacity = data.batteryCapacity || ''; const color = data.color || ''; const price = data.price ? `$${data.price}` : ''; const dateReleased = data.dateReleased || ''; const dateBought = data.dateBought || ''; const osVersion = data.osVersion || ''; const batteryHealth = data.batteryHealth !== null && !isNaN(data.batteryHealth) ? parseInt(data.batteryHealth, 10) : null; const batteryCycles = data.batteryCycles !== null && !isNaN(data.batteryCycles) ? data.batteryCycles : null; let batteryHtml = ''; if (batteryHealth !== null) { let batteryClass = ''; if (batteryHealth <= 20) batteryClass = 'critical'; else if (batteryHealth <= 50) batteryClass = 'low-power'; batteryHtml = `<div class="tech-detail"><i class="fas fa-heart"></i><span>Battery Health:</span></div><div class="battery-container"><div class="battery-icon ${batteryClass}"><div class="battery-level" style="width: ${batteryHealth}%;"></div><div class="battery-percentage">${batteryHealth}%</div></div></div>`; } let cyclesHtml = ''; if (batteryCycles !== null) { cyclesHtml = `<div class="tech-detail"><i class="fas fa-sync"></i><span>Battery Charge Cycles:</span> ${batteryCycles}</div>`; } return `<div class="tech-item"><h3><i class="${iconClass}"></i> ${name}</h3> ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${model}</div>` : ''} ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ''} ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${storage}</div>` : ''} ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${batteryCapacity}</div>` : ''} ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${color}</div>` : ''} ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ''} ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ''} ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ''} ${osVersion ? `<div class="tech-detail"><i class="fab fa-apple"></i><span>OS Version:</span> ${osVersion}</div>` : ''} ${batteryHtml} ${cyclesHtml} </div>`;
-     }
 
-     /** Reads form data and updates the corresponding tech preview area */
-     function updateTechItemPreview(formType) {
-         // ... (function code from previous response) ...
-          let formElement; let previewElement; if (formType === 'add') { formElement = addTechItemForm; previewElement = addTechItemPreview; } else if (formType === 'edit') { formElement = editTechItemForm; previewElement = editTechItemPreview; } else { return; } if (!formElement || !previewElement) { return; } const techData = {}; const inputs = formElement.querySelectorAll('input[name], select[name], textarea[name]'); inputs.forEach(input => { const name = input.name; let value = input.value.trim(); if (input.type === 'number') { value = input.value === '' ? null : parseFloat(input.value); if (isNaN(value)) value = null; } techData[name] = value === '' ? null : value; }); try { const previewHTML = renderTechItemPreview(techData); previewElement.innerHTML = previewHTML; } catch (e) { console.error("Error rendering tech preview:", e); previewElement.innerHTML = '<p class="error"><small>Error generating preview.</small></p>'; }
-     }
+// ======================
+// PREVIEW HELPERS
+// ======================
+function getTechPreviewThresholds() {
+    return {
+        cycleOld: 1500,
+        cycleVeryOld: 2000,
+        batteryBad: 85,
+        batteryCritical: 75
+    };
+}
 
-     /** Attaches input/change listeners to tech form inputs to trigger preview updates */
-     function attachTechPreviewListeners(formElement, formType) {
-         // ... (function code from previous response) ...
-          if (!formElement) return; const inputs = formElement.querySelectorAll('input[name], select[name], textarea[name]'); console.log(`Attaching preview listeners to ${inputs.length} inputs for ${formType} tech form.`); inputs.forEach(input => { const eventType = (input.type === 'checkbox' || input.type === 'select-one') ? 'change' : 'input'; const listenerFlag = `__techPreviewListener_${eventType}`; if (!input[listenerFlag]) { input.addEventListener(eventType, () => { updateTechItemPreview(formType); }); input[listenerFlag] = true; } });
-     }
+function detectPreviewOSType(osVersion) {
+    if (!osVersion) return "unknown";
 
+    const os = String(osVersion).toLowerCase();
+
+    if (os.includes("ipados")) return "ipados";
+    if (os.includes("ios")) return "ios";
+    if (os.includes("macos")) return "macos";
+
+    return "ios";
+}
+
+function formatPreviewOSType(osType) {
+    if (osType === "ios") return "iOS";
+    if (osType === "ipados") return "iPadOS";
+    if (osType === "macos") return "macOS";
+    return "OS";
+}
+
+function extractPreviewVersionString(osVersion) {
+    if (!osVersion) return null;
+
+    const match = String(osVersion).match(/(\d+(?:\.\d+){0,2})/);
+    return match ? match[1] : null;
+}
+
+function normalizePreviewVersion(version) {
+    return String(version)
+        .split(".")
+        .map(num => parseInt(num, 10))
+        .map(num => isNaN(num) ? 0 : num);
+}
+
+function comparePreviewVersions(a, b) {
+    const versionA = normalizePreviewVersion(a);
+    const versionB = normalizePreviewVersion(b);
+
+    const maxLength = Math.max(versionA.length, versionB.length);
+
+    for (let i = 0; i < maxLength; i++) {
+        const partA = versionA[i] || 0;
+        const partB = versionB[i] || 0;
+
+        if (partA > partB) return 1;
+        if (partA < partB) return -1;
+    }
+
+    return 0;
+}
+
+function detectPreviewOSChannel(osVersion) {
+    if (!osVersion) return "public";
+
+    const os = String(osVersion).toLowerCase();
+
+    if (os.includes("developer beta") || os.includes("dev beta")) {
+        return "developer-beta";
+    }
+
+    if (os.includes("public beta")) {
+        return "public-beta";
+    }
+
+    if (os.includes("beta")) {
+        return "beta";
+    }
+
+    return "public";
+}
+
+function checkPreviewOSStatus(osVersion) {
+    if (!osVersion) return null;
+
+    const latestOSVersions = {
+        ios: "26.5.1",
+        ipados: "26.5",
+        macos: "26.5.1"
+    };
+
+    const osType = detectPreviewOSType(osVersion);
+    const currentVersion = extractPreviewVersionString(osVersion);
+    const latestPublicVersion = latestOSVersions[osType] || latestOSVersions.ios;
+    const channel = detectPreviewOSChannel(osVersion);
+
+    if (!currentVersion) return null;
+
+    const comparisonToPublic = comparePreviewVersions(currentVersion, latestPublicVersion);
+
+    let status = "Latest";
+    let color = "green";
+    let releaseChannel = "Public";
+
+    if (channel === "developer-beta") {
+        status = "Developer Beta";
+        color = "purple";
+        releaseChannel = "Developer Beta";
+    } else if (channel === "public-beta") {
+        status = "Public Beta";
+        color = "purple";
+        releaseChannel = "Public Beta";
+    } else if (channel === "beta") {
+        status = "Beta";
+        color = "purple";
+        releaseChannel = "Beta";
+    } else if (comparisonToPublic > 0) {
+        status = "Ahead of Public";
+        color = "purple";
+        releaseChannel = "Pre-release / Beta";
+    } else if (comparisonToPublic < 0) {
+        status = "Outdated";
+        color = "yellow";
+        releaseChannel = "Public";
+    }
+
+    if (comparisonToPublic < 0) {
+        const currentMajor = normalizePreviewVersion(currentVersion)[0] || 0;
+        const latestMajor = normalizePreviewVersion(latestPublicVersion)[0] || 0;
+
+        if (latestMajor - currentMajor >= 1) {
+            status = "Very Outdated";
+            color = "red";
+        }
+    }
+
+    return {
+        status,
+        color,
+        osType,
+        currentVersion,
+        latestPublicVersion,
+        releaseChannel,
+        isBeta: channel !== "public" || comparisonToPublic > 0,
+        isPublicLatest: comparisonToPublic === 0 && channel === "public",
+        isBehindPublic: comparisonToPublic < 0
+    };
+}
+
+function calculatePreviewDeviceAge(dateBought) {
+    if (!dateBought) return null;
+
+    const bought = new Date(dateBought);
+    if (isNaN(bought.getTime())) return null;
+
+    const now = new Date();
+    const diffMs = now - bought;
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const years = parseFloat((days / 365).toFixed(1));
+
+    return { days, years };
+}
+
+function detectPreviewDeviceType(item) {
+    const explicitType = (item.deviceType || "").toLowerCase();
+    if (explicitType) return explicitType;
+
+    const name = (item.name || "").toLowerCase();
+    const model = (item.model || "").toLowerCase();
+    const iconClass = (item.iconClass || "").toLowerCase();
+
+    if (
+        name.includes("iphone") ||
+        name.includes("phone") ||
+        model.includes("iphone") ||
+        iconClass.includes("mobile")
+    ) {
+        return "phone";
+    }
+
+    if (
+        name.includes("ipad") ||
+        name.includes("tablet") ||
+        model.includes("ipad")
+    ) {
+        return "tablet";
+    }
+
+    if (
+        name.includes("mac") ||
+        name.includes("macbook") ||
+        name.includes("imac") ||
+        name.includes("computer") ||
+        model.includes("mac") ||
+        iconClass.includes("desktop") ||
+        iconClass.includes("laptop")
+    ) {
+        return "computer";
+    }
+
+    if (
+        name.includes("watch") ||
+        model.includes("watch")
+    ) {
+        return "watch";
+    }
+
+    return "computer";
+}
+
+function checkPreviewDeviceSupport(item) {
+    const currentYear = new Date().getFullYear();
+    const modelYear = Number(item.modelYear ?? currentYear);
+    const supportEndYear = item.supportEndYear ? Number(item.supportEndYear) : null;
+
+    const osStatus = checkPreviewOSStatus(item.osVersion);
+    const deviceType = detectPreviewDeviceType(item);
+
+    const yearsOld = currentYear - modelYear;
+
+    let supported = true;
+    let supportLevel = "Fully Supported";
+    let supportColor = "green";
+
+    if (supportEndYear) {
+        if (currentYear > supportEndYear) {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (currentYear === supportEndYear) {
+            supportLevel = "Support Ending Soon";
+            supportColor = "yellow";
+        }
+    }
+
+    if (deviceType === "phone") {
+        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (yearsOld >= 4 || osStatus?.isBehindPublic) {
+            if (supported) {
+                supportLevel = "Limited Support";
+                supportColor = "yellow";
+            }
+        }
+    }
+
+    if (deviceType === "computer") {
+        if (yearsOld >= 6 || osStatus?.status === "Very Outdated") {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (yearsOld >= 5 || osStatus?.isBehindPublic) {
+            if (supported) {
+                supportLevel = "Limited Support";
+                supportColor = "yellow";
+            }
+        }
+    }
+
+    if (deviceType === "tablet") {
+        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (yearsOld >= 4 || osStatus?.isBehindPublic) {
+            if (supported) {
+                supportLevel = "Limited Support";
+                supportColor = "yellow";
+            }
+        }
+    }
+
+    if (deviceType === "watch" || deviceType === "accessory") {
+        if (yearsOld >= 5) {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (yearsOld >= 4) {
+            if (supported) {
+                supportLevel = "Limited Support";
+                supportColor = "yellow";
+            }
+        }
+    }
+
+    return {
+        supported,
+        supportLevel,
+        supportColor,
+        yearsOld,
+        deviceType,
+        modelYear,
+        supportEndYear
+    };
+}
+
+function estimatePreviewBatteryTrend(item) {
+    const age = calculatePreviewDeviceAge(item.dateBought);
+    if (!age) return null;
+
+    const currentHealth = Number(item.batteryHealth ?? 100);
+
+    if (isNaN(currentHealth)) return null;
+
+    const degradationRate = 5;
+    const estimatedLoss = age.years * degradationRate;
+    const estimatedOriginal = Math.min(100, currentHealth + estimatedLoss);
+
+    const declineValue = Math.max(0, estimatedOriginal - currentHealth);
+    const decline = declineValue.toFixed(1);
+
+    return {
+        decline,
+        trend: declineValue > 10 ? "Fast Decline" : "Normal"
+    };
+}
+
+function calculatePreviewUpgradeScore(item) {
+    const thresholds = getTechPreviewThresholds();
+
+    const age = calculatePreviewDeviceAge(item.dateBought);
+    const battery = Number(item.batteryHealth ?? 100);
+    const cycles = Number(item.batteryCycles ?? 0);
+    const support = checkPreviewDeviceSupport(item);
+    const osStatus = checkPreviewOSStatus(item.osVersion);
+
+    let score = 100;
+
+    if (age) score -= age.years * 10;
+
+    score -= (100 - battery) * 1.2;
+    score -= cycles * 0.008;
+
+    if (cycles >= thresholds.cycleVeryOld) {
+        score -= 10;
+    }
+
+    if (osStatus?.isBehindPublic) {
+        score -= 8;
+    }
+
+    if (osStatus?.status === "Very Outdated") {
+        score -= 18;
+    }
+
+    if (support.supportLevel === "Limited Support") {
+        score -= 10;
+    }
+
+    if (!support.supported) {
+        score -= 25;
+    }
+
+    score = Math.max(0, Math.min(100, Math.round(score)));
+
+    let label = "Excellent";
+    let color = "green";
+
+    if (score < 80) {
+        label = "Good";
+        color = "yellow";
+    }
+
+    if (score < 60) {
+        label = "Aging";
+        color = "orange";
+    }
+
+    if (score < 40) {
+        label = "Upgrade Soon";
+        color = "red";
+    }
+
+    return { score, label, color };
+}
+
+function calculatePreviewUpgradeData(item) {
+    const thresholds = getTechPreviewThresholds();
+
+    const now = new Date();
+
+    let boughtDate = null;
+
+    if (item.dateBought) {
+        boughtDate = new Date(item.dateBought);
+    }
+
+    let ageYears = 0;
+    if (boughtDate && !isNaN(boughtDate.getTime())) {
+        ageYears = (now - boughtDate) / (1000 * 60 * 60 * 24 * 365);
+    }
+
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = Number(item.batteryCycles ?? 0);
+    const osStatus = checkPreviewOSStatus(item.osVersion);
+    const support = checkPreviewDeviceSupport(item);
+
+    const deviceType = detectPreviewDeviceType(item);
+    const isPhone = deviceType === "phone";
+    const isComputer = deviceType === "computer";
+
+    const batteryBad = batteryHealth < thresholds.batteryBad;
+    const batteryCritical = batteryHealth < thresholds.batteryCritical;
+
+    const cycleOld = cycles >= thresholds.cycleOld;
+    const cycleVeryOld = cycles >= thresholds.cycleVeryOld;
+
+    const ageOld = ageYears > 3;
+    const ageVeryOld = ageYears > 4;
+
+    const outdatedOS = osStatus?.isBehindPublic && osStatus.status === "Very Outdated";
+
+    let status = "Great";
+    let color = "green";
+    let suggestion = "No upgrade needed";
+
+    let triggers = [];
+
+    if (isPhone && batteryBad) {
+        triggers.push("Battery below 85%");
+    }
+
+    if (osStatus?.isBehindPublic) {
+        triggers.push("OS is outdated");
+    }
+
+    if (isComputer && osStatus?.isBehindPublic) {
+        triggers.push("macOS support/update concern");
+    }
+
+    if (cycleOld) {
+        triggers.push(`Charge cycles over ${thresholds.cycleOld}`);
+    }
+
+    if (cycleVeryOld) {
+        triggers.push(`Charge cycles reached ${thresholds.cycleVeryOld}+`);
+    }
+
+    if (ageOld) {
+        triggers.push("Device older than 3 years");
+    }
+
+    if (!support.supported) {
+        triggers.push("Device no longer supported");
+    }
+
+    if (
+        batteryCritical ||
+        cycleVeryOld ||
+        ageVeryOld ||
+        outdatedOS ||
+        !support.supported
+    ) {
+        status = "Upgrade Recommended";
+        color = "red";
+        suggestion = "Consider upgrading soon";
+    } else if (
+        batteryBad ||
+        cycleOld ||
+        ageOld ||
+        support.supportLevel === "Limited Support" ||
+        support.supportLevel === "Support Ending Soon"
+    ) {
+        status = "Aging";
+        color = "yellow";
+        suggestion = "Monitor closely";
+    }
+
+    return { status, color, suggestion, triggers };
+}
+
+function getPreviewRecommendedAction(item, upgrade, support) {
+    const thresholds = getTechPreviewThresholds();
+
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = Number(item.batteryCycles ?? 0);
+
+    if (!support.supported) {
+        return "Plan upgrade soon";
+    }
+
+    if (upgrade.status === "Upgrade Recommended") {
+        if (cycles >= thresholds.cycleVeryOld && batteryHealth >= thresholds.batteryBad) {
+            return "Keep for now, but monitor battery cycles closely";
+        }
+
+        return "Plan upgrade soon";
+    }
+
+    if (batteryHealth < thresholds.batteryBad && batteryHealth >= thresholds.batteryCritical) {
+        return "Consider battery replacement";
+    }
+
+    if (cycles >= thresholds.cycleVeryOld) {
+        return "Monitor battery cycles closely";
+    }
+
+    if (upgrade.status === "Aging") {
+        return "Monitor closely";
+    }
+
+    return "Keep";
+}
+
+function generatePreviewDeviceSummary(item, upgrade, support, osStatus) {
+    const thresholds = getTechPreviewThresholds();
+
+    const deviceType = detectPreviewDeviceType(item);
+    const primaryUse = item.primaryUse || '';
+    const condition = item.condition || '';
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = Number(item.batteryCycles ?? 0);
+
+    let parts = [];
+
+    if (primaryUse) {
+        parts.push(`Used for ${primaryUse.toLowerCase()}`);
+    } else {
+        parts.push(`This ${deviceType} is being tracked`);
+    }
+
+    if (condition) {
+        parts.push(`condition is ${condition.toLowerCase()}`);
+    }
+
+    if (osStatus?.isBeta) {
+        parts.push("running beta software");
+    } else if (osStatus?.isBehindPublic) {
+        parts.push("behind the latest public OS");
+    } else if (osStatus?.isPublicLatest) {
+        parts.push("on the latest public OS");
+    }
+
+    if (support.supportLevel) {
+        parts.push(`support status is ${support.supportLevel.toLowerCase()}`);
+    }
+
+    if (deviceType === "phone" && batteryHealth < thresholds.batteryBad) {
+        parts.push("battery health is below your preferred threshold");
+    }
+
+    if (cycles >= thresholds.cycleVeryOld) {
+        parts.push("battery cycles are at your upgrade-level threshold");
+    } else if (cycles >= thresholds.cycleOld) {
+        parts.push("battery cycles are worth monitoring");
+    }
+
+    if (upgrade.status === "Upgrade Recommended") {
+        parts.push("upgrade planning is recommended");
+    } else if (upgrade.status === "Aging") {
+        parts.push("monitoring is recommended");
+    } else {
+        parts.push("no major upgrade concern right now");
+    }
+
+    return parts.join(", ") + ".";
+}
+
+/** Generates HTML for the tech item preview based on data object */
+function renderTechItemPreview(data) {
+    const name = data.name || 'Device Name';
+    const model = data.model || '';
+    const primaryUse = data.primaryUse || '';
+    const condition = data.condition || '';
+    const deviceType = data.deviceType || '';
+    const modelYear = data.modelYear || '';
+    const supportEndYear = data.supportEndYear || '';
+    const iconClass = data.iconClass || 'fas fa-question-circle';
+    const material = data.material || '';
+    const storage = data.storage || '';
+    const batteryCapacity = data.batteryCapacity || '';
+    const color = data.color || '';
+    const price = data.price ? `$${data.price}` : '';
+    const dateReleased = data.dateReleased || '';
+    const dateBought = data.dateBought || '';
+    const osVersion = data.osVersion || '';
+
+    const osStatus = checkPreviewOSStatus(osVersion);
+    const support = checkPreviewDeviceSupport(data);
+
+    let osUpdateHtml = '';
+
+    if (osStatus) {
+        if (osStatus.isBehindPublic) {
+            osUpdateHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-download"></i>
+                <span>Update:</span>
+                Public software update recommended
+            </div>`;
+        } else if (osStatus.isBeta) {
+            osUpdateHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-flask"></i>
+                <span>Beta Notice:</span>
+                Running beta software ahead of public release
+            </div>`;
+        }
+    }
+
+    const supportHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-shield-check"></i>
+        <span>Support Status:</span>
+        <span class="support-badge ${support.supportColor || 'green'}">
+            ${support.supportLevel || 'Fully Supported'}
+        </span>
+    </div>`;
+
+    const batteryHealth = data.batteryHealth !== null &&
+        data.batteryHealth !== undefined &&
+        !isNaN(data.batteryHealth)
+        ? parseInt(data.batteryHealth, 10)
+        : null;
+
+    const batteryCycles = data.batteryCycles !== null &&
+        data.batteryCycles !== undefined &&
+        !isNaN(data.batteryCycles)
+        ? Number(data.batteryCycles)
+        : null;
+
+    const upgrade = calculatePreviewUpgradeData(data);
+    const age = calculatePreviewDeviceAge(data.dateBought);
+    const batteryTrend = estimatePreviewBatteryTrend(data);
+    const upgradeScore = calculatePreviewUpgradeScore(data);
+
+    if (upgradeScore.score < 40 && upgrade.status !== "Upgrade Recommended") {
+        upgrade.status = "Upgrade Recommended";
+        upgrade.color = "red";
+        upgrade.suggestion = "Consider upgrading soon";
+    } else if (upgradeScore.score < 60 && upgrade.status === "Great") {
+        upgrade.status = "Aging";
+        upgrade.color = "yellow";
+        upgrade.suggestion = "Monitor closely";
+    }
+
+    const recommendedAction = getPreviewRecommendedAction(data, upgrade, support);
+
+    const deviceSummary = generatePreviewDeviceSummary(data, upgrade, support, osStatus);
+
+    const summaryHtml = `
+    <div class="tech-detail tech-summary">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Device Summary:</span>
+        ${deviceSummary}
+    </div>`;
+
+    const actionHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-tools"></i>
+        <span>Recommended Action:</span>
+        ${recommendedAction}
+    </div>`;
+
+    let batteryHtml = '';
+
+    if (batteryHealth !== null) {
+        let batteryClass = '';
+
+        if (batteryHealth <= 20) {
+            batteryClass = 'critical';
+        } else if (batteryHealth <= 50) {
+            batteryClass = 'low-power';
+        }
+
+        const displayHealth = Math.min(Math.max(batteryHealth, 0), 100);
+
+        batteryHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-heart"></i>
+            <span>Battery Health:</span>
+        </div>
+
+        <div class="battery-container">
+            <div class="battery-icon ${batteryClass}">
+                <div class="battery-level" style="width: ${displayHealth}%"></div>
+                <div class="battery-percentage">${batteryHealth}%</div>
+            </div>
+        </div>`;
+    }
+
+    let cyclesHtml = '';
+
+    if (batteryCycles !== null) {
+        cyclesHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-sync"></i>
+            <span>Battery Charge Cycles:</span> ${batteryCycles}
+        </div>`;
+    }
+
+    const upgradeHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-arrow-up"></i>
+        <span>Upgrade Status:</span>
+        <span class="upgrade-badge ${upgrade.color}">
+            ${upgrade.status}
+        </span>
+    </div>
+
+    <div class="tech-detail">
+        <i class="fas fa-lightbulb"></i>
+        <span>Suggestion:</span>
+        ${upgrade.suggestion}
+    </div>`;
+
+    let triggersHtml = '';
+
+    if (upgrade.triggers && upgrade.triggers.length > 0) {
+        triggersHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>Upgrade Triggers:</span>
+        </div>
+
+        <ul class="upgrade-triggers">
+            ${upgrade.triggers.map(t => `<li>${t}</li>`).join('')}
+        </ul>`;
+    }
+
+    const ageHtml = age ? `
+    <div class="tech-detail">
+        <i class="fas fa-clock"></i>
+        <span>Device Age:</span>
+        ${age.days} days (${age.years} years)
+    </div>` : '';
+
+    const trendHtml = batteryTrend && batteryTrend.decline !== undefined ? `
+    <div class="tech-detail">
+        <i class="fas fa-chart-line"></i>
+        <span>Battery Trend:</span>
+        ${batteryTrend.trend} (-${batteryTrend.decline}%)
+    </div>` : '';
+
+    const scoreHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-gauge-high"></i>
+        <span>Upgrade Score:</span>
+        ${upgradeScore.label} (${upgradeScore.score}/100)
+    </div>
+
+    <div class="score-bar">
+        <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%"></div>
+    </div>`;
+
+    const formattedOSType = osStatus
+        ? formatPreviewOSType(osStatus.osType)
+        : '';
+
+    const advancedDetailsContent = `
+        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${deviceType}</div>` : ''}
+        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${modelYear}</div>` : ''}
+        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${supportEndYear}</div>` : ''}
+        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ''}
+        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${batteryCapacity}</div>` : ''}
+        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ''}
+        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ''}
+        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ''}
+        ${cyclesHtml}
+        ${trendHtml}
+    `;
+
+    const hasAdvancedDetails =
+        deviceType ||
+        modelYear ||
+        supportEndYear ||
+        material ||
+        batteryCapacity ||
+        price ||
+        dateReleased ||
+        dateBought ||
+        cyclesHtml ||
+        trendHtml;
+
+    const advancedHtml = hasAdvancedDetails ? `
+    <details class="tech-advanced-details">
+        <summary>Advanced Details</summary>
+        ${advancedDetailsContent}
+    </details>` : '';
+
+    return `
+    <div class="tech-item">
+        <h3><i class="${iconClass}"></i> ${name}</h3>
+
+        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${model}</div>` : ''}
+        ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${primaryUse}</div>` : ''}
+        ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${condition}</div>` : ''}
+        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${storage}</div>` : ''}
+        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${color}</div>` : ''}
+
+        ${summaryHtml}
+        ${ageHtml}
+
+        ${osVersion ? `
+        <div class="tech-detail">
+            <i class="fab fa-apple"></i>
+            <span>OS Version:</span> ${osVersion}
+            ${osStatus ? `<span class="os-badge ${osStatus.color}">${osStatus.status}</span>` : ''}
+        </div>
+
+        ${osStatus ? `
+        <div class="tech-detail">
+            <i class="fas fa-code-branch"></i>
+            <span>Release Channel:</span> ${osStatus.releaseChannel}
+        </div>
+
+        <div class="tech-detail">
+            <i class="fas fa-circle-info"></i>
+            <span>Public Latest:</span> ${formattedOSType} ${osStatus.latestPublicVersion}
+        </div>
+        ` : ''}
+        ` : ''}
+
+        ${osUpdateHtml}
+        ${supportHtml}
+        ${batteryHtml}
+        ${scoreHtml}
+        ${upgradeHtml}
+        ${actionHtml}
+        ${triggersHtml}
+        ${advancedHtml}
+    </div>`;
+}
+
+/** Reads form data and updates the corresponding tech preview area */
+function updateTechItemPreview(formType) {
+    let formElement;
+    let previewElement;
+
+    if (formType === 'add') {
+        formElement = addTechItemForm;
+        previewElement = addTechItemPreview;
+    } else if (formType === 'edit') {
+        formElement = editTechItemForm;
+        previewElement = editTechItemPreview;
+    } else {
+        return;
+    }
+
+    if (!formElement || !previewElement) {
+        return;
+    }
+
+    const techData = {};
+    const inputs = formElement.querySelectorAll('input[name], select[name], textarea[name]');
+
+    inputs.forEach(input => {
+        const name = input.name;
+        let value = input.value.trim();
+
+        if (input.type === 'number') {
+            value = input.value === '' ? null : parseFloat(input.value);
+            if (isNaN(value)) value = null;
+        }
+
+        techData[name] = value === '' ? null : value;
+    });
+
+    try {
+        const previewHTML = renderTechItemPreview(techData);
+        previewElement.innerHTML = previewHTML;
+    } catch (e) {
+        console.error("Error rendering tech preview:", e);
+        previewElement.innerHTML = '<p class="error"><small>Error generating preview.</small></p>';
+    }
+}
+
+/** Attaches input/change listeners to tech form inputs to trigger preview updates */
+function attachTechPreviewListeners(formElement, formType) {
+    if (!formElement) return;
+
+    const inputs = formElement.querySelectorAll('input[name], select[name], textarea[name]');
+    console.log(`Attaching preview listeners to ${inputs.length} inputs for ${formType} tech form.`);
+
+    inputs.forEach(input => {
+        const eventType = (input.type === 'checkbox' || input.tagName.toLowerCase() === 'select')
+            ? 'change'
+            : 'input';
+
+        const listenerFlag = `__techPreviewListener_${eventType}`;
+
+        if (!input[listenerFlag]) {
+            input.addEventListener(eventType, () => {
+                updateTechItemPreview(formType);
+            });
+
+            input[listenerFlag] = true;
+        }
+    });
+}
 
     // ==================================
     // == END Tech Item Functions =======
