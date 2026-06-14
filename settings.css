@@ -1502,3 +1502,621 @@ body.settings-page .setting-icon-container.instagram-icon i,
 body.settings-page .setting-card.layout-reset-card .setting-icon-container.layout-reset-icon i{
   color: inherit !important;
 }
+
+/* ============================================================
+   APPLE / IOS-STYLE LIQUID GLASS UPGRADE
+   For settings page cards, dock, buttons, controls
+   Card-only glow. Text stays normal.
+============================================================ */
+
+/* ======================== */
+/* Page Background Polish   */
+/* ======================== */
+
+body.settings-page {
+    background:
+        radial-gradient(
+            circle at 18% 8%,
+            color-mix(in srgb, var(--accent-color) 18%, transparent),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 82% 0%,
+            rgba(255, 255, 255, 0.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(255, 255, 255, 0.04),
+            transparent 45%
+        ),
+        var(--bg-color);
+}
+
+/* Light mode background */
+body.light-e.settings-page,
+body.light-mode.settings-page {
+    background:
+        radial-gradient(
+            circle at 18% 8%,
+            color-mix(in srgb, var(--accent-color) 20%, transparent),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 82% 0%,
+            rgba(255, 255, 255, 0.9),
+            transparent 34%
+        ),
+        linear-gradient(
+            135deg,
+            #eef7ff,
+            #f8fbff 46%,
+            #ffffff
+        );
+}
+
+/* ======================== */
+/* Main Settings Shell      */
+/* ======================== */
+
+.settings-section {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.16),
+            rgba(255, 255, 255, 0.045) 42%,
+            rgba(0, 0, 0, 0.16)
+        ),
+        radial-gradient(
+            circle at 24% 0%,
+            rgba(255, 255, 255, 0.22),
+            transparent 45%
+        ),
+        color-mix(in srgb, var(--content-bg) 86%, transparent);
+
+    border: 1px solid color-mix(in srgb, white 14%, var(--border-color));
+    border-radius: 32px;
+
+    backdrop-filter: blur(42px) saturate(190%) contrast(108%);
+    -webkit-backdrop-filter: blur(42px) saturate(190%) contrast(108%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.28),
+        0 28px 70px color-mix(in srgb, var(--shadow-color) 70%, transparent);
+}
+
+.settings-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        radial-gradient(
+            ellipse at 50% -10%,
+            rgba(255, 255, 255, 0.48),
+            rgba(255, 255, 255, 0.12) 34%,
+            transparent 72%
+        ),
+        linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.18),
+            transparent 42%,
+            rgba(255, 255, 255, 0.07)
+        );
+
+    opacity: 0.46;
+    mix-blend-mode: screen;
+}
+
+.settings-section::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 110%,
+            rgba(0, 0, 0, 0.36),
+            transparent 62%
+        );
+
+    opacity: 0.38;
+}
+
+.settings-section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Light settings shell */
+body.light-e .settings-section,
+body.light-mode .settings-section {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.76),
+            rgba(255, 255, 255, 0.42) 45%,
+            rgba(255, 255, 255, 0.22)
+        ),
+        radial-gradient(
+            circle at 24% 0%,
+            rgba(255, 255, 255, 0.92),
+            transparent 48%
+        ),
+        rgba(255, 255, 255, 0.58);
+
+    border-color: rgba(255, 255, 255, 0.72);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.92),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+        0 24px 60px rgba(0, 0, 0, 0.14);
+}
+
+/* ======================== */
+/* Subsections              */
+/* ======================== */
+
+.settings-subsection {
+    position: relative;
+    border-radius: 28px;
+    padding: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0.025)
+        ),
+        color-mix(in srgb, var(--content-bg) 54%, transparent);
+
+    border: 1px solid color-mix(in srgb, white 10%, var(--border-color));
+
+    backdrop-filter: blur(28px) saturate(165%);
+    -webkit-backdrop-filter: blur(28px) saturate(165%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        0 14px 34px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+}
+
+body.light-e .settings-subsection,
+body.light-mode .settings-subsection {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.62),
+            rgba(255, 255, 255, 0.32)
+        ),
+        rgba(255, 255, 255, 0.36);
+
+    border-color: rgba(255, 255, 255, 0.58);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.85),
+        0 12px 28px rgba(0, 0, 0, 0.10);
+}
+
+/* ======================== */
+/* Settings Cards           */
+/* ======================== */
+
+.setting-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.14),
+            rgba(255, 255, 255, 0.045) 44%,
+            rgba(0, 0, 0, 0.13)
+        ),
+        radial-gradient(
+            circle at 18% 0%,
+            rgba(255, 255, 255, 0.22),
+            transparent 42%
+        ),
+        color-mix(in srgb, var(--content-bg) 78%, transparent);
+
+    border: 1px solid color-mix(in srgb, white 14%, var(--border-color));
+
+    backdrop-filter: blur(34px) saturate(190%) contrast(108%);
+    -webkit-backdrop-filter: blur(34px) saturate(190%) contrast(108%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.16),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.24),
+        0 12px 30px color-mix(in srgb, var(--shadow-color) 52%, transparent);
+
+    transition:
+        transform 220ms ease,
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        background 220ms ease;
+}
+
+/* Top glass shine */
+.setting-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        radial-gradient(
+            ellipse at 50% -18%,
+            rgba(255, 255, 255, 0.48),
+            rgba(255, 255, 255, 0.14) 36%,
+            transparent 72%
+        ),
+        linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.16),
+            transparent 48%,
+            rgba(255, 255, 255, 0.08)
+        );
+
+    opacity: 0.44;
+    mix-blend-mode: screen;
+}
+
+/* Bottom curved shadow */
+.setting-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 112%,
+            rgba(0, 0, 0, 0.32),
+            rgba(0, 0, 0, 0.12) 34%,
+            transparent 72%
+        );
+
+    opacity: 0.44;
+}
+
+.setting-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Card-only hover */
+.setting-card:hover {
+    transform: translateY(-3px);
+
+    border-color: color-mix(in srgb, var(--accent-color) 42%, var(--border-color));
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.24),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.26),
+        0 16px 36px color-mix(in srgb, var(--shadow-color) 58%, transparent),
+        0 0 0 1px color-mix(in srgb, var(--accent-color) 20%, transparent),
+        0 0 22px color-mix(in srgb, var(--accent-color) 22%, transparent);
+}
+
+.setting-card:hover::before {
+    opacity: 0.58;
+}
+
+.setting-card:hover::after {
+    opacity: 0.52;
+}
+
+/* Do not animate text/icons themselves */
+.setting-card:hover .setting-title,
+.setting-card:hover .setting-description,
+.setting-card:hover .setting-label,
+.setting-card:hover strong,
+.setting-card:hover p,
+.setting-card:hover span,
+.setting-card:hover i {
+    text-shadow: none !important;
+    transform: none !important;
+}
+
+/* Light card version */
+body.light-e .setting-card,
+body.light-mode .setting-card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.72),
+            rgba(255, 255, 255, 0.36) 45%,
+            rgba(255, 255, 255, 0.18)
+        ),
+        radial-gradient(
+            circle at 18% 0%,
+            rgba(255, 255, 255, 0.92),
+            transparent 44%
+        ),
+        rgba(255, 255, 255, 0.42);
+
+    border-color: rgba(255, 255, 255, 0.58);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.88),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+        0 12px 28px rgba(0, 0, 0, 0.11);
+}
+
+body.light-e .setting-card:hover,
+body.light-mode .setting-card:hover {
+    border-color: color-mix(in srgb, var(--accent-color) 34%, rgba(255, 255, 255, 0.72));
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.95),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.08),
+        0 16px 34px rgba(0, 0, 0, 0.14),
+        0 0 0 1px color-mix(in srgb, var(--accent-color) 18%, transparent),
+        0 0 22px color-mix(in srgb, var(--accent-color) 18%, transparent);
+}
+
+/* ======================== */
+/* Icon Containers          */
+/* ======================== */
+
+.setting-icon-container {
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.28),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.28),
+        0 8px 18px color-mix(in srgb, var(--shadow-color) 48%, transparent);
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+}
+
+/* ======================== */
+/* Buttons                  */
+/* ======================== */
+
+.button,
+.custom-bg-label,
+.back-link {
+    position: relative;
+    overflow: hidden;
+
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, white 14%, var(--border-color));
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0.04) 48%,
+            rgba(0, 0, 0, 0.12)
+        ),
+        color-mix(in srgb, var(--content-bg) 74%, transparent);
+
+    backdrop-filter: blur(22px) saturate(170%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.18),
+        0 8px 18px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease;
+}
+
+.button:hover,
+.custom-bg-label:hover,
+.back-link:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--accent-color) 42%, var(--border-color));
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.22),
+        0 12px 24px color-mix(in srgb, var(--shadow-color) 50%, transparent),
+        0 0 16px color-mix(in srgb, var(--accent-color) 18%, transparent);
+}
+
+/* ======================== */
+/* Segmented Controls       */
+/* ======================== */
+
+.segmented-control {
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.14),
+            rgba(255, 255, 255, 0.04)
+        ),
+        color-mix(in srgb, var(--content-bg) 72%, transparent);
+
+    border: 1px solid color-mix(in srgb, white 12%, var(--border-color));
+
+    backdrop-filter: blur(24px) saturate(170%);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.14),
+        0 8px 18px color-mix(in srgb, var(--shadow-color) 34%, transparent);
+}
+
+.segmented-control .seg-bg {
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--accent-color) 86%, white 14%),
+            color-mix(in srgb, var(--accent-color) 92%, black 8%)
+        );
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.34),
+        0 6px 14px color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+/* ======================== */
+/* Switches                 */
+/* ======================== */
+
+.md-switch .track {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.16),
+            rgba(0, 0, 0, 0.12)
+        ),
+        var(--toggle-off);
+
+    border: 1px solid color-mix(in srgb, white 14%, var(--border-color));
+
+    box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.14),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.md-switch input:checked + .track {
+    background:
+        linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--accent-color) 82%, white 18%),
+            color-mix(in srgb, var(--accent-color) 92%, black 8%)
+        );
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.32),
+        0 0 18px color-mix(in srgb, var(--accent-color) 28%, transparent);
+}
+
+.md-switch .thumb {
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.28),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+/* ======================== */
+/* Inputs / Selects         */
+/* ======================== */
+
+input[type="time"],
+input[type="date"],
+input[type="range"],
+select {
+    border-radius: 16px;
+}
+
+select,
+input[type="time"],
+input[type="date"] {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0.04)
+        ),
+        color-mix(in srgb, var(--content-bg) 78%, transparent);
+
+    border: 1px solid color-mix(in srgb, white 12%, var(--border-color));
+
+    color: var(--text-color);
+
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.12),
+        0 6px 14px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+}
+
+/* ======================== */
+/* Bottom Dock              */
+/* ======================== */
+
+.onyx-dock {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.18),
+            rgba(255, 255, 255, 0.05) 48%,
+            rgba(0, 0, 0, 0.18)
+        ),
+        color-mix(in srgb, var(--content-bg) 80%, transparent);
+
+    border: 1px solid color-mix(in srgb, white 16%, var(--border-color));
+
+    backdrop-filter: blur(38px) saturate(190%) contrast(108%);
+    -webkit-backdrop-filter: blur(38px) saturate(190%) contrast(108%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.20),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.24),
+        0 20px 50px color-mix(in srgb, var(--shadow-color) 62%, transparent);
+}
+
+.dock-item {
+    border-radius: 18px;
+
+    transition:
+        transform 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.dock-item:hover,
+.dock-item.active {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.16),
+            rgba(255, 255, 255, 0.04)
+        ),
+        color-mix(in srgb, var(--accent-color) 18%, transparent);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.18),
+        0 0 18px color-mix(in srgb, var(--accent-color) 18%, transparent);
+}
+
+/* ======================== */
+/* Reduced Motion           */
+/* ======================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .setting-card,
+    .button,
+    .custom-bg-label,
+    .back-link,
+    .dock-item {
+        transition: none !important;
+    }
+
+    .setting-card:hover,
+    .button:hover,
+    .custom-bg-label:hover,
+    .back-link:hover {
+        transform: none !important;
+    }
+}
