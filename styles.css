@@ -4558,7 +4558,7 @@ body.dark-mode .bubble {
     display: none;
 }
 
-/* Stats row — labels below numbers and grayed */
+/* Stats row — labels below numbers and grayed, slightly bigger */
 .instagram-profile-card .instagram-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4579,7 +4579,7 @@ body.dark-mode .bubble {
 .instagram-profile-card .instagram-stats strong {
     display: block;
     color: var(--text-color);
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 900;
     line-height: 1.1;
     margin: 0;
@@ -4594,7 +4594,7 @@ body.dark-mode .bubble {
 .instagram-profile-card .instagram-stats span {
     display: block;
     color: var(--secondary-text);
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     font-weight: 600;
     line-height: 1.15;
     margin-top: 3px;
@@ -4985,11 +4985,11 @@ body.light-e .tiktok-profile-card i {
     }
 
     .instagram-profile-card .instagram-stats strong {
-        font-size: 0.86rem;
+        font-size: 0.92rem;
     }
 
     .instagram-profile-card .instagram-stats span {
-        font-size: 0.7rem;
+        font-size: 0.74rem;
         letter-spacing: -0.01em;
     }
 }
@@ -5063,11 +5063,11 @@ body.light-e .tiktok-profile-card i {
     }
 
     .instagram-profile-card .instagram-stats strong {
-        font-size: 0.78rem;
+        font-size: 0.84rem;
     }
 
     .instagram-profile-card .instagram-stats span {
-        font-size: 0.64rem;
+        font-size: 0.68rem;
     }
 
     .instagram-bio-block,
@@ -5133,7 +5133,7 @@ body.light-e .tiktok-profile-card i {
     }
 
     .instagram-profile-card .instagram-stats strong {
-        font-size: 0.74rem;
+        font-size: 0.76rem;
     }
 
     .instagram-profile-card .instagram-stats span {
@@ -5214,11 +5214,11 @@ body.light-e .tiktok-profile-card i {
     }
 
     .instagram-profile-card .instagram-stats strong {
-        font-size: 0.72rem;
+        font-size: 0.76rem;
     }
 
     .instagram-profile-card .instagram-stats span {
-        font-size: 0.58rem;
+        font-size: 0.62rem;
     }
 
     .instagram-bio-block,
