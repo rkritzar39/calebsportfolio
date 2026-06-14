@@ -6054,8 +6054,11 @@ body.light-e .tiktok-profile-card i {
 /* ======================================================= */
 /* ONYX GLASS v2 – Version & Legal Sections               */
 /* Cleaner depth, better light/dark balance               */
+/* Fixed for current HTML IDs and optional classes         */
 /* ======================================================= */
 
+#version-info-section,
+#legal-section,
 .version-info-section,
 .legal-section {
   position: relative;
@@ -6075,43 +6078,68 @@ body.light-e .tiktok-profile-card i {
 
   border: 1px solid color-mix(in srgb, var(--border-color) 35%, transparent);
 
-  transition: all 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease,
+    background 0.3s ease;
 }
 
-/* Subtle liquid reflection (reduced intensity) */
+/* Subtle liquid reflection, reduced intensity */
+#version-info-section::before,
+#legal-section::before,
 .version-info-section::before,
 .legal-section::before {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
+
   background: radial-gradient(
     circle at 50% 0%,
     color-mix(in srgb, white 10%, transparent),
     transparent 60%
   );
+
   opacity: 0.22;
   pointer-events: none;
 }
 
+/* Subtle liquid depth */
+#version-info-section::after,
+#legal-section::after,
 .version-info-section::after,
 .legal-section::after {
   content: "";
   position: absolute;
   inset: 0;
+  border-radius: inherit;
+
   background: linear-gradient(
     180deg,
     color-mix(in srgb, white 6%, transparent),
     transparent 40%,
     color-mix(in srgb, black 8%, transparent)
   );
+
   opacity: 0.18;
   pointer-events: none;
+}
+
+/* Keep real content above glass overlays */
+#version-info-section > *,
+#legal-section > *,
+.version-info-section > *,
+.legal-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ======================== */
 /* Version Info Section     */
 /* ======================== */
 
+#version-info-section,
 .version-info-section {
   padding: 26px;
   margin-bottom: 36px;
@@ -6142,14 +6170,16 @@ body.light-e .tiktok-profile-card i {
 }
 
 /* ======================== */
-/* List Items              */
+/* List Items               */
 /* ======================== */
 
 .version-list {
   position: relative;
   z-index: 1;
+
   display: grid;
   gap: 12px;
+
   list-style: none;
   margin: 0;
   padding: 0;
@@ -6174,7 +6204,11 @@ body.light-e .tiktok-profile-card i {
     0 10px 24px color-mix(in srgb, var(--shadow-color) 25%, transparent),
     inset 0 1px 0 color-mix(in srgb, white 6%, transparent);
 
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    background 0.25s ease;
 }
 
 /* Cleaner glow dot */
@@ -6182,6 +6216,7 @@ body.light-e .tiktok-profile-card i {
   content: "";
   position: absolute;
   left: 14px;
+
   width: 9px;
   height: 9px;
   border-radius: 50%;
@@ -6199,6 +6234,7 @@ body.light-e .tiktok-profile-card i {
 /* Soft hover lift */
 .version-list li:hover {
   transform: translateY(-2px);
+
   border-color: color-mix(in srgb, var(--accent-color) 28%, var(--border-color));
 
   box-shadow:
@@ -6213,12 +6249,12 @@ body.light-e .tiktok-profile-card i {
 }
 
 .version-value {
-  font-family: var(--mono-font, ui-monospace, SFMono-Regular, monospace);
+  font-family: var(--mono-font, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace);
   color: var(--text-color);
 }
 
 /* ======================== */
-/* System States           */
+/* System States            */
 /* ======================== */
 
 #browser-info::before {
@@ -6233,8 +6269,42 @@ body.light-e .tiktok-profile-card i {
   background: linear-gradient(135deg, #34c759, #0bd36f);
 }
 
+#network-info::before {
+  background: linear-gradient(135deg, #34c759, #0bd36f);
+}
+
 #battery-info::before {
   background: linear-gradient(135deg, #30d158, #1ecf4a);
+}
+
+/* New beta/revamp rows */
+#release-track-info::before {
+  background: linear-gradient(135deg, #bf5af2, #9b5cff);
+}
+
+#revamp-info::before {
+  background: linear-gradient(135deg, #ff9500, #ffcc00);
+}
+
+#target-release-info::before {
+  background: linear-gradient(135deg, #007aff, #5ac8fa);
+}
+
+/* Weather / sun status rows */
+#weather-info::before {
+  background: linear-gradient(135deg, #ffd60a, #ff9500);
+}
+
+#sunrise-info::before {
+  background: linear-gradient(135deg, #ffcc00, #ff9500);
+}
+
+#sunset-info::before {
+  background: linear-gradient(135deg, #ff2d55, #5856d6);
+}
+
+#day-status-info::before {
+  background: linear-gradient(135deg, #ffd60a, #30d158);
 }
 
 /* Battery states */
@@ -6254,7 +6324,15 @@ body.light-e .tiktok-profile-card i {
 #browser-info:hover,
 #resolution-info:hover,
 #connection-info:hover,
-#battery-info:hover {
+#network-info:hover,
+#battery-info:hover,
+#release-track-info:hover,
+#revamp-info:hover,
+#target-release-info:hover,
+#weather-info:hover,
+#sunrise-info:hover,
+#sunset-info:hover,
+#day-status-info:hover {
   background: color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
   border-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
@@ -6263,31 +6341,104 @@ body.light-e .tiktok-profile-card i {
 /* Dark Mode Refinement     */
 /* ======================== */
 
-@media (prefers-color-scheme: dark) {
-  .version-info-section,
-  .legal-section {
-    backdrop-filter: blur(26px) saturate(155%) contrast(110%);
-  }
+body.dark-mode #version-info-section,
+body.dark-mode #legal-section,
+html.dark-mode body #version-info-section,
+html.dark-mode body #legal-section,
+body.dark-mode .version-info-section,
+body.dark-mode .legal-section,
+html.dark-mode body .version-info-section,
+html.dark-mode body .legal-section {
+  backdrop-filter: blur(26px) saturate(155%) contrast(110%);
+  -webkit-backdrop-filter: blur(26px) saturate(155%) contrast(110%);
+}
 
-  .version-list li {
-    background: color-mix(in srgb, var(--content-bg) 78%, transparent);
-  }
+body.dark-mode .version-list li,
+html.dark-mode body .version-list li {
+  background: color-mix(in srgb, var(--content-bg) 78%, transparent);
 }
 
 /* ======================== */
 /* Light Mode Refinement    */
 /* ======================== */
 
+body.light-e #version-info-section,
+body.light-e #legal-section,
+body.light-mode #version-info-section,
+body.light-mode #legal-section,
+body.light-e .version-info-section,
+body.light-e .legal-section,
+body.light-mode .version-info-section,
+body.light-mode .legal-section {
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+body.light-e .version-list li,
+body.light-mode .version-list li {
+  background: rgba(255, 255, 255, 0.65);
+}
+
+/* ======================== */
+/* Optional System Preference Fallback */
+/* Only applies if no explicit theme class is present */
+/* ======================== */
+
+@media (prefers-color-scheme: dark) {
+  body:not(.light-e):not(.light-mode):not(.dark-mode) #version-info-section,
+  body:not(.light-e):not(.light-mode):not(.dark-mode) #legal-section,
+  body:not(.light-e):not(.light-mode):not(.dark-mode) .version-info-section,
+  body:not(.light-e):not(.light-mode):not(.dark-mode) .legal-section {
+    backdrop-filter: blur(26px) saturate(155%) contrast(110%);
+    -webkit-backdrop-filter: blur(26px) saturate(155%) contrast(110%);
+  }
+
+  body:not(.light-e):not(.light-mode):not(.dark-mode) .version-list li {
+    background: color-mix(in srgb, var(--content-bg) 78%, transparent);
+  }
+}
+
 @media (prefers-color-scheme: light) {
-  .version-info-section,
-  .legal-section {
+  body:not(.light-e):not(.light-mode):not(.dark-mode) #version-info-section,
+  body:not(.light-e):not(.light-mode):not(.dark-mode) #legal-section,
+  body:not(.light-e):not(.light-mode):not(.dark-mode) .version-info-section,
+  body:not(.light-e):not(.light-mode):not(.dark-mode) .legal-section {
     box-shadow:
       0 18px 45px rgba(0, 0, 0, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.7);
   }
 
-  .version-list li {
+  body:not(.light-e):not(.light-mode):not(.dark-mode) .version-list li {
     background: rgba(255, 255, 255, 0.65);
+  }
+}
+
+/* ======================== */
+/* Responsive Layout        */
+/* ======================== */
+
+@media screen and (max-width: 768px) {
+  #version-info-section,
+  #legal-section,
+  .version-info-section,
+  .legal-section {
+    padding: 20px;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .version-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    padding: 14px 14px 14px 36px;
+  }
+
+  .version-value {
+    word-break: break-word;
+    overflow-wrap: anywhere;
   }
 }
 
