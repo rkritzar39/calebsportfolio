@@ -10052,18 +10052,7 @@ body.light-e .creator-sort-controls select option {
 }
 
 /* ======================================================= */
-/* Beta Preview Page                                      */
-/* v26.6-beta.1                                           */
-/* ======================================================= */
-
-.beta-page .container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding-bottom: 120px;
-}
-
-.beta-page-section {
-  position: relative;
+/* Beta Preview Page                                     : relative;/* Beta Preview Page                                      */
   overflow: hidden;
   padding: 30px;
   margin-bottom: 28px;
@@ -10089,6 +10078,7 @@ body.light-e .creator-sort-controls select option {
   position: absolute;
   inset: 0;
   border-radius: inherit;
+
   background: var(--liquid-reflection);
   opacity: 0.28;
   mix-blend-mode: soft-light;
@@ -10112,6 +10102,7 @@ body.light-e .creator-sort-controls select option {
   color: var(--accent-color);
   font-weight: 800;
   letter-spacing: 0.02em;
+
   display: flex;
   align-items: center;
   gap: 8px;
@@ -10211,6 +10202,7 @@ body.light-e .creator-sort-controls select option {
 .beta-section-heading h2 {
   margin: 0;
   color: var(--text-color);
+
   display: flex;
   align-items: center;
   gap: 10px;
@@ -10293,6 +10285,11 @@ body.light-e .creator-sort-controls select option {
 .beta-status.testing {
   color: #111111;
   background: linear-gradient(135deg, #ffd60a, #ffcc00);
+}
+
+.beta-status.planned {
+  color: #ffffff;
+  background: linear-gradient(135deg, #8e8e93, #636366);
 }
 
 .beta-notes-list {
@@ -10409,3 +10406,15 @@ body.light-e .creator-sort-controls select option {
     height: 46px;
   }
 }
+``
+/* v26.6-beta.1                                           */
+/* ======================================================= */
+
+.beta-page .container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 120px;
+}
+
+.beta-page-section {
+
