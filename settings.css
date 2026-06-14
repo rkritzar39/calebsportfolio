@@ -10,7 +10,14 @@
     --font-size-base: 16px;
     --line-height-base: 1.65;
 
-    --accent-color: #007aff;
+    /* ======================== */
+    /* Accent Colors            */
+    /* ======================== */
+
+    --light-accent: #007aff;
+    --dark-accent: #4ea8ff;
+
+    --accent-color: var(--light-accent);
     --accent-text-color: #ffffff;
 
     /* ======================== */
@@ -23,7 +30,7 @@
     --light-secondary-text: #8a8a8e;
     --light-border: #c6c6c8;
     --light-hover: rgba(0, 0, 0, 0.05);
-    --light-toggle-on: var(--accent-color);
+    --light-toggle-on: var(--light-accent);
     --light-toggle-off: #e9e9eb;
     --light-red-color: #ff3b30;
     --light-slider-track: #e9e9eb;
@@ -39,7 +46,7 @@
     --dark-secondary-text: #8d8d93;
     --dark-border: #38383a;
     --dark-hover: rgba(255, 255, 255, 0.1);
-    --dark-toggle-on: var(--accent-color);
+    --dark-toggle-on: var(--dark-accent);
     --dark-toggle-off: #39393d;
     --dark-red-color: #ff453a;
     --dark-slider-track: #2f2f31;
@@ -55,6 +62,7 @@
     --secondary-text: var(--light-secondary-text);
     --border-color: var(--light-border);
     --hover-color: var(--light-hover);
+
     --toggle-on: var(--light-toggle-on);
     --toggle-off: var(--light-toggle-off);
     --red-color: var(--light-red-color);
@@ -106,7 +114,7 @@
     --ios-radius-lg: 18px;
     --ios-radius-md: 14px;
 
-    /* Shoutouts compatibility radius aliases */
+    /* Compatibility aliases */
     --radius-xl: var(--ios-radius-xl);
     --radius-lg: var(--ios-radius-lg);
     --radius-md: var(--ios-radius-md);
@@ -120,7 +128,8 @@
     --transition-slow: 0.5s ease;
 
     /* ======================== */
-    /* Shoutouts Glass Aliases  */
+    /* Liquid Glass Aliases     */
+    /* Used by shoutouts.css    */
     /* ======================== */
 
     --backdrop-blur: var(--glass-blur);
@@ -142,25 +151,26 @@
     --liquid-reflection:
         linear-gradient(
             120deg,
-            rgba(255, 255, 255, 0.65),
-            rgba(255, 255, 255, 0.18) 45%,
-            rgba(255, 255, 255, 0.05)
+            rgba(255, 255, 255, 0.75),
+            rgba(255, 255, 255, 0.28) 45%,
+            rgba(255, 255, 255, 0.08)
         );
 
     --liquid-refraction:
         linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.35),
-            rgba(255, 255, 255, 0.08)
+            rgba(255, 255, 255, 0.42),
+            rgba(255, 255, 255, 0.12)
         );
 }
 
 /* ======================================================= */
 /* Light Mode Overrides                                   */
-/* Supports body.light-e                                  */
+/* Supports body.light-e and body.light-mode               */
 /* ======================================================= */
 
-body.light-e {
+body.light-e,
+body.light-mode {
     --bg-color: var(--light-bg);
     --content-bg: var(--light-content-bg);
     --text-color: var(--light-text);
@@ -168,7 +178,7 @@ body.light-e {
     --border-color: var(--light-border);
     --hover-color: var(--light-hover);
 
-    --accent-color: #007aff;
+    --accent-color: var(--light-accent);
     --link-color: var(--accent-color);
     --icon-color: var(--light-text);
     --social-icon-text-color: var(--light-text);
@@ -205,16 +215,16 @@ body.light-e {
     --liquid-reflection:
         linear-gradient(
             120deg,
-            rgba(255, 255, 255, 0.65),
-            rgba(255, 255, 255, 0.18) 45%,
-            rgba(255, 255, 255, 0.05)
+            rgba(255, 255, 255, 0.75),
+            rgba(255, 255, 255, 0.28) 45%,
+            rgba(255, 255, 255, 0.08)
         );
 
     --liquid-refraction:
         linear-gradient(
             135deg,
-            rgba(255, 255, 255, 0.35),
-            rgba(255, 255, 255, 0.08)
+            rgba(255, 255, 255, 0.42),
+            rgba(255, 255, 255, 0.12)
         );
 }
 
@@ -232,7 +242,7 @@ html.dark-mode body {
     --border-color: var(--dark-border);
     --hover-color: var(--dark-hover);
 
-    --accent-color: #007aff;
+    --accent-color: var(--dark-accent);
     --link-color: var(--accent-color);
     --icon-color: var(--dark-text);
     --social-icon-text-color: var(--dark-text);
