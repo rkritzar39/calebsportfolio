@@ -1,17 +1,25 @@
 :root {
     /* ======================================================= */
-    /* === Onyx (macOS/iOS 26 Inspired) Theme Defaults ===== */
+    /* === Onyx / Apple Liquid Glass Theme Defaults ========= */
     /* ======================================================= */
 
-    /* Base Defaults */
-    --font-size-base: 16px;
-    --accent-color: #007aff; /* Standard Apple blue */
-    --accent-text-color: #fff;
+    /* ======================== */
+    /* Base Defaults            */
+    /* ======================== */
 
-    /* Light Mode */
+    --font-size-base: 16px;
+    --line-height-base: 1.65;
+
+    --accent-color: #007aff;
+    --accent-text-color: #ffffff;
+
+    /* ======================== */
+    /* Light Mode Palette       */
+    /* ======================== */
+
     --light-bg: #f2f2f7;
     --light-content-bg: #ffffff;
-    --light-text: #000;
+    --light-text: #000000;
     --light-secondary-text: #8a8a8e;
     --light-border: #c6c6c8;
     --light-hover: rgba(0, 0, 0, 0.05);
@@ -19,12 +27,15 @@
     --light-toggle-off: #e9e9eb;
     --light-red-color: #ff3b30;
     --light-slider-track: #e9e9eb;
-    --light-slider-thumb: #fff;
+    --light-slider-thumb: #ffffff;
 
-    /* Dark Mode (Onyx) */
-    --dark-bg: #000;
+    /* ======================== */
+    /* Dark Mode Palette        */
+    /* ======================== */
+
+    --dark-bg: #000000;
     --dark-content-bg: #1c1c1e;
-    --dark-text: #fff;
+    --dark-text: #ffffff;
     --dark-secondary-text: #8d8d93;
     --dark-border: #38383a;
     --dark-hover: rgba(255, 255, 255, 0.1);
@@ -34,7 +45,10 @@
     --dark-slider-track: #2f2f31;
     --dark-slider-thumb: #e6e6e6;
 
-    /* Default theme */
+    /* ======================== */
+    /* Default Theme - Light    */
+    /* ======================== */
+
     --bg-color: var(--light-bg);
     --content-bg: var(--light-content-bg);
     --text-color: var(--light-text);
@@ -47,43 +61,225 @@
     --slider-track-color: var(--light-slider-track);
     --slider-track-filled-color: var(--accent-color);
     --slider-thumb-color: var(--light-slider-thumb);
-    --shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.08);
-    --shadow-elevation-2: 0 6px 20px rgba(0,0,0,0.12);
 
-    /* Glass Material (Optimized for deep blur) */
+    /* ======================== */
+    /* Shadows                  */
+    /* ======================== */
+
+    --shadow-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.08);
+    --shadow-elevation-2: 0 6px 20px rgba(0, 0, 0, 0.12);
+
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --glow-color: rgba(255, 255, 255, 0.7);
+
+    /* ======================== */
+    /* Links / Icons            */
+    /* ======================== */
+
+    --link-color: var(--accent-color);
+    --icon-color: var(--light-text);
+    --social-icon-text-color: var(--light-text);
+
+    /* ======================== */
+    /* Glass Material           */
+    /* ======================== */
+
     --glass-blur: blur(40px) saturate(180%) brightness(1.05);
-    
-    /* Light Mode Glass */
+
     --glass-bg-light: rgba(255, 255, 255, 0.55);
-    --glass-highlight-light: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    --glass-highlight-light:
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.4);
     --glass-shadow-light: 0 12px 32px -8px rgba(0, 0, 0, 0.12);
-    
-    /* Dark Mode Glass */
+
     --glass-bg-dark: rgba(28, 28, 30, 0.45);
-    --glass-highlight-dark: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    --glass-highlight-dark:
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
     --glass-shadow-dark: 0 16px 40px -8px rgba(0, 0, 0, 0.45);
 
-    /* iOS Radius Variables */
+    /* ======================== */
+    /* Radius Variables         */
+    /* ======================== */
+
     --ios-radius-xl: 22px;
     --ios-radius-lg: 18px;
     --ios-radius-md: 14px;
+
+    /* Shoutouts compatibility radius aliases */
+    --radius-xl: var(--ios-radius-xl);
+    --radius-lg: var(--ios-radius-lg);
+    --radius-md: var(--ios-radius-md);
+
+    /* ======================== */
+    /* Transition Variables     */
+    /* ======================== */
+
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* ======================== */
+    /* Shoutouts Glass Aliases  */
+    /* ======================== */
+
+    --backdrop-blur: var(--glass-blur);
+
+    --bubble-gradient:
+        radial-gradient(
+            circle at 40% 25%,
+            rgba(255, 255, 255, 0.65),
+            transparent 65%
+        );
+
+    --bubble-highlight:
+        inset 0 1px 2px rgba(255, 255, 255, 0.85),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+
+    --bubble-shadow:
+        var(--glass-shadow-light);
+
+    --liquid-reflection:
+        linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.65),
+            rgba(255, 255, 255, 0.18) 45%,
+            rgba(255, 255, 255, 0.05)
+        );
+
+    --liquid-refraction:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0.08)
+        );
 }
 
-/* Dark Mode Overrides */
-body.dark-mode {
+/* ======================================================= */
+/* Light Mode Overrides                                   */
+/* Supports body.light-e                                  */
+/* ======================================================= */
+
+body.light-e {
+    --bg-color: var(--light-bg);
+    --content-bg: var(--light-content-bg);
+    --text-color: var(--light-text);
+    --secondary-text: var(--light-secondary-text);
+    --border-color: var(--light-border);
+    --hover-color: var(--light-hover);
+
+    --accent-color: #007aff;
+    --link-color: var(--accent-color);
+    --icon-color: var(--light-text);
+    --social-icon-text-color: var(--light-text);
+
+    --toggle-on: var(--light-toggle-on);
+    --toggle-off: var(--light-toggle-off);
+    --red-color: var(--light-red-color);
+    --slider-track-color: var(--light-slider-track);
+    --slider-track-filled-color: var(--accent-color);
+    --slider-thumb-color: var(--light-slider-thumb);
+
+    --shadow-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.08);
+    --shadow-elevation-2: 0 6px 20px rgba(0, 0, 0, 0.12);
+
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --glow-color: rgba(255, 255, 255, 0.7);
+
+    --backdrop-blur: var(--glass-blur);
+
+    --bubble-gradient:
+        radial-gradient(
+            circle at 40% 25%,
+            rgba(255, 255, 255, 0.65),
+            transparent 65%
+        );
+
+    --bubble-highlight:
+        inset 0 1px 2px rgba(255, 255, 255, 0.85),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+
+    --bubble-shadow:
+        var(--glass-shadow-light);
+
+    --liquid-reflection:
+        linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.65),
+            rgba(255, 255, 255, 0.18) 45%,
+            rgba(255, 255, 255, 0.05)
+        );
+
+    --liquid-refraction:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0.08)
+        );
+}
+
+/* ======================================================= */
+/* Dark Mode Overrides                                    */
+/* Supports body.dark-mode and html.dark-mode body         */
+/* ======================================================= */
+
+body.dark-mode,
+html.dark-mode body {
     --bg-color: var(--dark-bg);
     --content-bg: var(--dark-content-bg);
     --text-color: var(--dark-text);
     --secondary-text: var(--dark-secondary-text);
     --border-color: var(--dark-border);
     --hover-color: var(--dark-hover);
+
+    --accent-color: #007aff;
+    --link-color: var(--accent-color);
+    --icon-color: var(--dark-text);
+    --social-icon-text-color: var(--dark-text);
+
     --toggle-on: var(--dark-toggle-on);
     --toggle-off: var(--dark-toggle-off);
     --red-color: var(--dark-red-color);
     --slider-track-color: var(--dark-slider-track);
+    --slider-track-filled-color: var(--accent-color);
     --slider-thumb-color: var(--dark-slider-thumb);
-    --shadow-elevation-1: 0 1px 2px rgba(0,0,0,0.3);
-    --shadow-elevation-2: 0 12px 28px rgba(0,0,0,0.35);
+
+    --shadow-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-elevation-2: 0 12px 28px rgba(0, 0, 0, 0.35);
+
+    --shadow-color: rgba(0, 0, 0, 0.55);
+    --glow-color: rgba(255, 255, 255, 0.08);
+
+    --backdrop-blur: var(--glass-blur);
+
+    --bubble-gradient:
+        radial-gradient(
+            circle at 25% 20%,
+            rgba(255, 255, 255, 0.15),
+            transparent 72%
+        );
+
+    --bubble-highlight:
+        inset 0 1px 2px rgba(255, 255, 255, 0.18),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+
+    --bubble-shadow:
+        var(--glass-shadow-dark);
+
+    --liquid-reflection:
+        linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.35),
+            rgba(255, 255, 255, 0.05) 45%,
+            rgba(255, 255, 255, 0.02)
+        );
+
+    --liquid-refraction:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.12),
+            rgba(255, 255, 255, 0.02)
+        );
 }
 
 /* Base body */
