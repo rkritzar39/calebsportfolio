@@ -80,6 +80,9 @@ body.light-e {
   --text-color: var(--light-text);
   --secondary-text: var(--light-secondary-text);
   --border-color: rgba(255, 255, 255, 0.45);
+
+  --accent-color: var(--light-accent);
+
   --hover-color: var(--light-hover);
   --link-color: var(--light-link);
   --shadow-color: var(--light-shadow);
@@ -101,6 +104,24 @@ body.dark-mode {
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-content-bg);
   --text-color: var(--dark-text);
+  --secondary-text: var(--dark-secondary-text);
+  --border-color: var(--dark-border);
+
+  --accent-color: var(--dark-accent);
+
+  --hover-color: var(--dark-hover);
+  --link-color: var(--dark-link);
+  --shadow-color: var(--dark-shadow);
+  --glow-color: var(--dark-glow);
+  --icon-color: var(--dark-icon);
+  --social-icon-text-color: var(--dark-text);
+
+  --bubble-gradient: radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.15), transparent 72%);
+  --bubble-highlight: inset 0 1px 2px rgba(255, 255, 255, 0.18);
+  --bubble-shadow: 0 28px 60px rgba(0, 0, 0, 0.45), inset 0 0 16px rgba(255, 255, 255, 0.05);
+  --liquid-reflection: linear-gradient(120deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.02));
+  --liquid-refraction: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+  --backdrop-blur: blur(28px) saturate(180%) contrast(110%);
 }
 
 /* ======================== */
@@ -9655,4 +9676,232 @@ body.light-e .creator-sort-controls select option {
 /* If sort controls are inside shoutouts section, keep them above cards */
 .shoutouts-section .creator-sort-controls {
     z-index: 120 !important;
+}
+
+/* ============================================================
+   SHOUTOUT CARD HOVER GLOW + BUTTON ARROW
+   Uses --accent-color from settings.css / root
+============================================================ */
+
+/* Smooth card hover */
+.tiktok-profile-card,
+.instagram-profile-card,
+.youtube-channel-card {
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease,
+        filter 220ms ease;
+    will-change: transform;
+}
+
+/* Accent glow around platform cards */
+.tiktok-profile-card:hover,
+.instagram-profile-card:hover,
+.youtube-channel-card:hover {
+    transform: translateY(-5px);
+
+    border-color: color-mix(in srgb, var(--accent-color) 50%, var(--border-color));
+
+    box-shadow:
+        var(--bubble-highlight),
+        var(--bubble-shadow),
+        0 18px 42px color-mix(in srgb, var(--shadow-color) 65%, transparent),
+        0 0 0 1px color-mix(in srgb, var(--accent-color) 28%, transparent),
+        0 0 22px color-mix(in srgb, var(--accent-color) 34%, transparent),
+        0 0 48px color-mix(in srgb, var(--accent-color) 18%, transparent);
+}
+
+/* Keyboard accessibility */
+.tiktok-profile-card:focus-within,
+.instagram-profile-card:focus-within,
+.youtube-channel-card:focus-within {
+    transform: translateY(-5px);
+
+    border-color: color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
+
+    box-shadow:
+        var(--bubble-highlight),
+        var(--bubble-shadow),
+        0 18px 42px color-mix(in srgb, var(--shadow-color) 65%, transparent),
+        0 0 0 3px color-mix(in srgb, var(--accent-color) 24%, transparent),
+        0 0 28px color-mix(in srgb, var(--accent-color) 30%, transparent);
+}
+
+/* Stronger glass reflection on hover */
+.tiktok-profile-card:hover::before,
+.instagram-profile-card:hover::before,
+.youtube-channel-card:hover::before {
+    opacity: 0.46;
+}
+
+/* Avatar hover polish */
+.tiktok-avatar,
+.instagram-avatar,
+.youtube-channel-avatar {
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
+}
+
+.tiktok-profile-card:hover .tiktok-avatar,
+.instagram-profile-card:hover .instagram-avatar,
+.youtube-channel-card:hover .youtube-channel-avatar {
+    transform: scale(1.035);
+
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
+        0 14px 30px color-mix(in srgb, var(--shadow-color) 62%, transparent),
+        0 0 16px color-mix(in srgb, var(--accent-color) 24%, transparent);
+}
+
+/* ============================================================
+   Stat Hover Effects
+============================================================ */
+
+.tiktok-stat,
+.instagram-profile-card .instagram-stats div {
+    transition:
+        transform 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease,
+        color 180ms ease;
+    border-radius: 14px;
+}
+
+/* TikTok stat hover */
+.tiktok-stat:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+}
+
+/* Instagram stat hover */
+.instagram-profile-card .instagram-stats div:hover {
+    transform: translateY(-2px);
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 14%, transparent);
+}
+
+/* Stat number accent pop */
+.tiktok-stat:hover strong,
+.instagram-profile-card .instagram-stats div:hover strong {
+    color: var(--accent-color);
+}
+
+/* Keep labels readable */
+.tiktok-stat:hover span,
+.instagram-profile-card .instagram-stats div:hover span {
+    color: var(--secondary-text);
+}
+
+/* YouTube stat hover */
+.youtube-stats {
+    display: inline-block;
+    border-radius: 12px;
+    transition:
+        transform 180ms ease,
+        background-color 180ms ease,
+        color 180ms ease;
+}
+
+.youtube-channel-card:hover .youtube-stats {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+}
+
+/* ============================================================
+   Button Arrow Inside Right Side
+============================================================ */
+
+/* Give room for arrow */
+.platform-visit-button {
+    position: relative;
+    overflow: hidden;
+    padding-left: 22px;
+    padding-right: 46px;
+}
+
+/* Right-side arrow */
+.platform-visit-button::after {
+    content: "→";
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1;
+
+    color: currentColor;
+    opacity: 0.84;
+
+    transition:
+        transform 180ms ease,
+        opacity 180ms ease;
+}
+
+/* Arrow slide animation */
+.platform-visit-button:hover::after,
+.platform-visit-button:focus-visible::after {
+    transform: translate(4px, -50%);
+    opacity: 1;
+}
+
+/* Button hover glow */
+.platform-visit-button:hover,
+.platform-visit-button:focus-visible {
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 12px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent),
+        0 0 18px color-mix(in srgb, var(--accent-color) 24%, transparent);
+}
+
+/* Keep platform buttons white */
+.tiktok-visit-button,
+.instagram-visit-button,
+.youtube-visit-button {
+    color: #ffffff !important;
+}
+
+/* ============================================================
+   Reduced Motion Accessibility
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .tiktok-profile-card,
+    .instagram-profile-card,
+    .youtube-channel-card,
+    .tiktok-avatar,
+    .instagram-avatar,
+    .youtube-channel-avatar,
+    .tiktok-stat,
+    .instagram-profile-card .instagram-stats div,
+    .youtube-stats,
+    .platform-visit-button,
+    .platform-visit-button::after {
+        transition: none !important;
+    }
+
+    .tiktok-profile-card:hover,
+    .instagram-profile-card:hover,
+    .youtube-channel-card:hover,
+    .tiktok-profile-card:focus-within,
+    .instagram-profile-card:focus-within,
+    .youtube-channel-card:focus-within,
+    .tiktok-profile-card:hover .tiktok-avatar,
+    .instagram-profile-card:hover .instagram-avatar,
+    .youtube-channel-card:hover .youtube-channel-avatar,
+    .tiktok-stat:hover,
+    .instagram-profile-card .instagram-stats div:hover,
+    .youtube-channel-card:hover .youtube-stats {
+        transform: none !important;
+    }
+
+    .platform-visit-button:hover::after,
+    .platform-visit-button:focus-visible::after {
+        transform: translateY(-50%) !important;
+    }
 }
