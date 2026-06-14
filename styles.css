@@ -9679,11 +9679,12 @@ body.light-e .creator-sort-controls select option {
 }
 
 /* ============================================================
-   SHOUTOUT CARD HOVER GLOW + BUTTON ARROW
-   Uses --accent-color from settings.css / root
+   CARD-ONLY HOVER EFFECT FIX
+   Keeps hover effects on the card only
+   Prevents text/stats from changing on hover
 ============================================================ */
 
-/* Smooth card hover */
+/* Card hover glow only */
 .tiktok-profile-card,
 .instagram-profile-card,
 .youtube-channel-card {
@@ -9695,7 +9696,6 @@ body.light-e .creator-sort-controls select option {
     will-change: transform;
 }
 
-/* Accent glow around platform cards */
 .tiktok-profile-card:hover,
 .instagram-profile-card:hover,
 .youtube-channel-card:hover {
@@ -9712,7 +9712,7 @@ body.light-e .creator-sort-controls select option {
         0 0 48px color-mix(in srgb, var(--accent-color) 18%, transparent);
 }
 
-/* Keyboard accessibility */
+/* Keyboard focus gets card glow only */
 .tiktok-profile-card:focus-within,
 .instagram-profile-card:focus-within,
 .youtube-channel-card:focus-within {
@@ -9728,94 +9728,62 @@ body.light-e .creator-sort-controls select option {
         0 0 28px color-mix(in srgb, var(--accent-color) 30%, transparent);
 }
 
-/* Stronger glass reflection on hover */
+/* Optional: slightly stronger glass reflection only */
 .tiktok-profile-card:hover::before,
 .instagram-profile-card:hover::before,
 .youtube-channel-card:hover::before {
     opacity: 0.46;
 }
 
-/* Avatar hover polish */
-.tiktok-avatar,
-.instagram-avatar,
-.youtube-channel-avatar {
-    transition:
-        transform 220ms ease,
-        box-shadow 220ms ease,
-        border-color 220ms ease;
+/* ============================================================
+   STOP TEXT / STATS FROM CHANGING ON HOVER
+============================================================ */
+
+/* No text glow */
+.tiktok-profile-card:hover .tiktok-profile-main h3,
+.instagram-profile-card:hover .instagram-username-row h3,
+.youtube-channel-card:hover .youtube-channel-text h3 {
+    text-shadow: none !important;
 }
 
+/* No avatar movement if you only want card hover */
 .tiktok-profile-card:hover .tiktok-avatar,
 .instagram-profile-card:hover .instagram-avatar,
 .youtube-channel-card:hover .youtube-channel-avatar {
-    transform: scale(1.035);
-
-    box-shadow:
-        0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
-        0 14px 30px color-mix(in srgb, var(--shadow-color) 62%, transparent),
-        0 0 16px color-mix(in srgb, var(--accent-color) 24%, transparent);
+    transform: none !important;
 }
 
-/* ============================================================
-   Stat Hover Effects
-============================================================ */
-
-.tiktok-stat,
-.instagram-profile-card .instagram-stats div {
-    transition:
-        transform 180ms ease,
-        background-color 180ms ease,
-        box-shadow 180ms ease,
-        color 180ms ease;
-    border-radius: 14px;
-}
-
-/* TikTok stat hover */
-.tiktok-stat:hover {
-    transform: translateY(-2px);
-    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
-}
-
-/* Instagram stat hover */
+/* No stat block movement */
+.tiktok-stat:hover,
 .instagram-profile-card .instagram-stats div:hover {
-    transform: translateY(-2px);
-    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
-    box-shadow:
-        inset 0 0 0 1px color-mix(in srgb, var(--accent-color) 14%, transparent);
+    transform: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
 }
 
-/* Stat number accent pop */
+/* No stat number color change */
 .tiktok-stat:hover strong,
 .instagram-profile-card .instagram-stats div:hover strong {
-    color: var(--accent-color);
+    color: var(--text-color) !important;
 }
 
-/* Keep labels readable */
+/* No stat label color change */
 .tiktok-stat:hover span,
 .instagram-profile-card .instagram-stats div:hover span {
-    color: var(--secondary-text);
+    color: var(--secondary-text) !important;
 }
 
-/* YouTube stat hover */
-.youtube-stats {
-    display: inline-block;
-    border-radius: 12px;
-    transition:
-        transform 180ms ease,
-        background-color 180ms ease,
-        color 180ms ease;
-}
-
+/* No YouTube stat movement/background */
 .youtube-channel-card:hover .youtube-stats {
-    transform: translateY(-1px);
-    background: color-mix(in srgb, var(--accent-color) 8%, transparent);
+    transform: none !important;
+    background: transparent !important;
 }
 
 /* ============================================================
-   Button Arrow Inside Right Side
+   BUTTON ARROW CAN STAY
+   This only affects the button, not profile text
 ============================================================ */
 
-/* Give room for arrow */
 .platform-visit-button {
     position: relative;
     overflow: hidden;
@@ -9823,7 +9791,6 @@ body.light-e .creator-sort-controls select option {
     padding-right: 46px;
 }
 
-/* Right-side arrow */
 .platform-visit-button::after {
     content: "→";
     position: absolute;
@@ -9843,65 +9810,14 @@ body.light-e .creator-sort-controls select option {
         opacity 180ms ease;
 }
 
-/* Arrow slide animation */
 .platform-visit-button:hover::after,
 .platform-visit-button:focus-visible::after {
     transform: translate(4px, -50%);
     opacity: 1;
 }
 
-/* Button hover glow */
-.platform-visit-button:hover,
-.platform-visit-button:focus-visible {
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.16),
-        0 12px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent),
-        0 0 18px color-mix(in srgb, var(--accent-color) 24%, transparent);
-}
-
-/* Keep platform buttons white */
 .tiktok-visit-button,
 .instagram-visit-button,
 .youtube-visit-button {
     color: #ffffff !important;
-}
-
-/* ============================================================
-   Reduced Motion Accessibility
-============================================================ */
-
-@media (prefers-reduced-motion: reduce) {
-    .tiktok-profile-card,
-    .instagram-profile-card,
-    .youtube-channel-card,
-    .tiktok-avatar,
-    .instagram-avatar,
-    .youtube-channel-avatar,
-    .tiktok-stat,
-    .instagram-profile-card .instagram-stats div,
-    .youtube-stats,
-    .platform-visit-button,
-    .platform-visit-button::after {
-        transition: none !important;
-    }
-
-    .tiktok-profile-card:hover,
-    .instagram-profile-card:hover,
-    .youtube-channel-card:hover,
-    .tiktok-profile-card:focus-within,
-    .instagram-profile-card:focus-within,
-    .youtube-channel-card:focus-within,
-    .tiktok-profile-card:hover .tiktok-avatar,
-    .instagram-profile-card:hover .instagram-avatar,
-    .youtube-channel-card:hover .youtube-channel-avatar,
-    .tiktok-stat:hover,
-    .instagram-profile-card .instagram-stats div:hover,
-    .youtube-channel-card:hover .youtube-stats {
-        transform: none !important;
-    }
-
-    .platform-visit-button:hover::after,
-    .platform-visit-button:focus-visible::after {
-        transform: translateY(-50%) !important;
-    }
 }
