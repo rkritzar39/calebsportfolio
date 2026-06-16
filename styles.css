@@ -4861,6 +4861,57 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
+
+/* ======================================================= */
+/* FORCE DARK MODE TECH READABILITY                        */
+/* Put this at the VERY END of your CSS                    */
+/* ======================================================= */
+
+/* Dark mode only */
+body:not(.light-e) .tech-section,
+body:not(.light-e) .tech-item,
+body:not(.light-e) .tech-advanced-details,
+body:not(.light-e) .tech-upgrade-explanation {
+  --tech-value-color: #f5f7fb;
+  --tech-label-color: #aeb7c2;
+  --tech-muted-color: #98a2b3;
+  --tech-strong-color: #ffffff;
+}
+
+/* Main tech text */
+body:not(.light-e) .tech-detail,
+body:not(.light-e) .tech-value,
+body:not(.light-e) .tech-upgrade-explanation .upgrade-explanation-text,
+body:not(.light-e) .battery-percentage,
+body:not(.light-e) .beta-page-header h1,
+body:not(.light-e) .beta-summary-card strong,
+body:not(.light-e) .beta-feature-item h3,
+body:not(.light-e) .beta-roadmap-item strong {
+  color: #f5f7fb !important;
+}
+
+/* Labels stay muted in dark mode */
+body:not(.light-e) .tech-label,
+body:not(.light-e) .tech-detail span,
+body:not(.light-e) .beta-page-subtitle,
+body:not(.light-e) .beta-summary-label,
+body:not(.light-e) .beta-section-heading p,
+body:not(.light-e) .beta-feature-item p,
+body:not(.light-e) .beta-roadmap-item p,
+body:not(.light-e) .beta-notes-list,
+body:not(.light-e) .beta-notes-list li {
+  color: #aeb7c2 !important;
+}
+
+/* Keep badges untouched */
+body:not(.light-e) .upgrade-badge,
+body:not(.light-e) .support-badge,
+body:not(.light-e) .os-badge,
+body:not(.light-e) .upgrade-priority-badge {
+  color: inherit;
+}
+
+
 /* ======================== */
 /* Disabilities Section – Onyx Bubble Glass */
 /* ======================== */
