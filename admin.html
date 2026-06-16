@@ -1220,6 +1220,9 @@
     <form id="add-tech-item-form" aria-labelledby="add-tech-heading">
         <h4 id="add-tech-heading">Add New Tech Item</h4>
 
+        <!-- ================================================== -->
+        <!-- BASIC FIELDS - ALWAYS VISIBLE                      -->
+        <!-- ================================================== -->
         <div class="form-group">
             <label for="tech-name">Device Name:</label>
             <input type="text" id="tech-name" name="name" required placeholder="e.g., iPhone 16 Pro">
@@ -1235,9 +1238,6 @@
             <input type="text" id="tech-primary-use" name="primaryUse" placeholder="e.g., Daily driver, school, content creation">
         </div>
 
-        <!-- ================================================== -->
-        <!-- OWNERSHIP STATE                                   -->
-        <!-- ================================================== -->
         <div class="form-group">
             <label for="tech-ownership-state">Ownership State:</label>
             <select id="tech-ownership-state" name="ownershipState">
@@ -1276,16 +1276,16 @@
                 </optgroup>
             </select>
             <small>
-                Active and archive devices use full smart cards. Roadmap devices use roadmap cards. Wishlist/research devices use compact cards.
+                Roadmap devices only show roadmap planning fields. Wishlist/research devices stay compact. Active/archive devices show full inventory fields.
             </small>
         </div>
 
         <!-- ================================================== -->
-        <!-- ROADMAP / FUTURE DEVICE FIELDS                     -->
-        <!-- Shows for Planned, Coming Soon, Future Upgrade,     -->
-        <!-- Preordered, Ordered, Reserved                       -->
+        <!-- ROADMAP DEVICE FIELDS                              -->
+        <!-- Shows only for Planned / Coming Soon / Future       -->
+        <!-- Upgrade / Preordered / Ordered / Reserved           -->
         <!-- ================================================== -->
-        <div class="planned-tech-fields">
+        <div class="roadmap-tech-fields">
             <div class="form-group">
                 <label for="tech-planned-window">Planned / Expected Window:</label>
                 <input type="text" id="tech-planned-window" name="plannedWindow" placeholder="e.g., September 2026">
@@ -1302,62 +1302,66 @@
             </div>
 
             <div class="form-group">
-                <label for="tech-target-year">Target Year:</label>
-                <input type="number" id="tech-target-year" name="targetYear" min="2000" max="2100" placeholder="e.g., 2026">
-            </div>
-
-            <div class="form-group">
                 <label for="tech-replaces-device">Replaces Device:</label>
                 <input type="text" id="tech-replaces-device" name="replacesDevice" placeholder="e.g., Current school computer">
             </div>
 
             <div class="form-group">
-                <label for="tech-expected-chip">Expected Chip:</label>
-                <input type="text" id="tech-expected-chip" name="expectedChip" placeholder="e.g., Apple M5">
+                <label for="tech-target-year">Target Year:</label>
+                <input type="number" id="tech-target-year" name="targetYear" min="2000" max="2100" placeholder="e.g., 2026">
             </div>
 
-            <div class="form-group">
-                <label for="tech-expected-ram">Expected RAM / Memory:</label>
-                <input type="text" id="tech-expected-ram" name="expectedRam" placeholder="e.g., 16GB">
-            </div>
+            <fieldset class="admin-fieldset expected-specs-fieldset">
+                <legend>Expected Specs</legend>
 
-            <div class="form-group">
-                <label for="tech-expected-storage">Expected Storage:</label>
-                <input type="text" id="tech-expected-storage" name="expectedStorage" placeholder="e.g., 512GB">
-            </div>
+                <div class="form-group">
+                    <label for="tech-expected-chip">Expected Chip:</label>
+                    <input type="text" id="tech-expected-chip" name="expectedChip" placeholder="e.g., Apple M5">
+                </div>
 
-            <div class="form-group">
-                <label for="tech-expected-color">Expected Color:</label>
-                <input type="text" id="tech-expected-color" name="expectedColor" placeholder="e.g., Midnight">
-            </div>
+                <div class="form-group">
+                    <label for="tech-expected-ram">Expected RAM:</label>
+                    <input type="text" id="tech-expected-ram" name="expectedRam" placeholder="e.g., 16GB">
+                </div>
 
-            <div class="form-group">
-                <label for="tech-expected-ai-level">Expected AI Level:</label>
-                <select id="tech-expected-ai-level" name="expectedAILevel">
-                    <option value="">Select AI level</option>
-                    <option value="Standard">Standard</option>
-                    <option value="Advanced">Advanced</option>
-                    <option value="Maximum">Maximum</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="tech-expected-storage">Expected Storage:</label>
+                    <input type="text" id="tech-expected-storage" name="expectedStorage" placeholder="e.g., 512GB">
+                </div>
 
-            <div class="form-group">
-                <label for="tech-expected-future-proof-rating">Expected Future-Proof Rating:</label>
-                <select id="tech-expected-future-proof-rating" name="expectedFutureProofRating">
-                    <option value="">Select rating</option>
-                    <option value="Balanced">Balanced</option>
-                    <option value="High">High</option>
-                    <option value="Maximum">Maximum</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="tech-expected-color">Expected Color:</label>
+                    <input type="text" id="tech-expected-color" name="expectedColor" placeholder="e.g., Midnight">
+                </div>
+
+                <div class="form-group">
+                    <label for="tech-expected-ai-level">Expected AI Support:</label>
+                    <select id="tech-expected-ai-level" name="expectedAILevel">
+                        <option value="">Select AI support</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Advanced">Advanced</option>
+                        <option value="Maximum">Maximum</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tech-expected-future-proof-rating">Expected Future-Proofing:</label>
+                    <select id="tech-expected-future-proof-rating" name="expectedFutureProofRating">
+                        <option value="">Select future-proofing</option>
+                        <option value="Balanced">Balanced</option>
+                        <option value="High">High</option>
+                        <option value="Maximum">Maximum</option>
+                    </select>
+                </div>
+            </fieldset>
         </div>
 
         <!-- ================================================== -->
-        <!-- OWNED / ARCHIVE DEVICE FIELDS                      -->
-        <!-- Shows for Owned, Borrowed, Issued, Repair,          -->
-        <!-- Retired, Sold, Traded In, Donated, etc.             -->
+        <!-- FULL INVENTORY FIELDS                              -->
+        <!-- Shows for Active + Archive devices only             -->
+        <!-- Hidden for Roadmap and Wishlist/Research            -->
         <!-- ================================================== -->
-        <div class="owned-only-fields">
+        <div class="full-tech-fields">
             <div class="form-group">
                 <label for="tech-condition">Condition:</label>
                 <select id="tech-condition" name="condition">
@@ -1404,115 +1408,115 @@
                 <label for="tech-battery-cycles">Battery Charge Cycles:</label>
                 <input type="number" id="tech-battery-cycles" name="batteryCycles" min="0" placeholder="e.g., 244">
             </div>
+
+            <div class="form-group">
+                <label for="tech-device-type">Device Type:</label>
+                <select id="tech-device-type" name="deviceType">
+                    <option value="">Auto Detect</option>
+                    <option value="phone">Phone</option>
+                    <option value="computer">Computer</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="watch">Watch</option>
+                    <option value="accessory">Accessory</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tech-model-year">Model Year:</label>
+                <input type="number" id="tech-model-year" name="modelYear" min="2000" max="2100" placeholder="e.g., 2024">
+            </div>
+
+            <div class="form-group">
+                <label for="tech-icon-class">Font Awesome Icon Class:</label>
+                <input type="text" id="tech-icon-class" name="iconClass" placeholder="e.g., fas fa-laptop">
+                <small>Examples: "fas fa-laptop", "fas fa-mobile-alt", "fas fa-desktop"</small>
+            </div>
+
+            <div class="form-group">
+                <label for="tech-material">Material:</label>
+                <input type="text" id="tech-material" name="material" placeholder="e.g., Titanium, Aluminum">
+            </div>
+
+            <div class="form-group">
+                <label for="tech-storage">Storage:</label>
+                <input type="text" id="tech-storage" name="storage" placeholder="e.g., 128GB, 256GB SSD">
+            </div>
+
+            <div class="form-group">
+                <label for="tech-chip-name">Chip / Processor:</label>
+                <input type="text" id="tech-chip-name" name="chipName" placeholder="e.g., A18 Pro, M2, S9">
+            </div>
+
+            <div class="form-group">
+                <label for="tech-ram-gb">RAM / Memory (GB):</label>
+                <input type="number" id="tech-ram-gb" name="ramGB" min="0" step="1" placeholder="e.g., 8">
+            </div>
+
+            <div class="form-group">
+                <label for="tech-storage-gb">Storage Capacity (GB):</label>
+                <input type="number" id="tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 128">
+            </div>
+
+            <div class="form-group">
+                <label for="tech-expected-keep-years">Expected Keep Time (Years):</label>
+                <input type="number" id="tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 4">
+            </div>
+
+            <div class="form-group">
+                <label for="tech-future-proofing-priority">Future-Proofing Priority:</label>
+                <select id="tech-future-proofing-priority" name="futureProofingPriority">
+                    <option value="">Select priority</option>
+                    <option value="Low">Low</option>
+                    <option value="Balanced">Balanced</option>
+                    <option value="High">High</option>
+                    <option value="Maximum">Maximum</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tech-ai-feature-priority">AI Feature Priority:</label>
+                <select id="tech-ai-feature-priority" name="aiFeaturePriority">
+                    <option value="">Select priority</option>
+                    <option value="Not Important">Not Important</option>
+                    <option value="Nice to Have">Nice to Have</option>
+                    <option value="Important">Important</option>
+                    <option value="Must Have">Must Have</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tech-compatibility-status">Compatibility Status:</label>
+                <select id="tech-compatibility-status" name="compatibilityStatus">
+                    <option value="">Select compatibility</option>
+                    <option value="Current">Current</option>
+                    <option value="Limited">Limited</option>
+                    <option value="Obsolete">Obsolete</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tech-paired-ai-phone">Paired with AI-Compatible iPhone:</label>
+                <select id="tech-paired-ai-phone" name="pairedAIPhone">
+                    <option value="">Not Applicable / Unknown</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tech-color">Color:</label>
+                <input type="text" id="tech-color" name="color" placeholder="e.g., Natural Titanium">
+            </div>
+
+            <div class="form-group">
+                <label for="tech-date-released">Date Released:</label>
+                <input type="text" id="tech-date-released" name="dateReleased" placeholder="e.g., September 20, 2024">
+            </div>
         </div>
 
         <!-- ================================================== -->
-        <!-- SHARED FIELDS                                      -->
+        <!-- ALWAYS VISIBLE FINAL FIELDS                        -->
         <!-- ================================================== -->
-        <div class="form-group">
-            <label for="tech-device-type">Device Type:</label>
-            <select id="tech-device-type" name="deviceType">
-                <option value="">Auto Detect</option>
-                <option value="phone">Phone</option>
-                <option value="computer">Computer</option>
-                <option value="tablet">Tablet</option>
-                <option value="watch">Watch</option>
-                <option value="accessory">Accessory</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="tech-model-year">Model Year:</label>
-            <input type="number" id="tech-model-year" name="modelYear" min="2000" max="2100" placeholder="e.g., 2024">
-        </div>
-
-        <div class="form-group">
-            <label for="tech-icon-class">Font Awesome Icon Class:</label>
-            <input type="text" id="tech-icon-class" name="iconClass" placeholder="e.g., fas fa-laptop">
-            <small>Examples: "fas fa-laptop", "fas fa-mobile-alt", "fas fa-desktop", "fas fa-tablet-screen-button"</small>
-        </div>
-
-        <div class="form-group">
-            <label for="tech-material">Material:</label>
-            <input type="text" id="tech-material" name="material" placeholder="e.g., Titanium, Aluminum">
-        </div>
-
-        <div class="form-group">
-            <label for="tech-storage">Storage:</label>
-            <input type="text" id="tech-storage" name="storage" placeholder="e.g., 128GB, 256GB SSD">
-        </div>
-
-        <div class="form-group">
-            <label for="tech-chip-name">Chip / Processor:</label>
-            <input type="text" id="tech-chip-name" name="chipName" placeholder="e.g., A18 Pro, M2, S9">
-        </div>
-
-        <div class="form-group">
-            <label for="tech-ram-gb">RAM / Memory (GB):</label>
-            <input type="number" id="tech-ram-gb" name="ramGB" min="0" step="1" placeholder="e.g., 8">
-        </div>
-
-        <div class="form-group">
-            <label for="tech-storage-gb">Storage Capacity (GB):</label>
-            <input type="number" id="tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 128">
-        </div>
-
-        <div class="form-group">
-            <label for="tech-expected-keep-years">Expected Keep Time (Years):</label>
-            <input type="number" id="tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 4">
-        </div>
-
-        <div class="form-group">
-            <label for="tech-future-proofing-priority">Future-Proofing Priority:</label>
-            <select id="tech-future-proofing-priority" name="futureProofingPriority">
-                <option value="">Select priority</option>
-                <option value="Low">Low</option>
-                <option value="Balanced">Balanced</option>
-                <option value="High">High</option>
-                <option value="Maximum">Maximum</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="tech-ai-feature-priority">AI Feature Priority:</label>
-            <select id="tech-ai-feature-priority" name="aiFeaturePriority">
-                <option value="">Select priority</option>
-                <option value="Not Important">Not Important</option>
-                <option value="Nice to Have">Nice to Have</option>
-                <option value="Important">Important</option>
-                <option value="Must Have">Must Have</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="tech-compatibility-status">Compatibility Status:</label>
-            <select id="tech-compatibility-status" name="compatibilityStatus">
-                <option value="">Select compatibility</option>
-                <option value="Current">Current</option>
-                <option value="Limited">Limited</option>
-                <option value="Obsolete">Obsolete</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="tech-paired-ai-phone">Paired with AI-Compatible iPhone:</label>
-            <select id="tech-paired-ai-phone" name="pairedAIPhone">
-                <option value="">Not Applicable / Unknown</option>
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="tech-color">Color:</label>
-            <input type="text" id="tech-color" name="color" placeholder="e.g., Natural Titanium">
-        </div>
-
-        <div class="form-group">
-            <label for="tech-date-released">Date Released:</label>
-            <input type="text" id="tech-date-released" name="dateReleased" placeholder="e.g., September 20, 2024">
-        </div>
-
         <div class="form-group">
             <label for="tech-order">Display Order:</label>
             <input type="number" id="tech-order" name="order" min="0" step="1" required placeholder="Lower numbers show first">
@@ -1771,6 +1775,9 @@
         <h2 id="edit-tech-modal-heading">Edit Tech Item</h2>
 
         <form id="edit-tech-item-form" data-doc-id="">
+            <!-- ================================================== -->
+            <!-- BASIC FIELDS - ALWAYS VISIBLE                      -->
+            <!-- ================================================== -->
             <div class="form-group">
                 <label for="edit-tech-name">Device Name:</label>
                 <input type="text" id="edit-tech-name" name="name" required>
@@ -1786,9 +1793,6 @@
                 <input type="text" id="edit-tech-primary-use" name="primaryUse" placeholder="e.g., Daily driver, school, content creation">
             </div>
 
-            <!-- ================================================== -->
-            <!-- OWNERSHIP STATE (EDIT)                            -->
-            <!-- ================================================== -->
             <div class="form-group">
                 <label for="edit-tech-ownership-state">Ownership State:</label>
                 <select id="edit-tech-ownership-state" name="ownershipState">
@@ -1829,9 +1833,9 @@
             </div>
 
             <!-- ================================================== -->
-            <!-- ROADMAP / FUTURE DEVICE FIELDS (EDIT)              -->
+            <!-- ROADMAP DEVICE FIELDS - EDIT                       -->
             <!-- ================================================== -->
-            <div class="planned-tech-fields">
+            <div class="roadmap-tech-fields">
                 <div class="form-group">
                     <label for="edit-tech-planned-window">Planned / Expected Window:</label>
                     <input type="text" id="edit-tech-planned-window" name="plannedWindow" placeholder="e.g., September 2026">
@@ -1848,60 +1852,64 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="edit-tech-target-year">Target Year:</label>
-                    <input type="number" id="edit-tech-target-year" name="targetYear" min="2000" max="2100" placeholder="e.g., 2026">
-                </div>
-
-                <div class="form-group">
                     <label for="edit-tech-replaces-device">Replaces Device:</label>
                     <input type="text" id="edit-tech-replaces-device" name="replacesDevice" placeholder="e.g., Current school computer">
                 </div>
 
                 <div class="form-group">
-                    <label for="edit-tech-expected-chip">Expected Chip:</label>
-                    <input type="text" id="edit-tech-expected-chip" name="expectedChip" placeholder="e.g., Apple M5">
+                    <label for="edit-tech-target-year">Target Year:</label>
+                    <input type="number" id="edit-tech-target-year" name="targetYear" min="2000" max="2100" placeholder="e.g., 2026">
                 </div>
 
-                <div class="form-group">
-                    <label for="edit-tech-expected-ram">Expected RAM / Memory:</label>
-                    <input type="text" id="edit-tech-expected-ram" name="expectedRam" placeholder="e.g., 16GB">
-                </div>
+                <fieldset class="admin-fieldset expected-specs-fieldset">
+                    <legend>Expected Specs</legend>
 
-                <div class="form-group">
-                    <label for="edit-tech-expected-storage">Expected Storage:</label>
-                    <input type="text" id="edit-tech-expected-storage" name="expectedStorage" placeholder="e.g., 512GB">
-                </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-chip">Expected Chip:</label>
+                        <input type="text" id="edit-tech-expected-chip" name="expectedChip" placeholder="e.g., Apple M5">
+                    </div>
 
-                <div class="form-group">
-                    <label for="edit-tech-expected-color">Expected Color:</label>
-                    <input type="text" id="edit-tech-expected-color" name="expectedColor" placeholder="e.g., Midnight">
-                </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-ram">Expected RAM:</label>
+                        <input type="text" id="edit-tech-expected-ram" name="expectedRam" placeholder="e.g., 16GB">
+                    </div>
 
-                <div class="form-group">
-                    <label for="edit-tech-expected-ai-level">Expected AI Level:</label>
-                    <select id="edit-tech-expected-ai-level" name="expectedAILevel">
-                        <option value="">Select AI level</option>
-                        <option value="Standard">Standard</option>
-                        <option value="Advanced">Advanced</option>
-                        <option value="Maximum">Maximum</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-storage">Expected Storage:</label>
+                        <input type="text" id="edit-tech-expected-storage" name="expectedStorage" placeholder="e.g., 512GB">
+                    </div>
 
-                <div class="form-group">
-                    <label for="edit-tech-expected-future-proof-rating">Expected Future-Proof Rating:</label>
-                    <select id="edit-tech-expected-future-proof-rating" name="expectedFutureProofRating">
-                        <option value="">Select rating</option>
-                        <option value="Balanced">Balanced</option>
-                        <option value="High">High</option>
-                        <option value="Maximum">Maximum</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-color">Expected Color:</label>
+                        <input type="text" id="edit-tech-expected-color" name="expectedColor" placeholder="e.g., Midnight">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-tech-expected-ai-level">Expected AI Support:</label>
+                        <select id="edit-tech-expected-ai-level" name="expectedAILevel">
+                            <option value="">Select AI support</option>
+                            <option value="Standard">Standard</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Maximum">Maximum</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-tech-expected-future-proof-rating">Expected Future-Proofing:</label>
+                        <select id="edit-tech-expected-future-proof-rating" name="expectedFutureProofRating">
+                            <option value="">Select future-proofing</option>
+                            <option value="Balanced">Balanced</option>
+                            <option value="High">High</option>
+                            <option value="Maximum">Maximum</option>
+                        </select>
+                    </div>
+                </fieldset>
             </div>
 
             <!-- ================================================== -->
-            <!-- OWNED / ARCHIVE DEVICE FIELDS (EDIT)               -->
+            <!-- FULL INVENTORY FIELDS - EDIT                       -->
             <!-- ================================================== -->
-            <div class="owned-only-fields">
+            <div class="full-tech-fields">
                 <div class="form-group">
                     <label for="edit-tech-condition">Condition:</label>
                     <select id="edit-tech-condition" name="condition">
@@ -1948,114 +1956,114 @@
                     <label for="edit-tech-battery-cycles">Battery Charge Cycles:</label>
                     <input type="number" id="edit-tech-battery-cycles" name="batteryCycles" min="0">
                 </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-device-type">Device Type:</label>
+                    <select id="edit-tech-device-type" name="deviceType">
+                        <option value="">Auto Detect</option>
+                        <option value="phone">Phone</option>
+                        <option value="computer">Computer</option>
+                        <option value="tablet">Tablet</option>
+                        <option value="watch">Watch</option>
+                        <option value="accessory">Accessory</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-model-year">Model Year:</label>
+                    <input type="number" id="edit-tech-model-year" name="modelYear" min="2000" max="2100">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-icon-class">Font Awesome Icon Class:</label>
+                    <input type="text" id="edit-tech-icon-class" name="iconClass">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-material">Material:</label>
+                    <input type="text" id="edit-tech-material" name="material">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-storage">Storage:</label>
+                    <input type="text" id="edit-tech-storage" name="storage">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-chip-name">Chip / Processor:</label>
+                    <input type="text" id="edit-tech-chip-name" name="chipName" placeholder="e.g., A18 Pro, M2, S9">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-ram-gb">RAM / Memory (GB):</label>
+                    <input type="number" id="edit-tech-ram-gb" name="ramGB" min="0" step="1" placeholder="e.g., 8">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-storage-gb">Storage Capacity (GB):</label>
+                    <input type="number" id="edit-tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 128">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-expected-keep-years">Expected Keep Time (Years):</label>
+                    <input type="number" id="edit-tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 4">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-future-proofing-priority">Future-Proofing Priority:</label>
+                    <select id="edit-tech-future-proofing-priority" name="futureProofingPriority">
+                        <option value="">Select priority</option>
+                        <option value="Low">Low</option>
+                        <option value="Balanced">Balanced</option>
+                        <option value="High">High</option>
+                        <option value="Maximum">Maximum</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-ai-feature-priority">AI Feature Priority:</label>
+                    <select id="edit-tech-ai-feature-priority" name="aiFeaturePriority">
+                        <option value="">Select priority</option>
+                        <option value="Not Important">Not Important</option>
+                        <option value="Nice to Have">Nice to Have</option>
+                        <option value="Important">Important</option>
+                        <option value="Must Have">Must Have</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-compatibility-status">Compatibility Status:</label>
+                    <select id="edit-tech-compatibility-status" name="compatibilityStatus">
+                        <option value="">Select compatibility</option>
+                        <option value="Current">Current</option>
+                        <option value="Limited">Limited</option>
+                        <option value="Obsolete">Obsolete</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-paired-ai-phone">Paired with AI-Compatible iPhone:</label>
+                    <select id="edit-tech-paired-ai-phone" name="pairedAIPhone">
+                        <option value="">Not Applicable / Unknown</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-color">Color:</label>
+                    <input type="text" id="edit-tech-color" name="color">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-date-released">Date Released:</label>
+                    <input type="text" id="edit-tech-date-released" name="dateReleased">
+                </div>
             </div>
 
             <!-- ================================================== -->
-            <!-- SHARED FIELDS (EDIT)                               -->
+            <!-- ALWAYS VISIBLE FINAL FIELDS - EDIT                -->
             <!-- ================================================== -->
-            <div class="form-group">
-                <label for="edit-tech-device-type">Device Type:</label>
-                <select id="edit-tech-device-type" name="deviceType">
-                    <option value="">Auto Detect</option>
-                    <option value="phone">Phone</option>
-                    <option value="computer">Computer</option>
-                    <option value="tablet">Tablet</option>
-                    <option value="watch">Watch</option>
-                    <option value="accessory">Accessory</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-model-year">Model Year:</label>
-                <input type="number" id="edit-tech-model-year" name="modelYear" min="2000" max="2100">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-icon-class">Font Awesome Icon Class:</label>
-                <input type="text" id="edit-tech-icon-class" name="iconClass">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-material">Material:</label>
-                <input type="text" id="edit-tech-material" name="material">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-storage">Storage:</label>
-                <input type="text" id="edit-tech-storage" name="storage">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-chip-name">Chip / Processor:</label>
-                <input type="text" id="edit-tech-chip-name" name="chipName" placeholder="e.g., A18 Pro, M2, S9">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-ram-gb">RAM / Memory (GB):</label>
-                <input type="number" id="edit-tech-ram-gb" name="ramGB" min="0" step="1" placeholder="e.g., 8">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-storage-gb">Storage Capacity (GB):</label>
-                <input type="number" id="edit-tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 128">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-expected-keep-years">Expected Keep Time (Years):</label>
-                <input type="number" id="edit-tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 4">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-future-proofing-priority">Future-Proofing Priority:</label>
-                <select id="edit-tech-future-proofing-priority" name="futureProofingPriority">
-                    <option value="">Select priority</option>
-                    <option value="Low">Low</option>
-                    <option value="Balanced">Balanced</option>
-                    <option value="High">High</option>
-                    <option value="Maximum">Maximum</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-ai-feature-priority">AI Feature Priority:</label>
-                <select id="edit-tech-ai-feature-priority" name="aiFeaturePriority">
-                    <option value="">Select priority</option>
-                    <option value="Not Important">Not Important</option>
-                    <option value="Nice to Have">Nice to Have</option>
-                    <option value="Important">Important</option>
-                    <option value="Must Have">Must Have</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-compatibility-status">Compatibility Status:</label>
-                <select id="edit-tech-compatibility-status" name="compatibilityStatus">
-                    <option value="">Select compatibility</option>
-                    <option value="Current">Current</option>
-                    <option value="Limited">Limited</option>
-                    <option value="Obsolete">Obsolete</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-paired-ai-phone">Paired with AI-Compatible iPhone:</label>
-                <select id="edit-tech-paired-ai-phone" name="pairedAIPhone">
-                    <option value="">Not Applicable / Unknown</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-color">Color:</label>
-                <input type="text" id="edit-tech-color" name="color">
-            </div>
-
-            <div class="form-group">
-                <label for="edit-tech-date-released">Date Released:</label>
-                <input type="text" id="edit-tech-date-released" name="dateReleased">
-            </div>
-
             <div class="form-group">
                 <label for="edit-tech-order">Display Order:</label>
                 <input type="number" id="edit-tech-order" name="order" min="0" step="1" required>
