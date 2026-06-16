@@ -3145,6 +3145,7 @@ function normalizeTechItem(itemData) {
     normalized.predecessorDevice = getFirstField(itemData, ["predecessorDevice", "predecessor"], "");
     normalized.roleChangedDate = getFirstField(itemData, ["roleChangedDate", "roleUpdatedAt", "roleChangeDate"], "");
     normalized.autoRoleManaged = itemData.autoRoleManaged === true || String(itemData.autoRoleManaged || "").toLowerCase() === "true";
+    normalized.showAutoRoleBadge = itemData.showAutoRoleBadge === true || String(itemData.showAutoRoleBadge || "").toLowerCase() === "true";
 
     return normalized;
 }
@@ -3552,12 +3553,24 @@ function hasTechLifecycleValue(value) {
 function formatRoleStatusLabel(roleStatus) {
     if (!hasTechLifecycleValue(roleStatus)) return "";
 
+    const normalized = String(roleStatus)
+        .toLowerCase()
+        .trim()
+        .replace(/[\s_]+/g, "-")
+        .replace(/--+/g, "-");
+
     const labels = {
         primary: "Primary Device",
         secondary: "Secondary Device",
         backup: "Backup Device",
         "future-primary": "Future Primary Device",
-        "replaced-owned": "Replaced but Owned",
+
+        // Legacy value kept for old Firestore data.
+        // Admin cleanup now writes "secondary", but old documents may still have this.
+        "replaced-owned": "Secondary Device",
+        "replaced-active": "Secondary Device",
+        "replaced-kept": "Secondary Device",
+
         "replaced-sold": "Replaced and Sold",
         "replaced-archived": "Replaced and Archived",
         retired: "Retired",
@@ -3570,7 +3583,6 @@ function formatRoleStatusLabel(roleStatus) {
         archived: "Archived"
     };
 
-    const normalized = String(roleStatus).toLowerCase().trim();
     return labels[normalized] || normalized
         .split("-")
         .filter(Boolean)
@@ -3583,8 +3595,30 @@ function formatTechLifecycleDate(value) {
     return formatTechDate(value) || String(value);
 }
 
+function shouldShowTechAutomationBadge(item = {}) {
+    /*
+        Public display should not show stale admin automation badges by default.
+        The admin panel may leave autoRoleManaged=true on old test documents until cleanup runs.
+        To intentionally show the public badge again, set showAutoRoleBadge=true in Firestore.
+    */
+    const explicitlyShowBadge =
+        item.showAutoRoleBadge === true ||
+        String(item.showAutoRoleBadge || "").toLowerCase() === "true";
+
+    if (!explicitlyShowBadge) return false;
+
+    return item.autoRoleManaged === true && (
+        hasTechLifecycleValue(item.roleStatus) ||
+        hasTechLifecycleValue(item.currentRole) ||
+        hasTechLifecycleValue(item.previousRole) ||
+        hasTechLifecycleValue(item.replacedByDevice) ||
+        hasTechLifecycleValue(item.successorDevice) ||
+        hasTechLifecycleValue(item.predecessorDevice)
+    );
+}
+
 function renderTechAutomationBadge(item) {
-    return item.autoRoleManaged
+    return shouldShowTechAutomationBadge(item)
         ? `<span class="support-badge green tech-auto-role-badge"><i class="fas fa-wand-magic-sparkles"></i> Auto-managed</span>`
         : "";
 }
