@@ -4819,3 +4819,31 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
 .owned-only-fields.hidden {
     display: none;
 }
+
+/* ================================================== */
+/* TECH OWNERSHIP FIELD VISIBILITY                    */
+/* ================================================== */
+
+.roadmap-tech-fields,
+.full-tech-fields {
+    display: none;
+}
+
+.roadmap-tech-fields.active,
+.full-tech-fields.active {
+    display: block;
+}
+
+.admin-fieldset {
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.16));
+    border-radius: 14px;
+    padding: 1rem;
+    margin: 1rem 0;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-fieldset legend {
+    padding: 0 0.5rem;
+    font-weight: 700;
+    color: var(--accent-color, #0a84ff);
+}
