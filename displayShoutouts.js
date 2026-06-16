@@ -1656,6 +1656,18 @@ function extractVersionString(osVersion, osType = null) {
     return genericMatch ? genericMatch[1] : null;
 }
 
+function isPlannedTechItem(item) {
+    const state = String(item.ownershipState || "").toLowerCase().trim();
+
+    return (
+        state === "planned" ||
+        state === "wishlist" ||
+        state === "coming-soon" ||
+        state === "future-upgrade"
+    );
+}
+
+
 function normalizeVersion(version) {
     return String(version)
         .split(".")
@@ -3227,6 +3239,138 @@ function calculateBackupPriority(item, osStatus, support) {
     }
 
     return { label, color, reason };
+}
+
+function renderTechItemHomepage(itemData) {
+    const item = normalizeTechItem(itemData);
+
+    if (isPlannedTechItem(item)) {
+        return renderPlannedTechItemHomepage(item);
+    }
+
+    const name = item.name || "Unnamed Device";
+    const model = item.model || "";
+    const primaryUse = item.primaryUse || "";
+    const condition = item.condition || "";
+    const deviceType = item.deviceType || "";
+    const modelYear = item.modelYear || "";
+    const supportEndYear = item.supportEndYear || "";
+    const iconClass = item.iconClass || "fas fa-question-circle";
+    const material = item.material || "";
+    const storage = item.storage || "";
+    const batteryCapacity = item.batteryCapacity || "";
+    const color = item.color || "";
+    const price = item.priceNumber ? `$${item.priceNumber.toLocaleString()}` : "";
+    const dateReleased = item.dateReleased || "";
+    const dateBought = item.dateBought || "";
+    const osVersion = item.osVersion || "";
+    
+    return `
+    <div class="tech-item planned-tech-item">
+        <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
+
+        ${model ? `
+        <div class="tech-detail">
+            <i class="fas fa-info-circle"></i>
+            <span>Model:</span>
+            <span class="tech-value">${escapeHTML(model)}</span>
+        </div>` : ""}
+
+        <div class="tech-detail">
+            <i class="fas fa-clock"></i>
+            <span>Ownership:</span>
+            <span class="upgrade-badge planned">${escapeHTML(plannedStatus)}</span>
+        </div>
+
+        ${plannedWindow ? `
+        <div class="tech-detail">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Planned For:</span>
+            <span class="tech-value">${escapeHTML(plannedWindow)}</span>
+        </div>` : ""}
+
+        ${primaryUse ? `
+        <div class="tech-detail">
+            <i class="fas fa-bullseye"></i>
+            <span>Primary Use:</span>
+            <span class="tech-value">${escapeHTML(primaryUse)}</span>
+        </div>` : ""}
+
+        ${plannedReason ? `
+        <div class="tech-detail">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Reason:</span>
+            <span class="tech-value">${escapeHTML(plannedReason)}</span>
+        </div>` : ""}
+
+        ${futureUpgradeTarget ? `
+        <div class="tech-detail">
+            <i class="fas fa-flag-checkered"></i>
+            <span>Future Role:</span>
+            <span class="tech-value">${escapeHTML(futureUpgradeTarget)}</span>
+        </div>` : ""}
+
+        ${targetYear ? `
+        <div class="tech-detail">
+            <i class="fas fa-calendar-check"></i>
+            <span>Target Year:</span>
+            <span class="tech-value">${escapeHTML(targetYear)}</span>
+        </div>` : ""}
+
+        ${replacesDevice ? `
+        <div class="tech-detail">
+            <i class="fas fa-right-left"></i>
+            <span>Replaces:</span>
+            <span class="tech-value">${escapeHTML(replacesDevice)}</span>
+        </div>` : ""}
+
+        ${(expectedChip || expectedStorage || expectedRam || expectedColor || expectedAILevel || expectedFutureProofRating) ? `
+        <details class="tech-advanced-details">
+            <summary>Expected Specs</summary>
+
+            ${expectedChip ? `
+            <div class="tech-detail">
+                <i class="fas fa-microchip"></i>
+                <span>Chip:</span>
+                <span class="tech-value">${escapeHTML(expectedChip)}</span>
+            </div>` : ""}
+
+            ${expectedRam ? `
+            <div class="tech-detail">
+                <i class="fas fa-memory"></i>
+                <span>Memory:</span>
+                <span class="tech-value">${escapeHTML(expectedRam)}</span>
+            </div>` : ""}
+
+            ${expectedStorage ? `
+            <div class="tech-detail">
+                <i class="fas fa-hard-drive"></i>
+                <span>Storage:</span>
+                <span class="tech-value">${escapeHTML(expectedStorage)}</span>
+            </div>` : ""}
+
+            ${expectedColor ? `
+            <div class="tech-detail">
+                <i class="fas fa-palette"></i>
+                <span>Color:</span>
+                <span class="tech-value">${escapeHTML(expectedColor)}</span>
+            </div>` : ""}
+
+            ${expectedAILevel ? `
+            <div class="tech-detail">
+                <i class="fas fa-brain"></i>
+                <span>Expected AI Support:</span>
+                <span class="tech-value status-green">${escapeHTML(expectedAILevel)}</span>
+            </div>` : ""}
+
+            ${expectedFutureProofRating ? `
+            <div class="tech-detail">
+                <i class="fas fa-seedling"></i>
+                <span>Expected Future-Proofing:</span>
+                <span class="tech-value status-green">${escapeHTML(expectedFutureProofRating)}</span>
+            </div>` : ""}
+        </details>` : ""}
+    </div>`;
 }
 
 /* ------------------------------------------------------------
