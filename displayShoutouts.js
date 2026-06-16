@@ -869,7 +869,9 @@ function extractID(url) {
   return match ? match[1] : "";
 }
 
-/* ------------------------------------------------------------/* ------------------------------------------------------------ */
+/* ------------------------------------------------------------
+   GLOBAL STORAGE
+------------------------------------------------------------ */
 let allTechItems = [];
 
 // ======================
@@ -903,13 +905,42 @@ const minimumUpgradeGapDefaults = {
 
 /* ------------------------------------------------------------
    LATEST OS CONFIG
-   Update these manually when public releases change.
+   Fallback values are used if the JSON fetch fails.
 ------------------------------------------------------------ */
-const latestOSVersions = {
+let latestOSVersions = {
     ios: "26.5.1",
     ipados: "26.5",
     macos: "26.5.1"
 };
+
+const LATEST_OS_ENDPOINT = "/latest_os_versions.json";
+
+/* ------------------------------------------------------------
+   AUTO LATEST OS FETCH
+------------------------------------------------------------ */
+async function fetchLatestOSVersions() {
+    try {
+        const response = await fetch(LATEST_OS_ENDPOINT, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`Latest OS fetch failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        latestOSVersions = {
+            ios: data.ios || latestOSVersions.ios,
+            ipados: data.ipados || latestOSVersions.ipados,
+            macos: data.macos || latestOSVersions.macos
+        };
+
+        console.log("Latest OS versions updated:", latestOSVersions);
+    } catch (error) {
+        console.warn("Using fallback latest OS versions:", error);
+    }
+}
 
 // ======================
 // OS TYPE DETECTION
@@ -1377,7 +1408,6 @@ function calculateUpgradeScore(item) {
 
 // ======================
 // UPGRADE PRIORITY LABEL
-// Matches CSS:
 // Critical     = red
 // Recommended  = yellow
 // Optional     = gray
@@ -2216,7 +2246,12 @@ async function loadTechItems() {
 /* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
-loadTechItems();
+async function initTechItems() {
+    await fetchLatestOSVersions();
+    await loadTechItems();
+}
+
+initTechItems();
 
 /* ------------------------------------------------------------
    INIT
