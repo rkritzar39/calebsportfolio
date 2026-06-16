@@ -4232,7 +4232,10 @@ function closeEditUsefulLinkModal() { //
 
     function setupTechOwnershipFieldToggle(selectId, formRoot) {
     const ownershipSelect = document.getElementById(selectId);
-    if (!ownershipSelect || !formRoot) return;
+
+    if (!ownershipSelect || !formRoot) {
+        return;
+    }
 
     const roadmapStates = new Set([
         "planned",
@@ -4255,17 +4258,27 @@ function closeEditUsefulLinkModal() { //
         const isRoadmap = roadmapStates.has(state);
         const isWishlist = wishlistStates.has(state);
 
-        const shouldShowPlannedFields = isRoadmap;
-        const shouldShowOwnedFields = !isRoadmap && !isWishlist;
+        /*
+            Roadmap:
+            Shows only roadmap fields + always-visible basic fields/order/preview.
 
-        formRoot.querySelectorAll(".planned-tech-fields").forEach(group => {
-            group.classList.toggle("active", shouldShowPlannedFields);
-            group.style.display = shouldShowPlannedFields ? "" : "none";
+            Wishlist / Research:
+            Shows only always-visible basic fields/order/preview.
+
+            Active + Archive:
+            Shows full inventory fields + always-visible basic fields/order/preview.
+        */
+
+        formRoot.querySelectorAll(".roadmap-tech-fields").forEach((group) => {
+            group.classList.toggle("active", isRoadmap);
+            group.style.display = isRoadmap ? "" : "none";
         });
 
-        formRoot.querySelectorAll(".owned-only-fields").forEach(group => {
-            group.classList.toggle("hidden", !shouldShowOwnedFields);
-            group.style.display = shouldShowOwnedFields ? "" : "none";
+        formRoot.querySelectorAll(".full-tech-fields").forEach((group) => {
+            const shouldShowFullFields = !isRoadmap && !isWishlist;
+
+            group.classList.toggle("active", shouldShowFullFields);
+            group.style.display = shouldShowFullFields ? "" : "none";
         });
     }
 
@@ -4274,11 +4287,11 @@ function closeEditUsefulLinkModal() { //
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const addForm = document.getElementById("add-tech-item-form");
-    const editForm = document.getElementById("edit-tech-item-form");
+    const addTechForm = document.getElementById("add-tech-item-form");
+    const editTechForm = document.getElementById("edit-tech-item-form");
 
-    setupTechOwnershipFieldToggle("tech-ownership-state", addForm);
-    setupTechOwnershipFieldToggle("edit-tech-ownership-state", editForm);
+    setupTechOwnershipFieldToggle("tech-ownership-state", addTechForm);
+    setupTechOwnershipFieldToggle("edit-tech-ownership-state", editTechForm);
 });
 
 // --- NEW: LOGIC FOR SMART CHECKBOXES ---
