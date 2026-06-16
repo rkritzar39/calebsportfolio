@@ -4230,6 +4230,57 @@ function closeEditUsefulLinkModal() { //
     // END: All Social Link Functions
     // ========================================================
 
+    function setupTechOwnershipFieldToggle(selectId, formRoot) {
+    const ownershipSelect = document.getElementById(selectId);
+    if (!ownershipSelect || !formRoot) return;
+
+    const roadmapStates = new Set([
+        "planned",
+        "coming-soon",
+        "future-upgrade",
+        "preordered",
+        "ordered",
+        "reserved"
+    ]);
+
+    const wishlistStates = new Set([
+        "wishlist",
+        "considering",
+        "researching"
+    ]);
+
+    function updateVisibility() {
+        const state = String(ownershipSelect.value || "owned").toLowerCase().trim();
+
+        const isRoadmap = roadmapStates.has(state);
+        const isWishlist = wishlistStates.has(state);
+
+        const shouldShowPlannedFields = isRoadmap;
+        const shouldShowOwnedFields = !isRoadmap && !isWishlist;
+
+        formRoot.querySelectorAll(".planned-tech-fields").forEach(group => {
+            group.classList.toggle("active", shouldShowPlannedFields);
+            group.style.display = shouldShowPlannedFields ? "" : "none";
+        });
+
+        formRoot.querySelectorAll(".owned-only-fields").forEach(group => {
+            group.classList.toggle("hidden", !shouldShowOwnedFields);
+            group.style.display = shouldShowOwnedFields ? "" : "none";
+        });
+    }
+
+    ownershipSelect.addEventListener("change", updateVisibility);
+    updateVisibility();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const addForm = document.getElementById("add-tech-item-form");
+    const editForm = document.getElementById("edit-tech-item-form");
+
+    setupTechOwnershipFieldToggle("tech-ownership-state", addForm);
+    setupTechOwnershipFieldToggle("edit-tech-ownership-state", editForm);
+});
+
 // --- NEW: LOGIC FOR SMART CHECKBOXES ---
 function setupLegislationCheckboxLogic() {
     const checkboxes = [
