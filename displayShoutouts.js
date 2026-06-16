@@ -1300,32 +1300,2119 @@ async function loadAndDisplayDisabilities() {
 }
 
 
+
 /* ------------------------------------------------------------
-   BASIC TECH ITEM RENDERER
-   This prevents loadAndDisplayTechItems() from failing if the full smart
-   tech renderer is not present in this file.
+   SMART TECH ITEM SYSTEM
+   Restores the full smart tech section: OS status, support status,
+   AI support, future AI target, device score, upgrade recommendation,
+   support lifespan, battery trend, advanced details, and Android support.
+------------------------------------------------------------ */
+
+// ======================
+// PERSONAL THRESHOLDS
+// ======================
+const techThresholds = {
+    cycleOld: 1500,
+    cycleVeryOld: 2000,
+    batteryBad: 85,
+    batteryCritical: 75
+};
+
+// ======================
+// UPGRADE CYCLE DEFAULTS
+// ======================
+const upgradeCycleDefaults = {
+    phone: 4,
+    tablet: 5,
+    watch: 4,
+    computer: 6,
+    accessory: 0
+};
+
+const minimumUpgradeGapDefaults = {
+    phone: 3,
+    tablet: 4,
+    watch: 3,
+    computer: 5,
+    accessory: 0
+};
+
+// ======================
+// SUPPORT LIFESPAN DEFAULTS
+// Estimates, not guarantees.
+// ======================
+const supportLifespanDefaults = {
+    phone: {
+        majorYears: 6,
+        securityYearsAfterMajor: 2
+    },
+    tablet: {
+        majorYears: 7,
+        securityYearsAfterMajor: 2
+    },
+    computer: {
+        majorYears: 7,
+        securityYearsAfterMajor: 2
+    },
+    watch: {
+        majorYears: 5,
+        securityYearsAfterMajor: 1
+    },
+    accessory: {
+        majorYears: 0,
+        securityYearsAfterMajor: 0
+    }
+};
+
+/* ------------------------------------------------------------
+   AUTO LATEST OS FETCH
+------------------------------------------------------------ */
+async function fetchLatestOSVersions() {
+    try {
+        const response = await fetch(LATEST_OS_ENDPOINT, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(`Latest OS fetch failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        latestOSVersions = {
+            ...latestOSVersions,
+            ...data
+        };
+
+        console.log("Latest OS versions updated:", latestOSVersions);
+    } catch (error) {
+        console.warn("Using fallback latest OS versions:", error);
+    }
+}
+
+// ======================
+// OS TYPE DETECTION
+// ======================
+function detectOSType(osVersion) {
+    if (!osVersion) return "unknown";
+
+    const os = String(osVersion).toLowerCase();
+
+    // Apple
+    if (os.includes("ipados")) return "ipados";
+    if (os.includes("ios")) return "ios";
+    if (os.includes("macos")) return "macos";
+    if (os.includes("watchos")) return "watchos";
+    if (os.includes("tvos")) return "tvos";
+    if (os.includes("visionos")) return "visionos";
+
+    // Android skins / OEM software first
+    if (os.includes("one ui") || os.includes("oneui")) return "oneui";
+    if (os.includes("pixel ui") || os.includes("pixelui")) return "pixelui";
+    if (os.includes("oxygenos") || os.includes("oxygen os")) return "oxygenos";
+    if (os.includes("coloros") || os.includes("color os")) return "coloros";
+    if (os.includes("realme ui") || os.includes("realmeui")) return "realmeui";
+    if (os.includes("hyperos")) return "hyperos";
+    if (os.includes("miui")) return "miui";
+    if (os.includes("magic os") || os.includes("magicos")) return "magicos";
+    if (os.includes("emui")) return "emui";
+    if (os.includes("harmonyos") || os.includes("harmony os")) return "harmonyos";
+    if (os.includes("funtouch")) return "funtouchos";
+    if (os.includes("originos") || os.includes("origin os")) return "originos";
+    if (os.includes("nothing os") || os.includes("nothingos")) return "nothingos";
+    if (os.includes("motorola hello") || os.includes("hello ui")) return "motorolahello";
+    if (os.includes("zenui") || os.includes("zen ui")) return "zenui";
+    if (os.includes("rog ui") || os.includes("rogui")) return "rogui";
+    if (os.includes("xos")) return "xos";
+    if (os.includes("hios")) return "hios";
+    if (os.includes("flyme")) return "flymeos";
+
+    // Android generic after skins
+    if (os.includes("android tv")) return "androidtv";
+    if (os.includes("google tv")) return "googletv";
+    if (os.includes("android")) return "android";
+
+    // Windows
+    if (os.includes("windows server")) return "windowsserver";
+    if (os.includes("windows phone")) return "windowsphone";
+    if (os.includes("windows")) return "windows";
+
+    // ChromeOS
+    if (os.includes("chromeos") || os.includes("chrome os")) return "chromeos";
+    if (os.includes("chromiumos") || os.includes("chromium os")) return "chromiumos";
+
+    // Linux
+    if (os.includes("ubuntu")) return "ubuntu";
+    if (os.includes("debian")) return "debian";
+    if (os.includes("fedora")) return "fedora";
+    if (os.includes("arch")) return "arch";
+    if (os.includes("manjaro")) return "manjaro";
+    if (os.includes("mint")) return "linuxmint";
+    if (os.includes("pop!_os") || os.includes("pop os")) return "popos";
+    if (os.includes("elementary")) return "elementaryos";
+    if (os.includes("zorin")) return "zorinos";
+    if (os.includes("opensuse") || os.includes("suse")) return "opensuse";
+    if (os.includes("kali")) return "kali";
+    if (os.includes("tails")) return "tails";
+    if (os.includes("red hat") || os.includes("rhel")) return "redhat";
+    if (os.includes("rocky")) return "rocky";
+    if (os.includes("alma")) return "almalinux";
+    if (os.includes("linux")) return "linux";
+
+    // BSD
+    if (os.includes("freebsd")) return "freebsd";
+    if (os.includes("openbsd")) return "openbsd";
+    if (os.includes("netbsd")) return "netbsd";
+
+    // Gaming
+    if (os.includes("steamos") || os.includes("steam os")) return "steamos";
+    if (os.includes("playstation") || os.includes("ps5") || os.includes("ps4")) return "playstation";
+    if (os.includes("xbox")) return "xbox";
+    if (os.includes("nintendo switch") || os.includes("switch os")) return "nintendoswitch";
+
+    // TV / streaming
+    if (os.includes("fire os") || os.includes("fireos")) return "fireos";
+    if (os.includes("roku")) return "rokuos";
+    if (os.includes("webos") || os.includes("web os")) return "webos";
+    if (os.includes("tizen")) return "tizen";
+
+    // Wearables
+    if (os.includes("wear os") || os.includes("wearos")) return "wearos";
+    if (os.includes("garmin")) return "garminos";
+    if (os.includes("fitbit")) return "fitbitos";
+    if (os.includes("zepp")) return "zeppos";
+
+    // Other
+    if (os.includes("kindle")) return "kindleos";
+    if (os.includes("quest") || os.includes("meta horizon")) return "metaquest";
+
+    return "unknown";
+}
+
+function formatOSType(osType) {
+    const labels = {
+        ios: "iOS",
+        ipados: "iPadOS",
+        macos: "macOS",
+        watchos: "watchOS",
+        tvos: "tvOS",
+        visionos: "visionOS",
+
+        android: "Android",
+        pixelui: "Pixel UI",
+        oneui: "One UI",
+        oxygenos: "OxygenOS",
+        coloros: "ColorOS",
+        realmeui: "realme UI",
+        miui: "MIUI",
+        hyperos: "HyperOS",
+        magicos: "MagicOS",
+        emui: "EMUI",
+        harmonyos: "HarmonyOS",
+        funtouchos: "Funtouch OS",
+        originos: "OriginOS",
+        nothingos: "Nothing OS",
+        motorolahello: "Motorola Hello UI",
+        zenui: "ZenUI",
+        rogui: "ROG UI",
+        xos: "XOS",
+        hios: "HiOS",
+        flymeos: "Flyme OS",
+
+        windows: "Windows",
+        windowsphone: "Windows Phone",
+        windowsserver: "Windows Server",
+
+        linux: "Linux",
+        ubuntu: "Ubuntu",
+        debian: "Debian",
+        fedora: "Fedora",
+        arch: "Arch Linux",
+        manjaro: "Manjaro",
+        linuxmint: "Linux Mint",
+        popos: "Pop!_OS",
+        elementaryos: "elementary OS",
+        zorinos: "Zorin OS",
+        opensuse: "openSUSE",
+        kali: "Kali Linux",
+        tails: "Tails",
+        redhat: "Red Hat Enterprise Linux",
+        rocky: "Rocky Linux",
+        almalinux: "AlmaLinux",
+
+        chromeos: "ChromeOS",
+        chromiumos: "ChromiumOS",
+
+        freebsd: "FreeBSD",
+        openbsd: "OpenBSD",
+        netbsd: "NetBSD",
+
+        steamos: "SteamOS",
+        playstation: "PlayStation System Software",
+        xbox: "Xbox System Software",
+        nintendoswitch: "Nintendo Switch System Software",
+
+        fireos: "Fire OS",
+        rokuos: "Roku OS",
+        webos: "webOS",
+        tizen: "Tizen",
+        androidtv: "Android TV",
+        googletv: "Google TV",
+
+        wearos: "Wear OS",
+        garminos: "Garmin OS",
+        fitbitos: "Fitbit OS",
+        zeppos: "Zepp OS",
+
+        kindleos: "Kindle OS",
+        metaquest: "Meta Quest System Software",
+        unknown: "OS"
+    };
+
+    return labels[osType] || "OS";
+}
+
+// ======================
+// VERSION PARSER
+// ======================
+function extractVersionString(osVersion, osType = null) {
+    if (!osVersion) return null;
+
+    const os = String(osVersion);
+
+    const patterns = {
+        ios: /ios\s*(\d+(?:\.\d+){0,5})/i,
+        ipados: /ipados\s*(\d+(?:\.\d+){0,5})/i,
+        macos: /macos\s*(?:[a-z\s]+)?\s*(\d+(?:\.\d+){0,5})/i,
+        watchos: /watchos\s*(\d+(?:\.\d+){0,5})/i,
+        tvos: /tvos\s*(\d+(?:\.\d+){0,5})/i,
+        visionos: /visionos\s*(\d+(?:\.\d+){0,5})/i,
+
+        android: /android\s*(\d+(?:\.\d+){0,5})/i,
+        pixelui: /pixel\s*ui\s*(\d+(?:\.\d+){0,5})/i,
+        oneui: /one\s*ui\s*(\d+(?:\.\d+){0,5})/i,
+        oxygenos: /oxygen\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        coloros: /color\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        realmeui: /realme\s*ui\s*(\d+(?:\.\d+){0,5})/i,
+        miui: /miui\s*(\d+(?:\.\d+){0,5})/i,
+        hyperos: /hyperos\s*(\d+(?:\.\d+){0,5})/i,
+        magicos: /magic\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        emui: /emui\s*(\d+(?:\.\d+){0,5})/i,
+        harmonyos: /harmony\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        funtouchos: /funtouch\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        originos: /origin\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        nothingos: /nothing\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        motorolahello: /(?:motorola\s*hello|hello\s*ui)\s*(\d+(?:\.\d+){0,5})/i,
+        zenui: /zen\s*ui\s*(\d+(?:\.\d+){0,5})/i,
+        rogui: /rog\s*ui\s*(\d+(?:\.\d+){0,5})/i,
+        xos: /xos\s*(\d+(?:\.\d+){0,5})/i,
+        hios: /hios\s*(\d+(?:\.\d+){0,5})/i,
+        flymeos: /flyme\s*os\s*(\d+(?:\.\d+){0,5})/i,
+
+        windows: /windows\s*(\d+(?:\.\d+){0,5})/i,
+        windowsphone: /windows\s*phone\s*(\d+(?:\.\d+){0,5})/i,
+        windowsserver: /windows\s*server\s*(\d{4})/i,
+
+        chromeos: /chrome\s*os\s*(\d+(?:\.\d+){0,6})/i,
+        chromiumos: /chromium\s*os\s*(\d+(?:\.\d+){0,6})/i,
+
+        ubuntu: /ubuntu\s*(\d+(?:\.\d+){0,5})/i,
+        debian: /debian\s*(\d+(?:\.\d+){0,5})/i,
+        fedora: /fedora\s*(\d+(?:\.\d+){0,5})/i,
+        linuxmint: /linux\s*mint\s*(\d+(?:\.\d+){0,5})/i,
+        opensuse: /opensuse\s*(\d+(?:\.\d+){0,5})/i,
+        kali: /kali\s*(\d+(?:\.\d+){0,5})/i,
+        tails: /tails\s*(\d+(?:\.\d+){0,5})/i,
+        redhat: /(?:red\s*hat|rhel)\s*(\d+(?:\.\d+){0,5})/i,
+        rocky: /rocky\s*(\d+(?:\.\d+){0,5})/i,
+        almalinux: /alma(?:linux)?\s*(\d+(?:\.\d+){0,5})/i,
+
+        freebsd: /freebsd\s*(\d+(?:\.\d+){0,5})/i,
+        openbsd: /openbsd\s*(\d+(?:\.\d+){0,5})/i,
+        netbsd: /netbsd\s*(\d+(?:\.\d+){0,5})/i,
+
+        steamos: /steam\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        playstation: /(?:playstation|ps5|ps4)\s*(\d+(?:\.\d+){0,5})/i,
+        xbox: /xbox\s*(\d+(?:\.\d+){0,5})/i,
+        nintendoswitch: /(?:nintendo\s*switch|switch\s*os)\s*(\d+(?:\.\d+){0,5})/i,
+
+        fireos: /fire\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        rokuos: /roku\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        webos: /webos\s*(\d+(?:\.\d+){0,5})/i,
+        tizen: /tizen\s*(\d+(?:\.\d+){0,5})/i,
+        androidtv: /android\s*tv\s*(\d+(?:\.\d+){0,5})/i,
+        googletv: /google\s*tv\s*(\d+(?:\.\d+){0,5})/i,
+
+        wearos: /wear\s*os\s*(\d+(?:\.\d+){0,5})/i,
+        zeppos: /zepp\s*os\s*(\d+(?:\.\d+){0,5})/i
+    };
+
+    if (osType && patterns[osType]) {
+        const specificMatch = os.match(patterns[osType]);
+        if (specificMatch) return specificMatch[1];
+    }
+
+    const genericMatch = os.match(/(\d+(?:\.\d+){0,6})/);
+    return genericMatch ? genericMatch[1] : null;
+}
+
+function normalizeVersion(version) {
+    return String(version)
+        .split(".")
+        .map(num => parseInt(num, 10))
+        .map(num => isNaN(num) ? 0 : num);
+}
+
+function compareVersions(a, b) {
+    if (a === "latest" || b === "latest") return 0;
+    if (a === "rolling" || b === "rolling") return 0;
+    if (a === "series" || b === "series") return 0;
+    if (a === "Unknown" || b === "Unknown") return 0;
+
+    const versionA = normalizeVersion(a);
+    const versionB = normalizeVersion(b);
+    const maxLength = Math.max(versionA.length, versionB.length);
+
+    for (let i = 0; i < maxLength; i++) {
+        const partA = versionA[i] || 0;
+        const partB = versionB[i] || 0;
+
+        if (partA > partB) return 1;
+        if (partA < partB) return -1;
+    }
+
+    return 0;
+}
+
+// ======================
+// BETA / CHANNEL DETECTION
+// ======================
+function detectOSChannel(osVersion) {
+    if (!osVersion) return "public";
+
+    const os = String(osVersion).toLowerCase();
+
+    if (os.includes("developer beta") || os.includes("dev beta")) return "developer-beta";
+    if (os.includes("public beta")) return "public-beta";
+    if (os.includes("beta")) return "beta";
+    if (os.includes("canary")) return "canary";
+    if (os.includes("preview")) return "preview";
+    if (os.includes("rc") || os.includes("release candidate")) return "release-candidate";
+
+    return "public";
+}
+
+// ======================
+// OS STATUS
+// ======================
+function checkOSStatus(osVersion) {
+    if (!osVersion) return null;
+
+    const osType = detectOSType(osVersion);
+    const currentVersion = extractVersionString(osVersion, osType);
+    const latestPublicVersion = latestOSVersions[osType] || null;
+    const channel = detectOSChannel(osVersion);
+
+    if (!currentVersion) return null;
+
+    if (!latestPublicVersion) {
+        return {
+            status: "Unknown",
+            color: "gray",
+            osType,
+            currentVersion,
+            latestPublicVersion: "Unknown",
+            releaseChannel: "Unknown",
+            description: "Latest public version is not configured for this OS.",
+            isBeta: false,
+            isPublicLatest: false,
+            isBehindPublic: false
+        };
+    }
+
+    const comparisonToPublic = compareVersions(currentVersion, latestPublicVersion);
+
+    let status = "Latest";
+    let color = "green";
+    let releaseChannel = "Public";
+    let description = "Running the latest public release.";
+
+    if (channel === "developer-beta") {
+        status = "Developer Beta";
+        color = "purple";
+        releaseChannel = "Developer Beta";
+        description = "Running a developer beta ahead of the public release.";
+    } else if (channel === "public-beta") {
+        status = "Public Beta";
+        color = "purple";
+        releaseChannel = "Public Beta";
+        description = "Running a public beta ahead of the public release.";
+    } else if (channel === "beta") {
+        status = "Beta";
+        color = "purple";
+        releaseChannel = "Beta";
+        description = "Running a beta build ahead of the public release.";
+    } else if (channel === "canary") {
+        status = "Canary";
+        color = "purple";
+        releaseChannel = "Canary";
+        description = "Running an experimental canary build.";
+    } else if (channel === "preview") {
+        status = "Preview";
+        color = "purple";
+        releaseChannel = "Preview";
+        description = "Running a preview build.";
+    } else if (channel === "release-candidate") {
+        status = "Release Candidate";
+        color = "purple";
+        releaseChannel = "Release Candidate";
+        description = "Running a release candidate build.";
+    } else if (comparisonToPublic > 0) {
+        status = "Ahead of Public";
+        color = "purple";
+        releaseChannel = "Pre-release / Beta";
+        description = "This version is newer than the latest public release.";
+    } else if (comparisonToPublic < 0) {
+        status = "Outdated";
+        color = "yellow";
+        releaseChannel = "Public";
+        description = "A newer public release is available.";
+    }
+
+    if (comparisonToPublic < 0) {
+        const currentMajor = normalizeVersion(currentVersion)[0] || 0;
+        const latestMajor = normalizeVersion(latestPublicVersion)[0] || 0;
+
+        if (latestMajor - currentMajor >= 1) {
+            status = "Very Outdated";
+            color = "red";
+            description = "This OS version is significantly behind the latest public release.";
+        }
+    }
+
+    return {
+        status,
+        color,
+        osType,
+        currentVersion,
+        latestPublicVersion,
+        releaseChannel,
+        description,
+        isBeta: channel !== "public" || comparisonToPublic > 0,
+        isPublicLatest: comparisonToPublic === 0 && channel === "public",
+        isBehindPublic: comparisonToPublic < 0
+    };
+}
+
+// ======================
+// DEVICE AGE
+// ======================
+function calculateDeviceAge(dateBought) {
+    if (!dateBought) return null;
+
+    let bought;
+
+    if (dateBought && typeof dateBought.toDate === "function") {
+        bought = dateBought.toDate();
+    } else {
+        bought = new Date(dateBought);
+    }
+
+    if (isNaN(bought.getTime())) return null;
+
+    const now = new Date();
+    const diffMs = now - bought;
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const years = parseFloat((days / 365).toFixed(1));
+
+    return { days, years };
+}
+
+// ======================
+// DEVICE TYPE DETECTION
+// ======================
+function detectDeviceType(item) {
+    const explicitType = String(item.deviceType || "").toLowerCase();
+    if (explicitType) return explicitType;
+
+    const name = String(item.name || "").toLowerCase();
+    const model = String(item.model || "").toLowerCase();
+    const iconClass = String(item.iconClass || "").toLowerCase();
+
+    if (
+        name.includes("iphone") ||
+        name.includes("phone") ||
+        name.includes("galaxy") ||
+        name.includes("pixel") ||
+        model.includes("iphone") ||
+        model.includes("galaxy") ||
+        model.includes("pixel") ||
+        iconClass.includes("mobile")
+    ) {
+        return "phone";
+    }
+
+    if (
+        name.includes("ipad") ||
+        name.includes("tablet") ||
+        name.includes("tab") ||
+        model.includes("ipad") ||
+        model.includes("tablet") ||
+        model.includes("tab")
+    ) {
+        return "tablet";
+    }
+
+    if (
+        name.includes("mac") ||
+        name.includes("macbook") ||
+        name.includes("imac") ||
+        name.includes("computer") ||
+        name.includes("laptop") ||
+        name.includes("desktop") ||
+        name.includes("pc") ||
+        model.includes("mac") ||
+        model.includes("macbook") ||
+        model.includes("computer") ||
+        model.includes("laptop") ||
+        model.includes("desktop") ||
+        model.includes("pc") ||
+        iconClass.includes("desktop") ||
+        iconClass.includes("laptop")
+    ) {
+        return "computer";
+    }
+
+    if (name.includes("watch") || model.includes("watch")) {
+        return "watch";
+    }
+
+    if (
+        name.includes("accessory") ||
+        model.includes("accessory") ||
+        iconClass.includes("keyboard") ||
+        iconClass.includes("mouse") ||
+        iconClass.includes("headphones")
+    ) {
+        return "accessory";
+    }
+
+    return "computer";
+}
+
+// ======================
+// CHIP HELPERS
+// ======================
+function getChipInfo(item) {
+    const chipName = String(item.chipName || item.chip || "").trim();
+    const chipLower = chipName.toLowerCase();
+
+    return {
+        chipName,
+        chipLower,
+
+        isA17ProOrNewer:
+            chipLower.includes("a17 pro") ||
+            chipLower.includes("a18") ||
+            chipLower.includes("a19") ||
+            chipLower.includes("a20") ||
+            chipLower.includes("a21"),
+
+        isA19ProOrNewer:
+            chipLower.includes("a19 pro") ||
+            chipLower.includes("a20 pro") ||
+            chipLower.includes("a21 pro"),
+
+        isAppleSilicon:
+            chipLower.includes("m1") ||
+            chipLower.includes("m2") ||
+            chipLower.includes("m3") ||
+            chipLower.includes("m4") ||
+            chipLower.includes("m5") ||
+            chipLower.includes("m6"),
+
+        isM3OrNewer:
+            chipLower.includes("m3") ||
+            chipLower.includes("m4") ||
+            chipLower.includes("m5") ||
+            chipLower.includes("m6"),
+
+        isM4OrNewer:
+            chipLower.includes("m4") ||
+            chipLower.includes("m5") ||
+            chipLower.includes("m6"),
+
+        isSnapdragonAIClass:
+            chipLower.includes("snapdragon 8") ||
+            chipLower.includes("snapdragon elite"),
+
+        isTensorAIClass:
+            chipLower.includes("tensor g3") ||
+            chipLower.includes("tensor g4") ||
+            chipLower.includes("tensor g5") ||
+            chipLower.includes("tensor g6"),
+
+        isExynosAIClass:
+            chipLower.includes("exynos 2400") ||
+            chipLower.includes("exynos 2500") ||
+            chipLower.includes("exynos 2600"),
+
+        isDimensityAIClass:
+            chipLower.includes("dimensity 9300") ||
+            chipLower.includes("dimensity 9400") ||
+            chipLower.includes("dimensity 9500"),
+
+        isProMaxClass:
+            chipLower.includes("pro") ||
+            chipLower.includes("max") ||
+            chipLower.includes("ultra") ||
+            chipLower.includes("elite")
+    };
+}
+
+// ======================
+// DEVICE SUPPORT
+// ======================
+function checkDeviceSupport(item) {
+    const currentYear = new Date().getFullYear();
+
+    const parsedModelYear = Number(item.modelYear);
+    const modelYear = !isNaN(parsedModelYear) ? parsedModelYear : currentYear;
+
+    const parsedSupportEndYear = Number(item.supportEndYear);
+    const supportEndYear = !isNaN(parsedSupportEndYear) && item.supportEndYear
+        ? parsedSupportEndYear
+        : null;
+
+    const osStatus = checkOSStatus(item.osVersion);
+    const deviceType = detectDeviceType(item);
+    const condition = String(item.condition || "").toLowerCase();
+
+    const yearsOld = Math.max(0, currentYear - modelYear);
+
+    let supported = true;
+    let supportLevel = "Fully Supported";
+    let supportColor = "green";
+
+    if (supportEndYear) {
+        if (currentYear > supportEndYear) {
+            supported = false;
+            supportLevel = "Unsupported";
+            supportColor = "red";
+        } else if (currentYear === supportEndYear) {
+            supportLevel = "Support Ending Soon";
+            supportColor = "yellow";
+        } else if (supportEndYear - currentYear === 1) {
+            supportLevel = "Support Ending Next Year";
+            supportColor = "yellow";
+        }
+    }
+
+    if (condition === "retired") {
+        supported = false;
+        supportLevel = "Retired";
+        supportColor = "gray";
+    }
+
+    if (condition === "needs repair" && supported) {
+        supportLevel = "Needs Repair";
+        supportColor = "orange";
+    }
+
+    if (osStatus && osStatus.status === "Very Outdated") {
+        supported = false;
+        supportLevel = "Unsupported";
+        supportColor = "red";
+    } else if (osStatus && osStatus.isBehindPublic && supported) {
+        supportLevel = "Limited Support";
+        supportColor = "yellow";
+    }
+
+    const limitedSupportAgeByType = {
+        phone: 5,
+        tablet: 5,
+        watch: 4,
+        computer: 6,
+        accessory: null
+    };
+
+    const veryOldAgeByType = {
+        phone: 6,
+        tablet: 6,
+        watch: 5,
+        computer: 7,
+        accessory: null
+    };
+
+    const limitedAge = limitedSupportAgeByType[deviceType];
+    const veryOldAge = veryOldAgeByType[deviceType];
+
+    if (supported && limitedAge !== null && yearsOld >= limitedAge) {
+        supportLevel = "Limited Support";
+        supportColor = "yellow";
+    }
+
+    if (supported && veryOldAge !== null && yearsOld >= veryOldAge) {
+        supportLevel = "Older Device";
+        supportColor = "orange";
+    }
+
+    if (deviceType === "accessory" && supported) {
+        if (condition === "needs repair") {
+            supportLevel = "Needs Repair";
+            supportColor = "orange";
+        } else if (supportEndYear && currentYear === supportEndYear) {
+            supportLevel = "Support Ending Soon";
+            supportColor = "yellow";
+        } else {
+            supportLevel = "Condition-Based";
+            supportColor = "green";
+        }
+    }
+
+    let supportRemaining = null;
+
+    if (supportEndYear) {
+        supportRemaining = supportEndYear - currentYear;
+    }
+
+    return {
+        supported,
+        supportLevel,
+        supportColor,
+        yearsOld,
+        deviceType,
+        modelYear,
+        supportEndYear,
+        supportRemaining
+    };
+}
+
+// ======================
+// ESTIMATED SUPPORT LIFESPAN
+// ======================
+function estimateSupportLifespan(item) {
+    const currentYear = new Date().getFullYear();
+    const deviceType = detectDeviceType(item);
+
+    if (deviceType === "accessory") {
+        return {
+            estimatedMajorSupportEndYear: null,
+            estimatedSecuritySupportEndYear: null,
+            majorSupportRemaining: null,
+            securitySupportRemaining: null,
+            supportRating: "Compatibility-Based",
+            supportColor: "green"
+        };
+    }
+
+    const modelYear = Number(item.modelYear || currentYear);
+    const supportEndYear = item.supportEndYear ? Number(item.supportEndYear) : null;
+    const defaults = supportLifespanDefaults[deviceType] || supportLifespanDefaults.phone;
+
+    const estimatedMajorSupportEndYear = supportEndYear || modelYear + defaults.majorYears;
+    const estimatedSecuritySupportEndYear = estimatedMajorSupportEndYear + defaults.securityYearsAfterMajor;
+    const majorSupportRemaining = estimatedMajorSupportEndYear - currentYear;
+    const securitySupportRemaining = estimatedSecuritySupportEndYear - currentYear;
+
+    let supportRating = "Supported";
+    let supportColor = "green";
+
+    if (majorSupportRemaining <= 1 && majorSupportRemaining > 0) {
+        supportRating = "Major Support Ending Soon";
+        supportColor = "yellow";
+    }
+
+    if (majorSupportRemaining <= 0 && securitySupportRemaining > 0) {
+        supportRating = "Security Updates Only";
+        supportColor = "yellow";
+    }
+
+    if (securitySupportRemaining <= 0) {
+        supportRating = "Unsupported";
+        supportColor = "red";
+    }
+
+    return {
+        estimatedMajorSupportEndYear,
+        estimatedSecuritySupportEndYear,
+        majorSupportRemaining,
+        securitySupportRemaining,
+        supportRating,
+        supportColor
+    };
+}
+
+// ======================
+// BATTERY TREND
+// ======================
+function estimateBatteryTrend(item) {
+    const age = calculateDeviceAge(item.dateBought);
+    if (!age) return null;
+
+    const currentHealth = Number(item.batteryHealth ?? 100);
+    if (isNaN(currentHealth)) return null;
+
+    const degradationRate = 5;
+    const estimatedLoss = age.years * degradationRate;
+    const estimatedOriginal = Math.min(100, currentHealth + estimatedLoss);
+    const declineValue = Math.max(0, estimatedOriginal - currentHealth);
+    const decline = declineValue.toFixed(1);
+
+    return {
+        decline,
+        trend: declineValue > 10 ? "Fast Decline" : "Normal"
+    };
+}
+
+// ======================
+// BATTERY CYCLES HELPER
+// Supports both batteryCycles and batteryChargeCycles
+// ======================
+function getBatteryCycles(item) {
+    const cycles = item.batteryCycles ?? item.batteryChargeCycles ?? 0;
+    const numberCycles = Number(cycles);
+    return isNaN(numberCycles) ? 0 : numberCycles;
+}
+
+// ======================
+// CURRENT AI FEATURE SUPPORT
+// ======================
+function calculateAIFeatureSupport(item) {
+    const deviceType = detectDeviceType(item);
+    const model = String(item.model || "").toLowerCase();
+    const ramGB = Number(item.ramGB || 0);
+    const storageGB = Number(item.storageGB || 0);
+    const chip = getChipInfo(item);
+
+    let level = "None";
+    let score = 0;
+    let color = "red";
+    let reasons = [];
+    let weaknesses = [];
+
+    const hasEnoughStorageForAI = storageGB >= 128;
+
+    if (deviceType === "phone") {
+        const isIPhone15Pro = model.includes("iphone 15 pro");
+        const isIPhone16OrNewer =
+            model.includes("iphone 16") ||
+            model.includes("iphone 17") ||
+            model.includes("iphone 18") ||
+            model.includes("iphone 19") ||
+            model.includes("iphone 20") ||
+            model.includes("iphone 21");
+
+        const isAndroidAIPhone =
+            model.includes("galaxy") ||
+            model.includes("pixel") ||
+            model.includes("ultra") ||
+            model.includes("fold") ||
+            chip.isSnapdragonAIClass ||
+            chip.isTensorAIClass ||
+            chip.isExynosAIClass ||
+            chip.isDimensityAIClass;
+
+        if (isIPhone15Pro || isIPhone16OrNewer || chip.isA17ProOrNewer || isAndroidAIPhone) {
+            level = "Standard";
+            score = 70;
+            color = "yellow";
+            reasons.push("Meets the current AI-capable phone hardware class.");
+        }
+
+        if (ramGB >= 12) {
+            level = "Advanced";
+            score = 88;
+            color = "green";
+            reasons.push("12GB+ memory gives stronger AI feature headroom.");
+        }
+
+        if ((chip.isA19ProOrNewer || chip.isSnapdragonAIClass || chip.isTensorAIClass) && ramGB >= 12) {
+            level = "Maximum";
+            score = 95;
+            color = "green";
+            reasons.push("Flagship AI-class chip with 12GB+ memory provides maximum AI headroom.");
+        }
+
+        if (level === "Standard" && ramGB > 0 && ramGB < 12) {
+            weaknesses.push("Memory supports current AI features but may limit future advanced on-device AI tiers.");
+        }
+    }
+
+    if (deviceType === "tablet") {
+        if (chip.isAppleSilicon || chip.isA17ProOrNewer || chip.isSnapdragonAIClass || chip.isTensorAIClass) {
+            level = "Standard";
+            score = 72;
+            color = "yellow";
+            reasons.push("Meets AI-capable tablet hardware class.");
+        }
+
+        if ((chip.isM4OrNewer || chip.isSnapdragonAIClass) && ramGB >= 12) {
+            level = "Advanced";
+            score = 90;
+            color = "green";
+            reasons.push("Newer chip with 12GB+ memory gives stronger AI headroom.");
+        }
+    }
+
+    if (deviceType === "computer") {
+        if (chip.isAppleSilicon || chip.isSnapdragonAIClass) {
+            level = "Standard";
+            score = 75;
+            color = "yellow";
+            reasons.push("Modern AI-capable computer hardware detected.");
+        }
+
+        if ((chip.isM3OrNewer || chip.isSnapdragonAIClass) && ramGB >= 12) {
+            level = "Advanced";
+            score = 90;
+            color = "green";
+            reasons.push("Newer chip with 12GB+ memory has stronger future AI headroom.");
+        }
+
+        if (chip.isProMaxClass && ramGB >= 24) {
+            level = "Maximum";
+            score = 96;
+            color = "green";
+            reasons.push("Pro/Max/Ultra/Elite-class chip with high memory headroom.");
+        }
+    }
+
+    if (deviceType === "watch") {
+        if (item.pairedAIPhone === true) {
+            level = "Relay";
+            score = 55;
+            color = "yellow";
+            reasons.push("AI features depend on a nearby compatible phone.");
+        } else {
+            level = "Limited";
+            score = 30;
+            color = "orange";
+            weaknesses.push("Watch AI support depends on paired phone compatibility.");
+        }
+    }
+
+    if (deviceType === "accessory") {
+        level = "Not Applicable";
+        score = 0;
+        color = "gray";
+        reasons.push("Accessories do not need direct AI feature support.");
+    }
+
+    if (!hasEnoughStorageForAI && level !== "None" && level !== "Not Applicable") {
+        score -= 8;
+        weaknesses.push("Lower storage may limit local AI model flexibility.");
+    }
+
+    if (reasons.length === 0 && weaknesses.length === 0) {
+        weaknesses.push("Does not appear to meet current AI hardware requirements.");
+    }
+
+    return {
+        aiSupportLevel: level,
+        aiSupportScore: Math.max(0, Math.min(100, score)),
+        aiSupportColor: color,
+        aiSupportReasons: reasons,
+        aiSupportWeaknesses: weaknesses
+    };
+}
+
+// ======================
+// FUTURE AI TARGET
+// ======================
+function calculateFutureAITarget(item, futureTarget) {
+    const deviceType = detectDeviceType(item);
+    const model = String(item.model || "").toLowerCase();
+    const target = String(futureTarget.futureUpgradeTarget || "").toLowerCase();
+
+    if (deviceType === "accessory") {
+        return {
+            level: "Not Applicable",
+            color: "gray",
+            reason: "Accessories do not need direct AI feature support."
+        };
+    }
+
+    if (deviceType === "watch") {
+        return {
+            level: "Relay",
+            color: "yellow",
+            reason: "Future watch AI support should depend on a compatible paired phone."
+        };
+    }
+
+    if (deviceType === "phone") {
+        if (
+            target.includes("pro") ||
+            target.includes("pro max") ||
+            target.includes("air") ||
+            target.includes("ultra") ||
+            target.includes("fold") ||
+            model.includes("galaxy") ||
+            model.includes("pixel")
+        ) {
+            return {
+                level: "Maximum",
+                color: "green",
+                reason: "Future target is a flagship phone class, so the goal should be maximum AI headroom."
+            };
+        }
+
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future target should aim for stronger AI headroom than the current device."
+        };
+    }
+
+    if (deviceType === "tablet") {
+        if (target.includes("pro") || target.includes("ultra")) {
+            return {
+                level: "Maximum",
+                color: "green",
+                reason: "Future tablet target should prioritize Pro/Ultra-class chip and memory headroom."
+            };
+        }
+
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future tablet target should prioritize newer silicon and enough memory."
+        };
+    }
+
+    if (deviceType === "computer") {
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future computer target should prioritize newer silicon with at least 16GB memory."
+        };
+    }
+
+    return {
+        level: "Advanced",
+        color: "green",
+        reason: "Future target should prioritize stronger AI feature support."
+    };
+}
+
+// ======================
+// DEVICE SCORE
+// Higher score = healthier device
+// Lower score = more upgrade urgency
+// ======================
+function calculateUpgradeScore(item) {
+    const age = calculateDeviceAge(item.dateBought);
+    const battery = Number(item.batteryHealth ?? 100);
+    const cycles = getBatteryCycles(item);
+    const support = checkDeviceSupport(item);
+    const osStatus = checkOSStatus(item.osVersion);
+
+    let score = 100;
+
+    if (age) score -= age.years * 10;
+    score -= (100 - battery) * 1.2;
+    score -= cycles * 0.008;
+
+    if (cycles >= techThresholds.cycleVeryOld) score -= 10;
+    if (osStatus && osStatus.isBehindPublic) score -= 8;
+    if (osStatus && osStatus.status === "Very Outdated") score -= 18;
+
+    if (support.supportLevel === "Limited Support") score -= 10;
+    if (support.supportLevel === "Older Device") score -= 14;
+    if (support.supportLevel === "Support Ending Soon") score -= 12;
+    if (support.supportLevel === "Support Ending Next Year") score -= 8;
+    if (!support.supported) score -= 25;
+
+    score = Math.max(0, Math.min(100, Math.round(score)));
+
+    let label = "Excellent";
+    let color = "green";
+
+    if (score < 80) {
+        label = "Good";
+        color = "yellow";
+    }
+
+    if (score < 60) {
+        label = "Aging";
+        color = "orange";
+    }
+
+    if (score < 40) {
+        label = "Needs Attention";
+        color = "red";
+    }
+
+    return { score, label, color };
+}
+
+// ======================
+// FUTURE-PROOF SCORE
+// ======================
+function calculateFutureProofScore(item) {
+    const deviceType = detectDeviceType(item);
+    const ai = calculateAIFeatureSupport(item);
+    const support = estimateSupportLifespan(item);
+
+    const ramGB = Number(item.ramGB || 0);
+    const storageGB = Number(item.storageGB || 0);
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const compatibilityStatus = String(item.compatibilityStatus || "").toLowerCase();
+
+    let score = 50;
+    let reasons = [];
+    let weaknesses = [];
+
+    if (deviceType !== "accessory") {
+        if (support.majorSupportRemaining >= 4) {
+            score += 20;
+            reasons.push("Several years of estimated major OS support remain");
+        } else if (support.majorSupportRemaining >= 2) {
+            score += 10;
+            reasons.push("Some major OS support remains");
+        } else {
+            score -= 15;
+            weaknesses.push("Major OS support may be nearing its end");
+        }
+    }
+
+    if (ai.aiSupportLevel === "Maximum") {
+        score += 20;
+        reasons.push("Maximum AI feature headroom");
+    } else if (ai.aiSupportLevel === "Advanced") {
+        score += 15;
+        reasons.push("Strong AI feature headroom");
+    } else if (ai.aiSupportLevel === "Standard") {
+        score += 8;
+        reasons.push("Supports current AI feature class");
+    } else if (ai.aiSupportLevel === "Limited" || ai.aiSupportLevel === "None") {
+        score -= 10;
+        weaknesses.push("Limited AI feature support");
+    }
+
+    if (deviceType === "phone") {
+        if (ramGB >= 12) {
+            score += 8;
+            reasons.push("Higher RAM improves long-term AI and multitasking headroom");
+        } else if (ramGB > 0 && ramGB < 12) {
+            weaknesses.push("RAM may limit future advanced AI features");
+        }
+
+        if (storageGB >= 512) {
+            score += 8;
+            reasons.push("Storage is strong for long-term use");
+        } else if (storageGB > 0 && storageGB <= 128) {
+            score -= 6;
+            weaknesses.push("128GB storage may become limiting over time");
+        }
+    }
+
+    if (deviceType === "tablet") {
+        if (ramGB >= 8) {
+            score += 6;
+            reasons.push("Tablet memory is reasonable for long-term use");
+        }
+
+        if (storageGB >= 256) {
+            score += 8;
+            reasons.push("Tablet storage has good long-term headroom");
+        } else if (storageGB > 0 && storageGB < 128) {
+            score -= 8;
+            weaknesses.push("Low tablet storage may limit long-term usefulness");
+        }
+    }
+
+    if (deviceType === "computer") {
+        if (ramGB >= 16) {
+            score += 12;
+            reasons.push("16GB+ memory is better for long-term computer use");
+        } else if (ramGB > 0) {
+            score -= 10;
+            weaknesses.push("Low memory may age poorly for a computer");
+        }
+
+        if (storageGB >= 512) {
+            score += 8;
+            reasons.push("512GB+ storage is better for long-term computer use");
+        } else if (storageGB > 0) {
+            score -= 6;
+            weaknesses.push("Base storage may become limiting");
+        }
+    }
+
+    if (deviceType === "watch") {
+        if (batteryHealth >= 85) {
+            score += 10;
+            reasons.push("Battery health is still strong for a watch");
+        } else {
+            score -= 12;
+            weaknesses.push("Battery health may limit long-term watch usefulness");
+        }
+    }
+
+    if (deviceType === "accessory") {
+        if (compatibilityStatus === "current") {
+            score += 20;
+            reasons.push("Accessory is compatible with current standards");
+        } else if (compatibilityStatus === "limited") {
+            score -= 5;
+            weaknesses.push("Accessory compatibility is limited");
+        } else if (compatibilityStatus === "obsolete") {
+            score -= 25;
+            weaknesses.push("Accessory standard is obsolete");
+        } else {
+            reasons.push("Accessory future-proofing depends on compatibility and condition");
+        }
+    }
+
+    score = Math.max(0, Math.min(100, Math.round(score)));
+
+    let rating = "Limited";
+    let color = "red";
+
+    if (score >= 85) {
+        rating = "Maximum";
+        color = "green";
+    } else if (score >= 70) {
+        rating = "High";
+        color = "green";
+    } else if (score >= 50) {
+        rating = "Balanced";
+        color = "yellow";
+    } else if (score >= 35) {
+        rating = "Limited";
+        color = "orange";
+    }
+
+    return {
+        futureProofScore: score,
+        futureProofRating: rating,
+        futureProofColor: color,
+        futureProofReasons: reasons,
+        futureProofWeaknesses: weaknesses,
+        aiSupport: ai,
+        supportLifespan: support
+    };
+}
+
+// ======================
+// FUTURE UPGRADE TARGET
+// ======================
+function getRecommendedFutureUpgradeTarget(item) {
+    const deviceType = detectDeviceType(item);
+    const model = String(item.model || "");
+    const modelLower = model.toLowerCase();
+    const modelYear = Number(item.modelYear || new Date().getFullYear());
+    const expectedKeepYears = Number(item.expectedKeepYears || item.expectedYearsOfUse || 4);
+    const targetYear = modelYear + expectedKeepYears;
+    const futureProof = calculateFutureProofScore(item);
+
+    let target = "Next meaningful upgrade";
+    let recommendedSpecs = "";
+    let avoid = "";
+    let reason = "";
+
+    if (deviceType === "phone") {
+        const iPhoneMatch = model.match(/iPhone\s+(\d+)/i);
+        const currentGeneration = iPhoneMatch ? Number(iPhoneMatch[1]) : null;
+        const isIPhone = modelLower.includes("iphone");
+        const isPro = modelLower.includes("pro");
+        const isProMax = modelLower.includes("pro max");
+        const isSamsung = modelLower.includes("galaxy") || modelLower.includes("samsung");
+        const isPixel = modelLower.includes("pixel");
+
+        if (isIPhone && currentGeneration) {
+            const targetGeneration = currentGeneration + expectedKeepYears;
+            target = `iPhone ${targetGeneration}${isProMax ? " Pro Max" : isPro ? " Pro" : ""}`;
+        } else if (isSamsung) {
+            target = "Future Samsung Ultra-class Galaxy phone";
+        } else if (isPixel) {
+            target = "Future Google Pixel Pro-class phone";
+        } else {
+            target = "Future flagship phone with strong AI hardware";
+        }
+
+        recommendedSpecs = "256GB minimum, 512GB recommended, 12GB+ RAM preferred for long-term AI features";
+        avoid = "Avoid low-RAM or 128GB-only models if you plan to keep the next phone long term";
+        reason = "Phones age mostly through battery, storage, AI feature headroom, camera needs, and software support.";
+    }
+
+    if (deviceType === "tablet") {
+        const isAndroidTablet = modelLower.includes("galaxy tab") || modelLower.includes("pixel tablet") || modelLower.includes("android");
+        target = isAndroidTablet
+            ? "Future Pro/Ultra-class Android tablet"
+            : "iPad Air/Pro-class tablet depending on use";
+        recommendedSpecs = "256GB minimum, 12GB+ RAM preferred for heavier AI/productivity use, keyboard/Pencil support if needed";
+        avoid = "Avoid low storage if using it for school, drawing, content, or productivity";
+        reason = "Tablets age through chip support, storage, accessory support, and whether they are used casually or as laptop replacements.";
+    }
+
+    if (deviceType === "computer") {
+        const isWindowsOrAndroidChip = modelLower.includes("windows") || modelLower.includes("snapdragon");
+        target = isWindowsOrAndroidChip
+            ? "Modern AI-capable computer with stronger memory and storage headroom"
+            : "Apple silicon computer with stronger memory and storage headroom";
+        recommendedSpecs = "16GB memory minimum, 24GB+ preferred for heavier use, 512GB+ storage";
+        avoid = "Avoid base memory/storage if this will be a main computer";
+        reason = "Computers age mostly through memory, storage, processor headroom, ports, thermals, workload, and OS support.";
+    }
+
+    if (deviceType === "watch") {
+        target = "Newer watch with current health sensors and stronger battery life";
+        recommendedSpecs = "Current sensor package, good battery health, preferred case size";
+        avoid = "Avoid upgrading yearly unless battery, sensors, or support are limiting";
+        reason = "Watches are worth replacing when battery, health sensors, or software support become limiting.";
+    }
+
+    if (deviceType === "accessory") {
+        target = "Current-standard compatible replacement";
+        recommendedSpecs = "USB-C, MagSafe, Qi2, Bluetooth LE, or current standard depending on accessory";
+        avoid = "Avoid older connector standards unless needed for legacy devices";
+        reason = "Accessories age mostly through compatibility, connector standards, battery condition, and reliability.";
+    }
+
+    return {
+        futureUpgradeTarget: target,
+        targetYear,
+        recommendedFutureSpecs: recommendedSpecs,
+        avoidRecommendation: avoid,
+        futureUpgradeReason: reason,
+        futureProofRating: futureProof.futureProofRating,
+        futureProofScore: futureProof.futureProofScore,
+        futureProofColor: futureProof.futureProofColor
+    };
+}
+
+// ======================
+// UPGRADE PRIORITY LABEL
+// ======================
+function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
+    const condition = String(item.condition || "").toLowerCase();
+
+    if (condition === "retired") {
+        return { label: "Not Needed", color: "green", level: "not-needed" };
+    }
+
+    if (!support.supported || condition === "needs repair") {
+        return { label: "Critical", color: "red", level: "critical" };
+    }
+
+    if (upgrade.status === "Upgrade Recommended" && upgradeScore.score <= 40) {
+        return { label: "Critical", color: "red", level: "critical" };
+    }
+
+    if (upgradeScore.score <= 55) {
+        return { label: "Recommended", color: "yellow", level: "recommended" };
+    }
+
+    if (upgradeScore.score <= 75) {
+        return { label: "Optional", color: "gray", level: "optional" };
+    }
+
+    return { label: "Not Needed", color: "green", level: "not-needed" };
+}
+
+// ======================
+// RECOMMENDED UPGRADE YEAR
+// ======================
+function calculateRecommendedUpgradeYear(item, priority, support, upgradeScore) {
+    const currentYear = new Date().getFullYear();
+    const deviceType = detectDeviceType(item);
+    const modelYear = Number(item.modelYear || currentYear);
+    const condition = String(item.condition || "").toLowerCase();
+
+    const preferredCycle =
+        Number(item.preferredUpgradeCycle) ||
+        upgradeCycleDefaults[deviceType] ||
+        4;
+
+    const minimumGap =
+        Number(item.minimumUpgradeGap) ||
+        minimumUpgradeGapDefaults[deviceType] ||
+        3;
+
+    const supportEndYear = item.supportEndYear ? Number(item.supportEndYear) : null;
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = getBatteryCycles(item);
+
+    if (deviceType === "accessory") {
+        if (condition === "needs repair") {
+            return { year: currentYear, window: `${currentYear}`, timing: "Replace now if this accessory is still needed." };
+        }
+
+        return {
+            year: "Replace only when needed",
+            window: "Condition-based",
+            timing: "Accessories should only be replaced when broken, unsupported, or no longer useful."
+        };
+    }
+
+    if (condition === "retired") {
+        return {
+            year: "No active upgrade needed",
+            window: "Retired",
+            timing: "This device is retired, so it does not need an upgrade unless you are replacing its role."
+        };
+    }
+
+    let recommendedYear = modelYear + preferredCycle;
+    const earliestAllowedYear = modelYear + minimumGap;
+
+    if (supportEndYear && supportEndYear < recommendedYear) recommendedYear = supportEndYear;
+    if (!support.supported) recommendedYear = currentYear;
+
+    if (batteryHealth < techThresholds.batteryCritical) {
+        recommendedYear = Math.min(recommendedYear, currentYear);
+    } else if (batteryHealth < techThresholds.batteryBad) {
+        recommendedYear = Math.min(recommendedYear, currentYear + 1);
+    }
+
+    if (cycles >= techThresholds.cycleVeryOld) {
+        recommendedYear = Math.min(recommendedYear, currentYear);
+    } else if (cycles >= techThresholds.cycleOld) {
+        recommendedYear = Math.min(recommendedYear, currentYear + 1);
+    }
+
+    if (condition === "needs repair") recommendedYear = currentYear;
+
+    const hasMajorIssue =
+        !support.supported ||
+        condition === "needs repair" ||
+        batteryHealth < techThresholds.batteryCritical ||
+        cycles >= techThresholds.cycleVeryOld ||
+        upgradeScore.score <= 40;
+
+    if (!hasMajorIssue && recommendedYear < earliestAllowedYear) {
+        recommendedYear = earliestAllowedYear;
+    }
+
+    let window = `${recommendedYear}–${recommendedYear + 1}`;
+    let timing = `Plan around ${recommendedYear}.`;
+
+    if (priority.level === "critical") {
+        window = `${currentYear}`;
+        timing = "Upgrade as soon as practical.";
+    } else if (priority.level === "recommended") {
+        timing = `Upgrade around ${recommendedYear}, especially if battery life, support, or performance gets worse.`;
+    } else if (priority.level === "optional") {
+        timing = `Consider upgrading around ${recommendedYear}, but it is not urgent.`;
+    } else {
+        timing = `Keep using this device. A realistic upgrade target is around ${recommendedYear}.`;
+    }
+
+    return { year: recommendedYear, window, timing };
+}
+
+// ======================
+// UPGRADE EXPLANATION
+// ======================
+function generateUpgradeExplanation(item, priority, recommendedUpgrade, upgrade, support, osStatus, upgradeScore) {
+    const triggers = upgrade.triggers || [];
+    const deviceType = detectDeviceType(item);
+    const condition = item.condition || "Unknown";
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = getBatteryCycles(item);
+
+    let reasons = [];
+
+    if (triggers.length > 0) reasons = [...triggers];
+    if (condition === "Excellent" || condition === "Good") reasons.push(`Condition is ${condition.toLowerCase()}`);
+    if (support.supportLevel) reasons.push(`Support status is ${support.supportLevel.toLowerCase()}`);
+    if (osStatus && osStatus.isBeta) reasons.push("Running beta software does not count against the device score");
+    if (batteryHealth >= techThresholds.batteryBad) reasons.push("Battery health is still acceptable");
+    if (cycles < techThresholds.cycleOld) reasons.push("Charge cycles are below your upgrade threshold");
+
+    const reasonText = reasons.length > 0 ? reasons.join(", ") : "No major issues detected";
+
+    if (priority.level === "critical") {
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} has enough major concerns to justify replacement. Main reasons: ${reasonText}.`;
+    }
+
+    if (priority.level === "recommended") {
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still usable, but replacement is becoming the smarter long-term choice. Main reasons: ${reasonText}.`;
+    }
+
+    if (priority.level === "optional") {
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} does not need to be replaced immediately. Upgrade only if you want newer features, better battery life, or better performance. Main reasons: ${reasonText}.`;
+    }
+
+    return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still useful enough to keep. There is not enough reason to replace it right now. Main reasons: ${reasonText}.`;
+}
+
+// ======================
+// SMART UPGRADE RECOMMENDATION
+// ======================
+function calculateSmartUpgradeRecommendation(item, upgrade, support, osStatus, upgradeScore) {
+    const priority = getUpgradePriorityLabel(item, upgradeScore, support, upgrade);
+    const recommendedUpgrade = calculateRecommendedUpgradeYear(item, priority, support, upgradeScore);
+
+    const explanation = generateUpgradeExplanation(
+        item,
+        priority,
+        recommendedUpgrade,
+        upgrade,
+        support,
+        osStatus,
+        upgradeScore
+    );
+
+    return {
+        priority,
+        recommendedUpgradeYear: recommendedUpgrade.year,
+        upgradeWindow: recommendedUpgrade.window,
+        timing: recommendedUpgrade.timing,
+        explanation
+    };
+}
+
+// ======================
+// UPGRADE DATA
+// ======================
+function calculateUpgradeData(item) {
+    const now = new Date();
+    let boughtDate = null;
+
+    if (item.dateBought && typeof item.dateBought.toDate === "function") {
+        boughtDate = item.dateBought.toDate();
+    } else if (item.dateBought) {
+        boughtDate = new Date(item.dateBought);
+    }
+
+    let ageYears = 0;
+    if (boughtDate && !isNaN(boughtDate.getTime())) {
+        ageYears = (now - boughtDate) / (1000 * 60 * 60 * 24 * 365);
+    }
+
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = getBatteryCycles(item);
+    const osStatus = checkOSStatus(item.osVersion);
+    const support = checkDeviceSupport(item);
+    const deviceType = detectDeviceType(item);
+    const condition = String(item.condition || "").toLowerCase();
+
+    const isPhone = deviceType === "phone";
+    const isComputer = deviceType === "computer";
+
+    const batteryBad = batteryHealth < techThresholds.batteryBad;
+    const batteryCritical = batteryHealth < techThresholds.batteryCritical;
+    const cycleOld = cycles >= techThresholds.cycleOld;
+    const cycleVeryOld = cycles >= techThresholds.cycleVeryOld;
+    const ageOld = ageYears > 3;
+    const ageVeryOld = ageYears > 4;
+    const outdatedOS = osStatus && osStatus.isBehindPublic && osStatus.status === "Very Outdated";
+
+    let status = "Great";
+    let color = "green";
+    let suggestion = "No upgrade needed";
+    let triggers = [];
+
+    if (isPhone && batteryBad) triggers.push("Battery below 85%");
+    if (osStatus && osStatus.isBehindPublic) triggers.push("OS is outdated");
+    if (isComputer && osStatus && osStatus.isBehindPublic) triggers.push("OS support/update concern");
+    if (cycleOld) triggers.push(`Charge cycles over ${techThresholds.cycleOld}`);
+    if (cycleVeryOld) triggers.push(`Charge cycles reached ${techThresholds.cycleVeryOld}+`);
+    if (ageOld) triggers.push("Device older than 3 years");
+
+    if (condition === "retired") {
+        triggers.push("Device is retired");
+    } else if (!support.supported) {
+        triggers.push("Device no longer supported");
+    }
+
+    if (
+        batteryCritical ||
+        cycleVeryOld ||
+        ageVeryOld ||
+        outdatedOS ||
+        (!support.supported && condition !== "retired")
+    ) {
+        status = "Upgrade Recommended";
+        color = "red";
+        suggestion = "Consider upgrading soon";
+    } else if (
+        batteryBad ||
+        cycleOld ||
+        ageOld ||
+        support.supportLevel === "Limited Support" ||
+        support.supportLevel === "Older Device" ||
+        support.supportLevel === "Support Ending Soon" ||
+        support.supportLevel === "Support Ending Next Year"
+    ) {
+        status = "Aging";
+        color = "yellow";
+        suggestion = "Monitor closely";
+    }
+
+    if (condition === "retired") {
+        status = "Retired";
+        color = "gray";
+        suggestion = "No active upgrade needed";
+    }
+
+    return { status, color, suggestion, triggers };
+}
+
+// ======================
+// RECOMMENDED ACTION
+// ======================
+function getRecommendedAction(item, upgrade, support, osStatus) {
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = getBatteryCycles(item);
+    const condition = String(item.condition || "").toLowerCase();
+
+    if (condition === "retired" || support.supportLevel === "Retired") return "No active upgrade needed";
+    if (condition === "needs repair") return "Repair or replace depending on cost";
+    if (!support.supported) return "Plan upgrade soon";
+
+    if (upgrade.status === "Upgrade Recommended") {
+        if (cycles >= techThresholds.cycleVeryOld && batteryHealth >= techThresholds.batteryBad) {
+            return "Keep for now, but monitor battery cycles closely";
+        }
+
+        return "Plan upgrade soon";
+    }
+
+    if (batteryHealth < techThresholds.batteryBad && batteryHealth >= techThresholds.batteryCritical) {
+        return "Consider battery replacement";
+    }
+
+    if (cycles >= techThresholds.cycleVeryOld) return "Monitor battery cycles closely";
+    if (upgrade.status === "Aging") return "Monitor closely";
+
+    return "Keep";
+}
+
+// ======================
+// AUTO DEVICE SUMMARY
+// ======================
+function generateDeviceSummary(item, upgrade, support, osStatus) {
+    const deviceType = detectDeviceType(item);
+    const primaryUse = item.primaryUse || "";
+    const condition = item.condition || "";
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = getBatteryCycles(item);
+
+    let parts = [];
+
+    if (primaryUse) {
+        parts.push(`Used for ${String(primaryUse).toLowerCase()}`);
+    } else {
+        parts.push(`This ${deviceType} is being tracked`);
+    }
+
+    if (condition) parts.push(`condition is ${String(condition).toLowerCase()}`);
+
+    if (osStatus && osStatus.isBeta) {
+        parts.push("running beta software");
+    } else if (osStatus && osStatus.isBehindPublic) {
+        parts.push("behind the latest public OS");
+    } else if (osStatus && osStatus.isPublicLatest) {
+        parts.push("on the latest public OS");
+    }
+
+    if (support.supportLevel) parts.push(`support status is ${String(support.supportLevel).toLowerCase()}`);
+    if (deviceType === "phone" && batteryHealth < techThresholds.batteryBad) parts.push("battery health is below your preferred threshold");
+    if (cycles >= techThresholds.cycleVeryOld) parts.push("battery cycles are at your upgrade-level threshold");
+    else if (cycles >= techThresholds.cycleOld) parts.push("battery cycles are worth monitoring");
+
+    if (upgrade.status === "Upgrade Recommended") parts.push("upgrade planning is recommended");
+    else if (upgrade.status === "Aging") parts.push("monitoring is recommended");
+    else if (upgrade.status === "Retired") parts.push("no active upgrade is needed");
+    else parts.push("no major upgrade concern right now");
+
+    return parts.join(", ") + ".";
+}
+
+/* ------------------------------------------------------------
+   RENDER FUNCTION
 ------------------------------------------------------------ */
 function renderTechItemHomepage(itemData) {
     const name = itemData.name || "Unnamed Device";
     const model = itemData.model || "";
     const primaryUse = itemData.primaryUse || "";
     const condition = itemData.condition || "";
-    const storage = itemData.storage || "";
-    const color = itemData.color || "";
-    const osVersion = itemData.osVersion || "";
+    const deviceType = itemData.deviceType || "";
+    const modelYear = itemData.modelYear || "";
+    const supportEndYear = itemData.supportEndYear || "";
     const iconClass = itemData.iconClass || "fas fa-question-circle";
+    const material = itemData.material || "";
+    const storage = itemData.storage || "";
+    const batteryCapacity = itemData.batteryCapacity || "";
+    const color = itemData.color || "";
+    const price = itemData.price ? `$${itemData.price}` : "";
+    const dateReleased = itemData.dateReleased || "";
+    const dateBought = itemData.dateBought || "";
+    const osVersion = itemData.osVersion || "";
+
+    const osStatus = checkOSStatus(itemData.osVersion);
+    const support = checkDeviceSupport(itemData);
+    const supportLife = estimateSupportLifespan(itemData);
+    const aiSupport = calculateAIFeatureSupport(itemData);
+    const futureProof = calculateFutureProofScore(itemData);
+    const futureTarget = getRecommendedFutureUpgradeTarget(itemData);
+    const futureAITarget = calculateFutureAITarget(itemData, futureTarget);
+
+    let osUpdateHtml = "";
+
+    if (osStatus) {
+        if (osStatus.isBehindPublic) {
+            osUpdateHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-download"></i>
+                <span>Update:</span>
+                Public software update recommended
+            </div>`;
+        } else if (osStatus.isBeta) {
+            osUpdateHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-flask"></i>
+                <span>Beta Notice:</span>
+                Running beta software ahead of public release
+            </div>`;
+        }
+    }
+
+    const supportHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-shield-check"></i>
+        <span>Support Status:</span>
+        <span class="support-badge ${support.supportColor || "green"}">
+            ${escapeHTML(support.supportLevel || "Fully Supported")}
+        </span>
+    </div>`;
+
+    const batteryHealth = itemData.batteryHealth !== null &&
+        itemData.batteryHealth !== undefined &&
+        !isNaN(itemData.batteryHealth)
+        ? parseInt(itemData.batteryHealth, 10)
+        : null;
+
+    const rawBatteryCycles = itemData.batteryCycles ?? itemData.batteryChargeCycles;
+
+    const batteryCycles = rawBatteryCycles !== null &&
+        rawBatteryCycles !== undefined &&
+        !isNaN(rawBatteryCycles)
+        ? Number(rawBatteryCycles)
+        : null;
+
+    const upgrade = calculateUpgradeData(itemData);
+    const age = calculateDeviceAge(itemData.dateBought);
+    const batteryTrend = estimateBatteryTrend(itemData);
+    const upgradeScore = calculateUpgradeScore(itemData);
+
+    if (
+        upgradeScore.score < 40 &&
+        upgrade.status !== "Upgrade Recommended" &&
+        upgrade.status !== "Retired"
+    ) {
+        upgrade.status = "Upgrade Recommended";
+        upgrade.color = "red";
+        upgrade.suggestion = "Consider upgrading soon";
+    } else if (upgradeScore.score < 60 && upgrade.status === "Great") {
+        upgrade.status = "Aging";
+        upgrade.color = "yellow";
+        upgrade.suggestion = "Monitor closely";
+    }
+
+    const recommendedAction = getRecommendedAction(itemData, upgrade, support, osStatus);
+
+    const smartUpgrade = calculateSmartUpgradeRecommendation(
+        itemData,
+        upgrade,
+        support,
+        osStatus,
+        upgradeScore
+    );
+
+    const deviceSummary = generateDeviceSummary(itemData, upgrade, support, osStatus);
+
+    const summaryHtml = `
+    <div class="tech-detail tech-summary">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Device Summary:</span>
+        ${escapeHTML(deviceSummary)}
+    </div>`;
+
+    const actionHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-tools"></i>
+        <span>Recommended Action:</span>
+        ${escapeHTML(recommendedAction)}
+    </div>`;
+
+    let batteryHtml = "";
+
+    if (batteryHealth !== null) {
+        let batteryClass = "";
+
+        if (batteryHealth <= 20) {
+            batteryClass = "critical";
+        } else if (batteryHealth <= 50) {
+            batteryClass = "low-power";
+        }
+
+        const displayHealth = Math.min(Math.max(batteryHealth, 0), 100);
+
+        batteryHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-heart"></i>
+            <span>Battery Health:</span>
+        </div>
+
+        <div class="battery-container">
+            <div class="battery-icon ${batteryClass}">
+                <div class="battery-level" style="width: ${displayHealth}%"></div>
+                <div class="battery-percentage">${batteryHealth}%</div>
+            </div>
+        </div>`;
+    }
+
+    let cyclesHtml = "";
+
+    if (batteryCycles !== null) {
+        cyclesHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-sync"></i>
+            <span>Battery Charge Cycles:</span> ${batteryCycles}
+        </div>`;
+    }
+
+    const upgradeHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-arrow-up"></i>
+        <span>Upgrade Status:</span>
+        <span class="upgrade-badge ${upgrade.color}">
+            ${escapeHTML(upgrade.status)}
+        </span>
+    </div>
+
+    <div class="tech-detail">
+        <i class="fas fa-lightbulb"></i>
+        <span>Suggestion:</span>
+        ${escapeHTML(upgrade.suggestion)}
+    </div>`;
+
+    let triggersHtml = "";
+
+    if (upgrade.triggers && upgrade.triggers.length > 0) {
+        triggersHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>Upgrade Triggers:</span>
+        </div>
+
+        <ul class="upgrade-triggers">
+            ${upgrade.triggers.map(t => `<li>${escapeHTML(t)}</li>`).join("")}
+        </ul>`;
+    }
+
+    const smartUpgradeHtml = `
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-calendar-check"></i>
+        <span class="tech-label">Recommended Upgrade Year:</span>
+        <span class="tech-value">${escapeHTML(smartUpgrade.recommendedUpgradeYear)}</span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-calendar-days"></i>
+        <span class="tech-label">Upgrade Window:</span>
+        <span class="tech-value">${escapeHTML(smartUpgrade.upgradeWindow)}</span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-ranking-star"></i>
+        <span class="tech-label">Upgrade Priority:</span>
+        <span class="upgrade-priority-badge ${smartUpgrade.priority.color}">
+            ${escapeHTML(smartUpgrade.priority.label)}
+        </span>
+    </div>
+
+    <div class="tech-detail tech-upgrade-explanation">
+        <i class="fas fa-circle-question"></i>
+        <span class="tech-label">Why:</span>
+        <span class="upgrade-explanation-text">
+            ${escapeHTML(smartUpgrade.explanation)}
+        </span>
+    </div>`;
+
+    const futureProofHtml = `
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-brain"></i>
+        <span class="tech-label">Current AI Support:</span>
+        <span class="support-badge ${aiSupport.aiSupportColor}">
+            ${escapeHTML(aiSupport.aiSupportLevel)}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        <span class="tech-label">Future AI Target:</span>
+        <span class="support-badge ${futureAITarget.color}">
+            ${escapeHTML(futureAITarget.level)}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-hourglass-half"></i>
+        <span class="tech-label">Estimated Major Support End:</span>
+        <span class="tech-value">
+            ${supportLife.estimatedMajorSupportEndYear ? escapeHTML(supportLife.estimatedMajorSupportEndYear) : "N/A"}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-shield-halved"></i>
+        <span class="tech-label">Estimated Security Support End:</span>
+        <span class="tech-value">
+            ${supportLife.estimatedSecuritySupportEndYear ? escapeHTML(supportLife.estimatedSecuritySupportEndYear) : "N/A"}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-seedling"></i>
+        <span class="tech-label">Future-Proof Rating:</span>
+        <span class="support-badge ${futureProof.futureProofColor}">
+            ${escapeHTML(futureProof.futureProofRating)} (${futureProof.futureProofScore}/100)
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-bullseye"></i>
+        <span class="tech-label">Future Upgrade Target:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.futureUpgradeTarget)}</span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-calendar-alt"></i>
+        <span class="tech-label">Target Year:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.targetYear)}</span>
+    </div>
+
+    <div class="tech-detail tech-upgrade-explanation">
+        <i class="fas fa-route"></i>
+        <span class="tech-label">Future Specs:</span>
+        <span class="upgrade-explanation-text">
+            ${escapeHTML(futureTarget.recommendedFutureSpecs)}
+        </span>
+    </div>
+
+    <div class="tech-detail tech-upgrade-explanation">
+        <i class="fas fa-ban"></i>
+        <span class="tech-label">Avoid:</span>
+        <span class="upgrade-explanation-text">
+            ${escapeHTML(futureTarget.avoidRecommendation)}
+        </span>
+    </div>`;
+
+    const ageHtml = age ? `
+    <div class="tech-detail">
+        <i class="fas fa-clock"></i>
+        <span>Device Age:</span>
+        ${age.days} days (${age.years} years)
+    </div>` : "";
+
+    const trendHtml = batteryTrend && batteryTrend.decline !== undefined ? `
+    <div class="tech-detail">
+        <i class="fas fa-chart-line"></i>
+        <span>Battery Trend:</span>
+        ${escapeHTML(batteryTrend.trend)} (-${escapeHTML(batteryTrend.decline)}%)
+    </div>` : "";
+
+    const scoreHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-gauge-high"></i>
+        <span>Device Score:</span>
+        ${escapeHTML(upgradeScore.label)} (${upgradeScore.score}/100)
+    </div>
+
+    <div class="score-bar">
+        <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%"></div>
+    </div>`;
+
+    const formattedOSType = osStatus ? formatOSType(osStatus.osType) : "";
+
+    const advancedDetailsContent = `
+        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${escapeHTML(deviceType)}</div>` : ""}
+        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${escapeHTML(modelYear)}</div>` : ""}
+        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${escapeHTML(supportEndYear)}</div>` : ""}
+        ${itemData.chipName ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Chip:</span> ${escapeHTML(itemData.chipName)}</div>` : ""}
+        ${itemData.ramGB ? `<div class="tech-detail"><i class="fas fa-memory"></i><span>RAM:</span> ${escapeHTML(itemData.ramGB)}GB</div>` : ""}
+        ${itemData.storageGB ? `<div class="tech-detail"><i class="fas fa-database"></i><span>Storage Capacity:</span> ${escapeHTML(itemData.storageGB)}GB</div>` : ""}
+        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${escapeHTML(material)}</div>` : ""}
+        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${escapeHTML(batteryCapacity)}</div>` : ""}
+        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${escapeHTML(price)}</div>` : ""}
+        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${escapeHTML(dateReleased)}</div>` : ""}
+        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${escapeHTML(dateBought)}</div>` : ""}
+        ${cyclesHtml}
+        ${trendHtml}
+    `;
+
+    const hasAdvancedDetails =
+        deviceType ||
+        modelYear ||
+        supportEndYear ||
+        itemData.chipName ||
+        itemData.ramGB ||
+        itemData.storageGB ||
+        material ||
+        batteryCapacity ||
+        price ||
+        dateReleased ||
+        dateBought ||
+        cyclesHtml ||
+        trendHtml;
+
+    const advancedHtml = hasAdvancedDetails ? `
+    <details class="tech-advanced-details">
+        <summary>Advanced Details</summary>
+        ${advancedDetailsContent}
+    </details>` : "";
 
     return `
-        <div class="tech-item">
-            <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
-            ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${escapeHTML(model)}</div>` : ""}
-            ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${escapeHTML(primaryUse)}</div>` : ""}
-            ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${escapeHTML(condition)}</div>` : ""}
-            ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${escapeHTML(storage)}</div>` : ""}
-            ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${escapeHTML(color)}</div>` : ""}
-            ${osVersion ? `<div class="tech-detail"><i class="fas fa-code-branch"></i><span>OS Version:</span> ${escapeHTML(osVersion)}</div>` : ""}
+    <div class="tech-item">
+        <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
+
+        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${escapeHTML(model)}</div>` : ""}
+        ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${escapeHTML(primaryUse)}</div>` : ""}
+        ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${escapeHTML(condition)}</div>` : ""}
+        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${escapeHTML(storage)}</div>` : ""}
+        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${escapeHTML(color)}</div>` : ""}
+
+        ${summaryHtml}
+        ${ageHtml}
+
+        ${osVersion ? `
+        <div class="tech-detail">
+            <i class="fas fa-code-branch"></i>
+            <span>OS Version:</span> ${escapeHTML(osVersion)}
+            ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
         </div>
-    `;
+
+        ${osStatus ? `
+        <div class="tech-detail">
+            <i class="fas fa-code-branch"></i>
+            <span>Release Channel:</span> ${escapeHTML(osStatus.releaseChannel)}
+        </div>
+
+        <div class="tech-detail">
+            <i class="fas fa-circle-info"></i>
+            <span>Public Latest:</span> ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
+        </div>
+        ` : ""}
+        ` : ""}
+
+        ${osUpdateHtml}
+        ${supportHtml}
+        ${batteryHtml}
+        ${scoreHtml}
+        ${upgradeHtml}
+        ${smartUpgradeHtml}
+        ${futureProofHtml}
+        ${actionHtml}
+        ${triggersHtml}
+        ${advancedHtml}
+    </div>`;
 }
 
 async function loadAndDisplayTechItems() {
