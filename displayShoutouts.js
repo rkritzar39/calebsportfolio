@@ -1994,24 +1994,11 @@ function checkDeviceSupport(item) {
     let supportLevel = "Fully Supported";
     let supportColor = "green";
 
-    const ownershipState = getOwnershipState(item);
-    if (ownershipState === "retired") {
+    const ownershipConfig = getOwnershipConfig(item);
+    if (ownershipConfig.mode === "archive") {
         return {
             supported: false,
-            supportLevel: "Retired",
-            supportColor: "gray",
-            yearsOld,
-            deviceType,
-            modelYear,
-            supportEndYear,
-            supportRemaining: supportEndYear ? supportEndYear - currentYear : null
-        };
-    }
-
-    if (ownershipState === "sold") {
-        return {
-            supported: false,
-            supportLevel: "No Longer Owned",
+            supportLevel: ownershipConfig.label,
             supportColor: "gray",
             yearsOld,
             deviceType,
@@ -2716,9 +2703,9 @@ function getRecommendedFutureUpgradeTarget(item) {
 // ======================
 function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
     const condition = String(item.condition || "").toLowerCase();
-    const ownershipState = getOwnershipState(item);
+    const ownershipConfig = getOwnershipConfig(item);
 
-    if (ownershipState === "retired" || ownershipState === "sold") {
+    if (ownershipConfig.mode === "archive") {
         return { label: "Not Needed", color: "green", level: "not-needed" };
     }
 
@@ -2753,14 +2740,13 @@ function calculateRecommendedUpgradeYear(item, priority, support, upgradeScore) 
     const deviceType = detectDeviceType(item);
     const modelYear = Number(item.modelYear || currentYear);
     const condition = String(item.condition || "").toLowerCase();
-    const ownershipState = getOwnershipState(item);
+    const ownershipConfig = getOwnershipConfig(item);
 
-    if (ownershipState === "retired" || ownershipState === "sold") {
-        const label = ownershipState === "sold" ? "Sold" : "Retired";
+    if (ownershipConfig.mode === "archive") {
         return {
             year: "No active upgrade needed",
-            window: label,
-            timing: `This device is ${label.toLowerCase()} and is kept as an archive entry.`
+            window: ownershipConfig.label,
+            timing: `This device is ${ownershipConfig.archiveSummary || ownershipConfig.label.toLowerCase()}.`
         };
     }
 
@@ -2949,22 +2935,13 @@ function calculateUpgradeData(item) {
     let suggestion = "No upgrade needed";
     let triggers = [];
 
-    const ownershipState = getOwnershipState(item);
-    if (ownershipState === "retired") {
+    const ownershipConfig = getOwnershipConfig(item);
+    if (ownershipConfig.mode === "archive") {
         return {
-            status: "Retired",
-            color: "gray",
-            suggestion: "No active upgrade needed",
-            triggers: ["Device is retired"]
-        };
-    }
-
-    if (ownershipState === "sold") {
-        return {
-            status: "Sold",
+            status: ownershipConfig.label,
             color: "gray",
             suggestion: "No active tracking needed",
-            triggers: ["Device is no longer owned"]
+            triggers: [`Device is ${ownershipConfig.archiveSummary || ownershipConfig.label.toLowerCase()}`]
         };
     }
 
@@ -3021,9 +2998,9 @@ function getRecommendedAction(item, upgrade, support, osStatus) {
     const batteryHealth = Number(item.batteryHealth ?? 100);
     const cycles = getBatteryCycles(item);
     const condition = String(item.condition || "").toLowerCase();
-    const ownershipState = getOwnershipState(item);
+    const ownershipConfig = getOwnershipConfig(item);
 
-    if (ownershipState === "retired" || ownershipState === "sold") return "No active upgrade needed";
+    if (ownershipConfig.mode === "archive") return "No active upgrade needed";
     if (condition === "retired" || support.supportLevel === "Retired") return "No active upgrade needed";
     if (condition === "needs repair") return "Repair or replace depending on cost";
     if (!support.supported) return "Plan upgrade soon";
@@ -3055,14 +3032,10 @@ function generateDeviceSummary(item, upgrade, support, osStatus) {
     const condition = item.condition || "";
     const batteryHealth = Number(item.batteryHealth ?? 100);
     const cycles = getBatteryCycles(item);
-    const ownershipState = getOwnershipState(item);
+    const ownershipConfig = getOwnershipConfig(item);
 
-    if (ownershipState === "retired") {
-        return `This ${deviceType} is retired and kept as an archive entry.`;
-    }
-
-    if (ownershipState === "sold") {
-        return `This ${deviceType} is sold and kept as an archive entry.`;
+    if (ownershipConfig.mode === "archive") {
+        return `This ${deviceType} is ${ownershipConfig.archiveSummary || ownershipConfig.label.toLowerCase()}.`;
     }
 
     let parts = [];
@@ -3148,7 +3121,7 @@ function normalizeTechItem(itemData) {
     normalized.storageGB = getNumberField(itemData, ["storageGB", "storageCapacityGB", "capacityGB", "storageCapacity"], 0);
     normalized.priceNumber = getNumberField(itemData, ["price", "purchasePrice", "cost", "msrp"], 0);
 
-    // Planned / roadmap / ownership fields
+    // Ownership / roadmap fields
     normalized.ownershipState = getFirstField(itemData, ["ownershipState", "state"], "");
     normalized.plannedStatus = getFirstField(itemData, ["plannedStatus"], "");
     normalized.plannedWindow = getFirstField(itemData, ["plannedWindow", "plannedFor"], "");
@@ -3316,45 +3289,240 @@ function calculateBackupPriority(item, osStatus, support) {
     return { label, color, reason };
 }
 
+const ownershipStateConfig = {
+    owned: {
+        label: "Owned",
+        mode: "active",
+        badgeClass: "owned",
+        archiveSummary: null
+    },
+    planned: {
+        label: "Planned",
+        mode: "roadmap",
+        badgeClass: "planned",
+        archiveSummary: null
+    },
+    wishlist: {
+        label: "Wishlist",
+        mode: "wishlist",
+        badgeClass: "wishlist",
+        archiveSummary: null
+    },
+    "coming-soon": {
+        label: "Coming Soon",
+        mode: "roadmap",
+        badgeClass: "coming-soon",
+        archiveSummary: null
+    },
+    "future-upgrade": {
+        label: "Future Upgrade",
+        mode: "roadmap",
+        badgeClass: "future-upgrade",
+        archiveSummary: null
+    },
+    preordered: {
+        label: "Preordered",
+        mode: "roadmap",
+        badgeClass: "preordered",
+        archiveSummary: null
+    },
+    ordered: {
+        label: "Ordered",
+        mode: "roadmap",
+        badgeClass: "ordered",
+        archiveSummary: null
+    },
+    reserved: {
+        label: "Reserved",
+        mode: "roadmap",
+        badgeClass: "reserved",
+        archiveSummary: null
+    },
+    considering: {
+        label: "Considering",
+        mode: "wishlist",
+        badgeClass: "considering",
+        archiveSummary: null
+    },
+    researching: {
+        label: "Researching",
+        mode: "wishlist",
+        badgeClass: "researching",
+        archiveSummary: null
+    },
+    borrowed: {
+        label: "Borrowed",
+        mode: "active",
+        badgeClass: "borrowed",
+        archiveSummary: null
+    },
+    "loaned-out": {
+        label: "Loaned Out",
+        mode: "active",
+        badgeClass: "loaned-out",
+        archiveSummary: null
+    },
+    "school-issued": {
+        label: "School-Issued",
+        mode: "active",
+        badgeClass: "school-issued",
+        archiveSummary: null
+    },
+    "work-issued": {
+        label: "Work-Issued",
+        mode: "active",
+        badgeClass: "work-issued",
+        archiveSummary: null
+    },
+    "in-repair": {
+        label: "In Repair",
+        mode: "active",
+        badgeClass: "in-repair",
+        archiveSummary: null
+    },
+    retired: {
+        label: "Retired",
+        mode: "archive",
+        badgeClass: "retired",
+        archiveSummary: "retired and kept as an archive entry"
+    },
+    sold: {
+        label: "Sold",
+        mode: "archive",
+        badgeClass: "sold",
+        archiveSummary: "sold and kept as an archive entry"
+    },
+    "traded-in": {
+        label: "Traded In",
+        mode: "archive",
+        badgeClass: "traded-in",
+        archiveSummary: "traded in and kept as an archive entry"
+    },
+    donated: {
+        label: "Donated",
+        mode: "archive",
+        badgeClass: "donated",
+        archiveSummary: "donated and kept as an archive entry"
+    },
+    recycled: {
+        label: "Recycled",
+        mode: "archive",
+        badgeClass: "recycled",
+        archiveSummary: "recycled and kept as an archive entry"
+    },
+    returned: {
+        label: "Returned",
+        mode: "archive",
+        badgeClass: "returned",
+        archiveSummary: "returned and kept as an archive entry"
+    },
+    lost: {
+        label: "Lost",
+        mode: "archive",
+        badgeClass: "lost",
+        archiveSummary: "lost and kept as an archive entry"
+    }
+};
+
+function normalizeOwnershipStateValue(value) {
+    const rawState = String(value || "owned").toLowerCase().trim();
+    const normalizedState = rawState
+        .replace(/[\s_]+/g, "-")
+        .replace(/--+/g, "-");
+
+    const aliases = {
+        own: "owned",
+        active: "owned",
+        current: "owned",
+        plan: "planned",
+        future: "planned",
+        "comingsoon": "coming-soon",
+        "coming-soon": "coming-soon",
+        "futureupgrade": "future-upgrade",
+        "future-upgrade": "future-upgrade",
+        preorder: "preordered",
+        "pre-order": "preordered",
+        "pre-ordered": "preordered",
+        preordered: "preordered",
+        order: "ordered",
+        ordered: "ordered",
+        reserve: "reserved",
+        reserved: "reserved",
+        wish: "wishlist",
+        wishlist: "wishlist",
+        considering: "considering",
+        research: "researching",
+        researching: "researching",
+        borrowed: "borrowed",
+        loaned: "loaned-out",
+        "loaned-out": "loaned-out",
+        lent: "loaned-out",
+        "school-issued": "school-issued",
+        school: "school-issued",
+        "work-issued": "work-issued",
+        work: "work-issued",
+        repair: "in-repair",
+        "in-repair": "in-repair",
+        repairing: "in-repair",
+        retired: "retired",
+        archived: "retired",
+        sold: "sold",
+        "traded-in": "traded-in",
+        tradein: "traded-in",
+        "trade-in": "traded-in",
+        donated: "donated",
+        recycled: "recycled",
+        returned: "returned",
+        lost: "lost"
+    };
+
+    return aliases[normalizedState] || normalizedState || "owned";
+}
+
 function getOwnershipState(item) {
-    return String(item.ownershipState || "owned").toLowerCase().trim();
+    return normalizeOwnershipStateValue(item.ownershipState || "owned");
+}
+
+function getOwnershipConfig(itemOrState) {
+    const state = typeof itemOrState === "string"
+        ? normalizeOwnershipStateValue(itemOrState)
+        : getOwnershipState(itemOrState || {});
+
+    return ownershipStateConfig[state] || {
+        label: state
+            .split("-")
+            .filter(Boolean)
+            .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+            .join(" ") || "Owned",
+        mode: "active",
+        badgeClass: state || "owned",
+        archiveSummary: null
+    };
 }
 
 function isRoadmapTechItem(item) {
-    const state = getOwnershipState(item);
-
-    return (
-        state === "planned" ||
-        state === "coming-soon" ||
-        state === "future-upgrade"
-    );
+    return getOwnershipConfig(item).mode === "roadmap";
 }
 
 function isWishlistTechItem(item) {
-    return getOwnershipState(item) === "wishlist";
+    return getOwnershipConfig(item).mode === "wishlist";
 }
 
 function isPlannedTechItem(item) {
-    return isRoadmapTechItem(item) || isWishlistTechItem(item);
+    const mode = getOwnershipConfig(item).mode;
+    return mode === "roadmap" || mode === "wishlist";
 }
 
 function isArchivedTechItem(item) {
-    const state = getOwnershipState(item);
-    return state === "retired" || state === "sold";
+    return getOwnershipConfig(item).mode === "archive";
 }
 
-function getOwnershipLabel(state) {
-    const labels = {
-        owned: "Owned",
-        planned: "Planned",
-        wishlist: "Wishlist",
-        "coming-soon": "Coming Soon",
-        "future-upgrade": "Future Upgrade",
-        retired: "Retired",
-        sold: "Sold"
-    };
+function getOwnershipLabel(stateOrItem) {
+    return getOwnershipConfig(stateOrItem).label;
+}
 
-    return labels[state] || "Owned";
+function getOwnershipBadgeClass(stateOrItem) {
+    return getOwnershipConfig(stateOrItem).badgeClass;
 }
 
 function renderPlannedTechItemHomepage(itemData) {
@@ -3366,8 +3534,9 @@ function renderPlannedTechItemHomepage(itemData) {
     const iconClass = item.iconClass || "fas fa-laptop";
 
     const ownershipState = getOwnershipState(item);
-    const ownershipLabel = getOwnershipLabel(ownershipState);
-    const ownershipBadgeClass = ownershipState || "planned";
+    const ownershipConfig = getOwnershipConfig(ownershipState);
+    const ownershipLabel = ownershipConfig.label;
+    const ownershipBadgeClass = ownershipConfig.badgeClass;
 
     const plannedWindow = item.plannedWindow || "";
     const plannedReason = item.plannedReason || "";
@@ -3382,8 +3551,8 @@ function renderPlannedTechItemHomepage(itemData) {
     const expectedAILevel = item.expectedAILevel || "";
     const expectedFutureProofRating = item.expectedFutureProofRating || "";
 
-    const isWishlist = ownershipState === "wishlist";
-    const isRoadmap = !isWishlist;
+    const isWishlist = ownershipConfig.mode === "wishlist";
+    const isRoadmap = ownershipConfig.mode === "roadmap";
 
     return `
     <div class="tech-item planned-tech-item ownership-${escapeHTML(ownershipBadgeClass)}">
@@ -3525,9 +3694,9 @@ function renderTechItemHomepage(itemData) {
     const dateBought = item.dateBought || "";
     const osVersion = item.osVersion || "";
 
-    const ownershipState = getOwnershipState(item);
-    const ownershipLabel = getOwnershipLabel(ownershipState);
-    const ownershipBadgeClass = ownershipState || "owned";
+    const ownershipConfig = getOwnershipConfig(item);
+    const ownershipLabel = ownershipConfig.label;
+    const ownershipBadgeClass = ownershipConfig.badgeClass;
 
     const osStatus = checkOSStatus(item.osVersion);
     const support = checkDeviceSupport(item);
