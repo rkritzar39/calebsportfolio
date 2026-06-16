@@ -1209,7 +1209,7 @@ function checkDeviceSupport(item) {
         supportColor = "yellow";
     }
 
-    // Age-based limited support warnings
+    // Age-based support warnings
     const limitedSupportAgeByType = {
         phone: 4,
         tablet: 4,
@@ -1324,7 +1324,7 @@ function calculateUpgradeScore(item) {
 
     score -= (100 - battery) * 1.2;
 
-    // Adjusted for your high cycle tolerance
+    // Adjusted for high cycle tolerance
     score -= cycles * 0.008;
 
     if (cycles >= techThresholds.cycleVeryOld) {
@@ -1339,7 +1339,7 @@ function calculateUpgradeScore(item) {
         score -= 18;
     }
 
-    // Beta OS does not affect score
+    // Beta OS does not affect device score
 
     if (support.supportLevel === "Limited Support") {
         score -= 10;
@@ -1386,12 +1386,12 @@ function calculateUpgradeScore(item) {
 
 // ======================
 // UPGRADE PRIORITY LABEL
-// Clean text-only priority labels
+// Clean text-only, color-coded priority labels
 // ======================
 function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
     const condition = String(item.condition || "").toLowerCase();
 
-    // Retired devices should not look like urgent upgrade devices
+    // Retired devices should not look urgent
     if (condition === "retired") {
         return {
             label: "Not Needed",
@@ -1400,7 +1400,7 @@ function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
         };
     }
 
-    // Hard override cases
+    // Critical cases
     if (!support.supported) {
         return {
             label: "Critical",
@@ -1425,6 +1425,7 @@ function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
         };
     }
 
+    // Score-based priority
     if (upgradeScore.score <= 55) {
         return {
             label: "Recommended",
