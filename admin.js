@@ -4837,12 +4837,16 @@ function renderTechItemAdminListItem(container, docId, itemData, deleteHandler, 
 
 
 
+
 /* ============================================================
    TECH ROLE / DEVICE LIFECYCLE AUTOMATION
    ------------------------------------------------------------
-   This keeps upgrade history clean when a roadmap device becomes
-   owned, when a device is sold/retired/archived, and when devices
-   replace each other over time.
+   Handles:
+   - Planned / ordered / reserved devices becoming owned
+   - Device replacement chains
+   - Sold / retired / archive states
+   - Automatic cleanup when Replaces Device is removed
+   - Manual reset of role automation fields
 
    Example lifecycle:
    Mac mini → MacBook Air → Future MacBook
@@ -4898,6 +4902,7 @@ async function findTechItemByNameOrModel(deviceName, excludeDocId = null) {
         if (excludeDocId && docSnap.id === excludeDocId) continue;
 
         const data = docSnap.data();
+
         const name = normalizeDeviceLookupText(data.name);
         const model = normalizeDeviceLookupText(data.model);
         const displayName = normalizeDeviceLookupText(getTechDisplayName(data));
@@ -4964,7 +4969,110 @@ function getArchivedCurrentRole(ownershipState) {
     if (ownershipState === "donated") return "Donated / no longer owned";
     if (ownershipState === "traded-in") return "Traded in / no longer owned";
     if (ownershipState === "sold") return "Sold / no longer owned";
+
     return "No longer owned";
+}
+
+async function clearTechRoleAutomationFields(docId) {
+    if (!docId) {
+        throw new Error("Missing tech item document ID.");
+    }
+
+    const docRef = doc(db, "tech_items", docId);
+
+    await updateDoc(docRef, {
+        autoRoleManaged: deleteField(),
+        roleStatus: deleteField(),
+        currentRole: deleteField(),
+        previousRole: deleteField(),
+        replacedByDevice: deleteField(),
+        successorDevice: deleteField(),
+        predecessorDevice: deleteField(),
+        roleChangedDate: deleteField()
+    });
+}
+
+async function clearTechRoleAutomationFieldsByRef(docRef) {
+    await updateDoc(docRef, {
+        autoRoleManaged: deleteField(),
+        roleStatus: deleteField(),
+        currentRole: deleteField(),
+        previousRole: deleteField(),
+        replacedByDevice: deleteField(),
+        successorDevice: deleteField(),
+        predecessorDevice: deleteField(),
+        roleChangedDate: deleteField()
+    });
+}
+
+async function clearTechRoleAutomationAfterRelationshipRemoved({
+    updatedDocId,
+    oldData = {},
+    newData = {}
+}) {
+    const oldReplacesDevice = String(oldData.replacesDevice || "").trim();
+    const newReplacesDevice = String(newData.replacesDevice || "").trim();
+
+    const removedReplacementRelationship =
+        Boolean(oldReplacesDevice) &&
+        !newReplacesDevice;
+
+    if (!removedReplacementRelationship) {
+        return false;
+    }
+
+    const updatedDeviceRef = doc(db, "tech_items", updatedDocId);
+    const updatedDeviceName = getTechDisplayName(newData || oldData);
+
+    await updateDoc(updatedDeviceRef, {
+        autoRoleManaged: deleteField(),
+        roleStatus: deleteField(),
+        currentRole: deleteField(),
+        previousRole: deleteField(),
+        replacedByDevice: deleteField(),
+        successorDevice: deleteField(),
+        predecessorDevice: deleteField(),
+        roleChangedDate: deleteField()
+    });
+
+    const oldPredecessor = await findTechItemByNameOrModel(oldReplacesDevice, updatedDocId);
+
+    if (oldPredecessor) {
+        const predecessorSuccessor = String(oldPredecessor.data.successorDevice || "").trim();
+        const predecessorReplacedBy = String(oldPredecessor.data.replacedByDevice || "").trim();
+
+        const predecessorPointsToUpdatedDevice =
+            predecessorSuccessor === updatedDeviceName ||
+            predecessorReplacedBy === updatedDeviceName ||
+            normalizeDeviceLookupText(predecessorSuccessor) === normalizeDeviceLookupText(updatedDeviceName) ||
+            normalizeDeviceLookupText(predecessorReplacedBy) === normalizeDeviceLookupText(updatedDeviceName);
+
+        if (predecessorPointsToUpdatedDevice) {
+            const restoredCurrentRole =
+                oldPredecessor.data.previousRole ||
+                oldPredecessor.data.primaryUse ||
+                null;
+
+            const predecessorCleanup = {
+                autoRoleManaged: deleteField(),
+                roleStatus: deleteField(),
+                previousRole: deleteField(),
+                replacedByDevice: deleteField(),
+                successorDevice: deleteField(),
+                roleChangedDate: deleteField()
+            };
+
+            if (restoredCurrentRole) {
+                predecessorCleanup.currentRole = restoredCurrentRole;
+            } else {
+                predecessorCleanup.currentRole = deleteField();
+            }
+
+            await updateDoc(oldPredecessor.ref, predecessorCleanup);
+        }
+    }
+
+    return true;
 }
 
 async function applyTechRoleAutomation({
@@ -4975,11 +5083,29 @@ async function applyTechRoleAutomation({
 }) {
     if (!updatedDocId || !newData) return;
 
+    const updatedDeviceRef = doc(db, "tech_items", updatedDocId);
+
+    const didCleanupRemovedRelationship =
+        await clearTechRoleAutomationAfterRelationshipRemoved({
+            updatedDocId,
+            oldData,
+            newData
+        });
+
+    if (didCleanupRemovedRelationship) {
+        console.log("Tech role automation cleanup completed after Replaces Device was removed.", {
+            updatedDocId
+        });
+        return;
+    }
+
     const oldOwnership = normalizeAdminOwnershipState(oldData.ownershipState || "");
     const newOwnership = normalizeAdminOwnershipState(newData.ownershipState || "owned");
 
-    const hadOldOwnership = Boolean(oldData && Object.prototype.hasOwnProperty.call(oldData, "ownershipState"));
-    const updatedDeviceRef = doc(db, "tech_items", updatedDocId);
+    const hadOldOwnership =
+        Boolean(oldData) &&
+        Object.prototype.hasOwnProperty.call(oldData, "ownershipState");
+
     const updatedDeviceName = getTechDisplayName(newData || oldData);
     const replacesDevice = String(newData.replacesDevice || oldData.replacesDevice || "").trim();
     const futureRole = getDefaultRoleForOwnedDevice(newData);
@@ -4992,16 +5118,14 @@ async function applyTechRoleAutomation({
         TECH_ROLE_ARCHIVE_STATES.has(newOwnership) &&
         (isNewItem || oldOwnership !== newOwnership);
 
-    /*
-        Rule A:
-        A roadmap / ordered / reserved device becomes owned and replaces another device.
-        New device becomes primary. Previous device becomes replaced-owned unless it is already archived.
-    */
     if (becameOwned && replacesDevice) {
         const predecessor = await findTechItemByNameOrModel(replacesDevice, updatedDocId);
 
         if (predecessor) {
-            const predecessorOwnership = normalizeAdminOwnershipState(predecessor.data.ownershipState || "owned");
+            const predecessorOwnership = normalizeAdminOwnershipState(
+                predecessor.data.ownershipState || "owned"
+            );
+
             const predecessorCurrentRole =
                 predecessor.data.currentRole ||
                 predecessor.data.primaryUse ||
@@ -5019,9 +5143,12 @@ async function applyTechRoleAutomation({
                 predecessorUpdate.roleStatus = predecessorOwnership === "sold"
                     ? "replaced-sold"
                     : "replaced-archived";
-                predecessorUpdate.currentRole = predecessor.data.currentRole || getArchivedCurrentRole(predecessorOwnership);
+
+                predecessorUpdate.currentRole =
+                    predecessor.data.currentRole ||
+                    getArchivedCurrentRole(predecessorOwnership);
             } else {
-                predecessorUpdate.roleStatus = "replaced-owned";
+                predecessorUpdate.roleStatus = "secondary";
                 predecessorUpdate.currentRole = getSecondaryRoleForReplacedDevice(predecessor.data);
             }
 
@@ -5035,8 +5162,6 @@ async function applyTechRoleAutomation({
                 autoRoleManaged: true
             });
         } else {
-            // Still mark the new device as primary if it says it replaces something,
-            // even if the predecessor text did not match an existing tech item.
             await updateDoc(updatedDeviceRef, {
                 currentRole: futureRole,
                 roleStatus: "primary",
@@ -5047,11 +5172,6 @@ async function applyTechRoleAutomation({
         }
     }
 
-    /*
-        Rule B:
-        Device becomes sold / retired / traded in / donated / recycled / returned / lost.
-        Keep its history, but mark it as no longer active.
-    */
     if (becameArchived) {
         const previousRole =
             oldData.currentRole ||
@@ -5080,22 +5200,21 @@ async function applyTechRoleAutomation({
         });
     }
 
-    /*
-        Rule C:
-        If the new owned device replaces a predecessor that is already archived,
-        preserve the successor chain on the predecessor.
-    */
     if (becameOwned && replacesDevice) {
         const predecessor = await findTechItemByNameOrModel(replacesDevice, updatedDocId);
 
         if (predecessor) {
-            const predecessorOwnership = normalizeAdminOwnershipState(predecessor.data.ownershipState || "owned");
+            const predecessorOwnership = normalizeAdminOwnershipState(
+                predecessor.data.ownershipState || "owned"
+            );
 
             if (TECH_ROLE_ARCHIVE_STATES.has(predecessorOwnership)) {
                 await updateDoc(predecessor.ref, {
                     replacedByDevice: updatedDeviceName,
                     successorDevice: updatedDeviceName,
-                    roleStatus: predecessorOwnership === "sold" ? "replaced-sold" : "replaced-archived",
+                    roleStatus: predecessorOwnership === "sold"
+                        ? "replaced-sold"
+                        : "replaced-archived",
                     roleChangedDate: serverTimestamp(),
                     autoRoleManaged: true
                 });
@@ -5111,6 +5230,7 @@ async function applyTechRoleAutomation({
         }
     }
 }
+
 
 /* Legacy wrapper kept for older calls. The unified setupTechOwnershipFieldToggle above now controls all tech field visibility. */
 function setupPlannedTechFieldToggle(selectId, formRoot) {
