@@ -3387,11 +3387,11 @@ body.dark-mode .bubble {
 
 /* ======================================================= */
 /* TECH + SMART UPGRADE + BETA PREVIEW CSS                 */
-/* Clean unified version of the pasted block               */
+/* Corrected full version                                   */
 /* ======================================================= */
 
 /* ======================== */
-/* STATUS COLOR VARS        */
+/* STATUS / TEXT VARIABLES  */
 /* ======================== */
 
 :root {
@@ -3429,6 +3429,12 @@ body.dark-mode .bubble {
   --status-text-red: #ff453a;
   --status-text-gray: #d1d1d6;
   --status-text-purple: #bf5af2;
+
+  --tech-value-color: var(--text-color);
+  --tech-label-color: var(--secondary-text);
+  --tech-muted-color: color-mix(in srgb, var(--secondary-text) 92%, white 8%);
+  --tech-card-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --tech-strong-color: var(--text-color);
 }
 
 body.light-e {
@@ -3452,6 +3458,12 @@ body.light-e {
   --status-text-red: #d70015;
   --status-text-gray: #636366;
   --status-text-purple: #8e44ad;
+
+  --tech-value-color: #111827;
+  --tech-label-color: #5f6b7a;
+  --tech-muted-color: #4b5563;
+  --tech-card-text-shadow: 0 1px 1px rgba(255, 255, 255, 0.35);
+  --tech-strong-color: #0f172a;
 }
 
 /* ======================== */
@@ -3465,9 +3477,9 @@ body.light-e {
 .status-text-gray   { color: var(--status-text-gray) !important; }
 .status-text-purple { color: var(--status-text-purple) !important; }
 
-/* ======================================================= */
-/* STATUS BADGES                                             */
-/* ======================================================= */
+/* ======================== */
+/* STATUS BADGES            */
+/* ======================== */
 
 .status {
   padding: 4px 10px;
@@ -3490,9 +3502,9 @@ body.light-e {
   background: rgba(78, 168, 255, 0.15);
 }
 
-/* ======================================================= */
-/* BADGE SYSTEM                                              */
-/* ======================================================= */
+/* ======================== */
+/* BADGES                   */
+/* ======================== */
 
 .upgrade-badge,
 .support-badge,
@@ -3521,7 +3533,7 @@ body.light-e {
     0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
-/* legacy sizes */
+/* legacy sizing preserved */
 .upgrade-badge {
   padding: 4px 10px;
   font-size: 0.8rem;
@@ -3535,7 +3547,7 @@ body.light-e {
   font-weight: 600;
 }
 
-/* shared colors */
+/* badge colors */
 .upgrade-badge.green,
 .support-badge.green,
 .os-badge.green {
@@ -3584,9 +3596,18 @@ body.light-e {
   border-color: var(--status-purple-border);
 }
 
-/* ======================================================= */
-/* SMART UPGRADE PRIORITY BADGE                            */
-/* ======================================================= */
+/* light mode badge effect */
+body.light-e .upgrade-badge,
+body.light-e .support-badge,
+body.light-e .os-badge {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.65),
+    0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* ======================== */
+/* UPGRADE PRIORITY BADGE   */
+/* ======================== */
 
 .upgrade-priority-badge {
   display: inline-flex;
@@ -3687,10 +3708,7 @@ body.light-e {
     0 0 18px var(--status-green-glow);
 }
 
-body.light-e .upgrade-priority-badge,
-body.light-e .upgrade-badge,
-body.light-e .support-badge,
-body.light-e .os-badge {
+body.light-e .upgrade-priority-badge {
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.65),
     0 6px 14px rgba(0, 0, 0, 0.08);
@@ -3770,7 +3788,7 @@ body.light-e .upgrade-priority-badge.green {
 
   padding: 13px 15px;
 
-  color: var(--secondary-text);
+  color: var(--tech-label-color);
   font-weight: 700;
   font-size: 0.92rem;
 
@@ -3793,6 +3811,7 @@ body.light-e .upgrade-priority-badge.green {
   content: "▸";
   color: var(--accent-color);
   font-size: 0.85rem;
+
   transition:
     transform 0.2s ease,
     color 0.2s ease;
@@ -3813,12 +3832,12 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 .tech-advanced-details summary:hover {
-  color: var(--text-color);
+  color: var(--tech-value-color);
   background: color-mix(in srgb, white 5%, transparent);
 }
 
 .tech-advanced-details[open] summary {
-  color: var(--text-color);
+  color: var(--tech-value-color);
   border-bottom: 1px solid color-mix(in srgb, white 6%, var(--border-color));
 }
 
@@ -3876,7 +3895,7 @@ body.light-e .upgrade-priority-badge.green {
     inset 0 -1px 0 rgba(0,0,0,0.35),
     0 12px 32px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 
-  color: var(--text-color);
+  color: var(--tech-value-color);
   overflow: hidden;
 }
 
@@ -3913,9 +3932,9 @@ body.light-e .upgrade-priority-badge.green {
   pointer-events: none;
 }
 
-/* ======================== */
-/* TECH ITEMS               */
-/* ======================== */
+/* ======================================================= */
+/* TECH ITEM CARDS                                           */
+/* ======================================================= */
 
 .tech-item {
   position: relative;
@@ -3966,16 +3985,18 @@ body.light-e .upgrade-priority-badge.green {
 
 .tech-item:hover {
   transform: translateY(-3px);
+
   border-color: color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
+
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.08),
     0 14px 30px color-mix(in srgb, var(--shadow-color) 60%, transparent),
     0 0 10px color-mix(in srgb, var(--accent-color) 14%, transparent);
 }
 
-/* ======================== */
-/* TITLES                   */
-/* ======================== */
+/* ======================================================= */
+/* TITLES                                                     */
+/* ======================================================= */
 
 .tech-item h3 {
   margin: 0 0 15px 0;
@@ -3988,7 +4009,7 @@ body.light-e .upgrade-priority-badge.green {
   font-weight: 700;
   letter-spacing: -0.01em;
 
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  text-shadow: var(--tech-card-text-shadow);
   position: relative;
   z-index: 1;
 }
@@ -3999,7 +4020,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* TECH DETAIL ROWS                                        */
+/* TECH DETAIL ROWS                                           */
 /* ======================================================= */
 
 .tech-detail {
@@ -4008,7 +4029,7 @@ body.light-e .upgrade-priority-badge.green {
   gap: 10px;
   margin: 10px 0;
 
-  color: #ffffff;
+  color: var(--tech-value-color);
   position: relative;
   z-index: 1;
 }
@@ -4028,26 +4049,26 @@ body.light-e .upgrade-priority-badge.green {
 
 .tech-detail span {
   font-weight: 600;
-  color: var(--secondary-text);
+  color: var(--tech-label-color);
   margin-right: 6px;
 }
 
 /* ======================================================= */
-/* TECH LABEL / VALUE HIERARCHY                            */
+/* LABEL / VALUE HIERARCHY                                  */
 /* ======================================================= */
 
 .tech-label {
   flex-shrink: 0;
   font-weight: 700;
-  color: var(--secondary-text) !important;
-  opacity: 0.75;
+  color: var(--tech-label-color) !important;
+  opacity: 0.9;
 }
 
 .tech-value {
-  color: #ffffff !important;
+  color: var(--tech-value-color) !important;
   font-weight: 600;
   letter-spacing: -0.01em;
-  text-shadow: 0 0 6px rgba(255, 255, 255, 0.05);
+  text-shadow: var(--tech-card-text-shadow);
 }
 
 .tech-value.status-green  { color: var(--status-text-green) !important; }
@@ -4057,14 +4078,14 @@ body.light-e .upgrade-priority-badge.green {
 .tech-value.status-gray   { color: var(--status-text-gray) !important; }
 .tech-value.status-purple { color: var(--status-text-purple) !important; }
 
-/* generic non-label content stays white */
 .tech-detail span:not(.tech-label):not(.support-badge):not(.upgrade-badge):not(.os-badge):not(.upgrade-priority-badge):not(.upgrade-explanation-text) {
-  color: #ffffff !important;
+  color: var(--tech-value-color) !important;
   font-weight: 500;
+  text-shadow: var(--tech-card-text-shadow);
 }
 
 /* ======================================================= */
-/* BATTERY UI                                               */
+/* BATTERY UI                                                 */
 /* ======================================================= */
 
 .battery-container {
@@ -4111,8 +4132,8 @@ body.light-e .upgrade-priority-badge.green {
 
   width: 6px;
   height: 18px;
-
   border-radius: 2px;
+
   background: color-mix(in srgb, var(--border-color) 90%, transparent);
   box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
 }
@@ -4170,15 +4191,22 @@ body.light-e .upgrade-priority-badge.green {
   left: 50%;
   transform: translate(-50%, -50%);
 
-  color: var(--text-color);
+  color: var(--tech-strong-color) !important;
   font-weight: 700;
   font-size: calc(var(--font-size-base) * 0.75);
 
-  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.32),
+    0 0 2px rgba(0, 0, 0, 0.18);
+}
+
+body.light-e .battery-percentage {
+  color: #0f172a !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.65);
 }
 
 /* ======================================================= */
-/* SCORE BAR                                                */
+/* SCORE BAR                                                  */
 /* ======================================================= */
 
 .score-bar {
@@ -4237,7 +4265,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* SMART UPGRADE ROWS                                      */
+/* SMART UPGRADE ROWS                                        */
 /* ======================================================= */
 
 .smart-upgrade-row {
@@ -4255,7 +4283,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* UPGRADE EXPLANATION BOX                                 */
+/* WHY / EXPLANATION BOX                                     */
 /* ======================================================= */
 
 .tech-upgrade-explanation {
@@ -4292,16 +4320,16 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 .tech-upgrade-explanation .upgrade-explanation-text {
-  color: #ffffff !important;
+  color: var(--tech-value-color) !important;
   font-weight: 400;
   line-height: 1.55;
   opacity: 1;
 }
 
 .tech-upgrade-explanation .tech-label {
-  color: var(--secondary-text) !important;
+  color: var(--tech-label-color) !important;
   font-weight: 700;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 body.light-e .tech-upgrade-explanation {
@@ -4313,27 +4341,28 @@ body.light-e .tech-upgrade-explanation {
     ),
     color-mix(in srgb, var(--content-bg) 90%, transparent);
 
-  border-color: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255,255,255,0.65);
 
   box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.65),
-    0 8px 20px rgba(0, 0, 0, 0.09);
+    inset 0 1px 1px rgba(255,255,255,0.65),
+    0 8px 20px rgba(0,0,0,0.09);
 }
 
-/* AI badge pop */
+/* AI badge emphasis */
 .tech-detail .fa-brain + .tech-label + .support-badge,
 .tech-detail .fa-wand-magic-sparkles + .tech-label + .support-badge {
   transform: scale(1.03);
 }
 
 /* ======================================================= */
-/* UPGRADE TRIGGER LIST                                    */
+/* UPGRADE TRIGGERS                                         */
 /* ======================================================= */
 
 .upgrade-triggers {
   margin: 0.35rem 0 0.9rem 2rem;
   padding: 0;
   list-style: none;
+  color: var(--tech-muted-color);
 }
 
 .upgrade-triggers li {
@@ -4341,7 +4370,7 @@ body.light-e .tech-upgrade-explanation {
   margin: 0.3rem 0;
   padding-left: 1rem;
 
-  color: var(--secondary-text);
+  color: var(--tech-muted-color);
   font-size: 0.92rem;
   line-height: 1.4;
 }
@@ -4356,83 +4385,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* RESPONSIVE                                               */
-/* ======================================================= */
-
-@media screen and (max-width: 768px) {
-  .tech-section {
-    padding: 20px;
-  }
-
-  .tech-item {
-    padding: 15px;
-  }
-
-  .battery-icon {
-    width: 150px;
-    height: 35px;
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .upgrade-priority-badge,
-  .upgrade-badge,
-  .support-badge,
-  .os-badge {
-    font-size: 0.74rem;
-    padding: 0.2rem 0.5rem;
-    margin-left: 0.25rem;
-  }
-
-  .upgrade-priority-badge {
-    min-width: 84px;
-  }
-
-  .upgrade-priority-badge::before {
-    width: 0.38rem;
-    height: 0.38rem;
-    margin-right: 0.05rem;
-  }
-
-  .score-bar {
-    height: 9px;
-  }
-
-  .tech-upgrade-explanation {
-    padding: 0.65rem;
-    line-height: 1.45;
-  }
-
-  .upgrade-triggers {
-    margin-left: 1.35rem;
-  }
-
-  .upgrade-triggers li {
-    font-size: 0.88rem;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .tech-section {
-    padding: 15px;
-  }
-
-  .tech-item {
-    padding: 12px;
-  }
-
-  .battery-icon {
-    width: 120px;
-    height: 30px;
-  }
-
-  .battery-percentage {
-    font-size: calc(var(--font-size-base) * 0.65);
-  }
-}
-
-/* ======================================================= */
-/* BETA PREVIEW PAGE (FIXED)                               */
+/* BETA PREVIEW PAGE (FIXED)                                */
 /* ======================================================= */
 
 .beta-page .container {
@@ -4500,7 +4453,7 @@ body.light-e .tech-upgrade-explanation {
 
 .beta-page-header h1 {
   margin: 0;
-  color: var(--text-color);
+  color: var(--tech-strong-color) !important;
   font-size: clamp(2rem, 4vw, 3.4rem);
   letter-spacing: -0.05em;
 }
@@ -4508,7 +4461,7 @@ body.light-e .tech-upgrade-explanation {
 .beta-page-subtitle {
   max-width: 680px;
   margin: 12px 0 0;
-  color: var(--secondary-text);
+  color: var(--tech-muted-color) !important;
   font-size: 1.05rem;
   line-height: 1.55;
 }
@@ -4521,7 +4474,7 @@ body.light-e .tech-upgrade-explanation {
   padding: 9px 15px;
   border-radius: 999px;
 
-  color: #ffffff;
+  color: #ffffff !important;
   font-size: 0.88rem;
   font-weight: 900;
   white-space: nowrap;
@@ -4574,14 +4527,14 @@ body.light-e .tech-upgrade-explanation {
 
 .beta-summary-label {
   display: block;
-  color: var(--secondary-text);
+  color: var(--tech-muted-color) !important;
   font-size: 0.82rem;
   font-weight: 700;
   margin-bottom: 5px;
 }
 
 .beta-summary-card strong {
-  color: var(--text-color);
+  color: var(--tech-strong-color) !important;
   font-size: 1rem;
 }
 
@@ -4591,7 +4544,7 @@ body.light-e .tech-upgrade-explanation {
 
 .beta-section-heading h2 {
   margin: 0;
-  color: var(--text-color);
+  color: var(--tech-strong-color) !important;
 
   display: flex;
   align-items: center;
@@ -4604,7 +4557,7 @@ body.light-e .tech-upgrade-explanation {
 
 .beta-section-heading p {
   margin: 6px 0 0;
-  color: var(--secondary-text);
+  color: var(--tech-muted-color) !important;
 }
 
 .beta-feature-list {
@@ -4644,14 +4597,14 @@ body.light-e .tech-upgrade-explanation {
 
 .beta-feature-item h3 {
   margin: 0 0 6px;
-  color: var(--text-color);
+  color: var(--tech-strong-color) !important;
   font-size: 1.08rem;
   font-weight: 850;
 }
 
 .beta-feature-item p {
   margin: 0 0 12px;
-  color: var(--secondary-text);
+  color: var(--tech-muted-color) !important;
   line-height: 1.5;
 }
 
@@ -4685,12 +4638,13 @@ body.light-e .tech-upgrade-explanation {
 .beta-notes-list {
   margin: 0;
   padding-left: 1.25rem;
-  color: var(--secondary-text);
+  color: var(--tech-muted-color) !important;
 }
 
 .beta-notes-list li {
   margin: 8px 0;
   line-height: 1.5;
+  color: var(--tech-muted-color) !important;
 }
 
 .beta-roadmap {
@@ -4725,12 +4679,12 @@ body.light-e .tech-upgrade-explanation {
 }
 
 .beta-roadmap-item strong {
-  color: var(--text-color);
+  color: var(--tech-strong-color) !important;
 }
 
 .beta-roadmap-item p {
   margin: 2px 0 0;
-  color: var(--secondary-text);
+  color: var(--tech-muted-color) !important;
 }
 
 .beta-actions {
@@ -4766,7 +4720,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 .beta-action-button.secondary {
-  color: var(--text-color);
+  color: var(--tech-strong-color);
   background:
     linear-gradient(
       180deg,
@@ -4776,6 +4730,51 @@ body.light-e .tech-upgrade-explanation {
     color-mix(in srgb, var(--content-bg) 88%, transparent);
 
   border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
+}
+
+body.light-e .beta-action-button.secondary {
+  color: #111827 !important;
+}
+
+/* ======================================================= */
+/* LIGHT MODE GLASS TUNING                                  */
+/* ======================================================= */
+
+body.light-e .tech-section,
+body.light-e .tech-item,
+body.light-e .tech-advanced-details,
+body.light-e .tech-upgrade-explanation {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+    0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* badges should keep their own colors */
+.upgrade-badge,
+.support-badge,
+.os-badge,
+.upgrade-priority-badge {
+  text-shadow: none !important;
+}
+
+/* ======================================================= */
+/* RESPONSIVE                                                */
+/* ======================================================= */
+
+@media screen and (max-width: 768px) {
+  .tech-section {
+    padding: 20px;
+  }
+
+  .tech-item {
+    padding: 15px;
+  }
+
+  .battery-icon {
+    width: 150px;
+    height: 35px;
+  }
 }
 
 @media screen and (max-width: 700px) {
@@ -4797,201 +4796,68 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-/* ======================================================= */
-/* TECH READABILITY FIX — DARK + LIGHT MODE SAFE           */
-/* Add this at the VERY END of your CSS                    */
-/* ======================================================= */
-
-/* ---------- Theme-aware readable text tokens ---------- */
-:root {
-  --tech-value-color: var(--text-color);
-  --tech-label-color: var(--secondary-text);
-  --tech-muted-color: color-mix(in srgb, var(--secondary-text) 92%, white 8%);
-  --tech-card-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
-  --tech-strong-color: var(--text-color);
-}
-
-body.light-e {
-  --tech-value-color: #111827;
-  --tech-label-color: #5f6b7a;
-  --tech-muted-color: #4b5563;
-  --tech-card-text-shadow: 0 1px 1px rgba(255, 255, 255, 0.35);
-  --tech-strong-color: #0f172a;
-}
-
-/* ---------- Fix malformed beta content selector if needed ---------- */
-.beta-page-section > * {
-  position: relative;
-  z-index: 1;
-}
-
-/* ---------- Base text hierarchy ---------- */
-.tech-detail {
-  color: var(--tech-value-color) !important;
-}
-
-.tech-detail span,
-.tech-label {
-  color: var(--tech-label-color) !important;
-}
-
-/* Actual values / non-label content */
-.tech-value,
-.tech-detail span:not(.tech-label):not(.support-badge):not(.upgrade-badge):not(.os-badge):not(.upgrade-priority-badge):not(.upgrade-explanation-text) {
-  color: var(--tech-value-color) !important;
-  text-shadow: var(--tech-card-text-shadow);
-}
-
-/* Slightly stronger value weight */
-.tech-value {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-/* Labels stay muted */
-.tech-label {
-  font-weight: 700;
-  opacity: 0.9;
-}
-
-/* ---------- Headings ---------- */
-.tech-item h3 {
-  color: var(--accent-color);
-  text-shadow: var(--tech-card-text-shadow);
-}
-
-.tech-item h3 i {
-  color: var(--accent-color);
-}
-
-/* ---------- General paragraph / supporting text inside tech cards ---------- */
-.tech-item p,
-.tech-advanced-details,
-.tech-advanced-details .tech-detail,
-.tech-upgrade-explanation .upgrade-explanation-text {
-  color: var(--tech-value-color) !important;
-}
-
-/* Keep the label in the Why box muted */
-.tech-upgrade-explanation .tech-label {
-  color: var(--tech-label-color) !important;
-}
-
-/* ---------- Battery percentage readability ---------- */
-.battery-percentage {
-  color: var(--tech-strong-color) !important;
-  text-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.32),
-    0 0 2px rgba(0, 0, 0, 0.18);
-}
-
-body.light-e .battery-percentage {
-  color: #0f172a !important;
-  text-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.65);
-}
-
-/* ---------- Make detail icons readable but not overpowering ---------- */
-.tech-detail i,
-.tech-advanced-details .tech-detail i {
-  color: var(--accent-color);
-  opacity: 0.95;
-}
-
-/* ---------- Advanced details summary readability ---------- */
-.tech-advanced-details summary {
-  color: var(--tech-label-color) !important;
-}
-
-.tech-advanced-details[open] summary,
-.tech-advanced-details summary:hover {
-  color: var(--tech-value-color) !important;
-}
-
-/* ---------- Trigger list readability ---------- */
-.upgrade-triggers {
-  color: var(--tech-muted-color);
-}
-
-.upgrade-triggers li {
-  color: var(--tech-muted-color);
-}
-
-/* ---------- Beta preview readability ---------- */
-.beta-page-header h1,
-.beta-summary-card strong,
-.beta-feature-item h3,
-.beta-roadmap-item strong {
-  color: var(--tech-strong-color) !important;
-}
-
-.beta-page-subtitle,
-.beta-summary-label,
-.beta-section-heading p,
-.beta-feature-item p,
-.beta-notes-list,
-.beta-notes-list li,
-.beta-roadmap-item p {
-  color: var(--tech-muted-color) !important;
-}
-
-.beta-section-heading h2 {
-  color: var(--tech-strong-color) !important;
-}
-
-/* ---------- Buttons remain readable ---------- */
-.beta-action-button,
-.beta-version-pill {
-  color: #ffffff !important;
-}
-
-body.light-e .beta-action-button.secondary {
-  color: #111827 !important;
-}
-
-/* ---------- Light mode glass tuning for tech cards ---------- */
-body.light-e .tech-section,
-body.light-e .tech-item,
-body.light-e .tech-advanced-details,
-body.light-e .tech-upgrade-explanation {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.18),
-    0 8px 24px rgba(15, 23, 42, 0.08);
-}
-
-/* ---------- Keep badges color-based, not forced to text color ---------- */
-.upgrade-badge,
-.support-badge,
-.os-badge,
-.upgrade-priority-badge {
-  text-shadow: none !important;
-}
-
-/* ---------- Optional colorized plain values by status ---------- */
-.tech-value.status-green  { color: var(--status-text-green) !important; }
-.tech-value.status-yellow { color: var(--status-text-yellow) !important; }
-.tech-value.status-orange { color: var(--status-text-orange) !important; }
-.tech-value.status-red    { color: var(--status-text-red) !important; }
-.tech-value.status-gray   { color: var(--status-text-gray) !important; }
-.tech-value.status-purple { color: var(--status-text-purple) !important; }
-
-/* ---------- Light mode adjustments for colored text ---------- */
-body.light-e .tech-value.status-green  { color: #248a3d !important; }
-body.light-e .tech-value.status-yellow { color: #9a6a00 !important; }
-body.light-e .tech-value.status-orange { color: #c76a00 !important; }
-body.light-e .tech-value.status-red    { color: #d70015 !important; }
-body.light-e .tech-value.status-gray   { color: #636366 !important; }
-body.light-e .tech-value.status-purple { color: #8e44ad !important; }
-
-/* ---------- Mobile safety ---------- */
 @media (max-width: 600px) {
+  .upgrade-priority-badge,
+  .upgrade-badge,
+  .support-badge,
+  .os-badge {
+    font-size: 0.74rem;
+    padding: 0.2rem 0.5rem;
+    margin-left: 0.25rem;
+  }
+
+  .upgrade-priority-badge {
+    min-width: 84px;
+  }
+
+  .upgrade-priority-badge::before {
+    width: 0.38rem;
+    height: 0.38rem;
+    margin-right: 0.05rem;
+  }
+
+  .score-bar {
+    height: 9px;
+  }
+
+  .tech-upgrade-explanation {
+    padding: 0.65rem;
+    line-height: 1.45;
+  }
+
+  .upgrade-triggers {
+    margin-left: 1.35rem;
+  }
+
+  .upgrade-triggers li {
+    font-size: 0.88rem;
+  }
+
   .tech-value,
   .tech-detail,
   .tech-upgrade-explanation .upgrade-explanation-text,
   .beta-feature-item p,
   .beta-page-subtitle {
     text-shadow: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .tech-section {
+    padding: 15px;
+  }
+
+  .tech-item {
+    padding: 12px;
+  }
+
+  .battery-icon {
+    width: 120px;
+    height: 30px;
+  }
+
+  .battery-percentage {
+    font-size: calc(var(--font-size-base) * 0.65);
   }
 }
 
