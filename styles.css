@@ -4286,12 +4286,38 @@ body.light-e .battery-percentage {
 /* PLANNED / FUTURE DEVICE UI                         */
 /* ================================================== */
 
+/* Planned / future ownership badges */
+
 .upgrade-badge.planned,
 .support-badge.planned,
 .os-badge.planned {
     background: rgba(191, 90, 242, 0.15);
     color: #BF5AF2;
     border: 1px solid rgba(191, 90, 242, 0.28);
+}
+
+.upgrade-badge.wishlist,
+.support-badge.wishlist,
+.os-badge.wishlist {
+    background: rgba(255, 45, 85, 0.15);
+    color: #FF2D55;
+    border: 1px solid rgba(255, 45, 85, 0.28);
+}
+
+.upgrade-badge.coming-soon,
+.support-badge.coming-soon,
+.os-badge.coming-soon {
+    background: rgba(90, 200, 250, 0.15);
+    color: #5AC8FA;
+    border: 1px solid rgba(90, 200, 250, 0.28);
+}
+
+.upgrade-badge.future-upgrade,
+.support-badge.future-upgrade,
+.os-badge.future-upgrade {
+    background: rgba(255, 149, 0, 0.15);
+    color: #FF9500;
+    border: 1px solid rgba(255, 149, 0, 0.28);
 }
 
 .planned-tech-item {
