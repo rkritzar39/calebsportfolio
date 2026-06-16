@@ -10422,6 +10422,10 @@ body.light-e .creator-sort-controls select option {
 /* SMART TECH UPGRADE RECOMMENDATION UI               */
 /* ================================================== */
 
+/* ================================================== */
+/* SMART TECH STATUS / UPGRADE UI                     */
+/* ================================================== */
+
 /* ======================== */
 /* Badge Color Variables    */
 /* ======================== */
@@ -10447,9 +10451,16 @@ body.light-e .creator-sort-controls select option {
   --status-red-border: rgba(255, 69, 58, 0.34);
   --status-gray-border: rgba(199, 199, 204, 0.28);
   --status-purple-border: rgba(191, 90, 242, 0.34);
+
+  --status-green-glow: rgba(48, 209, 88, 0.22);
+  --status-yellow-glow: rgba(255, 214, 10, 0.22);
+  --status-orange-glow: rgba(255, 159, 10, 0.2);
+  --status-red-glow: rgba(255, 69, 58, 0.24);
+  --status-gray-glow: rgba(199, 199, 204, 0.12);
+  --status-purple-glow: rgba(191, 90, 242, 0.2);
 }
 
-/* Light mode slightly strengthens badge backgrounds */
+/* Light mode tuning */
 body.light-e {
   --status-green-bg: rgba(48, 209, 88, 0.18);
   --status-yellow-bg: rgba(255, 204, 0, 0.2);
@@ -10457,6 +10468,13 @@ body.light-e {
   --status-red-bg: rgba(255, 59, 48, 0.18);
   --status-gray-bg: rgba(142, 142, 147, 0.16);
   --status-purple-bg: rgba(175, 82, 222, 0.18);
+
+  --status-green-border: rgba(48, 209, 88, 0.38);
+  --status-yellow-border: rgba(255, 204, 0, 0.42);
+  --status-orange-border: rgba(255, 149, 0, 0.36);
+  --status-red-border: rgba(255, 59, 48, 0.36);
+  --status-gray-border: rgba(142, 142, 147, 0.26);
+  --status-purple-border: rgba(175, 82, 222, 0.36);
 }
 
 
@@ -10464,7 +10482,6 @@ body.light-e {
 /* Shared Badge Styling     */
 /* ======================== */
 
-.upgrade-priority-badge,
 .upgrade-badge,
 .support-badge,
 .os-badge {
@@ -10494,10 +10511,123 @@ body.light-e {
 
 
 /* ======================== */
-/* Badge Colors             */
+/* Upgrade Priority Badge   */
+/* Color-coded main badge   */
 /* ======================== */
 
-.upgrade-priority-badge.green,
+.upgrade-priority-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.42rem;
+
+  min-width: 96px;
+  padding: 0.28rem 0.78rem;
+  margin-left: 0.35rem;
+
+  border-radius: 999px;
+  border: 1px solid transparent;
+
+  font-size: 0.78rem;
+  font-weight: 850;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+
+  backdrop-filter: blur(16px) saturate(165%);
+  -webkit-backdrop-filter: blur(16px) saturate(165%);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.16);
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+/* Clean status dot, not emoji */
+.upgrade-priority-badge::before {
+  content: "";
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+  flex-shrink: 0;
+}
+
+/* Critical */
+.upgrade-priority-badge.red {
+  color: var(--status-red);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 69, 58, 0.24),
+      rgba(255, 69, 58, 0.075)
+    );
+  border-color: var(--status-red-border);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.16),
+    0 0 18px var(--status-red-glow);
+}
+
+/* Recommended */
+.upgrade-priority-badge.yellow {
+  color: var(--status-yellow);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 214, 10, 0.24),
+      rgba(255, 214, 10, 0.075)
+    );
+  border-color: var(--status-yellow-border);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.16),
+    0 0 18px var(--status-yellow-glow);
+}
+
+/* Optional */
+.upgrade-priority-badge.gray {
+  color: var(--status-gray);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(199, 199, 204, 0.2),
+      rgba(199, 199, 204, 0.06)
+    );
+  border-color: var(--status-gray-border);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    0 6px 16px rgba(0, 0, 0, 0.12),
+    0 0 14px var(--status-gray-glow);
+}
+
+/* Not Needed */
+.upgrade-priority-badge.green {
+  color: var(--status-green);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(48, 209, 88, 0.24),
+      rgba(48, 209, 88, 0.075)
+    );
+  border-color: var(--status-green-border);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    0 6px 16px rgba(0, 0, 0, 0.16),
+    0 0 18px var(--status-green-glow);
+}
+
+
+/* ======================== */
+/* Normal Badge Colors      */
+/* ======================== */
+
 .upgrade-badge.green,
 .support-badge.green,
 .os-badge.green {
@@ -10506,7 +10636,6 @@ body.light-e {
   border-color: var(--status-green-border);
 }
 
-.upgrade-priority-badge.yellow,
 .upgrade-badge.yellow,
 .support-badge.yellow,
 .os-badge.yellow {
@@ -10515,7 +10644,6 @@ body.light-e {
   border-color: var(--status-yellow-border);
 }
 
-.upgrade-priority-badge.orange,
 .upgrade-badge.orange,
 .support-badge.orange,
 .os-badge.orange {
@@ -10524,7 +10652,6 @@ body.light-e {
   border-color: var(--status-orange-border);
 }
 
-.upgrade-priority-badge.red,
 .upgrade-badge.red,
 .support-badge.red,
 .os-badge.red {
@@ -10533,7 +10660,6 @@ body.light-e {
   border-color: var(--status-red-border);
 }
 
-.upgrade-priority-badge.gray,
 .upgrade-badge.gray,
 .support-badge.gray,
 .os-badge.gray {
@@ -10542,13 +10668,66 @@ body.light-e {
   border-color: var(--status-gray-border);
 }
 
-.upgrade-priority-badge.purple,
 .upgrade-badge.purple,
 .support-badge.purple,
 .os-badge.purple {
   color: var(--status-purple);
   background: var(--status-purple-bg);
   border-color: var(--status-purple-border);
+}
+
+
+/* ======================== */
+/* Light Mode Badge Tuning  */
+/* ======================== */
+
+body.light-e .upgrade-priority-badge,
+body.light-e .upgrade-badge,
+body.light-e .support-badge,
+body.light-e .os-badge {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.65),
+    0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+body.light-e .upgrade-priority-badge.red {
+  color: #d70015;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 59, 48, 0.2),
+      rgba(255, 59, 48, 0.08)
+    );
+}
+
+body.light-e .upgrade-priority-badge.yellow {
+  color: #9a6a00;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 204, 0, 0.28),
+      rgba(255, 204, 0, 0.1)
+    );
+}
+
+body.light-e .upgrade-priority-badge.gray {
+  color: #636366;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(142, 142, 147, 0.18),
+      rgba(142, 142, 147, 0.07)
+    );
+}
+
+body.light-e .upgrade-priority-badge.green {
+  color: #248a3d;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(52, 199, 89, 0.22),
+      rgba(52, 199, 89, 0.08)
+    );
 }
 
 
@@ -10653,7 +10832,6 @@ body.light-e {
   font-weight: 700;
 }
 
-
 /* Light mode explanation tuning */
 body.light-e .tech-upgrade-explanation {
   background:
@@ -10710,7 +10888,6 @@ body.light-e .tech-upgrade-explanation {
 /* Smart Recommendation Rows */
 /* ======================== */
 
-/* These improve the new rows without changing your whole .tech-detail system */
 .tech-detail .fa-calendar-check,
 .tech-detail .fa-calendar-days,
 .tech-detail .fa-ranking-star,
@@ -10732,6 +10909,16 @@ body.light-e .tech-upgrade-explanation {
     font-size: 0.74rem;
     padding: 0.2rem 0.5rem;
     margin-left: 0.25rem;
+  }
+
+  .upgrade-priority-badge {
+    min-width: 84px;
+  }
+
+  .upgrade-priority-badge::before {
+    width: 0.38rem;
+    height: 0.38rem;
+    margin-right: 0.05rem;
   }
 
   .score-bar {
