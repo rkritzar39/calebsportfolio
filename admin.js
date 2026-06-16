@@ -4566,1085 +4566,549 @@ function displayFilteredActivityLog() {
     logCountElement.textContent = `(${filteredLogs.length})`;
 }
 
-    // ========================================
-    // == Tech Item Management Functions V2 ===
-    // ========================================
-    // (Add ALL the Tech functions here: renderTechItemAdminListItem, displayFilteredTechItems, loadTechItemsAdmin,
-    //  handleAddTechItem, handleDeleteTechItem, openEditTechItemModal, closeEditTechItemModal, handleUpdateTechItem,
-    //  renderTechItemPreview, updateTechItemPreview, attachTechPreviewListeners)
+   // ========================================
+// == Tech Item Management Functions V2 ===
+// ========================================
 
-    /** Renders a single tech item in the admin list view */
-    function renderTechItemAdminListItem(container, docId, itemData, deleteHandler, editHandler) {
-        // ... (function code from previous response) ...
-         if (!container) { console.warn("Tech list container missing for render"); return; }
-         const itemDiv = document.createElement('div');
-         itemDiv.className = 'list-item-admin';
-         itemDiv.setAttribute('data-id', docId);
-         itemDiv.innerHTML = `
-             <div class="item-content">
-                 <div class="item-details">
-                     <strong>${itemData.name || 'N/A'}</strong>
-                     <span>(${itemData.model || 'N/A'})</span>
-                     <small>Order: ${itemData.order ?? 'N/A'} | OS: ${itemData.osVersion || '?'}</small>
-                 </div>
-             </div>
-             <div class="item-actions">
-                 <button type="button" class="edit-button small-button">Edit</button>
-                 <button type="button" class="delete-button small-button">Delete</button>
-             </div>`;
-         const editButton = itemDiv.querySelector('.edit-button');
-         if (editButton) editButton.addEventListener('click', () => editHandler(docId));
-         const deleteButton = itemDiv.querySelector('.delete-button');
-         if (deleteButton) deleteButton.addEventListener('click', () => deleteHandler(docId, itemDiv));
-         container.appendChild(itemDiv);
-    }
+function escapeAdminHTML(value) {
+    if (value === null || value === undefined) return "";
 
-     /** Filters and displays tech items in the admin list based on search */
-    function displayFilteredTechItems() {
-        // ... (function code from previous response) ...
-         if (!techItemsListAdmin || !searchTechItemsInput || typeof allTechItems === 'undefined') {
-             console.error("Tech Items Filter Error: Missing elements/data.");
-             if(techItemsListAdmin) techItemsListAdmin.innerHTML = `<p class="error">Error displaying tech list.</p>`;
-             return;
-         }
-         const searchTerm = searchTechItemsInput.value.trim().toLowerCase();
-         techItemsListAdmin.innerHTML = ''; // Clear list
-         const filteredList = allTechItems.filter(item => {
-             if (!searchTerm) return true;
-             const name = (item.name || '').toLowerCase();
-             const model = (item.model || '').toLowerCase();
-             return name.includes(searchTerm) || model.includes(searchTerm);
-         });
-         if (filteredList.length > 0) {
-             filteredList.forEach(item => {
-                 renderTechItemAdminListItem(techItemsListAdmin, item.id, item, handleDeleteTechItem, openEditTechItemModal);
-             });
-         } else {
-              techItemsListAdmin.innerHTML = searchTerm ? `<p>No tech items found matching "${searchTerm}".</p>` : '<p>No tech items added yet.</p>';
-         }
-         if (techItemsCount) { techItemsCount.textContent = `(${filteredList.length})`; }
-    }
-
-    /** Loads all tech items from Firestore, stores them globally, and triggers display */
-    async function loadTechItemsAdmin() {
-        // ... (function code from previous response) ...
-         if (!techItemsListAdmin) { console.error("Tech items list container element missing."); return; }
-         console.log("Loading tech items for admin...");
-         if (techItemsCount) techItemsCount.textContent = '(...)'; // Indicate loading count
-         techItemsListAdmin.innerHTML = `<p>Loading tech items...</p>`; // Loading message
-         allTechItems = []; // Clear global array before fetching
-         try {
-             const techQuery = query(techItemsCollectionRef, orderBy("order", "asc")); // Order by display order
-             const querySnapshot = await getDocs(techQuery);
-             querySnapshot.forEach((doc) => {
-                 allTechItems.push({ id: doc.id, ...doc.data() }); // Store ID with data
-             });
-             console.log(`Loaded ${allTechItems.length} tech items.`);
-             displayFilteredTechItems(); // Initial display
-         } catch (error) {
-             console.error("Error loading tech items:", error);
-              let errorMsg = "Error loading tech items.";
-              if (error.code === 'failed-precondition') {
-                  errorMsg = "Error: Missing Firestore index for tech items (order). Check console (F12) for link to create it.";
-                  showAdminStatus(errorMsg, true);
-              } else {
-                  showAdminStatus(errorMsg + `: ${error.message}`, true);
-              }
-             techItemsListAdmin.innerHTML = `<p class="error">${errorMsg}</p>`;
-             if (techItemsCount) techItemsCount.textContent = '(Error)';
-         }
-    }
-
-    /** Handles adding a new tech item via the form */
-    async function handleAddTechItem(event) {
-        // ... (function code from previous response, INCLUDING activity log) ...
-        event.preventDefault();
-        if (!addTechItemForm) { console.error("Add tech form not found"); return; }
-        const techData = {};
-        const inputs = addTechItemForm.querySelectorAll('input[name], select[name], textarea[name]');
-        let isValid = true;
-        inputs.forEach(input => {
-             const name = input.name; let value = input.value.trim();
-             if (input.type === 'number') { value = input.value === '' ? null : parseFloat(input.value); if (input.value !== '' && isNaN(value)) { value = null; if (input.name === 'order' || input.name === 'batteryHealth' || input.name === 'batteryCycles') { showAdminStatus(`Invalid number entered for ${name}.`, true); isValid = false; } } else if (value !== null && value < 0 && (input.name === 'order' || input.name === 'batteryHealth' || input.name === 'batteryCycles')) { showAdminStatus(`${name} cannot be negative.`, true); isValid = false; } }
-             techData[name] = value === '' ? null : value;
-         });
-         if (!techData.name || techData.order === null || techData.order < 0 || isNaN(techData.order)) { showAdminStatus("Device Name and a valid non-negative Order are required.", true); isValid = false; }
-         if (!isValid) return;
-         techData.createdAt = serverTimestamp();
-         showAdminStatus("Adding tech item...");
-         try {
-             const docRef = await addDoc(techItemsCollectionRef, techData);
-             console.log("Tech item added with ID:", docRef.id);
-              if (typeof logAdminActivity === 'function') { logAdminActivity('TECH_ITEM_ADD', { name: techData.name, id: docRef.id }); } else { console.warn("logAdminActivity function not found!"); }
-             showAdminStatus("Tech item added successfully.", false);
-             addTechItemForm.reset();
-             if (addTechItemPreview) { addTechItemPreview.innerHTML = '<p><small>Preview will appear here as you type.</small></p>'; }
-             loadTechItemsAdmin();
-         } catch (error) { console.error("Error adding tech item:", error); showAdminStatus(`Error adding tech item: ${error.message}`, true); }
-    }
-
-     /** Handles deleting a specified tech item */
-    async function handleDeleteTechItem(docId, listItemElement) {
-        // ... (function code from previous response, INCLUDING activity log) ...
-        if (!confirm("Are you sure you want to permanently delete this tech item? This action cannot be undone.")) return;
-         showAdminStatus("Deleting tech item...");
-         let itemNameToLog = 'Unknown Item';
-         try {
-              const itemSnap = await getDoc(doc(db, 'tech_items', docId));
-              if (itemSnap.exists()) itemNameToLog = itemSnap.data().name || 'Unknown Item';
-             await deleteDoc(doc(db, 'tech_items', docId));
-              if (typeof logAdminActivity === 'function') { logAdminActivity('TECH_ITEM_DELETE', { name: itemNameToLog, id: docId }); } else { console.warn("logAdminActivity function not found!"); }
-             showAdminStatus("Tech item deleted successfully.", false);
-             loadTechItemsAdmin();
-         } catch (error) {
-             console.error(`Error deleting tech item (ID: ${docId}):`, error);
-              if (typeof logAdminActivity === 'function') { logAdminActivity('TECH_ITEM_DELETE_FAILED', { name: itemNameToLog, id: docId, error: error.message }); }
-             showAdminStatus(`Error deleting tech item: ${error.message}`, true);
-         }
-    }
-
-    /** Opens the Edit Tech Item modal and populates it with data */
-    async function openEditTechItemModal(docId) {
-        // ... (function code from previous response, INCLUDING triggering preview/listener attach) ...
-         if (!editTechItemModal || !editTechItemForm) { console.error("Edit tech item modal elements not found."); showAdminStatus("UI Error: Cannot open edit form.", true); return; }
-         showEditTechItemStatus("Loading item data...");
-         if(editTechItemPreview) editTechItemPreview.innerHTML = '<p><small>Loading preview...</small></p>';
-         try {
-             const docRef = doc(db, 'tech_items', docId); const docSnap = await getDoc(docRef);
-             if (docSnap.exists()) {
-                 const data = docSnap.data(); editTechItemForm.setAttribute('data-doc-id', docId);
-                 const inputs = editTechItemForm.querySelectorAll('input[name], select[name], textarea[name]');
-                 inputs.forEach(input => { const name = input.name; if (data.hasOwnProperty(name)) { input.value = data[name] ?? ''; } else { input.value = ''; } });
-                 editTechItemModal.style.display = 'block'; showEditTechItemStatus("");
-                 updateTechItemPreview('edit'); attachTechPreviewListeners(editTechItemForm, 'edit');
-             } else { showAdminStatus("Error: Could not load tech item data for editing (not found).", true); showEditTechItemStatus("Error: Item not found.", true); if(editTechItemPreview) editTechItemPreview.innerHTML = '<p class="error"><small>Item not found.</small></p>'; }
-         } catch (error) { console.error("Error getting tech item document for edit:", error); showAdminStatus(`Error loading tech item data: ${error.message}`, true); showEditTechItemStatus(`Error: ${error.message}`, true); if(editTechItemPreview) editTechItemPreview.innerHTML = `<p class="error"><small>Error loading preview: ${error.message}</small></p>`; }
-    }
-
-     /** Closes the Edit Tech Item modal */
-    function closeEditTechItemModal() {
-        // ... (function code from previous response, INCLUDING resetting preview) ...
-         if (editTechItemModal) editTechItemModal.style.display = 'none'; if (editTechItemForm) editTechItemForm.reset(); editTechItemForm?.removeAttribute('data-doc-id'); if (editTechStatusMessage) editTechStatusMessage.textContent = ''; if (editTechItemPreview) { editTechItemPreview.innerHTML = '<p><small>Preview will load when modal opens.</small></p>'; }
-    }
-
-     /** Handles updating a tech item from the edit modal */
-    async function handleUpdateTechItem(event) {
-        // ... (function code from previous response, INCLUDING activity log) ...
-         event.preventDefault(); if (!editTechItemForm) {console.error("Edit tech form not found"); return;} const docId = editTechItemForm.getAttribute('data-doc-id'); if (!docId) { showEditTechItemStatus("Error: Missing document ID. Cannot save.", true); return; }
-         const updatedData = {}; const inputs = editTechItemForm.querySelectorAll('input[name], select[name], textarea[name]'); let isValid = true; let techNameForLog = '';
-          inputs.forEach(input => { const name = input.name; let value = input.value.trim(); if (input.type === 'number') { value = input.value === '' ? null : parseFloat(input.value); if (input.value !== '' && isNaN(value)) { value = null; if (input.name === 'order' || input.name === 'batteryHealth' || input.name === 'batteryCycles') { showEditTechItemStatus(`Invalid number entered for ${name}.`, true); isValid = false; } } else if (value !== null && value < 0 && (input.name === 'order' || input.name === 'batteryHealth' || input.name === 'batteryCycles')) { showEditTechItemStatus(`${name} cannot be negative.`, true); isValid = false; } } updatedData[name] = value === '' ? null : value; if (name === 'name') techNameForLog = value; });
-          if (!updatedData.name || updatedData.order === null || updatedData.order < 0 || isNaN(updatedData.order)) { showEditTechItemStatus("Device Name and a valid non-negative Order are required.", true); isValid = false; } if (!isValid) return;
-         updatedData.lastModified = serverTimestamp();
-         showEditTechItemStatus("Saving changes...");
-         try {
-              const docRef = doc(db, 'tech_items', docId); let oldData = {}; const oldDataSnap = await getDoc(docRef); if (oldDataSnap.exists()) oldData = oldDataSnap.data();
-             await updateDoc(docRef, updatedData);
-              const changes = {}; let hasChanges = false;
-              for (const key in updatedData) { if (key !== 'lastModified' && oldData[key] !== updatedData[key]) { changes[key] = { from: oldData[key] ?? null, to: updatedData[key] }; hasChanges = true; } }
-              if (hasChanges && typeof logAdminActivity === 'function') { logAdminActivity('TECH_ITEM_UPDATE', { name: techNameForLog, id: docId, changes: changes }); } else if (hasChanges) { console.warn("logAdminActivity function not found!"); } else { console.log("Tech item updated, but no data fields changed value."); }
-             showAdminStatus("Tech item updated successfully.", false); closeEditTechItemModal(); loadTechItemsAdmin();
-         } catch (error) { console.error(`Error updating tech item (ID: ${docId}):`, error); showEditTechItemStatus(`Error saving: ${error.message}`, true); if (typeof logAdminActivity === 'function') { logAdminActivity('TECH_ITEM_UPDATE_FAILED', { name: techNameForLog, id: docId, error: error.message }); } }
-    }
-
-    // --- Tech Preview Rendering Functions ---
-
-// ======================
-// PREVIEW HELPERS
-// ======================
-function getTechPreviewThresholds() {
-    return {
-        cycleOld: 1500,
-        cycleVeryOld: 2000,
-        batteryBad: 85,
-        batteryCritical: 75
-    };
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
 
-function detectPreviewOSType(osVersion) {
-    if (!osVersion) return "unknown";
+const techNumberFields = [
+    "order",
+    "batteryHealth",
+    "batteryCycles",
+    "batteryChargeCycles",
+    "modelYear",
+    "supportEndYear",
+    "ramGB",
+    "storageGB",
+    "expectedKeepYears"
+];
 
-    const os = String(osVersion).toLowerCase();
+function normalizeTechFormValue(name, input, statusCallback) {
+    let value = input.value.trim();
+    let isValid = true;
 
-    if (os.includes("ipados")) return "ipados";
-    if (os.includes("ios")) return "ios";
-    if (os.includes("macos")) return "macos";
+    if (input.type === "number") {
+        value = input.value === "" ? null : parseFloat(input.value);
 
-    return "ios";
-}
+        if (input.value !== "" && isNaN(value)) {
+            value = null;
 
-function formatPreviewOSType(osType) {
-    if (osType === "ios") return "iOS";
-    if (osType === "ipados") return "iPadOS";
-    if (osType === "macos") return "macOS";
-    return "OS";
-}
-
-function extractPreviewVersionString(osVersion) {
-    if (!osVersion) return null;
-
-    const match = String(osVersion).match(/(\d+(?:\.\d+){0,2})/);
-    return match ? match[1] : null;
-}
-
-function normalizePreviewVersion(version) {
-    return String(version)
-        .split(".")
-        .map(num => parseInt(num, 10))
-        .map(num => isNaN(num) ? 0 : num);
-}
-
-function comparePreviewVersions(a, b) {
-    const versionA = normalizePreviewVersion(a);
-    const versionB = normalizePreviewVersion(b);
-
-    const maxLength = Math.max(versionA.length, versionB.length);
-
-    for (let i = 0; i < maxLength; i++) {
-        const partA = versionA[i] || 0;
-        const partB = versionB[i] || 0;
-
-        if (partA > partB) return 1;
-        if (partA < partB) return -1;
-    }
-
-    return 0;
-}
-
-function detectPreviewOSChannel(osVersion) {
-    if (!osVersion) return "public";
-
-    const os = String(osVersion).toLowerCase();
-
-    if (os.includes("developer beta") || os.includes("dev beta")) {
-        return "developer-beta";
-    }
-
-    if (os.includes("public beta")) {
-        return "public-beta";
-    }
-
-    if (os.includes("beta")) {
-        return "beta";
-    }
-
-    return "public";
-}
-
-function checkPreviewOSStatus(osVersion) {
-    if (!osVersion) return null;
-
-    const latestOSVersions = {
-        ios: "26.5.1",
-        ipados: "26.5",
-        macos: "26.5.1"
-    };
-
-    const osType = detectPreviewOSType(osVersion);
-    const currentVersion = extractPreviewVersionString(osVersion);
-    const latestPublicVersion = latestOSVersions[osType] || latestOSVersions.ios;
-    const channel = detectPreviewOSChannel(osVersion);
-
-    if (!currentVersion) return null;
-
-    const comparisonToPublic = comparePreviewVersions(currentVersion, latestPublicVersion);
-
-    let status = "Latest";
-    let color = "green";
-    let releaseChannel = "Public";
-
-    if (channel === "developer-beta") {
-        status = "Developer Beta";
-        color = "purple";
-        releaseChannel = "Developer Beta";
-    } else if (channel === "public-beta") {
-        status = "Public Beta";
-        color = "purple";
-        releaseChannel = "Public Beta";
-    } else if (channel === "beta") {
-        status = "Beta";
-        color = "purple";
-        releaseChannel = "Beta";
-    } else if (comparisonToPublic > 0) {
-        status = "Ahead of Public";
-        color = "purple";
-        releaseChannel = "Pre-release / Beta";
-    } else if (comparisonToPublic < 0) {
-        status = "Outdated";
-        color = "yellow";
-        releaseChannel = "Public";
-    }
-
-    if (comparisonToPublic < 0) {
-        const currentMajor = normalizePreviewVersion(currentVersion)[0] || 0;
-        const latestMajor = normalizePreviewVersion(latestPublicVersion)[0] || 0;
-
-        if (latestMajor - currentMajor >= 1) {
-            status = "Very Outdated";
-            color = "red";
-        }
-    }
-
-    return {
-        status,
-        color,
-        osType,
-        currentVersion,
-        latestPublicVersion,
-        releaseChannel,
-        isBeta: channel !== "public" || comparisonToPublic > 0,
-        isPublicLatest: comparisonToPublic === 0 && channel === "public",
-        isBehindPublic: comparisonToPublic < 0
-    };
-}
-
-function calculatePreviewDeviceAge(dateBought) {
-    if (!dateBought) return null;
-
-    const bought = new Date(dateBought);
-    if (isNaN(bought.getTime())) return null;
-
-    const now = new Date();
-    const diffMs = now - bought;
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const years = parseFloat((days / 365).toFixed(1));
-
-    return { days, years };
-}
-
-function detectPreviewDeviceType(item) {
-    const explicitType = (item.deviceType || "").toLowerCase();
-    if (explicitType) return explicitType;
-
-    const name = (item.name || "").toLowerCase();
-    const model = (item.model || "").toLowerCase();
-    const iconClass = (item.iconClass || "").toLowerCase();
-
-    if (
-        name.includes("iphone") ||
-        name.includes("phone") ||
-        model.includes("iphone") ||
-        iconClass.includes("mobile")
-    ) {
-        return "phone";
-    }
-
-    if (
-        name.includes("ipad") ||
-        name.includes("tablet") ||
-        model.includes("ipad")
-    ) {
-        return "tablet";
-    }
-
-    if (
-        name.includes("mac") ||
-        name.includes("macbook") ||
-        name.includes("imac") ||
-        name.includes("computer") ||
-        model.includes("mac") ||
-        iconClass.includes("desktop") ||
-        iconClass.includes("laptop")
-    ) {
-        return "computer";
-    }
-
-    if (
-        name.includes("watch") ||
-        model.includes("watch")
-    ) {
-        return "watch";
-    }
-
-    return "computer";
-}
-
-function checkPreviewDeviceSupport(item) {
-    const currentYear = new Date().getFullYear();
-    const modelYear = Number(item.modelYear ?? currentYear);
-    const supportEndYear = item.supportEndYear ? Number(item.supportEndYear) : null;
-
-    const osStatus = checkPreviewOSStatus(item.osVersion);
-    const deviceType = detectPreviewDeviceType(item);
-
-    const yearsOld = currentYear - modelYear;
-
-    let supported = true;
-    let supportLevel = "Fully Supported";
-    let supportColor = "green";
-
-    if (supportEndYear) {
-        if (currentYear > supportEndYear) {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (currentYear === supportEndYear) {
-            supportLevel = "Support Ending Soon";
-            supportColor = "yellow";
-        }
-    }
-
-    if (deviceType === "phone") {
-        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (yearsOld >= 4 || osStatus?.isBehindPublic) {
-            if (supported) {
-                supportLevel = "Limited Support";
-                supportColor = "yellow";
+            if (techNumberFields.includes(name)) {
+                statusCallback(`Invalid number entered for ${name}.`, true);
+                isValid = false;
             }
         }
-    }
 
-    if (deviceType === "computer") {
-        if (yearsOld >= 6 || osStatus?.status === "Very Outdated") {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (yearsOld >= 5 || osStatus?.isBehindPublic) {
-            if (supported) {
-                supportLevel = "Limited Support";
-                supportColor = "yellow";
-            }
+        if (
+            value !== null &&
+            value < 0 &&
+            techNumberFields.includes(name)
+        ) {
+            statusCallback(`${name} cannot be negative.`, true);
+            isValid = false;
         }
     }
 
-    if (deviceType === "tablet") {
-        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (yearsOld >= 4 || osStatus?.isBehindPublic) {
-            if (supported) {
-                supportLevel = "Limited Support";
-                supportColor = "yellow";
-            }
+    if (name === "pairedAIPhone") {
+        if (value === "true") {
+            value = true;
+        } else if (value === "false") {
+            value = false;
+        } else {
+            value = null;
         }
     }
 
-    if (deviceType === "watch" || deviceType === "accessory") {
-        if (yearsOld >= 5) {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (yearsOld >= 4) {
-            if (supported) {
-                supportLevel = "Limited Support";
-                supportColor = "yellow";
-            }
-        }
+    if (value === "") {
+        value = null;
     }
 
-    return {
-        supported,
-        supportLevel,
-        supportColor,
-        yearsOld,
-        deviceType,
-        modelYear,
-        supportEndYear
-    };
+    return { value, isValid };
 }
 
-function estimatePreviewBatteryTrend(item) {
-    const age = calculatePreviewDeviceAge(item.dateBought);
-    if (!age) return null;
-
-    const currentHealth = Number(item.batteryHealth ?? 100);
-
-    if (isNaN(currentHealth)) return null;
-
-    const degradationRate = 5;
-    const estimatedLoss = age.years * degradationRate;
-    const estimatedOriginal = Math.min(100, currentHealth + estimatedLoss);
-
-    const declineValue = Math.max(0, estimatedOriginal - currentHealth);
-    const decline = declineValue.toFixed(1);
-
-    return {
-        decline,
-        trend: declineValue > 10 ? "Fast Decline" : "Normal"
-    };
-}
-
-function calculatePreviewUpgradeScore(item) {
-    const thresholds = getTechPreviewThresholds();
-
-    const age = calculatePreviewDeviceAge(item.dateBought);
-    const battery = Number(item.batteryHealth ?? 100);
-    const cycles = Number(item.batteryCycles ?? 0);
-    const support = checkPreviewDeviceSupport(item);
-    const osStatus = checkPreviewOSStatus(item.osVersion);
-
-    let score = 100;
-
-    if (age) score -= age.years * 10;
-
-    score -= (100 - battery) * 1.2;
-    score -= cycles * 0.008;
-
-    if (cycles >= thresholds.cycleVeryOld) {
-        score -= 10;
-    }
-
-    if (osStatus?.isBehindPublic) {
-        score -= 8;
-    }
-
-    if (osStatus?.status === "Very Outdated") {
-        score -= 18;
-    }
-
-    if (support.supportLevel === "Limited Support") {
-        score -= 10;
-    }
-
-    if (!support.supported) {
-        score -= 25;
-    }
-
-    score = Math.max(0, Math.min(100, Math.round(score)));
-
-    let label = "Excellent";
-    let color = "green";
-
-    if (score < 80) {
-        label = "Good";
-        color = "yellow";
-    }
-
-    if (score < 60) {
-        label = "Aging";
-        color = "orange";
-    }
-
-    if (score < 40) {
-        label = "Upgrade Soon";
-        color = "red";
-    }
-
-    return { score, label, color };
-}
-
-function calculatePreviewUpgradeData(item) {
-    const thresholds = getTechPreviewThresholds();
-
-    const now = new Date();
-
-    let boughtDate = null;
-
-    if (item.dateBought) {
-        boughtDate = new Date(item.dateBought);
-    }
-
-    let ageYears = 0;
-    if (boughtDate && !isNaN(boughtDate.getTime())) {
-        ageYears = (now - boughtDate) / (1000 * 60 * 60 * 24 * 365);
-    }
-
-    const batteryHealth = Number(item.batteryHealth ?? 100);
-    const cycles = Number(item.batteryCycles ?? 0);
-    const osStatus = checkPreviewOSStatus(item.osVersion);
-    const support = checkPreviewDeviceSupport(item);
-
-    const deviceType = detectPreviewDeviceType(item);
-    const isPhone = deviceType === "phone";
-    const isComputer = deviceType === "computer";
-
-    const batteryBad = batteryHealth < thresholds.batteryBad;
-    const batteryCritical = batteryHealth < thresholds.batteryCritical;
-
-    const cycleOld = cycles >= thresholds.cycleOld;
-    const cycleVeryOld = cycles >= thresholds.cycleVeryOld;
-
-    const ageOld = ageYears > 3;
-    const ageVeryOld = ageYears > 4;
-
-    const outdatedOS = osStatus?.isBehindPublic && osStatus.status === "Very Outdated";
-
-    let status = "Great";
-    let color = "green";
-    let suggestion = "No upgrade needed";
-
-    let triggers = [];
-
-    if (isPhone && batteryBad) {
-        triggers.push("Battery below 85%");
-    }
-
-    if (osStatus?.isBehindPublic) {
-        triggers.push("OS is outdated");
-    }
-
-    if (isComputer && osStatus?.isBehindPublic) {
-        triggers.push("macOS support/update concern");
-    }
-
-    if (cycleOld) {
-        triggers.push(`Charge cycles over ${thresholds.cycleOld}`);
-    }
-
-    if (cycleVeryOld) {
-        triggers.push(`Charge cycles reached ${thresholds.cycleVeryOld}+`);
-    }
-
-    if (ageOld) {
-        triggers.push("Device older than 3 years");
-    }
-
-    if (!support.supported) {
-        triggers.push("Device no longer supported");
-    }
-
-    if (
-        batteryCritical ||
-        cycleVeryOld ||
-        ageVeryOld ||
-        outdatedOS ||
-        !support.supported
-    ) {
-        status = "Upgrade Recommended";
-        color = "red";
-        suggestion = "Consider upgrading soon";
-    } else if (
-        batteryBad ||
-        cycleOld ||
-        ageOld ||
-        support.supportLevel === "Limited Support" ||
-        support.supportLevel === "Support Ending Soon"
-    ) {
-        status = "Aging";
-        color = "yellow";
-        suggestion = "Monitor closely";
-    }
-
-    return { status, color, suggestion, triggers };
-}
-
-function getPreviewRecommendedAction(item, upgrade, support) {
-    const thresholds = getTechPreviewThresholds();
-
-    const batteryHealth = Number(item.batteryHealth ?? 100);
-    const cycles = Number(item.batteryCycles ?? 0);
-
-    if (!support.supported) {
-        return "Plan upgrade soon";
-    }
-
-    if (upgrade.status === "Upgrade Recommended") {
-        if (cycles >= thresholds.cycleVeryOld && batteryHealth >= thresholds.batteryBad) {
-            return "Keep for now, but monitor battery cycles closely";
-        }
-
-        return "Plan upgrade soon";
-    }
-
-    if (batteryHealth < thresholds.batteryBad && batteryHealth >= thresholds.batteryCritical) {
-        return "Consider battery replacement";
-    }
-
-    if (cycles >= thresholds.cycleVeryOld) {
-        return "Monitor battery cycles closely";
-    }
-
-    if (upgrade.status === "Aging") {
-        return "Monitor closely";
-    }
-
-    return "Keep";
-}
-
-function generatePreviewDeviceSummary(item, upgrade, support, osStatus) {
-    const thresholds = getTechPreviewThresholds();
-
-    const deviceType = detectPreviewDeviceType(item);
-    const primaryUse = item.primaryUse || '';
-    const condition = item.condition || '';
-    const batteryHealth = Number(item.batteryHealth ?? 100);
-    const cycles = Number(item.batteryCycles ?? 0);
-
-    let parts = [];
-
-    if (primaryUse) {
-        parts.push(`Used for ${primaryUse.toLowerCase()}`);
-    } else {
-        parts.push(`This ${deviceType} is being tracked`);
-    }
-
-    if (condition) {
-        parts.push(`condition is ${condition.toLowerCase()}`);
-    }
-
-    if (osStatus?.isBeta) {
-        parts.push("running beta software");
-    } else if (osStatus?.isBehindPublic) {
-        parts.push("behind the latest public OS");
-    } else if (osStatus?.isPublicLatest) {
-        parts.push("on the latest public OS");
-    }
-
-    if (support.supportLevel) {
-        parts.push(`support status is ${support.supportLevel.toLowerCase()}`);
-    }
-
-    if (deviceType === "phone" && batteryHealth < thresholds.batteryBad) {
-        parts.push("battery health is below your preferred threshold");
-    }
-
-    if (cycles >= thresholds.cycleVeryOld) {
-        parts.push("battery cycles are at your upgrade-level threshold");
-    } else if (cycles >= thresholds.cycleOld) {
-        parts.push("battery cycles are worth monitoring");
-    }
-
-    if (upgrade.status === "Upgrade Recommended") {
-        parts.push("upgrade planning is recommended");
-    } else if (upgrade.status === "Aging") {
-        parts.push("monitoring is recommended");
-    } else {
-        parts.push("no major upgrade concern right now");
-    }
-
-    return parts.join(", ") + ".";
-}
-
-/** Generates HTML for the tech item preview based on data object */
-function renderTechItemPreview(data) {
-    const name = data.name || 'Device Name';
-    const model = data.model || '';
-    const primaryUse = data.primaryUse || '';
-    const condition = data.condition || '';
-    const deviceType = data.deviceType || '';
-    const modelYear = data.modelYear || '';
-    const supportEndYear = data.supportEndYear || '';
-    const iconClass = data.iconClass || 'fas fa-question-circle';
-    const material = data.material || '';
-    const storage = data.storage || '';
-    const batteryCapacity = data.batteryCapacity || '';
-    const color = data.color || '';
-    const price = data.price ? `$${data.price}` : '';
-    const dateReleased = data.dateReleased || '';
-    const dateBought = data.dateBought || '';
-    const osVersion = data.osVersion || '';
-
-    const osStatus = checkPreviewOSStatus(osVersion);
-    const support = checkPreviewDeviceSupport(data);
-
-    let osUpdateHtml = '';
-
-    if (osStatus) {
-        if (osStatus.isBehindPublic) {
-            osUpdateHtml = `
-            <div class="tech-detail">
-                <i class="fas fa-download"></i>
-                <span>Update:</span>
-                Public software update recommended
-            </div>`;
-        } else if (osStatus.isBeta) {
-            osUpdateHtml = `
-            <div class="tech-detail">
-                <i class="fas fa-flask"></i>
-                <span>Beta Notice:</span>
-                Running beta software ahead of public release
-            </div>`;
-        }
-    }
-
-    const supportHtml = `
-    <div class="tech-detail">
-        <i class="fas fa-shield-check"></i>
-        <span>Support Status:</span>
-        <span class="support-badge ${support.supportColor || 'green'}">
-            ${support.supportLevel || 'Fully Supported'}
-        </span>
-    </div>`;
-
-    const batteryHealth = data.batteryHealth !== null &&
-        data.batteryHealth !== undefined &&
-        !isNaN(data.batteryHealth)
-        ? parseInt(data.batteryHealth, 10)
-        : null;
-
-    const batteryCycles = data.batteryCycles !== null &&
-        data.batteryCycles !== undefined &&
-        !isNaN(data.batteryCycles)
-        ? Number(data.batteryCycles)
-        : null;
-
-    const upgrade = calculatePreviewUpgradeData(data);
-    const age = calculatePreviewDeviceAge(data.dateBought);
-    const batteryTrend = estimatePreviewBatteryTrend(data);
-    const upgradeScore = calculatePreviewUpgradeScore(data);
-
-    if (upgradeScore.score < 40 && upgrade.status !== "Upgrade Recommended") {
-        upgrade.status = "Upgrade Recommended";
-        upgrade.color = "red";
-        upgrade.suggestion = "Consider upgrading soon";
-    } else if (upgradeScore.score < 60 && upgrade.status === "Great") {
-        upgrade.status = "Aging";
-        upgrade.color = "yellow";
-        upgrade.suggestion = "Monitor closely";
-    }
-
-    const recommendedAction = getPreviewRecommendedAction(data, upgrade, support);
-
-    const deviceSummary = generatePreviewDeviceSummary(data, upgrade, support, osStatus);
-
-    const summaryHtml = `
-    <div class="tech-detail tech-summary">
-        <i class="fas fa-clipboard-list"></i>
-        <span>Device Summary:</span>
-        ${deviceSummary}
-    </div>`;
-
-    const actionHtml = `
-    <div class="tech-detail">
-        <i class="fas fa-tools"></i>
-        <span>Recommended Action:</span>
-        ${recommendedAction}
-    </div>`;
-
-    let batteryHtml = '';
-
-    if (batteryHealth !== null) {
-        let batteryClass = '';
-
-        if (batteryHealth <= 20) {
-            batteryClass = 'critical';
-        } else if (batteryHealth <= 50) {
-            batteryClass = 'low-power';
-        }
-
-        const displayHealth = Math.min(Math.max(batteryHealth, 0), 100);
-
-        batteryHtml = `
-        <div class="tech-detail">
-            <i class="fas fa-heart"></i>
-            <span>Battery Health:</span>
-        </div>
-
-        <div class="battery-container">
-            <div class="battery-icon ${batteryClass}">
-                <div class="battery-level" style="width: ${displayHealth}%"></div>
-                <div class="battery-percentage">${batteryHealth}%</div>
-            </div>
-        </div>`;
-    }
-
-    let cyclesHtml = '';
-
-    if (batteryCycles !== null) {
-        cyclesHtml = `
-        <div class="tech-detail">
-            <i class="fas fa-sync"></i>
-            <span>Battery Charge Cycles:</span> ${batteryCycles}
-        </div>`;
-    }
-
-    const upgradeHtml = `
-    <div class="tech-detail">
-        <i class="fas fa-arrow-up"></i>
-        <span>Upgrade Status:</span>
-        <span class="upgrade-badge ${upgrade.color}">
-            ${upgrade.status}
-        </span>
-    </div>
-
-    <div class="tech-detail">
-        <i class="fas fa-lightbulb"></i>
-        <span>Suggestion:</span>
-        ${upgrade.suggestion}
-    </div>`;
-
-    let triggersHtml = '';
-
-    if (upgrade.triggers && upgrade.triggers.length > 0) {
-        triggersHtml = `
-        <div class="tech-detail">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>Upgrade Triggers:</span>
-        </div>
-
-        <ul class="upgrade-triggers">
-            ${upgrade.triggers.map(t => `<li>${t}</li>`).join('')}
-        </ul>`;
-    }
-
-    const ageHtml = age ? `
-    <div class="tech-detail">
-        <i class="fas fa-clock"></i>
-        <span>Device Age:</span>
-        ${age.days} days (${age.years} years)
-    </div>` : '';
-
-    const trendHtml = batteryTrend && batteryTrend.decline !== undefined ? `
-    <div class="tech-detail">
-        <i class="fas fa-chart-line"></i>
-        <span>Battery Trend:</span>
-        ${batteryTrend.trend} (-${batteryTrend.decline}%)
-    </div>` : '';
-
-    const scoreHtml = `
-    <div class="tech-detail">
-        <i class="fas fa-gauge-high"></i>
-        <span>Upgrade Score:</span>
-        ${upgradeScore.label} (${upgradeScore.score}/100)
-    </div>
-
-    <div class="score-bar">
-        <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%"></div>
-    </div>`;
-
-    const formattedOSType = osStatus
-        ? formatPreviewOSType(osStatus.osType)
-        : '';
-
-    const advancedDetailsContent = `
-        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${deviceType}</div>` : ''}
-        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${modelYear}</div>` : ''}
-        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${supportEndYear}</div>` : ''}
-        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ''}
-        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${batteryCapacity}</div>` : ''}
-        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ''}
-        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ''}
-        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ''}
-        ${cyclesHtml}
-        ${trendHtml}
-    `;
-
-    const hasAdvancedDetails =
-        deviceType ||
-        modelYear ||
-        supportEndYear ||
-        material ||
-        batteryCapacity ||
-        price ||
-        dateReleased ||
-        dateBought ||
-        cyclesHtml ||
-        trendHtml;
-
-    const advancedHtml = hasAdvancedDetails ? `
-    <details class="tech-advanced-details">
-        <summary>Advanced Details</summary>
-        ${advancedDetailsContent}
-    </details>` : '';
-
-    return `
-    <div class="tech-item">
-        <h3><i class="${iconClass}"></i> ${name}</h3>
-
-        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${model}</div>` : ''}
-        ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${primaryUse}</div>` : ''}
-        ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${condition}</div>` : ''}
-        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${storage}</div>` : ''}
-        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${color}</div>` : ''}
-
-        ${summaryHtml}
-        ${ageHtml}
-
-        ${osVersion ? `
-        <div class="tech-detail">
-            <i class="fab fa-apple"></i>
-            <span>OS Version:</span> ${osVersion}
-            ${osStatus ? `<span class="os-badge ${osStatus.color}">${osStatus.status}</span>` : ''}
-        </div>
-
-        ${osStatus ? `
-        <div class="tech-detail">
-            <i class="fas fa-code-branch"></i>
-            <span>Release Channel:</span> ${osStatus.releaseChannel}
-        </div>
-
-        <div class="tech-detail">
-            <i class="fas fa-circle-info"></i>
-            <span>Public Latest:</span> ${formattedOSType} ${osStatus.latestPublicVersion}
-        </div>
-        ` : ''}
-        ` : ''}
-
-        ${osUpdateHtml}
-        ${supportHtml}
-        ${batteryHtml}
-        ${scoreHtml}
-        ${upgradeHtml}
-        ${actionHtml}
-        ${triggersHtml}
-        ${advancedHtml}
-    </div>`;
-}
-
-/** Reads form data and updates the corresponding tech preview area */
-function updateTechItemPreview(formType) {
-    let formElement;
-    let previewElement;
-
-    if (formType === 'add') {
-        formElement = addTechItemForm;
-        previewElement = addTechItemPreview;
-    } else if (formType === 'edit') {
-        formElement = editTechItemForm;
-        previewElement = editTechItemPreview;
-    } else {
+/** Renders a single tech item in the admin list view */
+function renderTechItemAdminListItem(container, docId, itemData, deleteHandler, editHandler) {
+    if (!container) {
+        console.warn("Tech list container missing for render");
         return;
     }
 
-    if (!formElement || !previewElement) {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "list-item-admin";
+    itemDiv.setAttribute("data-id", docId);
+
+    itemDiv.innerHTML = `
+        <div class="item-content">
+            <div class="item-details">
+                <strong>${escapeAdminHTML(itemData.name || "N/A")}</strong>
+                <span>(${escapeAdminHTML(itemData.model || "N/A")})</span>
+                <small>
+                    Order: ${escapeAdminHTML(itemData.order ?? "N/A")} |
+                    OS: ${escapeAdminHTML(itemData.osVersion || "?")}
+                </small>
+            </div>
+        </div>
+        <div class="item-actions">
+            <button type="button" class="edit-button small-button">Edit</button>
+            <button type="button" class="delete-button small-button">Delete</button>
+        </div>
+    `;
+
+    const editButton = itemDiv.querySelector(".edit-button");
+    if (editButton) {
+        editButton.addEventListener("click", () => editHandler(docId));
+    }
+
+    const deleteButton = itemDiv.querySelector(".delete-button");
+    if (deleteButton) {
+        deleteButton.addEventListener("click", () => deleteHandler(docId, itemDiv));
+    }
+
+    container.appendChild(itemDiv);
+}
+
+/** Filters and displays tech items in the admin list based on search */
+function displayFilteredTechItems() {
+    if (!techItemsListAdmin || !searchTechItemsInput || typeof allTechItems === "undefined") {
+        console.error("Tech Items Filter Error: Missing elements/data.");
+
+        if (techItemsListAdmin) {
+            techItemsListAdmin.innerHTML = '<p class="error">Error displaying tech list.</p>';
+        }
+
+        return;
+    }
+
+    const searchTerm = searchTechItemsInput.value.trim().toLowerCase();
+
+    techItemsListAdmin.innerHTML = "";
+
+    const filteredList = allTechItems.filter(item => {
+        if (!searchTerm) return true;
+
+        const name = String(item.name || "").toLowerCase();
+        const model = String(item.model || "").toLowerCase();
+
+        return name.includes(searchTerm) || model.includes(searchTerm);
+    });
+
+    if (filteredList.length > 0) {
+        filteredList.forEach(item => {
+            renderTechItemAdminListItem(
+                techItemsListAdmin,
+                item.id,
+                item,
+                handleDeleteTechItem,
+                openEditTechItemModal
+            );
+        });
+    } else {
+        techItemsListAdmin.innerHTML = searchTerm
+            ? `<p>No tech items found matching "${escapeAdminHTML(searchTerm)}".</p>`
+            : "<p>No tech items added yet.</p>";
+    }
+
+    if (techItemsCount) {
+        techItemsCount.textContent = `(${filteredList.length})`;
+    }
+}
+
+/** Loads all tech items from Firestore, stores them globally, and triggers display */
+async function loadTechItemsAdmin() {
+    if (!techItemsListAdmin) {
+        console.error("Tech items list container element missing.");
+        return;
+    }
+
+    console.log("Loading tech items for admin...");
+
+    if (techItemsCount) {
+        techItemsCount.textContent = "(...)";
+    }
+
+    techItemsListAdmin.innerHTML = "<p>Loading tech items...</p>";
+    allTechItems = [];
+
+    try {
+        const techQuery = query(techItemsCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(techQuery);
+
+        querySnapshot.forEach(docSnap => {
+            allTechItems.push({
+                id: docSnap.id,
+                ...docSnap.data()
+            });
+        });
+
+        console.log(`Loaded ${allTechItems.length} tech items.`);
+        displayFilteredTechItems();
+
+    } catch (error) {
+        console.error("Error loading tech items:", error);
+
+        let errorMsg = "Error loading tech items.";
+
+        if (error.code === "failed-precondition") {
+            errorMsg = "Error: Missing Firestore index for tech items ordered by order.";
+        } else {
+            errorMsg = `Error loading tech items: ${error.message}`;
+        }
+
+        showAdminStatus(errorMsg, true);
+
+        techItemsListAdmin.innerHTML = `<p class="error">${escapeAdminHTML(errorMsg)}</p>`;
+
+        if (techItemsCount) {
+            techItemsCount.textContent = "(Error)";
+        }
+    }
+}
+
+/** Handles adding a new tech item via the form */
+async function handleAddTechItem(event) {
+    event.preventDefault();
+
+    if (!addTechItemForm) {
+        console.error("Add tech form not found");
         return;
     }
 
     const techData = {};
-    const inputs = formElement.querySelectorAll('input[name], select[name], textarea[name]');
+    const inputs = addTechItemForm.querySelectorAll("input[name], select[name], textarea[name]");
+    let isValid = true;
 
     inputs.forEach(input => {
         const name = input.name;
-        let value = input.value.trim();
 
-        if (input.type === 'number') {
-            value = input.value === '' ? null : parseFloat(input.value);
-            if (isNaN(value)) value = null;
+        const result = normalizeTechFormValue(name, input, showAdminStatus);
+
+        if (!result.isValid) {
+            isValid = false;
         }
 
-        techData[name] = value === '' ? null : value;
+        techData[name] = result.value;
     });
 
+    if (!techData.name) {
+        showAdminStatus("Device Name is required.", true);
+        isValid = false;
+    }
+
+    if (
+        techData.order === null ||
+        techData.order === undefined ||
+        techData.order < 0 ||
+        isNaN(techData.order)
+    ) {
+        showAdminStatus("A valid non-negative Display Order is required.", true);
+        isValid = false;
+    }
+
+    if (!isValid) return;
+
+    techData.createdAt = serverTimestamp();
+
+    showAdminStatus("Adding tech item...");
+
     try {
-        const previewHTML = renderTechItemPreview(techData);
-        previewElement.innerHTML = previewHTML;
-    } catch (e) {
-        console.error("Error rendering tech preview:", e);
-        previewElement.innerHTML = '<p class="error"><small>Error generating preview.</small></p>';
+        const docRef = await addDoc(techItemsCollectionRef, techData);
+
+        console.log("Tech item added with ID:", docRef.id);
+
+        if (typeof logAdminActivity === "function") {
+            logAdminActivity("TECH_ITEM_ADD", {
+                name: techData.name,
+                id: docRef.id
+            });
+        } else {
+            console.warn("logAdminActivity function not found!");
+        }
+
+        showAdminStatus("Tech item added successfully.", false);
+
+        addTechItemForm.reset();
+
+        if (addTechItemPreview) {
+            addTechItemPreview.innerHTML = "<p><small>Preview will appear here as you type.</small></p>";
+        }
+
+        loadTechItemsAdmin();
+
+    } catch (error) {
+        console.error("Error adding tech item:", error);
+        showAdminStatus(`Error adding tech item: ${error.message}`, true);
     }
 }
 
-/** Attaches input/change listeners to tech form inputs to trigger preview updates */
-function attachTechPreviewListeners(formElement, formType) {
-    if (!formElement) return;
+/** Handles deleting a specified tech item */
+async function handleDeleteTechItem(docId, listItemElement) {
+    if (!confirm("Are you sure you want to permanently delete this tech item? This action cannot be undone.")) {
+        return;
+    }
 
-    const inputs = formElement.querySelectorAll('input[name], select[name], textarea[name]');
-    console.log(`Attaching preview listeners to ${inputs.length} inputs for ${formType} tech form.`);
+    showAdminStatus("Deleting tech item...");
 
-    inputs.forEach(input => {
-        const eventType = (input.type === 'checkbox' || input.tagName.toLowerCase() === 'select')
-            ? 'change'
-            : 'input';
+    let itemNameToLog = "Unknown Item";
 
-        const listenerFlag = `__techPreviewListener_${eventType}`;
+    try {
+        const itemSnap = await getDoc(doc(db, "tech_items", docId));
 
-        if (!input[listenerFlag]) {
-            input.addEventListener(eventType, () => {
-                updateTechItemPreview(formType);
-            });
-
-            input[listenerFlag] = true;
+        if (itemSnap.exists()) {
+            itemNameToLog = itemSnap.data().name || "Unknown Item";
         }
-    });
+
+        await deleteDoc(doc(db, "tech_items", docId));
+
+        if (typeof logAdminActivity === "function") {
+            logAdminActivity("TECH_ITEM_DELETE", {
+                name: itemNameToLog,
+                id: docId
+            });
+        } else {
+            console.warn("logAdminActivity function not found!");
+        }
+
+        showAdminStatus("Tech item deleted successfully.", false);
+        loadTechItemsAdmin();
+
+    } catch (error) {
+        console.error(`Error deleting tech item ID ${docId}:`, error);
+
+        if (typeof logAdminActivity === "function") {
+            logAdminActivity("TECH_ITEM_DELETE_FAILED", {
+                name: itemNameToLog,
+                id: docId,
+                error: error.message
+            });
+        }
+
+        showAdminStatus(`Error deleting tech item: ${error.message}`, true);
+    }
 }
 
-    // ==================================
-    // == END Tech Item Functions =======
-    // ==================================
+/** Opens the Edit Tech Item modal and populates it with data */
+async function openEditTechItemModal(docId) {
+    if (!editTechItemModal || !editTechItemForm) {
+        console.error("Edit tech item modal elements not found.");
+        showAdminStatus("UI Error: Cannot open edit form.", true);
+        return;
+    }
 
+    showEditTechItemStatus("Loading item data...");
+
+    if (editTechItemPreview) {
+        editTechItemPreview.innerHTML = "<p><small>Loading preview...</small></p>";
+    }
+
+    try {
+        const docRef = doc(db, "tech_items", docId);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            showAdminStatus("Error: Could not load tech item data for editing.", true);
+            showEditTechItemStatus("Error: Item not found.", true);
+
+            if (editTechItemPreview) {
+                editTechItemPreview.innerHTML = '<p class="error"><small>Item not found.</small></p>';
+            }
+
+            return;
+        }
+
+        const data = docSnap.data();
+
+        editTechItemForm.setAttribute("data-doc-id", docId);
+
+        const inputs = editTechItemForm.querySelectorAll("input[name], select[name], textarea[name]");
+
+        inputs.forEach(input => {
+            const name = input.name;
+
+            if (!Object.prototype.hasOwnProperty.call(data, name)) {
+                input.value = "";
+                return;
+            }
+
+            if (name === "pairedAIPhone") {
+                if (data[name] === true) {
+                    input.value = "true";
+                } else if (data[name] === false) {
+                    input.value = "false";
+                } else {
+                    input.value = "";
+                }
+
+                return;
+            }
+
+            input.value = data[name] ?? "";
+        });
+
+        editTechItemModal.style.display = "block";
+        showEditTechItemStatus("");
+
+        updateTechItemPreview("edit");
+        attachTechPreviewListeners(editTechItemForm, "edit");
+
+    } catch (error) {
+        console.error("Error getting tech item document for edit:", error);
+
+        showAdminStatus(`Error loading tech item data: ${error.message}`, true);
+        showEditTechItemStatus(`Error: ${error.message}`, true);
+
+        if (editTechItemPreview) {
+            editTechItemPreview.innerHTML = `<p class="error"><small>Error loading preview: ${escapeAdminHTML(error.message)}</small></p>`;
+        }
+    }
+}
+
+/** Closes the Edit Tech Item modal */
+function closeEditTechItemModal() {
+    if (editTechItemModal) {
+        editTechItemModal.style.display = "none";
+    }
+
+    if (editTechItemForm) {
+        editTechItemForm.reset();
+        editTechItemForm.removeAttribute("data-doc-id");
+    }
+
+    if (editTechStatusMessage) {
+        editTechStatusMessage.textContent = "";
+        editTechStatusMessage.className = "status-message";
+    }
+
+    if (editTechItemPreview) {
+        editTechItemPreview.innerHTML = "<p><small>Preview will load when modal opens.</small></p>";
+    }
+}
+
+/** Handles updating a tech item from the edit modal */
+async function handleUpdateTechItem(event) {
+    event.preventDefault();
+
+    if (!editTechItemForm) {
+        console.error("Edit tech form not found");
+        return;
+    }
+
+    const docId = editTechItemForm.getAttribute("data-doc-id");
+
+    if (!docId) {
+        showEditTechItemStatus("Error: Missing document ID. Cannot save.", true);
+        return;
+    }
+
+    const updatedData = {};
+    const inputs = editTechItemForm.querySelectorAll("input[name], select[name], textarea[name]");
+    let isValid = true;
+    let techNameForLog = "";
+
+    inputs.forEach(input => {
+        const name = input.name;
+
+        const result = normalizeTechFormValue(name, input, showEditTechItemStatus);
+
+        if (!result.isValid) {
+            isValid = false;
+        }
+
+        updatedData[name] = result.value;
+
+        if (name === "name") {
+            techNameForLog = result.value;
+        }
+    });
+
+    if (!updatedData.name) {
+        showEditTechItemStatus("Device Name is required.", true);
+        isValid = false;
+    }
+
+    if (
+        updatedData.order === null ||
+        updatedData.order === undefined ||
+        updatedData.order < 0 ||
+        isNaN(updatedData.order)
+    ) {
+        showEditTechItemStatus("A valid non-negative Display Order is required.", true);
+        isValid = false;
+    }
+
+    if (!isValid) return;
+
+    updatedData.lastModified = serverTimestamp();
+
+    showEditTechItemStatus("Saving changes...");
+
+    try {
+        const docRef = doc(db, "tech_items", docId);
+
+        let oldData = {};
+        const oldDataSnap = await getDoc(docRef);
+
+        if (oldDataSnap.exists()) {
+            oldData = oldDataSnap.data();
+        }
+
+        await updateDoc(docRef, updatedData);
+
+        const changes = {};
+        let hasChanges = false;
+
+        for (const key in updatedData) {
+            if (key === "lastModified") continue;
+
+            if (oldData[key] !== updatedData[key]) {
+                changes[key] = {
+                    from: oldData[key] ?? null,
+                    to: updatedData[key]
+                };
+                hasChanges = true;
+            }
+        }
+
+        if (hasChanges && typeof logAdminActivity === "function") {
+            logAdminActivity("TECH_ITEM_UPDATE", {
+                name: techNameForLog,
+                id: docId,
+                changes
+            });
+        } else if (hasChanges) {
+            console.warn("logAdminActivity function not found!");
+        } else {
+            console.log("Tech item updated, but no data fields changed value.");
+        }
+
+        showAdminStatus("Tech item updated successfully.", false);
+
+        closeEditTechItemModal();
+        loadTechItemsAdmin();
+
+    } catch (error) {
+        console.error(`Error updating tech item ID ${docId}:`, error);
+
+        showEditTechItemStatus(`Error saving: ${error.message}`, true);
+
+        if (typeof logAdminActivity === "function") {
+            logAdminActivity("TECH_ITEM_UPDATE_FAILED", {
+                name: techNameForLog,
+                id: docId,
+                error: error.message
+            });
+        }
+    }
+}
 
     // --- *** Event Listener for Saving ONLY Countdown Settings (WITH EXTRA LOGGING) *** ---
     if (saveCountdownSettingsButton) {
