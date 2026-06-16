@@ -2932,99 +2932,99 @@ if (profilePicUrlInput && adminPfpPreview) {
 
 // *** FUNCTION TO SAVE Maintenance Mode Status ***
 
-    async function saveMaintenanceModeStatus(isEnabled) { //
+    async function saveMaintenanceModeStatus(isEnabled) { //
 
-        // Ensure user is logged in
+        // Ensure user is logged in
 
-        if (!auth || !auth.currentUser) { //
+        if (!auth || !auth.currentUser) { //
 
-            showAdminStatus("Error: Not logged in. Cannot save settings.", true); // Use main admin status
+            showAdminStatus("Error: Not logged in. Cannot save settings.", true); // Use main admin status
 
-            // Revert checkbox state visually if save fails due to auth issue
+            // Revert checkbox state visually if save fails due to auth issue
 
-            if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
+            if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
 
-            return; //
+            return; //
 
-        }
-
-
-
-        // Use the specific status message area for settings, fallback to main admin status
-
-        const statusElement = settingsStatusMessage || adminStatusElement; //
+        }
 
 
 
-        // Show saving message
+        // Use the specific status message area for settings, fallback to main admin status
 
-        if (statusElement) { //
-
-            statusElement.textContent = "Saving setting..."; //
-
-            statusElement.className = "status-message"; // Reset style
-
-            statusElement.style.display = 'block'; //
-
-        }
+        const statusElement = settingsStatusMessage || adminStatusElement; //
 
 
 
-        try { //
+        // Show saving message
 
-            // Use profileDocRef (site_config/mainProfile) to store the flag
+        if (statusElement) { //
 
-            // Use setDoc with merge: true to update only this field without overwriting others
+            statusElement.textContent = "Saving setting..."; //
 
-            await setDoc(profileDocRef, { //
+            statusElement.className = "status-message"; // Reset style
 
-                isMaintenanceModeEnabled: isEnabled // Save the boolean value (true/false)
+            statusElement.style.display = 'block'; //
 
-            }, { merge: true }); //
-
-
-
-            console.log("Maintenance mode status saved:", isEnabled); //
+        }
 
 
 
-            // Show success message using the dedicated settings status element or fallback
+        try { //
 
-             if (statusElement === settingsStatusMessage && settingsStatusMessage) { // Check if we are using the specific element
+            // Use profileDocRef (site_config/mainProfile) to store the flag
 
-                 showSettingsStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); // Uses the settings-specific display/clear logic
+            // Use setDoc with merge: true to update only this field without overwriting others
 
-             } else { // Fallback if specific element wasn't found initially
+            await setDoc(profileDocRef, { //
 
-                showAdminStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); //
+                isMaintenanceModeEnabled: isEnabled // Save the boolean value (true/false)
 
-             }
+            }, { merge: true }); //
 
 
 
-        } catch (error) { //
+            console.log("Maintenance mode status saved:", isEnabled); //
 
-            console.error("Error saving maintenance mode status:", error); //
 
-            // Show error message in the specific status area or fallback
 
-            if (statusElement === settingsStatusMessage && settingsStatusMessage) { //
+            // Show success message using the dedicated settings status element or fallback
 
-                 showSettingsStatus(`Error saving setting: ${error.message}`, true); //
+             if (statusElement === settingsStatusMessage && settingsStatusMessage) { // Check if we are using the specific element
 
-            } else { //
+                 showSettingsStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); // Uses the settings-specific display/clear logic
 
-                showAdminStatus(`Error saving maintenance mode: ${error.message}`, true); //
+             } else { // Fallback if specific element wasn't found initially
 
-            }
+                showAdminStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); //
 
-            // Revert checkbox state visually on error
+             }
 
-             if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
 
-        }
 
-    }
+        } catch (error) { //
+
+            console.error("Error saving maintenance mode status:", error); //
+
+            // Show error message in the specific status area or fallback
+
+            if (statusElement === settingsStatusMessage && settingsStatusMessage) { //
+
+                 showSettingsStatus(`Error saving setting: ${error.message}`, true); //
+
+            } else { //
+
+                showAdminStatus(`Error saving maintenance mode: ${error.message}`, true); //
+
+            }
+
+            // Revert checkbox state visually on error
+
+             if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
+
+        }
+
+    }
     // *** END FUNCTION ***
 
 // --- Inactivity Logout & Timer Display Functions ---
@@ -4230,69 +4230,139 @@ function closeEditUsefulLinkModal() { //
     // END: All Social Link Functions
     // ========================================================
 
-    function setupTechOwnershipFieldToggle(selectId, formRoot) {
+    /* ============================================================
+   TECH OWNERSHIP FIELD VISIBILITY
+   Final behavior:
+   - Roadmap: Planned, Coming Soon, Future Upgrade, Preordered, Ordered, Reserved
+       Shows basic fields + roadmap fields + Expected Specs + order/preview/buttons.
+   - Wishlist / Research: Wishlist, Considering, Researching
+       Shows basic fields + order/preview/buttons only.
+   - Active / Archive: Owned, Borrowed, Loaned Out, School-Issued, Work-Issued,
+       In Repair, Retired, Sold, Traded In, Donated, Recycled, Returned, Lost
+       Shows basic fields + full inventory fields + order/preview/buttons.
+============================================================ */
+function normalizeAdminOwnershipState(value) {
+    return String(value || "owned")
+        .toLowerCase()
+        .trim()
+        .replace(/[\s_]+/g, "-")
+        .replace(/--+/g, "-");
+}
+
+const TECH_ROADMAP_OWNERSHIP_STATES = new Set([
+    "planned",
+    "coming-soon",
+    "future-upgrade",
+    "preordered",
+    "ordered",
+    "reserved"
+]);
+
+const TECH_WISHLIST_OWNERSHIP_STATES = new Set([
+    "wishlist",
+    "considering",
+    "researching"
+]);
+
+function isTechRoadmapState(state) {
+    return TECH_ROADMAP_OWNERSHIP_STATES.has(normalizeAdminOwnershipState(state));
+}
+
+function isTechWishlistState(state) {
+    return TECH_WISHLIST_OWNERSHIP_STATES.has(normalizeAdminOwnershipState(state));
+}
+
+function setTechGroupVisible(group, visible) {
+    if (!group) return;
+
+    group.hidden = !visible;
+    group.style.display = visible ? "block" : "none";
+    group.classList.toggle("active", visible);
+    group.classList.toggle("hidden", !visible);
+}
+
+function setupTechOwnershipFieldToggle(selectId, formRoot) {
     const ownershipSelect = document.getElementById(selectId);
 
     if (!ownershipSelect || !formRoot) {
+        console.warn("Tech ownership toggle setup skipped:", {
+            selectId,
+            hasSelect: Boolean(ownershipSelect),
+            hasFormRoot: Boolean(formRoot)
+        });
         return;
     }
 
-    const roadmapStates = new Set([
-        "planned",
-        "coming-soon",
-        "future-upgrade",
-        "preordered",
-        "ordered",
-        "reserved"
-    ]);
-
-    const wishlistStates = new Set([
-        "wishlist",
-        "considering",
-        "researching"
-    ]);
-
     function updateVisibility() {
-        const state = String(ownershipSelect.value || "owned").toLowerCase().trim();
+        const state = normalizeAdminOwnershipState(ownershipSelect.value);
+        const isRoadmap = isTechRoadmapState(state);
+        const isWishlist = isTechWishlistState(state);
+        const showFullInventory = !isRoadmap && !isWishlist;
 
-        const isRoadmap = roadmapStates.has(state);
-        const isWishlist = wishlistStates.has(state);
+        // Supports both the new class names and older class names.
+        const roadmapGroups = formRoot.querySelectorAll(
+            ".roadmap-tech-fields, .planned-tech-fields"
+        );
 
-        /*
-            Roadmap:
-            Shows only roadmap fields + always-visible basic fields/order/preview.
+        const fullGroups = formRoot.querySelectorAll(
+            ".full-tech-fields, .owned-only-fields"
+        );
 
-            Wishlist / Research:
-            Shows only always-visible basic fields/order/preview.
+        roadmapGroups.forEach((group) => setTechGroupVisible(group, isRoadmap));
+        fullGroups.forEach((group) => setTechGroupVisible(group, showFullInventory));
 
-            Active + Archive:
-            Shows full inventory fields + always-visible basic fields/order/preview.
-        */
+        formRoot.dataset.ownershipMode = isRoadmap
+            ? "roadmap"
+            : isWishlist
+                ? "wishlist"
+                : "full";
 
-        formRoot.querySelectorAll(".roadmap-tech-fields").forEach((group) => {
-            group.classList.toggle("active", isRoadmap);
-            group.style.display = isRoadmap ? "" : "none";
-        });
-
-        formRoot.querySelectorAll(".full-tech-fields").forEach((group) => {
-            const shouldShowFullFields = !isRoadmap && !isWishlist;
-
-            group.classList.toggle("active", shouldShowFullFields);
-            group.style.display = shouldShowFullFields ? "" : "none";
+        console.log("Tech ownership visibility updated:", {
+            formId: formRoot.id,
+            selectId,
+            state,
+            mode: formRoot.dataset.ownershipMode,
+            roadmapGroups: roadmapGroups.length,
+            fullGroups: fullGroups.length
         });
     }
 
-    ownershipSelect.addEventListener("change", updateVisibility);
+    if (!ownershipSelect.__techOwnershipToggleAttached) {
+        ownershipSelect.addEventListener("change", updateVisibility);
+        ownershipSelect.__techOwnershipToggleAttached = true;
+    }
+
+    formRoot.__updateTechOwnershipVisibility = updateVisibility;
+
     updateVisibility();
+    setTimeout(updateVisibility, 50);
+    setTimeout(updateVisibility, 250);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const addTechForm = document.getElementById("add-tech-item-form");
-    const editTechForm = document.getElementById("edit-tech-item-form");
+function refreshTechOwnershipVisibility(formRootOrId) {
+    const formRoot = typeof formRootOrId === "string"
+        ? document.getElementById(formRootOrId)
+        : formRootOrId;
 
-    setupTechOwnershipFieldToggle("tech-ownership-state", addTechForm);
-    setupTechOwnershipFieldToggle("edit-tech-ownership-state", editTechForm);
-});
+    if (formRoot && typeof formRoot.__updateTechOwnershipVisibility === "function") {
+        formRoot.__updateTechOwnershipVisibility();
+        return;
+    }
+
+    if (formRoot?.id === "add-tech-item-form") {
+        setupTechOwnershipFieldToggle("tech-ownership-state", formRoot);
+    } else if (formRoot?.id === "edit-tech-item-form") {
+        setupTechOwnershipFieldToggle("edit-tech-ownership-state", formRoot);
+    }
+}
+
+function setupAllTechOwnershipToggles() {
+    setupTechOwnershipFieldToggle("tech-ownership-state", document.getElementById("add-tech-item-form"));
+    setupTechOwnershipFieldToggle("edit-tech-ownership-state", document.getElementById("edit-tech-item-form"));
+}
+
+document.addEventListener("DOMContentLoaded", setupAllTechOwnershipToggles);
+
 
 // --- NEW: LOGIC FOR SMART CHECKBOXES ---
 function setupLegislationCheckboxLogic() {
@@ -4657,7 +4727,8 @@ const techNumberFields = [
     "ramGB",
     "storageGB",
     "expectedKeepYears"
-];
+,
+    "targetYear"];
 
 function normalizeTechFormValue(name, input, statusCallback) {
     let value = input.value.trim();
@@ -4764,40 +4835,11 @@ function renderTechItemAdminListItem(container, docId, itemData, deleteHandler, 
     container.appendChild(itemDiv);
 }
 
+/* Legacy wrapper kept for older calls. The unified setupTechOwnershipFieldToggle above now controls all tech field visibility. */
 function setupPlannedTechFieldToggle(selectId, formRoot) {
-    const ownershipSelect = document.getElementById(selectId);
-    if (!ownershipSelect || !formRoot) return;
-
-    function updateVisibility() {
-        const isPlanned =
-            ownershipSelect.value === "planned" ||
-            ownershipSelect.value === "wishlist" ||
-            ownershipSelect.value === "future-upgrade" ||
-            ownershipSelect.value === "coming-soon";
-
-        const plannedGroups = formRoot.querySelectorAll(".planned-tech-fields");
-        const ownedGroups = formRoot.querySelectorAll(".owned-only-fields");
-
-        plannedGroups.forEach(group => {
-            group.classList.toggle("active", isPlanned);
-        });
-
-        ownedGroups.forEach(group => {
-            group.classList.toggle("hidden", isPlanned);
-        });
-    }
-
-    ownershipSelect.addEventListener("change", updateVisibility);
-    updateVisibility();
+    setupTechOwnershipFieldToggle(selectId, formRoot);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const addForm = document.getElementById("add-tech-item-form");
-    const editForm = document.getElementById("edit-tech-item-form");
-
-    setupPlannedTechFieldToggle("tech-ownership-state", addForm);
-    setupPlannedTechFieldToggle("edit-tech-ownership-state", editForm);
-});
 
 function displayFilteredTechItems() {
     if (!techItemsListAdmin || !searchTechItemsInput || typeof allTechItems === "undefined") {
@@ -4953,6 +4995,7 @@ async function handleAddTechItem(event) {
         showAdminStatus("Tech item added successfully.", false);
 
         addTechItemForm.reset();
+        refreshTechOwnershipVisibility(addTechItemForm);
 
         if (addTechItemPreview) {
             addTechItemPreview.innerHTML = "<p><small>Preview will appear here as you type.</small></p>";
@@ -5068,6 +5111,13 @@ async function openEditTechItemModal(docId) {
 
         editTechItemModal.style.display = "block";
         showEditTechItemStatus("");
+
+        // The edit form is populated dynamically, so refresh field visibility after values are loaded.
+        setupTechOwnershipFieldToggle("edit-tech-ownership-state", editTechItemForm);
+        document.getElementById("edit-tech-ownership-state")?.dispatchEvent(new Event("change"));
+        refreshTechOwnershipVisibility(editTechItemForm);
+        setTimeout(() => refreshTechOwnershipVisibility(editTechItemForm), 50);
+        setTimeout(() => refreshTechOwnershipVisibility(editTechItemForm), 250);
 
         updateTechItemPreview("edit");
         attachTechPreviewListeners(editTechItemForm, "edit");
@@ -5359,6 +5409,9 @@ function attachTechPreviewListeners(formElement, formType) {
 
         if (!input[listenerFlag]) {
             input.addEventListener(eventType, () => {
+                if (input.name === "ownershipState") {
+                    refreshTechOwnershipVisibility(formElement);
+                }
                 updateTechItemPreview(formType);
             });
 
