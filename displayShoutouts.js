@@ -884,6 +884,25 @@ const techThresholds = {
     batteryCritical: 75
 };
 
+// ======================
+// UPGRADE CYCLE DEFAULTS
+// ======================
+const upgradeCycleDefaults = {
+    phone: 4,
+    tablet: 5,
+    watch: 4,
+    computer: 6,
+    accessory: 0
+};
+
+const minimumUpgradeGapDefaults = {
+    phone: 3,
+    tablet: 4,
+    watch: 3,
+    computer: 5,
+    accessory: 0
+};
+
 /* ------------------------------------------------------------
    LATEST OS CONFIG
    Update these manually when public releases change.
@@ -1124,96 +1143,141 @@ function detectDeviceType(item) {
 // ======================
 function checkDeviceSupport(item) {
     const currentYear = new Date().getFullYear();
-    const modelYear = Number(item.modelYear ?? currentYear);
-    const supportEndYear = item.supportEndYear ? Number(item.supportEndYear) : null;
+
+    const parsedModelYear = Number(item.modelYear);
+    const modelYear = !isNaN(parsedModelYear) ? parsedModelYear : currentYear;
+
+    const parsedSupportEndYear = Number(item.supportEndYear);
+    const supportEndYear = !isNaN(parsedSupportEndYear) && item.supportEndYear
+        ? parsedSupportEndYear
+        : null;
 
     const osStatus = checkOSStatus(item.osVersion);
     const deviceType = detectDeviceType(item);
+    const condition = String(item.condition || "").toLowerCase();
 
-    const yearsOld = currentYear - modelYear;
+    const yearsOld = Math.max(0, currentYear - modelYear);
 
     let supported = true;
     let supportLevel = "Fully Supported";
     let supportColor = "green";
 
-    // Support End Year rule
-    if (supportEndYear) {
-        if (currentYear > supportEndYear) {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (currentYear === supportEndYear) {
-            supportLevel = "Support Ending Soon";
-            supportColor = "yellow";
-        }
+   // ======================
+// SUPPORT END YEAR RULE
+// This is the strongest support rule.
+// ======================
+if (supportEndYear) {
+    if (currentYear > supportEndYear) {
+        supported = false;
+        supportLevel = "Unsupported";
+        supportColor = "red";
+    } else if (currentYear === supportEndYear) {
+        supportLevel = "Support Ending Soon";
+        supportColor = "yellow";
+    } else if (supportEndYear - currentYear === 1) {
+        supportLevel = "Support Ending Next Year";
+        supportColor = "yellow";
     }
-
-    // 📱 PHONE RULES
-    if (deviceType === "phone") {
-        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (yearsOld >= 4 || osStatus?.isBehindPublic) {
-            if (supported) {
-                supportLevel = "Limited Support";
-                supportColor = "yellow";
-            }
-        }
-    }
-
-    // 💻 COMPUTER RULES
-    if (deviceType === "computer") {
-        if (yearsOld >= 6 || osStatus?.status === "Very Outdated") {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (yearsOld >= 5 || osStatus?.isBehindPublic) {
-            if (supported) {
-                supportLevel = "Limited Support";
-                supportColor = "yellow";
-            }
-        }
-    }
-
-    // 📱 TABLET RULES
-    if (deviceType === "tablet") {
-        if (yearsOld >= 5 || osStatus?.status === "Very Outdated") {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (yearsOld >= 4 || osStatus?.isBehindPublic) {
-            if (supported) {
-                supportLevel = "Limited Support";
-                supportColor = "yellow";
-            }
-        }
-    }
-
-    // ⌚ WATCH / ACCESSORY FALLBACK
-    if (deviceType === "watch" || deviceType === "accessory") {
-        if (yearsOld >= 5) {
-            supported = false;
-            supportLevel = "Unsupported";
-            supportColor = "red";
-        } else if (yearsOld >= 4) {
-            if (supported) {
-                supportLevel = "Limited Support";
-                supportColor = "yellow";
-            }
-        }
-    }
-
-    return {
-        supported,
-        supportLevel,
-        supportColor,
-        yearsOld,
-        deviceType,
-        modelYear,
-        supportEndYear
-    };
 }
+
+// ======================
+// RETIRED / NEEDS REPAIR RULES
+// These affect practical support/usefulness.
+// ======================
+if (condition === "retired") {
+    supported = false;
+    supportLevel = "Retired";
+    supportColor = "gray";
+}
+
+if (condition === "needs repair" && supported) {
+    supportLevel = "Needs Repair";
+    supportColor = "orange";
+}
+
+// ======================
+// OS RULES
+// Very outdated OS can indicate practical unsupported status.
+// A normal outdated OS only causes limited support.
+// ======================
+if (osStatus?.status === "Very Outdated") {
+    supported = false;
+    supportLevel = "Unsupported";
+    supportColor = "red";
+} else if (osStatus?.isBehindPublic && supported) {
+    supportLevel = "Limited Support";
+    supportColor = "yellow";
+}
+
+// ======================
+// AGE-BASED LIMITED SUPPORT RULES
+// Age should warn you, not automatically mark unsupported.
+// ======================
+const limitedSupportAgeByType = {
+    phone: 4,
+    tablet: 4,
+    watch: 4,
+    computer: 5,
+    accessory: null
+};
+
+const veryOldAgeByType = {
+    phone: 5,
+    tablet: 5,
+    watch: 5,
+    computer: 6,
+    accessory: null
+};
+
+const limitedAge = limitedSupportAgeByType[deviceType];
+const veryOldAge = veryOldAgeByType[deviceType];
+
+if (supported && limitedAge !== null && yearsOld >= limitedAge) {
+    supportLevel = "Limited Support";
+    supportColor = "yellow";
+}
+
+if (supported && veryOldAge !== null && yearsOld >= veryOldAge) {
+    supportLevel = "Older Device";
+    supportColor = "orange";
+}
+
+// ======================
+// ACCESSORY RULES
+// Accessories should not become unsupported just because of age.
+// ======================
+if (deviceType === "accessory" && supported) {
+    if (condition === "needs repair") {
+        supportLevel = "Needs Repair";
+        supportColor = "orange";
+    } else if (supportEndYear && currentYear === supportEndYear) {
+        supportLevel = "Support Ending Soon";
+        supportColor = "yellow";
+    } else {
+        supportLevel = "Condition-Based";
+        supportColor = "green";
+    }
+}
+
+// ======================
+// SUPPORT REMAINING
+// ======================
+let supportRemaining = null;
+
+if (supportEndYear) {
+    supportRemaining = supportEndYear - currentYear;
+}
+
+return {
+    supported,
+    supportLevel,
+    supportColor,
+    yearsOld,
+    deviceType,
+    modelYear,
+    supportEndYear,
+    supportRemaining
+};
 
 // ======================
 // BATTERY TREND
@@ -1239,17 +1303,30 @@ function estimateBatteryTrend(item) {
     };
 }
 
+
+// ======================
+// BATTERY CYCLES HELPER
+// Supports both batteryCycles and batteryChargeCycles
+// ======================
+function getBatteryCycles(item) {
+    const cycles = item.batteryCycles ?? item.batteryChargeCycles ?? 0;
+    const numberCycles = Number(cycles);
+
+    return isNaN(numberCycles) ? 0 : numberCycles;
+}
+
 // ======================
 // UPGRADE SCORE
 // ======================
 function calculateUpgradeScore(item) {
     const age = calculateDeviceAge(item.dateBought);
     const battery = Number(item.batteryHealth ?? 100);
-    const cycles = Number(item.batteryCycles ?? 0);
+    const cycles = getBatteryCycles(item);
     const support = checkDeviceSupport(item);
     const osStatus = checkOSStatus(item.osVersion);
 
     let score = 100;
+
 
     if (age) score -= age.years * 10;
 
@@ -1272,8 +1349,20 @@ function calculateUpgradeScore(item) {
 
     // Beta OS does not affect score
 
-    if (support.supportLevel === "Limited Support") {
-        score -= 10;
+   if (support.supportLevel === "Limited Support") {
+    score -= 10;
+    }
+    
+    if (support.supportLevel === "Older Device") {
+        score -= 14;
+    }
+    
+    if (support.supportLevel === "Support Ending Soon") {
+        score -= 12;
+    }
+    
+    if (support.supportLevel === "Support Ending Next Year") {
+        score -= 8;
     }
 
     if (!support.supported) {
@@ -1304,6 +1393,265 @@ function calculateUpgradeScore(item) {
 }
 
 // ======================
+// UPGRADE PRIORITY LABEL
+// Uses your current Upgrade Score system:
+// Higher score = healthier device
+// Lower score = more urgent upgrade
+// ======================
+function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
+    const condition = String(item.condition || "").toLowerCase();
+
+    // Retired devices should not look like urgent upgrade devices
+    if (condition === "retired") {
+        return {
+            label: "❌ Do Not Upgrade",
+            color: "green",
+            level: "do-not-upgrade"
+        };
+    }
+
+    // Hard override cases
+    if (!support.supported) {
+        return {
+            label: "🚨 Definitely Upgrade",
+            color: "red",
+            level: "definitely-upgrade"
+        };
+    }
+
+    if (condition === "needs repair") {
+        return {
+            label: "🚨 Definitely Upgrade",
+            color: "red",
+            level: "definitely-upgrade"
+        };
+    }
+
+    if (upgrade.status === "Upgrade Recommended" && upgradeScore.score <= 40) {
+        return {
+            label: "🚨 Definitely Upgrade",
+            color: "red",
+            level: "definitely-upgrade"
+        };
+    }
+
+    if (upgradeScore.score <= 55) {
+        return {
+            label: "🟡 Highly Recommended",
+            color: "yellow",
+            level: "highly-recommended"
+        };
+    }
+
+    if (upgradeScore.score <= 75) {
+        return {
+            label: "⚪ Optional",
+            color: "gray",
+            level: "optional"
+        };
+    }
+
+    return {
+        label: "❌ Do Not Upgrade",
+        color: "green",
+        level: "do-not-upgrade"
+    };
+}
+
+// ======================
+// RECOMMENDED UPGRADE YEAR
+// ======================
+function calculateRecommendedUpgradeYear(item, priority, support, upgradeScore) {
+    const currentYear = new Date().getFullYear();
+    const deviceType = detectDeviceType(item);
+    const modelYear = Number(item.modelYear || currentYear);
+    const condition = String(item.condition || "").toLowerCase();
+
+    const preferredCycle =
+        Number(item.preferredUpgradeCycle) ||
+        upgradeCycleDefaults[deviceType] ||
+        4;
+
+    const minimumGap =
+        Number(item.minimumUpgradeGap) ||
+        minimumUpgradeGapDefaults[deviceType] ||
+        3;
+
+    const supportEndYear = item.supportEndYear
+        ? Number(item.supportEndYear)
+        : null;
+
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = getBatteryCycles(item);
+
+    // Accessories should not follow normal yearly upgrade cycles
+    if (deviceType === "accessory") {
+        if (condition === "needs repair") {
+            return {
+                year: currentYear,
+                window: `${currentYear}`,
+                timing: "Replace now if this accessory is still needed."
+            };
+        }
+
+        return {
+            year: "Replace only when needed",
+            window: "Condition-based",
+            timing: "Accessories should only be replaced when broken, unsupported, or no longer useful."
+        };
+    }
+
+    // Retired devices do not need active replacement
+    if (condition === "retired") {
+        return {
+            year: "No active upgrade needed",
+            window: "Retired",
+            timing: "This device is retired, so it does not need an upgrade unless you are replacing its role."
+        };
+    }
+
+    let recommendedYear = modelYear + preferredCycle;
+    const earliestAllowedYear = modelYear + minimumGap;
+
+    // Support ending earlier should pull the upgrade year sooner
+    if (supportEndYear && supportEndYear < recommendedYear) {
+        recommendedYear = supportEndYear;
+    }
+
+    // Unsupported devices should be upgraded now
+    if (!support.supported) {
+        recommendedYear = currentYear;
+    }
+
+    // Bad battery can pull upgrade closer
+    if (batteryHealth < techThresholds.batteryCritical) {
+        recommendedYear = Math.min(recommendedYear, currentYear);
+    } else if (batteryHealth < techThresholds.batteryBad) {
+        recommendedYear = Math.min(recommendedYear, currentYear + 1);
+    }
+
+    // Very high cycles can pull upgrade closer
+    if (cycles >= techThresholds.cycleVeryOld) {
+        recommendedYear = Math.min(recommendedYear, currentYear);
+    } else if (cycles >= techThresholds.cycleOld) {
+        recommendedYear = Math.min(recommendedYear, currentYear + 1);
+    }
+
+    // Needs repair should be immediate
+    if (condition === "needs repair") {
+        recommendedYear = currentYear;
+    }
+
+    // Do not recommend upgrading too early unless there is a major reason
+    const hasMajorIssue =
+        !support.supported ||
+        condition === "needs repair" ||
+        batteryHealth < techThresholds.batteryCritical ||
+        cycles >= techThresholds.cycleVeryOld ||
+        upgradeScore.score <= 40;
+
+    if (!hasMajorIssue && recommendedYear < earliestAllowedYear) {
+        recommendedYear = earliestAllowedYear;
+    }
+
+    let window = `${recommendedYear}–${recommendedYear + 1}`;
+    let timing = `Plan around ${recommendedYear}.`;
+
+    if (priority.level === "definitely-upgrade") {
+        window = `${currentYear}`;
+        timing = "Upgrade as soon as practical.";
+    } else if (priority.level === "highly-recommended") {
+        timing = `Upgrade around ${recommendedYear}, especially if battery life, support, or performance gets worse.`;
+    } else if (priority.level === "optional") {
+        timing = `Consider upgrading around ${recommendedYear}, but it is not urgent.`;
+    } else {
+        timing = `Keep using this device. A realistic upgrade target is around ${recommendedYear}.`;
+    }
+
+    return {
+        year: recommendedYear,
+        window,
+        timing
+    };
+}
+
+// ======================
+// UPGRADE EXPLANATION
+// ======================
+function generateUpgradeExplanation(item, priority, recommendedUpgrade, upgrade, support, osStatus, upgradeScore) {
+    const triggers = upgrade.triggers || [];
+    const deviceType = detectDeviceType(item);
+    const condition = item.condition || "Unknown";
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const cycles = getBatteryCycles(item);
+
+    let reasons = [];
+
+    if (triggers.length > 0) {
+        reasons = [...triggers];
+    }
+
+    if (condition === "Excellent" || condition === "Good") {
+        reasons.push(`Condition is ${condition.toLowerCase()}`);
+    }
+
+    if (support.supportLevel) {
+        reasons.push(`Support status is ${support.supportLevel.toLowerCase()}`);
+    }
+
+    if (osStatus?.isBeta) {
+        reasons.push("Running beta software does not count against the upgrade score");
+    }
+
+    if (batteryHealth >= techThresholds.batteryBad) {
+        reasons.push("Battery health is still acceptable");
+    }
+
+    if (cycles < techThresholds.cycleOld) {
+        reasons.push("Charge cycles are below your upgrade threshold");
+    }
+
+    if (priority.level === "definitely-upgrade") {
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} has enough major concerns to justify replacement. Main reasons: ${reasons.join(", ")}.`;
+    }
+
+    if (priority.level === "highly-recommended") {
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still usable, but replacement is becoming the smarter long-term choice. Main reasons: ${reasons.join(", ")}.`;
+    }
+
+    if (priority.level === "optional") {
+        return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} does not need to be replaced immediately. Upgrade only if you want newer features, better battery life, or better performance. Main reasons: ${reasons.join(", ")}.`;
+    }
+
+    return `${priority.label} — ${recommendedUpgrade.timing} This ${deviceType} is still useful enough to keep. There is not enough reason to replace it right now. Main reasons: ${reasons.join(", ")}.`;
+}
+
+// ======================
+// SMART UPGRADE RECOMMENDATION
+// ======================
+function calculateSmartUpgradeRecommendation(item, upgrade, support, osStatus, upgradeScore) {
+    const priority = getUpgradePriorityLabel(item, upgradeScore, support, upgrade);
+    const recommendedUpgrade = calculateRecommendedUpgradeYear(item, priority, support, upgradeScore);
+    const explanation = generateUpgradeExplanation(
+        item,
+        priority,
+        recommendedUpgrade,
+        upgrade,
+        support,
+        osStatus,
+        upgradeScore
+    );
+
+    return {
+        priority,
+        recommendedUpgradeYear: recommendedUpgrade.year,
+        upgradeWindow: recommendedUpgrade.window,
+        timing: recommendedUpgrade.timing,
+        explanation
+    };
+}
+
+// ======================
 // UPGRADE DATA
 // ======================
 function calculateUpgradeData(item) {
@@ -1323,7 +1671,7 @@ function calculateUpgradeData(item) {
     }
 
     const batteryHealth = Number(item.batteryHealth ?? 100);
-    const cycles = Number(item.batteryCycles ?? 0);
+    const cycles = getBatteryCycles(item);
     const osStatus = checkOSStatus(item.osVersion);
     const support = checkDeviceSupport(item);
 
@@ -1411,7 +1759,16 @@ function calculateUpgradeData(item) {
 // ======================
 function getRecommendedAction(item, upgrade, support, osStatus) {
     const batteryHealth = Number(item.batteryHealth ?? 100);
-    const cycles = Number(item.batteryCycles ?? 0);
+    const cycles = getBatteryCycles(item);
+    const condition = String(item.condition || "").toLowerCase();
+
+    if (condition === "retired" || support.supportLevel === "Retired") {
+        return "No active upgrade needed";
+    }
+
+    if (condition === "needs repair") {
+        return "Repair or replace depending on cost";
+    }
 
     if (!support.supported) {
         return "Plan upgrade soon";
@@ -1448,7 +1805,7 @@ function generateDeviceSummary(item, upgrade, support, osStatus) {
     const primaryUse = item.primaryUse || '';
     const condition = item.condition || '';
     const batteryHealth = Number(item.batteryHealth ?? 100);
-    const cycles = Number(item.batteryCycles ?? 0);
+    const cycles = getBatteryCycles(item);
 
     let parts = [];
 
@@ -1563,10 +1920,12 @@ function renderTechItemHomepage(itemData) {
         ? parseInt(itemData.batteryHealth, 10)
         : null;
 
-    const batteryCycles = itemData.batteryCycles !== null &&
-        itemData.batteryCycles !== undefined &&
-        !isNaN(itemData.batteryCycles)
-        ? Number(itemData.batteryCycles)
+    const rawBatteryCycles = itemData.batteryCycles ?? itemData.batteryChargeCycles;
+
+    const batteryCycles = rawBatteryCycles !== null &&
+        rawBatteryCycles !== undefined &&
+        !isNaN(rawBatteryCycles)
+        ? Number(rawBatteryCycles)
         : null;
 
     // ======================
@@ -1588,8 +1947,16 @@ function renderTechItemHomepage(itemData) {
         upgrade.suggestion = "Monitor closely";
     }
 
-    const recommendedAction = getRecommendedAction(itemData, upgrade, support, osStatus);
+   const recommendedAction = getRecommendedAction(itemData, upgrade, support, osStatus);
 
+    const smartUpgrade = calculateSmartUpgradeRecommendation(
+        itemData,
+        upgrade,
+        support,
+        osStatus,
+        upgradeScore
+    );
+    
     const deviceSummary = generateDeviceSummary(itemData, upgrade, support, osStatus);
 
     const summaryHtml = `
@@ -1678,6 +2045,33 @@ function renderTechItemHomepage(itemData) {
         </ul>`;
     }
 
+    const smartUpgradeHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-calendar-check"></i>
+            <span>Recommended Upgrade Year:</span>
+            ${smartUpgrade.recommendedUpgradeYear}
+        </div>
+        
+        <div class="tech-detail">
+            <i class="fas fa-calendar-days"></i>
+            <span>Upgrade Window:</span>
+            ${smartUpgrade.upgradeWindow}
+        </div>
+        
+        <div class="tech-detail">
+            <i class="fas fa-ranking-star"></i>
+            <span>Upgrade Priority:</span>
+            <span class="upgrade-priority-badge ${smartUpgrade.priority.color}">
+                ${smartUpgrade.priority.label}
+            </span>
+        </div>
+        
+        <div class="tech-detail tech-upgrade-explanation">
+            <i class="fas fa-circle-question"></i>
+            <span>Why:</span>
+            ${smartUpgrade.explanation}
+        </div>`;
+    
     // ======================
     // SMART DATA UI
     // ======================
@@ -1698,7 +2092,7 @@ function renderTechItemHomepage(itemData) {
     const scoreHtml = `
     <div class="tech-detail">
         <i class="fas fa-gauge-high"></i>
-        <span>Upgrade Score:</span>
+        <span>Device Score:</span>
         ${upgradeScore.label} (${upgradeScore.score}/100)
     </div>
 
@@ -1788,6 +2182,7 @@ function renderTechItemHomepage(itemData) {
         ${batteryHtml}
         ${scoreHtml}
         ${upgradeHtml}
+        ${smartUpgradeHtml}
         ${actionHtml}
         ${triggersHtml}
         ${advancedHtml}
