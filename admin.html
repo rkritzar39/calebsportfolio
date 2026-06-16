@@ -1276,6 +1276,67 @@
                         <label for="tech-storage">Storage:</label>
                         <input type="text" id="tech-storage" name="storage" placeholder="e.g., 128GB, 256GB SSD">
                     </div>
+                    <div class="form-group">
+    <label for="tech-chip-name">Chip / Processor:</label>
+    <input type="text" id="tech-chip-name" name="chipName" placeholder="e.g., A18 Pro, M2, S9">
+</div>
+
+<div class="form-group">
+    <label for="tech-ram-gb">RAM / Memory (GB):</label>
+    <input type="number" id="tech-ram-gb" name="ramGB" min="0" step="1" placeholder="e.g., 8">
+</div>
+
+<div class="form-group">
+    <label for="tech-storage-gb">Storage Capacity (GB):</label>
+    <input type="number" id="tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 128">
+</div>
+
+<div class="form-group">
+    <label for="tech-expected-keep-years">Expected Keep Time (Years):</label>
+    <input type="number" id="tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 4">
+</div>
+
+<div class="form-group">
+    <label for="tech-future-proofing-priority">Future-Proofing Priority:</label>
+    <select id="tech-future-proofing-priority" name="futureProofingPriority">
+        <option value="">Select priority</option>
+        <option value="Low">Low</option>
+        <option value="Balanced">Balanced</option>
+        <option value="High">High</option>
+        <option value="Maximum">Maximum</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="tech-ai-feature-priority">AI Feature Priority:</label>
+    <select id="tech-ai-feature-priority" name="aiFeaturePriority">
+        <option value="">Select priority</option>
+        <option value="Not Important">Not Important</option>
+        <option value="Nice to Have">Nice to Have</option>
+        <option value="Important">Important</option>
+        <option value="Must Have">Must Have</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="tech-compatibility-status">Compatibility Status:</label>
+    <select id="tech-compatibility-status" name="compatibilityStatus">
+        <option value="">Select compatibility</option>
+        <option value="Current">Current</option>
+        <option value="Limited">Limited</option>
+        <option value="Obsolete">Obsolete</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="tech-paired-ai-phone">Paired with AI-Compatible iPhone:</label>
+    <select id="tech-paired-ai-phone" name="pairedAIPhone">
+        <option value="">Not Applicable / Unknown</option>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+    </select>
+</div>
+
                      <div class="form-group">
                         <label for="tech-battery-capacity">Battery Capacity (mAh):</label>
                         <input type="text" id="tech-battery-capacity" name="batteryCapacity" placeholder="e.g., 3,582mAh">
