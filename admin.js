@@ -4567,7 +4567,13 @@ function displayFilteredActivityLog() {
 }
 
 // ========================================
-// == Tech Item Management Functions V2 ===(value)// == Tech Item Management Functions V2 ===
+// == Tech Item Management Functions V2 ===
+// ========================================
+
+function escapeAdminHTML(value) {
+    if (value === null || value === undefined) return "";
+
+    return String(value)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -4628,6 +4634,29 @@ function normalizeTechFormValue(name, input, statusCallback) {
     }
 
     return { value, isValid };
+}
+
+/** Displays status messages in the tech edit modal */
+function showEditTechItemStatus(message, isError = false) {
+    if (!editTechStatusMessage) {
+        console.warn("Edit tech status message element not found");
+        return;
+    }
+
+    editTechStatusMessage.textContent = message;
+    editTechStatusMessage.className = `status-message ${isError ? "error" : "success"}`;
+
+    if (!isError && message) {
+        setTimeout(() => {
+            if (
+                editTechStatusMessage &&
+                editTechStatusMessage.textContent === message
+            ) {
+                editTechStatusMessage.textContent = "";
+                editTechStatusMessage.className = "status-message";
+            }
+        }, 3000);
+    }
 }
 
 /** Renders a single tech item in the admin list view */
@@ -4783,7 +4812,6 @@ async function handleAddTechItem(event) {
 
     inputs.forEach(input => {
         const name = input.name;
-
         const result = normalizeTechFormValue(name, input, showAdminStatus);
 
         if (!result.isValid) {
@@ -5010,7 +5038,6 @@ async function handleUpdateTechItem(event) {
 
     inputs.forEach(input => {
         const name = input.name;
-
         const result = normalizeTechFormValue(name, input, showEditTechItemStatus);
 
         if (!result.isValid) {
@@ -5280,473 +5307,6 @@ if (cancelEditTechButtonSecondary) {
 if (searchTechItemsInput) {
     searchTechItemsInput.addEventListener("input", displayFilteredTechItems);
 }
-
-window.addEventListener("click", event => {
-    if (event.target === editTechItemModal) {
-        closeEditTechItemModal();
-    }
-});
-// ========================================
-
-function escapeAdminHTML(value) {
-    if (value === null || value === undefined) return "";
-
-
-    // --- *** Event Listener for Saving ONLY Countdown Settings (WITH EXTRA LOGGING) *** ---
-    if (saveCountdownSettingsButton) {
-        saveCountdownSettingsButton.addEventListener('click', async () => {
-            // --- LOG 1: Button Clicked ---
-            console.log(">>> SAVE COUNTDOWN BUTTON CLICKED at", new Date().toLocaleTimeString());
-
-            // Check required elements exist first
-            if (!countdownTitleInput || !countdownDatetimeInput || !countdownExpiredMessageInput || !settingsStatusMessage) {
-                 console.error(">>> ERROR: Cannot save - one or more countdown input elements are missing!");
-                 showSettingsStatus("Error: Page structure problem. Cannot save countdown.", true);
-                 return;
-             }
-            if (!profileDocRef) {
-                 console.error(">>> ERROR: profileDocRef not defined. Cannot save countdown settings.");
-                 showSettingsStatus("Error: Config reference missing.", true);
-                 return;
-            }
-
-            // --- Read values ---
-            const title = countdownTitleInput.value.trim();
-            const dateTimeString = countdownDatetimeInput.value.trim();
-            const expiredMessage = countdownExpiredMessageInput.value.trim();
-            console.log(`>>> Read Values: Title='${title}', DateTime='${dateTimeString}', ExpiredMsg='${expiredMessage}'`);
-
-            showSettingsStatus("Saving countdown settings...", false);
-
-            // Prepare data object
-            const updateData = {
-                countdownTitle: title,
-                countdownExpiredMessage: expiredMessage
-                // countdownTargetDate added below conditionally
-            };
-            let isValid = true;
-            let targetTimestamp = null;
-
-            // --- Handle Date/Time conversion ---
-            if (dateTimeString) {
-                console.log(">>> Processing DateTime String...");
-                if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(dateTimeString)) {
-                     console.error(">>> ERROR: Invalid DateTime format.");
-                     showSettingsStatus('Invalid Date/Time format. Use YYYY-MM-DDTHH:MM:SS', true);
-                     isValid = false;
-                } else {
-                    try {
-                        const localDate = new Date(dateTimeString);
-                        if (isNaN(localDate.getTime())) {
-                            throw new Error("Invalid date or time value resulted in an invalid Date object.");
-                        }
-                        // *** Ensure Timestamp is imported: import { Timestamp } from '...' ***
-                        targetTimestamp = Timestamp.fromDate(localDate);
-                        updateData.countdownTargetDate = targetTimestamp;
-                        console.log(">>> SUCCESS: Converted input string to Timestamp:", targetTimestamp);
-                    } catch (error) {
-                        console.error(">>> ERROR: Parsing date/time input:", error);
-                        let errorText = `Error parsing date/time: ${error.message}`;
-                         if (error instanceof ReferenceError && error.message.includes("Timestamp is not defined")) {
-                            errorText += " (Import Timestamp from Firestore library at top of admin.js!)";
-                         }
-                        showSettingsStatus(errorText, true);
-                        isValid = false;
-                    }
-                }
-            } else {
-                 updateData.countdownTargetDate = null; // Set date to null if input is empty
-                 console.log(">>> DateTime field empty. Setting target date to null.");
-            }
-
-            if (!isValid) {
-                console.log(">>> Validation failed. Aborting save.");
-                return; // Stop if validation failed
-            }
-
-            // --- Update Firestore Document ---
-            try {
-                // --- LOG 2: Data being sent ---
-                console.log(">>> PRE-UPDATE CHECK <<<");
-                console.log(">>> profileDocRef Path:", profileDocRef.path);
-                console.log(">>> Data being sent:", JSON.stringify(updateData, null, 2)); // Stringify for clear view
-
-                await updateDoc(profileDocRef, updateData); // Attempt the update
-
-                // --- LOG 3: Success ---
-                console.log(">>> updateDoc SUCCEEDED <<<");
-                showSettingsStatus("Countdown settings saved successfully!", false);
-                console.log("Countdown settings updated in Firestore successfully.");
-
-                // Log activity
-                 if (typeof logAdminActivity === 'function') {
-                      logAdminActivity('UPDATE_COUNTDOWN_SETTINGS', { title: title, targetSet: !!updateData.countdownTargetDate, messageSet: !!expiredMessage });
-                 } else { console.warn("logAdminActivity function not found!"); }
-
-            } catch (error) {
-                 // --- LOG 4: Failure ---
-                console.error(">>> updateDoc FAILED <<<", error);
-                showSettingsStatus(`Error saving countdown settings: ${error.message}`, true);
-                 if (typeof logAdminActivity === 'function') {
-                      logAdminActivity('UPDATE_COUNTDOWN_SETTINGS_FAILED', { error: error.message });
-                 }
-            }
-        });
-    } else {
-         console.error("Save Countdown Settings button (#save-countdown-settings-button) not found!");
-         if(settingsStatusMessage) { showSettingsStatus("Error: Save Countdown button missing from page.", true); }
-    }
-    // --- *** END Event Listener with Logging *** ---
-    
-    
-   // --- Useful Links Event Listeners ---
-    if (addUsefulLinkForm) { //
-        addUsefulLinkForm.addEventListener('submit', handleAddUsefulLink); //
-    }
-    if (editUsefulLinkForm) { //
-        editUsefulLinkForm.addEventListener('submit', handleUpdateUsefulLink); //
-    }
-    if (cancelEditLinkButton) { // X close button
-        cancelEditLinkButton.addEventListener('click', closeEditUsefulLinkModal); //
-    }
-    if (cancelEditLinkButtonSecondary) { // Secondary Cancel button
-        cancelEditLinkButtonSecondary.addEventListener('click', closeEditUsefulLinkModal); //
-    }
-
-   // --- Attach Event Listeners ---
-    if (addSocialLinkForm) {
-        addSocialLinkForm.addEventListener('submit', handleAddSocialLink);
-    }
-    if (editSocialLinkForm) {
-        editSocialLinkForm.addEventListener('submit', handleUpdateSocialLink);
-    }
-    if (cancelEditSocialLinkButton) {
-        cancelEditSocialLinkButton.addEventListener('click', closeEditSocialLinkModal);
-    }
-    if (cancelEditSocialLinkButtonSecondary) {
-        cancelEditSocialLinkButtonSecondary.addEventListener('click', closeEditSocialLinkModal);
-    }
-    if (searchInputSocialLinks) {
-        searchInputSocialLinks.addEventListener('input', displayFilteredSocialLinks);
-    }
-
-
-    // Function to render a single Disability Link item in the admin list
-    function renderDisabilityAdminListItem(container, docId, name, url, order, deleteHandler, editHandler) {
-        if (!container) {
-             console.warn("Disabilities list container not found during render.");
-             return;
-        }
-
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'list-item-admin'; // Use the same class as other list items
-        itemDiv.setAttribute('data-id', docId);
-
-        // Basic validation for URL before creating the visit link
-        let displayUrl = url || 'N/A';
-        let visitUrl = '#';
-        try {
-            if (url) {
-                visitUrl = new URL(url).href; // Ensures it's a valid structure
-            }
-        } catch (e) {
-            console.warn(`Invalid URL for disability link ${docId}: ${url}`);
-            displayUrl += " (Invalid URL)";
-        }
-
-        itemDiv.innerHTML = `
-            <div class="item-content">
-                <div class="item-details">
-                    <strong>${name || 'N/A'}</strong>
-                    <span>(${displayUrl})</span>
-                    <small>Order: ${order ?? 'N/A'}</small>
-                </div>
-            </div>
-            <div class="item-actions">
-                <a href="${visitUrl}" target="_blank" rel="noopener noreferrer" class="direct-link small-button" title="Visit Info Link" ${visitUrl === '#' ? 'style="pointer-events: none; opacity: 0.5;"' : ''}>
-                    <i class="fas fa-external-link-alt"></i> Visit
-                </a>
-                <button type="button" class="edit-button small-button">Edit</button>
-                <button type="button" class="delete-button small-button">Delete</button>
-            </div>`;
-
-        // Add event listeners for Edit and Delete buttons
-        const editButton = itemDiv.querySelector('.edit-button');
-        if (editButton) editButton.addEventListener('click', () => editHandler(docId)); // Pass docId to edit handler
-
-        const deleteButton = itemDiv.querySelector('.delete-button');
-        if (deleteButton) deleteButton.addEventListener('click', () => deleteHandler(docId, itemDiv)); // Pass docId and the element to delete handler
-
-        container.appendChild(itemDiv);
-    }
-
-    // Function to show status messages inside the Edit Disability modal
-    function showEditDisabilityStatus(message, isError = false) {
-        // Uses the 'editDisabilityStatusMessage' element const defined earlier
-        if (!editDisabilityStatusMessage) { console.warn("Edit disability status message element not found"); return; }
-        editDisabilityStatusMessage.textContent = message;
-        editDisabilityStatusMessage.className = `status-message ${isError ? 'error' : 'success'}`;
-        // Clear message after 3 seconds
-        setTimeout(() => { if (editDisabilityStatusMessage) { editDisabilityStatusMessage.textContent = ''; editDisabilityStatusMessage.className = 'status-message'; } }, 3000);
-    }
-
-    /** Displays status messages in the tech edit modal */
-     function showEditTechItemStatus(message, isError = false) {
-         if (!editTechStatusMessage) { console.warn("Edit tech status message element not found"); return; }
-         editTechStatusMessage.textContent = message;
-         editTechStatusMessage.className = `status-message ${isError ? 'error' : 'success'}`;
-         if (!isError) setTimeout(() => { if (editTechStatusMessage && editTechStatusMessage.textContent === message) { editTechStatusMessage.textContent = ''; editTechStatusMessage.className = 'status-message'; } }, 3000);
-     }
-
-    // *** CORRECTED Function to Load Disabilities ***
-async function loadDisabilitiesAdmin() {
-    if (!disabilitiesListAdmin) { console.error("Disabilities list container missing."); return; }
-    if (disabilitiesCount) disabilitiesCount.textContent = '';
-    disabilitiesListAdmin.innerHTML = `<p>Loading disability links...</p>`;
-    allDisabilities = []; // Clear the global array
-
-    try {
-        const disabilityQuery = query(disabilitiesCollectionRef, orderBy("order", "asc"));
-        const querySnapshot = await getDocs(disabilityQuery);
-
-        // Populate the global array
-        querySnapshot.forEach((doc) => {
-            allDisabilities.push({ id: doc.id, ...doc.data() }); // Store data in the array
-        });
-        console.log(`Stored ${allDisabilities.length} disability links.`);
-
-        // Call the filter function to display initially (will show all)
-        displayFilteredDisabilities();
-
-    } catch (error) {
-        console.error("Error loading disabilities:", error);
-        let errorMsg = "Error loading disabilities.";
-        if (error.code === 'failed-precondition') {
-            errorMsg = "Error: Missing Firestore index for disabilities (order).";
-            showAdminStatus(errorMsg, true);
-        } else {
-            showAdminStatus(errorMsg + `: ${error.message}`, true);
-        }
-        disabilitiesListAdmin.innerHTML = `<p class="error">${errorMsg}</p>`;
-        if (disabilitiesCount) disabilitiesCount.textContent = '(Error)';
-    }
-}
-
-    // Function to Handle Adding a New Disability Link
-    async function handleAddDisability(event) {
-        event.preventDefault(); // Prevent default form submission
-        // Use const defined earlier for the add form
-        if (!addDisabilityForm) return;
-
-        // Get values from the add disability form
-        const nameInput = addDisabilityForm.querySelector('#disability-name');
-        const urlInput = addDisabilityForm.querySelector('#disability-url');
-        const orderInput = addDisabilityForm.querySelector('#disability-order');
-
-        const name = nameInput?.value.trim();
-        const url = urlInput?.value.trim();
-        const orderStr = orderInput?.value.trim();
-        const order = parseInt(orderStr);
-
-        // Basic validation
-        if (!name || !url || !orderStr || isNaN(order) || order < 0) {
-            showAdminStatus("Invalid input for Disability Link. Check required fields and ensure Order is non-negative.", true);
-            return;
-        }
-        // Basic URL validation
-        try {
-            new URL(url);
-        } catch (_) {
-            showAdminStatus("Invalid URL format. Please enter a valid URL.", true);
-            return;
-        }
-
-        const disabilityData = {
-            name: name,
-            url: url,
-            order: order,
-            createdAt: serverTimestamp() // Add a timestamp
-        };
-
-        showAdminStatus("Adding disability link...");
-        try {
-            // Use the disabilitiesCollectionRef defined earlier
-            const docRef = await addDoc(disabilitiesCollectionRef, disabilityData);
-            console.log("Disability link added with ID:", docRef.id);
-            showAdminStatus("Disability link added successfully.", false);
-            addDisabilityForm.reset(); // Reset the form
-            loadDisabilitiesAdmin(); // Reload the list
-
-        } catch (error) {
-            console.error("Error adding disability link:", error);
-            showAdminStatus(`Error adding disability link: ${error.message}`, true);
-        }
-    }
-
-    // Function to Handle Deleting a Disability Link
-    async function handleDeleteDisability(docId, listItemElement) {
-        if (!confirm("Are you sure you want to permanently delete this disability link?")) {
-            return; // Do nothing if user cancels
-        }
-
-        showAdminStatus("Deleting disability link...");
-        try {
-             // Use the disabilitiesCollectionRef defined earlier
-            await deleteDoc(doc(db, 'disabilities', docId));
-            showAdminStatus("Disability link deleted successfully.", false);
-            loadDisabilitiesAdmin(); // Reload list is simplest
-
-        } catch (error) {
-            console.error(`Error deleting disability link (ID: ${docId}):`, error);
-            showAdminStatus(`Error deleting disability link: ${error.message}`, true);
-        }
-    }
-
-     // Function to Open and Populate the Edit Disability Modal
-    function openEditDisabilityModal(docId) {
-        // Use consts defined earlier for modal elements
-        if (!editDisabilityModal || !editDisabilityForm) {
-            console.error("Edit disability modal elements not found.");
-            showAdminStatus("UI Error: Cannot open edit form.", true);
-            return;
-        }
-
-        // Use the disabilitiesCollectionRef defined earlier
-        const docRef = doc(db, 'disabilities', docId);
-        showEditDisabilityStatus("Loading disability data..."); // Use specific status func
-
-        getDoc(docRef).then(docSnap => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                editDisabilityForm.setAttribute('data-doc-id', docId); // Store doc ID on the form
-                // Populate modal inputs using consts defined earlier
-                if (editDisabilityNameInput) editDisabilityNameInput.value = data.name || '';
-                if (editDisabilityUrlInput) editDisabilityUrlInput.value = data.url || '';
-                if (editDisabilityOrderInput) editDisabilityOrderInput.value = data.order ?? '';
-
-                editDisabilityModal.style.display = 'block'; // Show the modal
-                showEditDisabilityStatus(""); // Clear loading message
-            } else {
-                showAdminStatus("Error: Could not load disability data for editing.", true);
-                showEditDisabilityStatus("Error: Link not found.", true); // Show error inside modal
-            }
-        }).catch(error => {
-            console.error("Error getting disability document for edit:", error);
-            showAdminStatus(`Error loading disability data: ${error.message}`, true);
-            showEditDisabilityStatus(`Error: ${error.message}`, true);
-        });
-    }
-
-    // Function to Close the Edit Disability Modal
-    function closeEditDisabilityModal() {
-        // Use consts defined earlier
-        if (editDisabilityModal) editDisabilityModal.style.display = 'none';
-        if (editDisabilityForm) editDisabilityForm.reset();
-        editDisabilityForm?.removeAttribute('data-doc-id');
-        if (editDisabilityStatusMessage) editDisabilityStatusMessage.textContent = ''; // Clear status message inside modal
-    }
-
-    // --- Function to Handle Updating a Disability Link (with DETAILED Logging) ---
-    async function handleUpdateDisability(event) {
-        event.preventDefault();
-        if (!editDisabilityForm) return;
-        const docId = editDisabilityForm.getAttribute('data-doc-id');
-        if (!docId) { showEditDisabilityStatus("Error: Missing document ID...", true); return; }
-        console.log("Attempting to update disability link (detailed log):", docId);
-
-        // 1. Get NEW data from form
-        const name = editDisabilityNameInput?.value.trim();
-        const url = editDisabilityUrlInput?.value.trim();
-        const orderStr = editDisabilityOrderInput?.value.trim();
-        const order = parseInt(orderStr);
-
-        if (!name || !url || !orderStr || isNaN(order) || order < 0) { showEditDisabilityStatus("Invalid input...", true); return; }
-        try { new URL(url); } catch (_) { showEditDisabilityStatus("Invalid URL format.", true); return; }
-
-        const newDataFromForm = { name: name, url: url, order: order };
-        showEditDisabilityStatus("Saving changes...");
-        const docRef = doc(db, 'disabilities', docId); // Define once
-
-        try {
-            // 2. Get OLD data BEFORE saving
-            let oldData = {};
-            const oldDataSnap = await getDoc(docRef);
-            if (oldDataSnap.exists()) { oldData = oldDataSnap.data(); }
-
-            // 3. Save NEW data
-            await updateDoc(docRef, { ...newDataFromForm, lastModified: serverTimestamp() });
-            console.log("Disability link update successful:", docId);
-
-            // 4. Compare and find changes
-            const changes = {};
-            let hasChanges = false;
-            for (const key in newDataFromForm) {
-                if (oldData[key] !== newDataFromForm[key]) {
-                    changes[key] = { to: newDataFromForm[key] };
-                    hasChanges = true;
-                }
-            }
-
-             // 5. Log ONLY actual changes
-            if (hasChanges) {
-                console.log("DEBUG: Detected disability link changes:", changes);
-                 if (typeof logAdminActivity === 'function') {
-                    logAdminActivity('DISABILITY_LINK_UPDATE', { id: docId, name: name, changes: changes });
-                 } else { console.error("logAdminActivity function not found!");}
-            } else {
-                 console.log("DEBUG: Disability link update saved, but no values changed.");
-            }
-
-            showAdminStatus("Disability link updated successfully.", false);
-            closeEditDisabilityModal();
-            loadDisabilitiesAdmin();
-
-        } catch (error) {
-            console.error(`Error updating disability link (ID: ${docId}):`, error);
-            showEditDisabilityStatus(`Error saving: ${error.message}`, true);
-            showAdminStatus(`Error updating disability link: ${error.message}`, true);
-        }
-    }
-// --- Attach Event Listeners for Section Forms & Modals ---
-
-    // Profile Save Form
-    if (profileForm) { profileForm.addEventListener('submit', saveProfileData); }
-
-    // Maintenance Mode Toggle
-    if (maintenanceModeToggle) { maintenanceModeToggle.addEventListener('change', (e) => { saveMaintenanceModeStatus(e.target.checked); }); }
-
-    // Hide TikTok Toggle
-    if (hideTikTokSectionToggle) { hideTikTokSectionToggle.addEventListener('change', (e) => { saveHideTikTokSectionStatus(e.target.checked); }); }
-    
-
-    // Add Shoutout Forms
-    if (addShoutoutTiktokForm) { addShoutoutTiktokForm.addEventListener('submit', (e) => { e.preventDefault(); handleAddShoutout('tiktok', addShoutoutTiktokForm); }); }
-    if (addShoutoutInstagramForm) { addShoutoutInstagramForm.addEventListener('submit', (e) => { e.preventDefault(); handleAddShoutout('instagram', addShoutoutInstagramForm); }); }
-    if (addShoutoutYoutubeForm) { addShoutoutYoutubeForm.addEventListener('submit', (e) => { e.preventDefault(); handleAddShoutout('youtube', addShoutoutYoutubeForm); }); }
-
-    // Edit Shoutout Form (in modal) & Close Button
-    if (editForm) { editForm.addEventListener('submit', handleUpdateShoutout); }
-    if (cancelEditButton) { cancelEditButton.addEventListener('click', closeEditModal); }
-
-    // --- Tech Management Listeners ---
-     if (addTechItemForm) {
-        addTechItemForm.addEventListener('submit', handleAddTechItem);
-        // Attach preview listeners for the add form on initial load
-        attachTechPreviewListeners(addTechItemForm, 'add');
-     }
-     if (editTechItemForm) {
-        editTechItemForm.addEventListener('submit', handleUpdateTechItem);
-        // Note: Preview listeners for edit form are attached in openEditTechItemModal
-     }
-      if (cancelEditTechButton) {
-        cancelEditTechButton.addEventListener('click', closeEditTechItemModal);
-     }
-     if (cancelEditTechButtonSecondary) {
-        cancelEditTechButtonSecondary.addEventListener('click', closeEditTechItemModal);
-     }
-     if (searchTechItemsInput) {
-        searchTechItemsInput.addEventListener('input', displayFilteredTechItems);
-     }
 
     // --- Activity Log Listeners ---
     const clearLogBtn = document.getElementById('clear-log-button');
