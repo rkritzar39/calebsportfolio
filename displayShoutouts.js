@@ -3262,8 +3262,17 @@ function renderPlannedTechItemHomepage(itemData) {
     const model = item.model || "";
     const primaryUse = item.primaryUse || "";
     const iconClass = item.iconClass || "fas fa-laptop";
-
-    const plannedStatus = item.plannedStatus || "Planned";
+    const ownershipState = String(item.ownershipState || "planned").toLowerCase().trim();
+    
+    const ownershipLabelMap = {
+        planned: "Planned",
+        wishlist: "Wishlist",
+        "coming-soon": "Coming Soon",
+        "future-upgrade": "Future Upgrade"
+    };
+    
+    const plannedStatus = ownershipLabelMap[ownershipState] || "Planned";
+    const plannedBadgeClass = ownershipState || "planned";
     const plannedWindow = item.plannedWindow || "";
     const plannedReason = item.plannedReason || "";
     const futureUpgradeTarget = item.futureUpgradeTarget || "";
@@ -3291,7 +3300,7 @@ function renderPlannedTechItemHomepage(itemData) {
         <div class="tech-detail">
             <i class="fas fa-clock"></i>
             <span>Ownership:</span>
-            <span class="upgrade-badge planned">${escapeHTML(plannedStatus)}</span>
+           <span class="upgrade-badge ${escapeHTML(plannedBadgeClass)}">${escapeHTML(plannedStatus)}</span>
         </div>
 
         ${plannedWindow ? `
