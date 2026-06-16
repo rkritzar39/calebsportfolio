@@ -3296,16 +3296,40 @@ const ownershipStateConfig = {
         badgeClass: "owned",
         archiveSummary: null
     },
+    borrowed: {
+        label: "Borrowed",
+        mode: "active",
+        badgeClass: "borrowed",
+        archiveSummary: null
+    },
+    "loaned-out": {
+        label: "Loaned Out",
+        mode: "active",
+        badgeClass: "loaned-out",
+        archiveSummary: null
+    },
+    "school-issued": {
+        label: "School-Issued",
+        mode: "active",
+        badgeClass: "school-issued",
+        archiveSummary: null
+    },
+    "work-issued": {
+        label: "Work-Issued",
+        mode: "active",
+        badgeClass: "work-issued",
+        archiveSummary: null
+    },
+    "in-repair": {
+        label: "In Repair",
+        mode: "active",
+        badgeClass: "in-repair",
+        archiveSummary: null
+    },
     planned: {
         label: "Planned",
         mode: "roadmap",
         badgeClass: "planned",
-        archiveSummary: null
-    },
-    wishlist: {
-        label: "Wishlist",
-        mode: "wishlist",
-        badgeClass: "wishlist",
         archiveSummary: null
     },
     "coming-soon": {
@@ -3338,6 +3362,12 @@ const ownershipStateConfig = {
         badgeClass: "reserved",
         archiveSummary: null
     },
+    wishlist: {
+        label: "Wishlist",
+        mode: "wishlist",
+        badgeClass: "wishlist",
+        archiveSummary: null
+    },
     considering: {
         label: "Considering",
         mode: "wishlist",
@@ -3348,36 +3378,6 @@ const ownershipStateConfig = {
         label: "Researching",
         mode: "wishlist",
         badgeClass: "researching",
-        archiveSummary: null
-    },
-    borrowed: {
-        label: "Borrowed",
-        mode: "active",
-        badgeClass: "borrowed",
-        archiveSummary: null
-    },
-    "loaned-out": {
-        label: "Loaned Out",
-        mode: "active",
-        badgeClass: "loaned-out",
-        archiveSummary: null
-    },
-    "school-issued": {
-        label: "School-Issued",
-        mode: "active",
-        badgeClass: "school-issued",
-        archiveSummary: null
-    },
-    "work-issued": {
-        label: "Work-Issued",
-        mode: "active",
-        badgeClass: "work-issued",
-        archiveSummary: null
-    },
-    "in-repair": {
-        label: "In Repair",
-        mode: "active",
-        badgeClass: "in-repair",
         archiveSummary: null
     },
     retired: {
@@ -3436,9 +3436,9 @@ function normalizeOwnershipStateValue(value) {
         current: "owned",
         plan: "planned",
         future: "planned",
-        "comingsoon": "coming-soon",
+        comingsoon: "coming-soon",
         "coming-soon": "coming-soon",
-        "futureupgrade": "future-upgrade",
+        futureupgrade: "future-upgrade",
         "future-upgrade": "future-upgrade",
         preorder: "preordered",
         "pre-order": "preordered",
@@ -3457,19 +3457,19 @@ function normalizeOwnershipStateValue(value) {
         loaned: "loaned-out",
         "loaned-out": "loaned-out",
         lent: "loaned-out",
-        "school-issued": "school-issued",
         school: "school-issued",
-        "work-issued": "work-issued",
+        "school-issued": "school-issued",
         work: "work-issued",
+        "work-issued": "work-issued",
         repair: "in-repair",
-        "in-repair": "in-repair",
         repairing: "in-repair",
+        "in-repair": "in-repair",
         retired: "retired",
         archived: "retired",
         sold: "sold",
-        "traded-in": "traded-in",
         tradein: "traded-in",
         "trade-in": "traded-in",
+        "traded-in": "traded-in",
         donated: "donated",
         recycled: "recycled",
         returned: "returned",
@@ -3529,8 +3529,8 @@ function renderPlannedTechItemHomepage(itemData) {
     const item = normalizeTechItem(itemData);
 
     const name = item.name || "Upcoming Device";
-    const model = item.model || "";
-    const primaryUse = item.primaryUse || "";
+    const model = item.model || "Not set";
+    const primaryUse = item.primaryUse || "Not set";
     const iconClass = item.iconClass || "fas fa-laptop";
 
     const ownershipState = getOwnershipState(item);
@@ -3538,21 +3538,148 @@ function renderPlannedTechItemHomepage(itemData) {
     const ownershipLabel = ownershipConfig.label;
     const ownershipBadgeClass = ownershipConfig.badgeClass;
 
-    const plannedWindow = item.plannedWindow || "";
-    const plannedReason = item.plannedReason || "";
-    const futureUpgradeTarget = item.futureUpgradeTarget || "";
-    const targetYear = item.targetYear || "";
-    const replacesDevice = item.replacesDevice || "";
+    const plannedWindow = item.plannedWindow || "Not set";
+    const plannedReason = item.plannedReason || "Not set";
+    const futureUpgradeTarget = item.futureUpgradeTarget || "Not set";
+    const targetYear = item.targetYear || "Not set";
+    const replacesDevice = item.replacesDevice || "Not set";
 
-    const expectedChip = item.expectedChip || "";
-    const expectedStorage = item.expectedStorage || "";
-    const expectedRam = item.expectedRam || "";
-    const expectedColor = item.expectedColor || "";
-    const expectedAILevel = item.expectedAILevel || "";
-    const expectedFutureProofRating = item.expectedFutureProofRating || "";
+    const expectedChip = item.expectedChip || "Not set";
+    const expectedRam = item.expectedRam || "Not set";
+    const expectedStorage = item.expectedStorage || "Not set";
+    const expectedColor = item.expectedColor || "Not set";
+    const expectedAILevel = item.expectedAILevel || "Not set";
+    const expectedFutureProofRating = item.expectedFutureProofRating || "Not set";
 
-    const isWishlist = ownershipConfig.mode === "wishlist";
-    const isRoadmap = ownershipConfig.mode === "roadmap";
+    if (ownershipConfig.mode === "wishlist") {
+        return `
+        <div class="tech-item planned-tech-item ownership-${escapeHTML(ownershipBadgeClass)}">
+            <h3>
+                <i class="${escapeHTML(iconClass)}"></i>
+                ${escapeHTML(name)}
+            </h3>
+
+            <div class="tech-detail">
+                <i class="fas fa-info-circle"></i>
+                <span>Model:</span>
+                <span class="tech-value">${escapeHTML(model)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-id-badge"></i>
+                <span>Ownership:</span>
+                <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">
+                    ${escapeHTML(ownershipLabel)}
+                </span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-bullseye"></i>
+                <span>Primary Use:</span>
+                <span class="tech-value">${escapeHTML(primaryUse)}</span>
+            </div>
+        </div>`;
+    }
+
+    if (ownershipConfig.mode === "roadmap") {
+        return `
+        <div class="tech-item planned-tech-item ownership-${escapeHTML(ownershipBadgeClass)}">
+            <h3>
+                <i class="${escapeHTML(iconClass)}"></i>
+                ${escapeHTML(name)}
+            </h3>
+
+            <div class="tech-detail">
+                <i class="fas fa-info-circle"></i>
+                <span>Model:</span>
+                <span class="tech-value">${escapeHTML(model)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-id-badge"></i>
+                <span>Ownership:</span>
+                <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">
+                    ${escapeHTML(ownershipLabel)}
+                </span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Planned / Expected Window:</span>
+                <span class="tech-value">${escapeHTML(plannedWindow)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-bullseye"></i>
+                <span>Primary Use:</span>
+                <span class="tech-value">${escapeHTML(primaryUse)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-circle-question"></i>
+                <span>Reason:</span>
+                <span class="tech-value">${escapeHTML(plannedReason)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-flag-checkered"></i>
+                <span>Future Role:</span>
+                <span class="tech-value">${escapeHTML(futureUpgradeTarget)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-right-left"></i>
+                <span>Replaces Device:</span>
+                <span class="tech-value">${escapeHTML(replacesDevice)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-calendar-check"></i>
+                <span>Target Year:</span>
+                <span class="tech-value">${escapeHTML(targetYear)}</span>
+            </div>
+
+            <details class="tech-advanced-details" open>
+                <summary>Expected Specs</summary>
+
+                <div class="tech-detail">
+                    <i class="fas fa-microchip"></i>
+                    <span>Expected Chip:</span>
+                    <span class="tech-value">${escapeHTML(expectedChip)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-memory"></i>
+                    <span>Expected RAM:</span>
+                    <span class="tech-value">${escapeHTML(expectedRam)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-hard-drive"></i>
+                    <span>Expected Storage:</span>
+                    <span class="tech-value">${escapeHTML(expectedStorage)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-palette"></i>
+                    <span>Expected Color:</span>
+                    <span class="tech-value">${escapeHTML(expectedColor)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-brain"></i>
+                    <span>Expected AI Support:</span>
+                    <span class="tech-value status-green">${escapeHTML(expectedAILevel)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-seedling"></i>
+                    <span>Expected Future-Proofing:</span>
+                    <span class="tech-value status-green">${escapeHTML(expectedFutureProofRating)}</span>
+                </div>
+            </details>
+        </div>`;
+    }
 
     return `
     <div class="tech-item planned-tech-item ownership-${escapeHTML(ownershipBadgeClass)}">
@@ -3561,12 +3688,11 @@ function renderPlannedTechItemHomepage(itemData) {
             ${escapeHTML(name)}
         </h3>
 
-        ${model ? `
         <div class="tech-detail">
             <i class="fas fa-info-circle"></i>
             <span>Model:</span>
             <span class="tech-value">${escapeHTML(model)}</span>
-        </div>` : ""}
+        </div>
 
         <div class="tech-detail">
             <i class="fas fa-id-badge"></i>
@@ -3576,94 +3702,11 @@ function renderPlannedTechItemHomepage(itemData) {
             </span>
         </div>
 
-        ${plannedWindow && isRoadmap ? `
-        <div class="tech-detail">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Planned For:</span>
-            <span class="tech-value">${escapeHTML(plannedWindow)}</span>
-        </div>` : ""}
-
-        ${primaryUse ? `
         <div class="tech-detail">
             <i class="fas fa-bullseye"></i>
             <span>Primary Use:</span>
             <span class="tech-value">${escapeHTML(primaryUse)}</span>
-        </div>` : ""}
-
-        ${plannedReason && isRoadmap ? `
-        <div class="tech-detail">
-            <i class="fas fa-circle-question"></i>
-            <span>Reason:</span>
-            <span class="tech-value">${escapeHTML(plannedReason)}</span>
-        </div>` : ""}
-
-        ${futureUpgradeTarget && isRoadmap ? `
-        <div class="tech-detail">
-            <i class="fas fa-flag-checkered"></i>
-            <span>Future Role:</span>
-            <span class="tech-value">${escapeHTML(futureUpgradeTarget)}</span>
-        </div>` : ""}
-
-        ${replacesDevice && isRoadmap ? `
-        <div class="tech-detail">
-            <i class="fas fa-right-left"></i>
-            <span>Replaces:</span>
-            <span class="tech-value">${escapeHTML(replacesDevice)}</span>
-        </div>` : ""}
-
-        ${targetYear && isRoadmap ? `
-        <div class="tech-detail">
-            <i class="fas fa-calendar-check"></i>
-            <span>Target Year:</span>
-            <span class="tech-value">${escapeHTML(targetYear)}</span>
-        </div>` : ""}
-
-        ${isRoadmap && (expectedChip || expectedStorage || expectedRam || expectedColor || expectedAILevel || expectedFutureProofRating) ? `
-        <details class="tech-advanced-details">
-            <summary>Expected Specs</summary>
-
-            ${expectedChip ? `
-            <div class="tech-detail">
-                <i class="fas fa-microchip"></i>
-                <span>Chip:</span>
-                <span class="tech-value">${escapeHTML(expectedChip)}</span>
-            </div>` : ""}
-
-            ${expectedRam ? `
-            <div class="tech-detail">
-                <i class="fas fa-memory"></i>
-                <span>Memory:</span>
-                <span class="tech-value">${escapeHTML(expectedRam)}</span>
-            </div>` : ""}
-
-            ${expectedStorage ? `
-            <div class="tech-detail">
-                <i class="fas fa-hard-drive"></i>
-                <span>Storage:</span>
-                <span class="tech-value">${escapeHTML(expectedStorage)}</span>
-            </div>` : ""}
-
-            ${expectedColor ? `
-            <div class="tech-detail">
-                <i class="fas fa-palette"></i>
-                <span>Color:</span>
-                <span class="tech-value">${escapeHTML(expectedColor)}</span>
-            </div>` : ""}
-
-            ${expectedAILevel ? `
-            <div class="tech-detail">
-                <i class="fas fa-brain"></i>
-                <span>Expected AI Support:</span>
-                <span class="tech-value status-green">${escapeHTML(expectedAILevel)}</span>
-            </div>` : ""}
-
-            ${expectedFutureProofRating ? `
-            <div class="tech-detail">
-                <i class="fas fa-seedling"></i>
-                <span>Expected Future-Proofing:</span>
-                <span class="tech-value status-green">${escapeHTML(expectedFutureProofRating)}</span>
-            </div>` : ""}
-        </details>` : ""}
+        </div>
     </div>`;
 }
 
