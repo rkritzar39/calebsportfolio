@@ -3145,7 +3145,6 @@ function normalizeTechItem(itemData) {
     normalized.predecessorDevice = getFirstField(itemData, ["predecessorDevice", "predecessor"], "");
     normalized.roleChangedDate = getFirstField(itemData, ["roleChangedDate", "roleUpdatedAt", "roleChangeDate"], "");
     normalized.autoRoleManaged = itemData.autoRoleManaged === true || String(itemData.autoRoleManaged || "").toLowerCase() === "true";
-    normalized.showAutoRoleBadge = itemData.showAutoRoleBadge === true || String(itemData.showAutoRoleBadge || "").toLowerCase() === "true";
 
     return normalized;
 }
@@ -3298,6 +3297,118 @@ function calculateBackupPriority(item, osStatus, support) {
     }
 
     return { label, color, reason };
+}
+
+
+/* ------------------------------------------------------------
+   PUBLIC TECH LIFECYCLE SAFETY CONTEXT
+   Prevents planned devices from making currently-owned devices
+   look replaced before the planned device is actually owned.
+------------------------------------------------------------ */
+let plannedTechReplacementContext = {
+    byPredecessor: new Map(),
+    byPlannedName: new Map()
+};
+
+function normalizeTechLookupName(value) {
+    return String(value || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[\u2018\u2019]/g, "'")
+        .replace(/[\u201C\u201D]/g, '"')
+        .replace(/\s+/g, " ");
+}
+
+function buildPlannedTechReplacementContext(items = []) {
+    const byPredecessor = new Map();
+    const byPlannedName = new Map();
+
+    items.forEach(rawItem => {
+        const item = normalizeTechItem(rawItem);
+        const config = getOwnershipConfig(item);
+
+        if ((config.mode === "roadmap" || config.mode === "wishlist") && hasTechLifecycleValue(item.replacesDevice)) {
+            const plannedNameKey = normalizeTechLookupName(item.name);
+            const predecessorKey = normalizeTechLookupName(item.replacesDevice);
+
+            if (plannedNameKey) byPlannedName.set(plannedNameKey, item);
+            if (predecessorKey) byPredecessor.set(predecessorKey, item);
+        }
+    });
+
+    plannedTechReplacementContext = { byPredecessor, byPlannedName };
+}
+
+function getPlannedReplacementForDevice(deviceName) {
+    return plannedTechReplacementContext.byPredecessor.get(normalizeTechLookupName(deviceName)) || null;
+}
+
+function isPlannedReplacementSuccessor(successorName) {
+    return plannedTechReplacementContext.byPlannedName.has(normalizeTechLookupName(successorName));
+}
+
+function sanitizeTechLifecycleForPublicDisplay(itemData = {}, context = "active") {
+    const item = { ...itemData };
+    const ownershipConfig = getOwnershipConfig(item);
+    const roleStatus = String(item.roleStatus || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[\s_]+/g, "-")
+        .replace(/--+/g, "-");
+
+    const staleArchiveRoleStatuses = new Set([
+        "sold",
+        "retired",
+        "traded-in",
+        "donated",
+        "recycled",
+        "returned",
+        "lost",
+        "archived",
+        "replaced-sold",
+        "replaced-archived"
+    ]);
+
+    const isPlannedContext = context === "roadmap" || context === "wishlist" || ownershipConfig.mode === "roadmap" || ownershipConfig.mode === "wishlist";
+
+    if (isPlannedContext) {
+        if (staleArchiveRoleStatuses.has(roleStatus)) {
+            item.roleStatus = "future-primary";
+            item.previousRole = "";
+            item.currentRole = item.futureUpgradeTarget || item.primaryUse || "Planned future role";
+            item.replacedByDevice = "";
+            item.successorDevice = "";
+            item.predecessorDevice = "";
+            item.roleChangedDate = "";
+            item.autoRoleManaged = false;
+        }
+
+        if (hasTechLifecycleValue(item.predecessorDevice) && !hasTechLifecycleValue(item.replacesDevice)) {
+            item.replacesDevice = item.predecessorDevice;
+            item.predecessorDevice = "";
+        }
+    }
+
+    const plannedReplacement = getPlannedReplacementForDevice(item.name);
+    const successorName = item.successorDevice || item.replacedByDevice || "";
+
+    if (
+        ownershipConfig.mode === "active" &&
+        plannedReplacement &&
+        (roleStatus === "secondary" || roleStatus === "replaced-owned") &&
+        (!successorName || isPlannedReplacementSuccessor(successorName) || normalizeTechLookupName(successorName) === normalizeTechLookupName(plannedReplacement.name))
+    ) {
+        item.roleStatus = "";
+        item.previousRole = "";
+        item.currentRole = "";
+        item.replacedByDevice = "";
+        item.successorDevice = "";
+        item.predecessorDevice = "";
+        item.roleChangedDate = "";
+        item.autoRoleManaged = false;
+    }
+
+    return item;
 }
 
 const ownershipStateConfig = {
@@ -3553,24 +3664,12 @@ function hasTechLifecycleValue(value) {
 function formatRoleStatusLabel(roleStatus) {
     if (!hasTechLifecycleValue(roleStatus)) return "";
 
-    const normalized = String(roleStatus)
-        .toLowerCase()
-        .trim()
-        .replace(/[\s_]+/g, "-")
-        .replace(/--+/g, "-");
-
     const labels = {
         primary: "Primary Device",
         secondary: "Secondary Device",
         backup: "Backup Device",
         "future-primary": "Future Primary Device",
-
-        // Legacy value kept for old Firestore data.
-        // Admin cleanup now writes "secondary", but old documents may still have this.
         "replaced-owned": "Secondary Device",
-        "replaced-active": "Secondary Device",
-        "replaced-kept": "Secondary Device",
-
         "replaced-sold": "Replaced and Sold",
         "replaced-archived": "Replaced and Archived",
         retired: "Retired",
@@ -3583,6 +3682,7 @@ function formatRoleStatusLabel(roleStatus) {
         archived: "Archived"
     };
 
+    const normalized = String(roleStatus).toLowerCase().trim();
     return labels[normalized] || normalized
         .split("-")
         .filter(Boolean)
@@ -3595,30 +3695,8 @@ function formatTechLifecycleDate(value) {
     return formatTechDate(value) || String(value);
 }
 
-function shouldShowTechAutomationBadge(item = {}) {
-    /*
-        Public display should not show stale admin automation badges by default.
-        The admin panel may leave autoRoleManaged=true on old test documents until cleanup runs.
-        To intentionally show the public badge again, set showAutoRoleBadge=true in Firestore.
-    */
-    const explicitlyShowBadge =
-        item.showAutoRoleBadge === true ||
-        String(item.showAutoRoleBadge || "").toLowerCase() === "true";
-
-    if (!explicitlyShowBadge) return false;
-
-    return item.autoRoleManaged === true && (
-        hasTechLifecycleValue(item.roleStatus) ||
-        hasTechLifecycleValue(item.currentRole) ||
-        hasTechLifecycleValue(item.previousRole) ||
-        hasTechLifecycleValue(item.replacedByDevice) ||
-        hasTechLifecycleValue(item.successorDevice) ||
-        hasTechLifecycleValue(item.predecessorDevice)
-    );
-}
-
 function renderTechAutomationBadge(item) {
-    return shouldShowTechAutomationBadge(item)
+    return item.autoRoleManaged
         ? `<span class="support-badge green tech-auto-role-badge"><i class="fas fa-wand-magic-sparkles"></i> Auto-managed</span>`
         : "";
 }
@@ -3693,9 +3771,11 @@ function renderTechDeviceLineageBlock(item) {
 }
 
 function renderTechLifecycleSections(itemData, options = {}) {
-    const item = normalizeTechItem(itemData);
+    const initialItem = normalizeTechItem(itemData);
+    const initialOwnershipConfig = getOwnershipConfig(initialItem);
+    const context = options.context || initialOwnershipConfig.mode;
+    const item = sanitizeTechLifecycleForPublicDisplay(initialItem, context);
     const ownershipConfig = getOwnershipConfig(item);
-    const context = options.context || ownershipConfig.mode;
 
     const name = item.name || "Device";
     const predecessor = item.predecessorDevice || "";
@@ -3968,7 +4048,9 @@ function renderPlannedTechItemHomepage(itemData) {
    RENDER FUNCTION
 ------------------------------------------------------------ */
 function renderTechItemHomepage(itemData) {
-    const item = normalizeTechItem(itemData);
+    const initialItem = normalizeTechItem(itemData);
+    const initialConfig = getOwnershipConfig(initialItem);
+    const item = sanitizeTechLifecycleForPublicDisplay(initialItem, initialConfig.mode);
 
     if (isPlannedTechItem(item)) {
         return renderPlannedTechItemHomepage(item);
@@ -4430,11 +4512,20 @@ async function loadAndDisplayTechItems() {
         if (querySnapshot.empty) {
             console.log("No tech items found in Firestore.");
             allItemsHtml = "<p>No tech items to display currently.</p>";
+            buildPlannedTechReplacementContext([]);
         } else {
-            console.log(`Found ${querySnapshot.size} tech items.`);
+            const techItems = [];
 
             querySnapshot.forEach((doc) => {
-                allItemsHtml += renderTechItemHomepage(doc.data());
+                techItems.push({ id: doc.id, ...doc.data() });
+            });
+
+            buildPlannedTechReplacementContext(techItems);
+
+            console.log(`Found ${techItems.length} tech items.`);
+
+            techItems.forEach((item) => {
+                allItemsHtml += renderTechItemHomepage(item);
             });
         }
 
