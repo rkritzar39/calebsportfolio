@@ -1257,6 +1257,76 @@ function getChipInfo(item) {
     };
 }
 
+function calculateFutureAITarget(item, futureTarget) {function deviceType = detectDeviceType(item);
+    const target = String(futureTarget.futureUpgradeTarget || "").toLowerCase();
+
+    if (deviceType === "accessory") {
+        return {
+            level: "Not Applicable",
+            color: "gray",
+            reason: "Accessories do not need direct AI feature support."
+        };
+    }
+
+    if (deviceType === "watch") {
+        return {
+            level: "Relay",
+            color: "yellow",
+            reason: "Future watch AI support should depend on a compatible paired iPhone."
+        };
+    }
+
+    if (deviceType === "phone") {
+        if (
+            target.includes("pro") ||
+            target.includes("pro max") ||
+            target.includes("air")
+        ) {
+            return {
+                level: "Maximum",
+                color: "green",
+                reason: "Future target is a Pro/Air-class iPhone, so the goal should be maximum AI headroom."
+            };
+        }
+
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future target should aim for stronger AI headroom than the current device."
+        };
+    }
+
+    if (deviceType === "tablet") {
+        if (target.includes("pro")) {
+            return {
+                level: "Maximum",
+                color: "green",
+                reason: "Future iPad target should prioritize Pro-class chip and memory headroom."
+            };
+        }
+
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future iPad target should prioritize newer Apple silicon and enough memory."
+        };
+    }
+
+    if (deviceType === "computer") {
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future computer target should prioritize newer Apple silicon with at least 16GB memory."
+        };
+    }
+
+    return {
+        level: "Advanced",
+        color: "green",
+        reason: "Future target should prioritize stronger AI feature support."
+    };
+}
+
 // ======================
 // DEVICE SUPPORT
 // ======================
@@ -2390,6 +2460,7 @@ function renderTechItemHomepage(itemData) {
     const aiSupport = calculateAIFeatureSupport(itemData);
     const futureProof = calculateFutureProofScore(itemData);
     const futureTarget = getRecommendedFutureUpgradeTarget(itemData);
+    const futureAITarget = calculateFutureAITarget(itemData, futureTarget);
 
     let osUpdateHtml = "";
 
@@ -2571,13 +2642,21 @@ function renderTechItemHomepage(itemData) {
     </div>`;
 
     const futureProofHtml = `
-    <div class="tech-detail smart-upgrade-row">
-        <i class="fas fa-brain"></i>
-        <span class="tech-label">AI Support:</span>
-        <span class="support-badge ${aiSupport.aiSupportColor}">
-            ${escapeHTML(aiSupport.aiSupportLevel)}
-        </span>
-    </div>
+    <div class="tech-detail smart-upgrade-row"><div class="tech-detailSupportLevel)}
+    </span>
+        </div>
+        
+        <div class="tech-detail smart-upgrade-row">
+            <i class="fas fa-wand-magic-sparkles"></i>
+            <span class="tech-label">Future AI Target:</span>
+            <span class="support-badge ${futureAITarget.color}">
+                ${escapeHTML(futureAITarget.level)}
+            </span>
+        </div>
+            <i class="fas fa-brain"></i>
+            <span class="tech-label">Current AI Support:</span>
+            <span class="support-badge ${aiSupport.aiSupportColor}">
+
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-hourglass-half"></i>
