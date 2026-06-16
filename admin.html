@@ -1213,6 +1213,7 @@
   </section>
 </div>
   
+
 <section class="admin-section" id="tech-management" aria-labelledby="tech-heading">
     <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
 
@@ -1235,45 +1236,68 @@
         </div>
 
         <!-- ================================================== -->
-        <!-- PLANNED / FUTURE DEVICE FIELDS (ADD)               -->
+        <!-- OWNERSHIP STATE                                   -->
         <!-- ================================================== -->
         <div class="form-group">
             <label for="tech-ownership-state">Ownership State:</label>
             <select id="tech-ownership-state" name="ownershipState">
-                <option value="owned">Owned</option>
-                <option value="planned">Planned</option>
-                <option value="wishlist">Wishlist</option>
-                <option value="future-upgrade">Future Upgrade</option>
-                <option value="coming-soon">Coming Soon</option>
-                <option value="retired">Retired</option>
-                <option value="sold">Sold</option>
+                <optgroup label="Active Devices">
+                    <option value="owned">Owned</option>
+                    <option value="borrowed">Borrowed</option>
+                    <option value="loaned-out">Loaned Out</option>
+                    <option value="school-issued">School-Issued</option>
+                    <option value="work-issued">Work-Issued</option>
+                    <option value="in-repair">In Repair</option>
+                </optgroup>
+
+                <optgroup label="Roadmap Devices">
+                    <option value="planned">Planned</option>
+                    <option value="coming-soon">Coming Soon</option>
+                    <option value="future-upgrade">Future Upgrade</option>
+                    <option value="preordered">Preordered</option>
+                    <option value="ordered">Ordered</option>
+                    <option value="reserved">Reserved</option>
+                </optgroup>
+
+                <optgroup label="Wishlist / Research">
+                    <option value="wishlist">Wishlist</option>
+                    <option value="considering">Considering</option>
+                    <option value="researching">Researching</option>
+                </optgroup>
+
+                <optgroup label="Archive">
+                    <option value="retired">Retired</option>
+                    <option value="sold">Sold</option>
+                    <option value="traded-in">Traded In</option>
+                    <option value="donated">Donated</option>
+                    <option value="recycled">Recycled</option>
+                    <option value="returned">Returned</option>
+                    <option value="lost">Lost</option>
+                </optgroup>
             </select>
+            <small>
+                Active and archive devices use full smart cards. Roadmap devices use roadmap cards. Wishlist/research devices use compact cards.
+            </small>
         </div>
 
+        <!-- ================================================== -->
+        <!-- ROADMAP / FUTURE DEVICE FIELDS                     -->
+        <!-- Shows for Planned, Coming Soon, Future Upgrade,     -->
+        <!-- Preordered, Ordered, Reserved                       -->
+        <!-- ================================================== -->
         <div class="planned-tech-fields">
             <div class="form-group">
-                <label for="tech-planned-status">Planned Status:</label>
-                <select id="tech-planned-status" name="plannedStatus">
-                    <option value="">Select status</option>
-                    <option value="Planned">Planned</option>
-                    <option value="Wishlist">Wishlist</option>
-                    <option value="Future Upgrade">Future Upgrade</option>
-                    <option value="Coming Soon">Coming Soon</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="tech-planned-window">Planned Window:</label>
+                <label for="tech-planned-window">Planned / Expected Window:</label>
                 <input type="text" id="tech-planned-window" name="plannedWindow" placeholder="e.g., September 2026">
             </div>
 
             <div class="form-group">
-                <label for="tech-planned-reason">Planned Reason:</label>
+                <label for="tech-planned-reason">Reason:</label>
                 <input type="text" id="tech-planned-reason" name="plannedReason" placeholder="e.g., School">
             </div>
 
             <div class="form-group">
-                <label for="tech-future-upgrade-target">Future Upgrade Target:</label>
+                <label for="tech-future-upgrade-target">Future Role:</label>
                 <input type="text" id="tech-future-upgrade-target" name="futureUpgradeTarget" placeholder="e.g., Main school laptop">
             </div>
 
@@ -1328,7 +1352,11 @@
             </div>
         </div>
 
-        <!-- OWNED-ONLY FIELDS -->
+        <!-- ================================================== -->
+        <!-- OWNED / ARCHIVE DEVICE FIELDS                      -->
+        <!-- Shows for Owned, Borrowed, Issued, Repair,          -->
+        <!-- Retired, Sold, Traded In, Donated, etc.             -->
+        <!-- ================================================== -->
         <div class="owned-only-fields">
             <div class="form-group">
                 <label for="tech-condition">Condition:</label>
@@ -1364,7 +1392,7 @@
 
             <div class="form-group">
                 <label for="tech-os-version">OS Version:</label>
-                <input type="text" id="tech-os-version" name="osVersion" placeholder="e.g., iOS 18.5 (22F5053f)">
+                <input type="text" id="tech-os-version" name="osVersion" placeholder="e.g., iOS 18.5">
             </div>
 
             <div class="form-group">
@@ -1378,7 +1406,9 @@
             </div>
         </div>
 
-        <!-- SHARED FIELDS -->
+        <!-- ================================================== -->
+        <!-- SHARED FIELDS                                      -->
+        <!-- ================================================== -->
         <div class="form-group">
             <label for="tech-device-type">Device Type:</label>
             <select id="tech-device-type" name="deviceType">
@@ -1398,8 +1428,8 @@
 
         <div class="form-group">
             <label for="tech-icon-class">Font Awesome Icon Class:</label>
-            <input type="text" id="tech-icon-class" name="iconClass" placeholder="e.g., fas fa-mobile-alt">
-            <small>Find icons at Font Awesome (e.g., "fas fa-mobile-alt", "fas fa-desktop")</small>
+            <input type="text" id="tech-icon-class" name="iconClass" placeholder="e.g., fas fa-laptop">
+            <small>Examples: "fas fa-laptop", "fas fa-mobile-alt", "fas fa-desktop", "fas fa-tablet-screen-button"</small>
         </div>
 
         <div class="form-group">
@@ -1513,7 +1543,6 @@
         <p>Loading tech items...</p>
     </div>
 </section>
-
 
              <section class="admin-section" id="disabilities-management" aria-labelledby="disabilities-heading">
                 <h3 id="disabilities-heading">Manage Disabilities List</h3>
@@ -1732,6 +1761,7 @@
 </div>
         
 
+
 <!-- ================================================== -->
 <!-- EDIT TECH ITEM MODAL                               -->
 <!-- ================================================== -->
@@ -1757,45 +1787,63 @@
             </div>
 
             <!-- ================================================== -->
-            <!-- PLANNED / FUTURE DEVICE FIELDS (EDIT)              -->
+            <!-- OWNERSHIP STATE (EDIT)                            -->
             <!-- ================================================== -->
             <div class="form-group">
                 <label for="edit-tech-ownership-state">Ownership State:</label>
                 <select id="edit-tech-ownership-state" name="ownershipState">
-                    <option value="owned">Owned</option>
-                    <option value="planned">Planned</option>
-                    <option value="wishlist">Wishlist</option>
-                    <option value="future-upgrade">Future Upgrade</option>
-                    <option value="coming-soon">Coming Soon</option>
-                    <option value="retired">Retired</option>
-                    <option value="sold">Sold</option>
+                    <optgroup label="Active Devices">
+                        <option value="owned">Owned</option>
+                        <option value="borrowed">Borrowed</option>
+                        <option value="loaned-out">Loaned Out</option>
+                        <option value="school-issued">School-Issued</option>
+                        <option value="work-issued">Work-Issued</option>
+                        <option value="in-repair">In Repair</option>
+                    </optgroup>
+
+                    <optgroup label="Roadmap Devices">
+                        <option value="planned">Planned</option>
+                        <option value="coming-soon">Coming Soon</option>
+                        <option value="future-upgrade">Future Upgrade</option>
+                        <option value="preordered">Preordered</option>
+                        <option value="ordered">Ordered</option>
+                        <option value="reserved">Reserved</option>
+                    </optgroup>
+
+                    <optgroup label="Wishlist / Research">
+                        <option value="wishlist">Wishlist</option>
+                        <option value="considering">Considering</option>
+                        <option value="researching">Researching</option>
+                    </optgroup>
+
+                    <optgroup label="Archive">
+                        <option value="retired">Retired</option>
+                        <option value="sold">Sold</option>
+                        <option value="traded-in">Traded In</option>
+                        <option value="donated">Donated</option>
+                        <option value="recycled">Recycled</option>
+                        <option value="returned">Returned</option>
+                        <option value="lost">Lost</option>
+                    </optgroup>
                 </select>
             </div>
 
+            <!-- ================================================== -->
+            <!-- ROADMAP / FUTURE DEVICE FIELDS (EDIT)              -->
+            <!-- ================================================== -->
             <div class="planned-tech-fields">
                 <div class="form-group">
-                    <label for="edit-tech-planned-status">Planned Status:</label>
-                    <select id="edit-tech-planned-status" name="plannedStatus">
-                        <option value="">Select status</option>
-                        <option value="Planned">Planned</option>
-                        <option value="Wishlist">Wishlist</option>
-                        <option value="Future Upgrade">Future Upgrade</option>
-                        <option value="Coming Soon">Coming Soon</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-planned-window">Planned Window:</label>
+                    <label for="edit-tech-planned-window">Planned / Expected Window:</label>
                     <input type="text" id="edit-tech-planned-window" name="plannedWindow" placeholder="e.g., September 2026">
                 </div>
 
                 <div class="form-group">
-                    <label for="edit-tech-planned-reason">Planned Reason:</label>
+                    <label for="edit-tech-planned-reason">Reason:</label>
                     <input type="text" id="edit-tech-planned-reason" name="plannedReason" placeholder="e.g., School">
                 </div>
 
                 <div class="form-group">
-                    <label for="edit-tech-future-upgrade-target">Future Upgrade Target:</label>
+                    <label for="edit-tech-future-upgrade-target">Future Role:</label>
                     <input type="text" id="edit-tech-future-upgrade-target" name="futureUpgradeTarget" placeholder="e.g., Main school laptop">
                 </div>
 
@@ -1850,7 +1898,9 @@
                 </div>
             </div>
 
-            <!-- OWNED-ONLY FIELDS -->
+            <!-- ================================================== -->
+            <!-- OWNED / ARCHIVE DEVICE FIELDS (EDIT)               -->
+            <!-- ================================================== -->
             <div class="owned-only-fields">
                 <div class="form-group">
                     <label for="edit-tech-condition">Condition:</label>
@@ -1900,7 +1950,9 @@
                 </div>
             </div>
 
-            <!-- SHARED FIELDS -->
+            <!-- ================================================== -->
+            <!-- SHARED FIELDS (EDIT)                               -->
+            <!-- ================================================== -->
             <div class="form-group">
                 <label for="edit-tech-device-type">Device Type:</label>
                 <select id="edit-tech-device-type" name="deviceType">
