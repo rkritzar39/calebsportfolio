@@ -1656,18 +1656,6 @@ function extractVersionString(osVersion, osType = null) {
     return genericMatch ? genericMatch[1] : null;
 }
 
-function isPlannedTechItem(item) {
-    const state = String(item.ownershipState || "").toLowerCase().trim();
-
-    return (
-        state === "planned" ||
-        state === "wishlist" ||
-        state === "coming-soon" ||
-        state === "future-upgrade"
-    );
-}
-
-
 function normalizeVersion(version) {
     return String(version)
         .split(".")
@@ -3239,6 +3227,17 @@ function calculateBackupPriority(item, osStatus, support) {
     }
 
     return { label, color, reason };
+}
+
+function isPlannedTechItem(item) {
+    const state = String(item.ownershipState || "").toLowerCase().trim();
+
+    return (
+        state === "planned" ||
+        state === "wishlist" ||
+        state === "coming-soon" ||
+        state === "future-upgrade"
+    );
 }
 
 function renderPlannedTechItemHomepage(itemData) {
