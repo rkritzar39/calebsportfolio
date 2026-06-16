@@ -932,14 +932,100 @@ const supportLifespanDefaults = {
    LATEST OS CONFIG
    Fallback values are used if JSON fetch fails.
 ------------------------------------------------------------ */
+
 let latestOSVersions = {
+    // Apple
     ios: "26.5.1",
     ipados: "26.5",
     macos: "26.5.1",
     watchos: "26.5",
     tvos: "26.5",
-    visionos: "26.5"
+    visionos: "26.5",
+
+    // Android / Google
+    android: "16",
+    pixelui: "16",
+
+    // Samsung
+    oneui: "8.5",
+
+    // Other Android skins
+    oxygenos: "16",
+    coloros: "16",
+    realmeui: "7",
+    miui: "14",
+    hyperos: "3",
+    magicos: "10",
+    emui: "15",
+    harmonyos: "5",
+    funtouchos: "16",
+    originos: "6",
+    nothingos: "4",
+    motorolahello: "16",
+    zenui: "12",
+    rogui: "12",
+    xos: "15",
+    hios: "15",
+    flymeos: "11",
+
+    // Windows
+    windows: "11",
+    windowsphone: "10",
+    windowsserver: "2025",
+
+    // Linux / Desktop
+    linux: "rolling",
+    ubuntu: "26.04",
+    debian: "13",
+    fedora: "42",
+    arch: "rolling",
+    manjaro: "rolling",
+    linuxmint: "22",
+    popos: "24.04",
+    elementaryos: "8",
+    zorinos: "17",
+    opensuse: "15.6",
+    kali: "2026.1",
+    tails: "6",
+    redhat: "10",
+    rocky: "10",
+    almalinux: "10",
+
+    // Chrome / Google desktop
+    chromeos: "latest",
+    chromiumos: "latest",
+
+    // BSD / Unix-like
+    freebsd: "14",
+    openbsd: "7",
+    netbsd: "10",
+
+    // Gaming
+    steamOS: "3",
+    playstation: "5",
+    xbox: "series",
+    nintendoswitch: "18",
+
+    // TV / Smart home
+    fireos: "8",
+    rokuos: "13",
+    webos: "24",
+    tizen: "8",
+    androidtv: "16",
+    googletv: "16",
+
+    // Watches / wearables
+    wearos: "6",
+    garminos: "latest",
+    fitbitos: "latest",
+    zeppos: "4",
+
+    // Other
+    kindleos: "latest",
+    metaquest: "latest",
+    unknown: "Unknown"
 };
+
 
 const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
 
