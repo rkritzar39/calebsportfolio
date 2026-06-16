@@ -4807,3 +4807,15 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
 .owned-only-fields.hidden {
     display: none;
 }
+
+.planned-tech-fields {
+    display: none;
+}
+
+.planned-tech-fields.active {
+    display: block;
+}
+
+.owned-only-fields.hidden {
+    display: none;
+}
