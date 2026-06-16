@@ -3385,9 +3385,8 @@ body.dark-mode .bubble {
   filter: brightness(1.1);
 }
 
-/* ======================================================= */
-/* TECH INFO REDESIGN — ONYX LIQUID GLASS SYSTEM           */
-/* Designed for your current :root / light-e / dark-mode   */
+/* ======================================================= *//* =================================================QUID GLASS      */
+/* Works with :root / body.light-e / body.dark-mode        */
 /* ======================================================= */
 
 /* ======================== */
@@ -3395,6 +3394,7 @@ body.dark-mode .bubble {
 /* ======================== */
 
 :root {
+  /* Status colors */
   --tech-green: #30d158;
   --tech-yellow: #ffd60a;
   --tech-orange: #ff9f0a;
@@ -3403,95 +3403,110 @@ body.dark-mode .bubble {
   --tech-blue: #5ac8fa;
   --tech-gray: #8e8e93;
 
-  --tech-green-bg: rgba(48, 209, 88, 0.14);
-  --tech-yellow-bg: rgba(255, 214, 10, 0.14);
-  --tech-orange-bg: rgba(255, 159, 10, 0.14);
-  --tech-red-bg: rgba(255, 69, 58, 0.14);
-  --tech-purple-bg: rgba(191, 90, 242, 0.14);
-  --tech-blue-bg: rgba(90, 200, 250, 0.14);
-  --tech-gray-bg: rgba(142, 142, 147, 0.14);
+  --tech-green-bg: color-mix(in srgb, var(--tech-green) 16%, transparent);
+  --tech-yellow-bg: color-mix(in srgb, var(--tech-yellow) 16%, transparent);
+  --tech-orange-bg: color-mix(in srgb, var(--tech-orange) 16%, transparent);
+  --tech-red-bg: color-mix(in srgb, var(--tech-red) 16%, transparent);
+  --tech-purple-bg: color-mix(in srgb, var(--tech-purple) 16%, transparent);
+  --tech-blue-bg: color-mix(in srgb, var(--tech-blue) 16%, transparent);
+  --tech-gray-bg: color-mix(in srgb, var(--tech-gray) 16%, transparent);
 
-  --tech-green-border: rgba(48, 209, 88, 0.34);
-  --tech-yellow-border: rgba(255, 214, 10, 0.34);
-  --tech-orange-border: rgba(255, 159, 10, 0.34);
-  --tech-red-border: rgba(255, 69, 58, 0.34);
-  --tech-purple-border: rgba(191, 90, 242, 0.34);
-  --tech-blue-border: rgba(90, 200, 250, 0.34);
-  --tech-gray-border: rgba(142, 142, 147, 0.28);
+  --tech-green-border: color-mix(in srgb, var(--tech-green) 36%, transparent);
+  --tech-yellow-border: color-mix(in srgb, var(--tech-yellow) 36%, transparent);
+  --tech-orange-border: color-mix(in srgb, var(--tech-orange) 36%, transparent);
+  --tech-red-border: color-mix(in srgb, var(--tech-red) 36%, transparent);
+  --tech-purple-border: color-mix(in srgb, var(--tech-purple) 36%, transparent);
+  --tech-blue-border: color-mix(in srgb, var(--tech-blue) 36%, transparent);
+  --tech-gray-border: color-mix(in srgb, var(--tech-gray) 32%, transparent);
 
+  /* Theme-connected tokens */
+  --tech-text: var(--text-color);
+  --tech-muted: var(--secondary-text);
+  --tech-surface: var(--content-bg);
+  --tech-border-live: var(--border-color);
+  --tech-accent-live: var(--accent-color);
+  --tech-shadow-live: var(--shadow-color);
+  --tech-glow-live: var(--glow-color);
+
+  /* Tech backgrounds derived from main theme */
   --tech-panel-bg:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, white 8%, transparent),
-      color-mix(in srgb, black 8%, transparent)
-    ),
-    color-mix(in srgb, var(--content-bg) 92%, transparent);
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
 
   --tech-card-bg:
     radial-gradient(
       circle at 18% 0%,
-      color-mix(in srgb, white 15%, transparent),
-      transparent 34%
+      color-mix(in srgb, white 14%, transparent),
+      transparent 38%
     ),
     linear-gradient(
       145deg,
-      color-mix(in srgb, white 9%, transparent),
-      color-mix(in srgb, black 10%, transparent)
+      color-mix(in srgb, white 8%, transparent),
+      color-mix(in srgb, black 8%, transparent)
     ),
     color-mix(in srgb, var(--content-bg) 90%, transparent);
 
   --tech-inner-bg:
     linear-gradient(
       135deg,
-      color-mix(in srgb, white 8%, transparent),
-      color-mix(in srgb, black 6%, transparent)
+      color-mix(in srgb, white 7%, transparent),
+      color-mix(in srgb, black 5%, transparent)
     ),
-    color-mix(in srgb, var(--content-bg) 88%, transparent);
-
-  --tech-text: var(--text-color);
-  --tech-muted: var(--secondary-text);
-  --tech-border: color-mix(in srgb, var(--border-color) 74%, white 6%);
-  --tech-shadow: color-mix(in srgb, var(--shadow-color) 58%, transparent);
-  --tech-glow: color-mix(in srgb, var(--accent-color) 18%, transparent);
+    color-mix(in srgb, var(--content-bg) 90%, transparent);
 }
 
+/* ======================== */
+/* LIGHT MODE TECH TOKENS   */
+/* ======================== */
+
 body.light-e {
+  --tech-text: var(--text-color);
+  --tech-muted: var(--secondary-text);
+  --tech-surface: var(--content-bg);
+  --tech-border-live: var(--border-color);
+  --tech-accent-live: var(--accent-color);
+  --tech-shadow-live: var(--shadow-color);
+  --tech-glow-live: var(--glow-color);
+
   --tech-panel-bg:
-    radial-gradient(
-      circle at 30% 0%,
-      rgba(255, 255, 255, 0.72),
-      transparent 46%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.78),
-      rgba(255, 255, 255, 0.42)
-    );
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 90%, white 10%);
 
   --tech-card-bg:
     radial-gradient(
       circle at 20% 0%,
-      rgba(255, 255, 255, 0.9),
-      transparent 38%
+      color-mix(in srgb, white 78%, transparent),
+      transparent 42%
     ),
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.78),
-      rgba(255, 255, 255, 0.45)
+      color-mix(in srgb, white 72%, transparent),
+      color-mix(in srgb, var(--content-bg) 75%, transparent)
     );
 
   --tech-inner-bg:
     linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.72),
-      rgba(255, 255, 255, 0.36)
+      color-mix(in srgb, white 66%, transparent),
+      color-mix(in srgb, var(--content-bg) 76%, transparent)
     );
+}
 
-  --tech-text: #111827;
-  --tech-muted: #4b5563;
-  --tech-border: rgba(255, 255, 255, 0.72);
-  --tech-shadow: rgba(15, 23, 42, 0.12);
-  --tech-glow: color-mix(in srgb, var(--accent-color) 14%, transparent);
+/* ======================== */
+/* DARK MODE TECH TOKENS    */
+/* ======================== */
+
+html.dark-mode body,
+body.dark-mode {
+  --tech-text: var(--text-color);
+  --tech-muted: var(--secondary-text);
+  --tech-surface: var(--content-bg);
+  --tech-border-live: var(--border-color);
+  --tech-accent-live: var(--accent-color);
+  --tech-shadow-live: var(--shadow-color);
+  --tech-glow-live: var(--glow-color);
 }
 
 /* ======================================================= */
@@ -3507,7 +3522,7 @@ body.light-e {
   margin-bottom: 32px;
 
   border-radius: var(--radius-xl);
-  border: 1px solid var(--tech-border);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 82%, white 8%);
 
   background: var(--tech-panel-bg);
 
@@ -3515,9 +3530,8 @@ body.light-e {
   -webkit-backdrop-filter: var(--backdrop-blur);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.26),
-    0 24px 60px var(--tech-shadow);
+    var(--bubble-highlight),
+    var(--bubble-shadow);
 
   color: var(--tech-text);
 }
@@ -3529,24 +3543,19 @@ body.light-e {
   z-index: -1;
 
   background:
+    var(--liquid-reflection),
     radial-gradient(
-      circle at 12% 0%,
-      color-mix(in srgb, var(--accent-color) 26%, transparent),
-      transparent 34%
+      circle at 8% 0%,
+      color-mix(in srgb, var(--tech-accent-live) 26%, transparent),
+      transparent 35%
     ),
     radial-gradient(
-      circle at 92% 8%,
-      color-mix(in srgb, #bf5af2 20%, transparent),
+      circle at 92% 10%,
+      color-mix(in srgb, var(--tech-purple) 18%, transparent),
       transparent 34%
-    ),
-    linear-gradient(
-      120deg,
-      transparent 22%,
-      rgba(255, 255, 255, 0.08),
-      transparent 62%
     );
 
-  opacity: 0.9;
+  opacity: 0.55;
   pointer-events: none;
 }
 
@@ -3554,12 +3563,12 @@ body.light-e {
   content: "";
   position: absolute;
   inset: auto 0 0 0;
-  height: 34%;
+  height: 38%;
   z-index: -1;
 
   background: radial-gradient(
     circle at 50% 100%,
-    rgba(0, 0, 0, 0.22),
+    color-mix(in srgb, black 20%, transparent),
     transparent 72%
   );
 
@@ -3569,20 +3578,26 @@ body.light-e {
 body.light-e .tech-section::after {
   background: radial-gradient(
     circle at 50% 100%,
-    rgba(15, 23, 42, 0.10),
+    rgba(15, 23, 42, 0.11),
     transparent 72%
   );
 }
 
-/* Optional heading polish if your section title is inside tech-section */
+.tech-section h1,
 .tech-section h2,
+.tech-section h3,
 .tech-section .section-title {
   position: relative;
   z-index: 1;
 
-  margin-top: 0;
-  color: var(--tech-text);
+  color: var(--tech-text) !important;
   letter-spacing: -0.04em;
+}
+
+.tech-section h1,
+.tech-section h2,
+.tech-section .section-title {
+  margin-top: 0;
 }
 
 /* ======================================================= */
@@ -3598,7 +3613,7 @@ body.light-e .tech-section::after {
   margin-bottom: 18px;
 
   border-radius: 24px;
-  border: 1px solid color-mix(in srgb, var(--tech-border) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 84%, white 6%);
 
   background: var(--tech-card-bg);
 
@@ -3606,16 +3621,16 @@ body.light-e .tech-section::after {
   -webkit-backdrop-filter: blur(22px) saturate(165%);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.24),
-    0 16px 38px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+    inset 0 1px 0 color-mix(in srgb, white 12%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, black 22%, transparent),
+    0 16px 38px color-mix(in srgb, var(--tech-shadow-live) 56%, transparent);
 
   color: var(--tech-text);
 
   transition:
-    transform 0.22s ease,
-    border-color 0.22s ease,
-    box-shadow 0.22s ease;
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .tech-item::before {
@@ -3627,13 +3642,13 @@ body.light-e .tech-section::after {
   background:
     linear-gradient(
       120deg,
-      rgba(255, 255, 255, 0.14),
+      color-mix(in srgb, white 14%, transparent),
       transparent 32%,
       transparent 68%,
-      rgba(255, 255, 255, 0.05)
+      color-mix(in srgb, white 5%, transparent)
     );
 
-  opacity: 0.58;
+  opacity: 0.55;
   pointer-events: none;
 }
 
@@ -3646,7 +3661,7 @@ body.light-e .tech-section::after {
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in srgb, var(--accent-color) 44%, transparent),
+    color-mix(in srgb, var(--tech-accent-live) 44%, transparent),
     transparent
   );
 
@@ -3656,25 +3671,27 @@ body.light-e .tech-section::after {
 
 .tech-item:hover {
   transform: translateY(-3px);
-  border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+
+  border-color: color-mix(in srgb, var(--tech-accent-live) 42%, var(--tech-border-live));
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 22px 46px color-mix(in srgb, var(--shadow-color) 58%, transparent),
-    0 0 20px var(--tech-glow);
+    inset 0 1px 0 color-mix(in srgb, white 16%, transparent),
+    0 22px 48px color-mix(in srgb, var(--tech-shadow-live) 66%, transparent),
+    0 0 22px color-mix(in srgb, var(--tech-accent-live) 18%, transparent);
 }
 
 /* Planned / roadmap cards */
 .planned-tech-item {
-  border-color: color-mix(in srgb, var(--tech-purple) 32%, var(--border-color));
+  border-color: color-mix(in srgb, var(--tech-purple) 34%, var(--tech-border-live));
 }
 
 .planned-tech-item:hover {
-  border-color: color-mix(in srgb, var(--tech-purple) 54%, var(--border-color));
+  border-color: color-mix(in srgb, var(--tech-purple) 56%, var(--tech-border-live));
+
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 22px 46px color-mix(in srgb, var(--shadow-color) 58%, transparent),
-    0 0 20px rgba(191, 90, 242, 0.20);
+    inset 0 1px 0 color-mix(in srgb, white 16%, transparent),
+    0 22px 48px color-mix(in srgb, var(--tech-shadow-live) 66%, transparent),
+    0 0 22px color-mix(in srgb, var(--tech-purple) 22%, transparent);
 }
 
 /* ======================================================= */
@@ -3691,7 +3708,7 @@ body.light-e .tech-section::after {
 
   margin: 0 0 16px;
 
-  color: var(--tech-text);
+  color: var(--tech-text) !important;
   font-size: clamp(1.05rem, 2vw, 1.28rem);
   font-weight: 850;
   letter-spacing: -0.035em;
@@ -3708,17 +3725,17 @@ body.light-e .tech-section::after {
 
   border-radius: 15px;
 
-  color: #fff;
+  color: #ffffff;
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--accent-color) 88%, white 12%),
-      color-mix(in srgb, var(--accent-color) 78%, black 18%)
+      color-mix(in srgb, var(--tech-accent-live) 86%, white 14%),
+      color-mix(in srgb, var(--tech-accent-live) 76%, black 18%)
     );
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 8px 18px color-mix(in srgb, var(--accent-color) 22%, transparent);
+    inset 0 1px 0 color-mix(in srgb, white 26%, transparent),
+    0 8px 18px color-mix(in srgb, var(--tech-accent-live) 24%, transparent);
 
   flex-shrink: 0;
 }
@@ -3749,7 +3766,7 @@ body.light-e .tech-section::after {
   align-items: center;
   justify-content: center;
 
-  color: var(--accent-color);
+  color: var(--tech-accent-live);
   font-size: 0.92rem;
 
   flex-shrink: 0;
@@ -3768,18 +3785,36 @@ body.light-e .tech-section::after {
 }
 
 .tech-value {
+  color: var(--tech-text) !important;
   font-weight: 720;
   letter-spacing: -0.015em;
 }
 
-body:not(.light-e) .tech-detail,
-body:not(.light-e) .tech-value {
-  color: #f5f7fb !important;
+/* Protect tech text from global .section span/p/li rules */
+.tech-section,
+.tech-section .tech-item,
+.tech-section .tech-detail,
+.tech-section .tech-value,
+.tech-section .tech-lifecycle-note,
+.tech-section .tech-lifecycle-node,
+.tech-section .tech-upgrade-explanation,
+.tech-section .tech-upgrade-explanation .upgrade-explanation-text,
+.tech-section .tech-summary,
+.tech-section .tech-summary .upgrade-explanation-text,
+.tech-section .battery-percentage {
+  color: var(--tech-text) !important;
 }
 
-body:not(.light-e) .tech-detail span:first-of-type,
-body:not(.light-e) .tech-label {
-  color: #aeb7c2 !important;
+.tech-section .tech-detail span:first-of-type,
+.tech-section .tech-label,
+.tech-section .tech-lifecycle-meta,
+.tech-section .upgrade-triggers li,
+.tech-section .tech-advanced-details summary {
+  color: var(--tech-muted) !important;
+}
+
+.tech-section .tech-detail span:not(.tech-label):not(.support-badge):not(.upgrade-badge):not(.os-badge):not(.upgrade-priority-badge) {
+  color: var(--tech-text) !important;
 }
 
 /* ======================================================= */
@@ -3813,8 +3848,8 @@ body:not(.light-e) .tech-label {
   -webkit-backdrop-filter: blur(16px) saturate(170%);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 5px 14px rgba(0, 0, 0, 0.14);
+    inset 0 1px 0 color-mix(in srgb, white 12%, transparent),
+    0 5px 14px color-mix(in srgb, var(--tech-shadow-live) 24%, transparent);
 
   text-shadow: none !important;
 }
@@ -3824,7 +3859,7 @@ body:not(.light-e) .tech-label {
   font-size: 0.72rem;
 }
 
-/* Badge colors */
+/* Basic badge colors */
 .upgrade-badge.green,
 .support-badge.green,
 .os-badge.green,
@@ -3888,7 +3923,7 @@ body:not(.light-e) .tech-label {
   border-color: var(--tech-blue-border);
 }
 
-/* Ownership badges */
+/* Ownership badge states */
 .upgrade-badge.owned,
 .support-badge.owned,
 .os-badge.owned,
@@ -3945,6 +3980,23 @@ body:not(.light-e) .tech-label {
   color: var(--tech-yellow);
   background: var(--tech-yellow-bg);
   border-color: var(--tech-yellow-border);
+}
+
+.upgrade-badge.borrowed,
+.support-badge.borrowed,
+.os-badge.borrowed,
+.upgrade-badge.loaned-out,
+.support-badge.loaned-out,
+.os-badge.loaned-out,
+.upgrade-badge.school-issued,
+.support-badge.school-issued,
+.os-badge.school-issued,
+.upgrade-badge.work-issued,
+.support-badge.work-issued,
+.os-badge.work-issued {
+  color: var(--tech-blue);
+  background: var(--tech-blue-bg);
+  border-color: var(--tech-blue-border);
 }
 
 .upgrade-badge.retired,
@@ -4006,22 +4058,16 @@ body:not(.light-e) .tech-label {
   height: 42px;
 
   border-radius: 13px;
-  border: 1px solid color-mix(in srgb, var(--tech-border) 82%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 78%, transparent);
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.10),
-      rgba(255, 255, 255, 0.035)
-    ),
-    color-mix(in srgb, var(--content-bg) 92%, transparent);
+  background: var(--tech-inner-bg);
 
   overflow: hidden;
 
   box-shadow:
-    inset 0 2px 8px rgba(0, 0, 0, 0.40),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    0 8px 18px color-mix(in srgb, var(--shadow-color) 34%, transparent);
+    inset 0 2px 8px color-mix(in srgb, black 40%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+    0 8px 18px color-mix(in srgb, var(--tech-shadow-live) 34%, transparent);
 }
 
 .battery-icon::after {
@@ -4036,7 +4082,7 @@ body:not(.light-e) .tech-label {
   border-radius: 3px;
   transform: translateY(-50%);
 
-  background: color-mix(in srgb, var(--tech-border) 86%, transparent);
+  background: color-mix(in srgb, var(--tech-border-live) 86%, transparent);
 }
 
 .battery-level {
@@ -4048,13 +4094,13 @@ body:not(.light-e) .tech-label {
   background:
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--accent-color) 82%, white 10%),
-      var(--accent-color)
+      color-mix(in srgb, var(--tech-accent-live) 82%, white 10%),
+      var(--tech-accent-live)
     );
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 0 18px color-mix(in srgb, var(--accent-color) 28%, transparent);
+    inset 0 1px 0 color-mix(in srgb, white 20%, transparent),
+    0 0 18px color-mix(in srgb, var(--tech-accent-live) 28%, transparent);
 
   transition: width var(--transition-medium);
 }
@@ -4075,16 +4121,11 @@ body:not(.light-e) .tech-label {
   align-items: center;
   justify-content: center;
 
-  color: #ffffff !important;
+  color: var(--tech-text) !important;
   font-size: 0.8rem;
   font-weight: 900;
 
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.42);
-}
-
-body.light-e .battery-percentage {
-  color: #111827 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+  text-shadow: none !important;
 }
 
 /* ======================================================= */
@@ -4103,19 +4144,13 @@ body.light-e .battery-percentage {
   border-radius: 999px;
   overflow: hidden;
 
-  border: 1px solid color-mix(in srgb, var(--tech-border) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 70%, transparent);
 
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.11),
-      rgba(255, 255, 255, 0.035)
-    ),
-    color-mix(in srgb, var(--content-bg) 88%, transparent);
+  background: var(--tech-inner-bg);
 
   box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.30),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    inset 0 1px 3px color-mix(in srgb, black 30%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
 }
 
 .score-fill {
@@ -4125,7 +4160,7 @@ body.light-e .battery-percentage {
   transition: width var(--transition-medium);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 1px 0 color-mix(in srgb, white 24%, transparent),
     0 0 14px currentColor;
 }
 
@@ -4160,15 +4195,15 @@ body.light-e .battery-percentage {
   margin-top: 1rem;
 
   border-radius: 18px;
-  border: 1px solid color-mix(in srgb, var(--tech-border) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 78%, transparent);
 
   background: var(--tech-inner-bg);
 
   overflow: hidden;
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 10px 24px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
+    0 10px 24px color-mix(in srgb, var(--tech-shadow-live) 28%, transparent);
 }
 
 .tech-advanced-details summary {
@@ -4182,7 +4217,7 @@ body.light-e .battery-percentage {
   list-style: none;
   user-select: none;
 
-  color: var(--tech-text);
+  color: var(--tech-text) !important;
   font-size: 0.92rem;
   font-weight: 850;
 }
@@ -4194,7 +4229,7 @@ body.light-e .battery-percentage {
 .tech-advanced-details summary::before {
   content: "▸";
 
-  color: var(--accent-color);
+  color: var(--tech-accent-live);
   font-size: 0.85rem;
 
   transition: transform var(--transition-fast);
@@ -4212,8 +4247,8 @@ body.light-e .battery-percentage {
 
   border-radius: 999px;
 
-  color: var(--accent-color);
-  background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+  color: var(--tech-accent-live);
+  background: color-mix(in srgb, var(--tech-accent-live) 12%, transparent);
 
   font-size: 0.72rem;
   font-weight: 850;
@@ -4224,7 +4259,7 @@ body.light-e .battery-percentage {
 }
 
 .tech-advanced-details[open] summary {
-  border-bottom: 1px solid color-mix(in srgb, var(--tech-border) 70%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--tech-border-live) 70%, transparent);
 }
 
 .tech-advanced-details .tech-detail {
@@ -4236,7 +4271,7 @@ body.light-e .battery-percentage {
 }
 
 /* ======================================================= */
-/* EXPLANATION / WHY BOXES                                 */
+/* EXPLANATION / SUMMARY BOXES                             */
 /* ======================================================= */
 
 .tech-upgrade-explanation,
@@ -4253,18 +4288,24 @@ body.light-e .battery-percentage {
   padding: 0.8rem 0.9rem;
 
   border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--tech-border) 72%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 72%, transparent);
 
   background: var(--tech-inner-bg);
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 8px 20px color-mix(in srgb, var(--shadow-color) 24%, transparent);
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
+    0 8px 20px color-mix(in srgb, var(--tech-shadow-live) 24%, transparent);
 
   line-height: 1.5;
 }
 
-.tech-upgrade-explanation .upgrade-explanation-text {
+.tech-upgrade-explanation i,
+.tech-summary i {
+  color: var(--tech-accent-live);
+}
+
+.tech-upgrade-explanation .upgrade-explanation-text,
+.tech-summary .upgrade-explanation-text {
   color: var(--tech-text) !important;
   font-weight: 500;
 }
@@ -4289,7 +4330,7 @@ body.light-e .battery-percentage {
   margin: 0.35rem 0;
   padding-left: 1rem;
 
-  color: var(--tech-muted);
+  color: var(--tech-muted) !important;
   font-size: 0.92rem;
   line-height: 1.45;
 }
@@ -4316,26 +4357,28 @@ body.light-e .battery-percentage {
   padding: 1rem;
 
   border-radius: 20px;
-  border: 1px solid color-mix(in srgb, var(--accent-color) 25%, var(--tech-border));
+  border: 1px solid color-mix(in srgb, var(--tech-accent-live) 25%, var(--tech-border-live));
 
   background:
     radial-gradient(
       circle at 0% 0%,
-      rgba(255, 255, 255, 0.15),
+      color-mix(in srgb, white 15%, transparent),
       transparent 34%
     ),
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--accent-color) 14%, transparent),
-      color-mix(in srgb, #bf5af2 9%, transparent)
+      color-mix(in srgb, var(--tech-accent-live) 14%, transparent),
+      color-mix(in srgb, var(--tech-purple) 9%, transparent)
     ),
-    color-mix(in srgb, var(--content-bg) 88%, transparent);
+    color-mix(in srgb, var(--tech-surface) 88%, transparent);
 
   overflow: hidden;
 
+  color: var(--tech-text);
+
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    0 12px 28px color-mix(in srgb, var(--shadow-color) 38%, transparent);
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent),
+    0 12px 28px color-mix(in srgb, var(--tech-shadow-live) 38%, transparent);
 }
 
 .tech-lifecycle-title {
@@ -4346,7 +4389,7 @@ body.light-e .battery-percentage {
 
   margin-bottom: 0.85rem;
 
-  color: var(--tech-text);
+  color: var(--tech-text) !important;
   font-weight: 900;
   letter-spacing: -0.025em;
 }
@@ -4361,9 +4404,9 @@ body.light-e .battery-percentage {
 
   border-radius: 999px;
 
-  color: var(--accent-color);
-  background: color-mix(in srgb, var(--accent-color) 16%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent-color) 28%, transparent);
+  color: var(--tech-accent-live);
+  background: color-mix(in srgb, var(--tech-accent-live) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-accent-live) 28%, transparent);
 
   flex-shrink: 0;
 }
@@ -4376,7 +4419,7 @@ body.light-e .battery-percentage {
 }
 
 .tech-lifecycle-flow > i {
-  color: var(--tech-muted);
+  color: var(--tech-muted) !important;
   font-size: 0.9rem;
 }
 
@@ -4389,18 +4432,18 @@ body.light-e .battery-percentage {
   padding: 0.45rem 0.78rem;
 
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--tech-border) 80%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 80%, transparent);
 
   background: var(--tech-inner-bg);
 
-  color: var(--tech-text);
+  color: var(--tech-text) !important;
   font-size: 0.9rem;
   font-weight: 850;
   text-align: center;
 
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 6px 14px color-mix(in srgb, var(--shadow-color) 22%, transparent);
+    inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
+    0 6px 14px color-mix(in srgb, var(--tech-shadow-live) 22%, transparent);
 }
 
 .tech-lifecycle-from {
@@ -4410,9 +4453,9 @@ body.light-e .battery-percentage {
 }
 
 .tech-lifecycle-current {
-  color: var(--accent-color) !important;
-  background: color-mix(in srgb, var(--accent-color) 14%, transparent);
-  border-color: color-mix(in srgb, var(--accent-color) 36%, transparent);
+  color: var(--tech-accent-live) !important;
+  background: color-mix(in srgb, var(--tech-accent-live) 14%, transparent);
+  border-color: color-mix(in srgb, var(--tech-accent-live) 36%, transparent);
 }
 
 .tech-lifecycle-to {
@@ -4426,11 +4469,11 @@ body.light-e .battery-percentage {
   padding: 0.75rem 0.85rem;
 
   border-radius: 15px;
-  border: 1px solid color-mix(in srgb, var(--tech-border) 68%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 68%, transparent);
 
   background: var(--tech-inner-bg);
 
-  color: var(--tech-text);
+  color: var(--tech-text) !important;
   font-size: 0.92rem;
   line-height: 1.45;
 }
@@ -4443,14 +4486,14 @@ body.light-e .battery-percentage {
 
   margin-top: 0.75rem;
 
-  color: var(--tech-muted);
+  color: var(--tech-muted) !important;
   font-size: 0.86rem;
   font-weight: 700;
 }
 
 /* Lifecycle card variants */
 .tech-upgrade-path {
-  border-color: color-mix(in srgb, var(--tech-blue) 38%, var(--tech-border));
+  border-color: color-mix(in srgb, var(--tech-blue) 38%, var(--tech-border-live));
 }
 
 .tech-upgrade-path .tech-lifecycle-title i {
@@ -4460,7 +4503,7 @@ body.light-e .battery-percentage {
 }
 
 .tech-role-transition {
-  border-color: color-mix(in srgb, var(--tech-yellow) 38%, var(--tech-border));
+  border-color: color-mix(in srgb, var(--tech-yellow) 38%, var(--tech-border-live));
 }
 
 .tech-role-transition .tech-lifecycle-title i {
@@ -4470,7 +4513,7 @@ body.light-e .battery-percentage {
 }
 
 .tech-role-details {
-  border-color: color-mix(in srgb, var(--tech-purple) 38%, var(--tech-border));
+  border-color: color-mix(in srgb, var(--tech-purple) 38%, var(--tech-border-live));
 }
 
 .tech-role-details .tech-lifecycle-title i {
@@ -4480,7 +4523,7 @@ body.light-e .battery-percentage {
 }
 
 .tech-device-lineage {
-  border-color: color-mix(in srgb, var(--tech-green) 38%, var(--tech-border));
+  border-color: color-mix(in srgb, var(--tech-green) 38%, var(--tech-border-live));
 }
 
 .tech-device-lineage .tech-lifecycle-title i {
@@ -4494,7 +4537,7 @@ body.light-e .battery-percentage {
   margin: 0.48rem 0;
 
   border-radius: 14px;
-  border: 1px solid color-mix(in srgb, var(--tech-border) 62%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tech-border-live) 62%, transparent);
 
   background: var(--tech-inner-bg);
 }
@@ -4524,34 +4567,62 @@ body.light-e .battery-percentage {
 }
 
 /* ======================================================= */
-/* LIGHT MODE POLISH                                       */
+/* LIGHT MODE FINAL TUNING                                 */
 /* ======================================================= */
 
+body.light-e .tech-section,
 body.light-e .tech-item,
 body.light-e .tech-lifecycle-card,
 body.light-e .tech-advanced-details,
 body.light-e .tech-upgrade-explanation,
-body.light-e .tech-summary {
+body.light-e .tech-summary,
+body.light-e .battery-icon,
+body.light-e .score-bar {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.68),
     0 12px 28px rgba(15, 23, 42, 0.09);
 }
 
+body.light-e .tech-section,
+body.light-e .tech-item,
 body.light-e .tech-detail,
 body.light-e .tech-value,
 body.light-e .tech-lifecycle-note,
-body.light-e .tech-lifecycle-node {
-  color: #111827 !important;
+body.light-e .tech-lifecycle-node,
+body.light-e .tech-upgrade-explanation .upgrade-explanation-text {
+  color: var(--text-color) !important;
 }
 
 body.light-e .tech-detail span:first-of-type,
 body.light-e .tech-label,
-body.light-e .tech-lifecycle-meta {
-  color: #4b5563 !important;
+body.light-e .tech-lifecycle-meta,
+body.light-e .upgrade-triggers li {
+  color: var(--secondary-text) !important;
 }
 
 /* ======================================================= */
-/* MOBILE                                                   */
+/* DARK MODE FINAL TUNING                                  */
+/* ======================================================= */
+
+body:not(.light-e) .tech-section,
+body:not(.light-e) .tech-item,
+body:not(.light-e) .tech-detail,
+body:not(.light-e) .tech-value,
+body:not(.light-e) .tech-lifecycle-note,
+body:not(.light-e) .tech-lifecycle-node,
+body:not(.light-e) .tech-upgrade-explanation .upgrade-explanation-text {
+  color: var(--text-color) !important;
+}
+
+body:not(.light-e) .tech-detail span:first-of-type,
+body:not(.light-e) .tech-label,
+body:not(.light-e) .tech-lifecycle-meta,
+body:not(.light-e) .upgrade-triggers li {
+  color: var(--secondary-text) !important;
+}
+
+/* ======================================================= */
+/* MOBILE RESPONSIVE FIXES                                 */
 /* ======================================================= */
 
 @media screen and (max-width: 768px) {
@@ -4653,6 +4724,7 @@ body.light-e .tech-lifecycle-meta {
     padding: 0.22rem 0.52rem;
   }
 }
+
 
 /* ======================== */
 /* Disabilities Section – Onyx Bubble Glass */
