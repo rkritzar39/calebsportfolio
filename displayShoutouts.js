@@ -4257,7 +4257,7 @@ async function loadRegionalLeader() {
 
   await renderLeaders();
 }
-``
+
   const footnoteEl = document.getElementById("leader-footnote");
   const refreshBtn = document.getElementById("leader-refresh");
 
