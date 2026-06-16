@@ -4566,12 +4566,7 @@ function displayFilteredActivityLog() {
     logCountElement.textContent = `(${filteredLogs.length})`;
 }
 
-   // ========================================
-// == Tech Item Management Functions V2 ===
-// ========================================
-
-function escapeAdminHTML(value) {
-    if (value === null || value === undefined) return "";
+// ========================================// ================================= value === undefined) return "";
 
     return String(value)
         .replaceAll("&", "&amp;")
@@ -5109,6 +5104,10 @@ async function handleUpdateTechItem(event) {
         }
     }
 }
+// == Tech Item Management Functions V2 ===
+// ========================================
+
+function escapeAdminHTML(value) {
 
     // --- *** Event Listener for Saving ONLY Countdown Settings (WITH EXTRA LOGGING) *** ---
     if (saveCountdownSettingsButton) {
