@@ -903,9 +903,36 @@ const minimumUpgradeGapDefaults = {
     accessory: 0
 };
 
+// ======================
+// SUPPORT LIFESPAN DEFAULTS
+// These are estimates, not Apple guarantees.
+// ======================
+const supportLifespanDefaults = {
+    phone: {
+        majorYears: 6,
+        securityYearsAfterMajor: 2
+    },
+    tablet: {
+        majorYears: 7,
+        securityYearsAfterMajor: 2
+    },
+    computer: {
+        majorYears: 7,
+        securityYearsAfterMajor: 2
+    },
+    watch: {
+        majorYears: 5,
+        securityYearsAfterMajor: 1
+    },
+    accessory: {
+        majorYears: 0,
+        securityYearsAfterMajor: 0
+    }
+};
+
 /* ------------------------------------------------------------
    LATEST OS CONFIG
-   Fallback values are used if the JSON fetch fails.
+   Fallback values are used if JSON fetch fails.
 ------------------------------------------------------------ */
 let latestOSVersions = {
     ios: "26.5.1",
@@ -913,7 +940,7 @@ let latestOSVersions = {
     macos: "26.5.1"
 };
 
-const LATEST_OS_ENDPOINT = "/latest_os_versions.json";
+const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
 
 /* ------------------------------------------------------------
    AUTO LATEST OS FETCH
@@ -943,6 +970,20 @@ async function fetchLatestOSVersions() {
 }
 
 // ======================
+// SAFE HTML
+// ======================
+function escapeHTML(value) {
+    if (value === null || value === undefined) return "";
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+// ======================
 // OS TYPE DETECTION
 // ======================
 function detectOSType(osVersion) {
@@ -953,6 +994,9 @@ function detectOSType(osVersion) {
     if (os.includes("ipados")) return "ipados";
     if (os.includes("ios")) return "ios";
     if (os.includes("macos")) return "macos";
+    if (os.includes("watchos")) return "watchos";
+    if (os.includes("tvos")) return "tvos";
+    if (os.includes("visionos")) return "visionos";
 
     return "ios";
 }
@@ -961,6 +1005,9 @@ function formatOSType(osType) {
     if (osType === "ios") return "iOS";
     if (osType === "ipados") return "iPadOS";
     if (osType === "macos") return "macOS";
+    if (osType === "watchos") return "watchOS";
+    if (osType === "tvos") return "tvOS";
+    if (osType === "visionos") return "visionOS";
     return "OS";
 }
 
@@ -1178,6 +1225,54 @@ function detectDeviceType(item) {
 }
 
 // ======================
+// CHIP HELPERS
+// ======================
+function getChipInfo(item) {
+    const chipName = String(item.chipName || item.chip || "").trim();
+    const chipLower = chipName.toLowerCase();
+
+    return {
+        chipName,
+        chipLower,
+        isA17ProOrNewer:
+            chipLower.includes("a17 pro") ||
+            chipLower.includes("a18") ||
+            chipLower.includes("a19") ||
+            chipLower.includes("a20") ||
+            chipLower.includes("a21"),
+        isA18OrNewer:
+            chipLower.includes("a18") ||
+            chipLower.includes("a19") ||
+            chipLower.includes("a20") ||
+            chipLower.includes("a21"),
+        isA19ProOrNewer:
+            chipLower.includes("a19 pro") ||
+            chipLower.includes("a20 pro") ||
+            chipLower.includes("a21 pro"),
+        isAppleSilicon:
+            chipLower.includes("m1") ||
+            chipLower.includes("m2") ||
+            chipLower.includes("m3") ||
+            chipLower.includes("m4") ||
+            chipLower.includes("m5") ||
+            chipLower.includes("m6"),
+        isM3OrNewer:
+            chipLower.includes("m3") ||
+            chipLower.includes("m4") ||
+            chipLower.includes("m5") ||
+            chipLower.includes("m6"),
+        isM4OrNewer:
+            chipLower.includes("m4") ||
+            chipLower.includes("m5") ||
+            chipLower.includes("m6"),
+        isProMaxClass:
+            chipLower.includes("pro") ||
+            chipLower.includes("max") ||
+            chipLower.includes("ultra")
+    };
+}
+
+// ======================
 // DEVICE SUPPORT
 // ======================
 function checkDeviceSupport(item) {
@@ -1296,6 +1391,69 @@ function checkDeviceSupport(item) {
 }
 
 // ======================
+// ESTIMATED SUPPORT LIFESPAN
+// ======================
+function estimateSupportLifespan(item) {
+    const currentYear = new Date().getFullYear();
+    const deviceType = detectDeviceType(item);
+
+    if (deviceType === "accessory") {
+        return {
+            estimatedMajorSupportEndYear: null,
+            estimatedSecuritySupportEndYear: null,
+            majorSupportRemaining: null,
+            securitySupportRemaining: null,
+            supportRating: "Compatibility-Based",
+            supportColor: "green"
+        };
+    }
+
+    const modelYear = Number(item.modelYear || currentYear);
+    const supportEndYear = item.supportEndYear ? Number(item.supportEndYear) : null;
+
+    const defaults = supportLifespanDefaults[deviceType] || supportLifespanDefaults.phone;
+
+    const estimatedMajorSupportEndYear =
+        supportEndYear || modelYear + defaults.majorYears;
+
+    const estimatedSecuritySupportEndYear =
+        estimatedMajorSupportEndYear + defaults.securityYearsAfterMajor;
+
+    const majorSupportRemaining =
+        estimatedMajorSupportEndYear - currentYear;
+
+    const securitySupportRemaining =
+        estimatedSecuritySupportEndYear - currentYear;
+
+    let supportRating = "Supported";
+    let supportColor = "green";
+
+    if (majorSupportRemaining <= 1 && majorSupportRemaining > 0) {
+        supportRating = "Major Support Ending Soon";
+        supportColor = "yellow";
+    }
+
+    if (majorSupportRemaining <= 0 && securitySupportRemaining > 0) {
+        supportRating = "Security Updates Only";
+        supportColor = "yellow";
+    }
+
+    if (securitySupportRemaining <= 0) {
+        supportRating = "Unsupported";
+        supportColor = "red";
+    }
+
+    return {
+        estimatedMajorSupportEndYear,
+        estimatedSecuritySupportEndYear,
+        majorSupportRemaining,
+        securitySupportRemaining,
+        supportRating,
+        supportColor
+    };
+}
+
+// ======================
 // BATTERY TREND
 // ======================
 function estimateBatteryTrend(item) {
@@ -1331,6 +1489,136 @@ function getBatteryCycles(item) {
 }
 
 // ======================
+// AI FEATURE SUPPORT
+// ======================
+function calculateAIFeatureSupport(item) {
+    const deviceType = detectDeviceType(item);
+    const model = String(item.model || "").toLowerCase();
+    const ramGB = Number(item.ramGB || 0);
+    const storageGB = Number(item.storageGB || 0);
+    const chip = getChipInfo(item);
+
+    let level = "None";
+    let score = 0;
+    let color = "red";
+    let reasons = [];
+    let weaknesses = [];
+
+    const hasEnoughStorageForAI = storageGB >= 128;
+
+    if (deviceType === "phone") {
+        const isIPhone15Pro =
+            model.includes("iphone 15 pro");
+
+        const isIPhone16OrNewer =
+            model.includes("iphone 16") ||
+            model.includes("iphone 17") ||
+            model.includes("iphone 18") ||
+            model.includes("iphone 19") ||
+            model.includes("iphone 20") ||
+            model.includes("iphone 21");
+
+        if (isIPhone15Pro || isIPhone16OrNewer || chip.isA17ProOrNewer) {
+            level = "Standard";
+            score = 70;
+            color = "yellow";
+            reasons.push("Meets current Apple Intelligence hardware class");
+        }
+
+        if (ramGB >= 12) {
+            level = "Advanced";
+            score = 88;
+            color = "green";
+            reasons.push("12GB+ memory improves AI feature headroom");
+        }
+
+        if (chip.isA19ProOrNewer && ramGB >= 12) {
+            level = "Maximum";
+            score = 95;
+            color = "green";
+            reasons.push("Newer Pro-class chip and 12GB+ memory provide maximum AI headroom");
+        }
+    }
+
+    if (deviceType === "tablet") {
+        if (chip.isAppleSilicon || chip.isA17ProOrNewer) {
+            level = "Standard";
+            score = 72;
+            color = "yellow";
+            reasons.push("Meets Apple Intelligence tablet hardware class");
+        }
+
+        if (chip.isM4OrNewer && ramGB >= 12) {
+            level = "Advanced";
+            score = 90;
+            color = "green";
+            reasons.push("M4-class or newer chip with 12GB+ memory gives stronger AI headroom");
+        }
+    }
+
+    if (deviceType === "computer") {
+        if (chip.isAppleSilicon) {
+            level = "Standard";
+            score = 75;
+            color = "yellow";
+            reasons.push("Apple silicon Mac supports Apple Intelligence");
+        }
+
+        if (chip.isM3OrNewer && ramGB >= 12) {
+            level = "Advanced";
+            score = 90;
+            color = "green";
+            reasons.push("Newer Apple silicon with 12GB+ memory has stronger future AI headroom");
+        }
+
+        if (chip.isProMaxClass && ramGB >= 24) {
+            level = "Maximum";
+            score = 96;
+            color = "green";
+            reasons.push("Pro/Max/Ultra-class Apple silicon with high memory headroom");
+        }
+    }
+
+    if (deviceType === "watch") {
+        if (item.pairedAIPhone === true) {
+            level = "Relay";
+            score = 55;
+            color = "yellow";
+            reasons.push("Apple Intelligence features depend on a nearby compatible iPhone");
+        } else {
+            level = "Limited";
+            score = 30;
+            color = "orange";
+            weaknesses.push("Watch AI support depends on paired iPhone compatibility");
+        }
+    }
+
+    if (deviceType === "accessory") {
+        level = "Not Applicable";
+        score = 0;
+        color = "gray";
+        reasons.push("Accessories do not need direct AI feature support");
+    }
+
+    if (!hasEnoughStorageForAI && level !== "None" && level !== "Not Applicable") {
+        score -= 8;
+        weaknesses.push("Lower storage may limit local AI model flexibility");
+    }
+
+    if (reasons.length === 0 && weaknesses.length === 0) {
+        weaknesses.push("Does not appear to meet current AI hardware requirements");
+    }
+
+    return {
+        aiSupportLevel: level,
+        aiSupportScore: Math.max(0, Math.min(100, score)),
+        aiSupportColor: color,
+        aiSupportReasons: reasons,
+        aiSupportWeaknesses: weaknesses
+    };
+}
+
+// ======================
 // DEVICE SCORE
 // Higher score = healthier device
 // Lower score = more upgrade urgency
@@ -1360,8 +1648,6 @@ function calculateUpgradeScore(item) {
     if (osStatus?.status === "Very Outdated") {
         score -= 18;
     }
-
-    // Beta OS does not affect device score
 
     if (support.supportLevel === "Limited Support") {
         score -= 10;
@@ -1407,11 +1693,232 @@ function calculateUpgradeScore(item) {
 }
 
 // ======================
+// FUTURE-PROOF SCORE
+// ======================
+function calculateFutureProofScore(item) {
+    const deviceType = detectDeviceType(item);
+    const ai = calculateAIFeatureSupport(item);
+    const support = estimateSupportLifespan(item);
+
+    const ramGB = Number(item.ramGB || 0);
+    const storageGB = Number(item.storageGB || 0);
+    const batteryHealth = Number(item.batteryHealth ?? 100);
+    const compatibilityStatus = String(item.compatibilityStatus || "").toLowerCase();
+
+    let score = 50;
+    let reasons = [];
+    let weaknesses = [];
+
+    if (deviceType !== "accessory") {
+        if (support.majorSupportRemaining >= 4) {
+            score += 20;
+            reasons.push("Several years of estimated major OS support remain");
+        } else if (support.majorSupportRemaining >= 2) {
+            score += 10;
+            reasons.push("Some major OS support remains");
+        } else {
+            score -= 15;
+            weaknesses.push("Major OS support may be nearing its end");
+        }
+    }
+
+    if (ai.aiSupportLevel === "Maximum") {
+        score += 20;
+        reasons.push("Maximum AI feature headroom");
+    } else if (ai.aiSupportLevel === "Advanced") {
+        score += 15;
+        reasons.push("Strong AI feature headroom");
+    } else if (ai.aiSupportLevel === "Standard") {
+        score += 8;
+        reasons.push("Supports current AI feature class");
+    } else if (ai.aiSupportLevel === "Limited" || ai.aiSupportLevel === "None") {
+        score -= 10;
+        weaknesses.push("Limited AI feature support");
+    }
+
+    if (deviceType === "phone") {
+        if (ramGB >= 12) {
+            score += 8;
+            reasons.push("Higher RAM improves long-term AI and multitasking headroom");
+        } else if (ramGB > 0 && ramGB < 12) {
+            weaknesses.push("RAM may limit future advanced AI features");
+        }
+
+        if (storageGB >= 512) {
+            score += 8;
+            reasons.push("Storage is strong for long-term use");
+        } else if (storageGB > 0 && storageGB <= 128) {
+            score -= 6;
+            weaknesses.push("128GB storage may become limiting over time");
+        }
+    }
+
+    if (deviceType === "tablet") {
+        if (ramGB >= 8) {
+            score += 6;
+            reasons.push("Tablet memory is reasonable for long-term use");
+        }
+
+        if (storageGB >= 256) {
+            score += 8;
+            reasons.push("Tablet storage has good long-term headroom");
+        } else if (storageGB > 0 && storageGB < 128) {
+            score -= 8;
+            weaknesses.push("Low tablet storage may limit long-term usefulness");
+        }
+    }
+
+    if (deviceType === "computer") {
+        if (ramGB >= 16) {
+            score += 12;
+            reasons.push("16GB+ memory is better for long-term computer use");
+        } else if (ramGB > 0) {
+            score -= 10;
+            weaknesses.push("Low memory may age poorly for a computer");
+        }
+
+        if (storageGB >= 512) {
+            score += 8;
+            reasons.push("512GB+ storage is better for long-term computer use");
+        } else if (storageGB > 0) {
+            score -= 6;
+            weaknesses.push("Base storage may become limiting");
+        }
+    }
+
+    if (deviceType === "watch") {
+        if (batteryHealth >= 85) {
+            score += 10;
+            reasons.push("Battery health is still strong for a watch");
+        } else {
+            score -= 12;
+            weaknesses.push("Battery health may limit long-term watch usefulness");
+        }
+    }
+
+    if (deviceType === "accessory") {
+        if (compatibilityStatus === "current") {
+            score += 20;
+            reasons.push("Accessory is compatible with current standards");
+        } else if (compatibilityStatus === "limited") {
+            score -= 5;
+            weaknesses.push("Accessory compatibility is limited");
+        } else if (compatibilityStatus === "obsolete") {
+            score -= 25;
+            weaknesses.push("Accessory standard is obsolete");
+        } else {
+            reasons.push("Accessory future-proofing depends on compatibility and condition");
+        }
+    }
+
+    score = Math.max(0, Math.min(100, Math.round(score)));
+
+    let rating = "Limited";
+    let color = "red";
+
+    if (score >= 85) {
+        rating = "Maximum";
+        color = "green";
+    } else if (score >= 70) {
+        rating = "High";
+        color = "green";
+    } else if (score >= 50) {
+        rating = "Balanced";
+        color = "yellow";
+    } else if (score >= 35) {
+        rating = "Limited";
+        color = "orange";
+    }
+
+    return {
+        futureProofScore: score,
+        futureProofRating: rating,
+        futureProofColor: color,
+        futureProofReasons: reasons,
+        futureProofWeaknesses: weaknesses,
+        aiSupport: ai,
+        supportLifespan: support
+    };
+}
+
+// ======================
+// FUTURE UPGRADE TARGET
+// ======================
+function getRecommendedFutureUpgradeTarget(item) {
+    const deviceType = detectDeviceType(item);
+    const model = String(item.model || "");
+    const modelLower = model.toLowerCase();
+    const modelYear = Number(item.modelYear || new Date().getFullYear());
+    const expectedKeepYears = Number(item.expectedKeepYears || item.expectedYearsOfUse || 4);
+
+    const targetYear = modelYear + expectedKeepYears;
+    const futureProof = calculateFutureProofScore(item);
+
+    let target = "Next meaningful upgrade";
+    let recommendedSpecs = "";
+    let avoid = "";
+    let reason = "";
+
+    if (deviceType === "phone") {
+        const match = model.match(/iPhone\s+(\d+)/i);
+        const currentGeneration = match ? Number(match[1]) : null;
+        const isPro = modelLower.includes("pro");
+        const isProMax = modelLower.includes("pro max");
+
+        if (currentGeneration) {
+            const targetGeneration = currentGeneration + expectedKeepYears;
+            target = `iPhone ${targetGeneration}${isProMax ? " Pro Max" : isPro ? " Pro" : ""}`;
+        } else {
+            target = "Future Pro-level iPhone";
+        }
+
+        recommendedSpecs = "256GB minimum, 512GB recommended for 4–5+ years";
+        avoid = "Avoid 128GB if you plan to keep the next phone long term";
+        reason = "Phones age mostly through battery, storage, AI feature headroom, camera needs, and software support.";
+    }
+
+    if (deviceType === "tablet") {
+        target = "iPad Air/Pro-class tablet depending on use";
+        recommendedSpecs = "256GB minimum, keyboard/Pencil support if used for school, drawing, or productivity";
+        avoid = "Avoid low storage if using it for school, drawing, or content";
+        reason = "Tablets age through chip support, storage, accessory support, and whether they are used casually or as laptop replacements.";
+    }
+
+    if (deviceType === "computer") {
+        target = "Apple silicon computer with stronger memory and storage headroom";
+        recommendedSpecs = "16GB memory minimum, 24GB+ preferred for heavier use, 512GB+ storage";
+        avoid = "Avoid base memory/storage if this will be a main computer";
+        reason = "Computers age mostly through memory, storage, processor headroom, ports, thermals, workload, and OS support.";
+    }
+
+    if (deviceType === "watch") {
+        target = "Newer watch with current health sensors and stronger battery life";
+        recommendedSpecs = "Current sensor package, good battery health, preferred case size";
+        avoid = "Avoid upgrading yearly unless battery, sensors, or support are limiting";
+        reason = "Watches are worth replacing when battery, health sensors, or software support become limiting.";
+    }
+
+    if (deviceType === "accessory") {
+        target = "Current-standard compatible replacement";
+        recommendedSpecs = "USB-C, MagSafe, Qi2, Bluetooth LE, or current standard depending on accessory";
+        avoid = "Avoid older connector standards unless needed for legacy devices";
+        reason = "Accessories age mostly through compatibility, connector standards, battery condition, and reliability.";
+    }
+
+    return {
+        futureUpgradeTarget: target,
+        targetYear,
+        recommendedFutureSpecs: recommendedSpecs,
+        avoidRecommendation: avoid,
+        futureUpgradeReason: reason,
+        futureProofRating: futureProof.futureProofRating,
+        futureProofScore: futureProof.futureProofScore,
+        futureProofColor: futureProof.futureProofColor
+    };
+}
+
+// ======================
 // UPGRADE PRIORITY LABEL
-// Critical     = red
-// Recommended  = yellow
-// Optional     = gray
-// Not Needed   = green
 // ======================
 function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
     const condition = String(item.condition || "").toLowerCase();
@@ -1828,13 +2335,13 @@ function generateDeviceSummary(item, upgrade, support, osStatus) {
     let parts = [];
 
     if (primaryUse) {
-        parts.push(`Used for ${primaryUse.toLowerCase()}`);
+        parts.push(`Used for ${String(primaryUse).toLowerCase()}`);
     } else {
         parts.push(`This ${deviceType} is being tracked`);
     }
 
     if (condition) {
-        parts.push(`condition is ${condition.toLowerCase()}`);
+        parts.push(`condition is ${String(condition).toLowerCase()}`);
     }
 
     if (osStatus?.isBeta) {
@@ -1846,7 +2353,7 @@ function generateDeviceSummary(item, upgrade, support, osStatus) {
     }
 
     if (support.supportLevel) {
-        parts.push(`support status is ${support.supportLevel.toLowerCase()}`);
+        parts.push(`support status is ${String(support.supportLevel).toLowerCase()}`);
     }
 
     if (deviceType === "phone" && batteryHealth < techThresholds.batteryBad) {
@@ -1895,6 +2402,10 @@ function renderTechItemHomepage(itemData) {
 
     const osStatus = checkOSStatus(itemData.osVersion);
     const support = checkDeviceSupport(itemData);
+    const supportLife = estimateSupportLifespan(itemData);
+    const aiSupport = calculateAIFeatureSupport(itemData);
+    const futureProof = calculateFutureProofScore(itemData);
+    const futureTarget = getRecommendedFutureUpgradeTarget(itemData);
 
     let osUpdateHtml = "";
 
@@ -1921,7 +2432,7 @@ function renderTechItemHomepage(itemData) {
         <i class="fas fa-shield-check"></i>
         <span>Support Status:</span>
         <span class="support-badge ${support.supportColor || "green"}">
-            ${support.supportLevel || "Fully Supported"}
+            ${escapeHTML(support.supportLevel || "Fully Supported")}
         </span>
     </div>`;
 
@@ -1970,14 +2481,14 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail tech-summary">
         <i class="fas fa-clipboard-list"></i>
         <span>Device Summary:</span>
-        ${deviceSummary}
+        ${escapeHTML(deviceSummary)}
     </div>`;
 
     const actionHtml = `
     <div class="tech-detail">
         <i class="fas fa-tools"></i>
         <span>Recommended Action:</span>
-        ${recommendedAction}
+        ${escapeHTML(recommendedAction)}
     </div>`;
 
     let batteryHtml = "";
@@ -2022,14 +2533,14 @@ function renderTechItemHomepage(itemData) {
         <i class="fas fa-arrow-up"></i>
         <span>Upgrade Status:</span>
         <span class="upgrade-badge ${upgrade.color}">
-            ${upgrade.status}
+            ${escapeHTML(upgrade.status)}
         </span>
     </div>
 
     <div class="tech-detail">
         <i class="fas fa-lightbulb"></i>
         <span>Suggestion:</span>
-        ${upgrade.suggestion}
+        ${escapeHTML(upgrade.suggestion)}
     </div>`;
 
     let triggersHtml = "";
@@ -2042,7 +2553,7 @@ function renderTechItemHomepage(itemData) {
         </div>
 
         <ul class="upgrade-triggers">
-            ${upgrade.triggers.map(t => `<li>${t}</li>`).join("")}
+            ${upgrade.triggers.map(t => `<li>${escapeHTML(t)}</li>`).join("")}
         </ul>`;
     }
 
@@ -2050,20 +2561,20 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-calendar-check"></i>
         <span class="tech-label">Recommended Upgrade Year:</span>
-        <span class="tech-value">${smartUpgrade.recommendedUpgradeYear}</span>
+        <span class="tech-value">${escapeHTML(smartUpgrade.recommendedUpgradeYear)}</span>
     </div>
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-calendar-days"></i>
         <span class="tech-label">Upgrade Window:</span>
-        <span class="tech-value">${smartUpgrade.upgradeWindow}</span>
+        <span class="tech-value">${escapeHTML(smartUpgrade.upgradeWindow)}</span>
     </div>
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-ranking-star"></i>
         <span class="tech-label">Upgrade Priority:</span>
         <span class="upgrade-priority-badge ${smartUpgrade.priority.color}">
-            ${smartUpgrade.priority.label}
+            ${escapeHTML(smartUpgrade.priority.label)}
         </span>
     </div>
 
@@ -2071,7 +2582,68 @@ function renderTechItemHomepage(itemData) {
         <i class="fas fa-circle-question"></i>
         <span class="tech-label">Why:</span>
         <span class="upgrade-explanation-text">
-            ${smartUpgrade.explanation}
+            ${escapeHTML(smartUpgrade.explanation)}
+        </span>
+    </div>`;
+
+    const futureProofHtml = `
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-brain"></i>
+        <span class="tech-label">AI Support:</span>
+        <span class="support-badge ${aiSupport.aiSupportColor}">
+            ${escapeHTML(aiSupport.aiSupportLevel)}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-hourglass-half"></i>
+        <span class="tech-label">Estimated Major Support End:</span>
+        <span class="tech-value">
+            ${supportLife.estimatedMajorSupportEndYear ? escapeHTML(supportLife.estimatedMajorSupportEndYear) : "N/A"}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-shield-halved"></i>
+        <span class="tech-label">Estimated Security Support End:</span>
+        <span class="tech-value">
+            ${supportLife.estimatedSecuritySupportEndYear ? escapeHTML(supportLife.estimatedSecuritySupportEndYear) : "N/A"}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-seedling"></i>
+        <span class="tech-label">Future-Proof Rating:</span>
+        <span class="support-badge ${futureProof.futureProofColor}">
+            ${escapeHTML(futureProof.futureProofRating)} (${futureProof.futureProofScore}/100)
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-bullseye"></i>
+        <span class="tech-label">Future Upgrade Target:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.futureUpgradeTarget)}</span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-calendar-alt"></i>
+        <span class="tech-label">Target Year:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.targetYear)}</span>
+    </div>
+
+    <div class="tech-detail tech-upgrade-explanation">
+        <i class="fas fa-route"></i>
+        <span class="tech-label">Future Specs:</span>
+        <span class="upgrade-explanation-text">
+            ${escapeHTML(futureTarget.recommendedFutureSpecs)}
+        </span>
+    </div>
+
+    <div class="tech-detail tech-upgrade-explanation">
+        <i class="fas fa-ban"></i>
+        <span class="tech-label">Avoid:</span>
+        <span class="upgrade-explanation-text">
+            ${escapeHTML(futureTarget.avoidRecommendation)}
         </span>
     </div>`;
 
@@ -2086,29 +2658,36 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail">
         <i class="fas fa-chart-line"></i>
         <span>Battery Trend:</span>
-        ${batteryTrend.trend} (-${batteryTrend.decline}%)
+        ${escapeHTML(batteryTrend.trend)} (-${escapeHTML(batteryTrend.decline)}%)
     </div>` : "";
 
     const scoreHtml = `
     <div class="tech-detail">
         <i class="fas fa-gauge-high"></i>
         <span>Device Score:</span>
-        ${upgradeScore.label} (${upgradeScore.score}/100)
+        ${escapeHTML(upgradeScore.label)} (${upgradeScore.score}/100)
     </div>
 
     <div class="score-bar">
         <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%"></div>
     </div>`;
 
+    const formattedOSType = osStatus
+        ? formatOSType(osStatus.osType)
+        : "";
+
     const advancedDetailsContent = `
-        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${deviceType}</div>` : ""}
-        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${modelYear}</div>` : ""}
-        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${supportEndYear}</div>` : ""}
-        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${material}</div>` : ""}
-        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${batteryCapacity}</div>` : ""}
-        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${price}</div>` : ""}
-        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${dateReleased}</div>` : ""}
-        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${dateBought}</div>` : ""}
+        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${escapeHTML(deviceType)}</div>` : ""}
+        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${escapeHTML(modelYear)}</div>` : ""}
+        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${escapeHTML(supportEndYear)}</div>` : ""}
+        ${itemData.chipName ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Chip:</span> ${escapeHTML(itemData.chipName)}</div>` : ""}
+        ${itemData.ramGB ? `<div class="tech-detail"><i class="fas fa-memory"></i><span>RAM:</span> ${escapeHTML(itemData.ramGB)}GB</div>` : ""}
+        ${itemData.storageGB ? `<div class="tech-detail"><i class="fas fa-database"></i><span>Storage Capacity:</span> ${escapeHTML(itemData.storageGB)}GB</div>` : ""}
+        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${escapeHTML(material)}</div>` : ""}
+        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${escapeHTML(batteryCapacity)}</div>` : ""}
+        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${escapeHTML(price)}</div>` : ""}
+        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${escapeHTML(dateReleased)}</div>` : ""}
+        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${escapeHTML(dateBought)}</div>` : ""}
         ${cyclesHtml}
         ${trendHtml}
     `;
@@ -2117,6 +2696,9 @@ function renderTechItemHomepage(itemData) {
         deviceType ||
         modelYear ||
         supportEndYear ||
+        itemData.chipName ||
+        itemData.ramGB ||
+        itemData.storageGB ||
         material ||
         batteryCapacity ||
         price ||
@@ -2131,19 +2713,15 @@ function renderTechItemHomepage(itemData) {
         ${advancedDetailsContent}
     </details>` : "";
 
-    const formattedOSType = osStatus
-        ? formatOSType(osStatus.osType)
-        : "";
-
     return `
     <div class="tech-item">
-        <h3><i class="${iconClass}"></i> ${name}</h3>
+        <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
 
-        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${model}</div>` : ""}
-        ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${primaryUse}</div>` : ""}
-        ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${condition}</div>` : ""}
-        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${storage}</div>` : ""}
-        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${color}</div>` : ""}
+        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${escapeHTML(model)}</div>` : ""}
+        ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${escapeHTML(primaryUse)}</div>` : ""}
+        ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${escapeHTML(condition)}</div>` : ""}
+        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${escapeHTML(storage)}</div>` : ""}
+        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${escapeHTML(color)}</div>` : ""}
 
         ${summaryHtml}
         ${ageHtml}
@@ -2151,19 +2729,19 @@ function renderTechItemHomepage(itemData) {
         ${osVersion ? `
         <div class="tech-detail">
             <i class="fab fa-apple"></i>
-            <span>OS Version:</span> ${osVersion}
-            ${osStatus ? `<span class="os-badge ${osStatus.color}">${osStatus.status}</span>` : ""}
+            <span>OS Version:</span> ${escapeHTML(osVersion)}
+            ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
         </div>
 
         ${osStatus ? `
         <div class="tech-detail">
             <i class="fas fa-code-branch"></i>
-            <span>Release Channel:</span> ${osStatus.releaseChannel}
+            <span>Release Channel:</span> ${escapeHTML(osStatus.releaseChannel)}
         </div>
 
         <div class="tech-detail">
             <i class="fas fa-circle-info"></i>
-            <span>Public Latest:</span> ${formattedOSType} ${osStatus.latestPublicVersion}
+            <span>Public Latest:</span> ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
         </div>
         ` : ""}
         ` : ""}
@@ -2174,6 +2752,7 @@ function renderTechItemHomepage(itemData) {
         ${scoreHtml}
         ${upgradeHtml}
         ${smartUpgradeHtml}
+        ${futureProofHtml}
         ${actionHtml}
         ${triggersHtml}
         ${advancedHtml}
@@ -2239,7 +2818,7 @@ async function loadTechItems() {
             errorMsg = `Could not load tech information: ${error.message}`;
         }
 
-        techItemsListContainer.innerHTML = `<p class="error">${errorMsg}</p>`;
+        techItemsListContainer.innerHTML = `<p class="error">${escapeHTML(errorMsg)}</p>`;
     }
 }
 
