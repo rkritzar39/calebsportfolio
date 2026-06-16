@@ -1257,76 +1257,6 @@ function getChipInfo(item) {
     };
 }
 
-function calculateFutureAITarget(item, futureTarget) {function deviceType = detectDeviceType(item);
-    const target = String(futureTarget.futureUpgradeTarget || "").toLowerCase();
-
-    if (deviceType === "accessory") {
-        return {
-            level: "Not Applicable",
-            color: "gray",
-            reason: "Accessories do not need direct AI feature support."
-        };
-    }
-
-    if (deviceType === "watch") {
-        return {
-            level: "Relay",
-            color: "yellow",
-            reason: "Future watch AI support should depend on a compatible paired iPhone."
-        };
-    }
-
-    if (deviceType === "phone") {
-        if (
-            target.includes("pro") ||
-            target.includes("pro max") ||
-            target.includes("air")
-        ) {
-            return {
-                level: "Maximum",
-                color: "green",
-                reason: "Future target is a Pro/Air-class iPhone, so the goal should be maximum AI headroom."
-            };
-        }
-
-        return {
-            level: "Advanced",
-            color: "green",
-            reason: "Future target should aim for stronger AI headroom than the current device."
-        };
-    }
-
-    if (deviceType === "tablet") {
-        if (target.includes("pro")) {
-            return {
-                level: "Maximum",
-                color: "green",
-                reason: "Future iPad target should prioritize Pro-class chip and memory headroom."
-            };
-        }
-
-        return {
-            level: "Advanced",
-            color: "green",
-            reason: "Future iPad target should prioritize newer Apple silicon and enough memory."
-        };
-    }
-
-    if (deviceType === "computer") {
-        return {
-            level: "Advanced",
-            color: "green",
-            reason: "Future computer target should prioritize newer Apple silicon with at least 16GB memory."
-        };
-    }
-
-    return {
-        level: "Advanced",
-        color: "green",
-        reason: "Future target should prioritize stronger AI feature support."
-    };
-}
-
 // ======================
 // DEVICE SUPPORT
 // ======================
@@ -1544,7 +1474,7 @@ function getBatteryCycles(item) {
 }
 
 // ======================
-// AI FEATURE SUPPORT
+// CURRENT AI FEATURE SUPPORT.// CURRENT AI FEATURE SUPPORT
 // ======================
 function calculateAIFeatureSupport(item) {
     const deviceType = detectDeviceType(item);
@@ -1576,21 +1506,25 @@ function calculateAIFeatureSupport(item) {
             level = "Standard";
             score = 70;
             color = "yellow";
-            reasons.push("Meets current Apple Intelligence hardware class");
+            reasons.push("Meets the current Apple Intelligence hardware class.");
         }
 
         if (ramGB >= 12) {
             level = "Advanced";
             score = 88;
             color = "green";
-            reasons.push("12GB+ memory improves AI feature headroom");
+            reasons.push("12GB+ memory gives stronger AI feature headroom.");
         }
 
         if (chip.isA19ProOrNewer && ramGB >= 12) {
             level = "Maximum";
             score = 95;
             color = "green";
-            reasons.push("Newer Pro-class chip and 12GB+ memory provide maximum AI headroom");
+            reasons.push("Newer Pro-class chip and 12GB+ memory provide maximum AI headroom.");
+        }
+
+        if (level === "Standard" && ramGB > 0 && ramGB < 12) {
+            weaknesses.push("8GB memory supports current Apple Intelligence but may not qualify for future advanced on-device AI tiers.");
         }
     }
 
@@ -1599,14 +1533,14 @@ function calculateAIFeatureSupport(item) {
             level = "Standard";
             score = 72;
             color = "yellow";
-            reasons.push("Meets Apple Intelligence tablet hardware class");
+            reasons.push("Meets Apple Intelligence tablet hardware class.");
         }
 
         if (chip.isM4OrNewer && ramGB >= 12) {
             level = "Advanced";
             score = 90;
             color = "green";
-            reasons.push("M4-class or newer chip with 12GB+ memory gives stronger AI headroom");
+            reasons.push("M4-class or newer chip with 12GB+ memory gives stronger AI headroom.");
         }
     }
 
@@ -1615,21 +1549,21 @@ function calculateAIFeatureSupport(item) {
             level = "Standard";
             score = 75;
             color = "yellow";
-            reasons.push("Apple silicon Mac supports Apple Intelligence");
+            reasons.push("Apple silicon Mac supports Apple Intelligence.");
         }
 
         if (chip.isM3OrNewer && ramGB >= 12) {
             level = "Advanced";
             score = 90;
             color = "green";
-            reasons.push("Newer Apple silicon with 12GB+ memory has stronger future AI headroom");
+            reasons.push("Newer Apple silicon with 12GB+ memory has stronger future AI headroom.");
         }
 
         if (chip.isProMaxClass && ramGB >= 24) {
             level = "Maximum";
             score = 96;
             color = "green";
-            reasons.push("Pro/Max/Ultra-class Apple silicon with high memory headroom");
+            reasons.push("Pro/Max/Ultra-class Apple silicon with high memory headroom.");
         }
     }
 
@@ -1638,12 +1572,12 @@ function calculateAIFeatureSupport(item) {
             level = "Relay";
             score = 55;
             color = "yellow";
-            reasons.push("Apple Intelligence features depend on a nearby compatible iPhone");
+            reasons.push("Apple Intelligence features depend on a nearby compatible iPhone.");
         } else {
             level = "Limited";
             score = 30;
             color = "orange";
-            weaknesses.push("Watch AI support depends on paired iPhone compatibility");
+            weaknesses.push("Watch AI support depends on paired iPhone compatibility.");
         }
     }
 
@@ -1651,16 +1585,16 @@ function calculateAIFeatureSupport(item) {
         level = "Not Applicable";
         score = 0;
         color = "gray";
-        reasons.push("Accessories do not need direct AI feature support");
+        reasons.push("Accessories do not need direct AI feature support.");
     }
 
     if (!hasEnoughStorageForAI && level !== "None" && level !== "Not Applicable") {
         score -= 8;
-        weaknesses.push("Lower storage may limit local AI model flexibility");
+        weaknesses.push("Lower storage may limit local AI model flexibility.");
     }
 
     if (reasons.length === 0 && weaknesses.length === 0) {
-        weaknesses.push("Does not appear to meet current AI hardware requirements");
+        weaknesses.push("Does not appear to meet current AI hardware requirements.");
     }
 
     return {
@@ -1671,6 +1605,85 @@ function calculateAIFeatureSupport(item) {
         aiSupportWeaknesses: weaknesses
     };
 }
+
+// ======================
+// FUTURE AI TARGET
+// This judges what the future AI Target: Maximum// This judges what the future upgrade should aim for.
+// ======================
+function calculateFutureAITarget(item, futureTarget) {
+    const deviceType = detectDeviceType(item);
+    const target = String(futureTarget.futureUpgradeTarget || "").toLowerCase();
+
+    if (deviceType === "accessory") {
+        return {
+            level: "Not Applicable",
+            color: "gray",
+            reason: "Accessories do not need direct AI feature support."
+        };
+    }
+
+    if (deviceType === "watch") {
+        return {
+            level: "Relay",
+            color: "yellow",
+            reason: "Future watch AI support should depend on a compatible paired iPhone."
+        };
+    }
+
+    if (deviceType === "phone") {
+        if (
+            target.includes("pro") ||
+            target.includes("pro max") ||
+            target.includes("air")
+        ) {
+            return {
+                level: "Maximum",
+                color: "green",
+                reason: "Future target is a Pro/Air-class iPhone, so the goal should be maximum AI headroom."
+            };
+        }
+
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future target should aim for stronger AI headroom than the current device."
+        };
+    }
+
+    if (deviceType === "tablet") {
+        if (target.includes("pro")) {
+            return {
+                level: "Maximum",
+                color: "green",
+                reason: "Future iPad target should prioritize Pro-class chip and memory headroom."
+            };
+        }
+
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future iPad target should prioritize newer Apple silicon and enough memory."
+        };
+    }
+
+    if (deviceType === "computer") {
+        return {
+            level: "Advanced",
+            color: "green",
+            reason: "Future computer target should prioritize newer Apple silicon with at least 16GB memory."
+        };
+    }
+
+    return {
+        level: "Advanced",
+        color: "green",
+        reason: "Future target should prioritize stronger AI feature support."
+    };
+}
+
+// Example:
+// Current AI Support: Standard
+
 
 // ======================
 // DEVICE SCORE
@@ -2510,7 +2523,11 @@ function renderTechItemHomepage(itemData) {
     const batteryTrend = estimateBatteryTrend(itemData);
     const upgradeScore = calculateUpgradeScore(itemData);
 
-    if (upgradeScore.score < 40 && upgrade.status !== "Upgrade Recommended" && upgrade.status !== "Retired") {
+    if (
+        upgradeScore.score < 40 &&
+        upgrade.status !== "Upgrade Recommended" &&
+        upgrade.status !== "Retired"
+    ) {
         upgrade.status = "Upgrade Recommended";
         upgrade.color = "red";
         upgrade.suggestion = "Consider upgrading soon";
@@ -2642,21 +2659,21 @@ function renderTechItemHomepage(itemData) {
     </div>`;
 
     const futureProofHtml = `
-    <div class="tech-detail smart-upgrade-row"><div class="tech-detailSupportLevel)}
-    </span>
-        </div>
-        
-        <div class="tech-detail smart-upgrade-row">
-            <i class="fas fa-wand-magic-sparkles"></i>
-            <span class="tech-label">Future AI Target:</span>
-            <span class="support-badge ${futureAITarget.color}">
-                ${escapeHTML(futureAITarget.level)}
-            </span>
-        </div>
-            <i class="fas fa-brain"></i>
-            <span class="tech-label">Current AI Support:</span>
-            <span class="support-badge ${aiSupport.aiSupportColor}">
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-brain"></i>
+        <span class="tech-label">Current AI Support:</span>
+        <span class="support-badge ${aiSupport.aiSupportColor}">
+            ${escapeHTML(aiSupport.aiSupportLevel)}
+        </span>
+    </div>
 
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        <span class="tech-label">Future AI Target:</span>
+        <span class="support-badge ${futureAITarget.color}">
+            ${escapeHTML(futureAITarget.level)}
+        </span>
+    </div>
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-hourglass-half"></i>
@@ -2855,7 +2872,7 @@ async function loadTechItems() {
         } else {
             console.log(`Found ${querySnapshot.size} tech items.`);
 
-            querySnapshot.forEach((doc) => {
+            querySnapshot.forEach(doc => {
                 const itemData = {
                     id: doc.id,
                     ...doc.data()
