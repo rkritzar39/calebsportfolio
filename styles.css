@@ -4282,6 +4282,30 @@ body.light-e .battery-percentage {
   color: var(--accent-color);
 }
 
+/* ================================================== */
+/* PLANNED / FUTURE DEVICE UI                         */
+/* ================================================== */
+
+.upgrade-badge.planned,
+.support-badge.planned,
+.os-badge.planned {
+    background: rgba(191, 90, 242, 0.15);
+    color: #BF5AF2;
+    border: 1px solid rgba(191, 90, 242, 0.28);
+}
+
+.planned-tech-item {
+    border-color: color-mix(in srgb, #BF5AF2 24%, var(--border-color));
+}
+
+.planned-tech-item:hover {
+    border-color: color-mix(in srgb, #BF5AF2 40%, var(--border-color));
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 14px 30px color-mix(in srgb, var(--shadow-color) 60%, transparent),
+        0 0 12px color-mix(in srgb, #BF5AF2 18%, transparent);
+}
+
 /* ======================================================= */
 /* WHY / EXPLANATION BOX                                     */
 /* ======================================================= */
