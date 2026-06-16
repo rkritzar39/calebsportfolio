@@ -3851,21 +3851,7 @@ async function loadAndDisplayTechItems() {
         techItemsListContainer.innerHTML = `<p class="error">${errorMsg}</p>`;
     }
 }
-correct it yourself pls
-Absolutely — I corrected it for you **myself**.
 
-### What I fixed in your code
-- ✅ added the **planned-device check** to the main renderer
-- ✅ fixed the **escaped HTML** in `renderPlannedTechItemHomepage`
-- ✅ kept your existing owned-device render logic intact
-- ✅ cleaned the `loadAndDisplayTechItems()` block
-- ✅ made the whole thing **paste-ready**
-
----
-
-## Paste this exact code over your current block
-
-```js
 function renderPlannedTechItemHomepage(itemData) {
     const item = normalizeTechItem(itemData);
 
