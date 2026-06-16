@@ -1,5 +1,39 @@
 {
   "ios": "26.5.1",
   "ipados": "26.5",
-  "macos": "26.5.1"
+  "macos": "26.5.1",
+  "watchos": "26.5",
+  "tvos": "26.5",
+  "visionos": "26.5",
+
+  "android": "16",
+  "pixelui": "16",
+  "oneui": "8.5",
+  "oxygenos": "16",
+  "coloros": "16",
+  "realmeui": "7",
+  "hyperos": "3",
+  "harmonyos": "5",
+  "nothingos": "4",
+
+  "windows": "11",
+  "windowsserver": "2025",
+
+  "chromeos": "latest",
+  "ubuntu": "26.04",
+  "debian": "13",
+  "fedora": "42",
+  "arch": "rolling",
+  "linux": "rolling",
+
+  "steamOS": "3",
+  "playstation": "5",
+  "xbox": "series",
+  "nintendoswitch": "18",
+
+  "wearos": "6",
+  "fireos": "8",
+  "rokuos": "13",
+  "webos": "24",
+  "tizen": "8"
 }
