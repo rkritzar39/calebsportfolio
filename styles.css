@@ -3388,6 +3388,7 @@ body.dark-mode .bubble {
 /* ======================================================= */
 /* TECH + SMART UPGRADE + BETA PREVIEW CSS                 */
 /* Corrected full version + lifecycle polish               */
+/* Responsive-fixed: edge-gap protection on all screens   */
 /* ======================================================= */
 
 /* ======================== */
@@ -4271,6 +4272,7 @@ body.light-e .battery-percentage {
 .smart-upgrade-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;   /* ← guard: wraps badges instead of overflowing */
   gap: 0.6rem;
 }
 
@@ -4433,13 +4435,25 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* BETA PREVIEW PAGE (FIXED)                               */
+/* BETA PREVIEW PAGE                                       */
 /* ======================================================= */
 
 .beta-page .container {
   max-width: 1100px;
   margin: 0 auto;
+  /* Horizontal padding keeps cards off viewport edges on every screen size.
+     Falls back to 16px on browsers that don't support clamp() or env(). */
   padding-bottom: 120px;
+  padding-left:  clamp(12px, 4vw, 24px);
+  padding-right: clamp(12px, 4vw, 24px);
+}
+
+/* Safe-area override for notched / Dynamic Island devices */
+@supports (padding: env(safe-area-inset-left)) {
+  .beta-page .container {
+    padding-left:  max(clamp(12px, 4vw, 24px), env(safe-area-inset-left));
+    padding-right: max(clamp(12px, 4vw, 24px), env(safe-area-inset-right));
+  }
 }
 
 .beta-page-section {
@@ -4476,7 +4490,6 @@ body.light-e .tech-upgrade-explanation {
   pointer-events: none;
 }
 
-/* FIXED: was beta-page-section &gt; * */
 .beta-page-section > * {
   position: relative;
   z-index: 1;
@@ -4808,27 +4821,70 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* RESPONSIVE                                              */
+/* BASE RESPONSIVE SAFETY                                  */
+/* Applied before any media queries so all cards obey     */
+/* box-sizing and never overflow their own padding.       */
 /* ======================================================= */
 
+.tech-section,
+.tech-item,
+.tech-lifecycle-card,
+.beta-page-section,
+.tech-upgrade-explanation,
+.tech-advanced-details,
+.beta-summary-card,
+.beta-feature-item {
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* ======================================================= */
+/* RESPONSIVE                                              */
+/* Breakpoint ladder: 900 → 768 → 700 → 640 →            */
+/* 600 → 540 → 480 → 375 plus safe-area @supports         */
+/* ======================================================= */
+
+/* ── 900px: summary grid loosens up ── */
+@media screen and (max-width: 900px) {
+  .beta-summary-grid {
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 12px;
+  }
+}
+
+/* ── 768px: tablets ── */
 @media screen and (max-width: 768px) {
   .tech-section {
-    padding: 20px;
+    padding: 22px;
+    margin-bottom: 22px;
   }
 
   .tech-item {
-    padding: 15px;
+    padding: 17px;
+    margin-bottom: 13px;
+  }
+
+  .tech-lifecycle-card {
+    margin: 13px 0;
   }
 
   .battery-icon {
     width: 150px;
     height: 35px;
   }
+
+  .beta-feature-list {
+    gap: 13px;
+  }
 }
 
+/* ── 700px: large phones / small tablets ── */
 @media screen and (max-width: 700px) {
   .beta-page-section {
-    padding: 22px;
+    padding: 20px;
+    margin-bottom: 20px;
   }
 
   .beta-page-header {
@@ -4843,8 +4899,22 @@ body.light-e .tech-upgrade-explanation {
     width: 46px;
     height: 46px;
   }
+
+  /* Stack action buttons so they don't crowd each other */
+  .beta-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .beta-action-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
+/* ── 600px: badge scale-down + flex-wrap guards ── */
 @media (max-width: 600px) {
   .upgrade-priority-badge,
   .upgrade-badge,
@@ -4872,6 +4942,7 @@ body.light-e .tech-upgrade-explanation {
   .tech-upgrade-explanation {
     padding: 0.65rem;
     line-height: 1.45;
+    column-gap: 0.5rem;
   }
 
   .upgrade-triggers {
@@ -4882,6 +4953,7 @@ body.light-e .tech-upgrade-explanation {
     font-size: 0.88rem;
   }
 
+  /* Suppress decorative text-shadows on small screens for legibility */
   .tech-value,
   .tech-detail,
   .tech-upgrade-explanation .upgrade-explanation-text,
@@ -4889,15 +4961,107 @@ body.light-e .tech-upgrade-explanation {
   .beta-page-subtitle {
     text-shadow: none;
   }
+
+  /* Allow detail rows to wrap badges below label/value on narrow widths */
+  .tech-detail {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Battery wraps below the label text when space is tight */
+  .battery-container {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .beta-summary-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
 }
 
+/* ── 540px: mid-range phones ── */
+@media screen and (max-width: 540px) {
+  .tech-section {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .tech-item {
+    padding: 14px;
+    margin-bottom: 11px;
+  }
+
+  .tech-lifecycle-card {
+    padding: 14px;
+    margin: 11px 0;
+  }
+
+  .beta-page-section {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .beta-feature-item {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .beta-summary-card {
+    padding: 14px;
+  }
+
+  .tech-advanced-details {
+    margin-top: 12px;
+  }
+
+  .tech-advanced-details summary {
+    padding: 11px 13px;
+  }
+
+  .tech-advanced-details .tech-detail {
+    padding: 0 13px;
+    margin: 9px 0;
+  }
+
+  /* 2-col explanation collapses to icon + text */
+  .tech-upgrade-explanation {
+    grid-template-columns: auto 1fr;
+  }
+}
+
+/* ── 480px: standard small phones ── */
 @media screen and (max-width: 480px) {
   .tech-section {
-    padding: 15px;
+    padding: 14px;
+    margin-bottom: 14px;
   }
 
   .tech-item {
     padding: 12px;
+    margin-bottom: 10px;
+  }
+
+  .tech-lifecycle-card {
+    padding: 12px;
+    border-radius: 16px;
+    margin: 10px 0;
+  }
+
+  .beta-page-section {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .tech-advanced-details summary {
+    padding: 10px 12px;
+    font-size: 0.87rem;
+  }
+
+  .tech-advanced-details .tech-detail {
+    padding: 0 12px;
+    margin: 8px 0;
   }
 
   .battery-icon {
@@ -4907,6 +5071,215 @@ body.light-e .tech-upgrade-explanation {
 
   .battery-percentage {
     font-size: calc(var(--font-size-base) * 0.65);
+  }
+
+  .battery-container {
+    gap: 8px;
+  }
+
+  .beta-page-header h1 {
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+  }
+
+  .beta-version-pill {
+    padding: 7px 12px;
+    font-size: 0.82rem;
+  }
+
+  .beta-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .beta-summary-card {
+    padding: 12px;
+  }
+
+  .beta-feature-item {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .beta-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
+    font-size: 1rem;
+  }
+
+  .beta-feature-item h3 {
+    font-size: 0.98rem;
+  }
+
+  .beta-actions {
+    margin: 8px 0 20px;
+    gap: 8px;
+  }
+
+  .beta-action-button {
+    min-height: 44px;
+    padding: 0 14px;
+    font-size: 0.9rem;
+  }
+
+  .tech-section .tech-item h3,
+  .tech-item h3 {
+    font-size: calc(var(--font-size-base) * 0.98);
+    margin-bottom: 12px;
+  }
+
+  .beta-roadmap {
+    gap: 10px;
+  }
+}
+
+/* ── 375px: very small phones (SE, Galaxy A-series) ── */
+@media screen and (max-width: 375px) {
+  .tech-section {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .tech-item {
+    padding: 10px;
+    margin-bottom: 9px;
+  }
+
+  .tech-lifecycle-card {
+    padding: 10px;
+    border-radius: 14px;
+    margin: 9px 0;
+  }
+
+  .beta-page-section {
+    padding: 12px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+  }
+
+  .tech-detail {
+    gap: 5px;
+    font-size: 0.9rem;
+  }
+
+  .tech-detail i {
+    width: 16px;
+    height: 16px;
+    font-size: calc(var(--font-size-base) * 0.78);
+  }
+
+  .battery-icon {
+    width: 100px;
+    height: 26px;
+    border-radius: 7px;
+  }
+
+  .upgrade-priority-badge,
+  .upgrade-badge,
+  .support-badge,
+  .os-badge {
+    font-size: 0.7rem;
+    padding: 0.17rem 0.42rem;
+    margin-left: 0.2rem;
+  }
+
+  .upgrade-priority-badge {
+    min-width: 76px;
+    gap: 0.3rem;
+  }
+
+  .score-bar {
+    height: 8px;
+    margin: 0.3rem 0 0.8rem;
+  }
+
+  .tech-advanced-details summary {
+    padding: 9px 11px;
+    font-size: 0.84rem;
+  }
+
+  .tech-advanced-details .tech-detail {
+    padding: 0 11px;
+    margin: 7px 0;
+  }
+
+  .tech-upgrade-explanation {
+    padding: 0.55rem 0.65rem;
+    column-gap: 0.4rem;
+    font-size: 0.88rem;
+  }
+
+  .upgrade-triggers {
+    margin-left: 1.1rem;
+  }
+
+  .upgrade-triggers li {
+    font-size: 0.84rem;
+  }
+
+  .beta-page-header h1 {
+    font-size: clamp(1.4rem, 9vw, 1.9rem);
+  }
+
+  .beta-version-pill {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  .beta-summary-card {
+    padding: 10px;
+  }
+
+  .beta-summary-label {
+    font-size: 0.76rem;
+  }
+
+  .beta-feature-item {
+    padding: 10px;
+    gap: 9px;
+  }
+
+  .beta-feature-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    font-size: 0.92rem;
+  }
+
+  .beta-feature-item h3 {
+    font-size: 0.92rem;
+    margin-bottom: 4px;
+  }
+
+  .beta-feature-item p {
+    font-size: 0.88rem;
+  }
+
+  .beta-action-button {
+    min-height: 42px;
+    padding: 0 12px;
+    font-size: 0.86rem;
+    gap: 7px;
+  }
+
+  .tech-lifecycle-flow {
+    gap: 0.32rem;
+  }
+
+  .tech-lifecycle-node {
+    padding: 0.42rem 0.58rem;
+    font-size: 0.84rem;
+  }
+
+  .tech-lifecycle-title {
+    font-size: 0.88rem;
+    gap: 0.38rem;
+  }
+
+  .tech-lifecycle-title i {
+    width: 1.55rem;
+    height: 1.55rem;
   }
 }
 
@@ -5544,6 +5917,7 @@ body:not(.light-e) .tech-role-details .tech-detail span:first-of-type {
     height: 1.75rem;
   }
 
+  /* Stack flow nodes vertically; arrow rotates to point down */
   .tech-lifecycle-flow {
     flex-direction: column;
     align-items: stretch;
@@ -5565,6 +5939,7 @@ body:not(.light-e) .tech-role-details .tech-detail span:first-of-type {
     margin-left: 0;
   }
 
+  /* Role-detail rows stack label above value */
   .tech-role-details .tech-detail {
     align-items: flex-start;
     flex-direction: column;
@@ -5573,6 +5948,48 @@ body:not(.light-e) .tech-role-details .tech-detail span:first-of-type {
 
   .tech-role-details .tech-value {
     margin-left: 0;
+  }
+
+  /* Lifecycle notes get slightly smaller text */
+  .tech-lifecycle-note {
+    font-size: 0.88rem;
+    padding: 0.62rem 0.72rem;
+  }
+
+  .tech-lifecycle-meta {
+    font-size: 0.84rem;
+    margin-top: 0.6rem;
+  }
+}
+
+/* ── 375px: lifecycle micro-adjustments ── */
+@media screen and (max-width: 375px) {
+  .tech-lifecycle-card {
+    padding: 10px;
+    border-radius: 13px;
+  }
+
+  .tech-lifecycle-node {
+    border-radius: 11px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.82rem;
+  }
+
+  .tech-lifecycle-note {
+    font-size: 0.82rem;
+    padding: 0.52rem 0.6rem;
+    border-radius: 11px;
+  }
+
+  .tech-lifecycle-meta {
+    font-size: 0.78rem;
+    gap: 0.4rem;
+  }
+
+  .tech-role-details .tech-detail {
+    padding: 0.48rem 0.55rem;
+    border-radius: 10px;
+    font-size: 0.86rem;
   }
 }
 
