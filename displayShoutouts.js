@@ -869,9 +869,7 @@ function extractID(url) {
   return match ? match[1] : "";
 }
 
-/* ------------------------------------------------------------
-   GLOBAL STORAGE
------------------------------------------------------------- */
+/* ------------------------------------------------------------/* ------------------------------------------------------------ */
 let allTechItems = [];
 
 // ======================
@@ -2019,21 +2017,21 @@ function renderTechItemHomepage(itemData) {
     }
 
     const smartUpgradeHtml = `
-    <div class="tech-detail">
+    <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-calendar-check"></i>
-        <span>Recommended Upgrade Year:</span>
-        ${smartUpgrade.recommendedUpgradeYear}
+        <span class="tech-label">Recommended Upgrade Year:</span>
+        <span class="tech-value">${smartUpgrade.recommendedUpgradeYear}</span>
     </div>
 
-    <div class="tech-detail">
+    <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-calendar-days"></i>
-        <span>Upgrade Window:</span>
-        ${smartUpgrade.upgradeWindow}
+        <span class="tech-label">Upgrade Window:</span>
+        <span class="tech-value">${smartUpgrade.upgradeWindow}</span>
     </div>
 
-    <div class="tech-detail">
+    <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-ranking-star"></i>
-        <span>Upgrade Priority:</span>
+        <span class="tech-label">Upgrade Priority:</span>
         <span class="upgrade-priority-badge ${smartUpgrade.priority.color}">
             ${smartUpgrade.priority.label}
         </span>
@@ -2041,8 +2039,10 @@ function renderTechItemHomepage(itemData) {
 
     <div class="tech-detail tech-upgrade-explanation">
         <i class="fas fa-circle-question"></i>
-        <span>Why:</span>
-        ${smartUpgrade.explanation}
+        <span class="tech-label">Why:</span>
+        <span class="upgrade-explanation-text">
+            ${smartUpgrade.explanation}
+        </span>
     </div>`;
 
     const ageHtml = age ? `
