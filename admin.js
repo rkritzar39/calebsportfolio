@@ -4700,6 +4700,41 @@ function renderTechItemAdminListItem(container, docId, itemData, deleteHandler, 
     container.appendChild(itemDiv);
 }
 
+function setupPlannedTechFieldToggle(selectId, formRoot) {
+    const ownershipSelect = document.getElementById(selectId);
+    if (!ownershipSelect || !formRoot) return;
+
+    function updateVisibility() {
+        const isPlanned =
+            ownershipSelect.value === "planned" ||
+            ownershipSelect.value === "wishlist" ||
+            ownershipSelect.value === "future-upgrade" ||
+            ownershipSelect.value === "coming-soon";
+
+        const plannedGroups = formRoot.querySelectorAll(".planned-tech-fields");
+        const ownedGroups = formRoot.querySelectorAll(".owned-only-fields");
+
+        plannedGroups.forEach(group => {
+            group.classList.toggle("active", isPlanned);
+        });
+
+        ownedGroups.forEach(group => {
+            group.classList.toggle("hidden", isPlanned);
+        });
+    }
+
+    ownershipSelect.addEventListener("change", updateVisibility);
+    updateVisibility();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const addForm = document.getElementById("add-tech-item-form");
+    const editForm = document.getElementById("edit-tech-item-form");
+
+    setupPlannedTechFieldToggle("tech-ownership-state", addForm);
+    setupPlannedTechFieldToggle("edit-tech-ownership-state", editForm);
+});
+
 function displayFilteredTechItems() {
     if (!techItemsListAdmin || !searchTechItemsInput || typeof allTechItems === "undefined") {
         console.error("Tech Items Filter Error: Missing elements/data.");
