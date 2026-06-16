@@ -869,9 +869,7 @@ function extractID(url) {
   return match ? match[1] : "";
 }
 
-/* ------------------------------------------------------------
-   GLOBAL STORAGE
------------------------------------------------------------- */
+/* ------------------------------------------------------------/* ------------------------------------------------------------ */
 let allTechItems = [];
 
 // ======================
@@ -905,7 +903,7 @@ const minimumUpgradeGapDefaults = {
 
 // ======================
 // SUPPORT LIFESPAN DEFAULTS
-// These are estimates, not Apple guarantees.
+// Estimates, not guarantees.
 // ======================
 const supportLifespanDefaults = {
     phone: {
@@ -937,7 +935,10 @@ const supportLifespanDefaults = {
 let latestOSVersions = {
     ios: "26.5.1",
     ipados: "26.5",
-    macos: "26.5.1"
+    macos: "26.5.1",
+    watchos: "26.5",
+    tvos: "26.5",
+    visionos: "26.5"
 };
 
 const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
@@ -960,7 +961,10 @@ async function fetchLatestOSVersions() {
         latestOSVersions = {
             ios: data.ios || latestOSVersions.ios,
             ipados: data.ipados || latestOSVersions.ipados,
-            macos: data.macos || latestOSVersions.macos
+            macos: data.macos || latestOSVersions.macos,
+            watchos: data.watchos || latestOSVersions.watchos,
+            tvos: data.tvos || latestOSVersions.tvos,
+            visionos: data.visionos || latestOSVersions.visionos
         };
 
         console.log("Latest OS versions updated:", latestOSVersions);
@@ -1240,11 +1244,6 @@ function getChipInfo(item) {
             chipLower.includes("a19") ||
             chipLower.includes("a20") ||
             chipLower.includes("a21"),
-        isA18OrNewer:
-            chipLower.includes("a18") ||
-            chipLower.includes("a19") ||
-            chipLower.includes("a20") ||
-            chipLower.includes("a21"),
         isA19ProOrNewer:
             chipLower.includes("a19 pro") ||
             chipLower.includes("a20 pro") ||
@@ -1507,8 +1506,7 @@ function calculateAIFeatureSupport(item) {
     const hasEnoughStorageForAI = storageGB >= 128;
 
     if (deviceType === "phone") {
-        const isIPhone15Pro =
-            model.includes("iphone 15 pro");
+        const isIPhone15Pro = model.includes("iphone 15 pro");
 
         const isIPhone16OrNewer =
             model.includes("iphone 16") ||
