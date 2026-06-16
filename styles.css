@@ -11046,3 +11046,367 @@ body.light-e .creator-sort-controls select option {
     color: #ffffff !important;
 }
 
+/* ======================================================= *//* ================================================= pasted as HTML */
+.tech-detail > :not(i):not(.upgrade-badge):not(.support-badge):not(.os-badge):not(.upgrade-priority-badge) {
+  color: var(--tech-text) !important;
+}
+
+.tech-lifecycle-flow > i {
+  color: var(--tech-muted) !important;
+}
+
+/* ======================================================= */
+/* FORCE TECH SECTION TO FOLLOW CURRENT THEME              */
+/* ======================================================= */
+
+.tech-section {
+  --tech-text: var(--text-color);
+  --tech-muted: var(--secondary-text);
+  --tech-surface: var(--content-bg);
+  --tech-border-final: var(--border-color);
+  --tech-accent-final: var(--accent-color);
+  --tech-shadow-final: var(--shadow-color);
+
+  color: var(--tech-text) !important;
+}
+
+/* ======================================================= */
+/* LIGHT MODE TECH BACKGROUND FIX                          */
+/* Makes card less washed out and improves contrast        */
+/* ======================================================= */
+
+body.light-e .tech-section {
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(255, 255, 255, 0.92),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.88),
+      rgba(245, 249, 255, 0.68)
+    ) !important;
+
+  border-color: rgba(17, 24, 39, 0.18) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 18px 38px rgba(15, 23, 42, 0.14) !important;
+
+  color: var(--text-color) !important;
+}
+
+body.light-e .tech-item {
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(255, 255, 255, 0.95),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.86),
+      rgba(255, 255, 255, 0.62)
+    ) !important;
+
+  border-color: rgba(17, 24, 39, 0.20) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 14px 30px rgba(15, 23, 42, 0.12) !important;
+
+  color: var(--text-color) !important;
+}
+
+/* ======================================================= */
+/* DARK MODE TECH BACKGROUND FIX                           */
+/* Keeps dark mode premium and readable                    */
+/* ======================================================= */
+
+body:not(.light-e) .tech-section {
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(255, 255, 255, 0.12),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(0, 0, 0, 0.24)
+    ),
+    color-mix(in srgb, var(--content-bg) 94%, black 6%) !important;
+
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: var(--text-color) !important;
+}
+
+body:not(.light-e) .tech-item {
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      rgba(255, 255, 255, 0.12),
+      transparent 38%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(0, 0, 0, 0.18)
+    ),
+    color-mix(in srgb, var(--content-bg) 92%, black 8%) !important;
+
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: var(--text-color) !important;
+}
+
+/* ======================================================= */
+/* OVERRIDE GLOBAL .section TEXT COLORS INSIDE TECH        */
+/* This is the important part                              */
+/* ======================================================= */
+
+.section .tech-section,
+.section .tech-section *,
+.tech-section,
+.tech-section * {
+  color: inherit;
+}
+
+/* Tech headings */
+.section .tech-section h1,
+.section .tech-section h2,
+.section .tech-section h3,
+.tech-section h1,
+.tech-section h2,
+.tech-section h3,
+.tech-section .section-title {
+  color: var(--text-color) !important;
+}
+
+/* Tech normal text */
+.section .tech-section p,
+.section .tech-section li,
+.section .tech-section .tech-detail,
+.section .tech-section .tech-value,
+.section .tech-section .tech-lifecycle-note,
+.section .tech-section .tech-lifecycle-node,
+.section .tech-section .tech-upgrade-explanation,
+.section .tech-section .upgrade-explanation-text,
+.tech-section p,
+.tech-section li,
+.tech-section .tech-detail,
+.tech-section .tech-value,
+.tech-section .tech-lifecycle-note,
+.tech-section .tech-lifecycle-node,
+.tech-section .tech-upgrade-explanation,
+.tech-section .upgrade-explanation-text {
+  color: var(--text-color) !important;
+}
+
+/* Tech labels */
+.section .tech-section .tech-detail span:first-of-type,
+.section .tech-section .tech-label,
+.section .tech-section .tech-lifecycle-meta,
+.section .tech-section .upgrade-triggers li,
+.section .tech-section .tech-advanced-details summary,
+.tech-section .tech-detail span:first-of-type,
+.tech-section .tech-label,
+.tech-section .tech-lifecycle-meta,
+.tech-section .upgrade-triggers li,
+.tech-section .tech-advanced-details summary {
+  color: var(--secondary-text) !important;
+}
+
+/* Tech values specifically */
+.section .tech-section .tech-detail span:not(.tech-label):not(.support-badge):not(.upgrade-badge):not(.os-badge):not(.upgrade-priority-badge),
+.tech-section .tech-detail span:not(.tech-label):not(.support-badge):not(.upgrade-badge):not(.os-badge):not(.upgrade-priority-badge) {
+  color: var(--text-color) !important;
+}
+
+/* Icons */
+.tech-section .tech-detail i,
+.tech-section .tech-item h3 i,
+.tech-section .tech-lifecycle-title i {
+  color: var(--accent-color);
+}
+
+/* ======================================================= */
+/* BADGES MUST KEEP THEIR COLORS                           */
+/* Prevent inherited text color from ruining badges        */
+/* ======================================================= */
+
+.tech-section .upgrade-badge.green,
+.tech-section .support-badge.green,
+.tech-section .os-badge.green,
+.tech-section .upgrade-priority-badge.green,
+.tech-section .upgrade-badge.owned,
+.tech-section .support-badge.owned,
+.tech-section .os-badge.owned,
+.tech-section .upgrade-badge.ordered,
+.tech-section .support-badge.ordered,
+.tech-section .os-badge.ordered {
+  color: #30d158 !important;
+}
+
+.tech-section .upgrade-badge.yellow,
+.tech-section .support-badge.yellow,
+.tech-section .os-badge.yellow,
+.tech-section .upgrade-priority-badge.yellow,
+.tech-section .upgrade-badge.in-repair,
+.tech-section .support-badge.in-repair,
+.tech-section .os-badge.in-repair {
+  color: #ffd60a !important;
+}
+
+.tech-section .upgrade-badge.orange,
+.tech-section .support-badge.orange,
+.tech-section .os-badge.orange,
+.tech-section .upgrade-priority-badge.orange,
+.tech-section .upgrade-badge.wishlist,
+.tech-section .support-badge.wishlist,
+.tech-section .os-badge.wishlist,
+.tech-section .upgrade-badge.considering,
+.tech-section .support-badge.considering,
+.tech-section .os-badge.considering,
+.tech-section .upgrade-badge.reserved,
+.tech-section .support-badge.reserved,
+.tech-section .os-badge.reserved {
+  color: #ff9f0a !important;
+}
+
+.tech-section .upgrade-badge.red,
+.tech-section .support-badge.red,
+.tech-section .os-badge.red,
+.tech-section .upgrade-priority-badge.red {
+  color: #ff453a !important;
+}
+
+.tech-section .upgrade-badge.purple,
+.tech-section .support-badge.purple,
+.tech-section .os-badge.purple,
+.tech-section .upgrade-priority-badge.purple,
+.tech-section .upgrade-badge.planned,
+.tech-section .support-badge.planned,
+.tech-section .os-badge.planned,
+.tech-section .upgrade-badge.future-upgrade,
+.tech-section .support-badge.future-upgrade,
+.tech-section .os-badge.future-upgrade {
+  color: #bf5af2 !important;
+}
+
+.tech-section .upgrade-badge.blue,
+.tech-section .support-badge.blue,
+.tech-section .os-badge.blue,
+.tech-section .upgrade-priority-badge.blue,
+.tech-section .upgrade-badge.coming-soon,
+.tech-section .support-badge.coming-soon,
+.tech-section .os-badge.coming-soon,
+.tech-section .upgrade-badge.preordered,
+.tech-section .support-badge.preordered,
+.tech-section .os-badge.preordered,
+.tech-section .upgrade-badge.researching,
+.tech-section .support-badge.researching,
+.tech-section .os-badge.researching {
+  color: #5ac8fa !important;
+}
+
+.tech-section .upgrade-badge.gray,
+.tech-section .support-badge.gray,
+.tech-section .os-badge.gray,
+.tech-section .upgrade-priority-badge.gray,
+.tech-section .upgrade-badge.retired,
+.tech-section .support-badge.retired,
+.tech-section .os-badge.retired,
+.tech-section .upgrade-badge.sold,
+.tech-section .support-badge.sold,
+.tech-section .os-badge.sold,
+.tech-section .upgrade-badge.traded-in,
+.tech-section .support-badge.traded-in,
+.tech-section .os-badge.traded-in,
+.tech-section .upgrade-badge.donated,
+.tech-section .support-badge.donated,
+.tech-section .os-badge.donated,
+.tech-section .upgrade-badge.recycled,
+.tech-section .support-badge.recycled,
+.tech-section .os-badge.recycled,
+.tech-section .upgrade-badge.returned,
+.tech-section .support-badge.returned,
+.tech-section .os-badge.returned,
+.tech-section .upgrade-badge.lost,
+.tech-section .support-badge.lost,
+.tech-section .os-badge.lost {
+  color: #8e8e93 !important;
+}
+
+/* ======================================================= */
+/* LIGHT MODE BADGE BACKGROUNDS                            */
+/* ======================================================= */
+
+body.light-e .tech-section .upgrade-badge,
+body.light-e .tech-section .support-badge,
+body.light-e .tech-section .os-badge,
+body.light-e .tech-section .upgrade-priority-badge {
+  background-color: rgba(255, 255, 255, 0.62);
+  border-color: rgba(17, 24, 39, 0.14);
+}
+
+/* ======================================================= */
+/* DETAIL BOXES IN LIGHT MODE                              */
+/* ======================================================= */
+
+body.light-e .tech-advanced-details,
+body.light-e .tech-upgrade-explanation,
+body.light-e .tech-summary,
+body.light-e .tech-lifecycle-card,
+body.light-e .battery-icon,
+body.light-e .score-bar {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.78),
+      rgba(255, 255, 255, 0.52)
+    ) !important;
+
+  border-color: rgba(17, 24, 39, 0.14) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    0 10px 24px rgba(15, 23, 42, 0.09) !important;
+}
+
+/* ======================================================= */
+/* DETAIL BOXES IN DARK MODE                               */
+/* ======================================================= */
+
+body:not(.light-e) .tech-advanced-details,
+body:not(.light-e) .tech-upgrade-explanation,
+body:not(.light-e) .tech-summary,
+body:not(.light-e) .tech-lifecycle-card,
+body:not(.light-e) .battery-icon,
+body:not(.light-e) .score-bar {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(0, 0, 0, 0.18)
+    ),
+    color-mix(in srgb, var(--content-bg) 92%, black 8%) !important;
+
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ======================================================= */
+/* MOBILE FIXES                                            */
+/* ======================================================= */
+
+@media screen and (max-width: 640px) {
+  .tech-lifecycle-flow > i {
+    align-self: center;
+    transform: rotate(90deg);
+  }
+}
+/* FINAL TECH INFO READABILITY FIX                         */
+/* MUST BE AT THE VERY END OF THE CSS FILE                 */
+/* Fixes Tech Info text being invisible in light mode      */
+/* ======================================================= */
+
