@@ -236,7 +236,7 @@ a:hover {
 }
 
 /* ===================================== */
-/* 🪟 Windows 11 + iOS Glass Login Design (Fixed Desktop) */
+/* ðŸªŸ Windows 11 + iOS Glass Login Design (Fixed Desktop) */
 /* ===================================== */
 
 .modern-login {
@@ -437,7 +437,7 @@ a:hover {
 }
 
 /* ===================================== */
-/* 📱 FINAL RESPONSIVE MOBILE DESIGN     */
+/* ðŸ“± FINAL RESPONSIVE MOBILE DESIGN     */
 /* ===================================== */
 @media (max-width: 900px) {
   /* Hide desktop hero */
@@ -600,7 +600,7 @@ a:hover {
 #login-section .g_id_signin > div {
   width: 100% !important;
   max-width: 100% !important;
-  min-width: 0 !important;    /* override Google’s inline min-width */
+  min-width: 0 !important;    /* override Googleâ€™s inline min-width */
   display: block !important;
 }
 
@@ -611,7 +611,7 @@ a:hover {
     overflow: hidden;          /* ensures nothing bleeds out visually */
   }
 
-  /* Keep the GSI button visually “native” on mobile */
+  /* Keep the GSI button visually â€œnativeâ€ on mobile */
   #login-section .g_id_signin {
     border: none !important;
     background: none !important;
@@ -999,7 +999,7 @@ a:hover {
 }
 
 /* ======================== */
-/* Form Element Styles – iOS 26 Onyx Enhanced */
+/* Form Element Styles â€“ iOS 26 Onyx Enhanced */
 /* ======================== */
 .form-group {
     margin-bottom: 22px;
@@ -1103,7 +1103,7 @@ select {
 }
 
 /* ======================== */
-/* Toggle Styles – iOS 26 Onyx Enhanced (Fixed Alignment) */
+/* Toggle Styles â€“ iOS 26 Onyx Enhanced (Fixed Alignment) */
 /* ======================== */
 .checkbox-group {
     display: flex;
@@ -1243,7 +1243,7 @@ select#edit-disability-icon-select {
 }
 
 /* ======================== */
-/* Button Styles – iOS 26 Onyx */
+/* Button Styles â€“ iOS 26 Onyx */
 /* ======================== */
 button, .button-primary {
     background-color: var(--accent-color);
@@ -2726,7 +2726,7 @@ body.light-mode .shoutout-preview-area .youtube-channel-card span {
 }
 
 /* ======================================== */
-/* Business Info & Admin Styles – Onyx Refined */
+/* Business Info & Admin Styles â€“ Onyx Refined */
 /* ======================================== */
 
 /* ---------------------------------------- */
@@ -4846,4 +4846,354 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
     padding: 0 0.5rem;
     font-weight: 700;
     color: var(--accent-color, #0a84ff);
+}
+
+
+/* ============================================================
+   TECH INVENTORY 2.0 â€” Guided Lifecycle Admin Redesign
+   ------------------------------------------------------------
+   Adds structured cards, lifecycle mode picker, cleaner forms,
+   and responsive polish while preserving existing admin.js IDs.
+============================================================ */
+.tech-admin-v2 {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(var(--accent-rgb), 0.18), transparent 34%),
+    linear-gradient(145deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)),
+    var(--content-bg);
+}
+
+.tech-admin-hero,
+.tech-form-title-row,
+.tech-existing-header,
+.tech-card-heading,
+.tech-workflow-note,
+.tech-lifecycle-tools {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tech-admin-hero {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 82%, rgba(var(--accent-rgb), 0.24));
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
+    rgba(255,255,255,0.03);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 42px rgba(0,0,0,0.22);
+}
+
+.tech-admin-hero h3,
+.tech-form-title-row h4,
+.modal-title-row h2,
+.tech-existing-header h4 {
+  margin: 0;
+}
+
+.tech-admin-hero p:not(.eyebrow),
+.tech-existing-header p,
+.modal-subtitle,
+.tech-card-heading p,
+.tech-lifecycle-tools p {
+  margin: 0.35rem 0 0;
+  color: var(--secondary-text);
+  line-height: 1.45;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--accent-color);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tech-admin-hero-actions {
+  display: grid;
+  gap: 0.45rem;
+  min-width: min(280px, 100%);
+}
+
+.tech-admin-hero-actions span,
+.tech-form-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  color: var(--accent-color);
+  background: rgba(var(--accent-rgb), 0.12);
+  border: 1px solid rgba(var(--accent-rgb), 0.22);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.tech-workflow-note {
+  justify-content: flex-start;
+  margin: 1rem 0 1.25rem;
+  padding: 0.85rem 1rem;
+  border-radius: 18px;
+  border: 1px solid rgba(var(--accent-rgb), 0.22);
+  background: rgba(var(--accent-rgb), 0.09);
+  color: var(--text-color);
+}
+
+.tech-workflow-note i {
+  color: var(--accent-color);
+  margin-top: 0.15rem;
+}
+
+.tech-workflow-note span {
+  display: block;
+  color: var(--secondary-text);
+  margin-top: 0.15rem;
+}
+
+.tech-wizard-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.tech-form-card {
+  position: relative;
+  padding: 1.15rem;
+  border-radius: 22px;
+  border: 1px solid var(--border-color);
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255,255,255,0.08), transparent 30%),
+    rgba(255,255,255,0.035);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 12px 28px rgba(0,0,0,0.18);
+}
+
+.tech-card-heading {
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.tech-card-heading > i {
+  width: 2.35rem;
+  height: 2.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-color), var(--hover-color));
+  box-shadow: 0 8px 18px rgba(var(--accent-rgb), 0.26);
+  flex-shrink: 0;
+}
+
+.tech-card-heading h5 {
+  margin: 0;
+  color: var(--text-color);
+  font-size: 1.02rem;
+  font-weight: 800;
+}
+
+.tech-form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.tech-form-grid.two-col {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.tech-form-grid.three-col {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.tech-form-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+.tech-mode-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.tech-mode-option {
+  margin: 0;
+  min-height: 118px;
+  padding: 1rem;
+  text-align: left;
+  border-radius: 18px;
+  border: 1px solid var(--border-color);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.065), rgba(255,255,255,0.02));
+  color: var(--text-color);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 20px rgba(0,0,0,0.16);
+}
+
+.tech-mode-option i,
+.tech-mode-option strong,
+.tech-mode-option span {
+  display: block;
+}
+
+.tech-mode-option i {
+  color: var(--accent-color);
+  font-size: 1.15rem;
+  margin-bottom: 0.55rem;
+}
+
+.tech-mode-option strong {
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.tech-mode-option span {
+  color: var(--secondary-text);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.tech-mode-option.is-active {
+  border-color: rgba(var(--accent-rgb), 0.62);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(var(--accent-rgb), 0.25), transparent 44%),
+    rgba(var(--accent-rgb), 0.10);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.14), 0 12px 28px rgba(0,0,0,0.24);
+}
+
+.tech-mode-guidance {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 14px;
+  color: var(--secondary-text);
+  background: rgba(255,255,255,0.035);
+  border: 1px solid var(--border-color);
+  font-size: 0.88rem;
+}
+
+.tech-mode-guidance i {
+  color: var(--accent-color);
+  margin-top: 0.15rem;
+}
+
+.tech-details-block {
+  margin-top: 1rem;
+  border-radius: 18px;
+  border: 1px solid var(--border-color);
+  background: rgba(0,0,0,0.14);
+  overflow: hidden;
+}
+
+.tech-details-block summary {
+  cursor: pointer;
+  padding: 0.9rem 1rem;
+  color: var(--text-color);
+  font-weight: 800;
+  user-select: none;
+}
+
+.tech-details-block summary i {
+  color: var(--accent-color);
+  margin-right: 0.5rem;
+}
+
+.tech-details-block .tech-form-grid {
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.tech-cleanup-panel,
+.tech-lifecycle-tools {
+  padding: 0.8rem 0.9rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  background: rgba(255,255,255,0.035);
+}
+
+.tech-cleanup-panel strong,
+.tech-lifecycle-tools strong {
+  color: var(--text-color);
+}
+
+.tech-cleanup-panel p,
+.tech-lifecycle-tools p {
+  font-size: 0.86rem;
+}
+
+.tech-existing-header {
+  margin-top: 1.25rem;
+  align-items: end;
+}
+
+.tech-search-group {
+  margin-bottom: 0;
+  min-width: min(360px, 100%);
+}
+
+.tech-list-v2 {
+  border-radius: 20px;
+}
+
+.tech-sticky-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--content-bg) 88%, black 12%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--border-color);
+}
+
+.tech-modal-content-v2 {
+  max-width: 980px;
+}
+
+.tech-lifecycle-tools {
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.tech-edit-warning {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .tech-admin-hero,
+  .tech-form-title-row,
+  .tech-existing-header,
+  .tech-lifecycle-tools {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tech-mode-picker,
+  .tech-form-grid.three-col,
+  .tech-form-grid.two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-mode-option {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .tech-admin-v2,
+  .tech-form-card,
+  .tech-admin-hero {
+    padding: 1rem;
+    border-radius: 18px;
+  }
+
+  .tech-sticky-actions {
+    position: static;
+  }
 }
