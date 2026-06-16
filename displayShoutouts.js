@@ -3136,6 +3136,16 @@ function normalizeTechItem(itemData) {
     normalized.expectedAILevel = getFirstField(itemData, ["expectedAILevel"], "");
     normalized.expectedFutureProofRating = getFirstField(itemData, ["expectedFutureProofRating"], "");
 
+    // Role / lifecycle automation fields from admin.js
+    normalized.currentRole = getFirstField(itemData, ["currentRole", "role", "deviceRole"], "");
+    normalized.previousRole = getFirstField(itemData, ["previousRole", "priorRole", "oldRole"], "");
+    normalized.roleStatus = getFirstField(itemData, ["roleStatus", "lifecycleStatus"], "");
+    normalized.replacedByDevice = getFirstField(itemData, ["replacedByDevice", "replacedBy"], "");
+    normalized.successorDevice = getFirstField(itemData, ["successorDevice", "successor"], "");
+    normalized.predecessorDevice = getFirstField(itemData, ["predecessorDevice", "predecessor"], "");
+    normalized.roleChangedDate = getFirstField(itemData, ["roleChangedDate", "roleUpdatedAt", "roleChangeDate"], "");
+    normalized.autoRoleManaged = itemData.autoRoleManaged === true || String(itemData.autoRoleManaged || "").toLowerCase() === "true";
+
     return normalized;
 }
 
@@ -3525,6 +3535,204 @@ function getOwnershipBadgeClass(stateOrItem) {
     return getOwnershipConfig(stateOrItem).badgeClass;
 }
 
+
+/* ------------------------------------------------------------
+   TECH LIFECYCLE / ROLE DISPLAY HELPERS
+   Supports admin role automation fields:
+   currentRole, previousRole, roleStatus, replacedByDevice,
+   successorDevice, predecessorDevice, roleChangedDate,
+   autoRoleManaged.
+------------------------------------------------------------ */
+function hasTechLifecycleValue(value) {
+    if (value === null || value === undefined) return false;
+    const text = String(value).trim();
+    return text !== "" && text.toLowerCase() !== "not set" && text.toLowerCase() !== "n/a";
+}
+
+function formatRoleStatusLabel(roleStatus) {
+    if (!hasTechLifecycleValue(roleStatus)) return "";
+
+    const labels = {
+        primary: "Primary Device",
+        secondary: "Secondary Device",
+        backup: "Backup Device",
+        "future-primary": "Future Primary Device",
+        "replaced-owned": "Replaced but Owned",
+        "replaced-sold": "Replaced and Sold",
+        "replaced-archived": "Replaced and Archived",
+        retired: "Retired",
+        sold: "Sold",
+        "traded-in": "Traded In",
+        donated: "Donated",
+        recycled: "Recycled",
+        returned: "Returned",
+        lost: "Lost",
+        archived: "Archived"
+    };
+
+    const normalized = String(roleStatus).toLowerCase().trim();
+    return labels[normalized] || normalized
+        .split("-")
+        .filter(Boolean)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+}
+
+function formatTechLifecycleDate(value) {
+    if (!hasTechLifecycleValue(value)) return "";
+    return formatTechDate(value) || String(value);
+}
+
+function renderTechAutomationBadge(item) {
+    return item.autoRoleManaged
+        ? `<span class="support-badge green tech-auto-role-badge"><i class="fas fa-wand-magic-sparkles"></i> Auto-managed</span>`
+        : "";
+}
+
+function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = "", windowText = "" }) {
+    if (!hasTechLifecycleValue(fromDevice) || !hasTechLifecycleValue(toDevice)) return "";
+
+    return `
+    <div class="tech-lifecycle-card tech-upgrade-path">
+        <div class="tech-lifecycle-title">
+            <i class="fas fa-route"></i>
+            <span>Upgrade Path</span>
+        </div>
+        <div class="tech-lifecycle-flow">
+            <span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(fromDevice)}</span>
+            <i class="fas fa-arrow-right"></i>
+            <span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(toDevice)}</span>
+        </div>
+        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note">${escapeHTML(note)}</div>` : ""}
+        ${hasTechLifecycleValue(status) || hasTechLifecycleValue(windowText) ? `
+        <div class="tech-lifecycle-meta">
+            ${hasTechLifecycleValue(status) ? `<span class="support-badge blue">${escapeHTML(status)}</span>` : ""}
+            ${hasTechLifecycleValue(windowText) ? `<span>${escapeHTML(windowText)}</span>` : ""}
+        </div>` : ""}
+    </div>`;
+}
+
+function renderTechRoleTransitionBlock({ title, iconClass = "fas fa-right-left", fromRole = "", toRole = "", note = "", changedDate = "", badge = "" }) {
+    if (!hasTechLifecycleValue(fromRole) && !hasTechLifecycleValue(toRole) && !hasTechLifecycleValue(note)) return "";
+
+    return `
+    <div class="tech-lifecycle-card tech-role-transition">
+        <div class="tech-lifecycle-title">
+            <i class="${escapeHTML(iconClass)}"></i>
+            <span>${escapeHTML(title)}</span>
+            ${badge || ""}
+        </div>
+        ${hasTechLifecycleValue(fromRole) && hasTechLifecycleValue(toRole) ? `
+        <div class="tech-lifecycle-flow">
+            <span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(fromRole)}</span>
+            <i class="fas fa-arrow-right"></i>
+            <span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(toRole)}</span>
+        </div>` : ""}
+        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note">${escapeHTML(note)}</div>` : ""}
+        ${hasTechLifecycleValue(changedDate) ? `<div class="tech-lifecycle-meta"><i class="fas fa-clock"></i> Updated ${escapeHTML(changedDate)}</div>` : ""}
+    </div>`;
+}
+
+function renderTechDeviceLineageBlock(item) {
+    const predecessor = item.predecessorDevice;
+    const successor = item.successorDevice || item.replacedByDevice;
+    const name = item.name;
+
+    if (!hasTechLifecycleValue(predecessor) && !hasTechLifecycleValue(successor)) return "";
+
+    const nodes = [];
+    if (hasTechLifecycleValue(predecessor)) nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(predecessor)}</span>`);
+    nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-current">${escapeHTML(name)}</span>`);
+    if (hasTechLifecycleValue(successor)) nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(successor)}</span>`);
+
+    return `
+    <div class="tech-lifecycle-card tech-device-lineage">
+        <div class="tech-lifecycle-title">
+            <i class="fas fa-timeline"></i>
+            <span>Device Lineage</span>
+            ${renderTechAutomationBadge(item)}
+        </div>
+        <div class="tech-lifecycle-flow">
+            ${nodes.join(`<i class="fas fa-arrow-right"></i>`)}
+        </div>
+    </div>`;
+}
+
+function renderTechLifecycleSections(itemData, options = {}) {
+    const item = normalizeTechItem(itemData);
+    const ownershipConfig = getOwnershipConfig(item);
+    const context = options.context || ownershipConfig.mode;
+
+    const name = item.name || "Device";
+    const predecessor = item.predecessorDevice || "";
+    const successor = item.successorDevice || item.replacedByDevice || "";
+    const replacesDevice = item.replacesDevice || "";
+    const currentRole = item.currentRole || "";
+    const previousRole = item.previousRole || "";
+    const roleStatus = item.roleStatus || "";
+    const roleStatusLabel = formatRoleStatusLabel(roleStatus);
+    const changedDate = formatTechLifecycleDate(item.roleChangedDate);
+    const autoBadge = renderTechAutomationBadge(item);
+
+    let html = "";
+
+    if (context === "roadmap" && hasTechLifecycleValue(replacesDevice)) {
+        html += renderTechUpgradePathBlock({
+            fromDevice: replacesDevice,
+            toDevice: name,
+            note: item.futureUpgradeTarget ? `Planned role: ${item.futureUpgradeTarget}` : "",
+            status: getOwnershipLabel(item),
+            windowText: item.plannedWindow ? `Expected: ${item.plannedWindow}` : ""
+        });
+    }
+
+    if (context !== "roadmap" && hasTechLifecycleValue(predecessor)) {
+        html += renderTechUpgradePathBlock({
+            fromDevice: predecessor,
+            toDevice: name,
+            note: currentRole ? `Current role: ${currentRole}` : "",
+            status: roleStatusLabel || getOwnershipLabel(item),
+            windowText: changedDate ? `Transitioned: ${changedDate}` : ""
+        });
+    }
+
+    if (hasTechLifecycleValue(successor)) {
+        const title = ownershipConfig.mode === "archive" ? "Replaced By" : "Role Changed";
+        const note = ownershipConfig.mode === "archive"
+            ? `${successor} replaced this device in the lifecycle history.`
+            : `${successor} is listed as the successor for this device.`;
+
+        html += renderTechRoleTransitionBlock({
+            title,
+            iconClass: ownershipConfig.mode === "archive" ? "fas fa-box-archive" : "fas fa-right-left",
+            fromRole: name,
+            toRole: successor,
+            note,
+            changedDate,
+            badge: autoBadge
+        });
+    }
+
+    if (hasTechLifecycleValue(previousRole) || hasTechLifecycleValue(currentRole) || hasTechLifecycleValue(roleStatusLabel)) {
+        html += `
+        <div class="tech-lifecycle-card tech-role-details">
+            <div class="tech-lifecycle-title">
+                <i class="fas fa-id-card-clip"></i>
+                <span>Role Details</span>
+                ${autoBadge}
+            </div>
+            ${hasTechLifecycleValue(roleStatusLabel) ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Role Status:</span><span class="support-badge blue">${escapeHTML(roleStatusLabel)}</span></div>` : ""}
+            ${hasTechLifecycleValue(previousRole) ? `<div class="tech-detail"><i class="fas fa-history"></i><span>Previous Role:</span><span class="tech-value">${escapeHTML(previousRole)}</span></div>` : ""}
+            ${hasTechLifecycleValue(currentRole) ? `<div class="tech-detail"><i class="fas fa-location-dot"></i><span>Current Role:</span><span class="tech-value">${escapeHTML(currentRole)}</span></div>` : ""}
+            ${hasTechLifecycleValue(changedDate) ? `<div class="tech-detail"><i class="fas fa-clock"></i><span>Role Updated:</span><span class="tech-value">${escapeHTML(changedDate)}</span></div>` : ""}
+        </div>`;
+    }
+
+    html += renderTechDeviceLineageBlock(item);
+
+    return html;
+}
+
 function renderPlannedTechItemHomepage(itemData) {
     const item = normalizeTechItem(itemData);
 
@@ -3550,6 +3758,16 @@ function renderPlannedTechItemHomepage(itemData) {
     const expectedColor = item.expectedColor || "Not set";
     const expectedAILevel = item.expectedAILevel || "Not set";
     const expectedFutureProofRating = item.expectedFutureProofRating || "Not set";
+
+    const lifecycleSections = renderTechLifecycleSections(item, { context: ownershipConfig.mode });
+    const replacesDeviceRow = hasTechLifecycleValue(item.replacesDevice)
+        ? ""
+        : `
+            <div class="tech-detail">
+                <i class="fas fa-right-left"></i>
+                <span>Replaces Device:</span>
+                <span class="tech-value">${escapeHTML(replacesDevice)}</span>
+            </div>`;
 
     if (ownershipConfig.mode === "wishlist") {
         return `
@@ -3578,6 +3796,8 @@ function renderPlannedTechItemHomepage(itemData) {
                 <span>Primary Use:</span>
                 <span class="tech-value">${escapeHTML(primaryUse)}</span>
             </div>
+
+            ${lifecycleSections}
         </div>`;
     }
 
@@ -3627,11 +3847,8 @@ function renderPlannedTechItemHomepage(itemData) {
                 <span class="tech-value">${escapeHTML(futureUpgradeTarget)}</span>
             </div>
 
-            <div class="tech-detail">
-                <i class="fas fa-right-left"></i>
-                <span>Replaces Device:</span>
-                <span class="tech-value">${escapeHTML(replacesDevice)}</span>
-            </div>
+            ${lifecycleSections}
+            ${replacesDeviceRow}
 
             <div class="tech-detail">
                 <i class="fas fa-calendar-check"></i>
@@ -3707,8 +3924,11 @@ function renderPlannedTechItemHomepage(itemData) {
             <span>Primary Use:</span>
             <span class="tech-value">${escapeHTML(primaryUse)}</span>
         </div>
+
+        ${lifecycleSections}
     </div>`;
 }
+
 
 /* ------------------------------------------------------------
    RENDER FUNCTION
@@ -3740,6 +3960,7 @@ function renderTechItemHomepage(itemData) {
     const ownershipConfig = getOwnershipConfig(item);
     const ownershipLabel = ownershipConfig.label;
     const ownershipBadgeClass = ownershipConfig.badgeClass;
+    const lifecycleSections = renderTechLifecycleSections(item, { context: ownershipConfig.mode });
 
     const osStatus = checkOSStatus(item.osVersion);
     const support = checkDeviceSupport(item);
@@ -4101,7 +4322,13 @@ function renderTechItemHomepage(itemData) {
         <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
 
         ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${escapeHTML(model)}</div>` : ""}
+        <div class="tech-detail">
+            <i class="fas fa-id-badge"></i>
+            <span>Ownership:</span>
+            <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">${escapeHTML(ownershipLabel)}</span>
+        </div>
         ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${escapeHTML(primaryUse)}</div>` : ""}
+        ${lifecycleSections}
         ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${escapeHTML(condition)}</div>` : ""}
         ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${escapeHTML(storage)}</div>` : ""}
         ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${escapeHTML(color)}</div>` : ""}
