@@ -3387,7 +3387,7 @@ body.dark-mode .bubble {
 
 /* ======================================================= */
 /* TECH + SMART UPGRADE + BETA PREVIEW CSS                 */
-/* Corrected full version                                   */
+/* Corrected full version + lifecycle polish               */
 /* ======================================================= */
 
 /* ======================== */
@@ -3933,7 +3933,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* TECH ITEM CARDS                                           */
+/* TECH ITEM CARDS                                         */
 /* ======================================================= */
 
 .tech-item {
@@ -3995,7 +3995,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* TITLES                                                     */
+/* TITLES                                                  */
 /* ======================================================= */
 
 .tech-item h3 {
@@ -4020,7 +4020,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* TECH DETAIL ROWS                                           */
+/* TECH DETAIL ROWS                                        */
 /* ======================================================= */
 
 .tech-detail {
@@ -4054,7 +4054,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* LABEL / VALUE HIERARCHY                                  */
+/* LABEL / VALUE HIERARCHY                                 */
 /* ======================================================= */
 
 .tech-label {
@@ -4085,7 +4085,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* BATTERY UI                                                 */
+/* BATTERY UI                                              */
 /* ======================================================= */
 
 .battery-container {
@@ -4206,7 +4206,7 @@ body.light-e .battery-percentage {
 }
 
 /* ======================================================= */
-/* SCORE BAR                                                  */
+/* SCORE BAR                                               */
 /* ======================================================= */
 
 .score-bar {
@@ -4265,7 +4265,7 @@ body.light-e .battery-percentage {
 }
 
 /* ======================================================= */
-/* SMART UPGRADE ROWS                                        */
+/* SMART UPGRADE ROWS                                      */
 /* ======================================================= */
 
 .smart-upgrade-row {
@@ -4286,54 +4286,52 @@ body.light-e .battery-percentage {
 /* PLANNED / FUTURE DEVICE UI                         */
 /* ================================================== */
 
-/* Planned / future ownership badges */
-
 .upgrade-badge.planned,
 .support-badge.planned,
 .os-badge.planned {
-    background: rgba(191, 90, 242, 0.15);
-    color: #BF5AF2;
-    border: 1px solid rgba(191, 90, 242, 0.28);
+  background: rgba(191, 90, 242, 0.15);
+  color: #BF5AF2;
+  border: 1px solid rgba(191, 90, 242, 0.28);
 }
 
 .upgrade-badge.wishlist,
 .support-badge.wishlist,
 .os-badge.wishlist {
-    background: rgba(255, 45, 85, 0.15);
-    color: #FF2D55;
-    border: 1px solid rgba(255, 45, 85, 0.28);
+  background: rgba(255, 45, 85, 0.15);
+  color: #FF2D55;
+  border: 1px solid rgba(255, 45, 85, 0.28);
 }
 
 .upgrade-badge.coming-soon,
 .support-badge.coming-soon,
 .os-badge.coming-soon {
-    background: rgba(90, 200, 250, 0.15);
-    color: #5AC8FA;
-    border: 1px solid rgba(90, 200, 250, 0.28);
+  background: rgba(90, 200, 250, 0.15);
+  color: #5AC8FA;
+  border: 1px solid rgba(90, 200, 250, 0.28);
 }
 
 .upgrade-badge.future-upgrade,
 .support-badge.future-upgrade,
 .os-badge.future-upgrade {
-    background: rgba(255, 149, 0, 0.15);
-    color: #FF9500;
-    border: 1px solid rgba(255, 149, 0, 0.28);
+  background: rgba(255, 149, 0, 0.15);
+  color: #FF9500;
+  border: 1px solid rgba(255, 149, 0, 0.28);
 }
 
 .planned-tech-item {
-    border-color: color-mix(in srgb, #BF5AF2 24%, var(--border-color));
+  border-color: color-mix(in srgb, #BF5AF2 24%, var(--border-color));
 }
 
 .planned-tech-item:hover {
-    border-color: color-mix(in srgb, #BF5AF2 40%, var(--border-color));
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        0 14px 30px color-mix(in srgb, var(--shadow-color) 60%, transparent),
-        0 0 12px color-mix(in srgb, #BF5AF2 18%, transparent);
+  border-color: color-mix(in srgb, #BF5AF2 40%, var(--border-color));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 14px 30px color-mix(in srgb, var(--shadow-color) 60%, transparent),
+    0 0 12px color-mix(in srgb, #BF5AF2 18%, transparent);
 }
 
 /* ======================================================= */
-/* WHY / EXPLANATION BOX                                     */
+/* WHY / EXPLANATION BOX                                   */
 /* ======================================================= */
 
 .tech-upgrade-explanation {
@@ -4405,7 +4403,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* UPGRADE TRIGGERS                                         */
+/* UPGRADE TRIGGERS                                        */
 /* ======================================================= */
 
 .upgrade-triggers {
@@ -4435,7 +4433,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* BETA PREVIEW PAGE (FIXED)                                */
+/* BETA PREVIEW PAGE (FIXED)                               */
 /* ======================================================= */
 
 .beta-page .container {
@@ -4478,6 +4476,7 @@ body.light-e .tech-upgrade-explanation {
   pointer-events: none;
 }
 
+/* FIXED: was beta-page-section &gt; * */
 .beta-page-section > * {
   position: relative;
   z-index: 1;
@@ -4787,7 +4786,7 @@ body.light-e .beta-action-button.secondary {
 }
 
 /* ======================================================= */
-/* LIGHT MODE GLASS TUNING                                  */
+/* LIGHT MODE GLASS TUNING                                 */
 /* ======================================================= */
 
 body.light-e .tech-section,
@@ -4809,7 +4808,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 /* ======================================================= */
-/* RESPONSIVE                                                */
+/* RESPONSIVE                                              */
 /* ======================================================= */
 
 @media screen and (max-width: 768px) {
@@ -4911,13 +4910,10 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-
 /* ======================================================= */
 /* FORCE DARK MODE TECH READABILITY                        */
-/* Put this at the VERY END of your CSS                    */
 /* ======================================================= */
 
-/* Dark mode only */
 body:not(.light-e) .tech-section,
 body:not(.light-e) .tech-item,
 body:not(.light-e) .tech-advanced-details,
@@ -4928,7 +4924,6 @@ body:not(.light-e) .tech-upgrade-explanation {
   --tech-strong-color: #ffffff;
 }
 
-/* Main tech text */
 body:not(.light-e) .tech-detail,
 body:not(.light-e) .tech-value,
 body:not(.light-e) .tech-upgrade-explanation .upgrade-explanation-text,
@@ -4940,7 +4935,6 @@ body:not(.light-e) .beta-roadmap-item strong {
   color: #f5f7fb !important;
 }
 
-/* Labels stay muted in dark mode */
 body:not(.light-e) .tech-label,
 body:not(.light-e) .tech-detail span,
 body:not(.light-e) .beta-page-subtitle,
@@ -4953,7 +4947,6 @@ body:not(.light-e) .beta-notes-list li {
   color: #aeb7c2 !important;
 }
 
-/* Keep badges untouched */
 body:not(.light-e) .upgrade-badge,
 body:not(.light-e) .support-badge,
 body:not(.light-e) .os-badge,
@@ -4961,6 +4954,627 @@ body:not(.light-e) .upgrade-priority-badge {
   color: inherit;
 }
 
+/* ======================================================= */
+/* TECH LIFECYCLE / ROLE AUTOMATION DISPLAY POLISH         */
+/* ======================================================= */
+
+.tech-lifecycle-card {
+  position: relative;
+  z-index: 1;
+
+  margin: 16px 0;
+  padding: 15px;
+
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 24%, var(--border-color));
+
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent-color) 16%, transparent),
+      color-mix(in srgb, #bf5af2 10%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
+
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    inset 0 -1px 0 rgba(0,0,0,0.22),
+    0 10px 26px color-mix(in srgb, var(--shadow-color) 46%, transparent);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.tech-lifecycle-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255,255,255,0.18),
+      transparent 38%
+    ),
+    linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(255,255,255,0.08),
+      transparent 58%
+    );
+
+  opacity: 0.55;
+}
+
+.tech-lifecycle-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent-color) 48%, var(--border-color));
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.11),
+    0 16px 34px color-mix(in srgb, var(--shadow-color) 60%, transparent),
+    0 0 16px color-mix(in srgb, var(--accent-color) 18%, transparent);
+}
+
+/* ======================== */
+/* LIFECYCLE TITLES         */
+/* ======================== */
+
+.tech-lifecycle-title {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+
+  margin-bottom: 0.8rem;
+
+  color: var(--accent-color);
+  font-weight: 850;
+  letter-spacing: -0.015em;
+  text-shadow: var(--tech-card-text-shadow);
+}
+
+.tech-lifecycle-title i {
+  width: 2rem;
+  height: 2rem;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-color) 24%, transparent);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 6px 14px color-mix(in srgb, var(--accent-color) 16%, transparent);
+
+  flex-shrink: 0;
+}
+
+/* ======================== */
+/* DEVICE FLOW              */
+/* ======================== */
+
+.tech-lifecycle-flow {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+
+  margin: 0.45rem 0;
+}
+
+.tech-lifecycle-flow > i {
+  color: var(--tech-muted-color);
+  font-size: 0.92rem;
+  opacity: 0.9;
+}
+
+.tech-lifecycle-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 2.15rem;
+  padding: 0.42rem 0.78rem;
+
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, white 9%, var(--border-color));
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.035)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
+
+  color: var(--tech-value-color);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 5px 14px color-mix(in srgb, var(--shadow-color) 26%, transparent);
+}
+
+.tech-lifecycle-from {
+  color: var(--status-yellow) !important;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 214, 10, 0.18),
+      rgba(255, 214, 10, 0.055)
+    );
+  border-color: var(--status-yellow-border);
+}
+
+.tech-lifecycle-current {
+  color: var(--accent-color) !important;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent-color) 18%, transparent),
+      color-mix(in srgb, var(--accent-color) 6%, transparent)
+    );
+  border-color: color-mix(in srgb, var(--accent-color) 38%, transparent);
+}
+
+.tech-lifecycle-to {
+  color: var(--status-green) !important;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(48, 209, 88, 0.18),
+      rgba(48, 209, 88, 0.055)
+    );
+  border-color: var(--status-green-border);
+}
+
+/* ======================== */
+/* NOTES / META             */
+/* ======================== */
+
+.tech-lifecycle-note {
+  position: relative;
+  z-index: 1;
+
+  margin-top: 0.65rem;
+  padding: 0.72rem 0.85rem;
+
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.075),
+      rgba(255,255,255,0.028)
+    ),
+    color-mix(in srgb, var(--content-bg) 90%, transparent);
+
+  color: var(--tech-value-color);
+  font-size: 0.93rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.tech-lifecycle-meta {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+
+  margin-top: 0.75rem;
+
+  color: var(--tech-muted-color);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.tech-lifecycle-meta i {
+  color: var(--accent-color);
+}
+
+/* ======================================================= */
+/* SPECIFIC LIFECYCLE CARD TYPES                           */
+/* ======================================================= */
+
+.tech-upgrade-path {
+  border-color: color-mix(in srgb, var(--accent-color) 36%, var(--border-color));
+
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent-color) 20%, transparent),
+      color-mix(in srgb, #5ac8fa 8%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
+}
+
+.tech-upgrade-path .tech-lifecycle-title i {
+  color: #5ac8fa;
+  background: rgba(90, 200, 250, 0.15);
+  border-color: rgba(90, 200, 250, 0.28);
+}
+
+.tech-role-transition {
+  border-color: color-mix(in srgb, var(--status-yellow) 32%, var(--border-color));
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 214, 10, 0.14),
+      rgba(255, 149, 0, 0.08)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
+}
+
+.tech-role-transition .tech-lifecycle-title i {
+  color: var(--status-yellow);
+  background: var(--status-yellow-bg);
+  border-color: var(--status-yellow-border);
+}
+
+.tech-role-details {
+  border-color: color-mix(in srgb, #bf5af2 36%, var(--border-color));
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(191, 90, 242, 0.15),
+      color-mix(in srgb, var(--accent-color) 8%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
+}
+
+.tech-role-details .tech-lifecycle-title i {
+  color: #bf5af2;
+  background: rgba(191, 90, 242, 0.15);
+  border-color: rgba(191, 90, 242, 0.28);
+}
+
+.tech-device-lineage {
+  border-color: color-mix(in srgb, var(--status-green) 34%, var(--border-color));
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(48, 209, 88, 0.14),
+      color-mix(in srgb, var(--accent-color) 8%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
+}
+
+.tech-device-lineage .tech-lifecycle-title i {
+  color: var(--status-green);
+  background: var(--status-green-bg);
+  border-color: var(--status-green-border);
+}
+
+/* ======================================================= */
+/* ROLE DETAILS INSIDE LIFECYCLE CARDS                     */
+/* ======================================================= */
+
+.tech-role-details .tech-detail {
+  margin: 0.5rem 0;
+  padding: 0.6rem 0.7rem;
+
+  border-radius: 13px;
+  border: 1px solid color-mix(in srgb, var(--border-color) 60%, transparent);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.07),
+      rgba(255,255,255,0.025)
+    );
+
+  color: var(--tech-value-color);
+}
+
+.tech-role-details .tech-detail span:first-of-type {
+  color: var(--tech-label-color) !important;
+  font-weight: 800;
+}
+
+.tech-role-details .tech-value {
+  margin-left: auto;
+  color: var(--tech-value-color) !important;
+  font-weight: 750;
+}
+
+/* ======================================================= */
+/* AUTO-MANAGED BADGE                                      */
+/* ======================================================= */
+
+.tech-auto-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  margin-left: auto;
+
+  color: var(--status-green) !important;
+  background: var(--status-green-bg) !important;
+  border-color: var(--status-green-border) !important;
+
+  font-size: 0.74rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.tech-auto-role-badge i {
+  width: auto;
+  height: auto;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: inherit;
+}
+
+/* ======================================================= */
+/* EXTRA BADGE SUPPORT FOR LIFECYCLE JS                    */
+/* ======================================================= */
+
+.support-badge.blue,
+.upgrade-badge.blue,
+.os-badge.blue {
+  color: #5ac8fa;
+  background: rgba(90, 200, 250, 0.15);
+  border-color: rgba(90, 200, 250, 0.32);
+}
+
+body.light-e .support-badge.blue,
+body.light-e .upgrade-badge.blue,
+body.light-e .os-badge.blue {
+  color: #0077a8;
+  background: rgba(90, 200, 250, 0.20);
+  border-color: rgba(0, 122, 255, 0.26);
+}
+
+/* ======================================================= */
+/* LIGHT MODE LIFECYCLE TUNING                             */
+/* ======================================================= */
+
+body.light-e .tech-lifecycle-card {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent-color) 9%, transparent),
+      rgba(191, 90, 242, 0.055)
+    ),
+    rgba(255, 255, 255, 0.82);
+
+  border-color: rgba(15, 23, 42, 0.10);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.72),
+    0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+body.light-e .tech-lifecycle-card::before {
+  opacity: 0.4;
+}
+
+body.light-e .tech-lifecycle-node {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(15, 23, 42, 0.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    0 5px 12px rgba(15, 23, 42, 0.06);
+}
+
+body.light-e .tech-lifecycle-note {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #111827;
+}
+
+body.light-e .tech-lifecycle-meta {
+  color: #4b5563;
+}
+
+/* ======================================================= */
+/* DARK MODE LIFECYCLE READABILITY                         */
+/* ======================================================= */
+
+body:not(.light-e) .tech-lifecycle-card,
+body:not(.light-e) .tech-lifecycle-note,
+body:not(.light-e) .tech-lifecycle-node {
+  color: #f5f7fb !important;
+}
+
+body:not(.light-e) .tech-lifecycle-meta {
+  color: #aeb7c2 !important;
+}
+
+body:not(.light-e) .tech-role-details .tech-detail,
+body:not(.light-e) .tech-role-details .tech-value {
+  color: #f5f7fb !important;
+}
+
+body:not(.light-e) .tech-role-details .tech-detail span:first-of-type {
+  color: #aeb7c2 !important;
+}
+
+/* ======================================================= */
+/* OWNERSHIP BADGES FOR NEW STATES                         */
+/* ======================================================= */
+
+.upgrade-badge.preordered,
+.support-badge.preordered,
+.os-badge.preordered {
+  color: #64d2ff;
+  background: rgba(100, 210, 255, 0.15);
+  border-color: rgba(100, 210, 255, 0.30);
+}
+
+.upgrade-badge.ordered,
+.support-badge.ordered,
+.os-badge.ordered {
+  color: #30d158;
+  background: rgba(48, 209, 88, 0.15);
+  border-color: rgba(48, 209, 88, 0.30);
+}
+
+.upgrade-badge.reserved,
+.support-badge.reserved,
+.os-badge.reserved {
+  color: #ffd60a;
+  background: rgba(255, 214, 10, 0.15);
+  border-color: rgba(255, 214, 10, 0.30);
+}
+
+.upgrade-badge.considering,
+.support-badge.considering,
+.os-badge.considering {
+  color: #ff9f0a;
+  background: rgba(255, 159, 10, 0.15);
+  border-color: rgba(255, 159, 10, 0.30);
+}
+
+.upgrade-badge.researching,
+.support-badge.researching,
+.os-badge.researching {
+  color: #5ac8fa;
+  background: rgba(90, 200, 250, 0.15);
+  border-color: rgba(90, 200, 250, 0.30);
+}
+
+.upgrade-badge.owned,
+.support-badge.owned,
+.os-badge.owned {
+  color: #30d158;
+  background: rgba(48, 209, 88, 0.15);
+  border-color: rgba(48, 209, 88, 0.30);
+}
+
+.upgrade-badge.borrowed,
+.support-badge.borrowed,
+.os-badge.borrowed,
+.upgrade-badge.loaned-out,
+.support-badge.loaned-out,
+.os-badge.loaned-out,
+.upgrade-badge.school-issued,
+.support-badge.school-issued,
+.os-badge.school-issued,
+.upgrade-badge.work-issued,
+.support-badge.work-issued,
+.os-badge.work-issued {
+  color: #5ac8fa;
+  background: rgba(90, 200, 250, 0.15);
+  border-color: rgba(90, 200, 250, 0.30);
+}
+
+.upgrade-badge.in-repair,
+.support-badge.in-repair,
+.os-badge.in-repair {
+  color: #ff9f0a;
+  background: rgba(255, 159, 10, 0.15);
+  border-color: rgba(255, 159, 10, 0.30);
+}
+
+.upgrade-badge.retired,
+.support-badge.retired,
+.os-badge.retired,
+.upgrade-badge.sold,
+.support-badge.sold,
+.os-badge.sold,
+.upgrade-badge.traded-in,
+.support-badge.traded-in,
+.os-badge.traded-in,
+.upgrade-badge.donated,
+.support-badge.donated,
+.os-badge.donated,
+.upgrade-badge.recycled,
+.support-badge.recycled,
+.os-badge.recycled,
+.upgrade-badge.returned,
+.support-badge.returned,
+.os-badge.returned,
+.upgrade-badge.lost,
+.support-badge.lost,
+.os-badge.lost {
+  color: var(--status-gray);
+  background: var(--status-gray-bg);
+  border-color: var(--status-gray-border);
+}
+
+/* ======================================================= */
+/* MOBILE LIFECYCLE LAYOUT                                 */
+/* ======================================================= */
+
+@media screen and (max-width: 640px) {
+  .tech-lifecycle-card {
+    padding: 13px;
+    border-radius: 16px;
+  }
+
+  .tech-lifecycle-title {
+    gap: 0.45rem;
+    font-size: 0.95rem;
+  }
+
+  .tech-lifecycle-title i {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .tech-lifecycle-flow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.45rem;
+  }
+
+  .tech-lifecycle-flow > i {
+    align-self: center;
+    transform: rotate(90deg);
+  }
+
+  .tech-lifecycle-node {
+    width: 100%;
+    border-radius: 14px;
+    padding: 0.55rem 0.75rem;
+  }
+
+  .tech-auto-role-badge {
+    margin-left: 0;
+  }
+
+  .tech-role-details .tech-detail {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .tech-role-details .tech-value {
+    margin-left: 0;
+  }
+}
 
 /* ======================== */
 /* Disabilities Section – Onyx Bubble Glass */
