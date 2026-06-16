@@ -4797,6 +4797,203 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
+/* ======================================================= */
+/* TECH READABILITY FIX — DARK + LIGHT MODE SAFE           */
+/* Add this at the VERY END of your CSS                    */
+/* ======================================================= */
+
+/* ---------- Theme-aware readable text tokens ---------- */
+:root {
+  --tech-value-color: var(--text-color);
+  --tech-label-color: var(--secondary-text);
+  --tech-muted-color: color-mix(in srgb, var(--secondary-text) 92%, white 8%);
+  --tech-card-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+  --tech-strong-color: var(--text-color);
+}
+
+body.light-e {
+  --tech-value-color: #111827;
+  --tech-label-color: #5f6b7a;
+  --tech-muted-color: #4b5563;
+  --tech-card-text-shadow: 0 1px 1px rgba(255, 255, 255, 0.35);
+  --tech-strong-color: #0f172a;
+}
+
+/* ---------- Fix malformed beta content selector if needed ---------- */
+.beta-page-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Base text hierarchy ---------- */
+.tech-detail {
+  color: var(--tech-value-color) !important;
+}
+
+.tech-detail span,
+.tech-label {
+  color: var(--tech-label-color) !important;
+}
+
+/* Actual values / non-label content */
+.tech-value,
+.tech-detail span:not(.tech-label):not(.support-badge):not(.upgrade-badge):not(.os-badge):not(.upgrade-priority-badge):not(.upgrade-explanation-text) {
+  color: var(--tech-value-color) !important;
+  text-shadow: var(--tech-card-text-shadow);
+}
+
+/* Slightly stronger value weight */
+.tech-value {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Labels stay muted */
+.tech-label {
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+/* ---------- Headings ---------- */
+.tech-item h3 {
+  color: var(--accent-color);
+  text-shadow: var(--tech-card-text-shadow);
+}
+
+.tech-item h3 i {
+  color: var(--accent-color);
+}
+
+/* ---------- General paragraph / supporting text inside tech cards ---------- */
+.tech-item p,
+.tech-advanced-details,
+.tech-advanced-details .tech-detail,
+.tech-upgrade-explanation .upgrade-explanation-text {
+  color: var(--tech-value-color) !important;
+}
+
+/* Keep the label in the Why box muted */
+.tech-upgrade-explanation .tech-label {
+  color: var(--tech-label-color) !important;
+}
+
+/* ---------- Battery percentage readability ---------- */
+.battery-percentage {
+  color: var(--tech-strong-color) !important;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.32),
+    0 0 2px rgba(0, 0, 0, 0.18);
+}
+
+body.light-e .battery-percentage {
+  color: #0f172a !important;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+/* ---------- Make detail icons readable but not overpowering ---------- */
+.tech-detail i,
+.tech-advanced-details .tech-detail i {
+  color: var(--accent-color);
+  opacity: 0.95;
+}
+
+/* ---------- Advanced details summary readability ---------- */
+.tech-advanced-details summary {
+  color: var(--tech-label-color) !important;
+}
+
+.tech-advanced-details[open] summary,
+.tech-advanced-details summary:hover {
+  color: var(--tech-value-color) !important;
+}
+
+/* ---------- Trigger list readability ---------- */
+.upgrade-triggers {
+  color: var(--tech-muted-color);
+}
+
+.upgrade-triggers li {
+  color: var(--tech-muted-color);
+}
+
+/* ---------- Beta preview readability ---------- */
+.beta-page-header h1,
+.beta-summary-card strong,
+.beta-feature-item h3,
+.beta-roadmap-item strong {
+  color: var(--tech-strong-color) !important;
+}
+
+.beta-page-subtitle,
+.beta-summary-label,
+.beta-section-heading p,
+.beta-feature-item p,
+.beta-notes-list,
+.beta-notes-list li,
+.beta-roadmap-item p {
+  color: var(--tech-muted-color) !important;
+}
+
+.beta-section-heading h2 {
+  color: var(--tech-strong-color) !important;
+}
+
+/* ---------- Buttons remain readable ---------- */
+.beta-action-button,
+.beta-version-pill {
+  color: #ffffff !important;
+}
+
+body.light-e .beta-action-button.secondary {
+  color: #111827 !important;
+}
+
+/* ---------- Light mode glass tuning for tech cards ---------- */
+body.light-e .tech-section,
+body.light-e .tech-item,
+body.light-e .tech-advanced-details,
+body.light-e .tech-upgrade-explanation {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.18),
+    0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+/* ---------- Keep badges color-based, not forced to text color ---------- */
+.upgrade-badge,
+.support-badge,
+.os-badge,
+.upgrade-priority-badge {
+  text-shadow: none !important;
+}
+
+/* ---------- Optional colorized plain values by status ---------- */
+.tech-value.status-green  { color: var(--status-text-green) !important; }
+.tech-value.status-yellow { color: var(--status-text-yellow) !important; }
+.tech-value.status-orange { color: var(--status-text-orange) !important; }
+.tech-value.status-red    { color: var(--status-text-red) !important; }
+.tech-value.status-gray   { color: var(--status-text-gray) !important; }
+.tech-value.status-purple { color: var(--status-text-purple) !important; }
+
+/* ---------- Light mode adjustments for colored text ---------- */
+body.light-e .tech-value.status-green  { color: #248a3d !important; }
+body.light-e .tech-value.status-yellow { color: #9a6a00 !important; }
+body.light-e .tech-value.status-orange { color: #c76a00 !important; }
+body.light-e .tech-value.status-red    { color: #d70015 !important; }
+body.light-e .tech-value.status-gray   { color: #636366 !important; }
+body.light-e .tech-value.status-purple { color: #8e44ad !important; }
+
+/* ---------- Mobile safety ---------- */
+@media (max-width: 600px) {
+  .tech-value,
+  .tech-detail,
+  .tech-upgrade-explanation .upgrade-explanation-text,
+  .beta-feature-item p,
+  .beta-page-subtitle {
+    text-shadow: none;
+  }
+}
 
 /* ======================== */
 /* Disabilities Section – Onyx Bubble Glass */
