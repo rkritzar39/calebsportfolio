@@ -869,6 +869,9 @@ function extractID(url) {
   return match ? match[1] : "";
 }
 
+/* ------------------------------------------------------------
+   LATEST OS CONFIG
+   Fallback values are used if JSON fetch fails.
 ------------------------------------------------------------ */
 let latestOSVersions = {
     // Apple
@@ -886,7 +889,83 @@ let latestOSVersions = {
 
     // Other Android skins
     oxygenos: "16",
-    
+    coloros: "16",
+    realmeui: "7",
+    miui: "14",
+    hyperos: "3",
+    magicos: "10",
+    emui: "15",
+    harmonyos: "5",
+    funtouchos: "16",
+    originos: "6",
+    nothingos: "4",
+    motorolahello: "16",
+    zenui: "12",
+    rogui: "12",
+    xos: "15",
+    hios: "15",
+    flymeos: "11",
+
+    // Windows
+    windows: "11",
+    windowsphone: "10",
+    windowsserver: "2025",
+
+    // Linux / Desktop
+    linux: "rolling",
+    ubuntu: "26.04",
+    debian: "13",
+    fedora: "42",
+    arch: "rolling",
+    manjaro: "rolling",
+    linuxmint: "22",
+    popos: "24.04",
+    elementaryos: "8",
+    zorinos: "17",
+    opensuse: "15.6",
+    kali: "2026.1",
+    tails: "6",
+    redhat: "10",
+    rocky: "10",
+    almalinux: "10",
+
+    // Chrome / Google desktop
+    chromeos: "latest",
+    chromiumos: "latest",
+
+    // BSD / Unix-like
+    freebsd: "14",
+    openbsd: "7",
+    netbsd: "10",
+
+    // Gaming
+    steamos: "3",
+    playstation: "5",
+    xbox: "series",
+    nintendoswitch: "18",
+
+    // TV / Smart home
+    fireos: "8",
+    rokuos: "13",
+    webos: "24",
+    tizen: "8",
+    androidtv: "16",
+    googletv: "16",
+
+    // Watches / wearables
+    wearos: "6",
+    garminos: "latest",
+    fitbitos: "latest",
+    zeppos: "4",
+
+    // Other
+    kindleos: "latest",
+    metaquest: "latest",
+    unknown: "Unknown"
+};
+
+const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
+
 /* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
@@ -1218,6 +1297,35 @@ async function loadAndDisplayDisabilities() {
         }
         placeholderElement.innerHTML = `<li>${errorMsg}</li>`;
     }
+}
+
+
+/* ------------------------------------------------------------
+   BASIC TECH ITEM RENDERER
+   This prevents loadAndDisplayTechItems() from failing if the full smart
+   tech renderer is not present in this file.
+------------------------------------------------------------ */
+function renderTechItemHomepage(itemData) {
+    const name = itemData.name || "Unnamed Device";
+    const model = itemData.model || "";
+    const primaryUse = itemData.primaryUse || "";
+    const condition = itemData.condition || "";
+    const storage = itemData.storage || "";
+    const color = itemData.color || "";
+    const osVersion = itemData.osVersion || "";
+    const iconClass = itemData.iconClass || "fas fa-question-circle";
+
+    return `
+        <div class="tech-item">
+            <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
+            ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${escapeHTML(model)}</div>` : ""}
+            ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${escapeHTML(primaryUse)}</div>` : ""}
+            ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${escapeHTML(condition)}</div>` : ""}
+            ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${escapeHTML(storage)}</div>` : ""}
+            ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${escapeHTML(color)}</div>` : ""}
+            ${osVersion ? `<div class="tech-detail"><i class="fas fa-code-branch"></i><span>OS Version:</span> ${escapeHTML(osVersion)}</div>` : ""}
+        </div>
+    `;
 }
 
 async function loadAndDisplayTechItems() {
