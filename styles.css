@@ -11078,3 +11078,63 @@ body.light-e .tech-upgrade-explanation {
   margin-top: 0.2rem;
   color: var(--accent-color);
 }
+
+/* ================================================== */
+/* FINAL TECH CONTRAST + VALUE VISIBILITY FIX          */
+/* DOES NOT REMOVE OR CHANGE ANYTHING ABOVE            */
+/* ================================================== */
+
+/* ---------- BASE FIX: stop gray inheritance ---------- */
+.tech-detail {
+  color: #ffffff !important;
+}
+
+/* ---------- LABELS (ONLY THESE STAY GRAY) ---------- */
+.tech-label {
+  color: var(--secondary-text) !important;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+/* ---------- VALUES (FORCE PURE WHITE) ---------- */
+.tech-value {
+  color: #ffffff !important;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Any non-label text becomes white */
+.tech-detail span:not(.tech-label):not(.support-badge):not(.upgrade-badge):not(.os-badge):not(.upgrade-priority-badge):not(.upgrade-explanation-text) {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* ---------- WHY SECTION FIX ---------- */
+.tech-upgrade-explanation .upgrade-explanation-text {
+  color: #ffffff !important;
+  opacity: 1;
+}
+
+/* Keep only the label gray */
+.tech-upgrade-explanation .tech-label {
+  color: var(--secondary-text) !important;
+  opacity: 0.8;
+}
+
+/* ---------- AI SUPPORT VISUAL BOOST ---------- */
+
+/* Make AI support badges slightly stronger */
+.tech-detail .fa-brain + .tech-label + .support-badge,
+.tech-detail .fa-wand-magic-sparkles + .tech-label + .support-badge {
+  transform: scale(1.03);
+}
+
+/* ---------- VALUE POLISH (SUBTLE PREMIUM LOOK) ---------- */
+.tech-value {
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.05);
+}
+
+/* ---------- PREVENT FADED TEXT ---------- */
+.tech-detail * {
+  opacity: 1;
+}
