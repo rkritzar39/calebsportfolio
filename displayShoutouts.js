@@ -3644,12 +3644,7 @@ function setupCreatorSearch() {
 
 
 async function loadRegionalLeader() {
-  const subtitleEl = document.getElementById("leader-subtitleById("pres-img");  const subtitleEl = document.getElementById("leader-subtitle");
-  const presTermEl = document.getElementById("pres-term");
-
-  // Governor / Regional leader
-  const govNameEl = document.getElementById("governor-name");
-  const govImgEl = document.getElementById("gov-img");
+  const subtitleEl = document.getElementById("leader-subtitleById("gov-img");  const subtitleEl = document.getElementById("leader-subtitle");
   const govTermEl = document.getElementById("gov-term");
   const govLabelEl = document.getElementById("gov-label");
 
@@ -3722,14 +3717,16 @@ async function loadRegionalLeader() {
     return "Term: Not listed";
   };
 
-  // Handles BOTH: Commons filename OR URL
   const commonsFileToUrl = (value, width = 256) => {
     if (!value) return null;
 
     const stringValue = String(value);
 
     if (/^https?:\/\//i.test(stringValue)) {
-      if (stringValue.includes("Special:FilePath/") && !stringValue.includes("width=")) {
+      if (
+        stringValue.includes("Special:FilePath/") &&
+        !stringValue.includes("width=")
+      ) {
         const join = stringValue.includes("?") ? "&" : "?";
         return `${stringValue}${join}width=${width}`;
       }
@@ -3754,8 +3751,6 @@ async function loadRegionalLeader() {
     }
   }
 
-  // Q22686 is Donald Trump.
-  // The cache also prevents repeated Wikidata label requests.
   const wikidataLabelCache = {
     Q22686: "Donald Trump"
   };
@@ -3771,7 +3766,11 @@ async function loadRegionalLeader() {
 
     const match = textValue.match(/\/entity\/(Q\d+)$/);
 
-    return match ? match[1] : "";
+    if (match && match[1]) {
+      return match[1];
+    }
+
+    return "";
   }
 
   async function resolveWikiLabel(value) {
@@ -3780,7 +3779,6 @@ async function loadRegionalLeader() {
     const textValue = String(value).trim();
     const qid = extractQid(textValue);
 
-    // Already a regular name.
     if (!qid) {
       return textValue;
     }
@@ -3790,21 +3788,37 @@ async function loadRegionalLeader() {
     }
 
     try {
-      const url = `https://www.wikidata.org/wiki/Special:EntityData/${encodeURIComponent(qid)}.json`;
+      const url =
+        "https://www.wikidata.org/wiki/Special:EntityData/" +
+        encodeURIComponent(qid) +
+        ".json";
+
       const response = await safeFetch(url, {}, 9000);
 
       if (!response.ok) {
-        throw new Error(`Wikidata label fetch failed: ${response.status}`);
+        throw new Error("Wikidata label fetch failed: " + response.status);
       }
 
       const data = await response.json();
-      const label = data.entities?.[qid]?.labels?.en?.value || qid;
+
+      let label = qid;
+
+      if (
+        data &&
+        data.entities &&
+        data.entities[qid] &&
+        data.entities[qid].labels &&
+        data.entities[qid].labels.en &&
+        data.entities[qid].labels.en.value
+      ) {
+        label = data.entities[qid].labels.en.value;
+      }
 
       wikidataLabelCache[qid] = label;
 
       return label;
     } catch (error) {
-      console.warn(`Could not resolve Wikidata ID ${qid}:`, error);
+      console.warn("Could not resolve Wikidata ID " + qid + ":", error);
       return qid;
     }
   }
@@ -3955,7 +3969,6 @@ async function loadRegionalLeader() {
     return US_STATE_NAME_TO_CODE[raw.toLowerCase()] || "";
   }
 
-  // Geo detection: returns { countryCode, countryName, stateCode, provider }
   async function detectGeo() {
     const localeCountry = (() => {
       const lang = navigator.language || "";
@@ -3987,22 +4000,22 @@ async function loadRegionalLeader() {
         const data = await response.json();
 
         const countryCode = String(
-          data?.country_code ||
-          data?.country ||
+          data.country_code ||
+          data.country ||
           localeCountry ||
           "US"
         ).toUpperCase();
 
         const countryName = String(
-          data?.country_name ||
-          data?.country ||
+          data.country_name ||
+          data.country ||
           "United States"
         );
 
         const stateCode = normalizeUSStateCode(
-          data?.region_code ||
-          data?.region_code_iso ||
-          data?.region ||
+          data.region_code ||
+          data.region_code_iso ||
+          data.region ||
           ""
         );
 
@@ -4013,7 +4026,7 @@ async function loadRegionalLeader() {
           provider: provider.name
         };
       } catch (error) {
-        console.warn(`Geo provider failed: ${provider.name}`, error);
+        console.warn("Geo provider failed: " + provider.name, error);
       }
     }
 
@@ -4026,7 +4039,10 @@ async function loadRegionalLeader() {
   }
 
   async function fetchWikidataSparql(query) {
-    const url = `https://query.wikidata.org/sparql?format=json&query=${encodeURIComponent(query)}`;
+    const url =
+      "https://query.wikidata.org/sparql?format=json&query=" +
+      encodeURIComponent(query);
+
     const response = await safeFetch(
       url,
       {
@@ -4038,14 +4054,18 @@ async function loadRegionalLeader() {
     );
 
     if (!response.ok) {
-      throw new Error(`Wikidata query failed: ${response.status}`);
+      throw new Error("Wikidata query failed: " + response.status);
     }
 
     return await response.json();
   }
 
   function bindingValue(binding, key) {
-    return binding?.[key]?.value || "";
+    if (!binding || !binding[key] || !binding[key].value) {
+      return "";
+    }
+
+    return binding[key].value;
   }
 
   async function fetchCurrentNationalLeader(countryQid) {
@@ -4069,13 +4089,24 @@ async function loadRegionalLeader() {
     `;
 
     const data = await fetchWikidataSparql(query);
-    const binding = data?.results?.bindings?.[0];
+    const bindings =
+      data &&
+      data.results &&
+      data.results.bindings
+        ? data.results.bindings
+        : [];
+
+    const binding = bindings[0];
 
     if (!binding) return null;
 
+    const leaderRaw = bindingValue(binding, "leader");
+    const leaderQid = extractQid(leaderRaw);
+    const leaderLabel = bindingValue(binding, "leaderLabel");
+
     return {
-      id: extractQid(bindingValue(binding, "leader")),
-      name: bindingValue(binding, "leaderLabel") || extractQid(bindingValue(binding, "leader")),
+      id: leaderQid,
+      name: leaderLabel || leaderQid,
       image: bindingValue(binding, "image"),
       start: bindingValue(binding, "start"),
       end: bindingValue(binding, "end")
@@ -4103,13 +4134,24 @@ async function loadRegionalLeader() {
     `;
 
     const data = await fetchWikidataSparql(query);
-    const binding = data?.results?.bindings?.[0];
+    const bindings =
+      data &&
+      data.results &&
+      data.results.bindings
+        ? data.results.bindings
+        : [];
+
+    const binding = bindings[0];
 
     if (!binding) return null;
 
+    const leaderRaw = bindingValue(binding, "leader");
+    const leaderQid = extractQid(leaderRaw);
+    const leaderLabel = bindingValue(binding, "leaderLabel");
+
     return {
-      id: extractQid(bindingValue(binding, "leader")),
-      name: bindingValue(binding, "leaderLabel") || extractQid(bindingValue(binding, "leader")),
+      id: leaderQid,
+      name: leaderLabel || leaderQid,
       image: bindingValue(binding, "image"),
       start: bindingValue(binding, "start"),
       end: bindingValue(binding, "end")
@@ -4145,8 +4187,6 @@ async function loadRegionalLeader() {
 
       footnoteEl.textContent = `Source: Wikidata • Region detection: ${geo.provider}`;
 
-      // This currently supports the United States national leader directly.
-      // Other countries can be added with a country-code-to-QID map later.
       const countryQid = geo.countryCode === "US" ? "Q30" : "Q30";
 
       const president = await fetchCurrentNationalLeader(countryQid);
@@ -4162,7 +4202,11 @@ async function loadRegionalLeader() {
         setLeaderImage(presImgEl, null, "");
       }
 
-      if (geo.countryCode === "US" && geo.stateCode && US_STATE_CODE_TO_QID[geo.stateCode]) {
+      if (
+        geo.countryCode === "US" &&
+        geo.stateCode &&
+        US_STATE_CODE_TO_QID[geo.stateCode]
+      ) {
         const stateQid = US_STATE_CODE_TO_QID[geo.stateCode];
         const governor = await fetchCurrentRegionalLeader(stateQid);
 
@@ -4213,13 +4257,18 @@ async function loadRegionalLeader() {
 
   await renderLeaders();
 }
+``
   const footnoteEl = document.getElementById("leader-footnote");
   const refreshBtn = document.getElementById("leader-refresh");
 
   // President
   const presNameEl = document.getElementById("president-name");
+  const presImgEl = document.getElementById("pres-img");
+  const presTermEl = document.getElementById("pres-term");
 
-setloading();
+  // Governor / Regional leader
+  const govNameEl = document.getElementById("governor-name");
+
 
   try {
     const geo = await detectGeo();
