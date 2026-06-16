@@ -4566,9 +4566,7 @@ function displayFilteredActivityLog() {
     logCountElement.textContent = `(${filteredLogs.length})`;
 }
 
-// ========================================
-// == Tech Item Management Functions V2 ===
-// ========================================
+// ========================================//=======
 
 function escapeAdminHTML(value) {
     if (value === null || value === undefined) return "";
@@ -4580,6 +4578,10 @@ function escapeAdminHTML(value) {
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
 }
+
+// ========================================
+// == Tech Item Management Functions V2 ===
+// ========================================
 
 const techNumberFields = [
     "order",
@@ -4636,7 +4638,6 @@ function normalizeTechFormValue(name, input, statusCallback) {
     return { value, isValid };
 }
 
-/** Displays status messages in the tech edit modal */
 function showEditTechItemStatus(message, isError = false) {
     if (!editTechStatusMessage) {
         console.warn("Edit tech status message element not found");
@@ -4659,7 +4660,6 @@ function showEditTechItemStatus(message, isError = false) {
     }
 }
 
-/** Renders a single tech item in the admin list view */
 function renderTechItemAdminListItem(container, docId, itemData, deleteHandler, editHandler) {
     if (!container) {
         console.warn("Tech list container missing for render");
@@ -4700,7 +4700,6 @@ function renderTechItemAdminListItem(container, docId, itemData, deleteHandler, 
     container.appendChild(itemDiv);
 }
 
-/** Filters and displays tech items in the admin list based on search */
 function displayFilteredTechItems() {
     if (!techItemsListAdmin || !searchTechItemsInput || typeof allTechItems === "undefined") {
         console.error("Tech Items Filter Error: Missing elements/data.");
@@ -4746,7 +4745,6 @@ function displayFilteredTechItems() {
     }
 }
 
-/** Loads all tech items from Firestore, stores them globally, and triggers display */
 async function loadTechItemsAdmin() {
     if (!techItemsListAdmin) {
         console.error("Tech items list container element missing.");
@@ -4797,7 +4795,6 @@ async function loadTechItemsAdmin() {
     }
 }
 
-/** Handles adding a new tech item via the form */
 async function handleAddTechItem(event) {
     event.preventDefault();
 
@@ -4852,8 +4849,6 @@ async function handleAddTechItem(event) {
                 name: techData.name,
                 id: docRef.id
             });
-        } else {
-            console.warn("logAdminActivity function not found!");
         }
 
         showAdminStatus("Tech item added successfully.", false);
@@ -4872,7 +4867,6 @@ async function handleAddTechItem(event) {
     }
 }
 
-/** Handles deleting a specified tech item */
 async function handleDeleteTechItem(docId, listItemElement) {
     if (!confirm("Are you sure you want to permanently delete this tech item? This action cannot be undone.")) {
         return;
@@ -4896,8 +4890,6 @@ async function handleDeleteTechItem(docId, listItemElement) {
                 name: itemNameToLog,
                 id: docId
             });
-        } else {
-            console.warn("logAdminActivity function not found!");
         }
 
         showAdminStatus("Tech item deleted successfully.", false);
@@ -4918,7 +4910,6 @@ async function handleDeleteTechItem(docId, listItemElement) {
     }
 }
 
-/** Opens the Edit Tech Item modal and populates it with data */
 async function openEditTechItemModal(docId) {
     if (!editTechItemModal || !editTechItemForm) {
         console.error("Edit tech item modal elements not found.");
@@ -4994,7 +4985,6 @@ async function openEditTechItemModal(docId) {
     }
 }
 
-/** Closes the Edit Tech Item modal */
 function closeEditTechItemModal() {
     if (editTechItemModal) {
         editTechItemModal.style.display = "none";
@@ -5015,7 +5005,6 @@ function closeEditTechItemModal() {
     }
 }
 
-/** Handles updating a tech item from the edit modal */
 async function handleUpdateTechItem(event) {
     event.preventDefault();
 
@@ -5105,10 +5094,6 @@ async function handleUpdateTechItem(event) {
                 id: docId,
                 changes
             });
-        } else if (hasChanges) {
-            console.warn("logAdminActivity function not found!");
-        } else {
-            console.log("Tech item updated, but no data fields changed value.");
         }
 
         showAdminStatus("Tech item updated successfully.", false);
@@ -5284,7 +5269,433 @@ function attachTechPreviewListeners(formElement, formType) {
 }
 
 // ========================================
-// == Tech Management Listeners ===========
+// == Disability Link Management ==========
+// ========================================
+
+function showEditDisabilityStatus(message, isError = false) {
+    if (!editDisabilityStatusMessage) {
+        console.warn("Edit disability status message element not found");
+        return;
+    }
+
+    editDisabilityStatusMessage.textContent = message;
+    editDisabilityStatusMessage.className = `status-message ${isError ? "error" : "success"}`;
+
+    if (!isError && message) {
+        setTimeout(() => {
+            if (
+                editDisabilityStatusMessage &&
+                editDisabilityStatusMessage.textContent === message
+            ) {
+                editDisabilityStatusMessage.textContent = "";
+                editDisabilityStatusMessage.className = "status-message";
+            }
+        }, 3000);
+    }
+}
+
+function renderDisabilityAdminListItem(container, docId, name, url, order, deleteHandler, editHandler) {
+    if (!container) {
+        console.warn("Disabilities list container not found during render.");
+        return;
+    }
+
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "list-item-admin";
+    itemDiv.setAttribute("data-id", docId);
+
+    let displayUrl = url || "N/A";
+    let visitUrl = "#";
+    let visitDisabledAttributes = 'style="pointer-events: none; opacity: 0.5;"';
+
+    try {
+        if (url) {
+            visitUrl = new URL(url).href;
+            visitDisabledAttributes = "";
+        }
+    } catch (error) {
+        console.warn(`Invalid URL for disability link ${docId}: ${url}`);
+        displayUrl = `${displayUrl} (Invalid URL)`;
+    }
+
+    itemDiv.innerHTML = `
+        <div class="item-content">
+            <div class="item-details">
+                <strong>${escapeAdminHTML(name || "N/A")}</strong>
+                <span>(${escapeAdminHTML(displayUrl)})</span>
+                <small>Order: ${escapeAdminHTML(order ?? "N/A")}</small>
+            </div>
+        </div>
+        <div class="item-actions">
+            <a href="${escapeAdminHTML(visitUrl)}"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="direct-link small-button"
+               title="Visit Info Link"
+               ${visitDisabledAttributes}>
+                <i class="fas fa-external-link-alt"></i> Visit
+            </a>
+            <button type="button" class="edit-button small-button">Edit</button>
+            <button type="button" class="delete-button small-button">Delete</button>
+        </div>
+    `;
+
+    const editButton = itemDiv.querySelector(".edit-button");
+    if (editButton) {
+        editButton.addEventListener("click", () => editHandler(docId));
+    }
+
+    const deleteButton = itemDiv.querySelector(".delete-button");
+    if (deleteButton) {
+        deleteButton.addEventListener("click", () => deleteHandler(docId, itemDiv));
+    }
+
+    container.appendChild(itemDiv);
+}
+
+function displayFilteredDisabilities() {
+    if (!disabilitiesListAdmin || typeof allDisabilities === "undefined") {
+        console.error("Disabilities Filter Error: Missing elements/data.");
+
+        if (disabilitiesListAdmin) {
+            disabilitiesListAdmin.innerHTML = '<p class="error">Error displaying disability links.</p>';
+        }
+
+        return;
+    }
+
+    disabilitiesListAdmin.innerHTML = "";
+
+    const searchInput = document.getElementById("search-disabilities");
+    const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : "";
+
+    const filteredList = allDisabilities.filter(item => {
+        if (!searchTerm) return true;
+
+        const name = String(item.name || "").toLowerCase();
+        const url = String(item.url || "").toLowerCase();
+
+        return name.includes(searchTerm) || url.includes(searchTerm);
+    });
+
+    if (filteredList.length > 0) {
+        filteredList.forEach(item => {
+            renderDisabilityAdminListItem(
+                disabilitiesListAdmin,
+                item.id,
+                item.name,
+                item.url,
+                item.order,
+                handleDeleteDisability,
+                openEditDisabilityModal
+            );
+        });
+    } else {
+        disabilitiesListAdmin.innerHTML = searchTerm
+            ? `<p>No disability links found matching "${escapeAdminHTML(searchTerm)}".</p>`
+            : "<p>No disability links added yet.</p>";
+    }
+
+    if (disabilitiesCount) {
+        disabilitiesCount.textContent = `(${filteredList.length})`;
+    }
+}
+
+async function loadDisabilitiesAdmin() {
+    if (!disabilitiesListAdmin) {
+        console.error("Disabilities list container missing.");
+        return;
+    }
+
+    if (disabilitiesCount) {
+        disabilitiesCount.textContent = "(...)";
+    }
+
+    disabilitiesListAdmin.innerHTML = "<p>Loading disability links...</p>";
+    allDisabilities = [];
+
+    try {
+        const disabilityQuery = query(disabilitiesCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(disabilityQuery);
+
+        querySnapshot.forEach(docSnap => {
+            allDisabilities.push({
+                id: docSnap.id,
+                ...docSnap.data()
+            });
+        });
+
+        console.log(`Stored ${allDisabilities.length} disability links.`);
+        displayFilteredDisabilities();
+
+    } catch (error) {
+        console.error("Error loading disabilities:", error);
+
+        let errorMsg = "Error loading disabilities.";
+
+        if (error.code === "failed-precondition") {
+            errorMsg = "Error: Missing Firestore index for disabilities ordered by order.";
+        } else {
+            errorMsg = `Error loading disabilities: ${error.message}`;
+        }
+
+        showAdminStatus(errorMsg, true);
+
+        disabilitiesListAdmin.innerHTML = `<p class="error">${escapeAdminHTML(errorMsg)}</p>`;
+
+        if (disabilitiesCount) {
+            disabilitiesCount.textContent = "(Error)";
+        }
+    }
+}
+
+async function handleAddDisability(event) {
+    event.preventDefault();
+
+    if (!addDisabilityForm) {
+        console.error("Add disability form not found.");
+        return;
+    }
+
+    const nameInput = addDisabilityForm.querySelector("#disability-name");
+    const urlInput = addDisabilityForm.querySelector("#disability-url");
+    const orderInput = addDisabilityForm.querySelector("#disability-order");
+
+    const name = nameInput ? nameInput.value.trim() : "";
+    const url = urlInput ? urlInput.value.trim() : "";
+    const orderStr = orderInput ? orderInput.value.trim() : "";
+    const order = parseInt(orderStr, 10);
+
+    if (!name || !url || !orderStr || isNaN(order) || order < 0) {
+        showAdminStatus("Invalid input for Disability Link. Check required fields and ensure Order is non-negative.", true);
+        return;
+    }
+
+    try {
+        new URL(url);
+    } catch (error) {
+        showAdminStatus("Invalid URL format. Please enter a valid URL.", true);
+        return;
+    }
+
+    const disabilityData = {
+        name,
+        url,
+        order,
+        createdAt: serverTimestamp()
+    };
+
+    showAdminStatus("Adding disability link...");
+
+    try {
+        const docRef = await addDoc(disabilitiesCollectionRef, disabilityData);
+
+        console.log("Disability link added with ID:", docRef.id);
+
+        if (typeof logAdminActivity === "function") {
+            logAdminActivity("DISABILITY_LINK_ADD", {
+                name,
+                id: docRef.id
+            });
+        }
+
+        showAdminStatus("Disability link added successfully.", false);
+
+        addDisabilityForm.reset();
+        loadDisabilitiesAdmin();
+
+    } catch (error) {
+        console.error("Error adding disability link:", error);
+        showAdminStatus(`Error adding disability link: ${error.message}`, true);
+    }
+}
+
+async function handleDeleteDisability(docId, listItemElement) {
+    if (!confirm("Are you sure you want to permanently delete this disability link?")) {
+        return;
+    }
+
+    showAdminStatus("Deleting disability link...");
+
+    let nameToLog = "Unknown Link";
+
+    try {
+        const itemSnap = await getDoc(doc(db, "disabilities", docId));
+
+        if (itemSnap.exists()) {
+            nameToLog = itemSnap.data().name || "Unknown Link";
+        }
+
+        await deleteDoc(doc(db, "disabilities", docId));
+
+        if (typeof logAdminActivity === "function") {
+            logAdminActivity("DISABILITY_LINK_DELETE", {
+                name: nameToLog,
+                id: docId
+            });
+        }
+
+        showAdminStatus("Disability link deleted successfully.", false);
+        loadDisabilitiesAdmin();
+
+    } catch (error) {
+        console.error(`Error deleting disability link ID ${docId}:`, error);
+        showAdminStatus(`Error deleting disability link: ${error.message}`, true);
+    }
+}
+
+async function openEditDisabilityModal(docId) {
+    if (!editDisabilityModal || !editDisabilityForm) {
+        console.error("Edit disability modal elements not found.");
+        showAdminStatus("UI Error: Cannot open edit form.", true);
+        return;
+    }
+
+    showEditDisabilityStatus("Loading disability data...");
+
+    try {
+        const docRef = doc(db, "disabilities", docId);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+            showAdminStatus("Error: Could not load disability data for editing.", true);
+            showEditDisabilityStatus("Error: Link not found.", true);
+            return;
+        }
+
+        const data = docSnap.data();
+
+        editDisabilityForm.setAttribute("data-doc-id", docId);
+
+        if (editDisabilityNameInput) {
+            editDisabilityNameInput.value = data.name || "";
+        }
+
+        if (editDisabilityUrlInput) {
+            editDisabilityUrlInput.value = data.url || "";
+        }
+
+        if (editDisabilityOrderInput) {
+            editDisabilityOrderInput.value = data.order ?? "";
+        }
+
+        editDisabilityModal.style.display = "block";
+        showEditDisabilityStatus("");
+
+    } catch (error) {
+        console.error("Error getting disability document for edit:", error);
+        showAdminStatus(`Error loading disability data: ${error.message}`, true);
+        showEditDisabilityStatus(`Error: ${error.message}`, true);
+    }
+}
+
+function closeEditDisabilityModal() {
+    if (editDisabilityModal) {
+        editDisabilityModal.style.display = "none";
+    }
+
+    if (editDisabilityForm) {
+        editDisabilityForm.reset();
+        editDisabilityForm.removeAttribute("data-doc-id");
+    }
+
+    if (editDisabilityStatusMessage) {
+        editDisabilityStatusMessage.textContent = "";
+        editDisabilityStatusMessage.className = "status-message";
+    }
+}
+
+async function handleUpdateDisability(event) {
+    event.preventDefault();
+
+    if (!editDisabilityForm) {
+        console.error("Edit disability form not found.");
+        return;
+    }
+
+    const docId = editDisabilityForm.getAttribute("data-doc-id");
+
+    if (!docId) {
+        showEditDisabilityStatus("Error: Missing document ID. Cannot save.", true);
+        return;
+    }
+
+    const name = editDisabilityNameInput ? editDisabilityNameInput.value.trim() : "";
+    const url = editDisabilityUrlInput ? editDisabilityUrlInput.value.trim() : "";
+    const orderStr = editDisabilityOrderInput ? editDisabilityOrderInput.value.trim() : "";
+    const order = parseInt(orderStr, 10);
+
+    if (!name || !url || !orderStr || isNaN(order) || order < 0) {
+        showEditDisabilityStatus("Invalid input. Check required fields and ensure Order is non-negative.", true);
+        return;
+    }
+
+    try {
+        new URL(url);
+    } catch (error) {
+        showEditDisabilityStatus("Invalid URL format.", true);
+        return;
+    }
+
+    const newDataFromForm = {
+        name,
+        url,
+        order
+    };
+
+    showEditDisabilityStatus("Saving changes...");
+
+    try {
+        const docRef = doc(db, "disabilities", docId);
+
+        let oldData = {};
+        const oldDataSnap = await getDoc(docRef);
+
+        if (oldDataSnap.exists()) {
+            oldData = oldDataSnap.data();
+        }
+
+        await updateDoc(docRef, {
+            ...newDataFromForm,
+            lastModified: serverTimestamp()
+        });
+
+        const changes = {};
+        let hasChanges = false;
+
+        for (const key in newDataFromForm) {
+            if (oldData[key] !== newDataFromForm[key]) {
+                changes[key] = {
+                    from: oldData[key] ?? null,
+                    to: newDataFromForm[key]
+                };
+                hasChanges = true;
+            }
+        }
+
+        if (hasChanges && typeof logAdminActivity === "function") {
+            logAdminActivity("DISABILITY_LINK_UPDATE", {
+                id: docId,
+                name,
+                changes
+            });
+        }
+
+        showAdminStatus("Disability link updated successfully.", false);
+
+        closeEditDisabilityModal();
+        loadDisabilitiesAdmin();
+
+    } catch (error) {
+        console.error(`Error updating disability link ID ${docId}:`, error);
+
+        showEditDisabilityStatus(`Error saving: ${error.message}`, true);
+        showAdminStatus(`Error updating disability link: ${error.message}`, true);
+    }
+}
+
+// ========================================
+// == Tech + Disability Listeners =========
 // ========================================
 
 if (addTechItemForm) {
@@ -5307,6 +5718,29 @@ if (cancelEditTechButtonSecondary) {
 if (searchTechItemsInput) {
     searchTechItemsInput.addEventListener("input", displayFilteredTechItems);
 }
+
+if (addDisabilityForm) {
+    addDisabilityForm.addEventListener("submit", handleAddDisability);
+}
+
+if (editDisabilityForm) {
+    editDisabilityForm.addEventListener("submit", handleUpdateDisability);
+}
+
+if (cancelEditDisabilityButton) {
+    cancelEditDisabilityButton.addEventListener("click", closeEditDisabilityModal);
+}
+
+if (cancelEditDisabilityButtonSecondary) {
+    cancelEditDisabilityButtonSecondary.addEventListener("click", closeEditDisabilityModal);
+}
+
+const searchDisabilitiesInput = document.getElementById("search-disabilities");
+
+if (searchDisabilitiesInput) {
+    searchDisabilitiesInput.addEventListener("input", displayFilteredDisabilities);
+}
+// == Shared Admin Helpers ================
 
     // --- Activity Log Listeners ---
     const clearLogBtn = document.getElementById('clear-log-button');
