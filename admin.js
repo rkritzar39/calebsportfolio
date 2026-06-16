@@ -4566,9 +4566,8 @@ function displayFilteredActivityLog() {
     logCountElement.textContent = `(${filteredLogs.length})`;
 }
 
-// ========================================// ================================= value === undefined) return "";
-
-    return String(value)
+// ========================================
+// == Tech Item Management Functions V2 ===(value)// == Tech Item Management Functions V2 ===
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -5104,10 +5103,194 @@ async function handleUpdateTechItem(event) {
         }
     }
 }
-// == Tech Item Management Functions V2 ===
+
+// ========================================
+// == Tech Preview Functions ==============
+// ========================================
+
+function renderTechItemPreview(data) {
+    const name = data.name || "Device Name";
+    const model = data.model || "";
+    const primaryUse = data.primaryUse || "";
+    const condition = data.condition || "";
+    const deviceType = data.deviceType || "";
+    const modelYear = data.modelYear || "";
+    const supportEndYear = data.supportEndYear || "";
+    const iconClass = data.iconClass || "fas fa-question-circle";
+    const material = data.material || "";
+    const storage = data.storage || "";
+    const storageGB = data.storageGB || "";
+    const ramGB = data.ramGB || "";
+    const chipName = data.chipName || "";
+    const expectedKeepYears = data.expectedKeepYears || "";
+    const futureProofingPriority = data.futureProofingPriority || "";
+    const aiFeaturePriority = data.aiFeaturePriority || "";
+    const compatibilityStatus = data.compatibilityStatus || "";
+    const batteryCapacity = data.batteryCapacity || "";
+    const color = data.color || "";
+    const price = data.price ? `$${data.price}` : "";
+    const dateReleased = data.dateReleased || "";
+    const dateBought = data.dateBought || "";
+    const osVersion = data.osVersion || "";
+
+    const batteryHealth = data.batteryHealth !== null && data.batteryHealth !== undefined
+        ? Number(data.batteryHealth)
+        : null;
+
+    const batteryCycles = data.batteryCycles !== null && data.batteryCycles !== undefined
+        ? Number(data.batteryCycles)
+        : null;
+
+    let batteryHtml = "";
+
+    if (batteryHealth !== null && !isNaN(batteryHealth)) {
+        const displayHealth = Math.min(Math.max(batteryHealth, 0), 100);
+
+        batteryHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-heart"></i>
+                <span>Battery Health:</span>
+                ${displayHealth}%
+            </div>
+        `;
+    }
+
+    const advancedDetailsContent = `
+        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${escapeAdminHTML(deviceType)}</div>` : ""}
+        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${escapeAdminHTML(modelYear)}</div>` : ""}
+        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${escapeAdminHTML(supportEndYear)}</div>` : ""}
+        ${chipName ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Chip:</span> ${escapeAdminHTML(chipName)}</div>` : ""}
+        ${ramGB ? `<div class="tech-detail"><i class="fas fa-memory"></i><span>RAM:</span> ${escapeAdminHTML(ramGB)}GB</div>` : ""}
+        ${storageGB ? `<div class="tech-detail"><i class="fas fa-database"></i><span>Storage Capacity:</span> ${escapeAdminHTML(storageGB)}GB</div>` : ""}
+        ${expectedKeepYears ? `<div class="tech-detail"><i class="fas fa-calendar-check"></i><span>Expected Keep Time:</span> ${escapeAdminHTML(expectedKeepYears)} years</div>` : ""}
+        ${futureProofingPriority ? `<div class="tech-detail"><i class="fas fa-seedling"></i><span>Future-Proofing Priority:</span> ${escapeAdminHTML(futureProofingPriority)}</div>` : ""}
+        ${aiFeaturePriority ? `<div class="tech-detail"><i class="fas fa-brain"></i><span>AI Feature Priority:</span> ${escapeAdminHTML(aiFeaturePriority)}</div>` : ""}
+        ${compatibilityStatus ? `<div class="tech-detail"><i class="fas fa-plug"></i><span>Compatibility Status:</span> ${escapeAdminHTML(compatibilityStatus)}</div>` : ""}
+        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${escapeAdminHTML(material)}</div>` : ""}
+        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${escapeAdminHTML(batteryCapacity)}</div>` : ""}
+        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${escapeAdminHTML(price)}</div>` : ""}
+        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${escapeAdminHTML(dateReleased)}</div>` : ""}
+        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${escapeAdminHTML(dateBought)}</div>` : ""}
+        ${batteryCycles !== null && !isNaN(batteryCycles) ? `<div class="tech-detail"><i class="fas fa-sync"></i><span>Battery Charge Cycles:</span> ${batteryCycles}</div>` : ""}
+    `;
+
+    return `
+        <div class="tech-item">
+            <h3><i class="${escapeAdminHTML(iconClass)}"></i> ${escapeAdminHTML(name)}</h3>
+
+            ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${escapeAdminHTML(model)}</div>` : ""}
+            ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${escapeAdminHTML(primaryUse)}</div>` : ""}
+            ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${escapeAdminHTML(condition)}</div>` : ""}
+            ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${escapeAdminHTML(storage)}</div>` : ""}
+            ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${escapeAdminHTML(color)}</div>` : ""}
+            ${osVersion ? `<div class="tech-detail"><i class="fab fa-apple"></i><span>OS Version:</span> ${escapeAdminHTML(osVersion)}</div>` : ""}
+
+            ${batteryHtml}
+
+            <details class="tech-advanced-details">
+                <summary>Advanced Details</summary>
+                ${advancedDetailsContent}
+            </details>
+        </div>
+    `;
+}
+
+function updateTechItemPreview(formType) {
+    let formElement;
+    let previewElement;
+
+    if (formType === "add") {
+        formElement = addTechItemForm;
+        previewElement = addTechItemPreview;
+    } else if (formType === "edit") {
+        formElement = editTechItemForm;
+        previewElement = editTechItemPreview;
+    } else {
+        return;
+    }
+
+    if (!formElement || !previewElement) {
+        return;
+    }
+
+    const techData = {};
+    const inputs = formElement.querySelectorAll("input[name], select[name], textarea[name]");
+
+    inputs.forEach(input => {
+        const name = input.name;
+        const result = normalizeTechFormValue(name, input, () => {});
+        techData[name] = result.value;
+    });
+
+    try {
+        const previewHTML = renderTechItemPreview(techData);
+        previewElement.innerHTML = previewHTML;
+    } catch (error) {
+        console.error("Error rendering tech preview:", error);
+        previewElement.innerHTML = '<p class="error"><small>Error generating preview.</small></p>';
+    }
+}
+
+function attachTechPreviewListeners(formElement, formType) {
+    if (!formElement) return;
+
+    const inputs = formElement.querySelectorAll("input[name], select[name], textarea[name]");
+
+    console.log(`Attaching preview listeners to ${inputs.length} inputs for ${formType} tech form.`);
+
+    inputs.forEach(input => {
+        const eventType =
+            input.type === "checkbox" || input.tagName.toLowerCase() === "select"
+                ? "change"
+                : "input";
+
+        const listenerFlag = `__techPreviewListener_${eventType}`;
+
+        if (!input[listenerFlag]) {
+            input.addEventListener(eventType, () => {
+                updateTechItemPreview(formType);
+            });
+
+            input[listenerFlag] = true;
+        }
+    });
+}
+
+// ========================================
+// == Tech Management Listeners ===========
+// ========================================
+
+if (addTechItemForm) {
+    addTechItemForm.addEventListener("submit", handleAddTechItem);
+    attachTechPreviewListeners(addTechItemForm, "add");
+}
+
+if (editTechItemForm) {
+    editTechItemForm.addEventListener("submit", handleUpdateTechItem);
+}
+
+if (cancelEditTechButton) {
+    cancelEditTechButton.addEventListener("click", closeEditTechItemModal);
+}
+
+if (cancelEditTechButtonSecondary) {
+    cancelEditTechButtonSecondary.addEventListener("click", closeEditTechItemModal);
+}
+
+if (searchTechItemsInput) {
+    searchTechItemsInput.addEventListener("input", displayFilteredTechItems);
+}
+
+window.addEventListener("click", event => {
+    if (event.target === editTechItemModal) {
+        closeEditTechItemModal();
+    }
+});
 // ========================================
 
 function escapeAdminHTML(value) {
+    if (value === null || value === undefined) return "";
+
 
     // --- *** Event Listener for Saving ONLY Countdown Settings (WITH EXTRA LOGGING) *** ---
     if (saveCountdownSettingsButton) {
