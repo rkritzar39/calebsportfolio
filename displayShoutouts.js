@@ -1994,6 +1994,33 @@ function checkDeviceSupport(item) {
     let supportLevel = "Fully Supported";
     let supportColor = "green";
 
+    const ownershipState = getOwnershipState(item);
+    if (ownershipState === "retired") {
+        return {
+            supported: false,
+            supportLevel: "Retired",
+            supportColor: "gray",
+            yearsOld,
+            deviceType,
+            modelYear,
+            supportEndYear,
+            supportRemaining: supportEndYear ? supportEndYear - currentYear : null
+        };
+    }
+
+    if (ownershipState === "sold") {
+        return {
+            supported: false,
+            supportLevel: "No Longer Owned",
+            supportColor: "gray",
+            yearsOld,
+            deviceType,
+            modelYear,
+            supportEndYear,
+            supportRemaining: supportEndYear ? supportEndYear - currentYear : null
+        };
+    }
+
     if (supportEndYear) {
         if (currentYear > supportEndYear) {
             supported = false;
@@ -2689,6 +2716,11 @@ function getRecommendedFutureUpgradeTarget(item) {
 // ======================
 function getUpgradePriorityLabel(item, upgradeScore, support, upgrade) {
     const condition = String(item.condition || "").toLowerCase();
+    const ownershipState = getOwnershipState(item);
+
+    if (ownershipState === "retired" || ownershipState === "sold") {
+        return { label: "Not Needed", color: "green", level: "not-needed" };
+    }
 
     if (condition === "retired") {
         return { label: "Not Needed", color: "green", level: "not-needed" };
@@ -2721,6 +2753,16 @@ function calculateRecommendedUpgradeYear(item, priority, support, upgradeScore) 
     const deviceType = detectDeviceType(item);
     const modelYear = Number(item.modelYear || currentYear);
     const condition = String(item.condition || "").toLowerCase();
+    const ownershipState = getOwnershipState(item);
+
+    if (ownershipState === "retired" || ownershipState === "sold") {
+        const label = ownershipState === "sold" ? "Sold" : "Retired";
+        return {
+            year: "No active upgrade needed",
+            window: label,
+            timing: `This device is ${label.toLowerCase()} and is kept as an archive entry.`
+        };
+    }
 
     const preferredCycle =
         Number(item.preferredUpgradeCycle) ||
@@ -2907,6 +2949,25 @@ function calculateUpgradeData(item) {
     let suggestion = "No upgrade needed";
     let triggers = [];
 
+    const ownershipState = getOwnershipState(item);
+    if (ownershipState === "retired") {
+        return {
+            status: "Retired",
+            color: "gray",
+            suggestion: "No active upgrade needed",
+            triggers: ["Device is retired"]
+        };
+    }
+
+    if (ownershipState === "sold") {
+        return {
+            status: "Sold",
+            color: "gray",
+            suggestion: "No active tracking needed",
+            triggers: ["Device is no longer owned"]
+        };
+    }
+
     if (isPhone && batteryBad) triggers.push("Battery below 85%");
     if (osStatus && osStatus.isBehindPublic) triggers.push("OS is outdated");
     if (isComputer && osStatus && osStatus.isBehindPublic) triggers.push("OS support/update concern");
@@ -2960,7 +3021,9 @@ function getRecommendedAction(item, upgrade, support, osStatus) {
     const batteryHealth = Number(item.batteryHealth ?? 100);
     const cycles = getBatteryCycles(item);
     const condition = String(item.condition || "").toLowerCase();
+    const ownershipState = getOwnershipState(item);
 
+    if (ownershipState === "retired" || ownershipState === "sold") return "No active upgrade needed";
     if (condition === "retired" || support.supportLevel === "Retired") return "No active upgrade needed";
     if (condition === "needs repair") return "Repair or replace depending on cost";
     if (!support.supported) return "Plan upgrade soon";
@@ -2992,6 +3055,15 @@ function generateDeviceSummary(item, upgrade, support, osStatus) {
     const condition = item.condition || "";
     const batteryHealth = Number(item.batteryHealth ?? 100);
     const cycles = getBatteryCycles(item);
+    const ownershipState = getOwnershipState(item);
+
+    if (ownershipState === "retired") {
+        return `This ${deviceType} is retired and kept as an archive entry.`;
+    }
+
+    if (ownershipState === "sold") {
+        return `This ${deviceType} is sold and kept as an archive entry.`;
+    }
 
     let parts = [];
 
@@ -3076,7 +3148,7 @@ function normalizeTechItem(itemData) {
     normalized.storageGB = getNumberField(itemData, ["storageGB", "storageCapacityGB", "capacityGB", "storageCapacity"], 0);
     normalized.priceNumber = getNumberField(itemData, ["price", "purchasePrice", "cost", "msrp"], 0);
 
-    // Planned / future device fields
+    // Planned / roadmap / ownership fields
     normalized.ownershipState = getFirstField(itemData, ["ownershipState", "state"], "");
     normalized.plannedStatus = getFirstField(itemData, ["plannedStatus"], "");
     normalized.plannedWindow = getFirstField(itemData, ["plannedWindow", "plannedFor"], "");
@@ -3244,15 +3316,45 @@ function calculateBackupPriority(item, osStatus, support) {
     return { label, color, reason };
 }
 
-function isPlannedTechItem(item) {
-    const state = String(item.ownershipState || "").toLowerCase().trim();
+function getOwnershipState(item) {
+    return String(item.ownershipState || "owned").toLowerCase().trim();
+}
+
+function isRoadmapTechItem(item) {
+    const state = getOwnershipState(item);
 
     return (
         state === "planned" ||
-        state === "wishlist" ||
         state === "coming-soon" ||
         state === "future-upgrade"
     );
+}
+
+function isWishlistTechItem(item) {
+    return getOwnershipState(item) === "wishlist";
+}
+
+function isPlannedTechItem(item) {
+    return isRoadmapTechItem(item) || isWishlistTechItem(item);
+}
+
+function isArchivedTechItem(item) {
+    const state = getOwnershipState(item);
+    return state === "retired" || state === "sold";
+}
+
+function getOwnershipLabel(state) {
+    const labels = {
+        owned: "Owned",
+        planned: "Planned",
+        wishlist: "Wishlist",
+        "coming-soon": "Coming Soon",
+        "future-upgrade": "Future Upgrade",
+        retired: "Retired",
+        sold: "Sold"
+    };
+
+    return labels[state] || "Owned";
 }
 
 function renderPlannedTechItemHomepage(itemData) {
@@ -3262,17 +3364,11 @@ function renderPlannedTechItemHomepage(itemData) {
     const model = item.model || "";
     const primaryUse = item.primaryUse || "";
     const iconClass = item.iconClass || "fas fa-laptop";
-    const ownershipState = String(item.ownershipState || "planned").toLowerCase().trim();
-    
-    const ownershipLabelMap = {
-        planned: "Planned",
-        wishlist: "Wishlist",
-        "coming-soon": "Coming Soon",
-        "future-upgrade": "Future Upgrade"
-    };
-    
-    const plannedStatus = ownershipLabelMap[ownershipState] || "Planned";
-    const plannedBadgeClass = ownershipState || "planned";
+
+    const ownershipState = getOwnershipState(item);
+    const ownershipLabel = getOwnershipLabel(ownershipState);
+    const ownershipBadgeClass = ownershipState || "planned";
+
     const plannedWindow = item.plannedWindow || "";
     const plannedReason = item.plannedReason || "";
     const futureUpgradeTarget = item.futureUpgradeTarget || "";
@@ -3286,9 +3382,15 @@ function renderPlannedTechItemHomepage(itemData) {
     const expectedAILevel = item.expectedAILevel || "";
     const expectedFutureProofRating = item.expectedFutureProofRating || "";
 
+    const isWishlist = ownershipState === "wishlist";
+    const isRoadmap = !isWishlist;
+
     return `
-    <div class="tech-item planned-tech-item">
-        <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
+    <div class="tech-item planned-tech-item ownership-${escapeHTML(ownershipBadgeClass)}">
+        <h3>
+            <i class="${escapeHTML(iconClass)}"></i>
+            ${escapeHTML(name)}
+        </h3>
 
         ${model ? `
         <div class="tech-detail">
@@ -3298,12 +3400,14 @@ function renderPlannedTechItemHomepage(itemData) {
         </div>` : ""}
 
         <div class="tech-detail">
-            <i class="fas fa-clock"></i>
+            <i class="fas fa-id-badge"></i>
             <span>Ownership:</span>
-           <span class="upgrade-badge ${escapeHTML(plannedBadgeClass)}">${escapeHTML(plannedStatus)}</span>
+            <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">
+                ${escapeHTML(ownershipLabel)}
+            </span>
         </div>
 
-        ${plannedWindow ? `
+        ${plannedWindow && isRoadmap ? `
         <div class="tech-detail">
             <i class="fas fa-calendar-alt"></i>
             <span>Planned For:</span>
@@ -3317,35 +3421,35 @@ function renderPlannedTechItemHomepage(itemData) {
             <span class="tech-value">${escapeHTML(primaryUse)}</span>
         </div>` : ""}
 
-        ${plannedReason ? `
+        ${plannedReason && isRoadmap ? `
         <div class="tech-detail">
-            <i class="fas fa-graduation-cap"></i>
+            <i class="fas fa-circle-question"></i>
             <span>Reason:</span>
             <span class="tech-value">${escapeHTML(plannedReason)}</span>
         </div>` : ""}
 
-        ${futureUpgradeTarget ? `
+        ${futureUpgradeTarget && isRoadmap ? `
         <div class="tech-detail">
             <i class="fas fa-flag-checkered"></i>
             <span>Future Role:</span>
             <span class="tech-value">${escapeHTML(futureUpgradeTarget)}</span>
         </div>` : ""}
 
-        ${targetYear ? `
-        <div class="tech-detail">
-            <i class="fas fa-calendar-check"></i>
-            <span>Target Year:</span>
-            <span class="tech-value">${escapeHTML(targetYear)}</span>
-        </div>` : ""}
-
-        ${replacesDevice ? `
+        ${replacesDevice && isRoadmap ? `
         <div class="tech-detail">
             <i class="fas fa-right-left"></i>
             <span>Replaces:</span>
             <span class="tech-value">${escapeHTML(replacesDevice)}</span>
         </div>` : ""}
 
-        ${(expectedChip || expectedStorage || expectedRam || expectedColor || expectedAILevel || expectedFutureProofRating) ? `
+        ${targetYear && isRoadmap ? `
+        <div class="tech-detail">
+            <i class="fas fa-calendar-check"></i>
+            <span>Target Year:</span>
+            <span class="tech-value">${escapeHTML(targetYear)}</span>
+        </div>` : ""}
+
+        ${isRoadmap && (expectedChip || expectedStorage || expectedRam || expectedColor || expectedAILevel || expectedFutureProofRating) ? `
         <details class="tech-advanced-details">
             <summary>Expected Specs</summary>
 
@@ -3420,6 +3524,10 @@ function renderTechItemHomepage(itemData) {
     const dateReleased = item.dateReleased || "";
     const dateBought = item.dateBought || "";
     const osVersion = item.osVersion || "";
+
+    const ownershipState = getOwnershipState(item);
+    const ownershipLabel = getOwnershipLabel(ownershipState);
+    const ownershipBadgeClass = ownershipState || "owned";
 
     const osStatus = checkOSStatus(item.osVersion);
     const support = checkDeviceSupport(item);
