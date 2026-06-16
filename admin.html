@@ -1214,33 +1214,115 @@
 </div>
   
 
-<section class="admin-section" id="tech-management" aria-labelledby="tech-heading">
-    <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
 
-    <form id="add-tech-item-form" aria-labelledby="add-tech-heading">
-        <h4 id="add-tech-heading">Add New Tech Item</h4>
+<section class="admin-section tech-admin-v2" id="tech-management" aria-labelledby="tech-heading">
+    <div class="tech-admin-hero">
+        <div>
+            <p class="eyebrow">Tech Inventory 2.0</p>
+            <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
+            <p>Use the guided lifecycle workflow so active, planned, and archived devices stay clean and do not accidentally inherit stale replacement data.</p>
+        </div>
+        <div class="tech-admin-hero-actions" aria-label="Tech workflow rules">
+            <span><i class="fas fa-circle-check"></i> Active devices stay active</span>
+            <span><i class="fas fa-route"></i> Planned devices point forward</span>
+            <span><i class="fas fa-box-archive"></i> Archive stays historical</span>
+        </div>
+    </div>
 
-        <!-- ================================================== -->
-        <!-- BASIC FIELDS - ALWAYS VISIBLE                      -->
-        <!-- ================================================== -->
-        <div class="form-group">
-            <label for="tech-name">Device Name:</label>
-            <input type="text" id="tech-name" name="name" required placeholder="e.g., iPhone 16 Pro">
+    <div class="tech-workflow-note">
+        <i class="fas fa-lightbulb"></i>
+        <div>
+            <strong>Recommended workflow:</strong>
+            <span>Add the current device first. Add planned replacements second. Only convert the current device to secondary after the planned device is actually owned.</span>
+        </div>
+    </div>
+
+    <form id="add-tech-item-form" class="tech-wizard-form" aria-labelledby="add-tech-heading">
+        <div class="tech-form-title-row">
+            <div>
+                <p class="eyebrow">New Device</p>
+                <h4 id="add-tech-heading">Add Tech Item</h4>
+            </div>
+            <span class="tech-form-badge">Guided</span>
         </div>
 
-        <div class="form-group">
-            <label for="tech-model">Model:</label>
-            <input type="text" id="tech-model" name="model" placeholder="Specific model info">
+        <div class="tech-form-card tech-identity-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-fingerprint"></i>
+                <div>
+                    <h5>Device Identity</h5>
+                    <p>Name, model, icon, and what this device is used for.</p>
+                </div>
+            </div>
+            <div class="tech-form-grid two-col">
+                <div class="form-group">
+                    <label for="tech-name">Device Name</label>
+                    <input type="text" id="tech-name" name="name" required placeholder="e.g., Mac mini">
+                </div>
+                <div class="form-group">
+                    <label for="tech-model">Model</label>
+                    <input type="text" id="tech-model" name="model" placeholder="e.g., M2 Mac mini">
+                </div>
+                <div class="form-group full-width">
+                    <label for="tech-primary-use">Primary Use</label>
+                    <input type="text" id="tech-primary-use" name="primaryUse" placeholder="e.g., Main computer, future school laptop, backup device">
+                </div>
+                <div class="form-group">
+                    <label for="tech-device-type">Device Type</label>
+                    <select id="tech-device-type" name="deviceType">
+                        <option value="">Auto Detect</option>
+                        <option value="phone">Phone</option>
+                        <option value="computer">Computer</option>
+                        <option value="tablet">Tablet</option>
+                        <option value="watch">Watch</option>
+                        <option value="accessory">Accessory</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tech-icon-class">Font Awesome Icon Class</label>
+                    <input type="text" id="tech-icon-class" name="iconClass" placeholder="e.g., fas fa-desktop">
+                    <small>Examples: fas fa-laptop, fas fa-mobile-alt, fas fa-desktop.</small>
+                </div>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="tech-primary-use">Primary Use:</label>
-            <input type="text" id="tech-primary-use" name="primaryUse" placeholder="e.g., Daily driver, school, content creation">
-        </div>
+        <div class="tech-form-card tech-mode-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-layer-group"></i>
+                <div>
+                    <h5>Lifecycle Mode</h5>
+                    <p>Pick the device state first. The form will only show fields that make sense.</p>
+                </div>
+            </div>
 
-        <div class="form-group">
-            <label for="tech-ownership-state">Ownership State:</label>
-            <select id="tech-ownership-state" name="ownershipState">
+            <div class="tech-mode-picker" aria-label="Tech lifecycle shortcuts">
+                <button type="button" class="tech-mode-option" data-tech-mode-value="owned" data-tech-mode-target="tech-ownership-state">
+                    <i class="fas fa-circle-check"></i>
+                    <strong>Active Device</strong>
+                    <span>Owned or currently in use.</span>
+                </button>
+                <button type="button" class="tech-mode-option" data-tech-mode-value="planned" data-tech-mode-target="tech-ownership-state">
+                    <i class="fas fa-calendar-plus"></i>
+                    <strong>Planned Device</strong>
+                    <span>Future purchase or upgrade roadmap.</span>
+                </button>
+                <button type="button" class="tech-mode-option" data-tech-mode-value="wishlist" data-tech-mode-target="tech-ownership-state">
+                    <i class="fas fa-star"></i>
+                    <strong>Wishlist / Research</strong>
+                    <span>Considering, researching, or nice-to-have.</span>
+                </button>
+                <button type="button" class="tech-mode-option" data-tech-mode-value="retired" data-tech-mode-target="tech-ownership-state">
+                    <i class="fas fa-box-archive"></i>
+                    <strong>Archived</strong>
+                    <span>Retired, sold, traded in, or no longer active.</span>
+                </button>
+            </div>
+
+            <div class="tech-form-grid two-col">
+                <div class="form-group">
+                    <label for="tech-ownership-state">Ownership State</label>
+                    <select id="tech-ownership-state" name="ownershipState">
+
                 <optgroup label="Active Devices">
                     <option value="owned">Owned</option>
                     <option value="borrowed">Borrowed</option>
@@ -1249,8 +1331,7 @@
                     <option value="work-issued">Work-Issued</option>
                     <option value="in-repair">In Repair</option>
                 </optgroup>
-
-                <optgroup label="Roadmap Devices">
+                <optgroup label="Planned / Roadmap Devices">
                     <option value="planned">Planned</option>
                     <option value="coming-soon">Coming Soon</option>
                     <option value="future-upgrade">Future Upgrade</option>
@@ -1258,14 +1339,12 @@
                     <option value="ordered">Ordered</option>
                     <option value="reserved">Reserved</option>
                 </optgroup>
-
                 <optgroup label="Wishlist / Research">
                     <option value="wishlist">Wishlist</option>
                     <option value="considering">Considering</option>
                     <option value="researching">Researching</option>
                 </optgroup>
-
-                <optgroup label="Archive">
+                <optgroup label="Archive / No Longer Active">
                     <option value="retired">Retired</option>
                     <option value="sold">Sold</option>
                     <option value="traded-in">Traded In</option>
@@ -1274,279 +1353,284 @@
                     <option value="returned">Returned</option>
                     <option value="lost">Lost</option>
                 </optgroup>
-            </select>
-            <small>
-                Roadmap devices only show roadmap planning fields. Wishlist/research devices stay compact. Active/archive devices show full inventory fields.
-            </small>
-        </div>
-
-        <!-- ================================================== -->
-        <!-- ROADMAP DEVICE FIELDS                              -->
-        <!-- Shows only for Planned / Coming Soon / Future       -->
-        <!-- Upgrade / Preordered / Ordered / Reserved           -->
-        <!-- ================================================== -->
-        <div class="roadmap-tech-fields">
-            <div class="form-group">
-                <label for="tech-planned-window">Planned / Expected Window:</label>
-                <input type="text" id="tech-planned-window" name="plannedWindow" placeholder="e.g., September 2026">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-planned-reason">Reason:</label>
-                <input type="text" id="tech-planned-reason" name="plannedReason" placeholder="e.g., School">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-future-upgrade-target">Future Role:</label>
-                <input type="text" id="tech-future-upgrade-target" name="futureUpgradeTarget" placeholder="e.g., Main school laptop">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-replaces-device">Replaces Device:</label>
-                <input type="text" id="tech-replaces-device" name="replacesDevice" placeholder="e.g., Current school computer">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-target-year">Target Year:</label>
-                <input type="number" id="tech-target-year" name="targetYear" min="2000" max="2100" placeholder="e.g., 2026">
-            </div>
-
-            <fieldset class="admin-fieldset expected-specs-fieldset">
-                <legend>Expected Specs</legend>
-
-                <div class="form-group">
-                    <label for="tech-expected-chip">Expected Chip:</label>
-                    <input type="text" id="tech-expected-chip" name="expectedChip" placeholder="e.g., Apple M5">
-                </div>
-
-                <div class="form-group">
-                    <label for="tech-expected-ram">Expected RAM:</label>
-                    <input type="text" id="tech-expected-ram" name="expectedRam" placeholder="e.g., 16GB">
-                </div>
-
-                <div class="form-group">
-                    <label for="tech-expected-storage">Expected Storage:</label>
-                    <input type="text" id="tech-expected-storage" name="expectedStorage" placeholder="e.g., 512GB">
-                </div>
-
-                <div class="form-group">
-                    <label for="tech-expected-color">Expected Color:</label>
-                    <input type="text" id="tech-expected-color" name="expectedColor" placeholder="e.g., Midnight">
-                </div>
-
-                <div class="form-group">
-                    <label for="tech-expected-ai-level">Expected AI Support:</label>
-                    <select id="tech-expected-ai-level" name="expectedAILevel">
-                        <option value="">Select AI support</option>
-                        <option value="Standard">Standard</option>
-                        <option value="Advanced">Advanced</option>
-                        <option value="Maximum">Maximum</option>
                     </select>
                 </div>
+                <div class="form-group full-tech-fields">
+                    <label for="tech-condition">Condition</label>
+                    <select id="tech-condition" name="condition">
+                        <option value="">Select condition</option>
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Needs Repair">Needs Repair</option>
+                        <option value="Retired">Retired</option>
+                    </select>
+                </div>
+            </div>
+            <div class="tech-mode-guidance" data-tech-guidance-for="tech-ownership-state">
+                <i class="fas fa-circle-info"></i>
+                <span>Active devices should not point to future planned successors. Planned devices can say what device they will replace later.</span>
+            </div>
+        </div>
 
+        <div class="tech-form-card roadmap-tech-fields tech-roadmap-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-route"></i>
+                <div>
+                    <h5>Planning & Replacement Roadmap</h5>
+                    <p>Use this for planned, ordered, reserved, wishlist, or research devices.</p>
+                </div>
+            </div>
+            <div class="tech-form-grid two-col">
                 <div class="form-group">
-                    <label for="tech-expected-future-proof-rating">Expected Future-Proofing:</label>
-                    <select id="tech-expected-future-proof-rating" name="expectedFutureProofRating">
-                        <option value="">Select future-proofing</option>
+                    <label for="tech-planned-window">Planned / Expected Window</label>
+                    <input type="text" id="tech-planned-window" name="plannedWindow" placeholder="e.g., Fall 2026">
+                </div>
+                <div class="form-group">
+                    <label for="tech-planned-reason">Reason</label>
+                    <input type="text" id="tech-planned-reason" name="plannedReason" placeholder="e.g., School">
+                </div>
+                <div class="form-group">
+                    <label for="tech-future-upgrade-target">Future Role</label>
+                    <input type="text" id="tech-future-upgrade-target" name="futureUpgradeTarget" placeholder="e.g., Main school laptop">
+                </div>
+                <div class="form-group">
+                    <label for="tech-replaces-device">Replaces Device</label>
+                    <input type="text" id="tech-replaces-device" name="replacesDevice" placeholder="e.g., Mac mini">
+                    <small>For planned devices, this points forward only. The old device should not point back yet.</small>
+                </div>
+                <div class="form-group">
+                    <label for="tech-target-year">Target Year</label>
+                    <input type="number" id="tech-target-year" name="targetYear" min="2000" max="2100" placeholder="e.g., 2026">
+                </div>
+            </div>
+
+            <details class="tech-details-block" open>
+                <summary><i class="fas fa-microchip"></i> Expected Specs</summary>
+                <div class="tech-form-grid two-col">
+                    <div class="form-group">
+                        <label for="tech-expected-chip">Expected Chip</label>
+                        <input type="text" id="tech-expected-chip" name="expectedChip" placeholder="e.g., Apple M5">
+                    </div>
+                    <div class="form-group">
+                        <label for="tech-expected-ram">Expected RAM</label>
+                        <input type="text" id="tech-expected-ram" name="expectedRam" placeholder="e.g., 16GB">
+                    </div>
+                    <div class="form-group">
+                        <label for="tech-expected-storage">Expected Storage</label>
+                        <input type="text" id="tech-expected-storage" name="expectedStorage" placeholder="e.g., 512GB">
+                    </div>
+                    <div class="form-group">
+                        <label for="tech-expected-color">Expected Color</label>
+                        <input type="text" id="tech-expected-color" name="expectedColor" placeholder="e.g., Midnight">
+                    </div>
+                    <div class="form-group">
+                        <label for="tech-expected-ai-level">Expected AI Support</label>
+                        <select id="tech-expected-ai-level" name="expectedAILevel">
+                            <option value="">Select AI support</option>
+                            <option value="Standard">Standard</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Maximum">Maximum</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tech-expected-future-proof-rating">Expected Future-Proofing</label>
+                        <select id="tech-expected-future-proof-rating" name="expectedFutureProofRating">
+                            <option value="">Select future-proofing</option>
+                            <option value="Balanced">Balanced</option>
+                            <option value="High">High</option>
+                            <option value="Maximum">Maximum</option>
+                        </select>
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <div class="full-tech-fields tech-form-card tech-hardware-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-memory"></i>
+                <div>
+                    <h5>Hardware & Purchase Details</h5>
+                    <p>Use for devices you own, use, or archive. Desktops can leave battery fields blank.</p>
+                </div>
+            </div>
+            <div class="tech-form-grid three-col">
+                <div class="form-group">
+                    <label for="tech-price">Price ($)</label>
+                    <input type="text" id="tech-price" name="price" placeholder="e.g., 639.43">
+                </div>
+                <div class="form-group">
+                    <label for="tech-date-bought">Date Bought</label>
+                    <input type="text" id="tech-date-bought" name="dateBought" placeholder="e.g., May 16, 2024">
+                </div>
+                <div class="form-group">
+                    <label for="tech-date-released">Date Released</label>
+                    <input type="text" id="tech-date-released" name="dateReleased" placeholder="e.g., January 24, 2023">
+                </div>
+                <div class="form-group">
+                    <label for="tech-model-year">Model Year</label>
+                    <input type="number" id="tech-model-year" name="modelYear" min="2000" max="2100" placeholder="e.g., 2023">
+                </div>
+                <div class="form-group">
+                    <label for="tech-material">Material</label>
+                    <input type="text" id="tech-material" name="material" placeholder="e.g., Aluminum enclosure">
+                </div>
+                <div class="form-group">
+                    <label for="tech-color">Color</label>
+                    <input type="text" id="tech-color" name="color" placeholder="e.g., Silver">
+                </div>
+                <div class="form-group">
+                    <label for="tech-storage">Storage</label>
+                    <input type="text" id="tech-storage" name="storage" placeholder="e.g., 256GB SSD">
+                </div>
+                <div class="form-group">
+                    <label for="tech-storage-gb">Storage Capacity (GB)</label>
+                    <input type="number" id="tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 256">
+                </div>
+                <div class="form-group">
+                    <label for="tech-ram-gb">RAM / Memory (GB)</label>
+                    <input type="number" id="tech-ram-gb" name="ramGB" min="0" step="1" placeholder="e.g., 8">
+                </div>
+                <div class="form-group">
+                    <label for="tech-chip-name">Chip / Processor</label>
+                    <input type="text" id="tech-chip-name" name="chipName" placeholder="e.g., M2">
+                </div>
+            </div>
+        </div>
+
+        <div class="full-tech-fields tech-form-card tech-software-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-code-branch"></i>
+                <div>
+                    <h5>Software, Support & Future-Proofing</h5>
+                    <p>Support, OS, AI priority, and long-term usefulness.</p>
+                </div>
+            </div>
+            <div class="tech-form-grid three-col">
+                <div class="form-group">
+                    <label for="tech-os-version">OS Version</label>
+                    <input type="text" id="tech-os-version" name="osVersion" placeholder="e.g., macOS 27.0">
+                </div>
+                <div class="form-group">
+                    <label for="tech-support-end-year">Support End Year</label>
+                    <input type="number" id="tech-support-end-year" name="supportEndYear" min="2000" max="2100" placeholder="e.g., 2029">
+                </div>
+                <div class="form-group">
+                    <label for="tech-compatibility-status">Compatibility Status</label>
+                    <select id="tech-compatibility-status" name="compatibilityStatus">
+                        <option value="">Select compatibility</option>
+                        <option value="Current">Current</option>
+                        <option value="Limited">Limited</option>
+                        <option value="Obsolete">Obsolete</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tech-expected-keep-years">Expected Keep Time (Years)</label>
+                    <input type="number" id="tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 5">
+                </div>
+                <div class="form-group">
+                    <label for="tech-future-proofing-priority">Future-Proofing Priority</label>
+                    <select id="tech-future-proofing-priority" name="futureProofingPriority">
+                        <option value="">Select priority</option>
+                        <option value="Low">Low</option>
                         <option value="Balanced">Balanced</option>
                         <option value="High">High</option>
                         <option value="Maximum">Maximum</option>
                     </select>
                 </div>
-            </fieldset>
-        </div>
-
-        <!-- ================================================== -->
-        <!-- FULL INVENTORY FIELDS                              -->
-        <!-- Shows for Active + Archive devices only             -->
-        <!-- Hidden for Roadmap and Wishlist/Research            -->
-        <!-- ================================================== -->
-        <div class="full-tech-fields">
-            <div class="form-group">
-                <label for="tech-condition">Condition:</label>
-                <select id="tech-condition" name="condition">
-                    <option value="">Select condition</option>
-                    <option value="Excellent">Excellent</option>
-                    <option value="Good">Good</option>
-                    <option value="Fair">Fair</option>
-                    <option value="Needs Repair">Needs Repair</option>
-                    <option value="Retired">Retired</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="tech-support-end-year">Support End Year:</label>
-                <input type="number" id="tech-support-end-year" name="supportEndYear" min="2000" max="2100" placeholder="e.g., 2029">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-battery-capacity">Battery Capacity (mAh):</label>
-                <input type="text" id="tech-battery-capacity" name="batteryCapacity" placeholder="e.g., 3,582mAh">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-price">Price ($):</label>
-                <input type="text" id="tech-price" name="price" placeholder="e.g., 1,067.49">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-date-bought">Date Bought:</label>
-                <input type="text" id="tech-date-bought" name="dateBought" placeholder="e.g., November 08, 2024">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-os-version">OS Version:</label>
-                <input type="text" id="tech-os-version" name="osVersion" placeholder="e.g., iOS 18.5">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-battery-health">Battery Health (%):</label>
-                <input type="number" id="tech-battery-health" name="batteryHealth" min="0" max="100" placeholder="e.g., 99">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-battery-cycles">Battery Charge Cycles:</label>
-                <input type="number" id="tech-battery-cycles" name="batteryCycles" min="0" placeholder="e.g., 244">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-device-type">Device Type:</label>
-                <select id="tech-device-type" name="deviceType">
-                    <option value="">Auto Detect</option>
-                    <option value="phone">Phone</option>
-                    <option value="computer">Computer</option>
-                    <option value="tablet">Tablet</option>
-                    <option value="watch">Watch</option>
-                    <option value="accessory">Accessory</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="tech-model-year">Model Year:</label>
-                <input type="number" id="tech-model-year" name="modelYear" min="2000" max="2100" placeholder="e.g., 2024">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-icon-class">Font Awesome Icon Class:</label>
-                <input type="text" id="tech-icon-class" name="iconClass" placeholder="e.g., fas fa-laptop">
-                <small>Examples: "fas fa-laptop", "fas fa-mobile-alt", "fas fa-desktop"</small>
-            </div>
-
-            <div class="form-group">
-                <label for="tech-material">Material:</label>
-                <input type="text" id="tech-material" name="material" placeholder="e.g., Titanium, Aluminum">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-storage">Storage:</label>
-                <input type="text" id="tech-storage" name="storage" placeholder="e.g., 128GB, 256GB SSD">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-chip-name">Chip / Processor:</label>
-                <input type="text" id="tech-chip-name" name="chipName" placeholder="e.g., A18 Pro, M2, S9">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-ram-gb">RAM / Memory (GB):</label>
-                <input type="number" id="tech-ram-gb" name="ramGB" min="0" step="1" placeholder="e.g., 8">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-storage-gb">Storage Capacity (GB):</label>
-                <input type="number" id="tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 128">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-expected-keep-years">Expected Keep Time (Years):</label>
-                <input type="number" id="tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 4">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-future-proofing-priority">Future-Proofing Priority:</label>
-                <select id="tech-future-proofing-priority" name="futureProofingPriority">
-                    <option value="">Select priority</option>
-                    <option value="Low">Low</option>
-                    <option value="Balanced">Balanced</option>
-                    <option value="High">High</option>
-                    <option value="Maximum">Maximum</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="tech-ai-feature-priority">AI Feature Priority:</label>
-                <select id="tech-ai-feature-priority" name="aiFeaturePriority">
-                    <option value="">Select priority</option>
-                    <option value="Not Important">Not Important</option>
-                    <option value="Nice to Have">Nice to Have</option>
-                    <option value="Important">Important</option>
-                    <option value="Must Have">Must Have</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="tech-compatibility-status">Compatibility Status:</label>
-                <select id="tech-compatibility-status" name="compatibilityStatus">
-                    <option value="">Select compatibility</option>
-                    <option value="Current">Current</option>
-                    <option value="Limited">Limited</option>
-                    <option value="Obsolete">Obsolete</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="tech-paired-ai-phone">Paired with AI-Compatible iPhone:</label>
-                <select id="tech-paired-ai-phone" name="pairedAIPhone">
-                    <option value="">Not Applicable / Unknown</option>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="tech-color">Color:</label>
-                <input type="text" id="tech-color" name="color" placeholder="e.g., Natural Titanium">
-            </div>
-
-            <div class="form-group">
-                <label for="tech-date-released">Date Released:</label>
-                <input type="text" id="tech-date-released" name="dateReleased" placeholder="e.g., September 20, 2024">
+                <div class="form-group">
+                    <label for="tech-ai-feature-priority">AI Feature Priority</label>
+                    <select id="tech-ai-feature-priority" name="aiFeaturePriority">
+                        <option value="">Select priority</option>
+                        <option value="Not Important">Not Important</option>
+                        <option value="Nice to Have">Nice to Have</option>
+                        <option value="Important">Important</option>
+                        <option value="Must Have">Must Have</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tech-paired-ai-phone">Paired with AI-Compatible iPhone</label>
+                    <select id="tech-paired-ai-phone" name="pairedAIPhone">
+                        <option value="">Not Applicable / Unknown</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                    <small>Usually only relevant for watches or accessories that depend on an iPhone.</small>
+                </div>
             </div>
         </div>
 
-        <!-- ================================================== -->
-        <!-- ALWAYS VISIBLE FINAL FIELDS                        -->
-        <!-- ================================================== -->
-        <div class="form-group">
-            <label for="tech-order">Display Order:</label>
-            <input type="number" id="tech-order" name="order" min="0" step="1" required placeholder="Lower numbers show first">
-        </div>
-
-        <div class="form-group">
-            <label>Preview:</label>
-            <div id="add-tech-item-preview" class="tech-preview-area">
-                <p><small>Preview will appear here as you type.</small></p>
+        <div class="full-tech-fields tech-form-card tech-battery-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-battery-half"></i>
+                <div>
+                    <h5>Battery</h5>
+                    <p>Leave blank for desktop computers like Mac mini.</p>
+                </div>
+            </div>
+            <div class="tech-form-grid three-col">
+                <div class="form-group">
+                    <label for="tech-battery-capacity">Battery Capacity (mAh)</label>
+                    <input type="text" id="tech-battery-capacity" name="batteryCapacity" placeholder="e.g., 3582mAh">
+                </div>
+                <div class="form-group">
+                    <label for="tech-battery-health">Battery Health (%)</label>
+                    <input type="number" id="tech-battery-health" name="batteryHealth" min="0" max="100" placeholder="e.g., 99">
+                </div>
+                <div class="form-group">
+                    <label for="tech-battery-cycles">Battery Charge Cycles</label>
+                    <input type="number" id="tech-battery-cycles" name="batteryCycles" min="0" placeholder="e.g., 244">
+                </div>
             </div>
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="button-primary">Add Tech Item</button>
+        <div class="tech-form-card tech-final-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-list-ol"></i>
+                <div>
+                    <h5>Display & Preview</h5>
+                    <p>Order controls where the item appears publicly.</p>
+                </div>
+            </div>
+            <div class="tech-form-grid two-col">
+                <div class="form-group">
+                    <label for="tech-order">Display Order</label>
+                    <input type="number" id="tech-order" name="order" min="0" step="1" required placeholder="Lower numbers show first">
+                </div>
+                <div class="tech-cleanup-panel add-only">
+                    <strong>Lifecycle rule</strong>
+                    <p>Planned devices can point to what they will replace. Active devices should not point back until conversion to owned.</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Preview</label>
+                <div id="add-tech-item-preview" class="tech-preview-area">
+                    <p><small>Preview will appear here as you type.</small></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions tech-sticky-actions">
+            <button type="submit" class="button-primary"><i class="fas fa-plus"></i> Add Tech Item</button>
         </div>
     </form>
 
-    <h4 id="existing-tech-heading">
-        Existing Tech Items <span id="tech-items-count" class="list-count"></span>
-    </h4>
-
-    <div class="form-group">
-        <label for="search-tech-items">Search Tech Items:</label>
-        <input type="search" id="search-tech-items" placeholder="Search by name or model...">
+    <div class="tech-existing-header">
+        <div>
+            <h4 id="existing-tech-heading">Existing Tech Items <span id="tech-items-count" class="list-count"></span></h4>
+            <p>Search, edit, delete, or open a device to update its lifecycle.</p>
+        </div>
+        <div class="form-group tech-search-group">
+            <label for="search-tech-items">Search Tech Items</label>
+            <input type="search" id="search-tech-items" placeholder="Search by name or model...">
+        </div>
     </div>
 
-    <div id="tech-items-list-admin" class="list-container-admin" role="list" aria-labelledby="existing-tech-heading">
+    <div id="tech-items-list-admin" class="list-container-admin tech-list-v2" role="list" aria-labelledby="existing-tech-heading">
         <p>Loading tech items...</p>
     </div>
 </section>
+
 
              <section class="admin-section" id="disabilities-management" aria-labelledby="disabilities-heading">
                 <h3 id="disabilities-heading">Manage Disabilities List</h3>
@@ -1769,196 +1853,53 @@
 <!-- ================================================== -->
 <!-- EDIT TECH ITEM MODAL                               -->
 <!-- ================================================== -->
-<div id="edit-tech-item-modal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-tech-modal-heading">
-    <div class="modal-content">
+
+<div id="edit-tech-item-modal" class="modal tech-modal-v2" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="edit-tech-modal-heading">
+    <div class="modal-content tech-modal-content-v2">
         <button type="button" class="close-button" id="cancel-edit-tech-button" aria-label="Close dialog">&times;</button>
-        <h2 id="edit-tech-modal-heading">Edit Tech Item</h2>
 
-        <form id="edit-tech-item-form" data-doc-id="">
-            <!-- ================================================== -->
-            <!-- BASIC FIELDS - ALWAYS VISIBLE                      -->
-            <!-- ================================================== -->
-            <div class="form-group">
-                <label for="edit-tech-name">Device Name:</label>
-                <input type="text" id="edit-tech-name" name="name" required>
+        <div class="tech-form-title-row modal-title-row">
+            <div>
+                <p class="eyebrow">Edit Device</p>
+                <h2 id="edit-tech-modal-heading">Edit Tech Item</h2>
+                <p class="modal-subtitle">Keep active, planned, and archived device data separated.</p>
             </div>
+            <span class="tech-form-badge">Lifecycle Safe</span>
+        </div>
 
-            <div class="form-group">
-                <label for="edit-tech-model">Model:</label>
-                <input type="text" id="edit-tech-model" name="model">
+        <div class="tech-workflow-note tech-edit-warning">
+            <i class="fas fa-shield-halved"></i>
+            <div>
+                <strong>Safety reminder:</strong>
+                <span>If this is a planned device, use Replaces Device. Do not manually set successor fields on the current device until the planned device becomes owned.</span>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label for="edit-tech-primary-use">Primary Use:</label>
-                <input type="text" id="edit-tech-primary-use" name="primaryUse" placeholder="e.g., Daily driver, school, content creation">
+        <form id="edit-tech-item-form" class="tech-wizard-form" data-doc-id="">
+
+        <div class="tech-form-card tech-identity-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-fingerprint"></i>
+                <div>
+                    <h5>Device Identity</h5>
+                    <p>Name, model, icon, and what this device is used for.</p>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="edit-tech-ownership-state">Ownership State:</label>
-                <select id="edit-tech-ownership-state" name="ownershipState">
-                    <optgroup label="Active Devices">
-                        <option value="owned">Owned</option>
-                        <option value="borrowed">Borrowed</option>
-                        <option value="loaned-out">Loaned Out</option>
-                        <option value="school-issued">School-Issued</option>
-                        <option value="work-issued">Work-Issued</option>
-                        <option value="in-repair">In Repair</option>
-                    </optgroup>
-
-                    <optgroup label="Roadmap Devices">
-                        <option value="planned">Planned</option>
-                        <option value="coming-soon">Coming Soon</option>
-                        <option value="future-upgrade">Future Upgrade</option>
-                        <option value="preordered">Preordered</option>
-                        <option value="ordered">Ordered</option>
-                        <option value="reserved">Reserved</option>
-                    </optgroup>
-
-                    <optgroup label="Wishlist / Research">
-                        <option value="wishlist">Wishlist</option>
-                        <option value="considering">Considering</option>
-                        <option value="researching">Researching</option>
-                    </optgroup>
-
-                    <optgroup label="Archive">
-                        <option value="retired">Retired</option>
-                        <option value="sold">Sold</option>
-                        <option value="traded-in">Traded In</option>
-                        <option value="donated">Donated</option>
-                        <option value="recycled">Recycled</option>
-                        <option value="returned">Returned</option>
-                        <option value="lost">Lost</option>
-                    </optgroup>
-                </select>
-            </div>
-
-            <!-- ================================================== -->
-            <!-- ROADMAP DEVICE FIELDS - EDIT                       -->
-            <!-- ================================================== -->
-            <div class="roadmap-tech-fields">
+            <div class="tech-form-grid two-col">
                 <div class="form-group">
-                    <label for="edit-tech-planned-window">Planned / Expected Window:</label>
-                    <input type="text" id="edit-tech-planned-window" name="plannedWindow" placeholder="e.g., September 2026">
+                    <label for="edit-tech-name">Device Name</label>
+                    <input type="text" id="edit-tech-name" name="name" required placeholder="e.g., Mac mini">
                 </div>
-
                 <div class="form-group">
-                    <label for="edit-tech-planned-reason">Reason:</label>
-                    <input type="text" id="edit-tech-planned-reason" name="plannedReason" placeholder="e.g., School">
+                    <label for="edit-tech-model">Model</label>
+                    <input type="text" id="edit-tech-model" name="model" placeholder="e.g., M2 Mac mini">
                 </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-future-upgrade-target">Future Role:</label>
-                    <input type="text" id="edit-tech-future-upgrade-target" name="futureUpgradeTarget" placeholder="e.g., Main school laptop">
+                <div class="form-group full-width">
+                    <label for="edit-tech-primary-use">Primary Use</label>
+                    <input type="text" id="edit-tech-primary-use" name="primaryUse" placeholder="e.g., Main computer, future school laptop, backup device">
                 </div>
-
                 <div class="form-group">
-                    <label for="edit-tech-replaces-device">Replaces Device:</label>
-                    <input type="text" id="edit-tech-replaces-device" name="replacesDevice" placeholder="e.g., Current school computer">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-target-year">Target Year:</label>
-                    <input type="number" id="edit-tech-target-year" name="targetYear" min="2000" max="2100" placeholder="e.g., 2026">
-                </div>
-
-                <fieldset class="admin-fieldset expected-specs-fieldset">
-                    <legend>Expected Specs</legend>
-
-                    <div class="form-group">
-                        <label for="edit-tech-expected-chip">Expected Chip:</label>
-                        <input type="text" id="edit-tech-expected-chip" name="expectedChip" placeholder="e.g., Apple M5">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit-tech-expected-ram">Expected RAM:</label>
-                        <input type="text" id="edit-tech-expected-ram" name="expectedRam" placeholder="e.g., 16GB">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit-tech-expected-storage">Expected Storage:</label>
-                        <input type="text" id="edit-tech-expected-storage" name="expectedStorage" placeholder="e.g., 512GB">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit-tech-expected-color">Expected Color:</label>
-                        <input type="text" id="edit-tech-expected-color" name="expectedColor" placeholder="e.g., Midnight">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit-tech-expected-ai-level">Expected AI Support:</label>
-                        <select id="edit-tech-expected-ai-level" name="expectedAILevel">
-                            <option value="">Select AI support</option>
-                            <option value="Standard">Standard</option>
-                            <option value="Advanced">Advanced</option>
-                            <option value="Maximum">Maximum</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="edit-tech-expected-future-proof-rating">Expected Future-Proofing:</label>
-                        <select id="edit-tech-expected-future-proof-rating" name="expectedFutureProofRating">
-                            <option value="">Select future-proofing</option>
-                            <option value="Balanced">Balanced</option>
-                            <option value="High">High</option>
-                            <option value="Maximum">Maximum</option>
-                        </select>
-                    </div>
-                </fieldset>
-            </div>
-
-            <!-- ================================================== -->
-            <!-- FULL INVENTORY FIELDS - EDIT                       -->
-            <!-- ================================================== -->
-            <div class="full-tech-fields">
-                <div class="form-group">
-                    <label for="edit-tech-condition">Condition:</label>
-                    <select id="edit-tech-condition" name="condition">
-                        <option value="">Select condition</option>
-                        <option value="Excellent">Excellent</option>
-                        <option value="Good">Good</option>
-                        <option value="Fair">Fair</option>
-                        <option value="Needs Repair">Needs Repair</option>
-                        <option value="Retired">Retired</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-support-end-year">Support End Year:</label>
-                    <input type="number" id="edit-tech-support-end-year" name="supportEndYear" min="2000" max="2100">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-battery-capacity">Battery Capacity (mAh):</label>
-                    <input type="text" id="edit-tech-battery-capacity" name="batteryCapacity">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-price">Price ($):</label>
-                    <input type="text" id="edit-tech-price" name="price">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-date-bought">Date Bought:</label>
-                    <input type="text" id="edit-tech-date-bought" name="dateBought">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-os-version">OS Version:</label>
-                    <input type="text" id="edit-tech-os-version" name="osVersion">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-battery-health">Battery Health (%):</label>
-                    <input type="number" id="edit-tech-battery-health" name="batteryHealth" min="0" max="100">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-battery-cycles">Battery Charge Cycles:</label>
-                    <input type="number" id="edit-tech-battery-cycles" name="batteryCycles" min="0">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-device-type">Device Type:</label>
+                    <label for="edit-tech-device-type">Device Type</label>
                     <select id="edit-tech-device-type" name="deviceType">
                         <option value="">Auto Detect</option>
                         <option value="phone">Phone</option>
@@ -1968,49 +1909,258 @@
                         <option value="accessory">Accessory</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="edit-tech-model-year">Model Year:</label>
-                    <input type="number" id="edit-tech-model-year" name="modelYear" min="2000" max="2100">
+                    <label for="edit-tech-icon-class">Font Awesome Icon Class</label>
+                    <input type="text" id="edit-tech-icon-class" name="iconClass" placeholder="e.g., fas fa-desktop">
+                    <small>Examples: fas fa-laptop, fas fa-mobile-alt, fas fa-desktop.</small>
                 </div>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label for="edit-tech-icon-class">Font Awesome Icon Class:</label>
-                    <input type="text" id="edit-tech-icon-class" name="iconClass">
+        <div class="tech-form-card tech-mode-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-layer-group"></i>
+                <div>
+                    <h5>Lifecycle Mode</h5>
+                    <p>Pick the device state first. The form will only show fields that make sense.</p>
                 </div>
+            </div>
 
+            <div class="tech-mode-picker" aria-label="Tech lifecycle shortcuts">
+                <button type="button" class="tech-mode-option" data-tech-mode-value="owned" data-tech-mode-target="edit-tech-ownership-state">
+                    <i class="fas fa-circle-check"></i>
+                    <strong>Active Device</strong>
+                    <span>Owned or currently in use.</span>
+                </button>
+                <button type="button" class="tech-mode-option" data-tech-mode-value="planned" data-tech-mode-target="edit-tech-ownership-state">
+                    <i class="fas fa-calendar-plus"></i>
+                    <strong>Planned Device</strong>
+                    <span>Future purchase or upgrade roadmap.</span>
+                </button>
+                <button type="button" class="tech-mode-option" data-tech-mode-value="wishlist" data-tech-mode-target="edit-tech-ownership-state">
+                    <i class="fas fa-star"></i>
+                    <strong>Wishlist / Research</strong>
+                    <span>Considering, researching, or nice-to-have.</span>
+                </button>
+                <button type="button" class="tech-mode-option" data-tech-mode-value="retired" data-tech-mode-target="edit-tech-ownership-state">
+                    <i class="fas fa-box-archive"></i>
+                    <strong>Archived</strong>
+                    <span>Retired, sold, traded in, or no longer active.</span>
+                </button>
+            </div>
+
+            <div class="tech-form-grid two-col">
                 <div class="form-group">
-                    <label for="edit-tech-material">Material:</label>
-                    <input type="text" id="edit-tech-material" name="material">
+                    <label for="edit-tech-ownership-state">Ownership State</label>
+                    <select id="edit-tech-ownership-state" name="ownershipState">
+
+                <optgroup label="Active Devices">
+                    <option value="owned">Owned</option>
+                    <option value="borrowed">Borrowed</option>
+                    <option value="loaned-out">Loaned Out</option>
+                    <option value="school-issued">School-Issued</option>
+                    <option value="work-issued">Work-Issued</option>
+                    <option value="in-repair">In Repair</option>
+                </optgroup>
+                <optgroup label="Planned / Roadmap Devices">
+                    <option value="planned">Planned</option>
+                    <option value="coming-soon">Coming Soon</option>
+                    <option value="future-upgrade">Future Upgrade</option>
+                    <option value="preordered">Preordered</option>
+                    <option value="ordered">Ordered</option>
+                    <option value="reserved">Reserved</option>
+                </optgroup>
+                <optgroup label="Wishlist / Research">
+                    <option value="wishlist">Wishlist</option>
+                    <option value="considering">Considering</option>
+                    <option value="researching">Researching</option>
+                </optgroup>
+                <optgroup label="Archive / No Longer Active">
+                    <option value="retired">Retired</option>
+                    <option value="sold">Sold</option>
+                    <option value="traded-in">Traded In</option>
+                    <option value="donated">Donated</option>
+                    <option value="recycled">Recycled</option>
+                    <option value="returned">Returned</option>
+                    <option value="lost">Lost</option>
+                </optgroup>
+                    </select>
                 </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-storage">Storage:</label>
-                    <input type="text" id="edit-tech-storage" name="storage">
+                <div class="form-group full-tech-fields">
+                    <label for="edit-tech-condition">Condition</label>
+                    <select id="edit-tech-condition" name="condition">
+                        <option value="">Select condition</option>
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Needs Repair">Needs Repair</option>
+                        <option value="Retired">Retired</option>
+                    </select>
                 </div>
+            </div>
+            <div class="tech-mode-guidance" data-tech-guidance-for="edit-tech-ownership-state">
+                <i class="fas fa-circle-info"></i>
+                <span>Active devices should not point to future planned successors. Planned devices can say what device they will replace later.</span>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label for="edit-tech-chip-name">Chip / Processor:</label>
-                    <input type="text" id="edit-tech-chip-name" name="chipName" placeholder="e.g., A18 Pro, M2, S9">
+        <div class="tech-form-card roadmap-tech-fields tech-roadmap-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-route"></i>
+                <div>
+                    <h5>Planning & Replacement Roadmap</h5>
+                    <p>Use this for planned, ordered, reserved, wishlist, or research devices.</p>
                 </div>
-
+            </div>
+            <div class="tech-form-grid two-col">
                 <div class="form-group">
-                    <label for="edit-tech-ram-gb">RAM / Memory (GB):</label>
+                    <label for="edit-tech-planned-window">Planned / Expected Window</label>
+                    <input type="text" id="edit-tech-planned-window" name="plannedWindow" placeholder="e.g., Fall 2026">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-planned-reason">Reason</label>
+                    <input type="text" id="edit-tech-planned-reason" name="plannedReason" placeholder="e.g., School">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-future-upgrade-target">Future Role</label>
+                    <input type="text" id="edit-tech-future-upgrade-target" name="futureUpgradeTarget" placeholder="e.g., Main school laptop">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-replaces-device">Replaces Device</label>
+                    <input type="text" id="edit-tech-replaces-device" name="replacesDevice" placeholder="e.g., Mac mini">
+                    <small>For planned devices, this points forward only. The old device should not point back yet.</small>
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-target-year">Target Year</label>
+                    <input type="number" id="edit-tech-target-year" name="targetYear" min="2000" max="2100" placeholder="e.g., 2026">
+                </div>
+            </div>
+
+            <details class="tech-details-block" open>
+                <summary><i class="fas fa-microchip"></i> Expected Specs</summary>
+                <div class="tech-form-grid two-col">
+                    <div class="form-group">
+                        <label for="edit-tech-expected-chip">Expected Chip</label>
+                        <input type="text" id="edit-tech-expected-chip" name="expectedChip" placeholder="e.g., Apple M5">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-ram">Expected RAM</label>
+                        <input type="text" id="edit-tech-expected-ram" name="expectedRam" placeholder="e.g., 16GB">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-storage">Expected Storage</label>
+                        <input type="text" id="edit-tech-expected-storage" name="expectedStorage" placeholder="e.g., 512GB">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-color">Expected Color</label>
+                        <input type="text" id="edit-tech-expected-color" name="expectedColor" placeholder="e.g., Midnight">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-ai-level">Expected AI Support</label>
+                        <select id="edit-tech-expected-ai-level" name="expectedAILevel">
+                            <option value="">Select AI support</option>
+                            <option value="Standard">Standard</option>
+                            <option value="Advanced">Advanced</option>
+                            <option value="Maximum">Maximum</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-tech-expected-future-proof-rating">Expected Future-Proofing</label>
+                        <select id="edit-tech-expected-future-proof-rating" name="expectedFutureProofRating">
+                            <option value="">Select future-proofing</option>
+                            <option value="Balanced">Balanced</option>
+                            <option value="High">High</option>
+                            <option value="Maximum">Maximum</option>
+                        </select>
+                    </div>
+                </div>
+            </details>
+        </div>
+
+        <div class="full-tech-fields tech-form-card tech-hardware-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-memory"></i>
+                <div>
+                    <h5>Hardware & Purchase Details</h5>
+                    <p>Use for devices you own, use, or archive. Desktops can leave battery fields blank.</p>
+                </div>
+            </div>
+            <div class="tech-form-grid three-col">
+                <div class="form-group">
+                    <label for="edit-tech-price">Price ($)</label>
+                    <input type="text" id="edit-tech-price" name="price" placeholder="e.g., 639.43">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-date-bought">Date Bought</label>
+                    <input type="text" id="edit-tech-date-bought" name="dateBought" placeholder="e.g., May 16, 2024">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-date-released">Date Released</label>
+                    <input type="text" id="edit-tech-date-released" name="dateReleased" placeholder="e.g., January 24, 2023">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-model-year">Model Year</label>
+                    <input type="number" id="edit-tech-model-year" name="modelYear" min="2000" max="2100" placeholder="e.g., 2023">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-material">Material</label>
+                    <input type="text" id="edit-tech-material" name="material" placeholder="e.g., Aluminum enclosure">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-color">Color</label>
+                    <input type="text" id="edit-tech-color" name="color" placeholder="e.g., Silver">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-storage">Storage</label>
+                    <input type="text" id="edit-tech-storage" name="storage" placeholder="e.g., 256GB SSD">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-storage-gb">Storage Capacity (GB)</label>
+                    <input type="number" id="edit-tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 256">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-ram-gb">RAM / Memory (GB)</label>
                     <input type="number" id="edit-tech-ram-gb" name="ramGB" min="0" step="1" placeholder="e.g., 8">
                 </div>
-
                 <div class="form-group">
-                    <label for="edit-tech-storage-gb">Storage Capacity (GB):</label>
-                    <input type="number" id="edit-tech-storage-gb" name="storageGB" min="0" step="1" placeholder="e.g., 128">
+                    <label for="edit-tech-chip-name">Chip / Processor</label>
+                    <input type="text" id="edit-tech-chip-name" name="chipName" placeholder="e.g., M2">
                 </div>
+            </div>
+        </div>
 
-                <div class="form-group">
-                    <label for="edit-tech-expected-keep-years">Expected Keep Time (Years):</label>
-                    <input type="number" id="edit-tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 4">
+        <div class="full-tech-fields tech-form-card tech-software-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-code-branch"></i>
+                <div>
+                    <h5>Software, Support & Future-Proofing</h5>
+                    <p>Support, OS, AI priority, and long-term usefulness.</p>
                 </div>
-
+            </div>
+            <div class="tech-form-grid three-col">
                 <div class="form-group">
-                    <label for="edit-tech-future-proofing-priority">Future-Proofing Priority:</label>
+                    <label for="edit-tech-os-version">OS Version</label>
+                    <input type="text" id="edit-tech-os-version" name="osVersion" placeholder="e.g., macOS 27.0">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-support-end-year">Support End Year</label>
+                    <input type="number" id="edit-tech-support-end-year" name="supportEndYear" min="2000" max="2100" placeholder="e.g., 2029">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-compatibility-status">Compatibility Status</label>
+                    <select id="edit-tech-compatibility-status" name="compatibilityStatus">
+                        <option value="">Select compatibility</option>
+                        <option value="Current">Current</option>
+                        <option value="Limited">Limited</option>
+                        <option value="Obsolete">Obsolete</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-expected-keep-years">Expected Keep Time (Years)</label>
+                    <input type="number" id="edit-tech-expected-keep-years" name="expectedKeepYears" min="1" max="10" step="1" placeholder="e.g., 5">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-future-proofing-priority">Future-Proofing Priority</label>
                     <select id="edit-tech-future-proofing-priority" name="futureProofingPriority">
                         <option value="">Select priority</option>
                         <option value="Low">Low</option>
@@ -2019,9 +2169,8 @@
                         <option value="Maximum">Maximum</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="edit-tech-ai-feature-priority">AI Feature Priority:</label>
+                    <label for="edit-tech-ai-feature-priority">AI Feature Priority</label>
                     <select id="edit-tech-ai-feature-priority" name="aiFeaturePriority">
                         <option value="">Select priority</option>
                         <option value="Not Important">Not Important</option>
@@ -2030,62 +2179,90 @@
                         <option value="Must Have">Must Have</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="edit-tech-compatibility-status">Compatibility Status:</label>
-                    <select id="edit-tech-compatibility-status" name="compatibilityStatus">
-                        <option value="">Select compatibility</option>
-                        <option value="Current">Current</option>
-                        <option value="Limited">Limited</option>
-                        <option value="Obsolete">Obsolete</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-paired-ai-phone">Paired with AI-Compatible iPhone:</label>
+                    <label for="edit-tech-paired-ai-phone">Paired with AI-Compatible iPhone</label>
                     <select id="edit-tech-paired-ai-phone" name="pairedAIPhone">
                         <option value="">Not Applicable / Unknown</option>
                         <option value="true">Yes</option>
                         <option value="false">No</option>
                     </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-color">Color:</label>
-                    <input type="text" id="edit-tech-color" name="color">
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-tech-date-released">Date Released:</label>
-                    <input type="text" id="edit-tech-date-released" name="dateReleased">
+                    <small>Usually only relevant for watches or accessories that depend on an iPhone.</small>
                 </div>
             </div>
+        </div>
 
-            <!-- ================================================== -->
-            <!-- ALWAYS VISIBLE FINAL FIELDS - EDIT                -->
-            <!-- ================================================== -->
-            <div class="form-group">
-                <label for="edit-tech-order">Display Order:</label>
-                <input type="number" id="edit-tech-order" name="order" min="0" step="1" required>
+        <div class="full-tech-fields tech-form-card tech-battery-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-battery-half"></i>
+                <div>
+                    <h5>Battery</h5>
+                    <p>Leave blank for desktop computers like Mac mini.</p>
+                </div>
             </div>
+            <div class="tech-form-grid three-col">
+                <div class="form-group">
+                    <label for="edit-tech-battery-capacity">Battery Capacity (mAh)</label>
+                    <input type="text" id="edit-tech-battery-capacity" name="batteryCapacity" placeholder="e.g., 3582mAh">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-battery-health">Battery Health (%)</label>
+                    <input type="number" id="edit-tech-battery-health" name="batteryHealth" min="0" max="100" placeholder="e.g., 99">
+                </div>
+                <div class="form-group">
+                    <label for="edit-tech-battery-cycles">Battery Charge Cycles</label>
+                    <input type="number" id="edit-tech-battery-cycles" name="batteryCycles" min="0" placeholder="e.g., 244">
+                </div>
+            </div>
+        </div>
 
+        <div class="tech-form-card tech-final-card">
+            <div class="tech-card-heading">
+                <i class="fas fa-list-ol"></i>
+                <div>
+                    <h5>Display & Preview</h5>
+                    <p>Order controls where the item appears publicly.</p>
+                </div>
+            </div>
+            <div class="tech-form-grid two-col">
+                <div class="form-group">
+                    <label for="edit-tech-order">Display Order</label>
+                    <input type="number" id="edit-tech-order" name="order" min="0" step="1" required placeholder="Lower numbers show first">
+                </div>
+                <div class="tech-cleanup-panel edit-only">
+                    <strong>Lifecycle rule</strong>
+                    <p>Planned devices can point to what they will replace. Active devices should not point back until conversion to owned.</p>
+                </div>
+            </div>
             <div class="form-group">
-                <label>Preview:</label>
+                <label>Preview</label>
                 <div id="edit-tech-item-preview" class="tech-preview-area">
                     <p><small>Preview will load when modal opens.</small></p>
                 </div>
             </div>
+        </div>
+
+            <div class="tech-lifecycle-tools">
+                <div>
+                    <strong>Lifecycle cleanup</strong>
+                    <p>Use this if a test accidentally left stale role, successor, predecessor, or auto-managed fields in Firestore.</p>
+                </div>
+                <button type="button" class="danger-button" id="reset-tech-lifecycle-button">
+                    <i class="fas fa-rotate-left"></i> Reset Lifecycle Fields
+                </button>
+            </div>
 
             <div id="edit-tech-status-message" class="status-message" role="status" aria-live="polite"></div>
 
-            <div class="form-actions">
-                <button type="submit" class="button-primary">Save Tech Changes</button>
+            <div class="form-actions tech-sticky-actions">
+                <button type="submit" class="button-primary"><i class="fas fa-save"></i> Save Tech Changes</button>
                 <button type="button" class="secondary-button" id="cancel-edit-tech-button-secondary">Cancel</button>
             </div>
         </form>
     </div>
 </div>
 
+
 <script type="module" src="admin.js"></script>
+<script type="module" src="admin.tech-v2-ui.js"></script>
 </body>
 </html>
