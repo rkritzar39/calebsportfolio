@@ -3024,34 +3024,244 @@ function generateDeviceSummary(item, upgrade, support, osStatus) {
     return parts.join(", ") + ".";
 }
 
+
+/* ------------------------------------------------------------
+   EXTRA TECH HELPERS
+------------------------------------------------------------ */
+function getFirstField(item, keys, fallback = "") {
+    for (const key of keys) {
+        const value = item[key];
+        if (value !== null && value !== undefined && String(value).trim() !== "") {
+            return value;
+        }
+    }
+
+    return fallback;
+}
+
+function getNumberField(item, keys, fallback = 0) {
+    for (const key of keys) {
+        const value = item[key];
+        if (value !== null && value !== undefined && String(value).trim() !== "") {
+            const cleaned = String(value).replace(/[$,\s]/g, "");
+            const numberValue = Number(cleaned);
+            if (!isNaN(numberValue)) return numberValue;
+        }
+    }
+
+    return fallback;
+}
+
+function normalizeTechItem(itemData) {
+    const normalized = { ...itemData };
+
+    normalized.name = getFirstField(itemData, ["name", "deviceName", "title"], "Unnamed Device");
+    normalized.model = getFirstField(itemData, ["model", "modelName", "deviceModel"], "");
+    normalized.primaryUse = getFirstField(itemData, ["primaryUse", "use", "usage", "mainUse"], "");
+    normalized.condition = getFirstField(itemData, ["condition", "status", "deviceCondition"], "");
+    normalized.deviceType = getFirstField(itemData, ["deviceType", "type", "category"], "");
+    normalized.modelYear = getFirstField(itemData, ["modelYear", "year", "releaseYear"], "");
+    normalized.supportEndYear = getFirstField(itemData, ["supportEndYear", "endOfSupportYear", "securityEndYear"], "");
+    normalized.iconClass = getFirstField(itemData, ["iconClass", "fontAwesomeIcon", "icon"], "fas fa-question-circle");
+    normalized.material = getFirstField(itemData, ["material", "buildMaterial", "build"], "");
+    normalized.storage = getFirstField(itemData, ["storage", "storageText", "storageLabel"], "");
+    normalized.batteryCapacity = getFirstField(itemData, ["batteryCapacity", "batteryCapacityMah", "batteryCapacitymAh"], "");
+    normalized.color = getFirstField(itemData, ["color", "colour", "finish"], "");
+    normalized.dateReleased = getFirstField(itemData, ["dateReleased", "releaseDate", "released"], "");
+    normalized.dateBought = getFirstField(itemData, ["dateBought", "purchaseDate", "datePurchased", "boughtDate"], "");
+    normalized.osVersion = getFirstField(itemData, ["osVersion", "operatingSystem", "softwareVersion", "os"], "");
+    normalized.chipName = getFirstField(itemData, ["chipName", "chip", "processor", "cpu", "soc"], "");
+
+    normalized.ramGB = getNumberField(itemData, ["ramGB", "ram", "memoryGB", "memory", "ramMemoryGB"], 0);
+    normalized.storageGB = getNumberField(itemData, ["storageGB", "storageCapacityGB", "capacityGB", "storageCapacity"], 0);
+    normalized.priceNumber = getNumberField(itemData, ["price", "purchasePrice", "cost", "msrp"], 0);
+
+    return normalized;
+}
+
+function parseTechDate(value) {
+    if (!value) return null;
+
+    let dateValue;
+
+    if (value && typeof value.toDate === "function") {
+        dateValue = value.toDate();
+    } else {
+        dateValue = new Date(value);
+    }
+
+    if (isNaN(dateValue.getTime())) return null;
+    return dateValue;
+}
+
+function formatTechDate(value) {
+    const dateValue = parseTechDate(value);
+    if (!dateValue) return "";
+
+    return dateValue.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
+}
+
+function getOSIconClass(osType) {
+    const appleTypes = ["ios", "ipados", "macos", "watchos", "tvos", "visionos"];
+    const androidTypes = [
+        "android", "oneui", "pixelui", "oxygenos", "coloros", "realmeui", "miui",
+        "hyperos", "magicos", "emui", "harmonyos", "funtouchos", "originos",
+        "nothingos", "motorolahello", "zenui", "rogui", "xos", "hios", "flymeos",
+        "androidtv", "googletv"
+    ];
+    const linuxTypes = [
+        "linux", "ubuntu", "debian", "fedora", "arch", "manjaro", "linuxmint",
+        "popos", "elementaryos", "zorinos", "opensuse", "kali", "tails", "redhat",
+        "rocky", "almalinux"
+    ];
+
+    if (appleTypes.includes(osType)) return "fab fa-apple";
+    if (androidTypes.includes(osType)) return "fab fa-android";
+    if (osType === "windows" || osType === "windowsphone" || osType === "windowsserver") return "fab fa-windows";
+    if (linuxTypes.includes(osType)) return "fab fa-linux";
+    if (osType === "chromeos" || osType === "chromiumos") return "fab fa-chrome";
+    if (osType === "playstation") return "fab fa-playstation";
+    if (osType === "xbox") return "fab fa-xbox";
+    if (osType === "steamos") return "fab fa-steam";
+
+    return "fas fa-code-branch";
+}
+
+function calculateCoverageStatus(item) {
+    const coverageDateRaw = getFirstField(item, [
+        "coverageEndDate",
+        "warrantyEndDate",
+        "appleCareEndDate",
+        "insuranceEndDate",
+        "protectionPlanEndDate"
+    ], "");
+
+    const coverageDate = parseTechDate(coverageDateRaw);
+
+    if (!coverageDate) {
+        return {
+            hasCoverageData: false,
+            label: "Not Listed",
+            color: "gray",
+            detail: "Coverage end date not listed."
+        };
+    }
+
+    const now = new Date();
+    const daysRemaining = Math.ceil((coverageDate - now) / (1000 * 60 * 60 * 24));
+
+    if (daysRemaining < 0) {
+        return {
+            hasCoverageData: true,
+            label: "Expired",
+            color: "red",
+            detail: `Expired on ${formatTechDate(coverageDateRaw)}`
+        };
+    }
+
+    if (daysRemaining <= 30) {
+        return {
+            hasCoverageData: true,
+            label: "Ending Soon",
+            color: "yellow",
+            detail: `Ends ${formatTechDate(coverageDateRaw)} (${daysRemaining} days left)`
+        };
+    }
+
+    return {
+        hasCoverageData: true,
+        label: "Active",
+        color: "green",
+        detail: `Ends ${formatTechDate(coverageDateRaw)} (${daysRemaining} days left)`
+    };
+}
+
+function calculateCostEfficiency(item) {
+    const priceNumber = Number(item.priceNumber || 0);
+    const age = calculateDeviceAge(item.dateBought);
+
+    if (!priceNumber || !age || age.days <= 0) {
+        return null;
+    }
+
+    const costPerDay = priceNumber / Math.max(age.days, 1);
+    const costPerYear = priceNumber / Math.max(age.years, 0.1);
+
+    return {
+        costPerDay,
+        costPerYear,
+        label: `$${costPerYear.toFixed(0)}/year • $${costPerDay.toFixed(2)}/day`
+    };
+}
+
+function calculateBackupPriority(item, osStatus, support) {
+    const deviceType = detectDeviceType(item);
+    const primaryUse = String(item.primaryUse || "").toLowerCase();
+    const storageGB = Number(item.storageGB || 0);
+
+    let label = "Normal";
+    let color = "green";
+    let reason = "Normal backup priority.";
+
+    if (
+        deviceType === "computer" ||
+        primaryUse.includes("daily") ||
+        primaryUse.includes("main") ||
+        primaryUse.includes("school") ||
+        primaryUse.includes("work") ||
+        storageGB >= 512
+    ) {
+        label = "High";
+        color = "yellow";
+        reason = "This device likely holds important daily-use data.";
+    }
+
+    if (!support.supported || (osStatus && osStatus.status === "Very Outdated")) {
+        label = "Critical";
+        color = "red";
+        reason = "Back up before repair, retirement, or replacement planning.";
+    }
+
+    return { label, color, reason };
+}
+
 /* ------------------------------------------------------------
    RENDER FUNCTION
 ------------------------------------------------------------ */
 function renderTechItemHomepage(itemData) {
-    const name = itemData.name || "Unnamed Device";
-    const model = itemData.model || "";
-    const primaryUse = itemData.primaryUse || "";
-    const condition = itemData.condition || "";
-    const deviceType = itemData.deviceType || "";
-    const modelYear = itemData.modelYear || "";
-    const supportEndYear = itemData.supportEndYear || "";
-    const iconClass = itemData.iconClass || "fas fa-question-circle";
-    const material = itemData.material || "";
-    const storage = itemData.storage || "";
-    const batteryCapacity = itemData.batteryCapacity || "";
-    const color = itemData.color || "";
-    const price = itemData.price ? `$${itemData.price}` : "";
-    const dateReleased = itemData.dateReleased || "";
-    const dateBought = itemData.dateBought || "";
-    const osVersion = itemData.osVersion || "";
+    const item = normalizeTechItem(itemData);
 
-    const osStatus = checkOSStatus(itemData.osVersion);
-    const support = checkDeviceSupport(itemData);
-    const supportLife = estimateSupportLifespan(itemData);
-    const aiSupport = calculateAIFeatureSupport(itemData);
-    const futureProof = calculateFutureProofScore(itemData);
-    const futureTarget = getRecommendedFutureUpgradeTarget(itemData);
-    const futureAITarget = calculateFutureAITarget(itemData, futureTarget);
+    const name = item.name || "Unnamed Device";
+    const model = item.model || "";
+    const primaryUse = item.primaryUse || "";
+    const condition = item.condition || "";
+    const deviceType = item.deviceType || "";
+    const modelYear = item.modelYear || "";
+    const supportEndYear = item.supportEndYear || "";
+    const iconClass = item.iconClass || "fas fa-question-circle";
+    const material = item.material || "";
+    const storage = item.storage || "";
+    const batteryCapacity = item.batteryCapacity || "";
+    const color = item.color || "";
+    const price = item.priceNumber ? `$${item.priceNumber.toLocaleString()}` : "";
+    const dateReleased = item.dateReleased || "";
+    const dateBought = item.dateBought || "";
+    const osVersion = item.osVersion || "";
+
+    const osStatus = checkOSStatus(item.osVersion);
+    const support = checkDeviceSupport(item);
+    const supportLife = estimateSupportLifespan(item);
+    const aiSupport = calculateAIFeatureSupport(item);
+    const futureProof = calculateFutureProofScore(item);
+    const futureTarget = getRecommendedFutureUpgradeTarget(item);
+    const futureAITarget = calculateFutureAITarget(item, futureTarget);
+    const coverage = calculateCoverageStatus(item);
+    const costEfficiency = calculateCostEfficiency(item);
+    const backupPriority = calculateBackupPriority(item, osStatus, support);
 
     let osUpdateHtml = "";
 
@@ -3082,13 +3292,36 @@ function renderTechItemHomepage(itemData) {
         </span>
     </div>`;
 
-    const batteryHealth = itemData.batteryHealth !== null &&
-        itemData.batteryHealth !== undefined &&
-        !isNaN(itemData.batteryHealth)
-        ? parseInt(itemData.batteryHealth, 10)
+    const coverageHtml = coverage.hasCoverageData ? `
+    <div class="tech-detail">
+        <i class="fas fa-file-shield"></i>
+        <span>Coverage:</span>
+        <span class="support-badge ${coverage.color}">${escapeHTML(coverage.label)}</span>
+        ${escapeHTML(coverage.detail)}
+    </div>` : "";
+
+    const backupHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-cloud-arrow-up"></i>
+        <span>Backup Priority:</span>
+        <span class="support-badge ${backupPriority.color}">${escapeHTML(backupPriority.label)}</span>
+        ${escapeHTML(backupPriority.reason)}
+    </div>`;
+
+    const costHtml = costEfficiency ? `
+    <div class="tech-detail">
+        <i class="fas fa-chart-pie"></i>
+        <span>Cost Efficiency:</span>
+        ${escapeHTML(costEfficiency.label)}
+    </div>` : "";
+
+    const batteryHealth = item.batteryHealth !== null &&
+        item.batteryHealth !== undefined &&
+        !isNaN(item.batteryHealth)
+        ? parseInt(item.batteryHealth, 10)
         : null;
 
-    const rawBatteryCycles = itemData.batteryCycles ?? itemData.batteryChargeCycles;
+    const rawBatteryCycles = item.batteryCycles ?? item.batteryChargeCycles;
 
     const batteryCycles = rawBatteryCycles !== null &&
         rawBatteryCycles !== undefined &&
@@ -3096,10 +3329,10 @@ function renderTechItemHomepage(itemData) {
         ? Number(rawBatteryCycles)
         : null;
 
-    const upgrade = calculateUpgradeData(itemData);
-    const age = calculateDeviceAge(itemData.dateBought);
-    const batteryTrend = estimateBatteryTrend(itemData);
-    const upgradeScore = calculateUpgradeScore(itemData);
+    const upgrade = calculateUpgradeData(item);
+    const age = calculateDeviceAge(item.dateBought);
+    const batteryTrend = estimateBatteryTrend(item);
+    const upgradeScore = calculateUpgradeScore(item);
 
     if (
         upgradeScore.score < 40 &&
@@ -3115,17 +3348,17 @@ function renderTechItemHomepage(itemData) {
         upgrade.suggestion = "Monitor closely";
     }
 
-    const recommendedAction = getRecommendedAction(itemData, upgrade, support, osStatus);
+    const recommendedAction = getRecommendedAction(item, upgrade, support, osStatus);
 
     const smartUpgrade = calculateSmartUpgradeRecommendation(
-        itemData,
+        item,
         upgrade,
         support,
         osStatus,
         upgradeScore
     );
 
-    const deviceSummary = generateDeviceSummary(itemData, upgrade, support, osStatus);
+    const deviceSummary = generateDeviceSummary(item, upgrade, support, osStatus);
 
     const summaryHtml = `
     <div class="tech-detail tech-summary">
@@ -3331,37 +3564,42 @@ function renderTechItemHomepage(itemData) {
     </div>`;
 
     const formattedOSType = osStatus ? formatOSType(osStatus.osType) : "";
+    const osIconClass = osStatus ? getOSIconClass(osStatus.osType) : "fas fa-code-branch";
 
     const advancedDetailsContent = `
         ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${escapeHTML(deviceType)}</div>` : ""}
         ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${escapeHTML(modelYear)}</div>` : ""}
         ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${escapeHTML(supportEndYear)}</div>` : ""}
-        ${itemData.chipName ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Chip:</span> ${escapeHTML(itemData.chipName)}</div>` : ""}
-        ${itemData.ramGB ? `<div class="tech-detail"><i class="fas fa-memory"></i><span>RAM:</span> ${escapeHTML(itemData.ramGB)}GB</div>` : ""}
-        ${itemData.storageGB ? `<div class="tech-detail"><i class="fas fa-database"></i><span>Storage Capacity:</span> ${escapeHTML(itemData.storageGB)}GB</div>` : ""}
+        ${item.chipName ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Chip:</span> ${escapeHTML(item.chipName)}</div>` : ""}
+        ${item.ramGB ? `<div class="tech-detail"><i class="fas fa-memory"></i><span>RAM:</span> ${escapeHTML(item.ramGB)}GB</div>` : ""}
+        ${item.storageGB ? `<div class="tech-detail"><i class="fas fa-database"></i><span>Storage Capacity:</span> ${escapeHTML(item.storageGB)}GB</div>` : ""}
         ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${escapeHTML(material)}</div>` : ""}
         ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${escapeHTML(batteryCapacity)}</div>` : ""}
         ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${escapeHTML(price)}</div>` : ""}
-        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${escapeHTML(dateReleased)}</div>` : ""}
-        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${escapeHTML(dateBought)}</div>` : ""}
+        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${escapeHTML(formatTechDate(dateReleased) || dateReleased)}</div>` : ""}
+        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${escapeHTML(formatTechDate(dateBought) || dateBought)}</div>` : ""}
         ${cyclesHtml}
         ${trendHtml}
+        ${coverageHtml}
+        ${costHtml}
     `;
 
     const hasAdvancedDetails =
         deviceType ||
         modelYear ||
         supportEndYear ||
-        itemData.chipName ||
-        itemData.ramGB ||
-        itemData.storageGB ||
+        item.chipName ||
+        item.ramGB ||
+        item.storageGB ||
         material ||
         batteryCapacity ||
         price ||
         dateReleased ||
         dateBought ||
         cyclesHtml ||
-        trendHtml;
+        trendHtml ||
+        coverageHtml ||
+        costHtml;
 
     const advancedHtml = hasAdvancedDetails ? `
     <details class="tech-advanced-details">
@@ -3384,7 +3622,7 @@ function renderTechItemHomepage(itemData) {
 
         ${osVersion ? `
         <div class="tech-detail">
-            <i class="fas fa-code-branch"></i>
+            <i class="${escapeHTML(osIconClass)}"></i>
             <span>OS Version:</span> ${escapeHTML(osVersion)}
             ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
         </div>
@@ -3404,6 +3642,7 @@ function renderTechItemHomepage(itemData) {
 
         ${osUpdateHtml}
         ${supportHtml}
+        ${backupHtml}
         ${batteryHtml}
         ${scoreHtml}
         ${upgradeHtml}
