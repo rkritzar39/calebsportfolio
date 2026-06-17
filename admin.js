@@ -6409,20 +6409,37 @@ window.handleCredentialResponse = (response) => {
 
 
 /* ============================================================
-   ADMIN PORTAL 3.0 — Whole Portal UI Controller
+   ADMIN PORTAL 3.0 — Whole Portal UI Controller — SAFE VERSION
    ------------------------------------------------------------
-   Adds sidebar navigation, dashboard count mirroring, section search,
-   mobile nav, quick actions, and single-section focus mode.
+   IMPORTANT:
+   Replace the old ADMIN PORTAL 3.0 controller at the bottom of admin.js
+   with this entire block. Do not leave the old broad MutationObserver
+   version in the file.
+
+   Fixes the freeze/site-not-responding issue by:
+   - removing the broad document-wide MutationObserver loop
+   - only observing the original count source spans
+   - only writing dashboard count text when the value changed
+   - binding every portal listener once
 ============================================================ */
+
 function initAdminPortalV3() {
     const body = document.body;
     const adminContent = document.getElementById("admin-content");
     const sidebar = document.getElementById("portal-sidebar");
     const searchInput = document.getElementById("portal-section-search");
-    const navLinks = [...document.querySelectorAll(".portal-nav-link[data-portal-target]")];
+
+    const navLinks = [
+        ...document.querySelectorAll(".portal-nav-link[data-portal-target]")
+    ];
+
     const sections = [
         document.getElementById("portal-dashboard"),
-        ...[...document.querySelectorAll(".portal-main-shell > .admin-section, .portal-main-shell > .admin-card, .portal-main-shell > .admin-subsection")]
+        ...[
+            ...document.querySelectorAll(
+                ".portal-main-shell > .admin-section, .portal-main-shell > .admin-card, .portal-main-shell > .admin-subsection"
+            )
+        ]
     ].filter(Boolean);
 
     if (!adminContent || !sidebar || !sections.length) return;
@@ -6437,17 +6454,25 @@ function initAdminPortalV3() {
         sections.forEach(section => {
             section.classList.toggle("portal-section-hidden", section.id !== targetId);
         });
+
         setActiveNav(targetId);
         body.classList.remove("portal-nav-open");
 
         const target = document.getElementById(targetId);
+
         if (target && shouldScroll) {
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
         }
     };
 
     const showAllSections = () => {
-        sections.forEach(section => section.classList.remove("portal-section-hidden"));
+        sections.forEach(section => {
+            section.classList.remove("portal-section-hidden");
+        });
+
         setActiveNav("portal-dashboard");
         body.classList.remove("portal-nav-open");
     };
@@ -6455,7 +6480,8 @@ function initAdminPortalV3() {
     navLinks.forEach(link => {
         if (link.dataset.portalBound === "true") return;
         link.dataset.portalBound = "true";
-        link.addEventListener("click", (event) => {
+
+        link.addEventListener("click", event => {
             event.preventDefault();
             focusSection(link.dataset.portalTarget || "portal-dashboard");
         });
@@ -6464,28 +6490,63 @@ function initAdminPortalV3() {
     document.querySelectorAll("[data-portal-jump]").forEach(button => {
         if (button.dataset.portalJumpBound === "true") return;
         button.dataset.portalJumpBound = "true";
+
         button.addEventListener("click", () => {
             focusSection(button.dataset.portalJump || "portal-dashboard");
         });
     });
 
-    document.getElementById("portal-expand-all")?.addEventListener("click", showAllSections);
-    document.getElementById("portal-focus-dashboard")?.addEventListener("click", () => focusSection("portal-dashboard"));
-    document.getElementById("portal-mobile-menu")?.addEventListener("click", () => body.classList.toggle("portal-nav-open"));
-    document.getElementById("portal-collapse-toggle")?.addEventListener("click", () => body.classList.toggle("portal-sidebar-collapsed"));
+    const expandAllButton = document.getElementById("portal-expand-all");
+
+    if (expandAllButton && expandAllButton.dataset.portalBound !== "true") {
+        expandAllButton.dataset.portalBound = "true";
+        expandAllButton.addEventListener("click", showAllSections);
+    }
+
+    const dashboardButton = document.getElementById("portal-focus-dashboard");
+
+    if (dashboardButton && dashboardButton.dataset.portalBound !== "true") {
+        dashboardButton.dataset.portalBound = "true";
+        dashboardButton.addEventListener("click", () => {
+            focusSection("portal-dashboard");
+        });
+    }
+
+    const mobileMenuButton = document.getElementById("portal-mobile-menu");
+
+    if (mobileMenuButton && mobileMenuButton.dataset.portalBound !== "true") {
+        mobileMenuButton.dataset.portalBound = "true";
+        mobileMenuButton.addEventListener("click", () => {
+            body.classList.toggle("portal-nav-open");
+        });
+    }
+
+    const collapseButton = document.getElementById("portal-collapse-toggle");
+
+    if (collapseButton && collapseButton.dataset.portalBound !== "true") {
+        collapseButton.dataset.portalBound = "true";
+        collapseButton.addEventListener("click", () => {
+            body.classList.toggle("portal-sidebar-collapsed");
+        });
+    }
 
     if (searchInput && searchInput.dataset.portalSearchBound !== "true") {
         searchInput.dataset.portalSearchBound = "true";
+
         searchInput.addEventListener("input", () => {
             const term = searchInput.value.trim().toLowerCase();
 
             if (!term) {
-                sections.forEach(section => section.classList.remove("portal-section-hidden"));
+                sections.forEach(section => {
+                    section.classList.remove("portal-section-hidden");
+                });
+
                 document.querySelector(".portal-no-results")?.remove();
                 return;
             }
 
             let matches = 0;
+
             sections.forEach(section => {
                 const haystack = [
                     section.dataset.portalTitle || "",
@@ -6495,12 +6556,15 @@ function initAdminPortalV3() {
                 ].join(" ").toLowerCase();
 
                 const isMatch = haystack.includes(term);
+
                 section.classList.toggle("portal-section-hidden", !isMatch);
+
                 if (isMatch) matches += 1;
             });
 
             const shell = document.querySelector(".portal-main-shell");
             let noResults = document.querySelector(".portal-no-results");
+
             if (!matches && shell && !noResults) {
                 noResults = document.createElement("div");
                 noResults.className = "portal-no-results";
@@ -6512,24 +6576,61 @@ function initAdminPortalV3() {
         });
     }
 
-    const mirrorCounts = () => {
-        document.querySelectorAll("[data-portal-count-source]").forEach(target => {
-            const source = document.getElementById(target.dataset.portalCountSource);
-            const value = source?.textContent?.trim();
-            target.textContent = value || "—";
-        });
-    };
+    setupAdminPortalV3Counts();
+}
 
-    mirrorCounts();
-    if (!window.__portalV3CountObserverAttached) {
-        const observer = new MutationObserver(mirrorCounts);
-        observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
-        window.__portalV3CountObserverAttached = true;
-    }
+function syncAdminPortalV3Counts() {
+    document.querySelectorAll("[data-portal-count-source]").forEach(target => {
+        const source = document.getElementById(target.dataset.portalCountSource);
+        const nextValue = source?.textContent?.trim() || "—";
+
+        /*
+            Important:
+            Do not write unless the value actually changed.
+            This prevents MutationObserver feedback loops.
+        */
+        if (target.textContent !== nextValue) {
+            target.textContent = nextValue;
+        }
+    });
+}
+
+function setupAdminPortalV3Counts() {
+    syncAdminPortalV3Counts();
+
+    if (window.__portalV3CountObserverAttached) return;
+
+    const sourceIds = [
+        ...document.querySelectorAll("[data-portal-count-source]")
+    ]
+        .map(target => target.dataset.portalCountSource)
+        .filter(Boolean);
+
+    const sourceElements = sourceIds
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
+
+    if (!sourceElements.length) return;
+
+    const observer = new MutationObserver(() => {
+        window.requestAnimationFrame(syncAdminPortalV3Counts);
+    });
+
+    sourceElements.forEach(source => {
+        observer.observe(source, {
+            childList: true,
+            characterData: true,
+            subtree: true
+        });
+    });
+
+    window.__portalV3CountObserverAttached = true;
 }
 
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initAdminPortalV3);
+    document.addEventListener("DOMContentLoaded", initAdminPortalV3, {
+        once: true
+    });
 } else {
     initAdminPortalV3();
 }
