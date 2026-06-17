@@ -4973,74 +4973,6 @@ function getArchivedCurrentRole(ownershipState) {
     return "No longer owned";
 }
 
-
-/* ============================================================
-   TECH INVENTORY 2.0 — LIFECYCLE-SAFE SAVE HELPERS
-   ------------------------------------------------------------
-   These helpers keep the rebuilt Tech Inventory workflow clean:
-   - Planned / roadmap / wishlist devices never keep stale role fields.
-   - Active devices are not marked replaced by planned devices.
-   - Archive automation still works when an item is intentionally archived.
-============================================================ */
-const TECH_V2_ROADMAP_STATES = new Set([
-    "planned",
-    "coming-soon",
-    "future-upgrade",
-    "preordered",
-    "ordered",
-    "reserved"
-]);
-
-const TECH_V2_WISHLIST_STATES = new Set([
-    "wishlist",
-    "considering",
-    "researching"
-]);
-
-const TECH_V2_LIFECYCLE_FIELDS = [
-    "autoRoleManaged",
-    "roleStatus",
-    "currentRole",
-    "previousRole",
-    "replacedByDevice",
-    "successorDevice",
-    "predecessorDevice",
-    "roleChangedDate"
-];
-
-function isTechV2RoadmapOrWishlistState(ownershipState) {
-    const normalized = normalizeAdminOwnershipState(ownershipState || "owned");
-    return TECH_V2_ROADMAP_STATES.has(normalized) || TECH_V2_WISHLIST_STATES.has(normalized);
-}
-
-function prepareTechItemAddPayload(rawData = {}) {
-    const payload = { ...rawData };
-
-    // New roadmap/wishlist devices should start clean and should not inherit
-    // stale automation fields from copied form data or browser autofill.
-    if (isTechV2RoadmapOrWishlistState(payload.ownershipState)) {
-        TECH_V2_LIFECYCLE_FIELDS.forEach(field => {
-            delete payload[field];
-        });
-    }
-
-    return payload;
-}
-
-function prepareTechItemUpdatePayload(rawData = {}) {
-    const payload = { ...rawData };
-
-    // Firestore updateDoc supports deleteField(). When an existing device is
-    // saved as planned/wishlist/research, actively remove stale role fields.
-    if (isTechV2RoadmapOrWishlistState(payload.ownershipState)) {
-        TECH_V2_LIFECYCLE_FIELDS.forEach(field => {
-            payload[field] = deleteField();
-        });
-    }
-
-    return payload;
-}
-
 async function clearTechRoleAutomationFields(docId) {
     if (!docId) {
         throw new Error("Missing tech item document ID.");
@@ -5443,12 +5375,10 @@ async function handleAddTechItem(event) {
 
     techData.createdAt = serverTimestamp();
 
-    const techDataForSave = prepareTechItemAddPayload(techData);
-
     showAdminStatus("Adding tech item...");
 
     try {
-        const docRef = await addDoc(techItemsCollectionRef, techDataForSave);
+        const docRef = await addDoc(techItemsCollectionRef, techData);
 
         console.log("Tech item added with ID:", docRef.id);
 
@@ -5456,7 +5386,7 @@ async function handleAddTechItem(event) {
             await applyTechRoleAutomation({
                 updatedDocId: docRef.id,
                 oldData: {},
-                newData: techDataForSave,
+                newData: techData,
                 isNewItem: true
             });
         } catch (automationError) {
@@ -5699,8 +5629,7 @@ async function handleUpdateTechItem(event) {
             oldData = oldDataSnap.data();
         }
 
-        const updatePayload = prepareTechItemUpdatePayload(updatedData);
-        await updateDoc(docRef, updatePayload);
+        await updateDoc(docRef, updatedData);
 
         try {
             await applyTechRoleAutomation({
@@ -6480,180 +6409,127 @@ window.handleCredentialResponse = (response) => {
 
 
 /* ============================================================
-   TECH INVENTORY 2.0 — INTEGRATED ADMIN UI HELPERS
+   ADMIN PORTAL 3.0 — Whole Portal UI Controller
    ------------------------------------------------------------
-   This is integrated directly into admin.js so the redesigned admin
-   page does not need a separate admin.tech-v2-ui.js file.
+   Adds sidebar navigation, dashboard count mirroring, section search,
+   mobile nav, quick actions, and single-section focus mode.
 ============================================================ */
-const TECH_V2_ACTIVE_STATES = new Set(["owned", "borrowed", "loaned-out", "school-issued", "work-issued", "in-repair"]);
-const TECH_V2_ARCHIVE_STATES = new Set(["retired", "sold", "traded-in", "donated", "recycled", "returned", "lost"]);
+function initAdminPortalV3() {
+    const body = document.body;
+    const adminContent = document.getElementById("admin-content");
+    const sidebar = document.getElementById("portal-sidebar");
+    const searchInput = document.getElementById("portal-section-search");
+    const navLinks = [...document.querySelectorAll(".portal-nav-link[data-portal-target]")];
+    const sections = [
+        document.getElementById("portal-dashboard"),
+        ...[...document.querySelectorAll(".portal-main-shell > .admin-section, .portal-main-shell > .admin-card, .portal-main-shell > .admin-subsection")]
+    ].filter(Boolean);
 
-function getTechV2ModeFromState(state) {
-    const normalized = normalizeAdminOwnershipState(state || "owned");
+    if (!adminContent || !sidebar || !sections.length) return;
 
-    if (TECH_V2_ROADMAP_STATES.has(normalized)) return "roadmap";
-    if (TECH_V2_WISHLIST_STATES.has(normalized)) return "wishlist";
-    if (TECH_V2_ARCHIVE_STATES.has(normalized)) return "archive";
-    return "active";
-}
-
-function setTechV2Guidance(selectElement) {
-    if (!selectElement) return;
-
-    const form = selectElement.closest("form") || document;
-    const guidance = form.querySelector(`[data-tech-guidance-for="${selectElement.id}"]`);
-
-    if (!guidance) return;
-
-    const messageTarget = guidance.querySelector("span") || guidance;
-    const mode = getTechV2ModeFromState(selectElement.value);
-
-    const messages = {
-        active: "Active device: keep successor/replaced-by fields blank until a planned device is actually owned.",
-        roadmap: "Planned device: use Replaces Device to point to the current device. The current device should not point back yet.",
-        wishlist: "Wishlist/research device: keep details lightweight. It does not affect your active setup.",
-        archive: "Archived device: use this after a device is retired, sold, traded in, donated, recycled, returned, or lost."
+    const setActiveNav = (targetId) => {
+        navLinks.forEach(link => {
+            link.classList.toggle("active", link.dataset.portalTarget === targetId);
+        });
     };
 
-    messageTarget.textContent = messages[mode] || messages.active;
-}
+    const focusSection = (targetId, shouldScroll = true) => {
+        sections.forEach(section => {
+            section.classList.toggle("portal-section-hidden", section.id !== targetId);
+        });
+        setActiveNav(targetId);
+        body.classList.remove("portal-nav-open");
 
-function syncTechV2ModeCards(selectElement) {
-    if (!selectElement) return;
+        const target = document.getElementById(targetId);
+        if (target && shouldScroll) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    };
 
-    const selectedMode = getTechV2ModeFromState(selectElement.value);
+    const showAllSections = () => {
+        sections.forEach(section => section.classList.remove("portal-section-hidden"));
+        setActiveNav("portal-dashboard");
+        body.classList.remove("portal-nav-open");
+    };
 
-    document.querySelectorAll(`[data-tech-mode-target="${selectElement.id}"]`).forEach(button => {
-        const buttonMode = getTechV2ModeFromState(button.dataset.techModeValue || "owned");
-        button.classList.toggle("is-active", buttonMode === selectedMode);
-    });
-
-    setTechV2Guidance(selectElement);
-}
-
-function setupTechV2ModeCards() {
-    document.querySelectorAll(".tech-mode-option[data-tech-mode-target]").forEach(button => {
-        if (button.dataset.techModeBound === "true") return;
-        button.dataset.techModeBound = "true";
-
-        button.addEventListener("click", () => {
-            const selectElement = document.getElementById(button.dataset.techModeTarget);
-            if (!selectElement) return;
-
-            selectElement.value = button.dataset.techModeValue || "owned";
-            selectElement.dispatchEvent(new Event("change", { bubbles: true }));
-            selectElement.dispatchEvent(new Event("input", { bubbles: true }));
-            syncTechV2ModeCards(selectElement);
+    navLinks.forEach(link => {
+        if (link.dataset.portalBound === "true") return;
+        link.dataset.portalBound = "true";
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            focusSection(link.dataset.portalTarget || "portal-dashboard");
         });
     });
 
-    ["tech-ownership-state", "edit-tech-ownership-state"].forEach(id => {
-        const selectElement = document.getElementById(id);
-        if (!selectElement) return;
-
-        syncTechV2ModeCards(selectElement);
-
-        if (selectElement.dataset.techModeSelectBound === "true") return;
-        selectElement.dataset.techModeSelectBound = "true";
-        selectElement.addEventListener("change", () => syncTechV2ModeCards(selectElement));
+    document.querySelectorAll("[data-portal-jump]").forEach(button => {
+        if (button.dataset.portalJumpBound === "true") return;
+        button.dataset.portalJumpBound = "true";
+        button.addEventListener("click", () => {
+            focusSection(button.dataset.portalJump || "portal-dashboard");
+        });
     });
-}
 
-function setupTechV2DesktopBatteryHints() {
-    ["tech-device-type", "edit-tech-device-type"].forEach(id => {
-        const selectElement = document.getElementById(id);
-        if (!selectElement || selectElement.dataset.batteryHintBound === "true") return;
+    document.getElementById("portal-expand-all")?.addEventListener("click", showAllSections);
+    document.getElementById("portal-focus-dashboard")?.addEventListener("click", () => focusSection("portal-dashboard"));
+    document.getElementById("portal-mobile-menu")?.addEventListener("click", () => body.classList.toggle("portal-nav-open"));
+    document.getElementById("portal-collapse-toggle")?.addEventListener("click", () => body.classList.toggle("portal-sidebar-collapsed"));
 
-        selectElement.dataset.batteryHintBound = "true";
+    if (searchInput && searchInput.dataset.portalSearchBound !== "true") {
+        searchInput.dataset.portalSearchBound = "true";
+        searchInput.addEventListener("input", () => {
+            const term = searchInput.value.trim().toLowerCase();
 
-        const updateBatteryHint = () => {
-            const form = selectElement.closest("form");
-            if (!form) return;
+            if (!term) {
+                sections.forEach(section => section.classList.remove("portal-section-hidden"));
+                document.querySelector(".portal-no-results")?.remove();
+                return;
+            }
 
-            const batteryCard = form.querySelector(".tech-battery-card");
-            if (!batteryCard) return;
+            let matches = 0;
+            sections.forEach(section => {
+                const haystack = [
+                    section.dataset.portalTitle || "",
+                    section.dataset.portalKeywords || "",
+                    section.id || "",
+                    section.querySelector("h2,h3,h4")?.textContent || ""
+                ].join(" ").toLowerCase();
 
-            batteryCard.classList.toggle(
-                "desktop-battery-optional",
-                normalizeAdminOwnershipState(selectElement.value) === "computer"
-            );
-        };
+                const isMatch = haystack.includes(term);
+                section.classList.toggle("portal-section-hidden", !isMatch);
+                if (isMatch) matches += 1;
+            });
 
-        selectElement.addEventListener("change", updateBatteryHint);
-        updateBatteryHint();
-    });
-}
-
-async function resetTechV2LifecycleFieldsFromEditModal() {
-    const form = document.getElementById("edit-tech-item-form");
-    const statusElement = document.getElementById("edit-tech-status-message");
-    const docId = form?.getAttribute("data-doc-id") || "";
-
-    if (!docId) {
-        if (statusElement) {
-            statusElement.textContent = "Missing tech item document ID. Open a tech item first.";
-            statusElement.className = "status-message error";
-        }
-        return;
+            const shell = document.querySelector(".portal-main-shell");
+            let noResults = document.querySelector(".portal-no-results");
+            if (!matches && shell && !noResults) {
+                noResults = document.createElement("div");
+                noResults.className = "portal-no-results";
+                noResults.textContent = "No admin sections match that search.";
+                shell.prepend(noResults);
+            } else if (matches && noResults) {
+                noResults.remove();
+            }
+        });
     }
 
-    const confirmed = confirm(
-        "Reset lifecycle fields for this device?\n\nThis removes roleStatus, currentRole, previousRole, replacedByDevice, successorDevice, predecessorDevice, roleChangedDate, and autoRoleManaged."
-    );
+    const mirrorCounts = () => {
+        document.querySelectorAll("[data-portal-count-source]").forEach(target => {
+            const source = document.getElementById(target.dataset.portalCountSource);
+            const value = source?.textContent?.trim();
+            target.textContent = value || "—";
+        });
+    };
 
-    if (!confirmed) return;
-
-    try {
-        if (statusElement) {
-            statusElement.textContent = "Resetting lifecycle fields...";
-            statusElement.className = "status-message";
-        }
-
-        await clearTechRoleAutomationFields(docId);
-
-        if (statusElement) {
-            statusElement.textContent = "Lifecycle fields reset successfully.";
-            statusElement.className = "status-message success";
-        }
-
-        if (typeof loadTechItemsAdmin === "function") {
-            await loadTechItemsAdmin();
-        }
-    } catch (error) {
-        console.error("Lifecycle reset failed:", error);
-
-        if (statusElement) {
-            statusElement.textContent = `Lifecycle reset failed: ${error.message}`;
-            statusElement.className = "status-message error";
-        }
+    mirrorCounts();
+    if (!window.__portalV3CountObserverAttached) {
+        const observer = new MutationObserver(mirrorCounts);
+        observer.observe(document.documentElement, { childList: true, subtree: true, characterData: true });
+        window.__portalV3CountObserverAttached = true;
     }
-}
-
-function setupTechV2LifecycleResetButton() {
-    const resetButton = document.getElementById("reset-tech-lifecycle-button");
-    if (!resetButton || resetButton.dataset.lifecycleResetBound === "true") return;
-
-    resetButton.dataset.lifecycleResetBound = "true";
-    resetButton.addEventListener("click", resetTechV2LifecycleFieldsFromEditModal);
-}
-
-function initTechInventoryV2IntegratedUI() {
-    setupTechV2ModeCards();
-    setupTechV2DesktopBatteryHints();
-    setupTechV2LifecycleResetButton();
 }
 
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initTechInventoryV2IntegratedUI);
+    document.addEventListener("DOMContentLoaded", initAdminPortalV3);
 } else {
-    initTechInventoryV2IntegratedUI();
+    initAdminPortalV3();
 }
-
-const techV2IntegratedObserver = new MutationObserver(() => {
-    initTechInventoryV2IntegratedUI();
-});
-
-techV2IntegratedObserver.observe(document.documentElement, {
-    childList: true,
-    subtree: true
-});
