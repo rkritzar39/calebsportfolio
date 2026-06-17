@@ -4973,6 +4973,74 @@ function getArchivedCurrentRole(ownershipState) {
     return "No longer owned";
 }
 
+
+/* ============================================================
+   TECH INVENTORY 2.0 — LIFECYCLE-SAFE SAVE HELPERS
+   ------------------------------------------------------------
+   These helpers keep the rebuilt Tech Inventory workflow clean:
+   - Planned / roadmap / wishlist devices never keep stale role fields.
+   - Active devices are not marked replaced by planned devices.
+   - Archive automation still works when an item is intentionally archived.
+============================================================ */
+const TECH_V2_ROADMAP_STATES = new Set([
+    "planned",
+    "coming-soon",
+    "future-upgrade",
+    "preordered",
+    "ordered",
+    "reserved"
+]);
+
+const TECH_V2_WISHLIST_STATES = new Set([
+    "wishlist",
+    "considering",
+    "researching"
+]);
+
+const TECH_V2_LIFECYCLE_FIELDS = [
+    "autoRoleManaged",
+    "roleStatus",
+    "currentRole",
+    "previousRole",
+    "replacedByDevice",
+    "successorDevice",
+    "predecessorDevice",
+    "roleChangedDate"
+];
+
+function isTechV2RoadmapOrWishlistState(ownershipState) {
+    const normalized = normalizeAdminOwnershipState(ownershipState || "owned");
+    return TECH_V2_ROADMAP_STATES.has(normalized) || TECH_V2_WISHLIST_STATES.has(normalized);
+}
+
+function prepareTechItemAddPayload(rawData = {}) {
+    const payload = { ...rawData };
+
+    // New roadmap/wishlist devices should start clean and should not inherit
+    // stale automation fields from copied form data or browser autofill.
+    if (isTechV2RoadmapOrWishlistState(payload.ownershipState)) {
+        TECH_V2_LIFECYCLE_FIELDS.forEach(field => {
+            delete payload[field];
+        });
+    }
+
+    return payload;
+}
+
+function prepareTechItemUpdatePayload(rawData = {}) {
+    const payload = { ...rawData };
+
+    // Firestore updateDoc supports deleteField(). When an existing device is
+    // saved as planned/wishlist/research, actively remove stale role fields.
+    if (isTechV2RoadmapOrWishlistState(payload.ownershipState)) {
+        TECH_V2_LIFECYCLE_FIELDS.forEach(field => {
+            payload[field] = deleteField();
+        });
+    }
+
+    return payload;
+}
+
 async function clearTechRoleAutomationFields(docId) {
     if (!docId) {
         throw new Error("Missing tech item document ID.");
@@ -5375,10 +5443,12 @@ async function handleAddTechItem(event) {
 
     techData.createdAt = serverTimestamp();
 
+    const techDataForSave = prepareTechItemAddPayload(techData);
+
     showAdminStatus("Adding tech item...");
 
     try {
-        const docRef = await addDoc(techItemsCollectionRef, techData);
+        const docRef = await addDoc(techItemsCollectionRef, techDataForSave);
 
         console.log("Tech item added with ID:", docRef.id);
 
@@ -5386,7 +5456,7 @@ async function handleAddTechItem(event) {
             await applyTechRoleAutomation({
                 updatedDocId: docRef.id,
                 oldData: {},
-                newData: techData,
+                newData: techDataForSave,
                 isNewItem: true
             });
         } catch (automationError) {
@@ -5629,7 +5699,8 @@ async function handleUpdateTechItem(event) {
             oldData = oldDataSnap.data();
         }
 
-        await updateDoc(docRef, updatedData);
+        const updatePayload = prepareTechItemUpdatePayload(updatedData);
+        await updateDoc(docRef, updatePayload);
 
         try {
             await applyTechRoleAutomation({
@@ -6406,3 +6477,183 @@ window.handleCredentialResponse = (response) => {
         console.error("Critical Error: handleGoogleSignIn is not globally available for the Google callback.");
     }
 };
+
+
+/* ============================================================
+   TECH INVENTORY 2.0 — INTEGRATED ADMIN UI HELPERS
+   ------------------------------------------------------------
+   This is integrated directly into admin.js so the redesigned admin
+   page does not need a separate admin.tech-v2-ui.js file.
+============================================================ */
+const TECH_V2_ACTIVE_STATES = new Set(["owned", "borrowed", "loaned-out", "school-issued", "work-issued", "in-repair"]);
+const TECH_V2_ARCHIVE_STATES = new Set(["retired", "sold", "traded-in", "donated", "recycled", "returned", "lost"]);
+
+function getTechV2ModeFromState(state) {
+    const normalized = normalizeAdminOwnershipState(state || "owned");
+
+    if (TECH_V2_ROADMAP_STATES.has(normalized)) return "roadmap";
+    if (TECH_V2_WISHLIST_STATES.has(normalized)) return "wishlist";
+    if (TECH_V2_ARCHIVE_STATES.has(normalized)) return "archive";
+    return "active";
+}
+
+function setTechV2Guidance(selectElement) {
+    if (!selectElement) return;
+
+    const form = selectElement.closest("form") || document;
+    const guidance = form.querySelector(`[data-tech-guidance-for="${selectElement.id}"]`);
+
+    if (!guidance) return;
+
+    const messageTarget = guidance.querySelector("span") || guidance;
+    const mode = getTechV2ModeFromState(selectElement.value);
+
+    const messages = {
+        active: "Active device: keep successor/replaced-by fields blank until a planned device is actually owned.",
+        roadmap: "Planned device: use Replaces Device to point to the current device. The current device should not point back yet.",
+        wishlist: "Wishlist/research device: keep details lightweight. It does not affect your active setup.",
+        archive: "Archived device: use this after a device is retired, sold, traded in, donated, recycled, returned, or lost."
+    };
+
+    messageTarget.textContent = messages[mode] || messages.active;
+}
+
+function syncTechV2ModeCards(selectElement) {
+    if (!selectElement) return;
+
+    const selectedMode = getTechV2ModeFromState(selectElement.value);
+
+    document.querySelectorAll(`[data-tech-mode-target="${selectElement.id}"]`).forEach(button => {
+        const buttonMode = getTechV2ModeFromState(button.dataset.techModeValue || "owned");
+        button.classList.toggle("is-active", buttonMode === selectedMode);
+    });
+
+    setTechV2Guidance(selectElement);
+}
+
+function setupTechV2ModeCards() {
+    document.querySelectorAll(".tech-mode-option[data-tech-mode-target]").forEach(button => {
+        if (button.dataset.techModeBound === "true") return;
+        button.dataset.techModeBound = "true";
+
+        button.addEventListener("click", () => {
+            const selectElement = document.getElementById(button.dataset.techModeTarget);
+            if (!selectElement) return;
+
+            selectElement.value = button.dataset.techModeValue || "owned";
+            selectElement.dispatchEvent(new Event("change", { bubbles: true }));
+            selectElement.dispatchEvent(new Event("input", { bubbles: true }));
+            syncTechV2ModeCards(selectElement);
+        });
+    });
+
+    ["tech-ownership-state", "edit-tech-ownership-state"].forEach(id => {
+        const selectElement = document.getElementById(id);
+        if (!selectElement) return;
+
+        syncTechV2ModeCards(selectElement);
+
+        if (selectElement.dataset.techModeSelectBound === "true") return;
+        selectElement.dataset.techModeSelectBound = "true";
+        selectElement.addEventListener("change", () => syncTechV2ModeCards(selectElement));
+    });
+}
+
+function setupTechV2DesktopBatteryHints() {
+    ["tech-device-type", "edit-tech-device-type"].forEach(id => {
+        const selectElement = document.getElementById(id);
+        if (!selectElement || selectElement.dataset.batteryHintBound === "true") return;
+
+        selectElement.dataset.batteryHintBound = "true";
+
+        const updateBatteryHint = () => {
+            const form = selectElement.closest("form");
+            if (!form) return;
+
+            const batteryCard = form.querySelector(".tech-battery-card");
+            if (!batteryCard) return;
+
+            batteryCard.classList.toggle(
+                "desktop-battery-optional",
+                normalizeAdminOwnershipState(selectElement.value) === "computer"
+            );
+        };
+
+        selectElement.addEventListener("change", updateBatteryHint);
+        updateBatteryHint();
+    });
+}
+
+async function resetTechV2LifecycleFieldsFromEditModal() {
+    const form = document.getElementById("edit-tech-item-form");
+    const statusElement = document.getElementById("edit-tech-status-message");
+    const docId = form?.getAttribute("data-doc-id") || "";
+
+    if (!docId) {
+        if (statusElement) {
+            statusElement.textContent = "Missing tech item document ID. Open a tech item first.";
+            statusElement.className = "status-message error";
+        }
+        return;
+    }
+
+    const confirmed = confirm(
+        "Reset lifecycle fields for this device?\n\nThis removes roleStatus, currentRole, previousRole, replacedByDevice, successorDevice, predecessorDevice, roleChangedDate, and autoRoleManaged."
+    );
+
+    if (!confirmed) return;
+
+    try {
+        if (statusElement) {
+            statusElement.textContent = "Resetting lifecycle fields...";
+            statusElement.className = "status-message";
+        }
+
+        await clearTechRoleAutomationFields(docId);
+
+        if (statusElement) {
+            statusElement.textContent = "Lifecycle fields reset successfully.";
+            statusElement.className = "status-message success";
+        }
+
+        if (typeof loadTechItemsAdmin === "function") {
+            await loadTechItemsAdmin();
+        }
+    } catch (error) {
+        console.error("Lifecycle reset failed:", error);
+
+        if (statusElement) {
+            statusElement.textContent = `Lifecycle reset failed: ${error.message}`;
+            statusElement.className = "status-message error";
+        }
+    }
+}
+
+function setupTechV2LifecycleResetButton() {
+    const resetButton = document.getElementById("reset-tech-lifecycle-button");
+    if (!resetButton || resetButton.dataset.lifecycleResetBound === "true") return;
+
+    resetButton.dataset.lifecycleResetBound = "true";
+    resetButton.addEventListener("click", resetTechV2LifecycleFieldsFromEditModal);
+}
+
+function initTechInventoryV2IntegratedUI() {
+    setupTechV2ModeCards();
+    setupTechV2DesktopBatteryHints();
+    setupTechV2LifecycleResetButton();
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initTechInventoryV2IntegratedUI);
+} else {
+    initTechInventoryV2IntegratedUI();
+}
+
+const techV2IntegratedObserver = new MutationObserver(() => {
+    initTechInventoryV2IntegratedUI();
+});
+
+techV2IntegratedObserver.observe(document.documentElement, {
+    childList: true,
+    subtree: true
+});
