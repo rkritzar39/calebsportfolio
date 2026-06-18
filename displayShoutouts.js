@@ -1573,6 +1573,276 @@ function formatOSType(osType) {
 }
 
 // ======================
+// FUTURE-PROOF DEVICE / MODEL LATEST OS MATCHING
+// Priority:
+// 1. Exact model override
+// 2. Rule-based device match
+// 3. Normal OS default
+//
+// Supports:
+// - Apple split releases by device
+// - Android skins by model
+// - Windows/Linux/game/TV OS defaults
+// - future releases configured only in latest_os_versions.json
+// ======================
+function normalizeDeviceLookupText(value) {
+    return String(value || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[’‘]/g, "'")
+        .replace(/[“”]/g, '"')
+        .replace(/[_-]+/g, " ")
+        .replace(/\s+/g, " ");
+}
+
+function getDeviceModelForOSLookup(item = {}) {
+    return String(
+        item.model ||
+        item.name ||
+        item.deviceName ||
+        item.title ||
+        ""
+    ).trim();
+}
+
+function getDeviceLookupText(item = {}) {
+    return normalizeDeviceLookupText([
+        item.name,
+        item.model,
+        item.deviceName,
+        item.title,
+        item.deviceType,
+        item.chipName,
+        item.osVersion
+    ].filter(Boolean).join(" "));
+}
+
+function getDeviceGenerationFromModel(item = {}, familyName = "") {
+    const lookupText = getDeviceLookupText(item);
+    const normalizedFamily = normalizeDeviceLookupText(familyName);
+
+    if (!normalizedFamily) return null;
+
+    const escapedFamily = normalizedFamily.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`${escapedFamily}\\s+(\\d+)`, "i");
+    const match = lookupText.match(regex);
+
+    if (!match) return null;
+
+    const generation = Number(match[1]);
+    return Number.isFinite(generation) ? generation : null;
+}
+
+function matchesIncludesAny(lookupText, values = []) {
+    if (!Array.isArray(values) || values.length === 0) return true;
+
+    return values.some(value => {
+        const normalizedValue = normalizeDeviceLookupText(value);
+        return normalizedValue && lookupText.includes(normalizedValue);
+    });
+}
+
+function matchesIncludesAll(lookupText, values = []) {
+    if (!Array.isArray(values) || values.length === 0) return true;
+
+    return values.every(value => {
+        const normalizedValue = normalizeDeviceLookupText(value);
+        return normalizedValue && lookupText.includes(normalizedValue);
+    });
+}
+
+function matchesAnyGroup(lookupText, groups = []) {
+    if (!Array.isArray(groups) || groups.length === 0) return true;
+
+    return groups.some(group => matchesIncludesAny(lookupText, group));
+}
+
+function matchesExcludesAny(lookupText, values = []) {
+    if (!Array.isArray(values) || values.length === 0) return true;
+
+    return !values.some(value => {
+        const normalizedValue = normalizeDeviceLookupText(value);
+        return normalizedValue && lookupText.includes(normalizedValue);
+    });
+}
+
+function matchesExactModel(item = {}, values = []) {
+    if (!Array.isArray(values) || values.length === 0) return true;
+
+    const model = normalizeDeviceLookupText(getDeviceModelForOSLookup(item));
+
+    return values.some(value => normalizeDeviceLookupText(value) === model);
+}
+
+function matchesDeviceType(item = {}, expectedTypes = []) {
+    if (!Array.isArray(expectedTypes) || expectedTypes.length === 0) return true;
+
+    const deviceType = normalizeDeviceLookupText(detectDeviceType(item));
+
+    return expectedTypes
+        .map(type => normalizeDeviceLookupText(type))
+        .includes(deviceType);
+}
+
+function matchesModelYear(item = {}, match = {}) {
+    const modelYear = Number(item.modelYear || item.year || item.releaseYear || 0);
+
+    if (!modelYear) {
+        if (match.modelYearMin || match.modelYearMax) return false;
+        return true;
+    }
+
+    if (match.modelYearMin && modelYear < Number(match.modelYearMin)) return false;
+    if (match.modelYearMax && modelYear > Number(match.modelYearMax)) return false;
+
+    return true;
+}
+
+function matchesGeneration(item = {}, match = {}) {
+    if (!match.deviceFamily && !match.generationMin && !match.generationMax) {
+        return true;
+    }
+
+    const family = match.deviceFamily || "";
+    const generation = getDeviceGenerationFromModel(item, family);
+
+    if (generation === null) return false;
+
+    if (match.generationMin && generation < Number(match.generationMin)) return false;
+    if (match.generationMax && generation > Number(match.generationMax)) return false;
+
+    return true;
+}
+
+function deviceMatchesVersionRule(item = {}, rule = {}) {
+    const match = rule.match || {};
+    const lookupText = getDeviceLookupText(item);
+
+    if (!matchesExactModel(item, match.exactModels)) return false;
+    if (!matchesIncludesAny(lookupText, match.modelIncludesAny)) return false;
+    if (!matchesIncludesAll(lookupText, match.modelIncludesAll)) return false;
+    if (!matchesAnyGroup(lookupText, match.modelIncludesAnyGroup)) return false;
+    if (!matchesExcludesAny(lookupText, match.modelExcludesAny)) return false;
+    if (!matchesDeviceType(item, match.deviceTypes)) return false;
+    if (!matchesModelYear(item, match)) return false;
+    if (!matchesGeneration(item, match)) return false;
+
+    return true;
+}
+
+function getLegacyModelOverrides(osType) {
+    const normalizedOSType = String(osType || "").toLowerCase();
+
+    // Backward compatibility with older iosModelOverrides format.
+    if (normalizedOSType === "ios" && latestOSVersions.iosModelOverrides) {
+        return latestOSVersions.iosModelOverrides;
+    }
+
+    return null;
+}
+
+function getModelOverrideVersion(osType, item = {}) {
+    const normalizedOSType = String(osType || "").toLowerCase();
+    const modelName = getDeviceModelForOSLookup(item);
+    const normalizedModelName = normalizeDeviceLookupText(modelName);
+
+    const overrideGroups = latestOSVersions.deviceModelOverrides || {};
+    const modernOverrides = overrideGroups[normalizedOSType] || {};
+    const legacyOverrides = getLegacyModelOverrides(normalizedOSType) || {};
+
+    const combinedOverrides = {
+        ...legacyOverrides,
+        ...modernOverrides
+    };
+
+    if (!normalizedModelName) return null;
+
+    // Exact match first.
+    if (combinedOverrides[modelName]) {
+        return {
+            version: combinedOverrides[modelName],
+            source: "model-override",
+            label: modelName,
+            note: `Specific latest version for ${modelName}.`
+        };
+    }
+
+    // Case-insensitive exact match fallback.
+    for (const [overrideModel, overrideVersion] of Object.entries(combinedOverrides)) {
+        if (normalizeDeviceLookupText(overrideModel) === normalizedModelName) {
+            return {
+                version: overrideVersion,
+                source: "model-override",
+                label: overrideModel,
+                note: `Specific latest version for ${overrideModel}.`
+            };
+        }
+    }
+
+    return null;
+}
+
+function getRuleBasedVersion(osType, item = {}) {
+    const normalizedOSType = String(osType || "").toLowerCase();
+    const ruleGroups = latestOSVersions.deviceVersionRules || {};
+    const rules = ruleGroups[normalizedOSType] || [];
+
+    if (!Array.isArray(rules) || rules.length === 0) return null;
+
+    for (const rule of rules) {
+        if (!rule || !rule.version) continue;
+
+        if (deviceMatchesVersionRule(item, rule)) {
+            return {
+                version: rule.version,
+                source: "version-rule",
+                label: rule.label || "Device-specific rule",
+                note: rule.note || ""
+            };
+        }
+    }
+
+    return null;
+}
+
+function getDefaultOSVersion(osType) {
+    const normalizedOSType = String(osType || "").toLowerCase();
+    return latestOSVersions[normalizedOSType] || null;
+}
+
+function resolveLatestOSVersionInfo(osType, item = {}) {
+    const normalizedOSType = String(osType || "").toLowerCase();
+
+    if (!normalizedOSType || !latestOSVersions) {
+        return {
+            version: null,
+            source: "none",
+            label: "",
+            note: ""
+        };
+    }
+
+    const modelOverride = getModelOverrideVersion(normalizedOSType, item);
+    if (modelOverride) return modelOverride;
+
+    const ruleBased = getRuleBasedVersion(normalizedOSType, item);
+    if (ruleBased) return ruleBased;
+
+    const defaultVersion = getDefaultOSVersion(normalizedOSType);
+
+    return {
+        version: defaultVersion,
+        source: "default",
+        label: formatOSType(normalizedOSType),
+        note: latestOSVersions.platformCompatibilityNotes?.[normalizedOSType] || ""
+    };
+}
+
+function resolveLatestOSVersion(osType, item = {}) {
+    return resolveLatestOSVersionInfo(osType, item).version;
+}
+
+// ======================
 // VERSION PARSER
 // ======================
 function extractVersionString(osVersion, osType = null) {
@@ -1705,12 +1975,13 @@ function detectOSChannel(osVersion) {
 // ======================
 // OS STATUS
 // ======================
-function checkOSStatus(osVersion) {
+function checkOSStatus(osVersion, item = {}) {
     if (!osVersion) return null;
 
     const osType = detectOSType(osVersion);
     const currentVersion = extractVersionString(osVersion, osType);
-    const latestPublicVersion = latestOSVersions[osType] || null;
+    const latestInfo = resolveLatestOSVersionInfo(osType, item);
+    const latestPublicVersion = latestInfo.version;
     const channel = detectOSChannel(osVersion);
 
     if (!currentVersion) return null;
@@ -1722,6 +1993,9 @@ function checkOSStatus(osVersion) {
             osType,
             currentVersion,
             latestPublicVersion: "Unknown",
+            latestVersionSource: "none",
+            latestVersionLabel: "",
+            latestVersionNote: "",
             releaseChannel: "Unknown",
             description: "Latest public version is not configured for this OS.",
             isBeta: false,
@@ -1735,7 +2009,9 @@ function checkOSStatus(osVersion) {
     let status = "Latest";
     let color = "green";
     let releaseChannel = "Public";
-    let description = "Running the latest public release.";
+    let description = latestInfo.note
+        ? `Running the latest public release. ${latestInfo.note}`
+        : "Running the latest public release.";
 
     if (channel === "developer-beta") {
         status = "Developer Beta";
@@ -1771,12 +2047,16 @@ function checkOSStatus(osVersion) {
         status = "Ahead of Public";
         color = "purple";
         releaseChannel = "Pre-release / Beta";
-        description = "This version is newer than the latest public release.";
+        description = latestInfo.note
+            ? `This version is newer than the latest configured public release for this device group. ${latestInfo.note}`
+            : "This version is newer than the latest configured public release.";
     } else if (comparisonToPublic < 0) {
         status = "Outdated";
         color = "yellow";
         releaseChannel = "Public";
-        description = "A newer public release is available.";
+        description = latestInfo.note
+            ? `A newer public release is available for this device group. ${latestInfo.note}`
+            : "A newer public release is available.";
     }
 
     if (comparisonToPublic < 0) {
@@ -1786,7 +2066,9 @@ function checkOSStatus(osVersion) {
         if (latestMajor - currentMajor >= 1) {
             status = "Very Outdated";
             color = "red";
-            description = "This OS version is significantly behind the latest public release.";
+            description = latestInfo.note
+                ? `This OS version is significantly behind the latest public release for this device group. ${latestInfo.note}`
+                : "This OS version is significantly behind the latest public release.";
         }
     }
 
@@ -1796,6 +2078,9 @@ function checkOSStatus(osVersion) {
         osType,
         currentVersion,
         latestPublicVersion,
+        latestVersionSource: latestInfo.source,
+        latestVersionLabel: latestInfo.label,
+        latestVersionNote: latestInfo.note,
         releaseChannel,
         description,
         isBeta: channel !== "public" || comparisonToPublic > 0,
@@ -1984,7 +2269,7 @@ function checkDeviceSupport(item) {
         ? parsedSupportEndYear
         : null;
 
-    const osStatus = checkOSStatus(item.osVersion);
+    const osStatus = checkOSStatus(item.osVersion, item);
     const deviceType = detectDeviceType(item);
     const condition = String(item.condition || "").toLowerCase();
 
@@ -2420,7 +2705,7 @@ function calculateUpgradeScore(item) {
     const battery = Number(item.batteryHealth ?? 100);
     const cycles = getBatteryCycles(item);
     const support = checkDeviceSupport(item);
-    const osStatus = checkOSStatus(item.osVersion);
+    const osStatus = checkOSStatus(item.osVersion, item);
 
     let score = 100;
 
@@ -2914,7 +3199,7 @@ function calculateUpgradeData(item) {
 
     const batteryHealth = Number(item.batteryHealth ?? 100);
     const cycles = getBatteryCycles(item);
-    const osStatus = checkOSStatus(item.osVersion);
+    const osStatus = checkOSStatus(item.osVersion, item);
     const support = checkDeviceSupport(item);
     const deviceType = detectDeviceType(item);
     const condition = String(item.condition || "").toLowerCase();
@@ -4078,7 +4363,7 @@ function renderTechItemHomepage(itemData) {
     const ownershipBadgeClass = ownershipConfig.badgeClass;
     const lifecycleSections = renderTechLifecycleSections(item, { context: ownershipConfig.mode });
 
-    const osStatus = checkOSStatus(item.osVersion);
+    const osStatus = checkOSStatus(item.osVersion, item);
     const support = checkDeviceSupport(item);
     const supportLife = estimateSupportLifespan(item);
     const aiSupport = calculateAIFeatureSupport(item);
@@ -4466,9 +4751,12 @@ function renderTechItemHomepage(itemData) {
         </div>
 
         <div class="tech-detail">
-            <i class="fas fa-circle-info"></i>
-            <span>Public Latest:</span> ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
-        </div>
+    <i class="fas fa-circle-info"></i>
+    <span>Public Latest:</span>
+    ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
+    ${osStatus.latestVersionLabel ? `<small>${escapeHTML(osStatus.latestVersionLabel)}</small>` : ""}
+    ${osStatus.latestVersionNote ? `<small>${escapeHTML(osStatus.latestVersionNote)}</small>` : ""}
+</div>
         ` : ""}
         ` : ""}
 
