@@ -3785,6 +3785,7 @@ body.light-e .upgrade-priority-badge.green {
 
   display: flex;
   align-items: center;
+  flex-wrap: wrap; /* GUARD: Allow wrap if summary title is huge */
   gap: 10px;
 
   padding: 13px 15px;
@@ -3821,6 +3822,7 @@ body.light-e .upgrade-priority-badge.green {
 .tech-advanced-details summary::after {
   content: "More specs";
   margin-left: auto;
+  white-space: nowrap; /* GUARD: keep button text intact */
 
   font-size: 0.72rem;
   font-weight: 700;
@@ -4003,6 +4005,7 @@ body.light-e .upgrade-priority-badge.green {
   margin: 0 0 15px 0;
   display: flex;
   align-items: center;
+  flex-wrap: wrap; /* GUARD: Allow title to wrap if icons + text overflow */
   gap: 10px;
 
   color: var(--accent-color);
@@ -4026,7 +4029,7 @@ body.light-e .upgrade-priority-badge.green {
 
 .tech-detail {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* GUARD: If text wraps, icon stays top-aligned */
   gap: 10px;
   margin: 10px 0;
 
@@ -4042,6 +4045,7 @@ body.light-e .upgrade-priority-badge.green {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 2px; /* GUARD: Visual balance for flex-start alignment */
 
   color: var(--accent-color);
   font-size: calc(var(--font-size-base) * 0.85);
@@ -4070,6 +4074,8 @@ body.light-e .upgrade-priority-badge.green {
   font-weight: 600;
   letter-spacing: -0.01em;
   text-shadow: var(--tech-card-text-shadow);
+  flex: 1; /* GUARD: Allow value to take remaining space */
+  min-width: 0; /* GUARD: Flex shrink protection */
 }
 
 .tech-value.status-green  { color: var(--status-text-green) !important; }
@@ -4083,6 +4089,8 @@ body.light-e .upgrade-priority-badge.green {
   color: var(--tech-value-color) !important;
   font-weight: 500;
   text-shadow: var(--tech-card-text-shadow);
+  flex: 1; /* GUARD: Ensure unwrapped spans can also shrink */
+  min-width: 0;
 }
 
 /* ======================================================= */
@@ -4102,8 +4110,10 @@ body.light-e .upgrade-priority-badge.green {
   position: relative;
 
   width: 180px;
+  max-width: 100%; /* GUARD: Battery will never exceed container width */
   height: 40px;
   border-radius: 10px;
+  flex-shrink: 1; /* GUARD: Allow shrinking */
 
   background:
     linear-gradient(
@@ -4374,6 +4384,7 @@ body.light-e .battery-percentage {
   font-weight: 400;
   line-height: 1.55;
   opacity: 1;
+  min-width: 0; /* GUARD: Allow long words to break */
 }
 
 .tech-upgrade-explanation .tech-label {
@@ -4836,8 +4847,8 @@ body.light-e .tech-upgrade-explanation {
 .beta-feature-item {
   box-sizing: border-box;
   max-width: 100%;
-  overflow-wrap: break-word;
-  word-break: break-word;
+  overflow-wrap: anywhere; /* GUARD: Forces unbroken strings to break safely */
+  word-break: normal;
 }
 
 /* ======================================================= */
@@ -5281,6 +5292,31 @@ body.light-e .tech-upgrade-explanation {
     width: 1.55rem;
     height: 1.55rem;
   }
+}
+
+/* ── 320px: MICRO SCREENS (e.g., Galaxy Fold Cover Screen) ── */
+@media screen and (max-width: 320px) {
+  .tech-section, .beta-page-section { padding: 10px; margin-bottom: 10px; }
+  .tech-item, .tech-lifecycle-card, .beta-summary-card, .beta-feature-item { padding: 8px; }
+  
+  .tech-detail { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .tech-detail i { margin-top: 0; }
+  
+  .upgrade-priority-badge, .upgrade-badge, .support-badge, .os-badge { 
+    margin-left: 0; 
+    margin-top: 4px; 
+    display: flex; 
+  }
+  
+  .beta-page-header h1 { font-size: 1.4rem; }
+  
+  .tech-upgrade-explanation {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .tech-upgrade-explanation i { display: none; } /* Hide icon to save space */
+  
+  .battery-container { flex-direction: column; align-items: flex-start; }
 }
 
 /* ======================================================= */
@@ -11713,248 +11749,6 @@ body.maintenance-active .onyx-dock {
 
 .college-table th {
   color: var(--secondary-text);
-}
-
-/* Status badges */
-.status {
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-}
-
-.status.completed {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.15);
-}
-
-.status.pending {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.15);
-}
-
-.status.in-progress {
-  color: var(--accent-color);
-  background: rgba(78, 168, 255, 0.15);
-}
-
-/* Upgrade badge */
-.upgrade-badge {
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.8rem;
-}
-
-.upgrade-badge.green {
-    background: rgba(50, 205, 50, 0.15);
-    color: #32CD32;
-}
-
-.upgrade-badge.yellow {
-    background: rgba(255, 204, 0, 0.15);
-    color: #FFCC00;
-}
-
-.upgrade-badge.red {
-    background: rgba(255, 59, 48, 0.15);
-    color: #FF3B30;
-}
-
-/* Trigger list */
-.upgrade-triggers {
-    margin: 5px 0 10px 28px;
-    padding: 0;
-    list-style-type: disc;
-    color: var(--secondary-text);
-    font-size: 0.9rem;
-}
-
-/* Score bar */
-.score-bar {
-    width: 100%;
-    height: 10px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 999px;
-    margin: 6px 0 14px 0;
-    overflow: hidden;
-}
-
-.score-fill {
-    height: 100%;
-    border-radius: 999px;
-    transition: width 0.4s ease;
-}
-
-.score-fill.green {
-    background: #32CD32;
-}
-
-.score-fill.yellow {
-    background: #FFCC00;
-}
-
-.score-fill.orange {
-    background: #FF9500;
-}
-
-.score-fill.red {
-    background: #FF3B30;
-}
-
-.os-badge {
-    margin-left: 8px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.os-badge.green {
-    background: rgba(50, 205, 50, 0.15);
-    color: #32CD32;
-}
-
-.os-badge.yellow {
-    background: rgba(255, 204, 0, 0.15);
-    color: #FFCC00;
-}
-
-.os-badge.red {
-    background: rgba(255, 59, 48, 0.15);
-    color: #FF3B30;
-}
-
-.os-badge.purple,
-.support-badge.purple,
-.upgrade-badge.purple {
-    background: rgba(175, 82, 222, 0.15);
-    color: #AF52DE;
-}
-
-/* =============================== */
-/* Tech Advanced Details Dropdown  */
-/* =============================== */
-
-.tech-advanced-details {
-    margin-top: 16px;
-    padding: 0;
-    border-radius: 14px;
-
-    background:
-        linear-gradient(
-            180deg,
-            color-mix(in srgb, white 7%, transparent),
-            transparent 60%
-        ),
-        color-mix(in srgb, var(--content-bg) 92%, black 8%);
-
-    border: 1px solid color-mix(in srgb, white 7%, var(--border-color));
-
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.05),
-        0 6px 18px color-mix(in srgb, var(--shadow-color) 35%, transparent);
-
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-}
-
-/* Dropdown header */
-.tech-advanced-details summary {
-    cursor: pointer;
-    list-style: none;
-
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    padding: 13px 15px;
-
-    color: var(--secondary-text);
-    font-weight: 700;
-    font-size: 0.92rem;
-
-    user-select: none;
-
-    transition:
-        color 0.2s ease,
-        background-color 0.2s ease;
-}
-
-/* Remove default browser arrow */
-.tech-advanced-details summary::-webkit-details-marker {
-    display: none;
-}
-
-.tech-advanced-details summary::marker {
-    content: "";
-}
-
-/* Custom arrow */
-.tech-advanced-details summary::before {
-    content: "▸";
-    color: var(--accent-color);
-    font-size: 0.85rem;
-
-    transition:
-        transform 0.2s ease,
-        color 0.2s ease;
-}
-
-/* Optional icon after arrow */
-.tech-advanced-details summary::after {
-    content: "More specs";
-    margin-left: auto;
-
-    font-size: 0.72rem;
-    font-weight: 700;
-
-    padding: 3px 8px;
-    border-radius: 999px;
-
-    color: var(--accent-color);
-    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
-}
-
-/* Hover effect */
-.tech-advanced-details summary:hover {
-    color: var(--text-color);
-    background: color-mix(in srgb, white 5%, transparent);
-}
-
-/* Open state */
-.tech-advanced-details[open] summary {
-    color: var(--text-color);
-    border-bottom: 1px solid color-mix(in srgb, white 6%, var(--border-color));
-}
-
-.tech-advanced-details[open] summary::before {
-    transform: rotate(90deg);
-}
-
-.tech-advanced-details[open] summary::after {
-    content: "Hide specs";
-}
-
-/* Content spacing */
-.tech-advanced-details .tech-detail {
-    padding: 0 15px;
-    margin: 11px 0;
-}
-
-/* First detail after summary */
-.tech-advanced-details summary + .tech-detail {
-    margin-top: 14px;
-}
-
-/* Last detail spacing */
-.tech-advanced-details .tech-detail:last-child {
-    margin-bottom: 15px;
-}
-
-/* Slight indentation for advanced rows */
-.tech-advanced-details .tech-detail i {
-    opacity: 0.9;
 }
 
 /* ============================================================
