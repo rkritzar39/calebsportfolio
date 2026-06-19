@@ -4023,6 +4023,18 @@ body.light-e .upgrade-priority-badge.green {
   color: var(--accent-color);
 }
 
+/* Ensure all tech containers respect their parent bounds */
+.tech-item, .tech-section, .beta-summary-card {
+  min-width: 0; /* Critical: Allows flex children to shrink below content size */
+  max-width: 100%;
+}
+
+/* Fix for the overflowing badge/row elements */
+.smart-upgrade-row, .tech-detail {
+  width: 100%;
+  flex-wrap: wrap; /* Already in your code, ensure it's not overridden */
+}
+
 /* ======================================================= */
 /* TECH DETAIL ROWS                                        */
 /* ======================================================= */
@@ -4063,10 +4075,12 @@ body.light-e .upgrade-priority-badge.green {
 /* ======================================================= */
 
 .tech-label {
-  flex-shrink: 0;
+  flex-shrink: 0;           /* Prevents the label from shrinking/compressing */
+  white-space: nowrap;      /* FORCES the label to stay on one line */
   font-weight: 700;
   color: var(--tech-label-color) !important;
   opacity: 0.9;
+  margin-right: 8px;        /* Adds breathing room between label and value */
 }
 
 .tech-value {
