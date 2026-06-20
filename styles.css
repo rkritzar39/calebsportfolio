@@ -3810,7 +3810,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 .tech-advanced-details summary::before {
-  content: "▸";
+  content: "â¸";
   color: var(--accent-color);
   font-size: 0.85rem;
 
@@ -3870,7 +3870,7 @@ body.light-e .upgrade-priority-badge.green {
 }
 
 /* ======================================================= */
-/* TECH INFORMATION SECTION – ONYX GLASS SYSTEM            */
+/* TECH INFORMATION SECTION â ONYX GLASS SYSTEM            */
 /* ======================================================= */
 
 .tech-section {
@@ -4296,7 +4296,7 @@ body.light-e .battery-percentage {
 .smart-upgrade-row {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;   /* ← guard: wraps badges instead of overflowing */
+  flex-wrap: wrap;   /* â guard: wraps badges instead of overflowing */
   gap: 0.6rem;
 }
 
@@ -4451,7 +4451,7 @@ body.light-e .tech-upgrade-explanation {
 }
 
 .upgrade-triggers li::before {
-  content: "•";
+  content: "â¢";
   position: absolute;
   left: 0;
   top: 0;
@@ -4867,11 +4867,11 @@ body.light-e .tech-upgrade-explanation {
 
 /* ======================================================= */
 /* RESPONSIVE                                              */
-/* Breakpoint ladder: 900 → 768 → 700 → 640 →            */
-/* 600 → 540 → 480 → 375 plus safe-area @supports         */
+/* Breakpoint ladder: 900 â 768 â 700 â 640 â            */
+/* 600 â 540 â 480 â 375 plus safe-area @supports         */
 /* ======================================================= */
 
-/* ── 900px: summary grid loosens up ── */
+/* ââ 900px: summary grid loosens up ââ */
 @media screen and (max-width: 900px) {
   .beta-summary-grid {
     grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
@@ -4879,7 +4879,7 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-/* ── 768px: tablets ── */
+/* ââ 768px: tablets ââ */
 @media screen and (max-width: 768px) {
   .tech-section {
     padding: 22px;
@@ -4905,7 +4905,7 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-/* ── 700px: large phones / small tablets ── */
+/* ââ 700px: large phones / small tablets ââ */
 @media screen and (max-width: 700px) {
   .beta-page-section {
     padding: 20px;
@@ -4939,7 +4939,7 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-/* ── 600px: badge scale-down + flex-wrap guards ── */
+/* ââ 600px: badge scale-down + flex-wrap guards ââ */
 @media (max-width: 600px) {
   .upgrade-priority-badge,
   .upgrade-badge,
@@ -5006,7 +5006,7 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-/* ── 540px: mid-range phones ── */
+/* ââ 540px: mid-range phones ââ */
 @media screen and (max-width: 540px) {
   .tech-section {
     padding: 16px;
@@ -5056,7 +5056,7 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-/* ── 480px: standard small phones ── */
+/* ââ 480px: standard small phones ââ */
 @media screen and (max-width: 480px) {
   .tech-section {
     padding: 14px;
@@ -5159,7 +5159,7 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-/* ── 375px: very small phones (SE, Galaxy A-series) ── */
+/* ââ 375px: very small phones (SE, Galaxy A-series) ââ */
 @media screen and (max-width: 375px) {
   .tech-section {
     padding: 12px;
@@ -5308,7 +5308,7 @@ body.light-e .tech-upgrade-explanation {
   }
 }
 
-/* ── 320px: MICRO SCREENS (e.g., Galaxy Fold Cover Screen) ── */
+/* ââ 320px: MICRO SCREENS (e.g., Galaxy Fold Cover Screen) ââ */
 @media screen and (max-width: 320px) {
   .tech-section, .beta-page-section { padding: 10px; margin-bottom: 10px; }
   .tech-item, .tech-lifecycle-card, .beta-summary-card, .beta-feature-item { padding: 8px; }
@@ -6012,7 +6012,7 @@ body:not(.light-e) .tech-role-details .tech-detail span:first-of-type {
   }
 }
 
-/* ── 375px: lifecycle micro-adjustments ── */
+/* ââ 375px: lifecycle micro-adjustments ââ */
 @media screen and (max-width: 375px) {
   .tech-lifecycle-card {
     padding: 10px;
