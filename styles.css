@@ -350,6 +350,11 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	letter-spacing: -0.01em;
+	overflow-x: hidden; /* Prevent horizontal scroll from blowing out tech cards */
+}
+
+html {
+  overflow-x: hidden;
 }
 
 h1, h2, h3 {
@@ -3941,6 +3946,7 @@ body.light-e .upgrade-priority-badge.green {
 
 .tech-item {
   position: relative;
+  overflow: hidden; /* Clip any inner content that tries to escape the card */
 
   background:
     linear-gradient(
@@ -4042,8 +4048,13 @@ body.light-e .upgrade-priority-badge.green {
 .tech-detail {
   display: flex;
   align-items: flex-start; /* GUARD: If text wraps, icon stays top-aligned */
+  flex-wrap: wrap;         /* GUARD: Wrap badges/values rather than overflow */
   gap: 10px;
   margin: 10px 0;
+  max-width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
   color: var(--tech-value-color);
   position: relative;
@@ -4068,6 +4079,8 @@ body.light-e .upgrade-priority-badge.green {
   font-weight: 600;
   color: var(--tech-label-color);
   margin-right: 6px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* ======================================================= */
@@ -4075,12 +4088,12 @@ body.light-e .upgrade-priority-badge.green {
 /* ======================================================= */
 
 .tech-label {
-  flex-shrink: 0;           /* Prevents the label from shrinking/compressing */
-  white-space: nowrap;      /* FORCES the label to stay on one line */
+  flex-shrink: 1;           /* Allow shrinking — never let it push past card edge */
+  white-space: normal;      /* Allow wrapping on very narrow screens */
   font-weight: 700;
   color: var(--tech-label-color) !important;
   opacity: 0.9;
-  margin-right: 8px;        /* Adds breathing room between label and value */
+  margin-right: 8px;
 }
 
 .tech-value {
@@ -4088,8 +4101,10 @@ body.light-e .upgrade-priority-badge.green {
   font-weight: 600;
   letter-spacing: -0.01em;
   text-shadow: var(--tech-card-text-shadow);
-  flex: 1; /* GUARD: Allow value to take remaining space */
-  min-width: 0; /* GUARD: Flex shrink protection */
+  flex: 1;       /* Take remaining space */
+  min-width: 0;  /* Allow shrinking below content size */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .tech-value.status-green  { color: var(--status-text-green) !important; }
@@ -4361,10 +4376,13 @@ body.light-e .battery-percentage {
 /* ======================================================= */
 
 .tech-upgrade-explanation {
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  align-items: start;
-  column-gap: 0.6rem;
+  /* Flex replaces the old 3-column grid (auto auto 1fr).
+     The 3rd "auto" label column with white-space:nowrap was the
+     root cause of text overflowing off-screen on mobile. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.35rem 0.6rem;
 
   margin-top: 0.35rem;
   padding: 0.75rem 0.85rem;
@@ -4386,25 +4404,45 @@ body.light-e .battery-percentage {
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.08),
     0 8px 22px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+
+  /* Hard clip anything that still tries to escape */
+  overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-.tech-upgrade-explanation i {
+/* Icon: fixed-width, stays at top */
+.tech-upgrade-explanation > i {
+  flex: 0 0 auto;
   margin-top: 0.2rem;
   color: var(--accent-color);
 }
 
+/* Label: nowrap removed — let it wrap if the screen is tiny */
+.tech-upgrade-explanation .tech-label {
+  flex: 0 0 auto;
+  white-space: normal;
+  max-width: calc(100% - 2rem);
+  color: var(--tech-label-color) !important;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+/* Explanation text: always takes its own full-width line,
+   indented to sit under the label rather than the icon */
 .tech-upgrade-explanation .upgrade-explanation-text {
+  flex: 1 1 100%;
+  min-width: 0;
+  padding-left: calc(20px + 0.6rem); /* align with label start */
   color: var(--tech-value-color) !important;
   font-weight: 400;
   line-height: 1.55;
   opacity: 1;
-  min-width: 0; /* GUARD: Allow long words to break */
-}
-
-.tech-upgrade-explanation .tech-label {
-  color: var(--tech-label-color) !important;
-  font-weight: 700;
-  opacity: 0.85;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  text-shadow: none;
 }
 
 body.light-e .tech-upgrade-explanation {
@@ -4422,6 +4460,7 @@ body.light-e .tech-upgrade-explanation {
     inset 0 1px 1px rgba(255,255,255,0.65),
     0 8px 20px rgba(0,0,0,0.09);
 }
+
 
 /* AI badge emphasis */
 .tech-detail .fa-brain + .tech-label + .support-badge,
@@ -5050,14 +5089,24 @@ body.light-e .tech-upgrade-explanation {
     margin: 9px 0;
   }
 
-  /* 2-col explanation collapses to icon + text */
+  /* Tighten the explanation box padding on mid-range phones */
   .tech-upgrade-explanation {
-    grid-template-columns: auto 1fr;
+    padding: 0.65rem 0.75rem;
+    gap: 0.3rem 0.5rem;
+  }
+
+  .tech-upgrade-explanation .upgrade-explanation-text {
+    padding-left: calc(16px + 0.5rem);
   }
 }
 
 /* ── 480px: standard small phones ── */
 @media screen and (max-width: 480px) {
+  /* Reduce body padding so cards get more horizontal room */
+  body {
+    padding: 16px;
+  }
+
   .tech-section {
     padding: 14px;
     margin-bottom: 14px;
@@ -5066,12 +5115,47 @@ body.light-e .tech-upgrade-explanation {
   .tech-item {
     padding: 12px;
     margin-bottom: 10px;
+    font-size: 0.95rem;
   }
 
   .tech-lifecycle-card {
     padding: 12px;
     border-radius: 16px;
     margin: 10px 0;
+  }
+
+  /* Stack FROM → TO lifecycle nodes vertically on small phones */
+  .tech-lifecycle-flow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  /* Rotate the arrow to point downward when stacked */
+  .tech-lifecycle-flow > i.fa-arrow-right {
+    transform: rotate(90deg);
+    align-self: center;
+    font-size: 0.8rem;
+    opacity: 0.7;
+  }
+
+  /* Nodes fill the full card width */
+  .tech-lifecycle-node {
+    width: 100%;
+    border-radius: 14px;
+    justify-content: center;
+    text-align: center;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .tech-upgrade-explanation {
+    padding: 0.6rem 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .tech-upgrade-explanation .upgrade-explanation-text {
+    font-size: 0.88rem;
   }
 
   .beta-page-section {
@@ -5231,8 +5315,13 @@ body.light-e .tech-upgrade-explanation {
 
   .tech-upgrade-explanation {
     padding: 0.55rem 0.65rem;
-    column-gap: 0.4rem;
+    gap: 0.25rem 0.4rem;
     font-size: 0.88rem;
+  }
+
+  .tech-upgrade-explanation .upgrade-explanation-text {
+    padding-left: calc(16px + 0.4rem);
+    font-size: 0.86rem;
   }
 
   .upgrade-triggers {
@@ -12123,7 +12212,7 @@ body.light-e .creator-sort-controls select option {
 / Add this at the VERY BOTTOM of the CSS file             /
 / ======================================================= /
 
-/ Global overflow protection for tech cards /
+/* Global overflow protection for tech cards */
 .tech-section,
 .tech-item,
 .tech-lifecycle-card,
@@ -12137,18 +12226,18 @@ body.light-e .creator-sort-controls select option {
   box-sizing: border-box;
 }
 
-/ Prevent text from forcing cards wider than screen */
-.tech-section *,
-.tech-item *,
-.tech-lifecycle-card *,
-.tech-advanced-details *,
+/* Prevent text from forcing cards wider than screen */
+.tech-section,
+.tech-item,
+.tech-lifecycle-card,
+.tech-advanced-details,
 .tech-upgrade-explanation ,
-.beta-page-section * {
+.beta-page-section {
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
-/ Prevent vertical one-letter label stacking /
+/* Prevent vertical one-letter label stacking */
 .tech-detail,
 .smart-upgrade-row {
   min-width: 0;
@@ -12163,7 +12252,7 @@ body.light-e .creator-sort-controls select option {
   white-space: normal;
 }
 
-/ Badges should wrap nicely instead of squishing text /
+/* Badges should wrap nicely instead of squishing text */
 .upgrade-badge,
 .support-badge,
 .os-badge,
@@ -12175,7 +12264,7 @@ body.light-e .creator-sort-controls select option {
   text-align: center;
 }
 
-/ Fix advanced details summary layout /
+/* Fix advanced details summary layout */
 .tech-advanced-details summary {
   min-width: 0;
   flex-wrap: wrap;
@@ -12186,14 +12275,14 @@ body.light-e .creator-sort-controls select option {
   flex-shrink: 0;
 }
 
-/ Better spacing for tech details on phones /
+/* Better spacing for tech details on phones */
 .tech-detail {
   align-items: flex-start;
 }
 
-/ ======================================================= /
+/* ======================================================= /
 / MOBILE: 700px and below                                /
-/ ======================================================= /
+/ ======================================================= */
 
 @media screen and (max-width: 700px) {
   .tech-section {
@@ -12280,10 +12369,10 @@ body.light-e .creator-sort-controls select option {
   }
 }
 
-/ ======================================================= /
+/* ======================================================= /
 / MOBILE: 540px and below                                /
 / This is where the screenshot issue is happening         /
-/ ======================================================= /
+/ ======================================================= */
 
 @media screen and (max-width: 540px) {
   .tech-section {
@@ -12374,10 +12463,10 @@ body.light-e .creator-sort-controls select option {
   }
 }
 
-/ ======================================================= /
+/* ======================================================= /
 / MOBILE: 430px and below                                /
 / iPhone portrait / narrow browser fix                   /
-/ ======================================================= /
+/ ======================================================= */
 
 @media screen and (max-width: 430px) {
   .tech-section {
@@ -12468,10 +12557,10 @@ body.light-e .creator-sort-controls select option {
   }
 }
 
-/ ======================================================= /
+/* ======================================================= /
 / MOBILE: 390px and below                                /
 / Fixes the exact screenshot vertical-text problem        /
-/ ======================================================= /
+/ ======================================================= */
 
 @media screen and (max-width: 390px) {
   .tech-detail {
@@ -12530,10 +12619,10 @@ body.light-e .creator-sort-controls select option {
   }
 }
 
-/ ======================================================= /
+/* ======================================================= /
 / MOBILE: 360px and below                                /
 / Very small phones                                      /
-/ ======================================================= /
+/ ======================================================= */
 
 @media screen and (max-width: 360px) {
   .tech-section {
@@ -12570,10 +12659,10 @@ body.light-e .creator-sort-controls select option {
   }
 }
 
-/ ======================================================= /
+/* ======================================================= /
 / BOTTOM NAV OVERLAP PROTECTION                          /
 / Use this because screenshots show bottom dock overlap   /
-/ ======================================================= /
+/ ======================================================= */
 
 @media screen and (max-width: 700px) {
   .tech-section,
@@ -12586,7 +12675,7 @@ body.light-e .creator-sort-controls select option {
   }
 }
 
-/ ======================================================= /
+/* ======================================================= /
 / SAFARI / iOS EDGE PROTECTION                            /
 / ======================================================= */
 
@@ -12595,6 +12684,38 @@ body.light-e .creator-sort-controls select option {
     .beta-page .container,
     .tech-section {
       padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+    }
+  }
+}
+
+/* ============================================================
+   RESPONSIVE BODY PADDING + SAFE-AREA FIX
+   (applied last so it wins over any earlier body {} rules)
+   ============================================================ */
+
+@media screen and (max-width: 480px) {
+  body {
+    padding: 16px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  body {
+    padding: 12px;
+  }
+}
+
+/* iPhone notch / Dynamic Island safe-area support */
+@supports (padding: env(safe-area-inset-left)) {
+  body {
+    padding-left:  max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+
+  @media screen and (max-width: 375px) {
+    body {
+      padding-left:  max(12px, env(safe-area-inset-left));
       padding-right: max(12px, env(safe-area-inset-right));
     }
   }
