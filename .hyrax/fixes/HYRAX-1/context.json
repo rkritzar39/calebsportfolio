@@ -1,0 +1,14 @@
+{
+  "affected_projects": [],
+  "audit_job_id": null,
+  "category": "security",
+  "created_at": "2026-06-26T17:15:09.044965+00:00",
+  "file": "post.js",
+  "line": 38,
+  "mode": "finding",
+  "project_path": null,
+  "ref": "HYRAX-1",
+  "severity": "critical",
+  "title": "Stored XSS via unescaped Firestore post fields rendered as innerHTML",
+  "tool": "mini_audit"
+}

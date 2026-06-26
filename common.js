@@ -99,6 +99,24 @@ class CommonManager {
     }
 }
 
+/**
+ * Escapes a value for safe insertion as text content inside an HTML attribute
+ * or element. Use this for every Firestore field interpolated into innerHTML.
+ * For rich-HTML content fields (post.content) use DOMPurify.sanitize() instead.
+ *
+ * @param {*} value
+ * @returns {string}
+ */
+function escapeHTML(value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
 // Accept cookies function
 function acceptCookies() {
     document.cookie = "cookieConsent=true; path=/; max-age=" + (60 * 60 * 24 * 365);

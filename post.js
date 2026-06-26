@@ -28,24 +28,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 const post = doc.data();
                 document.title = post.title; // Update page title
 
-                let timestampsHTML = `<span class="post-date">Posted on ${formatTimestamp(post.createdAt)}</span>`;
+                let timestampsHTML = `<span class="post-date">Posted on ${escapeHTML(formatTimestamp(post.createdAt))}</span>`;
                 // Check if updatedAt is significantly different from createdAt
                 if (post.updatedAt && post.createdAt && post.updatedAt.seconds - post.createdAt.seconds > 60) {
-                     timestampsHTML += `<br><span class="update-date">Last updated on ${formatTimestamp(post.updatedAt)}</span>`;
+                     timestampsHTML += `<br><span class="update-date">Last updated on ${escapeHTML(formatTimestamp(post.updatedAt))}</span>`;
                 }
 
+                // Sanitize the rich-HTML content field with DOMPurify to allow
+                // legitimate markup while stripping any injected scripts or event handlers.
+                const safeContent = (typeof DOMPurify !== 'undefined')
+                    ? DOMPurify.sanitize(post.content || '')
+                    : escapeHTML(post.content);
 
                 postContentArea.innerHTML = `
-                    <h1 class="post-title">${post.title}</h1>
+                    <h1 class="post-title">${escapeHTML(post.title)}</h1>
                     <div class="post-author-info">
-                        ${post.authorPfpUrl ? `<img src="${post.authorPfpUrl}" alt="${post.author}" class="author-pfp">` : ''}
+                        ${post.authorPfpUrl ? `<img src="${escapeHTML(post.authorPfpUrl)}" alt="${escapeHTML(post.author)}" class="author-pfp">` : ''}
                         <div class="author-details">
-                            <span class="author-name">${post.author}</span>
+                            <span class="author-name">${escapeHTML(post.author)}</span>
                             <div class="post-timestamps">${timestampsHTML}</div>
                         </div>
                     </div>
                     <div class="post-main-content">
-                        ${post.content}
+                        ${safeContent}
                     </div>
                 `;
             } else {

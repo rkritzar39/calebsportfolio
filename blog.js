@@ -70,18 +70,18 @@ document.addEventListener('DOMContentLoaded', () => {
             featuredContainer.innerHTML = `
                 <h2 class="section-title">Featured Post</h2>
                 <article class="featured-post">
-                    <img src="${featuredPost.imageUrl || 'images/default-post-image.jpg'}" alt="${featuredPost.title}" class="post-image-featured" onerror="this.style.display='none';">
+                    <img src="${escapeHTML(featuredPost.imageUrl || 'images/default-post-image.jpg')}" alt="${escapeHTML(featuredPost.title)}" class="post-image-featured" onerror="this.style.display='none';">
                     <div class="post-content-featured">
-                        <h2><a href="post.html?id=${featuredPost.id}">${featuredPost.title}</a></h2>
+                        <h2><a href="post.html?id=${escapeHTML(featuredPost.id)}">${escapeHTML(featuredPost.title)}</a></h2>
                         <div class="post-meta">
-                            <img src="${featuredPost.authorPfpUrl || 'images/default-profile.jpg'}" alt="${featuredPost.author}" class="author-pfp">
+                            <img src="${escapeHTML(featuredPost.authorPfpUrl || 'images/default-profile.jpg')}" alt="${escapeHTML(featuredPost.author)}" class="author-pfp">
                             <div class="author-details">
-                                <span class="author-name"><a href="author.html?name=${encodeURIComponent(featuredPost.author)}">${featuredPost.author}</a></span>
-                                <span class="post-timestamps">${formatDate(featuredPost.createdAt)}</span>
+                                <span class="author-name"><a href="author.html?name=${encodeURIComponent(featuredPost.author)}">${escapeHTML(featuredPost.author)}</a></span>
+                                <span class="post-timestamps">${escapeHTML(formatDate(featuredPost.createdAt))}</span>
                             </div>
                         </div>
-                        <p>${getShortContent(featuredPost.content, 200)}...</p>
-                        <a href="post.html?id=${featuredPost.id}" class="read-more-btn">Read Post <i class="fas fa-arrow-right"></i></a>
+                        <p>${escapeHTML(getShortContent(featuredPost.content, 200))}...</p>
+                        <a href="post.html?id=${escapeHTML(featuredPost.id)}" class="read-more-btn">Read Post <i class="fas fa-arrow-right"></i></a>
                     </div>
                 </article>
             `;
@@ -110,18 +110,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const postElement = document.createElement('article');
             postElement.className = 'post-item';
             postElement.innerHTML = `
-                <img src="${post.imageUrl || 'images/default-post-image.jpg'}" alt="${post.title}" class="post-image" onerror="this.style.display='none';">
+                <img src="${escapeHTML(post.imageUrl || 'images/default-post-image.jpg')}" alt="${escapeHTML(post.title)}" class="post-image" onerror="this.style.display='none';">
                 <div class="post-content">
-                    <h2><a href="post.html?id=${post.id}">${post.title}</a></h2>
+                    <h2><a href="post.html?id=${escapeHTML(post.id)}">${escapeHTML(post.title)}</a></h2>
                     <div class="post-meta">
-                        <img src="${post.authorPfpUrl || 'images/default-profile.jpg'}" alt="${post.author}" class="author-pfp">
+                        <img src="${escapeHTML(post.authorPfpUrl || 'images/default-profile.jpg')}" alt="${escapeHTML(post.author)}" class="author-pfp">
                         <div class="author-details">
-                            <span class="author-name"><a href="author.html?name=${encodeURIComponent(post.author)}">${post.author}</a></span>
-                            <span class="post-timestamps">${formatDate(post.createdAt)}</span>
+                            <span class="author-name"><a href="author.html?name=${encodeURIComponent(post.author)}">${escapeHTML(post.author)}</a></span>
+                            <span class="post-timestamps">${escapeHTML(formatDate(post.createdAt))}</span>
                         </div>
                     </div>
-                    <p>${getShortContent(post.content, 150)}...</p>
-                    <a href="post.html?id=${post.id}" class="read-more-btn">Read More <i class="fas fa-arrow-right"></i></a>
+                    <p>${escapeHTML(getShortContent(post.content, 150))}...</p>
+                    <a href="post.html?id=${escapeHTML(post.id)}" class="read-more-btn">Read More <i class="fas fa-arrow-right"></i></a>
                 </div>
             `;
             postsGrid.appendChild(postElement);
@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!categoryFiltersContainer) return;
         const categories = ['All', ...new Set(posts.map(post => post.category))];
         categoryFiltersContainer.innerHTML = categories.map(category =>
-            `<button class="category-btn ${category === 'All' ? 'active' : ''}" data-category="${category}">${category}</button>`
+            `<button class="category-btn ${category === 'All' ? 'active' : ''}" data-category="${escapeHTML(category)}">${escapeHTML(category)}</button>`
         ).join('');
     }
 
