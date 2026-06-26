@@ -7838,16 +7838,16 @@ async function initializeBlogListPageContent() {
         const authorLink = `author.html?name=${encodeURIComponent(featuredPost.author)}`;
         featuredContainer.innerHTML = `
             <article class="featured-post">
-                <h2>${featuredPost.title}</h2>
+                <h2>${escapeHTML(featuredPost.title)}</h2>
                 <div class="post-meta">
-                    ${featuredPost.authorPfpUrl ? `<img src="${featuredPost.authorPfpUrl}" class="author-pfp" alt="${featuredPost.author}">` : ""}
+                    ${featuredPost.authorPfpUrl ? `<img src="${escapeHTML(featuredPost.authorPfpUrl)}" class="author-pfp" alt="${escapeHTML(featuredPost.author)}">` : ""}
                     <div class="author-details">
-                        <span class="author-name"><a href="${authorLink}">${featuredPost.author}</a></span>
+                        <span class="author-name"><a href="${escapeHTML(authorLink)}">${escapeHTML(featuredPost.author)}</a></span>
                         <span class="post-time">${formatRelativeTime(featuredPost.createdAt, featuredPost.updatedAt)}</span>
                     </div>
                 </div>
-                <p>${featuredPost.content.substring(0, 200)}...</p>
-                <a href="post.html?id=${featuredPost.id}" class="read-more-btn">Read Full Story <i class="fas fa-arrow-right"></i></a>
+                <p>${escapeHTML(featuredPost.content.substring(0, 200))}...</p>
+                <a href="post.html?id=${encodeURIComponent(featuredPost.id)}" class="read-more-btn">Read Full Story <i class="fas fa-arrow-right"></i></a>
             </article>`;
     }
 }
@@ -7866,17 +7866,17 @@ function displayPosts(posts) {
         // The <p> tag for content is now moved above the post-meta for correct layout
         postCard.innerHTML = `
             <div class="post-card-content">
-                <span class="post-category">${post.category}</span>
-                <h3>${post.title}</h3>
-                <p>${post.content.substring(0, 100)}...</p>
+                <span class="post-category">${escapeHTML(post.category)}</span>
+                <h3>${escapeHTML(post.title)}</h3>
+                <p>${escapeHTML(post.content.substring(0, 100))}...</p>
                 <div class="post-meta">
-                    ${post.authorPfpUrl ? `<img src="${post.authorPfpUrl}" class="author-pfp" alt="${post.author}">` : ""}
+                    ${post.authorPfpUrl ? `<img src="${escapeHTML(post.authorPfpUrl)}" class="author-pfp" alt="${escapeHTML(post.author)}">` : ""}
                     <div class="author-details">
-                        <span class="author-name"><a href="${authorLink}">${post.author}</a></span>
+                        <span class="author-name"><a href="${escapeHTML(authorLink)}">${escapeHTML(post.author)}</a></span>
                         <span class="post-time">${formatRelativeTime(post.createdAt, post.updatedAt)}</span>
                     </div>
                 </div>
-                <a href="post.html?id=${post.id}" class="read-more-btn">Read More</a>
+                <a href="post.html?id=${encodeURIComponent(post.id)}" class="read-more-btn">Read More</a>
             </div>`;
         postsGrid.appendChild(postCard);
     });
@@ -7957,9 +7957,9 @@ async function initializePostPageContent() {
             // This is the corrected innerHTML structure
             postContentArea.innerHTML = `
                 <div class="post-author-info">
-                    ${post.authorPfpUrl ? `<img src="${post.authorPfpUrl}" alt="${post.author}" class="author-pfp">` : ''}
+                    ${post.authorPfpUrl ? `<img src="${escapeHTML(post.authorPfpUrl)}" alt="${escapeHTML(post.author)}" class="author-pfp">` : ''}
                     <div class="author-details">
-                        <span class="author-name"><a href="author.html?name=${encodeURIComponent(post.author)}">${post.author}</a></span>
+                        <span class="author-name"><a href="author.html?name=${encodeURIComponent(post.author)}">${escapeHTML(post.author)}</a></span>
                         <div class="post-timestamps">${timestampsHTML}</div>
                     </div>
                 </div>

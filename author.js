@@ -2,6 +2,21 @@
 import { db } from './firebase-init.js';
 import { collection, query, where, getDocs, orderBy, Timestamp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
+/**
+ * Escapes a string for safe interpolation into HTML content or attributes.
+ * Converts the five characters that have special meaning in HTML/XML.
+ * @param {*} value - The value to escape (coerced to string).
+ * @returns {string}
+ */
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
 // Helper function to format time
 function formatRelativeTime(createdAt, updatedAt) {
     if (!createdAt) return "Posted (unknown time)";
@@ -49,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.title = `Posts by ${authorName}`; // Keep the page title the same
 
     async function fetchPostsByAuthor() {
-        postsGrid.innerHTML = `<p>Loading posts by ${authorName}...</p>`;
+        postsGrid.innerHTML = `<p>Loading posts by ${escapeHTML(authorName)}...</p>`;
         try {
             const postsRef = collection(db, 'posts');
             const authorQuery = query(postsRef, where("author", "==", authorName), orderBy("createdAt", "desc"));
@@ -77,17 +92,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 postCard.innerHTML = `
                     <div class="post-card-content">
-                        <span class="post-category">${post.category}</span>
-                        <h3>${post.title}</h3>
-                        <p>${post.content.substring(0, 100)}...</p>
+                        <span class="post-category">${escapeHTML(post.category)}</span>
+                        <h3>${escapeHTML(post.title)}</h3>
+                        <p>${escapeHTML(post.content.substring(0, 100))}...</p>
                         <div class="post-meta">
-                            <img src="${authorPfpUrl}" class="author-pfp" alt="${authorName}">
+                            <img src="${escapeHTML(authorPfpUrl)}" class="author-pfp" alt="${escapeHTML(authorName)}">
                             <div class="author-details">
-                                <span class="author-name">${authorName}</span>
+                                <span class="author-name">${escapeHTML(authorName)}</span>
                                 <span class="post-time">${formatRelativeTime(post.createdAt, post.updatedAt)}</span>
                             </div>
                         </div>
-                        <a href="post.html?id=${post.id}" class="read-more-btn">Read More</a>
+                        <a href="post.html?id=${encodeURIComponent(post.id)}" class="read-more-btn">Read More</a>
                     </div>`;
                 postsGrid.appendChild(postCard);
             });
