@@ -77,17 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 postCard.innerHTML = `
                     <div class="post-card-content">
-                        <span class="post-category">${post.category}</span>
-                        <h3>${post.title}</h3>
-                        <p>${post.content.substring(0, 100)}...</p>
+                        <span class="post-category">${escapeHTML(post.category)}</span>
+                        <h3>${escapeHTML(post.title)}</h3>
+                        <p>${escapeHTML(post.content.substring(0, 100))}...</p>
                         <div class="post-meta">
-                            <img src="${authorPfpUrl}" class="author-pfp" alt="${authorName}">
+                            <img src="${escapeHTML(authorPfpUrl)}" class="author-pfp" alt="${escapeHTML(authorName)}">
                             <div class="author-details">
-                                <span class="author-name">${authorName}</span>
-                                <span class="post-time">${formatRelativeTime(post.createdAt, post.updatedAt)}</span>
+                                <span class="author-name">${escapeHTML(authorName)}</span>
+                                <span class="post-time">${escapeHTML(formatRelativeTime(post.createdAt, post.updatedAt))}</span>
                             </div>
                         </div>
-                        <a href="post.html?id=${post.id}" class="read-more-btn">Read More</a>
+                        <a href="post.html?id=${escapeHTML(post.id)}" class="read-more-btn">Read More</a>
                     </div>`;
                 postsGrid.appendChild(postCard);
             });
