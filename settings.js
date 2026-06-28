@@ -1601,7 +1601,6 @@ class SettingsManager {
   }
 
   escapeHTML(value) {
-    // FIXED: Corrected mapping values to real entity targets instead of replacing items with themselves
     return String(value)
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
@@ -1659,7 +1658,7 @@ class SettingsManager {
       setTimeout(() => toast.remove(), 250);
     }, 4000);
   }
-
+  
   getNotificationSettings() {
     let settings = {};
 
@@ -1672,9 +1671,10 @@ class SettingsManager {
     return {
       enabled: settings.notifications?.enabled ?? false,
       categories: {
-        updates: settings.notifications?.categories?.updates ?? false,
-        liveActivity: settings.notifications?.categories?.liveActivity ?? false,
-        creators: settings.notifications?.categories?.creators ?? false,
+        website: settings.notifications?.categories?.website ?? true,
+        college: settings.notifications?.categories?.college ?? false,
+        youtube: settings.notifications?.categories?.youtube ?? false,
+        discord: settings.notifications?.categories?.discord ?? false,
       },
     };
   }
@@ -1688,103 +1688,78 @@ class SettingsManager {
       settings = {};
     }
 
-    settings.notifications = {
-      enabled: next.enabled ?? false,
-      categories: {
-        updates: next.categories?.updates ?? false,
-        liveActivity: next.categories?.liveActivity ?? false,
-        creators: next.categories?.creators ?? false,
-      },
-    };
-
+    settings.notifications = next;
     localStorage.setItem("websiteSettings", JSON.stringify(settings));
 
     this.applyNotificationUI();
   }
 
-    applyNotificationUI() {
+  applyNotificationUI() {
     const state = this.getNotificationSettings();
 
-    const main = document.getElementById("inSiteNotificationsToggle");
-    const group = document.getElementById("notificationCategories");
-    const upd = document.getElementById("notifUpdatesToggle");
-    const live = document.getElementById("notifLiveActivityToggle");
-    const cre = document.getElementById("notifCreatorUpdatesToggle");
+    const main = document.getElementById("enableNotificationsToggle");
+    const web = document.getElementById("topicWebsite");
+    const col = document.getElementById("topicCollege");
+    const yt = document.getElementById("topicYoutube");
+    const disc = document.getElementById("topicDiscord");
 
-    // 1. Only abort if the MAIN toggle is missing
     if (!main) return;
 
-    // 2. Apply the main toggle state
     main.checked = !!state.enabled;
 
-    // 3. Safely apply the group display ONLY if the group element exists in the HTML
-    if (group) {
-      group.style.display = state.enabled ? "block" : "none";
-    }
-
-    // 4. Safely apply sub-categories (your getNotificationSettings already guarantees state.categories exists)
-    if (upd) upd.checked = !!state.categories.updates;
-    if (live) live.checked = !!state.categories.liveActivity;
-    if (cre) cre.checked = !!state.categories.creators;
+    if (web) web.checked = !!state.categories.website;
+    if (col) col.checked = !!state.categories.college;
+    if (yt) yt.checked = !!state.categories.youtube;
+    if (disc) disc.checked = !!state.categories.discord;
   }
 
-
   initNotificationSettings() {
-    const main = document.getElementById("inSiteNotificationsToggle");
+    const main = document.getElementById("enableNotificationsToggle");
     if (!main) return;
 
-    const upd = document.getElementById("notifUpdatesToggle");
-    const live = document.getElementById("notifLiveActivityToggle");
-    const cre = document.getElementById("notifCreatorUpdatesToggle");
+    const web = document.getElementById("topicWebsite");
+    const col = document.getElementById("topicCollege");
+    const yt = document.getElementById("topicYoutube");
+    const disc = document.getElementById("topicDiscord");
 
+    // Load initial states on page load
     this.applyNotificationUI();
 
+    // Listen for main toggle clicks
     main.addEventListener("change", () => {
       const state = this.getNotificationSettings();
-
       state.enabled = main.checked;
-
-      state.categories = state.categories || {
-        updates: false,
-        liveActivity: false,
-        creators: false,
-      };
-
+      
       this.setNotificationSettings(state);
 
       this.showToast(
         state.enabled ? "Notifications Enabled" : "Notifications Disabled",
-        state.enabled ? "You’ll now see in-site alerts." : "Notifications turned off."
+        state.enabled ? "You’ll now receive updates." : "Notifications turned off."
       );
     });
 
+    // Reusable function to listen for sub-category clicks
     const wireCat = (el, key) => {
       if (!el) return;
 
       el.addEventListener("change", () => {
         const state = this.getNotificationSettings();
-
-        state.categories = state.categories || {
-          updates: false,
-          liveActivity: false,
-          creators: false,
-        };
-
         state.categories[key] = el.checked;
-
+        
         this.setNotificationSettings(state);
 
-        const label =
-          el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
-
+        const label = el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
         this.showToast("Preference Saved", `${label} updated.`);
       });
     };
 
-    wireCat(upd, "updates");
-    wireCat(live, "liveActivity");
-    wireCat(cre, "creators");
+    // Wire up all categories
+    wireCat(web, "website");
+    wireCat(col, "college");
+    wireCat(yt, "youtube");
+    wireCat(disc, "discord");
   }
+
 
   /* =============================
      Reset Controls
