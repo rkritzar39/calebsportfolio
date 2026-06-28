@@ -1217,8 +1217,26 @@ async function loadAndDisplaySocialLinks() {
     containerElement.innerHTML = '<p class="social-loading">Loading socials...</p>';
 
     try {
-        const linkQuery = query(socialLinksCollectionRef, orderBy("order", "asc"));
-        const querySnapshot = await getDocs(linkQuery);
+        console.log("Loading social links from Firestore...");
+        console.log("Collection ref:", socialLinksCollectionRef);
+
+        const linkQuery = query(
+            socialLinksCollectionRef,
+            orderBy("order", "asc")
+        );
+
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => {
+                reject(new Error("Social links request timed out."));
+            }, 10000);
+        });
+
+        const querySnapshot = await Promise.race([
+            getDocs(linkQuery),
+            timeoutPromise
+        ]);
+
+        console.log("Social links snapshot received:", querySnapshot);
 
         containerElement.innerHTML = '';
 
@@ -1237,16 +1255,6 @@ async function loadAndDisplaySocialLinks() {
 
                 let url = String(data.url).trim();
 
-                /*
-                  Keeps your existing links working.
-                  If the URL does not start with a protocol, add https://.
-                  This allows:
-                  - instagram.com/example
-                  - www.instagram.com/example
-                  - https://instagram.com/example
-                  - mailto:example@email.com
-                  - tel:1234567890
-                */
                 if (
                     !url.startsWith('http://') &&
                     !url.startsWith('https://') &&
@@ -1277,12 +1285,13 @@ async function loadAndDisplaySocialLinks() {
 
                 displayedCount++;
             } else {
-                console.warn("Skipping social link item due to missing label or URL:", doc.id);
+                console.warn("Skipping social link item due to missing label or URL:", doc.id, data);
             }
         });
 
         if (displayedCount === 0) {
             containerElement.innerHTML = '<p class="no-results">No valid social links available.</p>';
+            return;
         }
 
         console.log(Displayed ${displayedCount} social links.);
@@ -1294,6 +1303,10 @@ async function loadAndDisplaySocialLinks() {
         if (error.code === 'failed-precondition') {
             errorMsg = "Error: DB configuration needed for socials (order).";
             console.error("Missing Firestore index for social_links collection, ordered by 'order'.");
+        }
+
+        if (error.message === "Social links request timed out.") {
+            errorMsg = "Social links took too long to load.";
         }
 
         containerElement.innerHTML = <p class="error">${errorMsg}</p>;
