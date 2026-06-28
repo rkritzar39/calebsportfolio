@@ -1508,8 +1508,13 @@ body.settings-page .setting-card.layout-reset-card .setting-icon-container.layou
 / ======================================================= */
 
 .notifications-disabled-section {
-    position: relative;
-    overflow: hidden;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Keep all notification cards inside the parent glass area */
+.notifications-disabled-section .setting-card {
+    box-sizing: border-box !important;
 }
 
 /* ======================================================= /
@@ -1517,18 +1522,23 @@ body.settings-page .setting-card.layout-reset-card .setting-icon-container.layou
 / ======================================================= */
 
 .notification-coming-soon-hero {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 14px;
+    position: relative !important;
 
-    margin: 14px 0 16px;
-    padding: 18px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
 
-    border-radius: var(--ios-radius-xl);
-    overflow: hidden;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 
-    color: var(--text-color);
+    margin: 14px 0 16px !important;
+    padding: 18px !important;
+
+    border-radius: var(--ios-radius-xl) !important;
+    overflow: hidden !important;
+
+    color: var(--text-color) !important;
 
     background:
         radial-gradient(
@@ -1542,16 +1552,16 @@ body.settings-page .setting-card.layout-reset-card .setting-icon-container.layou
             rgba(255, 59, 48, 0.12),
             rgba(142, 142, 147, 0.14)
         ),
-        rgba(255, 255, 255, 0.18);
+        rgba(255, 255, 255, 0.18) !important;
 
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
+    backdrop-filter: var(--backdrop-blur) !important;
+    -webkit-backdrop-filter: var(--backdrop-blur) !important;
 
-    border: 1px solid rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
 
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        0 18px 42px rgba(0, 0, 0, 0.18);
+        0 18px 42px rgba(0, 0, 0, 0.18) !important;
 }
 
 body.dark-mode .notification-coming-soon-hero,
@@ -1567,202 +1577,239 @@ html.dark-mode body .notification-coming-soon-hero {
             rgba(255, 149, 0, 0.14),
             rgba(255, 69, 58, 0.10),
             rgba(28, 28, 30, 0.52)
-        );
+        ) !important;
 
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.12) !important;
 }
 
 /* Hero icon */
 .coming-soon-icon-wrap {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
 
-    display: grid;
-    place-items: center;
+    display: grid !important;
+    place-items: center !important;
 
-    border-radius: 17px;
+    border-radius: 17px !important;
 
-    color: #ffffff;
-    background: linear-gradient(135deg, #ff9500, #ff3b30);
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #ff9500, #ff3b30) !important;
 
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.4),
-        0 10px 24px rgba(255, 59, 48, 0.28);
+        0 10px 24px rgba(255, 59, 48, 0.28) !important;
 }
 
 .coming-soon-icon-wrap i {
-    font-size: 21px;
+    font-size: 21px !important;
+    color: #ffffff !important;
 }
 
 .coming-soon-content {
-    min-width: 0;
-    flex: 1;
+    min-width: 0 !important;
+    flex: 1 !important;
+    overflow: hidden !important;
 }
 
 .coming-soon-title-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-wrap: nowrap !important;
 }
 
 .coming-soon-title {
-    color: var(--text-color);
-    font-size: 18px;
-    font-weight: 800;
-    line-height: 1.2;
-    letter-spacing: -0.03em;
+    flex: 1 !important;
+    min-width: 0 !important;
+
+    color: var(--text-color) !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.03em !important;
+
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
 }
 
 .coming-soon-description {
-    margin: 6px 0 10px;
-    color: var(--secondary-text);
-    font-size: 13.5px;
-    line-height: 1.45;
+    margin: 6px 0 10px !important;
+
+    color: var(--secondary-text) !important;
+    font-size: 13.5px !important;
+    line-height: 1.45 !important;
+
+    overflow-wrap: break-word !important;
 }
 
 .coming-soon-meta {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+    display: flex !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
 }
 
 .coming-soon-meta span {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
 
-    padding: 6px 10px;
-    border-radius: 999px;
+    padding: 6px 10px !important;
+    border-radius: 999px !important;
 
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-color);
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: var(--text-color) !important;
 
-    background: rgba(255, 255, 255, 0.24);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.24) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
 
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
 }
 
 body.dark-mode .coming-soon-meta span,
 html.dark-mode body .coming-soon-meta span {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
 }
 
 /* ======================================================= /
 / Disabled Setting Cards Fixed Layout                     /
 / ======================================================= */
 
-.notifications-disabled-section .setting-card.disabled-setting {
-    display: grid;
-    grid-template-columns: 52px minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 14px;
-
-    width: 100%;
-    min-height: unset;
-    padding: 14px 16px;
-
-    opacity: 0.86;
-    filter: grayscale(1);
-    cursor: not-allowed;
-    user-select: none;
+.notifications-disabled-section .setting-label {
+    min-width: 0 !important;
+    overflow: hidden !important;
 }
 
-.notifications-disabled-section label.setting-card.disabled-setting {
-    min-height: 84px;
+.notifications-disabled-section .setting-card.disabled-setting {
+    position: relative !important;
+
+    display: grid !important;
+    grid-template-columns: 56px minmax(0, 1fr) 64px !important;
+    align-items: center !important;
+    gap: 14px !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+
+    padding: 18px 18px !important;
+    min-height: 112px !important;
+
+    opacity: 0.86 !important;
+    filter: grayscale(1) !important;
+
+    overflow: hidden !important;
+    cursor: not-allowed !important;
+    user-select: none !important;
 }
 
 .notifications-disabled-section .setting-card.disabled-setting.no-switch-card {
-    grid-template-columns: 52px minmax(0, 1fr);
-}
-
-.notifications-disabled-section .setting-card.disabled-setting * {
-    cursor: not-allowed;
+    grid-template-columns: 56px minmax(0, 1fr) !important;
 }
 
 .notifications-disabled-section .setting-card.disabled-setting:hover {
     transform: none !important;
 }
 
+.notifications-disabled-section .setting-card.disabled-setting,
+.notifications-disabled-section .setting-card.disabled-setting * {
+    cursor: not-allowed !important;
+}
+
 /* Disabled icons */
 .notifications-disabled-section .setting-icon-container.disabled-icon,
 .notifications-disabled-section .setting-icon-container.disabled-emoji-icon {
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
 
-    display: grid;
-    place-items: center;
+    display: grid !important;
+    place-items: center !important;
 
-    border-radius: 50%;
+    border-radius: 50% !important;
 
-    color: #ffffff;
-    background: linear-gradient(135deg, #8e8e93, #636366) !important;
+    color: #ffffff !important;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(190, 190, 195, 0.95),
+            rgba(112, 112, 118, 0.95)
+        ) !important;
 
-    font-size: 23px;
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.28),
-        0 6px 16px rgba(0, 0, 0, 0.18);
-}
-
-.notifications-disabled-section .setting-icon-container.disabled-icon i {
-    color: #ffffff;
-}
-
-/* Text area */
-.notifications-disabled-section .setting-label {
-    min-width: 0;
-}
-
-.notifications-disabled-section .setting-title {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
-
-    color: var(--text-color);
-    font-size: 16.5px;
-    line-height: 1.25;
-}
-
-.notifications-disabled-section .setting-description {
-    margin-top: 3px;
-    font-size: 13px;
-    line-height: 1.35;
-    color: var(--secondary-text);
-}
-
-.disabled-reason {
-    color: var(--secondary-text);
-}
-
-/* Coming Soon badge */
-.coming-soon-badge {
-    display: inline-flex;
-    align-items: center;
-
-    margin-left: 0;
-    padding: 3px 8px;
-
-    border-radius: 999px;
-
-    color: #ffffff;
-    background: linear-gradient(135deg, #ff9500, #ff3b30);
-
-    font-size: 10.5px;
-    font-weight: 800;
-    line-height: 1.1;
-    white-space: nowrap;
+    font-size: 24px !important;
 
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        0 5px 12px rgba(255, 59, 48, 0.2);
+        0 8px 18px rgba(0, 0, 0, 0.18) !important;
+}
+
+.notifications-disabled-section .setting-icon-container.disabled-icon i {
+    color: #ffffff !important;
+}
+
+/* Text area */
+.notifications-disabled-section .setting-title {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+
+    max-width: 100% !important;
+
+    color: var(--text-color) !important;
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+}
+
+.notifications-disabled-section .setting-description {
+    max-width: 100% !important;
+
+    margin-top: 5px !important;
+
+    color: var(--secondary-text) !important;
+    font-size: 14px !important;
+    line-height: 1.38 !important;
+
+    overflow-wrap: break-word !important;
+}
+
+.disabled-reason {
+    color: var(--secondary-text) !important;
+}
+
+/* Coming Soon badge */
+.notifications-disabled-section .coming-soon-badge,
+.coming-soon-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+
+    max-width: max-content !important;
+
+    margin-left: 0 !important;
+    padding: 4px 10px !important;
+
+    border-radius: 999px !important;
+
+    color: #ffffff !important;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(180, 180, 185, 0.95),
+            rgba(118, 118, 124, 0.95)
+        ) !important;
+
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 4px 12px rgba(0, 0, 0, 0.16) !important;
 }
 
 /* ======================================================= /
@@ -1770,51 +1817,92 @@ html.dark-mode body .coming-soon-meta span {
 / ======================================================= */
 
 .notifications-disabled-section .md-switch {
-    width: 56px;
-    min-width: 56px;
-    justify-self: end;
+    width: 54px !important;
+    min-width: 54px !important;
+    max-width: 54px !important;
+
+    justify-self: end !important;
+    align-self: center !important;
+
+    margin: 0 !important;
+    transform: none !important;
+}
+
+.notifications-disabled-section .md-switch input {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 .notifications-disabled-section .md-switch input:disabled {
-    pointer-events: none;
+    pointer-events: none !important;
 }
 
-/* Track */
+/* Switch track */
+.notifications-disabled-section .md-switch .track,
 .notifications-disabled-section .md-switch input:disabled + .track,
 .notifications-disabled-section .disabled-switch .track {
-    background: rgba(142, 142, 147, 0.32) !important;
-    border: 1px solid rgba(142, 142, 147, 0.28) !important;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.18) !important;
+    position: relative !important;
+
+    width: 54px !important;
+    height: 32px !important;
+
+    border-radius: 999px !important;
+
+    background: rgba(142, 142, 147, 0.28) !important;
+    border: 1px solid rgba(142, 142, 147, 0.24) !important;
+
+    box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.22) !important;
 }
 
-/* Even if checked in HTML, force it gray */
+/* Even if checked by old JS/localStorage, force gray */
 .notifications-disabled-section .md-switch input:disabled:checked + .track,
-.notifications-disabled-section .md-switch input:checked:disabled + .track {
-    background: rgba(142, 142, 147, 0.32) !important;
+.notifications-disabled-section .md-switch input:checked:disabled + .track,
+.notifications-disabled-section .md-switch input:checked + .track {
+    background: rgba(142, 142, 147, 0.28) !important;
 }
 
-/* Thumb */
+/* Switch thumb */
+.notifications-disabled-section .md-switch .thumb,
 .notifications-disabled-section .md-switch input:disabled + .track .thumb,
+.notifications-disabled-section .disabled-switch .thumb {
+    position: absolute !important;
+
+    width: 26px !important;
+    height: 26px !important;
+
+    top: 2px !important;
+    left: 2px !important;
+
+    border-radius: 50% !important;
+
+    background: #bdbdc2 !important;
+    box-shadow: none !important;
+
+    transform: translateX(0) !important;
+}
+
+/* Force checked disabled switches to appear OFF */
 .notifications-disabled-section .md-switch input:disabled:checked + .track .thumb,
 .notifications-disabled-section .md-switch input:checked:disabled + .track .thumb,
-.notifications-disabled-section .disabled-switch .thumb {
-    background: #c7c7cc !important;
-    box-shadow: none !important;
+.notifications-disabled-section .md-switch input:checked + .track .thumb {
+    left: 2px !important;
     transform: translateX(0) !important;
 }
 
 /* Dark mode switches */
-body.dark-mode .notifications-disabled-section .md-switch input:disabled + .track,
+body.dark-mode .notifications-disabled-section .md-switch .track,
 body.dark-mode .notifications-disabled-section .disabled-switch .track,
-html.dark-mode body .notifications-disabled-section .md-switch input:disabled + .track,
+html.dark-mode body .notifications-disabled-section .md-switch .track,
 html.dark-mode body .notifications-disabled-section .disabled-switch .track {
     background: rgba(99, 99, 102, 0.36) !important;
     border-color: rgba(142, 142, 147, 0.2) !important;
 }
 
-body.dark-mode .notifications-disabled-section .md-switch input:disabled + .track .thumb,
+body.dark-mode .notifications-disabled-section .md-switch .thumb,
 body.dark-mode .notifications-disabled-section .disabled-switch .thumb,
-html.dark-mode body .notifications-disabled-section .md-switch input:disabled + .track .thumb,
+html.dark-mode body .notifications-disabled-section .md-switch .thumb,
 html.dark-mode body .notifications-disabled-section .disabled-switch .thumb {
     background: #a1a1a6 !important;
 }
@@ -1824,106 +1912,108 @@ html.dark-mode body .notifications-disabled-section .disabled-switch .thumb {
 / ======================================================= */
 
 .delay-info-button {
-    position: relative;
+    position: relative !important;
 
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
 
-    display: inline-grid;
-    place-items: center;
+    display: inline-grid !important;
+    place-items: center !important;
 
-    border: none;
-    border-radius: 999px;
+    border: none !important;
+    border-radius: 999px !important;
 
-    color: var(--text-color);
-    background: rgba(255, 255, 255, 0.54);
+    color: var(--text-color) !important;
+    background: rgba(255, 255, 255, 0.54) !important;
 
-    cursor: pointer;
+    cursor: pointer !important;
 
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.6),
-        0 5px 14px rgba(0, 0, 0, 0.12);
+        0 5px 14px rgba(0, 0, 0, 0.12) !important;
 
     transition:
         transform var(--transition-fast),
-        background var(--transition-fast);
+        background var(--transition-fast) !important;
+
+    flex: 0 0 auto !important;
 }
 
 .delay-info-button i {
-    font-size: 14px;
+    font-size: 14px !important;
 }
 
 .delay-info-button:hover,
 .delay-info-button:focus-visible,
 .delay-info-button.is-open {
-    transform: scale(1.06);
-    outline: none;
-    background: rgba(255, 255, 255, 0.72);
+    transform: scale(1.06) !important;
+    outline: none !important;
+    background: rgba(255, 255, 255, 0.72) !important;
 }
 
 /* Tooltip bubble */
 .delay-info-button::after {
-    content: attr(data-tooltip);
+    content: attr(data-tooltip) !important;
 
-    position: absolute;
-    right: 0;
-    bottom: calc(100% + 12px);
+    position: absolute !important;
+    right: 0 !important;
+    bottom: calc(100% + 12px) !important;
 
-    width: min(280px, 76vw);
-    padding: 12px 14px;
+    width: min(280px, 76vw) !important;
+    padding: 12px 14px !important;
 
-    border-radius: 16px;
+    border-radius: 16px !important;
 
-    color: var(--text-color);
-    font-size: 12.5px;
-    font-weight: 600;
-    line-height: 1.42;
-    text-align: left;
+    color: var(--text-color) !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    line-height: 1.42 !important;
+    text-align: left !important;
 
-    background: rgba(255, 255, 255, 0.86);
+    background: rgba(255, 255, 255, 0.86) !important;
 
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
 
-    border: 1px solid rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
 
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.7),
-        0 16px 34px rgba(0, 0, 0, 0.2);
+        0 16px 34px rgba(0, 0, 0, 0.2) !important;
 
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(8px) scale(0.96);
-    transform-origin: bottom right;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(8px) scale(0.96) !important;
+    transform-origin: bottom right !important;
 
-    pointer-events: none;
-    z-index: 999;
+    pointer-events: none !important;
+    z-index: 999 !important;
 }
 
 /* Tooltip arrow */
 .delay-info-button::before {
-    content: "";
+    content: "" !important;
 
-    position: absolute;
-    right: 10px;
-    bottom: calc(100% + 5px);
+    position: absolute !important;
+    right: 10px !important;
+    bottom: calc(100% + 5px) !important;
 
-    width: 14px;
-    height: 14px;
+    width: 14px !important;
+    height: 14px !important;
 
-    background: rgba(255, 255, 255, 0.86);
+    background: rgba(255, 255, 255, 0.86) !important;
 
-    transform: rotate(45deg);
+    transform: rotate(45deg) !important;
 
-    border-right: 1px solid rgba(255, 255, 255, 0.45);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+    border-right: 1px solid rgba(255, 255, 255, 0.45) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.45) !important;
 
-    opacity: 0;
-    visibility: hidden;
+    opacity: 0 !important;
+    visibility: hidden !important;
 
-    pointer-events: none;
-    z-index: 998;
+    pointer-events: none !important;
+    z-index: 998 !important;
 }
 
 .delay-info-button:hover::after,
@@ -1932,20 +2022,20 @@ html.dark-mode body .notifications-disabled-section .disabled-switch .thumb {
 .delay-info-button:focus-visible::before,
 .delay-info-button.is-open::after,
 .delay-info-button.is-open::before {
-    opacity: 1;
-    visibility: visible;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .delay-info-button:hover::after,
 .delay-info-button:focus-visible::after,
 .delay-info-button.is-open::after {
-    transform: translateY(0) scale(1);
+    transform: translateY(0) scale(1) !important;
 }
 
 /* Dark mode tooltip */
 body.dark-mode .delay-info-button,
 html.dark-mode body .delay-info-button {
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.16) !important;
 }
 
 body.dark-mode .delay-info-button:hover,
@@ -1954,146 +2044,188 @@ body.dark-mode .delay-info-button.is-open,
 html.dark-mode body .delay-info-button:hover,
 html.dark-mode body .delay-info-button:focus-visible,
 html.dark-mode body .delay-info-button.is-open {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.22) !important;
 }
 
 body.dark-mode .delay-info-button::after,
 html.dark-mode body .delay-info-button::after {
-    background: rgba(28, 28, 30, 0.94);
-    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(28, 28, 30, 0.94) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
 }
 
 body.dark-mode .delay-info-button::before,
 html.dark-mode body .delay-info-button::before {
-    background: rgba(28, 28, 30, 0.94);
-    border-color: rgba(255, 255, 255, 0.14);
+    background: rgba(28, 28, 30, 0.94) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
 }
 
 /* ======================================================= /
-/ Mobile Fixes                                            /
+/ Mobile Layout Fix                                       /
 / ======================================================= */
 
 @media screen and (max-width: 520px) {
     .notification-coming-soon-hero {
-        display: grid;
-        grid-template-columns: 44px minmax(0, 1fr);
-        align-items: start;
-        gap: 12px;
+        display: grid !important;
+        grid-template-columns: 54px minmax(0, 1fr) !important;
+        align-items: start !important;
 
-        padding: 15px;
-        margin: 12px 0 14px;
+        gap: 14px !important;
+        padding: 16px !important;
+        margin: 12px 0 16px !important;
     }
 
     .coming-soon-icon-wrap {
-        width: 44px;
-        height: 44px;
-        min-width: 44px;
-        border-radius: 15px;
+        width: 54px !important;
+        height: 54px !important;
+        min-width: 54px !important;
+        border-radius: 16px !important;
     }
 
     .coming-soon-icon-wrap i {
-        font-size: 18px;
+        font-size: 20px !important;
+    }
+
+    .coming-soon-title-row {
+        gap: 8px !important;
     }
 
     .coming-soon-title {
-        font-size: 16.5px;
+        font-size: 18px !important;
+        line-height: 1.18 !important;
     }
 
     .coming-soon-description {
-        font-size: 12.8px;
-        line-height: 1.4;
+        font-size: 14px !important;
+        line-height: 1.45 !important;
     }
 
     .coming-soon-meta {
-        gap: 6px;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
     }
 
     .coming-soon-meta span {
-        padding: 5px 8px;
-        font-size: 11.5px;
+        font-size: 12.5px !important;
+        padding: 7px 10px !important;
     }
 
     .notifications-disabled-section .setting-card.disabled-setting {
-        grid-template-columns: 46px minmax(0, 1fr) 54px;
-        gap: 12px;
+        grid-template-columns: 54px minmax(0, 1fr) 58px !important;
+        gap: 14px !important;
 
-        padding: 13px 14px;
-        min-height: 78px;
+        padding: 18px 14px !important;
+        min-height: 108px !important;
     }
 
     .notifications-disabled-section .setting-card.disabled-setting.no-switch-card {
-        grid-template-columns: 46px minmax(0, 1fr);
+        grid-template-columns: 54px minmax(0, 1fr) !important;
     }
 
     .notifications-disabled-section .setting-icon-container.disabled-icon,
     .notifications-disabled-section .setting-icon-container.disabled-emoji-icon {
-        width: 46px;
-        height: 46px;
-        min-width: 46px;
-        font-size: 21px;
+        width: 54px !important;
+        height: 54px !important;
+        min-width: 54px !important;
+        font-size: 23px !important;
     }
 
     .notifications-disabled-section .setting-title {
-        font-size: 15.5px;
-        line-height: 1.22;
+        font-size: 17px !important;
+        line-height: 1.22 !important;
     }
 
     .notifications-disabled-section .setting-description {
-        font-size: 12.5px;
+        font-size: 13.5px !important;
+        line-height: 1.38 !important;
     }
 
-    .coming-soon-badge {
-        font-size: 10px;
-        padding: 3px 7px;
+    .notifications-disabled-section .coming-soon-badge {
+        font-size: 11.5px !important;
+        padding: 4px 9px !important;
+    }
+
+    .notifications-disabled-section .md-switch {
+        width: 54px !important;
+        min-width: 54px !important;
+        max-width: 54px !important;
     }
 
     .delay-info-button {
-        width: 28px;
-        height: 28px;
-        min-width: 28px;
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
     }
 
     .delay-info-button::after {
-        right: -8px;
-        width: min(250px, 72vw);
+        right: -8px !important;
+        width: min(250px, 72vw) !important;
     }
 }
 
-/ Very small phones /
+/* ======================================================= /
+/ Extra Small Phones                                      /
+/ ======================================================= */
+
 @media screen and (max-width: 390px) {
     .notifications-disabled-section .setting-card.disabled-setting {
-        grid-template-columns: 42px minmax(0, 1fr) 50px;
-        gap: 10px;
-        padding: 12px;
+        grid-template-columns: 50px minmax(0, 1fr) 54px !important;
+        gap: 12px !important;
+
+        padding: 16px 12px !important;
+        min-height: 104px !important;
     }
 
     .notifications-disabled-section .setting-card.disabled-setting.no-switch-card {
-        grid-template-columns: 42px minmax(0, 1fr);
+        grid-template-columns: 50px minmax(0, 1fr) !important;
     }
 
     .notifications-disabled-section .setting-icon-container.disabled-icon,
     .notifications-disabled-section .setting-icon-container.disabled-emoji-icon {
-        width: 42px;
-        height: 42px;
-        min-width: 42px;
-        font-size: 19px;
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px !important;
+        font-size: 21px !important;
     }
 
     .notifications-disabled-section .setting-title {
-        font-size: 15px;
+        font-size: 16px !important;
+    }
+
+    .notifications-disabled-section .setting-description {
+        font-size: 13px !important;
+    }
+
+    .notifications-disabled-section .coming-soon-badge {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
     }
 
     .notifications-disabled-section .md-switch {
-        width: 50px;
-        min-width: 50px;
+        width: 52px !important;
+        min-width: 52px !important;
+        max-width: 52px !important;
+    }
+
+    .notifications-disabled-section .md-switch .track {
+        width: 52px !important;
+        height: 31px !important;
+    }
+
+    .notifications-disabled-section .md-switch .thumb {
+        width: 25px !important;
+        height: 25px !important;
     }
 }
 
-/ Accessibility */
+/* ======================================================= /
+/ Accessibility                                           /
+/ ======================================================= */
+
 @media (prefers-reduced-motion: reduce) {
     .delay-info-button,
     .delay-info-button::before,
     .delay-info-button::after {
-        transition: none;
+        transition: none !important;
     }
 }
