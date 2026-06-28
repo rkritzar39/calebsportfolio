@@ -3951,1149 +3951,352 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
   filter: brightness(1.1);
 }
 
-/* ======================================== /
-/ Status Badges – Liquid Glass Capsules    /
-/ Root Theme Light/Dark Compatible         /
-/ ======================================== /
+/* ======================================== */
+/* == Tech Information Section – Onyx Glass System == */
+/* ======================================== */
 
-.status,
-.upgrade-badge,
-.os-badge,
-.support-badge {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: 6px;
-
-	width: fit-content;
-	max-width: 100%;
-
-	padding: 5px 11px;
-	border-radius: 999px;
-
-	font-weight: 700;
-	line-height: 1.15;
-	white-space: nowrap;
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 22%, transparent),
-			color-mix(in srgb, var(--content-bg) 86%, transparent)
-		),
-		color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-
-	box-shadow:
-		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 44%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 26%, transparent);
-
-	backdrop-filter: blur(14px) saturate(150%);
-	-webkit-backdrop-filter: blur(14px) saturate(150%);
-}
-
-.status {
-	font-size: 0.75rem;
-}
-
-.upgrade-badge,
-.os-badge,
-.support-badge {
-	font-size: 0.8rem;
-}
-
-/ Status Colors /
-
-.status.completed {
-	color: #22c55e;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, #22c55e 18%, transparent),
-			color-mix(in srgb, var(--content-bg) 88%, transparent)
-		);
-	border-color: color-mix(in srgb, #22c55e 30%, var(--border-color));
-}
-
-.status.pending {
-	color: #f59e0b;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, #f59e0b 18%, transparent),
-			color-mix(in srgb, var(--content-bg) 88%, transparent)
-		);
-	border-color: color-mix(in srgb, #f59e0b 30%, var(--border-color));
-}
-
-.status.in-progress {
-	color: var(--accent-color);
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--accent-color) 18%, transparent),
-			color-mix(in srgb, var(--content-bg) 88%, transparent)
-		);
-	border-color: color-mix(in srgb, var(--accent-color) 30%, var(--border-color));
-}
-
-/ Badge Colors /
-
-.upgrade-badge.green,
-.os-badge.green,
-.support-badge.green {
-	color: #32cd32;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, #32cd32 22%, transparent),
-			color-mix(in srgb, var(--content-bg) 88%, transparent)
-		);
-	border-color: color-mix(in srgb, #32cd32 32%, var(--border-color));
-}
-
-.upgrade-badge.yellow,
-.os-badge.yellow,
-.support-badge.yellow {
-	color: #ffcc00;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, #ffcc00 22%, transparent),
-			color-mix(in srgb, var(--content-bg) 88%, transparent)
-		);
-	border-color: color-mix(in srgb, #ffcc00 32%, var(--border-color));
-}
-
-.upgrade-badge.orange,
-.os-badge.orange,
-.support-badge.orange {
-	color: #ff9500;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, #ff9500 22%, transparent),
-			color-mix(in srgb, var(--content-bg) 88%, transparent)
-		);
-	border-color: color-mix(in srgb, #ff9500 32%, var(--border-color));
-}
-
-.upgrade-badge.red,
-.os-badge.red,
-.support-badge.red {
-	color: #ff3b30;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, #ff3b30 22%, transparent),
-			color-mix(in srgb, var(--content-bg) 88%, transparent)
-		);
-	border-color: color-mix(in srgb, #ff3b30 32%, var(--border-color));
-}
-
-.os-badge.purple,
-.support-badge.purple,
-.upgrade-badge.purple {
-	color: #af52de;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, #af52de 22%, transparent),
-			color-mix(in srgb, var(--content-bg) 88%, transparent)
-		);
-	border-color: color-mix(in srgb, #af52de 32%, var(--border-color));
-}
-
-/ ======================================== /
-/ Upgrade Triggers                         /
-/ ======================================== /
-
-.upgrade-triggers {
-	margin: 8px 0 12px 28px;
-	padding: 0;
-
-	list-style-type: disc;
-
-	color: var(--secondary-text);
-	font-size: 0.92rem;
-	line-height: 1.55;
-}
-
-/ ======================================== /
-/ Score Bar – Liquid Capsule               /
-/ ======================================== /
-
-.score-bar {
-	position: relative;
-	overflow: hidden;
-
-	width: 100%;
-	height: 12px;
-
-	margin: 8px 0 16px 0;
-	border-radius: 999px;
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 18%, transparent),
-			color-mix(in srgb, var(--shadow-color) 16%, transparent)
-		),
-		color-mix(in srgb, var(--content-bg) 84%, var(--bg-color) 16%);
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
-
-	box-shadow:
-		inset 0 1px 2px color-mix(in srgb, var(--glow-color) 24%, transparent),
-		inset 0 -1px 2px color-mix(in srgb, var(--shadow-color) 34%, transparent);
-}
-
-.score-bar::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-
-	border-radius: inherit;
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 24%, transparent),
-			transparent 70%
-		);
-
-	opacity: 0.45;
-	pointer-events: none;
-}
-
-.score-fill {
-	position: relative;
-	height: 100%;
-
-	border-radius: inherit;
-
-	transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-
-	box-shadow:
-		inset 0 1px 1px rgba(255, 255, 255, 0.24),
-		0 0 14px currentColor;
-}
-
-.score-fill.green {
-	color: #32cd32;
-	background: linear-gradient(90deg, #32cd32, color-mix(in srgb, #32cd32 80%, white 20%));
-}
-
-.score-fill.yellow {
-	color: #ffcc00;
-	background: linear-gradient(90deg, #ffcc00, color-mix(in srgb, #ffcc00 80%, white 20%));
-}
-
-.score-fill.orange {
-	color: #ff9500;
-	background: linear-gradient(90deg, #ff9500, color-mix(in srgb, #ff9500 80%, white 20%));
-}
-
-.score-fill.red {
-	color: #ff3b30;
-	background: linear-gradient(90deg, #ff3b30, color-mix(in srgb, #ff3b30 80%, white 20%));
-}
-
-/ ======================================== /
-/ Tech Information Section – Liquid Glass  /
-/ Onyx Card System                         /
-/ Root Theme Light/Dark Compatible         /
-/ ======================================== /
-
+/* ======================== */
+/* Section Container        */
+/* ======================== */
 .tech-section {
 	position: relative;
-	isolation: isolate;
-	overflow: hidden;
-
-	padding: 30px;
-	margin-bottom: 30px;
-
-	border-radius: var(--radius-xl);
-
-	color: var(--text-color);
 
 	background:
-		radial-gradient(
-			circle at 45% 0%,
-			color-mix(in srgb, var(--glow-color) 64%, transparent),
-			transparent 58%
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 6%, transparent),
+			transparent 45%
 		),
-		var(--bubble-gradient),
-		var(--liquid-refraction),
-		color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+		var(--content-bg);
 
-	border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+	padding: 30px;
+	border-radius: var(--radius-xl);
+	margin-bottom: 30px;
+
+	border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+
+	backdrop-filter: blur(18px) saturate(140%);
+	-webkit-backdrop-filter: blur(18px) saturate(140%);
 
 	box-shadow:
-		var(--bubble-highlight),
-		var(--bubble-shadow);
+		inset 0 1px 0 rgba(255,255,255,0.06),
+		inset 0 -1px 0 rgba(0,0,0,0.35),
+		0 12px 32px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	color: var(--text-color);
+	overflow: hidden;
 }
 
-/ Section Reflection /
-
+/* Directional reflection */
 .tech-section::before {
 	content: "";
 	position: absolute;
 	inset: 0;
-	z-index: 0;
-
 	border-radius: inherit;
 
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: 0.42;
+	background: linear-gradient(
+		120deg,
+		transparent 20%,
+		color-mix(in srgb, white 18%, transparent),
+		transparent 60%
+	);
 
+	opacity: 0.25;
 	pointer-events: none;
 }
 
-/ Section Depth /
-
+/* Bottom depth shading */
 .tech-section::after {
 	content: "";
 	position: absolute;
 	inset: 0;
-	z-index: 0;
-
 	border-radius: inherit;
 
-	background:
-		radial-gradient(
-			circle at 50% 0%,
-			color-mix(in srgb, var(--glow-color) 48%, transparent),
-			transparent 58%
-		),
-		radial-gradient(
-			circle at 50% 100%,
-			color-mix(in srgb, var(--shadow-color) 44%, transparent),
-			transparent 72%
-		);
+	background: radial-gradient(
+		circle at 50% 100%,
+		color-mix(in srgb, black 18%, transparent),
+		transparent 70%
+	);
 
-	opacity: 0.58;
-
+	opacity: 0.35;
 	pointer-events: none;
 }
 
-.tech-section > * {
-	position: relative;
-	z-index: 1;
-}
-
-.tech-section h2 {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-
-	margin-top: 0;
-	margin-bottom: 24px;
-
-	color: var(--text-color);
-
-	font-size: clamp(1.65rem, 4vw, 2.25rem);
-	font-weight: 800;
-	letter-spacing: -0.045em;
-	line-height: 1.05;
-}
-
-/ ======================================== /
-/ Tech Items – Glass Tiles                 /
-/ ======================================== /
-
+/* ======================== */
+/* Tech Items (Glass Tiles) */
+/* ======================== */
 .tech-item {
 	position: relative;
-	isolation: isolate;
-	overflow: hidden;
-
-	padding: 22px;
-	margin-bottom: 18px;
-
-	border-radius: var(--radius-lg);
-
-	color: var(--text-color);
 
 	background:
-		radial-gradient(
-			circle at 30% 0%,
-			color-mix(in srgb, var(--glow-color) 34%, transparent),
-			transparent 52%
-		),
 		linear-gradient(
-			145deg,
-			color-mix(in srgb, var(--glow-color) 16%, transparent),
-			color-mix(in srgb, var(--content-bg) 90%, transparent) 44%,
-			color-mix(in srgb, var(--shadow-color) 10%, transparent)
+			180deg,
+			color-mix(in srgb, white 8%, transparent),
+			transparent 50%
 		),
-		color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+		var(--content-bg);
 
-	border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+	border-radius: var(--radius-lg);
+	padding: 20px;
+	margin-bottom: 16px;
+
+	border: 1px solid color-mix(in srgb, white 5%, var(--border-color));
+
+	backdrop-filter: blur(14px) saturate(135%);
+	-webkit-backdrop-filter: blur(14px) saturate(135%);
 
 	box-shadow:
-		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 42%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 24%, transparent),
-		0 10px 26px color-mix(in srgb, var(--shadow-color) 42%, transparent);
-
-	backdrop-filter: blur(22px) saturate(165%) contrast(108%);
-	-webkit-backdrop-filter: blur(22px) saturate(165%) contrast(108%);
+		inset 0 1px 0 rgba(255,255,255,0.05),
+		inset 0 -1px 0 rgba(0,0,0,0.3),
+		0 8px 20px color-mix(in srgb, var(--shadow-color) 50%, transparent);
 
 	transition:
-		transform var(--transition-fast),
-		box-shadow var(--transition-medium),
-		border-color var(--transition-medium),
-		background var(--transition-medium);
+		transform 0.2s ease,
+		box-shadow 0.25s ease,
+		border-color 0.25s ease;
 }
 
-/ Tile Reflection /
-
+/* Subtle glass highlight */
 .tech-item::before {
 	content: "";
 	position: absolute;
 	inset: 0;
-	z-index: 0;
-
 	border-radius: inherit;
 
-	background:
-		linear-gradient(
-			125deg,
-			color-mix(in srgb, var(--glow-color) 34%, transparent),
-			color-mix(in srgb, var(--glow-color) 8%, transparent) 42%,
-			transparent 70%
-		);
+	background: linear-gradient(
+		180deg,
+		color-mix(in srgb, white 10%, transparent),
+		transparent 45%
+	);
 
-	opacity: 0.46;
-	mix-blend-mode: soft-light;
-
+	opacity: 0.25;
 	pointer-events: none;
 }
 
-/ Tile Depth /
-
-.tech-item::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	z-index: 0;
-
-	border-radius: inherit;
-
-	background:
-		radial-gradient(
-			circle at 50% 100%,
-			color-mix(in srgb, var(--shadow-color) 32%, transparent),
-			transparent 70%
-		);
-
-	opacity: 0.46;
-
-	pointer-events: none;
-}
-
-.tech-item > * {
-	position: relative;
-	z-index: 1;
-}
-
-/ Hover Lift /
-
+/* Hover lift */
 .tech-item:hover {
 	transform: translateY(-3px);
 
-	border-color: color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
+	border-color: color-mix(in srgb, var(--accent-color) 35%, var(--border-color));
 
 	box-shadow:
-		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 52%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 24%, transparent),
-		0 16px 34px color-mix(in srgb, var(--shadow-color) 52%, transparent),
-		0 0 16px color-mix(in srgb, var(--accent-color) 16%, transparent);
+		inset 0 1px 0 rgba(255,255,255,0.08),
+		0 14px 30px color-mix(in srgb, var(--shadow-color) 60%, transparent),
+		0 0 10px color-mix(in srgb, var(--accent-color) 14%, transparent);
 }
 
-/ ======================================== /
-/ Tech Item Titles                         /
-/ ======================================== /
-
+/* ======================== */
+/* Titles                  */
+/* ======================== */
 .tech-item h3 {
+	margin: 0 0 15px 0;
 	display: flex;
 	align-items: center;
 	gap: 10px;
 
-	margin: 0 0 18px 0;
-
 	color: var(--accent-color);
+	font-size: calc(var(--font-size-base) * 1.05);
+	font-weight: 700;
+	letter-spacing: -0.01em;
 
-	font-size: clamp(1.15rem, 3vw, 1.45rem);
-	font-weight: 800;
-	line-height: 1.15;
-	letter-spacing: -0.025em;
-
-	text-shadow: none;
+	text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+	position: relative;
+	z-index: 1;
 }
 
 .tech-item h3 i {
-	width: 24px;
-
+	font-size: calc(var(--font-size-base) * 1.1);
 	color: var(--accent-color);
-
-	font-size: 1.05em;
-	text-align: center;
 }
 
-/ ======================================== /
-/ Tech Detail Rows – Clean Grid            /
-/ Icon / Label / Value                     /
-/ ======================================== /
-
+/* ======================== */
+/* Tech Detail Rows         */
+/* ======================== */
 .tech-detail {
-	display: grid;
-	grid-template-columns: 30px minmax(120px, 0.72fr) minmax(0, 1.15fr);
-	align-items: baseline;
-	column-gap: 12px;
-	row-gap: 4px;
-
-	margin: 14px 0;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin: 10px 0;
 
 	color: var(--text-color);
-
-	font-size: clamp(0.98rem, 2.8vw, 1.08rem);
-	line-height: 1.45;
+	position: relative;
+	z-index: 1;
 }
 
 .tech-detail i {
-	grid-column: 1;
+	width: 20px;
+	height: 20px;
 
-	width: 24px;
-	height: 24px;
-
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	justify-content: center;
 
 	color: var(--accent-color);
-
-	font-size: 0.95em;
-	line-height: 1;
-
-	opacity: 0.92;
+	font-size: calc(var(--font-size-base) * 0.85);
+	flex-shrink: 0;
 }
 
 .tech-detail span {
-	grid-column: 2;
-
-	margin: 0;
-
+	font-weight: 600;
 	color: var(--secondary-text);
-
-	font-weight: 800;
-	line-height: 1.35;
-	letter-spacing: -0.02em;
+	margin-right: 6px;
 }
 
-.tech-detail > :not(i):not(span) {
-	grid-column: 3;
-
-	color: var(--text-color);
-}
-
-/ Value Text Fallback /
-
-.tech-detail {
-	color: var(--text-color);
-}
-
-.tech-detail strong,
-.tech-detail b {
-	color: var(--text-color);
-	font-weight: 650;
-}
-
-/ Long Detail Rows /
-
-.tech-detail.long,
-.tech-detail.summary,
-.tech-detail.description,
-.tech-detail.reason,
-.tech-detail.why {
-	align-items: start;
-}
-
-.tech-detail.long > :not(i):not(span),
-.tech-detail.summary > :not(i):not(span),
-.tech-detail.description > :not(i):not(span),
-.tech-detail.reason > :not(i):not(span),
-.tech-detail.why > :not(i):not(span) {
-	line-height: 1.55;
-}
-
-/ Auto Better Wrapping /
-
-.tech-detail p {
-	grid-column: 3;
-
-	margin: 0;
-
-	color: var(--text-color);
-
-	line-height: 1.55;
-	overflow-wrap: anywhere;
-}
-
-/ ======================================== /
-/ Tech Advanced Details Dropdown           /
-/ ======================================== /
-
-.tech-advanced-details {
-	position: relative;
-	z-index: 1;
-	overflow: hidden;
-
-	margin-top: 18px;
-	padding: 0;
-
-	border-radius: var(--radius-lg);
-
-	background:
-		radial-gradient(
-			circle at 30% 0%,
-			color-mix(in srgb, var(--glow-color) 26%, transparent),
-			transparent 54%
-		),
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 14%, transparent),
-			color-mix(in srgb, var(--content-bg) 90%, transparent)
-		),
-		color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent);
-
-	box-shadow:
-		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 40%, transparent),
-		0 8px 22px color-mix(in srgb, var(--shadow-color) 34%, transparent);
-
-	backdrop-filter: blur(18px) saturate(155%);
-	-webkit-backdrop-filter: blur(18px) saturate(155%);
-}
-
-/ Dropdown Header /
-
-.tech-advanced-details summary {
-	cursor: pointer;
-	list-style: none;
-	user-select: none;
-
-	display: grid;
-	grid-template-columns: auto minmax(0, 1fr) auto;
-	align-items: center;
-	gap: 10px;
-
-	padding: 14px 16px;
-
-	color: var(--secondary-text);
-
-	font-weight: 800;
-	font-size: 0.95rem;
-	letter-spacing: -0.015em;
-
-	transition:
-		color var(--transition-fast),
-		background var(--transition-fast);
-}
-
-/ Remove Native Arrow /
-
-.tech-advanced-details summary::-webkit-details-marker {
-	display: none;
-}
-
-.tech-advanced-details summary::marker {
-	content: "";
-}
-
-/ Custom Arrow /
-
-.tech-advanced-details summary::before {
-	content: "▸";
-
-	color: var(--accent-color);
-
-	font-size: 0.9rem;
-
-	transition:
-		transform var(--transition-fast),
-		color var(--transition-fast);
-}
-
-/ More Specs Badge /
-
-.tech-advanced-details summary::after {
-	content: "More specs";
-
-	justify-self: end;
-
-	padding: 4px 9px;
-	border-radius: 999px;
-
-	color: var(--accent-color);
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--accent-color) 18%, transparent),
-			color-mix(in srgb, var(--content-bg) 86%, transparent)
-		);
-
-	border: 1px solid color-mix(in srgb, var(--accent-color) 20%, var(--border-color));
-
-	font-size: 0.72rem;
-	font-weight: 800;
-	white-space: nowrap;
-}
-
-/ Dropdown Hover /
-
-.tech-advanced-details summary:hover {
-	color: var(--text-color);
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 12%, transparent),
-			transparent
-		);
-}
-
-/ Dropdown Open /
-
-.tech-advanced-details[open] summary {
-	color: var(--text-color);
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-}
-
-.tech-advanced-details[open] summary::before {
-	transform: rotate(90deg);
-}
-
-.tech-advanced-details[open] summary::after {
-	content: "Hide specs";
-}
-
-.tech-advanced-details .tech-detail {
-	padding: 0 16px;
-	margin: 12px 0;
-}
-
-.tech-advanced-details summary + .tech-detail {
-	margin-top: 15px;
-}
-
-.tech-advanced-details .tech-detail:last-child {
-	margin-bottom: 16px;
-}
-
-/ ======================================== /
-/ Battery Container                        /
-/ ======================================== /
-
+/* ======================== */
+/* Battery Container        */
+/* ======================== */
 .battery-container {
 	display: flex;
 	align-items: center;
 	gap: 15px;
-
 	margin-top: 15px;
-
 	position: relative;
 	z-index: 1;
 }
 
-/ Battery Shell /
-
+/* Battery Shell */
 .battery-icon {
 	position: relative;
-	overflow: visible;
 
 	width: 180px;
 	height: 40px;
-
-	border-radius: 12px;
+	border-radius: 10px;
 
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, var(--glow-color) 22%, transparent),
-			color-mix(in srgb, var(--content-bg) 84%, transparent)
+			color-mix(in srgb, white 10%, transparent),
+			transparent 60%
 		),
-		color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+		var(--content-bg);
 
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+	border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
 
 	box-shadow:
-		inset 0 2px 6px color-mix(in srgb, var(--shadow-color) 52%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, var(--glow-color) 22%, transparent),
-		0 5px 16px color-mix(in srgb, var(--shadow-color) 36%, transparent);
+		inset 0 2px 6px rgba(0,0,0,0.6),
+		inset 0 -1px 0 rgba(255,255,255,0.05),
+		0 4px 14px color-mix(in srgb, var(--shadow-color) 40%, transparent);
 
-	backdrop-filter: blur(12px) saturate(150%);
-	-webkit-backdrop-filter: blur(12px) saturate(150%);
+	backdrop-filter: blur(10px);
+
+	overflow: hidden;
 }
 
-/ Battery Cap /
-
+/* Battery Cap */
 .battery-icon::after {
 	content: "";
 	position: absolute;
 	right: -8px;
 	top: 50%;
+	transform: translateY(-50%);
 
 	width: 6px;
 	height: 18px;
 
-	border-radius: 3px;
+	border-radius: 2px;
 
-	transform: translateY(-50%);
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 24%, transparent),
-			color-mix(in srgb, var(--border-color) 90%, transparent)
-		);
-
-	box-shadow:
-		inset 0 1px 1px color-mix(in srgb, var(--glow-color) 34%, transparent);
+	background: color-mix(in srgb, var(--border-color) 90%, transparent);
+	box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
 }
 
-/ Battery Fill /
-
+/* Battery Fill */
 .battery-level {
 	position: relative;
-	overflow: hidden;
-
 	height: 100%;
+	border-radius: 6px;
 
-	border-radius: 10px;
-
-	background:
-		linear-gradient(
-			90deg,
-			color-mix(in srgb, var(--accent-color) 88%, white 10%),
-			var(--accent-color)
-		);
+	background: linear-gradient(
+		90deg,
+		color-mix(in srgb, var(--accent-color) 85%, white 10%),
+		var(--accent-color)
+	);
 
 	box-shadow:
-		inset 0 1px 2px rgba(255, 255, 255, 0.22),
-		inset 0 -1px 2px rgba(0, 0, 0, 0.24),
-		0 0 14px color-mix(in srgb, var(--accent-color) 34%, transparent);
+		inset 0 0 6px rgba(0,0,0,0.25),
+		0 0 12px color-mix(in srgb, var(--accent-color) 30%, transparent);
 
 	transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/ Battery Shimmer /
-
+/* Animated energy shimmer */
 .battery-level::after {
 	content: "";
 	position: absolute;
 	inset: 0;
 
-	background:
-		linear-gradient(
-			120deg,
-			transparent 20%,
-			rgba(255, 255, 255, 0.28),
-			transparent 80%
-		);
+	background: linear-gradient(
+		120deg,
+		transparent 20%,
+		rgba(255,255,255,0.25),
+		transparent 80%
+	);
 
-	opacity: 0.42;
-
+	opacity: 0.4;
 	animation: batteryShimmer 2.5s linear infinite;
 }
 
 @keyframes batteryShimmer {
-	from {
-		transform: translateX(-100%);
-	}
-
-	to {
-		transform: translateX(100%);
-	}
+	from { transform: translateX(-100%); }
+	to { transform: translateX(100%); }
 }
 
-/ Battery States /
-
+/* Battery States */
 .low-power .battery-level {
-	background: linear-gradient(90deg, #ffcc00, color-mix(in srgb, #ffcc00 82%, white 18%));
+	background: #FFCC00;
 }
 
 .critical .battery-level {
-	background: linear-gradient(90deg, #ff3b30, color-mix(in srgb, #ff3b30 82%, white 18%));
+	background: #FF3B30;
 }
 
-/ Battery Percentage /
-
+/* Percentage Text */
 .battery-percentage {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-
 	transform: translate(-50%, -50%);
 
-	color: #ffffff;
-
-	font-weight: 800;
-	font-size: calc(var(--font-size-base) * 0.78);
-	letter-spacing: 0.08em;
-
-	text-shadow:
-		0 1px 3px rgba(0, 0, 0, 0.55),
-		0 0 8px rgba(0, 0, 0, 0.35);
-}
-
-/ ======================================== /
-/ Light Mode Polish                        /
-/ ======================================== /
-
-body.light-e .tech-section {
-	background:
-		radial-gradient(
-			circle at 45% 0%,
-			rgba(255, 255, 255, 0.92),
-			transparent 58%
-		),
-		var(--bubble-gradient),
-		var(--liquid-refraction),
-		color-mix(in srgb, var(--content-bg) 88%, white 12%);
-
-	border-color: color-mix(in srgb, var(--border-color) 90%, white 10%);
-
-	box-shadow:
-		var(--bubble-highlight),
-		0 22px 56px color-mix(in srgb, var(--shadow-color) 64%, transparent),
-		inset 0 -1px 0 rgba(0, 0, 0, 0.045);
-}
-
-body.light-e .tech-section::before {
-	opacity: 0.52;
-}
-
-body.light-e .tech-section::after {
-	background:
-		radial-gradient(
-			circle at 50% 0%,
-			rgba(255, 255, 255, 0.78),
-			transparent 58%
-		),
-		radial-gradient(
-			circle at 50% 100%,
-			rgba(0, 0, 0, 0.10),
-			transparent 72%
-		);
-
-	opacity: 0.54;
-}
-
-body.light-e .tech-item,
-body.light-e .tech-advanced-details {
-	background:
-		radial-gradient(
-			circle at 25% 12%,
-			rgba(255, 255, 255, 0.76),
-			transparent 50%
-		),
-		linear-gradient(
-			145deg,
-			rgba(255, 255, 255, 0.82),
-			rgba(255, 255, 255, 0.48) 48%,
-			rgba(255, 255, 255, 0.34)
-		),
-		rgba(255, 255, 255, 0.46);
-
-	border-color: rgba(190, 190, 190, 0.52);
-
-	box-shadow:
-		inset 0 1px 1px rgba(255, 255, 255, 0.82),
-		inset 0 -1px 1px rgba(0, 0, 0, 0.05),
-		0 8px 22px rgba(0, 0, 0, 0.08);
-}
-
-body.light-e .tech-detail span {
-	color: var(--secondary-text);
-}
-
-body.light-e .tech-detail,
-body.light-e .tech-detail p,
-body.light-e .tech-detail strong,
-body.light-e .tech-detail b {
 	color: var(--text-color);
+	font-weight: 700;
+	font-size: calc(var(--font-size-base) * 0.75);
+
+	text-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
 
-body.light-e .score-bar,
-body.light-e .battery-icon {
-	background:
-		linear-gradient(
-			180deg,
-			rgba(255, 255, 255, 0.64),
-			rgba(255, 255, 255, 0.32)
-		),
-		rgba(255, 255, 255, 0.42);
-
-	border-color: rgba(190, 190, 190, 0.46);
-}
-
-/ ======================================== /
-/ Dark Mode Polish                         /
-/ ======================================== /
-
-html.dark-mode body .tech-section,
-body.dark-mode .tech-section {
-	background:
-		radial-gradient(
-			circle at 36% 0%,
-			rgba(255, 255, 255, 0.12),
-			transparent 52%
-		),
-		var(--bubble-gradient),
-		var(--liquid-refraction),
-		color-mix(in srgb, var(--content-bg) 88%, black 12%);
-
-	border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
-
-	box-shadow:
-		var(--bubble-highlight),
-		0 30px 70px color-mix(in srgb, var(--shadow-color) 88%, transparent),
-		inset 0 -1px 0 rgba(0, 0, 0, 0.32);
-}
-
-html.dark-mode body .tech-item,
-html.dark-mode body .tech-advanced-details,
-body.dark-mode .tech-item,
-body.dark-mode .tech-advanced-details {
-	background:
-		radial-gradient(
-			circle at 25% 12%,
-			rgba(255, 255, 255, 0.10),
-			transparent 50%
-		),
-		linear-gradient(
-			145deg,
-			rgba(255, 255, 255, 0.08),
-			rgba(255, 255, 255, 0.025) 45%,
-			rgba(0, 0, 0, 0.20)
-		),
-		var(--bubble-gradient),
-		color-mix(in srgb, var(--content-bg) 88%, black 12%);
-
-	border-color: color-mix(in srgb, var(--border-color) 88%, transparent);
-
-	box-shadow:
-		inset 0 1px 1px rgba(255, 255, 255, 0.12),
-		inset 0 -1px 1px rgba(0, 0, 0, 0.34),
-		0 10px 26px color-mix(in srgb, var(--shadow-color) 52%, transparent);
-}
-
-/ ======================================== /
-/ Responsive                               /
-/ ======================================== */
-
+/* ======================== */
+/* Responsive               */
+/* ======================== */
 @media screen and (max-width: 768px) {
 	.tech-section {
-		padding: 22px;
-		border-radius: var(--radius-lg);
-	}
-
-	.tech-section h2 {
-		margin-bottom: 20px;
-		font-size: clamp(1.55rem, 6vw, 2rem);
+		padding: 20px;
 	}
 
 	.tech-item {
-		padding: 18px;
-		border-radius: var(--radius-lg);
-	}
-
-	.tech-detail {
-		grid-template-columns: 28px minmax(110px, 0.8fr) minmax(0, 1fr);
-		column-gap: 10px;
-		margin: 13px 0;
-
-		font-size: 1rem;
+		padding: 15px;
 	}
 
 	.battery-icon {
 		width: 150px;
-		height: 36px;
-	}
-}
-
-@media screen and (max-width: 560px) {
-	.tech-detail {
-		grid-template-columns: 28px minmax(0, 1fr);
-		align-items: start;
-		row-gap: 4px;
-	}
-
-	.tech-detail i {
-		grid-column: 1;
-		grid-row: 1 / span 2;
-		margin-top: 2px;
-	}
-
-	.tech-detail span {
-		grid-column: 2;
-	}
-
-	.tech-detail > :not(i):not(span),
-	.tech-detail p {
-		grid-column: 2;
-	}
-
-	.tech-detail p {
-		margin-top: 2px;
-	}
-
-	.battery-container {
-		flex-wrap: wrap;
+		height: 35px;
 	}
 }
 
 @media screen and (max-width: 480px) {
 	.tech-section {
-		padding: 18px;
+		padding: 15px;
 	}
 
 	.tech-item {
-		padding: 16px;
-	}
-
-	.tech-item h3 {
-		font-size: 1.2rem;
-	}
-
-	.tech-detail {
-		font-size: 0.98rem;
-		line-height: 1.42;
-	}
-
-	.tech-advanced-details summary {
-		grid-template-columns: auto minmax(0, 1fr);
-	}
-
-	.tech-advanced-details summary::after {
-		grid-column: 2;
-		justify-self: start;
-		margin-top: 4px;
+		padding: 12px;
 	}
 
 	.battery-icon {
-		width: 128px;
-		height: 32px;
+		width: 120px;
+		height: 30px;
 	}
 
 	.battery-percentage {
-		font-size: calc(var(--font-size-base) * 0.68);
+		font-size: calc(var(--font-size-base) * 0.65);
 	}
 }
 
@@ -10863,7 +10066,247 @@ body.maintenance-active .onyx-dock {
   color: var(--secondary-text);
 }
 
-m
+/* Status badges */
+.status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.status.completed {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.status.pending {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.status.in-progress {
+  color: var(--accent-color);
+  background: rgba(78, 168, 255, 0.15);
+}
+
+/* Upgrade badge */
+.upgrade-badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.upgrade-badge.green {
+    background: rgba(50, 205, 50, 0.15);
+    color: #32CD32;
+}
+
+.upgrade-badge.yellow {
+    background: rgba(255, 204, 0, 0.15);
+    color: #FFCC00;
+}
+
+.upgrade-badge.red {
+    background: rgba(255, 59, 48, 0.15);
+    color: #FF3B30;
+}
+
+/* Trigger list */
+.upgrade-triggers {
+    margin: 5px 0 10px 28px;
+    padding: 0;
+    list-style-type: disc;
+    color: var(--secondary-text);
+    font-size: 0.9rem;
+}
+
+/* Score bar */
+.score-bar {
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 999px;
+    margin: 6px 0 14px 0;
+    overflow: hidden;
+}
+
+.score-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+.score-fill.green {
+    background: #32CD32;
+}
+
+.score-fill.yellow {
+    background: #FFCC00;
+}
+
+.score-fill.orange {
+    background: #FF9500;
+}
+
+.score-fill.red {
+    background: #FF3B30;
+}
+
+.os-badge {
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.os-badge.green {
+    background: rgba(50, 205, 50, 0.15);
+    color: #32CD32;
+}
+
+.os-badge.yellow {
+    background: rgba(255, 204, 0, 0.15);
+    color: #FFCC00;
+}
+
+.os-badge.red {
+    background: rgba(255, 59, 48, 0.15);
+    color: #FF3B30;
+}
+
+.os-badge.purple,
+.support-badge.purple,
+.upgrade-badge.purple {
+    background: rgba(175, 82, 222, 0.15);
+    color: #AF52DE;
+}
+
+/* =============================== */
+/* Tech Advanced Details Dropdown  */
+/* =============================== */
+
+.tech-advanced-details {
+    margin-top: 16px;
+    padding: 0;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            180deg,
+            color-mix(in srgb, white 7%, transparent),
+            transparent 60%
+        ),
+        color-mix(in srgb, var(--content-bg) 92%, black 8%);
+
+    border: 1px solid color-mix(in srgb, white 7%, var(--border-color));
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.05),
+        0 6px 18px color-mix(in srgb, var(--shadow-color) 35%, transparent);
+
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+/* Dropdown header */
+.tech-advanced-details summary {
+    cursor: pointer;
+    list-style: none;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 13px 15px;
+
+    color: var(--secondary-text);
+    font-weight: 700;
+    font-size: 0.92rem;
+
+    user-select: none;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+/* Remove default browser arrow */
+.tech-advanced-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.tech-advanced-details summary::marker {
+    content: "";
+}
+
+/* Custom arrow */
+.tech-advanced-details summary::before {
+    content: "▸";
+    color: var(--accent-color);
+    font-size: 0.85rem;
+
+    transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+/* Optional icon after arrow */
+.tech-advanced-details summary::after {
+    content: "More specs";
+    margin-left: auto;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+
+    padding: 3px 8px;
+    border-radius: 999px;
+
+    color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+}
+
+/* Hover effect */
+.tech-advanced-details summary:hover {
+    color: var(--text-color);
+    background: color-mix(in srgb, white 5%, transparent);
+}
+
+/* Open state */
+.tech-advanced-details[open] summary {
+    color: var(--text-color);
+    border-bottom: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+}
+
+.tech-advanced-details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.tech-advanced-details[open] summary::after {
+    content: "Hide specs";
+}
+
+/* Content spacing */
+.tech-advanced-details .tech-detail {
+    padding: 0 15px;
+    margin: 11px 0;
+}
+
+/* First detail after summary */
+.tech-advanced-details summary + .tech-detail {
+    margin-top: 14px;
+}
+
+/* Last detail spacing */
+.tech-advanced-details .tech-detail:last-child {
+    margin-bottom: 15px;
+}
+
+/* Slight indentation for advanced rows */
+.tech-advanced-details .tech-detail i {
+    opacity: 0.9;
+}
 
 /* ============================================================
    TIKTOK LIGHT MODE FIX — FINAL
