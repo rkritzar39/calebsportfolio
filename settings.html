@@ -642,27 +642,73 @@
         </div>
       </div>
 
-      <div class="settings-subsection animate-slide-in">
+      <div class="settings-subsection animate-slide-in notifications-disabled-section">
   <h2 class="subsection-title">Notifications</h2>
 
-  <label class="setting-card" for="enableNotificationsToggle">
+  <div class="notification-coming-soon-hero">
+    <div class="coming-soon-glow"></div>
 
-    <div class="setting-icon-container" style="background-color:#ff3b30;">
+    <div class="coming-soon-icon-wrap">
+      <i class="fa-solid fa-bell-slash"></i>
+    </div>
+
+    <div class="coming-soon-content">
+      <div class="coming-soon-title-row">
+        <strong class="coming-soon-title">Notifications Coming Soon</strong>
+
+        <button
+          class="delay-info-button"
+          type="button"
+          aria-label="Why are notifications delayed?"
+          aria-expanded="false"
+          data-tooltip="Push notifications are currently disabled because the system is malfunctioning. The feature is planned to return once it is rebuilt and stabilized, likely around 2027 or 2028.">
+          <i class="fa-solid fa-circle-info"></i>
+        </button>
+      </div>
+
+      <p class="coming-soon-description">
+        Push notifications and topic subscriptions are temporarily unavailable while the feature is being fixed and rebuilt.
+      </p>
+
+      <div class="coming-soon-meta">
+        <span>
+          <i class="fa-solid fa-wrench"></i>
+          Malfunctioning
+        </span>
+
+        <span>
+          <i class="fa-solid fa-calendar-days"></i>
+          Expected 2027–2028
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <label class="setting-card disabled-setting" for="enableNotificationsToggle">
+
+    <div class="setting-icon-container disabled-icon">
       <i class="fa-solid fa-bell"></i>
     </div>
 
     <div class="setting-label">
-      <strong class="setting-title">Push Notifications</strong>
+      <strong class="setting-title">
+        Push Notifications
+        <span class="coming-soon-badge">Coming Soon</span>
+      </strong>
       <p class="setting-description">
         Receive website updates on Android, iPhone, Windows and Mac.
       </p>
+      <p class="setting-description disabled-reason">
+        Disabled because notification support is currently malfunctioning.
+      </p>
     </div>
 
-    <div class="md-switch">
+    <div class="md-switch disabled-switch">
       <input
         type="checkbox"
         id="enableNotificationsToggle"
-        role="switch">
+        role="switch"
+        disabled>
       <div class="track">
         <div class="thumb"></div>
       </div>
@@ -670,95 +716,115 @@
 
   </label>
 
-  <div class="setting-card">
+  <div class="setting-card disabled-setting">
 
-    <div class="setting-icon-container" style="background-color:#34c759;">
+    <div class="setting-icon-container disabled-icon">
       <i class="fa-solid fa-layer-group"></i>
     </div>
 
     <div class="setting-label">
-      <strong class="setting-title">Notification Topics</strong>
+      <strong class="setting-title">
+        Notification Topics
+        <span class="coming-soon-badge">Coming Soon</span>
+      </strong>
       <p class="setting-description">
         Choose which notifications you'd like to receive.
+      </p>
+      <p class="setting-description disabled-reason">
+        Topic selection will return when notifications are fixed.
       </p>
     </div>
 
   </div>
 
-  <label class="setting-card" for="topicWebsite">
-
-    <div class="setting-icon-container">
-      🌐
-    </div>
+  <label class="setting-card disabled-setting" for="topicWebsite">
+    <div class="setting-icon-container disabled-emoji-icon">🌐</div>
 
     <div class="setting-label">
-      <strong class="setting-title">Website Updates</strong>
+      <strong class="setting-title">
+        Website Updates
+        <span class="coming-soon-badge">Coming Soon</span>
+      </strong>
     </div>
 
-    <div class="md-switch">
-      <input type="checkbox" id="topicWebsite" checked>
+    <div class="md-switch disabled-switch">
+      <input type="checkbox" id="topicWebsite" disabled>
       <div class="track">
         <div class="thumb"></div>
       </div>
     </div>
-
   </label>
 
-  <label class="setting-card" for="topicCollege">
-
-    <div class="setting-icon-container">
-      🎓
-    </div>
+  <label class="setting-card disabled-setting" for="topicInstagram">
+    <div class="setting-icon-container disabled-emoji-icon">📷</div>
 
     <div class="setting-label">
-      <strong class="setting-title">College</strong>
+      <strong class="setting-title">
+        Instagram
+        <span class="coming-soon-badge">Coming Soon</span>
+      </strong>
     </div>
 
-    <div class="md-switch">
-      <input type="checkbox" id="topicCollege">
+    <div class="md-switch disabled-switch">
+      <input type="checkbox" id="topicInstagram" disabled>
       <div class="track">
         <div class="thumb"></div>
       </div>
     </div>
-
   </label>
 
-  <label class="setting-card" for="topicYoutube">
-
-    <div class="setting-icon-container">
-      ▶️
-    </div>
+  <label class="setting-card disabled-setting" for="topicTikTok">
+    <div class="setting-icon-container disabled-emoji-icon">🎶</div>
 
     <div class="setting-label">
-      <strong class="setting-title">YouTube</strong>
+      <strong class="setting-title">
+        TikTok
+        <span class="coming-soon-badge">Coming Soon</span>
+      </strong>
     </div>
 
-    <div class="md-switch">
-      <input type="checkbox" id="topicYoutube">
+    <div class="md-switch disabled-switch">
+      <input type="checkbox" id="topicTikTok" disabled>
       <div class="track">
         <div class="thumb"></div>
       </div>
     </div>
-
   </label>
 
-  <label class="setting-card" for="topicDiscord">
-
-    <div class="setting-icon-container">
-      💬
-    </div>
+  <label class="setting-card disabled-setting" for="topicYoutube">
+    <div class="setting-icon-container disabled-emoji-icon">▶️</div>
 
     <div class="setting-label">
-      <strong class="setting-title">Discord</strong>
+      <strong class="setting-title">
+        YouTube
+        <span class="coming-soon-badge">Coming Soon</span>
+      </strong>
     </div>
 
-    <div class="md-switch">
-      <input type="checkbox" id="topicDiscord">
+    <div class="md-switch disabled-switch">
+      <input type="checkbox" id="topicYoutube" disabled>
       <div class="track">
         <div class="thumb"></div>
       </div>
     </div>
+  </label>
 
+  <label class="setting-card disabled-setting" for="topicDiscord">
+    <div class="setting-icon-container disabled-emoji-icon">💬</div>
+
+    <div class="setting-label">
+      <strong class="setting-title">
+        Discord
+        <span class="coming-soon-badge">Coming Soon</span>
+      </strong>
+    </div>
+
+    <div class="md-switch disabled-switch">
+      <input type="checkbox" id="topicDiscord" disabled>
+      <div class="track">
+        <div class="thumb"></div>
+      </div>
+    </div>
   </label>
 
 </div>
