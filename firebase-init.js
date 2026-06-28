@@ -13,7 +13,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
 
 // ==============================================
-// Firebase Configuration
+// Firebase Config
 // ==============================================
 
 const firebaseConfig = {
@@ -27,121 +27,85 @@ const firebaseConfig = {
 };
 
 // ==============================================
-// Initialize Firebase
+// Init Firebase
 // ==============================================
 
-let app;
-let auth;
-let db;
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-try {
-
-  app = getApps().length
-    ? getApp()
-    : initializeApp(firebaseConfig);
-
-  auth = getAuth(app);
-  db = getFirestore(app);
-
-  console.log("✅ Firebase initialized.");
-
-} catch (error) {
-
-  console.error(error);
-  throw error;
-
-}
+console.log("✅ Firebase initialized");
 
 // ==============================================
-// Firebase Cloud Messaging
+// Messaging Setup (SAFE WRAPPER)
 // ==============================================
+
+const VAPID_KEY = "BHRwwN7PbDF6gKdczJdDHTesQdZ-WbXsIpnwtFyy4yPk6ekWCN43upT6nbXD-ONlCIFNPKCLHKanw-Xzw_GmpJQ";
 
 let messaging = null;
 
-if (await isSupported()) {
-
-  messaging = getMessaging(app);
-
+async function initMessaging() {
   try {
+    const supported = await isSupported();
+    if (!supported) {
+      console.log("Messaging not supported on this browser");
+      return;
+    }
 
-    const registration =
-      await navigator.serviceWorker.register(
-        "/firebase-messaging-sw.js"
-      );
+    messaging = getMessaging(app);
 
-    console.log("✅ Service Worker registered.");
+    // Register SW
+    const registration = await navigator.serviceWorker.register(
+      "/firebase-messaging-sw.js"
+    );
 
-    const permission =
-      await Notification.requestPermission();
+    console.log("✅ Service Worker registered");
 
-    if (permission === "granted") {
+    // Ask permission
+    const permission = await Notification.requestPermission();
 
-      const token = await getToken(messaging, {
+    if (permission !== "granted") {
+      console.warn("❌ Notification permission denied");
+      return;
+    }
 
-        vapidKey: "M9gA6JaPNqk2iUjcMctwxly91RJJJzor1Lr9ohJo6Js",
+    // Get FCM token
+    const token = await getToken(messaging, {
+      vapidKey: VAPID_KEY,
+      serviceWorkerRegistration: registration
+    });
 
-        serviceWorkerRegistration: registration
+    if (token) {
+      console.log("📱 FCM Token:", token);
 
-      });
-
-      if (token) {
-
-        console.log("📱 FCM Token:");
-        console.log(token);
-
-        // TODO:
-        // Save token to Firestore
-        // so your admin panel can send notifications.
-
-      }
-
+      // TODO: store token in Firestore
+      // await setDoc(doc(db, "fcmTokens", token), {...});
     } else {
-
-      console.warn("❌ Notifications denied.");
-
+      console.warn("⚠️ No FCM token returned");
     }
 
-  } catch (error) {
+    // Foreground messages
+    onMessage(messaging, (payload) => {
+      console.log("📩 Foreground message:", payload);
 
-    console.error("Messaging Error:", error);
+      if (Notification.permission === "granted") {
+        new Notification(payload?.notification?.title ?? "New Notification", {
+          body: payload?.notification?.body ?? "",
+          icon: payload?.notification?.icon ?? "/favicon-192.png"
+        });
+      }
+    });
 
+  } catch (err) {
+    console.error("❌ Messaging init failed:", err);
   }
-
-  // Foreground notifications
-
-  onMessage(messaging, (payload) => {
-
-    console.log("📩 Foreground notification:", payload);
-
-    if (Notification.permission === "granted") {
-
-      new Notification(
-        payload.notification?.title || "New Notification",
-        {
-          body: payload.notification?.body,
-          icon:
-            payload.notification?.icon ||
-            "/favicon-192.png"
-        }
-      );
-
-    }
-
-  });
-
-} else {
-
-  console.log("Messaging not supported.");
-
 }
+
+// Run safely
+initMessaging();
 
 // ==============================================
 // Export Firebase
 // ==============================================
 
-export {
-  app,
-  auth,
-  db,
-  messaging
-};
+export { app, auth, db, messaging };
