@@ -1702,7 +1702,7 @@ class SettingsManager {
     this.applyNotificationUI();
   }
 
-  applyNotificationUI() {
+    applyNotificationUI() {
     const state = this.getNotificationSettings();
 
     const main = document.getElementById("inSiteNotificationsToggle");
@@ -1711,15 +1711,23 @@ class SettingsManager {
     const live = document.getElementById("notifLiveActivityToggle");
     const cre = document.getElementById("notifCreatorUpdatesToggle");
 
-    if (!main || !group) return;
+    // 1. Only abort if the MAIN toggle is missing
+    if (!main) return;
 
+    // 2. Apply the main toggle state
     main.checked = !!state.enabled;
-    group.style.display = state.enabled ? "block" : "none";
 
+    // 3. Safely apply the group display ONLY if the group element exists in the HTML
+    if (group) {
+      group.style.display = state.enabled ? "block" : "none";
+    }
+
+    // 4. Safely apply sub-categories (your getNotificationSettings already guarantees state.categories exists)
     if (upd) upd.checked = !!state.categories.updates;
     if (live) live.checked = !!state.categories.liveActivity;
     if (cre) cre.checked = !!state.categories.creators;
   }
+
 
   initNotificationSettings() {
     const main = document.getElementById("inSiteNotificationsToggle");
