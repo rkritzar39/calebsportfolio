@@ -18,7 +18,7 @@ import {
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-const VAPID_KEY = "YOUR_PUBLIC_VAPID_KEY";
+const VAPID_KEY = "BHRwwN7PbDF6gKdczJdDHTesQdZ-WbXsIpnwtFyy4yPk6ekWCN43upT6nbXD-ONlCIFNPKCLHKanw-Xzw_GmpJQ";
 
 const toggle = document.getElementById("enableNotificationsToggle");
 
