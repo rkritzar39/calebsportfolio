@@ -1202,117 +1202,101 @@ async function loadAndDisplaySocialLinks() {
         return;
     }
 
-    const setStateMessage = (message, className = '') => {
-        containerElement.innerHTML = '';
-
-        const messageElement = document.createElement('p');
-        messageElement.textContent = message;
-
-        if (className) {
-            messageElement.className = className;
-        }
-
-        containerElement.appendChild(messageElement);
-    };
-
-    const isValidUrl = (url) => {
-        try {
-            const parsedUrl = new URL(url);
-            return parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:';
-        } catch {
-            return false;
-        }
-    };
-
     if (!firebaseAppInitialized || !db) {
         console.error("Social Links load error: Firebase not ready.");
-        setStateMessage("Error loading socials. Database is not ready.", "error");
+        containerElement.innerHTML = '<p class="error">Error loading socials (DB Init Error).</p>';
         return;
     }
 
     if (!socialLinksCollectionRef) {
         console.error("Social Links load error: Collection reference missing.");
-        setStateMessage("Error loading socials. Configuration issue.", "error");
+        containerElement.innerHTML = '<p class="error">Error loading socials (Config Error).</p>';
         return;
     }
 
-    setStateMessage("Loading socials...", "social-loading");
+    containerElement.innerHTML = '<p class="social-loading">Loading socials...</p>';
 
     try {
-        const linkQuery = query(
-            socialLinksCollectionRef,
-            orderBy("order", "asc")
-        );
-
+        const linkQuery = query(socialLinksCollectionRef, orderBy("order", "asc"));
         const querySnapshot = await getDocs(linkQuery);
 
         containerElement.innerHTML = '';
 
         if (querySnapshot.empty) {
-            setStateMessage("No social links available.", "no-results");
+            containerElement.innerHTML = '<p class="no-results">No social links available.</p>';
             return;
         }
 
-        let renderedCount = 0;
+        let displayedCount = 0;
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
 
-            const label = typeof data.label === "string" ? data.label.trim() : "";
-            const url = typeof data.url === "string" ? data.url.trim() : "";
-            const iconClass = typeof data.iconClass === "string" ? data.iconClass.trim() : "";
+            if (data.label && data.url) {
+                const linkElement = document.createElement('a');
 
-            if (!label || !url) {
+                let url = String(data.url).trim();
+
+                /*
+                  Keeps your existing links working.
+                  If the URL does not start with a protocol, add https://.
+                  This allows:
+                  - instagram.com/example
+                  - www.instagram.com/example
+                  - https://instagram.com/example
+                  - mailto:example@email.com
+                  - tel:1234567890
+                */
+                if (
+                    !url.startsWith('http://') &&
+                    !url.startsWith('https://') &&
+                    !url.startsWith('mailto:') &&
+                    !url.startsWith('tel:')
+                ) {
+                    url = https://${url};
+                }
+
+                linkElement.href = url;
+                linkElement.target = '_blank';
+                linkElement.rel = 'noopener noreferrer';
+                linkElement.className = 'social-button';
+                linkElement.setAttribute('aria-label', Open ${data.label});
+
+                if (data.iconClass) {
+                    const iconElement = document.createElement('i');
+                    iconElement.className = data.iconClass + ' social-icon';
+                    iconElement.setAttribute('aria-hidden', 'true');
+                    linkElement.appendChild(iconElement);
+                }
+
+                const textElement = document.createElement('span');
+                textElement.textContent = data.label;
+
+                linkElement.appendChild(textElement);
+                containerElement.appendChild(linkElement);
+
+                displayedCount++;
+            } else {
                 console.warn("Skipping social link item due to missing label or URL:", doc.id);
-                return;
             }
-
-            if (!isValidUrl(url)) {
-                console.warn("Skipping social link item due to invalid URL:", doc.id, url);
-                return;
-            }
-
-            const linkElement = document.createElement('a');
-            linkElement.href = url;
-            linkElement.target = '_blank';
-            linkElement.rel = 'noopener noreferrer';
-            linkElement.className = 'social-button';
-            linkElement.setAttribute('aria-label', Open ${label});
-            linkElement.title = label;
-
-            if (iconClass) {
-                const iconElement = document.createElement('i');
-                iconElement.className = ${iconClass} social-icon;
-                iconElement.setAttribute('aria-hidden', 'true');
-                linkElement.appendChild(iconElement);
-            }
-
-            const textElement = document.createElement('span');
-            textElement.textContent = label;
-
-            linkElement.appendChild(textElement);
-            containerElement.appendChild(linkElement);
-
-            renderedCount++;
         });
 
-        if (renderedCount === 0) {
-            setStateMessage("No valid social links available.", "no-results");
-            return;
+        if (displayedCount === 0) {
+            containerElement.innerHTML = '<p class="no-results">No valid social links available.</p>';
         }
 
-        console.log(Displayed ${renderedCount} social links.);
+        console.log(Displayed ${displayedCount} social links.);
     } catch (error) {
         console.error("Error loading social links:", error);
 
         let errorMsg = "Could not load social links.";
 
         if (error.code === 'failed-precondition') {
-            errorMsg = "Database configuration needed for social link ordering.";
+            errorMsg = "Error: DB configuration needed for socials (order).";
             console.error("Missing Firestore index for social_links collection, ordered by 'order'.");
         }
 
-        setStateMessage(errorMsg, "error");
+        containerElement.innerHTML = <p class="error">${errorMsg}</p>;
     }
 }
 
