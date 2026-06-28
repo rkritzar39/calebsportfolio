@@ -171,46 +171,69 @@ async function loadAndDisplayLegislation() {
 // --- Initialize Firebase ---
 let db;
 let firebaseAppInitialized = false;
+
 // Declare references in module scope
-let profileDocRef; 
+let profileDocRef;
 let presidentDocRef;
 let usefulLinksCollectionRef;
 let socialLinksCollectionRef;
 let disabilitiesCollectionRef;
 let techItemsCollectionRef;
-let shoutoutsMetaRef; 
+let shoutoutsMetaRef;
 let faqsCollectionRef;
-let businessDocRef; 
-let postsCollectionRef; // 🔥 declare this too
+let businessDocRef;
+let postsCollectionRef;
 
-// --- NEW: Module-level variables to store all creator data for searching ---
-let allTikTokCreators = [], allInstagramCreators = [], allYouTubeCreators = [];
+// --- Module-level variables to store all creator data for searching ---
+let allTikTokCreators = [];
+let allInstagramCreators = [];
+let allYouTubeCreators = [];
 
+function showFirebaseInitError() {
+    const errorHTML = 
+        <p class="error" style="text-align: center; padding: 50px; color: red; font-size: 1.2em;">
+            Could not connect to required services. Please try again later.
+        </p>
+    ;
+
+    if (document.body) {
+        document.body.innerHTML = errorHTML;
+    } else {
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.innerHTML = errorHTML;
+        });
+    }
+}
 
 try {
     const app = initializeApp(firebaseConfig);
+
     db = getFirestore(app);
-    // Assign references
-    profileDocRef = doc(db, "site_config", "mainProfile"); 
-    businessDocRef = doc(db, "site_config", "businessDetails"); 
+
+    profileDocRef = doc(db, "site_config", "mainProfile");
+    businessDocRef = doc(db, "site_config", "businessDetails");
     presidentDocRef = doc(db, "site_config", "currentPresident");
+
     usefulLinksCollectionRef = collection(db, "useful_links");
     socialLinksCollectionRef = collection(db, "social_links");
     disabilitiesCollectionRef = collection(db, "disabilities");
     techItemsCollectionRef = collection(db, "tech_items");
-    shoutoutsMetaRef = doc(db, 'siteConfig', 'shoutoutsMetadata');
     faqsCollectionRef = collection(db, "faqs");
     postsCollectionRef = collection(db, "posts");
+
+    shoutoutsMetaRef = doc(db, "siteConfig", "shoutoutsMetadata");
+
     firebaseAppInitialized = true;
     console.log("Firebase initialized for display.");
+
+    loadAndDisplaySocialLinks();
 } catch (error) {
     console.error("Firebase initialization failed:", error);
-    const body = document.body;
-    if (body) {
-        body.innerHTML = '<p class="error" style="text-align: center; padding: 50px; color: red; font-size: 1.2em;">Could not connect to required services. Please try again later.</p>';
-    }
+
     firebaseAppInitialized = false;
+    showFirebaseInitError();
 }
+
 
 /* ==========================================================
    🔔 FIREBASE CLOUD MESSAGING — PUSH NOTIFICATION SETUP
@@ -1196,55 +1219,112 @@ async function loadAndDisplayUsefulLinks() {
 
 async function loadAndDisplaySocialLinks() {
     const containerElement = document.querySelector('.social-links-container');
-    if (!containerElement) { console.warn("Social links container missing (.social-links-container)."); return; }
 
-    if (!firebaseAppInitialized || !db) { console.error("Social Links load error: Firebase not ready."); containerElement.innerHTML = '<p class="error">Error loading socials (DB Init Error).</p>'; return; }
-    if (!socialLinksCollectionRef) { console.error("Social Links load error: Collection reference missing."); containerElement.innerHTML = '<p class="error">Error loading socials (Config Error).</p>'; return;}
+    if (!containerElement) {
+        console.warn("Social links container missing (.social-links-container).");
+        return;
+    }
 
-    containerElement.innerHTML = '<p>Loading socials...</p>';
+    if (!firebaseAppInitialized || !db) {
+        console.error("Social Links load error: Firebase not ready.");
+        containerElement.innerHTML = '<p class="error">Error loading socials (DB Init Error).</p>';
+        return;
+    }
+
+    if (!socialLinksCollectionRef) {
+        console.error("Social Links load error: Collection reference missing.");
+        containerElement.innerHTML = '<p class="error">Error loading socials (Config Error).</p>';
+        return;
+    }
+
+    containerElement.innerHTML = '<p class="social-loading">Loading socials...</p>';
+
     try {
-        const linkQuery = query(socialLinksCollectionRef, orderBy("order", "asc"));
+        console.log("Loading social links...");
+
+        const linkQuery = query(
+            socialLinksCollectionRef,
+            orderBy("order", "asc")
+        );
+
         const querySnapshot = await getDocs(linkQuery);
+
+        console.log("Social links loaded:", querySnapshot.size);
+
         containerElement.innerHTML = '';
 
         if (querySnapshot.empty) {
-            containerElement.innerHTML = '<p>No social links available.</p>';
-        } else {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                if (data.label && data.url) {
-                    const linkElement = document.createElement('a');
-                    linkElement.href = data.url;
-                    linkElement.target = '_blank';
-                    linkElement.rel = 'noopener noreferrer';
-                    linkElement.className = 'social-button';
-
-                    if (data.iconClass) {
-                        const iconElement = document.createElement('i');
-                        iconElement.className = data.iconClass + ' social-icon';
-                        linkElement.appendChild(iconElement);
-                    }
-
-                    const textElement = document.createElement('span');
-                    textElement.textContent = data.label;
-                    linkElement.appendChild(textElement);
-                    containerElement.appendChild(linkElement);
-                } else {
-                    console.warn("Skipping social link item due to missing label or URL:", doc.id);
-                }
-            });
+            containerElement.innerHTML = '<p class="no-results">No social links available.</p>';
+            return;
         }
-        console.log(`Displayed ${querySnapshot.size} social links.`);
+
+        let displayedCount = 0;
+
+        querySnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+
+            if (data.label && data.url) {
+                const linkElement = document.createElement('a');
+
+                let url = String(data.url).trim();
+
+                if (
+                    !url.startsWith('http://') &&
+                    !url.startsWith('https://') &&
+                    !url.startsWith('mailto:') &&
+                    !url.startsWith('tel:')
+                ) {
+                    url = https://${url};
+                }
+
+                linkElement.href = url;
+                linkElement.target = '_blank';
+                linkElement.rel = 'noopener noreferrer';
+                linkElement.className = 'social-button';
+                linkElement.setAttribute('aria-label', Open ${data.label});
+
+                if (data.iconClass) {
+                    const iconElement = document.createElement('i');
+                    iconElement.className = data.iconClass + ' social-icon';
+                    iconElement.setAttribute('aria-hidden', 'true');
+                    linkElement.appendChild(iconElement);
+                }
+
+                const textElement = document.createElement('span');
+                textElement.textContent = data.label;
+
+                linkElement.appendChild(textElement);
+                containerElement.appendChild(linkElement);
+
+                displayedCount++;
+            } else {
+                console.warn("Skipping social link item due to missing label or URL:", docSnap.id, data);
+            }
+        });
+
+        if (displayedCount === 0) {
+            containerElement.innerHTML = '<p class="no-results">No valid social links available.</p>';
+            return;
+        }
+
+        console.log(Displayed ${displayedCount} social links.);
     } catch (error) {
         console.error("Error loading social links:", error);
+
         let errorMsg = "Could not load social links.";
+
         if (error.code === 'failed-precondition') {
             errorMsg = "Error: DB configuration needed for socials (order).";
-            console.error("Missing Firestore index for social_links collection, ordered by 'order'.");
         }
-        containerElement.innerHTML = `<p class="error">${errorMsg}</p>`;
+
+        if (error.code === 'permission-denied') {
+            errorMsg = "Error: Missing permission to load social links.";
+        }
+
+        containerElement.innerHTML = <p class="error">${errorMsg}</p>;
     }
 }
+
 
 async function loadAndDisplayDisabilities() {
     const placeholderElement = document.getElementById('disabilities-list-placeholder');
