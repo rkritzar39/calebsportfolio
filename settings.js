@@ -206,7 +206,7 @@ class SettingsManager {
 
     if (slider && badge) {
       slider.value = this.settings.fontSize;
-      badge.textContent = ${this.settings.fontSize}px;
+      badge.textContent = `${this.settings.fontSize}px`;
       this.updateSliderFill(slider);
     }
 
@@ -276,12 +276,12 @@ class SettingsManager {
       control.prepend(bg);
     }
 
-    bg.style.left = ${active.offsetLeft}px;
-    bg.style.width = ${active.offsetWidth}px;
+    bg.style.left = `${active.offsetLeft}px`;
+    bg.style.width = `${active.offsetWidth}px`;
   }
 
   setToggle(key) {
-    const el = document.getElementById(${key}Toggle);
+    const el = document.getElementById(`${key}Toggle`);
     if (el) el.checked = this.settings[key] === "enabled";
   }
 
@@ -356,7 +356,7 @@ class SettingsManager {
         this.updateSliderFill(slider);
 
         const badge = document.getElementById("textSizeValue");
-        if (badge) badge.textContent = ${this.settings.fontSize}px;
+        if (badge) badge.textContent = `${this.settings.fontSize}px`;
 
         this.saveSettings();
       });
@@ -493,7 +493,7 @@ class SettingsManager {
 
       this.toggleScheduleInputs();
       this.renderScheduleRecommendationUI();
-      this.showToast("Schedule Applied", Dark mode will follow ${rec.start} → ${rec.end}.);
+      this.showToast("Schedule Applied", `Dark mode will follow ${rec.start} → ${rec.end}.`);
       this.updateDarkModeStatusUI();
       this.checkDarkModeSchedule(true);
     });
@@ -518,7 +518,7 @@ class SettingsManager {
     );
 
     toggleKeys.forEach((key) => {
-      const el = document.getElementById(${key}Toggle);
+      const el = document.getElementById(`${key}Toggle`);
       if (!el) return;
 
       el.addEventListener("change", () => {
@@ -610,7 +610,7 @@ class SettingsManager {
   }
 
   applyFontSize() {
-    document.documentElement.style.setProperty("--font-size-base", ${this.settings.fontSize}px);
+    document.documentElement.style.setProperty("--font-size-base", `${this.settings.fontSize}px`);
   }
 
   applyMotionEffects() {
@@ -626,7 +626,7 @@ class SettingsManager {
     const val = slider.value;
     const pct = ((val - min) / (max - min)) * 100;
 
-    slider.style.setProperty("--_fill", ${pct}%);
+    slider.style.setProperty("--_fill", `${pct}%`);
   }
 
   getContrastColor(hex) {
@@ -736,7 +736,7 @@ class SettingsManager {
 
       if (blurSlider && blurBadge) {
         blurSlider.value = savedBlur;
-        blurBadge.textContent = ${savedBlur}px;
+        blurBadge.textContent = `${savedBlur}px`;
       }
     } else {
       this.toggleWallpaperBlurCard(false);
@@ -768,7 +768,7 @@ class SettingsManager {
         this.applyWallpaperBlur(blurValue);
 
         const blurBadge = document.getElementById("blurValue");
-        if (blurBadge) blurBadge.textContent = ${blurValue}px;
+        if (blurBadge) blurBadge.textContent = `${blurValue}px`;
 
         if (remove) remove.style.display = "inline-block";
 
@@ -835,13 +835,13 @@ class SettingsManager {
         layer.style.opacity = "0";
 
         requestAnimationFrame(() => {
-          layer.style.backgroundImage = url("${bg}");
+          layer.style.backgroundImage = `url("${bg}")`;
           setTimeout(() => {
             layer.style.opacity = "1";
           }, 50);
         });
       } else {
-        layer.style.backgroundImage = url("${bg}");
+        layer.style.backgroundImage = `url("${bg}")`;
         layer.style.opacity = "1";
       }
     } else {
@@ -866,7 +866,7 @@ class SettingsManager {
     if (!layer) return;
 
     const blurAmount = parseInt(value, 10) || 0;
-    layer.style.filter = blur(${blurAmount}px) brightness(1.03);
+    layer.style.filter = `blur(${blurAmount}px) brightness(1.03)`;
   }
 
   initWallpaperBlurControl() {
@@ -878,7 +878,7 @@ class SettingsManager {
     const stored = localStorage.getItem("wallpaperBlur") ?? "0";
 
     slider.value = stored;
-    badge.textContent = ${stored}px;
+    badge.textContent = `${stored}px`;
 
     this.applyWallpaperBlur(stored);
     this.updateSliderFill(slider);
@@ -886,7 +886,7 @@ class SettingsManager {
     slider.addEventListener("input", (e) => {
       const val = e.target.value;
 
-      badge.textContent = ${val}px;
+      badge.textContent = `${val}px`;
       localStorage.setItem("wallpaperBlur", val);
 
       this.applyWallpaperBlur(val);
@@ -918,7 +918,7 @@ class SettingsManager {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, "0");
     const da = String(d.getDate()).padStart(2, "0");
-    return ${y}-${m}-${da};
+    return `${y}-${m}-${da}`;
   }
 
   ensurePerDayRule(groupKey) {
@@ -946,7 +946,7 @@ class SettingsManager {
 
       if (rule && rule.mode) {
         return {
-          source: per_day:${groupKey},
+          source: `per_day:${groupKey}`,
           mode: rule.mode,
           start: rule.start ?? this.settings.darkModeStart,
           end: rule.end ?? this.settings.darkModeEnd,
@@ -1024,7 +1024,7 @@ class SettingsManager {
     }
 
     card.style.display = "";
-    text.textContent = You often switch around the same time. Auto-schedule dark mode from ${rec.start} → ${rec.end}?;
+    text.textContent = `You often switch around the same time. Auto-schedule dark mode from ${rec.start} → ${rec.end}?`;
   }
 
   logThemeBehavior(newMode) {
@@ -1066,7 +1066,7 @@ class SettingsManager {
     const h = String(Math.floor(mins / 60)).padStart(2, "0");
     const m = String(mins % 60).padStart(2, "0");
 
-    return ${h}:${m};
+    return `${h}:${m}`;
   }
 
   maybeRecommendSchedule() {
@@ -1099,7 +1099,7 @@ class SettingsManager {
 
     if (darkSd > 35 || lightSd > 35) return;
 
-    const recId = autoSched_${darkMed}_${lightMed};
+    const recId = `autoSched_${darkMed}_${lightMed}`;
 
     if (this.settings.dismissedRecommendations?.[recId]) return;
 
@@ -1120,7 +1120,7 @@ class SettingsManager {
   }
 
   dateKey(d = new Date()) {
-    return ${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()};
+    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
   }
 
   formatTime12h(date) {
@@ -1131,7 +1131,7 @@ class SettingsManager {
     const hh = ((h + 11) % 12) + 1;
     const mm = String(m).padStart(2, "0");
 
-    return ${hh}:${mm} ${ampm};
+    return `${hh}:${mm} ${ampm}`;
   }
 
   ensureSunCache() {
@@ -1188,7 +1188,7 @@ class SettingsManager {
     const now = new Date();
 
     const tag = eff.source?.startsWith("per_day:")
-      ?  • ${eff.source.replace("per_day:", "").toUpperCase()}
+      ? ` • ${eff.source.replace("per_day:", "").toUpperCase()}`
       : "";
 
     const setText = (t) => {
@@ -1201,12 +1201,12 @@ class SettingsManager {
     }
 
     if (mode === "always_dark") {
-      setText(Dark mode is always on.${tag});
+      setText(`Dark mode is always on.${tag}`);
       return;
     }
 
     if (mode === "always_light") {
-      setText(Light mode is always on.${tag});
+      setText(`Light mode is always on.${tag}`);
       return;
     }
 
@@ -1237,7 +1237,7 @@ class SettingsManager {
         nextSwitch = isDark ? end : start;
       }
 
-      setText(${isDark ? "Dark mode" : "Light mode"} until ${this.formatTime12h(nextSwitch)}.${tag});
+      setText(`${isDark ? "Dark mode" : "Light mode"} until ${this.formatTime12h(nextSwitch)}.${tag}`);
       return;
     }
 
@@ -1246,14 +1246,14 @@ class SettingsManager {
       const lon = this.settings.darkModeLon;
 
       if (lat == null || lon == null) {
-        setText(Needs location to calculate sunrise/sunset.${tag});
+        setText(`Needs location to calculate sunrise/sunset.${tag}`);
         return;
       }
 
       const sun = this.ensureSunCache();
 
       if (!sun) {
-        setText(Sun times unavailable. SunCalc may be missing.${tag});
+        setText(`Sun times unavailable. SunCalc may be missing.${tag}`);
         return;
       }
 
@@ -1266,20 +1266,20 @@ class SettingsManager {
       if (mode === "sunset_to_sunrise") {
         isDark = now >= sunset || now < sunrise;
         nextLabel = isDark
-          ? sunrise (${this.formatTime12h(sunrise)})
-          : sunset (${this.formatTime12h(sunset)});
+          ? sunrise (`${this.formatTime12h(sunrise)}`)
+          : sunset (`${this.formatTime12h(sunset)}`);
       } else {
         isDark = now >= sunrise && now < sunset;
         nextLabel = isDark
-          ? sunset (${this.formatTime12h(sunset)})
-          : sunrise (${this.formatTime12h(sunrise)});
+          ? sunset (`${this.formatTime12h(sunset)}`)
+          : sunrise (`${this.formatTime12h(sunrise)}`);
       }
 
-      setText(${isDark ? "Dark mode" : "Light mode"} until ${nextLabel}.${tag});
+      setText(`${isDark ? "Dark mode" : "Light mode"} until ${nextLabel}.${tag}`);
       return;
     }
 
-    setText(Unknown scheduler mode.${tag});
+    setText(`Unknown scheduler mode.${tag}`);
   }
 
   requestUserLocation() {
@@ -1489,8 +1489,8 @@ class SettingsManager {
         .replace(/[A-Z]/g, (m) => "-" + m.toLowerCase());
 
       const el =
-        document.getElementById(${sectionId}-section) ||
-        document.querySelector([data-section-id="${sectionId}"]);
+        document.getElementById(`${sectionId}-section`) ||
+        document.querySelector(`[data-section-id="${sectionId}"]`);
 
       if (el) {
         const visible = this.settings[key] === "enabled";
@@ -1573,9 +1573,9 @@ class SettingsManager {
     }
   }
 
-  / =============================
+  /* =============================
      In-Site Notifications
-  ============================= /
+  ============================= */
   ensureToastContainer() {
     let c = document.getElementById("toast-container");
 
@@ -1605,8 +1605,8 @@ class SettingsManager {
       .replaceAll("&", "&")
       .replaceAll("<", "<")
       .replaceAll(">", ">")
-      .replaceAll('"', """)
-      .replaceAll("'", "'");
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
   }
 
   showToast(title, message) {
@@ -1637,12 +1637,12 @@ class SettingsManager {
       transition: "opacity .25s ease, transform .25s ease",
     });
 
-    toast.innerHTML = 
+    toast.innerHTML = `
       <strong style="display:block;margin-bottom:4px;">
         ${this.escapeHTML(title)}
       </strong>
       <span>${this.escapeHTML(message)}</span>
-    ;
+    `;
 
     container.appendChild(toast);
 
@@ -1768,7 +1768,7 @@ class SettingsManager {
         const label =
           el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
 
-        this.showToast("Preference Saved", ${label} updated.);
+        this.showToast("Preference Saved", `${label} updated.`);
       });
     };
 
