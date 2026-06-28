@@ -1416,6 +1416,44 @@ body.light-e {
   }
 }
 
+/* ================================================== /
+/ ✅ DOCK AUTO-SELECT LOAD FIX                        /
+/ ================================================== /
+
+/ Hide dock only until JS confirms the active tab /
+.onyx-dock {
+  opacity: 0;
+  transition:
+    opacity 0.18s ease,
+    transform 0.35s var(--ease-fluid);
+}
+
+.onyx-dock.dock-ready {
+  opacity: 1;
+}
+
+/ Make active tab impossible to visually disappear */
+.onyx-dock.dock-ready .dock-item.active {
+  background:
+    radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(255,255,255,0.95),
+      rgba(255,255,255,0.45) 50%,
+      rgba(255,255,255,0.25)
+    ) !important;
+
+  color: var(--accent-color) !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    0 6px 14px rgba(0,0,0,0.2) !important;
+}
+
+.onyx-dock.dock-ready .dock-item.active .dock-label {
+  opacity: 1 !important;
+}
+
+
 /* ========== Section Icon Containers & Layout Overrides ========== */
 .setting-icon-container {
   display: flex; align-items: center; justify-content: center;
