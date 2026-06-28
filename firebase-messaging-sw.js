@@ -5,7 +5,7 @@ import {
   getMessaging,
   getToken,
   onMessage,
-  isSupported // Added to prevent crashes on unsupported browsers
+  isSupported 
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
 
 /**
@@ -151,9 +151,9 @@ function showInAppNotification(title, body, payload) {
     width: "100%",
     cursor: "pointer",
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    transition: "transform 0.3s ease, opacity 0.3s ease",
+    transition: "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease", // Swapped to an intentional ease-out curve
     opacity: "0",
-    transform: "clientY(20px)"
+    transform: "translateY(20px)" // FIXED: Changed clientY(20px) to translateY(20px)
   });
 
   notification.innerHTML = `
@@ -168,7 +168,7 @@ function showInAppNotification(title, body, payload) {
 
   document.body.appendChild(notification);
 
-  // Fade-in animation
+  // Fade-in and slide-up animation
   requestAnimationFrame(() => {
     notification.style.opacity = "1";
     notification.style.transform = "translateY(0)";
