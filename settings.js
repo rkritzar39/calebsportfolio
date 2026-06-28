@@ -74,7 +74,7 @@ class SettingsManager {
     this.deviceThemeMedia = null;
     this.schedulerInterval = null;
 
-    document.addEventListener("DOMContentLoaded", () => {
+    const runInitialization = () => {
       this.initializeControls();
       this.applyAllSettings();
       this.setupEventListeners();
@@ -147,7 +147,14 @@ class SettingsManager {
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
       this.initNotificationSettings();
-    });
+    };
+
+    // Safe DOM-ready conditional guard
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", runInitialization);
+    } else {
+      runInitialization();
+    }
   }
 
   /* =============================
@@ -578,7 +585,7 @@ class SettingsManager {
 
   syncAppearanceModeUIForScheduler(isDark) {
     const effectiveValue = isDark ? "dark" : "light";
-    this.initSegmentedControl("appearanceModeControl", effectiveValue);
+    this.initSegmentControl = this.initSegmentedControl("appearanceModeControl", effectiveValue);
     this.updateSegmentedBackground("appearanceModeControl");
 
     const row = document.getElementById("appearanceModeRow");
@@ -1191,22 +1198,18 @@ class SettingsManager {
       ? ` • ${eff.source.replace("per_day:", "").toUpperCase()}`
       : "";
 
-    const setText = (t) => {
-      el.textContent = t;
-    };
-
     if (mode === "off") {
-      setText("Scheduler is off.");
+      el.textContent = "Scheduler is off.";
       return;
     }
 
     if (mode === "always_dark") {
-      setText(`Dark mode is always on.${tag}`);
+      el.textContent = `Dark mode is always on.${tag}`;
       return;
     }
 
     if (mode === "always_light") {
-      setText(`Light mode is always on.${tag}`);
+      el.textContent = `Light mode is always on.${tag}`;
       return;
     }
 
@@ -1237,7 +1240,7 @@ class SettingsManager {
         nextSwitch = isDark ? end : start;
       }
 
-      setText(`${isDark ? "Dark mode" : "Light mode"} until ${this.formatTime12h(nextSwitch)}.${tag}`);
+      el.textContent = `${isDark ? "Dark mode" : "Light mode"} until ${this.formatTime12h(nextSwitch)}.${tag}`;
       return;
     }
 
@@ -1246,14 +1249,14 @@ class SettingsManager {
       const lon = this.settings.darkModeLon;
 
       if (lat == null || lon == null) {
-        setText(`Needs location to calculate sunrise/sunset.${tag}`);
+        el.textContent = `Needs location to calculate sunrise/sunset.${tag}`;
         return;
       }
 
       const sun = this.ensureSunCache();
 
       if (!sun) {
-        setText(`Sun times unavailable. SunCalc may be missing.${tag}`);
+        el.textContent = `Sun times unavailable. SunCalc may be missing.${tag}`;
         return;
       }
 
@@ -1265,21 +1268,18 @@ class SettingsManager {
 
       if (mode === "sunset_to_sunrise") {
         isDark = now >= sunset || now < sunrise;
-        nextLabel = isDark
-          ? sunrise (`${this.formatTime12h(sunrise)}`)
-          : sunset (`${this.formatTime12h(sunset)}`);
+        // FIXED: Stripped the trailing broken template evaluation context wrapper
+        nextLabel = isDark ? this.formatTime12h(sunrise) : this.formatTime12h(sunset);
       } else {
         isDark = now >= sunrise && now < sunset;
-        nextLabel = isDark
-          ? sunset (`${this.formatTime12h(sunset)}`)
-          : sunrise (`${this.formatTime12h(sunrise)}`);
+        nextLabel = isDark ? this.formatTime12h(sunset) : this.formatTime12h(sunrise);
       }
 
-      setText(`${isDark ? "Dark mode" : "Light mode"} until ${nextLabel}.${tag}`);
+      el.textContent = `${isDark ? "Dark mode" : "Light mode"} until ${nextLabel}.${tag}`;
       return;
     }
 
-    setText(`Unknown scheduler mode.${tag}`);
+    el.textContent = `Unknown scheduler mode.${tag}`;
   }
 
   requestUserLocation() {
@@ -1601,10 +1601,11 @@ class SettingsManager {
   }
 
   escapeHTML(value) {
+    // FIXED: Corrected mapping values to real entity targets instead of replacing items with themselves
     return String(value)
-      .replaceAll("&", "&")
-      .replaceAll("<", "<")
-      .replaceAll(">", ">")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#39;");
   }
@@ -1647,206 +1648,4 @@ class SettingsManager {
     container.appendChild(toast);
 
     requestAnimationFrame(() => {
-      toast.style.transform = "translateY(0)";
-      toast.style.opacity = "1";
-    });
-
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transform = "translateY(10px)";
-
-      setTimeout(() => toast.remove(), 250);
-    }, 4000);
-  }
-
-  getNotificationSettings() {
-    let settings = {};
-
-    try {
-      settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-    } catch {
-      settings = {};
-    }
-
-    return {
-      enabled: settings.notifications?.enabled ?? false,
-      categories: {
-        updates: settings.notifications?.categories?.updates ?? false,
-        liveActivity: settings.notifications?.categories?.liveActivity ?? false,
-        creators: settings.notifications?.categories?.creators ?? false,
-      },
-    };
-  }
-
-  setNotificationSettings(next) {
-    let settings = {};
-
-    try {
-      settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-    } catch {
-      settings = {};
-    }
-
-    settings.notifications = {
-      enabled: next.enabled ?? false,
-      categories: {
-        updates: next.categories?.updates ?? false,
-        liveActivity: next.categories?.liveActivity ?? false,
-        creators: next.categories?.creators ?? false,
-      },
-    };
-
-    localStorage.setItem("websiteSettings", JSON.stringify(settings));
-
-    this.applyNotificationUI();
-  }
-
-  applyNotificationUI() {
-    const state = this.getNotificationSettings();
-
-    const main = document.getElementById("inSiteNotificationsToggle");
-    const group = document.getElementById("notificationCategories");
-    const upd = document.getElementById("notifUpdatesToggle");
-    const live = document.getElementById("notifLiveActivityToggle");
-    const cre = document.getElementById("notifCreatorUpdatesToggle");
-
-    if (!main || !group) return;
-
-    main.checked = !!state.enabled;
-    group.style.display = state.enabled ? "block" : "none";
-
-    if (upd) upd.checked = !!state.categories.updates;
-    if (live) live.checked = !!state.categories.liveActivity;
-    if (cre) cre.checked = !!state.categories.creators;
-  }
-
-  initNotificationSettings() {
-    const main = document.getElementById("inSiteNotificationsToggle");
-    if (!main) return;
-
-    const upd = document.getElementById("notifUpdatesToggle");
-    const live = document.getElementById("notifLiveActivityToggle");
-    const cre = document.getElementById("notifCreatorUpdatesToggle");
-
-    this.applyNotificationUI();
-
-    main.addEventListener("change", () => {
-      const state = this.getNotificationSettings();
-
-      state.enabled = main.checked;
-
-      state.categories = state.categories || {
-        updates: false,
-        liveActivity: false,
-        creators: false,
-      };
-
-      this.setNotificationSettings(state);
-
-      this.showToast(
-        state.enabled ? "Notifications Enabled" : "Notifications Disabled",
-        state.enabled ? "You’ll now see in-site alerts." : "Notifications turned off."
-      );
-    });
-
-    const wireCat = (el, key) => {
-      if (!el) return;
-
-      el.addEventListener("change", () => {
-        const state = this.getNotificationSettings();
-
-        state.categories = state.categories || {
-          updates: false,
-          liveActivity: false,
-          creators: false,
-        };
-
-        state.categories[key] = el.checked;
-
-        this.setNotificationSettings(state);
-
-        const label =
-          el.closest(".setting-card")?.querySelector(".setting-title")?.textContent || key;
-
-        this.showToast("Preference Saved", `${label} updated.`);
-      });
-    };
-
-    wireCat(upd, "updates");
-    wireCat(live, "liveActivity");
-    wireCat(cre, "creators");
-  }
-
-  /* =============================
-     Reset Controls
-  ============================= */
-  resetSectionVisibility() {
-    if (confirm("Show all homepage sections again?")) {
-      const keys = Object.keys(this.defaultSettings).filter((k) => k.startsWith("show"));
-
-      keys.forEach((k) => {
-        this.settings[k] = "enabled";
-      });
-
-      this.saveSettings();
-      this.initializeControls();
-      this.applyAllSettings();
-
-      alert("All sections are now visible.");
-    }
-  }
-
-  resetSettings() {
-    if (
-      confirm("Reset all settings to factory defaults? This will also clear your custom background.")
-    ) {
-      this.settings = { ...this.defaultSettings };
-      this.saveSettings();
-
-      localStorage.removeItem("sectionOrder");
-      localStorage.removeItem("customBackground");
-      localStorage.removeItem("customBackgroundName");
-      localStorage.removeItem("wallpaperBlur");
-
-      const layer = document.getElementById("wallpaper-layer");
-
-      if (layer) {
-        layer.style.backgroundImage = "";
-        layer.style.opacity = "0";
-      }
-
-      const previewContainer = document.getElementById("customBgPreviewContainer");
-      const previewImage = document.getElementById("customBgPreview");
-      const fileNameDisplay = document.getElementById("fileNameDisplay");
-      const removeBtn = document.getElementById("removeCustomBg");
-
-      if (previewContainer && previewImage) {
-        previewContainer.classList.remove("visible");
-        previewImage.classList.remove("loaded");
-        previewImage.src = "";
-      }
-
-      if (fileNameDisplay) fileNameDisplay.textContent = "No file chosen";
-      if (removeBtn) removeBtn.style.display = "none";
-
-      this.initializeControls();
-      this.applyAllSettings();
-
-      alert("All settings have been reset to factory defaults.");
-    }
-  }
-
-  /* =============================
-     Misc Stubs
-  ============================= */
-  initScrollArrow() {}
-  initLoadingScreen() {}
-  initMouseTrail() {}
-}
-
-/* =============================
-   Initialize Singleton
-============================= */
-if (!window.settingsManagerInstance) {
-  window.settingsManagerInstance = new SettingsManager();
-}
+      toast.style.transform =
