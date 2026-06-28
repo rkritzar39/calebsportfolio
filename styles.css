@@ -2779,541 +2779,187 @@ body.dark-mode .bubble {
   }
 }
 
-/* =========================================================
-   LEADER SECTION – CLEAN ONYX CONTAINER
-   MATCHED WIDTH VERSION
-========================================================= */
 
-/* =========================
-   OUTER SECTION
-========================= */
-#leader-section,
-#leader-section.section {
-	position: relative;
-	width: 100%;
-	max-width: 100%;
-	box-sizing: border-box;
-	margin: 0 0 32px 0;
-	padding: 0;
-}
-
-/* =========================
-   SINGLE OUTER CONTAINER
-========================= */
-#leader-section .leader-wrap {
-	position: relative;
-	overflow: hidden;
-	isolation: isolate;
-	width: 100%;
-	max-width: 100%;
-	box-sizing: border-box;
-
-	padding: 30px;
-	margin: 0;
-	border-radius: var(--radius-xl);
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 3%, transparent),
-			color-mix(in srgb, black 12%, transparent)
-		),
-		var(--content-bg);
-	background-image:
-		var(--bubble-gradient),
-		var(--liquid-refraction);
-
-	box-shadow:
-		0 18px 40px color-mix(in srgb, var(--shadow-color) 32%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 6%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 12%, transparent),
-		var(--bubble-shadow),
-		var(--bubble-highlight);
-
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-}
-
-#leader-section .leader-wrap::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: 0.28;
-	pointer-events: none;
-}
-
-#leader-section .leader-wrap::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	pointer-events: none;
-	background: linear-gradient(
-		180deg,
-		color-mix(in srgb, white 10%, transparent) 0%,
-		color-mix(in srgb, white 3%, transparent) 35%,
-		transparent 100%
-	);
-	opacity: 0.36;
-}
-
-#leader-section .leader-wrap > * {
-	position: relative;
-	z-index: 1;
-}
-
-/* =========================
-   HEADER
-========================= */
-#leader-section .leader-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 16px;
-	padding-bottom: 16px;
-	margin-bottom: 20px;
-	border-bottom: 1px solid color-mix(in srgb, var(--border-color) 20%, transparent);
-}
-
-#leader-section .leader-title {
-	margin: 0;
-	font-size: 1.35rem;
-	font-weight: 800;
-	letter-spacing: -0.02em;
-	color: var(--text-color);
-}
-
-#leader-section .leader-sub {
-	margin-top: 8px;
-	color: var(--secondary-text);
-	font-size: 0.96rem;
-	line-height: 1.45;
-}
-
-/* =========================
-   REFRESH BUTTON
-========================= */
-#leader-section .leader-refresh {
-	appearance: none;
-	position: relative;
-	overflow: hidden;
-	flex-shrink: 0;
-
-	width: 46px;
-	height: 46px;
-	border-radius: 9999px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 5%, transparent),
-			color-mix(in srgb, white 1%, transparent)
-		),
-		var(--content-bg);
-	background-image:
-		var(--bubble-gradient),
-		var(--liquid-refraction);
-
-	color: var(--text-color);
-	font-size: 1.15rem;
-	font-weight: 900;
-	cursor: pointer;
-
-	box-shadow:
-		0 8px 20px color-mix(in srgb, var(--shadow-color) 28%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 10%, transparent);
-
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-
-	transition:
-		transform .18s ease,
-		box-shadow .18s ease,
-		border-color .18s ease;
-}
-
-#leader-section .leader-refresh::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: .28;
-	pointer-events: none;
-}
-
-#leader-section .leader-refresh:hover {
-	transform: translateY(-2px) rotate(8deg);
-	box-shadow:
-		0 12px 24px color-mix(in srgb, var(--shadow-color) 34%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 8%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 10%, transparent);
-}
-
-/* =========================
-   GRID
-========================= */
-#leader-section .leader-grid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 18px;
-	width: 100%;
-	max-width: 100%;
-	box-sizing: border-box;
-}
-
-/* =========================
-   INNER CARDS
-========================= */
-#leader-section .leader-card {
-	position: relative;
-	overflow: hidden;
-	isolation: isolate;
-	min-width: 0;
-	box-sizing: border-box;
-
-	border-radius: var(--radius-xl);
-	padding: 20px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 50%, transparent);
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 2%, transparent),
-			color-mix(in srgb, black 8%, transparent)
-		),
-		color-mix(in srgb, var(--content-bg) 92%, transparent);
-	background-image:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 2%, transparent),
-			color-mix(in srgb, white 0%, transparent)
-		),
-		var(--bubble-gradient);
-
-	box-shadow:
-		0 10px 24px color-mix(in srgb, var(--shadow-color) 22%, transparent),
-		inset 0 1px 0 rgba(255,255,255,.05);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-
-	transition:
-		transform .2s ease,
-		box-shadow .2s ease,
-		border-color .2s ease;
-}
-
-#leader-section .leader-card::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: .18;
-	pointer-events: none;
-}
-
-#leader-section .leader-card:hover {
-	transform: translateY(-2px);
-	box-shadow:
-		0 14px 28px color-mix(in srgb, var(--shadow-color) 28%, transparent),
-		inset 0 1px 0 rgba(255,255,255,.05);
-}
-
-/* =========================
-   CARD CONTENT
-========================= */
-#leader-section .leader-top {
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	min-width: 0;
-}
-
-#leader-section .leader-avatar {
-	width: 88px;
-	height: 88px;
-	min-width: 88px;
-	border-radius: 50%;
-	object-fit: cover;
-	flex-shrink: 0;
-
-	border: 2px solid color-mix(in srgb, var(--border-color) 76%, transparent);
-
-	box-shadow:
-		0 10px 20px color-mix(in srgb, var(--shadow-color) 38%, transparent),
-		0 0 0 4px color-mix(in srgb, var(--content-bg) 45%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 8%, transparent);
-}
-
-#leader-section .leader-meta {
-	display: flex;
-	flex-direction: column;
-	min-width: 0;
-}
-
-#leader-section .leader-label {
-	display: inline-flex;
-	align-items: center;
-	width: fit-content;
-	max-width: 100%;
-	padding: 6px 10px;
-	margin-bottom: 6px;
-	border-radius: 9999px;
-	border: 1px solid color-mix(in srgb, var(--border-color) 40%, transparent);
-
-	background:
-		linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)),
-		color-mix(in srgb, var(--content-bg) 90%, transparent);
-
-	color: var(--secondary-text);
-	font-size: .75rem;
-	font-weight: 900;
-	letter-spacing: .03em;
-	text-transform: uppercase;
-
-	box-shadow:
-		inset 0 1px 0 rgba(255,255,255,.05),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 12%, transparent);
-}
-
-#leader-section .leader-value {
-	font-size: 1.18rem;
-	font-weight: 800;
-	line-height: 1.15;
-	color: var(--text-color);
-	word-break: break-word;
-}
-
-#leader-section .leader-term {
-	margin-top: 4px;
-	font-size: .95rem;
-	line-height: 1.45;
-	color: var(--secondary-text);
-	word-break: break-word;
-}
-
-/* =========================
-   FOOTNOTE
-========================= */
-#leader-section .leader-foot {
-	margin-top: 18px;
-	padding-top: 14px;
-	border-top: 1px solid color-mix(in srgb, var(--border-color) 20%, transparent);
-	color: var(--secondary-text);
-	font-size: .9rem;
-	line-height: 1.5;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width: 900px) {
-	#leader-section .leader-grid {
-		grid-template-columns: 1fr;
-	}
-}
-
-@media (max-width: 768px) {
-	#leader-section .leader-wrap {
-		padding: 22px;
-	}
-
-	#leader-section .leader-header {
-		gap: 14px;
-	}
-
-	#leader-section .leader-title {
-		font-size: clamp(1.15rem, 3.4vw, 1.3rem);
-	}
-
-	#leader-section .leader-card {
-		padding: 18px;
-	}
-
-	#leader-section .leader-avatar {
-		width: 80px;
-		height: 80px;
-		min-width: 80px;
-	}
-}
-
-@media (max-width: 560px) {
-	#leader-section .leader-header {
-		flex-direction: column;
-		align-items: stretch;
-	}
-
-	#leader-section .leader-refresh {
-		align-self: flex-start;
-	}
-
-	#leader-section .leader-top {
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-	}
-
-	#leader-section .leader-meta {
-		align-items: center;
-	}
-
-	#leader-section .leader-label {
-		margin-left: auto;
-		margin-right: auto;
-	}
-
-	#leader-section .leader-avatar {
-		width: 76px;
-		height: 76px;
-		min-width: 76px;
-	}
-}
-
-@media (max-width: 420px) {
-	#leader-section .leader-wrap {
-		padding: 20px 16px;
-	}
-
-	#leader-section .leader-grid {
-		gap: 14px;
-	}
-
-	#leader-section .leader-card {
-		padding: 16px;
-	}
-}
-
-/* ======================================== */
-/* == Social Links Section – Onyx Glass   == */
-/* == iOS-Style Pill Rows + Chevron       == */
-/* ======================================== */
+/* ======================================== /
+/ == Social Links Section – Onyx Glass   == /
+/ == iOS-Style Pill Rows + Chevron       == /
+/ == Root Theme Light/Dark Compatible    == /
+/ ======================================== */
 
 .social-links-section {
 	position: relative;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient), var(--liquid-refraction);
-	padding: 30px;
-	border-radius: var(--radius-xl);
-	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-	margin: 20px 0;
 	width: 100%;
 	box-sizing: border-box;
-	color: var(--text-color);
 	overflow: hidden;
 
+	margin: 20px 0;
+	padding: 30px;
+	border-radius: var(--radius-xl);
+
+	color: var(--text-color);
+
+	background:
+		radial-gradient(
+			circle at 40% 0%,
+			color-mix(in srgb, var(--glow-color) 60%, transparent),
+			transparent 58%
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+
 	box-shadow:
-		var(--bubble-shadow),
-		var(--bubble-highlight);
+		var(--bubble-highlight),
+		var(--bubble-shadow);
 
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
+
+	isolation: isolate;
+
+	transition:
+		background var(--transition-medium),
+		border-color var(--transition-medium),
+		box-shadow var(--transition-medium),
+		color var(--transition-medium);
 }
 
-/* Reflection */
+/* Reflection Layer */
 .social-links-section::before {
 	content: "";
 	position: absolute;
 	inset: 0;
+	z-index: 0;
 	border-radius: inherit;
+	pointer-events: none;
+
 	background: var(--liquid-reflection);
 	mix-blend-mode: soft-light;
-	opacity: 0.45;
+	opacity: 0.42;
+}
+
+/* Depth Layer */
+.social-links-section::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
 	pointer-events: none;
+
+	background:
+		radial-gradient(
+			circle at 50% 0%,
+			color-mix(in srgb, var(--glow-color) 48%, transparent),
+			transparent 58%
+		),
+		radial-gradient(
+			circle at 50% 100%,
+			color-mix(in srgb, var(--shadow-color) 42%, transparent),
+			transparent 72%
+		);
+
+	opacity: 0.58;
 }
 
 /* Header */
 .social-links-section h2 {
 	position: relative;
 	z-index: 1;
+
 	font-size: calc(var(--font-size-base, 20px) * 1.2);
-	font-weight: 700;
+	font-weight: 750;
+	letter-spacing: -0.025em;
+
 	margin-top: 0;
 	margin-bottom: 20px;
+
 	text-align: center;
+	color: var(--text-color);
 }
 
-/* ======================================== */
-/* Search */
-/* ======================================== */
+/* ======================================== /
+/ Search /
+/ ======================================== */
+
 .search-container.unified {
 	position: relative;
 	z-index: 1;
 	margin-bottom: 20px;
 }
 
-/* ======================================== */
-/* Container */
-/* ======================================== */
+/* ======================================== /
+/ Container /
+/ ======================================== */
+
 .social-links-container {
 	position: relative;
 	z-index: 1;
+
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
+
 	width: 100%;
 }
 
-/* ======================================== */
-/* Social Button – True Pill Style */
-/* ======================================== */
+/* ======================================== /
+/ Social Button – True iOS Glass Pill /
+/ ======================================== */
+
 .social-button {
+	position: relative;
+
 	display: flex;
 	align-items: center;
 	gap: 14px;
+
 	width: 100%;
 	min-height: 56px;
+
 	padding: 14px 20px;
 	padding-right: 50px;
 
-	position: relative;
 	box-sizing: border-box;
 	text-decoration: none;
-	border-radius: 9999px;
+	border-radius: var(--radius-pill, 9999px);
+
+	color: var(--text-color);
 
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, white 8%, transparent),
-			color-mix(in srgb, white 2%, transparent)
+			color-mix(in srgb, var(--glow-color) 26%, transparent),
+			color-mix(in srgb, var(--content-bg) 88%, transparent)
 		),
-		var(--content-bg);
-	background-image:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 8%, transparent),
-			color-mix(in srgb, white 2%, transparent)
-		),
-		var(--bubble-gradient);
+		var(--bubble-gradient),
+		color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
 
-	border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+	border: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent);
 
 	box-shadow:
-		0 8px 24px color-mix(in srgb, var(--shadow-color) 42%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 14%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 8%, transparent);
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 48%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 28%, transparent),
+		0 8px 24px color-mix(in srgb, var(--shadow-color) 38%, transparent);
 
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
+	backdrop-filter: blur(18px) saturate(160%) contrast(108%);
+	-webkit-backdrop-filter: blur(18px) saturate(160%) contrast(108%);
 
-	color: var(--text-color);
-	font-weight: 600;
-	letter-spacing: 0.2px;
+	font-weight: 650;
+	letter-spacing: 0.1px;
+
+	overflow: hidden;
+	isolation: isolate;
 
 	transition:
-		background 0.2s ease,
-		border-color 0.2s ease,
-		box-shadow 0.2s ease,
+		background var(--transition-fast),
+		border-color var(--transition-fast),
+		box-shadow var(--transition-fast),
 		transform 0.12s ease,
-		color 0.2s ease;
+		color var(--transition-fast),
+		filter var(--transition-fast);
 }
 
 /* Soft glass sheen inside each pill */
@@ -3321,40 +2967,20 @@ body.dark-mode .bubble {
 	content: "";
 	position: absolute;
 	inset: 0;
+	z-index: 0;
 	border-radius: inherit;
-	background: linear-gradient(
-		180deg,
-		color-mix(in srgb, white 16%, transparent) 0%,
-		color-mix(in srgb, white 6%, transparent) 35%,
-		transparent 100%
-	);
-	opacity: 0.55;
 	pointer-events: none;
-}
 
-/* Icon */
-.social-button .social-icon {
-	position: relative;
-	z-index: 1;
-	font-size: 1.08em;
-	color: var(--icon-color);
-	flex-shrink: 0;
-	width: 20px;
-	text-align: center;
-	transition: color 0.2s ease;
-}
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--glow-color) 34%, transparent) 0%,
+			color-mix(in srgb, var(--glow-color) 12%, transparent) 36%,
+			transparent 100%
+		);
 
-/* Text */
-.social-button span {
-	position: relative;
-	z-index: 1;
-	flex: 1 1 auto;
-	text-align: left;
-	color: var(--text-color);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	transition: color 0.2s ease;
+	opacity: 0.58;
+	mix-blend-mode: soft-light;
 }
 
 /* Chevron */
@@ -3363,90 +2989,356 @@ body.dark-mode .bubble {
 	position: absolute;
 	right: 20px;
 	top: 50%;
-	transform: translateY(-50%) rotate(45deg);
 	z-index: 1;
 
 	width: 8px;
 	height: 8px;
 
+	transform: translateY(-50%) rotate(45deg);
+
 	border-top: 2px solid color-mix(in srgb, var(--text-color) 58%, transparent);
 	border-right: 2px solid color-mix(in srgb, var(--text-color) 58%, transparent);
 
-	opacity: 0.85;
+	opacity: 0.82;
 	pointer-events: none;
-	transition: border-color 0.2s ease, opacity 0.2s ease;
+
+	transition:
+		border-color var(--transition-fast),
+		opacity var(--transition-fast),
+		transform var(--transition-fast);
 }
 
-/* ======================================== */
-/* HOVER — ACCENT GLASS EFFECT */
-/* ======================================== */
+/* Icon */
+.social-button .social-icon {
+	position: relative;
+	z-index: 1;
+
+	font-size: 1.08em;
+	color: var(--icon-color);
+
+	flex-shrink: 0;
+	width: 20px;
+	text-align: center;
+
+	transition:
+		color var(--transition-fast),
+		transform var(--transition-fast),
+		filter var(--transition-fast);
+}
+
+/* Text */
+.social-button span {
+	position: relative;
+	z-index: 1;
+
+	flex: 1 1 auto;
+	text-align: left;
+
+	color: var(--text-color);
+
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	transition:
+		color var(--transition-fast),
+		transform var(--transition-fast);
+}
+
+/* ======================================== /
+/ Hover — Accent Liquid Bloom /
+/ ======================================== */
+
 .social-button:hover {
+	transform: translateY(-1px);
+
 	background:
+		radial-gradient(
+			circle at 18% 0%,
+			color-mix(in srgb, var(--accent-color) 24%, transparent),
+			transparent 52%
+		),
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, white 12%, transparent),
-			color-mix(in srgb, white 4%, transparent)
+			color-mix(in srgb, var(--glow-color) 32%, transparent),
+			color-mix(in srgb, var(--accent-color) 12%, var(--content-bg))
 		),
-		color-mix(in srgb, var(--accent-color, #4EA8FF) 18%, var(--content-bg));
+		color-mix(in srgb, var(--accent-color) 15%, var(--content-bg));
 
-	border-color: color-mix(in srgb, var(--accent-color, #4EA8FF) 60%, var(--border-color));
+	border-color: color-mix(in srgb, var(--accent-color) 52%, var(--border-color));
 
 	box-shadow:
-		0 10px 28px color-mix(in srgb, var(--accent-color, #4EA8FF) 25%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 16%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, black 10%, transparent);
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 58%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 30%, transparent),
+		0 10px 28px color-mix(in srgb, var(--shadow-color) 42%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 22%, transparent);
+
+	filter: brightness(1.04);
 }
 
-/* Hover text + icon + chevron */
 .social-button:hover span {
-	color: color-mix(in srgb, var(--accent-color, #4EA8FF) 85%, white 15%);
+	color: color-mix(in srgb, var(--accent-color) 88%, var(--text-color) 12%);
 }
 
 .social-button:hover .social-icon {
-	color: var(--accent-color, #4EA8FF);
+	color: var(--accent-color);
+	transform: scale(1.04);
+	filter:
+		drop-shadow(
+			0 0 8px color-mix(in srgb, var(--accent-color) 28%, transparent)
+		);
 }
 
 .social-button:hover::after {
-	border-top-color: var(--accent-color, #4EA8FF);
-	border-right-color: var(--accent-color, #4EA8FF);
+	border-top-color: var(--accent-color);
+	border-right-color: var(--accent-color);
 	opacity: 1;
+	transform: translateY(-50%) rotate(45deg) translate(1px, -1px);
 }
 
-/* ======================================== */
-/* Focus */
-/* ======================================== */
+/* ======================================== /
+/ Focus /
+/ ======================================== */
+
 .social-button:focus-visible {
 	outline: none;
-	border-color: color-mix(in srgb, var(--accent-color, #4EA8FF) 52%, var(--border-color));
+
+	border-color: color-mix(in srgb, var(--accent-color) 56%, var(--border-color));
+
 	box-shadow:
-		0 0 0 3px color-mix(in srgb, var(--accent-color, #4EA8FF) 20%, transparent),
-		0 10px 28px color-mix(in srgb, var(--shadow-color) 48%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 16%, transparent);
+		0 0 0 4px color-mix(in srgb, var(--accent-color) 26%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 18%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 58%, transparent),
+		0 10px 28px color-mix(in srgb, var(--shadow-color) 48%, transparent);
 }
 
 /* Press */
 .social-button:active {
 	transform: scale(0.985);
+	filter: brightness(0.98);
 }
 
 .social-button:active::after {
 	opacity: 1;
 }
 
-/* ======================================== */
-/* No Results */
-/* ======================================== */
+/* ======================================== /
+/ No Results /
+/ ======================================== */
+
 .no-results {
 	position: relative;
 	z-index: 1;
+
 	margin-top: 10px;
+
 	color: var(--secondary-text);
 	text-align: center;
 }
 
-/* ======================================== */
-/* Responsive */
-/* ======================================== */
+/* ======================================== /
+/ Light Mode Polish /
+/ ======================================== */
+
+body.light-e .social-links-section {
+	background:
+		radial-gradient(
+			circle at 40% 0%,
+			rgba(255, 255, 255, 0.88),
+			transparent 56%
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		color-mix(in srgb, var(--content-bg) 86%, white 14%);
+
+	border-color: color-mix(in srgb, var(--border-color) 92%, white 8%);
+
+	box-shadow:
+		var(--bubble-highlight),
+		0 22px 56px color-mix(in srgb, var(--shadow-color) 72%, transparent),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.045);
+}
+
+body.light-e .social-links-section::before {
+	opacity: 0.5;
+}
+
+body.light-e .social-links-section::after {
+	background:
+		radial-gradient(
+			circle at 50% 0%,
+			rgba(255, 255, 255, 0.74),
+			transparent 58%
+		),
+		radial-gradient(
+			circle at 50% 100%,
+			rgba(0, 0, 0, 0.12),
+			transparent 72%
+		);
+
+	opacity: 0.55;
+}
+
+body.light-e .social-button {
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.72),
+			rgba(255, 255, 255, 0.42)
+		),
+		var(--bubble-gradient),
+		color-mix(in srgb, var(--content-bg) 84%, white 16%);
+
+	border-color: color-mix(in srgb, var(--border-color) 92%, white 8%);
+
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.74),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.055),
+		0 8px 22px color-mix(in srgb, var(--shadow-color) 52%, transparent);
+}
+
+body.light-e .social-button::before {
+	opacity: 0.64;
+	mix-blend-mode: soft-light;
+}
+
+body.light-e .social-button:hover {
+	background:
+		radial-gradient(
+			circle at 18% 0%,
+			color-mix(in srgb, var(--accent-color) 20%, transparent),
+			transparent 52%
+		),
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.82),
+			color-mix(in srgb, var(--accent-color) 10%, rgba(255, 255, 255, 0.52))
+		),
+		color-mix(in srgb, var(--accent-color) 12%, var(--content-bg));
+
+	border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.80),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+		0 10px 28px color-mix(in srgb, var(--shadow-color) 55%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 20%, transparent);
+}
+
+body.light-e .social-button span {
+	color: var(--text-color);
+}
+
+body.light-e .social-button:hover span {
+	color: color-mix(in srgb, var(--accent-color) 82%, var(--text-color) 18%);
+}
+
+body.light-e .social-button .social-icon {
+	color: var(--icon-color);
+}
+
+body.light-e .social-button:hover .social-icon {
+	color: var(--accent-color);
+}
+
+body.light-e .social-button::after {
+	border-top-color: color-mix(in srgb, var(--text-color) 50%, transparent);
+	border-right-color: color-mix(in srgb, var(--text-color) 50%, transparent);
+}
+
+/* ======================================== /
+/ Dark Mode Polish /
+/ ======================================== */
+
+html.dark-mode body .social-links-section,
+body.dark-mode .social-links-section {
+	background:
+		radial-gradient(
+			circle at 36% 0%,
+			rgba(255, 255, 255, 0.12),
+			transparent 52%
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		color-mix(in srgb, var(--content-bg) 88%, black 12%);
+
+	border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
+
+	box-shadow:
+		var(--bubble-highlight),
+		0 30px 70px color-mix(in srgb, var(--shadow-color) 88%, transparent),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.32);
+}
+
+html.dark-mode body .social-links-section::before,
+body.dark-mode .social-links-section::before {
+	opacity: 0.4;
+}
+
+html.dark-mode body .social-links-section::after,
+body.dark-mode .social-links-section::after {
+	background:
+		radial-gradient(
+			circle at 50% 0%,
+			rgba(255, 255, 255, 0.1),
+			transparent 58%
+		),
+		radial-gradient(
+			circle at 50% 100%,
+			rgba(0, 0, 0, 0.4),
+			transparent 72%
+		);
+
+	opacity: 0.72;
+}
+
+html.dark-mode body .social-button,
+body.dark-mode .social-button {
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.08),
+			rgba(255, 255, 255, 0.025)
+		),
+		var(--bubble-gradient),
+		color-mix(in srgb, var(--content-bg) 88%, black 12%);
+
+	border-color: color-mix(in srgb, var(--border-color) 86%, transparent);
+
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.10),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.32),
+		0 8px 24px color-mix(in srgb, var(--shadow-color) 48%, transparent);
+}
+
+html.dark-mode body .social-button:hover,
+body.dark-mode .social-button:hover {
+	background:
+		radial-gradient(
+			circle at 18% 0%,
+			color-mix(in srgb, var(--accent-color) 24%, transparent),
+			transparent 52%
+		),
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.10),
+			color-mix(in srgb, var(--accent-color) 12%, rgba(255, 255, 255, 0.025))
+		),
+		color-mix(in srgb, var(--accent-color) 16%, var(--content-bg));
+
+	border-color: color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
+
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.12),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.34),
+		0 10px 30px color-mix(in srgb, var(--shadow-color) 58%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 24%, transparent);
+}
+
+/* ======================================== /
+/ Responsive /
+/ ======================================== */
+
 @media (max-width: 768px) {
 	.social-links-section {
 		padding: 22px;
