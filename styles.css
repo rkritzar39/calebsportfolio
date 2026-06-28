@@ -983,15 +983,15 @@ body.light-e {
   }
 }
 
-/* ======================================================= */
-/* === LIVE ACTIVITY — APPLE MUSIC / IOS STYLE =========== */
-/* === Existing HTML only ================================= */
-/* ======================================================= */
+/* ======================================================= /
+/ === LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE ====== /
+/ === Existing HTML only ================================ /
+/ ======================================================= */
 
 .live-activity {
   --dynamic-accent: var(--accent-color, #ff4f8b);
-  --dynamic-accent-soft: var(--accent-color, #ff6a9c);
-  --dynamic-accent-glow: var(--accent-color, #ff7dab);
+  --dynamic-accent-soft: color-mix(in srgb, var(--accent-color, #ff6a9c) 82%, var(--glow-color) 18%);
+  --dynamic-accent-glow: color-mix(in srgb, var(--accent-color, #ff7dab) 70%, var(--glow-color) 30%);
   --dynamic-bg: none;
 
   --la-pad-x: clamp(18px, 3vw, 24px);
@@ -1022,34 +1022,31 @@ body.light-e {
   color: var(--text-color);
 
   background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.045),
-      rgba(255,255,255,0.02)
+    radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
+      transparent 52%
     ),
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--dynamic-accent-soft) 6%, rgba(18,18,22,0.90)),
-      color-mix(in srgb, var(--dynamic-accent) 3%, rgba(10,10,14,0.94))
-    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
     var(--dynamic-bg),
-    color-mix(in srgb, var(--content-bg, #111) 94%, transparent);
+    color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
 
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
 
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.05) inset,
-    0 0 0 1px rgba(255,255,255,0.03),
-    0 18px 48px rgba(0,0,0,0.46),
-    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 10%, transparent);
+    var(--bubble-highlight),
+    var(--bubble-shadow),
+    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
 
-  backdrop-filter: blur(24px) saturate(1.12);
-  -webkit-backdrop-filter: blur(24px) saturate(1.12);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
 
   transition:
-    background .45s ease,
-    box-shadow .45s ease,
-    border-color .45s ease;
+    background var(--transition-medium, .45s ease),
+    box-shadow var(--transition-medium, .45s ease),
+    border-color var(--transition-medium, .45s ease),
+    color var(--transition-medium, .45s ease);
 }
 
 .live-activity::before {
@@ -1058,15 +1055,10 @@ body.light-e {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.10) 0%,
-      rgba(255,255,255,0.03) 16%,
-      rgba(255,255,255,0.00) 38%
-    );
-  opacity: 0.55;
-  mix-blend-mode: screen;
+
+  background: var(--liquid-reflection);
+  opacity: 0.38;
+  mix-blend-mode: soft-light;
 }
 
 .live-activity::after {
@@ -1075,6 +1067,7 @@ body.light-e {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+
   background:
     radial-gradient(
       80% 46% at 50% 22%,
@@ -1083,14 +1076,15 @@ body.light-e {
     ),
     radial-gradient(
       70% 38% at 50% 46%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 10%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
       transparent 62%
     ),
     radial-gradient(
       90% 48% at 50% 100%,
-      rgba(0,0,0,0.18),
+      color-mix(in srgb, var(--shadow-color) 38%, transparent),
       transparent 70%
     );
+
   opacity: 0.82;
 }
 
@@ -1099,17 +1093,17 @@ body.light-e {
   z-index: 2;
 }
 
-/* ======================================================= */
-/* === HIDDEN ============================================ */
-/* ======================================================= */
+/* ======================================================= /
+/ === HIDDEN ============================================ /
+/ ======================================================= */
 
 .hidden {
   display: none !important;
 }
 
-/* ======================================================= */
-/* === STATUS LINE ======================================= */
-/* ======================================================= */
+/* ======================================================= /
+/ === STATUS LINE ======================================= /
+/ ======================================================= */
 
 .status-line {
   display: inline-flex;
@@ -1123,9 +1117,10 @@ body.light-e {
   font-size: 0.98rem;
   font-weight: 500;
   letter-spacing: -0.01em;
-  color: color-mix(in srgb, var(--text-color) 92%, rgba(255,255,255,0.35));
 
-  transition: opacity .22s ease;
+  color: color-mix(in srgb, var(--text-color) 88%, var(--secondary-text) 12%);
+
+  transition: opacity var(--transition-fast, .22s ease);
 }
 
 .status-icon {
@@ -1133,19 +1128,26 @@ body.light-e {
   height: 23px;
   flex-shrink: 0;
   display: block;
+
   filter:
-    drop-shadow(0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 16%, transparent));
+    drop-shadow(
+      0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent)
+    );
 }
 
 .status-icon.glow {
   filter:
-    drop-shadow(0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent))
-    drop-shadow(0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 10%, transparent));
+    drop-shadow(
+      0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 26%, transparent)
+    )
+    drop-shadow(
+      0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent)
+    );
 }
 
-/* ======================================================= */
-/* === CARD BODY ========================================= */
-/* ======================================================= */
+/* ======================================================= /
+/ === CARD BODY ========================================= /
+/ ======================================================= */
 
 .spotify-card {
   width: 100%;
@@ -1172,13 +1174,13 @@ body.light-e {
 
 .spotify-card:focus-visible {
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 26%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 10%, transparent);
+    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 30%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
 }
 
-/* ======================================================= */
-/* === ALBUM ART ========================================= */
-/* ======================================================= */
+/* ======================================================= /
+/ === ALBUM ART ========================================= /
+/ ======================================================= */
 
 .live-album-art {
   position: relative;
@@ -1190,15 +1192,19 @@ body.light-e {
   overflow: hidden;
 
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
-    rgba(255,255,255,0.02);
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 18%, transparent),
+      color-mix(in srgb, var(--content-bg) 82%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
 
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
 
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.04),
-    0 22px 48px rgba(0,0,0,0.42),
-    0 0 28px color-mix(in srgb, var(--dynamic-accent-glow) 10%, transparent);
+    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 38%, transparent),
+    0 22px 48px color-mix(in srgb, var(--shadow-color) 62%, transparent),
+    0 0 28px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
 
   transition:
     transform .35s cubic-bezier(.2,.8,.2,1),
@@ -1216,7 +1222,7 @@ body.light-e {
   background:
     radial-gradient(
       circle,
-      color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent),
       transparent 72%
     );
 
@@ -1235,12 +1241,13 @@ body.light-e {
   background:
     linear-gradient(
       180deg,
-      rgba(255,255,255,0.16) 0%,
-      rgba(255,255,255,0.04) 20%,
-      transparent 36%,
+      color-mix(in srgb, var(--glow-color) 24%, transparent) 0%,
+      color-mix(in srgb, var(--glow-color) 8%, transparent) 22%,
+      transparent 38%,
       transparent 72%,
-      rgba(0,0,0,0.10) 100%
+      color-mix(in srgb, var(--shadow-color) 16%, transparent) 100%
     );
+
   mix-blend-mode: screen;
 }
 
@@ -1262,9 +1269,11 @@ body.light-e {
 .spotify-card:hover .live-album-art,
 .spotify-card:focus-visible .live-album-art {
   transform: translateY(-3px) scale(1.018);
+
   box-shadow:
-    0 28px 58px rgba(0,0,0,0.48),
-    0 0 36px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 42%, transparent),
+    0 28px 58px color-mix(in srgb, var(--shadow-color) 68%, transparent),
+    0 0 36px color-mix(in srgb, var(--dynamic-accent-glow) 16%, transparent);
 }
 
 .spotify-card:hover .live-album-art img,
@@ -1273,9 +1282,9 @@ body.light-e {
   filter: saturate(1.03) contrast(1.02);
 }
 
-/* ======================================================= */
-/* === INFO ============================================== */
-/* ======================================================= */
+/* ======================================================= /
+/ === INFO ============================================== /
+/ ======================================================= */
 
 .live-info {
   width: 100%;
@@ -1307,7 +1316,7 @@ body.light-e {
   text-wrap: balance;
 
   text-shadow:
-    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 14%, transparent);
 }
 
 .explicit-badge {
@@ -1327,9 +1336,12 @@ body.light-e {
   line-height: 1;
   letter-spacing: 0;
 
-  color: rgba(255,255,255,0.82);
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text-color);
+
+  background:
+    color-mix(in srgb, var(--content-bg) 78%, var(--glow-color) 22%);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
 }
 
 .live-artist {
@@ -1341,7 +1353,7 @@ body.light-e {
   font-weight: 400;
   letter-spacing: -0.015em;
 
-  color: color-mix(in srgb, var(--secondary-text) 94%, rgba(255,255,255,0.18));
+  color: var(--secondary-text);
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1352,9 +1364,9 @@ body.light-e {
   overflow-wrap: anywhere;
 }
 
-/* ======================================================= */
-/* === PROGRESS ========================================== */
-/* ======================================================= */
+/* ======================================================= /
+/ === PROGRESS ========================================== /
+/ ======================================================= */
 
 .music-progress-container {
   position: relative;
@@ -1366,19 +1378,22 @@ body.light-e {
   margin: 22px auto 14px;
 
   border-radius: 999px;
+  box-sizing: border-box;
 
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02)),
-    linear-gradient(180deg, rgba(0,0,0,0.42), rgba(0,0,0,0.18));
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 18%, transparent),
+      color-mix(in srgb, var(--content-bg) 70%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
 
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
 
   box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.06),
-    inset 0 -1px 2px rgba(0,0,0,0.46),
-    0 1px 8px rgba(0,0,0,0.24);
-
-  box-sizing: border-box;
+    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 28%, transparent),
+    inset 0 -1px 2px color-mix(in srgb, var(--shadow-color) 36%, transparent),
+    0 1px 8px color-mix(in srgb, var(--shadow-color) 28%, transparent);
 }
 
 .music-progress-container::before {
@@ -1391,10 +1406,11 @@ body.light-e {
   background:
     linear-gradient(
       180deg,
-      rgba(255,255,255,0.16),
+      color-mix(in srgb, var(--glow-color) 22%, transparent),
       transparent 72%
     );
-  opacity: 0.28;
+
+  opacity: 0.34;
 }
 
 .music-progress-bar {
@@ -1407,14 +1423,14 @@ body.light-e {
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--dynamic-accent-soft) 94%, rgba(255,255,255,0.24)),
-      color-mix(in srgb, var(--dynamic-accent) 72%, rgba(0,0,0,0.18))
+      color-mix(in srgb, var(--dynamic-accent-soft) 94%, var(--glow-color) 6%),
+      color-mix(in srgb, var(--dynamic-accent) 78%, var(--shadow-color) 22%)
     );
 
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.18),
-    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
-    0 0 24px color-mix(in srgb, var(--dynamic-accent-soft) 10%, transparent);
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 34%, transparent),
+    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
+    0 0 24px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
 
   transition: width .32s linear;
 }
@@ -1429,14 +1445,22 @@ body.light-e {
 }
 
 @keyframes liveActivityIndeterminate {
-  0%   { transform: translateX(-120%); }
-  50%  { transform: translateX(94%); }
-  100% { transform: translateX(240%); }
+  0% {
+    transform: translateX(-120%);
+  }
+
+  50% {
+    transform: translateX(94%);
+  }
+
+  100% {
+    transform: translateX(240%);
+  }
 }
 
-/* ======================================================= */
-/* === TIME PILL ========================================= */
-/* ======================================================= */
+/* ======================================================= /
+/ === TIME PILL ========================================= /
+/ ======================================================= */
 
 .music-progress-time {
   width: var(--la-time-w);
@@ -1451,16 +1475,20 @@ body.light-e {
   border-radius: 20px;
 
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015)),
-    rgba(12,12,16,0.62);
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 14%, transparent),
+      color-mix(in srgb, var(--content-bg) 78%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
 
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
 
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.05),
-    inset 0 -1px 1px rgba(0,0,0,0.34);
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 26%, transparent),
+    inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 32%, transparent);
 
-  color: color-mix(in srgb, var(--secondary-text) 92%, rgba(255,255,255,0.20));
+  color: var(--secondary-text);
 
   font-size: clamp(0.84rem, 1.4vw, 0.96rem);
   line-height: 1;
@@ -1486,7 +1514,9 @@ body.light-e {
   justify-self: center;
   text-align: center;
   font-weight: 700;
-  color: color-mix(in srgb, var(--dynamic-accent-soft) 82%, #fff);
+
+  color: color-mix(in srgb, var(--dynamic-accent-soft) 84%, var(--text-color) 16%);
+
   padding: 0 12px;
 }
 
@@ -1495,9 +1525,9 @@ body.light-e {
   text-align: right;
 }
 
-/* ======================================================= */
-/* === UPDATED PILL ====================================== */
-/* ======================================================= */
+/* ======================================================= /
+/ === UPDATED PILL ====================================== /
+/ ======================================================= */
 
 .la-updated,
 #live-activity-updated {
@@ -1509,16 +1539,20 @@ body.light-e {
   border-radius: 999px;
 
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)),
-    rgba(12,12,16,0.56);
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 12%, transparent),
+      color-mix(in srgb, var(--content-bg) 78%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
 
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
 
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.04),
-    inset 0 -1px 1px rgba(0,0,0,0.28);
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 24%, transparent),
+    inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 28%, transparent);
 
-  color: color-mix(in srgb, var(--secondary-text) 90%, rgba(255,255,255,0.16));
+  color: var(--secondary-text);
 
   font-size: 0.72rem;
   line-height: 1;
@@ -1527,9 +1561,9 @@ body.light-e {
   text-transform: uppercase;
 }
 
-/* ======================================================= */
-/* === IN / OUT ========================================== */
-/* ======================================================= */
+/* ======================================================= /
+/ === IN / OUT ========================================== /
+/ ======================================================= */
 
 .spotify-card.slide-in {
   animation: liveCardIn .34s cubic-bezier(.2,.8,.2,1);
@@ -1544,6 +1578,7 @@ body.light-e {
     opacity: 0;
     transform: translateY(8px) scale(.988);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1555,45 +1590,45 @@ body.light-e {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+
   to {
     opacity: 0;
     transform: translateY(8px) scale(.988);
   }
 }
 
-/* ======================================================= */
-/* === LIGHT MODE ======================================== */
-/* === stronger visible dynamic accent =================== */
-/* ======================================================= */
+/* ======================================================= /
+/ === LIGHT MODE THEME POLISH =========================== /
+/ ======================================================= */
 
 body.light-e .live-activity {
-  color: #111;
+  color: var(--text-color);
 
   background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.74),
-      rgba(255,255,255,0.58)
+    radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--dynamic-accent-glow) 24%, rgba(255,255,255,0.72)),
+      transparent 56%
     ),
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--dynamic-accent-soft) 22%, rgba(255,255,255,0.92)),
-      color-mix(in srgb, var(--dynamic-accent) 12%, rgba(255,255,255,0.84))
-    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
     var(--dynamic-bg),
-    rgba(255,255,255,0.76);
+    color-mix(in srgb, var(--content-bg) 88%, white 12%);
 
-  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 16%, rgba(0,0,0,0.08));
+  border-color:
+    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
 
   box-shadow:
-    0 1px 0 rgba(255,255,255,0.62) inset,
-    0 0 0 1px rgba(255,255,255,0.20),
-    0 16px 36px rgba(0,0,0,0.10),
-    0 0 28px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
+    var(--bubble-highlight),
+    0 18px 42px color-mix(in srgb, var(--shadow-color) 78%, transparent),
+    inset 0 1px 1px rgba(255, 255, 255, 0.82),
+    inset 0 -2px 8px rgba(0, 0, 0, 0.08),
+    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
 }
 
 body.light-e .live-activity::before {
-  opacity: 0.46;
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
 }
 
 body.light-e .live-activity::after {
@@ -1610,25 +1645,32 @@ body.light-e .live-activity::after {
     ),
     radial-gradient(
       90% 48% at 50% 100%,
-      rgba(255,255,255,0.16),
+      rgba(0, 0, 0, 0.12),
       transparent 70%
     );
-  opacity: 0.92;
+
+  opacity: 0.9;
 }
 
 body.light-e .status-line {
-  color: rgba(0,0,0,0.78);
+  color: var(--text-color);
 }
 
 body.light-e .status-icon {
   filter:
-    drop-shadow(0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent));
+    drop-shadow(
+      0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent)
+    );
 }
 
 body.light-e .status-icon.glow {
   filter:
-    drop-shadow(0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent))
-    drop-shadow(0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 18%, transparent));
+    drop-shadow(
+      0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 30%, transparent)
+    )
+    drop-shadow(
+      0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 18%, transparent)
+    );
 }
 
 body.light-e .spotify-card:focus-visible {
@@ -1639,13 +1681,20 @@ body.light-e .spotify-card:focus-visible {
 
 body.light-e .live-album-art {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.10)),
-    rgba(255,255,255,0.14);
-  border: 1px solid color-mix(in srgb, var(--dynamic-accent) 14%, rgba(0,0,0,0.08));
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.44),
+      rgba(255,255,255,0.18)
+    ),
+    color-mix(in srgb, var(--content-bg) 82%, white 18%);
+
+  border-color:
+    color-mix(in srgb, var(--dynamic-accent) 14%, var(--border-color));
+
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.18),
-    0 20px 34px rgba(0,0,0,0.10),
-    0 0 34px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
+    inset 0 1px 0 rgba(255,255,255,0.54),
+    0 20px 34px color-mix(in srgb, var(--shadow-color) 55%, transparent),
+    0 0 34px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
 }
 
 body.light-e .live-album-art::before {
@@ -1655,39 +1704,52 @@ body.light-e .live-album-art::before {
       color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent),
       transparent 72%
     );
+
   opacity: 0.92;
 }
 
 body.light-e .live-song-title {
-  color: rgba(0,0,0,0.90);
+  color: var(--text-color);
+
   text-shadow:
-    0 0 16px color-mix(in srgb, var(--dynamic-accent-glow) 16%, transparent);
+    0 0 16px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
 }
 
 body.light-e .live-artist {
-  color: rgba(0,0,0,0.58);
+  color: var(--secondary-text);
 }
 
 body.light-e .explicit-badge {
-  color: rgba(0,0,0,0.72);
-  background: color-mix(in srgb, var(--dynamic-accent-soft) 18%, rgba(255,255,255,0.74));
-  border-color: color-mix(in srgb, var(--dynamic-accent) 18%, rgba(0,0,0,0.08));
+  color: var(--text-color);
+
+  background:
+    color-mix(in srgb, var(--dynamic-accent-soft) 18%, var(--content-bg) 82%);
+
+  border-color:
+    color-mix(in srgb, var(--dynamic-accent) 18%, var(--border-color));
 }
 
 body.light-e .music-progress-container {
-  border-color: color-mix(in srgb, var(--dynamic-accent) 16%, rgba(0,0,0,0.08));
+  border-color:
+    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
+
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.34), rgba(255,255,255,0.12)),
-    rgba(255,255,255,0.46);
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.42),
+      rgba(255,255,255,0.16)
+    ),
+    color-mix(in srgb, var(--content-bg) 82%, white 18%);
+
   box-shadow:
     inset 0 1px 2px rgba(255,255,255,0.64),
     inset 0 -1px 2px rgba(0,0,0,0.05),
-    0 1px 8px rgba(0,0,0,0.06);
+    0 1px 8px color-mix(in srgb, var(--shadow-color) 36%, transparent);
 }
 
 body.light-e .music-progress-bar {
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.26),
+    inset 0 1px 1px rgba(255,255,255,0.28),
     0 0 18px color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent),
     0 0 28px color-mix(in srgb, var(--dynamic-accent-soft) 16%, transparent);
 }
@@ -1695,28 +1757,93 @@ body.light-e .music-progress-bar {
 body.light-e .music-progress-time,
 body.light-e .la-updated,
 body.light-e #live-activity-updated {
-  border-color: color-mix(in srgb, var(--dynamic-accent) 16%, rgba(0,0,0,0.08));
+  border-color:
+    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
+
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.62), rgba(255,255,255,0.40)),
-    rgba(255,255,255,0.44);
-  color: rgba(0,0,0,0.64);
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.68),
+      rgba(255,255,255,0.42)
+    ),
+    color-mix(in srgb, var(--content-bg) 82%, white 18%);
+
+  color: var(--secondary-text);
+
   box-shadow:
     inset 0 1px 1px rgba(255,255,255,0.68),
     inset 0 -1px 1px rgba(0,0,0,0.05);
 }
 
 body.light-e .music-progress-time span:nth-child(2) {
-  color: color-mix(in srgb, var(--dynamic-accent) 86%, #111);
+  color: color-mix(in srgb, var(--dynamic-accent) 86%, var(--text-color) 14%);
 }
 
 body.light-e .la-updated,
 body.light-e #live-activity-updated {
-  color: rgba(0,0,0,0.58);
+  color: var(--secondary-text);
 }
 
-/* ======================================================= */
-/* === RESPONSIVE ======================================== */
-/* ======================================================= */
+/* ======================================================= /
+/ === DARK MODE THEME POLISH ============================ /
+/ ======================================================= */
+
+html.dark-mode body .live-activity,
+body.dark-mode .live-activity {
+  color: var(--text-color);
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
+      transparent 52%
+    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    var(--dynamic-bg),
+    color-mix(in srgb, var(--content-bg) 88%, black 12%);
+
+  border-color:
+    color-mix(in srgb, var(--border-color) 90%, transparent);
+
+  box-shadow:
+    var(--bubble-highlight),
+    0 24px 58px color-mix(in srgb, var(--shadow-color) 88%, transparent),
+    inset 0 1px 1px rgba(255,255,255,0.08),
+    inset 0 -4px 14px rgba(0,0,0,0.42),
+    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+}
+
+html.dark-mode body .live-activity::before,
+body.dark-mode .live-activity::before {
+  opacity: 0.38;
+}
+
+html.dark-mode body .live-activity::after,
+body.dark-mode .live-activity::after {
+  background:
+    radial-gradient(
+      80% 46% at 50% 22%,
+      color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      70% 38% at 50% 46%,
+      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      90% 48% at 50% 100%,
+      rgba(0,0,0,0.32),
+      transparent 70%
+    );
+
+  opacity: 0.84;
+}
+
+/* ======================================================= /
+/ === RESPONSIVE ======================================== /
+/ ======================================================= */
 
 @media (max-width: 600px) {
   .live-activity {
@@ -1772,9 +1899,9 @@ body.light-e #live-activity-updated {
   }
 }
 
-/* ======================================================= */
-/* === REDUCED MOTION ==================================== */
-/* ======================================================= */
+/* ======================================================= /
+/ === REDUCED MOTION ==================================== /
+/ ======================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   .live-activity,
@@ -1785,6 +1912,10 @@ body.light-e #live-activity-updated {
   .music-progress-bar,
   .status-line {
     transition: none !important;
+    animation: none !important;
+  }
+
+  .music-progress-container.indeterminate .music-progress-bar {
     animation: none !important;
   }
 }
@@ -3929,29 +4060,46 @@ body.dark-mode .bubble {
 	transform: scale(0.985);
 }
 
-/* ======================== */
-/* Shoutouts Section – Onyx Bubble Glass */
-/* Platform Profile Top-Only Upgrade */
-/* Root Variable Compatible */
-/* ======================== */
+/* ============================================================
+   Shoutouts Section – Root-Themed Onyx Liquid Glass
+   Fully compatible with light-e and dark-mode variables
+============================================================ */
+
+/* ======================== /
+/ Shoutouts Section Shell  /
+/ ======================== */
 
 .shoutouts-section {
     position: relative;
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient), var(--liquid-refraction);
-    color: var(--text-color);
-    padding: 30px;
-    border-radius: var(--radius-xl);
-    margin-bottom: 30px;
-    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-    box-shadow: var(--bubble-highlight), var(--bubble-shadow);
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
     width: 100%;
     box-sizing: border-box;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: var(--radius-xl);
     overflow: hidden;
+    color: var(--text-color);
+
+    background:
+        radial-gradient(
+            circle at 35% 0%,
+            color-mix(in srgb, var(--glow-color) 55%, transparent),
+            transparent 52%
+        ),
+        var(--bubble-gradient),
+        var(--liquid-refraction),
+        color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+
+    border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+
+    box-shadow:
+        var(--bubble-highlight),
+        var(--bubble-shadow);
+
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+
     transition:
-        background-color var(--transition-medium),
+        background var(--transition-medium),
         color var(--transition-medium),
         box-shadow var(--transition-medium),
         border-color var(--transition-medium);
@@ -3976,19 +4124,19 @@ body.dark-mode .bubble {
     pointer-events: none;
     background: radial-gradient(
         circle at 50% 100%,
-        color-mix(in srgb, black 16%, transparent),
-        transparent 65%
+        color-mix(in srgb, var(--shadow-color) 45%, transparent),
+        transparent 68%
     );
-    opacity: 0.35;
+    opacity: 0.38;
 }
 
-/* ======================== */
-/* Section Headers */
-/* ======================== */
+/* ======================== /
+/ Section Headers          /
+/ ======================== */
 
 .shoutouts-section h2 {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     color: var(--text-color);
     margin-bottom: 10px;
     display: flex;
@@ -4009,7 +4157,7 @@ body.dark-mode .bubble {
 #instagram-last-updated-timestamp,
 #youtube-last-updated-timestamp {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     color: var(--secondary-text);
     font-size: 0.9em;
     margin-bottom: 20px;
@@ -4026,9 +4174,9 @@ body.dark-mode .bubble {
     font-weight: 900;
 }
 
-/* ======================== */
-/* Creator Grids */
-/* ======================== */
+/* ======================== /
+/ Creator Grids            /
+/ ======================== */
 
 .creator-grid,
 .youtube-creator-grid {
@@ -4040,10 +4188,9 @@ body.dark-mode .bubble {
     margin: 0;
     padding: 0;
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
-/* Instagram needs a safer minimum so stats do not get crushed */
 .instagram-creator-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
@@ -4053,39 +4200,55 @@ body.dark-mode .bubble {
     margin: 0;
     padding: 0;
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
 /* ============================================================
-   LEGACY CREATOR CARD SUPPORT
-   Safe to keep in case old cards still render somewhere.
+   Legacy Creator Cards
 ============================================================ */
 
 .creator-card,
 .instagram-creator-card,
 .youtube-creator-card {
-    background: var(--content-bg);
-    background-image: var(--bubble-gradient);
-    border-radius: var(--radius-lg);
-    padding: 20px;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-height: fit-content;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+
     display: flex;
     flex-direction: column;
-    border: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent);
-    box-shadow: var(--bubble-highlight), var(--bubble-shadow);
+    padding: 20px;
+    border-radius: var(--radius-lg);
+
+    color: var(--text-color);
+
+    background:
+        radial-gradient(
+            circle at 35% 0%,
+            color-mix(in srgb, var(--glow-color) 45%, transparent),
+            transparent 52%
+        ),
+        var(--bubble-gradient),
+        var(--liquid-refraction),
+        color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+
+    border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+
+    box-shadow:
+        var(--bubble-highlight),
+        var(--bubble-shadow);
+
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
+
     transition:
         transform var(--transition-medium),
         box-shadow var(--transition-medium),
         border-color var(--transition-medium),
         background var(--transition-medium);
-    width: 100%;
-    box-sizing: border-box;
-    max-width: 100%;
-    position: relative;
-    overflow: visible;
-    min-height: fit-content;
-    height: 100%;
 }
 
 .creator-card::before,
@@ -4096,35 +4259,36 @@ body.dark-mode .bubble {
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    background: linear-gradient(
-        180deg,
-        color-mix(in srgb, white 10%, transparent),
-        transparent 42%
-    );
-    opacity: 0.34;
+    background: var(--liquid-reflection);
+    opacity: 0.28;
+    mix-blend-mode: soft-light;
 }
 
 .creator-card:hover,
 .instagram-creator-card:hover,
 .youtube-creator-card:hover {
     transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--accent-color) 32%, var(--border-color));
+
     box-shadow:
-        0 10px 24px color-mix(in srgb, var(--shadow-color) 58%, transparent),
-        0 0 12px color-mix(in srgb, var(--accent-color) 14%, transparent);
-    border-color: color-mix(in srgb, var(--accent-color) 24%, var(--border-color));
+        var(--bubble-highlight),
+        0 12px 28px color-mix(in srgb, var(--shadow-color) 58%, transparent),
+        0 0 16px color-mix(in srgb, var(--accent-color) 18%, transparent);
 }
 
 .creator-pic,
 .instagram-creator-pic,
 .youtube-creator-pic {
+    position: relative;
+    z-index: 2;
     width: 60px;
     height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid color-mix(in srgb, var(--accent-color) 85%, white 8%);
     margin-bottom: 15px;
-    position: relative;
-    z-index: 1;
+
+    border: 3px solid color-mix(in srgb, var(--accent-color) 72%, var(--glow-color) 18%);
+
     box-shadow:
         0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
         0 8px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent);
@@ -4133,12 +4297,12 @@ body.dark-mode .bubble {
 .creator-header,
 .instagram-creator-header,
 .youtube-creator-header {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 5px;
-    position: relative;
-    z-index: 1;
 }
 
 .creator-header h3,
@@ -4171,23 +4335,23 @@ body.dark-mode .bubble {
 .creator-bio,
 .instagram-creator-bio,
 .youtube-creator-bio {
+    position: relative;
+    z-index: 2;
     color: var(--secondary-text);
     margin: 10px 0;
     font-size: 0.9em;
     line-height: 1.45;
     word-break: break-word;
-    position: relative;
-    z-index: 1;
 }
 
 .follower-count,
 .instagram-follower-count,
 .youtube-subscriber-count {
+    position: relative;
+    z-index: 2;
     color: var(--accent-color);
     font-weight: 700;
     margin: 10px 0;
-    position: relative;
-    z-index: 1;
 }
 
 .youtube-cover-photo {
@@ -4200,14 +4364,15 @@ body.dark-mode .bubble {
     margin-bottom: 16px;
 }
 
-/* ======================== */
-/* Legacy Visit Buttons */
-/* ======================== */
+/* ======================== /
+/ Legacy Visit Buttons     /
+/ ======================== */
 
 .visit-profile,
 .instagram-visit-profile,
 .youtube-visit-profile {
     position: relative;
+    z-index: 2;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -4219,22 +4384,27 @@ body.dark-mode .bubble {
     letter-spacing: 0.2px;
     text-decoration: none;
     color: var(--text-color);
+
     background:
         linear-gradient(
             180deg,
-            color-mix(in srgb, white 10%, transparent),
-            color-mix(in srgb, white 2%, transparent) 40%,
-            transparent 100%
+            color-mix(in srgb, var(--glow-color) 28%, transparent),
+            color-mix(in srgb, var(--content-bg) 86%, transparent)
         ),
-        var(--content-bg);
-    border: 1px solid color-mix(in srgb, white 8%, var(--border-color));
+        color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+
+    border: 1px solid color-mix(in srgb, var(--border-color) 85%, transparent);
+
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
+
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        inset 0 -1px 0 rgba(0,0,0,0.25),
+        inset 0 1px 0 color-mix(in srgb, var(--glow-color) 48%, transparent),
+        inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 35%, transparent),
         0 6px 16px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+
     overflow: hidden;
+
     transition:
         transform var(--transition-fast),
         box-shadow var(--transition-fast),
@@ -4247,34 +4417,44 @@ body.dark-mode .bubble {
 .youtube-visit-profile:hover {
     transform: translateY(-2px);
     border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
+
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
+        inset 0 1px 0 color-mix(in srgb, var(--glow-color) 62%, transparent),
         0 10px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent),
         0 0 12px color-mix(in srgb, var(--accent-color) 18%, transparent);
 }
 
 /* ============================================================
-   NEW PLATFORM PROFILE CARDS — TOP ONLY
+   Platform Profile Cards
 ============================================================ */
 
 .tiktok-profile-card,
 .instagram-profile-card,
 .youtube-channel-card {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     width: 100%;
     margin: 0 auto 28px auto;
     box-sizing: border-box;
     overflow: hidden;
     color: var(--text-color);
+
     background:
+        radial-gradient(
+            circle at 50% 0%,
+            color-mix(in srgb, var(--glow-color) 46%, transparent),
+            transparent 48%
+        ),
         var(--bubble-gradient),
         var(--liquid-refraction),
-        color-mix(in srgb, var(--content-bg) 88%, black 12%);
-    border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+        color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+
+    border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
     border-radius: var(--radius-xl);
+
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
+
     box-shadow:
         var(--bubble-highlight),
         var(--bubble-shadow);
@@ -4288,7 +4468,7 @@ body.dark-mode .bubble {
     inset: 0;
     border-radius: inherit;
     background: var(--liquid-reflection);
-    opacity: 0.28;
+    opacity: 0.32;
     mix-blend-mode: soft-light;
     pointer-events: none;
 }
@@ -4302,10 +4482,10 @@ body.dark-mode .bubble {
     border-radius: inherit;
     background: radial-gradient(
         circle at 50% 100%,
-        color-mix(in srgb, black 22%, transparent),
+        color-mix(in srgb, var(--shadow-color) 44%, transparent),
         transparent 68%
     );
-    opacity: 0.35;
+    opacity: 0.36;
     pointer-events: none;
 }
 
@@ -4326,11 +4506,11 @@ body.dark-mode .bubble {
 .youtube-channel-description,
 .single-visit-button-row {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 }
 
 /* ============================================================
-   Single Real Visit Button
+   Single Visit Button
 ============================================================ */
 
 .single-visit-button-row {
@@ -4356,21 +4536,25 @@ body.dark-mode .bubble {
     font-weight: 800;
     font-size: 1rem;
     letter-spacing: 0.1px;
+
     background:
         linear-gradient(
             180deg,
-            color-mix(in srgb, white 10%, transparent),
-            color-mix(in srgb, white 2%, transparent) 45%,
-            transparent
+            color-mix(in srgb, var(--glow-color) 28%, transparent),
+            color-mix(in srgb, var(--content-bg) 86%, transparent)
         ),
-        color-mix(in srgb, var(--content-bg) 92%, black 8%);
-    border: 1px solid color-mix(in srgb, white 10%, var(--border-color));
+        color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+
+    border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
+
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        inset 0 -1px 0 rgba(0,0,0,0.25),
+        inset 0 1px 0 color-mix(in srgb, var(--glow-color) 52%, transparent),
+        inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 34%, transparent),
         0 8px 18px color-mix(in srgb, var(--shadow-color) 45%, transparent);
+
     transition:
         transform var(--transition-fast),
         filter var(--transition-fast),
@@ -4382,8 +4566,9 @@ body.dark-mode .bubble {
     transform: translateY(-2px);
     filter: brightness(1.08);
     border-color: color-mix(in srgb, var(--accent-color) 45%, var(--border-color));
+
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
+        inset 0 1px 0 color-mix(in srgb, var(--glow-color) 64%, transparent),
         0 12px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent),
         0 0 12px color-mix(in srgb, var(--accent-color) 18%, transparent);
 }
@@ -4399,40 +4584,39 @@ body.dark-mode .bubble {
         0 10px 24px color-mix(in srgb, var(--shadow-color) 50%, transparent);
 }
 
-/* Platform button accents */
+/* Platform button accents stay branded */
 .tiktok-visit-button {
-    color: #fff;
-    background: linear-gradient(135deg, #ff2d55, #fe2c55);
+    color: #fff !important;
+    background: linear-gradient(135deg, #ff2d55, #fe2c55) !important;
+    border-color: rgba(255, 255, 255, 0.24) !important;
 }
 
 .instagram-visit-button {
-    color: #fff;
-    background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+    color: #fff !important;
+    background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045) !important;
+    border-color: rgba(255, 255, 255, 0.24) !important;
 }
 
 .youtube-visit-button {
-    color: #fff;
+    color: #fff !important;
     background:
         linear-gradient(
             180deg,
-            color-mix(in srgb, white 10%, transparent),
+            rgba(255, 255, 255, 0.12),
             transparent
         ),
-        #272727;
+        #272727 !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
 }
 
 /* ============================================================
-   TikTok Top Profile — Refined Text Sizes
+   TikTok Top Profile
 ============================================================ */
 
 .tiktok-profile-card {
     max-width: 430px;
-    background:
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 42%),
-        color-mix(in srgb, var(--dark-bg) 92%, black 8%);
 }
 
-/* Hide old fake TikTok topbar if JS still outputs it */
 .tiktok-topbar,
 .tiktok-dynamic-island,
 .tiktok-top-icons {
@@ -4449,8 +4633,9 @@ body.dark-mode .bubble {
     height: 118px;
     border-radius: 50%;
     object-fit: cover;
-    background: #111;
-    border: 2px solid color-mix(in srgb, var(--accent-color) 65%, white 10%);
+    background: color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+    border: 2px solid color-mix(in srgb, var(--accent-color) 65%, var(--glow-color) 12%);
+
     box-shadow:
         0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
         0 12px 26px color-mix(in srgb, var(--shadow-color) 58%, transparent);
@@ -4479,7 +4664,7 @@ body.dark-mode .bubble {
 }
 
 .tiktok-stat:not(:last-child) {
-    border-right: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+    border-right: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
 }
 
 .tiktok-stat strong {
@@ -4512,11 +4697,7 @@ body.dark-mode .bubble {
     color: var(--secondary-text);
 }
 
-.tiktok-bio {
-    font-weight: 600;
-    color: var(--text-color);
-}
-
+.tiktok-bio,
 .tiktok-education {
     font-weight: 800;
     color: var(--text-color);
@@ -4527,7 +4708,7 @@ body.dark-mode .bubble {
 }
 
 /* ============================================================
-   Instagram Profile — Stable Screenshot-Style Layout
+   Instagram Profile
 ============================================================ */
 
 .instagram-profile-card,
@@ -4539,19 +4720,15 @@ body.dark-mode .bubble {
     width: 100%;
     max-width: 520px;
     overflow: hidden;
-    background:
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 45%),
-        color-mix(in srgb, var(--content-bg) 90%, black 10%);
 }
 
-/* Hide fake Instagram topbar if JS still outputs it */
 .instagram-topbar,
 .instagram-icon-btn,
-.instagram-top-actions {
+.instagram-top-actions,
+.instagram-more-dots {
     display: none !important;
 }
 
-/* Main row: avatar left, account info right */
 .instagram-profile-row,
 .instagram-profile-row.instagram-profile-row-full {
     display: grid;
@@ -4561,33 +4738,32 @@ body.dark-mode .bubble {
     padding: 24px 18px 12px;
 }
 
-/* Instagram avatar with gradient ring */
 .instagram-avatar,
 .instagram-profile-card .instagram-avatar {
     width: 82px;
     height: 82px;
     border-radius: 50%;
     object-fit: cover;
-    background: #111;
     border: 3px solid transparent;
+
     background-image:
         linear-gradient(var(--content-bg), var(--content-bg)),
         linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+
     background-origin: border-box;
     background-clip: content-box, border-box;
+
     box-shadow:
         0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
         0 10px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 }
 
-/* Right side content can shrink */
 .instagram-profile-main {
     min-width: 0;
     max-width: 100%;
     overflow: visible;
 }
 
-/* Username row */
 .instagram-username-row {
     display: flex;
     align-items: center;
@@ -4613,12 +4789,6 @@ body.dark-mode .bubble {
     word-break: break-word;
 }
 
-/* Remove dots if old markup still outputs them */
-.instagram-more-dots {
-    display: none !important;
-}
-
-/* Verified badge beside username */
 .instagram-username-row .instagram-verified-badge {
     width: 16px;
     height: 16px;
@@ -4628,7 +4798,6 @@ body.dark-mode .bubble {
     flex-shrink: 0;
 }
 
-/* Name/pronouns line under username */
 .instagram-name-line {
     margin: 0 0 10px;
     display: flex;
@@ -4652,12 +4821,10 @@ body.dark-mode .bubble {
     font-weight: 600;
 }
 
-/* Hide old standalone nickname line if old markup exists */
 .instagram-profile-main > strong {
     display: none;
 }
 
-/* Stats row — labels below numbers and grayed, slightly bigger */
 .instagram-profile-card .instagram-stats {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4703,7 +4870,6 @@ body.dark-mode .bubble {
     word-break: normal;
 }
 
-/* Bio section under row */
 .instagram-bio-block,
 .instagram-profile-card .instagram-bio-block {
     padding: 10px 18px 12px;
@@ -4748,7 +4914,6 @@ body.dark-mode .bubble {
     flex-shrink: 0;
 }
 
-/* Keep your one real button */
 .instagram-real-button-row,
 .instagram-profile-card .single-visit-button-row {
     padding-top: 14px;
@@ -4768,16 +4933,13 @@ body.dark-mode .bubble {
 
 .youtube-channel-card {
     max-width: 520px;
-    background:
-        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.07), transparent 48%),
-        color-mix(in srgb, var(--content-bg) 90%, black 10%);
 }
 
 .youtube-channel-banner {
     margin: 18px 18px 0;
     border-radius: 12px;
     overflow: hidden;
-    background: color-mix(in srgb, var(--accent-color) 18%, black 82%);
+    background: color-mix(in srgb, var(--accent-color) 18%, var(--bg-color) 82%);
 }
 
 .youtube-cover-img {
@@ -4800,8 +4962,9 @@ body.dark-mode .bubble {
     height: 82px;
     border-radius: 50%;
     object-fit: cover;
-    background: #111;
-    border: 2px solid color-mix(in srgb, var(--accent-color) 55%, white 8%);
+    background: color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+    border: 2px solid color-mix(in srgb, var(--accent-color) 55%, var(--glow-color) 12%);
+
     box-shadow:
         0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
         0 10px 24px color-mix(in srgb, var(--shadow-color) 55%, transparent);
@@ -4872,7 +5035,7 @@ body.dark-mode .bubble {
     font-size: 0.95em;
     justify-content: flex-start;
     position: relative;
-    z-index: 100;
+    z-index: 120;
     pointer-events: auto;
 }
 
@@ -4880,23 +5043,31 @@ body.dark-mode .bubble {
     font-weight: 500;
     color: var(--text-color);
     position: relative;
-    z-index: 101;
+    z-index: 121;
     pointer-events: auto;
 }
 
 .creator-sort-controls select {
-    background: color-mix(in srgb, var(--content-bg) 85%, transparent);
-    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    background:
+        var(--bubble-gradient),
+        color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+
+    border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
     border-radius: 14px;
     padding: 6px 12px;
-    color: var(--text-color);
     font-size: 0.9em;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 2px 8px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+
+    box-shadow:
+        inset 0 1px 2px color-mix(in srgb, var(--glow-color) 45%, transparent),
+        0 2px 8px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+
     transition: all var(--transition-fast);
     position: relative;
-    z-index: 101;
+    z-index: 121;
     pointer-events: auto;
     cursor: pointer;
     appearance: auto;
@@ -4906,9 +5077,11 @@ body.dark-mode .bubble {
 
 .creator-sort-controls select:hover,
 .creator-sort-controls select:focus {
-    border-color: var(--accent-color);
+    border-color: color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
     outline: none;
-    box-shadow: 0 0 10px color-mix(in srgb, var(--accent-color) 60%, transparent);
+    box-shadow:
+        inset 0 1px 2px color-mix(in srgb, var(--glow-color) 55%, transparent),
+        0 0 10px color-mix(in srgb, var(--accent-color) 42%, transparent);
 }
 
 .creator-sort-controls select option {
@@ -4916,86 +5089,93 @@ body.dark-mode .bubble {
     color: var(--text-color);
 }
 
-.shoutouts-section .creator-sort-controls {
-    z-index: 120;
+/* ============================================================
+   Global Light Mode Polish
+============================================================ */
+
+body.light-e .shoutouts-section,
+body.light-e .creator-card,
+body.light-e .instagram-creator-card,
+body.light-e .youtube-creator-card,
+body.light-e .tiktok-profile-card,
+body.light-e .instagram-profile-card,
+body.light-e .youtube-channel-card {
+    background:
+        radial-gradient(
+            circle at 40% 0%,
+            rgba(255, 255, 255, 0.85),
+            transparent 54%
+        ),
+        var(--bubble-gradient),
+        var(--liquid-refraction),
+        color-mix(in srgb, var(--content-bg) 88%, white 12%);
+
+    border-color: color-mix(in srgb, var(--border-color) 90%, white 10%);
+
+    box-shadow:
+        var(--bubble-highlight),
+        0 18px 42px color-mix(in srgb, var(--shadow-color) 78%, transparent),
+        inset 0 1px 1px rgba(255, 255, 255, 0.82),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body.light-e .shoutouts-section::before,
+body.light-e .creator-card::before,
+body.light-e .instagram-creator-card::before,
+body.light-e .youtube-creator-card::before,
+body.light-e .tiktok-profile-card::before,
+body.light-e .instagram-profile-card::before,
+body.light-e .youtube-channel-card::before {
+    opacity: 0.48;
+}
+
+body.light-e .shoutouts-section::after,
+body.light-e .tiktok-profile-card::after,
+body.light-e .instagram-profile-card::after,
+body.light-e .youtube-channel-card::after {
+    background: radial-gradient(
+        circle at 50% 100%,
+        rgba(0, 0, 0, 0.14),
+        transparent 70%
+    );
+    opacity: 0.42;
 }
 
 /* ============================================================
-   Light Mode Fixes
+   Global Dark Mode Polish
 ============================================================ */
 
-body.light-e .tiktok-profile-card {
-    color: var(--text-color) !important;
+html.dark-mode body .shoutouts-section,
+html.dark-mode body .creator-card,
+html.dark-mode body .instagram-creator-card,
+html.dark-mode body .youtube-creator-card,
+html.dark-mode body .tiktok-profile-card,
+html.dark-mode body .instagram-profile-card,
+html.dark-mode body .youtube-channel-card,
+body.dark-mode .shoutouts-section,
+body.dark-mode .creator-card,
+body.dark-mode .instagram-creator-card,
+body.dark-mode .youtube-creator-card,
+body.dark-mode .tiktok-profile-card,
+body.dark-mode .instagram-profile-card,
+body.dark-mode .youtube-channel-card {
     background:
+        radial-gradient(
+            circle at 35% 0%,
+            rgba(255, 255, 255, 0.11),
+            transparent 50%
+        ),
         var(--bubble-gradient),
         var(--liquid-refraction),
-        color-mix(in srgb, var(--content-bg) 88%, white 12%) !important;
-    border-color: color-mix(in srgb, var(--border-color) 86%, transparent) !important;
+        color-mix(in srgb, var(--content-bg) 88%, black 12%);
+
+    border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
+
     box-shadow:
         var(--bubble-highlight),
-        var(--bubble-shadow) !important;
-    backdrop-filter: var(--backdrop-blur) !important;
-    -webkit-backdrop-filter: var(--backdrop-blur) !important;
-}
-
-body.light-e .tiktok-profile-card h3,
-body.light-e .tiktok-profile-card strong,
-body.light-e .tiktok-stat strong,
-body.light-e .instagram-profile-card .instagram-username-row h3,
-body.light-e .instagram-profile-card .instagram-name-line strong,
-body.light-e .instagram-profile-card .instagram-stats strong,
-body.light-e .instagram-profile-card .instagram-website,
-body.light-e .instagram-secondary-handle,
-body.light-e .instagram-profile-card .instagram-website i,
-body.light-e .instagram-secondary-handle i {
-    color: var(--text-color) !important;
-}
-
-body.light-e .tiktok-profile-card p,
-body.light-e .tiktok-profile-card span,
-body.light-e .tiktok-username,
-body.light-e .tiktok-stat span,
-body.light-e .tiktok-subtitle,
-body.light-e .instagram-profile-card .instagram-name-line span,
-body.light-e .instagram-profile-card .instagram-category,
-body.light-e .instagram-profile-card .instagram-bio-block,
-body.light-e .instagram-profile-card .instagram-stats span {
-    color: var(--secondary-text) !important;
-}
-
-body.light-e .tiktok-bio,
-body.light-e .tiktok-education {
-    color: var(--text-color) !important;
-}
-
-body.light-e .tiktok-stat:not(:last-child) {
-    border-right-color: color-mix(in srgb, var(--border-color) 85%, transparent) !important;
-}
-
-body.light-e .tiktok-avatar {
-    border-color: color-mix(in srgb, var(--accent-color) 55%, white 20%) !important;
-    box-shadow:
-        0 0 0 4px color-mix(in srgb, var(--content-bg) 58%, transparent),
-        0 10px 24px color-mix(in srgb, var(--shadow-color) 35%, transparent) !important;
-}
-
-body.light-e .tiktok-visit-button,
-body.light-e .tiktok-profile-card .platform-visit-button {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #ff2d55, #fe2c55) !important;
-    border-color: rgba(255,255,255,0.28) !important;
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.18),
-        0 8px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent) !important;
-}
-
-body.light-e .tiktok-profile-card .verified-badge {
-    filter: none !important;
-    opacity: 1 !important;
-}
-
-body.light-e .tiktok-profile-card i {
-    color: inherit;
+        0 24px 58px color-mix(in srgb, var(--shadow-color) 88%, transparent),
+        inset 0 1px 1px rgba(255, 255, 255, 0.08),
+        inset 0 -4px 14px rgba(0, 0, 0, 0.42);
 }
 
 /* ============================================================
@@ -5013,14 +5193,12 @@ body.light-e .tiktok-profile-card i {
     }
 }
 
-/* Medium desktop and split-screen */
 @media screen and (max-width: 1000px) {
     .instagram-creator-grid {
         grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
     }
 }
 
-/* Force one column before Instagram cards become too cramped */
 @media screen and (max-width: 760px) {
     .instagram-creator-grid {
         grid-template-columns: 1fr;
@@ -5065,7 +5243,6 @@ body.light-e .tiktok-profile-card i {
     }
 }
 
-/* Small split-screen / tablet */
 @media screen and (max-width: 650px) {
     .instagram-profile-row,
     .instagram-profile-row.instagram-profile-row-full {
@@ -5211,7 +5388,24 @@ body.light-e .tiktok-profile-card i {
     }
 }
 
-/* Very narrow split-screen */
+@media screen and (max-width: 480px) {
+    .shoutouts-section {
+        padding: 15px;
+    }
+
+    .visit-profile,
+    .instagram-visit-profile,
+    .youtube-visit-profile {
+        min-width: 124px;
+        padding: 10px 15px;
+    }
+
+    .platform-visit-button {
+        min-width: 180px;
+        min-height: 48px;
+    }
+}
+
 @media screen and (max-width: 430px) {
     .instagram-profile-row,
     .instagram-profile-row.instagram-profile-row-full {
@@ -5238,24 +5432,6 @@ body.light-e .tiktok-profile-card i {
     .instagram-profile-card .instagram-stats span {
         font-size: 0.62rem;
         line-height: 1.1;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .shoutouts-section {
-        padding: 15px;
-    }
-
-    .visit-profile,
-    .instagram-visit-profile,
-    .youtube-visit-profile {
-        min-width: 124px;
-        padding: 10px 15px;
-    }
-
-    .platform-visit-button {
-        min-width: 180px;
-        min-height: 48px;
     }
 }
 
@@ -5334,7 +5510,6 @@ body.light-e .tiktok-profile-card i {
     }
 }
 
-/* Ultra narrow fallback: stack stats cleanly instead of cutting off */
 @media screen and (max-width: 340px) {
     .instagram-profile-card .instagram-stats {
         grid-template-columns: 1fr;
