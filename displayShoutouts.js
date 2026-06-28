@@ -1196,53 +1196,123 @@ async function loadAndDisplayUsefulLinks() {
 
 async function loadAndDisplaySocialLinks() {
     const containerElement = document.querySelector('.social-links-container');
-    if (!containerElement) { console.warn("Social links container missing (.social-links-container)."); return; }
 
-    if (!firebaseAppInitialized || !db) { console.error("Social Links load error: Firebase not ready."); containerElement.innerHTML = '<p class="error">Error loading socials (DB Init Error).</p>'; return; }
-    if (!socialLinksCollectionRef) { console.error("Social Links load error: Collection reference missing."); containerElement.innerHTML = '<p class="error">Error loading socials (Config Error).</p>'; return;}
+    if (!containerElement) {
+        console.warn("Social links container missing (.social-links-container).");
+        return;
+    }
 
-    containerElement.innerHTML = '<p>Loading socials...</p>';
+    const setStateMessage = (message, className = '') => {
+        containerElement.innerHTML = '';
+
+        const messageElement = document.createElement('p');
+        messageElement.textContent = message;
+
+        if (className) {
+            messageElement.className = className;
+        }
+
+        containerElement.appendChild(messageElement);
+    };
+
+    const isValidUrl = (url) => {
+        try {
+            const parsedUrl = new URL(url);
+            return parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:';
+        } catch {
+            return false;
+        }
+    };
+
+    if (!firebaseAppInitialized || !db) {
+        console.error("Social Links load error: Firebase not ready.");
+        setStateMessage("Error loading socials. Database is not ready.", "error");
+        return;
+    }
+
+    if (!socialLinksCollectionRef) {
+        console.error("Social Links load error: Collection reference missing.");
+        setStateMessage("Error loading socials. Configuration issue.", "error");
+        return;
+    }
+
+    setStateMessage("Loading socials...", "social-loading");
+
     try {
-        const linkQuery = query(socialLinksCollectionRef, orderBy("order", "asc"));
+        const linkQuery = query(
+            socialLinksCollectionRef,
+            orderBy("order", "asc")
+        );
+
         const querySnapshot = await getDocs(linkQuery);
+
         containerElement.innerHTML = '';
 
         if (querySnapshot.empty) {
-            containerElement.innerHTML = '<p>No social links available.</p>';
-        } else {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                if (data.label && data.url) {
-                    const linkElement = document.createElement('a');
-                    linkElement.href = data.url;
-                    linkElement.target = '_blank';
-                    linkElement.rel = 'noopener noreferrer';
-                    linkElement.className = 'social-button';
-
-                    if (data.iconClass) {
-                        const iconElement = document.createElement('i');
-                        iconElement.className = data.iconClass + ' social-icon';
-                        linkElement.appendChild(iconElement);
-                    }
-
-                    const textElement = document.createElement('span');
-                    textElement.textContent = data.label;
-                    linkElement.appendChild(textElement);
-                    containerElement.appendChild(linkElement);
-                } else {
-                    console.warn("Skipping social link item due to missing label or URL:", doc.id);
-                }
-            });
+            setStateMessage("No social links available.", "no-results");
+            return;
         }
-        console.log(`Displayed ${querySnapshot.size} social links.`);
+
+        let renderedCount = 0;
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+
+            const label = typeof data.label === "string" ? data.label.trim() : "";
+            const url = typeof data.url === "string" ? data.url.trim() : "";
+            const iconClass = typeof data.iconClass === "string" ? data.iconClass.trim() : "";
+
+            if (!label || !url) {
+                console.warn("Skipping social link item due to missing label or URL:", doc.id);
+                return;
+            }
+
+            if (!isValidUrl(url)) {
+                console.warn("Skipping social link item due to invalid URL:", doc.id, url);
+                return;
+            }
+
+            const linkElement = document.createElement('a');
+            linkElement.href = url;
+            linkElement.target = '_blank';
+            linkElement.rel = 'noopener noreferrer';
+            linkElement.className = 'social-button';
+            linkElement.setAttribute('aria-label', Open ${label});
+            linkElement.title = label;
+
+            if (iconClass) {
+                const iconElement = document.createElement('i');
+                iconElement.className = ${iconClass} social-icon;
+                iconElement.setAttribute('aria-hidden', 'true');
+                linkElement.appendChild(iconElement);
+            }
+
+            const textElement = document.createElement('span');
+            textElement.textContent = label;
+
+            linkElement.appendChild(textElement);
+            containerElement.appendChild(linkElement);
+
+            renderedCount++;
+        });
+
+        if (renderedCount === 0) {
+            setStateMessage("No valid social links available.", "no-results");
+            return;
+        }
+
+        console.log(Displayed ${renderedCount} social links.);
     } catch (error) {
         console.error("Error loading social links:", error);
+
         let errorMsg = "Could not load social links.";
+
         if (error.code === 'failed-precondition') {
-            errorMsg = "Error: DB configuration needed for socials (order).";
+            errorMsg = "Database configuration needed for social link ordering.";
             console.error("Missing Firestore index for social_links collection, ordered by 'order'.");
         }
-        containerElement.innerHTML = `<p class="error">${errorMsg}</p>`;
+
+        setStateMessage(errorMsg, "error");
     }
 }
 
