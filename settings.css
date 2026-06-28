@@ -1504,141 +1504,100 @@ body.settings-page .setting-card.layout-reset-card .setting-icon-container.layou
 }
 
 /* ======================================================= /
-/ Notifications Coming Soon / Disabled State              /
-/ ======================================================= /
+/ Notifications Coming Soon Fixed Version                 /
+/ ======================================================= */
 
 .notifications-disabled-section {
     position: relative;
+    overflow: hidden;
 }
 
-/ Big premium coming soon banner /
+/* ======================================================= /
+/ Coming Soon Hero Banner                                 /
+/ ======================================================= */
+
 .notification-coming-soon-hero {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
 
-    margin: 14px 0 18px;
+    margin: 14px 0 16px;
     padding: 18px;
 
     border-radius: var(--ios-radius-xl);
-    overflow: visible;
+    overflow: hidden;
 
     color: var(--text-color);
 
     background:
-        var(--bubble-gradient),
+        radial-gradient(
+            circle at 20% 15%,
+            rgba(255, 255, 255, 0.34),
+            transparent 42%
+        ),
         linear-gradient(
             135deg,
-            rgba(255, 149, 0, 0.22),
+            rgba(255, 149, 0, 0.24),
             rgba(255, 59, 48, 0.12),
-            rgba(142, 142, 147, 0.16)
+            rgba(142, 142, 147, 0.14)
         ),
-        var(--glass-bg-light);
+        rgba(255, 255, 255, 0.18);
 
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
 
-    box-shadow:
-        var(--bubble-highlight),
-        0 18px 45px rgba(255, 149, 0, 0.16),
-        var(--bubble-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.28);
 
-    border: 1px solid rgba(255, 255, 255, 0.34);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        0 18px 42px rgba(0, 0, 0, 0.18);
 }
 
-/ Dark mode hero /
 body.dark-mode .notification-coming-soon-hero,
 html.dark-mode body .notification-coming-soon-hero {
     background:
         radial-gradient(
-            circle at 20% 10%,
-            rgba(255, 184, 77, 0.20),
-            transparent 42%
+            circle at 20% 15%,
+            rgba(255, 184, 77, 0.16),
+            transparent 45%
         ),
         linear-gradient(
             135deg,
-            rgba(255, 149, 0, 0.20),
-            rgba(255, 69, 58, 0.12),
-            rgba(28, 28, 30, 0.60)
-        ),
-        var(--glass-bg-dark);
-
-    border-color: rgba(255, 255, 255, 0.12);
-
-    box-shadow:
-        var(--bubble-highlight),
-        0 20px 50px rgba(0, 0, 0, 0.42),
-        0 0 36px rgba(255, 149, 0, 0.10);
-}
-
-/ Animated glow blob /
-.coming-soon-glow {
-    position: absolute;
-    inset: -40%;
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(255, 204, 0, 0.20),
-            transparent 42%
+            rgba(255, 149, 0, 0.14),
+            rgba(255, 69, 58, 0.10),
+            rgba(28, 28, 30, 0.52)
         );
 
-    filter: blur(18px);
-    opacity: 0.75;
-
-    animation: notificationGlowFloat 7s ease-in-out infinite;
+    border-color: rgba(255, 255, 255, 0.12);
 }
 
-@keyframes notificationGlowFloat {
-    0%, 100% {
-        transform: translate3d(-8%, -4%, 0) scale(1);
-    }
-
-    50% {
-        transform: translate3d(10%, 8%, 0) scale(1.15);
-    }
-}
-
-/ Bell slash icon /
+/* Hero icon */
 .coming-soon-icon-wrap {
-    position: relative;
-    z-index: 1;
-
-    width: 54px;
-    height: 54px;
-    min-width: 54px;
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
 
     display: grid;
     place-items: center;
 
-    border-radius: 18px;
+    border-radius: 17px;
 
     color: #ffffff;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ff9500,
-            #ff3b30
-        );
+    background: linear-gradient(135deg, #ff9500, #ff3b30);
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.45),
-        0 12px 26px rgba(255, 59, 48, 0.28);
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        0 10px 24px rgba(255, 59, 48, 0.28);
 }
 
 .coming-soon-icon-wrap i {
-    font-size: 22px;
+    font-size: 21px;
 }
 
-/ Text area /
 .coming-soon-content {
-    position: relative;
-    z-index: 1;
-    flex: 1;
     min-width: 0;
+    flex: 1;
 }
 
 .coming-soon-title-row {
@@ -1649,24 +1608,24 @@ html.dark-mode body .notification-coming-soon-hero {
 }
 
 .coming-soon-title {
+    color: var(--text-color);
     font-size: 18px;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
 }
 
 .coming-soon-description {
-    margin: 5px 0 10px;
-
+    margin: 6px 0 10px;
     color: var(--secondary-text);
     font-size: 13.5px;
     line-height: 1.45;
 }
 
-/ Small status chips inside hero /
 .coming-soon-meta {
     display: flex;
-    flex-wrap: wrap;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .coming-soon-meta span {
@@ -1675,18 +1634,17 @@ html.dark-mode body .notification-coming-soon-hero {
     gap: 6px;
 
     padding: 6px 10px;
-
     border-radius: 999px;
 
-    color: var(--text-color);
     font-size: 12px;
     font-weight: 700;
+    color: var(--text-color);
 
-    background: rgba(255, 255, 255, 0.34);
-    border: 1px solid rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.24);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 
-    backdrop-filter: blur(18px) saturate(160%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
 }
 
 body.dark-mode .coming-soon-meta span,
@@ -1695,12 +1653,182 @@ html.dark-mode body .coming-soon-meta span {
     border-color: rgba(255, 255, 255, 0.10);
 }
 
-/ Tooltip info button /
+/* ======================================================= /
+/ Disabled Setting Cards Fixed Layout                     /
+/ ======================================================= */
+
+.notifications-disabled-section .setting-card.disabled-setting {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+
+    width: 100%;
+    min-height: unset;
+    padding: 14px 16px;
+
+    opacity: 0.86;
+    filter: grayscale(1);
+    cursor: not-allowed;
+    user-select: none;
+}
+
+.notifications-disabled-section label.setting-card.disabled-setting {
+    min-height: 84px;
+}
+
+.notifications-disabled-section .setting-card.disabled-setting.no-switch-card {
+    grid-template-columns: 52px minmax(0, 1fr);
+}
+
+.notifications-disabled-section .setting-card.disabled-setting * {
+    cursor: not-allowed;
+}
+
+.notifications-disabled-section .setting-card.disabled-setting:hover {
+    transform: none !important;
+}
+
+/* Disabled icons */
+.notifications-disabled-section .setting-icon-container.disabled-icon,
+.notifications-disabled-section .setting-icon-container.disabled-emoji-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    color: #ffffff;
+    background: linear-gradient(135deg, #8e8e93, #636366) !important;
+
+    font-size: 23px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.notifications-disabled-section .setting-icon-container.disabled-icon i {
+    color: #ffffff;
+}
+
+/* Text area */
+.notifications-disabled-section .setting-label {
+    min-width: 0;
+}
+
+.notifications-disabled-section .setting-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    color: var(--text-color);
+    font-size: 16.5px;
+    line-height: 1.25;
+}
+
+.notifications-disabled-section .setting-description {
+    margin-top: 3px;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--secondary-text);
+}
+
+.disabled-reason {
+    color: var(--secondary-text);
+}
+
+/* Coming Soon badge */
+.coming-soon-badge {
+    display: inline-flex;
+    align-items: center;
+
+    margin-left: 0;
+    padding: 3px 8px;
+
+    border-radius: 999px;
+
+    color: #ffffff;
+    background: linear-gradient(135deg, #ff9500, #ff3b30);
+
+    font-size: 10.5px;
+    font-weight: 800;
+    line-height: 1.1;
+    white-space: nowrap;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 5px 12px rgba(255, 59, 48, 0.2);
+}
+
+/* ======================================================= /
+/ Force Disabled Switches Gray And Off                    /
+/ ======================================================= */
+
+.notifications-disabled-section .md-switch {
+    width: 56px;
+    min-width: 56px;
+    justify-self: end;
+}
+
+.notifications-disabled-section .md-switch input:disabled {
+    pointer-events: none;
+}
+
+/* Track */
+.notifications-disabled-section .md-switch input:disabled + .track,
+.notifications-disabled-section .disabled-switch .track {
+    background: rgba(142, 142, 147, 0.32) !important;
+    border: 1px solid rgba(142, 142, 147, 0.28) !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Even if checked in HTML, force it gray */
+.notifications-disabled-section .md-switch input:disabled:checked + .track,
+.notifications-disabled-section .md-switch input:checked:disabled + .track {
+    background: rgba(142, 142, 147, 0.32) !important;
+}
+
+/* Thumb */
+.notifications-disabled-section .md-switch input:disabled + .track .thumb,
+.notifications-disabled-section .md-switch input:disabled:checked + .track .thumb,
+.notifications-disabled-section .md-switch input:checked:disabled + .track .thumb,
+.notifications-disabled-section .disabled-switch .thumb {
+    background: #c7c7cc !important;
+    box-shadow: none !important;
+    transform: translateX(0) !important;
+}
+
+/* Dark mode switches */
+body.dark-mode .notifications-disabled-section .md-switch input:disabled + .track,
+body.dark-mode .notifications-disabled-section .disabled-switch .track,
+html.dark-mode body .notifications-disabled-section .md-switch input:disabled + .track,
+html.dark-mode body .notifications-disabled-section .disabled-switch .track {
+    background: rgba(99, 99, 102, 0.36) !important;
+    border-color: rgba(142, 142, 147, 0.2) !important;
+}
+
+body.dark-mode .notifications-disabled-section .md-switch input:disabled + .track .thumb,
+body.dark-mode .notifications-disabled-section .disabled-switch .thumb,
+html.dark-mode body .notifications-disabled-section .md-switch input:disabled + .track .thumb,
+html.dark-mode body .notifications-disabled-section .disabled-switch .thumb {
+    background: #a1a1a6 !important;
+}
+
+/* ======================================================= /
+/ Tooltip Button                                          /
+/ ======================================================= */
+
 .delay-info-button {
     position: relative;
 
     width: 30px;
     height: 30px;
+    min-width: 30px;
 
     display: inline-grid;
     place-items: center;
@@ -1709,43 +1837,32 @@ html.dark-mode body .coming-soon-meta span {
     border-radius: 999px;
 
     color: var(--text-color);
-    background: rgba(255, 255, 255, 0.38);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.5),
-        0 4px 14px rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.54);
 
     cursor: pointer;
 
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 5px 14px rgba(0, 0, 0, 0.12);
+
     transition:
         transform var(--transition-fast),
-        background var(--transition-fast),
-        box-shadow var(--transition-fast);
+        background var(--transition-fast);
+}
+
+.delay-info-button i {
+    font-size: 14px;
 }
 
 .delay-info-button:hover,
 .delay-info-button:focus-visible,
 .delay-info-button.is-open {
     transform: scale(1.06);
-    background: rgba(255, 255, 255, 0.62);
     outline: none;
+    background: rgba(255, 255, 255, 0.72);
 }
 
-body.dark-mode .delay-info-button,
-html.dark-mode body .delay-info-button {
-    background: rgba(255, 255, 255, 0.10);
-}
-
-body.dark-mode .delay-info-button:hover,
-body.dark-mode .delay-info-button:focus-visible,
-body.dark-mode .delay-info-button.is-open,
-html.dark-mode body .delay-info-button:hover,
-html.dark-mode body .delay-info-button:focus-visible,
-html.dark-mode body .delay-info-button.is-open {
-    background: rgba(255, 255, 255, 0.16);
-}
-
-/ Tooltip bubble /
+/* Tooltip bubble */
 .delay-info-button::after {
     content: attr(data-tooltip);
 
@@ -1753,7 +1870,7 @@ html.dark-mode body .delay-info-button.is-open {
     right: 0;
     bottom: calc(100% + 12px);
 
-    width: min(280px, 78vw);
+    width: min(280px, 76vw);
     padding: 12px 14px;
 
     border-radius: 16px;
@@ -1764,9 +1881,7 @@ html.dark-mode body .delay-info-button.is-open {
     line-height: 1.42;
     text-align: left;
 
-    background:
-        var(--bubble-gradient),
-        rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.86);
 
     backdrop-filter: blur(28px) saturate(180%);
     -webkit-backdrop-filter: blur(28px) saturate(180%);
@@ -1774,8 +1889,8 @@ html.dark-mode body .delay-info-button.is-open {
     border: 1px solid rgba(255, 255, 255, 0.45);
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.65),
-        0 16px 34px rgba(0, 0, 0, 0.18);
+        inset 0 1px 0 rgba(255, 255, 255, 0.7),
+        0 16px 34px rgba(0, 0, 0, 0.2);
 
     opacity: 0;
     visibility: hidden;
@@ -1783,15 +1898,10 @@ html.dark-mode body .delay-info-button.is-open {
     transform-origin: bottom right;
 
     pointer-events: none;
-
-    transition:
-        opacity var(--transition-fast),
-        visibility var(--transition-fast),
-        transform var(--transition-fast);
-
-    z-index: 30;
+    z-index: 999;
 }
 
+/* Tooltip arrow */
 .delay-info-button::before {
     content: "";
 
@@ -1802,7 +1912,7 @@ html.dark-mode body .delay-info-button.is-open {
     width: 14px;
     height: 14px;
 
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.86);
 
     transform: rotate(45deg);
 
@@ -1813,34 +1923,9 @@ html.dark-mode body .delay-info-button.is-open {
     visibility: hidden;
 
     pointer-events: none;
-
-    transition:
-        opacity var(--transition-fast),
-        visibility var(--transition-fast);
-
-    z-index: 29;
+    z-index: 998;
 }
 
-body.dark-mode .delay-info-button::after,
-html.dark-mode body .delay-info-button::after {
-    background:
-        var(--bubble-gradient),
-        rgba(28, 28, 30, 0.88);
-
-    border-color: rgba(255, 255, 255, 0.14);
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.12),
-        0 18px 40px rgba(0, 0, 0, 0.42);
-}
-
-body.dark-mode .delay-info-button::before,
-html.dark-mode body .delay-info-button::before {
-    background: rgba(28, 28, 30, 0.88);
-    border-color: rgba(255, 255, 255, 0.14);
-}
-
-/ Show tooltip on hover, keyboard focus, and phone tap /
 .delay-info-button:hover::after,
 .delay-info-button:hover::before,
 .delay-info-button:focus-visible::after,
@@ -1857,116 +1942,57 @@ html.dark-mode body .delay-info-button::before {
     transform: translateY(0) scale(1);
 }
 
-/ Disabled cards /
-.disabled-setting {
-    opacity: 0.62;
-    filter: grayscale(1);
-    cursor: not-allowed;
-    user-select: none;
+/* Dark mode tooltip */
+body.dark-mode .delay-info-button,
+html.dark-mode body .delay-info-button {
+    background: rgba(255, 255, 255, 0.16);
 }
 
-.disabled-setting * {
-    cursor: not-allowed;
+body.dark-mode .delay-info-button:hover,
+body.dark-mode .delay-info-button:focus-visible,
+body.dark-mode .delay-info-button.is-open,
+html.dark-mode body .delay-info-button:hover,
+html.dark-mode body .delay-info-button:focus-visible,
+html.dark-mode body .delay-info-button.is-open {
+    background: rgba(255, 255, 255, 0.22);
 }
 
-.disabled-setting:hover {
-    transform: none;
+body.dark-mode .delay-info-button::after,
+html.dark-mode body .delay-info-button::after {
+    background: rgba(28, 28, 30, 0.94);
+    border-color: rgba(255, 255, 255, 0.14);
 }
 
-/ Disabled icon style /
-.disabled-icon,
-.disabled-emoji-icon {
-    background:
-        linear-gradient(
-            135deg,
-            #a1a1a6,
-            #7d7d84
-        ) !important;
-
-    color: #ffffff;
+body.dark-mode .delay-info-button::before,
+html.dark-mode body .delay-info-button::before {
+    background: rgba(28, 28, 30, 0.94);
+    border-color: rgba(255, 255, 255, 0.14);
 }
 
-.disabled-emoji-icon {
-    filter: grayscale(1);
-}
+/* ======================================================= /
+/ Mobile Fixes                                            /
+/ ======================================================= */
 
-/ Coming soon pill beside titles /
-.coming-soon-badge {
-    display: inline-flex;
-    align-items: center;
-
-    margin-left: 8px;
-    padding: 4px 9px;
-
-    border-radius: 999px;
-
-    color: #ffffff;
-    background:
-        linear-gradient(
-            135deg,
-            #ff9500,
-            #ff3b30
-        );
-
-    font-size: 10.5px;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-    vertical-align: middle;
-
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.35),
-        0 5px 14px rgba(255, 59, 48, 0.22);
-}
-
-.disabled-reason {
-    color: var(--secondary-text);
-}
-
-/ Disabled switch /
-.md-switch input:disabled {
-    pointer-events: none;
-}
-
-.md-switch input:disabled + .track,
-.disabled-switch .track {
-    background: #d1d1d6 !important;
-    opacity: 1;
-}
-
-.md-switch input:disabled + .track .thumb,
-.disabled-switch .thumb {
-    background: #f2f2f7 !important;
-    box-shadow: none;
-}
-
-/ Dark mode disabled switch /
-body.dark-mode .md-switch input:disabled + .track,
-body.dark-mode .disabled-switch .track,
-html.dark-mode body .md-switch input:disabled + .track,
-html.dark-mode body .disabled-switch .track {
-    background: #3a3a3c !important;
-}
-
-body.dark-mode .md-switch input:disabled + .track .thumb,
-body.dark-mode .disabled-switch .thumb,
-html.dark-mode body .md-switch input:disabled + .track .thumb,
-html.dark-mode body .disabled-switch .thumb {
-    background: #8e8e93 !important;
-}
-
-/ Phone layout /
 @media screen and (max-width: 520px) {
     .notification-coming-soon-hero {
-        align-items: flex-start;
-        padding: 16px;
-        gap: 13px;
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr);
+        align-items: start;
+        gap: 12px;
+
+        padding: 15px;
+        margin: 12px 0 14px;
     }
 
     .coming-soon-icon-wrap {
-        width: 48px;
-        height: 48px;
-        min-width: 48px;
-        border-radius: 16px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        border-radius: 15px;
+    }
+
+    .coming-soon-icon-wrap i {
+        font-size: 18px;
     }
 
     .coming-soon-title {
@@ -1974,37 +2000,100 @@ html.dark-mode body .disabled-switch .thumb {
     }
 
     .coming-soon-description {
-        font-size: 13px;
+        font-size: 12.8px;
+        line-height: 1.4;
+    }
+
+    .coming-soon-meta {
+        gap: 6px;
+    }
+
+    .coming-soon-meta span {
+        padding: 5px 8px;
+        font-size: 11.5px;
+    }
+
+    .notifications-disabled-section .setting-card.disabled-setting {
+        grid-template-columns: 46px minmax(0, 1fr) 54px;
+        gap: 12px;
+
+        padding: 13px 14px;
+        min-height: 78px;
+    }
+
+    .notifications-disabled-section .setting-card.disabled-setting.no-switch-card {
+        grid-template-columns: 46px minmax(0, 1fr);
+    }
+
+    .notifications-disabled-section .setting-icon-container.disabled-icon,
+    .notifications-disabled-section .setting-icon-container.disabled-emoji-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        font-size: 21px;
+    }
+
+    .notifications-disabled-section .setting-title {
+        font-size: 15.5px;
+        line-height: 1.22;
+    }
+
+    .notifications-disabled-section .setting-description {
+        font-size: 12.5px;
+    }
+
+    .coming-soon-badge {
+        font-size: 10px;
+        padding: 3px 7px;
+    }
+
+    .delay-info-button {
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
     }
 
     .delay-info-button::after {
         right: -8px;
-        width: min(260px, 72vw);
-    }
-
-    .coming-soon-badge {
-        margin-left: 0;
-        margin-top: 5px;
-    }
-
-    .setting-title {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        align-items: center;
+        width: min(250px, 72vw);
     }
 }
 
-/ Reduce animation for accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .coming-soon-glow {
-        animation: none;
+/ Very small phones /
+@media screen and (max-width: 390px) {
+    .notifications-disabled-section .setting-card.disabled-setting {
+        grid-template-columns: 42px minmax(0, 1fr) 50px;
+        gap: 10px;
+        padding: 12px;
     }
 
+    .notifications-disabled-section .setting-card.disabled-setting.no-switch-card {
+        grid-template-columns: 42px minmax(0, 1fr);
+    }
+
+    .notifications-disabled-section .setting-icon-container.disabled-icon,
+    .notifications-disabled-section .setting-icon-container.disabled-emoji-icon {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        font-size: 19px;
+    }
+
+    .notifications-disabled-section .setting-title {
+        font-size: 15px;
+    }
+
+    .notifications-disabled-section .md-switch {
+        width: 50px;
+        min-width: 50px;
+    }
+}
+
+/ Accessibility */
+@media (prefers-reduced-motion: reduce) {
     .delay-info-button,
-    .delay-info-button::after,
-    .delay-info-button::before {
+    .delay-info-button::before,
+    .delay-info-button::after {
         transition: none;
     }
 }
-
