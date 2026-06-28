@@ -1196,120 +1196,53 @@ async function loadAndDisplayUsefulLinks() {
 
 async function loadAndDisplaySocialLinks() {
     const containerElement = document.querySelector('.social-links-container');
+    if (!containerElement) { console.warn("Social links container missing (.social-links-container)."); return; }
 
-    if (!containerElement) {
-        console.warn("Social links container missing (.social-links-container).");
-        return;
-    }
+    if (!firebaseAppInitialized || !db) { console.error("Social Links load error: Firebase not ready."); containerElement.innerHTML = '<p class="error">Error loading socials (DB Init Error).</p>'; return; }
+    if (!socialLinksCollectionRef) { console.error("Social Links load error: Collection reference missing."); containerElement.innerHTML = '<p class="error">Error loading socials (Config Error).</p>'; return;}
 
-    if (!firebaseAppInitialized || !db) {
-        console.error("Social Links load error: Firebase not ready.");
-        containerElement.innerHTML = '<p class="error">Error loading socials (DB Init Error).</p>';
-        return;
-    }
-
-    if (!socialLinksCollectionRef) {
-        console.error("Social Links load error: Collection reference missing.");
-        containerElement.innerHTML = '<p class="error">Error loading socials (Config Error).</p>';
-        return;
-    }
-
-    containerElement.innerHTML = '<p class="social-loading">Loading socials...</p>';
-
+    containerElement.innerHTML = '<p>Loading socials...</p>';
     try {
-        console.log("Loading social links from Firestore...");
-        console.log("Collection ref:", socialLinksCollectionRef);
-
-        const linkQuery = query(
-            socialLinksCollectionRef,
-            orderBy("order", "asc")
-        );
-
-        const timeoutPromise = new Promise((_, reject) => {
-            setTimeout(() => {
-                reject(new Error("Social links request timed out."));
-            }, 10000);
-        });
-
-        const querySnapshot = await Promise.race([
-            getDocs(linkQuery),
-            timeoutPromise
-        ]);
-
-        console.log("Social links snapshot received:", querySnapshot);
-
+        const linkQuery = query(socialLinksCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(linkQuery);
         containerElement.innerHTML = '';
 
         if (querySnapshot.empty) {
-            containerElement.innerHTML = '<p class="no-results">No social links available.</p>';
-            return;
-        }
+            containerElement.innerHTML = '<p>No social links available.</p>';
+        } else {
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                if (data.label && data.url) {
+                    const linkElement = document.createElement('a');
+                    linkElement.href = data.url;
+                    linkElement.target = '_blank';
+                    linkElement.rel = 'noopener noreferrer';
+                    linkElement.className = 'social-button';
 
-        let displayedCount = 0;
+                    if (data.iconClass) {
+                        const iconElement = document.createElement('i');
+                        iconElement.className = data.iconClass + ' social-icon';
+                        linkElement.appendChild(iconElement);
+                    }
 
-        querySnapshot.forEach((doc) => {
-            const data = doc.data();
-
-            if (data.label && data.url) {
-                const linkElement = document.createElement('a');
-
-                let url = String(data.url).trim();
-
-                if (
-                    !url.startsWith('http://') &&
-                    !url.startsWith('https://') &&
-                    !url.startsWith('mailto:') &&
-                    !url.startsWith('tel:')
-                ) {
-                    url = https://${url};
+                    const textElement = document.createElement('span');
+                    textElement.textContent = data.label;
+                    linkElement.appendChild(textElement);
+                    containerElement.appendChild(linkElement);
+                } else {
+                    console.warn("Skipping social link item due to missing label or URL:", doc.id);
                 }
-
-                linkElement.href = url;
-                linkElement.target = '_blank';
-                linkElement.rel = 'noopener noreferrer';
-                linkElement.className = 'social-button';
-                linkElement.setAttribute('aria-label', Open ${data.label});
-
-                if (data.iconClass) {
-                    const iconElement = document.createElement('i');
-                    iconElement.className = data.iconClass + ' social-icon';
-                    iconElement.setAttribute('aria-hidden', 'true');
-                    linkElement.appendChild(iconElement);
-                }
-
-                const textElement = document.createElement('span');
-                textElement.textContent = data.label;
-
-                linkElement.appendChild(textElement);
-                containerElement.appendChild(linkElement);
-
-                displayedCount++;
-            } else {
-                console.warn("Skipping social link item due to missing label or URL:", doc.id, data);
-            }
-        });
-
-        if (displayedCount === 0) {
-            containerElement.innerHTML = '<p class="no-results">No valid social links available.</p>';
-            return;
+            });
         }
-
-        console.log(Displayed ${displayedCount} social links.);
+        console.log(`Displayed ${querySnapshot.size} social links.`);
     } catch (error) {
         console.error("Error loading social links:", error);
-
         let errorMsg = "Could not load social links.";
-
         if (error.code === 'failed-precondition') {
             errorMsg = "Error: DB configuration needed for socials (order).";
             console.error("Missing Firestore index for social_links collection, ordered by 'order'.");
         }
-
-        if (error.message === "Social links request timed out.") {
-            errorMsg = "Social links took too long to load.";
-        }
-
-        containerElement.innerHTML = <p class="error">${errorMsg}</p>;
+        containerElement.innerHTML = `<p class="error">${errorMsg}</p>`;
     }
 }
 
