@@ -1502,3 +1502,509 @@ body.settings-page .setting-icon-container.instagram-icon i,
 body.settings-page .setting-card.layout-reset-card .setting-icon-container.layout-reset-icon i{
   color: inherit !important;
 }
+
+/* ======================================================= /
+/ Notifications Coming Soon / Disabled State              /
+/ ======================================================= /
+
+.notifications-disabled-section {
+    position: relative;
+}
+
+/ Big premium coming soon banner /
+.notification-coming-soon-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    margin: 14px 0 18px;
+    padding: 18px;
+
+    border-radius: var(--ios-radius-xl);
+    overflow: visible;
+
+    color: var(--text-color);
+
+    background:
+        var(--bubble-gradient),
+        linear-gradient(
+            135deg,
+            rgba(255, 149, 0, 0.22),
+            rgba(255, 59, 48, 0.12),
+            rgba(142, 142, 147, 0.16)
+        ),
+        var(--glass-bg-light);
+
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+
+    box-shadow:
+        var(--bubble-highlight),
+        0 18px 45px rgba(255, 149, 0, 0.16),
+        var(--bubble-shadow);
+
+    border: 1px solid rgba(255, 255, 255, 0.34);
+}
+
+/ Dark mode hero /
+body.dark-mode .notification-coming-soon-hero,
+html.dark-mode body .notification-coming-soon-hero {
+    background:
+        radial-gradient(
+            circle at 20% 10%,
+            rgba(255, 184, 77, 0.20),
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(255, 149, 0, 0.20),
+            rgba(255, 69, 58, 0.12),
+            rgba(28, 28, 30, 0.60)
+        ),
+        var(--glass-bg-dark);
+
+    border-color: rgba(255, 255, 255, 0.12);
+
+    box-shadow:
+        var(--bubble-highlight),
+        0 20px 50px rgba(0, 0, 0, 0.42),
+        0 0 36px rgba(255, 149, 0, 0.10);
+}
+
+/ Animated glow blob /
+.coming-soon-glow {
+    position: absolute;
+    inset: -40%;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255, 204, 0, 0.20),
+            transparent 42%
+        );
+
+    filter: blur(18px);
+    opacity: 0.75;
+
+    animation: notificationGlowFloat 7s ease-in-out infinite;
+}
+
+@keyframes notificationGlowFloat {
+    0%, 100% {
+        transform: translate3d(-8%, -4%, 0) scale(1);
+    }
+
+    50% {
+        transform: translate3d(10%, 8%, 0) scale(1.15);
+    }
+}
+
+/ Bell slash icon /
+.coming-soon-icon-wrap {
+    position: relative;
+    z-index: 1;
+
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 18px;
+
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9500,
+            #ff3b30
+        );
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+        0 12px 26px rgba(255, 59, 48, 0.28);
+}
+
+.coming-soon-icon-wrap i {
+    font-size: 22px;
+}
+
+/ Text area /
+.coming-soon-content {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-width: 0;
+}
+
+.coming-soon-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.coming-soon-title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.coming-soon-description {
+    margin: 5px 0 10px;
+
+    color: var(--secondary-text);
+    font-size: 13.5px;
+    line-height: 1.45;
+}
+
+/ Small status chips inside hero /
+.coming-soon-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.coming-soon-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    color: var(--text-color);
+    font-size: 12px;
+    font-weight: 700;
+
+    background: rgba(255, 255, 255, 0.34);
+    border: 1px solid rgba(255, 255, 255, 0.32);
+
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+
+body.dark-mode .coming-soon-meta span,
+html.dark-mode body .coming-soon-meta span {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.10);
+}
+
+/ Tooltip info button /
+.delay-info-button {
+    position: relative;
+
+    width: 30px;
+    height: 30px;
+
+    display: inline-grid;
+    place-items: center;
+
+    border: none;
+    border-radius: 999px;
+
+    color: var(--text-color);
+    background: rgba(255, 255, 255, 0.38);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        0 4px 14px rgba(0, 0, 0, 0.08);
+
+    cursor: pointer;
+
+    transition:
+        transform var(--transition-fast),
+        background var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+.delay-info-button:hover,
+.delay-info-button:focus-visible,
+.delay-info-button.is-open {
+    transform: scale(1.06);
+    background: rgba(255, 255, 255, 0.62);
+    outline: none;
+}
+
+body.dark-mode .delay-info-button,
+html.dark-mode body .delay-info-button {
+    background: rgba(255, 255, 255, 0.10);
+}
+
+body.dark-mode .delay-info-button:hover,
+body.dark-mode .delay-info-button:focus-visible,
+body.dark-mode .delay-info-button.is-open,
+html.dark-mode body .delay-info-button:hover,
+html.dark-mode body .delay-info-button:focus-visible,
+html.dark-mode body .delay-info-button.is-open {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+/ Tooltip bubble /
+.delay-info-button::after {
+    content: attr(data-tooltip);
+
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 12px);
+
+    width: min(280px, 78vw);
+    padding: 12px 14px;
+
+    border-radius: 16px;
+
+    color: var(--text-color);
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.42;
+    text-align: left;
+
+    background:
+        var(--bubble-gradient),
+        rgba(255, 255, 255, 0.78);
+
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+
+    border: 1px solid rgba(255, 255, 255, 0.45);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.65),
+        0 16px 34px rgba(0, 0, 0, 0.18);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.96);
+    transform-origin: bottom right;
+
+    pointer-events: none;
+
+    transition:
+        opacity var(--transition-fast),
+        visibility var(--transition-fast),
+        transform var(--transition-fast);
+
+    z-index: 30;
+}
+
+.delay-info-button::before {
+    content: "";
+
+    position: absolute;
+    right: 10px;
+    bottom: calc(100% + 5px);
+
+    width: 14px;
+    height: 14px;
+
+    background: rgba(255, 255, 255, 0.78);
+
+    transform: rotate(45deg);
+
+    border-right: 1px solid rgba(255, 255, 255, 0.45);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity var(--transition-fast),
+        visibility var(--transition-fast);
+
+    z-index: 29;
+}
+
+body.dark-mode .delay-info-button::after,
+html.dark-mode body .delay-info-button::after {
+    background:
+        var(--bubble-gradient),
+        rgba(28, 28, 30, 0.88);
+
+    border-color: rgba(255, 255, 255, 0.14);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 18px 40px rgba(0, 0, 0, 0.42);
+}
+
+body.dark-mode .delay-info-button::before,
+html.dark-mode body .delay-info-button::before {
+    background: rgba(28, 28, 30, 0.88);
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+/ Show tooltip on hover, keyboard focus, and phone tap /
+.delay-info-button:hover::after,
+.delay-info-button:hover::before,
+.delay-info-button:focus-visible::after,
+.delay-info-button:focus-visible::before,
+.delay-info-button.is-open::after,
+.delay-info-button.is-open::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+.delay-info-button:hover::after,
+.delay-info-button:focus-visible::after,
+.delay-info-button.is-open::after {
+    transform: translateY(0) scale(1);
+}
+
+/ Disabled cards /
+.disabled-setting {
+    opacity: 0.62;
+    filter: grayscale(1);
+    cursor: not-allowed;
+    user-select: none;
+}
+
+.disabled-setting * {
+    cursor: not-allowed;
+}
+
+.disabled-setting:hover {
+    transform: none;
+}
+
+/ Disabled icon style /
+.disabled-icon,
+.disabled-emoji-icon {
+    background:
+        linear-gradient(
+            135deg,
+            #a1a1a6,
+            #7d7d84
+        ) !important;
+
+    color: #ffffff;
+}
+
+.disabled-emoji-icon {
+    filter: grayscale(1);
+}
+
+/ Coming soon pill beside titles /
+.coming-soon-badge {
+    display: inline-flex;
+    align-items: center;
+
+    margin-left: 8px;
+    padding: 4px 9px;
+
+    border-radius: 999px;
+
+    color: #ffffff;
+    background:
+        linear-gradient(
+            135deg,
+            #ff9500,
+            #ff3b30
+        );
+
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    vertical-align: middle;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        0 5px 14px rgba(255, 59, 48, 0.22);
+}
+
+.disabled-reason {
+    color: var(--secondary-text);
+}
+
+/ Disabled switch /
+.md-switch input:disabled {
+    pointer-events: none;
+}
+
+.md-switch input:disabled + .track,
+.disabled-switch .track {
+    background: #d1d1d6 !important;
+    opacity: 1;
+}
+
+.md-switch input:disabled + .track .thumb,
+.disabled-switch .thumb {
+    background: #f2f2f7 !important;
+    box-shadow: none;
+}
+
+/ Dark mode disabled switch /
+body.dark-mode .md-switch input:disabled + .track,
+body.dark-mode .disabled-switch .track,
+html.dark-mode body .md-switch input:disabled + .track,
+html.dark-mode body .disabled-switch .track {
+    background: #3a3a3c !important;
+}
+
+body.dark-mode .md-switch input:disabled + .track .thumb,
+body.dark-mode .disabled-switch .thumb,
+html.dark-mode body .md-switch input:disabled + .track .thumb,
+html.dark-mode body .disabled-switch .thumb {
+    background: #8e8e93 !important;
+}
+
+/ Phone layout /
+@media screen and (max-width: 520px) {
+    .notification-coming-soon-hero {
+        align-items: flex-start;
+        padding: 16px;
+        gap: 13px;
+    }
+
+    .coming-soon-icon-wrap {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        border-radius: 16px;
+    }
+
+    .coming-soon-title {
+        font-size: 16.5px;
+    }
+
+    .coming-soon-description {
+        font-size: 13px;
+    }
+
+    .delay-info-button::after {
+        right: -8px;
+        width: min(260px, 72vw);
+    }
+
+    .coming-soon-badge {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+
+    .setting-title {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        align-items: center;
+    }
+}
+
+/ Reduce animation for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .coming-soon-glow {
+        animation: none;
+    }
+
+    .delay-info-button,
+    .delay-info-button::after,
+    .delay-info-button::before {
+        transition: none;
+    }
+}
+
