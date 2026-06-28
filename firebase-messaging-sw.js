@@ -4,7 +4,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/fireba
 import {
   getMessaging,
   getToken,
-  onMessage
+  onMessage,
+  isSupported // Added to prevent crashes on unsupported browsers
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging.js";
 
 /**
@@ -20,16 +21,46 @@ const firebaseConfig = {
   measurementId: "G-DQPH8YL789"
 };
 
-/**
- * Initialize Firebase
- */
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+let messaging = null;
+
+/**
+ * Safely initialize Firebase Messaging after checking environment support
+ */
+async function initMessaging() {
+  try {
+    if (typeof window !== "undefined" && "serviceWorker" in navigator && "Notification" in window) {
+      const supported = await isSupported();
+      if (supported) {
+        messaging = getMessaging(app);
+        setupForegroundListener();
+      } else {
+        console.warn("FCM is not supported in this browser context (e.g., insecure HTTP or private mode).");
+      }
+    } else {
+      console.warn("Push notifications or Service Workers are not supported by this browser.");
+    }
+  } catch (err) {
+    console.error("Failed to initialize FCM:", err);
+  }
+}
+
+// Trigger initialization
+initMessaging();
 
 /**
  * Request notification permission from user
  */
 export async function requestNotificationPermission() {
+  if (!messaging) {
+    await initMessaging();
+    if (!messaging) {
+      console.error("Cannot request permission: FCM is not supported or initialized.");
+      return null;
+    }
+  }
+
   try {
     const permission = await Notification.requestPermission();
 
@@ -55,7 +86,7 @@ async function registerServiceWorkerAndGetToken() {
       "/firebase-messaging-sw.js"
     );
 
-    // Your public VAPID key from Firebase console
+    // Public VAPID key from Firebase console
     const vapidKey = "BHRwwN7PbDF6gKdczJdDHTesQdZ-WbXsIpnwtFyy4yPk6ekWCN43upT6nbXD-ONlCIFNPKCLHKanw-Xzw_GmpJQ";
 
     // Get device token
@@ -71,7 +102,7 @@ async function registerServiceWorkerAndGetToken() {
 
     console.log("FCM Token:", token);
 
-    // Send token to your backend (important)
+    // Send token to your backend
     await sendTokenToServer(token);
 
     return token;
@@ -82,38 +113,52 @@ async function registerServiceWorkerAndGetToken() {
 }
 
 /**
- * Handle foreground messages (when app is open)
+ * Bind the foreground message listener
  */
-onMessage(messaging, (payload) => {
-  console.log("Foreground message received:", payload);
+function setupForegroundListener() {
+  if (!messaging) return;
 
-  const title = payload.notification?.title || "New Notification";
-  const body = payload.notification?.body || "";
+  onMessage(messaging, (payload) => {
+    console.log("Foreground message received:", payload);
 
-  showInAppNotification(title, body, payload);
-});
+    const title = payload.notification?.title || "New Notification";
+    const body = payload.notification?.body || "";
+
+    showInAppNotification(title, body, payload);
+  });
+}
 
 /**
- * Simple in-app notification UI
+ * Modern in-app notification UI with a sleek frosted-glass aesthetic
  */
 function showInAppNotification(title, body, payload) {
   const notification = document.createElement("div");
 
-  notification.style.position = "fixed";
-  notification.style.bottom = "20px";
-  notification.style.right = "20px";
-  notification.style.background = "#111";
-  notification.style.color = "#fff";
-  notification.style.padding = "12px 16px";
-  notification.style.borderRadius = "10px";
-  notification.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-  notification.style.zIndex = "9999";
-  notification.style.maxWidth = "300px";
-  notification.style.cursor = "pointer";
+  // Modern UI styling with glassmorphism touches
+  Object.assign(notification.style, {
+    position: "fixed",
+    bottom: "24px",
+    right: "24px",
+    background: "rgba(20, 20, 20, 0.85)",
+    backdropFilter: "blur(12px)",
+    webkitBackdropFilter: "blur(12px)",
+    color: "#ffffff",
+    padding: "16px",
+    borderRadius: "14px",
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+    zIndex: "9999",
+    maxWidth: "320px",
+    width: "100%",
+    cursor: "pointer",
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    transition: "transform 0.3s ease, opacity 0.3s ease",
+    opacity: "0",
+    transform: "clientY(20px)"
+  });
 
   notification.innerHTML = `
-    <strong>${title}</strong><br/>
-    <span style="font-size: 13px;">${body}</span>
+    <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px; letter-spacing: -0.2px;">${title}</div>
+    <div style="font-size: 13px; color: rgba(255, 255, 255, 0.75); line-height: 1.4;">${body}</div>
   `;
 
   notification.onclick = () => {
@@ -123,23 +168,35 @@ function showInAppNotification(title, body, payload) {
 
   document.body.appendChild(notification);
 
+  // Fade-in animation
+  requestAnimationFrame(() => {
+    notification.style.opacity = "1";
+    notification.style.transform = "translateY(0)";
+  });
+
+  // Smooth slide out and removal
   setTimeout(() => {
-    notification.remove();
+    notification.style.opacity = "0";
+    notification.style.transform = "translateY(20px)";
+    notification.addEventListener("transitionend", () => notification.remove());
   }, 6000);
 }
 
 /**
- * Send token to backend (replace with your API)
+ * Send token to backend
  */
 async function sendTokenToServer(token) {
   try {
-    await fetch("/api/save-fcm-token", {
+    const response = await fetch("/api/save-fcm-token", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ token })
     });
+    if (!response.ok) {
+      throw new Error(`Server responded with status ${response.status}`);
+    }
   } catch (err) {
     console.error("Failed to send token to server:", err);
   }
