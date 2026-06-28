@@ -1030,5 +1030,47 @@
       if (year) year.textContent = new Date().getFullYear();
     });
   </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const tooltipButtons = document.querySelectorAll(".delay-info-button");
+
+    tooltipButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+
+        const isOpen = button.classList.contains("is-open");
+
+        tooltipButtons.forEach((btn) => {
+          btn.classList.remove("is-open");
+          btn.setAttribute("aria-expanded", "false");
+        });
+
+        if (!isOpen) {
+          button.classList.add("is-open");
+          button.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
+
+    document.addEventListener("click", () => {
+      tooltipButtons.forEach((button) => {
+        button.classList.remove("is-open");
+        button.setAttribute("aria-expanded", "false");
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        tooltipButtons.forEach((button) => {
+          button.classList.remove("is-open");
+          button.setAttribute("aria-expanded", "false");
+        });
+      }
+    });
+  });
+</script>
+
+  
 </body>
 </html>
