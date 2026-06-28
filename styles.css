@@ -2781,16 +2781,18 @@ body.dark-mode .bubble {
 
 
 /* ======================================== /
-/ == Social Links Section – Onyx Glass   == /
-/ == iOS-Style Pill Rows + Chevron       == /
-/ == Root Theme Light/Dark Compatible    == /
+/ Social Links Section – Onyx Liquid Glass /
+/ iOS-Style Pill Rows + Chevron            /
+/ Root Theme Light/Dark Compatible         /
 / ======================================== */
 
 .social-links-section {
 	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+
 	width: 100%;
 	box-sizing: border-box;
-	overflow: hidden;
 
 	margin: 20px 0;
 	padding: 30px;
@@ -2801,7 +2803,7 @@ body.dark-mode .bubble {
 	background:
 		radial-gradient(
 			circle at 40% 0%,
-			color-mix(in srgb, var(--glow-color) 60%, transparent),
+			color-mix(in srgb, var(--glow-color) 58%, transparent),
 			transparent 58%
 		),
 		var(--bubble-gradient),
@@ -2817,8 +2819,6 @@ body.dark-mode .bubble {
 	backdrop-filter: var(--backdrop-blur);
 	-webkit-backdrop-filter: var(--backdrop-blur);
 
-	isolation: isolate;
-
 	transition:
 		background var(--transition-medium),
 		border-color var(--transition-medium),
@@ -2832,12 +2832,13 @@ body.dark-mode .bubble {
 	position: absolute;
 	inset: 0;
 	z-index: 0;
+
 	border-radius: inherit;
 	pointer-events: none;
 
 	background: var(--liquid-reflection);
 	mix-blend-mode: soft-light;
-	opacity: 0.42;
+	opacity: 0.44;
 }
 
 /* Depth Layer */
@@ -2846,13 +2847,14 @@ body.dark-mode .bubble {
 	position: absolute;
 	inset: 0;
 	z-index: 0;
+
 	border-radius: inherit;
 	pointer-events: none;
 
 	background:
 		radial-gradient(
 			circle at 50% 0%,
-			color-mix(in srgb, var(--glow-color) 48%, transparent),
+			color-mix(in srgb, var(--glow-color) 46%, transparent),
 			transparent 58%
 		),
 		radial-gradient(
@@ -2869,19 +2871,20 @@ body.dark-mode .bubble {
 	position: relative;
 	z-index: 1;
 
-	font-size: calc(var(--font-size-base, 20px) * 1.2);
-	font-weight: 750;
-	letter-spacing: -0.025em;
-
 	margin-top: 0;
 	margin-bottom: 20px;
 
 	text-align: center;
+
+	font-size: calc(var(--font-size-base, 20px) * 1.2);
+	font-weight: 750;
+	letter-spacing: -0.025em;
+
 	color: var(--text-color);
 }
 
 /* ======================================== /
-/ Search /
+/ Search                                   /
 / ======================================== */
 
 .search-container.unified {
@@ -2891,7 +2894,7 @@ body.dark-mode .bubble {
 }
 
 /* ======================================== /
-/ Container /
+/ Container                                /
 / ======================================== */
 
 .social-links-container {
@@ -2906,21 +2909,24 @@ body.dark-mode .bubble {
 }
 
 /* ======================================== /
-/ Social Button – True iOS Glass Pill /
+/ Social Button – Liquid Glass Pill         /
+/ Icon left, text centered, arrow right     /
 / ======================================== */
 
 .social-button {
 	position: relative;
+	isolation: isolate;
+	overflow: hidden;
 
-	display: flex;
+	display: grid;
+	grid-template-columns: 28px minmax(0, 1fr) 28px;
 	align-items: center;
-	gap: 14px;
+	column-gap: 14px;
 
 	width: 100%;
-	min-height: 56px;
+	min-height: 58px;
 
 	padding: 14px 20px;
-	padding-right: 50px;
 
 	box-sizing: border-box;
 	text-decoration: none;
@@ -2929,6 +2935,11 @@ body.dark-mode .bubble {
 	color: var(--text-color);
 
 	background:
+		radial-gradient(
+			circle at 22% 0%,
+			color-mix(in srgb, var(--glow-color) 22%, transparent),
+			transparent 52%
+		),
 		linear-gradient(
 			180deg,
 			color-mix(in srgb, var(--glow-color) 26%, transparent),
@@ -2950,9 +2961,6 @@ body.dark-mode .bubble {
 	font-weight: 650;
 	letter-spacing: 0.1px;
 
-	overflow: hidden;
-	isolation: isolate;
-
 	transition:
 		background var(--transition-fast),
 		border-color var(--transition-fast),
@@ -2968,36 +2976,39 @@ body.dark-mode .bubble {
 	position: absolute;
 	inset: 0;
 	z-index: 0;
+
 	border-radius: inherit;
 	pointer-events: none;
 
 	background:
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, var(--glow-color) 34%, transparent) 0%,
-			color-mix(in srgb, var(--glow-color) 12%, transparent) 36%,
+			color-mix(in srgb, var(--glow-color) 36%, transparent) 0%,
+			color-mix(in srgb, var(--glow-color) 12%, transparent) 38%,
 			transparent 100%
 		);
 
-	opacity: 0.58;
+	opacity: 0.6;
 	mix-blend-mode: soft-light;
 }
 
-/* Chevron */
+/* Chevron Right */
 .social-button::after {
 	content: "";
-	position: absolute;
-	right: 20px;
-	top: 50%;
+
+	position: relative;
 	z-index: 1;
+
+	grid-column: 3;
+	justify-self: end;
 
 	width: 8px;
 	height: 8px;
 
-	transform: translateY(-50%) rotate(45deg);
-
 	border-top: 2px solid color-mix(in srgb, var(--text-color) 58%, transparent);
 	border-right: 2px solid color-mix(in srgb, var(--text-color) 58%, transparent);
+
+	transform: rotate(45deg);
 
 	opacity: 0.82;
 	pointer-events: none;
@@ -3008,17 +3019,20 @@ body.dark-mode .bubble {
 		transform var(--transition-fast);
 }
 
-/* Icon */
+/* Icon Left */
 .social-button .social-icon {
 	position: relative;
 	z-index: 1;
 
+	grid-column: 1;
+	justify-self: start;
+
 	font-size: 1.08em;
 	color: var(--icon-color);
 
-	flex-shrink: 0;
-	width: 20px;
+	width: 22px;
 	text-align: center;
+	flex-shrink: 0;
 
 	transition:
 		color var(--transition-fast),
@@ -3026,14 +3040,18 @@ body.dark-mode .bubble {
 		filter var(--transition-fast);
 }
 
-/* Text */
+/* Text Center */
 .social-button span {
 	position: relative;
 	z-index: 1;
 
-	flex: 1 1 auto;
-	text-align: left;
+	grid-column: 2;
+	justify-self: center;
 
+	width: 100%;
+	min-width: 0;
+
+	text-align: center;
 	color: var(--text-color);
 
 	white-space: nowrap;
@@ -3046,7 +3064,7 @@ body.dark-mode .bubble {
 }
 
 /* ======================================== /
-/ Hover — Accent Liquid Bloom /
+/ Hover — Accent Liquid Bloom              /
 / ======================================== */
 
 .social-button:hover {
@@ -3060,7 +3078,7 @@ body.dark-mode .bubble {
 		),
 		linear-gradient(
 			180deg,
-			color-mix(in srgb, var(--glow-color) 32%, transparent),
+			color-mix(in srgb, var(--glow-color) 34%, transparent),
 			color-mix(in srgb, var(--accent-color) 12%, var(--content-bg))
 		),
 		color-mix(in srgb, var(--accent-color) 15%, var(--content-bg));
@@ -3082,7 +3100,8 @@ body.dark-mode .bubble {
 
 .social-button:hover .social-icon {
 	color: var(--accent-color);
-	transform: scale(1.04);
+	transform: scale(1.05);
+
 	filter:
 		drop-shadow(
 			0 0 8px color-mix(in srgb, var(--accent-color) 28%, transparent)
@@ -3092,12 +3111,13 @@ body.dark-mode .bubble {
 .social-button:hover::after {
 	border-top-color: var(--accent-color);
 	border-right-color: var(--accent-color);
+
 	opacity: 1;
-	transform: translateY(-50%) rotate(45deg) translate(1px, -1px);
+	transform: rotate(45deg) translate(1px, -1px);
 }
 
 /* ======================================== /
-/ Focus /
+/ Focus                                    /
 / ======================================== */
 
 .social-button:focus-visible {
@@ -3123,21 +3143,58 @@ body.dark-mode .bubble {
 }
 
 /* ======================================== /
-/ No Results /
+/ Loading / Error / No Results             /
 / ======================================== */
 
-.no-results {
+.no-results,
+.social-loading,
+.social-links-container .error,
+.social-links-container .no-results {
 	position: relative;
 	z-index: 1;
 
-	margin-top: 10px;
+	margin: 8px 0;
+	padding: 14px 18px;
+
+	border-radius: var(--radius-lg);
 
 	color: var(--secondary-text);
 	text-align: center;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--glow-color) 20%, transparent),
+			color-mix(in srgb, var(--content-bg) 86%, transparent)
+		),
+		color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent);
+
+	box-shadow:
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 44%, transparent),
+		0 6px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+
+	backdrop-filter: blur(14px) saturate(150%);
+	-webkit-backdrop-filter: blur(14px) saturate(150%);
+}
+
+.social-links-container .error {
+	color: #ff6b6b;
+
+	border-color: color-mix(in srgb, #ff6b6b 36%, var(--border-color));
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, #ff6b6b 12%, transparent),
+			color-mix(in srgb, var(--content-bg) 86%, transparent)
+		),
+		color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 }
 
 /* ======================================== /
-/ Light Mode Polish /
+/ Light Mode Polish                        /
 / ======================================== */
 
 body.light-e .social-links-section {
@@ -3181,9 +3238,14 @@ body.light-e .social-links-section::after {
 
 body.light-e .social-button {
 	background:
+		radial-gradient(
+			circle at 22% 0%,
+			rgba(255, 255, 255, 0.76),
+			transparent 54%
+		),
 		linear-gradient(
 			180deg,
-			rgba(255, 255, 255, 0.72),
+			rgba(255, 255, 255, 0.74),
 			rgba(255, 255, 255, 0.42)
 		),
 		var(--bubble-gradient),
@@ -3192,13 +3254,13 @@ body.light-e .social-button {
 	border-color: color-mix(in srgb, var(--border-color) 92%, white 8%);
 
 	box-shadow:
-		inset 0 1px 0 rgba(255, 255, 255, 0.74),
+		inset 0 1px 0 rgba(255, 255, 255, 0.78),
 		inset 0 -1px 0 rgba(0, 0, 0, 0.055),
 		0 8px 22px color-mix(in srgb, var(--shadow-color) 52%, transparent);
 }
 
 body.light-e .social-button::before {
-	opacity: 0.64;
+	opacity: 0.66;
 	mix-blend-mode: soft-light;
 }
 
@@ -3211,15 +3273,15 @@ body.light-e .social-button:hover {
 		),
 		linear-gradient(
 			180deg,
-			rgba(255, 255, 255, 0.82),
-			color-mix(in srgb, var(--accent-color) 10%, rgba(255, 255, 255, 0.52))
+			rgba(255, 255, 255, 0.84),
+			color-mix(in srgb, var(--accent-color) 10%, rgba(255, 255, 255, 0.54))
 		),
 		color-mix(in srgb, var(--accent-color) 12%, var(--content-bg));
 
 	border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
 
 	box-shadow:
-		inset 0 1px 0 rgba(255, 255, 255, 0.80),
+		inset 0 1px 0 rgba(255, 255, 255, 0.82),
 		inset 0 -1px 0 rgba(0, 0, 0, 0.06),
 		0 10px 28px color-mix(in srgb, var(--shadow-color) 55%, transparent),
 		0 0 18px color-mix(in srgb, var(--accent-color) 20%, transparent);
@@ -3246,52 +3308,8 @@ body.light-e .social-button::after {
 	border-right-color: color-mix(in srgb, var(--text-color) 50%, transparent);
 }
 
-.social-loading,
-.social-links-container .error,
-.social-links-container .no-results {
-	position: relative;
-	z-index: 1;
-
-	margin: 8px 0;
-	padding: 14px 18px;
-
-	border-radius: var(--radius-lg);
-
-	color: var(--secondary-text);
-	text-align: center;
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 20%, transparent),
-			color-mix(in srgb, var(--content-bg) 86%, transparent)
-		),
-		color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent);
-
-	box-shadow:
-		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 44%, transparent),
-		0 6px 18px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-
-	backdrop-filter: blur(14px) saturate(150%);
-	-webkit-backdrop-filter: blur(14px) saturate(150%);
-}
-
-.social-links-container .error {
-	color: #ff6b6b;
-	border-color: color-mix(in srgb, #ff6b6b 36%, var(--border-color));
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, #ff6b6b 12%, transparent),
-			color-mix(in srgb, var(--content-bg) 86%, transparent)
-		),
-		color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
-}
-
 /* ======================================== /
-/ Dark Mode Polish /
+/ Dark Mode Polish                         /
 / ======================================== */
 
 html.dark-mode body .social-links-section,
@@ -3339,6 +3357,11 @@ body.dark-mode .social-links-section::after {
 html.dark-mode body .social-button,
 body.dark-mode .social-button {
 	background:
+		radial-gradient(
+			circle at 22% 0%,
+			rgba(255, 255, 255, 0.08),
+			transparent 54%
+		),
 		linear-gradient(
 			180deg,
 			rgba(255, 255, 255, 0.08),
@@ -3380,7 +3403,7 @@ body.dark-mode .social-button:hover {
 }
 
 /* ======================================== /
-/ Responsive /
+/ Responsive                               /
 / ======================================== */
 
 @media (max-width: 768px) {
@@ -3395,8 +3418,9 @@ body.dark-mode .social-button:hover {
 
 	.social-button {
 		min-height: 54px;
+		grid-template-columns: 26px minmax(0, 1fr) 26px;
+		column-gap: 12px;
 		padding: 13px 18px;
-		padding-right: 46px;
 	}
 }
 
@@ -3407,18 +3431,18 @@ body.dark-mode .social-button:hover {
 
 	.social-button {
 		min-height: 52px;
+		grid-template-columns: 24px minmax(0, 1fr) 24px;
+		column-gap: 10px;
 		padding: 12px 16px;
-		padding-right: 42px;
 		font-size: 0.95em;
 	}
 
 	.social-button .social-icon {
 		font-size: 1em;
-		width: 18px;
+		width: 20px;
 	}
 
 	.social-button::after {
-		right: 16px;
 		width: 7px;
 		height: 7px;
 	}
