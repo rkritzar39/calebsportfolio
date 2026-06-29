@@ -870,103 +870,6 @@ function extractID(url) {
 }
 
 /* ------------------------------------------------------------
-   LATEST OS CONFIG
-   Fallback values are used if JSON fetch fails.
------------------------------------------------------------- */
-let latestOSVersions = {
-    // Apple
-    ios: "26.5.1",
-    ipados: "26.5",
-    macos: "26.5.1",
-    watchos: "26.5",
-    tvos: "26.5",
-    visionos: "26.5",
-
-    // Android / Google / Samsung
-    android: "16",
-    pixelui: "16",
-    oneui: "8.5",
-
-    // Other Android skins
-    oxygenos: "16",
-    coloros: "16",
-    realmeui: "7",
-    miui: "14",
-    hyperos: "3",
-    magicos: "10",
-    emui: "15",
-    harmonyos: "5",
-    funtouchos: "16",
-    originos: "6",
-    nothingos: "4",
-    motorolahello: "16",
-    zenui: "12",
-    rogui: "12",
-    xos: "15",
-    hios: "15",
-    flymeos: "11",
-
-    // Windows
-    windows: "11",
-    windowsphone: "10",
-    windowsserver: "2025",
-
-    // Linux / Desktop
-    linux: "rolling",
-    ubuntu: "26.04",
-    debian: "13",
-    fedora: "42",
-    arch: "rolling",
-    manjaro: "rolling",
-    linuxmint: "22",
-    popos: "24.04",
-    elementaryos: "8",
-    zorinos: "17",
-    opensuse: "15.6",
-    kali: "2026.1",
-    tails: "6",
-    redhat: "10",
-    rocky: "10",
-    almalinux: "10",
-
-    // Chrome / Google desktop
-    chromeos: "latest",
-    chromiumos: "latest",
-
-    // BSD / Unix-like
-    freebsd: "14",
-    openbsd: "7",
-    netbsd: "10",
-
-    // Gaming
-    steamos: "3",
-    playstation: "5",
-    xbox: "series",
-    nintendoswitch: "18",
-
-    // TV / Smart home
-    fireos: "8",
-    rokuos: "13",
-    webos: "24",
-    tizen: "8",
-    androidtv: "16",
-    googletv: "16",
-
-    // Watches / wearables
-    wearos: "6",
-    garminos: "latest",
-    fitbitos: "latest",
-    zeppos: "4",
-
-    // Other
-    kindleos: "latest",
-    metaquest: "latest",
-    unknown: "Unknown"
-};
-
-const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
-
-/* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
 function renderFaqItemHomepage(faqData) {
@@ -1307,6 +1210,139 @@ async function loadAndDisplayDisabilities() {
    AI support, future AI target, device score, upgrade recommendation,
    support lifespan, battery trend, advanced details, and Android support.
 ------------------------------------------------------------ */
+
+const latestOSTiers = {
+
+    // =========================================================
+    // PRODUCTION STABLE (Broad Public Rollout)
+    // =========================================================
+    production_stable: {
+        // Apple
+        ios: "26.5.2",
+        ipados: "26.5.2",
+        macos: "26.5.2",
+        watchos: "26.5",
+        tvos: "26.5",
+        visionos: "26.5",
+
+        // Android / Google / Samsung
+        android: "17",
+        pixelui: "17",
+        oneui: "8.5",
+        oxygenos: "17",
+        coloros: "17",
+        realmeui: "7",
+        miui: "14",
+        hyperos: "3",
+        magicos: "10",
+        emui: "15",
+        harmonyos: "5",
+        funtouchos: "17",
+        originos: "5",
+        nothingos: "4",
+        motorolahello: "17",
+        zenui: "15",
+        rogui: "15",
+        xos: "15",
+        hios: "15",
+        flymeos: "22",
+
+        // Android TV / Google TV
+        androidtv: "17",
+        googletv: "17",
+
+        // Windows
+        windows: "11",
+        windowsphone: "10",
+        windowsserver: "2025",
+
+        // ChromeOS
+        chromeos: "146",
+        chromiumos: "146",
+
+        // Linux / Unix Desktop
+        linux: "6.15",
+        ubuntu: "26.04",
+        debian: "13",
+        fedora: "42",
+        arch: "rolling",
+        manjaro: "26.0",
+        linuxmint: "22",
+        popos: "24.04",
+        elementaryos: "8",
+        zorinos: "17",
+        opensuse: "15.6",
+        kali: "2026.2",
+        tails: "6.18",
+        redhat: "10.0",
+        rocky: "10.0",
+        almalinux: "10.0",
+
+        // BSD
+        freebsd: "14.2",
+        openbsd: "7.9",
+        netbsd: "10.2",
+
+        // Gaming Platforms
+        steamos: "3.7",
+        playstation: "26.02",
+        xbox: "10.0",
+        nintendoswitch: "20.0",
+
+        // Smart TV / Connected Home
+        fireos: "8",
+        rokuos: "14",
+        webos: "25",
+        tizen: "8",
+
+        // Wearables / Fitness
+        wearos: "6",
+        garminos: "18",
+        fitbitos: "7",
+        zeppos: "4",
+
+        // Extended Smart Devices
+        kindleos: "16",
+        metaquest: "78"
+    },
+
+    // =========================================================
+    // PUBLIC BETA (Registered System Enthusiasts)
+    // =========================================================
+    public_beta: {
+        ios: "26.6",
+        ipados: "26.6",
+        macos: "26.6",
+        watchos: "26.6",
+        tvos: "26.6",
+        visionos: "26.6",
+        android: "18",
+        pixelui: "18",
+        oneui: "9.0",
+        oxygenos: "18",
+        coloros: "18"
+    },
+
+    // =========================================================
+    // DEVELOPER TESTER (Bleeding-Edge Sandbox Builds)
+    // =========================================================
+    developer_tester: {
+        ios: "27.0",
+        ipados: "27.0",
+        macos: "27.0",
+        watchos: "27.0",
+        tvos: "27.0",
+        visionos: "27.0",
+        android: "18",
+        pixelui: "18",
+        oneui: "9.0",
+        oxygenos: "18",
+        coloros: "18"
+    }
+};
+
+// Flat object all existing functions read from — always production stable
+let latestOSVersions = { ...latestOSTiers.production_stable };
 
 // ======================
 // PERSONAL THRESHOLDS
@@ -1968,6 +2004,9 @@ function detectOSChannel(osVersion) {
     if (os.includes("canary")) return "canary";
     if (os.includes("preview")) return "preview";
     if (os.includes("rc") || os.includes("release candidate")) return "release-candidate";
+
+    // Apple developer beta build numbers end in a letter (e.g. 24A5370h)
+    if (/\(\d{2}[A-Z]\d+[e-z]\)/i.test(String(osVersion))) return "developer-beta";
 
     return "public";
 }
@@ -4738,25 +4777,36 @@ function renderTechItemHomepage(itemData) {
         ${ageHtml}
 
         ${osVersion ? `
+<div class="tech-detail">
+    <i class="${escapeHTML(osIconClass)}"></i>
+    <span>OS Version:</span>
+    <span class="tech-os-row">
+        ${escapeHTML(osVersion)}
+        ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
+    </span>
+</div>` : ""}
+
+
+                ${osStatus ? `
         <div class="tech-detail">
-            <i class="${escapeHTML(osIconClass)}"></i>
-            <span>OS Version:</span> ${escapeHTML(osVersion)}
-            ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
+            <i class="fas fa-circle-info"></i>
+            <span>Public Latest:</span>
+            <span class="tech-value">${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}</span>
+            ${["version-rule", "model-override"].includes(osStatus.latestVersionSource)
+                ? `<small class="tech-note">Device-specific</small>`
+                : ""}
+            ${osStatus.latestVersionNote
+                ? `<small class="tech-note">${escapeHTML(osStatus.latestVersionNote)}</small>`
+                : ""}
         </div>
 
-        ${osStatus ? `
         <div class="tech-detail">
             <i class="fas fa-code-branch"></i>
-            <span>Release Channel:</span> ${escapeHTML(osStatus.releaseChannel)}
+            <span>Release Channel:</span>
+            <span class="support-badge ${osStatus.isBeta ? "purple" : "green"}">
+                ${escapeHTML(osStatus.releaseChannel)}
+            </span>
         </div>
-
-        <div class="tech-detail">
-    <i class="fas fa-circle-info"></i>
-    <span>Public Latest:</span>
-    ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
-    ${osStatus.latestVersionLabel ? `<small>${escapeHTML(osStatus.latestVersionLabel)}</small>` : ""}
-    ${osStatus.latestVersionNote ? `<small>${escapeHTML(osStatus.latestVersionNote)}</small>` : ""}
-</div>
         ` : ""}
         ` : ""}
 
