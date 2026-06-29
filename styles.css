@@ -3902,6 +3902,22 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* == Tech Information Section – Onyx Glass System == */
 /* ======================================== */
 
+/* Add this to your base CSS */
+.glass-panel {
+    background: var(--content-bg);
+    border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(14px) saturate(135%);
+    -webkit-backdrop-filter: blur(14px) saturate(135%);
+}
+
+@supports not (backdrop-filter: blur(10px)) {
+  .glass-panel {
+    background-color: var(--content-bg); /* Fallback to solid color */
+    border: 1px solid var(--border-color);
+  }
+}
+
 /* ======================== */
 /* Section Container        */
 /* ======================== */
