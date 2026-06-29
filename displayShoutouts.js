@@ -3973,6 +3973,527 @@ function getOwnershipBadgeClass(stateOrItem) {
 
 
 /* ------------------------------------------------------------
+   RENDER FUNCTION
+------------------------------------------------------------ */
+function renderTechItemHomepage(itemData) {
+    const initialItem = normalizeTechItem(itemData);
+    const initialConfig = getOwnershipConfig(initialItem);
+    const item = sanitizeTechLifecycleForPublicDisplay(initialItem, initialConfig.mode);
+
+    if (isPlannedTechItem(item)) {
+        return renderPlannedTechItemHomepage(item);
+    }
+
+    const name = item.name || "Unnamed Device";
+    const model = item.model || "";
+    const primaryUse = item.primaryUse || "";
+    const condition = item.condition || "";
+    const deviceType = item.deviceType || "";
+    const modelYear = item.modelYear || "";
+    const supportEndYear = item.supportEndYear || "";
+    const iconClass = item.iconClass || "fas fa-question-circle";
+    const material = item.material || "";
+    const storage = item.storage || "";
+    const batteryCapacity = item.batteryCapacity || "";
+    const color = item.color || "";
+    const price = item.priceNumber ? `$${item.priceNumber.toLocaleString()}` : "";
+    const dateReleased = item.dateReleased || "";
+    const dateBought = item.dateBought || "";
+    const osVersion = item.osVersion || "";
+
+    const ownershipConfig = getOwnershipConfig(item);
+    const ownershipLabel = ownershipConfig.label;
+    const ownershipBadgeClass = ownershipConfig.badgeClass;
+    const lifecycleSections = renderTechLifecycleSections(item, { context: ownershipConfig.mode });
+
+    const osStatus = checkOSStatus(item.osVersion, item);
+    const support = checkDeviceSupport(item);
+    const supportLife = estimateSupportLifespan(item);
+    const aiSupport = calculateAIFeatureSupport(item);
+    const futureProof = calculateFutureProofScore(item);
+    const futureTarget = getRecommendedFutureUpgradeTarget(item);
+    const futureAITarget = calculateFutureAITarget(item, futureTarget);
+    const coverage = calculateCoverageStatus(item);
+    const costEfficiency = calculateCostEfficiency(item);
+    const backupPriority = calculateBackupPriority(item, osStatus, support);
+
+    let osUpdateHtml = "";
+
+    if (osStatus) {
+        if (osStatus.isBehindPublic) {
+            osUpdateHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-download"></i>
+                <span>Update:</span>
+                Public software update recommended
+            </div>`;
+        } else if (osStatus.isBeta) {
+            osUpdateHtml = `
+            <div class="tech-detail">
+                <i class="fas fa-flask"></i>
+                <span>Beta Notice:</span>
+                Running beta software ahead of public release
+            </div>`;
+        }
+    }
+
+    const supportHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-shield-check"></i>
+        <span>Support Status:</span>
+        <span class="support-badge ${support.supportColor || "green"}">
+            ${escapeHTML(support.supportLevel || "Fully Supported")}
+        </span>
+    </div>`;
+
+    const coverageHtml = coverage.hasCoverageData ? `
+    <div class="tech-detail">
+        <i class="fas fa-file-shield"></i>
+        <span>Coverage:</span>
+        <span class="support-badge ${coverage.color}">${escapeHTML(coverage.label)}</span>
+        ${escapeHTML(coverage.detail)}
+    </div>` : "";
+
+    const backupHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-cloud-arrow-up"></i>
+        <span>Backup Priority:</span>
+        <span class="support-badge ${backupPriority.color}">${escapeHTML(backupPriority.label)}</span>
+        ${escapeHTML(backupPriority.reason)}
+    </div>`;
+
+    const costHtml = costEfficiency ? `
+    <div class="tech-detail">
+        <i class="fas fa-chart-pie"></i>
+        <span>Cost Efficiency:</span>
+        ${escapeHTML(costEfficiency.label)}
+    </div>` : "";
+
+    // FIXED: Strict checking for Battery Health to avoid NaN values
+    let batteryHealth = null;
+    if (item.batteryHealth !== null && item.batteryHealth !== undefined && item.batteryHealth !== "") {
+        const parsedHealth = parseInt(item.batteryHealth, 10);
+        if (!isNaN(parsedHealth)) {
+            batteryHealth = parsedHealth;
+        }
+    }
+
+    // FIXED: Strict checking for Battery Cycles to avoid empty strings evaluating to 0
+    let batteryCycles = null;
+    const rawBatteryCycles = item.batteryCycles ?? item.batteryChargeCycles;
+    if (rawBatteryCycles !== null && rawBatteryCycles !== undefined && rawBatteryCycles !== "") {
+        const parsedCycles = Number(rawBatteryCycles);
+        if (!isNaN(parsedCycles)) {
+            batteryCycles = parsedCycles;
+        }
+    }
+
+    const upgrade = calculateUpgradeData(item);
+    const age = calculateDeviceAge(item.dateBought);
+    const batteryTrend = estimateBatteryTrend(item);
+    const upgradeScore = calculateUpgradeScore(item);
+
+    if (
+        upgradeScore.score < 40 &&
+        upgrade.status !== "Upgrade Recommended" &&
+        upgrade.status !== "Retired"
+    ) {
+        upgrade.status = "Upgrade Recommended";
+        upgrade.color = "red";
+        upgrade.suggestion = "Consider upgrading soon";
+    } else if (upgradeScore.score < 60 && upgrade.status === "Great") {
+        upgrade.status = "Aging";
+        upgrade.color = "yellow";
+        upgrade.suggestion = "Monitor closely";
+    }
+
+    const recommendedAction = getRecommendedAction(item, upgrade, support, osStatus);
+
+    const smartUpgrade = calculateSmartUpgradeRecommendation(
+        item,
+        upgrade,
+        support,
+        osStatus,
+        upgradeScore
+    );
+
+    const deviceSummary = generateDeviceSummary(item, upgrade, support, osStatus);
+
+    const summaryHtml = `
+    <div class="tech-detail tech-summary">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Device Summary:</span>
+        ${escapeHTML(deviceSummary)}
+    </div>`;
+
+    const actionHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-tools"></i>
+        <span>Recommended Action:</span>
+        ${escapeHTML(recommendedAction)}
+    </div>`;
+
+    let batteryHtml = "";
+
+    if (batteryHealth !== null) {
+        let batteryClass = "";
+
+        if (batteryHealth <= 20) {
+            batteryClass = "critical";
+        } else if (batteryHealth <= 50) {
+            batteryClass = "low-power";
+        }
+
+        const displayHealth = Math.min(Math.max(batteryHealth, 0), 100);
+
+        batteryHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-heart"></i>
+            <span>Battery Health:</span>
+        </div>
+
+        <div class="battery-container">
+            <div class="battery-icon ${batteryClass}">
+                <div class="battery-level" style="width: ${displayHealth}%"></div>
+                <div class="battery-percentage">${batteryHealth}%</div>
+            </div>
+        </div>`;
+    }
+
+    let cyclesHtml = "";
+
+    if (batteryCycles !== null) {
+        cyclesHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-sync"></i>
+            <span>Battery Charge Cycles:</span> ${batteryCycles}
+        </div>`;
+    }
+
+    const upgradeHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-arrow-up"></i>
+        <span>Upgrade Status:</span>
+        <span class="upgrade-badge ${upgrade.color}">
+            ${escapeHTML(upgrade.status)}
+        </span>
+    </div>
+
+    <div class="tech-detail">
+        <i class="fas fa-lightbulb"></i>
+        <span>Suggestion:</span>
+        ${escapeHTML(upgrade.suggestion)}
+    </div>`;
+
+    let triggersHtml = "";
+
+    if (upgrade.triggers && upgrade.triggers.length > 0) {
+        triggersHtml = `
+        <div class="tech-detail">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>Upgrade Triggers:</span>
+        </div>
+
+        <ul class="upgrade-triggers">
+            ${upgrade.triggers.map(t => `<li>${escapeHTML(t)}</li>`).join("")}
+        </ul>`;
+    }
+
+    const smartUpgradeHtml = `
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-calendar-check"></i>
+        <span class="tech-label">Recommended Upgrade Year:</span>
+        <span class="tech-value">${escapeHTML(smartUpgrade.recommendedUpgradeYear)}</span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-calendar-days"></i>
+        <span class="tech-label">Upgrade Window:</span>
+        <span class="tech-value">${escapeHTML(smartUpgrade.upgradeWindow)}</span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-ranking-star"></i>
+        <span class="tech-label">Upgrade Priority:</span>
+        <span class="upgrade-priority-badge ${smartUpgrade.priority.color}">
+            ${escapeHTML(smartUpgrade.priority.label)}
+        </span>
+    </div>
+
+    <div class="tech-detail tech-upgrade-explanation">
+        <i class="fas fa-circle-question"></i>
+        <span class="tech-label">Why:</span>
+        <span class="upgrade-explanation-text">
+            ${escapeHTML(smartUpgrade.explanation)}
+        </span>
+    </div>`;
+
+    const futureProofHtml = `
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-brain"></i>
+        <span class="tech-label">Current AI Support:</span>
+        <span class="support-badge ${aiSupport.aiSupportColor}">
+            ${escapeHTML(aiSupport.aiSupportLevel)}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        <span class="tech-label">Future AI Target:</span>
+        <span class="support-badge ${futureAITarget.color}">
+            ${escapeHTML(futureAITarget.level)}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-hourglass-half"></i>
+        <span class="tech-label">Estimated Major Support End:</span>
+        <span class="tech-value">
+            ${supportLife.estimatedMajorSupportEndYear ? escapeHTML(supportLife.estimatedMajorSupportEndYear) : "N/A"}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-shield-halved"></i>
+        <span class="tech-label">Estimated Security Support End:</span>
+        <span class="tech-value">
+            ${supportLife.estimatedSecuritySupportEndYear ? escapeHTML(supportLife.estimatedSecuritySupportEndYear) : "N/A"}
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-seedling"></i>
+        <span class="tech-label">Future-Proof Rating:</span>
+        <span class="support-badge ${futureProof.futureProofColor}">
+            ${escapeHTML(futureProof.futureProofRating)} (${futureProof.futureProofScore}/100)
+        </span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-bullseye"></i>
+        <span class="tech-label">Future Upgrade Target:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.futureUpgradeTarget)}</span>
+    </div>
+
+    <div class="tech-detail smart-upgrade-row">
+        <i class="fas fa-calendar-alt"></i>
+        <span class="tech-label">Target Year:</span>
+        <span class="tech-value">${escapeHTML(futureTarget.targetYear)}</span>
+    </div>
+
+    <div class="tech-detail tech-upgrade-explanation">
+        <i class="fas fa-route"></i>
+        <span class="tech-label">Future Specs:</span>
+        <span class="upgrade-explanation-text">
+            ${escapeHTML(futureTarget.recommendedFutureSpecs)}
+        </span>
+    </div>
+
+    <div class="tech-detail tech-upgrade-explanation">
+        <i class="fas fa-ban"></i>
+        <span class="tech-label">Avoid:</span>
+        <span class="upgrade-explanation-text">
+            ${escapeHTML(futureTarget.avoidRecommendation)}
+        </span>
+    </div>`;
+
+    const ageHtml = age ? `
+    <div class="tech-detail">
+        <i class="fas fa-clock"></i>
+        <span>Device Age:</span>
+        ${age.days} days (${age.years} years)
+    </div>` : "";
+
+    const trendHtml = batteryTrend && batteryTrend.decline !== undefined ? `
+    <div class="tech-detail">
+        <i class="fas fa-chart-line"></i>
+        <span>Battery Trend:</span>
+        ${escapeHTML(batteryTrend.trend)} (-${escapeHTML(batteryTrend.decline)}%)
+    </div>` : "";
+
+    const scoreHtml = `
+    <div class="tech-detail">
+        <i class="fas fa-gauge-high"></i>
+        <span>Device Score:</span>
+        ${escapeHTML(upgradeScore.label)} (${upgradeScore.score}/100)
+    </div>
+
+    <div class="score-bar">
+        <div class="score-fill ${upgradeScore.color}" style="width: ${upgradeScore.score}%"></div>
+    </div>`;
+
+    const formattedOSType = osStatus ? formatOSType(osStatus.osType) : "";
+    const osIconClass = osStatus ? getOSIconClass(osStatus.osType) : "fas fa-code-branch";
+
+    const advancedDetailsContent = `
+        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${escapeHTML(deviceType)}</div>` : ""}
+        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${escapeHTML(modelYear)}</div>` : ""}
+        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${escapeHTML(supportEndYear)}</div>` : ""}
+        ${item.chipName ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Chip:</span> ${escapeHTML(item.chipName)}</div>` : ""}
+        ${item.ramGB ? `<div class="tech-detail"><i class="fas fa-memory"></i><span>RAM:</span> ${escapeHTML(item.ramGB)}GB</div>` : ""}
+        ${item.storageGB ? `<div class="tech-detail"><i class="fas fa-database"></i><span>Storage Capacity:</span> ${escapeHTML(item.storageGB)}GB</div>` : ""}
+        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${escapeHTML(material)}</div>` : ""}
+        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${escapeHTML(batteryCapacity)}</div>` : ""}
+        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${escapeHTML(price)}</div>` : ""}
+        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${escapeHTML(formatTechDate(dateReleased) || dateReleased)}</div>` : ""}
+        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${escapeHTML(formatTechDate(dateBought) || dateBought)}</div>` : ""}
+        ${cyclesHtml}
+        ${trendHtml}
+        ${coverageHtml}
+        ${costHtml}
+    `;
+
+    const hasAdvancedDetails =
+        deviceType ||
+        modelYear ||
+        supportEndYear ||
+        item.chipName ||
+        item.ramGB ||
+        item.storageGB ||
+        material ||
+        batteryCapacity ||
+        price ||
+        dateReleased ||
+        dateBought ||
+        cyclesHtml ||
+        trendHtml ||
+        coverageHtml ||
+        costHtml;
+
+    const advancedHtml = hasAdvancedDetails ? `
+    <details class="tech-advanced-details">
+        <summary>Advanced Details</summary>
+        ${advancedDetailsContent}
+    </details>` : "";
+
+    return `
+    <div class="tech-item">
+        <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
+
+        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${escapeHTML(model)}</div>` : ""}
+        <div class="tech-detail">
+            <i class="fas fa-id-badge"></i>
+            <span>Ownership:</span>
+            <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">${escapeHTML(ownershipLabel)}</span>
+        </div>
+        ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${escapeHTML(primaryUse)}</div>` : ""}
+        ${lifecycleSections}
+        ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${escapeHTML(condition)}</div>` : ""}
+        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${escapeHTML(storage)}</div>` : ""}
+        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${escapeHTML(color)}</div>` : ""}
+
+        ${summaryHtml}
+        ${ageHtml}
+
+        ${osVersion ? `
+<div class="tech-detail">
+    <i class="${escapeHTML(osIconClass)}"></i>
+    <span>OS Version:</span>
+    <span class="tech-os-row">
+        ${escapeHTML(osVersion)}
+        ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
+    </span>
+</div>
+
+        ${osStatus ? `
+        <div class="tech-detail">
+            <i class="fas fa-circle-info"></i>
+            <span>Public Latest:</span>
+            <span class="tech-value">${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}</span>
+            ${["version-rule", "model-override"].includes(osStatus.latestVersionSource)
+                ? `<small class="tech-note">Device-specific</small>`
+                : ""}
+            ${osStatus.latestVersionNote
+                ? `<small class="tech-note">${escapeHTML(osStatus.latestVersionNote)}</small>`
+                : ""}
+        </div>
+
+        <div class="tech-detail">
+            <i class="fas fa-code-branch"></i>
+            <span>Release Channel:</span>
+            <span class="support-badge ${osStatus.isBeta ? "purple" : "green"}">
+                ${escapeHTML(osStatus.releaseChannel)}
+            </span>
+        </div>
+        ` : ""}
+        ` : ""}
+
+        ${osUpdateHtml}
+        ${supportHtml}
+        ${backupHtml}
+        ${batteryHtml}
+        ${scoreHtml}
+        ${upgradeHtml}
+        ${smartUpgradeHtml}
+        ${futureProofHtml}
+        ${actionHtml}
+        ${triggersHtml}
+        ${advancedHtml}
+    </div>`;
+}
+
+async function loadAndDisplayTechItems() {
+    const techItemsListContainer = document.getElementById("tech-items-list-dynamic");
+
+    if (!techItemsListContainer) {
+        console.error("Tech Item Load Error: Container element #tech-items-list-dynamic not found.");
+        return;
+    }
+
+    if (!firebaseAppInitialized || !db || !techItemsCollectionRef) {
+        console.error("Tech Item Load Error: Firebase not ready or collection ref missing.");
+        techItemsListContainer.innerHTML = '<p class="error">Error loading tech data (DB connection/Config).</p>';
+        return;
+    }
+
+    console.log("Fetching tech items for homepage...");
+    techItemsListContainer.innerHTML = "<p>Loading Tech Info...</p>";
+
+    try {
+        const techQuery = query(techItemsCollectionRef, orderBy("order", "asc"));
+        const querySnapshot = await getDocs(techQuery);
+
+        let allItemsHtml = "";
+
+        if (querySnapshot.empty) {
+            console.log("No tech items found in Firestore.");
+            allItemsHtml = "<p>No tech items to display currently.</p>";
+            buildPlannedTechReplacementContext([]);
+        } else {
+            const techItems = [];
+
+            querySnapshot.forEach((doc) => {
+                techItems.push({ id: doc.id, ...doc.data() });
+            });
+
+            buildPlannedTechReplacementContext(techItems);
+
+            console.log(`Found ${techItems.length} tech items.`);
+
+            techItems.forEach((item) => {
+                allItemsHtml += renderTechItemHomepage(item);
+            });
+        }
+
+        techItemsListContainer.innerHTML = allItemsHtml;
+        console.log("Tech items list updated on homepage.");
+    } catch (error) {
+        console.error("Error loading/displaying tech items:", error);
+
+        let errorMsg = "Could not load tech information at this time.";
+
+        if (error.code === "failed-precondition") {
+            errorMsg = "Error: DB configuration needed for tech items (order).";
+            console.error("Missing Firestore index for tech_items collection, ordered by 'order'.");
+        } else {
+            errorMsg = `Could not load tech information: ${error.message}`;
+        }
+
+        techItemsListContainer.innerHTML = `<p class="error">${errorMsg}</p>`;
+    }
+}
+
+/* ------------------------------------------------------------
    TECH LIFECYCLE / ROLE DISPLAY HELPERS
    Supports admin role automation fields:
    currentRole, previousRole, roleStatus, replacedByDevice,
@@ -4179,8 +4700,8 @@ function renderPlannedTechItemHomepage(itemData) {
     const primaryUse = item.primaryUse || "Not set";
     const iconClass = item.iconClass || "fas fa-laptop";
 
-    const ownershipState = getOwnershipState(item);
-    const ownershipConfig = getOwnershipConfig(ownershipState);
+    // FIXED: Passed standard "item" object into getOwnershipConfig instead of an undefined "ownershipState" function result.
+    const ownershipConfig = getOwnershipConfig(item);
     const ownershipLabel = ownershipConfig.label;
     const ownershipBadgeClass = ownershipConfig.badgeClass;
 
@@ -4198,14 +4719,16 @@ function renderPlannedTechItemHomepage(itemData) {
     const expectedFutureProofRating = item.expectedFutureProofRating || "Not set";
 
     const lifecycleSections = renderTechLifecycleSections(item, { context: ownershipConfig.mode });
+    
+    // FIXED: Corrected reversed logic where if it DID have a value, it previously rendered an empty string.
     const replacesDeviceRow = hasTechLifecycleValue(item.replacesDevice)
-        ? ""
-        : `
+        ? `
             <div class="tech-detail">
                 <i class="fas fa-right-left"></i>
                 <span>Replaces Device:</span>
                 <span class="tech-value">${escapeHTML(replacesDevice)}</span>
-            </div>`;
+            </div>`
+        : "";
 
     if (ownershipConfig.mode === "wishlist") {
         return `
@@ -4367,7 +4890,6 @@ function renderPlannedTechItemHomepage(itemData) {
     </div>`;
 }
 
-
 /* ------------------------------------------------------------
    RENDER FUNCTION
 ------------------------------------------------------------ */
@@ -4465,19 +4987,24 @@ function renderTechItemHomepage(itemData) {
         ${escapeHTML(costEfficiency.label)}
     </div>` : "";
 
-    const batteryHealth = item.batteryHealth !== null &&
-        item.batteryHealth !== undefined &&
-        !isNaN(item.batteryHealth)
-        ? parseInt(item.batteryHealth, 10)
-        : null;
+    // FIXED: Strict checking for Battery Health to avoid NaN values
+    let batteryHealth = null;
+    if (item.batteryHealth !== null && item.batteryHealth !== undefined && item.batteryHealth !== "") {
+        const parsedHealth = parseInt(item.batteryHealth, 10);
+        if (!isNaN(parsedHealth)) {
+            batteryHealth = parsedHealth;
+        }
+    }
 
+    // FIXED: Strict checking for Battery Cycles to avoid empty strings evaluating to 0
+    let batteryCycles = null;
     const rawBatteryCycles = item.batteryCycles ?? item.batteryChargeCycles;
-
-    const batteryCycles = rawBatteryCycles !== null &&
-        rawBatteryCycles !== undefined &&
-        !isNaN(rawBatteryCycles)
-        ? Number(rawBatteryCycles)
-        : null;
+    if (rawBatteryCycles !== null && rawBatteryCycles !== undefined && rawBatteryCycles !== "") {
+        const parsedCycles = Number(rawBatteryCycles);
+        if (!isNaN(parsedCycles)) {
+            batteryCycles = parsedCycles;
+        }
+    }
 
     const upgrade = calculateUpgradeData(item);
     const age = calculateDeviceAge(item.dateBought);
