@@ -1211,6 +1211,8 @@ async function loadAndDisplayDisabilities() {
    support lifespan, battery trend, advanced details, and Android support.
 ------------------------------------------------------------ */
 
+let latestOSVersions = {};
+
 // ======================
 // PERSONAL THRESHOLDS
 // ======================
