@@ -4784,10 +4784,9 @@ function renderTechItemHomepage(itemData) {
         ${escapeHTML(osVersion)}
         ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
     </span>
-</div>` : ""}
+</div>
 
-
-                ${osStatus ? `
+        ${osStatus ? `
         <div class="tech-detail">
             <i class="fas fa-circle-info"></i>
             <span>Public Latest:</span>
