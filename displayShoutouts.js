@@ -4777,11 +4777,15 @@ function renderTechItemHomepage(itemData) {
         ${ageHtml}
 
         ${osVersion ? `
-        <div class="tech-detail">
-            <i class="${escapeHTML(osIconClass)}"></i>
-            <span>OS Version:</span> ${escapeHTML(osVersion)}
-            ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
-        </div>
+<div class="tech-detail">
+    <i class="${escapeHTML(osIconClass)}"></i>
+    <span>OS Version:</span>
+    <span class="tech-os-row">
+        ${escapeHTML(osVersion)}
+        ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
+    </span>
+</div>` : ""}
+
 
                 ${osStatus ? `
         <div class="tech-detail">
