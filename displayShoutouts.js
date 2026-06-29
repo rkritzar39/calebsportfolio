@@ -1212,10 +1212,93 @@ async function loadAndDisplayDisabilities() {
 ------------------------------------------------------------ */
 
 let latestOSVersions = {
+    // Apple
     ios: "18.5",
-    macos: "15.5",
     ipados: "18.5",
-    watchos: "11.5"
+    macos: "15.5",
+    watchos: "11.5",
+    tvos: "18.5",
+    visionos: "2.5",
+
+    // Android skins
+    android: "15",
+    pixelui: "9",
+    oneui: "7",
+    oxygenos: "15",
+    coloros: "15",
+    realmeui: "6",
+    miui: "14",
+    hyperos: "2",
+    magicos: "9",
+    emui: "14",
+    harmonyos: "4",
+    funtouchos: "14",
+    originos: "4",
+    nothingos: "3",
+    motorolahello: "14",
+    zenui: "14",
+    rogui: "7",
+    xos: "14",
+    hios: "14",
+    flymeos: "21",
+
+    // Android TV
+    androidtv: "14",
+    googletv: "14",
+
+    // Windows
+    windows: "11",
+    windowsphone: "8.1",
+    windowsserver: "2025",
+
+    // ChromeOS
+    chromeos: "136",
+    chromiumos: "136",
+
+    // Linux
+    linux: "6.9",
+    ubuntu: "24.04",
+    debian: "12",
+    fedora: "42",
+    arch: "rolling",
+    manjaro: "24.1",
+    linuxmint: "22",
+    popos: "22.04",
+    elementaryos: "8",
+    zorinos: "17",
+    opensuse: "15.6",
+    kali: "2025.1",
+    tails: "6.14",
+    redhat: "9.5",
+    rocky: "9.5",
+    almalinux: "9.5",
+
+    // BSD
+    freebsd: "14.2",
+    openbsd: "7.6",
+    netbsd: "10.1",
+
+    // Gaming
+    steamos: "3.6",
+    playstation: "24.06",
+    xbox: "10.0",
+    nintendoswitch: "19.0",
+
+    // TV / Streaming
+    fireos: "8",
+    rokuos: "13",
+    webos: "24",
+    tizen: "8",
+
+    // Wearables
+    wearos: "5",
+    garminos: "16",
+    fitbitos: "6",
+    zeppos: "3",
+
+    // Other
+    kindleos: "15",
+    metaquest: "68"
 };
 
 // ======================
