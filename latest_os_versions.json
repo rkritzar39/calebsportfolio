@@ -1,41 +1,72 @@
 {
-  "ios": "26.5.2",
-  "ipados": "26.5.2",
-  "macos": "26.5.2",
-  "watchos": "26.5",
-  "tvos": "26.5",
-  "visionos": "26.5",
+  "production_stable": {
+    "ios": "26.5.2",
+    "ipados": "26.5.2",
+    "macos": "26.5.2",
+    "watchos": "26.5",
+    "tvos": "26.5",
+    "visionos": "26.5",
+    
+    "android": "16",
+    "pixelui": "16",
+    "oneui": "8.5",
+    "oxygenos": "16",
+    "coloros": "16",
+    "realmeui": "7",
+    "hyperos": "3",
+    "harmonyos": "5",
+    "nothingos": "4",
+    
+    "windows": "11",
+    "windowsserver": "2025",
+    "chromeos": "latest",
+    "ubuntu": "26.04",
+    "debian": "13",
+    "fedora": "42",
+    "arch": "rolling",
+    "linux": "rolling",
+    
+    "steamos": "3",
+    "playstation": "5",
+    "xbox": "series",
+    "nintendoswitch": "18",
+    
+    "wearos": "6",
+    "fireos": "8",
+    "rokuos": "13",
+    "webos": "24",
+    "tizen": "8"
+  },
 
-  "android": "16",
-  "pixelui": "16",
-  "oneui": "8.5",
-  "oxygenos": "16",
-  "coloros": "16",
-  "realmeui": "7",
-  "hyperos": "3",
-  "harmonyos": "5",
-  "nothingos": "4",
+  "public_beta": {
+    "ios": "27.0-b2",
+    "ipados": "27.0-b2",
+    "macos": "27.0-b2",
+    "watchos": "27.0-b2",
+    "tvos": "27.0-b2",
+    "visionos": "27.0-b2",
+    
+    "android": "17-beta",
+    "pixelui": "17-beta",
+    "oneui": "9.0-pb",
+    "oxygenos": "17-beta",
+    "coloros": "17-beta"
+  },
 
-  "windows": "11",
-  "windowsserver": "2025",
-
-  "chromeos": "latest",
-  "ubuntu": "26.04",
-  "debian": "13",
-  "fedora": "42",
-  "arch": "rolling",
-  "linux": "rolling",
-
-  "steamos": "3",
-  "playstation": "5",
-  "xbox": "series",
-  "nintendoswitch": "18",
-
-  "wearos": "6",
-  "fireos": "8",
-  "rokuos": "13",
-  "webos": "24",
-  "tizen": "8",
+  "developer_tester": {
+    "ios": "27.0-db3",
+    "ipados": "27.0-db3",
+    "macos": "27.0-db3", 
+    "watchos": "27.0-db3",
+    "tvos": "27.0-db3",
+    "visionos": "27.0-db3",
+    
+    "android": "17-dp2",
+    "pixelui": "17-dp2",
+    "oneui": "9.0-internal",
+    "oxygenos": "17-dp",
+    "coloros": "17-dp"
+  },
 
   "deviceModelOverrides": {
     "ios": {
@@ -51,23 +82,25 @@
     "ios": [
       {
         "version": "26.5.2",
-        "label": "iPhone 11 through iPhone 17 models, including iPhone Air",
-        "note": "For all currently supported iPhone models.",
-        "match": {
-          "deviceFamily": "iphone",
-          "generationMin": 11,
-          "generationMax": 17
-        }
+        "label": "Stable Public Release",
+        "note": "Uniform global public rollout across all generation lines.",
+        "match": { "deviceFamily": "iphone", "generationMin": 11, "generationMax": 17 }
+      },
+      {
+        "version": "27.0",
+        "label": "Apple 27 Beta Pipeline",
+        "note": "Addresses the next generational shift featuring Liquid Glass interface frameworks.",
+        "match": { "deviceFamily": "iphone", "generationMin": 11, "generationMax": 17 }
       }
     ]
   },
 
   "platformCompatibilityNotes": {
-    "ios": "iOS 26.5.2 for supported iPhone models including iPhone 11 through iPhone 17 and iPhone Air.",
-    "macos": "macOS 26.5.2 Tahoe for modern Macs including MacBook, iMac, Mac mini, Mac Studio, and Mac Pro.",
-    "ipados": "iPadOS 26.5.2 for supported iPad, iPad Air, iPad mini, and iPad Pro models.",
-    "watchos": "watchOS 26.5 for Apple Watch Series 6 and newer.",
-    "tvos": "tvOS 26.5 for Apple TV HD and Apple TV 4K models.",
-    "visionos": "visionOS 26.5 for Apple Vision Pro."
+    "ios": "iOS 26.5.2 for stable consumer configurations. iOS 27 tracks available via Beta Profiles.",
+    "macos": "macOS 26.5.2 Tahoe on stable production channels. macOS 27 Golden Gate is active on Apple Silicon systems for beta participants.",
+    "ipados": "iPadOS 26.5.2 for broad deployment; iPadOS 27 features enhanced multi-tasking workflows.",
+    "watchos": "watchOS 26.5 stable baseline; watchOS 27 available for compatible testing units.",
+    "tvos": "tvOS 26.5 production release; tvOS 27 developer channel open.",
+    "visionos": "visionOS 26.5 public baseline; visionOS 27 features expanded spatial environment profiles."
   }
 }
