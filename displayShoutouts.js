@@ -870,103 +870,6 @@ function extractID(url) {
 }
 
 /* ------------------------------------------------------------
-   LATEST OS CONFIG
-   Fallback values are used if JSON fetch fails.
------------------------------------------------------------- */
-let latestOSVersions = {
-    // Apple (Released June 2026)
-    ios: "26.5.2",
-    ipados: "26.5.2",
-    macos: "26.5.2", // macOS Tahoe
-    watchos: "26.5",
-    tvos: "26.5",
-    visionos: "26.5",
-
-    // Android / Google / Samsung (Released June 2026)
-    android: "17",
-    pixelui: "17",
-    oneui: "8.5",
-
-    // Other Android skins
-    oxygenos: "17",
-    coloros: "17",
-    realmeui: "8",
-    miui: "14",
-    hyperos: "3",
-    magicos: "10",
-    emui: "15",
-    harmonyos: "5",
-    funtouchos: "17",
-    originos: "6",
-    nothingos: "4",
-    motorolahello: "17",
-    zenui: "12",
-    rogui: "12",
-    xos: "15",
-    hios: "15",
-    flymeos: "11",
-
-    // Windows
-    windows: "11 (26H1)", // Or "11 (25H2)" depending on your tracking preference
-    windowsphone: "10",
-    windowsserver: "2025",
-
-    // Linux / Desktop
-    linux: "rolling",
-    ubuntu: "26.04",
-    debian: "13",
-    fedora: "42",
-    arch: "rolling",
-    manjaro: "rolling",
-    linuxmint: "22",
-    popos: "24.04",
-    elementaryos: "8",
-    zorinos: "17",
-    opensuse: "15.6",
-    kali: "2026.2",
-    tails: "6",
-    redhat: "10",
-    rocky: "10",
-    almalinux: "10",
-
-    // Chrome / Google desktop
-    chromeos: "latest",
-    chromiumos: "latest",
-
-    // BSD / Unix-like
-    freebsd: "14",
-    openbsd: "7",
-    netbsd: "10",
-
-    // Gaming
-    steamos: "3",
-    playstation: "5",
-    xbox: "series",
-    nintendoswitch: "18",
-
-    // TV / Smart home
-    fireos: "8",
-    rokuos: "13",
-    webos: "24",
-    tizen: "8",
-    androidtv: "17",
-    googletv: "17",
-
-    // Watches / wearables
-    wearos: "6",
-    garminos: "latest",
-    fitbitos: "latest",
-    zeppos: "4",
-
-    // Other
-    kindleos: "latest",
-    metaquest: "latest",
-    unknown: "Unknown"
-};
-
-const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
-
-/* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
 function renderFaqItemHomepage(faqData) {
@@ -4744,19 +4647,26 @@ function renderTechItemHomepage(itemData) {
             ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
         </div>
 
-        ${osStatus ? `
+                ${osStatus ? `
         <div class="tech-detail">
-            <i class="fas fa-code-branch"></i>
-            <span>Release Channel:</span> ${escapeHTML(osStatus.releaseChannel)}
+            <i class="fas fa-circle-info"></i>
+            <span>Public Latest:</span>
+            <span class="tech-value">${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}</span>
+            ${["version-rule", "model-override"].includes(osStatus.latestVersionSource)
+                ? `<small class="tech-note">Device-specific</small>`
+                : ""}
+            ${osStatus.latestVersionNote
+                ? `<small class="tech-note">${escapeHTML(osStatus.latestVersionNote)}</small>`
+                : ""}
         </div>
 
         <div class="tech-detail">
-    <i class="fas fa-circle-info"></i>
-    <span>Public Latest:</span>
-    ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
-    ${osStatus.latestVersionLabel ? `<small>${escapeHTML(osStatus.latestVersionLabel)}</small>` : ""}
-    ${osStatus.latestVersionNote ? `<small>${escapeHTML(osStatus.latestVersionNote)}</small>` : ""}
-</div>
+            <i class="fas fa-code-branch"></i>
+            <span>Release Channel:</span>
+            <span class="support-badge ${osStatus.isBeta ? "purple" : "green"}">
+                ${escapeHTML(osStatus.releaseChannel)}
+            </span>
+        </div>
         ` : ""}
         ` : ""}
 
