@@ -1211,7 +1211,12 @@ async function loadAndDisplayDisabilities() {
    support lifespan, battery trend, advanced details, and Android support.
 ------------------------------------------------------------ */
 
-let latestOSVersions = {};
+let latestOSVersions = {
+    ios: "18.5",
+    macos: "15.5",
+    ipados: "18.5",
+    watchos: "11.5"
+};
 
 // ======================
 // PERSONAL THRESHOLDS
@@ -1873,6 +1878,9 @@ function detectOSChannel(osVersion) {
     if (os.includes("canary")) return "canary";
     if (os.includes("preview")) return "preview";
     if (os.includes("rc") || os.includes("release candidate")) return "release-candidate";
+
+    // Apple developer beta build numbers end in a letter (e.g. 24A5370h)
+    if (/\(\d{2}[A-Z]\d+[e-z]\)/i.test(String(osVersion))) return "developer-beta";
 
     return "public";
 }
