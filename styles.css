@@ -1048,55 +1048,6 @@ body.reduced-motion .mouse-trail-container {
 	margin: 0.625rem auto 1.25rem;
 }
 
-/* --- Corner Buttons --- */
-.corner-button {
-	position: absolute;
-	width: 2.75rem;
-	height: 2.75rem;
-	border-radius: var(--radius-lg);
-	border: none;
-	cursor: pointer;
-	z-index: 10;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--icon-color);
-	transition: transform 0.25s ease, box-shadow 0.25s ease, width 0.3s ease, height 0.3s ease;
-}
-
-.settings-button { top: 1.25rem; right: 1.25rem; }
-.merch-button    { top: 1.25rem; left: 1.25rem; }
-.blog-button     { bottom: 1.25rem; left: 1.25rem; }
-.tracker-button  { bottom: 1.25rem; right: 1.25rem; }
-
-.corner-button:hover,
-.corner-button:focus-visible {
-	transform: translateY(-3px) scale(1.05);
-	box-shadow: 0 8px 24px var(--shadow-color), 0 0 12px var(--accent-color);
-	outline: none;
-}
-
-.corner-button:active {
-	transform: scale(0.9);
-	box-shadow: 0 4px 12px var(--shadow-color), inset 0 2px 4px rgba(255, 255, 255, 0.1);
-}
-
-.corner-button > * {
-	width: 1.25rem;
-	height: 1.25rem;
-	font-size: 1.25rem;
-	object-fit: contain;
-}
-
-a.corner-button {
-	text-decoration: none;
-}
-
 /* =================================== */
 /* === Responsive Breakpoint Rules === */
 /* =================================== */
@@ -1140,16 +1091,6 @@ a.corner-button {
 	.profile-pic-wrapper {
 		--profile-pic-size: 6.25rem;
 	}
-	.corner-button {
-		width: 2.25rem;
-		height: 2.25rem;
-		top: 0.9375rem;
-	}
-	.blog-button { top: auto; bottom: 0.9375rem; left: 0.9375rem; }
-	.tracker-button { top: auto; bottom: 0.9375rem; right: 0.9375rem; }
-	.settings-button { right: 0.9375rem; }
-	.merch-button { left: 0.9375rem; }
-	.profile-bio { font-size: 0.9rem; }
 }
 
 /* ================================================== */
@@ -2248,6 +2189,12 @@ body.dark-mode .live-activity::after {
 	.profile-bio {
 		font-size: 0.95rem;
 	}
+}
+
+@supports not (backdrop-filter: blur(10px)) {
+  .live-activity {
+    background-color: var(--content-bg); /* Fallback for older browsers */
+  }
 }
 
 @media screen and (max-width: 480px) {
