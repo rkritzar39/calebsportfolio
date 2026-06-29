@@ -1212,93 +1212,146 @@ async function loadAndDisplayDisabilities() {
 ------------------------------------------------------------ */
 
 let latestOSVersions = {
-    // Apple
-    ios: "18.5",
-    ipados: "18.5",
-    macos: "15.5",
-    watchos: "11.5",
-    tvos: "18.5",
-    visionos: "2.5",
+    // =========================================================
+    // PRODUCTION STABLE (Broad Public Rollout)
+    // =========================================================
+    production_stable: {
+        // Apple
+        ios: "26.5.2",         // Released today (June 29, 2026)
+        ipados: "26.5.2",      // Released today (June 29, 2026)
+        macos: "26.5.2",       // macOS Tahoe 26.5.2 patch out today
+        watchos: "26.5",
+        tvos: "26.5",
+        visionos: "2.5",
 
-    // Android skins
-    android: "15",
-    pixelui: "9",
-    oneui: "7",
-    oxygenos: "15",
-    coloros: "15",
-    realmeui: "6",
-    miui: "14",
-    hyperos: "2",
-    magicos: "9",
-    emui: "14",
-    harmonyos: "4",
-    funtouchos: "14",
-    originos: "4",
-    nothingos: "3",
-    motorolahello: "14",
-    zenui: "14",
-    rogui: "7",
-    xos: "14",
-    hios: "14",
-    flymeos: "21",
+        // Android / Google / Samsung
+        android: "17",         // Android 17 officially launched June 16, 2026
+        pixelui: "17",
+        oneui: "8.5",
+        oxygenos: "17",
+        coloros: "17",
+        realmeui: "7",
+        miui: "14",
+        hyperos: "3",
+        magicos: "10",
+        emui: "15",
+        harmonyos: "5",
+        funtouchos: "17",
+        originos: "5",
+        nothingos: "4",
+        motorolahello: "17",
+        zenui: "15",
+        rogui: "15",
+        xos: "15",
+        hios: "15",
+        flymeos: "22",
 
-    // Android TV
-    androidtv: "14",
-    googletv: "14",
+        // Android TV / Google TV
+        androidtv: "17",
+        googletv: "17",
 
-    // Windows
-    windows: "11",
-    windowsphone: "8.1",
-    windowsserver: "2025",
+        // Windows
+        windows: "11 (25H2)",
+        windowsphone: "10",     // End of life legacy fallback
+        windowsserver: "2025",
 
-    // ChromeOS
-    chromeos: "136",
-    chromiumos: "136",
+        // ChromeOS
+        chromeos: "146",
+        chromiumos: "146",
 
-    // Linux
-    linux: "6.9",
-    ubuntu: "24.04",
-    debian: "12",
-    fedora: "42",
-    arch: "rolling",
-    manjaro: "24.1",
-    linuxmint: "22",
-    popos: "22.04",
-    elementaryos: "8",
-    zorinos: "17",
-    opensuse: "15.6",
-    kali: "2025.1",
-    tails: "6.14",
-    redhat: "9.5",
-    rocky: "9.5",
-    almalinux: "9.5",
+        // Linux / Unix Desktop
+        linux: "6.15",
+        ubuntu: "26.04",
+        debian: "13",
+        fedora: "42",
+        arch: "rolling",
+        manjaro: "26.0",
+        linuxmint: "22",
+        popos: "24.04",
+        elementaryos: "8",
+        zorinos: "17",
+        opensuse: "15.6",
+        kali: "2026.2",
+        tails: "6.18",
+        redhat: "10.0",
+        rocky: "10.0",
+        almalinux: "10.0",
 
-    // BSD
-    freebsd: "14.2",
-    openbsd: "7.6",
-    netbsd: "10.1",
+        // BSD
+        freebsd: "14.2",
+        openbsd: "7.9",
+        netbsd: "10.2",
 
-    // Gaming
-    steamos: "3.6",
-    playstation: "24.06",
-    xbox: "10.0",
-    nintendoswitch: "19.0",
+        // Gaming Platforms
+        steamos: "3.7",
+        playstation: "26.02",
+        xbox: "10.0",
+        nintendoswitch: "20.0",
 
-    // TV / Streaming
-    fireos: "8",
-    rokuos: "13",
-    webos: "24",
-    tizen: "8",
+        // Smart TV / Connected Home
+        fireos: "8",
+        rokuos: "14",
+        webos: "25",
+        tizen: "8",
 
-    // Wearables
-    wearos: "5",
-    garminos: "16",
-    fitbitos: "6",
-    zeppos: "3",
+        // Wearables / Fitness
+        wearos: "6",
+        garminos: "18",
+        fitbitos: "7",
+        zeppos: "4",
 
-    // Other
-    kindleos: "15",
-    metaquest: "68"
+        // Extended Smart Devices
+        kindleos: "16",
+        metaquest: "78"
+    },
+
+    // =========================================================
+    // PUBLIC BETA (Registered System Enthusiasts)
+    // =========================================================
+    public_beta: {
+        // Apple (Active iOS 26.6 / iPadOS 26.6 testing tracks)
+        ios: "26.6-pb2",
+        ipados: "26.6-pb2",
+        macos: "26.6-pb2",    // macOS Tahoe point revision track
+        watchos: "26.6-pb2",
+        tvos: "26.6-pb2",
+        visionos: "2.6-pb2",
+
+        // Note: Apple 27 Public Betas (iOS 27, macOS 27 Golden Gate) 
+        // are officially slated for release in July 2026.
+        apple_27_next: "coming-july-2026",
+
+        // Android 18 Early-Access Tranche
+        android: "18-beta1",
+        pixelui: "18-beta1",
+        oneui: "9.0-pb1",
+        oxygenos: "18-beta1",
+        coloros: "18-beta1"
+    },
+
+    // =========================================================
+    // DEVELOPER TESTER (Bleeding-Edge Sandbox Builds)
+    // =========================================================
+    developer_tester: {
+        // Apple Next-Gen (Announced at WWDC 2026, Beta 2 seeded June 22)
+        ios: "27.0-db2",        // iOS 27 Major Upgrade Branch
+        ipados: "27.0-db2",
+        macos: "27.0-db2",      // macOS 27 Golden Gate Branch
+        watchos: "27.0-db2",
+        tvos: "27.0-db2",
+        visionos: "3.0-db2",
+
+        // Apple Current Point-Release (Seeded June 29, 2026)
+        ios_current_line: "26.6-db3",
+        macos_current_line: "26.6-db3",
+
+        // Android / Samsung Core Debugging Sandboxes
+        android: "18-dp1",      // Android 18 Developer Preview
+        pixelui: "18-dp1",
+        oneui: "9.0-alpha",
+        oxygenos: "18-dp1",
+        coloros: "18-dp1"
+    }
 };
 
 // ======================
