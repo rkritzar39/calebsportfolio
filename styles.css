@@ -3922,67 +3922,38 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* Section Container        */
 /* ======================== */
 .tech-section {
-	position: relative;
+    position: relative;
+    padding: 30px;
+    border-radius: var(--radius-xl);
+    margin-bottom: 30px;
+    color: var(--text-color);
+    
+    /* FIX: Enable hardware acceleration and isolate the context */
+    isolation: isolate;
+    
+    /* FIX: Use a background color fallback that blends well */
+    background: color-mix(in srgb, var(--content-bg) 85%, black 15%);
+    
+    /* Apply border and shadow */
+    border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+    box-shadow: 
+        inset 0 1px 0 rgba(255,255,255,0.06),
+        0 12px 32px color-mix(in srgb, var(--shadow-color) 55%, transparent);
 
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 6%, transparent),
-			transparent 45%
-		),
-		var(--content-bg);
-
-	padding: 30px;
-	border-radius: var(--radius-xl);
-	margin-bottom: 30px;
-
-	border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
-
-	backdrop-filter: blur(18px) saturate(140%);
-	-webkit-backdrop-filter: blur(18px) saturate(140%);
-
-	box-shadow:
-		inset 0 1px 0 rgba(255,255,255,0.06),
-		inset 0 -1px 0 rgba(0,0,0,0.35),
-		0 12px 32px color-mix(in srgb, var(--shadow-color) 55%, transparent);
-
-	color: var(--text-color);
-	overflow: hidden;
+    /* Keep the blur effect */
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
 }
 
-/* Directional reflection */
-.tech-section::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-
-	background: linear-gradient(
-		120deg,
-		transparent 20%,
-		color-mix(in srgb, white 18%, transparent),
-		transparent 60%
-	);
-
-	opacity: 0.25;
-	pointer-events: none;
-}
-
-/* Bottom depth shading */
+/* Ensure the pseudo-elements don't conflict with the blur */
+.tech-section::before, 
 .tech-section::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-
-	background: radial-gradient(
-		circle at 50% 100%,
-		color-mix(in srgb, black 18%, transparent),
-		transparent 70%
-	);
-
-	opacity: 0.35;
-	pointer-events: none;
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: -1; /* Keep behind content */
 }
 
 /* ======================== */
