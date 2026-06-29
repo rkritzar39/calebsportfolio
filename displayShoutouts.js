@@ -1211,21 +1211,22 @@ async function loadAndDisplayDisabilities() {
    support lifespan, battery trend, advanced details, and Android support.
 ------------------------------------------------------------ */
 
-let latestOSVersions = {
+const latestOSTiers = {
+
     // =========================================================
     // PRODUCTION STABLE (Broad Public Rollout)
     // =========================================================
     production_stable: {
         // Apple
-        ios: "26.5.2",         // Released today (June 29, 2026)
-        ipados: "26.5.2",      // Released today (June 29, 2026)
-        macos: "26.5.2",       // macOS Tahoe 26.5.2 patch out today
+        ios: "26.5.2",
+        ipados: "26.5.2",
+        macos: "26.5.2",
         watchos: "26.5",
         tvos: "26.5",
-        visionos: "2.5",
+        visionos: "26.5",
 
         // Android / Google / Samsung
-        android: "17",         // Android 17 officially launched June 16, 2026
+        android: "17",
         pixelui: "17",
         oneui: "8.5",
         oxygenos: "17",
@@ -1251,8 +1252,8 @@ let latestOSVersions = {
         googletv: "17",
 
         // Windows
-        windows: "11 (25H2)",
-        windowsphone: "10",     // End of life legacy fallback
+        windows: "11",
+        windowsphone: "10",
         windowsserver: "2025",
 
         // ChromeOS
@@ -1309,50 +1310,39 @@ let latestOSVersions = {
     // PUBLIC BETA (Registered System Enthusiasts)
     // =========================================================
     public_beta: {
-        // Apple (Active iOS 26.6 / iPadOS 26.6 testing tracks)
-        ios: "26.6-pb2",
-        ipados: "26.6-pb2",
-        macos: "26.6-pb2",    // macOS Tahoe point revision track
-        watchos: "26.6-pb2",
-        tvos: "26.6-pb2",
-        visionos: "2.6-pb2",
-
-        // Note: Apple 27 Public Betas (iOS 27, macOS 27 Golden Gate) 
-        // are officially slated for release in July 2026.
-        apple_27_next: "coming-july-2026",
-
-        // Android 18 Early-Access Tranche
-        android: "18-beta1",
-        pixelui: "18-beta1",
-        oneui: "9.0-pb1",
-        oxygenos: "18-beta1",
-        coloros: "18-beta1"
+        ios: "26.6",
+        ipados: "26.6",
+        macos: "26.6",
+        watchos: "26.6",
+        tvos: "26.6",
+        visionos: "26.6",
+        android: "18",
+        pixelui: "18",
+        oneui: "9.0",
+        oxygenos: "18",
+        coloros: "18"
     },
 
     // =========================================================
     // DEVELOPER TESTER (Bleeding-Edge Sandbox Builds)
     // =========================================================
     developer_tester: {
-        // Apple Next-Gen (Announced at WWDC 2026, Beta 2 seeded June 22)
-        ios: "27.0-db2",        // iOS 27 Major Upgrade Branch
-        ipados: "27.0-db2",
-        macos: "27.0-db2",      // macOS 27 Golden Gate Branch
-        watchos: "27.0-db2",
-        tvos: "27.0-db2",
-        visionos: "3.0-db2",
-
-        // Apple Current Point-Release (Seeded June 29, 2026)
-        ios_current_line: "26.6-db3",
-        macos_current_line: "26.6-db3",
-
-        // Android / Samsung Core Debugging Sandboxes
-        android: "18-dp1",      // Android 18 Developer Preview
-        pixelui: "18-dp1",
-        oneui: "9.0-alpha",
-        oxygenos: "18-dp1",
-        coloros: "18-dp1"
+        ios: "27.0",
+        ipados: "27.0",
+        macos: "27.0",
+        watchos: "27.0",
+        tvos: "27.0",
+        visionos: "27.0",
+        android: "18",
+        pixelui: "18",
+        oneui: "9.0",
+        oxygenos: "18",
+        coloros: "18"
     }
 };
+
+// Flat object all existing functions read from — always production stable
+let latestOSVersions = { ...latestOSTiers.production_stable };
 
 // ======================
 // PERSONAL THRESHOLDS
