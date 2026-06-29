@@ -6317,10 +6317,12 @@ body.dark-mode .youtube-channel-card {
     letter-spacing: -0.03em;
 }
 
+/* Center text labels */
 .countdown-label {
     margin-top: 6px;
     font-size: 0.7em;
-    color: var(--secondary-text);
+    /* Updated contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     letter-spacing: 1px;
     text-transform: uppercase;
 }
@@ -6329,7 +6331,8 @@ body.dark-mode .youtube-channel-card {
 .countdown-status {
     position: relative;
     z-index: 1;
-    color: var(--secondary-text);
+    /* Updated contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     margin-top: 15px;
     font-size: 0.95em;
 }
@@ -6352,7 +6355,8 @@ body.dark-mode .youtube-channel-card {
     position: absolute;
     top: -16px;
     font-size: 0.75em;
-    color: var(--secondary-text);
+    /* Updated contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     transform: translateX(-50%);
 }
 
