@@ -4499,18 +4499,24 @@ function renderTechItemHomepage(itemData) {
         const displayHealth = Math.min(Math.max(batteryHealth, 0), 100);
 
         batteryHtml = `
-        <div class="tech-detail">
-            <i class="fas fa-heart"></i>
-            <span>Battery Health:</span>
-        </div>
+    <div class="tech-detail">
+        <i class="fas fa-heart"></i>
+        <span>Battery Health:</span>
+    </div>
 
-        <div class="battery-container">
-            <div class="battery-icon ${batteryClass}">
-                <div class="battery-level" style="width: ${displayHealth}%"></div>
-                <div class="battery-percentage">${batteryHealth}%</div>
+    <div class="battery-container" role="img" aria-label="Battery health at ${displayHealth} percent">
+        <div class="battery-icon ${batteryClass}">
+            <div class="battery-level" 
+                 style="width: ${displayHealth}%" 
+                 role="progressbar" 
+                 aria-valuenow="${displayHealth}" 
+                 aria-valuemin="0" 
+                 aria-valuemax="100">
             </div>
-        </div>`;
-    }
+            <div class="battery-percentage">${displayHealth}%</div>
+        </div>
+    </div>`;
+
 
     let cyclesHtml = "";
 
