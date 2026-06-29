@@ -3918,6 +3918,29 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
   }
 }
 
+/* Support badge colors — all variants */
+.support-badge.green { background: rgba(50, 205, 50, 0.15); color: #32CD32; }
+.support-badge.yellow { background: rgba(255, 204, 0, 0.15); color: #FFCC00; }
+.support-badge.orange { background: rgba(255, 149, 0, 0.15); color: #FF9500; }
+.support-badge.red { background: rgba(255, 59, 48, 0.15); color: #FF3B30; }
+.support-badge.gray { background: rgba(142, 142, 147, 0.15); color: #8E8E93; }
+.support-badge.blue { background: rgba(10, 132, 255, 0.15); color: #0A84FF; }
+
+/* Upgrade priority badge — all variants */
+.upgrade-priority-badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    display: inline-block;
+    white-space: nowrap;
+}
+.upgrade-priority-badge.green { background: rgba(50, 205, 50, 0.15); color: #32CD32; }
+.upgrade-priority-badge.yellow { background: rgba(255, 204, 0, 0.15); color: #FFCC00; }
+.upgrade-priority-badge.red { background: rgba(255, 59, 48, 0.15); color: #FF3B30; }
+.upgrade-priority-badge.gray { background: rgba(142, 142, 147, 0.15); color: #8E8E93; }
+
+
 /* ======================== */
 /* Section Container        */
 /* ======================== */
@@ -4046,28 +4069,15 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* ======================== */
 /* Tech Detail Rows         */
 /* ======================== */
+/* Align icon to top when content wraps */
 .tech-detail {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	margin: 10px 0;
-
-	color: var(--text-color);
-	position: relative;
-	z-index: 1;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
 
 .tech-detail i {
-	width: 20px;
-	height: 20px;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	color: var(--accent-color);
-	font-size: calc(var(--font-size-base) * 0.85);
-	flex-shrink: 0;
+    margin-top: 3px;
+    flex-shrink: 0;
 }
 
 .tech-detail span {
@@ -11012,7 +11022,7 @@ body.light-e .creator-sort-controls select option {
     height: 46px;
   }
 }
-``
+
 /* v26.6-beta.1                                           */
 /* ======================================================= */
 
@@ -11401,30 +11411,11 @@ body.light-e .upgrade-priority-badge.green {
 /* Upgrade Explanation Box  */
 /* ======================== */
 
+/* Explanation text (Why, Future Specs, Avoid) */
 .tech-upgrade-explanation {
-  align-items: flex-start;
-  gap: 0.5rem;
-
-  margin-top: 0.35rem;
-  padding: 0.75rem 0.85rem;
-
-  border-radius: var(--radius-md);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.09),
-      rgba(255, 255, 255, 0.035)
-    ),
-    color-mix(in srgb, var(--content-bg) 88%, transparent);
-
-  border: 1px solid color-mix(in srgb, var(--border-color) 90%, transparent);
-
-  line-height: 1.5;
-
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.08),
-    0 8px 22px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .tech-upgrade-explanation i {
@@ -11611,6 +11602,19 @@ body.light-e .tech-upgrade-explanation {
   border-color: var(--status-red-border);
 }
 
+.upgrade-explanation-text {
+    width: 100%;
+    font-size: 0.83rem;
+    font-weight: 400;
+    color: var(--secondary-text);
+    line-height: 1.55;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border-left: 2px solid var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color) 6%, transparent);
+    box-sizing: border-box;
+}
+	
 /* Recommended */
 .tech-detail .upgrade-priority-badge.yellow {
   color: var(--status-yellow);
@@ -11676,8 +11680,9 @@ body.light-e .tech-upgrade-explanation {
 }
 
 .tech-upgrade-explanation .tech-label {
-  color: var(--secondary-text);
-  font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .tech-upgrade-explanation i {
@@ -11706,10 +11711,12 @@ body.light-e .tech-upgrade-explanation {
     word-break: break-word;
 }
 
+/* OS row grouping */
 .tech-os-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 6px;
     min-width: 0;
+    flex: 1;
 }
