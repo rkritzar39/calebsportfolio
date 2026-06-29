@@ -1,7 +1,7 @@
 {
-  "ios": "26.5",
-  "ipados": "26.5",
-  "macos": "26.5.1",
+  "ios": "26.5.2",
+  "ipados": "26.5.2",
+  "macos": "26.5.2",
   "watchos": "26.5",
   "tvos": "26.5",
   "visionos": "26.5",
@@ -39,41 +39,33 @@
 
   "deviceModelOverrides": {
     "ios": {
-      "iPhone Air": "26.5.1",
-      "iPhone 17": "26.5.1",
-      "iPhone 17 Plus": "26.5.1",
-      "iPhone 17 Pro": "26.5.1",
-      "iPhone 17 Pro Max": "26.5.1"
+      "iPhone Air": "26.5.2",
+      "iPhone 17": "26.5.2",
+      "iPhone 17 Plus": "26.5.2",
+      "iPhone 17 Pro": "26.5.2",
+      "iPhone 17 Pro Max": "26.5.2"
     }
   },
 
   "deviceVersionRules": {
     "ios": [
       {
-        "version": "26.5.1",
-        "label": "iPhone Air and iPhone 17 models",
-        "note": "For iPhone Air and iPhone 17 models.",
-        "match": {
-          "modelIncludesAny": ["iphone air", "iphone 17"]
-        }
-      },
-      {
-        "version": "26.5",
-        "label": "iPhone 11 through iPhone 16 models",
-        "note": "For iPhone 11 through iPhone 16 Pro/Pro Max models.",
+        "version": "26.5.2",
+        "label": "iPhone 11 through iPhone 17 models, including iPhone Air",
+        "note": "For all currently supported iPhone models.",
         "match": {
           "deviceFamily": "iphone",
           "generationMin": 11,
-          "generationMax": 16
+          "generationMax": 17
         }
       }
     ]
   },
 
   "platformCompatibilityNotes": {
-    "ios": "iOS 26.5.1 for iPhone Air and iPhone 17 models; iOS 26.5 for iPhone 11 through iPhone 16 Pro/Pro Max models.",
-    "macos": "macOS 26.5.1 Tahoe for modern Macs including MacBook, iMac, Mac mini, Mac Studio, and Mac Pro.",
-    "ipados": "iPadOS 26.5 for supported iPad, iPad Air, iPad mini, and iPad Pro models.",
+    "ios": "iOS 26.5.2 for supported iPhone models including iPhone 11 through iPhone 17 and iPhone Air.",
+    "macos": "macOS 26.5.2 Tahoe for modern Macs including MacBook, iMac, Mac mini, Mac Studio, and Mac Pro.",
+    "ipados": "iPadOS 26.5.2 for supported iPad, iPad Air, iPad mini, and iPad Pro models.",
     "watchos": "watchOS 26.5 for Apple Watch Series 6 and newer.",
     "tvos": "tvOS 26.5 for Apple TV HD and Apple TV 4K models.",
     "visionos": "visionOS 26.5 for Apple Vision Pro."
