@@ -870,6 +870,103 @@ function extractID(url) {
 }
 
 /* ------------------------------------------------------------
+   LATEST OS CONFIG
+   Fallback values are used if JSON fetch fails.
+------------------------------------------------------------ */
+let latestOSVersions = {
+    // Apple
+    ios: "26.5.1",
+    ipados: "26.5",
+    macos: "26.5.1",
+    watchos: "26.5",
+    tvos: "26.5",
+    visionos: "26.5",
+
+    // Android / Google / Samsung
+    android: "16",
+    pixelui: "16",
+    oneui: "8.5",
+
+    // Other Android skins
+    oxygenos: "16",
+    coloros: "16",
+    realmeui: "7",
+    miui: "14",
+    hyperos: "3",
+    magicos: "10",
+    emui: "15",
+    harmonyos: "5",
+    funtouchos: "16",
+    originos: "6",
+    nothingos: "4",
+    motorolahello: "16",
+    zenui: "12",
+    rogui: "12",
+    xos: "15",
+    hios: "15",
+    flymeos: "11",
+
+    // Windows
+    windows: "11",
+    windowsphone: "10",
+    windowsserver: "2025",
+
+    // Linux / Desktop
+    linux: "rolling",
+    ubuntu: "26.04",
+    debian: "13",
+    fedora: "42",
+    arch: "rolling",
+    manjaro: "rolling",
+    linuxmint: "22",
+    popos: "24.04",
+    elementaryos: "8",
+    zorinos: "17",
+    opensuse: "15.6",
+    kali: "2026.1",
+    tails: "6",
+    redhat: "10",
+    rocky: "10",
+    almalinux: "10",
+
+    // Chrome / Google desktop
+    chromeos: "latest",
+    chromiumos: "latest",
+
+    // BSD / Unix-like
+    freebsd: "14",
+    openbsd: "7",
+    netbsd: "10",
+
+    // Gaming
+    steamos: "3",
+    playstation: "5",
+    xbox: "series",
+    nintendoswitch: "18",
+
+    // TV / Smart home
+    fireos: "8",
+    rokuos: "13",
+    webos: "24",
+    tizen: "8",
+    androidtv: "16",
+    googletv: "16",
+
+    // Watches / wearables
+    wearos: "6",
+    garminos: "latest",
+    fitbitos: "latest",
+    zeppos: "4",
+
+    // Other
+    kindleos: "latest",
+    metaquest: "latest",
+    unknown: "Unknown"
+};
+
+const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
+
+/* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
 function renderFaqItemHomepage(faqData) {
@@ -1210,139 +1307,6 @@ async function loadAndDisplayDisabilities() {
    AI support, future AI target, device score, upgrade recommendation,
    support lifespan, battery trend, advanced details, and Android support.
 ------------------------------------------------------------ */
-
-const latestOSTiers = {
-
-    // =========================================================
-    // PRODUCTION STABLE (Broad Public Rollout)
-    // =========================================================
-    production_stable: {
-        // Apple
-        ios: "26.5.2",
-        ipados: "26.5.2",
-        macos: "26.5.2",
-        watchos: "26.5",
-        tvos: "26.5",
-        visionos: "26.5",
-
-        // Android / Google / Samsung
-        android: "17",
-        pixelui: "17",
-        oneui: "8.5",
-        oxygenos: "17",
-        coloros: "17",
-        realmeui: "7",
-        miui: "14",
-        hyperos: "3",
-        magicos: "10",
-        emui: "15",
-        harmonyos: "5",
-        funtouchos: "17",
-        originos: "5",
-        nothingos: "4",
-        motorolahello: "17",
-        zenui: "15",
-        rogui: "15",
-        xos: "15",
-        hios: "15",
-        flymeos: "22",
-
-        // Android TV / Google TV
-        androidtv: "17",
-        googletv: "17",
-
-        // Windows
-        windows: "11",
-        windowsphone: "10",
-        windowsserver: "2025",
-
-        // ChromeOS
-        chromeos: "146",
-        chromiumos: "146",
-
-        // Linux / Unix Desktop
-        linux: "6.15",
-        ubuntu: "26.04",
-        debian: "13",
-        fedora: "42",
-        arch: "rolling",
-        manjaro: "26.0",
-        linuxmint: "22",
-        popos: "24.04",
-        elementaryos: "8",
-        zorinos: "17",
-        opensuse: "15.6",
-        kali: "2026.2",
-        tails: "6.18",
-        redhat: "10.0",
-        rocky: "10.0",
-        almalinux: "10.0",
-
-        // BSD
-        freebsd: "14.2",
-        openbsd: "7.9",
-        netbsd: "10.2",
-
-        // Gaming Platforms
-        steamos: "3.7",
-        playstation: "26.02",
-        xbox: "10.0",
-        nintendoswitch: "20.0",
-
-        // Smart TV / Connected Home
-        fireos: "8",
-        rokuos: "14",
-        webos: "25",
-        tizen: "8",
-
-        // Wearables / Fitness
-        wearos: "6",
-        garminos: "18",
-        fitbitos: "7",
-        zeppos: "4",
-
-        // Extended Smart Devices
-        kindleos: "16",
-        metaquest: "78"
-    },
-
-    // =========================================================
-    // PUBLIC BETA (Registered System Enthusiasts)
-    // =========================================================
-    public_beta: {
-        ios: "26.6",
-        ipados: "26.6",
-        macos: "26.6",
-        watchos: "26.6",
-        tvos: "26.6",
-        visionos: "26.6",
-        android: "18",
-        pixelui: "18",
-        oneui: "9.0",
-        oxygenos: "18",
-        coloros: "18"
-    },
-
-    // =========================================================
-    // DEVELOPER TESTER (Bleeding-Edge Sandbox Builds)
-    // =========================================================
-    developer_tester: {
-        ios: "27.0",
-        ipados: "27.0",
-        macos: "27.0",
-        watchos: "27.0",
-        tvos: "27.0",
-        visionos: "27.0",
-        android: "18",
-        pixelui: "18",
-        oneui: "9.0",
-        oxygenos: "18",
-        coloros: "18"
-    }
-};
-
-// Flat object all existing functions read from — always production stable
-let latestOSVersions = { ...latestOSTiers.production_stable };
 
 // ======================
 // PERSONAL THRESHOLDS
@@ -2004,9 +1968,6 @@ function detectOSChannel(osVersion) {
     if (os.includes("canary")) return "canary";
     if (os.includes("preview")) return "preview";
     if (os.includes("rc") || os.includes("release candidate")) return "release-candidate";
-
-    // Apple developer beta build numbers end in a letter (e.g. 24A5370h)
-    if (/\(\d{2}[A-Z]\d+[e-z]\)/i.test(String(osVersion))) return "developer-beta";
 
     return "public";
 }
@@ -3971,6 +3932,403 @@ function getOwnershipBadgeClass(stateOrItem) {
     return getOwnershipConfig(stateOrItem).badgeClass;
 }
 
+
+/* ------------------------------------------------------------
+   TECH LIFECYCLE / ROLE DISPLAY HELPERS
+   Supports admin role automation fields:
+   currentRole, previousRole, roleStatus, replacedByDevice,
+   successorDevice, predecessorDevice, roleChangedDate,
+   autoRoleManaged.
+------------------------------------------------------------ */
+function hasTechLifecycleValue(value) {
+    if (value === null || value === undefined) return false;
+    const text = String(value).trim();
+    return text !== "" && text.toLowerCase() !== "not set" && text.toLowerCase() !== "n/a";
+}
+
+function formatRoleStatusLabel(roleStatus) {
+    if (!hasTechLifecycleValue(roleStatus)) return "";
+
+    const labels = {
+        primary: "Primary Device",
+        secondary: "Secondary Device",
+        backup: "Backup Device",
+        "future-primary": "Future Primary Device",
+        "replaced-owned": "Secondary Device",
+        "replaced-sold": "Replaced and Sold",
+        "replaced-archived": "Replaced and Archived",
+        retired: "Retired",
+        sold: "Sold",
+        "traded-in": "Traded In",
+        donated: "Donated",
+        recycled: "Recycled",
+        returned: "Returned",
+        lost: "Lost",
+        archived: "Archived"
+    };
+
+    const normalized = String(roleStatus).toLowerCase().trim();
+    return labels[normalized] || normalized
+        .split("-")
+        .filter(Boolean)
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+}
+
+function formatTechLifecycleDate(value) {
+    if (!hasTechLifecycleValue(value)) return "";
+    return formatTechDate(value) || String(value);
+}
+
+function renderTechAutomationBadge(item) {
+    return item.autoRoleManaged
+        ? `<span class="support-badge green tech-auto-role-badge"><i class="fas fa-wand-magic-sparkles"></i> Auto-managed</span>`
+        : "";
+}
+
+function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = "", windowText = "" }) {
+    if (!hasTechLifecycleValue(fromDevice) || !hasTechLifecycleValue(toDevice)) return "";
+
+    return `
+    <div class="tech-lifecycle-card tech-upgrade-path">
+        <div class="tech-lifecycle-title">
+            <i class="fas fa-route"></i>
+            <span>Upgrade Path</span>
+        </div>
+        <div class="tech-lifecycle-flow">
+            <span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(fromDevice)}</span>
+            <i class="fas fa-arrow-right"></i>
+            <span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(toDevice)}</span>
+        </div>
+        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note">${escapeHTML(note)}</div>` : ""}
+        ${hasTechLifecycleValue(status) || hasTechLifecycleValue(windowText) ? `
+        <div class="tech-lifecycle-meta">
+            ${hasTechLifecycleValue(status) ? `<span class="support-badge blue">${escapeHTML(status)}</span>` : ""}
+            ${hasTechLifecycleValue(windowText) ? `<span>${escapeHTML(windowText)}</span>` : ""}
+        </div>` : ""}
+    </div>`;
+}
+
+function renderTechRoleTransitionBlock({ title, iconClass = "fas fa-right-left", fromRole = "", toRole = "", note = "", changedDate = "", badge = "" }) {
+    if (!hasTechLifecycleValue(fromRole) && !hasTechLifecycleValue(toRole) && !hasTechLifecycleValue(note)) return "";
+
+    return `
+    <div class="tech-lifecycle-card tech-role-transition">
+        <div class="tech-lifecycle-title">
+            <i class="${escapeHTML(iconClass)}"></i>
+            <span>${escapeHTML(title)}</span>
+            ${badge || ""}
+        </div>
+        ${hasTechLifecycleValue(fromRole) && hasTechLifecycleValue(toRole) ? `
+        <div class="tech-lifecycle-flow">
+            <span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(fromRole)}</span>
+            <i class="fas fa-arrow-right"></i>
+            <span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(toRole)}</span>
+        </div>` : ""}
+        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note">${escapeHTML(note)}</div>` : ""}
+        ${hasTechLifecycleValue(changedDate) ? `<div class="tech-lifecycle-meta"><i class="fas fa-clock"></i> Updated ${escapeHTML(changedDate)}</div>` : ""}
+    </div>`;
+}
+
+function renderTechDeviceLineageBlock(item) {
+    const predecessor = item.predecessorDevice;
+    const successor = item.successorDevice || item.replacedByDevice;
+    const name = item.name;
+
+    if (!hasTechLifecycleValue(predecessor) && !hasTechLifecycleValue(successor)) return "";
+
+    const nodes = [];
+    if (hasTechLifecycleValue(predecessor)) nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(predecessor)}</span>`);
+    nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-current">${escapeHTML(name)}</span>`);
+    if (hasTechLifecycleValue(successor)) nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(successor)}</span>`);
+
+    return `
+    <div class="tech-lifecycle-card tech-device-lineage">
+        <div class="tech-lifecycle-title">
+            <i class="fas fa-timeline"></i>
+            <span>Device Lineage</span>
+            ${renderTechAutomationBadge(item)}
+        </div>
+        <div class="tech-lifecycle-flow">
+            ${nodes.join(`<i class="fas fa-arrow-right"></i>`)}
+        </div>
+    </div>`;
+}
+
+function renderTechLifecycleSections(itemData, options = {}) {
+    const initialItem = normalizeTechItem(itemData);
+    const initialOwnershipConfig = getOwnershipConfig(initialItem);
+    const context = options.context || initialOwnershipConfig.mode;
+    const item = sanitizeTechLifecycleForPublicDisplay(initialItem, context);
+    const ownershipConfig = getOwnershipConfig(item);
+
+    const name = item.name || "Device";
+    const predecessor = item.predecessorDevice || "";
+    const successor = item.successorDevice || item.replacedByDevice || "";
+    const replacesDevice = item.replacesDevice || "";
+    const currentRole = item.currentRole || "";
+    const previousRole = item.previousRole || "";
+    const roleStatus = item.roleStatus || "";
+    const roleStatusLabel = formatRoleStatusLabel(roleStatus);
+    const changedDate = formatTechLifecycleDate(item.roleChangedDate);
+    const autoBadge = renderTechAutomationBadge(item);
+
+    let html = "";
+
+    if (context === "roadmap" && hasTechLifecycleValue(replacesDevice)) {
+        html += renderTechUpgradePathBlock({
+            fromDevice: replacesDevice,
+            toDevice: name,
+            note: item.futureUpgradeTarget ? `Planned role: ${item.futureUpgradeTarget}` : "",
+            status: getOwnershipLabel(item),
+            windowText: item.plannedWindow ? `Expected: ${item.plannedWindow}` : ""
+        });
+    }
+
+    if (context !== "roadmap" && hasTechLifecycleValue(predecessor)) {
+        html += renderTechUpgradePathBlock({
+            fromDevice: predecessor,
+            toDevice: name,
+            note: currentRole ? `Current role: ${currentRole}` : "",
+            status: roleStatusLabel || getOwnershipLabel(item),
+            windowText: changedDate ? `Transitioned: ${changedDate}` : ""
+        });
+    }
+
+    if (hasTechLifecycleValue(successor)) {
+        const title = ownershipConfig.mode === "archive" ? "Replaced By" : "Role Changed";
+        const note = ownershipConfig.mode === "archive"
+            ? `${successor} replaced this device in the lifecycle history.`
+            : `${successor} is listed as the successor for this device.`;
+
+        html += renderTechRoleTransitionBlock({
+            title,
+            iconClass: ownershipConfig.mode === "archive" ? "fas fa-box-archive" : "fas fa-right-left",
+            fromRole: name,
+            toRole: successor,
+            note,
+            changedDate,
+            badge: autoBadge
+        });
+    }
+
+    if (hasTechLifecycleValue(previousRole) || hasTechLifecycleValue(currentRole) || hasTechLifecycleValue(roleStatusLabel)) {
+        html += `
+        <div class="tech-lifecycle-card tech-role-details">
+            <div class="tech-lifecycle-title">
+                <i class="fas fa-id-card-clip"></i>
+                <span>Role Details</span>
+                ${autoBadge}
+            </div>
+            ${hasTechLifecycleValue(roleStatusLabel) ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Role Status:</span><span class="support-badge blue">${escapeHTML(roleStatusLabel)}</span></div>` : ""}
+            ${hasTechLifecycleValue(previousRole) ? `<div class="tech-detail"><i class="fas fa-history"></i><span>Previous Role:</span><span class="tech-value">${escapeHTML(previousRole)}</span></div>` : ""}
+            ${hasTechLifecycleValue(currentRole) ? `<div class="tech-detail"><i class="fas fa-location-dot"></i><span>Current Role:</span><span class="tech-value">${escapeHTML(currentRole)}</span></div>` : ""}
+            ${hasTechLifecycleValue(changedDate) ? `<div class="tech-detail"><i class="fas fa-clock"></i><span>Role Updated:</span><span class="tech-value">${escapeHTML(changedDate)}</span></div>` : ""}
+        </div>`;
+    }
+
+    html += renderTechDeviceLineageBlock(item);
+
+    return html;
+}
+
+function renderPlannedTechItemHomepage(itemData) {
+    const item = normalizeTechItem(itemData);
+
+    const name = item.name || "Upcoming Device";
+    const model = item.model || "Not set";
+    const primaryUse = item.primaryUse || "Not set";
+    const iconClass = item.iconClass || "fas fa-laptop";
+
+    const ownershipState = getOwnershipState(item);
+    const ownershipConfig = getOwnershipConfig(ownershipState);
+    const ownershipLabel = ownershipConfig.label;
+    const ownershipBadgeClass = ownershipConfig.badgeClass;
+
+    const plannedWindow = item.plannedWindow || "Not set";
+    const plannedReason = item.plannedReason || "Not set";
+    const futureUpgradeTarget = item.futureUpgradeTarget || "Not set";
+    const targetYear = item.targetYear || "Not set";
+    const replacesDevice = item.replacesDevice || "Not set";
+
+    const expectedChip = item.expectedChip || "Not set";
+    const expectedRam = item.expectedRam || "Not set";
+    const expectedStorage = item.expectedStorage || "Not set";
+    const expectedColor = item.expectedColor || "Not set";
+    const expectedAILevel = item.expectedAILevel || "Not set";
+    const expectedFutureProofRating = item.expectedFutureProofRating || "Not set";
+
+    const lifecycleSections = renderTechLifecycleSections(item, { context: ownershipConfig.mode });
+    const replacesDeviceRow = hasTechLifecycleValue(item.replacesDevice)
+        ? ""
+        : `
+            <div class="tech-detail">
+                <i class="fas fa-right-left"></i>
+                <span>Replaces Device:</span>
+                <span class="tech-value">${escapeHTML(replacesDevice)}</span>
+            </div>`;
+
+    if (ownershipConfig.mode === "wishlist") {
+        return `
+        <div class="tech-item planned-tech-item ownership-${escapeHTML(ownershipBadgeClass)}">
+            <h3>
+                <i class="${escapeHTML(iconClass)}"></i>
+                ${escapeHTML(name)}
+            </h3>
+
+            <div class="tech-detail">
+                <i class="fas fa-info-circle"></i>
+                <span>Model:</span>
+                <span class="tech-value">${escapeHTML(model)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-id-badge"></i>
+                <span>Ownership:</span>
+                <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">
+                    ${escapeHTML(ownershipLabel)}
+                </span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-bullseye"></i>
+                <span>Primary Use:</span>
+                <span class="tech-value">${escapeHTML(primaryUse)}</span>
+            </div>
+
+            ${lifecycleSections}
+        </div>`;
+    }
+
+    if (ownershipConfig.mode === "roadmap") {
+        return `
+        <div class="tech-item planned-tech-item ownership-${escapeHTML(ownershipBadgeClass)}">
+            <h3>
+                <i class="${escapeHTML(iconClass)}"></i>
+                ${escapeHTML(name)}
+            </h3>
+
+            <div class="tech-detail">
+                <i class="fas fa-info-circle"></i>
+                <span>Model:</span>
+                <span class="tech-value">${escapeHTML(model)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-id-badge"></i>
+                <span>Ownership:</span>
+                <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">
+                    ${escapeHTML(ownershipLabel)}
+                </span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Planned / Expected Window:</span>
+                <span class="tech-value">${escapeHTML(plannedWindow)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-bullseye"></i>
+                <span>Primary Use:</span>
+                <span class="tech-value">${escapeHTML(primaryUse)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-circle-question"></i>
+                <span>Reason:</span>
+                <span class="tech-value">${escapeHTML(plannedReason)}</span>
+            </div>
+
+            <div class="tech-detail">
+                <i class="fas fa-flag-checkered"></i>
+                <span>Future Role:</span>
+                <span class="tech-value">${escapeHTML(futureUpgradeTarget)}</span>
+            </div>
+
+            ${lifecycleSections}
+            ${replacesDeviceRow}
+
+            <div class="tech-detail">
+                <i class="fas fa-calendar-check"></i>
+                <span>Target Year:</span>
+                <span class="tech-value">${escapeHTML(targetYear)}</span>
+            </div>
+
+            <details class="tech-advanced-details" open>
+                <summary>Expected Specs</summary>
+
+                <div class="tech-detail">
+                    <i class="fas fa-microchip"></i>
+                    <span>Expected Chip:</span>
+                    <span class="tech-value">${escapeHTML(expectedChip)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-memory"></i>
+                    <span>Expected RAM:</span>
+                    <span class="tech-value">${escapeHTML(expectedRam)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-hard-drive"></i>
+                    <span>Expected Storage:</span>
+                    <span class="tech-value">${escapeHTML(expectedStorage)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-palette"></i>
+                    <span>Expected Color:</span>
+                    <span class="tech-value">${escapeHTML(expectedColor)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-brain"></i>
+                    <span>Expected AI Support:</span>
+                    <span class="tech-value status-green">${escapeHTML(expectedAILevel)}</span>
+                </div>
+
+                <div class="tech-detail">
+                    <i class="fas fa-seedling"></i>
+                    <span>Expected Future-Proofing:</span>
+                    <span class="tech-value status-green">${escapeHTML(expectedFutureProofRating)}</span>
+                </div>
+            </details>
+        </div>`;
+    }
+
+    return `
+    <div class="tech-item planned-tech-item ownership-${escapeHTML(ownershipBadgeClass)}">
+        <h3>
+            <i class="${escapeHTML(iconClass)}"></i>
+            ${escapeHTML(name)}
+        </h3>
+
+        <div class="tech-detail">
+            <i class="fas fa-info-circle"></i>
+            <span>Model:</span>
+            <span class="tech-value">${escapeHTML(model)}</span>
+        </div>
+
+        <div class="tech-detail">
+            <i class="fas fa-id-badge"></i>
+            <span>Ownership:</span>
+            <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">
+                ${escapeHTML(ownershipLabel)}
+            </span>
+        </div>
+
+        <div class="tech-detail">
+            <i class="fas fa-bullseye"></i>
+            <span>Primary Use:</span>
+            <span class="tech-value">${escapeHTML(primaryUse)}</span>
+        </div>
+
+        ${lifecycleSections}
+    </div>`;
+}
+
+
 /* ------------------------------------------------------------
    RENDER FUNCTION
 ------------------------------------------------------------ */
@@ -4068,24 +4426,19 @@ function renderTechItemHomepage(itemData) {
         ${escapeHTML(costEfficiency.label)}
     </div>` : "";
 
-    // FIXED: Strict checking for Battery Health to avoid NaN values
-    let batteryHealth = null;
-    if (item.batteryHealth !== null && item.batteryHealth !== undefined && item.batteryHealth !== "") {
-        const parsedHealth = parseInt(item.batteryHealth, 10);
-        if (!isNaN(parsedHealth)) {
-            batteryHealth = parsedHealth;
-        }
-    }
+    const batteryHealth = item.batteryHealth !== null &&
+        item.batteryHealth !== undefined &&
+        !isNaN(item.batteryHealth)
+        ? parseInt(item.batteryHealth, 10)
+        : null;
 
-    // FIXED: Strict checking for Battery Cycles to avoid empty strings evaluating to 0
-    let batteryCycles = null;
     const rawBatteryCycles = item.batteryCycles ?? item.batteryChargeCycles;
-    if (rawBatteryCycles !== null && rawBatteryCycles !== undefined && rawBatteryCycles !== "") {
-        const parsedCycles = Number(rawBatteryCycles);
-        if (!isNaN(parsedCycles)) {
-            batteryCycles = parsedCycles;
-        }
-    }
+
+    const batteryCycles = rawBatteryCycles !== null &&
+        rawBatteryCycles !== undefined &&
+        !isNaN(rawBatteryCycles)
+        ? Number(rawBatteryCycles)
+        : null;
 
     const upgrade = calculateUpgradeData(item);
     const age = calculateDeviceAge(item.dateBought);
@@ -4385,35 +4738,25 @@ function renderTechItemHomepage(itemData) {
         ${ageHtml}
 
         ${osVersion ? `
-<div class="tech-detail">
-    <i class="${escapeHTML(osIconClass)}"></i>
-    <span>OS Version:</span>
-    <span class="tech-os-row">
-        ${escapeHTML(osVersion)}
-        ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
-    </span>
-</div>
+        <div class="tech-detail">
+            <i class="${escapeHTML(osIconClass)}"></i>
+            <span>OS Version:</span> ${escapeHTML(osVersion)}
+            ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
+        </div>
 
         ${osStatus ? `
         <div class="tech-detail">
-            <i class="fas fa-circle-info"></i>
-            <span>Public Latest:</span>
-            <span class="tech-value">${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}</span>
-            ${["version-rule", "model-override"].includes(osStatus.latestVersionSource)
-                ? `<small class="tech-note">Device-specific</small>`
-                : ""}
-            ${osStatus.latestVersionNote
-                ? `<small class="tech-note">${escapeHTML(osStatus.latestVersionNote)}</small>`
-                : ""}
+            <i class="fas fa-code-branch"></i>
+            <span>Release Channel:</span> ${escapeHTML(osStatus.releaseChannel)}
         </div>
 
         <div class="tech-detail">
-            <i class="fas fa-code-branch"></i>
-            <span>Release Channel:</span>
-            <span class="support-badge ${osStatus.isBeta ? "purple" : "green"}">
-                ${escapeHTML(osStatus.releaseChannel)}
-            </span>
-        </div>
+    <i class="fas fa-circle-info"></i>
+    <span>Public Latest:</span>
+    ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
+    ${osStatus.latestVersionLabel ? `<small>${escapeHTML(osStatus.latestVersionLabel)}</small>` : ""}
+    ${osStatus.latestVersionNote ? `<small>${escapeHTML(osStatus.latestVersionNote)}</small>` : ""}
+</div>
         ` : ""}
         ` : ""}
 
