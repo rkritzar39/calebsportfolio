@@ -11684,3 +11684,32 @@ body.light-e .tech-upgrade-explanation {
   margin-top: 0.2rem;
   color: var(--accent-color);
 }
+
+/* Allow OS version row to wrap on small screens */
+.tech-detail {
+    flex-wrap: wrap;
+    row-gap: 4px;
+}
+
+/* OS badge drops below if needed */
+.os-badge {
+    flex-shrink: 0;
+    max-width: calc(100% - 28px);
+    white-space: nowrap;
+}
+
+/* Prevent the version text from pushing the badge out */
+.tech-detail .tech-value,
+.tech-detail span:not(.os-badge):not(.support-badge):not(.upgrade-badge) {
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.tech-os-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
