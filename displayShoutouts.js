@@ -874,32 +874,32 @@ function extractID(url) {
    Fallback values are used if JSON fetch fails.
 ------------------------------------------------------------ */
 let latestOSVersions = {
-    // Apple
-    ios: "26.5.1",
-    ipados: "26.5",
-    macos: "26.5.1",
+    // Apple (Released June 2026)
+    ios: "26.5.2",
+    ipados: "26.5.2",
+    macos: "26.5.2", // macOS Tahoe
     watchos: "26.5",
     tvos: "26.5",
     visionos: "26.5",
 
-    // Android / Google / Samsung
-    android: "16",
-    pixelui: "16",
+    // Android / Google / Samsung (Released June 2026)
+    android: "17",
+    pixelui: "17",
     oneui: "8.5",
 
     // Other Android skins
-    oxygenos: "16",
-    coloros: "16",
-    realmeui: "7",
+    oxygenos: "17",
+    coloros: "17",
+    realmeui: "8",
     miui: "14",
     hyperos: "3",
     magicos: "10",
     emui: "15",
     harmonyos: "5",
-    funtouchos: "16",
+    funtouchos: "17",
     originos: "6",
     nothingos: "4",
-    motorolahello: "16",
+    motorolahello: "17",
     zenui: "12",
     rogui: "12",
     xos: "15",
@@ -907,7 +907,7 @@ let latestOSVersions = {
     flymeos: "11",
 
     // Windows
-    windows: "11",
+    windows: "11 (26H1)", // Or "11 (25H2)" depending on your tracking preference
     windowsphone: "10",
     windowsserver: "2025",
 
@@ -923,7 +923,7 @@ let latestOSVersions = {
     elementaryos: "8",
     zorinos: "17",
     opensuse: "15.6",
-    kali: "2026.1",
+    kali: "2026.2",
     tails: "6",
     redhat: "10",
     rocky: "10",
@@ -949,8 +949,8 @@ let latestOSVersions = {
     rokuos: "13",
     webos: "24",
     tizen: "8",
-    androidtv: "16",
-    googletv: "16",
+    androidtv: "17",
+    googletv: "17",
 
     // Watches / wearables
     wearos: "6",
