@@ -4755,7 +4755,8 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 .creator-username,
 .instagram-creator-username,
 .youtube-creator-username {
-    color: var(--secondary-text);
+    /* Mixed with --text-color for safe contrast in light & dark mode */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     font-size: max(0.9em, calc(var(--font-size-base, 20px) * 0.7));
     margin: 0;
     width: auto;
@@ -4772,8 +4773,10 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 .youtube-creator-bio {
     position: relative;
     z-index: 2;
-    color: var(--secondary-text);
-    margin: 10px 0;
+    /* Increased contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
+    /* Increased bottom margin from 0 to 20px for breathing room */
+    margin: 10px 0 20px;
     font-size: 0.9em;
     line-height: 1.45;
     word-break: break-word;
@@ -5087,7 +5090,8 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 
 .tiktok-username {
     margin: 0;
-    color: var(--secondary-text);
+    /* Increased contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     font-size: 1rem;
     font-weight: 600;
 }
@@ -5113,7 +5117,8 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 .tiktok-stat span {
     display: block;
     margin-top: 6px;
-    color: var(--secondary-text);
+    /* Increased contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     font-size: 0.9rem;
 }
 
@@ -5123,23 +5128,19 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 }
 
 .tiktok-bio,
-.tiktok-subtitle,
-.tiktok-education {
-    margin: 8px auto;
+.tiktok-subtitle {
+    /* Increased bottom margin to 20px */
+    margin: 8px auto 20px;
     max-width: 360px;
     line-height: 1.35;
     font-size: 0.95rem;
-    color: var(--secondary-text);
+    /* Increased contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
 }
 
-.tiktok-bio,
-.tiktok-education {
+.tiktok-bio {
     font-weight: 800;
     color: var(--text-color);
-}
-
-.tiktok-education i {
-    margin-right: 6px;
 }
 
 /* ============================================================
@@ -5250,10 +5251,20 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
     font-weight: 800;
 }
 
+.instagram-name-line {
+    margin: 0 0 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Added to explicitly target the grey span inside the name line */
 .instagram-name-line span {
-    color: var(--secondary-text);
-    font-size: 0.86rem;
-    font-weight: 600;
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
 }
 
 .instagram-profile-main > strong {
@@ -5294,7 +5305,8 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 
 .instagram-profile-card .instagram-stats span {
     display: block;
-    color: var(--secondary-text);
+    /* Increased contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     font-size: 0.8rem;
     font-weight: 600;
     line-height: 1.15;
@@ -5307,8 +5319,10 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 
 .instagram-bio-block,
 .instagram-profile-card .instagram-bio-block {
-    padding: 10px 18px 12px;
-    color: var(--secondary-text);
+    /* Increased bottom padding from 12px to 20px */
+    padding: 10px 18px 20px;
+    /* Increased contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     font-size: 0.98rem;
     line-height: 1.35;
     overflow-wrap: anywhere;
@@ -5420,14 +5434,17 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 .youtube-handle,
 .youtube-stats {
     margin: 3px 0;
-    color: var(--secondary-text);
+    /* Increased contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     font-size: 1rem;
 }
 
 .youtube-channel-description {
-    padding: 8px 22px 4px;
+    /* Increased bottom padding from 4px to 20px */
+    padding: 8px 22px 20px;
     margin: 0;
-    color: var(--secondary-text);
+    /* Increased contrast */
+    color: color-mix(in srgb, var(--secondary-text) 75%, var(--text-color));
     line-height: 1.45;
     font-size: 1rem;
     white-space: normal;
