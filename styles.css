@@ -10061,6 +10061,47 @@ body.maintenance-active .onyx-dock {
     color: #FFCC00;
 }
 
+/* Prevent any badge from wrapping */
+.os-badge,
+.support-badge,
+.upgrade-badge,
+.upgrade-priority-badge {
+    white-space: nowrap;
+}
+
+/* Tighter OS version inline badge */
+.os-badge {
+    margin-left: 8px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+/* Refined purple for beta/pre-release */
+.os-badge.purple,
+.support-badge.purple,
+.upgrade-badge.purple,
+.upgrade-priority-badge.purple {
+    background: rgba(175, 82, 222, 0.15);
+    color: #AF52DE;
+    box-shadow: 0 0 10px rgba(175, 82, 222, 0.18);
+    border: 1px solid rgba(175, 82, 222, 0.2);
+}
+
+/* Support badge sizing */
+.support-badge {
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+
 .upgrade-badge.red {
     background: rgba(255, 59, 48, 0.15);
     color: #FF3B30;
