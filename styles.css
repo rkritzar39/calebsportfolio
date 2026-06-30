@@ -3927,22 +3927,19 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
     border-radius: var(--radius-xl);
     margin-bottom: 30px;
     color: var(--text-color);
-    
-    /* FIX: Enable hardware acceleration and isolate the context */
     isolation: isolate;
-    
-    /* FIX: Use a background color fallback that blends well */
     background: color-mix(in srgb, var(--content-bg) 85%, black 15%);
-    
-    /* Apply border and shadow */
     border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
     box-shadow: 
         inset 0 1px 0 rgba(255,255,255,0.06),
         0 12px 32px color-mix(in srgb, var(--shadow-color) 55%, transparent);
-
-    /* Keep the blur effect */
     backdrop-filter: blur(18px) saturate(140%);
     -webkit-backdrop-filter: blur(18px) saturate(140%);
+    
+    /* NEW: Prevent container blowout on mobile */
+    box-sizing: border-box;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 /* Ensure the pseudo-elements don't conflict with the blur */
@@ -3960,34 +3957,19 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* Tech Items (Glass Tiles) */
 /* ======================== */
 .tech-item {
-	position: relative;
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 8%, transparent),
-			transparent 50%
-		),
-		var(--content-bg);
-
-	border-radius: var(--radius-lg);
-	padding: 20px;
-	margin-bottom: 16px;
-
-	border: 1px solid color-mix(in srgb, white 5%, var(--border-color));
-
-	backdrop-filter: blur(14px) saturate(135%);
-	-webkit-backdrop-filter: blur(14px) saturate(135%);
-
-	box-shadow:
-		inset 0 1px 0 rgba(255,255,255,0.05),
-		inset 0 -1px 0 rgba(0,0,0,0.3),
-		0 8px 20px color-mix(in srgb, var(--shadow-color) 50%, transparent);
-
-	transition:
-		transform 0.2s ease,
-		box-shadow 0.25s ease,
-		border-color 0.25s ease;
+    position: relative;
+    background: linear-gradient(180deg, color-mix(in srgb, white 8%, transparent), transparent 50%), var(--content-bg);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid color-mix(in srgb, white 5%, var(--border-color));
+    backdrop-filter: blur(14px) saturate(135%);
+    -webkit-backdrop-filter: blur(14px) saturate(135%);
+    
+    /* NEW: Contain all inner elements */
+    box-sizing: border-box;
+    width: 100%;
+    overflow-wrap: break-word; 
 }
 
 /* Subtle glass highlight */
@@ -4046,28 +4028,27 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* ======================== */
 /* Tech Detail Rows         */
 /* ======================== */
+/* NEW: Flex-wrap allows long strings to drop to the next line */
 .tech-detail {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	margin: 10px 0;
-
-	color: var(--text-color);
-	position: relative;
-	z-index: 1;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap; 
+    gap: 6px 10px;
+    margin: 10px 0;
+    position: relative;
+    z-index: 1;
 }
 
 .tech-detail i {
-	width: 20px;
-	height: 20px;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	color: var(--accent-color);
-	font-size: calc(var(--font-size-base) * 0.85);
-	flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color);
+    font-size: calc(var(--font-size-base) * 0.85);
+    flex-shrink: 0;
+    margin-top: 2px; /* Aligns icon with multi-line text */
 }
 
 .tech-detail span {
@@ -4079,41 +4060,29 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* ======================== */
 /* Battery Container        */
 /* ======================== */
+/* MODIFIED: Fluid battery scaling */
 .battery-container {
-	display: flex;
-	align-items: center;
-	gap: 15px;
-	margin-top: 15px;
-	position: relative;
-	z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    position: relative;
+    z-index: 1;
 }
 
-/* Battery Shell */
 .battery-icon {
-	position: relative;
-
-	width: 180px;
-	height: 40px;
-	border-radius: 10px;
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 10%, transparent),
-			transparent 60%
-		),
-		var(--content-bg);
-
-	border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
-
-	box-shadow:
-		inset 0 2px 6px rgba(0,0,0,0.6),
-		inset 0 -1px 0 rgba(255,255,255,0.05),
-		0 4px 14px color-mix(in srgb, var(--shadow-color) 40%, transparent);
-
-	backdrop-filter: blur(10px);
-
-	overflow: hidden;
+    position: relative;
+    /* Changed from fixed 180px to fluid sizing */
+    flex: 1 1 auto;
+    min-width: 120px; 
+    max-width: 180px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 60%), var(--content-bg);
+    border: 1px solid color-mix(in srgb, white 6%, var(--border-color));
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.05), 0 4px 14px color-mix(in srgb, var(--shadow-color) 40%, transparent);
+    overflow: hidden;
 }
 
 /* Battery Cap */
@@ -4201,37 +4170,22 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* Responsive               */
 /* ======================== */
 @media screen and (max-width: 768px) {
-	.tech-section {
-		padding: 20px;
-	}
-
-	.tech-item {
-		padding: 15px;
-	}
-
-	.battery-icon {
-		width: 150px;
-		height: 35px;
-	}
+    .tech-section { padding: 20px; }
+    .tech-item { padding: 15px; }
+    .battery-icon { max-width: 150px; height: 35px; }
 }
 
 @media screen and (max-width: 480px) {
-	.tech-section {
-		padding: 15px;
-	}
-
-	.tech-item {
-		padding: 12px;
-	}
-
-	.battery-icon {
-		width: 120px;
-		height: 30px;
-	}
-
-	.battery-percentage {
-		font-size: calc(var(--font-size-base) * 0.65);
-	}
+    .tech-section { padding: 15px; }
+    .tech-item { padding: 12px; }
+    .battery-icon { max-width: 100%; height: 30px; }
+    .battery-percentage { font-size: calc(var(--font-size-base) * 0.65); }
+    
+    /* Ensure advanced details drop-down text doesn't overflow */
+    .tech-advanced-details summary {
+        font-size: 0.85rem;
+        flex-wrap: wrap;
+    }
 }
 
 /* ======================== */
@@ -10061,12 +10015,14 @@ body.maintenance-active .onyx-dock {
     color: #FFCC00;
 }
 
-/* Prevent any badge from wrapping */
+/* Badges themselves retain nowrap to keep text intact */
 .os-badge,
 .support-badge,
 .upgrade-badge,
 .upgrade-priority-badge {
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
 }
 
 /* Tighter OS version inline badge */
@@ -10107,12 +10063,12 @@ body.maintenance-active .onyx-dock {
     color: #FF3B30;
 }
 
-/* Trigger list */
+/* MODIFIED: Ensure triggers are not entirely gray */
 .upgrade-triggers {
     margin: 5px 0 10px 28px;
     padding: 0;
     list-style-type: disc;
-    color: var(--secondary-text);
+    color: var(--text-color); /* Changed from secondary-text */
     font-size: 0.9rem;
 }
 
@@ -10302,6 +10258,33 @@ body.maintenance-active .onyx-dock {
 /* Slight indentation for advanced rows */
 .tech-advanced-details .tech-detail i {
     opacity: 0.9;
+}
+
+/* NEW: Strict separation of gray labels and prominent text */
+.tech-detail .tech-label {
+    font-weight: 600;
+    color: var(--secondary-text); /* Keeps "Condition:", "Primary Use:" gray */
+    white-space: nowrap;
+}
+
+.tech-detail .tech-value {
+    font-weight: 500;
+    color: var(--text-color); /* Ensures actual text is NOT gray */
+    flex: 1;
+    min-width: 120px;
+}
+
+.upgrade-triggers li::marker {
+    color: var(--secondary-text); /* Keep only the bullets gray */
+}
+
+/* NEW: Wrapper to prevent badges from forcing horizontal scroll */
+.badge-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 8px;
 }
 
 /* ============================================================
