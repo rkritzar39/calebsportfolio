@@ -10995,7 +10995,7 @@ body.light-e .creator-sort-controls select option {
     height: 46px;
   }
 }
-``
+
 /* v26.6-beta.1                                           */
 /* ======================================================= */
 
@@ -11384,32 +11384,6 @@ body.light-e .upgrade-priority-badge.green {
 /* Upgrade Explanation Box  */
 /* ======================== */
 
-.tech-upgrade-explanation {
-  align-items: flex-start;
-  gap: 0.5rem;
-
-  margin-top: 0.35rem;
-  padding: 0.75rem 0.85rem;
-
-  border-radius: var(--radius-md);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.09),
-      rgba(255, 255, 255, 0.035)
-    ),
-    color-mix(in srgb, var(--content-bg) 88%, transparent);
-
-  border: 1px solid color-mix(in srgb, var(--border-color) 90%, transparent);
-
-  line-height: 1.5;
-
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.08),
-    0 8px 22px color-mix(in srgb, var(--shadow-color) 28%, transparent);
-}
-
 .tech-upgrade-explanation i {
   margin-top: 0.18rem;
   color: var(--accent-color);
@@ -11508,10 +11482,6 @@ body.light-e .tech-upgrade-explanation {
     width: 0.38rem;
     height: 0.38rem;
     margin-right: 0.05rem;
-  }
-
-  .score-bar {
-    height: 9px;
   }
 
   .tech-upgrade-explanation {
@@ -11701,6 +11671,7 @@ body.light-e .tech-upgrade-explanation {
 / UNIVERSAL STATUS PILLS                             /
 / ================================================== */
 
+
 .status-pill {
     display: inline-flex;
     align-items: center;
@@ -11736,7 +11707,7 @@ body.light-e .tech-upgrade-explanation {
     word-break: break-word;
 }
 
-/ Hover */
+/* Hover */
 
 .status-pill:hover {
     transform: translateY(-1px);
@@ -11823,20 +11794,6 @@ body.light-e .status-pill.gray {
 
 body.light-e .status-pill.purple {
     color: #8c33c7;
-}
-
-/* ================================================== /
-/ OWNERSHIP PILL                                     /
-/ ================================================== */
-
-.ownership-pill {
-    color: var(--status-green);
-    background: var(--status-green-bg);
-    border-color: var(--status-green-border);
-}
-
-body.light-e .ownership-pill {
-    color: #248a3d;
 }
 
 /* ================================================== /
@@ -11932,17 +11889,6 @@ body.light-e .trigger-pill.info {
 }
 
 /* ================================================== /
-/ BADGE CONTAINER                                    /
-/ ================================================== */
-
-.badge-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-}
-
-/* ================================================== /
 / RESPONSIVE PILLS                                   /
 / ================================================== */
 
@@ -11952,7 +11898,7 @@ body.light-e .trigger-pill.info {
     box-sizing: border-box;
 }
 
-/ Tablets */
+/* Tablets */
 
 @media (max-width: 768px) {
 
@@ -11975,7 +11921,7 @@ body.light-e .trigger-pill.info {
     }
 }
 
-/ Phones */
+/* Phones */
 
 @media (max-width: 600px) {
 
@@ -12008,7 +11954,7 @@ body.light-e .trigger-pill.info {
     }
 }
 
-/ Small Phones */
+/* Small Phones */
 
 @media (max-width: 400px) {
 
@@ -12035,27 +11981,6 @@ body.light-e .trigger-pill.info {
 }
 
 /* ------------------------------------------------------------
-   BASE STATUS PILL STYLES
------------------------------------------------------------- */
-.status-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.25rem 0.6rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-radius: 9999px; /* Fully rounded pills */
-    text-transform: capitalize;
-    line-height: 1.2;
-    white-space: nowrap;
-}
-
-.neutral {
-    background-color: #e2e8f0;
-    color: #475569;
-}
-
-/* ------------------------------------------------------------
    AI SUPPORT & FUTURE TARGET
 ------------------------------------------------------------ */
 .ai-standard {
@@ -12069,21 +11994,21 @@ body.light-e .trigger-pill.info {
 }
 
 .ai-maximum {
-    background-color: #ffedd5;
-    color: #c2410c; /* Orange/Gold */
+    background-color: #cffafe;
+    color: #0e7490;
 }
 
 /* ------------------------------------------------------------
    FUTURE-PROOF RATING
 ------------------------------------------------------------ */
 .future-balanced {
-    background-color: #e0f2fe;
-    color: #0369a1; /* Blue */
+    background-color: #fef3c7;
+    color: #b45309;
 }
 
 .future-high {
-    background-color: #f3e8ff;
-    color: #6b21a8; /* Purple */
+    background-color: #dcfce7;
+    color: #15803d;
 }
 
 .future-maximum {
@@ -12110,13 +12035,13 @@ body.light-e .trigger-pill.info {
 }
 
 .release-internal {
-    background-color: #fee2e2;
-    color: #b91c1c; /* Red */
+    background-color: #f3e8ff;
+    color: #7e22ce;
 }
 
 .release-pre-release {
-    background-color: #ccfbf1;
-    color: #0f766e; /* Teal */
+    background-color: #fce7f3;
+    color: #be185d;
 }
 
 /* ------------------------------------------------------------
@@ -12180,6 +12105,7 @@ body.light-e .trigger-pill.info {
 }
 
 /* Fallback */
+.neutral,
 .ownership-default {
     background-color: #e2e8f0;
     color: #475569;
