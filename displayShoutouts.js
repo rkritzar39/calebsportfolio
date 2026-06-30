@@ -4361,7 +4361,6 @@ function renderTechItemHomepage(itemData) {
 
     const ownershipConfig = getOwnershipConfig(item);
     const ownershipLabel = ownershipConfig.label;
-    const ownershipBadgeClass = ownershipConfig.badgeClass;
     const lifecycleSections = renderTechLifecycleSections(item, { context: ownershipConfig.mode });
 
     const osStatus = checkOSStatus(item.osVersion, item);
@@ -4382,15 +4381,15 @@ function renderTechItemHomepage(itemData) {
             osUpdateHtml = `
             <div class="tech-detail">
                 <i class="fas fa-download"></i>
-                <span>Update:</span>
-                Public software update recommended
+                <span class="tech-label">Update:</span>
+                <span class="tech-value">Public software update recommended</span>
             </div>`;
         } else if (osStatus.isBeta) {
             osUpdateHtml = `
             <div class="tech-detail">
                 <i class="fas fa-flask"></i>
-                <span>Beta Notice:</span>
-                Running beta software ahead of public release
+                <span class="tech-label">Beta Notice:</span>
+                <span class="tech-value">Running beta software ahead of public release</span>
             </div>`;
         }
     }
@@ -4398,8 +4397,8 @@ function renderTechItemHomepage(itemData) {
     const supportHtml = `
     <div class="tech-detail">
         <i class="fas fa-shield-check"></i>
-        <span>Support Status:</span>
-        <span class="support-badge ${support.supportColor || "green"}">
+        <span class="tech-label">Support Status:</span>
+        <span class="status-pill ${support.supportColor || "green"}">
             ${escapeHTML(support.supportLevel || "Fully Supported")}
         </span>
     </div>`;
@@ -4407,24 +4406,30 @@ function renderTechItemHomepage(itemData) {
     const coverageHtml = coverage.hasCoverageData ? `
     <div class="tech-detail">
         <i class="fas fa-file-shield"></i>
-        <span>Coverage:</span>
-        <span class="support-badge ${coverage.color}">${escapeHTML(coverage.label)}</span>
-        ${escapeHTML(coverage.detail)}
+        <span class="tech-label">Coverage:</span>
+        <span class="tech-value badge-container">
+            <span class="status-pill ${coverage.color}">${escapeHTML(coverage.label)}</span>
+            <span>${escapeHTML(coverage.detail)}</span>
+        </span>
     </div>` : "";
 
     const backupHtml = `
     <div class="tech-detail">
         <i class="fas fa-cloud-arrow-up"></i>
-        <span>Backup Priority:</span>
-        <span class="support-badge ${backupPriority.color}">${escapeHTML(backupPriority.label)}</span>
-        ${escapeHTML(backupPriority.reason)}
+        <span class="tech-label">Backup Priority:</span>
+        <span class="tech-value badge-container">
+            <span class="status-pill ${backupPriority.color}">
+                ${escapeHTML(backupPriority.label)}
+            </span>
+            <span>${escapeHTML(backupPriority.reason)}</span>
+        </span>
     </div>`;
 
     const costHtml = costEfficiency ? `
     <div class="tech-detail">
         <i class="fas fa-chart-pie"></i>
-        <span>Cost Efficiency:</span>
-        ${escapeHTML(costEfficiency.label)}
+        <span class="tech-label">Cost Efficiency:</span>
+        <span class="tech-value">${escapeHTML(costEfficiency.label)}</span>
     </div>` : "";
 
     const batteryHealth = item.batteryHealth !== null &&
@@ -4475,15 +4480,15 @@ function renderTechItemHomepage(itemData) {
     const summaryHtml = `
     <div class="tech-detail tech-summary">
         <i class="fas fa-clipboard-list"></i>
-        <span>Device Summary:</span>
-        ${escapeHTML(deviceSummary)}
+        <span class="tech-label">Device Summary:</span>
+        <span class="tech-value">${escapeHTML(deviceSummary)}</span>
     </div>`;
 
     const actionHtml = `
     <div class="tech-detail">
         <i class="fas fa-tools"></i>
-        <span>Recommended Action:</span>
-        ${escapeHTML(recommendedAction)}
+        <span class="tech-label">Recommended Action:</span>
+        <span class="tech-value">${escapeHTML(recommendedAction)}</span>
     </div>`;
 
     let batteryHtml = "";
@@ -4502,7 +4507,7 @@ function renderTechItemHomepage(itemData) {
         batteryHtml = `
         <div class="tech-detail">
             <i class="fas fa-heart"></i>
-            <span>Battery Health:</span>
+            <span class="tech-label">Battery Health:</span>
         </div>
 
         <div class="battery-container">
@@ -4519,23 +4524,24 @@ function renderTechItemHomepage(itemData) {
         cyclesHtml = `
         <div class="tech-detail">
             <i class="fas fa-sync"></i>
-            <span>Battery Charge Cycles:</span> ${batteryCycles}
+            <span class="tech-label">Battery Charge Cycles:</span> 
+            <span class="tech-value">${batteryCycles}</span>
         </div>`;
     }
 
     const upgradeHtml = `
     <div class="tech-detail">
         <i class="fas fa-arrow-up"></i>
-        <span>Upgrade Status:</span>
-        <span class="upgrade-badge ${upgrade.color}">
+        <span class="tech-label">Upgrade Status:</span>
+        <span class="status-pill ${upgrade.color}">
             ${escapeHTML(upgrade.status)}
         </span>
     </div>
 
     <div class="tech-detail">
         <i class="fas fa-lightbulb"></i>
-        <span>Suggestion:</span>
-        ${escapeHTML(upgrade.suggestion)}
+        <span class="tech-label">Suggestion:</span>
+        <span class="tech-value">${escapeHTML(upgrade.suggestion)}</span>
     </div>`;
 
     let triggersHtml = "";
@@ -4544,39 +4550,61 @@ function renderTechItemHomepage(itemData) {
         triggersHtml = `
         <div class="tech-detail">
             <i class="fas fa-exclamation-circle"></i>
-            <span>Upgrade Triggers:</span>
+            <span class="tech-label">Upgrade Triggers:</span>
         </div>
 
-        <ul class="upgrade-triggers">
-            ${upgrade.triggers.map(t => `<li>${escapeHTML(t)}</li>`).join("")}
-        </ul>`;
+        <div class="upgrade-trigger-container" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px 28px;">
+            ${upgrade.triggers.map(trigger => {
+                let urgency = "info";
+                const lower = trigger.toLowerCase();
+
+                if (
+                    lower.includes("unsupported") ||
+                    lower.includes("repair") ||
+                    lower.includes("critical") ||
+                    lower.includes("2000")
+                ) {
+                    urgency = "critical";
+                } else if (
+                    lower.includes("battery") ||
+                    lower.includes("outdated") ||
+                    lower.includes("1500")
+                ) {
+                    urgency = "warning";
+                }
+
+                return `<span class="trigger-pill ${urgency}">${escapeHTML(trigger)}</span>`;
+            }).join("")}
+        </div>`;
     }
 
     const smartUpgradeHtml = `
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-calendar-check"></i>
         <span class="tech-label">Recommended Upgrade Year:</span>
-        <span class="tech-value">${escapeHTML(smartUpgrade.recommendedUpgradeYear)}</span>
+        <span class="tech-value">
+        ${escapeHTML(smartUpgrade.recommendedUpgradeYear)}</span>
     </div>
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-calendar-days"></i>
         <span class="tech-label">Upgrade Window:</span>
-        <span class="tech-value">${escapeHTML(smartUpgrade.upgradeWindow)}</span>
+        <span class="tech-value">
+        ${escapeHTML(smartUpgrade.upgradeWindow)}</span>
     </div>
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-ranking-star"></i>
         <span class="tech-label">Upgrade Priority:</span>
-        <span class="upgrade-priority-badge ${smartUpgrade.priority.color}">
-            ${escapeHTML(smartUpgrade.priority.label)}
+        <span class="status-pill ${smartUpgrade.priority.color}">
+        ${escapeHTML(smartUpgrade.priority.label)}
         </span>
     </div>
 
     <div class="tech-detail tech-upgrade-explanation">
         <i class="fas fa-circle-question"></i>
         <span class="tech-label">Why:</span>
-        <span class="upgrade-explanation-text">
+        <span class="tech-value upgrade-explanation-text" style="color: white;">
             ${escapeHTML(smartUpgrade.explanation)}
         </span>
     </div>`;
@@ -4585,7 +4613,7 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-brain"></i>
         <span class="tech-label">Current AI Support:</span>
-        <span class="support-badge ${aiSupport.aiSupportColor}">
+        <span class="status-pill ${aiSupport.aiSupportColor}">
             ${escapeHTML(aiSupport.aiSupportLevel)}
         </span>
     </div>
@@ -4593,7 +4621,7 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-wand-magic-sparkles"></i>
         <span class="tech-label">Future AI Target:</span>
-        <span class="support-badge ${futureAITarget.color}">
+        <span class="status-pill ${futureAITarget.color}">
             ${escapeHTML(futureAITarget.level)}
         </span>
     </div>
@@ -4617,7 +4645,7 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-seedling"></i>
         <span class="tech-label">Future-Proof Rating:</span>
-        <span class="support-badge ${futureProof.futureProofColor}">
+       <span class="status-pill ${futureProof.futureProofColor}">
             ${escapeHTML(futureProof.futureProofRating)} (${futureProof.futureProofScore}/100)
         </span>
     </div>
@@ -4637,7 +4665,7 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail tech-upgrade-explanation">
         <i class="fas fa-route"></i>
         <span class="tech-label">Future Specs:</span>
-        <span class="upgrade-explanation-text">
+        <span class="tech-value upgrade-explanation-text" style="color: white;">
             ${escapeHTML(futureTarget.recommendedFutureSpecs)}
         </span>
     </div>
@@ -4645,7 +4673,7 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail tech-upgrade-explanation">
         <i class="fas fa-ban"></i>
         <span class="tech-label">Avoid:</span>
-        <span class="upgrade-explanation-text">
+        <span class="tech-value upgrade-explanation-text" style="color: white;">
             ${escapeHTML(futureTarget.avoidRecommendation)}
         </span>
     </div>`;
@@ -4653,22 +4681,22 @@ function renderTechItemHomepage(itemData) {
     const ageHtml = age ? `
     <div class="tech-detail">
         <i class="fas fa-clock"></i>
-        <span>Device Age:</span>
-        ${age.days} days (${age.years} years)
+        <span class="tech-label">Device Age:</span>
+        <span class="tech-value">${age.days} days (${age.years} years)</span>
     </div>` : "";
 
     const trendHtml = batteryTrend && batteryTrend.decline !== undefined ? `
     <div class="tech-detail">
         <i class="fas fa-chart-line"></i>
-        <span>Battery Trend:</span>
-        ${escapeHTML(batteryTrend.trend)} (-${escapeHTML(batteryTrend.decline)}%)
+        <span class="tech-label">Battery Trend:</span>
+        <span class="tech-value">${escapeHTML(batteryTrend.trend)} (-${escapeHTML(batteryTrend.decline)}%)</span>
     </div>` : "";
 
     const scoreHtml = `
     <div class="tech-detail">
         <i class="fas fa-gauge-high"></i>
-        <span>Device Score:</span>
-        ${escapeHTML(upgradeScore.label)} (${upgradeScore.score}/100)
+        <span class="tech-label">Device Score:</span>
+        <span class="tech-value">${escapeHTML(upgradeScore.label)} (${upgradeScore.score}/100)</span>
     </div>
 
     <div class="score-bar">
@@ -4679,17 +4707,17 @@ function renderTechItemHomepage(itemData) {
     const osIconClass = osStatus ? getOSIconClass(osStatus.osType) : "fas fa-code-branch";
 
     const advancedDetailsContent = `
-        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Device Type:</span> ${escapeHTML(deviceType)}</div>` : ""}
-        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span>Model Year:</span> ${escapeHTML(modelYear)}</div>` : ""}
-        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span>Support End Year:</span> ${escapeHTML(supportEndYear)}</div>` : ""}
-        ${item.chipName ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span>Chip:</span> ${escapeHTML(item.chipName)}</div>` : ""}
-        ${item.ramGB ? `<div class="tech-detail"><i class="fas fa-memory"></i><span>RAM:</span> ${escapeHTML(item.ramGB)}GB</div>` : ""}
-        ${item.storageGB ? `<div class="tech-detail"><i class="fas fa-database"></i><span>Storage Capacity:</span> ${escapeHTML(item.storageGB)}GB</div>` : ""}
-        ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span>Material:</span> ${escapeHTML(material)}</div>` : ""}
-        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span>Battery Capacity:</span> ${escapeHTML(batteryCapacity)}</div>` : ""}
-        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span>Price:</span> ${escapeHTML(price)}</div>` : ""}
-        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span>Date Released:</span> ${escapeHTML(formatTechDate(dateReleased) || dateReleased)}</div>` : ""}
-        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span>Date Bought:</span> ${escapeHTML(formatTechDate(dateBought) || dateBought)}</div>` : ""}
+        ${deviceType ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span class="tech-label">Device Type:</span> <span class="tech-value">${escapeHTML(deviceType)}</span></div>` : ""}
+        ${modelYear ? `<div class="tech-detail"><i class="fas fa-calendar"></i><span class="tech-label">Model Year:</span> <span class="tech-value">${escapeHTML(modelYear)}</span></div>` : ""}
+        ${supportEndYear ? `<div class="tech-detail"><i class="fas fa-shield-halved"></i><span class="tech-label">Support End Year:</span> <span class="tech-value">${escapeHTML(supportEndYear)}</span></div>` : ""}
+        ${item.chipName ? `<div class="tech-detail"><i class="fas fa-microchip"></i><span class="tech-label">Chip:</span> <span class="tech-value">${escapeHTML(item.chipName)}</span></div>` : ""}
+        ${item.ramGB ? `<div class="tech-detail"><i class="fas fa-memory"></i><span class="tech-label">RAM:</span> <span class="tech-value">${escapeHTML(item.ramGB)}GB</span></div>` : ""}
+        ${item.storageGB ? `<div class="tech-detail"><i class="fas fa-database"></i><span class="tech-label">Storage Capacity:</span> <span class="tech-value">${escapeHTML(item.storageGB)}GB</span></div>` : ""}
+              ${material ? `<div class="tech-detail"><i class="fas fa-layer-group"></i><span class="tech-label">Material:</span> <span class="tech-value">${escapeHTML(material)}</span></div>` : ""}
+        ${batteryCapacity ? `<div class="tech-detail"><i class="fas fa-battery-full"></i><span class="tech-label">Battery Capacity:</span> <span class="tech-value">${escapeHTML(batteryCapacity)}</span></div>` : ""}
+        ${price ? `<div class="tech-detail"><i class="fas fa-tag"></i><span class="tech-label">Price:</span> <span class="tech-value">${escapeHTML(price)}</span></div>` : ""}
+        ${dateReleased ? `<div class="tech-detail"><i class="fas fa-calendar-plus"></i><span class="tech-label">Date Released:</span> <span class="tech-value">${escapeHTML(formatTechDate(dateReleased) || dateReleased)}</span></div>` : ""}
+        ${dateBought ? `<div class="tech-detail"><i class="fas fa-shopping-cart"></i><span class="tech-label">Date Bought:</span> <span class="tech-value">${escapeHTML(formatTechDate(dateBought) || dateBought)}</span></div>` : ""}
         ${cyclesHtml}
         ${trendHtml}
         ${coverageHtml}
@@ -4723,17 +4751,17 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-item">
         <h3><i class="${escapeHTML(iconClass)}"></i> ${escapeHTML(name)}</h3>
 
-        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span>Model:</span> ${escapeHTML(model)}</div>` : ""}
+        ${model ? `<div class="tech-detail"><i class="fas fa-info-circle"></i><span class="tech-label">Model:</span> <span class="tech-value">${escapeHTML(model)}</span></div>` : ""}
         <div class="tech-detail">
             <i class="fas fa-id-badge"></i>
-            <span>Ownership:</span>
-            <span class="upgrade-badge ${escapeHTML(ownershipBadgeClass)}">${escapeHTML(ownershipLabel)}</span>
+            <span class="tech-label">Ownership:</span>
+            <span class="status-pill ownership-pill">${escapeHTML(ownershipLabel)}</span>
         </div>
-        ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span>Primary Use:</span> ${escapeHTML(primaryUse)}</div>` : ""}
+        ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span class="tech-label">Primary Use:</span> <span class="tech-value">${escapeHTML(primaryUse)}</span></div>` : ""}
         ${lifecycleSections}
-        ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span>Condition:</span> ${escapeHTML(condition)}</div>` : ""}
-        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span>Storage:</span> ${escapeHTML(storage)}</div>` : ""}
-        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span>Color:</span> ${escapeHTML(color)}</div>` : ""}
+        ${condition ? `<div class="tech-detail"><i class="fas fa-screwdriver-wrench"></i><span class="tech-label">Condition:</span> <span class="status-pill condition-pill ${condition.toLowerCase().replace(/\s+/g, "-")}">${escapeHTML(condition)}</span></div>` : ""}
+        ${storage ? `<div class="tech-detail"><i class="fas fa-hdd"></i><span class="tech-label">Storage:</span> <span class="tech-value">${escapeHTML(storage)}</span></div>` : ""}
+        ${color ? `<div class="tech-detail"><i class="fas fa-palette"></i><span class="tech-label">Color:</span> <span class="tech-value">${escapeHTML(color)}</span></div>` : ""}
 
         ${summaryHtml}
         ${ageHtml}
@@ -4741,23 +4769,35 @@ function renderTechItemHomepage(itemData) {
         ${osVersion ? `
         <div class="tech-detail">
             <i class="${escapeHTML(osIconClass)}"></i>
-            <span>OS Version:</span> ${escapeHTML(osVersion)}
-            ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
+            <span class="tech-label">OS Version:</span> 
+            <span class="tech-value badge-container">
+                <span>${escapeHTML(osVersion)}</span>
+                ${osStatus ? `<span class="os-badge ${osStatus.color}">${escapeHTML(osStatus.status)}</span>` : ""}
+            </span>
         </div>
 
         ${osStatus ? `
         <div class="tech-detail">
             <i class="fas fa-code-branch"></i>
-            <span>Release Channel:</span> ${escapeHTML(osStatus.releaseChannel)}
+            <span class="tech-label">Release Channel:</span>
+            <span class="status-pill ${osStatus.isBeta ? "purple" : "green"}">
+                ${escapeHTML(osStatus.releaseChannel)}
+            </span>
         </div>
 
         <div class="tech-detail">
-    <i class="fas fa-circle-info"></i>
-    <span>Public Latest:</span>
-    ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
-    ${osStatus.latestVersionLabel ? `<small>${escapeHTML(osStatus.latestVersionLabel)}</small>` : ""}
-    ${osStatus.latestVersionNote ? `<small>${escapeHTML(osStatus.latestVersionNote)}</small>` : ""}
-</div>
+            <i class="fas fa-circle-info"></i>
+            <span class="tech-label">Public Latest:</span>
+            <span class="tech-value">
+                ${escapeHTML(formattedOSType)} ${escapeHTML(osStatus.latestPublicVersion)}
+                ${osStatus.latestVersionLabel && osStatus.latestVersionLabel !== formattedOSType
+                    ? `<small style="display: block; margin-top: 4px; color: var(--secondary-text);">${escapeHTML(osStatus.latestVersionLabel)}</small>`
+                    : ""}
+                ${osStatus.latestVersionNote
+                    ? `<small style="display: block; margin-top: 2px; color: var(--secondary-text);">${escapeHTML(osStatus.latestVersionNote)}</small>`
+                    : ""}
+            </span>
+        </div>
         ` : ""}
         ` : ""}
 
