@@ -3993,18 +3993,19 @@ function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = 
     <div class="tech-lifecycle-card tech-upgrade-path">
         <div class="tech-lifecycle-title">
             <i class="fas fa-route"></i>
-            <span>Upgrade Path</span>
+            <span class="tech-label">Upgrade Path:</span>
         </div>
-        <div class="tech-lifecycle-flow">
-            <span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(fromDevice)}</span>
-            <i class="fas fa-arrow-right"></i>
-            <span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(toDevice)}</span>
+        <!-- NEW: Added flex-wrap inline or via CSS to prevent node overflow -->
+        <div class="tech-lifecycle-flow" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+            <span class="tech-lifecycle-node tech-lifecycle-from tech-value">${escapeHTML(fromDevice)}</span>
+            <i class="fas fa-arrow-right" style="color: var(--secondary-text);"></i>
+            <span class="tech-lifecycle-node tech-lifecycle-to tech-value">${escapeHTML(toDevice)}</span>
         </div>
-        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note">${escapeHTML(note)}</div>` : ""}
+        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note tech-value">${escapeHTML(note)}</div>` : ""}
         ${hasTechLifecycleValue(status) || hasTechLifecycleValue(windowText) ? `
-        <div class="tech-lifecycle-meta">
+        <div class="badge-container">
             ${hasTechLifecycleValue(status) ? `<span class="support-badge blue">${escapeHTML(status)}</span>` : ""}
-            ${hasTechLifecycleValue(windowText) ? `<span>${escapeHTML(windowText)}</span>` : ""}
+            ${hasTechLifecycleValue(windowText) ? `<span class="tech-value" style="font-size: 0.85rem;">${escapeHTML(windowText)}</span>` : ""}
         </div>` : ""}
     </div>`;
 }
@@ -4016,17 +4017,17 @@ function renderTechRoleTransitionBlock({ title, iconClass = "fas fa-right-left",
     <div class="tech-lifecycle-card tech-role-transition">
         <div class="tech-lifecycle-title">
             <i class="${escapeHTML(iconClass)}"></i>
-            <span>${escapeHTML(title)}</span>
+            <span class="tech-label">${escapeHTML(title)}</span>
             ${badge || ""}
         </div>
         ${hasTechLifecycleValue(fromRole) && hasTechLifecycleValue(toRole) ? `
-        <div class="tech-lifecycle-flow">
-            <span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(fromRole)}</span>
-            <i class="fas fa-arrow-right"></i>
-            <span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(toRole)}</span>
+        <div class="tech-lifecycle-flow" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+            <span class="tech-lifecycle-node tech-lifecycle-from tech-value">${escapeHTML(fromRole)}</span>
+            <i class="fas fa-arrow-right" style="color: var(--secondary-text);"></i>
+            <span class="tech-lifecycle-node tech-lifecycle-to tech-value">${escapeHTML(toRole)}</span>
         </div>` : ""}
-        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note">${escapeHTML(note)}</div>` : ""}
-        ${hasTechLifecycleValue(changedDate) ? `<div class="tech-lifecycle-meta"><i class="fas fa-clock"></i> Updated ${escapeHTML(changedDate)}</div>` : ""}
+        ${hasTechLifecycleValue(note) ? `<div class="tech-detail"><span class="tech-label">Note:</span> <span class="tech-value">${escapeHTML(note)}</span></div>` : ""}
+        ${hasTechLifecycleValue(changedDate) ? `<div class="tech-lifecycle-meta tech-label"><i class="fas fa-clock"></i> Updated ${escapeHTML(changedDate)}</div>` : ""}
     </div>`;
 }
 
@@ -4038,19 +4039,19 @@ function renderTechDeviceLineageBlock(item) {
     if (!hasTechLifecycleValue(predecessor) && !hasTechLifecycleValue(successor)) return "";
 
     const nodes = [];
-    if (hasTechLifecycleValue(predecessor)) nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(predecessor)}</span>`);
-    nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-current">${escapeHTML(name)}</span>`);
-    if (hasTechLifecycleValue(successor)) nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(successor)}</span>`);
+    if (hasTechLifecycleValue(predecessor)) nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-from tech-value">${escapeHTML(predecessor)}</span>`);
+    nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-current tech-value" style="font-weight: 700; color: var(--accent-color);">${escapeHTML(name)}</span>`);
+    if (hasTechLifecycleValue(successor)) nodes.push(`<span class="tech-lifecycle-node tech-lifecycle-to tech-value">${escapeHTML(successor)}</span>`);
 
     return `
     <div class="tech-lifecycle-card tech-device-lineage">
         <div class="tech-lifecycle-title">
             <i class="fas fa-timeline"></i>
-            <span>Device Lineage</span>
+            <span class="tech-label">Device Lineage</span>
             ${renderTechAutomationBadge(item)}
         </div>
-        <div class="tech-lifecycle-flow">
-            ${nodes.join(`<i class="fas fa-arrow-right"></i>`)}
+        <div class="tech-lifecycle-flow" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+            ${nodes.join(`<i class="fas fa-arrow-right" style="color: var(--secondary-text);"></i>`)}
         </div>
     </div>`;
 }
