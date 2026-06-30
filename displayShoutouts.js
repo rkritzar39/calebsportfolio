@@ -4056,6 +4056,7 @@ function renderTechDeviceLineageBlock(item) {
     </div>`;
 }
 
+
 function renderTechLifecycleSections(itemData, options = {}) {
     const initialItem = normalizeTechItem(itemData);
     const initialOwnershipConfig = getOwnershipConfig(initialItem);
@@ -4327,6 +4328,81 @@ function renderPlannedTechItemHomepage(itemData) {
 
         ${lifecycleSections}
     </div>`;
+}
+
+/* ------------------------------------------------------------
+   STATUS PILL MAPPINGS & HELPERS
+------------------------------------------------------------ */
+
+const AI_SUPPORT_MAP = {
+    "Standard": "ai-standard",
+    "Advanced": "ai-advanced",
+    "Maximum": "ai-maximum"
+};
+
+function getAISupportClass(level) {
+    return AI_SUPPORT_MAP[level] || "neutral";
+}
+
+const FUTURE_AI_TARGET_MAP = {
+    "Standard": "ai-standard",
+    "Advanced": "ai-advanced",
+    "Maximum": "ai-maximum"
+};
+
+function getFutureAITargetClass(level) {
+    return FUTURE_AI_TARGET_MAP[level] || "neutral";
+}
+
+const FUTURE_PROOF_MAP = {
+    "Balanced": "future-balanced",
+    "High": "future-high",
+    "Maximum": "future-maximum"
+};
+
+function getFutureProofClass(level) {
+    return FUTURE_PROOF_MAP[level] || "neutral";
+}
+
+const RELEASE_CHANNEL_MAP = {
+    "Public": "release-public",
+    "Public Beta": "release-public-beta",
+    "Developer Beta": "release-dev-beta",
+    "Internal": "release-internal",
+    "Pre-Release": "release-pre-release"
+};
+
+function getReleaseChannelClass(channel) {
+    return RELEASE_CHANNEL_MAP[channel] || "neutral";
+}
+
+const OWNERSHIP_MAP = {
+    "Owned": "ownership-owned",
+    "Borrowed": "ownership-borrowed",
+    "Loaned Out": "ownership-loaned",
+    "School-Issued": "ownership-school",
+    "Work-Issued": "ownership-work",
+    "In Repair": "ownership-repair",
+    "Planned": "ownership-planned",
+    "Coming Soon": "ownership-coming-soon",
+    "Future Upgrade": "ownership-future-upgrade",
+    "Preordered": "ownership-preordered",
+    "Wishlist": "ownership-wishlist",
+    "Considering": "ownership-considering",
+    "Researching": "ownership-researching",
+    "Ordered": "ownership-ordered",
+    "Reserved": "ownership-reserved",
+    "Retired": "ownership-retired",
+    "Sold": "ownership-sold",
+    "Traded In": "ownership-traded-in",
+    "Donated": "ownership-donated",
+    "Recycled": "ownership-recycled",
+    "Returned": "ownership-returned",
+    "Lost": "ownership-lost"
+};
+
+function getOwnershipClass(label) {
+    return OWNERSHIP_MAP[label] || "ownership-default";
 }
 
 
@@ -4613,7 +4689,7 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-brain"></i>
         <span class="tech-label">Current AI Support:</span>
-        <span class="status-pill ${aiSupport.aiSupportColor}">
+        <span class="status-pill ${getAISupportClass(aiSupport.aiSupportLevel)}">
             ${escapeHTML(aiSupport.aiSupportLevel)}
         </span>
     </div>
@@ -4621,7 +4697,7 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-wand-magic-sparkles"></i>
         <span class="tech-label">Future AI Target:</span>
-        <span class="status-pill ${futureAITarget.color}">
+        <span class="status-pill ${getFutureAITargetClass(futureAITarget.level)}">
             ${escapeHTML(futureAITarget.level)}
         </span>
     </div>
@@ -4645,7 +4721,7 @@ function renderTechItemHomepage(itemData) {
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-seedling"></i>
         <span class="tech-label">Future-Proof Rating:</span>
-       <span class="status-pill ${futureProof.futureProofColor}">
+       <span class="status-pill ${getFutureProofClass(futureProof.futureProofRating)}">
             ${escapeHTML(futureProof.futureProofRating)} (${futureProof.futureProofScore}/100)
         </span>
     </div>
@@ -4755,7 +4831,7 @@ function renderTechItemHomepage(itemData) {
         <div class="tech-detail">
             <i class="fas fa-id-badge"></i>
             <span class="tech-label">Ownership:</span>
-            <span class="status-pill ownership-pill">${escapeHTML(ownershipLabel)}</span>
+            <span class="status-pill ${getOwnershipClass(ownershipLabel)}">${escapeHTML(ownershipLabel)}</span>
         </div>
         ${primaryUse ? `<div class="tech-detail"><i class="fas fa-bullseye"></i><span class="tech-label">Primary Use:</span> <span class="tech-value">${escapeHTML(primaryUse)}</span></div>` : ""}
         ${lifecycleSections}
@@ -4780,7 +4856,7 @@ function renderTechItemHomepage(itemData) {
         <div class="tech-detail">
             <i class="fas fa-code-branch"></i>
             <span class="tech-label">Release Channel:</span>
-            <span class="status-pill ${osStatus.isBeta ? "purple" : "green"}">
+            <span class="status-pill ${getReleaseChannelClass(osStatus.releaseChannel)}">
                 ${escapeHTML(osStatus.releaseChannel)}
             </span>
         </div>
