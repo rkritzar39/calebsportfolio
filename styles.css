@@ -11067,37 +11067,57 @@ body.light-e {
 }
 
 
-/* ======================== */
-/* Shared Badge Styling     */
-/* ======================== */
+/* ======================================== /
+/  Liquid Glass Status Pills Base           /
+/ ======================================== */
 
+/* Grouping all badge types to inherit the root theme's glass optics */
+.status,
 .upgrade-badge,
+.os-badge,
 .support-badge,
-.os-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
+.upgrade-priority-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    
+    /* Spacing and Typography */
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-weight: 650;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    
+    /* Liquid Glass Base Background */
+    background: 
+        linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--glow-color) 24%, transparent),
+            color-mix(in srgb, var(--content-bg) 86%, transparent)
+        ),
+        color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 
-  padding: 0.24rem 0.62rem;
-  margin-left: 0.35rem;
+    /* Dynamic Border & Blur */
+    border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+    backdrop-filter: blur(14px) saturate(155%);
+    -webkit-backdrop-filter: blur(14px) saturate(155%);
 
-  border-radius: 999px;
-  border: 1px solid transparent;
+    /* Depth & Glow Integration */
+    box-shadow:
+        inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent),
+        0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
 
-  font-size: 0.78rem;
-  font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
-
-  backdrop-filter: blur(14px) saturate(150%);
-  -webkit-backdrop-filter: blur(14px) saturate(150%);
-
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.08),
-    0 4px 12px rgba(0, 0, 0, 0.12);
+    /* Smooth Transitions for Hover States */
+    transition: all var(--transition-medium);
 }
 
+/* Tighter sizing specific to OS badges to maintain hierarchy */
+.os-badge {
+    margin-left: 8px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+}
 
 /* ======================== */
 /* Upgrade Priority Badge   */
@@ -11148,123 +11168,64 @@ body.light-e {
   flex-shrink: 0;
 }
 
-/* Critical */
-.upgrade-priority-badge.red {
-  color: var(--status-red);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 69, 58, 0.24),
-      rgba(255, 69, 58, 0.075)
-    );
-  border-color: var(--status-red-border);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.12),
-    0 6px 16px rgba(0, 0, 0, 0.16),
-    0 0 18px var(--status-red-glow);
-}
+/* ======================================== /
+/  Liquid Glass Pill Color Variants         /
+/ ======================================== */
 
-/* Recommended */
-.upgrade-priority-badge.yellow {
-  color: var(--status-yellow);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 214, 10, 0.24),
-      rgba(255, 214, 10, 0.075)
-    );
-  border-color: var(--status-yellow-border);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.12),
-    0 6px 16px rgba(0, 0, 0, 0.16),
-    0 0 18px var(--status-yellow-glow);
-}
-
-/* Optional */
-.upgrade-priority-badge.gray {
-  color: var(--status-gray);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(199, 199, 204, 0.2),
-      rgba(199, 199, 204, 0.06)
-    );
-  border-color: var(--status-gray-border);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.1),
-    0 6px 16px rgba(0, 0, 0, 0.12),
-    0 0 14px var(--status-gray-glow);
-}
-
-/* Not Needed */
-.upgrade-priority-badge.green {
-  color: var(--status-green);
-  background:
-    linear-gradient(
-      135deg,
-      rgba(48, 209, 88, 0.24),
-      rgba(48, 209, 88, 0.075)
-    );
-  border-color: var(--status-green-border);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.12),
-    0 6px 16px rgba(0, 0, 0, 0.16),
-    0 0 18px var(--status-green-glow);
-}
-
-
-/* ======================== */
-/* Normal Badge Colors      */
-/* ======================== */
-
+/* --- Green (Completed, Healthy, Supported) --- */
+.status.completed,
 .upgrade-badge.green,
-.support-badge.green,
-.os-badge.green {
-  color: var(--status-green);
-  background: var(--status-green-bg);
-  border-color: var(--status-green-border);
+.os-badge.green,
+.score-fill.green {
+    color: #32CD32;
+    border-color: rgba(50, 205, 50, 0.3);
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.15),
+        0 4px 14px rgba(50, 205, 50, 0.12);
 }
 
+/* --- Yellow/Orange (Pending, Warning, Limited) --- */
+.status.pending,
 .upgrade-badge.yellow,
-.support-badge.yellow,
-.os-badge.yellow {
-  color: var(--status-yellow);
-  background: var(--status-yellow-bg);
-  border-color: var(--status-yellow-border);
+.os-badge.yellow,
+.score-fill.yellow {
+    color: #FFCC00;
+    border-color: rgba(255, 204, 0, 0.3);
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.15),
+        0 4px 14px rgba(255, 204, 0, 0.12);
 }
 
-.upgrade-badge.orange,
-.support-badge.orange,
-.os-badge.orange {
-  color: var(--status-orange);
-  background: var(--status-orange-bg);
-  border-color: var(--status-orange-border);
+.status.in-progress {
+    color: var(--accent-color);
+    border-color: color-mix(in srgb, var(--accent-color) 30%, transparent);
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.15),
+        0 4px 14px color-mix(in srgb, var(--accent-color) 15%, transparent);
 }
 
+/* --- Red (Critical, Outdated, Unsupported) --- */
 .upgrade-badge.red,
-.support-badge.red,
-.os-badge.red {
-  color: var(--status-red);
-  background: var(--status-red-bg);
-  border-color: var(--status-red-border);
+.os-badge.red,
+.score-fill.red {
+    color: #FF3B30;
+    border-color: rgba(255, 59, 48, 0.3);
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.15),
+        0 4px 14px rgba(255, 59, 48, 0.15);
 }
 
-.upgrade-badge.gray,
-.support-badge.gray,
-.os-badge.gray {
-  color: var(--status-gray);
-  background: var(--status-gray-bg);
-  border-color: var(--status-gray-border);
-}
-
-.upgrade-badge.purple,
+/* --- Purple (Beta, Pre-release) --- */
+.os-badge.purple,
 .support-badge.purple,
-.os-badge.purple {
-  color: var(--status-purple);
-  background: var(--status-purple-bg);
-  border-color: var(--status-purple-border);
+.upgrade-badge.purple,
+.upgrade-priority-badge.purple {
+    color: #AF52DE;
+    border-color: rgba(175, 82, 222, 0.3);
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.15),
+        0 4px 14px rgba(175, 82, 222, 0.18);
 }
-
 
 /* ======================== */
 /* Light Mode Badge Tuning  */
@@ -11439,39 +11400,37 @@ body.light-e .tech-upgrade-explanation {
 }
 
 
-/* ======================== */
-/* Upgrade Trigger List     */
-/* ======================== */
+/* ======================================== /
+/  "The Why" Typography Fixes (White Text)  /
+/ ======================================== */
 
+/* Force the upgrade triggers list and its bullet points to be stark white */
 .upgrade-triggers {
-  margin: 0.35rem 0 0.9rem 2rem;
-  padding: 0;
-
-  list-style: none;
+    color: var(--text-color) !important; /* Forces #f7f8fb in dark mode */
+    font-weight: 500; /* Slightly bolder for readability against glass */
 }
 
-.upgrade-triggers li {
-  position: relative;
-
-  margin: 0.3rem 0;
-  padding-left: 1rem;
-
-  color: var(--secondary-text);
-  font-size: 0.92rem;
-  line-height: 1.4;
+/* Target the bullet markers specifically to ensure they aren't left gray */
+.upgrade-triggers li::marker {
+    color: var(--text-color) !important; 
 }
 
-.upgrade-triggers li::before {
-  content: "•";
-
-  position: absolute;
-  left: 0;
-  top: 0;
-
-  color: var(--status-yellow);
-  font-weight: 900;
+/* Advanced details wrapper text */
+.tech-advanced-details summary {
+    color: var(--text-color); 
 }
 
+/* Overriding the gray tech labels */
+.tech-detail .tech-label {
+    color: var(--text-color) !important; 
+    font-weight: 650; /* Makes the label distinct from the value without using gray */
+}
+
+/* Ensuring the corresponding values are also bright */
+.tech-detail .tech-value {
+    color: var(--text-color) !important; 
+    font-weight: 400;
+}
 
 /* ======================== */
 /* Smart Recommendation Rows */
