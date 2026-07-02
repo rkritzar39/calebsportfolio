@@ -2234,7 +2234,8 @@ async function loadBusinessInfoData() {
 async function saveBusinessInfoData(e) {
     e?.preventDefault();
 
-    if (!auth?.currentUser) {
+    // FIXED AUTH CHECK
+    if (!auth || !auth.currentUser) {
         showBusinessInfoStatus("Not logged in.", true);
         return;
     }
@@ -2652,7 +2653,8 @@ async function loadAcademicAvailabilityData() {
 async function saveAcademicAvailabilityData(e) {
     e?.preventDefault();
 
-    if (!auth?.currentUser) {
+    // FIXED AUTH CHECK
+    if (!auth || !auth.currentUser) {
         showAcademicStatus("Not logged in.", true);
         return;
     }
