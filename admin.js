@@ -735,6 +735,9 @@ document.addEventListener('DOMContentLoaded', () => { //
     // Firestore Reference for Tech
     const techItemsCollectionRef = collection(db, "tech_items"); // Tech collection ref
 
+    const academicDocRef =doc(db, "site_config", "academicAvailability"  );
+
+
     // --- Inactivity Logout Variables ---
     let inactivityTimer; //
     let expirationTime; //
@@ -1921,6 +1924,99 @@ function addListenerSafe(element, eventType, handler, flagSuffix = '') {
     }
 }
 
+async function saveAcademicAvailabilityData(e) {
+
+    e.preventDefault();
+
+    const payload = {
+
+        currentSemester: {
+            name:
+                document.getElementById(
+                    "semester-name"
+                ).value,
+
+            termType:
+                document.getElementById(
+                    "semester-term-type"
+                ).value,
+
+            startDate:
+                document.getElementById(
+                    "semester-start-date"
+                ).value,
+
+            endDate:
+                document.getElementById(
+                    "semester-end-date"
+                ).value
+        },
+
+        availabilityStatus:
+            document.getElementById(
+                "academic-availability-status"
+            ).value,
+
+        currentActivity:
+            document.getElementById(
+                "academic-activity"
+            ).value
+    };
+
+    await setDoc(
+        academicDocRef,
+        payload,
+        { merge: true }
+    );
+
+}
+
+ document
+    .getElementById(
+        "academic-availability-form"
+    )
+    ?.addEventListener(
+        "submit",
+        saveAcademicAvailabilityData
+    );
+
+
+    async function loadAcademicAvailabilityData() {
+
+    const snap =
+        await getDoc(
+            academicDocRef
+        );
+
+    if (!snap.exists())
+        return;
+
+    const data =
+        snap.data();
+
+    document.getElementById(
+        "semester-name"
+    ).value =
+        data.currentSemester?.name || "";
+
+    document.getElementById(
+        "semester-term-type"
+    ).value =
+        data.currentSemester?.termType || "";
+
+    document.getElementById(
+        "semester-start-date"
+    ).value =
+        data.currentSemester?.startDate || "";
+
+    document.getElementById(
+        "semester-end-date"
+    ).value =
+        data.currentSemester?.endDate || "";
+
+}
+
+
 function showBusinessInfoStatus(message, isError = false) {
     const el = document.getElementById('business-info-status-message');
     if (!el) { console.warn("Business info status message element not found!"); return; }
@@ -2547,6 +2643,8 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         setupBusinessInfoListeners();
         loadBusinessInfoData();
+        loadAcademicAvailabilityData();
+
     });
 } else {
     setupBusinessInfoListeners();
