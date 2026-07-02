@@ -8988,6 +8988,208 @@ main .business-section{
   }
 }
 
+/* =========================================================
+   ACADEMIC AVAILABILITY
+========================================================= */
+
+#schoolDetails{
+  scroll-margin-top:100px;
+}
+
+#schoolDetails .biz-meta{
+  margin-top:12px;
+}
+
+#schoolDetails .biz-meta__value{
+  font-weight:900;
+}
+
+#school-hours-display{
+  display:grid;
+  gap:10px;
+}
+
+.school-day{
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:150px 1fr;
+  gap:12px;
+  align-items:start;
+  padding:12px 14px;
+  border-radius:var(--radius-lg);
+  border:1px solid color-mix(
+    in srgb,
+    var(--border-color) 30%,
+    transparent
+  );
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.04),
+      rgba(255,255,255,.01)
+    ),
+    color-mix(
+      in srgb,
+      var(--content-bg) 90%,
+      transparent
+    );
+
+  backdrop-filter:var(--backdrop-blur);
+  -webkit-backdrop-filter:var(--backdrop-blur);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    0 8px 18px color-mix(
+      in srgb,
+      var(--shadow-color) 14%,
+      transparent
+    );
+}
+
+.school-day::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:var(--liquid-reflection);
+  mix-blend-mode:soft-light;
+  opacity:.20;
+  pointer-events:none;
+}
+
+.school-day-name{
+  font-weight:900;
+  color:var(--text-color);
+}
+
+.school-day-times{
+  color:var(--secondary-text);
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+
+.school-day-times .class-block{
+  display:block;
+  margin-bottom:4px;
+}
+
+.school-day.no-classes{
+  opacity:.85;
+}
+
+.school-day.no-classes .school-day-times{
+  color:var(--secondary-text);
+  font-style:italic;
+}
+
+/* Active Semester Highlight */
+
+#schoolSemester{
+  color:var(--accent-color);
+}
+
+/* Semester Status Colors */
+
+#schoolStatus[data-status="active"]{
+  color:#22c55e;
+}
+
+#schoolStatus[data-status="break"]{
+  color:#facc15;
+}
+
+#schoolStatus[data-status="graduated"]{
+  color:#60a5fa;
+}
+
+#schoolStatus[data-status="inactive"]{
+  color:#ef4444;
+}
+
+/* Next Semester */
+
+#nextSemester{
+  font-weight:900;
+}
+
+#nextSemesterCountdown{
+  font-variant-numeric:tabular-nums;
+}
+
+/* Upcoming Semester Card */
+
+#upcomingSemesterDetails{
+  margin-top:14px;
+}
+
+/* In-Class State */
+
+#business-section.state-in-class,
+.business-info-section.state-in-class{
+  --biz-state-color:#facc15;
+  --biz-state-glow:rgba(250,204,21,.28);
+}
+
+#business-section.state-in-class .biz-chip,
+.business-info-section.state-in-class .biz-chip{
+  color:#facc15;
+  border-color:color-mix(
+    in srgb,
+    #facc15 40%,
+    var(--border-color)
+  );
+
+  background:
+    color-mix(
+      in srgb,
+      #facc15 10%,
+      var(--content-bg)
+    );
+}
+
+#business-section.state-in-class .biz-panel,
+.business-info-section.state-in-class .biz-panel{
+  box-shadow:
+    0 0 0 1px rgba(250,204,21,.10),
+    0 0 18px rgba(250,204,21,.10),
+    0 14px 34px color-mix(
+      in srgb,
+      var(--shadow-color) 32%,
+      transparent
+    ),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 -1px 0 rgba(0,0,0,.12);
+}
+
+/* Semester Break */
+
+#business-section.state-break,
+.business-info-section.state-break{
+  --biz-state-color:#60a5fa;
+}
+
+#business-section.state-break .biz-chip,
+.business-info-section.state-break .biz-chip{
+  color:#60a5fa;
+  border-color:rgba(96,165,250,.35);
+}
+
+/* Mobile */
+
+@media (max-width:768px){
+
+  .school-day{
+    grid-template-columns:1fr;
+  }
+
+  .school-day-name{
+    margin-bottom:4px;
+  }
+}
+
+
 /* Prevent printing of the page */
 @media print {
 	html, body {
