@@ -1892,29 +1892,35 @@ async function handleGoogleSignIn(response) {
 }
 
 // admin-business-hours-v16.js
-// ======================================================
-// ========== BUSINESS HOURS ADMIN (MULTI-RANGE v16) ====
-// ======================================================
-// - Multi-range regularHours per day (recommended)
-// - Single-range holidayHours and temporaryHours
-// - Live preview, add/remove, mutation observer
+//
+// ADMIN DASHBOARD: BUSINESS HOURS + ACADEMIC AVAILABILITY
+//
+// - Multi-range regularHours per day, plus holidayHours and temporaryHours
+// - Complete Academic Availability system: semester info, status, activity,
+//   breaks, academic profile, and a live preview
+// - Live preview, add/remove entries, mutation observer
+// - Duplicate-listener-safe and initialization-order-safe
 // - Depends on Firestore helpers: db, doc, getDoc, setDoc, serverTimestamp
 // - Depends on auth (for save permission checks)
-// ======================================================
+//
 
-/* -------------------------
+/* ======================================
    CONFIG & SHARED HELPERS
-   ------------------------- */
+====================================== */
 
-// Firestore doc ref (declare once)
+// Firestore doc refs (declared once)
 const businessDocRef = (typeof doc !== 'undefined' && typeof db !== 'undefined')
     ? doc(db, "site_config", "businessDetails")
     : null;
 
-// Days constants
-const daysOfWeek = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+const academicDocRef = (typeof doc !== 'undefined' && typeof db !== 'undefined')
+    ? doc(db, "site_config", "academicAvailability")
+    : null;
 
-// Small util: safe attach listener (prevents duplicate attachments)
+// Days constants
+const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+// Safe listener attachment (prevents duplicate attachments on the same element)
 function addListenerSafe(element, eventType, handler, flagSuffix = '') {
     if (!element) return;
     const flag = `__listener_${eventType}_${flagSuffix}`;
@@ -1924,107 +1930,29 @@ function addListenerSafe(element, eventType, handler, flagSuffix = '') {
     }
 }
 
-async function saveAcademicAvailabilityData(e) {
-
-    e.preventDefault();
-
-    const payload = {
-
-        currentSemester: {
-            name:
-                document.getElementById(
-                    "semester-name"
-                ).value,
-
-            termType:
-                document.getElementById(
-                    "semester-term-type"
-                ).value,
-
-            startDate:
-                document.getElementById(
-                    "semester-start-date"
-                ).value,
-
-            endDate:
-                document.getElementById(
-                    "semester-end-date"
-                ).value
-        },
-
-        availabilityStatus:
-            document.getElementById(
-                "academic-availability-status"
-            ).value,
-
-        currentActivity:
-            document.getElementById(
-                "academic-activity"
-            ).value
-    };
-
-    await setDoc(
-        academicDocRef,
-        payload,
-        { merge: true }
-    );
-
+// Read a form field's trimmed value, defaulting to ''
+function getFieldValue(id) {
+    return document.getElementById(id)?.value?.trim() ?? '';
 }
 
- document
-    .getElementById(
-        "academic-availability-form"
-    )
-    ?.addEventListener(
-        "submit",
-        saveAcademicAvailabilityData
-    );
-
-
-    async function loadAcademicAvailabilityData() {
-
-    const snap =
-        await getDoc(
-            academicDocRef
-        );
-
-    if (!snap.exists())
-        return;
-
-    const data =
-        snap.data();
-
-    document.getElementById(
-        "semester-name"
-    ).value =
-        data.currentSemester?.name || "";
-
-    document.getElementById(
-        "semester-term-type"
-    ).value =
-        data.currentSemester?.termType || "";
-
-    document.getElementById(
-        "semester-start-date"
-    ).value =
-        data.currentSemester?.startDate || "";
-
-    document.getElementById(
-        "semester-end-date"
-    ).value =
-        data.currentSemester?.endDate || "";
-
+// Write a value into a form field if it exists
+function setFieldValue(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value ?? '';
 }
 
+// Shared status-message renderer used by both admin sections
+function showStatusMessage(elementId, message, isError = false) {
+    const el = document.getElementById(elementId);
+    if (!el) { console.warn(`Status message element not found: ${elementId}`); return; }
 
-function showBusinessInfoStatus(message, isError = false) {
-    const el = document.getElementById('business-info-status-message');
-    if (!el) { console.warn("Business info status message element not found!"); return; }
     el.textContent = message;
     el.className = `status-message ${isError ? 'error' : 'success'}`;
     el.style.display = 'block';
+
     setTimeout(() => {
-        if (el && el.textContent === message) {
+        // Only clear it if a newer call hasn't already replaced the message.
+        if (el.textContent === message) {
             el.textContent = '';
             el.className = 'status-message';
             el.style.display = 'none';
@@ -2032,7 +1960,18 @@ function showBusinessInfoStatus(message, isError = false) {
     }, 5000);
 }
 
-function capitalizeFirstLetter(s) { if (!s) return ''; return s.charAt(0).toUpperCase() + s.slice(1); }
+function showBusinessInfoStatus(message, isError = false) {
+    showStatusMessage('business-info-status-message', message, isError);
+}
+
+function showAcademicStatus(message, isError = false) {
+    showStatusMessage('academic-availability-status-message', message, isError);
+}
+
+function capitalizeFirstLetter(s) {
+    if (!s) return '';
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 function timeStringToMinutesBI(timeStr) {
     if (!timeStr || typeof timeStr !== 'string' || !timeStr.includes(':')) return null;
@@ -2055,9 +1994,9 @@ function formatTimeForAdminPreview(timeString) {
     }
 }
 
-/* -------------------------
-   REGULAR HOURS: Multi-range admin UI
-   ------------------------- */
+/* ======================================
+   BUSINESS HOURS: REGULAR HOURS (MULTI-RANGE) UI
+====================================== */
 
 /*
 Expected stored format:
@@ -2067,9 +2006,7 @@ regularHours: {
 }
 */
 
-// Template creation helper: creates a DOM fragment for one hours-range row
 function createHoursRangeElement(day, open = "", close = "") {
-    // Template markup (keeps it self-contained so no separate <template> needed)
     const wrapper = document.createElement('div');
     wrapper.className = 'hours-range';
     wrapper.innerHTML = `
@@ -2080,7 +2017,7 @@ function createHoursRangeElement(day, open = "", close = "") {
     `;
 
     const removeBtn = wrapper.querySelector('.remove-hours');
-    addListenerSafe(removeBtn, 'click', (e) => {
+    addListenerSafe(removeBtn, 'click', () => {
         wrapper.remove();
         updateAdminPreview();
     }, `rem_range_${day}`);
@@ -2092,7 +2029,6 @@ function createHoursRangeElement(day, open = "", close = "") {
     return wrapper;
 }
 
-// Populate the multi-range UI for regular hours
 function populateRegularHoursForm(data = {}) {
     const container = document.getElementById('regular-hours-container');
     if (!container) { console.error("regular-hours-container missing"); return; }
@@ -2104,7 +2040,6 @@ function populateRegularHoursForm(data = {}) {
         block.className = 'day-block';
         block.dataset.day = day;
 
-        // Header + closed checkbox + ranges container + add-button
         block.innerHTML = `
             <h5>${capitalizeFirstLetter(day)}</h5>
             <label class="checkbox-inline"><input type="checkbox" class="closed-all-day" ${dayData.isClosed ? 'checked' : ''} /> Closed all day</label>
@@ -2116,20 +2051,17 @@ function populateRegularHoursForm(data = {}) {
         const hoursList = block.querySelector('.hours-list');
         const addBtn = block.querySelector('.add-hours');
 
-        // Populate existing ranges (multi-range)
         if (!dayData.isClosed && Array.isArray(dayData.ranges)) {
             dayData.ranges.forEach(r => {
                 hoursList.appendChild(createHoursRangeElement(day, r.open || '', r.close || ''));
             });
         }
 
-        // Add button
         addListenerSafe(addBtn, 'click', () => {
             hoursList.appendChild(createHoursRangeElement(day, '', ''));
             updateAdminPreview();
         }, `add_hours_${day}`);
 
-        // Closed toggler
         addListenerSafe(closedCheckbox, 'change', (e) => {
             if (e.target.checked) {
                 hoursList.innerHTML = '';
@@ -2143,10 +2075,9 @@ function populateRegularHoursForm(data = {}) {
     updateAdminPreview();
 }
 
-/* -------------------------
-   HOLIDAY / TEMP ENTRY RENDERERS
-   (single open/close per entry)
-   ------------------------- */
+/* ======================================
+   BUSINESS HOURS: HOLIDAY / TEMPORARY ENTRY RENDERERS
+====================================== */
 
 function renderHolidayEntry(entry = {}, index = 0) {
     const uniqueId = `holiday-${Date.now()}-${index}`;
@@ -2184,7 +2115,10 @@ function renderHolidayEntry(entry = {}, index = 0) {
         const disabled = e.target.checked;
         if (openInput) openInput.disabled = disabled;
         if (closeInput) closeInput.disabled = disabled;
-        if (disabled) { if (openInput) openInput.value = ''; if (closeInput) closeInput.value = ''; }
+        if (disabled) {
+            if (openInput) openInput.value = '';
+            if (closeInput) closeInput.value = '';
+        }
         updateAdminPreview();
     }, `hol_closed_${uniqueId}`);
 
@@ -2233,7 +2167,10 @@ function renderTemporaryEntry(entry = {}, index = 0) {
         const disabled = e.target.checked;
         if (openInput) openInput.disabled = disabled;
         if (closeInput) closeInput.disabled = disabled;
-        if (disabled) { if (openInput) openInput.value = ''; if (closeInput) closeInput.value = ''; }
+        if (disabled) {
+            if (openInput) openInput.value = '';
+            if (closeInput) closeInput.value = '';
+        }
         updateAdminPreview();
     }, `tmp_closed_${uniqueId}`);
 
@@ -2242,21 +2179,22 @@ function renderTemporaryEntry(entry = {}, index = 0) {
     return div;
 }
 
-/* -------------------------
-   LOAD DATA FROM FIRESTORE
-   ------------------------- */
+/* ======================================
+   BUSINESS HOURS: LOAD FROM FIRESTORE
+====================================== */
 
 async function loadBusinessInfoData() {
-    console.log("Loading business info (v16)...");
-    const contactEmailInput = document.getElementById('business-contact-email');
-    const statusOverrideSelect = document.getElementById('business-status-override');
-    const holidayHoursList = document.getElementById('holiday-hours-list');
-    const temporaryHoursList = document.getElementById('temporary-hours-list');
+    console.log("Loading business info...");
 
     if (!businessDocRef || typeof getDoc !== 'function') {
         console.error("Firestore helpers missing: cannot load business info.");
         return;
     }
+
+    const contactEmailInput = document.getElementById('business-contact-email');
+    const statusOverrideSelect = document.getElementById('business-status-override');
+    const holidayHoursList = document.getElementById('holiday-hours-list');
+    const temporaryHoursList = document.getElementById('temporary-hours-list');
 
     try {
         const snap = await getDoc(businessDocRef);
@@ -2265,21 +2203,16 @@ async function loadBusinessInfoData() {
         if (contactEmailInput) contactEmailInput.value = data.contactEmail || '';
         if (statusOverrideSelect) statusOverrideSelect.value = data.statusOverride || 'auto';
 
-        // Regular hours (multi-range)
-        if (typeof populateRegularHoursForm === 'function') {
-            populateRegularHoursForm(data.regularHours || {});
-        }
+        populateRegularHoursForm(data.regularHours || {});
 
-        // Holidays
-        if (holidayHoursList && typeof renderHolidayEntry === 'function') {
+        if (holidayHoursList) {
             holidayHoursList.innerHTML = '';
             (data.holidayHours || []).forEach((h, idx) => {
                 holidayHoursList.appendChild(renderHolidayEntry(h, idx));
             });
         }
 
-        // Temporary
-        if (temporaryHoursList && typeof renderTemporaryEntry === 'function') {
+        if (temporaryHoursList) {
             temporaryHoursList.innerHTML = '';
             (data.temporaryHours || []).forEach((t, idx) => {
                 temporaryHoursList.appendChild(renderTemporaryEntry(t, idx));
@@ -2294,24 +2227,35 @@ async function loadBusinessInfoData() {
     }
 }
 
-/* -------------------------
-   SAVE DATA TO FIRESTORE
-   ------------------------- */
+/* ======================================
+   BUSINESS HOURS: SAVE TO FIRESTORE
+====================================== */
 
 async function saveBusinessInfoData(e) {
-    e.preventDefault();
+    e?.preventDefault();
 
-    if (!auth || !auth.currentUser) {
+    if (!auth?.currentUser) {
         showBusinessInfoStatus("Not logged in.", true);
+        return;
+    }
+
+    if (!businessDocRef) {
+        showBusinessInfoStatus("Firestore is not available.", true);
         return;
     }
 
     showBusinessInfoStatus("Saving...");
 
-    // Build payload
-    const contactEmail = document.getElementById('business-contact-email')?.value?.trim() || null;
-    const statusOverride = document.getElementById('business-status-override')?.value || 'auto';
-    const payload = { contactEmail, statusOverride, regularHours: {}, holidayHours: [], temporaryHours: [], lastUpdated: serverTimestamp() };
+    const contactEmail = getFieldValue('business-contact-email') || null;
+    const statusOverride = getFieldValue('business-status-override') || 'auto';
+    const payload = {
+        contactEmail,
+        statusOverride,
+        regularHours: {},
+        holidayHours: [],
+        temporaryHours: [],
+        lastUpdated: serverTimestamp()
+    };
 
     // Regular hours: read multi-range form
     document.querySelectorAll('.day-block').forEach(block => {
@@ -2357,8 +2301,8 @@ async function saveBusinessInfoData(e) {
     }
 
     // Sort arrays for consistency
-    payload.holidayHours.sort((a,b) => a.date > b.date ? 1 : -1);
-    payload.temporaryHours.sort((a,b) => a.startDate > b.startDate ? 1 : -1);
+    payload.holidayHours.sort((a, b) => (a.date > b.date ? 1 : -1));
+    payload.temporaryHours.sort((a, b) => (a.startDate > b.startDate ? 1 : -1));
 
     try {
         await setDoc(businessDocRef, payload, { merge: true });
@@ -2370,9 +2314,9 @@ async function saveBusinessInfoData(e) {
     }
 }
 
-/* -------------------------
-   ADMIN PREVIEW
-   ------------------------- */
+/* ======================================
+   BUSINESS HOURS: ADMIN PREVIEW
+====================================== */
 
 function updateAdminPreview() {
     const adminPreviewStatus = document.getElementById('admin-preview-status');
@@ -2384,8 +2328,8 @@ function updateAdminPreview() {
         return;
     }
 
-    const contactEmail = document.getElementById('business-contact-email')?.value?.trim() || null;
-    const statusOverride = document.getElementById('business-status-override')?.value || 'auto';
+    const contactEmail = getFieldValue('business-contact-email') || null;
+    const statusOverride = getFieldValue('business-status-override') || 'auto';
 
     const previewData = { contactEmail, statusOverride, regularHours: {}, holidayHours: [], temporaryHours: [] };
 
@@ -2427,7 +2371,7 @@ function updateAdminPreview() {
 
     // TIME + STATUS CALC
     const now = new Date();
-    const previewDateStr = now.toISOString().slice(0,10);
+    const previewDateStr = now.toISOString().slice(0, 10);
     const previewDayName = daysOfWeek[(now.getDay() + 6) % 7];
     const previewMinutes = now.getHours() * 60 + now.getMinutes();
 
@@ -2447,8 +2391,9 @@ function updateAdminPreview() {
         const todayHoliday = previewData.holidayHours.find(h => h.date === previewDateStr);
         if (todayHoliday) {
             reason = `Holiday (${todayHoliday.label || todayHoliday.date})`;
-            if (todayHoliday.isClosed) currentStatus = 'Closed';
-            else if (todayHoliday.open && todayHoliday.close) {
+            if (todayHoliday.isClosed) {
+                currentStatus = 'Closed';
+            } else if (todayHoliday.open && todayHoliday.close) {
                 const o = timeStringToMinutesBI(todayHoliday.open);
                 const c = timeStringToMinutesBI(todayHoliday.close);
                 currentStatus = (previewMinutes >= o && previewMinutes < c) ? 'Open' : 'Closed';
@@ -2496,29 +2441,19 @@ function updateAdminPreview() {
 
     adminPreviewStatus.innerHTML = `
         <div class="preview-status">
-            <span class="status-main-text ${statusClass}">
-                ${currentStatus}
-            </span>
+            <span class="status-main-text ${statusClass}">${currentStatus}</span>
             <span class="status-reason">(${reason})</span>
         </div>
     `;
 
-    // =============================
-    // ONYX REGULAR HOURS LIST (🔥)
-    // =============================
-    let html = `
-        <h4>Regular Hours</h4>
-        <ul class="preview-hours">
-    `;
+    // REGULAR HOURS LIST
+    let html = `<h4>Regular Hours</h4><ul class="preview-hours">`;
 
     daysOfWeek.forEach(day => {
         const isToday = day === previewDayName;
         const d = previewData.regularHours[day] || { isClosed: true, ranges: [] };
 
-        html += `
-            <li class="${isToday ? 'current-day-preview' : ''}">
-                <strong>${capitalizeFirstLetter(day)}:</strong>
-        `;
+        html += `<li class="${isToday ? 'current-day-preview' : ''}"><strong>${capitalizeFirstLetter(day)}:</strong>`;
 
         if (d.isClosed) {
             html += `<span class="hours-line">Closed</span>`;
@@ -2527,9 +2462,9 @@ function updateAdminPreview() {
         } else {
             d.ranges.forEach((r, i) => {
                 const disp = `${formatTimeForAdminPreview(r.open)} – ${formatTimeForAdminPreview(r.close)} ET`;
-
-                if (i === 0) html += `<span class="hours-line">${disp}</span>`;
-                else html += `<span class="hours-line additional-hours">${disp}</span>`;
+                html += i === 0
+                    ? `<span class="hours-line">${disp}</span>`
+                    : `<span class="hours-line additional-hours">${disp}</span>`;
             });
         }
 
@@ -2542,13 +2477,11 @@ function updateAdminPreview() {
     if (previewData.temporaryHours.length) {
         html += `<h4>Temporary Hours</h4><ul>`;
         previewData.temporaryHours.forEach(t => {
+            const range = t.isClosed ? 'Closed' : `${formatTimeForAdminPreview(t.open)} - ${formatTimeForAdminPreview(t.close)} ET`;
             html += `
                 <li>
                     <strong>${t.label || 'Temporary'}:</strong>
-                    <span>${t.startDate} → ${t.endDate} 
-                        ${t.isClosed ? 'Closed' :
-                            `${formatTimeForAdminPreview(t.open)} - ${formatTimeForAdminPreview(t.close)} ET`}
-                    </span>
+                    <span>${t.startDate} → ${t.endDate} ${range}</span>
                 </li>
             `;
         });
@@ -2559,13 +2492,11 @@ function updateAdminPreview() {
     if (previewData.holidayHours.length) {
         html += `<h4>Holiday Hours</h4><ul>`;
         previewData.holidayHours.forEach(h => {
+            const range = h.isClosed ? 'Closed' : `${formatTimeForAdminPreview(h.open)} - ${formatTimeForAdminPreview(h.close)} ET`;
             html += `
                 <li>
                     <strong>${h.label || 'Holiday'}:</strong>
-                    <span>${h.date} 
-                        ${h.isClosed ? 'Closed' :
-                            `${formatTimeForAdminPreview(h.open)} - ${formatTimeForAdminPreview(h.close)} ET`}
-                    </span>
+                    <span>${h.date} ${range}</span>
                 </li>
             `;
         });
@@ -2580,26 +2511,28 @@ function updateAdminPreview() {
         ? `Contact: <a href="mailto:${contactEmail}" target="_blank">${contactEmail}</a>`
         : '';
 }
-/* -------------------------
-   LISTENERS & INIT
-   ------------------------- */
+
+/* ======================================
+   BUSINESS HOURS: LISTENERS & INIT
+====================================== */
 
 function setupBusinessInfoListeners() {
-    console.log("Setting up admin business info listeners (v16)...");
-    const form = document.getElementById('business-info-form');
-    const addHolidayBtn = document.getElementById('add-holiday-button');
-    const addTempBtn = document.getElementById('add-temporary-button');
-    const holidayList = document.getElementById('holiday-hours-list');
-    const tempList = document.getElementById('temporary-hours-list');
+    console.log("Setting up business info listeners...");
 
+    const form = document.getElementById('business-info-form');
     if (!form) { console.error("business-info-form missing"); return; }
 
     // Prevent double-attach
     if (form.dataset.listenersAttached === 'true') {
-        console.log("Listeners already attached — skipping.");
+        console.log("Business info listeners already attached — skipping.");
         return;
     }
     form.dataset.listenersAttached = 'true';
+
+    const addHolidayBtn = document.getElementById('add-holiday-button');
+    const addTempBtn = document.getElementById('add-temporary-button');
+    const holidayList = document.getElementById('holiday-hours-list');
+    const tempList = document.getElementById('temporary-hours-list');
 
     addListenerSafe(form, 'submit', saveBusinessInfoData, 'biz_submit');
 
@@ -2616,39 +2549,280 @@ function setupBusinessInfoListeners() {
     }
 
     // Live preview on form input/change
-    addListenerSafe(form, 'input', (e) => { updateAdminPreview(); }, 'preview_input');
-    addListenerSafe(form, 'change', (e) => { updateAdminPreview(); }, 'preview_change');
+    addListenerSafe(form, 'input', updateAdminPreview, 'preview_input');
+    addListenerSafe(form, 'change', updateAdminPreview, 'preview_change');
 
     // Observe holiday/temp lists to trigger preview on add/remove
-    const holidayListEl = document.getElementById('holiday-hours-list');
-    const tempListEl = document.getElementById('temporary-hours-list');
     const observer = new MutationObserver((mutationsList) => {
-        let shouldUpdate = false;
-        for (const m of mutationsList) {
-            if (m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length)) { shouldUpdate = true; break; }
-        }
+        const shouldUpdate = mutationsList.some(m => m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length));
         if (shouldUpdate) {
             setTimeout(updateAdminPreview, 100); // debounce small
         }
     });
-    if (holidayListEl) observer.observe(holidayListEl, { childList: true, subtree: true });
-    if (tempListEl) observer.observe(tempListEl, { childList: true, subtree: true });
+
+    if (holidayList) observer.observe(holidayList, { childList: true, subtree: true });
+    if (tempList) observer.observe(tempList, { childList: true, subtree: true });
+}
+
+/* ======================================
+   ACADEMIC AVAILABILITY: STATE
+====================================== */
+
+// recurringClasses / exams / finals / universityEvents / internships live in
+// the same Firestore document but have no dedicated form fields in this file
+// yet. They're cached here on load purely so the preview can summarize them.
+// saveAcademicAvailabilityData() intentionally never writes these keys back
+// (see the comment in that function for why).
+const academicArraysCache = {
+    recurringClasses: [],
+    exams: [],
+    finals: [],
+    universityEvents: [],
+    internships: []
+};
+
+/* ======================================
+   ACADEMIC AVAILABILITY: LOAD FROM FIRESTORE
+====================================== */
+
+async function loadAcademicAvailabilityData() {
+    console.log("Loading academic availability...");
+
+    if (!academicDocRef || typeof getDoc !== 'function') {
+        console.error("Firestore helpers missing: cannot load academic availability.");
+        return;
+    }
+
+    try {
+        const snap = await getDoc(academicDocRef);
+
+        if (!snap.exists()) {
+            updateAcademicPreview();
+            return;
+        }
+
+        const data = snap.data() || {};
+
+        setFieldValue('semester-name', data.currentSemester?.name);
+        setFieldValue('semester-term-type', data.currentSemester?.termType);
+        setFieldValue('semester-start-date', data.currentSemester?.startDate);
+        setFieldValue('semester-end-date', data.currentSemester?.endDate);
+
+        setFieldValue('academic-availability-status', data.availabilityStatus || 'available');
+        setFieldValue('academic-activity', data.currentActivity);
+
+        setFieldValue('fall-break', data.breaks?.fall);
+        setFieldValue('thanksgiving-break', data.breaks?.thanksgiving);
+        setFieldValue('winter-break', data.breaks?.winter);
+        setFieldValue('spring-break', data.breaks?.spring);
+        setFieldValue('summer-break', data.breaks?.summer);
+
+        setFieldValue('academic-institution', data.academicProfile?.institution);
+        setFieldValue('academic-range', data.academicProfile?.academicRange);
+        setFieldValue('graduation-date', data.academicProfile?.graduationDate);
+
+        Object.assign(academicArraysCache, {
+            recurringClasses: Array.isArray(data.recurringClasses) ? data.recurringClasses : [],
+            exams: Array.isArray(data.exams) ? data.exams : [],
+            finals: Array.isArray(data.finals) ? data.finals : [],
+            universityEvents: Array.isArray(data.universityEvents) ? data.universityEvents : [],
+            internships: Array.isArray(data.internships) ? data.internships : []
+        });
+
+        updateAcademicPreview();
+        console.log("Academic availability loaded.");
+    } catch (err) {
+        console.error("Error loading academic availability:", err);
+        showAcademicStatus("Error loading academic availability.", true);
+    }
+}
+
+/* ======================================
+   ACADEMIC AVAILABILITY: SAVE TO FIRESTORE
+====================================== */
+
+async function saveAcademicAvailabilityData(e) {
+    e?.preventDefault();
+
+    if (!auth?.currentUser) {
+        showAcademicStatus("Not logged in.", true);
+        return;
+    }
+
+    if (!academicDocRef) {
+        showAcademicStatus("Firestore is not available.", true);
+        return;
+    }
+
+    showAcademicStatus("Saving...");
+
+    // recurringClasses / exams / finals / universityEvents / internships are
+    // intentionally left out of this payload: this file has no form fields
+    // for them, and setDoc's merge:true means omitting them here leaves
+    // whatever already exists in Firestore untouched instead of overwriting
+    // it with stale or empty data.
+    const payload = {
+        lastUpdated: serverTimestamp(),
+        currentSemester: {
+            name: getFieldValue('semester-name'),
+            termType: getFieldValue('semester-term-type'),
+            startDate: getFieldValue('semester-start-date'),
+            endDate: getFieldValue('semester-end-date')
+        },
+        availabilityStatus: getFieldValue('academic-availability-status') || 'available',
+        currentActivity: getFieldValue('academic-activity'),
+        breaks: {
+            fall: getFieldValue('fall-break'),
+            thanksgiving: getFieldValue('thanksgiving-break'),
+            winter: getFieldValue('winter-break'),
+            spring: getFieldValue('spring-break'),
+            summer: getFieldValue('summer-break')
+        },
+        academicProfile: {
+            institution: getFieldValue('academic-institution'),
+            academicRange: getFieldValue('academic-range'),
+            graduationDate: getFieldValue('graduation-date')
+        }
+    };
+
+    try {
+        await setDoc(academicDocRef, payload, { merge: true });
+        showAcademicStatus("Academic availability saved.");
+        updateAcademicPreview();
+    } catch (error) {
+        console.error("Error saving academic availability:", error);
+        showAcademicStatus("Error saving academic availability.", true);
+    }
+}
+
+/* ======================================
+   ACADEMIC AVAILABILITY: PREVIEW
+====================================== */
+
+function updateAcademicPreview() {
+    const statusEl = document.getElementById('academic-preview-status');
+    const detailsEl =
+    document.getElementById(
+        'academic-preview-details'
+    ) ||
+    document.getElementById(
+        'academic-preview-semester'
+    );
+
+    // Both preview containers are optional — pages that don't include them
+    // simply skip the preview instead of erroring.
+    if (!statusEl && !detailsEl) {
+    return;
+}
+
+    const semesterName = getFieldValue('semester-name');
+    const termType = getFieldValue('semester-term-type');
+    const startDate = getFieldValue('semester-start-date');
+    const endDate = getFieldValue('semester-end-date');
+    const availabilityStatus = getFieldValue('academic-availability-status') || 'available';
+    const currentActivity = getFieldValue('academic-activity');
+
+    if (statusEl) {
+        statusEl.innerHTML = `
+            <div class="preview-status">
+                <span class="status-main-text">${capitalizeFirstLetter(availabilityStatus)}</span>
+                ${currentActivity ? `<span class="status-reason">(${currentActivity})</span>` : ''}
+            </div>
+        `;
+    }
+
+    if (detailsEl) {
+        const breaks = [
+            ['Fall', getFieldValue('fall-break')],
+            ['Thanksgiving', getFieldValue('thanksgiving-break')],
+            ['Winter', getFieldValue('winter-break')],
+            ['Spring', getFieldValue('spring-break')],
+            ['Summer', getFieldValue('summer-break')]
+        ].filter(([, value]) => value);
+
+        const institution = getFieldValue('academic-institution');
+        const academicRange = getFieldValue('academic-range');
+        const graduationDate = getFieldValue('graduation-date');
+
+        const scheduleCounts = [
+            ['Recurring Classes', academicArraysCache.recurringClasses.length],
+            ['Exams', academicArraysCache.exams.length],
+            ['Finals', academicArraysCache.finals.length],
+            ['University Events', academicArraysCache.universityEvents.length],
+            ['Internships', academicArraysCache.internships.length]
+        ].filter(([, count]) => count > 0);
+
+        const meta = [termType, [startDate, endDate].filter(Boolean).join(' – ')].filter(Boolean).join(' • ');
+
+        let html = `<h4>${semesterName || 'Current Semester'}</h4>`;
+
+        if (meta) html += `<p class="preview-semester-meta">${meta}</p>`;
+
+        if (breaks.length) {
+            html += `<h4>Breaks</h4><ul class="preview-breaks">`;
+            breaks.forEach(([label, value]) => {
+                html += `<li><strong>${label}:</strong> <span>${value}</span></li>`;
+            });
+            html += `</ul>`;
+        }
+
+        if (institution || academicRange || graduationDate) {
+            html += `<h4>Academic Profile</h4><ul class="preview-profile">`;
+            if (institution) html += `<li><strong>Institution:</strong> <span>${institution}</span></li>`;
+            if (academicRange) html += `<li><strong>Level:</strong> <span>${academicRange}</span></li>`;
+            if (graduationDate) html += `<li><strong>Graduation:</strong> <span>${graduationDate}</span></li>`;
+            html += `</ul>`;
+        }
+
+        if (scheduleCounts.length) {
+            html += `<h4>Schedule Summary</h4><ul class="preview-schedule-summary">`;
+            scheduleCounts.forEach(([label, count]) => {
+                html += `<li><strong>${label}:</strong> <span>${count}</span></li>`;
+            });
+            html += `</ul>`;
+        }
+
+        detailsEl.innerHTML = html;
+    }
+}
+
+/* ======================================
+   ACADEMIC AVAILABILITY: LISTENERS & INIT
+====================================== */
+
+function setupAcademicAvailabilityListeners() {
+    console.log("Setting up academic availability listeners...");
+
+    const form = document.getElementById('academic-availability-form');
+    if (!form) { console.error("academic-availability-form missing"); return; }
+
+    // Prevent double-attach
+    if (form.dataset.listenersAttached === 'true') {
+        console.log("Academic availability listeners already attached — skipping.");
+        return;
+    }
+    form.dataset.listenersAttached = 'true';
+
+    addListenerSafe(form, 'submit', saveAcademicAvailabilityData, 'academic_submit');
+    addListenerSafe(form, 'input', updateAcademicPreview, 'academic_preview_input');
+    addListenerSafe(form, 'change', updateAcademicPreview, 'academic_preview_change');
 }
 
 /* -------------------------
-   BOOTSTRAP: Attach on DOM ready
-   ------------------------- */
+BOOTSTRAP: Attach on DOM ready
+------------------------- */
+
+function initAdminPage() {
+    setupBusinessInfoListeners();
+    setupAcademicAvailabilityListeners();
+    loadBusinessInfoData();
+    loadAcademicAvailabilityData();
+}
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        setupBusinessInfoListeners();
-        loadBusinessInfoData();
-        loadAcademicAvailabilityData();
-
-    });
+    document.addEventListener('DOMContentLoaded', initAdminPage);
 } else {
-    setupBusinessInfoListeners();
-    loadBusinessInfoData();
+    initAdminPage();
 }
 
 // End of admin-business-hours-v16.js
