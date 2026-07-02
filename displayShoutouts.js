@@ -5237,6 +5237,7 @@ window.assumedBusinessTimezone = window.assumedBusinessTimezone || 'America/New_
 
 let use24HourBusinessTime = localStorage.getItem(BUSINESS_TIME_FORMAT_STORAGE_KEY) === '24';
 let cachedBusinessData = null;
+let cachedAcademicData = null;
 let cachedVisitorTimezone = 'UTC';
 let unsubscribeBusinessListener = null;
 let minuteRefreshTimer = null;
@@ -5259,6 +5260,50 @@ try {
 } catch (error) {
   businessDocumentReferenceLocal = null;
 }
+
+
+const academicRef =
+    doc(
+        db,
+        "site_config",
+        "academicAvailability"
+    );
+
+onSnapshot(
+    academicRef,
+    snap => {
+
+        if (!snap.exists())
+            return;
+
+        cachedAcademicData =
+            snap.data();
+
+        renderAcademicAvailability();
+
+    }
+);
+
+function renderAcademicAvailability() {
+
+    if (!cachedAcademicData)
+        return;
+
+    document.getElementById(
+        "schoolSemester"
+    ).textContent =
+        cachedAcademicData
+            .currentSemester
+            ?.name || "Unknown";
+
+    document.getElementById(
+        "schoolTermType"
+    ).textContent =
+        cachedAcademicData
+            .currentSemester
+            ?.termType || "Unknown";
+}
+
 
 /* -------------------------
    GENERAL HELPERS
