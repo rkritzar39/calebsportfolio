@@ -5,7 +5,7 @@ Welcome to the repository for my **Link in Bio** website. This site serves as a 
  
 The current version of the website is **v26.7** 
  
----
+--- 
 
 ## Features  
 
