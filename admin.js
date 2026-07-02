@@ -2369,9 +2369,17 @@ function updateAdminPreview() {
         previewData.temporaryHours.push({ startDate, endDate, label, isClosed, open, close });
     });
 
-    // TIME + STATUS CALC
-    const now = new Date();
-    const previewDateStr = now.toISOString().slice(0, 10);
+    // TIME + STATUS CALC (UPDATED FOR EASTERN TIME)
+    const localNow = new Date();
+    const etString = localNow.toLocaleString("en-US", { timeZone: "America/New_York" });
+    const now = new Date(etString);
+    
+    // Calculate the date string based on the ET date, not UTC
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const previewDateStr = `${year}-${month}-${day}`;
+    
     const previewDayName = daysOfWeek[(now.getDay() + 6) % 7];
     const previewMinutes = now.getHours() * 60 + now.getMinutes();
 
@@ -2503,7 +2511,7 @@ function updateAdminPreview() {
         html += `</ul>`;
     }
 
-    html += `<p class="preview-timezone-note">Preview based on your browser time. Hours entered as ET.</p>`;
+    html += `<p class="preview-timezone-note">Preview based on Eastern Time (ET) to ensure accuracy.</p>`;
 
     adminPreviewHours.innerHTML = html;
 
