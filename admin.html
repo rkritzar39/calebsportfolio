@@ -1289,7 +1289,398 @@
 
   </section>
 </div>
-  
+
+  <!-- ============================ -->
+<!-- ACADEMIC AVAILABILITY        -->
+<!-- ============================ -->
+<section
+  class="admin-section"
+  id="academic-availability-management"
+  aria-labelledby="academic-availability-heading"
+  data-portal-title="Academic Availability"
+  data-portal-keywords="college university semester classes finals exams internship schedule availability"
+>
+
+  <h3 id="academic-availability-heading" class="onyx-heading">
+    Manage Academic Availability
+  </h3>
+
+  <form id="academic-availability-form" class="onyx-form">
+
+    <!-- ============================ -->
+    <!-- CURRENT SEMESTER            -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+      <h4>Current Semester</h4>
+
+      <div class="form-group">
+        <label for="semester-name">Semester Name</label>
+        <input
+          type="text"
+          id="semester-name"
+          placeholder="Fall 2026"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="semester-term-type">Term Type</label>
+        <select id="semester-term-type">
+          <option value="semester">Semester</option>
+          <option value="summer">Summer</option>
+          <option value="winter">Winter</option>
+          <option value="internship">Internship</option>
+          <option value="break">Break</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="semester-start-date">Start Date</label>
+        <input type="date" id="semester-start-date">
+      </div>
+
+      <div class="form-group">
+        <label for="semester-end-date">End Date</label>
+        <input type="date" id="semester-end-date">
+      </div>
+    </div>
+
+    <!-- ============================ -->
+    <!-- ACADEMIC STATUS             -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+      <h4>Academic Status</h4>
+
+      <div class="form-group">
+        <label for="academic-availability-status">
+          Availability Status
+        </label>
+
+        <select id="academic-availability-status">
+          <option value="available">Available</option>
+          <option value="busy">Busy</option>
+          <option value="class">In Class</option>
+          <option value="exam">Exam In Progress</option>
+          <option value="internship">At Internship</option>
+          <option value="break">Academic Break</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="academic-activity">
+          Current Activity
+        </label>
+
+        <input
+          type="text"
+          id="academic-activity"
+          placeholder="CSET 1100 Lecture"
+        >
+      </div>
+    </div>
+
+    <!-- ============================ -->
+    <!-- WEEKLY CLASS SCHEDULE       -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+
+      <h4>Weekly Academic Schedule</h4>
+
+      <div id="academic-schedule-container" class="hours-grid">
+
+        <div class="day-hours-block" data-day="monday">
+          <div class="day-title">Monday</div>
+          <div class="hours-list"></div>
+          <button type="button" class="add-range-btn add-class">
+            + Add Class
+          </button>
+        </div>
+
+        <div class="day-hours-block" data-day="tuesday">
+          <div class="day-title">Tuesday</div>
+          <div class="hours-list"></div>
+          <button type="button" class="add-range-btn add-class">
+            + Add Class
+          </button>
+        </div>
+
+        <div class="day-hours-block" data-day="wednesday">
+          <div class="day-title">Wednesday</div>
+          <div class="hours-list"></div>
+          <button type="button" class="add-range-btn add-class">
+            + Add Class
+          </button>
+        </div>
+
+        <div class="day-hours-block" data-day="thursday">
+          <div class="day-title">Thursday</div>
+          <div class="hours-list"></div>
+          <button type="button" class="add-range-btn add-class">
+            + Add Class
+          </button>
+        </div>
+
+        <div class="day-hours-block" data-day="friday">
+          <div class="day-title">Friday</div>
+          <div class="hours-list"></div>
+          <button type="button" class="add-range-btn add-class">
+            + Add Class
+          </button>
+        </div>
+
+        <div class="day-hours-block" data-day="saturday">
+          <div class="day-title">Saturday</div>
+          <div class="hours-list"></div>
+          <button type="button" class="add-range-btn add-class">
+            + Add Class
+          </button>
+        </div>
+
+        <div class="day-hours-block" data-day="sunday">
+          <div class="day-title">Sunday</div>
+          <div class="hours-list"></div>
+          <button type="button" class="add-range-btn add-class">
+            + Add Class
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ============================ -->
+    <!-- EXAMS                       -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+
+      <h4>Exams & Quizzes</h4>
+
+      <div
+        id="academic-exam-list"
+        class="special-hours-list"
+      ></div>
+
+      <button
+        type="button"
+        id="add-academic-exam-button"
+        class="add-range-btn"
+      >
+        + Add Exam
+      </button>
+
+    </div>
+
+    <!-- ============================ -->
+    <!-- FINALS                      -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+
+      <h4>Final Exams</h4>
+
+      <div
+        id="academic-finals-list"
+        class="special-hours-list"
+      ></div>
+
+      <button
+        type="button"
+        id="add-final-button"
+        class="add-range-btn"
+      >
+        + Add Final
+      </button>
+
+    </div>
+
+    <!-- ============================ -->
+    <!-- UNIVERSITY EVENTS           -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+
+      <h4>University Events</h4>
+
+      <div
+        id="academic-events-list"
+        class="special-hours-list"
+      ></div>
+
+      <button
+        type="button"
+        id="add-university-event-button"
+        class="add-range-btn"
+      >
+        + Add Event
+      </button>
+
+    </div>
+
+    <!-- ============================ -->
+    <!-- INTERNSHIPS                 -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+
+      <h4>Internships & Co-ops</h4>
+
+      <div
+        id="academic-internship-list"
+        class="special-hours-list"
+      ></div>
+
+      <button
+        type="button"
+        id="add-internship-button"
+        class="add-range-btn"
+      >
+        + Add Internship / Co-op
+      </button>
+
+    </div>
+
+    <!-- ============================ -->
+    <!-- BREAKS                      -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+
+      <h4>Academic Breaks</h4>
+
+      <div class="form-group">
+        <label>Fall Break</label>
+        <input
+          type="text"
+          id="fall-break"
+          placeholder="October 12–13, 2026"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Thanksgiving Break</label>
+        <input
+          type="text"
+          id="thanksgiving-break"
+          placeholder="November 25–29, 2026"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Winter Break</label>
+        <input
+          type="text"
+          id="winter-break"
+          placeholder="December 19, 2026–January 18, 2027"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Spring Break</label>
+        <input
+          type="text"
+          id="spring-break"
+          placeholder="March 2027"
+        >
+      </div>
+
+      <div class="form-group">
+        <label>Summer Break</label>
+        <input
+          type="text"
+          id="summer-break"
+          placeholder="May–August"
+        >
+      </div>
+
+    </div>
+
+    <!-- ============================ -->
+    <!-- ACADEMIC PROFILE            -->
+    <!-- ============================ -->
+    <div class="admin-section-card">
+
+      <h4>Academic Profile</h4>
+
+      <div class="form-group">
+        <label for="academic-institution">
+          Institution
+        </label>
+        <input
+          type="text"
+          id="academic-institution"
+          value="University of Toledo"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="academic-range">
+          Academic Years
+        </label>
+        <input
+          type="text"
+          id="academic-range"
+          value="2026-2030"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="graduation-date">
+          Expected Graduation
+        </label>
+        <input
+          type="text"
+          id="graduation-date"
+          value="Spring 2030"
+        >
+      </div>
+
+    </div>
+
+    <!-- ============================ -->
+    <!-- SAVE                        -->
+    <!-- ============================ -->
+    <div class="form-actions">
+
+      <button
+        type="submit"
+        id="save-academic-availability-button"
+        class="button-primary"
+      >
+        Save Academic Availability
+      </button>
+
+    </div>
+
+  </form>
+
+  <!-- ============================ -->
+  <!-- LIVE PREVIEW                -->
+  <!-- ============================ -->
+  <div class="admin-preview-container business-preview">
+
+    <h4 class="onyx-subheading">
+      Academic Availability Preview
+    </h4>
+
+    <div id="academic-preview-status" class="preview-status">
+      Available
+    </div>
+
+    <ul id="academic-preview-schedule" class="preview-hours"></ul>
+
+    <div id="academic-preview-semester"
+         class="preview-contact">
+    </div>
+
+  </div>
+
+  <!-- ============================ -->
+  <!-- STATUS MESSAGE              -->
+  <!-- ============================ -->
+  <div
+    id="academic-availability-status-message"
+    class="status-message"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+</section>
+              
 
 <section class="admin-section" id="tech-management" aria-labelledby="tech-heading" data-portal-title="Tech Inventory" data-portal-keywords="tech inventory devices ownership planned active archive lifecycle">
     <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
