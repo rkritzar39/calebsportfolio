@@ -9189,6 +9189,275 @@ main .business-section{
   }
 }
 
+/* =========================================================
+   ADVANCED ACADEMIC SYSTEM
+========================================================= */
+
+/* Real-Time Academic Status */
+
+#liveAcademicStatus,
+#currentClass,
+#nextClass,
+#academicActivity,
+#currentAcademicActivity {
+  font-weight: 900;
+}
+
+#currentlyInClass,
+#liveAcademicStatus {
+  color: var(--text-color);
+}
+
+#todayClassCount,
+#semesterProgress,
+#availableAgain,
+#nextClassCountdown {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Term Type */
+
+#schoolTermType {
+  font-weight: 900;
+}
+
+#schoolTermType[data-term="fall"] {
+  color: #f97316;
+}
+
+#schoolTermType[data-term="spring"] {
+  color: #22c55e;
+}
+
+#schoolTermType[data-term="summer"] {
+  color: #facc15;
+}
+
+#schoolTermType[data-term="winter"] {
+  color: #60a5fa;
+}
+
+/* Academic Activity States */
+
+#academicActivity[data-activity="class"] {
+  color: #facc15;
+}
+
+#academicActivity[data-activity="lab"] {
+  color: #a855f7;
+}
+
+#academicActivity[data-activity="exam"] {
+  color: #ef4444;
+}
+
+#academicActivity[data-activity="final"] {
+  color: #dc2626;
+}
+
+#academicActivity[data-activity="break"] {
+  color: #60a5fa;
+}
+
+#academicActivity[data-activity="internship"] {
+  color: #10b981;
+}
+
+/* Weekly Schedule */
+
+.school-day.current-day {
+  border-color: color-mix(
+    in srgb,
+    var(--accent-color) 40%,
+    var(--border-color)
+  );
+
+  box-shadow:
+    0 0 0 3px color-mix(
+      in srgb,
+      var(--accent-color) 12%,
+      transparent
+    ),
+    0 10px 24px color-mix(
+      in srgb,
+      var(--shadow-color) 24%,
+      transparent
+    );
+}
+
+.school-day.current-class {
+  border-color: #facc15;
+
+  box-shadow:
+    0 0 0 3px rgba(250, 204, 21, 0.15),
+    0 8px 24px rgba(250, 204, 21, 0.12);
+}
+
+.school-day.current-class .school-day-name {
+  color: #facc15;
+}
+
+/* Individual Class Blocks */
+
+.class-block {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 8px 10px;
+  margin-bottom: 6px;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.02)
+  );
+
+  border: 1px solid color-mix(
+    in srgb,
+    var(--border-color) 30%,
+    transparent
+  );
+}
+
+.class-time {
+  font-weight: 900;
+  color: var(--text-color);
+}
+
+.class-type {
+  color: var(--secondary-text);
+}
+
+/* Exams */
+
+#examScheduleDisplay .biz-meta__row {
+  border-left: 3px solid #ef4444;
+}
+
+/* Finals */
+
+#finalsScheduleDisplay .biz-meta__row {
+  border-left: 3px solid #dc2626;
+}
+
+/* Internships */
+
+#internshipDisplay .biz-meta__row {
+  border-left: 3px solid #10b981;
+}
+
+/* University Events */
+
+#universityEventsDisplay .biz-meta__row {
+  border-left: 3px solid #6366f1;
+}
+
+/* Schedule Diagnostics */
+
+#scheduleHealth[data-health="good"] {
+  color: #22c55e;
+}
+
+#scheduleHealth[data-health="warning"] {
+  color: #facc15;
+}
+
+#scheduleHealth[data-health="error"] {
+  color: #ef4444;
+}
+
+#overlapStatus[data-overlap="true"] {
+  color: #ef4444;
+  font-weight: 900;
+}
+
+#semesterConflictStatus[data-conflict="true"] {
+  color: #ef4444;
+  font-weight: 900;
+}
+
+/* Graduation */
+
+#expectedGraduation {
+  color: #60a5fa;
+  font-weight: 900;
+}
+
+/* Semester Timeline */
+
+#semesterArchiveDisplay {
+  display: grid;
+  gap: 10px;
+}
+
+#semesterArchiveDisplay .biz-meta__row {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+#semesterArchiveDisplay .biz-meta__row:hover {
+  transform: translateY(-1px);
+}
+
+/* Business States */
+
+#business-section.state-exam,
+.business-info-section.state-exam {
+  --biz-state-color: #ef4444;
+}
+
+#business-section.state-finals,
+.business-info-section.state-finals {
+  --biz-state-color: #dc2626;
+}
+
+#business-section.state-break,
+.business-info-section.state-break {
+  --biz-state-color: #60a5fa;
+}
+
+#business-section.state-summer,
+.business-info-section.state-summer {
+  --biz-state-color: #facc15;
+}
+
+/* Academic Progress Bar */
+
+.academic-progress {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(0, 0, 0, 0.1)
+  );
+}
+
+.academic-progress__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+
+  width: 0%;
+
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    #22c55e,
+    #60a5fa
+  );
+
+  transition: width 0.4s ease;
+}
 
 /* Prevent printing of the page */
 @media print {
