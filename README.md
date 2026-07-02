@@ -7,7 +7,7 @@ The current version of the website is **v26.7**
  
 ---
 
-## Features   
+## Features  
 
 ### Home Page
 
