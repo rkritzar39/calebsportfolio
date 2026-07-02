@@ -489,17 +489,113 @@
         <div id="holiday-hours-display" class="hours-wrap"></div>
       </details>
 
-      <details class="biz-details" id="schoolDetails">
-        <summary>Academic Schedule</summary>
-        <div class="biz-muted" style="font-size: 0.85em; margin-bottom: 12px; line-height: 1.4;">
-          Store operations and live support are automatically paused during scheduled classes.
-        </div>
-        <div id="school-hours-display" class="hours-wrap">
-           <div class="biz-meta__row">
-              <span class="biz-meta__label">No classes currently scheduled.</span>
-           </div>
-        </div>
-      </details>
+     <details class="biz-details" id="schoolDetails">
+  <summary>Academic Availability</summary>
+
+  <div
+    class="biz-muted"
+    style="font-size: 0.85em; margin-bottom: 12px; line-height: 1.4;"
+  >
+    Business operations and live support may be temporarily unavailable during
+    scheduled university classes.
+  </div>
+
+  <div class="biz-meta">
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Current Semester</span>
+      <span class="biz-meta__value" id="schoolSemester">
+        Not Available
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Semester Status</span>
+      <span class="biz-meta__value" id="schoolStatus">
+        Not In Session
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Next Semester</span>
+      <span class="biz-meta__value" id="nextSemester">
+        None Scheduled
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Days Until Next Semester</span>
+      <span class="biz-meta__value" id="nextSemesterCountdown">
+        —
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Academic Program</span>
+      <span class="biz-meta__value" id="schoolProgram">
+        University of Toledo
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Academic Year Range</span>
+      <span class="biz-meta__value" id="schoolYearRange">
+        2026–2030
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Availability Status</span>
+      <span class="biz-meta__value" id="schoolAvailabilityStatus">
+        No Classes Scheduled
+      </span>
+    </div>
+
+  </div>
+
+  <div class="biz-divider" role="separator" aria-hidden="true"></div>
+
+  <div id="school-hours-display" class="hours-wrap">
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">
+        No class schedule loaded.
+      </span>
+    </div>
+
+  </div>
+
+  <details class="biz-details" id="upcomingSemesterDetails">
+    <summary>Upcoming Semester</summary>
+
+    <div class="biz-meta">
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Semester</span>
+        <span class="biz-meta__value" id="upcomingSemesterName">
+          —
+        </span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Start Date</span>
+        <span class="biz-meta__value" id="upcomingSemesterStart">
+          —
+        </span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">End Date</span>
+        <span class="biz-meta__value" id="upcomingSemesterEnd">
+          —
+        </span>
+      </div>
+
+    </div>
+  </details>
+
+</details>
+
 
       <div class="biz-divider" role="separator" aria-hidden="true"></div>
 
