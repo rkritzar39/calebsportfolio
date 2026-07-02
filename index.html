@@ -489,81 +489,242 @@
         <div id="holiday-hours-display" class="hours-wrap"></div>
       </details>
 
-     <details class="biz-details" id="schoolDetails">
+<details class="biz-details" id="schoolDetails">
   <summary>Academic Availability</summary>
 
   <div
     class="biz-muted"
-    style="font-size: 0.85em; margin-bottom: 12px; line-height: 1.4;"
+    style="font-size:0.85em;margin-bottom:12px;line-height:1.4;"
   >
-    Business operations and live support may be temporarily unavailable during
-    scheduled university classes.
+    Business availability may be affected by classes, labs, exams, finals,
+    academic events, internships, and university breaks.
   </div>
 
   <div class="biz-meta">
 
     <div class="biz-meta__row">
       <span class="biz-meta__label">Current Semester</span>
-      <span class="biz-meta__value" id="schoolSemester">
-        Not Available
-      </span>
+      <span class="biz-meta__value" id="schoolSemester">Detecting...</span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Term Type</span>
+      <span class="biz-meta__value" id="schoolTermType">—</span>
     </div>
 
     <div class="biz-meta__row">
       <span class="biz-meta__label">Semester Status</span>
-      <span class="biz-meta__value" id="schoolStatus">
-        Not In Session
-      </span>
+      <span class="biz-meta__value" id="schoolStatus">Checking...</span>
     </div>
 
     <div class="biz-meta__row">
-      <span class="biz-meta__label">Next Semester</span>
-      <span class="biz-meta__value" id="nextSemester">
-        None Scheduled
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Days Until Next Semester</span>
-      <span class="biz-meta__value" id="nextSemesterCountdown">
-        —
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Academic Program</span>
-      <span class="biz-meta__value" id="schoolProgram">
-        University of Toledo
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Academic Year Range</span>
-      <span class="biz-meta__value" id="schoolYearRange">
-        2026–2030
-      </span>
+      <span class="biz-meta__label">Semester Progress</span>
+      <span class="biz-meta__value" id="semesterProgress">—</span>
     </div>
 
     <div class="biz-meta__row">
       <span class="biz-meta__label">Availability Status</span>
       <span class="biz-meta__value" id="schoolAvailabilityStatus">
-        No Classes Scheduled
+        Available
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Current Academic Activity</span>
+      <span class="biz-meta__value" id="currentAcademicActivity">
+        None
       </span>
     </div>
 
   </div>
 
-  <div class="biz-divider" role="separator" aria-hidden="true"></div>
+  <div class="biz-divider"></div>
+
+  <h4 style="margin:0 0 12px 0;">Real-Time Academic Status</h4>
+
+  <div class="biz-meta">
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Current Status</span>
+      <span class="biz-meta__value" id="liveAcademicStatus">
+        Available
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Current Class</span>
+      <span class="biz-meta__value" id="currentClass">
+        None
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Available Again</span>
+      <span class="biz-meta__value" id="availableAgain">
+        Now
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Next Class</span>
+      <span class="biz-meta__value" id="nextClass">
+        None Scheduled
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Begins In</span>
+      <span class="biz-meta__value" id="nextClassCountdown">
+        —
+      </span>
+    </div>
+
+    <div class="biz-meta__row">
+      <span class="biz-meta__label">Classes Today</span>
+      <span class="biz-meta__value" id="todayClassCount">
+        0
+      </span>
+    </div>
+
+  </div>
+
+  <div class="biz-divider"></div>
+
+  <h4 style="margin:0 0 12px 0;">
+    Weekly Academic Schedule
+  </h4>
 
   <div id="school-hours-display" class="hours-wrap">
 
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">
-        No class schedule loaded.
-      </span>
+    <div class="school-day">
+      <div class="school-day-name">Monday</div>
+      <div class="school-day-times" id="scheduleMonday">
+        No Classes
+      </div>
+    </div>
+
+    <div class="school-day">
+      <div class="school-day-name">Tuesday</div>
+      <div class="school-day-times" id="scheduleTuesday">
+        No Classes
+      </div>
+    </div>
+
+    <div class="school-day">
+      <div class="school-day-name">Wednesday</div>
+      <div class="school-day-times" id="scheduleWednesday">
+        No Classes
+      </div>
+    </div>
+
+    <div class="school-day">
+      <div class="school-day-name">Thursday</div>
+      <div class="school-day-times" id="scheduleThursday">
+        No Classes
+      </div>
+    </div>
+
+    <div class="school-day">
+      <div class="school-day-name">Friday</div>
+      <div class="school-day-times" id="scheduleFriday">
+        No Classes
+      </div>
+    </div>
+
+    <div class="school-day">
+      <div class="school-day-name">Saturday</div>
+      <div class="school-day-times" id="scheduleSaturday">
+        No Classes
+      </div>
+    </div>
+
+    <div class="school-day">
+      <div class="school-day-name">Sunday</div>
+      <div class="school-day-times" id="scheduleSunday">
+        No Classes
+      </div>
     </div>
 
   </div>
+
+  <details class="biz-details" id="examScheduleDetails">
+    <summary>Exams & Quizzes</summary>
+
+    <div id="examScheduleDisplay" class="hours-wrap">
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">No exams scheduled.</span>
+      </div>
+    </div>
+  </details>
+
+  <details class="biz-details" id="finalsScheduleDetails">
+    <summary>Finals Week</summary>
+
+    <div id="finalsScheduleDisplay" class="hours-wrap">
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">
+          No finals schedule available.
+        </span>
+      </div>
+    </div>
+  </details>
+
+  <details class="biz-details" id="universityEventsDetails">
+    <summary>University Events</summary>
+
+    <div id="universityEventsDisplay" class="hours-wrap">
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">
+          No events scheduled.
+        </span>
+      </div>
+    </div>
+  </details>
+
+  <details class="biz-details" id="internshipDetails">
+    <summary>Internships & Co-ops</summary>
+
+    <div id="internshipDisplay" class="hours-wrap">
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">
+          No internship commitments loaded.
+        </span>
+      </div>
+    </div>
+  </details>
+
+  <details class="biz-details" id="breaksDetails">
+    <summary>Academic Breaks</summary>
+
+    <div class="biz-meta">
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Fall Break</span>
+        <span class="biz-meta__value" id="fallBreakInfo">—</span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Thanksgiving Break</span>
+        <span class="biz-meta__value" id="thanksgivingBreakInfo">—</span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Winter Break</span>
+        <span class="biz-meta__value" id="winterBreakInfo">—</span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Spring Break</span>
+        <span class="biz-meta__value" id="springBreakInfo">—</span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Summer Break</span>
+        <span class="biz-meta__value" id="summerBreakInfo">—</span>
+      </div>
+
+    </div>
+  </details>
 
   <details class="biz-details" id="upcomingSemesterDetails">
     <summary>Upcoming Semester</summary>
@@ -572,7 +733,14 @@
 
       <div class="biz-meta__row">
         <span class="biz-meta__label">Semester</span>
-        <span class="biz-meta__value" id="upcomingSemesterName">
+        <span class="biz-meta__value" id="nextSemester">
+          —
+        </span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Term Type</span>
+        <span class="biz-meta__value" id="upcomingSemesterTermType">
           —
         </span>
       </div>
@@ -591,10 +759,81 @@
         </span>
       </div>
 
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Days Until Start</span>
+        <span class="biz-meta__value" id="nextSemesterCountdown">
+          —
+        </span>
+      </div>
+
     </div>
   </details>
 
+  <details class="biz-details" id="academicProfileDetails">
+    <summary>Academic Profile</summary>
+
+    <div class="biz-meta">
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Institution</span>
+        <span class="biz-meta__value">University of Toledo</span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Academic Range</span>
+        <span class="biz-meta__value">2026–2030</span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Expected Graduation</span>
+        <span class="biz-meta__value">Spring 2030</span>
+      </div>
+
+    </div>
+
+  </details>
+
+  <details class="biz-details" id="semesterTimelineDetails">
+    <summary>Academic Timeline</summary>
+
+    <div id="semesterArchiveDisplay" class="hours-wrap">
+      <!-- Populate from admin portal -->
+    </div>
+
+  </details>
+
+  <details class="biz-details" id="academicDiagnostics">
+    <summary>Schedule Diagnostics</summary>
+
+    <div class="biz-meta">
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Overlapping Classes</span>
+        <span class="biz-meta__value" id="overlapStatus">
+          None
+        </span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Semester Conflicts</span>
+        <span class="biz-meta__value" id="semesterConflictStatus">
+          None
+        </span>
+      </div>
+
+      <div class="biz-meta__row">
+        <span class="biz-meta__label">Schedule Health</span>
+        <span class="biz-meta__value" id="scheduleHealth">
+          Good
+        </span>
+      </div>
+
+    </div>
+
+  </details>
+
 </details>
+
 
 
       <div class="biz-divider" role="separator" aria-hidden="true"></div>
