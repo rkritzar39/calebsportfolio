@@ -352,155 +352,199 @@
       </div>
 
       <!-- Luxon MUST load before your business script -->
-      <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 
-      <script>
-        window.assumedBusinessTimezone = "America/New_York";
-      </script>
+<script>
+  window.assumedBusinessTimezone = "America/New_York";
+</script>
 
-      <section class="section business-info-section" id="business-section" data-section-id="business-info">
-        <div class="business-head">
-          <div class="business-head-left">
-            <h2>Business Status &amp; Hours</h2>
-            <p class="business-subtitle">
-              Hours shown in your local timezone. Store timezone: <strong>America/New_York</strong>.
-            </p>
-          </div>
+<section class="section business-info-section"
+         id="business-section"
+         data-section-id="business-info">
 
-          <div class="business-head-right">
-            <button class="biz-action" type="button" id="copyTodayBtn">
-              Copy Today
-            </button>
+  <!-- ============================ -->
+  <!-- BUSINESS HEADER              -->
+  <!-- ============================ -->
+  <div class="business-head">
+    <div class="business-head-left">
+      <h2>Business Status & Hours</h2>
+      <p class="business-subtitle">
+        Hours shown in your local timezone.
+        Store timezone: <strong>America/New_York</strong>.
+      </p>
+    </div>
 
-            <button
-              class="biz-action biz-action-ghost"
-              type="button"
-              id="toggleHoursBtn"
-              aria-expanded="true"
-              aria-controls="hoursPanel"
-            >
-              Hide Full Hours
-            </button>
+    <div class="business-head-right">
+      <button class="biz-action" type="button" id="copyTodayBtn">
+        Copy Today
+      </button>
 
-            <div
-              class="biz-segmented-time"
-              id="bizTimeFormatSegment"
-              role="group"
-              aria-label="Time format"
-            >
-              <button
-                type="button"
-                class="biz-segmented-time__option is-active"
-                id="bizTime12Btn"
-                data-format="12"
-                aria-pressed="true"
-              >
-                12h
-              </button>
+      <button
+        class="biz-action biz-action-ghost"
+        type="button"
+        id="toggleHoursBtn"
+        aria-expanded="true"
+        aria-controls="hoursPanel"
+      >
+        Hide Full Hours
+      </button>
 
-              <button
-                type="button"
-                class="biz-segmented-time__option"
-                id="bizTime24Btn"
-                data-format="24"
-                aria-pressed="false"
-              >
-                24h
-              </button>
-            </div>
-          </div>
+      <div
+        class="biz-segmented-time"
+        id="bizTimeFormatSegment"
+        role="group"
+        aria-label="Time format"
+      >
+        <button
+          type="button"
+          class="biz-segmented-time__option is-active"
+          id="bizTime12Btn"
+          data-format="12"
+          aria-pressed="true"
+        >
+          12h
+        </button>
+
+        <button
+          type="button"
+          class="biz-segmented-time__option"
+          id="bizTime24Btn"
+          data-format="24"
+          aria-pressed="false"
+        >
+          24h
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="business-grid">
+
+    <!-- ============================ -->
+    <!-- LEFT PANEL — LIVE STATUS     -->
+    <!-- ============================ -->
+    <div class="biz-panel">
+      <div class="biz-panel-title">
+        <div class="biz-signal" aria-hidden="true">
+          <span class="biz-signal__light biz-signal__light--red" id="bizLightRed"></span>
+          <span class="biz-signal__light biz-signal__light--yellow" id="bizLightYellow"></span>
+          <span class="biz-signal__light biz-signal__light--green" id="bizLightGreen"></span>
         </div>
 
-        <div class="business-grid">
-          <!-- LEFT PANEL — LIVE STATUS -->
-          <div class="biz-panel">
-            <div class="biz-panel-title">
-              <div class="biz-signal" aria-hidden="true">
-                <span class="biz-signal__light biz-signal__light--red" id="bizLightRed"></span>
-                <span class="biz-signal__light biz-signal__light--yellow" id="bizLightYellow"></span>
-                <span class="biz-signal__light biz-signal__light--green" id="bizLightGreen"></span>
-              </div>
+        <h3>Live Status</h3>
+        <span class="biz-chip" id="bizChip">AUTO</span>
+      </div>
 
-              <h3>Live Status</h3>
-              <span class="biz-chip" id="bizChip">AUTO</span>
-            </div>
+      <div id="business-status-display" class="business-status">
+        <span class="status-main-text status-unavailable">Loading…</span>
+        <span class="status-countdown-text"></span>
+        <div class="status-reason-text"></div>
+      </div>
 
-            <div id="business-status-display" class="business-status">
-              <span class="status-main-text status-unavailable">Loading…</span>
-              <span class="status-countdown-text"></span>
-              <div class="status-reason-text"></div>
-            </div>
+      <div class="biz-status-hint" id="bizStatusHint"></div>
 
-            <div class="biz-status-hint" id="bizStatusHint"></div>
+      <!-- ============================ -->
+      <!-- ACADEMIC STATUS BANNER      -->
+      <!-- ============================ -->
+      <div
+        id="academic-status-banner"
+        class="biz-academic-banner"
+        hidden
+      >
+        <strong id="academic-status-title"></strong>
+        <span id="academic-status-detail"></span>
+      </div>
 
-            <div class="biz-meta">
-              <div class="biz-meta__row">
-                <span class="biz-meta__label">Your timezone</span>
-                <span class="biz-meta__value" id="bizUserTz">Detecting…</span>
-              </div>
-
-              <div class="biz-meta__row">
-                <span class="biz-meta__label">Store time</span>
-                <span class="biz-meta__value" id="bizStoreTime">Loading…</span>
-              </div>
-
-              <div class="biz-meta__row">
-                <span class="biz-meta__label">Today</span>
-                <span class="biz-meta__value" id="bizTodayHours">Loading…</span>
-              </div>
-
-              <div class="biz-meta__row">
-                <span class="biz-meta__label">Next open</span>
-                <span class="biz-meta__value" id="bizNextOpen">Loading…</span>
-              </div>
-            </div>
-
-            <div
-              class="biz-today-timeline"
-              id="bizTodayTimeline"
-              aria-label="Today's schedule timeline"
-            >
-              <div class="biz-today-timeline__bar">
-                <span class="biz-today-timeline__fill" id="bizTodayTimelineFill"></span>
-                <span class="biz-today-timeline__now" id="bizTodayTimelineNow"></span>
-              </div>
-
-              <div class="biz-today-timeline__labels">
-                <span id="bizTimelineStart">—</span>
-                <span id="bizTimelineNowLabel">Now</span>
-                <span id="bizTimelineEnd">—</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT PANEL — HOURS -->
-          <div class="biz-panel" id="hoursPanel">
-            <div class="biz-panel-title biz-panel-title--split">
-              <h3>Weekly Hours</h3>
-              <span class="biz-muted" id="bizLocalTime">Local time: …</span>
-            </div>
-
-            <div id="business-hours-display" class="hours-wrap"></div>
-
-            <details class="biz-details" id="temporaryDetails" open>
-              <summary>Temporary Hours</summary>
-              <div id="temporary-hours-display" class="hours-wrap"></div>
-            </details>
-
-            <details class="biz-details" id="holidayDetails">
-              <summary>Holiday Hours</summary>
-              <div id="holiday-hours-display" class="hours-wrap"></div>
-            </details>
-
-            <div class="biz-divider" role="separator" aria-hidden="true"></div>
-
-            <div class="biz-contact">
-              <h4>Contact</h4>
-              <div id="contact-email-display" class="contact-info"></div>
-            </div>
-          </div>
+      <div class="biz-meta">
+        <div class="biz-meta__row">
+          <span class="biz-meta__label">Your timezone</span>
+          <span class="biz-meta__value" id="bizUserTz">Detecting…</span>
         </div>
-      </section>
+
+        <div class="biz-meta__row">
+          <span class="biz-meta__label">Store time</span>
+          <span class="biz-meta__value" id="bizStoreTime">Loading…</span>
+        </div>
+
+        <div class="biz-meta__row">
+          <span class="biz-meta__label">Today</span>
+          <span class="biz-meta__value" id="bizTodayHours">Loading…</span>
+        </div>
+
+        <div class="biz-meta__row">
+          <span class="biz-meta__label">Next open</span>
+          <span class="biz-meta__value" id="bizNextOpen">Loading…</span>
+        </div>
+      </div>
+
+      <div
+        class="biz-today-timeline"
+        id="bizTodayTimeline"
+        aria-label="Today's schedule timeline"
+      >
+        <div class="biz-today-timeline__bar">
+          <span class="biz-today-timeline__fill" id="bizTodayTimelineFill"></span>
+          <span class="biz-today-timeline__now" id="bizTodayTimelineNow"></span>
+        </div>
+
+        <div class="biz-today-timeline__labels">
+          <span id="bizTimelineStart">—</span>
+          <span id="bizTimelineNowLabel">Now</span>
+          <span id="bizTimelineEnd">—</span>
+        </div>
+      </div>
+
+      <!-- ============================ -->
+      <!-- ACADEMIC SUMMARY            -->
+      <!-- ============================ -->
+      <div
+        id="academic-summary"
+        class="biz-academic-summary"
+        hidden
+      >
+        <h4>Academic Schedule Impact</h4>
+        <ul id="academic-summary-list"></ul>
+      </div>
+    </div>
+
+    <!-- ============================ -->
+    <!-- RIGHT PANEL — HOURS          -->
+    <!-- ============================ -->
+    <div class="biz-panel" id="hoursPanel">
+      <div class="biz-panel-title biz-panel-title--split">
+        <h3>Weekly Hours</h3>
+        <span class="biz-muted" id="bizLocalTime">Local time: …</span>
+      </div>
+
+      <div id="business-hours-display" class="hours-wrap"></div>
+
+      <details class="biz-details" id="temporaryDetails" open>
+        <summary>Temporary Hours</summary>
+        <div id="temporary-hours-display" class="hours-wrap"></div>
+      </details>
+
+      <details class="biz-details" id="holidayDetails">
+        <summary>Holiday Hours</summary>
+        <div id="holiday-hours-display" class="hours-wrap"></div>
+      </details>
+
+      <!-- ============================ -->
+      <!-- ACADEMIC HOURS              -->
+      <!-- ============================ -->
+      <details class="biz-details" id="academicDetails">
+        <summary>Academic Schedule</summary>
+        <div id="academic-hours-display" class="hours-wrap"></div>
+      </details>
+
+      <div class="biz-divider" role="separator" aria-hidden="true"></div>
+
+      <div class="biz-contact">
+        <h4>Contact</h4>
+        <div id="contact-email-display" class="contact-info"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
       <div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
         <h2><i class="fas fa-microchip"></i> Tech Information</h2>
