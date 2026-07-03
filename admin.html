@@ -1290,7 +1290,44 @@
   </section>
 </div>
   
+<!-- =====================================================
+     ACADEMIC AVAILABILITY (PHASE 1 – CLASSES)
+===================================================== -->
+<section id="academic-availability-management" class="admin-section">
 
+  <h3>Academic Availability</h3>
+  <p class="section-description">
+    Manage recurring class schedules that may affect availability.
+  </p>
+
+  <form id="academic-availability-form">
+
+    <h4>Weekly Class Schedule</h4>
+
+    <!-- Container where class rows will appear -->
+    <div id="academic-classes-container" class="academic-container">
+      <!-- JS will inject class rows here -->
+    </div>
+
+    <button
+      type="button"
+      id="add-academic-class-btn"
+      class="btn-small"
+    >
+      + Add Class
+    </button>
+
+    <div class="form-actions">
+      <button type="submit" class="primary-btn">
+        Save Academic Availability
+      </button>
+    </div>
+
+    <p id="academic-status-message" class="status-message"></p>
+
+  </form>
+</section>
+            
 <section class="admin-section" id="tech-management" aria-labelledby="tech-heading" data-portal-title="Tech Inventory" data-portal-keywords="tech inventory devices ownership planned active archive lifecycle">
     <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
 
