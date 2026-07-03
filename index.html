@@ -351,501 +351,156 @@
         </div>
       </div>
 
-<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+      <!-- Luxon MUST load before your business script -->
+      <script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
 
-<script>
-  window.assumedBusinessTimezone = "America/New_York";
-</script>
+      <script>
+        window.assumedBusinessTimezone = "America/New_York";
+      </script>
 
-<section class="section business-info-section" id="business-section" data-section-id="business-info">
-  <div class="business-head">
-    <div class="business-head-left">
-      <h2>Business Status &amp; Hours</h2>
-      <p class="business-subtitle">
-        Hours shown in your local timezone. Store timezone: <strong>America/New_York</strong>.
-      </p>
-    </div>
+      <section class="section business-info-section" id="business-section" data-section-id="business-info">
+        <div class="business-head">
+          <div class="business-head-left">
+            <h2>Business Status &amp; Hours</h2>
+            <p class="business-subtitle">
+              Hours shown in your local timezone. Store timezone: <strong>America/New_York</strong>.
+            </p>
+          </div>
 
-    <div class="business-head-right">
-      <button class="biz-action" type="button" id="copyTodayBtn">
-        Copy Today
-      </button>
+          <div class="business-head-right">
+            <button class="biz-action" type="button" id="copyTodayBtn">
+              Copy Today
+            </button>
 
-      <button
-        class="biz-action biz-action-ghost"
-        type="button"
-        id="toggleHoursBtn"
-        aria-expanded="true"
-        aria-controls="hoursPanel"
-      >
-        Hide Full Hours
-      </button>
+            <button
+              class="biz-action biz-action-ghost"
+              type="button"
+              id="toggleHoursBtn"
+              aria-expanded="true"
+              aria-controls="hoursPanel"
+            >
+              Hide Full Hours
+            </button>
 
-      <div
-        class="biz-segmented-time"
-        id="bizTimeFormatSegment"
-        role="group"
-        aria-label="Time format"
-      >
-        <button
-          type="button"
-          class="biz-segmented-time__option is-active"
-          id="bizTime12Btn"
-          data-format="12"
-          aria-pressed="true"
-        >
-          12h
-        </button>
+            <div
+              class="biz-segmented-time"
+              id="bizTimeFormatSegment"
+              role="group"
+              aria-label="Time format"
+            >
+              <button
+                type="button"
+                class="biz-segmented-time__option is-active"
+                id="bizTime12Btn"
+                data-format="12"
+                aria-pressed="true"
+              >
+                12h
+              </button>
 
-        <button
-          type="button"
-          class="biz-segmented-time__option"
-          id="bizTime24Btn"
-          data-format="24"
-          aria-pressed="false"
-        >
-          24h
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div class="business-grid">
-    <div class="biz-panel">
-      <div class="biz-panel-title">
-        <div class="biz-signal" aria-hidden="true">
-          <span class="biz-signal__light biz-signal__light--red" id="bizLightRed"></span>
-          <span class="biz-signal__light biz-signal__light--yellow" id="bizLightYellow"></span>
-          <span class="biz-signal__light biz-signal__light--green" id="bizLightGreen"></span>
+              <button
+                type="button"
+                class="biz-segmented-time__option"
+                id="bizTime24Btn"
+                data-format="24"
+                aria-pressed="false"
+              >
+                24h
+              </button>
+            </div>
+          </div>
         </div>
 
-        <h3>Live Status</h3>
-        <span class="biz-chip" id="bizChip">AUTO</span>
-      </div>
+        <div class="business-grid">
+          <!-- LEFT PANEL — LIVE STATUS -->
+          <div class="biz-panel">
+            <div class="biz-panel-title">
+              <div class="biz-signal" aria-hidden="true">
+                <span class="biz-signal__light biz-signal__light--red" id="bizLightRed"></span>
+                <span class="biz-signal__light biz-signal__light--yellow" id="bizLightYellow"></span>
+                <span class="biz-signal__light biz-signal__light--green" id="bizLightGreen"></span>
+              </div>
 
-      <div id="business-status-display" class="business-status">
-        <span class="status-main-text status-unavailable">Loading…</span>
-        <span class="status-countdown-text"></span>
-        <div class="status-reason-text"></div>
-      </div>
+              <h3>Live Status</h3>
+              <span class="biz-chip" id="bizChip">AUTO</span>
+            </div>
 
-      <div class="biz-status-hint" id="bizStatusHint"></div>
+            <div id="business-status-display" class="business-status">
+              <span class="status-main-text status-unavailable">Loading…</span>
+              <span class="status-countdown-text"></span>
+              <div class="status-reason-text"></div>
+            </div>
 
-      <div class="biz-meta">
-        <div class="biz-meta__row">
-          <span class="biz-meta__label">Your timezone</span>
-          <span class="biz-meta__value" id="bizUserTz">Detecting…</span>
+            <div class="biz-status-hint" id="bizStatusHint"></div>
+
+            <div class="biz-meta">
+              <div class="biz-meta__row">
+                <span class="biz-meta__label">Your timezone</span>
+                <span class="biz-meta__value" id="bizUserTz">Detecting…</span>
+              </div>
+
+              <div class="biz-meta__row">
+                <span class="biz-meta__label">Store time</span>
+                <span class="biz-meta__value" id="bizStoreTime">Loading…</span>
+              </div>
+
+              <div class="biz-meta__row">
+                <span class="biz-meta__label">Today</span>
+                <span class="biz-meta__value" id="bizTodayHours">Loading…</span>
+              </div>
+
+              <div class="biz-meta__row">
+                <span class="biz-meta__label">Next open</span>
+                <span class="biz-meta__value" id="bizNextOpen">Loading…</span>
+              </div>
+            </div>
+
+            <div
+              class="biz-today-timeline"
+              id="bizTodayTimeline"
+              aria-label="Today's schedule timeline"
+            >
+              <div class="biz-today-timeline__bar">
+                <span class="biz-today-timeline__fill" id="bizTodayTimelineFill"></span>
+                <span class="biz-today-timeline__now" id="bizTodayTimelineNow"></span>
+              </div>
+
+              <div class="biz-today-timeline__labels">
+                <span id="bizTimelineStart">—</span>
+                <span id="bizTimelineNowLabel">Now</span>
+                <span id="bizTimelineEnd">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT PANEL — HOURS -->
+          <div class="biz-panel" id="hoursPanel">
+            <div class="biz-panel-title biz-panel-title--split">
+              <h3>Weekly Hours</h3>
+              <span class="biz-muted" id="bizLocalTime">Local time: …</span>
+            </div>
+
+            <div id="business-hours-display" class="hours-wrap"></div>
+
+            <details class="biz-details" id="temporaryDetails" open>
+              <summary>Temporary Hours</summary>
+              <div id="temporary-hours-display" class="hours-wrap"></div>
+            </details>
+
+            <details class="biz-details" id="holidayDetails">
+              <summary>Holiday Hours</summary>
+              <div id="holiday-hours-display" class="hours-wrap"></div>
+            </details>
+
+            <div class="biz-divider" role="separator" aria-hidden="true"></div>
+
+            <div class="biz-contact">
+              <h4>Contact</h4>
+              <div id="contact-email-display" class="contact-info"></div>
+            </div>
+          </div>
         </div>
-
-        <div class="biz-meta__row">
-          <span class="biz-meta__label">Store time</span>
-          <span class="biz-meta__value" id="bizStoreTime">Loading…</span>
-        </div>
-
-        <div class="biz-meta__row">
-          <span class="biz-meta__label">Today</span>
-          <span class="biz-meta__value" id="bizTodayHours">Loading…</span>
-        </div>
-
-        <div class="biz-meta__row">
-          <span class="biz-meta__label">Next open</span>
-          <span class="biz-meta__value" id="bizNextOpen">Loading…</span>
-        </div>
-      </div>
-
-      <div
-        class="biz-today-timeline"
-        id="bizTodayTimeline"
-        aria-label="Today's schedule timeline"
-      >
-        <div class="biz-today-timeline__bar">
-          <span class="biz-today-timeline__fill" id="bizTodayTimelineFill"></span>
-          <span class="biz-today-timeline__now" id="bizTodayTimelineNow"></span>
-        </div>
-
-        <div class="biz-today-timeline__labels">
-          <span id="bizTimelineStart">—</span>
-          <span id="bizTimelineNowLabel">Now</span>
-          <span id="bizTimelineEnd">—</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="biz-panel" id="hoursPanel">
-      <div class="biz-panel-title biz-panel-title--split">
-        <h3>Weekly Hours</h3>
-        <span class="biz-muted" id="bizLocalTime">Local time: …</span>
-      </div>
-
-      <div id="business-hours-display" class="hours-wrap"></div>
-
-      <details class="biz-details" id="temporaryDetails" open>
-        <summary>Temporary Hours</summary>
-        <div id="temporary-hours-display" class="hours-wrap"></div>
-      </details>
-
-      <details class="biz-details" id="holidayDetails">
-        <summary>Holiday Hours</summary>
-        <div id="holiday-hours-display" class="hours-wrap"></div>
-      </details>
-
-<details class="biz-details" id="schoolDetails">
-  <summary>Academic Availability</summary>
-
-  <div
-    class="biz-muted"
-    style="font-size:0.85em;margin-bottom:12px;line-height:1.4;"
-  >
-    Business availability may be affected by classes, labs, exams, finals,
-    academic events, internships, and university breaks.
-  </div>
-
-  <div class="biz-meta">
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Current Semester</span>
-      <span class="biz-meta__value" id="schoolSemester">Detecting...</span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Term Type</span>
-      <span class="biz-meta__value" id="schoolTermType">—</span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Semester Status</span>
-      <span class="biz-meta__value" id="schoolStatus">Checking...</span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Semester Progress</span>
-      <span class="biz-meta__value" id="semesterProgress">—</span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Availability Status</span>
-      <span class="biz-meta__value" id="schoolAvailabilityStatus">
-        Available
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Current Academic Activity</span>
-      <span class="biz-meta__value" id="currentAcademicActivity">
-        None
-      </span>
-    </div>
-
-  </div>
-
-  <div class="biz-divider"></div>
-
-  <h4 style="margin:0 0 12px 0;">Real-Time Academic Status</h4>
-
-  <div class="biz-meta">
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Current Status</span>
-      <span class="biz-meta__value" id="liveAcademicStatus">
-        Available
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Current Class</span>
-      <span class="biz-meta__value" id="currentClass">
-        None
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Available Again</span>
-      <span class="biz-meta__value" id="availableAgain">
-        Now
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Next Class</span>
-      <span class="biz-meta__value" id="nextClass">
-        None Scheduled
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Begins In</span>
-      <span class="biz-meta__value" id="nextClassCountdown">
-        —
-      </span>
-    </div>
-
-    <div class="biz-meta__row">
-      <span class="biz-meta__label">Classes Today</span>
-      <span class="biz-meta__value" id="todayClassCount">
-        0
-      </span>
-    </div>
-
-  </div>
-
-  <div class="biz-divider"></div>
-
-  <h4 style="margin:0 0 12px 0;">
-    Weekly Academic Schedule
-  </h4>
-
-  <div id="school-hours-display" class="hours-wrap">
-
-    <div class="school-day">
-      <div class="school-day-name">Monday</div>
-      <div class="school-day-times" id="scheduleMonday">
-        No Classes
-      </div>
-    </div>
-
-    <div class="school-day">
-      <div class="school-day-name">Tuesday</div>
-      <div class="school-day-times" id="scheduleTuesday">
-        No Classes
-      </div>
-    </div>
-
-    <div class="school-day">
-      <div class="school-day-name">Wednesday</div>
-      <div class="school-day-times" id="scheduleWednesday">
-        No Classes
-      </div>
-    </div>
-
-    <div class="school-day">
-      <div class="school-day-name">Thursday</div>
-      <div class="school-day-times" id="scheduleThursday">
-        No Classes
-      </div>
-    </div>
-
-    <div class="school-day">
-      <div class="school-day-name">Friday</div>
-      <div class="school-day-times" id="scheduleFriday">
-        No Classes
-      </div>
-    </div>
-
-    <div class="school-day">
-      <div class="school-day-name">Saturday</div>
-      <div class="school-day-times" id="scheduleSaturday">
-        No Classes
-      </div>
-    </div>
-
-    <div class="school-day">
-      <div class="school-day-name">Sunday</div>
-      <div class="school-day-times" id="scheduleSunday">
-        No Classes
-      </div>
-    </div>
-
-  </div>
-
-  <details class="biz-details" id="examScheduleDetails">
-    <summary>Exams & Quizzes</summary>
-
-    <div id="examScheduleDisplay" class="hours-wrap">
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">No exams scheduled.</span>
-      </div>
-    </div>
-  </details>
-
-  <details class="biz-details" id="finalsScheduleDetails">
-    <summary>Finals Week</summary>
-
-    <div id="finalsScheduleDisplay" class="hours-wrap">
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">
-          No finals schedule available.
-        </span>
-      </div>
-    </div>
-  </details>
-
-  <details class="biz-details" id="universityEventsDetails">
-    <summary>University Events</summary>
-
-    <div id="universityEventsDisplay" class="hours-wrap">
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">
-          No events scheduled.
-        </span>
-      </div>
-    </div>
-  </details>
-
-  <details class="biz-details" id="internshipDetails">
-    <summary>Internships & Co-ops</summary>
-
-    <div id="internshipDisplay" class="hours-wrap">
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">
-          No internship commitments loaded.
-        </span>
-      </div>
-    </div>
-  </details>
-
-  <details class="biz-details" id="breaksDetails">
-    <summary>Academic Breaks</summary>
-
-    <div class="biz-meta">
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Fall Break</span>
-        <span class="biz-meta__value" id="fallBreakInfo">—</span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Thanksgiving Break</span>
-        <span class="biz-meta__value" id="thanksgivingBreakInfo">—</span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Winter Break</span>
-        <span class="biz-meta__value" id="winterBreakInfo">—</span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Spring Break</span>
-        <span class="biz-meta__value" id="springBreakInfo">—</span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Summer Break</span>
-        <span class="biz-meta__value" id="summerBreakInfo">—</span>
-      </div>
-
-    </div>
-  </details>
-
-  <details class="biz-details" id="upcomingSemesterDetails">
-    <summary>Upcoming Semester</summary>
-
-    <div class="biz-meta">
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Semester</span>
-        <span class="biz-meta__value" id="nextSemester">
-          —
-        </span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Term Type</span>
-        <span class="biz-meta__value" id="upcomingSemesterTermType">
-          —
-        </span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Start Date</span>
-        <span class="biz-meta__value" id="upcomingSemesterStart">
-          —
-        </span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">End Date</span>
-        <span class="biz-meta__value" id="upcomingSemesterEnd">
-          —
-        </span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Days Until Start</span>
-        <span class="biz-meta__value" id="nextSemesterCountdown">
-          —
-        </span>
-      </div>
-
-    </div>
-  </details>
-
-  <details class="biz-details" id="academicProfileDetails">
-    <summary>Academic Profile</summary>
-
-    <div class="biz-meta">
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Institution</span>
-        <span class="biz-meta__value">University of Toledo</span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Academic Range</span>
-        <span class="biz-meta__value">2026–2030</span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Expected Graduation</span>
-        <span class="biz-meta__value">Spring 2030</span>
-      </div>
-
-    </div>
-
-  </details>
-
-  <details class="biz-details" id="semesterTimelineDetails">
-    <summary>Academic Timeline</summary>
-
-    <div id="semesterArchiveDisplay" class="hours-wrap">
-      <!-- Populate from admin portal -->
-    </div>
-
-  </details>
-
-  <details class="biz-details" id="academicDiagnostics">
-    <summary>Schedule Diagnostics</summary>
-
-    <div class="biz-meta">
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Overlapping Classes</span>
-        <span class="biz-meta__value" id="overlapStatus">
-          None
-        </span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Semester Conflicts</span>
-        <span class="biz-meta__value" id="semesterConflictStatus">
-          None
-        </span>
-      </div>
-
-      <div class="biz-meta__row">
-        <span class="biz-meta__label">Schedule Health</span>
-        <span class="biz-meta__value" id="scheduleHealth">
-          Good
-        </span>
-      </div>
-
-    </div>
-
-  </details>
-
-</details>
-
-
-
-      <div class="biz-divider" role="separator" aria-hidden="true"></div>
-
-      <div class="biz-contact">
-        <h4>Contact</h4>
-        <div id="contact-email-display" class="contact-info"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
+      </section>
 
       <div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
         <h2><i class="fas fa-microchip"></i> Tech Information</h2>
@@ -1095,131 +750,64 @@
   </script>
 
 <nav class="onyx-dock">
-  <a class="dock-item" href="/">
+  <a href="/" class="dock-item active">
     <span class="dock-icon">🏠</span>
     <span class="dock-label">Home</span>
   </a>
 
-  <a class="dock-item" href="/beta">
+  <a href="/beta" class="dock-item">
     <span class="dock-icon">🧪</span>
     <span class="dock-label">Beta</span>
   </a>
 
-  <a class="dock-item" href="/resume">
+  <a href="/resume" class="dock-item">
     <span class="dock-icon">📜</span>
     <span class="dock-label">Resume</span>
   </a>
 
-  <a class="dock-item" href="/settings">
+  <a href="/settings" class="dock-item">
     <span class="dock-icon">⚙️</span>
     <span class="dock-label">Settings</span>
   </a>
 </nav>
 
-<script>
-  function normalizeOnyxDockPath(path) {
-    return (path || "/")
-      .toLowerCase()
-      .replace(/index\.html$/, "")
-      .replace(/\.html$/, "")
-      .replace(/\/+$/, "") || "/";
-  }
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const links = document.querySelectorAll('.onyx-dock .dock-item');
+      const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
 
-  function updateOnyxDockActiveTab() {
-    const dock = document.querySelector(".onyx-dock");
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
+      links.forEach(link => {
+        const targetPath = new URL(link.getAttribute("href"), window.location.origin)
+          .pathname
+          .replace(/\/$/, '') || '/';
 
-    if (!dock || !links.length) return;
+        link.classList.toggle('active', targetPath === currentPath);
 
-    const currentPath = normalizeOnyxDockPath(window.location.pathname);
-    let matched = false;
+        link.addEventListener('mousemove', (e) => {
+          const rect = link.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const dx = (x / rect.width) - 0.5;
+          const dy = (y / rect.height) - 0.5;
 
-    links.forEach((link) => {
-      const targetPath = normalizeOnyxDockPath(
-        new URL(link.getAttribute("href"), window.location.origin).pathname
-      );
+          link.style.setProperty('--x', `${x}px`);
+          link.style.setProperty('--y', `${y}px`);
+          link.style.setProperty('--dx', dx);
+          link.style.setProperty('--dy', dy);
+        });
 
-      const isActive =
-        targetPath === "/"
-          ? currentPath === "/"
-          : currentPath === targetPath ||
-            currentPath.startsWith(targetPath + "/");
-
-      link.classList.toggle("active", isActive);
-
-      if (isActive) matched = true;
-    });
-
-    if (!matched) {
-      const homeLink = document.querySelector('.onyx-dock .dock-item[href="/"]');
-
-      links.forEach((l) => l.classList.remove("active"));
-      if (homeLink) homeLink.classList.add("active");
-    }
-
-    dock.classList.add("dock-ready");
-  }
-
-  function setupOnyxDockEffects() {
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
-
-    links.forEach((link) => {
-      if (link.dataset.dockEffectsReady === "true") return;
-      link.dataset.dockEffectsReady = "true";
-
-      link.addEventListener("mousemove", (e) => {
-        const rect = link.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const dx = x / rect.width - 0.5;
-        const dy = y / rect.height - 0.5;
-
-        link.style.setProperty("--x", `${x}px`);
-        link.style.setProperty("--y", `${y}px`);
-        link.style.setProperty("--dx", dx);
-        link.style.setProperty("--dy", dy);
+        link.addEventListener('mouseleave', () => {
+          link.style.setProperty('--dx', 0);
+          link.style.setProperty('--dy', 0);
+        });
       });
 
-      link.addEventListener("mouseleave", () => {
-        link.style.setProperty("--dx", "0");
-        link.style.setProperty("--dy", "0");
-      });
+      const y = document.getElementById("year");
+
+      if (y) {
+        y.textContent = new Date().getFullYear();
+      }
     });
-  }
-
-  function initOnyxDock() {
-    setupOnyxDockEffects();
-    updateOnyxDockActiveTab();
-
-    requestAnimationFrame(updateOnyxDockActiveTab);
-    setTimeout(updateOnyxDockActiveTab, 50);
-    setTimeout(updateOnyxDockActiveTab, 150);
-    setTimeout(updateOnyxDockActiveTab, 350);
-    setTimeout(updateOnyxDockActiveTab, 800);
-
-    const y = document.getElementById("year");
-    if (y) y.textContent = new Date().getFullYear();
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initOnyxDock);
-  } else {
-    initOnyxDock();
-  }
-
-  window.addEventListener("pageshow", () => {
-    setupOnyxDockEffects();
-    updateOnyxDockActiveTab();
-    requestAnimationFrame(updateOnyxDockActiveTab);
-    setTimeout(updateOnyxDockActiveTab, 100);
-    setTimeout(updateOnyxDockActiveTab, 400);
-  });
-
-  window.addEventListener("load", updateOnyxDockActiveTab);
-  window.addEventListener("popstate", updateOnyxDockActiveTab);
-  window.addEventListener("hashchange", updateOnyxDockActiveTab);
-</script>
-
+  </script>
 </body>
 </html>
