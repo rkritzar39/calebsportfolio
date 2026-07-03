@@ -3297,7 +3297,6 @@ async function loadRecurringClasses() {
     
     
 // Listener for changes in authentication state (login/logout)
-// Added 'async' to the user callback so 'await' works inside it
 onAuthStateChanged(auth, async user => {
     // --- User is signed IN ---
     if (user) {
@@ -3326,7 +3325,6 @@ onAuthStateChanged(auth, async user => {
             const adminProfilePic = document.getElementById('admin-profile-pic');
             if (adminProfilePic) {
                 if (user.photoURL) {
-                    // If the user has a Google photo URL, use it
                     adminProfilePic.src = user.photoURL;
                     adminProfilePic.style.display = 'inline-block'; 
                 } else {
@@ -3342,17 +3340,19 @@ onAuthStateChanged(auth, async user => {
             // 2. Safely load all data
             try {
                 console.log("Loading all admin panel data...");
-                loadProfileData();
-                loadBusinessInfoData();
-                setupBusinessInfoListeners();
-                loadShoutoutsAdmin('tiktok');
-                loadShoutoutsAdmin('instagram');
-                loadShoutoutsAdmin('youtube');
-                loadUsefulLinksAdmin();
-                loadSocialLinksAdmin();
-                loadDisabilitiesAdmin();
-                loadTechItemsAdmin();
-                loadLegislationAdmin();
+                if (typeof loadProfileData === 'function') loadProfileData();
+                if (typeof loadBusinessInfoData === 'function') loadBusinessInfoData();
+                if (typeof setupBusinessInfoListeners === 'function') setupBusinessInfoListeners();
+                if (typeof loadShoutoutsAdmin === 'function') {
+                    loadShoutoutsAdmin('tiktok');
+                    loadShoutoutsAdmin('instagram');
+                    loadShoutoutsAdmin('youtube');
+                }
+                if (typeof loadUsefulLinksAdmin === 'function') loadUsefulLinksAdmin();
+                if (typeof loadSocialLinksAdmin === 'function') loadSocialLinksAdmin();
+                if (typeof loadDisabilitiesAdmin === 'function') loadDisabilitiesAdmin();
+                if (typeof loadTechItemsAdmin === 'function') loadTechItemsAdmin();
+                if (typeof loadLegislationAdmin === 'function') loadLegislationAdmin();
 
                 // ================================
                 // Academic Availability – Phase 1
@@ -3373,14 +3373,15 @@ onAuthStateChanged(auth, async user => {
                   addClassBtn.__addListenerAttached = true;
                 }
 
-                // This await now works perfectly because we added 'async' to the user callback
                 await loadRecurringClasses();
                 
-                resetInactivityTimer();
-                addActivityListeners();
+                if (typeof resetInactivityTimer === 'function') resetInactivityTimer();
+                if (typeof addActivityListeners === 'function') addActivityListeners();
             } catch (error) {
                 console.error("❌ CRITICAL ERROR during data loading:", error);
-                showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
+                if (typeof showAdminStatus === 'function') {
+                    showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
+                }
             }
 
         } else {
@@ -3406,69 +3407,78 @@ onAuthStateChanged(auth, async user => {
         }
         // --- END: ADD THIS CODE ---
 
-        removeActivityListeners();
+        if (typeof removeActivityListeners === 'function') removeActivityListeners();
     }
 });
     
-// Login Form Submission
-if (loginForm) { 
-    loginForm.addEventListener('submit', (e) => { 
-        e.preventDefault(); 
-        const email = emailInput.value; 
-        const password = passwordInput.value; 
+// Wait for HTML to load before attaching form events
+document.addEventListener("DOMContentLoaded", () => {
+    // Dynamically grab elements (fall back to your globals if they exist)
+    const activeLoginForm = document.getElementById('login-form') || (typeof loginForm !== 'undefined' ? loginForm : null);
+    const activeEmailInput = document.getElementById('email-input') || (typeof emailInput !== 'undefined' ? emailInput : null);
+    const activePasswordInput = document.getElementById('password-input') || (typeof passwordInput !== 'undefined' ? passwordInput : null);
+    const activeAuthStatus = document.getElementById('auth-status') || (typeof authStatus !== 'undefined' ? authStatus : null);
+    const activeLogoutBtn = document.getElementById('logout-button') || (typeof logoutButton !== 'undefined' ? logoutButton : null);
 
-        if (!email || !password) { 
-             if (passwordGroup && passwordGroup.style.display !== 'none' && !password) { 
-                 if (authStatus) { authStatus.textContent = 'Please enter your password.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} 
-             } else if (!email) { 
-                 if (authStatus) { authStatus.textContent = 'Please enter your email.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} 
-             } else { 
-                 if (authStatus) { authStatus.textContent = 'Please enter email and password.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} 
-             }
-             return; 
-        }
+    // Login Form Submission
+    if (activeLoginForm) { 
+        activeLoginForm.addEventListener('submit', (e) => { 
+            e.preventDefault(); 
+            // Added .trim() here to prevent accidental spaces at the end of the email causing an error
+            const email = activeEmailInput ? activeEmailInput.value.trim() : ''; 
+            const password = activePasswordInput ? activePasswordInput.value : ''; 
 
-        if (authStatus) { 
-            authStatus.textContent = 'Logging in...'; 
-            authStatus.className = 'status-message'; 
-            authStatus.style.display = 'block'; 
-        }
+            if (!email || !password) { 
+                 if (activeAuthStatus) { 
+                     activeAuthStatus.textContent = 'Please enter email and password.'; 
+                     activeAuthStatus.className = 'status-message error'; 
+                     activeAuthStatus.style.display = 'block';
+                 } 
+                 return; 
+            }
 
-        signInWithEmailAndPassword(auth, email, password) 
-            .then((userCredential) => { 
-                console.log("Login successful via form submission."); 
-             })
-            .catch((error) => { 
-                console.error("Login failed:", error.code, error.message); 
-                let errorMessage = 'Invalid email or password.'; 
-                if (error.code === 'auth/invalid-email') { errorMessage = 'Invalid email format.'; } 
-                else if (error.code === 'auth/user-disabled') { errorMessage = 'This account has been disabled.'; } 
-                else if (error.code === 'auth/invalid-credential') { errorMessage = 'Invalid email or password.'; } 
-                else if (error.code === 'auth/too-many-requests') { errorMessage = 'Access temporarily disabled due to too many failed login attempts. Please try again later.'; } 
-                else { errorMessage = `An unexpected error occurred (${error.code}).`; } 
+            if (activeAuthStatus) { 
+                activeAuthStatus.textContent = 'Logging in...'; 
+                activeAuthStatus.className = 'status-message'; 
+                activeAuthStatus.style.display = 'block'; 
+            }
 
-                if (authStatus) { 
-                    authStatus.textContent = `Login Failed: ${errorMessage}`; 
-                    authStatus.className = 'status-message error'; 
-                    authStatus.style.display = 'block'; 
-                }
-            });
-    });
-}
+            signInWithEmailAndPassword(auth, email, password) 
+                .then((userCredential) => { 
+                    console.log("Login successful via form submission."); 
+                 })
+                .catch((error) => { 
+                    console.error("Login failed:", error.code, error.message); 
+                    let errorMessage = 'Invalid email or password.'; 
+                    if (error.code === 'auth/invalid-email') { errorMessage = 'Invalid email format.'; } 
+                    else if (error.code === 'auth/user-disabled') { errorMessage = 'This account has been disabled.'; } 
+                    else if (error.code === 'auth/invalid-credential') { errorMessage = 'Invalid email or password.'; } 
+                    else if (error.code === 'auth/too-many-requests') { errorMessage = 'Access temporarily disabled due to too many failed login attempts. Please try again later.'; } 
+                    else { errorMessage = `An unexpected error occurred (${error.code}).`; } 
 
-// Logout Button Event Listener
-if (logoutButton) { 
-    logoutButton.addEventListener('click', () => { 
-        console.log("Logout button clicked."); 
-        removeActivityListeners(); 
-        signOut(auth).then(() => { 
-             console.log("User signed out via button."); 
-         }).catch((error) => { 
-             console.error("Logout failed:", error); 
-             showAdminStatus(`Logout Failed: ${error.message}`, true); 
-         });
-    });
-}
+                    if (activeAuthStatus) { 
+                        activeAuthStatus.textContent = `Login Failed: ${errorMessage}`; 
+                        activeAuthStatus.className = 'status-message error'; 
+                        activeAuthStatus.style.display = 'block'; 
+                    }
+                });
+        });
+    }
+
+    // Logout Button Event Listener
+    if (activeLogoutBtn) { 
+        activeLogoutBtn.addEventListener('click', () => { 
+            console.log("Logout button clicked."); 
+            if (typeof removeActivityListeners === 'function') removeActivityListeners(); 
+            signOut(auth).then(() => { 
+                 console.log("User signed out via button."); 
+             }).catch((error) => { 
+                 console.error("Logout failed:", error); 
+                 if (typeof showAdminStatus === 'function') showAdminStatus(`Logout Failed: ${error.message}`, true); 
+             });
+        });
+    }
+});
 
 /* ------------------------------------------------------------
    SHOUTOUTS LOAD / ADD / DELETE / UPDATE
