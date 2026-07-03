@@ -3236,6 +3236,42 @@ function createRecurringClassRow(data = {}) {
 
   return row;
 }
+
+async function saveRecurringClasses(e) {
+  e.preventDefault();
+
+  const rows = document.querySelectorAll(".recurring-class-row");
+
+  const classes = [...rows].map(row => ({
+    course: row.querySelector(".class-course")?.value.trim() || "",
+    title: row.querySelector(".class-title")?.value.trim() || "",
+    instructor: row.querySelector(".class-instructor")?.value.trim() || "",
+    location: row.querySelector(".class-location")?.value.trim() || "",
+    days: row
+      .querySelector(".class-days")
+      ?.value.split(",")
+      .map(d => d.trim().toLowerCase())
+      .filter(Boolean),
+    startTime: row.querySelector(".class-start")?.value || "",
+    endTime: row.querySelector(".class-end")?.value || "",
+    startDate: row.querySelector(".class-start-date")?.value || "",
+    endDate: row.querySelector(".class-end-date")?.value || ""
+  }));
+
+  await setDoc(
+    doc(db, "site_config", "academicAvailability"),
+    {
+      academicAvailability: {
+        recurringClasses: classes
+      },
+      lastUpdated: serverTimestamp()
+    },
+    { merge: true }
+  );
+
+  const msg = document.getElementById("academic-status-message");
+  if (msg) msg.textContent = "Classes saved successfully.";
+}    
     
 // Listener for changes in authentication state (login/logout)
 onAuthStateChanged(auth, user => {
@@ -3297,12 +3333,25 @@ onAuthStateChanged(auth, user => {
                 // ================================
                 const addClassBtn = document.getElementById("add-academic-class-btn");
                 const classContainer = document.getElementById("academic-classes-container");
+                // ================================
+// Academic Availability – Save Button
+// ================================
+const academicForm =
+  document.getElementById("academic-availability-form");
 
-                if (addClassBtn && classContainer) {
-                  addClassBtn.addEventListener("click", () => {
-                    classContainer.appendChild(createRecurringClassRow());
-                  });
-                }
+if (academicForm && !academicForm.__saveListenerAttached) {
+  academicForm.addEventListener("submit", saveRecurringClasses);
+  academicForm.__saveListenerAttached = true;
+}
+
+
+                if (addClassBtn && classContainer && !addClassBtn.__addListenerAttached) {
+  addClassBtn.addEventListener("click", () => {
+    classContainer.appendChild(createRecurringClassRow());
+  });
+  addClassBtn.__addListenerAttached = true;
+}
+
 
                 resetInactivityTimer();
                 addActivityListeners();
