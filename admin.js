@@ -3297,6 +3297,7 @@ async function loadRecurringClasses() {
     
     
 // Listener for changes in authentication state (login/logout)
+// Added 'async' to the user callback so 'await' works inside it
 onAuthStateChanged(auth, async user => {
     // --- User is signed IN ---
     if (user) {
@@ -3411,20 +3412,18 @@ onAuthStateChanged(auth, async user => {
     }
 });
     
-// Wait for HTML to load before attaching form events
+
+// Wait for HTML to load before attaching form events (Fixes Login)
 document.addEventListener("DOMContentLoaded", () => {
-    // Dynamically grab elements (fall back to your globals if they exist)
     const activeLoginForm = document.getElementById('login-form') || (typeof loginForm !== 'undefined' ? loginForm : null);
     const activeEmailInput = document.getElementById('email-input') || (typeof emailInput !== 'undefined' ? emailInput : null);
     const activePasswordInput = document.getElementById('password-input') || (typeof passwordInput !== 'undefined' ? passwordInput : null);
     const activeAuthStatus = document.getElementById('auth-status') || (typeof authStatus !== 'undefined' ? authStatus : null);
-    const activeLogoutBtn = document.getElementById('logout-button') || (typeof logoutButton !== 'undefined' ? logoutButton : null);
 
     // Login Form Submission
     if (activeLoginForm) { 
         activeLoginForm.addEventListener('submit', (e) => { 
             e.preventDefault(); 
-            // Added .trim() here to prevent accidental spaces at the end of the email causing an error
             const email = activeEmailInput ? activeEmailInput.value.trim() : ''; 
             const password = activePasswordInput ? activePasswordInput.value : ''; 
 
@@ -3464,21 +3463,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
         });
     }
+});
 
-    // Logout Button Event Listener
-    if (activeLogoutBtn) { 
-        activeLogoutBtn.addEventListener('click', () => { 
-            console.log("Logout button clicked."); 
-            if (typeof removeActivityListeners === 'function') removeActivityListeners(); 
-            signOut(auth).then(() => { 
-                 console.log("User signed out via button."); 
-             }).catch((error) => { 
-                 console.error("Logout failed:", error); 
-                 if (typeof showAdminStatus === 'function') showAdminStatus(`Logout Failed: ${error.message}`, true); 
-             });
+// BULLETPROOF LOGOUT LISTENER (Fixes Logout via Event Delegation)
+// This listens to all clicks on the page and checks if the logout button was clicked.
+document.addEventListener('click', (e) => {
+    const clickedLogoutBtn = e.target.closest('#logout-button');
+    
+    if (clickedLogoutBtn) {
+        e.preventDefault(); // Prevents the button from accidentally refreshing the page
+        console.log("Logout button clicked."); 
+        
+        if (typeof removeActivityListeners === 'function') {
+            removeActivityListeners(); 
+        }
+        
+        signOut(auth).then(() => { 
+            console.log("User signed out via button."); 
+        }).catch((error) => { 
+            console.error("Logout failed:", error); 
+            if (typeof showAdminStatus === 'function') {
+                showAdminStatus(`Logout Failed: ${error.message}`, true); 
+            } else {
+                alert(`Logout Failed: ${error.message}`);
+            }
         });
     }
 });
+
 
 /* ------------------------------------------------------------
    SHOUTOUTS LOAD / ADD / DELETE / UPDATE
