@@ -3271,7 +3271,30 @@ async function saveRecurringClasses(e) {
 
   const msg = document.getElementById("academic-status-message");
   if (msg) msg.textContent = "Classes saved successfully.";
-}    
+} 
+
+async function loadRecurringClasses() {
+  const container =
+    document.getElementById("academic-classes-container");
+  if (!container) return;
+
+  // Clear existing rows (important)
+  container.innerHTML = "";
+
+  const snap = await getDoc(
+    doc(db, "site_config", "academicAvailability")
+  );
+
+  if (!snap.exists()) return;
+
+  const data = snap.data()?.academicAvailability || {};
+  const classes = data.recurringClasses || [];
+
+  classes.forEach(cls => {
+    container.appendChild(createRecurringClassRow(cls));
+  });
+}
+    
     
 // Listener for changes in authentication state (login/logout)
 onAuthStateChanged(auth, user => {
@@ -3336,12 +3359,15 @@ onAuthStateChanged(auth, user => {
                 // ================================
 // Academic Availability – Save Button
 // ================================
-const academicForm =
-  document.getElementById("academic-availability-form");
+const saveBtn =
+  document.getElementById("save-academic-availability-btn");
 
-if (academicForm && !academicForm.__saveListenerAttached) {
-  academicForm.addEventListener("submit", saveRecurringClasses);
-  academicForm.__saveListenerAttached = true;
+if (saveBtn && !saveBtn.__saveListenerAttached) {
+  saveBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    saveRecurringClasses(e);
+  });
+  saveBtn.__saveListenerAttached = true;
 }
 
 
@@ -3352,7 +3378,7 @@ if (academicForm && !academicForm.__saveListenerAttached) {
   addClassBtn.__addListenerAttached = true;
 }
 
-
+                await loadRecurringClasses();
                 resetInactivityTimer();
                 addActivityListeners();
             } catch (error) {
