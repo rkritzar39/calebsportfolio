@@ -430,10 +430,49 @@ function setupSmartRealtimeNotifications() {
 document.addEventListener('DOMContentLoaded', () => {
   if (firebaseAppInitialized && db) {
     setupSmartRealtimeNotifications();
+    watchAcademicAvailability();
   }
 });
 // --- !! MOVED HERE FOR GLOBAL SCOPE !! ---
 const assumedBusinessTimezone = 'America/New_York'; // Your business's primary IANA timezone
+
+/* =========================================================
+   ACADEMIC AVAILABILITY – STORAGE
+========================================================= */
+
+let academicAvailability = null;
+
+/* =========================================================
+   ACADEMIC AVAILABILITY – FIRESTORE LISTENER
+========================================================= */
+
+function watchAcademicAvailability() {
+  const ref = doc(db, "site_config", "academicAvailability");
+
+  onSnapshot(ref, snap => {
+    academicAvailability = snap.exists()
+      ? snap.data()?.academicAvailability || null
+      : null;
+  });
+}
+
+/* =========================================================
+   ACADEMIC CHECK – IN CLASS RIGHT NOW?
+========================================================= */
+
+function isInClassNow(now) {
+  if (!academicAvailability) return false;
+
+  const classes = academicAvailability.recurringClasses || [];
+  const weekday = now.toFormat('cccc').toLowerCase();
+  const timeNow = now.toFormat("HH:mm");
+
+  return classes.some(cls =>
+    cls.days?.toLowerCase().includes(weekday) &&
+    cls.startTime <= timeNow &&
+    cls.endTime >= timeNow
+  );
+}
 
 // --- Helper Functions ---
 function formatFirestoreTimestamp(firestoreTimestamp) {
