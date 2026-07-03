@@ -1976,7 +1976,7 @@ function getAcademicAvailability(academicData) {
                 const start = timeStringToMinutesBI(exam.startTime);
                 const end = timeStringToMinutesBI(exam.endTime);
                 if (currentMinutes >= start && currentMinutes < end) {
-                    return { available: false, reason: 'Exam in Progress' };
+                    return {available: false, reason: 'Exam in Progress', backAt: exam.endTime};
                 }
             }
         }
@@ -1990,7 +1990,12 @@ function getAcademicAvailability(academicData) {
                     const start = timeStringToMinutesBI(cls.startTime);
                     const end = timeStringToMinutesBI(cls.endTime);
                     if (currentMinutes >= start && currentMinutes < end) {
-                        return { available: false, reason: 'In Class' };
+                        return {
+    available: false,
+    reason: 'In Class',
+    backAt: cls.endTime
+};
+
                     }
                 }
             }
@@ -2380,6 +2385,7 @@ function updateAdminPreview() {
     let currentStatus = 'Closed';
     let reason = 'Regular Hours';
     let isAcademicBlocked = false;
+    let backAtTime = null;
 
     // =============================
     // ACADEMIC AVAILABILITY OVERRIDE
@@ -2388,10 +2394,12 @@ function updateAdminPreview() {
         const academicResult = getAcademicAvailability(cachedAcademicAvailability);
 
         if (academicResult && academicResult.available === false) {
-            currentStatus = 'Closed';
-            reason = academicResult.reason;
-            isAcademicBlocked = true;
-        }
+    currentStatus = 'Closed';
+    reason = academicResult.reason;
+    backAtTime = academicResult.backAt || null;
+    isAcademicBlocked = true;
+}
+
     }
 
     if (previewData.statusOverride !== 'auto') {
@@ -2452,19 +2460,25 @@ function updateAdminPreview() {
     }
 
     // STATUS DISPLAY
-    let statusClass = 'status-closed';
-    if (currentStatus === 'Open') statusClass = 'status-open';
-    else if (currentStatus === 'Temporarily Unavailable') statusClass = 'status-unavailable';
+let statusClass = 'status-closed';
 
-    adminPreviewStatus.innerHTML = `
-        <div class="preview-status">
-            <span class="status-main-text ${statusClass}">
-                ${currentStatus}
-            </span>
-            <span class="status-reason">(${reason})</span>
-        </div>
-    `;
+if (currentStatus === 'Open') {
+    statusClass = 'status-open';
+} else if (currentStatus === 'Temporarily Unavailable') {
+    statusClass = 'status-unavailable';
+}
 
+adminPreviewStatus.innerHTML = `
+    <div class="preview-status">
+        <span class="status-main-text ${statusClass}">
+            ${currentStatus}
+        </span>
+        <span class="status-reason">
+            (${reason}${backAtTime ? ` — Back at ${formatTimeForAdminPreview(backAtTime)}` : ''})
+        </span>
+    </div>
+`;
+    
     // =============================
     // ONYX REGULAR HOURS LIST (🔥)
     // =============================
