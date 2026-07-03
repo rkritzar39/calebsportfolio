@@ -2624,11 +2624,7 @@ if (document.readyState === 'loading') {
     setupBusinessInfoListeners();
     loadBusinessInfoData();
 }
-
-// End of admin-business-hours-v16.js
-
-
-    
+ 
 /** Filters and displays shoutouts in the admin list */
 function displayFilteredShoutouts(platform) {
     const listContainer = document.getElementById(`shoutouts-${platform}-list-admin`);
@@ -3372,7 +3368,7 @@ async function saveRecurringClasses(e) {
     endDate: row.querySelector(".class-end-date")?.value || ""
   }));
 
-  // FIXED: 2. Gather Exams (Moved inside the function so it reads the current DOM state)
+  // 2. Gather Exams
   const examRows = document.querySelectorAll(".exam-row");
   const exams = [...examRows].map(row => ({
     course: row.querySelector(".exam-course")?.value.trim() || "",
@@ -3383,13 +3379,25 @@ async function saveRecurringClasses(e) {
     location: row.querySelector(".exam-location")?.value.trim() || ""
   }));
 
-  // 3. Save to Firebase
+  // 3. Gather Finals
+  const finalRows = document.querySelectorAll(".final-row");
+  const finals = [...finalRows].map(row => ({
+    course: row.querySelector(".final-course")?.value.trim() || "",
+    title: row.querySelector(".final-title")?.value.trim() || "",
+    date: row.querySelector(".final-date")?.value || "",
+    startTime: row.querySelector(".final-start")?.value || "",
+    endTime: row.querySelector(".final-end")?.value || "",
+    location: row.querySelector(".final-location")?.value.trim() || ""
+  }));
+
+  // 4. Save to Firebase
   await setDoc(
     doc(db, "site_config", "academicAvailability"),
     {
       academicAvailability: {
         recurringClasses: classes,
-        exams: exams
+        exams: exams,
+        finals: finals
       },
       lastUpdated: serverTimestamp()
     },
@@ -3397,8 +3405,8 @@ async function saveRecurringClasses(e) {
   );
 
   const msg = document.getElementById("academic-status-message");
-  if (msg) msg.textContent = "Classes and exams saved successfully.";
-} 
+  if (msg) msg.textContent = "Classes, exams, and finals saved successfully.";
+}
 
 async function loadAcademicAvailabilityForPreview() {
     if (typeof getDoc !== 'function' || typeof db === 'undefined') return;
@@ -3417,16 +3425,17 @@ async function loadAcademicAvailabilityForPreview() {
     }
 }
 
-    
 async function loadRecurringClasses() {
   const classContainer = document.getElementById("academic-classes-container");
   const examContainer = document.getElementById("academic-exams-container");
+  const finalContainer = document.getElementById("academic-finals-container");
   
   if (!classContainer) return;
 
   // Clear existing content
   classContainer.innerHTML = "";
   if (examContainer) examContainer.innerHTML = "";
+  if (finalContainer) finalContainer.innerHTML = "";
 
   const snap = await getDoc(doc(db, "site_config", "academicAvailability"));
 
@@ -3437,7 +3446,8 @@ async function loadRecurringClasses() {
 
   const data = snap.data()?.academicAvailability || {};
   const classes = data.recurringClasses || [];
-  const exams = data.exams || []; // FIXED: Now we pull saved exams too
+  const exams = data.exams || []; 
+  const finals = data.finals || []; 
 
   classes.forEach(cls => {
     classContainer.appendChild(createRecurringClassRow(cls));
@@ -3449,6 +3459,12 @@ async function loadRecurringClasses() {
     });
   }
 
+  if (finalContainer && typeof createFinalRow === 'function') {
+    finals.forEach(final => {
+      finalContainer.appendChild(createFinalRow(final));
+    });
+  }
+
   updateAcademicPreview();
 }
 
@@ -3457,9 +3473,10 @@ function updateAcademicPreview() {
   if (!countEl) return;
 
   const classCount = document.querySelectorAll(".recurring-class-row").length;
-  const examCount = document.querySelectorAll(".exam-row").length; // FIXED: Count exams too
+  const examCount = document.querySelectorAll(".exam-row").length; 
+  const finalCount = document.querySelectorAll(".final-row").length;
 
-  countEl.textContent = `Classes: ${classCount} | Exams: ${examCount}`;
+  countEl.textContent = `Classes: ${classCount} | Exams: ${examCount} | Finals: ${finalCount}`;
 }
     
 // Listener for changes in authentication state (login/logout)
