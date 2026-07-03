@@ -3232,7 +3232,10 @@ function createRecurringClassRow(data = {}) {
   `;
 
   row.querySelector(".remove-class-btn")
-    .addEventListener("click", () => row.remove());
+  .addEventListener("click", () => {
+    row.remove();
+    updateAcademicPreview();
+  });
 
   return row;
 }
@@ -3278,14 +3281,16 @@ async function loadRecurringClasses() {
     document.getElementById("academic-classes-container");
   if (!container) return;
 
-  // Clear existing rows (important)
   container.innerHTML = "";
 
   const snap = await getDoc(
     doc(db, "site_config", "academicAvailability")
   );
 
-  if (!snap.exists()) return;
+  if (!snap.exists()) {
+    updateAcademicPreview();
+    return;
+  }
 
   const data = snap.data()?.academicAvailability || {};
   const classes = data.recurringClasses || [];
@@ -3293,8 +3298,21 @@ async function loadRecurringClasses() {
   classes.forEach(cls => {
     container.appendChild(createRecurringClassRow(cls));
   });
+
+  updateAcademicPreview();
 }
-    
+
+function updateAcademicPreview() {
+  const countEl =
+    document.getElementById("academic-preview-counts");
+  if (!countEl) return;
+
+  const classCount =
+    document.querySelectorAll(".recurring-class-row").length;
+
+  // FIXED: Added backticks around the string template literal
+  countEl.textContent = `Classes: ${classCount}`;
+}
     
 // Listener for changes in authentication state (login/logout)
 // Added 'async' to the user callback so 'await' works inside it
@@ -3370,7 +3388,9 @@ onAuthStateChanged(auth, async user => {
                 if (addClassBtn && classContainer && !addClassBtn.__addListenerAttached) {
                   addClassBtn.addEventListener("click", () => {
                     classContainer.appendChild(createRecurringClassRow());
+                    updateAcademicPreview();
                   });
+
                   addClassBtn.__addListenerAttached = true;
                 }
 
