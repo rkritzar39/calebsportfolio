@@ -3234,7 +3234,7 @@ function createRecurringClassRow(data = {}) {
     .addEventListener("click", () => row.remove());
 
   return row;
-} 
+}
 
 // Listener for changes in authentication state (login/logout)
 onAuthStateChanged(auth, user => {
