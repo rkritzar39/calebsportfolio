@@ -184,6 +184,7 @@ let allSocialLinks = [];
 let allDisabilities = [];
 let allTechItems = []; // For Tech section
 
+
 document.addEventListener('DOMContentLoaded', () => { //
     // First, check if db and auth were successfully imported/initialized
     if (!db || !auth) { //
@@ -1910,6 +1911,7 @@ const businessDocRef = (typeof doc !== 'undefined' && typeof db !== 'undefined')
 
 // Days constants
 const daysOfWeek = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
+let cachedAcademicAvailability = null;
 
 // Small util: safe attach listener (prevents duplicate attachments)
 function addListenerSafe(element, eventType, handler, flagSuffix = '') {
@@ -1957,6 +1959,45 @@ function formatTimeForAdminPreview(timeString) {
     } catch (e) {
         return timeString;
     }
+}
+
+function getAcademicAvailability(academicData) {
+    if (!academicData) return { available: true };
+    
+    const now = new Date();
+    const todayDateStr = now.toISOString().slice(0, 10);
+    const todayDayName = daysOfWeek[(now.getDay() + 6) % 7];
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    // 1. Check Exams
+    if (Array.isArray(academicData.exams)) {
+        for (const exam of academicData.exams) {
+            if (exam.date === todayDateStr && exam.startTime && exam.endTime) {
+                const start = timeStringToMinutesBI(exam.startTime);
+                const end = timeStringToMinutesBI(exam.endTime);
+                if (currentMinutes >= start && currentMinutes < end) {
+                    return { available: false, reason: 'Exam in Progress' };
+                }
+            }
+        }
+    }
+
+    // 2. Check Recurring Classes
+    if (Array.isArray(academicData.recurringClasses)) {
+        for (const cls of academicData.recurringClasses) {
+            if (cls.startDate && cls.endDate && todayDateStr >= cls.startDate && todayDateStr <= cls.endDate) {
+                if (cls.days && cls.days.includes(todayDayName) && cls.startTime && cls.endTime) {
+                    const start = timeStringToMinutesBI(cls.startTime);
+                    const end = timeStringToMinutesBI(cls.endTime);
+                    if (currentMinutes >= start && currentMinutes < end) {
+                        return { available: false, reason: 'In Class' };
+                    }
+                }
+            }
+        }
+    }
+
+    return { available: true };
 }
 
 /* -------------------------
@@ -2190,8 +2231,9 @@ async function loadBusinessInfoData() {
             });
         }
 
-        updateAdminPreview();
-        console.log("Business info loaded.");
+       await loadAcademicAvailabilityForPreview();
+updateAdminPreview();
+console.log("Business info loaded.");
     } catch (err) {
         console.error("Error loading business info:", err);
         showBusinessInfoStatus("Error loading business info", true);
@@ -2337,6 +2379,20 @@ function updateAdminPreview() {
 
     let currentStatus = 'Closed';
     let reason = 'Regular Hours';
+    let isAcademicBlocked = false;
+
+    // =============================
+    // ACADEMIC AVAILABILITY OVERRIDE
+    // =============================
+    if (cachedAcademicAvailability) {
+        const academicResult = getAcademicAvailability(cachedAcademicAvailability);
+
+        if (academicResult && academicResult.available === false) {
+            currentStatus = 'Closed';
+            reason = academicResult.reason;
+            isAcademicBlocked = true;
+        }
+    }
 
     if (previewData.statusOverride !== 'auto') {
         currentStatus =
@@ -2347,6 +2403,8 @@ function updateAdminPreview() {
                     : 'Temporarily Unavailable';
 
         reason = 'Manual Override';
+    } else if (isAcademicBlocked) {
+        // Short-circuit: Academic availability is active, so bypass business hours logic
     } else {
         const todayHoliday = previewData.holidayHours.find(h => h.date === previewDateStr);
         if (todayHoliday) {
@@ -3327,6 +3385,24 @@ async function saveRecurringClasses(e) {
   if (msg) msg.textContent = "Classes and exams saved successfully.";
 } 
 
+async function loadAcademicAvailabilityForPreview() {
+    if (typeof getDoc !== 'function' || typeof db === 'undefined') return;
+
+    try {
+        const snap = await getDoc(
+            doc(db, "site_config", "academicAvailability")
+        );
+
+        cachedAcademicAvailability = snap.exists()
+            ? snap.data()?.academicAvailability || {}
+            : {};
+    } catch (err) {
+        console.warn("Academic availability preview load failed", err);
+        cachedAcademicAvailability = {};
+    }
+}
+
+    
 async function loadRecurringClasses() {
   const classContainer = document.getElementById("academic-classes-container");
   const examContainer = document.getElementById("academic-exams-container");
