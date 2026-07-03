@@ -2008,8 +2008,7 @@ function createRecurringClassRow(data = {}) {
 
   return row;
 }
-
-    
+ 
 // Template creation helper: creates a DOM fragment for one hours-range row
 function createHoursRangeElement(day, open = "", close = "") {
     // Template markup (keeps it self-contained so no separate <template> needed)
