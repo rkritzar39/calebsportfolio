@@ -1976,8 +1976,7 @@ function getAcademicAvailability(academicData) {
                 const start = timeStringToMinutesBI(exam.startTime);
                 const end = timeStringToMinutesBI(exam.endTime);
                 if (currentMinutes >= start && currentMinutes < end) {
-                    return {available: false,reason: 'Exam in Progress',backAt: exam.endTime};
-
+                    return { available: false, reason: 'Exam in Progress' };
                 }
             }
         }
@@ -1991,12 +1990,7 @@ function getAcademicAvailability(academicData) {
                     const start = timeStringToMinutesBI(cls.startTime);
                     const end = timeStringToMinutesBI(cls.endTime);
                     if (currentMinutes >= start && currentMinutes < end) {
-                        return {
-    available: false,
-    reason: 'In Class',
-    backAt: cls.endTime
-};
-
+                        return { available: false, reason: 'In Class' };
                     }
                 }
             }
@@ -2322,12 +2316,6 @@ async function saveBusinessInfoData(e) {
     }
 }
 
-function formatBackAtTime(timeStr) {
-    if (!timeStr) return '';
-    return formatTimeForAdminPreview(timeStr);
-}
-
-    
 /* -------------------------
    ADMIN PREVIEW
    ------------------------- */
@@ -2392,21 +2380,19 @@ function updateAdminPreview() {
     let currentStatus = 'Closed';
     let reason = 'Regular Hours';
     let isAcademicBlocked = false;
-    let backAtTime = null;
 
     // =============================
     // ACADEMIC AVAILABILITY OVERRIDE
     // =============================
     if (cachedAcademicAvailability) {
-    const academicResult = getAcademicAvailability(cachedAcademicAvailability);
+        const academicResult = getAcademicAvailability(cachedAcademicAvailability);
 
-    if (academicResult && academicResult.available === false) {
-        currentStatus = 'Closed';
-        reason = academicResult.reason;
-        backAtTime = academicResult.backAt || null;
-        isAcademicBlocked = true;
+        if (academicResult && academicResult.available === false) {
+            currentStatus = 'Closed';
+            reason = academicResult.reason;
+            isAcademicBlocked = true;
+        }
     }
-}
 
     if (previewData.statusOverride !== 'auto') {
         currentStatus =
@@ -2465,26 +2451,20 @@ function updateAdminPreview() {
         }
     }
 
-// STATUS DISPLAY
-let statusClass = 'status-closed';
+    // STATUS DISPLAY
+    let statusClass = 'status-closed';
+    if (currentStatus === 'Open') statusClass = 'status-open';
+    else if (currentStatus === 'Temporarily Unavailable') statusClass = 'status-unavailable';
 
-if (currentStatus === 'Open') {
-    statusClass = 'status-open';
-} else if (currentStatus === 'Temporarily Unavailable') {
-    statusClass = 'status-unavailable';
-}
+    adminPreviewStatus.innerHTML = `
+        <div class="preview-status">
+            <span class="status-main-text ${statusClass}">
+                ${currentStatus}
+            </span>
+            <span class="status-reason">(${reason})</span>
+        </div>
+    `;
 
-adminPreviewStatus.innerHTML = `
-    <div class="preview-status">
-        <span class="status-main-text ${statusClass}">
-            ${currentStatus}
-        </span>
-        <span class="status-reason">
-            (${reason}${backAtTime ? ` — Back at ${formatBackAtTime(backAtTime)}` : ''})
-        </span>
-    </div>
-`;
-    
     // =============================
     // ONYX REGULAR HOURS LIST (🔥)
     // =============================
@@ -2632,6 +2612,7 @@ if (document.readyState === 'loading') {
 }
 
 // End of admin-business-hours-v16.js
+
 
     
 /** Filters and displays shoutouts in the admin list */
@@ -3664,6 +3645,7 @@ document.addEventListener('click', (e) => {
         });
     }
 });
+
 
 /* ------------------------------------------------------------
    SHOUTOUTS LOAD / ADD / DELETE / UPDATE
