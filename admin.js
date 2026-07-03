@@ -3199,6 +3199,43 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
          console.warn("Could not find all necessary elements for the 'Next' button functionality (Next Button, Email Input, Auth Status, Email Group, Password Group, Login Button)."); //
     }
 
+ function createRecurringClassRow(data = {}) {
+  const row = document.createElement("div");
+  row.className = "academic-row recurring-class-row";
+
+  row.innerHTML = 
+    <input type="text" class="class-course" placeholder="Course Code"
+      value="${data.course || ""}">
+    <input type="text" class="class-title" placeholder="Course Title"
+      value="${data.title || ""}">
+    <input type="text" class="class-instructor" placeholder="Instructor"
+      value="${data.instructor || ""}">
+    <input type="text" class="class-location" placeholder="Location"
+      value="${data.location || ""}">
+
+    <input type="text" class="class-days"
+      placeholder="Days (mon,wed,fri)"
+      value="${(data.days || []).join(",")}">
+
+    <input type="time" class="class-start"
+      value="${data.startTime || ""}">
+    <input type="time" class="class-end"
+      value="${data.endTime || ""}">
+
+    <input type="date" class="class-start-date"
+      value="${data.startDate || ""}">
+    <input type="date" class="class-end-date"
+      value="${data.endDate || ""}">
+
+    <button type="button" class="danger-btn remove-class-btn">×</button>
+  ;
+
+  row.querySelector(".remove-class-btn")
+    .addEventListener("click", () => row.remove());
+
+  return row;
+}   
+
 // Listener for changes in authentication state (login/logout)
 onAuthStateChanged(auth, user => {
     // --- User is signed IN ---
@@ -3216,7 +3253,14 @@ onAuthStateChanged(auth, user => {
             const adminGreeting = document.getElementById('admin-greeting');
             const authStatus = document.getElementById('auth-status');
             const adminStatusElement = document.getElementById('admin-status');
+const addClassBtn = document.getElementById("add-academic-class-btn");
+const classContainer = document.getElementById("academic-classes-container");
 
+if (addClassBtn && classContainer) {
+  addClassBtn.addEventListener("click", () => {
+    classContainer.appendChild(createRecurringClassRow());
+  });
+}
             if (loginSection) loginSection.style.display = 'none';
             if (adminContent) adminContent.style.display = 'block';
             if (logoutButton) logoutButton.style.display = 'inline-block';
