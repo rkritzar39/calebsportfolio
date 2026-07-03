@@ -3231,8 +3231,46 @@ function createRecurringClassRow(data = {}) {
     <button type="button" class="danger-btn remove-class-btn">×</button>
   `;
 
-  row.querySelector(".remove-class-btn")
-  .addEventListener("click", () => {
+  row.querySelector(".remove-class-btn").addEventListener("click", () => {
+    row.remove();
+    updateAcademicPreview();
+  });
+
+  return row;
+}
+
+function createExamRow(data = {}) {
+  const row = document.createElement("div");
+  row.className = "academic-row exam-row";
+
+  // FIXED: Added backticks around the template literal
+  row.innerHTML = `
+    <input type="text" class="exam-course"
+      placeholder="Course Code"
+      value="${data.course || ""}">
+
+    <input type="text" class="exam-title"
+      placeholder="Exam Title (Midterm, Final, etc.)"
+      value="${data.title || ""}">
+
+    <input type="date" class="exam-date"
+      value="${data.date || ""}">
+
+    <input type="time" class="exam-start"
+      value="${data.startTime || ""}">
+
+    <input type="time" class="exam-end"
+      value="${data.endTime || ""}">
+
+    <input type="text" class="exam-location"
+      placeholder="Location"
+      value="${data.location || ""}">
+
+    <button type="button"
+      class="danger-btn remove-exam-btn">×</button>
+  `;
+
+  row.querySelector(".remove-exam-btn").addEventListener("click", () => {
     row.remove();
     updateAcademicPreview();
   });
@@ -3243,9 +3281,9 @@ function createRecurringClassRow(data = {}) {
 async function saveRecurringClasses(e) {
   e.preventDefault();
 
-  const rows = document.querySelectorAll(".recurring-class-row");
-
-  const classes = [...rows].map(row => ({
+  // 1. Gather Classes
+  const classRows = document.querySelectorAll(".recurring-class-row");
+  const classes = [...classRows].map(row => ({
     course: row.querySelector(".class-course")?.value.trim() || "",
     title: row.querySelector(".class-title")?.value.trim() || "",
     instructor: row.querySelector(".class-instructor")?.value.trim() || "",
@@ -3261,11 +3299,24 @@ async function saveRecurringClasses(e) {
     endDate: row.querySelector(".class-end-date")?.value || ""
   }));
 
+  // FIXED: 2. Gather Exams (Moved inside the function so it reads the current DOM state)
+  const examRows = document.querySelectorAll(".exam-row");
+  const exams = [...examRows].map(row => ({
+    course: row.querySelector(".exam-course")?.value.trim() || "",
+    title: row.querySelector(".exam-title")?.value.trim() || "",
+    date: row.querySelector(".exam-date")?.value || "",
+    startTime: row.querySelector(".exam-start")?.value || "",
+    endTime: row.querySelector(".exam-end")?.value || "",
+    location: row.querySelector(".exam-location")?.value.trim() || ""
+  }));
+
+  // 3. Save to Firebase
   await setDoc(
     doc(db, "site_config", "academicAvailability"),
     {
       academicAvailability: {
-        recurringClasses: classes
+        recurringClasses: classes,
+        exams: exams
       },
       lastUpdated: serverTimestamp()
     },
@@ -3273,19 +3324,20 @@ async function saveRecurringClasses(e) {
   );
 
   const msg = document.getElementById("academic-status-message");
-  if (msg) msg.textContent = "Classes saved successfully.";
+  if (msg) msg.textContent = "Classes and exams saved successfully.";
 } 
 
 async function loadRecurringClasses() {
-  const container =
-    document.getElementById("academic-classes-container");
-  if (!container) return;
+  const classContainer = document.getElementById("academic-classes-container");
+  const examContainer = document.getElementById("academic-exams-container");
+  
+  if (!classContainer) return;
 
-  container.innerHTML = "";
+  // Clear existing content
+  classContainer.innerHTML = "";
+  if (examContainer) examContainer.innerHTML = "";
 
-  const snap = await getDoc(
-    doc(db, "site_config", "academicAvailability")
-  );
+  const snap = await getDoc(doc(db, "site_config", "academicAvailability"));
 
   if (!snap.exists()) {
     updateAcademicPreview();
@@ -3294,38 +3346,40 @@ async function loadRecurringClasses() {
 
   const data = snap.data()?.academicAvailability || {};
   const classes = data.recurringClasses || [];
+  const exams = data.exams || []; // FIXED: Now we pull saved exams too
 
   classes.forEach(cls => {
-    container.appendChild(createRecurringClassRow(cls));
+    classContainer.appendChild(createRecurringClassRow(cls));
   });
+
+  if (examContainer) {
+    exams.forEach(exam => {
+      examContainer.appendChild(createExamRow(exam));
+    });
+  }
 
   updateAcademicPreview();
 }
 
 function updateAcademicPreview() {
-  const countEl =
-    document.getElementById("academic-preview-counts");
+  const countEl = document.getElementById("academic-preview-counts");
   if (!countEl) return;
 
-  const classCount =
-    document.querySelectorAll(".recurring-class-row").length;
+  const classCount = document.querySelectorAll(".recurring-class-row").length;
+  const examCount = document.querySelectorAll(".exam-row").length; // FIXED: Count exams too
 
-  // FIXED: Added backticks around the string template literal
-  countEl.textContent = `Classes: ${classCount}`;
+  countEl.textContent = `Classes: ${classCount} | Exams: ${examCount}`;
 }
     
 // Listener for changes in authentication state (login/logout)
-// Added 'async' to the user callback so 'await' works inside it
 onAuthStateChanged(auth, async user => {
     // --- User is signed IN ---
     if (user) {
-        const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"]; // Your authorized email
+        const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"];
 
-        // Check if the signed-in user is on the admin list
         if (adminEmails.includes(user.email)) {
             console.log(`✅ Access GRANTED for admin: ${user.email}`);
 
-            // 1. Immediately show the admin panel
             const loginSection = document.getElementById('login-section');
             const adminContent = document.getElementById('admin-content');
             const logoutButton = document.getElementById('logout-button');
@@ -3340,7 +3394,6 @@ onAuthStateChanged(auth, async user => {
                 adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
             }
 
-            // --- START: ADD THIS CODE ---
             const adminProfilePic = document.getElementById('admin-profile-pic');
             if (adminProfilePic) {
                 if (user.photoURL) {
@@ -3351,12 +3404,10 @@ onAuthStateChanged(auth, async user => {
                     adminProfilePic.style.display = 'inline-block';
                 }
             }
-            // --- END: ADD THIS CODE ---
             
             if (authStatus) authStatus.textContent = '';
             if (adminStatusElement) adminStatusElement.textContent = '';
             
-            // 2. Safely load all data
             try {
                 console.log("Loading all admin panel data...");
                 if (typeof loadProfileData === 'function') loadProfileData();
@@ -3374,10 +3425,12 @@ onAuthStateChanged(auth, async user => {
                 if (typeof loadLegislationAdmin === 'function') loadLegislationAdmin();
 
                 // ================================
-                // Academic Availability – Phase 1
+                // Academic Availability
                 // ================================
                 const addClassBtn = document.getElementById("add-academic-class-btn");
                 const classContainer = document.getElementById("academic-classes-container");
+                const addExamBtn = document.getElementById("add-academic-exam-btn");
+                const examContainer = document.getElementById("academic-exams-container");
                 const saveBtn = document.getElementById("save-academic-availability-btn");
 
                 if (saveBtn && !saveBtn.__saveListenerAttached) {
@@ -3390,10 +3443,18 @@ onAuthStateChanged(auth, async user => {
                     classContainer.appendChild(createRecurringClassRow());
                     updateAcademicPreview();
                   });
-
                   addClassBtn.__addListenerAttached = true;
                 }
 
+                if (addExamBtn && examContainer && !addExamBtn.__addListenerAttached) {
+                  addExamBtn.addEventListener("click", () => {
+                    examContainer.appendChild(createExamRow());
+                    updateAcademicPreview();
+                  });
+                  addExamBtn.__addListenerAttached = true;
+                }
+
+                // Load existing data from Firestore
                 await loadRecurringClasses();
                 
                 if (typeof resetInactivityTimer === 'function') resetInactivityTimer();
@@ -3420,13 +3481,11 @@ onAuthStateChanged(auth, async user => {
         if (loginSection) loginSection.style.display = 'block';
         if (adminContent) adminContent.style.display = 'none';
         
-        // --- START: ADD THIS CODE ---
         const adminProfilePic = document.getElementById('admin-profile-pic');
         if (adminProfilePic) {
             adminProfilePic.src = '';
             adminProfilePic.style.display = 'none';
         }
-        // --- END: ADD THIS CODE ---
 
         if (typeof removeActivityListeners === 'function') removeActivityListeners();
     }
@@ -3486,12 +3545,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // BULLETPROOF LOGOUT LISTENER (Fixes Logout via Event Delegation)
-// This listens to all clicks on the page and checks if the logout button was clicked.
 document.addEventListener('click', (e) => {
     const clickedLogoutBtn = e.target.closest('#logout-button');
     
     if (clickedLogoutBtn) {
-        e.preventDefault(); // Prevents the button from accidentally refreshing the page
+        e.preventDefault(); 
         console.log("Logout button clicked."); 
         
         if (typeof removeActivityListeners === 'function') {
@@ -3510,7 +3568,6 @@ document.addEventListener('click', (e) => {
         });
     }
 });
-
 
 /* ------------------------------------------------------------
    SHOUTOUTS LOAD / ADD / DELETE / UPDATE
