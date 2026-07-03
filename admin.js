@@ -3200,6 +3200,43 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
     }
 
 
+function createRecurringClassRow(data = {}) {
+  const row = document.createElement("div");
+  row.className = "academic-row recurring-class-row";
+
+  row.innerHTML = `
+    <input type="text" class="class-course" placeholder="Course Code"
+      value="${data.course || ""}">
+    <input type="text" class="class-title" placeholder="Course Title"
+      value="${data.title || ""}">
+    <input type="text" class="class-instructor" placeholder="Instructor"
+      value="${data.instructor || ""}">
+    <input type="text" class="class-location" placeholder="Location"
+      value="${data.location || ""}">
+
+    <input type="text" class="class-days"
+      placeholder="Days (mon,wed,fri)"
+      value="${(data.days || []).join(",")}">
+
+    <input type="time" class="class-start"
+      value="${data.startTime || ""}">
+    <input type="time" class="class-end"
+      value="${data.endTime || ""}">
+
+    <input type="date" class="class-start-date"
+      value="${data.startDate || ""}">
+    <input type="date" class="class-end-date"
+      value="${data.endDate || ""}">
+
+    <button type="button" class="danger-btn remove-class-btn">×</button>
+  `;
+
+  row.querySelector(".remove-class-btn")
+    .addEventListener("click", () => row.remove());
+
+  return row;
+}
+    
 // Listener for changes in authentication state (login/logout)
 onAuthStateChanged(auth, user => {
     // --- User is signed IN ---
@@ -3230,11 +3267,9 @@ onAuthStateChanged(auth, user => {
                 if (user.photoURL) {
                     // If the user has a Google photo URL, use it
                     adminProfilePic.src = user.photoURL;
-                    adminProfilePic.style.display = 'inline-block'; // Or 'block' based on your CSS
+                    adminProfilePic.style.display = 'inline-block'; 
                 } else {
-                    // Optional: Use a default image if they logged in via email/pass
-                    // or if their Google account has no photo.
-                    adminProfilePic.src = 'images/default-profile.jpg'; // Make sure this path is correct
+                    adminProfilePic.src = 'images/default-profile.jpg'; 
                     adminProfilePic.style.display = 'inline-block';
                 }
             }
@@ -3256,22 +3291,22 @@ onAuthStateChanged(auth, user => {
                 loadDisabilitiesAdmin();
                 loadTechItemsAdmin();
                 loadLegislationAdmin();
-// ================================
-// Academic Availability – Phase 1
-// ================================
-const addClassBtn = document.getElementById("add-academic-class-btn");
-const classContainer = document.getElementById("academic-classes-container");
 
-if (addClassBtn && classContainer) {
-  addClassBtn.addEventListener("click", () => {
-    classContainer.appendChild(createRecurringClassRow());
-  });
-}
+                // ================================
+                // Academic Availability – Phase 1
+                // ================================
+                const addClassBtn = document.getElementById("add-academic-class-btn");
+                const classContainer = document.getElementById("academic-classes-container");
+
+                if (addClassBtn && classContainer) {
+                  addClassBtn.addEventListener("click", () => {
+                    classContainer.appendChild(createRecurringClassRow());
+                  });
+                }
 
                 resetInactivityTimer();
                 addActivityListeners();
             } catch (error) {
-                // If any data-loading function fails, it will be caught here
                 console.error("❌ CRITICAL ERROR during data loading:", error);
                 showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
             }
@@ -3292,7 +3327,6 @@ if (addClassBtn && classContainer) {
         if (adminContent) adminContent.style.display = 'none';
         
         // --- START: ADD THIS CODE ---
-        // Hide the profile picture on logout
         const adminProfilePic = document.getElementById('admin-profile-pic');
         if (adminProfilePic) {
             adminProfilePic.src = '';
@@ -3304,77 +3338,65 @@ if (addClassBtn && classContainer) {
     }
 });
     
-    // Login Form Submission (Handles the final step after password entry)
-    if (loginForm) { //
-        loginForm.addEventListener('submit', (e) => { //
-            e.preventDefault(); // Prevent default form submission
-            const email = emailInput.value; //
-            const password = passwordInput.value; //
+// Login Form Submission
+if (loginForm) { 
+    loginForm.addEventListener('submit', (e) => { 
+        e.preventDefault(); 
+        const email = emailInput.value; 
+        const password = passwordInput.value; 
 
-            // Re-validate inputs (especially password as email was checked by 'Next')
-            if (!email || !password) { //
-                 // Check which field is missing in the current state
-                 if (passwordGroup && passwordGroup.style.display !== 'none' && !password) { //
-                     if (authStatus) { authStatus.textContent = 'Please enter your password.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} //
-                 } else if (!email) { // Should ideally not happen in two-step flow, but check anyway
-                     if (authStatus) { authStatus.textContent = 'Please enter your email.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} //
-                 } else { // Generic message if validation fails unexpectedly
-                     if (authStatus) { authStatus.textContent = 'Please enter email and password.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} //
-                 }
-                 return; // Stop if validation fails
-            }
+        if (!email || !password) { 
+             if (passwordGroup && passwordGroup.style.display !== 'none' && !password) { 
+                 if (authStatus) { authStatus.textContent = 'Please enter your password.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} 
+             } else if (!email) { 
+                 if (authStatus) { authStatus.textContent = 'Please enter your email.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} 
+             } else { 
+                 if (authStatus) { authStatus.textContent = 'Please enter email and password.'; authStatus.className = 'status-message error'; authStatus.style.display = 'block';} 
+             }
+             return; 
+        }
 
-            // Show "Logging in..." message
-            if (authStatus) { //
-                authStatus.textContent = 'Logging in...'; //
-                authStatus.className = 'status-message'; // Reset style
-                authStatus.style.display = 'block'; //
-            }
+        if (authStatus) { 
+            authStatus.textContent = 'Logging in...'; 
+            authStatus.className = 'status-message'; 
+            authStatus.style.display = 'block'; 
+        }
 
-            // Attempt Firebase sign-in
-            signInWithEmailAndPassword(auth, email, password) //
-                .then((userCredential) => { //
-                    // Login successful - onAuthStateChanged will handle the UI updates
-                    console.log("Login successful via form submission."); //
-                    // No need to clear authStatus here, onAuthStateChanged does it.
-                 })
-                .catch((error) => { //
-                    // Handle login errors
-                    console.error("Login failed:", error.code, error.message); //
-                    let errorMessage = 'Invalid email or password.'; // Default error
-                    // Map specific Firebase Auth error codes to user-friendly messages
-                    if (error.code === 'auth/invalid-email') { errorMessage = 'Invalid email format.'; } //
-                    else if (error.code === 'auth/user-disabled') { errorMessage = 'This account has been disabled.'; } //
-                    else if (error.code === 'auth/invalid-credential') { errorMessage = 'Invalid email or password.'; } // Covers wrong password, user not found
-                    else if (error.code === 'auth/too-many-requests') { errorMessage = 'Access temporarily disabled due to too many failed login attempts. Please try again later.'; } //
-                    else { errorMessage = `An unexpected error occurred (${error.code}).`; } // Fallback
+        signInWithEmailAndPassword(auth, email, password) 
+            .then((userCredential) => { 
+                console.log("Login successful via form submission."); 
+             })
+            .catch((error) => { 
+                console.error("Login failed:", error.code, error.message); 
+                let errorMessage = 'Invalid email or password.'; 
+                if (error.code === 'auth/invalid-email') { errorMessage = 'Invalid email format.'; } 
+                else if (error.code === 'auth/user-disabled') { errorMessage = 'This account has been disabled.'; } 
+                else if (error.code === 'auth/invalid-credential') { errorMessage = 'Invalid email or password.'; } 
+                else if (error.code === 'auth/too-many-requests') { errorMessage = 'Access temporarily disabled due to too many failed login attempts. Please try again later.'; } 
+                else { errorMessage = `An unexpected error occurred (${error.code}).`; } 
 
-                    // Display the specific error message
-                    if (authStatus) { //
-                        authStatus.textContent = `Login Failed: ${errorMessage}`; //
-                        authStatus.className = 'status-message error'; //
-                        authStatus.style.display = 'block'; //
-                    }
-                });
-        });
-    }
+                if (authStatus) { 
+                    authStatus.textContent = `Login Failed: ${errorMessage}`; 
+                    authStatus.className = 'status-message error'; 
+                    authStatus.style.display = 'block'; 
+                }
+            });
+    });
+}
 
-    // Logout Button Event Listener
-    if (logoutButton) { //
-        logoutButton.addEventListener('click', () => { //
-            console.log("Logout button clicked."); //
-            removeActivityListeners(); // Stop inactivity timer first
-            signOut(auth).then(() => { //
-                 // Sign-out successful - onAuthStateChanged handles UI updates
-                 console.log("User signed out via button."); //
-             }).catch((error) => { //
-                 // Handle potential logout errors
-                 console.error("Logout failed:", error); //
-                 showAdminStatus(`Logout Failed: ${error.message}`, true); // Show error in admin area
-             });
-        });
-    }
-
+// Logout Button Event Listener
+if (logoutButton) { 
+    logoutButton.addEventListener('click', () => { 
+        console.log("Logout button clicked."); 
+        removeActivityListeners(); 
+        signOut(auth).then(() => { 
+             console.log("User signed out via button."); 
+         }).catch((error) => { 
+             console.error("Logout failed:", error); 
+             showAdminStatus(`Logout Failed: ${error.message}`, true); 
+         });
+    });
+}
 
 /* ------------------------------------------------------------
    SHOUTOUTS LOAD / ADD / DELETE / UPDATE
