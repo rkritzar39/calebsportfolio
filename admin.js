@@ -3297,7 +3297,8 @@ async function loadRecurringClasses() {
     
     
 // Listener for changes in authentication state (login/logout)
-onAuthStateChanged(auth, user => {
+// Added 'async' to the user callback so 'await' works inside it
+onAuthStateChanged(auth, async user => {
     // --- User is signed IN ---
     if (user) {
         const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"]; // Your authorized email
@@ -3313,6 +3314,7 @@ onAuthStateChanged(auth, user => {
             const adminGreeting = document.getElementById('admin-greeting');
             const authStatus = document.getElementById('auth-status');
             const adminStatusElement = document.getElementById('admin-status');
+            
             if (loginSection) loginSection.style.display = 'none';
             if (adminContent) adminContent.style.display = 'block';
             if (logoutButton) logoutButton.style.display = 'inline-block';
@@ -3333,6 +3335,7 @@ onAuthStateChanged(auth, user => {
                 }
             }
             // --- END: ADD THIS CODE ---
+            
             if (authStatus) authStatus.textContent = '';
             if (adminStatusElement) adminStatusElement.textContent = '';
             
@@ -3356,29 +3359,23 @@ onAuthStateChanged(auth, user => {
                 // ================================
                 const addClassBtn = document.getElementById("add-academic-class-btn");
                 const classContainer = document.getElementById("academic-classes-container");
-                // ================================
-// Academic Availability – Save Button
-// ================================
-const saveBtn =
-  document.getElementById("save-academic-availability-btn");
+                const saveBtn = document.getElementById("save-academic-availability-btn");
 
-if (saveBtn && !saveBtn.__saveListenerAttached) {
-  saveBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    saveRecurringClasses(e);
-  });
-  saveBtn.__saveListenerAttached = true;
-}
-
+                if (saveBtn && !saveBtn.__saveListenerAttached) {
+                  saveBtn.addEventListener("click", (e) => saveRecurringClasses(e));
+                  saveBtn.__saveListenerAttached = true;
+                }
 
                 if (addClassBtn && classContainer && !addClassBtn.__addListenerAttached) {
-  addClassBtn.addEventListener("click", () => {
-    classContainer.appendChild(createRecurringClassRow());
-  });
-  addClassBtn.__addListenerAttached = true;
-}
+                  addClassBtn.addEventListener("click", () => {
+                    classContainer.appendChild(createRecurringClassRow());
+                  });
+                  addClassBtn.__addListenerAttached = true;
+                }
 
+                // This await now works perfectly because we added 'async' to the user callback
                 await loadRecurringClasses();
+                
                 resetInactivityTimer();
                 addActivityListeners();
             } catch (error) {
