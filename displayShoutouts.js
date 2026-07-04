@@ -5641,7 +5641,7 @@ function getAcademicItemStatusLabel({
     const itemStart = dateTime.startOf('day');
     const differenceInDays = Math.round(itemStart.diff(todayStart, 'days').days);
 
-    if (differenceInDays > 1) return Scheduled in ${differenceInDays} days;
+    if (differenceInDays > 1) return `Scheduled in ${differenceInDays} days`;
     if (differenceInDays === 1) return 'Scheduled for Tomorrow';
     if (differenceInDays === 0) return 'Scheduled for Today';
     return 'Concluded';
@@ -5658,7 +5658,7 @@ function getAcademicItemStatusLabel({
         start.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
       );
 
-      if (differenceInDays > 1) return Scheduled in ${differenceInDays} days;
+      if (differenceInDays > 1) return `Scheduled in ${differenceInDays} days`;
       if (differenceInDays === 1) return 'Scheduled for Tomorrow';
       return 'Scheduled for Today';
     }
@@ -5714,12 +5714,12 @@ function renderAcademicSchedulePanel({
       endDate: item.endDate
     });
 
-    html += <li>
+    html += `<li>
       <strong>${escapeHtml(title)}</strong>
       <span class="hours">Academic Break</span>
       <span class="dates">${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}</span>
       <span class="days-until">${escapeHtml(statusLabel)}</span>
-    </li>;
+    </li>`;
   });
 
   const finals = Array.isArray(academicAvailability.finals)
@@ -5731,7 +5731,7 @@ function renderAcademicSchedulePanel({
 
     const timeText =
       item.startTime && item.endTime
-        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
 
     const statusLabel = getAcademicItemStatusLabel({
@@ -5739,12 +5739,12 @@ function renderAcademicSchedulePanel({
       date: item.date
     });
 
-    html += <li>
+    html += `<li>
       <strong>${escapeHtml(title)}</strong>
       <span class="hours">${escapeHtml(timeText)}</span>
       <span class="dates">${escapeHtml(formatDate(item.date))}</span>
       <span class="days-until">${escapeHtml(statusLabel)}</span>
-    </li>;
+    </li>`;
   });
 
   const exams = Array.isArray(academicAvailability.exams)
@@ -5756,7 +5756,7 @@ function renderAcademicSchedulePanel({
 
     const timeText =
       item.startTime && item.endTime
-        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
 
     const statusLabel = getAcademicItemStatusLabel({
@@ -5764,12 +5764,12 @@ function renderAcademicSchedulePanel({
       date: item.date
     });
 
-    html += <li>
+    html += `<li>
       <strong>${escapeHtml(title)}</strong>
       <span class="hours">${escapeHtml(timeText)}</span>
       <span class="dates">${escapeHtml(formatDate(item.date))}</span>
       <span class="days-until">${escapeHtml(statusLabel)}</span>
-    </li>;
+    </li>`;
   });
 
   const classes = Array.isArray(academicAvailability.recurringClasses)
@@ -5782,12 +5782,12 @@ function renderAcademicSchedulePanel({
 
     const timeText =
       item.startTime && item.endTime
-        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
 
     const dateText =
       item.startDate && item.endDate
-        ? ${formatDate(item.startDate)} to ${formatDate(item.endDate)}
+        ? `${formatDate(item.startDate)} to ${formatDate(item.endDate)}`
         : 'Recurring';
 
     const statusLabel = getAcademicItemStatusLabel({
@@ -5796,12 +5796,12 @@ function renderAcademicSchedulePanel({
       endDate: item.endDate
     });
 
-    html += <li>
+    html += `<li>
       <strong>${escapeHtml(title)}</strong>
       <span class="hours">${escapeHtml(daysText)} • ${escapeHtml(timeText)}</span>
       <span class="dates">${escapeHtml(dateText)}</span>
       <span class="days-until">${escapeHtml(statusLabel)}</span>
-    </li>;
+    </li>`;
   });
 
   html += '</ul>';
