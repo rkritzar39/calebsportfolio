@@ -3677,7 +3677,6 @@ function updateAcademicPreview() {
   }
 }
 
-
 /* -------------------------
    AUTH & INIT LISTENERS
    ------------------------- */
