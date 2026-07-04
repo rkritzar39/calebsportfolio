@@ -4963,6 +4963,7 @@ function setupCreatorSearch() {
    - Strong schedule normalization
    - Holiday and temporary schedule handling
    - Manual override support
+   - Academic availability override
    - Business status chip + traffic light state
    - Premium status hint
    - Today timeline
@@ -4988,8 +4989,10 @@ window.assumedBusinessTimezone = window.assumedBusinessTimezone || 'America/New_
 
 let use24HourBusinessTime = localStorage.getItem(BUSINESS_TIME_FORMAT_STORAGE_KEY) === '24';
 let cachedBusinessData = null;
+let cachedAcademicData = null;
 let cachedVisitorTimezone = 'UTC';
 let unsubscribeBusinessListener = null;
+let unsubscribeAcademicListener = null;
 let minuteRefreshTimer = null;
 let minuteBoundaryTimeout = null;
 let localClockTimer = null;
@@ -4998,6 +5001,7 @@ let localClockTimer = null;
    SAFE FIRESTORE REFERENCE
 ------------------------- */
 let businessDocumentReferenceLocal;
+let academicDocumentReferenceLocal;
 
 try {
   if (typeof businessDocRef !== 'undefined' && businessDocRef) {
@@ -5009,6 +5013,18 @@ try {
   }
 } catch (error) {
   businessDocumentReferenceLocal = null;
+}
+
+try {
+  if (typeof academicDocRef !== 'undefined' && academicDocRef) {
+    academicDocumentReferenceLocal = academicDocRef;
+  } else if (typeof doc !== 'undefined' && typeof db !== 'undefined') {
+    academicDocumentReferenceLocal = doc(db, 'site_config', 'academicAvailability');
+  } else {
+    academicDocumentReferenceLocal = null;
+  }
+} catch (error) {
+  academicDocumentReferenceLocal = null;
 }
 
 /* -------------------------
@@ -5144,6 +5160,8 @@ function formatDate(dateString) {
   if (!LuxonLibrary) {
     try {
       const parts = dateString.split('-');
+      if (parts.length !== 3) return dateString;
+      
       const date = new Date(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])));
       return date.toLocaleDateString('en-US', {
         weekday: 'long',
@@ -5351,23 +5369,28 @@ function hadAnyOpenEarlierToday(currentMinutes, schedule) {
 function normalizeRanges(sourceObject) {
   if (!sourceObject) return [];
 
-  if (Array.isArray(sourceObject.ranges)) {
-    return sourceObject.ranges
-      .map((range) => ({
-        open: range?.open || '',
-        close: range?.close || ''
-      }))
-      .filter((range) => range.open && range.close);
-  }
+  let rawRanges = [];
 
-  if (sourceObject.open && sourceObject.close) {
-    return [{
+  if (Array.isArray(sourceObject.ranges)) {
+    rawRanges = sourceObject.ranges;
+  } else if (sourceObject.open && sourceObject.close) {
+    rawRanges = [{
       open: sourceObject.open,
       close: sourceObject.close
     }];
   }
 
-  return [];
+  return rawRanges
+    .map((range) => ({
+      open: range?.open || '',
+      close: range?.close || ''
+    }))
+    .filter((range) => range.open && range.close)
+    .sort((a, b) => {
+      const aOpen = timeStringToMinutes(a.open) || 0;
+      const bOpen = timeStringToMinutes(b.open) || 0;
+      return aOpen - bOpen;
+    });
 }
 
 function normalizeRegularHours(regularHours) {
@@ -5422,19 +5445,108 @@ function normalizeTemporaryHours(temporaryHours) {
   return sourceArray
     .map((temporaryEntry) => {
       const ranges = normalizeRanges(temporaryEntry);
+      const isClosed = !!temporaryEntry?.isClosed || ranges.length === 0;
 
       return {
         startDate: temporaryEntry?.startDate || '',
         endDate: temporaryEntry?.endDate || '',
         label: temporaryEntry?.label || 'Temporary Schedule',
+        isClosed,
         ranges
       };
     })
     .filter((temporaryEntry) =>
-      temporaryEntry.startDate &&
-      temporaryEntry.endDate &&
-      temporaryEntry.ranges.length > 0
+      temporaryEntry.startDate && temporaryEntry.endDate
     );
+}
+
+/* =========================
+   ACADEMIC AVAILABILITY
+   ========================= */
+function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezone) {
+  if (!academicAvailability || !nowInBusinessTimezone) return { active: false };
+
+  const currentMinutes = (nowInBusinessTimezone.hour * 60) + nowInBusinessTimezone.minute;
+  const currentIsoDate = nowInBusinessTimezone.toISODate();
+  const currentDayOfWeek = nowInBusinessTimezone.toFormat('ccc').toLowerCase();
+
+  // Priority 1: Academic Breaks
+  const breaks = academicAvailability.breaks || [];
+  for (const b of breaks) {
+    if (isInDateWindow(nowInBusinessTimezone, b.startDate, b.endDate)) {
+      return {
+        active: true,
+        reason: b.title || b.name || b.label || 'Academic Break',
+        backAt: null // Breaks typically span whole days
+      };
+    }
+  }
+
+  // Helper to check active time blocks
+  const checkBlocks = (blocks, matchField, matchValue) => {
+    for (const block of (blocks || [])) {
+      let isMatch = false;
+      if (block[matchField]) {
+        if (Array.isArray(block[matchField])) {
+          isMatch = block[matchField].map(v => String(v).toLowerCase()).includes(matchValue);
+        } else {
+          isMatch = String(block[matchField]).toLowerCase() === matchValue;
+        }
+      }
+      
+      if (!isMatch) continue;
+
+      let ranges = normalizeRanges(block);
+      // Fallback if structured differently
+      if (ranges.length === 0 && block.start && block.end) {
+         ranges = [{ open: block.start, close: block.end }];
+      }
+
+      const activeRange = findActiveRange(currentMinutes, ranges);
+      if (activeRange) {
+        const closeMinutes = timeStringToMinutes(activeRange.close);
+        const backAt = closeMinutes != null 
+          ? nowInBusinessTimezone.startOf('day').plus({ minutes: closeMinutes })
+          : null;
+        return { block, activeRange, backAt };
+      }
+    }
+    return null;
+  };
+
+  // Priority 2: Exams and Finals
+  const finals = academicAvailability.finals || [];
+  const activeFinal = checkBlocks(finals, 'date', currentIsoDate);
+  if (activeFinal) {
+    return {
+      active: true,
+      reason: activeFinal.block.title || 'Final Exam',
+      backAt: activeFinal.backAt
+    };
+  }
+
+  const exams = academicAvailability.exams || [];
+  const activeExam = checkBlocks(exams, 'date', currentIsoDate);
+  if (activeExam) {
+    return {
+      active: true,
+      reason: activeExam.block.title || 'Exam in Progress',
+      backAt: activeExam.backAt
+    };
+  }
+
+  // Priority 3: Recurring Classes
+  const classes = academicAvailability.recurringClasses || [];
+  const activeClass = checkBlocks(classes, 'days', currentDayOfWeek) || checkBlocks(classes, 'day', currentDayOfWeek);
+  if (activeClass) {
+    return {
+      active: true,
+      reason: activeClass.block.title || 'In Class',
+      backAt: activeClass.backAt
+    };
+  }
+
+  return { active: false };
 }
 
 /* -------------------------
@@ -5719,14 +5831,10 @@ function startMinuteAlignedRefresh() {
     minuteBoundaryTimeout = null;
   }
 
-  // This checks the status every 5 seconds.
-  // This way, when it turns 5:00 PM, the store closes 
-  // almost instantly instead of waiting for a 60-second timer.
   minuteRefreshTimer = setInterval(() => {
     renderFromCache();
   }, 5000);
 }
-
 
 function installPanelToggle() {
   const button = document.getElementById('toggleHoursBtn');
@@ -5873,6 +5981,8 @@ function normalizeDisplayStatus(finalStatus, finalType, finalReason, isManualOve
     displayStatusText = 'Holiday Hours';
   } else if (finalType === 'temporary') {
     displayStatusText = 'Temporary Closure';
+  } else if (finalType === 'academic') {
+    displayStatusText = 'Closed';
   } else if (finalStatus === 'Open') {
     displayStatusText = 'Open';
   } else {
@@ -5894,6 +6004,8 @@ function normalizeDisplayStatus(finalStatus, finalType, finalReason, isManualOve
       displayReasonText = 'Holiday schedule';
     } else if (finalType === 'temporary') {
       displayReasonText = 'Temporary change';
+    } else if (finalType === 'academic') {
+      displayReasonText = finalReason;
     } else {
       displayReasonText = 'Regular schedule';
     }
@@ -5913,10 +6025,15 @@ function buildPremiumStatusHint({
   isOpeningSoon,
   isTemporaryStartingSoon,
   isTemporaryEndingSoon,
-  statusSubText
+  statusSubText,
+  finalReason
 }) {
   if (isManualOverride) {
     return 'Manual override is currently active.';
+  }
+
+  if (finalType === 'academic') {
+    return `Currently unavailable: ${finalReason}.`;
   }
 
   if (finalType === 'holiday') {
@@ -5972,6 +6089,9 @@ function setStatusChip(statusText, statusType = 'regular', isManualOverride = fa
   } else if (statusType === 'temporary') {
     color = temporaryColor;
     label = 'Temporary';
+  } else if (statusType === 'academic') {
+    color = closedColor;
+    label = 'Closed';
   } else if (statusText === 'Open') {
     color = openColor;
     label = 'Open';
@@ -6026,6 +6146,11 @@ function setTrafficLight({
       yellowLight.classList.add('is-active');
       return;
     }
+  }
+  
+  if (statusType === 'academic') {
+    redLight.classList.add('is-active');
+    return;
   }
 
   if (statusType === 'holiday' && statusText !== 'Open') {
@@ -6115,7 +6240,7 @@ function getVisualBusinessState({
   nowInBusinessTimezone,
   baseActiveRange
 }) {
-  if (finalType === 'temporary') return 'closed';
+  if (finalType === 'temporary' || finalType === 'academic') return 'closed';
   if (finalStatus !== 'Open') return 'closed';
 
   if (
@@ -6221,6 +6346,8 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   const temporaryHours = normalizeTemporaryHours(businessData.temporaryHours || []);
   const statusOverride = (businessData.statusOverride || 'auto').toLowerCase();
 
+  const academicResult = evaluateAcademicAvailability(cachedAcademicData, nowInBusinessTimezone);
+
   const contactEmail = businessData.contactEmail || '';
   if (contactElement) {
     if (contactEmail) {
@@ -6250,6 +6377,14 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       continue;
     }
 
+    if (temporarySchedule.isClosed || !temporarySchedule.ranges.length) {
+      activeTemporarySchedule = {
+        ...temporarySchedule,
+        activeRange: { open: '00:00', close: '23:59' }
+      };
+      break;
+    }
+
     const activeRange = findActiveRange(currentMinutes, temporarySchedule.ranges);
     if (activeRange) {
       activeTemporarySchedule = {
@@ -6264,10 +6399,10 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   let finalType = baseType;
   let finalReason = baseReason;
   let isManualOverride = false;
+  let activeAcademic = null;
 
   if (statusOverride !== 'auto') {
     isManualOverride = true;
-
     if (statusOverride === 'open') {
       finalStatus = 'Open';
       finalType = 'regular';
@@ -6281,6 +6416,11 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       finalType = 'temporary';
       finalReason = 'Manual Override';
     }
+  } else if (academicResult && academicResult.active) {
+    finalStatus = 'Closed';
+    finalType = 'academic';
+    finalReason = academicResult.reason;
+    activeAcademic = academicResult;
   } else if (activeTemporarySchedule) {
     finalStatus = 'Temporarily Unavailable';
     finalType = 'temporary';
@@ -6313,6 +6453,11 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   let isTemporaryEndingSoon = false;
 
   (function setTodayMeta() {
+    if (finalType === 'academic') {
+      setMetaRow('bizTodayHours', 'Unavailable');
+      return;
+    }
+
     if (finalType === 'temporary') {
       const todaySourceSchedule = baseSchedule;
 
@@ -6378,6 +6523,38 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       return dateTime.toFormat('cccc');
     };
+
+    if (finalType === 'academic' && !isManualOverride) {
+      if (activeAcademic && activeAcademic.backAt && LuxonLibrary) {
+        const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, activeAcademic.backAt);
+        
+        if (minutesAway != null && minutesAway > 0) {
+          const backAtMinutes = activeAcademic.backAt.hour * 60 + activeAcademic.backAt.minute;
+          const reopeningTimeText = formatDisplayTimeBusinessInfo(
+            minutesToTimeString(backAtMinutes),
+            visitorTimezone
+          );
+          const nextOpenLabel = formatDayLabelFromDateTime(activeAcademic.backAt);
+
+          setMetaRow('bizNextOpen', `${nextOpenLabel} • ${reopeningTimeText}`);
+
+          if (minutesAway <= TEMPORARY_WARNING_MINUTES) {
+            statusSubTextElement.textContent = `Back in ${formatDuration(minutesAway)}`;
+          } else if (nextOpenLabel === 'Today') {
+            statusSubTextElement.textContent = `Back today at ${reopeningTimeText}`;
+          } else if (nextOpenLabel === 'Tomorrow') {
+            statusSubTextElement.textContent = `Back tomorrow at ${reopeningTimeText}`;
+          } else {
+            statusSubTextElement.textContent = `Back ${nextOpenLabel} at ${reopeningTimeText}`;
+          }
+          return;
+        }
+      }
+      
+      statusSubTextElement.textContent = activeAcademic ? activeAcademic.reason : '';
+      setMetaRow('bizNextOpen', '—');
+      return;
+    }
 
     if (finalType === 'temporary' && isManualOverride) {
       statusSubTextElement.textContent = 'Manual temporary override is active';
@@ -6746,7 +6923,8 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       isOpeningSoon,
       isTemporaryStartingSoon,
       isTemporaryEndingSoon,
-      statusSubText: statusSubTextElement.textContent || ''
+      statusSubText: statusSubTextElement.textContent || '',
+      finalReason
     })
   );
 
@@ -6879,11 +7057,13 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       }
 
-      const rangeText = temporarySchedule.ranges
-        .map((range) =>
-          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
-        )
-        .join(', ');
+      const rangeText = temporarySchedule.isClosed
+        ? 'Closed'
+        : temporarySchedule.ranges
+            .map((range) =>
+              `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+            )
+            .join(', ');
 
       html += `<li>
         <strong>${escapeHtml(temporarySchedule.label || 'Temporary Schedule')}</strong>
@@ -7028,6 +7208,20 @@ async function oneTimeFetchFallback() {
   setMetaRow('bizNextOpen', '—');
   setMetaRow('bizTodayHours', '—');
 
+  try {
+    if (academicDocumentReferenceLocal && typeof getDoc === 'function') {
+      const academicSnapshot = await getDoc(academicDocumentReferenceLocal);
+      if (academicSnapshot.exists()) {
+        const data = academicSnapshot.data() || {};
+        cachedAcademicData = data.academicAvailability || {};
+      } else {
+        cachedAcademicData = null;
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
   if (!businessDocumentReferenceLocal || typeof getDoc !== 'function') {
     renderErrorState('Status Error');
     return;
@@ -7061,6 +7255,11 @@ function stopBusinessInfoRefresh() {
     unsubscribeBusinessListener();
     unsubscribeBusinessListener = null;
   }
+  
+  if (typeof unsubscribeAcademicListener === 'function') {
+    unsubscribeAcademicListener();
+    unsubscribeAcademicListener = null;
+  }
 
   if (minuteRefreshTimer) {
     clearInterval(minuteRefreshTimer);
@@ -7092,6 +7291,28 @@ function startBusinessInfoRefresh() {
   updateBizTimeFormatToggleUI();
 
   startLiveLocalClock();
+
+  if (academicDocumentReferenceLocal && typeof onSnapshot === 'function') {
+    try {
+      unsubscribeAcademicListener = onSnapshot(
+        academicDocumentReferenceLocal,
+        (documentSnapshot) => {
+          if (documentSnapshot.exists()) {
+            const data = documentSnapshot.data() || {};
+            cachedAcademicData = data.academicAvailability || {};
+          } else {
+            cachedAcademicData = null;
+          }
+          renderFromCache();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   if (businessDocumentReferenceLocal && typeof onSnapshot === 'function') {
     try {
