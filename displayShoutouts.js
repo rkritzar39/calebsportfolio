@@ -5477,46 +5477,81 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
       return {
         active: true,
         reason: b.title || b.name || b.label || 'Academic Break',
-        backAt: null // Breaks typically span whole days
+        backAt: null
       };
     }
   }
 
-  // Helper to check active time blocks
+  // Helper to check active dated/time-based academic blocks
   const checkBlocks = (blocks, matchField, matchValue) => {
     for (const block of (blocks || [])) {
       let isMatch = false;
+
       if (block[matchField]) {
         if (Array.isArray(block[matchField])) {
-          isMatch = block[matchField].map(v => String(v).toLowerCase()).includes(matchValue);
+          isMatch = block[matchField]
+            .map(v => String(v).trim().toLowerCase())
+            .includes(matchValue);
+        } else if (typeof block[matchField] === 'string') {
+          const values = block[matchField]
+            .split(',')
+            .map(v => v.trim().toLowerCase())
+            .filter(Boolean);
+
+          isMatch = values.includes(matchValue);
         } else {
-          isMatch = String(block[matchField]).toLowerCase() === matchValue;
+          isMatch = String(block[matchField]).trim().toLowerCase() === matchValue;
         }
       }
-      
+
       if (!isMatch) continue;
 
       let ranges = normalizeRanges(block);
-      // Fallback if structured differently
+
+      // Admin academic data uses startTime / endTime
+      if (ranges.length === 0 && block.startTime && block.endTime) {
+        ranges = [
+          {
+            open: block.startTime,
+            close: block.endTime
+          }
+        ];
+      }
+
+      // Extra fallback if another format is ever used
       if (ranges.length === 0 && block.start && block.end) {
-         ranges = [{ open: block.start, close: block.end }];
+        ranges = [
+          {
+            open: block.start,
+            close: block.end
+          }
+        ];
       }
 
       const activeRange = findActiveRange(currentMinutes, ranges);
+
       if (activeRange) {
         const closeMinutes = timeStringToMinutes(activeRange.close);
-        const backAt = closeMinutes != null 
+
+        const backAt = closeMinutes != null
           ? nowInBusinessTimezone.startOf('day').plus({ minutes: closeMinutes })
           : null;
-        return { block, activeRange, backAt };
+
+        return {
+          block,
+          activeRange,
+          backAt
+        };
       }
     }
+
     return null;
   };
 
-  // Priority 2: Exams and Finals
+  // Priority 2: Finals
   const finals = academicAvailability.finals || [];
   const activeFinal = checkBlocks(finals, 'date', currentIsoDate);
+
   if (activeFinal) {
     return {
       active: true,
@@ -5525,8 +5560,10 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
     };
   }
 
+  // Priority 3: Exams
   const exams = academicAvailability.exams || [];
   const activeExam = checkBlocks(exams, 'date', currentIsoDate);
+
   if (activeExam) {
     return {
       active: true,
@@ -5535,19 +5572,77 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
     };
   }
 
-  // Priority 3: Recurring Classes
-  const classes = academicAvailability.recurringClasses || [];
-  const activeClass = checkBlocks(classes, 'days', currentDayOfWeek) || checkBlocks(classes, 'day', currentDayOfWeek);
+  // Priority 4: Recurring Classes
+  const classes = (academicAvailability.recurringClasses || []).filter((cls) => {
+    if (!cls.startDate || !cls.endDate) return true;
+    return isInDateWindow(nowInBusinessTimezone, cls.startDate, cls.endDate);
+  });
+
+  const activeClass =
+    checkBlocks(classes, 'days', currentDayOfWeek) ||
+    checkBlocks(classes, 'day', currentDayOfWeek);
+
   if (activeClass) {
     return {
       active: true,
-      reason: activeClass.block.title || 'In Class',
+      reason: activeClass.block.title || activeClass.block.course || 'In Class',
       backAt: activeClass.backAt
     };
   }
 
   return { active: false };
 }
+
+  // Helper to check active time blocks
+  const checkBlocks = (blocks, matchField, matchValue) => {
+  for (const block of (blocks || [])) {
+    let isMatch = false;
+
+    if (block[matchField]) {
+      if (Array.isArray(block[matchField])) {
+        isMatch = block[matchField]
+          .map(v => String(v).trim().toLowerCase())
+          .includes(matchValue);
+      } else if (typeof block[matchField] === 'string') {
+        const values = block[matchField]
+          .split(',')
+          .map(v => v.trim().toLowerCase())
+          .filter(Boolean);
+
+        isMatch = values.includes(matchValue);
+      } else {
+        isMatch = String(block[matchField]).trim().toLowerCase() === matchValue;
+      }
+    }
+
+    if (!isMatch) continue;
+
+    let ranges = normalizeRanges(block);
+
+    // Admin academic data uses startTime / endTime
+    if (ranges.length === 0 && block.startTime && block.endTime) {
+      ranges = [{ open: block.startTime, close: block.endTime }];
+    }
+
+    // Extra fallback
+    if (ranges.length === 0 && block.start && block.end) {
+      ranges = [{ open: block.start, close: block.end }];
+    }
+
+    const activeRange = findActiveRange(currentMinutes, ranges);
+
+    if (activeRange) {
+      const closeMinutes = timeStringToMinutes(activeRange.close);
+      const backAt = closeMinutes != null
+        ? nowInBusinessTimezone.startOf('day').plus({ minutes: closeMinutes })
+        : null;
+
+      return { block, activeRange, backAt };
+    }
+  }
+
+  return null;
+};
 
 /* -------------------------
    NEXT OPENING HELPERS
