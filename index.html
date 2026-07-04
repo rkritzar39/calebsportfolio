@@ -399,7 +399,6 @@
           type="button"
           class="biz-segmented-time__option is-active"
           id="bizTime12Btn"
-          data-format="12"
           aria-pressed="true"
         >
           12h
@@ -409,7 +408,6 @@
           type="button"
           class="biz-segmented-time__option"
           id="bizTime24Btn"
-          data-format="24"
           aria-pressed="false"
         >
           24h
@@ -450,6 +448,8 @@
         id="academic-status-banner"
         class="biz-academic-banner"
         hidden
+        role="status"
+        aria-live="polite"
       >
         <strong id="academic-status-title"></strong>
         <span id="academic-status-detail"></span>
@@ -493,18 +493,6 @@
           <span id="bizTimelineEnd">—</span>
         </div>
       </div>
-
-      <!-- ============================ -->
-      <!-- ACADEMIC SUMMARY            -->
-      <!-- ============================ -->
-      <div
-        id="academic-summary"
-        class="biz-academic-summary"
-        hidden
-      >
-        <h4>Academic Schedule Impact</h4>
-        <ul id="academic-summary-list"></ul>
-      </div>
     </div>
 
     <!-- ============================ -->
@@ -529,11 +517,15 @@
       </details>
 
       <!-- ============================ -->
-      <!-- ACADEMIC HOURS              -->
+      <!-- ACADEMIC HOURS (INFO ONLY)  -->
       <!-- ============================ -->
-      <details class="biz-details" id="academicDetails">
+      <details class="biz-details" id="academicDetails" hidden>
         <summary>Academic Schedule</summary>
-        <div id="academic-hours-display" class="hours-wrap"></div>
+        <div id="academic-hours-display" class="hours-wrap">
+          <p class="biz-muted">
+            Business availability may be affected by academic commitments.
+          </p>
+        </div>
       </details>
 
       <div class="biz-divider" role="separator" aria-hidden="true"></div>
@@ -545,6 +537,7 @@
     </div>
   </div>
 </section>
+
 
       <div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
         <h2><i class="fas fa-microchip"></i> Tech Information</h2>
