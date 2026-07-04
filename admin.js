@@ -3182,6 +3182,11 @@ function createRecurringClassRow(data = {}) {
     row.remove();
     updateAcademicPreview();
   });
+
+  row.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", updateAcademicPreview);
+  });
+
   return row;
 }
 
@@ -3202,6 +3207,11 @@ function createExamRow(data = {}) {
     row.remove();
     updateAcademicPreview();
   });
+
+  row.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", updateAcademicPreview);
+  });
+
   return row;
 }
 
@@ -3222,6 +3232,11 @@ function createFinalRow(data = {}) {
     row.remove();
     updateAcademicPreview();
   });
+
+  row.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", updateAcademicPreview);
+  });
+
   return row;
 }
 
@@ -3242,6 +3257,11 @@ function createEventRow(data = {}) {
     row.remove();
     updateAcademicPreview();
   });
+
+  row.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", updateAcademicPreview);
+  });
+
   return row;
 }
 
@@ -3261,6 +3281,11 @@ function createInternshipRow(data = {}) {
     row.remove();
     updateAcademicPreview();
   });
+
+  row.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", updateAcademicPreview);
+  });
+
   return row;
 }
 
@@ -3269,7 +3294,7 @@ function createBreakRow(data = {}) {
   row.className = "academic-row academic-break-row";
 
   row.innerHTML = `
-    <input type="text" class="break-name" placeholder="Break Name" value="${data.name || ""}">
+    <input type="text" class="break-name" placeholder="Break Name" value="${data.name || data.title || ""}">
     <input type="date" class="break-start" value="${data.startDate || ""}">
     <input type="date" class="break-end" value="${data.endDate || ""}">
     <button type="button" class="danger-btn remove-break-btn">×</button>
@@ -3353,37 +3378,60 @@ async function saveRecurringClasses(e) {
     endDate: document.getElementById("academic-term-end")?.value || ""
   };
 
+  const institutionValue = document.getElementById("academic-institution")?.value.trim() || "";
+  const programValue = document.getElementById("academic-program")?.value.trim() || "";
+  const yearValue = document.getElementById("academic-year")?.value.trim() || "";
+  const advisorValue = document.getElementById("academic-advisor")?.value.trim() || "";
+  const timezoneValue =
+    document.getElementById("academic-timezone")?.value.trim() ||
+    "America/New_York";
+
   const profile = {
-    institution: document.getElementById("academic-institution")?.value.trim() || "",
-    program: document.getElementById("academic-program")?.value.trim() || "",
-    year: document.getElementById("academic-year")?.value.trim() || "",
-    advisor: document.getElementById("academic-advisor")?.value.trim() || ""
+    institution: institutionValue,
+    school: institutionValue,
+    program: programValue,
+    year: yearValue,
+    advisor: advisorValue,
+    timezone: timezoneValue
   };
 
   const breakRows = document.querySelectorAll(".academic-break-row");
-  const breaks = [...breakRows].map(row => ({
-    name: row.querySelector(".break-name")?.value.trim() || "",
-    startDate: row.querySelector(".break-start")?.value || "",
-    endDate: row.querySelector(".break-end")?.value || ""
-  }));
+  const breaks = [...breakRows].map(row => {
+    const breakName = row.querySelector(".break-name")?.value.trim() || "";
+
+    return {
+      name: breakName,
+      title: breakName,
+      startDate: row.querySelector(".break-start")?.value || "",
+      endDate: row.querySelector(".break-end")?.value || ""
+    };
+  });
+
+  const academicAvailability = {
+    recurringClasses: classes,
+    exams: exams,
+    finals: finals,
+    universityEvents: universityEvents,
+    internships: internships,
+    semester: semester,
+    profile: profile,
+    breaks: breaks,
+    coOps: Array.isArray(cachedAcademicAvailability?.coOps)
+      ? cachedAcademicAvailability.coOps
+      : []
+  };
 
   await setDoc(
     doc(db, "site_config", "academicAvailability"),
     {
-      academicAvailability: {
-        recurringClasses: classes,
-        exams: exams,
-        finals: finals,
-        universityEvents: universityEvents,
-        internships: internships,
-        semester: semester,
-        profile: profile,
-        breaks: breaks
-      },
+      academicAvailability: academicAvailability,
       lastUpdated: serverTimestamp()
     },
     { merge: true }
   );
+
+  cachedAcademicAvailability = academicAvailability;
+  updateAcademicPreview();
 
   const msg = document.getElementById("academic-status-message");
   if (msg) msg.textContent = "Academic availability saved successfully.";
@@ -3422,11 +3470,13 @@ async function loadRecurringClasses() {
   const snap = await getDoc(doc(db, "site_config", "academicAvailability"));
 
   if (!snap.exists()) {
+    cachedAcademicAvailability = {};
     updateAcademicPreview();
     return;
   }
 
   const data = snap.data()?.academicAvailability || {};
+  cachedAcademicAvailability = data;
   
   const classes = data.recurringClasses || [];
   const exams = data.exams || []; 
@@ -3443,10 +3493,11 @@ async function loadRecurringClasses() {
   if (document.getElementById("academic-term-start")) document.getElementById("academic-term-start").value = semester.startDate || "";
   if (document.getElementById("academic-term-end")) document.getElementById("academic-term-end").value = semester.endDate || "";
 
-  if (document.getElementById("academic-institution")) document.getElementById("academic-institution").value = profile.institution || "";
+  if (document.getElementById("academic-institution")) document.getElementById("academic-institution").value = profile.institution || profile.school || "";
   if (document.getElementById("academic-program")) document.getElementById("academic-program").value = profile.program || "";
   if (document.getElementById("academic-year")) document.getElementById("academic-year").value = profile.year || "";
   if (document.getElementById("academic-advisor")) document.getElementById("academic-advisor").value = profile.advisor || "";
+  if (document.getElementById("academic-timezone")) document.getElementById("academic-timezone").value = profile.timezone || "America/New_York";
 
   if (breakContainer && typeof createBreakRow === 'function') {
     breaks.forEach(b => { breakContainer.appendChild(createBreakRow(b)); });
@@ -3465,6 +3516,58 @@ async function loadRecurringClasses() {
    ACADEMIC PREVIEW UI
    ------------------------- */
 
+function getUpcomingAcademicBreaksAdmin() {
+  const breakRows = document.querySelectorAll(".academic-break-row");
+  const today = new Date().toISOString().slice(0, 10);
+
+  return [...breakRows]
+    .map(row => {
+      const name = row.querySelector(".break-name")?.value.trim() || "Academic Break";
+      const startDate = row.querySelector(".break-start")?.value || "";
+      const endDate = row.querySelector(".break-end")?.value || startDate;
+
+      return {
+        name,
+        title: name,
+        startDate,
+        endDate
+      };
+    })
+    .filter(item => item.startDate && item.endDate && item.endDate >= today)
+    .sort((a, b) => String(a.startDate).localeCompare(String(b.startDate)));
+}
+
+function formatUpcomingAcademicBreaksAdmin() {
+  const upcomingBreaks = getUpcomingAcademicBreaksAdmin();
+
+  if (!upcomingBreaks.length) return "—";
+
+  return upcomingBreaks
+    .slice(0, 3)
+    .map(item => {
+      const title = item.title || item.name || "Academic Break";
+      const startDate = item.startDate || "?";
+      const endDate = item.endDate || item.startDate || "?";
+
+      if (startDate === endDate) {
+        return `${title} (${startDate})`;
+      }
+
+      return `${title} (${startDate} to ${endDate})`;
+    })
+    .join(", ");
+}
+
+function setAcademicPreviewText(selectorList, value) {
+  for (const selector of selectorList) {
+    const element = document.querySelector(selector);
+
+    if (element) {
+      element.textContent = value;
+    }
+  }
+}
+
 function updateAcademicPreview() {
   const classCountEl = document.querySelector('span[data-count="classes"]');
   const examCountEl = document.querySelector('span[data-count="exams"]');
@@ -3472,37 +3575,117 @@ function updateAcademicPreview() {
   const eventCountEl = document.querySelector('span[data-count="events"]');
   const internshipCountEl = document.querySelector('span[data-count="internships"]');
   const breakCountEl = document.querySelector('span[data-count="breaks"]');
-  
-  const semesterDisplay = document.querySelector('span[data-display="semesterName"]');
-  const termTypeDisplay = document.querySelector('span[data-display="termType"]');
-  const termDatesDisplay = document.querySelector('span[data-display="termDates"]');
-  const profileInfoDisplay = document.querySelector('span[data-display="profileInfo"]');
 
-  if (classCountEl) classCountEl.textContent = document.querySelectorAll(".recurring-class-row").length;
-  if (examCountEl) examCountEl.textContent = document.querySelectorAll(".exam-row").length;
-  if (finalCountEl) finalCountEl.textContent = document.querySelectorAll(".final-row").length;
-  if (eventCountEl) eventCountEl.textContent = document.querySelectorAll(".university-event-row").length;
-  if (internshipCountEl) internshipCountEl.textContent = document.querySelectorAll(".internship-row").length;
-  if (breakCountEl) breakCountEl.textContent = document.querySelectorAll(".academic-break-row").length;
+  const classCount = document.querySelectorAll(".recurring-class-row").length;
+  const examCount = document.querySelectorAll(".exam-row").length;
+  const finalCount = document.querySelectorAll(".final-row").length;
+  const eventCount = document.querySelectorAll(".university-event-row").length;
+  const internshipCount = document.querySelectorAll(".internship-row").length;
+  const breakCount = document.querySelectorAll(".academic-break-row").length;
 
-  if (semesterDisplay) semesterDisplay.textContent = document.getElementById("academic-semester-name")?.value || "N/A";
-  if (termTypeDisplay) {
-    const tt = document.getElementById("academic-term-type")?.value || "N/A";
-    termTypeDisplay.textContent = capitalizeFirstLetter(tt);
-  }
-  if (termDatesDisplay) {
-    const sDate = document.getElementById("academic-term-start")?.value || "?";
-    const eDate = document.getElementById("academic-term-end")?.value || "?";
-    termDatesDisplay.textContent = `${sDate} to ${eDate}`;
-  }
-  if (profileInfoDisplay) {
-    const inst = document.getElementById("academic-institution")?.value || "N/A";
-    const prog = document.getElementById("academic-program")?.value || "N/A";
-    const yr = document.getElementById("academic-year")?.value || "N/A";
-    profileInfoDisplay.textContent = `${inst} | ${prog} | ${yr}`;
-  }
+  if (classCountEl) classCountEl.textContent = classCount;
+  if (examCountEl) examCountEl.textContent = examCount;
+  if (finalCountEl) finalCountEl.textContent = finalCount;
+  if (eventCountEl) eventCountEl.textContent = eventCount;
+  if (internshipCountEl) internshipCountEl.textContent = internshipCount;
+  if (breakCountEl) breakCountEl.textContent = breakCount;
+
+  const semesterName =
+    document.getElementById("academic-semester-name")?.value.trim() ||
+    "—";
+
+  const termType =
+    document.getElementById("academic-term-type")?.value ||
+    "";
+
+  const termStart =
+    document.getElementById("academic-term-start")?.value ||
+    "";
+
+  const termEnd =
+    document.getElementById("academic-term-end")?.value ||
+    "";
+
+  const institution =
+    document.getElementById("academic-institution")?.value.trim() ||
+    "";
+
+  const program =
+    document.getElementById("academic-program")?.value.trim() ||
+    "";
+
+  const year =
+    document.getElementById("academic-year")?.value.trim() ||
+    "";
+
+  const timezone =
+    document.getElementById("academic-timezone")?.value.trim() ||
+    "America/New_York";
+
+  const termTypeText = termType
+    ? capitalizeFirstLetter(termType)
+    : "—";
+
+  const termDatesText =
+    termStart && termEnd
+      ? `${termStart} to ${termEnd}`
+      : "—";
+
+  const profileText = [
+    institution,
+    program,
+    year,
+    timezone
+  ].filter(Boolean).join(" • ") || "—";
+
+  const upcomingBreaksText = formatUpcomingAcademicBreaksAdmin();
+
+  setAcademicPreviewText(
+    [
+      'span[data-display="semesterName"]',
+      '#academic-semester-summary',
+      '#academicSemesterSummary'
+    ],
+    semesterName
+  );
+
+  setAcademicPreviewText(
+    [
+      'span[data-display="termType"]',
+      '#academic-term-type-summary',
+      '#academicTermTypeSummary'
+    ],
+    termTypeText
+  );
+
+  setAcademicPreviewText(
+    [
+      'span[data-display="termDates"]',
+      '#academic-term-dates-summary',
+      '#academicTermDatesSummary'
+    ],
+    termDatesText
+  );
+
+  setAcademicPreviewText(
+    [
+      'span[data-display="profileInfo"]',
+      '#academic-profile-summary',
+      '#academicProfileSummary'
+    ],
+    profileText
+  );
+
+  setAcademicPreviewText(
+    [
+      'span[data-display="upcomingBreaks"]',
+      '#academic-upcoming-breaks-summary',
+      '#academicUpcomingBreaksSummary'
+    ],
+    upcomingBreaksText
+  );
 }
-    
+
 /* -------------------------
    AUTH & INIT LISTENERS
    ------------------------- */
@@ -3617,7 +3800,7 @@ onAuthStateChanged(auth, async user => {
 
                 const liveInputs = [
                   'academic-semester-name', 'academic-term-type', 'academic-term-start', 'academic-term-end',
-                  'academic-institution', 'academic-program', 'academic-year', 'academic-advisor'
+                  'academic-institution', 'academic-program', 'academic-year', 'academic-advisor', 'academic-timezone'
                 ];
                 liveInputs.forEach(id => {
                   const el = document.getElementById(id);
@@ -3722,6 +3905,7 @@ document.addEventListener('click', (e) => {
         });
     }
 });
+
 
 /* ------------------------------------------------------------
    SHOUTOUTS LOAD / ADD / DELETE / UPDATE
