@@ -3171,7 +3171,7 @@ function createRecurringClassRow(data = {}) {
     <input type="text" class="class-title" placeholder="Course Title" value="${data.title || ""}">
     <input type="text" class="class-instructor" placeholder="Instructor" value="${data.instructor || ""}">
     <input type="text" class="class-location" placeholder="Location" value="${data.location || ""}">
-    <input type="text" class="class-days" placeholder="Days (mon,wed,fri)" value="${(data.days || []).join(",")}">
+    <input type="text" class="class-days" placeholder="Days (mon,wed,fri)" value="${Array.isArray(data.days) ? data.days.join(",") : (data.days || "")}">
     <input type="time" class="class-start" value="${data.startTime || ""}">
     <input type="time" class="class-end" value="${data.endTime || ""}">
     <input type="date" class="class-start-date" value="${data.startDate || ""}">
@@ -3594,10 +3594,6 @@ function updateAcademicPreview() {
     document.getElementById("academic-semester-name")?.value.trim() ||
     "—";
 
-  const termType =
-    document.getElementById("academic-term-type")?.value ||
-    "";
-
   const termStart =
     document.getElementById("academic-term-start")?.value ||
     "";
@@ -3618,73 +3614,69 @@ function updateAcademicPreview() {
     document.getElementById("academic-year")?.value.trim() ||
     "";
 
+  const advisor =
+    document.getElementById("academic-advisor")?.value.trim() ||
+    "";
+
   const timezone =
     document.getElementById("academic-timezone")?.value.trim() ||
     "America/New_York";
 
-  const termTypeText = termType
-    ? capitalizeFirstLetter(termType)
-    : "—";
-
   const termDatesText =
     termStart && termEnd
-      ? `${termStart} to ${termEnd}`
-      : "—";
+      ? (${termStart} to ${termEnd})
+      : "";
 
   const profileText = [
     institution,
     program,
     year,
+    advisor,
     timezone
   ].filter(Boolean).join(" • ") || "—";
 
-  const upcomingBreaksText = formatUpcomingAcademicBreaksAdmin();
+  const semesterPreview = document.getElementById("preview-semester-name");
+  const termDatesPreview = document.getElementById("preview-term-dates");
+  const profilePreview = document.getElementById("preview-academic-profile");
+  const breaksPreview = document.getElementById("preview-academic-breaks");
 
-  setAcademicPreviewText(
-    [
-      'span[data-display="semesterName"]',
-      '#academic-semester-summary',
-      '#academicSemesterSummary'
-    ],
-    semesterName
-  );
+  if (semesterPreview) {
+    semesterPreview.textContent = semesterName;
+  }
 
-  setAcademicPreviewText(
-    [
-      'span[data-display="termType"]',
-      '#academic-term-type-summary',
-      '#academicTermTypeSummary'
-    ],
-    termTypeText
-  );
+  if (termDatesPreview) {
+    termDatesPreview.textContent = termDatesText;
+  }
 
-  setAcademicPreviewText(
-    [
-      'span[data-display="termDates"]',
-      '#academic-term-dates-summary',
-      '#academicTermDatesSummary'
-    ],
-    termDatesText
-  );
+  if (profilePreview) {
+    profilePreview.textContent = profileText;
+  }
 
-  setAcademicPreviewText(
-    [
-      'span[data-display="profileInfo"]',
-      '#academic-profile-summary',
-      '#academicProfileSummary'
-    ],
-    profileText
-  );
+  if (breaksPreview) {
+    const upcomingBreaks = getUpcomingAcademicBreaksAdmin();
 
-  setAcademicPreviewText(
-    [
-      'span[data-display="upcomingBreaks"]',
-      '#academic-upcoming-breaks-summary',
-      '#academicUpcomingBreaksSummary'
-    ],
-    upcomingBreaksText
-  );
+    if (!upcomingBreaks.length) {
+      breaksPreview.innerHTML = <li>—</li>;
+    } else {
+      breaksPreview.innerHTML = upcomingBreaks
+        .slice(0, 3)
+        .map(item => {
+          const title = item.title || item.name || "Academic Break";
+          const startDate = item.startDate || "?";
+          const endDate = item.endDate || item.startDate || "?";
+
+          const dateText =
+            startDate === endDate
+              ? startDate
+              : ${startDate} to ${endDate};
+
+          return <li>${title} (${dateText})</li>;
+        })
+        .join("");
+    }
+  }
 }
+
 
 /* -------------------------
    AUTH & INIT LISTENERS
