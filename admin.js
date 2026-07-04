@@ -3310,7 +3310,6 @@ function createExamRow(data = {}) {
   const row = document.createElement("div");
   row.className = "academic-row exam-row";
 
-  // FIXED: Added backticks around the template literal
   row.innerHTML = `
     <input type="text" class="exam-course"
       placeholder="Course Code"
@@ -3383,6 +3382,79 @@ function createFinalRow(data = {}) {
   return row;
 }
 
+function createEventRow(data = {}) {
+  const row = document.createElement("div");
+  row.className = "academic-row university-event-row";
+
+  row.innerHTML = `
+    <input type="text" class="event-title"
+      placeholder="Event Title"
+      value="${data.title || ""}">
+
+    <input type="date" class="event-date"
+      value="${data.date || ""}">
+
+    <input type="time" class="event-start"
+      value="${data.startTime || ""}">
+
+    <input type="time" class="event-end"
+      value="${data.endTime || ""}">
+
+    <input type="text" class="event-location"
+      placeholder="Location"
+      value="${data.location || ""}">
+      
+    <input type="text" class="event-note"
+      placeholder="Note"
+      value="${data.note || ""}">
+
+    <button type="button"
+      class="danger-btn remove-event-btn">×</button>
+  `;
+
+  row.querySelector(".remove-event-btn").addEventListener("click", () => {
+    row.remove();
+    updateAcademicPreview();
+  });
+
+  return row;
+}
+
+function createInternshipRow(data = {}) {
+  const row = document.createElement("div");
+  row.className = "academic-row internship-row";
+
+  row.innerHTML = `
+    <input type="text" class="intern-company"
+      placeholder="Company"
+      value="${data.company || ""}">
+
+    <input type="text" class="intern-role"
+      placeholder="Role"
+      value="${data.role || ""}">
+
+    <input type="date" class="intern-start"
+      value="${data.startDate || ""}">
+
+    <input type="date" class="intern-end"
+      value="${data.endDate || ""}">
+
+    <input type="text" class="intern-location"
+      placeholder="Location"
+      value="${data.location || ""}">
+
+    <button type="button"
+      class="danger-btn remove-internship-btn">×</button>
+  `;
+
+  row.querySelector(".remove-internship-btn").addEventListener("click", () => {
+    row.remove();
+    updateAcademicPreview();
+  });
+
+  return row;
+}
+
 async function saveRecurringClasses(e) {
   e.preventDefault();
 
@@ -3426,14 +3498,37 @@ async function saveRecurringClasses(e) {
     location: row.querySelector(".final-location")?.value.trim() || ""
   }));
 
-  // 4. Save to Firebase
+  // 4. Gather Events
+  const eventRows = document.querySelectorAll(".university-event-row");
+  const universityEvents = [...eventRows].map(row => ({
+    title: row.querySelector(".event-title")?.value.trim() || "",
+    date: row.querySelector(".event-date")?.value || "",
+    startTime: row.querySelector(".event-start")?.value || "",
+    endTime: row.querySelector(".event-end")?.value || "",
+    location: row.querySelector(".event-location")?.value.trim() || "",
+    note: row.querySelector(".event-note")?.value.trim() || ""
+  }));
+
+  // 5. Gather Internships
+  const internshipRows = document.querySelectorAll(".internship-row");
+  const internships = [...internshipRows].map(row => ({
+    company: row.querySelector(".intern-company")?.value.trim() || "",
+    role: row.querySelector(".intern-role")?.value.trim() || "",
+    startDate: row.querySelector(".intern-start")?.value || "",
+    endDate: row.querySelector(".intern-end")?.value || "",
+    location: row.querySelector(".intern-location")?.value.trim() || ""
+  }));
+
+  // 6. Save to Firebase
   await setDoc(
     doc(db, "site_config", "academicAvailability"),
     {
       academicAvailability: {
         recurringClasses: classes,
         exams: exams,
-        finals: finals
+        finals: finals,
+        universityEvents: universityEvents,
+        internships: internships
       },
       lastUpdated: serverTimestamp()
     },
@@ -3441,7 +3536,7 @@ async function saveRecurringClasses(e) {
   );
 
   const msg = document.getElementById("academic-status-message");
-  if (msg) msg.textContent = "Classes, exams, and finals saved successfully.";
+  if (msg) msg.textContent = "Academic availability saved successfully.";
 }
 
 async function loadAcademicAvailabilityForPreview() {
@@ -3465,6 +3560,8 @@ async function loadRecurringClasses() {
   const classContainer = document.getElementById("academic-classes-container");
   const examContainer = document.getElementById("academic-exams-container");
   const finalContainer = document.getElementById("academic-finals-container");
+  const eventContainer = document.getElementById("academic-events-container");
+  const internshipContainer = document.getElementById("academic-internships-container");
   
   if (!classContainer) return;
 
@@ -3472,6 +3569,8 @@ async function loadRecurringClasses() {
   classContainer.innerHTML = "";
   if (examContainer) examContainer.innerHTML = "";
   if (finalContainer) finalContainer.innerHTML = "";
+  if (eventContainer) eventContainer.innerHTML = "";
+  if (internshipContainer) internshipContainer.innerHTML = "";
 
   const snap = await getDoc(doc(db, "site_config", "academicAvailability"));
 
@@ -3484,6 +3583,8 @@ async function loadRecurringClasses() {
   const classes = data.recurringClasses || [];
   const exams = data.exams || []; 
   const finals = data.finals || []; 
+  const events = data.universityEvents || [];
+  const internships = data.internships || [];
 
   classes.forEach(cls => {
     classContainer.appendChild(createRecurringClassRow(cls));
@@ -3501,18 +3602,33 @@ async function loadRecurringClasses() {
     });
   }
 
+  if (eventContainer && typeof createEventRow === 'function') {
+    events.forEach(ev => {
+      eventContainer.appendChild(createEventRow(ev));
+    });
+  }
+
+  if (internshipContainer && typeof createInternshipRow === 'function') {
+    internships.forEach(intern => {
+      internshipContainer.appendChild(createInternshipRow(intern));
+    });
+  }
+
   updateAcademicPreview();
 }
 
 function updateAcademicPreview() {
-  const countEl = document.getElementById("academic-preview-counts");
-  if (!countEl) return;
+  const classCountEl = document.querySelector('span[data-count="classes"]');
+  const examCountEl = document.querySelector('span[data-count="exams"]');
+  const finalCountEl = document.querySelector('span[data-count="finals"]');
+  const eventCountEl = document.querySelector('span[data-count="events"]');
+  const internshipCountEl = document.querySelector('span[data-count="internships"]');
 
-  const classCount = document.querySelectorAll(".recurring-class-row").length;
-  const examCount = document.querySelectorAll(".exam-row").length; 
-  const finalCount = document.querySelectorAll(".final-row").length;
-
-  countEl.textContent = `Classes: ${classCount} | Exams: ${examCount} | Finals: ${finalCount}`;
+  if (classCountEl) classCountEl.textContent = document.querySelectorAll(".recurring-class-row").length;
+  if (examCountEl) examCountEl.textContent = document.querySelectorAll(".exam-row").length;
+  if (finalCountEl) finalCountEl.textContent = document.querySelectorAll(".final-row").length;
+  if (eventCountEl) eventCountEl.textContent = document.querySelectorAll(".university-event-row").length;
+  if (internshipCountEl) internshipCountEl.textContent = document.querySelectorAll(".internship-row").length;
 }
     
 // Listener for changes in authentication state (login/logout)
@@ -3577,6 +3693,10 @@ onAuthStateChanged(auth, async user => {
                 const examContainer = document.getElementById("academic-exams-container");
                 const addFinalBtn = document.getElementById("add-academic-final-btn");
                 const finalContainer = document.getElementById("academic-finals-container");
+                const addEventBtn = document.getElementById("add-academic-event-btn");
+                const eventContainer = document.getElementById("academic-events-container");
+                const addInternshipBtn = document.getElementById("add-academic-internship-btn");
+                const internshipContainer = document.getElementById("academic-internships-container");
                 const saveBtn = document.getElementById("save-academic-availability-btn");
 
                 if (saveBtn && !saveBtn.__saveListenerAttached) {
@@ -3606,6 +3726,22 @@ onAuthStateChanged(auth, async user => {
                     updateAcademicPreview();
                   });
                   addFinalBtn.__addListenerAttached = true;
+                }
+
+                if (addEventBtn && eventContainer && !addEventBtn.__addListenerAttached) {
+                  addEventBtn.addEventListener("click", () => {
+                    eventContainer.appendChild(createEventRow());
+                    updateAcademicPreview();
+                  });
+                  addEventBtn.__addListenerAttached = true;
+                }
+
+                if (addInternshipBtn && internshipContainer && !addInternshipBtn.__addListenerAttached) {
+                  addInternshipBtn.addEventListener("click", () => {
+                    internshipContainer.appendChild(createInternshipRow());
+                    updateAcademicPreview();
+                  });
+                  addInternshipBtn.__addListenerAttached = true;
                 }
 
                 // Load existing data from Firestore
@@ -3722,8 +3858,6 @@ document.addEventListener('click', (e) => {
         });
     }
 });
-
-
 
 /* ------------------------------------------------------------
    SHOUTOUTS LOAD / ADD / DELETE / UPDATE
