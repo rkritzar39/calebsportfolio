@@ -1889,31 +1889,29 @@ async function handleGoogleSignIn(response) {
     }
 }
 
-// admin-business-hours-v16.js
+// admin-business-hours-v17.js
 // ======================================================
-// ========== BUSINESS HOURS ADMIN (MULTI-RANGE v16) ====
+// ========== BUSINESS HOURS ADMIN (MULTI-RANGE v17) ====
 // ======================================================
-// - Multi-range regularHours per day (recommended)
+// - Multi-range regularHours per day
 // - Single-range holidayHours and temporaryHours
+// - Integrated Academic Availability (Classes, Exams, Finals)
+// - Integrated Academic Events, Internships
+// - NEW: Semester Metadata, Academic Profile, Academic Breaks
 // - Live preview, add/remove, mutation observer
-// - Depends on Firestore helpers: db, doc, getDoc, setDoc, serverTimestamp
-// - Depends on auth (for save permission checks)
 // ======================================================
 
 /* -------------------------
    CONFIG & SHARED HELPERS
    ------------------------- */
 
-// Firestore doc ref (declare once)
 const businessDocRef = (typeof doc !== 'undefined' && typeof db !== 'undefined')
     ? doc(db, "site_config", "businessDetails")
     : null;
 
-// Days constants
 const daysOfWeek = ['monday','tuesday','wednesday','thursday','friday','saturday','sunday'];
 let cachedAcademicAvailability = null;
 
-// Small util: safe attach listener (prevents duplicate attachments)
 function addListenerSafe(element, eventType, handler, flagSuffix = '') {
     if (!element) return;
     const flag = `__listener_${eventType}_${flagSuffix}`;
@@ -1969,6 +1967,15 @@ function getAcademicAvailability(academicData) {
     const todayDayName = daysOfWeek[(now.getDay() + 6) % 7];
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
+    // 0. Check Academic Breaks (Runs first, overrides everything)
+    if (Array.isArray(academicData.breaks)) {
+        for (const b of academicData.breaks) {
+            if (b.startDate && b.endDate && todayDateStr >= b.startDate && todayDateStr <= b.endDate) {
+                return { available: false, reason: b.name || 'Academic Break' };
+            }
+        }
+    }
+
     // 1. Check Exams
     if (Array.isArray(academicData.exams)) {
         for (const exam of academicData.exams) {
@@ -2005,20 +2012,10 @@ function getAcademicAvailability(academicData) {
 }
 
 /* -------------------------
-   REGULAR HOURS: Multi-range admin UI
+   REGULAR HOURS UI
    ------------------------- */
 
-/*
-Expected stored format:
-regularHours: {
-  monday: { isClosed: false, ranges: [ {open: "07:00", close: "09:30"}, {...} ] },
-  ...
-}
-*/
-
-// Template creation helper: creates a DOM fragment for one hours-range row
 function createHoursRangeElement(day, open = "", close = "") {
-    // Template markup (keeps it self-contained so no separate <template> needed)
     const wrapper = document.createElement('div');
     wrapper.className = 'hours-range';
     wrapper.innerHTML = `
@@ -2041,10 +2038,9 @@ function createHoursRangeElement(day, open = "", close = "") {
     return wrapper;
 }
 
-// Populate the multi-range UI for regular hours
 function populateRegularHoursForm(data = {}) {
     const container = document.getElementById('regular-hours-container');
-    if (!container) { console.error("regular-hours-container missing"); return; }
+    if (!container) return;
     container.innerHTML = '';
 
     daysOfWeek.forEach(day => {
@@ -2053,7 +2049,6 @@ function populateRegularHoursForm(data = {}) {
         block.className = 'day-block';
         block.dataset.day = day;
 
-        // Header + closed checkbox + ranges container + add-button
         block.innerHTML = `
             <h5>${capitalizeFirstLetter(day)}</h5>
             <label class="checkbox-inline"><input type="checkbox" class="closed-all-day" ${dayData.isClosed ? 'checked' : ''} /> Closed all day</label>
@@ -2065,24 +2060,19 @@ function populateRegularHoursForm(data = {}) {
         const hoursList = block.querySelector('.hours-list');
         const addBtn = block.querySelector('.add-hours');
 
-        // Populate existing ranges (multi-range)
         if (!dayData.isClosed && Array.isArray(dayData.ranges)) {
             dayData.ranges.forEach(r => {
                 hoursList.appendChild(createHoursRangeElement(day, r.open || '', r.close || ''));
             });
         }
 
-        // Add button
         addListenerSafe(addBtn, 'click', () => {
             hoursList.appendChild(createHoursRangeElement(day, '', ''));
             updateAdminPreview();
         }, `add_hours_${day}`);
 
-        // Closed toggler
         addListenerSafe(closedCheckbox, 'change', (e) => {
-            if (e.target.checked) {
-                hoursList.innerHTML = '';
-            }
+            if (e.target.checked) hoursList.innerHTML = '';
             updateAdminPreview();
         }, `closed_toggle_${day}`);
 
@@ -2093,8 +2083,7 @@ function populateRegularHoursForm(data = {}) {
 }
 
 /* -------------------------
-   HOLIDAY / TEMP ENTRY RENDERERS
-   (single open/close per entry)
+   HOLIDAY / TEMP UI
    ------------------------- */
 
 function renderHolidayEntry(entry = {}, index = 0) {
@@ -2192,20 +2181,16 @@ function renderTemporaryEntry(entry = {}, index = 0) {
 }
 
 /* -------------------------
-   LOAD DATA FROM FIRESTORE
+   DATA LOAD / SAVE (BUSINESS)
    ------------------------- */
 
 async function loadBusinessInfoData() {
-    console.log("Loading business info (v16)...");
     const contactEmailInput = document.getElementById('business-contact-email');
     const statusOverrideSelect = document.getElementById('business-status-override');
     const holidayHoursList = document.getElementById('holiday-hours-list');
     const temporaryHoursList = document.getElementById('temporary-hours-list');
 
-    if (!businessDocRef || typeof getDoc !== 'function') {
-        console.error("Firestore helpers missing: cannot load business info.");
-        return;
-    }
+    if (!businessDocRef || typeof getDoc !== 'function') return;
 
     try {
         const snap = await getDoc(businessDocRef);
@@ -2214,12 +2199,10 @@ async function loadBusinessInfoData() {
         if (contactEmailInput) contactEmailInput.value = data.contactEmail || '';
         if (statusOverrideSelect) statusOverrideSelect.value = data.statusOverride || 'auto';
 
-        // Regular hours (multi-range)
         if (typeof populateRegularHoursForm === 'function') {
             populateRegularHoursForm(data.regularHours || {});
         }
 
-        // Holidays
         if (holidayHoursList && typeof renderHolidayEntry === 'function') {
             holidayHoursList.innerHTML = '';
             (data.holidayHours || []).forEach((h, idx) => {
@@ -2227,7 +2210,6 @@ async function loadBusinessInfoData() {
             });
         }
 
-        // Temporary
         if (temporaryHoursList && typeof renderTemporaryEntry === 'function') {
             temporaryHoursList.innerHTML = '';
             (data.temporaryHours || []).forEach((t, idx) => {
@@ -2237,16 +2219,10 @@ async function loadBusinessInfoData() {
 
        await loadAcademicAvailabilityForPreview();
        updateAdminPreview();
-       console.log("Business info loaded.");
     } catch (err) {
-        console.error("Error loading business info:", err);
         showBusinessInfoStatus("Error loading business info", true);
     }
 }
-
-/* -------------------------
-   SAVE DATA TO FIRESTORE
-   ------------------------- */
 
 async function saveBusinessInfoData(e) {
     e.preventDefault();
@@ -2255,15 +2231,12 @@ async function saveBusinessInfoData(e) {
         showBusinessInfoStatus("Not logged in.", true);
         return;
     }
-
     showBusinessInfoStatus("Saving...");
 
-    // Build payload
     const contactEmail = document.getElementById('business-contact-email')?.value?.trim() || null;
     const statusOverride = document.getElementById('business-status-override')?.value || 'auto';
     const payload = { contactEmail, statusOverride, regularHours: {}, holidayHours: [], temporaryHours: [], lastUpdated: serverTimestamp() };
 
-    // Regular hours: read multi-range form
     document.querySelectorAll('.day-block').forEach(block => {
         const day = block.dataset.day;
         const isClosed = block.querySelector('.closed-all-day')?.checked || false;
@@ -2276,7 +2249,6 @@ async function saveBusinessInfoData(e) {
         payload.regularHours[day] = { isClosed: !!isClosed, ranges };
     });
 
-    // Holiday entries
     document.querySelectorAll('#holiday-hours-list .holiday-entry').forEach(entryDiv => {
         const date = entryDiv.querySelector('.holiday-date')?.value || null;
         if (!date) return;
@@ -2287,13 +2259,11 @@ async function saveBusinessInfoData(e) {
         payload.holidayHours.push({ date, label, isClosed, open, close });
     });
 
-    // Temporary entries
     let valid = true;
     document.querySelectorAll('#temporary-hours-list .temporary-entry').forEach(entryDiv => {
         const startDate = entryDiv.querySelector('.temp-start')?.value || null;
         const endDate = entryDiv.querySelector('.temp-end')?.value || null;
-        if (!startDate || !endDate) { valid = false; return; }
-        if (endDate < startDate) { valid = false; return; }
+        if (!startDate || !endDate || endDate < startDate) { valid = false; return; }
         const isClosed = entryDiv.querySelector('.temp-isClosed')?.checked || false;
         const label = entryDiv.querySelector('.temp-label')?.value?.trim() || null;
         const open = isClosed ? null : (entryDiv.querySelector('.temp-open')?.value || null);
@@ -2306,7 +2276,6 @@ async function saveBusinessInfoData(e) {
         return;
     }
 
-    // Sort arrays for consistency
     payload.holidayHours.sort((a,b) => a.date > b.date ? 1 : -1);
     payload.temporaryHours.sort((a,b) => a.startDate > b.startDate ? 1 : -1);
 
@@ -2315,13 +2284,12 @@ async function saveBusinessInfoData(e) {
         showBusinessInfoStatus("Business info updated!");
         updateAdminPreview();
     } catch (err) {
-        console.error("Error saving business info:", err);
         showBusinessInfoStatus(`Error saving: ${err.message || err}`, true);
     }
 }
 
 /* -------------------------
-   ADMIN PREVIEW
+   ADMIN PREVIEW (BUSINESS)
    ------------------------- */
 
 function updateAdminPreview() {
@@ -2329,17 +2297,12 @@ function updateAdminPreview() {
     const adminPreviewHours = document.getElementById('admin-preview-hours');
     const adminPreviewContact = document.getElementById('admin-preview-contact');
 
-    if (!adminPreviewStatus || !adminPreviewHours || !adminPreviewContact) {
-        console.warn("Preview elements missing");
-        return;
-    }
+    if (!adminPreviewStatus || !adminPreviewHours || !adminPreviewContact) return;
 
     const contactEmail = document.getElementById('business-contact-email')?.value?.trim() || null;
     const statusOverride = document.getElementById('business-status-override')?.value || 'auto';
-
     const previewData = { contactEmail, statusOverride, regularHours: {}, holidayHours: [], temporaryHours: [] };
 
-    // REGULAR HOURS READ
     document.querySelectorAll('.day-block').forEach(block => {
         const day = block.dataset.day;
         const isClosed = block.querySelector('.closed-all-day')?.checked || false;
@@ -2352,7 +2315,6 @@ function updateAdminPreview() {
         previewData.regularHours[day] = { isClosed: !!isClosed, ranges };
     });
 
-    // HOLIDAYS READ
     document.querySelectorAll('#holiday-hours-list .holiday-entry').forEach(entryDiv => {
         const date = entryDiv.querySelector('.holiday-date')?.value || null;
         if (!date) return;
@@ -2363,7 +2325,6 @@ function updateAdminPreview() {
         previewData.holidayHours.push({ date, label, isClosed, open, close });
     });
 
-    // TEMPORARY READ
     document.querySelectorAll('#temporary-hours-list .temporary-entry').forEach(entryDiv => {
         const startDate = entryDiv.querySelector('.temp-start')?.value || null;
         const endDate = entryDiv.querySelector('.temp-end')?.value || null;
@@ -2375,7 +2336,6 @@ function updateAdminPreview() {
         previewData.temporaryHours.push({ startDate, endDate, label, isClosed, open, close });
     });
 
-    // TIME + STATUS CALC
     const now = new Date();
     const previewDateStr = now.toISOString().slice(0,10);
     const previewDayName = daysOfWeek[(now.getDay() + 6) % 7];
@@ -2386,9 +2346,6 @@ function updateAdminPreview() {
     let isAcademicBlocked = false;
     let backAtTime = null;
 
-    // =============================
-    // ACADEMIC AVAILABILITY OVERRIDE
-    // =============================
     if (cachedAcademicAvailability) {
         const academicResult = getAcademicAvailability(cachedAcademicAvailability);
 
@@ -2401,16 +2358,11 @@ function updateAdminPreview() {
     }
 
     if (previewData.statusOverride !== 'auto') {
-        currentStatus =
-            previewData.statusOverride === 'open'
-                ? 'Open'
-                : previewData.statusOverride === 'closed'
-                    ? 'Closed'
-                    : 'Temporarily Unavailable';
-
+        currentStatus = previewData.statusOverride === 'open' ? 'Open' :
+                        previewData.statusOverride === 'closed' ? 'Closed' : 'Temporarily Unavailable';
         reason = 'Manual Override';
     } else if (isAcademicBlocked) {
-        // Short-circuit: Academic availability is active, so bypass business hours logic
+        // Blocked by academic class/exam/break (reason is already correctly set)
     } else {
         const todayHoliday = previewData.holidayHours.find(h => h.date === previewDateStr);
         if (todayHoliday) {
@@ -2447,9 +2399,7 @@ function updateAdminPreview() {
                         const o = timeStringToMinutesBI(r.open);
                         const c = timeStringToMinutesBI(r.close);
                         if (o == null || c == null) return false;
-                        return c > o
-                            ? previewMinutes >= o && previewMinutes < c
-                            : previewMinutes >= o || previewMinutes < c;
+                        return c > o ? previewMinutes >= o && previewMinutes < c : previewMinutes >= o || previewMinutes < c;
                     });
                     currentStatus = openNow ? 'Open' : 'Closed';
                 }
@@ -2457,14 +2407,9 @@ function updateAdminPreview() {
         }
     }
 
-    // STATUS DISPLAY
     let statusClass = 'status-closed';
-
-    if (currentStatus === 'Open') {
-        statusClass = 'status-open';
-    } else if (currentStatus === 'Temporarily Unavailable') {
-        statusClass = 'status-unavailable';
-    }
+    if (currentStatus === 'Open') statusClass = 'status-open';
+    else if (currentStatus === 'Temporarily Unavailable') statusClass = 'status-unavailable';
 
     adminPreviewStatus.innerHTML = `
         <div class="preview-status">
@@ -2477,22 +2422,11 @@ function updateAdminPreview() {
         </div>
     `;
     
-    // =============================
-    // ONYX REGULAR HOURS LIST (🔥)
-    // =============================
-    let html = `
-        <h4>Regular Hours</h4>
-        <ul class="preview-hours">
-    `;
-
+    let html = `<h4>Regular Hours</h4><ul class="preview-hours">`;
     daysOfWeek.forEach(day => {
         const isToday = day === previewDayName;
         const d = previewData.regularHours[day] || { isClosed: true, ranges: [] };
-
-        html += `
-            <li class="${isToday ? 'current-day-preview' : ''}">
-                <strong>${capitalizeFirstLetter(day)}:</strong>
-        `;
+        html += `<li class="${isToday ? 'current-day-preview' : ''}"><strong>${capitalizeFirstLetter(day)}:</strong>`;
 
         if (d.isClosed) {
             html += `<span class="hours-line">Closed</span>`;
@@ -2501,78 +2435,45 @@ function updateAdminPreview() {
         } else {
             d.ranges.forEach((r, i) => {
                 const disp = `${formatTimeForAdminPreview(r.open)} – ${formatTimeForAdminPreview(r.close)} ET`;
-
                 if (i === 0) html += `<span class="hours-line">${disp}</span>`;
                 else html += `<span class="hours-line additional-hours">${disp}</span>`;
             });
         }
-
         html += `</li>`;
     });
-
     html += `</ul>`;
 
-    // TEMP HOURS
     if (previewData.temporaryHours.length) {
         html += `<h4>Temporary Hours</h4><ul>`;
         previewData.temporaryHours.forEach(t => {
-            html += `
-                <li>
-                    <strong>${t.label || 'Temporary'}:</strong>
-                    <span>${t.startDate} → ${t.endDate} 
-                        ${t.isClosed ? 'Closed' :
-                            `${formatTimeForAdminPreview(t.open)} - ${formatTimeForAdminPreview(t.close)} ET`}
-                    </span>
-                </li>
-            `;
+            html += `<li><strong>${t.label || 'Temporary'}:</strong>
+                     <span>${t.startDate} → ${t.endDate} ${t.isClosed ? 'Closed' : `${formatTimeForAdminPreview(t.open)} - ${formatTimeForAdminPreview(t.close)} ET`}</span></li>`;
         });
         html += `</ul>`;
     }
 
-    // HOLIDAY HOURS
     if (previewData.holidayHours.length) {
         html += `<h4>Holiday Hours</h4><ul>`;
         previewData.holidayHours.forEach(h => {
-            html += `
-                <li>
-                    <strong>${h.label || 'Holiday'}:</strong>
-                    <span>${h.date} 
-                        ${h.isClosed ? 'Closed' :
-                            `${formatTimeForAdminPreview(h.open)} - ${formatTimeForAdminPreview(h.close)} ET`}
-                    </span>
-                </li>
-            `;
+            html += `<li><strong>${h.label || 'Holiday'}:</strong>
+                     <span>${h.date} ${h.isClosed ? 'Closed' : `${formatTimeForAdminPreview(h.open)} - ${formatTimeForAdminPreview(h.close)} ET`}</span></li>`;
         });
         html += `</ul>`;
     }
 
     html += `<p class="preview-timezone-note">Preview based on your browser time. Hours entered as ET.</p>`;
-
     adminPreviewHours.innerHTML = html;
-
-    adminPreviewContact.innerHTML = contactEmail
-        ? `Contact: <a href="mailto:${contactEmail}" target="_blank">${contactEmail}</a>`
-        : '';
+    adminPreviewContact.innerHTML = contactEmail ? `Contact: <a href="mailto:${contactEmail}" target="_blank">${contactEmail}</a>` : '';
 }
-/* -------------------------
-   LISTENERS & INIT
-   ------------------------- */
 
 function setupBusinessInfoListeners() {
-    console.log("Setting up admin business info listeners (v16)...");
     const form = document.getElementById('business-info-form');
     const addHolidayBtn = document.getElementById('add-holiday-button');
     const addTempBtn = document.getElementById('add-temporary-button');
     const holidayList = document.getElementById('holiday-hours-list');
     const tempList = document.getElementById('temporary-hours-list');
 
-    if (!form) { console.error("business-info-form missing"); return; }
-
-    // Prevent double-attach
-    if (form.dataset.listenersAttached === 'true') {
-        console.log("Listeners already attached — skipping.");
-        return;
-    }
+    if (!form || form.dataset.listenersAttached === 'true') return;
     form.dataset.listenersAttached = 'true';
 
     addListenerSafe(form, 'submit', saveBusinessInfoData, 'biz_submit');
@@ -2589,29 +2490,19 @@ function setupBusinessInfoListeners() {
         }, 'add_tmp_btn');
     }
 
-    // Live preview on form input/change
-    addListenerSafe(form, 'input', (e) => { updateAdminPreview(); }, 'preview_input');
-    addListenerSafe(form, 'change', (e) => { updateAdminPreview(); }, 'preview_change');
+    addListenerSafe(form, 'input', () => updateAdminPreview(), 'preview_input');
+    addListenerSafe(form, 'change', () => updateAdminPreview(), 'preview_change');
 
-    // Observe holiday/temp lists to trigger preview on add/remove
-    const holidayListEl = document.getElementById('holiday-hours-list');
-    const tempListEl = document.getElementById('temporary-hours-list');
     const observer = new MutationObserver((mutationsList) => {
         let shouldUpdate = false;
         for (const m of mutationsList) {
             if (m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length)) { shouldUpdate = true; break; }
         }
-        if (shouldUpdate) {
-            setTimeout(updateAdminPreview, 100); // debounce small
-        }
+        if (shouldUpdate) setTimeout(updateAdminPreview, 100); 
     });
-    if (holidayListEl) observer.observe(holidayListEl, { childList: true, subtree: true });
-    if (tempListEl) observer.observe(tempListEl, { childList: true, subtree: true });
+    if (holidayList) observer.observe(holidayList, { childList: true, subtree: true });
+    if (tempList) observer.observe(tempList, { childList: true, subtree: true });
 }
-
-/* -------------------------
-   BOOTSTRAP: Attach on DOM ready
-   ------------------------- */
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
@@ -3267,42 +3158,30 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
     }
 
 
+/* -------------------------
+   ACADEMIC UI ELEMENTS
+   ------------------------- */
+
 function createRecurringClassRow(data = {}) {
   const row = document.createElement("div");
   row.className = "academic-row recurring-class-row";
 
   row.innerHTML = `
-    <input type="text" class="class-course" placeholder="Course Code"
-      value="${data.course || ""}">
-    <input type="text" class="class-title" placeholder="Course Title"
-      value="${data.title || ""}">
-    <input type="text" class="class-instructor" placeholder="Instructor"
-      value="${data.instructor || ""}">
-    <input type="text" class="class-location" placeholder="Location"
-      value="${data.location || ""}">
-
-    <input type="text" class="class-days"
-      placeholder="Days (mon,wed,fri)"
-      value="${(data.days || []).join(",")}">
-
-    <input type="time" class="class-start"
-      value="${data.startTime || ""}">
-    <input type="time" class="class-end"
-      value="${data.endTime || ""}">
-
-    <input type="date" class="class-start-date"
-      value="${data.startDate || ""}">
-    <input type="date" class="class-end-date"
-      value="${data.endDate || ""}">
-
+    <input type="text" class="class-course" placeholder="Course Code" value="${data.course || ""}">
+    <input type="text" class="class-title" placeholder="Course Title" value="${data.title || ""}">
+    <input type="text" class="class-instructor" placeholder="Instructor" value="${data.instructor || ""}">
+    <input type="text" class="class-location" placeholder="Location" value="${data.location || ""}">
+    <input type="text" class="class-days" placeholder="Days (mon,wed,fri)" value="${(data.days || []).join(",")}">
+    <input type="time" class="class-start" value="${data.startTime || ""}">
+    <input type="time" class="class-end" value="${data.endTime || ""}">
+    <input type="date" class="class-start-date" value="${data.startDate || ""}">
+    <input type="date" class="class-end-date" value="${data.endDate || ""}">
     <button type="button" class="danger-btn remove-class-btn">×</button>
   `;
-
   row.querySelector(".remove-class-btn").addEventListener("click", () => {
     row.remove();
     updateAcademicPreview();
   });
-
   return row;
 }
 
@@ -3311,36 +3190,18 @@ function createExamRow(data = {}) {
   row.className = "academic-row exam-row";
 
   row.innerHTML = `
-    <input type="text" class="exam-course"
-      placeholder="Course Code"
-      value="${data.course || ""}">
-
-    <input type="text" class="exam-title"
-      placeholder="Exam Title (Midterm, Final, etc.)"
-      value="${data.title || ""}">
-
-    <input type="date" class="exam-date"
-      value="${data.date || ""}">
-
-    <input type="time" class="exam-start"
-      value="${data.startTime || ""}">
-
-    <input type="time" class="exam-end"
-      value="${data.endTime || ""}">
-
-    <input type="text" class="exam-location"
-      placeholder="Location"
-      value="${data.location || ""}">
-
-    <button type="button"
-      class="danger-btn remove-exam-btn">×</button>
+    <input type="text" class="exam-course" placeholder="Course Code" value="${data.course || ""}">
+    <input type="text" class="exam-title" placeholder="Exam Title (Midterm, Final, etc.)" value="${data.title || ""}">
+    <input type="date" class="exam-date" value="${data.date || ""}">
+    <input type="time" class="exam-start" value="${data.startTime || ""}">
+    <input type="time" class="exam-end" value="${data.endTime || ""}">
+    <input type="text" class="exam-location" placeholder="Location" value="${data.location || ""}">
+    <button type="button" class="danger-btn remove-exam-btn">×</button>
   `;
-
   row.querySelector(".remove-exam-btn").addEventListener("click", () => {
     row.remove();
     updateAcademicPreview();
   });
-
   return row;
 }
 
@@ -3349,36 +3210,18 @@ function createFinalRow(data = {}) {
   row.className = "academic-row final-row";
 
   row.innerHTML = `
-    <input type="text" class="final-course"
-      placeholder="Course Code"
-      value="${data.course || ""}">
-
-    <input type="text" class="final-title"
-      placeholder="Final Title"
-      value="${data.title || ""}">
-
-    <input type="date" class="final-date"
-      value="${data.date || ""}">
-
-    <input type="time" class="final-start"
-      value="${data.startTime || ""}">
-
-    <input type="time" class="final-end"
-      value="${data.endTime || ""}">
-
-    <input type="text" class="final-location"
-      placeholder="Location"
-      value="${data.location || ""}">
-
-    <button type="button"
-      class="danger-btn remove-final-btn">×</button>
+    <input type="text" class="final-course" placeholder="Course Code" value="${data.course || ""}">
+    <input type="text" class="final-title" placeholder="Final Title" value="${data.title || ""}">
+    <input type="date" class="final-date" value="${data.date || ""}">
+    <input type="time" class="final-start" value="${data.startTime || ""}">
+    <input type="time" class="final-end" value="${data.endTime || ""}">
+    <input type="text" class="final-location" placeholder="Location" value="${data.location || ""}">
+    <button type="button" class="danger-btn remove-final-btn">×</button>
   `;
-
   row.querySelector(".remove-final-btn").addEventListener("click", () => {
     row.remove();
     updateAcademicPreview();
   });
-
   return row;
 }
 
@@ -3387,36 +3230,18 @@ function createEventRow(data = {}) {
   row.className = "academic-row university-event-row";
 
   row.innerHTML = `
-    <input type="text" class="event-title"
-      placeholder="Event Title"
-      value="${data.title || ""}">
-
-    <input type="date" class="event-date"
-      value="${data.date || ""}">
-
-    <input type="time" class="event-start"
-      value="${data.startTime || ""}">
-
-    <input type="time" class="event-end"
-      value="${data.endTime || ""}">
-
-    <input type="text" class="event-location"
-      placeholder="Location"
-      value="${data.location || ""}">
-      
-    <input type="text" class="event-note"
-      placeholder="Note"
-      value="${data.note || ""}">
-
-    <button type="button"
-      class="danger-btn remove-event-btn">×</button>
+    <input type="text" class="event-title" placeholder="Event Title" value="${data.title || ""}">
+    <input type="date" class="event-date" value="${data.date || ""}">
+    <input type="time" class="event-start" value="${data.startTime || ""}">
+    <input type="time" class="event-end" value="${data.endTime || ""}">
+    <input type="text" class="event-location" placeholder="Location" value="${data.location || ""}">
+    <input type="text" class="event-note" placeholder="Note" value="${data.note || ""}">
+    <button type="button" class="danger-btn remove-event-btn">×</button>
   `;
-
   row.querySelector(".remove-event-btn").addEventListener("click", () => {
     row.remove();
     updateAcademicPreview();
   });
-
   return row;
 }
 
@@ -3425,58 +3250,63 @@ function createInternshipRow(data = {}) {
   row.className = "academic-row internship-row";
 
   row.innerHTML = `
-    <input type="text" class="intern-company"
-      placeholder="Company"
-      value="${data.company || ""}">
-
-    <input type="text" class="intern-role"
-      placeholder="Role"
-      value="${data.role || ""}">
-
-    <input type="date" class="intern-start"
-      value="${data.startDate || ""}">
-
-    <input type="date" class="intern-end"
-      value="${data.endDate || ""}">
-
-    <input type="text" class="intern-location"
-      placeholder="Location"
-      value="${data.location || ""}">
-
-    <button type="button"
-      class="danger-btn remove-internship-btn">×</button>
+    <input type="text" class="intern-company" placeholder="Company" value="${data.company || ""}">
+    <input type="text" class="intern-role" placeholder="Role" value="${data.role || ""}">
+    <input type="date" class="intern-start" value="${data.startDate || ""}">
+    <input type="date" class="intern-end" value="${data.endDate || ""}">
+    <input type="text" class="intern-location" placeholder="Location" value="${data.location || ""}">
+    <button type="button" class="danger-btn remove-internship-btn">×</button>
   `;
-
   row.querySelector(".remove-internship-btn").addEventListener("click", () => {
     row.remove();
     updateAcademicPreview();
+  });
+  return row;
+}
+
+function createBreakRow(data = {}) {
+  const row = document.createElement("div");
+  row.className = "academic-row academic-break-row";
+
+  row.innerHTML = `
+    <input type="text" class="break-name" placeholder="Break Name" value="${data.name || ""}">
+    <input type="date" class="break-start" value="${data.startDate || ""}">
+    <input type="date" class="break-end" value="${data.endDate || ""}">
+    <button type="button" class="danger-btn remove-break-btn">×</button>
+  `;
+
+  row.querySelector(".remove-break-btn").addEventListener("click", () => {
+    row.remove();
+    updateAcademicPreview();
+  });
+  
+  row.querySelectorAll("input").forEach(input => {
+    input.addEventListener("input", updateAcademicPreview);
   });
 
   return row;
 }
 
+/* -------------------------
+   ACADEMIC SAVE & LOAD LOGIC
+   ------------------------- */
+
 async function saveRecurringClasses(e) {
   e.preventDefault();
 
-  // 1. Gather Classes
   const classRows = document.querySelectorAll(".recurring-class-row");
   const classes = [...classRows].map(row => ({
     course: row.querySelector(".class-course")?.value.trim() || "",
     title: row.querySelector(".class-title")?.value.trim() || "",
     instructor: row.querySelector(".class-instructor")?.value.trim() || "",
     location: row.querySelector(".class-location")?.value.trim() || "",
-    days: row
-      .querySelector(".class-days")
-      ?.value.split(",")
-      .map(d => d.trim().toLowerCase())
-      .filter(Boolean),
+    days: row.querySelector(".class-days")?.value.split(",").map(d => d.trim().toLowerCase()).filter(Boolean),
     startTime: row.querySelector(".class-start")?.value || "",
     endTime: row.querySelector(".class-end")?.value || "",
     startDate: row.querySelector(".class-start-date")?.value || "",
     endDate: row.querySelector(".class-end-date")?.value || ""
   }));
 
-  // 2. Gather Exams
   const examRows = document.querySelectorAll(".exam-row");
   const exams = [...examRows].map(row => ({
     course: row.querySelector(".exam-course")?.value.trim() || "",
@@ -3487,7 +3317,6 @@ async function saveRecurringClasses(e) {
     location: row.querySelector(".exam-location")?.value.trim() || ""
   }));
 
-  // 3. Gather Finals
   const finalRows = document.querySelectorAll(".final-row");
   const finals = [...finalRows].map(row => ({
     course: row.querySelector(".final-course")?.value.trim() || "",
@@ -3498,7 +3327,6 @@ async function saveRecurringClasses(e) {
     location: row.querySelector(".final-location")?.value.trim() || ""
   }));
 
-  // 4. Gather Events
   const eventRows = document.querySelectorAll(".university-event-row");
   const universityEvents = [...eventRows].map(row => ({
     title: row.querySelector(".event-title")?.value.trim() || "",
@@ -3509,7 +3337,6 @@ async function saveRecurringClasses(e) {
     note: row.querySelector(".event-note")?.value.trim() || ""
   }));
 
-  // 5. Gather Internships
   const internshipRows = document.querySelectorAll(".internship-row");
   const internships = [...internshipRows].map(row => ({
     company: row.querySelector(".intern-company")?.value.trim() || "",
@@ -3519,7 +3346,27 @@ async function saveRecurringClasses(e) {
     location: row.querySelector(".intern-location")?.value.trim() || ""
   }));
 
-  // 6. Save to Firebase
+  const semester = {
+    name: document.getElementById("academic-semester-name")?.value.trim() || "",
+    termType: document.getElementById("academic-term-type")?.value || "semester",
+    startDate: document.getElementById("academic-term-start")?.value || "",
+    endDate: document.getElementById("academic-term-end")?.value || ""
+  };
+
+  const profile = {
+    institution: document.getElementById("academic-institution")?.value.trim() || "",
+    program: document.getElementById("academic-program")?.value.trim() || "",
+    year: document.getElementById("academic-year")?.value.trim() || "",
+    advisor: document.getElementById("academic-advisor")?.value.trim() || ""
+  };
+
+  const breakRows = document.querySelectorAll(".academic-break-row");
+  const breaks = [...breakRows].map(row => ({
+    name: row.querySelector(".break-name")?.value.trim() || "",
+    startDate: row.querySelector(".break-start")?.value || "",
+    endDate: row.querySelector(".break-end")?.value || ""
+  }));
+
   await setDoc(
     doc(db, "site_config", "academicAvailability"),
     {
@@ -3528,7 +3375,10 @@ async function saveRecurringClasses(e) {
         exams: exams,
         finals: finals,
         universityEvents: universityEvents,
-        internships: internships
+        internships: internships,
+        semester: semester,
+        profile: profile,
+        breaks: breaks
       },
       lastUpdated: serverTimestamp()
     },
@@ -3546,12 +3396,8 @@ async function loadAcademicAvailabilityForPreview() {
         const snap = await getDoc(
             doc(db, "site_config", "academicAvailability")
         );
-
-        cachedAcademicAvailability = snap.exists()
-            ? snap.data()?.academicAvailability || {}
-            : {};
+        cachedAcademicAvailability = snap.exists() ? snap.data()?.academicAvailability || {} : {};
     } catch (err) {
-        console.warn("Academic availability preview load failed", err);
         cachedAcademicAvailability = {};
     }
 }
@@ -3562,15 +3408,16 @@ async function loadRecurringClasses() {
   const finalContainer = document.getElementById("academic-finals-container");
   const eventContainer = document.getElementById("academic-events-container");
   const internshipContainer = document.getElementById("academic-internships-container");
+  const breakContainer = document.getElementById("academic-breaks-container");
   
   if (!classContainer) return;
 
-  // Clear existing content
   classContainer.innerHTML = "";
   if (examContainer) examContainer.innerHTML = "";
   if (finalContainer) finalContainer.innerHTML = "";
   if (eventContainer) eventContainer.innerHTML = "";
   if (internshipContainer) internshipContainer.innerHTML = "";
+  if (breakContainer) breakContainer.innerHTML = "";
 
   const snap = await getDoc(doc(db, "site_config", "academicAvailability"));
 
@@ -3580,42 +3427,43 @@ async function loadRecurringClasses() {
   }
 
   const data = snap.data()?.academicAvailability || {};
+  
   const classes = data.recurringClasses || [];
   const exams = data.exams || []; 
   const finals = data.finals || []; 
   const events = data.universityEvents || [];
   const internships = data.internships || [];
+  
+  const semester = data.semester || {};
+  const profile = data.profile || {};
+  const breaks = data.breaks || [];
 
-  classes.forEach(cls => {
-    classContainer.appendChild(createRecurringClassRow(cls));
-  });
+  if (document.getElementById("academic-semester-name")) document.getElementById("academic-semester-name").value = semester.name || "";
+  if (document.getElementById("academic-term-type")) document.getElementById("academic-term-type").value = semester.termType || "semester";
+  if (document.getElementById("academic-term-start")) document.getElementById("academic-term-start").value = semester.startDate || "";
+  if (document.getElementById("academic-term-end")) document.getElementById("academic-term-end").value = semester.endDate || "";
 
-  if (examContainer) {
-    exams.forEach(exam => {
-      examContainer.appendChild(createExamRow(exam));
-    });
+  if (document.getElementById("academic-institution")) document.getElementById("academic-institution").value = profile.institution || "";
+  if (document.getElementById("academic-program")) document.getElementById("academic-program").value = profile.program || "";
+  if (document.getElementById("academic-year")) document.getElementById("academic-year").value = profile.year || "";
+  if (document.getElementById("academic-advisor")) document.getElementById("academic-advisor").value = profile.advisor || "";
+
+  if (breakContainer && typeof createBreakRow === 'function') {
+    breaks.forEach(b => { breakContainer.appendChild(createBreakRow(b)); });
   }
 
-  if (finalContainer && typeof createFinalRow === 'function') {
-    finals.forEach(final => {
-      finalContainer.appendChild(createFinalRow(final));
-    });
-  }
-
-  if (eventContainer && typeof createEventRow === 'function') {
-    events.forEach(ev => {
-      eventContainer.appendChild(createEventRow(ev));
-    });
-  }
-
-  if (internshipContainer && typeof createInternshipRow === 'function') {
-    internships.forEach(intern => {
-      internshipContainer.appendChild(createInternshipRow(intern));
-    });
-  }
+  classes.forEach(cls => { classContainer.appendChild(createRecurringClassRow(cls)); });
+  if (examContainer) { exams.forEach(exam => { examContainer.appendChild(createExamRow(exam)); }); }
+  if (finalContainer && typeof createFinalRow === 'function') { finals.forEach(final => { finalContainer.appendChild(createFinalRow(final)); }); }
+  if (eventContainer && typeof createEventRow === 'function') { events.forEach(ev => { eventContainer.appendChild(createEventRow(ev)); }); }
+  if (internshipContainer && typeof createInternshipRow === 'function') { internships.forEach(intern => { internshipContainer.appendChild(createInternshipRow(intern)); }); }
 
   updateAcademicPreview();
 }
+
+/* -------------------------
+   ACADEMIC PREVIEW UI
+   ------------------------- */
 
 function updateAcademicPreview() {
   const classCountEl = document.querySelector('span[data-count="classes"]');
@@ -3623,23 +3471,47 @@ function updateAcademicPreview() {
   const finalCountEl = document.querySelector('span[data-count="finals"]');
   const eventCountEl = document.querySelector('span[data-count="events"]');
   const internshipCountEl = document.querySelector('span[data-count="internships"]');
+  const breakCountEl = document.querySelector('span[data-count="breaks"]');
+  
+  const semesterDisplay = document.querySelector('span[data-display="semesterName"]');
+  const termTypeDisplay = document.querySelector('span[data-display="termType"]');
+  const termDatesDisplay = document.querySelector('span[data-display="termDates"]');
+  const profileInfoDisplay = document.querySelector('span[data-display="profileInfo"]');
 
   if (classCountEl) classCountEl.textContent = document.querySelectorAll(".recurring-class-row").length;
   if (examCountEl) examCountEl.textContent = document.querySelectorAll(".exam-row").length;
   if (finalCountEl) finalCountEl.textContent = document.querySelectorAll(".final-row").length;
   if (eventCountEl) eventCountEl.textContent = document.querySelectorAll(".university-event-row").length;
   if (internshipCountEl) internshipCountEl.textContent = document.querySelectorAll(".internship-row").length;
+  if (breakCountEl) breakCountEl.textContent = document.querySelectorAll(".academic-break-row").length;
+
+  if (semesterDisplay) semesterDisplay.textContent = document.getElementById("academic-semester-name")?.value || "N/A";
+  if (termTypeDisplay) {
+    const tt = document.getElementById("academic-term-type")?.value || "N/A";
+    termTypeDisplay.textContent = capitalizeFirstLetter(tt);
+  }
+  if (termDatesDisplay) {
+    const sDate = document.getElementById("academic-term-start")?.value || "?";
+    const eDate = document.getElementById("academic-term-end")?.value || "?";
+    termDatesDisplay.textContent = `${sDate} to ${eDate}`;
+  }
+  if (profileInfoDisplay) {
+    const inst = document.getElementById("academic-institution")?.value || "N/A";
+    const prog = document.getElementById("academic-program")?.value || "N/A";
+    const yr = document.getElementById("academic-year")?.value || "N/A";
+    profileInfoDisplay.textContent = `${inst} | ${prog} | ${yr}`;
+  }
 }
     
-// Listener for changes in authentication state (login/logout)
+/* -------------------------
+   AUTH & INIT LISTENERS
+   ------------------------- */
+
 onAuthStateChanged(auth, async user => {
-    // --- User is signed IN ---
     if (user) {
         const adminEmails = ["ckritzar53@busarmydude.org", "rkritzar53@gmail.com"];
 
         if (adminEmails.includes(user.email)) {
-            console.log(`✅ Access GRANTED for admin: ${user.email}`);
-
             const loginSection = document.getElementById('login-section');
             const adminContent = document.getElementById('admin-content');
             const logoutButton = document.getElementById('logout-button');
@@ -3650,26 +3522,18 @@ onAuthStateChanged(auth, async user => {
             if (loginSection) loginSection.style.display = 'none';
             if (adminContent) adminContent.style.display = 'block';
             if (logoutButton) logoutButton.style.display = 'inline-block';
-            if (adminGreeting) {
-                adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
-            }
+            if (adminGreeting) adminGreeting.textContent = `Logged in as: ${user.displayName || user.email}`;
 
             const adminProfilePic = document.getElementById('admin-profile-pic');
             if (adminProfilePic) {
-                if (user.photoURL) {
-                    adminProfilePic.src = user.photoURL;
-                    adminProfilePic.style.display = 'inline-block'; 
-                } else {
-                    adminProfilePic.src = 'images/default-profile.jpg'; 
-                    adminProfilePic.style.display = 'inline-block';
-                }
+                adminProfilePic.src = user.photoURL ? user.photoURL : 'images/default-profile.jpg'; 
+                adminProfilePic.style.display = 'inline-block';
             }
             
             if (authStatus) authStatus.textContent = '';
             if (adminStatusElement) adminStatusElement.textContent = '';
             
             try {
-                console.log("Loading all admin panel data...");
                 if (typeof loadProfileData === 'function') loadProfileData();
                 if (typeof loadBusinessInfoData === 'function') loadBusinessInfoData();
                 if (typeof setupBusinessInfoListeners === 'function') setupBusinessInfoListeners();
@@ -3684,9 +3548,6 @@ onAuthStateChanged(auth, async user => {
                 if (typeof loadTechItemsAdmin === 'function') loadTechItemsAdmin();
                 if (typeof loadLegislationAdmin === 'function') loadLegislationAdmin();
 
-                // ================================
-                // Academic Availability
-                // ================================
                 const addClassBtn = document.getElementById("add-academic-class-btn");
                 const classContainer = document.getElementById("academic-classes-container");
                 const addExamBtn = document.getElementById("add-academic-exam-btn");
@@ -3697,6 +3558,8 @@ onAuthStateChanged(auth, async user => {
                 const eventContainer = document.getElementById("academic-events-container");
                 const addInternshipBtn = document.getElementById("add-academic-internship-btn");
                 const internshipContainer = document.getElementById("academic-internships-container");
+                const addBreakBtn = document.getElementById("add-academic-break-btn");
+                const breakContainer = document.getElementById("academic-breaks-container");
                 const saveBtn = document.getElementById("save-academic-availability-btn");
 
                 if (saveBtn && !saveBtn.__saveListenerAttached) {
@@ -3744,28 +3607,39 @@ onAuthStateChanged(auth, async user => {
                   addInternshipBtn.__addListenerAttached = true;
                 }
 
-                // Load existing data from Firestore
+                if (addBreakBtn && breakContainer && !addBreakBtn.__addListenerAttached) {
+                  addBreakBtn.addEventListener("click", () => {
+                    breakContainer.appendChild(createBreakRow());
+                    updateAcademicPreview();
+                  });
+                  addBreakBtn.__addListenerAttached = true;
+                }
+
+                const liveInputs = [
+                  'academic-semester-name', 'academic-term-type', 'academic-term-start', 'academic-term-end',
+                  'academic-institution', 'academic-program', 'academic-year', 'academic-advisor'
+                ];
+                liveInputs.forEach(id => {
+                  const el = document.getElementById(id);
+                  if (el && !el.__previewListenerAttached) {
+                      el.addEventListener('input', updateAcademicPreview);
+                      el.__previewListenerAttached = true;
+                  }
+                });
+
                 await loadRecurringClasses();
                 
                 if (typeof resetInactivityTimer === 'function') resetInactivityTimer();
                 if (typeof addActivityListeners === 'function') addActivityListeners();
             } catch (error) {
-                console.error("❌ CRITICAL ERROR during data loading:", error);
-                if (typeof showAdminStatus === 'function') {
-                    showAdminStatus(`Error loading admin data: ${error.message}. Check console.`, true);
-                }
+                if (typeof showAdminStatus === 'function') showAdminStatus(`Error loading admin data: ${error.message}.`, true);
             }
 
         } else {
-            // --- User is NOT an authorized admin ---
-            console.warn(`❌ Access DENIED for user: ${user.email}. Not in the admin list.`);
             alert("Access Denied. This account is not authorized to access the admin panel.");
             signOut(auth);
         }
-
     } else {
-        // --- User is signed OUT ---
-        console.log("User is signed out. Displaying login screen.");
         const loginSection = document.getElementById('login-section');
         const adminContent = document.getElementById('admin-content');
         if (loginSection) loginSection.style.display = 'block';
@@ -3781,15 +3655,12 @@ onAuthStateChanged(auth, async user => {
     }
 });
     
-
-// Wait for HTML to load before attaching form events (Fixes Login)
 document.addEventListener("DOMContentLoaded", () => {
     const activeLoginForm = document.getElementById('login-form') || (typeof loginForm !== 'undefined' ? loginForm : null);
     const activeEmailInput = document.getElementById('email-input') || (typeof emailInput !== 'undefined' ? emailInput : null);
     const activePasswordInput = document.getElementById('password-input') || (typeof passwordInput !== 'undefined' ? passwordInput : null);
     const activeAuthStatus = document.getElementById('auth-status') || (typeof authStatus !== 'undefined' ? authStatus : null);
 
-    // Login Form Submission
     if (activeLoginForm) { 
         activeLoginForm.addEventListener('submit', (e) => { 
             e.preventDefault(); 
@@ -3812,17 +3683,14 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             signInWithEmailAndPassword(auth, email, password) 
-                .then((userCredential) => { 
-                    console.log("Login successful via form submission."); 
-                 })
+                .then((userCredential) => {})
                 .catch((error) => { 
-                    console.error("Login failed:", error.code, error.message); 
                     let errorMessage = 'Invalid email or password.'; 
-                    if (error.code === 'auth/invalid-email') { errorMessage = 'Invalid email format.'; } 
-                    else if (error.code === 'auth/user-disabled') { errorMessage = 'This account has been disabled.'; } 
-                    else if (error.code === 'auth/invalid-credential') { errorMessage = 'Invalid email or password.'; } 
-                    else if (error.code === 'auth/too-many-requests') { errorMessage = 'Access temporarily disabled due to too many failed login attempts. Please try again later.'; } 
-                    else { errorMessage = `An unexpected error occurred (${error.code}).`; } 
+                    if (error.code === 'auth/invalid-email') errorMessage = 'Invalid email format.'; 
+                    else if (error.code === 'auth/user-disabled') errorMessage = 'This account has been disabled.'; 
+                    else if (error.code === 'auth/invalid-credential') errorMessage = 'Invalid email or password.'; 
+                    else if (error.code === 'auth/too-many-requests') errorMessage = 'Access temporarily disabled due to too many failed login attempts.'; 
+                    else errorMessage = `An unexpected error occurred (${error.code}).`; 
 
                     if (activeAuthStatus) { 
                         activeAuthStatus.textContent = `Login Failed: ${errorMessage}`; 
@@ -3834,22 +3702,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// BULLETPROOF LOGOUT LISTENER (Fixes Logout via Event Delegation)
 document.addEventListener('click', (e) => {
     const clickedLogoutBtn = e.target.closest('#logout-button');
     
     if (clickedLogoutBtn) {
         e.preventDefault(); 
-        console.log("Logout button clicked."); 
         
         if (typeof removeActivityListeners === 'function') {
             removeActivityListeners(); 
         }
         
         signOut(auth).then(() => { 
-            console.log("User signed out via button."); 
         }).catch((error) => { 
-            console.error("Logout failed:", error); 
             if (typeof showAdminStatus === 'function') {
                 showAdminStatus(`Logout Failed: ${error.message}`, true); 
             } else {
