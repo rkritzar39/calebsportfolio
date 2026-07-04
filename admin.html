@@ -1122,19 +1122,25 @@
 </section>
 
 
-         <div class="business-container onyx-surface">
+<div class="business-container onyx-surface">
 
   <!-- ============================ -->
   <!-- BUSINESS INFO MANAGEMENT     -->
   <!-- ============================ -->
-  <section class="admin-section" id="business-info-management" aria-labelledby="business-info-heading" data-portal-title="Business Information" data-portal-keywords="business hours contact temporary holiday open closed status">
+  <section
+    class="admin-section"
+    id="business-info-management"
+    aria-labelledby="business-info-heading"
+    data-portal-title="Business Information"
+    data-portal-keywords="business hours contact temporary holiday open closed status"
+  >
 
     <h3 id="business-info-heading" class="onyx-heading">
       Manage Business Information
     </h3>
 
     <!-- ============================ -->
-    <!-- BUSINESS FORM               -->
+    <!-- BUSINESS FORM                -->
     <!-- ============================ -->
     <form id="business-info-form" class="onyx-form">
 
@@ -1144,8 +1150,12 @@
 
         <div class="form-group">
           <label for="business-contact-email">Contact Email</label>
-          <input type="email" id="business-contact-email" name="contactEmail"
-                 placeholder="Enter contact email address">
+          <input
+            type="email"
+            id="business-contact-email"
+            name="contactEmail"
+            placeholder="Enter contact email address"
+          >
         </div>
       </div>
 
@@ -1159,7 +1169,6 @@
 
         <div id="regular-hours-container" class="hours-grid">
 
-          <!-- DAY BLOCK COMPONENT -->
           <div class="day-hours-block" data-day="monday">
             <div class="day-title">Monday</div>
             <div class="hours-list"></div>
@@ -1257,7 +1266,7 @@
     </form>
 
     <!-- ============================ -->
-    <!-- LIVE PREVIEW                -->
+    <!-- LIVE PREVIEW                 -->
     <!-- ============================ -->
     <div class="admin-preview-container business-preview">
 
@@ -1281,30 +1290,34 @@
     </div>
 
     <!-- STATUS MESSAGE -->
-    <div id="business-info-status-message"
-         class="status-message"
-         role="status"
-         aria-live="polite">
-    </div>
+    <div
+      id="business-info-status-message"
+      class="status-message"
+      role="status"
+      aria-live="polite"
+    ></div>
 
   </section>
 </div>
-  
-<!-- =====================================================
-     ACADEMIC AVAILABILITY (PHASE 1 – CLASSES)
-===================================================== -->
+
+<!-- ===================================================== -->
+<!-- ACADEMIC AVAILABILITY                                -->
+<!-- ===================================================== -->
 <section id="academic-availability-management" class="admin-section">
 
   <h3>Academic Availability</h3>
+
   <p class="section-description">
-    Manage recurring class schedules that may affect availability.
+    Manage recurring class schedules, exams, finals, academic breaks, and display-only university items.
   </p>
 
   <form id="academic-availability-form">
 
+    <!-- ========================= -->
+    <!-- WEEKLY CLASS SCHEDULE     -->
+    <!-- ========================= -->
     <h4>Weekly Class Schedule</h4>
 
-    <!-- Container where class rows will appear -->
     <div id="academic-classes-container" class="academic-container">
       <!-- JS will inject class rows here -->
     </div>
@@ -1319,67 +1332,70 @@
 
     <div class="form-actions">
       <button
-  type="button"
-  id="save-academic-availability-btn"
-  class="primary-btn">
-  Save Academic Availability
-</button>
-
+        type="button"
+        id="save-academic-availability-btn"
+        class="primary-btn"
+      >
+        Save Academic Availability
+      </button>
     </div>
 
     <p id="academic-status-message" class="status-message"></p>
 
   </form>
-    <!-- Academic Preview -->
-<div class="academic-preview">
-  <strong>Academic Preview</strong>
 
-  <ul id="academic-preview-counts" class="academic-preview-list">
-    <li><strong>Classes:</strong> <span data-count="classes">0</span></li>
-    <li><strong>Exams:</strong> <span data-count="exams">0</span></li>
-    <li><strong>Finals:</strong> <span data-count="finals">0</span></li>
-    <li><strong>Events:</strong> <span data-count="events">0</span></li>
-    <li><strong>Internships:</strong> <span data-count="internships">0</span></li>
-  </ul>
+  <!-- ========================= -->
+  <!-- ACADEMIC PREVIEW COUNTS   -->
+  <!-- ========================= -->
+  <div class="academic-preview">
+    <strong>Academic Preview</strong>
 
-</div>
-
-<!-- ========================= -->
-<!-- ACADEMIC PREVIEW DETAILS  -->
-<!-- ========================= -->
-<div class="academic-preview-details">
-
-  <div class="preview-semester">
-    <strong>Semester:</strong>
-    <span id="preview-semester-name">—</span>
-    <span id="preview-term-dates"></span>
-  </div>
-
-  <div class="preview-profile">
-    <strong>Academic Profile:</strong>
-    <span id="preview-academic-profile">—</span>
-  </div>
-
-  <div class="preview-breaks">
-    <strong>Upcoming Breaks:</strong>
-    <ul id="preview-academic-breaks">
-      <!-- Breaks injected here -->
+    <ul id="academic-preview-counts" class="academic-preview-list">
+      <li><strong>Classes:</strong> <span data-count="classes">0</span></li>
+      <li><strong>Exams:</strong> <span data-count="exams">0</span></li>
+      <li><strong>Finals:</strong> <span data-count="finals">0</span></li>
+      <li><strong>Events:</strong> <span data-count="events">0</span></li>
+      <li><strong>Internships:</strong> <span data-count="internships">0</span></li>
+      <li><strong>Breaks:</strong> <span data-count="breaks">0</span></li>
     </ul>
   </div>
 
-</div>
+  <!-- ========================= -->
+  <!-- ACADEMIC PREVIEW DETAILS  -->
+  <!-- ========================= -->
+  <div class="academic-preview-details">
 
-    
+    <div class="preview-semester">
+      <strong>Semester:</strong>
+      <span id="preview-semester-name">—</span>
+      <span id="preview-term-dates"></span>
+    </div>
+
+    <div class="preview-profile">
+      <strong>Academic Profile:</strong>
+      <span id="preview-academic-profile">—</span>
+    </div>
+
+    <div class="preview-breaks">
+      <strong>Upcoming Breaks:</strong>
+      <ul id="preview-academic-breaks">
+        <li>—</li>
+      </ul>
+    </div>
+
+  </div>
+
 </section>
 
 <!-- ========================= -->
-<!-- EXAMS (PHASE 1)           -->
+<!-- EXAMS                     -->
 <!-- ========================= -->
 <section class="admin-section">
 
   <h4>Exams</h4>
+
   <p class="section-description">
-    Manage midterms, finals, or one-time exams.
+    Manage midterms, one-time exams, or semester exams that are not final exams.
   </p>
 
   <div id="academic-exams-container" class="academic-container">
@@ -1402,8 +1418,9 @@
 <section class="admin-section">
 
   <h4>Finals</h4>
+
   <p class="section-description">
-    Manage final exams.
+    Manage final exams or final semester exams.
   </p>
 
   <div id="academic-finals-container" class="academic-container">
@@ -1426,8 +1443,9 @@
 <section class="admin-section">
 
   <h4>University Events</h4>
+
   <p class="section-description">
-    Manage campus events, meetings, or one-time academic activities.
+    Manage display-only campus events, semester milestones, commencement, or academic calendar markers.
   </p>
 
   <div id="academic-events-container" class="academic-container">
@@ -1449,9 +1467,10 @@
 <!-- ========================= -->
 <section class="admin-section">
 
-  <h4>Internships & Co‑ops</h4>
+  <h4>Internships & Co-ops</h4>
+
   <p class="section-description">
-    Track internships, co‑ops, or long‑term work placements.
+    Track internships, co-ops, or long-term work placements.
   </p>
 
   <div id="academic-internships-container" class="academic-container">
@@ -1468,24 +1487,26 @@
 
 </section>
 
-                
 <!-- ========================= -->
 <!-- SEMESTER & TERM METADATA  -->
 <!-- ========================= -->
 <section class="admin-section">
 
   <h4>Semester & Term Information</h4>
+
   <p class="section-description">
     Define the current academic term.
   </p>
 
   <div class="academic-metadata-grid">
+
     <div class="form-group">
       <label for="academic-semester-name">Semester Name</label>
       <input
         type="text"
         id="academic-semester-name"
-        placeholder="e.g., Fall 2026">
+        placeholder="e.g., Fall 2026"
+      >
     </div>
 
     <div class="form-group">
@@ -1507,6 +1528,7 @@
       <label for="academic-term-end">Term End Date</label>
       <input type="date" id="academic-term-end">
     </div>
+
   </div>
 
 </section>
@@ -1517,8 +1539,9 @@
 <section class="admin-section">
 
   <h4>Academic Breaks</h4>
+
   <p class="section-description">
-    Manage breaks that suspend classes and exams.
+    Manage academic breaks that suspend classes and exams.
   </p>
 
   <div id="academic-breaks-container" class="academic-container">
@@ -1528,7 +1551,8 @@
   <button
     type="button"
     id="add-academic-break-btn"
-    class="btn-small">
+    class="btn-small"
+  >
     + Add Break
   </button>
 
@@ -1540,17 +1564,20 @@
 <section class="admin-section">
 
   <h4>Academic Profile</h4>
+
   <p class="section-description">
-    General academic information (display-only).
+    General academic information. This is display-only information.
   </p>
 
   <div class="academic-profile-grid">
+
     <div class="form-group">
       <label for="academic-institution">Institution</label>
       <input
         type="text"
         id="academic-institution"
-        placeholder="University of Toledo">
+        placeholder="University of Toledo"
+      >
     </div>
 
     <div class="form-group">
@@ -1558,7 +1585,8 @@
       <input
         type="text"
         id="academic-program"
-        placeholder="Information Technology">
+        placeholder="Information Technology"
+      >
     </div>
 
     <div class="form-group">
@@ -1577,31 +1605,57 @@
       <input
         type="text"
         id="academic-advisor"
-        placeholder="Advisor name">
+        placeholder="Advisor name"
+      >
     </div>
+
+    <div class="form-group">
+      <label for="academic-timezone">Academic Timezone</label>
+      <input
+        type="text"
+        id="academic-timezone"
+        placeholder="America/New_York"
+        value="America/New_York"
+      >
+      <small class="onyx-hint">
+        Use an IANA timezone such as America/New_York.
+      </small>
+    </div>
+
   </div>
 
 </section>
-                
 
+<!-- ========================= -->
+<!-- ACADEMIC BREAK TEMPLATE   -->
+<!-- ========================= -->
 <template id="academic-break-template">
   <div class="academic-row academic-break-row">
-    <input type="text"
-           class="break-title"
-           placeholder="Break Name (e.g., Spring Break)">
+    <input
+      type="text"
+      class="break-name"
+      placeholder="Break Name (e.g., Spring Break)"
+    >
 
-    <input type="date"
-           class="break-start">
+    <input
+      type="date"
+      class="break-start"
+    >
 
-    <input type="date"
-           class="break-end">
+    <input
+      type="date"
+      class="break-end"
+    >
 
-    <button type="button"
-            class="danger-btn remove-break-btn">×</button>
+    <button
+      type="button"
+      class="danger-btn remove-break-btn"
+    >
+      ×
+    </button>
   </div>
 </template>
-                
-                
+
 <!-- ========================= -->
 <!-- UNIVERSITY EVENT TEMPLATE -->
 <!-- ========================= -->
@@ -1627,9 +1681,10 @@
     <input type="date" class="intern-start">
     <input type="date" class="intern-end">
     <input type="text" class="intern-location" placeholder="Location">
-    <button type="button" class="danger-btn remove-intern-btn">×</button>
+    <button type="button" class="danger-btn remove-internship-btn">×</button>
   </div>
 </template>
+
 
                 
 <section class="admin-section" id="tech-management" aria-labelledby="tech-heading" data-portal-title="Tech Inventory" data-portal-keywords="tech inventory devices ownership planned active archive lifecycle">
