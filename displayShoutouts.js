@@ -6949,6 +6949,39 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     theme: visualTheme
   });
 
+  /* ============================
+     NEW ACADEMIC UI UPDATES
+     ============================ */
+  const timelineNowLabel = document.getElementById('bizTimelineNowLabel');
+  if (timelineNowLabel) {
+    timelineNowLabel.textContent = (finalType === 'academic') ? 'Paused' : 'Now';
+  }
+
+  const academicBanner = document.getElementById('academic-status-banner');
+  const academicTitle = document.getElementById('academic-status-title');
+  const academicDetail = document.getElementById('academic-status-detail');
+  
+  if (academicBanner) {
+    if (finalType === 'academic') {
+      academicBanner.hidden = false;
+      if (academicTitle) academicTitle.textContent = 'Academic Schedule Active';
+      if (academicDetail) academicDetail.textContent = finalReason;
+    } else {
+      academicBanner.hidden = true;
+    }
+  }
+
+  const academicDetails = document.getElementById('academicDetails');
+  if (academicDetails) {
+    if (finalType === 'academic') {
+      academicDetails.hidden = false;
+      academicDetails.open = true;
+    } else {
+      academicDetails.hidden = true;
+    }
+  }
+  /* ============================ */
+
   (function renderRegularHours() {
     const weekOrder = [
       'monday',
