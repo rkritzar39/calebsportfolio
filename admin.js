@@ -1991,11 +1991,10 @@ function getAcademicAvailability(academicData) {
                     const end = timeStringToMinutesBI(cls.endTime);
                     if (currentMinutes >= start && currentMinutes < end) {
                         return {
-    available: false,
-    reason: 'In Class',
-    backAt: cls.endTime
-};
-
+                            available: false,
+                            reason: 'In Class',
+                            backAt: cls.endTime
+                        };
                     }
                 }
             }
@@ -2237,8 +2236,8 @@ async function loadBusinessInfoData() {
         }
 
        await loadAcademicAvailabilityForPreview();
-updateAdminPreview();
-console.log("Business info loaded.");
+       updateAdminPreview();
+       console.log("Business info loaded.");
     } catch (err) {
         console.error("Error loading business info:", err);
         showBusinessInfoStatus("Error loading business info", true);
@@ -2394,12 +2393,11 @@ function updateAdminPreview() {
         const academicResult = getAcademicAvailability(cachedAcademicAvailability);
 
         if (academicResult && academicResult.available === false) {
-    currentStatus = 'Closed';
-    reason = academicResult.reason;
-    backAtTime = academicResult.backAt || null;
-    isAcademicBlocked = true;
-}
-
+            currentStatus = 'Closed';
+            reason = academicResult.reason;
+            backAtTime = academicResult.backAt || null;
+            isAcademicBlocked = true;
+        }
     }
 
     if (previewData.statusOverride !== 'auto') {
@@ -2460,24 +2458,24 @@ function updateAdminPreview() {
     }
 
     // STATUS DISPLAY
-let statusClass = 'status-closed';
+    let statusClass = 'status-closed';
 
-if (currentStatus === 'Open') {
-    statusClass = 'status-open';
-} else if (currentStatus === 'Temporarily Unavailable') {
-    statusClass = 'status-unavailable';
-}
+    if (currentStatus === 'Open') {
+        statusClass = 'status-open';
+    } else if (currentStatus === 'Temporarily Unavailable') {
+        statusClass = 'status-unavailable';
+    }
 
-adminPreviewStatus.innerHTML = `
-    <div class="preview-status">
-        <span class="status-main-text ${statusClass}">
-            ${currentStatus}
-        </span>
-        <span class="status-reason">
-            (${reason}${backAtTime ? ` — Back at ${formatTimeForAdminPreview(backAtTime)}` : ''})
-        </span>
-    </div>
-`;
+    adminPreviewStatus.innerHTML = `
+        <div class="preview-status">
+            <span class="status-main-text ${statusClass}">
+                ${currentStatus}
+            </span>
+            <span class="status-reason">
+                (${reason}${backAtTime ? ` — Back at ${formatTimeForAdminPreview(backAtTime)}` : ''})
+            </span>
+        </div>
+    `;
     
     // =============================
     // ONYX REGULAR HOURS LIST (🔥)
@@ -3347,6 +3345,44 @@ function createExamRow(data = {}) {
   return row;
 }
 
+function createFinalRow(data = {}) {
+  const row = document.createElement("div");
+  row.className = "academic-row final-row";
+
+  row.innerHTML = `
+    <input type="text" class="final-course"
+      placeholder="Course Code"
+      value="${data.course || ""}">
+
+    <input type="text" class="final-title"
+      placeholder="Final Title"
+      value="${data.title || ""}">
+
+    <input type="date" class="final-date"
+      value="${data.date || ""}">
+
+    <input type="time" class="final-start"
+      value="${data.startTime || ""}">
+
+    <input type="time" class="final-end"
+      value="${data.endTime || ""}">
+
+    <input type="text" class="final-location"
+      placeholder="Location"
+      value="${data.location || ""}">
+
+    <button type="button"
+      class="danger-btn remove-final-btn">×</button>
+  `;
+
+  row.querySelector(".remove-final-btn").addEventListener("click", () => {
+    row.remove();
+    updateAcademicPreview();
+  });
+
+  return row;
+}
+
 async function saveRecurringClasses(e) {
   e.preventDefault();
 
@@ -3539,6 +3575,8 @@ onAuthStateChanged(auth, async user => {
                 const classContainer = document.getElementById("academic-classes-container");
                 const addExamBtn = document.getElementById("add-academic-exam-btn");
                 const examContainer = document.getElementById("academic-exams-container");
+                const addFinalBtn = document.getElementById("add-academic-final-btn");
+                const finalContainer = document.getElementById("academic-finals-container");
                 const saveBtn = document.getElementById("save-academic-availability-btn");
 
                 if (saveBtn && !saveBtn.__saveListenerAttached) {
@@ -3560,6 +3598,14 @@ onAuthStateChanged(auth, async user => {
                     updateAcademicPreview();
                   });
                   addExamBtn.__addListenerAttached = true;
+                }
+
+                if (addFinalBtn && finalContainer && !addFinalBtn.__addListenerAttached) {
+                  addFinalBtn.addEventListener("click", () => {
+                    finalContainer.appendChild(createFinalRow());
+                    updateAcademicPreview();
+                  });
+                  addFinalBtn.__addListenerAttached = true;
                 }
 
                 // Load existing data from Firestore
@@ -3676,6 +3722,7 @@ document.addEventListener('click', (e) => {
         });
     }
 });
+
 
 
 /* ------------------------------------------------------------
