@@ -6950,7 +6950,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   });
 
   /* ============================
-     NEW ACADEMIC UI UPDATES
+     ACADEMIC UI UPDATES
      ============================ */
   const timelineNowLabel = document.getElementById('bizTimelineNowLabel');
   if (timelineNowLabel) {
@@ -6964,10 +6964,12 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   if (academicBanner) {
     if (finalType === 'academic') {
       academicBanner.hidden = false;
+      academicBanner.style.display = 'block';
       if (academicTitle) academicTitle.textContent = 'Academic Schedule Active';
       if (academicDetail) academicDetail.textContent = finalReason;
     } else {
       academicBanner.hidden = true;
+      academicBanner.style.display = 'none';
     }
   }
 
@@ -6975,9 +6977,12 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   if (academicDetails) {
     if (finalType === 'academic') {
       academicDetails.hidden = false;
+      academicDetails.style.display = 'block';
       academicDetails.open = true;
     } else {
       academicDetails.hidden = true;
+      academicDetails.style.display = 'none';
+      academicDetails.open = false;
     }
   }
   /* ============================ */
@@ -7200,6 +7205,24 @@ function renderErrorState(message = 'Error Loading') {
 
   if (reasonElement) {
     reasonElement.textContent = '';
+  }
+  
+  const academicBanner = document.getElementById('academic-status-banner');
+  if (academicBanner) {
+    academicBanner.hidden = true;
+    academicBanner.style.display = 'none';
+  }
+
+  const academicDetails = document.getElementById('academicDetails');
+  if (academicDetails) {
+    academicDetails.hidden = true;
+    academicDetails.style.display = 'none';
+    academicDetails.open = false;
+  }
+
+  const timelineNowLabel = document.getElementById('bizTimelineNowLabel');
+  if (timelineNowLabel) {
+    timelineNowLabel.textContent = 'Now';
   }
 
   setStatusHint('Business information is temporarily unavailable.');
