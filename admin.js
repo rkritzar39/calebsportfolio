@@ -3159,6 +3159,11 @@ function formatTimeForPreview(timeString) { // Converts HH:MM to AM/PM format
 
 
 /* -------------------------
+   GLOBAL VARIABLES
+   ------------------------- */
+let cachedAcademicAvailability = {};
+
+/* -------------------------
    ACADEMIC UI ELEMENTS
    ------------------------- */
 
@@ -3624,7 +3629,7 @@ function updateAcademicPreview() {
 
   const termDatesText =
     termStart && termEnd
-      ? (${termStart} to ${termEnd})
+      ? `(${termStart} to ${termEnd})`
       : "";
 
   const profileText = [
@@ -3656,7 +3661,7 @@ function updateAcademicPreview() {
     const upcomingBreaks = getUpcomingAcademicBreaksAdmin();
 
     if (!upcomingBreaks.length) {
-      breaksPreview.innerHTML = <li>—</li>;
+      breaksPreview.innerHTML = `<li>—</li>`;
     } else {
       breaksPreview.innerHTML = upcomingBreaks
         .slice(0, 3)
@@ -3668,9 +3673,9 @@ function updateAcademicPreview() {
           const dateText =
             startDate === endDate
               ? startDate
-              : ${startDate} to ${endDate};
+              : `${startDate} to ${endDate}`;
 
-          return <li>${title} (${dateText})</li>;
+          return `<li>${title} (${dateText})</li>`;
         })
         .join("");
     }
@@ -3918,9 +3923,12 @@ async function updateMetadataTimestamp(platform) {
 
     } catch (error) {
         console.error(`Error updating timestamp for ${platform}:`, error);
-        showAdminStatus(`Warning: Could not update site timestamp for ${platform}.`, true);
+        if (typeof showAdminStatus === 'function') {
+            showAdminStatus(`Warning: Could not update site timestamp for ${platform}.`, true);
+        }
     }
 }
+
 
 async function loadShoutoutsAdmin(platform) {
     const listContainer = document.getElementById(`shoutouts-${platform}-list-admin`);
