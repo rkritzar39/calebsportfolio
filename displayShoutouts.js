@@ -5593,6 +5593,92 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
   return { active: false };
 }
 
+function getAcademicStartingSoonMinutes(academicAvailability, nowInBusinessTimezone) {
+  if (!academicAvailability || !nowInBusinessTimezone) return null;
+
+  const currentIsoDate = nowInBusinessTimezone.toISODate();
+  const currentDayOfWeek = nowInBusinessTimezone.toFormat('ccc').toLowerCase();
+
+  let earliestMinutesAway = null;
+
+  const considerCandidate = (candidateDateTime) => {
+    if (!candidateDateTime || !candidateDateTime.isValid) return;
+    const minutesAway = minutesUntilLuxon(nowInBusinessTimezone, candidateDateTime);
+    if (minutesAway != null && minutesAway > 0) {
+      if (earliestMinutesAway == null || minutesAway < earliestMinutesAway) {
+        earliestMinutesAway = minutesAway;
+      }
+    }
+  };
+
+  const matchesField = (block, matchField, matchValue) => {
+    if (!block[matchField]) return false;
+
+    if (Array.isArray(block[matchField])) {
+      return block[matchField]
+        .map((v) => String(v).trim().toLowerCase())
+        .includes(matchValue);
+    }
+
+    if (typeof block[matchField] === 'string') {
+      return block[matchField]
+        .split(',')
+        .map((v) => v.trim().toLowerCase())
+        .filter(Boolean)
+        .includes(matchValue);
+    }
+
+    return String(block[matchField]).trim().toLowerCase() === matchValue;
+  };
+
+  const getBlockOpenMinutes = (block) => {
+    let ranges = normalizeRanges(block);
+
+    if (ranges.length === 0 && block.startTime && block.endTime) {
+      ranges = [{ open: block.startTime, close: block.endTime }];
+    }
+
+    if (ranges.length === 0 && block.start && block.end) {
+      ranges = [{ open: block.start, close: block.end }];
+    }
+
+    return ranges.length ? timeStringToMinutes(ranges[0].open) : null;
+  };
+
+  // Finals + Exams: dated, time-based blocks matching today
+  const finals = Array.isArray(academicAvailability.finals) ? academicAvailability.finals : [];
+  const exams = Array.isArray(academicAvailability.exams) ? academicAvailability.exams : [];
+
+  [...finals, ...exams].forEach((item) => {
+    if (!matchesField(item, 'date', currentIsoDate)) return;
+    const openMinutes = getBlockOpenMinutes(item);
+    if (openMinutes == null) return;
+    considerCandidate(nowInBusinessTimezone.startOf('day').plus({ minutes: openMinutes }));
+  });
+
+  // Recurring Classes: day-of-week, time-based blocks active today
+  const classes = (Array.isArray(academicAvailability.recurringClasses)
+    ? academicAvailability.recurringClasses
+    : []
+  ).filter((cls) => {
+    if (!cls.startDate || !cls.endDate) return true;
+    return isInDateWindow(nowInBusinessTimezone, cls.startDate, cls.endDate);
+  });
+
+  classes.forEach((item) => {
+    const isTodayMatch =
+      matchesField(item, 'days', currentDayOfWeek) || matchesField(item, 'day', currentDayOfWeek);
+
+    if (!isTodayMatch) return;
+
+    const openMinutes = getBlockOpenMinutes(item);
+    if (openMinutes == null) return;
+    considerCandidate(nowInBusinessTimezone.startOf('day').plus({ minutes: openMinutes }));
+  });
+
+  return earliestMinutesAway;
+}
+
 function hasAcademicScheduleData(academicAvailability) {
   if (!academicAvailability) return false;
 
@@ -6498,8 +6584,8 @@ function setStatusChip(statusText, statusType = 'regular', isManualOverride = fa
     color = temporaryColor;
     label = 'Temporary';
   } else if (statusType === 'academic') {
-    color = closedColor;
-    label = 'Closed';
+    color = temporaryColor;
+    label = 'Academic';
   } else if (statusText === 'Open') {
     color = openColor;
     label = 'Open';
@@ -6527,7 +6613,9 @@ function setTrafficLight({
   isClosingSoon = false,
   isOpeningSoon = false,
   isTemporaryStartingSoon = false,
-  isTemporaryEndingSoon = false
+  isTemporaryEndingSoon = false,
+  isAcademicStartingSoon = false,
+  isAcademicEndingSoon = false
 } = {}) {
   const greenLight = document.getElementById('bizLightGreen');
   const yellowLight = document.getElementById('bizLightYellow');
@@ -6555,9 +6643,13 @@ function setTrafficLight({
       return;
     }
   }
-  
+
   if (statusType === 'academic') {
-    redLight.classList.add('is-active');
+    if (isAcademicEndingSoon) {
+      yellowLight.classList.add('is-active', 'is-blinking');
+    } else {
+      yellowLight.classList.add('is-active');
+    }
     return;
   }
 
@@ -6582,6 +6674,11 @@ function setTrafficLight({
       yellowLight.classList.add('is-blinking');
     }
 
+    return;
+  }
+
+  if (isAcademicStartingSoon) {
+    yellowLight.classList.add('is-active', 'is-blinking');
     return;
   }
 
@@ -6859,6 +6956,8 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   let isOpeningSoon = false;
   let isTemporaryStartingSoon = false;
   let isTemporaryEndingSoon = false;
+  let isAcademicStartingSoon = false;
+  let isAcademicEndingSoon = false;
 
   (function setTodayMeta() {
     if (finalType === 'academic') {
@@ -6947,6 +7046,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
           setMetaRow('bizNextOpen', `${nextOpenLabel} • ${reopeningTimeText}`);
 
           if (minutesAway <= TEMPORARY_WARNING_MINUTES) {
+            isAcademicEndingSoon = true;
             statusSubTextElement.textContent = `Back in ${formatDuration(minutesAway)}`;
           } else if (nextOpenLabel === 'Today') {
             statusSubTextElement.textContent = `Back today at ${reopeningTimeText}`;
@@ -7183,6 +7283,24 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       return;
     }
 
+    if (
+      statusOverride === 'auto' &&
+      finalType !== 'academic' &&
+      LuxonLibrary &&
+      nowInBusinessTimezone
+    ) {
+      const academicStartingSoonMinutes = getAcademicStartingSoonMinutes(
+        cachedAcademicData,
+        nowInBusinessTimezone
+      );
+
+      if (academicStartingSoonMinutes != null && academicStartingSoonMinutes <= GENERAL_WARNING_MINUTES) {
+        isAcademicStartingSoon = true;
+        statusSubTextElement.textContent = `Academic schedule begins in ${formatDuration(academicStartingSoonMinutes)}`;
+        return;
+      }
+    }
+
     let soonestTemporaryStart = null;
 
     if (LuxonLibrary && nowInBusinessTimezone) {
@@ -7350,7 +7468,9 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     isClosingSoon,
     isOpeningSoon,
     isTemporaryStartingSoon,
-    isTemporaryEndingSoon
+    isTemporaryEndingSoon,
+    isAcademicStartingSoon,
+    isAcademicEndingSoon
   });
   applyBusinessVisualState({
     state: visualState,
