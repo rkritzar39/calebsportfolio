@@ -424,9 +424,20 @@
     <div class="biz-panel">
       <div class="biz-panel-title">
         <div class="biz-signal" aria-hidden="true">
-          <span class="biz-signal__light biz-signal__light--red" id="bizLightRed"></span>
-          <span class="biz-signal__light biz-signal__light--yellow" id="bizLightYellow"></span>
-          <span class="biz-signal__light biz-signal__light--green" id="bizLightGreen"></span>
+          <span
+            class="biz-signal__light biz-signal__light--red"
+            id="bizLightRed"
+          ></span>
+
+          <span
+            class="biz-signal__light biz-signal__light--yellow"
+            id="bizLightYellow"
+          ></span>
+
+          <span
+            class="biz-signal__light biz-signal__light--green"
+            id="bizLightGreen"
+          ></span>
         </div>
 
         <h3>Live Status</h3>
@@ -442,7 +453,7 @@
       <div class="biz-status-hint" id="bizStatusHint"></div>
 
       <!-- ============================ -->
-      <!-- ACADEMIC STATUS BANNER      -->
+      <!-- ACADEMIC STATUS BANNER       -->
       <!-- ============================ -->
       <div
         id="academic-status-banner"
@@ -483,8 +494,15 @@
         aria-label="Today's schedule timeline"
       >
         <div class="biz-today-timeline__bar">
-          <span class="biz-today-timeline__fill" id="bizTodayTimelineFill"></span>
-          <span class="biz-today-timeline__now" id="bizTodayTimelineNow"></span>
+          <span
+            class="biz-today-timeline__fill"
+            id="bizTodayTimelineFill"
+          ></span>
+
+          <span
+            class="biz-today-timeline__now"
+            id="bizTodayTimelineNow"
+          ></span>
         </div>
 
         <div class="biz-today-timeline__labels">
@@ -504,32 +522,44 @@
         <span class="biz-muted" id="bizLocalTime">Local time: …</span>
       </div>
 
+      <!-- ============================ -->
+      <!-- REGULAR WEEKLY HOURS         -->
+      <!-- ============================ -->
       <div id="business-hours-display" class="hours-wrap"></div>
 
+      <!-- ============================ -->
+      <!-- TEMPORARY HOURS              -->
+      <!-- ============================ -->
       <details class="biz-details" id="temporaryDetails" open>
         <summary>Temporary Hours</summary>
         <div id="temporary-hours-display" class="hours-wrap"></div>
       </details>
 
+      <!-- ============================ -->
+      <!-- HOLIDAY HOURS                -->
+      <!-- ============================ -->
       <details class="biz-details" id="holidayDetails">
         <summary>Holiday Hours</summary>
         <div id="holiday-hours-display" class="hours-wrap"></div>
       </details>
 
       <!-- ============================ -->
-<!-- ACADEMIC SCHEDULE           -->
-<!-- ============================ -->
-<details class="biz-details" id="academicDetails" hidden>
-  <summary>Academic Schedule</summary>
-  <div id="academic-hours-display" class="hours-wrap">
-    <p class="biz-muted">
-      Business availability may be affected by academic commitments.
-    </p>
-  </div>
-</details>
-      
+      <!-- ACADEMIC SCHEDULE            -->
+      <!-- ============================ -->
+      <details class="biz-details" id="academicDetails" hidden>
+        <summary>Academic Schedule</summary>
+        <div id="academic-hours-display" class="hours-wrap">
+          <p class="biz-muted">
+            Business availability may be affected by academic commitments.
+          </p>
+        </div>
+      </details>
+
       <div class="biz-divider" role="separator" aria-hidden="true"></div>
 
+      <!-- ============================ -->
+      <!-- CONTACT                      -->
+      <!-- ============================ -->
       <div class="biz-contact">
         <h4>Contact</h4>
         <div id="contact-email-display" class="contact-info"></div>
