@@ -1344,6 +1344,32 @@
 
 </div>
 
+<!-- ========================= -->
+<!-- ACADEMIC PREVIEW DETAILS  -->
+<!-- ========================= -->
+<div class="academic-preview-details">
+
+  <div class="preview-semester">
+    <strong>Semester:</strong>
+    <span id="preview-semester-name">—</span>
+    <span id="preview-term-dates"></span>
+  </div>
+
+  <div class="preview-profile">
+    <strong>Academic Profile:</strong>
+    <span id="preview-academic-profile">—</span>
+  </div>
+
+  <div class="preview-breaks">
+    <strong>Upcoming Breaks:</strong>
+    <ul id="preview-academic-breaks">
+      <!-- Breaks injected here -->
+    </ul>
+  </div>
+
+</div>
+
+    
 </section>
 
 <!-- ========================= -->
@@ -1441,6 +1467,140 @@
   </button>
 
 </section>
+
+                
+<!-- ========================= -->
+<!-- SEMESTER & TERM METADATA  -->
+<!-- ========================= -->
+<section class="admin-section">
+
+  <h4>Semester & Term Information</h4>
+  <p class="section-description">
+    Define the current academic term.
+  </p>
+
+  <div class="academic-metadata-grid">
+    <div class="form-group">
+      <label for="academic-semester-name">Semester Name</label>
+      <input
+        type="text"
+        id="academic-semester-name"
+        placeholder="e.g., Fall 2026">
+    </div>
+
+    <div class="form-group">
+      <label for="academic-term-type">Term Type</label>
+      <select id="academic-term-type">
+        <option value="">Select type</option>
+        <option value="semester">Semester</option>
+        <option value="quarter">Quarter</option>
+        <option value="trimester">Trimester</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="academic-term-start">Term Start Date</label>
+      <input type="date" id="academic-term-start">
+    </div>
+
+    <div class="form-group">
+      <label for="academic-term-end">Term End Date</label>
+      <input type="date" id="academic-term-end">
+    </div>
+  </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- ACADEMIC BREAKS           -->
+<!-- ========================= -->
+<section class="admin-section">
+
+  <h4>Academic Breaks</h4>
+  <p class="section-description">
+    Manage breaks that suspend classes and exams.
+  </p>
+
+  <div id="academic-breaks-container" class="academic-container">
+    <!-- Break rows injected here -->
+  </div>
+
+  <button
+    type="button"
+    id="add-academic-break-btn"
+    class="btn-small">
+    + Add Break
+  </button>
+
+</section>
+
+<!-- ========================= -->
+<!-- ACADEMIC PROFILE          -->
+<!-- ========================= -->
+<section class="admin-section">
+
+  <h4>Academic Profile</h4>
+  <p class="section-description">
+    General academic information (display-only).
+  </p>
+
+  <div class="academic-profile-grid">
+    <div class="form-group">
+      <label for="academic-institution">Institution</label>
+      <input
+        type="text"
+        id="academic-institution"
+        placeholder="University of Toledo">
+    </div>
+
+    <div class="form-group">
+      <label for="academic-program">Program / Major</label>
+      <input
+        type="text"
+        id="academic-program"
+        placeholder="Information Technology">
+    </div>
+
+    <div class="form-group">
+      <label for="academic-year">Academic Year</label>
+      <select id="academic-year">
+        <option value="">Select year</option>
+        <option value="freshman">Freshman</option>
+        <option value="sophomore">Sophomore</option>
+        <option value="junior">Junior</option>
+        <option value="senior">Senior</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="academic-advisor">Advisor (optional)</label>
+      <input
+        type="text"
+        id="academic-advisor"
+        placeholder="Advisor name">
+    </div>
+  </div>
+
+</section>
+                
+
+<template id="academic-break-template">
+  <div class="academic-row academic-break-row">
+    <input type="text"
+           class="break-title"
+           placeholder="Break Name (e.g., Spring Break)">
+
+    <input type="date"
+           class="break-start">
+
+    <input type="date"
+           class="break-end">
+
+    <button type="button"
+            class="danger-btn remove-break-btn">×</button>
+  </div>
+</template>
+                
                 
 <!-- ========================= -->
 <!-- UNIVERSITY EVENT TEMPLATE -->
