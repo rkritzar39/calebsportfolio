@@ -5707,17 +5707,17 @@ function renderAcademicSchedulePanel({
   const renderSection = (sectionTitle, itemsHtml) => {
     if (!itemsHtml.trim()) return '';
 
-    return 
+    return `
       <h4>${escapeHtml(sectionTitle)}</h4>
       <ul class="special-hours-display">
         ${itemsHtml}
       </ul>
-    ;
+    `;
   };
 
   /* -------------------------
      Academic Breaks
-  ------------------------- /
+  ------------------------- */
   let breaksHtml = '';
 
   const breaks = Array.isArray(academicAvailability.breaks)
@@ -5733,21 +5733,21 @@ function renderAcademicSchedulePanel({
       endDate: item.endDate
     });
 
-    breaksHtml += 
+    breaksHtml += `
       <li>
         <strong>${escapeHtml(title)}</strong>
         <span class="hours">Academic Break</span>
         <span class="dates">${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>
-    ;
+    `;
   });
 
   html += renderSection('Academic Breaks', breaksHtml);
 
-  / -------------------------
+  /* -------------------------
      Classes
-  ------------------------- /
+  ------------------------- */
   let classesHtml = '';
 
   const classes = Array.isArray(academicAvailability.recurringClasses)
@@ -5760,12 +5760,12 @@ function renderAcademicSchedulePanel({
 
     const timeText =
       item.startTime && item.endTime
-        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
 
     const dateText =
       item.startDate && item.endDate
-        ? ${formatDate(item.startDate)} to ${formatDate(item.endDate)}
+        ? `${formatDate(item.startDate)} to ${formatDate(item.endDate)}`
         : 'Recurring';
 
     const statusLabel = getAcademicItemStatusLabel({
@@ -5774,21 +5774,21 @@ function renderAcademicSchedulePanel({
       endDate: item.endDate
     });
 
-    classesHtml += 
+    classesHtml += `
       <li>
         <strong>${escapeHtml(title)}</strong>
         <span class="hours">${escapeHtml(daysText)} • ${escapeHtml(timeText)}</span>
         <span class="dates">${escapeHtml(dateText)}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>
-    ;
+    `;
   });
 
   html += renderSection('Classes', classesHtml);
 
-  / -------------------------
+  /* -------------------------
      Exams
-  ------------------------- /
+  ------------------------- */
   let examsHtml = '';
 
   const exams = Array.isArray(academicAvailability.exams)
@@ -5800,7 +5800,7 @@ function renderAcademicSchedulePanel({
 
     const timeText =
       item.startTime && item.endTime
-        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
 
     const statusLabel = getAcademicItemStatusLabel({
@@ -5808,21 +5808,21 @@ function renderAcademicSchedulePanel({
       date: item.date
     });
 
-    examsHtml += 
+    examsHtml += `
       <li>
         <strong>${escapeHtml(title)}</strong>
         <span class="hours">${escapeHtml(timeText)}</span>
         <span class="dates">${escapeHtml(formatDate(item.date))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>
-    ;
+    `;
   });
 
   html += renderSection('Exams', examsHtml);
 
-  / -------------------------
+  /* -------------------------
      Finals
-  ------------------------- /
+  ------------------------- */
   let finalsHtml = '';
 
   const finals = Array.isArray(academicAvailability.finals)
@@ -5834,7 +5834,7 @@ function renderAcademicSchedulePanel({
 
     const timeText =
       item.startTime && item.endTime
-        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
 
     const statusLabel = getAcademicItemStatusLabel({
@@ -5842,21 +5842,21 @@ function renderAcademicSchedulePanel({
       date: item.date
     });
 
-    finalsHtml += 
+    finalsHtml += `
       <li>
         <strong>${escapeHtml(title)}</strong>
         <span class="hours">${escapeHtml(timeText)}</span>
         <span class="dates">${escapeHtml(formatDate(item.date))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>
-    ;
+    `;
   });
 
   html += renderSection('Finals', finalsHtml);
 
-  / -------------------------
+  /* -------------------------
      University Events
-  ------------------------- /
+  ------------------------- */
   let universityEventsHtml = '';
 
   const universityEvents = Array.isArray(academicAvailability.universityEvents)
@@ -5868,7 +5868,7 @@ function renderAcademicSchedulePanel({
 
     const timeText =
       item.startTime && item.endTime
-        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
 
     const statusLabel = getAcademicItemStatusLabel({
@@ -5876,19 +5876,19 @@ function renderAcademicSchedulePanel({
       date: item.date
     });
 
-    universityEventsHtml += 
+    universityEventsHtml += `
       <li>
         <strong>${escapeHtml(title)}</strong>
         <span class="hours">${escapeHtml(timeText)}</span>
         <span class="dates">${escapeHtml(formatDate(item.date))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>
-    ;
+    `;
   });
 
   html += renderSection('University Events', universityEventsHtml);
 
-  / -------------------------
+  /* -------------------------
      Internships & Co-Ops
   ------------------------- */
   let internshipsHtml = '';
@@ -5899,10 +5899,10 @@ function renderAcademicSchedulePanel({
 
   internships.forEach((item) => {
     const title = item.company || item.title || item.role || 'Internship';
-    const role = item.role ?  • ${item.role} : '';
-    const location = item.location ?  • ${item.location} : '';
+    const role = item.role ? ` • ${item.role}` : '';
+    const location = item.location ? ` • ${item.location}` : '';
 
-    const detailsText = ${role}${location}.replace(/^ • /, '') || 'Internship / Co-Op';
+    const detailsText = `${role}${location}`.replace(/^ • /, '') || 'Internship / Co-Op';
 
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
@@ -5910,14 +5910,14 @@ function renderAcademicSchedulePanel({
       endDate: item.endDate
     });
 
-    internshipsHtml += 
+    internshipsHtml += `
       <li>
         <strong>${escapeHtml(title)}</strong>
         <span class="hours">${escapeHtml(detailsText)}</span>
         <span class="dates">${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>
-    ;
+    `;
   });
 
   const coOps = Array.isArray(academicAvailability.coOps)
@@ -5926,10 +5926,10 @@ function renderAcademicSchedulePanel({
 
   coOps.forEach((item) => {
     const title = item.company || item.title || item.role || 'Co-Op';
-    const role = item.role ?  • ${item.role} : '';
-    const location = item.location ?  • ${item.location} : '';
+    const role = item.role ? ` • ${item.role}` : '';
+    const location = item.location ? ` • ${item.location}` : '';
 
-    const detailsText = ${role}${location}.replace(/^ • /, '') || 'Internship / Co-Op';
+    const detailsText = `${role}${location}`.replace(/^ • /, '') || 'Internship / Co-Op';
 
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
@@ -5937,14 +5937,14 @@ function renderAcademicSchedulePanel({
       endDate: item.endDate
     });
 
-    internshipsHtml += 
+    internshipsHtml += `
       <li>
         <strong>${escapeHtml(title)}</strong>
         <span class="hours">${escapeHtml(detailsText)}</span>
         <span class="dates">${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
       </li>
-    ;
+    `;
   });
 
   html += renderSection('Internships & Co-Ops', internshipsHtml);
