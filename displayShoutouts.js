@@ -6304,6 +6304,7 @@ function buildPremiumStatusHint({
     if (isTemporaryEndingSoon) {
       return 'Temporary closure is ending soon.';
     }
+
     return 'Temporary hours are currently active.';
   }
 
@@ -6319,17 +6320,12 @@ function buildPremiumStatusHint({
     return 'A temporary schedule change begins soon.';
   }
 
-  if (typeof statusSubText === 'string' && statusSubText.trim()) {
-    return statusSubText;
-  }
-
   if (finalStatus === 'Open') {
     return 'Business is currently open under the regular schedule.';
   }
 
   return 'Business is currently closed under the regular schedule.';
 }
-
 
 function setStatusChip(statusText, statusType = 'regular', isManualOverride = false) {
   const chip = document.getElementById('bizChip');
