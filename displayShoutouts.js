@@ -6128,7 +6128,7 @@ function buildPremiumStatusHint({
   }
 
   if (finalType === 'academic') {
-    return `Currently unavailable: ${finalReason}.`;
+    return 'Unavailable due to academic schedule.';
   }
 
   if (finalType === 'holiday') {
@@ -6164,6 +6164,7 @@ function buildPremiumStatusHint({
 
   return 'Business is currently closed under the regular schedule.';
 }
+
 
 function setStatusChip(statusText, statusType = 'regular', isManualOverride = false) {
   const chip = document.getElementById('bizChip');
@@ -6646,7 +6647,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
         }
       }
       
-      statusSubTextElement.textContent = activeAcademic ? activeAcademic.reason : '';
+      statusSubTextElement.textContent = '';
       setMetaRow('bizNextOpen', '—');
       return;
     }
@@ -7057,29 +7058,45 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   const academicDetail = document.getElementById('academic-status-detail');
   
   if (academicBanner) {
-    if (finalType === 'academic') {
-      academicBanner.hidden = false;
-      academicBanner.style.display = 'block';
-      if (academicTitle) academicTitle.textContent = 'Academic Schedule Active';
-      if (academicDetail) academicDetail.textContent = finalReason;
-    } else {
-      academicBanner.hidden = true;
-      academicBanner.style.display = 'none';
-    }
-  }
+  if (finalType === 'academic') {
+    academicBanner.hidden = false;
+    academicBanner.style.display = 'block';
 
-  const academicDetails = document.getElementById('academicDetails');
-  if (academicDetails) {
-    if (finalType === 'academic') {
-      academicDetails.hidden = false;
-      academicDetails.style.display = 'block';
-      academicDetails.open = true;
-    } else {
-      academicDetails.hidden = true;
-      academicDetails.style.display = 'none';
-      academicDetails.open = false;
+    if (academicTitle) {
+      academicTitle.textContent = 'Academic Schedule Active';
+    }
+
+    if (academicDetail) {
+      academicDetail.textContent = finalReason || '';
+    }
+  } else {
+    academicBanner.hidden = true;
+    academicBanner.style.display = 'none';
+
+    if (academicTitle) {
+      academicTitle.textContent = '';
+    }
+
+    if (academicDetail) {
+      academicDetail.textContent = '';
     }
   }
+}
+
+const academicDetails = document.getElementById('academicDetails');
+
+if (academicDetails) {
+  if (finalType === 'academic') {
+    academicDetails.hidden = false;
+    academicDetails.style.display = 'block';
+    academicDetails.open = true;
+  } else {
+    academicDetails.hidden = true;
+    academicDetails.style.display = 'none';
+    academicDetails.open = false;
+  }
+}
+
   /* ============================ */
 
   (function renderRegularHours() {
