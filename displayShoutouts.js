@@ -5593,56 +5593,221 @@ function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezon
   return { active: false };
 }
 
-  // Helper to check active time blocks
-  const checkBlocks = (blocks, matchField, matchValue) => {
-  for (const block of (blocks || [])) {
-    let isMatch = false;
+function hasAcademicScheduleData(academicAvailability) {
+  if (!academicAvailability) return false;
 
-    if (block[matchField]) {
-      if (Array.isArray(block[matchField])) {
-        isMatch = block[matchField]
-          .map(v => String(v).trim().toLowerCase())
-          .includes(matchValue);
-      } else if (typeof block[matchField] === 'string') {
-        const values = block[matchField]
-          .split(',')
-          .map(v => v.trim().toLowerCase())
-          .filter(Boolean);
+  return (
+    (Array.isArray(academicAvailability.recurringClasses) && academicAvailability.recurringClasses.length > 0) ||
+    (Array.isArray(academicAvailability.exams) && academicAvailability.exams.length > 0) ||
+    (Array.isArray(academicAvailability.finals) && academicAvailability.finals.length > 0) ||
+    (Array.isArray(academicAvailability.breaks) && academicAvailability.breaks.length > 0)
+  );
+}
 
-        isMatch = values.includes(matchValue);
-      } else {
-        isMatch = String(block[matchField]).trim().toLowerCase() === matchValue;
-      }
-    }
+function formatAcademicDays(daysValue) {
+  if (!daysValue) return '—';
 
-    if (!isMatch) continue;
-
-    let ranges = normalizeRanges(block);
-
-    // Admin academic data uses startTime / endTime
-    if (ranges.length === 0 && block.startTime && block.endTime) {
-      ranges = [{ open: block.startTime, close: block.endTime }];
-    }
-
-    // Extra fallback
-    if (ranges.length === 0 && block.start && block.end) {
-      ranges = [{ open: block.start, close: block.end }];
-    }
-
-    const activeRange = findActiveRange(currentMinutes, ranges);
-
-    if (activeRange) {
-      const closeMinutes = timeStringToMinutes(activeRange.close);
-      const backAt = closeMinutes != null
-        ? nowInBusinessTimezone.startOf('day').plus({ minutes: closeMinutes })
-        : null;
-
-      return { block, activeRange, backAt };
-    }
+  if (Array.isArray(daysValue)) {
+    return daysValue
+      .map(day => String(day).trim())
+      .filter(Boolean)
+      .join(', ');
   }
 
-  return null;
-};
+  if (typeof daysValue === 'string') {
+    return daysValue
+      .split(',')
+      .map(day => day.trim())
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  return '—';
+}
+
+function getAcademicItemStatusLabel({
+  nowInBusinessTimezone,
+  date,
+  startDate,
+  endDate
+}) {
+  if (!nowInBusinessTimezone) return '';
+
+  if (date) {
+    const dateTime = parseBusinessIsoDate(date);
+    if (!dateTime) return '';
+
+    const todayStart = nowInBusinessTimezone.startOf('day');
+    const itemStart = dateTime.startOf('day');
+    const differenceInDays = Math.round(itemStart.diff(todayStart, 'days').days);
+
+    if (differenceInDays > 1) return Scheduled in ${differenceInDays} days;
+    if (differenceInDays === 1) return 'Scheduled for Tomorrow';
+    if (differenceInDays === 0) return 'Scheduled for Today';
+    return 'Concluded';
+  }
+
+  if (startDate && endDate) {
+    const start = parseBusinessIsoDate(startDate);
+    const end = parseBusinessIsoDate(endDate);
+
+    if (!start || !end) return '';
+
+    if (nowInBusinessTimezone < start.startOf('day')) {
+      const differenceInDays = Math.round(
+        start.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
+      );
+
+      if (differenceInDays > 1) return Scheduled in ${differenceInDays} days;
+      if (differenceInDays === 1) return 'Scheduled for Tomorrow';
+      return 'Scheduled for Today';
+    }
+
+    if (nowInBusinessTimezone >= start.startOf('day') && nowInBusinessTimezone <= end.endOf('day')) {
+      return 'In Effect';
+    }
+
+    return 'Concluded';
+  }
+
+  return '';
+}
+
+function renderAcademicSchedulePanel({
+  academicAvailability,
+  nowInBusinessTimezone,
+  visitorTimezone,
+  finalType
+}) {
+  const academicDetails = document.getElementById('academicDetails');
+  const academicHoursDisplay = document.getElementById('academic-hours-display');
+
+  if (!academicDetails || !academicHoursDisplay) return;
+
+  if (!hasAcademicScheduleData(academicAvailability)) {
+    academicDetails.hidden = true;
+    academicDetails.style.display = 'none';
+    academicDetails.open = false;
+    academicHoursDisplay.innerHTML = '';
+    return;
+  }
+
+  academicDetails.hidden = false;
+  academicDetails.style.display = 'block';
+
+  if (finalType === 'academic') {
+    academicDetails.open = true;
+  }
+
+  let html = '<h4>Academic Schedule</h4><ul class="special-hours-display">';
+
+  const breaks = Array.isArray(academicAvailability.breaks)
+    ? academicAvailability.breaks
+    : [];
+
+  breaks.forEach((item) => {
+    const title = item.name || item.title || item.label || 'Academic Break';
+
+    const statusLabel = getAcademicItemStatusLabel({
+      nowInBusinessTimezone,
+      startDate: item.startDate,
+      endDate: item.endDate
+    });
+
+    html += <li>
+      <strong>${escapeHtml(title)}</strong>
+      <span class="hours">Academic Break</span>
+      <span class="dates">${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}</span>
+      <span class="days-until">${escapeHtml(statusLabel)}</span>
+    </li>;
+  });
+
+  const finals = Array.isArray(academicAvailability.finals)
+    ? academicAvailability.finals
+    : [];
+
+  finals.forEach((item) => {
+    const title = item.title || item.course || 'Final Exam';
+
+    const timeText =
+      item.startTime && item.endTime
+        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        : '—';
+
+    const statusLabel = getAcademicItemStatusLabel({
+      nowInBusinessTimezone,
+      date: item.date
+    });
+
+    html += <li>
+      <strong>${escapeHtml(title)}</strong>
+      <span class="hours">${escapeHtml(timeText)}</span>
+      <span class="dates">${escapeHtml(formatDate(item.date))}</span>
+      <span class="days-until">${escapeHtml(statusLabel)}</span>
+    </li>;
+  });
+
+  const exams = Array.isArray(academicAvailability.exams)
+    ? academicAvailability.exams
+    : [];
+
+  exams.forEach((item) => {
+    const title = item.title || item.course || 'Exam';
+
+    const timeText =
+      item.startTime && item.endTime
+        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        : '—';
+
+    const statusLabel = getAcademicItemStatusLabel({
+      nowInBusinessTimezone,
+      date: item.date
+    });
+
+    html += <li>
+      <strong>${escapeHtml(title)}</strong>
+      <span class="hours">${escapeHtml(timeText)}</span>
+      <span class="dates">${escapeHtml(formatDate(item.date))}</span>
+      <span class="days-until">${escapeHtml(statusLabel)}</span>
+    </li>;
+  });
+
+  const classes = Array.isArray(academicAvailability.recurringClasses)
+    ? academicAvailability.recurringClasses
+    : [];
+
+  classes.forEach((item) => {
+    const title = item.title || item.course || 'Class';
+    const daysText = formatAcademicDays(item.days || item.day);
+
+    const timeText =
+      item.startTime && item.endTime
+        ? ${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}
+        : '—';
+
+    const dateText =
+      item.startDate && item.endDate
+        ? ${formatDate(item.startDate)} to ${formatDate(item.endDate)}
+        : 'Recurring';
+
+    const statusLabel = getAcademicItemStatusLabel({
+      nowInBusinessTimezone,
+      startDate: item.startDate,
+      endDate: item.endDate
+    });
+
+    html += <li>
+      <strong>${escapeHtml(title)}</strong>
+      <span class="hours">${escapeHtml(daysText)} • ${escapeHtml(timeText)}</span>
+      <span class="dates">${escapeHtml(dateText)}</span>
+      <span class="days-until">${escapeHtml(statusLabel)}</span>
+    </li>;
+  });
+
+  html += '</ul>';
+
+  academicHoursDisplay.innerHTML = html;
+}
 
 /* -------------------------
    NEXT OPENING HELPERS
@@ -7045,19 +7210,20 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     theme: visualTheme
   });
 
-  /* ============================
-     ACADEMIC UI UPDATES
-     ============================ */
-  const timelineNowLabel = document.getElementById('bizTimelineNowLabel');
-  if (timelineNowLabel) {
-    timelineNowLabel.textContent = (finalType === 'academic') ? 'Paused' : 'Now';
-  }
+/* ============================
+   ACADEMIC UI UPDATES
+   ============================ */
+const timelineNowLabel = document.getElementById('bizTimelineNowLabel');
 
-  const academicBanner = document.getElementById('academic-status-banner');
-  const academicTitle = document.getElementById('academic-status-title');
-  const academicDetail = document.getElementById('academic-status-detail');
-  
-  if (academicBanner) {
+if (timelineNowLabel) {
+  timelineNowLabel.textContent = finalType === 'academic' ? 'Paused' : 'Now';
+}
+
+const academicBanner = document.getElementById('academic-status-banner');
+const academicTitle = document.getElementById('academic-status-title');
+const academicDetail = document.getElementById('academic-status-detail');
+
+if (academicBanner) {
   if (finalType === 'academic') {
     academicBanner.hidden = false;
     academicBanner.style.display = 'block';
@@ -7083,21 +7249,14 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
   }
 }
 
-const academicDetails = document.getElementById('academicDetails');
+renderAcademicSchedulePanel({
+  academicAvailability: cachedAcademicData,
+  nowInBusinessTimezone,
+  visitorTimezone,
+  finalType
+});
 
-if (academicDetails) {
-  if (finalType === 'academic') {
-    academicDetails.hidden = false;
-    academicDetails.style.display = 'block';
-    academicDetails.open = true;
-  } else {
-    academicDetails.hidden = true;
-    academicDetails.style.display = 'none';
-    academicDetails.open = false;
-  }
-}
 
-  /* ============================ */
 
   (function renderRegularHours() {
     const weekOrder = [
