@@ -1333,9 +1333,15 @@
     <!-- Academic Preview -->
 <div class="academic-preview">
   <strong>Academic Preview</strong>
-  <div id="academic-preview-counts">
-    Classes: 0
-  </div>
+
+  <ul id="academic-preview-counts" class="academic-preview-list">
+    <li><strong>Classes:</strong> <span data-count="classes">0</span></li>
+    <li><strong>Exams:</strong> <span data-count="exams">0</span></li>
+    <li><strong>Finals:</strong> <span data-count="finals">0</span></li>
+    <li><strong>Events:</strong> <span data-count="events">0</span></li>
+    <li><strong>Internships:</strong> <span data-count="internships">0</span></li>
+  </ul>
+
 </div>
 
 </section>
@@ -1387,7 +1393,85 @@
   </button>
 
 </section>
-            
+
+<!-- ========================= -->
+<!-- UNIVERSITY EVENTS         -->
+<!-- ========================= -->
+<section class="admin-section">
+
+  <h4>University Events</h4>
+  <p class="section-description">
+    Manage campus events, meetings, or one-time academic activities.
+  </p>
+
+  <div id="academic-events-container" class="academic-container">
+    <!-- Event rows injected here -->
+  </div>
+
+  <button
+    type="button"
+    id="add-academic-event-btn"
+    class="btn-small"
+  >
+    + Add Event
+  </button>
+
+</section>
+
+<!-- ========================= -->
+<!-- INTERNSHIPS & CO-OPS      -->
+<!-- ========================= -->
+<section class="admin-section">
+
+  <h4>Internships & Co‑ops</h4>
+  <p class="section-description">
+    Track internships, co‑ops, or long‑term work placements.
+  </p>
+
+  <div id="academic-internships-container" class="academic-container">
+    <!-- Internship rows injected here -->
+  </div>
+
+  <button
+    type="button"
+    id="add-academic-internship-btn"
+    class="btn-small"
+  >
+    + Add Internship
+  </button>
+
+</section>
+                
+<!-- ========================= -->
+<!-- UNIVERSITY EVENT TEMPLATE -->
+<!-- ========================= -->
+<template id="university-event-template">
+  <div class="academic-row university-event-row">
+    <input type="text" class="event-title" placeholder="Event Title">
+    <input type="date" class="event-date">
+    <input type="time" class="event-start">
+    <input type="time" class="event-end">
+    <input type="text" class="event-location" placeholder="Location">
+    <input type="text" class="event-note" placeholder="Optional note">
+    <button type="button" class="danger-btn remove-event-btn">×</button>
+  </div>
+</template>
+
+<!-- ========================= -->
+<!-- INTERNSHIP TEMPLATE       -->
+<!-- ========================= -->
+<template id="internship-template">
+  <div class="academic-row internship-row">
+    <input type="text" class="intern-company" placeholder="Company">
+    <input type="text" class="intern-role" placeholder="Role">
+    <input type="date" class="intern-start">
+    <input type="date" class="intern-end">
+    <input type="text" class="intern-location" placeholder="Location">
+    <button type="button" class="danger-btn remove-intern-btn">×</button>
+  </div>
+</template>
+
+                
 <section class="admin-section" id="tech-management" aria-labelledby="tech-heading" data-portal-title="Tech Inventory" data-portal-keywords="tech inventory devices ownership planned active archive lifecycle">
     <h3 id="tech-heading"><i class="fas fa-microchip"></i> Manage Tech Information</h3>
 
