@@ -3171,7 +3171,7 @@ function createRecurringClassRow(data = {}) {
     <input type="text" class="class-title" placeholder="Course Title" value="${data.title || ""}">
     <input type="text" class="class-instructor" placeholder="Instructor" value="${data.instructor || ""}">
     <input type="text" class="class-location" placeholder="Location" value="${data.location || ""}">
-    <input type="text" class="class-days" placeholder="Days (mon,wed,fri)" value="${Array.isArray(data.days) ? data.days.join(",") : (data.days || "")}"
+    <input type="text" class="class-days" placeholder="Days (mon,wed,fri)" value="${(data.days || []).join(",")}">
     <input type="time" class="class-start" value="${data.startTime || ""}">
     <input type="time" class="class-end" value="${data.endTime || ""}">
     <input type="date" class="class-start-date" value="${data.startDate || ""}">
@@ -3569,6 +3569,13 @@ function setAcademicPreviewText(selectorList, value) {
 }
 
 function updateAcademicPreview() {
+  const classCountEl = document.querySelector('span[data-count="classes"]');
+  const examCountEl = document.querySelector('span[data-count="exams"]');
+  const finalCountEl = document.querySelector('span[data-count="finals"]');
+  const eventCountEl = document.querySelector('span[data-count="events"]');
+  const internshipCountEl = document.querySelector('span[data-count="internships"]');
+  const breakCountEl = document.querySelector('span[data-count="breaks"]');
+
   const classCount = document.querySelectorAll(".recurring-class-row").length;
   const examCount = document.querySelectorAll(".exam-row").length;
   const finalCount = document.querySelectorAll(".final-row").length;
@@ -3576,95 +3583,109 @@ function updateAcademicPreview() {
   const internshipCount = document.querySelectorAll(".internship-row").length;
   const breakCount = document.querySelectorAll(".academic-break-row").length;
 
-  document.querySelector('span[data-count="classes"]')?.textContent = classCount;
-  document.querySelector('span[data-count="exams"]')?.textContent = examCount;
-  document.querySelector('span[data-count="finals"]')?.textContent = finalCount;
-  document.querySelector('span[data-count="events"]')?.textContent = eventCount;
-  document.querySelector('span[data-count="internships"]')?.textContent = internshipCount;
-  document.querySelector('span[data-count="breaks"]')?.textContent = breakCount;
+  if (classCountEl) classCountEl.textContent = classCount;
+  if (examCountEl) examCountEl.textContent = examCount;
+  if (finalCountEl) finalCountEl.textContent = finalCount;
+  if (eventCountEl) eventCountEl.textContent = eventCount;
+  if (internshipCountEl) internshipCountEl.textContent = internshipCount;
+  if (breakCountEl) breakCountEl.textContent = breakCount;
 
   const semesterName =
-    document.getElementById("academic-semester-name")?.value.trim() || "—";
+    document.getElementById("academic-semester-name")?.value.trim() ||
+    "—";
+
+  const termType =
+    document.getElementById("academic-term-type")?.value ||
+    "";
 
   const termStart =
-    document.getElementById("academic-term-start")?.value || "";
+    document.getElementById("academic-term-start")?.value ||
+    "";
 
   const termEnd =
-    document.getElementById("academic-term-end")?.value || "";
+    document.getElementById("academic-term-end")?.value ||
+    "";
 
   const institution =
-    document.getElementById("academic-institution")?.value.trim() || "";
+    document.getElementById("academic-institution")?.value.trim() ||
+    "";
 
   const program =
-    document.getElementById("academic-program")?.value.trim() || "";
+    document.getElementById("academic-program")?.value.trim() ||
+    "";
 
   const year =
-    document.getElementById("academic-year")?.value.trim() || "";
-
-  const advisor =
-    document.getElementById("academic-advisor")?.value.trim() || "";
+    document.getElementById("academic-year")?.value.trim() ||
+    "";
 
   const timezone =
     document.getElementById("academic-timezone")?.value.trim() ||
     "America/New_York";
 
-  const semesterPreview =
-    document.getElementById("preview-semester-name");
+  const termTypeText = termType
+    ? capitalizeFirstLetter(termType)
+    : "—";
 
-  if (semesterPreview) {
-    semesterPreview.textContent = semesterName;
-  }
+  const termDatesText =
+    termStart && termEnd
+      ? `${termStart} to ${termEnd}`
+      : "—";
 
-  const termDatesPreview =
-    document.getElementById("preview-term-dates");
+  const profileText = [
+    institution,
+    program,
+    year,
+    timezone
+  ].filter(Boolean).join(" • ") || "—";
 
-  if (termDatesPreview) {
-    termDatesPreview.textContent =
-      termStart && termEnd
-        ? `(${termStart} to ${termEnd})`
-        : "";
-  }
+  const upcomingBreaksText = formatUpcomingAcademicBreaksAdmin();
 
-  const profilePreview =
-    document.getElementById("preview-academic-profile");
+  setAcademicPreviewText(
+    [
+      'span[data-display="semesterName"]',
+      '#academic-semester-summary',
+      '#academicSemesterSummary'
+    ],
+    semesterName
+  );
 
-  if (profilePreview) {
-    profilePreview.textContent =
-      [
-        institution,
-        program,
-        year,
-        advisor,
-        timezone
-      ].filter(Boolean).join(" • ") || "—";
-  }
+  setAcademicPreviewText(
+    [
+      'span[data-display="termType"]',
+      '#academic-term-type-summary',
+      '#academicTermTypeSummary'
+    ],
+    termTypeText
+  );
 
-  const breaksPreview =
-    document.getElementById("preview-academic-breaks");
+  setAcademicPreviewText(
+    [
+      'span[data-display="termDates"]',
+      '#academic-term-dates-summary',
+      '#academicTermDatesSummary'
+    ],
+    termDatesText
+  );
 
-  if (breaksPreview) {
-    const upcomingBreaks = getUpcomingAcademicBreaksAdmin();
+  setAcademicPreviewText(
+    [
+      'span[data-display="profileInfo"]',
+      '#academic-profile-summary',
+      '#academicProfileSummary'
+    ],
+    profileText
+  );
 
-    if (!upcomingBreaks.length) {
-      breaksPreview.innerHTML = `<li>—</li>`;
-    } else {
-      breaksPreview.innerHTML = upcomingBreaks
-        .slice(0, 3)
-        .map(item => {
-          const title = item.title || item.name || "Academic Break";
-
-          const dateText =
-            item.startDate === item.endDate
-              ? item.startDate
-              : `${item.startDate} to ${item.endDate}`;
-
-          return `<li>${title} (${dateText})</li>`;
-        })
-        .join("");
-    }
-  }
+  setAcademicPreviewText(
+    [
+      'span[data-display="upcomingBreaks"]',
+      '#academic-upcoming-breaks-summary',
+      '#academicUpcomingBreaksSummary'
+    ],
+    upcomingBreaksText
+  );
 }
-    
+
 /* -------------------------
    AUTH & INIT LISTENERS
    ------------------------- */
