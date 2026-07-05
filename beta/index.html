@@ -17,10 +17,10 @@
     referrerpolicy="no-referrer"
   />
 
-  /apple-touch-icon.png
-  /favicon-32x32.png
-  /favicon-16x16.png
-  /manifest.json
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/manifest.json" />
 
   <meta name="theme-color" content="#4EA8FF" />
 </head>
@@ -28,9 +28,6 @@
 <body class="dark-mode beta-page">
   <main class="container">
 
-    <!-- =============================== -->
-    <!-- Beta Header                     -->
-    <!-- =============================== -->
     <section class="section beta-page-section">
       <div class="beta-page-header">
         <div>
@@ -67,9 +64,6 @@
       </div>
     </section>
 
-    <!-- =============================== -->
-    <!-- Redone So Far                   -->
-    <!-- =============================== -->
     <section class="section beta-page-section">
       <div class="beta-section-heading">
         <h2>
@@ -167,9 +161,6 @@
       </div>
     </section>
 
-    <!-- =============================== -->
-    <!-- Currently Being Worked On       -->
-    <!-- =============================== -->
     <section class="section beta-page-section">
       <div class="beta-section-heading">
         <h2>
@@ -211,9 +202,6 @@
       </div>
     </section>
 
-    <!-- =============================== -->
-    <!-- Possible Next Changes           -->
-    <!-- =============================== -->
     <section class="section beta-page-section">
       <div class="beta-section-heading">
         <h2>
@@ -234,9 +222,6 @@
       </ul>
     </section>
 
-    <!-- =============================== -->
-    <!-- Beta Notes                      -->
-    <!-- =============================== -->
     <section class="section beta-page-section">
       <div class="beta-section-heading">
         <h2>
@@ -256,9 +241,6 @@
       </ul>
     </section>
 
-    <!-- =============================== -->
-    <!-- Release Roadmap                 -->
-    <!-- =============================== -->
     <section class="section beta-page-section">
       <div class="beta-section-heading">
         <h2>
@@ -320,42 +302,36 @@
       </div>
     </section>
 
-    <!-- =============================== -->
-    <!-- Actions                         -->
-    <!-- =============================== -->
     <div class="beta-actions">
-      /
+      <a href="/" class="beta-action-button">
         <i class="fa-solid fa-arrow-left"></i>
         Back to Home
       </a>
 
-      /settings
+      <a href="/settings" class="beta-action-button secondary">
         <i class="fa-solid fa-gear"></i>
         Open Settings
       </a>
     </div>
   </main>
 
-  <!-- =============================== -->
-  <!-- Dock Navigation                 -->
-  <!-- =============================== -->
   <nav class="onyx-dock">
-    /
+    <a class="dock-item" href="/">
       <span class="dock-icon">🏠</span>
       <span class="dock-label">Home</span>
     </a>
 
-    /beta
+    <a class="dock-item" href="/beta">
       <span class="dock-icon">🧪</span>
       <span class="dock-label">Beta</span>
     </a>
 
-    /resume
+    <a class="dock-item" href="/resume">
       <span class="dock-icon">📜</span>
       <span class="dock-label">Resume</span>
     </a>
 
-    /settings
+    <a class="dock-item" href="/settings">
       <span class="dock-icon">⚙️</span>
       <span class="dock-label">Settings</span>
     </a>
@@ -365,9 +341,9 @@
     function normalizeOnyxDockPath(path) {
       return (path || "/")
         .toLowerCase()
-        .replace(/index.html$/, "")
-        .replace(/.html$/, "")
-        .replace(//+$/, "") || "/";
+        .replace(/index\.html$/, "")
+        .replace(/\.html$/, "")
+        .replace(/\/+$/, "") || "/";
     }
 
     function updateOnyxDockActiveTab() {
@@ -420,8 +396,8 @@
           const dx = x / rect.width - 0.5;
           const dy = y / rect.height - 0.5;
 
-          link.style.setProperty("--x", ${x}px);
-          link.style.setProperty("--y", ${y}px);
+          link.style.setProperty("--x", `${x}px`);
+          link.style.setProperty("--y", `${y}px`);
           link.style.setProperty("--dx", dx);
           link.style.setProperty("--dy", dy);
         });
