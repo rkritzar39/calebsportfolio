@@ -11112,7 +11112,11 @@ body.light-e .creator-sort-controls select option {
 }
 
 /* ======================================================= */
-/* Beta Preview Page                                     : relative;/* Beta Preview Page                                      */
+/* Beta Preview Page                                       */
+/* ======================================================= */
+
+.beta-page-section {
+  position: relative;
   overflow: hidden;
   padding: 30px;
   margin-bottom: 28px;
@@ -11466,7 +11470,7 @@ body.light-e .creator-sort-controls select option {
     height: 46px;
   }
 }
-``
+
 /* v26.6-beta.1                                           */
 /* ======================================================= */
 
@@ -11475,8 +11479,6 @@ body.light-e .creator-sort-controls select option {
   margin: 0 auto;
   padding-bottom: 120px;
 }
-
-.beta-page-section {
 
 /* ================================================== */
 /* SMART TECH UPGRADE RECOMMENDATION UI               */
