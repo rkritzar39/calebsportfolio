@@ -12255,3 +12255,8 @@ body.light-e .tech-upgrade-explanation {
 #academic-hours-display .school-day{
   margin-top:0;
 }
+
+#academicDetails.is-collapsed {
+  display: none !important;
+}
+	
