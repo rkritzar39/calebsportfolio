@@ -1,16 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <metaamp."  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <meta name="author" content="Caleb Kritzar" />
 
   <title>Beta Preview - Caleb's Profile</title>
 
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/settings.css" />
+  /styles.css
+  /settings.css
 
   <link
     rel="stylesheet"
@@ -18,10 +17,10 @@
     referrerpolicy="no-referrer"
   />
 
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-  <link rel="manifest" href="/manifest.json" />
+  /apple-touch-icon.png
+  /favicon-32x32.png
+  /favicon-16x16.png
+  /manifest.json
 
   <meta name="theme-color" content="#4EA8FF" />
 </head>
@@ -47,7 +46,7 @@
           </p>
         </div>
 
-        <span class="beta-version-pill">v26.6-beta.1</span>
+        <span class="beta-version-pill">v26.6-beta.2</span>
       </div>
 
       <div class="beta-summary-grid">
@@ -58,7 +57,7 @@
 
         <article class="beta-summary-card">
           <span class="beta-summary-label">Current Beta</span>
-          <strong>v26.6-beta.1</strong>
+          <strong>v26.6-beta.2</strong>
         </article>
 
         <article class="beta-summary-card">
@@ -137,6 +136,34 @@
             <span class="beta-status active">Redone</span>
           </div>
         </article>
+
+        <article class="beta-feature-item">
+          <div class="beta-feature-icon">
+            <i class="fa-solid fa-business-time"></i>
+          </div>
+
+          <div>
+            <h3>Business Information Section</h3>
+            <p>
+              The business status and hours section was updated with improved weekly hours, holiday hours, temporary hours, manual overrides, local timezone display, traffic light status, status chip, today timeline, copy button, and hide/show full hours behavior.
+            </p>
+            <span class="beta-status active">Redone</span>
+          </div>
+        </article>
+
+        <article class="beta-feature-item">
+          <div class="beta-feature-icon">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+
+          <div>
+            <h3>Academic Availability Integration</h3>
+            <p>
+              Academic availability was added into the business section with support for recurring classes, exams, finals, university events, academic breaks, internships, semester metadata, academic profile information, and smart class status labels.
+            </p>
+            <span class="beta-status active">Redone</span>
+          </div>
+        </article>
       </div>
     </section>
 
@@ -202,7 +229,6 @@
         <li>Social links redesign</li>
         <li>Settings page cleanup</li>
         <li>Countdown section polish</li>
-        <li>Business section polish</li>
         <li>Useful Links section cleanup</li>
         <li>Disabilities section cleanup</li>
       </ul>
@@ -253,10 +279,18 @@
         </div>
 
         <div class="beta-roadmap-item">
-          <span class="roadmap-dot active"></span>
+          <span class="roadmap-dot"></span>
           <div>
             <strong>v26.6-beta.1</strong>
-            <p>Current partial beta revamp preview.</p>
+            <p>Original partial beta revamp preview.</p>
+          </div>
+        </div>
+
+        <div class="beta-roadmap-item">
+          <span class="roadmap-dot active"></span>
+          <div>
+            <strong>v26.6-beta.2</strong>
+            <p>Current beta update with business and academic section improvements.</p>
           </div>
         </div>
 
@@ -290,12 +324,12 @@
     <!-- Actions                         -->
     <!-- =============================== -->
     <div class="beta-actions">
-      <a href="/" class="beta-action-button">
+      /
         <i class="fa-solid fa-arrow-left"></i>
         Back to Home
       </a>
 
-      <a href="/settings" class="beta-action-button secondary">
+      /settings
         <i class="fa-solid fa-gear"></i>
         Open Settings
       </a>
@@ -306,130 +340,130 @@
   <!-- Dock Navigation                 -->
   <!-- =============================== -->
   <nav class="onyx-dock">
-  <a class="dock-item" href="/">
-    <span class="dock-icon">🏠</span>
-    <span class="dock-label">Home</span>
-  </a>
+    /
+      <span class="dock-icon">🏠</span>
+      <span class="dock-label">Home</span>
+    </a>
 
-  <a class="dock-item" href="/beta">
-    <span class="dock-icon">🧪</span>
-    <span class="dock-label">Beta</span>
-  </a>
+    /beta
+      <span class="dock-icon">🧪</span>
+      <span class="dock-label">Beta</span>
+    </a>
 
-  <a class="dock-item" href="/resume">
-    <span class="dock-icon">📜</span>
-    <span class="dock-label">Resume</span>
-  </a>
+    /resume
+      <span class="dock-icon">📜</span>
+      <span class="dock-label">Resume</span>
+    </a>
 
-  <a class="dock-item" href="/settings">
-    <span class="dock-icon">⚙️</span>
-    <span class="dock-label">Settings</span>
-  </a>
-</nav>
+    /settings
+      <span class="dock-icon">⚙️</span>
+      <span class="dock-label">Settings</span>
+    </a>
+  </nav>
 
-<script>
-  function normalizeOnyxDockPath(path) {
-    return (path || "/")
-      .toLowerCase()
-      .replace(/index\.html$/, "")
-      .replace(/\.html$/, "")
-      .replace(/\/+$/, "") || "/";
-  }
-
-  function updateOnyxDockActiveTab() {
-    const dock = document.querySelector(".onyx-dock");
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
-
-    if (!dock || !links.length) return;
-
-    const currentPath = normalizeOnyxDockPath(window.location.pathname);
-    let matched = false;
-
-    links.forEach((link) => {
-      const targetPath = normalizeOnyxDockPath(
-        new URL(link.getAttribute("href"), window.location.origin).pathname
-      );
-
-      const isActive =
-        targetPath === "/"
-          ? currentPath === "/"
-          : currentPath === targetPath ||
-            currentPath.startsWith(targetPath + "/");
-
-      link.classList.toggle("active", isActive);
-
-      if (isActive) matched = true;
-    });
-
-    if (!matched) {
-      const homeLink = document.querySelector('.onyx-dock .dock-item[href="/"]');
-
-      links.forEach((l) => l.classList.remove("active"));
-      if (homeLink) homeLink.classList.add("active");
+  <script>
+    function normalizeOnyxDockPath(path) {
+      return (path || "/")
+        .toLowerCase()
+        .replace(/index.html$/, "")
+        .replace(/.html$/, "")
+        .replace(//+$/, "") || "/";
     }
 
-    dock.classList.add("dock-ready");
-  }
+    function updateOnyxDockActiveTab() {
+      const dock = document.querySelector(".onyx-dock");
+      const links = document.querySelectorAll(".onyx-dock .dock-item");
 
-  function setupOnyxDockEffects() {
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
+      if (!dock || !links.length) return;
 
-    links.forEach((link) => {
-      if (link.dataset.dockEffectsReady === "true") return;
-      link.dataset.dockEffectsReady = "true";
+      const currentPath = normalizeOnyxDockPath(window.location.pathname);
+      let matched = false;
 
-      link.addEventListener("mousemove", (e) => {
-        const rect = link.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+      links.forEach((link) => {
+        const targetPath = normalizeOnyxDockPath(
+          new URL(link.getAttribute("href"), window.location.origin).pathname
+        );
 
-        const dx = x / rect.width - 0.5;
-        const dy = y / rect.height - 0.5;
+        const isActive =
+          targetPath === "/"
+            ? currentPath === "/"
+            : currentPath === targetPath ||
+              currentPath.startsWith(targetPath + "/");
 
-        link.style.setProperty("--x", `${x}px`);
-        link.style.setProperty("--y", `${y}px`);
-        link.style.setProperty("--dx", dx);
-        link.style.setProperty("--dy", dy);
+        link.classList.toggle("active", isActive);
+
+        if (isActive) matched = true;
       });
 
-      link.addEventListener("mouseleave", () => {
-        link.style.setProperty("--dx", "0");
-        link.style.setProperty("--dy", "0");
+      if (!matched) {
+        const homeLink = document.querySelector('.onyx-dock .dock-item[href="/"]');
+
+        links.forEach((l) => l.classList.remove("active"));
+        if (homeLink) homeLink.classList.add("active");
+      }
+
+      dock.classList.add("dock-ready");
+    }
+
+    function setupOnyxDockEffects() {
+      const links = document.querySelectorAll(".onyx-dock .dock-item");
+
+      links.forEach((link) => {
+        if (link.dataset.dockEffectsReady === "true") return;
+        link.dataset.dockEffectsReady = "true";
+
+        link.addEventListener("mousemove", (e) => {
+          const rect = link.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          const dx = x / rect.width - 0.5;
+          const dy = y / rect.height - 0.5;
+
+          link.style.setProperty("--x", ${x}px);
+          link.style.setProperty("--y", ${y}px);
+          link.style.setProperty("--dx", dx);
+          link.style.setProperty("--dy", dy);
+        });
+
+        link.addEventListener("mouseleave", () => {
+          link.style.setProperty("--dx", "0");
+          link.style.setProperty("--dy", "0");
+        });
       });
+    }
+
+    function initOnyxDock() {
+      setupOnyxDockEffects();
+      updateOnyxDockActiveTab();
+
+      requestAnimationFrame(updateOnyxDockActiveTab);
+      setTimeout(updateOnyxDockActiveTab, 50);
+      setTimeout(updateOnyxDockActiveTab, 150);
+      setTimeout(updateOnyxDockActiveTab, 350);
+      setTimeout(updateOnyxDockActiveTab, 800);
+
+      const y = document.getElementById("year");
+      if (y) y.textContent = new Date().getFullYear();
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initOnyxDock);
+    } else {
+      initOnyxDock();
+    }
+
+    window.addEventListener("pageshow", () => {
+      setupOnyxDockEffects();
+      updateOnyxDockActiveTab();
+      requestAnimationFrame(updateOnyxDockActiveTab);
+      setTimeout(updateOnyxDockActiveTab, 100);
+      setTimeout(updateOnyxDockActiveTab, 400);
     });
-  }
 
-  function initOnyxDock() {
-    setupOnyxDockEffects();
-    updateOnyxDockActiveTab();
-
-    requestAnimationFrame(updateOnyxDockActiveTab);
-    setTimeout(updateOnyxDockActiveTab, 50);
-    setTimeout(updateOnyxDockActiveTab, 150);
-    setTimeout(updateOnyxDockActiveTab, 350);
-    setTimeout(updateOnyxDockActiveTab, 800);
-
-    const y = document.getElementById("year");
-    if (y) y.textContent = new Date().getFullYear();
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initOnyxDock);
-  } else {
-    initOnyxDock();
-  }
-
-  window.addEventListener("pageshow", () => {
-    setupOnyxDockEffects();
-    updateOnyxDockActiveTab();
-    requestAnimationFrame(updateOnyxDockActiveTab);
-    setTimeout(updateOnyxDockActiveTab, 100);
-    setTimeout(updateOnyxDockActiveTab, 400);
-  });
-
-  window.addEventListener("load", updateOnyxDockActiveTab);
-  window.addEventListener("popstate", updateOnyxDockActiveTab);
-  window.addEventListener("hashchange", updateOnyxDockActiveTab);
-</script>
+    window.addEventListener("load", updateOnyxDockActiveTab);
+    window.addEventListener("popstate", updateOnyxDockActiveTab);
+    window.addEventListener("hashchange", updateOnyxDockActiveTab);
+  </script>
 </body>
 </html>
