@@ -1,13 +1,13 @@
 # Link in Bio Website
 
-https://img.shields.io/badge/version-v26.6--beta.2-blue
-https://img.shields.io/badge/build-2026.07.05-purple
-https://img.shields.io/badge/release%20track-Beta%20Revamp%20Preview-orange
-https://img.shields.io/badge/stable%20base-v26.5-green
-https://img.shields.io/badge/planned%20revamp-v27.0-yellow
-https://img.shields.io/badge/JavaScript-50.0%25-f1e05a
-https://img.shields.io/badge/CSS-36.3%25-663399
-https://img.shields.io/badge/HTML-13.7%25-e34c26
+![Version](https://img.shields.io/badge/version-v26.6--beta.2-blue)
+![Build](https://img.shields.io/badge/build-2026.07.05-purple)
+![Release Track](https://img.shields.io/badge/release%20track-Beta%20Revamp%20Preview-orange)
+![Stable Base](https://img.shields.io/badge/stable%20base-v26.5-green)
+![Planned Revamp](https://img.shields.io/badge/planned%20revamp-v27.0-yellow)
+![JavaScript](https://img.shields.io/badge/JavaScript-50.0%25-f1e05a)
+![CSS](https://img.shields.io/badge/CSS-36.3%25-663399)
+![HTML](https://img.shields.io/badge/HTML-13.7%25-e34c26)
 
 Welcome to the repository for my Link in Bio Website.
 
@@ -21,47 +21,47 @@ The website is built to be responsive, accessible, secure, and easy to use acros
 
 | Attribute | Details |
 | :--- | :--- |
-| Version | v26.6-beta.2 |
-| Build | 2026.07.05 |
-| Release Track | Beta Revamp Preview |
-| Current Stable Base | v26.5 |
-| Revamp Status | Partial beta revamp in progress |
-| Target Release | September 2026 |
-| Planned Full Revamp | v27.0 |
+| **Version** | v26.6-beta.2 |
+| **Build** | 2026.07.05 |
+| **Release Track** | Beta Revamp Preview |
+| **Current Stable Base** | v26.5 |
+| **Revamp Status** | Partial beta revamp in progress |
+| **Target Release** | September 2026 |
+| **Planned Full Revamp** | v27.0 |
 
 ---
 
 ## Table of Contents
 
-* #overview
-* #features
-  * #home-page
-  * #1-profile-section
-  * #2-live-activity--status
-  * #3-connect-with-me
-  * #4-tiktok-instagram-and-youtube-creator-shoutouts
-  * #5-useful-links
-  * #6-countdown
-  * #7-business-information
-  * #8-holiday-hours
-  * #9-temporary-hours
-  * #10-academic-availability
-  * #11-tech-information
-  * #12-useful-device-and-website-information
-  * #13-disabilities
-  * #14-version-information
-  * #15-notice-information
-  * #16-maintenance-mode
-* #beta-page
-* #settings-page
-* #resume-page
-* #admin-portal
-* #security-features
-* #accessibility-and-responsive-design
-* #coding-languages-and-technologies
-* #version-history
-* #release-roadmap
-* #conclusion
+* [Overview](#overview)
+* [Features](#features)
+  * [Home Page](#home-page)
+  * [1. Profile Section](#1-profile-section)
+  * [2. Live Activity / Status](#2-live-activity--status)
+  * [3. Connect with Me](#3-connect-with-me)
+  * [4. TikTok, Instagram, and YouTube Creator Shoutouts](#4-tiktok-instagram-and-youtube-creator-shoutouts)
+  * [5. Useful Links](#5-useful-links)
+  * [6. Countdown](#6-countdown)
+  * [7. Business Information](#7-business-information)
+  * [8. Holiday Hours](#8-holiday-hours)
+  * [9. Temporary Hours](#9-temporary-hours)
+  * [10. Academic Availability](#10-academic-availability)
+  * [11. Tech Information](#11-tech-information)
+  * [12. Useful Device and Website Information](#12-useful-device-and-website-information)
+  * [13. Disabilities](#13-disabilities)
+  * [14. Version Information](#14-version-information)
+  * [15. Notice Information](#15-notice-information)
+  * [16. Maintenance Mode](#16-maintenance-mode)
+* [Beta Page](#beta-page)
+* [Settings Page](#settings-page)
+* [Resume Page](#resume-page)
+* [Admin Portal](#admin-portal)
+* [Security Features](#security-features)
+* [Accessibility and Responsive Design](#accessibility-and-responsive-design)
+* [Coding Languages and Technologies](#coding-languages-and-technologies)
+* [Version History](#version-history)
+* [Release Roadmap](#release-roadmap)
+* [Conclusion](#conclusion)
 
 ---
 
@@ -83,7 +83,7 @@ Visitors can use the website to:
 * Access legal and notice information
 * Adjust appearance and accessibility settings
 
-> Note: Most public content is managed through the Admin Portal, which is only accessible to authorized accounts.
+> **Note:** Most public content is managed through the Admin Portal, which is only accessible to authorized accounts.
 
 ---
 
@@ -208,7 +208,7 @@ Useful links may include:
 * Visitors can click the links
 * Visitors cannot edit the links
 
-> Note: The merch store is listed under Useful Links instead of being treated as a separate built-in website page.
+> **Note:** The merch store is listed under Useful Links instead of being treated as a separate built-in website page.
 
 ---
 
@@ -482,7 +482,7 @@ Tech items support different ownership states.
 * Returned
 * Lost
 
-> Privacy Note: The tech section is public-facing, so private or sensitive device information is not exposed.
+> **Privacy Note:** The tech section is public-facing, so private or sensitive device information is not exposed.
 
 ---
 
@@ -835,7 +835,7 @@ The website includes features to discourage casual copying and misuse of content
 * Firebase-backed data
 * Restricted Admin Portal access
 
-> Disclaimer: These features act as deterrents and are not a replacement for server-side security or legal protection.
+> **Disclaimer:** These features act as deterrents and are not a replacement for server-side security or legal protection.
 
 ---
 
@@ -881,9 +881,9 @@ This project is built with standard web technologies and Firebase backend servic
 
 | Language | Percentage | Purpose |
 | :--- | :--- | :--- |
-| JavaScript | 50.0% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, and interactive UI features. |
-| CSS | 36.3% | Controls visual design, responsive layouts, liquid glass styling, animations, themes, and hover effects. |
-| HTML | 13.7% | Provides website structure, page sections, and content frameworks. |
+| **JavaScript** | 50.0% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, and interactive UI features. |
+| **CSS** | 36.3% | Controls visual design, responsive layouts, liquid glass styling, animations, themes, and hover effects. |
+| **HTML** | 13.7% | Provides website structure, page sections, and content frameworks. |
 
 ---
 
@@ -957,35 +957,35 @@ HTML provides the website structure.
 
 | Version | Highlights |
 | :--- | :--- |
-| v26.6-beta.2 | Current beta update. Updated Business Status & Hours. Improved academic availability. Added smart recurring class status labels. Fixed recurring classes so ended classes no longer stay stuck on “In Effect.” Improved hide/show full hours behavior. |
-| v26.6-beta.1 | Original partial beta revamp preview. Continued liquid glass / onyx UI refinements. Added beta notes and roadmap. |
-| v26.5 | Current stable base. Updated device info and creator shoutout sections. Continued liquid glass refinement. |
-| v26.1.2 | Introduced appearance settings, match device theme, and manual light/dark mode. |
-| v1.17.0 | Bug fixes. |
-| v1.16.0 | Introduced the Admin Portal and owner-only content management tools. |
-| v1.15.0 | Bug fixes. |
-| v1.14.0 | Theme consistency improvements and performance optimization. |
-| v1.13.0 | Added focus outline toggle and accessibility enhancements. |
-| v1.12.0 | Added merch store access under Useful Links. |
-| v1.11.0 | Added settings page, dark/light modes, font adjustments, and factory reset. |
-| v1.10.1 | Added current day highlight and enhanced the theme. |
-| v1.10.0 | Added event calendar and bug fixes. |
-| v1.9.0 | Added TikTok creator shoutouts, tech info, disabilities, version info, legal notices. |
-| v1.8.0 | Added RedNote support styled like YouTube and Instagram, plus general enhancements. |
-| v1.7.0 | Added security enhancements, media-saving deterrents, and text-copying deterrents. |
-| v1.6.0 | Added Instagram and YouTube creator shoutouts, last updated timestamps, and bug fixes. |
-| v1.5.0 | Bug fixes and improvements. |
+| **v26.6-beta.2** | Current beta update. Updated Business Status & Hours. Improved academic availability. Added smart recurring class status labels. Fixed recurring classes so ended classes no longer stay stuck on “In Effect.” Improved hide/show full hours behavior. |
+| **v26.6-beta.1** | Original partial beta revamp preview. Continued liquid glass / onyx UI refinements. Added beta notes and roadmap. |
+| **v26.5** | Current stable base. Updated device info and creator shoutout sections. Continued liquid glass refinement. |
+| **v26.1.2** | Introduced appearance settings, match device theme, and manual light/dark mode. |
+| **v1.17.0** | Bug fixes. |
+| **v1.16.0** | Introduced the Admin Portal and owner-only content management tools. |
+| **v1.15.0** | Bug fixes. |
+| **v1.14.0** | Theme consistency improvements and performance optimization. |
+| **v1.13.0** | Added focus outline toggle and accessibility enhancements. |
+| **v1.12.0** | Added merch store access under Useful Links. |
+| **v1.11.0** | Added settings page, dark/light modes, font adjustments, and factory reset. |
+| **v1.10.1** | Added current day highlight and enhanced the theme. |
+| **v1.10.0** | Added event calendar and bug fixes. |
+| **v1.9.0** | Added TikTok creator shoutouts, tech info, disabilities, version info, legal notices. |
+| **v1.8.0** | Added RedNote support styled like YouTube and Instagram, plus general enhancements. |
+| **v1.7.0** | Added security enhancements, media-saving deterrents, and text-copying deterrents. |
+| **v1.6.0** | Added Instagram and YouTube creator shoutouts, last updated timestamps, and bug fixes. |
+| **v1.5.0** | Bug fixes and improvements. |
 
 ---
 
 # Release Roadmap
 
-* v26.5 — Current stable website base.
-* v26.6-beta.1 — Original partial beta revamp preview.
-* v26.6-beta.2 — Current beta update with business and academic section improvements.
-* v26.6-beta.2+ — More beta fixes and section updates.
-* v26.6-rc.1 — Release candidate before the full September launch.
-* v27.0 — Full September 2026 revamp release.
+* **v26.5** — Current stable website base.
+* **v26.6-beta.1** — Original partial beta revamp preview.
+* **v26.6-beta.2** — Current beta update with business and academic section improvements.
+* **v26.6-beta.2+** — More beta fixes and section updates.
+* **v26.6-rc.1** — Release candidate before the full September launch.
+* **v27.0** — Full September 2026 revamp release.
 
 ---
 
