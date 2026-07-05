@@ -5463,120 +5463,100 @@ function normalizeTemporaryHours(temporaryHours) {
 /* =========================
    ACADEMIC AVAILABILITY
    ========================= */
+
 function evaluateAcademicAvailability(academicAvailability, nowInBusinessTimezone) {
   if (!academicAvailability || !nowInBusinessTimezone) return { active: false };
 
-  const currentMinutes = (nowInBusinessTimezone.hour * 60) + nowInBusinessTimezone.minute;
   const currentIsoDate = nowInBusinessTimezone.toISODate();
   const currentDayOfWeek = nowInBusinessTimezone.toFormat('ccc').toLowerCase();
+  const currentMinutes = nowInBusinessTimezone.hour * 60 + nowInBusinessTimezone.minute;
 
-  // Priority 1: Academic Breaks
-  const breaks = academicAvailability.breaks || [];
-  for (const b of breaks) {
-    if (isInDateWindow(nowInBusinessTimezone, b.startDate, b.endDate)) {
-      return {
-        active: true,
-        reason: b.title || b.name || b.label || 'Academic Break',
-        backAt: null
-      };
-    }
-  }
-
-  // Helper to check active dated/time-based academic blocks
   const checkBlocks = (blocks, matchField, matchValue) => {
-    for (const block of (blocks || [])) {
+    for (const block of blocks) {
+      if (!block[matchField]) continue;
+
       let isMatch = false;
+      if (matchField === 'date') {
+        isMatch = String(block[matchField]).trim() === matchValue;
+      } else if (Array.isArray(block[matchField])) {
+        isMatch = block[matchField]
+          .map((v) => normalizeAcademicDayValue(String(v)))
+          .includes(normalizeAcademicDayValue(matchValue));
+      } else if (typeof block[matchField] === 'string') {
+        isMatch = String(block[matchField])
+          .split(',')
+          .map((v) => normalizeAcademicDayValue(v))
+          .includes(normalizeAcademicDayValue(matchValue));
+      } else {
+        isMatch = normalizeAcademicDayValue(String(block[matchField])) === normalizeAcademicDayValue(matchValue);
+      }
 
-      if (block[matchField]) {
-        if (Array.isArray(block[matchField])) {
-          isMatch = block[matchField]
-            .map(v => String(v).trim().toLowerCase())
-            .includes(matchValue);
-        } else if (typeof block[matchField] === 'string') {
-          const values = block[matchField]
-            .split(',')
-            .map(v => v.trim().toLowerCase())
-            .filter(Boolean);
+      if (isMatch) {
+        let ranges = normalizeRanges(block);
 
-          isMatch = values.includes(matchValue);
-        } else {
-          isMatch = String(block[matchField]).trim().toLowerCase() === matchValue;
+        if (ranges.length === 0 && block.startTime && block.endTime) {
+          ranges = [{ open: block.startTime, close: block.endTime }];
         }
-      }
 
-      if (!isMatch) continue;
+        if (ranges.length === 0 && block.start && block.end) {
+          ranges = [{ open: block.start, close: block.end }];
+        }
 
-      let ranges = normalizeRanges(block);
+        const activeRange = findActiveRange(currentMinutes, ranges);
 
-      // Admin academic data uses startTime / endTime
-      if (ranges.length === 0 && block.startTime && block.endTime) {
-        ranges = [
-          {
-            open: block.startTime,
-            close: block.endTime
-          }
-        ];
-      }
-
-      // Extra fallback if another format is ever used
-      if (ranges.length === 0 && block.start && block.end) {
-        ranges = [
-          {
-            open: block.start,
-            close: block.end
-          }
-        ];
-      }
-
-      const activeRange = findActiveRange(currentMinutes, ranges);
-
-      if (activeRange) {
-        const closeMinutes = timeStringToMinutes(activeRange.close);
-
-        const backAt = closeMinutes != null
-          ? nowInBusinessTimezone.startOf('day').plus({ minutes: closeMinutes })
-          : null;
-
-        return {
-          block,
-          activeRange,
-          backAt
-        };
+        if (activeRange) {
+          const closeMinutes = timeStringToMinutes(activeRange.close);
+          const backAt = closeMinutes != null
+            ? nowInBusinessTimezone.startOf('day').plus({ minutes: closeMinutes })
+            : null;
+          return { block, activeRange, backAt };
+        }
       }
     }
 
     return null;
   };
 
-  // Priority 2: Finals
-  const finals = academicAvailability.finals || [];
-  const activeFinal = checkBlocks(finals, 'date', currentIsoDate);
+  // Priority 1: Academic Breaks
+  const breaks = Array.isArray(academicAvailability.breaks) ? academicAvailability.breaks : [];
+  for (const brk of breaks) {
+    if (isInDateWindow(nowInBusinessTimezone, brk.startDate, brk.endDate)) {
+      return {
+        active: true,
+        reason: brk.title || brk.label || 'Academic Break',
+        backAt: null
+      };
+    }
+  }
 
+  // Priority 2: Finals
+  const finals = Array.isArray(academicAvailability.finals) ? academicAvailability.finals : [];
+  const activeFinal = checkBlocks(finals, 'date', currentIsoDate);
   if (activeFinal) {
     return {
       active: true,
-      reason: activeFinal.block.title || 'Final Exam',
+      reason: activeFinal.block.title || activeFinal.block.course || 'Final Exam',
       backAt: activeFinal.backAt
     };
   }
 
   // Priority 3: Exams
-  const exams = academicAvailability.exams || [];
+  const exams = Array.isArray(academicAvailability.exams) ? academicAvailability.exams : [];
   const activeExam = checkBlocks(exams, 'date', currentIsoDate);
-
   if (activeExam) {
     return {
       active: true,
-      reason: activeExam.block.title || 'Exam in Progress',
+      reason: activeExam.block.title || activeExam.block.course || 'Exam',
       backAt: activeExam.backAt
     };
   }
 
   // Priority 4: Recurring Classes
-  const classes = (academicAvailability.recurringClasses || []).filter((cls) => {
-    if (!cls.startDate || !cls.endDate) return true;
-    return isInDateWindow(nowInBusinessTimezone, cls.startDate, cls.endDate);
-  });
+  const classes = (Array.isArray(academicAvailability.recurringClasses) ? academicAvailability.recurringClasses : [])
+    .filter((cls) => {
+      if (!cls.startDate || !cls.endDate) return true;
+      return isInDateWindow(nowInBusinessTimezone, cls.startDate, cls.endDate);
+    });
 
   const activeClass =
     checkBlocks(classes, 'days', currentDayOfWeek) ||
@@ -5614,21 +5594,24 @@ function getAcademicStartingSoonMinutes(academicAvailability, nowInBusinessTimez
   const matchesField = (block, matchField, matchValue) => {
     if (!block[matchField]) return false;
 
+    if (matchField === 'date') {
+      return String(block[matchField]).trim() === matchValue;
+    }
+
     if (Array.isArray(block[matchField])) {
       return block[matchField]
-        .map((v) => String(v).trim().toLowerCase())
-        .includes(matchValue);
+        .map((v) => normalizeAcademicDayValue(v))
+        .includes(normalizeAcademicDayValue(matchValue));
     }
 
     if (typeof block[matchField] === 'string') {
       return block[matchField]
         .split(',')
-        .map((v) => v.trim().toLowerCase())
-        .filter(Boolean)
-        .includes(matchValue);
+        .map((v) => normalizeAcademicDayValue(v))
+        .includes(normalizeAcademicDayValue(matchValue));
     }
 
-    return String(block[matchField]).trim().toLowerCase() === matchValue;
+    return normalizeAcademicDayValue(block[matchField]) === normalizeAcademicDayValue(matchValue);
   };
 
   const getBlockOpenMinutes = (block) => {
@@ -5645,7 +5628,7 @@ function getAcademicStartingSoonMinutes(academicAvailability, nowInBusinessTimez
     return ranges.length ? timeStringToMinutes(ranges[0].open) : null;
   };
 
-  // Finals + Exams: dated, time-based blocks matching today
+  // Finals + Exams
   const finals = Array.isArray(academicAvailability.finals) ? academicAvailability.finals : [];
   const exams = Array.isArray(academicAvailability.exams) ? academicAvailability.exams : [];
 
@@ -5656,7 +5639,7 @@ function getAcademicStartingSoonMinutes(academicAvailability, nowInBusinessTimez
     considerCandidate(nowInBusinessTimezone.startOf('day').plus({ minutes: openMinutes }));
   });
 
-  // Recurring Classes: day-of-week, time-based blocks active today
+  // Recurring Classes
   const classes = (Array.isArray(academicAvailability.recurringClasses)
     ? academicAvailability.recurringClasses
     : []
@@ -5712,6 +5695,126 @@ function formatAcademicDays(daysValue) {
   }
 
   return '—';
+}
+
+function normalizeAcademicDayValue(dayValue) {
+  const value = String(dayValue || '').trim().toLowerCase();
+
+  const dayMap = {
+    sunday: 'sun', sun: 'sun',
+    monday: 'mon', mon: 'mon',
+    tuesday: 'tue', tues: 'tue', tue: 'tue',
+    wednesday: 'wed', weds: 'wed', wed: 'wed',
+    thursday: 'thu', thurs: 'thu', thu: 'thu',
+    friday: 'fri', fri: 'fri',
+    saturday: 'sat', sat: 'sat'
+  };
+
+  return dayMap[value] || value.slice(0, 3);
+}
+
+function getRecurringClassDays(item) {
+  const rawDays = item?.days || item?.day || '';
+
+  if (Array.isArray(rawDays)) {
+    return rawDays
+      .map(normalizeAcademicDayValue)
+      .filter(Boolean);
+  }
+
+  return String(rawDays)
+    .split(',')
+    .map(day => normalizeAcademicDayValue(day))
+    .filter(Boolean);
+}
+
+function getNextRecurringClassLabel(item, nowInBusinessTimezone, fallbackTodayLabel = 'Not Scheduled Today') {
+  if (!item || !nowInBusinessTimezone) return fallbackTodayLabel;
+
+  const normalizedClassDays = getRecurringClassDays(item);
+
+  if (!normalizedClassDays.length) {
+    return fallbackTodayLabel;
+  }
+
+  const dayOrder = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  const currentDay = normalizeAcademicDayValue(nowInBusinessTimezone.toFormat('ccc'));
+  const currentIndex = dayOrder.indexOf(currentDay);
+
+  if (currentIndex === -1) return fallbackTodayLabel;
+
+  for (let offset = 1; offset <= 7; offset += 1) {
+    const nextIndex = (currentIndex + offset) % 7;
+    const nextDay = dayOrder[nextIndex];
+
+    if (normalizedClassDays.includes(nextDay)) {
+      const nextDate = nowInBusinessTimezone.plus({ days: offset });
+      const nextDayName = nextDate.toFormat('cccc');
+
+      if (offset === 1) {
+        return `${fallbackTodayLabel} • Next class tomorrow`;
+      }
+
+      return `${fallbackTodayLabel} • Next class ${nextDayName}`;
+    }
+  }
+
+  return fallbackTodayLabel;
+}
+
+function getRecurringClassSmartLabel(item, nowInBusinessTimezone) {
+  if (!item || !nowInBusinessTimezone) return '';
+
+  const classStartDate = item.startDate ? parseBusinessIsoDate(item.startDate) : null;
+  const classEndDate = item.endDate ? parseBusinessIsoDate(item.endDate) : null;
+
+  if (classStartDate && nowInBusinessTimezone < classStartDate.startOf('day')) {
+    const daysUntil = Math.round(
+      classStartDate.startOf('day').diff(nowInBusinessTimezone.startOf('day'), 'days').days
+    );
+
+    if (daysUntil === 0) return 'Scheduled for Today';
+    if (daysUntil === 1) return 'Scheduled for Tomorrow';
+    return `Scheduled in ${daysUntil} days`;
+  }
+
+  if (classEndDate && nowInBusinessTimezone > classEndDate.endOf('day')) {
+    return 'Concluded';
+  }
+
+  const currentDay = normalizeAcademicDayValue(nowInBusinessTimezone.toFormat('ccc'));
+  const normalizedClassDays = getRecurringClassDays(item);
+
+  if (
+    normalizedClassDays.length > 0 &&
+    !normalizedClassDays.includes(currentDay)
+  ) {
+    return getNextRecurringClassLabel(item, nowInBusinessTimezone, 'Not Scheduled Today');
+  }
+
+  if (!item.startTime || !item.endTime) {
+    return 'Scheduled for Today';
+  }
+
+  const startMinutes = timeStringToMinutes(item.startTime);
+  const endMinutes = timeStringToMinutes(item.endTime);
+
+  if (startMinutes == null || endMinutes == null) {
+    return 'Scheduled for Today';
+  }
+
+  const currentMinutes = nowInBusinessTimezone.hour * 60 + nowInBusinessTimezone.minute;
+
+  if (currentMinutes < startMinutes) {
+    const minutesUntilStart = startMinutes - currentMinutes;
+    return `Starts in ${formatDuration(minutesUntilStart)}`;
+  }
+
+  if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
+    return 'In Progress';
+  }
+
+  return getNextRecurringClassLabel(item, nowInBusinessTimezone, 'Concluded Today');
 }
 
 function getAcademicItemStatusLabel({
@@ -5801,18 +5904,12 @@ function renderAcademicSchedulePanel({
     `;
   };
 
-  /* -------------------------
-     Academic Breaks
-  ------------------------- */
+  // 1. Academic Breaks
+  const breaks = Array.isArray(academicAvailability.breaks) ? academicAvailability.breaks : [];
   let breaksHtml = '';
-
-  const breaks = Array.isArray(academicAvailability.breaks)
-    ? academicAvailability.breaks
-    : [];
-
   breaks.forEach((item) => {
-    const title = item.name || item.title || item.label || 'Academic Break';
-
+    const label = item.title || item.label || 'Break';
+    const dates = `${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}`;
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       startDate: item.startDate,
@@ -5821,74 +5918,41 @@ function renderAcademicSchedulePanel({
 
     breaksHtml += `
       <li>
-        <strong>${escapeHtml(title)}</strong>
-        <span class="hours">Academic Break</span>
-        <span class="dates">${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}</span>
+        <strong>${escapeHtml(label)}</strong>
+        <span class="dates">${dates}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
-      </li>
-    `;
+      </li>`;
   });
-
   html += renderSection('Academic Breaks', breaksHtml);
 
-  /* -------------------------
-     Classes
-  ------------------------- */
+  // 2. Classes
+  const classes = Array.isArray(academicAvailability.recurringClasses) ? academicAvailability.recurringClasses : [];
   let classesHtml = '';
-
-  const classes = Array.isArray(academicAvailability.recurringClasses)
-    ? academicAvailability.recurringClasses
-    : [];
-
   classes.forEach((item) => {
-    const title = item.title || item.course || 'Class';
-    const daysText = formatAcademicDays(item.days || item.day);
-
-    const timeText =
-      item.startTime && item.endTime
+    const label = item.title || item.course || 'Class';
+    const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
-
-    const dateText =
-      item.startDate && item.endDate
-        ? `${formatDate(item.startDate)} to ${formatDate(item.endDate)}`
-        : 'Recurring';
-
-    const statusLabel = getAcademicItemStatusLabel({
-      nowInBusinessTimezone,
-      startDate: item.startDate,
-      endDate: item.endDate
-    });
+    const days = formatAcademicDays(item.days || item.day);
+    const statusLabel = getRecurringClassSmartLabel(item, nowInBusinessTimezone);
 
     classesHtml += `
       <li>
-        <strong>${escapeHtml(title)}</strong>
-        <span class="hours">${escapeHtml(daysText)} • ${escapeHtml(timeText)}</span>
-        <span class="dates">${escapeHtml(dateText)}</span>
+        <strong>${escapeHtml(label)}</strong>
+        <span class="hours">${escapeHtml(timeRange)} (${escapeHtml(days)})</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
-      </li>
-    `;
+      </li>`;
   });
+  html += renderSection('Recurring Classes', classesHtml);
 
-  html += renderSection('Classes', classesHtml);
-
-  /* -------------------------
-     Exams
-  ------------------------- */
+  // 3. Exams
+  const exams = Array.isArray(academicAvailability.exams) ? academicAvailability.exams : [];
   let examsHtml = '';
-
-  const exams = Array.isArray(academicAvailability.exams)
-    ? academicAvailability.exams
-    : [];
-
   exams.forEach((item) => {
-    const title = item.title || item.course || 'Exam';
-
-    const timeText =
-      item.startTime && item.endTime
+    const label = item.title || item.course || 'Exam';
+    const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
-
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
@@ -5896,33 +5960,22 @@ function renderAcademicSchedulePanel({
 
     examsHtml += `
       <li>
-        <strong>${escapeHtml(title)}</strong>
-        <span class="hours">${escapeHtml(timeText)}</span>
+        <strong>${escapeHtml(label)}</strong>
+        <span class="hours">${escapeHtml(timeRange)}</span>
         <span class="dates">${escapeHtml(formatDate(item.date))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
-      </li>
-    `;
+      </li>`;
   });
-
   html += renderSection('Exams', examsHtml);
 
-  /* -------------------------
-     Finals
-  ------------------------- */
+  // 4. Finals
+  const finals = Array.isArray(academicAvailability.finals) ? academicAvailability.finals : [];
   let finalsHtml = '';
-
-  const finals = Array.isArray(academicAvailability.finals)
-    ? academicAvailability.finals
-    : [];
-
   finals.forEach((item) => {
-    const title = item.title || item.course || 'Final Exam';
-
-    const timeText =
-      item.startTime && item.endTime
+    const label = item.title || item.course || 'Final';
+    const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
-
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
@@ -5930,66 +5983,49 @@ function renderAcademicSchedulePanel({
 
     finalsHtml += `
       <li>
-        <strong>${escapeHtml(title)}</strong>
-        <span class="hours">${escapeHtml(timeText)}</span>
+        <strong>${escapeHtml(label)}</strong>
+        <span class="hours">${escapeHtml(timeRange)}</span>
         <span class="dates">${escapeHtml(formatDate(item.date))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
-      </li>
-    `;
+      </li>`;
   });
-
   html += renderSection('Finals', finalsHtml);
 
-  /* -------------------------
-     University Events
-  ------------------------- */
-  let universityEventsHtml = '';
-
-  const universityEvents = Array.isArray(academicAvailability.universityEvents)
-    ? academicAvailability.universityEvents
-    : [];
-
+  // 5. University Events
+  const universityEvents = Array.isArray(academicAvailability.universityEvents) ? academicAvailability.universityEvents : [];
+  let eventsHtml = '';
   universityEvents.forEach((item) => {
-    const title = item.title || item.name || 'University Event';
-
-    const timeText =
-      item.startTime && item.endTime
+    const label = item.title || item.label || 'Event';
+    const timeRange = (item.startTime && item.endTime)
         ? `${formatDisplayTimeBusinessInfo(item.startTime, visitorTimezone)} - ${formatDisplayTimeBusinessInfo(item.endTime, visitorTimezone)}`
         : '—';
-
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       date: item.date
     });
 
-    universityEventsHtml += `
+    eventsHtml += `
       <li>
-        <strong>${escapeHtml(title)}</strong>
-        <span class="hours">${escapeHtml(timeText)}</span>
+        <strong>${escapeHtml(label)}</strong>
+        <span class="hours">${escapeHtml(timeRange)}</span>
         <span class="dates">${escapeHtml(formatDate(item.date))}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
-      </li>
-    `;
+      </li>`;
   });
+  html += renderSection('University Events', eventsHtml);
 
-  html += renderSection('University Events', universityEventsHtml);
-
-  /* -------------------------
-     Internships & Co-Ops
-  ------------------------- */
+  // 6. Internships & Co-Ops
+  const internships = [
+    ...(Array.isArray(academicAvailability.internships) ? academicAvailability.internships : []),
+    ...(Array.isArray(academicAvailability.coOps) ? academicAvailability.coOps : [])
+  ];
   let internshipsHtml = '';
-
-  const internships = Array.isArray(academicAvailability.internships)
-    ? academicAvailability.internships
-    : [];
-
   internships.forEach((item) => {
-    const title = item.company || item.title || item.role || 'Internship';
-    const role = item.role ? ` • ${item.role}` : '';
-    const location = item.location ? ` • ${item.location}` : '';
-
-    const detailsText = `${role}${location}`.replace(/^ • /, '') || 'Internship / Co-Op';
-
+    const label = item.title || item.company || item.role || 'Internship/Co-Op';
+    const dates = (item.startDate && item.endDate)
+        ? `${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}`
+        : (item.startDate ? escapeHtml(formatDate(item.startDate)) : '—');
+        
     const statusLabel = getAcademicItemStatusLabel({
       nowInBusinessTimezone,
       startDate: item.startDate,
@@ -5998,50 +6034,12 @@ function renderAcademicSchedulePanel({
 
     internshipsHtml += `
       <li>
-        <strong>${escapeHtml(title)}</strong>
-        <span class="hours">${escapeHtml(detailsText)}</span>
-        <span class="dates">${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}</span>
+        <strong>${escapeHtml(label)}</strong>
+        <span class="dates">${dates}</span>
         <span class="days-until">${escapeHtml(statusLabel)}</span>
-      </li>
-    `;
+      </li>`;
   });
-
-  const coOps = Array.isArray(academicAvailability.coOps)
-    ? academicAvailability.coOps
-    : [];
-
-  coOps.forEach((item) => {
-    const title = item.company || item.title || item.role || 'Co-Op';
-    const role = item.role ? ` • ${item.role}` : '';
-    const location = item.location ? ` • ${item.location}` : '';
-
-    const detailsText = `${role}${location}`.replace(/^ • /, '') || 'Internship / Co-Op';
-
-    const statusLabel = getAcademicItemStatusLabel({
-      nowInBusinessTimezone,
-      startDate: item.startDate,
-      endDate: item.endDate
-    });
-
-    internshipsHtml += `
-      <li>
-        <strong>${escapeHtml(title)}</strong>
-        <span class="hours">${escapeHtml(detailsText)}</span>
-        <span class="dates">${escapeHtml(formatDate(item.startDate))} to ${escapeHtml(formatDate(item.endDate))}</span>
-        <span class="days-until">${escapeHtml(statusLabel)}</span>
-      </li>
-    `;
-  });
-
   html += renderSection('Internships & Co-Ops', internshipsHtml);
-
-  if (!html.trim()) {
-    academicDetails.hidden = true;
-    academicDetails.style.display = 'none';
-    academicDetails.open = false;
-    academicHoursDisplay.innerHTML = '';
-    return;
-  }
 
   academicHoursDisplay.innerHTML = html;
 }
