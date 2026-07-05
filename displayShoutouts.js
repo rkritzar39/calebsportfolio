@@ -5884,12 +5884,16 @@ function renderAcademicSchedulePanel({
     return;
   }
 
-  academicDetails.hidden = false;
-  academicDetails.style.display = 'block';
+  const hoursPanelIsCollapsed =
+  localStorage.getItem(BUSINESS_HOURS_COLLAPSED_STORAGE_KEY) === '1';
 
-  if (finalType === 'academic') {
-    academicDetails.open = true;
-  }
+academicDetails.hidden = false;
+academicDetails.classList.toggle('is-collapsed', hoursPanelIsCollapsed);
+academicDetails.style.display = hoursPanelIsCollapsed ? 'none' : 'block';
+
+if (finalType === 'academic' && !hoursPanelIsCollapsed) {
+  academicDetails.open = true;
+}
 
   let html = '';
 
@@ -6334,35 +6338,39 @@ function startMinuteAlignedRefresh() {
 function installPanelToggle() {
   const button = document.getElementById('toggleHoursBtn');
   const panel = document.getElementById('hoursPanel');
+  const academicDetails = document.getElementById('academicDetails');
 
   if (!button || !panel) return;
 
-  const isCollapsedInitially = localStorage.getItem(BUSINESS_HOURS_COLLAPSED_STORAGE_KEY) === '1';
+  const setCollapsedState = (isCollapsed) => {
+    panel.classList.toggle('is-collapsed', isCollapsed);
 
-  if (isCollapsedInitially) {
-    panel.classList.add('is-collapsed');
-    button.setAttribute('aria-expanded', 'false');
-  }
+    if (academicDetails) {
+      academicDetails.classList.toggle('is-collapsed', isCollapsed);
+      academicDetails.style.display = isCollapsed ? 'none' : '';
+      academicDetails.open = isCollapsed ? false : academicDetails.open;
+    }
+
+    button.setAttribute('aria-expanded', String(!isCollapsed));
+    localStorage.setItem(BUSINESS_HOURS_COLLAPSED_STORAGE_KEY, isCollapsed ? '1' : '0');
+    button.textContent = isCollapsed ? 'Show Full Hours' : 'Hide Full Hours';
+  };
+
+  const isCollapsedInitially =
+    localStorage.getItem(BUSINESS_HOURS_COLLAPSED_STORAGE_KEY) === '1';
+
+  setCollapsedState(isCollapsedInitially);
 
   if (button.dataset.bound === 'true') {
-    button.textContent = panel.classList.contains('is-collapsed')
-      ? 'Show Full Hours'
-      : 'Hide Full Hours';
     return;
   }
 
   button.dataset.bound = 'true';
 
   button.addEventListener('click', () => {
-    const isCollapsed = panel.classList.toggle('is-collapsed');
-    button.setAttribute('aria-expanded', String(!isCollapsed));
-    localStorage.setItem(BUSINESS_HOURS_COLLAPSED_STORAGE_KEY, isCollapsed ? '1' : '0');
-    button.textContent = isCollapsed ? 'Show Full Hours' : 'Hide Full Hours';
+    const isCollapsed = !panel.classList.contains('is-collapsed');
+    setCollapsedState(isCollapsed);
   });
-
-  button.textContent = panel.classList.contains('is-collapsed')
-    ? 'Show Full Hours'
-    : 'Hide Full Hours';
 }
 
 function installCopyToday() {
