@@ -54,12 +54,9 @@
   },
 
   "developer_tester": {
-    "ios": "27.0-db3",
-    "ipados": "27.0-db3",
-    "macos": "27.0-db3", 
-    "watchos": "27.0-db3",
-    "tvos": "27.0-db3",
-    "visionos": "27.0-db3",
+    "ios": "iOS 27.0 (24A5380h)",
+    "ipados": "iPadOS 27.0 (24A5380h)",
+    "macos": "macOS 27.0 (26A5378j)",
     
     "android": "17-dp2",
     "pixelui": "17-dp2",
@@ -87,7 +84,7 @@
         "match": { "deviceFamily": "iphone", "generationMin": 11, "generationMax": 17 }
       },
       {
-        "version": "27.0",
+        "version": "iOS 27.0",
         "label": "Apple 27 Beta Pipeline",
         "note": "Addresses the next generational shift featuring Liquid Glass interface frameworks.",
         "match": { "deviceFamily": "iphone", "generationMin": 11, "generationMax": 17 }
