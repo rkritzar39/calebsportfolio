@@ -5885,15 +5885,15 @@ function renderAcademicSchedulePanel({
   }
 
   const hoursPanelIsCollapsed =
-  localStorage.getItem(BUSINESS_HOURS_COLLAPSED_STORAGE_KEY) === '1';
+    localStorage.getItem(BUSINESS_HOURS_COLLAPSED_STORAGE_KEY) === '1';
 
-academicDetails.hidden = false;
-academicDetails.classList.toggle('is-collapsed', hoursPanelIsCollapsed);
-academicDetails.style.display = hoursPanelIsCollapsed ? 'none' : 'block';
+  academicDetails.hidden = false;
+  academicDetails.classList.toggle('is-collapsed', hoursPanelIsCollapsed);
+  academicDetails.style.display = hoursPanelIsCollapsed ? 'none' : 'block';
 
-if (finalType === 'academic' && !hoursPanelIsCollapsed) {
-  academicDetails.open = true;
-}
+  if (finalType === 'academic' && !hoursPanelIsCollapsed) {
+    academicDetails.open = true;
+  }
 
   let html = '';
 
@@ -6485,7 +6485,7 @@ function normalizeDisplayStatus(finalStatus, finalType, finalReason, isManualOve
   } else if (finalType === 'temporary') {
     displayStatusText = 'Temporary Closure';
   } else if (finalType === 'academic') {
-    displayStatusText = 'Closed';
+    displayStatusText = 'Temporarily Unavailable';
   } else if (finalStatus === 'Open') {
     displayStatusText = 'Open';
   } else {
@@ -6499,6 +6499,8 @@ function normalizeDisplayStatus(finalStatus, finalType, finalReason, isManualOve
       displayReasonText = 'Manually set to open';
     } else if (finalStatus === 'Closed') {
       displayReasonText = 'Manually set to closed';
+    } else if (finalStatus === 'Temporarily Unavailable') {
+      displayReasonText = 'Manually set to unavailable';
     } else {
       displayReasonText = 'Manual override';
     }
@@ -6508,7 +6510,7 @@ function normalizeDisplayStatus(finalStatus, finalType, finalReason, isManualOve
     } else if (finalType === 'temporary') {
       displayReasonText = 'Temporary change';
     } else if (finalType === 'academic') {
-      displayReasonText = finalReason;
+      displayReasonText = finalReason || 'Academic schedule';
     } else {
       displayReasonText = 'Regular schedule';
     }
@@ -6914,6 +6916,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
   if (statusOverride !== 'auto') {
     isManualOverride = true;
+
     if (statusOverride === 'open') {
       finalStatus = 'Open';
       finalType = 'regular';
@@ -6927,18 +6930,19 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
       finalType = 'temporary';
       finalReason = 'Manual Override';
     }
-  } else if (academicResult && academicResult.active) {
-    finalStatus = 'Closed';
-    finalType = 'academic';
-    finalReason = academicResult.reason;
-    activeAcademic = academicResult;
   } else if (activeTemporarySchedule) {
     finalStatus = 'Temporarily Unavailable';
     finalType = 'temporary';
     finalReason = `Temporary (${activeTemporarySchedule.label || 'Schedule'})`;
+  } else if (academicResult && academicResult.active) {
+    finalStatus = 'Temporarily Unavailable';
+    finalType = 'academic';
+    finalReason = academicResult.reason || 'Academic schedule';
+    activeAcademic = academicResult;
   }
 
   let statusClass = 'status-closed';
+
   if (finalStatus === 'Open') {
     statusClass = 'status-open';
   } else if (finalStatus === 'Temporarily Unavailable') {
@@ -6967,7 +6971,7 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
   (function setTodayMeta() {
     if (finalType === 'academic') {
-      setMetaRow('bizTodayHours', 'Unavailable');
+      setMetaRow('bizTodayHours', 'Temporarily Unavailable');
       return;
     }
 
@@ -6976,21 +6980,27 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
       if (todaySourceSchedule.isClosed || !todaySourceSchedule.ranges.length) {
         setMetaRow('bizTodayHours', 'Temporarily Unavailable');
-      } else if (todaySourceSchedule.ranges.length === 1) {
+        return;
+      }
+
+      if (todaySourceSchedule.ranges.length === 1) {
         const range = todaySourceSchedule.ranges[0];
+
         setMetaRow(
           'bizTodayHours',
           `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} – ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
         );
-      } else {
-        const joinedRanges = todaySourceSchedule.ranges
-          .map((range) =>
-            `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}–${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
-          )
-          .join(', ');
 
-        setMetaRow('bizTodayHours', joinedRanges);
+        return;
       }
+
+      const joinedRanges = todaySourceSchedule.ranges
+        .map((range) =>
+          `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)}–${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
+        )
+        .join(', ');
+
+      setMetaRow('bizTodayHours', joinedRanges);
       return;
     }
 
@@ -7003,10 +7013,12 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
 
     if (schedule.ranges.length === 1) {
       const range = schedule.ranges[0];
+
       setMetaRow(
         'bizTodayHours',
         `${formatDisplayTimeBusinessInfo(range.open, visitorTimezone)} – ${formatDisplayTimeBusinessInfo(range.close, visitorTimezone)}`
       );
+
       return;
     }
 
@@ -7483,53 +7495,51 @@ function calculateAndDisplayStatusBusinessInfo(businessData = {}, visitorTimezon
     theme: visualTheme
   });
 
-/* ============================
-   ACADEMIC UI UPDATES
-   ============================ */
-const timelineNowLabel = document.getElementById('bizTimelineNowLabel');
+  /* ============================
+     ACADEMIC UI UPDATES
+     ============================ */
+  const timelineNowLabel = document.getElementById('bizTimelineNowLabel');
 
-if (timelineNowLabel) {
-  timelineNowLabel.textContent = finalType === 'academic' ? 'Paused' : 'Now';
-}
+  if (timelineNowLabel) {
+    timelineNowLabel.textContent = finalType === 'academic' ? 'Paused' : 'Now';
+  }
 
-const academicBanner = document.getElementById('academic-status-banner');
-const academicTitle = document.getElementById('academic-status-title');
-const academicDetail = document.getElementById('academic-status-detail');
+  const academicBanner = document.getElementById('academic-status-banner');
+  const academicTitle = document.getElementById('academic-status-title');
+  const academicDetail = document.getElementById('academic-status-detail');
 
-if (academicBanner) {
-  if (finalType === 'academic') {
-    academicBanner.hidden = false;
-    academicBanner.style.display = 'block';
+  if (academicBanner) {
+    if (finalType === 'academic') {
+      academicBanner.hidden = false;
+      academicBanner.style.display = 'block';
 
-    if (academicTitle) {
-      academicTitle.textContent = 'Academic Schedule Active';
-    }
+      if (academicTitle) {
+        academicTitle.textContent = 'Academic Schedule Active';
+      }
 
-    if (academicDetail) {
-      academicDetail.textContent = finalReason || '';
-    }
-  } else {
-    academicBanner.hidden = true;
-    academicBanner.style.display = 'none';
+      if (academicDetail) {
+        academicDetail.textContent = finalReason || '';
+      }
+    } else {
+      academicBanner.hidden = true;
+      academicBanner.style.display = 'none';
 
-    if (academicTitle) {
-      academicTitle.textContent = '';
-    }
+      if (academicTitle) {
+        academicTitle.textContent = '';
+      }
 
-    if (academicDetail) {
-      academicDetail.textContent = '';
+      if (academicDetail) {
+        academicDetail.textContent = '';
+      }
     }
   }
-}
 
-renderAcademicSchedulePanel({
-  academicAvailability: cachedAcademicData,
-  nowInBusinessTimezone,
-  visitorTimezone,
-  finalType
-});
-
-
+  renderAcademicSchedulePanel({
+    academicAvailability: cachedAcademicData,
+    nowInBusinessTimezone,
+    visitorTimezone,
+    finalType
+  });
 
   (function renderRegularHours() {
     const weekOrder = [
