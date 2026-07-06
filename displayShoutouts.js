@@ -637,6 +637,192 @@ function getPlatformProfileUrl(platform, username) {
     return "#";
 }
 
+
+/* ------------------------------------------------------------
+   Creator Last Updated Helpers
+   TikTok / Instagram / YouTube
+------------------------------------------------------------ */
+
+const CREATOR_LAST_UPDATED_ELEMENT_IDS = {
+  tiktok: [
+    "tiktok-last-updated-timestamp",
+    "tiktok-last-updated",
+    "tiktokLastUpdated"
+  ],
+  instagram: [
+    "instagram-last-updated-timestamp",
+    "instagram-last-updated",
+    "instagramLastUpdated"
+  ],
+  youtube: [
+    "youtube-last-updated-timestamp",
+    "youtube-last-updated",
+    "youtubeLastUpdated"
+  ]
+};
+
+function normalizeCreatorTimestamp(value) {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    if (typeof value.toDate === "function") {
+      const date = value.toDate();
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    if (typeof value.seconds === "number") {
+      const date = new Date(value.seconds * 1000);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    if (typeof value._seconds === "number") {
+      const date = new Date(value._seconds * 1000);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    if (value instanceof Date) {
+      return Number.isNaN(value.getTime()) ? null : value;
+    }
+
+    if (typeof value === "string" || typeof value === "number") {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error normalizing creator timestamp:", error);
+    return null;
+  }
+}
+
+function formatCreatorLastUpdated(value) {
+  const date = normalizeCreatorTimestamp(value);
+
+  if (!date) {
+    return "Not available";
+  }
+
+  try {
+    return date.toLocaleString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  } catch (error) {
+    console.error("Error formatting creator timestamp:", error);
+    return "Not available";
+  }
+}
+
+function getCreatorLastUpdatedFromData(data = {}) {
+  if (!data || typeof data !== "object") {
+    return null;
+  }
+
+  return (
+    data.lastUpdated ||
+    data.updatedAt ||
+    data.timestamp ||
+    data.syncedAt ||
+    data.lastSynced ||
+    data.modifiedAt ||
+    data.createdAt ||
+    data.lastUpdatedAt ||
+    data.updated ||
+    null
+  );
+}
+
+function getLatestCreatorTimestampFromAccounts(accounts = []) {
+  if (!Array.isArray(accounts) || !accounts.length) {
+    return null;
+  }
+
+  let latestDate = null;
+
+  accounts.forEach((account) => {
+    const candidate = getCreatorLastUpdatedFromData(account);
+    const candidateDate = normalizeCreatorTimestamp(candidate);
+
+    if (!candidateDate) {
+      return;
+    }
+
+    if (!latestDate || candidateDate.getTime() > latestDate.getTime()) {
+      latestDate = candidateDate;
+    }
+  });
+
+  return latestDate;
+}
+
+function setCreatorLastUpdatedText(platform, text, explicitElement = null) {
+  const platformKey = String(platform || "").toLowerCase();
+  const ids = CREATOR_LAST_UPDATED_ELEMENT_IDS[platformKey] || [];
+  const updatedElements = new Set();
+
+  if (explicitElement) {
+    explicitElement.textContent = text;
+    updatedElements.add(explicitElement);
+  }
+
+  ids.forEach((elementId) => {
+    const element = document.getElementById(elementId);
+
+    if (element && !updatedElements.has(element)) {
+      element.textContent = text;
+      updatedElements.add(element);
+    }
+  });
+}
+
+function updateCreatorLastUpdated(platform, data = {}, accounts = [], explicitElement = null) {
+  const platformKey = String(platform || "").toLowerCase();
+  const platformSpecificTimestamp = data && typeof data === "object"
+    ? data[`lastUpdatedTime_${platformKey}`]
+    : null;
+  const directTimestamp = platformSpecificTimestamp || getCreatorLastUpdatedFromData(data);
+  const latestAccountTimestamp = getLatestCreatorTimestampFromAccounts(accounts);
+  const finalTimestamp = directTimestamp || latestAccountTimestamp;
+
+  setCreatorLastUpdatedText(
+    platformKey,
+    `Last Updated: ${formatCreatorLastUpdated(finalTimestamp)}`,
+    explicitElement
+  );
+}
+
+function setCreatorLastUpdatedLoading(platform, explicitElement = null) {
+  setCreatorLastUpdatedText(platform, "Last Updated: Loading...", explicitElement);
+}
+
+function setCreatorLastUpdatedUnavailable(platform, explicitElement = null) {
+  setCreatorLastUpdatedText(platform, "Last Updated: Not available", explicitElement);
+}
+
+function updateCreatorLastUpdatedFromSnapshot(platform, snapshot, accounts = [], explicitElement = null) {
+  if (!snapshot) {
+    setCreatorLastUpdatedUnavailable(platform, explicitElement);
+    return;
+  }
+
+  if (typeof snapshot.exists === "function" && !snapshot.exists()) {
+    updateCreatorLastUpdated(platform, {}, accounts, explicitElement);
+    return;
+  }
+
+  const data = typeof snapshot.data === "function"
+    ? snapshot.data() || {}
+    : snapshot || {};
+
+  updateCreatorLastUpdated(platform, data, accounts, explicitElement);
+}
+
 /* ------------------------------------------------------------
    TikTok Card
 ------------------------------------------------------------ */
@@ -4842,8 +5028,7 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
 
   console.log(`Loading ${platform} shoutout data into:`, gridElement);
   gridElement.innerHTML = `<p>Loading ${platform} Creators...</p>`;
-  if (timestampElement)
-    timestampElement.textContent = "Last Updated: Loading...";
+  setCreatorLastUpdatedLoading(platform, timestampElement);
 
   try {
     const shoutoutsCol = collection(db, "shoutouts");
@@ -4853,7 +5038,10 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
     );
     const querySnapshot = await getDocs(shoutoutQuery);
 
-    let creatorsData = querySnapshot.docs.map((doc) => doc.data());
+    let creatorsData = querySnapshot.docs.map((creatorDoc) => ({
+      id: creatorDoc.id,
+      ...creatorDoc.data()
+    }));
 
     // Apply saved sort initially
     const savedSort = getSavedSortPreference(platform);
@@ -4875,30 +5063,27 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
     displayPlatformCreators(platform, creatorsData);
 
     // Timestamp display
-    if (timestampElement && shoutoutsMetaRef) {
+    // Prefer the platform-level shoutouts metadata document when it exists.
+    // If that is unavailable or missing the platform timestamp, fall back to
+    // the newest timestamp found on the creator account documents.
+    let metadataData = {};
+
+    if (shoutoutsMetaRef) {
       try {
         const metaSnap = await getDoc(shoutoutsMetaRef);
-        if (metaSnap.exists()) {
-          const tsField = `lastUpdatedTime_${platform}`;
-          timestampElement.textContent = `Last Updated: ${formatFirestoreTimestamp(
-            metaSnap.data()?.[tsField]
-          )}`;
-        } else {
-          timestampElement.textContent = "Last Updated: N/A";
-        }
-      } catch (e) {
-        console.warn(`Could not fetch timestamp for ${platform}:`, e);
-        timestampElement.textContent = "Last Updated: Error";
+        metadataData = metaSnap.exists() ? metaSnap.data() || {} : {};
+      } catch (timestampError) {
+        console.warn(`Could not fetch timestamp metadata for ${platform}:`, timestampError);
       }
-    } else if (timestampElement) {
-      timestampElement.textContent = "Last Updated: N/A";
     }
+
+    updateCreatorLastUpdated(platform, metadataData, creatorsData, timestampElement);
 
     console.log(`${platform} shoutouts loaded and displayed (${savedSort}).`);
   } catch (error) {
     console.error(`Error loading ${platform} shoutout data:`, error);
     gridElement.innerHTML = `<p class="error">Error loading ${platform} creators.</p>`;
-    if (timestampElement) timestampElement.textContent = "Last Updated: Error";
+    setCreatorLastUpdatedUnavailable(platform, timestampElement);
   }
 }
 
