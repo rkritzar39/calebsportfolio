@@ -3956,20 +3956,22 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* ======================== */
 /* Tech Items (Glass Tiles) */
 /* ======================== */
-.tech-item {
-    position: relative;
-    background: linear-gradient(180deg, color-mix(in srgb, white 8%, transparent), transparent 50%), var(--content-bg);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    margin-bottom: 16px;
-    border: 1px solid color-mix(in srgb, white 5%, var(--border-color));
-    backdrop-filter: blur(14px) saturate(135%);
-    -webkit-backdrop-filter: blur(14px) saturate(135%);
-    
-    /* NEW: Contain all inner elements */
-    box-sizing: border-box;
-    width: 100%;
-    overflow-wrap: break-word; 
+.tech-item { 
+position: relative; 
+background: linear-gradient(180deg, color-mix(in srgb, white 8%, transparent), transparent 50%), var(--content-bg); 
+border-radius: var(--radius-lg); 
+padding: 20px; 
+margin-bottom: 16px; 
+border: 1px solid color-mix(in srgb, white 5%, var(--border-color)); 
+backdrop-filter: blur(14px) saturate(135%); 
+-webkit-backdrop-filter: blur(14px) saturate(135%);
+
+box-sizing: border-box;
+width: 100%;
+
+/* 🚨 FIX: Replaced aggressive 'break-word' to stop single-letter stacking */
+overflow-wrap: normal;
+word-break: normal; 
 }
 
 /* Subtle glass highlight */
@@ -4029,23 +4031,31 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* Tech Detail Rows         */
 /* ======================== */
 /* NEW: Flex-wrap allows long strings to drop to the next line */
-.tech-detail {
-    display: grid;
-    grid-template-columns: 24px max-content minmax(0,1fr);
-    align-items: start;
-    column-gap: 12px;
-    row-gap: 4px;
+.tech-detail { 
+display: flex; 
+align-items: flex-start; 
+flex-wrap: wrap; 
+gap: 6px 10px; 
+margin: 10px 0; 
+position: relative; 
+z-index: 1;
 
-    margin: 10px 0;
-    width: 100%;
-    box-sizing: border-box;
+/* 🚨 FIX: Ensures the flex row itself stays strictly within the glass tile */
+width: 100%;
+box-sizing: border-box;
 }
 
-.tech-detail i {
-    width: 20px;
-    justify-self: center;
-    margin-top: 2px;
-    flex: none;
+/* Icons stay the same */ 
+.tech-detail i { 
+width: 20px; 
+height: 20px; 
+display: flex; 
+align-items: center; 
+justify-content: center; 
+color: var(--accent-color); 
+font-size: calc(var(--font-size-base) * 0.85); 
+flex-shrink: 0; 
+margin-top: 2px; 
 }
 
 .tech-detail span {
@@ -10729,17 +10739,25 @@ body.maintenance-active .onyx-dock {
 }
 
 /* NEW: Strict separation of gray labels and prominent text */
-.tech-detail .tech-label {
-    font-weight: 600;
-    color: var(--secondary-text); /* Keeps "Condition:", "Primary Use:" gray */
-    white-space: nowrap;
+.tech-detail .tech-label { 
+font-weight: 600; 
+color: var(--secondary-text);
+
+/* 🚨 FIX: Removed 'white-space: nowrap'. Labels can now wrap naturally if they are too long */
+white-space: normal; 
+flex: 0 1 auto; 
 }
 
-.tech-detail .tech-value {
-    font-weight: 500;
-    color: var(--text-color); /* Ensures actual text is NOT gray */
-    flex: 1;
-    min-width: 120px;
+.tech-detail .tech-value { 
+font-weight: 500; 
+color: var(--text-color);
+
+/* 🚨 FIX: Uses flex-basis 0% so it behaves consistently. It drops to a new line if space is < 100px */
+flex: 1 1 0%;
+min-width: 100px; 
+
+/* Safely breaks only extremely long continuous strings (like URLs or serial numbers) */
+word-break: break-word; 
 }
 
 .upgrade-triggers li::marker {
