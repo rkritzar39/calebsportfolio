@@ -637,7 +637,6 @@ function getPlatformProfileUrl(platform, username) {
     return "#";
 }
 
-
 /* ------------------------------------------------------------
    Creator Last Updated Helpers
    TikTok / Instagram / YouTube
@@ -707,11 +706,13 @@ function formatCreatorLastUpdated(value) {
 
   try {
     return date.toLocaleString(undefined, {
-      month: "short",
+      weekday: "long",
+      month: "long",
       day: "numeric",
       year: "numeric",
       hour: "numeric",
-      minute: "2-digit"
+      minute: "2-digit",
+      hour12: true
     });
   } catch (error) {
     console.error("Error formatting creator timestamp:", error);
@@ -786,9 +787,22 @@ function updateCreatorLastUpdated(platform, data = {}, accounts = [], explicitEl
   const platformSpecificTimestamp = data && typeof data === "object"
     ? data[`lastUpdatedTime_${platformKey}`]
     : null;
-  const directTimestamp = platformSpecificTimestamp || getCreatorLastUpdatedFromData(data);
-  const latestAccountTimestamp = getLatestCreatorTimestampFromAccounts(accounts);
-  const finalTimestamp = directTimestamp || latestAccountTimestamp;
+  const directDate = normalizeCreatorTimestamp(
+    platformSpecificTimestamp || getCreatorLastUpdatedFromData(data)
+  );
+  const latestAccountDate = normalizeCreatorTimestamp(
+    getLatestCreatorTimestampFromAccounts(accounts)
+  );
+
+  let finalTimestamp = null;
+
+  if (directDate && latestAccountDate) {
+    finalTimestamp = directDate.getTime() >= latestAccountDate.getTime()
+      ? directDate
+      : latestAccountDate;
+  } else {
+    finalTimestamp = directDate || latestAccountDate || null;
+  }
 
   setCreatorLastUpdatedText(
     platformKey,
@@ -5014,8 +5028,10 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
     console.error(
       `Shoutout load error (${platform}): Firebase not ready.`
     );
-    if (gridElement)
+    if (gridElement) {
       gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`;
+    }
+    setCreatorLastUpdatedUnavailable(platform, timestampElement);
     return;
   }
 
@@ -5023,6 +5039,7 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
     console.warn(
       `Grid element missing for ${platform}. Cannot display shoutouts.`
     );
+    setCreatorLastUpdatedUnavailable(platform, timestampElement);
     return;
   }
 
@@ -5062,10 +5079,10 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
 
     displayPlatformCreators(platform, creatorsData);
 
-    // Timestamp display
-    // Prefer the platform-level shoutouts metadata document when it exists.
-    // If that is unavailable or missing the platform timestamp, fall back to
-    // the newest timestamp found on the creator account documents.
+    // Timestamp display:
+    // 1. Use the platform-level metadata timestamp when it is the newest.
+    // 2. If creator documents have a newer timestamp, use the newest creator timestamp instead.
+    // 3. If nothing exists, show "Not available".
     let metadataData = {};
 
     if (shoutoutsMetaRef) {
