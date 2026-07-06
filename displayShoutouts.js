@@ -914,16 +914,16 @@ function extractID(url) {
 ------------------------------------------------------------ */
 let latestOSVersions = {
     // Apple
-    ios: "26.5.1",
-    ipados: "26.5",
-    macos: "26.5.1",
+    ios: "26.5.2",
+    ipados: "26.5.2",
+    macos: "26.5.2",
     watchos: "26.5",
     tvos: "26.5",
     visionos: "26.5",
 
     // Android / Google / Samsung
-    android: "16",
-    pixelui: "16",
+    android: "17",
+    pixelui: "17",
     oneui: "8.5",
 
     // Other Android skins
@@ -954,48 +954,48 @@ let latestOSVersions = {
     linux: "rolling",
     ubuntu: "26.04",
     debian: "13",
-    fedora: "42",
+    fedora: "44",
     arch: "rolling",
     manjaro: "rolling",
-    linuxmint: "22",
-    popos: "24.04",
-    elementaryos: "8",
-    zorinos: "17",
-    opensuse: "15.6",
-    kali: "2026.1",
-    tails: "6",
+    linuxmint: "23",
+    popos: "26.04",
+    elementaryos: "9",
+    zorinos: "18",
+    opensuse: "16",
+    kali: "2026.2",
+    tails: "7",
     redhat: "10",
     rocky: "10",
     almalinux: "10",
 
     // Chrome / Google desktop
-    chromeos: "latest",
-    chromiumos: "latest",
+    chromeos: "148",
+    chromiumos: "148",
 
     // BSD / Unix-like
-    freebsd: "14",
-    openbsd: "7",
-    netbsd: "10",
+    freebsd: "15",
+    openbsd: "7.9",
+    netbsd: "11",
 
     // Gaming
-    steamos: "3",
+    steamos: "3.8.14",
     playstation: "5",
     xbox: "series",
-    nintendoswitch: "18",
+    nintendoswitch: "19",
 
     // TV / Smart home
-    fireos: "8",
-    rokuos: "13",
-    webos: "24",
-    tizen: "8",
+    fireos: "9",
+    rokuos: "15",
+    webos: "26",
+    tizen: "9",
     androidtv: "16",
     googletv: "16",
 
     // Watches / wearables
-    wearos: "6",
+    wearos: "7",
     garminos: "latest",
     fitbitos: "latest",
-    zeppos: "4",
+    zeppos: "5",
 
     // Other
     kindleos: "latest",
@@ -1004,6 +1004,7 @@ let latestOSVersions = {
 };
 
 const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
+
 
 /* ------------------------------------------------------------
    INIT
