@@ -4030,25 +4030,22 @@ body.dark-mode .social-button:not(:has(.social-chevron)):hover span::after {
 /* ======================== */
 /* NEW: Flex-wrap allows long strings to drop to the next line */
 .tech-detail {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap; 
-    gap: 6px 10px;
+    display: grid;
+    grid-template-columns: 24px max-content minmax(0,1fr);
+    align-items: start;
+    column-gap: 12px;
+    row-gap: 4px;
+
     margin: 10px 0;
-    position: relative;
-    z-index: 1;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tech-detail i {
     width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent-color);
-    font-size: calc(var(--font-size-base) * 0.85);
-    flex-shrink: 0;
-    margin-top: 2px; /* Aligns icon with multi-line text */
+    justify-self: center;
+    margin-top: 2px;
+    flex: none;
 }
 
 .tech-detail span {
@@ -11893,16 +11890,22 @@ body.light-e .tech-upgrade-explanation {
     color: var(--text-color); 
 }
 
-/* Overriding the gray tech labels */
 .tech-detail .tech-label {
-    color: var(--text-color) !important; 
-    font-weight: 650; /* Makes the label distinct from the value without using gray */
+    white-space: nowrap;
+    color: var(--secondary-text);
+    font-weight: 600;
 }
 
-/* Ensuring the corresponding values are also bright */
 .tech-detail .tech-value {
-    color: var(--text-color) !important; 
-    font-weight: 400;
+    color: var(--text-color);
+    font-weight: 500;
+
+    min-width: 0;
+    width: 100%;
+
+    overflow-wrap: break-word;
+    word-break: normal;
+    white-space: normal;
 }
 
 /* ======================== */
