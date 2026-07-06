@@ -3741,40 +3741,36 @@ function renderTechAutomationBadge(item) {
 }
 
 function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = "", windowText = "" }) {
-    if (!hasTechLifecycleValue(fromDevice) || !hasTechLifecycleValue(toDevice)) return "";
+    if (!hasTechLifecycleValue(fromDevice) || !hasTechLifecycleValue(toDevice)) {
+        return "";
+    }
 
-    const noteText = hasTechLifecycleValue(note)
-        ? String(note).trim()
-        : "";
+    let displayNote = note;
+    let roleLabel = "Planned role";
+    
+    if (note.startsWith("Current role:")) {
+        roleLabel = "Current role";
+        displayNote = note.replace("Current role:", "").trim();
+    } else if (note.startsWith("Planned role:")) {
+        displayNote = note.replace("Planned role:", "").trim();
+    }
 
-    const isPlannedRole = /^Planned role:\s*/i.test(noteText);
-    const isCurrentRole = /^Current role:\s*/i.test(noteText);
+    let displayWindow = windowText;
+    let dateIconClass = "fas fa-calendar-days"; 
+    
+    if (windowText.startsWith("Transitioned:")) {
+        dateIconClass = "fas fa-clock";
+        displayWindow = windowText.replace("Transitioned:", "").trim();
+    } else if (windowText.startsWith("Expected:")) {
+        displayWindow = windowText.replace("Expected:", "").trim();
+    }
 
-    const cleanNote = noteText
-        .replace(/^Planned role:\s*/i, "")
-        .replace(/^Current role:\s*/i, "")
-        .trim();
-
-    const roleLabel = isCurrentRole ? "Current role" : "Planned role";
-
-    const cleanWindowText = hasTechLifecycleValue(windowText)
-        ? String(windowText)
-            .replace(/^Expected:\s*/i, "")
-            .replace(/^Transitioned:\s*/i, "")
-            .trim()
-        : "";
-
-    const dateIcon = /^Transitioned:/i.test(String(windowText || ""))
-        ? "fas fa-clock"
-        : "fas fa-calendar-days";
-
-    return 
+    return `
     <div class="upgrade-path-modern">
         <div class="upgrade-path-modern-header">
             <div class="upgrade-path-modern-icon">
-                <i class="fas fa-route"></i>
+                <i class="fas fa-arrow-up-right-dots"></i>
             </div>
-
             <div>
                 <div class="upgrade-path-modern-title">Upgrade Path</div>
                 <div class="upgrade-path-modern-caption">Planned device transition</div>
@@ -3783,7 +3779,7 @@ function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = 
 
         <div class="upgrade-path-modern-flow">
             <div class="upgrade-path-modern-node">
-                <span>Current role</span>
+                <span>From</span>
                 <strong>${escapeHTML(fromDevice)}</strong>
             </div>
 
@@ -3792,56 +3788,97 @@ function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = 
             </div>
 
             <div class="upgrade-path-modern-node upgrade-path-modern-node-accent">
-                <span>Next device</span>
+                <span>To</span>
                 <strong>${escapeHTML(toDevice)}</strong>
             </div>
         </div>
 
-        ${hasTechLifecycleValue(cleanNote) ? 
+        ${hasTechLifecycleValue(displayNote) ? `
         <div class="upgrade-path-modern-role">
             <i class="fas fa-user"></i>
             <div>
-                <span class="upgrade-path-modern-label">${escapeHTML(roleLabel)}</span>
-                <span class="upgrade-path-modern-value">${escapeHTML(cleanNote)}</span>
+                <div class="upgrade-path-modern-label">${escapeHTML(roleLabel)}</div>
+                <div class="upgrade-path-modern-value">${escapeHTML(displayNote)}</div>
             </div>
-        </div>: ""}
+        </div>
+        ` : ""}
 
-        ${hasTechLifecycleValue(status) || hasTechLifecycleValue(cleanWindowText) ?
+        ${(hasTechLifecycleValue(status) || hasTechLifecycleValue(displayWindow)) ? `
         <div class="upgrade-path-modern-footer">
-            ${hasTechLifecycleValue(status) ? 
-            <span class="upgrade-path-modern-badge">
+            ${hasTechLifecycleValue(status) ? `
+            <div class="upgrade-path-modern-badge">
                 <i class="fas fa-calendar-check"></i>
                 ${escapeHTML(status)}
-            </span> : ""}
-
-            ${hasTechLifecycleValue(cleanWindowText) ? 
-            <span class="upgrade-path-modern-date">
-                <i class="${dateIcon}"></i>
-                ${escapeHTML(cleanWindowText)}
-            </span> : ""}
-        </div> : ""}
-    </div>;
+            </div>
+            ` : ""}
+            
+            ${hasTechLifecycleValue(displayWindow) ? `
+            <div class="upgrade-path-modern-date">
+                <i class="${escapeHTML(dateIconClass)}"></i>
+                <span>${escapeHTML(displayWindow)}</span>
+            </div>
+            ` : ""}
+        </div>
+        ` : ""}
+    </div>`;
 }
 
 
 function renderTechRoleTransitionBlock({ title, iconClass = "fas fa-right-left", fromRole = "", toRole = "", note = "", changedDate = "", badge = "" }) {
-    if (!hasTechLifecycleValue(fromRole) && !hasTechLifecycleValue(toRole) && !hasTechLifecycleValue(note)) return "";
+    if (!hasTechLifecycleValue(fromRole) && !hasTechLifecycleValue(toRole) && !hasTechLifecycleValue(note)) {
+        return "";
+    }
 
     return `
-    <div class="tech-lifecycle-card tech-role-transition">
-        <div class="tech-lifecycle-title">
-            <i class="${escapeHTML(iconClass)}"></i>
-            <span>${escapeHTML(title)}</span>
-            ${badge || ""}
+    <div class="upgrade-path-modern role-transition-block">
+        <div class="upgrade-path-modern-header">
+            <div class="upgrade-path-modern-icon">
+                <i class="${escapeHTML(iconClass)}"></i>
+            </div>
+
+            <div>
+                <div class="upgrade-path-modern-title">${escapeHTML(title || 'Role Transition')}</div>
+                ${hasTechLifecycleValue(changedDate) ? `<div class="upgrade-path-modern-caption">Updated: ${escapeHTML(changedDate)}</div>` : ""}
+            </div>
+            
+            ${hasTechLifecycleValue(badge) ? `
+            <div class="upgrade-path-modern-badge-wrapper">
+                ${badge}
+            </div>` : ""}
         </div>
-        ${hasTechLifecycleValue(fromRole) && hasTechLifecycleValue(toRole) ? `
-        <div class="tech-lifecycle-flow">
-            <span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(fromRole)}</span>
-            <i class="fas fa-arrow-right"></i>
-            <span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(toRole)}</span>
+
+        ${(hasTechLifecycleValue(fromRole) || hasTechLifecycleValue(toRole)) ? `
+        <div class="upgrade-path-modern-flow">
+            ${hasTechLifecycleValue(fromRole) ? `
+            <div class="upgrade-path-modern-node">
+                <span>Previous role</span>
+                <strong>${escapeHTML(fromRole)}</strong>
+            </div>
+            ` : ""}
+
+            ${hasTechLifecycleValue(fromRole) && hasTechLifecycleValue(toRole) ? `
+            <div class="upgrade-path-modern-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+            ` : ""}
+
+            ${hasTechLifecycleValue(toRole) ? `
+            <div class="upgrade-path-modern-node upgrade-path-modern-node-accent">
+                <span>New role</span>
+                <strong>${escapeHTML(toRole)}</strong>
+            </div>
+            ` : ""}
+        </div>
+        ` : ""}
+
+        ${hasTechLifecycleValue(note) ? `
+        <div class="upgrade-path-modern-role">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <span class="upgrade-path-modern-label">Transition Note</span>
+                <span class="upgrade-path-modern-value">${escapeHTML(note)}</span>
+            </div>
         </div>` : ""}
-        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note">${escapeHTML(note)}</div>` : ""}
-        ${hasTechLifecycleValue(changedDate) ? `<div class="tech-lifecycle-meta"><i class="fas fa-clock"></i> Updated ${escapeHTML(changedDate)}</div>` : ""}
     </div>`;
 }
 
