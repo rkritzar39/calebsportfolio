@@ -3743,24 +3743,67 @@ function renderTechAutomationBadge(item) {
 function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = "", windowText = "" }) {
     if (!hasTechLifecycleValue(fromDevice) || !hasTechLifecycleValue(toDevice)) return "";
 
-    return `
-    <div class="tech-lifecycle-card tech-upgrade-path">
-        <div class="tech-lifecycle-title">
-            <i class="fas fa-route"></i>
-            <span>Upgrade Path</span>
+    const cleanNote = hasTechLifecycleValue(note)
+        ? String(note).replace(/^Planned role:\s*/i, "").trim()
+        : "";
+
+    const cleanWindowText = hasTechLifecycleValue(windowText)
+        ? String(windowText).replace(/^Expected:\s*/i, "").trim()
+        : "";
+
+    return 
+    <div class="upgrade-path-modern">
+        <div class="upgrade-path-modern-header">
+            <div class="upgrade-path-modern-icon">
+                <i class="fas fa-route"></i>
+            </div>
+
+            <div>
+                <div class="upgrade-path-modern-title">Upgrade Path</div>
+                <div class="upgrade-path-modern-caption">Planned device transition</div>
+            </div>
         </div>
-        <div class="tech-lifecycle-flow">
-            <span class="tech-lifecycle-node tech-lifecycle-from">${escapeHTML(fromDevice)}</span>
-            <i class="fas fa-arrow-right"></i>
-            <span class="tech-lifecycle-node tech-lifecycle-to">${escapeHTML(toDevice)}</span>
+
+        <div class="upgrade-path-modern-flow">
+            <div class="upgrade-path-modern-node">
+                <span>Current role</span>
+                <strong>${escapeHTML(fromDevice)}</strong>
+            </div>
+
+            <div class="upgrade-path-modern-arrow">
+                <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <div class="upgrade-path-modern-node upgrade-path-modern-node-accent">
+                <span>Next device</span>
+                <strong>${escapeHTML(toDevice)}</strong>
+            </div>
         </div>
-        ${hasTechLifecycleValue(note) ? `<div class="tech-lifecycle-note">${escapeHTML(note)}</div>` : ""}
-        ${hasTechLifecycleValue(status) || hasTechLifecycleValue(windowText) ? `
-        <div class="tech-lifecycle-meta">
-            ${hasTechLifecycleValue(status) ? `<span class="support-badge blue">${escapeHTML(status)}</span>` : ""}
-            ${hasTechLifecycleValue(windowText) ? `<span>${escapeHTML(windowText)}</span>` : ""}
-        </div>` : ""}
-    </div>`;
+
+        ${hasTechLifecycleValue(cleanNote) ? 
+        <div class="upgrade-path-modern-role">
+            <i class="fas fa-user"></i>
+            <div>
+                <span class="upgrade-path-modern-label">Planned role</span>
+                <span class="upgrade-path-modern-value">${escapeHTML(cleanNote)}</span>
+            </div>
+        </div>: ""}
+
+        ${hasTechLifecycleValue(status) || hasTechLifecycleValue(cleanWindowText) ?
+        <div class="upgrade-path-modern-footer">
+            ${hasTechLifecycleValue(status) ? 
+            <span class="upgrade-path-modern-badge">
+                <i class="fas fa-calendar-check"></i>
+                ${escapeHTML(status)}
+            </span> : ""}
+
+            ${hasTechLifecycleValue(cleanWindowText) ? 
+            <span class="upgrade-path-modern-date">
+                <i class="fas fa-calendar-days"></i>
+                ${escapeHTML(cleanWindowText)}
+            </span> : ""}
+        </div> : ""}
+    </div>;
 }
 
 function renderTechRoleTransitionBlock({ title, iconClass = "fas fa-right-left", fromRole = "", toRole = "", note = "", changedDate = "", badge = "" }) {
