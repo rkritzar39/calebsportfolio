@@ -198,7 +198,7 @@ try {
     socialLinksCollectionRef = collection(db, "social_links");
     disabilitiesCollectionRef = collection(db, "disabilities");
     techItemsCollectionRef = collection(db, "tech_items");
-    shoutoutsMetaRef = doc(db, 'siteConfig', 'shoutoutsMetadata');
+    shoutoutsMetaRef = doc(db, 'site_config', 'shoutoutsMetadata');
     faqsCollectionRef = collection(db, "faqs");
     postsCollectionRef = collection(db, "posts");
     firebaseAppInitialized = true;
