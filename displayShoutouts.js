@@ -3743,13 +3743,30 @@ function renderTechAutomationBadge(item) {
 function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = "", windowText = "" }) {
     if (!hasTechLifecycleValue(fromDevice) || !hasTechLifecycleValue(toDevice)) return "";
 
-    const cleanNote = hasTechLifecycleValue(note)
-        ? String(note).replace(/^Planned role:\s*/i, "").trim()
+    const noteText = hasTechLifecycleValue(note)
+        ? String(note).trim()
         : "";
 
+    const isPlannedRole = /^Planned role:\s*/i.test(noteText);
+    const isCurrentRole = /^Current role:\s*/i.test(noteText);
+
+    const cleanNote = noteText
+        .replace(/^Planned role:\s*/i, "")
+        .replace(/^Current role:\s*/i, "")
+        .trim();
+
+    const roleLabel = isCurrentRole ? "Current role" : "Planned role";
+
     const cleanWindowText = hasTechLifecycleValue(windowText)
-        ? String(windowText).replace(/^Expected:\s*/i, "").trim()
+        ? String(windowText)
+            .replace(/^Expected:\s*/i, "")
+            .replace(/^Transitioned:\s*/i, "")
+            .trim()
         : "";
+
+    const dateIcon = /^Transitioned:/i.test(String(windowText || ""))
+        ? "fas fa-clock"
+        : "fas fa-calendar-days";
 
     return 
     <div class="upgrade-path-modern">
@@ -3784,7 +3801,7 @@ function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = 
         <div class="upgrade-path-modern-role">
             <i class="fas fa-user"></i>
             <div>
-                <span class="upgrade-path-modern-label">Planned role</span>
+                <span class="upgrade-path-modern-label">${escapeHTML(roleLabel)}</span>
                 <span class="upgrade-path-modern-value">${escapeHTML(cleanNote)}</span>
             </div>
         </div>: ""}
@@ -3799,12 +3816,13 @@ function renderTechUpgradePathBlock({ fromDevice, toDevice, note = "", status = 
 
             ${hasTechLifecycleValue(cleanWindowText) ? 
             <span class="upgrade-path-modern-date">
-                <i class="fas fa-calendar-days"></i>
+                <i class="${dateIcon}"></i>
                 ${escapeHTML(cleanWindowText)}
             </span> : ""}
         </div> : ""}
     </div>;
 }
+
 
 function renderTechRoleTransitionBlock({ title, iconClass = "fas fa-right-left", fromRole = "", toRole = "", note = "", changedDate = "", badge = "" }) {
     if (!hasTechLifecycleValue(fromRole) && !hasTechLifecycleValue(toRole) && !hasTechLifecycleValue(note)) return "";
