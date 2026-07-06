@@ -4308,7 +4308,7 @@ function renderTechItemHomepage(itemData) {
     const smartUpgradeHtml = `
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-calendar-check"></i>
-        <span class="tech-label">Recommended Upgrade Year:</span>
+        <span class="tech-label">Rec. Upgrade Year:</span>
         <span class="tech-value">${escapeHTML(smartUpgrade.recommendedUpgradeYear)}</span>
     </div>
 
@@ -4353,7 +4353,7 @@ function renderTechItemHomepage(itemData) {
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-hourglass-half"></i>
-        <span class="tech-label">Estimated Major Support End:</span>
+        <span class="tech-label">Est. Major Support End:</span>
         <span class="tech-value">
             ${supportLife.estimatedMajorSupportEndYear ? escapeHTML(supportLife.estimatedMajorSupportEndYear) : "N/A"}
         </span>
@@ -4361,7 +4361,7 @@ function renderTechItemHomepage(itemData) {
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-shield-halved"></i>
-        <span class="tech-label">Estimated Security Support End:</span>
+        <span class="tech-label">Est. Security Support End:</span>
         <span class="tech-value">
             ${supportLife.estimatedSecuritySupportEndYear ? escapeHTML(supportLife.estimatedSecuritySupportEndYear) : "N/A"}
         </span>
@@ -4377,7 +4377,7 @@ function renderTechItemHomepage(itemData) {
 
     <div class="tech-detail smart-upgrade-row">
         <i class="fas fa-bullseye"></i>
-        <span class="tech-label">Future Upgrade Target:</span>
+        <span class="tech-label">Upgrade Target:</span>
         <span class="tech-value">${escapeHTML(futureTarget.futureUpgradeTarget)}</span>
     </div>
 
