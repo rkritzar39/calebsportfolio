@@ -60,7 +60,7 @@
   /* ======================== /
   / iOS 27 Liquid Glass Optics /
   / ======================== */
-  --backdrop-blur: blur(34px) saturate(190%) contrast(112%);
+  --backdrop-blur: blur(30px) saturate(140%);
 
   --bubble-gradient:
     radial-gradient(
@@ -155,7 +155,7 @@ body.light-e {
   --icon-color: var(--light-icon);
   --social-icon-text-color: var(--light-text);
 
-  --backdrop-blur: blur(32px) saturate(200%) contrast(108%);
+  --backdrop-blur: blur(30px) saturate(140%);
 
   --bubble-gradient:
     radial-gradient(
@@ -225,7 +225,7 @@ body.dark-mode {
   --icon-color: var(--dark-icon);
   --social-icon-text-color: var(--dark-text);
 
-  --backdrop-blur: blur(34px) saturate(190%) contrast(112%);
+  --backdrop-blur: blur(30px) saturate(140%);
 
   --bubble-gradient:
     radial-gradient(
@@ -336,6 +336,10 @@ a {
   overflow: hidden;
   isolation: isolate;
 
+  /* Force Hardware Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
+
   background: var(--glass-surface);
   color: var(--text-color);
 
@@ -359,8 +363,7 @@ a {
   z-index: 0;
 
   background: var(--liquid-reflection);
-  opacity: 0.42;
-  mix-blend-mode: soft-light;
+  opacity: 0.25; /* Lowered opacity to replace mix-blend-mode */
 }
 
 .glass::after {
@@ -399,6 +402,10 @@ a {
   padding: 18px 22px;
   border-radius: var(--radius-lg);
 
+  /* Force Hardware Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
+
   background:
     var(--bubble-gradient),
     var(--liquid-refraction),
@@ -406,8 +413,9 @@ a {
 
   border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
 
-  backdrop-filter: blur(20px) saturate(160%) contrast(108%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%) contrast(108%);
+  /* Tamed contrast */
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
 
   box-shadow:
     inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent),
@@ -429,6 +437,9 @@ a {
 
   padding: 7px 14px;
   border-radius: var(--radius-pill);
+
+  will-change: transform;
+  transform: translateZ(0);
 
   background:
     linear-gradient(
@@ -460,6 +471,9 @@ a {
   padding: 8px 15px;
   border-radius: var(--radius-pill);
 
+  will-change: transform;
+  transform: translateZ(0);
+
   background:
     linear-gradient(
       180deg,
@@ -487,6 +501,10 @@ a {
   padding: 18px 22px;
   border-radius: var(--radius-lg);
 
+  /* Force Hardware Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
+
   background:
     var(--bubble-gradient),
     var(--liquid-refraction),
@@ -494,8 +512,9 @@ a {
 
   border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
 
-  backdrop-filter: blur(22px) saturate(165%) contrast(108%);
-  -webkit-backdrop-filter: blur(22px) saturate(165%) contrast(108%);
+  /* Tamed contrast */
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
 
   box-shadow:
     inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent),
@@ -525,6 +544,9 @@ a {
   padding: 8px 15px;
   border-radius: var(--radius-pill);
 
+  will-change: transform;
+  transform: translateZ(0);
+
   background:
     linear-gradient(
       180deg,
@@ -551,6 +573,10 @@ a {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+
+  /* Force Hardware Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
 
   padding: 28px;
   margin-bottom: 32px;
@@ -588,8 +614,7 @@ a {
   z-index: 0;
 
   background: var(--liquid-reflection);
-  opacity: 0.42;
-  mix-blend-mode: soft-light;
+  opacity: 0.25; /* Lowered opacity to replace mix-blend-mode */
 }
 
 .section::after {
@@ -662,7 +687,7 @@ body.light-e .section[data-section-id="battery"] {
 
 body.light-e .glass::before,
 body.light-e .section::before {
-  opacity: 0.5;
+  opacity: 0.35; /* Adjusted down relative to the new base opacity */
 }
 
 body.light-e .glass::after,
@@ -732,7 +757,7 @@ html.dark-mode body .glass::before,
 html.dark-mode body .section::before,
 body.dark-mode .glass::before,
 body.dark-mode .section::before {
-  opacity: 0.4;
+  opacity: 0.25; /* Adjusted down relative to the new base opacity */
 }
 
 html.dark-mode body .glass::after,
@@ -825,7 +850,6 @@ body.reduced-motion .mouse-trail-container {
     padding: 16px 18px;
   }
 }
-
 
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
