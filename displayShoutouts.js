@@ -4673,99 +4673,75 @@ function attachFaqAccordionListeners() {
 
 // --- NEW SHOUTOUTS DISPLAY FUNCTION ---
 function displayPlatformCreators(platform, creatorsToDisplay) {
-  let gridElement;
-  let renderFunction;
+    let gridElement, renderFunction;
 
-  switch (platform) {
-    case "tiktok":
-      gridElement = document.querySelector("#tiktok-shoutouts-section .creator-grid");
-      renderFunction = renderTikTokCard;
-      break;
+    switch (platform) {
+        case 'tiktok':
+            gridElement = document.querySelector('#tiktok-shoutouts-section .creator-grid');
+            renderFunction = renderTikTokCard;
+            break;
+        case 'instagram':
+            gridElement = document.querySelector('#instagram-shoutouts-section .instagram-creator-grid');
+            renderFunction = renderInstagramCard;
+            break;
+        case 'youtube':
+            gridElement = document.querySelector('#youtube-shoutouts-section .youtube-creator-grid');
+            renderFunction = renderYouTubeCard;
+            break;
+        default:
+            console.error("Unknown platform for display:", platform);
+            return;
+    }
 
-    case "instagram":
-      gridElement = document.querySelector("#instagram-shoutouts-section .instagram-creator-grid");
-      renderFunction = renderInstagramCard;
-      break;
+    if (!gridElement) {
+        console.error(`Grid element for ${platform} not found.`);
+        return;
+    }
 
-    case "youtube":
-      gridElement = document.querySelector("#youtube-shoutouts-section .youtube-creator-grid");
-      renderFunction = renderYouTubeCard;
-      break;
-
-    default:
-      console.error("Unknown platform for display:", platform);
-      return;
-  }
-
-  if (!gridElement) {
-    console.error(Grid element for ${platform} not found.);
-    return;
-  }
-
-  if (!Array.isArray(creatorsToDisplay) || creatorsToDisplay.length === 0) {
-    gridElement.innerHTML = <p>No creators match your search.</p>;
-    return;
-  }
-
-  gridElement.innerHTML = creatorsToDisplay
-    .map((creator) => renderFunction(creator))
-    .join("");
+    if (creatorsToDisplay.length === 0) {
+        gridElement.innerHTML = `<p>No creators match your search.</p>`;
+    } else {
+        gridElement.innerHTML = creatorsToDisplay.map(creator => renderFunction(creator)).join('');
+    }
 }
 
 /* ==========================================================
-   CREATOR SHOUTOUTS SYSTEM
-   TikTok / Instagram / YouTube
-   Search + Sort + Last Updated
+   CREATOR SHOUTOUTS SYSTEM (FINAL INTEGRATED VERSION)
    ========================================================== */
 
 // --- Helper: Safely parse follower/subscriber counts ---
 function parseCount(value) {
   if (!value) return 0;
-
-  if (typeof value === "number") {
-    return value;
-  }
-
+  if (typeof value === "number") return value;
   const str = value.toString().replace(/,/g, "").trim().toUpperCase();
-
-  if (str.endsWith("K")) {
-    return parseFloat(str) * 1000;
-  }
-
-  if (str.endsWith("M")) {
-    return parseFloat(str) * 1000000;
-  }
-
-  if (str.endsWith("B")) {
-    return parseFloat(str) * 1000000000;
-  }
-
+  if (str.endsWith("K")) return parseFloat(str) * 1000;
+  if (str.endsWith("M")) return parseFloat(str) * 1000000;
+  if (str.endsWith("B")) return parseFloat(str) * 1000000000;
   return parseFloat(str) || 0;
 }
 
 // --- Generic Sorter Function ---
 function sortCreators(creators, method) {
-  const sorted = Array.isArray(creators) ? [...creators] : [];
-
+  const sorted = [...creators];
   switch (method) {
     case "followers_desc":
       return sorted.sort(
         (a, b) =>
-          parseCount(b.followers || b.subscribers || b.followerCount || b.subscriberCount) -
-          parseCount(a.followers || a.subscribers || a.followerCount || a.subscriberCount)
+          parseCount(b.followers || b.subscribers) -
+          parseCount(a.followers || a.subscribers)
       );
 
     case "followers_asc":
       return sorted.sort(
         (a, b) =>
-          parseCount(a.followers || a.subscribers || a.followerCount || a.subscriberCount) -
-          parseCount(b.followers || b.subscribers || b.followerCount || b.subscriberCount)
+          parseCount(a.followers || a.subscribers) -
+          parseCount(b.followers || b.subscribers)
       );
 
     case "abc_asc":
       return sorted.sort((a, b) =>
-        (a.nickname || a.displayName || a.name || a.username || "").localeCompare(
-          b.nickname || b.displayName || b.name || b.username || "",
+        (a.nickname || a.username || "").localeCompare(
+          b.nickname || b.username || "",
           undefined,
           { sensitivity: "base" }
         )
@@ -4773,8 +4749,8 @@ function sortCreators(creators, method) {
 
     case "abc_desc":
       return sorted.sort((a, b) =>
-        (b.nickname || b.displayName || b.name || b.username || "").localeCompare(
-          a.nickname || a.displayName || a.name || a.username || "",
+        (b.nickname || b.username || "").localeCompare(
+          a.nickname || a.username || "",
           undefined,
           { sensitivity: "base" }
         )
@@ -4787,78 +4763,39 @@ function sortCreators(creators, method) {
 
 // --- LocalStorage Helpers ---
 function getSavedSortPreference(platform) {
-  return localStorage.getItem(sortPref_${platform}) || "followers_desc";
+  return localStorage.getItem(`sortPref_${platform}`) || "followers_desc";
 }
-
 function saveSortPreference(platform, value) {
-  localStorage.setItem(sortPref_${platform}, value);
-}
-
-// --- Get Cached Creators By Platform ---
-function getCreatorsForPlatform(platform) {
-  switch (platform) {
-    case "tiktok":
-      return allTikTokCreators;
-
-    case "instagram":
-      return allInstagramCreators;
-
-    case "youtube":
-      return allYouTubeCreators;
-
-    default:
-      return [];
-  }
-}
-
-// --- Store Cached Creators By Platform ---
-function setCreatorsForPlatform(platform, creatorsData = []) {
-  switch (platform) {
-    case "tiktok":
-      allTikTokCreators = creatorsData;
-      break;
-
-    case "instagram":
-      allInstagramCreators = creatorsData;
-      break;
-
-    case "youtube":
-      allYouTubeCreators = creatorsData;
-      break;
-
-    default:
-      console.warn("Unknown platform for cache storage:", platform);
-  }
+  localStorage.setItem(`sortPref_${platform}`, value);
 }
 
 // --- Combined Renderer for Search + Sort ---
 function renderFilteredAndSortedCreators(platform, searchTerm = "") {
-  const creators = getCreatorsForPlatform(platform);
+  let creators;
+  switch (platform) {
+    case "tiktok":
+      creators = allTikTokCreators;
+      break;
+    case "instagram":
+      creators = allInstagramCreators;
+      break;
+    case "youtube":
+      creators = allYouTubeCreators;
+      break;
+    default:
+      return;
+  }
 
-  const sortSelect = document.getElementById(${platform}-sort);
+  const sortSelect = document.getElementById(`${platform}-sort`);
   const sortMethod = sortSelect
     ? sortSelect.value
     : getSavedSortPreference(platform);
 
-  const normalizedSearchTerm = String(searchTerm || "").trim().toLowerCase();
-
-  const filtered = creators.filter((creator) => {
-    if (!normalizedSearchTerm) {
-      return true;
-    }
-
-    const username = String(creator.username || "").toLowerCase();
-    const nickname = String(creator.nickname || "").toLowerCase();
-    const displayName = String(creator.displayName || "").toLowerCase();
-    const name = String(creator.name || "").toLowerCase();
-    const channelName = String(creator.channelName || "").toLowerCase();
-
+  const filtered = creators.filter((c) => {
+    const term = searchTerm.toLowerCase();
     return (
-      username.includes(normalizedSearchTerm) ||
-      nickname.includes(normalizedSearchTerm) ||
-      displayName.includes(normalizedSearchTerm) ||
-      name.includes(normalizedSearchTerm) ||
-      channelName.includes(normalizedSearchTerm)
+      (c.username && c.username.toLowerCase().includes(term)) ||
+      (c.nickname && c.nickname.toLowerCase().includes(term))
     );
   });
 
@@ -4869,61 +4806,44 @@ function renderFilteredAndSortedCreators(platform, searchTerm = "") {
 // --- Main Loader for Firestore Data ---
 async function loadShoutoutPlatformData(platform, timestampElement) {
   let gridElement;
-
   switch (platform) {
     case "tiktok":
-      gridElement = document.querySelector("#tiktok-shoutouts-section .creator-grid");
+      gridElement = document.querySelector(
+        "#tiktok-shoutouts-section .creator-grid"
+      );
       break;
-
     case "instagram":
-      gridElement = document.querySelector("#instagram-shoutouts-section .instagram-creator-grid");
+      gridElement = document.querySelector(
+        "#instagram-shoutouts-section .instagram-creator-grid"
+      );
       break;
-
     case "youtube":
-      gridElement = document.querySelector("#youtube-shoutouts-section .youtube-creator-grid");
+      gridElement = document.querySelector(
+        "#youtube-shoutouts-section .youtube-creator-grid"
+      );
       break;
-
-    default:
-      console.error("Unknown shoutout platform:", platform);
-      return;
   }
 
   if (!firebaseAppInitialized || !db) {
-    console.error(Shoutout load error (${platform}): Firebase not ready.);
-
-    if (gridElement) {
-      gridElement.innerHTML = <p class="error">Error loading ${platform} creators (DB Init).</p>;
-    }
-
-    if (typeof setCreatorLastUpdatedUnavailable === "function") {
-      setCreatorLastUpdatedUnavailable(platform, timestampElement);
-    } else if (timestampElement) {
-      timestampElement.textContent = "Last Updated: Not available";
-    }
-
+    console.error(
+      `Shoutout load error (${platform}): Firebase not ready.`
+    );
+    if (gridElement)
+      gridElement.innerHTML = `<p class="error">Error loading ${platform} creators (DB Init).</p>`;
     return;
   }
 
   if (!gridElement) {
-    console.warn(Grid element missing for ${platform}. Cannot display shoutouts.);
-
-    if (typeof setCreatorLastUpdatedUnavailable === "function") {
-      setCreatorLastUpdatedUnavailable(platform, timestampElement);
-    } else if (timestampElement) {
-      timestampElement.textContent = "Last Updated: Not available";
-    }
-
+    console.warn(
+      `Grid element missing for ${platform}. Cannot display shoutouts.`
+    );
     return;
   }
 
-  console.log(Loading ${platform} shoutout data into:, gridElement);
-  gridElement.innerHTML = <p>Loading ${platform} Creators...</p>;
-
-  if (typeof setCreatorLastUpdatedLoading === "function") {
-    setCreatorLastUpdatedLoading(platform, timestampElement);
-  } else if (timestampElement) {
+  console.log(`Loading ${platform} shoutout data into:`, gridElement);
+  gridElement.innerHTML = `<p>Loading ${platform} Creators...</p>`;
+  if (timestampElement)
     timestampElement.textContent = "Last Updated: Loading...";
-  }
 
   try {
     const shoutoutsCol = collection(db, "shoutouts");
@@ -4931,57 +4851,54 @@ async function loadShoutoutPlatformData(platform, timestampElement) {
       shoutoutsCol,
       where("platform", "==", platform)
     );
-
     const querySnapshot = await getDocs(shoutoutQuery);
 
-    let creatorsData = querySnapshot.docs.map((creatorDoc) => ({
-      id: creatorDoc.id,
-      ...creatorDoc.data()
-    }));
+    let creatorsData = querySnapshot.docs.map((doc) => doc.data());
 
     // Apply saved sort initially
     const savedSort = getSavedSortPreference(platform);
     creatorsData = sortCreators(creatorsData, savedSort);
 
-    // Store globally for search and sorting
-    setCreatorsForPlatform(platform, creatorsData);
+    // Store globally for searches
+    switch (platform) {
+      case "tiktok":
+        allTikTokCreators = creatorsData;
+        break;
+      case "instagram":
+        allInstagramCreators = creatorsData;
+        break;
+      case "youtube":
+        allYouTubeCreators = creatorsData;
+        break;
+    }
 
-    // Render cards
     displayPlatformCreators(platform, creatorsData);
 
-    // Last Updated display:
-    // 1. Try platform-level metadata first.
-    // 2. Compare metadata timestamp against creator document timestamps.
-    // 3. Use the newest timestamp available.
-    // 4. If no timestamp exists, show "Not available".
-    let metadataData = {};
-
-    if (shoutoutsMetaRef) {
+    // Timestamp display
+    if (timestampElement && shoutoutsMetaRef) {
       try {
         const metaSnap = await getDoc(shoutoutsMetaRef);
-        metadataData = metaSnap.exists() ? metaSnap.data() || {} : {};
-      } catch (timestampError) {
-        console.warn(Could not fetch timestamp metadata for ${platform}:, timestampError);
+        if (metaSnap.exists()) {
+          const tsField = `lastUpdatedTime_${platform}`;
+          timestampElement.textContent = `Last Updated: ${formatFirestoreTimestamp(
+            metaSnap.data()?.[tsField]
+          )}`;
+        } else {
+          timestampElement.textContent = "Last Updated: N/A";
+        }
+      } catch (e) {
+        console.warn(`Could not fetch timestamp for ${platform}:`, e);
+        timestampElement.textContent = "Last Updated: Error";
       }
-    }
-
-    if (typeof updateCreatorLastUpdated === "function") {
-      updateCreatorLastUpdated(platform, metadataData, creatorsData, timestampElement);
     } else if (timestampElement) {
-      timestampElement.textContent = "Last Updated: Not available";
+      timestampElement.textContent = "Last Updated: N/A";
     }
 
-    console.log(${platform} shoutouts loaded and displayed (${savedSort}).);
+    console.log(`${platform} shoutouts loaded and displayed (${savedSort}).`);
   } catch (error) {
-    console.error(Error loading ${platform} shoutout data:, error);
-
-    gridElement.innerHTML = <p class="error">Error loading ${platform} creators.</p>;
-
-    if (typeof setCreatorLastUpdatedUnavailable === "function") {
-      setCreatorLastUpdatedUnavailable(platform, timestampElement);
-    } else if (timestampElement) {
-      timestampElement.textContent = "Last Updated: Not available";
-    }
+    console.error(`Error loading ${platform} shoutout data:`, error);
+    gridElement.innerHTML = `<p class="error">Error loading ${platform} creators.</p>`;
+    if (timestampElement) timestampElement.textContent = "Last Updated: Error";
   }
 }
 
@@ -4990,33 +4907,22 @@ function setupCreatorSorting() {
   const sortConfigs = [
     { id: "tiktok-sort", platform: "tiktok" },
     { id: "instagram-sort", platform: "instagram" },
-    { id: "youtube-sort", platform: "youtube" }
+    { id: "youtube-sort", platform: "youtube" },
   ];
 
   sortConfigs.forEach(({ id, platform }) => {
     const select = document.getElementById(id);
-
-    if (!select) {
-      return;
-    }
+    if (!select) return;
 
     const saved = getSavedSortPreference(platform);
     select.value = saved;
 
-    if (select.dataset.creatorSortBound === "true") {
-      return;
-    }
-
-    select.dataset.creatorSortBound = "true";
-
     select.addEventListener("change", () => {
       saveSortPreference(platform, select.value);
-
-      const searchInput = document.getElementById(${platform}-search);
+      const searchInput = document.getElementById(`${platform}-search`);
       const searchTerm = searchInput
         ? searchInput.value.trim().toLowerCase()
         : "";
-
       renderFilteredAndSortedCreators(platform, searchTerm);
     });
   });
@@ -5029,24 +4935,15 @@ function setupCreatorSearch() {
   const configs = [
     { id: "tiktok-search", platform: "tiktok" },
     { id: "instagram-search", platform: "instagram" },
-    { id: "youtube-search", platform: "youtube" }
+    { id: "youtube-search", platform: "youtube" },
   ];
 
   configs.forEach(({ id, platform }) => {
     const input = document.getElementById(id);
+    if (!input) return;
 
-    if (!input) {
-      return;
-    }
-
-    if (input.dataset.creatorSearchBound === "true") {
-      return;
-    }
-
-    input.dataset.creatorSearchBound = "true";
-
-    input.addEventListener("input", (event) => {
-      const term = event.target.value.trim().toLowerCase();
+    input.addEventListener("input", (e) => {
+      const term = e.target.value.trim().toLowerCase();
       renderFilteredAndSortedCreators(platform, term);
     });
   });
