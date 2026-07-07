@@ -1001,6 +1001,74 @@ body.reduced-motion .mouse-trail-container {
 	}
 }
 
+/* ======================================== /
+/ == Profile Status Dot Final Override == /
+/ ======================================== */
+
+.profile-pic-wrapper {
+	position: relative;
+	overflow: visible;
+}
+
+.profile-status-container {
+	display: block !important;
+	position: absolute !important;
+
+	width: calc(var(--profile-pic-size) * 0.30);
+	height: calc(var(--profile-pic-size) * 0.30);
+
+	right: -0.125rem;
+	bottom: -0.125rem;
+
+	border-radius: 50%;
+	border: 5px solid var(--content-bg);
+
+	background-color: #747f8d;
+	box-shadow: none !important;
+
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+
+	z-index: 999 !important;
+	pointer-events: none;
+}
+
+/* Remove any old glass orb effects if they still exist elsewhere */
+.profile-status-container::before,
+.profile-status-container::after {
+	content: none !important;
+	display: none !important;
+}
+
+/* Status colors */
+.profile-status-container.status-online {
+	background-color: #31d158 !important;
+}
+
+.profile-status-container.status-idle {
+	background-color: #f5c542 !important;
+}
+
+.profile-status-container.status-dnd {
+	background-color: #ed4245 !important;
+}
+
+.profile-status-container.status-offline {
+	background-color: #747f8d !important;
+}
+
+/* Hide text badge everywhere */
+.profile-status-text {
+	display: none !important;
+}
+
+/* Keep dot visible on mobile */
+@media screen and (max-width: 768px) {
+	.profile-status-container {
+		display: block !important;
+	}
+}
+
 /* ======================================================= /
 / === LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE ====== /
 / === Existing HTML only ================================ /
