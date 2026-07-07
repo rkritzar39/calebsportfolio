@@ -1180,8 +1180,8 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
   --dock-accent: var(--accent-color, #0A84FF);
 
   --dock-width: min(92vw, 560px);
-  --dock-height: 76px;
-  --dock-padding: 7px;
+  --dock-height: 64px; /* Decreased from 76px */
+  --dock-padding: 6px; /* Tightened padding */
   --dock-radius: 999px;
 
   --dock-text: rgba(255, 255, 255, 0.96);
@@ -1343,9 +1343,9 @@ body.light-mode {
 .dock-active-lens {
   position: absolute;
   top: var(--dock-padding);
-  left: var(--dock-padding);
+  left: 0; /* Changed from var(--dock-padding) so it aligns perfectly with JS */
 
-  width: var(--lens-width, 120px);
+  width: var(--lens-width, 100px);
   height: calc(100% - (var(--dock-padding) * 2));
 
   border-radius: 999px;
@@ -1405,8 +1405,8 @@ body.light-mode {
   align-items: center;
   justify-content: center;
 
-  gap: 5px;
-  padding: 5px 4px;
+  gap: 3px; /* Decreased gap to fit shorter height */
+  padding: 4px; /* Decreased padding */
 
   border-radius: 999px;
 
@@ -1421,7 +1421,7 @@ body.light-mode {
 }
 
 .dock-icon {
-  font-size: 25px;
+  font-size: 22px; /* Scaled down slightly */
   line-height: 1;
   opacity: 0.86;
 
@@ -1436,7 +1436,7 @@ body.light-mode {
 }
 
 .dock-label {
-  font-size: 14px;
+  font-size: 12px; /* Scaled down slightly */
   line-height: 1;
   font-weight: 800;
   letter-spacing: -0.03em;
@@ -1490,17 +1490,17 @@ body.light-mode {
 
 @media (max-width: 600px) {
   :root {
-    --dock-width: calc(100vw - 22px);
-    --dock-height: 74px;
-    --dock-padding: 6px;
+    --dock-width: calc(100vw - 20px);
+    --dock-height: 58px; /* Proportional mobile height */
+    --dock-padding: 5px;
   }
 
   .dock-icon {
-    font-size: 23px;
+    font-size: 20px;
   }
 
   .dock-label {
-    font-size: 13px;
+    font-size: 11px;
   }
 }
 
@@ -1517,7 +1517,6 @@ body.light-mode {
     transition: none !important;
   }
 }
-
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
 .setting-icon-container {
