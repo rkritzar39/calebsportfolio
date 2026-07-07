@@ -1163,7 +1163,11 @@ async function getDiscord() {
       offline: "No Current Active Activities",
     };
 
-    return { text: map[data.discord_status] || "No Current Active Activities", source: "discord" };
+    const currentStatus = data.discord_status || "offline";
+    const text = map[currentStatus] || "No Current Active Activities";
+    const source = currentStatus === "offline" ? "default" : "discord";
+
+    return { text, source };
 
   } catch (e) {
     console.warn("Lanyard error:", e);
@@ -1303,7 +1307,7 @@ async function mainLoop() {
     : (discord?.source === "youtube") ? discord
     : (discord?.source === "music") ? discord
     : (discord?.source === "activity") ? discord
-    : (discord || { text: "No Current Active Activities", source: "discord" });
+    : (discord || { text: "No Current Active Activities", source: "default" });
 
   const tempHit = reddit?.isTemp ? reddit : null;
 
