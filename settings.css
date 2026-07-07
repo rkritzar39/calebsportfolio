@@ -1197,7 +1197,7 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
   --dock-active: rgba(0, 0, 0, 0.28);
   --dock-active-edge: rgba(255, 255, 255, 0.18);
 
-  --dock-blur: 30px;
+  --dock-blur: 48px;
   --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1342,33 +1342,27 @@ body.light-mode {
 
 .dock-active-lens {
   position: absolute;
-  top: var(--dock-padding);
+  top: 7px;
   left: 0; /* Changed from var(--dock-padding) so it aligns perfectly with JS */
 
   width: var(--lens-width, 100px);
-  height: calc(100% - (var(--dock-padding) * 2));
+  height: calc(100% - 14px);
 
   border-radius: 999px;
   pointer-events: none;
 
   transform: translateX(var(--lens-x, 0px));
 
-  background:
-    radial-gradient(
-      120% 130% at 50% 0%,
-      rgba(255, 255, 255, 0.28),
-      transparent 48%
-    ),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--dock-active) 86%, white 14%),
-      var(--dock-active)
-    );
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.16),
+    rgba(255,255,255,.06)
+);
 
-  border: 1px solid var(--dock-active-edge);
+  border: 1px solid rgba(255,255,255,.12);
 
   backdrop-filter:
-    blur(18px)
+    blur(36px)
     saturate(190%)
     brightness(1.04);
   -webkit-backdrop-filter:
