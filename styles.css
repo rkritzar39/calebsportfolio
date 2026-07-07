@@ -853,7 +853,6 @@ body.reduced-motion .mouse-trail-container {
 
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
-/* (Original layout, only status restyled)  */
 /* ======================================== */
 
 .profile-section {
@@ -891,66 +890,38 @@ body.reduced-motion .mouse-trail-container {
 	border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
-/* --- Profile Status (Desktop Default) --- */
+/* --- Discord-Style Status Indicator --- */
 .profile-status-container {
 	position: absolute;
-	width: calc(var(--profile-pic-size) * 0.19);
-	aspect-ratio: 1 / 1;
+	width: calc(var(--profile-pic-size) * 0.28);
+	height: calc(var(--profile-pic-size) * 0.28);
 	border-radius: 50%;
-	z-index: 2;
-	top: 87%;
-	left: 87%;
-	transform: translate(-50%, -50%);
-	transition: all 0.3s ease;
-
-	/* onyx shell */
-	padding: 2px;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 10%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, var(--content-bg) 88%, transparent);
-	border: 2px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-	box-shadow:
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 40%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	overflow: hidden;
+	bottom: 0;
+	right: 0;
+	border: 5px solid var(--content-bg);
+	z-index: 10;
+	box-shadow: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	background-color: #747f8d; /* Default to offline */
 }
 
-.profile-status-container::before {
-	content: "";
-	position: absolute;
-	inset: 3px;
-	border-radius: 50%;
-	background: currentColor;
-	box-shadow:
-		inset 0 1px 1px rgba(255,255,255,0.18),
-		0 0 8px currentColor;
-	opacity: 0.95;
+/* Status Colors */
+.profile-status-container.status-online {
+	background-color: #31d158;
 }
 
-.profile-status-container::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: 50%;
-	pointer-events: none;
-	background: linear-gradient(
-		180deg,
-		rgba(255,255,255,0.22),
-		transparent 48%
-	);
-	opacity: 0.65;
+.profile-status-container.status-idle {
+	background-color: #f5c542;
 }
 
-.profile-status-container.status-online { color: #31a24c; }
-.profile-status-container.status-idle { color: #ffc107; }
-.profile-status-container.status-dnd { color: #dc3545; }
-.profile-status-container.status-offline { color: #747f8d; }
+.profile-status-container.status-dnd {
+	background-color: #ed4245;
+}
+
+.profile-status-container.status-offline {
+	background-color: #747f8d;
+}
 
 /* --- Username & Verified --- */
 .username-checkmark {
@@ -978,89 +949,9 @@ body.reduced-motion .mouse-trail-container {
 	flex-shrink: 0;
 }
 
-/* --- Text-Based Profile Status Badge (Fixed: Color + Onyx) --- */
+/* --- Hidden Text-Based Profile Status Badge --- */
 .profile-status-text {
-	display: none;
-	font-size: 0.85rem;
-	font-weight: 700;
-	margin-top: 0.35rem;
-	padding: 0.32em 0.8em;
-	border-radius: 999px;
-	line-height: 1;
-	letter-spacing: 0.01em;
-
-	position: relative;
-	overflow: hidden;
-
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-
-	border: 1px solid transparent;
-
-	box-shadow:
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
-
-	color: #fff;
-}
-
-/* --- STATUS COLORS (restored but upgraded) --- */
-
-.profile-status-text.status-online {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 18%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #31a24c 35%, var(--content-bg));
-	border-color: color-mix(in srgb, #31a24c 55%, transparent);
-	box-shadow:
-		0 0 10px color-mix(in srgb, #31a24c 35%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-}
-
-.profile-status-text.status-idle {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 18%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #ffc107 40%, var(--content-bg));
-	border-color: color-mix(in srgb, #ffc107 55%, transparent);
-	color: #1f1f1f;
-	box-shadow:
-		0 0 10px color-mix(in srgb, #ffc107 35%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-}
-
-.profile-status-text.status-dnd {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 18%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #dc3545 38%, var(--content-bg));
-	border-color: color-mix(in srgb, #dc3545 55%, transparent);
-	box-shadow:
-		0 0 10px color-mix(in srgb, #dc3545 35%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
-}
-
-.profile-status-text.status-offline {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 12%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #747f8d 35%, var(--content-bg));
-	border-color: color-mix(in srgb, #747f8d 50%, transparent);
-	box-shadow:
-		0 0 8px color-mix(in srgb, #747f8d 25%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+	display: none !important;
 }
 
 /* --- Profile Bio --- */
@@ -1089,13 +980,6 @@ body.reduced-motion .mouse-trail-container {
 	}
 	.profile-pic-wrapper {
 		--profile-pic-size: 7.5rem;
-	}
-	.profile-status-container {
-		display: none;
-	}
-	.profile-status-text {
-		display: block;
-		flex-basis: 100%;
 	}
 	.corner-button {
 		width: 2.375rem;
