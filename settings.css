@@ -1173,284 +1173,359 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== */
-/* 💎 TRUE APPLE LIQUID GLASS DOCK */
+/* 💎 APPLE-STYLE LIQUID GLASS DOCK                   */
 /* ================================================== */
 
-/* ---------- ROOT ---------- */
 :root {
-  --accent-color: #0A84FF;
-  --text-main: #ffffff;
+  --dock-accent: var(--accent-color, #0A84FF);
+  --dock-text: #ffffff;
+  --dock-muted: rgba(255, 255, 255, 0.58);
 
-  --glass-base: rgba(255,255,255,0.06);
-  --glass-edge: rgba(255,255,255,0.4);
+  --dock-glass-bg: rgba(255, 255, 255, 0.11);
+  --dock-glass-edge: rgba(255, 255, 255, 0.42);
+  --dock-inner-edge: rgba(255, 255, 255, 0.72);
 
-  --shadow-main: rgba(0,0,0,0.35);
+  --dock-active-bg: rgba(255, 255, 255, 0.72);
+  --dock-active-text: var(--dock-accent);
 
-  --blur: 24px;
-  --radius: 999px;
+  --dock-shadow: rgba(0, 0, 0, 0.36);
+  --dock-radius: 999px;
+  --dock-blur: 34px;
 
   --ease-fluid: cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* ---------- LIGHT MODE ---------- */
-body.light-e {
-  --text-main: #111;
+body.light-e,
+body.light-mode {
+  --dock-text: rgba(0, 0, 0, 0.88);
+  --dock-muted: rgba(0, 0, 0, 0.56);
 
-  --glass-base: rgba(255,255,255,0.22);
-  --glass-edge: rgba(255,255,255,0.7);
+  --dock-glass-bg: rgba(255, 255, 255, 0.42);
+  --dock-glass-edge: rgba(255, 255, 255, 0.86);
+  --dock-inner-edge: rgba(255, 255, 255, 0.95);
 
-  --shadow-main: rgba(0,0,0,0.2);
+  --dock-active-bg: rgba(255, 255, 255, 0.78);
+  --dock-shadow: rgba(0, 0, 0, 0.18);
 }
 
 /* ================================================== */
-/* 🧊 DOCK CONTAINER */
+/* 🧊 DOCK SHELL                                      */
 /* ================================================== */
 
 .onyx-dock {
   position: fixed;
-  bottom: 18px;
   left: 50%;
-  transform: translateX(-50%);
+  bottom: max(14px, env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(18px) scale(0.985);
+
+  width: min(92vw, 560px);
 
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 4px;
 
-  padding: 10px 12px;
+  padding: 8px;
 
-  border-radius: var(--radius);
-  border: 1px solid var(--glass-edge);
+  border-radius: var(--dock-radius);
+  border: 1px solid var(--dock-glass-edge);
 
-  /* ✅ LIQUID GLASS (CRISP, NOT FOGGY) */
   background:
     radial-gradient(
-      140% 120% at 50% 0%,
-      rgba(255,255,255,0.55),
-      rgba(255,255,255,0.18) 40%,
-      rgba(255,255,255,0.06) 70%
+      120% 140% at 18% 0%,
+      rgba(255, 255, 255, 0.72),
+      rgba(255, 255, 255, 0.24) 34%,
+      transparent 62%
     ),
-    var(--glass-base);
+    radial-gradient(
+      140% 120% at 82% 100%,
+      rgba(10, 132, 255, 0.22),
+      transparent 55%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.32),
+      rgba(255, 255, 255, 0.08) 46%,
+      rgba(0, 0, 0, 0.12)
+    ),
+    var(--dock-glass-bg);
 
   backdrop-filter:
-    blur(var(--blur))
-    saturate(140%)
-    brightness(102%);
+    blur(var(--dock-blur))
+    saturate(190%)
+    brightness(1.08)
+    contrast(1.03);
   -webkit-backdrop-filter:
-    blur(var(--blur))
-    saturate(140%)
-    brightness(102%);
+    blur(var(--dock-blur))
+    saturate(190%)
+    brightness(1.08)
+    contrast(1.03);
 
-  /* ✅ PROPER DEPTH */
   box-shadow:
-    0 25px 60px var(--shadow-main),
-    inset 0 1px 0 rgba(255,255,255,0.7),
-    inset 0 -1px 0 rgba(0,0,0,0.25);
+    0 24px 70px var(--dock-shadow),
+    0 8px 22px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 var(--dock-inner-edge),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22),
+    inset 0 0 22px rgba(255, 255, 255, 0.12);
 
+  opacity: 0;
   overflow: hidden;
   isolation: isolate;
+
   z-index: 9999;
+
+  transition:
+    opacity 0.24s ease,
+    transform 0.48s var(--ease-fluid);
+}
+
+.onyx-dock.dock-ready {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
 }
 
 /* ================================================== */
-/* ✨ TOP LIGHT WRAP (CRITICAL) */
+/* ✨ GLASS HIGHLIGHTS                                */
 /* ================================================== */
 
 .onyx-dock::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 1px;
   border-radius: inherit;
   pointer-events: none;
 
   background:
     linear-gradient(
       180deg,
-      rgba(255,255,255,0.7),
-      rgba(255,255,255,0.2) 30%,
-      transparent 65%
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.18) 28%,
+      transparent 62%
     );
 
-  opacity: 0.35;
+  opacity: 0.42;
+  z-index: -1;
 }
-
-/* ================================================== */
-/* 🌊 SUBTLE MOVING LIGHT */
-/* ================================================== */
 
 .onyx-dock::after {
   content: "";
   position: absolute;
-  inset: 0;
+  top: -45%;
+  left: -40%;
+  width: 55%;
+  height: 190%;
   pointer-events: none;
 
   background:
     linear-gradient(
-      120deg,
-      transparent 30%,
-      rgba(255,255,255,0.35),
-      transparent 70%
+      105deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.42),
+      transparent 78%
     );
 
   opacity: 0.18;
-  transform: translateX(-50%);
-  transition: transform 0.9s var(--ease-fluid);
+  transform: translateX(-40%) rotate(10deg);
+  transition: transform 1s var(--ease-fluid);
 }
 
 .onyx-dock:hover::after {
-  transform: translateX(50%);
+  transform: translateX(260%) rotate(10deg);
 }
 
 /* ================================================== */
-/* 📦 ITEMS */
+/* 📦 DOCK ITEMS                                      */
 /* ================================================== */
 
 .dock-item {
   position: relative;
+
+  flex: 1;
+  min-width: 0;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  min-width: 68px;
-  padding: 10px 6px;
-  gap: 5px;
+  gap: 4px;
+  min-height: 70px;
+  padding: 8px 6px;
 
   border-radius: 999px;
 
-  color: var(--text-main);
+  color: var(--dock-muted);
   text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transform:
+    translateY(0)
+    scale(1)
+    perspective(500px)
+    rotateX(calc(var(--dy, 0) * -5deg))
+    rotateY(calc(var(--dx, 0) * 6deg));
 
   transition:
-    transform 0.35s var(--ease-fluid),
+    color 0.22s ease,
     background 0.25s ease,
-    box-shadow 0.25s ease;
+    opacity 0.22s ease,
+    transform 0.34s var(--ease-fluid),
+    box-shadow 0.28s ease;
 }
 
-/* ICON */
 .dock-icon {
-  font-size: 18px;
+  font-size: 25px;
+  line-height: 1;
 
+  transform: translateZ(0);
   filter:
-    drop-shadow(0 1px 0 rgba(0,0,0,0.25))
-    brightness(0.95);
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18))
+    drop-shadow(0 4px 9px rgba(0, 0, 0, 0.18));
+
+  transition:
+    transform 0.34s var(--ease-fluid),
+    filter 0.28s ease;
 }
 
-/* LABEL */
 .dock-label {
-  font-size: 10px;
-  font-weight: 700;
-  opacity: 0.65;
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 
-  transition: opacity 0.2s ease;
+  opacity: 0.72;
+
+  transition:
+    opacity 0.22s ease,
+    transform 0.34s var(--ease-fluid);
 }
 
 /* ================================================== */
-/* 🟢 ACTIVE — MELTED GLASS */
+/* 🟦 ACTIVE LIQUID PILL                              */
 /* ================================================== */
 
 .dock-item.active {
+  color: var(--dock-active-text);
+
   background:
     radial-gradient(
-      120% 90% at 50% 0%,
-      rgba(255,255,255,0.95),
-      rgba(255,255,255,0.45) 50%,
-      rgba(255,255,255,0.25)
+      90% 120% at 50% 0%,
+      rgba(255, 255, 255, 0.98),
+      rgba(255, 255, 255, 0.62) 46%,
+      rgba(255, 255, 255, 0.34) 100%
     );
 
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
-
-  color: var(--accent-color);
-
-  /* ✅ FUSED LOOK (NOT FLOATING) */
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    0 6px 14px rgba(0,0,0,0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 10px 24px rgba(0, 0, 0, 0.2),
+    0 0 28px color-mix(in srgb, var(--dock-accent) 34%, transparent);
+
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+}
+
+.dock-item.active::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0.18) 48%,
+      transparent
+    );
+
+  opacity: 0.45;
+}
+
+.dock-item.active .dock-icon {
+  transform: translateY(-1px) scale(1.08);
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.35))
+    drop-shadow(0 6px 12px color-mix(in srgb, var(--dock-accent) 38%, transparent));
 }
 
 .dock-item.active .dock-label {
   opacity: 1;
+  transform: translateY(1px);
 }
 
 /* ================================================== */
-/* ✨ INTERACTION */
+/* ✨ INTERACTION                                     */
 /* ================================================== */
 
 .dock-item:hover:not(.active) {
-  transform: translateY(-3px) scale(1.05);
+  color: var(--dock-text);
 
-  background: rgba(255,255,255,0.08);
+  background:
+    radial-gradient(
+      95% 100% at 50% 0%,
+      rgba(255, 255, 255, 0.25),
+      rgba(255, 255, 255, 0.08)
+    );
 
-  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+  transform:
+    translateY(-4px)
+    scale(1.045)
+    perspective(500px)
+    rotateX(calc(var(--dy, 0) * -5deg))
+    rotateY(calc(var(--dx, 0) * 6deg));
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.38),
+    0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+.dock-item:hover:not(.active) .dock-icon {
+  transform: scale(1.08);
 }
 
 .dock-item:active {
-  transform: scale(0.9);
+  transform: scale(0.92);
 }
 
 /* ================================================== */
-/* 📱 MOBILE */
+/* 📱 MOBILE TUNING                                   */
 /* ================================================== */
 
 @media (max-width: 600px) {
   .onyx-dock {
-    width: 92%;
-    bottom: 12px;
-    padding: 8px;
+    width: calc(100vw - 24px);
+    bottom: max(10px, env(safe-area-inset-bottom));
+    padding: 7px;
   }
 
   .dock-item {
-    flex: 1;
+    min-height: 66px;
+    padding: 7px 4px;
+  }
+
+  .dock-icon {
+    font-size: 24px;
+  }
+
+  .dock-label {
+    font-size: 12px;
   }
 }
 
 /* ================================================== */
-/* ♿ REDUCED MOTION */
+/* ♿ REDUCED MOTION                                   */
 /* ================================================== */
 
 @media (prefers-reduced-motion: reduce) {
+  .onyx-dock,
+  .onyx-dock::after,
   .dock-item,
-  .onyx-dock::after {
-    transition: none;
+  .dock-icon,
+  .dock-label {
+    transition: none !important;
   }
-}
-
-/* ================================================== /
-/ ✅ DOCK AUTO-SELECT LOAD FIX                        /
-/ ================================================== /
-
-/ Hide dock only until JS confirms the active tab /
-.onyx-dock {
-  opacity: 0;
-  transition:
-    opacity 0.18s ease,
-    transform 0.35s var(--ease-fluid);
-}
-
-.onyx-dock.dock-ready {
-  opacity: 1;
-}
-
-/ Make active tab impossible to visually disappear */
-.onyx-dock.dock-ready .dock-item.active {
-  background:
-    radial-gradient(
-      120% 90% at 50% 0%,
-      rgba(255,255,255,0.95),
-      rgba(255,255,255,0.45) 50%,
-      rgba(255,255,255,0.25)
-    ) !important;
-
-  color: var(--accent-color) !important;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    0 6px 14px rgba(0,0,0,0.2) !important;
-}
-
-.onyx-dock.dock-ready .dock-item.active .dock-label {
-  opacity: 1 !important;
 }
 
 
