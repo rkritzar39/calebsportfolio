@@ -95,142 +95,143 @@ document.getElementById("download-btn").addEventListener("click", function () {
 
 <nav class="onyx-dock" aria-label="Primary navigation">
   <a class="dock-item" href="/">
-    <span class="dock-icon">🏠</span>
+    <span class="dock-icon" aria-hidden="true">🏠</span>
     <span class="dock-label">Home</span>
   </a>
 
   <a class="dock-item" href="/beta">
-    <span class="dock-icon">🧪</span>
+    <span class="dock-icon" aria-hidden="true">🧪</span>
     <span class="dock-label">Beta</span>
   </a>
 
   <a class="dock-item" href="/resume">
-    <span class="dock-icon">📜</span>
+    <span class="dock-icon" aria-hidden="true">📜</span>
     <span class="dock-label">Resume</span>
   </a>
 
   <a class="dock-item" href="/settings">
-    <span class="dock-icon">⚙️</span>
+    <span class="dock-icon" aria-hidden="true">⚙️</span>
     <span class="dock-label">Settings</span>
   </a>
 </nav>
 
 <script>
-  function normalizeOnyxDockPath(path) {
-    return (path || "/")
-      .toLowerCase()
-      .replace(/\/index\.html$/, "")
-      .replace(/\.html$/, "")
-      .replace(/\/+$/, "") || "/";
-  }
+function normalizeOnyxDockPath(path) {
+  let clean = String(path || "/")
+    .split("?")[0]
+    .split("#")[0]
+    .toLowerCase()
+    .replace(/\/index\.html$/i, "/")
+    .replace(/\.html$/i, "")
+    .replace(/\/+$/g, "");
 
-  function updateOnyxDockActiveTab() {
-    const dock = document.querySelector(".onyx-dock");
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
+  if (!clean) clean = "/";
+  if (clean === "/home") clean = "/";
 
-    if (!dock || !links.length) return;
+  return clean;
+}
 
-    const currentPath = normalizeOnyxDockPath(window.location.pathname);
-    let matched = false;
+function updateOnyxDockActiveTab() {
+  const dock = document.querySelector(".onyx-dock");
+  const links = [...document.querySelectorAll(".onyx-dock .dock-item")];
 
-    links.forEach((link) => {
-      const targetPath = normalizeOnyxDockPath(
-        new URL(link.getAttribute("href"), window.location.origin).pathname
-      );
+  if (!dock || !links.length) return;
 
-      // Check if it's an exact match, or a nested page (e.g., /beta/feature)
-      const isActive =
-        targetPath === "/"
-          ? currentPath === "/"
-          : currentPath === targetPath || currentPath.startsWith(targetPath + "/");
+  const currentPath = normalizeOnyxDockPath(window.location.pathname);
 
-      // Apply styling class
-      link.classList.toggle("active", isActive);
+  let activeLink = links.find((link) => {
+    const targetPath = normalizeOnyxDockPath(
+      new URL(link.href, window.location.origin).pathname
+    );
 
-      // Apply accessibility attributes
-      if (isActive) {
-        link.setAttribute("aria-current", "page");
-        matched = true;
-      } else {
-        link.removeAttribute("aria-current");
-      }
-    });
-
-    // Fallback to Home if nothing matches
-    if (!matched) {
-      const homeLink = document.querySelector('.onyx-dock .dock-item[href="/"]');
-      if (homeLink) {
-        links.forEach((l) => l.classList.remove("active"));
-        homeLink.classList.add("active");
-        homeLink.setAttribute("aria-current", "page");
-      }
-    }
-
-    dock.classList.add("dock-ready");
-  }
-
-  function setupOnyxDockEffects() {
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
-
-    links.forEach((link) => {
-      if (link.dataset.dockEffectsReady === "true") return;
-      link.dataset.dockEffectsReady = "true";
-
-      link.addEventListener("mousemove", (e) => {
-        const rect = link.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const dx = (x / rect.width - 0.5).toFixed(3);
-        const dy = (y / rect.height - 0.5).toFixed(3);
-
-        link.style.setProperty("--x", `${x}px`);
-        link.style.setProperty("--y", `${y}px`);
-        link.style.setProperty("--dx", dx);
-        link.style.setProperty("--dy", dy);
-      });
-
-      link.addEventListener("mouseleave", () => {
-        link.style.setProperty("--dx", "0");
-        link.style.setProperty("--dy", "0");
-      });
-    });
-  }
-
-  function initOnyxDock() {
-    setupOnyxDockEffects();
-    updateOnyxDockActiveTab();
-
-    // Cascading updates to catch slow framework renders
-    requestAnimationFrame(updateOnyxDockActiveTab);
-    setTimeout(updateOnyxDockActiveTab, 50);
-    setTimeout(updateOnyxDockActiveTab, 150);
-    setTimeout(updateOnyxDockActiveTab, 350);
-    setTimeout(updateOnyxDockActiveTab, 800);
-
-    const y = document.getElementById("year");
-    if (y) y.textContent = new Date().getFullYear();
-  }
-
-  // Initialize safely based on loading state
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initOnyxDock);
-  } else {
-    initOnyxDock();
-  }
-
-  // Handle back/forward cache and SPA navigation
-  window.addEventListener("pageshow", () => {
-    setupOnyxDockEffects();
-    updateOnyxDockActiveTab();
-    requestAnimationFrame(updateOnyxDockActiveTab);
-    setTimeout(updateOnyxDockActiveTab, 100);
-    setTimeout(updateOnyxDockActiveTab, 400);
+    return targetPath === "/"
+      ? currentPath === "/"
+      : currentPath === targetPath ||
+          currentPath.startsWith(targetPath + "/");
   });
 
-  window.addEventListener("load", updateOnyxDockActiveTab);
-  window.addEventListener("popstate", updateOnyxDockActiveTab);
-  window.addEventListener("hashchange", updateOnyxDockActiveTab);
+  if (!activeLink) {
+    activeLink =
+      document.querySelector('.onyx-dock .dock-item[href="/"]') || links[0];
+  }
+
+  links.forEach((link) => {
+    const active = link === activeLink;
+
+    link.classList.toggle("active", active);
+
+    if (active) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+
+  dock.classList.add("dock-ready");
+}
+
+function setupOnyxDockEffects() {
+  document.querySelectorAll(".onyx-dock .dock-item").forEach((link) => {
+    if (link.dataset.dockEffectsReady) return;
+
+    link.dataset.dockEffectsReady = "true";
+
+    link.addEventListener("mousemove", (e) => {
+      const rect = link.getBoundingClientRect();
+
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const dx = x / rect.width - 0.5;
+      const dy = y / rect.height - 0.5;
+
+      link.style.setProperty("--x", `${x}px`);
+      link.style.setProperty("--y", `${y}px`);
+      link.style.setProperty("--dx", dx.toFixed(3));
+      link.style.setProperty("--dy", dy.toFixed(3));
+    });
+
+    link.addEventListener("mouseleave", () => {
+      link.style.setProperty("--dx", "0");
+      link.style.setProperty("--dy", "0");
+    });
+  });
+}
+
+function initOnyxDock() {
+  setupOnyxDockEffects();
+  updateOnyxDockActiveTab();
+
+  requestAnimationFrame(updateOnyxDockActiveTab);
+  setTimeout(updateOnyxDockActiveTab, 50);
+  setTimeout(updateOnyxDockActiveTab, 150);
+  setTimeout(updateOnyxDockActiveTab, 350);
+  setTimeout(updateOnyxDockActiveTab, 800);
+
+  const year = document.getElementById("year");
+  if (year) {
+    year.textContent = new Date().getFullYear();
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initOnyxDock);
+} else {
+  initOnyxDock();
+}
+
+window.addEventListener("pageshow", () => {
+  setupOnyxDockEffects();
+  updateOnyxDockActiveTab();
+  requestAnimationFrame(updateOnyxDockActiveTab);
+  setTimeout(updateOnyxDockActiveTab, 100);
+  setTimeout(updateOnyxDockActiveTab, 400);
+});
+
+window.addEventListener("load", updateOnyxDockActiveTab);
+window.addEventListener("resize", updateOnyxDockActiveTab);
+window.addEventListener("popstate", updateOnyxDockActiveTab);
+window.addEventListener("hashchange", updateOnyxDockActiveTab);
 </script>
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
   <script src="settings.js"></script>
