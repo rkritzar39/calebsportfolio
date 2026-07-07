@@ -1069,6 +1069,113 @@ body.reduced-motion .mouse-trail-container {
 	}
 }
 
+/* ======================================== /
+/ == Final Discord-Style Profile Dot Fix == /
+/ ======================================== */
+
+.profile-pic-wrapper {
+	position: relative !important;
+	overflow: visible !important;
+}
+
+/* Main profile status dot */
+.profile-status-container {
+	display: block !important;
+	position: absolute !important;
+
+	/* Reset old positioning so it does NOT float too high */
+	top: auto !important;
+	left: auto !important;
+
+	/* Dot size like the reference */
+	width: calc(var(--profile-pic-size) * 0.34) !important;
+	height: calc(var(--profile-pic-size) * 0.34) !important;
+	box-sizing: border-box !important;
+
+	/* Correct lower-right Discord-style placement */
+	right: 5% !important;
+	bottom: 5% !important;
+	transform: translate(35%, 35%) !important;
+
+	border-radius: 50% !important;
+
+	/* Thick outer ring */
+	border: 6px solid #111 !important;
+
+	/* Default color */
+	background: #31d158 !important;
+	background-color: #31d158 !important;
+
+	box-shadow: none !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+
+	z-index: 999 !important;
+	pointer-events: none;
+}
+
+/* Remove old glass effects */
+.profile-status-container::before,
+.profile-status-container::after {
+	content: none !important;
+	display: none !important;
+}
+
+/* Keep online green */
+.profile-status-container.status-online {
+	background: #31d158 !important;
+	background-color: #31d158 !important;
+}
+
+/* Optional status colors */
+.profile-status-container.status-idle {
+	background: #f5c542 !important;
+	background-color: #f5c542 !important;
+}
+
+.profile-status-container.status-dnd {
+	background: #ed4245 !important;
+	background-color: #ed4245 !important;
+}
+
+.profile-status-container.status-offline {
+	background: #747f8d !important;
+	background-color: #747f8d !important;
+}
+
+/* Hide old status text */
+.profile-status-text {
+	display: none !important;
+}
+
+/* Mobile tuning */
+@media screen and (max-width: 768px) {
+	.profile-status-container {
+		width: calc(var(--profile-pic-size) * 0.34) !important;
+		height: calc(var(--profile-pic-size) * 0.34) !important;
+
+		right: 5% !important;
+		bottom: 5% !important;
+		transform: translate(35%, 35%) !important;
+
+		border-width: 6px !important;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.profile-status-container {
+		width: calc(var(--profile-pic-size) * 0.35) !important;
+		height: calc(var(--profile-pic-size) * 0.35) !important;
+
+		right: 5% !important;
+		bottom: 5% !important;
+		transform: translate(35%, 35%) !important;
+
+		border-width: 6px !important;
+	}
+}
+
+
 /* ======================================================= /
 / === LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE ====== /
 / === Existing HTML only ================================ /
