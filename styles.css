@@ -1,56 +1,47 @@
-/* ================================================== /
-/ ONYX LIQUID GLASS THEME SYSTEM                     /
-/ ================================================== */
-
 :root {
   /* ======================== /
   / Base Sizing              /
   / ======================== */
-
   --font-size-base: 16px;
   --line-height-base: 1.65;
 
   /* ======================== /
   / Dark Liquid Glass Palette /
   / ======================== */
-
   --dark-bg: #0b0b0d;
-  --dark-content-bg: rgba(22, 22, 26, 0.38);
+  --dark-content-bg: rgba(22, 22, 26, 0.52);
   --dark-text: #f7f8fb;
   --dark-secondary-text: #a9adb7;
-  --dark-border: rgba(255, 255, 255, 0.18);
+  --dark-border: rgba(255, 255, 255, 0.105);
   --dark-accent: #4ea8ff;
   --dark-hover: #3f8ce0;
   --dark-link: var(--dark-accent);
   --dark-shadow: rgba(0, 0, 0, 0.62);
-  --dark-glow: rgba(255, 255, 255, 0.13);
+  --dark-glow: rgba(255, 255, 255, 0.105);
   --dark-icon: #e8e8ed;
 
   /* ======================== /
   / Light Liquid Glass Palette /
   / ======================== */
-
   --light-bg-gradient:
-    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.98), transparent 28%),
-    radial-gradient(circle at 86% 14%, rgba(182, 225, 255, 0.72), transparent 30%),
-    radial-gradient(circle at 50% 100%, rgba(210, 238, 255, 0.52), transparent 38%),
+    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.95), transparent 28%),
+    radial-gradient(circle at 86% 14%, rgba(182, 225, 255, 0.65), transparent 30%),
     linear-gradient(120deg, #d9f0ff 0%, #f7fbff 56%, #eef6ff 100%);
 
-  --light-content-bg: rgba(255, 255, 255, 0.50);
+  --light-content-bg: rgba(255, 255, 255, 0.46);
   --light-text: #111114;
   --light-secondary-text: #4b5563;
-  --light-border: rgba(255, 255, 255, 0.78);
+  --light-border: rgba(255, 255, 255, 0.62);
   --light-accent: #007aff;
   --light-hover: #005fcc;
   --light-link: var(--light-accent);
   --light-shadow: rgba(17, 24, 39, 0.16);
-  --light-glow: rgba(255, 255, 255, 0.88);
+  --light-glow: rgba(255, 255, 255, 0.82);
   --light-icon: #2c2c2e;
 
   /* ======================== /
   / Default Theme - Dark     /
   / ======================== */
-
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-content-bg);
   --text-color: var(--dark-text);
@@ -67,79 +58,73 @@
   --social-icon-text-color: var(--dark-text);
 
   /* ======================== /
-  / Liquid Glass Optics      /
+  / iOS 27 Liquid Glass Optics /
   / ======================== */
-
-  --backdrop-blur:
-    blur(24px)
-    saturate(180%)
-    contrast(1.08)
-    brightness(1.06);
+  --backdrop-blur: blur(30px) saturate(140%);
 
   --bubble-gradient:
     radial-gradient(
       circle at 22% 16%,
-      rgba(255, 255, 255, 0.20),
+      rgba(255, 255, 255, 0.18),
       transparent 54%
     ),
     radial-gradient(
       circle at 84% 12%,
-      rgba(255, 255, 255, 0.10),
+      rgba(255, 255, 255, 0.08),
       transparent 42%
     );
 
   --bubble-highlight:
-    inset 0 1px 1px rgba(255, 255, 255, 0.26),
-    inset 0 0 24px rgba(255, 255, 255, 0.07);
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    inset 0 0 22px rgba(255, 255, 255, 0.055);
 
   --bubble-shadow:
-    0 30px 70px rgba(0, 0, 0, 0.46),
-    0 8px 28px rgba(0, 0, 0, 0.22),
+    0 30px 70px rgba(0, 0, 0, 0.50),
+    0 8px 28px rgba(0, 0, 0, 0.24),
     inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 
   --liquid-reflection:
     linear-gradient(
       125deg,
-      rgba(255, 255, 255, 0.46),
-      rgba(255, 255, 255, 0.13) 34%,
-      rgba(255, 255, 255, 0.04) 62%,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0.11) 34%,
+      rgba(255, 255, 255, 0.035) 62%,
       transparent
     );
 
   --liquid-refraction:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.17),
-      rgba(255, 255, 255, 0.045) 46%,
-      rgba(0, 0, 0, 0.13)
+      rgba(255, 255, 255, 0.15),
+      rgba(255, 255, 255, 0.035) 46%,
+      rgba(0, 0, 0, 0.12)
     );
 
   --glass-surface:
     var(--bubble-gradient),
     var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 86%, var(--bg-color) 14%);
+    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 
   --glass-border:
-    color-mix(in srgb, var(--border-color) 92%, transparent);
+    color-mix(in srgb, var(--border-color) 88%, transparent);
 
   --glass-top-glow:
     radial-gradient(
       circle at 50% 0%,
-      color-mix(in srgb, var(--glow-color) 64%, transparent),
+      color-mix(in srgb, var(--glow-color) 62%, transparent),
       transparent 62%
     );
 
   --glass-bottom-depth:
     radial-gradient(
       circle at 50% 100%,
-      color-mix(in srgb, var(--shadow-color) 42%, transparent),
+      color-mix(in srgb, var(--shadow-color) 45%, transparent),
       transparent 72%
     );
 
   /* ======================== /
   / Radii & Transitions      /
   / ======================== */
-
   --radius-xl: 30px;
   --radius-lg: 22px;
   --radius-md: 15px;
@@ -150,18 +135,11 @@
   --transition-slow: 0.5s ease;
 }
 
-/* ================================================== /
-/ LIGHT MODE VARIABLES                               /
-/ ================================================== */
+/* ======================== /
+/ Light Mode Overrides     /
+/ ======================== */
 
-html.light-mode body,
-html.light-e body,
-html[data-theme="light"] body,
-body.light-mode,
-body.light-e,
-body[data-theme="light"] {
-  color-scheme: light;
-
+body.light-e {
   --bg-color: var(--light-bg-gradient);
   --content-bg: var(--light-content-bg);
   --text-color: var(--light-text);
@@ -177,47 +155,43 @@ body[data-theme="light"] {
   --icon-color: var(--light-icon);
   --social-icon-text-color: var(--light-text);
 
-  --backdrop-blur:
-    blur(24px)
-    saturate(190%)
-    contrast(1.06)
-    brightness(1.08);
+  --backdrop-blur: blur(30px) saturate(140%);
 
   --bubble-gradient:
     radial-gradient(
       circle at 34% 18%,
-      rgba(255, 255, 255, 0.90),
+      rgba(255, 255, 255, 0.86),
       transparent 58%
     ),
     radial-gradient(
       circle at 85% 10%,
-      rgba(255, 255, 255, 0.50),
+      rgba(255, 255, 255, 0.46),
       transparent 44%
     );
 
   --bubble-highlight:
-    inset 0 1px 1px rgba(255, 255, 255, 0.94),
-    inset 0 0 20px rgba(255, 255, 255, 0.34);
+    inset 0 1px 1px rgba(255, 255, 255, 0.92),
+    inset 0 0 18px rgba(255, 255, 255, 0.30);
 
   --bubble-shadow:
     0 22px 56px rgba(17, 24, 39, 0.14),
     0 8px 24px rgba(17, 24, 39, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.055);
+    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
 
   --liquid-reflection:
     linear-gradient(
       125deg,
-      rgba(255, 255, 255, 0.94),
-      rgba(255, 255, 255, 0.46) 38%,
-      rgba(255, 255, 255, 0.16) 66%,
+      rgba(255, 255, 255, 0.92),
+      rgba(255, 255, 255, 0.42) 38%,
+      rgba(255, 255, 255, 0.14) 66%,
       transparent
     );
 
   --liquid-refraction:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.62),
-      rgba(255, 255, 255, 0.20) 48%,
+      rgba(255, 255, 255, 0.58),
+      rgba(255, 255, 255, 0.18) 48%,
       rgba(0, 0, 0, 0.045)
     );
 
@@ -227,21 +201,15 @@ body[data-theme="light"] {
     color-mix(in srgb, var(--content-bg) 86%, white 14%);
 
   --glass-border:
-    color-mix(in srgb, var(--border-color) 94%, white 6%);
+    color-mix(in srgb, var(--border-color) 92%, white 8%);
 }
 
-/* ================================================== /
-/ DARK MODE VARIABLES                                /
-/ ================================================== */
+/* ======================== /
+/ Dark Mode Wrapper        /
+/ ======================== */
 
 html.dark-mode body,
-html.dark-e body,
-html[data-theme="dark"] body,
-body.dark-mode,
-body.dark-e,
-body[data-theme="dark"] {
-  color-scheme: dark;
-
+body.dark-mode {
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-content-bg);
   --text-color: var(--dark-text);
@@ -257,48 +225,44 @@ body[data-theme="dark"] {
   --icon-color: var(--dark-icon);
   --social-icon-text-color: var(--dark-text);
 
-  --backdrop-blur:
-    blur(24px)
-    saturate(180%)
-    contrast(1.08)
-    brightness(1.06);
+  --backdrop-blur: blur(30px) saturate(140%);
 
   --bubble-gradient:
     radial-gradient(
       circle at 22% 16%,
-      rgba(255, 255, 255, 0.20),
+      rgba(255, 255, 255, 0.18),
       transparent 54%
     ),
     radial-gradient(
       circle at 84% 12%,
-      rgba(255, 255, 255, 0.10),
+      rgba(255, 255, 255, 0.08),
       transparent 42%
     );
 
   --bubble-highlight:
-    inset 0 1px 1px rgba(255, 255, 255, 0.26),
-    inset 0 0 24px rgba(255, 255, 255, 0.07);
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    inset 0 0 22px rgba(255, 255, 255, 0.055);
 
   --bubble-shadow:
-    0 30px 70px rgba(0, 0, 0, 0.46),
-    0 8px 28px rgba(0, 0, 0, 0.22),
+    0 30px 70px rgba(0, 0, 0, 0.50),
+    0 8px 28px rgba(0, 0, 0, 0.24),
     inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 
   --liquid-reflection:
     linear-gradient(
       125deg,
-      rgba(255, 255, 255, 0.46),
-      rgba(255, 255, 255, 0.13) 34%,
-      rgba(255, 255, 255, 0.04) 62%,
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0.11) 34%,
+      rgba(255, 255, 255, 0.035) 62%,
       transparent
     );
 
   --liquid-refraction:
     linear-gradient(
       145deg,
-      rgba(255, 255, 255, 0.17),
-      rgba(255, 255, 255, 0.045) 46%,
-      rgba(0, 0, 0, 0.13)
+      rgba(255, 255, 255, 0.15),
+      rgba(255, 255, 255, 0.035) 46%,
+      rgba(0, 0, 0, 0.12)
     );
 
   --glass-surface:
@@ -307,23 +271,18 @@ body[data-theme="dark"] {
     color-mix(in srgb, var(--content-bg) 88%, black 12%);
 
   --glass-border:
-    color-mix(in srgb, var(--border-color) 92%, transparent);
+    color-mix(in srgb, var(--border-color) 90%, transparent);
 }
 
-/* ================================================== /
-/ BASE PAGE STYLES                                   /
-/ ================================================== */
+/* ======================== /
+/ Base Styles              /
+/ ======================== */
 
 html {
-  min-height: 100%;
   background: var(--bg-color);
 }
 
 body {
-  min-height: 100vh;
-  margin: 0;
-  padding: 32px;
-
   background: var(--bg-color);
   color: var(--text-color);
 
@@ -333,57 +292,296 @@ body {
     "SF Pro Text",
     "SF Pro Display",
     Roboto,
-    system-ui,
     sans-serif;
 
+  margin: 0;
+  padding: 32px;
+  min-height: 100vh;
+
   line-height: var(--line-height-base);
-  font-size: var(--font-size-base);
-
-  letter-spacing: -0.01em;
-
-  overflow-x: hidden;
+  font-size: var(--font-size-base, 16px);
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  letter-spacing: -0.01em;
 }
 
 h1,
 h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--text-color);
+h3 {
   font-weight: 650;
   letter-spacing: -0.025em;
+  color: var(--text-color);
 }
 
 p,
+span,
 li {
-  color: var(--secondary-text);
   font-weight: 400;
-}
-
-span {
-  font-weight: inherit;
+  color: var(--secondary-text);
 }
 
 a {
   color: var(--link-color);
 }
 
+/* ======================== /
+/ Apple Glass Effect Block /
+/ iOS 27 Liquid Glass      /
+/ ======================== */
+
+.glass {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  /* Force Hardware Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
+
+  background: var(--glass-surface);
+  color: var(--text-color);
+
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--glass-border);
+
+  box-shadow:
+    var(--bubble-highlight),
+    var(--bubble-shadow);
+
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+}
+
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+
+  background: var(--liquid-reflection);
+  opacity: 0.25; /* Lowered opacity to replace mix-blend-mode */
+}
+
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+
+  background:
+    var(--glass-top-glow),
+    var(--glass-bottom-depth);
+
+  opacity: 0.58;
+}
+
+.glass > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* ================================================== /
-/ APPLE-STYLE LIQUID GLASS SURFACE                   /
+/ === ONYX / LIQUID GLASS MICRO-SECTIONS =========== /
 / ================================================== */
 
-.glass,
+.section[data-section-id="time"],
+.section[data-section-id="weather"],
+.section[data-section-id="focus"],
+.section[data-section-id="battery"] {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  padding: 18px 22px;
+  border-radius: var(--radius-lg);
+
+  /* Force Hardware Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
+
+  background:
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+
+  /* Tamed contrast */
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+
+  box-shadow:
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent),
+    0 10px 28px color-mix(in srgb, var(--shadow-color) 42%, transparent);
+
+  transition:
+    background var(--transition-medium),
+    border-color var(--transition-medium),
+    box-shadow var(--transition-medium);
+}
+
+/* 🕒 Live Time */
+
+#live-time {
+  font-weight: 650;
+  font-size: 1rem;
+  color: var(--text-color);
+  letter-spacing: 0.35px;
+
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+
+  will-change: transform;
+  transform: translateZ(0);
+
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 24%, transparent),
+      color-mix(in srgb, var(--content-bg) 86%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+  backdrop-filter: blur(14px) saturate(155%);
+  -webkit-backdrop-filter: blur(14px) saturate(155%);
+
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 58%, transparent),
+    0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+}
+
+/* 🌤️ Weather */
+
+#weather-widget {
+  display: inline-block;
+
+  font-size: 1.05rem;
+  font-weight: 550;
+  color: var(--text-color);
+
+  padding: 8px 15px;
+  border-radius: var(--radius-pill);
+
+  will-change: transform;
+  transform: translateZ(0);
+
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 24%, transparent),
+      color-mix(in srgb, var(--content-bg) 86%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+  backdrop-filter: blur(14px) saturate(155%);
+  -webkit-backdrop-filter: blur(14px) saturate(155%);
+
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent),
+    0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+}
+
+/* 💬 Daily Focus */
+
+#daily-focus {
+  width: 100%;
+  max-width: 480px;
+
+  padding: 18px 22px;
+  border-radius: var(--radius-lg);
+
+  /* Force Hardware Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
+
+  background:
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+
+  /* Tamed contrast */
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+
+  box-shadow:
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent),
+    0 8px 24px color-mix(in srgb, var(--shadow-color) 38%, transparent);
+}
+
+#daily-focus h3 {
+  margin: 0 0 8px;
+  font-size: 1.1em;
+  font-weight: 750;
+  color: var(--text-color);
+}
+
+#daily-focus p {
+  margin: 0;
+  color: var(--secondary-text);
+  font-size: 1em;
+}
+
+/* 🔋 Battery */
+
+#battery-widget {
+  font-size: 1rem;
+  font-weight: 550;
+  color: var(--text-color);
+
+  padding: 8px 15px;
+  border-radius: var(--radius-pill);
+
+  will-change: transform;
+  transform: translateZ(0);
+
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 24%, transparent),
+      color-mix(in srgb, var(--content-bg) 86%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+
+  border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+  backdrop-filter: blur(14px) saturate(155%);
+  -webkit-backdrop-filter: blur(14px) saturate(155%);
+
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent),
+    0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+}
+
+/* ======================== /
+/ iOS 27 Liquid Sections   /
+/ ======================== */
+
 .section {
   position: relative;
   isolation: isolate;
   overflow: hidden;
 
+  /* Force Hardware Acceleration */
   will-change: transform;
   transform: translateZ(0);
+
+  padding: 28px;
+  margin-bottom: 32px;
+
+  border-radius: var(--radius-xl);
 
   color: var(--text-color);
 
@@ -392,7 +590,6 @@ a {
     var(--glass-surface);
 
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
 
   box-shadow:
     var(--bubble-highlight),
@@ -408,43 +605,41 @@ a {
     transform var(--transition-fast);
 }
 
-.section {
-  padding: 28px;
-  margin-bottom: 32px;
-}
-
-.glass::before,
 .section::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
-
   border-radius: inherit;
   pointer-events: none;
+  z-index: 0;
 
   background: var(--liquid-reflection);
-  opacity: 0.28;
+  opacity: 0.25; /* Lowered opacity to replace mix-blend-mode */
 }
 
-.glass::after,
 .section::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
-
   border-radius: inherit;
   pointer-events: none;
+  z-index: 0;
 
   background:
-    var(--glass-top-glow),
-    var(--glass-bottom-depth);
+    radial-gradient(
+      circle at 50% 0%,
+      color-mix(in srgb, var(--glow-color) 54%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      circle at 50% 100%,
+      color-mix(in srgb, var(--shadow-color) 42%, transparent),
+      transparent 72%
+    );
 
-  opacity: 0.58;
+  opacity: 0.62;
 }
 
-.glass > ,
 .section > * {
   position: relative;
   z-index: 1;
@@ -452,185 +647,37 @@ a {
 
 .section h1,
 .section h2,
-.section h3,
-.section h4,
-.section h5,
-.section h6 {
+.section h3 {
   color: var(--text-color);
 }
 
 .section p,
+.section span,
 .section li {
   color: var(--secondary-text);
 }
 
-.section span {
-  color: inherit;
-}
+/* ======================== /
+/ Light Mode Tuning        /
+/ ======================== */
 
-/* ================================================== /
-/ MICRO GLASS SECTIONS                               /
-/ ================================================== */
-
-.section[data-section-id="time"],
-.section[data-section-id="weather"],
-.section[data-section-id="focus"],
-.section[data-section-id="battery"] {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-
-  padding: 18px 22px;
-  border-radius: var(--radius-lg);
-
-  background:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
-
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
-
-  backdrop-filter:
-    blur(20px)
-    saturate(160%)
-    contrast(1.04);
-  -webkit-backdrop-filter:
-    blur(20px)
-    saturate(160%)
-    contrast(1.04);
-
-  box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent),
-    0 10px 28px color-mix(in srgb, var(--shadow-color) 42%, transparent);
-}
-
-/* ================================================== /
-/ SMALL GLASS PILLS                                  /
-/ ================================================== */
-
-#live-time,
-#weather-widget,
-#battery-widget {
-  color: var(--text-color);
-  font-weight: 650;
-
-  padding: 7px 14px;
-  border-radius: var(--radius-pill);
-
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--glow-color) 24%, transparent),
-      color-mix(in srgb, var(--content-bg) 86%, transparent)
-    ),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
-
-  border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
-
-  backdrop-filter:
-    blur(14px)
-    saturate(165%)
-    contrast(1.04);
-  -webkit-backdrop-filter:
-    blur(14px)
-    saturate(165%)
-    contrast(1.04);
-
-  box-shadow:
-    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 54%, transparent),
-    0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
-}
-
-#live-time {
-  font-size: 1rem;
-  letter-spacing: 0.35px;
-}
-
-#weather-widget {
-  display: inline-block;
-  font-size: 1.05rem;
-}
-
-#battery-widget {
-  font-size: 1rem;
-}
-
-/* ================================================== /
-/ DAILY FOCUS                                        /
-/ ================================================== */
-
-#daily-focus {
-  width: 100%;
-  max-width: 480px;
-
-  padding: 18px 22px;
-  border-radius: var(--radius-lg);
-
-  background:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
-
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
-
-  backdrop-filter:
-    blur(22px)
-    saturate(160%)
-    contrast(1.04);
-  -webkit-backdrop-filter:
-    blur(22px)
-    saturate(160%)
-    contrast(1.04);
-
-  box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent),
-    0 8px 24px color-mix(in srgb, var(--shadow-color) 38%, transparent);
-}
-
-#daily-focus h3 {
-  margin: 0 0 8px;
-
-  color: var(--text-color);
-  font-size: 1.1em;
-  font-weight: 750;
-}
-
-#daily-focus p {
-  margin: 0;
-
-  color: var(--secondary-text);
-  font-size: 1em;
-}
-
-/* ================================================== /
-/ LIGHT MODE GLASS TUNING                            /
-/ ================================================== */
-
-html.light-mode body .glass,
-html.light-e body .glass,
-html[data-theme="light"] body .glass,
-body.light-mode .glass,
 body.light-e .glass,
-body[data-theme="light"] .glass,
-html.light-mode body .section,
-html.light-e body .section,
-html[data-theme="light"] body .section,
-body.light-mode .section,
 body.light-e .section,
-body[data-theme="light"] .section {
+body.light-e .section[data-section-id="time"],
+body.light-e .section[data-section-id="weather"],
+body.light-e .section[data-section-id="focus"],
+body.light-e .section[data-section-id="battery"] {
   background:
     radial-gradient(
       circle at 40% 0%,
-      rgba(255, 255, 255, 0.90),
+      rgba(255, 255, 255, 0.88),
       transparent 56%
     ),
     var(--bubble-gradient),
     var(--liquid-refraction),
     color-mix(in srgb, var(--content-bg) 86%, white 14%);
 
-  border-color:
-    color-mix(in srgb, var(--border-color) 94%, white 6%);
+  border-color: color-mix(in srgb, var(--border-color) 92%, white 8%);
 
   box-shadow:
     var(--bubble-highlight),
@@ -638,128 +685,103 @@ body[data-theme="light"] .section {
     inset 0 -1px 0 rgba(0, 0, 0, 0.045);
 }
 
-html.light-mode body .glass::before,
-html.light-e body .glass::before,
-html[data-theme="light"] body .glass::before,
-body.light-mode .glass::before,
 body.light-e .glass::before,
-body[data-theme="light"] .glass::before,
-html.light-mode body .section::before,
-html.light-e body .section::before,
-html[data-theme="light"] body .section::before,
-body.light-mode .section::before,
-body.light-e .section::before,
-body[data-theme="light"] .section::before {
-  opacity: 0.34;
+body.light-e .section::before {
+  opacity: 0.35; /* Adjusted down relative to the new base opacity */
 }
 
-html.light-mode body .glass::after,
-html.light-e body .glass::after,
-html[data-theme="light"] body .glass::after,
-body.light-mode .glass::after,
 body.light-e .glass::after,
-body[data-theme="light"] .glass::after,
-html.light-mode body .section::after,
-html.light-e body .section::after,
-html[data-theme="light"] body .section::after,
-body.light-mode .section::after,
-body.light-e .section::after,
-body[data-theme="light"] .section::after {
+body.light-e .section::after {
   background:
     radial-gradient(
       circle at 50% 0%,
-      rgba(255, 255, 255, 0.76),
+      rgba(255, 255, 255, 0.74),
       transparent 58%
     ),
     radial-gradient(
       circle at 50% 100%,
-      rgba(0, 0, 0, 0.10),
+      rgba(0, 0, 0, 0.12),
       transparent 72%
     );
 
-  opacity: 0.54;
+  opacity: 0.55;
 }
 
-/* ================================================== /
-/ DARK MODE GLASS TUNING                             /
-/ ================================================== */
+body.light-e .section h1,
+body.light-e .section h2,
+body.light-e .section h3 {
+  color: var(--text-color);
+}
+
+body.light-e .section p,
+body.light-e .section span,
+body.light-e .section li {
+  color: var(--secondary-text);
+}
+
+/* ======================== /
+/ Dark Mode Tuning         /
+/ ======================== */
 
 html.dark-mode body .glass,
-html.dark-e body .glass,
-html[data-theme="dark"] body .glass,
-body.dark-mode .glass,
-body.dark-e .glass,
-body[data-theme="dark"] .glass,
 html.dark-mode body .section,
-html.dark-e body .section,
-html[data-theme="dark"] body .section,
+html.dark-mode body .section[data-section-id="time"],
+html.dark-mode body .section[data-section-id="weather"],
+html.dark-mode body .section[data-section-id="focus"],
+html.dark-mode body .section[data-section-id="battery"],
+body.dark-mode .glass,
 body.dark-mode .section,
-body.dark-e .section,
-body[data-theme="dark"] .section {
+body.dark-mode .section[data-section-id="time"],
+body.dark-mode .section[data-section-id="weather"],
+body.dark-mode .section[data-section-id="focus"],
+body.dark-mode .section[data-section-id="battery"] {
   background:
     radial-gradient(
       circle at 36% 0%,
-      rgba(255, 255, 255, 0.13),
+      rgba(255, 255, 255, 0.12),
       transparent 52%
     ),
     var(--bubble-gradient),
     var(--liquid-refraction),
     color-mix(in srgb, var(--content-bg) 88%, black 12%);
 
-  border-color:
-    color-mix(in srgb, var(--border-color) 92%, transparent);
+  border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
 
   box-shadow:
     var(--bubble-highlight),
-    0 30px 70px color-mix(in srgb, var(--shadow-color) 84%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.30);
+    0 30px 70px color-mix(in srgb, var(--shadow-color) 88%, transparent),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.32);
 }
 
 html.dark-mode body .glass::before,
-html.dark-e body .glass::before,
-html[data-theme="dark"] body .glass::before,
-body.dark-mode .glass::before,
-body.dark-e .glass::before,
-body[data-theme="dark"] .glass::before,
 html.dark-mode body .section::before,
-html.dark-e body .section::before,
-html[data-theme="dark"] body .section::before,
-body.dark-mode .section::before,
-body.dark-e .section::before,
-body[data-theme="dark"] .section::before {
-  opacity: 0.28;
+body.dark-mode .glass::before,
+body.dark-mode .section::before {
+  opacity: 0.25; /* Adjusted down relative to the new base opacity */
 }
 
 html.dark-mode body .glass::after,
-html.dark-e body .glass::after,
-html[data-theme="dark"] body .glass::after,
-body.dark-mode .glass::after,
-body.dark-e .glass::after,
-body[data-theme="dark"] .glass::after,
 html.dark-mode body .section::after,
-html.dark-e body .section::after,
-html[data-theme="dark"] body .section::after,
-body.dark-mode .section::after,
-body.dark-e .section::after,
-body[data-theme="dark"] .section::after {
+body.dark-mode .glass::after,
+body.dark-mode .section::after {
   background:
     radial-gradient(
       circle at 50% 0%,
-      rgba(255, 255, 255, 0.11),
+      rgba(255, 255, 255, 0.1),
       transparent 58%
     ),
     radial-gradient(
       circle at 50% 100%,
-      rgba(0, 0, 0, 0.42),
+      rgba(0, 0, 0, 0.4),
       transparent 72%
     );
 
-  opacity: 0.70;
+  opacity: 0.72;
 }
 
-/* ================================================== /
-/ FOCUS RING                                         /
-/ ================================================== */
+/* ======================================== /
+/ iOS-Style Focus Ring                     /
+/ ======================================== */
 
 :focus {
   outline: none;
@@ -773,9 +795,9 @@ body:not(.focus-outline-disabled) :focus-visible {
     0 0 18px color-mix(in srgb, var(--accent-color) 18%, transparent);
 }
 
-/* ================================================== /
-/ MOUSE TRAIL                                        /
-/ ================================================== */
+/* ======================== /
+/ Mouse Trail              /
+/ ======================== */
 
 .mouse-trail-container .trail-dot {
   mix-blend-mode: screen;
@@ -785,12 +807,7 @@ body:not(.focus-outline-disabled) :focus-visible {
     opacity 0.3s ease-out;
 }
 
-html.light-mode body .mouse-trail-container .trail-dot,
-html.light-e body .mouse-trail-container .trail-dot,
-html[data-theme="light"] body .mouse-trail-container .trail-dot,
-body.light-mode .mouse-trail-container .trail-dot,
-body.light-e .mouse-trail-container .trail-dot,
-body[data-theme="light"] .mouse-trail-container .trail-dot {
+body.light-e .mouse-trail-container .trail-dot {
   mix-blend-mode: multiply;
 }
 
@@ -798,9 +815,7 @@ body.reduced-motion .mouse-trail-container {
   display: none !important;
 }
 
-/* ================================================== /
-/ MOBILE RESPONSIVENESS                              /
-/ ================================================== */
+/* 📱 Mobile Responsiveness */
 
 @media (max-width: 600px) {
   body {
@@ -835,7 +850,6 @@ body.reduced-motion .mouse-trail-container {
     padding: 16px 18px;
   }
 }
-
 
 /* ======================================== */
 /* == Profile Section – Onyx Bubble Glass == */
@@ -12385,4 +12399,3 @@ body.light-e .tech-upgrade-explanation {
         padding: 9px 10px;
     }
 }
-
