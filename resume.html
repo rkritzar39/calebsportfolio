@@ -94,144 +94,109 @@ document.getElementById("download-btn").addEventListener("click", function () {
   </footer>
 
 <nav class="onyx-dock" aria-label="Primary navigation">
-  <a class="dock-item" href="/">
-    <span class="dock-icon" aria-hidden="true">🏠</span>
+  <span class="dock-active-lens" aria-hidden="true"></span>
+
+  <a href="/" class="dock-item">
+    <span class="dock-icon">🏠</span>
     <span class="dock-label">Home</span>
   </a>
 
-  <a class="dock-item" href="/beta">
-    <span class="dock-icon" aria-hidden="true">🧪</span>
+  <a href="/beta" class="dock-item">
+    <span class="dock-icon">🧪</span>
     <span class="dock-label">Beta</span>
   </a>
 
-  <a class="dock-item" href="/resume">
-    <span class="dock-icon" aria-hidden="true">📜</span>
+  <a href="/resume" class="dock-item">
+    <span class="dock-icon">📜</span>
     <span class="dock-label">Resume</span>
   </a>
 
-  <a class="dock-item" href="/settings">
-    <span class="dock-icon" aria-hidden="true">⚙️</span>
+  <a href="/settings" class="dock-item">
+    <span class="dock-icon">⚙️</span>
     <span class="dock-label">Settings</span>
   </a>
 </nav>
 
 <script>
-function normalizeOnyxDockPath(path) {
-  let clean = String(path || "/")
-    .split("?")[0]
-    .split("#")[0]
-    .toLowerCase()
-    .replace(/\/index\.html$/i, "/")
-    .replace(/\.html$/i, "")
-    .replace(/\/+$/g, "");
+  document.addEventListener("DOMContentLoaded", () => {
+    const dock = document.querySelector(".onyx-dock");
+    const links = document.querySelectorAll(".onyx-dock .dock-item");
+    const lens = document.querySelector(".dock-active-lens");
 
-  if (!clean) clean = "/";
-  if (clean === "/home") clean = "/";
+    if (!dock || !links.length || !lens) return;
 
-  return clean;
-}
+    function normalizePath(path) {
+      // Fixed: Escaped the forward slashes in the regex
+      let clean = String(path || "/")
+        .split("?")[0]
+        .split("#")[0]
+        .replace(/\/index\.html$/i, "/")
+        .replace(/\/$/, "");
 
-function updateOnyxDockActiveTab() {
-  const dock = document.querySelector(".onyx-dock");
-  const links = [...document.querySelectorAll(".onyx-dock .dock-item")];
+      if (!clean) clean = "/";
+      if (clean === "/home") clean = "/";
 
-  if (!dock || !links.length) return;
-
-  const currentPath = normalizeOnyxDockPath(window.location.pathname);
-
-  let activeLink = links.find((link) => {
-    const targetPath = normalizeOnyxDockPath(
-      new URL(link.href, window.location.origin).pathname
-    );
-
-    return targetPath === "/"
-      ? currentPath === "/"
-      : currentPath === targetPath ||
-          currentPath.startsWith(targetPath + "/");
-  });
-
-  if (!activeLink) {
-    activeLink =
-      document.querySelector('.onyx-dock .dock-item[href="/"]') || links[0];
-  }
-
-  links.forEach((link) => {
-    const active = link === activeLink;
-
-    link.classList.toggle("active", active);
-
-    if (active) {
-      link.setAttribute("aria-current", "page");
-    } else {
-      link.removeAttribute("aria-current");
+      return clean;
     }
-  });
 
-  dock.classList.add("dock-ready");
-}
+    function moveLensTo(link) {
+      const dockRect = dock.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
 
-function setupOnyxDockEffects() {
-  document.querySelectorAll(".onyx-dock .dock-item").forEach((link) => {
-    if (link.dataset.dockEffectsReady) return;
+      const x = linkRect.left - dockRect.left;
+      const width = linkRect.width;
 
-    link.dataset.dockEffectsReady = "true";
+      // Fixed: Wrapped template literals in backticks
+      dock.style.setProperty("--lens-x", `${x}px`);
+      dock.style.setProperty("--lens-width", `${width}px`);
+    }
 
-    link.addEventListener("mousemove", (e) => {
-      const rect = link.getBoundingClientRect();
+    const currentPath = normalizePath(window.location.pathname);
+    let activeLink = null;
 
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+    links.forEach((link) => {
+      const href = link.getAttribute("href") || "/";
+      const targetPath = normalizePath(
+        new URL(href, window.location.origin).pathname
+      );
 
-      const dx = x / rect.width - 0.5;
-      const dy = y / rect.height - 0.5;
+      const exactMatch = targetPath === currentPath;
+      const nestedMatch = targetPath !== "/" && currentPath.startsWith(targetPath + "/");
 
-      link.style.setProperty("--x", `${x}px`);
-      link.style.setProperty("--y", `${y}px`);
-      link.style.setProperty("--dx", dx.toFixed(3));
-      link.style.setProperty("--dy", dy.toFixed(3));
+      if (exactMatch || nestedMatch) {
+        activeLink = link;
+      }
     });
 
-    link.addEventListener("mouseleave", () => {
-      link.style.setProperty("--dx", "0");
-      link.style.setProperty("--dy", "0");
+    if (!activeLink) {
+      activeLink = document.querySelector('.onyx-dock .dock-item[href="/"]') || links[0];
+    }
+
+    links.forEach((link) => {
+      const isActive = link === activeLink;
+
+      link.classList.toggle("active", isActive);
+
+      if (isActive) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
     });
+
+    requestAnimationFrame(() => {
+      moveLensTo(activeLink);
+      dock.classList.add("dock-ready");
+    });
+
+    window.addEventListener("resize", () => {
+      const active = document.querySelector(".onyx-dock .dock-item.active");
+      if (active) moveLensTo(active);
+    });
+
+    const year = document.getElementById("year");
+    if (year) year.textContent = new Date().getFullYear();
   });
-}
-
-function initOnyxDock() {
-  setupOnyxDockEffects();
-  updateOnyxDockActiveTab();
-
-  requestAnimationFrame(updateOnyxDockActiveTab);
-  setTimeout(updateOnyxDockActiveTab, 50);
-  setTimeout(updateOnyxDockActiveTab, 150);
-  setTimeout(updateOnyxDockActiveTab, 350);
-  setTimeout(updateOnyxDockActiveTab, 800);
-
-  const year = document.getElementById("year");
-  if (year) {
-    year.textContent = new Date().getFullYear();
-  }
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initOnyxDock);
-} else {
-  initOnyxDock();
-}
-
-window.addEventListener("pageshow", () => {
-  setupOnyxDockEffects();
-  updateOnyxDockActiveTab();
-  requestAnimationFrame(updateOnyxDockActiveTab);
-  setTimeout(updateOnyxDockActiveTab, 100);
-  setTimeout(updateOnyxDockActiveTab, 400);
-});
-
-window.addEventListener("load", updateOnyxDockActiveTab);
-window.addEventListener("resize", updateOnyxDockActiveTab);
-window.addEventListener("popstate", updateOnyxDockActiveTab);
-window.addEventListener("hashchange", updateOnyxDockActiveTab);
 </script>
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
   <script src="settings.js"></script>
