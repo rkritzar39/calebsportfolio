@@ -315,131 +315,178 @@
     </div>
   </main>
 
-  <nav class="onyx-dock">
-    <a class="dock-item" href="/">
-      <span class="dock-icon">🏠</span>
-      <span class="dock-label">Home</span>
-    </a>
+ <nav class="onyx-dock" aria-label="Primary navigation">
+  <span class="dock-active-lens" aria-hidden="true"></span>
 
-    <a class="dock-item" href="/beta">
-      <span class="dock-icon">🧪</span>
-      <span class="dock-label">Beta</span>
-    </a>
+  <a href="/" class="dock-item" data-route="/">
+    <span class="dock-icon" aria-hidden="true">🏠</span>
+    <span class="dock-label">Home</span>
+  </a>
 
-    <a class="dock-item" href="/resume">
-      <span class="dock-icon">📜</span>
-      <span class="dock-label">Resume</span>
-    </a>
+  <a href="/beta" class="dock-item" data-route="/beta">
+    <span class="dock-icon" aria-hidden="true">🧪</span>
+    <span class="dock-label">Beta</span>
+  </a>
 
-    <a class="dock-item" href="/settings">
-      <span class="dock-icon">⚙️</span>
-      <span class="dock-label">Settings</span>
-    </a>
-  </nav>
+  <a href="/resume" class="dock-item" data-route="/resume">
+    <span class="dock-icon" aria-hidden="true">📜</span>
+    <span class="dock-label">Resume</span>
+  </a>
 
-  <script>
-    function normalizeOnyxDockPath(path) {
-      return (path || "/")
-        .toLowerCase()
-        .replace(/index\.html$/, "")
-        .replace(/\.html$/, "")
-        .replace(/\/+$/, "") || "/";
+  <a href="/settings" class="dock-item" data-route="/settings">
+    <span class="dock-icon" aria-hidden="true">⚙️</span>
+    <span class="dock-label">Settings</span>
+  </a>
+</nav>
+
+<script>
+function normalizeOnyxDockPath(path) {
+  let clean = String(path || "/")
+    .split("?")[0]
+    .split("#")[0]
+    .toLowerCase()
+    .replace(/\/index\.html$/i, "/")
+    .replace(/\.html$/i, "")
+    .replace(/\/+$/g, "");
+
+  if (!clean) clean = "/";
+  if (clean === "/home") clean = "/";
+
+  return clean;
+}
+
+function getOnyxDockActiveLink() {
+  const links = [...document.querySelectorAll(".onyx-dock .dock-item")];
+  const currentPath = normalizeOnyxDockPath(window.location.pathname);
+
+  let activeLink = null;
+
+  links.forEach((link) => {
+    const rawRoute = link.dataset.route || link.getAttribute("href") || "/";
+    const targetPath = normalizeOnyxDockPath(
+      new URL(rawRoute, window.location.origin).pathname
+    );
+
+    const isExactMatch = currentPath === targetPath;
+    const isNestedMatch =
+      targetPath !== "/" && currentPath.startsWith(targetPath + "/");
+
+    if (isExactMatch || isNestedMatch) {
+      activeLink = link;
     }
+  });
 
-    function updateOnyxDockActiveTab() {
-      const dock = document.querySelector(".onyx-dock");
-      const links = document.querySelectorAll(".onyx-dock .dock-item");
+  return (
+    activeLink ||
+    document.querySelector('.onyx-dock .dock-item[data-route="/"]') ||
+    document.querySelector('.onyx-dock .dock-item[href="/"]') ||
+    links[0]
+  );
+}
 
-      if (!dock || !links.length) return;
+function moveOnyxDockLensTo(link) {
+  const dock = document.querySelector(".onyx-dock");
+  const lens = document.querySelector(".dock-active-lens");
 
-      const currentPath = normalizeOnyxDockPath(window.location.pathname);
-      let matched = false;
+  if (!dock || !lens || !link) return;
 
-      links.forEach((link) => {
-        const targetPath = normalizeOnyxDockPath(
-          new URL(link.getAttribute("href"), window.location.origin).pathname
-        );
+  const dockRect = dock.getBoundingClientRect();
+  const linkRect = link.getBoundingClientRect();
 
-        const isActive =
-          targetPath === "/"
-            ? currentPath === "/"
-            : currentPath === targetPath ||
-              currentPath.startsWith(targetPath + "/");
+  const dockPaddingLeft =
+    parseFloat(getComputedStyle(dock).paddingLeft) || 0;
 
-        link.classList.toggle("active", isActive);
+  const x = linkRect.left - dockRect.left - dockPaddingLeft;
+  const width = linkRect.width;
 
-        if (isActive) matched = true;
-      });
+  dock.style.setProperty("--lens-x", `${x}px`);
+  dock.style.setProperty("--lens-width", `${width}px`);
+}
 
-      if (!matched) {
-        const homeLink = document.querySelector('.onyx-dock .dock-item[href="/"]');
+function updateOnyxDockActiveTab() {
+  const dock = document.querySelector(".onyx-dock");
+  const links = document.querySelectorAll(".onyx-dock .dock-item");
 
-        links.forEach((l) => l.classList.remove("active"));
-        if (homeLink) homeLink.classList.add("active");
-      }
+  if (!dock || !links.length) return;
 
-      dock.classList.add("dock-ready");
-    }
+  const activeLink = getOnyxDockActiveLink();
 
-    function setupOnyxDockEffects() {
-      const links = document.querySelectorAll(".onyx-dock .dock-item");
+  links.forEach((link) => {
+    const isActive = link === activeLink;
 
-      links.forEach((link) => {
-        if (link.dataset.dockEffectsReady === "true") return;
-        link.dataset.dockEffectsReady = "true";
+    link.classList.toggle("active", isActive);
 
-        link.addEventListener("mousemove", (e) => {
-          const rect = link.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          const dx = x / rect.width - 0.5;
-          const dy = y / rect.height - 0.5;
-
-          link.style.setProperty("--x", `${x}px`);
-          link.style.setProperty("--y", `${y}px`);
-          link.style.setProperty("--dx", dx);
-          link.style.setProperty("--dy", dy);
-        });
-
-        link.addEventListener("mouseleave", () => {
-          link.style.setProperty("--dx", "0");
-          link.style.setProperty("--dy", "0");
-        });
-      });
-    }
-
-    function initOnyxDock() {
-      setupOnyxDockEffects();
-      updateOnyxDockActiveTab();
-
-      requestAnimationFrame(updateOnyxDockActiveTab);
-      setTimeout(updateOnyxDockActiveTab, 50);
-      setTimeout(updateOnyxDockActiveTab, 150);
-      setTimeout(updateOnyxDockActiveTab, 350);
-      setTimeout(updateOnyxDockActiveTab, 800);
-
-      const y = document.getElementById("year");
-      if (y) y.textContent = new Date().getFullYear();
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initOnyxDock);
+    if (isActive) {
+      link.setAttribute("aria-current", "page");
     } else {
-      initOnyxDock();
+      link.removeAttribute("aria-current");
     }
+  });
 
-    window.addEventListener("pageshow", () => {
-      setupOnyxDockEffects();
-      updateOnyxDockActiveTab();
-      requestAnimationFrame(updateOnyxDockActiveTab);
-      setTimeout(updateOnyxDockActiveTab, 100);
-      setTimeout(updateOnyxDockActiveTab, 400);
+  moveOnyxDockLensTo(activeLink);
+  dock.classList.add("dock-ready");
+}
+
+function setupOnyxDockEffects() {
+  const links = document.querySelectorAll(".onyx-dock .dock-item");
+
+  links.forEach((link) => {
+    if (link.dataset.dockEffectsReady === "true") return;
+    link.dataset.dockEffectsReady = "true";
+
+    link.addEventListener("mousemove", (e) => {
+      const rect = link.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const dx = x / rect.width - 0.5;
+      const dy = y / rect.height - 0.5;
+
+      link.style.setProperty("--x", `${x}px`);
+      link.style.setProperty("--y", `${y}px`);
+      link.style.setProperty("--dx", dx.toFixed(3));
+      link.style.setProperty("--dy", dy.toFixed(3));
     });
 
-    window.addEventListener("load", updateOnyxDockActiveTab);
-    window.addEventListener("popstate", updateOnyxDockActiveTab);
-    window.addEventListener("hashchange", updateOnyxDockActiveTab);
-  </script>
+    link.addEventListener("mouseleave", () => {
+      link.style.setProperty("--dx", "0");
+      link.style.setProperty("--dy", "0");
+    });
+  });
+}
+
+function initOnyxDock() {
+  setupOnyxDockEffects();
+
+  requestAnimationFrame(() => {
+    updateOnyxDockActiveTab();
+
+    requestAnimationFrame(() => {
+      updateOnyxDockActiveTab();
+    });
+  });
+
+  const y = document.getElementById("year");
+  if (y) {
+    y.textContent = new Date().getFullYear();
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initOnyxDock);
+} else {
+  initOnyxDock();
+}
+
+window.addEventListener("pageshow", () => {
+  setupOnyxDockEffects();
+  requestAnimationFrame(updateOnyxDockActiveTab);
+});
+
+window.addEventListener("load", updateOnyxDockActiveTab);
+window.addEventListener("resize", updateOnyxDockActiveTab);
+window.addEventListener("popstate", updateOnyxDockActiveTab);
+window.addEventListener("hashchange", updateOnyxDockActiveTab);
+</script>
 </body>
 </html>
