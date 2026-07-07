@@ -93,7 +93,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
     <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
   </footer>
 
- <nav class="onyx-dock">
+<nav class="onyx-dock" aria-label="Primary navigation">
   <a class="dock-item" href="/">
     <span class="dock-icon">🏠</span>
     <span class="dock-label">Home</span>
@@ -119,7 +119,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
   function normalizeOnyxDockPath(path) {
     return (path || "/")
       .toLowerCase()
-      .replace(/index\.html$/, "")
+      .replace(/\/index\.html$/, "")
       .replace(/\.html$/, "")
       .replace(/\/+$/, "") || "/";
   }
@@ -138,22 +138,32 @@ document.getElementById("download-btn").addEventListener("click", function () {
         new URL(link.getAttribute("href"), window.location.origin).pathname
       );
 
+      // Check if it's an exact match, or a nested page (e.g., /beta/feature)
       const isActive =
         targetPath === "/"
           ? currentPath === "/"
-          : currentPath === targetPath ||
-            currentPath.startsWith(targetPath + "/");
+          : currentPath === targetPath || currentPath.startsWith(targetPath + "/");
 
+      // Apply styling class
       link.classList.toggle("active", isActive);
 
-      if (isActive) matched = true;
+      // Apply accessibility attributes
+      if (isActive) {
+        link.setAttribute("aria-current", "page");
+        matched = true;
+      } else {
+        link.removeAttribute("aria-current");
+      }
     });
 
+    // Fallback to Home if nothing matches
     if (!matched) {
       const homeLink = document.querySelector('.onyx-dock .dock-item[href="/"]');
-
-      links.forEach((l) => l.classList.remove("active"));
-      if (homeLink) homeLink.classList.add("active");
+      if (homeLink) {
+        links.forEach((l) => l.classList.remove("active"));
+        homeLink.classList.add("active");
+        homeLink.setAttribute("aria-current", "page");
+      }
     }
 
     dock.classList.add("dock-ready");
@@ -171,8 +181,8 @@ document.getElementById("download-btn").addEventListener("click", function () {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        const dx = x / rect.width - 0.5;
-        const dy = y / rect.height - 0.5;
+        const dx = (x / rect.width - 0.5).toFixed(3);
+        const dy = (y / rect.height - 0.5).toFixed(3);
 
         link.style.setProperty("--x", `${x}px`);
         link.style.setProperty("--y", `${y}px`);
@@ -191,6 +201,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
     setupOnyxDockEffects();
     updateOnyxDockActiveTab();
 
+    // Cascading updates to catch slow framework renders
     requestAnimationFrame(updateOnyxDockActiveTab);
     setTimeout(updateOnyxDockActiveTab, 50);
     setTimeout(updateOnyxDockActiveTab, 150);
@@ -201,12 +212,14 @@ document.getElementById("download-btn").addEventListener("click", function () {
     if (y) y.textContent = new Date().getFullYear();
   }
 
+  // Initialize safely based on loading state
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initOnyxDock);
   } else {
     initOnyxDock();
   }
 
+  // Handle back/forward cache and SPA navigation
   window.addEventListener("pageshow", () => {
     setupOnyxDockEffects();
     updateOnyxDockActiveTab();
