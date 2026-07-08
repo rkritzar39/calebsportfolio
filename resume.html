@@ -116,92 +116,11 @@ document.getElementById("download-btn").addEventListener("click", function () {
     <span class="dock-label">Settings</span>
   </a>
 </nav>
-
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const dock = document.querySelector(".onyx-dock");
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
-    const lens = document.querySelector(".dock-active-lens");
-
-    if (!dock || !links.length || !lens) return;
-
-    function normalizePath(path) {
-      // Fixed: Escaped the forward slashes in the regex
-      let clean = String(path || "/")
-        .split("?")[0]
-        .split("#")[0]
-        .replace(/\/index\.html$/i, "/")
-        .replace(/\/$/, "");
-
-      if (!clean) clean = "/";
-      if (clean === "/home") clean = "/";
-
-      return clean;
-    }
-
-    function moveLensTo(link) {
-      const dockRect = dock.getBoundingClientRect();
-      const linkRect = link.getBoundingClientRect();
-
-      const x = linkRect.left - dockRect.left;
-      const width = linkRect.width;
-
-      // Fixed: Wrapped template literals in backticks
-      dock.style.setProperty("--lens-x", `${x}px`);
-      dock.style.setProperty("--lens-width", `${width}px`);
-    }
-
-    const currentPath = normalizePath(window.location.pathname);
-    let activeLink = null;
-
-    links.forEach((link) => {
-      const href = link.getAttribute("href") || "/";
-      const targetPath = normalizePath(
-        new URL(href, window.location.origin).pathname
-      );
-
-      const exactMatch = targetPath === currentPath;
-      const nestedMatch = targetPath !== "/" && currentPath.startsWith(targetPath + "/");
-
-      if (exactMatch || nestedMatch) {
-        activeLink = link;
-      }
-    });
-
-    if (!activeLink) {
-      activeLink = document.querySelector('.onyx-dock .dock-item[href="/"]') || links[0];
-    }
-
-    links.forEach((link) => {
-      const isActive = link === activeLink;
-
-      link.classList.toggle("active", isActive);
-
-      if (isActive) {
-        link.setAttribute("aria-current", "page");
-      } else {
-        link.removeAttribute("aria-current");
-      }
-    });
-
-    requestAnimationFrame(() => {
-      moveLensTo(activeLink);
-      dock.classList.add("dock-ready");
-    });
-
-    window.addEventListener("resize", () => {
-      const active = document.querySelector(".onyx-dock .dock-item.active");
-      if (active) moveLensTo(active);
-    });
-
-    const year = document.getElementById("year");
-    if (year) year.textContent = new Date().getFullYear();
-  });
-</script>
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
   <script src="settings.js"></script>
   <script src="script.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="dock.js"></script>
 
   <script type="module" src="resume.js"></script>
 </body>
