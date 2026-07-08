@@ -847,7 +847,6 @@
     const links = document.querySelectorAll(".onyx-dock .dock-item");
     const lens = document.querySelector(".dock-active-lens");
 
-    // Failsafe: Exit if crucial elements are missing
     if (!dock || !links.length || !lens) return;
 
     function normalizePath(path) {
@@ -864,11 +863,9 @@
     }
 
     function moveLensTo(link) {
-      if (!link) return;
       const dockRect = dock.getBoundingClientRect();
       const linkRect = link.getBoundingClientRect();
 
-      // Calculate the X offset relative to the dock container
       const x = linkRect.left - dockRect.left;
       const width = linkRect.width;
 
@@ -876,30 +873,14 @@
       dock.style.setProperty("--lens-width", `${width}px`);
     }
 
-    function setActiveTab(link) {
-      // Clear active states from all links
-      links.forEach((l) => {
-        l.classList.remove("active");
-        l.removeAttribute("aria-current");
-      });
-      
-      // Apply active state to the clicked/current link
-      link.classList.add("active");
-      link.setAttribute("aria-current", "page");
-      
-      // Use requestAnimationFrame to ensure the DOM updates before measuring
-      requestAnimationFrame(() => {
-        moveLensTo(link);
-      });
-    }
-
     const currentPath = normalizePath(window.location.pathname);
     let activeLink = null;
 
-    // Determine which link should be active on initial load
     links.forEach((link) => {
-      // link.href safely returns the absolute resolved URL in all environments
-      const targetPath = normalizePath(new URL(link.href).pathname);
+      const href = link.getAttribute("href") || "/";
+      const targetPath = normalizePath(
+        new URL(href, window.location.origin).pathname
+      );
 
       const exactMatch = targetPath === currentPath;
       const nestedMatch = targetPath !== "/" && currentPath.startsWith(targetPath + "/");
@@ -909,37 +890,35 @@
       }
     });
 
-    // Default to the first item (Home) if no route matches
     if (!activeLink) {
       activeLink = document.querySelector('.onyx-dock .dock-item[href="/"]') || links[0];
     }
 
-    // Initialize the dock state
-    setActiveTab(activeLink);
+    links.forEach((link) => {
+      const isActive = link === activeLink;
+
+      link.classList.toggle("active", isActive);
+
+      if (isActive) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+
     requestAnimationFrame(() => {
+      moveLensTo(activeLink);
       dock.classList.add("dock-ready");
     });
 
-    // Handle window resizing to keep the lens aligned
     window.addEventListener("resize", () => {
       const active = document.querySelector(".onyx-dock .dock-item.active");
       if (active) moveLensTo(active);
     });
 
-    // Click handler for switching tabs
-    links.forEach((link) => {
-      link.addEventListener("click", (e) => {
-        // If you are using this as a standard multi-page website where you WANT the page 
-        // to fully reload on click, delete the next two lines (preventDefault & pushState).
-        e.preventDefault(); 
-        window.history.pushState({}, "", link.getAttribute("href"));
-        
-        // Visually switch the active tab
-        setActiveTab(link);
-      });
-    });
+    const year = document.getElementById("year");
+    if (year) year.textContent = new Date().getFullYear();
   });
 </script>
-
 </body>
 </html>
