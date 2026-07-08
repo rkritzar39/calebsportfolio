@@ -1181,13 +1181,9 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
 
   /* Sizes preserved exactly as requested */
   --dock-width: min(92vw, 560px);
-  --dock-height: 64px;
-  --dock-padding: 6px;
+  --dock-height: 64px; 
+  --dock-padding: 6px; 
   --dock-radius: 999px;
-
-  /* Lens defaults */
-  --lens-width: 0px;
-  --lens-x: 0px;
 
   /* Modern Apple Dark Mode Base */
   --dock-text: rgba(255, 255, 255, 0.95);
@@ -1206,8 +1202,8 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
   --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body.light-e,
 body.light-mode {
+  /* Modern Apple Light Mode Base */
   --dock-text: rgba(0, 0, 0, 0.95);
   --dock-muted: rgba(0, 0, 0, 0.5);
   --dock-bg: rgba(250, 250, 250, 0.65);
@@ -1215,39 +1211,10 @@ body.light-mode {
   --dock-highlight: rgba(255, 255, 255, 0.8);
   --dock-shadow: rgba(0, 0, 0, 0.15);
 
+  /* Active Lens Colors */
   --lens-bg: rgba(0, 0, 0, 0.06);
   --lens-border: rgba(0, 0, 0, 0.08);
   --lens-highlight: rgba(255, 255, 255, 0.6);
-}
-
-/* ================================================== */
-/* 🎛️ MATERIAL VARIANTS: CLEAR VS. TINTED             */
-/* ================================================== */
-
-.onyx-dock.theme-clear {
-  --dock-bg: rgba(28, 28, 30, 0.1);
-  --dock-border: rgba(255, 255, 255, 0.05);
-  --dock-shadow: rgba(0, 0, 0, 0.15);
-}
-
-body.light-mode .onyx-dock.theme-clear,
-body.light-e .onyx-dock.theme-clear {
-  --dock-bg: rgba(250, 250, 250, 0.1);
-  --dock-border: rgba(0, 0, 0, 0.03);
-  --dock-shadow: rgba(0, 0, 0, 0.08);
-}
-
-.onyx-dock.theme-tinted {
-  --dock-bg: rgba(28, 28, 30, 0.85);
-  --dock-border: rgba(255, 255, 255, 0.25);
-  --dock-shadow: rgba(0, 0, 0, 0.6);
-}
-
-body.light-mode .onyx-dock.theme-tinted,
-body.light-e .onyx-dock.theme-tinted {
-  --dock-bg: rgba(250, 250, 250, 0.85);
-  --dock-border: rgba(0, 0, 0, 0.15);
-  --dock-shadow: rgba(0, 0, 0, 0.25);
 }
 
 /* ================================================== */
@@ -1255,20 +1222,11 @@ body.light-e .onyx-dock.theme-tinted {
 /* ================================================== */
 
 .onyx-dock {
-  --lens-width: 0px;
-  --lens-x: 0px;
-
   box-sizing: border-box;
-
   position: fixed;
-
   left: 50%;
   bottom: max(12px, env(safe-area-inset-bottom));
-
-  transform:
-    translateX(-50%)
-    translateY(14px)
-    scale(0.985);
+  transform: translateX(-50%) translateY(14px) scale(0.985);
 
   width: var(--dock-width);
   height: var(--dock-height);
@@ -1278,19 +1236,16 @@ body.light-e .onyx-dock.theme-tinted {
   justify-content: space-between;
 
   padding: var(--dock-padding);
-
   border-radius: var(--dock-radius);
-
+  
+  /* Clean Apple Glass Fill */
   background: var(--dock-bg);
 
-  backdrop-filter:
-    blur(var(--dock-blur))
-    saturate(200%);
+  /* Deep Blur & Saturation */
+  backdrop-filter: blur(var(--dock-blur)) saturate(200%);
+  -webkit-backdrop-filter: blur(var(--dock-blur)) saturate(200%);
 
-  -webkit-backdrop-filter:
-    blur(var(--dock-blur))
-    saturate(200%);
-
+  /* Sub-pixel borders & Soft Shadows */
   box-shadow:
     0 12px 32px var(--dock-shadow),
     0 2px 8px color-mix(in srgb, var(--dock-shadow) 50%, transparent),
@@ -1298,27 +1253,18 @@ body.light-e .onyx-dock.theme-tinted {
     inset 0 1px 0 var(--dock-highlight);
 
   opacity: 0;
-
   overflow: hidden;
-
   isolation: isolate;
-
   z-index: 9999;
 
   transition:
-    background 0.3s ease,
-    box-shadow 0.3s ease,
     opacity 0.22s ease,
     transform 0.42s var(--ease-fluid);
 }
 
 .onyx-dock.dock-ready {
   opacity: 1;
-
-  transform:
-    translateX(-50%)
-    translateY(0)
-    scale(1);
+  transform: translateX(-50%) translateY(0) scale(1);
 }
 
 /* ================================================== */
@@ -1327,53 +1273,31 @@ body.light-e .onyx-dock.theme-tinted {
 
 .dock-active-lens {
   box-sizing: border-box;
-
   position: absolute;
-
+  
+  /* Mathematically derived to perfectly fit padding on any screen */
   top: var(--dock-padding);
-
-  /*
-    Important fix:
-    The lens starts inside the dock padding now,
-    not from the outer edge of the dock.
-  */
-  left: var(--dock-padding);
-
+  left: 0; 
   height: calc(100% - (var(--dock-padding) * 2));
-
-  width: var(--lens-width, 0px);
+  width: var(--lens-width, 100px);
 
   border-radius: 999px;
-
   pointer-events: none;
 
-  transform:
-    translate3d(
-      var(--lens-x, 0px),
-      0,
-      0
-    );
+  transform: translateX(var(--lens-x, 0px));
 
   background: var(--lens-bg);
 
-  backdrop-filter:
-    blur(24px)
-    saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
 
-  -webkit-backdrop-filter:
-    blur(24px)
-    saturate(150%);
-
+  /* Crisp sub-pixel Apple pill styling */
   box-shadow:
     inset 0 0 0 0.5px var(--lens-border),
     inset 0 1px 0 var(--lens-highlight),
     0 4px 12px color-mix(in srgb, var(--dock-shadow) 30%, transparent);
 
-  /*
-    Keep the lens behind the labels/icons,
-    but still inside the dock.
-  */
-  z-index: 1;
+  z-index: 0;
 
   transition:
     transform 0.42s var(--ease-fluid),
@@ -1386,36 +1310,26 @@ body.light-e .onyx-dock.theme-tinted {
 
 .dock-item {
   box-sizing: border-box;
-
   position: relative;
+  z-index: 4;
 
-  /*
-    Items sit above the active lens.
-  */
-  z-index: 2;
-
+  /* Forces perfectly equal distribution regardless of screen size */
   flex: 1 1 0%;
-
   min-width: 0;
-
   height: 100%;
 
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
 
   gap: 2px;
-
   padding: 0 4px;
 
   border-radius: 999px;
 
   color: var(--dock-muted);
-
   text-decoration: none;
-
   -webkit-tap-highlight-color: transparent;
 
   transition:
@@ -1425,16 +1339,12 @@ body.light-e .onyx-dock.theme-tinted {
 }
 
 .dock-icon {
-  font-size: 22px;
-
+  font-size: 22px; 
   line-height: 1;
-
   opacity: 0.7;
 
-  filter:
-    drop-shadow(
-      0 2px 4px rgba(0, 0, 0, 0.15)
-    );
+  /* Modern subtle shadow instead of heavy drop-shadows */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 
   transition:
     opacity 0.22s ease,
@@ -1443,29 +1353,18 @@ body.light-e .onyx-dock.theme-tinted {
 }
 
 .dock-label {
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Text",
-    "Segoe UI",
-    sans-serif;
-
-  font-size: 11px;
-
+  /* Apple System Typography */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  font-size: 11px; 
   line-height: 1;
-
-  font-weight: 600;
-
+  font-weight: 600; /* Apple uses medium/semibold for tabs, not 800 */
   letter-spacing: 0.01em;
-
   opacity: 0.8;
 
+  /* Prevent text breaking layout on tiny screens */
   white-space: nowrap;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
-
   max-width: 100%;
 
   transition:
@@ -1483,15 +1382,8 @@ body.light-e .onyx-dock.theme-tinted {
 
 .dock-item.active .dock-icon {
   opacity: 1;
-
-  transform:
-    translateY(-1px)
-    scale(1.04);
-
-  filter:
-    drop-shadow(
-      0 4px 8px color-mix(in srgb, var(--dock-shadow) 50%, transparent)
-    );
+  transform: translateY(-1px) scale(1.04);
+  filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--dock-shadow) 50%, transparent));
 }
 
 .dock-item.active .dock-label {
@@ -1508,14 +1400,11 @@ body.light-e .onyx-dock.theme-tinted {
 
 .dock-item:hover .dock-icon {
   opacity: 1;
-
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 }
 
 .dock-item:active {
-  transform:
-    scale(0.92);
+  transform: scale(0.92);
 }
 
 /* ================================================== */
