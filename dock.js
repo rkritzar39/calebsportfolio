@@ -25,8 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!link) return;
 
-        const dockWidth = dock.clientWidth;
-
         const styles = getComputedStyle(dock);
 
         const paddingLeft =
@@ -35,14 +33,25 @@ document.addEventListener("DOMContentLoaded", () => {
         const paddingRight =
             parseFloat(styles.paddingRight) || paddingLeft;
 
+        const dockWidth = dock.clientWidth;
+
         const width = link.offsetWidth;
 
-        let x = link.offsetLeft;
+        /*
+            CSS lens starts at:
+            left: var(--dock-padding);
 
-        const minX = paddingLeft;
+            So subtract paddingLeft here.
+        */
+        let x =
+            link.offsetLeft -
+            paddingLeft;
+
+        const minX = 0;
 
         const maxX =
             dockWidth -
+            paddingLeft -
             paddingRight -
             width;
 
@@ -78,7 +87,8 @@ document.addEventListener("DOMContentLoaded", () => {
             ).pathname
         );
 
-        const exact = target === currentPath;
+        const exact =
+            target === currentPath;
 
         const nested =
             target !== "/" &&
@@ -103,7 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     links.forEach(link => {
 
-        const active = link === activeLink;
+        const active =
+            link === activeLink;
 
         link.classList.toggle(
             "active",
