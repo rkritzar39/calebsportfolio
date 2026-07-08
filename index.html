@@ -890,7 +890,6 @@
       }
     });
 
-    // Default to the first item (Home) if no route matches
     if (!activeLink) {
       activeLink = document.querySelector('.onyx-dock .dock-item[href="/"]') || links[0];
     }
@@ -917,22 +916,8 @@
       if (active) moveLensTo(active);
     });
 
-    // Optional: Add manual click handlers for testing without actual navigation
-    // (Remove this block if you are using real page navigation)
-    links.forEach((link) => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault(); // Prevent page reload for demo purposes
-        
-        links.forEach(l => {
-          l.classList.remove("active");
-          l.removeAttribute("aria-current");
-        });
-        
-        link.classList.add("active");
-        link.setAttribute("aria-current", "page");
-        moveLensTo(link);
-      });
-    });
+    const year = document.getElementById("year");
+    if (year) year.textContent = new Date().getFullYear();
   });
 </script>
 </body>
