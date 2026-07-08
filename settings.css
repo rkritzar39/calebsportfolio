@@ -1172,13 +1172,13 @@ body.focus-outline-disabled :focus { outline: none !important; }
 }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
-/* ================================================== */
-/* 🍎 APPLE LIQOS LIQUID GLASS TAB BAR (iOS 27 STYLE) */
-/* ================================================== */
+/* ================================================== /
+/ 🍎 APPLE LIQOS LIQUID GLASS TAB BAR (iOS 27 STYLE) /
+/ ================================================== */
 
 :root {
 
-  --dock-accent: var(--accent-color,#0A84FF);
+  --dock-accent:var(--accent-color,#0A84FF);
 
   --dock-width:min(92vw,560px);
   --dock-height:64px;
@@ -1203,7 +1203,7 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
 
 }
 
-body.light-mode{
+body.light-mode {
 
   --dock-text:rgba(0,0,0,.94);
   --dock-muted:rgba(0,0,0,.55);
@@ -1219,11 +1219,14 @@ body.light-mode{
 
 }
 
-/* ================================================== */
-/* GLASS CAPSULE                                      */
-/* ================================================== */
+/* ================================================== /
+/ GLASS CAPSULE                                      /
+/ ================================================== */
 
-.onyx-dock{
+.onyx-dock {
+
+  --lens-width:0px;
+  --lens-x:var(--dock-padding);
 
   box-sizing:border-box;
 
@@ -1278,44 +1281,35 @@ body.light-mode{
       saturate(200%);
 
   box-shadow:
-
       0 14px 36px var(--dock-shadow),
-
       0 2px 10px rgba(0,0,0,.18),
-
       inset 0 0 0 .5px var(--dock-border),
-
       inset 0 1px .5px var(--dock-highlight);
 
   transition:
-
       opacity .22s ease,
-
       transform .42s var(--ease-fluid);
 
 }
 
-body.light-mode .onyx-dock{
+body.light-mode .onyx-dock {
 
   background:
-
       linear-gradient(
           180deg,
           rgba(255,255,255,.92),
           rgba(255,255,255,.58)
       ),
-
       linear-gradient(
           135deg,
           rgba(255,255,255,.72),
           rgba(255,255,255,.34)
       ),
-
       rgba(250,250,250,.64);
 
 }
 
-.onyx-dock.dock-ready{
+.onyx-dock.dock-ready {
 
   opacity:1;
 
@@ -1326,11 +1320,11 @@ body.light-mode .onyx-dock{
 
 }
 
-/* ================================================== */
-/* ACTIVE LENS                                        */
-/* ================================================== */
+/* ================================================== /
+/ ACTIVE LENS                                        /
+/ ================================================== */
 
-.dock-active-lens{
+.dock-active-lens {
 
   position:absolute;
 
@@ -1340,22 +1334,25 @@ body.light-mode .onyx-dock{
 
   height:calc(100% - (var(--dock-padding) * 2));
 
-  width:var(--lens-width);
+  width:var(--lens-width,0px);
 
-  transform:translateX(var(--lens-x));
+  transform:
+      translate3d(
+          var(--lens-x,var(--dock-padding)),
+          0,
+          0
+      );
 
   border-radius:999px;
 
   pointer-events:none;
 
   background:
-
       linear-gradient(
           180deg,
           rgba(255,255,255,.18),
           rgba(255,255,255,.04)
       ),
-
       var(--lens-bg);
 
   backdrop-filter:
@@ -1367,28 +1364,23 @@ body.light-mode .onyx-dock{
       saturate(180%);
 
   box-shadow:
-
       inset 0 0 0 .5px var(--lens-border),
-
       inset 0 1px .5px var(--lens-highlight),
-
       0 6px 18px rgba(0,0,0,.12);
 
   transition:
-
       transform .42s var(--ease-fluid),
-
       width .42s var(--ease-fluid);
 
   z-index:0;
 
 }
 
-/* ================================================== */
-/* ITEMS                                              */
-/* ================================================== */
+/* ================================================== /
+/ ITEMS                                              /
+/ ================================================== */
 
-.dock-item{
+.dock-item {
 
   position:relative;
 
@@ -1417,14 +1409,12 @@ body.light-mode .onyx-dock{
   -webkit-tap-highlight-color:transparent;
 
   transition:
-
       color .22s ease,
-
       transform .28s var(--ease-fluid);
 
 }
 
-.dock-icon{
+.dock-icon {
 
   font-size:22px;
 
@@ -1432,28 +1422,24 @@ body.light-mode .onyx-dock{
 
   opacity:.72;
 
-  filter:drop-shadow(0 1px 2px rgba(0,0,0,.10));
+  filter:
+      drop-shadow(
+          0 1px 2px rgba(0,0,0,.10)
+      );
 
   transition:
-
       opacity .22s,
-
       transform .28s var(--ease-fluid),
-
       filter .22s;
 
 }
 
-.dock-label{
+.dock-label {
 
   font-family:
-
       -apple-system,
-
       BlinkMacSystemFont,
-
       "SF Pro Text",
-
       sans-serif;
 
   font-size:11px;
@@ -1473,74 +1459,75 @@ body.light-mode .onyx-dock{
   opacity:.82;
 
   transition:
-
       opacity .22s,
-
       transform .28s var(--ease-fluid);
 
 }
 
-/* ================================================== */
-/* ACTIVE                                             */
-/* ================================================== */
+/* ================================================== /
+/ ACTIVE                                             /
+/ ================================================== */
 
-.dock-item.active{
+.dock-item.active {
 
   color:var(--dock-text);
 
 }
 
-.dock-item.active .dock-icon{
+.dock-item.active .dock-icon {
 
   opacity:1;
 
   transform:
-
       translateY(-1px)
-
       scale(1.03);
 
-  filter:drop-shadow(0 2px 5px rgba(0,0,0,.18));
+  filter:
+      drop-shadow(
+          0 2px 5px rgba(0,0,0,.18)
+      );
 
 }
 
-.dock-item.active .dock-label{
+.dock-item.active .dock-label {
 
   opacity:1;
 
 }
 
-/* ================================================== */
-/* INTERACTION                                        */
-/* ================================================== */
+/* ================================================== /
+/ INTERACTION                                        /
+/ ================================================== */
 
-.dock-item:hover{
+.dock-item:hover {
 
   color:var(--dock-text);
 
 }
 
-.dock-item:hover .dock-icon{
+.dock-item:hover .dock-icon {
 
   opacity:1;
 
-  transform:translateY(-1px);
+  transform:
+      translateY(-1px);
 
 }
 
-.dock-item:active{
+.dock-item:active {
 
-  transform:scale(.94);
+  transform:
+      scale(.94);
 
 }
 
-/* ================================================== */
-/* MOBILE                                             */
-/* ================================================== */
+/* ================================================== /
+/ MOBILE                                             /
+/ ================================================== */
 
-@media (max-width:600px){
+@media (max-width:600px) {
 
-  :root{
+  :root {
 
       --dock-width:calc(100vw - 20px);
 
@@ -1550,13 +1537,13 @@ body.light-mode .onyx-dock{
 
   }
 
-  .dock-icon{
+  .dock-icon {
 
       font-size:20px;
 
   }
 
-  .dock-label{
+  .dock-label {
 
       font-size:10px;
 
@@ -1564,23 +1551,24 @@ body.light-mode .onyx-dock{
 
 }
 
-/* ================================================== */
-/* REDUCED MOTION                                     */
-/* ================================================== */
+/* ================================================== /
+/ REDUCED MOTION                                     /
+/ ================================================== */
 
-@media (prefers-reduced-motion:reduce){
+@media (prefers-reduced-motion:reduce) {
 
   .onyx-dock,
   .dock-active-lens,
   .dock-item,
   .dock-icon,
-  .dock-label{
+  .dock-label {
 
       transition:none !important;
 
   }
 
 }
+
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
 .setting-icon-container {
