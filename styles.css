@@ -4158,25 +4158,43 @@ margin-top: 2px;
     color: var(--accent-color);
 }
 
+/* Shared Glass Effect */
 #tiktok-last-updated-timestamp,
 #instagram-last-updated-timestamp,
 #youtube-last-updated-timestamp {
-    position: relative;
-    z-index: 2;
-    color: var(--secondary-text);
-    font-size: 0.9em;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-#tiktok-last-updated-timestamp::before,
-#instagram-last-updated-timestamp::before,
+/* TikTok Glass */
+#tiktok-last-updated-timestamp {
+    background: linear-gradient(135deg, rgba(37, 244, 238, 0.15), rgba(254, 44, 85, 0.05));
+    border: 1px solid rgba(37, 244, 238, 0.2);
+}
+#tiktok-last-updated-timestamp::before {
+    color: #FE2C55;
+    text-shadow: 0 0 8px rgba(254, 44, 85, 0.4); /* Soft pink glow */
+}
+
+/* Instagram Glass */
+#instagram-last-updated-timestamp {
+    background: linear-gradient(135deg, rgba(131, 58, 180, 0.15), rgba(253, 29, 29, 0.05));
+    border: 1px solid rgba(225, 48, 108, 0.2);
+}
+#instagram-last-updated-timestamp::before {
+    color: #E1306C;
+    text-shadow: 0 0 8px rgba(225, 48, 108, 0.4);
+}
+
+/* YouTube Glass */
+#youtube-last-updated-timestamp {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.15), rgba(255, 0, 0, 0.02));
+    border: 1px solid rgba(255, 0, 0, 0.2);
+}
 #youtube-last-updated-timestamp::before {
-    content: '\f073';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
+    color: #FF0000;
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
 }
 
 /* ======================== /
