@@ -1173,272 +1173,413 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== */
-/* 🍎 APPLE LIQUID GLASS TAB BAR (MODERN BETA STYLE)  */
+/* 🍎 APPLE LIQOS LIQUID GLASS TAB BAR (iOS 27 STYLE) */
 /* ================================================== */
 
 :root {
-  --dock-accent: var(--accent-color, #0A84FF);
 
-  /* Sizes preserved exactly as requested */
-  --dock-width: min(92vw, 560px);
-  --dock-height: 64px; 
-  --dock-padding: 6px; 
-  --dock-radius: 999px;
+  --dock-accent: var(--accent-color,#0A84FF);
 
-  /* Modern Apple Dark Mode Base */
-  --dock-text: rgba(255, 255, 255, 0.95);
-  --dock-muted: rgba(255, 255, 255, 0.5);
-  --dock-bg: rgba(28, 28, 30, 0.65);
-  --dock-border: rgba(255, 255, 255, 0.15);
-  --dock-highlight: rgba(255, 255, 255, 0.2);
-  --dock-shadow: rgba(0, 0, 0, 0.4);
+  --dock-width:min(92vw,560px);
+  --dock-height:64px;
+  --dock-padding:6px;
+  --dock-radius:999px;
 
-  /* Active Lens Colors */
-  --lens-bg: rgba(255, 255, 255, 0.18);
-  --lens-border: rgba(255, 255, 255, 0.22);
-  --lens-highlight: rgba(255, 255, 255, 0.3);
+  --dock-text:rgba(255,255,255,.96);
+  --dock-muted:rgba(255,255,255,.52);
 
-  --dock-blur: 50px;
-  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+  --dock-border:rgba(255,255,255,.16);
+  --dock-highlight:rgba(255,255,255,.28);
+
+  --dock-shadow:rgba(0,0,0,.42);
+
+  --lens-bg:rgba(255,255,255,.16);
+  --lens-border:rgba(255,255,255,.20);
+  --lens-highlight:rgba(255,255,255,.35);
+
+  --dock-blur:48px;
+
+  --ease-fluid:cubic-bezier(.22,1,.36,1);
+
 }
 
-body.light-mode {
-  /* Modern Apple Light Mode Base */
-  --dock-text: rgba(0, 0, 0, 0.95);
-  --dock-muted: rgba(0, 0, 0, 0.5);
-  --dock-bg: rgba(250, 250, 250, 0.65);
-  --dock-border: rgba(0, 0, 0, 0.1);
-  --dock-highlight: rgba(255, 255, 255, 0.8);
-  --dock-shadow: rgba(0, 0, 0, 0.15);
+body.light-mode{
 
-  /* Active Lens Colors */
-  --lens-bg: rgba(0, 0, 0, 0.06);
-  --lens-border: rgba(0, 0, 0, 0.08);
-  --lens-highlight: rgba(255, 255, 255, 0.6);
+  --dock-text:rgba(0,0,0,.94);
+  --dock-muted:rgba(0,0,0,.55);
+
+  --dock-border:rgba(0,0,0,.08);
+  --dock-highlight:rgba(255,255,255,.82);
+
+  --dock-shadow:rgba(0,0,0,.14);
+
+  --lens-bg:rgba(0,0,0,.05);
+  --lens-border:rgba(0,0,0,.08);
+  --lens-highlight:rgba(255,255,255,.65);
+
 }
 
 /* ================================================== */
-/* 🧊 OUTER GLASS CAPSULE                             */
+/* GLASS CAPSULE                                      */
 /* ================================================== */
 
-.onyx-dock {
-  box-sizing: border-box;
-  position: fixed;
-  left: 50%;
-  bottom: max(12px, env(safe-area-inset-bottom));
-  transform: translateX(-50%) translateY(14px) scale(0.985);
+.onyx-dock{
 
-  width: var(--dock-width);
-  height: var(--dock-height);
+  box-sizing:border-box;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  position:fixed;
 
-  padding: var(--dock-padding);
-  border-radius: var(--dock-radius);
-  
-  /* Clean Apple Glass Fill */
-  background: var(--dock-bg);
+  left:50%;
+  bottom:max(12px,env(safe-area-inset-bottom));
 
-  /* Deep Blur & Saturation */
-  backdrop-filter: blur(var(--dock-blur)) saturate(200%);
-  -webkit-backdrop-filter: blur(var(--dock-blur)) saturate(200%);
+  transform:
+      translateX(-50%)
+      translateY(14px)
+      scale(.985);
 
-  /* Sub-pixel borders & Soft Shadows */
+  width:var(--dock-width);
+  height:var(--dock-height);
+
+  display:flex;
+  align-items:stretch;
+  justify-content:stretch;
+
+  padding:var(--dock-padding);
+
+  border-radius:var(--dock-radius);
+
+  overflow:hidden;
+
+  isolation:isolate;
+
+  z-index:9999;
+
+  opacity:0;
+
+  background:
+      linear-gradient(
+          180deg,
+          rgba(255,255,255,.22),
+          rgba(255,255,255,.06)
+      ),
+      linear-gradient(
+          135deg,
+          rgba(255,255,255,.08),
+          rgba(255,255,255,.02)
+      ),
+      rgba(28,28,30,.62);
+
+  backdrop-filter:
+      blur(var(--dock-blur))
+      saturate(200%);
+
+  -webkit-backdrop-filter:
+      blur(var(--dock-blur))
+      saturate(200%);
+
   box-shadow:
-    0 12px 32px var(--dock-shadow),
-    0 2px 8px color-mix(in srgb, var(--dock-shadow) 50%, transparent),
-    inset 0 0 0 0.5px var(--dock-border),
-    inset 0 1px 0 var(--dock-highlight);
 
-  opacity: 0;
-  overflow: hidden;
-  isolation: isolate;
-  z-index: 9999;
+      0 14px 36px var(--dock-shadow),
+
+      0 2px 10px rgba(0,0,0,.18),
+
+      inset 0 0 0 .5px var(--dock-border),
+
+      inset 0 1px .5px var(--dock-highlight);
 
   transition:
-    opacity 0.22s ease,
-    transform 0.42s var(--ease-fluid);
+
+      opacity .22s ease,
+
+      transform .42s var(--ease-fluid);
+
 }
 
-.onyx-dock.dock-ready {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
+body.light-mode .onyx-dock{
+
+  background:
+
+      linear-gradient(
+          180deg,
+          rgba(255,255,255,.92),
+          rgba(255,255,255,.58)
+      ),
+
+      linear-gradient(
+          135deg,
+          rgba(255,255,255,.72),
+          rgba(255,255,255,.34)
+      ),
+
+      rgba(250,250,250,.64);
+
+}
+
+.onyx-dock.dock-ready{
+
+  opacity:1;
+
+  transform:
+      translateX(-50%)
+      translateY(0)
+      scale(1);
+
 }
 
 /* ================================================== */
-/* 🔵 SLIDING ACTIVE LENS                             */
+/* ACTIVE LENS                                        */
 /* ================================================== */
 
-.dock-active-lens {
-  box-sizing: border-box;
-  position: absolute;
-  
-  /* Mathematically derived to perfectly fit padding on any screen */
-  top: var(--dock-padding);
-  left: 0; 
-  height: calc(100% - (var(--dock-padding) * 2));
-  width: var(--lens-width, 100px);
+.dock-active-lens{
 
-  border-radius: 999px;
-  pointer-events: none;
+  position:absolute;
 
-  transform: translateX(var(--lens-x, 0px));
+  top:var(--dock-padding);
 
-  background: var(--lens-bg);
+  left:0;
 
-  backdrop-filter: blur(24px) saturate(150%);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  height:calc(100% - (var(--dock-padding) * 2));
 
-  /* Crisp sub-pixel Apple pill styling */
+  width:var(--lens-width);
+
+  transform:translateX(var(--lens-x));
+
+  border-radius:999px;
+
+  pointer-events:none;
+
+  background:
+
+      linear-gradient(
+          180deg,
+          rgba(255,255,255,.18),
+          rgba(255,255,255,.04)
+      ),
+
+      var(--lens-bg);
+
+  backdrop-filter:
+      blur(28px)
+      saturate(180%);
+
+  -webkit-backdrop-filter:
+      blur(28px)
+      saturate(180%);
+
   box-shadow:
-    inset 0 0 0 0.5px var(--lens-border),
-    inset 0 1px 0 var(--lens-highlight),
-    0 4px 12px color-mix(in srgb, var(--dock-shadow) 30%, transparent);
 
-  z-index: 0;
+      inset 0 0 0 .5px var(--lens-border),
 
-  transition:
-    transform 0.42s var(--ease-fluid),
-    width 0.42s var(--ease-fluid);
-}
+      inset 0 1px .5px var(--lens-highlight),
 
-/* ================================================== */
-/* 📦 ITEMS                                           */
-/* ================================================== */
-
-.dock-item {
-  box-sizing: border-box;
-  position: relative;
-  z-index: 4;
-
-  /* Forces perfectly equal distribution regardless of screen size */
-  flex: 1 1 0%;
-  min-width: 0;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  gap: 2px;
-  padding: 0 4px;
-
-  border-radius: 999px;
-
-  color: var(--dock-muted);
-  text-decoration: none;
-  -webkit-tap-highlight-color: transparent;
+      0 6px 18px rgba(0,0,0,.12);
 
   transition:
-    color 0.22s ease,
-    transform 0.28s var(--ease-fluid),
-    opacity 0.22s ease;
+
+      transform .42s var(--ease-fluid),
+
+      width .42s var(--ease-fluid);
+
+  z-index:0;
+
 }
 
-.dock-icon {
-  font-size: 22px; 
-  line-height: 1;
-  opacity: 0.7;
+/* ================================================== */
+/* ITEMS                                              */
+/* ================================================== */
 
-  /* Modern subtle shadow instead of heavy drop-shadows */
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+.dock-item{
+
+  position:relative;
+
+  z-index:2;
+
+  flex:1 1 0;
+
+  min-width:0;
+
+  display:flex;
+
+  flex-direction:column;
+
+  justify-content:center;
+
+  align-items:center;
+
+  gap:2px;
+
+  border-radius:999px;
+
+  color:var(--dock-muted);
+
+  text-decoration:none;
+
+  -webkit-tap-highlight-color:transparent;
 
   transition:
-    opacity 0.22s ease,
-    transform 0.28s var(--ease-fluid),
-    filter 0.22s ease;
+
+      color .22s ease,
+
+      transform .28s var(--ease-fluid);
+
 }
 
-.dock-label {
-  /* Apple System Typography */
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-  font-size: 11px; 
-  line-height: 1;
-  font-weight: 600; /* Apple uses medium/semibold for tabs, not 800 */
-  letter-spacing: 0.01em;
-  opacity: 0.8;
+.dock-icon{
 
-  /* Prevent text breaking layout on tiny screens */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  font-size:22px;
+
+  line-height:1;
+
+  opacity:.72;
+
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.10));
 
   transition:
-    opacity 0.22s ease,
-    transform 0.28s var(--ease-fluid);
+
+      opacity .22s,
+
+      transform .28s var(--ease-fluid),
+
+      filter .22s;
+
+}
+
+.dock-label{
+
+  font-family:
+
+      -apple-system,
+
+      BlinkMacSystemFont,
+
+      "SF Pro Text",
+
+      sans-serif;
+
+  font-size:11px;
+
+  font-weight:600;
+
+  line-height:1;
+
+  letter-spacing:.01em;
+
+  white-space:nowrap;
+
+  overflow:hidden;
+
+  text-overflow:ellipsis;
+
+  opacity:.82;
+
+  transition:
+
+      opacity .22s,
+
+      transform .28s var(--ease-fluid);
+
 }
 
 /* ================================================== */
-/* ✅ ACTIVE ITEM                                     */
+/* ACTIVE                                             */
 /* ================================================== */
 
-.dock-item.active {
-  color: var(--dock-text);
+.dock-item.active{
+
+  color:var(--dock-text);
+
 }
 
-.dock-item.active .dock-icon {
-  opacity: 1;
-  transform: translateY(-1px) scale(1.04);
-  filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--dock-shadow) 50%, transparent));
+.dock-item.active .dock-icon{
+
+  opacity:1;
+
+  transform:
+
+      translateY(-1px)
+
+      scale(1.03);
+
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.18));
+
 }
 
-.dock-item.active .dock-label {
-  opacity: 1;
-}
+.dock-item.active .dock-label{
 
-/* ================================================== */
-/* ✨ INTERACTION                                     */
-/* ================================================== */
+  opacity:1;
 
-.dock-item:hover {
-  color: var(--dock-text);
-}
-
-.dock-item:hover .dock-icon {
-  opacity: 1;
-  transform: translateY(-1px);
-}
-
-.dock-item:active {
-  transform: scale(0.92);
 }
 
 /* ================================================== */
-/* 📱 MOBILE                                          */
+/* INTERACTION                                        */
 /* ================================================== */
 
-@media (max-width: 600px) {
-  :root {
-    --dock-width: calc(100vw - 20px);
-    --dock-height: 58px;
-    --dock-padding: 5px;
+.dock-item:hover{
+
+  color:var(--dock-text);
+
+}
+
+.dock-item:hover .dock-icon{
+
+  opacity:1;
+
+  transform:translateY(-1px);
+
+}
+
+.dock-item:active{
+
+  transform:scale(.94);
+
+}
+
+/* ================================================== */
+/* MOBILE                                             */
+/* ================================================== */
+
+@media (max-width:600px){
+
+  :root{
+
+      --dock-width:calc(100vw - 20px);
+
+      --dock-height:58px;
+
+      --dock-padding:5px;
+
   }
 
-  .dock-icon {
-    font-size: 20px;
+  .dock-icon{
+
+      font-size:20px;
+
   }
 
-  .dock-label {
-    font-size: 10px;
+  .dock-label{
+
+      font-size:10px;
+
   }
+
 }
 
 /* ================================================== */
-/* ♿ REDUCED MOTION                                   */
+/* REDUCED MOTION                                     */
 /* ================================================== */
 
-@media (prefers-reduced-motion: reduce) {
+@media (prefers-reduced-motion:reduce){
+
   .onyx-dock,
   .dock-active-lens,
   .dock-item,
   .dock-icon,
-  .dock-label {
-    transition: none !important;
+  .dock-label{
+
+      transition:none !important;
+
   }
+
 }
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
