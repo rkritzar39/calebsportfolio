@@ -1,13 +1,13 @@
+/* ======================================================== */
+/* === BASE SIZING ======================================== */
+/* ======================================================== */
 :root {
-  /* ======================== /
-  / Base Sizing              /
-  / ======================== */
   --font-size-base: 16px;
   --line-height-base: 1.65;
 
-  /* ======================== /
-  / Dark Liquid Glass Palette /
-  / ======================== */
+  /* ======================================================== */
+  /* === DARK LIQUID GLASS PALETTE ========================== */
+  /* ======================================================== */
   --dark-bg: #0b0b0d;
   --dark-content-bg: rgba(22, 22, 26, 0.52);
   --dark-text: #f7f8fb;
@@ -20,9 +20,9 @@
   --dark-glow: rgba(255, 255, 255, 0.105);
   --dark-icon: #e8e8ed;
 
-  /* ======================== /
-  / Light Liquid Glass Palette /
-  / ======================== */
+  /* ======================================================== */
+  /* === LIGHT LIQUID GLASS PALETTE ========================= */
+  /* ======================================================== */
   --light-bg-gradient:
     radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.95), transparent 28%),
     radial-gradient(circle at 86% 14%, rgba(182, 225, 255, 0.65), transparent 30%),
@@ -39,9 +39,9 @@
   --light-glow: rgba(255, 255, 255, 0.82);
   --light-icon: #2c2c2e;
 
-  /* ======================== /
-  / Default Theme - Dark     /
-  / ======================== */
+  /* ======================================================== */
+  /* === DEFAULT THEME - DARK =============================== */
+  /* ======================================================== */
   --bg-color: var(--dark-bg);
   --content-bg: var(--dark-content-bg);
   --text-color: var(--dark-text);
@@ -57,9 +57,9 @@
   --icon-color: var(--dark-icon);
   --social-icon-text-color: var(--dark-text);
 
-  /* ======================== /
-  / iOS 27 Liquid Glass Optics /
-  / ======================== */
+  /* ======================================================== */
+  /* === iOS 27 LIQUID GLASS OPTICS ========================= */
+  /* ======================================================== */
   --backdrop-blur: blur(30px) saturate(140%);
 
   --bubble-gradient:
@@ -122,9 +122,9 @@
       transparent 72%
     );
 
-  /* ======================== /
-  / Radii & Transitions      /
-  / ======================== */
+  /* ======================================================== */
+  /* === RADII & TRANSITIONS ================================ */
+  /* ======================================================== */
   --radius-xl: 30px;
   --radius-lg: 22px;
   --radius-md: 15px;
@@ -135,10 +135,9 @@
   --transition-slow: 0.5s ease;
 }
 
-/* ======================== /
-/ Light Mode Overrides     /
-/ ======================== */
-
+/* ======================================================== */
+/* === LIGHT MODE OVERRIDES =============================== */
+/* ======================================================== */
 body.light-e {
   --bg-color: var(--light-bg-gradient);
   --content-bg: var(--light-content-bg);
@@ -204,10 +203,9 @@ body.light-e {
     color-mix(in srgb, var(--border-color) 92%, white 8%);
 }
 
-/* ======================== /
-/ Dark Mode Wrapper        /
-/ ======================== */
-
+/* ======================================================== */
+/* === DARK MODE WRAPPER ================================== */
+/* ======================================================== */
 html.dark-mode body,
 body.dark-mode {
   --bg-color: var(--dark-bg);
@@ -274,10 +272,9 @@ body.dark-mode {
     color-mix(in srgb, var(--border-color) 90%, transparent);
 }
 
-/* ======================== /
-/ Base Styles              /
-/ ======================== */
-
+/* ======================================================== */
+/* === BASE STYLES ======================================== */
+/* ======================================================== */
 html {
   background: var(--bg-color);
 }
@@ -326,11 +323,9 @@ a {
   color: var(--link-color);
 }
 
-/* ======================== /
-/ Apple Glass Effect Block /
-/ iOS 27 Liquid Glass      /
-/ ======================== */
-
+/* ======================================================== */
+/* === APPLE GLASS EFFECT BLOCK & iOS 27 OPTICS =========== */
+/* ======================================================== */
 .glass {
   position: relative;
   overflow: hidden;
@@ -386,10 +381,9 @@ a {
   z-index: 1;
 }
 
-/* ================================================== /
-/ === ONYX / LIQUID GLASS MICRO-SECTIONS =========== /
-/ ================================================== */
-
+/* ======================================================== */
+/* === ONYX / LIQUID GLASS MICRO-SECTIONS ================= */
+/* ======================================================== */
 .section[data-section-id="time"],
 .section[data-section-id="weather"],
 .section[data-section-id="focus"],
@@ -428,7 +422,6 @@ a {
 }
 
 /* 🕒 Live Time */
-
 #live-time {
   font-weight: 650;
   font-size: 1rem;
@@ -460,7 +453,6 @@ a {
 }
 
 /* 🌤️ Weather */
-
 #weather-widget {
   display: inline-block;
 
@@ -493,7 +485,6 @@ a {
 }
 
 /* 💬 Daily Focus */
-
 #daily-focus {
   width: 100%;
   max-width: 480px;
@@ -535,7 +526,6 @@ a {
 }
 
 /* 🔋 Battery */
-
 #battery-widget {
   font-size: 1rem;
   font-weight: 550;
@@ -565,10 +555,9 @@ a {
     0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
 }
 
-/* ======================== /
-/ iOS 27 Liquid Sections   /
-/ ======================== */
-
+/* ======================================================== */
+/* === iOS 27 LIQUID SECTIONS ============================= */
+/* ======================================================== */
 .section {
   position: relative;
   isolation: isolate;
@@ -657,10 +646,9 @@ a {
   color: var(--secondary-text);
 }
 
-/* ======================== /
-/ Light Mode Tuning        /
-/ ======================== */
-
+/* ======================================================== */
+/* === LIGHT MODE TUNING ================================== */
+/* ======================================================== */
 body.light-e .glass,
 body.light-e .section,
 body.light-e .section[data-section-id="time"],
@@ -719,10 +707,9 @@ body.light-e .section li {
   color: var(--secondary-text);
 }
 
-/* ======================== /
-/ Dark Mode Tuning         /
-/ ======================== */
-
+/* ======================================================== */
+/* === DARK MODE TUNING =================================== */
+/* ======================================================== */
 html.dark-mode body .glass,
 html.dark-mode body .section,
 html.dark-mode body .section[data-section-id="time"],
@@ -779,10 +766,9 @@ body.dark-mode .section::after {
   opacity: 0.72;
 }
 
-/* ======================================== /
-/ iOS-Style Focus Ring                     /
-/ ======================================== */
-
+/* ======================================================== */
+/* === iOS-STYLE FOCUS RING =============================== */
+/* ======================================================== */
 :focus {
   outline: none;
 }
@@ -795,10 +781,9 @@ body:not(.focus-outline-disabled) :focus-visible {
     0 0 18px color-mix(in srgb, var(--accent-color) 18%, transparent);
 }
 
-/* ======================== /
-/ Mouse Trail              /
-/ ======================== */
-
+/* ======================================================== */
+/* === MOUSE TRAIL ======================================== */
+/* ======================================================== */
 .mouse-trail-container .trail-dot {
   mix-blend-mode: screen;
 
@@ -815,8 +800,9 @@ body.reduced-motion .mouse-trail-container {
   display: none !important;
 }
 
-/* 📱 Mobile Responsiveness */
-
+/* ======================================================== */
+/* === MOBILE RESPONSIVENESS ============================== */
+/* ======================================================== */
 @media (max-width: 600px) {
   body {
     padding: 20px;
@@ -851,100 +837,98 @@ body.reduced-motion .mouse-trail-container {
   }
 }
 
-/* ======================================== */
-/* == Profile Section – Onyx Bubble Glass == */
-/* (Original layout, only status restyled)  */
-/* ======================================== */
-
+/* ======================================================== */
+/* === PROFILE SECTION – ONYX BUBBLE GLASS ================ */
+/* ======================================================== */
 .profile-section {
-	position: relative;
-	text-align: center;
-	margin: 1.25rem 0 1.875rem 0;
-	padding: 1.875rem;
-	background: var(--content-bg);
-	background-image: var(--bubble-gradient);
-	border-radius: var(--radius-xl);
-	box-shadow: var(--bubble-shadow), var(--bubble-highlight);
-	backdrop-filter: var(--backdrop-blur);
-	-webkit-backdrop-filter: var(--backdrop-blur);
-	width: 100%;
-	box-sizing: border-box;
-	transition: background 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  text-align: center;
+  margin: 1.25rem 0 1.875rem 0;
+  padding: 1.875rem;
+  background: var(--content-bg);
+  background-image: var(--bubble-gradient);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  width: 100%;
+  box-sizing: border-box;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* --- Profile Pic Wrapper --- */
 .profile-pic-wrapper {
-	position: relative;
-	--profile-pic-size: 9.375rem;
-	width: var(--profile-pic-size);
-	height: var(--profile-pic-size);
-	margin: 0 auto;
-	transition: width 0.3s ease, height 0.3s ease;
+  position: relative;
+  --profile-pic-size: 9.375rem;
+  width: var(--profile-pic-size);
+  height: var(--profile-pic-size);
+  margin: 0 auto;
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
 .profile-pic {
-	width: 100%;
-	height: 100%;
-	border-radius: 50%;
-	object-fit: cover;
-	box-shadow: var(--bubble-shadow);
-	border: 2px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: var(--bubble-shadow);
+  border: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 /* --- Profile Status (Desktop Default) --- */
 .profile-status-container {
-	position: absolute;
-	width: calc(var(--profile-pic-size) * 0.19);
-	aspect-ratio: 1 / 1;
-	border-radius: 50%;
-	z-index: 2;
-	top: 87%;
-	left: 87%;
-	transform: translate(-50%, -50%);
-	transition: all 0.3s ease;
+  position: absolute;
+  width: calc(var(--profile-pic-size) * 0.19);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  z-index: 2;
+  top: 87%;
+  left: 87%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
 
-	/* onyx shell */
-	padding: 2px;
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 10%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, var(--content-bg) 88%, transparent);
-	border: 2px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-	box-shadow:
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 40%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	overflow: hidden;
+  /* onyx shell */
+  padding: 2px;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 10%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, transparent);
+  border: 2px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+  box-shadow:
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 40%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
 }
 
 .profile-status-container::before {
-	content: "";
-	position: absolute;
-	inset: 3px;
-	border-radius: 50%;
-	background: currentColor;
-	box-shadow:
-		inset 0 1px 1px rgba(255,255,255,0.18),
-		0 0 8px currentColor;
-	opacity: 0.95;
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    0 0 8px currentColor;
+  opacity: 0.95;
 }
 
 .profile-status-container::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: 50%;
-	pointer-events: none;
-	background: linear-gradient(
-		180deg,
-		rgba(255,255,255,0.22),
-		transparent 48%
-	);
-	opacity: 0.65;
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.22),
+    transparent 48%
+  );
+  opacity: 0.65;
 }
 
 .profile-status-container.status-online { color: #31a24c; }
@@ -954,200 +938,189 @@ body.reduced-motion .mouse-trail-container {
 
 /* --- Username & Verified --- */
 .username-checkmark {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 0.5rem;
-	margin: 1.875rem 0 0.625rem;
-	flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.875rem 0 0.625rem;
+  flex-wrap: wrap;
 }
 
 .username-checkmark h1 {
-	margin: 0;
-	font-size: clamp(1.5rem, 5vw, 2.25rem);
-	font-weight: 800;
-	background: linear-gradient(120deg, var(--secondary-text), var(--accent-color));
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
+  margin: 0;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  font-weight: 800;
+  background: linear-gradient(120deg, var(--secondary-text), var(--accent-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .verified {
-	width: 1.25rem;
-	height: 1.25rem;
-	flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
 }
 
-/* --- Text-Based Profile Status Badge (Fixed: Color + Onyx) --- */
+/* --- Text-Based Profile Status Badge --- */
 .profile-status-text {
-	display: none;
-	font-size: 0.85rem;
-	font-weight: 700;
-	margin-top: 0.35rem;
-	padding: 0.32em 0.8em;
-	border-radius: 999px;
-	line-height: 1;
-	letter-spacing: 0.01em;
+  display: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 0.35rem;
+  padding: 0.32em 0.8em;
+  border-radius: 999px;
+  line-height: 1;
+  letter-spacing: 0.01em;
 
-	position: relative;
-	overflow: hidden;
+  position: relative;
+  overflow: hidden;
 
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
-	border: 1px solid transparent;
+  border: 1px solid transparent;
 
-	box-shadow:
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent),
-		inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
+  box-shadow:
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
 
-	color: #fff;
+  color: #fff;
 }
 
-/* --- STATUS COLORS (restored but upgraded) --- */
-
+/* --- STATUS COLORS --- */
 .profile-status-text.status-online {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 18%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #31a24c 35%, var(--content-bg));
-	border-color: color-mix(in srgb, #31a24c 55%, transparent);
-	box-shadow:
-		0 0 10px color-mix(in srgb, #31a24c 35%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 18%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, #31a24c 35%, var(--content-bg));
+  border-color: color-mix(in srgb, #31a24c 55%, transparent);
+  box-shadow:
+    0 0 10px color-mix(in srgb, #31a24c 35%, transparent),
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 .profile-status-text.status-idle {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 18%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #ffc107 40%, var(--content-bg));
-	border-color: color-mix(in srgb, #ffc107 55%, transparent);
-	color: #1f1f1f;
-	box-shadow:
-		0 0 10px color-mix(in srgb, #ffc107 35%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 18%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, #ffc107 40%, var(--content-bg));
+  border-color: color-mix(in srgb, #ffc107 55%, transparent);
+  color: #1f1f1f;
+  box-shadow:
+    0 0 10px color-mix(in srgb, #ffc107 35%, transparent),
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 .profile-status-text.status-dnd {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 18%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #dc3545 38%, var(--content-bg));
-	border-color: color-mix(in srgb, #dc3545 55%, transparent);
-	box-shadow:
-		0 0 10px color-mix(in srgb, #dc3545 35%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 18%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, #dc3545 38%, var(--content-bg));
+  border-color: color-mix(in srgb, #dc3545 55%, transparent);
+  box-shadow:
+    0 0 10px color-mix(in srgb, #dc3545 35%, transparent),
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 .profile-status-text.status-offline {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 12%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #747f8d 35%, var(--content-bg));
-	border-color: color-mix(in srgb, #747f8d 50%, transparent);
-	box-shadow:
-		0 0 8px color-mix(in srgb, #747f8d 25%, transparent),
-		0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, white 12%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, #747f8d 35%, var(--content-bg));
+  border-color: color-mix(in srgb, #747f8d 50%, transparent);
+  box-shadow:
+    0 0 8px color-mix(in srgb, #747f8d 25%, transparent),
+    0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent);
 }
 
 /* --- Profile Bio --- */
 .profile-bio {
-	font-size: var(--font-size-base, 1rem);
-	color: var(--secondary-text);
-	line-height: 1.6;
-	max-width: 37.5rem;
-	margin: 0.625rem auto 1.25rem;
+  font-size: var(--font-size-base, 1rem);
+  color: var(--secondary-text);
+  line-height: 1.6;
+  max-width: 37.5rem;
+  margin: 0.625rem auto 1.25rem;
 }
 
-/* =================================== */
-/* === Responsive Breakpoint Rules === */
-/* =================================== */
-
+/* ======================================================== */
+/* === RESPONSIVE BREAKPOINT RULES (PROFILE) ============== */
+/* ======================================================== */
 @media screen and (max-width: 1024px) {
-	.profile-pic-wrapper {
-		--profile-pic-size: 8.5rem;
-	}
+  .profile-pic-wrapper {
+    --profile-pic-size: 8.5rem;
+  }
 }
 
 @media screen and (max-width: 768px) {
-	.profile-section {
-		padding: 1.5rem;
-		padding-bottom: 4rem;
-	}
-	.profile-pic-wrapper {
-		--profile-pic-size: 7.5rem;
-	}
-	.profile-status-container {
-		display: none;
-	}
-	.profile-status-text {
-		display: block;
-		flex-basis: 100%;
-	}
-	.corner-button {
-		width: 2.375rem;
-		height: 2.375rem;
-	}
-	.profile-bio {
-		font-size: 0.95rem;
-	}
+  .profile-section {
+    padding: 1.5rem;
+    padding-bottom: 4rem;
+  }
+  .profile-pic-wrapper {
+    --profile-pic-size: 7.5rem;
+  }
+  .profile-status-container {
+    display: none;
+  }
+  .profile-status-text {
+    display: block;
+    flex-basis: 100%;
+  }
+  .corner-button {
+    width: 2.375rem;
+    height: 2.375rem;
+  }
+  .profile-bio {
+    font-size: 0.95rem;
+  }
 }
 
 @media screen and (max-width: 480px) {
-	.profile-section {
-		padding: 1.25rem;
-		padding-bottom: 4rem;
-		margin: 1rem 0;
-	}
-	.profile-pic-wrapper {
-		--profile-pic-size: 6.25rem;
-	}
+  .profile-section {
+    padding: 1.25rem;
+    padding-bottom: 4rem;
+    margin: 1rem 0;
+  }
+  .profile-pic-wrapper {
+    --profile-pic-size: 6.25rem;
+  }
 }
 
-
-/* ======================================================= /
-/ === LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE ====== /
-/ === Existing HTML only ================================ /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === LIVE ACTIVITY — PREMIUM LIQUID GLASS =============== */
+/* ======================================================== */
 .live-activity {
   --dynamic-accent: var(--accent-color, #ff4f8b);
-  --dynamic-accent-soft: color-mix(in srgb, var(--accent-color, #ff6a9c) 82%, var(--glow-color) 18%);
-  --dynamic-accent-glow: color-mix(in srgb, var(--accent-color, #ff7dab) 70%, var(--glow-color) 30%);
-  --dynamic-bg: none;
+  --dynamic-accent-soft: color-mix(in srgb, var(--dynamic-accent) 72%, white 28%);
+  --dynamic-accent-glow: color-mix(in srgb, var(--dynamic-accent) 64%, var(--glow-color) 36%);
 
-  --la-pad-x: clamp(18px, 3vw, 24px);
-  --la-pad-y: clamp(24px, 3.4vw, 34px);
-  --la-max-w: 540px;
-  --la-art-size: min(270px, 72vw);
-  --la-pill-radius: 18px;
-  --la-track-h: 9px;
-  --la-progress-w: min(100%, 400px);
-  --la-time-w: min(100%, 408px);
+  --la-max-w: 520px;
+  --la-art-size: min(286px, 70vw);
+  --la-progress-w: min(100%, 390px);
+  --la-time-w: min(100%, 406px);
 
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  box-sizing: border-box;
 
-  width: min(var(--la-max-w), calc(100% - 32px));
+  width: min(var(--la-max-w), calc(100vw - 28px));
   margin: 20px auto;
-  padding: var(--la-pad-y) var(--la-pad-x) 22px;
+  padding: clamp(24px, 4vw, 34px) clamp(18px, 4vw, 28px) 24px;
 
-  border-radius: 32px;
+  border-radius: 36px;
 
   display: flex;
   flex-direction: column;
@@ -1158,30 +1131,36 @@ body.reduced-motion .mouse-trail-container {
 
   background:
     radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
-      transparent 52%
+      90% 46% at 50% 0%,
+      color-mix(in srgb, var(--dynamic-accent-glow) 26%, transparent),
+      transparent 64%
+    ),
+    radial-gradient(
+      75% 42% at 50% 42%,
+      color-mix(in srgb, var(--dynamic-accent) 10%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 12%, transparent),
+      transparent 34%,
+      color-mix(in srgb, var(--shadow-color) 22%, transparent)
     ),
     var(--bubble-gradient),
     var(--liquid-refraction),
-    var(--dynamic-bg),
-    color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+    color-mix(in srgb, var(--content-bg) 86%, var(--bg-color) 14%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 76%, var(--glow-color) 24%);
 
   box-shadow:
-    var(--bubble-highlight),
-    var(--bubble-shadow),
-    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 58%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 48%, transparent),
+    0 34px 82px color-mix(in srgb, var(--shadow-color) 82%, transparent),
+    0 12px 34px color-mix(in srgb, var(--shadow-color) 42%, transparent),
+    0 0 42px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
 
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-
-  transition:
-    background var(--transition-medium, .45s ease),
-    box-shadow var(--transition-medium, .45s ease),
-    border-color var(--transition-medium, .45s ease),
-    color var(--transition-medium, .45s ease);
 }
 
 .live-activity::before {
@@ -1190,10 +1169,18 @@ body.reduced-motion .mouse-trail-container {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+  z-index: 0;
 
-  background: var(--liquid-reflection);
-  opacity: 0.38;
-  mix-blend-mode: soft-light;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--glow-color) 62%, transparent),
+      color-mix(in srgb, var(--glow-color) 14%, transparent) 34%,
+      transparent 62%
+    );
+
+  opacity: 0.34;
+  mix-blend-mode: screen;
 }
 
 .live-activity::after {
@@ -1202,25 +1189,27 @@ body.reduced-motion .mouse-trail-container {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+  z-index: 0;
 
   background:
     radial-gradient(
-      80% 46% at 50% 22%,
-      color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent),
-      transparent 58%
+      75% 36% at 50% 13%,
+      color-mix(in srgb, var(--dynamic-accent-soft) 24%, transparent),
+      transparent 64%
     ),
     radial-gradient(
-      70% 38% at 50% 46%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
-      transparent 62%
+      80% 48% at 50% 100%,
+      color-mix(in srgb, var(--shadow-color) 48%, transparent),
+      transparent 72%
     ),
-    radial-gradient(
-      90% 48% at 50% 100%,
-      color-mix(in srgb, var(--shadow-color) 38%, transparent),
-      transparent 70%
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      transparent 52%,
+      color-mix(in srgb, black 18%, transparent) 100%
     );
 
-  opacity: 0.82;
+  opacity: 0.88;
 }
 
 .live-activity > * {
@@ -1228,64 +1217,58 @@ body.reduced-motion .mouse-trail-container {
   z-index: 2;
 }
 
-/* ======================================================= /
-/ === HIDDEN ============================================ /
-/ ======================================================= */
-
 .hidden {
   display: none !important;
 }
 
-/* ======================================================= /
-/ === STATUS LINE ======================================= /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === STATUS LINE ======================================== */
+/* ======================================================== */
 .status-line {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 11px;
 
-  margin: 2px auto 18px;
-  padding: 0;
+  margin: 0 auto 22px;
 
-  font-size: 0.98rem;
-  font-weight: 500;
-  letter-spacing: -0.01em;
+  font-size: clamp(1rem, 2vw, 1.12rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
 
-  color: color-mix(in srgb, var(--text-color) 88%, var(--secondary-text) 12%);
-
-  transition: opacity var(--transition-fast, .22s ease);
+  color: color-mix(in srgb, var(--text-color) 84%, var(--secondary-text) 16%);
 }
 
 .status-icon {
-  width: 23px;
-  height: 23px;
+  width: 30px;
+  height: 30px;
   flex-shrink: 0;
   display: block;
-
-  filter:
-    drop-shadow(
-      0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent)
-    );
 }
 
 .status-icon.glow {
   filter:
-    drop-shadow(
-      0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 26%, transparent)
-    )
-    drop-shadow(
-      0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent)
-    );
+    drop-shadow(0 0 12px rgba(30, 215, 96, 0.5))
+    drop-shadow(0 0 26px rgba(30, 215, 96, 0.22));
 }
 
-/* ======================================================= /
-/ === CARD BODY ========================================= /
-/ ======================================================= */
+#status-icon {
+  filter:
+    invert(54%)
+    sepia(98%)
+    saturate(633%)
+    hue-rotate(88deg)
+    brightness(92%)
+    contrast(91%)
+    drop-shadow(0 0 12px rgba(30, 215, 96, 0.45));
+}
 
+/* ======================================================== */
+/* === SPOTIFY CARD ======================================= */
+/* ======================================================== */
 .spotify-card {
   width: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1295,74 +1278,76 @@ body.reduced-motion .mouse-trail-container {
   outline: none;
   user-select: none;
 
-  border-radius: 26px;
+  border-radius: 30px;
 
   transition:
-    transform .28s cubic-bezier(.2,.8,.2,1),
-    opacity .28s ease;
+    transform 0.32s cubic-bezier(.2,.8,.2,1),
+    opacity 0.28s ease,
+    filter 0.28s ease;
 }
 
 .spotify-card:hover,
 .spotify-card:focus-visible {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  filter: brightness(1.035);
 }
 
 .spotify-card:focus-visible {
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 30%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
+    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 34%, transparent),
+    0 0 0 7px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
 }
 
-/* ======================================================= /
-/ === ALBUM ART ========================================= /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === ALBUM ART ========================================== */
+/* ======================================================== */
 .live-album-art {
   position: relative;
   width: var(--la-art-size);
   aspect-ratio: 1 / 1;
-  margin: 2px auto 20px;
+  margin: 0 auto 24px;
 
-  border-radius: 30px;
+  border-radius: 32px;
   overflow: hidden;
 
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 18%, transparent),
-      color-mix(in srgb, var(--content-bg) 82%, transparent)
+      color-mix(in srgb, var(--glow-color) 28%, transparent),
+      color-mix(in srgb, var(--content-bg) 72%, transparent)
     ),
-    color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--glow-color) 36%, var(--border-color) 64%);
 
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 38%, transparent),
-    0 22px 48px color-mix(in srgb, var(--shadow-color) 62%, transparent),
-    0 0 28px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 48%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 44%, transparent),
+    0 28px 58px color-mix(in srgb, var(--shadow-color) 70%, transparent),
+    0 0 42px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
 
   transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    box-shadow .35s cubic-bezier(.2,.8,.2,1);
+    transform 0.35s cubic-bezier(.2,.8,.2,1),
+    box-shadow 0.35s cubic-bezier(.2,.8,.2,1);
 }
 
 .live-album-art::before {
   content: "";
   position: absolute;
-  inset: -18px;
-  border-radius: 40px;
+  inset: -28px;
+  border-radius: 44px;
   pointer-events: none;
   z-index: 0;
 
   background:
     radial-gradient(
-      circle,
-      color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent),
-      transparent 72%
+      circle at 50% 45%,
+      color-mix(in srgb, var(--dynamic-accent-glow) 30%, transparent),
+      transparent 68%
     );
 
-  filter: blur(18px);
-  opacity: 0.75;
+  filter: blur(24px);
+  opacity: 0.82;
 }
 
 .live-album-art::after {
@@ -1376,65 +1361,70 @@ body.reduced-motion .mouse-trail-container {
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 24%, transparent) 0%,
-      color-mix(in srgb, var(--glow-color) 8%, transparent) 22%,
-      transparent 38%,
-      transparent 72%,
-      color-mix(in srgb, var(--shadow-color) 16%, transparent) 100%
+      color-mix(in srgb, white 18%, transparent) 0%,
+      color-mix(in srgb, white 6%, transparent) 24%,
+      transparent 48%,
+      color-mix(in srgb, black 12%, transparent) 100%
     );
 
   mix-blend-mode: screen;
+  opacity: 0.72;
 }
 
 .live-album-art img,
 #live-activity-cover {
   position: relative;
   z-index: 1;
+
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
+
   border-radius: inherit;
 
   transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    filter .35s cubic-bezier(.2,.8,.2,1);
+    transform 0.35s cubic-bezier(.2,.8,.2,1),
+    filter 0.35s cubic-bezier(.2,.8,.2,1);
 }
 
 .spotify-card:hover .live-album-art,
 .spotify-card:focus-visible .live-album-art {
-  transform: translateY(-3px) scale(1.018);
+  transform: translateY(-4px) scale(1.018);
 
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 42%, transparent),
-    0 28px 58px color-mix(in srgb, var(--shadow-color) 68%, transparent),
-    0 0 36px color-mix(in srgb, var(--dynamic-accent-glow) 16%, transparent);
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 52%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 44%, transparent),
+    0 34px 70px color-mix(in srgb, var(--shadow-color) 76%, transparent),
+    0 0 54px color-mix(in srgb, var(--dynamic-accent-glow) 26%, transparent);
 }
 
 .spotify-card:hover .live-album-art img,
 .spotify-card:focus-visible .live-album-art img {
   transform: scale(1.025);
-  filter: saturate(1.03) contrast(1.02);
+  filter: saturate(1.04) contrast(1.025);
 }
 
-/* ======================================================= /
-/ === INFO ============================================== /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === INFO =============================================== */
+/* ======================================================== */
 .live-info {
   width: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .live-song-title-wrapper {
+  width: min(100%, 430px);
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 9px;
   flex-wrap: wrap;
-  width: min(100%, 440px);
+
   margin: 0 auto;
 }
 
@@ -1442,16 +1432,18 @@ body.reduced-motion .mouse-trail-container {
   max-width: 100%;
   margin: 0;
 
-  font-size: clamp(1.32rem, 2.1vw, 1.72rem);
-  line-height: 1.14;
-  font-weight: 700;
-  letter-spacing: -0.035em;
-  color: var(--text-color);
+  font-size: clamp(1.48rem, 3vw, 2rem);
+  line-height: 1.08;
+  font-weight: 780;
+  letter-spacing: -0.052em;
+
+  color: color-mix(in srgb, var(--text-color) 96%, white 4%);
 
   text-wrap: balance;
 
   text-shadow:
-    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 14%, transparent);
+    0 1px 1px color-mix(in srgb, black 26%, transparent),
+    0 0 18px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
 }
 
 .explicit-badge {
@@ -1459,36 +1451,40 @@ body.reduced-motion .mouse-trail-container {
   align-items: center;
   justify-content: center;
 
-  min-width: 18px;
-  height: 18px;
+  min-width: 19px;
+  height: 19px;
   padding: 0 5px;
 
-  border-radius: 5px;
+  border-radius: 6px;
   flex-shrink: 0;
 
   font-size: 0.68rem;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1;
-  letter-spacing: 0;
 
-  color: var(--text-color);
+  color: color-mix(in srgb, var(--text-color) 92%, white 8%);
 
   background:
-    color-mix(in srgb, var(--content-bg) 78%, var(--glow-color) 22%);
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 20%, transparent),
+      color-mix(in srgb, var(--content-bg) 78%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 82%, var(--bg-color) 18%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 78%, var(--glow-color) 22%);
 }
 
 .live-artist {
-  max-width: min(90%, 430px);
-  margin: 10px auto 0;
+  max-width: min(92%, 420px);
+  margin: 11px auto 0;
 
-  font-size: clamp(0.98rem, 1.6vw, 1.08rem);
-  line-height: 1.35;
-  font-weight: 400;
-  letter-spacing: -0.015em;
+  font-size: clamp(1.02rem, 2vw, 1.16rem);
+  line-height: 1.32;
+  font-weight: 500;
+  letter-spacing: -0.025em;
 
-  color: var(--secondary-text);
+  color: color-mix(in srgb, var(--secondary-text) 82%, var(--text-color) 18%);
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -1499,36 +1495,34 @@ body.reduced-motion .mouse-trail-container {
   overflow-wrap: anywhere;
 }
 
-/* ======================================================= /
-/ === PROGRESS ========================================== /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === PROGRESS =========================================== */
+/* ======================================================== */
 .music-progress-container {
   position: relative;
   overflow: hidden;
 
   width: var(--la-progress-w);
   max-width: calc(100% - 8px);
-  height: var(--la-track-h);
-  margin: 22px auto 14px;
+  height: 10px;
+  margin: 24px auto 16px;
 
   border-radius: 999px;
-  box-sizing: border-box;
 
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 18%, transparent),
-      color-mix(in srgb, var(--content-bg) 70%, transparent)
+      color-mix(in srgb, black 34%, transparent),
+      color-mix(in srgb, var(--glow-color) 8%, transparent)
     ),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+    color-mix(in srgb, var(--content-bg) 70%, black 30%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
 
   box-shadow:
-    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 28%, transparent),
-    inset 0 -1px 2px color-mix(in srgb, var(--shadow-color) 36%, transparent),
-    0 1px 8px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+    inset 0 1px 2px color-mix(in srgb, black 42%, transparent),
+    inset 0 -1px 1px color-mix(in srgb, var(--glow-color) 18%, transparent),
+    0 1px 10px color-mix(in srgb, var(--shadow-color) 34%, transparent);
 }
 
 .music-progress-container::before {
@@ -1541,62 +1535,39 @@ body.reduced-motion .mouse-trail-container {
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 22%, transparent),
+      color-mix(in srgb, white 18%, transparent),
       transparent 72%
     );
 
-  opacity: 0.34;
+  opacity: 0.25;
 }
 
 .music-progress-bar {
   position: relative;
   z-index: 1;
+
   height: 100%;
-  width: 0%;
+  width: 38%;
   border-radius: inherit;
 
   background:
     linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--dynamic-accent-soft) 94%, var(--glow-color) 6%),
-      color-mix(in srgb, var(--dynamic-accent) 78%, var(--shadow-color) 22%)
+      90deg,
+      color-mix(in srgb, var(--dynamic-accent-soft) 88%, white 12%),
+      color-mix(in srgb, var(--dynamic-accent) 82%, var(--text-color) 18%)
     );
 
   box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 34%, transparent),
-    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
-    0 0 24px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
+    inset 0 1px 1px color-mix(in srgb, white 28%, transparent),
+    0 0 16px color-mix(in srgb, var(--dynamic-accent-glow) 34%, transparent),
+    0 0 30px color-mix(in srgb, var(--dynamic-accent-soft) 18%, transparent);
 
-  transition: width .32s linear;
+  transition: width 0.32s linear;
 }
 
-.music-progress-container.indeterminate {
-  overflow: hidden;
-}
-
-.music-progress-container.indeterminate .music-progress-bar {
-  width: 42%;
-  animation: liveActivityIndeterminate 1.45s ease-in-out infinite;
-}
-
-@keyframes liveActivityIndeterminate {
-  0% {
-    transform: translateX(-120%);
-  }
-
-  50% {
-    transform: translateX(94%);
-  }
-
-  100% {
-    transform: translateX(240%);
-  }
-}
-
-/* ======================================================= /
-/ === TIME PILL ========================================= /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === TIME PILL ========================================== */
+/* ======================================================== */
 .music-progress-time {
   width: var(--la-time-w);
   max-width: calc(100% - 8px);
@@ -1606,30 +1577,36 @@ body.reduced-motion .mouse-trail-container {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
 
-  padding: 12px 16px;
-  border-radius: 20px;
+  padding: 13px 18px;
+  border-radius: 23px;
 
   background:
+    radial-gradient(
+      120% 120% at 50% 0%,
+      color-mix(in srgb, var(--glow-color) 16%, transparent),
+      transparent 52%
+    ),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 14%, transparent),
-      color-mix(in srgb, var(--content-bg) 78%, transparent)
+      color-mix(in srgb, var(--content-bg) 74%, transparent),
+      color-mix(in srgb, black 26%, transparent)
     ),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+    color-mix(in srgb, var(--content-bg) 76%, black 24%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 74%, var(--glow-color) 26%);
 
   box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 26%, transparent),
-    inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 32%, transparent);
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 28%, transparent),
+    inset 0 -1px 1px color-mix(in srgb, black 34%, transparent),
+    0 8px 20px color-mix(in srgb, var(--shadow-color) 28%, transparent);
 
-  color: var(--secondary-text);
+  color: color-mix(in srgb, var(--secondary-text) 82%, var(--text-color) 18%);
 
-  font-size: clamp(0.84rem, 1.4vw, 0.96rem);
+  font-size: clamp(0.9rem, 1.7vw, 1rem);
+  font-weight: 560;
   line-height: 1;
   letter-spacing: -0.01em;
 
-  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -1648,11 +1625,11 @@ body.reduced-motion .mouse-trail-container {
 .music-progress-time span:nth-child(2) {
   justify-self: center;
   text-align: center;
-  font-weight: 700;
-
-  color: color-mix(in srgb, var(--dynamic-accent-soft) 84%, var(--text-color) 16%);
 
   padding: 0 12px;
+
+  font-weight: 800;
+  color: color-mix(in srgb, var(--dynamic-accent-soft) 78%, white 22%);
 }
 
 .music-progress-time span:last-child {
@@ -1660,16 +1637,16 @@ body.reduced-motion .mouse-trail-container {
   text-align: right;
 }
 
-/* ======================================================= /
-/ === UPDATED PILL ====================================== /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === UPDATED CHIP ======================================= */
+/* ======================================================== */
 .la-updated,
 #live-activity-updated {
   width: fit-content;
   max-width: calc(100% - 24px);
-  margin: 16px auto 0;
-  padding: 9px 16px;
+
+  margin: 18px auto 0;
+  padding: 10px 18px;
 
   border-radius: 999px;
 
@@ -1677,43 +1654,42 @@ body.reduced-motion .mouse-trail-container {
     linear-gradient(
       180deg,
       color-mix(in srgb, var(--glow-color) 12%, transparent),
-      color-mix(in srgb, var(--content-bg) 78%, transparent)
+      color-mix(in srgb, black 18%, transparent)
     ),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+    color-mix(in srgb, var(--content-bg) 72%, black 28%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border-color) 72%, var(--glow-color) 28%);
 
   box-shadow:
     inset 0 1px 1px color-mix(in srgb, var(--glow-color) 24%, transparent),
-    inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+    inset 0 -1px 1px color-mix(in srgb, black 32%, transparent),
+    0 6px 18px color-mix(in srgb, var(--shadow-color) 28%, transparent);
 
-  color: var(--secondary-text);
+  color: color-mix(in srgb, var(--secondary-text) 84%, var(--text-color) 16%);
 
   font-size: 0.72rem;
   line-height: 1;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-weight: 720;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
-/* ======================================================= /
-/ === IN / OUT ========================================== /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === ANIMATIONS ========================================= */
+/* ======================================================== */
 .spotify-card.slide-in {
-  animation: liveCardIn .34s cubic-bezier(.2,.8,.2,1);
+  animation: liveCardIn 0.34s cubic-bezier(.2,.8,.2,1);
 }
 
 .spotify-card.slide-out {
-  animation: liveCardOut .34s cubic-bezier(.2,.8,.2,1);
+  animation: liveCardOut 0.34s cubic-bezier(.2,.8,.2,1);
 }
 
 @keyframes liveCardIn {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(.988);
+    transform: translateY(8px) scale(0.988);
   }
-
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1725,302 +1701,62 @@ body.reduced-motion .mouse-trail-container {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
-
   to {
     opacity: 0;
-    transform: translateY(8px) scale(.988);
+    transform: translateY(8px) scale(0.988);
   }
 }
 
-/* ======================================================= /
-/ === LIGHT MODE THEME POLISH =========================== /
-/ ======================================================= */
-
-body.light-e .live-activity {
-  color: var(--text-color);
-
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 24%, rgba(255,255,255,0.72)),
-      transparent 56%
-    ),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    var(--dynamic-bg),
-    color-mix(in srgb, var(--content-bg) 88%, white 12%);
-
-  border-color:
-    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
-
-  box-shadow:
-    var(--bubble-highlight),
-    0 18px 42px color-mix(in srgb, var(--shadow-color) 78%, transparent),
-    inset 0 1px 1px rgba(255, 255, 255, 0.82),
-    inset 0 -2px 8px rgba(0, 0, 0, 0.08),
-    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
-}
-
-body.light-e .live-activity::before {
-  opacity: 0.5;
-  mix-blend-mode: soft-light;
-}
-
-body.light-e .live-activity::after {
-  background:
-    radial-gradient(
-      82% 50% at 50% 22%,
-      color-mix(in srgb, var(--dynamic-accent-soft) 34%, transparent),
-      transparent 56%
-    ),
-    radial-gradient(
-      72% 40% at 50% 46%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
-      transparent 60%
-    ),
-    radial-gradient(
-      90% 48% at 50% 100%,
-      rgba(0, 0, 0, 0.12),
-      transparent 70%
-    );
-
-  opacity: 0.9;
-}
-
-body.light-e .status-line {
-  color: var(--text-color);
-}
-
-body.light-e .status-icon {
-  filter:
-    drop-shadow(
-      0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent)
-    );
-}
-
-body.light-e .status-icon.glow {
-  filter:
-    drop-shadow(
-      0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 30%, transparent)
-    )
-    drop-shadow(
-      0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 18%, transparent)
-    );
-}
-
-body.light-e .spotify-card:focus-visible {
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 34%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
-}
-
-body.light-e .live-album-art {
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.44),
-      rgba(255,255,255,0.18)
-    ),
-    color-mix(in srgb, var(--content-bg) 82%, white 18%);
-
-  border-color:
-    color-mix(in srgb, var(--dynamic-accent) 14%, var(--border-color));
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.54),
-    0 20px 34px color-mix(in srgb, var(--shadow-color) 55%, transparent),
-    0 0 34px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
-}
-
-body.light-e .live-album-art::before {
-  background:
-    radial-gradient(
-      circle,
-      color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent),
-      transparent 72%
-    );
-
-  opacity: 0.92;
-}
-
-body.light-e .live-song-title {
-  color: var(--text-color);
-
-  text-shadow:
-    0 0 16px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
-}
-
-body.light-e .live-artist {
-  color: var(--secondary-text);
-}
-
-body.light-e .explicit-badge {
-  color: var(--text-color);
-
-  background:
-    color-mix(in srgb, var(--dynamic-accent-soft) 18%, var(--content-bg) 82%);
-
-  border-color:
-    color-mix(in srgb, var(--dynamic-accent) 18%, var(--border-color));
-}
-
-body.light-e .music-progress-container {
-  border-color:
-    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.42),
-      rgba(255,255,255,0.16)
-    ),
-    color-mix(in srgb, var(--content-bg) 82%, white 18%);
-
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.64),
-    inset 0 -1px 2px rgba(0,0,0,0.05),
-    0 1px 8px color-mix(in srgb, var(--shadow-color) 36%, transparent);
-}
-
-body.light-e .music-progress-bar {
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.28),
-    0 0 18px color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent),
-    0 0 28px color-mix(in srgb, var(--dynamic-accent-soft) 16%, transparent);
-}
-
-body.light-e .music-progress-time,
-body.light-e .la-updated,
-body.light-e #live-activity-updated {
-  border-color:
-    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.68),
-      rgba(255,255,255,0.42)
-    ),
-    color-mix(in srgb, var(--content-bg) 82%, white 18%);
-
-  color: var(--secondary-text);
-
-  box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.68),
-    inset 0 -1px 1px rgba(0,0,0,0.05);
-}
-
-body.light-e .music-progress-time span:nth-child(2) {
-  color: color-mix(in srgb, var(--dynamic-accent) 86%, var(--text-color) 14%);
-}
-
-body.light-e .la-updated,
-body.light-e #live-activity-updated {
-  color: var(--secondary-text);
-}
-
-/* ======================================================= /
-/ === DARK MODE THEME POLISH ============================ /
-/ ======================================================= */
-
-html.dark-mode body .live-activity,
-body.dark-mode .live-activity {
-  color: var(--text-color);
-
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
-      transparent 52%
-    ),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    var(--dynamic-bg),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
-
-  border-color:
-    color-mix(in srgb, var(--border-color) 90%, transparent);
-
-  box-shadow:
-    var(--bubble-highlight),
-    0 24px 58px color-mix(in srgb, var(--shadow-color) 88%, transparent),
-    inset 0 1px 1px rgba(255,255,255,0.08),
-    inset 0 -4px 14px rgba(0,0,0,0.42),
-    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
-}
-
-html.dark-mode body .live-activity::before,
-body.dark-mode .live-activity::before {
-  opacity: 0.38;
-}
-
-html.dark-mode body .live-activity::after,
-body.dark-mode .live-activity::after {
-  background:
-    radial-gradient(
-      80% 46% at 50% 22%,
-      color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent),
-      transparent 58%
-    ),
-    radial-gradient(
-      70% 38% at 50% 46%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
-      transparent 62%
-    ),
-    radial-gradient(
-      90% 48% at 50% 100%,
-      rgba(0,0,0,0.32),
-      transparent 70%
-    );
-
-  opacity: 0.84;
-}
-
-/* ======================================================= /
-/ === RESPONSIVE ======================================== /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === RESPONSIVE ========================================= */
+/* ======================================================== */
 @media (max-width: 600px) {
-  .live-activity {
-    --la-art-size: min(230px, 72vw);
-    --la-progress-w: min(100%, 360px);
-    --la-time-w: min(100%, 368px);
+  body {
+    padding: 28px 10px;
+  }
 
-    width: min(var(--la-max-w), calc(100% - 22px));
-    margin: 16px auto;
-    padding: 22px 16px 18px;
-    border-radius: 28px;
+  .live-activity {
+    --la-art-size: min(250px, 70vw);
+    --la-progress-w: min(100%, 350px);
+    --la-time-w: min(100%, 360px);
+
+    width: min(var(--la-max-w), calc(100vw - 20px));
+    padding: 22px 16px 20px;
+    border-radius: 30px;
   }
 
   .status-line {
-    margin-bottom: 16px;
-    font-size: 0.95rem;
+    margin-bottom: 19px;
+    font-size: 1rem;
+  }
+
+  .status-icon {
+    width: 26px;
+    height: 26px;
   }
 
   .live-album-art {
-    margin-bottom: 18px;
-    border-radius: 26px;
+    margin-bottom: 22px;
+    border-radius: 28px;
   }
 
   .live-song-title {
-    font-size: clamp(1.22rem, 5.2vw, 1.5rem);
+    font-size: clamp(1.36rem, 6vw, 1.72rem);
   }
 
   .live-artist {
-    max-width: min(94%, 360px);
-    font-size: 0.98rem;
+    font-size: 1rem;
   }
 
   .music-progress-container {
-    margin: 20px auto 12px;
-    max-width: calc(100% - 4px);
+    height: 9px;
+    margin: 22px auto 14px;
   }
 
   .music-progress-time {
-    max-width: calc(100% - 4px);
-    padding: 11px 14px;
-    border-radius: 18px;
-    font-size: 0.9rem;
+    padding: 12px 15px;
+    border-radius: 21px;
+    font-size: 0.92rem;
   }
 
   .music-progress-time span:nth-child(2) {
@@ -2029,15 +1765,14 @@ body.dark-mode .live-activity::after {
 
   .la-updated,
   #live-activity-updated {
-    margin-top: 14px;
-    font-size: 0.7rem;
+    margin-top: 16px;
+    padding: 9px 16px;
   }
 }
 
-/* ======================================================= /
-/ === REDUCED MOTION ==================================== /
-/ ======================================================= */
-
+/* ======================================================== */
+/* === REDUCED MOTION ===================================== */
+/* ======================================================== */
 @media (prefers-reduced-motion: reduce) {
   .live-activity,
   .spotify-card,
@@ -2047,10 +1782,6 @@ body.dark-mode .live-activity::after {
   .music-progress-bar,
   .status-line {
     transition: none !important;
-    animation: none !important;
-  }
-
-  .music-progress-container.indeterminate .music-progress-bar {
     animation: none !important;
   }
 }
