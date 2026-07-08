@@ -4159,7 +4159,7 @@ margin-top: 2px;
 }
 
 /* =========================================
-   TIMESTAMP PILLS - SHARED LIQUID GLASS BASE
+   TIMESTAMP PILLS - INTEGRATED LIQUID GLASS
    ========================================= */
 #tiktok-last-updated-timestamp,
 #instagram-last-updated-timestamp,
@@ -4167,68 +4167,70 @@ margin-top: 2px;
     position: relative;
     z-index: 2;
     font-size: 0.85em;
-    margin-top: 8px; /* Space between H2 and the pill */
+    margin-top: 8px;
     margin-bottom: 20px;
     
-    /* Pill Shape & Layout */
+    /* Perfect Pill Layout */
     display: inline-flex;
     align-items: center;
     gap: 8px;
     padding: 6px 16px;
-    border-radius: 50px;
     
-    /* Text Styling */
+    /* Hooking into your :root variables */
+    border-radius: var(--radius-pill);
     color: var(--secondary-text); 
     font-weight: 500;
     
-    /* Shared Glass Effect */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    /* The iOS 27 Liquid Glass Engine */
+    background: var(--glass-surface);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    
+    /* Combining your highlights and shadows for 3D depth */
+    box-shadow: var(--bubble-shadow), var(--bubble-highlight);
+    border: 1px solid var(--glass-border);
+    transition: var(--transition-medium);
 }
 
-/* Shared Font Awesome Icon Setup */
+/* Shared Font Awesome Icon */
 #tiktok-last-updated-timestamp::before,
 #instagram-last-updated-timestamp::before,
 #youtube-last-updated-timestamp::before {
-    content: '\f073'; /* Calendar icon */
+    content: '\f073'; 
     font-family: 'Font Awesome 6 Free';
     font-weight: 900;
 }
 
-
 /* =========================================
-   PLATFORM-SPECIFIC COLOR CODING
+   PLATFORM COLOR INJECTIONS
    ========================================= */
 
-/* TikTok Glass */
+/* TikTok - Pink Accent */
 #tiktok-last-updated-timestamp {
-    background: linear-gradient(135deg, rgba(37, 244, 238, 0.15), rgba(254, 44, 85, 0.05));
-    border: 1px solid rgba(37, 244, 238, 0.2);
+    /* Mixes 30% TikTok Pink with your dynamic glass border */
+    border-color: color-mix(in srgb, #FE2C55 30%, var(--glass-border));
 }
 #tiktok-last-updated-timestamp::before {
-    color: #FE2C55; /* TikTok Pink */
-    text-shadow: 0 0 8px rgba(254, 44, 85, 0.4);
+    color: #FE2C55; 
+    text-shadow: 0 0 10px color-mix(in srgb, #FE2C55 40%, transparent);
 }
 
-/* Instagram Glass */
+/* Instagram - Magenta Accent */
 #instagram-last-updated-timestamp {
-    background: linear-gradient(135deg, rgba(131, 58, 180, 0.15), rgba(253, 29, 29, 0.05));
-    border: 1px solid rgba(225, 48, 108, 0.2);
+    border-color: color-mix(in srgb, #E1306C 30%, var(--glass-border));
 }
 #instagram-last-updated-timestamp::before {
-    color: #E1306C; /* Instagram Pink/Magenta */
-    text-shadow: 0 0 8px rgba(225, 48, 108, 0.4);
+    color: #E1306C; 
+    text-shadow: 0 0 10px color-mix(in srgb, #E1306C 40%, transparent);
 }
 
-/* YouTube Glass */
+/* YouTube - Red Accent */
 #youtube-last-updated-timestamp {
-    background: linear-gradient(135deg, rgba(255, 0, 0, 0.15), rgba(255, 0, 0, 0.02));
-    border: 1px solid rgba(255, 0, 0, 0.2);
+    border-color: color-mix(in srgb, #FF0000 30%, var(--glass-border));
 }
 #youtube-last-updated-timestamp::before {
-    color: #FF0000; /* YouTube Red */
-    text-shadow: 0 0 8px rgba(255, 0, 0, 0.4);
+    color: #FF0000; 
+    text-shadow: 0 0 10px color-mix(in srgb, #FF0000 40%, transparent);
 }
 
 /* ======================== /
