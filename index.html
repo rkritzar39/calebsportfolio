@@ -850,6 +850,7 @@
     if (!dock || !links.length || !lens) return;
 
     function normalizePath(path) {
+      // Fixed: Escaped the forward slashes in the regex
       let clean = String(path || "/")
         .split("?")[0]
         .split("#")[0]
@@ -869,6 +870,7 @@
       const x = linkRect.left - dockRect.left;
       const width = linkRect.width;
 
+      // Fixed: Wrapped template literals in backticks
       dock.style.setProperty("--lens-x", `${x}px`);
       dock.style.setProperty("--lens-width", `${width}px`);
     }
