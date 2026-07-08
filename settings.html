@@ -977,214 +977,206 @@
     </div>
   </footer>
 
-  <nav class="onyx-dock">
+ <nav class="onyx-dock" aria-label="Primary navigation">
+  <span class="dock-active-lens" aria-hidden="true"></span>
 
-  <a class="dock-item" href="/">
-
-    <span class="dock-icon">🏠</span>
-
+  <a class="dock-item" href="/" data-route="/" aria-current="page">
+    <span class="dock-icon" aria-hidden="true">🏠</span>
     <span class="dock-label">Home</span>
-
   </a>
 
-  <a class="dock-item" href="/beta">
-
-    <span class="dock-icon">🧪</span>
-
+  <a class="dock-item" href="/beta" data-route="/beta">
+    <span class="dock-icon" aria-hidden="true">🧪</span>
     <span class="dock-label">Beta</span>
-
   </a>
 
-  <a class="dock-item" href="/resume">
-
-    <span class="dock-icon">📜</span>
-
+  <a class="dock-item" href="/resume" data-route="/resume">
+    <span class="dock-icon" aria-hidden="true">📜</span>
     <span class="dock-label">Resume</span>
-
   </a>
 
-  <a class="dock-item" href="/settings">
-
-    <span class="dock-icon">⚙️</span>
-
+  <a class="dock-item" href="/settings" data-route="/settings">
+    <span class="dock-icon" aria-hidden="true">⚙️</span>
     <span class="dock-label">Settings</span>
-
   </a>
-
 </nav>
-  
-  <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
+
+<script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
 
 <script type="module" src="firebase-init.js"></script>
-
 <script type="module" src="notifications.js"></script>
 
 <script src="settings.js"></script>
-
 <script src="script.js"></script>
 
-  <script>
-
+<script>
+  // Normalize a path so comparisons are consistent
   function normalizeOnyxDockPath(path) {
-
-    return (path || "/")
-
+    let clean = String(path || "/")
+      .split("?")[0]
+      .split("#")[0]
       .toLowerCase()
+      .replace(/index\.html$/i, "/")
+      .replace(/\.html$/i, "")
+      .replace(/\/+$/g, "");
 
-      .replace(/index\.html$/, "")
+    if (!clean) clean = "/";
+    if (clean === "/home") clean = "/";
 
-      .replace(/\.html$/, "")
-
-      .replace(/\/+$/, "") || "/";
-
+    return clean;
   }
 
-  function updateOnyxDockActiveTab() {
-
+  // Grab the dock, links, and lens
+  function getOnyxDockElements() {
     const dock = document.querySelector(".onyx-dock");
+    const links = Array.from(document.querySelectorAll(".onyx-dock .dock-item"));
+    const lens = document.querySelector(".onyx-dock .dock-active-lens");
 
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
+    return { dock, links, lens };
+  }
+
+  // Determine which link should be active based on current location
+  function getOnyxDockActiveLink() {
+    const { links } = getOnyxDockElements();
+
+    if (!links.length) return null;
+
+    const currentPath = normalizeOnyxDockPath(window.location.pathname);
+    let activeLink = null;
+
+    links.forEach((link) => {
+      const rawRoute = link.dataset.route || link.getAttribute("href") || "/";
+      const targetPath = normalizeOnyxDockPath(
+        new URL(rawRoute, window.location.origin).pathname
+      );
+
+      const isExactMatch = currentPath === targetPath;
+      const isNestedMatch =
+        targetPath !== "/" && currentPath.startsWith(targetPath + "/");
+
+      if (isExactMatch || isNestedMatch) {
+        activeLink = link;
+      }
+    });
+
+    return (
+      activeLink ||
+      document.querySelector('.onyx-dock .dock-item[data-route="/"]') ||
+      document.querySelector('.onyx-dock .dock-item[href="/"]') ||
+      links[0]
+    );
+  }
+
+  // Move the lens to the active link using CSS variables
+  function moveOnyxDockLensTo(link) {
+    const { dock, lens } = getOnyxDockElements();
+
+    if (!dock || !lens || !link) return;
+
+    const dockRect = dock.getBoundingClientRect();
+    const linkRect = link.getBoundingClientRect();
+
+    const dockPaddingLeft = parseFloat(getComputedStyle(dock).paddingLeft) || 0;
+
+    const x = linkRect.left - dockRect.left - dockPaddingLeft;
+    const width = linkRect.width;
+
+    dock.style.setProperty("--lens-x", `${x}px`);
+    dock.style.setProperty("--lens-width", `${width}px`);
+  }
+
+  // Update active tab classes and aria attributes
+  function updateOnyxDockActiveTab() {
+    const { dock, links } = getOnyxDockElements();
 
     if (!dock || !links.length) return;
 
-    const currentPath = normalizeOnyxDockPath(window.location.pathname);
-
-    let matched = false;
+    const activeLink = getOnyxDockActiveLink();
 
     links.forEach((link) => {
-
-      const targetPath = normalizeOnyxDockPath(
-
-        new URL(link.getAttribute("href"), window.location.origin).pathname
-
-      );
-
-      const isActive =
-
-        targetPath === "/"
-
-          ? currentPath === "/"
-
-          : currentPath === targetPath ||
-
-            currentPath.startsWith(targetPath + "/");
+      const isActive = link === activeLink;
 
       link.classList.toggle("active", isActive);
 
-      if (isActive) matched = true;
-
+      if (isActive) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
     });
 
-    if (!matched) {
-
-      const homeLink = document.querySelector('.onyx-dock .dock-item[href="/"]');
-
-      links.forEach((l) => l.classList.remove("active"));
-
-      if (homeLink) homeLink.classList.add("active");
-
-    }
-
+    moveOnyxDockLensTo(activeLink);
     dock.classList.add("dock-ready");
-
   }
 
+  // Add pointer effects to each dock item
   function setupOnyxDockEffects() {
-
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
+    const { links } = getOnyxDockElements();
 
     links.forEach((link) => {
-
       if (link.dataset.dockEffectsReady === "true") return;
-
       link.dataset.dockEffectsReady = "true";
 
-      link.addEventListener("mousemove", (e) => {
-
+      link.addEventListener("mousemove", (event) => {
         const rect = link.getBoundingClientRect();
 
-        const x = e.clientX - rect.left;
-
-        const y = e.clientY - rect.top;
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
 
         const dx = x / rect.width - 0.5;
-
         const dy = y / rect.height - 0.5;
 
         link.style.setProperty("--x", `${x}px`);
-
         link.style.setProperty("--y", `${y}px`);
-
-        link.style.setProperty("--dx", dx);
-
-        link.style.setProperty("--dy", dy);
-
+        link.style.setProperty("--dx", dx.toFixed(3));
+        link.style.setProperty("--dy", dy.toFixed(3));
       });
 
       link.addEventListener("mouseleave", () => {
-
         link.style.setProperty("--dx", "0");
-
         link.style.setProperty("--dy", "0");
-
+        link.style.removeProperty("--x");
+        link.style.removeProperty("--y");
       });
-
     });
-
   }
 
+  // Initialize the dock
   function initOnyxDock() {
-
     setupOnyxDockEffects();
 
-    updateOnyxDockActiveTab();
+    requestAnimationFrame(() => {
+      updateOnyxDockActiveTab();
 
-    requestAnimationFrame(updateOnyxDockActiveTab);
+      requestAnimationFrame(() => {
+        updateOnyxDockActiveTab();
+      });
+    });
 
-    setTimeout(updateOnyxDockActiveTab, 50);
-
-    setTimeout(updateOnyxDockActiveTab, 150);
-
-    setTimeout(updateOnyxDockActiveTab, 350);
-
-    setTimeout(updateOnyxDockActiveTab, 800);
-
-    const y = document.getElementById("year");
-
-    if (y) y.textContent = new Date().getFullYear();
-
+    const year = document.getElementById("year");
+    if (year) {
+      year.textContent = new Date().getFullYear();
+    }
   }
 
   if (document.readyState === "loading") {
-
     document.addEventListener("DOMContentLoaded", initOnyxDock);
-
   } else {
-
     initOnyxDock();
-
   }
 
   window.addEventListener("pageshow", () => {
-
     setupOnyxDockEffects();
 
-    updateOnyxDockActiveTab();
-
-    requestAnimationFrame(updateOnyxDockActiveTab);
-
-    setTimeout(updateOnyxDockActiveTab, 100);
-
-    setTimeout(updateOnyxDockActiveTab, 400);
-
+    requestAnimationFrame(() => {
+      updateOnyxDockActiveTab();
+    });
   });
 
   window.addEventListener("load", updateOnyxDockActiveTab);
-
+  window.addEventListener("resize", updateOnyxDockActiveTab);
   window.addEventListener("popstate", updateOnyxDockActiveTab);
-
   window.addEventListener("hashchange", updateOnyxDockActiveTab);
-
 </script>
 
 <script>
@@ -1226,6 +1218,5 @@
     });
   });
 </script>
-  
 </body>
 </html>
