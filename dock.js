@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
         let clean = String(path || "/")
             .split("?")[0]
             .split("#")[0]
-            .replace(/\/index\.html$/i, "/")
-            .replace(/\/$/, "");
+            .replace(//index.html$/i, "/")
+            .replace(//$/, "");
 
         if (!clean) clean = "/";
         if (clean === "/home") clean = "/";
@@ -23,30 +23,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function moveLens(link) {
 
-        const dockRect = dock.getBoundingClientRect();
-        const linkRect = link.getBoundingClientRect();
+        if (!link) return;
 
-        const padding =
-            parseFloat(
-                getComputedStyle(dock)
-                    .paddingLeft
-            ) || 0;
+        const dockWidth = dock.clientWidth;
 
-        const width = linkRect.width;
+        const styles = getComputedStyle(dock);
 
-        const x =
-            linkRect.left -
-            dockRect.left -
-            padding;
+        const paddingLeft =
+            parseFloat(styles.paddingLeft) || 0;
+
+        const paddingRight =
+            parseFloat(styles.paddingRight) || paddingLeft;
+
+        const width = link.offsetWidth;
+
+        let x = link.offsetLeft;
+
+        const minX = paddingLeft;
+
+        const maxX =
+            dockWidth -
+            paddingRight -
+            width;
+
+        x = Math.max(
+            minX,
+            Math.min(x, maxX)
+        );
 
         dock.style.setProperty(
             "--lens-width",
-            `${width}px`
+            ${Math.round(width)}px
         );
 
         dock.style.setProperty(
             "--lens-x",
-            `${x}px`
+            ${Math.round(x)}px
         );
 
     }
@@ -134,12 +146,23 @@ document.addEventListener("DOMContentLoaded", () => {
         refresh
     );
 
+    window.addEventListener(
+        "load",
+        refresh
+    );
+
     if (window.visualViewport) {
 
         window.visualViewport.addEventListener(
             "resize",
             refresh
         );
+
+    }
+
+    if (document.fonts) {
+
+        document.fonts.ready.then(refresh);
 
     }
 
