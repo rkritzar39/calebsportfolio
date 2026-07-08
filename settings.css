@@ -1185,7 +1185,7 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
   --dock-padding: 6px; 
   --dock-radius: 999px;
 
-  /* Modern Apple Dark Mode Base */
+  /* Modern Apple Dark Mode Base (Default) */
   --dock-text: rgba(255, 255, 255, 0.95);
   --dock-muted: rgba(255, 255, 255, 0.5);
   --dock-bg: rgba(28, 28, 30, 0.65);
@@ -1204,7 +1204,7 @@ body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; borde
 
 body.light-e,
 body.light-mode {
-  /* Modern Apple Light Mode Base */
+  /* Modern Apple Light Mode Base (Default) */
   --dock-text: rgba(0, 0, 0, 0.95);
   --dock-muted: rgba(0, 0, 0, 0.5);
   --dock-bg: rgba(250, 250, 250, 0.65);
@@ -1216,6 +1216,48 @@ body.light-mode {
   --lens-bg: rgba(0, 0, 0, 0.06);
   --lens-border: rgba(0, 0, 0, 0.08);
   --lens-highlight: rgba(255, 255, 255, 0.6);
+}
+
+/* ================================================== */
+/* 🎛️ MATERIAL VARIANTS (CLEAR VS. TINTED)             */
+/* ================================================== */
+
+/* 
+  1. CLEAR MATERIAL
+  Maximum transparency. Relies almost entirely on the blur effect.
+*/
+.onyx-dock.theme-clear {
+  /* Dark Mode Ultra-Clear */
+  --dock-bg: rgba(28, 28, 30, 0.1);
+  --dock-border: rgba(255, 255, 255, 0.05);
+  --dock-shadow: rgba(0, 0, 0, 0.15);
+}
+
+body.light-mode .onyx-dock.theme-clear,
+body.light-e .onyx-dock.theme-clear {
+  /* Light Mode Ultra-Clear */
+  --dock-bg: rgba(250, 250, 250, 0.1);
+  --dock-border: rgba(0, 0, 0, 0.03);
+  --dock-shadow: rgba(0, 0, 0, 0.08);
+}
+
+/* 
+  2. TINTED MATERIAL
+  Increases opacity. Adds strict contrast to content and controls.
+*/
+.onyx-dock.theme-tinted {
+  /* Dark Mode Tinted */
+  --dock-bg: rgba(28, 28, 30, 0.85); 
+  --dock-border: rgba(255, 255, 255, 0.25);
+  --dock-shadow: rgba(0, 0, 0, 0.6);
+}
+
+body.light-mode .onyx-dock.theme-tinted,
+body.light-e .onyx-dock.theme-tinted {
+  /* Light Mode Tinted */
+  --dock-bg: rgba(250, 250, 250, 0.85);
+  --dock-border: rgba(0, 0, 0, 0.15);
+  --dock-shadow: rgba(0, 0, 0, 0.25);
 }
 
 /* ================================================== */
@@ -1239,7 +1281,6 @@ body.light-mode {
   padding: var(--dock-padding);
   border-radius: var(--dock-radius);
   
-  /* Clean Apple Glass Fill */
   background: var(--dock-bg);
 
   /* Deep Blur & Saturation */
@@ -1259,6 +1300,8 @@ body.light-mode {
   z-index: 9999;
 
   transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease,
     opacity 0.22s ease,
     transform 0.42s var(--ease-fluid);
 }
@@ -1276,7 +1319,6 @@ body.light-mode {
   box-sizing: border-box;
   position: absolute;
   
-  /* Mathematically derived to perfectly fit padding on any screen */
   top: var(--dock-padding);
   left: 0; 
   height: calc(100% - (var(--dock-padding) * 2));
@@ -1314,7 +1356,6 @@ body.light-mode {
   position: relative;
   z-index: 4;
 
-  /* Forces perfectly equal distribution regardless of screen size */
   flex: 1 1 0%;
   min-width: 0;
   height: 100%;
@@ -1344,7 +1385,6 @@ body.light-mode {
   line-height: 1;
   opacity: 0.7;
 
-  /* Modern subtle shadow instead of heavy drop-shadows */
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
 
   transition:
@@ -1354,15 +1394,13 @@ body.light-mode {
 }
 
 .dock-label {
-  /* Apple System Typography */
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
   font-size: 11px; 
   line-height: 1;
-  font-weight: 600; /* Apple uses medium/semibold for tabs, not 800 */
+  font-weight: 600; 
   letter-spacing: 0.01em;
   opacity: 0.8;
 
-  /* Prevent text breaking layout on tiny screens */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1441,6 +1479,7 @@ body.light-mode {
     transition: none !important;
   }
 }
+
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
 .setting-icon-container {
