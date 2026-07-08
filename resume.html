@@ -5,13 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Caleb Kritzar - Resume</title>
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="settings.css" />
-  <link rel="stylesheet" href="resume.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="settings.css" />
+<link rel="stylesheet" href="resume.css" />
+<link rel="stylesheet" href="styles.css" />
+
+
 </head>
 <body>
   <div id="resume-print-area">
@@ -91,131 +93,110 @@ document.getElementById("download-btn").addEventListener("click", function () {
     <p>© <span id="year"></span> Caleb Kritzar. All Rights Reserved.</p>
   </footer>
 
- <nav class="onyx-dock">
-  <a class="dock-item" href="/">
+<nav class="onyx-dock" aria-label="Primary navigation">
+  <span class="dock-active-lens" aria-hidden="true"></span>
+
+  <a href="/" class="dock-item">
     <span class="dock-icon">🏠</span>
     <span class="dock-label">Home</span>
   </a>
 
-  <a class="dock-item" href="/beta">
+  <a href="/beta" class="dock-item">
     <span class="dock-icon">🧪</span>
     <span class="dock-label">Beta</span>
   </a>
 
-  <a class="dock-item" href="/resume">
+  <a href="/resume" class="dock-item">
     <span class="dock-icon">📜</span>
     <span class="dock-label">Resume</span>
   </a>
 
-  <a class="dock-item" href="/settings">
+  <a href="/settings" class="dock-item">
     <span class="dock-icon">⚙️</span>
     <span class="dock-label">Settings</span>
   </a>
 </nav>
 
 <script>
-  function normalizeOnyxDockPath(path) {
-    return (path || "/")
-      .toLowerCase()
-      .replace(/index\.html$/, "")
-      .replace(/\.html$/, "")
-      .replace(/\/+$/, "") || "/";
-  }
-
-  function updateOnyxDockActiveTab() {
+  document.addEventListener("DOMContentLoaded", () => {
     const dock = document.querySelector(".onyx-dock");
     const links = document.querySelectorAll(".onyx-dock .dock-item");
+    const lens = document.querySelector(".dock-active-lens");
 
-    if (!dock || !links.length) return;
+    if (!dock || !links.length || !lens) return;
 
-    const currentPath = normalizeOnyxDockPath(window.location.pathname);
-    let matched = false;
+    function normalizePath(path) {
+      // Fixed: Escaped the forward slashes in the regex
+      let clean = String(path || "/")
+        .split("?")[0]
+        .split("#")[0]
+        .replace(/\/index\.html$/i, "/")
+        .replace(/\/$/, "");
+
+      if (!clean) clean = "/";
+      if (clean === "/home") clean = "/";
+
+      return clean;
+    }
+
+    function moveLensTo(link) {
+      const dockRect = dock.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+
+      const x = linkRect.left - dockRect.left;
+      const width = linkRect.width;
+
+      // Fixed: Wrapped template literals in backticks
+      dock.style.setProperty("--lens-x", `${x}px`);
+      dock.style.setProperty("--lens-width", `${width}px`);
+    }
+
+    const currentPath = normalizePath(window.location.pathname);
+    let activeLink = null;
 
     links.forEach((link) => {
-      const targetPath = normalizeOnyxDockPath(
-        new URL(link.getAttribute("href"), window.location.origin).pathname
+      const href = link.getAttribute("href") || "/";
+      const targetPath = normalizePath(
+        new URL(href, window.location.origin).pathname
       );
 
-      const isActive =
-        targetPath === "/"
-          ? currentPath === "/"
-          : currentPath === targetPath ||
-            currentPath.startsWith(targetPath + "/");
+      const exactMatch = targetPath === currentPath;
+      const nestedMatch = targetPath !== "/" && currentPath.startsWith(targetPath + "/");
+
+      if (exactMatch || nestedMatch) {
+        activeLink = link;
+      }
+    });
+
+    if (!activeLink) {
+      activeLink = document.querySelector('.onyx-dock .dock-item[href="/"]') || links[0];
+    }
+
+    links.forEach((link) => {
+      const isActive = link === activeLink;
 
       link.classList.toggle("active", isActive);
 
-      if (isActive) matched = true;
+      if (isActive) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
     });
 
-    if (!matched) {
-      const homeLink = document.querySelector('.onyx-dock .dock-item[href="/"]');
-
-      links.forEach((l) => l.classList.remove("active"));
-      if (homeLink) homeLink.classList.add("active");
-    }
-
-    dock.classList.add("dock-ready");
-  }
-
-  function setupOnyxDockEffects() {
-    const links = document.querySelectorAll(".onyx-dock .dock-item");
-
-    links.forEach((link) => {
-      if (link.dataset.dockEffectsReady === "true") return;
-      link.dataset.dockEffectsReady = "true";
-
-      link.addEventListener("mousemove", (e) => {
-        const rect = link.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const dx = x / rect.width - 0.5;
-        const dy = y / rect.height - 0.5;
-
-        link.style.setProperty("--x", `${x}px`);
-        link.style.setProperty("--y", `${y}px`);
-        link.style.setProperty("--dx", dx);
-        link.style.setProperty("--dy", dy);
-      });
-
-      link.addEventListener("mouseleave", () => {
-        link.style.setProperty("--dx", "0");
-        link.style.setProperty("--dy", "0");
-      });
+    requestAnimationFrame(() => {
+      moveLensTo(activeLink);
+      dock.classList.add("dock-ready");
     });
-  }
 
-  function initOnyxDock() {
-    setupOnyxDockEffects();
-    updateOnyxDockActiveTab();
+    window.addEventListener("resize", () => {
+      const active = document.querySelector(".onyx-dock .dock-item.active");
+      if (active) moveLensTo(active);
+    });
 
-    requestAnimationFrame(updateOnyxDockActiveTab);
-    setTimeout(updateOnyxDockActiveTab, 50);
-    setTimeout(updateOnyxDockActiveTab, 150);
-    setTimeout(updateOnyxDockActiveTab, 350);
-    setTimeout(updateOnyxDockActiveTab, 800);
-
-    const y = document.getElementById("year");
-    if (y) y.textContent = new Date().getFullYear();
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initOnyxDock);
-  } else {
-    initOnyxDock();
-  }
-
-  window.addEventListener("pageshow", () => {
-    setupOnyxDockEffects();
-    updateOnyxDockActiveTab();
-    requestAnimationFrame(updateOnyxDockActiveTab);
-    setTimeout(updateOnyxDockActiveTab, 100);
-    setTimeout(updateOnyxDockActiveTab, 400);
+    const year = document.getElementById("year");
+    if (year) year.textContent = new Date().getFullYear();
   });
-
-  window.addEventListener("load", updateOnyxDockActiveTab);
-  window.addEventListener("popstate", updateOnyxDockActiveTab);
-  window.addEventListener("hashchange", updateOnyxDockActiveTab);
 </script>
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
   <script src="settings.js"></script>
