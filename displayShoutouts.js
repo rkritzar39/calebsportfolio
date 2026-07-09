@@ -4624,6 +4624,261 @@ function renderTechItemHomepage(itemData) {
     </div>`;
 }
 
+// ======================
+// TECH SEARCH / FILTER STATE
+// ======================
+let allTechItems = [];
+let activeTechFilter = "all";
+
+// ======================
+// TECH LIST RENDER HELPER
+// ======================
+function renderTechList(items) {
+    const techItemsListContainer = document.getElementById("tech-items-list-dynamic");
+
+    if (!techItemsListContainer) return;
+
+    if (!items || items.length === 0) {
+        techItemsListContainer.innerHTML = `
+            <p class="tech-empty-state">
+                No matching tech items found.
+            </p>
+        `;
+        return;
+    }
+
+    techItemsListContainer.innerHTML = items
+        .map(item => renderTechItemHomepage(item))
+        .join("");
+}
+
+// ======================
+// TECH FILTER + SORT SYSTEM
+// ======================
+function applyTechFiltersAndSort() {
+    const searchInput = document.getElementById("tech-search-input");
+    const sortSelect = document.getElementById("tech-sort-select");
+
+    const queryText = searchInput
+        ? searchInput.value.toLowerCase().trim()
+        : "";
+
+    const sortValue = sortSelect
+        ? sortSelect.value
+        : "order";
+
+    let results = allTechItems.filter(rawItem => {
+        const item = normalizeTechItem(rawItem);
+        const deviceType = detectDeviceType(item);
+        const ownershipMode = getOwnershipConfig(item).mode;
+
+        if (activeTechFilter !== "all") {
+            if (activeTechFilter === "planned") {
+                if (ownershipMode !== "roadmap" && ownershipMode !== "wishlist") {
+                    return false;
+                }
+            } else if (activeTechFilter === "archived") {
+                if (ownershipMode !== "archive") {
+                    return false;
+                }
+            } else if (deviceType !== activeTechFilter) {
+                return false;
+            }
+        }
+
+        if (!queryText) return true;
+
+        const searchableText = [
+            item.name,
+            item.model,
+            item.primaryUse,
+            item.condition,
+            item.deviceType,
+            item.modelYear,
+            item.osVersion,
+            item.chipName,
+            item.storage,
+            item.color,
+            item.ownershipState,
+            item.currentRole,
+            item.previousRole,
+            item.roleStatus,
+            item.futureUpgradeTarget,
+            item.plannedWindow,
+            item.plannedReason,
+            item.replacesDevice,
+            item.expectedChip,
+            item.expectedStorage,
+            item.expectedRam,
+            item.expectedColor,
+            item.expectedAILevel,
+            item.expectedFutureProofRating
+        ]
+            .join(" ")
+            .toLowerCase();
+
+        return searchableText.includes(queryText);
+    });
+
+    results = sortTechItems(results, sortValue);
+
+    renderTechList(results);
+}
+
+// ======================
+// TECH SORT HELPER
+// ======================
+function sortTechItems(items, sortValue) {
+    const sorted = [...items];
+
+    switch (sortValue) {
+        case "name":
+            sorted.sort((a, b) => {
+                const itemA = normalizeTechItem(a);
+                const itemB = normalizeTechItem(b);
+
+                return String(itemA.name || "").localeCompare(String(itemB.name || ""));
+            });
+            break;
+
+        case "age":
+            sorted.sort((a, b) => {
+                const itemA = normalizeTechItem(a);
+                const itemB = normalizeTechItem(b);
+
+                const ageA = calculateDeviceAge(itemA.dateBought)?.days ?? -1;
+                const ageB = calculateDeviceAge(itemB.dateBought)?.days ?? -1;
+
+                if (ageA === -1 && ageB === -1) return 0;
+                if (ageA === -1) return 1;
+                if (ageB === -1) return -1;
+
+                // Newest first: smaller age in days comes first.
+                return ageA - ageB;
+            });
+            break;
+
+        case "score":
+            sorted.sort((a, b) => {
+                const itemA = normalizeTechItem(a);
+                const itemB = normalizeTechItem(b);
+
+                return calculateUpgradeScore(itemB).score - calculateUpgradeScore(itemA).score;
+            });
+            break;
+
+        case "upgrade":
+            sorted.sort((a, b) => {
+                const itemA = normalizeTechItem(a);
+                const itemB = normalizeTechItem(b);
+
+                const upgradeA = calculateUpgradeData(itemA);
+                const upgradeB = calculateUpgradeData(itemB);
+
+                const supportA = checkDeviceSupport(itemA);
+                const supportB = checkDeviceSupport(itemB);
+
+                const scoreA = calculateUpgradeScore(itemA);
+                const scoreB = calculateUpgradeScore(itemB);
+
+                const priorityA = getUpgradePriorityLabel(itemA, scoreA, supportA, upgradeA).level;
+                const priorityB = getUpgradePriorityLabel(itemB, scoreB, supportB, upgradeB).level;
+
+                const priorityOrder = {
+                    critical: 0,
+                    recommended: 1,
+                    optional: 2,
+                    "not-needed": 3
+                };
+
+                return (
+                    (priorityOrder[priorityA] ?? 99) -
+                    (priorityOrder[priorityB] ?? 99)
+                );
+            });
+            break;
+
+        case "order":
+        default:
+            sorted.sort((a, b) => {
+                const orderA = Number(a.order ?? 0);
+                const orderB = Number(b.order ?? 0);
+
+                return orderA - orderB;
+            });
+            break;
+    }
+
+    return sorted;
+}
+
+// ======================
+// TECH SEARCH CONTROL SETUP
+// ======================
+function setupTechSearchControls() {
+    const searchInput = document.getElementById("tech-search-input");
+    const clearButton = document.getElementById("tech-search-clear");
+    const searchContainer = document.querySelector(".tech-search-container");
+    const sortSelect = document.getElementById("tech-sort-select");
+    const chips = document.querySelectorAll(".tech-chip");
+
+    if (searchInput && searchInput.dataset.techSearchReady !== "true") {
+        searchInput.dataset.techSearchReady = "true";
+
+        searchInput.addEventListener("input", () => {
+            const hasValue = searchInput.value.trim() !== "";
+
+            if (clearButton) {
+                clearButton.hidden = !hasValue;
+            }
+
+            if (searchContainer) {
+                searchContainer.classList.toggle("typing", hasValue);
+            }
+
+            applyTechFiltersAndSort();
+        });
+    }
+
+    if (clearButton && searchInput && clearButton.dataset.techSearchReady !== "true") {
+        clearButton.dataset.techSearchReady = "true";
+
+        clearButton.addEventListener("click", () => {
+            searchInput.value = "";
+            clearButton.hidden = true;
+
+            if (searchContainer) {
+                searchContainer.classList.remove("typing");
+            }
+
+            applyTechFiltersAndSort();
+            searchInput.focus();
+        });
+    }
+
+    if (sortSelect && sortSelect.dataset.techSearchReady !== "true") {
+        sortSelect.dataset.techSearchReady = "true";
+        sortSelect.addEventListener("change", applyTechFiltersAndSort);
+    }
+
+    chips.forEach(chip => {
+        if (chip.dataset.techSearchReady === "true") return;
+        chip.dataset.techSearchReady = "true";
+
+        chip.addEventListener("click", () => {
+            chips.forEach(item => item.classList.remove("active"));
+
+            chip.classList.add("active");
+            activeTechFilter = chip.dataset.filter || "all";
+
+            applyTechFiltersAndSort();
+        });
+    });
+}
+
+// ======================
+// TECH ITEMS FIRESTORE LOADER
+// ======================
 async function loadAndDisplayTechItems() {
     const techItemsListContainer = document.getElementById("tech-items-list-dynamic");
 
@@ -4638,6 +4893,8 @@ async function loadAndDisplayTechItems() {
         return;
     }
 
+    setupTechSearchControls();
+
     console.log("Fetching tech items for homepage...");
     techItemsListContainer.innerHTML = "<p>Loading Tech Info...</p>";
 
@@ -4645,29 +4902,27 @@ async function loadAndDisplayTechItems() {
         const techQuery = query(techItemsCollectionRef, orderBy("order", "asc"));
         const querySnapshot = await getDocs(techQuery);
 
-        let allItemsHtml = "";
-
         if (querySnapshot.empty) {
             console.log("No tech items found in Firestore.");
-            allItemsHtml = "<p>No tech items to display currently.</p>";
+
+            allTechItems = [];
             buildPlannedTechReplacementContext([]);
-        } else {
-            const techItems = [];
-
-            querySnapshot.forEach((doc) => {
-                techItems.push({ id: doc.id, ...doc.data() });
-            });
-
-            buildPlannedTechReplacementContext(techItems);
-
-            console.log(`Found ${techItems.length} tech items.`);
-
-            techItems.forEach((item) => {
-                allItemsHtml += renderTechItemHomepage(item);
-            });
+            renderTechList([]);
+            return;
         }
 
-        techItemsListContainer.innerHTML = allItemsHtml;
+        allTechItems = [];
+
+        querySnapshot.forEach((doc) => {
+            allTechItems.push({ id: doc.id, ...doc.data() });
+        });
+
+        buildPlannedTechReplacementContext(allTechItems);
+
+        console.log(`Found ${allTechItems.length} tech items.`);
+
+        applyTechFiltersAndSort();
+
         console.log("Tech items list updated on homepage.");
     } catch (error) {
         console.error("Error loading/displaying tech items:", error);
@@ -4684,6 +4939,13 @@ async function loadAndDisplayTechItems() {
         techItemsListContainer.innerHTML = `<p class="error">${errorMsg}</p>`;
     }
 }
+
+// ======================
+// INITIALIZE TECH SEARCH UI
+// ======================
+document.addEventListener("DOMContentLoaded", () => {
+    setupTechSearchControls();
+});
 
 async function loadAndDisplayFaqs() {
     const faqContainer = document.getElementById('faq-container-dynamic');
