@@ -13218,3 +13218,761 @@ body.light-e .tech-upgrade-explanation {
 		display: none;
 	}
 }
+
+/* ======================================================= */
+/* 💻 TECH SEARCH BAR — ONYX LIQUID GLASS FULL CSS         */
+/* Search, clear button, sort capsule, sticky bar, filters */
+/* Light/Dark readable input text included                 */
+/* ======================================================= */
+
+/* ======================================================= */
+/* 📌 TECH SEARCH STICKY WRAPPER                           */
+/* ======================================================= */
+
+.tech-search-sticky {
+	position: sticky;
+	top: 72px;
+	z-index: 50;
+
+	width: 100%;
+	margin: 0 0 26px;
+	padding: 8px 0 14px;
+
+	background: transparent;
+
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+/* ======================================================= */
+/* 🔍 TECH SEARCH MAIN GLASS CONTAINER                     */
+/* ======================================================= */
+
+.tech-search-container {
+	position: relative;
+
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+
+	width: calc(100% - 28px);
+	max-width: 560px;
+
+	margin: 0 auto 14px;
+	padding: 14px;
+
+	border-radius: 28px;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.72),
+			rgba(255, 255, 255, 0.42)
+		),
+		color-mix(in srgb, var(--content-bg) 82%, transparent);
+
+	border: 1px solid rgba(255, 255, 255, 0.7);
+
+	box-shadow:
+		0 18px 42px rgba(0, 0, 0, 0.18),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+
+	backdrop-filter: blur(22px) saturate(160%);
+	-webkit-backdrop-filter: blur(22px) saturate(160%);
+
+	overflow: hidden;
+
+	transition:
+		border-color 0.25s ease,
+		box-shadow 0.25s ease,
+		background 0.25s ease,
+		transform 0.25s ease;
+}
+
+/* ======================================================= */
+/* ✨ SOFT GLASS HIGHLIGHT LAYER                           */
+/* ======================================================= */
+
+.tech-search-container::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+
+	border-radius: inherit;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.5),
+			transparent 42%
+		);
+
+	opacity: 0.65;
+}
+
+/* ======================================================= */
+/* 🔎 SEARCH ROW                                           */
+/* ======================================================= */
+
+.tech-search-top-row {
+	position: relative;
+	z-index: 2;
+
+	display: flex;
+	align-items: center;
+
+	width: 100%;
+	height: 52px;
+
+	margin-bottom: 12px;
+}
+
+/* ======================================================= */
+/* 🔤 TECH SEARCH INPUT                                    */
+/* ======================================================= */
+
+.tech-search-input {
+	width: 100%;
+	height: 52px;
+
+	padding: 0 48px 0 46px;
+
+	border-radius: 18px;
+	border: 1px solid rgba(0, 0, 0, 0.06);
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.78),
+			rgba(255, 255, 255, 0.52)
+		);
+
+	color: var(--text-color) !important;
+	caret-color: var(--accent-color);
+
+	font-size: 16px;
+	font-weight: 650;
+	letter-spacing: -0.02em;
+
+	text-shadow: none;
+
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.9),
+		0 4px 14px rgba(0, 0, 0, 0.08);
+
+	outline: none;
+
+	transition:
+		background 0.22s ease,
+		border-color 0.22s ease,
+		box-shadow 0.22s ease;
+}
+
+.tech-search-input::placeholder {
+	color: color-mix(in srgb, var(--secondary-text) 78%, transparent) !important;
+	opacity: 1;
+}
+
+.tech-search-input:focus {
+	border-color: color-mix(in srgb, var(--accent-color) 42%, rgba(0,0,0,0.08));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 16%, transparent),
+		0 4px 16px rgba(0, 0, 0, 0.1),
+		inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+/* ======================================================= */
+/* 🔎 SEARCH ICON                                          */
+/* ======================================================= */
+
+.tech-search-container .search-icon {
+	position: absolute;
+	left: 16px;
+	top: 50%;
+	transform: translateY(-50%);
+
+	width: 18px;
+	height: 18px;
+
+	opacity: 0.45;
+	z-index: 3;
+
+	transition:
+		opacity 0.25s ease,
+		transform 0.25s ease,
+		filter 0.25s ease;
+}
+
+.tech-search-container:focus-within .search-icon,
+.tech-search-container.typing .search-icon {
+	opacity: 0.95;
+	transform: translateY(-50%) scale(1.08);
+
+	filter:
+		drop-shadow(0 0 6px var(--accent-color))
+		drop-shadow(0 0 12px color-mix(in srgb, var(--accent-color) 40%, transparent));
+}
+
+/* ======================================================= */
+/* ✕ CLEAR SEARCH BUTTON                                   */
+/* ======================================================= */
+
+.tech-search-clear {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+
+	width: 34px;
+	height: 34px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border: none;
+	border-radius: 999px;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.92),
+			rgba(255, 255, 255, 0.66)
+		);
+
+	color: color-mix(in srgb, var(--secondary-text) 82%, #000 18%);
+
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1;
+
+	cursor: pointer;
+	z-index: 4;
+
+	box-shadow:
+		0 8px 18px rgba(0, 0, 0, 0.18),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9);
+
+	transition:
+		transform 0.2s ease,
+		color 0.2s ease,
+		background 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.tech-search-clear:hover {
+	transform: translateY(-50%) scale(1.06);
+	color: var(--text-color);
+
+	box-shadow:
+		0 0 14px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+.tech-search-clear:active {
+	transform: translateY(-50%) scale(0.96);
+}
+
+/* ======================================================= */
+/* 🔽 SORT DROPDOWN — COMPACT INNER CAPSULE                */
+/* ======================================================= */
+
+.tech-search-container .tech-sort-select {
+	position: relative;
+	right: auto;
+	top: auto;
+	transform: none;
+
+	z-index: 2;
+
+	width: 100%;
+	height: 58px;
+	min-height: 58px;
+	max-height: 58px;
+
+	margin: 0;
+
+	border-radius: 20px;
+
+	padding: 0 48px 0 18px;
+
+	font-size: 17px;
+	font-weight: 800;
+	letter-spacing: -0.025em;
+
+	color: #111;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.42),
+			rgba(255, 255, 255, 0.18)
+		),
+		rgba(180, 180, 188, 0.72);
+
+	border: 1px solid rgba(255, 255, 255, 0.46);
+
+	box-shadow:
+		0 8px 20px rgba(0, 0, 0, 0.16),
+		inset 0 1px 0 rgba(255, 255, 255, 0.52),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.14);
+
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+
+	cursor: pointer;
+
+	background-image:
+		linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
+		linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
+
+	background-position:
+		calc(100% - 28px) 50%,
+		calc(100% - 20px) 50%;
+
+	background-size:
+		8px 8px,
+		8px 8px;
+
+	background-repeat: no-repeat;
+
+	transition:
+		border-color 0.22s ease,
+		background-color 0.22s ease,
+		box-shadow 0.22s ease,
+		transform 0.22s ease;
+}
+
+.tech-search-container .tech-sort-select:hover,
+.tech-search-container .tech-sort-select:focus {
+	outline: none;
+
+	border-color: color-mix(in srgb, var(--accent-color) 42%, rgba(255,255,255,0.6));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 20%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 10px 24px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+
+.tech-search-container .tech-sort-select option {
+	background: #f5f5f7;
+	color: #111;
+}
+
+/* ======================================================= */
+/* 🎯 SEARCH CONTAINER FOCUS / TYPING STATE                */
+/* ======================================================= */
+
+.tech-search-container:focus-within,
+.tech-search-container.typing {
+	border-color: color-mix(in srgb, var(--accent-color) 38%, rgba(255,255,255,0.7));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 0 0 6px color-mix(in srgb, var(--accent-color) 8%, transparent),
+		0 20px 46px rgba(0, 0, 0, 0.22),
+		inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+/* ======================================================= */
+/* 🧩 FILTER CHIPS                                         */
+/* ======================================================= */
+
+.tech-filter-chips {
+	position: relative;
+	z-index: 3;
+
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 10px;
+
+	width: calc(100% - 28px);
+	max-width: 560px;
+
+	margin: 0 auto;
+	padding: 4px 2px 10px;
+
+	overflow-x: auto;
+	overflow-y: hidden;
+
+	scrollbar-width: none;
+	-webkit-overflow-scrolling: touch;
+}
+
+.tech-filter-chips::-webkit-scrollbar {
+	display: none;
+}
+
+.tech-chip {
+	flex: 0 0 auto;
+
+	min-height: 40px;
+	padding: 0 18px;
+
+	border-radius: 999px;
+	border: 1px solid rgba(255, 255, 255, 0.68);
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.9),
+			rgba(255, 255, 255, 0.62)
+		);
+
+	color: color-mix(in srgb, var(--secondary-text) 84%, #000 16%);
+
+	font-size: 0.9rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+
+	cursor: pointer;
+
+	box-shadow:
+		0 8px 20px rgba(0, 0, 0, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.92);
+
+	transition:
+		transform 0.18s ease,
+		color 0.18s ease,
+		border-color 0.18s ease,
+		background 0.18s ease,
+		box-shadow 0.18s ease;
+}
+
+.tech-chip:hover {
+	transform: translateY(-1px);
+	color: var(--text-color);
+
+	box-shadow:
+		0 0 14px color-mix(in srgb, var(--accent-color) 16%, transparent),
+		0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.tech-chip.active {
+	color: #fff;
+
+	border-color: color-mix(in srgb, var(--accent-color) 72%, #fff 28%);
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--accent-color) 92%, #fff 8%),
+			color-mix(in srgb, var(--accent-color) 72%, #000 28%)
+		);
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 25%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 32%, transparent),
+		0 10px 24px rgba(0, 0, 0, 0.18),
+		inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.tech-chip.active::after {
+	display: none;
+}
+
+/* ======================================================= */
+/* 📦 TECH ITEMS LIST SPACING                              */
+/* ======================================================= */
+
+.tech-items-list {
+	display: grid;
+	gap: 20px;
+}
+
+/* ======================================================= */
+/* 💤 EMPTY STATE                                          */
+/* ======================================================= */
+
+.tech-empty-state {
+	text-align: center;
+	color: var(--secondary-text);
+	padding: 24px;
+	font-weight: 700;
+}
+
+/* ======================================================= */
+/* ☀️ LIGHT MODE READABILITY                               */
+/* Supports data-theme and body light-mode class           */
+/* ======================================================= */
+
+[data-theme="light"] .tech-search-input,
+body.light-mode .tech-search-input {
+	color: #111111 !important;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.96),
+			rgba(245, 245, 247, 0.82)
+		);
+}
+
+[data-theme="light"] .tech-search-input::placeholder,
+body.light-mode .tech-search-input::placeholder {
+	color: rgba(60, 60, 67, 0.58) !important;
+}
+
+[data-theme="light"] .tech-search-container .tech-sort-select,
+body.light-mode .tech-search-container .tech-sort-select {
+	color: #111;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.46),
+			rgba(255, 255, 255, 0.2)
+		),
+		rgba(180, 180, 188, 0.74);
+}
+
+[data-theme="light"] .tech-search-container .tech-sort-select option,
+body.light-mode .tech-search-container .tech-sort-select option {
+	background: #f5f5f7;
+	color: #111;
+}
+
+/* ======================================================= */
+/* 🌙 DARK MODE READABILITY                                */
+/* Supports data-theme and body dark-mode class            */
+/* ======================================================= */
+
+[data-theme="dark"] .tech-search-container,
+body.dark-mode .tech-search-container {
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.1),
+			rgba(255, 255, 255, 0.035)
+		),
+		color-mix(in srgb, var(--content-bg) 88%, transparent);
+
+	border-color: color-mix(in srgb, var(--border-color) 78%, transparent);
+
+	box-shadow:
+		0 18px 42px rgba(0, 0, 0, 0.35),
+		inset 0 1px 0 rgba(255, 255, 255, 0.12),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .tech-search-input,
+body.dark-mode .tech-search-input {
+	color: #ffffff !important;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.11),
+			rgba(255, 255, 255, 0.045)
+		),
+		color-mix(in srgb, var(--content-bg) 86%, transparent);
+
+	border-color: color-mix(in srgb, var(--border-color) 70%, transparent);
+
+	box-shadow:
+		inset 0 1px 0 rgba(255, 255, 255, 0.11),
+		0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="dark"] .tech-search-input::placeholder,
+body.dark-mode .tech-search-input::placeholder {
+	color: rgba(235, 235, 245, 0.58) !important;
+}
+
+[data-theme="dark"] .tech-search-clear,
+body.dark-mode .tech-search-clear {
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.13),
+			rgba(255, 255, 255, 0.055)
+		),
+		color-mix(in srgb, var(--content-bg) 82%, transparent);
+
+	color: rgba(235, 235, 245, 0.72);
+
+	box-shadow:
+		0 8px 18px rgba(0, 0, 0, 0.28),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .tech-search-clear:hover,
+body.dark-mode .tech-search-clear:hover {
+	color: #ffffff;
+}
+
+[data-theme="dark"] .tech-search-container .tech-sort-select,
+body.dark-mode .tech-search-container .tech-sort-select {
+	color: #ffffff;
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.09),
+			rgba(255, 255, 255, 0.025)
+		),
+		color-mix(in srgb, var(--content-bg) 78%, #000 22%);
+
+	border-color: color-mix(in srgb, var(--border-color) 78%, transparent);
+
+	box-shadow:
+		0 8px 20px rgba(0, 0, 0, 0.34),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] .tech-search-container .tech-sort-select option,
+body.dark-mode .tech-search-container .tech-sort-select option {
+	background: #111111;
+	color: #ffffff;
+}
+
+[data-theme="dark"] .tech-chip,
+body.dark-mode .tech-chip {
+	color: rgba(235, 235, 245, 0.72);
+
+	border-color: color-mix(in srgb, var(--border-color) 78%, transparent);
+
+	background:
+		linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.11),
+			rgba(255, 255, 255, 0.035)
+		),
+		color-mix(in srgb, var(--content-bg) 84%, transparent);
+
+	box-shadow:
+		0 8px 20px rgba(0, 0, 0, 0.26),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .tech-chip:hover,
+body.dark-mode .tech-chip:hover {
+	color: #ffffff;
+}
+
+[data-theme="dark"] .tech-chip.active,
+body.dark-mode .tech-chip.active {
+	color: #ffffff;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--accent-color) 86%, #fff 14%),
+			color-mix(in srgb, var(--accent-color) 68%, #000 32%)
+		);
+}
+
+/* ======================================================= */
+/* 🧩 SAFARI / CHROME AUTOFILL FIX                         */
+/* ======================================================= */
+
+.tech-search-input:-webkit-autofill,
+.tech-search-input:-webkit-autofill:hover,
+.tech-search-input:-webkit-autofill:focus {
+	-webkit-text-fill-color: var(--text-color);
+	caret-color: var(--accent-color);
+
+	box-shadow:
+		0 0 0 1000px color-mix(in srgb, var(--content-bg) 82%, transparent) inset,
+		inset 0 1px 0 rgba(255, 255, 255, 0.65);
+
+	transition: background-color 9999s ease-in-out 0s;
+}
+
+[data-theme="light"] .tech-search-input:-webkit-autofill,
+body.light-mode .tech-search-input:-webkit-autofill {
+	-webkit-text-fill-color: #111111;
+}
+
+[data-theme="dark"] .tech-search-input:-webkit-autofill,
+body.dark-mode .tech-search-input:-webkit-autofill {
+	-webkit-text-fill-color: #ffffff;
+}
+
+/* ======================================================= */
+/* 📱 MOBILE POLISH                                        */
+/* ======================================================= */
+
+@media (max-width: 600px) {
+
+	.tech-search-sticky {
+		top: 64px;
+		padding: 6px 0 12px;
+		margin-bottom: 22px;
+	}
+
+	.tech-search-container {
+		width: calc(100% - 24px);
+		padding: 12px;
+		border-radius: 24px;
+		margin-bottom: 12px;
+	}
+
+	.tech-search-top-row {
+		height: 48px;
+		margin-bottom: 10px;
+	}
+
+	.tech-search-input {
+		height: 48px;
+		padding: 0 44px 0 42px;
+
+		font-size: 16px;
+		border-radius: 16px;
+	}
+
+	.tech-search-container .search-icon {
+		left: 14px;
+		width: 17px;
+		height: 17px;
+	}
+
+	.tech-search-clear {
+		right: 8px;
+
+		width: 32px;
+		height: 32px;
+
+		font-size: 22px;
+	}
+
+	.tech-search-container .tech-sort-select {
+		height: 54px;
+		min-height: 54px;
+		max-height: 54px;
+
+		border-radius: 18px;
+
+		padding: 0 46px 0 16px;
+
+		font-size: 16px;
+
+		background-position:
+			calc(100% - 26px) 50%,
+			calc(100% - 19px) 50%;
+
+		background-size:
+			7px 7px,
+			7px 7px;
+	}
+
+	.tech-filter-chips {
+		width: calc(100% - 24px);
+		gap: 8px;
+		padding-bottom: 8px;
+	}
+
+	.tech-chip {
+		min-height: 38px;
+		padding: 0 16px;
+		font-size: 0.86rem;
+	}
+}
+
