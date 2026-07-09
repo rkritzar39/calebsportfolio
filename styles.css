@@ -12815,3 +12815,406 @@ body.light-e .tech-upgrade-explanation {
 		display: none;
 	}
 }
+
+/* ======================================================= */
+/* 📌 TECH SEARCH STICKY ONYX WRAPPER                      */
+/* ======================================================= */
+
+.tech-search-sticky {
+	position: sticky;
+	top: 72px;
+	z-index: 50;
+
+	width: 100%;
+	margin: 0 0 28px;
+	padding: 10px 0 16px;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--content-bg) 92%, transparent),
+			color-mix(in srgb, var(--content-bg) 72%, transparent)
+		);
+
+	backdrop-filter: blur(22px) saturate(160%);
+	-webkit-backdrop-filter: blur(22px) saturate(160%);
+
+	border-radius: 0 0 24px 24px;
+}
+
+/* ======================================================= */
+/* 🔍 TECH SEARCH CONTAINER — STACKED ONYX STYLE           */
+/* ======================================================= */
+
+.tech-search-container {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+
+	width: calc(100% - 40px);
+	max-width: 520px;
+
+	margin: 0 auto 14px;
+	padding: 18px 16px 16px;
+
+	border-radius: 22px;
+
+	overflow: hidden;
+}
+
+/* Search row inside the glass shell */
+
+.tech-search-top-row {
+	position: relative;
+
+	display: flex;
+	align-items: center;
+
+	width: 100%;
+	min-height: 46px;
+
+	z-index: 2;
+}
+
+/* Override default input spacing for stacked layout */
+
+.tech-search-input {
+	width: 100%;
+	padding: 12px 42px 12px 48px;
+}
+
+/* Keep search icon aligned to input row */
+
+.tech-search-container .search-icon {
+	left: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/* ======================================================= */
+/* ✕ TECH SEARCH CLEAR BUTTON                             */
+/* ======================================================= */
+
+.tech-search-clear {
+	position: absolute;
+	right: 4px;
+	top: 50%;
+	transform: translateY(-50%);
+
+	width: 30px;
+	height: 30px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border: none;
+	border-radius: 999px;
+
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.08), transparent),
+		color-mix(in srgb, var(--content-bg) 78%, transparent);
+
+	color: color-mix(in srgb, var(--secondary-text) 88%, transparent);
+
+	font-size: 22px;
+	font-weight: 600;
+	line-height: 1;
+
+	cursor: pointer;
+	z-index: 5;
+
+	box-shadow:
+		0 2px 8px rgba(0,0,0,0.28),
+		inset 0 1px 0 rgba(255,255,255,0.10);
+
+	transition:
+		color 0.2s ease,
+		background 0.2s ease,
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.tech-search-clear:hover {
+	color: var(--text-color);
+
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.12), transparent),
+		color-mix(in srgb, var(--accent-color) 18%, var(--content-bg));
+
+	transform: translateY(-50%) scale(1.08);
+
+	box-shadow:
+		0 0 12px color-mix(in srgb, var(--accent-color) 24%, transparent),
+		0 2px 8px rgba(0,0,0,0.38);
+}
+
+.tech-search-clear:active {
+	transform: translateY(-50%) scale(0.96);
+}
+
+/* ======================================================= */
+/* 🔽 TECH SORT DROPDOWN — LARGE INNER CAPSULE            */
+/* ======================================================= */
+
+.tech-search-container .tech-sort-select {
+	position: relative;
+	right: auto;
+	top: auto;
+	transform: none;
+
+	width: 100%;
+	min-height: 54px;
+
+	margin-top: 14px;
+
+	border-radius: 18px;
+	padding: 12px 42px 12px 18px;
+
+	font-size: 1rem;
+	font-weight: 750;
+	letter-spacing: -0.02em;
+
+	color: var(--text-color);
+
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015)),
+		color-mix(in srgb, var(--bg-color) 72%, #000 28%);
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+
+	box-shadow:
+		0 7px 18px rgba(0,0,0,0.42),
+		inset 0 1px 0 rgba(255,255,255,0.08),
+		inset 0 -1px 0 rgba(0,0,0,0.28);
+
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+
+	cursor: pointer;
+
+	background-image:
+		linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
+		linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
+
+	background-position:
+		calc(100% - 24px) 50%,
+		calc(100% - 18px) 50%;
+
+	background-size:
+		7px 7px,
+		7px 7px;
+
+	background-repeat: no-repeat;
+
+	transition:
+		border-color 0.22s ease,
+		background-color 0.22s ease,
+		box-shadow 0.22s ease,
+		transform 0.22s ease;
+}
+
+.tech-search-container .tech-sort-select:hover,
+.tech-search-container .tech-sort-select:focus {
+	outline: none;
+
+	border-color: color-mix(in srgb, var(--accent-color) 52%, var(--border-color));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 18%, transparent),
+		0 0 16px color-mix(in srgb, var(--accent-color) 20%, transparent),
+		0 8px 22px rgba(0,0,0,0.48),
+		inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+.tech-search-container .tech-sort-select option {
+	background: var(--bg-color);
+	color: var(--text-color);
+}
+
+/* Typing state */
+
+.tech-search-container.typing {
+	border-color: color-mix(in srgb, var(--accent-color) 42%, var(--border-color));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 26%, transparent),
+		0 0 0 6px color-mix(in srgb, var(--accent-color) 8%, transparent),
+		0 18px 44px rgba(0,0,0,0.46),
+		inset 0 1px 0 rgba(255,255,255,0.18);
+}
+
+/* ======================================================= */
+/* 🧩 TECH FILTER CHIPS — ONYX CAPSULE FILTERS             */
+/* ======================================================= */
+
+.tech-filter-chips {
+	position: relative;
+	z-index: 2;
+
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+
+	width: calc(100% - 40px);
+	max-width: 760px;
+
+	margin: 0 auto;
+}
+
+.tech-chip {
+	position: relative;
+
+	padding: 7px 14px;
+
+	border-radius: 999px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02)),
+		color-mix(in srgb, var(--content-bg) 82%, transparent);
+
+	backdrop-filter: blur(14px) saturate(150%);
+	-webkit-backdrop-filter: blur(14px) saturate(150%);
+
+	color: color-mix(in srgb, var(--secondary-text) 92%, transparent);
+
+	font-size: 0.82rem;
+	font-weight: 750;
+	letter-spacing: -0.01em;
+
+	cursor: pointer;
+
+	box-shadow:
+		0 6px 16px rgba(0,0,0,0.24),
+		inset 0 1px 0 rgba(255,255,255,0.10);
+
+	transition:
+		transform 0.2s ease,
+		color 0.2s ease,
+		border-color 0.2s ease,
+		background 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.tech-chip:hover {
+	transform: translateY(-1px);
+
+	color: var(--text-color);
+
+	border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03)),
+		color-mix(in srgb, var(--accent-color) 9%, var(--content-bg));
+
+	box-shadow:
+		0 0 12px color-mix(in srgb, var(--accent-color) 16%, transparent),
+		0 8px 18px rgba(0,0,0,0.30);
+}
+
+.tech-chip.active {
+	color: var(--text-color);
+
+	border-color: color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
+
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.03)),
+		color-mix(in srgb, var(--accent-color) 22%, var(--content-bg));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 24%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 8px 22px rgba(0,0,0,0.34),
+		inset 0 1px 0 rgba(255,255,255,0.16);
+}
+
+.tech-chip.active::after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: -5px;
+
+	width: 5px;
+	height: 5px;
+
+	border-radius: 999px;
+	background: var(--accent-color);
+
+	transform: translateX(-50%);
+
+	box-shadow:
+		0 0 8px var(--accent-color),
+		0 0 16px color-mix(in srgb, var(--accent-color) 50%, transparent);
+}
+
+/* ======================================================= */
+/* 📱 TECH SEARCH MOBILE                                  */
+/* ======================================================= */
+
+@media (max-width: 600px) {
+
+	.tech-search-sticky {
+		top: 64px;
+		padding: 10px 0 14px;
+		border-radius: 0 0 18px 18px;
+	}
+
+	.tech-search-container {
+		width: calc(100% - 30px);
+		padding: 14px 12px 12px;
+		border-radius: 20px;
+	}
+
+	.tech-search-top-row {
+		min-height: 44px;
+	}
+
+	.tech-search-input {
+		padding: 12px 42px 12px 42px;
+		font-size: 16px;
+	}
+
+	.tech-search-container .search-icon {
+		left: 8px;
+		top: 50%;
+	}
+
+	.tech-search-clear {
+		right: 4px;
+		top: 50%;
+	}
+
+	.tech-search-container .tech-sort-select {
+		width: 100%;
+		min-height: 52px;
+
+		margin-top: 12px;
+		padding: 12px 42px 12px 16px;
+
+		border-radius: 17px;
+		font-size: 0.96rem;
+	}
+
+	.tech-filter-chips {
+		justify-content: flex-start;
+		flex-wrap: nowrap;
+
+		width: calc(100% - 30px);
+
+		overflow-x: auto;
+		padding: 2px 2px 8px;
+
+		scrollbar-width: thin;
+	}
+
+	.tech-chip {
+		flex: 0 0 auto;
+	}
+
+	.tech-chip.active::after {
+		display: none;
+	}
+}
