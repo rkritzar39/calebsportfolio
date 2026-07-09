@@ -570,61 +570,67 @@
 
 
 
-     <!-- ============================================================
-     TECH INFORMATION SECTION
-     Includes search + sorting controls
-============================================================ -->
-
-<div
-  class="tech-section section"
-  id="tech-information-section"
-  data-section-id="tech-info"
->
-
+<div class="tech-section section" id="tech-information-section" data-section-id="tech-info">
   <h2>
     <i class="fas fa-microchip"></i>
     Tech Information
   </h2>
 
-  <!-- ======================
-       TECH SEARCH & SORT
-       ====================== -->
-  <div class="tech-controls">
+  <!-- Tech Search / Sort / Filters -->
+  <div class="tech-search-sticky">
 
-    <!-- Search -->
-    <input
-      type="search"
-      id="tech-search-input"
-      class="tech-search-input"
-      placeholder="Search devices, models, chips, OS…"
-      aria-label="Search tech items"
-      autocomplete="off"
-    />
+    <div class="search-container unified tech-search-container">
+      <span class="search-icon" aria-hidden="true"></span>
 
-    <!-- Sort -->
-    <select
-      id="tech-sort-select"
-      class="tech-sort-select"
-      aria-label="Sort tech items"
-    >
-      <option value="order">Default order</option>
-      <option value="name">Name (A–Z)</option>
-      <option value="age">Age (Newest first)</option>
-      <option value="score">Device score (High → Low)</option>
-      <option value="upgrade">Upgrade priority</option>
-    </select>
+      <input
+        type="search"
+        id="tech-search-input"
+        class="creator-search tech-search-input"
+        placeholder="Search devices, models, chips, OS…"
+        aria-label="Search tech items"
+        autocomplete="off"
+      />
+
+      <button
+        type="button"
+        id="tech-search-clear"
+        class="tech-search-clear"
+        aria-label="Clear search"
+        hidden
+      >
+        ×
+      </button>
+
+      <select
+        id="tech-sort-select"
+        class="sort-inline-select tech-sort-select"
+        aria-label="Sort tech items"
+      >
+        <option value="order">Default</option>
+        <option value="name">Name</option>
+        <option value="age">Newest</option>
+        <option value="score">Score</option>
+        <option value="upgrade">Priority</option>
+      </select>
+    </div>
+
+    <div class="tech-filter-chips" role="group" aria-label="Filter tech items">
+      <button type="button" class="tech-chip active" data-filter="all">All</button>
+      <button type="button" class="tech-chip" data-filter="phone">Phones</button>
+      <button type="button" class="tech-chip" data-filter="tablet">Tablets</button>
+      <button type="button" class="tech-chip" data-filter="computer">Computers</button>
+      <button type="button" class="tech-chip" data-filter="watch">Watches</button>
+      <button type="button" class="tech-chip" data-filter="planned">Planned</button>
+      <button type="button" class="tech-chip" data-filter="archived">Archived</button>
+    </div>
 
   </div>
 
-  <!-- ======================
-       TECH ITEMS LIST
-       ====================== -->
-  <div id="tech-items-list-dynamic" class="tech-items-list">
+  <div id="tech-items-list-dynamic">
     <p>Loading Tech Info...</p>
   </div>
-
 </div>
-
+      
       <div class="useful-links-section section" id="useful-links-section" data-section-id="useful-links">
         <h2 class="section-title">Useful Links</h2>
 
