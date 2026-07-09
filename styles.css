@@ -13975,4 +13975,1050 @@ body.dark-mode .tech-search-input:-webkit-autofill {
 		font-size: 0.86rem;
 	}
 }
+/* ======================================================= */
+/* 🖤 ROOT ONYX UNIFICATION OVERRIDES                      */
+/* Matches Tech, search, filters, cards, badges, and states */
+/* to the site-wide :root liquid glass design tokens         */
+/* ======================================================= */
 
+/* ======================================================= */
+/* Global Content Surface Helpers                           */
+/* ======================================================= */
+
+.tech-section,
+.tech-items-list,
+.tech-item,
+.planned-tech-item,
+.tech-lifecycle-card,
+.upgrade-path-modern,
+.tech-advanced-details,
+.tech-empty-state,
+.tech-search-sticky,
+.tech-search-container,
+.tech-filter-chips,
+.tech-chip,
+.score-bar,
+.battery-container,
+.battery-icon,
+.support-badge,
+.upgrade-badge,
+.os-badge,
+.upgrade-priority-badge {
+	box-sizing: border-box;
+}
+
+/* ======================================================= */
+/* Tech Section — Root Onyx Glass                           */
+/* ======================================================= */
+
+.tech-section,
+.section[data-section-id="tech-info"] {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+
+	color: var(--text-color);
+
+	background:
+		var(--glass-top-glow),
+		var(--glass-surface);
+
+	border: 1px solid var(--glass-border);
+	border-radius: var(--radius-xl);
+
+	box-shadow:
+		var(--bubble-highlight),
+		var(--bubble-shadow);
+
+	backdrop-filter: var(--backdrop-blur);
+	-webkit-backdrop-filter: var(--backdrop-blur);
+}
+
+.tech-section > *,
+.section[data-section-id="tech-info"] > * {
+	position: relative;
+	z-index: 1;
+}
+
+.tech-section h2,
+.section[data-section-id="tech-info"] h2 {
+	margin-top: 0;
+	margin-bottom: 22px;
+
+	color: var(--text-color);
+	font-weight: 800;
+	letter-spacing: -0.035em;
+	text-align: center;
+}
+
+.tech-section h2 i,
+.section[data-section-id="tech-info"] h2 i {
+	color: var(--accent-color);
+	filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent-color) 24%, transparent));
+}
+
+/* ======================================================= */
+/* Sticky Search Area — Transparent Root Layer              */
+/* ======================================================= */
+
+.tech-search-sticky {
+	position: sticky;
+	top: 72px;
+	z-index: 60;
+
+	width: 100%;
+	margin: 0 0 26px;
+	padding: 8px 0 14px;
+
+	background: transparent;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+
+/* ======================================================= */
+/* Search Shell — Root Onyx Capsule                         */
+/* ======================================================= */
+
+.tech-search-container.search-container.unified,
+.search-container.unified.tech-search-container {
+	position: relative;
+	z-index: 2;
+
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+
+	width: calc(100% - 28px);
+	max-width: 560px;
+	margin: 0 auto 14px;
+	padding: 14px;
+
+	border-radius: 28px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+
+	box-shadow:
+		inset 0 1px 1px color-mix(in srgb, var(--glow-color) 46%, transparent),
+		inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 28%, transparent),
+		0 18px 42px color-mix(in srgb, var(--shadow-color) 54%, transparent);
+
+	backdrop-filter: blur(24px) saturate(170%);
+	-webkit-backdrop-filter: blur(24px) saturate(170%);
+
+	overflow: hidden;
+
+	transition:
+		border-color var(--transition-fast),
+		box-shadow var(--transition-fast),
+		background var(--transition-fast),
+		transform var(--transition-fast);
+}
+
+/* Fix typo-safe duplicate background for browsers */
+.tech-search-container.search-container.unified,
+.search-container.unified.tech-search-container {}
+
+/* Correct final background declaration */
+.tech-search-container.search-container.unified,
+.search-container.unified.tech-search-container {
+	background:
+		radial-gradient(
+			circle at 34% 0%,
+			color-mix(in srgb, var(--glow-color) 42%, transparent),
+			transparent 58%
+		),
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+}
+
+.tech-search-container::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	opacity: 0.34;
+	mix-blend-mode: soft-light;
+}
+
+.tech-search-container > * {
+	position: relative;
+	z-index: 2;
+}
+
+.tech-search-container:focus-within,
+.tech-search-container.typing {
+	transform: translateY(-1px);
+
+	border-color: color-mix(in srgb, var(--accent-color) 46%, var(--border-color));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 0 0 6px color-mix(in srgb, var(--accent-color) 8%, transparent),
+		0 20px 46px color-mix(in srgb, var(--shadow-color) 60%, transparent),
+		inset 0 1px 1px color-mix(in srgb, var(--glow-color) 56%, transparent);
+}
+
+/* ======================================================= */
+/* Search Row + Input                                      */
+/* ======================================================= */
+
+.tech-search-top-row {
+	position: relative;
+	display: flex;
+	align-items: center;
+
+	width: 100%;
+	height: 52px;
+	margin-bottom: 12px;
+}
+
+.tech-search-input.creator-search,
+.creator-search.tech-search-input {
+	width: 100%;
+	height: 52px;
+
+	padding: 0 48px 0 46px;
+
+	border-radius: 18px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 76%, transparent);
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--glow-color) 22%, transparent),
+			color-mix(in srgb, var(--content-bg) 82%, transparent)
+		),
+		color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+
+	color: var(--text-color) !important;
+	caret-color: var(--accent-color);
+
+	font-size: 16px;
+	font-weight: 650;
+	letter-spacing: -0.02em;
+
+	box-shadow:
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 44%, transparent),
+		0 4px 14px color-mix(in srgb, var(--shadow-color) 24%, transparent);
+
+	outline: none;
+}
+
+.tech-search-input::placeholder {
+	color: color-mix(in srgb, var(--secondary-text) 78%, transparent) !important;
+	opacity: 1;
+}
+
+.tech-search-container .search-icon {
+	left: 16px;
+	top: 50%;
+	width: 18px;
+	height: 18px;
+	opacity: 0.6;
+	z-index: 3;
+}
+
+.tech-search-container:focus-within .search-icon,
+.tech-search-container.typing .search-icon {
+	opacity: 1;
+	filter:
+		drop-shadow(0 0 6px var(--accent-color))
+		drop-shadow(0 0 12px color-mix(in srgb, var(--accent-color) 40%, transparent));
+}
+
+/* ======================================================= */
+/* Clear Button                                            */
+/* ======================================================= */
+
+.tech-search-clear {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 34px;
+	height: 34px;
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 74%, transparent);
+	border-radius: var(--radius-pill);
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--glow-color) 22%, transparent),
+			color-mix(in srgb, var(--content-bg) 78%, transparent)
+		),
+		color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+
+	color: color-mix(in srgb, var(--secondary-text) 82%, transparent);
+
+	font-size: 23px;
+	font-weight: 750;
+	line-height: 1;
+
+	box-shadow:
+		0 8px 18px color-mix(in srgb, var(--shadow-color) 34%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 36%, transparent);
+
+	cursor: pointer;
+	z-index: 4;
+}
+
+.tech-search-clear:hover {
+	color: var(--text-color);
+	transform: translateY(-50%) scale(1.06);
+
+	border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+	box-shadow:
+		0 0 14px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 8px 20px color-mix(in srgb, var(--shadow-color) 42%, transparent);
+}
+
+.tech-search-clear:active {
+	transform: translateY(-50%) scale(0.96);
+}
+
+/* ======================================================= */
+/* Sort Dropdown                                           */
+/* ======================================================= */
+
+.tech-search-container .tech-sort-select,
+.search-container.unified.tech-search-container .sort-inline-select.tech-sort-select {
+	position: relative;
+	right: auto;
+	top: auto;
+	transform: none;
+
+	width: 100%;
+	height: 58px;
+	min-height: 58px;
+	max-height: 58px;
+	margin: 0;
+	padding: 0 48px 0 18px;
+
+	border-radius: 20px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--glow-color) 20%, transparent),
+			color-mix(in srgb, var(--content-bg) 80%, transparent)
+		),
+		color-mix(in srgb, var(--content-bg) 86%, var(--bg-color) 14%);
+
+	color: var(--text-color);
+
+	font-size: 17px;
+	font-weight: 800;
+	letter-spacing: -0.025em;
+
+	box-shadow:
+		0 8px 20px color-mix(in srgb, var(--shadow-color) 38%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 40%, transparent),
+		inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 24%, transparent);
+
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+
+	cursor: pointer;
+
+	background-image:
+		linear-gradient(45deg, transparent 50%, var(--accent-color) 50%),
+		linear-gradient(135deg, var(--accent-color) 50%, transparent 50%);
+	background-position:
+		calc(100% - 28px) 50%,
+		calc(100% - 20px) 50%;
+	background-size: 8px 8px, 8px 8px;
+	background-repeat: no-repeat;
+}
+
+.tech-search-container .tech-sort-select:hover,
+.tech-search-container .tech-sort-select:focus {
+	outline: none;
+	border-color: color-mix(in srgb, var(--accent-color) 50%, var(--border-color));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 20%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 10px 24px color-mix(in srgb, var(--shadow-color) 46%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 46%, transparent);
+}
+
+.tech-search-container .tech-sort-select option {
+	background: color-mix(in srgb, var(--bg-color) 92%, black 8%);
+	color: var(--text-color);
+}
+
+/* ======================================================= */
+/* Filter Chips                                            */
+/* ======================================================= */
+
+.tech-filter-chips {
+	position: relative;
+	z-index: 3;
+
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 10px;
+
+	width: calc(100% - 28px);
+	max-width: 560px;
+	margin: 0 auto;
+	padding: 4px 2px 10px;
+
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: none;
+	-webkit-overflow-scrolling: touch;
+}
+
+.tech-filter-chips::-webkit-scrollbar {
+	display: none;
+}
+
+.tech-chip {
+	position: relative;
+	flex: 0 0 auto;
+
+	min-height: 40px;
+	padding: 0 18px;
+
+	border-radius: var(--radius-pill);
+	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--glow-color) 24%, transparent),
+			color-mix(in srgb, var(--content-bg) 78%, transparent)
+		),
+		color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+
+	color: color-mix(in srgb, var(--secondary-text) 88%, transparent);
+
+	font-size: 0.9rem;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+
+	box-shadow:
+		0 8px 20px color-mix(in srgb, var(--shadow-color) 28%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 42%, transparent);
+
+	cursor: pointer;
+
+	transition:
+		transform var(--transition-fast),
+		color var(--transition-fast),
+		border-color var(--transition-fast),
+		background var(--transition-fast),
+		box-shadow var(--transition-fast);
+}
+
+.tech-chip:hover {
+	transform: translateY(-1px);
+	color: var(--text-color);
+	border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+	box-shadow:
+		0 0 14px color-mix(in srgb, var(--accent-color) 16%, transparent),
+		0 10px 24px color-mix(in srgb, var(--shadow-color) 34%, transparent);
+}
+
+.tech-chip.active {
+	color: color-mix(in srgb, var(--accent-color) 84%, var(--text-color) 16%);
+	border-color: color-mix(in srgb, var(--accent-color) 60%, var(--border-color));
+
+	background:
+		radial-gradient(
+			circle at 50% 0%,
+			color-mix(in srgb, var(--accent-color) 24%, transparent),
+			transparent 58%
+		),
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--accent-color) 18%, var(--glow-color) 14%),
+			color-mix(in srgb, var(--content-bg) 82%, var(--accent-color) 18%)
+		);
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 24%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 24%, transparent),
+		0 10px 24px color-mix(in srgb, var(--shadow-color) 40%, transparent),
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 48%, transparent);
+}
+
+.tech-chip.active::after {
+	display: none;
+}
+
+/* ======================================================= */
+/* Tech Cards                                              */
+/* ======================================================= */
+
+.tech-items-list {
+	display: grid;
+	gap: 20px;
+	width: 100%;
+}
+
+.tech-item,
+.planned-tech-item {
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+
+	width: 100%;
+	padding: 22px;
+	border-radius: var(--radius-lg);
+
+	color: var(--text-color);
+
+	background:
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+
+	border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+
+	box-shadow:
+		inset 0 1px 1px color-mix(in srgb, var(--glow-color) 44%, transparent),
+		inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 26%, transparent),
+		0 12px 34px color-mix(in srgb, var(--shadow-color) 42%, transparent);
+
+	backdrop-filter: blur(22px) saturate(150%);
+	-webkit-backdrop-filter: blur(22px) saturate(150%);
+}
+
+.tech-item::before,
+.planned-tech-item::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	border-radius: inherit;
+	background: var(--liquid-reflection);
+	opacity: 0.26;
+	mix-blend-mode: soft-light;
+}
+
+.tech-item > *,
+.planned-tech-item > * {
+	position: relative;
+	z-index: 1;
+}
+
+.tech-item h3,
+.planned-tech-item h3 {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+
+	margin: 0 0 16px;
+
+	color: var(--text-color);
+	font-weight: 800;
+	letter-spacing: -0.03em;
+}
+
+.tech-item h3 i,
+.planned-tech-item h3 i {
+	color: var(--accent-color);
+	filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent-color) 20%, transparent));
+}
+
+.tech-detail {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	flex-wrap: wrap;
+
+	margin: 9px 0;
+	padding: 10px 12px;
+
+	border-radius: 15px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 68%, transparent);
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--glow-color) 10%, transparent),
+			color-mix(in srgb, var(--content-bg) 72%, transparent)
+		),
+		color-mix(in srgb, var(--content-bg) 76%, transparent);
+
+	color: var(--secondary-text);
+}
+
+.tech-detail i {
+	color: var(--accent-color);
+	min-width: 18px;
+	text-align: center;
+}
+
+.tech-detail span:first-of-type,
+.tech-label {
+	color: var(--text-color);
+	font-weight: 750;
+}
+
+.tech-value,
+.upgrade-explanation-text {
+	color: var(--secondary-text);
+}
+
+.tech-summary,
+.tech-upgrade-explanation {
+	align-items: flex-start;
+}
+
+/* ======================================================= */
+/* Badges + Status Pills                                   */
+/* ======================================================= */
+
+.support-badge,
+.upgrade-badge,
+.os-badge,
+.upgrade-priority-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+
+	min-height: 26px;
+	padding: 5px 10px;
+
+	border-radius: var(--radius-pill);
+	border: 1px solid color-mix(in srgb, currentColor 34%, var(--border-color));
+
+	font-size: 0.78rem;
+	font-weight: 850;
+	line-height: 1;
+	letter-spacing: -0.01em;
+
+	background:
+		linear-gradient(180deg, color-mix(in srgb, currentColor 16%, transparent), transparent),
+		color-mix(in srgb, var(--content-bg) 82%, transparent);
+
+	box-shadow:
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 36%, transparent),
+		0 4px 12px color-mix(in srgb, var(--shadow-color) 26%, transparent);
+}
+
+.support-badge.green,
+.upgrade-badge.green,
+.os-badge.green,
+.upgrade-priority-badge.green,
+.status-green {
+	color: #32d74b;
+}
+
+.support-badge.yellow,
+.upgrade-badge.yellow,
+.os-badge.yellow,
+.upgrade-priority-badge.yellow,
+.status-yellow {
+	color: #ffd60a;
+}
+
+.support-badge.orange,
+.upgrade-badge.orange,
+.os-badge.orange,
+.upgrade-priority-badge.orange,
+.status-orange {
+	color: #ff9f0a;
+}
+
+.support-badge.red,
+.upgrade-badge.red,
+.os-badge.red,
+.upgrade-priority-badge.red,
+.status-red {
+	color: #ff453a;
+}
+
+.support-badge.purple,
+.upgrade-badge.purple,
+.os-badge.purple,
+.upgrade-priority-badge.purple,
+.status-purple {
+	color: #bf5af2;
+}
+
+.support-badge.gray,
+.upgrade-badge.gray,
+.os-badge.gray,
+.upgrade-priority-badge.gray,
+.status-gray {
+	color: color-mix(in srgb, var(--secondary-text) 90%, white 10%);
+}
+
+/* Ownership badge variants */
+.upgrade-badge.owned,
+.upgrade-badge.school-issued,
+.upgrade-badge.work-issued,
+.upgrade-badge.borrowed {
+	color: var(--accent-color);
+}
+
+.upgrade-badge.planned,
+.upgrade-badge.coming-soon,
+.upgrade-badge.future-upgrade,
+.upgrade-badge.preordered,
+.upgrade-badge.ordered,
+.upgrade-badge.reserved,
+.upgrade-badge.wishlist,
+.upgrade-badge.considering,
+.upgrade-badge.researching {
+	color: #bf5af2;
+}
+
+.upgrade-badge.retired,
+.upgrade-badge.sold,
+.upgrade-badge.traded-in,
+.upgrade-badge.donated,
+.upgrade-badge.recycled,
+.upgrade-badge.returned,
+.upgrade-badge.lost {
+	color: color-mix(in srgb, var(--secondary-text) 90%, white 10%);
+}
+
+/* ======================================================= */
+/* Score + Battery                                         */
+/* ======================================================= */
+
+.score-bar {
+	position: relative;
+	width: 100%;
+	height: 12px;
+	margin: 10px 0 18px;
+	overflow: hidden;
+
+	border-radius: var(--radius-pill);
+	border: 1px solid color-mix(in srgb, var(--border-color) 76%, transparent);
+
+	background:
+		linear-gradient(180deg, color-mix(in srgb, var(--glow-color) 12%, transparent), transparent),
+		color-mix(in srgb, var(--content-bg) 82%, var(--bg-color) 18%);
+
+	box-shadow:
+		inset 0 1px 2px color-mix(in srgb, var(--shadow-color) 34%, transparent),
+		0 4px 12px color-mix(in srgb, var(--shadow-color) 20%, transparent);
+}
+
+.score-fill {
+	height: 100%;
+	border-radius: inherit;
+	background: var(--accent-color);
+	box-shadow: 0 0 14px color-mix(in srgb, var(--accent-color) 34%, transparent);
+}
+
+.score-fill.green { background: #32d74b; }
+.score-fill.yellow { background: #ffd60a; }
+.score-fill.orange { background: #ff9f0a; }
+.score-fill.red { background: #ff453a; }
+
+.battery-container {
+	padding: 6px 0 14px;
+}
+
+.battery-icon {
+	position: relative;
+	width: min(100%, 260px);
+	height: 38px;
+	overflow: hidden;
+
+	border-radius: 13px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+	background:
+		linear-gradient(180deg, color-mix(in srgb, var(--glow-color) 18%, transparent), transparent),
+		color-mix(in srgb, var(--content-bg) 86%, var(--bg-color) 14%);
+
+	box-shadow:
+		inset 0 1px 1px color-mix(in srgb, var(--glow-color) 38%, transparent),
+		0 8px 18px color-mix(in srgb, var(--shadow-color) 26%, transparent);
+}
+
+.battery-icon::after {
+	content: "";
+	position: absolute;
+	right: -7px;
+	top: 50%;
+	transform: translateY(-50%);
+
+	width: 5px;
+	height: 16px;
+	border-radius: 0 5px 5px 0;
+	background: color-mix(in srgb, var(--border-color) 80%, var(--text-color) 20%);
+}
+
+.battery-level {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 0%;
+	border-radius: inherit;
+	background:
+		linear-gradient(90deg, #32d74b, color-mix(in srgb, #32d74b 72%, var(--accent-color) 28%));
+	box-shadow: 0 0 14px color-mix(in srgb, #32d74b 34%, transparent);
+}
+
+.battery-icon.low-power .battery-level {
+	background: linear-gradient(90deg, #ffd60a, #ff9f0a);
+}
+
+.battery-icon.critical .battery-level {
+	background: linear-gradient(90deg, #ff453a, #ff9f0a);
+}
+
+.battery-percentage {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-color);
+	font-size: 0.88rem;
+	font-weight: 900;
+	text-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-color) 70%, transparent);
+}
+
+/* ======================================================= */
+/* Advanced + Lifecycle Cards                              */
+/* ======================================================= */
+
+.tech-advanced-details,
+.tech-lifecycle-card,
+.upgrade-path-modern {
+	margin-top: 14px;
+	padding: 14px;
+
+	border-radius: 18px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 78%, transparent);
+
+	background:
+		var(--bubble-gradient),
+		color-mix(in srgb, var(--content-bg) 86%, var(--bg-color) 14%);
+
+	box-shadow:
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 34%, transparent),
+		0 8px 20px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+}
+
+.tech-advanced-details summary {
+	cursor: pointer;
+	color: var(--text-color);
+	font-weight: 850;
+	letter-spacing: -0.02em;
+}
+
+.upgrade-triggers {
+	margin: 8px 0 0;
+	padding-left: 24px;
+	color: var(--secondary-text);
+}
+
+.upgrade-triggers li {
+	margin: 6px 0;
+}
+
+.tech-empty-state {
+	width: calc(100% - 28px);
+	margin: 0 auto;
+	padding: 18px;
+
+	border-radius: var(--radius-lg);
+	border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+
+	background:
+		var(--bubble-gradient),
+		color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+
+	color: var(--secondary-text);
+	text-align: center;
+	font-weight: 750;
+
+	box-shadow:
+		inset 0 1px 0 color-mix(in srgb, var(--glow-color) 34%, transparent),
+		0 8px 20px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+}
+
+/* ======================================================= */
+/* Light Mode Root Onyx Tuning                             */
+/* ======================================================= */
+
+body.light-e .tech-search-container,
+body.light-e .tech-item,
+body.light-e .planned-tech-item,
+body.light-e .tech-lifecycle-card,
+body.light-e .upgrade-path-modern,
+body.light-e .tech-advanced-details,
+body.light-e .tech-empty-state {
+	background:
+		radial-gradient(circle at 42% 0%, rgba(255,255,255,0.86), transparent 58%),
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		color-mix(in srgb, var(--content-bg) 88%, white 12%);
+
+	border-color: color-mix(in srgb, var(--border-color) 92%, white 8%);
+	box-shadow:
+		var(--bubble-highlight),
+		0 18px 42px color-mix(in srgb, var(--shadow-color) 68%, transparent),
+		inset 0 -1px 0 rgba(0,0,0,0.045);
+}
+
+body.light-e .tech-search-input,
+body.light-e .tech-search-container .tech-sort-select,
+body.light-e .tech-detail,
+body.light-e .tech-chip {
+	color: var(--text-color) !important;
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.42)),
+		color-mix(in srgb, var(--content-bg) 86%, white 14%);
+}
+
+body.light-e .tech-search-input::placeholder {
+	color: rgba(60, 60, 67, 0.58) !important;
+}
+
+/* ======================================================= */
+/* Dark Mode Root Onyx Tuning                              */
+/* ======================================================= */
+
+html.dark-mode body .tech-search-container,
+html.dark-mode body .tech-item,
+html.dark-mode body .planned-tech-item,
+html.dark-mode body .tech-lifecycle-card,
+html.dark-mode body .upgrade-path-modern,
+html.dark-mode body .tech-advanced-details,
+html.dark-mode body .tech-empty-state,
+body.dark-mode .tech-search-container,
+body.dark-mode .tech-item,
+body.dark-mode .planned-tech-item,
+body.dark-mode .tech-lifecycle-card,
+body.dark-mode .upgrade-path-modern,
+body.dark-mode .tech-advanced-details,
+body.dark-mode .tech-empty-state {
+	background:
+		radial-gradient(circle at 36% 0%, rgba(255,255,255,0.12), transparent 52%),
+		var(--bubble-gradient),
+		var(--liquid-refraction),
+		color-mix(in srgb, var(--content-bg) 88%, black 12%);
+
+	border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
+	box-shadow:
+		var(--bubble-highlight),
+		0 24px 58px color-mix(in srgb, var(--shadow-color) 84%, transparent),
+		inset 0 -1px 0 rgba(0,0,0,0.32);
+}
+
+html.dark-mode body .tech-search-input,
+html.dark-mode body .tech-search-container .tech-sort-select,
+html.dark-mode body .tech-detail,
+html.dark-mode body .tech-chip,
+body.dark-mode .tech-search-input,
+body.dark-mode .tech-search-container .tech-sort-select,
+body.dark-mode .tech-detail,
+body.dark-mode .tech-chip {
+	color: var(--text-color) !important;
+	background:
+		linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.035)),
+		color-mix(in srgb, var(--content-bg) 88%, black 12%);
+}
+
+html.dark-mode body .tech-search-input::placeholder,
+body.dark-mode .tech-search-input::placeholder {
+	color: rgba(235, 235, 245, 0.58) !important;
+}
+
+/* ======================================================= */
+/* Mobile Polish                                           */
+/* ======================================================= */
+
+@media (max-width: 600px) {
+
+	.tech-search-sticky {
+		top: 64px;
+		padding: 6px 0 12px;
+		margin-bottom: 22px;
+	}
+
+	.tech-search-container.search-container.unified,
+	.search-container.unified.tech-search-container {
+		width: calc(100% - 24px);
+		padding: 12px;
+		border-radius: 24px;
+		margin-bottom: 12px;
+	}
+
+	.tech-search-top-row {
+		height: 48px;
+		margin-bottom: 10px;
+	}
+
+	.tech-search-input.creator-search,
+	.creator-search.tech-search-input {
+		height: 48px;
+		padding: 0 44px 0 42px;
+		font-size: 16px;
+		border-radius: 16px;
+	}
+
+	.tech-search-container .search-icon {
+		left: 14px;
+		width: 17px;
+		height: 17px;
+	}
+
+	.tech-search-clear {
+		right: 8px;
+		width: 32px;
+		height: 32px;
+		font-size: 22px;
+	}
+
+	.tech-search-container .tech-sort-select {
+		height: 54px;
+		min-height: 54px;
+		max-height: 54px;
+		border-radius: 18px;
+		padding: 0 46px 0 16px;
+		font-size: 16px;
+		background-position:
+			calc(100% - 26px) 50%,
+			calc(100% - 19px) 50%;
+		background-size: 7px 7px, 7px 7px;
+	}
+
+	.tech-filter-chips {
+		width: calc(100% - 24px);
+		gap: 8px;
+		padding-bottom: 8px;
+	}
+
+	.tech-chip {
+		min-height: 38px;
+		padding: 0 16px;
+		font-size: 0.86rem;
+	}
+
+	.tech-item,
+	.planned-tech-item {
+		padding: 18px;
+		border-radius: 22px;
+	}
+
+	.tech-detail {
+		align-items: flex-start;
+		gap: 8px;
+	}
+}
