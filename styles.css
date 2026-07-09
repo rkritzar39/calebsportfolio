@@ -12569,3 +12569,249 @@ body.light-e .tech-upgrade-explanation {
     display: grid;
     gap: 20px;
 }
+
+/* =======================================================
+   📌 TECH SEARCH STICKY WRAPPER
+======================================================= */
+
+.tech-search-sticky {
+	position: sticky;
+	top: 72px;
+	z-index: 40;
+
+	margin: 0 0 28px;
+	padding: 10px 0 14px;
+
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, var(--content-bg) 94%, transparent),
+			color-mix(in srgb, var(--content-bg) 78%, transparent)
+		);
+
+	backdrop-filter: blur(20px) saturate(150%);
+	-webkit-backdrop-filter: blur(20px) saturate(150%);
+
+	border-radius: 0 0 22px 22px;
+}
+
+/* Keeps your existing search style but lets Tech layout breathe */
+.tech-search-container {
+	margin-bottom: 12px;
+}
+
+/* =======================================================
+   ✕ TECH SEARCH CLEAR BUTTON
+======================================================= */
+
+.tech-search-clear {
+	position: absolute;
+	right: 108px;
+	top: 50%;
+	transform: translateY(-50%);
+
+	width: 26px;
+	height: 26px;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border: none;
+	border-radius: 999px;
+
+	background: color-mix(in srgb, var(--content-bg) 72%, transparent);
+	color: color-mix(in srgb, var(--secondary-text) 88%, transparent);
+
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1;
+
+	cursor: pointer;
+	z-index: 4;
+
+	box-shadow:
+		0 2px 8px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+	transition:
+		color 0.2s ease,
+		background 0.2s ease,
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.tech-search-clear:hover {
+	color: var(--text-color);
+	background: color-mix(in srgb, var(--accent-color) 18%, var(--content-bg));
+	transform: translateY(-50%) scale(1.08);
+
+	box-shadow:
+		0 0 12px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.tech-search-clear:active {
+	transform: translateY(-50%) scale(0.96);
+}
+
+/* Give search text room for clear button + dropdown */
+.tech-search-input {
+	padding-right: 154px;
+}
+
+/* Typing state */
+.tech-search-container.typing {
+	border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 14px 40px rgba(0, 0, 0, 0.42),
+		inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+/* =======================================================
+   🧩 TECH FILTER CHIPS
+======================================================= */
+
+.tech-filter-chips {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px;
+
+	width: calc(100% - 40px);
+	max-width: 760px;
+	margin: 0 auto;
+}
+
+.tech-chip {
+	position: relative;
+
+	padding: 7px 14px;
+
+	border-radius: 999px;
+	border: 1px solid color-mix(in srgb, var(--border-color) 72%, transparent);
+
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+		color-mix(in srgb, var(--content-bg) 82%, transparent);
+
+	backdrop-filter: blur(14px) saturate(150%);
+	-webkit-backdrop-filter: blur(14px) saturate(150%);
+
+	color: color-mix(in srgb, var(--secondary-text) 92%, transparent);
+
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+
+	cursor: pointer;
+
+	box-shadow:
+		0 6px 16px rgba(0, 0, 0, 0.22),
+		inset 0 1px 0 rgba(255, 255, 255, 0.10);
+
+	transition:
+		transform 0.2s ease,
+		color 0.2s ease,
+		border-color 0.2s ease,
+		background 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.tech-chip:hover {
+	transform: translateY(-1px);
+
+	color: var(--text-color);
+
+	border-color: color-mix(in srgb, var(--accent-color) 38%, var(--border-color));
+
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.03)),
+		color-mix(in srgb, var(--accent-color) 9%, var(--content-bg));
+
+	box-shadow:
+		0 0 12px color-mix(in srgb, var(--accent-color) 16%, transparent),
+		0 8px 18px rgba(0, 0, 0, 0.28);
+}
+
+.tech-chip.active {
+	color: var(--text-color);
+
+	border-color: color-mix(in srgb, var(--accent-color) 55%, var(--border-color));
+
+	background:
+		linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
+		color-mix(in srgb, var(--accent-color) 22%, var(--content-bg));
+
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--accent-color) 24%, transparent),
+		0 0 18px color-mix(in srgb, var(--accent-color) 22%, transparent),
+		0 8px 22px rgba(0, 0, 0, 0.34),
+		inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.tech-chip.active::after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: -5px;
+
+	width: 5px;
+	height: 5px;
+
+	border-radius: 999px;
+	background: var(--accent-color);
+
+	transform: translateX(-50%);
+
+	box-shadow:
+		0 0 8px var(--accent-color),
+		0 0 16px color-mix(in srgb, var(--accent-color) 50%, transparent);
+}
+
+/* =======================================================
+   📱 MOBILE TECH SEARCH FIXES
+======================================================= */
+
+@media (max-width: 600px) {
+
+	.tech-search-sticky {
+		top: 64px;
+		padding: 10px 0 12px;
+		border-radius: 0 0 18px 18px;
+	}
+
+	.tech-search-input {
+		padding-right: 42px;
+	}
+
+	.tech-search-clear {
+		right: 18px;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	.tech-filter-chips {
+		justify-content: flex-start;
+
+		width: calc(100% - 30px);
+
+		flex-wrap: nowrap;
+		overflow-x: auto;
+
+		padding: 2px 2px 8px;
+
+		scrollbar-width: thin;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.tech-chip {
+		flex: 0 0 auto;
+	}
+
+	.tech-chip.active::after {
+		display: none;
+	}
+}
