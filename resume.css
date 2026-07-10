@@ -525,11 +525,75 @@ body[data-theme="dark"] {
 
 /* ---------- FORCE BASE COLORS TO UPDATE ---------- */
 
-html,
-body {
-  background: var(--bg-color) !important;
-  color: var(--text-color) !important;
+/* ======================================================= /
+/ Custom Background Compatibility                          /
+/ ======================================================= */
+
+:root {
+	--custom-background-image: none;
+	--custom-background-size: cover;
+	--custom-background-position: center center;
+	--custom-background-repeat: no-repeat;
+	--custom-background-attachment: fixed;
 }
+
+html {
+	min-height: 100%;
+	background: var(--bg-color);
+}
+
+body {
+	min-height: 100vh;
+
+	background:
+		var(--custom-background-image),
+		var(--bg-color);
+
+	background-size:
+		var(--custom-background-size),
+		auto;
+
+	background-position:
+		var(--custom-background-position),
+		center;
+
+	background-repeat:
+		var(--custom-background-repeat),
+		repeat;
+
+	background-attachment:
+		var(--custom-background-attachment),
+		scroll;
+
+	color: var(--text-color) !important;
+}
+
+/* ======================================================= /
+/ Custom Background Active State                           /
+/ ======================================================= */
+
+body.custom-background-active {
+	background:
+		var(--custom-background-image),
+		var(--bg-color);
+
+	background-size:
+		var(--custom-background-size),
+		auto;
+
+	background-position:
+		var(--custom-background-position),
+		center;
+
+	background-repeat:
+		var(--custom-background-repeat),
+		repeat;
+
+	background-attachment:
+		var(--custom-background-attachment),
+		scroll;
+}
+
 
 /* Make normal text follow theme correctly */
 body p,
