@@ -369,164 +369,9 @@ body[data-theme="light"] {
     }
 }
 
-/* ================================================== /
-/ ✅ GLOBAL THEME COMPATIBILITY FIX                  /
-/ Supports: light-e, light-mode, dark-mode,          /
-/ data-theme="light", data-theme="dark"              /
-/ ================================================== */
-
-/* ---------- LIGHT MODE ALIASES ---------- */
-
-html.light-e body,
-html.light-mode body,
-html[data-theme="light"] body,
-body.light-e,
-body.light-mode,
-body[data-theme="light"] {
-  color-scheme: light;
-
-  --bg-color: var(--light-bg-gradient);
-  --content-bg: var(--light-content-bg);
-  --text-color: var(--light-text);
-  --secondary-text: var(--light-secondary-text);
-  --border-color: var(--light-border);
-
-  --accent-color: var(--light-accent);
-  --hover-color: var(--light-hover);
-  --link-color: var(--light-link);
-
-  --shadow-color: var(--light-shadow);
-  --glow-color: var(--light-glow);
-  --icon-color: var(--light-icon);
-  --social-icon-text-color: var(--light-text);
-
-  --backdrop-blur: blur(30px) saturate(150%);
-
-  --bubble-gradient:
-    radial-gradient(
-      circle at 34% 18%,
-      rgba(255, 255, 255, 0.86),
-      transparent 58%
-    ),
-    radial-gradient(
-      circle at 85% 10%,
-      rgba(255, 255, 255, 0.46),
-      transparent 44%
-    );
-
-  --bubble-highlight:
-    inset 0 1px 1px rgba(255, 255, 255, 0.92),
-    inset 0 0 18px rgba(255, 255, 255, 0.30);
-
-  --bubble-shadow:
-    0 22px 56px rgba(17, 24, 39, 0.14),
-    0 8px 24px rgba(17, 24, 39, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
-
-  --liquid-reflection:
-    linear-gradient(
-      125deg,
-      rgba(255, 255, 255, 0.92),
-      rgba(255, 255, 255, 0.42) 38%,
-      rgba(255, 255, 255, 0.14) 66%,
-      transparent
-    );
-
-  --liquid-refraction:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.58),
-      rgba(255, 255, 255, 0.18) 48%,
-      rgba(0, 0, 0, 0.045)
-    );
-
-  --glass-surface:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 86%, white 14%);
-
-  --glass-border:
-    color-mix(in srgb, var(--border-color) 92%, white 8%);
-}
-
-/* ---------- DARK MODE ALIASES ---------- */
-
-html.dark-e body,
-html.dark-mode body,
-html[data-theme="dark"] body,
-body.dark-e,
-body.dark-mode,
-body[data-theme="dark"] {
-  color-scheme: dark;
-
-  --bg-color: var(--dark-bg);
-  --content-bg: var(--dark-content-bg);
-  --text-color: var(--dark-text);
-  --secondary-text: var(--dark-secondary-text);
-  --border-color: var(--dark-border);
-
-  --accent-color: var(--dark-accent);
-  --hover-color: var(--dark-hover);
-  --link-color: var(--dark-link);
-
-  --shadow-color: var(--dark-shadow);
-  --glow-color: var(--dark-glow);
-  --icon-color: var(--dark-icon);
-  --social-icon-text-color: var(--dark-text);
-
-  --backdrop-blur: blur(30px) saturate(145%);
-
-  --bubble-gradient:
-    radial-gradient(
-      circle at 22% 16%,
-      rgba(255, 255, 255, 0.18),
-      transparent 54%
-    ),
-    radial-gradient(
-      circle at 84% 12%,
-      rgba(255, 255, 255, 0.08),
-      transparent 42%
-    );
-
-  --bubble-highlight:
-    inset 0 1px 1px rgba(255, 255, 255, 0.22),
-    inset 0 0 22px rgba(255, 255, 255, 0.055);
-
-  --bubble-shadow:
-    0 30px 70px rgba(0, 0, 0, 0.50),
-    0 8px 28px rgba(0, 0, 0, 0.24),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
-
-  --liquid-reflection:
-    linear-gradient(
-      125deg,
-      rgba(255, 255, 255, 0.42),
-      rgba(255, 255, 255, 0.11) 34%,
-      rgba(255, 255, 255, 0.035) 62%,
-      transparent
-    );
-
-  --liquid-refraction:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.15),
-      rgba(255, 255, 255, 0.035) 46%,
-      rgba(0, 0, 0, 0.12)
-    );
-
-  --glass-surface:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
-
-  --glass-border:
-    color-mix(in srgb, var(--border-color) 90%, transparent);
-}
-
-/* ---------- FORCE BASE COLORS TO UPDATE ---------- */
-
 /* ======================================================= /
 / Custom Background Compatibility                          /
+/ Light + Dark Mode Safe                                  /
 / ======================================================= */
 
 :root {
@@ -536,6 +381,10 @@ body[data-theme="dark"] {
 	--custom-background-repeat: no-repeat;
 	--custom-background-attachment: fixed;
 }
+
+/* ======================================================= /
+/ Base Background Fallback                                /
+/ ======================================================= */
 
 html {
 	min-height: 100%;
@@ -570,9 +419,16 @@ body {
 
 /* ======================================================= /
 / Custom Background Active State                           /
+/ Applies in Both Light and Dark Mode                      /
 / ======================================================= */
 
-body.custom-background-active {
+body.custom-background-active,
+body.light-e.custom-background-active,
+body.light-mode.custom-background-active,
+body.dark-mode.custom-background-active,
+body.dark-e.custom-background-active,
+body[data-theme="light"].custom-background-active,
+body[data-theme="dark"].custom-background-active {
 	background:
 		var(--custom-background-image),
 		var(--bg-color);
@@ -594,6 +450,27 @@ body.custom-background-active {
 		scroll;
 }
 
+/* ======================================================= /
+/ Light Mode Custom Background Glass Tuning                /
+/ ======================================================= */
+
+body.light-e.custom-background-active,
+body.light-mode.custom-background-active,
+body[data-theme="light"].custom-background-active {
+	--light-content-bg: rgba(255, 255, 255, 0.34);
+	--content-bg: var(--light-content-bg);
+}
+
+/* ======================================================= /
+/ Dark Mode Custom Background Glass Tuning                 /
+/ ======================================================= */
+
+body.dark-mode.custom-background-active,
+body.dark-e.custom-background-active,
+body[data-theme="dark"].custom-background-active {
+	--dark-content-bg: rgba(22, 22, 26, 0.42);
+	--content-bg: var(--dark-content-bg);
+}
 
 /* Make normal text follow theme correctly */
 body p,
