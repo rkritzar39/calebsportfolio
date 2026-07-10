@@ -139,6 +139,8 @@
 / Light Mode Overrides     /
 / ======================== */
 
+html.light-mode body,
+body.light-mode,
 body.light-e {
   --bg-color: var(--light-bg-gradient);
   --content-bg: var(--light-content-bg);
@@ -324,6 +326,29 @@ li {
 
 a {
   color: var(--link-color);
+}
+
+/* ======================== /
+/ Custom Background        /
+/ ======================== */
+
+body.custom-background-active {
+  background-image: var(--custom-background-image) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Optional: Ensure the background layer doesn't completely overwrite your glass theme */
+body.custom-background-active::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg-color);
+  opacity: 0.6; /* Adjust this to let the custom image peek through your liquid glass */
+  pointer-events: none;
 }
 
 /* ======================== /
