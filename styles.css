@@ -846,6 +846,12 @@ body.reduced-motion .mouse-trail-container {
     padding: 7px 13px;
   }
 
+  /* Add this to your light mode section */
+body.light-e .beta-page {
+  background: var(--light-bg-gradient);
+}
+
+
   #daily-focus {
     padding: 16px 18px;
   }
