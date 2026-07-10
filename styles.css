@@ -1,860 +1,854 @@
-:root {
-  /* ======================== /
-  / Base Sizing              /
-  / ======================== */
-  --font-size-base: 16px;
-  --line-height-base: 1.65;
+:root { 
+/*  / 
+/ Base Sizing              / 
+/  */ 
+--font-size-base: 16px; 
+--line-height-base: 1.65;
 
-  /* ======================== /
-  / Dark Liquid Glass Palette /
-  / ======================== */
-  --dark-bg: #0b0b0d;
-  --dark-content-bg: rgba(22, 22, 26, 0.52);
-  --dark-text: #f7f8fb;
-  --dark-secondary-text: #a9adb7;
-  --dark-border: rgba(255, 255, 255, 0.105);
-  --dark-accent: #4ea8ff;
-  --dark-hover: #3f8ce0;
-  --dark-link: var(--dark-accent);
-  --dark-shadow: rgba(0, 0, 0, 0.62);
-  --dark-glow: rgba(255, 255, 255, 0.105);
-  --dark-icon: #e8e8ed;
+/*  / 
+/ Dark Liquid Glass Palette / 
+/  */ 
+--dark-bg: #0b0b0d; 
+--dark-content-bg: rgba(22, 22, 26, 0.52); 
+--dark-text: #f7f8fb; 
+--dark-secondary-text: #a9adb7; 
+--dark-border: rgba(255, 255, 255, 0.105); 
+--dark-accent: #4ea8ff; 
+--dark-hover: #3f8ce0; 
+--dark-link: var(--dark-accent); 
+--dark-shadow: rgba(0, 0, 0, 0.62); 
+--dark-glow: rgba(255, 255, 255, 0.105); 
+--dark-icon: #e8e8ed;
 
-  /* ======================== /
-  / Light Liquid Glass Palette /
-  / ======================== */
-  --light-bg-gradient:
-    radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.95), transparent 28%),
-    radial-gradient(circle at 86% 14%, rgba(182, 225, 255, 0.65), transparent 30%),
-    linear-gradient(120deg, #d9f0ff 0%, #f7fbff 56%, #eef6ff 100%);
+/*  / 
+/ Light Liquid Glass Palette / 
+/  */ 
+--light-bg-gradient: 
+radial-gradient(circle at 12% 8%, rgba(255, 255, 255, 0.95), transparent 28%), 
+radial-gradient(circle at 86% 14%, rgba(182, 225, 255, 0.65), transparent 30%), 
+linear-gradient(120deg, #d9f0ff 0%, #f7fbff 56%, #eef6ff 100%);
 
-  --light-content-bg: rgba(255, 255, 255, 0.46);
-  --light-text: #111114;
-  --light-secondary-text: #4b5563;
-  --light-border: rgba(255, 255, 255, 0.62);
-  --light-accent: #007aff;
-  --light-hover: #005fcc;
-  --light-link: var(--light-accent);
-  --light-shadow: rgba(17, 24, 39, 0.16);
-  --light-glow: rgba(255, 255, 255, 0.82);
-  --light-icon: #2c2c2e;
+--light-content-bg: rgba(255, 255, 255, 0.46); 
+--light-text: #111114; 
+--light-secondary-text: #4b5563; 
+--light-border: rgba(255, 255, 255, 0.62); 
+--light-accent: #007aff; 
+--light-hover: #005fcc; 
+--light-link: var(--light-accent); 
+--light-shadow: rgba(17, 24, 39, 0.16); 
+--light-glow: rgba(255, 255, 255, 0.82); 
+--light-icon: #2c2c2e;
 
-  /* ======================== /
-  / Default Theme - Dark     /
-  / ======================== */
-  --bg-color: var(--dark-bg);
-  --content-bg: var(--dark-content-bg);
-  --text-color: var(--dark-text);
-  --secondary-text: var(--dark-secondary-text);
-  --border-color: var(--dark-border);
+/*  / 
+/ Default Theme - Dark     / 
+/  */ 
+--bg-color: var(--dark-bg); 
+--content-bg: var(--dark-content-bg); 
+--text-color: var(--dark-text); 
+--secondary-text: var(--dark-secondary-text); 
+--border-color: var(--dark-border);
 
-  --accent-color: var(--dark-accent);
-  --hover-color: var(--dark-hover);
-  --link-color: var(--dark-link);
+--accent-color: var(--dark-accent); 
+--hover-color: var(--dark-hover); 
+--link-color: var(--dark-link);
 
-  --shadow-color: var(--dark-shadow);
-  --glow-color: var(--dark-glow);
-  --icon-color: var(--dark-icon);
-  --social-icon-text-color: var(--dark-text);
+--shadow-color: var(--dark-shadow); 
+--glow-color: var(--dark-glow); 
+--icon-color: var(--dark-icon); 
+--social-icon-text-color: var(--dark-text);
 
-  /* ======================== /
-  / iOS 27 Liquid Glass Optics /
-  / ======================== */
-  --backdrop-blur: blur(30px) saturate(140%);
+/*  / 
+/ iOS 27 Liquid Glass Optics / 
+/  */ 
+--backdrop-blur: blur(30px) saturate(140%);
 
-  --bubble-gradient:
-    radial-gradient(
-      circle at 22% 16%,
-      rgba(255, 255, 255, 0.18),
-      transparent 54%
-    ),
-    radial-gradient(
-      circle at 84% 12%,
-      rgba(255, 255, 255, 0.08),
-      transparent 42%
-    );
+--bubble-gradient: 
+radial-gradient( 
+circle at 22% 16%, 
+rgba(255, 255, 255, 0.18), 
+transparent 54% 
+), 
+radial-gradient( 
+circle at 84% 12%, 
+rgba(255, 255, 255, 0.08), 
+transparent 42% 
+);
 
-  --bubble-highlight:
-    inset 0 1px 1px rgba(255, 255, 255, 0.22),
-    inset 0 0 22px rgba(255, 255, 255, 0.055);
+--bubble-highlight: 
+inset 0 1px 1px rgba(255, 255, 255, 0.22), 
+inset 0 0 22px rgba(255, 255, 255, 0.055);
 
-  --bubble-shadow:
-    0 30px 70px rgba(0, 0, 0, 0.50),
-    0 8px 28px rgba(0, 0, 0, 0.24),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+--bubble-shadow: 
+0 30px 70px rgba(0, 0, 0, 0.50), 
+0 8px 28px rgba(0, 0, 0, 0.24), 
+inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 
-  --liquid-reflection:
-    linear-gradient(
-      125deg,
-      rgba(255, 255, 255, 0.42),
-      rgba(255, 255, 255, 0.11) 34%,
-      rgba(255, 255, 255, 0.035) 62%,
-      transparent
-    );
+--liquid-reflection: 
+linear-gradient( 
+125deg, 
+rgba(255, 255, 255, 0.42), 
+rgba(255, 255, 255, 0.11) 34%, 
+rgba(255, 255, 255, 0.035) 62%, 
+transparent 
+);
 
-  --liquid-refraction:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.15),
-      rgba(255, 255, 255, 0.035) 46%,
-      rgba(0, 0, 0, 0.12)
-    );
+--liquid-refraction: 
+linear-gradient( 
+145deg, 
+rgba(255, 255, 255, 0.15), 
+rgba(255, 255, 255, 0.035) 46%, 
+rgba(0, 0, 0, 0.12) 
+);
 
-  --glass-surface:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+--glass-surface: 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 
-  --glass-border:
-    color-mix(in srgb, var(--border-color) 88%, transparent);
+--glass-border: 
+color-mix(in srgb, var(--border-color) 88%, transparent);
 
-  --glass-top-glow:
-    radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--glow-color) 62%, transparent),
-      transparent 62%
-    );
+--glass-top-glow: 
+radial-gradient( 
+circle at 50% 0%, 
+color-mix(in srgb, var(--glow-color) 62%, transparent), 
+transparent 62% 
+);
 
-  --glass-bottom-depth:
-    radial-gradient(
-      circle at 50% 100%,
-      color-mix(in srgb, var(--shadow-color) 45%, transparent),
-      transparent 72%
-    );
+--glass-bottom-depth: 
+radial-gradient( 
+circle at 50% 100%, 
+color-mix(in srgb, var(--shadow-color) 45%, transparent), 
+transparent 72% 
+);
 
-  /* ======================== /
-  / Radii & Transitions      /
-  / ======================== */
-  --radius-xl: 30px;
-  --radius-lg: 22px;
-  --radius-md: 15px;
-  --radius-pill: 999px;
+/*  / 
+/ Radii & Transitions      / 
+/  */ 
+--radius-xl: 30px; 
+--radius-lg: 22px; 
+--radius-md: 15px; 
+--radius-pill: 999px;
 
-  --transition-fast: 0.2s ease;
-  --transition-medium: 0.3s ease;
-  --transition-slow: 0.5s ease;
+--transition-fast: 0.2s ease; 
+--transition-medium: 0.3s ease; 
+--transition-slow: 0.5s ease; 
 }
 
-/* ======================== /
-/ Light Mode Overrides     /
-/ ======================== */
+/*  / 
+/ Light Mode Overrides     / 
+/  */
 
-body.light-e {
-  --bg-color: var(--light-bg-gradient);
-  --content-bg: var(--light-content-bg);
-  --text-color: var(--light-text);
-  --secondary-text: var(--light-secondary-text);
-  --border-color: var(--light-border);
+body.light-e { 
+--bg-color: var(--light-bg-gradient); 
+--content-bg: var(--light-content-bg); 
+--text-color: var(--light-text); 
+--secondary-text: var(--light-secondary-text); 
+--border-color: var(--light-border);
 
-  --accent-color: var(--light-accent);
-  --hover-color: var(--light-hover);
-  --link-color: var(--light-link);
+--accent-color: var(--light-accent); 
+--hover-color: var(--light-hover); 
+--link-color: var(--light-link);
 
-  --shadow-color: var(--light-shadow);
-  --glow-color: var(--light-glow);
-  --icon-color: var(--light-icon);
-  --social-icon-text-color: var(--light-text);
+--shadow-color: var(--light-shadow); 
+--glow-color: var(--light-glow); 
+--icon-color: var(--light-icon); 
+--social-icon-text-color: var(--light-text);
 
-  --backdrop-blur: blur(30px) saturate(140%);
+--backdrop-blur: blur(30px) saturate(140%);
 
-  --bubble-gradient:
-    radial-gradient(
-      circle at 34% 18%,
-      rgba(255, 255, 255, 0.86),
-      transparent 58%
-    ),
-    radial-gradient(
-      circle at 85% 10%,
-      rgba(255, 255, 255, 0.46),
-      transparent 44%
-    );
+--bubble-gradient: 
+radial-gradient( 
+circle at 34% 18%, 
+rgba(255, 255, 255, 0.86), 
+transparent 58% 
+), 
+radial-gradient( 
+circle at 85% 10%, 
+rgba(255, 255, 255, 0.46), 
+transparent 44% 
+);
 
-  --bubble-highlight:
-    inset 0 1px 1px rgba(255, 255, 255, 0.92),
-    inset 0 0 18px rgba(255, 255, 255, 0.30);
+--bubble-highlight: 
+inset 0 1px 1px rgba(255, 255, 255, 0.92), 
+inset 0 0 18px rgba(255, 255, 255, 0.30);
 
-  --bubble-shadow:
-    0 22px 56px rgba(17, 24, 39, 0.14),
-    0 8px 24px rgba(17, 24, 39, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.06);
+--bubble-shadow: 
+0 22px 56px rgba(17, 24, 39, 0.14), 
+0 8px 24px rgba(17, 24, 39, 0.08), 
+inset 0 -1px 0 rgba(0, 0, 0, 0.06);
 
-  --liquid-reflection:
-    linear-gradient(
-      125deg,
-      rgba(255, 255, 255, 0.92),
-      rgba(255, 255, 255, 0.42) 38%,
-      rgba(255, 255, 255, 0.14) 66%,
-      transparent
-    );
+--liquid-reflection: 
+linear-gradient( 
+125deg, 
+rgba(255, 255, 255, 0.92), 
+rgba(255, 255, 255, 0.42) 38%, 
+rgba(255, 255, 255, 0.14) 66%, 
+transparent 
+);
 
-  --liquid-refraction:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.58),
-      rgba(255, 255, 255, 0.18) 48%,
-      rgba(0, 0, 0, 0.045)
-    );
+--liquid-refraction: 
+linear-gradient( 
+145deg, 
+rgba(255, 255, 255, 0.58), 
+rgba(255, 255, 255, 0.18) 48%, 
+rgba(0, 0, 0, 0.045) 
+);
 
-  --glass-surface:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 86%, white 14%);
+--glass-surface: 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 86%, white 14%);
 
-  --glass-border:
-    color-mix(in srgb, var(--border-color) 92%, white 8%);
+--glass-border: 
+color-mix(in srgb, var(--border-color) 92%, white 8%); 
 }
 
-/* ======================== /
-/ Dark Mode Wrapper        /
-/ ======================== */
+/*  / 
+/ Dark Mode Wrapper        / 
+/  */
 
-html.dark-mode body,
-body.dark-mode {
-  --bg-color: var(--dark-bg);
-  --content-bg: var(--dark-content-bg);
-  --text-color: var(--dark-text);
-  --secondary-text: var(--dark-secondary-text);
-  --border-color: var(--dark-border);
+html.dark-mode body, 
+body.dark-mode { 
+--bg-color: var(--dark-bg); 
+--content-bg: var(--dark-content-bg); 
+--text-color: var(--dark-text); 
+--secondary-text: var(--dark-secondary-text); 
+--border-color: var(--dark-border);
 
-  --accent-color: var(--dark-accent);
-  --hover-color: var(--dark-hover);
-  --link-color: var(--dark-link);
+--accent-color: var(--dark-accent); 
+--hover-color: var(--dark-hover); 
+--link-color: var(--dark-link);
 
-  --shadow-color: var(--dark-shadow);
-  --glow-color: var(--dark-glow);
-  --icon-color: var(--dark-icon);
-  --social-icon-text-color: var(--dark-text);
+--shadow-color: var(--dark-shadow); 
+--glow-color: var(--dark-glow); 
+--icon-color: var(--dark-icon); 
+--social-icon-text-color: var(--dark-text);
 
-  --backdrop-blur: blur(30px) saturate(140%);
+--backdrop-blur: blur(30px) saturate(140%);
 
-  --bubble-gradient:
-    radial-gradient(
-      circle at 22% 16%,
-      rgba(255, 255, 255, 0.18),
-      transparent 54%
-    ),
-    radial-gradient(
-      circle at 84% 12%,
-      rgba(255, 255, 255, 0.08),
-      transparent 42%
-    );
+--bubble-gradient: 
+radial-gradient( 
+circle at 22% 16%, 
+rgba(255, 255, 255, 0.18), 
+transparent 54% 
+), 
+radial-gradient( 
+circle at 84% 12%, 
+rgba(255, 255, 255, 0.08), 
+transparent 42% 
+);
 
-  --bubble-highlight:
-    inset 0 1px 1px rgba(255, 255, 255, 0.22),
-    inset 0 0 22px rgba(255, 255, 255, 0.055);
+--bubble-highlight: 
+inset 0 1px 1px rgba(255, 255, 255, 0.22), 
+inset 0 0 22px rgba(255, 255, 255, 0.055);
 
-  --bubble-shadow:
-    0 30px 70px rgba(0, 0, 0, 0.50),
-    0 8px 28px rgba(0, 0, 0, 0.24),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+--bubble-shadow: 
+0 30px 70px rgba(0, 0, 0, 0.50), 
+0 8px 28px rgba(0, 0, 0, 0.24), 
+inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 
-  --liquid-reflection:
-    linear-gradient(
-      125deg,
-      rgba(255, 255, 255, 0.42),
-      rgba(255, 255, 255, 0.11) 34%,
-      rgba(255, 255, 255, 0.035) 62%,
-      transparent
-    );
+--liquid-reflection: 
+linear-gradient( 
+125deg, 
+rgba(255, 255, 255, 0.42), 
+rgba(255, 255, 255, 0.11) 34%, 
+rgba(255, 255, 255, 0.035) 62%, 
+transparent 
+);
 
-  --liquid-refraction:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.15),
-      rgba(255, 255, 255, 0.035) 46%,
-      rgba(0, 0, 0, 0.12)
-    );
+--liquid-refraction: 
+linear-gradient( 
+145deg, 
+rgba(255, 255, 255, 0.15), 
+rgba(255, 255, 255, 0.035) 46%, 
+rgba(0, 0, 0, 0.12) 
+);
 
-  --glass-surface:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
+--glass-surface: 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 88%, black 12%);
 
-  --glass-border:
-    color-mix(in srgb, var(--border-color) 90%, transparent);
+--glass-border: 
+color-mix(in srgb, var(--border-color) 90%, transparent); 
 }
 
-/* ======================== /
-/ Base Styles              /
-/ ======================== */
+/*  / 
+/ Base Styles              / 
+/  */
 
-html {
-  background: var(--bg-color);
+html { 
+/* Background removed to prevent double-rendering */ 
 }
 
-body {
-  background: var(--bg-color);
-  color: var(--text-color);
+body { 
+background: var(--bg-color); 
+color: var(--text-color);
 
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Text",
-    "SF Pro Display",
-    Roboto,
-    sans-serif;
+font-family: 
+-apple-system, 
+BlinkMacSystemFont, 
+"SF Pro Text", 
+"SF Pro Display", 
+Roboto, 
+sans-serif;
 
-  margin: 0;
-  padding: 32px;
-  min-height: 100vh;
+margin: 0; 
+padding: 32px; 
+min-height: 100vh;
 
-  line-height: var(--line-height-base);
-  font-size: var(--font-size-base, 16px);
+line-height: var(--line-height-base); 
+font-size: var(--font-size-base, 16px);
 
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+-webkit-font-smoothing: antialiased; 
+-moz-osx-font-smoothing: grayscale;
 
-  letter-spacing: -0.01em;
+letter-spacing: -0.01em; 
 }
 
-h1,
-h2,
-h3 {
-  font-weight: 650;
-  letter-spacing: -0.025em;
-  color: var(--text-color);
+h1, 
+h2, 
+h3 { 
+font-weight: 650; 
+letter-spacing: -0.025em; 
+color: var(--text-color); 
 }
 
-p,
-span,
-li {
-  font-weight: 400;
-  color: var(--secondary-text);
+p, 
+span, 
+li { 
+font-weight: 400; 
+color: var(--secondary-text); 
 }
 
-a {
-  color: var(--link-color);
+a { 
+color: var(--link-color); 
 }
 
-/* ======================== /
-/ Apple Glass Effect Block /
-/ iOS 27 Liquid Glass      /
-/ ======================== */
+/*  / 
+/ Apple Glass Effect Block / 
+/ iOS 27 Liquid Glass      / 
+/  */
 
-.glass {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
+.glass { 
+position: relative; 
+overflow: hidden; 
+isolation: isolate;
 
-  /* Force Hardware Acceleration */
-  will-change: transform;
-  transform: translateZ(0);
+/* Force Hardware Acceleration */ 
+will-change: transform; 
+transform: translateZ(0);
 
-  background: var(--glass-surface);
-  color: var(--text-color);
+background: var(--glass-surface); 
+color: var(--text-color);
 
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--glass-border);
+border-radius: var(--radius-xl); 
+border: 1px solid var(--glass-border);
 
-  box-shadow:
-    var(--bubble-highlight),
-    var(--bubble-shadow);
+box-shadow: 
+var(--bubble-highlight), 
+var(--bubble-shadow);
 
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+backdrop-filter: var(--backdrop-blur); 
+-webkit-backdrop-filter: var(--backdrop-blur); 
 }
 
-.glass::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
+.glass::before { 
+content: ""; 
+position: absolute; 
+inset: 0; 
+border-radius: inherit; 
+pointer-events: none; 
+z-index: 0;
 
-  background: var(--liquid-reflection);
-  opacity: 0.25;
+background: var(--liquid-reflection); 
+opacity: 0.25; 
 }
 
-.glass::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
+.glass::after { 
+content: ""; 
+position: absolute; 
+inset: 0; 
+border-radius: inherit; 
+pointer-events: none; 
+z-index: 0;
 
-  background:
-    var(--glass-top-glow),
-    var(--glass-bottom-depth);
+background: 
+var(--glass-top-glow), 
+var(--glass-bottom-depth);
 
-  opacity: 0.58;
+opacity: 0.58; 
 }
 
-.glass > * {
-  position: relative;
-  z-index: 1;
+.glass > * { 
+position: relative; 
+z-index: 1; 
 }
 
-/* ================================================== /
-/ === ONYX / LIQUID GLASS MICRO-SECTIONS =========== /
-/ ================================================== */
+/*  / 
+/ = ONYX / LIQUID GLASS MICRO-SECTIONS = / 
+/  */
 
-.section[data-section-id="time"],
-.section[data-section-id="weather"],
-.section[data-section-id="focus"],
-.section[data-section-id="battery"] {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+.section[data-section-id="time"], 
+.section[data-section-id="weather"], 
+.section[data-section-id="focus"], 
+.section[data-section-id="battery"] { 
+display: flex; 
+justify-content: center; 
+align-items: center; 
+text-align: center;
 
-  padding: 18px 22px;
-  border-radius: var(--radius-lg);
+padding: 18px 22px; 
+border-radius: var(--radius-lg);
 
-  /* Force Hardware Acceleration */
-  will-change: transform;
-  transform: translateZ(0);
+/* Force Hardware Acceleration */ 
+will-change: transform; 
+transform: translateZ(0);
 
-  background:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+background: 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
 
-  /* Tamed contrast */
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
+/* Tamed contrast */ 
+backdrop-filter: blur(20px) saturate(140%); 
+-webkit-backdrop-filter: blur(20px) saturate(140%);
 
-  box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent),
-    0 10px 28px color-mix(in srgb, var(--shadow-color) 42%, transparent);
+box-shadow: 
+inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent), 
+0 10px 28px color-mix(in srgb, var(--shadow-color) 42%, transparent);
 
-  transition:
-    background var(--transition-medium),
-    border-color var(--transition-medium),
-    box-shadow var(--transition-medium);
+transition: 
+background var(--transition-medium), 
+border-color var(--transition-medium), 
+box-shadow var(--transition-medium); 
 }
 
 /* 🕒 Live Time */
 
-#live-time {
-  font-weight: 650;
-  font-size: 1rem;
-  color: var(--text-color);
-  letter-spacing: 0.35px;
+#live-time { 
+font-weight: 650; 
+font-size: 1rem; 
+color: var(--text-color); 
+letter-spacing: 0.35px;
 
-  padding: 7px 14px;
-  border-radius: var(--radius-pill);
+padding: 7px 14px; 
+border-radius: var(--radius-pill);
 
-  will-change: transform;
-  transform: translateZ(0);
+will-change: transform; 
+transform: translateZ(0);
 
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--glow-color) 24%, transparent),
-      color-mix(in srgb, var(--content-bg) 86%, transparent)
-    ),
-    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+background: 
+linear-gradient( 
+180deg, 
+color-mix(in srgb, var(--glow-color) 24%, transparent), 
+color-mix(in srgb, var(--content-bg) 86%, transparent) 
+), 
+color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
 
-  backdrop-filter: blur(14px) saturate(155%);
-  -webkit-backdrop-filter: blur(14px) saturate(155%);
+backdrop-filter: blur(14px) saturate(155%); 
+-webkit-backdrop-filter: blur(14px) saturate(155%);
 
-  box-shadow:
-    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 58%, transparent),
-    0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+box-shadow: 
+inset 0 1px 2px color-mix(in srgb, var(--glow-color) 58%, transparent), 
+0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent); 
 }
 
 /* 🌤️ Weather */
 
-#weather-widget {
-  display: inline-block;
+#weather-widget { 
+display: inline-block;
 
-  font-size: 1.05rem;
-  font-weight: 550;
-  color: var(--text-color);
+font-size: 1.05rem; 
+font-weight: 550; 
+color: var(--text-color);
 
-  padding: 8px 15px;
-  border-radius: var(--radius-pill);
+padding: 8px 15px; 
+border-radius: var(--radius-pill);
 
-  will-change: transform;
-  transform: translateZ(0);
+will-change: transform; 
+transform: translateZ(0);
 
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--glow-color) 24%, transparent),
-      color-mix(in srgb, var(--content-bg) 86%, transparent)
-    ),
-    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+background: 
+linear-gradient( 
+180deg, 
+color-mix(in srgb, var(--glow-color) 24%, transparent), 
+color-mix(in srgb, var(--content-bg) 86%, transparent) 
+), 
+color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
 
-  backdrop-filter: blur(14px) saturate(155%);
-  -webkit-backdrop-filter: blur(14px) saturate(155%);
+backdrop-filter: blur(14px) saturate(155%); 
+-webkit-backdrop-filter: blur(14px) saturate(155%);
 
-  box-shadow:
-    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent),
-    0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+box-shadow: 
+inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent), 
+0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent); 
 }
 
 /* 💬 Daily Focus */
 
-#daily-focus {
-  width: 100%;
-  max-width: 480px;
+#daily-focus { 
+width: 100%; 
+max-width: 480px;
 
-  padding: 18px 22px;
-  border-radius: var(--radius-lg);
+padding: 18px 22px; 
+border-radius: var(--radius-lg);
 
-  /* Force Hardware Acceleration */
-  will-change: transform;
-  transform: translateZ(0);
+/* Force Hardware Acceleration */ 
+will-change: transform; 
+transform: translateZ(0);
 
-  background:
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+background: 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
 
-  /* Tamed contrast */
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
+/* Tamed contrast */ 
+backdrop-filter: blur(22px) saturate(140%); 
+-webkit-backdrop-filter: blur(22px) saturate(140%);
 
-  box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent),
-    0 8px 24px color-mix(in srgb, var(--shadow-color) 38%, transparent);
+box-shadow: 
+inset 0 1px 1px color-mix(in srgb, var(--glow-color) 42%, transparent), 
+0 8px 24px color-mix(in srgb, var(--shadow-color) 38%, transparent); 
 }
 
-#daily-focus h3 {
-  margin: 0 0 8px;
-  font-size: 1.1em;
-  font-weight: 750;
-  color: var(--text-color);
+#daily-focus h3 { 
+margin: 0 0 8px; 
+font-size: 1.1em; 
+font-weight: 750; 
+color: var(--text-color); 
 }
 
-#daily-focus p {
-  margin: 0;
-  color: var(--secondary-text);
-  font-size: 1em;
+#daily-focus p { 
+margin: 0; 
+color: var(--secondary-text); 
+font-size: 1em; 
 }
 
 /* 🔋 Battery */
 
-#battery-widget {
-  font-size: 1rem;
-  font-weight: 550;
-  color: var(--text-color);
+#battery-widget { 
+font-size: 1rem; 
+font-weight: 550; 
+color: var(--text-color);
 
-  padding: 8px 15px;
-  border-radius: var(--radius-pill);
+padding: 8px 15px; 
+border-radius: var(--radius-pill);
 
-  will-change: transform;
-  transform: translateZ(0);
+will-change: transform; 
+transform: translateZ(0);
 
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--glow-color) 24%, transparent),
-      color-mix(in srgb, var(--content-bg) 86%, transparent)
-    ),
-    color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
+background: 
+linear-gradient( 
+180deg, 
+color-mix(in srgb, var(--glow-color) 24%, transparent), 
+color-mix(in srgb, var(--content-bg) 86%, transparent) 
+), 
+color-mix(in srgb, var(--content-bg) 90%, var(--bg-color) 10%);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
+border: 1px solid color-mix(in srgb, var(--border-color) 82%, transparent);
 
-  backdrop-filter: blur(14px) saturate(155%);
-  -webkit-backdrop-filter: blur(14px) saturate(155%);
+backdrop-filter: blur(14px) saturate(155%); 
+-webkit-backdrop-filter: blur(14px) saturate(155%);
 
-  box-shadow:
-    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent),
-    0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+box-shadow: 
+inset 0 1px 2px color-mix(in srgb, var(--glow-color) 52%, transparent), 
+0 4px 14px color-mix(in srgb, var(--shadow-color) 28%, transparent); 
 }
 
-/* ======================== /
-/ iOS 27 Liquid Sections   /
-/ ======================== */
+/*  / 
+/ iOS 27 Liquid Sections   / 
+/  */
 
-.section {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
+.section { 
+position: relative; 
+isolation: isolate; 
+overflow: hidden;
 
-  /* Force Hardware Acceleration */
-  will-change: transform;
-  transform: translateZ(0);
+/* Force Hardware Acceleration */ 
+will-change: transform; 
+transform: translateZ(0);
 
-  padding: 28px;
-  margin-bottom: 32px;
+padding: 28px; 
+margin-bottom: 32px;
 
-  border-radius: var(--radius-xl);
+border-radius: var(--radius-xl);
 
-  color: var(--text-color);
+color: var(--text-color);
 
-  background:
-    var(--glass-top-glow),
-    var(--glass-surface);
+background: 
+var(--glass-top-glow), 
+var(--glass-surface);
 
-  border: 1px solid var(--glass-border);
+border: 1px solid var(--glass-border);
 
-  box-shadow:
-    var(--bubble-highlight),
-    var(--bubble-shadow);
+box-shadow: 
+var(--bubble-highlight), 
+var(--bubble-shadow);
 
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+backdrop-filter: var(--backdrop-blur); 
+-webkit-backdrop-filter: var(--backdrop-blur);
 
-  transition:
-    background var(--transition-medium),
-    border-color var(--transition-medium),
-    box-shadow var(--transition-medium),
-    transform var(--transition-fast);
+transition: 
+background var(--transition-medium), 
+border-color var(--transition-medium), 
+box-shadow var(--transition-medium), 
+transform var(--transition-fast); 
 }
 
-.section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
+.section::before { 
+content: ""; 
+position: absolute; 
+inset: 0; 
+border-radius: inherit; 
+pointer-events: none; 
+z-index: 0;
 
-  background: var(--liquid-reflection);
-  opacity: 0.25; 
+background: var(--liquid-reflection); 
+opacity: 0.25; 
 }
 
-.section::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
+.section::after { 
+content: ""; 
+position: absolute; 
+inset: 0; 
+border-radius: inherit; 
+pointer-events: none; 
+z-index: 0;
 
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--glow-color) 54%, transparent),
-      transparent 58%
-    ),
-    radial-gradient(
-      circle at 50% 100%,
-      color-mix(in srgb, var(--shadow-color) 42%, transparent),
-      transparent 72%
-    );
+background: 
+radial-gradient( 
+circle at 50% 0%, 
+color-mix(in srgb, var(--glow-color) 54%, transparent), 
+transparent 58% 
+), 
+radial-gradient( 
+circle at 50% 100%, 
+color-mix(in srgb, var(--shadow-color) 42%, transparent), 
+transparent 72% 
+);
 
-  opacity: 0.62;
+opacity: 0.62; 
 }
 
-.section > * {
-  position: relative;
-  z-index: 1;
+.section > * { 
+position: relative; 
+z-index: 1; 
 }
 
-.section h1,
-.section h2,
-.section h3 {
-  color: var(--text-color);
+.section h1, 
+.section h2, 
+.section h3 { 
+color: var(--text-color); 
 }
 
-.section p,
-.section span,
-.section li {
-  color: var(--secondary-text);
+.section p, 
+.section span, 
+.section li { 
+color: var(--secondary-text); 
 }
 
-/* ======================== /
-/ Light Mode Tuning        /
-/ ======================== */
+/*  / 
+/ Light Mode Tuning        / 
+/  */
 
-body.light-e .glass,
-body.light-e .section,
-body.light-e .section[data-section-id="time"],
-body.light-e .section[data-section-id="weather"],
-body.light-e .section[data-section-id="focus"],
-body.light-e .section[data-section-id="battery"] {
-  background:
-    radial-gradient(
-      circle at 40% 0%,
-      rgba(255, 255, 255, 0.88),
-      transparent 56%
-    ),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 86%, white 14%);
+body.light-e .glass, 
+body.light-e .section, 
+body.light-e .section[data-section-id="time"], 
+body.light-e .section[data-section-id="weather"], 
+body.light-e .section[data-section-id="focus"], 
+body.light-e .section[data-section-id="battery"] { 
+background: 
+radial-gradient( 
+circle at 40% 0%, 
+rgba(255, 255, 255, 0.88), 
+transparent 56% 
+), 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 86%, white 14%);
 
-  border-color: color-mix(in srgb, var(--border-color) 92%, white 8%);
+border-color: color-mix(in srgb, var(--border-color) 92%, white 8%);
 
-  box-shadow:
-    var(--bubble-highlight),
-    0 22px 56px color-mix(in srgb, var(--shadow-color) 72%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.045);
+box-shadow: 
+var(--bubble-highlight), 
+0 22px 56px color-mix(in srgb, var(--shadow-color) 72%, transparent), 
+inset 0 -1px 0 rgba(0, 0, 0, 0.045); 
 }
 
-body.light-e .glass::before,
-body.light-e .section::before {
-  opacity: 0.35; 
+body.light-e .glass::before, 
+body.light-e .section::before { 
+opacity: 0.35; 
 }
 
-body.light-e .glass::after,
-body.light-e .section::after {
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(255, 255, 255, 0.74),
-      transparent 58%
-    ),
-    radial-gradient(
-      circle at 50% 100%,
-      rgba(0, 0, 0, 0.12),
-      transparent 72%
-    );
+body.light-e .glass::after, 
+body.light-e .section::after { 
+background: 
+radial-gradient( 
+circle at 50% 0%, 
+rgba(255, 255, 255, 0.74), 
+transparent 58% 
+), 
+radial-gradient( 
+circle at 50% 100%, 
+rgba(0, 0, 0, 0.12), 
+transparent 72% 
+);
 
-  opacity: 0.55;
+opacity: 0.55; 
 }
 
-body.light-e .section h1,
-body.light-e .section h2,
-body.light-e .section h3 {
-  color: var(--text-color);
+body.light-e .section h1, 
+body.light-e .section h2, 
+body.light-e .section h3 { 
+color: var(--text-color); 
 }
 
-body.light-e .section p,
-body.light-e .section span,
-body.light-e .section li {
-  color: var(--secondary-text);
+body.light-e .section p, 
+body.light-e .section span, 
+body.light-e .section li { 
+color: var(--secondary-text); 
 }
 
-/* ======================== /
-/ Dark Mode Tuning         /
-/ ======================== */
+/*  / 
+/ Dark Mode Tuning         / 
+/  */
 
-html.dark-mode body .glass,
-html.dark-mode body .section,
-html.dark-mode body .section[data-section-id="time"],
-html.dark-mode body .section[data-section-id="weather"],
-html.dark-mode body .section[data-section-id="focus"],
-html.dark-mode body .section[data-section-id="battery"],
-body.dark-mode .glass,
-body.dark-mode .section,
-body.dark-mode .section[data-section-id="time"],
-body.dark-mode .section[data-section-id="weather"],
-body.dark-mode .section[data-section-id="focus"],
-body.dark-mode .section[data-section-id="battery"] {
-  background:
-    radial-gradient(
-      circle at 36% 0%,
-      rgba(255, 255, 255, 0.12),
-      transparent 52%
-    ),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
+html.dark-mode body .glass, 
+html.dark-mode body .section, 
+html.dark-mode body .section[data-section-id="time"], 
+html.dark-mode body .section[data-section-id="weather"], 
+html.dark-mode body .section[data-section-id="focus"], 
+html.dark-mode body .section[data-section-id="battery"], 
+body.dark-mode .glass, 
+body.dark-mode .section, 
+body.dark-mode .section[data-section-id="time"], 
+body.dark-mode .section[data-section-id="weather"], 
+body.dark-mode .section[data-section-id="focus"], 
+body.dark-mode .section[data-section-id="battery"] { 
+background: 
+radial-gradient( 
+circle at 36% 0%, 
+rgba(255, 255, 255, 0.12), 
+transparent 52% 
+), 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 88%, black 12%);
 
-  border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
+border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
 
-  box-shadow:
-    var(--bubble-highlight),
-    0 30px 70px color-mix(in srgb, var(--shadow-color) 88%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.32);
+box-shadow: 
+var(--bubble-highlight), 
+0 30px 70px color-mix(in srgb, var(--shadow-color) 88%, transparent), 
+inset 0 -1px 0 rgba(0, 0, 0, 0.32); 
 }
 
-html.dark-mode body .glass::before,
-html.dark-mode body .section::before,
-body.dark-mode .glass::before,
-body.dark-mode .section::before {
-  opacity: 0.25; 
+html.dark-mode body .glass::before, 
+html.dark-mode body .section::before, 
+body.dark-mode .glass::before, 
+body.dark-mode .section::before { 
+opacity: 0.25; 
 }
 
-html.dark-mode body .glass::after,
-html.dark-mode body .section::after,
-body.dark-mode .glass::after,
-body.dark-mode .section::after {
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      rgba(255, 255, 255, 0.1),
-      transparent 58%
-    ),
-    radial-gradient(
-      circle at 50% 100%,
-      rgba(0, 0, 0, 0.4),
-      transparent 72%
-    );
+html.dark-mode body .glass::after, 
+html.dark-mode body .section::after, 
+body.dark-mode .glass::after, 
+body.dark-mode .section::after { 
+background: 
+radial-gradient( 
+circle at 50% 0%, 
+rgba(255, 255, 255, 0.1), 
+transparent 58% 
+), 
+radial-gradient( 
+circle at 50% 100%, 
+rgba(0, 0, 0, 0.4), 
+transparent 72% 
+);
 
-  opacity: 0.72;
+opacity: 0.72; 
 }
 
-/* ======================================== /
-/ iOS-Style Focus Ring                     /
-/ ======================================== */
+/*  / 
+/ iOS-Style Focus Ring                     / 
+/  */
 
-:focus {
-  outline: none;
+:focus { 
+outline: none; 
 }
 
-body:not(.focus-outline-disabled) :focus-visible {
-  outline: none;
+body:not(.focus-outline-disabled) :focus-visible { 
+outline: none;
 
-  box-shadow:
-    0 0 0 4px color-mix(in srgb, var(--accent-color) 30%, transparent),
-    0 0 18px color-mix(in srgb, var(--accent-color) 18%, transparent);
+box-shadow: 
+0 0 0 4px color-mix(in srgb, var(--accent-color) 30%, transparent), 
+0 0 18px color-mix(in srgb, var(--accent-color) 18%, transparent); 
 }
 
-/* ======================== /
-/ Mouse Trail              /
-/ ======================== */
+/*  / 
+/ Mouse Trail              / 
+/  */
 
-.mouse-trail-container .trail-dot {
-  mix-blend-mode: screen;
+.mouse-trail-container .trail-dot { 
+mix-blend-mode: screen;
 
-  transition:
-    transform 0.1s ease-out,
-    opacity 0.3s ease-out;
+transition: 
+transform 0.1s ease-out, 
+opacity 0.3s ease-out; 
 }
 
-body.light-e .mouse-trail-container .trail-dot {
-  mix-blend-mode: multiply;
+body.light-e .mouse-trail-container .trail-dot { 
+mix-blend-mode: multiply; 
 }
 
-body.reduced-motion .mouse-trail-container {
-  display: none !important;
+body.reduced-motion .mouse-trail-container { 
+display: none !important; 
 }
 
 /* 📱 Mobile Responsiveness */
 
-@media (max-width: 600px) {
-  body {
-    padding: 20px;
-  }
-
-  .section {
-    padding: 22px;
-    margin-bottom: 24px;
-    border-radius: 24px;
-  }
-
-  .glass {
-    border-radius: 24px;
-  }
-
-  .section[data-section-id="time"],
-  .section[data-section-id="weather"],
-  .section[data-section-id="focus"],
-  .section[data-section-id="battery"] {
-    padding: 14px 16px;
-    border-radius: 20px;
-  }
-
-  #live-time,
-  #weather-widget,
-  #battery-widget {
-    padding: 7px 13px;
-  }
-
-  /* Add this to your light mode section */
-body.light-e .beta-page {
-  background: var(--light-bg-gradient);
+@media (max-width: 600px) { 
+body { 
+padding: 20px; 
 }
 
+.section { 
+padding: 22px; 
+margin-bottom: 24px; 
+border-radius: 24px; 
+}
 
-  #daily-focus {
-    padding: 16px 18px;
-  }
+.glass { 
+border-radius: 24px; 
+}
+
+.section[data-section-id="time"], 
+.section[data-section-id="weather"], 
+.section[data-section-id="focus"], 
+.section[data-section-id="battery"] { 
+padding: 14px 16px; 
+border-radius: 20px; 
+}
+
+#live-time, 
+#weather-widget, 
+#battery-widget { 
+padding: 7px 13px; 
+}
+
+#daily-focus { 
+padding: 16px 18px; 
+} 
 }
 
 /* ======================================== */
@@ -11002,591 +10996,591 @@ body.light-e .creator-sort-controls select option {
     color: #ffffff !important;
 }
 
-/* ======================================================= /
-/ Beta Preview Page — Theme-Aware Liquid Glass Fix        /
-/ ======================================================= */
+/* = / 
+/ Beta Preview Page — Theme-Aware Liquid Glass Fix        / 
+/ = */
 
-:root {
-  --beta-surface:
-    radial-gradient(
-      circle at 36% 0%,
-      rgba(255, 255, 255, 0.12),
-      transparent 52%
-    ),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
+:root { 
+--beta-surface: 
+radial-gradient( 
+circle at 36% 0%, 
+rgba(255, 255, 255, 0.12), 
+transparent 52% 
+), 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 88%, black 12%);
 
-  --beta-card-surface:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.08),
-      rgba(255, 255, 255, 0.02) 52%,
-      rgba(0, 0, 0, 0.14)
-    ),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
+--beta-card-surface: 
+linear-gradient( 
+180deg, 
+rgba(255, 255, 255, 0.08), 
+rgba(255, 255, 255, 0.02) 52%, 
+rgba(0, 0, 0, 0.14) 
+), 
+color-mix(in srgb, var(--content-bg) 88%, black 12%);
 
-  --beta-border: color-mix(in srgb, var(--border-color) 78%, transparent);
-  --beta-card-border: color-mix(in srgb, var(--border-color) 58%, transparent);
+--beta-border: color-mix(in srgb, var(--border-color) 78%, transparent); 
+--beta-card-border: color-mix(in srgb, var(--border-color) 58%, transparent);
 
-  --beta-shadow:
-    var(--bubble-highlight),
-    0 30px 70px color-mix(in srgb, var(--shadow-color) 86%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+--beta-shadow: 
+var(--bubble-highlight), 
+0 30px 70px color-mix(in srgb, var(--shadow-color) 86%, transparent), 
+inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 
-  --beta-card-shadow:
-    0 10px 24px color-mix(in srgb, var(--shadow-color) 44%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+--beta-card-shadow: 
+0 10px 24px color-mix(in srgb, var(--shadow-color) 44%, transparent), 
+inset 0 1px 0 rgba(255, 255, 255, 0.09); 
 }
 
-/* Light mode support for all your theme class styles */
-html.light-mode body,
-html.light-e body,
-html[data-theme="light"] body,
-body.light-mode,
-body.light-e,
-body[data-theme="light"] {
-  --beta-surface:
-    radial-gradient(
-      circle at 40% 0%,
-      rgba(255, 255, 255, 0.9),
-      transparent 56%
-    ),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 88%, white 12%);
+/* Light mode support for all your theme class styles */ 
+html.light-mode body, 
+html.light-e body, 
+html[data-theme="light"] body, 
+body.light-mode, 
+body.light-e, 
+body[data-theme="light"] { 
+--beta-surface: 
+radial-gradient( 
+circle at 40% 0%, 
+rgba(255, 255, 255, 0.9), 
+transparent 56% 
+), 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 88%, white 12%);
 
-  --beta-card-surface:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.72),
-      rgba(255, 255, 255, 0.36) 52%,
-      rgba(225, 241, 255, 0.28)
-    ),
-    color-mix(in srgb, var(--content-bg) 88%, white 12%);
+--beta-card-surface: 
+linear-gradient( 
+180deg, 
+rgba(255, 255, 255, 0.72), 
+rgba(255, 255, 255, 0.36) 52%, 
+rgba(225, 241, 255, 0.28) 
+), 
+color-mix(in srgb, var(--content-bg) 88%, white 12%);
 
-  --beta-border: color-mix(in srgb, var(--border-color) 88%, white 12%);
-  --beta-card-border: color-mix(in srgb, var(--border-color) 76%, white 10%);
+--beta-border: color-mix(in srgb, var(--border-color) 88%, white 12%); 
+--beta-card-border: color-mix(in srgb, var(--border-color) 76%, white 10%);
 
-  --beta-shadow:
-    var(--bubble-highlight),
-    0 22px 56px color-mix(in srgb, var(--shadow-color) 68%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.045);
+--beta-shadow: 
+var(--bubble-highlight), 
+0 22px 56px color-mix(in srgb, var(--shadow-color) 68%, transparent), 
+inset 0 -1px 0 rgba(0, 0, 0, 0.045);
 
-  --beta-card-shadow:
-    0 10px 24px color-mix(in srgb, var(--shadow-color) 38%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+--beta-card-shadow: 
+0 10px 24px color-mix(in srgb, var(--shadow-color) 38%, transparent), 
+inset 0 1px 0 rgba(255, 255, 255, 0.86); 
 }
 
 
-/* Dark mode support */
-html.dark-mode body,
-html.dark-e body,
-html[data-theme="dark"] body,
-body.dark-mode,
-body.dark-e,
-body[data-theme="dark"] {
-  --beta-surface:
-    radial-gradient(
-      circle at 36% 0%,
-      rgba(255, 255, 255, 0.12),
-      transparent 52%
-    ),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
+/* Dark mode support */ 
+html.dark-mode body, 
+html.dark-e body, 
+html[data-theme="dark"] body, 
+body.dark-mode, 
+body.dark-e, 
+body[data-theme="dark"] { 
+--beta-surface: 
+radial-gradient( 
+circle at 36% 0%, 
+rgba(255, 255, 255, 0.12), 
+transparent 52% 
+), 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 88%, black 12%);
 
-  --beta-card-surface:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.08),
-      rgba(255, 255, 255, 0.02) 52%,
-      rgba(0, 0, 0, 0.14)
-    ),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
+--beta-card-surface: 
+linear-gradient( 
+180deg, 
+rgba(255, 255, 255, 0.08), 
+rgba(255, 255, 255, 0.02) 52%, 
+rgba(0, 0, 0, 0.14) 
+), 
+color-mix(in srgb, var(--content-bg) 88%, black 12%);
 
-  --beta-border: color-mix(in srgb, var(--border-color) 78%, transparent);
-  --beta-card-border: color-mix(in srgb, var(--border-color) 58%, transparent);
+--beta-border: color-mix(in srgb, var(--border-color) 78%, transparent); 
+--beta-card-border: color-mix(in srgb, var(--border-color) 58%, transparent);
 
-  --beta-shadow:
-    var(--bubble-highlight),
-    0 30px 70px color-mix(in srgb, var(--shadow-color) 86%, transparent),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+--beta-shadow: 
+var(--bubble-highlight), 
+0 30px 70px color-mix(in srgb, var(--shadow-color) 86%, transparent), 
+inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 
-  --beta-card-shadow:
-    0 10px 24px color-mix(in srgb, var(--shadow-color) 44%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+--beta-card-shadow: 
+0 10px 24px color-mix(in srgb, var(--shadow-color) 44%, transparent), 
+inset 0 1px 0 rgba(255, 255, 255, 0.09); 
 }
 
-/* ======================================================= /
-/ Custom Wallpaper Adaptive Transparency                  /
-/ ======================================================= */
+/* = / 
+/ Custom Wallpaper Adaptive Transparency                  / 
+/ = */
 
-/* Dark Mode Wallpaper Tuning for Beta */
-body.custom-background-active {
-  --beta-surface: 
-    radial-gradient(circle at 36% 0%, rgba(255, 255, 255, 0.12), transparent 52%),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 35%, transparent) !important;
+/* Dark Mode Wallpaper Tuning for Beta */ 
+body.custom-background-active { 
+--beta-surface: 
+radial-gradient(circle at 36% 0%, rgba(255, 255, 255, 0.12), transparent 52%), 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 35%, transparent) !important;
 
-  --beta-card-surface: 
-    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01) 52%, rgba(0, 0, 0, 0.1)),
-    color-mix(in srgb, var(--content-bg) 25%, transparent) !important;
+--beta-card-surface: 
+linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01) 52%, rgba(0, 0, 0, 0.1)), 
+color-mix(in srgb, var(--content-bg) 25%, transparent) !important; 
 }
 
-/* Light Mode Wallpaper Tuning & Background Rescue */
-html.light-mode body.custom-background-active,
-html[data-theme="light"] body.custom-background-active,
-body.light-mode.custom-background-active,
-body[data-theme="light"].custom-background-active {
-  background: 
-      var(--custom-background-image), 
-      var(--bg-color) !important;
-  background-size: var(--custom-background-size, cover) !important;
-  background-position: var(--custom-background-position, center) !important;
-  background-attachment: var(--custom-background-attachment, fixed) !important;
-  background-repeat: var(--custom-background-repeat, no-repeat) !important;
+/* Light Mode Wallpaper Tuning & Background Rescue */ 
+html.light-mode body.custom-background-active, 
+html[data-theme="light"] body.custom-background-active, 
+body.light-mode.custom-background-active, 
+body[data-theme="light"].custom-background-active { 
+background: 
+var(--custom-background-image), 
+var(--bg-color) !important; 
+background-size: var(--custom-background-size, cover) !important; 
+background-position: var(--custom-background-position, center) !important; 
+background-attachment: var(--custom-background-attachment, fixed) !important; 
+background-repeat: var(--custom-background-repeat, no-repeat) !important;
 
-  --light-content-bg: rgba(255, 255, 255, 0.28) !important;
-  --content-bg: var(--light-content-bg) !important;
+--light-content-bg: rgba(255, 255, 255, 0.28) !important; 
+--content-bg: var(--light-content-bg) !important;
 
-  --beta-surface: 
-    radial-gradient(circle at 40% 0%, rgba(255, 255, 255, 0.65), transparent 56%),
-    var(--bubble-gradient),
-    var(--liquid-refraction),
-    color-mix(in srgb, var(--content-bg) 45%, transparent) !important;
+--beta-surface: 
+radial-gradient(circle at 40% 0%, rgba(255, 255, 255, 0.65), transparent 56%), 
+var(--bubble-gradient), 
+var(--liquid-refraction), 
+color-mix(in srgb, var(--content-bg) 45%, transparent) !important;
 
-  --beta-card-surface: 
-    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15) 52%, rgba(225, 241, 255, 0.1)),
-    color-mix(in srgb, var(--content-bg) 35%, transparent) !important;
+--beta-card-surface: 
+linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.15) 52%, rgba(225, 241, 255, 0.1)), 
+color-mix(in srgb, var(--content-bg) 35%, transparent) !important; 
 }
 
-/* ======================================================= /
-/ Page Container                                          /
-/ ======================================================= */
+/* = / 
+/ Page Container                                          / 
+/ = */
 
-.beta-page .container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding-bottom: 120px;
+.beta-page .container { 
+max-width: 1100px; 
+margin: 0 auto; 
+padding-bottom: 120px; 
 }
 
-/* ======================================================= /
-/ Main Beta Glass Section                                 /
-/ ======================================================= */
+/* = / 
+/ Main Beta Glass Section                                 / 
+/ = */
 
-.beta-page .beta-page-section {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
+.beta-page .beta-page-section { 
+position: relative; 
+isolation: isolate; 
+overflow: hidden;
 
-  padding: 30px;
-  margin-bottom: 28px;
+padding: 30px; 
+margin-bottom: 28px;
 
-  color: var(--text-color);
+color: var(--text-color);
 
-  background: var(--beta-surface) !important;
-  border: 1px solid var(--beta-border) !important;
-  border-radius: var(--radius-xl);
+background: var(--beta-surface) !important; 
+border: 1px solid var(--beta-border) !important; 
+border-radius: var(--radius-xl);
 
-  box-shadow: var(--beta-shadow) !important;
+box-shadow: var(--beta-shadow) !important;
 
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+backdrop-filter: var(--backdrop-blur); 
+-webkit-backdrop-filter: var(--backdrop-blur); 
 }
 
-.beta-page .beta-page-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
+.beta-page .beta-page-section::before { 
+content: ""; 
+position: absolute; 
+inset: 0; 
+border-radius: inherit; 
+pointer-events: none; 
+z-index: 0;
 
-  background: var(--liquid-reflection);
-  opacity: 0.28;
+background: var(--liquid-reflection); 
+opacity: 0.28; 
 }
 
-.beta-page .beta-page-section::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
+.beta-page .beta-page-section::after { 
+content: ""; 
+position: absolute; 
+inset: 0; 
+border-radius: inherit; 
+pointer-events: none; 
+z-index: 0;
 
-  background:
-    radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--glow-color) 54%, transparent),
-      transparent 58%
-    ),
-    radial-gradient(
-      circle at 50% 100%,
-      color-mix(in srgb, var(--shadow-color) 42%, transparent),
-      transparent 72%
-    );
+background: 
+radial-gradient( 
+circle at 50% 0%, 
+color-mix(in srgb, var(--glow-color) 54%, transparent), 
+transparent 58% 
+), 
+radial-gradient( 
+circle at 50% 100%, 
+color-mix(in srgb, var(--shadow-color) 42%, transparent), 
+transparent 72% 
+);
 
-  opacity: 0.58;
+opacity: 0.58; 
 }
 
-.beta-page .beta-page-section > * {
-  position: relative;
-  z-index: 1;
+.beta-page .beta-page-section > * { 
+position: relative; 
+z-index: 1; 
 }
 
-/* ======================================================= /
-/ Header                                                  /
-/ ======================================================= */
+/* = / 
+/ Header                                                  / 
+/ = */
 
-.beta-page .beta-page-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
+.beta-page .beta-page-header { 
+display: flex; 
+align-items: flex-start; 
+justify-content: space-between; 
+gap: 20px; 
 }
 
-.beta-page .beta-eyebrow {
-  margin: 0 0 8px;
-  color: var(--accent-color);
-  font-weight: 800;
-  letter-spacing: 0.02em;
+.beta-page .beta-eyebrow { 
+margin: 0 0 8px; 
+color: var(--accent-color); 
+font-weight: 800; 
+letter-spacing: 0.02em;
 
-  display: flex;
-  align-items: center;
-  gap: 8px;
+display: flex; 
+align-items: center; 
+gap: 8px; 
 }
 
-.beta-page .beta-page-header h1 {
-  margin: 0;
-  color: var(--text-color);
-  font-size: clamp(2rem, 4vw, 3.4rem);
-  letter-spacing: -0.05em;
+.beta-page .beta-page-header h1 { 
+margin: 0; 
+color: var(--text-color); 
+font-size: clamp(2rem, 4vw, 3.4rem); 
+letter-spacing: -0.05em; 
 }
 
-.beta-page .beta-page-subtitle {
-  max-width: 680px;
-  margin: 12px 0 0;
-  color: var(--secondary-text);
-  font-size: 1.05rem;
-  line-height: 1.55;
+.beta-page .beta-page-subtitle { 
+max-width: 680px; 
+margin: 12px 0 0; 
+color: var(--secondary-text); 
+font-size: 1.05rem; 
+line-height: 1.55; 
 }
 
-/* ======================================================= /
-/ Version Pill                                            /
-/ ======================================================= */
+/* = / 
+/ Version Pill                                            / 
+/ = */
 
-.beta-page .beta-version-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.beta-page .beta-version-pill { 
+display: inline-flex; 
+align-items: center; 
+justify-content: center;
 
-  padding: 9px 15px;
-  border-radius: 999px;
+padding: 9px 15px; 
+border-radius: 999px;
 
-  color: #ffffff;
-  font-size: 0.88rem;
-  font-weight: 900;
-  white-space: nowrap;
+color: #ffffff; 
+font-size: 0.88rem; 
+font-weight: 900; 
+white-space: nowrap;
 
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent-color) 88%, white 12%),
-      color-mix(in srgb, var(--accent-color) 88%, black 12%)
-    );
+background: 
+linear-gradient( 
+135deg, 
+color-mix(in srgb, var(--accent-color) 88%, white 12%), 
+color-mix(in srgb, var(--accent-color) 88%, black 12%) 
+);
 
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.22),
-    0 8px 18px color-mix(in srgb, var(--accent-color) 24%, transparent);
+box-shadow: 
+inset 0 1px 0 rgba(255,255,255,0.22), 
+0 8px 18px color-mix(in srgb, var(--accent-color) 24%, transparent); 
 }
 
-/* ======================================================= /
-/ Summary Grid                                            /
-/ ======================================================= */
+/* = / 
+/ Summary Grid                                            / 
+/ = */
 
-.beta-page .beta-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 14px;
-  margin-top: 24px;
+.beta-page .beta-summary-grid { 
+display: grid; 
+grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); 
+gap: 14px; 
+margin-top: 24px; 
 }
 
-.beta-page .beta-summary-card,
-.beta-page .beta-feature-item {
-  position: relative;
-  overflow: hidden;
+.beta-page .beta-summary-card, 
+.beta-page .beta-feature-item { 
+position: relative; 
+overflow: hidden;
 
-  background: var(--beta-card-surface) !important;
-  border: 1px solid var(--beta-card-border) !important;
-  border-radius: var(--radius-lg);
+background: var(--beta-card-surface) !important; 
+border: 1px solid var(--beta-card-border) !important; 
+border-radius: var(--radius-lg);
 
-  box-shadow: var(--beta-card-shadow) !important;
+box-shadow: var(--beta-card-shadow) !important;
 
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
+backdrop-filter: blur(18px) saturate(150%); 
+-webkit-backdrop-filter: blur(18px) saturate(150%); 
 }
 
-.beta-page .beta-summary-card {
-  padding: 18px;
+.beta-page .beta-summary-card { 
+padding: 18px; 
 }
 
-.beta-page .beta-summary-label {
-  display: block;
-  color: var(--secondary-text);
-  font-size: 0.82rem;
-  font-weight: 700;
-  margin-bottom: 5px;
+.beta-page .beta-summary-label { 
+display: block; 
+color: var(--secondary-text); 
+font-size: 0.82rem; 
+font-weight: 700; 
+margin-bottom: 5px; 
 }
 
-.beta-page .beta-summary-card strong {
-  color: var(--text-color);
-  font-size: 1rem;
+.beta-page .beta-summary-card strong { 
+color: var(--text-color); 
+font-size: 1rem; 
 }
 
-/* ======================================================= /
-/ Section Heading                                         /
-/ ======================================================= */
+/* = / 
+/ Section Heading                                         / 
+/ = */
 
-.beta-page .beta-section-heading {
-  margin-bottom: 18px;
+.beta-page .beta-section-heading { 
+margin-bottom: 18px; 
 }
 
-.beta-page .beta-section-heading h2 {
-  margin: 0;
-  color: var(--text-color);
+.beta-page .beta-section-heading h2 { 
+margin: 0; 
+color: var(--text-color);
 
-  display: flex;
-  align-items: center;
-  gap: 10px;
+display: flex; 
+align-items: center; 
+gap: 10px; 
 }
 
-.beta-page .beta-section-heading h2 i {
-  color: var(--accent-color);
+.beta-page .beta-section-heading h2 i { 
+color: var(--accent-color); 
 }
 
-.beta-page .beta-section-heading p {
-  margin: 6px 0 0;
-  color: var(--secondary-text);
+.beta-page .beta-section-heading p { 
+margin: 6px 0 0; 
+color: var(--secondary-text); 
 }
 
-/* ======================================================= /
-/ Feature List                                            /
-/ ======================================================= */
+/* = / 
+/ Feature List                                            / 
+/ = */
 
-.beta-page .beta-feature-list {
-  display: grid;
-  gap: 16px;
+.beta-page .beta-feature-list { 
+display: grid; 
+gap: 16px; 
 }
 
-.beta-page .beta-feature-item {
-  display: grid;
-  grid-template-columns: 50px 1fr;
-  gap: 15px;
-  padding: 18px;
+.beta-page .beta-feature-item { 
+display: grid; 
+grid-template-columns: 50px 1fr; 
+gap: 15px; 
+padding: 18px; 
 }
 
-.beta-page .beta-feature-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 17px;
+.beta-page .beta-feature-icon { 
+width: 50px; 
+height: 50px; 
+border-radius: 17px;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+display: inline-flex; 
+align-items: center; 
+justify-content: center;
 
-  color: #ffffff;
-  font-size: 1.15rem;
+color: #ffffff; 
+font-size: 1.15rem;
 
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent-color) 88%, white 12%),
-      color-mix(in srgb, var(--accent-color) 88%, black 12%)
-    );
+background: 
+linear-gradient( 
+135deg, 
+color-mix(in srgb, var(--accent-color) 88%, white 12%), 
+color-mix(in srgb, var(--accent-color) 88%, black 12%) 
+);
 
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.2),
-    0 8px 18px color-mix(in srgb, var(--accent-color) 22%, transparent);
+box-shadow: 
+inset 0 1px 0 rgba(255,255,255,0.2), 
+0 8px 18px color-mix(in srgb, var(--accent-color) 22%, transparent); 
 }
 
-.beta-page .beta-feature-item h3 {
-  margin: 0 0 6px;
-  color: var(--text-color);
-  font-size: 1.08rem;
-  font-weight: 850;
+.beta-page .beta-feature-item h3 { 
+margin: 0 0 6px; 
+color: var(--text-color); 
+font-size: 1.08rem; 
+font-weight: 850; 
 }
 
-.beta-page .beta-feature-item p {
-  margin: 0 0 12px;
-  color: var(--secondary-text);
-  line-height: 1.5;
+.beta-page .beta-feature-item p { 
+margin: 0 0 12px; 
+color: var(--secondary-text); 
+line-height: 1.5; 
 }
 
-/* ======================================================= /
-/ Status Tags                                             /
-/ ======================================================= */
+/* = / 
+/ Status Tags                                             / 
+/ = */
 
-.beta-page .beta-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.beta-page .beta-status { 
+display: inline-flex; 
+align-items: center; 
+justify-content: center;
 
-  padding: 5px 10px;
-  border-radius: 999px;
+padding: 5px 10px; 
+border-radius: 999px;
 
-  font-size: 0.78rem;
-  font-weight: 850;
+font-size: 0.78rem; 
+font-weight: 850; 
 }
 
-.beta-page .beta-status.active {
-  color: #ffffff;
-  background: linear-gradient(135deg, #34c759, #0bd36f);
+.beta-page .beta-status.active { 
+color: #ffffff; 
+background: linear-gradient(135deg, #34c759, #0bd36f); 
 }
 
-.beta-page .beta-status.testing {
-  color: #111111;
-  background: linear-gradient(135deg, #ffd60a, #ffcc00);
+.beta-page .beta-status.testing { 
+color: #111111; 
+background: linear-gradient(135deg, #ffd60a, #ffcc00); 
 }
 
-.beta-page .beta-status.planned {
-  color: #ffffff;
-  background: linear-gradient(135deg, #8e8e93, #636366);
+.beta-page .beta-status.planned { 
+color: #ffffff; 
+background: linear-gradient(135deg, #8e8e93, #636366); 
 }
 
-/* ======================================================= /
-/ Notes                                                   /
-/ ======================================================= */
+/* = / 
+/ Notes                                                   / 
+/ = */
 
-.beta-page .beta-notes-list {
-  margin: 0;
-  padding-left: 1.25rem;
-  color: var(--secondary-text);
+.beta-page .beta-notes-list { 
+margin: 0; 
+padding-left: 1.25rem; 
+color: var(--secondary-text); 
 }
 
-.beta-page .beta-notes-list li {
-  margin: 8px 0;
-  line-height: 1.5;
-  color: var(--secondary-text);
+.beta-page .beta-notes-list li { 
+margin: 8px 0; 
+line-height: 1.5; 
+color: var(--secondary-text); 
 }
 
-/* ======================================================= /
-/ Roadmap                                                 /
-/ ======================================================= */
+/* = / 
+/ Roadmap                                                 / 
+/ = */
 
-.beta-page .beta-roadmap {
-  display: grid;
-  gap: 14px;
+.beta-page .beta-roadmap { 
+display: grid; 
+gap: 14px; 
 }
 
-.beta-page .beta-roadmap-item {
-  display: grid;
-  grid-template-columns: 18px 1fr;
-  gap: 12px;
-  align-items: start;
+.beta-page .beta-roadmap-item { 
+display: grid; 
+grid-template-columns: 18px 1fr; 
+gap: 12px; 
+align-items: start; 
 }
 
-.beta-page .roadmap-dot {
-  width: 12px;
-  height: 12px;
-  margin-top: 7px;
-  border-radius: 50%;
-  background: var(--secondary-text);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--secondary-text) 40%, transparent);
+.beta-page .roadmap-dot { 
+width: 12px; 
+height: 12px; 
+margin-top: 7px; 
+border-radius: 50%; 
+background: var(--secondary-text); 
+box-shadow: 0 0 10px color-mix(in srgb, var(--secondary-text) 40%, transparent); 
 }
 
-.beta-page .roadmap-dot.active {
-  background: var(--accent-color);
-  box-shadow: 0 0 14px color-mix(in srgb, var(--accent-color) 60%, transparent);
+.beta-page .roadmap-dot.active { 
+background: var(--accent-color); 
+box-shadow: 0 0 14px color-mix(in srgb, var(--accent-color) 60%, transparent); 
 }
 
-.beta-page .roadmap-dot.future {
-  background: #bf5af2;
-  box-shadow: 0 0 14px color-mix(in srgb, #bf5af2 45%, transparent);
+.beta-page .roadmap-dot.future { 
+background: #bf5af2; 
+box-shadow: 0 0 14px color-mix(in srgb, #bf5af2 45%, transparent); 
 }
 
-.beta-page .beta-roadmap-item strong {
-  color: var(--text-color);
+.beta-page .beta-roadmap-item strong { 
+color: var(--text-color); 
 }
 
-.beta-page .beta-roadmap-item p {
-  margin: 2px 0 0;
-  color: var(--secondary-text);
+.beta-page .beta-roadmap-item p { 
+margin: 2px 0 0; 
+color: var(--secondary-text); 
 }
 
-/* ======================================================= /
-/ Actions                                                 /
-/ ======================================================= */
+/* = / 
+/ Actions                                                 / 
+/ = */
 
-.beta-page .beta-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin: 10px 0 32px;
+.beta-page .beta-actions { 
+display: flex; 
+gap: 12px; 
+flex-wrap: wrap; 
+margin: 10px 0 32px; 
 }
 
-.beta-page .beta-action-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
+.beta-page .beta-action-button { 
+display: inline-flex; 
+align-items: center; 
+justify-content: center; 
+gap: 9px;
 
-  min-height: 48px;
-  padding: 0 18px;
-  border-radius: 999px;
+min-height: 48px; 
+padding: 0 18px; 
+border-radius: 999px;
 
-  color: #ffffff;
-  font-weight: 850;
-  text-decoration: none;
+color: #ffffff; 
+font-weight: 850; 
+text-decoration: none;
 
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--accent-color) 88%, white 12%),
-      color-mix(in srgb, var(--accent-color) 88%, black 12%)
-    );
+background: 
+linear-gradient( 
+135deg, 
+color-mix(in srgb, var(--accent-color) 88%, white 12%), 
+color-mix(in srgb, var(--accent-color) 88%, black 12%) 
+);
 
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.18),
-    0 8px 18px color-mix(in srgb, var(--accent-color) 20%, transparent);
+box-shadow: 
+inset 0 1px 0 rgba(255,255,255,0.18), 
+0 8px 18px color-mix(in srgb, var(--accent-color) 20%, transparent); 
 }
 
-.beta-page .beta-action-button.secondary {
-  color: var(--text-color);
+.beta-page .beta-action-button.secondary { 
+color: var(--text-color);
 
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--glow-color) 16%, transparent),
-      transparent
-    ),
-    color-mix(in srgb, var(--content-bg) 88%, transparent);
+background: 
+linear-gradient( 
+180deg, 
+color-mix(in srgb, var(--glow-color) 16%, transparent), 
+transparent 
+), 
+color-mix(in srgb, var(--content-bg) 88%, transparent);
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 56%, transparent);
+border: 1px solid color-mix(in srgb, var(--border-color) 56%, transparent); 
 }
 
-/* ======================================================= /
-/ Mobile                                                  /
-/ ======================================================= */
+/* = / 
+/ Mobile                                                  / 
+/ = */
 
-@media screen and (max-width: 700px) {
-  .beta-page .beta-page-section {
-    padding: 22px;
-  }
+@media screen and (max-width: 700px) { 
+.beta-page .beta-page-section { 
+padding: 22px; 
+}
 
-  .beta-page .beta-page-header {
-    flex-direction: column;
-  }
+.beta-page .beta-page-header { 
+flex-direction: column; 
+}
 
-  .beta-page .beta-feature-item {
-    grid-template-columns: 1fr;
-  }
+.beta-page .beta-feature-item { 
+grid-template-columns: 1fr; 
+}
 
-  .beta-page .beta-feature-icon {
-    width: 46px;
-    height: 46px;
-  }
+.beta-page .beta-feature-icon { 
+width: 46px; 
+height: 46px; 
+} 
 }
 
 /* ================================================== */
