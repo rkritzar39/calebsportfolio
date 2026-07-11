@@ -14304,3 +14304,85 @@ body.dark-mode .tech-search-input:-webkit-autofill {
   }
 }
 
+/* ========================================================== */
+/* Tally Beta Feedback Embed                                  */
+/* ========================================================== */
+
+.beta-feedback-embed {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+
+  background: color-mix(
+    in srgb,
+    var(--content-bg) 90%,
+    transparent
+  );
+
+  backdrop-filter:
+    blur(18px)
+    saturate(135%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(135%);
+
+  box-shadow:
+    var(--bubble-shadow),
+    0 16px 40px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 40%,
+        transparent
+      );
+}
+
+.beta-feedback-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 700px;
+  border: 0;
+  background: transparent;
+}
+
+.beta-feedback-fallback {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.beta-feedback-fallback p {
+  margin: 0;
+  color: var(--secondary-text);
+}
+
+.beta-feedback-privacy {
+  max-width: 760px;
+  margin: 1rem auto 0;
+
+  color: var(--secondary-text);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+/* Mobile */
+
+@media screen and (max-width: 700px) {
+  .beta-feedback-embed {
+    border-radius: var(--radius-md);
+  }
+
+  .beta-feedback-embed iframe {
+    min-height: 760px;
+  }
+
+  .beta-feedback-privacy {
+    font-size: 0.88rem;
+  }
+}
+
