@@ -13869,3 +13869,438 @@ body.dark-mode .tech-search-input:-webkit-autofill {
 		font-size: 0.86rem;
 	}
 }
+
+/* ========================================================== /
+/ Beta Search, Changelog, Removed Features, and Feedback      /
+/ ========================================================== */
+
+/* Search Wrapper */
+
+.beta-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.beta-search-wrapper > .fa-magnifying-glass {
+  position: absolute;
+  left: 1rem;
+  z-index: 1;
+  color: var(--secondary-text);
+  pointer-events: none;
+}
+
+/* Search Input */
+
+.beta-search {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.95rem 3rem 0.95rem 2.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--content-bg);
+  color: var(--text-color);
+  font: inherit;
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  transition:
+    border-color var(--transition-medium),
+    box-shadow var(--transition-medium),
+    background var(--transition-medium);
+}
+
+.beta-search::placeholder {
+  color: var(--secondary-text);
+  opacity: 0.8;
+}
+
+.beta-search:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--accent-color) 45%,
+    var(--border-color)
+  );
+}
+
+.beta-search:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow:
+    0 0 0 3px color-mix(
+      in srgb,
+      var(--accent-color) 20%,
+      transparent
+    ),
+    0 8px 24px color-mix(
+      in srgb,
+      var(--shadow-color) 35%,
+      transparent
+    );
+}
+
+/* Clear Search Button */
+
+.beta-search-clear {
+  position: absolute;
+  right: 0.6rem;
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: color-mix(
+    in srgb,
+    var(--content-bg) 75%,
+    var(--accent-color) 25%
+  );
+  color: var(--text-color);
+  cursor: pointer;
+  transition:
+    transform var(--transition-medium),
+    background var(--transition-medium);
+}
+
+.beta-search-clear:hover {
+  transform: scale(1.06);
+  background: color-mix(
+    in srgb,
+    var(--content-bg) 55%,
+    var(--accent-color) 45%
+  );
+}
+
+.beta-search-clear:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Search Status */
+
+.beta-search-status {
+  min-height: 1.5em;
+  margin: 0.75rem 0 0;
+  color: var(--secondary-text);
+}
+
+/* Hidden Search Results */
+
+.beta-searchable[hidden],
+.beta-searchable-item[hidden] {
+  display: none !important;
+}
+
+/* ========================================================== /
+/ Beta Changelog                                             /
+/ ========================================================== */
+
+.beta-changelog {
+  display: grid;
+  gap: 1rem;
+}
+
+.beta-release {
+  position: relative;
+  padding: 1.25rem;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--content-bg);
+  color: var(--text-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  box-shadow:
+    var(--bubble-shadow),
+    0 12px 30px color-mix(
+      in srgb,
+      var(--shadow-color) 35%,
+      transparent
+    );
+}
+
+.beta-release.current {
+  border-color: color-mix(
+    in srgb,
+    var(--accent-color) 65%,
+    var(--border-color)
+  );
+
+  box-shadow:
+    0 0 0 2px color-mix(
+      in srgb,
+      var(--accent-color) 22%,
+      transparent
+    ),
+    var(--bubble-shadow),
+    0 16px 36px color-mix(
+      in srgb,
+      var(--shadow-color) 40%,
+      transparent
+    );
+}
+
+.beta-release.current::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--accent-color);
+}
+
+.beta-release-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.beta-release-header h3 {
+  margin: 0;
+  color: var(--text-color);
+}
+
+.beta-release-meta {
+  margin: 0.25rem 0 0;
+  color: var(--secondary-text);
+  font-size: 0.92rem;
+}
+
+.beta-release ul {
+  margin-bottom: 0;
+  color: var(--secondary-text);
+}
+
+.beta-release li + li {
+  margin-top: 0.4rem;
+}
+
+/* Previous Status */
+
+.beta-status.previous {
+  background: color-mix(
+    in srgb,
+    var(--secondary-text) 18%,
+    transparent
+  );
+
+  color: var(--secondary-text);
+  border: 1px solid color-mix(
+    in srgb,
+    var(--secondary-text) 30%,
+    transparent
+  );
+}
+
+/* ========================================================== /
+/ Removed Features                                           /
+/ ========================================================== */
+
+.beta-removed-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+}
+
+.beta-removed-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--content-bg);
+  color: var(--text-color);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+}
+
+.beta-removed-item i {
+  flex: 0 0 auto;
+  color: var(--accent-color);
+  font-size: 1.1rem;
+}
+
+.beta-removed-item span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+/* ========================================================== /
+/ No Search Results                                          /
+/ ========================================================== */
+
+.beta-no-results {
+  text-align: center;
+}
+
+.beta-no-results > i {
+  margin-bottom: 0.75rem;
+  color: var(--accent-color);
+  font-size: 2rem;
+}
+
+.beta-no-results h2 {
+  margin: 0 0 0.5rem;
+}
+
+.beta-no-results p {
+  color: var(--secondary-text);
+}
+
+/* ========================================================== /
+/ Beta Feedback Form                                         /
+/ ========================================================== */
+
+.beta-feedback-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.beta-form-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.beta-form-field label {
+  color: var(--text-color);
+  font-weight: 700;
+}
+
+.optional-label {
+  margin-left: 0.3rem;
+  color: var(--secondary-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.beta-feedback-form input,
+.beta-feedback-form select,
+.beta-feedback-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--content-bg);
+  color: var(--text-color);
+  font: inherit;
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  transition:
+    border-color var(--transition-medium),
+    box-shadow var(--transition-medium);
+}
+
+.beta-feedback-form input::placeholder,
+.beta-feedback-form textarea::placeholder {
+  color: var(--secondary-text);
+  opacity: 0.8;
+}
+
+.beta-feedback-form input:focus,
+.beta-feedback-form select:focus,
+.beta-feedback-form textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow:
+    0 0 0 3px color-mix(
+      in srgb,
+      var(--accent-color) 20%,
+      transparent
+    );
+}
+
+.beta-feedback-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.beta-feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.beta-feedback-actions button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.feedback-status {
+  min-height: 1.5em;
+  margin: 0;
+  color: var(--secondary-text);
+}
+
+/* ========================================================== /
+/ Beta Accessibility                                         /
+/ ========================================================== */
+
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 1rem;
+  z-index: 10000;
+  padding: 0.8rem 1rem;
+  border-radius:
+    0 0 var(--radius-md) var(--radius-md);
+  background: var(--accent-color);
+  color: var(--accent-text-color, #fff);
+  text-decoration: none;
+  transform: translateY(-120%);
+  transition: transform 0.2s ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ========================================================== /
+/ Beta Responsive Adjustments                                /
+/ ========================================================== */
+
+@media screen and (max-width: 700px) {
+  .beta-release-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .beta-removed-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .beta-feedback-actions {
+    flex-direction: column;
+  }
+
+  .beta-feedback-actions .beta-action-button {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .beta-search {
+    font-size: 16px;
+  }
+
+  .beta-feedback-form input,
+  .beta-feedback-form select,
+  .beta-feedback-form textarea {
+    font-size: 16px;
+  }
+
+  .beta-release {
+    padding: 1rem;
+  }
+}
+
