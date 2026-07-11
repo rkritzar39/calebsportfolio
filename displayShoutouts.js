@@ -84,104 +84,23 @@ function watchLiveStatus() {
 
 document.addEventListener("DOMContentLoaded", watchLiveStatus);
 
-async function loadAndDisplayLegislation() {
-    const legislationList = document.getElementById('legislation-list');
-    if (!legislationList) return;
 
-    legislationList.innerHTML = '<p>Loading active legislation...</p>';
-    const legislationCollectionRef = collection(db, "legislation");
-
-    try {
-        const q = query(legislationCollectionRef, orderBy("order", "asc"));
-        const querySnapshot = await getDocs(q);
-
-        legislationList.innerHTML = '';
-        if (querySnapshot.empty) {
-            legislationList.innerHTML = '<p>No bills are currently being tracked.</p>';
-        } else {
-            querySnapshot.forEach(doc => {
-                const item = doc.data();
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'legislation-item';
-
-                const status = item.status || {};
-                const steps = [
-                    { key: 'introduced', label: 'Introduced', completed: status.introduced },
-                    { key: 'passedHouse', label: 'Passed House', completed: status.passedHouse },
-                    { key: 'passedSenate', label: 'Passed Senate', completed: status.passedSenate },
-                    { key: 'toPresident', label: 'To President', completed: status.toPresident },
-                    { key: 'becameLaw', label: 'Became Law', completed: status.becameLaw },
-                ];
-                
-                // Find the index of the current (most recent) step
-                const currentIndex = steps.map(s => s.completed).lastIndexOf(true);
-                
-                // Generate the HTML for the vertical steps
-                let stepsHtml = '';
-                steps.forEach((step, index) => {
-                    let stepClass = '';
-                    if (step.completed) {
-                        stepClass = 'completed';
-                    }
-                    // The last completed step is the "current" one
-                    if (index === currentIndex) {
-                        stepClass += ' current';
-                    }
-                    
-                    stepsHtml += `
-                        <li class="progress-step-vertical ${stepClass}">
-                            <div class="step-dot"></div>
-                            <div class="step-details">
-                                <span class="step-label">${step.label}</span>
-                            </div>
-                        </li>
-                    `;
-                });
-
-                // This is the new two-column HTML structure
-                itemDiv.innerHTML = `
-                    <div class="bill-info">
-                        <div class="bill-header">
-                            <span class="bill-id">${item.billId || 'N/A'}</span>
-                            <h4>${item.title || 'No Title'}</h4>
-                        </div>
-                        <div class="bill-details">
-                            <p><strong>Sponsor:</strong> ${item.sponsor || 'N/A'}<br>
-                               <strong>Introduced:</strong> ${item.date || 'N/A'}
-                            </p>
-                        </div>
-                        <p class="bill-summary">${item.description || 'A summary is in progress.'}</p>
-                        ${item.url ? `<div class="bill-actions"><a href="${item.url}" class="button-primary small-button" target="_blank" rel="noopener noreferrer">Read Full Text</a></div>` : ''}
-                    </div>
-                    <div class="bill-progress">
-                        <ol class="progress-tracker-vertical">
-                            ${stepsHtml}
-                        </ol>
-                    </div>
-                `;
-                legislationList.appendChild(itemDiv);
-            });
-        }
-    } catch (error) {
-        console.error("Error loading legislation for display:", error);
-        legislationList.innerHTML = '<p class="error">Could not load legislation data.</p>';
-    }
-}
-
+/* ==========================================================
+   ACTIVE SITE DATA INITIALIZATION
+   Retired sections removed: FAQ, Posts/Blog, President,
+   Legislation, Quote of the Day, and Latest TikTok embed.
+   ========================================================== */
 // --- Initialize Firebase ---
 let db;
 let firebaseAppInitialized = false;
 // Declare references in module scope
 let profileDocRef; 
-let presidentDocRef;
 let usefulLinksCollectionRef;
 let socialLinksCollectionRef;
 let disabilitiesCollectionRef;
 let techItemsCollectionRef;
 let shoutoutsMetaRef; 
-let faqsCollectionRef;
 let businessDocRef; 
-let postsCollectionRef; // 🔥 declare this too
 
 // --- NEW: Module-level variables to store all creator data for searching ---
 let allTikTokCreators = [], allInstagramCreators = [], allYouTubeCreators = [];
@@ -193,14 +112,11 @@ try {
     // Assign references
     profileDocRef = doc(db, "site_config", "mainProfile"); 
     businessDocRef = doc(db, "site_config", "businessDetails"); 
-    presidentDocRef = doc(db, "site_config", "currentPresident");
     usefulLinksCollectionRef = collection(db, "useful_links");
     socialLinksCollectionRef = collection(db, "social_links");
     disabilitiesCollectionRef = collection(db, "disabilities");
     techItemsCollectionRef = collection(db, "tech_items");
     shoutoutsMetaRef = doc(db, 'siteConfig', 'shoutoutsMetadata');
-    faqsCollectionRef = collection(db, "faqs");
-    postsCollectionRef = collection(db, "posts");
     firebaseAppInitialized = true;
     console.log("Firebase initialized for display.");
 } catch (error) {
@@ -379,24 +295,6 @@ function setupSmartRealtimeNotifications() {
     message: `${d.name || "Device"} ${action === "added" ? "added" : action === "modified" ? "updated" : "removed"}.`
   }));
 
-  // === FAQs ===
-  setupCollectionListener(collection(db, "faqs"), "FAQs", (action, d) => ({
-    title: action === "added" ? "New FAQ" : action === "modified" ? "FAQ Updated" : "FAQ Removed",
-    message: `${d.question || "Question"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
-  }));
-
-  // === Posts ===
-  setupCollectionListener(collection(db, "posts"), "Posts", (action, d) => ({
-    title: action === "added" ? "New Post" : action === "modified" ? "Post Updated" : "Post Removed",
-    message: `${d.title || "A post"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
-  }));
-
-  // === Legislation ===
-  setupCollectionListener(collection(db, "legislation"), "Legislation", (action, d) => ({
-    title: action === "added" ? "New Bill" : action === "modified" ? "Bill Updated" : "Bill Removed",
-    message: `${d.title || d.billId || "A bill"} ${action === "removed" ? "was removed" : "has been " + (action === "added" ? "added" : "updated")}.`
-  }));
-
   // === Business Info ===
   const bizRef = doc(db, "site_config", "businessDetails");
   let firstBiz = false;
@@ -413,15 +311,6 @@ function setupSmartRealtimeNotifications() {
     if (!firstMain) { firstMain = true; rememberDoc("mainProfile"); return; }
     showSmartToast("Profile Updated", "Site profile or settings were modified.");
     rememberDoc("mainProfile");
-  });
-
-  // === President Info ===
-  const presRef = doc(db, "site_config", "currentPresident");
-  let firstPres = false;
-  onSnapshot(presRef, (snap) => {
-    if (!firstPres) { firstPres = true; rememberDoc("presInfo"); return; }
-    showSmartToast("President Info Updated", "President data has changed.");
-    rememberDoc("presInfo");
   });
 
   console.log("✅ Smart Firestore notifications initialized (all collections).");
@@ -504,33 +393,6 @@ function formatFirestoreTimestamp(firestoreTimestamp) {
     }
 }
 
-function formatRelativeTime(createdAt, updatedAt) {
-    if (!createdAt) return "Posted (unknown time)";
-    const createdDate = createdAt.toDate();
-    const now = new Date();
-    const diffMs = now - createdDate;
-    const diffMinutes = Math.floor(diffMs / (1000 * 60));
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    let result = "";
-    if (diffMinutes < 60) {
-        result = `Posted ${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''} ago`;
-    } else if (diffHours < 24) {
-        result = `Posted ${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
-    } else if (diffDays < 30) {
-        result = `Posted ${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
-    } else {
-        result = `Posted on ${createdDate.toLocaleDateString()}`;
-    }
-
-        if (updatedAt && updatedAt.toDate() > createdDate) {
-        const updatedDate = updatedAt.toDate();
-        result += ` (Edited on ${updatedDate.toLocaleDateString()} at ${updatedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`;
-    }
-
-    return result;
-}
 
 /* ============================================================
    CREATOR SHOUTOUT RENDER FUNCTIONS
@@ -884,29 +746,6 @@ function renderYouTubeCard(account) {
     </article>`;
 }
 
-const tiktokContainer = document.getElementById("latest-tiktok-section");
-const ref = doc(db, "admin", "globalSettings");
-
-onSnapshot(ref, snap => {
-  const data = snap.data();
-  const url = data.latestTikTok;
-  if (!url) {
-    tiktokContainer.innerHTML = "";
-    return;
-  }
-
-  tiktokContainer.innerHTML = `
-    <blockquote class="tiktok-embed" cite="${url}" data-video-id="${extractID(url)}">
-      <section></section>
-    </blockquote>
-    <script async src="https://www.tiktok.com/embed.js"></script>
-  `;
-});
-
-function extractID(url) {
-  const match = url.match(/video\/(\d+)/);
-  return match ? match[1] : "";
-}
 
 /* ------------------------------------------------------------
    LATEST OS CONFIG
@@ -1009,24 +848,6 @@ const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
 /* ------------------------------------------------------------
    INIT
 ------------------------------------------------------------ */
-function renderFaqItemHomepage(faqData) {
-    const question = faqData.question || "No Question Provided";
-    const answerHtml = faqData.answer
-        ? (faqData.answer.includes("<") ? faqData.answer : `<p>${faqData.answer}</p>`)
-        : "<p>No Answer Provided.</p>";
-
-    return `
-        <div class="faq-item">
-            <button class="faq-question">
-                ${question}
-                <span class="faq-icon">+</span>
-            </button>
-            <div class="faq-answer">
-                ${answerHtml}
-            </div>
-        </div>
-    `;
-}
     
 const DISCORD_USER_ID = "850815059093356594";
 
@@ -1152,44 +973,6 @@ async function displayProfileData(profileData) {
     });
 }
 
-async function displayPresidentData() {
-    const placeholderElement = document.getElementById('president-placeholder');
-    if (!placeholderElement) { console.warn("President placeholder missing."); return; }
-    placeholderElement.innerHTML = '<p style="text-align: center; padding: 20px;">Loading president info...</p>';
-
-    if (!firebaseAppInitialized || !db) { console.error("President display error: Firebase not ready."); placeholderElement.innerHTML = '<p class="error">Could not load (DB Init Error).</p>'; return; }
-    if (!presidentDocRef) { console.error("President display error: presidentDocRef missing."); placeholderElement.innerHTML = '<p class="error">Could not load (Config Error).</p>'; return; }
-
-    try {
-        const docSnap = await getDoc(presidentDocRef);
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            const presidentHTML = `
-                <section id="current-president" class="president-section">
-                  <h2 class="section-title">Current U.S. President</h2>
-                  <div class="president-info">
-                    <img src="${data.imageUrl || 'images/default-president.jpg'}" alt="President ${data.name || 'N/A'}" class="president-photo" onerror="this.src='images/default-president.jpg'; this.alt='Photo Missing';">
-                    <div class="president-details">
-                      <h3 class="president-name">${data.name || 'N/A'}</h3>
-                      <p><strong>Born:</strong> ${data.born || 'N/A'}</p>
-                      <p><strong>Height:</strong> ${data.height || 'N/A'}</p>
-                      <p><strong>Party:</strong> ${data.party || 'N/A'}</p>
-                      <p class="presidential-term"><strong>Term:</strong> ${data.term || 'N/A'}</p>
-                      <p><strong>VP:</strong> ${data.vp || 'N/A'}</p>
-                    </div>
-                  </div>
-                </section>`;
-            placeholderElement.innerHTML = presidentHTML;
-            console.log("President section updated.");
-        } else {
-            console.warn(`President document ('site_config/currentPresident') missing.`);
-            placeholderElement.innerHTML = '<p style="text-align: center; padding: 20px;">President info unavailable.</p>';
-        }
-    } catch (error) {
-        console.error("Error fetching president data:", error);
-        placeholderElement.innerHTML = `<p class="error">Error loading president info: ${error.message}</p>`;
-    }
-}
 
 async function loadAndDisplayUsefulLinks() {
     const containerElement = document.querySelector('.useful-links-section .links-container');
@@ -4947,90 +4730,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setupTechSearchControls();
 });
 
-async function loadAndDisplayFaqs() {
-    const faqContainer = document.getElementById('faq-container-dynamic');
-    if (!faqContainer) { console.error("FAQ Load Error: Container element #faq-container-dynamic not found."); return; }
 
-    if (!firebaseAppInitialized || !db || !faqsCollectionRef) { console.error("FAQ Load Error: Firebase not ready or collection ref missing."); faqContainer.innerHTML = '<p class="error">Error loading FAQs (DB connection/Config).</p>'; return; }
-
-    console.log("Fetching FAQs for homepage...");
-    faqContainer.innerHTML = '<p>Loading FAQs...</p>';
-    try {
-        const faqQuery = query(faqsCollectionRef, orderBy("order", "asc"));
-        const querySnapshot = await getDocs(faqQuery);
-        let allItemsHtml = '';
-
-        if (querySnapshot.empty) {
-            console.log("No FAQs found in Firestore.");
-            allItemsHtml = '<p>No frequently asked questions available yet.</p>';
-        } else {
-            console.log(`Found ${querySnapshot.size} FAQs.`);
-            querySnapshot.forEach((doc) => {
-                allItemsHtml += renderFaqItemHomepage(doc.data());
-            });
-        }
-        faqContainer.innerHTML = allItemsHtml;
-        attachFaqAccordionListeners(); 
-        console.log("FAQ list updated on homepage.");
-    } catch (error) {
-        console.error("Error loading/displaying FAQs:", error);
-        let errorMsg = "Could not load FAQs at this time.";
-        if (error.code === 'failed-precondition') {
-            errorMsg = "Error: DB configuration needed for FAQs (order).";
-            console.error("Missing Firestore index for faqs collection, ordered by 'order'.");
-        }
-        faqContainer.innerHTML = `<p class="error">${errorMsg}</p>`;
-    }
-}
-
-function attachFaqAccordionListeners() {
-    const container = document.getElementById('faq-container-dynamic');
-    if (!container) { console.error("FAQ Accordion Error: Container #faq-container-dynamic not found for listeners."); return; }
-
-    console.log("Attaching FAQ accordion listeners (single open)...");
-    if (container.dataset.faqListenersAttached === 'true') {
-        console.log("FAQ listeners already attached, skipping.");
-        return;
-    }
-    container.dataset.faqListenersAttached = 'true';
-
-    const allFaqItems = container.querySelectorAll('.faq-item');
-
-    container.addEventListener('click', (event) => {
-        const questionButton = event.target.closest('.faq-question');
-        if (!questionButton) return; 
-
-        const clickedFaqItem = questionButton.closest('.faq-item');
-        if (!clickedFaqItem) return; 
-
-        const answer = clickedFaqItem.querySelector('.faq-answer');
-        if (!answer) return; 
-
-        const icon = questionButton.querySelector('.faq-icon');
-        const wasActive = clickedFaqItem.classList.contains('active');
-
-        allFaqItems.forEach(item => {
-            if (item !== clickedFaqItem && item.classList.contains('active')) {
-                item.classList.remove('active'); 
-                const otherAnswer = item.querySelector('.faq-answer');
-                const otherIcon = item.querySelector('.faq-icon');
-                if (otherAnswer) otherAnswer.style.maxHeight = null; 
-                if (otherIcon) otherIcon.textContent = '+'; 
-            }
-        });
-
-        if (wasActive) {
-            clickedFaqItem.classList.remove('active');
-            answer.style.maxHeight = null;
-            if (icon) icon.textContent = '+';
-        } else {
-            clickedFaqItem.classList.add('active');
-            answer.style.maxHeight = answer.scrollHeight + "px";
-            if (icon) icon.textContent = '-'; 
-        }
-    });
-    console.log("FAQ accordion listeners attached (single open).");
-}
 
 // --- NEW SHOUTOUTS DISPLAY FUNCTION ---
 function displayPlatformCreators(platform, creatorsToDisplay) {
@@ -8392,557 +8092,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/* ========================================================= */
-/* == QUOTE OF THE DAY MODULE (Local + Custom + Manager) == */
-/* ========================================================= */
-
-function getAllLocalQuotes() {
-  const baseQuotes = {
-    inspirational: [
-      { content: "The best way to get started is to quit talking and begin doing.", author: "Walt Disney" },
-      { content: "Don’t watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-      { content: "Success is not final; failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" }
-    ],
-    life: [
-      { content: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
-      { content: "The purpose of life is to live it, to taste experience to the utmost.", author: "Eleanor Roosevelt" }
-    ],
-    technology: [
-      { content: "Technology is best when it brings people together.", author: "Matt Mullenweg" },
-      { content: "Any sufficiently advanced technology is indistinguishable from magic.", author: "Arthur C. Clarke" },
-      { content: "The real problem is not whether machines think but whether men do.", author: "B.F. Skinner" }
-    ],
-    programming: [
-      { content: "Talk is cheap. Show me the code.", author: "Linus Torvalds" },
-      { content: "First, solve the problem. Then, write the code.", author: "John Johnson" },
-      { content: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson" }
-    ],
-    cybersecurity: [
-      { content: "Security is not a product, but a process.", author: "Bruce Schneier" },
-      { content: "The only truly secure system is one that is powered off.", author: "Gene Spafford" },
-      { content: "Amateurs hack systems, professionals hack people.", author: "Bruce Schneier" }
-    ],
-    ai: [
-      { content: "Artificial Intelligence is the new electricity.", author: "Andrew Ng" },
-      { content: "The question is not whether intelligent machines can have emotions, but whether machines can be intelligent without emotions.", author: "Marvin Minsky" }
-    ],
-    business: [
-      { content: "Opportunities don’t happen. You create them.", author: "Chris Grosser" },
-      { content: "Success usually comes to those who are too busy to be looking for it.", author: "Henry David Thoreau" }
-    ]
-  };
-
-  const customQuotes = JSON.parse(localStorage.getItem("customQuotes") || "{}");
-  for (const cat in customQuotes) {
-    if (!baseQuotes[cat]) baseQuotes[cat] = [];
-    baseQuotes[cat] = baseQuotes[cat].concat(customQuotes[cat]);
-  }
-
-  return baseQuotes;
-}
-
-/* ========================================================= */
-/* == MAIN QUOTE LOADER == */
-/* ========================================================= */
-
-async function loadQuoteOfTheDay(forceRefresh = false) {
-  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  const quoteSection = document.getElementById("quote-section");
-  if (!quoteSection) return;
-
-  const showQuote =
-    settings.showQuoteSection === "enabled" ||
-    settings.showQuoteSection === undefined ||
-    settings.showQuoteSection === null;
-  quoteSection.style.display = showQuote ? "" : "none";
-  if (!showQuote) return;
-
-  const quoteText = document.getElementById("quote-text");
-  const quoteAuthor = document.getElementById("quote-author");
-  const quoteDateEl = document.getElementById("quote-date");
-  if (!quoteText || !quoteAuthor) return;
-
-  const now = new Date();
-  const formattedDate = now.toLocaleDateString(undefined, {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric"
-  });
-  if (quoteDateEl) quoteDateEl.textContent = formattedDate;
-
-  const today = now.toDateString();
-  const category = settings.quoteCategory || "inspirational";
-  const storedDate = localStorage.getItem("quoteDate");
-  const storedCategory = localStorage.getItem("quoteCategory");
-  const storedQuote = localStorage.getItem("quoteOfTheDay");
-
-  if (!forceRefresh && storedDate === today && storedQuote && storedCategory === category) {
-    try {
-      const { content, author } = JSON.parse(storedQuote);
-      quoteText.textContent = `“${content}”`;
-      quoteAuthor.textContent = `— ${author || "Unknown"}`;
-      quoteSection.classList.add("loaded");
-      return;
-    } catch (err) {
-      console.warn("Cached quote parse failed:", err);
-    }
-  }
-
-  const allQuotes = getAllLocalQuotes();
-  let quotes = allQuotes[category];
-  if (!quotes || quotes.length === 0) quotes = allQuotes.inspirational;
-
-  const chosen = quotes[Math.floor(Math.random() * quotes.length)];
-
-  quoteText.textContent = `“${chosen.content}”`;
-  quoteAuthor.textContent = `— ${chosen.author || "Unknown"}`;
-
-  localStorage.setItem("quoteOfTheDay", JSON.stringify(chosen));
-  localStorage.setItem("quoteDate", today);
-  localStorage.setItem("quoteCategory", category);
-
-  quoteSection.classList.add("loaded");
-}
-
-/* ========================================================= */
-/* == CATEGORY HANDLING == */
-/* ========================================================= */
-
-function setupQuoteCategorySelector() {
-  const categorySelect = document.getElementById("quote-category");
-  const customContainer = document.getElementById("custom-category-container");
-  const customInput = document.getElementById("custom-category-input");
-  const saveCustomBtn = document.getElementById("save-custom-category");
-
-  if (!categorySelect || !customInput || !saveCustomBtn) return;
-
-  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  const savedCategories = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
-  const currentCategory = settings.quoteCategory || "inspirational";
-
-  const baseCategories = [
-    "inspirational", "life", "technology", "programming", "cybersecurity", "ai", "business"
-  ];
-
-  categorySelect.innerHTML = "";
-
-  baseCategories.forEach(cat => {
-    const opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-    categorySelect.appendChild(opt);
-  });
-
-  if (savedCategories.length > 0) {
-    const optGroup = document.createElement("optgroup");
-    optGroup.label = "Custom Categories";
-    savedCategories.forEach(cat => {
-      const opt = document.createElement("option");
-      opt.value = cat;
-      opt.textContent = `🌟 ${cat}`;
-      optGroup.appendChild(opt);
-    });
-    categorySelect.appendChild(optGroup);
-  }
-
-  const customOpt = document.createElement("option");
-  customOpt.value = "custom";
-  customOpt.textContent = "➕ Add new category…";
-  categorySelect.appendChild(customOpt);
-
-  categorySelect.value =
-    (baseCategories.includes(currentCategory) || savedCategories.includes(currentCategory))
-      ? currentCategory
-      : "inspirational";
-
-  categorySelect.addEventListener("change", () => {
-    if (categorySelect.value === "custom") {
-      customContainer.style.display = "flex";
-      customInput.focus();
-    } else {
-      customContainer.style.display = "none";
-      updateQuoteCategory(categorySelect.value);
-    }
-  });
-
-  saveCustomBtn.addEventListener("click", () => {
-    const newCategory = customInput.value
-      .trim()
-      .replace(/[^a-z0-9-_\s]/gi, '')
-      .toLowerCase();
-    if (!newCategory) {
-      alert("Please enter a valid category name!");
-      return;
-    }
-
-    const saved = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
-    if (!saved.includes(newCategory)) saved.push(newCategory);
-    localStorage.setItem("customQuoteCategories", JSON.stringify(saved));
-
-    updateQuoteCategory(newCategory, true);
-    setupQuoteCategorySelector();
-    customContainer.style.display = "none";
-    customInput.value = "";
-  });
-}
-
-function updateQuoteCategory(category, forceReload = false) {
-  const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  settings.quoteCategory = category;
-  localStorage.setItem("websiteSettings", JSON.stringify(settings));
-
-  localStorage.removeItem("quoteOfTheDay");
-  localStorage.setItem("quoteCategory", category);
-
-  loadQuoteOfTheDay(true);
-}
-
-/* ========================================================= */
-/* == CUSTOM QUOTE ADDER & MANAGER == */
-/* ========================================================= */
-
-function setupCustomQuoteAdder() {
-  const addQuoteBtn = document.getElementById("add-custom-quote-btn");
-  const customQuoteModal = document.getElementById("custom-quote-modal");
-  const saveQuoteBtn = document.getElementById("save-custom-quote");
-  const cancelQuoteBtn = document.getElementById("cancel-custom-quote");
-  const quoteInput = document.getElementById("new-quote-text");
-  const authorInput = document.getElementById("new-quote-author");
-  const categorySelect = document.getElementById("new-quote-category");
-
-  if (!addQuoteBtn || !customQuoteModal) return;
-
-  addQuoteBtn.addEventListener("click", () => {
-    updateQuoteCategoryOptions(categorySelect);
-    customQuoteModal.classList.remove("hidden");
-  });
-
-  cancelQuoteBtn.addEventListener("click", () => {
-    customQuoteModal.classList.add("hidden");
-    quoteInput.value = "";
-    authorInput.value = "";
-  });
-
-  saveQuoteBtn.addEventListener("click", () => {
-    const quoteText = quoteInput.value.trim();
-    const author = authorInput.value.trim() || "Unknown";
-    const category = categorySelect.value;
-
-    if (!quoteText) {
-      alert("Please enter a quote!");
-      return;
-    }
-
-    const customQuotes = JSON.parse(localStorage.getItem("customQuotes") || "{}");
-    if (!customQuotes[category]) customQuotes[category] = [];
-    customQuotes[category].push({ content: quoteText, author });
-    localStorage.setItem("customQuotes", JSON.stringify(customQuotes));
-
-    alert(`Quote added to "${category}"!`);
-    customQuoteModal.classList.add("hidden");
-    quoteInput.value = "";
-    authorInput.value = "";
-
-    loadQuoteOfTheDay(true);
-  });
-}
-
-function updateQuoteCategoryOptions(select) {
-  if (!select) return;
-  select.innerHTML = "";
-
-  const baseCategories = [
-    "inspirational", "life", "technology", "programming", "cybersecurity", "ai", "business"
-  ];
-  const customCategories = JSON.parse(localStorage.getItem("customQuoteCategories") || "[]");
-  [...baseCategories, ...customCategories].forEach(cat => {
-    const opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-    select.appendChild(opt);
-  });
-}
-
-/* ========================================================= */
-/* == VIEW & DELETE CUSTOM QUOTES == */
-/* ========================================================= */
-
-function setupCustomQuoteManager() {
-  const manageBtn = document.getElementById("manage-custom-quotes-btn");
-  const managerModal = document.getElementById("custom-quotes-manager");
-  const closeManagerBtn = document.getElementById("close-manager-btn");
-  const quoteList = document.getElementById("custom-quote-list");
-  const categorySelect = document.getElementById("manager-category-select");
-
-  if (!manageBtn) return;
-
-  manageBtn.addEventListener("click", () => {
-    updateQuoteCategoryOptions(categorySelect);
-    loadCustomQuotesIntoList(categorySelect.value);
-    managerModal.classList.remove("hidden");
-  });
-
-  closeManagerBtn.addEventListener("click", () => {
-    managerModal.classList.add("hidden");
-  });
-
-  categorySelect.addEventListener("change", () => {
-    loadCustomQuotesIntoList(categorySelect.value);
-  });
-
-  function loadCustomQuotesIntoList(category) {
-    quoteList.innerHTML = "";
-    const customQuotes = JSON.parse(localStorage.getItem("customQuotes") || "{}");
-    const quotes = (customQuotes[category] || []);
-    if (quotes.length === 0) {
-      quoteList.innerHTML = "<li>No custom quotes for this category.</li>";
-      return;
-    }
-
-    quotes.forEach((q, idx) => {
-      const li = document.createElement("li");
-      li.textContent = `"${q.content}" — ${q.author}`;
-      const del = document.createElement("button");
-      del.textContent = "🗑️";
-      del.addEventListener("click", () => {
-        if (confirm("Delete this quote?")) {
-          quotes.splice(idx, 1);
-          customQuotes[category] = quotes;
-          localStorage.setItem("customQuotes", JSON.stringify(customQuotes));
-          loadCustomQuotesIntoList(category);
-        }
-      });
-      li.appendChild(del);
-      quoteList.appendChild(li);
-    });
-  }
-}
-
-/* ========================================================= */
-/* == NEXT QUOTE BUTTON == */
-/* ========================================================= */
-
-function setupNextQuoteButton() {
-  const btn = document.getElementById("next-quote-btn");
-  if (!btn) return;
-  btn.addEventListener("click", () => loadQuoteOfTheDay(true));
-}
-
-/* ========================================================= */
-/* == INIT on DOMContentLoaded == */
-/* ========================================================= */
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadQuoteOfTheDay();
-  setupQuoteCategorySelector();
-  setupNextQuoteButton();
-  setupCustomQuoteAdder();
-  setupCustomQuoteManager();
-});
-
-// ======================================================
-// ===== BLOG LIST PAGE SPECIFIC FUNCTIONS
-// ======================================================
-async function initializeBlogListPageContent() {
-    if (!firebaseAppInitialized) return;
-    console.log("Initializing Blog List Page...");
-
-    const postsGrid = document.getElementById('posts-grid');
-    const featuredContainer = document.getElementById('featured-post-container');
-    const categoryFiltersContainer = document.getElementById('category-filters');
-    const searchInput = document.getElementById('search-input');
-    let allPosts = [];
-
-    // --- Helper: relative time formatting ---
-
-    async function fetchPosts() {
-        postsGrid.innerHTML = '<p>Loading latest posts...</p>';
-        try {
-            const postsQuery = query(postsCollectionRef, orderBy('createdAt', 'desc'));
-            const snapshot = await getDocs(postsQuery);
-            if (snapshot.empty) {
-                postsGrid.innerHTML = '<p>No posts have been published yet.</p>';
-                return;
-            }
-            allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            displayPosts(allPosts);
-            populateCategories(allPosts);
-            displayFeaturedPost(allPosts);
-        } catch (error) {
-            console.error("Error fetching posts:", error);
-            postsGrid.innerHTML = `<p class="error">Error loading posts. Check Firestore rules and console.</p>`;
-        }
-    }
-
-   function displayFeaturedPost(posts) {
-    const featuredPost = posts.find(post => post.isFeatured);
-    if (featuredPost && featuredContainer) {
-        const authorLink = `author.html?name=${encodeURIComponent(featuredPost.author)}`;
-        featuredContainer.innerHTML = `
-            <article class="featured-post">
-                <h2>${featuredPost.title}</h2>
-                <div class="post-meta">
-                    ${featuredPost.authorPfpUrl ? `<img src="${featuredPost.authorPfpUrl}" class="author-pfp" alt="${featuredPost.author}">` : ""}
-                    <div class="author-details">
-                        <span class="author-name"><a href="${authorLink}">${featuredPost.author}</a></span>
-                        <span class="post-time">${formatRelativeTime(featuredPost.createdAt, featuredPost.updatedAt)}</span>
-                    </div>
-                </div>
-                <p>${featuredPost.content.substring(0, 200)}...</p>
-                <a href="post.html?id=${featuredPost.id}" class="read-more-btn">Read Full Story <i class="fas fa-arrow-right"></i></a>
-            </article>`;
-    }
-}
-
-function displayPosts(posts) {
-    postsGrid.innerHTML = '';
-    const postsToDisplay = posts.filter(post => !post.isFeatured);
-    if (postsToDisplay.length === 0) {
-        postsGrid.innerHTML = posts.find(p => p.isFeatured) ? '<p>No other posts to display.</p>' : '<p>No posts match your search or filter.</p>';
-        return;
-    }
-    postsToDisplay.forEach(post => {
-        const authorLink = `author.html?name=${encodeURIComponent(post.author)}`;
-        const postCard = document.createElement('div');
-        postCard.className = 'post-card';
-        // The <p> tag for content is now moved above the post-meta for correct layout
-        postCard.innerHTML = `
-            <div class="post-card-content">
-                <span class="post-category">${post.category}</span>
-                <h3>${post.title}</h3>
-                <p>${post.content.substring(0, 100)}...</p>
-                <div class="post-meta">
-                    ${post.authorPfpUrl ? `<img src="${post.authorPfpUrl}" class="author-pfp" alt="${post.author}">` : ""}
-                    <div class="author-details">
-                        <span class="author-name"><a href="${authorLink}">${post.author}</a></span>
-                        <span class="post-time">${formatRelativeTime(post.createdAt, post.updatedAt)}</span>
-                    </div>
-                </div>
-                <a href="post.html?id=${post.id}" class="read-more-btn">Read More</a>
-            </div>`;
-        postsGrid.appendChild(postCard);
-    });
-}
-    
-    function populateCategories(posts) {
-        categoryFiltersContainer.innerHTML = '<button class="category-btn active" data-category="all">All</button>';
-        const categories = [...new Set(posts.map(post => post.category))];
-        categories.forEach(category => {
-            const btn = document.createElement('button');
-            btn.className = 'category-btn';
-            btn.dataset.category = category;
-            btn.textContent = category;
-            categoryFiltersContainer.appendChild(btn);
-        });
-    }
-
-    function filterAndSearch() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const activeCategory = categoryFiltersContainer.querySelector('.category-btn.active').dataset.category;
-        let filteredPosts = allPosts;
-        if (activeCategory !== 'all') {
-            filteredPosts = filteredPosts.filter(post => post.category === activeCategory);
-        }
-        if (searchTerm) {
-            filteredPosts = filteredPosts.filter(post =>
-                post.title.toLowerCase().includes(searchTerm) ||
-                post.content.toLowerCase().includes(searchTerm) ||
-                post.author.toLowerCase().includes(searchTerm)
-            );
-        }
-        displayPosts(filteredPosts);
-    }
-    
-    searchInput.addEventListener('input', filterAndSearch);
-    categoryFiltersContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('category-btn')) {
-            categoryFiltersContainer.querySelector('.category-btn.active').classList.remove('active');
-            e.target.classList.add('active');
-            filterAndSearch();
-        }
-    });
-
-    fetchPosts();
-}
-
-
-// ======================================================
-// ===== SINGLE POST PAGE SPECIFIC FUNCTIONS (CORRECTED)
-// ======================================================
-async function initializePostPageContent() {
-    if (!firebaseAppInitialized) return;
-    console.log("Initializing Single Post Page...");
-
-    const postContentArea = document.getElementById('post-content-area');
-    const postTitleHeader = document.getElementById('post-title-header');
-    
-    const params = new URLSearchParams(window.location.search);
-    const postId = params.get('id');
-
-    if (!postId) {
-        postContentArea.innerHTML = '<h1>Post not found</h1><p>No post ID was provided.</p>';
-        return;
-    }
-
-    try {
-        const docRef = doc(db, 'posts', postId);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            const post = docSnap.data();
-            document.title = post.title;
-            // Use textContent for security, as title is user-generated
-            if (postTitleHeader) postTitleHeader.textContent = post.title;
-
-            let timestampsHTML = `<span class="post-date">${formatRelativeTime(post.createdAt, post.updatedAt)}</span>`;
-
-            // This is the corrected innerHTML structure
-            postContentArea.innerHTML = `
-                <div class="post-author-info">
-                    ${post.authorPfpUrl ? `<img src="${post.authorPfpUrl}" alt="${post.author}" class="author-pfp">` : ''}
-                    <div class="author-details">
-                        <span class="author-name"><a href="author.html?name=${encodeURIComponent(post.author)}">${post.author}</a></span>
-                        <div class="post-timestamps">${timestampsHTML}</div>
-                    </div>
-                </div>
-                <div class="post-main-content">
-                    ${post.content}
-                </div>`;
-        } else {
-            postContentArea.innerHTML = '<h1>Post not found</h1><p>The requested post does not exist.</p>';
-        }
-    } catch (error) {
-        console.error("Error fetching post:", error);
-        postContentArea.innerHTML = '<h1>Error</h1><p>Could not load the post.</p>';
-    }
-}
-
-// ======================================================
-// ===== PAGE ROUTER (This decides what to run) ======
-// ======================================================
+/* ==========================================================
+   PAGE INITIALIZATION
+   ========================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if we are on the blog list page
-    if (document.getElementById('posts-grid')) {
-        initializeBlogListPageContent();
-    } 
-    // Check if we are on the single post page
-    else if (document.getElementById('post-content-area')) {
-        initializePostPageContent();
-    }
-    // --- THIS IS THE FIX for the "Loading..." issue ---
-    // Check if we are on the legislation tracker page
-    else if (document.getElementById('legislation-list')) {
-        console.log("Initializing Legislation Tracker Page...");
-        loadAndDisplayLegislation();
-    }
-    // Otherwise, assume we are on the main homepage
-    else if (document.getElementById('main-content-wrapper')) {
+    if (document.getElementById('main-content-wrapper')) {
         initializeHomepageContent();
     }
 });
-
-
 
 /* ------------------------------------------------------------ */
 /*  START EVENT COUNTDOWN (SINGLETON + CLEAN SHUTDOWN)           */
@@ -9269,14 +8426,12 @@ async function initializeHomepageContent() {
         // --- LOAD ALL CONTENT ---
         const loadPromises = [
             (typeof displayProfileData === 'function' ? displayProfileData(siteSettings) : Promise.resolve()),
-            (typeof displayPresidentData === 'function' ? displayPresidentData() : Promise.resolve()),
             (typeof loadShoutoutPlatformData === 'function' ? loadShoutoutPlatformData('instagram', document.getElementById('instagram-last-updated-timestamp')) : Promise.resolve()),
             (typeof loadShoutoutPlatformData === 'function' ? loadShoutoutPlatformData('youtube', document.getElementById('youtube-last-updated-timestamp')) : Promise.resolve()),
             (typeof loadAndDisplayUsefulLinks === 'function' ? loadAndDisplayUsefulLinks() : Promise.resolve()),
             (typeof loadAndDisplaySocialLinks === 'function' ? loadAndDisplaySocialLinks() : Promise.resolve()),
             (typeof loadAndDisplayDisabilities === 'function' ? loadAndDisplayDisabilities() : Promise.resolve()),
-            (typeof loadAndDisplayTechItems === 'function' ? loadAndDisplayTechItems() : Promise.resolve()),
-            (typeof loadAndDisplayFaqs === 'function' ? loadAndDisplayFaqs() : Promise.resolve())
+            (typeof loadAndDisplayTechItems === 'function' ? loadAndDisplayTechItems() : Promise.resolve())
         ];
 
         if (isTikTokVisible && typeof loadShoutoutPlatformData === 'function') {
@@ -9311,118 +8466,3 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- Call the main initialization function when the DOM is ready ---
 document.addEventListener('DOMContentLoaded', initializeHomepageContent);
 
-/* =============================================== */
-/* == ONYX AI ASSISTANT LOGIC (Integrated v1.0) == */
-/* =============================================== */
-document.addEventListener("DOMContentLoaded", () => {
-  const aiToggleBtn = document.getElementById("ai-toggle-btn");
-  const aiAssistant = document.getElementById("onyx-ai-assistant");
-  const aiCloseBtn = document.getElementById("ai-close-btn");
-  const aiForm = document.getElementById("ai-form");
-  const aiInput = document.getElementById("ai-input");
-  const aiMessages = document.getElementById("ai-messages");
-
-  // If AI elements aren’t found, exit early (prevents errors if section is hidden)
-  if (!aiToggleBtn || !aiAssistant) return;
-
-  // === Open / Close Assistant ===
-  aiToggleBtn.addEventListener("click", () => {
-    aiAssistant.classList.toggle("hidden");
-  });
-  aiCloseBtn.addEventListener("click", () => {
-    aiAssistant.classList.add("hidden");
-  });
-
-  // === Message Handling ===
-  aiForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const userMsg = aiInput.value.trim();
-    if (!userMsg) return;
-
-    appendMessage("user", userMsg);
-    aiInput.value = "";
-    aiMessages.scrollTop = aiMessages.scrollHeight;
-
-    // Simulated AI reply for now
-    setTimeout(() => {
-      appendMessage("ai", generateReply(userMsg));
-      aiMessages.scrollTop = aiMessages.scrollHeight;
-    }, 600);
-  });
-
-  // === Append Message Utility ===
-  function appendMessage(sender, text) {
-    const msg = document.createElement("div");
-    msg.className = `message ${sender}`;
-    msg.textContent = text;
-    aiMessages.appendChild(msg);
-  }
-
-  // === Placeholder AI Logic (to be replaced with API later) ===
-  function generateReply(input) {
-    const lower = input.toLowerCase();
-    if (lower.includes("hello") || lower.includes("hi")) {
-      return "Hey there! 👋 What can I help you with today?";
-    }
-    if (lower.includes("theme") || lower.includes("color")) {
-      return "You can change my color using the Accent Color picker in your settings!";
-    }
-    if (lower.includes("who are you")) {
-      return "I’m Onyx — your personal glass assistant, designed just for this site.";
-    }
-    if (lower.includes("settings")) {
-      return "You can access all settings in your admin panel under 'Site Settings'.";
-    }
-    return "I'm still learning! Try asking about your theme, layout, or sections.";
-  }
-});
-
-// --------------------------------------
-// LOAD PROJECT GOAL TRACKER ON HOMEPAGE
-// --------------------------------------
-async function loadGoalTrackerHomepage() {
-  try {
-    const ref = doc(db, "siteSettings", "goalTracker");
-    const snap = await getDoc(ref);
-
-    if (!snap.exists()) {
-      console.warn("No goalTracker document found.");
-      return;
-    }
-
-    const data = snap.data();
-
-    // Set title
-    const titleEl = document.querySelector(".goals-title");
-    if (titleEl) titleEl.textContent = data.goalTitle || "Project Goal";
-
-    // Set numbers
-    const totalEl = document.getElementById("goalTotal");
-    const raisedEl = document.getElementById("goalRaised");
-    const remainingEl = document.getElementById("goalRemaining");
-
-    if (totalEl) totalEl.textContent = data.goalTotal ?? 0;
-    if (raisedEl) raisedEl.textContent = data.goalRaised ?? 0;
-    if (remainingEl) remainingEl.textContent = data.goalRemaining ?? 0;
-
-    // Progress bar
-    const fill = document.getElementById("goalFill");
-    if (fill && data.goalTotal > 0) {
-      const pct = Math.min((data.goalRaised / data.goalTotal) * 100, 100);
-      fill.style.width = pct + "%";
-    }
-
-    // Message
-    const msg = document.getElementById("goalMessage");
-    if (msg && data.goalTotal > 0) {
-      const pct = Math.min((data.goalRaised / data.goalTotal) * 100, 100);
-      msg.textContent = `You are ${pct.toFixed(1)}% of the way there!`;
-    }
-
-  } catch (err) {
-    console.error("Error loading goal tracker:", err);
-  }
-}
-
-// Load on page render
-document.addEventListener("DOMContentLoaded", loadGoalTrackerHomepage);
