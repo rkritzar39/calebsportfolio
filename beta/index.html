@@ -800,26 +800,42 @@
       copyFeedbackButton?.addEventListener("click", copyFeedbackReport);
 
       feedbackForm?.addEventListener("submit", (event) => {
-        event.preventDefault();
+  event.preventDefault();
 
-        if (!feedbackForm.reportValidity()) {
-          return;
-        }
+  if (!feedbackForm.reportValidity()) {
+    return;
+  }
 
-        const subject = encodeURIComponent("Beta Feedback — v26.6-beta.3");
-        const body = encodeURIComponent(createFeedbackReport());
+  const subject = encodeURIComponent(
+    "Beta Feedback — v26.6-beta.3"
+  );
 
-        if (!FEEDBACK_EMAIL || FEEDBACK_EMAIL.includes("calebkritzar@gmail.com")) {
-          copyFeedbackReport();
-          feedbackStatus.textContent =
-            "Feedback copied. Add your public email address to FEEDBACK_EMAIL to enable email submission.";
-          return;
-        }
+  const body = encodeURIComponent(
+    createFeedbackReport()
+  );
 
-        window.location.href = `mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
-        feedbackStatus.textContent = "Opening your email application...";
-      });
+  if (!FEEDBACK_EMAIL) {
+    feedbackStatus.textContent =
+      "No feedback email address is configured.";
 
+    return;
+  }
+
+  const mailtoURL =
+    mailto:${FEEDBACK_EMAIL} +
+    ?subject=${subject} +
+    &body=${body};
+
+  feedbackStatus.textContent =
+    "Opening your email application...";
+
+  window.location.href = mailtoURL;
+
+  window.setTimeout(() => {
+    feedbackStatus.textContent =
+      "If the email application did not open, use Copy Report.";
+  }, 2000);
+});
       feedbackForm?.addEventListener("reset", () => {
         feedbackStatus.textContent = "";
       });
