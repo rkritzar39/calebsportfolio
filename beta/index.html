@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <meta name="author" content="Caleb Kritzar" />
+
   <meta
     name="description"
     content="View the current beta version, changelog, development status, release roadmap, and feedback options for Caleb's Link in Bio Website."
@@ -13,6 +19,7 @@
 
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/settings.css" />
+
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -24,7 +31,14 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="manifest" href="/manifest.json" />
 
-  <meta name="theme-color" content="#4EA8FF" />
+  <meta
+    name="theme-color"
+    content="#4EA8FF"
+  />
+
+  <!-- ====================================================== -->
+  <!-- Apply Saved Appearance Before Rendering                -->
+  <!-- ====================================================== -->
 
   <script>
     (function () {
@@ -41,7 +55,11 @@
           localStorage.getItem("websiteTheme") ||
           "dark";
 
-        const normalizedTheme = String(savedTheme).toLowerCase();
+        const normalizedTheme =
+          String(savedTheme).toLowerCase();
+
+        const isLightTheme =
+          normalizedTheme.includes("light");
 
         document.documentElement.classList.remove(
           "light-mode",
@@ -50,32 +68,48 @@
           "dark-e"
         );
 
-        if (normalizedTheme.includes("light")) {
-          document.documentElement.classList.add("light-mode");
-          document.documentElement.dataset.theme = "light";
+        document.documentElement.classList.add(
+          isLightTheme
+            ? "light-mode"
+            : "dark-mode"
+        );
 
-          document.addEventListener("DOMContentLoaded", () => {
-            document.body.classList.remove("dark-mode", "dark-e");
-            document.body.classList.add("light-mode");
-            document.body.dataset.theme = "light";
-          });
-        } else {
-          document.documentElement.classList.add("dark-mode");
-          document.documentElement.dataset.theme = "dark";
+        document.documentElement.dataset.theme =
+          isLightTheme
+            ? "light"
+            : "dark";
 
-          document.addEventListener("DOMContentLoaded", () => {
-            document.body.classList.remove("light-mode", "light-e");
-            document.body.classList.add("dark-mode");
-            document.body.dataset.theme = "dark";
-          });
-        }
+        document.addEventListener(
+          "DOMContentLoaded",
+          () => {
+            document.body.classList.remove(
+              "light-mode",
+              "light-e",
+              "dark-mode",
+              "dark-e"
+            );
+
+            document.body.classList.add(
+              isLightTheme
+                ? "light-mode"
+                : "dark-mode"
+            );
+
+            document.body.dataset.theme =
+              isLightTheme
+                ? "light"
+                : "dark";
+          }
+        );
 
         const customBackground =
           settings.customBackground ||
           settings.customBackgroundUrl ||
           settings.backgroundImage ||
           settings.backgroundUrl ||
-          localStorage.getItem("customBackground");
+          localStorage.getItem(
+            "customBackground"
+          );
 
         if (customBackground) {
           const backgroundValue = `url("${customBackground}")`;
@@ -85,85 +119,159 @@
             backgroundValue
           );
 
-          document.addEventListener("DOMContentLoaded", () => {
-            document.body.style.setProperty(
-              "--custom-background-image",
-              backgroundValue
-            );
+          document.addEventListener(
+            "DOMContentLoaded",
+            () => {
+              document.body.style.setProperty(
+                "--custom-background-image",
+                backgroundValue
+              );
 
-            document.body.classList.add("custom-background-active");
-          });
+              document.body.classList.add(
+                "custom-background-active"
+              );
+            }
+          );
         }
       } catch (error) {
-        document.documentElement.classList.add("dark-mode");
-        document.documentElement.dataset.theme = "dark";
+        document.documentElement.classList.add(
+          "dark-mode"
+        );
 
-        document.addEventListener("DOMContentLoaded", () => {
-          document.body.classList.add("dark-mode");
-          document.body.dataset.theme = "dark";
-        });
+        document.documentElement.dataset.theme =
+          "dark";
+
+        document.addEventListener(
+          "DOMContentLoaded",
+          () => {
+            document.body.classList.add(
+              "dark-mode"
+            );
+
+            document.body.dataset.theme =
+              "dark";
+          }
+        );
       }
     })();
   </script>
 </head>
 
 <body class="beta-page">
+
+  <!-- ====================================================== -->
+  <!-- Skip Navigation                                       -->
+  <!-- ====================================================== -->
+
   <a href="#main-content" class="skip-link">
     Skip to beta information
   </a>
 
-  <main class="container" id="main-content">
+  <main
+    class="container"
+    id="main-content"
+  >
+
+    <!-- ==================================================== -->
+    <!-- Beta Header                                          -->
+    <!-- ==================================================== -->
 
     <section class="section beta-page-section">
       <div class="beta-page-header">
         <div>
           <p class="beta-eyebrow">
-            <i class="fa-solid fa-flask-vial" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-flask-vial"
+              aria-hidden="true"
+            ></i>
+
             Beta Revamp Preview
           </p>
+
           <h1>Beta Preview</h1>
+
           <p class="beta-page-subtitle">
             Track current changes, completed improvements,
-            development progress, and the path to the full website
-            revamp planned for September 2026.
+            development progress, and the path to the full
+            website revamp planned for September 2026.
           </p>
         </div>
-        <span class="beta-version-pill" aria-label="Current beta version">
+
+        <span
+          class="beta-version-pill"
+          aria-label="Current beta version"
+        >
           v26.6-beta.3
         </span>
       </div>
 
-      <div class="beta-summary-grid" aria-label="Current release summary">
+      <div
+        class="beta-summary-grid"
+        aria-label="Current release summary"
+      >
         <article class="beta-summary-card">
-          <span class="beta-summary-label">Stable Base</span>
+          <span class="beta-summary-label">
+            Stable Base
+          </span>
+
           <strong>v26.5</strong>
         </article>
+
         <article class="beta-summary-card">
-          <span class="beta-summary-label">Current Beta</span>
+          <span class="beta-summary-label">
+            Current Beta
+          </span>
+
           <strong>v26.6-beta.3</strong>
         </article>
+
         <article class="beta-summary-card">
-          <span class="beta-summary-label">Current Build</span>
+          <span class="beta-summary-label">
+            Current Build
+          </span>
+
           <strong>2026.07.11</strong>
         </article>
+
         <article class="beta-summary-card">
-          <span class="beta-summary-label">Full Release</span>
-          <strong>v27.0 — September 2026</strong>
+          <span class="beta-summary-label">
+            Full Release
+          </span>
+
+          <strong>
+            v27.0 — September 2026
+          </strong>
         </article>
       </div>
     </section>
 
+    <!-- ==================================================== -->
+    <!-- Beta Search                                          -->
+    <!-- ==================================================== -->
+
     <section class="section beta-page-section">
       <div class="beta-section-heading">
         <h2>
-          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <i
+            class="fa-solid fa-magnifying-glass"
+            aria-hidden="true"
+          ></i>
+
           Search Beta Information
         </h2>
-        <p>Search versions, features, fixes, or removed sections.</p>
+
+        <p>
+          Search versions, features, fixes, or removed
+          sections.
+        </p>
       </div>
 
       <div class="beta-search-wrapper">
-        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <i
+          class="fa-solid fa-magnifying-glass"
+          aria-hidden="true"
+        ></i>
+
         <input
           type="search"
           id="beta-search"
@@ -172,6 +280,7 @@
           autocomplete="off"
           aria-describedby="beta-search-status"
         />
+
         <button
           type="button"
           id="clear-beta-search"
@@ -179,668 +288,1310 @@
           aria-label="Clear search"
           hidden
         >
-          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          <i
+            class="fa-solid fa-xmark"
+            aria-hidden="true"
+          ></i>
         </button>
       </div>
 
-      <p id="beta-search-status" class="beta-search-status" role="status" aria-live="polite">
+      <p
+        id="beta-search-status"
+        class="beta-search-status"
+        role="status"
+        aria-live="polite"
+      >
         Showing all beta information.
       </p>
     </section>
 
+    <!-- ==================================================== -->
+    <!-- Searchable Beta Content                              -->
+    <!-- ==================================================== -->
+
     <div id="beta-search-content">
 
-      <section class="section beta-page-section beta-searchable" data-search-title="Current Release">
+      <!-- ================================================== -->
+      <!-- Current Release                                    -->
+      <!-- ================================================== -->
+
+      <section
+        class="section beta-page-section beta-searchable"
+        data-search-title="Current Release"
+      >
         <div class="beta-section-heading">
           <h2>
-            <i class="fa-solid fa-sparkles" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-sparkles"
+              aria-hidden="true"
+            ></i>
+
             What’s New in v26.6-beta.3
           </h2>
+
           <p>
-            This release focuses on removing retired features and
-            reducing unnecessary website code.
+            This release focuses on removing retired
+            features and reducing unnecessary website code.
           </p>
         </div>
+
         <ul class="beta-notes-list">
-          <li>Removed the FAQ, Posts, Blog, President information, Legislation tracker, Quote of the Day, Latest TikTok embed, Onyx AI assistant, and Project Goal Tracker.</li>
-          <li>Removed associated JavaScript, CSS, Firestore references, realtime listeners, page routing, and initialization calls.</li>
-          <li>Reduced unnecessary public-page processing and unused data activity.</li>
-          <li>Kept the main TikTok, Instagram, and YouTube creator shoutout sections.</li>
-          <li>Kept device AI compatibility information in the Tech Information section because it is separate from the retired Onyx AI assistant.</li>
+          <li>
+            Removed the FAQ, Posts, Blog, President
+            information, Legislation tracker, Quote of the
+            Day, Latest TikTok embed, Onyx AI assistant,
+            and Project Goal Tracker.
+          </li>
+
+          <li>
+            Removed associated JavaScript, CSS, Firestore
+            references, realtime listeners, page routing,
+            and initialization calls.
+          </li>
+
+          <li>
+            Reduced unnecessary public-page processing and
+            unused data activity.
+          </li>
+
+          <li>
+            Kept the main TikTok, Instagram, and YouTube
+            creator shoutout sections.
+          </li>
+
+          <li>
+            Kept device AI compatibility information in the
+            Tech Information section because it is separate
+            from the retired Onyx AI assistant.
+          </li>
         </ul>
       </section>
 
-      <section class="section beta-page-section beta-searchable" data-search-title="Beta Changelog">
+      <!-- ================================================== -->
+      <!-- Beta Changelog                                     -->
+      <!-- ================================================== -->
+
+      <section
+        class="section beta-page-section beta-searchable"
+        data-search-title="Beta Changelog"
+      >
         <div class="beta-section-heading">
           <h2>
-            <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-clock-rotate-left"
+              aria-hidden="true"
+            ></i>
+
             Beta Changelog
           </h2>
-          <p>Changes included in each v26.6 beta release.</p>
+
+          <p>
+            Changes included in each v26.6 beta release.
+          </p>
         </div>
+
         <div class="beta-changelog">
-          <article class="beta-release current beta-searchable-item">
+
+          <!-- v26.6-beta.3 -->
+
+          <article
+            class="beta-release current beta-searchable-item"
+          >
             <div class="beta-release-header">
               <div>
                 <h3>v26.6-beta.3</h3>
-                <p class="beta-release-meta">Build 2026.07.11</p>
+
+                <p class="beta-release-meta">
+                  Build 2026.07.11
+                </p>
               </div>
-              <span class="beta-status active">Current</span>
+
+              <span class="beta-status active">
+                Current
+              </span>
             </div>
+
             <ul>
-              <li>Removed retired public sections and interfaces.</li>
-              <li>Removed obsolete JavaScript and CSS.</li>
-              <li>Removed unused Firestore references and listeners.</li>
-              <li>Removed the Onyx AI assistant.</li>
-              <li>Removed the Project Goal Tracker.</li>
-              <li>Updated the README, Beta Page, and release roadmap.</li>
+              <li>
+                Removed retired public sections and
+                interfaces.
+              </li>
+
+              <li>
+                Removed obsolete JavaScript and CSS.
+              </li>
+
+              <li>
+                Removed unused Firestore references and
+                listeners.
+              </li>
+
+              <li>
+                Removed the Onyx AI assistant.
+              </li>
+
+              <li>
+                Removed the Project Goal Tracker.
+              </li>
+
+              <li>
+                Updated the README, Beta Page, and release
+                roadmap.
+              </li>
             </ul>
           </article>
 
-          <article class="beta-release beta-searchable-item">
+          <!-- v26.6-beta.2 -->
+
+          <article
+            class="beta-release beta-searchable-item"
+          >
             <div class="beta-release-header">
               <div>
                 <h3>v26.6-beta.2</h3>
-                <p class="beta-release-meta">Build 2026.07.05</p>
+
+                <p class="beta-release-meta">
+                  Build 2026.07.05
+                </p>
               </div>
-              <span class="beta-status previous">Previous</span>
+
+              <span class="beta-status previous">
+                Previous
+              </span>
             </div>
+
             <ul>
-              <li>Updated Business Status and Hours.</li>
-              <li>Improved holiday, temporary, and manual availability states.</li>
-              <li>Expanded Academic Availability integration.</li>
-              <li>Added smarter recurring class status labels.</li>
-              <li>Fixed ended classes remaining marked as “In Effect.”</li>
-              <li>Improved Hide or Show Full Hours behavior.</li>
+              <li>
+                Updated Business Status and Hours.
+              </li>
+
+              <li>
+                Improved holiday, temporary, and manual
+                availability states.
+              </li>
+
+              <li>
+                Expanded Academic Availability
+                integration.
+              </li>
+
+              <li>
+                Added smarter recurring class status
+                labels.
+              </li>
+
+              <li>
+                Fixed ended classes remaining marked as
+                “In Effect.”
+              </li>
+
+              <li>
+                Improved Hide or Show Full Hours behavior.
+              </li>
             </ul>
           </article>
 
-          <article class="beta-release beta-searchable-item">
+          <!-- v26.6-beta.1 -->
+
+          <article
+            class="beta-release beta-searchable-item"
+          >
             <div class="beta-release-header">
               <div>
                 <h3>v26.6-beta.1</h3>
-                <p class="beta-release-meta">Original partial beta preview</p>
+
+                <p class="beta-release-meta">
+                  Original partial beta preview
+                </p>
               </div>
-              <span class="beta-status previous">Previous</span>
+
+              <span class="beta-status previous">
+                Previous
+              </span>
             </div>
+
             <ul>
-              <li>Started the partial website revamp.</li>
-              <li>Updated device and website information.</li>
-              <li>Redesigned TikTok creator cards.</li>
-              <li>Redesigned Instagram creator cards.</li>
-              <li>Redesigned YouTube creator cards.</li>
-              <li>Continued Onyx and liquid-glass refinements.</li>
-              <li>Added beta notes and the release roadmap.</li>
+              <li>
+                Started the partial website revamp.
+              </li>
+
+              <li>
+                Updated device and website information.
+              </li>
+
+              <li>
+                Redesigned TikTok creator cards.
+              </li>
+
+              <li>
+                Redesigned Instagram creator cards.
+              </li>
+
+              <li>
+                Redesigned YouTube creator cards.
+              </li>
+
+              <li>
+                Continued Onyx and liquid-glass
+                refinements.
+              </li>
+
+              <li>
+                Added beta notes and the release roadmap.
+              </li>
             </ul>
           </article>
         </div>
       </section>
 
-      <section class="section beta-page-section beta-searchable" data-search-title="Redone So Far">
+      <!-- ================================================== -->
+      <!-- Completed Improvements                             -->
+      <!-- ================================================== -->
+
+      <section
+        class="section beta-page-section beta-searchable"
+        data-search-title="Redone So Far"
+      >
         <div class="beta-section-heading">
           <h2>
-            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-circle-check"
+              aria-hidden="true"
+            ></i>
+
             Redone So Far
           </h2>
-          <p>These sections have already been updated during the current beta cycle.</p>
+
+          <p>
+            These sections have already been updated during
+            the current beta cycle.
+          </p>
         </div>
+
         <div class="beta-feature-list">
-          <article class="beta-feature-item beta-searchable-item">
+
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-solid fa-microchip" aria-hidden="true"></i>
+              <i
+                class="fa-solid fa-microchip"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>Device Information Section</h3>
-              <p>Updated build tracking, synced time, operating system, browser, resolution, connection, weather, sunrise, and sunset information.</p>
-              <span class="beta-status active">Redone</span>
+
+              <p>
+                Updated build tracking, synced time,
+                operating system, browser, resolution,
+                connection, weather, sunrise, and sunset
+                information.
+              </p>
+
+              <span class="beta-status active">
+                Redone
+              </span>
             </div>
           </article>
 
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+              <i
+                class="fa-brands fa-tiktok"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>TikTok Creator Shoutouts</h3>
-              <p>Rebuilt creator cards with a cleaner profile layout, refined text, statistics, verified badges, search, sorting, and a Visit Profile button.</p>
-              <span class="beta-status active">Redone</span>
+
+              <p>
+                Rebuilt creator cards with a cleaner
+                profile layout, refined text, statistics,
+                verified badges, search, sorting, and a
+                Visit Profile button.
+              </p>
+
+              <span class="beta-status active">
+                Redone
+              </span>
             </div>
           </article>
 
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+              <i
+                class="fa-brands fa-instagram"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>Instagram Creator Shoutouts</h3>
-              <p>Redesigned profile statistics, labels, verified badges, nickname placement, search, sorting, and responsive behavior.</p>
-              <span class="beta-status active">Redone</span>
+
+              <p>
+                Redesigned profile statistics, labels,
+                verified badges, nickname placement,
+                search, sorting, and responsive behavior.
+              </p>
+
+              <span class="beta-status active">
+                Redone
+              </span>
             </div>
           </article>
 
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+              <i
+                class="fa-brands fa-youtube"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>YouTube Creator Shoutouts</h3>
-              <p>Added a channel-style layout, handle, subscribers, video statistics, banner support, descriptions, search, sorting, and a Visit Channel button.</p>
-              <span class="beta-status active">Redone</span>
+
+              <p>
+                Added a channel-style layout, handle,
+                subscribers, video statistics, banner
+                support, descriptions, search, sorting,
+                and a Visit Channel button.
+              </p>
+
+              <span class="beta-status active">
+                Redone
+              </span>
             </div>
           </article>
 
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-solid fa-business-time" aria-hidden="true"></i>
+              <i
+                class="fa-solid fa-business-time"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>Business Information Section</h3>
-              <p>Improved weekly hours, holiday schedules, temporary hours, manual overrides, local time, status indicators, the today timeline, copy controls, and full-hours visibility.</p>
-              <span class="beta-status active">Redone</span>
+
+              <p>
+                Improved weekly hours, holiday schedules,
+                temporary hours, manual overrides, local
+                time, status indicators, the today
+                timeline, copy controls, and full-hours
+                visibility.
+              </p>
+
+              <span class="beta-status active">
+                Redone
+              </span>
             </div>
           </article>
 
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+              <i
+                class="fa-solid fa-graduation-cap"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>Academic Availability Integration</h3>
-              <p>Added recurring classes, exams, finals, university events, academic breaks, internships, co-ops, semester information, and smarter status labels.</p>
-              <span class="beta-status active">Redone</span>
+
+              <p>
+                Added recurring classes, exams, finals,
+                university events, academic breaks,
+                internships, co-ops, semester information,
+                and smarter status labels.
+              </p>
+
+              <span class="beta-status active">
+                Redone
+              </span>
             </div>
           </article>
 
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-solid fa-code" aria-hidden="true"></i>
+              <i
+                class="fa-solid fa-code"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>Website and Code Cleanup</h3>
-              <p>Removed retired sections and their associated JavaScript, CSS, Firestore references, listeners, routing, and initialization calls.</p>
-              <span class="beta-status active">Completed</span>
+
+              <p>
+                Removed retired sections and their
+                associated JavaScript, CSS, Firestore
+                references, listeners, routing, and
+                initialization calls.
+              </p>
+
+              <span class="beta-status active">
+                Completed
+              </span>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="section beta-page-section beta-searchable" data-search-title="Currently Being Worked On">
+      <!-- ================================================== -->
+      <!-- Current Development                               -->
+      <!-- ================================================== -->
+
+      <section
+        class="section beta-page-section beta-searchable"
+        data-search-title="Currently Being Worked On"
+      >
         <div class="beta-section-heading">
           <h2>
-            <i class="fa-solid fa-spinner" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-spinner"
+              aria-hidden="true"
+            ></i>
+
             Currently Being Worked On
           </h2>
-          <p>These areas are still being refined and may change.</p>
+
+          <p>
+            These areas are still being refined and may
+            change.
+          </p>
         </div>
+
         <div class="beta-feature-list">
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+              <i
+                class="fa-solid fa-layer-group"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>Liquid Glass Refinement</h3>
-              <p>Card surfaces, shadows, borders, reflections, contrast, readability, and hover states may continue to change.</p>
-              <span class="beta-status testing">In Progress</span>
+
+              <p>
+                Card surfaces, shadows, borders,
+                reflections, contrast, readability, and
+                hover states may continue to change.
+              </p>
+
+              <span class="beta-status testing">
+                In Progress
+              </span>
             </div>
           </article>
 
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>
+              <i
+                class="fa-solid fa-mobile-screen-button"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>Responsive Layout Polish</h3>
-              <p>Phone, tablet, desktop, landscape, and split-screen layouts are being tested for overflow, clipping, and readability issues.</p>
-              <span class="beta-status testing">Testing</span>
+
+              <p>
+                Phone, tablet, desktop, landscape, and
+                split-screen layouts are being tested for
+                overflow, clipping, and readability issues.
+              </p>
+
+              <span class="beta-status testing">
+                Testing
+              </span>
             </div>
           </article>
 
-          <article class="beta-feature-item beta-searchable-item">
+          <article
+            class="beta-feature-item beta-searchable-item"
+          >
             <div class="beta-feature-icon">
-              <i class="fa-solid fa-gear" aria-hidden="true"></i>
+              <i
+                class="fa-solid fa-gear"
+                aria-hidden="true"
+              ></i>
             </div>
+
             <div>
               <h3>Settings Page Cleanup</h3>
-              <p>Appearance, accessibility, device-matching, and reset options may be reorganized for clarity.</p>
-              <span class="beta-status testing">Planned Next</span>
+
+              <p>
+                Appearance, accessibility, device-matching,
+                and reset options may be reorganized for
+                clarity.
+              </p>
+
+              <span class="beta-status testing">
+                Planned Next
+              </span>
             </div>
           </article>
         </div>
       </section>
 
-      <section class="section beta-page-section beta-searchable" data-search-title="Removed Features">
+      <!-- ================================================== -->
+      <!-- Removed Features                                   -->
+      <!-- ================================================== -->
+
+      <section
+        class="section beta-page-section beta-searchable"
+        data-search-title="Removed Features"
+      >
         <div class="beta-section-heading">
           <h2>
-            <i class="fa-solid fa-box-archive" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-box-archive"
+              aria-hidden="true"
+            ></i>
+
             Removed Features
           </h2>
-          <p>These features were retired in v26.6-beta.3.</p>
+
+          <p>
+            These features were retired in v26.6-beta.3.
+          </p>
         </div>
+
         <div class="beta-removed-grid">
-          <article class="beta-removed-item beta-searchable-item">
-            <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
+          <article
+            class="beta-removed-item beta-searchable-item"
+          >
+            <i
+              class="fa-solid fa-circle-question"
+              aria-hidden="true"
+            ></i>
+
             <span>FAQ</span>
           </article>
-          <article class="beta-removed-item beta-searchable-item">
-            <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
+
+          <article
+            class="beta-removed-item beta-searchable-item"
+          >
+            <i
+              class="fa-solid fa-newspaper"
+              aria-hidden="true"
+            ></i>
+
             <span>Posts and Blog</span>
           </article>
-          <article class="beta-removed-item beta-searchable-item">
-            <i class="fa-solid fa-landmark" aria-hidden="true"></i>
+
+          <article
+            class="beta-removed-item beta-searchable-item"
+          >
+            <i
+              class="fa-solid fa-landmark"
+              aria-hidden="true"
+            ></i>
+
             <span>President Information</span>
           </article>
-          <article class="beta-removed-item beta-searchable-item">
-            <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+
+          <article
+            class="beta-removed-item beta-searchable-item"
+          >
+            <i
+              class="fa-solid fa-scale-balanced"
+              aria-hidden="true"
+            ></i>
+
             <span>Legislation Tracker</span>
           </article>
-          <article class="beta-removed-item beta-searchable-item">
-            <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+
+          <article
+            class="beta-removed-item beta-searchable-item"
+          >
+            <i
+              class="fa-solid fa-quote-left"
+              aria-hidden="true"
+            ></i>
+
             <span>Quote of the Day</span>
           </article>
-          <article class="beta-removed-item beta-searchable-item">
-            <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+
+          <article
+            class="beta-removed-item beta-searchable-item"
+          >
+            <i
+              class="fa-brands fa-tiktok"
+              aria-hidden="true"
+            ></i>
+
             <span>Latest TikTok Embed</span>
           </article>
-          <article class="beta-removed-item beta-searchable-item">
-            <i class="fa-solid fa-comments" aria-hidden="true"></i>
+
+          <article
+            class="beta-removed-item beta-searchable-item"
+          >
+            <i
+              class="fa-solid fa-comments"
+              aria-hidden="true"
+            ></i>
+
             <span>Onyx AI Assistant</span>
           </article>
-          <article class="beta-removed-item beta-searchable-item">
-            <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+
+          <article
+            class="beta-removed-item beta-searchable-item"
+          >
+            <i
+              class="fa-solid fa-bullseye"
+              aria-hidden="true"
+            ></i>
+
             <span>Project Goal Tracker</span>
           </article>
         </div>
       </section>
 
-      <section class="section beta-page-section beta-searchable" data-search-title="Beta Notes">
+      <!-- ================================================== -->
+      <!-- Beta Notes                                         -->
+      <!-- ================================================== -->
+
+      <section
+        class="section beta-page-section beta-searchable"
+        data-search-title="Beta Notes"
+      >
         <div class="beta-section-heading">
           <h2>
-            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-triangle-exclamation"
+              aria-hidden="true"
+            ></i>
+
             Beta Notes
           </h2>
-          <p>Important information about this beta version.</p>
+
+          <p>
+            Important information about this beta version.
+          </p>
         </div>
+
         <ul class="beta-notes-list">
-          <li>This beta is not the final September revamp.</li>
-          <li>Some visual styles may change before release.</li>
-          <li>Liquid-glass effects remain experimental.</li>
-          <li>Mobile and split-screen layouts may still be adjusted.</li>
-          <li>Custom backgrounds may affect contrast and readability.</li>
-          <li>The main creator shoutout sections remain active.</li>
-          <li>The final complete revamp is planned as v27.0.</li>
+          <li>
+            This beta is not the final September revamp.
+          </li>
+
+          <li>
+            Some visual styles may change before release.
+          </li>
+
+          <li>
+            Liquid-glass effects remain experimental.
+          </li>
+
+          <li>
+            Mobile and split-screen layouts may still be
+            adjusted.
+          </li>
+
+          <li>
+            Custom backgrounds may affect contrast and
+            readability.
+          </li>
+
+          <li>
+            The main creator shoutout sections remain
+            active.
+          </li>
+
+          <li>
+            The final complete revamp is planned as v27.0.
+          </li>
         </ul>
       </section>
 
-      <section class="section beta-page-section beta-searchable" data-search-title="Release Roadmap">
+      <!-- ================================================== -->
+      <!-- Release Roadmap                                    -->
+      <!-- ================================================== -->
+
+      <section
+        class="section beta-page-section beta-searchable"
+        data-search-title="Release Roadmap"
+      >
         <div class="beta-section-heading">
           <h2>
-            <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+            <i
+              class="fa-solid fa-calendar-days"
+              aria-hidden="true"
+            ></i>
+
             Release Roadmap
           </h2>
-          <p>The planned path for the beta and final revamp.</p>
+
+          <p>
+            The planned path for the beta and final revamp.
+          </p>
         </div>
+
         <div class="beta-roadmap">
           <div class="beta-roadmap-item">
             <span class="roadmap-dot"></span>
+
             <div>
               <strong>v26.5</strong>
               <p>Current stable website base.</p>
             </div>
           </div>
+
           <div class="beta-roadmap-item">
             <span class="roadmap-dot"></span>
+
             <div>
               <strong>v26.6-beta.1</strong>
-              <p>Original partial beta revamp preview.</p>
+              <p>
+                Original partial beta revamp preview.
+              </p>
             </div>
           </div>
+
           <div class="beta-roadmap-item">
             <span class="roadmap-dot"></span>
+
             <div>
               <strong>v26.6-beta.2</strong>
-              <p>Business and academic availability improvements.</p>
+
+              <p>
+                Business and academic availability
+                improvements.
+              </p>
             </div>
           </div>
+
           <div class="beta-roadmap-item">
             <span class="roadmap-dot active"></span>
+
             <div>
               <strong>v26.6-beta.3</strong>
-              <p>Current cleanup release removing retired features and obsolete code.</p>
+
+              <p>
+                Current cleanup release removing retired
+                features and obsolete code.
+              </p>
             </div>
           </div>
+
           <div class="beta-roadmap-item">
             <span class="roadmap-dot future"></span>
+
             <div>
               <strong>v26.6-beta.4+</strong>
-              <p>Additional beta fixes and refinements if needed.</p>
+
+              <p>
+                Additional beta fixes and refinements if
+                needed.
+              </p>
             </div>
           </div>
+
           <div class="beta-roadmap-item">
             <span class="roadmap-dot future"></span>
+
             <div>
               <strong>v26.6-rc.1</strong>
-              <p>Release candidate and final testing.</p>
+
+              <p>
+                Release candidate and final testing.
+              </p>
             </div>
           </div>
+
           <div class="beta-roadmap-item">
             <span class="roadmap-dot future"></span>
+
             <div>
               <strong>v27.0</strong>
-              <p>Full September 2026 website revamp.</p>
+
+              <p>
+                Full September 2026 website revamp.
+              </p>
             </div>
           </div>
         </div>
       </section>
     </div>
 
-    <section id="beta-no-results" class="section beta-page-section beta-no-results" hidden>
-      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+    <!-- ==================================================== -->
+    <!-- No Search Results                                    -->
+    <!-- ==================================================== -->
+
+    <section
+      id="beta-no-results"
+      class="section beta-page-section beta-no-results"
+      hidden
+    >
+      <i
+        class="fa-solid fa-magnifying-glass"
+        aria-hidden="true"
+      ></i>
+
       <h2>No Results Found</h2>
-      <p>Try a different version number, feature, or keyword.</p>
-      <button type="button" id="reset-beta-search" class="beta-action-button">
+
+      <p>
+        Try a different version number, feature, or keyword.
+      </p>
+
+      <button
+        type="button"
+        id="reset-beta-search"
+        class="beta-action-button"
+      >
         Clear Search
       </button>
     </section>
 
-    <section class="section beta-page-section">
+    <!-- ==================================================== -->
+    <!-- Tally Beta Feedback                                  -->
+    <!-- ==================================================== -->
+
+    <section
+      class="section beta-page-section"
+      id="beta-feedback"
+    >
       <div class="beta-section-heading">
         <h2>
-          <i class="fa-solid fa-comment-dots" aria-hidden="true"></i>
+          <i
+            class="fa-solid fa-comment-dots"
+            aria-hidden="true"
+          ></i>
+
           Beta Feedback
         </h2>
-        <p>Report a problem, accessibility concern, or suggestion.</p>
+
+        <p>
+          Report a problem, accessibility concern, design
+          issue, performance problem, or feature suggestion.
+        </p>
       </div>
 
-      <form id="beta-feedback-form" class="beta-feedback-form">
-        <div class="beta-form-field">
-          <label for="feedback-type">Feedback Type</label>
-          <select id="feedback-type" required>
-            <option value="Bug Report">Bug Report</option>
-            <option value="Design Feedback">Design Feedback</option>
-            <option value="Accessibility Feedback">Accessibility Feedback</option>
-            <option value="Feature Suggestion">Feature Suggestion</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
+      <div class="beta-feedback-embed">
+        <iframe data-tally-src="https://tally.so/embed/2Eya9j?alignLeft=1&hideTitle=0&transparentBackground=1&dynamicHeight=1&version=v26.6-beta.3&build=2026.07.11&source=beta-page&release_track=Beta%20Revamp%20Preview&stable_base=v26.5&target_release=September%202026" width="100%" height="300" frameborder="0" marginheight="0" marginwidth="0" title="Beta Feedback"></iframe>
 
-        <div class="beta-form-field">
-          <label for="feedback-section">Page or Section</label>
-          <input
-            id="feedback-section"
-            type="text"
-            placeholder="Example: Business Information"
-            maxlength="100"
-            required
-          />
-        </div>
+        <noscript>
+          <div class="beta-feedback-fallback">
+            <p>
+              JavaScript is required to display the embedded
+              feedback form.
+            </p>
 
-        <div class="beta-form-field">
-          <label for="feedback-message">Message</label>
-          <textarea
-            id="feedback-message"
-            placeholder="Describe what happened, what you expected, or what you would like improved."
-            maxlength="2000"
-            required
-          ></textarea>
-        </div>
+            <a
+              href="https://tally.so/r/2Eya9j"
+              class="beta-action-button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <i
+                class="fa-solid fa-arrow-up-right-from-square"
+                aria-hidden="true"
+              ></i>
 
-        <div class="beta-form-field">
-          <label for="feedback-contact">
-            Contact Email
-            <span class="optional-label">Optional</span>
-          </label>
-          <input
-            id="feedback-contact"
-            type="email"
-            autocomplete="email"
-            placeholder="name@example.com"
-          />
-        </div>
+              Open Feedback Form
+            </a>
+          </div>
+        </noscript>
+      </div>
 
-        <div class="beta-feedback-actions">
-          <button type="submit" class="beta-action-button">
-            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-            Prepare Email
-          </button>
-          <button type="button" id="copy-feedback" class="beta-action-button secondary">
-            <i class="fa-solid fa-copy" aria-hidden="true"></i>
-            Copy Report
-          </button>
-          <button type="reset" class="beta-action-button secondary">
-            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
-            Clear
-          </button>
-        </div>
-
-        <p id="feedback-status" class="feedback-status" role="status" aria-live="polite"></p>
-      </form>
+      <p class="beta-feedback-privacy">
+        Feedback is submitted through Tally. Do not include
+        passwords, account credentials, private device
+        identifiers, financial information, or other
+        sensitive information.
+      </p>
     </section>
 
+    <!-- ==================================================== -->
+    <!-- Page Actions                                         -->
+    <!-- ==================================================== -->
+
     <div class="beta-actions">
-      <a href="/" class="beta-action-button">
-        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+      <a href="/">
+        <i
+          class="fa-solid fa-arrow-left"
+          aria-hidden="true"
+        ></i>
+
         Back to Home
       </a>
-      <a href="/settings" class="beta-action-button">
-        <i class="fa-solid fa-gear" aria-hidden="true"></i>
+
+      <a href="/settings">
+        <i
+          class="fa-solid fa-gear"
+          aria-hidden="true"
+        ></i>
+
         Open Settings
       </a>
-      <a href="#main-content" class="beta-action-button">
-        <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+
+      <a href="#main-content">
+        <i
+          class="fa-solid fa-arrow-up"
+          aria-hidden="true"
+        ></i>
+
         Back to Top
       </a>
     </div>
   </main>
 
-  <nav class="onyx-dock" aria-label="Primary navigation">
-    <span class="dock-active-lens" aria-hidden="true"></span>
+  <!-- ====================================================== -->
+  <!-- Onyx Navigation Dock                                  -->
+  <!-- ====================================================== -->
+
+  <nav
+    class="onyx-dock"
+    aria-label="Primary navigation"
+  >
+    <span
+      class="dock-active-lens"
+      aria-hidden="true"
+    ></span>
+
     <a href="/" class="dock-item">
-      <span class="dock-icon" aria-hidden="true">🏠</span>
-      <span class="dock-label">Home</span>
+      <span
+        class="dock-icon"
+        aria-hidden="true"
+      >
+        🏠
+      </span>
+
+      <span class="dock-label">
+        Home
+      </span>
     </a>
+
     <a href="/beta" class="dock-item">
-      <span class="dock-icon" aria-hidden="true">🧪</span>
-      <span class="dock-label">Beta</span>
+      <span
+        class="dock-icon"
+        aria-hidden="true"
+      >
+        🧪
+      </span>
+
+      <span class="dock-label">
+        Beta
+      </span>
     </a>
+
     <a href="/resume" class="dock-item">
-      <span class="dock-icon" aria-hidden="true">📜</span>
-      <span class="dock-label">Resume</span>
+      <span
+        class="dock-icon"
+        aria-hidden="true"
+      >
+        📜
+      </span>
+
+      <span class="dock-label">
+        Resume
+      </span>
     </a>
+
     <a href="/settings" class="dock-item">
-      <span class="dock-icon" aria-hidden="true">⚙️</span>
-      <span class="dock-label">Settings</span>
+      <span
+        class="dock-icon"
+        aria-hidden="true"
+      >
+        ⚙️
+      </span>
+
+      <span class="dock-label">
+        Settings
+      </span>
     </a>
   </nav>
 
+  <!-- ====================================================== -->
+  <!-- Beta Search Logic                                     -->
+  <!-- ====================================================== -->
+
   <script>
-    /*
-     * Replace this placeholder with the public email address
-     * that should receive beta feedback.
-     */
-    const FEEDBACK_EMAIL = "calebkritzar@gmail.com";
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        const searchInput =
+          document.getElementById(
+            "beta-search"
+          );
 
-    document.addEventListener("DOMContentLoaded", () => {
-      /* ------------------------------------------------------ */
-      /* Beta Search                                            */
-      /* ------------------------------------------------------ */
+        const searchStatus =
+          document.getElementById(
+            "beta-search-status"
+          );
 
-      const searchInput = document.getElementById("beta-search");
-      const searchStatus = document.getElementById("beta-search-status");
-      const clearSearchButton = document.getElementById("clear-beta-search");
-      const resetSearchButton = document.getElementById("reset-beta-search");
-      const noResultsSection = document.getElementById("beta-no-results");
-      const searchableSections = [...document.querySelectorAll(".beta-searchable")];
+        const clearSearchButton =
+          document.getElementById(
+            "clear-beta-search"
+          );
 
-      function runBetaSearch() {
-        const query = searchInput.value.trim().toLowerCase();
-        let sectionMatches = 0;
-        let itemMatches = 0;
+        const resetSearchButton =
+          document.getElementById(
+            "reset-beta-search"
+          );
 
-        searchableSections.forEach((section) => {
-          const searchableItems = [...section.querySelectorAll(".beta-searchable-item")];
+        const noResultsSection =
+          document.getElementById(
+            "beta-no-results"
+          );
 
-          if (!query) {
-            section.hidden = false;
-            searchableItems.forEach((item) => {
-              item.hidden = false;
-            });
+        const searchableSections = [
+          ...document.querySelectorAll(
+            ".beta-searchable"
+          )
+        ];
+
+        function resetSearchResults() {
+          searchableSections.forEach(
+            (section) => {
+              section.hidden = false;
+
+              section
+                .querySelectorAll(
+                  ".beta-searchable-item"
+                )
+                .forEach((item) => {
+                  item.hidden = false;
+                });
+            }
+          );
+        }
+
+        function runBetaSearch() {
+          if (
+            !searchInput ||
+            !searchStatus ||
+            !noResultsSection
+          ) {
             return;
           }
 
-          if (searchableItems.length > 0) {
-            let matchingItems = 0;
+          const query =
+            searchInput.value
+              .trim()
+              .toLowerCase();
 
-            searchableItems.forEach((item) => {
-              const isMatch = item.textContent.toLowerCase().includes(query);
-              item.hidden = !isMatch;
+          let sectionMatches = 0;
+          let itemMatches = 0;
 
-              if (isMatch) {
-                matchingItems += 1;
-                itemMatches += 1;
-              }
-            });
+          if (!query) {
+            resetSearchResults();
 
-            const headingText = section.dataset.searchTitle?.toLowerCase() || "";
-            const headingMatches = headingText.includes(query);
-
-            if (headingMatches) {
-              searchableItems.forEach((item) => {
-                item.hidden = false;
-              });
-
-              matchingItems = searchableItems.length;
-              itemMatches += searchableItems.length;
+            if (clearSearchButton) {
+              clearSearchButton.hidden = true;
             }
 
-            section.hidden = matchingItems === 0;
+            noResultsSection.hidden = true;
 
-            if (matchingItems > 0) {
-              sectionMatches += 1;
-            }
-          } else {
-            const sectionMatchesQuery = section.textContent.toLowerCase().includes(query);
-            section.hidden = !sectionMatchesQuery;
+            searchStatus.textContent =
+              "Showing all beta information.";
 
-            if (sectionMatchesQuery) {
-              sectionMatches += 1;
-            }
+            return;
           }
-        });
 
-        clearSearchButton.hidden = !query;
-        const hasResults = !query || sectionMatches > 0;
-        noResultsSection.hidden = hasResults;
+          searchableSections.forEach(
+            (section) => {
+              const searchableItems = [
+                ...section.querySelectorAll(
+                  ".beta-searchable-item"
+                )
+              ];
 
-        if (!query) {
-          searchStatus.textContent = "Showing all beta information.";
-          return;
+              const sectionTitle =
+                section.dataset.searchTitle
+                  ?.toLowerCase() || "";
+
+              const sectionHeadingMatches =
+                sectionTitle.includes(query);
+
+              if (
+                searchableItems.length === 0
+              ) {
+                const sectionMatchesQuery =
+                  section.textContent
+                    .toLowerCase()
+                    .includes(query);
+
+                section.hidden =
+                  !sectionMatchesQuery;
+
+                if (sectionMatchesQuery) {
+                  sectionMatches += 1;
+                }
+
+                return;
+              }
+
+              let matchingItems = 0;
+
+              searchableItems.forEach(
+                (item) => {
+                  const itemMatchesQuery =
+                    item.textContent
+                      .toLowerCase()
+                      .includes(query);
+
+                  const shouldShow =
+                    itemMatchesQuery ||
+                    sectionHeadingMatches;
+
+                  item.hidden = !shouldShow;
+
+                  if (shouldShow) {
+                    matchingItems += 1;
+                    itemMatches += 1;
+                  }
+                }
+              );
+
+              section.hidden =
+                matchingItems === 0;
+
+              if (matchingItems > 0) {
+                sectionMatches += 1;
+              }
+            }
+          );
+
+          if (clearSearchButton) {
+            clearSearchButton.hidden = false;
+          }
+
+          const hasResults =
+            sectionMatches > 0;
+
+          noResultsSection.hidden =
+            hasResults;
+
+          if (!hasResults) {
+            searchStatus.textContent =
+              "No matching beta information found.";
+
+            return;
+          }
+
+          const resultCount =
+            itemMatches || sectionMatches;
+
+          searchStatus.textContent = `${resultCount} matching result${resultCount === 1 ? "" : "s"} found.`;
         }
 
-        if (!hasResults) {
-          searchStatus.textContent = "No matching beta information found.";
-          return;
+        function clearBetaSearch() {
+          if (!searchInput) {
+            return;
+          }
+
+          searchInput.value = "";
+          runBetaSearch();
+          searchInput.focus();
         }
 
-        const resultCount = itemMatches || sectionMatches;
-        searchStatus.textContent = `${resultCount} matching result${resultCount === 1 ? "" : "s"} found.`;
+        searchInput?.addEventListener(
+          "input",
+          runBetaSearch
+        );
+
+        clearSearchButton?.addEventListener(
+          "click",
+          clearBetaSearch
+        );
+
+        resetSearchButton?.addEventListener(
+          "click",
+          clearBetaSearch
+        );
       }
-
-      function clearBetaSearch() {
-        searchInput.value = "";
-        runBetaSearch();
-        searchInput.focus();
-      }
-
-      searchInput?.addEventListener("input", runBetaSearch);
-      clearSearchButton?.addEventListener("click", clearBetaSearch);
-      resetSearchButton?.addEventListener("click", clearBetaSearch);
-
-      /* ------------------------------------------------------ */
-      /* Beta Feedback                                          */
-      /* ------------------------------------------------------ */
-
-      const feedbackForm = document.getElementById("beta-feedback-form");
-      const feedbackStatus = document.getElementById("feedback-status");
-      const copyFeedbackButton = document.getElementById("copy-feedback");
-
-      function createFeedbackReport() {
-        const type = document.getElementById("feedback-type").value;
-        const section = document.getElementById("feedback-section").value.trim();
-        const message = document.getElementById("feedback-message").value.trim();
-        const contact = document.getElementById("feedback-contact").value.trim() || "Not provided";
-
-        return [
-          "Beta Feedback — v26.6-beta.3",
-          "",
-          `Type: ${type}`,
-          `Page or Section: ${section}`,
-          `Contact Email: ${contact}`,
-          `Page URL: ${window.location.href}`,
-          `Browser: ${navigator.userAgent}`,
-          "",
-          "Message:",
-          message
-        ].join("\n");
-      }
-
-      async function copyFeedbackReport() {
-        if (!feedbackForm.reportValidity()) {
-          return;
-        }
-
-        try {
-          await navigator.clipboard.writeText(createFeedbackReport());
-          feedbackStatus.textContent = "Feedback report copied.";
-        } catch (error) {
-          feedbackStatus.textContent =
-            "The report could not be copied. Please copy the form details manually.";
-        }
-      }
-
-      copyFeedbackButton?.addEventListener("click", copyFeedbackReport);
-
-      feedbackForm?.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  if (!feedbackForm.reportValidity()) {
-    return;
-  }
-
-  const subject = encodeURIComponent(
-    "Beta Feedback — v26.6-beta.3"
-  );
-
-  const body = encodeURIComponent(
-    createFeedbackReport()
-  );
-
-  if (!FEEDBACK_EMAIL) {
-    feedbackStatus.textContent =
-      "No feedback email address is configured.";
-
-    return;
-  }
-
-  const mailtoURL =
-    mailto:${FEEDBACK_EMAIL} +
-    ?subject=${subject} +
-    &body=${body};
-
-  feedbackStatus.textContent =
-    "Opening your email application...";
-
-  window.location.href = mailtoURL;
-
-  window.setTimeout(() => {
-    feedbackStatus.textContent =
-      "If the email application did not open, use Copy Report.";
-  }, 2000);
-});
-      feedbackForm?.addEventListener("reset", () => {
-        feedbackStatus.textContent = "";
-      });
-    });
+    );
   </script>
+
+  <!-- ====================================================== -->
+  <!-- Tally Embed Loader                                    -->
+  <!-- ====================================================== -->
+
+  <script>
+    (function () {
+      const tallyScriptURL =
+        "https://tally.so/widgets/embed.js";
+
+      function loadTallyEmbeds() {
+        if (
+          typeof Tally !== "undefined"
+        ) {
+          Tally.loadEmbeds();
+          return;
+        }
+
+        document
+          .querySelectorAll(
+            "iframe[data-tally-src]:not([src])"
+          )
+          .forEach((iframe) => {
+            iframe.src =
+              iframe.dataset.tallySrc;
+          });
+      }
+
+      if (
+        typeof Tally !== "undefined"
+      ) {
+        loadTallyEmbeds();
+        return;
+      }
+
+      if (
+        document.querySelector(
+          `script[src="${tallyScriptURL}"]`
+        )
+      ) {
+        return;
+      }
+
+      const tallyScript =
+        document.createElement("script");
+
+      tallyScript.src =
+        tallyScriptURL;
+
+      tallyScript.async = true;
+
+      tallyScript.onload =
+        loadTallyEmbeds;
+
+      tallyScript.onerror =
+        loadTallyEmbeds;
+
+      document.body.appendChild(
+        tallyScript
+      );
+    })();
+  </script>
+
+  <!-- ====================================================== -->
+  <!-- Onyx Dock Logic                                       -->
+  <!-- ====================================================== -->
 
   <script>
     function normalizeOnyxDockPath(path) {
@@ -864,106 +1615,221 @@
     }
 
     function getOnyxDockActiveLink() {
-      const links = [...document.querySelectorAll(".onyx-dock .dock-item")];
-      const currentPath = normalizeOnyxDockPath(window.location.pathname);
+      const links = [
+        ...document.querySelectorAll(
+          ".onyx-dock .dock-item"
+        )
+      ];
+
+      const currentPath =
+        normalizeOnyxDockPath(
+          window.location.pathname
+        );
 
       let activeLink = null;
 
       links.forEach((link) => {
-        const rawRoute = link.dataset.route || link.getAttribute("href") || "/";
-        const targetPath = normalizeOnyxDockPath(
-          new URL(rawRoute, window.location.origin).pathname
-        );
+        const rawRoute =
+          link.dataset.route ||
+          link.getAttribute("href") ||
+          "/";
 
-        const isExactMatch = currentPath === targetPath;
+        const targetPath =
+          normalizeOnyxDockPath(
+            new URL(
+              rawRoute,
+              window.location.origin
+            ).pathname
+          );
+
+        const isExactMatch =
+          currentPath === targetPath;
+
         const isNestedMatch =
-          targetPath !== "/" && currentPath.startsWith(targetPath + "/");
+          targetPath !== "/" &&
+          currentPath.startsWith(
+            targetPath + "/"
+          );
 
-        if (isExactMatch || isNestedMatch) {
+        if (
+          isExactMatch ||
+          isNestedMatch
+        ) {
           activeLink = link;
         }
       });
 
       return (
         activeLink ||
-        document.querySelector('.onyx-dock .dock-item[data-route="/"]') ||
-        document.querySelector('.onyx-dock .dock-item[href="/"]') ||
+        document.querySelector(
+          '.onyx-dock .dock-item[data-route="/"]'
+        ) ||
+        document.querySelector(
+          '.onyx-dock .dock-item[href="/"]'
+        ) ||
         links[0]
       );
     }
 
     function moveOnyxDockLensTo(link) {
-      const dock = document.querySelector(".onyx-dock");
-      const lens = document.querySelector(".dock-active-lens");
+      const dock =
+        document.querySelector(
+          ".onyx-dock"
+        );
+
+      const lens =
+        document.querySelector(
+          ".dock-active-lens"
+        );
 
       if (!dock || !lens || !link) {
         return;
       }
 
-      const dockRect = dock.getBoundingClientRect();
-      const linkRect = link.getBoundingClientRect();
+      const dockRect =
+        dock.getBoundingClientRect();
+
+      const linkRect =
+        link.getBoundingClientRect();
+
       const dockPaddingLeft =
-        parseFloat(getComputedStyle(dock).paddingLeft) || 0;
+        parseFloat(
+          getComputedStyle(dock).paddingLeft
+        ) || 0;
 
-      const x = linkRect.left - dockRect.left - dockPaddingLeft;
+      const x =
+        linkRect.left -
+        dockRect.left -
+        dockPaddingLeft;
 
-      dock.style.setProperty("--lens-x", `${x}px`);
-      dock.style.setProperty("--lens-width", `${linkRect.width}px`);
+      dock.style.setProperty(
+        "--lens-x",
+        `${x}px`
+      );
+
+      dock.style.setProperty(
+        "--lens-width",
+        `${linkRect.width}px`
+      );
     }
 
     function updateOnyxDockActiveTab() {
-      const dock = document.querySelector(".onyx-dock");
-      const links = document.querySelectorAll(".onyx-dock .dock-item");
+      const dock =
+        document.querySelector(
+          ".onyx-dock"
+        );
+
+      const links =
+        document.querySelectorAll(
+          ".onyx-dock .dock-item"
+        );
 
       if (!dock || !links.length) {
         return;
       }
 
-      const activeLink = getOnyxDockActiveLink();
+      const activeLink =
+        getOnyxDockActiveLink();
 
       links.forEach((link) => {
-        const isActive = link === activeLink;
+        const isActive =
+          link === activeLink;
 
-        link.classList.toggle("active", isActive);
+        link.classList.toggle(
+          "active",
+          isActive
+        );
 
         if (isActive) {
-          link.setAttribute("aria-current", "page");
+          link.setAttribute(
+            "aria-current",
+            "page"
+          );
         } else {
-          link.removeAttribute("aria-current");
+          link.removeAttribute(
+            "aria-current"
+          );
         }
       });
 
       moveOnyxDockLensTo(activeLink);
-      dock.classList.add("dock-ready");
+
+      dock.classList.add(
+        "dock-ready"
+      );
     }
 
     function setupOnyxDockEffects() {
-      const links = document.querySelectorAll(".onyx-dock .dock-item");
+      const links =
+        document.querySelectorAll(
+          ".onyx-dock .dock-item"
+        );
 
       links.forEach((link) => {
-        if (link.dataset.dockEffectsReady === "true") {
+        if (
+          link.dataset.dockEffectsReady ===
+          "true"
+        ) {
           return;
         }
 
-        link.dataset.dockEffectsReady = "true";
+        link.dataset.dockEffectsReady =
+          "true";
 
-        link.addEventListener("mousemove", (event) => {
-          const rect = link.getBoundingClientRect();
-          const x = event.clientX - rect.left;
-          const y = event.clientY - rect.top;
-          const dx = x / rect.width - 0.5;
-          const dy = y / rect.height - 0.5;
+        link.addEventListener(
+          "mousemove",
+          (event) => {
+            const rect =
+              link.getBoundingClientRect();
 
-          link.style.setProperty("--x", `${x}px`);
-          link.style.setProperty("--y", `${y}px`);
-          link.style.setProperty("--dx", dx.toFixed(3));
-          link.style.setProperty("--dy", dy.toFixed(3));
-        });
+            const x =
+              event.clientX - rect.left;
 
-        link.addEventListener("mouseleave", () => {
-          link.style.setProperty("--dx", "0");
-          link.style.setProperty("--dy", "0");
-        });
+            const y =
+              event.clientY - rect.top;
+
+            const dx =
+              x / rect.width - 0.5;
+
+            const dy =
+              y / rect.height - 0.5;
+
+            link.style.setProperty(
+              "--x",
+              `${x}px`
+            );
+
+            link.style.setProperty(
+              "--y",
+              `${y}px`
+            );
+
+            link.style.setProperty(
+              "--dx",
+              dx.toFixed(3)
+            );
+
+            link.style.setProperty(
+              "--dy",
+              dy.toFixed(3)
+            );
+          }
+        );
+
+        link.addEventListener(
+          "mouseleave",
+          () => {
+            link.style.setProperty(
+              "--dx",
+              "0"
+            );
+
+            link.style.setProperty(
+              "--dy",
+              "0"
+            );
+          }
+        );
       });
     }
 
@@ -979,36 +1845,77 @@
       });
     }
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initOnyxDock);
+    if (
+      document.readyState === "loading"
+    ) {
+      document.addEventListener(
+        "DOMContentLoaded",
+        initOnyxDock
+      );
     } else {
       initOnyxDock();
     }
 
-    window.addEventListener("pageshow", () => {
-      setupOnyxDockEffects();
-      requestAnimationFrame(updateOnyxDockActiveTab);
-    });
+    window.addEventListener(
+      "pageshow",
+      () => {
+        setupOnyxDockEffects();
 
-    window.addEventListener("load", updateOnyxDockActiveTab);
-    window.addEventListener("resize", updateOnyxDockActiveTab);
-    window.addEventListener("popstate", updateOnyxDockActiveTab);
-    window.addEventListener("hashchange", updateOnyxDockActiveTab);
+        requestAnimationFrame(
+          updateOnyxDockActiveTab
+        );
+      }
+    );
+
+    window.addEventListener(
+      "load",
+      updateOnyxDockActiveTab
+    );
+
+    window.addEventListener(
+      "resize",
+      updateOnyxDockActiveTab
+    );
+
+    window.addEventListener(
+      "popstate",
+      updateOnyxDockActiveTab
+    );
+
+    window.addEventListener(
+      "hashchange",
+      updateOnyxDockActiveTab
+    );
   </script>
 
+  <!-- ====================================================== -->
+  <!-- Active Website Scripts                                -->
+  <!-- ====================================================== -->
+
   <script src="/script.js"></script>
+
   <script src="/autoRefresh.js"></script>
 
+  <!--
+    Keep ai-features.js only if it supports active,
+    non-chat functionality such as Tech Information.
+  -->
   <script src="/ai-features.js"></script>
 
   <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+
   <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging-compat.js"></script>
+
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
 
   <script src="/settings.js"></script>
+
   <script src="/version.js"></script>
+
   <script src="/device.js"></script>
+
   <script src="/displayShoutouts.js"></script>
+
   <script src="/rearrange.js"></script>
 </body>
 </html>
