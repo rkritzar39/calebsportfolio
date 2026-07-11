@@ -1,13 +1,6 @@
 # Link in Bio Website
 
-https://img.shields.io/badge/version-v26.6--beta.3-blue
-https://img.shields.io/badge/build-2026.07.11-purple
-https://img.shields.io/badge/release%20track-Beta%20Revamp%20Preview-orange
-https://img.shields.io/badge/stable%20base-v26.5-green
-https://img.shields.io/badge/planned%20revamp-v27.0-yellow
-https://img.shields.io/badge/JavaScript-48.7%25-f1e05a
-https://img.shields.io/badge/CSS-37.9%25-663399
-https://img.shields.io/badge/HTML-13.4%25-e34c26
+![Version](https://img.shields.io/badge/version-v26.6--beta.3-blue) ![Build](https://img.shields.io/badge/build-2026.07.11-purple) ![Release Track](https://img.shields.io/badge/release%20track-Beta%20Revamp%20Preview-orange) ![Stable Base](https://img.shields.io/badge/stable%20base-v26.5-green) ![Planned Revamp](https://img.shields.io/badge/planned%20revamp-v27.0-yellow) ![JavaScript](https://img.shields.io/badge/JavaScript-48.7%25-f1e05a) ![CSS](https://img.shields.io/badge/CSS-37.9%25-663399) ![HTML](https://img.shields.io/badge/HTML-13.4%25-e34c26)
 
 Welcome to the repository for my Link in Bio Website.
 
@@ -33,36 +26,36 @@ The website is built to be responsive, accessible, secure, and easy to use acros
 
 ## Table of Contents
 
-* #overview
-* #features
-  * #home-page
-  * #1-profile-section
-  * #2-live-activity-and-status
-  * #3-connect-with-me
-  * #4-creator-shoutouts
-  * #5-useful-links
-  * #6-countdown
-  * #7-business-information
-  * #8-holiday-hours
-  * #9-temporary-hours
-  * #10-academic-availability
-  * #11-tech-information
-  * #12-useful-device-and-website-information
-  * #13-disabilities
-  * #14-version-information
-  * #15-notice-information
-  * #16-maintenance-mode
-* #beta-page
-* #settings-page
-* #resume-page
-* #admin-portal
-* #security-features
-* #accessibility-and-responsive-design
-* #coding-languages-and-technologies
-* #version-history
-* #release-roadmap
-* #removed-and-retired-features
-* #conclusion
+* [Overview](#overview)
+* [Features](#features)
+  * [Home Page](#home-page)
+  * [1. Profile Section](#1-profile-section)
+  * [2. Live Activity and Status](#2-live-activity-and-status)
+  * [3. Connect with Me](#3-connect-with-me)
+  * [4. Creator Shoutouts](#4-creator-shoutouts)
+  * [5. Useful Links](#5-useful-links)
+  * [6. Countdown](#6-countdown)
+  * [7. Business Information](#7-business-information)
+  * [8. Holiday Hours](#8-holiday-hours)
+  * [9. Temporary Hours](#9-temporary-hours)
+  * [10. Academic Availability](#10-academic-availability)
+  * [11. Tech Information](#11-tech-information)
+  * [12. Useful Device and Website Information](#12-useful-device-and-website-information)
+  * [13. Disabilities](#13-disabilities)
+  * [14. Version Information](#14-version-information)
+  * [15. Notice Information](#15-notice-information)
+  * [16. Maintenance Mode](#16-maintenance-mode)
+* [Beta Page](#beta-page)
+* [Settings Page](#settings-page)
+* [Resume Page](#resume-page)
+* [Admin Portal](#admin-portal)
+* [Security Features](#security-features)
+* [Accessibility and Responsive Design](#accessibility-and-responsive-design)
+* [Coding Languages and Technologies](#coding-languages-and-technologies)
+* [Version History](#version-history)
+* [Release Roadmap](#release-roadmap)
+* [Removed and Retired Features](#removed-and-retired-features)
+* [Conclusion](#conclusion)
 
 ---
 
@@ -84,7 +77,7 @@ Visitors can use the website to:
 * Access legal and notice information
 * Adjust appearance and accessibility settings
 
-> Note: Most public content is managed through the Admin Portal, which is only accessible to authorized accounts.
+> **Note:** Most public content is managed through the Admin Portal, which is only accessible to authorized accounts.
 
 ---
 
@@ -92,7 +85,7 @@ Visitors can use the website to:
 
 ## Home Page
 
-The Home Page contains the main public-facing sections of the website.
+The Home Page contains the main public-facing sections of the website. 
 
 The current beta focuses on a cleaner experience by maintaining actively used sections and removing retired or unnecessary features.
 
@@ -150,9 +143,7 @@ The Connect with Me section contains links to social media platforms and other p
 * Platform icons
 * Links that open in a new tab
 * Admin-managed links
-* Visitor-only access to public content
-* Visitors can click links
-* Visitors cannot edit or modify links
+* Visitor-only access to public content (visitors can click links, but cannot edit or modify them)
 
 This section allows visitors to quickly access my public social profiles and connected accounts.
 
@@ -196,7 +187,7 @@ Creator lists can be sorted by:
 
 Visitors can view and visit creator profiles, but only authorized accounts can modify creator lists through the Admin Portal.
 
-> Note: The separate Latest TikTok embed feature has been retired. The main TikTok creator shoutout section remains active.
+> **Note:** The separate *Latest TikTok embed* feature has been retired. The main TikTok creator shoutout section remains active.
 
 ---
 
@@ -220,10 +211,9 @@ Useful links may include:
 * Links open in a new tab
 * Links are displayed as buttons
 * Links are managed through the Admin Portal
-* Visitors can click links
-* Visitors cannot edit links
+* Visitors can click links but cannot edit them
 
-> Note: The merch store is listed under Useful Links instead of being treated as a separate built-in website page.
+> **Note:** The merch store is listed under Useful Links instead of being treated as a separate built-in website page.
 
 ---
 
@@ -240,15 +230,13 @@ The Countdown section displays a live countdown timer to a selected event.
 * Minutes
 * Seconds
 
-The countdown is based on the visitor’s device or browser timezone.
-
-This helps visitors see the time remaining until a configured event using their local time context.
+The countdown is based on the visitor’s device or browser timezone. This helps visitors see the time remaining until a configured event using their local time context.
 
 ---
 
 ## 7. Business Information
 
-The Business Information section displays business availability and contact information.
+The Business Information section displays business availability and contact information. 
 
 Business hours can be shown in the visitor’s local timezone while still being based on the configured business timezone.
 
@@ -269,9 +257,9 @@ Business hours can be shown in the visitor’s local timezone while still being 
 * Traffic light indicator
 * Premium status hint
 * Today timeline
-* Copy Today button
+* *Copy Today* button
 * 12-hour and 24-hour time format toggle
-* Hide or Show Full Hours toggle
+* *Hide / Show Full Hours* toggle
 
 ### Business Statuses
 
@@ -286,13 +274,7 @@ The Business Information section can display statuses such as:
 
 ### Status Behavior
 
-The business status can automatically update based on:
-
-* Regular weekly hours
-* Holiday hours
-* Temporary hours
-* Academic availability
-* Manual override settings
+The business status can automatically update based on: regular weekly hours, holiday hours, temporary hours, academic availability, and manual override settings. 
 
 The Business Information section is designed to show whether availability is currently open, closed, temporarily unavailable, affected by a holiday, or affected by an academic schedule.
 
@@ -312,15 +294,13 @@ Holiday hours can show:
 * Active holiday schedule
 * Concluded holiday schedule
 
-Holiday hours only appear when holiday entries are configured.
-
-Holiday hours can affect the displayed business status and the next available opening time.
+Holiday hours only appear when holiday entries are configured. They can affect the displayed business status and the next available opening time.
 
 ---
 
 ## 9. Temporary Hours
 
-The business system supports Temporary Hours for special periods.
+The business system supports Temporary Hours for special periods. 
 
 Temporary hours can be used for:
 
@@ -346,9 +326,7 @@ Temporary hours can override normal business hours and affect the public availab
 
 ## 10. Academic Availability
 
-The website includes Academic Availability support because school commitments can affect business availability.
-
-Academic availability is built into the Business Information section.
+The website includes Academic Availability support because school commitments can affect business availability. Academic availability is built directly into the Business Information section.
 
 ### Academic Items
 
@@ -381,7 +359,7 @@ Academic availability can display or affect status for:
 
 ### Smart Recurring Class Status
 
-Recurring classes use smart time-aware labels to prevent classes from incorrectly remaining marked as active after the scheduled class time has ended.
+Recurring classes use smart, time-aware labels to prevent classes from incorrectly remaining marked as active after the scheduled class time has ended.
 
 A recurring class can show:
 
@@ -404,17 +382,9 @@ This makes recurring class information more accurate and easier for visitors to 
 
 The Academic Schedule dropdown is part of the Business Information display.
 
-The dropdown can show academic schedule items such as:
+The dropdown can show academic schedule items such as: recurring classes, exams, finals, academic breaks, university events, internships, and co-ops. 
 
-* Recurring classes
-* Exams
-* Finals
-* Academic breaks
-* University events
-* Internships
-* Co-ops
-
-The Academic Schedule dropdown hides or shows together with the Hide or Show Full Hours toggle when academic data is available.
+The Academic Schedule dropdown hides or shows together with the *Hide / Show Full Hours* toggle when academic data is available.
 
 ---
 
@@ -497,7 +467,7 @@ Future-planning features can include:
 * Upgrade target
 * Features or specifications to avoid
 
-> Note: AI feature compatibility in the Tech Information section is a device-evaluation feature. It is separate from the retired Onyx AI assistant.
+> **Note:** AI feature compatibility in the Tech Information section is a device-evaluation feature. It is separate from the retired Onyx AI assistant.
 
 ### Device Lineage
 
@@ -552,7 +522,7 @@ Tech items support different ownership states.
 * Returned
 * Lost
 
-> Privacy Note: The Tech Information section is public-facing, so private or sensitive device information should not be exposed.
+> **Privacy Note:** The Tech Information section is public-facing, so private or sensitive device information should not be exposed.
 
 ---
 
@@ -572,9 +542,7 @@ The website displays useful visitor-side information related to the current devi
 * Sunrise information
 * Sunset information
 
-This information helps show how the website is being viewed and provides additional context for visitors.
-
-Availability can depend on browser support, permissions, network access, and configured services.
+This information helps show how the website is being viewed and provides additional context for visitors. Availability can depend on browser support, permissions, network access, and configured services.
 
 ---
 
@@ -688,9 +656,7 @@ Beta notes can include important information such as:
 
 # Settings Page
 
-The Settings Page allows visitors to adjust appearance and accessibility options.
-
-Some settings are available to visitors, while restricted management options remain owner-only.
+The Settings Page allows visitors to adjust appearance and accessibility options. Some settings are available to visitors, while restricted management options remain owner-only.
 
 ---
 
@@ -724,7 +690,7 @@ Accessibility settings help improve usability.
 
 ## Reset to Factory Settings
 
-The Reset to Factory Settings option restores visitor settings to their default values.
+The *Reset to Factory Settings* option restores visitor settings to their default values.
 
 ---
 
@@ -806,9 +772,7 @@ The Admin Portal can manage:
 
 ## Live Previews and Save State
 
-Supported Admin Portal sections can provide live previews for business and academic updates.
-
-Admin changes use Firebase Firestore save and load support.
+Supported Admin Portal sections can provide live previews for business and academic updates. Admin changes use Firebase Firestore save and load support.
 
 ---
 
@@ -858,9 +822,7 @@ The academic admin area supports:
 
 The creator shoutout admin area supports:
 
-* TikTok creator management
-* Instagram creator management
-* YouTube creator management
+* TikTok, Instagram, and YouTube creator management
 * Profile image fields
 * Username fields
 * Display name or nickname fields
@@ -900,31 +862,24 @@ The Tech admin area supports management of public tech information.
 
 ### Tech Item Fields Can Include
 
-* Device name
-* Model
+* Device name & Model
 * Device type
-* Material
-* Storage
-* Battery capacity
-* Color
+* Material & Color
+* Storage & Battery capacity
 * Price
-* Date released
-* Date bought
+* Date released & Date bought
 * Operating system version
-* Battery health
-* Battery charge cycles
+* Battery health & Battery charge cycles
 * Ownership state
 * Upgrade information
 * Support information
 * Lifecycle information
-* Current role
-* Previous role
-* Predecessor device
-* Successor device
+* Current role & Previous role
+* Predecessor device & Successor device
 * Planned replacement
 * Expected future specifications
 
-> Privacy Note: Only information intended for public display should be entered into public tech records.
+> **Privacy Note:** Only information intended for public display should be entered into public tech records.
 
 ---
 
@@ -946,7 +901,7 @@ The website includes features intended to discourage casual copying and misuse o
 * Firebase-backed data
 * Restricted Admin Portal access
 
-> Disclaimer: Client-side restrictions act only as deterrents. They are not replacements for proper authentication, Firestore Security Rules, server-side security, account security, backups, or legal protection.
+> **Disclaimer:** Client-side restrictions act only as deterrents. They are not replacements for proper authentication, Firestore Security Rules, server-side security, account security, backups, or legal protection.
 
 ---
 
@@ -1001,7 +956,7 @@ This project is built with standard web technologies and Firebase backend servic
 | CSS | 37.9% | Controls visual design, responsive layouts, liquid glass styling, animations, themes, and hover effects. |
 | HTML | 13.4% | Provides website structure, page sections, navigation, and content frameworks. |
 
-> Language percentages are based on the current GitHub repository language analysis and may change as files are added, removed, or updated.
+> **Note:** Language percentages are based on the current GitHub repository language analysis and may change as files are added, removed, or updated.
 
 ---
 
@@ -1178,7 +1133,7 @@ Visitors can:
 * Review website and device information
 * Adjust basic appearance and accessibility settings
 
-Only authorized accounts can modify managed content through the Admin Portal.
+Only authorized accounts can modify managed content through the Admin Portal. 
 
 Version v26.6-beta.3 focuses on cleaning up the website by removing retired features and reducing unnecessary frontend code while preserving the primary public-facing experience.
 
