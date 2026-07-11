@@ -657,7 +657,7 @@
      * Replace this placeholder with the public email address
      * that should receive beta feedback.
      */
-    const FEEDBACK_EMAIL = "YOUR_PUBLIC_EMAIL@example.com";
+    const FEEDBACK_EMAIL = "calebkritzar@gmail.com";
 
     document.addEventListener("DOMContentLoaded", () => {
       /* ------------------------------------------------------ */
@@ -809,7 +809,7 @@
         const subject = encodeURIComponent("Beta Feedback — v26.6-beta.3");
         const body = encodeURIComponent(createFeedbackReport());
 
-        if (!FEEDBACK_EMAIL || FEEDBACK_EMAIL.includes("YOUR_PUBLIC_EMAIL")) {
+        if (!FEEDBACK_EMAIL || FEEDBACK_EMAIL.includes("calebkritzar@gmail.com")) {
           copyFeedbackReport();
           feedbackStatus.textContent =
             "Feedback copied. Add your public email address to FEEDBACK_EMAIL to enable email submission.";
