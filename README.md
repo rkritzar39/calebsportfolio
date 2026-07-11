@@ -1,19 +1,19 @@
 # Link in Bio Website
 
-![Version](https://img.shields.io/badge/version-v26.6--beta.2-blue)
-![Build](https://img.shields.io/badge/build-2026.07.05-purple)
-![Release Track](https://img.shields.io/badge/release%20track-Beta%20Revamp%20Preview-orange)
-![Stable Base](https://img.shields.io/badge/stable%20base-v26.5-green)
-![Planned Revamp](https://img.shields.io/badge/planned%20revamp-v27.0-yellow)
-![JavaScript](https://img.shields.io/badge/JavaScript-50.0%25-f1e05a)
-![CSS](https://img.shields.io/badge/CSS-36.3%25-663399)
-![HTML](https://img.shields.io/badge/HTML-13.7%25-e34c26)
+https://img.shields.io/badge/version-v26.6--beta.3-blue
+https://img.shields.io/badge/build-2026.07.11-purple
+https://img.shields.io/badge/release%20track-Beta%20Revamp%20Preview-orange
+https://img.shields.io/badge/stable%20base-v26.5-green
+https://img.shields.io/badge/planned%20revamp-v27.0-yellow
+https://img.shields.io/badge/JavaScript-48.7%25-f1e05a
+https://img.shields.io/badge/CSS-37.9%25-663399
+https://img.shields.io/badge/HTML-13.4%25-e34c26
 
 Welcome to the repository for my Link in Bio Website.
 
 This website is a centralized hub for my profile, social links, creator shoutouts, useful links, business availability, academic availability, tech information, accessibility settings, and website updates.
 
-The website is built to be responsive, accessible, secure, and easy to use across phones, tablets, computers, and other devices.
+The website is built to be responsive, accessible, secure, and easy to use across phones, tablets, computers, and other supported devices.
 
 ---
 
@@ -21,47 +21,48 @@ The website is built to be responsive, accessible, secure, and easy to use acros
 
 | Attribute | Details |
 | :--- | :--- |
-| **Version** | v26.6-beta.2 |
-| **Build** | 2026.07.05 |
-| **Release Track** | Beta Revamp Preview |
-| **Current Stable Base** | v26.5 |
-| **Revamp Status** | Partial beta revamp in progress |
-| **Target Release** | September 2026 |
-| **Planned Full Revamp** | v27.0 |
+| Version | v26.6-beta.3 |
+| Build | 2026.07.11 |
+| Release Track | Beta Revamp Preview |
+| Current Stable Base | v26.5 |
+| Revamp Status | Partial beta revamp in progress |
+| Target Release | September 2026 |
+| Planned Full Revamp | v27.0 |
 
 ---
 
 ## Table of Contents
 
-* [Overview](#overview)
-* [Features](#features)
-  * [Home Page](#home-page)
-  * [1. Profile Section](#1-profile-section)
-  * [2. Live Activity / Status](#2-live-activity--status)
-  * [3. Connect with Me](#3-connect-with-me)
-  * [4. TikTok, Instagram, and YouTube Creator Shoutouts](#4-tiktok-instagram-and-youtube-creator-shoutouts)
-  * [5. Useful Links](#5-useful-links)
-  * [6. Countdown](#6-countdown)
-  * [7. Business Information](#7-business-information)
-  * [8. Holiday Hours](#8-holiday-hours)
-  * [9. Temporary Hours](#9-temporary-hours)
-  * [10. Academic Availability](#10-academic-availability)
-  * [11. Tech Information](#11-tech-information)
-  * [12. Useful Device and Website Information](#12-useful-device-and-website-information)
-  * [13. Disabilities](#13-disabilities)
-  * [14. Version Information](#14-version-information)
-  * [15. Notice Information](#15-notice-information)
-  * [16. Maintenance Mode](#16-maintenance-mode)
-* [Beta Page](#beta-page)
-* [Settings Page](#settings-page)
-* [Resume Page](#resume-page)
-* [Admin Portal](#admin-portal)
-* [Security Features](#security-features)
-* [Accessibility and Responsive Design](#accessibility-and-responsive-design)
-* [Coding Languages and Technologies](#coding-languages-and-technologies)
-* [Version History](#version-history)
-* [Release Roadmap](#release-roadmap)
-* [Conclusion](#conclusion)
+* #overview
+* #features
+  * #home-page
+  * #1-profile-section
+  * #2-live-activity-and-status
+  * #3-connect-with-me
+  * #4-creator-shoutouts
+  * #5-useful-links
+  * #6-countdown
+  * #7-business-information
+  * #8-holiday-hours
+  * #9-temporary-hours
+  * #10-academic-availability
+  * #11-tech-information
+  * #12-useful-device-and-website-information
+  * #13-disabilities
+  * #14-version-information
+  * #15-notice-information
+  * #16-maintenance-mode
+* #beta-page
+* #settings-page
+* #resume-page
+* #admin-portal
+* #security-features
+* #accessibility-and-responsive-design
+* #coding-languages-and-technologies
+* #version-history
+* #release-roadmap
+* #removed-and-retired-features
+* #conclusion
 
 ---
 
@@ -73,17 +74,17 @@ Visitors can use the website to:
 
 * Learn more about me
 * View my social links
-* Visit useful links
-* View creator shoutouts
-* Check business availability
+* Visit useful links and resources
+* View TikTok, Instagram, and YouTube creator shoutouts
+* Check current business availability
 * View academic availability information
-* View tech information
+* View public tech information
 * Learn about listed disabilities
-* Check version and device information
+* Check website version and device information
 * Access legal and notice information
 * Adjust appearance and accessibility settings
 
-> **Note:** Most public content is managed through the Admin Portal, which is only accessible to authorized accounts.
+> Note: Most public content is managed through the Admin Portal, which is only accessible to authorized accounts.
 
 ---
 
@@ -93,6 +94,8 @@ Visitors can use the website to:
 
 The Home Page contains the main public-facing sections of the website.
 
+The current beta focuses on a cleaner experience by maintaining actively used sections and removing retired or unnecessary features.
+
 ---
 
 ## 1. Profile Section
@@ -101,7 +104,7 @@ The Profile Section displays my main profile information.
 
 ### Includes
 
-* Username / display name
+* Username or display name
 * Bio
 * Profile image
 * Verified badge
@@ -117,44 +120,45 @@ The navigation area can include links such as:
 * Resume
 * Settings
 
-The profile section gives visitors a quick overview of who I am and provides access to other important pages.
+The Profile Section gives visitors a quick overview of who I am and provides access to other important pages.
 
 ---
 
-## 2. Live Activity / Status
+## 2. Live Activity and Status
 
 The website can display a live activity or status area.
 
 ### Includes
 
 * Current status or activity text
-* Active/offline style indicator
+* Active or offline indicator
 * Optional live media or music-style display
 * Updated timestamp
 * Dynamic Firestore-powered updates
 
-This helps visitors see current activity or availability without needing to manually refresh the page.
+The live status system helps visitors see current activity or availability without needing to manually refresh the page.
 
 ---
 
 ## 3. Connect with Me
 
-The Connect with Me section contains links to social media platforms and other ways to connect with me.
+The Connect with Me section contains links to social media platforms and other public ways to connect with me.
 
 ### Features
 
-* Social media buttons and platform icons
+* Social media buttons
+* Platform icons
 * Links that open in a new tab
 * Admin-managed links
-* Visitor-only access
-* Visitors can click the links
-* Visitors cannot edit or modify the links
+* Visitor-only access to public content
+* Visitors can click links
+* Visitors cannot edit or modify links
 
-This section allows visitors to quickly access my public social profiles and other connected accounts.
+This section allows visitors to quickly access my public social profiles and connected accounts.
 
 ---
 
-## 4. TikTok, Instagram, and YouTube Creator Shoutouts
+## 4. Creator Shoutouts
 
 The website includes creator shoutout sections for:
 
@@ -168,20 +172,31 @@ These sections list creators that I follow, collaborate with, or want to highlig
 
 * Creator profile cards
 * Profile pictures
-* Usernames and display names
+* Usernames
+* Display names or nicknames
 * Platform-specific card designs
 * Verified badges when available
-* Follower, subscriber, like, post, or video counts when available
-* Visit Profile / Visit Channel buttons
+* Follower counts when available
+* Subscriber counts when available
+* Like, post, or video counts when available
+* Visit Profile buttons
+* Visit Channel buttons
 * Search support
 * Sorting support
-  * High to low
-  * Low to high
-  * A to Z
-  * Z to A
 * Last updated timestamps
 
-Visitors can view and visit creator profiles, but only I can modify the creator lists through the Admin Portal.
+### Sorting Options
+
+Creator lists can be sorted by:
+
+* High to low
+* Low to high
+* A to Z
+* Z to A
+
+Visitors can view and visit creator profiles, but only authorized accounts can modify creator lists through the Admin Portal.
+
+> Note: The separate Latest TikTok embed feature has been retired. The main TikTok creator shoutout section remains active.
 
 ---
 
@@ -198,17 +213,17 @@ Useful links may include:
 * External pages
 * Important references
 * Tools
-* Merch store link
+* Merch store links
 
 ### Features
 
 * Links open in a new tab
 * Links are displayed as buttons
 * Links are managed through the Admin Portal
-* Visitors can click the links
-* Visitors cannot edit the links
+* Visitors can click links
+* Visitors cannot edit links
 
-> **Note:** The merch store is listed under Useful Links instead of being treated as a separate built-in website page.
+> Note: The merch store is listed under Useful Links instead of being treated as a separate built-in website page.
 
 ---
 
@@ -225,7 +240,7 @@ The Countdown section displays a live countdown timer to a selected event.
 * Minutes
 * Seconds
 
-The countdown is based on the visitor’s device/browser timezone.
+The countdown is based on the visitor’s device or browser timezone.
 
 This helps visitors see the time remaining until a configured event using their local time context.
 
@@ -235,21 +250,15 @@ This helps visitors see the time remaining until a configured event using their 
 
 The Business Information section displays business availability and contact information.
 
-Business hours are shown in the visitor’s local timezone while still being based on the configured business timezone.
+Business hours can be shown in the visitor’s local timezone while still being based on the configured business timezone.
 
 ### Includes
 
 * Business status
-  * Open
-  * Closed
-  * Holiday Hours
-  * Temporary Closure
-  * Academic Schedule Active
-  * Manual Override
 * Contact email
 * Visitor timezone
-* Store/business timezone
-* Store time
+* Business timezone
+* Current business time
 * Today’s hours
 * Next open time
 * Weekly business hours
@@ -261,8 +270,19 @@ Business hours are shown in the visitor’s local timezone while still being bas
 * Premium status hint
 * Today timeline
 * Copy Today button
-* 12-hour / 24-hour time format toggle
-* Hide / Show Full Hours toggle
+* 12-hour and 24-hour time format toggle
+* Hide or Show Full Hours toggle
+
+### Business Statuses
+
+The Business Information section can display statuses such as:
+
+* Open
+* Closed
+* Holiday Hours
+* Temporary Closure
+* Academic Schedule Active
+* Manual Override
 
 ### Status Behavior
 
@@ -274,7 +294,7 @@ The business status can automatically update based on:
 * Academic availability
 * Manual override settings
 
-The business section is designed to show visitors whether availability is currently open, closed, temporarily unavailable, affected by a holiday, or affected by academic scheduling.
+The Business Information section is designed to show whether availability is currently open, closed, temporarily unavailable, affected by a holiday, or affected by an academic schedule.
 
 ---
 
@@ -330,7 +350,7 @@ The website includes Academic Availability support because school commitments ca
 
 Academic availability is built into the Business Information section.
 
-### Academic Items Included
+### Academic Items
 
 Academic availability can include:
 
@@ -352,14 +372,16 @@ Academic availability can display or affect status for:
 
 * Class in progress
 * Exam in progress
-* Final exam
+* Final exam in progress
 * Academic break
+* University event
+* Internship or co-op schedule
 
 ---
 
 ### Smart Recurring Class Status
 
-Recurring classes use smart time-aware labels to prevent classes from incorrectly staying on “In Effect” after the class time has ended.
+Recurring classes use smart time-aware labels to prevent classes from incorrectly remaining marked as active after the scheduled class time has ended.
 
 A recurring class can show:
 
@@ -370,17 +392,17 @@ A recurring class can show:
 * Starts in X hours
 * In Progress
 * Concluded Today
-* Concluded Today • Next class Tuesday
-* Not Scheduled Today • Next class Tuesday
+* Concluded Today — Next class Tuesday
+* Not Scheduled Today — Next class Tuesday
 * Concluded
 
-This makes recurring classes more accurate and easier for visitors to understand.
+This makes recurring class information more accurate and easier for visitors to understand.
 
 ---
 
 ### Academic Schedule Dropdown
 
-The Academic Schedule dropdown is part of the business hours display.
+The Academic Schedule dropdown is part of the Business Information display.
 
 The dropdown can show academic schedule items such as:
 
@@ -389,9 +411,10 @@ The dropdown can show academic schedule items such as:
 * Finals
 * Academic breaks
 * University events
-* Internships and co-ops
+* Internships
+* Co-ops
 
-The Academic Schedule dropdown hides or shows together with the Hide / Show Full Hours toggle if academic data is available.
+The Academic Schedule dropdown hides or shows together with the Hide or Show Full Hours toggle when academic data is available.
 
 ---
 
@@ -414,42 +437,80 @@ Tech items can include:
 * Battery charge cycles
 * Date released
 * Date bought
-* OS version
+* Operating system version
 
 ---
 
 ### Smart Tech Features
 
-The Tech Information section also includes advanced device and lifecycle tracking.
+The Tech Information section includes advanced device and lifecycle tracking.
 
-### Advanced Features Include
+### Operating System Status
 
-* OS status
-  * Latest
-  * Outdated
-  * Very Outdated
-  * Beta
-  * Developer Beta
-  * Public Beta
-  * Ahead of Public
-* Lifecycle and Support
-  * Device support status
-  * Estimated support lifespan
-  * Upgrade recommendation
-  * Upgrade priority
-  * Future-proof score
-* Battery and Performance
-  * Battery trend
-  * Battery cycle evaluation
-* AI and Future Planning
-  * AI feature support
-  * Future AI target
-  * Backup priority
-  * Cost efficiency
-* Lineage
-  * Device lineage
-  * Role transition details
-  * Upgrade path
+Operating system statuses can include:
+
+* Latest
+* Outdated
+* Very Outdated
+* Beta
+* Developer Beta
+* Public Beta
+* Ahead of Public
+* Release Candidate
+* Preview
+* Canary
+
+### Lifecycle and Support
+
+Lifecycle and support features can include:
+
+* Device support status
+* Estimated major support lifespan
+* Estimated security support lifespan
+* Upgrade recommendation
+* Recommended upgrade year
+* Upgrade window
+* Upgrade priority
+* Future-proof score
+* Recommended action
+
+### Battery and Performance
+
+Battery features can include:
+
+* Battery health evaluation
+* Battery charge cycle evaluation
+* Battery trend
+* Device age
+* Device score
+* Upgrade triggers
+
+### Future Planning
+
+Future-planning features can include:
+
+* Current AI feature compatibility
+* Future hardware target
+* Backup priority
+* Cost efficiency
+* Recommended future specifications
+* Upgrade target
+* Features or specifications to avoid
+
+> Note: AI feature compatibility in the Tech Information section is a device-evaluation feature. It is separate from the retired Onyx AI assistant.
+
+### Device Lineage
+
+Device lineage features can include:
+
+* Device lineage
+* Role transition details
+* Previous device role
+* Current device role
+* Predecessor device
+* Successor device
+* Upgrade path
+* Automatically managed role information
 
 ---
 
@@ -457,7 +518,7 @@ The Tech Information section also includes advanced device and lifecycle trackin
 
 Tech items support different ownership states.
 
-### Examples
+### Active Ownership States
 
 * Owned
 * Borrowed
@@ -465,15 +526,24 @@ Tech items support different ownership states.
 * School-issued
 * Work-issued
 * In repair
+
+### Planned and Roadmap States
+
 * Planned
 * Coming soon
 * Future upgrade
 * Preordered
 * Ordered
 * Reserved
+
+### Wishlist States
+
 * Wishlist
 * Considering
 * Researching
+
+### Archived States
+
 * Retired
 * Sold
 * Traded in
@@ -482,7 +552,7 @@ Tech items support different ownership states.
 * Returned
 * Lost
 
-> **Privacy Note:** The tech section is public-facing, so private or sensitive device information is not exposed.
+> Privacy Note: The Tech Information section is public-facing, so private or sensitive device information should not be exposed.
 
 ---
 
@@ -497,12 +567,14 @@ The website displays useful visitor-side information related to the current devi
 * Device type
 * Screen resolution
 * Connection information
-* Network information
+* Network information when available
 * Weather information
 * Sunrise information
 * Sunset information
 
 This information helps show how the website is being viewed and provides additional context for visitors.
+
+Availability can depend on browser support, permissions, network access, and configured services.
 
 ---
 
@@ -513,7 +585,7 @@ The Disabilities section displays disabilities or conditions that I choose to li
 ### Features
 
 * Disability names
-* Buttons or links to official informational websites
+* Buttons or links to informational websites
 * Hover animations
 * Admin-managed list
 * Visitor-only access
@@ -524,33 +596,39 @@ Visitors can click each disability link to learn more, but visitors cannot modif
 
 ## 14. Version Information
 
-The Version Information section displays metadata about the website and the visitor’s device/browser environment.
+The Version Information section displays metadata about the website and the visitor’s device or browser environment.
 
-### Includes
+### Website Information
 
-* Website
-  * Version number
-  * Build number
-  * Release track
-  * Revamp status
-  * Target release
-  * Synced timestamp
-* Visitor
-  * Operating system
-  * Device
-  * Browser
-  * Screen resolution
-  * Connection information
-  * Weather information
-  * Sunrise and sunset information
+The website portion can include:
 
-This section helps show the current site version and visitor environment.
+* Version number
+* Build number
+* Release track
+* Revamp status
+* Target release
+* Synced timestamp
+
+### Visitor Information
+
+The visitor portion can include:
+
+* Operating system
+* Device
+* Browser
+* Screen resolution
+* Connection information
+* Weather information
+* Sunrise information
+* Sunset information
+
+This section helps show the current website version and visitor environment.
 
 ---
 
 ## 15. Notice Information
 
-The website displays legal and content protection information.
+The website displays legal and content-protection information.
 
 ### Includes
 
@@ -559,7 +637,7 @@ The website displays legal and content protection information.
 * Copyright notice
 * Protected content message
 
-This section helps explain that the website content is protected and should not be copied or reused without permission.
+This section helps explain that website content is protected and should not be copied or reused without permission.
 
 ---
 
@@ -574,7 +652,7 @@ The website can show a maintenance message when maintenance is active.
 * Loading overlay
 * Visitor-friendly maintenance message
 
-Maintenance Mode helps visitors understand when the website may be temporarily unavailable or under active updates.
+Maintenance Mode helps visitors understand when the website may be temporarily unavailable or undergoing active updates.
 
 ---
 
@@ -591,7 +669,7 @@ The Beta Page displays information about beta versions and upcoming changes.
 * Sections being tested
 * Notes about experimental visual styles
 
-The beta page helps show what is currently being tested before the full revamp release.
+The Beta Page helps show what is currently being tested before the full revamp release.
 
 ---
 
@@ -603,6 +681,7 @@ Beta notes can include important information such as:
 * Some visual styles may change before release.
 * Liquid glass effects may still be experimental.
 * Mobile and split-screen layouts may still be adjusted.
+* Additional features may be changed or removed during cleanup.
 * The final complete revamp is planned as v27.0.
 
 ---
@@ -638,12 +717,14 @@ Accessibility settings help improve usability.
 * Focus outline toggle
 * Keyboard navigation support
 * Accessibility-friendly display preferences
+* Reduced or adjusted visual effects when supported
+* Readability-focused options
 
 ---
 
 ## Reset to Factory Settings
 
-The Reset to Factory Settings option restores settings to their default values.
+The Reset to Factory Settings option restores visitor settings to their default values.
 
 ---
 
@@ -657,13 +738,14 @@ The Resume Page provides access to resume-related information.
 * Skills
 * Experience
 * Education
-* Download or viewing options, when available
+* Download options when available
+* Browser-based viewing options when available
 
 ---
 
 # Admin Portal
 
-The Admin Portal is exclusively for authorized accounts and is used to manage website content.
+The Admin Portal is exclusively for authorized accounts and is used to manage supported website content.
 
 ---
 
@@ -671,43 +753,62 @@ The Admin Portal is exclusively for authorized accounts and is used to manage we
 
 The Admin Portal can manage:
 
-* Profile
-  * Profile information
-  * Social links
-  * Useful links
-  * Creator shoutouts
-  * Disabilities
-* Business
-  * Contact email
-  * Weekly hours
-  * Holiday/date closures
-  * Temporary closures
-  * Manual status overrides
-* Academic
-  * Class schedules
-  * Exams
-  * Finals
-  * University events
-  * Internships
-  * Academic breaks
-  * Semester metadata
-  * Academic timezone
-* Tech
-  * Device tracking
-  * Lifecycle information
-  * Support information
-  * Upgrade information
-* Metadata
-  * Website information
-  * Version information
+### Profile
+
+* Profile information
+* Profile image
+* Bio
+* Social links
+* Useful links
+* Creator shoutouts
+* Disabilities
+
+### Business
+
+* Contact email
+* Weekly business hours
+* Holiday or date-based closures
+* Temporary closures
+* Temporary schedules
+* Manual status overrides
+
+### Academic
+
+* Class schedules
+* Exams
+* Finals
+* University events
+* Internships
+* Co-ops
+* Academic breaks
+* Semester metadata
+* Academic timezone
+
+### Tech
+
+* Device tracking
+* Ownership states
+* Lifecycle information
+* Support information
+* Upgrade information
+* Planned devices
+* Wishlist devices
+* Archived devices
+
+### Metadata
+
+* Website information
+* Version information
+* Build information
+* Release information
 
 ---
 
 ## Live Previews and Save State
 
-The Admin Portal supports live previews for business and academic updates.
+Supported Admin Portal sections can provide live previews for business and academic updates.
 
-Admin changes are powered by Firestore save/load support.
+Admin changes use Firebase Firestore save and load support.
 
 ---
 
@@ -718,11 +819,11 @@ The business admin area supports:
 * Contact email editing
 * Regular weekly hours
 * Multiple hour ranges per day
-* Holiday/date closures
+* Holiday or date-based closures
 * Temporary schedule periods
 * Manual status override
 * Live preview
-* Firestore save/load support
+* Firestore save and load support
 
 ### Manual Status Override Options
 
@@ -742,13 +843,14 @@ The academic admin area supports:
 * Finals
 * University events
 * Internships
+* Co-ops
 * Academic breaks
 * Semester metadata
 * Academic profile data
 * Academic timezone
 * Live preview
 * Upcoming breaks preview
-* Firestore save/load support
+* Firestore save and load support
 
 ---
 
@@ -761,7 +863,7 @@ The creator shoutout admin area supports:
 * YouTube creator management
 * Profile image fields
 * Username fields
-* Display name / nickname fields
+* Display name or nickname fields
 * Follower or subscriber count fields
 * Verification status
 * Platform-specific display information
@@ -771,7 +873,7 @@ The creator shoutout admin area supports:
 
 ## Useful Links Admin Features
 
-The useful links admin area supports:
+The Useful Links admin area supports:
 
 * Link labels
 * Link URLs
@@ -783,7 +885,7 @@ The useful links admin area supports:
 
 ## Disabilities Admin Features
 
-The disabilities admin area supports:
+The Disabilities admin area supports:
 
 * Disability names
 * Educational or official resource links
@@ -794,12 +896,13 @@ The disabilities admin area supports:
 
 ## Tech Admin Features
 
-The tech admin area supports management of public tech information.
+The Tech admin area supports management of public tech information.
 
 ### Tech Item Fields Can Include
 
 * Device name
 * Model
+* Device type
 * Material
 * Storage
 * Battery capacity
@@ -807,35 +910,43 @@ The tech admin area supports management of public tech information.
 * Price
 * Date released
 * Date bought
-* OS version
+* Operating system version
 * Battery health
 * Battery charge cycles
 * Ownership state
 * Upgrade information
 * Support information
 * Lifecycle information
+* Current role
+* Previous role
+* Predecessor device
+* Successor device
+* Planned replacement
+* Expected future specifications
+
+> Privacy Note: Only information intended for public display should be entered into public tech records.
 
 ---
 
 # Security Features
 
-The website includes features to discourage casual copying and misuse of content.
+The website includes features intended to discourage casual copying and misuse of content.
 
 ### Includes
 
-* Copy and paste prevention
-* Printing prevention
-* Drag-and-drop disabled
-* Text selection disabled
-* Right-click disabled
-* Image saving deterrents
+* Copy and paste deterrents
+* Printing deterrents
+* Drag-and-drop restrictions
+* Text-selection restrictions
+* Right-click restrictions
+* Image-saving deterrents
 * Watermark notice
 * Legal notice
 * Copyright notices
 * Firebase-backed data
 * Restricted Admin Portal access
 
-> **Disclaimer:** These features act as deterrents and are not a replacement for server-side security or legal protection.
+> Disclaimer: Client-side restrictions act only as deterrents. They are not replacements for proper authentication, Firestore Security Rules, server-side security, account security, backups, or legal protection.
 
 ---
 
@@ -847,7 +958,8 @@ The website is designed to work across multiple screen sizes and device types.
 
 * Responsive layout
 * Mobile-friendly sections
-* Dark/light appearance support
+* Tablet and desktop support
+* Dark and light appearance support
 * Adjustable text size
 * Keyboard focus options
 * Visitor-local timezone support
@@ -856,13 +968,15 @@ The website is designed to work across multiple screen sizes and device types.
 * Accessible buttons and links
 * Dynamic content updates
 
+Visual effects and layouts may continue to be refined during the beta period.
+
 ---
 
 # Coding Languages and Technologies
 
 This project is built with standard web technologies and Firebase backend services.
 
-### Core Technologies
+## Core Technologies
 
 * HTML
 * CSS
@@ -874,6 +988,8 @@ This project is built with standard web technologies and Firebase backend servic
 * Font Awesome icons
 * LocalStorage
 * SessionStorage
+* Progressive Web App technologies
+* Service workers
 
 ---
 
@@ -881,9 +997,11 @@ This project is built with standard web technologies and Firebase backend servic
 
 | Language | Percentage | Purpose |
 | :--- | :--- | :--- |
-| **JavaScript** | 50.0% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, and interactive UI features. |
-| **CSS** | 36.3% | Controls visual design, responsive layouts, liquid glass styling, animations, themes, and hover effects. |
-| **HTML** | 13.7% | Provides website structure, page sections, and content frameworks. |
+| JavaScript | 48.7% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, and interactive user-interface features. |
+| CSS | 37.9% | Controls visual design, responsive layouts, liquid glass styling, animations, themes, and hover effects. |
+| HTML | 13.4% | Provides website structure, page sections, navigation, and content frameworks. |
+
+> Language percentages are based on the current GitHub repository language analysis and may change as files are added, removed, or updated.
 
 ---
 
@@ -894,19 +1012,25 @@ JavaScript powers most of the dynamic website behavior.
 ### JavaScript Handles
 
 * Profile loading
+* Live activity and status
 * Social links
+* Useful links
 * Creator shoutouts
-* Search and sorting
+* Creator search and sorting
 * Business status
 * Holiday hours
 * Temporary hours
 * Academic availability
 * Countdown
 * Tech information
-* Device/version detection
-* Settings
-* Weather/time data
-* Firestore realtime updates
+* Device and version detection
+* Visitor settings
+* Weather and time data
+* Firestore updates
+* Realtime notifications
+* Page initialization
+
+Unused logic associated with retired sections is removed as part of the v26.6-beta.3 cleanup.
 
 ---
 
@@ -919,13 +1043,19 @@ CSS controls the visual design and layout.
 * Page layout
 * Responsive design
 * Light and dark themes
-* Liquid glass / onyx styling
+* Liquid glass and Onyx styling
 * Buttons
 * Cards
 * Animations
 * Hover effects
 * Focus styles
 * Mobile layouts
+* Accessibility presentation
+* Business status presentation
+* Creator profile card designs
+* Tech information layouts
+
+Unused styles associated with retired sections are removed as part of the v26.6-beta.3 cleanup.
 
 ---
 
@@ -936,6 +1066,7 @@ HTML provides the website structure.
 ### HTML Includes Sections For
 
 * Profile
+* Live activity
 * Social links
 * Creator shoutouts
 * Countdown
@@ -949,7 +1080,7 @@ HTML provides the website structure.
 * Beta page
 * Resume page
 * Settings page
-* Admin portal
+* Admin Portal
 
 ---
 
@@ -957,44 +1088,98 @@ HTML provides the website structure.
 
 | Version | Highlights |
 | :--- | :--- |
-| **v26.6-beta.2** | Current beta update. Updated Business Status & Hours. Improved academic availability. Added smart recurring class status labels. Fixed recurring classes so ended classes no longer stay stuck on “In Effect.” Improved hide/show full hours behavior. |
-| **v26.6-beta.1** | Original partial beta revamp preview. Continued liquid glass / onyx UI refinements. Added beta notes and roadmap. |
-| **v26.5** | Current stable base. Updated device info and creator shoutout sections. Continued liquid glass refinement. |
-| **v26.1.2** | Introduced appearance settings, match device theme, and manual light/dark mode. |
-| **v1.17.0** | Bug fixes. |
-| **v1.16.0** | Introduced the Admin Portal and owner-only content management tools. |
-| **v1.15.0** | Bug fixes. |
-| **v1.14.0** | Theme consistency improvements and performance optimization. |
-| **v1.13.0** | Added focus outline toggle and accessibility enhancements. |
-| **v1.12.0** | Added merch store access under Useful Links. |
-| **v1.11.0** | Added settings page, dark/light modes, font adjustments, and factory reset. |
-| **v1.10.1** | Added current day highlight and enhanced the theme. |
-| **v1.10.0** | Added event calendar and bug fixes. |
-| **v1.9.0** | Added TikTok creator shoutouts, tech info, disabilities, version info, legal notices. |
-| **v1.8.0** | Added RedNote support styled like YouTube and Instagram, plus general enhancements. |
-| **v1.7.0** | Added security enhancements, media-saving deterrents, and text-copying deterrents. |
-| **v1.6.0** | Added Instagram and YouTube creator shoutouts, last updated timestamps, and bug fixes. |
-| **v1.5.0** | Bug fixes and improvements. |
+| v26.6-beta.3 | Current cleanup release. Removed retired FAQ, Posts, Blog, President, Legislation, Quote of the Day, Latest TikTok embed, Onyx AI assistant, and Project Goal Tracker features. Removed associated JavaScript, CSS, Firestore references, listeners, initialization calls, and obsolete script references. |
+| v26.6-beta.2 | Updated Business Status and Hours. Improved academic availability. Added smart recurring class status labels. Fixed recurring classes so ended classes no longer stay stuck on “In Effect.” Improved hide and show full hours behavior. |
+| v26.6-beta.1 | Original partial beta revamp preview. Continued liquid glass and Onyx UI refinements. Added beta notes and the release roadmap. |
+| v26.5 | Current stable base. Updated device information and creator shoutout sections. Continued liquid glass refinement. |
+| v26.1.2 | Introduced appearance settings, match-device theme, and manual light and dark modes. |
+| v1.17.0 | Bug fixes. |
+| v1.16.0 | Introduced the Admin Portal and owner-only content management tools. |
+| v1.15.0 | Bug fixes and general improvements. |
+| v1.14.0 | Theme consistency improvements and performance optimization. |
+| v1.13.0 | Added a focus outline toggle and accessibility enhancements. |
+| v1.12.0 | Added merch store access under Useful Links. |
+| v1.11.0 | Added the Settings Page, dark and light modes, font adjustments, and factory reset. |
+| v1.10.1 | Added current-day highlighting and enhanced the website theme. |
+| v1.10.0 | Added an event calendar and bug fixes. |
+| v1.9.0 | Added TikTok creator shoutouts, tech information, disabilities, version information, and legal notices. |
+| v1.8.0 | Added RedNote support styled like YouTube and Instagram, plus general enhancements. |
+| v1.7.0 | Added security enhancements, media-saving deterrents, and text-copying deterrents. |
+| v1.6.0 | Added Instagram and YouTube creator shoutouts, last updated timestamps, and bug fixes. |
+| v1.5.0 | Bug fixes and improvements. |
 
 ---
 
 # Release Roadmap
 
-* **v26.5** — Current stable website base.
-* **v26.6-beta.1** — Original partial beta revamp preview.
-* **v26.6-beta.2** — Current beta update with business and academic section improvements.
-* **v26.6-beta.2+** — More beta fixes and section updates.
-* **v26.6-rc.1** — Release candidate before the full September launch.
-* **v27.0** — Full September 2026 revamp release.
+* v26.5 — Current stable website base.
+* v26.6-beta.1 — Original partial beta revamp preview.
+* v26.6-beta.2 — Business and academic availability improvements.
+* v26.6-beta.3 — Current cleanup release removing retired and unused website sections.
+* v26.6-beta.4+ — Additional beta fixes and revamp updates, if needed.
+* v26.6-rc.1 — Release candidate before the complete September launch.
+* v27.0 — Full September 2026 revamp release.
+
+The roadmap may change during testing if additional beta builds or release candidates are needed.
+
+---
+
+# Removed and Retired Features
+
+The following features were removed in v26.6-beta.3 because they were no longer needed or were not part of the planned website direction:
+
+* FAQ section
+* Posts system
+* Blog list page logic
+* Individual blog post page logic
+* President information section
+* Legislation tracker
+* Quote of the Day
+* Custom quote categories
+* Custom quote manager
+* Latest TikTok embed
+* Onyx AI assistant
+* Project Goal Tracker
+
+### Cleanup Included
+
+The cleanup also removed:
+
+* Unused Firestore collection references
+* Unused Firestore document references
+* Retired realtime notification listeners
+* Retired page initialization calls
+* Unused JavaScript helper functions
+* Feature-specific CSS
+* Obsolete AI chat script references
+* Retired page-routing logic
+* Unused frontend code
+
+The main TikTok, Instagram, and YouTube creator shoutout sections remain active.
+
+Device AI compatibility information in the Tech Information section also remains active because it evaluates device capabilities and is not an interactive AI assistant.
 
 ---
 
 # Conclusion
 
-This Link in Bio Website is a centralized and dynamic hub for links, profile information, creator shoutouts, business availability, academic scheduling, technology information, accessibility settings, and public updates.
+The Link in Bio Website is a centralized and dynamic hub for profile information, social links, creator shoutouts, useful links, business availability, academic scheduling, technology information, accessibility settings, and public website updates.
 
-Visitors can interact with public sections, view links, check business status, view creator shoutouts, read useful information, and adjust basic appearance/accessibility settings.
+Visitors can:
 
-Only I can modify managed content through the Admin Portal.
+* View public profile information
+* Access social and useful links
+* Check live activity and availability
+* View creator shoutouts
+* Check business hours
+* View academic schedule impacts
+* Review public tech information
+* Access disability resources
+* Review website and device information
+* Adjust basic appearance and accessibility settings
+
+Only authorized accounts can modify managed content through the Admin Portal.
+
+Version v26.6-beta.3 focuses on cleaning up the website by removing retired features and reducing unnecessary frontend code while preserving the primary public-facing experience.
 
 Thanks for visiting!
