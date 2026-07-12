@@ -1173,151 +1173,104 @@ body.focus-outline-disabled :focus { outline: none !important; }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
 /* ================================================== /
-/ 🍎 APPLE LIQOS LIQUID GLASS TAB BAR (iOS 27 STYLE) /
+/ 🍎 APPLE NATIVE LIQUID GLASS TAB BAR (iOS STYLE)   /
 / ================================================== */
 
 :root {
+  --dock-accent: var(--accent-color, #0A84FF);
+  
+  --dock-height: 49px; /* Standard iOS base touch target height */
+  --dock-padding: 4px; /* Reduced padding for native top-alignment */
 
-  --dock-accent:var(--accent-color,#0A84FF);
+  --dock-text: rgba(255,255,255,.96);
+  --dock-muted: rgba(255,255,255,.52);
+  --dock-border: rgba(255,255,255,.16);
+  --dock-highlight: rgba(255,255,255,.28);
+  --dock-shadow: rgba(0,0,0,.42);
 
-  --dock-width:min(92vw,560px);
-  --dock-height:64px;
-  --dock-padding:6px;
-  --dock-radius:999px;
+  --lens-bg: rgba(255,255,255,.16);
+  --lens-border: rgba(255,255,255,.20);
+  --lens-highlight: rgba(255,255,255,.35);
 
-  --dock-text:rgba(255,255,255,.96);
-  --dock-muted:rgba(255,255,255,.52);
-
-  --dock-border:rgba(255,255,255,.16);
-  --dock-highlight:rgba(255,255,255,.28);
-
-  --dock-shadow:rgba(0,0,0,.42);
-
-  --lens-bg:rgba(255,255,255,.16);
-  --lens-border:rgba(255,255,255,.20);
-  --lens-highlight:rgba(255,255,255,.35);
-
-  --dock-blur:48px;
-
-  --ease-fluid:cubic-bezier(.22,1,.36,1);
-
+  --dock-blur: 48px;
+  --ease-fluid: cubic-bezier(.22,1,.36,1);
 }
 
 body.light-mode {
+  --dock-text: rgba(0,0,0,.94);
+  --dock-muted: rgba(0,0,0,.55);
+  --dock-border: rgba(0,0,0,.08);
+  --dock-highlight: rgba(255,255,255,.82);
+  --dock-shadow: rgba(0,0,0,.14);
 
-  --dock-text:rgba(0,0,0,.94);
-  --dock-muted:rgba(0,0,0,.55);
-
-  --dock-border:rgba(0,0,0,.08);
-  --dock-highlight:rgba(255,255,255,.82);
-
-  --dock-shadow:rgba(0,0,0,.14);
-
-  --lens-bg:rgba(0,0,0,.05);
-  --lens-border:rgba(0,0,0,.08);
-  --lens-highlight:rgba(255,255,255,.65);
-
+  --lens-bg: rgba(0,0,0,.05);
+  --lens-border: rgba(0,0,0,.08);
+  --lens-highlight: rgba(255,255,255,.65);
 }
 
 /* ================================================== /
-/ GLASS CAPSULE                                      /
+/ NATIVE EDGE-TO-EDGE BAR                            /
 / ================================================== */
 
 .onyx-dock {
+  --lens-width: 0px;
+  --lens-x: 0px;
 
-  --lens-width:0px;
-  --lens-x:var(--dock-padding);
+  box-sizing: border-box;
+  position: fixed;
+  left: 0;
+  bottom: 0; /* Anchored perfectly to the bottom */
+  
+  width: 100%; /* Edge-to-edge */
+  height: auto;
+  min-height: calc(var(--dock-height) + env(safe-area-inset-bottom));
 
-  box-sizing:border-box;
+  display: flex;
+  align-items: center; /* Centers items within the active zone */
+  justify-content: space-around;
 
-  position:fixed;
+  /* Dynamically pads the bottom for the Home Indicator */
+  padding-top: var(--dock-padding);
+  padding-bottom: max(var(--dock-padding), env(safe-area-inset-bottom));
+  padding-left: max(var(--dock-padding), env(safe-area-inset-left));
+  padding-right: max(var(--dock-padding), env(safe-area-inset-right));
 
-  left:50%;
-  bottom:max(12px,env(safe-area-inset-bottom));
-
-  transform:
-      translateX(-50%)
-      translateY(14px)
-      scale(.985);
-
-  width:var(--dock-width);
-  height:var(--dock-height);
-
-  display:flex;
-  align-items:stretch;
-  justify-content:stretch;
-
-  padding:var(--dock-padding);
-
-  border-radius:var(--dock-radius);
-
-  overflow:hidden;
-
-  isolation:isolate;
-
-  z-index:9999;
-
-  opacity:0;
+  border-radius: 0; /* Flat top, flush sides */
+  overflow: hidden;
+  isolation: isolate;
+  z-index: 9999;
+  opacity: 0;
 
   background:
-      linear-gradient(
-          180deg,
-          rgba(255,255,255,.22),
-          rgba(255,255,255,.06)
-      ),
-      linear-gradient(
-          135deg,
-          rgba(255,255,255,.08),
-          rgba(255,255,255,.02)
-      ),
+      linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.06)),
+      linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
       rgba(28,28,30,.62);
 
-  backdrop-filter:
-      blur(var(--dock-blur))
-      saturate(200%);
+  backdrop-filter: blur(var(--dock-blur)) saturate(200%);
+  -webkit-backdrop-filter: blur(var(--dock-blur)) saturate(200%);
 
-  -webkit-backdrop-filter:
-      blur(var(--dock-blur))
-      saturate(200%);
+  /* Replaced full-wrap shadow with a crisp native top-border line */
+  box-shadow: 
+      inset 0 1px 0 0 var(--dock-border),
+      0 -4px 24px var(--dock-shadow);
 
-  box-shadow:
-      0 14px 36px var(--dock-shadow),
-      0 2px 10px rgba(0,0,0,.18),
-      inset 0 0 0 .5px var(--dock-border),
-      inset 0 1px .5px var(--dock-highlight);
-
+  /* Slides up from the bottom natively */
+  transform: translateY(100%);
   transition:
       opacity .22s ease,
       transform .42s var(--ease-fluid);
-
 }
 
 body.light-mode .onyx-dock {
-
   background:
-      linear-gradient(
-          180deg,
-          rgba(255,255,255,.92),
-          rgba(255,255,255,.58)
-      ),
-      linear-gradient(
-          135deg,
-          rgba(255,255,255,.72),
-          rgba(255,255,255,.34)
-      ),
+      linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.58)),
+      linear-gradient(135deg, rgba(255,255,255,.72), rgba(255,255,255,.34)),
       rgba(250,250,250,.64);
-
 }
 
 .onyx-dock.dock-ready {
-
-  opacity:1;
-
-  transform:
-      translateX(-50%)
-      translateY(0)
-      scale(1);
-
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ================================================== /
@@ -1325,43 +1278,23 @@ body.light-mode .onyx-dock {
 / ================================================== */
 
 .dock-active-lens {
-
-  position:absolute;
-
-  top:var(--dock-padding);
-
-  left:0;
-
-  height:calc(100% - (var(--dock-padding) * 2));
-
-  width:var(--lens-width,0px);
-
-  transform:
-      translate3d(
-          var(--lens-x,var(--dock-padding)),
-          0,
-          0
-      );
-
-  border-radius:999px;
-
-  pointer-events:none;
+  position: absolute;
+  top: var(--dock-padding);
+  
+  /* Locks lens to the interaction zone, ignoring safe area */
+  height: calc(100% - var(--dock-padding) - max(var(--dock-padding), env(safe-area-inset-bottom)));
+  width: var(--lens-width, 0px);
+  
+  transform: translate3d(var(--lens-x, 0px), 0, 0);
+  border-radius: 999px;
+  pointer-events: none;
 
   background:
-      linear-gradient(
-          180deg,
-          rgba(255,255,255,.18),
-          rgba(255,255,255,.04)
-      ),
+      linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.04)),
       var(--lens-bg);
 
-  backdrop-filter:
-      blur(28px)
-      saturate(180%);
-
-  -webkit-backdrop-filter:
-      blur(28px)
-      saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
 
   box-shadow:
       inset 0 0 0 .5px var(--lens-border),
@@ -1371,9 +1304,8 @@ body.light-mode .onyx-dock {
   transition:
       transform .42s var(--ease-fluid),
       width .42s var(--ease-fluid);
-
-  z-index:0;
-
+      
+  z-index: 0;
 }
 
 /* ================================================== /
@@ -1381,87 +1313,52 @@ body.light-mode .onyx-dock {
 / ================================================== */
 
 .dock-item {
-
-  position:relative;
-
-  z-index:2;
-
-  flex:1 1 0;
-
-  min-width:0;
-
-  display:flex;
-
-  flex-direction:column;
-
-  justify-content:center;
-
-  align-items:center;
-
-  gap:2px;
-
-  border-radius:999px;
-
-  color:var(--dock-muted);
-
-  text-decoration:none;
-
-  -webkit-tap-highlight-color:transparent;
-
+  position: relative;
+  z-index: 2;
+  flex: 1 1 0;
+  min-width: 0;
+  height: var(--dock-height); /* Constrain clickable area */
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  
+  border-radius: 8px; /* Slightly rounded interaction targets */
+  color: var(--dock-muted);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  
   transition:
       color .22s ease,
       transform .28s var(--ease-fluid);
-
 }
 
 .dock-icon {
-
-  font-size:22px;
-
-  line-height:1;
-
-  opacity:.72;
-
-  filter:
-      drop-shadow(
-          0 1px 2px rgba(0,0,0,.10)
-      );
-
+  font-size: 24px; /* Increased slightly for native feel */
+  line-height: 1;
+  opacity: .72;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.10));
   transition:
       opacity .22s,
       transform .28s var(--ease-fluid),
       filter .22s;
-
 }
 
 .dock-label {
-
-  font-family:
-      -apple-system,
-      BlinkMacSystemFont,
-      "SF Pro Text",
-      sans-serif;
-
-  font-size:11px;
-
-  font-weight:600;
-
-  line-height:1;
-
-  letter-spacing:.01em;
-
-  white-space:nowrap;
-
-  overflow:hidden;
-
-  text-overflow:ellipsis;
-
-  opacity:.82;
-
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  font-size: 10px; /* Native standard is exactly 10px */
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: .82;
   transition:
       opacity .22s,
       transform .28s var(--ease-fluid);
-
 }
 
 /* ================================================== /
@@ -1469,30 +1366,17 @@ body.light-mode .onyx-dock {
 / ================================================== */
 
 .dock-item.active {
-
-  color:var(--dock-text);
-
+  color: var(--dock-text);
 }
 
 .dock-item.active .dock-icon {
-
-  opacity:1;
-
-  transform:
-      translateY(-1px)
-      scale(1.03);
-
-  filter:
-      drop-shadow(
-          0 2px 5px rgba(0,0,0,.18)
-      );
-
+  opacity: 1;
+  transform: translateY(-1px) scale(1.03);
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,.18));
 }
 
 .dock-item.active .dock-label {
-
-  opacity:1;
-
+  opacity: 1;
 }
 
 /* ================================================== /
@@ -1500,55 +1384,26 @@ body.light-mode .onyx-dock {
 / ================================================== */
 
 .dock-item:hover {
-
-  color:var(--dock-text);
-
+  color: var(--dock-text);
 }
 
 .dock-item:hover .dock-icon {
-
-  opacity:1;
-
-  transform:
-      translateY(-1px);
-
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
 .dock-item:active {
-
-  transform:
-      scale(.94);
-
+  transform: scale(.94);
 }
 
 /* ================================================== /
-/ MOBILE                                             /
+/ MOBILE (No longer needs width overrides)           /
 / ================================================== */
 
 @media (max-width:600px) {
-
-  :root {
-
-      --dock-width:calc(100vw - 20px);
-
-      --dock-height:58px;
-
-      --dock-padding:5px;
-
-  }
-
   .dock-icon {
-
-      font-size:20px;
-
+      font-size: 22px;
   }
-
-  .dock-label {
-
-      font-size:10px;
-
-  }
-
 }
 
 /* ================================================== /
@@ -1556,19 +1411,14 @@ body.light-mode .onyx-dock {
 / ================================================== */
 
 @media (prefers-reduced-motion:reduce) {
-
   .onyx-dock,
   .dock-active-lens,
   .dock-item,
   .dock-icon,
   .dock-label {
-
-      transition:none !important;
-
+      transition: none !important;
   }
-
 }
-
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
 .setting-icon-container {
