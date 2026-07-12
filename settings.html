@@ -981,22 +981,62 @@
   <span class="dock-active-lens" aria-hidden="true"></span>
 
   <a href="/" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">🏠</span>
+    <span class="dock-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        role="img"
+        focusable="false"
+      >
+        <path
+          d="M3 10.75 12 3l9 7.75v9.5a.75.75 0 0 1-.75.75h-5.5a.75.75 0 0 1-.75-.75V15a2 2 0 0 0-4 0v5.25a.75.75 0 0 1-.75.75h-5.5A.75.75 0 0 1 3 20.25v-9.5Z"
+        />
+      </svg>
+    </span>
     <span class="dock-label">Home</span>
   </a>
 
   <a href="/beta" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">🧪</span>
+    <span class="dock-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        role="img"
+        focusable="false"
+      >
+        <path
+          d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"
+        />
+      </svg>
+    </span>
     <span class="dock-label">Beta</span>
   </a>
 
   <a href="/resume" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">📜</span>
+    <span class="dock-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        role="img"
+        focusable="false"
+      >
+        <path
+          d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"
+        />
+      </svg>
+    </span>
     <span class="dock-label">Resume</span>
   </a>
 
   <a href="/settings" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">⚙️</span>
+    <span class="dock-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        role="img"
+        focusable="false"
+      >
+        <path
+          d="M10.69 2.77c.57-1.03 2.05-1.03 2.62 0l.46.82c.3.53.91.8 1.5.65l.91-.23c1.14-.28 2.19.77 1.91 1.91l-.23.91c-.15.59.12 1.2.65 1.5l.82.46c1.03.57 1.03 2.05 0 2.62l-.82.46c-.53.3-.8.91-.65 1.5l.23.91c.28 1.14-.77 2.19-1.91 1.91l-.91-.23c-.59-.15-1.2.12-1.5.65l-.46.82c-.57 1.03-2.05 1.03-2.62 0l-.46-.82c-.3-.53-.91-.8-1.5-.65l-.91.23c-1.14.28-2.19-.77-1.91-1.91l.23-.91c.15-.59-.12-1.2-.65-1.5l-.82-.46c-1.03-.57-1.03-2.05 0-2.62l.82-.46c.53-.3.8-.91.65-1.5l-.23-.91c-.28-1.14.77-2.19 1.91-1.91l.91.23c.59.15 1.2-.12 1.5-.65l.46-.82ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.5a3.25 3.25 0 1 1 0 6.5 3.25 3.25 0 0 1 0-6.5Z"
+        />
+      </svg>
+    </span>
     <span class="dock-label">Settings</span>
   </a>
 </nav>
@@ -1059,24 +1099,20 @@
     /* ======================================================= */
 
     function getDockLinkPath(link) {
-      const rawRoute =
+      const route =
         link.dataset.route ||
         link.getAttribute("href") ||
         "/";
 
       try {
-        const routeURL = new URL(
-          rawRoute,
-          window.location.origin
-        );
-
         return normalizeOnyxDockPath(
-          routeURL.pathname
+          new URL(
+            route,
+            window.location.origin
+          ).pathname
         );
       } catch (error) {
-        return normalizeOnyxDockPath(
-          rawRoute
-        );
+        return normalizeOnyxDockPath(route);
       }
     }
 
@@ -1085,9 +1121,6 @@
         window.location.pathname
       );
 
-      /*
-       * Exact matching takes priority.
-       */
       const exactMatch = links.find((link) => {
         return (
           getDockLinkPath(link) === currentPath
@@ -1099,7 +1132,7 @@
       }
 
       /*
-       * Then check nested paths, such as:
+       * Supports nested routes such as:
        * /beta/changelog
        * /resume/download
        * /settings/accessibility
@@ -1127,7 +1160,7 @@
     }
 
     /* ======================================================= */
-    /* Active Lens Positioning                                 */
+    /* Active Lens                                             */
     /* ======================================================= */
 
     function moveDockLensTo(link, animate = true) {
@@ -1140,8 +1173,8 @@
         link.getBoundingClientRect();
 
       /*
-       * The link position already includes the dock padding.
-       * Do not subtract the dock padding again.
+       * The link position already includes
+       * the dock's internal padding.
        */
       const lensX =
         linkRect.left - dockRect.left;
@@ -1175,7 +1208,7 @@
     }
 
     /* ======================================================= */
-    /* Active Tab State                                        */
+    /* Active Tab                                              */
     /* ======================================================= */
 
     function updateDockActiveTab(options = {}) {
@@ -1256,12 +1289,6 @@
             const pointerY =
               event.clientY - linkRect.top;
 
-            const normalizedX =
-              pointerX / linkRect.width - 0.5;
-
-            const normalizedY =
-              pointerY / linkRect.height - 0.5;
-
             link.style.setProperty(
               "--pointer-x",
               `${pointerX}px`
@@ -1270,16 +1297,6 @@
             link.style.setProperty(
               "--pointer-y",
               `${pointerY}px`
-            );
-
-            link.style.setProperty(
-              "--pointer-dx",
-              normalizedX.toFixed(3)
-            );
-
-            link.style.setProperty(
-              "--pointer-dy",
-              normalizedY.toFixed(3)
             );
           }
         );
@@ -1293,16 +1310,6 @@
 
             link.style.removeProperty(
               "--pointer-y"
-            );
-
-            link.style.setProperty(
-              "--pointer-dx",
-              "0"
-            );
-
-            link.style.setProperty(
-              "--pointer-dy",
-              "0"
             );
           }
         );
@@ -1333,40 +1340,29 @@
     }
 
     /* ======================================================= */
-    /* Initial Layout Readiness                                */
-    /* ======================================================= */
-
-    async function waitForDockLayout() {
-      if (document.fonts?.ready) {
-        try {
-          await document.fonts.ready;
-        } catch (error) {
-          /*
-           * Continue initializing if a font
-           * cannot finish loading.
-           */
-        }
-      }
-
-      await new Promise((resolve) => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(resolve);
-        });
-      });
-    }
-
-    /* ======================================================= */
     /* Initialization                                          */
     /* ======================================================= */
 
     async function initializeOnyxDock() {
       setupDockPointerEffects();
 
-      await waitForDockLayout();
+      if (document.fonts?.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (error) {
+          /*
+           * Continue if a font cannot load.
+           */
+        }
+      }
 
-      updateDockActiveTab({
-        animate: false,
-        reveal: true
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          updateDockActiveTab({
+            animate: false,
+            reveal: true
+          });
+        });
       });
 
       const year =
