@@ -1172,403 +1172,681 @@ body.focus-outline-disabled :focus { outline: none !important; }
 }
 body.dark-mode .color-warning { background-color: #4d3c1a; color: #ffeca7; border-color: #8b6b1f; }
 
-/* ================================================== /
-/ 🍎 APPLE LIQOS LIQUID GLASS TAB BAR (iOS 27 STYLE) /
-/ ================================================== */
+/* ======================================================= */
+/* === Onyx Liquid Glass Dock ============================ */
+/* ======================================================= */
 
 :root {
+    --dock-accent: var(--accent-color, #007aff);
 
-  --dock-accent:var(--accent-color,#0A84FF);
+    --dock-width: min(calc(100vw - 2rem), 35rem);
+    --dock-height: 4.5rem;
+    --dock-padding: 0.375rem;
+    --dock-radius: 2.25rem;
 
-  --dock-width:min(92vw,560px);
-  --dock-height:64px;
-  --dock-padding:6px;
-  --dock-radius:999px;
+    --dock-text: var(--text-color);
+    --dock-muted: color-mix(
+        in srgb,
+        var(--text-color) 55%,
+        transparent
+    );
 
-  --dock-text:rgba(255,255,255,.96);
-  --dock-muted:rgba(255,255,255,.52);
+    --dock-surface:
+        color-mix(
+            in srgb,
+            var(--glass-bg-light) 78%,
+            transparent
+        );
 
-  --dock-border:rgba(255,255,255,.16);
-  --dock-highlight:rgba(255,255,255,.28);
+    --dock-border:
+        color-mix(
+            in srgb,
+            var(--border-color) 48%,
+            rgba(255, 255, 255, 0.2)
+        );
 
-  --dock-shadow:rgba(0,0,0,.42);
+    --dock-specular: rgba(255, 255, 255, 0.76);
+    --dock-inner-light: rgba(255, 255, 255, 0.25);
+    --dock-shadow-color: rgba(0, 0, 0, 0.2);
 
-  --lens-bg:rgba(255,255,255,.16);
-  --lens-border:rgba(255,255,255,.20);
-  --lens-highlight:rgba(255,255,255,.35);
+    --dock-lens-surface:
+        color-mix(
+            in srgb,
+            var(--content-bg) 60%,
+            rgba(255, 255, 255, 0.22)
+        );
 
-  --dock-blur:48px;
+    --dock-lens-border:
+        color-mix(
+            in srgb,
+            var(--accent-color) 16%,
+            rgba(255, 255, 255, 0.52)
+        );
 
-  --ease-fluid:cubic-bezier(.22,1,.36,1);
+    --dock-lens-glow:
+        color-mix(
+            in srgb,
+            var(--accent-color) 16%,
+            transparent
+        );
 
+    --dock-blur: blur(42px) saturate(185%) brightness(1.04);
+    --dock-easing: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-body.light-mode {
+/* ======================================================= */
+/* Dark Mode Dock Variables                                */
+/* ======================================================= */
 
-  --dock-text:rgba(0,0,0,.94);
-  --dock-muted:rgba(0,0,0,.55);
+body.dark-mode,
+html.dark-mode body {
+    --dock-text: var(--dark-text);
 
-  --dock-border:rgba(0,0,0,.08);
-  --dock-highlight:rgba(255,255,255,.82);
+    --dock-muted:
+        color-mix(
+            in srgb,
+            var(--dark-text) 58%,
+            transparent
+        );
 
-  --dock-shadow:rgba(0,0,0,.14);
+    --dock-surface:
+        color-mix(
+            in srgb,
+            var(--glass-bg-dark) 82%,
+            rgba(0, 0, 0, 0.08)
+        );
 
-  --lens-bg:rgba(0,0,0,.05);
-  --lens-border:rgba(0,0,0,.08);
-  --lens-highlight:rgba(255,255,255,.65);
+    --dock-border: rgba(255, 255, 255, 0.13);
+    --dock-specular: rgba(255, 255, 255, 0.3);
+    --dock-inner-light: rgba(255, 255, 255, 0.09);
+    --dock-shadow-color: rgba(0, 0, 0, 0.58);
 
+    --dock-lens-surface:
+        color-mix(
+            in srgb,
+            var(--glass-bg-dark) 65%,
+            rgba(255, 255, 255, 0.11)
+        );
+
+    --dock-lens-border:
+        color-mix(
+            in srgb,
+            var(--accent-color) 20%,
+            rgba(255, 255, 255, 0.22)
+        );
+
+    --dock-lens-glow:
+        color-mix(
+            in srgb,
+            var(--accent-color) 22%,
+            transparent
+        );
+
+    --dock-blur: blur(46px) saturate(190%) brightness(0.95);
 }
 
-/* ================================================== /
-/ GLASS CAPSULE                                      /
-/ ================================================== */
+/* ======================================================= */
+/* Clear and Tinted Appearance Modes                       */
+/* ======================================================= */
+
+body.clear-mode {
+    --dock-surface:
+        color-mix(
+            in srgb,
+            var(--content-bg) 28%,
+            transparent
+        );
+
+    --dock-lens-surface:
+        color-mix(
+            in srgb,
+            var(--content-bg) 38%,
+            transparent
+        );
+}
+
+body.tinted-mode {
+    --dock-surface:
+        color-mix(
+            in srgb,
+            var(--accent-color) 9%,
+            var(--content-bg) 48%
+        );
+
+    --dock-lens-surface:
+        color-mix(
+            in srgb,
+            var(--accent-color) 14%,
+            var(--content-bg) 58%
+        );
+}
+
+/* ======================================================= */
+/* Dock Capsule                                            */
+/* ======================================================= */
 
 .onyx-dock {
+    --lens-width: 0px;
+    --lens-x: var(--dock-padding);
 
-  --lens-width:0px;
-  --lens-x:var(--dock-padding);
+    box-sizing: border-box;
 
-  box-sizing:border-box;
+    position: fixed;
+    left: 50%;
+    bottom: max(0.875rem, calc(env(safe-area-inset-bottom) + 0.5rem));
 
-  position:fixed;
+    z-index: 9999;
 
-  left:50%;
-  bottom:max(12px,env(safe-area-inset-bottom));
+    width: var(--dock-width);
+    height: var(--dock-height);
+    padding: var(--dock-padding);
 
-  transform:
-      translateX(-50%)
-      translateY(14px)
-      scale(.985);
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
 
-  width:var(--dock-width);
-  height:var(--dock-height);
+    border: 1px solid var(--dock-border);
+    border-radius: var(--dock-radius);
 
-  display:flex;
-  align-items:stretch;
-  justify-content:stretch;
+    isolation: isolate;
+    overflow: hidden;
 
-  padding:var(--dock-padding);
+    color: var(--dock-text);
+    background: var(--dock-surface);
 
-  border-radius:var(--dock-radius);
+    backdrop-filter: var(--dock-blur);
+    -webkit-backdrop-filter: var(--dock-blur);
 
-  overflow:hidden;
+    box-shadow:
+        inset 0 1px 0 var(--dock-specular),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 0 0 1px var(--dock-inner-light),
+        0 1.25rem 3rem -1.125rem var(--dock-shadow-color),
+        0 0.375rem 1.125rem -0.625rem rgba(0, 0, 0, 0.28);
 
-  isolation:isolate;
+    opacity: 0;
 
-  z-index:9999;
+    transform:
+        translateX(-50%)
+        translateY(1rem)
+        scale(0.975);
 
-  opacity:0;
-
-  background:
-      linear-gradient(
-          180deg,
-          rgba(255,255,255,.22),
-          rgba(255,255,255,.06)
-      ),
-      linear-gradient(
-          135deg,
-          rgba(255,255,255,.08),
-          rgba(255,255,255,.02)
-      ),
-      rgba(28,28,30,.62);
-
-  backdrop-filter:
-      blur(var(--dock-blur))
-      saturate(200%);
-
-  -webkit-backdrop-filter:
-      blur(var(--dock-blur))
-      saturate(200%);
-
-  box-shadow:
-      0 14px 36px var(--dock-shadow),
-      0 2px 10px rgba(0,0,0,.18),
-      inset 0 0 0 .5px var(--dock-border),
-      inset 0 1px .5px var(--dock-highlight);
-
-  transition:
-      opacity .22s ease,
-      transform .42s var(--ease-fluid);
-
+    transition:
+        opacity 0.24s ease,
+        transform 0.48s var(--dock-easing),
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
-body.light-mode .onyx-dock {
+/* Reflection layer */
+.onyx-dock::before {
+    content: "";
 
-  background:
-      linear-gradient(
-          180deg,
-          rgba(255,255,255,.92),
-          rgba(255,255,255,.58)
-      ),
-      linear-gradient(
-          135deg,
-          rgba(255,255,255,.72),
-          rgba(255,255,255,.34)
-      ),
-      rgba(250,250,250,.64);
+    position: absolute;
+    inset: 0;
 
+    z-index: -1;
+
+    border-radius: inherit;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse 70% 55% at 18% 0%,
+            rgba(255, 255, 255, 0.36),
+            transparent 68%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.17) 0%,
+            rgba(255, 255, 255, 0.035) 40%,
+            transparent 72%
+        );
+
+    opacity: 0.78;
 }
 
+/* Subtle lower refraction */
+.onyx-dock::after {
+    content: "";
+
+    position: absolute;
+    inset: auto 8% -45% 8%;
+
+    z-index: -1;
+
+    height: 75%;
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse at center,
+            var(--dock-lens-glow),
+            transparent 70%
+        );
+
+    filter: blur(1rem);
+    opacity: 0.72;
+}
+
+/* Dock entrance state */
 .onyx-dock.dock-ready {
+    opacity: 1;
 
-  opacity:1;
-
-  transform:
-      translateX(-50%)
-      translateY(0)
-      scale(1);
-
+    transform:
+        translateX(-50%)
+        translateY(0)
+        scale(1);
 }
 
-/* ================================================== /
-/ ACTIVE LENS                                        /
-/ ================================================== */
+/* ======================================================= */
+/* Active Liquid Lens                                      */
+/* ======================================================= */
 
 .dock-active-lens {
+    position: absolute;
 
-  position:absolute;
+    top: var(--dock-padding);
+    bottom: var(--dock-padding);
+    left: 0;
 
-  top:var(--dock-padding);
+    z-index: 1;
 
-  left:0;
+    width: var(--lens-width, 0px);
 
-  height:calc(100% - (var(--dock-padding) * 2));
+    border: 1px solid var(--dock-lens-border);
+    border-radius: calc(var(--dock-radius) - var(--dock-padding));
 
-  width:var(--lens-width,0px);
+    pointer-events: none;
 
-  transform:
-      translate3d(
-          var(--lens-x,var(--dock-padding)),
-          0,
-          0
-      );
+    background: var(--dock-lens-surface);
 
-  border-radius:999px;
+    backdrop-filter:
+        blur(28px)
+        saturate(185%)
+        brightness(1.06);
 
-  pointer-events:none;
+    -webkit-backdrop-filter:
+        blur(28px)
+        saturate(185%)
+        brightness(1.06);
 
-  background:
-      linear-gradient(
-          180deg,
-          rgba(255,255,255,.18),
-          rgba(255,255,255,.04)
-      ),
-      var(--lens-bg);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.58),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+        0 0.5rem 1.125rem -0.75rem rgba(0, 0, 0, 0.34),
+        0 0 1.25rem -0.75rem var(--dock-lens-glow);
 
-  backdrop-filter:
-      blur(28px)
-      saturate(180%);
+    transform:
+        translate3d(
+            var(--lens-x, var(--dock-padding)),
+            0,
+            0
+        );
 
-  -webkit-backdrop-filter:
-      blur(28px)
-      saturate(180%);
-
-  box-shadow:
-      inset 0 0 0 .5px var(--lens-border),
-      inset 0 1px .5px var(--lens-highlight),
-      0 6px 18px rgba(0,0,0,.12);
-
-  transition:
-      transform .42s var(--ease-fluid),
-      width .42s var(--ease-fluid);
-
-  z-index:0;
-
+    transition:
+        transform 0.46s var(--dock-easing),
+        width 0.46s var(--dock-easing),
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
-/* ================================================== /
-/ ITEMS                                              /
-/ ================================================== */
+/* Lens reflection */
+.dock-active-lens::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: inherit;
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            ellipse 72% 55% at 50% 0%,
+            rgba(255, 255, 255, 0.45),
+            transparent 72%
+        ),
+        linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.14),
+            transparent 42%
+        );
+
+    opacity: 0.76;
+}
+
+/* ======================================================= */
+/* Dock Items                                              */
+/* ======================================================= */
 
 .dock-item {
+    position: relative;
+    z-index: 2;
 
-  position:relative;
+    flex: 1 1 0;
+    min-width: 0;
 
-  z-index:2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-  flex:1 1 0;
+    gap: 0.1875rem;
 
-  min-width:0;
+    padding: 0.25rem 0.375rem;
 
-  display:flex;
+    border: 0;
+    border-radius: calc(var(--dock-radius) - var(--dock-padding));
 
-  flex-direction:column;
+    color: var(--dock-muted);
+    background: transparent;
+    text-decoration: none;
 
-  justify-content:center;
+    cursor: pointer;
 
-  align-items:center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 
-  gap:2px;
-
-  border-radius:999px;
-
-  color:var(--dock-muted);
-
-  text-decoration:none;
-
-  -webkit-tap-highlight-color:transparent;
-
-  transition:
-      color .22s ease,
-      transform .28s var(--ease-fluid);
-
+    transition:
+        color 0.22s ease,
+        opacity 0.22s ease,
+        transform 0.3s var(--dock-easing);
 }
+
+/* ======================================================= */
+/* Dock Icons                                              */
+/* ======================================================= */
 
 .dock-icon {
+    min-width: 1.625rem;
+    height: 1.625rem;
 
-  font-size:22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-  line-height:1;
+    color: currentColor;
 
-  opacity:.72;
+    font-size: 1.35rem;
+    line-height: 1;
 
-  filter:
-      drop-shadow(
-          0 1px 2px rgba(0,0,0,.10)
-      );
+    opacity: 0.8;
 
-  transition:
-      opacity .22s,
-      transform .28s var(--ease-fluid),
-      filter .22s;
+    transform: translateY(0) scale(1);
 
+    filter:
+        drop-shadow(0 1px 1px rgba(0, 0, 0, 0.12));
+
+    transition:
+        color 0.22s ease,
+        opacity 0.22s ease,
+        transform 0.32s var(--dock-easing),
+        filter 0.22s ease;
 }
+
+/* Font Awesome or other SVG icons */
+.dock-icon i,
+.dock-icon svg {
+    width: 1.35rem;
+    height: 1.35rem;
+
+    display: block;
+
+    color: inherit;
+    fill: currentColor;
+}
+
+/* Prevent emoji baseline inconsistencies */
+.dock-icon[aria-hidden="true"] {
+    font-variant-emoji: text;
+}
+
+/* ======================================================= */
+/* Dock Labels                                             */
+/* ======================================================= */
 
 .dock-label {
+    max-width: 100%;
 
-  font-family:
-      -apple-system,
-      BlinkMacSystemFont,
-      "SF Pro Text",
-      sans-serif;
+    overflow: hidden;
 
-  font-size:11px;
+    color: currentColor;
 
-  font-weight:600;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Text",
+        "Helvetica Neue",
+        sans-serif;
 
-  line-height:1;
+    font-size: 0.6875rem;
+    font-weight: 650;
+    line-height: 1;
+    letter-spacing: 0.005em;
 
-  letter-spacing:.01em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
-  white-space:nowrap;
+    opacity: 0.88;
 
-  overflow:hidden;
+    transform: translateY(0);
 
-  text-overflow:ellipsis;
-
-  opacity:.82;
-
-  transition:
-      opacity .22s,
-      transform .28s var(--ease-fluid);
-
+    transition:
+        color 0.22s ease,
+        opacity 0.22s ease,
+        transform 0.3s var(--dock-easing);
 }
 
-/* ================================================== /
-/ ACTIVE                                             /
-/ ================================================== */
+/* ======================================================= */
+/* Active Item                                             */
+/* ======================================================= */
 
 .dock-item.active {
-
-  color:var(--dock-text);
-
+    color: var(--dock-text);
 }
 
 .dock-item.active .dock-icon {
+    color: var(--dock-accent);
+    opacity: 1;
 
-  opacity:1;
+    transform:
+        translateY(-0.0625rem)
+        scale(1.06);
 
-  transform:
-      translateY(-1px)
-      scale(1.03);
-
-  filter:
-      drop-shadow(
-          0 2px 5px rgba(0,0,0,.18)
-      );
-
+    filter:
+        drop-shadow(
+            0 0.1875rem 0.375rem
+            color-mix(
+                in srgb,
+                var(--dock-accent) 28%,
+                transparent
+            )
+        );
 }
 
 .dock-item.active .dock-label {
+    color: var(--dock-text);
+    opacity: 1;
 
-  opacity:1;
-
+    transform: translateY(-0.015625rem);
 }
 
-/* ================================================== /
-/ INTERACTION                                        /
-/ ================================================== */
+/* ======================================================= */
+/* Hover and Press Interaction                             */
+/* ======================================================= */
 
-.dock-item:hover {
+@media (hover: hover) and (pointer: fine) {
+    .dock-item:hover {
+        color:
+            color-mix(
+                in srgb,
+                var(--dock-text) 88%,
+                var(--dock-accent) 12%
+            );
+    }
 
-  color:var(--dock-text);
+    .dock-item:hover .dock-icon {
+        opacity: 1;
 
-}
-
-.dock-item:hover .dock-icon {
-
-  opacity:1;
-
-  transform:
-      translateY(-1px);
-
+        transform:
+            translateY(-0.0625rem)
+            scale(1.035);
+    }
 }
 
 .dock-item:active {
-
-  transform:
-      scale(.94);
-
+    transform: scale(0.94);
 }
 
-/* ================================================== /
-/ MOBILE                                             /
-/ ================================================== */
-
-@media (max-width:600px) {
-
-  :root {
-
-      --dock-width:calc(100vw - 20px);
-
-      --dock-height:58px;
-
-      --dock-padding:5px;
-
-  }
-
-  .dock-icon {
-
-      font-size:20px;
-
-  }
-
-  .dock-label {
-
-      font-size:10px;
-
-  }
-
+.dock-item:active .dock-icon {
+    transform:
+        translateY(0)
+        scale(0.96);
 }
 
-/* ================================================== /
-/ REDUCED MOTION                                     /
-/ ================================================== */
-
-@media (prefers-reduced-motion:reduce) {
-
-  .onyx-dock,
-  .dock-active-lens,
-  .dock-item,
-  .dock-icon,
-  .dock-label {
-
-      transition:none !important;
-
-  }
-
+/* Keyboard focus */
+.dock-item:focus {
+    outline: none;
 }
 
+.dock-item:focus-visible {
+    outline:
+        0.125rem solid
+        color-mix(
+            in srgb,
+            var(--dock-accent) 72%,
+            white 28%
+        );
+
+    outline-offset: -0.1875rem;
+}
+
+/* ======================================================= */
+/* Mobile Dock                                             */
+/* ======================================================= */
+
+@media (max-width: 600px) {
+    :root {
+        --dock-width: calc(100vw - 1.25rem);
+        --dock-height: 4.125rem;
+        --dock-padding: 0.3125rem;
+    }
+
+    .onyx-dock {
+        bottom:
+            max(
+                0.625rem,
+                calc(env(safe-area-inset-bottom) + 0.375rem)
+            );
+    }
+
+    .dock-icon {
+        height: 1.5rem;
+        font-size: 1.25rem;
+    }
+
+    .dock-icon i,
+    .dock-icon svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    .dock-label {
+        font-size: 0.65625rem;
+    }
+}
+
+/* Extra-small phones */
+@media (max-width: 390px) {
+    :root {
+        --dock-width: calc(100vw - 1rem);
+        --dock-height: 4rem;
+        --dock-padding: 0.2875rem;
+    }
+
+    .dock-item {
+        padding-inline: 0.1875rem;
+    }
+
+    .dock-label {
+        font-size: 0.625rem;
+    }
+}
+
+/* ======================================================= */
+/* High Contrast Dock                                      */
+/* ======================================================= */
+
+body.high-contrast .onyx-dock {
+    background: #000000 !important;
+    border: 0.1875rem solid #ffff00 !important;
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.high-contrast .onyx-dock::before,
+body.high-contrast .onyx-dock::after {
+    display: none !important;
+}
+
+body.high-contrast .dock-active-lens {
+    background: #ffff00 !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.high-contrast .dock-item {
+    color: #ffff00 !important;
+}
+
+body.high-contrast .dock-item.active {
+    color: #000000 !important;
+}
+
+body.high-contrast .dock-item.active .dock-icon,
+body.high-contrast .dock-item.active .dock-label {
+    color: #000000 !important;
+}
+
+/* ======================================================= */
+/* Reduced Motion                                          */
+/* ======================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .onyx-dock,
+    .onyx-dock::before,
+    .onyx-dock::after,
+    .dock-active-lens,
+    .dock-active-lens::before,
+    .dock-item,
+    .dock-icon,
+    .dock-label {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .onyx-dock {
+        transform: translateX(-50%) !important;
+    }
+}
+
+.motion-disabled .onyx-dock,
+.motion-disabled .dock-active-lens,
+.motion-disabled .dock-item,
+.motion-disabled .dock-icon,
+.motion-disabled .dock-label {
+    transition: none !important;
+}
 
 /* ========== Section Icon Containers & Layout Overrides ========== */
 .setting-icon-container {
