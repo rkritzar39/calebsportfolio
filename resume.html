@@ -96,51 +96,39 @@ document.getElementById("download-btn").addEventListener("click", function () {
 <nav class="onyx-dock" aria-label="Primary navigation">
   <span class="dock-active-lens" aria-hidden="true"></span>
 
-  <a href="/" class="dock-item">
+  <a class="dock-item" href="/">
     <span class="dock-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" focusable="false">
-        <path
-          d="M3.5 10.65 12 3.5l8.5 7.15v8.6A1.75 1.75 0 0 1 18.75 21H15a1 1 0 0 1-1-1v-5a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H5.25a1.75 1.75 0 0 1-1.75-1.75v-8.6Z"
-        />
+        <path d="M3.5 10.65 12 3.5l8.5 7.15v8.6A1.75 1.75 0 0 1 18.75 21H15a1 1 0 0 1-1-1v-5a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H5.25a1.75 1.75 0 0 1-1.75-1.75v-8.6Z"></path>
       </svg>
     </span>
-
     <span class="dock-label">Home</span>
   </a>
 
-  <a href="/beta" class="dock-item">
+  <a class="dock-item" href="/beta">
     <span class="dock-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" focusable="false">
-        <path
-          d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"
-        />
+        <path d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"></path>
       </svg>
     </span>
-
     <span class="dock-label">Beta</span>
   </a>
 
-  <a href="/resume" class="dock-item">
+  <a class="dock-item" href="/resume">
     <span class="dock-icon" aria-hidden="true">
       <svg viewBox="0 0 24 24" focusable="false">
-        <path
-          d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"
-        />
+        <path d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"></path>
       </svg>
     </span>
-
     <span class="dock-label">Resume</span>
   </a>
 
-  <a href="/settings" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
+  <a class="dock-item" href="/settings">
+    <span class="dock-icon dock-icon-settings" aria-hidden="true">
       <svg viewBox="0 0 24 24" focusable="false">
-        <path
-          d="M10.69 2.77c.57-1.03 2.05-1.03 2.62 0l.46.82c.3.53.91.8 1.5.65l.91-.23c1.14-.28 2.19.77 1.91 1.91l-.23.91c-.15.59.12 1.2.65 1.5l.82.46c1.03.57 1.03 2.05 0 2.62l-.82.46c-.53.3-.8.91-.65 1.5l.23.91c.28 1.14-.77 2.19-1.91 1.91l-.91-.23c-.59-.15-1.2.12-1.5.65l-.46.82c-.57 1.03-2.05 1.03-2.62 0l-.46-.82c-.3-.53-.91-.8-1.5-.65l-.91.23c-1.14.28-2.19-.77-1.91-1.91l.23-.91c.15-.59-.12-1.2-.65-1.5l-.82-.46c-1.03-.57-1.03-2.05 0-2.62l.82-.46c.53-.3.8-.91.65-1.5l-.23-.91c-.28-1.14.77-2.19 1.91-1.91l.91.23c.59.15 1.2-.12 1.5-.65l.46-.82ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.5a3.25 3.25 0 1 1 0 6.5 3.25 3.25 0 0 1 0-6.5Z"
-        />
+        <path d="M10.69 2.77c.57-1.03 2.05-1.03 2.62 0l.46.82c.3.53.91.8 1.5.65l.91-.23c1.14-.28 2.19.77 1.91 1.91l-.23.91c-.15.59.12 1.2.65 1.5l.82.46c1.03.57 1.03 2.05 0 2.62l-.82.46c-.53.3-.8.91-.65 1.5l.23.91c.28 1.14-.77 2.19-1.91 1.91l-.91-.23c-.59-.15-1.2.12-1.5.65l-.46.82c-.57 1.03-2.05 1.03-2.62 0l-.46-.82c-.3-.53-.91-.8-1.5-.65l-.91.23c-1.14.28-2.19-.77-1.91-1.91l.23-.91c.15-.59-.12-1.2-.65-1.5l-.82-.46c-1.03-.57-1.03-2.05 0-2.62l.82-.46c.53-.3.8-.91.65-1.5l-.23-.91c-.28-1.14.77-2.19 1.91-1.91l.91.23c.59.15 1.2-.12 1.5-.65l.46-.82ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.5a3.25 3.25 0 1 1 0 6.5 3.25 3.25 0 0 1 0-6.5Z"></path>
       </svg>
     </span>
-
     <span class="dock-label">Settings</span>
   </a>
 </nav>
@@ -148,21 +136,58 @@ document.getElementById("download-btn").addEventListener("click", function () {
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const dock = document.querySelector(".onyx-dock");
-    const links = Array.from(
-      document.querySelectorAll(".onyx-dock .dock-item")
-    );
-    const lens = dock?.querySelector(".dock-active-lens");
 
-    if (!dock || !links.length || !lens) return;
+    if (!dock) {
+      return;
+    }
+
+    const links = Array.from(dock.querySelectorAll(".dock-item"));
+    const lens = dock.querySelector(".dock-active-lens");
+
+    if (!links.length || !lens) {
+      return;
+    }
+
+    let activeLink = null;
+    let pressedLink = null;
+    let dragTarget = null;
+
+    let activePointerId = null;
+
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let currentPointerX = 0;
+
+    let pointerIsDown = false;
+    let dragStarted = false;
+    let suppressNextClick = false;
 
     let resizeFrame = null;
+    let settlingTimer = null;
+    let settingsTimer = null;
+    let navigationTimer = null;
 
-    /* ======================================================= */
-    /* Path Normalization                                      */
-    /* ======================================================= */
+    const dragThreshold = 7;
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    /* ====================================================== */
+    /* Motion Preference                                      */
+    /* ====================================================== */
+
+    function motionIsDisabled() {
+      return (
+        reducedMotionQuery.matches ||
+        document.documentElement.classList.contains("motion-disabled") ||
+        document.body.classList.contains("motion-disabled")
+      );
+    }
+
+    /* ====================================================== */
+    /* Path Normalization                                     */
+    /* ====================================================== */
 
     function normalizePath(path) {
-      let clean = String(path || "/")
+      let cleanPath = String(path || "/")
         .split("?")[0]
         .split("#")[0]
         .toLowerCase()
@@ -170,174 +195,591 @@ document.getElementById("download-btn").addEventListener("click", function () {
         .replace(/\.html$/i, "")
         .replace(/\/+$/g, "");
 
-      if (!clean || clean === "/home") {
-        clean = "/";
+      if (!cleanPath || cleanPath === "/home") {
+        cleanPath = "/";
       }
 
-      if (!clean.startsWith("/")) {
-        clean = `/${clean}`;
+      if (!cleanPath.startsWith("/")) {
+        cleanPath = `/${cleanPath}`;
       }
 
-      return clean;
+      return cleanPath;
     }
 
-    /* ======================================================= */
-    /* Active Route Detection                                  */
-    /* ======================================================= */
+    function getLinkPath(link) {
+      const route = link.dataset.route || link.getAttribute("href") || "/";
+
+      try {
+        return normalizePath(new URL(route, window.location.origin).pathname);
+      } catch (error) {
+        return normalizePath(route);
+      }
+    }
+
+    /* ====================================================== */
+    /* Active Route Detection                                 */
+    /* ====================================================== */
 
     function findActiveLink() {
-      const currentPath = normalizePath(
-        window.location.pathname
-      );
+      const currentPath = normalizePath(window.location.pathname);
 
-      let exactMatch = null;
-      let nestedMatch = null;
-
-      links.forEach((link) => {
-        const href =
-          link.getAttribute("href") || "/";
-
-        const targetPath = normalizePath(
-          new URL(
-            href,
-            window.location.origin
-          ).pathname
-        );
-
-        if (currentPath === targetPath) {
-          exactMatch = link;
-        } else if (
-          targetPath !== "/" &&
-          currentPath.startsWith(`${targetPath}/`)
-        ) {
-          nestedMatch = link;
-        }
+      const exactMatch = links.find((link) => {
+        return getLinkPath(link) === currentPath;
       });
 
-      return exactMatch || nestedMatch || links[0];
+      if (exactMatch) {
+        return exactMatch;
+      }
+
+      const nestedMatches = links
+        .filter((link) => {
+          const targetPath = getLinkPath(link);
+          return targetPath !== "/" && currentPath.startsWith(`${targetPath}/`);
+        })
+        .sort((firstLink, secondLink) => {
+          return getLinkPath(secondLink).length - getLinkPath(firstLink).length;
+        });
+
+      return nestedMatches[0] || links[0];
     }
 
-    /* ======================================================= */
-    /* Active Lens Position                                    */
-    /* ======================================================= */
+    /* ====================================================== */
+    /* Active State                                           */
+    /* ====================================================== */
 
-    function moveLensTo(link) {
-      if (!link) return;
+    function setActiveLink(link) {
+      if (!link) {
+        return;
+      }
 
-      const dockRect =
-        dock.getBoundingClientRect();
+      activeLink = link;
 
-      const linkRect =
-        link.getBoundingClientRect();
-
-      const x =
-        linkRect.left - dockRect.left;
-
-      dock.style.setProperty(
-        "--lens-x",
-        `${x}px`
-      );
-
-      dock.style.setProperty(
-        "--lens-width",
-        `${linkRect.width}px`
-      );
-    }
-
-    /* ======================================================= */
-    /* Active Tab Update                                       */
-    /* ======================================================= */
-
-    function updateActiveTab() {
-      const activeLink = findActiveLink();
-
-      links.forEach((link) => {
-        const isActive =
-          link === activeLink;
-
-        link.classList.toggle(
-          "active",
-          isActive
-        );
+      links.forEach((dockLink) => {
+        const isActive = dockLink === link;
+        dockLink.classList.toggle("active", isActive);
 
         if (isActive) {
-          link.setAttribute(
-            "aria-current",
-            "page"
-          );
+          dockLink.setAttribute("aria-current", "page");
         } else {
-          link.removeAttribute(
-            "aria-current"
-          );
+          dockLink.removeAttribute("aria-current");
+        }
+      });
+    }
+
+    /* ====================================================== */
+    /* Lens Position                                          */
+    /* ====================================================== */
+
+    function moveLensTo(link, animate = true) {
+      if (!link) {
+        return;
+      }
+
+      const dockRect = dock.getBoundingClientRect();
+      const linkRect = link.getBoundingClientRect();
+      const lensX = linkRect.left - dockRect.left;
+
+      if (!animate) {
+        lens.style.transition = "none";
+      }
+
+      dock.style.setProperty("--lens-x", `${lensX}px`);
+      dock.style.setProperty("--lens-width", `${linkRect.width}px`);
+
+      if (!animate) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            lens.style.removeProperty("transition");
+          });
+        });
+      }
+    }
+
+    function moveLensWithPointer(pointerX, targetLink) {
+      if (!targetLink) {
+        return;
+      }
+
+      const dockRect = dock.getBoundingClientRect();
+      const targetRect = targetLink.getBoundingClientRect();
+      const dockStyles = getComputedStyle(dock);
+      const paddingLeft = parseFloat(dockStyles.paddingLeft) || 0;
+      const paddingRight = parseFloat(dockStyles.paddingRight) || 0;
+      const lensWidth = targetRect.width;
+      const halfLensWidth = lensWidth / 2;
+      const minimumCenter = dockRect.left + paddingLeft + halfLensWidth;
+      const maximumCenter = dockRect.right - paddingRight - halfLensWidth;
+
+      const constrainedCenter = Math.min(
+        Math.max(pointerX, minimumCenter),
+        maximumCenter
+      );
+
+      const lensX = constrainedCenter - dockRect.left - halfLensWidth;
+
+      dock.style.setProperty("--lens-x", `${lensX}px`);
+      dock.style.setProperty("--lens-width", `${lensWidth}px`);
+    }
+
+    /* ====================================================== */
+    /* Nearest Dock Link                                      */
+    /* ====================================================== */
+
+    function getNearestLink(pointerX) {
+      let nearestLink = links[0];
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      links.forEach((link) => {
+        const linkRect = link.getBoundingClientRect();
+        const linkCenter = linkRect.left + linkRect.width / 2;
+        const distance = Math.abs(pointerX - linkCenter);
+
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestLink = link;
         }
       });
 
-      moveLensTo(activeLink);
+      return nearestLink;
+    }
 
+    /* ====================================================== */
+    /* Drag Target                                            */
+    /* ====================================================== */
+
+    function setDragTarget(link) {
+      if (dragTarget === link) {
+        return;
+      }
+
+      links.forEach((dockLink) => {
+        dockLink.classList.remove("is-drag-target");
+      });
+
+      dragTarget = link;
+
+      if (dragTarget) {
+        dragTarget.classList.add("is-drag-target");
+      }
+    }
+
+    function clearInteractionClasses() {
+      dock.classList.remove("is-pressing", "is-dragging");
+
+      links.forEach((link) => {
+        link.classList.remove("is-pressed", "is-drag-target");
+      });
+    }
+
+    /* ====================================================== */
+    /* Settings Gear Rotation                                 */
+    /* ====================================================== */
+
+    function rotateSettingsGear(link) {
+      if (
+        !link ||
+        !link.querySelector(".dock-icon-settings") ||
+        motionIsDisabled()
+      ) {
+        return;
+      }
+
+      if (settingsTimer !== null) {
+        window.clearTimeout(settingsTimer);
+      }
+
+      link.classList.remove("settings-rotating");
+
+      /* Force a reflow so the CSS animation can replay. */
+      void link.offsetWidth;
+
+      link.classList.add("settings-rotating");
+
+      settingsTimer = window.setTimeout(() => {
+        link.classList.remove("settings-rotating");
+        settingsTimer = null;
+      }, 700);
+    }
+
+    /* ====================================================== */
+    /* Snap Animation                                         */
+    /* ====================================================== */
+
+    function runSettlingAnimation(link) {
+      if (!link || motionIsDisabled()) {
+        return;
+      }
+
+      if (settlingTimer !== null) {
+        window.clearTimeout(settlingTimer);
+      }
+
+      dock.classList.remove("is-settling");
+
+      links.forEach((dockLink) => {
+        dockLink.classList.remove("is-settling");
+      });
+
+      void dock.offsetWidth; // Force Reflow
+      dock.classList.add("is-settling");
+      link.classList.add("is-settling");
+
+      settlingTimer = window.setTimeout(() => {
+        dock.classList.remove("is-settling");
+        link.classList.remove("is-settling");
+        settlingTimer = null;
+      }, 540);
+    }
+
+    /* ====================================================== */
+    /* Manual Navigation                                      */
+    /* ====================================================== */
+
+    function navigateTo(link) {
+      if (!link) {
+        return;
+      }
+
+      const destination = new URL(link.href, window.location.href);
+      const current = new URL(window.location.href);
+
+      const sameDestination =
+        destination.pathname === current.pathname &&
+        destination.search === current.search &&
+        destination.hash === current.hash;
+
+      if (sameDestination) {
+        return;
+      }
+
+      if (navigationTimer !== null) {
+        window.clearTimeout(navigationTimer);
+      }
+
+      const delay = motionIsDisabled() ? 0 : 180;
+
+      navigationTimer = window.setTimeout(() => {
+        window.location.assign(destination.href);
+      }, delay);
+    }
+
+    /* ====================================================== */
+    /* Pointer Reflection                                     */
+    /* ====================================================== */
+
+    function updatePointerReflection(event, link) {
+      if (event.pointerType !== "mouse") {
+        return;
+      }
+
+      const linkRect = link.getBoundingClientRect();
+      link.style.setProperty("--pointer-x", `${event.clientX - linkRect.left}px`);
+      link.style.setProperty("--pointer-y", `${event.clientY - linkRect.top}px`);
+    }
+
+    function clearPointerReflection(link) {
+      link.style.removeProperty("--pointer-x");
+      link.style.removeProperty("--pointer-y");
+    }
+
+    /* ====================================================== */
+    /* Press Start                                            */
+    /* ====================================================== */
+
+    function beginPress(event, link) {
+      if (activePointerId !== null) {
+        return;
+      }
+
+      if (event.pointerType === "mouse" && event.button !== 0) {
+        return;
+      }
+
+      activePointerId = event.pointerId;
+      pointerIsDown = true;
+      dragStarted = false;
+      pressedLink = link;
+      pointerStartX = event.clientX;
+      pointerStartY = event.clientY;
+      currentPointerX = event.clientX;
+
+      dock.classList.add("is-pressing");
+      link.classList.add("is-pressed");
+
+      setDragTarget(link);
+
+      try {
+        dock.setPointerCapture(event.pointerId);
+      } catch (error) {
+        /* Continue if pointer capture is unavailable. */
+      }
+    }
+
+    /* ====================================================== */
+    /* Press and Drag Update                                  */
+    /* ====================================================== */
+
+    function updatePress(event) {
+      if (!pointerIsDown || event.pointerId !== activePointerId) {
+        return;
+      }
+
+      currentPointerX = event.clientX;
+      const movementX = event.clientX - pointerStartX;
+      const movementY = event.clientY - pointerStartY;
+      const movementDistance = Math.hypot(movementX, movementY);
+
+      if (!dragStarted && movementDistance >= dragThreshold) {
+        dragStarted = true;
+        dock.classList.add("is-dragging");
+        pressedLink?.classList.remove("is-pressed");
+      }
+
+      if (!dragStarted) {
+        return;
+      }
+
+      event.preventDefault();
+      const nearestLink = getNearestLink(event.clientX);
+      setDragTarget(nearestLink);
+      moveLensWithPointer(event.clientX, nearestLink);
+    }
+
+    /* ====================================================== */
+    /* Press Finish                                           */
+    /* ====================================================== */
+
+    function finishPress(event, cancelled = false) {
+      if (!pointerIsDown || event.pointerId !== activePointerId) {
+        return;
+      }
+
+      const wasDragging = dragStarted;
+
+      const selectedLink = cancelled
+        ? activeLink
+        : wasDragging
+        ? getNearestLink(currentPointerX)
+        : pressedLink;
+
+      if (wasDragging) {
+        suppressNextClick = true;
+      }
+
+      clearInteractionClasses();
+
+      try {
+        if (dock.hasPointerCapture(event.pointerId)) {
+          dock.releasePointerCapture(event.pointerId);
+        }
+      } catch (error) {
+        /* Continue if pointer capture is unavailable. */
+      }
+
+      pointerIsDown = false;
+      dragStarted = false;
+      pressedLink = null;
+      dragTarget = null;
+      activePointerId = null;
+
+      if (!selectedLink) {
+        return;
+      }
+
+      setActiveLink(selectedLink);
+      moveLensTo(selectedLink, true);
+      runSettlingAnimation(selectedLink);
+
+      if (!cancelled) {
+        rotateSettingsGear(selectedLink);
+      }
+
+      /* A drag does not rely on the normal anchor click, so navigate manually. */
+      if (!cancelled && wasDragging) {
+        navigateTo(selectedLink);
+      }
+    }
+
+    /* ====================================================== */
+    /* Link Events                                            */
+    /* ====================================================== */
+
+    links.forEach((link) => {
+      link.addEventListener("pointerdown", (event) => {
+        beginPress(event, link);
+      });
+
+      link.addEventListener("pointermove", (event) => {
+        updatePointerReflection(event, link);
+      });
+
+      link.addEventListener("pointerleave", () => {
+        clearPointerReflection(link);
+      });
+
+      link.addEventListener("click", (event) => {
+        const modifiedClick =
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey ||
+          event.button !== 0;
+
+        const specialNavigation =
+          link.target === "_blank" || link.hasAttribute("download");
+
+        if (modifiedClick || specialNavigation) {
+          return;
+        }
+
+        /* Prevent the synthetic click generated after dragging. */
+        if (suppressNextClick) {
+          event.preventDefault();
+          suppressNextClick = false;
+          return;
+        }
+
+        const currentPath = normalizePath(window.location.pathname);
+        const targetPath = getLinkPath(link);
+
+        /* If this is the current page, animate without reloading. */
+        if (currentPath === targetPath) {
+          event.preventDefault();
+          setActiveLink(link);
+          moveLensTo(link, true);
+          runSettlingAnimation(link);
+          rotateSettingsGear(link);
+        }
+      });
+    });
+
+    /* ====================================================== */
+    /* Dock Pointer Events                                    */
+    /* ====================================================== */
+
+    dock.addEventListener("pointermove", updatePress);
+    dock.addEventListener("pointerup", (event) => {
+      finishPress(event, false);
+    });
+    dock.addEventListener("pointercancel", (event) => {
+      finishPress(event, true);
+    });
+
+    /* ====================================================== */
+    /* Keyboard Navigation                                    */
+    /* ====================================================== */
+
+    links.forEach((link, index) => {
+      link.addEventListener("keydown", (event) => {
+        let nextIndex = null;
+
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+          nextIndex = (index + 1) % links.length;
+        }
+
+        if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+          nextIndex = (index - 1 + links.length) % links.length;
+        }
+
+        if (event.key === "Home") {
+          nextIndex = 0;
+        }
+
+        if (event.key === "End") {
+          nextIndex = links.length - 1;
+        }
+
+        if (nextIndex === null) {
+          return;
+        }
+
+        event.preventDefault();
+        const nextLink = links[nextIndex];
+        nextLink.focus();
+        setActiveLink(nextLink);
+        moveLensTo(nextLink, true);
+        runSettlingAnimation(nextLink);
+        rotateSettingsGear(nextLink);
+      });
+    });
+
+    /* ====================================================== */
+    /* Responsive Updates                                     */
+    /* ====================================================== */
+
+    function handleResize() {
+      if (resizeFrame !== null) {
+        cancelAnimationFrame(resizeFrame);
+      }
+
+      resizeFrame = requestAnimationFrame(() => {
+        moveLensTo(activeLink, false);
+        resizeFrame = null;
+      });
+    }
+
+    /* ====================================================== */
+    /* Route Update                                           */
+    /* ====================================================== */
+
+    function updateRouteState(animate = false) {
+      activeLink = findActiveLink();
+      setActiveLink(activeLink);
+      moveLensTo(activeLink, animate);
+    }
+
+    /* ====================================================== */
+    /* Initialization                                         */
+    /* ====================================================== */
+
+    async function initializeDock() {
+      if (document.fonts?.ready) {
+        try {
+          await document.fonts.ready;
+        } catch (error) {
+          /* Continue if font loading cannot finish. */
+        }
+      }
+
+      activeLink = findActiveLink();
+      setActiveLink(activeLink);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          moveLensTo(activeLink, false);
+          dock.classList.add("dock-ready");
+        });
+      });
+
+      const year = document.getElementById("year");
+      if (year) {
+        year.textContent = new Date().getFullYear();
+      }
+    }
+
+    initializeDock();
+
+    /* ====================================================== */
+    /* Browser Events                                         */
+    /* ====================================================== */
+
+    window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("orientationchange", handleResize, { passive: true });
+
+    window.addEventListener("pageshow", () => {
+      updateRouteState(false);
       requestAnimationFrame(() => {
         dock.classList.add("dock-ready");
       });
-    }
-
-    /* ======================================================= */
-    /* Initialize Dock                                         */
-    /* ======================================================= */
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(
-        updateActiveTab
-      );
     });
 
-    /* ======================================================= */
-    /* Responsive Lens Updates                                 */
-    /* ======================================================= */
+    window.addEventListener("popstate", () => {
+      updateRouteState(true);
+    });
 
-    window.addEventListener(
-      "resize",
-      () => {
-        if (resizeFrame !== null) {
-          cancelAnimationFrame(
-            resizeFrame
-          );
-        }
-
-        resizeFrame = requestAnimationFrame(
-          () => {
-            const activeLink =
-              dock.querySelector(
-                ".dock-item.active"
-              );
-
-            moveLensTo(activeLink);
-            resizeFrame = null;
-          }
-        );
-      },
-      { passive: true }
-    );
-
-    window.addEventListener(
-      "pageshow",
-      updateActiveTab
-    );
-
-    window.addEventListener(
-      "popstate",
-      updateActiveTab
-    );
-
-    /* ======================================================= */
-    /* Current Year                                            */
-    /* ======================================================= */
-
-    const year =
-      document.getElementById("year");
-
-    if (year) {
-      year.textContent =
-        new Date().getFullYear();
-    }
+    window.addEventListener("hashchange", () => {
+      updateRouteState(true);
+    });
   });
 </script>
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
