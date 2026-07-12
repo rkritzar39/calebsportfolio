@@ -615,3 +615,552 @@ body[data-theme="dark"] .site-header {
     inset 0 -1px 0 rgba(0, 0, 0, 0.32) !important;
 }
 
+/* ======================================================= /
+/ Resume Theme Integration                                /
+/ ======================================================= */
+
+body.resume-page {
+    color:
+        var(
+            --text-color,
+            #1c1c1e
+        );
+
+    background:
+        var(
+            --background-color,
+            #f5f5f7
+        );
+
+    transition:
+        color 0.3s ease,
+        background-color 0.3s ease;
+}
+
+/* ======================================================= /
+/ Resume Light Mode                                       /
+/ ======================================================= */
+
+body.resume-page.light-mode,
+html.light-mode body.resume-page {
+    color:
+        var(
+            --light-text,
+            var(
+                --text-color,
+                #1c1c1e
+            )
+        );
+
+    background:
+        var(
+            --light-background,
+            var(
+                --background-color,
+                #f5f5f7
+            )
+        );
+}
+
+/* ======================================================= /
+/ Resume Dark Mode                                        /
+/ ======================================================= */
+
+body.resume-page.dark-mode,
+html.dark-mode body.resume-page {
+    color:
+        var(
+            --dark-text,
+            #f5f5f7
+        );
+
+    background:
+        var(
+            --dark-background,
+            #000000
+        );
+}
+
+/* ======================================================= /
+/ Resume Header                                           /
+/ ======================================================= */
+
+body.resume-page .site-header {
+    color:
+        var(
+            --text-color,
+            inherit
+        );
+
+    background:
+        var(
+            --content-bg,
+            rgba(
+                255,
+                255,
+                255,
+                0.72
+            )
+        );
+
+    border-color:
+        var(
+            --border-color,
+            rgba(
+                60,
+                60,
+                67,
+                0.18
+            )
+        );
+
+    transition:
+        color 0.3s ease,
+        background-color 0.3s ease,
+        border-color 0.3s ease;
+}
+
+body.resume-page.light-mode .site-header,
+html.light-mode body.resume-page .site-header {
+    color:
+        var(
+            --light-text,
+            #1c1c1e
+        );
+
+    background:
+        color-mix(
+            in srgb,
+            var(
+                --glass-bg-light,
+                #ffffff
+            ) 78%,
+            transparent
+        );
+}
+
+body.resume-page.dark-mode .site-header,
+html.dark-mode body.resume-page .site-header {
+    color:
+        var(
+            --dark-text,
+            #f5f5f7
+        );
+
+    background:
+        color-mix(
+            in srgb,
+            var(
+                --glass-bg-dark,
+                #1c1c1e
+            ) 82%,
+            transparent
+        );
+}
+
+/* ======================================================= /
+/ Resume Content                                          /
+/ ======================================================= */
+
+body.resume-page .resume-container,
+body.resume-page .resume-content {
+    color:
+        inherit;
+}
+
+body.resume-page .resume-content {
+    background:
+        var(
+            --content-bg,
+            rgba(
+                255,
+                255,
+                255,
+                0.72
+            )
+        );
+
+    border-color:
+        var(
+            --border-color,
+            rgba(
+                60,
+                60,
+                67,
+                0.18
+            )
+        );
+
+    transition:
+        color 0.3s ease,
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+body.resume-page.light-mode .resume-content,
+html.light-mode body.resume-page .resume-content {
+    color:
+        var(
+            --light-text,
+            #1c1c1e
+        );
+
+    background:
+        var(
+            --content-bg,
+            rgba(
+                255,
+                255,
+                255,
+                0.78
+            )
+        );
+}
+
+body.resume-page.dark-mode .resume-content,
+html.dark-mode body.resume-page .resume-content {
+    color:
+        var(
+            --dark-text,
+            #f5f5f7
+        );
+
+    background:
+        var(
+            --dark-content-bg,
+            rgba(
+                28,
+                28,
+                30,
+                0.78
+            )
+        );
+
+    border-color:
+        rgba(
+            255,
+            255,
+            255,
+            0.12
+        );
+}
+
+/* ======================================================= /
+/ Resume Sections                                         /
+/ ======================================================= */
+
+body.resume-page .resume-content section {
+    color:
+        inherit;
+
+    border-color:
+        var(
+            --border-color,
+            rgba(
+                60,
+                60,
+                67,
+                0.18
+            )
+        );
+}
+
+body.resume-page .resume-content h1,
+body.resume-page .resume-content h2,
+body.resume-page .resume-content h3,
+body.resume-page .resume-content h4,
+body.resume-page .header-text h1,
+body.resume-page .professional-title {
+    color:
+        inherit;
+}
+
+body.resume-page .resume-content p,
+body.resume-page .resume-content li,
+body.resume-page .contact-line,
+body.resume-page .contact-line a {
+    color:
+        var(
+            --secondary-text,
+            currentColor
+        );
+}
+
+body.resume-page .contact-line a:hover {
+    color:
+        var(
+            --accent-color,
+            #007aff
+        );
+}
+
+/* ======================================================= /
+/ Resume Skills and Languages                             /
+/ ======================================================= */
+
+body.resume-page .skills-list,
+body.resume-page .languages-list {
+    color:
+        inherit;
+}
+
+body.resume-page .skill-item,
+body.resume-page .language-item,
+body.resume-page .skill,
+body.resume-page .language {
+    color:
+        var(
+            --text-color,
+            inherit
+        );
+
+    background:
+        color-mix(
+            in srgb,
+            var(
+                --content-bg,
+                #ffffff
+            ) 78%,
+            transparent
+        );
+
+    border-color:
+        var(
+            --border-color,
+            rgba(
+                60,
+                60,
+                67,
+                0.18
+            )
+        );
+}
+
+body.resume-page.dark-mode .skill-item,
+body.resume-page.dark-mode .language-item,
+body.resume-page.dark-mode .skill,
+body.resume-page.dark-mode .language,
+html.dark-mode body.resume-page .skill-item,
+html.dark-mode body.resume-page .language-item,
+html.dark-mode body.resume-page .skill,
+html.dark-mode body.resume-page .language {
+    color:
+        var(
+            --dark-text,
+            #f5f5f7
+        );
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.08
+        );
+
+    border-color:
+        rgba(
+            255,
+            255,
+            255,
+            0.12
+        );
+}
+
+/* ======================================================= /
+/ Resume Download Button                                  /
+/ ======================================================= */
+
+body.resume-page .download-btn {
+    color:
+        #ffffff;
+
+    background:
+        var(
+            --accent-color,
+            #007aff
+        );
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(
+                --accent-color,
+                #007aff
+            ) 76%,
+            transparent
+        );
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+body.resume-page .download-btn:hover {
+    background:
+        color-mix(
+            in srgb,
+            var(
+                --accent-color,
+                #007aff
+            ) 88%,
+            #000000 12%
+        );
+
+    transform:
+        translateY(-0.0625rem);
+
+    box-shadow:
+        0 0.5rem 1.25rem
+        color-mix(
+            in srgb,
+            var(
+                --accent-color,
+                #007aff
+            ) 24%,
+            transparent
+        );
+}
+
+body.resume-page .download-btn:active {
+    transform:
+        scale(0.97);
+}
+
+/* ======================================================= /
+/ Resume Footer                                           /
+/ ======================================================= */
+
+body.resume-page footer {
+    color:
+        var(
+            --secondary-text,
+            currentColor
+        );
+
+    border-color:
+        var(
+            --border-color,
+            rgba(
+                60,
+                60,
+                67,
+                0.18
+            )
+        );
+}
+
+/* ======================================================= /
+/ Resume Clear Mode                                       /
+/ ======================================================= */
+
+body.resume-page.clear-mode .site-header,
+body.resume-page.clear-mode .resume-content {
+    background:
+        color-mix(
+            in srgb,
+            var(
+                --content-bg,
+                #ffffff
+            ) 34%,
+            transparent
+        );
+
+    backdrop-filter:
+        blur(30px)
+        saturate(175%);
+
+    -webkit-backdrop-filter:
+        blur(30px)
+        saturate(175%);
+}
+
+/* ======================================================= /
+/ Resume Tinted Mode                                      /
+/ ======================================================= */
+
+body.resume-page.tinted-mode .site-header,
+body.resume-page.tinted-mode .resume-content {
+    background:
+        color-mix(
+            in srgb,
+            var(
+                --accent-color,
+                #007aff
+            ) 8%,
+            var(
+                --content-bg,
+                #ffffff
+            ) 72%
+        );
+}
+
+/* ======================================================= /
+/ Resume Dock Clearance                                   /
+/ ======================================================= */
+
+body.resume-page main {
+    padding-bottom:
+        calc(
+            var(
+                --dock-height,
+                4.5rem
+            ) +
+            env(
+                safe-area-inset-bottom
+            ) +
+            3rem
+        );
+}
+
+/* ======================================================= /
+/ Resume Print Mode                                       /
+/ ======================================================= */
+
+@media print {
+    body.resume-page {
+        color:
+            #000000 !important;
+
+        background:
+            #ffffff !important;
+    }
+
+    body.resume-page .site-header,
+    body.resume-page .resume-content {
+        color:
+            #000000 !important;
+
+        background:
+            #ffffff !important;
+
+        border-color:
+            #d1d1d6 !important;
+
+        box-shadow:
+            none !important;
+
+        backdrop-filter:
+            none !important;
+
+        -webkit-backdrop-filter:
+            none !important;
+    }
+
+    body.resume-page .onyx-dock,
+    body.resume-page footer,
+    body.resume-page .download-btn {
+        display:
+            none !important;
+    }
+
+    body.resume-page main {
+        padding-bottom:
+            0 !important;
+    }
+}
