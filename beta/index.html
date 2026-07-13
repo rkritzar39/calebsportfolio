@@ -2,156 +2,62 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="author" content="Caleb Kritzar" />
-
-  <meta
-    name="description"
-    content="View the current beta version, changelog, development status, release roadmap, and feedback options for Caleb's Link in Bio Website."
-  />
-
+  <meta name="description" content="View the current beta version, changelog, development status, release roadmap, and feedback options for Caleb's Link in Bio Website." />
+  
   <title>Beta Preview v26.6-beta.4 - Caleb's Profile</title>
 
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/settings.css" />
-
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    referrerpolicy="no-referrer"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" referrerpolicy="no-referrer" />
 
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="manifest" href="/manifest.json" />
-
-  <meta
-    name="theme-color"
-    content="#4EA8FF"
-  />
-
-  <!-- ====================================================== -->
-  <!-- Apply Saved Appearance Before Rendering                -->
-  <!-- ====================================================== -->
+  <meta name="theme-color" content="#4EA8FF" />
 
   <script>
-    (function () {
+    (() => {
       try {
-        const settings = JSON.parse(
-          localStorage.getItem("websiteSettings") || "{}"
-        );
+        const settings = JSON.parse(localStorage.getItem("websiteSettings") || "{}");
+        const savedTheme = settings.theme || settings.appearance || settings.themeMode || localStorage.getItem("theme") || localStorage.getItem("websiteTheme") || "dark";
+        const normalizedTheme = String(savedTheme).trim().toLowerCase();
+        const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+        const usesDeviceTheme = normalizedTheme === "system" || normalizedTheme === "device" || normalizedTheme === "auto" || normalizedTheme.includes("match");
+        const isLightTheme = normalizedTheme.includes("light") || (usesDeviceTheme && prefersLight);
+        const appearanceClass = isLightTheme ? "light-mode" : "dark-mode";
 
-        const savedTheme =
-          settings.theme ||
-          settings.appearance ||
-          settings.themeMode ||
-          localStorage.getItem("theme") ||
-          localStorage.getItem("websiteTheme") ||
-          "dark";
+        document.documentElement.classList.remove("light-mode", "light-e", "dark-mode", "dark-e");
+        document.documentElement.classList.add(appearanceClass);
+        document.documentElement.dataset.theme = isLightTheme ? "light" : "dark";
 
-        const normalizedTheme =
-          String(savedTheme).toLowerCase();
-
-        const isLightTheme =
-          normalizedTheme.includes("light");
-
-        document.documentElement.classList.remove(
-          "light-mode",
-          "light-e",
-          "dark-mode",
-          "dark-e"
-        );
-
-        document.documentElement.classList.add(
-          isLightTheme
-            ? "light-mode"
-            : "dark-mode"
-        );
-
-        document.documentElement.dataset.theme =
-          isLightTheme
-            ? "light"
-            : "dark";
-
-        document.addEventListener(
-          "DOMContentLoaded",
-          () => {
-            document.body.classList.remove(
-              "light-mode",
-              "light-e",
-              "dark-mode",
-              "dark-e"
-            );
-
-            document.body.classList.add(
-              isLightTheme
-                ? "light-mode"
-                : "dark-mode"
-            );
-
-            document.body.dataset.theme =
-              isLightTheme
-                ? "light"
-                : "dark";
-          }
-        );
-
-        const customBackground =
-          settings.customBackground ||
-          settings.customBackgroundUrl ||
-          settings.backgroundImage ||
-          settings.backgroundUrl ||
-          localStorage.getItem(
-            "customBackground"
-          );
+        const customBackground = settings.customBackground || settings.customBackgroundUrl || settings.backgroundImage || settings.backgroundUrl || localStorage.getItem("customBackground");
 
         if (customBackground) {
           const backgroundValue = `url("${customBackground}")`;
-
-          document.documentElement.style.setProperty(
-            "--custom-background-image",
-            backgroundValue
-          );
-
-          document.addEventListener(
-            "DOMContentLoaded",
-            () => {
-              document.body.style.setProperty(
-                "--custom-background-image",
-                backgroundValue
-              );
-
-              document.body.classList.add(
-                "custom-background-active"
-              );
-            }
-          );
+          document.documentElement.style.setProperty("--custom-background-image", backgroundValue);
         }
-      } catch (error) {
-        document.documentElement.classList.add(
-          "dark-mode"
-        );
 
-        document.documentElement.dataset.theme =
-          "dark";
+        document.addEventListener("DOMContentLoaded", () => {
+          document.body.classList.remove("light-mode", "light-e", "dark-mode", "dark-e");
+          document.body.classList.add(appearanceClass);
+          document.body.dataset.theme = isLightTheme ? "light" : "dark";
 
-        document.addEventListener(
-          "DOMContentLoaded",
-          () => {
-            document.body.classList.add(
-              "dark-mode"
-            );
-
-            document.body.dataset.theme =
-              "dark";
+          if (customBackground) {
+            const backgroundValue = `url("${customBackground}")`;
+            document.body.style.setProperty("--custom-background-image", backgroundValue);
+            document.body.classList.add("custom-background-active");
           }
-        );
+        }, { once: true });
+      } catch (error) {
+        document.documentElement.classList.add("dark-mode");
+        document.documentElement.dataset.theme = "dark";
+        document.addEventListener("DOMContentLoaded", () => {
+          document.body.classList.add("dark-mode");
+          document.body.dataset.theme = "dark";
+        }, { once: true });
       }
     })();
   </script>
@@ -159,1711 +65,1018 @@
 
 <body class="beta-page">
 
-  <!-- ====================================================== -->
-  <!-- Skip Navigation                                       -->
-  <!-- ====================================================== -->
+  <a href="#main-content" class="skip-link">Skip to beta information</a>
 
-  <a href="#main-content" class="skip-link">
-    Skip to beta information
-  </a>
+  <main class="container" id="main-content">
 
-  <main
-    class="container"
-    id="main-content"
-  >
-
-<!-- ====================================================== -->
-<!-- Current Release                                        -->
-<!-- ====================================================== -->
-
-<section class="section beta-page-section beta-searchable" data-search-title="Current Release">
-  <div class="beta-section-heading">
-    <h2>
-      <i class="fa-solid fa-sparkles" aria-hidden="true"></i>
-      What’s New in v26.6-beta.4
-    </h2>
-    <p>
-      This release introduces the responsive Onyx navigation dock and improves the Resume page across appearance modes, screen sizes, and input methods.
-    </p>
-  </div>
-
-  <ul class="beta-notes-list">
-    <li>Added the responsive Onyx liquid-glass navigation dock to the Home, Beta, Resume, and Settings pages.</li>
-    <li>Added inline SVG navigation icons, an active liquid lens, press feedback, drag selection, and release snapping.</li>
-    <li>Added a Settings-only gear animation that replays when the Settings destination is selected.</li>
-    <li>Improved dock alignment with equal-width navigation items, balanced edge spacing, and fractional-pixel lens positioning.</li>
-    <li>Added responsive dock layouts for phones, foldables, tablets, laptops, desktops, landscape displays, and split-screen layouts.</li>
-    <li>Improved keyboard navigation, reduced-motion support, high-contrast support, safe-area handling, and touch-device behavior.</li>
-    <li>Updated the Resume page to use the shared appearance system from the Settings page.</li>
-    <li>Improved Resume page support for light mode, dark mode, clear mode, tinted mode, printing, and browser-based PDF layouts.</li>
-  </ul>
-</section>
-
-<!-- ====================================================== -->
-<!-- Beta Changelog                                         -->
-<!-- ====================================================== -->
-
-<section class="section beta-page-section beta-searchable" data-search-title="Beta Changelog">
-  <div class="beta-section-heading">
-    <h2>
-      <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-      Beta Changelog
-    </h2>
-    <p>
-      Changes included in each v26.6 beta release.
-    </p>
-  </div>
-
-  <div class="beta-changelog">
-    <!-- v26.6-beta.4 -->
-    <article class="beta-release current beta-searchable-item">
-      <div class="beta-release-header">
+    <section class="section beta-page-section">
+      <div class="beta-page-header">
         <div>
-          <h3>v26.6-beta.4</h3>
-          <p class="beta-release-meta">Build 2026.07.13</p>
+          <p class="beta-eyebrow">
+            <i class="fa-solid fa-flask-vial" aria-hidden="true"></i> Beta Revamp Preview
+          </p>
+          <h1>Beta Preview</h1>
+          <p class="beta-page-subtitle">
+            Track current changes, completed improvements, development progress, and the path to the full website revamp planned for September 2026.
+          </p>
         </div>
-        <span class="beta-status active">Current</span>
+        <span class="beta-version-pill" aria-label="Current beta version">v26.6-beta.4</span>
       </div>
-      <ul>
-        <li>Added the responsive Onyx liquid-glass navigation dock.</li>
-        <li>Added inline SVG icons and an animated active navigation lens.</li>
-        <li>Added press, hold, drag, nearest-item targeting, release, and snap interactions.</li>
-        <li>Added a Settings-only gear rotation animation.</li>
-        <li>Equalized dock item widths and corrected the left and right lens spacing.</li>
-        <li>Added phone, foldable, tablet, landscape, laptop, desktop, and split-screen refinements.</li>
-        <li>Improved keyboard, touch, reduced-motion, high-contrast, and safe-area support.</li>
-        <li>Updated the Resume page to use the shared Settings appearance system.</li>
-        <li>Improved Resume light mode, dark mode, clear mode, tinted mode, print, and PDF layouts.</li>
-        <li>Updated the README, Beta Page, version history, and release roadmap.</li>
-      </ul>
-    </article>
 
-    <!-- v26.6-beta.3 -->
-    <article class="beta-release beta-searchable-item">
-      <div class="beta-release-header">
-        <div>
-          <h3>v26.6-beta.3</h3>
-          <p class="beta-release-meta">Build 2026.07.11</p>
-        </div>
-        <span class="beta-status previous">Previous</span>
+      <div class="beta-summary-grid" aria-label="Current release summary">
+        <article class="beta-summary-card">
+          <span class="beta-summary-label">Stable Base</span>
+          <strong>v26.5</strong>
+        </article>
+        <article class="beta-summary-card">
+          <span class="beta-summary-label">Current Beta</span>
+          <strong>v26.6-beta.4</strong>
+        </article>
+        <article class="beta-summary-card">
+          <span class="beta-summary-label">Current Build</span>
+          <strong>2026.07.13</strong>
+        </article>
+        <article class="beta-summary-card">
+          <span class="beta-summary-label">Full Release</span>
+          <strong>v27.0 — September 2026</strong>
+        </article>
       </div>
-      <ul>
-        <li>Removed retired public sections and interfaces.</li>
-        <li>Removed obsolete JavaScript and CSS.</li>
-        <li>Removed unused Firestore references and listeners.</li>
-        <li>Removed the FAQ, Posts, Blog, President Information, Legislation Tracker, and Quote of the Day features.</li>
-        <li>Removed the Latest TikTok embed.</li>
-        <li>Removed the Onyx AI assistant.</li>
-        <li>Removed the Project Goal Tracker.</li>
-        <li>Reduced unnecessary public-page processing and unused data activity.</li>
-        <li>Updated the README, Beta Page, and release roadmap.</li>
-      </ul>
-    </article>
+    </section>
 
-    <!-- v26.6-beta.2 -->
-    <article class="beta-release beta-searchable-item">
-      <div class="beta-release-header">
-        <div>
-          <h3>v26.6-beta.2</h3>
-          <p class="beta-release-meta">Build 2026.07.05</p>
-        </div>
-        <span class="beta-status previous">Previous</span>
-      </div>
-      <ul>
-        <li>Updated Business Status and Hours.</li>
-        <li>Improved holiday, temporary, and manual availability states.</li>
-        <li>Expanded Academic Availability integration.</li>
-        <li>Added smarter recurring class status labels.</li>
-        <li>Fixed ended classes remaining marked as “In Effect.”</li>
-        <li>Improved Hide or Show Full Hours behavior.</li>
-      </ul>
-    </article>
-
-    <!-- v26.6-beta.1 -->
-    <article class="beta-release beta-searchable-item">
-      <div class="beta-release-header">
-        <div>
-          <h3>v26.6-beta.1</h3>
-          <p class="beta-release-meta">Original partial beta preview</p>
-        </div>
-        <span class="beta-status previous">Previous</span>
-      </div>
-      <ul>
-        <li>Started the partial website revamp.</li>
-        <li>Updated device and website information.</li>
-        <li>Redesigned TikTok creator cards.</li>
-        <li>Redesigned Instagram creator cards.</li>
-        <li>Redesigned YouTube creator cards.</li>
-        <li>Continued Onyx and liquid-glass refinements.</li>
-        <li>Added beta notes and the release roadmap.</li>
-      </ul>
-    </article>
-  </div>
-</section>
-
-<!-- ====================================================== -->
-<!-- Completed Improvements                                 -->
-<!-- ====================================================== -->
-
-<section class="section beta-page-section beta-searchable" data-search-title="Redone So Far">
-  <div class="beta-section-heading">
-    <h2>
-      <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-      Redone So Far
-    </h2>
-    <p>
-      These sections and interfaces have already been updated during the current beta cycle.
-    </p>
-  </div>
-
-  <div class="beta-feature-list">
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-compass" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Onyx Navigation Dock</h3>
-        <p>
-          Added a responsive liquid-glass dock with inline SVG icons, active route detection, equal-width navigation items, balanced spacing, an animated lens, and safe-area support.
-        </p>
-        <span class="beta-status active">Redone</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Dock Press and Drag Interaction</h3>
-        <p>
-          Added press feedback, pointer capture, drag selection, nearest-destination targeting, release snapping, keyboard navigation, and synthetic-click protection.
-        </p>
-        <span class="beta-status active">Added</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Resume Page</h3>
-        <p>
-          Updated the Resume page to use the shared Settings appearance system and improved its phone, tablet, laptop, desktop, print, and PDF layouts.
-        </p>
-        <span class="beta-status active">Redone</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Navigation Accessibility</h3>
-        <p>
-          Added visible keyboard focus, directional navigation, reduced-motion handling, high-contrast presentation, touch-friendly targets, and modified-click support.
-        </p>
-        <span class="beta-status active">Improved</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-microchip" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Device Information Section</h3>
-        <p>
-          Updated build tracking, synced time, operating system, browser, resolution, connection, weather, sunrise, and sunset information.
-        </p>
-        <span class="beta-status active">Redone</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>TikTok Creator Shoutouts</h3>
-        <p>
-          Rebuilt creator cards with a cleaner profile layout, refined text, statistics, verified badges, search, sorting, and a Visit Profile button.
-        </p>
-        <span class="beta-status active">Redone</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-brands fa-instagram" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Instagram Creator Shoutouts</h3>
-        <p>
-          Redesigned profile statistics, labels, verified badges, nickname placement, search, sorting, and responsive behavior.
-        </p>
-        <span class="beta-status active">Redone</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-brands fa-youtube" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>YouTube Creator Shoutouts</h3>
-        <p>
-          Added a channel-style layout, handle, subscribers, video statistics, banner support, descriptions, search, sorting, and a Visit Channel button.
-        </p>
-        <span class="beta-status active">Redone</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-business-time" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Business Information Section</h3>
-        <p>
-          Improved weekly hours, holiday schedules, temporary hours, manual overrides, local time, status indicators, the today timeline, copy controls, and full-hours visibility.
-        </p>
-        <span class="beta-status active">Redone</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Academic Availability Integration</h3>
-        <p>
-          Added recurring classes, exams, finals, university events, academic breaks, internships, co-ops, semester information, and smarter status labels.
-        </p>
-        <span class="beta-status active">Redone</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-code" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Website and Code Cleanup</h3>
-        <p>
-          Removed retired sections and their associated JavaScript, CSS, Firestore references, listeners, routing, and initialization calls.
-        </p>
-        <span class="beta-status active">Completed</span>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- ====================================================== -->
-<!-- Current Development                                    -->
-<!-- ====================================================== -->
-
-<section class="section beta-page-section beta-searchable" data-search-title="Currently Being Worked On">
-  <div class="beta-section-heading">
-    <h2>
-      <i class="fa-solid fa-spinner" aria-hidden="true"></i>
-      Currently Being Worked On
-    </h2>
-    <p>
-      These areas are still being refined and may change before the final release.
-    </p>
-  </div>
-
-  <div class="beta-feature-list">
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Liquid Glass Refinement</h3>
-        <p>
-          Card surfaces, navigation surfaces, shadows, borders, reflections, contrast, readability, and hover states may continue to change.
-        </p>
-        <span class="beta-status testing">In Progress</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Responsive Layout Polish</h3>
-        <p>
-          Phone, foldable, tablet, laptop, desktop, landscape, and split-screen layouts are being tested for overflow, clipping, spacing, and readability issues.
-        </p>
-        <span class="beta-status testing">Testing</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-gear" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Settings Page Cleanup</h3>
-        <p>
-          Appearance, accessibility, device-matching, clear-mode, tinted-mode, and reset options may be reorganized for clarity.
-        </p>
-        <span class="beta-status testing">Planned Next</span>
-      </div>
-    </article>
-
-    <article class="beta-feature-item beta-searchable-item">
-      <div class="beta-feature-icon">
-        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
-      </div>
-      <div>
-        <h3>Performance and Compatibility Testing</h3>
-        <p>
-          Navigation effects, theme transitions, dynamic sections, and responsive layouts are being tested across supported browsers and devices.
-        </p>
-        <span class="beta-status testing">Testing</span>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- ====================================================== -->
-<!-- Removed Features                                       -->
-<!-- ====================================================== -->
-
-<section class="section beta-page-section beta-searchable" data-search-title="Removed Features">
-  <div class="beta-section-heading">
-    <h2>
-      <i class="fa-solid fa-box-archive" aria-hidden="true"></i>
-      Removed Features
-    </h2>
-    <p>
-      These features were retired in v26.6-beta.3.
-    </p>
-  </div>
-
-  <div class="beta-removed-grid">
-    <article class="beta-removed-item beta-searchable-item">
-      <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
-      <span>FAQ</span>
-    </article>
-
-    <article class="beta-removed-item beta-searchable-item">
-      <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
-      <span>Posts and Blog</span>
-    </article>
-
-    <article class="beta-removed-item beta-searchable-item">
-      <i class="fa-solid fa-landmark" aria-hidden="true"></i>
-      <span>President Information</span>
-    </article>
-
-    <article class="beta-removed-item beta-searchable-item">
-      <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
-      <span>Legislation Tracker</span>
-    </article>
-
-    <article class="beta-removed-item beta-searchable-item">
-      <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
-      <span>Quote of the Day</span>
-    </article>
-
-    <article class="beta-removed-item beta-searchable-item">
-      <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
-      <span>Latest TikTok Embed</span>
-    </article>
-
-    <article class="beta-removed-item beta-searchable-item">
-      <i class="fa-solid fa-comments" aria-hidden="true"></i>
-      <span>Onyx AI Assistant</span>
-    </article>
-
-    <article class="beta-removed-item beta-searchable-item">
-      <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
-      <span>Project Goal Tracker</span>
-    </article>
-  </div>
-</section>
-
-<!-- ====================================================== -->
-<!-- Beta Notes                                             -->
-<!-- ====================================================== -->
-
-<section class="section beta-page-section beta-searchable" data-search-title="Beta Notes">
-  <div class="beta-section-heading">
-    <h2>
-      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-      Beta Notes
-    </h2>
-    <p>
-      Important information about this beta version.
-    </p>
-  </div>
-
-  <ul class="beta-notes-list">
-    <li>This beta is not the final September revamp.</li>
-    <li>Some visual styles and interactions may change before release.</li>
-    <li>Liquid-glass effects remain experimental.</li>
-    <li>Phone, foldable, tablet, landscape, desktop, and split-screen layouts may still be adjusted.</li>
-    <li>The Onyx navigation dock may receive additional animation, spacing, and compatibility refinements.</li>
-    <li>Custom backgrounds may affect contrast and readability.</li>
-    <li>The main creator shoutout sections remain active.</li>
-    <li>The final complete revamp is planned as v27.0.</li>
-  </ul>
-</section>
-
-<!-- ====================================================== -->
-<!-- Release Roadmap                                        -->
-<!-- ====================================================== -->
-
-<section class="section beta-page-section beta-searchable" data-search-title="Release Roadmap">
-  <div class="beta-section-heading">
-    <h2>
-      <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
-      Release Roadmap
-    </h2>
-    <p>
-      The planned path for the beta and final revamp.
-    </p>
-  </div>
-
-  <div class="beta-roadmap">
-    <div class="beta-roadmap-item">
-      <span class="roadmap-dot"></span>
-      <div>
-        <strong>v26.5</strong>
-        <p>Current stable website base.</p>
-      </div>
-    </div>
-
-    <div class="beta-roadmap-item">
-      <span class="roadmap-dot"></span>
-      <div>
-        <strong>v26.6-beta.1</strong>
-        <p>Original partial beta revamp preview.</p>
-      </div>
-    </div>
-
-    <div class="beta-roadmap-item">
-      <span class="roadmap-dot"></span>
-      <div>
-        <strong>v26.6-beta.2</strong>
-        <p>Business and academic availability improvements.</p>
-      </div>
-    </div>
-
-    <div class="beta-roadmap-item">
-      <span class="roadmap-dot"></span>
-      <div>
-        <strong>v26.6-beta.3</strong>
-        <p>Cleanup release that removed retired features and obsolete code.</p>
-      </div>
-    </div>
-
-    <div class="beta-roadmap-item">
-      <span class="roadmap-dot active"></span>
-      <div>
-        <strong>v26.6-beta.4</strong>
-        <p>Current Onyx navigation, responsive-layout, and Resume appearance update.</p>
-      </div>
-    </div>
-
-    <div class="beta-roadmap-item">
-      <span class="roadmap-dot future"></span>
-      <div>
-        <strong>v26.6-beta.5+</strong>
-        <p>Additional beta fixes, accessibility updates, compatibility testing, and interface refinements if needed.</p>
-      </div>
-    </div>
-
-    <div class="beta-roadmap-item">
-      <span class="roadmap-dot future"></span>
-      <div>
-        <strong>v26.6-rc.1</strong>
-        <p>Release candidate and final testing.</p>
-      </div>
-    </div>
-
-    <div class="beta-roadmap-item">
-      <span class="roadmap-dot future"></span>
-      <div>
-        <strong>v27.0</strong>
-        <p>Full September 2026 website revamp.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====================================================== -->
-<!-- No Search Results                                      -->
-<!-- ====================================================== -->
-
-<section id="beta-no-results" class="section beta-page-section beta-no-results" hidden>
-  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-  <h2>No Results Found</h2>
-  <p>Try a different version number, feature, or keyword.</p>
-  <button type="button" id="reset-beta-search" class="beta-action-button">
-    Clear Search
-  </button>
-</section>
-
-    <!-- ==================================================== -->
-    <!-- Tally Beta Feedback                                  -->
-    <!-- ==================================================== -->
-
-    <section
-      class="section beta-page-section"
-      id="beta-feedback"
-    >
+    <section class="section beta-page-section">
       <div class="beta-section-heading">
         <h2>
-          <i
-            class="fa-solid fa-comment-dots"
-            aria-hidden="true"
-          ></i>
-
-          Beta Feedback
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Search Beta Information
         </h2>
+        <p>Search versions, features, fixes, improvements, or removed sections.</p>
+      </div>
 
-        <p>
-          Report a problem, accessibility concern, design
-          issue, performance problem, or feature suggestion.
-        </p>
+      <div class="beta-search-wrapper">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input type="search" id="beta-search" class="beta-search" placeholder="Search beta information..." autocomplete="off" aria-describedby="beta-search-status" />
+        <button type="button" id="clear-beta-search" class="beta-search-clear" aria-label="Clear search" hidden>
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <p id="beta-search-status" class="beta-search-status" role="status" aria-live="polite">
+        Showing all beta information.
+      </p>
+    </section>
+
+    <div id="beta-search-content">
+
+      <section class="section beta-page-section beta-searchable" data-search-title="Current Release">
+        <div class="beta-section-heading">
+          <h2>
+            <i class="fa-solid fa-sparkles" aria-hidden="true"></i> What’s New in v26.6-beta.4
+          </h2>
+          <p>
+            This release introduces the responsive Onyx navigation dock and improves the Resume page across appearance modes, screen sizes, and input methods.
+          </p>
+        </div>
+
+        <ul class="beta-notes-list">
+          <li>Added the responsive Onyx liquid-glass navigation dock to the Home, Beta, Resume, and Settings pages.</li>
+          <li>Added inline SVG navigation icons, an active liquid lens, press feedback, drag selection, and release snapping.</li>
+          <li>Added a Settings-only gear animation that replays when the Settings destination is selected.</li>
+          <li>Improved dock alignment with equal-width navigation items, balanced edge spacing, and fractional-pixel lens positioning.</li>
+          <li>Added responsive dock layouts for phones, foldables, tablets, laptops, desktops, landscape displays, and split-screen layouts.</li>
+          <li>Improved keyboard navigation, reduced-motion support, high-contrast support, safe-area handling, and touch-device behavior.</li>
+          <li>Updated the Resume page to use the shared appearance system from the Settings page.</li>
+          <li>Improved Resume support for light mode, dark mode, clear mode, tinted mode, printing, and browser-based PDF layouts.</li>
+        </ul>
+      </section>
+
+      <section class="section beta-page-section beta-searchable" data-search-title="Beta Changelog">
+        <div class="beta-section-heading">
+          <h2>
+            <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Beta Changelog
+          </h2>
+          <p>Changes included in each v26.6 beta release.</p>
+        </div>
+
+        <div class="beta-changelog">
+          <article class="beta-release current beta-searchable-item">
+            <div class="beta-release-header">
+              <div>
+                <h3>v26.6-beta.4</h3>
+                <p class="beta-release-meta">Build 2026.07.13</p>
+              </div>
+              <span class="beta-status active">Current</span>
+            </div>
+            <ul>
+              <li>Added the responsive Onyx liquid-glass navigation dock.</li>
+              <li>Added inline SVG icons and an animated active navigation lens.</li>
+              <li>Added press, hold, drag, nearest-item targeting, release, and snap interactions.</li>
+              <li>Added a Settings-only gear rotation animation.</li>
+              <li>Equalized dock item widths and corrected left and right lens spacing.</li>
+              <li>Added phone, foldable, tablet, landscape, laptop, desktop, and split-screen refinements.</li>
+              <li>Improved keyboard, touch, reduced-motion, high-contrast, and safe-area support.</li>
+              <li>Updated the Resume page to use the shared Settings appearance system.</li>
+              <li>Improved Resume light mode, dark mode, clear mode, tinted mode, print, and PDF layouts.</li>
+              <li>Updated the README, Beta Page, version history, and release roadmap.</li>
+            </ul>
+          </article>
+
+          <article class="beta-release beta-searchable-item">
+            <div class="beta-release-header">
+              <div>
+                <h3>v26.6-beta.3</h3>
+                <p class="beta-release-meta">Build 2026.07.11</p>
+              </div>
+              <span class="beta-status previous">Previous</span>
+            </div>
+            <ul>
+              <li>Removed retired public sections and interfaces.</li>
+              <li>Removed obsolete JavaScript and CSS.</li>
+              <li>Removed unused Firestore references and listeners.</li>
+              <li>Removed the FAQ, Posts, Blog, President Information, Legislation Tracker, and Quote of the Day features.</li>
+              <li>Removed the Latest TikTok embed.</li>
+              <li>Removed the Onyx AI assistant.</li>
+              <li>Removed the Project Goal Tracker.</li>
+              <li>Reduced unnecessary public-page processing and unused data activity.</li>
+              <li>Updated the README, Beta Page, and release roadmap.</li>
+            </ul>
+          </article>
+
+          <article class="beta-release beta-searchable-item">
+            <div class="beta-release-header">
+              <div>
+                <h3>v26.6-beta.2</h3>
+                <p class="beta-release-meta">Build 2026.07.05</p>
+              </div>
+              <span class="beta-status previous">Previous</span>
+            </div>
+            <ul>
+              <li>Updated Business Status and Hours.</li>
+              <li>Improved holiday, temporary, and manual availability states.</li>
+              <li>Expanded Academic Availability integration.</li>
+              <li>Added smarter recurring class status labels.</li>
+              <li>Fixed ended classes remaining marked as “In Effect.”</li>
+              <li>Improved Hide or Show Full Hours behavior.</li>
+            </ul>
+          </article>
+
+          <article class="beta-release beta-searchable-item">
+            <div class="beta-release-header">
+              <div>
+                <h3>v26.6-beta.1</h3>
+                <p class="beta-release-meta">Original partial beta preview</p>
+              </div>
+              <span class="beta-status previous">Previous</span>
+            </div>
+            <ul>
+              <li>Started the partial website revamp.</li>
+              <li>Updated device and website information.</li>
+              <li>Redesigned TikTok creator cards.</li>
+              <li>Redesigned Instagram creator cards.</li>
+              <li>Redesigned YouTube creator cards.</li>
+              <li>Continued Onyx and liquid-glass refinements.</li>
+              <li>Added beta notes and the release roadmap.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section beta-page-section beta-searchable" data-search-title="Redone So Far">
+        <div class="beta-section-heading">
+          <h2>
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Redone So Far
+          </h2>
+          <p>These sections and interfaces have already been updated during the current beta cycle.</p>
+        </div>
+        <div class="beta-feature-list">
+          <article class="beta-feature-item beta-searchable-item">
+            <div class="beta-feature-icon">
+              <i class="fa-solid fa-compass" aria-hidden="true"></i>
+            </div>
+            <div>
+              <h3>Onyx Navigation Dock</h3>
+              <p>Added a responsive liquid-glass dock with inline SVG icons, route detection, equal-width navigation items, balanced spacing, an animated lens, and safe-area support.</p>
+              <span class="beta-status active">Redone</span>
+            </div>
+          </article>
+          </div>
+      </section>
+
+      <section class="section beta-page-section beta-searchable" data-search-title="Currently Being Worked On">
+        <div class="beta-section-heading">
+          <h2>
+            <i class="fa-solid fa-spinner" aria-hidden="true"></i> Currently Being Worked On
+          </h2>
+          <p>These areas are still being refined and may change before the final release.</p>
+        </div>
+        <div class="beta-feature-list">
+          <article class="beta-feature-item beta-searchable-item">
+            <div class="beta-feature-icon">
+              <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+            </div>
+            <div>
+              <h3>Liquid Glass Refinement</h3>
+              <p>Card surfaces, navigation surfaces, shadows, borders, reflections, contrast, readability, and hover states may continue to change.</p>
+              <span class="beta-status testing">In Progress</span>
+            </div>
+          </article>
+          </div>
+      </section>
+
+      <section class="section beta-page-section beta-searchable" data-search-title="Removed Features">
+        <div class="beta-section-heading">
+          <h2>
+            <i class="fa-solid fa-box-archive" aria-hidden="true"></i> Removed Features
+          </h2>
+          <p>These features were retired in v26.6-beta.3.</p>
+        </div>
+        <div class="beta-removed-grid">
+          <article class="beta-removed-item beta-searchable-item"><i class="fa-solid fa-circle-question" aria-hidden="true"></i> <span>FAQ</span></article>
+          <article class="beta-removed-item beta-searchable-item"><i class="fa-solid fa-newspaper" aria-hidden="true"></i> <span>Posts and Blog</span></article>
+          <article class="beta-removed-item beta-searchable-item"><i class="fa-solid fa-landmark" aria-hidden="true"></i> <span>President Information</span></article>
+          <article class="beta-removed-item beta-searchable-item"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <span>Legislation Tracker</span></article>
+          <article class="beta-removed-item beta-searchable-item"><i class="fa-solid fa-quote-left" aria-hidden="true"></i> <span>Quote of the Day</span></article>
+          <article class="beta-removed-item beta-searchable-item"><i class="fa-brands fa-tiktok" aria-hidden="true"></i> <span>Latest TikTok Embed</span></article>
+          <article class="beta-removed-item beta-searchable-item"><i class="fa-solid fa-comments" aria-hidden="true"></i> <span>Onyx AI Assistant</span></article>
+          <article class="beta-removed-item beta-searchable-item"><i class="fa-solid fa-bullseye" aria-hidden="true"></i> <span>Project Goal Tracker</span></article>
+        </div>
+      </section>
+
+      <section class="section beta-page-section beta-searchable" data-search-title="Beta Notes">
+        <div class="beta-section-heading">
+          <h2>
+            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Beta Notes
+          </h2>
+          <p>Important information about this beta version.</p>
+        </div>
+        <ul class="beta-notes-list">
+          <li>This beta is not the final September revamp.</li>
+          <li>Some visual styles and interactions may change before release.</li>
+          <li>Liquid-glass effects remain experimental.</li>
+          <li>Phone, foldable, tablet, landscape, desktop, and split-screen layouts may still be adjusted.</li>
+          <li>The Onyx navigation dock may receive additional animation, spacing, and compatibility refinements.</li>
+          <li>Custom backgrounds may affect contrast and readability.</li>
+          <li>The main creator shoutout sections remain active.</li>
+          <li>The final complete revamp is planned as v27.0.</li>
+        </ul>
+      </section>
+
+      <section class="section beta-page-section beta-searchable" data-search-title="Release Roadmap">
+        <div class="beta-section-heading">
+          <h2>
+            <i class="fa-solid fa-calendar-days" aria-hidden="true"></i> Release Roadmap
+          </h2>
+          <p>The planned path for the beta and final revamp.</p>
+        </div>
+        <div class="beta-roadmap">
+          <div class="beta-roadmap-item"><span class="roadmap-dot"></span><div><strong>v26.5</strong><p>Current stable website base.</p></div></div>
+          <div class="beta-roadmap-item"><span class="roadmap-dot"></span><div><strong>v26.6-beta.1</strong><p>Original partial beta revamp preview.</p></div></div>
+          <div class="beta-roadmap-item"><span class="roadmap-dot"></span><div><strong>v26.6-beta.2</strong><p>Business and academic availability improvements.</p></div></div>
+          <div class="beta-roadmap-item"><span class="roadmap-dot"></span><div><strong>v26.6-beta.3</strong><p>Cleanup release that removed retired features and obsolete code.</p></div></div>
+          <div class="beta-roadmap-item"><span class="roadmap-dot active"></span><div><strong>v26.6-beta.4</strong><p>Current Onyx navigation, responsive-layout, and Resume appearance update.</p></div></div>
+          <div class="beta-roadmap-item"><span class="roadmap-dot future"></span><div><strong>v26.6-beta.5+</strong><p>Additional beta fixes, accessibility updates, compatibility testing, and interface refinements if needed.</p></div></div>
+          <div class="beta-roadmap-item"><span class="roadmap-dot future"></span><div><strong>v26.6-rc.1</strong><p>Release candidate and final testing.</p></div></div>
+          <div class="beta-roadmap-item"><span class="roadmap-dot future"></span><div><strong>v27.0</strong><p>Full September 2026 website revamp.</p></div></div>
+        </div>
+      </section>
+    </div>
+
+    <section id="beta-no-results" class="section beta-page-section beta-no-results" hidden>
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <h2>No Results Found</h2>
+      <p>Try a different version number, feature, or keyword.</p>
+      <button type="button" id="reset-beta-search" class="beta-action-button">Clear Search</button>
+    </section>
+
+    <section class="section beta-page-section" id="beta-feedback">
+      <div class="beta-section-heading">
+        <h2>
+          <i class="fa-solid fa-comment-dots" aria-hidden="true"></i> Beta Feedback
+        </h2>
+        <p>Report a problem, accessibility concern, design issue, performance problem, or feature suggestion.</p>
       </div>
 
       <div class="beta-feedback-embed">
-        <iframe data-tally-src="https://tally.so/embed/2Eya9j?alignLeft=1&hideTitle=0&transparentBackground=1&dynamicHeight=1&version=v26.6-beta.3&build=2026.07.11&source=beta-page&release_track=Beta%20Revamp%20Preview&stable_base=v26.5&target_release=September%202026" width="100%" height="300" frameborder="0" marginheight="0" marginwidth="0" title="Beta Feedback"></iframe>
+        <iframe data-tally-src="https://tally.so/embed/2Eya9j?alignLeft=1&hideTitle=0&transparentBackground=1&dynamicHeight=1&version=v26.6-beta.4&build=2026.07.13&source=beta-page&release_track=Beta%20Revamp%20Preview&stable_base=v26.5&target_release=September%202026" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="Beta Feedback"></iframe>
 
         <noscript>
           <div class="beta-feedback-fallback">
-            <p>
-              JavaScript is required to display the embedded
-              feedback form.
-            </p>
-
-            <a
-              href="https://tally.so/r/2Eya9j"
-              class="beta-action-button"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <i
-                class="fa-solid fa-arrow-up-right-from-square"
-                aria-hidden="true"
-              ></i>
-
-              Open Feedback Form
+            <p>JavaScript is required to display the embedded feedback form.</p>
+            <a href="https://tally.so/r/2Eya9j" class="beta-action-button" target="_blank" rel="noopener noreferrer">
+              <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Open Feedback Form
             </a>
           </div>
         </noscript>
       </div>
-
       <p class="beta-feedback-privacy">
-        Feedback is submitted through Tally. Do not include
-        passwords, account credentials, private device
-        identifiers, financial information, or other
-        sensitive information.
+        Feedback is submitted through Tally. Do not include passwords, account credentials, private device identifiers, financial information, or other sensitive information.
       </p>
     </section>
 
-    <!-- ==================================================== -->
-    <!-- Page Actions                                         -->
-    <!-- ==================================================== -->
-
     <div class="beta-actions">
-      <a href="/">
-        <i
-          class="fa-solid fa-arrow-left"
-          aria-hidden="true"
-        ></i>
-
-        Back to Home
-      </a>
-
-      <a href="/settings">
-        <i
-          class="fa-solid fa-gear"
-          aria-hidden="true"
-        ></i>
-
-        Open Settings
-      </a>
-
-      <a href="#main-content">
-        <i
-          class="fa-solid fa-arrow-up"
-          aria-hidden="true"
-        ></i>
-
-        Back to Top
-      </a>
+      <a href="/"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Back to Home</a>
+      <a href="/settings"><i class="fa-solid fa-gear" aria-hidden="true"></i> Open Settings</a>
+      <a href="#main-content"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i> Back to Top</a>
     </div>
   </main>
 
-<nav class="onyx-dock" aria-label="Primary navigation">
-  <span class="dock-active-lens" aria-hidden="true"></span>
-
-  <a href="/" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3.5 10.65 12 3.5l8.5 7.15v8.6A1.75 1.75 0 0 1 18.75 21H15a1 1 0 0 1-1-1v-5a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H5.25a1.75 1.75 0 0 1-1.75-1.75v-8.6Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Home</span>
-  </a>
-
-  <a href="/beta" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Beta</span>
-  </a>
-
-  <a href="/resume" class="dock-item">
-    <span class="dock-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Resume</span>
-  </a>
-
-  <a href="/settings" class="dock-item">
-    <span class="dock-icon dock-icon-settings" aria-hidden="true">
-      <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.36 2.54A1.68 1.68 0 0 1 12 1.25c.78 0 1.46.53 1.64 1.29l.24.98c.08.34.32.61.64.75.32.13.69.11.99-.07l.86-.52a1.69 1.69 0 0 1 2.07.26l1.62 1.62c.55.55.66 1.41.26 2.07l-.52.86c-.18.3-.2.67-.07.99.14.32.41.56.75.64l.98.24A1.68 1.68 0 0 1 22.75 12c0 .78-.53 1.46-1.29 1.64l-.98.24c-.34.08-.61.32-.75.64-.13.32-.11.69.07.99l.52.86c.4.66.29 1.52-.26 2.07l-1.62 1.62c-.55.55-1.41.66-2.07.26l-.86-.52c-.3-.18-.67-.2-.99-.07-.32.14-.56.41-.64.75l-.24.98A1.68 1.68 0 0 1 12 22.75c-.78 0-1.46-.53-1.64-1.29l-.24-.98a1.13 1.13 0 0 0-.64-.75 1.13 1.13 0 0 0-.99.07l-.86.52c-.66.4-1.52.29-2.07-.26l-1.62-1.62a1.69 1.69 0 0 1-.26-2.07l.52-.86c.18-.3.2-.67.07-.99a1.13 1.13 0 0 0-.75-.64l-.98-.24A1.68 1.68 0 0 1 1.25 12c0-.78.53-1.46 1.29-1.64l.98-.24c.34-.08.61-.32.75-.64.13-.32.11-.69-.07-.99l-.52-.86a1.69 1.69 0 0 1 .26-2.07l1.62-1.62a1.69 1.69 0 0 1 2.07-.26l.86.52c.3.18.67.2.99.07.32-.14.56-.41.64-.75l.24-.98ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.75a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"></path>
-      </svg>
-    </span>
-    <span class="dock-label">Settings</span>
-  </a>
-</nav>
-
-<script>
-  (() => {
-    function initializeOnyxDock() {
-      const dock = document.querySelector(".onyx-dock");
-
-      if (!dock || dock.dataset.onyxDockReady === "true") {
-        return;
-      }
-
-      const links = Array.from(dock.querySelectorAll(".dock-item"));
-      const lens = dock.querySelector(".dock-active-lens");
-
-      if (!links.length || !lens) {
-        return;
-      }
-
-      dock.dataset.onyxDockReady = "true";
-
-      let activeLink = null;
-      let pressedLink = null;
-      let dragTarget = null;
-      let activePointerId = null;
-
-      let pointerStartX = 0;
-      let pointerStartY = 0;
-      let currentPointerX = 0;
-
-      let pointerIsDown = false;
-      let dragStarted = false;
-      let suppressNextClick = false;
-
-      let resizeFrame = null;
-      let resizeTimer = null;
-      let settlingTimer = null;
-      let settingsTimer = null;
-      let navigationTimer = null;
-      let clickSuppressionTimer = null;
-
-      const dragThreshold = 7;
-      const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-      /* ==================================================== *
-       * Motion Preference                                    *
-       * ==================================================== */
-
-      function motionIsDisabled() {
-        return (
-          reducedMotionQuery.matches ||
-          document.documentElement.classList.contains("motion-disabled") ||
-          document.body.classList.contains("motion-disabled")
-        );
-      }
-
-      /* ==================================================== *
-       * Path Normalization                                   *
-       * ==================================================== */
-
-      function normalizeOnyxDockPath(path) {
-        let cleanPath = String(path || "/")
-          .split("?")[0]
-          .split("#")[0]
-          .toLowerCase()
-          .replace(/\/index\.html$/i, "")
-          .replace(/\.html$/i, "")
-          .replace(/\/+$/g, "");
-
-        if (!cleanPath || cleanPath === "/home") {
-          cleanPath = "/";
-        }
-
-        if (!cleanPath.startsWith("/")) {
-          cleanPath = `/${cleanPath}`;
-        }
-
-        return cleanPath;
-      }
-
-      function getOnyxDockLinkPath(link) {
-        const rawRoute = link.dataset.route || link.getAttribute("href") || "/";
-
-        try {
-          const routeURL = new URL(rawRoute, window.location.origin);
-          return normalizeOnyxDockPath(routeURL.pathname);
-        } catch (error) {
-          return normalizeOnyxDockPath(rawRoute);
-        }
-      }
-
-      /* ==================================================== *
-       * Active Route Detection                               *
-       * ==================================================== */
-
-      function getOnyxDockActiveLink() {
-        const currentPath = normalizeOnyxDockPath(window.location.pathname);
-
-        const exactMatch = links.find((link) => {
-          return getOnyxDockLinkPath(link) === currentPath;
-        });
-
-        if (exactMatch) {
-          return exactMatch;
-        }
-
-        const nestedMatches = links
-          .filter((link) => {
-            const targetPath = getOnyxDockLinkPath(link);
-            return targetPath !== "/" && currentPath.startsWith(`${targetPath}/`);
-          })
-          .sort((firstLink, secondLink) => {
-            return getOnyxDockLinkPath(secondLink).length - getOnyxDockLinkPath(firstLink).length;
-          });
-
-        return nestedMatches[0] || links[0];
-      }
-
-      /* ==================================================== *
-       * Active Tab State                                     *
-       * ==================================================== */
-
-      function setOnyxDockActiveLink(link) {
-        if (!link) {
-          return;
-        }
-
-        activeLink = link;
-
-        links.forEach((dockLink) => {
-          const isActive = dockLink === link;
-          dockLink.classList.toggle("active", isActive);
-
-          if (isActive) {
-            dockLink.setAttribute("aria-current", "page");
-          } else {
-            dockLink.removeAttribute("aria-current");
-          }
-        });
-      }
-
-      /* ==================================================== *
-       * Lens Position                                        *
-       * ==================================================== */
-
-      function moveOnyxDockLensTo(link, animate = true) {
-        if (!link) {
-          return;
-        }
-
-        const dockRect = dock.getBoundingClientRect();
-        const linkRect = link.getBoundingClientRect();
-        const lensX = linkRect.left - dockRect.left;
-
-        if (!animate) {
-          lens.style.transition = "none";
-        }
-
-        /*
-         * Fractional pixel measurements keep
-         * the left and right spacing equal.
-         */
-        dock.style.setProperty("--lens-x", `${lensX.toFixed(3)}px`);
-        dock.style.setProperty("--lens-width", `${linkRect.width.toFixed(3)}px`);
-
-        if (!animate) {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              lens.style.removeProperty("transition");
-            });
-          });
-        }
-      }
-
-      function moveOnyxDockLensWithPointer(pointerX, targetLink) {
-        if (!targetLink) {
-          return;
-        }
-
-        const dockRect = dock.getBoundingClientRect();
-        const targetRect = targetLink.getBoundingClientRect();
-        const dockStyles = getComputedStyle(dock);
-
-        const paddingLeft = parseFloat(dockStyles.paddingLeft) || 0;
-        const paddingRight = parseFloat(dockStyles.paddingRight) || 0;
-        const lensWidth = targetRect.width;
-        const halfLensWidth = lensWidth / 2;
-
-        const minimumCenter = dockRect.left + paddingLeft + halfLensWidth;
-        const maximumCenter = dockRect.right - paddingRight - halfLensWidth;
-
-        const constrainedCenter = Math.min(
-          Math.max(pointerX, minimumCenter),
-          maximumCenter
-        );
-
-        const lensX = constrainedCenter - dockRect.left - halfLensWidth;
-
-        dock.style.setProperty("--lens-x", `${lensX.toFixed(3)}px`);
-        dock.style.setProperty("--lens-width", `${lensWidth.toFixed(3)}px`);
-      }
-
-      /* ==================================================== *
-       * Nearest Dock Link                                    *
-       * ==================================================== */
-
-      function getNearestOnyxDockLink(pointerX) {
-        let nearestLink = links[0];
-        let nearestDistance = Number.POSITIVE_INFINITY;
-
-        links.forEach((link) => {
-          const linkRect = link.getBoundingClientRect();
-          const linkCenter = linkRect.left + linkRect.width / 2;
-          const distance = Math.abs(pointerX - linkCenter);
-
-          if (distance < nearestDistance) {
-            nearestDistance = distance;
-            nearestLink = link;
-          }
-        });
-
-        return nearestLink;
-      }
-
-      /* ==================================================== *
-       * Drag Target                                          *
-       * ==================================================== */
-
-      function setOnyxDockDragTarget(link) {
-        if (dragTarget === link) {
-          return;
-        }
-
-        links.forEach((dockLink) => {
-          dockLink.classList.remove("is-drag-target");
-        });
-
-        dragTarget = link;
-
-        if (dragTarget) {
-          dragTarget.classList.add("is-drag-target");
-        }
-      }
-
-      function clearOnyxDockInteraction() {
-        dock.classList.remove("is-pressing", "is-dragging");
-        links.forEach((link) => {
-          link.classList.remove("is-pressed", "is-drag-target");
-        });
-      }
-
-      /* ==================================================== *
-       * Settings Gear Rotation                               *
-       * ==================================================== */
-
-      function rotateOnyxSettingsGear(link) {
-        if (!link || !link.querySelector(".dock-icon-settings") || motionIsDisabled()) {
-          return;
-        }
-
-        if (settingsTimer !== null) {
-          window.clearTimeout(settingsTimer);
-        }
-
-        link.classList.remove("settings-rotating");
-
-        /*
-         * Force a reflow so the animation
-         * can replay.
-         */
-        void link.offsetWidth;
-
-        link.classList.add("settings-rotating");
-
-        settingsTimer = window.setTimeout(() => {
-          link.classList.remove("settings-rotating");
-          settingsTimer = null;
-        }, 700);
-      }
-
-      /* ==================================================== *
-       * Snap Animation                                       *
-       * ==================================================== */
-
-      function runOnyxDockSettle(link) {
-        if (!link || motionIsDisabled()) {
-          return;
-        }
-
-        if (settlingTimer !== null) {
-          window.clearTimeout(settlingTimer);
-        }
-
-        dock.classList.remove("is-settling");
-
-        links.forEach((dockLink) => {
-          dockLink.classList.remove("is-settling");
-        });
-
-        /*
-         * Force the settle animation
-         * to restart.
-         */
-        void dock.offsetWidth;
-
-        dock.classList.add("is-settling");
-        link.classList.add("is-settling");
-
-        settlingTimer = window.setTimeout(() => {
-          dock.classList.remove("is-settling");
-          link.classList.remove("is-settling");
-          settlingTimer = null;
-        }, 540);
-      }
-
-      /* ==================================================== *
-       * Navigation                                           *
-       * ==================================================== */
-
-      function isSameDestination(link) {
-        const destination = new URL(link.href, window.location.href);
-        const current = new URL(window.location.href);
-
-        return (
-          normalizeOnyxDockPath(destination.pathname) === normalizeOnyxDockPath(current.pathname) &&
-          destination.search === current.search &&
-          destination.hash === current.hash
-        );
-      }
-
-      function navigateToOnyxDockLink(link) {
-        if (!link || isSameDestination(link)) {
-          return;
-        }
-
-        if (navigationTimer !== null) {
-          window.clearTimeout(navigationTimer);
-        }
-
-        const delay = motionIsDisabled() ? 0 : 180;
-
-        navigationTimer = window.setTimeout(() => {
-          window.location.assign(link.href);
-        }, delay);
-      }
-
-      /* ==================================================== *
-       * Synthetic Click Suppression                          *
-       * ==================================================== */
-
-      function suppressSyntheticClick() {
-        suppressNextClick = true;
-
-        if (clickSuppressionTimer !== null) {
-          window.clearTimeout(clickSuppressionTimer);
-        }
-
-        /*
-         * Clear the flag automatically if
-         * no synthetic click is generated.
-         */
-        clickSuppressionTimer = window.setTimeout(() => {
-          suppressNextClick = false;
-          clickSuppressionTimer = null;
-        }, 700);
-      }
-
-      /* ==================================================== *
-       * Pointer Reflection                                   *
-       * ==================================================== */
-
-      function updatePointerReflection(event, link) {
-        if (event.pointerType !== "mouse") {
-          return;
-        }
-
-        const linkRect = link.getBoundingClientRect();
-        link.style.setProperty("--pointer-x", `${event.clientX - linkRect.left}px`);
-        link.style.setProperty("--pointer-y", `${event.clientY - linkRect.top}px`);
-      }
-
-      function clearPointerReflection(link) {
-        link.style.removeProperty("--pointer-x");
-        link.style.removeProperty("--pointer-y");
-      }
-
-      /* ==================================================== *
-       * Press Start                                          *
-       * ==================================================== */
-
-      function beginOnyxDockPress(event, link) {
-        if (activePointerId !== null) {
-          return;
-        }
-
-        /*
-         * Preserve middle-click and modified
-         * browser navigation behaviors.
-         */
-        if (
-          event.pointerType === "mouse" &&
-          (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
-        ) {
-          return;
-        }
-
-        activePointerId = event.pointerId;
-        pointerIsDown = true;
-        dragStarted = false;
-        pressedLink = link;
-        pointerStartX = event.clientX;
-        pointerStartY = event.clientY;
-        currentPointerX = event.clientX;
-
-        dock.classList.add("is-pressing");
-        link.classList.add("is-pressed");
-
-        setOnyxDockDragTarget(link);
-
-        try {
-          dock.setPointerCapture(event.pointerId);
-        } catch (error) {
-          /*
-           * Continue if pointer capture
-           * is unavailable.
-           */
-        }
-      }
-
-      /* ==================================================== *
-       * Press and Drag Update                                *
-       * ==================================================== */
-
-      function updateOnyxDockPress(event) {
-        if (!pointerIsDown || event.pointerId !== activePointerId) {
-          return;
-        }
-
-        currentPointerX = event.clientX;
-
-        const movementX = event.clientX - pointerStartX;
-        const movementY = event.clientY - pointerStartY;
-        const movementDistance = Math.hypot(movementX, movementY);
-
-        if (!dragStarted && movementDistance >= dragThreshold) {
-          dragStarted = true;
-          dock.classList.add("is-dragging");
-          pressedLink?.classList.remove("is-pressed");
-        }
-
-        if (!dragStarted) {
-          return;
-        }
-
-        event.preventDefault();
-
-        const nearestLink = getNearestOnyxDockLink(event.clientX);
-        setOnyxDockDragTarget(nearestLink);
-        moveOnyxDockLensWithPointer(event.clientX, nearestLink);
-      }
-
-      /* ==================================================== *
-       * Press Finish                                         *
-       * ==================================================== */
-
-      function finishOnyxDockPress(event, cancelled = false) {
-        if (!pointerIsDown || event.pointerId !== activePointerId) {
-          return;
-        }
-
-        const wasDragging = dragStarted;
-        const selectedLink = cancelled
-          ? activeLink
-          : wasDragging
-            ? getNearestOnyxDockLink(currentPointerX)
-            : pressedLink;
-
-        if (wasDragging) {
-          suppressSyntheticClick();
-        }
-
-        clearOnyxDockInteraction();
-
-        try {
-          if (dock.hasPointerCapture(event.pointerId)) {
-            dock.releasePointerCapture(event.pointerId);
-          }
-        } catch (error) {
-          /*
-           * Continue if pointer capture
-           * is unavailable.
-           */
-        }
-
-        pointerIsDown = false;
-        dragStarted = false;
-        pressedLink = null;
-        dragTarget = null;
-        activePointerId = null;
-
-        if (!selectedLink) {
-          return;
-        }
-
-        setOnyxDockActiveLink(selectedLink);
-        moveOnyxDockLensTo(selectedLink, true);
-        runOnyxDockSettle(selectedLink);
-
-        if (!cancelled) {
-          rotateOnyxSettingsGear(selectedLink);
-        }
-
-        /*
-         * Dragging navigates manually because
-         * the following click is suppressed.
-         */
-        if (!cancelled && wasDragging) {
-          navigateToOnyxDockLink(selectedLink);
-        }
-      }
-
-      /* ==================================================== *
-       * Link Events                                          *
-       * ==================================================== */
-
-      links.forEach((link) => {
-        link.addEventListener("pointerdown", (event) => {
-          beginOnyxDockPress(event, link);
-        });
-
-        link.addEventListener("pointermove", (event) => {
-          updatePointerReflection(event, link);
-        });
-
-        link.addEventListener("pointerleave", () => {
-          clearPointerReflection(link);
-        });
-
-        link.addEventListener("click", (event) => {
-          const modifiedClick =
-            event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
-
-          const specialNavigation = link.target === "_blank" || link.hasAttribute("download");
-
-          if (modifiedClick || specialNavigation) {
-            return;
-          }
-
-          /*
-           * Prevent the synthetic click
-           * produced after dragging.
-           */
-          if (suppressNextClick) {
-            event.preventDefault();
-            suppressNextClick = false;
-
-            if (clickSuppressionTimer !== null) {
-              window.clearTimeout(clickSuppressionTimer);
-              clickSuppressionTimer = null;
-            }
-
-            return;
-          }
-
-          /*
-           * Handle ordinary navigation
-           * manually so the snap effect
-           * remains visible.
-           */
-          event.preventDefault();
-
-          setOnyxDockActiveLink(link);
-          moveOnyxDockLensTo(link, true);
-          runOnyxDockSettle(link);
-          rotateOnyxSettingsGear(link);
-          navigateToOnyxDockLink(link);
-        });
-      });
-
-      /* ==================================================== *
-       * Dock Pointer Events                                  *
-       * ==================================================== */
-
-      dock.addEventListener("pointermove", updateOnyxDockPress);
-      dock.addEventListener("pointerup", (event) => finishOnyxDockPress(event, false));
-      dock.addEventListener("pointercancel", (event) => finishOnyxDockPress(event, true));
-
-      /* ==================================================== *
-       * Keyboard Navigation                                  *
-       * ==================================================== */
-
-      links.forEach((link, index) => {
-        link.addEventListener("keydown", (event) => {
-          let nextIndex = null;
-
-          if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-            nextIndex = (index + 1) % links.length;
-          }
-
-          if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-            nextIndex = (index - 1 + links.length) % links.length;
-          }
-
-          if (event.key === "Home") {
-            nextIndex = 0;
-          }
-
-          if (event.key === "End") {
-            nextIndex = links.length - 1;
-          }
-
-          if (nextIndex === null) {
-            return;
-          }
-
-          event.preventDefault();
-          const nextLink = links[nextIndex];
-
-          nextLink.focus();
-          setOnyxDockActiveLink(nextLink);
-          moveOnyxDockLensTo(nextLink, true);
-          runOnyxDockSettle(nextLink);
-          rotateOnyxSettingsGear(nextLink);
-        });
-      });
-
-      /* ==================================================== *
-       * Resize Handling                                      *
-       * ==================================================== */
-
-      function handleOnyxDockResize() {
-        if (resizeFrame !== null) {
-          cancelAnimationFrame(resizeFrame);
-        }
-
-        if (resizeTimer !== null) {
-          window.clearTimeout(resizeTimer);
-        }
-
-        resizeFrame = requestAnimationFrame(() => {
-          moveOnyxDockLensTo(activeLink, false);
-          resizeFrame = null;
-        });
-
-        /*
-         * Recalculate after the mobile
-         * browser finishes resizing.
-         */
-        resizeTimer = window.setTimeout(() => {
-          moveOnyxDockLensTo(activeLink, false);
-          resizeTimer = null;
-        }, 180);
-      }
-
-      /* ==================================================== *
-       * Route State Update                                   *
-       * ==================================================== */
-
-      function updateOnyxDockRoute(animate = false) {
-        activeLink = getOnyxDockActiveLink();
-        setOnyxDockActiveLink(activeLink);
-        moveOnyxDockLensTo(activeLink, animate);
-      }
-
-      /* ==================================================== *
-       * Initial Layout                                       *
-       * ==================================================== */
-
-      async function initializeLayout() {
-        if (document.fonts?.ready) {
-          try {
-            await document.fonts.ready;
-          } catch (error) {
-            /*
-             * Continue if font loading
-             * cannot finish.
-             */
-          }
-        }
-
-        activeLink = getOnyxDockActiveLink();
-        setOnyxDockActiveLink(activeLink);
-
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            moveOnyxDockLensTo(activeLink, false);
-            dock.classList.add("dock-ready");
-          });
-        });
-
-        const year = document.getElementById("year");
-        if (year) {
-          year.textContent = new Date().getFullYear();
-        }
-      }
-
-      initializeLayout();
-
-      /* ==================================================== *
-       * Browser Events                                       *
-       * ==================================================== */
-
-      window.addEventListener("resize", handleOnyxDockResize, { passive: true });
-      window.addEventListener("orientationchange", handleOnyxDockResize, { passive: true });
-
-      window.addEventListener("pageshow", () => {
-        updateOnyxDockRoute(false);
-        requestAnimationFrame(() => {
-          dock.classList.add("dock-ready");
-        });
-      });
-
-      window.addEventListener("popstate", () => {
-        updateOnyxDockRoute(true);
-      });
-
-      window.addEventListener("hashchange", () => {
-        updateOnyxDockRoute(true);
-      });
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initializeOnyxDock, { once: true });
-    } else {
-      initializeOnyxDock();
-    }
-  })();
-</script>
-  <!-- ====================================================== -->
-  <!-- Beta Search Logic                                     -->
-  <!-- ====================================================== -->
+  <nav class="onyx-dock" aria-label="Primary navigation">
+    <span class="dock-active-lens" aria-hidden="true"></span>
+
+    <a href="/" class="dock-item">
+      <span class="dock-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3.5 10.65 12 3.5l8.5 7.15v8.6A1.75 1.75 0 0 1 18.75 21H15a1 1 0 0 1-1-1v-5a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H5.25a1.75 1.75 0 0 1-1.75-1.75v-8.6Z"></path>
+        </svg>
+      </span>
+      <span class="dock-label">Home</span>
+    </a>
+
+    <a href="/beta" class="dock-item">
+      <span class="dock-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 2.75a.75.75 0 0 0 0 1.5h.25v5.16L4.02 18a2.65 2.65 0 0 0 2.25 4h11.46a2.65 2.65 0 0 0 2.25-4l-5.23-8.59V4.25H15a.75.75 0 0 0 0-1.5H9Zm1.75 6.87V4.25h2.5v5.37l2.43 3.98H8.32l2.43-3.98Zm-3.34 5.48h9.18l2.11 3.68a1.15 1.15 0 0 1-.97 1.72H6.27a1.15 1.15 0 0 1-.97-1.72l2.11-3.68Z"></path>
+        </svg>
+      </span>
+      <span class="dock-label">Beta</span>
+    </a>
+
+    <a href="/resume" class="dock-item">
+      <span class="dock-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6.75 2A2.75 2.75 0 0 0 4 4.75v14.5A2.75 2.75 0 0 0 6.75 22h10.5A2.75 2.75 0 0 0 20 19.25V8.62a2.75 2.75 0 0 0-.81-1.94l-3.87-3.87A2.75 2.75 0 0 0 13.38 2H6.75Zm6.5 1.56c.38.08.73.27 1.01.54l3.64 3.65h-3.15a1.5 1.5 0 0 1-1.5-1.5V3.56ZM8 11.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4a.75.75 0 0 1 0 1.5h-4a.75.75 0 0 1-.75-.75Z"></path>
+        </svg>
+      </span>
+      <span class="dock-label">Resume</span>
+    </a>
+
+    <a href="/settings" class="dock-item">
+      <span class="dock-icon dock-icon-settings" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M10.36 2.54A1.68 1.68 0 0 1 12 1.25c.78 0 1.46.53 1.64 1.29l.24.98c.08.34.32.61.64.75.32.13.69.11.99-.07l.86-.52a1.69 1.69 0 0 1 2.07.26l1.62 1.62c.55.55.66 1.41.26 2.07l-.52.86c-.18.3-.2.67-.07.99.14.32.41.56.75.64l.98.24A1.68 1.68 0 0 1 22.75 12c0 .78-.53 1.46-1.29 1.64l-.98.24c-.34.08-.61.32-.75.64-.13.32-.11.69.07.99l.52.86c.4.66.29 1.52-.26 2.07l-1.62 1.62c-.55.55-1.41.66-2.07.26l-.86-.52c-.3-.18-.67-.2-.99-.07-.32.14-.56.41-.64.75l-.24.98A1.68 1.68 0 0 1 12 22.75c-.78 0-1.46-.53-1.64-1.29l-.24-.98a1.13 1.13 0 0 0-.64-.75 1.13 1.13 0 0 0-.99.07l-.86.52c-.66.4-1.52.29-2.07-.26l-1.62-1.62a1.69 1.69 0 0 1-.26-2.07l.52-.86c.18-.3.2-.67.07-.99a1.13 1.13 0 0 0-.75-.64l-.98-.24A1.68 1.68 0 0 1 1.25 12c0-.78.53-1.46 1.29-1.64l.98-.24c.34-.08.61-.32.75-.64.13-.32.11-.69-.07-.99l-.52-.86a1.69 1.69 0 0 1 .26-2.07l1.62-1.62a1.69 1.69 0 0 1 2.07-.26l.86.52c.3.18.67.2.99.07.32-.14.56-.41.64-.75l.24-.98ZM12 7.25A4.75 4.75 0 1 0 12 16.75 4.75 4.75 0 0 0 12 7.25Zm0 1.75a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z"></path>
+        </svg>
+      </span>
+      <span class="dock-label">Settings</span>
+    </a>
+  </nav>
 
   <script>
-    document.addEventListener(
-      "DOMContentLoaded",
-      () => {
-        const searchInput =
-          document.getElementById(
-            "beta-search"
-          );
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById("beta-search");
+      const searchStatus = document.getElementById("beta-search-status");
+      const clearSearchButton = document.getElementById("clear-beta-search");
+      const resetSearchButton = document.getElementById("reset-beta-search");
+      const noResultsSection = document.getElementById("beta-no-results");
+      const searchableSections = Array.from(document.querySelectorAll(".beta-searchable"));
 
-        const searchStatus =
-          document.getElementById(
-            "beta-search-status"
-          );
-
-        const clearSearchButton =
-          document.getElementById(
-            "clear-beta-search"
-          );
-
-        const resetSearchButton =
-          document.getElementById(
-            "reset-beta-search"
-          );
-
-        const noResultsSection =
-          document.getElementById(
-            "beta-no-results"
-          );
-
-        const searchableSections = [
-          ...document.querySelectorAll(
-            ".beta-searchable"
-          )
-        ];
-
-        function resetSearchResults() {
-          searchableSections.forEach(
-            (section) => {
-              section.hidden = false;
-
-              section
-                .querySelectorAll(
-                  ".beta-searchable-item"
-                )
-                .forEach((item) => {
-                  item.hidden = false;
-                });
-            }
-          );
-        }
-
-        function runBetaSearch() {
-          if (
-            !searchInput ||
-            !searchStatus ||
-            !noResultsSection
-          ) {
-            return;
-          }
-
-          const query =
-            searchInput.value
-              .trim()
-              .toLowerCase();
-
-          let sectionMatches = 0;
-          let itemMatches = 0;
-
-          if (!query) {
-            resetSearchResults();
-
-            if (clearSearchButton) {
-              clearSearchButton.hidden = true;
-            }
-
-            noResultsSection.hidden = true;
-
-            searchStatus.textContent =
-              "Showing all beta information.";
-
-            return;
-          }
-
-          searchableSections.forEach(
-            (section) => {
-              const searchableItems = [
-                ...section.querySelectorAll(
-                  ".beta-searchable-item"
-                )
-              ];
-
-              const sectionTitle =
-                section.dataset.searchTitle
-                  ?.toLowerCase() || "";
-
-              const sectionHeadingMatches =
-                sectionTitle.includes(query);
-
-              if (
-                searchableItems.length === 0
-              ) {
-                const sectionMatchesQuery =
-                  section.textContent
-                    .toLowerCase()
-                    .includes(query);
-
-                section.hidden =
-                  !sectionMatchesQuery;
-
-                if (sectionMatchesQuery) {
-                  sectionMatches += 1;
-                }
-
-                return;
-              }
-
-              let matchingItems = 0;
-
-              searchableItems.forEach(
-                (item) => {
-                  const itemMatchesQuery =
-                    item.textContent
-                      .toLowerCase()
-                      .includes(query);
-
-                  const shouldShow =
-                    itemMatchesQuery ||
-                    sectionHeadingMatches;
-
-                  item.hidden = !shouldShow;
-
-                  if (shouldShow) {
-                    matchingItems += 1;
-                    itemMatches += 1;
-                  }
-                }
-              );
-
-              section.hidden =
-                matchingItems === 0;
-
-              if (matchingItems > 0) {
-                sectionMatches += 1;
-              }
-            }
-          );
-
-          if (clearSearchButton) {
-            clearSearchButton.hidden = false;
-          }
-
-          const hasResults =
-            sectionMatches > 0;
-
-          noResultsSection.hidden =
-            hasResults;
-
-          if (!hasResults) {
-            searchStatus.textContent =
-              "No matching beta information found.";
-
-            return;
-          }
-
-          const resultCount =
-            itemMatches || sectionMatches;
-
-          searchStatus.textContent = `${resultCount} matching result${resultCount === 1 ? "" : "s"} found.`;
-        }
-
-        function clearBetaSearch() {
-          if (!searchInput) {
-            return;
-          }
-
-          searchInput.value = "";
-          runBetaSearch();
-          searchInput.focus();
-        }
-
-        searchInput?.addEventListener(
-          "input",
-          runBetaSearch
-        );
-
-        clearSearchButton?.addEventListener(
-          "click",
-          clearBetaSearch
-        );
-
-        resetSearchButton?.addEventListener(
-          "click",
-          clearBetaSearch
-        );
+      function resetSearchResults() {
+        searchableSections.forEach((section) => {
+          section.hidden = false;
+          section.querySelectorAll(".beta-searchable-item").forEach((item) => {
+            item.hidden = false;
+          });
+        });
       }
-    );
+
+      function runBetaSearch() {
+        if (!searchInput || !searchStatus || !noResultsSection) return;
+
+        const query = searchInput.value.trim().toLowerCase();
+        let sectionMatches = 0;
+        let itemMatches = 0;
+
+        if (!query) {
+          resetSearchResults();
+          if (clearSearchButton) clearSearchButton.hidden = true;
+          noResultsSection.hidden = true;
+          searchStatus.textContent = "Showing all beta information.";
+          return;
+        }
+
+        searchableSections.forEach((section) => {
+          const searchableItems = Array.from(section.querySelectorAll(".beta-searchable-item"));
+          const sectionTitle = section.dataset.searchTitle?.toLowerCase() || "";
+          const sectionHeadingMatches = sectionTitle.includes(query);
+
+          if (searchableItems.length === 0) {
+            const sectionMatchesQuery = section.textContent.toLowerCase().includes(query);
+            section.hidden = !sectionMatchesQuery;
+            if (sectionMatchesQuery) sectionMatches += 1;
+            return;
+          }
+
+          let matchingItems = 0;
+          searchableItems.forEach((item) => {
+            const itemMatchesQuery = item.textContent.toLowerCase().includes(query);
+            const shouldShow = itemMatchesQuery || sectionHeadingMatches;
+            item.hidden = !shouldShow;
+            if (shouldShow) {
+              matchingItems += 1;
+              itemMatches += 1;
+            }
+          });
+
+          section.hidden = matchingItems === 0;
+          if (matchingItems > 0) sectionMatches += 1;
+        });
+
+        if (clearSearchButton) clearSearchButton.hidden = false;
+        const hasResults = sectionMatches > 0;
+        noResultsSection.hidden = hasResults;
+
+        if (!hasResults) {
+          searchStatus.textContent = "No matching beta information found.";
+          return;
+        }
+
+        const resultCount = itemMatches || sectionMatches;
+        searchStatus.textContent = `${resultCount} matching result${resultCount === 1 ? "" : "s"} found.`;
+      }
+
+      function clearBetaSearch() {
+        if (!searchInput) return;
+        searchInput.value = "";
+        runBetaSearch();
+        searchInput.focus();
+      }
+
+      searchInput?.addEventListener("input", runBetaSearch);
+      clearSearchButton?.addEventListener("click", clearBetaSearch);
+      resetSearchButton?.addEventListener("click", clearBetaSearch);
+    });
   </script>
 
-  <!-- ====================================================== -->
-  <!-- Tally Embed Loader                                    -->
-  <!-- ====================================================== -->
-
   <script>
-    (function () {
-      const tallyScriptURL =
-        "https://tally.so/widgets/embed.js";
+    (() => {
+      const tallyScriptURL = "https://tally.so/widgets/embed.js";
 
       function loadTallyEmbeds() {
-        if (
-          typeof Tally !== "undefined"
-        ) {
+        if (typeof Tally !== "undefined") {
           Tally.loadEmbeds();
           return;
         }
 
-        document
-          .querySelectorAll(
-            "iframe[data-tally-src]:not([src])"
-          )
-          .forEach((iframe) => {
-            iframe.src =
-              iframe.dataset.tallySrc;
-          });
+        document.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((iframe) => {
+          iframe.src = iframe.dataset.tallySrc;
+        });
       }
 
-      if (
-        typeof Tally !== "undefined"
-      ) {
+      if (typeof Tally !== "undefined") {
         loadTallyEmbeds();
         return;
       }
 
-      if (
-        document.querySelector(
-          `script[src="${tallyScriptURL}"]`
-        )
-      ) {
+      if (document.querySelector(`script[src="${tallyScriptURL}"]`)) {
         return;
       }
 
-      const tallyScript =
-        document.createElement("script");
-
-      tallyScript.src =
-        tallyScriptURL;
-
+      const tallyScript = document.createElement("script");
+      tallyScript.src = tallyScriptURL;
       tallyScript.async = true;
-
-      tallyScript.onload =
-        loadTallyEmbeds;
-
-      tallyScript.onerror =
-        loadTallyEmbeds;
-
-      document.body.appendChild(
-        tallyScript
-      );
+      tallyScript.onload = loadTallyEmbeds;
+      tallyScript.onerror = loadTallyEmbeds;
+      document.body.appendChild(tallyScript);
     })();
   </script>
 
-
-
-  <!-- ====================================================== -->
-  <!-- Active Website Scripts                                -->
-  <!-- ====================================================== -->
-
-  <script src="/script.js"></script>
-
-  <script src="/autoRefresh.js"></script>
-
-  <!--
-    Keep ai-features.js only if it supports active,
-    non-chat functionality such as Tech Information.
-  -->
-  <script src="/ai-features.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
-
   <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-messaging-compat.js"></script>
-
   <script src="https://unpkg.com/suncalc@1.9.0/suncalc.js"></script>
 
   <script src="/settings.js"></script>
-
+  <script src="/script.js"></script>
+  <script src="/autoRefresh.js"></script>
   <script src="/version.js"></script>
-
   <script src="/device.js"></script>
-
   <script src="/displayShoutouts.js"></script>
-
   <script src="/rearrange.js"></script>
+  <script src="/ai-features.js"></script>
+
+  <script>
+    (() => {
+      function initializeOnyxDock() {
+        const dock = document.querySelector(".onyx-dock");
+
+        if (!dock || dock.dataset.onyxDockReady === "true") {
+          return;
+        }
+
+        const links = Array.from(dock.querySelectorAll(".dock-item"));
+        const lens = dock.querySelector(".dock-active-lens");
+
+        if (!links.length || !lens) {
+          return;
+        }
+
+        dock.dataset.onyxDockReady = "true";
+
+        let activeLink = null;
+        let pressedLink = null;
+        let dragTarget = null;
+        let activePointerId = null;
+        let pointerStartX = 0;
+        let pointerStartY = 0;
+        let currentPointerX = 0;
+
+        let pointerIsDown = false;
+        let dragStarted = false;
+        let suppressNextClick = false;
+
+        let resizeFrame = null;
+        let resizeTimer = null;
+        let settlingTimer = null;
+        let settingsTimer = null;
+        let navigationTimer = null;
+        let clickSuppressionTimer = null;
+
+        const dragThreshold = 7;
+        const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+        /* ================================================== */
+        /* Motion Preference                                  */
+        /* ================================================== */
+        function motionIsDisabled() {
+          return (
+            reducedMotionQuery.matches ||
+            document.documentElement.classList.contains("motion-disabled") ||
+            document.body.classList.contains("motion-disabled")
+          );
+        }
+
+        /* ================================================== */
+        /* Path Normalization                                 */
+        /* ================================================== */
+        function normalizePath(path) {
+          let cleanPath = String(path || "/")
+            .split("?")[0]
+            .split("#")[0]
+            .toLowerCase()
+            .replace(/\/index\.html$/i, "")
+            .replace(/\.html$/i, "")
+            .replace(/\/+$/g, "");
+
+          if (!cleanPath || cleanPath === "/home") {
+            cleanPath = "/";
+          }
+
+          if (!cleanPath.startsWith("/")) {
+            cleanPath = `/${cleanPath}`;
+          }
+
+          return cleanPath;
+        }
+
+        function getLinkPath(link) {
+          const route = link.dataset.route || link.getAttribute("href") || "/";
+          try {
+            return normalizePath(new URL(route, window.location.origin).pathname);
+          } catch (error) {
+            return normalizePath(route);
+          }
+        }
+
+        /* ================================================== */
+        /* Active Route                                       */
+        /* ================================================== */
+        function findActiveLink() {
+          const currentPath = normalizePath(window.location.pathname);
+          const exactMatch = links.find((link) => {
+            return getLinkPath(link) === currentPath;
+          });
+
+          if (exactMatch) return exactMatch;
+
+          const nestedMatches = links.filter((link) => {
+            const targetPath = getLinkPath(link);
+            return targetPath !== "/" && currentPath.startsWith(`${targetPath}/`);
+          }).sort((firstLink, secondLink) => {
+            return getLinkPath(secondLink).length - getLinkPath(firstLink).length;
+          });
+
+          return nestedMatches[0] || links[0];
+        }
+
+        /* ================================================== */
+        /* Active State                                       */
+        /* ================================================== */
+        function setActiveLink(link) {
+          if (!link) return;
+          activeLink = link;
+
+          links.forEach((dockLink) => {
+            const isActive = dockLink === link;
+            dockLink.classList.toggle("active", isActive);
+            if (isActive) {
+              dockLink.setAttribute("aria-current", "page");
+            } else {
+              dockLink.removeAttribute("aria-current");
+            }
+          });
+        }
+
+        /* ================================================== */
+        /* Lens Position                                      */
+        /* ================================================== */
+        function moveLensTo(link, animate = true) {
+          if (!link) return;
+          const dockRect = dock.getBoundingClientRect();
+          const linkRect = link.getBoundingClientRect();
+          const lensX = linkRect.left - dockRect.left;
+
+          if (!animate) lens.style.transition = "none";
+          
+          dock.style.setProperty("--lens-x", `${lensX.toFixed(3)}px`);
+          dock.style.setProperty("--lens-width", `${linkRect.width.toFixed(3)}px`);
+
+          if (!animate) {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                lens.style.removeProperty("transition");
+              });
+            });
+          }
+        }
+
+        function moveLensWithPointer(pointerX, targetLink) {
+          if (!targetLink) return;
+
+          const dockRect = dock.getBoundingClientRect();
+          const targetRect = targetLink.getBoundingClientRect();
+          const dockStyles = getComputedStyle(dock);
+          const paddingLeft = parseFloat(dockStyles.paddingLeft) || 0;
+          const paddingRight = parseFloat(dockStyles.paddingRight) || 0;
+          const lensWidth = targetRect.width;
+          const halfLensWidth = lensWidth / 2;
+          
+          const minimumCenter = dockRect.left + paddingLeft + halfLensWidth;
+          const maximumCenter = dockRect.right - paddingRight - halfLensWidth;
+          const constrainedCenter = Math.min(Math.max(pointerX, minimumCenter), maximumCenter);
+          const lensX = constrainedCenter - dockRect.left - halfLensWidth;
+
+          dock.style.setProperty("--lens-x", `${lensX.toFixed(3)}px`);
+          dock.style.setProperty("--lens-width", `${lensWidth.toFixed(3)}px`);
+        }
+
+        /* ================================================== */
+        /* Nearest Link                                       */
+        /* ================================================== */
+        function getNearestLink(pointerX) {
+          let nearestLink = links[0];
+          let nearestDistance = Number.POSITIVE_INFINITY;
+
+          links.forEach((link) => {
+            const linkRect = link.getBoundingClientRect();
+            const linkCenter = linkRect.left + linkRect.width / 2;
+            const distance = Math.abs(pointerX - linkCenter);
+
+            if (distance < nearestDistance) {
+              nearestDistance = distance;
+              nearestLink = link;
+            }
+          });
+          return nearestLink;
+        }
+
+        /* ================================================== */
+        /* Drag Target                                        */
+        /* ================================================== */
+        function setDragTarget(link) {
+          if (dragTarget === link) return;
+
+          links.forEach((dockLink) => {
+            dockLink.classList.remove("is-drag-target");
+          });
+
+          dragTarget = link;
+          dragTarget?.classList.add("is-drag-target");
+        }
+
+        function clearInteraction() {
+          dock.classList.remove("is-pressing", "is-dragging");
+          links.forEach((link) => {
+            link.classList.remove("is-pressed", "is-drag-target");
+          });
+        }
+
+        /* ================================================== */
+        /* Settings Rotation                                  */
+        /* ================================================== */
+        function rotateSettings(link) {
+          if (!link || !link.querySelector(".dock-icon-settings") || motionIsDisabled()) return;
+
+          if (settingsTimer !== null) window.clearTimeout(settingsTimer);
+          link.classList.remove("settings-rotating");
+          void link.offsetWidth; // Trigger reflow
+          link.classList.add("settings-rotating");
+
+          settingsTimer = window.setTimeout(() => {
+            link.classList.remove("settings-rotating");
+            settingsTimer = null;
+          }, 700);
+        }
+
+        /* ================================================== */
+        /* Snap Animation                                     */
+        /* ================================================== */
+        function runSettle(link) {
+          if (!link || motionIsDisabled()) return;
+          if (settlingTimer !== null) window.clearTimeout(settlingTimer);
+
+          dock.classList.remove("is-settling");
+          links.forEach((dockLink) => {
+            dockLink.classList.remove("is-settling");
+          });
+
+          void dock.offsetWidth;
+
+          dock.classList.add("is-settling");
+          link.classList.add("is-settling");
+
+          settlingTimer = window.setTimeout(() => {
+            dock.classList.remove("is-settling");
+            link.classList.remove("is-settling");
+            settlingTimer = null;
+          }, 540);
+        }
+
+        /* ================================================== */
+        /* Navigation                                         */
+        /* ================================================== */
+        function isSameDestination(link) {
+          const destination = new URL(link.href, window.location.href);
+          const current = new URL(window.location.href);
+
+          return (
+            normalizePath(destination.pathname) === normalizePath(current.pathname) &&
+            destination.search === current.search &&
+            destination.hash === current.hash
+          );
+        }
+
+        function navigateTo(link) {
+          if (!link || isSameDestination(link)) return;
+          if (navigationTimer !== null) window.clearTimeout(navigationTimer);
+
+          const delay = motionIsDisabled() ? 0 : 180;
+          navigationTimer = window.setTimeout(() => {
+            window.location.assign(link.href);
+          }, delay);
+        }
+
+        /* ================================================== */
+        /* Click Suppression                                  */
+        /* ================================================== */
+        function suppressClick() {
+          suppressNextClick = true;
+          if (clickSuppressionTimer !== null) window.clearTimeout(clickSuppressionTimer);
+
+          clickSuppressionTimer = window.setTimeout(() => {
+            suppressNextClick = false;
+            clickSuppressionTimer = null;
+          }, 700);
+        }
+
+        /* ================================================== */
+        /* Pointer Reflection                                 */
+        /* ================================================== */
+        function updateReflection(event, link) {
+          if (event.pointerType !== "mouse") return;
+
+          const linkRect = link.getBoundingClientRect();
+          link.style.setProperty("--pointer-x", `${event.clientX - linkRect.left}px`);
+          link.style.setProperty("--pointer-y", `${event.clientY - linkRect.top}px`);
+        }
+
+        function clearReflection(link) {
+          link.style.removeProperty("--pointer-x");
+          link.style.removeProperty("--pointer-y");
+        }
+
+        /* ================================================== */
+        /* Press Start                                        */
+        /* ================================================== */
+        function beginPress(event, link) {
+          if (activePointerId !== null) return;
+          if (event.pointerType === "mouse" && (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return;
+
+          activePointerId = event.pointerId;
+          pointerIsDown = true;
+          dragStarted = false;
+          pressedLink = link;
+          pointerStartX = event.clientX;
+          pointerStartY = event.clientY;
+          currentPointerX = event.clientX;
+
+          dock.classList.add("is-pressing");
+          link.classList.add("is-pressed");
+          setDragTarget(link);
+
+          try {
+            dock.setPointerCapture(event.pointerId);
+          } catch (error) {
+            // Continue without pointer capture
+          }
+        }
+
+        /* ================================================== */
+        /* Press Update                                       */
+        /* ================================================== */
+        function updatePress(event) {
+          if (!pointerIsDown || event.pointerId !== activePointerId) return;
+
+          currentPointerX = event.clientX;
+          const distance = Math.hypot(event.clientX - pointerStartX, event.clientY - pointerStartY);
+
+          if (!dragStarted && distance >= dragThreshold) {
+            dragStarted = true;
+            dock.classList.add("is-dragging");
+            pressedLink?.classList.remove("is-pressed");
+          }
+
+          if (!dragStarted) return;
+          event.preventDefault();
+
+          const nearestLink = getNearestLink(event.clientX);
+          setDragTarget(nearestLink);
+          moveLensWithPointer(event.clientX, nearestLink);
+        }
+
+        /* ================================================== */
+        /* Press Finish                                       */
+        /* ================================================== */
+        function finishPress(event, cancelled = false) {
+          if (!pointerIsDown || event.pointerId !== activePointerId) return;
+
+          const wasDragging = dragStarted;
+          const selectedLink = cancelled ? activeLink : wasDragging ? getNearestLink(currentPointerX) : pressedLink;
+
+          if (wasDragging) suppressClick();
+          clearInteraction();
+
+          try {
+            if (dock.hasPointerCapture(event.pointerId)) {
+              dock.releasePointerCapture(event.pointerId);
+            }
+          } catch (error) {
+            // Continue without pointer capture
+          }
+
+          pointerIsDown = false;
+          dragStarted = false;
+          pressedLink = null;
+          dragTarget = null;
+          activePointerId = null;
+
+          if (!selectedLink) return;
+
+          setActiveLink(selectedLink);
+          moveLensTo(selectedLink, true);
+          runSettle(selectedLink);
+
+          if (!cancelled) rotateSettings(selectedLink);
+          if (!cancelled && wasDragging) navigateTo(selectedLink);
+        }
+
+        /* ================================================== */
+        /* Link Events                                        */
+        /* ================================================== */
+        links.forEach((link) => {
+          link.addEventListener("pointerdown", (event) => beginPress(event, link));
+          link.addEventListener("pointermove", (event) => updateReflection(event, link));
+          link.addEventListener("pointerleave", () => clearReflection(link));
+
+          link.addEventListener("click", (event) => {
+            const modifiedClick = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+            const specialNavigation = link.target === "_blank" || link.hasAttribute("download");
+
+            if (modifiedClick || specialNavigation) return;
+
+            if (suppressNextClick) {
+              event.preventDefault();
+              suppressNextClick = false;
+              if (clickSuppressionTimer !== null) {
+                window.clearTimeout(clickSuppressionTimer);
+                clickSuppressionTimer = null;
+              }
+              return;
+            }
+
+            event.preventDefault();
+            setActiveLink(link);
+            moveLensTo(link, true);
+            runSettle(link);
+            rotateSettings(link);
+            navigateTo(link);
+          });
+        });
+
+        /* ================================================== */
+        /* Dock Pointer Events                                */
+        /* ================================================== */
+        dock.addEventListener("pointermove", updatePress);
+        dock.addEventListener("pointerup", (event) => finishPress(event, false));
+        dock.addEventListener("pointercancel", (event) => finishPress(event, true));
+
+        /* ================================================== */
+        /* Keyboard Navigation                                */
+        /* ================================================== */
+        links.forEach((link, index) => {
+          link.addEventListener("keydown", (event) => {
+            let nextIndex = null;
+
+            if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+              nextIndex = (index + 1) % links.length;
+            }
+
+            if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+              nextIndex = (index - 1 + links.length) % links.length;
+            }
+
+            if (event.key === "Home") nextIndex = 0;
+            if (event.key === "End") nextIndex = links.length - 1;
+            if (nextIndex === null) return;
+
+            event.preventDefault();
+            const nextLink = links[nextIndex];
+            nextLink.focus();
+            setActiveLink(nextLink);
+            moveLensTo(nextLink, true);
+            runSettle(nextLink);
+            rotateSettings(nextLink);
+          });
+        });
+
+        /* ================================================== */
+        /* Resize Handling                                    */
+        /* ================================================== */
+        function handleResize() {
+          if (resizeFrame !== null) cancelAnimationFrame(resizeFrame);
+          if (resizeTimer !== null) window.clearTimeout(resizeTimer);
+
+          resizeFrame = requestAnimationFrame(() => {
+            moveLensTo(activeLink, false);
+            resizeFrame = null;
+          });
+
+          resizeTimer = window.setTimeout(() => {
+            moveLensTo(activeLink, false);
+            resizeTimer = null;
+          }, 180);
+        }
+
+        /* ================================================== */
+        /* Route Update                                       */
+        /* ================================================== */
+        function updateRoute(animate = false) {
+          activeLink = findActiveLink();
+          setActiveLink(activeLink);
+          moveLensTo(activeLink, animate);
+        }
+
+        /* ================================================== */
+        /* Initial Layout                                     */
+        /* ================================================== */
+        async function initializeLayout() {
+          if (document.fonts?.ready) {
+            try {
+              await document.fonts.ready;
+            } catch (error) {
+              // Ignore font loading errors
+            }
+          }
+
+          activeLink = findActiveLink();
+          setActiveLink(activeLink);
+
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              moveLensTo(activeLink, false);
+              dock.classList.add("dock-ready");
+            });
+          });
+        }
+
+        initializeLayout();
+
+        /* ================================================== */
+        /* Browser Events                                     */
+        /* ================================================== */
+        window.addEventListener("resize", handleResize, { passive: true });
+        window.addEventListener("orientationchange", handleResize, { passive: true });
+        window.addEventListener("pageshow", () => {
+          updateRoute(false);
+          requestAnimationFrame(() => {
+            dock.classList.add("dock-ready");
+          });
+        });
+        window.addEventListener("popstate", () => updateRoute(true));
+        window.addEventListener("hashchange", () => updateRoute(true));
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeOnyxDock, { once: true });
+      } else {
+        initializeOnyxDock();
+      }
+    })();
+  </script>
 </body>
 </html>
