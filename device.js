@@ -13,8 +13,8 @@
  * 🧾 WEBSITE VERSION CONFIG
  * Single source of truth for Version Information section
  * =========================================================== */
-const WEBSITE_VERSION = "v26.6-beta.3";
-const WEBSITE_BUILD = "2026.07.11";
+const WEBSITE_VERSION = "v26.6-beta.4";
+const WEBSITE_BUILD = "2026.07.13";
 const RELEASE_TRACK = "Beta Revamp Preview";
 const REVAMP_STATUS = "Partial beta revamp in progress";
 const TARGET_RELEASE = "September 2026";
