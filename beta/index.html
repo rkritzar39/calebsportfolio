@@ -15,7 +15,7 @@
     content="View the current beta version, changelog, development status, release roadmap, and feedback options for Caleb's Link in Bio Website."
   />
 
-  <title>Beta Preview v26.6-beta.3 - Caleb's Profile</title>
+  <title>Beta Preview v26.6-beta.4 - Caleb's Profile</title>
 
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/settings.css" />
@@ -172,999 +172,545 @@
     id="main-content"
   >
 
-    <!-- ==================================================== -->
-    <!-- Beta Header                                          -->
-    <!-- ==================================================== -->
+<!-- ====================================================== -->
+<!-- Current Release                                        -->
+<!-- ====================================================== -->
 
-    <section class="section beta-page-section">
-      <div class="beta-page-header">
+<section class="section beta-page-section beta-searchable" data-search-title="Current Release">
+  <div class="beta-section-heading">
+    <h2>
+      <i class="fa-solid fa-sparkles" aria-hidden="true"></i>
+      What’s New in v26.6-beta.4
+    </h2>
+    <p>
+      This release introduces the responsive Onyx navigation dock and improves the Resume page across appearance modes, screen sizes, and input methods.
+    </p>
+  </div>
+
+  <ul class="beta-notes-list">
+    <li>Added the responsive Onyx liquid-glass navigation dock to the Home, Beta, Resume, and Settings pages.</li>
+    <li>Added inline SVG navigation icons, an active liquid lens, press feedback, drag selection, and release snapping.</li>
+    <li>Added a Settings-only gear animation that replays when the Settings destination is selected.</li>
+    <li>Improved dock alignment with equal-width navigation items, balanced edge spacing, and fractional-pixel lens positioning.</li>
+    <li>Added responsive dock layouts for phones, foldables, tablets, laptops, desktops, landscape displays, and split-screen layouts.</li>
+    <li>Improved keyboard navigation, reduced-motion support, high-contrast support, safe-area handling, and touch-device behavior.</li>
+    <li>Updated the Resume page to use the shared appearance system from the Settings page.</li>
+    <li>Improved Resume page support for light mode, dark mode, clear mode, tinted mode, printing, and browser-based PDF layouts.</li>
+  </ul>
+</section>
+
+<!-- ====================================================== -->
+<!-- Beta Changelog                                         -->
+<!-- ====================================================== -->
+
+<section class="section beta-page-section beta-searchable" data-search-title="Beta Changelog">
+  <div class="beta-section-heading">
+    <h2>
+      <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+      Beta Changelog
+    </h2>
+    <p>
+      Changes included in each v26.6 beta release.
+    </p>
+  </div>
+
+  <div class="beta-changelog">
+    <!-- v26.6-beta.4 -->
+    <article class="beta-release current beta-searchable-item">
+      <div class="beta-release-header">
         <div>
-          <p class="beta-eyebrow">
-            <i
-              class="fa-solid fa-flask-vial"
-              aria-hidden="true"
-            ></i>
-
-            Beta Revamp Preview
-          </p>
-
-          <h1>Beta Preview</h1>
-
-          <p class="beta-page-subtitle">
-            Track current changes, completed improvements,
-            development progress, and the path to the full
-            website revamp planned for September 2026.
-          </p>
+          <h3>v26.6-beta.4</h3>
+          <p class="beta-release-meta">Build 2026.07.13</p>
         </div>
-
-        <span
-          class="beta-version-pill"
-          aria-label="Current beta version"
-        >
-          v26.6-beta.3
-        </span>
+        <span class="beta-status active">Current</span>
       </div>
+      <ul>
+        <li>Added the responsive Onyx liquid-glass navigation dock.</li>
+        <li>Added inline SVG icons and an animated active navigation lens.</li>
+        <li>Added press, hold, drag, nearest-item targeting, release, and snap interactions.</li>
+        <li>Added a Settings-only gear rotation animation.</li>
+        <li>Equalized dock item widths and corrected the left and right lens spacing.</li>
+        <li>Added phone, foldable, tablet, landscape, laptop, desktop, and split-screen refinements.</li>
+        <li>Improved keyboard, touch, reduced-motion, high-contrast, and safe-area support.</li>
+        <li>Updated the Resume page to use the shared Settings appearance system.</li>
+        <li>Improved Resume light mode, dark mode, clear mode, tinted mode, print, and PDF layouts.</li>
+        <li>Updated the README, Beta Page, version history, and release roadmap.</li>
+      </ul>
+    </article>
 
-      <div
-        class="beta-summary-grid"
-        aria-label="Current release summary"
-      >
-        <article class="beta-summary-card">
-          <span class="beta-summary-label">
-            Stable Base
-          </span>
-
-          <strong>v26.5</strong>
-        </article>
-
-        <article class="beta-summary-card">
-          <span class="beta-summary-label">
-            Current Beta
-          </span>
-
-          <strong>v26.6-beta.3</strong>
-        </article>
-
-        <article class="beta-summary-card">
-          <span class="beta-summary-label">
-            Current Build
-          </span>
-
-          <strong>2026.07.11</strong>
-        </article>
-
-        <article class="beta-summary-card">
-          <span class="beta-summary-label">
-            Full Release
-          </span>
-
-          <strong>
-            v27.0 — September 2026
-          </strong>
-        </article>
+    <!-- v26.6-beta.3 -->
+    <article class="beta-release beta-searchable-item">
+      <div class="beta-release-header">
+        <div>
+          <h3>v26.6-beta.3</h3>
+          <p class="beta-release-meta">Build 2026.07.11</p>
+        </div>
+        <span class="beta-status previous">Previous</span>
       </div>
-    </section>
+      <ul>
+        <li>Removed retired public sections and interfaces.</li>
+        <li>Removed obsolete JavaScript and CSS.</li>
+        <li>Removed unused Firestore references and listeners.</li>
+        <li>Removed the FAQ, Posts, Blog, President Information, Legislation Tracker, and Quote of the Day features.</li>
+        <li>Removed the Latest TikTok embed.</li>
+        <li>Removed the Onyx AI assistant.</li>
+        <li>Removed the Project Goal Tracker.</li>
+        <li>Reduced unnecessary public-page processing and unused data activity.</li>
+        <li>Updated the README, Beta Page, and release roadmap.</li>
+      </ul>
+    </article>
 
-    <!-- ==================================================== -->
-    <!-- Beta Search                                          -->
-    <!-- ==================================================== -->
+    <!-- v26.6-beta.2 -->
+    <article class="beta-release beta-searchable-item">
+      <div class="beta-release-header">
+        <div>
+          <h3>v26.6-beta.2</h3>
+          <p class="beta-release-meta">Build 2026.07.05</p>
+        </div>
+        <span class="beta-status previous">Previous</span>
+      </div>
+      <ul>
+        <li>Updated Business Status and Hours.</li>
+        <li>Improved holiday, temporary, and manual availability states.</li>
+        <li>Expanded Academic Availability integration.</li>
+        <li>Added smarter recurring class status labels.</li>
+        <li>Fixed ended classes remaining marked as “In Effect.”</li>
+        <li>Improved Hide or Show Full Hours behavior.</li>
+      </ul>
+    </article>
 
-    <section class="section beta-page-section">
-      <div class="beta-section-heading">
-        <h2>
-          <i
-            class="fa-solid fa-magnifying-glass"
-            aria-hidden="true"
-          ></i>
+    <!-- v26.6-beta.1 -->
+    <article class="beta-release beta-searchable-item">
+      <div class="beta-release-header">
+        <div>
+          <h3>v26.6-beta.1</h3>
+          <p class="beta-release-meta">Original partial beta preview</p>
+        </div>
+        <span class="beta-status previous">Previous</span>
+      </div>
+      <ul>
+        <li>Started the partial website revamp.</li>
+        <li>Updated device and website information.</li>
+        <li>Redesigned TikTok creator cards.</li>
+        <li>Redesigned Instagram creator cards.</li>
+        <li>Redesigned YouTube creator cards.</li>
+        <li>Continued Onyx and liquid-glass refinements.</li>
+        <li>Added beta notes and the release roadmap.</li>
+      </ul>
+    </article>
+  </div>
+</section>
 
-          Search Beta Information
-        </h2>
+<!-- ====================================================== -->
+<!-- Completed Improvements                                 -->
+<!-- ====================================================== -->
 
+<section class="section beta-page-section beta-searchable" data-search-title="Redone So Far">
+  <div class="beta-section-heading">
+    <h2>
+      <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+      Redone So Far
+    </h2>
+    <p>
+      These sections and interfaces have already been updated during the current beta cycle.
+    </p>
+  </div>
+
+  <div class="beta-feature-list">
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-compass" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Onyx Navigation Dock</h3>
         <p>
-          Search versions, features, fixes, or removed
-          sections.
+          Added a responsive liquid-glass dock with inline SVG icons, active route detection, equal-width navigation items, balanced spacing, an animated lens, and safe-area support.
         </p>
+        <span class="beta-status active">Redone</span>
       </div>
+    </article>
 
-      <div class="beta-search-wrapper">
-        <i
-          class="fa-solid fa-magnifying-glass"
-          aria-hidden="true"
-        ></i>
-
-        <input
-          type="search"
-          id="beta-search"
-          class="beta-search"
-          placeholder="Search beta information..."
-          autocomplete="off"
-          aria-describedby="beta-search-status"
-        />
-
-        <button
-          type="button"
-          id="clear-beta-search"
-          class="beta-search-clear"
-          aria-label="Clear search"
-          hidden
-        >
-          <i
-            class="fa-solid fa-xmark"
-            aria-hidden="true"
-          ></i>
-        </button>
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-hand-pointer" aria-hidden="true"></i>
       </div>
-
-      <p
-        id="beta-search-status"
-        class="beta-search-status"
-        role="status"
-        aria-live="polite"
-      >
-        Showing all beta information.
-      </p>
-    </section>
-
-    <!-- ==================================================== -->
-    <!-- Searchable Beta Content                              -->
-    <!-- ==================================================== -->
-
-    <div id="beta-search-content">
-
-      <!-- ================================================== -->
-      <!-- Current Release                                    -->
-      <!-- ================================================== -->
-
-      <section
-        class="section beta-page-section beta-searchable"
-        data-search-title="Current Release"
-      >
-        <div class="beta-section-heading">
-          <h2>
-            <i
-              class="fa-solid fa-sparkles"
-              aria-hidden="true"
-            ></i>
-
-            What’s New in v26.6-beta.3
-          </h2>
-
-          <p>
-            This release focuses on removing retired
-            features and reducing unnecessary website code.
-          </p>
-        </div>
-
-        <ul class="beta-notes-list">
-          <li>
-            Removed the FAQ, Posts, Blog, President
-            information, Legislation tracker, Quote of the
-            Day, Latest TikTok embed, Onyx AI assistant,
-            and Project Goal Tracker.
-          </li>
-
-          <li>
-            Removed associated JavaScript, CSS, Firestore
-            references, realtime listeners, page routing,
-            and initialization calls.
-          </li>
-
-          <li>
-            Reduced unnecessary public-page processing and
-            unused data activity.
-          </li>
-
-          <li>
-            Kept the main TikTok, Instagram, and YouTube
-            creator shoutout sections.
-          </li>
-
-          <li>
-            Kept device AI compatibility information in the
-            Tech Information section because it is separate
-            from the retired Onyx AI assistant.
-          </li>
-        </ul>
-      </section>
-
-      <!-- ================================================== -->
-      <!-- Beta Changelog                                     -->
-      <!-- ================================================== -->
-
-      <section
-        class="section beta-page-section beta-searchable"
-        data-search-title="Beta Changelog"
-      >
-        <div class="beta-section-heading">
-          <h2>
-            <i
-              class="fa-solid fa-clock-rotate-left"
-              aria-hidden="true"
-            ></i>
-
-            Beta Changelog
-          </h2>
-
-          <p>
-            Changes included in each v26.6 beta release.
-          </p>
-        </div>
-
-        <div class="beta-changelog">
-
-          <!-- v26.6-beta.3 -->
-
-          <article
-            class="beta-release current beta-searchable-item"
-          >
-            <div class="beta-release-header">
-              <div>
-                <h3>v26.6-beta.3</h3>
-
-                <p class="beta-release-meta">
-                  Build 2026.07.11
-                </p>
-              </div>
-
-              <span class="beta-status active">
-                Current
-              </span>
-            </div>
-
-            <ul>
-              <li>
-                Removed retired public sections and
-                interfaces.
-              </li>
-
-              <li>
-                Removed obsolete JavaScript and CSS.
-              </li>
-
-              <li>
-                Removed unused Firestore references and
-                listeners.
-              </li>
-
-              <li>
-                Removed the Onyx AI assistant.
-              </li>
-
-              <li>
-                Removed the Project Goal Tracker.
-              </li>
-
-              <li>
-                Updated the README, Beta Page, and release
-                roadmap.
-              </li>
-            </ul>
-          </article>
-
-          <!-- v26.6-beta.2 -->
-
-          <article
-            class="beta-release beta-searchable-item"
-          >
-            <div class="beta-release-header">
-              <div>
-                <h3>v26.6-beta.2</h3>
-
-                <p class="beta-release-meta">
-                  Build 2026.07.05
-                </p>
-              </div>
-
-              <span class="beta-status previous">
-                Previous
-              </span>
-            </div>
-
-            <ul>
-              <li>
-                Updated Business Status and Hours.
-              </li>
-
-              <li>
-                Improved holiday, temporary, and manual
-                availability states.
-              </li>
-
-              <li>
-                Expanded Academic Availability
-                integration.
-              </li>
-
-              <li>
-                Added smarter recurring class status
-                labels.
-              </li>
-
-              <li>
-                Fixed ended classes remaining marked as
-                “In Effect.”
-              </li>
-
-              <li>
-                Improved Hide or Show Full Hours behavior.
-              </li>
-            </ul>
-          </article>
-
-          <!-- v26.6-beta.1 -->
-
-          <article
-            class="beta-release beta-searchable-item"
-          >
-            <div class="beta-release-header">
-              <div>
-                <h3>v26.6-beta.1</h3>
-
-                <p class="beta-release-meta">
-                  Original partial beta preview
-                </p>
-              </div>
-
-              <span class="beta-status previous">
-                Previous
-              </span>
-            </div>
-
-            <ul>
-              <li>
-                Started the partial website revamp.
-              </li>
-
-              <li>
-                Updated device and website information.
-              </li>
-
-              <li>
-                Redesigned TikTok creator cards.
-              </li>
-
-              <li>
-                Redesigned Instagram creator cards.
-              </li>
-
-              <li>
-                Redesigned YouTube creator cards.
-              </li>
-
-              <li>
-                Continued Onyx and liquid-glass
-                refinements.
-              </li>
-
-              <li>
-                Added beta notes and the release roadmap.
-              </li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <!-- ================================================== -->
-      <!-- Completed Improvements                             -->
-      <!-- ================================================== -->
-
-      <section
-        class="section beta-page-section beta-searchable"
-        data-search-title="Redone So Far"
-      >
-        <div class="beta-section-heading">
-          <h2>
-            <i
-              class="fa-solid fa-circle-check"
-              aria-hidden="true"
-            ></i>
-
-            Redone So Far
-          </h2>
-
-          <p>
-            These sections have already been updated during
-            the current beta cycle.
-          </p>
-        </div>
-
-        <div class="beta-feature-list">
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-solid fa-microchip"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>Device Information Section</h3>
-
-              <p>
-                Updated build tracking, synced time,
-                operating system, browser, resolution,
-                connection, weather, sunrise, and sunset
-                information.
-              </p>
-
-              <span class="beta-status active">
-                Redone
-              </span>
-            </div>
-          </article>
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-brands fa-tiktok"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>TikTok Creator Shoutouts</h3>
-
-              <p>
-                Rebuilt creator cards with a cleaner
-                profile layout, refined text, statistics,
-                verified badges, search, sorting, and a
-                Visit Profile button.
-              </p>
-
-              <span class="beta-status active">
-                Redone
-              </span>
-            </div>
-          </article>
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-brands fa-instagram"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>Instagram Creator Shoutouts</h3>
-
-              <p>
-                Redesigned profile statistics, labels,
-                verified badges, nickname placement,
-                search, sorting, and responsive behavior.
-              </p>
-
-              <span class="beta-status active">
-                Redone
-              </span>
-            </div>
-          </article>
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-brands fa-youtube"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>YouTube Creator Shoutouts</h3>
-
-              <p>
-                Added a channel-style layout, handle,
-                subscribers, video statistics, banner
-                support, descriptions, search, sorting,
-                and a Visit Channel button.
-              </p>
-
-              <span class="beta-status active">
-                Redone
-              </span>
-            </div>
-          </article>
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-solid fa-business-time"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>Business Information Section</h3>
-
-              <p>
-                Improved weekly hours, holiday schedules,
-                temporary hours, manual overrides, local
-                time, status indicators, the today
-                timeline, copy controls, and full-hours
-                visibility.
-              </p>
-
-              <span class="beta-status active">
-                Redone
-              </span>
-            </div>
-          </article>
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-solid fa-graduation-cap"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>Academic Availability Integration</h3>
-
-              <p>
-                Added recurring classes, exams, finals,
-                university events, academic breaks,
-                internships, co-ops, semester information,
-                and smarter status labels.
-              </p>
-
-              <span class="beta-status active">
-                Redone
-              </span>
-            </div>
-          </article>
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-solid fa-code"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>Website and Code Cleanup</h3>
-
-              <p>
-                Removed retired sections and their
-                associated JavaScript, CSS, Firestore
-                references, listeners, routing, and
-                initialization calls.
-              </p>
-
-              <span class="beta-status active">
-                Completed
-              </span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- ================================================== -->
-      <!-- Current Development                               -->
-      <!-- ================================================== -->
-
-      <section
-        class="section beta-page-section beta-searchable"
-        data-search-title="Currently Being Worked On"
-      >
-        <div class="beta-section-heading">
-          <h2>
-            <i
-              class="fa-solid fa-spinner"
-              aria-hidden="true"
-            ></i>
-
-            Currently Being Worked On
-          </h2>
-
-          <p>
-            These areas are still being refined and may
-            change.
-          </p>
-        </div>
-
-        <div class="beta-feature-list">
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-solid fa-layer-group"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>Liquid Glass Refinement</h3>
-
-              <p>
-                Card surfaces, shadows, borders,
-                reflections, contrast, readability, and
-                hover states may continue to change.
-              </p>
-
-              <span class="beta-status testing">
-                In Progress
-              </span>
-            </div>
-          </article>
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-solid fa-mobile-screen-button"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>Responsive Layout Polish</h3>
-
-              <p>
-                Phone, tablet, desktop, landscape, and
-                split-screen layouts are being tested for
-                overflow, clipping, and readability issues.
-              </p>
-
-              <span class="beta-status testing">
-                Testing
-              </span>
-            </div>
-          </article>
-
-          <article
-            class="beta-feature-item beta-searchable-item"
-          >
-            <div class="beta-feature-icon">
-              <i
-                class="fa-solid fa-gear"
-                aria-hidden="true"
-              ></i>
-            </div>
-
-            <div>
-              <h3>Settings Page Cleanup</h3>
-
-              <p>
-                Appearance, accessibility, device-matching,
-                and reset options may be reorganized for
-                clarity.
-              </p>
-
-              <span class="beta-status testing">
-                Planned Next
-              </span>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- ================================================== -->
-      <!-- Removed Features                                   -->
-      <!-- ================================================== -->
-
-      <section
-        class="section beta-page-section beta-searchable"
-        data-search-title="Removed Features"
-      >
-        <div class="beta-section-heading">
-          <h2>
-            <i
-              class="fa-solid fa-box-archive"
-              aria-hidden="true"
-            ></i>
-
-            Removed Features
-          </h2>
-
-          <p>
-            These features were retired in v26.6-beta.3.
-          </p>
-        </div>
-
-        <div class="beta-removed-grid">
-          <article
-            class="beta-removed-item beta-searchable-item"
-          >
-            <i
-              class="fa-solid fa-circle-question"
-              aria-hidden="true"
-            ></i>
-
-            <span>FAQ</span>
-          </article>
-
-          <article
-            class="beta-removed-item beta-searchable-item"
-          >
-            <i
-              class="fa-solid fa-newspaper"
-              aria-hidden="true"
-            ></i>
-
-            <span>Posts and Blog</span>
-          </article>
-
-          <article
-            class="beta-removed-item beta-searchable-item"
-          >
-            <i
-              class="fa-solid fa-landmark"
-              aria-hidden="true"
-            ></i>
-
-            <span>President Information</span>
-          </article>
-
-          <article
-            class="beta-removed-item beta-searchable-item"
-          >
-            <i
-              class="fa-solid fa-scale-balanced"
-              aria-hidden="true"
-            ></i>
-
-            <span>Legislation Tracker</span>
-          </article>
-
-          <article
-            class="beta-removed-item beta-searchable-item"
-          >
-            <i
-              class="fa-solid fa-quote-left"
-              aria-hidden="true"
-            ></i>
-
-            <span>Quote of the Day</span>
-          </article>
-
-          <article
-            class="beta-removed-item beta-searchable-item"
-          >
-            <i
-              class="fa-brands fa-tiktok"
-              aria-hidden="true"
-            ></i>
-
-            <span>Latest TikTok Embed</span>
-          </article>
-
-          <article
-            class="beta-removed-item beta-searchable-item"
-          >
-            <i
-              class="fa-solid fa-comments"
-              aria-hidden="true"
-            ></i>
-
-            <span>Onyx AI Assistant</span>
-          </article>
-
-          <article
-            class="beta-removed-item beta-searchable-item"
-          >
-            <i
-              class="fa-solid fa-bullseye"
-              aria-hidden="true"
-            ></i>
-
-            <span>Project Goal Tracker</span>
-          </article>
-        </div>
-      </section>
-
-      <!-- ================================================== -->
-      <!-- Beta Notes                                         -->
-      <!-- ================================================== -->
-
-      <section
-        class="section beta-page-section beta-searchable"
-        data-search-title="Beta Notes"
-      >
-        <div class="beta-section-heading">
-          <h2>
-            <i
-              class="fa-solid fa-triangle-exclamation"
-              aria-hidden="true"
-            ></i>
-
-            Beta Notes
-          </h2>
-
-          <p>
-            Important information about this beta version.
-          </p>
-        </div>
-
-        <ul class="beta-notes-list">
-          <li>
-            This beta is not the final September revamp.
-          </li>
-
-          <li>
-            Some visual styles may change before release.
-          </li>
-
-          <li>
-            Liquid-glass effects remain experimental.
-          </li>
-
-          <li>
-            Mobile and split-screen layouts may still be
-            adjusted.
-          </li>
-
-          <li>
-            Custom backgrounds may affect contrast and
-            readability.
-          </li>
-
-          <li>
-            The main creator shoutout sections remain
-            active.
-          </li>
-
-          <li>
-            The final complete revamp is planned as v27.0.
-          </li>
-        </ul>
-      </section>
-
-      <!-- ================================================== -->
-      <!-- Release Roadmap                                    -->
-      <!-- ================================================== -->
-
-      <section
-        class="section beta-page-section beta-searchable"
-        data-search-title="Release Roadmap"
-      >
-        <div class="beta-section-heading">
-          <h2>
-            <i
-              class="fa-solid fa-calendar-days"
-              aria-hidden="true"
-            ></i>
-
-            Release Roadmap
-          </h2>
-
-          <p>
-            The planned path for the beta and final revamp.
-          </p>
-        </div>
-
-        <div class="beta-roadmap">
-          <div class="beta-roadmap-item">
-            <span class="roadmap-dot"></span>
-
-            <div>
-              <strong>v26.5</strong>
-              <p>Current stable website base.</p>
-            </div>
-          </div>
-
-          <div class="beta-roadmap-item">
-            <span class="roadmap-dot"></span>
-
-            <div>
-              <strong>v26.6-beta.1</strong>
-              <p>
-                Original partial beta revamp preview.
-              </p>
-            </div>
-          </div>
-
-          <div class="beta-roadmap-item">
-            <span class="roadmap-dot"></span>
-
-            <div>
-              <strong>v26.6-beta.2</strong>
-
-              <p>
-                Business and academic availability
-                improvements.
-              </p>
-            </div>
-          </div>
-
-          <div class="beta-roadmap-item">
-            <span class="roadmap-dot active"></span>
-
-            <div>
-              <strong>v26.6-beta.3</strong>
-
-              <p>
-                Current cleanup release removing retired
-                features and obsolete code.
-              </p>
-            </div>
-          </div>
-
-          <div class="beta-roadmap-item">
-            <span class="roadmap-dot future"></span>
-
-            <div>
-              <strong>v26.6-beta.4+</strong>
-
-              <p>
-                Additional beta fixes and refinements if
-                needed.
-              </p>
-            </div>
-          </div>
-
-          <div class="beta-roadmap-item">
-            <span class="roadmap-dot future"></span>
-
-            <div>
-              <strong>v26.6-rc.1</strong>
-
-              <p>
-                Release candidate and final testing.
-              </p>
-            </div>
-          </div>
-
-          <div class="beta-roadmap-item">
-            <span class="roadmap-dot future"></span>
-
-            <div>
-              <strong>v27.0</strong>
-
-              <p>
-                Full September 2026 website revamp.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div>
+        <h3>Dock Press and Drag Interaction</h3>
+        <p>
+          Added press feedback, pointer capture, drag selection, nearest-destination targeting, release snapping, keyboard navigation, and synthetic-click protection.
+        </p>
+        <span class="beta-status active">Added</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-file-lines" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Resume Page</h3>
+        <p>
+          Updated the Resume page to use the shared Settings appearance system and improved its phone, tablet, laptop, desktop, print, and PDF layouts.
+        </p>
+        <span class="beta-status active">Redone</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-universal-access" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Navigation Accessibility</h3>
+        <p>
+          Added visible keyboard focus, directional navigation, reduced-motion handling, high-contrast presentation, touch-friendly targets, and modified-click support.
+        </p>
+        <span class="beta-status active">Improved</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-microchip" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Device Information Section</h3>
+        <p>
+          Updated build tracking, synced time, operating system, browser, resolution, connection, weather, sunrise, and sunset information.
+        </p>
+        <span class="beta-status active">Redone</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>TikTok Creator Shoutouts</h3>
+        <p>
+          Rebuilt creator cards with a cleaner profile layout, refined text, statistics, verified badges, search, sorting, and a Visit Profile button.
+        </p>
+        <span class="beta-status active">Redone</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-brands fa-instagram" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Instagram Creator Shoutouts</h3>
+        <p>
+          Redesigned profile statistics, labels, verified badges, nickname placement, search, sorting, and responsive behavior.
+        </p>
+        <span class="beta-status active">Redone</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>YouTube Creator Shoutouts</h3>
+        <p>
+          Added a channel-style layout, handle, subscribers, video statistics, banner support, descriptions, search, sorting, and a Visit Channel button.
+        </p>
+        <span class="beta-status active">Redone</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-business-time" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Business Information Section</h3>
+        <p>
+          Improved weekly hours, holiday schedules, temporary hours, manual overrides, local time, status indicators, the today timeline, copy controls, and full-hours visibility.
+        </p>
+        <span class="beta-status active">Redone</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Academic Availability Integration</h3>
+        <p>
+          Added recurring classes, exams, finals, university events, academic breaks, internships, co-ops, semester information, and smarter status labels.
+        </p>
+        <span class="beta-status active">Redone</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-code" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Website and Code Cleanup</h3>
+        <p>
+          Removed retired sections and their associated JavaScript, CSS, Firestore references, listeners, routing, and initialization calls.
+        </p>
+        <span class="beta-status active">Completed</span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- Current Development                                    -->
+<!-- ====================================================== -->
+
+<section class="section beta-page-section beta-searchable" data-search-title="Currently Being Worked On">
+  <div class="beta-section-heading">
+    <h2>
+      <i class="fa-solid fa-spinner" aria-hidden="true"></i>
+      Currently Being Worked On
+    </h2>
+    <p>
+      These areas are still being refined and may change before the final release.
+    </p>
+  </div>
+
+  <div class="beta-feature-list">
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Liquid Glass Refinement</h3>
+        <p>
+          Card surfaces, navigation surfaces, shadows, borders, reflections, contrast, readability, and hover states may continue to change.
+        </p>
+        <span class="beta-status testing">In Progress</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Responsive Layout Polish</h3>
+        <p>
+          Phone, foldable, tablet, laptop, desktop, landscape, and split-screen layouts are being tested for overflow, clipping, spacing, and readability issues.
+        </p>
+        <span class="beta-status testing">Testing</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-gear" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Settings Page Cleanup</h3>
+        <p>
+          Appearance, accessibility, device-matching, clear-mode, tinted-mode, and reset options may be reorganized for clarity.
+        </p>
+        <span class="beta-status testing">Planned Next</span>
+      </div>
+    </article>
+
+    <article class="beta-feature-item beta-searchable-item">
+      <div class="beta-feature-icon">
+        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+      </div>
+      <div>
+        <h3>Performance and Compatibility Testing</h3>
+        <p>
+          Navigation effects, theme transitions, dynamic sections, and responsive layouts are being tested across supported browsers and devices.
+        </p>
+        <span class="beta-status testing">Testing</span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- Removed Features                                       -->
+<!-- ====================================================== -->
+
+<section class="section beta-page-section beta-searchable" data-search-title="Removed Features">
+  <div class="beta-section-heading">
+    <h2>
+      <i class="fa-solid fa-box-archive" aria-hidden="true"></i>
+      Removed Features
+    </h2>
+    <p>
+      These features were retired in v26.6-beta.3.
+    </p>
+  </div>
+
+  <div class="beta-removed-grid">
+    <article class="beta-removed-item beta-searchable-item">
+      <i class="fa-solid fa-circle-question" aria-hidden="true"></i>
+      <span>FAQ</span>
+    </article>
+
+    <article class="beta-removed-item beta-searchable-item">
+      <i class="fa-solid fa-newspaper" aria-hidden="true"></i>
+      <span>Posts and Blog</span>
+    </article>
+
+    <article class="beta-removed-item beta-searchable-item">
+      <i class="fa-solid fa-landmark" aria-hidden="true"></i>
+      <span>President Information</span>
+    </article>
+
+    <article class="beta-removed-item beta-searchable-item">
+      <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i>
+      <span>Legislation Tracker</span>
+    </article>
+
+    <article class="beta-removed-item beta-searchable-item">
+      <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+      <span>Quote of the Day</span>
+    </article>
+
+    <article class="beta-removed-item beta-searchable-item">
+      <i class="fa-brands fa-tiktok" aria-hidden="true"></i>
+      <span>Latest TikTok Embed</span>
+    </article>
+
+    <article class="beta-removed-item beta-searchable-item">
+      <i class="fa-solid fa-comments" aria-hidden="true"></i>
+      <span>Onyx AI Assistant</span>
+    </article>
+
+    <article class="beta-removed-item beta-searchable-item">
+      <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+      <span>Project Goal Tracker</span>
+    </article>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- Beta Notes                                             -->
+<!-- ====================================================== -->
+
+<section class="section beta-page-section beta-searchable" data-search-title="Beta Notes">
+  <div class="beta-section-heading">
+    <h2>
+      <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+      Beta Notes
+    </h2>
+    <p>
+      Important information about this beta version.
+    </p>
+  </div>
+
+  <ul class="beta-notes-list">
+    <li>This beta is not the final September revamp.</li>
+    <li>Some visual styles and interactions may change before release.</li>
+    <li>Liquid-glass effects remain experimental.</li>
+    <li>Phone, foldable, tablet, landscape, desktop, and split-screen layouts may still be adjusted.</li>
+    <li>The Onyx navigation dock may receive additional animation, spacing, and compatibility refinements.</li>
+    <li>Custom backgrounds may affect contrast and readability.</li>
+    <li>The main creator shoutout sections remain active.</li>
+    <li>The final complete revamp is planned as v27.0.</li>
+  </ul>
+</section>
+
+<!-- ====================================================== -->
+<!-- Release Roadmap                                        -->
+<!-- ====================================================== -->
+
+<section class="section beta-page-section beta-searchable" data-search-title="Release Roadmap">
+  <div class="beta-section-heading">
+    <h2>
+      <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>
+      Release Roadmap
+    </h2>
+    <p>
+      The planned path for the beta and final revamp.
+    </p>
+  </div>
+
+  <div class="beta-roadmap">
+    <div class="beta-roadmap-item">
+      <span class="roadmap-dot"></span>
+      <div>
+        <strong>v26.5</strong>
+        <p>Current stable website base.</p>
+      </div>
     </div>
 
-    <!-- ==================================================== -->
-    <!-- No Search Results                                    -->
-    <!-- ==================================================== -->
+    <div class="beta-roadmap-item">
+      <span class="roadmap-dot"></span>
+      <div>
+        <strong>v26.6-beta.1</strong>
+        <p>Original partial beta revamp preview.</p>
+      </div>
+    </div>
 
-    <section
-      id="beta-no-results"
-      class="section beta-page-section beta-no-results"
-      hidden
-    >
-      <i
-        class="fa-solid fa-magnifying-glass"
-        aria-hidden="true"
-      ></i>
+    <div class="beta-roadmap-item">
+      <span class="roadmap-dot"></span>
+      <div>
+        <strong>v26.6-beta.2</strong>
+        <p>Business and academic availability improvements.</p>
+      </div>
+    </div>
 
-      <h2>No Results Found</h2>
+    <div class="beta-roadmap-item">
+      <span class="roadmap-dot"></span>
+      <div>
+        <strong>v26.6-beta.3</strong>
+        <p>Cleanup release that removed retired features and obsolete code.</p>
+      </div>
+    </div>
 
-      <p>
-        Try a different version number, feature, or keyword.
-      </p>
+    <div class="beta-roadmap-item">
+      <span class="roadmap-dot active"></span>
+      <div>
+        <strong>v26.6-beta.4</strong>
+        <p>Current Onyx navigation, responsive-layout, and Resume appearance update.</p>
+      </div>
+    </div>
 
-      <button
-        type="button"
-        id="reset-beta-search"
-        class="beta-action-button"
-      >
-        Clear Search
-      </button>
-    </section>
+    <div class="beta-roadmap-item">
+      <span class="roadmap-dot future"></span>
+      <div>
+        <strong>v26.6-beta.5+</strong>
+        <p>Additional beta fixes, accessibility updates, compatibility testing, and interface refinements if needed.</p>
+      </div>
+    </div>
+
+    <div class="beta-roadmap-item">
+      <span class="roadmap-dot future"></span>
+      <div>
+        <strong>v26.6-rc.1</strong>
+        <p>Release candidate and final testing.</p>
+      </div>
+    </div>
+
+    <div class="beta-roadmap-item">
+      <span class="roadmap-dot future"></span>
+      <div>
+        <strong>v27.0</strong>
+        <p>Full September 2026 website revamp.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- No Search Results                                      -->
+<!-- ====================================================== -->
+
+<section id="beta-no-results" class="section beta-page-section beta-no-results" hidden>
+  <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+  <h2>No Results Found</h2>
+  <p>Try a different version number, feature, or keyword.</p>
+  <button type="button" id="reset-beta-search" class="beta-action-button">
+    Clear Search
+  </button>
+</section>
 
     <!-- ==================================================== -->
     <!-- Tally Beta Feedback                                  -->
