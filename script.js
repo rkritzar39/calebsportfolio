@@ -111,239 +111,119 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-// =====================================================
-// Back to Top + Scroll Progress
+    // =====================================================
+// Back to Top + Scroll Progress (Unified System)
 // =====================================================
 
 (() => {
-  /* ===================================================== */
-  /* ELEMENTS                                              */
-  /* ===================================================== */
+    const scrollBtn = document.getElementById('scrollToTopBtn');
+    const progressIndicator = document.getElementById('progressIndicator');
+    const scrollPercent = document.getElementById('scrollPercent');
+    const scrollArrow = document.getElementById('scrollArrow');
 
-  const scrollShell = document.getElementById("scrollToTopShell");
-  const scrollBtn = document.getElementById("scrollToTopBtn");
-  const progressIndicator = document.getElementById("progressIndicator");
-  const scrollPercent = document.getElementById("scrollPercent");
+    if (!scrollBtn || !progressIndicator) return;
 
-  const dock = document.querySelector(".onyx-dock");
-  const dockItems = document.querySelectorAll(".dock-item");
-  const activeLens = document.querySelector(".dock-active-lens");
+    // --- Circle setup ---
+    const radius = progressIndicator.r.baseVal.value;
+    const circumference = 2 * Math.PI * radius;
 
-  if (!scrollShell || !scrollBtn || !progressIndicator || !dock || !activeLens) {
-    console.warn("Scroll orb or dock elements missing.");
-    return;
-  }
+    progressIndicator.style.strokeDasharray = `${circumference}`;
+    progressIndicator.style.strokeDashoffset = `${circumference}`;
 
-  /* ===================================================== */
-  /* PROGRESS RING SETUP                                   */
-  /* ===================================================== */
+    // --- State ---
+    let lastScrollTop = 0;
+    let ticking = false;
+    let fadeTimeout = null;
 
-  const radius = progressIndicator.r.baseVal.value;
-  const circumference = 2 * Math.PI * radius;
+    // =====================================================
+    // Core update loop
+    // =====================================================
+    function updateScrollState() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
 
-  progressIndicator.style.strokeDasharray = `${circumference}`;
-  progressIndicator.style.strokeDashoffset = `${circumference}`;
+        const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+        const percent = Math.round(progress * 100);
 
-  /* ===================================================== */
-  /* STATE                                                 */
-  /* ===================================================== */
+        // --- progress ring ---
+        const offset = circumference - progress * circumference;
+        progressIndicator.style.strokeDashoffset = offset;
 
-  let ticking = false;
-  let percentageFadeTimer = null;
-  let pressedPointerId = null;
+        // --- percentage text ---
+        if (scrollPercent) {
+            scrollPercent.textContent = `${percent}%`;
+        }
 
-  const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+        // --- visibility toggle ---
+        if (scrollTop > window.innerHeight * 0.2) {
+            scrollBtn.classList.remove('hidden');
+        } else {
+            scrollBtn.classList.add('hidden');
+        }
 
-  function motionIsDisabled() {
-    return (
-      reducedMotionQuery.matches ||
-      document.documentElement.classList.contains("motion-disabled") ||
-      document.body.classList.contains("motion-disabled")
-    );
-  }
+        // =====================================================
+        // Scroll direction detection (stable threshold)
+        // =====================================================
+        const delta = scrollTop - lastScrollTop;
 
-  /* ===================================================== */
-  /* SCROLL INFORMATION                                    */
-  /* ===================================================== */
+        if (Math.abs(delta) > 3) {
+            if (delta > 0) {
+                scrollBtn.classList.add('scroll-down');
+                scrollBtn.classList.remove('scroll-up');
+            } else {
+                scrollBtn.classList.add('scroll-up');
+                scrollBtn.classList.remove('scroll-down');
+            }
+        }
 
-  function getScrollInformation() {
-    const root = document.documentElement;
-    const body = document.body;
+        lastScrollTop = scrollTop;
 
-    const scrollTop = Math.max(
-      window.scrollY || 0,
-      root.scrollTop || 0,
-      body.scrollTop || 0
-    );
+        // =====================================================
+        // Percentage fade behavior
+        // =====================================================
+        if (scrollPercent) {
+            scrollPercent.classList.add('visible');
 
-    const documentHeight = Math.max(
-      root.scrollHeight,
-      root.offsetHeight,
-      root.clientHeight,
-      body.scrollHeight,
-      body.offsetHeight,
-      body.clientHeight
-    );
+            clearTimeout(fadeTimeout);
+            fadeTimeout = setTimeout(() => {
+                scrollPercent.classList.remove('visible');
+            }, 1200);
+        }
 
-    const scrollableHeight = Math.max(documentHeight - window.innerHeight, 0);
-
-    const rawProgress = scrollableHeight > 0 ? scrollTop / scrollableHeight : 0;
-    const progress = Math.min(Math.max(rawProgress, 0), 1);
-
-    return { scrollTop, scrollableHeight, progress };
-  }
-
-  /* ===================================================== */
-  /* PERCENTAGE DISPLAY                                    */
-  /* ===================================================== */
-
-  function showPercentageTemporarily() {
-    scrollPercent.classList.add("visible");
-
-    if (percentageFadeTimer !== null) {
-      clearTimeout(percentageFadeTimer);
+        ticking = false;
     }
 
-    percentageFadeTimer = setTimeout(() => {
-      scrollPercent.classList.remove("visible");
-      percentageFadeTimer = null;
-    }, 1200);
-  }
-
-  /* ===================================================== */
-  /* BUTTON VISIBILITY                                     */
-  /* ===================================================== */
-
-  function setButtonVisibility(shouldShow) {
-    scrollShell.classList.toggle("hidden", !shouldShow);
-    scrollShell.setAttribute("aria-hidden", String(!shouldShow));
-    scrollBtn.tabIndex = shouldShow ? 0 : -1;
-
-    if (!shouldShow) {
-      scrollBtn.classList.remove("is-pressed");
-      pressedPointerId = null;
-    }
-  }
-
-  /* ===================================================== */
-  /* UPDATE SCROLL STATE                                   */
-  /* ===================================================== */
-
-  function updateScrollState() {
-    const { scrollTop, scrollableHeight, progress } = getScrollInformation();
-
-    const percent = Math.round(progress * 100);
-    const offset = circumference - progress * circumference;
-
-    progressIndicator.style.strokeDashoffset = `${offset}`;
-    scrollPercent.textContent = `${percent}%`;
-
-    const revealPoint = window.innerHeight * 0.2;
-    const shouldShow = scrollableHeight > 0 && scrollTop > revealPoint;
-
-    setButtonVisibility(shouldShow);
-
-    if (shouldShow) {
-      showPercentageTemporarily();
+    // =====================================================
+    // rAF scroll handler (performance optimized)
+    // =====================================================
+    function onScroll() {
+        if (!ticking) {
+            window.requestAnimationFrame(updateScrollState);
+            ticking = true;
+        }
     }
 
-    ticking = false;
-  }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
 
-  function scheduleUpdate() {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(updateScrollState);
-    }
-  }
+    // initial render
+    updateScrollState();
 
-  /* ===================================================== */
-  /* SCROLL TO TOP ACTION                                  */
-  /* ===================================================== */
+    // =====================================================
+    // Scroll to top action
+    // =====================================================
+    scrollBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
 
-  function scrollToTop() {
-    scrollBtn.classList.remove("is-pressed");
-    pressedPointerId = null;
-
-    scrollPercent.classList.add("visible");
-
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: motionIsDisabled() ? "auto" : "smooth"
+        // reset arrow visibility state if used
+        if (scrollArrow) {
+            scrollArrow.style.opacity = "1";
+        }
     });
-  }
-
-  /* ===================================================== */
-  /* POINTER FEEDBACK                                      */
-  /* ===================================================== */
-
-  scrollBtn.addEventListener("pointerdown", (event) => {
-    if (event.pointerType === "mouse" && event.button !== 0) return;
-
-    pressedPointerId = event.pointerId;
-    scrollBtn.classList.add("is-pressed");
-
-    try {
-      scrollBtn.setPointerCapture(event.pointerId);
-    } catch {}
-  });
-
-  function clearPressedState(event) {
-    if (event && pressedPointerId !== null && event.pointerId !== pressedPointerId) return;
-
-    scrollBtn.classList.remove("is-pressed");
-    pressedPointerId = null;
-  }
-
-  scrollBtn.addEventListener("pointerup", clearPressedState);
-  scrollBtn.addEventListener("pointercancel", clearPressedState);
-  scrollBtn.addEventListener("lostpointercapture", clearPressedState);
-
-  scrollBtn.addEventListener("click", scrollToTop);
-
-  /* ===================================================== */
-  /* DOCK ACTIVE LENS                                      */
-  /* ===================================================== */
-
-  function updateDockLens(targetItem) {
-    const rect = targetItem.getBoundingClientRect();
-    const dockRect = dock.getBoundingClientRect();
-
-    const left = rect.left - dockRect.left;
-    const width = rect.width;
-
-    activeLens.style.left = `${left}px`;
-    activeLens.style.width = `${width}px`;
-  }
-
-  dockItems.forEach((item) => {
-    item.addEventListener("mouseenter", () => updateDockLens(item));
-    item.addEventListener("focus", () => updateDockLens(item));
-  });
-
-  /* ===================================================== */
-  /* BROWSER EVENTS                                        */
-  /* ===================================================== */
-
-  window.addEventListener("scroll", scheduleUpdate, { passive: true });
-  window.addEventListener("resize", scheduleUpdate, { passive: true });
-  window.addEventListener("orientationchange", scheduleUpdate, { passive: true });
-
-  window.addEventListener("pageshow", () => {
-    scheduleUpdate();
-  });
-
-  /* ===================================================== */
-  /* INITIAL STATE                                         */
-  /* ===================================================== */
-
-  scrollBtn.tabIndex = -1;
-  scrollShell.setAttribute("aria-hidden", "true");
-
-  updateScrollState();
 })();
-
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
     const acceptCookiesBtn = document.getElementById('cookieAccept');
