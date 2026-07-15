@@ -6063,107 +6063,123 @@ body.dark-mode .youtube-channel-card {
 }
 
 /* ===================================================== */
-/* Apple Vision Pro + Onyx Liquid Glass Scroll Orb (Unified) */
+/* Apple Vision Pro – Spatial Glass Scroll Orb (Full) */
 /* ===================================================== */
 
-/* === Shell (JS toggles .hidden) === */
-.scroll-to-top-shell {
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity .35s ease, transform .35s ease;
-}
-
-.scroll-to-top-shell.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(18px);
-}
-
-/* === Orb Base === */
 .scroll-to-top {
-    position: relative;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    cursor: pointer;
-    isolation: isolate;
-    overflow: hidden;
+	position: fixed;
+	bottom: calc(1.25rem + 78px);
+	left: 22px;
 
-    background:
-        linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 42%),
-        color-mix(in srgb, var(--content-bg) 68%, transparent);
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
 
-    border: 1px solid color-mix(in srgb, var(--border-color) 48%, transparent);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 10%, transparent),
+			transparent 42%
+		),
+		color-mix(in srgb, var(--content-bg) 68%, transparent);
 
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
+	border: 1px solid color-mix(in srgb, var(--border-color) 48%, transparent);
 
-    box-shadow:
-        0 0 0.8px rgba(255,255,255,0.55) inset,
-        0 2px 6px rgba(0,0,0,0.20),
-        0 12px 28px rgba(0,0,0,0.38),
-        0 24px 48px rgba(0,0,0,0.28);
+	backdrop-filter: blur(32px) saturate(180%);
+	-webkit-backdrop-filter: blur(32px) saturate(180%);
 
-    transition:
-        transform .25s ease,
-        box-shadow .3s ease,
-        opacity .4s ease,
-        background .3s ease,
-        border-color .3s ease;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	clip-path: circle(50%);
+	isolation: isolate;
+	overflow: hidden;
+
+	z-index: 9999;
+	cursor: pointer;
+
+	box-shadow:
+		0 0 0.8px rgba(255,255,255,0.55) inset,
+		0 2px 6px rgba(0,0,0,0.20),
+		0 12px 28px rgba(0,0,0,0.38),
+		0 24px 48px rgba(0,0,0,0.28);
+
+	transition:
+		transform .25s ease,
+		box-shadow .3s ease,
+		opacity .4s ease,
+		background .3s ease,
+		border-color .3s ease;
 }
 
-/* === Orb Shine Layers === */
 .scroll-to-top::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: var(--liquid-reflection);
-    mix-blend-mode: soft-light;
-    opacity: 0.38;
-    pointer-events: none;
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	background: var(--liquid-reflection);
+	mix-blend-mode: soft-light;
+	opacity: 0.38;
+	pointer-events: none;
 }
 
 .scroll-to-top::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 100%, rgba(0,0,0,0.18), transparent 68%);
-    opacity: 0.35;
-    pointer-events: none;
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	pointer-events: none;
+	background: radial-gradient(
+		circle at 50% 100%,
+		rgba(0,0,0,0.18),
+		transparent 68%
+	);
+	opacity: 0.35;
 }
 
-/* === Hover === */
+/* Hover state */
 .scroll-to-top:hover {
-    transform: scale(1.04);
-    background:
-        linear-gradient(180deg, color-mix(in srgb, white 12%, transparent), transparent 42%),
-        color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
-    border-color: color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
-    box-shadow:
-        0 0 1px rgba(255,255,255,0.72) inset,
-        0 3px 8px rgba(0,0,0,0.22),
-        0 16px 34px rgba(0,0,0,0.44),
-        0 30px 58px rgba(0,0,0,0.34),
-        0 0 14px color-mix(in srgb, var(--accent-color) 10%, transparent);
+	transform: scale(1.04);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 12%, transparent),
+			transparent 42%
+		),
+		color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
+	border-color: color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
+	box-shadow:
+		0 0 1px rgba(255,255,255,0.72) inset,
+		0 3px 8px rgba(0,0,0,0.22),
+		0 16px 34px rgba(0,0,0,0.44),
+		0 30px 58px rgba(0,0,0,0.34),
+		0 0 14px color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
-/* === Pressed === */
-.scroll-to-top.is-pressed {
-    transform: scale(0.94);
+/* Hidden state */
+.scroll-to-top.hidden {
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(10px);
 }
 
-/* === Scrolling Feedback === */
-.scroll-to-top.is-scrolling {
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.28),
-        0 0 22px color-mix(in srgb, var(--accent-color) 45%, transparent);
+/* ===================================================== */
+/* Direction states (arrow rotation control) */
+/* ===================================================== */
+
+.scroll-to-top .arrow-icon {
+	transform: translate(-50%, -50%) rotate(0deg);
+	transform-origin: center;
+	transition: transform .22s ease, opacity .22s ease, filter .22s ease;
+}
+
+.scroll-to-top.scroll-down .arrow-icon {
+	transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.scroll-to-top.scroll-up .arrow-icon {
+	transform: translate(-50%, -50%) rotate(0deg);
 }
 
 /* ===================================================== */
@@ -6171,32 +6187,34 @@ body.dark-mode .youtube-channel-card {
 /* ===================================================== */
 
 .progress-ring {
-    position: absolute;
-    width: 76%;
-    height: 76%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-90deg);
-    pointer-events: none;
+	position: absolute;
+	width: 76%;
+	height: 76%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(-90deg);
+	pointer-events: none;
 }
 
 .progress-bg {
-    fill: none;
-    stroke: color-mix(in srgb, var(--accent-color) 18%, transparent);
-    stroke-width: 3.3;
-    opacity: 0.2;
-    stroke-linecap: round;
+	fill: none;
+	stroke: color-mix(in srgb, var(--accent-color) 18%, transparent);
+	stroke-width: 3.3;
+	opacity: 0.2;
+	stroke-linecap: round;
 }
 
 .progress-indicator {
-    fill: none;
-    stroke: color-mix(in srgb, var(--accent-color) 88%, white 6%);
-    stroke-width: 3.3;
-    stroke-linecap: round;
-    stroke-dasharray: 141;
-    stroke-dashoffset: 141;
-    transition: stroke-dashoffset .25s ease;
-    filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 32%, transparent));
+	fill: none;
+	stroke: color-mix(in srgb, var(--accent-color) 88%, white 6%);
+	stroke-width: 3.3;
+	stroke-linecap: round;
+
+	stroke-dasharray: 141;
+	stroke-dashoffset: 141;
+
+	transition: stroke-dashoffset .25s ease;
+	filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 32%, transparent));
 }
 
 /* ===================================================== */
@@ -6204,39 +6222,31 @@ body.dark-mode .youtube-channel-card {
 /* ===================================================== */
 
 .arrow-icon {
-    position: absolute;
-    top: 38%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(0deg);
-    width: 20px;
-    height: 20px;
+	position: absolute;
+	top: 38%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(0deg);
 
-    background-image: url("data:image/svg+xml;utf8,\
-        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>\
-            <path d='M6 14L12 8L18 14' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/>\
-        </svg>");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+	width: 20px;
+	height: 20px;
 
-    opacity: 0.94;
-    filter: drop-shadow(0 0 4px rgba(0,0,0,0.24));
-    transition: transform .22s ease, opacity .22s ease, filter .22s ease;
+	background-image: url("data:image/svg+xml;utf8,\
+	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>\
+	  <path d='M6 14L12 8L18 14' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/>\
+	</svg>");
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-position: center;
+
+	opacity: 0.94;
+	filter: drop-shadow(0 0 4px rgba(0,0,0,0.24));
 }
 
+/* Hover arrow micro lift */
 .scroll-to-top:hover .arrow-icon {
-    opacity: 1;
-    transform: translate(-50%, -52%) rotate(0deg);
-    filter: drop-shadow(0 0 6px rgba(0,0,0,0.30));
-}
-
-/* Direction states */
-.scroll-to-top.scroll-down .arrow-icon {
-    transform: translate(-50%, -50%) rotate(180deg);
-}
-
-.scroll-to-top.scroll-up .arrow-icon {
-    transform: translate(-50%, -50%) rotate(0deg);
+	opacity: 1;
+	transform: translate(-50%, -52%) rotate(0deg);
+	filter: drop-shadow(0 0 6px rgba(0,0,0,0.30));
 }
 
 /* ===================================================== */
@@ -6244,61 +6254,67 @@ body.dark-mode .youtube-channel-card {
 /* ===================================================== */
 
 .percentage {
-    position: absolute;
-    top: 66%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.48rem;
-    font-weight: 650;
-    letter-spacing: 0.02em;
+	position: absolute;
+	top: 66%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 
-    color: color-mix(in srgb, var(--accent-color) 80%, var(--text-color));
-    opacity: 0;
+	font-size: 0.48rem;
+	font-weight: 650;
+	letter-spacing: 0.02em;
 
-    padding: 2px 5px;
-    border-radius: 999px;
+	color: color-mix(in srgb, var(--accent-color) 80%, var(--text-color));
+	opacity: 0;
 
-    background:
-        linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 60%),
-        color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+	padding: 2px 5px;
+	border-radius: 999px;
 
-    border: 1px solid color-mix(in srgb, var(--accent-color) 24%, transparent);
+	background:
+		linear-gradient(
+			180deg,
+			color-mix(in srgb, white 10%, transparent),
+			transparent 60%
+		),
+		color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
 
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+	border: 1px solid color-mix(in srgb, var(--accent-color) 24%, transparent);
 
-    box-shadow:
-        0 0 0.4px rgba(255,255,255,0.42) inset,
-        0 2px 5px rgba(0,0,0,0.18);
+	backdrop-filter: blur(6px);
+	-webkit-backdrop-filter: blur(6px);
 
-    pointer-events: none;
-    transition: opacity .35s ease;
+	box-shadow:
+		0 0 0.4px rgba(255,255,255,0.42) inset,
+		0 2px 5px rgba(0,0,0,0.18);
+
+	pointer-events: none;
+	transition: opacity .35s ease;
 }
 
 .percentage.visible {
-    opacity: 1;
+	opacity: 1;
 }
 
 /* ===================================================== */
-/* Mobile */
+/* Responsive scaling */
 /* ===================================================== */
 
 @media (max-width: 480px) {
-    .scroll-to-top {
-        width: 56px;
-        height: 56px;
-    }
+	.scroll-to-top {
+		width: 56px;
+		height: 56px;
+	}
 
-    .arrow-icon {
-        width: 17px;
-        height: 17px;
-    }
+	.arrow-icon {
+		width: 17px;
+		height: 17px;
+		top: 38%;
+	}
 
-    .percentage {
-        font-size: 0.44rem;
-    }
+	.percentage {
+		font-size: 0.44rem;
+		top: 66%;
+	}
 }
-
 
 /* ======================================================= */
 /* ONYX GLASS v2 – Version & Legal Sections               */
@@ -14368,388 +14384,4 @@ body.dark-mode .tech-search-input:-webkit-autofill {
   .beta-feedback-privacy {
     font-size: 0.88rem;
   }
-}
-
-/* ===================================================== */
-/* SCROLL ORB — Vision Pro Spatial Glass */
-/* ===================================================== */
-
-.scroll-orb-shell {
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity .35s ease, transform .35s ease;
-}
-
-.scroll-orb-shell.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(18px);
-}
-
-/* === Orb Button === */
-.scroll-orb {
-    position: relative;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    cursor: pointer;
-    isolation: isolate;
-    overflow: hidden;
-
-    background:
-        linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 42%),
-        color-mix(in srgb, var(--content-bg) 68%, transparent);
-
-    border: 1px solid color-mix(in srgb, var(--border-color) 48%, transparent);
-
-    backdrop-filter: blur(32px) saturate(180%);
-    -webkit-backdrop-filter: blur(32px) saturate(180%);
-
-    box-shadow:
-        0 0 0.8px rgba(255,255,255,0.55) inset,
-        0 2px 6px rgba(0,0,0,0.20),
-        0 12px 28px rgba(0,0,0,0.38),
-        0 24px 48px rgba(0,0,0,0.28);
-
-    transition:
-        transform .25s ease,
-        box-shadow .3s ease,
-        background .3s ease,
-        border-color .3s ease;
-}
-
-.scroll-orb::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: var(--liquid-reflection);
-    mix-blend-mode: soft-light;
-    opacity: 0.38;
-}
-
-.scroll-orb::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 100%, rgba(0,0,0,0.18), transparent 68%);
-    opacity: 0.35;
-}
-
-.scroll-orb:hover {
-    transform: scale(1.04);
-    background:
-        linear-gradient(180deg, color-mix(in srgb, white 12%, transparent), transparent 42%),
-        color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
-    border-color: color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
-}
-
-.scroll-orb.is-pressed {
-    transform: scale(0.94);
-}
-
-.scroll-orb.is-scrolling {
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.28),
-        0 0 22px color-mix(in srgb, var(--accent-color) 45%, transparent);
-}
-
-/* ===================================================== */
-/* Progress Ring */
-/* ===================================================== */
-
-.scroll-orb-ring {
-    position: absolute;
-    width: 76%;
-    height: 76%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-90deg);
-    pointer-events: none;
-}
-
-.scroll-orb-bg {
-    fill: none;
-    stroke: rgba(255,255,255,0.18);
-    stroke-width: 3.3;
-}
-
-.scroll-orb-indicator {
-    fill: none;
-    stroke: var(--accent-color);
-    stroke-width: 3.3;
-    stroke-linecap: round;
-    stroke-dasharray: 141;
-    stroke-dashoffset: 141;
-    transition: stroke-dashoffset .25s ease;
-}
-
-/* ===================================================== */
-/* Arrow Icon */
-/* ===================================================== */
-
-.scroll-orb-arrow {
-    width: 26px;
-    height: 26px;
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    stroke: var(--text-color);
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: transform .22s ease, opacity .22s ease;
-}
-
-.scroll-orb.scroll-down .scroll-orb-arrow {
-    transform: rotate(180deg);
-}
-
-.scroll-orb.scroll-up .scroll-orb-arrow {
-    transform: rotate(0deg);
-}
-
-/* ===================================================== */
-/* Percentage Badge */
-/* ===================================================== */
-
-.scroll-orb-percent {
-    position: absolute;
-    bottom: -22px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--secondary-text);
-    opacity: 0;
-    transition: opacity .35s ease;
-    pointer-events: none;
-}
-
-.scroll-orb-percent.visible {
-    opacity: 1;
-}
-
-/* ===================================================== */
-/* Dark Mode */
-/* ===================================================== */
-
-body.dark-mode .scroll-orb {
-    background: color-mix(in srgb, var(--glass-bg-dark) 72%, transparent);
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.12),
-        0 12px 32px rgba(0,0,0,0.65);
-}
-
-body.dark-mode .scroll-orb-bg {
-    stroke: rgba(255,255,255,0.12);
-}
-
-body.dark-mode .scroll-orb-arrow {
-    stroke: var(--text-color);
-}
-
-body.dark-mode .scroll-orb-percent {
-    color: var(--secondary-text);
-}
-
-/* ===================================================== */
-/* Mobile */
-/* ===================================================== */
-
-@media (max-width: 480px) {
-    .scroll-orb {
-        width: 56px;
-        height: 56px;
-    }
-
-    .scroll-orb-arrow {
-        width: 17px;
-        height: 17px;
-    }
-
-    .scroll-orb-percent {
-        font-size: 0.44rem;
-    }
-}
-
-/* ===================================================== */
-/* ONYX DOCK — Liquid Glass */
-/* ===================================================== */
-
-.onyx-dock-wrapper {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    z-index: 9998;
-    display: flex;
-    justify-content: center;
-    pointer-events: none;
-}
-
-.onyx-dock {
-    pointer-events: auto;
-    display: flex;
-    gap: 1.25rem;
-    padding: 0.75rem 1.25rem;
-
-    background:
-        var(--bubble-gradient),
-        var(--liquid-refraction),
-        color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
-    border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
-
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-
-    border-radius: var(--radius-pill);
-    box-shadow:
-        var(--bubble-highlight),
-        var(--bubble-shadow);
-
-    position: relative;
-    isolation: isolate;
-}
-
-/* Active Lens */
-.dock-active-lens {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: calc(25% - 0.5rem);
-    border-radius: var(--radius-pill);
-
-    background:
-        linear-gradient(180deg, color-mix(in srgb, var(--glow-color) 22%, transparent), transparent 60%),
-        color-mix(in srgb, var(--content-bg) 82%, transparent);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.22),
-        0 10px 22px rgba(0,0,0,0.25);
-
-    transition: left .35s cubic-bezier(.22,1,.36,1), width .35s cubic-bezier(.22,1,.36,1);
-    z-index: 1;
-}
-
-/* Dock Items */
-.dock-item {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-
-    padding: 0.35rem 0.5rem;
-    border-radius: var(--radius-pill);
-
-    color: var(--secondary-text);
-    transition: color .22s ease, transform .22s cubic-bezier(.22,1,.36,1);
-}
-
-.dock-item:hover {
-    color: var(--accent-color);
-    transform: translateY(-2px);
-}
-
-.dock-item:active {
-    transform: scale(0.94);
-}
-
-/* Icons */
-.dock-icon {
-    width: 1.55rem;
-    height: 1.55rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform .22s cubic-bezier(.22,1,.36,1);
-}
-
-.dock-icon svg {
-    width: 100%;
-    height: 100%;
-    stroke: var(--icon-color);
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    transition: stroke .22s ease;
-}
-
-.dock-item:hover .dock-icon {
-    transform: scale(1.18);
-}
-
-.dock-item:hover svg {
-    stroke: var(--accent-color);
-}
-
-/* Labels */
-.dock-label {
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--secondary-text);
-    transition: color .22s ease;
-}
-
-.dock-item:hover .dock-label {
-    color: var(--accent-color);
-}
-
-/* Active State */
-.dock-item.active .dock-label,
-.dock-item.active svg {
-    color: var(--accent-color);
-    stroke: var(--accent-color);
-}
-
-.dock-item.active .dock-icon {
-    transform: scale(1.22);
-}
-
-/* Dark Mode */
-body.dark-mode .onyx-dock {
-    background:
-        var(--bubble-gradient),
-        var(--liquid-refraction),
-        color-mix(in srgb, var(--content-bg) 88%, black 12%);
-    border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
-}
-
-body.dark-mode .dock-label {
-    color: var(--secondary-text);
-}
-
-body.dark-mode .dock-icon svg {
-    stroke: var(--icon-color);
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-    .onyx-dock {
-        gap: 0.85rem;
-        padding: 0.65rem 1rem;
-    }
-
-    .dock-icon {
-        width: 1.35rem;
-        height: 1.35rem;
-    }
-
-    .dock-label {
-        font-size: 0.7rem;
-    }
-
-    .dock-active-lens {
-        width: calc(25% - 0.35rem);
-    }
 }
