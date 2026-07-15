@@ -111,119 +111,248 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTime();
     setInterval(updateTime, 1000);
 
-    // =====================================================
-// Back to Top + Scroll Progress (Unified System)
+// =====================================================
+// Back to Top + Scroll Progress
 // =====================================================
 
 (() => {
-    const scrollBtn = document.getElementById('scrollToTopBtn');
-    const progressIndicator = document.getElementById('progressIndicator');
-    const scrollPercent = document.getElementById('scrollPercent');
-    const scrollArrow = document.getElementById('scrollArrow');
+	const scrollShell = document.getElementById("scrollToTopShell");
+	const scrollBtn = document.getElementById("scrollToTopBtn");
+	const progressIndicator = document.getElementById("progressIndicator");
+	const scrollPercent = document.getElementById("scrollPercent");
 
-    if (!scrollBtn || !progressIndicator) return;
+	if (!scrollShell || !scrollBtn || !progressIndicator) {
+		return;
+	}
 
-    // --- Circle setup ---
-    const radius = progressIndicator.r.baseVal.value;
-    const circumference = 2 * Math.PI * radius;
+	/* ===================================================== */
+	/* Progress Ring Setup                                   */
+	/* ===================================================== */
 
-    progressIndicator.style.strokeDasharray = `${circumference}`;
-    progressIndicator.style.strokeDashoffset = `${circumference}`;
+	const radius = progressIndicator.r.baseVal.value;
+	const circumference = 2 * Math.PI * radius;
 
-    // --- State ---
-    let lastScrollTop = 0;
-    let ticking = false;
-    let fadeTimeout = null;
+	progressIndicator.style.strokeDasharray = `${circumference}`;
+	progressIndicator.style.strokeDashoffset = `${circumference}`;
 
-    // =====================================================
-    // Core update loop
-    // =====================================================
-    function updateScrollState() {
-        const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+	/* ===================================================== */
+	/* State                                                 */
+	/* ===================================================== */
 
-        const progress = docHeight > 0 ? scrollTop / docHeight : 0;
-        const percent = Math.round(progress * 100);
+	let ticking = false;
+	let percentageFadeTimer = null;
+	let scrollEndTimer = null;
+	let isScrollingToTop = false;
 
-        // --- progress ring ---
-        const offset = circumference - progress * circumference;
-        progressIndicator.style.strokeDashoffset = offset;
+	const reducedMotionQuery = window.matchMedia(
+		"(prefers-reduced-motion: reduce)"
+	);
 
-        // --- percentage text ---
-        if (scrollPercent) {
-            scrollPercent.textContent = `${percent}%`;
-        }
+	/* ===================================================== */
+	/* Motion Preference                                     */
+	/* ===================================================== */
 
-        // --- visibility toggle ---
-        if (scrollTop > window.innerHeight * 0.2) {
-            scrollBtn.classList.remove('hidden');
-        } else {
-            scrollBtn.classList.add('hidden');
-        }
+	function motionIsDisabled() {
+		return (
+			reducedMotionQuery.matches ||
+			document.documentElement.classList.contains("motion-disabled") ||
+			document.body.classList.contains("motion-disabled")
+		);
+	}
 
-        // =====================================================
-        // Scroll direction detection (stable threshold)
-        // =====================================================
-        const delta = scrollTop - lastScrollTop;
+	/* ===================================================== */
+	/* Scroll Information                                    */
+	/* ===================================================== */
 
-        if (Math.abs(delta) > 3) {
-            if (delta > 0) {
-                scrollBtn.classList.add('scroll-down');
-                scrollBtn.classList.remove('scroll-up');
-            } else {
-                scrollBtn.classList.add('scroll-up');
-                scrollBtn.classList.remove('scroll-down');
-            }
-        }
+	function getScrollInformation() {
+		const documentElement = document.documentElement;
+		const body = document.body;
 
-        lastScrollTop = scrollTop;
+		const scrollTop = Math.max(
+			window.scrollY || 0,
+			documentElement.scrollTop || 0,
+			body.scrollTop || 0
+		);
 
-        // =====================================================
-        // Percentage fade behavior
-        // =====================================================
-        if (scrollPercent) {
-            scrollPercent.classList.add('visible');
+		const documentHeight = Math.max(
+			documentElement.scrollHeight,
+			documentElement.offsetHeight,
+			documentElement.clientHeight,
+			body.scrollHeight,
+			body.offsetHeight,
+			body.clientHeight
+		);
 
-            clearTimeout(fadeTimeout);
-            fadeTimeout = setTimeout(() => {
-                scrollPercent.classList.remove('visible');
-            }, 1200);
-        }
+		const scrollableHeight = Math.max(
+			documentHeight - window.innerHeight,
+			0
+		);
 
-        ticking = false;
-    }
+		const rawProgress = scrollableHeight > 0 ? scrollTop / scrollableHeight : 0;
+		const progress = Math.min(Math.max(rawProgress, 0), 1);
 
-    // =====================================================
-    // rAF scroll handler (performance optimized)
-    // =====================================================
-    function onScroll() {
-        if (!ticking) {
-            window.requestAnimationFrame(updateScrollState);
-            ticking = true;
-        }
-    }
+		return {
+			scrollTop,
+			scrollableHeight,
+			progress
+		};
+	}
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+	/* ===================================================== */
+	/* Percentage Visibility                                 */
+	/* ===================================================== */
 
-    // initial render
-    updateScrollState();
+	function showPercentageTemporarily() {
+		if (!scrollPercent) return;
 
-    // =====================================================
-    // Scroll to top action
-    // =====================================================
-    scrollBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+		scrollPercent.classList.add("visible");
 
-        // reset arrow visibility state if used
-        if (scrollArrow) {
-            scrollArrow.style.opacity = "1";
-        }
-    });
+		if (percentageFadeTimer !== null) {
+			window.clearTimeout(percentageFadeTimer);
+		}
+
+		percentageFadeTimer = window.setTimeout(() => {
+			scrollPercent.classList.remove("visible");
+			percentageFadeTimer = null;
+		}, 1200);
+	}
+
+	/* ===================================================== */
+	/* Update Progress                                       */
+	/* ===================================================== */
+
+	function updateScrollState() {
+		const { scrollTop, scrollableHeight, progress } = getScrollInformation();
+
+		const percentage = Math.round(progress * 100);
+		const progressOffset = circumference - progress * circumference;
+
+		progressIndicator.style.strokeDashoffset = `${progressOffset}`;
+
+		if (scrollPercent) {
+			scrollPercent.textContent = `${percentage}%`;
+		}
+
+		/*
+		 * Reveal after scrolling 20% of one viewport.
+		 */
+		const revealPoint = window.innerHeight * 0.2;
+		const shouldShow = scrollableHeight > 0 && scrollTop > revealPoint;
+
+		scrollShell.classList.toggle("hidden", !shouldShow);
+
+		/*
+		 * Keep the button unavailable while hidden.
+		 */
+		scrollBtn.tabIndex = shouldShow ? 0 : -1;
+		scrollBtn.setAttribute("aria-hidden", String(!shouldShow));
+
+		if (shouldShow) {
+			showPercentageTemporarily();
+		}
+
+		/*
+		 * Detect when the smooth scroll reaches the top.
+		 */
+		if (isScrollingToTop && scrollTop <= 2) {
+			isScrollingToTop = false;
+			scrollShell.classList.add("hidden");
+		}
+
+		ticking = false;
+	}
+
+	/* ===================================================== */
+	/* Animation Frame Scheduler                             */
+	/* ===================================================== */
+
+	function scheduleScrollUpdate() {
+		if (ticking) return;
+		ticking = true;
+		window.requestAnimationFrame(updateScrollState);
+	}
+
+	/* ===================================================== */
+	/* Smooth Scroll Action                                  */
+	/* ===================================================== */
+
+	function scrollToTop() {
+		isScrollingToTop = true;
+		scrollBtn.classList.add("is-scrolling");
+
+		if (scrollPercent) {
+			scrollPercent.classList.add("visible");
+		}
+
+		window.scrollTo({
+			top: 0,
+			left: 0,
+			behavior: motionIsDisabled() ? "auto" : "smooth"
+		});
+
+		if (scrollEndTimer !== null) {
+			window.clearTimeout(scrollEndTimer);
+		}
+
+		scrollEndTimer = window.setTimeout(() => {
+			scrollBtn.classList.remove("is-scrolling");
+			scrollEndTimer = null;
+		}, motionIsDisabled() ? 20 : 700);
+	}
+
+	/* ===================================================== */
+	/* Pointer Feedback                                      */
+	/* ===================================================== */
+
+	scrollBtn.addEventListener("pointerdown", () => {
+		scrollBtn.classList.add("is-pressed");
+	});
+
+	function clearPressedState() {
+		scrollBtn.classList.remove("is-pressed");
+	}
+
+	scrollBtn.addEventListener("pointerup", clearPressedState);
+	scrollBtn.addEventListener("pointercancel", clearPressedState);
+	scrollBtn.addEventListener("pointerleave", clearPressedState);
+
+	/* ===================================================== */
+	/* Click Action                                          */
+	/* ===================================================== */
+
+	scrollBtn.addEventListener("click", scrollToTop);
+
+	/* ===================================================== */
+	/* Keyboard Action                                       */
+	/* ===================================================== */
+
+	scrollBtn.addEventListener("keydown", (event) => {
+		if (event.key !== "Enter" && event.key !== " ") {
+			return;
+		}
+		event.preventDefault();
+		scrollToTop();
+	});
+
+	/* ===================================================== */
+	/* Browser Events                                        */
+	/* ===================================================== */
+
+	window.addEventListener("scroll", scheduleScrollUpdate, { passive: true });
+	window.addEventListener("resize", scheduleScrollUpdate, { passive: true });
+	window.addEventListener("orientationchange", scheduleScrollUpdate, { passive: true });
+	window.addEventListener("pageshow", scheduleScrollUpdate);
+
+	/* ===================================================== */
+	/* Initial State                                         */
+	/* ===================================================== */
+
+	scrollBtn.tabIndex = -1;
+	scrollBtn.setAttribute("aria-hidden", "true");
+
+	updateScrollState();
 })();
+
     // --- Cookie Consent ---
     const cookieConsent = document.getElementById('cookieConsent');
     const acceptCookiesBtn = document.getElementById('cookieAccept');
