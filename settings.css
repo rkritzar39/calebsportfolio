@@ -3722,3 +3722,969 @@ html.dark-mode body .delay-info-button::before {
         transition: none !important;
     }
 }
+
+/* ======================================================= */
+/* === Connected Scroll-To-Top Dock Extension ============ */
+/* ======================================================= */
+
+/* ======================================================= */
+/* Dock Wrapper                                            */
+/* ======================================================= */
+
+.onyx-dock-wrapper {
+    --scroll-bubble-size: 4rem;
+    --scroll-bubble-left: 0.75rem;
+    --scroll-bubble-rise: 2.75rem;
+
+    box-sizing: border-box;
+
+    position: fixed;
+
+    left: 50%;
+
+    bottom:
+        max(
+            0.875rem,
+            calc(
+                env(safe-area-inset-bottom) +
+                0.5rem
+            )
+        );
+
+    z-index: 9999;
+
+    width: var(--dock-width);
+    height: var(--dock-height);
+
+    overflow: visible;
+    isolation: isolate;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    transform:
+        translateX(-50%)
+        translateY(1rem)
+        scale(0.975);
+
+    transition:
+        opacity 0.24s ease,
+        transform 0.48s var(--dock-easing);
+}
+
+/*
+ * Dock JavaScript adds .dock-ready to .onyx-dock.
+ * :has() lets the wrapper follow that state.
+ */
+.onyx-dock-wrapper:has(.onyx-dock.dock-ready) {
+    opacity: 1;
+
+    transform:
+        translateX(-50%)
+        translateY(0)
+        scale(1);
+}
+
+/* Fallback when :has() is unavailable. */
+.onyx-dock-wrapper.wrapper-ready {
+    opacity: 1;
+
+    transform:
+        translateX(-50%)
+        translateY(0)
+        scale(1);
+}
+
+/* ======================================================= */
+/* Override Original Fixed Dock Positioning                 */
+/* ======================================================= */
+
+.onyx-dock-wrapper > .onyx-dock {
+    position: relative;
+
+    left: auto;
+    bottom: auto;
+
+    z-index: 2;
+
+    width: 100%;
+    height: 100%;
+
+    opacity: 1;
+
+    transform: none;
+
+    pointer-events: auto;
+
+    /*
+     * Keep the original clipping so the lens and internal
+     * reflection remain inside the dock capsule.
+     */
+    overflow: hidden;
+}
+
+.onyx-dock-wrapper > .onyx-dock.dock-ready {
+    opacity: 1;
+    transform: none;
+}
+
+.onyx-dock-wrapper > .onyx-dock.is-pressing {
+    transform:
+        translateY(0.0625rem)
+        scale(0.992);
+}
+
+/* ======================================================= */
+/* Scroll-To-Top Shell                                     */
+/* ======================================================= */
+
+.scroll-to-top-shell {
+    position: absolute;
+
+    top:
+        calc(
+            var(--scroll-bubble-rise) 
+            -1
+        );
+
+    left: var(--scroll-bubble-left);
+
+    z-index: 5;
+
+    width: var(--scroll-bubble-size);
+
+    height:
+        calc(
+            var(--scroll-bubble-size) +
+            2rem
+        );
+
+    opacity: 1;
+    visibility: visible;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+    transform-origin: 50% 100%;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.32s ease,
+        visibility 0.32s ease,
+        transform 0.48s var(--dock-easing);
+}
+
+.scroll-to-top-shell.hidden {
+    opacity: 0;
+    visibility: hidden;
+
+    transform:
+        translateY(2.5rem)
+        scale(0.72);
+}
+
+/* ======================================================= */
+/* Liquid Bridge                                           */
+/* ======================================================= */
+
+.scroll-to-top-bridge {
+    position: absolute;
+
+    top:
+        calc(
+            var(--scroll-bubble-size) -
+            1rem
+        );
+
+    left: 50%;
+
+    z-index: 1;
+
+    width: 3.875rem;
+    height: 3rem;
+
+    transform: translateX(-50%);
+
+    border-left:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--dock-border) 80%,
+            transparent
+        );
+
+    border-right:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--dock-border) 58%,
+            transparent
+        );
+
+    background:
+        radial-gradient(
+            circle at 35% 0%,
+            rgba(255, 255, 255, 0.2),
+            transparent 62%
+        ),
+        linear-gradient(
+            180deg,
+            color-mix(
+                in srgb,
+                var(--dock-surface) 96%,
+                transparent
+            ),
+            var(--dock-surface)
+        );
+
+    backdrop-filter: var(--dock-blur);
+    -webkit-backdrop-filter: var(--dock-blur);
+
+    /*
+     * Wider at the bottom so the material appears to
+     * flow naturally into the navigation dock.
+     */
+    clip-path:
+        polygon(
+            18% 0,
+            82% 0,
+            100% 100%,
+            0 100%
+        );
+
+    box-shadow:
+        inset 0 1px 0
+            var(--dock-specular);
+
+    pointer-events: none;
+}
+
+.scroll-to-top-bridge::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            125deg,
+            rgba(255, 255, 255, 0.22),
+            transparent 58%
+        );
+
+    opacity: 0.48;
+
+    pointer-events: none;
+}
+
+/* ======================================================= */
+/* Scroll-To-Top Bubble                                    */
+/* ======================================================= */
+
+.scroll-to-top {
+    appearance: none;
+    -webkit-appearance: none;
+
+    box-sizing: border-box;
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    z-index: 3;
+
+    width: var(--scroll-bubble-size);
+    height: var(--scroll-bubble-size);
+
+    display: grid;
+    place-items: center;
+
+    margin: 0;
+    padding: 0;
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--dock-border) 90%,
+            rgba(255, 255, 255, 0.18)
+        );
+
+    border-radius: 50%;
+
+    color: var(--dock-text);
+
+    font: inherit;
+
+    background:
+        radial-gradient(
+            circle at 28% 14%,
+            rgba(255, 255, 255, 0.26),
+            transparent 48%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.09),
+            rgba(0, 0, 0, 0.08)
+        ),
+        var(--dock-surface);
+
+    backdrop-filter: var(--dock-blur);
+    -webkit-backdrop-filter: var(--dock-blur);
+
+    box-shadow:
+        inset 0 1px 0
+            var(--dock-specular),
+        inset 0 0 0 1px
+            var(--dock-inner-light),
+        0 0.5rem 1.125rem -0.4rem
+            var(--dock-shadow-color),
+        0 1.25rem 2.5rem -1rem
+            var(--dock-shadow-color);
+
+    cursor: pointer;
+
+    isolation: isolate;
+    overflow: hidden;
+
+    pointer-events: auto;
+
+    transform:
+        translateY(0)
+        scale(1);
+
+    transform-origin: 50% 100%;
+
+    transition:
+        transform 0.25s var(--dock-easing),
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.3s ease;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Reflection Layer */
+
+.scroll-to-top::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            125deg,
+            rgba(255, 255, 255, 0.34),
+            rgba(255, 255, 255, 0.07) 44%,
+            transparent 70%
+        );
+
+    mix-blend-mode: soft-light;
+
+    opacity: 0.5;
+
+    pointer-events: none;
+}
+
+/* Depth Layer */
+
+.scroll-to-top::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: 0;
+
+    border-radius: inherit;
+
+    background:
+        radial-gradient(
+            circle at 50% 100%,
+            rgba(0, 0, 0, 0.2),
+            transparent 68%
+        );
+
+    opacity: 0.58;
+
+    pointer-events: none;
+}
+
+/* ======================================================= */
+/* Hover State                                             */
+/* ======================================================= */
+
+@media (hover: hover) and (pointer: fine) {
+    .scroll-to-top:hover {
+        border-color:
+            color-mix(
+                in srgb,
+                var(--dock-accent) 48%,
+                var(--dock-border)
+            );
+
+        transform:
+            translateY(-0.125rem)
+            scale(1.035);
+
+        box-shadow:
+            inset 0 1px 0
+                var(--dock-specular),
+            inset 0 0 0 1px
+                var(--dock-inner-light),
+            0 0.625rem 1.375rem -0.4rem
+                var(--dock-shadow-color),
+            0 1.375rem 2.875rem -1rem
+                var(--dock-shadow-color),
+            0 0 1.125rem
+                color-mix(
+                    in srgb,
+                    var(--dock-accent) 18%,
+                    transparent
+                );
+    }
+}
+
+/* ======================================================= */
+/* Press State                                             */
+/* ======================================================= */
+
+.scroll-to-top:active,
+.scroll-to-top.is-pressed {
+    transform:
+        translateY(0.0625rem)
+        scale(0.94);
+
+    transition-duration: 0.12s;
+}
+
+/* ======================================================= */
+/* Keyboard Focus                                          */
+/* ======================================================= */
+
+.scroll-to-top:focus {
+    outline: none;
+}
+
+.scroll-to-top:focus-visible {
+    outline:
+        0.125rem solid
+        color-mix(
+            in srgb,
+            var(--dock-accent) 76%,
+            white 24%
+        );
+
+    outline-offset: 0.1875rem;
+}
+
+/* ======================================================= */
+/* SVG Progress Ring                                       */
+/* ======================================================= */
+
+.progress-ring {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    z-index: 2;
+
+    width: 78%;
+    height: 78%;
+
+    transform:
+        translate(-50%, -50%)
+        rotate(-90deg);
+
+    overflow: visible;
+
+    pointer-events: none;
+}
+
+.progress-bg {
+    fill: none;
+
+    stroke:
+        color-mix(
+            in srgb,
+            var(--dock-accent) 20%,
+            transparent
+        );
+
+    stroke-width: 3.3;
+    stroke-linecap: round;
+
+    opacity: 0.34;
+}
+
+.progress-indicator {
+    fill: none;
+
+    stroke:
+        color-mix(
+            in srgb,
+            var(--dock-accent) 90%,
+            white 10%
+        );
+
+    stroke-width: 3.3;
+    stroke-linecap: round;
+
+    stroke-dasharray: 138.23;
+    stroke-dashoffset: 138.23;
+
+    filter:
+        drop-shadow(
+            0 0 0.1875rem
+            color-mix(
+                in srgb,
+                var(--dock-accent) 48%,
+                transparent
+            )
+        );
+
+    transition:
+        stroke-dashoffset
+        0.16s
+        linear;
+}
+
+/* ======================================================= */
+/* Inline SVG Up Arrow                                     */
+/* ======================================================= */
+
+.scroll-to-top .arrow-icon {
+    position: absolute;
+
+    top: 38%;
+    left: 50%;
+
+    z-index: 4;
+
+    width: 1.25rem;
+    height: 1.25rem;
+
+    color:
+        color-mix(
+            in srgb,
+            var(--dock-text) 88%,
+            var(--dock-accent) 12%
+        );
+
+    opacity: 0.96;
+
+    overflow: visible;
+
+    transform:
+        translate(-50%, -50%);
+
+    transform-origin: center;
+
+    pointer-events: none;
+
+    filter:
+        drop-shadow(
+            0 1px 1px
+            rgba(0, 0, 0, 0.28)
+        );
+
+    transition:
+        transform 0.22s ease,
+        color 0.22s ease,
+        filter 0.22s ease;
+}
+
+.scroll-to-top .arrow-icon path {
+    fill: none;
+
+    stroke: currentColor;
+    stroke-width: 2.35;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+
+    vector-effect: non-scaling-stroke;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .scroll-to-top:hover .arrow-icon {
+        color:
+            color-mix(
+                in srgb,
+                var(--dock-accent) 72%,
+                var(--dock-text) 28%
+            );
+
+        transform:
+            translate(-50%, -56%);
+
+        filter:
+            drop-shadow(
+                0 0 0.4rem
+                color-mix(
+                    in srgb,
+                    var(--dock-accent) 44%,
+                    transparent
+                )
+            );
+    }
+}
+
+.scroll-to-top:active .arrow-icon,
+.scroll-to-top.is-pressed .arrow-icon {
+    transform:
+        translate(-50%, -48%)
+        scale(0.9);
+}
+
+/* ======================================================= */
+/* Percentage Badge                                        */
+/* ======================================================= */
+
+.scroll-to-top .percentage {
+    position: absolute;
+
+    top: 67%;
+    left: 50%;
+
+    z-index: 4;
+
+    min-width: 1.5rem;
+
+    padding:
+        0.0625rem
+        0.3125rem;
+
+    border:
+        1px solid
+        color-mix(
+            in srgb,
+            var(--dock-accent) 28%,
+            transparent
+        );
+
+    border-radius: 999px;
+
+    color:
+        color-mix(
+            in srgb,
+            var(--dock-accent) 84%,
+            var(--dock-text) 16%
+        );
+
+    background:
+        color-mix(
+            in srgb,
+            var(--dock-accent) 9%,
+            var(--dock-surface)
+        );
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Text",
+        sans-serif;
+
+    font-size: 0.48rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+
+    text-align: center;
+
+    opacity: 0;
+
+    transform:
+        translate(-50%, -50%);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.3s ease;
+}
+
+.scroll-to-top .percentage.visible,
+.scroll-to-top:hover .percentage,
+.scroll-to-top:focus-visible .percentage {
+    opacity: 1;
+}
+
+/* ======================================================= */
+/* Light Appearance                                        */
+/* ======================================================= */
+
+body.light-e .scroll-to-top,
+body.light-mode .scroll-to-top {
+    background:
+        radial-gradient(
+            circle at 30% 16%,
+            rgba(255, 255, 255, 0.95),
+            transparent 48%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.72),
+            rgba(223, 234, 247, 0.46)
+        ),
+        var(--dock-surface);
+}
+
+body.light-e .scroll-to-top-bridge,
+body.light-mode .scroll-to-top-bridge {
+    background:
+        radial-gradient(
+            circle at 35% 0%,
+            rgba(255, 255, 255, 0.76),
+            transparent 58%
+        ),
+        var(--dock-surface);
+}
+
+/* ======================================================= */
+/* Dark Appearance                                         */
+/* ======================================================= */
+
+body.dark-mode .scroll-to-top,
+html.dark-mode body .scroll-to-top {
+    background:
+        radial-gradient(
+            circle at 30% 17%,
+            rgba(255, 255, 255, 0.16),
+            transparent 46%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.07),
+            rgba(0, 0, 0, 0.18)
+        ),
+        var(--dock-surface);
+}
+
+body.dark-mode .scroll-to-top-bridge,
+html.dark-mode body .scroll-to-top-bridge {
+    background:
+        radial-gradient(
+            circle at 35% 0%,
+            rgba(255, 255, 255, 0.12),
+            transparent 62%
+        ),
+        var(--dock-surface);
+}
+
+/* ======================================================= */
+/* Clear Appearance                                        */
+/* ======================================================= */
+
+body.clear-mode .scroll-to-top,
+body.clear-mode .scroll-to-top-bridge {
+    background:
+        color-mix(
+            in srgb,
+            var(--content-bg) 28%,
+            transparent
+        );
+}
+
+/* ======================================================= */
+/* Tinted Appearance                                       */
+/* ======================================================= */
+
+body.tinted-mode .scroll-to-top,
+body.tinted-mode .scroll-to-top-bridge {
+    background:
+        color-mix(
+            in srgb,
+            var(--dock-accent) 9%,
+            var(--content-bg) 48%
+        );
+}
+
+/* ======================================================= */
+/* Mobile                                                  */
+/* ======================================================= */
+
+@media (max-width: 600px) {
+    .onyx-dock-wrapper {
+        --scroll-bubble-size: 3.625rem;
+        --scroll-bubble-left: 0.625rem;
+        --scroll-bubble-rise: 2.5rem;
+
+        bottom:
+            max(
+                0.625rem,
+                calc(
+                    env(safe-area-inset-bottom) +
+                    0.375rem
+                )
+            );
+    }
+
+    .scroll-to-top-shell {
+        height:
+            calc(
+                var(--scroll-bubble-size) +
+                1.875rem
+            );
+    }
+
+    .scroll-to-top-bridge {
+        top:
+            calc(
+                var(--scroll-bubble-size) -
+                0.875rem
+            );
+
+        width: 3.5rem;
+        height: 2.75rem;
+    }
+
+    .scroll-to-top .arrow-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+
+    .scroll-to-top .percentage {
+        top: 68%;
+
+        font-size: 0.44rem;
+    }
+}
+
+/* ======================================================= */
+/* Extra-Small Phones                                      */
+/* ======================================================= */
+
+@media (max-width: 390px) {
+    .onyx-dock-wrapper {
+        --scroll-bubble-size: 3.5rem;
+        --scroll-bubble-left: 0.5rem;
+        --scroll-bubble-rise: 2.375rem;
+    }
+
+    .scroll-to-top-bridge {
+        width: 3.375rem;
+    }
+}
+
+/* ======================================================= */
+/* High Contrast                                           */
+/* ======================================================= */
+
+body.high-contrast .scroll-to-top {
+    color: #000000 !important;
+    background: #ffff00 !important;
+
+    border:
+        0.1875rem solid
+        #ffff00 !important;
+
+    box-shadow: none !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.high-contrast .scroll-to-top-bridge {
+    background: #000000 !important;
+
+    border-color: #ffff00 !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.high-contrast .progress-bg {
+    stroke:
+        rgba(
+            0,
+            0,
+            0,
+            0.28
+        ) !important;
+}
+
+body.high-contrast .progress-indicator {
+    stroke: #000000 !important;
+}
+
+body.high-contrast
+.scroll-to-top
+.arrow-icon path {
+    stroke: #000000 !important;
+}
+
+body.high-contrast
+.scroll-to-top
+.percentage {
+    color: #000000 !important;
+    background: #ffff00 !important;
+    border-color: #000000 !important;
+}
+
+/* ======================================================= */
+/* Reduced Motion                                          */
+/* ======================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .onyx-dock-wrapper,
+    .scroll-to-top-shell,
+    .scroll-to-top,
+    .scroll-to-top .arrow-icon,
+    .progress-indicator,
+    .scroll-to-top .percentage {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .onyx-dock-wrapper,
+    .onyx-dock-wrapper:has(.onyx-dock.dock-ready),
+    .onyx-dock-wrapper.wrapper-ready {
+        transform:
+            translateX(-50%) !important;
+    }
+
+    .onyx-dock-wrapper
+    > .onyx-dock,
+    .onyx-dock-wrapper
+    > .onyx-dock.is-pressing {
+        transform: none !important;
+    }
+}
+
+/* ======================================================= */
+/* Manual Motion Disabled                                  */
+/* ======================================================= */
+
+.motion-disabled .onyx-dock-wrapper,
+.motion-disabled .scroll-to-top-shell,
+.motion-disabled .scroll-to-top,
+.motion-disabled .scroll-to-top .arrow-icon,
+.motion-disabled .progress-indicator,
+.motion-disabled .scroll-to-top .percentage {
+    transition: none !important;
+    animation: none !important;
+}
+
+.motion-disabled .onyx-dock-wrapper {
+    transform:
+        translateX(-50%) !important;
+}
+
+.motion-disabled
+.onyx-dock-wrapper
+> .onyx-dock,
+.motion-disabled
+.onyx-dock-wrapper
+> .onyx-dock.is-pressing {
+    transform: none !important;
+}
+
