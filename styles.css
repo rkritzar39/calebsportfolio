@@ -6063,123 +6063,107 @@ body.dark-mode .youtube-channel-card {
 }
 
 /* ===================================================== */
-/* Apple Vision Pro – Spatial Glass Scroll Orb (Full) */
+/* Apple Vision Pro + Onyx Liquid Glass Scroll Orb (Unified) */
 /* ===================================================== */
 
-.scroll-to-top {
-	position: fixed;
-	bottom: calc(1.25rem + 78px);
-	left: 22px;
-
-	width: 64px;
-	height: 64px;
-	border-radius: 50%;
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 10%, transparent),
-			transparent 42%
-		),
-		color-mix(in srgb, var(--content-bg) 68%, transparent);
-
-	border: 1px solid color-mix(in srgb, var(--border-color) 48%, transparent);
-
-	backdrop-filter: blur(32px) saturate(180%);
-	-webkit-backdrop-filter: blur(32px) saturate(180%);
-
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	clip-path: circle(50%);
-	isolation: isolate;
-	overflow: hidden;
-
-	z-index: 9999;
-	cursor: pointer;
-
-	box-shadow:
-		0 0 0.8px rgba(255,255,255,0.55) inset,
-		0 2px 6px rgba(0,0,0,0.20),
-		0 12px 28px rgba(0,0,0,0.38),
-		0 24px 48px rgba(0,0,0,0.28);
-
-	transition:
-		transform .25s ease,
-		box-shadow .3s ease,
-		opacity .4s ease,
-		background .3s ease,
-		border-color .3s ease;
+/* === Shell (JS toggles .hidden) === */
+.scroll-to-top-shell {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity .35s ease, transform .35s ease;
 }
 
+.scroll-to-top-shell.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(18px);
+}
+
+/* === Orb Base === */
+.scroll-to-top {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    cursor: pointer;
+    isolation: isolate;
+    overflow: hidden;
+
+    background:
+        linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 42%),
+        color-mix(in srgb, var(--content-bg) 68%, transparent);
+
+    border: 1px solid color-mix(in srgb, var(--border-color) 48%, transparent);
+
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+
+    box-shadow:
+        0 0 0.8px rgba(255,255,255,0.55) inset,
+        0 2px 6px rgba(0,0,0,0.20),
+        0 12px 28px rgba(0,0,0,0.38),
+        0 24px 48px rgba(0,0,0,0.28);
+
+    transition:
+        transform .25s ease,
+        box-shadow .3s ease,
+        opacity .4s ease,
+        background .3s ease,
+        border-color .3s ease;
+}
+
+/* === Orb Shine Layers === */
 .scroll-to-top::before {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: 50%;
-	background: var(--liquid-reflection);
-	mix-blend-mode: soft-light;
-	opacity: 0.38;
-	pointer-events: none;
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--liquid-reflection);
+    mix-blend-mode: soft-light;
+    opacity: 0.38;
+    pointer-events: none;
 }
 
 .scroll-to-top::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	border-radius: 50%;
-	pointer-events: none;
-	background: radial-gradient(
-		circle at 50% 100%,
-		rgba(0,0,0,0.18),
-		transparent 68%
-	);
-	opacity: 0.35;
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 100%, rgba(0,0,0,0.18), transparent 68%);
+    opacity: 0.35;
+    pointer-events: none;
 }
 
-/* Hover state */
+/* === Hover === */
 .scroll-to-top:hover {
-	transform: scale(1.04);
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 12%, transparent),
-			transparent 42%
-		),
-		color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
-	border-color: color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
-	box-shadow:
-		0 0 1px rgba(255,255,255,0.72) inset,
-		0 3px 8px rgba(0,0,0,0.22),
-		0 16px 34px rgba(0,0,0,0.44),
-		0 30px 58px rgba(0,0,0,0.34),
-		0 0 14px color-mix(in srgb, var(--accent-color) 10%, transparent);
+    transform: scale(1.04);
+    background:
+        linear-gradient(180deg, color-mix(in srgb, white 12%, transparent), transparent 42%),
+        color-mix(in srgb, var(--accent-color) 8%, var(--content-bg));
+    border-color: color-mix(in srgb, var(--accent-color) 34%, var(--border-color));
+    box-shadow:
+        0 0 1px rgba(255,255,255,0.72) inset,
+        0 3px 8px rgba(0,0,0,0.22),
+        0 16px 34px rgba(0,0,0,0.44),
+        0 30px 58px rgba(0,0,0,0.34),
+        0 0 14px color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
-/* Hidden state */
-.scroll-to-top.hidden {
-	opacity: 0;
-	pointer-events: none;
-	transform: translateY(10px);
+/* === Pressed === */
+.scroll-to-top.is-pressed {
+    transform: scale(0.94);
 }
 
-/* ===================================================== */
-/* Direction states (arrow rotation control) */
-/* ===================================================== */
-
-.scroll-to-top .arrow-icon {
-	transform: translate(-50%, -50%) rotate(0deg);
-	transform-origin: center;
-	transition: transform .22s ease, opacity .22s ease, filter .22s ease;
-}
-
-.scroll-to-top.scroll-down .arrow-icon {
-	transform: translate(-50%, -50%) rotate(180deg);
-}
-
-.scroll-to-top.scroll-up .arrow-icon {
-	transform: translate(-50%, -50%) rotate(0deg);
+/* === Scrolling Feedback === */
+.scroll-to-top.is-scrolling {
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,0.28),
+        0 0 22px color-mix(in srgb, var(--accent-color) 45%, transparent);
 }
 
 /* ===================================================== */
@@ -6187,34 +6171,32 @@ body.dark-mode .youtube-channel-card {
 /* ===================================================== */
 
 .progress-ring {
-	position: absolute;
-	width: 76%;
-	height: 76%;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%) rotate(-90deg);
-	pointer-events: none;
+    position: absolute;
+    width: 76%;
+    height: 76%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    pointer-events: none;
 }
 
 .progress-bg {
-	fill: none;
-	stroke: color-mix(in srgb, var(--accent-color) 18%, transparent);
-	stroke-width: 3.3;
-	opacity: 0.2;
-	stroke-linecap: round;
+    fill: none;
+    stroke: color-mix(in srgb, var(--accent-color) 18%, transparent);
+    stroke-width: 3.3;
+    opacity: 0.2;
+    stroke-linecap: round;
 }
 
 .progress-indicator {
-	fill: none;
-	stroke: color-mix(in srgb, var(--accent-color) 88%, white 6%);
-	stroke-width: 3.3;
-	stroke-linecap: round;
-
-	stroke-dasharray: 141;
-	stroke-dashoffset: 141;
-
-	transition: stroke-dashoffset .25s ease;
-	filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 32%, transparent));
+    fill: none;
+    stroke: color-mix(in srgb, var(--accent-color) 88%, white 6%);
+    stroke-width: 3.3;
+    stroke-linecap: round;
+    stroke-dasharray: 141;
+    stroke-dashoffset: 141;
+    transition: stroke-dashoffset .25s ease;
+    filter: drop-shadow(0 0 2px color-mix(in srgb, var(--accent-color) 32%, transparent));
 }
 
 /* ===================================================== */
@@ -6222,31 +6204,39 @@ body.dark-mode .youtube-channel-card {
 /* ===================================================== */
 
 .arrow-icon {
-	position: absolute;
-	top: 38%;
-	left: 50%;
-	transform: translate(-50%, -50%) rotate(0deg);
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    width: 20px;
+    height: 20px;
 
-	width: 20px;
-	height: 20px;
+    background-image: url("data:image/svg+xml;utf8,\
+        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>\
+            <path d='M6 14L12 8L18 14' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/>\
+        </svg>");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 
-	background-image: url("data:image/svg+xml;utf8,\
-	<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'>\
-	  <path d='M6 14L12 8L18 14' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/>\
-	</svg>");
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center;
-
-	opacity: 0.94;
-	filter: drop-shadow(0 0 4px rgba(0,0,0,0.24));
+    opacity: 0.94;
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.24));
+    transition: transform .22s ease, opacity .22s ease, filter .22s ease;
 }
 
-/* Hover arrow micro lift */
 .scroll-to-top:hover .arrow-icon {
-	opacity: 1;
-	transform: translate(-50%, -52%) rotate(0deg);
-	filter: drop-shadow(0 0 6px rgba(0,0,0,0.30));
+    opacity: 1;
+    transform: translate(-50%, -52%) rotate(0deg);
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.30));
+}
+
+/* Direction states */
+.scroll-to-top.scroll-down .arrow-icon {
+    transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.scroll-to-top.scroll-up .arrow-icon {
+    transform: translate(-50%, -50%) rotate(0deg);
 }
 
 /* ===================================================== */
@@ -6254,221 +6244,59 @@ body.dark-mode .youtube-channel-card {
 /* ===================================================== */
 
 .percentage {
-	position: absolute;
-	top: 66%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-
-	font-size: 0.48rem;
-	font-weight: 650;
-	letter-spacing: 0.02em;
-
-	color: color-mix(in srgb, var(--accent-color) 80%, var(--text-color));
-	opacity: 0;
-
-	padding: 2px 5px;
-	border-radius: 999px;
-
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, white 10%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
-
-	border: 1px solid color-mix(in srgb, var(--accent-color) 24%, transparent);
-
-	backdrop-filter: blur(6px);
-	-webkit-backdrop-filter: blur(6px);
-
-	box-shadow:
-		0 0 0.4px rgba(255,255,255,0.42) inset,
-		0 2px 5px rgba(0,0,0,0.18);
-
-	pointer-events: none;
-	transition: opacity .35s ease;
-}
-
-.percentage.visible {
-	opacity: 1;
-}
-
-/* ===================================================== */
-/* Responsive scaling */
-/* ===================================================== */
-
-@media (max-width: 480px) {
-	.scroll-to-top {
-		width: 56px;
-		height: 56px;
-	}
-
-	.arrow-icon {
-		width: 17px;
-		height: 17px;
-		top: 38%;
-	}
-
-	.percentage {
-		font-size: 0.44rem;
-		top: 66%;
-	}
-}
-
-/* ============================================
-   SCROLL TO TOP — ONYX LIQUID GLASS STYLE
-   ============================================ */
-
-.scroll-to-top-shell {
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    z-index: 9999;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-/* Hidden state controlled by JS */
-.scroll-to-top-shell.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translateY(18px);
-}
-
-/* ============================
-   BUTTON BASE
-   ============================ */
-
-.scroll-to-top {
-    position: relative;
-    width: 54px;
-    height: 54px;
-
-    border: none;
-    border-radius: 999px;
-    cursor: pointer;
-
-    background: color-mix(in srgb, var(--content-bg) 82%, var(--bg-color) 18%);
-    backdrop-filter: blur(22px) saturate(160%);
-    -webkit-backdrop-filter: blur(22px) saturate(160%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.22),
-        0 10px 26px rgba(0,0,0,0.35);
-
-    transition:
-        transform 0.22s cubic-bezier(.22,1,.36,1),
-        box-shadow 0.22s ease,
-        background 0.22s ease;
-}
-
-/* Pressed feedback */
-.scroll-to-top.is-pressed {
-    transform: scale(0.94);
-}
-
-/* Scrolling feedback */
-.scroll-to-top.is-scrolling {
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.28),
-        0 0 22px color-mix(in srgb, var(--accent-color) 45%, transparent);
-}
-
-/* ============================
-   PROGRESS RING
-   ============================ */
-
-.progress-ring {
-    width: 100%;
-    height: 100%;
     position: absolute;
-    inset: 0;
-}
-
-.progress-ring .progress-bg {
-    fill: none;
-    stroke: rgba(255,255,255,0.18);
-    stroke-width: 4;
-}
-
-.progress-ring .progress-indicator {
-    fill: none;
-    stroke: var(--accent-color);
-    stroke-width: 4;
-    stroke-linecap: round;
-    transform-origin: center;
-    transform: rotate(-90deg);
-    transition: stroke-dashoffset 0.25s linear;
-}
-
-/* ============================
-   ARROW ICON
-   ============================ */
-
-.arrow-icon {
-    width: 26px;
-    height: 26px;
-    position: absolute;
-    inset: 0;
-    margin: auto;
-
-    stroke: var(--text-color);
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-
-    transition: opacity 0.25s ease;
-}
-
-/* ============================
-   PERCENTAGE LABEL
-   ============================ */
-
-.percentage {
-    position: absolute;
-    bottom: -22px;
+    top: 66%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
+    font-size: 0.48rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
 
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--secondary-text);
-
+    color: color-mix(in srgb, var(--accent-color) 80%, var(--text-color));
     opacity: 0;
-    transition: opacity 0.35s ease;
+
+    padding: 2px 5px;
+    border-radius: 999px;
+
+    background:
+        linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 60%),
+        color-mix(in srgb, var(--accent-color) 10%, var(--content-bg));
+
+    border: 1px solid color-mix(in srgb, var(--accent-color) 24%, transparent);
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    box-shadow:
+        0 0 0.4px rgba(255,255,255,0.42) inset,
+        0 2px 5px rgba(0,0,0,0.18);
+
     pointer-events: none;
+    transition: opacity .35s ease;
 }
 
 .percentage.visible {
     opacity: 1;
 }
 
-/* ============================
-   DARK MODE TUNING
-   ============================ */
+/* ===================================================== */
+/* Mobile */
+/* ===================================================== */
 
-body.dark-mode .scroll-to-top {
-    background: color-mix(in srgb, var(--glass-bg-dark) 72%, transparent);
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,0.12),
-        0 12px 32px rgba(0,0,0,0.65);
-}
+@media (max-width: 480px) {
+    .scroll-to-top {
+        width: 56px;
+        height: 56px;
+    }
 
-body.dark-mode .progress-ring .progress-bg {
-    stroke: rgba(255,255,255,0.12);
-}
+    .arrow-icon {
+        width: 17px;
+        height: 17px;
+    }
 
-body.dark-mode .arrow-icon {
-    stroke: var(--text-color);
-}
-
-body.dark-mode .percentage {
-    color: var(--secondary-text);
+    .percentage {
+        font-size: 0.44rem;
+    }
 }
 
 
