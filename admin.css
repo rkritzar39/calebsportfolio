@@ -7177,3 +7177,108 @@ button,
     width: 100%;
   }
 }
+
+/* ======================================================= /
+/ DISCORD PROFILE SYNC                                    /
+/ ======================================================= */
+
+#discord-sync-panel {
+  margin-top: 14px;
+  padding: 16px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      #5865f2 20%,
+      var(--border-color) 80%
+    );
+
+  border-radius: 18px;
+
+  background:
+    color-mix(
+      in srgb,
+      #5865f2 6%,
+      var(--content-bg) 94%
+    );
+}
+
+#discord-sync-panel[hidden] {
+  display: none !important;
+}
+
+.discord-profile-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 14px 0;
+  padding: 12px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      #5865f2 18%,
+      var(--border-color) 82%
+    );
+
+  border-radius: 14px;
+
+  background:
+    color-mix(
+      in srgb,
+      #5865f2 8%,
+      var(--content-bg) 92%
+    );
+}
+
+.discord-profile-preview[hidden] {
+  display: none !important;
+}
+
+#discord-avatar-preview {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 auto;
+
+  border-radius: 50%;
+  object-fit: cover;
+
+  border:
+    2px solid
+    color-mix(
+      in srgb,
+      #5865f2 54%,
+      transparent
+    );
+}
+
+.discord-profile-preview-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.discord-profile-preview-info strong,
+.discord-profile-preview-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#discord-username-preview {
+  color: var(--secondary-text);
+  font-size: 0.88rem;
+}
+
+#discord-sync-status.success {
+  color: #2f9e44;
+}
+
+#discord-sync-status.error {
+  color: #d9485f;
+}
