@@ -1259,38 +1259,15 @@ body.dark-mode .profile-bio {
 }
 
 
-/* ======================================================= */
-/* LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE */
-/* Existing HTML only */
-/* ======================================================= */
+/* ======================================================= /
+/ === LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE ====== /
+/ === Existing HTML only ================================ /
+/ ======================================================= */
 
 .live-activity {
-  --la-mode-accent:
-    var(
-      --album-accent,
-      var(--dynamic-accent, var(--accent-color, #ff4f8b))
-    );
-
-  --la-mode-accent-soft:
-    var(
-      --dynamic-accent-soft,
-      color-mix(
-        in srgb,
-        var(--la-mode-accent) 70%,
-        var(--glow-color) 30%
-      )
-    );
-
-  --la-mode-accent-strong:
-    var(
-      --dynamic-accent-glow,
-      color-mix(
-        in srgb,
-        var(--la-mode-accent) 88%,
-        var(--text-color) 12%
-      )
-    );
-
+  --dynamic-accent: var(--accent-color, #ff4f8b);
+  --dynamic-accent-soft: color-mix(in srgb, var(--accent-color, #ff6a9c) 82%, var(--glow-color) 18%);
+  --dynamic-accent-glow: color-mix(in srgb, var(--accent-color, #ff7dab) 70%, var(--glow-color) 30%);
   --dynamic-bg: none;
 
   --la-pad-x: clamp(18px, 3vw, 24px);
@@ -1323,7 +1300,7 @@ body.dark-mode .profile-bio {
   background:
     radial-gradient(
       circle at 50% 0%,
-      color-mix(in srgb, var(--la-mode-accent-strong) 22%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
       transparent 52%
     ),
     var(--bubble-gradient),
@@ -1336,7 +1313,7 @@ body.dark-mode .profile-bio {
   box-shadow:
     var(--bubble-highlight),
     var(--bubble-shadow),
-    0 0 30px color-mix(in srgb, var(--la-mode-accent-strong) 12%, transparent);
+    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
 
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
@@ -1370,12 +1347,12 @@ body.dark-mode .profile-bio {
   background:
     radial-gradient(
       80% 46% at 50% 22%,
-      color-mix(in srgb, var(--la-mode-accent-soft) 20%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent),
       transparent 58%
     ),
     radial-gradient(
       70% 38% at 50% 46%,
-      color-mix(in srgb, var(--la-mode-accent-strong) 12%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
       transparent 62%
     ),
     radial-gradient(
@@ -1392,17 +1369,17 @@ body.dark-mode .profile-bio {
   z-index: 2;
 }
 
-/* ======================================================= */
-/* HIDDEN */
-/* ======================================================= */
+/* ======================================================= /
+/ === HIDDEN ============================================ /
+/ ======================================================= */
 
 .hidden {
   display: none !important;
 }
 
-/* ======================================================= */
-/* STATUS LINE */
-/* ======================================================= */
+/* ======================================================= /
+/ === STATUS LINE ======================================= /
+/ ======================================================= */
 
 .status-line {
   display: inline-flex;
@@ -1430,23 +1407,23 @@ body.dark-mode .profile-bio {
 
   filter:
     drop-shadow(
-      0 0 8px color-mix(in srgb, var(--la-mode-accent-strong) 18%, transparent)
+      0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent)
     );
 }
 
 .status-icon.glow {
   filter:
     drop-shadow(
-      0 0 10px color-mix(in srgb, var(--la-mode-accent-strong) 26%, transparent)
+      0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 26%, transparent)
     )
     drop-shadow(
-      0 0 18px color-mix(in srgb, var(--la-mode-accent-soft) 14%, transparent)
+      0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent)
     );
 }
 
-/* ======================================================= */
-/* CARD BODY */
-/* ======================================================= */
+/* ======================================================= /
+/ === CARD BODY ========================================= /
+/ ======================================================= */
 
 .spotify-card {
   width: 100%;
@@ -1473,13 +1450,13 @@ body.dark-mode .profile-bio {
 
 .spotify-card:focus-visible {
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--la-mode-accent) 30%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--la-mode-accent-soft) 14%, transparent);
+    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 30%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
 }
 
-/* ======================================================= */
-/* ALBUM ART */
-/* ======================================================= */
+/* ======================================================= /
+/ === ALBUM ART ========================================= /
+/ ======================================================= */
 
 .live-album-art {
   position: relative;
@@ -1503,7 +1480,7 @@ body.dark-mode .profile-bio {
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glow-color) 38%, transparent),
     0 22px 48px color-mix(in srgb, var(--shadow-color) 62%, transparent),
-    0 0 28px color-mix(in srgb, var(--la-mode-accent-strong) 12%, transparent);
+    0 0 28px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
 
   transition:
     transform .35s cubic-bezier(.2,.8,.2,1),
@@ -1521,7 +1498,7 @@ body.dark-mode .profile-bio {
   background:
     radial-gradient(
       circle,
-      color-mix(in srgb, var(--la-mode-accent-strong) 20%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent),
       transparent 72%
     );
 
@@ -1572,7 +1549,7 @@ body.dark-mode .profile-bio {
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glow-color) 42%, transparent),
     0 28px 58px color-mix(in srgb, var(--shadow-color) 68%, transparent),
-    0 0 36px color-mix(in srgb, var(--la-mode-accent-strong) 16%, transparent);
+    0 0 36px color-mix(in srgb, var(--dynamic-accent-glow) 16%, transparent);
 }
 
 .spotify-card:hover .live-album-art img,
@@ -1581,9 +1558,9 @@ body.dark-mode .profile-bio {
   filter: saturate(1.03) contrast(1.02);
 }
 
-/* ======================================================= */
-/* INFO */
-/* ======================================================= */
+/* ======================================================= /
+/ === INFO ============================================== /
+/ ======================================================= */
 
 .live-info {
   width: 100%;
@@ -1615,7 +1592,7 @@ body.dark-mode .profile-bio {
   text-wrap: balance;
 
   text-shadow:
-    0 0 14px color-mix(in srgb, var(--la-mode-accent-strong) 14%, transparent);
+    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 14%, transparent);
 }
 
 .explicit-badge {
@@ -1663,9 +1640,9 @@ body.dark-mode .profile-bio {
   overflow-wrap: anywhere;
 }
 
-/* ======================================================= */
-/* PROGRESS */
-/* ======================================================= */
+/* ======================================================= /
+/ === PROGRESS ========================================== /
+/ ======================================================= */
 
 .music-progress-container {
   position: relative;
@@ -1722,14 +1699,14 @@ body.dark-mode .profile-bio {
   background:
     linear-gradient(
       135deg,
-      color-mix(in srgb, var(--la-mode-accent-soft) 94%, var(--glow-color) 6%),
-      color-mix(in srgb, var(--la-mode-accent) 78%, var(--shadow-color) 22%)
+      color-mix(in srgb, var(--dynamic-accent-soft) 94%, var(--glow-color) 6%),
+      color-mix(in srgb, var(--dynamic-accent) 78%, var(--shadow-color) 22%)
     );
 
   box-shadow:
     inset 0 1px 1px color-mix(in srgb, var(--glow-color) 34%, transparent),
-    0 0 14px color-mix(in srgb, var(--la-mode-accent-strong) 22%, transparent),
-    0 0 24px color-mix(in srgb, var(--la-mode-accent-soft) 14%, transparent);
+    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
+    0 0 24px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
 
   transition: width .32s linear;
 }
@@ -1757,9 +1734,9 @@ body.dark-mode .profile-bio {
   }
 }
 
-/* ======================================================= */
-/* TIME PILL */
-/* ======================================================= */
+/* ======================================================= /
+/ === TIME PILL ========================================= /
+/ ======================================================= */
 
 .music-progress-time {
   width: var(--la-time-w);
@@ -1814,7 +1791,7 @@ body.dark-mode .profile-bio {
   text-align: center;
   font-weight: 700;
 
-  color: color-mix(in srgb, var(--la-mode-accent-soft) 84%, var(--text-color) 16%);
+  color: color-mix(in srgb, var(--dynamic-accent-soft) 84%, var(--text-color) 16%);
 
   padding: 0 12px;
 }
@@ -1824,9 +1801,9 @@ body.dark-mode .profile-bio {
   text-align: right;
 }
 
-/* ======================================================= */
-/* UPDATED PILL */
-/* ======================================================= */
+/* ======================================================= /
+/ === UPDATED PILL ====================================== /
+/ ======================================================= */
 
 .la-updated,
 #live-activity-updated {
@@ -1860,9 +1837,9 @@ body.dark-mode .profile-bio {
   text-transform: uppercase;
 }
 
-/* ======================================================= */
-/* IN / OUT */
-/* ======================================================= */
+/* ======================================================= /
+/ === IN / OUT ========================================== /
+/ ======================================================= */
 
 .spotify-card.slide-in {
   animation: liveCardIn .34s cubic-bezier(.2,.8,.2,1);
@@ -1896,9 +1873,9 @@ body.dark-mode .profile-bio {
   }
 }
 
-/* ======================================================= */
-/* LIGHT MODE THEME POLISH */
-/* ======================================================= */
+/* ======================================================= /
+/ === LIGHT MODE THEME POLISH =========================== /
+/ ======================================================= */
 
 body.light-e .live-activity {
   color: var(--text-color);
@@ -1906,7 +1883,7 @@ body.light-e .live-activity {
   background:
     radial-gradient(
       circle at 50% 0%,
-      color-mix(in srgb, var(--la-mode-accent-strong) 24%, rgba(255,255,255,0.72)),
+      color-mix(in srgb, var(--dynamic-accent-glow) 24%, rgba(255,255,255,0.72)),
       transparent 56%
     ),
     var(--bubble-gradient),
@@ -1915,14 +1892,14 @@ body.light-e .live-activity {
     color-mix(in srgb, var(--content-bg) 88%, white 12%);
 
   border-color:
-    color-mix(in srgb, var(--la-mode-accent) 16%, var(--border-color));
+    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
 
   box-shadow:
     var(--bubble-highlight),
     0 18px 42px color-mix(in srgb, var(--shadow-color) 78%, transparent),
     inset 0 1px 1px rgba(255, 255, 255, 0.82),
     inset 0 -2px 8px rgba(0, 0, 0, 0.08),
-    0 0 30px color-mix(in srgb, var(--la-mode-accent-strong) 20%, transparent);
+    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
 }
 
 body.light-e .live-activity::before {
@@ -1934,12 +1911,12 @@ body.light-e .live-activity::after {
   background:
     radial-gradient(
       82% 50% at 50% 22%,
-      color-mix(in srgb, var(--la-mode-accent-soft) 34%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-soft) 34%, transparent),
       transparent 56%
     ),
     radial-gradient(
       72% 40% at 50% 46%,
-      color-mix(in srgb, var(--la-mode-accent-strong) 18%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
       transparent 60%
     ),
     radial-gradient(
@@ -1958,24 +1935,24 @@ body.light-e .status-line {
 body.light-e .status-icon {
   filter:
     drop-shadow(
-      0 0 8px color-mix(in srgb, var(--la-mode-accent-strong) 22%, transparent)
+      0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent)
     );
 }
 
 body.light-e .status-icon.glow {
   filter:
     drop-shadow(
-      0 0 10px color-mix(in srgb, var(--la-mode-accent-strong) 30%, transparent)
+      0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 30%, transparent)
     )
     drop-shadow(
-      0 0 18px color-mix(in srgb, var(--la-mode-accent-soft) 18%, transparent)
+      0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 18%, transparent)
     );
 }
 
 body.light-e .spotify-card:focus-visible {
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--la-mode-accent) 34%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--la-mode-accent-soft) 14%, transparent);
+    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 34%, transparent),
+    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
 }
 
 body.light-e .live-album-art {
@@ -1988,19 +1965,19 @@ body.light-e .live-album-art {
     color-mix(in srgb, var(--content-bg) 82%, white 18%);
 
   border-color:
-    color-mix(in srgb, var(--la-mode-accent) 14%, var(--border-color));
+    color-mix(in srgb, var(--dynamic-accent) 14%, var(--border-color));
 
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.54),
     0 20px 34px color-mix(in srgb, var(--shadow-color) 55%, transparent),
-    0 0 34px color-mix(in srgb, var(--la-mode-accent-strong) 20%, transparent);
+    0 0 34px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
 }
 
 body.light-e .live-album-art::before {
   background:
     radial-gradient(
       circle,
-      color-mix(in srgb, var(--la-mode-accent-strong) 28%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent),
       transparent 72%
     );
 
@@ -2011,7 +1988,7 @@ body.light-e .live-song-title {
   color: var(--text-color);
 
   text-shadow:
-    0 0 16px color-mix(in srgb, var(--la-mode-accent-strong) 18%, transparent);
+    0 0 16px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
 }
 
 body.light-e .live-artist {
@@ -2022,15 +1999,15 @@ body.light-e .explicit-badge {
   color: var(--text-color);
 
   background:
-    color-mix(in srgb, var(--la-mode-accent-soft) 18%, var(--content-bg) 82%);
+    color-mix(in srgb, var(--dynamic-accent-soft) 18%, var(--content-bg) 82%);
 
   border-color:
-    color-mix(in srgb, var(--la-mode-accent) 18%, var(--border-color));
+    color-mix(in srgb, var(--dynamic-accent) 18%, var(--border-color));
 }
 
 body.light-e .music-progress-container {
   border-color:
-    color-mix(in srgb, var(--la-mode-accent) 16%, var(--border-color));
+    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
 
   background:
     linear-gradient(
@@ -2049,15 +2026,15 @@ body.light-e .music-progress-container {
 body.light-e .music-progress-bar {
   box-shadow:
     inset 0 1px 1px rgba(255,255,255,0.28),
-    0 0 18px color-mix(in srgb, var(--la-mode-accent-strong) 28%, transparent),
-    0 0 28px color-mix(in srgb, var(--la-mode-accent-soft) 16%, transparent);
+    0 0 18px color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent),
+    0 0 28px color-mix(in srgb, var(--dynamic-accent-soft) 16%, transparent);
 }
 
 body.light-e .music-progress-time,
 body.light-e .la-updated,
 body.light-e #live-activity-updated {
   border-color:
-    color-mix(in srgb, var(--la-mode-accent) 16%, var(--border-color));
+    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
 
   background:
     linear-gradient(
@@ -2075,7 +2052,7 @@ body.light-e #live-activity-updated {
 }
 
 body.light-e .music-progress-time span:nth-child(2) {
-  color: color-mix(in srgb, var(--la-mode-accent) 86%, var(--text-color) 14%);
+  color: color-mix(in srgb, var(--dynamic-accent) 86%, var(--text-color) 14%);
 }
 
 body.light-e .la-updated,
@@ -2083,9 +2060,9 @@ body.light-e #live-activity-updated {
   color: var(--secondary-text);
 }
 
-/* ======================================================= */
-/* DARK MODE THEME POLISH */
-/* ======================================================= */
+/* ======================================================= /
+/ === DARK MODE THEME POLISH ============================ /
+/ ======================================================= */
 
 html.dark-mode body .live-activity,
 body.dark-mode .live-activity {
@@ -2094,7 +2071,7 @@ body.dark-mode .live-activity {
   background:
     radial-gradient(
       circle at 50% 0%,
-      color-mix(in srgb, var(--la-mode-accent-strong) 18%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
       transparent 52%
     ),
     var(--bubble-gradient),
@@ -2110,7 +2087,7 @@ body.dark-mode .live-activity {
     0 24px 58px color-mix(in srgb, var(--shadow-color) 88%, transparent),
     inset 0 1px 1px rgba(255,255,255,0.08),
     inset 0 -4px 14px rgba(0,0,0,0.42),
-    0 0 30px color-mix(in srgb, var(--la-mode-accent-strong) 12%, transparent);
+    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
 }
 
 html.dark-mode body .live-activity::before,
@@ -2123,12 +2100,12 @@ body.dark-mode .live-activity::after {
   background:
     radial-gradient(
       80% 46% at 50% 22%,
-      color-mix(in srgb, var(--la-mode-accent-soft) 20%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent),
       transparent 58%
     ),
     radial-gradient(
       70% 38% at 50% 46%,
-      color-mix(in srgb, var(--la-mode-accent-strong) 12%, transparent),
+      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
       transparent 62%
     ),
     radial-gradient(
@@ -2140,9 +2117,9 @@ body.dark-mode .live-activity::after {
   opacity: 0.84;
 }
 
-/* ======================================================= */
-/* RESPONSIVE */
-/* ======================================================= */
+/* ======================================================= /
+/ === RESPONSIVE ======================================== /
+/ ======================================================= */
 
 @media (max-width: 600px) {
   .live-activity {
@@ -2198,9 +2175,9 @@ body.dark-mode .live-activity::after {
   }
 }
 
-/* ======================================================= */
-/* REDUCED MOTION */
-/* ======================================================= */
+/* ======================================================= /
+/ === REDUCED MOTION ==================================== /
+/ ======================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   .live-activity,
@@ -2217,62 +2194,6 @@ body.dark-mode .live-activity::after {
   .music-progress-container.indeterminate .music-progress-bar {
     animation: none !important;
   }
-}
-
-
-/* ======================================================= */
-/* LIVE ACTIVITY COLOR MODE COMPATIBILITY                  */
-/* ======================================================= */
-
-.live-activity[data-live-activity-color-mode="accent"] {
-  --la-mode-accent: var(--accent-color, #ff4f8b);
-}
-
-.live-activity[data-live-activity-color-mode="dynamic"] {
-  --la-mode-accent:
-    var(
-      --album-accent,
-      var(--dynamic-accent, var(--accent-color, #ff4f8b))
-    );
-
-  --la-mode-accent-soft:
-    var(
-      --dynamic-accent-soft,
-      color-mix(
-        in srgb,
-        var(--la-mode-accent) 70%,
-        var(--glow-color) 30%
-      )
-    );
-
-  --la-mode-accent-strong:
-    var(
-      --dynamic-accent-glow,
-      color-mix(
-        in srgb,
-        var(--la-mode-accent) 88%,
-        var(--text-color) 12%
-      )
-    );
-}
-
-.live-activity[data-live-activity-color-mode="dynamic"] .music-progress-bar {
-  background:
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--la-mode-accent) 78%, white 22%),
-      var(--la-mode-accent)
-    );
-}
-
-.live-activity[data-live-activity-color-mode="dynamic"]
-  .music-progress-time span:nth-child(2) {
-  color:
-    color-mix(
-      in srgb,
-      var(--la-mode-accent) 82%,
-      var(--text-color) 18%
-    );
 }
 
 /* =================================== */
