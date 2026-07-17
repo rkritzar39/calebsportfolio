@@ -811,7 +811,6 @@ document.addEventListener('DOMContentLoaded', () => { //
     
     // Site Settings Elements
     const maintenanceModeToggle = document.getElementById('maintenance-mode-toggle'); //
-    const hideTikTokSectionToggle = document.getElementById('hide-tiktok-section-toggle'); //
     const settingsStatusMessage = document.getElementById('settings-status-message'); //
 
     
@@ -2688,7 +2687,6 @@ async function loadProfileData() {
         // OTHER SETTINGS
         // ============================
         maintenanceModeToggle.checked = data.isMaintenanceModeEnabled || false;
-        hideTikTokSectionToggle.checked = data.hideTikTokSection || false;
 
         // ============================
         // COUNTDOWN
@@ -2889,101 +2887,55 @@ if (profilePicUrlInput && adminPfpPreview) {
 }
 
 // *** FUNCTION TO SAVE Maintenance Mode Status ***
-
-    async function saveMaintenanceModeStatus(isEnabled) { //
-
-        // Ensure user is logged in
-
-        if (!auth || !auth.currentUser) { //
-
-            showAdminStatus("Error: Not logged in. Cannot save settings.", true); // Use main admin status
-
-            // Revert checkbox state visually if save fails due to auth issue
-
-            if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
-
-            return; //
-
-        }
-
-
-
-        // Use the specific status message area for settings, fallback to main admin status
-
-        const statusElement = settingsStatusMessage || adminStatusElement; //
-
-
-
-        // Show saving message
-
-        if (statusElement) { //
-
-            statusElement.textContent = "Saving setting..."; //
-
-            statusElement.className = "status-message"; // Reset style
-
-            statusElement.style.display = 'block'; //
-
-        }
-
-
-
-        try { //
-
-            // Use profileDocRef (site_config/mainProfile) to store the flag
-
-            // Use setDoc with merge: true to update only this field without overwriting others
-
-            await setDoc(profileDocRef, { //
-
-                isMaintenanceModeEnabled: isEnabled // Save the boolean value (true/false)
-
-            }, { merge: true }); //
-
-
-
-            console.log("Maintenance mode status saved:", isEnabled); //
-
-
-
-            // Show success message using the dedicated settings status element or fallback
-
-             if (statusElement === settingsStatusMessage && settingsStatusMessage) { // Check if we are using the specific element
-
-                 showSettingsStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); // Uses the settings-specific display/clear logic
-
-             } else { // Fallback if specific element wasn't found initially
-
-                showAdminStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); //
-
-             }
-
-
-
-        } catch (error) { //
-
-            console.error("Error saving maintenance mode status:", error); //
-
-            // Show error message in the specific status area or fallback
-
-            if (statusElement === settingsStatusMessage && settingsStatusMessage) { //
-
-                 showSettingsStatus(`Error saving setting: ${error.message}`, true); //
-
-            } else { //
-
-                showAdminStatus(`Error saving maintenance mode: ${error.message}`, true); //
-
-            }
-
-            // Revert checkbox state visually on error
-
-             if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled; //
-
-        }
-
+async function saveMaintenanceModeStatus(isEnabled) {
+    // Ensure user is logged in
+    if (!auth || !auth.currentUser) {
+        showAdminStatus("Error: Not logged in. Cannot save settings.", true); // Use main admin status
+        // Revert checkbox state visually if save fails due to auth issue
+        if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled;
+        return;
     }
-    // *** END FUNCTION ***
+
+    // Use the specific status message area for settings, fallback to main admin status
+    const statusElement = settingsStatusMessage || adminStatusElement;
+
+    // Show saving message
+    if (statusElement) {
+        statusElement.textContent = "Saving setting...";
+        statusElement.className = "status-message"; // Reset style
+        statusElement.style.display = 'block';
+    }
+
+    try {
+        // Use profileDocRef (site_config/mainProfile) to store the flag
+        // Use setDoc with merge: true to update only this field without overwriting others
+        await setDoc(profileDocRef, {
+            isMaintenanceModeEnabled: isEnabled // Save the boolean value (true/false)
+        }, { merge: true });
+
+        console.log("Maintenance mode status saved:", isEnabled);
+
+        // Show success message using the dedicated settings status element or fallback
+        if (statusElement === settingsStatusMessage && settingsStatusMessage) {
+            showSettingsStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false); // Uses the settings-specific display/clear logic
+        } else { // Fallback if specific element wasn't found initially
+            showAdminStatus(`Maintenance mode ${isEnabled ? 'enabled' : 'disabled'}.`, false);
+        }
+
+    } catch (error) {
+        console.error("Error saving maintenance mode status:", error);
+        // Show error message in the specific status area or fallback
+        if (statusElement === settingsStatusMessage && settingsStatusMessage) {
+            showSettingsStatus(`Error saving setting: ${error.message}`, true);
+        } else {
+            showAdminStatus(`Error saving maintenance mode: ${error.message}`, true);
+        }
+        // Revert checkbox state visually on error
+        if(maintenanceModeToggle) maintenanceModeToggle.checked = !isEnabled;
+    }
+}
+// *** END FUNCTION ***
+
 
 // --- Inactivity Logout & Timer Display Functions ---
 
