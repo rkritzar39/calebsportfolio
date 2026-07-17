@@ -237,11 +237,16 @@ function applySongThemeClass() {
   );
 
   if (!matchAccent) {
+    const userAccent = settings.accentColor || "#1DB954";
+
     /*
-     * Remove the artwork-specific color so CSS falls back to the
-     * website's global --accent-color value.
+     * Remove the artwork-specific color and explicitly restore the
+     * selected site accent for compatibility with both CSS versions.
      */
     activity.style.removeProperty("--album-accent");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    activity.style.setProperty("--dynamic-accent-soft", userAccent);
+    activity.style.setProperty("--dynamic-accent-glow", userAccent);
     activity.style.setProperty("--dynamic-bg", "none");
 
     /* Cancel any artwork extraction still in progress. */
@@ -669,6 +674,7 @@ function updateDynamicColors(imageUrl) {
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
+  const userAccent = settings.accentColor || "#1DB954";
 
   if (imageUrl) lastCoverUrl = imageUrl;
 
@@ -676,6 +682,9 @@ function updateDynamicColors(imageUrl) {
 
   const resetColors = () => {
     activity.style.removeProperty("--album-accent");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    activity.style.setProperty("--dynamic-accent-soft", userAccent);
+    activity.style.setProperty("--dynamic-accent-glow", userAccent);
     activity.style.setProperty("--dynamic-bg", "none");
   };
 
@@ -692,6 +701,18 @@ function updateDynamicColors(imageUrl) {
     activity.style.setProperty(
       "--album-accent",
       lastExtractedColors.albumAccent
+    );
+    activity.style.setProperty(
+      "--dynamic-accent",
+      lastExtractedColors.albumAccent
+    );
+    activity.style.setProperty(
+      "--dynamic-accent-soft",
+      lastExtractedColors.softCss
+    );
+    activity.style.setProperty(
+      "--dynamic-accent-glow",
+      lastExtractedColors.glowCss
     );
     activity.style.setProperty(
       "--dynamic-bg",
@@ -815,6 +836,8 @@ function updateDynamicColors(imageUrl) {
 
       const albumAccent =
         `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
+      const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
+      const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
 
       const bgValue = `
         radial-gradient(
@@ -835,10 +858,13 @@ function updateDynamicColors(imageUrl) {
       `;
 
       activity.style.setProperty("--album-accent", albumAccent);
+      activity.style.setProperty("--dynamic-accent", albumAccent);
+      activity.style.setProperty("--dynamic-accent-soft", softCss);
+      activity.style.setProperty("--dynamic-accent-glow", glowCss);
       activity.style.setProperty("--dynamic-bg", bgValue);
 
       lastExtractedForUrl = imageUrl;
-      lastExtractedColors = { albumAccent, bgValue };
+      lastExtractedColors = { albumAccent, softCss, glowCss, bgValue };
     } catch (error) {
       console.warn("Dynamic color extraction failed:", error);
       resetColors();
