@@ -5260,7 +5260,6 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
     margin: 0;
   }
 }
-
 /* ============================================================
    ADMIN CSS V6 Ã¢â‚¬â€ FULL DESIGN, MOTION, SIDEBAR & TOGGLE REFRESH
    ------------------------------------------------------------
@@ -6976,57 +6975,205 @@ button,
   }
 }
 
-/* ========================================================= */
-/* Maintenance Mode Toggle Layout Fix                        */
-/* Keeps the title beside the switch and helper text below.  */
-/* ========================================================= */
-#site-settings .form-group.checkbox-group.apple-toggle-group {
+/* ========================================================= /
+/ Maintenance Mode Setting                                 /
+/ ========================================================= */
+
+#site-settings .maintenance-setting {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 0 25px;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background: var(--content-bg);
+}
+
+#site-settings .maintenance-setting-row {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  flex-wrap: nowrap;
-  gap: 0;
+  align-items: flex-start;
   width: 100%;
   min-width: 0;
 }
 
-#site-settings .apple-toggle-group .apple-toggle-label {
-  display: flex;
+/* Hidden Native Checkbox */
+
+#site-settings .maintenance-setting-checkbox {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+/* Toggle Label */
+
+#site-settings .maintenance-setting-label {
+  position: relative;
+  display: flex !important;
   align-items: center;
-  width: 100%;
+  width: 100% !important;
   max-width: 100%;
   min-width: 0;
-  min-height: var(--switch-height, 32px);
-  margin: 0;
-  padding-left: calc(var(--switch-width, 54px) + 12px);
+  min-height: 32px;
+  margin: 0 !important;
+  padding: 0 0 0 66px !important;
+  color: var(--text-color);
+  font-size: 1rem;
+  font-weight: 600;
   line-height: 1.35;
+  text-align: left;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  cursor: pointer;
+  user-select: none;
 }
 
-#site-settings .apple-toggle-group > small {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  flex: none;
-  margin: 8px 0 0;
-  padding-left: calc(var(--switch-width, 54px) + 12px);
+/* Toggle Track */
+
+#site-settings .maintenance-setting-label::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 54px;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(142, 142, 147, 0.42),
+    rgba(99, 99, 102, 0.34)
+  );
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.22);
+  transition:
+    background 190ms ease,
+    border-color 190ms ease,
+    box-shadow 190ms ease;
+}
+
+/* Toggle Knob */
+
+#site-settings .maintenance-setting-label::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.32),
+    inset 0 1px 1px rgba(255, 255, 255, 0.88);
+  transition: transform 190ms cubic-bezier(0.2, 0.9, 0.18, 1.08);
+}
+
+/* Enabled Track */
+
+#site-settings
+  .maintenance-setting-checkbox:checked
+  + .maintenance-setting-label::before {
+  border-color: rgba(52, 199, 89, 0.55);
+  background: linear-gradient(
+    180deg,
+    var(--color-success-action),
+    var(--color-success-action-hover)
+  );
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.22),
+    0 0 0 4px rgba(52, 199, 89, 0.12),
+    0 8px 18px rgba(52, 199, 89, 0.18);
+}
+
+/* Enabled Knob */
+
+#site-settings
+  .maintenance-setting-checkbox:checked
+  + .maintenance-setting-label::after {
+  transform: translateX(22px);
+}
+
+/* Keyboard Focus */
+
+#site-settings
+  .maintenance-setting-checkbox:focus-visible
+  + .maintenance-setting-label::before {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--content-bg),
+    0 0 0 5px var(--accent-color),
+    0 8px 18px rgba(var(--accent-rgb), 0.16);
+}
+
+/* Hover State */
+
+#site-settings .maintenance-setting-label:hover::before {
+  border-color: rgba(var(--accent-rgb), 0.28);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.28);
+}
+
+/* Description */
+
+#site-settings .maintenance-setting-description {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 10px 0 0 !important;
+  padding: 0 0 0 66px !important;
   color: var(--secondary-text);
   font-size: 0.85rem;
+  font-weight: 400;
   line-height: 1.45;
   text-align: left;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: normal;
 }
+
+/* Site Settings Divider */
+
+#site-settings .site-settings-divider {
+  width: 100%;
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+}
+
+/* ========================================================= /
+/ Maintenance Mode Mobile Layout                           /
+/ ========================================================= */
 
 @media (max-width: 480px) {
-  #site-settings .apple-toggle-group .apple-toggle-label {
-    padding-left: calc(var(--switch-width, 54px) + 10px);
+  #site-settings .maintenance-setting {
+    padding: 16px !important;
   }
 
-  #site-settings .apple-toggle-group > small {
-    padding-left: 0;
-    margin-top: 10px;
+  #site-settings .maintenance-setting-label {
+    padding-left: 64px !important;
+    font-size: 0.95rem;
+  }
+
+  #site-settings .maintenance-setting-description {
+    margin-top: 12px !important;
+    padding-left: 0 !important;
+    font-size: 0.83rem;
+    line-height: 1.5;
+  }
+
+  #site-settings #save-countdown-settings-button {
+    width: 100%;
   }
 }
-
