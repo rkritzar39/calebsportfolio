@@ -1268,7 +1268,6 @@ body.dark-mode .profile-bio {
   --dynamic-accent: var(--accent-color, #ff4f8b);
   --dynamic-accent-soft: color-mix(in srgb, var(--accent-color, #ff6a9c) 82%, var(--glow-color) 18%);
   --dynamic-accent-glow: color-mix(in srgb, var(--accent-color, #ff7dab) 70%, var(--glow-color) 30%);
-  --dynamic-bg: none;
 
   --la-pad-x: clamp(18px, 3vw, 24px);
   --la-pad-y: clamp(24px, 3.4vw, 34px);
@@ -1305,7 +1304,6 @@ body.dark-mode .profile-bio {
     ),
     var(--bubble-gradient),
     var(--liquid-refraction),
-    var(--dynamic-bg),
     color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
 
   border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
