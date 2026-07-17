@@ -191,62 +191,93 @@
 
   <form id="profile-form">
 
-    <!-- Discord Sync Toggle -->
-    <div class="form-group checkbox-group">
-  <input type="checkbox" id="discord-sync-toggle" disabled> 
-  <label for="discord-sync-toggle" class="disabled-label">
-    Sync profile with Discord <span class="coming-soon-tag">COMING SOON</span>
-  </label>
-</div>
+<!-- Discord Profile Sync -->
 
-<div id="discord-sync-panel" style="display:none;">
+<section class="discord-sync-section">
+
+  <div class="form-group checkbox-group">
+    <input
+      type="checkbox"
+      id="discord-sync-toggle"
+      name="syncWithDiscord"
+    >
+
+    <label for="discord-sync-toggle">
+      Sync profile with Discord
+    </label>
   </div>
 
+  <div
+    id="discord-sync-panel"
+    hidden
+  >
 
+    <div class="form-group">
+      <label for="discord-user-id">
+        Discord User ID
+      </label>
 
-    <!-- Discord Sync Panel (shown when toggle is on) -->
-    <div id="discord-sync-panel" style="display:none;">
-      <div class="form-group">
-        <label for="discord-user-id">Discord User ID:</label>
-        <input
-          type="text"
-          id="discord-user-id"
-          placeholder="e.g. 123456789012345678"
-          inputmode="numeric"
-        >
-        <small>Enable Developer Mode in Discord → Settings → Advanced, then right-click your name → Copy User ID.</small>
-      </div>
+      <input
+        type="text"
+        id="discord-user-id"
+        name="discordUserId"
+        placeholder="Enter Discord User ID"
+        value="850815059093356594"
+        inputmode="numeric"
+        pattern="[0-9]{17,20}"
+        autocomplete="off"
+      >
 
-      <div class="form-group">
-        <label for="discord-username">Discord Username:</label>
-        <input
-          type="text"
-          id="discord-username"
-          placeholder="Paste your Discord username"
-        >
-      </div>
-
-      <div class="form-group">
-        <label for="discord-bio-input">Discord Bio (About Me):</label>
-        <textarea
-          id="discord-bio-input"
-          rows="3"
-          placeholder="Paste your Discord About Me text here"
-        ></textarea>
-        <small>Discord doesn't allow bots to read bios publicly — paste yours manually here.</small>
-      </div>
-
-      <div class="form-actions">
-        <button type="button" id="fetch-discord-btn" class="button-secondary">
-          ⬇️ Apply Discord Data to Profile
-        </button>
-      </div>
-
-      <div id="discord-sync-status" class="status-message" role="status" aria-live="polite"></div>
+      <small class="form-help">
+        Enable Developer Mode in Discord, then right-click your profile and
+        choose <strong>Copy User ID</strong>.
+      </small>
     </div>
 
-    <!-- Divider -->
-    <hr style="margin: 16px 0;">
+    <div
+      id="discord-profile-preview"
+      class="discord-profile-preview"
+      hidden
+    >
+      <img
+        id="discord-avatar-preview"
+        class="discord-avatar"
+        src=""
+        alt="Discord profile picture"
+      >
+
+      <div class="discord-profile-preview-info">
+        <strong id="discord-name-preview">
+          Discord Profile
+        </strong>
+
+        <span id="discord-username-preview"></span>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="button"
+        id="fetch-discord-btn"
+        class="button-secondary"
+      >
+        Apply Discord Profile
+      </button>
+    </div>
+
+    <div
+      id="discord-sync-status"
+      class="status-message"
+      role="status"
+      aria-live="polite"
+      hidden
+    ></div>
+
+  </div>
+
+</section>
+
+<hr class="section-divider">
 
     <!-- Username -->
     <div class="form-group">
