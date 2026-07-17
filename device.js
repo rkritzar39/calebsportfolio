@@ -13,11 +13,11 @@
  * 🧾 WEBSITE VERSION CONFIG
  * Single source of truth for Version Information section
  * =========================================================== */
-const WEBSITE_VERSION = "v26.6-beta.4";
-const WEBSITE_BUILD = "2026.07.13";
+const WEBSITE_VERSION = "v27.0-rc.1";
+const WEBSITE_BUILD = "2026.07.17";
 const RELEASE_TRACK = "Beta Revamp Preview";
 const REVAMP_STATUS = "Partial beta revamp in progress";
-const TARGET_RELEASE = "September 2026";
+const TARGET_RELEASE = "Late July 2026";
 
 /* ===========================================================
  * 📍 GLOBAL LOCATION SERVICE (SINGLE SOURCE OF TRUTH)
