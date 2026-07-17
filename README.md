@@ -5,9 +5,9 @@
 ![Release Track](https://img.shields.io/badge/release%20track-Release%20Candidate-orange)
 ![Stable Base](https://img.shields.io/badge/stable%20base-v26.5-green)
 ![Planned Revamp](https://img.shields.io/badge/planned%20revamp-v27.0-yellow)
-![JavaScript](https://img.shields.io/badge/JavaScript-48.7%25-f1e05a)
-![CSS](https://img.shields.io/badge/CSS-37.9%25-663399)
-![HTML](https://img.shields.io/badge/HTML-13.4%25-e34c26)
+![JavaScript](https://img.shields.io/badge/JavaScript-45.3%25-f1e05a)
+![CSS](https://img.shields.io/badge/CSS-37.6%25-663399)
+![HTML](https://img.shields.io/badge/HTML-17.1%25-e34c26)
 
 Welcome to the repository for my Link in Bio Website.
 
@@ -21,13 +21,13 @@ The website is built to be responsive, accessible, secure, and easy to use acros
 
 | Attribute | Details |
 | :--- | :--- |
-| **Version** | v27.0-rc.1[span_1](start_span)[span_1](end_span) |
-| **Build** | 2026.07.17[span_2](start_span)[span_2](end_span) |
-| **Release Track** | Release Candidate[span_3](start_span)[span_3](end_span) |
-| **Current Stable Base** | v26.5[span_4](start_span)[span_4](end_span) |
-| **Revamp Status** | Feature-frozen for final testing[span_5](start_span)[span_5](end_span) |
-| **Target Release** | Late July 2026[span_6](start_span)[span_6](end_span) |
-| **Planned Full Revamp** | v27.0[span_7](start_span)[span_7](end_span) |
+| **Version** | v27.0-rc.1[span_0](start_span)[span_0](end_span) |
+| **Build** | 2026.07.17[span_1](start_span)[span_1](end_span) |
+| **Release Track** | Release Candidate[span_2](start_span)[span_2](end_span) |
+| **Current Stable Base** | v26.5[span_3](start_span)[span_3](end_span) |
+| **Revamp Status** | Feature-frozen for final testing[span_4](start_span)[span_4](end_span) |
+| **Target Release** | Late July 2026[span_5](start_span)[span_5](end_span) |
+| **Planned Full Revamp** | v27.0[span_6](start_span)[span_6](end_span) |
 
 ---
 
@@ -84,7 +84,7 @@ Visitors can use the website to:
 * Access legal and notice information
 * View resume information
 * Adjust appearance and accessibility settings
-* Navigate between the Home, Release Candidate, Resume, and Settings pages using the responsive Onyx dock[span_8](start_span)[span_8](end_span)
+* Navigate between the Home, Release Candidate, Resume, and Settings pages using the responsive Onyx dock[span_7](start_span)[span_7](end_span)
 
 > **Note:** Most public content is managed through the Admin Portal, which is only accessible to authorized accounts.
 
@@ -96,15 +96,15 @@ Visitors can use the website to:
 
 The Home Page contains the primary public-facing sections of the website. 
 
-The current release candidate focuses on a cleaner experience by maintaining actively used sections, finalizing responsive layouts and the Onyx navigation dock, and keeping retired or unnecessary features removed for final testing[span_9](start_span)[span_9](end_span).
+The current release candidate focuses on a cleaner experience by maintaining actively used sections, finalizing responsive layouts and the Onyx navigation dock, and keeping retired or unnecessary features removed for final testing[span_8](start_span)[span_8](end_span).
 
 ### 1. Profile Section
 
-The Profile Section displays my main profile information and features improved picture-to-name spacing, enhanced biography readability, and Onyx surfaces[span_10](start_span)[span_10](end_span).
+The Profile Section displays my main profile information and features improved picture-to-name spacing, enhanced biography readability, and Onyx surfaces[span_9](start_span)[span_9](end_span).
 
 #### Includes
 * Username or display name
-* Optional Discord synchronization for display name, profile picture, and online status[span_11](start_span)[span_11](end_span)
+* Optional Discord synchronization for display name, profile picture, and online status[span_10](start_span)[span_10](end_span)
 * Bio
 * Profile image
 * Verified badge
@@ -114,7 +114,7 @@ The Profile Section displays my main profile information and features improved p
 #### Navigation Links
 The navigation area includes links such as:
 * Home
-* RC[span_12](start_span)[span_12](end_span)
+* RC[span_11](start_span)[span_11](end_span)
 * Resume
 * Settings
 
@@ -126,10 +126,10 @@ The website can display a live activity or status area.
 
 #### Includes
 * Current status or activity text
-* Spotify progress and PreMiD activities[span_13](start_span)[span_13](end_span)
-* Discord presence[span_14](start_span)[span_14](end_span)
-* Manual Firestore overrides[span_15](start_span)[span_15](end_span)
-* Dynamic album-art color matching and accent-color fallback[span_16](start_span)[span_16](end_span)
+* Spotify progress and PreMiD activities[span_12](start_span)[span_12](end_span)
+* Discord presence[span_13](start_span)[span_13](end_span)
+* Manual Firestore overrides[span_14](start_span)[span_14](end_span)
+* Dynamic album-art color matching and accent-color fallback[span_15](start_span)[span_15](end_span)
 * Active or offline indicator
 * Optional live media or music-style display
 * Updated timestamp
@@ -152,7 +152,7 @@ Visitors can click public links but cannot edit or modify them. This section all
 
 ### 4. Creator Shoutouts
 
-The website includes redesigned creator shoutout sections for[span_17](start_span)[span_17](end_span):
+The website includes redesigned creator shoutout sections for[span_16](start_span)[span_16](end_span):
 * TikTok
 * Instagram
 * YouTube
@@ -353,7 +353,7 @@ The Academic Schedule dropdown hides or shows together with the Hide / Show Full
 
 ### 11. Tech Information
 
-The Tech Information section displays technology items that I own, use, track, or plan to upgrade. Sensitive and private device details are kept out of the public page[span_18](start_span)[span_18](end_span).
+The Tech Information section displays technology items that I own, use, track, or plan to upgrade. Sensitive and private device details are kept out of the public page[span_17](start_span)[span_17](end_span).
 
 #### Basic Information
 Tech items can include:
@@ -467,7 +467,7 @@ Tech items support different ownership states.
 
 ### 12. Useful Device and Website Information
 
-The website displays useful visitor-side information related to the current device and environment without exposing sensitive details[span_19](start_span)[span_19](end_span).
+The website displays useful visitor-side information related to the current device and environment without exposing sensitive details[span_18](start_span)[span_18](end_span).
 
 #### Includes
 * Browser information
@@ -549,34 +549,34 @@ Maintenance Mode helps visitors understand when the website may be temporarily u
 
 ## Navigation Dock
 
-The responsive Onyx liquid-glass navigation dock provides centralized access to[span_20](start_span)[span_20](end_span):
+The responsive Onyx liquid-glass navigation dock provides centralized access to[span_19](start_span)[span_19](end_span):
 * Home
 * RC
 * Resume
 * Settings
 
 ### Dock Features
-* Inline SVG navigation icons[span_21](start_span)[span_21](end_span)
-* Active liquid-glass lens movement[span_22](start_span)[span_22](end_span)
+* Inline SVG navigation icons[span_20](start_span)[span_20](end_span)
+* Active liquid-glass lens movement[span_21](start_span)[span_21](end_span)
 * Automatic route detection
 * Nested route support
-* Equal-width navigation items[span_23](start_span)[span_23](end_span)
-* Balanced left and right edge spacing[span_24](start_span)[span_24](end_span)
-* Fractional-pixel lens positioning[span_25](start_span)[span_25](end_span)
-* Press feedback[span_26](start_span)[span_26](end_span)
-* Press-and-drag selection[span_27](start_span)[span_27](end_span)
-* Nearest-item drag targeting[span_28](start_span)[span_28](end_span)
-* Release and snap animation[span_29](start_span)[span_29](end_span)
-* Settings-only gear rotation[span_30](start_span)[span_30](end_span)
+* Equal-width navigation items[span_22](start_span)[span_22](end_span)
+* Balanced left and right edge spacing[span_23](start_span)[span_23](end_span)
+* Fractional-pixel lens positioning[span_24](start_span)[span_24](end_span)
+* Press feedback[span_25](start_span)[span_25](end_span)
+* Press-and-drag selection[span_26](start_span)[span_26](end_span)
+* Nearest-item drag targeting[span_27](start_span)[span_27](end_span)
+* Release and snap animation[span_28](start_span)[span_28](end_span)
+* Settings-only gear rotation[span_29](start_span)[span_29](end_span)
 * Pointer reflection on supported mouse devices
-* Keyboard navigation support[span_31](start_span)[span_31](end_span)
-* Safe-area handling[span_32](start_span)[span_32](end_span)
+* Keyboard navigation support[span_30](start_span)[span_30](end_span)
+* Safe-area handling[span_31](start_span)[span_31](end_span)
 * Phone responsiveness
 * Tablet portrait support
 * Tablet landscape support
 * Laptop and desktop support
-* Reduced-motion support[span_33](start_span)[span_33](end_span)
-* High-contrast support[span_34](start_span)[span_34](end_span)
+* Reduced-motion support[span_32](start_span)[span_32](end_span)
+* High-contrast support[span_33](start_span)[span_33](end_span)
 
 ### Dock Interaction
 Visitors can select a destination by clicking or tapping an item.
@@ -606,28 +606,28 @@ Modified browser interactions, such as opening a destination in a new tab, remai
 
 ## Release Candidate Page
 
-The Release Candidate Page (formerly the Beta Page) displays information about the frozen v27.0 update and upcoming finalization[span_35](start_span)[span_35](end_span).
+The Release Candidate Page (formerly the Beta Page) displays information about the frozen v27.0 update and upcoming finalization[span_34](start_span)[span_34](end_span).
 
 #### Includes
-* Current release candidate version[span_36](start_span)[span_36](end_span)
-* What's new in the release candidate[span_37](start_span)[span_37](end_span)
-* Release candidate changelog[span_38](start_span)[span_38](end_span)
-* Completed features list[span_39](start_span)[span_39](end_span)
-* Final testing areas[span_40](start_span)[span_40](end_span)
-* Removed features archive[span_41](start_span)[span_41](end_span)
-* Search release information feature[span_42](start_span)[span_42](end_span)
-* Release roadmap[span_43](start_span)[span_43](end_span)
-* Release Candidate Feedback form embedded via Tally[span_44](start_span)[span_44](end_span)
+* Current release candidate version[span_35](start_span)[span_35](end_span)
+* What's new in the release candidate[span_36](start_span)[span_36](end_span)
+* Release candidate changelog[span_37](start_span)[span_37](end_span)
+* Completed features list[span_38](start_span)[span_38](end_span)
+* Final testing areas[span_39](start_span)[span_39](end_span)
+* Removed features archive[span_40](start_span)[span_40](end_span)
+* Search release information feature[span_41](start_span)[span_41](end_span)
+* Release roadmap[span_42](start_span)[span_42](end_span)
+* Release Candidate Feedback form embedded via Tally[span_43](start_span)[span_43](end_span)
 
-The Release Candidate Page provides transparency into what is currently being validated before the final launch[span_45](start_span)[span_45](end_span).
+The Release Candidate Page provides transparency into what is currently being validated before the final launch[span_44](start_span)[span_44](end_span).
 
 #### Release Notes
-Important information about v27.0-rc.1 includes[span_46](start_span)[span_46](end_span):
-* v26.5 remains the current stable public version until v27.0 is formally released[span_47](start_span)[span_47](end_span).
-* v27.0-rc.1 is feature-frozen and intended for final validation[span_48](start_span)[span_48](end_span).
-* Only release-blocking bugs, accessibility corrections, compatibility fixes, performance issues, and content corrections should be added[span_49](start_span)[span_49](end_span).
-* Liquid-glass effects and custom backgrounds may vary by browser and device[span_50](start_span)[span_50](end_span).
-* The final v27.0 release is targeted for late July 2026[span_51](start_span)[span_51](end_span).
+Important information about v27.0-rc.1 includes[span_45](start_span)[span_45](end_span):
+* v26.5 remains the current stable public version until v27.0 is formally released[span_46](start_span)[span_46](end_span).
+* v27.0-rc.1 is feature-frozen and intended for final validation[span_47](start_span)[span_47](end_span).
+* Only release-blocking bugs, accessibility corrections, compatibility fixes, performance issues, and content corrections should be added[span_48](start_span)[span_48](end_span).
+* Liquid-glass effects and custom backgrounds may vary by browser and device[span_49](start_span)[span_49](end_span).
+* The final v27.0 release is targeted for late July 2026[span_50](start_span)[span_50](end_span).
 
 ---
 
@@ -663,7 +663,7 @@ The Reset to Factory Settings option restores visitor settings to their default 
 
 ## Resume Page
 
-The Resume Page provides access to resume-related information and shares the Settings appearance system for improved viewability[span_52](start_span)[span_52](end_span).
+The Resume Page provides access to resume-related information and shares the Settings appearance system for improved viewability[span_51](start_span)[span_51](end_span).
 
 ### Resume Content
 The Resume Page can include:
@@ -686,7 +686,7 @@ The Resume Page can include:
 * Resume PDF access
 
 ### Resume Appearance Integration
-The Resume Page supports improved variations of[span_53](start_span)[span_53](end_span):
+The Resume Page supports improved variations of[span_52](start_span)[span_52](end_span):
 * Light mode
 * Dark mode
 * Match-device appearance
@@ -710,8 +710,8 @@ The Resume Page is designed to adapt across:
 * Large desktop displays
 * Short landscape screens
 * Touchscreen devices
-* Printed pages[span_54](start_span)[span_54](end_span)
-* Browser-generated PDF layouts[span_55](start_span)[span_55](end_span)
+* Printed pages[span_53](start_span)[span_53](end_span)
+* Browser-generated PDF layouts[span_54](start_span)[span_54](end_span)
 
 ### Resume PDF
 Visitors can use the View Resume PDF button to open the configured PDF version in a new browser tab.
@@ -745,7 +745,7 @@ The Admin Portal can manage the following areas:
 * Useful links
 * Creator shoutouts
 * Disabilities
-* Optional Discord synchronization settings[span_56](start_span)[span_56](end_span)
+* Optional Discord synchronization settings[span_55](start_span)[span_55](end_span)
 
 **Business**
 * Contact email
@@ -961,9 +961,9 @@ This project is built with standard web technologies and Firebase backend servic
 
 | Language | Percentage | Purpose |
 | :--- | :--- | :--- |
-| **JavaScript** | 48.7% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, and interactive user-interface features. |
-| **CSS** | 37.9% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
-| **HTML** | 13.4% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
+| **JavaScript** | 45.3% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, and interactive user-interface features. |
+| **CSS** | 37.6% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
+| **HTML** | 17.1% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
 
 > **Note:** Language percentages are based on the current GitHub repository language analysis and may change as files are added, removed, or updated.
 
@@ -1058,7 +1058,7 @@ HTML provides the website structure.
 
 | Version | Highlights |
 | :--- | :--- |
-| **v27.0-rc.1** | Promoted completed beta features into the first release candidate, feature-froze for final stability testing, integrated updated Profile and Live Activity layouts, updated the Onyx navigation dock, and added optional Discord synchronization[span_57](start_span)[span_57](end_span). |
+| **v27.0-rc.1** | Promoted completed beta features into the first release candidate, feature-froze for final stability testing, integrated updated Profile and Live Activity layouts, updated the Onyx navigation dock, and added optional Discord synchronization[span_56](start_span)[span_56](end_span). |
 | **v26.6-beta.4** | Added the responsive Onyx liquid-glass navigation dock with inline SVG icons, active lens movement, press-and-drag navigation, release snapping, balanced dock spacing, and a Settings-only gear animation. Improved phone, foldable, tablet, laptop, desktop, landscape, touch, reduced-motion, and high-contrast support. Updated the Resume Page to use the shared Settings appearance system and improved light mode, dark mode, clear mode, tinted mode, print, and PDF layouts. |
 | **v26.6-beta.3** | Cleanup release. Removed retired FAQ, Posts, Blog, President, Legislation, Quote of the Day, Latest TikTok embed, Onyx AI assistant, and Project Goal Tracker features. Removed associated JavaScript, CSS, Firestore references, listeners, initialization calls, and obsolete script references. |
 | **v26.6-beta.2** | Updated Business Status and Hours. Improved academic availability. Added smart recurring class status labels. Fixed recurring classes so ended classes no longer stay stuck on “In Effect.” Improved hide and show full hours behavior. |
@@ -1084,20 +1084,20 @@ HTML provides the website structure.
 
 ## Release Roadmap
 
-* **v26.5** — Current stable website base[span_58](start_span)[span_58](end_span).
-* **v26.6-beta.1** — Original partial revamp preview[span_59](start_span)[span_59](end_span).
-* **v26.6-beta.2** — Business and academic availability improvements[span_60](start_span)[span_60](end_span).
-* **v26.6-beta.3** — Cleanup release removing retired and unused website sections[span_61](start_span)[span_61](end_span).
-* **v26.6-beta.4** — Onyx navigation, responsive-layout, and Resume appearance update[span_62](start_span)[span_62](end_span).
-* **v27.0-rc.1** — Current feature-frozen release candidate and final testing build[span_63](start_span)[span_63](end_span).
-* **v27.0** — Next stable release, targeted for late July 2026[span_64](start_span)[span_64](end_span).
-* **v27.x** — Post-release fixes and focused refinements[span_65](start_span)[span_65](end_span).
+* **v26.5** — Current stable website base[span_57](start_span)[span_57](end_span).
+* **v26.6-beta.1** — Original partial revamp preview[span_58](start_span)[span_58](end_span).
+* **v26.6-beta.2** — Business and academic availability improvements[span_59](start_span)[span_59](end_span).
+* **v26.6-beta.3** — Cleanup release removing retired and unused website sections[span_60](start_span)[span_60](end_span).
+* **v26.6-beta.4** — Onyx navigation, responsive-layout, and Resume appearance update[span_61](start_span)[span_61](end_span).
+* **v27.0-rc.1** — Current feature-frozen release candidate and final testing build[span_62](start_span)[span_62](end_span).
+* **v27.0** — Next stable release, targeted for late July 2026[span_63](start_span)[span_63](end_span).
+* **v27.x** — Post-release fixes and focused refinements[span_64](start_span)[span_64](end_span).
 
 ---
 
 ## Removed and Retired Features
 
-The following features were removed in v26.6-beta.3 and remain permanently excluded from v27.0 because they were no longer needed or were not part of the planned website direction[span_66](start_span)[span_66](end_span):
+The following features were removed in v26.6-beta.3 and remain permanently excluded from v27.0 because they were no longer needed or were not part of the planned website direction[span_65](start_span)[span_65](end_span):
 * FAQ section
 * Posts system
 * Blog list page logic
@@ -1123,7 +1123,7 @@ The cleanup also removed:
 * Retired page-routing logic
 * Unused frontend code
 
-The main TikTok, Instagram, and YouTube creator shoutout sections remain active[span_67](start_span)[span_67](end_span). Device AI compatibility information in the Tech Information section also remains active because it evaluates device capabilities and is not an interactive AI assistant.
+The main TikTok, Instagram, and YouTube creator shoutout sections remain active[span_66](start_span)[span_66](end_span). Device AI compatibility information in the Tech Information section also remains active because it evaluates device capabilities and is not an interactive AI assistant.
 
 ---
 
@@ -1148,6 +1148,6 @@ Visitors can:
 
 Only authorized accounts can modify managed content through the Admin Portal.
 
-Version v27.0-rc.1 brings the website into its feature-frozen testing phase for the upcoming full release[span_68](start_span)[span_68](end_span). It promotes all beta capabilities, finalizes the responsive Onyx navigation dock, integrates optional Discord synchronization controls, refines Live Activity elements with Spotify and PreMiD enhancements, and implements improved cross-device Resume presentation layouts[span_69](start_span)[span_69](end_span). 
+Version v27.0-rc.1 brings the website into its feature-frozen testing phase for the upcoming full release[span_67](start_span)[span_67](end_span). It promotes all beta capabilities, finalizes the responsive Onyx navigation dock, integrates optional Discord synchronization controls, refines Live Activity elements with Spotify and PreMiD enhancements, and implements improved cross-device Resume presentation layouts[span_68](start_span)[span_68](end_span). 
 
 Thanks for visiting!
