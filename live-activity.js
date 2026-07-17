@@ -40,6 +40,8 @@ let manualStatus = null;
 let dynamicColorRequestId = 0;
 let lastCoverUrl = null;
 let lastSettingsRaw = null;
+let lastExtractedForUrl = null;
+let lastExtractedColors = null; // { primaryCss, softCss, glowCss, bgValue }
 
 const $$ = (id) => document.getElementById(id);
 
@@ -677,6 +679,19 @@ function updateDynamicColors(imageUrl) {
     return;
   }
 
+  // Same cover as last successful extraction — reuse the result instead of
+  // re-sampling from scratch. Re-extracting an unchanged image can land on
+  // a different dominant color between polls when two colors are close in
+  // score (e.g. artwork with two near-equal-weight hues), which previously
+  // caused the accent to visibly flip on every ~30s poll even mid-song.
+  if (imageUrl === lastExtractedForUrl && lastExtractedColors) {
+    activity.style.setProperty("--dynamic-accent", lastExtractedColors.primaryCss);
+    activity.style.setProperty("--dynamic-accent-soft", lastExtractedColors.softCss);
+    activity.style.setProperty("--dynamic-accent-glow", lastExtractedColors.glowCss);
+    activity.style.setProperty("--dynamic-bg", lastExtractedColors.bgValue);
+    return;
+  }
+
   const img = new Image();
   img.crossOrigin = "anonymous";
   img.decoding = "async";
@@ -785,13 +800,7 @@ function updateDynamicColors(imageUrl) {
       const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
       const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
 
-      activity.style.setProperty("--dynamic-accent", primaryCss);
-      activity.style.setProperty("--dynamic-accent-soft", softCss);
-      activity.style.setProperty("--dynamic-accent-glow", glowCss);
-
-      activity.style.setProperty(
-        "--dynamic-bg",
-        `
+      const bgValue = `
         radial-gradient(
           82% 50% at 50% 22%,
           rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.34),
@@ -807,8 +816,17 @@ function updateDynamicColors(imageUrl) {
           rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.15),
           rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.07)
         )
-        `
-      );
+        `;
+
+      activity.style.setProperty("--dynamic-accent", primaryCss);
+      activity.style.setProperty("--dynamic-accent-soft", softCss);
+      activity.style.setProperty("--dynamic-accent-glow", glowCss);
+      activity.style.setProperty("--dynamic-bg", bgValue);
+
+      // Cache so the next poll for this same cover reuses this result
+      // instead of re-sampling and risking a different bucket winning.
+      lastExtractedForUrl = imageUrl;
+      lastExtractedColors = { primaryCss, softCss, glowCss, bgValue };
     } catch (error) {
       console.warn("Dynamic color extraction failed:", error);
       resetColors();
