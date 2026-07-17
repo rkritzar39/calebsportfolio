@@ -6,7 +6,7 @@
    Reddit one-time banner per new post
    Settings apply instantly (same tab)
    Match song accent OFF => CSS uses global --accent-color
-   Match song accent ON  => JS sets local --album-accent from artwork
+   Match song accent ON  => artwork-matched --album-accent extraction
    Time format ALWAYS hh:mm:ss
 */
 
@@ -225,9 +225,9 @@ function applySongThemeClass() {
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
+  const userAccent = settings.accentColor || "#1DB954";
 
   activity.classList.toggle("song-theme-off", !matchAccent);
-
   document.body.classList.toggle("dynamic-color-mode", matchAccent);
   document.body.classList.toggle("accent-color-mode", !matchAccent);
 
@@ -237,32 +237,26 @@ function applySongThemeClass() {
   );
 
   if (!matchAccent) {
-    const userAccent = settings.accentColor || "#1DB954";
-
-    /*
-     * Remove the artwork-specific color and explicitly restore the
-     * selected site accent for compatibility with both CSS versions.
-     */
+    dynamicColorRequestId += 1;
     activity.style.removeProperty("--album-accent");
+    activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-accent-soft", userAccent);
     activity.style.setProperty("--dynamic-accent-glow", userAccent);
-    activity.style.setProperty("--dynamic-bg", "none");
-
-    /* Cancel any artwork extraction still in progress. */
-    dynamicColorRequestId += 1;
   }
 }
 
 function watchWebsiteSettings() {
   const raw = localStorage.getItem("websiteSettings") || "{}";
   if (raw === lastSettingsRaw) return;
-
   lastSettingsRaw = raw;
+
   applySongThemeClass();
 
-  if (isMatchSongAccentEnabled() && lastCoverUrl) {
-    updateDynamicColors(lastCoverUrl);
+  if (isMatchSongAccentEnabled()) {
+    if (lastCoverUrl) updateDynamicColors(lastCoverUrl);
+  } else {
+    updateDynamicColors(null);
   }
 }
 
@@ -669,12 +663,12 @@ function makeAccentSetFromRgb(r, g, b) {
 }
 
 function updateDynamicColors(imageUrl) {
-  const activity = $$("live-activity");
+  const activity = document.querySelector(".live-activity");
   if (!activity) return;
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
-  const userAccent = settings.accentColor || "#1DB954";
+  const userAccent  = settings.accentColor || "#1DB954";
 
   if (imageUrl) lastCoverUrl = imageUrl;
 
@@ -682,42 +676,14 @@ function updateDynamicColors(imageUrl) {
 
   const resetColors = () => {
     activity.style.removeProperty("--album-accent");
+    activity.style.setProperty("--dynamic-bg", "none");
     activity.style.setProperty("--dynamic-accent", userAccent);
     activity.style.setProperty("--dynamic-accent-soft", userAccent);
     activity.style.setProperty("--dynamic-accent-glow", userAccent);
-    activity.style.setProperty("--dynamic-bg", "none");
   };
 
   if (!matchAccent || !imageUrl) {
     resetColors();
-    return;
-  }
-
-  /*
-   * Reuse the last successful result for an unchanged cover. This keeps
-   * near-equal artwork colors from alternating between Lanyard polls.
-   */
-  if (imageUrl === lastExtractedForUrl && lastExtractedColors) {
-    activity.style.setProperty(
-      "--album-accent",
-      lastExtractedColors.albumAccent
-    );
-    activity.style.setProperty(
-      "--dynamic-accent",
-      lastExtractedColors.albumAccent
-    );
-    activity.style.setProperty(
-      "--dynamic-accent-soft",
-      lastExtractedColors.softCss
-    );
-    activity.style.setProperty(
-      "--dynamic-accent-glow",
-      lastExtractedColors.glowCss
-    );
-    activity.style.setProperty(
-      "--dynamic-bg",
-      lastExtractedColors.bgValue
-    );
     return;
   }
 
@@ -729,7 +695,6 @@ function updateDynamicColors(imageUrl) {
   img.onload = () => {
     if (requestId !== dynamicColorRequestId) return;
 
-    /* The setting could have changed while the image was loading. */
     if (!isMatchSongAccentEnabled()) {
       resetColors();
       return;
@@ -746,6 +711,7 @@ function updateDynamicColors(imageUrl) {
       ctx.drawImage(img, 0, 0, size, size);
 
       const { data } = ctx.getImageData(0, 0, size, size);
+
       const buckets = new Map();
 
       for (let i = 0; i < data.length; i += 4) {
@@ -809,8 +775,8 @@ function updateDynamicColors(imageUrl) {
         const delta = max - min;
         const brightness = (r + g + b) / 3;
         const saturation = delta;
-        const prominence = bucket.count;
 
+        const prominence = bucket.count;
         const score =
           bucket.weight +
           prominence * 10 +
@@ -828,43 +794,37 @@ function updateDynamicColors(imageUrl) {
         return;
       }
 
-      const { primary, soft, glow, shadow } = makeAccentSetFromRgb(
-        best.r,
-        best.g,
-        best.b
-      );
+      const { primary, soft, glow, shadow } = makeAccentSetFromRgb(best.r, best.g, best.b);
 
-      const albumAccent =
-        `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
+      const primaryCss = `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
       const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
       const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
 
-      const bgValue = `
+      activity.style.setProperty("--album-accent", primaryCss);
+      activity.style.setProperty("--dynamic-accent", primaryCss);
+      activity.style.setProperty("--dynamic-accent-soft", softCss);
+      activity.style.setProperty("--dynamic-accent-glow", glowCss);
+
+      activity.style.setProperty(
+        "--dynamic-bg",
+        `
         radial-gradient(
           82% 50% at 50% 22%,
-          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.22),
-          transparent 58%
+          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.34),
+          transparent 56%
         ),
         radial-gradient(
           72% 40% at 50% 46%,
-          rgba(${glow.r}, ${glow.g}, ${glow.b}, 0.11),
-          transparent 62%
+          rgba(${glow.r}, ${glow.g}, ${glow.b}, 0.18),
+          transparent 60%
         ),
         linear-gradient(
           180deg,
-          rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.09),
-          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.045)
+          rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.15),
+          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.07)
         )
-      `;
-
-      activity.style.setProperty("--album-accent", albumAccent);
-      activity.style.setProperty("--dynamic-accent", albumAccent);
-      activity.style.setProperty("--dynamic-accent-soft", softCss);
-      activity.style.setProperty("--dynamic-accent-glow", glowCss);
-      activity.style.setProperty("--dynamic-bg", bgValue);
-
-      lastExtractedForUrl = imageUrl;
-      lastExtractedColors = { albumAccent, softCss, glowCss, bgValue };
+        `
+      );
     } catch (error) {
       console.warn("Dynamic color extraction failed:", error);
       resetColors();
