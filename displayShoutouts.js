@@ -849,20 +849,65 @@ const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
    INIT
 ------------------------------------------------------------ */
     
-const DISCORD_USER_ID = "850815059093356594";
+/* ============================ */
+/* DISCORD PROFILE SETTINGS     */
+/* ============================ */
 
-// ============================
-// DISCORD STATUS FETCH
-// ============================
-async function fetchDiscordStatus() {
+const DEFAULT_DISCORD_USER_ID = "850815059093356594";
+
+/* ============================ */
+/* DISCORD STATUS FETCH         */
+/* ============================ */
+
+async function fetchDiscordStatus(userId = DEFAULT_DISCORD_USER_ID) {
+    const normalizedUserId = String(
+        userId || DEFAULT_DISCORD_USER_ID
+    ).trim();
+
+    if (!/^\d{17,20}$/.test(normalizedUserId)) {
+        console.warn(
+            "Invalid Discord User ID for status lookup:",
+            normalizedUserId
+        );
+
+        return null;
+    }
+
     try {
-        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
-        const json = await res.json();
+        const response = await fetch(
+            "https://api.lanyard.rest/v1/users/" +
+            `${encodeURIComponent(normalizedUserId)}` +
+            `?timestamp=${Date.now()}`,
+            {
+                cache: "no-store",
+                headers: {
+                    Accept: "application/json"
+                }
+            }
+        );
 
-        return json?.data?.discord_status || null;
+        if (!response.ok) {
+            throw new Error(
+                `Lanyard returned status ${response.status}.`
+            );
+        }
 
-    } catch (err) {
-        console.warn("Lanyard API failed:", err);
+        const result = await response.json();
+
+        if (!result?.success || !result?.data) {
+            throw new Error(
+                "Lanyard did not return Discord status data."
+            );
+        }
+
+        return result.data.discord_status || null;
+
+    } catch (error) {
+        console.warn(
+            "Lanyard status request failed:",
+            error
+        );
+
         return null;
     }
 }
@@ -913,11 +958,13 @@ async function displayProfileData(profileData) {
     // ============================
     profileUsernameElement.textContent =
         profileData?.username ||
+        profileData?.discordDisplayName ||
         profileData?.displayName ||
         defaultUsername;
 
     profilePicElement.src =
         profileData?.profilePicUrl ||
+        profileData?.discordAvatar ||
         profileData?.profilePic ||
         profileData?.avatar ||
         defaultProfilePic;
@@ -933,7 +980,14 @@ async function displayProfileData(profileData) {
     let statusKey = profileData.status || "offline";
 
     if (profileData.autoStatusEnabled) {
-        const discordStatus = await fetchDiscordStatus();
+        const discordUserId =
+            profileData.discordUserId ||
+            DEFAULT_DISCORD_USER_ID;
+
+        const discordStatus = await fetchDiscordStatus(
+            discordUserId
+        );
+
         if (discordStatus) {
             statusKey = discordStatus;
         }
