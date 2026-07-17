@@ -1,4 +1,4 @@
-   // admin.js (Version includes Preview Prep + Previous Features + Social Links)
+// admin.js (Version includes Preview Prep + Previous Features + Social Links)
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
 const MANUAL_DOC = doc(db, "manualStatus", "site");
@@ -2579,7 +2579,8 @@ let discordData = {
     username: "",
     displayName: "",
     avatar: "",
-    status: "offline"
+    status: "offline",
+    lastFetchedAt: null
 };
 
 /* ============================ */
@@ -2595,6 +2596,7 @@ function setDiscordSyncStatus(message, isError = false) {
     if (!statusElement) return;
 
     statusElement.textContent = message;
+    statusElement.hidden = !message;
     statusElement.classList.toggle("error", isError);
     statusElement.classList.toggle("success", !isError && Boolean(message));
 }
@@ -2628,6 +2630,8 @@ function updateDiscordSyncPreview() {
     const avatar = document.getElementById("discord-avatar-preview");
     const displayName = document.getElementById("discord-name-preview");
     const username = document.getElementById("discord-username-preview");
+    const status = document.getElementById("discord-status-preview");
+    const lastSynced = document.getElementById("discord-last-synced");
 
     if (!preview || !avatar || !displayName || !username) return;
 
@@ -2640,6 +2644,22 @@ function updateDiscordSyncPreview() {
     avatar.alt = `${discordData.displayName || discordData.username} Discord profile picture`;
     displayName.textContent = discordData.displayName || discordData.username || "Discord profile";
     username.textContent = discordData.username ? `@${discordData.username}` : "";
+
+    if (status) {
+        const statusLabels = {
+            online: "Online",
+            idle: "Idle",
+            dnd: "Do Not Disturb",
+            offline: "Offline"
+        };
+        status.textContent = statusLabels[discordData.status] || "Status unavailable";
+        status.dataset.status = discordData.status || "offline";
+    }
+
+    if (lastSynced && discordData.lastFetchedAt) {
+        lastSynced.textContent = `Fetched ${new Date(discordData.lastFetchedAt).toLocaleString()}`;
+    }
+
     preview.hidden = false;
 }
 
@@ -2679,7 +2699,8 @@ async function fetchDiscordData(userId = DEFAULT_DISCORD_USER_ID) {
         username: user.username || "",
         displayName: user.global_name || user.display_name || user.username || "",
         avatar: getDiscordAvatarUrl(user),
-        status: result.data.discord_status || "offline"
+        status: result.data.discord_status || "offline",
+        lastFetchedAt: Date.now()
     };
 
     updateDiscordSyncPreview();
@@ -2696,20 +2717,26 @@ function applyDiscordDataToProfile() {
         return;
     }
 
-    if (profileUsernameInput) {
+    const syncName = document.getElementById("sync-discord-name")?.checked ?? true;
+    const syncAvatar = document.getElementById("sync-discord-avatar")?.checked ?? true;
+
+    if (syncName && profileUsernameInput) {
         profileUsernameInput.value = discordData.displayName || discordData.username;
     }
 
-    if (profilePicUrlInput) {
+    if (syncAvatar && profilePicUrlInput) {
         profilePicUrlInput.value = discordData.avatar;
     }
 
-    if (adminPfpPreview && discordData.avatar) {
+    if (syncAvatar && adminPfpPreview && discordData.avatar) {
         adminPfpPreview.src = discordData.avatar;
         adminPfpPreview.style.display = "inline-block";
     }
 
-    setDiscordSyncStatus("Discord display name and profile picture applied.", false);
+    setDiscordSyncStatus(
+        "Discord profile applied to the selected fields. Save profile changes to publish.",
+        false
+    );
 }
 
 /* ============================ */
@@ -2719,14 +2746,27 @@ function applyDiscordDataToProfile() {
 function updateDiscordSyncInterface() {
     const syncToggle = document.getElementById("discord-sync-toggle");
     const syncPanel = document.getElementById("discord-sync-panel");
+    const syncName = document.getElementById("sync-discord-name");
+    const syncAvatar = document.getElementById("sync-discord-avatar");
+    const syncStatus = document.getElementById("sync-discord-status");
+    const autoStatusToggle = document.getElementById("auto-status-toggle");
 
     if (!syncToggle || !syncPanel) return;
 
     const syncEnabled = syncToggle.checked;
     syncPanel.hidden = !syncEnabled;
 
-    if (profileUsernameInput) profileUsernameInput.disabled = syncEnabled;
-    if (profilePicUrlInput) profilePicUrlInput.disabled = syncEnabled;
+    if (profileUsernameInput) {
+        profileUsernameInput.disabled = syncEnabled && (syncName?.checked ?? true);
+    }
+
+    if (profilePicUrlInput) {
+        profilePicUrlInput.disabled = syncEnabled && (syncAvatar?.checked ?? true);
+    }
+
+    if (autoStatusToggle && syncEnabled) {
+        autoStatusToggle.checked = syncStatus?.checked ?? true;
+    }
 }
 
 /* ============================ */
@@ -2738,6 +2778,10 @@ function initializeDiscordSyncControls() {
     const syncPanel = document.getElementById("discord-sync-panel");
     const userIdInput = document.getElementById("discord-user-id");
     const fetchButton = document.getElementById("fetch-discord-btn");
+    const refreshButton = document.getElementById("refresh-discord-profile-btn");
+    const syncName = document.getElementById("sync-discord-name");
+    const syncAvatar = document.getElementById("sync-discord-avatar");
+    const syncStatus = document.getElementById("sync-discord-status");
 
     if (!syncToggle || !syncPanel || !fetchButton) return;
     if (syncToggle.dataset.discordSyncInitialized === "true") return;
@@ -2753,6 +2797,7 @@ function initializeDiscordSyncControls() {
 
         try {
             fetchButton.disabled = true;
+            if (refreshButton) refreshButton.disabled = true;
             setDiscordSyncStatus("Loading Discord profile…", false);
             await fetchDiscordData(userId);
             applyDiscordDataToProfile();
@@ -2761,6 +2806,7 @@ function initializeDiscordSyncControls() {
             setDiscordSyncStatus(error.message || "Unable to load Discord profile.", true);
         } finally {
             fetchButton.disabled = false;
+            if (refreshButton) refreshButton.disabled = false;
         }
     };
 
@@ -2776,6 +2822,15 @@ function initializeDiscordSyncControls() {
     });
 
     fetchButton.addEventListener("click", loadAndApplyDiscordProfile);
+
+    if (refreshButton) {
+        refreshButton.addEventListener("click", loadAndApplyDiscordProfile);
+    }
+
+    [syncName, syncAvatar, syncStatus].forEach((control) => {
+        control?.addEventListener("change", updateDiscordSyncInterface);
+    });
+
     updateDiscordSyncInterface();
 }
 
@@ -2813,11 +2868,17 @@ async function loadProfileData() {
 
         const syncToggle = document.getElementById("discord-sync-toggle");
         const discordUserIdInput = document.getElementById("discord-user-id");
+        const syncNameToggle = document.getElementById("sync-discord-name");
+        const syncAvatarToggle = document.getElementById("sync-discord-avatar");
+        const syncStatusToggle = document.getElementById("sync-discord-status");
         const isSync = data.syncWithDiscord || false;
         const savedDiscordUserId = data.discordUserId || DEFAULT_DISCORD_USER_ID;
 
         if (syncToggle) syncToggle.checked = isSync;
         if (discordUserIdInput) discordUserIdInput.value = savedDiscordUserId;
+        if (syncNameToggle) syncNameToggle.checked = data.syncDiscordName ?? true;
+        if (syncAvatarToggle) syncAvatarToggle.checked = data.syncDiscordAvatar ?? true;
+        if (syncStatusToggle) syncStatusToggle.checked = data.syncDiscordStatus ?? data.autoStatusEnabled ?? true;
 
         updateDiscordSyncInterface();
 
@@ -2830,14 +2891,18 @@ async function loadProfileData() {
             }
         }
 
-        if (isSync && discordData.id) {
-            if (profileUsernameInput) {
-                profileUsernameInput.value = discordData.displayName || discordData.username;
-            }
-            if (profilePicUrlInput) profilePicUrlInput.value = discordData.avatar;
-        } else {
-            if (profileUsernameInput) profileUsernameInput.value = data.username || "";
-            if (profilePicUrlInput) profilePicUrlInput.value = data.profilePicUrl || "";
+        if (profileUsernameInput) {
+            profileUsernameInput.value =
+                isSync && (data.syncDiscordName ?? true) && discordData.id
+                    ? (discordData.displayName || discordData.username)
+                    : (data.username || "");
+        }
+
+        if (profilePicUrlInput) {
+            profilePicUrlInput.value =
+                isSync && (data.syncDiscordAvatar ?? true) && discordData.id
+                    ? discordData.avatar
+                    : (data.profilePicUrl || "");
         }
 
         if (profileBioInput) profileBioInput.value = data.bio || "";
@@ -2924,7 +2989,13 @@ async function saveProfileData(event) {
     const syncToggle = document.getElementById("discord-sync-toggle");
     const autoStatusToggle = document.getElementById("auto-status-toggle");
     const discordUserIdInput = document.getElementById("discord-user-id");
+    const syncNameToggle = document.getElementById("sync-discord-name");
+    const syncAvatarToggle = document.getElementById("sync-discord-avatar");
+    const syncStatusToggle = document.getElementById("sync-discord-status");
     const isSync = syncToggle ? syncToggle.checked : false;
+    const syncDiscordName = isSync && (syncNameToggle?.checked ?? true);
+    const syncDiscordAvatar = isSync && (syncAvatarToggle?.checked ?? true);
+    const syncDiscordStatus = isSync && (syncStatusToggle?.checked ?? true);
     const discordUserId = discordUserIdInput?.value.trim() || DEFAULT_DISCORD_USER_ID;
 
     if (isSync) {
@@ -2938,16 +3009,25 @@ async function saveProfileData(event) {
 
     const newData = {
         syncWithDiscord: isSync,
+        syncDiscordName,
+        syncDiscordAvatar,
+        syncDiscordStatus,
         discordUserId: isSync ? discordUserId : null,
-        username: isSync
+        discordUsername: isSync ? (discordData.username || "") : "",
+        discordDisplayName: isSync ? (discordData.displayName || "") : "",
+        discordAvatar: isSync ? (discordData.avatar || "") : "",
+        discordLastSyncedAt: isSync ? serverTimestamp() : null,
+        username: syncDiscordName
             ? (discordData.displayName || discordData.username || "")
             : (profileUsernameInput?.value.trim() || ""),
-        profilePicUrl: isSync
+        profilePicUrl: syncDiscordAvatar
             ? (discordData.avatar || "")
             : (profilePicUrlInput?.value.trim() || ""),
         bio: profileBioInput?.value.trim() || "",
         status: profileStatusInput?.value || "offline",
-        autoStatusEnabled: autoStatusToggle ? autoStatusToggle.checked : false,
+        autoStatusEnabled: syncDiscordStatus
+            ? true
+            : (autoStatusToggle ? autoStatusToggle.checked : false),
         lastUpdated: serverTimestamp()
     };
 
