@@ -20,14 +20,34 @@ Security-sensitive controls are enforced through platform configuration, Firebas
 
 ## Supported Versions
 
-Security fixes are prioritized for the current stable release and the active release candidate.
+Security fixes are prioritized for the current stable release and the active release candidate. Previous versions are included below for historical clarity but are no longer supported.
 
-| Version | Status | Security Support |
+| Version | Release Status | Security Support |
 | :--- | :--- | :---: |
 | **v27.0-rc.1** | Current release candidate | :white_check_mark: |
+| **v26.6-beta.4** | Superseded beta release | :x: |
+| **v26.6-beta.3** | Superseded beta release | :x: |
+| **v26.6-beta.2** | Superseded beta release | :x: |
+| **v26.6-beta.1** | Superseded beta release | :x: |
 | **v26.5** | Current stable release | :white_check_mark: |
-| **v26.6-beta.x** | Superseded beta builds | :x: |
-| **v26.1.2 and earlier** | Unsupported | :x: |
+| **v26.1.2** | Previous stable release | :x: |
+| **v1.17.0** | Previous release | :x: |
+| **v1.16.0** | Previous release | :x: |
+| **v1.15.0** | Previous release | :x: |
+| **v1.14.0** | Previous release | :x: |
+| **v1.13.0** | Previous release | :x: |
+| **v1.12.0** | Previous release | :x: |
+| **v1.11.0** | Previous release | :x: |
+| **v1.10.1** | Previous release | :x: |
+| **v1.10.0** | Previous release | :x: |
+| **v1.9.x** | Previous release series | :x: |
+| **v1.8.x** | Previous release series | :x: |
+| **v1.7.x** | Previous release series | :x: |
+| **v1.6.x** | Previous release series | :x: |
+| **v1.5.x** | Previous release series | :x: |
+| **v1.4.x** | Previous release series | :x: |
+| **v1.3.x** | Previous release series | :x: |
+| **Earlier than v1.3** | Legacy release series | :x: |
 
 The release candidate may change during testing. Users who require the most predictable experience should continue using v26.5 until v27.0 is formally released.
 
