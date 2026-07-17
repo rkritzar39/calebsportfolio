@@ -1260,14 +1260,59 @@ body.dark-mode .profile-bio {
 
 
 /* ======================================================= /
-/ === LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE ====== /
-/ === Existing HTML only ================================ /
+/ LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE            /
+/ Existing HTML only                                      /
 / ======================================================= */
 
 .live-activity {
-  --dynamic-accent: var(--accent-color, #ff4f8b);
-  --dynamic-accent-soft: color-mix(in srgb, var(--accent-color, #ff6a9c) 82%, var(--glow-color) 18%);
-  --dynamic-accent-glow: color-mix(in srgb, var(--accent-color, #ff7dab) 70%, var(--glow-color) 30%);
+  --la-mode-accent:
+    var(
+      --album-accent,
+      var(--accent-color, #ff4f8b)
+    );
+
+  --la-mode-accent-strong:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 88%,
+      var(--text-color) 12%
+    );
+
+  --la-mode-accent-soft:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 70%,
+      var(--glow-color) 30%
+    );
+
+  --la-surface-tint:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 7%,
+      transparent
+    );
+
+  --la-surface-tint-strong:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 14%,
+      transparent
+    );
+
+  --la-border-accent:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 18%,
+      var(--border-color) 82%
+    );
+
+  --la-glow-opacity: 14%;
+  --la-art-glow-opacity: 16%;
+  --la-title-glow-opacity: 11%;
+
+  --dynamic-accent: var(--la-mode-accent);
+  --dynamic-accent-soft: var(--la-mode-accent-soft);
+  --dynamic-accent-glow: var(--la-mode-accent-strong);
   --dynamic-bg: none;
 
   --la-pad-x: clamp(18px, 3vw, 24px);
@@ -1299,69 +1344,117 @@ body.dark-mode .profile-bio {
 
   background:
     radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
-      transparent 52%
+      78% 44% at 50% -4%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) var(--la-glow-opacity),
+        transparent
+      ),
+      transparent 72%
+    ),
+    radial-gradient(
+      62% 38% at 50% 44%,
+      var(--la-surface-tint),
+      transparent 76%
     ),
     var(--bubble-gradient),
     var(--liquid-refraction),
     var(--dynamic-bg),
-    color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 92%,
+      var(--bg-color) 8%
+    );
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+  border: 1px solid var(--la-border-accent);
 
   box-shadow:
     var(--bubble-highlight),
     var(--bubble-shadow),
-    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+    0 18px 48px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 46%,
+        transparent
+      ),
+    0 0 34px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) var(--la-glow-opacity),
+        transparent
+      );
 
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
 
   transition:
-    background var(--transition-medium, .45s ease),
-    box-shadow var(--transition-medium, .45s ease),
-    border-color var(--transition-medium, .45s ease),
-    color var(--transition-medium, .45s ease);
+    background var(--transition-medium, 0.45s ease),
+    box-shadow var(--transition-medium, 0.45s ease),
+    border-color var(--transition-medium, 0.45s ease),
+    color var(--transition-medium, 0.45s ease);
 }
+
+/* Reflection Layer */
 
 .live-activity::before {
   content: "";
   position: absolute;
+  z-index: 1;
   inset: 0;
+
   border-radius: inherit;
   pointer-events: none;
 
-  background: var(--liquid-reflection);
-  opacity: 0.38;
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--glow-color) 22%,
+        transparent
+      ) 0%,
+      transparent 24%,
+      transparent 68%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 7%,
+        transparent
+      ) 100%
+    ),
+    var(--liquid-reflection);
+
+  opacity: 0.34;
   mix-blend-mode: soft-light;
 }
+
+/* Depth Layer */
 
 .live-activity::after {
   content: "";
   position: absolute;
+  z-index: 1;
   inset: 0;
+
   border-radius: inherit;
   pointer-events: none;
 
   background:
     radial-gradient(
-      80% 46% at 50% 22%,
-      color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent),
-      transparent 58%
+      72% 38% at 50% 18%,
+      var(--la-surface-tint-strong),
+      transparent 68%
     ),
     radial-gradient(
-      70% 38% at 50% 46%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
-      transparent 62%
-    ),
-    radial-gradient(
-      90% 48% at 50% 100%,
-      color-mix(in srgb, var(--shadow-color) 38%, transparent),
-      transparent 70%
+      88% 44% at 50% 106%,
+      color-mix(
+        in srgb,
+        var(--shadow-color) 28%,
+        transparent
+      ),
+      transparent 72%
     );
 
-  opacity: 0.82;
+  opacity: 0.8;
 }
 
 .live-activity > * {
@@ -1370,7 +1463,7 @@ body.dark-mode .profile-bio {
 }
 
 /* ======================================================= /
-/ === HIDDEN ============================================ /
+/ HIDDEN                                                  /
 / ======================================================= */
 
 .hidden {
@@ -1378,7 +1471,7 @@ body.dark-mode .profile-bio {
 }
 
 /* ======================================================= /
-/ === STATUS LINE ======================================= /
+/ STATUS LINE                                             /
 / ======================================================= */
 
 .status-line {
@@ -1387,46 +1480,109 @@ body.dark-mode .profile-bio {
   justify-content: center;
   gap: 10px;
 
+  max-width: 100%;
   margin: 2px auto 18px;
   padding: 0;
 
   font-size: 0.98rem;
   font-weight: 500;
+  line-height: 1.3;
   letter-spacing: -0.01em;
 
-  color: color-mix(in srgb, var(--text-color) 88%, var(--secondary-text) 12%);
+  color:
+    color-mix(
+      in srgb,
+      var(--text-color) 88%,
+      var(--secondary-text) 12%
+    );
 
-  transition: opacity var(--transition-fast, .22s ease);
+  transition:
+    color var(--transition-fast, 0.22s ease),
+    opacity var(--transition-fast, 0.22s ease);
 }
+
+#status-line-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status Icon Surface */
 
 .status-icon {
   width: 23px;
   height: 23px;
   flex-shrink: 0;
   display: block;
+  box-sizing: content-box;
+
+  padding: 6px;
+  border-radius: 11px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 11%,
+      transparent
+    );
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 16%,
+      var(--border-color) 84%
+    );
 
   filter:
     drop-shadow(
-      0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent)
+      0 0 8px
+      color-mix(
+        in srgb,
+        var(--dynamic-accent-glow) 18%,
+        transparent
+      )
     );
+
+  transition:
+    background var(--transition-fast, 0.22s ease),
+    border-color var(--transition-fast, 0.22s ease),
+    filter var(--transition-fast, 0.22s ease),
+    transform var(--transition-fast, 0.22s ease);
+}
+
+.status-line:hover .status-icon {
+  transform: scale(1.035);
 }
 
 .status-icon.glow {
   filter:
     drop-shadow(
-      0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 26%, transparent)
+      0 0 10px
+      color-mix(
+        in srgb,
+        var(--dynamic-accent-glow) 26%,
+        transparent
+      )
     )
     drop-shadow(
-      0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent)
+      0 0 18px
+      color-mix(
+        in srgb,
+        var(--dynamic-accent-soft) 14%,
+        transparent
+      )
     );
 }
 
 /* ======================================================= /
-/ === CARD BODY ========================================= /
+/ CARD BODY                                               /
 / ======================================================= */
 
 .spotify-card {
   width: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1435,12 +1591,14 @@ body.dark-mode .profile-bio {
   cursor: pointer;
   outline: none;
   user-select: none;
+  -webkit-tap-highlight-color: transparent;
 
   border-radius: 26px;
 
   transition:
-    transform .28s cubic-bezier(.2,.8,.2,1),
-    opacity .28s ease;
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.28s ease,
+    box-shadow 0.28s ease;
 }
 
 .spotify-card:hover,
@@ -1448,19 +1606,35 @@ body.dark-mode .profile-bio {
   transform: translateY(-1px);
 }
 
+.spotify-card:active {
+  transform: translateY(0) scale(0.993);
+}
+
 .spotify-card:focus-visible {
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 30%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
+    0 0 0 2px
+      color-mix(
+        in srgb,
+        var(--dynamic-accent) 30%,
+        transparent
+      ),
+    0 0 0 6px
+      color-mix(
+        in srgb,
+        var(--dynamic-accent-soft) 14%,
+        transparent
+      );
 }
 
 /* ======================================================= /
-/ === ALBUM ART ========================================= /
+/ ALBUM ART                                               /
 / ======================================================= */
 
 .live-album-art {
   position: relative;
+
   width: var(--la-art-size);
+  max-width: 100%;
   aspect-ratio: 1 / 1;
   margin: 2px auto 20px;
 
@@ -1470,76 +1644,135 @@ body.dark-mode .profile-bio {
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 18%, transparent),
-      color-mix(in srgb, var(--content-bg) 82%, transparent)
+      color-mix(
+        in srgb,
+        var(--glow-color) 18%,
+        transparent
+      ),
+      color-mix(
+        in srgb,
+        var(--content-bg) 82%,
+        transparent
+      )
     ),
-    color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 92%,
+      var(--bg-color) 8%
+    );
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 18%,
+      var(--border-color) 82%
+    );
 
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 38%, transparent),
-    0 22px 48px color-mix(in srgb, var(--shadow-color) 62%, transparent),
-    0 0 28px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+    inset 0 1px 0
+      color-mix(
+        in srgb,
+        var(--glow-color) 38%,
+        transparent
+      ),
+    0 22px 48px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 62%,
+        transparent
+      ),
+    0 0 32px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) var(--la-art-glow-opacity),
+        transparent
+      );
 
   transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    box-shadow .35s cubic-bezier(.2,.8,.2,1);
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.35s ease;
 }
+
+/* Album Art Ambient Glow */
 
 .live-album-art::before {
   content: "";
   position: absolute;
+  z-index: 0;
   inset: -18px;
+
   border-radius: 40px;
   pointer-events: none;
-  z-index: 0;
 
   background:
     radial-gradient(
       circle,
-      color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent),
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 22%,
+        transparent
+      ),
       transparent 72%
     );
 
   filter: blur(18px);
-  opacity: 0.75;
+  opacity: 0.72;
 }
+
+/* Album Art Reflection */
 
 .live-album-art::after {
   content: "";
   position: absolute;
+  z-index: 2;
   inset: 0;
+
   border-radius: inherit;
   pointer-events: none;
-  z-index: 2;
 
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 24%, transparent) 0%,
-      color-mix(in srgb, var(--glow-color) 8%, transparent) 22%,
-      transparent 38%,
+      color-mix(
+        in srgb,
+        var(--glow-color) 22%,
+        transparent
+      ) 0%,
+      color-mix(
+        in srgb,
+        var(--glow-color) 7%,
+        transparent
+      ) 22%,
+      transparent 39%,
       transparent 72%,
-      color-mix(in srgb, var(--shadow-color) 16%, transparent) 100%
+      color-mix(
+        in srgb,
+        var(--shadow-color) 14%,
+        transparent
+      ) 100%
     );
 
-  mix-blend-mode: screen;
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
 }
 
 .live-album-art img,
 #live-activity-cover {
   position: relative;
   z-index: 1;
+
   width: 100%;
   height: 100%;
   display: block;
+
   object-fit: cover;
   border-radius: inherit;
 
   transition:
-    transform .35s cubic-bezier(.2,.8,.2,1),
-    filter .35s cubic-bezier(.2,.8,.2,1);
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .spotify-card:hover .live-album-art,
@@ -1547,23 +1780,42 @@ body.dark-mode .profile-bio {
   transform: translateY(-3px) scale(1.018);
 
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--glow-color) 42%, transparent),
-    0 28px 58px color-mix(in srgb, var(--shadow-color) 68%, transparent),
-    0 0 36px color-mix(in srgb, var(--dynamic-accent-glow) 16%, transparent);
+    inset 0 1px 0
+      color-mix(
+        in srgb,
+        var(--glow-color) 42%,
+        transparent
+      ),
+    0 28px 58px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 68%,
+        transparent
+      ),
+    0 0 38px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 20%,
+        transparent
+      );
 }
 
 .spotify-card:hover .live-album-art img,
-.spotify-card:focus-visible .live-album-art img {
+.spotify-card:focus-visible .live-album-art img,
+.spotify-card:hover #live-activity-cover,
+.spotify-card:focus-visible #live-activity-cover {
   transform: scale(1.025);
   filter: saturate(1.03) contrast(1.02);
 }
 
 /* ======================================================= /
-/ === INFO ============================================== /
+/ TRACK INFORMATION                                       /
 / ======================================================= */
 
 .live-info {
   width: 100%;
+  min-width: 0;
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1575,6 +1827,7 @@ body.dark-mode .profile-bio {
   justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
+
   width: min(100%, 440px);
   margin: 0 auto;
 }
@@ -1587,12 +1840,23 @@ body.dark-mode .profile-bio {
   line-height: 1.14;
   font-weight: 700;
   letter-spacing: -0.035em;
+
   color: var(--text-color);
 
   text-wrap: balance;
+  overflow-wrap: anywhere;
 
   text-shadow:
-    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 14%, transparent);
+    0 0 16px
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) var(--la-title-glow-opacity),
+      transparent
+    );
+
+  transition:
+    color var(--transition-medium, 0.45s ease),
+    text-shadow var(--transition-medium, 0.45s ease);
 }
 
 .explicit-badge {
@@ -1615,9 +1879,32 @@ body.dark-mode .profile-bio {
   color: var(--text-color);
 
   background:
-    color-mix(in srgb, var(--content-bg) 78%, var(--glow-color) 22%);
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 9%,
+      var(--content-bg) 91%
+    );
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 18%,
+      var(--border-color) 82%
+    );
+
+  box-shadow:
+    inset 0 1px 0
+    color-mix(
+      in srgb,
+      var(--glow-color) 18%,
+      transparent
+    );
+
+  transition:
+    background var(--transition-medium, 0.45s ease),
+    border-color var(--transition-medium, 0.45s ease),
+    color var(--transition-medium, 0.45s ease);
 }
 
 .live-artist {
@@ -1638,10 +1925,12 @@ body.dark-mode .profile-bio {
 
   text-wrap: balance;
   overflow-wrap: anywhere;
+
+  transition: color var(--transition-medium, 0.45s ease);
 }
 
 /* ======================================================= /
-/ === PROGRESS ========================================== /
+/ MUSIC PROGRESS                                          /
 / ======================================================= */
 
 .music-progress-container {
@@ -1659,30 +1948,73 @@ body.dark-mode .profile-bio {
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 18%, transparent),
-      color-mix(in srgb, var(--content-bg) 70%, transparent)
+      color-mix(
+        in srgb,
+        var(--glow-color) 18%,
+        transparent
+      ),
+      color-mix(
+        in srgb,
+        var(--content-bg) 70%,
+        transparent
+      )
     ),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 88%,
+      var(--bg-color) 12%
+    );
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 14%,
+      var(--border-color) 86%
+    );
 
   box-shadow:
-    inset 0 1px 2px color-mix(in srgb, var(--glow-color) 28%, transparent),
-    inset 0 -1px 2px color-mix(in srgb, var(--shadow-color) 36%, transparent),
-    0 1px 8px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+    inset 0 1px 2px
+      color-mix(
+        in srgb,
+        var(--glow-color) 28%,
+        transparent
+      ),
+    inset 0 -1px 2px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 36%,
+        transparent
+      ),
+    0 1px 8px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 28%,
+        transparent
+      );
+
+  transition:
+    background var(--transition-medium, 0.45s ease),
+    border-color var(--transition-medium, 0.45s ease),
+    box-shadow var(--transition-medium, 0.45s ease);
 }
 
 .music-progress-container::before {
   content: "";
   position: absolute;
   inset: 0;
+
   border-radius: inherit;
   pointer-events: none;
 
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 22%, transparent),
+      color-mix(
+        in srgb,
+        var(--glow-color) 22%,
+        transparent
+      ),
       transparent 72%
     );
 
@@ -1692,24 +2024,44 @@ body.dark-mode .profile-bio {
 .music-progress-bar {
   position: relative;
   z-index: 1;
+
   height: 100%;
   width: 0%;
   border-radius: inherit;
 
   background:
     linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--dynamic-accent-soft) 94%, var(--glow-color) 6%),
-      color-mix(in srgb, var(--dynamic-accent) 78%, var(--shadow-color) 22%)
+      90deg,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 82%,
+        white 18%
+      ),
+      var(--la-mode-accent)
     );
 
   box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 34%, transparent),
-    0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
-    0 0 24px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
+    inset 0 1px 1px rgba(255, 255, 255, 0.28),
+    0 0 16px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 26%,
+        transparent
+      ),
+    0 0 28px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 13%,
+        transparent
+      );
 
-  transition: width .32s linear;
+  transition:
+    width 0.32s linear,
+    background var(--transition-medium, 0.45s ease),
+    box-shadow var(--transition-medium, 0.45s ease);
 }
+
+/* Indeterminate Progress */
 
 .music-progress-container.indeterminate {
   overflow: hidden;
@@ -1735,7 +2087,7 @@ body.dark-mode .profile-bio {
 }
 
 /* ======================================================= /
-/ === TIME PILL ========================================= /
+/ TIME PILL                                               /
 / ======================================================= */
 
 .music-progress-time {
@@ -1753,16 +2105,44 @@ body.dark-mode .profile-bio {
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 14%, transparent),
-      color-mix(in srgb, var(--content-bg) 78%, transparent)
+      color-mix(
+        in srgb,
+        var(--glow-color) 14%,
+        transparent
+      ),
+      color-mix(
+        in srgb,
+        var(--content-bg) 78%,
+        transparent
+      )
     ),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 88%,
+      var(--bg-color) 12%
+    );
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 13%,
+      var(--border-color) 87%
+    );
 
   box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 26%, transparent),
-    inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 32%, transparent);
+    inset 0 1px 1px
+      color-mix(
+        in srgb,
+        var(--glow-color) 26%,
+        transparent
+      ),
+    inset 0 -1px 1px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 32%,
+        transparent
+      );
 
   color: var(--secondary-text);
 
@@ -1772,11 +2152,18 @@ body.dark-mode .profile-bio {
 
   box-sizing: border-box;
   overflow: hidden;
+
+  transition:
+    background var(--transition-medium, 0.45s ease),
+    border-color var(--transition-medium, 0.45s ease),
+    box-shadow var(--transition-medium, 0.45s ease),
+    color var(--transition-medium, 0.45s ease);
 }
 
 .music-progress-time span {
   min-width: 0;
   white-space: nowrap;
+
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum" 1;
 }
@@ -1789,11 +2176,19 @@ body.dark-mode .profile-bio {
 .music-progress-time span:nth-child(2) {
   justify-self: center;
   text-align: center;
-  font-weight: 700;
-
-  color: color-mix(in srgb, var(--dynamic-accent-soft) 84%, var(--text-color) 16%);
 
   padding: 0 12px;
+
+  font-weight: 700;
+
+  color:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 82%,
+      var(--text-color) 18%
+    );
+
+  transition: color var(--transition-medium, 0.45s ease);
 }
 
 .music-progress-time span:last-child {
@@ -1802,7 +2197,7 @@ body.dark-mode .profile-bio {
 }
 
 /* ======================================================= /
-/ === UPDATED PILL ====================================== /
+/ UPDATED PILL                                            /
 / ======================================================= */
 
 .la-updated,
@@ -1817,16 +2212,44 @@ body.dark-mode .profile-bio {
   background:
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--glow-color) 12%, transparent),
-      color-mix(in srgb, var(--content-bg) 78%, transparent)
+      color-mix(
+        in srgb,
+        var(--glow-color) 12%,
+        transparent
+      ),
+      color-mix(
+        in srgb,
+        var(--content-bg) 78%,
+        transparent
+      )
     ),
-    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 88%,
+      var(--bg-color) 12%
+    );
 
-  border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 12%,
+      var(--border-color) 88%
+    );
 
   box-shadow:
-    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 24%, transparent),
-    inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 28%, transparent);
+    inset 0 1px 1px
+      color-mix(
+        in srgb,
+        var(--glow-color) 24%,
+        transparent
+      ),
+    inset 0 -1px 1px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 28%,
+        transparent
+      );
 
   color: var(--secondary-text);
 
@@ -1835,24 +2258,270 @@ body.dark-mode .profile-bio {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+
+  transition:
+    background var(--transition-medium, 0.45s ease),
+    border-color var(--transition-medium, 0.45s ease),
+    box-shadow var(--transition-medium, 0.45s ease),
+    color var(--transition-medium, 0.45s ease);
 }
 
 /* ======================================================= /
-/ === IN / OUT ========================================== /
+/ ACCENT COLOR MODE                                       /
+/ ======================================================= */
+
+body.accent-color-mode .live-activity,
+html.accent-color-mode .live-activity,
+[data-color-mode="accent"] .live-activity {
+  --la-mode-accent: var(--accent-color, #ff4f8b);
+  --la-glow-opacity: 16%;
+  --la-art-glow-opacity: 17%;
+  --la-title-glow-opacity: 12%;
+}
+
+body.accent-color-mode .live-album-art,
+html.accent-color-mode .live-album-art,
+[data-color-mode="accent"] .live-album-art {
+  border-color:
+    color-mix(
+      in srgb,
+      var(--accent-color, #ff4f8b) 20%,
+      var(--border-color) 80%
+    );
+
+  box-shadow:
+    inset 0 1px 0
+      color-mix(
+        in srgb,
+        var(--glow-color) 38%,
+        transparent
+      ),
+    0 22px 48px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 58%,
+        transparent
+      ),
+    0 0 32px
+      color-mix(
+        in srgb,
+        var(--accent-color, #ff4f8b) 17%,
+        transparent
+      );
+}
+
+body.accent-color-mode .music-progress-bar,
+html.accent-color-mode .music-progress-bar,
+[data-color-mode="accent"] .music-progress-bar {
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(
+        in srgb,
+        var(--accent-color, #ff4f8b) 82%,
+        white 18%
+      ),
+      var(--accent-color, #ff4f8b)
+    );
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    0 0 14px
+      color-mix(
+        in srgb,
+        var(--accent-color, #ff4f8b) 25%,
+        transparent
+      ),
+    0 0 28px
+      color-mix(
+        in srgb,
+        var(--accent-color, #ff4f8b) 12%,
+        transparent
+      );
+}
+
+body.accent-color-mode .music-progress-time span:nth-child(2),
+html.accent-color-mode .music-progress-time span:nth-child(2),
+[data-color-mode="accent"] .music-progress-time span:nth-child(2) {
+  color:
+    color-mix(
+      in srgb,
+      var(--accent-color, #ff4f8b) 78%,
+      var(--text-color) 22%
+    );
+}
+
+/* ======================================================= /
+/ DYNAMIC ALBUM COLOR MODE                                /
+/ JavaScript should set --album-accent on .live-activity. /
+/ ======================================================= */
+
+body.dynamic-color-mode .live-activity,
+html.dynamic-color-mode .live-activity,
+[data-color-mode="dynamic"] .live-activity {
+  --la-mode-accent:
+    var(
+      --album-accent,
+      var(--accent-color, #ff4f8b)
+    );
+
+  --la-glow-opacity: 20%;
+  --la-art-glow-opacity: 22%;
+  --la-title-glow-opacity: 13%;
+
+  background:
+    radial-gradient(
+      86% 47% at 50% -5%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 21%,
+        transparent
+      ),
+      transparent 70%
+    ),
+    radial-gradient(
+      70% 42% at 50% 46%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 9%,
+        transparent
+      ),
+      transparent 74%
+    ),
+    var(--bubble-gradient),
+    var(--liquid-refraction),
+    var(--dynamic-bg),
+    color-mix(
+      in srgb,
+      var(--content-bg) 90%,
+      var(--la-mode-accent) 10%
+    );
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 24%,
+      var(--border-color) 76%
+    );
+}
+
+body.dynamic-color-mode .live-album-art,
+html.dynamic-color-mode .live-album-art,
+[data-color-mode="dynamic"] .live-album-art {
+  border-color:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 24%,
+      var(--border-color) 76%
+    );
+
+  box-shadow:
+    inset 0 1px 0
+      color-mix(
+        in srgb,
+        var(--glow-color) 40%,
+        transparent
+      ),
+    0 24px 52px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 62%,
+        transparent
+      ),
+    0 0 38px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) var(--la-art-glow-opacity),
+        transparent
+      );
+}
+
+body.dynamic-color-mode .live-album-art::before,
+html.dynamic-color-mode .live-album-art::before,
+[data-color-mode="dynamic"] .live-album-art::before {
+  background:
+    radial-gradient(
+      circle,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 28%,
+        transparent
+      ),
+      transparent 70%
+    );
+
+  opacity: 0.82;
+}
+
+body.dynamic-color-mode .live-song-title,
+html.dynamic-color-mode .live-song-title,
+[data-color-mode="dynamic"] .live-song-title {
+  text-shadow:
+    0 0 16px
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) var(--la-title-glow-opacity),
+      transparent
+    );
+}
+
+body.dynamic-color-mode .music-progress-bar,
+html.dynamic-color-mode .music-progress-bar,
+[data-color-mode="dynamic"] .music-progress-bar {
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 78%,
+        white 22%
+      ),
+      var(--la-mode-accent)
+    );
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 0 16px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 28%,
+        transparent
+      ),
+    0 0 30px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 14%,
+        transparent
+      );
+}
+
+body.dynamic-color-mode .music-progress-time span:nth-child(2),
+html.dynamic-color-mode .music-progress-time span:nth-child(2),
+[data-color-mode="dynamic"] .music-progress-time span:nth-child(2) {
+  color:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 82%,
+      var(--text-color) 18%
+    );
+}
+
+/* ======================================================= /
+/ CARD ANIMATIONS                                         /
 / ======================================================= */
 
 .spotify-card.slide-in {
-  animation: liveCardIn .34s cubic-bezier(.2,.8,.2,1);
+  animation: liveCardIn 0.34s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .spotify-card.slide-out {
-  animation: liveCardOut .34s cubic-bezier(.2,.8,.2,1);
+  animation: liveCardOut 0.34s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @keyframes liveCardIn {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(.988);
+    transform: translateY(8px) scale(0.988);
   }
 
   to {
@@ -1869,12 +2538,12 @@ body.dark-mode .profile-bio {
 
   to {
     opacity: 0;
-    transform: translateY(8px) scale(.988);
+    transform: translateY(8px) scale(0.988);
   }
 }
 
 /* ======================================================= /
-/ === LIGHT MODE THEME POLISH =========================== /
+/ LIGHT MODE THEME POLISH                                 /
 / ======================================================= */
 
 body.light-e .live-activity {
@@ -1882,28 +2551,59 @@ body.light-e .live-activity {
 
   background:
     radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 24%, rgba(255,255,255,0.72)),
-      transparent 56%
+      82% 46% at 50% -4%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 18%,
+        rgba(255, 255, 255, 0.62)
+      ),
+      transparent 70%
+    ),
+    radial-gradient(
+      68% 40% at 50% 44%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 7%,
+        transparent
+      ),
+      transparent 74%
     ),
     var(--bubble-gradient),
     var(--liquid-refraction),
     var(--dynamic-bg),
-    color-mix(in srgb, var(--content-bg) 88%, white 12%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 88%,
+      white 12%
+    );
 
   border-color:
-    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 16%,
+      var(--border-color) 84%
+    );
 
   box-shadow:
     var(--bubble-highlight),
-    0 18px 42px color-mix(in srgb, var(--shadow-color) 78%, transparent),
+    0 18px 42px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 78%,
+        transparent
+      ),
     inset 0 1px 1px rgba(255, 255, 255, 0.82),
     inset 0 -2px 8px rgba(0, 0, 0, 0.08),
-    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
+    0 0 30px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 16%,
+        transparent
+      );
 }
 
 body.light-e .live-activity::before {
-  opacity: 0.5;
+  opacity: 0.46;
   mix-blend-mode: soft-light;
 }
 
@@ -1911,21 +2611,20 @@ body.light-e .live-activity::after {
   background:
     radial-gradient(
       82% 50% at 50% 22%,
-      color-mix(in srgb, var(--dynamic-accent-soft) 34%, transparent),
-      transparent 56%
-    ),
-    radial-gradient(
-      72% 40% at 50% 46%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 24%,
+        transparent
+      ),
       transparent 60%
     ),
     radial-gradient(
       90% 48% at 50% 100%,
-      rgba(0, 0, 0, 0.12),
+      rgba(0, 0, 0, 0.1),
       transparent 70%
     );
 
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 body.light-e .status-line {
@@ -1933,62 +2632,128 @@ body.light-e .status-line {
 }
 
 body.light-e .status-icon {
+  background:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 10%,
+      rgba(255, 255, 255, 0.36)
+    );
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 17%,
+      var(--border-color) 83%
+    );
+
   filter:
     drop-shadow(
-      0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent)
+      0 0 8px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 22%,
+        transparent
+      )
     );
 }
 
 body.light-e .status-icon.glow {
   filter:
     drop-shadow(
-      0 0 10px color-mix(in srgb, var(--dynamic-accent-glow) 30%, transparent)
+      0 0 10px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 30%,
+        transparent
+      )
     )
     drop-shadow(
-      0 0 18px color-mix(in srgb, var(--dynamic-accent-soft) 18%, transparent)
+      0 0 18px
+      color-mix(
+        in srgb,
+        var(--dynamic-accent-soft) 18%,
+        transparent
+      )
     );
 }
 
 body.light-e .spotify-card:focus-visible {
   box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--dynamic-accent) 34%, transparent),
-    0 0 0 6px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
+    0 0 0 2px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 34%,
+        transparent
+      ),
+    0 0 0 6px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 14%,
+        transparent
+      );
 }
 
 body.light-e .live-album-art {
   background:
     linear-gradient(
       180deg,
-      rgba(255,255,255,0.44),
-      rgba(255,255,255,0.18)
+      rgba(255, 255, 255, 0.44),
+      rgba(255, 255, 255, 0.18)
     ),
-    color-mix(in srgb, var(--content-bg) 82%, white 18%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 82%,
+      white 18%
+    );
 
   border-color:
-    color-mix(in srgb, var(--dynamic-accent) 14%, var(--border-color));
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 17%,
+      var(--border-color) 83%
+    );
 
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.54),
-    0 20px 34px color-mix(in srgb, var(--shadow-color) 55%, transparent),
-    0 0 34px color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent);
+    inset 0 1px 0 rgba(255, 255, 255, 0.54),
+    0 20px 34px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 55%,
+        transparent
+      ),
+    0 0 34px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 18%,
+        transparent
+      );
 }
 
 body.light-e .live-album-art::before {
   background:
     radial-gradient(
       circle,
-      color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent),
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 25%,
+        transparent
+      ),
       transparent 72%
     );
 
-  opacity: 0.92;
+  opacity: 0.84;
 }
 
 body.light-e .live-song-title {
   color: var(--text-color);
 
   text-shadow:
-    0 0 16px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent);
+    0 0 16px
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 14%,
+      transparent
+    );
 }
 
 body.light-e .live-artist {
@@ -1999,69 +2764,133 @@ body.light-e .explicit-badge {
   color: var(--text-color);
 
   background:
-    color-mix(in srgb, var(--dynamic-accent-soft) 18%, var(--content-bg) 82%);
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 10%,
+      var(--content-bg) 90%
+    );
 
   border-color:
-    color-mix(in srgb, var(--dynamic-accent) 18%, var(--border-color));
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 18%,
+      var(--border-color) 82%
+    );
 }
 
 body.light-e .music-progress-container {
   border-color:
-    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 16%,
+      var(--border-color) 84%
+    );
 
   background:
     linear-gradient(
       180deg,
-      rgba(255,255,255,0.42),
-      rgba(255,255,255,0.16)
+      rgba(255, 255, 255, 0.42),
+      rgba(255, 255, 255, 0.16)
     ),
-    color-mix(in srgb, var(--content-bg) 82%, white 18%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 82%,
+      white 18%
+    );
 
   box-shadow:
-    inset 0 1px 2px rgba(255,255,255,0.64),
-    inset 0 -1px 2px rgba(0,0,0,0.05),
-    0 1px 8px color-mix(in srgb, var(--shadow-color) 36%, transparent);
+    inset 0 1px 2px rgba(255, 255, 255, 0.64),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+    0 1px 8px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 36%,
+        transparent
+      );
 }
 
 body.light-e .music-progress-bar {
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.28),
-    0 0 18px color-mix(in srgb, var(--dynamic-accent-glow) 28%, transparent),
-    0 0 28px color-mix(in srgb, var(--dynamic-accent-soft) 16%, transparent);
+    inset 0 1px 1px rgba(255, 255, 255, 0.28),
+    0 0 18px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 25%,
+        transparent
+      ),
+    0 0 28px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 14%,
+        transparent
+      );
 }
 
 body.light-e .music-progress-time,
 body.light-e .la-updated,
 body.light-e #live-activity-updated {
   border-color:
-    color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 16%,
+      var(--border-color) 84%
+    );
 
   background:
     linear-gradient(
       180deg,
-      rgba(255,255,255,0.68),
-      rgba(255,255,255,0.42)
+      rgba(255, 255, 255, 0.68),
+      rgba(255, 255, 255, 0.42)
     ),
-    color-mix(in srgb, var(--content-bg) 82%, white 18%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 82%,
+      white 18%
+    );
 
   color: var(--secondary-text);
 
   box-shadow:
-    inset 0 1px 1px rgba(255,255,255,0.68),
-    inset 0 -1px 1px rgba(0,0,0,0.05);
+    inset 0 1px 1px rgba(255, 255, 255, 0.68),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.05);
 }
 
-body.light-e .music-progress-time span:nth-child(2) {
-  color: color-mix(in srgb, var(--dynamic-accent) 86%, var(--text-color) 14%);
+/* Light Dynamic Color Correction */
+
+body.light-e.dynamic-color-mode .live-activity,
+body.light-e [data-color-mode="dynamic"] .live-activity {
+  --dynamic-ui-accent:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 76%,
+      var(--text-color) 24%
+    );
 }
 
-body.light-e .la-updated,
-body.light-e #live-activity-updated {
-  color: var(--secondary-text);
+body.light-e.dynamic-color-mode .music-progress-bar,
+body.light-e [data-color-mode="dynamic"] .music-progress-bar {
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(
+        in srgb,
+        var(--dynamic-ui-accent) 78%,
+        white 22%
+      ),
+      var(--dynamic-ui-accent)
+    );
+}
+
+body.light-e.dynamic-color-mode
+  .music-progress-time span:nth-child(2),
+body.light-e
+  [data-color-mode="dynamic"]
+  .music-progress-time span:nth-child(2) {
+  color: var(--dynamic-ui-accent);
 }
 
 /* ======================================================= /
-/ === DARK MODE THEME POLISH ============================ /
+/ DARK MODE THEME POLISH                                  /
 / ======================================================= */
 
 html.dark-mode body .live-activity,
@@ -2070,55 +2899,132 @@ body.dark-mode .live-activity {
 
   background:
     radial-gradient(
-      circle at 50% 0%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent),
-      transparent 52%
+      82% 46% at 50% -4%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) var(--la-glow-opacity),
+        transparent
+      ),
+      transparent 70%
+    ),
+    radial-gradient(
+      66% 40% at 50% 44%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 7%,
+        transparent
+      ),
+      transparent 74%
     ),
     var(--bubble-gradient),
     var(--liquid-refraction),
     var(--dynamic-bg),
-    color-mix(in srgb, var(--content-bg) 88%, black 12%);
+    color-mix(
+      in srgb,
+      var(--content-bg) 88%,
+      black 12%
+    );
 
   border-color:
-    color-mix(in srgb, var(--border-color) 90%, transparent);
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 17%,
+      var(--border-color) 83%
+    );
 
   box-shadow:
     var(--bubble-highlight),
-    0 24px 58px color-mix(in srgb, var(--shadow-color) 88%, transparent),
-    inset 0 1px 1px rgba(255,255,255,0.08),
-    inset 0 -4px 14px rgba(0,0,0,0.42),
-    0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
+    0 24px 58px
+      color-mix(
+        in srgb,
+        var(--shadow-color) 88%,
+        transparent
+      ),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -4px 14px rgba(0, 0, 0, 0.42),
+    0 0 30px
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) var(--la-glow-opacity),
+        transparent
+      );
 }
 
 html.dark-mode body .live-activity::before,
 body.dark-mode .live-activity::before {
-  opacity: 0.38;
+  opacity: 0.34;
 }
 
 html.dark-mode body .live-activity::after,
 body.dark-mode .live-activity::after {
   background:
     radial-gradient(
-      80% 46% at 50% 22%,
-      color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent),
-      transparent 58%
-    ),
-    radial-gradient(
-      70% 38% at 50% 46%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
+      78% 44% at 50% 20%,
+      color-mix(
+        in srgb,
+        var(--la-mode-accent) 15%,
+        transparent
+      ),
       transparent 62%
     ),
     radial-gradient(
       90% 48% at 50% 100%,
-      rgba(0,0,0,0.32),
+      rgba(0, 0, 0, 0.32),
       transparent 70%
     );
 
-  opacity: 0.84;
+  opacity: 0.82;
+}
+
+/* Dark Dynamic Color Correction */
+
+html.dark-mode body.dynamic-color-mode .live-activity,
+body.dark-mode.dynamic-color-mode .live-activity,
+html.dark-mode body [data-color-mode="dynamic"] .live-activity,
+body.dark-mode [data-color-mode="dynamic"] .live-activity {
+  --dynamic-ui-accent:
+    color-mix(
+      in srgb,
+      var(--la-mode-accent) 78%,
+      white 22%
+    );
+}
+
+html.dark-mode body.dynamic-color-mode .music-progress-bar,
+body.dark-mode.dynamic-color-mode .music-progress-bar,
+html.dark-mode body
+  [data-color-mode="dynamic"]
+  .music-progress-bar,
+body.dark-mode
+  [data-color-mode="dynamic"]
+  .music-progress-bar {
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(
+        in srgb,
+        var(--dynamic-ui-accent) 82%,
+        white 18%
+      ),
+      var(--dynamic-ui-accent)
+    );
+}
+
+html.dark-mode body.dynamic-color-mode
+  .music-progress-time span:nth-child(2),
+body.dark-mode.dynamic-color-mode
+  .music-progress-time span:nth-child(2),
+html.dark-mode body
+  [data-color-mode="dynamic"]
+  .music-progress-time span:nth-child(2),
+body.dark-mode
+  [data-color-mode="dynamic"]
+  .music-progress-time span:nth-child(2) {
+  color: var(--dynamic-ui-accent);
 }
 
 /* ======================================================= /
-/ === RESPONSIVE ======================================== /
+/ RESPONSIVE                                              /
 / ======================================================= */
 
 @media (max-width: 600px) {
@@ -2130,12 +3036,21 @@ body.dark-mode .live-activity::after {
     width: min(var(--la-max-w), calc(100% - 22px));
     margin: 16px auto;
     padding: 22px 16px 18px;
+
     border-radius: 28px;
   }
 
   .status-line {
+    gap: 8px;
     margin-bottom: 16px;
     font-size: 0.95rem;
+  }
+
+  .status-icon {
+    width: 21px;
+    height: 21px;
+    padding: 5px;
+    border-radius: 10px;
   }
 
   .live-album-art {
@@ -2153,13 +3068,14 @@ body.dark-mode .live-activity::after {
   }
 
   .music-progress-container {
-    margin: 20px auto 12px;
     max-width: calc(100% - 4px);
+    margin: 20px auto 12px;
   }
 
   .music-progress-time {
     max-width: calc(100% - 4px);
     padding: 11px 14px;
+
     border-radius: 18px;
     font-size: 0.9rem;
   }
@@ -2175,24 +3091,81 @@ body.dark-mode .live-activity::after {
   }
 }
 
+@media (max-width: 380px) {
+  .live-activity {
+    --la-art-size: min(215px, 70vw);
+
+    width: calc(100% - 16px);
+    padding-inline: 13px;
+    border-radius: 25px;
+  }
+
+  .music-progress-time {
+    padding-inline: 11px;
+    font-size: 0.82rem;
+  }
+
+  .music-progress-time span:nth-child(2) {
+    padding-inline: 7px;
+  }
+
+  .la-updated,
+  #live-activity-updated {
+    max-width: calc(100% - 12px);
+    padding-inline: 13px;
+    letter-spacing: 0.06em;
+  }
+}
+
 /* ======================================================= /
-/ === REDUCED MOTION ==================================== /
+/ REDUCED MOTION                                          /
 / ======================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   .live-activity,
+  .status-line,
+  .status-icon,
   .spotify-card,
   .live-album-art,
   .live-album-art img,
   #live-activity-cover,
+  .live-song-title,
+  .live-artist,
+  .explicit-badge,
+  .music-progress-container,
   .music-progress-bar,
-  .status-line {
+  .music-progress-time,
+  .music-progress-time span,
+  .la-updated,
+  #live-activity-updated {
     transition: none !important;
     animation: none !important;
   }
 
+  .spotify-card:hover,
+  .spotify-card:focus-visible,
+  .spotify-card:active {
+    transform: none;
+  }
+
+  .spotify-card:hover .live-album-art,
+  .spotify-card:focus-visible .live-album-art {
+    transform: none;
+  }
+
+  .spotify-card:hover .live-album-art img,
+  .spotify-card:focus-visible .live-album-art img,
+  .spotify-card:hover #live-activity-cover,
+  .spotify-card:focus-visible #live-activity-cover {
+    transform: none;
+    filter: none;
+  }
+
   .music-progress-container.indeterminate .music-progress-bar {
+    width: 100%;
     animation: none !important;
+    transform: none;
+    opacity: 0.5;
   }
 }
 
