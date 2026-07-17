@@ -852,8 +852,7 @@ padding: 16px 18px;
 }
 
 /* ======================================================= */
-/* PROFILE SECTION — ONYX BUBBLE GLASS                     */
-/* Updated HTML and Live Activity compatible               */
+/* PROFILE SECTION - ONYX BUBBLE GLASS                     */
 /* ======================================================= */
 
 .profile-section {
@@ -861,53 +860,36 @@ padding: 16px 18px;
   isolation: isolate;
   overflow: hidden;
   box-sizing: border-box;
-
   width: 100%;
   margin: 1.25rem 0 1.875rem;
   padding: 1.875rem;
-
   text-align: center;
-
-  background:
-    var(--bubble-gradient),
-    var(--content-bg);
-
+  background: var(--bubble-gradient), var(--content-bg);
   border: 1px solid color-mix(in srgb, var(--border-color) 84%, transparent);
   border-radius: var(--radius-xl);
-
-  box-shadow:
-    var(--bubble-shadow),
-    var(--bubble-highlight);
-
+  box-shadow: var(--bubble-shadow), var(--bubble-highlight);
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-
   transition:
     background var(--transition-medium, 0.3s ease),
     border-color var(--transition-medium, 0.3s ease),
     box-shadow var(--transition-medium, 0.3s ease);
 }
 
-/* Reflection Layer */
-
 .profile-section::before {
   content: "";
   position: absolute;
   z-index: 0;
   inset: 0;
-
   border-radius: inherit;
   pointer-events: none;
-
-  background:
-    linear-gradient(
-      145deg,
-      color-mix(in srgb, var(--glow-color) 13%, transparent),
-      transparent 28%,
-      transparent 72%,
-      color-mix(in srgb, var(--shadow-color) 9%, transparent)
-    );
-
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--glow-color) 13%, transparent),
+    transparent 28%,
+    transparent 72%,
+    color-mix(in srgb, var(--shadow-color) 9%, transparent)
+  );
   opacity: 0.72;
 }
 
@@ -922,13 +904,10 @@ padding: 16px 18px;
 
 .profile-pic-wrapper {
   --profile-pic-size: 9.375rem;
-
   position: relative;
-
   width: var(--profile-pic-size);
   height: var(--profile-pic-size);
   margin: 0 auto;
-
   transition:
     width var(--transition-medium, 0.3s ease),
     height var(--transition-medium, 0.3s ease);
@@ -936,21 +915,16 @@ padding: 16px 18px;
 
 .profile-pic {
   display: block;
-
   width: 100%;
   height: 100%;
-
   object-fit: cover;
   object-position: center;
-
   background: color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
   border: 2px solid color-mix(in srgb, var(--border-color) 82%, transparent);
   border-radius: 50%;
-
   box-shadow:
     var(--bubble-shadow),
     inset 0 1px 0 color-mix(in srgb, var(--glow-color) 24%, transparent);
-
   transition:
     transform var(--transition-medium, 0.3s ease),
     border-color var(--transition-medium, 0.3s ease),
@@ -959,9 +933,7 @@ padding: 16px 18px;
 
 .profile-pic:hover {
   transform: translateY(-2px) scale(1.012);
-
   border-color: color-mix(in srgb, var(--accent-color) 24%, var(--border-color) 76%);
-
   box-shadow:
     var(--bubble-shadow),
     inset 0 1px 0 color-mix(in srgb, var(--glow-color) 30%, transparent),
@@ -975,38 +947,24 @@ padding: 16px 18px;
 .profile-status-container {
   position: absolute;
   z-index: 2;
-
   top: 87%;
   left: 87%;
-
   width: calc(var(--profile-pic-size) * 0.19);
   aspect-ratio: 1 / 1;
   padding: 2px;
-
   overflow: hidden;
-  border-radius: 50%;
-
   color: #747f8d;
-
   background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, white 10%, transparent),
-      transparent 60%
-    ),
+    linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 60%),
     color-mix(in srgb, var(--content-bg) 88%, transparent);
-
   border: 2px solid color-mix(in srgb, var(--border-color) 78%, transparent);
-
+  border-radius: 50%;
   box-shadow:
     0 4px 12px color-mix(in srgb, var(--shadow-color) 40%, transparent),
     inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
-
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
   transform: translate(-50%, -50%);
-
   transition:
     color var(--transition-medium, 0.3s ease),
     background var(--transition-medium, 0.3s ease),
@@ -1018,14 +976,11 @@ padding: 16px 18px;
   content: "";
   position: absolute;
   inset: 3px;
-
   border-radius: 50%;
   background: currentColor;
-
   box-shadow:
     inset 0 1px 1px rgba(255, 255, 255, 0.18),
     0 0 8px currentColor;
-
   opacity: 0.95;
 }
 
@@ -1033,10 +988,8 @@ padding: 16px 18px;
   content: "";
   position: absolute;
   inset: 0;
-
   border-radius: 50%;
   pointer-events: none;
-
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 48%);
   opacity: 0.65;
 }
@@ -1055,12 +1008,10 @@ padding: 16px 18px;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   width: 100%;
   min-width: 0;
-
   gap: 0;
-  margin: 1.875rem 0 0.625rem;
+  margin: 2.875rem 0 0.625rem;
 }
 
 .profile-name-row {
@@ -1068,7 +1019,6 @@ padding: 16px 18px;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-
   width: fit-content;
   max-width: 100%;
   min-width: 0;
@@ -1080,39 +1030,28 @@ padding: 16px 18px;
   min-width: 0;
   max-width: 100%;
   margin: 0;
-
   font-size: clamp(1.5rem, 5vw, 2.25rem);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.035em;
-
   overflow-wrap: anywhere;
   text-wrap: balance;
-
   background: linear-gradient(120deg, var(--secondary-text), var(--accent-color));
   background-clip: text;
   -webkit-background-clip: text;
-
   color: transparent;
   -webkit-text-fill-color: transparent;
-
   text-shadow: 0 0 18px color-mix(in srgb, var(--accent-color) 10%, transparent);
 }
 
 .verified {
   display: block;
   flex: 0 0 auto;
-
   width: 1.25rem;
   height: 1.25rem;
-
   object-fit: contain;
-
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent-color) 18%, transparent));
-
-  transition:
-    transform var(--transition-fast, 0.22s ease),
-    filter var(--transition-fast, 0.22s ease);
+  transition: transform var(--transition-fast, 0.22s ease);
 }
 
 .profile-name-row:hover .verified {
@@ -1125,52 +1064,36 @@ padding: 16px 18px;
 
 .profile-status-text {
   position: relative;
-
   display: none;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-
   width: min(100%, 430px);
   min-height: 38px;
-
   margin: 1.25rem auto 0;
   padding: 0.55rem 1rem;
-
   overflow: hidden;
+  color: #fff;
   border: 1px solid transparent;
   border-radius: 999px;
-
-  color: #fff;
-
   font-size: 0.85rem;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0.01em;
   text-align: center;
-
   box-shadow:
     0 4px 12px color-mix(in srgb, var(--shadow-color) 30%, transparent),
     inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
-
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-
-  transition:
-    color var(--transition-medium, 0.3s ease),
-    background var(--transition-medium, 0.3s ease),
-    border-color var(--transition-medium, 0.3s ease),
-    box-shadow var(--transition-medium, 0.3s ease);
 }
 
 .profile-status-text::before {
   content: "";
   position: absolute;
   inset: 0;
-
   border-radius: inherit;
   pointer-events: none;
-
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), transparent 55%);
   opacity: 0.72;
 }
@@ -1226,208 +1149,90 @@ padding: 16px 18px;
 .profile-bio {
   width: min(100%, 37.5rem);
   margin: 1.75rem auto 1rem;
-
   color: color-mix(in srgb, var(--secondary-text) 78%, var(--text-color) 22%);
-
   font-size: var(--font-size-base, 1rem);
   font-weight: 400;
   line-height: 1.6;
   letter-spacing: -0.01em;
-
   text-align: center;
-  text-wrap: pretty;
+  text-wrap: balance;
   overflow-wrap: anywhere;
 }
 
-/* ======================================================= /
-/ Profile Contrast Polish                                 /
-/ ======================================================= */
-
-.profile-bio {
-	color: color-mix(in srgb, var(--secondary-text) 78%, var(--text-color) 22%);
-	text-wrap: balance;
-}
-
-.profile-status-text.status-offline {
-	color: color-mix(in srgb, var(--text-color) 82%, var(--secondary-text) 18%);
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 18%, transparent),
-			transparent 60%
-		),
-		color-mix(in srgb, #747f8d 28%, var(--content-bg));
-	border-color: color-mix(in srgb, #747f8d 58%, var(--border-color));
-}
-
-/* ======================================================= /
-/ Mobile Profile Spacing                                  /
-/ ======================================================= */
-
-@media screen and (max-width: 600px) {
-	.profile-section {
-		padding-top: 1.5rem;
-		padding-bottom: 2.25rem;
-	}
-
-	.profile-bio {
-		font-size: 0.96rem;
-		line-height: 1.55;
-		margin-bottom: 1rem;
-	}
-
-	.username-checkmark {
-		margin-top: 1.35rem;
-	}
-}
-
-/* ======================================================= /
-/ Shared Search Bar Root Onyx Polish                      /
-/ ======================================================= */
+/* ======================================================= */
+/* SHARED SEARCH BAR ROOT ONYX POLISH                      */
+/* ======================================================= */
 
 .search-container.unified {
-	background:
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--glow-color) 18%, transparent),
-			color-mix(in srgb, var(--content-bg) 82%, transparent)
-		),
-		color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
-
-	border-color: color-mix(in srgb, var(--border-color) 82%, transparent);
-
-	box-shadow:
-		inset 0 1px 1px color-mix(in srgb, var(--glow-color) 34%, transparent),
-		inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 24%, transparent),
-		0 14px 34px color-mix(in srgb, var(--shadow-color) 44%, transparent);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--glow-color) 18%, transparent),
+      color-mix(in srgb, var(--content-bg) 82%, transparent)
+    ),
+    color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
+  border-color: color-mix(in srgb, var(--border-color) 82%, transparent);
+  box-shadow:
+    inset 0 1px 1px color-mix(in srgb, var(--glow-color) 34%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--shadow-color) 24%, transparent),
+    0 14px 34px color-mix(in srgb, var(--shadow-color) 44%, transparent);
 }
 
-/* ======================================================= /
-/ Tech Search Specific Safety Overrides                   /
-/ ======================================================= */
+/* ======================================================= */
+/* TECH SEARCH SAFETY OVERRIDES                            */
+/* ======================================================= */
 
 .tech-search-container.search-container.unified {
-	flex-direction: column;
-	align-items: stretch;
-
-	max-width: 560px;
-	padding: 14px;
-	border-radius: 28px;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 560px;
+  padding: 14px;
+  border-radius: 28px;
 }
 
 .tech-search-container .tech-search-top-row {
-	position: relative;
-	width: 100%;
-	height: 52px;
-	margin-bottom: 12px;
+  position: relative;
+  width: 100%;
+  height: 52px;
+  margin-bottom: 12px;
 }
 
 .tech-search-container .tech-search-input {
-	height: 52px;
-	padding: 0 48px 0 46px;
-	border-radius: 18px;
+  height: 52px;
+  padding: 0 48px 0 46px;
+  border-radius: 18px;
 }
 
 .tech-search-container .tech-sort-select {
-	position: relative;
-	top: auto;
-	right: auto;
-	transform: none;
-
-	width: 100%;
-	height: 56px;
-	margin-top: 0;
-
-	border-radius: 18px;
+  position: relative;
+  top: auto;
+  right: auto;
+  width: 100%;
+  height: 56px;
+  margin-top: 0;
+  border-radius: 18px;
+  transform: none;
 }
 
-/* ======================================================= /
-/ Social Section Minor Polish                             /
-/ ======================================================= */
+/* ======================================================= */
+/* SOCIAL SECTION MINOR POLISH                             */
+/* ======================================================= */
 
 .social-links-section h2 {
-	font-weight: 800;
-	letter-spacing: -0.035em;
+  font-weight: 800;
+  letter-spacing: -0.035em;
 }
 
 .social-button {
-	min-height: 64px;
+  min-height: 64px;
 }
 
 .social-button span {
-	font-weight: 650;
+  font-weight: 650;
 }
-
-/* ======================================================= /
-/ Light Mode Readability                                  /
-/ ======================================================= */
-
-body.light-e .profile-bio {
-	color: color-mix(in srgb, var(--secondary-text) 84%, var(--text-color) 16%);
-}
-
-body.light-e .profile-status-text.status-offline {
-	color: #2c2c2e;
-}
-
-/* ======================================================= /
-/ Dark Mode Readability                                   /
-/ ======================================================= */
-
-html.dark-mode body .profile-bio,
-body.dark-mode .profile-bio {
-	color: color-mix(in srgb, var(--secondary-text) 72%, var(--text-color) 28%);
-}
-
-
-/* =================================== */
-/* === Responsive Breakpoint Rules === */
-/* =================================== */
-
-@media screen and (max-width: 1024px) {
-	.profile-pic-wrapper {
-		--profile-pic-size: 8.5rem;
-	}
-}
-
-@media screen and (max-width: 768px) {
-	.profile-section {
-		padding: 1.5rem;
-		padding-bottom: 4rem;
-	}
-	.profile-pic-wrapper {
-		--profile-pic-size: 7.5rem;
-	}
-	.profile-status-container {
-		display: none;
-	}
-	.profile-status-text {
-		display: block;
-		flex-basis: 100%;
-	}
-	.corner-button {
-		width: 2.375rem;
-		height: 2.375rem;
-	}
-	.profile-bio {
-		font-size: 0.95rem;
-	}
-}
-
-@media screen and (max-width: 480px) {
-	.profile-section {
-		padding: 1.25rem;
-		padding-bottom: 4rem;
-		margin: 1rem 0;
-	}
-	.profile-pic-wrapper {
-		--profile-pic-size: 6.25rem;
-	}
-}
-
 
 /* ======================================================= */
-/* LIVE ACTIVITY — ROOT-THEMED ONYX / IOS STYLE            */
+/* LIVE ACTIVITY - ROOT-THEMED ONYX / IOS STYLE            */
 /* ======================================================= */
 
 .profile-section > .live-activity {
@@ -1438,10 +1243,9 @@ body.dark-mode .profile-bio {
 .live-activity {
   --la-mode-accent: var(--album-accent, var(--dynamic-accent, var(--accent-color, #ff4f8b)));
   --dynamic-accent: var(--accent-color, #ff4f8b);
-  --dynamic-accent-soft: color-mix(in srgb, var(--accent-color, #ff6a9c) 82%, var(--glow-color) 18%);
-  --dynamic-accent-glow: color-mix(in srgb, var(--accent-color, #ff7dab) 70%, var(--glow-color) 30%);
+  --dynamic-accent-soft: color-mix(in srgb, var(--dynamic-accent) 82%, var(--glow-color) 18%);
+  --dynamic-accent-glow: color-mix(in srgb, var(--dynamic-accent) 70%, var(--glow-color) 30%);
   --dynamic-bg: none;
-
   --la-pad-x: clamp(18px, 3vw, 24px);
   --la-pad-y: clamp(24px, 3.4vw, 34px);
   --la-max-w: 540px;
@@ -1454,18 +1258,14 @@ body.dark-mode .profile-bio {
   isolation: isolate;
   overflow: hidden;
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   width: min(var(--la-max-w), calc(100% - 32px));
   margin: 20px auto;
   padding: var(--la-pad-y) var(--la-pad-x) 22px;
-
   color: var(--text-color);
   text-align: center;
-
   background:
     radial-gradient(
       circle at 50% 0%,
@@ -1476,18 +1276,14 @@ body.dark-mode .profile-bio {
     var(--liquid-refraction),
     var(--dynamic-bg),
     color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
-
   border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
   border-radius: 32px;
-
   box-shadow:
     var(--bubble-highlight),
     var(--bubble-shadow),
     0 0 30px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
-
   backdrop-filter: var(--backdrop-blur);
   -webkit-backdrop-filter: var(--backdrop-blur);
-
   transition:
     background var(--transition-medium, 0.45s ease),
     box-shadow var(--transition-medium, 0.45s ease),
@@ -1508,7 +1304,6 @@ body.dark-mode .profile-bio {
   content: "";
   position: absolute;
   inset: 0;
-
   border-radius: inherit;
   pointer-events: none;
 }
@@ -1521,22 +1316,9 @@ body.dark-mode .profile-bio {
 
 .live-activity::after {
   background:
-    radial-gradient(
-      80% 46% at 50% 22%,
-      color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent),
-      transparent 58%
-    ),
-    radial-gradient(
-      70% 38% at 50% 46%,
-      color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent),
-      transparent 62%
-    ),
-    radial-gradient(
-      90% 48% at 50% 100%,
-      color-mix(in srgb, var(--shadow-color) 38%, transparent),
-      transparent 70%
-    );
-
+    radial-gradient(80% 46% at 50% 22%, color-mix(in srgb, var(--dynamic-accent-soft) 20%, transparent), transparent 58%),
+    radial-gradient(70% 38% at 50% 46%, color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent), transparent 62%),
+    radial-gradient(90% 48% at 50% 100%, color-mix(in srgb, var(--shadow-color) 38%, transparent), transparent 70%);
   opacity: 0.82;
 }
 
@@ -1558,16 +1340,12 @@ body.dark-mode .profile-bio {
   align-items: center;
   justify-content: center;
   gap: 10px;
-
   max-width: 100%;
   margin: 2px auto 18px;
-
   color: color-mix(in srgb, var(--text-color) 88%, var(--secondary-text) 12%);
-
   font-size: 0.98rem;
   font-weight: 500;
   letter-spacing: -0.01em;
-
   transition: opacity var(--transition-fast, 0.22s ease);
 }
 
@@ -1581,10 +1359,8 @@ body.dark-mode .profile-bio {
 .status-icon {
   display: block;
   flex: 0 0 auto;
-
   width: 23px;
   height: 23px;
-
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--dynamic-accent-glow) 18%, transparent));
 }
 
@@ -1602,17 +1378,13 @@ body.dark-mode .profile-bio {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   width: 100%;
-
   text-align: center;
   cursor: pointer;
   outline: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-
   border-radius: 26px;
-
   transition:
     transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
     opacity 0.28s ease,
@@ -1637,12 +1409,10 @@ body.dark-mode .profile-bio {
 .live-album-art {
   position: relative;
   overflow: hidden;
-
   width: var(--la-art-size);
   max-width: 100%;
   aspect-ratio: 1 / 1;
   margin: 2px auto 20px;
-
   background:
     linear-gradient(
       180deg,
@@ -1650,15 +1420,12 @@ body.dark-mode .profile-bio {
       color-mix(in srgb, var(--content-bg) 82%, transparent)
     ),
     color-mix(in srgb, var(--content-bg) 92%, var(--bg-color) 8%);
-
   border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
   border-radius: 30px;
-
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, var(--glow-color) 38%, transparent),
     0 22px 48px color-mix(in srgb, var(--shadow-color) 62%, transparent),
     0 0 28px color-mix(in srgb, var(--dynamic-accent-glow) 12%, transparent);
-
   transition:
     transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1674,7 +1441,6 @@ body.dark-mode .profile-bio {
 .live-album-art::before {
   z-index: 0;
   inset: -18px;
-
   border-radius: 40px;
   background: radial-gradient(circle, color-mix(in srgb, var(--dynamic-accent-glow) 20%, transparent), transparent 72%);
   filter: blur(18px);
@@ -1684,18 +1450,15 @@ body.dark-mode .profile-bio {
 .live-album-art::after {
   z-index: 2;
   inset: 0;
-
   border-radius: inherit;
-  background:
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--glow-color) 22%, transparent) 0%,
-      color-mix(in srgb, var(--glow-color) 7%, transparent) 22%,
-      transparent 39%,
-      transparent 72%,
-      color-mix(in srgb, var(--shadow-color) 14%, transparent) 100%
-    );
-
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--glow-color) 22%, transparent) 0%,
+    color-mix(in srgb, var(--glow-color) 7%, transparent) 22%,
+    transparent 39%,
+    transparent 72%,
+    color-mix(in srgb, var(--shadow-color) 14%, transparent) 100%
+  );
   opacity: 0.55;
   mix-blend-mode: soft-light;
 }
@@ -1704,15 +1467,11 @@ body.dark-mode .profile-bio {
 #live-activity-cover {
   position: relative;
   z-index: 1;
-
   display: block;
-
   width: 100%;
   height: 100%;
-
   object-fit: cover;
   border-radius: inherit;
-
   transition:
     transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
     filter 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1737,7 +1496,6 @@ body.dark-mode .profile-bio {
   display: flex;
   flex-direction: column;
   align-items: center;
-
   width: 100%;
   min-width: 0;
 }
@@ -1748,24 +1506,19 @@ body.dark-mode .profile-bio {
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-
   width: min(100%, 440px);
   margin: 0 auto;
 }
 
 .live-song-title {
   max-width: 100%;
-
   color: var(--text-color);
-
   font-size: clamp(1.32rem, 2.1vw, 1.72rem);
   font-weight: 700;
   line-height: 1.14;
   letter-spacing: -0.035em;
-
   text-wrap: balance;
   overflow-wrap: anywhere;
-
   text-shadow: 0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 14%, transparent);
 }
 
@@ -1774,16 +1527,13 @@ body.dark-mode .profile-bio {
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-
   min-width: 18px;
   height: 18px;
   padding: 0 5px;
-
   color: var(--text-color);
   background: color-mix(in srgb, var(--content-bg) 78%, var(--glow-color) 22%);
   border: 1px solid color-mix(in srgb, var(--border-color) 88%, transparent);
   border-radius: 5px;
-
   font-size: 0.68rem;
   font-weight: 700;
   line-height: 1;
@@ -1793,18 +1543,14 @@ body.dark-mode .profile-bio {
   display: -webkit-box;
   max-width: min(90%, 430px);
   margin: 10px auto 0;
-
   overflow: hidden;
   color: var(--secondary-text);
-
   font-size: clamp(0.98rem, 1.6vw, 1.08rem);
   font-weight: 400;
   line-height: 1.35;
   letter-spacing: -0.015em;
-
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-
   text-wrap: balance;
   overflow-wrap: anywhere;
 }
@@ -1817,12 +1563,10 @@ body.dark-mode .profile-bio {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
-
   width: var(--la-progress-w);
   max-width: calc(100% - 8px);
   height: var(--la-track-h);
   margin: 22px auto 14px;
-
   background:
     linear-gradient(
       180deg,
@@ -1830,10 +1574,8 @@ body.dark-mode .profile-bio {
       color-mix(in srgb, var(--content-bg) 70%, transparent)
     ),
     color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
-
   border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
   border-radius: 999px;
-
   box-shadow:
     inset 0 1px 2px color-mix(in srgb, var(--glow-color) 28%, transparent),
     inset 0 -1px 2px color-mix(in srgb, var(--shadow-color) 36%, transparent),
@@ -1843,24 +1585,18 @@ body.dark-mode .profile-bio {
 .music-progress-bar {
   position: relative;
   z-index: 1;
-
   width: 0%;
   height: 100%;
-
-  background:
-    linear-gradient(
-      135deg,
-      color-mix(in srgb, var(--dynamic-accent-soft) 94%, var(--glow-color) 6%),
-      color-mix(in srgb, var(--dynamic-accent) 78%, var(--shadow-color) 22%)
-    );
-
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dynamic-accent-soft) 94%, var(--glow-color) 6%),
+    color-mix(in srgb, var(--dynamic-accent) 78%, var(--shadow-color) 22%)
+  );
   border-radius: inherit;
-
   box-shadow:
     inset 0 1px 1px color-mix(in srgb, var(--glow-color) 34%, transparent),
     0 0 14px color-mix(in srgb, var(--dynamic-accent-glow) 22%, transparent),
     0 0 24px color-mix(in srgb, var(--dynamic-accent-soft) 14%, transparent);
-
   transition: width 0.32s linear;
 }
 
@@ -1884,15 +1620,12 @@ body.dark-mode .profile-bio {
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   box-sizing: border-box;
-
   width: var(--la-time-w);
   max-width: calc(100% - 8px);
   margin: 0 auto;
   padding: 12px 16px;
-
   overflow: hidden;
   color: var(--secondary-text);
-
   background:
     linear-gradient(
       180deg,
@@ -1900,14 +1633,11 @@ body.dark-mode .profile-bio {
       color-mix(in srgb, var(--content-bg) 78%, transparent)
     ),
     color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
-
   border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
   border-radius: 20px;
-
   box-shadow:
     inset 0 1px 1px color-mix(in srgb, var(--glow-color) 26%, transparent),
     inset 0 -1px 1px color-mix(in srgb, var(--shadow-color) 32%, transparent);
-
   font-size: clamp(0.84rem, 1.4vw, 0.96rem);
   line-height: 1;
   letter-spacing: -0.01em;
@@ -1926,7 +1656,6 @@ body.dark-mode .profile-bio {
 .music-progress-time span:nth-child(2) {
   justify-self: center;
   padding: 0 12px;
-
   color: color-mix(in srgb, var(--dynamic-accent-soft) 84%, var(--text-color) 16%);
   font-weight: 700;
 }
@@ -1937,9 +1666,7 @@ body.dark-mode .profile-bio {
   max-width: calc(100% - 24px);
   margin: 16px auto 0;
   padding: 9px 16px;
-
   color: var(--secondary-text);
-
   background:
     linear-gradient(
       180deg,
@@ -1947,10 +1674,8 @@ body.dark-mode .profile-bio {
       color-mix(in srgb, var(--content-bg) 78%, transparent)
     ),
     color-mix(in srgb, var(--content-bg) 88%, var(--bg-color) 12%);
-
   border: 1px solid color-mix(in srgb, var(--border-color) 86%, transparent);
   border-radius: 999px;
-
   font-size: 0.72rem;
   font-weight: 500;
   line-height: 1;
@@ -2003,9 +1728,7 @@ body.light-e .live-activity {
     var(--liquid-refraction),
     var(--dynamic-bg),
     color-mix(in srgb, var(--content-bg) 88%, white 12%);
-
   border-color: color-mix(in srgb, var(--dynamic-accent) 16%, var(--border-color));
-
   box-shadow:
     var(--bubble-highlight),
     0 18px 42px color-mix(in srgb, var(--shadow-color) 78%, transparent),
@@ -2024,7 +1747,6 @@ body.light-e #live-activity-updated {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.42)),
     color-mix(in srgb, var(--content-bg) 82%, white 18%);
-
   color: var(--secondary-text);
 }
 
@@ -2049,9 +1771,7 @@ body.dark-mode .live-activity {
     var(--liquid-refraction),
     var(--dynamic-bg),
     color-mix(in srgb, var(--content-bg) 88%, black 12%);
-
   border-color: color-mix(in srgb, var(--border-color) 90%, transparent);
-
   box-shadow:
     var(--bubble-highlight),
     0 24px 58px color-mix(in srgb, var(--shadow-color) 88%, transparent),
@@ -2072,8 +1792,7 @@ body.dark-mode .live-activity {
 
 @media screen and (max-width: 768px) {
   .profile-section {
-    padding: 1.5rem;
-    padding-bottom: 2.5rem;
+    padding: 1.5rem 1.5rem 2.5rem;
   }
 
   .profile-pic-wrapper {
@@ -2086,10 +1805,11 @@ body.dark-mode .live-activity {
 
   .profile-status-text {
     display: flex;
+    flex-basis: auto;
   }
 
   .username-checkmark {
-    margin-top: 1.35rem;
+    margin-top: 2.5rem;
   }
 
   .profile-name-row {
@@ -2099,7 +1819,6 @@ body.dark-mode .live-activity {
   .profile-bio {
     margin-top: 1.75rem;
     margin-bottom: 1rem;
-
     font-size: 0.95rem;
     line-height: 1.55;
   }
@@ -2114,6 +1833,10 @@ body.dark-mode .live-activity {
   .profile-section {
     padding-top: 1.5rem;
     padding-bottom: 2.25rem;
+  }
+
+  .username-checkmark {
+    margin-top: 2.25rem;
   }
 
   .profile-name-row h1,
@@ -2134,11 +1857,9 @@ body.dark-mode .live-activity {
     --la-art-size: min(230px, 72vw);
     --la-progress-w: min(100%, 360px);
     --la-time-w: min(100%, 368px);
-
     width: min(var(--la-max-w), calc(100% - 22px));
     margin: 16px auto;
     padding: 22px 16px 18px;
-
     border-radius: 28px;
   }
 
@@ -2169,7 +1890,6 @@ body.dark-mode .live-activity {
   .music-progress-time {
     max-width: calc(100% - 4px);
     padding: 11px 14px;
-
     border-radius: 18px;
     font-size: 0.9rem;
   }
@@ -2184,12 +1904,15 @@ body.dark-mode .live-activity {
 @media screen and (max-width: 480px) {
   .profile-section {
     margin: 1rem 0;
-    padding: 1.25rem;
-    padding-bottom: 2rem;
+    padding: 1.25rem 1.25rem 2rem;
   }
 
   .profile-pic-wrapper {
     --profile-pic-size: 6.25rem;
+  }
+
+  .username-checkmark {
+    margin-top: 2rem;
   }
 
   .profile-name-row h1,
@@ -2201,13 +1924,11 @@ body.dark-mode .live-activity {
     min-height: 36px;
     margin-top: 1rem;
     padding: 0.5rem 0.85rem;
-
     font-size: 0.82rem;
   }
 
   .profile-bio {
     margin-top: 1.5rem;
-
     font-size: 0.9rem;
     line-height: 1.55;
   }
