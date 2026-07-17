@@ -5260,6 +5260,7 @@ body.light-mode #resume-admin-section .ghost-btn:hover {
     margin: 0;
   }
 }
+
 /* ============================================================
    ADMIN CSS V6 Ã¢â‚¬â€ FULL DESIGN, MOTION, SIDEBAR & TOGGLE REFRESH
    ------------------------------------------------------------
@@ -6974,3 +6975,58 @@ button,
     scroll-behavior: auto !important;
   }
 }
+
+/* ========================================================= */
+/* Maintenance Mode Toggle Layout Fix                        */
+/* Keeps the title beside the switch and helper text below.  */
+/* ========================================================= */
+#site-settings .form-group.checkbox-group.apple-toggle-group {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+#site-settings .apple-toggle-group .apple-toggle-label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--switch-height, 32px);
+  margin: 0;
+  padding-left: calc(var(--switch-width, 54px) + 12px);
+  line-height: 1.35;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+#site-settings .apple-toggle-group > small {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  flex: none;
+  margin: 8px 0 0;
+  padding-left: calc(var(--switch-width, 54px) + 12px);
+  color: var(--secondary-text);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  #site-settings .apple-toggle-group .apple-toggle-label {
+    padding-left: calc(var(--switch-width, 54px) + 10px);
+  }
+
+  #site-settings .apple-toggle-group > small {
+    padding-left: 0;
+    margin-top: 10px;
+  }
+}
+
