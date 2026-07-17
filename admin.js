@@ -2610,9 +2610,9 @@ async function loadProfileData() {
         return;
     }
 
-    if (!profileForm || !maintenanceModeToggle || !hideTikTokSectionToggle ||
+    if (!profileForm || !maintenanceModeToggle ||
         !countdownTitleInput || !countdownDatetimeInput || !countdownExpiredMessageInput ||
-        !adminPfpPreview || !profileStatusInput) {
+        !profileStatusInput) {
         console.error("Missing admin.html elements!");
         if (profileStatusMessage) showProfileStatus("Error: Page structure incorrect.", true);
         return;
@@ -2693,17 +2693,13 @@ async function loadProfileData() {
         // ============================
         countdownTitleInput.value = data.countdownTitle || "";
 
-        if (data.countdownTargetDate && data.countdownTargetDate.toDate) {
+        // Support both the Firestore Timestamp used by the public site and
+        // the legacy string field used by older admin versions.
+        if (data.countdownTargetDate && typeof data.countdownTargetDate.toDate === "function") {
             const d = data.countdownTargetDate.toDate();
-            const formatted =
-                d.getFullYear() + "-" +
-                String(d.getMonth() + 1).padStart(2, "0") + "-" +
-                String(d.getDate()).padStart(2, "0") + "T" +
-                String(d.getHours()).padStart(2, "0") + ":" +
-                String(d.getMinutes()).padStart(2, "0") + ":" +
-                String(d.getSeconds()).padStart(2, "0");
-
-            countdownDatetimeInput.value = formatted;
+            countdownDatetimeInput.value = formatLocalCountdownDate(d);
+        } else {
+            countdownDatetimeInput.value = data.countdownTargetDateTime || "";
         }
 
         countdownExpiredMessageInput.value = data.countdownExpiredMessage || "";
@@ -2759,10 +2755,45 @@ async function loadProfileData() {
 }
 
 // ============================
+// COUNTDOWN HELPERS
+// ============================
+function formatLocalCountdownDate(date) {
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "";
+
+    return date.getFullYear() + "-" +
+        String(date.getMonth() + 1).padStart(2, "0") + "-" +
+        String(date.getDate()).padStart(2, "0") + "T" +
+        String(date.getHours()).padStart(2, "0") + ":" +
+        String(date.getMinutes()).padStart(2, "0") + ":" +
+        String(date.getSeconds()).padStart(2, "0");
+}
+
+function normalizeCountdownDateTime(value) {
+    const trimmed = String(value || "").trim();
+    if (!trimmed) return "";
+
+    // Accept YYYY-MM-DDTHH:MM and YYYY-MM-DDTHH:MM:SS.
+    const normalized = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(trimmed)
+        ? `${trimmed}:00`
+        : trimmed;
+
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(normalized)) {
+        throw new Error("Use the format YYYY-MM-DDTHH:MM:SS.");
+    }
+
+    const parsedDate = new Date(normalized);
+    if (Number.isNaN(parsedDate.getTime())) {
+        throw new Error("Enter a valid countdown date and time.");
+    }
+
+    return normalized;
+}
+
+// ============================
 // SAVE PROFILE DATA
 // ============================
 async function saveProfileData(event) {
-    event.preventDefault();
+    event?.preventDefault();
 
     if (!auth || !auth.currentUser) {
         showProfileStatus("Error: Not logged in.", true);
@@ -2771,56 +2802,76 @@ async function saveProfileData(event) {
 
     const syncToggle = document.getElementById("discord-sync-toggle");
     const autoStatusToggle = document.getElementById("auto-status-toggle");
-
     const isSync = syncToggle ? syncToggle.checked : false;
 
     const newData = {
         syncWithDiscord: isSync,
-
         username: isSync
-            ? discordData.username
-            : profileUsernameInput?.value.trim(),
-
+            ? (discordData.username || "")
+            : (profileUsernameInput?.value.trim() || ""),
         profilePicUrl: isSync
-            ? discordData.avatar
-            : profilePicUrlInput?.value.trim(),
-
+            ? (discordData.avatar || "")
+            : (profilePicUrlInput?.value.trim() || ""),
         bio: profileBioInput?.value.trim() || "",
         status: profileStatusInput?.value || "offline",
-
         autoStatusEnabled: autoStatusToggle ? autoStatusToggle.checked : false,
-
-        countdownTitle: countdownTitleInput?.value.trim() || "",
-        countdownTargetDateTime: countdownDatetimeInput?.value.trim() || "",
-        countdownExpiredMessage: countdownExpiredMessageInput?.value.trim() || ""
+        lastUpdated: serverTimestamp()
     };
 
-    const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+    try {
+        await setDoc(profileDocRef, newData, { merge: true });
+        showProfileStatus("Profile updated successfully!", false);
 
-    if (newData.countdownTargetDateTime &&
-        !dateTimeRegex.test(newData.countdownTargetDateTime)) {
-        showProfileStatus("Invalid date format.", true);
+        if (adminPfpPreview) {
+            if (newData.profilePicUrl) {
+                adminPfpPreview.src = newData.profilePicUrl;
+                adminPfpPreview.style.display = "inline-block";
+            } else {
+                adminPfpPreview.style.display = "none";
+            }
+        }
+    } catch (error) {
+        console.error("Profile save error:", error);
+        showProfileStatus(`Error saving profile: ${error.message}`, true);
+    }
+}
+
+// ============================
+// SAVE COUNTDOWN SETTINGS
+// ============================
+async function saveCountdownSettings(event) {
+    event?.preventDefault();
+
+    if (!auth || !auth.currentUser) {
+        showSettingsStatus("Error: Not logged in.", true);
         return;
     }
 
     try {
-
-        await setDoc(
-            profileDocRef,
-            { ...newData, lastUpdated: serverTimestamp() },
-            { merge: true }
+        const targetDateTime = normalizeCountdownDateTime(
+            countdownDatetimeInput?.value
         );
 
-        showProfileStatus("Profile updated successfully!", false);
+        const countdownData = {
+            countdownTitle: countdownTitleInput?.value.trim() || "",
+            countdownTargetDateTime: targetDateTime,
+            countdownExpiredMessage: countdownExpiredMessageInput?.value.trim() || "",
+            countdownUpdatedAt: serverTimestamp()
+        };
 
-        if (adminPfpPreview && newData.profilePicUrl) {
-            adminPfpPreview.src = newData.profilePicUrl;
-            adminPfpPreview.style.display = "inline-block";
+        // Keep the Timestamp field expected by the public countdown code.
+        // Firestore does not accept undefined, so only include it when set.
+        if (targetDateTime) {
+            countdownData.countdownTargetDate = Timestamp.fromDate(new Date(targetDateTime));
+        } else {
+            countdownData.countdownTargetDate = null;
         }
 
+        await setDoc(profileDocRef, countdownData, { merge: true });
+        showSettingsStatus("Countdown settings saved successfully!", false);
     } catch (error) {
-        console.error("Save error:", error);
-        showProfileStatus("Error saving profile.", true);
+        console.error("Countdown save error:", error);
+        showSettingsStatus(`Error saving countdown: ${error.message}`, true);
     }
 }
 
@@ -5042,8 +5093,15 @@ async function handleDeleteLegislation(docId) {
     }
 
     // Profile Save Form
-    if (profileForm) { //
-        profileForm.addEventListener('submit', saveProfileData); // Call handler on submit
+    if (profileForm && !profileForm.__profileSaveListenerAttached) {
+        profileForm.addEventListener('submit', saveProfileData);
+        profileForm.__profileSaveListenerAttached = true;
+    }
+
+    // Countdown Save Button
+    if (saveCountdownSettingsButton && !saveCountdownSettingsButton.__countdownSaveListenerAttached) {
+        saveCountdownSettingsButton.addEventListener('click', saveCountdownSettings);
+        saveCountdownSettingsButton.__countdownSaveListenerAttached = true;
     }
 
     // Edit Shoutout Form (in the modal)
