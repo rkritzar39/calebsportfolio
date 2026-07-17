@@ -956,15 +956,23 @@ async function displayProfileData(profileData) {
     // SAFE PROFILE FIELD MAPPING
     // (THIS FIXES YOUR ISSUE)
     // ============================
+    const useDiscordName =
+        profileData?.syncWithDiscord &&
+        (profileData?.syncDiscordName ?? true);
+
+    const useDiscordAvatar =
+        profileData?.syncWithDiscord &&
+        (profileData?.syncDiscordAvatar ?? true);
+
     profileUsernameElement.textContent =
+        (useDiscordName ? profileData?.discordDisplayName : "") ||
         profileData?.username ||
-        profileData?.discordDisplayName ||
         profileData?.displayName ||
         defaultUsername;
 
     profilePicElement.src =
+        (useDiscordAvatar ? profileData?.discordAvatar : "") ||
         profileData?.profilePicUrl ||
-        profileData?.discordAvatar ||
         profileData?.profilePic ||
         profileData?.avatar ||
         defaultProfilePic;
@@ -979,7 +987,12 @@ async function displayProfileData(profileData) {
     // ============================
     let statusKey = profileData.status || "offline";
 
-    if (profileData.autoStatusEnabled) {
+    const shouldSyncDiscordStatus =
+        profileData.syncWithDiscord
+            ? (profileData.syncDiscordStatus ?? profileData.autoStatusEnabled)
+            : profileData.autoStatusEnabled;
+
+    if (shouldSyncDiscordStatus) {
         const discordUserId =
             profileData.discordUserId ||
             DEFAULT_DISCORD_USER_ID;
