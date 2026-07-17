@@ -31,12 +31,12 @@ Access to view this Software is granted solely for:
 
 This repository is protected by copyright laws. You may not clone, fork, or redistribute this repository in any form. Unauthorized use of the repository may result in legal action.
 
-**Copyright (c) 2025 Caleb Kritzar. All rights reserved.**
+**Copyright (c) 2026 Caleb Kritzar. All rights reserved.**
 
   
 ### Enforcement
 Any violation of these terms will be subject to legal action and prosecution to the fullest extent of the law.
 
-**Last Updated:** 01-03-2025 11:55 PM EST
+**Last Updated:** 07-17-2026 5:32 PM EST
 
 **Updated By:** Caleb Kritzar
