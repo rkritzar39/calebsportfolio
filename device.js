@@ -15,8 +15,8 @@
  * =========================================================== */
 const WEBSITE_VERSION = "v27.0-rc.1";
 const WEBSITE_BUILD = "2026.07.17";
-const RELEASE_TRACK = "Beta Revamp Preview";
-const REVAMP_STATUS = "Partial beta revamp in progress";
+const RELEASE_TRACK = "Release Candidate";
+const REVAMP_STATUS = "Release candidate development and testing in progress";
 const TARGET_RELEASE = "Late July 2026";
 
 /* ===========================================================
