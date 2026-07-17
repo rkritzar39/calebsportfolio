@@ -335,45 +335,111 @@
     aria-live="polite"
   ></div>
 </section>
-         <section class="admin-section" id="site-settings" aria-labelledby="settings-heading" data-portal-title="Site Settings" data-portal-keywords="settings maintenance tiktok countdown homepage timer">
+    <section
+  class="admin-section"
+  id="site-settings"
+  aria-labelledby="settings-heading"
+  data-portal-title="Site Settings"
+  data-portal-keywords="settings maintenance countdown homepage timer"
+>
   <h3 id="settings-heading">Site Settings</h3>
 
-  <div class="form-group checkbox-group apple-toggle-group">
-    <input type="checkbox" id="maintenance-mode-toggle" name="maintenanceMode" class="apple-toggle-checkbox">
-    <label for="maintenance-mode-toggle" class="apple-toggle-label">Enable Maintenance Mode</label>
-    <small>Puts the public site into maintenance mode, showing only a maintenance message.</small>
+  <!-- Maintenance Mode -->
+  <div class="form-group maintenance-setting">
+    <div class="maintenance-setting-row">
+      <input
+        type="checkbox"
+        id="maintenance-mode-toggle"
+        name="maintenanceMode"
+        class="maintenance-setting-checkbox"
+      >
+
+      <label
+        for="maintenance-mode-toggle"
+        class="maintenance-setting-label"
+      >
+        Enable Maintenance Mode
+      </label>
+    </div>
+
+    <small class="maintenance-setting-description">
+      Puts the public site into maintenance mode, showing only a maintenance message.
+    </small>
   </div>
-<hr style="border-color: var(--border-color); margin: 2rem 0;">
+
+  <hr class="site-settings-divider">
 
   <h4>Homepage Countdown Timer</h4>
 
   <div class="form-group">
     <label for="countdown-title-input">Countdown Title:</label>
-    <input type="text" id="countdown-title-input" name="countdownTitle" placeholder="e.g., Countdown to Earth Day!">
-    <small>The main title displayed above the countdown timer.</small>
+
+    <input
+      type="text"
+      id="countdown-title-input"
+      name="countdownTitle"
+      placeholder="e.g., Countdown to Earth Day!"
+    >
+
+    <small>
+      The main title displayed above the countdown timer.
+    </small>
   </div>
 
   <div class="form-group">
-    <label for="countdown-datetime-input">Countdown Target Date & Time:</label>
-    <input type="text" id="countdown-datetime-input" name="countdownTargetDateTime"
-      placeholder="YYYY-MM-DDTHH:MM:SS (e.g., 2025-12-31T23:59:59)">
-    <small>Enter the target date and time in your local timezone (Bowling Green, Ohio is EDT - current time Mon, Sep 22
-      2025 1:14 PM EDT) using the specified format.</small>
+    <label for="countdown-datetime-input">
+      Countdown Target Date & Time:
+    </label>
+
+    <input
+      type="text"
+      id="countdown-datetime-input"
+      name="countdownTargetDateTime"
+      placeholder="YYYY-MM-DDTHH:MM:SS"
+      inputmode="numeric"
+      autocomplete="off"
+    >
+
+    <small>
+      Enter the target date and time using the format
+      YYYY-MM-DDTHH:MM:SS. The countdown uses the configured site timezone.
+    </small>
   </div>
 
   <div class="form-group">
-    <label for="countdown-expired-message-input">Expired Message:</label>
-    <textarea id="countdown-expired-message-input" name="countdownExpiredMessage" rows="3"
-      placeholder="Message shown when countdown ends (e.g., Happy Earth Day!)"></textarea>
-    <small>This message replaces the countdown numbers when the target time is reached. Leave blank for a default
-      message.</small>
+    <label for="countdown-expired-message-input">
+      Expired Message:
+    </label>
+
+    <textarea
+      id="countdown-expired-message-input"
+      name="countdownExpiredMessage"
+      rows="3"
+      placeholder="Message shown when countdown ends (e.g., Happy Earth Day!)"
+    ></textarea>
+
+    <small>
+      This message replaces the countdown numbers when the target time is
+      reached. Leave it blank to use the default message.
+    </small>
   </div>
 
   <div class="form-group">
-    <button id="save-countdown-settings-button" class="button">Save Countdown Settings</button>
+    <button
+      type="button"
+      id="save-countdown-settings-button"
+      class="button-primary"
+    >
+      Save Countdown Settings
+    </button>
   </div>
 
-  <div id="settings-status-message" class="status-message" role="status" aria-live="polite"></div>
+  <div
+    id="settings-status-message"
+    class="status-message"
+    role="status"
+    aria-live="polite"
+  ></div>
 </section>
 
             <section class="admin-section" id="social-links-management" aria-labelledby="social-links-heading" data-portal-title="Social Links" data-portal-keywords="social links instagram youtube tiktok url icon order">
@@ -2519,3 +2585,39 @@
                 <div class="form-group">
                     <label for="edit-tech-color">Color:</label>
                     <input type="text" id="edit-tech-color" name="color">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tech-date-released">Date Released:</label>
+                    <input type="text" id="edit-tech-date-released" name="dateReleased">
+                </div>
+            </div>
+
+            <!-- ================================================== -->
+            <!-- ALWAYS VISIBLE FINAL FIELDS - EDIT                -->
+            <!-- ================================================== -->
+            <div class="form-group">
+                <label for="edit-tech-order">Display Order:</label>
+                <input type="number" id="edit-tech-order" name="order" min="0" step="1" required>
+            </div>
+
+            <div class="form-group">
+                <label>Preview:</label>
+                <div id="edit-tech-item-preview" class="tech-preview-area">
+                    <p><small>Preview will load when modal opens.</small></p>
+                </div>
+            </div>
+
+            <div id="edit-tech-status-message" class="status-message" role="status" aria-live="polite"></div>
+
+            <div class="form-actions">
+                <button type="submit" class="button-primary">Save Tech Changes</button>
+                <button type="button" class="secondary-button" id="cancel-edit-tech-button-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
