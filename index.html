@@ -183,98 +183,82 @@
 
     <!-- Media Activity Card -->
 
-    <div
-      class="spotify-card hidden"
-      id="spotify-card"
-      role="button"
-      tabindex="0"
-      aria-label="Open current media activity"
-    >
-      <!-- Album or Activity Artwork -->
+<div
+  class="spotify-card hidden"
+  id="spotify-card"
+  role="button"
+  tabindex="0"
+  aria-label="Open current media activity"
+>
+  <!-- Album Artwork -->
 
-      <div class="live-album-art">
-        <img
-          src="path/to/default-cover.jpg"
-          alt="Album artwork"
-          class="live-album-image"
-          id="live-album-image"
-        />
-      </div>
+  <div class="live-album-art">
+    <img
+      id="live-activity-cover"
+      class="live-album-image"
+      src="path/to/default-cover.png"
+      alt="Album artwork"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
 
-      <!-- Media Information -->
+  <!-- Media Information -->
 
-      <div class="live-info">
-        <div class="live-song-title-wrapper">
-          <span
-            class="live-song-title"
-            id="live-song-title"
-          >
-            —
-          </span>
+  <div class="live-info">
+    <div class="live-song-title-wrapper">
+      <span
+        class="live-song-title"
+        id="live-song-title"
+      >
+        —
+      </span>
 
-          <span
-            class="explicit-badge"
-            id="explicit-badge"
-            aria-label="Explicit content"
-            title="Explicit"
-            hidden
-          >
-            E
-          </span>
-        </div>
-
-        <div
-          class="live-artist"
-          id="live-song-artist"
-        >
-          —
-        </div>
-
-        <!-- Media Progress -->
-
-        <div
-          class="music-progress-container"
-          role="progressbar"
-          aria-label="Media progress"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          aria-valuenow="0"
-        >
-          <div
-            class="music-progress-bar"
-            id="music-progress-bar"
-          ></div>
-        </div>
-
-        <!-- Media Times -->
-
-        <div
-          class="music-progress-time"
-          aria-label="Media playback times"
-        >
-          <span
-            id="elapsed-time"
-            aria-label="Elapsed time"
-          >
-            0:00:00
-          </span>
-
-          <span
-            id="remaining-time"
-            aria-label="Remaining time"
-          >
-            -0:00:00
-          </span>
-
-          <span
-            id="total-time"
-            aria-label="Total duration"
-          >
-            0:00:00
-          </span>
-        </div>
-      </div>
+      <span
+        class="explicit-badge hidden"
+        id="explicit-badge"
+        aria-label="Explicit content"
+        title="Explicit"
+      >
+        E
+      </span>
     </div>
+
+    <div
+      class="live-artist"
+      id="live-song-artist"
+    >
+      —
+    </div>
+
+    <!-- Progress -->
+
+    <div
+      class="music-progress-container"
+      role="progressbar"
+      aria-label="Media progress"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+    >
+      <div
+        id="music-progress-bar"
+        class="music-progress-bar"
+      ></div>
+    </div>
+
+    <!-- Playback Times -->
+
+    <div
+      class="music-progress-time"
+      aria-label="Media playback times"
+    >
+      <span id="elapsed-time">0:00</span>
+      <span id="remaining-time">-0:00</span>
+      <span id="total-time">0:00</span>
+    </div>
+  </div>
+</div>
 
     <!-- Last Activity Update -->
 
