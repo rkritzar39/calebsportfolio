@@ -205,6 +205,69 @@ function setImgWithFallback(imgEl, primaryUrl, fallbackUrl) {
   };
 }
 
+/* Album artwork image handling */
+function setAlbumCover(imageUrl) {
+  const coverEl = $$("live-activity-cover");
+  if (!coverEl) return;
+
+  const url = String(imageUrl || "").trim();
+
+  if (!url) {
+    coverEl.onload = null;
+    coverEl.onerror = null;
+    coverEl.removeAttribute("src");
+    coverEl.classList.remove("is-loading");
+    coverEl.classList.add("no-cover");
+    coverEl.style.removeProperty("display");
+    coverEl.style.opacity = "0";
+    lastCoverUrl = null;
+    return;
+  }
+
+  const currentUrl = coverEl.getAttribute("src") || "";
+
+  if (currentUrl === url && coverEl.complete && coverEl.naturalWidth > 0) {
+    coverEl.classList.remove("is-loading", "no-cover");
+    coverEl.style.removeProperty("display");
+    coverEl.style.opacity = "1";
+    lastCoverUrl = url;
+    return;
+  }
+
+  coverEl.onload = null;
+  coverEl.onerror = null;
+  coverEl.classList.add("is-loading");
+  coverEl.classList.remove("no-cover");
+  coverEl.style.removeProperty("display");
+  coverEl.style.opacity = "0";
+
+  coverEl.onload = () => {
+    coverEl.classList.remove("is-loading", "no-cover");
+    coverEl.style.removeProperty("display");
+    coverEl.style.opacity = "1";
+    lastCoverUrl = url;
+  };
+
+  coverEl.onerror = () => {
+    coverEl.onload = null;
+    coverEl.onerror = null;
+    coverEl.classList.remove("is-loading");
+    coverEl.classList.add("no-cover");
+    coverEl.style.opacity = "0";
+    coverEl.removeAttribute("src");
+
+    if (lastCoverUrl === url) lastCoverUrl = null;
+    console.warn("Failed to load album artwork:", url);
+  };
+
+  coverEl.src = url;
+
+  /* Handle artwork already loaded from the browser cache */
+  if (coverEl.complete && coverEl.naturalWidth > 0) {
+    coverEl.onload();
+  }
+}
+
 /* =========================
    SETTINGS HELPERS
 ========================= */
@@ -988,19 +1051,44 @@ function isYouTubeMusicLike(act) {
 ========================= */
 
 function resolveDiscordAssetUrl(activity) {
-  const a = activity?.assets;
-  if (!a) return "";
+  const assets = activity?.assets;
+  if (!assets) return "";
 
-  const large = a.large_image || "";
-  const appId = activity?.application_id;
-  if (!large) return "";
+  const largeImage = String(assets.large_image || "").trim();
+  const applicationId = activity?.application_id;
 
-  if (large.startsWith("mp:")) {
-    return `https://media.discordapp.net/${large.replace(/^mp:/, "")}`;
+  if (!largeImage) return "";
+
+  /* Already a complete image URL */
+  if (/^https?:\/\//i.test(largeImage)) {
+    return largeImage;
   }
 
-  if (appId) {
-    return `https://cdn.discordapp.com/app-assets/${appId}/${large}.png`;
+  /* Discord media proxy image */
+  if (largeImage.startsWith("mp:")) {
+    const mediaPath = largeImage.slice(3).replace(/^\/+/, "");
+    return `https://media.discordapp.net/${mediaPath}`;
+  }
+
+  /* Spotify activity artwork */
+  if (largeImage.startsWith("spotify:")) {
+    const spotifyImageId = largeImage.slice("spotify:".length);
+    return spotifyImageId
+      ? `https://i.scdn.co/image/${spotifyImageId}`
+      : "";
+  }
+
+  /* Twitch activity artwork */
+  if (largeImage.startsWith("twitch:")) {
+    const twitchName = largeImage.slice("twitch:".length);
+    return twitchName
+      ? `https://static-cdn.jtvnw.net/previews-ttv/live_user_${encodeURIComponent(twitchName)}-320x180.jpg`
+      : "";
+  }
+
+  /* Standard Discord application asset */
+  if (applicationId) {
+    return `https://cdn.discordapp.com/app-assets/${applicationId}/${largeImage}.png?size=512`;
   }
 
   return "";
@@ -1068,6 +1156,7 @@ async function getDiscord() {
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
+    setAlbumCover(null);
     updateDynamicColors(null);
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
@@ -1094,15 +1183,13 @@ async function getDiscord() {
       $$("live-song-title").textContent  = sp.song   || "Unknown";
       $$("live-song-artist").textContent = sp.artist || "Unknown";
 
-      const coverEl = $$("live-activity-cover");
-      if (coverEl && coverEl.src !== sp.album_art_url) {
-        setImgWithFallback(coverEl, sp.album_art_url, "");
-      }
+      const coverUrl = String(sp.album_art_url || "").trim();
+      setAlbumCover(coverUrl);
+      updateDynamicColors(coverUrl || null);
 
       currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
 
       setupProgress(startMs, endMs);
-      updateDynamicColors(sp.album_art_url);
 
       const explicitEl = $$("explicit-badge");
       if (explicitEl) explicitEl.style.display = sp?.explicit ? "inline-block" : "none";
@@ -1129,10 +1216,7 @@ async function getDiscord() {
         $$("live-song-artist").textContent = sub;
 
         const coverUrl = resolveDiscordAssetUrl(act);
-        const coverEl = $$("live-activity-cover");
-        if (coverEl && coverUrl && coverEl.src !== coverUrl) {
-          setImgWithFallback(coverEl, coverUrl, "");
-        }
+        setAlbumCover(coverUrl);
 
         currentSpotifyUrl = null;
 
@@ -1170,6 +1254,7 @@ async function getDiscord() {
     slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
+    setAlbumCover(null);
     updateDynamicColors(null);
 
     const map = {
