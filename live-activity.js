@@ -1,13 +1,13 @@
-/* live-activity.js — Apple Music style dynamic accent version
+/* live-activity.js — Updated Version
    Spotify via Lanyard (real timestamps -> real progress)
    PreMiD via Lanyard activities[] (show ALL activities)
    Manual Firestore overrides everything
    Twitch via decapi uptime
    Reddit one-time banner per new post
    Settings apply instantly (same tab)
-   Match song accent OFF => user accentColor
-   Match song accent ON  => Apple Music style cover-art ambient tint
-   Time format ALWAYS h:mm:ss
+   Match song accent OFF => CSS uses global --accent-color
+   Match song accent ON  => artwork-matched --album-accent extraction
+   Time format ALWAYS hh:mm:ss
 */
 
 import { doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
@@ -15,20 +15,26 @@ import { db } from "./firebase-init.js";
 
 const CONFIG = {
   discord: { userId: "850815059093356594" },
-  twitch: { username: "calebkritzar" },
-  reddit: { username: "Maleficent_Line6570" },
+  twitch:  { username: "calebkritzar" },
+  reddit:  { username: "Maleficent_Line6570" },
 };
+
+/* =========================
+   SETTINGS & STATE
+========================= */
 
 const NON_SPOTIFY_PROGRESS_MODE = "indeterminate"; // "indeterminate" | "hide"
 const SHOW_ALL_PREMID_ACTIVITIES = true;
-const TEMP_BANNER_MS = 15000;
 
 let lastUpdateTime = null;
-let lastPollTime = Date.now();
+let lastPollTime   = Date.now();
 let progressInterval = null;
 let currentSpotifyUrl = null;
 
 let tempBanner = null;
+const TEMP_BANNER_MS = 15000;
+
+let lastRedditPostId  = null;
 let manualStatus = null;
 
 let dynamicColorRequestId = 0;
@@ -36,25 +42,6 @@ let lastCoverUrl = null;
 let lastSettingsRaw = null;
 
 const $$ = (id) => document.getElementById(id);
-
-function els() {
-  return {
-    liveActivity: $$("live-activity"),
-    spotifyCard: $$("spotify-card"),
-    statusLine: $$("status-line"),
-    statusIcon: $$("status-icon"),
-    statusText: $$("status-line-text"),
-    cover: $$("live-activity-cover"),
-    title: $$("live-song-title"),
-    artist: $$("live-song-artist"),
-    explicit: $$("explicit-badge"),
-    progressBar: $$("music-progress-bar"),
-    elapsed: $$("elapsed-time"),
-    remaining: $$("remaining-time"),
-    total: $$("total-time"),
-    updated: $$("live-activity-updated"),
-  };
-}
 
 /* =========================
    TIME FORMAT
@@ -73,6 +60,7 @@ function fmt(seconds) {
 ========================= */
 
 const ICON_MAP = {
+  // MUSIC
   spotify: "https://cdn.simpleicons.org/spotify/1DB954",
   apple_music: "https://cdn.simpleicons.org/applemusic/FA57C1",
   youtubemusic: "https://cdn.simpleicons.org/youtubemusic/FF0000",
@@ -85,6 +73,7 @@ const ICON_MAP = {
   bandcamp: "https://cdn.simpleicons.org/bandcamp/408294",
   audiomack: "https://cdn.simpleicons.org/audiomack/FFA200",
 
+  // VIDEO / STREAMING
   netflix: "https://cdn.simpleicons.org/netflix/E50914",
   disneyplus: "https://cdn.simpleicons.org/disneyplus/113CCF",
   primevideo: "https://cdn.simpleicons.org/primevideo/1F2E3E",
@@ -97,6 +86,7 @@ const ICON_MAP = {
   plex: "https://cdn.simpleicons.org/plex/E5A00D",
   jellyfin: "https://cdn.simpleicons.org/jellyfin/00A4DC",
 
+  // SOCIAL
   discord: "https://cdn.simpleicons.org/discord/5865F2",
   reddit: "https://cdn.simpleicons.org/reddit/FF4500",
   x: "https://cdn.simpleicons.org/x/000000",
@@ -110,11 +100,13 @@ const ICON_MAP = {
   telegram: "https://cdn.simpleicons.org/telegram/26A5E4",
   signal: "https://cdn.simpleicons.org/signal/3A76F0",
 
+  // LIVE / CREATOR
   twitch: "https://cdn.simpleicons.org/twitch/9146FF",
   kick: "https://cdn.simpleicons.org/kick/53FC19",
   patreon: "https://cdn.simpleicons.org/patreon/F96854",
   ko_fi: "https://cdn.simpleicons.org/kofi/FF5E5B",
 
+  // GAMING
   steam: "https://cdn.simpleicons.org/steam/000000",
   epicgames: "https://cdn.simpleicons.org/epicgames/000000",
   gog: "https://cdn.simpleicons.org/gogdotcom/86328A",
@@ -124,6 +116,7 @@ const ICON_MAP = {
   roblox: "https://cdn.simpleicons.org/roblox/000000",
   minecraft: "https://cdn.simpleicons.org/minecraft/62B47A",
 
+  // DEV
   github: "https://cdn.simpleicons.org/github/000000",
   gitlab: "https://cdn.simpleicons.org/gitlab/FC6D26",
   bitbucket: "https://cdn.simpleicons.org/bitbucket/0052CC",
@@ -138,6 +131,7 @@ const ICON_MAP = {
   slack: "https://cdn.simpleicons.org/slack/4A154B",
   zoom: "https://cdn.simpleicons.org/zoom/2D8CFF",
 
+  // GOOGLE / MS
   google: "https://cdn.simpleicons.org/google/4285F4",
   googledocs: "https://cdn.simpleicons.org/googledocs/4285F4",
   googlesheets: "https://cdn.simpleicons.org/googlesheets/34A853",
@@ -149,6 +143,7 @@ const ICON_MAP = {
   teams: "https://cdn.simpleicons.org/microsoftteams/6264A7",
   onedrive: "https://cdn.simpleicons.org/microsoftonedrive/0078D4",
 
+  // SHOPPING
   amazon: "https://cdn.simpleicons.org/amazon/FF9900",
   ebay: "https://cdn.simpleicons.org/ebay/E53238",
   walmart: "https://cdn.simpleicons.org/walmart/0071CE",
@@ -168,6 +163,7 @@ const ICON_MAP = {
   newegg: "https://cdn.simpleicons.org/newegg/FF6600",
   microcenter: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/cpu.svg",
 
+  // PAYMENTS
   paypal: "https://cdn.simpleicons.org/paypal/00457C",
   venmo: "https://cdn.simpleicons.org/venmo/3D95CE",
   cashapp: "https://cdn.simpleicons.org/cashapp/00C244",
@@ -177,24 +173,28 @@ const ICON_MAP = {
   klarna: "https://cdn.simpleicons.org/klarna/FFB3C7",
   affirm: "https://cdn.simpleicons.org/affirm/000000",
 
+  // FOOD
   doordash: "https://cdn.simpleicons.org/doordash/FF3008",
   ubereats: "https://cdn.simpleicons.org/ubereats/000000",
   grubhub: "https://cdn.simpleicons.org/grubhub/F63440",
   postmates: "https://cdn.simpleicons.org/postmates/000000",
   instacart: "https://cdn.simpleicons.org/instacart/43B02A",
 
+  // TRAVEL
   airbnb: "https://cdn.simpleicons.org/airbnb/FF5A5F",
   booking: "https://cdn.simpleicons.org/bookingdotcom/003580",
   expedia: "https://cdn.simpleicons.org/expedia/00355F",
   uber: "https://cdn.simpleicons.org/uber/000000",
   lyft: "https://cdn.simpleicons.org/lyft/FF00BF",
 
+  // FALLBACKS
   activity: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/activity.svg",
   music: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/music.svg",
   manual: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
   default: "https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg",
 };
 
+/* Safe image set so icons never go blank */
 function setImgWithFallback(imgEl, primaryUrl, fallbackUrl) {
   if (!imgEl) return;
   imgEl.onerror = null;
@@ -205,16 +205,76 @@ function setImgWithFallback(imgEl, primaryUrl, fallbackUrl) {
   };
 }
 
+/* Album artwork image handling */
+function setAlbumCover(imageUrl) {
+  const coverEl = $$("live-activity-cover");
+  if (!coverEl) return;
+
+  const url = String(imageUrl || "").trim();
+
+  if (!url) {
+    coverEl.onload = null;
+    coverEl.onerror = null;
+    coverEl.removeAttribute("src");
+    coverEl.classList.remove("is-loading");
+    coverEl.classList.add("no-cover");
+    coverEl.style.removeProperty("display");
+    coverEl.style.opacity = "0";
+    lastCoverUrl = null;
+    return;
+  }
+
+  const currentUrl = coverEl.getAttribute("src") || "";
+
+  if (currentUrl === url && coverEl.complete && coverEl.naturalWidth > 0) {
+    coverEl.classList.remove("is-loading", "no-cover");
+    coverEl.style.removeProperty("display");
+    coverEl.style.opacity = "1";
+    lastCoverUrl = url;
+    return;
+  }
+
+  coverEl.onload = null;
+  coverEl.onerror = null;
+  coverEl.classList.add("is-loading");
+  coverEl.classList.remove("no-cover");
+  coverEl.style.removeProperty("display");
+  coverEl.style.opacity = "0";
+
+  coverEl.onload = () => {
+    coverEl.classList.remove("is-loading", "no-cover");
+    coverEl.style.removeProperty("display");
+    coverEl.style.opacity = "1";
+    lastCoverUrl = url;
+  };
+
+  coverEl.onerror = () => {
+    coverEl.onload = null;
+    coverEl.onerror = null;
+    coverEl.classList.remove("is-loading");
+    coverEl.classList.add("no-cover");
+    coverEl.style.opacity = "0";
+    coverEl.removeAttribute("src");
+
+    if (lastCoverUrl === url) lastCoverUrl = null;
+    console.warn("Failed to load album artwork:", url);
+  };
+
+  coverEl.src = url;
+
+  /* Handle artwork already loaded from the browser cache */
+  if (coverEl.complete && coverEl.naturalWidth > 0) {
+    coverEl.onload();
+  }
+}
+
 /* =========================
    SETTINGS HELPERS
 ========================= */
 
 function getWebsiteSettings() {
-  try {
-    return JSON.parse(localStorage.getItem("websiteSettings") || "{}");
-  } catch {
-    return {};
-  }
+  try { return JSON.parse(localStorage.getItem("websiteSettings") || "{}"); }
+  catch { return {}; }
 }
 
 function isMatchSongAccentEnabled() {
@@ -222,34 +282,38 @@ function isMatchSongAccentEnabled() {
   return settings.matchSongAccent === "enabled";
 }
 
-function getUserAccent() {
-  const settings = getWebsiteSettings();
-  return settings.accentColor || "#1DB954";
-}
-
 function applySongThemeClass() {
-  const { liveActivity } = els();
-  if (!liveActivity) return;
+  const activity = $$("live-activity");
+  if (!activity) return;
 
   const settings = getWebsiteSettings();
   const matchAccent = settings.matchSongAccent === "enabled";
   const userAccent = settings.accentColor || "#1DB954";
 
-  liveActivity.classList.toggle("song-theme-off", !matchAccent);
+  activity.classList.toggle("song-theme-off", !matchAccent);
+  document.body.classList.toggle("dynamic-color-mode", matchAccent);
+  document.body.classList.toggle("accent-color-mode", !matchAccent);
+
+  activity.setAttribute(
+    "data-live-activity-color-mode",
+    matchAccent ? "dynamic" : "accent"
+  );
 
   if (!matchAccent) {
-    liveActivity.style.setProperty("--dynamic-accent", userAccent);
-    liveActivity.style.setProperty("--dynamic-accent-soft", userAccent);
-    liveActivity.style.setProperty("--dynamic-accent-glow", userAccent);
-    liveActivity.style.setProperty("--dynamic-bg", "none");
+    dynamicColorRequestId += 1;
+    activity.style.removeProperty("--album-accent");
+    activity.style.setProperty("--dynamic-bg", "none");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    activity.style.setProperty("--dynamic-accent-soft", userAccent);
+    activity.style.setProperty("--dynamic-accent-glow", userAccent);
   }
 }
 
 function watchWebsiteSettings() {
   const raw = localStorage.getItem("websiteSettings") || "{}";
   if (raw === lastSettingsRaw) return;
-
   lastSettingsRaw = raw;
+
   applySongThemeClass();
 
   if (isMatchSongAccentEnabled()) {
@@ -275,6 +339,7 @@ function normAppName(s = "") {
 }
 
 const PREMID_RULES = [
+  // MUSIC
   { re: /spotify/i, key: "spotify", pretty: "Spotify" },
   { re: /apple\s*music|itunes/i, key: "apple_music", pretty: "Apple Music" },
   { re: /amazon\s*music|prime\s*music/i, key: "amazonmusic", pretty: "Amazon Music" },
@@ -285,9 +350,11 @@ const PREMID_RULES = [
   { re: /bandcamp/i, key: "bandcamp", pretty: "Bandcamp" },
   { re: /audiomack/i, key: "audiomack", pretty: "Audiomack" },
 
+  // YOUTUBE
   { re: /youtube\s*music|yt\s*music|youtubemusic/i, key: "youtubemusic", pretty: "YouTube Music" },
   { re: /youtube/i, key: "youtube", pretty: "YouTube" },
 
+  // VIDEO
   { re: /netflix/i, key: "netflix", pretty: "Netflix" },
   { re: /disney\+|disneyplus/i, key: "disneyplus", pretty: "Disney+" },
   { re: /prime\s*video|amazon\s*prime\s*video/i, key: "primevideo", pretty: "Prime Video" },
@@ -300,6 +367,7 @@ const PREMID_RULES = [
   { re: /plex/i, key: "plex", pretty: "Plex" },
   { re: /jellyfin/i, key: "jellyfin", pretty: "Jellyfin" },
 
+  // SOCIAL
   { re: /discord/i, key: "discord", pretty: "Discord" },
   { re: /reddit/i, key: "reddit", pretty: "Reddit" },
   { re: /^x$|twitter/i, key: "x", pretty: "X" },
@@ -312,11 +380,13 @@ const PREMID_RULES = [
   { re: /telegram/i, key: "telegram", pretty: "Telegram" },
   { re: /signal/i, key: "signal", pretty: "Signal" },
 
+  // CREATOR
   { re: /twitch/i, key: "twitch", pretty: "Twitch" },
   { re: /\bkick\b/i, key: "kick", pretty: "Kick" },
   { re: /patreon/i, key: "patreon", pretty: "Patreon" },
   { re: /ko-?fi|kofi/i, key: "ko_fi", pretty: "Ko-fi" },
 
+  // GAMING
   { re: /steam/i, key: "steam", pretty: "Steam" },
   { re: /epic\s*games|epicgames/i, key: "epicgames", pretty: "Epic Games" },
   { re: /\bgog\b|gog\.com|gogdotcom/i, key: "gog", pretty: "GOG" },
@@ -326,6 +396,7 @@ const PREMID_RULES = [
   { re: /roblox/i, key: "roblox", pretty: "Roblox" },
   { re: /minecraft/i, key: "minecraft", pretty: "Minecraft" },
 
+  // DEV
   { re: /github/i, key: "github", pretty: "GitHub" },
   { re: /gitlab/i, key: "gitlab", pretty: "GitLab" },
   { re: /bitbucket/i, key: "bitbucket", pretty: "Bitbucket" },
@@ -340,6 +411,7 @@ const PREMID_RULES = [
   { re: /slack/i, key: "slack", pretty: "Slack" },
   { re: /zoom/i, key: "zoom", pretty: "Zoom" },
 
+  // GOOGLE / MS
   { re: /google\s*docs|docs\.google/i, key: "googledocs", pretty: "Google Docs" },
   { re: /google\s*sheets|sheets\.google/i, key: "googlesheets", pretty: "Google Sheets" },
   { re: /google\s*slides|slides\.google/i, key: "googleslides", pretty: "Google Slides" },
@@ -350,6 +422,7 @@ const PREMID_RULES = [
   { re: /microsoft\s*teams|\bteams\b/i, key: "teams", pretty: "Microsoft Teams" },
   { re: /one\s*drive|onedrive/i, key: "onedrive", pretty: "OneDrive" },
 
+  // SHOPPING
   { re: /\bamazon\b/i, key: "amazon", pretty: "Amazon" },
   { re: /\bebay\b/i, key: "ebay", pretty: "eBay" },
   { re: /\bwalmart\b/i, key: "walmart", pretty: "Walmart" },
@@ -369,6 +442,7 @@ const PREMID_RULES = [
   { re: /new\s*egg|newegg/i, key: "newegg", pretty: "Newegg" },
   { re: /micro\s*center|microcenter/i, key: "microcenter", pretty: "Micro Center" },
 
+  // PAYMENTS
   { re: /paypal/i, key: "paypal", pretty: "PayPal" },
   { re: /\bvenmo\b/i, key: "venmo", pretty: "Venmo" },
   { re: /cash\s*app|cashapp/i, key: "cashapp", pretty: "Cash App" },
@@ -378,12 +452,14 @@ const PREMID_RULES = [
   { re: /\bklarna\b/i, key: "klarna", pretty: "Klarna" },
   { re: /\baffirm\b/i, key: "affirm", pretty: "Affirm" },
 
+  // FOOD
   { re: /door\s*dash|doordash/i, key: "doordash", pretty: "DoorDash" },
   { re: /uber\s*eats|ubereats/i, key: "ubereats", pretty: "Uber Eats" },
-  { re: /grubhub/i, key: "grubhub", pretty: "GrubHub" },
+  { re: /grubhub/i, key: "grubhub", pretty: "Grubhub" },
   { re: /postmates/i, key: "postmates", pretty: "Postmates" },
   { re: /instacart/i, key: "instacart", pretty: "Instacart" },
 
+  // TRAVEL
   { re: /airbnb/i, key: "airbnb", pretty: "Airbnb" },
   { re: /booking\.?com|booking/i, key: "booking", pretty: "Booking.com" },
   { re: /expedia/i, key: "expedia", pretty: "Expedia" },
@@ -398,7 +474,6 @@ function resolvePremidMeta(appName = "", act = null) {
   for (const rule of PREMID_RULES) {
     if (rule.re.test(n)) return { key: rule.key, pretty: rule.pretty };
   }
-
   return { key: "activity", pretty: raw?.trim() || "Activity" };
 }
 
@@ -407,40 +482,38 @@ function resolvePremidMeta(appName = "", act = null) {
 ========================= */
 
 function showStatusLineWithFade(text, source = "manual") {
-  const { statusText, statusLine, statusIcon } = els();
-  if (!statusText || !statusLine || !statusIcon) return;
+  const txt = $$("status-line-text");
+  const line = $$("status-line");
+  const icon = $$("status-icon");
+  if (!txt || !line || !icon) return;
 
-  if (statusText.textContent === text && statusIcon.alt === `${source} icon`) return;
+  if (txt.textContent === text && icon.alt === `${source} icon`) return;
 
   const iconUrl = ICON_MAP[source] || ICON_MAP.default;
 
-  statusLine.style.transition = "opacity .22s ease";
-  statusLine.style.opacity = "0";
+  line.style.transition = "opacity .22s ease";
+  line.style.opacity = "0";
 
   setTimeout(() => {
-    setImgWithFallback(statusIcon, iconUrl, ICON_MAP.default);
-    statusIcon.alt = `${source} icon`;
-    statusText.textContent = text;
+    setImgWithFallback(icon, iconUrl, ICON_MAP.default);
+    icon.alt = `${source} icon`;
+    txt.textContent = text;
 
-    statusIcon.classList.remove("glow");
+    icon.classList.remove("glow");
     if (["spotify", "twitch", "music", "youtube", "youtubemusic"].includes(source)) {
-      statusIcon.classList.add("glow");
+      icon.classList.add("glow");
     }
 
-    statusLine.style.opacity = "1";
+    line.style.opacity = "1";
 
     lastUpdateTime = Date.now();
-    localStorage.setItem("lastStatus", JSON.stringify({
-      text,
-      source,
-      timestamp: lastUpdateTime
-    }));
+    localStorage.setItem("lastStatus", JSON.stringify({ text, source, timestamp: lastUpdateTime }));
   }, 180);
 }
 
 function updateLastUpdated() {
-  const { updated } = els();
-  if (!updated) return;
+  const el = $$("live-activity-updated");
+  if (!el) return;
 
   let referenceTime = lastPollTime || lastUpdateTime;
 
@@ -458,29 +531,19 @@ function updateLastUpdated() {
 
   const s = Math.floor((Date.now() - referenceTime) / 1000);
 
-  if (s < 5) updated.textContent = "Updated just now";
-  else if (s < 60) updated.textContent = `Updated ${s}s ago`;
-  else if (s < 3600) updated.textContent = `Updated ${Math.floor(s / 60)}m ago`;
-  else updated.textContent = `Updated ${Math.floor(s / 3600)}h ago`;
+  if (s < 5) el.textContent = "Updated just now";
+  else if (s < 60) el.textContent = `Updated ${s}s ago`;
+  else if (s < 3600) el.textContent = `Updated ${Math.floor(s / 60)}m ago`;
+  else el.textContent = `Updated ${Math.floor(s / 3600)}h ago`;
 }
 
 /* =========================
-   CARD / PROGRESS
+   PROGRESS BAR
 ========================= */
 
-function getProgressNodes() {
-  return {
-    barWrap: document.querySelector(".music-progress-container"),
-    timeRow: document.querySelector(".music-progress-time"),
-    bar: $$("music-progress-bar"),
-    elapsed: $$("elapsed-time"),
-    remain: $$("remaining-time"),
-    total: $$("total-time"),
-  };
-}
-
 function setProgressVisibility(mode) {
-  const { barWrap, timeRow } = getProgressNodes();
+  const barWrap = document.querySelector(".music-progress-container");
+  const timeRow = document.querySelector(".music-progress-time");
   if (!barWrap || !timeRow) return;
 
   barWrap.classList.remove("indeterminate");
@@ -500,23 +563,30 @@ function setProgressVisibility(mode) {
 }
 
 function resetProgress() {
-  const { bar, elapsed, remain, total, barWrap } = getProgressNodes();
-
+  const bar = $$("music-progress-bar");
   if (bar) bar.style.width = "0%";
-  if (barWrap) barWrap.classList.remove("indeterminate");
-
   clearInterval(progressInterval);
   progressInterval = null;
 
-  if (elapsed) elapsed.textContent = "0:00:00";
-  if (remain) remain.textContent = "-0:00:00";
-  if (total) total.textContent = "0:00:00";
+  const elapsedEl = $$("elapsed-time");
+  const remainEl  = $$("remaining-time");
+  const totalEl   = $$("total-time");
+
+  if (elapsedEl) elapsedEl.textContent = "0:00:00";
+  if (remainEl)  remainEl.textContent  = "-0:00:00";
+  if (totalEl)   totalEl.textContent   = "0:00:00";
 }
 
 function setupProgress(startMs, endMs) {
-  const { bar, elapsed, remain, total, barWrap, timeRow } = getProgressNodes();
+  const bar       = $$("music-progress-bar");
+  const elapsedEl = $$("elapsed-time");
+  const remainEl  = $$("remaining-time");
+  const totalEl   = $$("total-time");
+
   if (!bar || !startMs || !endMs || endMs <= startMs) return;
 
+  const barWrap = document.querySelector(".music-progress-container");
+  const timeRow = document.querySelector(".music-progress-time");
   if (barWrap) {
     barWrap.classList.remove("indeterminate");
     barWrap.style.display = "";
@@ -524,7 +594,7 @@ function setupProgress(startMs, endMs) {
   if (timeRow) timeRow.style.display = "";
 
   const totalSec = Math.max((endMs - startMs) / 1000, 1);
-  if (total) total.textContent = fmt(totalSec);
+  if (totalEl) totalEl.textContent = fmt(totalSec);
 
   clearInterval(progressInterval);
 
@@ -534,8 +604,8 @@ function setupProgress(startMs, endMs) {
     const left = Math.max(totalSec - elapsedSec, 0);
 
     bar.style.width = `${(elapsedSec / totalSec) * 100}%`;
-    if (elapsed) elapsed.textContent = fmt(elapsedSec);
-    if (remain) remain.textContent = `-${fmt(left)}`;
+    if (elapsedEl) elapsedEl.textContent = fmt(elapsedSec);
+    if (remainEl) remainEl.textContent = `-${fmt(left)}`;
   }
 
   tick();
@@ -549,65 +619,130 @@ function toEpochMs(v) {
 
 function setupProgressFromActivityTimestamps(act) {
   const startMs = toEpochMs(act?.timestamps?.start);
-  const endMs = toEpochMs(act?.timestamps?.end);
+  const endMs   = toEpochMs(act?.timestamps?.end);
   if (!startMs || !endMs || endMs <= startMs) return false;
   setupProgress(startMs, endMs);
   return true;
-}
-
-function showCard() {
-  const { spotifyCard } = els();
-  if (!spotifyCard) return;
-  spotifyCard.classList.remove("hidden", "slide-out");
-  spotifyCard.classList.add("slide-in");
-  spotifyCard.style.display = "";
-  spotifyCard.style.opacity = "1";
-}
-
-function hideCard() {
-  const { spotifyCard } = els();
-  if (!spotifyCard) return;
-
-  spotifyCard.classList.remove("slide-in");
-  spotifyCard.classList.add("slide-out");
-
-  setTimeout(() => {
-    if (spotifyCard.classList.contains("slide-out")) {
-      spotifyCard.style.opacity = "0";
-      spotifyCard.style.display = "none";
-      spotifyCard.classList.add("hidden");
-    }
-  }, 360);
-}
-
-function clearCardContent() {
-  const { title, artist, explicit, cover } = els();
-  if (title) title.textContent = "—";
-  if (artist) artist.textContent = "—";
-  if (explicit) explicit.style.display = "none";
-  if (cover) cover.removeAttribute("src");
 }
 
 /* =========================
    DYNAMIC COLORS
 ========================= */
 
-function updateDynamicColors(imageUrl) {
-  const { liveActivity } = els();
-  if (!liveActivity) return;
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
 
-  const matchAccent = isMatchSongAccentEnabled();
-  const userAccent = getUserAccent();
+function rgbToHsl(r, g, b) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+
+  if (max === min) {
+    return { h: 0, s: 0, l };
+  }
+
+  const d = max - min;
+  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+  let h = 0;
+  switch (max) {
+    case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+    case g: h = ((b - r) / d + 2); break;
+    case b: h = ((r - g) / d + 4); break;
+  }
+  h /= 6;
+
+  return { h, s, l };
+}
+
+function hslToRgb(h, s, l) {
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l;
+  } else {
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255)
+  };
+}
+
+function makeAccentSetFromRgb(r, g, b) {
+  const hsl = rgbToHsl(r, g, b);
+
+  const primaryHsl = {
+    h: hsl.h,
+    s: clamp(hsl.s * 1.08, 0.45, 0.92),
+    l: clamp(hsl.l, 0.42, 0.58)
+  };
+
+  const softHsl = {
+    h: hsl.h,
+    s: clamp(primaryHsl.s * 0.92, 0.38, 0.82),
+    l: clamp(primaryHsl.l + 0.10, 0.52, 0.72)
+  };
+
+  const glowHsl = {
+    h: hsl.h,
+    s: clamp(primaryHsl.s, 0.45, 0.9),
+    l: clamp(primaryHsl.l + 0.16, 0.58, 0.78)
+  };
+
+  const shadowHsl = {
+    h: hsl.h,
+    s: clamp(primaryHsl.s * 0.8, 0.28, 0.68),
+    l: clamp(primaryHsl.l - 0.22, 0.16, 0.34)
+  };
+
+  const primary = hslToRgb(primaryHsl.h, primaryHsl.s, primaryHsl.l);
+  const soft = hslToRgb(softHsl.h, softHsl.s, softHsl.l);
+  const glow = hslToRgb(glowHsl.h, glowHsl.s, glowHsl.l);
+  const shadow = hslToRgb(shadowHsl.h, shadowHsl.s, shadowHsl.l);
+
+  return { primary, soft, glow, shadow };
+}
+
+function updateDynamicColors(imageUrl) {
+  const activity = document.querySelector(".live-activity");
+  if (!activity) return;
+
+  const settings = getWebsiteSettings();
+  const matchAccent = settings.matchSongAccent === "enabled";
+  const userAccent  = settings.accentColor || "#1DB954";
 
   if (imageUrl) lastCoverUrl = imageUrl;
 
   const requestId = ++dynamicColorRequestId;
 
   const resetColors = () => {
-    liveActivity.style.setProperty("--dynamic-accent", userAccent);
-    liveActivity.style.setProperty("--dynamic-accent-soft", userAccent);
-    liveActivity.style.setProperty("--dynamic-accent-glow", userAccent);
-    liveActivity.style.setProperty("--dynamic-bg", "none");
+    activity.style.removeProperty("--album-accent");
+    activity.style.setProperty("--dynamic-bg", "none");
+    activity.style.setProperty("--dynamic-accent", userAccent);
+    activity.style.setProperty("--dynamic-accent-soft", userAccent);
+    activity.style.setProperty("--dynamic-accent-glow", userAccent);
   };
 
   if (!matchAccent || !imageUrl) {
@@ -623,19 +758,24 @@ function updateDynamicColors(imageUrl) {
   img.onload = () => {
     if (requestId !== dynamicColorRequestId) return;
 
+    if (!isMatchSongAccentEnabled()) {
+      resetColors();
+      return;
+    }
+
     try {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d", { willReadFrequently: true });
       if (!ctx) throw new Error("No canvas context");
 
-      canvas.width = 64;
-      canvas.height = 64;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const size = 72;
+      canvas.width = size;
+      canvas.height = size;
+      ctx.drawImage(img, 0, 0, size, size);
 
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      const { data } = ctx.getImageData(0, 0, size, size);
 
-      let best = null;
-      let bestScore = -Infinity;
+      const buckets = new Map();
 
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i];
@@ -648,16 +788,63 @@ function updateDynamicColors(imageUrl) {
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
         const delta = max - min;
-
         const brightness = (r + g + b) / 3;
         const saturation = delta;
 
-        if (brightness < 30 || brightness > 230) continue;
-        if (saturation < 28) continue;
+        if (brightness < 22 || brightness > 238) continue;
+        if (saturation < 24) continue;
 
+        const qr = Math.round(r / 24) * 24;
+        const qg = Math.round(g / 24) * 24;
+        const qb = Math.round(b / 24) * 24;
+        const key = `${qr},${qg},${qb}`;
+
+        const weight =
+          saturation * 1.45 +
+          (255 - Math.abs(148 - brightness)) * 0.55;
+
+        const prev = buckets.get(key) || {
+          r: 0,
+          g: 0,
+          b: 0,
+          count: 0,
+          weight: 0
+        };
+
+        prev.r += r;
+        prev.g += g;
+        prev.b += b;
+        prev.count += 1;
+        prev.weight += weight;
+
+        buckets.set(key, prev);
+      }
+
+      if (!buckets.size) {
+        resetColors();
+        return;
+      }
+
+      let best = null;
+      let bestScore = -Infinity;
+
+      for (const bucket of buckets.values()) {
+        const r = Math.round(bucket.r / bucket.count);
+        const g = Math.round(bucket.g / bucket.count);
+        const b = Math.round(bucket.b / bucket.count);
+
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const delta = max - min;
+        const brightness = (r + g + b) / 3;
+        const saturation = delta;
+
+        const prominence = bucket.count;
         const score =
-          saturation * 1.35 +
-          (255 - Math.abs(150 - brightness)) * 0.45;
+          bucket.weight +
+          prominence * 10 +
+          saturation * 1.2 +
+          (255 - Math.abs(150 - brightness)) * 0.35;
 
         if (score > bestScore) {
           bestScore = score;
@@ -670,61 +857,34 @@ function updateDynamicColors(imageUrl) {
         return;
       }
 
-      const soften = (value, amount = 0.18) =>
-        Math.round(value + (255 - value) * amount);
-
-      const deepen = (value, amount = 0.12) =>
-        Math.round(value * (1 - amount));
-
-      const primary = {
-        r: soften(best.r, 0.10),
-        g: soften(best.g, 0.10),
-        b: soften(best.b, 0.10)
-      };
-
-      const soft = {
-        r: soften(best.r, 0.28),
-        g: soften(best.g, 0.28),
-        b: soften(best.b, 0.28)
-      };
-
-      const glow = {
-        r: soften(best.r, 0.18),
-        g: soften(best.g, 0.18),
-        b: soften(best.b, 0.18)
-      };
-
-      const shadow = {
-        r: deepen(best.r, 0.20),
-        g: deepen(best.g, 0.20),
-        b: deepen(best.b, 0.20)
-      };
+      const { primary, soft, glow, shadow } = makeAccentSetFromRgb(best.r, best.g, best.b);
 
       const primaryCss = `rgb(${primary.r}, ${primary.g}, ${primary.b})`;
       const softCss = `rgb(${soft.r}, ${soft.g}, ${soft.b})`;
       const glowCss = `rgb(${glow.r}, ${glow.g}, ${glow.b})`;
 
-      liveActivity.style.setProperty("--dynamic-accent", primaryCss);
-      liveActivity.style.setProperty("--dynamic-accent-soft", softCss);
-      liveActivity.style.setProperty("--dynamic-accent-glow", glowCss);
+      activity.style.setProperty("--album-accent", primaryCss);
+      activity.style.setProperty("--dynamic-accent", primaryCss);
+      activity.style.setProperty("--dynamic-accent-soft", softCss);
+      activity.style.setProperty("--dynamic-accent-glow", glowCss);
 
-      liveActivity.style.setProperty(
+      activity.style.setProperty(
         "--dynamic-bg",
         `
         radial-gradient(
-          circle at 50% 18%,
-          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.30),
+          82% 50% at 50% 22%,
+          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.34),
           transparent 56%
         ),
         radial-gradient(
-          circle at 50% 100%,
-          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.18),
-          transparent 70%
+          72% 40% at 50% 46%,
+          rgba(${glow.r}, ${glow.g}, ${glow.b}, 0.18),
+          transparent 60%
         ),
         linear-gradient(
           180deg,
-          rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.18),
-          rgba(${soft.r}, ${soft.g}, ${soft.b}, 0.08)
+          rgba(${primary.r}, ${primary.g}, ${primary.b}, 0.15),
+          rgba(${shadow.r}, ${shadow.g}, ${shadow.b}, 0.07)
         )
         `
       );
@@ -741,8 +901,29 @@ function updateDynamicColors(imageUrl) {
 }
 
 /* =========================
-   MANUAL STATUS
+   ANIMATION & STATE CHECKS
 ========================= */
+
+function slideInCard(cardEl) {
+  if (!cardEl) return;
+  cardEl.classList.remove("slide-out", "hidden");
+  cardEl.classList.add("slide-in");
+  cardEl.style.display = "";
+  cardEl.style.opacity = "1";
+}
+
+function slideOutCard(cardEl) {
+  if (!cardEl) return;
+  cardEl.classList.remove("slide-in");
+  cardEl.classList.add("slide-out");
+  setTimeout(() => {
+    if (cardEl.classList.contains("slide-out")) {
+      cardEl.style.opacity = "0";
+      cardEl.style.display = "none";
+      cardEl.classList.add("hidden");
+    }
+  }, 360);
+}
 
 function isManualActive() {
   if (!manualStatus?.enabled) return false;
@@ -758,6 +939,7 @@ function isManualActive() {
 function getActivityVerb(appName = "", act = null) {
   const n = (appName || "").toLowerCase();
 
+  // Music apps
   if (
     n.includes("youtube music") ||
     n.includes("spotify") ||
@@ -769,11 +951,13 @@ function getActivityVerb(appName = "", act = null) {
     n.includes("amazon music")
   ) return "Listening to";
 
+  // YouTube listening vs watching
   if (n.includes("youtube")) {
     if (act && isYouTubeMusicLike(act)) return "Listening to";
     return "Watching";
   }
 
+  // Streaming video
   if (
     n.includes("twitch") ||
     n.includes("netflix") ||
@@ -785,6 +969,7 @@ function getActivityVerb(appName = "", act = null) {
     n.includes("paramount")
   ) return "Watching";
 
+  // Shopping
   if (
     n.includes("amazon") || n.includes("ebay") || n.includes("walmart") || n.includes("target") ||
     n.includes("etsy") || n.includes("aliexpress") || n.includes("temu") || n.includes("shein") ||
@@ -793,17 +978,20 @@ function getActivityVerb(appName = "", act = null) {
     n.includes("home depot") || n.includes("lowe")
   ) return "Shopping on";
 
+  // Payments
   if (
     n.includes("paypal") || n.includes("venmo") || n.includes("cash app") ||
     n.includes("apple pay") || n.includes("google pay") || n.includes("stripe") ||
     n.includes("klarna") || n.includes("affirm")
   ) return "Paying with";
 
+  // Delivery
   if (
     n.includes("doordash") || n.includes("uber eats") || n.includes("grubhub") ||
     n.includes("postmates") || n.includes("instacart")
   ) return "Ordering on";
 
+  // Browsing / socials
   if (n.includes("reddit")) return "Browsing";
   if (n === "x" || n.includes("twitter") || n.includes("instagram") || n.includes("tiktok") || n.includes("facebook")) return "Scrolling";
 
@@ -824,6 +1012,7 @@ function isYouTubeMusicLike(act) {
   const s = state.toLowerCase();
   const l = largeText.toLowerCase();
 
+  // Strong music keywords
   const strongMusicSignals = [
     "lyrics", "lyric video", "official lyrics",
     "official audio", "audio",
@@ -839,12 +1028,14 @@ function isYouTubeMusicLike(act) {
   const hay = `${t} ${s} ${l}`;
   if (strongMusicSignals.some(k => hay.includes(k))) return true;
 
+  // "Song - Artist" format check
   const hasDashFormat =
     t.includes(" - ") &&
     t.split(" - ").every(part => part.trim().length >= 2);
 
   if (hasDashFormat) return true;
 
+  // Heuristic check
   const detailsLooksLikeTrack =
     t.length >= 6 && (t.includes(" - ") || t.includes(" by ") || t.includes(" • "));
   const stateLooksLikeArtist =
@@ -856,23 +1047,48 @@ function isYouTubeMusicLike(act) {
 }
 
 /* =========================
-   DISCORD / SPOTIFY / PREMID
+   DISCORD / SPOTIFY + PreMiD
 ========================= */
 
 function resolveDiscordAssetUrl(activity) {
-  const a = activity?.assets;
-  if (!a) return "";
+  const assets = activity?.assets;
+  if (!assets) return "";
 
-  const large = a.large_image || "";
-  const appId = activity?.application_id;
-  if (!large) return "";
+  const largeImage = String(assets.large_image || "").trim();
+  const applicationId = activity?.application_id;
 
-  if (large.startsWith("mp:")) {
-    return `https://media.discordapp.net/${large.replace(/^mp:/, "")}`;
+  if (!largeImage) return "";
+
+  /* Already a complete image URL */
+  if (/^https?:\/\//i.test(largeImage)) {
+    return largeImage;
   }
 
-  if (appId) {
-    return `https://cdn.discordapp.com/app-assets/${appId}/${large}.png`;
+  /* Discord media proxy image */
+  if (largeImage.startsWith("mp:")) {
+    const mediaPath = largeImage.slice(3).replace(/^\/+/, "");
+    return `https://media.discordapp.net/${mediaPath}`;
+  }
+
+  /* Spotify activity artwork */
+  if (largeImage.startsWith("spotify:")) {
+    const spotifyImageId = largeImage.slice("spotify:".length);
+    return spotifyImageId
+      ? `https://i.scdn.co/image/${spotifyImageId}`
+      : "";
+  }
+
+  /* Twitch activity artwork */
+  if (largeImage.startsWith("twitch:")) {
+    const twitchName = largeImage.slice("twitch:".length);
+    return twitchName
+      ? `https://static-cdn.jtvnw.net/previews-ttv/live_user_${encodeURIComponent(twitchName)}-320x180.jpg`
+      : "";
+  }
+
+  /* Standard Discord application asset */
+  if (applicationId) {
+    return `https://cdn.discordapp.com/app-assets/${applicationId}/${largeImage}.png?size=512`;
   }
 
   return "";
@@ -899,7 +1115,7 @@ const MUSIC_KEYWORDS = [
 
 function isMusicActivity(act) {
   if (!act) return false;
-  if (act.type === 2) return true;
+  if (act.type === 2) return true; // 'Listening' type
 
   const name = (act.name || "").toLowerCase();
   const details = (act.details || "").toLowerCase();
@@ -916,7 +1132,7 @@ function isMusicActivity(act) {
 
 function isIgnorableActivity(a) {
   if (!a) return true;
-  if (a.type === 4) return true;
+  if (a.type === 4) return true; // custom status
   const name = (a.name || "").toLowerCase();
   if (!name) return true;
   if (name === "discord") return true;
@@ -935,91 +1151,12 @@ function pickBestPremidActivity(activities = []) {
   return candidates[0] || null;
 }
 
-function renderSpotify(sp) {
-  const { title, artist, cover, explicit } = els();
-
-  showCard();
-
-  if (title) title.textContent = sp.song || "Unknown";
-  if (artist) artist.textContent = sp.artist || "Unknown";
-
-  if (cover && cover.src !== sp.album_art_url) {
-    setImgWithFallback(cover, sp.album_art_url, "");
-  }
-
-  currentSpotifyUrl = sp.track_id
-    ? `https://open.spotify.com/track/${sp.track_id}`
-    : null;
-
-  const now = Date.now();
-  const startMs = sp.timestamps?.start ?? now;
-  const endMs = sp.timestamps?.end ?? (startMs + (sp.duration_ms || 0));
-
-  resetProgress();
-  setupProgress(startMs, endMs);
-  updateDynamicColors(sp.album_art_url);
-
-  if (explicit) {
-    explicit.style.display = sp?.explicit ? "inline-flex" : "none";
-  }
-
-  return { text: "Listening to Spotify", source: "spotify" };
-}
-
-function renderPremid(act) {
-  const { title, artist, cover, explicit } = els();
-
-  showCard();
-
-  const appName = act.name || "Activity";
-  const n = appName.toLowerCase();
-  const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
-  const isYT = n.includes("youtube");
-
-  if (title) title.textContent = act.details || appName;
-  if (artist) artist.textContent = act.state || act?.assets?.large_text || appName;
-
-  const coverUrl = resolveDiscordAssetUrl(act);
-  if (cover && coverUrl && cover.src !== coverUrl) {
-    setImgWithFallback(cover, coverUrl, "");
-  }
-
-  currentSpotifyUrl = null;
-
-  if (explicit) explicit.style.display = "none";
-
-  resetProgress();
-
-  const hasRealProgress = setupProgressFromActivityTimestamps(act);
-  if (!hasRealProgress) {
-    if (isMusicActivity(act) || isYouTubeMusicLike(act)) {
-      setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
-    } else {
-      setProgressVisibility("hide");
-    }
-  }
-
-  updateDynamicColors(coverUrl || null);
-
-  const meta = resolvePremidMeta(appName, act);
-  let prettyApp = meta.pretty;
-  if (isYTM) prettyApp = "YouTube Music";
-  else if (isYT) prettyApp = "YouTube";
-
-  const verb = getActivityVerb(prettyApp, act);
-  let source = meta.key;
-  if (isYTM) source = "youtubemusic";
-  else if (isYT) source = "youtube";
-
-  return { text: `${verb} ${prettyApp}`, source };
-}
-
 async function getDiscord() {
   if (isManualActive()) {
-    hideCard();
-    clearCardContent();
+    slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
+    setAlbumCover(null);
     updateDynamicColors(null);
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
@@ -1030,24 +1167,94 @@ async function getDiscord() {
       { cache: "no-store" }
     );
     if (!res.ok) throw new Error(`Lanyard ${res.status}`);
-
     const json = await res.json();
     const data = json.data;
     if (!data) return null;
 
+    // 1) Spotify
     if (data.spotify) {
-      return renderSpotify(data.spotify);
+      const sp = data.spotify;
+      const now = Date.now();
+      const startMs = sp.timestamps?.start ?? now;
+      const endMs   = sp.timestamps?.end   ?? (startMs + (sp.duration_ms || 0));
+
+      slideInCard($$("spotify-card"));
+
+      $$("live-song-title").textContent  = sp.song   || "Unknown";
+      $$("live-song-artist").textContent = sp.artist || "Unknown";
+
+      const coverUrl = String(sp.album_art_url || "").trim();
+      setAlbumCover(coverUrl);
+      updateDynamicColors(coverUrl || null);
+
+      currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
+
+      setupProgress(startMs, endMs);
+
+      const explicitEl = $$("explicit-badge");
+      if (explicitEl) explicitEl.style.display = sp?.explicit ? "inline-block" : "none";
+
+      return { text: "Listening to Spotify", source: "spotify" };
     }
 
+    // 2) PreMiD / All activities
     if (SHOW_ALL_PREMID_ACTIVITIES) {
       const act = pickBestPremidActivity(data.activities || []);
-      if (act) return renderPremid(act);
+      if (act) {
+        slideInCard($$("spotify-card"));
+
+        const appName = act.name || "Activity";
+
+        const n = appName.toLowerCase();
+        const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
+        const isYT  = n.includes("youtube");
+
+        const title = act.details || appName;
+        const sub   = act.state || act?.assets?.large_text || appName;
+
+        $$("live-song-title").textContent  = title;
+        $$("live-song-artist").textContent = sub;
+
+        const coverUrl = resolveDiscordAssetUrl(act);
+        setAlbumCover(coverUrl);
+
+        currentSpotifyUrl = null;
+
+        const explicitEl = $$("explicit-badge");
+        if (explicitEl) explicitEl.style.display = "none";
+
+        resetProgress();
+
+        const hasRealProgress = setupProgressFromActivityTimestamps(act);
+        if (!hasRealProgress) {
+          if (isMusicActivity(act) || isYouTubeMusicLike(act)) {
+            setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
+          } else {
+            setProgressVisibility("hide");
+          }
+        }
+
+        updateDynamicColors(coverUrl || null);
+
+        const meta = resolvePremidMeta(appName, act);
+        let prettyApp = meta.pretty;
+        if (isYTM) prettyApp = "YouTube Music";
+        else if (isYT) prettyApp = "YouTube";
+
+        const verb = getActivityVerb(prettyApp, act);
+        let source = meta.key;
+        if (isYTM) source = "youtubemusic";
+        else if (isYT) source = "youtube";
+
+        return { text: `${verb} ${prettyApp}`, source };
+      }
     }
 
-    hideCard();
-    clearCardContent();
+    // 3) Nothing else
+    slideOutCard($$("spotify-card"));
     resetProgress();
     setProgressVisibility("hide");
+    setAlbumCover(null);
     updateDynamicColors(null);
 
     const map = {
@@ -1057,10 +1264,12 @@ async function getDiscord() {
       offline: "No Current Active Activities",
     };
 
-    return {
-      text: map[data.discord_status] || "No Current Active Activities",
-      source: "discord",
-    };
+    const currentStatus = data.discord_status || "offline";
+    const text = map[currentStatus] || "No Current Active Activities";
+    const source = currentStatus === "offline" ? "default" : "discord";
+
+    return { text, source };
+
   } catch (e) {
     console.warn("Lanyard error:", e);
     return null;
@@ -1068,7 +1277,7 @@ async function getDiscord() {
 }
 
 /* =========================
-   TWITCH / REDDIT
+   TWITCH & REDDIT
 ========================= */
 
 async function getTwitch() {
@@ -1093,7 +1302,9 @@ async function getTwitch() {
       return null;
     }
 
-    if (!/\d/.test(text)) return null;
+    if (!/\d/.test(text)) {
+      return null;
+    }
 
     return { live: true };
   } catch (e) {
@@ -1107,76 +1318,62 @@ async function getReddit() {
   if (!u) return null;
 
   try {
-    const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, {
-      cache: "no-store"
-    });
+    const r = await fetch(`https://www.reddit.com/user/${u}/submitted.json?limit=1`, { cache: "no-store" });
     if (!r.ok) throw new Error(`Reddit fetch ${r.status}`);
-
     const j = await r.json();
     const post = j?.data?.children?.[0]?.data;
     if (!post) return null;
 
     const lastShownId = localStorage.getItem("lastRedditShownId");
     if (post.id !== lastShownId) {
+      lastRedditPostId = post.id;
       localStorage.setItem("lastRedditShownId", post.id);
       return { text: "Shared on Reddit", source: "reddit", isTemp: true };
     }
   } catch (e) {
     console.warn("Reddit error:", e);
   }
-
   return null;
 }
 
 /* =========================
-   FIRESTORE MANUAL STATUS
+   MANUAL FIRESTORE
 ========================= */
 
 try {
   const manualRef = doc(db, "manualStatus", "site");
 
-  onSnapshot(
-    manualRef,
-    async (snap) => {
-      if (!snap.exists()) {
-        manualStatus = null;
-        return;
+  onSnapshot(manualRef, async (snap) => {
+    if (!snap.exists()) { manualStatus = null; return; }
+    const d = snap.data();
+
+    if (d.expiresAt?.toMillis) d.expiresAt = d.expiresAt.toMillis();
+    else if (typeof d.expiresAt !== "number") d.expiresAt = null;
+
+    manualStatus = d;
+
+    if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
+      try {
+        await setDoc(manualRef, {
+          enabled: false,
+          text: "",
+          expiresAt: null,
+          persistent: false,
+          updated_at: Date.now()
+        }, { merge: true });
+      } catch (err) {
+        console.warn("Failed to clear expired manual status:", err);
       }
+      manualStatus = null;
+    }
+  }, err => console.warn("manual listener error:", err));
 
-      const d = snap.data();
-
-      if (d.expiresAt?.toMillis) d.expiresAt = d.expiresAt.toMillis();
-      else if (typeof d.expiresAt !== "number") d.expiresAt = null;
-
-      manualStatus = d;
-
-      if (d.enabled && d.expiresAt && Date.now() >= d.expiresAt) {
-        try {
-          await setDoc(
-            manualRef,
-            {
-              enabled: false,
-              text: "",
-              expiresAt: null,
-              persistent: false,
-              updated_at: Date.now()
-            },
-            { merge: true }
-          );
-        } catch (err) {
-          console.warn("Failed to clear expired manual status:", err);
-        }
-        manualStatus = null;
-      }
-    },
-    (err) => console.warn("manual listener error:", err)
-  );
 } catch (e) {
   console.warn("Firestore manual disabled:", e);
 }
 
 /* =========================
-   STATUS DECISION
+   MAIN LOOP
 ========================= */
 
 function applyStatusDecision({ main, twitchLive, temp }) {
@@ -1184,7 +1381,6 @@ function applyStatusDecision({ main, twitchLive, temp }) {
     showStatusLineWithFade(manualStatus.text || "Status (manual)", manualStatus.icon || "manual");
     return;
   }
-
   if (temp && Date.now() < temp.expiresAt) {
     showStatusLineWithFade(temp.text, temp.source || "default");
     return;
@@ -1200,18 +1396,10 @@ function applyStatusDecision({ main, twitchLive, temp }) {
   showStatusLineWithFade(text, source);
 }
 
-/* =========================
-   MAIN LOOP
-========================= */
-
 async function mainLoop() {
   applySongThemeClass();
 
-  const [discord, twitch, reddit] = await Promise.all([
-    getDiscord(),
-    getTwitch(),
-    getReddit()
-  ]);
+  const [discord, twitch, reddit] = await Promise.all([getDiscord(), getTwitch(), getReddit()]);
 
   const primary =
     (discord?.source === "manual") ? discord
@@ -1220,28 +1408,18 @@ async function mainLoop() {
     : (discord?.source === "youtube") ? discord
     : (discord?.source === "music") ? discord
     : (discord?.source === "activity") ? discord
-    : (discord || { text: "No Current Active Activities", source: "discord" });
+    : (discord || { text: "No Current Active Activities", source: "default" });
 
   const tempHit = reddit?.isTemp ? reddit : null;
 
   if (tempHit) {
-    tempBanner = {
-      text: tempHit.text,
-      source: tempHit.source,
-      expiresAt: Date.now() + TEMP_BANNER_MS,
-    };
+    tempBanner = { text: tempHit.text, source: tempHit.source, expiresAt: Date.now() + TEMP_BANNER_MS };
   } else if (tempBanner && Date.now() >= tempBanner.expiresAt) {
     tempBanner = null;
   }
 
-  applyStatusDecision({
-    main: primary,
-    twitchLive: !!twitch,
-    temp: tempBanner
-  });
-
-  const { liveActivity } = els();
-  liveActivity?.classList.remove("hidden");
+  applyStatusDecision({ main: primary, twitchLive: !!twitch, temp: tempBanner });
+  $$("live-activity")?.classList.remove("hidden");
 
   lastPollTime = Date.now();
 }
@@ -1253,16 +1431,13 @@ async function mainLoop() {
 document.addEventListener("DOMContentLoaded", () => {
   applySongThemeClass();
 
-  const { spotifyCard } = els();
-
-  if (spotifyCard) {
-    spotifyCard.addEventListener("click", () => {
-      if (currentSpotifyUrl) {
-        window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
-      }
+  const card = $$("spotify-card");
+  if (card) {
+    card.addEventListener("click", () => {
+      if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
     });
 
-    spotifyCard.addEventListener("keydown", (e) => {
+    card.addEventListener("keydown", (e) => {
       if ((e.key === "Enter" || e.key === " ") && currentSpotifyUrl) {
         e.preventDefault();
         window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
@@ -1274,14 +1449,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (saved) {
     try {
       const { text, source } = JSON.parse(saved);
-      if (!isManualActive()) {
-        showStatusLineWithFade(text, source);
-      } else {
-        showStatusLineWithFade(
-          manualStatus?.text || "Status (manual)",
-          manualStatus?.icon || "manual"
-        );
-      }
+      if (!isManualActive()) showStatusLineWithFade(text, source);
+      else showStatusLineWithFade(manualStatus?.text || "Status (manual)", manualStatus?.icon || "manual");
     } catch (e) {
       console.warn("Failed to restore last status:", e);
     }
@@ -1290,9 +1459,7 @@ document.addEventListener("DOMContentLoaded", () => {
   watchWebsiteSettings();
   setInterval(watchWebsiteSettings, 300);
 
-  setTimeout(() => {
-    mainLoop();
-  }, 50);
+  setTimeout(() => { mainLoop(); }, 50);
 
   setInterval(mainLoop, 30000);
   setInterval(updateLastUpdated, 1000);
