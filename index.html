@@ -150,131 +150,149 @@
     and have a strong interest in technology and coding websites.
   </p>
 
-  <!-- ======================================================= -->
-  <!-- LIVE ACTIVITY SYSTEM                                   -->
-  <!-- ======================================================= -->
-
-  <div
-    class="live-activity hidden"
-    id="live-activity"
-    aria-label="Current activity"
-  >
-    <!-- Current Status -->
-
-    <div
-      class="status-line"
-      id="status-line"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <img
-        id="status-icon"
-        class="status-icon"
-        src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
-        alt=""
-        aria-hidden="true"
-      />
-
-      <span id="status-line-text">
-        Loading status…
-      </span>
-    </div>
-
-    <!-- Media Activity Card -->
+<!-- ======================================================= -->
+<!-- LIVE ACTIVITY SYSTEM                                    -->
+<!-- ======================================================= -->
 
 <div
-  class="spotify-card hidden"
-  id="spotify-card"
-  role="button"
-  tabindex="0"
-  aria-label="Open current media activity"
+  class="live-activity hidden"
+  id="live-activity"
+  aria-label="Current activity"
 >
-  <!-- Album Artwork -->
+  <!-- Current Status -->
 
-  <div class="live-album-art">
+  <div
+    class="status-line"
+    id="status-line"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
     <img
-      id="live-activity-cover"
-      class="live-album-image"
-      src="path/to/default-cover.png"
-      alt="Album artwork"
-      loading="lazy"
+      id="status-icon"
+      class="status-icon"
+      src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/outline/info-circle.svg"
+      alt=""
+      aria-hidden="true"
       decoding="async"
     />
+
+    <span id="status-line-text">
+      Loading status…
+    </span>
   </div>
 
-  <!-- Media Information -->
+  <!-- Media Activity Card -->
 
-  <div class="live-info">
-    <div class="live-song-title-wrapper">
-      <span
-        class="live-song-title"
-        id="live-song-title"
+  <div
+    class="spotify-card hidden"
+    id="spotify-card"
+    role="button"
+    tabindex="0"
+    aria-label="Open current media activity"
+    aria-disabled="true"
+  >
+    <!-- Activity Artwork -->
+
+    <div class="live-album-art">
+      <img
+        id="live-activity-cover"
+        class="live-album-image"
+        src="path/to/default-cover.png"
+        alt="Current activity artwork"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+
+    <!-- Media Information -->
+
+    <div class="live-info">
+      <div class="live-song-title-wrapper">
+        <span
+          class="live-song-title"
+          id="live-song-title"
+        >
+          —
+        </span>
+
+        <span
+          class="explicit-badge hidden"
+          id="explicit-badge"
+          aria-label="Explicit content"
+          title="Explicit"
+        >
+          E
+        </span>
+      </div>
+
+      <div
+        class="live-artist"
+        id="live-song-artist"
       >
         —
-      </span>
+      </div>
 
-      <span
-        class="explicit-badge hidden"
-        id="explicit-badge"
-        aria-label="Explicit content"
-        title="Explicit"
-      >
-        E
-      </span>
-    </div>
+      <!-- Activity Progress -->
 
-    <div
-      class="live-artist"
-      id="live-song-artist"
-    >
-      —
-    </div>
-
-    <!-- Progress -->
-
-    <div
-      class="music-progress-container"
-      role="progressbar"
-      aria-label="Media progress"
-      aria-valuemin="0"
-      aria-valuemax="100"
-      aria-valuenow="0"
-    >
       <div
-        id="music-progress-bar"
-        class="music-progress-bar"
-      ></div>
-    </div>
+        class="music-progress-container"
+        role="progressbar"
+        aria-label="Activity progress"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+      >
+        <div
+          id="music-progress-bar"
+          class="music-progress-bar"
+        ></div>
+      </div>
 
-    <!-- Playback Times -->
+      <!-- Activity Times -->
 
-    <div
-      class="music-progress-time"
-      aria-label="Media playback times"
-    >
-      <span id="elapsed-time">0:00</span>
-      <span id="remaining-time">-0:00</span>
-      <span id="total-time">0:00</span>
+      <div
+        class="music-progress-time"
+        aria-label="Activity playback times"
+      >
+        <span
+          id="elapsed-time"
+          aria-label="Elapsed time"
+        >
+          0:00
+        </span>
+
+        <span
+          id="remaining-time"
+          aria-label="Remaining time"
+        >
+          -0:00
+        </span>
+
+        <span
+          id="total-time"
+          aria-label="Total duration"
+        >
+          0:00
+        </span>
+      </div>
     </div>
+  </div>
+
+  <!-- Last Activity Update -->
+
+  <div
+    class="la-updated"
+    id="live-activity-updated"
+    aria-live="off"
+  >
+    Updated just now
   </div>
 </div>
 
-    <!-- Last Activity Update -->
-
-    <div
-      class="la-updated"
-      id="live-activity-updated"
-      aria-live="off"
-    >
-      Updated just now
-    </div>
-  </div>
-
-  <!-- ======================================================= -->
-  <!-- END LIVE ACTIVITY                                      -->
-  <!-- ======================================================= -->
-</div>
+<!-- ======================================================= -->
+<!-- END LIVE ACTIVITY                                       -->
+<!-- ======================================================= -->
 
       <!-- Toast Notifications -->
       <div id="toast-container"></div>
