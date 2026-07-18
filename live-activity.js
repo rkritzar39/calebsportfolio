@@ -29,7 +29,7 @@ const SHOW_ALL_PREMID_ACTIVITIES = true;
 let lastUpdateTime = null;
 let lastPollTime   = Date.now();
 let progressInterval = null;
-let currentSpotifyUrl = null;
+let currentMediaUrl = null;
 
 let tempBanner = null;
 const TEMP_BANNER_MS = 15000;
@@ -207,7 +207,7 @@ function setImgWithFallback(imgEl, primaryUrl, fallbackUrl) {
 
 /* Album artwork image handling */
 function setAlbumCover(imageUrl) {
-  const coverEl = $$("live-activity-cover");
+  const coverEl = $$("live-activity-cover") || $$("live-album-image");
   if (!coverEl) return;
 
   const url = String(imageUrl || "").trim();
@@ -1050,48 +1050,133 @@ function isYouTubeMusicLike(act) {
    DISCORD / SPOTIFY + PreMiD
 ========================= */
 
-function resolveDiscordAssetUrl(activity) {
+function resolveDiscordAssetUrl(activity, assetName = "large_image") {
   const assets = activity?.assets;
   if (!assets) return "";
 
-  const largeImage = String(assets.large_image || "").trim();
-  const applicationId = activity?.application_id;
+  const rawAsset = String(assets?.[assetName] || "").trim();
+  const applicationId = String(activity?.application_id || "").trim();
 
-  if (!largeImage) return "";
+  if (!rawAsset) return "";
 
-  /* Already a complete image URL */
-  if (/^https?:\/\//i.test(largeImage)) {
-    return largeImage;
+  /* Direct or data-backed artwork */
+  if (/^(https?:\/\/|data:image\/)/i.test(rawAsset)) {
+    return rawAsset;
   }
 
-  /* Discord media proxy image */
-  if (largeImage.startsWith("mp:")) {
-    const mediaPath = largeImage.slice(3).replace(/^\/+/, "");
-    return `https://media.discordapp.net/${mediaPath}`;
+  /* Discord media proxy asset used by many PreMiD activities */
+  if (rawAsset.startsWith("mp:")) {
+    const mediaPath = rawAsset.slice(3).replace(/^\/+/, "");
+    return mediaPath ? `https://media.discordapp.net/${mediaPath}` : "";
   }
 
-  /* Spotify activity artwork */
-  if (largeImage.startsWith("spotify:")) {
-    const spotifyImageId = largeImage.slice("spotify:".length);
-    return spotifyImageId
-      ? `https://i.scdn.co/image/${spotifyImageId}`
+  /* Spotify-backed Discord artwork */
+  if (rawAsset.startsWith("spotify:")) {
+    const imageId = rawAsset.slice("spotify:".length).trim();
+    return imageId ? `https://i.scdn.co/image/${imageId}` : "";
+  }
+
+  /* Twitch-backed Discord artwork */
+  if (rawAsset.startsWith("twitch:")) {
+    const channel = rawAsset.slice("twitch:".length).trim();
+    return channel
+      ? `https://static-cdn.jtvnw.net/previews-ttv/live_user_${encodeURIComponent(channel)}-640x360.jpg`
       : "";
   }
 
-  /* Twitch activity artwork */
-  if (largeImage.startsWith("twitch:")) {
-    const twitchName = largeImage.slice("twitch:".length);
-    return twitchName
-      ? `https://static-cdn.jtvnw.net/previews-ttv/live_user_${encodeURIComponent(twitchName)}-320x180.jpg`
-      : "";
-  }
-
-  /* Standard Discord application asset */
+  /* Standard Discord rich-presence application asset */
   if (applicationId) {
-    return `https://cdn.discordapp.com/app-assets/${applicationId}/${largeImage}.png?size=512`;
+    return `https://cdn.discordapp.com/app-assets/${applicationId}/${encodeURIComponent(rawAsset)}.png?size=512`;
   }
 
   return "";
+}
+
+function resolveBestActivityArtwork(activity) {
+  return (
+    resolveDiscordAssetUrl(activity, "large_image") ||
+    resolveDiscordAssetUrl(activity, "small_image") ||
+    ""
+  );
+}
+
+function resolveActivityUrl(activity) {
+  if (!activity) return null;
+
+  const directCandidates = [
+    activity.url,
+    activity.details_url,
+    activity.state_url,
+    activity.assets?.large_url,
+    activity.assets?.small_url,
+  ];
+
+  for (const candidate of directCandidates) {
+    if (/^https?:\/\//i.test(String(candidate || ""))) return String(candidate);
+  }
+
+  const metadataUrls = Array.isArray(activity?.metadata?.button_urls)
+    ? activity.metadata.button_urls
+    : [];
+
+  for (const url of metadataUrls) {
+    if (/^https?:\/\//i.test(String(url || ""))) return String(url);
+  }
+
+  const buttons = Array.isArray(activity.buttons) ? activity.buttons : [];
+  for (const button of buttons) {
+    if (typeof button === "string" && /^https?:\/\//i.test(button)) return button;
+    if (button && typeof button === "object" && /^https?:\/\//i.test(String(button.url || ""))) {
+      return String(button.url);
+    }
+  }
+
+  return null;
+}
+
+function getDiscordActivityType(activity) {
+  const type = Number(activity?.type);
+  const types = {
+    0: { verb: "Playing", source: "activity" },
+    1: { verb: "Streaming", source: "twitch" },
+    2: { verb: "Listening to", source: "music" },
+    3: { verb: "Watching", source: "activity" },
+    4: { verb: "Status", source: "discord" },
+    5: { verb: "Competing in", source: "activity" },
+  };
+  return types[type] || { verb: "Active on", source: "activity" };
+}
+
+function getUniversalActivityMeta(activity) {
+  const appName = String(activity?.name || "Activity").trim();
+  const known = resolvePremidMeta(appName, activity);
+  const typeMeta = getDiscordActivityType(activity);
+  const knownService = known.key !== "activity";
+
+  let verb = knownService ? getActivityVerb(known.pretty, activity) : typeMeta.verb;
+  let source = knownService ? known.key : typeMeta.source;
+  let pretty = knownService ? known.pretty : appName;
+
+  if (activity?.type === 2 || isMusicActivity(activity)) {
+    verb = "Listening to";
+    if (!knownService) source = "music";
+  }
+
+  return { appName, pretty, verb, source };
+}
+
+function setCardDestination(url, activityName = "media") {
+  const card = $$("spotify-card");
+  currentMediaUrl = /^https?:\/\//i.test(String(url || "")) ? String(url) : null;
+
+  if (!card) return;
+
+  card.classList.toggle("is-clickable", Boolean(currentMediaUrl));
+  card.setAttribute("aria-disabled", currentMediaUrl ? "false" : "true");
+  card.setAttribute(
+    "aria-label",
+    currentMediaUrl ? `Open current ${activityName} activity` : `Current ${activityName} activity`
+  );
 }
 
 const MUSIC_KEYWORDS = [
@@ -1139,16 +1224,73 @@ function isIgnorableActivity(a) {
   return false;
 }
 
+function scoreActivity(activity) {
+  if (isIgnorableActivity(activity)) return -Infinity;
+
+  let score = 0;
+  if (activity.type === 2) score += 70;
+  if (activity.type === 1) score += 60;
+  if (activity.details?.trim()) score += 30;
+  if (activity.state?.trim()) score += 20;
+  if (activity.assets?.large_image) score += 18;
+  if (activity.assets?.small_image) score += 6;
+  if (activity.timestamps?.start) score += 8;
+  if (activity.timestamps?.end) score += 10;
+  if (resolveActivityUrl(activity)) score += 5;
+  if (activity.application_id) score += 4;
+
+  return score;
+}
+
 function pickBestPremidActivity(activities = []) {
-  const candidates = (activities || []).filter(a => !isIgnorableActivity(a));
+  return (activities || [])
+    .filter(activity => !isIgnorableActivity(activity))
+    .map((activity, index) => ({ activity, index, score: scoreActivity(activity) }))
+    .sort((a, b) => b.score - a.score || a.index - b.index)[0]?.activity || null;
+}
 
-  const rich = candidates.find(a => (a.details && a.details.trim()) || (a.state && a.state.trim()));
-  if (rich) return rich;
+function renderUniversalActivity(activity) {
+  slideInCard($$("spotify-card"));
 
-  const withArt = candidates.find(a => a.assets?.large_image);
-  if (withArt) return withArt;
+  const meta = getUniversalActivityMeta(activity);
+  const title = String(
+    activity?.details ||
+    activity?.assets?.large_text ||
+    activity?.state ||
+    meta.appName
+  ).trim();
 
-  return candidates[0] || null;
+  const subtitle = String(
+    activity?.state ||
+    activity?.assets?.small_text ||
+    activity?.assets?.large_text ||
+    meta.pretty
+  ).trim();
+
+  const titleEl = $$("live-song-title");
+  const artistEl = $$("live-song-artist");
+  if (titleEl) titleEl.textContent = title || meta.pretty;
+  if (artistEl) artistEl.textContent = subtitle || meta.pretty;
+
+  const coverUrl = resolveBestActivityArtwork(activity);
+  setAlbumCover(coverUrl);
+  updateDynamicColors(coverUrl || null);
+  setCardDestination(resolveActivityUrl(activity), meta.pretty);
+
+  const explicitEl = $$("explicit-badge");
+  if (explicitEl) explicitEl.style.display = "none";
+
+  resetProgress();
+  const hasRealProgress = setupProgressFromActivityTimestamps(activity);
+  if (!hasRealProgress) {
+    const shouldIndeterminate = activity?.type === 2 || isMusicActivity(activity);
+    setProgressVisibility(shouldIndeterminate ? NON_SPOTIFY_PROGRESS_MODE : "hide");
+  }
+
+  return {
+    text: `${meta.verb} ${meta.pretty}`,
+    source: meta.source,
+  };
 }
 
 async function getDiscord() {
@@ -1157,6 +1299,7 @@ async function getDiscord() {
     resetProgress();
     setProgressVisibility("hide");
     setAlbumCover(null);
+    setCardDestination(null);
     updateDynamicColors(null);
     return { text: manualStatus?.text || "Status (manual)", source: "manual" };
   }
@@ -1187,7 +1330,10 @@ async function getDiscord() {
       setAlbumCover(coverUrl);
       updateDynamicColors(coverUrl || null);
 
-      currentSpotifyUrl = sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null;
+      setCardDestination(
+        sp.track_id ? `https://open.spotify.com/track/${sp.track_id}` : null,
+        "Spotify"
+      );
 
       setupProgress(startMs, endMs);
 
@@ -1197,57 +1343,10 @@ async function getDiscord() {
       return { text: "Listening to Spotify", source: "spotify" };
     }
 
-    // 2) PreMiD / All activities
+    // 2) Any Discord rich presence / PreMiD activity
     if (SHOW_ALL_PREMID_ACTIVITIES) {
       const act = pickBestPremidActivity(data.activities || []);
-      if (act) {
-        slideInCard($$("spotify-card"));
-
-        const appName = act.name || "Activity";
-
-        const n = appName.toLowerCase();
-        const isYTM = n.includes("youtube music") || n.includes("yt music") || n.includes("youtubemusic");
-        const isYT  = n.includes("youtube");
-
-        const title = act.details || appName;
-        const sub   = act.state || act?.assets?.large_text || appName;
-
-        $$("live-song-title").textContent  = title;
-        $$("live-song-artist").textContent = sub;
-
-        const coverUrl = resolveDiscordAssetUrl(act);
-        setAlbumCover(coverUrl);
-
-        currentSpotifyUrl = null;
-
-        const explicitEl = $$("explicit-badge");
-        if (explicitEl) explicitEl.style.display = "none";
-
-        resetProgress();
-
-        const hasRealProgress = setupProgressFromActivityTimestamps(act);
-        if (!hasRealProgress) {
-          if (isMusicActivity(act) || isYouTubeMusicLike(act)) {
-            setProgressVisibility(NON_SPOTIFY_PROGRESS_MODE);
-          } else {
-            setProgressVisibility("hide");
-          }
-        }
-
-        updateDynamicColors(coverUrl || null);
-
-        const meta = resolvePremidMeta(appName, act);
-        let prettyApp = meta.pretty;
-        if (isYTM) prettyApp = "YouTube Music";
-        else if (isYT) prettyApp = "YouTube";
-
-        const verb = getActivityVerb(prettyApp, act);
-        let source = meta.key;
-        if (isYTM) source = "youtubemusic";
-        else if (isYT) source = "youtube";
-
-        return { text: `${verb} ${prettyApp}`, source };
-      }
+      if (act) return renderUniversalActivity(act);
     }
 
     // 3) Nothing else
@@ -1255,6 +1354,7 @@ async function getDiscord() {
     resetProgress();
     setProgressVisibility("hide");
     setAlbumCover(null);
+    setCardDestination(null);
     updateDynamicColors(null);
 
     const map = {
@@ -1434,13 +1534,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const card = $$("spotify-card");
   if (card) {
     card.addEventListener("click", () => {
-      if (currentSpotifyUrl) window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
+      if (currentMediaUrl) window.open(currentMediaUrl, "_blank", "noopener,noreferrer");
     });
 
     card.addEventListener("keydown", (e) => {
-      if ((e.key === "Enter" || e.key === " ") && currentSpotifyUrl) {
+      if ((e.key === "Enter" || e.key === " ") && currentMediaUrl) {
         e.preventDefault();
-        window.open(currentSpotifyUrl, "_blank", "noopener,noreferrer");
+        window.open(currentMediaUrl, "_blank", "noopener,noreferrer");
       }
     });
   }
