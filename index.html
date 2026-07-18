@@ -160,6 +160,7 @@
   aria-label="Current activity"
 >
   <!-- Current Status -->
+
   <div
     class="status-line"
     id="status-line"
@@ -182,6 +183,7 @@
   </div>
 
   <!-- Media Activity Card -->
+
   <div
     class="spotify-card hidden"
     id="spotify-card"
@@ -191,40 +193,21 @@
     aria-disabled="true"
   >
     <!-- Activity Artwork -->
+
     <div class="live-album-art">
       <img
-        id="live-album-cover"
+        id="live-activity-cover"
+        class="live-album-image"
         src="path/to/default-cover.png"
-        alt="Album artwork"
+        alt="Current activity artwork"
         loading="lazy"
         decoding="async"
       />
     </div>
 
     <!-- Media Information -->
+
     <div class="live-info">
-
-      <!-- Activity Provider -->
-      <div
-        class="live-provider"
-        aria-label="Now playing on Spotify"
-      >
-        <svg
-          class="live-provider-icon"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            fill="currentColor"
-            d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.59 11.67 1.34a.75.75 0 0 1 .24 1.03Zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.98-8.15-2.55-11.96-1.4a.94.94 0 1 1-.54-1.8c4.36-1.32 9.78-.68 13.48 1.59a.94.94 0 0 1 .31 1.3Zm.13-3.4C14.32 7.45 7.94 7.23 4.24 8.35a1.13 1.13 0 1 1-.65-2.16c4.25-1.28 11.3-1.02 15.75 1.62a1.13 1.13 0 0 1-1.15 1.94Z"
-          />
-        </svg>
-
-        <span>Now Playing</span>
-      </div>
-
-      <!-- Track Information -->
       <div class="live-song-title-wrapper">
         <span
           class="live-song-title"
@@ -251,6 +234,7 @@
       </div>
 
       <!-- Activity Progress -->
+
       <div
         class="music-progress-container"
         role="progressbar"
@@ -266,6 +250,7 @@
       </div>
 
       <!-- Activity Times -->
+
       <div
         class="music-progress-time"
         aria-label="Activity playback times"
@@ -279,7 +264,6 @@
 
         <span
           id="remaining-time"
-          class="visually-hidden"
           aria-label="Remaining time"
         >
           -0:00
@@ -292,11 +276,11 @@
           0:00
         </span>
       </div>
-
     </div>
   </div>
 
   <!-- Last Activity Update -->
+
   <div
     class="la-updated"
     id="live-activity-updated"
@@ -304,7 +288,6 @@
   >
     Updated just now
   </div>
-
 </div>
 
 <!-- ======================================================= -->
