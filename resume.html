@@ -167,8 +167,8 @@ document.getElementById("download-btn").addEventListener("click", function () {
       let resizeFrame = null;
       let resizeTimer = null;
       let navigationTimer = null;
-      let settlingTimer = null;
       let settingsTimer = null;
+      let settlingTimer = null;
       let suppressionTimer = null;
 
       const dragThreshold = 7;
@@ -211,20 +211,20 @@ document.getElementById("download-btn").addEventListener("click", function () {
       }
 
       function getLinkPath(link) {
-        const route = link.dataset.route || link.getAttribute("href") || "/";
+        const rawRoute = link.dataset.route || link.getAttribute("href") || "/";
 
         try {
-          return normalizePath(new URL(route, window.location.origin).pathname);
+          return normalizePath(new URL(rawRoute, window.location.origin).pathname);
         } catch (error) {
-          return normalizePath(route);
+          return normalizePath(rawRoute);
         }
       }
 
       /* ====================================================== *
-       * Active Route Detection                                 *
+       * Route Matching                                         *
        * ====================================================== */
 
-      function findActiveLink() {
+      function findRouteActiveLink() {
         const currentPath = normalizePath(window.location.pathname);
 
         const exactMatch = links.find((link) => {
@@ -252,9 +252,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
        * ====================================================== */
 
       function setActiveLink(link) {
-        if (!link) {
-          return;
-        }
+        if (!link) return;
 
         activeLink = link;
 
@@ -275,9 +273,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
        * ====================================================== */
 
       function moveLensTo(link, animate = true) {
-        if (!link) {
-          return;
-        }
+        if (!link) return;
 
         const dockRect = dock.getBoundingClientRect();
         const linkRect = link.getBoundingClientRect();
@@ -300,16 +296,14 @@ document.getElementById("download-btn").addEventListener("click", function () {
       }
 
       function moveLensWithPointer(pointerX, targetLink) {
-        if (!targetLink) {
-          return;
-        }
+        if (!targetLink) return;
 
         const dockRect = dock.getBoundingClientRect();
         const targetRect = targetLink.getBoundingClientRect();
-        const dockStyles = getComputedStyle(dock);
+        const dockStyle = getComputedStyle(dock);
 
-        const paddingLeft = parseFloat(dockStyles.paddingLeft) || 0;
-        const paddingRight = parseFloat(dockStyles.paddingRight) || 0;
+        const paddingLeft = parseFloat(dockStyle.paddingLeft) || 0;
+        const paddingRight = parseFloat(dockStyle.paddingRight) || 0;
         const lensWidth = targetRect.width;
         const halfLensWidth = lensWidth / 2;
 
@@ -354,9 +348,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
        * ====================================================== */
 
       function setDragTarget(link) {
-        if (dragTarget === link) {
-          return;
-        }
+        if (dragTarget === link) return;
 
         links.forEach((dockLink) => {
           dockLink.classList.remove("is-drag-target");
@@ -369,9 +361,8 @@ document.getElementById("download-btn").addEventListener("click", function () {
         }
       }
 
-      function clearInteractionClasses() {
+      function clearInteractionState() {
         dock.classList.remove("is-pressing", "is-dragging");
-
         links.forEach((link) => {
           link.classList.remove("is-pressed", "is-drag-target");
         });
@@ -401,20 +392,17 @@ document.getElementById("download-btn").addEventListener("click", function () {
       }
 
       /* ====================================================== *
-       * Snap Animation                                         *
+       * Snap Response                                          *
        * ====================================================== */
 
       function runSettlingAnimation(link) {
-        if (!link || motionIsDisabled()) {
-          return;
-        }
+        if (!link || motionIsDisabled()) return;
 
         if (settlingTimer !== null) {
           window.clearTimeout(settlingTimer);
         }
 
         dock.classList.remove("is-settling");
-
         links.forEach((dockLink) => {
           dockLink.classList.remove("is-settling");
         });
@@ -447,9 +435,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
       }
 
       function navigateTo(link) {
-        if (!link || isCurrentDestination(link)) {
-          return;
-        }
+        if (!link || isCurrentDestination(link)) return;
 
         if (navigationTimer !== null) {
           window.clearTimeout(navigationTimer);
@@ -484,12 +470,9 @@ document.getElementById("download-btn").addEventListener("click", function () {
        * ====================================================== */
 
       function updatePointerReflection(event, link) {
-        if (event.pointerType !== "mouse") {
-          return;
-        }
+        if (event.pointerType !== "mouse") return;
 
         const linkRect = link.getBoundingClientRect();
-
         link.style.setProperty("--pointer-x", `${event.clientX - linkRect.left}px`);
         link.style.setProperty("--pointer-y", `${event.clientY - linkRect.top}px`);
       }
@@ -504,9 +487,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
        * ====================================================== */
 
       function beginPress(event, link) {
-        if (activePointerId !== null) {
-          return;
-        }
+        if (activePointerId !== null) return;
 
         if (
           event.pointerType === "mouse" &&
@@ -540,25 +521,21 @@ document.getElementById("download-btn").addEventListener("click", function () {
        * ====================================================== */
 
       function updatePress(event) {
-        if (!pointerIsDown || event.pointerId !== activePointerId) {
-          return;
-        }
+        if (!pointerIsDown || event.pointerId !== activePointerId) return;
 
         currentPointerX = event.clientX;
 
         const movementX = event.clientX - pointerStartX;
         const movementY = event.clientY - pointerStartY;
-        const movementDistance = Math.hypot(movementX, movementY);
+        const distance = Math.hypot(movementX, movementY);
 
-        if (!dragStarted && movementDistance >= dragThreshold) {
+        if (!dragStarted && distance >= dragThreshold) {
           dragStarted = true;
           dock.classList.add("is-dragging");
           pressedLink?.classList.remove("is-pressed");
         }
 
-        if (!dragStarted) {
-          return;
-        }
+        if (!dragStarted) return;
 
         event.preventDefault();
 
@@ -572,53 +549,46 @@ document.getElementById("download-btn").addEventListener("click", function () {
        * ====================================================== */
 
       function finishPress(event, cancelled = false) {
-        if (!pointerIsDown || event.pointerId !== activePointerId) {
-          return;
-        }
+  if (!pointerIsDown || event.pointerId !== activePointerId) return;
 
-        const wasDragging = dragStarted;
-        const selectedLink = cancelled
-          ? activeLink
-          : wasDragging
-            ? getNearestLink(currentPointerX)
-            : pressedLink;
+  const wasDragging = dragStarted;
 
-        if (wasDragging) {
-          suppressSyntheticClick();
-        }
+  const selectedLink = cancelled
+    ? activeLink
+    : wasDragging
+      ? getNearestLink(currentPointerX)
+      : pressedLink;
 
-        clearInteractionClasses();
+  clearInteractionState();
 
-        try {
-          if (dock.hasPointerCapture(event.pointerId)) {
-            dock.releasePointerCapture(event.pointerId);
-          }
-        } catch (error) {
-          // Continue if pointer capture is unavailable
-        }
+  try {
+    if (dock.hasPointerCapture(event.pointerId)) {
+      dock.releasePointerCapture(event.pointerId);
+    }
+  } catch (error) {
+    // Continue if pointer capture is unavailable.
+  }
 
-        pointerIsDown = false;
-        dragStarted = false;
-        pressedLink = null;
-        dragTarget = null;
-        activePointerId = null;
+  pointerIsDown = false;
+  dragStarted = false;
+  pressedLink = null;
+  dragTarget = null;
+  activePointerId = null;
 
-        if (!selectedLink) {
-          return;
-        }
+  if (!selectedLink) return;
 
-        setActiveLink(selectedLink);
-        moveLensTo(selectedLink, true);
-        runSettlingAnimation(selectedLink);
+  setActiveLink(selectedLink);
+  moveLensTo(selectedLink, true);
+  runSettlingAnimation(selectedLink);
 
-        if (!cancelled) {
-          rotateSettingsGear(selectedLink);
-        }
+  if (!cancelled) {
+    rotateSettingsGear(selectedLink);
 
-        if (!cancelled && wasDragging) {
-          navigateTo(selectedLink);
-        }
-      }
+    // Handle all pointer navigation here
+    suppressSyntheticClick();
+    navigateTo(selectedLink);
+  }
+}
 
       /* ====================================================== *
        * Link Events                                            *
@@ -638,35 +608,44 @@ document.getElementById("download-btn").addEventListener("click", function () {
         });
 
         link.addEventListener("click", (event) => {
-          const modifiedClick =
-            event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+  const modifiedClick =
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey ||
+    event.button !== 0;
 
-          const specialNavigation = link.target === "_blank" || link.hasAttribute("download");
+  const specialNavigation =
+    link.target === "_blank" ||
+    link.hasAttribute("download");
 
-          if (modifiedClick || specialNavigation) {
-            return;
-          }
+  if (modifiedClick || specialNavigation) {
+    return;
+  }
 
-          if (suppressNextClick) {
-            event.preventDefault();
-            suppressNextClick = false;
+  // Ignore the synthetic click after pointerup navigation
+  if (suppressNextClick) {
+    event.preventDefault();
 
-            if (suppressionTimer !== null) {
-              window.clearTimeout(suppressionTimer);
-              suppressionTimer = null;
-            }
+    suppressNextClick = false;
 
-            return;
-          }
+    if (suppressionTimer !== null) {
+      window.clearTimeout(suppressionTimer);
+      suppressionTimer = null;
+    }
 
-          event.preventDefault();
+    return;
+  }
 
-          setActiveLink(link);
-          moveLensTo(link, true);
-          runSettlingAnimation(link);
-          rotateSettingsGear(link);
-          navigateTo(link);
-        });
+  // Keyboard activation still works
+  event.preventDefault();
+
+  setActiveLink(link);
+  moveLensTo(link, true);
+  runSettlingAnimation(link);
+  rotateSettingsGear(link);
+  navigateTo(link);
+});
       });
 
       /* ====================================================== *
@@ -701,14 +680,11 @@ document.getElementById("download-btn").addEventListener("click", function () {
             nextIndex = links.length - 1;
           }
 
-          if (nextIndex === null) {
-            return;
-          }
+          if (nextIndex === null) return;
 
           event.preventDefault();
 
           const nextLink = links[nextIndex];
-
           nextLink.focus();
           setActiveLink(nextLink);
           moveLensTo(nextLink, true);
@@ -718,7 +694,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
       });
 
       /* ====================================================== *
-       * Responsive Updates                                     *
+       * Resize Handling                                        *
        * ====================================================== */
 
       function handleResize() {
@@ -742,20 +718,20 @@ document.getElementById("download-btn").addEventListener("click", function () {
       }
 
       /* ====================================================== *
-       * Route Update                                           *
+       * Route State                                            *
        * ====================================================== */
 
       function updateRouteState(animate = false) {
-        activeLink = findActiveLink();
-        setActiveLink(activeLink);
-        moveLensTo(activeLink, animate);
+        const routeLink = findRouteActiveLink();
+        setActiveLink(routeLink);
+        moveLensTo(routeLink, animate);
       }
 
       /* ====================================================== *
        * Initialization                                         *
        * ====================================================== */
 
-      async function initializeDock() {
+      async function initializeLayout() {
         if (document.fonts?.ready) {
           try {
             await document.fonts.ready;
@@ -764,7 +740,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
           }
         }
 
-        activeLink = findActiveLink();
+        activeLink = findRouteActiveLink();
         setActiveLink(activeLink);
 
         requestAnimationFrame(() => {
@@ -780,7 +756,7 @@ document.getElementById("download-btn").addEventListener("click", function () {
         }
       }
 
-      initializeDock();
+      initializeLayout();
 
       /* ====================================================== *
        * Browser Events                                         *
