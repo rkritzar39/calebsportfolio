@@ -1046,8 +1046,8 @@
       let dragTarget = null;
       let activePointerId = null;
 
-      let startPointerX = 0;
-      let startPointerY = 0;
+      let pointerStartX = 0;
+      let pointerStartY = 0;
       let currentPointerX = 0;
 
       let pointerIsDown = false;
@@ -1080,8 +1080,8 @@
        * Path Normalization                                     *
        * ====================================================== */
 
-      function normalizeOnyxDockPath(path) {
-        let normalizedPath = String(path || "/")
+      function normalizePath(path) {
+        let cleanPath = String(path || "/")
           .split("?")[0]
           .split("#")[0]
           .toLowerCase()
@@ -1089,35 +1089,36 @@
           .replace(/\.html$/i, "")
           .replace(/\/+$/g, "");
 
-        if (!normalizedPath || normalizedPath === "/home") {
-          normalizedPath = "/";
+        if (!cleanPath || cleanPath === "/home") {
+          cleanPath = "/";
         }
 
-        if (!normalizedPath.startsWith("/")) {
-          normalizedPath = `/${normalizedPath}`;
+        if (!cleanPath.startsWith("/")) {
+          cleanPath = `/${cleanPath}`;
         }
 
-        return normalizedPath;
+        return cleanPath;
       }
 
-      function getDockLinkPath(link) {
-        const route = link.dataset.route || link.getAttribute("href") || "/";
+      function getLinkPath(link) {
+        const rawRoute = link.dataset.route || link.getAttribute("href") || "/";
+
         try {
-          return normalizeOnyxDockPath(new URL(route, window.location.origin).pathname);
+          return normalizePath(new URL(rawRoute, window.location.origin).pathname);
         } catch (error) {
-          return normalizeOnyxDockPath(route);
+          return normalizePath(rawRoute);
         }
       }
 
       /* ====================================================== *
-       * Active Route Detection                                 *
+       * Route Matching                                         *
        * ====================================================== */
 
-      function getRouteActiveLink() {
-        const currentPath = normalizeOnyxDockPath(window.location.pathname);
+      function findRouteActiveLink() {
+        const currentPath = normalizePath(window.location.pathname);
 
         const exactMatch = links.find((link) => {
-          return getDockLinkPath(link) === currentPath;
+          return getLinkPath(link) === currentPath;
         });
 
         if (exactMatch) {
@@ -1126,11 +1127,11 @@
 
         const nestedMatches = links
           .filter((link) => {
-            const targetPath = getDockLinkPath(link);
+            const targetPath = getLinkPath(link);
             return targetPath !== "/" && currentPath.startsWith(`${targetPath}/`);
           })
           .sort((firstLink, secondLink) => {
-            return getDockLinkPath(secondLink).length - getDockLinkPath(firstLink).length;
+            return getLinkPath(secondLink).length - getLinkPath(firstLink).length;
           });
 
         return nestedMatches[0] || links[0];
@@ -1158,10 +1159,10 @@
       }
 
       /* ====================================================== *
-       * Lens Movement                                          *
+       * Lens Position                                          *
        * ====================================================== */
 
-      function moveDockLensTo(link, animate = true) {
+      function moveLensTo(link, animate = true) {
         if (!link) return;
 
         const dockRect = dock.getBoundingClientRect();
@@ -1184,15 +1185,15 @@
         }
       }
 
-      function moveDockLensWithPointer(pointerX, targetLink) {
+      function moveLensWithPointer(pointerX, targetLink) {
         if (!targetLink) return;
 
         const dockRect = dock.getBoundingClientRect();
         const targetRect = targetLink.getBoundingClientRect();
-        const computedStyle = getComputedStyle(dock);
+        const dockStyle = getComputedStyle(dock);
 
-        const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0;
-        const paddingRight = parseFloat(computedStyle.paddingRight) || 0;
+        const paddingLeft = parseFloat(dockStyle.paddingLeft) || 0;
+        const paddingRight = parseFloat(dockStyle.paddingRight) || 0;
         const lensWidth = targetRect.width;
         const halfLensWidth = lensWidth / 2;
 
@@ -1211,10 +1212,10 @@
       }
 
       /* ====================================================== *
-       * Nearest Destination                                    *
+       * Nearest Dock Link                                      *
        * ====================================================== */
 
-      function getNearestDockLink(pointerX) {
+      function getNearestLink(pointerX) {
         let nearestLink = links[0];
         let nearestDistance = Number.POSITIVE_INFINITY;
 
@@ -1271,7 +1272,7 @@
         }
 
         link.classList.remove("settings-rotating");
-        void link.offsetWidth; // Force keyframe animation restart
+        void link.offsetWidth; // Force reflow
         link.classList.add("settings-rotating");
 
         settingsTimer = window.setTimeout(() => {
@@ -1296,7 +1297,7 @@
           dockLink.classList.remove("is-settling");
         });
 
-        void dock.offsetWidth;
+        void dock.offsetWidth; // Force reflow
 
         dock.classList.add("is-settling");
         link.classList.add("is-settling");
@@ -1317,13 +1318,13 @@
         const current = new URL(window.location.href);
 
         return (
-          normalizeOnyxDockPath(destination.pathname) === normalizeOnyxDockPath(current.pathname) &&
+          normalizePath(destination.pathname) === normalizePath(current.pathname) &&
           destination.search === current.search &&
           destination.hash === current.hash
         );
       }
 
-      function navigateToDockLink(link) {
+      function navigateTo(link) {
         if (!link || isCurrentDestination(link)) return;
 
         if (navigationTimer !== null) {
@@ -1375,10 +1376,9 @@
        * Press Start                                            *
        * ====================================================== */
 
-      function beginDockPress(event, link) {
+      function beginPress(event, link) {
         if (activePointerId !== null) return;
 
-        // Preserve modified clicks and middle-button interactions.
         if (
           event.pointerType === "mouse" &&
           (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
@@ -1390,9 +1390,8 @@
         pointerIsDown = true;
         dragStarted = false;
         pressedLink = link;
-
-        startPointerX = event.clientX;
-        startPointerY = event.clientY;
+        pointerStartX = event.clientX;
+        pointerStartY = event.clientY;
         currentPointerX = event.clientX;
 
         dock.classList.add("is-pressing");
@@ -1403,7 +1402,7 @@
         try {
           dock.setPointerCapture(event.pointerId);
         } catch (error) {
-          // Continue if pointer capture is unavailable.
+          // Continue if pointer capture is unavailable
         }
       }
 
@@ -1411,13 +1410,13 @@
        * Press and Drag Update                                  *
        * ====================================================== */
 
-      function updateDockPress(event) {
+      function updatePress(event) {
         if (!pointerIsDown || event.pointerId !== activePointerId) return;
 
         currentPointerX = event.clientX;
 
-        const movementX = event.clientX - startPointerX;
-        const movementY = event.clientY - startPointerY;
+        const movementX = event.clientX - pointerStartX;
+        const movementY = event.clientY - pointerStartY;
         const distance = Math.hypot(movementX, movementY);
 
         if (!dragStarted && distance >= dragThreshold) {
@@ -1430,59 +1429,56 @@
 
         event.preventDefault();
 
-        const nearestLink = getNearestDockLink(event.clientX);
+        const nearestLink = getNearestLink(event.clientX);
         setDragTarget(nearestLink);
-        moveDockLensWithPointer(event.clientX, nearestLink);
+        moveLensWithPointer(event.clientX, nearestLink);
       }
 
       /* ====================================================== *
        * Press Finish                                           *
        * ====================================================== */
 
-      function finishDockPress(event, cancelled = false) {
-        if (!pointerIsDown || event.pointerId !== activePointerId) return;
+      function finishPress(event, cancelled = false) {
+  if (!pointerIsDown || event.pointerId !== activePointerId) return;
 
-        const wasDragging = dragStarted;
-        const selectedLink = cancelled
-          ? activeLink
-          : wasDragging
-          ? getNearestDockLink(currentPointerX)
-          : pressedLink;
+  const wasDragging = dragStarted;
 
-        if (wasDragging) {
-          suppressSyntheticClick();
-        }
+  const selectedLink = cancelled
+    ? activeLink
+    : wasDragging
+      ? getNearestLink(currentPointerX)
+      : pressedLink;
 
-        clearInteractionState();
+  clearInteractionState();
 
-        try {
-          if (dock.hasPointerCapture(event.pointerId)) {
-            dock.releasePointerCapture(event.pointerId);
-          }
-        } catch (error) {
-          // Continue without pointer capture support.
-        }
+  try {
+    if (dock.hasPointerCapture(event.pointerId)) {
+      dock.releasePointerCapture(event.pointerId);
+    }
+  } catch (error) {
+    // Continue if pointer capture is unavailable.
+  }
 
-        pointerIsDown = false;
-        dragStarted = false;
-        pressedLink = null;
-        dragTarget = null;
-        activePointerId = null;
+  pointerIsDown = false;
+  dragStarted = false;
+  pressedLink = null;
+  dragTarget = null;
+  activePointerId = null;
 
-        if (!selectedLink) return;
+  if (!selectedLink) return;
 
-        setActiveLink(selectedLink);
-        moveDockLensTo(selectedLink, true);
-        runSettlingAnimation(selectedLink);
+  setActiveLink(selectedLink);
+  moveLensTo(selectedLink, true);
+  runSettlingAnimation(selectedLink);
 
-        if (!cancelled) {
-          rotateSettingsGear(selectedLink);
-        }
+  if (!cancelled) {
+    rotateSettingsGear(selectedLink);
 
-        if (!cancelled && wasDragging) {
-          navigateToDockLink(selectedLink);
-        }
-      }
+    // Handle all pointer navigation here
+    suppressSyntheticClick();
+    navigateTo(selectedLink);
+  }
+}
 
       /* ====================================================== *
        * Link Events                                            *
@@ -1490,7 +1486,7 @@
 
       links.forEach((link) => {
         link.addEventListener("pointerdown", (event) => {
-          beginDockPress(event, link);
+          beginPress(event, link);
         });
 
         link.addEventListener("pointermove", (event) => {
@@ -1502,46 +1498,53 @@
         });
 
         link.addEventListener("click", (event) => {
-          const modifiedClick =
-            event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+  const modifiedClick =
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey ||
+    event.button !== 0;
 
-          const specialNavigation = link.target === "_blank" || link.hasAttribute("download");
+  const specialNavigation =
+    link.target === "_blank" ||
+    link.hasAttribute("download");
 
-          if (modifiedClick || specialNavigation) return;
+  if (modifiedClick || specialNavigation) {
+    return;
+  }
 
-          if (suppressNextClick) {
-            event.preventDefault();
-            suppressNextClick = false;
+  // Ignore the synthetic click after pointerup navigation
+  if (suppressNextClick) {
+    event.preventDefault();
 
-            if (suppressionTimer !== null) {
-              window.clearTimeout(suppressionTimer);
-              suppressionTimer = null;
-            }
-            return;
-          }
+    suppressNextClick = false;
 
-          event.preventDefault();
-          setActiveLink(link);
-          moveDockLensTo(link, true);
-          runSettlingAnimation(link);
-          rotateSettingsGear(link);
-          navigateToDockLink(link);
-        });
+    if (suppressionTimer !== null) {
+      window.clearTimeout(suppressionTimer);
+      suppressionTimer = null;
+    }
+
+    return;
+  }
+
+  // Keyboard activation still works
+  event.preventDefault();
+
+  setActiveLink(link);
+  moveLensTo(link, true);
+  runSettlingAnimation(link);
+  rotateSettingsGear(link);
+  navigateTo(link);
+});
       });
 
       /* ====================================================== *
        * Dock Pointer Events                                    *
        * ====================================================== */
 
-      dock.addEventListener("pointermove", updateDockPress);
-
-      dock.addEventListener("pointerup", (event) => {
-        finishDockPress(event, false);
-      });
-
-      dock.addEventListener("pointercancel", (event) => {
-        finishDockPress(event, true);
-      });
+      dock.addEventListener("pointermove", updatePress);
+      dock.addEventListener("pointerup", (event) => finishPress(event, false));
+      dock.addEventListener("pointercancel", (event) => finishPress(event, true));
 
       /* ====================================================== *
        * Keyboard Navigation                                    *
@@ -1570,10 +1573,11 @@
           if (nextIndex === null) return;
 
           event.preventDefault();
+
           const nextLink = links[nextIndex];
           nextLink.focus();
           setActiveLink(nextLink);
-          moveDockLensTo(nextLink, true);
+          moveLensTo(nextLink, true);
           runSettlingAnimation(nextLink);
           rotateSettingsGear(nextLink);
         });
@@ -1583,7 +1587,7 @@
        * Resize Handling                                        *
        * ====================================================== */
 
-      function handleDockResize() {
+      function handleResize() {
         if (resizeFrame !== null) {
           cancelAnimationFrame(resizeFrame);
         }
@@ -1593,12 +1597,12 @@
         }
 
         resizeFrame = requestAnimationFrame(() => {
-          moveDockLensTo(activeLink, false);
+          moveLensTo(activeLink, false);
           resizeFrame = null;
         });
 
         resizeTimer = window.setTimeout(() => {
-          moveDockLensTo(activeLink, false);
+          moveLensTo(activeLink, false);
           resizeTimer = null;
         }, 180);
       }
@@ -1608,9 +1612,9 @@
        * ====================================================== */
 
       function updateRouteState(animate = false) {
-        const routeLink = getRouteActiveLink();
+        const routeLink = findRouteActiveLink();
         setActiveLink(routeLink);
-        moveDockLensTo(routeLink, animate);
+        moveLensTo(routeLink, animate);
       }
 
       /* ====================================================== *
@@ -1622,16 +1626,16 @@
           try {
             await document.fonts.ready;
           } catch (error) {
-            // Continue if a font cannot finish loading.
+            // Continue if font loading cannot finish.
           }
         }
 
-        activeLink = getRouteActiveLink();
+        activeLink = findRouteActiveLink();
         setActiveLink(activeLink);
 
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            moveDockLensTo(activeLink, false);
+            moveLensTo(activeLink, false);
             dock.classList.add("dock-ready");
           });
         });
@@ -1648,8 +1652,8 @@
        * Browser Events                                         *
        * ====================================================== */
 
-      window.addEventListener("resize", handleDockResize, { passive: true });
-      window.addEventListener("orientationchange", handleDockResize, { passive: true });
+      window.addEventListener("resize", handleResize, { passive: true });
+      window.addEventListener("orientationchange", handleResize, { passive: true });
 
       window.addEventListener("pageshow", () => {
         updateRouteState(false);
