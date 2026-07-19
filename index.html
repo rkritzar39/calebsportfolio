@@ -1547,49 +1547,46 @@
        * ====================================================== */
 
       function finishPress(event, cancelled = false) {
-        if (!pointerIsDown || event.pointerId !== activePointerId) return;
+  if (!pointerIsDown || event.pointerId !== activePointerId) return;
 
-        const wasDragging = dragStarted;
-        const selectedLink = cancelled
-          ? activeLink
-          : wasDragging
-          ? getNearestLink(currentPointerX)
-          : pressedLink;
+  const wasDragging = dragStarted;
 
-        if (wasDragging) {
-          suppressSyntheticClick();
-        }
+  const selectedLink = cancelled
+    ? activeLink
+    : wasDragging
+      ? getNearestLink(currentPointerX)
+      : pressedLink;
 
-        clearInteractionState();
+  clearInteractionState();
 
-        try {
-          if (dock.hasPointerCapture(event.pointerId)) {
-            dock.releasePointerCapture(event.pointerId);
-          }
-        } catch (error) {
-          // Continue if pointer capture is unavailable
-        }
+  try {
+    if (dock.hasPointerCapture(event.pointerId)) {
+      dock.releasePointerCapture(event.pointerId);
+    }
+  } catch (error) {
+    // Continue if pointer capture is unavailable.
+  }
 
-        pointerIsDown = false;
-        dragStarted = false;
-        pressedLink = null;
-        dragTarget = null;
-        activePointerId = null;
+  pointerIsDown = false;
+  dragStarted = false;
+  pressedLink = null;
+  dragTarget = null;
+  activePointerId = null;
 
-        if (!selectedLink) return;
+  if (!selectedLink) return;
 
-        setActiveLink(selectedLink);
-        moveLensTo(selectedLink, true);
-        runSettlingAnimation(selectedLink);
+  setActiveLink(selectedLink);
+  moveLensTo(selectedLink, true);
+  runSettlingAnimation(selectedLink);
 
-        if (!cancelled) {
-          rotateSettingsGear(selectedLink);
-        }
+  if (!cancelled) {
+    rotateSettingsGear(selectedLink);
 
-        if (!cancelled && wasDragging) {
-          navigateTo(selectedLink);
-        }
-      }
+    // Handle all pointer navigation here
+    suppressSyntheticClick();
+    navigateTo(selectedLink);
+  }
+}
 
       /* ====================================================== *
        * Link Events                                            *
@@ -1609,32 +1606,44 @@
         });
 
         link.addEventListener("click", (event) => {
-          const modifiedClick =
-            event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+  const modifiedClick =
+    event.metaKey ||
+    event.ctrlKey ||
+    event.shiftKey ||
+    event.altKey ||
+    event.button !== 0;
 
-          const specialNavigation = link.target === "_blank" || link.hasAttribute("download");
+  const specialNavigation =
+    link.target === "_blank" ||
+    link.hasAttribute("download");
 
-          if (modifiedClick || specialNavigation) return;
+  if (modifiedClick || specialNavigation) {
+    return;
+  }
 
-          if (suppressNextClick) {
-            event.preventDefault();
-            suppressNextClick = false;
+  // Ignore the synthetic click after pointerup navigation
+  if (suppressNextClick) {
+    event.preventDefault();
 
-            if (suppressionTimer !== null) {
-              window.clearTimeout(suppressionTimer);
-              suppressionTimer = null;
-            }
-            return;
-          }
+    suppressNextClick = false;
 
-          event.preventDefault();
+    if (suppressionTimer !== null) {
+      window.clearTimeout(suppressionTimer);
+      suppressionTimer = null;
+    }
 
-          setActiveLink(link);
-          moveLensTo(link, true);
-          runSettlingAnimation(link);
-          rotateSettingsGear(link);
-          navigateTo(link);
-        });
+    return;
+  }
+
+  // Keyboard activation still works
+  event.preventDefault();
+
+  setActiveLink(link);
+  moveLensTo(link, true);
+  runSettlingAnimation(link);
+  rotateSettingsGear(link);
+  navigateTo(link);
+});
       });
 
       /* ====================================================== *
