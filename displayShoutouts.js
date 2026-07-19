@@ -1,6 +1,4 @@
 // displayShoutouts.js
-// Live activity/status rendering is owned exclusively by live-activity.js.
-// Do not add a second listener for live_status/current or modify #live-activity here.
 
 // Use the same Firebase config as in admin.js (Ensure this is correct)
 const firebaseConfig = {
@@ -27,6 +25,66 @@ import {
   query,
   where
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+let unsubscribeLiveStatus = null;
+
+function watchLiveStatus() {
+  if (!db) {
+    console.warn("Firestore not ready yet, retrying...");
+    setTimeout(watchLiveStatus, 500);
+    return;
+  }
+
+  const el = document.getElementById("live-activity-text");
+  const container = document.getElementById("live-activity");
+
+  if (!el || !container) {
+    console.warn("Live activity elements not found.");
+    return;
+  }
+
+  const liveStatusRef = doc(db, "live_status", "current");
+
+  if (unsubscribeLiveStatus) {
+    unsubscribeLiveStatus();
+    unsubscribeLiveStatus = null;
+  }
+
+  unsubscribeLiveStatus = onSnapshot(
+    liveStatusRef,
+    (snap) => {
+      if (!snap.exists()) {
+        el.textContent = "🛌 Offline";
+        container.classList.remove("active");
+        container.classList.add("hidden");
+        return;
+      }
+
+      const data = snap.data() || {};
+      const message = (data.message || "").trim();
+      const isActive = data.isActive === true || message.length > 0;
+
+      if (isActive) {
+        el.textContent = message || "🟢 Active";
+        container.classList.remove("hidden");
+        container.classList.add("active");
+      } else {
+        el.textContent = "🛌 Offline";
+        container.classList.remove("active");
+        container.classList.add("hidden");
+      }
+    },
+    (error) => {
+      console.error("Live status listener error:", error);
+      el.textContent = "🛌 Offline";
+      container.classList.remove("active");
+      container.classList.add("hidden");
+    }
+  );
+}
+
+document.addEventListener("DOMContentLoaded", watchLiveStatus);
+
+
 /* ==========================================================
    ACTIVE SITE DATA INITIALIZATION
    Retired sections removed: FAQ, Posts/Blog, President,
@@ -8474,4 +8532,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- Call the main initialization function when the DOM is ready ---
 document.addEventListener('DOMContentLoaded', initializeHomepageContent);
-
