@@ -12,7 +12,7 @@ on:
       - "**/*.js"
       - "**/*.mjs"
   schedule:
-    - cron: "15 6 2 * *"
+    - cron: "00 8 * * *"
   workflow_dispatch:
 
 permissions:
