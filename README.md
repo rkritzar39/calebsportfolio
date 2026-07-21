@@ -8,7 +8,7 @@
 ![Next Stable](https://img.shields.io/badge/next%20stable-v27.0-yellow)
 ![JavaScript](https://img.shields.io/badge/JavaScript-45.3%25-f1e05a)
 ![CSS](https://img.shields.io/badge/CSS-36.4%25-663399)
-![HTML](https://img.shields.io/badge/HTML-18.2%25-e34c26)
+![HTML](https://img.shields.io/badge/HTML-18.3%25-e34c26)
 <!-- AUTO:BADGES-END -->
 
 Welcome to the repository for my Link in Bio Website.
@@ -781,7 +781,7 @@ This project is built with standard web technologies, Firebase services, and sta
 | :--- | :--- | :--- |
 | **JavaScript** | 45.3% | Powers dynamic behavior, profile loading, sorting, time logic, Firestore updates, navigation interactions, Discord synchronization, Live Activity, and interactive interface features. |
 | **CSS** | 36.4% | Controls visual design, responsive layouts, liquid-glass styling, animations, themes, device breakpoints, and hover effects. |
-| **HTML** | 18.2% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
+| **HTML** | 18.3% | Provides website structure, page sections, navigation, inline SVG icons, and content frameworks. |
 <!-- AUTO:LANGUAGES-END -->
 
 > **Note:** Language percentages are based on the current GitHub repository language analysis and may change as files are added, removed, or updated.
