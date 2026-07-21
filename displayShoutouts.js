@@ -761,8 +761,8 @@ let latestOSVersions = {
     visionos: "26.5",
 
     // Android / Google / Samsung
-    android: "17",
-    pixelui: "17",
+    android: "16",
+    pixelui: "16",
     oneui: "8.5",
 
     // Other Android skins
@@ -849,6 +849,7 @@ const LATEST_OS_ENDPOINT = "/latest-os-versions.json";
    Keeps stable, public beta, developer beta, and RC data separate.
 ------------------------------------------------------------ */
 let latestOSReleaseData = {
+    schema_version: 2,
     production_stable: { ...latestOSVersions },
     public_beta: {},
     developer_tester: {},
@@ -1269,10 +1270,45 @@ const supportLifespanDefaults = {
 /* ------------------------------------------------------------
    AUTO LATEST OS FETCH
 ------------------------------------------------------------ */
+function isValidOSReleaseData(data) {
+    if (!data || typeof data !== "object") return false;
+
+    const stableData =
+        data.production_stable && typeof data.production_stable === "object"
+            ? data.production_stable
+            : data;
+
+    const requiredStablePlatforms = [
+        "ios",
+        "ipados",
+        "macos",
+        "android",
+        "windows"
+    ];
+
+    return requiredStablePlatforms.every(platform => {
+        const value = stableData[platform];
+        return value !== null && value !== undefined && String(value).trim() !== "";
+    });
+}
+
 async function fetchLatestOSVersions() {
     try {
-        const response = await fetch(LATEST_OS_ENDPOINT, {
-            cache: "no-store"
+        const endpointUrl = new URL(
+            LATEST_OS_ENDPOINT,
+            window.location.origin
+        );
+
+        endpointUrl.searchParams.set(
+            "updated",
+            String(Date.now())
+        );
+
+        const response = await fetch(endpointUrl.toString(), {
+            cache: "no-store",
+            headers: {
+                Accept: "application/json"
+            }
         });
 
         if (!response.ok) {
@@ -1280,6 +1316,13 @@ async function fetchLatestOSVersions() {
         }
 
         const data = await response.json();
+
+        if (!isValidOSReleaseData(data)) {
+            throw new Error(
+                "Latest OS JSON has an invalid or incomplete structure."
+            );
+        }
+
         const stableVersions =
             data.production_stable && typeof data.production_stable === "object"
                 ? data.production_stable
@@ -1293,6 +1336,7 @@ async function fetchLatestOSVersions() {
 
         // Preserve all structured release channels for the expanded UI.
         latestOSReleaseData = {
+            schema_version: Number(data.schema_version || 1),
             production_stable: {
                 ...latestOSReleaseData.production_stable,
                 ...stableVersions
@@ -1656,6 +1700,19 @@ function formatReleaseValue(value) {
         .trim();
 }
 
+function formatOSDataUpdatedDate(value) {
+    if (!value) return "";
+
+    const date = new Date(`${value}T12:00:00`);
+    if (isNaN(date.getTime())) return String(value);
+
+    return date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
+}
+
 function getOSReleaseInformation(osType) {
     return {
         stable: getReleaseChannelVersion(osType, "production_stable"),
@@ -1704,13 +1761,17 @@ function detectOSChannel(osVersion, osType = null) {
 // ======================
 // OS STATUS
 // ======================
-function checkOSStatus(osVersion) {
+function checkOSStatus(osVersion, explicitChannel = "") {
     if (!osVersion) return null;
 
     const osType = detectOSType(osVersion);
     const currentVersion = extractVersionString(osVersion, osType);
     const latestPublicVersion = latestOSVersions[osType] || null;
-    const channel = detectOSChannel(osVersion, osType);
+    const normalizedExplicitChannel = String(explicitChannel || "")
+        .toLowerCase()
+        .trim()
+        .replace(/[\s_]+/g, "-");
+    const channel = normalizedExplicitChannel || detectOSChannel(osVersion, osType);
     const releaseInformation = getOSReleaseInformation(osType);
     const latestPublicBeta = releaseInformation.publicBeta;
     const latestDeveloperBeta = releaseInformation.developerBeta;
@@ -1738,6 +1799,7 @@ function checkOSStatus(osVersion) {
             description: "Latest public version is not configured for this OS.",
             betaBuildStatus: null,
             betaBuildColor: "gray",
+            betaBuildDiffers: false,
             betaUpdateAvailable: false,
             isBeta: false,
             isPublicLatest: false,
@@ -1807,7 +1869,7 @@ function checkOSStatus(osVersion) {
 
     let betaBuildStatus = null;
     let betaBuildColor = "gray";
-    let betaUpdateAvailable = false;
+    let betaBuildDiffers = false;
 
     if (installedBuild && developerBuild) {
         if (installedBuild === developerBuild) {
@@ -1816,14 +1878,14 @@ function checkOSStatus(osVersion) {
         } else {
             betaBuildStatus = `Installed ${installedBuild}; configured developer build ${developerBuild}`;
             betaBuildColor = "yellow";
-            betaUpdateAvailable = true;
+            betaBuildDiffers = true;
         }
     }
 
     if (installedBuild && releaseCandidateBuild && installedBuild === releaseCandidateBuild) {
         betaBuildStatus = "Latest configured release candidate build";
         betaBuildColor = "green";
-        betaUpdateAvailable = false;
+        betaBuildDiffers = false;
     }
 
     return {
@@ -1842,7 +1904,8 @@ function checkOSStatus(osVersion) {
         description,
         betaBuildStatus,
         betaBuildColor,
-        betaUpdateAvailable,
+        betaBuildDiffers,
+        betaUpdateAvailable: betaBuildDiffers,
         isBeta: channel !== "public" || comparisonToPublic > 0,
         isPublicLatest: comparisonToPublic === 0 && channel === "public",
         isBehindPublic: comparisonToPublic < 0
@@ -2029,7 +2092,7 @@ function checkDeviceSupport(item) {
         ? parsedSupportEndYear
         : null;
 
-    const osStatus = checkOSStatus(item.osVersion);
+    const osStatus = checkOSStatus(item.osVersion, item.osChannel);
     const deviceType = detectDeviceType(item);
     const condition = String(item.condition || "").toLowerCase();
 
@@ -2465,7 +2528,7 @@ function calculateUpgradeScore(item) {
     const battery = Number(item.batteryHealth ?? 100);
     const cycles = getBatteryCycles(item);
     const support = checkDeviceSupport(item);
-    const osStatus = checkOSStatus(item.osVersion);
+    const osStatus = checkOSStatus(item.osVersion, item.osChannel);
 
     let score = 100;
 
@@ -2474,7 +2537,7 @@ function calculateUpgradeScore(item) {
     score -= cycles * 0.008;
 
     if (cycles >= techThresholds.cycleVeryOld) score -= 10;
-    if (osStatus && osStatus.isBehindPublic) score -= 8;
+    if (osStatus && osStatus.isBehindPublic && !osStatus.isBeta) score -= 8;
     if (osStatus && osStatus.status === "Very Outdated") score -= 18;
 
     if (support.supportLevel === "Limited Support") score -= 10;
@@ -2959,7 +3022,7 @@ function calculateUpgradeData(item) {
 
     const batteryHealth = Number(item.batteryHealth ?? 100);
     const cycles = getBatteryCycles(item);
-    const osStatus = checkOSStatus(item.osVersion);
+    const osStatus = checkOSStatus(item.osVersion, item.osChannel);
     const support = checkDeviceSupport(item);
     const deviceType = detectDeviceType(item);
     const condition = String(item.condition || "").toLowerCase();
@@ -3160,6 +3223,11 @@ function normalizeTechItem(itemData) {
     normalized.dateReleased = getFirstField(itemData, ["dateReleased", "releaseDate", "released"], "");
     normalized.dateBought = getFirstField(itemData, ["dateBought", "purchaseDate", "datePurchased", "boughtDate"], "");
     normalized.osVersion = getFirstField(itemData, ["osVersion", "operatingSystem", "softwareVersion", "os"], "");
+    normalized.osChannel = getFirstField(
+        itemData,
+        ["osChannel", "releaseChannel", "softwareChannel", "updateChannel"],
+        ""
+    );
     normalized.chipName = getFirstField(itemData, ["chipName", "chip", "processor", "cpu", "soc"], "");
 
     normalized.ramGB = getNumberField(itemData, ["ramGB", "ram", "memoryGB", "memory", "ramMemoryGB"], 0);
@@ -4221,7 +4289,7 @@ function renderTechItemHomepage(itemData) {
     const ownershipBadgeClass = ownershipConfig.badgeClass;
     const lifecycleSections = renderTechLifecycleSections(item, { context: ownershipConfig.mode });
 
-    const osStatus = checkOSStatus(item.osVersion);
+    const osStatus = checkOSStatus(item.osVersion, item.osChannel);
     const support = checkDeviceSupport(item);
     const supportLife = estimateSupportLifespan(item);
     const aiSupport = calculateAIFeatureSupport(item);
@@ -4541,6 +4609,9 @@ function renderTechItemHomepage(itemData) {
     let betaReleaseHtml = "";
 
     if (osStatus) {
+        const shouldShowBetaDetails =
+            osStatus.isBeta ||
+            osStatus.releaseChannel === "Release Candidate";
         const publicBetaText = osStatus.latestPublicBeta
             ? formatReleaseValue(osStatus.latestPublicBeta)
             : null;
@@ -4550,8 +4621,11 @@ function renderTechItemHomepage(itemData) {
         const releaseCandidateText = osStatus.latestReleaseCandidate
             ? formatReleaseValue(osStatus.latestReleaseCandidate)
             : null;
+        const releaseDataUpdatedText = formatOSDataUpdatedDate(
+            latestOSReleaseData.last_updated
+        );
 
-        if (publicBetaText) {
+        if (publicBetaText && shouldShowBetaDetails) {
             betaReleaseHtml += `
             <div class="tech-detail">
                 <i class="fas fa-users"></i>
@@ -4560,7 +4634,7 @@ function renderTechItemHomepage(itemData) {
             </div>`;
         }
 
-        if (developerBetaText) {
+        if (developerBetaText && shouldShowBetaDetails) {
             betaReleaseHtml += `
             <div class="tech-detail">
                 <i class="fas fa-code"></i>
@@ -4569,7 +4643,7 @@ function renderTechItemHomepage(itemData) {
             </div>`;
         }
 
-        if (releaseCandidateText) {
+        if (releaseCandidateText && shouldShowBetaDetails) {
             betaReleaseHtml += `
             <div class="tech-detail">
                 <i class="fas fa-flag-checkered"></i>
@@ -4578,7 +4652,7 @@ function renderTechItemHomepage(itemData) {
             </div>`;
         }
 
-        if (osStatus.betaBuildStatus) {
+        if (osStatus.betaBuildStatus && shouldShowBetaDetails) {
             betaReleaseHtml += `
             <div class="tech-detail">
                 <i class="fas fa-code-compare"></i>
@@ -4589,12 +4663,21 @@ function renderTechItemHomepage(itemData) {
             </div>`;
         }
 
-        if (osStatus.betaUpdateAvailable) {
+        if (osStatus.betaBuildDiffers && shouldShowBetaDetails) {
             betaReleaseHtml += `
             <div class="tech-detail">
-                <i class="fas fa-arrow-up-right-dots"></i>
-                <span>Beta Update:</span>
+                <i class="fas fa-code-compare"></i>
+                <span>Build Comparison:</span>
                 Installed build differs from the latest configured developer build
+            </div>`;
+        }
+
+        if (releaseDataUpdatedText && shouldShowBetaDetails) {
+            betaReleaseHtml += `
+            <div class="tech-detail os-data-updated">
+                <i class="fas fa-clock-rotate-left"></i>
+                <span>Release Data Checked:</span>
+                ${escapeHTML(releaseDataUpdatedText)}
             </div>`;
         }
     }
@@ -4766,6 +4849,7 @@ function applyTechFiltersAndSort() {
             item.deviceType,
             item.modelYear,
             item.osVersion,
+            item.osChannel,
             item.chipName,
             item.storage,
             item.color,
