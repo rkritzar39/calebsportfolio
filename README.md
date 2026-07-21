@@ -55,6 +55,8 @@ v26.5 remains the current stable public version. v27.0-rc.1 is the current relea
 - [Coding Languages and Technologies](#coding-languages-and-technologies)
 - [Future Multi-User Link-in-Bio Platform](#future-multi-user-link-in-bio-platform)
 - [Complete Proposed Feature Set](#complete-proposed-feature-set)
+- [Account Enforcement, Strikes, Bans, and Appeals](#account-enforcement-strikes-bans-and-appeals)
+- [Possible Built-In Social Media Platform](#possible-built-in-social-media-platform)
 - [Potential Career and Opportunity Platform](#potential-career-and-opportunity-platform)
 - [Estimated Development Timeline](#estimated-development-timeline)
 - [Proposed Version Plan](#proposed-version-plan)
@@ -1757,6 +1759,461 @@ The rebrand should not happen until the profile-platform alpha demonstrates that
 
 ---
 
+## Account Enforcement, Strikes, Bans, and Appeals
+
+The multi-user platform would require a transparent Trust and Safety system before public registration. Authorized staff could issue notices, warnings, strikes, feature restrictions, temporary suspensions, permanent bans, content removals, verification revocations, and account restorations.
+
+### Account states
+
+- `active` — account is in good standing
+- `warned` — account remains usable with an active policy warning
+- `restricted` — selected features are disabled
+- `under_review` — a report or safety concern is being reviewed
+- `suspended` — account or publishing access is temporarily disabled
+- `banned` — account is permanently disabled
+- `appeal_pending` — an appeal is awaiting review
+- `deactivated` — account was voluntarily deactivated
+- `deleted` — account deletion was completed or scheduled
+
+### Enforcement actions
+
+- Educational notice
+- Formal warning
+- Strike point
+- Link removal
+- Post removal
+- Comment removal
+- Profile unpublishing
+- Search suppression with a disclosed reason
+- Link-publishing restriction
+- Posting restriction
+- Comment restriction
+- Messaging restriction
+- Upload restriction
+- Live-stream restriction in a later phase
+- Organization restriction
+- Opportunity-posting restriction
+- Temporary suspension
+- Extended suspension
+- Permanent ban
+- Verification removal
+- Action reversal
+- Account restoration
+
+### Strike severity
+
+- Notice — guidance without a strike
+- Low — minor or first-time policy violation
+- Medium — repeated or more consequential violation
+- High — impersonation, scams, malicious redirects, or repeated evasion
+- Critical — severe fraud, malware, credible safety threats, or serious ban evasion
+
+Strike points may expire, but permanent moderation history remains available to authorized reviewers. Critical violations may bypass the normal strike ladder. Permanent bans should require a senior reviewer or a two-person approval process except during urgent security containment.
+
+### User Account Status page
+
+Every user would receive a private `/account/status` page showing:
+
+- Current account state
+- Public-profile state
+- Search visibility
+- Active warnings
+- Active strike points
+- Strike expiration dates
+- Current feature restrictions
+- Suspension start and end dates
+- Policy category
+- User-facing explanation
+- Affected content
+- Required corrective steps
+- Appeal availability
+- Appeal deadline
+- Appeal progress
+- Final appeal decision
+- Security actions
+- Account export and deletion links
+
+The status page would not expose reporters, confidential moderator notes, security-detection methods, or information belonging to other users.
+
+### Appeals
+
+- Appeal eligibility
+- Appeal deadline
+- User statement
+- Supporting URLs
+- Supporting files with strict upload controls
+- Assigned reviewer
+- Evidence review
+- Decision status
+- Decision explanation
+- Action upheld, reduced, reversed, or remanded
+- Second-level review for selected permanent actions
+- Appeal audit history
+
+### Moderator roles
+
+- Support
+- Report Reviewer
+- Moderator
+- Senior Moderator
+- Trust and Safety Administrator
+- Platform Administrator
+
+Permissions must be enforced by a trusted backend and Firebase Security Rules, not by hiding buttons in the browser.
+
+### Moderation records
+
+```text
+moderation_cases/{caseId}
+moderation_actions/{actionId}
+strikes/{strikeId}
+appeals/{appealId}
+reports/{reportId}
+audit_logs/{eventId}
+```
+
+Each action should record the actor, affected account, reason code, policy reference, public explanation, confidential notes, evidence references, timestamp, expiration, appeal eligibility, and reversal history.
+
+---
+
+## Possible Built-In Social Media Platform
+
+A proprietary social network could eventually be built into the platform, but it should come only after accounts, profiles, privacy, reporting, moderation, and abuse prevention are stable. The link-in-bio page would remain each user's public identity hub, while the social layer would add posts, following, discovery, and community interaction.
+
+### Social product concept
+
+> A profile-first social network where posts connect back to a customizable link-in-bio, portfolio, education, projects, skills, services, and verified evidence.
+
+### Social accounts and identity
+
+- One social identity per platform account
+- Public, private, or unlisted account
+- Display name and username
+- Profile image and cover image
+- Biography and headline
+- Link-in-bio profile connection
+- Verification states
+- Organization and creator labels
+- Account creation date
+- Optional general location
+- Follower and following counts
+- Mutual connection indicator
+- Pinned profile modules
+- Public account-status notices only where policy requires them
+
+### Social graph
+
+- Follow
+- Unfollow
+- Follow requests for private accounts
+- Accept or decline request
+- Remove follower
+- Block account
+- Mute account
+- Restrict account
+- Close Friends or selected audience in a later phase
+- Suggested accounts
+- Mutual followers
+- Follow recommendations with explanation controls
+- Import contacts only after explicit permission and privacy review
+
+### Posts
+
+- Text posts
+- Image posts
+- Multi-image posts
+- Video posts in a later phase
+- Link-preview posts
+- Project-update posts
+- Academic-milestone posts
+- Achievement posts
+- Certification posts
+- Job or availability updates
+- Polls in a later phase
+- Event posts
+- Organization announcements
+- Drafts
+- Scheduled posts
+- Pinned posts
+- Edit history
+- Delete post
+- Archive post
+- Download user's own post data
+- Alt text
+- Captions
+- Audience controls
+- Comment controls
+- Like visibility controls
+- Sensitive-content labeling
+- Sponsored-content disclosure
+- AI-generated-content disclosure if applicable
+
+### Post audiences
+
+- Public
+- Followers
+- Mutual followers
+- Selected audience
+- Private only
+- Organization members
+- Unlisted link access
+
+### Feed
+
+- Following feed in chronological order
+- Optional recommendation feed
+- Latest posts
+- Saved posts
+- Muted-word filtering
+- Topic filtering
+- Reduced-recommendation mode
+- Reset recommendations
+- Explain why a post was recommended
+- Hide post
+- Not interested
+- Report post
+- Block author
+- Content-preference controls
+
+A chronological Following feed should remain available even if recommendations are introduced.
+
+### Interactions
+
+- Like
+- Unlike
+- Comment
+- Reply
+- Mention
+- Share internally
+- Copy post link
+- Share externally
+- Repost or quote post in a later phase
+- Save post
+- Turn notifications on for a post
+- Disable comments
+- Limit comments
+- Delete comment on owned content
+- Pin comment
+- Report interaction
+
+### Comments and conversations
+
+- Threaded replies
+- Comment sorting
+- Creator-only comment controls
+- Keyword filters
+- Hidden-word filters
+- Manual comment approval for selected accounts
+- Comment-rate limits
+- Mention permissions
+- Anti-spam controls
+- Delete and edit history
+- Moderator removal notices
+
+### Media
+
+- Secure image uploads
+- Image resizing
+- Thumbnail creation
+- EXIF metadata removal
+- Alt text
+- Content warnings
+- Video upload only after storage, transcoding, moderation, and cost planning
+- Video captions
+- Video thumbnails
+- Playback-quality selection
+- Autoplay controls
+- Reduced-data mode
+- Copyright-reporting workflow
+- Media retention and deletion
+
+### Short-form video possibility
+
+A TikTok-style short-video experience would be a much later project because it requires:
+
+- Large-scale media storage
+- Video transcoding
+- Adaptive streaming
+- Content moderation
+- Copyright processes
+- Recommendation safety
+- Child-safety controls
+- High bandwidth and operating costs
+- Creator tools
+- Captioning
+- Playback analytics
+- Abuse prevention
+
+An initial social release should prioritize text, images, links, projects, and milestones rather than launching short-form video immediately.
+
+### Messaging possibility
+
+Direct messaging would be deferred until the platform has:
+
+- Blocking
+- Reporting
+- Spam detection
+- Message requests
+- Rate limits
+- Media safety
+- Minor-safety policies
+- Account-status enforcement
+- Moderator escalation
+- Data retention and deletion policies
+
+Potential later features include one-to-one messages, group messages, message requests, read receipts, typing indicators, attachments, and conversation muting.
+
+### Notifications
+
+- New follower
+- Follow request
+- Follow accepted
+- Like
+- Comment
+- Reply
+- Mention
+- Share
+- Account verification
+- Report update
+- Moderation action
+- Appeal update
+- Security alert
+- Product announcement
+
+Users would control in-app, email, and browser-push notification categories.
+
+### Discovery
+
+- Search users
+- Search posts
+- Search topics
+- Search projects
+- Search skills
+- Search organizations
+- Hashtags or topics
+- Trending topics with anti-manipulation controls
+- Suggested creators
+- Suggested students and professionals
+- Local discovery only through explicit opt-in and coarse location
+- Search-history controls
+- Recommendation-history controls
+
+### Creator features
+
+- Creator account type
+- Featured posts
+- Link-in-bio integration
+- Media kit
+- Collaboration status
+- Sponsorship links
+- Audience insights
+- Post analytics
+- Follower growth
+- Content scheduling
+- Comment controls
+- Product and affiliate disclosures
+- Creator verification
+
+### Community and group possibilities
+
+- Public communities
+- Private communities
+- School clubs
+- Project groups
+- Professional groups
+- Organization spaces
+- Community moderators
+- Membership requests
+- Community rules
+- Pinned resources
+- Events
+- Community reports
+
+Groups should not launch until member safety, moderation delegation, and appeals are ready.
+
+### Social moderation
+
+- Report post
+- Report comment
+- Report message
+- Report profile
+- Report impersonation
+- Report spam
+- Report scam
+- Report malicious link
+- Report harassment
+- Report copyright issue
+- Report organization
+- Block and mute
+- Comment restriction
+- Posting restriction
+- Recommendation removal
+- Content removal
+- Account suspension
+- Permanent ban
+- Appeals
+- Moderator audit logs
+
+### Social safety and privacy
+
+- Private accounts
+- Follow-request approval
+- Per-post audiences
+- Mention controls
+- Comment controls
+- Message controls
+- Follower removal
+- Block lists
+- Muted words
+- Hidden words
+- Search visibility
+- Recommendation visibility
+- Activity-status visibility
+- Download data
+- Delete account
+- Delete posts
+- Security sessions
+- Multi-factor authentication
+
+### Social analytics
+
+- Post views
+- Reach estimates
+- Likes
+- Comments
+- Shares
+- Saves
+- Profile visits
+- Link clicks
+- Follower growth
+- Traffic sources
+- Device categories
+- Time trends
+
+Analytics would be aggregated and privacy-conscious. Profile owners should not receive personally identifying visitor logs.
+
+### Social data structure
+
+```text
+posts/{postId}
+posts/{postId}/comments/{commentId}
+posts/{postId}/likes/{uid}
+users/{uid}/following/{targetUid}
+users/{uid}/followers/{sourceUid}
+users/{uid}/saved_posts/{postId}
+notifications/{uid}/items/{notificationId}
+conversations/{conversationId}
+reports/{reportId}
+moderation_cases/{caseId}
+```
+
+High-volume feeds, counters, recommendations, video processing, notifications, and moderation would require trusted backend services beyond ordinary client-side Firestore writes.
+
+### Social-media release principle
+
+The social network would not replace the link-in-bio product. The social network would drive discovery and interaction, while the link-in-bio profile would remain the stable public destination users can share anywhere.
+
+---
 ## Potential Career and Opportunity Platform
 
 After multi-user profiles become stable, the platform could expand into opportunities and career discovery.
@@ -1943,7 +2400,34 @@ The following estimate assumes one primary developer working part-time while beg
 - Finalize a separate brand if needed
 - Publish the first stable multi-user platform release
 
-### Phase 7 — Organizations and opportunities
+### Phase 7 — Social foundation research and prototype
+
+**Estimated duration:** 6–12 additional months  
+**Earliest working window:** Late 2028 through 2029
+
+- Social graph
+- Text and image posts
+- Following feed
+- Likes, comments, saves, and shares
+- Notifications
+- Social reporting
+- Social account-status actions
+- Closed social alpha
+
+### Phase 8 — Social closed beta
+
+**Estimated duration:** 6–12 additional months  
+**Earliest working window:** 2029
+
+- Discovery
+- Search
+- Recommendations with user controls
+- Creator analytics
+- Communities only if moderation is ready
+- Expanded trust and safety staffing and tools
+- Media processing improvements
+
+### Phase 9 — Organizations and opportunities
 
 **Estimated duration:** 6–12 additional months  
 **Earliest working window:** Late 2028 through 2029
@@ -1957,7 +2441,7 @@ The following estimate assumes one primary developer working part-time while beg
 - External applications
 - Scam reporting
 
-### Phase 8 — Internal career-platform workflows
+### Phase 10 — Internal career-platform workflows
 
 **Estimated duration:** 9–18 additional months  
 **Earliest realistic window:** 2029 or later
@@ -1978,8 +2462,10 @@ The following estimate assumes one primary developer working part-time while beg
 - **Feature-rich closed beta:** 10–16 months
 - **Public beta:** 16–22 months
 - **Stable link-in-bio platform:** 20–28 months
-- **Organization and external opportunity tools:** 28–40 months
-- **Full career-platform workflows:** 36–54+ months
+- **Basic social-network closed alpha:** 30–42 months
+- **Social-network public beta:** 40–54 months
+- **Organization and external opportunity tools:** 36–48 months
+- **Full career-platform workflows:** 48–66+ months
 
 ### Earliest plausible release windows
 
@@ -1989,8 +2475,10 @@ The following estimate assumes one primary developer working part-time while beg
 - **Closed link-in-bio beta:** Late 2027
 - **Public link-in-bio beta:** Early or mid-2028
 - **Stable multi-user link-in-bio platform:** Summer or Fall 2028
-- **Opportunity beta:** 2029
-- **Advanced job-platform features:** 2029–2030 or later
+- **Social alpha:** 2029
+- **Social beta:** 2029–2030
+- **Opportunity beta:** 2029–2030
+- **Advanced job-platform features:** 2030 or later
 
 A deliberately smaller MVP containing accounts, usernames, links, themes, privacy, QR codes, and basic analytics could be released earlier than the complete platform described above.
 
@@ -2099,29 +2587,41 @@ The following version sequence is provisional.
 - Account portability
 - Finalized platform identity or rebrand
 
-### v29.0-alpha / beta — Organizations and opportunities
+### v29.0-alpha / beta — Built-in social network
 
 **Rough target:** 2029
 
-- Organization accounts
-- Team roles
-- Verification
+- Social graph and follows
+- Text, image, link, project, and milestone posts
+- Chronological Following feed
+- Likes, comments, saves, shares, and notifications
+- Post and profile reporting
+- Social moderation and account-status integration
+- Creator analytics
+- Closed beta before public access
+
+### v30.0-alpha / beta — Organizations and opportunities
+
+**Rough target:** 2029–2030 or later
+
+- Organization accounts and teams
+- Organization verification
 - Jobs, internships, and co-ops
 - Saved opportunities
 - External applications
 - Explainable matching
 
-### v30.0 or later — Career-platform workflows
+### v31.0 or later — Advanced social and career workflows
 
-**Rough target:** 2029–2030 or later
+**Rough target:** 2030 or later
 
+- Optional direct messaging after safety readiness
 - Internal applications
-- Messaging
 - Interview scheduling
 - Candidate pipelines
 - Document exchange
-- Employer analytics
-- Expanded audit and compliance tools
+- Advanced creator and organization tools
+- Expanded audit, moderation, and compliance systems
 
 A separate brand or repository may reset or alter this version sequence.
 
@@ -2141,8 +2641,9 @@ A separate brand or repository may reset or alter this version sequence.
 - **v27.1** — Proposed Education and post-release refinement release
 - **v27.5** — Possible platform-foundation preview
 - **v28.x** — Proposed multi-user profile platform
-- **v29.x** — Proposed organization and opportunity features
-- **v30.x or later** — Possible advanced career-platform features
+- **v29.x** — Proposed built-in social-network alpha and beta
+- **v30.x** — Proposed organization and opportunity features
+- **v31.x or later** — Possible advanced social and career-platform workflows
 
 The roadmap may change if additional release candidates, security changes, hosting changes, or scope reductions are needed.
 
@@ -2239,7 +2740,7 @@ The existing system has the foundation for a future multi-user profile platform,
 - Responsive Onyx navigation
 - An established Admin Portal
 
-The recommended strategy is to keep BusArmyDude.org stable as a personal website while building a separate multi-user link-in-bio foundation. The first public product should focus on usernames, links, social profiles, themes, responsive pages, privacy, QR codes, and analytics. Advanced education, resume, project, and evidence modules can follow. Employers, opportunities, applications, and messaging should come much later.
+The recommended strategy is to keep BusArmyDude.org stable as a personal website while building a separate multi-user link-in-bio foundation. The first public product should focus on usernames, links, social profiles, themes, responsive pages, privacy, QR codes, and analytics. Advanced education, resume, project, and evidence modules can follow. A built-in social network may follow only after moderation is proven. Employers, opportunities, internal applications, and messaging should come later still.
 
 The shortest realistic future product is a modular profile builder. A trustworthy job and opportunity platform would be a multi-year project requiring stronger backend infrastructure, privacy controls, account security, moderation, role enforcement, verification, abuse prevention, and careful testing.
 
