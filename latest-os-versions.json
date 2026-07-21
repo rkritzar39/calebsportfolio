@@ -32,7 +32,7 @@
   "webos": "24",
   "tizen": "8",
   "production_stable": {
-    "ios": "26.5.2",
+    "ios": "26.5.3",
     "ipados": "26.5.2",
     "macos": "26.5.2",
     "watchos": "26.5",
